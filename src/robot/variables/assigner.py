@@ -88,14 +88,19 @@ class VariableAssigner(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_val is not None:
-            self._assign_by_exception(exc_val)
+        if exc_val is None:
+            return
+        failure = self._get_failure(exc_type, exc_val, exc_tb)
+        if failure.can_continue(self._context.in_teardown):
+            self.assign(failure.return_value)
+        if failure is not exc_val:
+            raise failure
 
-    def _assign_by_exception(self, exception):
-        if not isinstance(exception, ExecutionFailed):
-            exception = HandlerExecutionFailed(ErrorDetails())
-        if exception.can_continue(self._context.in_teardown):
-            self.assign(exception.return_value)
+    def _get_failure(self, exc_type, exc_val, exc_tb):
+        if isinstance(exc_val, ExecutionFailed):
+            return exc_val
+        exc_info = (exc_type, exc_val, exc_tb)
+        return HandlerExecutionFailed(ErrorDetails(exc_info))
 
     def assign(self, return_value):
         context = self._context

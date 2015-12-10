@@ -43,18 +43,18 @@ def get_error_message():
 
 def get_error_details(exclude_robot_traces=EXCLUDE_ROBOT_TRACES):
     """Returns error message and details of the last occurred exception."""
-    details = ErrorDetails(exclude_robot_traces)
+    details = ErrorDetails(exclude_robot_traces=exclude_robot_traces)
     return details.message, details.traceback
 
 
-def ErrorDetails(exclude_robot_traces=EXCLUDE_ROBOT_TRACES):
+def ErrorDetails(exc_info=None, exclude_robot_traces=EXCLUDE_ROBOT_TRACES):
     """This factory returns an object that wraps the last occurred exception
 
     It has attributes `message`, `traceback` and `error`, where `message`
     contains type and message of the original error, `traceback` contains the
     traceback/stack trace and `error` contains the original error instance.
     """
-    exc_type, exc_value, exc_traceback = sys.exc_info()
+    exc_type, exc_value, exc_traceback = exc_info or sys.exc_info()
     if exc_type in RERAISED_EXCEPTIONS:
         raise exc_value
     details = PythonErrorDetails \

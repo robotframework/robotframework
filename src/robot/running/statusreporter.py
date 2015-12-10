@@ -40,7 +40,7 @@ class StatusReporter(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         context = self._context
         result = self._result
-        failure = self._get_failure(exc_val, context)
+        failure = self._get_failure(exc_val, exc_tb, context)
         if failure is None:
             result.status = self._pass_status
         else:
@@ -54,7 +54,7 @@ class StatusReporter(object):
         if failure is not exc_val:
             raise failure
 
-    def _get_failure(self, exception, context):
+    def _get_failure(self, exception, traceback, context):
         if exception is None:
             return None
         if isinstance(exception, ExecutionFailed):
@@ -64,7 +64,8 @@ class StatusReporter(object):
             context.fail(msg)
             syntax_error = not isinstance(exception, VariableError)
             return ExecutionFailed(msg, syntax=syntax_error)
-        failure = HandlerExecutionFailed(ErrorDetails())
+        exc_info = (type(exception), exception, traceback)
+        failure = HandlerExecutionFailed(ErrorDetails(exc_info))
         if failure.timeout:
             context.timeout_occurred = True
         context.fail(failure.full_message)
