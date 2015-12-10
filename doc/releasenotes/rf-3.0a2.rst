@@ -25,6 +25,11 @@ version or use `pip install robotframework==3.0a2` to install exactly
 this version.  For more details and other installation approaches, see
 `installation instructions <../../INSTALL.rst>`_.
 
+Separate Windows installers are not created and the plan is not to create them 
+even for final releases in the future. The standalone jar distribution can be 
+created if there are requests, but we only upload final releases to the Maven 
+central.
+
 Robot Framework 3.0 alpha 2 was released on Thursday December 10, 2015.
 
 .. contents::
