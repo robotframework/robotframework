@@ -147,34 +147,18 @@ messages that would be logged by the current active log level (`#2242`_). If
 this change breaks some reasonable use case for listeners, we can consider
 making the level customizable by for example a listener attribute.
 
-Define keyword timeout using an argument
-----------------------------------------
-
-User keywords can now use their arguments as variables in timeout
-(`#2092`_).
-
-.. code:: robotframework
-
-    *** Keywords ***
-    Example
-        [Arguments]    ${timeout}
-        [Timeout]    ${timeout}
-        What ever
-
-Before this change it was possible to use the variables from parent keywords
-variable scope in the timeout. This was never intended and no longer works.
-
 Other backwards incompatible changes
 ------------------------------------
 
-- `#2184`_ Remove `DeprecatedBuiltIn` and `DeprecatedOperatingSystem` libraries (alpha 1)
-- `#2197`_ Write redirected console output using system encoding, not console encoding (alpha 1)
+- `#2184`_ Removed `DeprecatedBuiltIn` and `DeprecatedOperatingSystem` libraries (alpha 1)
+- `#2197`_ Redirected console output is written using system encoding, not console encoding (alpha 1)
 - `#2200`_ Changes to internal utility functions and classes (alpha 1)
-- `#2202`_ Remove aliases from `robot.utils.asserts` (alpha 1)
-- `#2204`_ Make it an error if same setting is used multiple times (alpha 1)
-- `#2205`_ Remove old `Meta: Name` syntax for specifying test suite metadata  (alpha 1)
-- `#2248`_ Keyword type passed to listeners is wrong with for loops and keyword teardowns (alpha 2)
-- `#2090`_ Cleanup `RunnerFactory` code in Java API (alpha 2)
+- `#2202`_ Aliases from `robot.utils.asserts` module have been removed (alpha 1)
+- `#2204`_ Using same setting multiple times is an error (alpha 1)
+- `#2205`_ Old `Meta: Name` syntax for specifying test suite metadata has been removed (alpha 1)
+- `#2248`_ Keyword type passed to listeners has changed (alpha 2)
+- `#2090`_ `RunnerFactory` Java API has changed (alpha 2)
+- `#2092`_ Executor's local variables can not be used in keyword timeouts (alpha 2)
 
 Deprecated features
 ===================
@@ -219,11 +203,6 @@ Full list of fixes and enhancements
       - critical
       - Python 3 support
       - alpha 1
-    * - `#2192`_
-      - bug
-      - high
-      - `BuiltIn.Import Resource` does not work on standalone jar when no directories in `sys.path`
-      - alpha 2
     * - `#2241`_
       - bug
       - high
@@ -249,6 +228,11 @@ Full list of fixes and enhancements
       - medium
       - `${TEST_MESSAGE}` is not updated by `Set Test Message` keyword
       - alpha 1
+    * - `#2192`_
+      - bug
+      - medium
+      - `BuiltIn.Import Resource` does not work on standalone jar when no directories in `sys.path`
+      - alpha 2
     * - `#2217`_
       - bug
       - medium
@@ -329,6 +313,11 @@ Full list of fixes and enhancements
       - medium
       - Listeners should not get log messages below the active log level
       - alpha 2
+    * - `#2257`_
+      - enhancement
+      - medium
+      - Allow using previous arguments in user keyword default values
+      - alpha 2
     * - `#2180`_
       - bug
       - low
@@ -400,16 +389,16 @@ Full list of fixes and enhancements
       - Loudly deprecate `robot.running.TestSuite.(imports|variables|user_keywords)` propertys
       - alpha 1
 
-Altogether 37 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0>`__.
+Altogether 38 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0>`__.
 
 .. _User Guide: http://robotframework.org/robotframework/#user-guide
 .. _#1506: https://github.com/robotframework/robotframework/issues/1506
-.. _#2192: https://github.com/robotframework/robotframework/issues/2192
 .. _#2241: https://github.com/robotframework/robotframework/issues/2241
 .. _#2216: https://github.com/robotframework/robotframework/issues/2216
 .. _#2218: https://github.com/robotframework/robotframework/issues/2218
 .. _#2223: https://github.com/robotframework/robotframework/issues/2223
 .. _#2188: https://github.com/robotframework/robotframework/issues/2188
+.. _#2192: https://github.com/robotframework/robotframework/issues/2192
 .. _#2217: https://github.com/robotframework/robotframework/issues/2217
 .. _#2230: https://github.com/robotframework/robotframework/issues/2230
 .. _#2231: https://github.com/robotframework/robotframework/issues/2231
@@ -426,6 +415,7 @@ Altogether 37 issues. View on `issue tracker <https://github.com/robotframework/
 .. _#2229: https://github.com/robotframework/robotframework/issues/2229
 .. _#2238: https://github.com/robotframework/robotframework/issues/2238
 .. _#2242: https://github.com/robotframework/robotframework/issues/2242
+.. _#2257: https://github.com/robotframework/robotframework/issues/2257
 .. _#2180: https://github.com/robotframework/robotframework/issues/2180
 .. _#2185: https://github.com/robotframework/robotframework/issues/2185
 .. _#2243: https://github.com/robotframework/robotframework/issues/2243
