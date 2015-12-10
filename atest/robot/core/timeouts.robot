@@ -75,6 +75,9 @@ Embedded Arguments Timeout From Argument
     Should Be Equal    ${tc.kws[0].timeout}    1 second
     Should Be Equal    ${tc.kws[1].timeout}    3 milliseconds
 
+Local Variables Are Not Visible In Child Keyword Timeout
+    Check Test Case    ${TEST NAME}
+
 Timeout Format
     ${tc} =   Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.timeout}    2 days 4 hours 56 minutes 18 seconds

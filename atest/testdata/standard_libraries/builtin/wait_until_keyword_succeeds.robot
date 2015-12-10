@@ -53,13 +53,11 @@ Wait Until With Shorter Test Timeout
 
 Wait Until With Longer Keyword Timeout
     [Documentation]    FAIL Keyword 'Fail' failed after retrying for 100 milliseconds. The last error was: Error in timeouted UK
-    ${timeout} =    Set Variable    1 hour
-    Timeouted UK with Wait Until KW
+    Timeouted UK with Wait Until KW    1 hour
 
 Wait Until With Shorter Keyword Timeout
     [Documentation]    FAIL Keyword timeout 40 milliseconds exceeded.
-    ${timeout} =    Set Variable    40 milliseconds
-    Timeouted UK with Wait Until KW
+    Timeouted UK with Wait Until KW     40 milliseconds
 
 Retry as count
     Wait Until Keyword Succeeds    4 times    0 s    Fail Until Retried Often Enough
@@ -120,6 +118,7 @@ Wait Until Inside User Keyword
     Wait Until Keyword Succeeds    3.99 seconds    0.1    Fail Until Retried Often Enough
 
 Timeouted UK with Wait Until KW
+    [Arguments]    ${timeout}
     [Timeout]    ${timeout}
     Wait Until Keyword Succeeds    100ms    10ms    Fail    Error in timeouted UK
 

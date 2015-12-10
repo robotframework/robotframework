@@ -112,6 +112,11 @@ Embedded Arguments Timeout From Argument
     Embedded args timeout '1 second' from arguments
     Embedded args timeout '0.003' from arguments
 
+Local Variables Are Not Visible In Child Keyword Timeout
+    [Documentation]    FAIL Setting keyword timeout failed: Variable '\${local}' not found.
+    ${local}=    Set variable    1 day
+    Keyword that uses parent local variable for timeout
+
 Timeout Format
     [Documentation]    This is thoroughly tested on unit level so here are only some sanity checks
     ...    FAIL Keyword timeout 1 second exceeded.
@@ -286,13 +291,17 @@ Run Keyword With Timeout
 
 Keyword timeout from variable
     [Timeout]    ${0.001}
-    Sleep   0.1
+    Sleep    0.1
 
 Keyword timeout from argument
     [Arguments]   ${timeout}
     [Timeout]    ${timeout}
-    Sleep   0.1
+    Sleep    0.1
 
 Embedded args timeout '${timeout}' from arguments
     [Timeout]    ${timeout}
-    Sleep   0.1
+    Sleep    0.1
+
+Keyword that uses parent local variable for timeout
+    [Timeout]    ${local}
+    Sleep    0.1
