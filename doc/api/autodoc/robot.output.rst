@@ -27,18 +27,26 @@ robot.output.filelogger module
     :undoc-members:
     :show-inheritance:
 
-robot.output.librarylisteners module
-------------------------------------
-
-.. automodule:: robot.output.librarylisteners
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 robot.output.librarylogger module
 ---------------------------------
 
 .. automodule:: robot.output.librarylogger
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.output.listenerarguments module
+-------------------------------------
+
+.. automodule:: robot.output.listenerarguments
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.output.listenermethods module
+-----------------------------------
+
+.. automodule:: robot.output.listenermethods
     :members:
     :undoc-members:
     :show-inheritance:

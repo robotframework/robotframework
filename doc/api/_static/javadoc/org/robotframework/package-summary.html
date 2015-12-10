@@ -80,10 +80,10 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a href="../../org/robotframework/RobotRunner.html" title="interface in org.robotframework">RobotRunner</a></td>
+<td class="colFirst"><a href="../../org/robotframework/RobotPythonRunner.html" title="interface in org.robotframework">RobotPythonRunner</a></td>
 <td class="colLast">
-<div class="block">An interface class that is used for creating a Jython object capable of
- running Robot Framework.</div>
+<div class="block">Interface used by <a href="../../org/robotframework/RobotRunner.html" title="class in org.robotframework"><code>RobotRunner</code></a> internally to
+ construct the Robot Framework Python class.</div>
 </td>
 </tr>
 </tbody>
@@ -104,10 +104,11 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="../../org/robotframework/RunnerFactory.html" title="class in org.robotframework">RunnerFactory</a></td>
+<td class="colFirst"><a href="../../org/robotframework/RobotRunner.html" title="class in org.robotframework">RobotRunner</a></td>
 <td class="colLast">
-<div class="block">Helper class to create an Jython object and coerce it so that it can be used
- from Java.</div>
+<div class="block">AutoCloseable Interface class that internally creates a Jython interpreter,
+ allows running Robot tests with it, and cleans up the interpreter afterwards
+ in close.</div>
 </td>
 </tr>
 </tbody>

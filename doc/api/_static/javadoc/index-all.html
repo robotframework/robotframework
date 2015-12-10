@@ -66,28 +66,15 @@
 <!--   -->
 </a></div>
 <!-- ========= END OF TOP NAVBAR ========= -->
-<div class="contentContainer"><a href="#I:C">C</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a name="I:C">
+<div class="contentContainer"><a href="#I:C">C</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a name="I:C">
 <!--   -->
 </a>
 <h2 class="title">C</h2>
 <dl>
-<dt><span class="memberNameLink"><a href="org/robotframework/RunnerFactory.html#cleanup--">cleanup()</a></span> - Method in class org.robotframework.<a href="org/robotframework/RunnerFactory.html" title="class in org.robotframework">RunnerFactory</a></dt>
+<dt><span class="memberNameLink"><a href="org/robotframework/RobotRunner.html#close--">close()</a></span> - Method in class org.robotframework.<a href="org/robotframework/RobotRunner.html" title="class in org.robotframework">RobotRunner</a></dt>
 <dd>
-<div class="block">Cleans up the interpreter used for creating runners.</div>
+<div class="block">Cleans up the Jython interpreter.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="org/robotframework/RunnerFactory.html#createRunner--">createRunner()</a></span> - Method in class org.robotframework.<a href="org/robotframework/RunnerFactory.html" title="class in org.robotframework">RunnerFactory</a></dt>
-<dd>
-<div class="block">Creates and returns an instance of the robot.JarRunner (implemented in
- Python), which can be used to execute tests.</div>
-</dd>
-</dl>
-<a name="I:I">
-<!--   -->
-</a>
-<h2 class="title">I</h2>
-<dl>
-<dt><span class="memberNameLink"><a href="org/robotframework/RunnerFactory.html#interpreter">interpreter</a></span> - Variable in class org.robotframework.<a href="org/robotframework/RunnerFactory.html" title="class in org.robotframework">RunnerFactory</a></dt>
-<dd>&nbsp;</dd>
 </dl>
 <a name="I:M">
 <!--   -->
@@ -118,26 +105,31 @@
 </dd>
 <dt><span class="memberNameLink"><a href="org/robotframework/RobotFramework.html#RobotFramework--">RobotFramework()</a></span> - Constructor for class org.robotframework.<a href="org/robotframework/RobotFramework.html" title="class in org.robotframework">RobotFramework</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/robotframework/RobotRunner.html" title="interface in org.robotframework"><span class="typeNameLink">RobotRunner</span></a> - Interface in <a href="org/robotframework/package-summary.html">org.robotframework</a></dt>
+<dt><a href="org/robotframework/RobotPythonRunner.html" title="interface in org.robotframework"><span class="typeNameLink">RobotPythonRunner</span></a> - Interface in <a href="org/robotframework/package-summary.html">org.robotframework</a></dt>
 <dd>
-<div class="block">An interface class that is used for creating a Jython object capable of
- running Robot Framework.</div>
+<div class="block">Interface used by <a href="org/robotframework/RobotRunner.html" title="class in org.robotframework"><code>RobotRunner</code></a> internally to
+ construct the Robot Framework Python class.</div>
 </dd>
+<dt><a href="org/robotframework/RobotRunner.html" title="class in org.robotframework"><span class="typeNameLink">RobotRunner</span></a> - Class in <a href="org/robotframework/package-summary.html">org.robotframework</a></dt>
+<dd>
+<div class="block">AutoCloseable Interface class that internally creates a Jython interpreter,
+ allows running Robot tests with it, and cleans up the interpreter afterwards
+ in close.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="org/robotframework/RobotRunner.html#RobotRunner--">RobotRunner()</a></span> - Constructor for class org.robotframework.<a href="org/robotframework/RobotRunner.html" title="class in org.robotframework">RobotRunner</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/robotframework/RobotFramework.html#run-java.lang.String:A-">run(String[])</a></span> - Static method in class org.robotframework.<a href="org/robotframework/RobotFramework.html" title="class in org.robotframework">RobotFramework</a></dt>
 <dd>
 <div class="block">Runs Robot Framework.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="org/robotframework/RobotRunner.html#run-java.lang.String:A-">run(String[])</a></span> - Method in interface org.robotframework.<a href="org/robotframework/RobotRunner.html" title="interface in org.robotframework">RobotRunner</a></dt>
+<dt><span class="memberNameLink"><a href="org/robotframework/RobotPythonRunner.html#run-java.lang.String:A-">run(String[])</a></span> - Method in interface org.robotframework.<a href="org/robotframework/RobotPythonRunner.html" title="interface in org.robotframework">RobotPythonRunner</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/robotframework/RunnerFactory.html" title="class in org.robotframework"><span class="typeNameLink">RunnerFactory</span></a> - Class in <a href="org/robotframework/package-summary.html">org.robotframework</a></dt>
+<dt><span class="memberNameLink"><a href="org/robotframework/RobotRunner.html#run-java.lang.String:A-">run(String[])</a></span> - Method in class org.robotframework.<a href="org/robotframework/RobotRunner.html" title="class in org.robotframework">RobotRunner</a></dt>
 <dd>
-<div class="block">Helper class to create an Jython object and coerce it so that it can be used
- from Java.</div>
+<div class="block">Runs the tests, but does not cleanup the interpreter afterwards.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="org/robotframework/RunnerFactory.html#RunnerFactory--">RunnerFactory()</a></span> - Constructor for class org.robotframework.<a href="org/robotframework/RunnerFactory.html" title="class in org.robotframework">RunnerFactory</a></dt>
-<dd>&nbsp;</dd>
 </dl>
-<a href="#I:C">C</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;</div>
+<a href="#I:C">C</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;</div>
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
 <div class="bottomNav"><a name="navbar.bottom">
 <!--   -->
