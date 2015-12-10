@@ -3,6 +3,7 @@ Resource          libdoc_resource.robot
 
 *** Test Cases ***
 List all keywords
+    [Tags]    require-tkinter
     Run Libdoc And Verify Output    Dialogs list
     ...   Execute Manual Step
     ...   Get Selection From User
@@ -21,6 +22,7 @@ List some keywords
     ...   kw 6
 
 Show whole library
+    [Tags]    require-tkinter
     Run Libdoc And Set Output    Dialogs show
     Should Contain Intro    Dialogs    Version:
     Should Contain Keyword    Execute Manual Step    message, default_error=
