@@ -64,8 +64,11 @@ Ignore Error When Syntax Error In Setting Variables
     Run Keyword And Ignore Error    Invalid Syntax When Setting Variable
 
 Ignore Error When Syntax Error In For Loop
-    [Documentation]    FAIL  Variable '\${nonexisting}' not found.
+    [Documentation]    FAIL Invalid FOR loop type 'IN KEKKONEN'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
     Run Keyword And Ignore Error    For Loop With Syntax Error
+
+Ignore Error When Non Existing Variable In For Loop
+    Run Keyword And Ignore Error    For Loop With Non Existing Variable
 
 Ignore Error When Access To Nonexisting Variable
     Run Keyword And Ignore Error   Access To Nonexisting Variable
@@ -146,8 +149,11 @@ Expect Error When Syntax Error In Setting Variables
     Run Keyword And Expect Error    *    Invalid Syntax When Setting Variable
 
 Expect Error When Syntax Error In For Loop
-    [Documentation]    FAIL  Variable '\${nonexisting}' not found.
+    [Documentation]    FAIL Invalid FOR loop type 'IN KEKKONEN'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
     Run Keyword And Expect Error    *    For Loop With Syntax Error
+
+Expect Error When Non Existing Variable In For Loop
+    Run Keyword And Expect Error    Variable '\${non existing}' not found.   For Loop With Non Existing Variable
 
 Expect Error When Access To Nonexisting Variable
     Run Keyword And Expect Error    Variable '\${nonexisting}' not found.    Access To Nonexisting Variable
@@ -188,7 +194,11 @@ Invalid Syntax When Setting Variable
     @{incompatible} =    Set Variable    string
 
 For Loop With Syntax Error
-    : FOR    ${a}    IN    ${nonexisting}
+    : FOR    ${a}    IN KEKKONEN   foo    bar
+    \    Whatever
+
+For Loop With Non Existing Variable
+    : FOR    ${a}    IN    ${non existing}
     \    Whatever
 
 Broken User Keyword

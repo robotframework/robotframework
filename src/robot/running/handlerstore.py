@@ -54,6 +54,9 @@ class HandlerStore(object):
             return True
         return any(template.matches(name) for template in self._embedded)
 
+    def create_runner(self, name):
+        return self[name].create_runner(name)
+
     def __getitem__(self, name):
         try:
             return self._normal[name]
@@ -61,7 +64,7 @@ class HandlerStore(object):
             return self._find_embedded(name)
 
     def _find_embedded(self, name):
-        embedded = [template.create(name) for template in self._embedded
+        embedded = [template for template in self._embedded
                     if template.matches(name)]
         if len(embedded) == 1:
             return embedded[0]
@@ -77,5 +80,5 @@ class HandlerStore(object):
                             % (source, name))
         error = ["%s contains multiple keywords matching name '%s':"
                  % (source, name)]
-        names = sorted(handler.orig_name for handler in found)
+        names = sorted(handler.name for handler in found)
         raise DataError('\n    '.join(error + names))

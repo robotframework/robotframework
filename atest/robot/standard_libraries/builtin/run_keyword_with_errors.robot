@@ -52,6 +52,9 @@ Ignore Error When Syntax Error In Setting Variables
 Ignore Error When Syntax Error In For Loop
     Check Test Case    ${TEST NAME}
 
+Ignore Error When Non Existing Variable In For Loop
+    Check Test Case    ${TEST NAME}
+
 Ignore Error When Access To Nonexisting Variable
     Check Test Case    ${TEST NAME}
 
@@ -118,6 +121,9 @@ Expect Error When Syntax Error In Setting Variables
     Check Test Case    ${TEST NAME}
 
 Expect Error When Syntax Error In For Loop
+    Check Test Case    ${TEST NAME}
+
+Expect Error When Non Existing Variable In For Loop
     Check Test Case    ${TEST NAME}
 
 Expect Error When Access To Nonexisting Variable

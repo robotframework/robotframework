@@ -13,15 +13,16 @@
 #  limitations under the License.
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
-                          ExitForLoop, ContinueForLoop, DataError,
-                          HandlerExecutionFailed)
+                          ExitForLoop, ContinueForLoop, DataError)
 from robot.result.keyword import Keyword as KeywordResult
-from robot.utils import (ErrorDetails, format_assign_message, frange,
-                         get_error_message, get_timestamp, is_list_like,
-                         is_number, plural_or_not as s, type_name, unic)
-from robot.variables import is_scalar_var, VariableAssigner
+from robot.utils import (format_assign_message, frange, get_error_message,
+                         is_list_like, is_number, plural_or_not as s, type_name)
+from robot.variables import is_scalar_var
+
+from .statusreporter import StatusReporter
 
 
+# TODO: Rename to StepRunner or similar. Also rename methods.
 class KeywordRunner(object):
 
     def __init__(self, context, templated=False):
@@ -59,59 +60,11 @@ class NormalRunner(object):
         self._context = context
 
     def run(self, kw, name=None):
-        handler = self._context.get_handler(name or kw.name)
-        handler.init_keyword(self._context.variables)
-        assigner = VariableAssigner(kw.assign)
-        result = KeywordResult(kwname=handler.name or '',
-                               libname=handler.libname or '',
-                               doc=handler.shortdoc,
-                               args=kw.args,
-                               assign=assigner.assignment,
-                               tags=handler.tags,
-                               timeout=getattr(handler, 'timeout', ''),
-                               type=kw.type)
-        dry_run_lib_kw = self._context.dry_run and handler.type == 'library'
-        with StatusReporter(self._context, result, dry_run_lib_kw):
-            self._warn_if_deprecated(result.name, result.doc)
-            return self._run_and_assign(handler, kw.args, assigner)
-
-    def _warn_if_deprecated(self, name, doc):
-        if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
-            message = ' ' + doc.split('*', 2)[-1].strip()
-            self._context.warn("Keyword '%s' is deprecated.%s" % (name, message))
-
-    def _run_and_assign(self, handler, args, assigner):
-        syntax_error_reporter = SyntaxErrorReporter(self._context)
-        with syntax_error_reporter:
-            assigner.validate_assignment()
-        return_value, exception = self._run(handler, args)
-        if not exception or exception.can_continue(self._context.in_teardown):
-            with syntax_error_reporter:
-                assigner.assign(self._context, return_value)
-        if exception:
-            raise exception
-        return return_value
-
-    def _run(self, handler, args):
-        return_value = exception = None
-        try:
-            return_value = handler.run(self._context, args)
-        except ExecutionFailed as err:
-            exception = err
-        except:
-            exception = self._get_and_report_failure()
-        if exception:
-            return_value = exception.return_value
-        return return_value, exception
-
-    def _get_and_report_failure(self):
-        failure = HandlerExecutionFailed(ErrorDetails())
-        if failure.timeout:
-            self._context.timeout_occurred = True
-        self._context.fail(failure.full_message)
-        if failure.traceback:
-            self._context.debug(failure.traceback)
-        return failure
+        ctx = self._context
+        runner = ctx.get_runner(name or kw.name)
+        if ctx.dry_run:
+            return runner.dry_run(kw, ctx)
+        return runner.run(kw, ctx)
 
 
 def ForRunner(context, templated=False, flavor='IN'):
@@ -136,9 +89,8 @@ class ForInRunner(object):
         result = KeywordResult(kwname=self._get_name(data),
                                type=data.FOR_LOOP_TYPE)
         with StatusReporter(self._context, result):
-            with SyntaxErrorReporter(self._context):
-                self._validate(data)
-                self._run(data)
+            self._validate(data)
+            self._run(data)
 
     def _get_name(self, data):
         return '%s %s [ %s ]' % (' | '.join(data.variables),
@@ -328,45 +280,3 @@ class InvalidForRunner(ForInRunner):
         raise DataError("Invalid FOR loop type '%s'. Expected 'IN', "
                         "'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'."
                         % self.flavor)
-
-
-class StatusReporter(object):
-
-    def __init__(self, context, result, dry_run_lib_kw=False):
-        self._context = context
-        self._result = result
-        self._pass_status = 'PASS' if not dry_run_lib_kw else 'NOT_RUN'
-        self._test_passed = None
-
-    def __enter__(self):
-        if self._context.test:
-            self._test_passed = self._context.test.passed
-        self._result.starttime = get_timestamp()
-        self._context.start_keyword(self._result)
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_val is None:
-            self._result.status = self._pass_status
-        elif isinstance(exc_val, ExecutionFailed):
-            self._result.status = exc_val.status
-            if self._result.type == self._result.TEARDOWN_TYPE:
-                self._result.message = unic(exc_val)
-        if self._context.test:
-            self._context.test.passed = self._test_passed and self._result.passed
-        self._result.endtime = get_timestamp()
-        self._context.end_keyword(self._result)
-
-
-class SyntaxErrorReporter(object):
-
-    def __init__(self, context):
-        self._context = context
-
-    def __enter__(self):
-        pass
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if isinstance(exc_val, DataError):
-            msg = exc_val.message
-            self._context.fail(msg)
-            raise ExecutionFailed(msg, syntax=True)

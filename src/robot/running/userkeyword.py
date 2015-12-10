@@ -14,19 +14,14 @@
 
 import os
 
-from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
-                          PassExecution, ReturnFromKeyword,
-                          UserKeywordExecutionFailed, VariableError)
+from robot.errors import DataError
 from robot.output import LOGGER
-from robot.utils import DotDict, is_string, prepr, split_tags_from_doc, unic
-from robot.variables import is_list_var
+from robot.utils import is_string, unic
 
-from .arguments import (ArgumentMapper, ArgumentResolver,
-                        EmbeddedArguments, UserKeywordArgumentParser)
 from .builder import ResourceFileBuilder
+from .arguments import EmbeddedArguments, UserKeywordArgumentParser
 from .handlerstore import HandlerStore
-from .keywordrunner import KeywordRunner
-from .timeouts import KeywordTimeout
+from .userkeywordrunner import UserKeywordRunner, EmbeddedArgsUserKeywordRunner
 from .usererrorhandler import UserErrorHandler
 
 
@@ -78,15 +73,16 @@ class UserKeywordHandler(object):
 
     def __init__(self, keyword, libname):
         self.name = keyword.name
+        self.libname = libname
+        self.doc = unic(keyword.doc)
+        self.tags = keyword.tags
+        self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
+                                                           self.longname)
+        self._kw = keyword
+        self.timeout = keyword.timeout
         self.keywords = keyword.keywords.normal
         self.return_value = tuple(keyword.return_)
         self.teardown = keyword.keywords.teardown
-        self.libname = libname
-        self.doc = self._doc = unic(keyword.doc)
-        self.tags = self._tags = keyword.tags
-        self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
-                                                           self.longname)
-        self._timeout = keyword.timeout
 
     @property
     def longname(self):
@@ -96,138 +92,8 @@ class UserKeywordHandler(object):
     def shortdoc(self):
         return self.doc.splitlines()[0] if self.doc else ''
 
-    def init_keyword(self, variables):
-        # TODO: Should use runner and not change internal state like this.
-        # Timeouts should also be cleaned up in general.
-        doc = variables.replace_string(self._doc, ignore_errors=True)
-        doc, tags = split_tags_from_doc(doc)
-        self.doc = doc
-        self.tags = [variables.replace_string(tag, ignore_errors=True)
-                     for tag in self._tags] + tags
-        if self._timeout:
-            self.timeout = KeywordTimeout(self._timeout.value,
-                                          self._timeout.message,
-                                          variables)
-        else:
-            self.timeout = None
-
-    def run(self, context, arguments):
-        arguments = self._resolve_arguments(context, arguments)
-        with context.user_keyword(self):
-            args, kwargs = self._map_arguments(context, arguments)
-            if context.dry_run:
-                return self._dry_run(context, args, kwargs)
-            return self._normal_run(context, args, kwargs)
-
-    def _resolve_arguments(self, context, arguments):
-        variables = context.variables if not context.dry_run else None
-        resolver = ArgumentResolver(self.arguments)
-        return resolver.resolve(arguments, variables)
-
-    def _map_arguments(self, context, arguments):
-        positional, named = arguments
-        variables = context.variables if not context.dry_run else None
-        mapper = ArgumentMapper(self.arguments)
-        return mapper.map(positional, named, variables)
-
-    def _dry_run(self, context, args, kwargs):
-        error, return_ = self._execute(context, args, kwargs)
-        if error:
-            raise error
-        return None
-
-    def _normal_run(self, context, args, kwargs):
-        error, return_ = self._execute(context, args, kwargs)
-        if error and not error.can_continue(context.in_teardown):
-            raise error
-        return_value = self._get_return_value(context.variables, return_)
-        if error:
-            error.return_value = return_value
-            raise error
-        return return_value
-
-    def _execute(self, context, positional, kwargs):
-        self._set_variables(positional, kwargs, context.variables)
-        context.output.trace(lambda: self._log_args(context.variables))
-        self._verify_keyword_is_valid()
-        error = return_ = pass_ = None
-        runner = KeywordRunner(context)
-        try:
-            runner.run_keywords(self.keywords)
-        except ReturnFromKeyword as exception:
-            return_ = exception
-            error = exception.earlier_failures
-        except ExecutionPassed as exception:
-            pass_ = exception
-            error = exception.earlier_failures
-        except ExecutionFailed as exception:
-            error = exception
-        with context.keyword_teardown(error):
-            td_error = self._run_teardown(context)
-        if error or td_error:
-            error = UserKeywordExecutionFailed(error, td_error)
-        return error or pass_, return_
-
-    def _set_variables(self, positional, kwargs, variables):
-        before_varargs, varargs = self._split_args_and_varargs(positional)
-        for name, value in zip(self.arguments.positional, before_varargs):
-            variables['${%s}' % name] = value
-        if self.arguments.varargs:
-            variables['@{%s}' % self.arguments.varargs] = varargs
-        if self.arguments.kwargs:
-            variables['&{%s}' % self.arguments.kwargs] = DotDict(kwargs)
-
-    def _split_args_and_varargs(self, args):
-        if not self.arguments.varargs:
-            return args, []
-        positional = len(self.arguments.positional)
-        return args[:positional], args[positional:]
-
-    def _log_args(self, variables):
-        args = ['${%s}' % arg for arg in self.arguments.positional]
-        if self.arguments.varargs:
-            args.append('@{%s}' % self.arguments.varargs)
-        if self.arguments.kwargs:
-            args.append('&{%s}' % self.arguments.kwargs)
-        args = ['%s=%s' % (name, prepr(variables[name])) for name in args]
-        return 'Arguments: [ %s ]' % ' | '.join(args)
-
-    def _run_teardown(self, context):
-        if not self.teardown:
-            return None
-        try:
-            name = context.variables.replace_string(self.teardown.name)
-        except DataError as err:
-            return ExecutionFailed(err.message, syntax=True)
-        if name.upper() in ('', 'NONE'):
-            return None
-        runner = KeywordRunner(context)
-        try:
-            runner.run_keyword(self.teardown, name)
-        except PassExecution:
-            return None
-        except ExecutionFailed as err:
-            return err
-        return None
-
-    def _verify_keyword_is_valid(self):
-        if not (self.keywords or self.return_value):
-            raise DataError("User keyword '%s' contains no keywords."
-                            % self.name)
-
-    def _get_return_value(self, variables, return_):
-        ret = self.return_value if not return_ else return_.return_value
-        if not ret:
-            return None
-        contains_list_var = any(is_list_var(item) for item in ret)
-        try:
-            ret = variables.replace_list(ret)
-        except DataError as err:
-            raise VariableError('Replacing variables from keyword return value '
-                                'failed: %s' % err.message)
-        if len(ret) != 1 or contains_list_var:
-            return ret
-        return ret[0]
+    def create_runner(self, name):
+        return UserKeywordRunner(self)
 
 
 class EmbeddedArgsTemplate(UserKeywordHandler):
@@ -241,31 +107,5 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
     def matches(self, name):
         return self.embedded_name.match(name) is not None
 
-    def create(self, name):
-        return EmbeddedArgs(name, self)
-
-
-class EmbeddedArgs(UserKeywordHandler):
-
-    def __init__(self, name, template):
-        match = template.embedded_name.match(name)
-        if not match:
-            raise ValueError('Does not match given name')
-        UserKeywordHandler.__init__(self, template.keyword, template.libname)
-        self.embedded_args = list(zip(template.embedded_args, match.groups()))
-        self.name = name
-        self.orig_name = template.name
-
-    def _resolve_arguments(self, context, arguments):
-        variables = context.variables if not context.dry_run else None
-        # Validates that no arguments given.
-        ArgumentResolver(self.arguments).resolve(arguments, variables)
-        if not variables:
-            return self.embedded_args
-        return [(n, variables.replace_scalar(v)) for n, v in self.embedded_args]
-
-    def _map_arguments(self, context, arguments):
-        if not context.dry_run:
-            for name, value in arguments:
-                context.variables['${%s}' % name] = value
-        return [], {}
+    def create_runner(self, name):
+        return EmbeddedArgsUserKeywordRunner(self, name)

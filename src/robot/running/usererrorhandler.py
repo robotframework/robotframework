@@ -12,11 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
+from robot.errors import ExecutionFailed
 from robot.model import Tags
+from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import unic
 
 from .arguments import ArgumentSpec
+from .keywordrunner import StatusReporter
 
 
 class UserErrorHandler(object):
@@ -47,8 +49,17 @@ class UserErrorHandler(object):
     def shortdoc(self):
         return self.doc.splitlines()[0]
 
-    def init_keyword(self, varz):
-        pass
+    def create_runner(self, name):
+        return self
 
-    def run(self, *args):
-        raise DataError(self.error)
+    def run(self, kw, context):
+        result = KeywordResult(kwname=self.name,
+                               libname=self.libname,
+                               args=kw.args,
+                               assign=kw.assign,
+                               type=kw.type)
+        with StatusReporter(context, result):
+            context.fail(self.error)
+            raise ExecutionFailed(self.error, syntax=True)
+
+    dry_run = run

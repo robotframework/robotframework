@@ -14,13 +14,12 @@
 
 import re
 
-from robot.errors import DataError
-from robot.utils import (format_assign_message, get_error_message, prepr,
-                         type_name, is_number, is_string)
+from robot.errors import DataError, ExecutionFailed, HandlerExecutionFailed
+from robot.utils import (ErrorDetails, format_assign_message, get_error_message,
+                         is_number, is_string, prepr, type_name)
 
 
-class VariableAssigner(object):
-    _valid_extended_attr = re.compile('^[_a-zA-Z]\w*$')
+class VariableAssignment(object):
 
     def __init__(self, assignment):
         validator = AssignmentValidator()
@@ -31,14 +30,77 @@ class VariableAssigner(object):
             self.assignment = assignment
             self.error = err
 
+    def __iter__(self):
+        return iter(self.assignment)
+
+    def __len__(self):
+        return len(self.assignment)
+
     def validate_assignment(self):
         if self.error:
             raise self.error
 
-    def assign(self, context, return_value):
+    def assigner(self, context):
         self.validate_assignment()
+        return VariableAssigner(self.assignment, context)
+
+
+class AssignmentValidator(object):
+
+    def __init__(self):
+        self._seen_list = False
+        self._seen_dict = False
+        self._seen_any_var = False
+        self._seen_assign_mark = False
+
+    def validate(self, variable):
+        variable = self._validate_assign_mark(variable)
+        self._validate_state(is_list=variable[0] == '@',
+                             is_dict=variable[0] == '&')
+        return variable
+
+    def _validate_assign_mark(self, variable):
+        if self._seen_assign_mark:
+            raise DataError("Assign mark '=' can be used only with the last "
+                            "variable.")
+        self._seen_assign_mark = variable.endswith('=')
+        return variable.rstrip('= ')
+
+    def _validate_state(self, is_list, is_dict):
+        if is_list and self._seen_list:
+            raise DataError('Assignment can contain only one list variable.')
+        if self._seen_dict or is_dict and self._seen_any_var:
+            raise DataError('Dictionary variable cannot be assigned with '
+                            'other variables.')
+        self._seen_list += is_list
+        self._seen_dict += is_dict
+        self._seen_any_var = True
+
+
+class VariableAssigner(object):
+    _valid_extended_attr = re.compile('^[_a-zA-Z]\w*$')
+
+    def __init__(self, assignment, context):
+        self._assignment = assignment
+        self._context = context
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_val is not None:
+            self._assign_by_exception(exc_val)
+
+    def _assign_by_exception(self, exception):
+        if not isinstance(exception, ExecutionFailed):
+            exception = HandlerExecutionFailed(ErrorDetails())
+        if exception.can_continue(self._context.in_teardown):
+            self.assign(exception.return_value)
+
+    def assign(self, return_value):
+        context = self._context
         context.trace(lambda: 'Return: %s' % prepr(return_value))
-        resolver = ReturnValueResolver(self.assignment)
+        resolver = ReturnValueResolver(self._assignment)
         for name, value in resolver.resolve(return_value):
             if not self._extended_assign(name, value, context.variables):
                 value = self._normal_assign(name, value, context.variables)
@@ -74,40 +136,8 @@ class VariableAssigner(object):
 
     def _normal_assign(self, name, value, variables):
         variables[name] = value
-        # Always weturn the actually assigned value.
+        # Always return the actually assigned value.
         return value if name[0] == '$' else variables[name]
-
-
-class AssignmentValidator(object):
-
-    def __init__(self):
-        self._seen_list = False
-        self._seen_dict = False
-        self._seen_any_var = False
-        self._seen_assign_mark = False
-
-    def validate(self, variable):
-        variable = self._validate_assign_mark(variable)
-        self._validate_state(is_list=variable[0] == '@',
-                             is_dict=variable[0] == '&')
-        return variable
-
-    def _validate_assign_mark(self, variable):
-        if self._seen_assign_mark:
-            raise DataError("Assign mark '=' can be used only with the last "
-                            "variable.")
-        self._seen_assign_mark = variable.endswith('=')
-        return variable.rstrip('= ')
-
-    def _validate_state(self, is_list, is_dict):
-        if is_list and self._seen_list:
-            raise DataError('Assignment can contain only one list variable.')
-        if self._seen_dict or is_dict and self._seen_any_var:
-            raise DataError('Dictionary variable cannot be assigned with '
-                            'other variables.')
-        self._seen_list += is_list
-        self._seen_dict += is_dict
-        self._seen_any_var = True
 
 
 def ReturnValueResolver(assignment):

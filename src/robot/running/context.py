@@ -97,14 +97,14 @@ class _ExecutionContext(object):
             self.in_keyword_teardown -= 1
 
     @contextmanager
-    def user_keyword(self, kw):
+    def user_keyword(self, timeout):
         self.namespace.start_user_keyword()
-        self._add_timeout(kw.timeout)
+        self._add_timeout(timeout)
         try:
             yield
         finally:
             self.namespace.end_user_keyword()
-            self._remove_timeout(kw.timeout)
+            self._remove_timeout(timeout)
 
     @property
     def in_teardown(self):
@@ -173,8 +173,8 @@ class _ExecutionContext(object):
         self.output.end_keyword(keyword)
         self._started_keywords -= 1
 
-    def get_handler(self, name):
-        return self.namespace.get_handler(name)
+    def get_runner(self, name):
+        return self.namespace.get_runner(name)
 
     def trace(self, message):
         self.output.trace(message)

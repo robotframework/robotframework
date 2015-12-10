@@ -13,8 +13,8 @@ Many Errors In Teardown
 
 Errors In Teardown When Setting Variables
     ${tc} =  Check Test Case  ${TESTNAME}
-    Check Log Message  ${tc.teardown.kws[0].msgs[0]}  no return value is set  FAIL
-    Check Log Message  ${tc.teardown.kws[0].msgs[1]}  \${ret} = None
+    Check Log Message  ${tc.teardown.kws[0].msgs[0]}  \${ret} = None
+    Check Log Message  ${tc.teardown.kws[0].msgs[1]}  no return value is set  FAIL
 
 Errors In For Loop In Teardown
     Check Test Case  ${TESTNAME}

@@ -418,7 +418,7 @@ class TestHandlers(unittest.TestCase):
         assert_equal(instance.kw_accessed, 1)
         assert_equal(instance.kw_called, 0)
         for _ in range(5):
-            lib.handlers['kw'].run(_FakeContext(), [])
+            lib.handlers.create_runner('kw')._run(_FakeContext(), [])
         assert_true(lib._libinst is instance)
         assert_equal(instance.kw_accessed, 1)
         assert_equal(instance.kw_called, 5)

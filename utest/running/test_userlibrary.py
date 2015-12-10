@@ -17,6 +17,9 @@ class UserHandlerStub:
         if kwdata.name == 'FAIL':
             raise Exception('Expected failure')
 
+    def create(self, name):
+        return self
+
 
 class EmbeddedArgsTemplateStub:
 
