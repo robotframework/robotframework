@@ -93,8 +93,6 @@ class VariableAssigner(object):
         failure = self._get_failure(exc_type, exc_val, exc_tb)
         if failure.can_continue(self._context.in_teardown):
             self.assign(failure.return_value)
-        if failure is not exc_val:
-            raise failure
 
     def _get_failure(self, exc_type, exc_val, exc_tb):
         if isinstance(exc_val, ExecutionFailed):
