@@ -96,7 +96,7 @@ Include internal traces when ROBOT_INTERNAL_TRACE is set
     ${tb} =    Set Variable    ${tc.kws[0].msgs[1].message}
     Should Start With    ${tb}    Traceback (most recent call last):
     Should End With    ${tb}    raise exception(msg)
-    Should Be True    len($tb.splitlines()) > 8
+    Should Be True    len($tb.splitlines()) > 5
     [Teardown]    Remove Environment Variable    ROBOT_INTERNAL_TRACES
 
 *** Keyword ***
