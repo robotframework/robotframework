@@ -1,6 +1,6 @@
-=====================
-Robot Framework 3.0a2
-=====================
+===========================
+Robot Framework 3.0 alpha 2
+===========================
 
 .. default-role:: code
 
@@ -20,12 +20,12 @@ and possible bugs `submitted to the issue tracker
 <https://github.com/robotframework/robotframework/issues>`__.
 
 If you have `pip <http://pip-installer.org>`_ installed, just run
-`pip install --upgrade robotframework` to install or upgrade to the latest
+`pip install --pre --upgrade robotframework` to install or upgrade to the latest
 version or use `pip install robotframework==3.0a2` to install exactly
 this version.  For more details and other installation approaches, see
 `installation instructions <../../INSTALL.rst>`_.
 
-Robot Framework 3.0a2 was released on **CHECK** Thursday December 10, 2015.
+Robot Framework 3.0 alpha 2 was released on Thursday December 10, 2015.
 
 .. contents::
    :depth: 2
@@ -75,7 +75,7 @@ Listeners no longer slow down execution
 ---------------------------------------
 
 Listeners used to slow down execution considerably, especially when keyword
-arguments or return values were objects with long string presentations
+arguments or return values were objects with a long string presentation
 (`#2241`_). As part of the speedup fix for this issue, listeners no longer get
 log messages below the active log level (`#2242`_).
 
@@ -145,7 +145,7 @@ amount of `TRACE` level messages to be generated internally even if the active
 log level was for example `INFO`. Now `log_message` will only be called for
 messages that would be logged by the current active log level (`#2242`_). If
 this change breaks some reasonable use case for listeners, we can consider
-making the level customizable by for example a listener attribute.
+making it possible for listeners to set their own custom log level.
 
 Other backwards incompatible changes
 ------------------------------------
@@ -159,6 +159,8 @@ Other backwards incompatible changes
 - `#2248`_ Keyword type passed to listeners has changed (alpha 2)
 - `#2090`_ `RunnerFactory` Java API has changed (alpha 2)
 - `#2092`_ Executor's local variables can not be used in keyword timeouts (alpha 2)
+- `#2092`_ Test and keyword timeouts are written to output.xml as a separate `<timeout/>` element,
+  not as an attribute for the `<kw>` element (alpha 2).
 
 Deprecated features
 ===================
