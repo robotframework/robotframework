@@ -61,6 +61,20 @@ Stopped After Keyword Timeout
 Test Timeouts When Also Keywords Are Timeouted
     Check Test Case    ${TEST NAME}
 
+Keyword Timeout From Variable
+    ${tc} =   Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].timeout}    1 millisecond
+
+Keyword Timeout From Argument
+    ${tc} =   Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].timeout}    1 second
+    Should Be Equal    ${tc.kws[1].timeout}    2 milliseconds
+
+Embedded Arguments Timeout From Argument
+    ${tc} =   Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].timeout}    1 second
+    Should Be Equal    ${tc.kws[1].timeout}    3 milliseconds
+
 Timeout Format
     ${tc} =   Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.timeout}    2 days 4 hours 56 minutes 18 seconds

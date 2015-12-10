@@ -98,6 +98,20 @@ Test Timeouts When Also Keywords Are Timeouted
     Timeouted Keyword Passes    0.2
     Timeouted Keyword Passes    0.2
 
+Keyword Timeout From Variable
+    [Documentation]    FAIL Keyword timeout 1 millisecond exceeded.
+    Keyword timeout from variable
+
+Keyword Timeout From Argument
+    [Documentation]    FAIL Keyword timeout 2 milliseconds exceeded.
+    Keyword timeout from argument   1s
+    Keyword timeout from argument   0.002
+
+Embedded Arguments Timeout From Argument
+    [Documentation]    FAIL Keyword timeout 3 milliseconds exceeded.
+    Embedded args timeout '1 second' from arguments
+    Embedded args timeout '0.003' from arguments
+
 Timeout Format
     [Documentation]    This is thoroughly tested on unit level so here are only some sanity checks
     ...    FAIL Keyword timeout 1 second exceeded.
@@ -269,3 +283,16 @@ Run Keyword With Timeout
     [Timeout]    200 milliseconds
     Run Keyword Unless    False    Log    Hello
     Run Keyword If    True    Sleep    3
+
+Keyword timeout from variable
+    [Timeout]    ${0.001}
+    Sleep   0.1
+
+Keyword timeout from argument
+    [Arguments]   ${timeout}
+    [Timeout]    ${timeout}
+    Sleep   0.1
+
+Embedded args timeout '${timeout}' from arguments
+    [Timeout]    ${timeout}
+    Sleep   0.1

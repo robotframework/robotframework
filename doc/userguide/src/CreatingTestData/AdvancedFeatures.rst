@@ -189,6 +189,10 @@ identical to the syntax used with `test case timeouts`_. If no custom
 message is provided, the default error message `Keyword timeout
 <time> exceeded` is used if a timeout occurs.
 
+Starting from Robot Framework 3.0, timeout can be specified as a variable
+so that the variable value is given as an argument. Using global variables
+works already with previous versions.
+
 .. sourcecode:: robotframework
 
    *** Keywords ***
@@ -198,10 +202,16 @@ message is provided, the default error message `Keyword timeout
        Do Something
        Do Something Else
 
-   Timed-out Wrapper
+   Wrapper With Timeout
        [Arguments]    @{args}
        [Documentation]    This keyword is a wrapper that adds a timeout to another keyword.
        [Timeout]    2 minutes    Original Keyword didn't finish in 2 minutes
+       Original Keyword    @{args}
+
+   Wrapper With Customizable Timeout
+       [Arguments]    ${timeout}    @{args}
+       [Documentation]    Same as the above but timeout given as an argument.
+       [Timeout]    ${timeout}
        Original Keyword    @{args}
 
 A user keyword timeout is applicable during the execution of that user
@@ -213,10 +223,6 @@ timeouts are not.
 If both the test case and some of its keywords (or several nested
 keywords) have a timeout, the active timeout is the one with the least
 time left.
-
-.. warning:: Using timeouts might slow down test execution when using Python 2.5
-             elsewhere than on Windows. Prior to Robot Framework 2.7 timeouts
-             slowed down execution with all Python versions on all platforms.
 
 .. _for loop:
 

@@ -68,20 +68,22 @@ class UserKeywordRunner(object):
 
     def _run(self, context, args, result):
         variables = context.variables
-        timeout = self._get_timeout(self._handler.timeout, result, variables)
         args = self._resolve_arguments(args, variables)
-        with context.user_keyword(timeout):
+        with context.user_keyword:
             self._set_arguments(args, context)
-            error, return_ = self._execute(context)
-            if error and not error.can_continue(context.in_teardown):
-                raise error
-            return_value = self._get_return_value(variables, return_)
-            if error:
-                error.return_value = return_value
-                raise error
-            return return_value
+            timeout = self._get_timeout(result, variables)
+            with context.timeout(timeout):
+                error, return_ = self._execute(context)
+                if error and not error.can_continue(context.in_teardown):
+                    raise error
+                return_value = self._get_return_value(variables, return_)
+                if error:
+                    error.return_value = return_value
+                    raise error
+                return return_value
 
-    def _get_timeout(self, timeout, result, variables=None):
+    def _get_timeout(self, result, variables=None):
+        timeout = self._handler.timeout
         if not timeout:
             return None
         timeout = KeywordTimeout(timeout.value, timeout.message, variables)

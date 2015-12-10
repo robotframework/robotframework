@@ -96,14 +96,21 @@ class _ExecutionContext(object):
         finally:
             self.in_keyword_teardown -= 1
 
+    @property
     @contextmanager
-    def user_keyword(self, timeout):
+    def user_keyword(self):
         self.namespace.start_user_keyword()
-        self._add_timeout(timeout)
         try:
             yield
         finally:
             self.namespace.end_user_keyword()
+
+    @contextmanager
+    def timeout(self, timeout):
+        self._add_timeout(timeout)
+        try:
+            yield
+        finally:
             self._remove_timeout(timeout)
 
     @property
