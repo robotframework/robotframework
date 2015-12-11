@@ -57,14 +57,18 @@ Correct Attributes To Listener Methods
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain    attributeverifyinglistener
     Should Not Contain    ${status}    FAILED
-    Should Contain X Times    ${status}    PASSED    280
+    Should Contain X Times    ${status}    PASSED    306
 
 Correct Attributes To Java Listener Methods
     [Tags]    require-jython
     ${status} =    Log File    %{TEMPDIR}/${JAVA_ATTR_TYPE_FILE}
     Check Stderr Does Not Contain    JavaAttributeVerifyingListener
     Should Not Contain    ${status}    FAILED
-    Should Contain X Times    ${status}    PASSED  280
+    Should Contain X Times    ${status}    PASSED    306
+
+Keyword Tags
+    ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
+    Should Contain X Times    ${status}    PASSED | tags: [force, keyword, tags]    6
 
 Suite And Test Counts
     Run Tests    --listener listeners.SuiteAndTestCounts    misc/suites/sub*

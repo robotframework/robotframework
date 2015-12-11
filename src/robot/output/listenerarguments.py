@@ -100,8 +100,7 @@ class EndTestArguments(StartTestArguments):
 
 
 class StartKeywordArguments(_ListenerArgumentsFromItem):
-    # TODO: Add kw tags!
-    _attribute_names = ('doc', 'args', 'assign', 'kwname', 'libname',
+    _attribute_names = ('kwname', 'libname', 'doc', 'args', 'assign', 'tags',
                         'starttime')
     _types = {'kw': 'Keyword', 'setup': 'Setup', 'teardown': 'Teardown',
               'for': 'For', 'foritem': 'For Item'}
@@ -111,5 +110,5 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
 
 
 class EndKeywordArguments(StartKeywordArguments):
-    _attribute_names = ('doc', 'args', 'assign', 'kwname', 'libname',
+    _attribute_names = ('kwname', 'libname', 'doc', 'args', 'assign', 'tags',
                         'starttime', 'endtime', 'elapsedtime', 'status')

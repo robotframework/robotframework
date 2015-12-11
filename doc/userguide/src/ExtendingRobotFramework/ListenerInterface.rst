@@ -169,6 +169,7 @@ synonym to `start_suite`.
    |                  |                  | * `args`: Keyword's arguments as a list of strings.            |
    |                  |                  | * `assign`: A list of variable names that keyword's            |
    |                  |                  |   return value is assigned to. New in RF 2.9.                  |
+   |                  |                  | * `tags`: `Keyword tags`_ as a list of strings. New in RF 3.0. |
    |                  |                  | * `starttime`: Keyword execution start time.                   |
    +------------------+------------------+----------------------------------------------------------------+
    | end_keyword      | name, attributes | `name` is the full keyword name containing                     |
@@ -183,6 +184,7 @@ synonym to `start_suite`.
    |                  |                  | * `doc`: Same as with `start_keyword`.                         |
    |                  |                  | * `args`: Same as with `start_keyword`.                        |
    |                  |                  | * `assign`: Same as with `start_keyword`.                      |
+   |                  |                  | * `tags`: Same as with `start_keyword`.                        |
    |                  |                  | * `starttime`: Same as with `start_keyword`.                   |
    |                  |                  | * `endtime`: Keyword execution end time.                       |
    |                  |                  | * `elapsedtime`: Total execution time in milliseconds as       |
