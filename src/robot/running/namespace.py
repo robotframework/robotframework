@@ -420,22 +420,14 @@ class KeywordRecommendationFinder(object):
         return names
 
     def _get_all_handler_names(self):
-        """Return a list of (library name, handler name) tuples.
-
-        For user keywords, library name == None.
-
-        Excludes DeprecatedBuiltIn, DeprecatedOperatingSystem,
-        and Reserved libraries.
-        """
-        excluded = ['DeprecatedBuiltIn', 'DeprecatedOperatingSystem',
-                    'Reserved']
+        """Return a list of `(library_name, handler_name)` tuples."""
         handlers = [(None, printable_name(handler.name, True))
                     for handler in self.user_keywords.handlers]
         for library in chain(self.libraries.values(), self.resources.values()):
-            if library.name not in excluded:
+            if library.name != 'Reserved':
                 handlers.extend(
-                    ((library.name,
+                    ((library.name or '',
                       printable_name(handler.name, code_style=True))
                      for handler in library.handlers))
         # sort handlers to ensure consistent ordering between Jython and Python
-        return sorted(handlers, key=lambda x: (x[0] or '', x[1]))
+        return sorted(handlers)
