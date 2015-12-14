@@ -25,10 +25,17 @@ Zero And Negative Times
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Repeated Messages    ${tc.kws[0]}    0
     Check Repeated Messages    ${tc.kws[2]}    0
+    Check Repeated Messages    ${tc.kws[3]}    0
 
 Invalid Times
     Check Test Case    Invalid Times 1
     Check Test Case    Invalid Times 2
+
+Repeat Keyword With Time String
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Repeated Messages With Time    ${tc.kws[0]}    This is done for 00:00:00.003
+    Check Repeated Messages With Time    ${tc.kws[1]}    This is done for 3 milliseconds
+    Check Repeated Messages With Time    ${tc.kws[2]}    This is done for 3ms
 
 Repeat Keyword Arguments As Variables
     ${tc} =    Check Test Case    ${TEST_NAME}
@@ -72,6 +79,15 @@ Check Repeated Messages
     \    Check Log Message    ${kw.kws[${i}].msgs[0]}    ${msg}
     Run Keyword If    ${count} == 0    Check Log Message    ${kw.msgs[0]}    Keyword 'This is not executed' repeated zero times.
     Run Keyword If    ${count} != 0    Should Be Equal As Integers    ${kw.msg_count}    ${count}
+
+Check Repeated Messages With Time
+    [Arguments]    ${kw}    ${msg}=${None}
+    Should Be True    ${kw.kw_count} > 1
+    : FOR    ${i}    IN RANGE    ${kw.kw_count}
+    \    Check Log Message    ${kw.msgs[${i}]}
+    \    ...    Repeating keyword, round ${i+1}, *remaining.    pattern=yes
+    \    Check Log Message    ${kw.kws[${i}].msgs[0]}    ${msg}
+    Should Be Equal As Integers    ${kw.msg_count}    ${kw.kw_count}
 
 Check Repeated Keyword Name
     [Arguments]    ${kw}    ${count}    ${name}=${None}
