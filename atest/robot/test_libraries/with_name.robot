@@ -6,32 +6,32 @@ Resource          atest_resource.robot
 Import Library Normally Before Importing With Name In Another Suite
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    OperatingSystem.Should Exist    args=*
-    Check Keyword Data    ${tc.kws[1]}    ParameterLibrary.Parameters    \${p1}, \${p2}
+    Check Keyword Data    ${tc.kws[1]}    ParameterLibrary.Parameters Should Be    args=before1, before2
     Check Syslog Contains    Imported library 'OperatingSystem' with arguments [ ] (version ${ROBOT VERSION}, class type, global scope,
     Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ before1 | before2 ] (version <unknown>, class type, test case scope,
 
 Import Library With Name Before Importing With Name In Another Suite
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    Params.Parameters    \${p1}, \${p2}
+    Check Keyword Data    ${tc.kws[0]}    Params.Parameters Should Be    args=before1with, before2with
     Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ after1 | after2 ] (version <unknown>, class type, test case scope,
 
 Import Library Normally After Importing With Name In Another Suite
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    OperatingSystem.Should Exist    args=*
-    Check Keyword Data    ${tc.kws[1]}    ParameterLibrary.Parameters    \${p1}, \${p2}
+    Check Keyword Data    ${tc.kws[1]}    ParameterLibrary.Parameters Should Be    args=after1, after2
 
 Import Library With Name After Importing With Name In Another Suite
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    Params.Parameters    \${a1}, \${a2}
+    Check Keyword Data    ${tc.kws[0]}    Params.Parameters Should Be    args=after1with, after2with
 
 Name Given Using "With Name" Can Be Reused In Different Suites
-    ${tc} =  Check Test Case  Import Library With Name Before Importing With Name In Another Suite
-    Check Keyword Data    ${tc.kws[0]}  Params.Parameters  \${p1}, \${p2}
-    ${tc} =  Check Test Case  Name Given Using "With Name" Can Be Reused in Different Suites
-    Check Keyword Data    ${tc.kws[0]}  Params.Keyword In My Lib File
-    Check Log Message  ${tc.kws[0].msgs[0]}  Here we go!!
-    ${tc} =  Check Test Case  Import Library With Name After Importing With Name In Another Suite
-    Check Keyword Data    ${tc.kws[0]}  Params.Parameters  \${a1}, \${a2}
+    ${tc} =    Check Test Case    Import Library With Name Before Importing With Name In Another Suite
+    Check Keyword Data    ${tc.kws[0]}    Params.Parameters Should Be    args=before1with, before2with
+    ${tc} =    Check Test Case    Name Given Using "With Name" Can Be Reused in Different Suites
+    Check Keyword Data    ${tc.kws[0]}    Params.Keyword In My Lib File
+    Check Log Message    ${tc.kws[0].msgs[0]}    Here we go!!
+    ${tc} =    Check Test Case    Import Library With Name After Importing With Name In Another Suite
+    Check Keyword Data    ${tc.kws[0]}    Params.Parameters Should Be    args=after1with, after2with
 
 No Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -46,8 +46,8 @@ Embedded Arguments
 
 Arguments Containing Variables And Import Same Library Twice
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    Param1.Parameters    \${a1}, \${a2}
-    Check Keyword Data    ${tc.kws[3]}    Param2.Parameters    \${a1}, \${a2}
+    Check Keyword Data    ${tc.kws[0]}    Param1.Parameters Should Be    args=1, 2
+    Check Keyword Data    ${tc.kws[1]}    Param2.Parameters Should Be    args=VAR, \${42}
     Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ 1 | 2 ] (version <unknown>, class type, test case scope,
     Check Syslog Contains    Imported library 'ParameterLibrary' with name 'Param1'
     Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ VAR | 42 ] (version <unknown>, class type, test case scope,
@@ -58,7 +58,7 @@ Alias Containing Variable
 
 With Name Has No Effect If Not Second Last
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    ParameterLibrary.Parameters    \${a1}, \${a2}
+    Check Keyword Data    ${tc.kws[0]}    ParameterLibrary.Parameters Should Be    args=whatever, WITH NAME
     Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ whatever | WITH NAME ] (version <unknown>, class type, test case scope,
 
 With Name After Normal Import
@@ -91,7 +91,7 @@ Java Library In Package
 Import Library Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[1]}    MyOS.Directory Should Exist    args=*
-    Check Keyword Data    ${tc.kws[3]}    MyParamLib.Parameters    \${a1}, \${a2}
+    Check Keyword Data    ${tc.kws[3]}    MyParamLib.Parameters Should Be    args=my first argument, second arg
 
 Correct Error When Using Keyword From Same Library With Different Names Without Prefix
     Check Test Case    ${TEST NAME} 1

@@ -8,14 +8,10 @@ Library           String    with name    Deprecated format
 *** Test Cases ***
 Import Library Normally After Importing With Name In Another Suite
     OperatingSystem.Should Exist    ${CURDIR}
-    ${p1}    ${p2} =    ParameterLibrary.Parameters
-    Should Be Equal    ${p1}    after1
-    Should Be Equal    ${p2}    after2
+    ParameterLibrary.Parameters Should Be    after1    after2
 
 Import Library With Name After Importing With Name In Another Suite
-    ${a1}    ${a2} =    Params.Parameters
-    Should Be Equal    ${a1}    after1with
-    Should Be Equal    ${a2}    after2with
+    Params.Parameters Should Be    after1with    after2with
 
 Correct Error When Using Keyword From Same Library With Different Names Without Prefix 3
     [Documentation]    FAIL Multiple keywords with name 'Parameters' found.\

@@ -32,25 +32,15 @@ Embedded Arguments
     Params.Keyword With Embedded --args-- in MyLibFile
 
 Arguments Containing Variables And Import Same Library Twice
-    ${a1}    ${a2} =    Param1.parameters
-    BuiltIn.Should Be Equal    ${a1}    1
-    BuiltIn.Should Be Equal    ${a2}    2
-    ${a1}    ${a2} =    par am 2 . par A meter S
-    BuiltIn.Should Be Equal    ${a1}    VAR
-    BuiltIn.Should Be Equal    ${a2}    ${42}
+    Param1.Parameters should be    1    2
+    par am 2 . par A meter S should BE    VAR    ${42}
 
 Alias Containing Variable
-    ${a1}    ${a2} =    VAR.parameters
-    BuiltIn.Should Be Equal    ${a1}    a
-    BuiltIn.Should Be Equal    ${a2}    b
-    ${a1}    ${a2} =    Run Keyword    ${VAR}.parameters
-    BuiltIn.Should Be Equal    ${a1}    a
-    BuiltIn.Should Be Equal    ${a2}    b
+    VAR.Parameters should be    a    b
+    Run Keyword    ${VAR}.Parameters should be    a    b
 
 With Name Has No Effect If Not Second Last
-    ${a1}    ${a2} =    ParameterLibrary.parameters
-    BuiltIn.Should Be Equal    ${a1}    whatever
-    BuiltIn.Should Be Equal    ${a2}    WITH NAME
+    ParameterLibrary.Parameters should be    whatever    WITH NAME
 
 With Name After Normal Import
     [Documentation]    FAIL This failure comes from B2!
@@ -87,9 +77,7 @@ Import Library Keyword
     BuiltIn.Import Library    Operating System    WITH NAME    MyOS
     MyOS.Directory Should Exist    ${CURDIR}
     B2.Import Library    ParameterLibrary    my first argument    second arg    WITH NAME    MyParamLib
-    ${a1}    ${a2} =    My Param Lib . Para Me Ters
-    BuiltIn.Should Be Equal    ${a1}    my first argument
-    BuiltIn.Should Be Equal    ${a2}    second arg
+    My Param Lib.Parameters should be    my first argument    second arg
 
 Correct Error When Using Keyword From Same Library With Different Names Without Prefix 2
     [Documentation]    FAIL Multiple keywords with name 'Parameters' found.\
