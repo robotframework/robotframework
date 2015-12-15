@@ -17,7 +17,6 @@ import re
 import time
 import token
 from tokenize import generate_tokens, untokenize
-from robot.utils import StringIO
 
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
@@ -30,8 +29,8 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          get_error_message, get_time, is_falsy, is_integer,
                          is_string, is_truthy, is_unicode, IRONPYTHON, JYTHON,
                          Matcher, normalize, NormalizedDict, parse_time, prepr,
-                         RERAISED_EXCEPTIONS, plural_or_not as s, PY3, roundup,
-                         secs_to_timestr, seq2str, split_from_equals,
+                         RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
+                         secs_to_timestr, seq2str, split_from_equals, StringIO,
                          timestr_to_secs, type_name, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
