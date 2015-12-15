@@ -282,7 +282,7 @@ class _Import(Setting):
         return [self.type, self.name] + self.args
 
     def report_invalid_syntax(self, message, level='ERROR', parent=None):
-        parent = parent or self.parent
+        parent = parent or getattr(self, 'parent', None)
         if parent:
             parent.report_invalid_syntax(message, level)
         else:
