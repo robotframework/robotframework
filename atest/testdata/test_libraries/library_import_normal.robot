@@ -13,7 +13,7 @@ Normal Library Import
 
 Library Import With Spaces In Name Is Deprecated
     Print    It works!
-    example Library. print many    It really    workz!!
+    example Library. print many    But it is    DEPRECATED!!!
 
 Importing Python Class From Module
     ${ret1} =    Verify Lib Class 1

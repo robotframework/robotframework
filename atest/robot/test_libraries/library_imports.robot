@@ -8,10 +8,16 @@ Normal Library Import
     Check Test Case    ${TESTNAME}
     Check Syslog Contains    | INFO \ |    Imported library 'OperatingSystem' with arguments [ ] (version
 
-Library Import With Spaces In Name
+Library Import With Spaces In Name Is Deprecated
     ${test} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${test.kws[0].messages[0]}    It works!
-    Check Log Message    ${test.kws[1].messages[0]}    It really workz!!
+    Check Log Message    ${test.kws[1].messages[0]}    But it is DEPRECATED!!!
+    ${path} =    Normalize Path    ${DATADIR}/test_libraries/library_import_normal.robot
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Importing library with extra spaces in name like 'E x a m p l e L i b r a r y' is deprecated.
+    ...    Remove spaces and use 'ExampleLibrary' instead.
+    Check Log Message    @{ERRORS}[0]    ${message}    WARN
 
 Importing Library Class Should Have Been Syslogged
     [Tags]    no-standalone

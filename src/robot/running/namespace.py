@@ -146,16 +146,23 @@ class Namespace(object):
             name = self.variables.replace_string(name)
         except DataError as err:
             self._raise_replacing_vars_failed(import_setting, err)
-        return self._get_name(name, import_setting.directory, import_setting.type)
+        return self._get_name(name, import_setting)
 
     def _raise_replacing_vars_failed(self, import_setting, err):
         raise DataError("Replacing variables from setting '%s' failed: %s"
                         % (import_setting.type, err.message))
 
-    def _get_name(self, name, basedir, import_type):
-        if import_type == 'Library' and not self._is_library_by_path(name):
-            return name.replace(' ', '')
-        return find_file(name, basedir, file_type=import_type)
+    def _get_name(self, name, import_setting):
+        if import_setting.type == 'Library' and not self._is_library_by_path(name):
+            if ' ' in name:
+                warning = ("Importing library with extra spaces in name like "
+                           "'%s' is deprecated. Remove spaces and use '%s' "
+                           "instead." % (name, name.replace(' ', '')))
+                import_setting.report_invalid_syntax(warning, 'WARN')
+                name = name.replace(' ', '')
+            return name
+        return find_file(name, import_setting.directory,
+                         file_type=import_setting.type)
 
     def _is_library_by_path(self, path):
         return path.lower().endswith(self._library_import_by_path_endings)

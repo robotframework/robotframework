@@ -48,3 +48,8 @@ Import Library From Path
     Run Keyword And Expect Error    *    Keyword should exist    Print
     Import Library    ExampleLibrary.py
     Print    hello
+
+Extra Spaces In Name Are Deprecated
+    Import Library    Date Time
+    Get Current Date
+    DateTime.Get Current Date

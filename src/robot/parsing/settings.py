@@ -281,6 +281,14 @@ class _Import(Setting):
     def _data_as_list(self):
         return [self.type, self.name] + self.args
 
+    def report_invalid_syntax(self, message, level='ERROR', parent=None):
+        parent = parent or self.parent
+        if parent:
+            parent.report_invalid_syntax(message, level)
+        else:
+            from robot.api import logger
+            logger.write(message, level)
+
 
 class Library(_Import):
 
@@ -304,11 +312,7 @@ class Library(_Import):
         message = ("Using 'WITH NAME' syntax when importing libraries case "
                    "insensitively like '%s' is deprecated. Use all upper case "
                    "format 'WITH NAME' instead." % with_name)
-        if parent:
-            parent.report_invalid_syntax(message, level='WARN')
-        else:
-            from robot.api import logger
-            logger.warn(message)
+        self.report_invalid_syntax(message, 'WARN', parent)
 
     def _data_as_list(self):
         data = ['Library', self.name] + self.args
