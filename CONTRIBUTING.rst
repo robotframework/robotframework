@@ -9,7 +9,7 @@ a library or tool missing, there is hardly any better way to contribute
 than creating your own project. Other great ways to contribute include
 answering questions and participating discussion on `robotframework-users
 <https://groups.google.com/forum/#!forum/robotframework-users>`_ mailing list
-and other forums as well as spreading the word about the framework one way or
+and other forums, as well as spreading the word about the framework one way or
 the other.
 
 .. contents::
@@ -22,10 +22,11 @@ Submitting issues
 Bugs and enhancements are tracked in the `issue tracker
 <https://github.com/robotframework/robotframework/issues>`_. If you are
 unsure if something is a bug or is a feature worth implementing, you can
-first ask on `robotframework-users`_ list or `IRC
+first ask on `robotframework-users`_ mailing list, on `IRC
 <http://webchat.freenode.net/?channels=robotframework&prompt=1>`_
-(#robotframework on irc.freenode.net). These and other similar forums,
-not the issue tracker, are also places where to ask general questions.
+(#robotframework on irc.freenode.net), or on `Slack
+<https://robotframework-slack.herokuapp.com>`_. These and other similar
+forums, not the issue tracker, are also places where to ask general questions.
 
 Before submitting a new issue, it is always a good idea to check is the
 same bug or enhancement already reported. If it is, please add your comments
@@ -168,9 +169,9 @@ tool. Documentation must use Robot Framework's own `documentation formatting
 and follow these guidelines:
 
 - Other keywords and sections in the library introduction can be referenced
-  with internal links created with backticks like ```Example Keyword```
+  with internal links created with backticks like ```Example Keyword```.
 
-- When referring to arguments, argument names must use in inline code style
+- When referring to arguments, argument names must use inline code style
   created with double backticks like ````argument````.
 
 - Examples are recommended whenever the new keyword or enhanced functionality is
@@ -209,14 +210,14 @@ Tests
 When submitting a pull request with a new feature or a fix, you should
 always include tests for your changes. These tests prove that your changes
 work, help prevent bugs in the future, and help document what your changes
-do. Depending an the change, you may need `acceptance tests`_, `unit tests`_
+do. Depending an the change, you may need acceptance tests, unit tests
 or both.
 
 Make sure to run all of the tests before submitting a pull request to be sure
 that your changes do not break anything. If you can, test in multiple
 environments and interpreters (Windows, Linux, OS X, Python, Jython,
-IronPython, etc). Pull requests are also automatically tested on `continuous
-integration`_.
+IronPython, Python 3, etc). Pull requests are also automatically tested on
+continuous integration.
 
 Acceptance tests
 ''''''''''''''''
