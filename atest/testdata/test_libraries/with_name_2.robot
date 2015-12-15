@@ -74,7 +74,7 @@ Name Given Using "With Name" Can Be Reused In Different Suites
     Para MS.Keyword In My Lib File
 
 Import Library Keyword
-    BuiltIn.Import Library    Operating System    WITH NAME    MyOS
+    BuiltIn.Import Library    OperatingSystem    WITH NAME    MyOS
     MyOS.Directory Should Exist    ${CURDIR}
     B2.Import Library    ParameterLibrary    my first argument    second arg    WITH NAME    MyParamLib
     My Param Lib.Parameters should be    my first argument    second arg

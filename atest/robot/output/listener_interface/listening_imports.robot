@@ -32,7 +32,7 @@ Failed Impors Are Listed In Errors
     Check Syslog Contains    | ERROR | Error in file '${path}':
     ...    Resource file 'resource that does not exist and fails' does not exist.
     Check Syslog Contains    | ERROR | Error in file '${path}':
-    ...    Importing test library 'librarythatdoesnotexist' failed:
+    ...    Importing test library 'LibraryThatDoesNotExist' failed:
     Check Syslog Contains    | ERROR | Error in file '${path}':
     ...    Variable file 'variables which dont exist' does not exist.
 

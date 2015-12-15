@@ -8,7 +8,7 @@ Variables         vars.py    name    value
 Variables         vars.py    name    value
 Variables         vars.py
 Resource          resource that does not exist and fails
-Library           library that does not exist
+Library           LibraryThatDoesNotExist
 Variables         variables which dont exist
 
 *** Test Cases ***

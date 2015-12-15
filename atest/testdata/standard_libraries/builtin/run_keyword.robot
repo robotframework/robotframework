@@ -1,5 +1,5 @@
 *** Settings ***
-Library         Operating System
+Library         OperatingSystem
 
 *** Variables ***
 @{NEEDS ESCAPING}  c:\\temp\\foo  \${notvar}  ${42}
