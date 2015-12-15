@@ -81,6 +81,11 @@ Arguments With Run Keyword
     Check Log Message    ${tc.kws[1].msgs[0]}    Arguments: [ 'Catenate' | '\@{VALUES}' ]    TRACE
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Arguments: [ 'a' | 'b' | 'c' | 'd' ]    TRACE
 
+Embedded Arguments
+    ${tc}=    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Arguments: [ \${first}='foo' | \${second}=42 | \${what}='UK' ]    TRACE
+    Check Log Message    ${tc.kws[1].msgs[0]}    Arguments: [ 'bar' | 'Embedded Arguments' ]    TRACE
+
 *** Keywords ***
 Check Argument Value Trace
     [Arguments]    @{expected}

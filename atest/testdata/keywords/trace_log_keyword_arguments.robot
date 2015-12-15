@@ -76,6 +76,10 @@ Arguments With Run Keyword
     ${result} =    Run Keyword    ${keyword name}    @{VALUES}
     Should Be Equal    ${result}    a b c d
 
+Embedded Arguments
+    Embedded Arguments "foo" and "${42}" with UK
+    Embedded Arguments "bar" and "${TEST NAME}"
+
 *** Keywords ***
 Set Unicode Repr Object As Variable
     ${object} =    Print and Return Unicode Object
@@ -104,3 +108,8 @@ Kwargs UK
 All args UK
     [Arguments]    ${positional}    @{varargs}    &{kwargs}
     No Operation
+
+Embedded Arguments "${first}" and "${second}" with ${what:[KU]+}
+    Should Be Equal    ${first}    foo
+    Should be Equal    ${second}    ${42}
+    Should be Equal    ${what}    UK

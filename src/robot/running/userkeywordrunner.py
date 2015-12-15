@@ -101,7 +101,7 @@ class UserKeywordRunner(object):
         args, kwargs = self.arguments.map(positional, named,
                                           replace_defaults=False)
         self._set_variables(args, kwargs, variables)
-        context.output.trace(lambda: self._log_args(variables))
+        context.output.trace(lambda: self._trace_log_args_message(variables))
 
     def _set_variables(self, positional, kwargs, variables):
         before_varargs, varargs = self._split_args_and_varargs(positional)
@@ -119,6 +119,18 @@ class UserKeywordRunner(object):
             return args, []
         positional = len(self.arguments.positional)
         return args[:positional], args[positional:]
+
+    def _trace_log_args_message(self, variables):
+        args = ['${%s}' % arg for arg in self.arguments.positional]
+        if self.arguments.varargs:
+            args.append('@{%s}' % self.arguments.varargs)
+        if self.arguments.kwargs:
+            args.append('&{%s}' % self.arguments.kwargs)
+        return self._format_trace_log_args_message(args, variables)
+
+    def _format_trace_log_args_message(self, args, variables):
+        args = ['%s=%s' % (name, prepr(variables[name])) for name in args]
+        return 'Arguments: [ %s ]' % ' | '.join(args)
 
     def _execute(self, context):
         if not (self._handler.keywords or self._handler.return_value):
@@ -139,15 +151,6 @@ class UserKeywordRunner(object):
         if error or td_error:
             error = UserKeywordExecutionFailed(error, td_error)
         return error or pass_, return_
-
-    def _log_args(self, variables):
-        args = ['${%s}' % arg for arg in self.arguments.positional]
-        if self.arguments.varargs:
-            args.append('@{%s}' % self.arguments.varargs)
-        if self.arguments.kwargs:
-            args.append('&{%s}' % self.arguments.kwargs)
-        args = ['%s=%s' % (name, prepr(variables[name])) for name in args]
-        return 'Arguments: [ %s ]' % ' | '.join(args)
 
     def _get_return_value(self, variables, return_):
         ret = self._handler.return_value if not return_ else return_.return_value
@@ -215,6 +218,11 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         return [(n, variables.replace_scalar(v)) for n, v in self.embedded_args]
 
     def _set_arguments(self, embedded_args, context):
+        variables = context.variables
         for name, value in embedded_args:
-            context.variables['${%s}' % name] = value
-        # TODO: Trace log embedded args
+            variables['${%s}' % name] = value
+        context.output.trace(lambda: self._trace_log_args_message(variables))
+
+    def _trace_log_args_message(self, variables):
+        args = ['${%s}' % arg for arg, _ in self.embedded_args]
+        return self._format_trace_log_args_message(args, variables)

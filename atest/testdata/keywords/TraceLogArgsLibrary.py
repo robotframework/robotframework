@@ -24,6 +24,11 @@ class TraceLogArgsLibrary(object):
     def return_object_with_non_ascii_string_repr(self):
         return NonAsciiRepr()
 
+    def embedded_arguments(self, *args):
+        assert args == ('bar', 'Embedded Arguments')
+
+    embedded_arguments.robot_name = 'Embedded Arguments "${a}" and "${b}"'
+
 
 class InvalidRepr(object):
 
