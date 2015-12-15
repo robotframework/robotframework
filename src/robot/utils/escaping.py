@@ -21,14 +21,14 @@ from .robottypes import is_string
 if PY3:
     unichr = chr
 
-_CONTROL_WORDS_TO_BE_ESCAPED = ('ELSE', 'ELSE IF', 'AND')
+_CONTROL_WORDS = frozenset(('ELSE', 'ELSE IF', 'AND', 'WITH NAME'))
 _SEQUENCES_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{', '=')
 
 
 def escape(item):
     if not is_string(item):
         return item
-    if item in _CONTROL_WORDS_TO_BE_ESCAPED:
+    if item in _CONTROL_WORDS:
         return '\\' + item
     for seq in _SEQUENCES_TO_BE_ESCAPED:
         if seq in item:

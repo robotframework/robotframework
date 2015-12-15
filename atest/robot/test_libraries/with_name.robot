@@ -139,11 +139,21 @@ Case-insensitive 'with name' works but is deprecated
     ...    Use all upper case format 'WITH NAME' instead.
     Check Log Message    @{ERRORS}[-1]    ${message}    WARN
 
+'WITH NAME' cannot come from variable
+    Check Test Case    ${TEST NAME}
+
+'WITH NAME' cannot come from variable with 'Import Library' keyword
+    Check Test Case    ${TEST NAME}
+
+'WITH NAME' cannot come from variable with 'Import Library' keyword even when list variable opened
+    Check Test Case    ${TEST NAME}
+
 *** Keywords ***
 Run 'With Name' Tests
     ${sources} =    Catenate
     ...    test_libraries/with_name_1.robot
     ...    test_libraries/with_name_2.robot
     ...    test_libraries/with_name_3.robot
+    ...    test_libraries/with_name_4.robot
     Run Tests    ${EMPTY}    ${sources}
-    Should Be Equal    ${SUITE.name}    With Name 1 & With Name 2 & With Name 3
+    Should Be Equal    ${SUITE.name}    With Name 1 & With Name 2 & With Name 3 & With Name 4
