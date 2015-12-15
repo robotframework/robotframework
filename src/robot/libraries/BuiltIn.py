@@ -42,18 +42,13 @@ if JYTHON:
     from java.lang import String, Number
 
 
-# TODO: The name of this decorator should be changed. It is used for avoiding
-# arguments to be resolved by many other keywords than run keyword variants.
-# Should also consider:
-# - Exposing this functionality to external libraries. Would require doc
-#   enhancements and clean way to expose variables to make resolving them
-#   based on needs easier.
-# - Removing the functionality that run keyword variants can be overridded
-#   by custom keywords without a warning.
+# TODO: Clean-up registering run keyword variants in RF 3.1.
+# https://github.com/robotframework/robotframework/issues/2190
 
 def run_keyword_variant(resolve):
     def decorator(method):
-        RUN_KW_REGISTER.register_run_keyword('BuiltIn', method.__name__, resolve)
+        RUN_KW_REGISTER.register_run_keyword('BuiltIn', method.__name__,
+                                             resolve, deprecation_warning=False)
         return method
     return decorator
 
@@ -3147,8 +3142,13 @@ class RobotNotRunningError(AttributeError):
     pass
 
 
-def register_run_keyword(library, keyword, args_to_process=None):
+def register_run_keyword(library, keyword, args_to_process=None,
+                         deprecation_warning=True):
     """Registers 'run keyword' so that its arguments can be handled correctly.
+
+    *NOTE:* This API will change in RF 3.1. For more information see
+    https://github.com/robotframework/robotframework/issues/2190. Use with
+    `deprecation_warning=False` to avoid related deprecation warnings.
 
     1) Why is this method needed
 
@@ -3204,4 +3204,5 @@ def register_run_keyword(library, keyword, args_to_process=None):
     register_run_keyword('MyLibrary', MyLibrary.my_run_keyword_if)
     register_run_keyword('MyLibrary', 'my_run_keyword_if', 2)
     """
-    RUN_KW_REGISTER.register_run_keyword(library, keyword, args_to_process)
+    RUN_KW_REGISTER.register_run_keyword(library, keyword, args_to_process,
+                                         deprecation_warning)
