@@ -286,18 +286,35 @@ class Library(_Import):
 
     def __init__(self, parent, name, args=None, alias=None, comment=None):
         if args and not alias:
-            args, alias = self._split_alias(args)
+            args, alias = self._split_alias(args, parent)
         _Import.__init__(self, parent, name, args, alias, comment)
 
-    def _split_alias(self, args):
-        if len(args) >= 2 and is_string(args[-2]) \
-                and args[-2].upper() == 'WITH NAME':
-            return args[:-2], args[-1]
+    def _split_alias(self, args, parent):
+        if len(args) > 1 and is_string(args[-2]):
+            with_name = args[-2]
+            if with_name.upper() == 'WITH NAME':
+                # TODO: Require all uppercase 'WITH NAME' in RF 3.1.
+                # https://github.com/robotframework/robotframework/issues/2263
+                if with_name != 'WITH NAME':
+                    self._deprecation_warning(with_name, parent)
+                return args[:-2], args[-1]
         return args, None
 
+    def _deprecation_warning(self, with_name, parent):
+        message = ("Using 'WITH NAME' syntax when importing libraries case "
+                   "insensitively like '%s' is deprecated. Use all upper case "
+                   "format 'WITH NAME' instead." % with_name)
+        if parent:
+            parent.report_invalid_syntax(message, level='WARN')
+        else:
+            from robot.api import logger
+            logger.warn(message)
+
     def _data_as_list(self):
-        alias = ['WITH NAME', self.alias] if self.alias else []
-        return ['Library', self.name] + self.args + alias
+        data = ['Library', self.name] + self.args
+        if self.alias:
+            data += ['WITH NAME', self.alias]
+        return data
 
 
 class Resource(_Import):

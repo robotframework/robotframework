@@ -4,7 +4,7 @@ Library           OperatingSystem    WITH NAME    OS
 Library           ParameterLibrary    1    2    WITH NAME    Param1
 Library           ParameterLibrary    ${VAR}    ${42}    WITH NAME    Param2
 Library           ParameterLibrary    a    b    WITH NAME    ${VAR}
-Library           ParameterLibrary    whatever    with name
+Library           ParameterLibrary    whatever    WITH NAME
 Library           BuiltIn    WITH NAME    B2
 Library           module_library    WITH NAME    MOD1
 Library           pythonmodule.library    WITH NAME    mod 2
@@ -50,7 +50,7 @@ Alias Containing Variable
 With Name Has No Effect If Not Second Last
     ${a1}    ${a2} =    ParameterLibrary.parameters
     BuiltIn.Should Be Equal    ${a1}    whatever
-    BuiltIn.Should Be Equal    ${a2}    with name
+    BuiltIn.Should Be Equal    ${a2}    WITH NAME
 
 With Name After Normal Import
     [Documentation]    FAIL This failure comes from B2!
@@ -84,7 +84,7 @@ Name Given Using "With Name" Can Be Reused In Different Suites
     Para MS.Keyword In My Lib File
 
 Import Library Keyword
-    BuiltIn.Import Library    Operating System    With Name    MyOS
+    BuiltIn.Import Library    Operating System    WITH NAME    MyOS
     MyOS.Directory Should Exist    ${CURDIR}
     B2.Import Library    ParameterLibrary    my first argument    second arg    WITH NAME    MyParamLib
     ${a1}    ${a2} =    My Param Lib . Para Me Ters

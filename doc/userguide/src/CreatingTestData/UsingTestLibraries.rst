@@ -153,7 +153,7 @@ __ `Handling keywords with same names`_
 
 
 The basic syntax for specifying the new name is having the text
-`WITH NAME` (case-insensitive) after the library name and then
+`WITH NAME` (case-sensitive) after the library name and then
 having the new name in the next cell. The specified name is shown in
 logs and must be used in the test data when using keywords' full name
 (:name:`LibraryName.Keyword Name`).

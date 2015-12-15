@@ -125,7 +125,7 @@ class TestSettingTable(unittest.TestCase):
     def test_library_with_name(self):
         lib = self.table.add_library('Name', ['WITH NAME', 'New name'])
         self._verify_import(lib, 'Name', [], 'New name')
-        lib = self.table.add_library('Orig', ['a1', 'a2', 'with name', 'New'])
+        lib = self.table.add_library('Orig', ['a1', 'a2', 'WITH NAME', 'New'])
         self._verify_import(lib, 'Orig', ['a1', 'a2'], 'New')
 
     def _verify_import(self, imp, name, args=[], alias=None):
