@@ -101,6 +101,9 @@ work on multiple pull requests at the same time.
 Coding conventions
 ~~~~~~~~~~~~~~~~~~
 
+General guidelines
+''''''''''''''''''
+
 Robot Framework uses the general Python code conventions defined in `PEP-8
 <https://www.python.org/dev/peps/pep-0008/>`_. In addition to that, we try
 to write `idiomatic Python
@@ -110,11 +113,12 @@ and follow the `SOLID principles
 new code. An important guideline is that the code should be clear enough that
 comments are generally not needed.
 
-Docstrings should be added to public APIs but are not generally needed in
-internal code. When docstrings are added, they should follow `PEP-257
-<https://www.python.org/dev/peps/pep-0257/>`_. See `API documentation`_
-section below for more details about documentation syntax, generating
-API docs, etc.
+All code, including test code, must be compatible with all supported Python
+interpreters and versions. Most importantly this means that the code must
+support both Python 2 and Python 3.
+
+Whitespace
+''''''''''
 
 We are pretty picky about using whitespace. We use blank lines and whitespace
 in expressions as dictated by `PEP-8`_, but we also follow these rules:
@@ -124,8 +128,17 @@ in expressions as dictated by `PEP-8`_, but we also follow these rules:
 - No extra empty lines at the end of the file.
 - Files must end with a newline.
 
-The above rules are good with most other code too. Any good editor or IDE
+The above rules are good with most other code too. Any decent editor or IDE
 can be configured to automatically format files according to them.
+
+Docstrings
+''''''''''
+
+Docstrings should be added to public APIs but are not generally needed in
+internal code. When docstrings are added, they should follow `PEP-257
+<https://www.python.org/dev/peps/pep-0257/>`_. See `API documentation`_
+section below for more details about documentation syntax, generating
+API docs, etc.
 
 Documentation
 ~~~~~~~~~~~~~
