@@ -122,9 +122,13 @@ Convert To Number With Java Objects
 
 Convert To Number With Precision
     [Documentation]    FAIL STARTS: 'invalid' cannot be converted to an integer: ValueError:
-    ${res} =    Convert to Number    1.01    precision=1
-    Should Be Equal    ${res}    ${1.0}
-    Convert to Number    1    invalid
+    [Template]    Test Convert To Number With Precision
+    1.01      0          1
+    1.02      ${0}       1
+    1.03      ${NONE}    1.03
+    1.14      1          1.1
+    9.1      -1          10
+    1         invalid    This fails!
 
 Numeric conversions with long types
     [Template]    Numeric conversions with long types
@@ -202,7 +206,11 @@ Test Convert To Hex
 Test Convert To Number
     [Arguments]    ${item}    ${exp}=1.0
     ${act} =    Convert To Number    ${item}
-    ${exp} =    Evaluate  ${exp}
+    Should Be True    round(${act}, 6) == ${exp}
+
+Test Convert To Number With Precision
+    [Arguments]    ${item}    ${precision}    ${exp}
+    ${act} =    Convert To Number    ${item}    ${precision}
     Should Be True    round(${act}, 6) == ${exp}
 
 Numeric conversions with long types

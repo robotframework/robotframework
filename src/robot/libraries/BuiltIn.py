@@ -275,7 +275,7 @@ class _Converter(_BuiltInBase):
 
     def _convert_to_number(self, item, precision=None):
         number = self._convert_to_number_without_precision(item)
-        if precision:
+        if precision is not None:
             number = roundup(number, self._convert_to_integer(precision),
                              return_type=float)
         return number
