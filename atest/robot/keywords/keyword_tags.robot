@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    keywords/keyword_tags.robot
 Resource         atest_resource.robot
-Test template    Keyword tags should be
+Test Template    Keyword tags should be
 
 *** Test Cases ***
 Library keyword tags with `robot_tags` attribute
@@ -24,13 +24,19 @@ Invalid library keyword tags
     ...    level=ERROR
 
 User keyword tags with `[Tags]` setting
-    2    first
+    first    two words
+
+User keyword tags with `[Tags]` setting containing variables
+    3    first    second    Tag    third
 
 User keyword tags with documentation
     3    one    two words
 
 User keyword tags with documentation and setting
-    2    3    one    two words
+    2    3    one    two    two words
+
+User keyword tags with duplicates
+    2    first    second    third    XXX
 
 Dynamic library keyword with tags
     bar    foo

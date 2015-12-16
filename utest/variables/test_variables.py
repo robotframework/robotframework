@@ -241,6 +241,21 @@ class TestVariables(unittest.TestCase):
             self.varz['${obj}'] = obj
             assert_equal(self.varz.replace_list(['${obj.name}']), ['my name'])
 
+    def test_ignore_error(self):
+        v = Variables()
+        v['${X}'] = 'x'
+        v['@{Y}'] = [1, 2, 3]
+        for item in ['${foo}', 'foo${bar}', '${foo}', '@{zap}', '@{Y}[7]']:
+            assert_equal(v.replace_string(item, ignore_errors=True), item)
+            assert_equal(v.replace_string('${x}'+item+'${x}', ignore_errors=True),
+                         'x'+item+'x')
+            assert_equal(v.replace_scalar(item, ignore_errors=True), item)
+            assert_equal(v.replace_scalar('${x}'+item+'${x}', ignore_errors=True),
+                         'x'+item+'x')
+            assert_equal(v.replace_list([item], ignore_errors=True), [item])
+            assert_equal(v.replace_list(['${X}', item, '@{Y}'], ignore_errors=True),
+                         ['x', item, 1, 2, 3])
+
 
 if __name__ == '__main__':
     unittest.main()

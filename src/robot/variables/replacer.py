@@ -24,7 +24,7 @@ class VariableReplacer(object):
     def __init__(self, variables):
         self._variables = variables
 
-    def replace_list(self, items, replace_until=None):
+    def replace_list(self, items, replace_until=None, ignore_errors=False):
         """Replaces variables from a list of items.
 
         If an item in a list is a @{list} variable its value is returned.
@@ -38,35 +38,42 @@ class VariableReplacer(object):
         """
         items = list(items or [])
         if replace_until is not None:
-            return self._replace_list_until(items, replace_until)
-        return list(self._replace_list(items))
+            return self._replace_list_until(items, replace_until, ignore_errors)
+        return list(self._replace_list(items, ignore_errors))
 
-    def _replace_list_until(self, items, replace_until):
+    def _replace_list_until(self, items, replace_until, ignore_errors):
         # @{list} variables can contain more or less arguments than needed.
         # Therefore we need to go through items one by one, and escape possible
         # extra items we got.
         replaced = []
         while len(replaced) < replace_until and items:
-            replaced.extend(self._replace_list([items.pop(0)]))
+            replaced.extend(self._replace_list([items.pop(0)], ignore_errors))
         if len(replaced) > replace_until:
             replaced[replace_until:] = [escape(item)
                                         for item in replaced[replace_until:]]
         return replaced + items
 
-    def _replace_list(self, items):
+    def _replace_list(self, items, ignore_errors):
         for item in items:
             if self._cannot_have_variables(item):
                 yield unescape(item)
             else:
-                splitter = VariableSplitter(item)
-                value = self._replace_scalar(item, splitter)
-                if splitter.is_list_variable():
-                    for v in value:
-                        yield v
-                else:
+                for value in self._replace_list_item(item, ignore_errors):
                     yield value
 
-    def replace_scalar(self, item):
+    def _replace_list_item(self, item, ignore_errors):
+        splitter = VariableSplitter(item)
+        try:
+            value = self._replace_scalar(item, splitter)
+        except DataError:
+            if ignore_errors:
+                return [item]
+            raise
+        if splitter.is_list_variable():
+            return value
+        return [value]
+
+    def replace_scalar(self, item, ignore_errors=False):
         """Replaces variables from a scalar item.
 
         If the item is not a string it is returned as is. If it is a ${scalar}
@@ -75,16 +82,21 @@ class VariableReplacer(object):
         """
         if self._cannot_have_variables(item):
             return unescape(item)
-        return self._replace_scalar(item)
+        return self._replace_scalar(item, ignore_errors=ignore_errors)
 
-    def _replace_scalar(self, item, splitter=None):
+    def _replace_scalar(self, item, splitter=None, ignore_errors=False):
         if not splitter:
             splitter = VariableSplitter(item)
         if not splitter.identifier:
             return unescape(item)
-        if splitter.is_variable():
+        if not splitter.is_variable():
+            return self._replace_string(item, splitter, ignore_errors)
+        try:
             return self._get_variable(splitter)
-        return self._replace_string(item, splitter)
+        except DataError:
+            if ignore_errors:
+                return item
+            raise
 
     def _cannot_have_variables(self, item):
         return not (is_string(item) and '{' in item)

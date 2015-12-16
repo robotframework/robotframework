@@ -15,7 +15,7 @@
 from robot.errors import ExecutionFailed, DataError, PassExecution
 from robot.model import SuiteVisitor
 from robot.result import TestSuite, Result
-from robot.utils import get_timestamp, NormalizedDict, unic
+from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic
 from robot.variables import VariableScopes
 
 from .context import EXECUTION_CONTEXTS
@@ -84,6 +84,8 @@ class Runner(SuiteVisitor):
         self._executed_tests = NormalizedDict(ignore='_')
 
     def _resolve_setting(self, value):
+        if is_list_like(value):
+            return self._variables.replace_list(value, ignore_errors=True)
         return self._variables.replace_string(value, ignore_errors=True)
 
     def end_suite(self, suite):
@@ -112,7 +114,7 @@ class Runner(SuiteVisitor):
         self._executed_tests[test.name] = True
         result = self._suite.tests.create(name=test.name,
                                           doc=self._resolve_setting(test.doc),
-                                          tags=test.tags,
+                                          tags=self._resolve_setting(test.tags),
                                           starttime=get_timestamp(),
                                           timeout=self._get_timeout(test))
         status = TestStatus(self._suite_status, result.critical)
@@ -120,11 +122,6 @@ class Runner(SuiteVisitor):
             status.test_failed('Test case name cannot be empty.')
         if not status.failures and not test.keywords.normal:
             status.test_failed('Test case contains no keywords.')
-        try:
-            result.tags = self._context.variables.replace_list(result.tags)
-        except DataError as err:
-            status.test_failed('Replacing variables from test tags failed: %s'
-                               % err.message)
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(result, test))
         if status.exit:

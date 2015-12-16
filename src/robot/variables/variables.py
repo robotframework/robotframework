@@ -46,13 +46,13 @@ class Variables(object):
     def resolve_delayed(self):
         self.store.resolve_delayed()
 
-    def replace_list(self, items, replace_until=None):
+    def replace_list(self, items, replace_until=None, ignore_errors=False):
         if not is_list_like(items):
             raise ValueError("'replace_list' requires list-like input.")
-        return self._replacer.replace_list(items, replace_until)
+        return self._replacer.replace_list(items, replace_until, ignore_errors)
 
-    def replace_scalar(self, item):
-        return self._replacer.replace_scalar(item)
+    def replace_scalar(self, item, ignore_errors=False):
+        return self._replacer.replace_scalar(item, ignore_errors)
 
     def replace_string(self, item, ignore_errors=False):
         return self._replacer.replace_string(item, ignore_errors)

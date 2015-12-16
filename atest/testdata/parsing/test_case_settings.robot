@@ -8,7 +8,7 @@ Test Timeout      ${TIMEOUT} milliseconds
 *** Variable ***
 ${VERSION}            1.2
 @{DEFAULT TAGS}       default-1    default-2    # default-3 added separately
-${TAG BASE}      test
+${TAG BASE}           test
 @{TEST TAGS}          ${TAG BASE}-1    ${TAG BASE}-2    ${TAG BASE}-3
 ${LOG}                Log
 ${TIMEOUT}            99999
@@ -84,9 +84,10 @@ Tags with variables
     No Operation
 
 Tags with non-existing variables
-    [Documentation]    FAIL Replacing variables from test tags failed: Variable '\${non_existing}' not found.
-    [t a g s]    @{non_existing}    ${non_existing}
-    Fail    Not executed
+    [t a g s]    @{non_existing}    ${TAG BASE}    ${non_existing}    ${4}${2}
+    Log    It's a bit questionable that non-existing variables are OK.
+    Log    But they are OK also in docs, with keyword tags, etc.
+
 Setup
     [Setup]    Log    Test case setup
     No Operation

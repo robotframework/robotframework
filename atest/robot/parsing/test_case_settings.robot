@@ -60,11 +60,10 @@ Override default tags using NONE
     Verify Tags        force-1
 
 Tags with variables
-    [Documentation]    Check that variables work in test case tags and invalid variables are handled correctly
     Verify Tags        force-1    test-1    test-2    test-3    test-4    test-5
 
 Tags with non-existing variables
-    Verify Tags         \${non_existing}    \@{non_existing}    force-1
+    Verify Tags         \${non_existing}    42    \@{non_existing}    force-1    test
 
 Setup
     Verify Setup    Test case setup
