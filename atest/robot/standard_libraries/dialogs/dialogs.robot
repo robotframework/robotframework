@@ -19,6 +19,9 @@ Execute Manual Step Passing
 Execute Manual Step Failing
     Check Test Case    ${TESTNAME}
 
+Execute Manual Step Exit
+    Check Test Case    ${TESTNAME}
+
 Get Value From User
     Check Test Case    ${TESTNAME}
 

@@ -4,7 +4,6 @@ Library         Dialogs
 *** Variable ***
 ${FILLER} =     wrapped${SPACE}
 
-
 *** Test Cases ***
 Pause Execution
     Pause Execution    Press OK.
@@ -13,7 +12,7 @@ Pause Execution With Long Line
     Pause Execution    Verify that the long text below is wrapped nicely.\n\n${FILLER*200}\n\nAnd then press OK.
 
 Pause Execution With Multiple Lines
-    Pause Execution    Verify that\nthis multi\nline text\nis displayed\nnicely.\n\nAnd then press OK.
+    Pause Execution    Verify that\nthis multi\nline text\nis displayed\nnicely.\n\nAnd then press <Esc>.
 
 Execute Manual Step Passing
     Execute Manual Step    Press PASS.
@@ -21,6 +20,10 @@ Execute Manual Step Passing
 Execute Manual Step Failing
     [Documentation]  FAIL Predefined error message
     Execute Manual Step    Press FAIL and then OK on next dialog.    Predefined error message
+
+Execute Manual Step Exit
+    [Documentation]  FAIL No value provided by user.
+    Execute Manual Step    Press <Esc>.    This should not be shown!!
 
 Get Value From User
     ${value} =    Get Value From User  Type 'value' and press OK.    Overwrite me

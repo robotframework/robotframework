@@ -61,7 +61,7 @@ def execute_manual_step(message, default_error=''):
     ``default_error`` is the default value shown in the possible error message
     dialog.
     """
-    if not PassFailDialog(message).show():
+    if not _validate_user_input(PassFailDialog(message)):
         msg = get_value_from_user('Give error message:', default_error)
         raise AssertionError(msg)
 

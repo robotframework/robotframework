@@ -28,6 +28,7 @@ class _WpfDialog(Window):
         self._initialize_dialog()
         self._create_body(message, value, **extra)
         self._create_buttons()
+        self._bind_esc_to_close_dialog()
         self._result = None
 
     def _initialize_dialog(self):
@@ -81,7 +82,6 @@ class _WpfDialog(Window):
         if self.right_button:
             self.right_button.SetValue(Grid.ColumnProperty, 1)
             self.Content.AddChild(self.right_button)
-            self.right_button.IsCancel = True
             self.left_button.SetValue(Grid.ColumnProperty, 0)
             self.Content.AddChild(self.left_button)
         else:
@@ -99,7 +99,19 @@ class _WpfDialog(Window):
             button.Click += callback
             return button
 
-    def _left_button_clicked(self, sender, eventArgs):
+    def _bind_esc_to_close_dialog(self):
+        # There doesn't seem to be easy way to bind esc otherwise than having
+        # a cancel button that binds it automatically. We don't always have
+        # actual cancel button so need to create one and make it invisible.
+        # Cannot actually hide it because it won't work after that so we just
+        # make it so small it is not seen.
+        button = Button()
+        button.IsCancel = True
+        button.MaxHeight = 1
+        button.MaxWidth = 1
+        self.Content.AddChild(button)
+
+    def _left_button_clicked(self, sender, event_args):
         if self._validate_value():
             self._result = self._get_value()
             self._close()
@@ -113,7 +125,7 @@ class _WpfDialog(Window):
     def _close(self):
         self.Close()
 
-    def _right_button_clicked(self, sender, eventArgs):
+    def _right_button_clicked(self, sender, event_args):
         self._result = self._get_right_button_value()
         self._close()
 
