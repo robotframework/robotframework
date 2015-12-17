@@ -549,8 +549,9 @@ the option :option:`--consolewidth (-W)`. The default width is 78 characters.
          environment variable like `--consolewidth $COLUMNS`.
 
 .. note:: Prior to Robot Framework 2.9 this functionality was enabled with
-          :option:`--monitorwidth` option that is nowadays deprecated.
-          The short option :option:`-W` works the same way in all versions.
+          :option:`--monitorwidth` option that was first deprecated and is
+          nowadays removed. The short option :option:`-W` works the same way
+          in all versions.
 
 Console colors
 ~~~~~~~~~~~~~~
@@ -579,8 +580,9 @@ This option supports the following case-insensitive values:
     Colors are disabled.
 
 .. note:: Prior to Robot Framework 2.9 this functionality was enabled with
-          :option:`--monitorcolors` option that is nowadays deprecated.
-          The short option :option:`-C` works the same way in all versions.
+          :option:`--monitorcolors` option that was first deprecated and is
+          nowadays removed. The short option :option:`-C` works the same way
+          in all versions.
 
 __ http://en.wikipedia.org/wiki/ANSI_escape_code
 
@@ -607,8 +609,9 @@ case-insensitive values:
     Markers are disabled.
 
 .. note:: Prior to Robot Framework 2.9 this functionality was enabled with
-          :option:`--monitormarkers` option that is nowadays deprecated.
-          The short option :option:`-K` works the same way in all versions.
+          :option:`--monitormarkers` option that was first deprecated and is
+          nowadays removed. The short option :option:`-K` works the same way
+          in all versions.
 
 __ `Console output type`_
 
