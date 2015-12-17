@@ -430,7 +430,7 @@ class KeywordRecommendationFinder(object):
 
     def _get_all_handler_names(self):
         """Return a list of `(library_name, handler_name)` tuples."""
-        handlers = [(None, printable_name(handler.name, True))
+        handlers = [('', printable_name(handler.name, True))
                     for handler in self.user_keywords.handlers]
         for library in chain(self.libraries.values(), self.resources.values()):
             if library.name != 'Reserved':
