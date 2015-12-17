@@ -12,6 +12,11 @@ Dotted
     Stdout Should Be    warnings_and_errors_stdout_dotted.txt
     Stderr Should Be    warnings_and_errors_stderr.txt
 
+Dotted with width
+    Run tests    --Console dotted --ConsoleWidth 10    misc/suites misc/suites
+    Stdout Should Be    warnings_and_errors_stdout_dotted_10.txt
+    Stderr Should Be    empty.txt
+
 Quiet
     Run and verify tests    --ConSole=QuiEt
     Stdout Should Be    empty.txt

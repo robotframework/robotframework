@@ -59,6 +59,7 @@ ARGUMENTS = '''
 --outputdir {outputdir}
 --splitlog
 --console dotted
+--consolewidth 100
 --SuiteStatLevel 3
 --TagStatExclude no-*
 '''.strip()

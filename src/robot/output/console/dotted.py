@@ -26,6 +26,7 @@ class DottedOutput(object):
         self._width = width
         self._stdout = HighlightingStream(stdout or sys.__stdout__, colors)
         self._stderr = HighlightingStream(stderr or sys.__stderr__, colors)
+        self._markers_on_row = 0
 
     def start_suite(self, suite):
         if not suite.parent:
@@ -34,6 +35,10 @@ class DottedOutput(object):
             self._stdout.write('=' * self._width + '\n')
 
     def end_test(self, test):
+        if self._markers_on_row == self._width:
+            self._stdout.write('\n')
+            self._markers_on_row = 0
+        self._markers_on_row += 1
         if test.passed:
             self._stdout.write('.')
         elif 'robot-exit' in test.tags:

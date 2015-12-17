@@ -1,0 +1,19 @@
+Running suite 'Suites & Suites' with 22 tests.
+==========
+F.........
+.F........
+..
+----------
+FAIL: Suites & Suites.Suites.Fourth.Suite4 First
+Expected
+----------
+FAIL: Suites & Suites.Suites.Fourth.Suite4 First
+Expected
+==========
+Run suite 'Suites & Suites' with 22 tests in *
+
+FAILED
+22 critical tests, 20 passed, 2 failed
+22 tests total, 20 passed, 2 failed
+
+Output:  *
