@@ -22,6 +22,7 @@ Zero And Negative Times
     Repeat Keyword    0 times    This is not executed
     ${name} =    Set Variable    This is not executed
     Repeat Keyword    ${-1}    ${name}    ${nonex}
+    Repeat Keyword    0 secs    This is not executed
 
 Invalid Times 1
     [Documentation]    FAIL STARTS: '1.3' cannot be converted to an integer: ValueError:
@@ -30,6 +31,11 @@ Invalid Times 1
 Invalid Times 2
     [Documentation]    FAIL STARTS: 'notaninteger' cannot be converted to an integer: ValueError:
     Repeat Keyword    Not an integer    No Operation
+
+Repeat Keyword With Time String
+    Repeat Keyword    00:00:00.003    Log    This is done for 00:00:00.003
+    Repeat Keyword    3 milliseconds    Log    This is done for 3 milliseconds
+    Repeat Keyword    3ms    Log    This is done for 3ms
 
 Repeat Keyword Arguments As Variables
     ${kw}    ${arg} =    Set Variable    Should Be Equal    Hello, world!
