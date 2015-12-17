@@ -69,6 +69,8 @@ class UserLibrary(object):
                         handler.name, error.message))
 
 
+# TODO: Should be merged with running.model.UserKeyword
+
 class UserKeywordHandler(object):
 
     def __init__(self, keyword, libname):

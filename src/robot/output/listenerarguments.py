@@ -17,35 +17,57 @@ from robot.utils import is_list_like, is_dict_like
 
 class ListenerArguments(object):
 
-    def get_arguments(self, *arguments):
+    def __init__(self, arguments):
+        self._arguments = arguments
+        self._version2 = None
+        self._version3 = None
+
+    def get_arguments(self, version):
+        if version == 2:
+            if self._version2 is None:
+                self._version2 = self._get_version2_arguments(*self._arguments)
+            return self._version2
+        else:
+            if self._version3 is None:
+                self._version3 = self._get_version3_arguments(*self._arguments)
+            return self._version3
+
+    def _get_version2_arguments(self, *arguments):
+        return arguments
+
+    def _get_version3_arguments(self, *arguments):
         return arguments
 
     @classmethod
-    def by_method_name(cls, name):
-        return {'start_suite': StartSuiteArguments,
-                'end_suite': EndSuiteArguments,
-                'start_test': StartTestArguments,
-                'end_test': EndTestArguments,
-                'start_keyword': StartKeywordArguments,
-                'end_keyword': EndKeywordArguments,
-                'log_message': MessageArguments,
-                'message': MessageArguments}.get(name, ListenerArguments)()
+    def by_method_name(cls, name, arguments):
+        Arguments = {'start_suite': StartSuiteArguments,
+                     'end_suite': EndSuiteArguments,
+                     'start_test': StartTestArguments,
+                     'end_test': EndTestArguments,
+                     'start_keyword': StartKeywordArguments,
+                     'end_keyword': EndKeywordArguments,
+                     'log_message': MessageArguments,
+                     'message': MessageArguments}.get(name, ListenerArguments)
+        return Arguments(arguments)
 
 
 class MessageArguments(ListenerArguments):
 
-    def get_arguments(self, msg):
+    def _get_version2_arguments(self, msg):
         attributes = {'timestamp': msg.timestamp,
                       'message': msg.message,
                       'level': msg.level,
                       'html': 'yes' if msg.html else 'no'}
         return attributes,
 
+    def _get_version3_arguments(self, msg):
+        return msg,
+
 
 class _ListenerArgumentsFromItem(ListenerArguments):
     _attribute_names = None
 
-    def get_arguments(self, item):
+    def _get_version2_arguments(self, item):
         attributes = dict((name, self._get_attribute_value(item, name))
                           for name in self._attribute_names)
         attributes.update(self._get_extra_attributes(item))
@@ -64,6 +86,9 @@ class _ListenerArgumentsFromItem(ListenerArguments):
 
     def _get_extra_attributes(self, item):
         return {}
+
+    def _get_version3_arguments(self, item):
+        return item.data, item.result
 
 
 class StartSuiteArguments(_ListenerArgumentsFromItem):

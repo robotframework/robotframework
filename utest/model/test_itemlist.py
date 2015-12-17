@@ -54,16 +54,24 @@ class TestItemLists(unittest.TestCase):
         items.extend((c for c in 'Hello, world!'))
         assert_equal(list(items), list('Hello, world!'))
 
+    def test_insert(self):
+        items = ItemList(str)
+        items.insert(0, 'a')
+        items.insert(0, 'b')
+        items.insert(3, 'c')
+        items.insert(1, 'd')
+        assert_equal(list(items), ['b', 'd', 'a', 'c'])
+
     def test_only_matching_types_can_be_added(self):
         assert_raises_with_msg(TypeError,
                                'Only int objects accepted, got str.',
                                ItemList(int).append, 'not integer')
         assert_raises_with_msg(TypeError,
                                'Only OldStyle objects accepted, got Object.',
-                               ItemList(OldStyle).append, Object())
+                               ItemList(OldStyle).extend, [Object()])
         assert_raises_with_msg(TypeError,
                                'Only Object objects accepted, got OldStyle.',
-                               ItemList(Object).append, OldStyle())
+                               ItemList(Object).insert, 0, OldStyle())
 
     def test_common_attrs(self):
         item1 = Object()

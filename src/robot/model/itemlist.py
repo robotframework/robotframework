@@ -52,6 +52,12 @@ class ItemList(object):
     def extend(self, items):
         self._items += self._check_type_and_set_attrs(*items)
 
+    def insert(self, index, item):
+        self._check_type_and_set_attrs(item)
+        items = list(self._items)
+        items.insert(index, item)
+        self._items = tuple(items)
+
     def index(self, item, *start_and_end):
         return self._items.index(item, *start_and_end)
 

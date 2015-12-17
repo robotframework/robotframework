@@ -23,22 +23,21 @@ class ListenerMethods(object):
 
     def __init__(self, method_name, listeners):
         self._methods = []
+        self._method_name = method_name
         if listeners:
             self._register_methods(method_name, listeners)
-        argument_handler = ListenerArguments.by_method_name(method_name)
-        self._get_arguments = argument_handler.get_arguments
 
     def _register_methods(self, method_name, listeners):
         for listener in listeners:
             method = getattr(listener, method_name)
             if method:
-                self._methods.append(ListenerMethod(method, listener.name))
+                self._methods.append(ListenerMethod(method, listener))
 
     def __call__(self, *args):
         if self._methods:
-            args = self._get_arguments(*args)
+            args = ListenerArguments.by_method_name(self._method_name, args)
             for method in self._methods:
-                method(args)
+                method(args.get_arguments(method.version))
 
     def __nonzero__(self):
         return bool(self._methods)
@@ -49,8 +48,6 @@ class LibraryListenerMethods(object):
     def __init__(self, method_name):
         self._method_stack = []
         self._method_name = method_name
-        argument_handler = ListenerArguments.by_method_name(method_name)
-        self._get_arguments = argument_handler.get_arguments
 
     def new_suite_scope(self):
         self._method_stack.append([])
@@ -63,7 +60,7 @@ class LibraryListenerMethods(object):
         for listener in listeners:
             method = getattr(listener, self._method_name)
             if method:
-                info = ListenerMethod(method, listener.name, library)
+                info = ListenerMethod(method, listener, library)
                 methods.append(info)
 
     def unregister(self, library):
@@ -73,9 +70,9 @@ class LibraryListenerMethods(object):
     def __call__(self, *args, **conf):
         methods = self._get_methods(**conf)
         if methods:
-            args = self._get_arguments(*args)
+            args = ListenerArguments.by_method_name(self._method_name, args)
             for method in methods:
-                method(args)
+                method(args.get_arguments(method.version))
 
     def _get_methods(self, library=None):
         if not (self._method_stack and self._method_stack[-1]):
@@ -90,9 +87,10 @@ class ListenerMethod(object):
     # Flag to avoid recursive listener calls.
     called = False
 
-    def __init__(self, method, listener_name, library=None):
+    def __init__(self, method, listener, library=None):
         self.method = method
-        self.listener_name = listener_name
+        self.listener_name = listener.name
+        self.version = listener.version
         self.library = library
 
     def __call__(self, args):

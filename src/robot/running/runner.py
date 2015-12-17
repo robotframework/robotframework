@@ -75,7 +75,7 @@ class Runner(SuiteVisitor):
         result.metadata = [(self._resolve_setting(n), self._resolve_setting(v))
                            for n, v in result.metadata.items()]
         self._context.set_suite_variables(result)
-        self._output.start_suite(ModelCombiner(result, suite,
+        self._output.start_suite(ModelCombiner(suite, result,
                                                tests=suite.tests,
                                                suites=suite.suites,
                                                test_count=suite.test_count))
@@ -100,7 +100,7 @@ class Runner(SuiteVisitor):
                     self._suite_status.critical_failure_occurred()
         self._suite.endtime = get_timestamp()
         self._suite.message = self._suite_status.message
-        self._context.end_suite(self._suite)
+        self._context.end_suite(ModelCombiner(suite, self._suite))
         self._suite = self._suite.parent
         self._suite_status = self._suite_status.parent
         self._output.library_listeners.discard_suite_scope()
@@ -117,13 +117,13 @@ class Runner(SuiteVisitor):
                                           tags=self._resolve_setting(test.tags),
                                           starttime=get_timestamp(),
                                           timeout=self._get_timeout(test))
+        self._context.start_test(result)
+        self._output.start_test(ModelCombiner(test, result))
         status = TestStatus(self._suite_status, result.critical)
         if not status.failures and not test.name:
             status.test_failed('Test case name cannot be empty.')
         if not status.failures and not test.keywords.normal:
             status.test_failed('Test case contains no keywords.')
-        self._context.start_test(result)
-        self._output.start_test(ModelCombiner(result, test))
         if status.exit:
             self._add_exit_combine()
             result.tags.add('robot-exit')
@@ -155,7 +155,7 @@ class Runner(SuiteVisitor):
             result.message = status.message
         result.status = status.status
         result.endtime = get_timestamp()
-        self._output.end_test(ModelCombiner(result, test))
+        self._output.end_test(ModelCombiner(test, result))
         self._context.end_test(result)
 
     def _add_exit_combine(self):
@@ -202,14 +202,16 @@ class Runner(SuiteVisitor):
 
 class ModelCombiner(object):
 
-    def __init__(self, *models, **priority):
-        self.models = models
+    def __init__(self, data, result, **priority):
+        self.data = data
+        self.result = result
         self.priority = priority
 
     def __getattr__(self, name):
         if name in self.priority:
             return self.priority[name]
-        for model in self.models:
-            if hasattr(model, name):
-                return getattr(model, name)
+        if hasattr(self.result, name):
+            return getattr(self.result, name)
+        if hasattr(self.data, name):
+            return getattr(self.data, name)
         raise AttributeError(name)

@@ -122,6 +122,8 @@ class ListenerProxy(AbstractLoggerProxy):
         AbstractLoggerProxy.__init__(self, listener, method_names, prefix)
         self.name = name
         self.version = self._get_version(listener)
+        if self.version == 3:
+            self.start_keyword = self.end_keyword = None
 
     def _import_listener(self, listener):
         if not is_string(listener):
@@ -135,7 +137,7 @@ class ListenerProxy(AbstractLoggerProxy):
     def _get_version(self, listener):
         try:
             version = int(listener.ROBOT_LISTENER_API_VERSION)
-            if version != 2:
+            if version not in (2, 3):
                 raise ValueError
         except AttributeError:
             raise DataError("Listener '%s' does not have mandatory "
