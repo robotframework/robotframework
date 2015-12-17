@@ -17,6 +17,7 @@ class LoggerMock:
 
     def __init__(self, *expected):
         self.expected = list(expected)
+        self.logger = self
 
     def message(self, msg):
         exp_msg, exp_level = self.expected.pop(0)
@@ -90,11 +91,11 @@ class TestLogger(unittest.TestCase):
         logger2 = LoggerMock2(('Hello, world!', 'INFO'))
         self.logger.register_logger(logger, logger2)
         self.logger.close()
-        assert_equal(self.logger._loggers.all_loggers(), [])
+        assert_equal(self.logger._other_loggers, [])
 
-    def test_registering_file_logger_with_none_path_does_nothing(self):
-        self.logger.register_file_logger('None')
-        assert_equal(self.logger._loggers.all_loggers(), [])
+    def test_registering_syslog_with_none_path_does_nothing(self):
+        self.logger.register_syslog('None')
+        assert_equal(self.logger._syslog, None)
 
     def test_cached_messages_are_given_to_registered_writers(self):
         self.logger.write('This is a cached message', 'INFO')
@@ -128,32 +129,22 @@ class TestLogger(unittest.TestCase):
 
     def test_verbose_console_output_is_automatically_registered(self):
         logger = Logger()
-        start_suite = logger._loggers.all_loggers()[0].start_suite
+        start_suite = logger._console_logger.start_suite
         assert_true(start_suite.__self__.__class__ is VerboseOutput)
-
-    def test_loggercollection_is_iterable(self):
-        logger = Logger()
-        for log in logger._loggers:
-            assert_true(log)
-
-    def test_logger_is_iterable(self):
-        logger = Logger()
-        for log in logger:
-            assert_true(log)
-        assert_equal(list(logger), list(logger._loggers))
 
     def test_automatic_console_logger_can_be_disabled(self):
         logger = Logger()
         logger.unregister_console_logger()
-        assert_equal(logger._loggers.all_loggers(), [])
+        assert_equal(logger._console_logger, None)
+        self._number_of_registered_loggers_should_be(0, logger)
 
     def test_automatic_console_logger_can_be_disabled_after_registering_logger(self):
         logger = Logger()
         mock = LoggerMock()
         logger.register_logger(mock)
+        self._number_of_registered_loggers_should_be(2, logger)
         logger.unregister_console_logger()
         self._number_of_registered_loggers_should_be(1, logger)
-        assert_true(logger._loggers.all_loggers()[0].message.__self__.__class__ is LoggerMock)
 
     def test_disabling_automatic_logger_multiple_times_has_no_effect(self):
         logger = Logger()
@@ -170,7 +161,7 @@ class TestLogger(unittest.TestCase):
         logger = Logger()
         logger.register_console_logger(width=42)
         self._number_of_registered_loggers_should_be(1, logger)
-        assert_equal(logger._loggers.all_loggers()[0].start_suite.__self__._writer._width, 42)
+        assert_equal(logger._console_logger.start_suite.__self__._writer._width, 42)
 
     def test_unregister_logger(self):
         logger1, logger2, logger3 = LoggerMock(), LoggerMock(), LoggerMock()
@@ -186,56 +177,25 @@ class TestLogger(unittest.TestCase):
         self.logger.unregister_logger(logger2)
         self.logger.unregister_logger(None)
 
-    def test_registering_context_changing_logger(self):
-        self.logger.register_context_changing_logger(LoggerMock())
-        self._number_of_registered_loggers_should_be(1)
-
-    def test_messages_to_context_chagning_loggers(self):
-        log = LoggerMock(('msg', 'INFO'))
-        self.logger.register_context_changing_logger(log)
-        self.logger.write('msg', 'INFO')
-        assert_true(log.msg is not None)
-
-    def test_start_methods_are_called_first_for_context_changing_loggers(self):
-        class FirstLogger:
-            def start_suite(self, suite): self.suite = suite
-            def start_test(self, test): self.test = test
-            def start_keyword(self, kw): self.kw = kw
-        class SecondLogger:
-            def __init__(self, logger): self._reference = logger
-            def start_suite(self, suite): assert_equal(suite, self._reference.suite)
-            def start_test(self, test): assert_equal(test, self._reference.test)
-            def start_keyword(self, kw): assert_equal(kw, self._reference.kw)
-        log1 = FirstLogger()
-        log2 = SecondLogger(log1)
-        self.logger.register_logger(log2)
-        self.logger.register_context_changing_logger(log1)
-        self.logger.start_suite('Suite')
-        self.logger.start_test('Test')
-        self.logger.start_keyword('Keyword')
-
-    def test_end_methods_are_called_last_for_context_changing_loggers(self):
-        class FirstLogger:
-            def end_suite(self, suite): self.suite = suite
-            def end_test(self, test): self.test = test
-            def end_keyword(self, kw): self.kw = kw
-        class SecondLogger:
-            def __init__(self, logger): self._reference = logger
-            def end_suite(self, suite): self.suite = suite; assert_equal(suite, self._reference.suite)
-            def end_test(self, test): assert_equal(test, self._reference.test)
-            def end_keyword(self, kw): assert_equal(kw, self._reference.kw)
-        log1 = FirstLogger()
-        log2 = SecondLogger(log1)
-        self.logger.register_logger(log1)
-        self.logger.register_context_changing_logger(log2)
-        self.logger.end_suite('Suite')
-        self.logger.end_test('Test')
-        self.logger.end_keyword('Keyword')
-        assert_true(log2.suite is not None)
+    def test_start_and_end_loggers_and_iter(self):
+        logger = Logger()
+        console = logger._console_logger.logger
+        xml = LoggerMock()
+        listener = LoggerMock()
+        lib_listener = LoggerMock()
+        other = LoggerMock()
+        logger.register_xml_logger(xml)
+        logger.register_listeners(listener, lib_listener)
+        logger.register_logger(other)
+        assert_equal([proxy.logger for proxy in logger.start_loggers],
+                     [other, console, xml, listener, lib_listener])
+        assert_equal([proxy.logger for proxy in logger.end_loggers],
+                     [listener, lib_listener, console, xml, other])
+        assert_equal(list(logger), list(logger.end_loggers))
 
     def _number_of_registered_loggers_should_be(self, number, logger=None):
         logger = logger or self.logger
-        assert_equal(len(logger._loggers.all_loggers()), number)
+        assert_equal(len(list(logger)), number)
 
 
 if __name__ == "__main__":

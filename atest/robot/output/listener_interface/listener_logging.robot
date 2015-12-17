@@ -68,9 +68,9 @@ Correct messages should be logged to normal log
     [Arguments]    ${kw}    ${name}
     Check Log Message    ${kw.kws[0].msgs[0]}    start_keyword    INFO
     Check Log Message    ${kw.kws[0].msgs[1]}    start_keyword    WARN
-    Check Log Message    ${kw.kws[0].msgs[2]}    Hello says "${name}"!    INFO
-    Check Log Message    ${kw.kws[0].msgs[3]}    log_message: INFO Hello says "${name}"!    INFO
-    Check Log Message    ${kw.kws[0].msgs[4]}    log_message: INFO Hello says "${name}"!    WARN
+    Check Log Message    ${kw.kws[0].msgs[2]}    log_message: INFO Hello says "${name}"!    INFO
+    Check Log Message    ${kw.kws[0].msgs[3]}    log_message: INFO Hello says "${name}"!    WARN
+    Check Log Message    ${kw.kws[0].msgs[4]}    Hello says "${name}"!    INFO
     Check Log Message    ${kw.kws[0].msgs[5]}    end_keyword    INFO
     Check Log Message    ${kw.kws[0].msgs[6]}    end_keyword    WARN
     Check Log Message    ${kw.kws[1].msgs[0]}    start_keyword    INFO
@@ -86,9 +86,9 @@ Correct messages should be logged to normal log
     [Arguments]    ${kw}
     Check Log Message    ${kw.msgs[0]}    start_keyword    INFO
     Check Log Message    ${kw.msgs[1]}    start_keyword    WARN
-    Check Log Message    ${kw.msgs[2]}    Expected failure    FAIL
-    Check Log Message    ${kw.msgs[3]}    log_message: FAIL Expected failure    INFO
-    Check Log Message    ${kw.msgs[4]}    log_message: FAIL Expected failure    WARN
+    Check Log Message    ${kw.msgs[2]}    log_message: FAIL Expected failure    INFO
+    Check Log Message    ${kw.msgs[3]}    log_message: FAIL Expected failure    WARN
+    Check Log Message    ${kw.msgs[4]}    Expected failure    FAIL
     Check Log Message    ${kw.msgs[5]}    end_keyword    INFO
     Check Log Message    ${kw.msgs[6]}    end_keyword    WARN
 
