@@ -124,6 +124,7 @@ class ListenerProxy(AbstractLoggerProxy):
         self.version = self._get_version(listener)
         if self.version == 3:
             self.start_keyword = self.end_keyword = None
+            self.library_import = self.resource_import = self.variables_import = None
 
     def _import_listener(self, listener):
         if not is_string(listener):

@@ -52,14 +52,6 @@ def end_test(data, result):
     data.name = data.doc = 'Not visible in results'
 
 
-def start_keyword(*args):
-    raise SystemExit('Should not be called!')
-
-
-def end_keyword(*args):
-    raise SystemExit('Should not be called!')
-
-
 def log_message(msg):
     msg.message = msg.message.upper()
     msg.timestamp = '20151216 15:51:20.141'
@@ -84,6 +76,10 @@ def debug_file(path):
     print("Debug: %s" % os.path.basename(path), file=sys.__stderr__)
 
 
+def xunit_file(path):
+    print("Xunit: %s" % os.path.basename(path), file=sys.__stderr__)
+
+
 def close():
     print("Close", file=sys.__stderr__)
 
@@ -94,3 +90,11 @@ class TestModifier(SuiteVisitor):
         test.name += ' [start suite]'
         test.doc = (test.doc + ' [start suite]').strip()
         test.tags.add('[start suite]')
+
+
+def not_implemented(*args):
+    raise SystemExit('Should not be called!')
+
+
+start_keyword = end_keyword = not_implemented
+library_import = resource_import = variables_import = not_implemented

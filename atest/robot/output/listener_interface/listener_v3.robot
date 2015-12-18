@@ -1,6 +1,6 @@
 *** Settings ***
 Resource    atest_resource.robot
-Suite Setup       Run Tests    --listener ${DATADIR}/output/listeners/v3.py -l l -r r -b d   misc/pass_and_fail.robot
+Suite Setup       Run Tests    --listener ${DATADIR}/output/listeners/v3.py -l l -r r -b d -x x   misc/pass_and_fail.robot
 
 *** Test Cases ***
 New tests and keywords can be added to suite
@@ -62,6 +62,7 @@ File methods and close are called
    Stderr Should Be Equal To    SEPARATOR=\n
    ...    Debug: d.txt
    ...    Output: output.xml
+   ...    Xunit: x.xml
    ...    Log: l.html
    ...    Report: r.html
    ...    Close\n
