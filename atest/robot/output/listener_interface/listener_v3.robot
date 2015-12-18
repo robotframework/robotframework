@@ -1,7 +1,6 @@
 *** Settings ***
 Resource    atest_resource.robot
-Suite Setup       Run Tests    --listener ${DATADIR}/output/listeners/v3.py    misc/pass_and_fail.robot
-Suite Teardown    Stderr Should Be Empty
+Suite Setup       Run Tests    --listener ${DATADIR}/output/listeners/v3.py -l l -r r -b d   misc/pass_and_fail.robot
 
 *** Test Cases ***
 New tests and keywords can be added to suite
@@ -58,3 +57,11 @@ Log messages and timestamps can be changed
 
 Message to syslog can be changed
    Syslog Should Contain Match    20151216 15:51:20.141 | INFO \ | TESTS EXECUTION ENDED. STATISTICS:
+
+File methods and close are called
+   Stderr Should Be Equal To    SEPARATOR=\n
+   ...    Debug: d.txt
+   ...    Output: output.xml
+   ...    Log: l.html
+   ...    Report: r.html
+   ...    Close\n
