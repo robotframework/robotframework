@@ -40,11 +40,18 @@ Sleeping And Timeouting
     Sleep Without Logging    5
     Fail    This should not be executed
 
-Total Time Too Long
+Total Time Too Long 1
     [Documentation]    FAIL Test timeout 300 milliseconds exceeded.
     [Timeout]    300 milliseconds
     Sleep Without Logging    0.1
     Sleep Without Logging    0.2
+    Sleep Without Logging    0.3
+    Fail    This should not be executed
+
+Total Time Too Long 2
+    [Documentation]    FAIL Test timeout 300 milliseconds exceeded.
+    [Timeout]    300 milliseconds
+    Sleep Without Logging    0.1
     Sleep Without Logging    0.3
     Fail    This should not be executed
 

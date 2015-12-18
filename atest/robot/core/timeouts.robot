@@ -32,8 +32,11 @@ Show Correct Trace Back When Failing In Java Before Timeout
 
 Timeouted Test Timeouts
     Check Test Case    Sleeping And Timeouting
-    Check Test Case    Total Time Too Long
     Check Test Case    Looping Forever And Timeouting
+
+Total Time Too Long
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
 
 Timout Defined For One Test
     Check Test Case    ${TEST NAME}
