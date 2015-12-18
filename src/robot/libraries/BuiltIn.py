@@ -1659,11 +1659,9 @@ class _RunKeyword(_BuiltInBase):
     def repeat_keyword(self, repeat, name, *args):
         """Executes the specified keyword multiple times.
 
-        ``name`` and ``args`` define the keyword that is executed
-        similarly as with `Run Keyword`.
-
-        ``repeat`` specifies how many times (count) or how long time
-        (timeout) the keyword should be executed.
+        ``name`` and ``args`` define the keyword that is executed similarly as
+        with `Run Keyword`. ``repeat`` specifies how many times (as a count) or
+        how long time (as a timeout) the keyword should be executed.
 
         If ``repeat`` is given as count, it specifies how many times the
         keyword should be executed. ``repeat`` can be given as an integer or
@@ -1673,29 +1671,41 @@ class _RunKeyword(_BuiltInBase):
 
         If ``repeat`` is given as timeout, it must be in Robot Framework's
         time format (e.g. ``1 minute``, ``2 min 3 s``). Using a number alone
-        (e.g. 1 or 1.5) does not work in this context.
+        (e.g. ``1`` or ``1.5``) does not work in this context.
 
         If ``repeat`` is zero or negative, the keyword is not executed at
         all. This keyword fails immediately if any of the execution
         rounds fails.
 
         Examples:
-        | Repeat Keyword | 5 times | Go to Previous Page |
-        | Repeat Keyword | ${var}  | Some Keyword | arg1 | arg2 |
-        | Repeat Keyword | 2 mins  | Some Keyword | arg1 | arg2 |
+        | Repeat Keyword | 5 times   | Go to Previous Page |
+        | Repeat Keyword | ${var}    | Some Keyword | arg1 | arg2 |
+        | Repeat Keyword | 2 minutes | Some Keyword | arg1 | arg2 |
+
+        Specifying ``repeat`` as a timeout is new in Robot Framework 3.0.
         """
         try:
-            count = self._get_times_to_repeat(repeat)
+            count = self._get_repeat_count(repeat)
         except RuntimeError as err:
-            timeout = self._get_timeout_to_repeat(repeat)
+            timeout = self._get_repeat_timeout(repeat)
             if timeout is None:
                 raise err
-            keywords = self._yield_repeated_keywords_until(timeout, name, args)
+            keywords = self._keywords_repeated_by_timeout(timeout, name, args)
         else:
-            keywords = self._yield_repeated_keywords(count, name, args)
+            keywords = self._keywords_repeated_by_count(count, name, args)
         self._run_keywords(keywords)
 
-    def _get_timeout_to_repeat(self, timestr):
+    def _get_repeat_count(self, times, require_postfix=False):
+        times = normalize(str(times))
+        if times.endswith('times'):
+            times = times[:-5]
+        elif times.endswith('x'):
+            times = times[:-1]
+        elif require_postfix:
+            raise ValueError
+        return self._convert_to_integer(times)
+
+    def _get_repeat_timeout(self, timestr):
         try:
             float(timestr)
         except ValueError:
@@ -1707,27 +1717,17 @@ class _RunKeyword(_BuiltInBase):
         except ValueError:
             return None
 
-    def _get_times_to_repeat(self, times, require_postfix=False):
-        times = normalize(str(times))
-        if times.endswith('times'):
-            times = times[:-5]
-        elif times.endswith('x'):
-            times = times[:-1]
-        elif require_postfix:
-            raise ValueError
-        return self._convert_to_integer(times)
-
-    def _yield_repeated_keywords(self, times, name, args):
-        if times <= 0:
+    def _keywords_repeated_by_count(self, count, name, args):
+        if count <= 0:
             self.log("Keyword '%s' repeated zero times." % name)
-        for i in range(times):
-            self.log("Repeating keyword, round %d/%d." % (i+1, times))
+        for i in range(count):
+            self.log("Repeating keyword, round %d/%d." % (i + 1, count))
             yield name, args
 
-    def _yield_repeated_keywords_until(self, timeout, name, args):
-        repeat_round = 0
+    def _keywords_repeated_by_timeout(self, timeout, name, args):
         if timeout <= 0:
             self.log("Keyword '%s' repeated zero times." % name)
+        repeat_round = 0
         maxtime = time.time() + timeout
         while time.time() < maxtime:
             repeat_round += 1
@@ -1776,7 +1776,7 @@ class _RunKeyword(_BuiltInBase):
         """
         maxtime = count = -1
         try:
-            count = self._get_times_to_repeat(retry, require_postfix=True)
+            count = self._get_repeat_count(retry, require_postfix=True)
         except ValueError:
             timeout = timestr_to_secs(retry)
             maxtime = time.time() + timeout
