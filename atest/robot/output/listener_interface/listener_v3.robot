@@ -50,3 +50,11 @@ Changing current element docs does not change console output, but does change ou
    Should be equal    ${SUITE.doc}    Some tests here [start suite] [end suite]
    Check stdout contains    Pass [start suite] :: [start suite] ${SPACE*33} | FAIL |
    Check Test Doc    Pass [start suite]    [start suite] [start test] [end test]
+
+Log messages and timestamps can be changed
+   ${tc}=   Get test case    Pass [start suite]
+   Check log message    ${tc.kws[0].kws[0].msgs[0]}    HELLO SAYS "PASS"!
+   Should be equal    ${tc.kws[0].kws[0].msgs[0].timestamp}    20151216 15:51:20.141
+
+Message to syslog can be changed
+   Syslog Should Contain Match    20151216 15:51:20.141 | INFO \ | TESTS EXECUTION ENDED. STATISTICS:
