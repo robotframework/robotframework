@@ -17,22 +17,17 @@ import time
 from threading import current_thread, Lock, Timer
 
 from robot.errors import TimeoutError
-from robot.utils import py2to3
 
 
 class Timeout(object):
 
     def __init__(self, timeout, error):
         self._runner_thread_id = current_thread().ident
-        self._timeout_error = self._create_timeout_error_class(error)
-        self._timer = Timer(timeout, self._raise_timeout_error)
+        self._timer = Timer(timeout, self._timed_out)
+        self._error = error
         self._timeout_occurred = False
         self._finished = False
         self._lock = Lock()
-
-    def _create_timeout_error_class(self, error):
-        return py2to3(type(TimeoutError.__name__, (TimeoutError,),
-                           {'__unicode__': lambda self: error}))
 
     def execute(self, runnable):
         try:
@@ -43,7 +38,7 @@ class Timeout(object):
             return result
         finally:
             if self._timeout_occurred:
-                raise self._timeout_error()
+                raise TimeoutError(self._error)
 
     def _start_timer(self):
         self._timer.start()
@@ -58,23 +53,18 @@ class Timeout(object):
             while True:
                 time.sleep(0)
 
-    def _raise_timeout_error(self):
+    def _timed_out(self):
         with self._lock:
             if self._finished:
                 return
             self._timeout_occurred = True
-        return_code = self._try_to_raise_timeout_error_in_runner_thread()
-        # return code tells how many threads have been influenced
-        while return_code > 1: # if more than one then cancel and retry
-            self._cancel_exception()
-            time.sleep(0) # yield so that other threads will get time
-            return_code = self._try_to_raise_timeout_error_in_runner_thread()
+        self._raise_timeout()
 
-    def _try_to_raise_timeout_error_in_runner_thread(self):
-        return ctypes.pythonapi.PyThreadState_SetAsyncExc(
-            ctypes.c_long(self._runner_thread_id),
-            ctypes.py_object(self._timeout_error))
-
-    def _cancel_exception(self):
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(
-            ctypes.c_long(self._runner_thread_id), None)
+    def _raise_timeout(self):
+        # See, for example, http://tomerfiliba.com/recipes/Thread2/
+        # for more information about using PyThreadState_SetAsyncExc
+        tid = ctypes.c_long(self._runner_thread_id)
+        error = ctypes.py_object(TimeoutError)
+        while ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, error) > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+            time.sleep(0)  # give time for other threads
