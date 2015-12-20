@@ -32,8 +32,10 @@ class Timeout(object):
     def execute(self, runnable):
         try:
             self._start_timer()
-            result = runnable()
-            self._cancel_timer()
+            try:
+                result = runnable()
+            finally:
+                self._cancel_timer()
             self._wait_for_raised_timeout()
             return result
         finally:
