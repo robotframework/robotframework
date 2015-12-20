@@ -138,7 +138,7 @@ class ExampleLibrary:
             remaining = endtime - time.time()
             if remaining <= 0:
                 break
-            time.sleep(min(remaining, 0.1))
+            time.sleep(min(remaining, 0.001))
 
     def return_consumable_iterable(self, *values):
         return iter(values)

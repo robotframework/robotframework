@@ -2285,7 +2285,7 @@ class _Misc(_BuiltInBase):
             remaining = endtime - time.time()
             if remaining <= 0:
                 break
-            time.sleep(min(remaining, 0.5))
+            time.sleep(min(remaining, 0.01))
 
     def catenate(self, *items):
         """Catenates the given items together and returns the resulted string.
