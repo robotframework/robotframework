@@ -82,7 +82,7 @@ Check Repeated Messages
 
 Check Repeated Messages With Time
     [Arguments]    ${kw}    ${msg}=${None}
-    Should Be True    ${kw.kw_count} > 1
+    Should Be True    ${kw.kw_count} > 0
     : FOR    ${i}    IN RANGE    ${kw.kw_count}
     \    Check Log Message    ${kw.msgs[${i}]}
     \    ...    Repeating keyword, round ${i+1}, *remaining.    pattern=yes
