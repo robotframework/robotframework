@@ -38,7 +38,7 @@ class GenerateApiDocs(object):
         self._clean_directory(self.AUTODOC_DIR)
         print 'Genearting autodoc'
         call(['sphinx-apidoc', '--output-dir', self.AUTODOC_DIR, '--force',
-              '--no-toc', '--maxdepth', '2', self.ROBOT_DIR])
+              '--no-toc', '--maxdepth', '2', '--module-first', self.ROBOT_DIR])
 
     def create_javadoc(self):
         self._clean_directory(self.JAVA_TARGET)
