@@ -3,11 +3,8 @@ import re
 
 from robot import utils
 from robot.utils.asserts import assert_equal
-from robot.result.resultbuilder import ExecutionResultBuilder
-from robot.result.executionresult import Result
-from robot.result.testsuite import TestSuite
-from robot.result.testcase import TestCase
-from robot.result.keyword import Keyword
+from robot.result import (ExecutionResultBuilder, Keyword, TestCase, TestSuite,
+                          Result)
 from robot.libraries.BuiltIn import BuiltIn
 
 

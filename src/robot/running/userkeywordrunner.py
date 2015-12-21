@@ -15,7 +15,7 @@
 from robot.errors import (ExecutionFailed, ReturnFromKeyword, ExecutionPassed,
                           UserKeywordExecutionFailed, DataError, VariableError,
                           PassExecution)
-from robot.result.keyword import Keyword as KeywordResult
+from robot.result import Keyword as KeywordResult
 from robot.utils import DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_var, VariableAssignment
 

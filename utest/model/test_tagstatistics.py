@@ -4,7 +4,7 @@ from robot.model import Criticality
 from robot.utils.asserts import assert_equal, assert_none
 from robot.model.tagstatistics import TagStatisticsBuilder, TagStatLink
 from robot.model import Tags
-from robot.result.testcase import TestCase
+from robot.result import TestCase
 from robot.utils import MultiMatcher
 
 

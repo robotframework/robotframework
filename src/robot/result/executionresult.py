@@ -15,7 +15,7 @@
 from robot.model import Statistics
 
 from .executionerrors import ExecutionErrors
-from .testsuite import TestSuite
+from .model import TestSuite
 
 
 class Result(object):

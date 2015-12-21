@@ -15,7 +15,7 @@
 from robot.model import ItemList
 from robot.utils import setter
 
-from .message import Message
+from .model import Message
 
 
 class ExecutionErrors(object):

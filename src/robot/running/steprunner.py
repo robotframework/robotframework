@@ -14,7 +14,7 @@
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExitForLoop, ContinueForLoop, DataError)
-from robot.result.keyword import Keyword as KeywordResult
+from robot.result import Keyword as KeywordResult
 from robot.utils import (format_assign_message, frange, get_error_message,
                          is_list_like, is_number, plural_or_not as s, type_name)
 from robot.variables import is_scalar_var

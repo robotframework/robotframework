@@ -2,10 +2,7 @@ import unittest
 from os.path import abspath, basename, dirname, join
 
 from robot.utils.asserts import assert_equal, assert_true
-from robot.result.testsuite import TestSuite
-from robot.result.testcase import TestCase
-from robot.result.keyword import Keyword
-from robot.result.message import Message
+from robot.result import Message, Keyword, TestCase, TestSuite
 from robot.result.executionerrors import ExecutionErrors
 from robot.model import Statistics
 from robot.reporting.jsmodelbuilders import *

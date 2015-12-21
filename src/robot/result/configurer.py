@@ -23,7 +23,7 @@ class SuiteConfigurer(model.SuiteConfigurer):
     :meth:`~robot.result.testsuite.TestSuite.remove_keywords`,
     :meth:`~robot.result.testsuite.TestSuite.filter_messages` and
     :meth:`~robot.result.testsuite.TestSuite.set_criticality` methods
-    and sets it's start and end time based on the given named parameters.
+    and sets its start and end time based on the given named parameters.
 
     ``base_config`` is forwarded to
     :class:`robot.model.SuiteConfigurer <robot.model.configurer.SuiteConfigurer>`

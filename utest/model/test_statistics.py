@@ -2,8 +2,7 @@ import unittest
 
 from robot.utils.asserts import assert_equal
 from robot.model.statistics import Statistics
-from robot.result.testsuite import TestSuite
-from robot.result.testcase import TestCase
+from robot.result import TestCase, TestSuite
 
 
 def verify_stat(stat, name, passed, failed, critical=None, combined=None,

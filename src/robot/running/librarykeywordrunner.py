@@ -14,7 +14,7 @@
 
 from robot.errors import DataError
 from robot.model import Keywords
-from robot.result.keyword import Keyword as KeywordResult
+from robot.result import Keyword as KeywordResult
 from robot.utils import prepr, unic
 from robot.variables import VariableAssignment, contains_var, is_list_var
 

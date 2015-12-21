@@ -20,10 +20,92 @@ from robot import model, utils
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
 from .keywordremover import KeywordRemover
-from .keyword import Keyword
 from .suiteteardownfailed import (SuiteTeardownFailureHandler,
                                   SuiteTeardownFailed)
-from .testcase import TestCase
+
+
+class Message(model.Message):
+    __slots__ = []
+
+
+class Keyword(model.Keyword):
+    """Results of a single keyword."""
+    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message']
+    message_class = Message
+
+    def __init__(self, kwname='', libname='', doc='', args=(), assign=(),
+                 tags=(), timeout=None, type='kw',  status='FAIL',
+                 starttime=None, endtime=None):
+        model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
+        #: Name of the keyword without library or resource name.
+        self.kwname = kwname or ''
+        #: Name of library or resource containing this keyword.
+        self.libname = libname or ''
+        #: String 'PASS' or 'FAIL'.
+        self.status = status
+        #: Keyword execution start time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.starttime = starttime
+        #: Keyword execution end time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.endtime = endtime
+        #: Keyword status message. Used only with suite teardowns.
+        self.message = ''
+
+    @property
+    def elapsedtime(self):
+        """Elapsed execution time of the keyword in milliseconds."""
+        return utils.get_elapsed_time(self.starttime, self.endtime)
+
+    @property
+    def name(self):
+        if not self.libname:
+            return self.kwname
+        return '%s.%s' % (self.libname, self.kwname)
+
+    @property
+    def passed(self):
+        """``True`` if the keyword did pass, ``False`` otherwise."""
+        return self.status == 'PASS'
+
+
+class TestCase(model.TestCase):
+    """Results of a single test case."""
+    __slots__ = ['status', 'message', 'starttime', 'endtime']
+    keyword_class = Keyword
+
+    def __init__(self, name='', doc='', tags=None, timeout=None, status='FAIL',
+                 message='', starttime=None, endtime=None):
+        model.TestCase.__init__(self, name, doc, tags, timeout)
+        #: String 'PASS' of 'FAIL'.
+        self.status = status
+        #: Possible failure message.
+        self.message = message
+        #: Test case execution start time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.starttime = starttime
+        #: Test case execution end time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.endtime = endtime
+
+    @property
+    def elapsedtime(self):
+        """Elapsed execution time of the test case in milliseconds."""
+        return utils.get_elapsed_time(self.starttime, self.endtime)
+
+    @property
+    def passed(self):
+        """``True`` if the test case did pass, ``False`` otherwise."""
+        return self.status == 'PASS'
+
+    @passed.setter
+    def passed(self, passed):
+        self.status = 'PASS' if passed else 'FAIL'
+
+    @property
+    def critical(self):
+        """``True`` if the test case is marked as critical,
+        ``False`` otherwise.
+        """
+        if not self.parent:
+            return True
+        return self.parent.criticality.test_is_critical(self)
 
 
 class TestSuite(model.TestSuite):

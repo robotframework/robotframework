@@ -29,6 +29,6 @@ Example
 """
 
 from .executionresult import Result
-from .resultbuilder import ExecutionResult
-from .testsuite import TestSuite
+from .model import Message, Keyword, TestCase, TestSuite
+from .resultbuilder import ExecutionResult, ExecutionResultBuilder
 from .visitor import ResultVisitor

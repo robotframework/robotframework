@@ -74,10 +74,12 @@ class TestSuite(ModelObject):
 
     @setter
     def tests(self, tests):
+        """A list-like :class:`~.TestCases` object containing tests."""
         return TestCases(self.test_class, self, tests)
 
     @setter
     def keywords(self, keywords):
+        """A list-like :class:`~.Keywords` object containing keywords."""
         return Keywords(self.keyword_class, self, keywords)
 
     @property

@@ -14,7 +14,7 @@
 
 from robot.errors import ExecutionFailed
 from robot.model import Tags
-from robot.result.keyword import Keyword as KeywordResult
+from robot.result import Keyword as KeywordResult
 from robot.utils import unic
 
 from .arguments import ArgumentSpec
