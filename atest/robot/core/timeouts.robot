@@ -37,6 +37,8 @@ Timeouted Test Timeouts
 Total Time Too Long
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
+    Check Test Case    ${TEST NAME} 4
 
 Timout Defined For One Test
     Check Test Case    ${TEST NAME}
