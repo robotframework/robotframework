@@ -1,6 +1,11 @@
 robot.conf package
 ==================
 
+.. automodule:: robot.conf
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -21,10 +26,3 @@ robot.conf.settings module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.conf
-    :members:
-    :undoc-members:
-    :show-inheritance:

@@ -1,6 +1,11 @@
 robot.output.console package
 ============================
 
+.. automodule:: robot.output.console
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -37,10 +42,3 @@ robot.output.console.verbose module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.output.console
-    :members:
-    :undoc-members:
-    :show-inheritance:

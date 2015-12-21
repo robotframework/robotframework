@@ -1,6 +1,11 @@
 robot.running.timeouts package
 ==============================
 
+.. automodule:: robot.running.timeouts
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -37,10 +42,3 @@ robot.running.timeouts.windows module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.running.timeouts
-    :members:
-    :undoc-members:
-    :show-inheritance:

@@ -1,6 +1,11 @@
 robot.parsing package
 =====================
 
+.. automodule:: robot.parsing
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -93,10 +98,3 @@ robot.parsing.txtreader module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.parsing
-    :members:
-    :undoc-members:
-    :show-inheritance:

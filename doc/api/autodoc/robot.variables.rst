@@ -1,6 +1,11 @@
 robot.variables package
 =======================
 
+.. automodule:: robot.variables
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -93,10 +98,3 @@ robot.variables.variables module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.variables
-    :members:
-    :undoc-members:
-    :show-inheritance:

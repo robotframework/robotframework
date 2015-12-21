@@ -1,6 +1,11 @@
 robot package
 =============
 
+.. automodule:: robot
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -97,10 +102,3 @@ robot.version module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot
-    :members:
-    :undoc-members:
-    :show-inheritance:

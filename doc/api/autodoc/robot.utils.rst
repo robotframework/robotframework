@@ -1,6 +1,11 @@
 robot.utils package
 ===================
 
+.. automodule:: robot.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -301,10 +306,3 @@ robot.utils.utf8reader module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:

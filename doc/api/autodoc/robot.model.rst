@@ -1,6 +1,11 @@
 robot.model package
 ===================
 
+.. automodule:: robot.model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -173,10 +178,3 @@ robot.model.visitor module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.model
-    :members:
-    :undoc-members:
-    :show-inheritance:

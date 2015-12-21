@@ -1,6 +1,11 @@
 robot.libraries package
 =======================
 
+.. automodule:: robot.libraries
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -133,10 +138,3 @@ robot.libraries.dialogs_py module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.libraries
-    :members:
-    :undoc-members:
-    :show-inheritance:

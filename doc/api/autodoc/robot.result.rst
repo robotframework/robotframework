@@ -1,6 +1,11 @@
 robot.result package
 ====================
 
+.. automodule:: robot.result
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -101,10 +106,3 @@ robot.result.xmlelementhandlers module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.result
-    :members:
-    :undoc-members:
-    :show-inheritance:

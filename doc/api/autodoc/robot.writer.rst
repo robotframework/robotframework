@@ -1,6 +1,11 @@
 robot.writer package
 ====================
 
+.. automodule:: robot.writer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -69,10 +74,3 @@ robot.writer.rowsplitter module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.writer
-    :members:
-    :undoc-members:
-    :show-inheritance:

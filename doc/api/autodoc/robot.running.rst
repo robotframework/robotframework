@@ -1,6 +1,11 @@
 robot.running package
 =====================
 
+.. automodule:: robot.running
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -197,10 +202,3 @@ robot.running.userkeywordrunner module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.running
-    :members:
-    :undoc-members:
-    :show-inheritance:

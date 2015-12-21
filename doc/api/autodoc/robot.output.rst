@@ -1,6 +1,11 @@
 robot.output package
 ====================
 
+.. automodule:: robot.output
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -108,10 +113,3 @@ robot.output.xmllogger module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.output
-    :members:
-    :undoc-members:
-    :show-inheritance:

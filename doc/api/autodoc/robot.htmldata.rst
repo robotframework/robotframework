@@ -1,6 +1,11 @@
 robot.htmldata package
 ======================
 
+.. automodule:: robot.htmldata
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -45,10 +50,3 @@ robot.htmldata.template module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.htmldata
-    :members:
-    :undoc-members:
-    :show-inheritance:

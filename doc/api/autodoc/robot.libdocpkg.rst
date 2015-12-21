@@ -1,6 +1,11 @@
 robot.libdocpkg package
 =======================
 
+.. automodule:: robot.libdocpkg
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -85,10 +90,3 @@ robot.libdocpkg.xmlwriter module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.libdocpkg
-    :members:
-    :undoc-members:
-    :show-inheritance:
