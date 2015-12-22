@@ -49,8 +49,8 @@ to Robot Framework 3.0.
 Some of the removed features were deprecated only in `Robot Framework 2.9
 <rf-2.9.rst>`_. If you encounter lot of errors when upgrading from RF 2.8
 or earlier, it might be a good idea to upgrade first to `RF 2.9.2
-<rf-2.9.2.rst>`_), the latest RF 2.9.x release, to get deprecation warnings
-about features that have now be removed altogether.
+<rf-2.9.2.rst>`_ to get deprecation warnings about features that have now
+be removed altogether.
 
 Most important enhancements
 ===========================
