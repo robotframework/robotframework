@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import NormalizedDict, py2to3
+from robot.utils import is_string, NormalizedDict, py2to3, unic
 
 
 @py2to3
@@ -20,6 +20,13 @@ class Metadata(NormalizedDict):
 
     def __init__(self, initial=None):
         NormalizedDict.__init__(self, initial, ignore='_')
+
+    def __setitem__(self, key, value):
+        if not is_string(key):
+            key = unic(key)
+        if not is_string(value):
+            value = unic(value)
+        NormalizedDict.__setitem__(self, key, value)
 
     def __unicode__(self):
         return u'{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)

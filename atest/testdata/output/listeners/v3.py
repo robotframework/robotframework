@@ -13,6 +13,7 @@ def start_suite(data, result):
     result.doc = (result.doc + ' [start suite]').strip()
     result.metadata['suite'] = '[start]'
     result.metadata['tests'] = ''
+    result.metadata['number'] = 42
     assert len(data.tests) == 2
     assert len(result.tests) == 0
     data.tests.create(name='New')
@@ -25,6 +26,8 @@ def end_suite(data, result):
     assert data.name == data.doc == result.name == 'Not visible in results'
     assert result.doc.endswith('[start suite]')
     assert result.metadata['suite'] == '[start]'
+    assert result.metadata['tests'] == 'xxx'
+    assert result.metadata['number'] == '42'
     result.name += ' [end suite]'
     result.doc += ' [end suite]'
     result.metadata['suite'] += ' [end]'
