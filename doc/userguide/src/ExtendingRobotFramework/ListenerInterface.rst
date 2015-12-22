@@ -58,7 +58,7 @@ Listener interface versions
 There are two supported listener interface versions. Listener version 2 has
 been available since Robot Framework 2.1, and version 3 is supported by
 Robot Framework 3.0 and newer. A listener must have attribute
-`ROBOT_LISTENER_API_VERSION` with value 2 or 3, either has a string or as an
+`ROBOT_LISTENER_API_VERSION` with value 2 or 3, either as a string or as an
 integer, depending on which API version it uses. There has also been an older
 listener version 1, but it is not supported anymore by Robot Framework 3.0.
 
@@ -644,10 +644,11 @@ benefit of using the listener API is that modifications can be done
 dynamically based on execution results or otherwise. This allows, for example,
 interesting possibilities for model based testing.
 
-Unlike the pre-run modifier API, listener API is not build on top of
-Robot Framework's internal `visitor interface`_, but listeners can still
-use visitors if needed. For example, the `SelectEveryXthTest` visitor used
-in `pre-run modifier`_ examples could be used like this:
+Although the listener interface is not built on top of Robot Framework's
+internal `visitor interface`_ similarly as the pre-run modifier API,
+listeners can still use the visitors interface themselves. For example,
+the `SelectEveryXthTest` visitor used in `pre-run modifier`_ examples could
+be used like this:
 
 .. sourcecode:: python
 
