@@ -7,9 +7,9 @@ Robot Framework 3.0 beta 1
 Robot Framework 3.0 beta 1 is the last planned preview release before
 release candidates and the final 3.0 release. The biggest enhancements in
 Robot Framework 3.0 are Python 3 support and a new listener interface
-that allows modifying executed tests as well as results. Also start-up
-scripts have been enhanced and it is now possible to run tests with `robot`
-command and like `python -m robot`.
+that allows modifying executed tests as well as execution results. Also
+start-up scripts have been enhanced and it is now possible to run tests
+with new `robot` command and like `python -m robot`.
 
 All issues targeted for RF 3.0 can be found from the `issue tracker
 <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0>`_.
@@ -32,11 +32,25 @@ even for final releases in the future. The standalone jar distribution can be
 created if there are requests, but we only upload final releases to the Maven 
 central.
 
-Robot Framework 3.0 beta 1 was released on Tuesday December 22, 2015.
+Robot Framework 3.0 beta 1 was released on Wednesday December 23, 2015.
 
 .. contents::
    :depth: 2
    :local:
+
+Upgrading from earlier versions
+===============================
+
+As usual with new major releases, there are some `backwards incompatible
+changes`_ and `deprecated features`_ that should be taken into account
+especially when upgrading larger amount of tests or bigger test infrastructure
+to Robot Framework 3.0.
+
+Some of the removed features were deprecated only in `Robot Framework 2.9
+<rf-2.9.rst>`_. If you encounter lot of errors when upgrading from RF 2.8
+or earlier, it might be a good idea to upgrade first to `RF 2.9.2
+<rf-2.9.2.rst>`_), the latest RF 2.9.x release, to get deprecation warnings
+about features that have now be removed altogether.
 
 Most important enhancements
 ===========================
@@ -49,7 +63,8 @@ currently supported Python versions are 2.6, 2.7, and 3.3 and newer.
 Installation on Python 3 works exactly as it does for Python 2, and
 the recommended installation method is with pip::
 
-    pip install --pre robotframework
+    pip3 install --pre robotframework
+    python3 -m pip install --pre robotframework
 
 Note that while the standard libraries distributed with Robot Framework do work
 with Python 3, most other external libraries currently do not.
@@ -65,7 +80,7 @@ can be modified so that the executed tests and/or created results are affected.
 
 For more information about the new listener API, including interesting
 usage examples, see the `Listener interface`__ section from Robot
-Framework User Guide version 3.0 beta 1 or newer.
+Framework User Guide version 3.0 beta 1.
 
 .. TODO: Update the version in above text and below URL in the final release!!
 
@@ -212,7 +227,7 @@ Deprecated synonyms for settings
 Setting names `Document` and `Suite/Test Pre/Post Condition` have been
 deprecated in favour of `Documentation` and `Suite/Test Setup/Teardown`,
 respectively (`#2207`_). The motivation is to make the overall syntax
-support by Robot Framework simpler for users and for external tools.
+supported by Robot Framework simpler for users and for external tools.
 None of examples in the Robot Framework User Guide or in the demo projects
 have used these deprecated forms, and we assume that they are not widely used.
 If, however, some of them are in common use, we can still consider removing
@@ -224,7 +239,7 @@ Deprecated synonyms for tables
 Table names `Metadata` and `User Keyword` have been deprecated in favour of
 `Settings` and `Keywords`, respectively (`#2208`_). Similarly as with
 `deprecated synonyms for settings`_, the motivation is making the syntax
-simpler, we do not expect them to be used too wildly, and can consider
+simpler, we do not expect them to be used too wildly, and we can consider
 reverting the deprecation if our expectation is wrong.
 
 Python 2.6 support
