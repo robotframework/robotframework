@@ -33,6 +33,8 @@ but can naturally be given also as an absolute path. Regardless of how
 a path to an individual output file is obtained, its parent directory
 is created automatically, if it does not exist already.
 
+.. _output.xml:
+
 Output file
 ~~~~~~~~~~~
 
@@ -115,6 +117,7 @@ name is :file:`report.html`.
    An example report file of failed test execution
 
 .. _xunit:
+.. _xunit file:
 
 XUnit compatible result file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -575,6 +578,8 @@ Examples::
    rebot --starttime 20080611-17:59:20.495 output1.xml output2.xml
    rebot --starttime 20080611-175920 --endtime 20080611-180242 *.xml
    rebot --starttime 20110302-1317 --endtime 20110302-11418 myoutput.xml
+
+.. _pre-Rebot modifier:
 
 Programmatic modification of results
 ------------------------------------

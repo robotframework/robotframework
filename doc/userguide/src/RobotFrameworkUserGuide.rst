@@ -196,7 +196,6 @@ __ http://creativecommons.org/licenses/by/3.0/
 
 .. _library API: `Creating test libraries`_
 .. _static library API: `Creating static keywords`_
-.. _listener interface: `Using listener interface`_
 .. _listener: `listener interface`_
 .. _listeners: `listener interface`_
 
@@ -210,7 +209,16 @@ __ http://creativecommons.org/licenses/by/3.0/
 .. _download page: http://downloads.robotframework.org
 .. _version control system: http://source.robotframework.org
 .. _previous User Guides: http://robotframework.org/robotframework/#user-guide
+
+.. API docs
+
 .. _API documentation: http://robot-framework.readthedocs.org
+.. _visitor interface: http://robot-framework.readthedocs.org/en/master/autodoc/robot.model.html#module-robot.model.visitor
+.. _running.TestSuite: http://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#robot.running.model.TestSuite
+.. _running.TestCase: http://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#robot.running.model.TestCase
+.. _result.TestSuite: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.TestSuite
+.. _result.TestCase: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.TestCase
+.. _result.Message: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.Message
 
 .. External link targets
 

@@ -1,12 +1,19 @@
-Using listener interface
-========================
+Listener interface
+==================
 
 Robot Framework has a listener interface that can be used to receive
-notifications about test execution. Listeners are classes or modules
-with certain special methods, and they can be implemented both with
-Python and Java. Example uses of the listener interface include
+notifications about test execution. Example usages include
 external test monitors, sending a mail message when a test fails, and
-communicating with other systems.
+communicating with other systems. Listener API version 3 also makes
+it possible to modify tests and results during the test execution.
+
+Listeners are classes or modules with certain special methods, and they
+can be implemented both with Python and Java. Listeners that monitor
+the whole test execution must be taken into use from the command line.
+In addition to that, `test libraries can register listeners`__ that receive
+notifications while that library is active.
+
+__ `Test libraries as listeners`_
 
 .. contents::
    :depth: 2
@@ -16,7 +23,7 @@ Taking listeners into use
 -------------------------
 
 Listeners are taken into use from the command line with the :option:`--listener`
-option, so that the name of the listener is given to it as an argument. The
+option so that the name of the listener is given to it as an argument. The
 listener name is got from the name of the class or module implementing the
 listener interface, similarly as `test library names`_ are got from classes
 implementing them. The specified listeners must be in the same `module search
@@ -45,46 +52,62 @@ quotes on UNIX-like operating systems::
 
 __ `Using physical path to library`_
 
-Available listener interface methods
-------------------------------------
+Listener interface versions
+---------------------------
 
-Robot Framework creates an instance of the listener class with given arguments
-when test execution starts. During the test execution, Robot Framework calls
-listeners' methods when test suites, test cases and keywords start and end. It
-also calls the appropriate methods when output files are ready, and finally at
-the end it calls the `close` method. A listener is not required to
+There are two supported listener interface versions. Listener version 2 has
+been available since Robot Framework 2.1, and version 3 is supported by
+Robot Framework 3.0 and newer. A listener must have attribute
+`ROBOT_LISTENER_API_VERSION` with value 2 or 3, either has a string or as an
+integer, depending on which API version it uses. There has also been an older
+listener version 1, but it is not supported anymore by Robot Framework 3.0.
+
+The main difference between listener versions 2 and 3 is that the former only
+gets information about the execution but cannot directly affect it. The latter
+interface gets data and result objects Robot Framework itself uses and is thus
+able to alter execution and change results. See `listener examples`_ for more
+information about what listeners can do.
+
+Another difference between versions 2 and 3 is that the former supports
+both Python and Java but the latter supports only Python.
+
+Listener interface methods
+--------------------------
+
+Robot Framework creates instances of listener classes when the test execution
+starts and uses listeners implemented as modules directly. During the test
+execution different listener methods are called when test suites, test cases
+and keywords start and end. Additional methods are called when a library or
+a resource or variable file is imported, when output files are ready, and
+finally when the whole test execution ends. A listener is not required to
 implement any official interface, and it only needs to have the methods it
 actually needs.
 
-Listener interface versions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Listener versions 2 and 3 have mostly the same methods, but the arguments
+they accept are different. These methods and their arguments are explained
+in the following sections. All methods that have an underscore in their name
+have also *camelCase* alternative. For example, `start_suite` method can
+be used also with name `startSuite`.
 
-The signatures of methods related to test execution progress were changed in
-Robot Framework 2.1. This change was made to allow new information to be added
-to the listener interface without breaking existing listeners.
-A listener must have attribute `ROBOT_LISTENER_API_VERSION` with value 2,
-either as a string or as an integer, to be recognized as a listener.
-The old listener interface has been removed in Robot Framework 3.0.
+Listener version 2
+~~~~~~~~~~~~~~~~~~
 
-Listener interface method signatures
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Listener methods in the API version 2 are listed in the following table.
+All methods related to test execution progress have the same signature
+`method(name, attributes)`, where `attributes` is a dictionary containing
+details of the event. Listener methods are free to do whatever they want
+to do with the information they receive, but they cannot directly change
+it. If that is needed, `listener version 3`_ can be used instead.
 
-All listener methods related to test execution progress have the same
-signature `method(name, attributes)`, where `attributes`
-is a dictionary containing details of the event. The following table
-lists all the available methods in the listener interface and the
-contents of the `attributes` dictionary, where applicable. Keys
-of the dictionary are strings. All of these methods have also
-`camelCase` aliases.  Thus, for example, `startSuite` is a
-synonym to `start_suite`.
-
-.. table:: Available methods in the listener interface
+.. table:: Methods in the listener API 2
    :class: tabular
 
    +------------------+------------------+----------------------------------------------------------------+
-   |    Method        |    Arguments     |                     Attributes / Explanation                   |
+   |    Method        |    Arguments     |                          Documentation                         |
    +==================+==================+================================================================+
-   | start_suite      | name, attributes | Keys in the attribute dictionary:                              |
+   | start_suite      | name, attributes | Called when a test suite starts.                               |
+   |                  |                  |                                                                |
+   |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
    |                  |                  | * `id`: Suite id. `s1` for the top level suite, `s1-s1`        |
    |                  |                  |   for its first child suite, `s1-s2` for the second            |
@@ -102,7 +125,9 @@ synonym to `start_suite`.
    |                  |                  |   and all its sub-suites as an integer.                        |
    |                  |                  | * `starttime`: Suite execution start time.                     |
    +------------------+------------------+----------------------------------------------------------------+
-   | end_suite        | name, attributes | Keys in the attribute dictionary:                              |
+   | end_suite        | name, attributes | Called when a test suite ends.                                 |
+   |                  |                  |                                                                |
+   |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
    |                  |                  | * `id`: Same as in `start_suite`.                              |
    |                  |                  | * `longname`: Same as in `start_suite`.                        |
@@ -119,7 +144,9 @@ synonym to `start_suite`.
    |                  |                  | * `message`: Error message if suite setup or teardown          |
    |                  |                  |   has failed, empty otherwise.                                 |
    +------------------+------------------+----------------------------------------------------------------+
-   | start_test       | name, attributes | Keys in the attribute dictionary:                              |
+   | start_test       | name, attributes | Called when a test case starts.                                |
+   |                  |                  |                                                                |
+   |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
    |                  |                  | * `id`: Test id in format like `s1-s2-t2`, where               |
    |                  |                  |   the beginning is the parent suite id and the last part       |
@@ -133,7 +160,9 @@ synonym to `start_suite`.
    |                  |                  |   An empty string if the test not templated.                   |
    |                  |                  | * `starttime`: Test execution execution start time.            |
    +------------------+------------------+----------------------------------------------------------------+
-   | end_test         | name, attributes | Keys in the attribute dictionary:                              |
+   | end_test         | name, attributes | Called when a test case ends.                                  |
+   |                  |                  |                                                                |
+   |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
    |                  |                  | * `id`: Same as in `start_test`.                               |
    |                  |                  | * `longname`: Same as in `start_test`.                         |
@@ -149,11 +178,13 @@ synonym to `start_suite`.
    |                  |                  | * `message`: Status message. Normally an error                 |
    |                  |                  |   message or an empty string.                                  |
    +------------------+------------------+----------------------------------------------------------------+
-   | start_keyword    | name, attributes | `name` is the full keyword name containing                     |
+   | start_keyword    | name, attributes | Called when a keyword starts.                                  |
+   |                  |                  |                                                                |
+   |                  |                  | `name` is the full keyword name containing                     |
    |                  |                  | possible library or resource name as a prefix.                 |
    |                  |                  | For example, `MyLibrary.Example Keyword`.                      |
    |                  |                  |                                                                |
-   |                  |                  | Keys in the attribute dictionary:                              |
+   |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
    |                  |                  | * `type`: String `Keyword` for normal keywords, `Setup` or     |
    |                  |                  |   `Teardown` for the top level keyword used as setup/teardown, |
@@ -172,11 +203,13 @@ synonym to `start_suite`.
    |                  |                  | * `tags`: `Keyword tags`_ as a list of strings. New in RF 3.0. |
    |                  |                  | * `starttime`: Keyword execution start time.                   |
    +------------------+------------------+----------------------------------------------------------------+
-   | end_keyword      | name, attributes | `name` is the full keyword name containing                     |
+   | end_keyword      | name, attributes | Called when a keyword ends.                                    |
+   |                  |                  |                                                                |
+   |                  |                  | `name` is the full keyword name containing                     |
    |                  |                  | possible library or resource name as a prefix.                 |
    |                  |                  | For example, `MyLibrary.Example Keyword`.                      |
    |                  |                  |                                                                |
-   |                  |                  | Keys in the attribute dictionary:                              |
+   |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
    |                  |                  | * `type`: Same as with `start_keyword`.                        |
    |                  |                  | * `kwname`: Same as with `start_keyword`.                      |
@@ -192,7 +225,8 @@ synonym to `start_suite`.
    |                  |                  | * `status`: Keyword status as string `PASS` or `FAIL`.         |
    +------------------+------------------+----------------------------------------------------------------+
    | log_message      | message          | Called when an executed keyword writes a log message.          |
-   |                  |                  | `message` is a dictionary with the following keys:             |
+   |                  |                  |                                                                |
+   |                  |                  | `message` is a dictionary with the following contents:         |
    |                  |                  |                                                                |
    |                  |                  | * `message`: The content of the message.                       |
    |                  |                  | * `level`: `Log level`_ used in logging the message.           |
@@ -202,17 +236,20 @@ synonym to `start_suite`.
    |                  |                  |   should be interpreted as HTML or not.                        |
    |                  |                  |                                                                |
    |                  |                  | Starting from RF 3.0, this method is not called if the message |
-   |                  |                  | has level below the current `threshold level`__.               |
+   |                  |                  | has level below the current `threshold level <Log levels_>`_.  |
    +------------------+------------------+----------------------------------------------------------------+
-   | message          | message          | Called when the framework itself writes a syslog_              |
-   |                  |                  | message. `message` is a dictionary with                        |
-   |                  |                  | same keys as with `log_message` method.                        |
-   +------------------+------------------+----------------------------------------------------------------+
-   | library_import   | name, attributes | Called when a library has been imported. `name` is the name of |
-   |                  |                  | the imported library. If the library has been imported using   |
-   |                  |                  | the `WITH NAME syntax`_, `name` is the specified alias.        |
+   | message          | message          | Called when the framework itself writes a syslog_ message.     |
    |                  |                  |                                                                |
-   |                  |                  | Keys in the attribute dictionary:                              |
+   |                  |                  | `message` is a dictionary with the same contents as with       |
+   |                  |                  | `log_message` method.                                          |
+   +------------------+------------------+----------------------------------------------------------------+
+   | library_import   | name, attributes | Called when a library has been imported.                       |
+   |                  |                  |                                                                |
+   |                  |                  | `name` is the name of the imported library. If the library     |
+   |                  |                  | has been imported using the `WITH NAME syntax`_, `name` is     |
+   |                  |                  | the specified alias.                                           |
+   |                  |                  |                                                                |
+   |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
    |                  |                  | * `args`: Arguments passed to the library as a list.           |
    |                  |                  | * `originalname`: The original library name when using the     |
@@ -226,11 +263,12 @@ synonym to `start_suite`.
    |                  |                  |                                                                |
    |                  |                  | New in Robot Framework 2.9.                                    |
    +------------------+------------------+----------------------------------------------------------------+
-   | resource_import  | name, attributes | Called when a resource file has been imported. `name` is       |
-   |                  |                  | the name of the imported resource file without the file        |
-   |                  |                  | extension.                                                     |
+   | resource_import  | name, attributes | Called when a resource file has been imported.                 |
    |                  |                  |                                                                |
-   |                  |                  | Keys in the attribute dictionary:                              |
+   |                  |                  | `name` is the name of the imported resource file without       |
+   |                  |                  | the file extension.                                            |
+   |                  |                  |                                                                |
+   |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
    |                  |                  | * `source`: An absolute path to the imported resource file.    |
    |                  |                  | * `importer`: An absolute path to the file importing the       |
@@ -239,11 +277,12 @@ synonym to `start_suite`.
    |                  |                  |                                                                |
    |                  |                  | New in Robot Framework 2.9.                                    |
    +------------------+------------------+----------------------------------------------------------------+
-   | variables_import | name, attributes | Called when a variable file has been imported. `name` is       |
-   |                  |                  | the name of the imported variable file with the file           |
-   |                  |                  | extension.                                                     |
+   | variables_import | name, attributes | Called when a variable file has been imported.                 |
    |                  |                  |                                                                |
-   |                  |                  | Keys in the attribute dictionary:                              |
+   |                  |                  | `name` is the name of the imported variable file with          |
+   |                  |                  | the file extension.                                            |
+   |                  |                  |                                                                |
+   |                  |                  | Contents of the attribute dictionary:                          |
    |                  |                  |                                                                |
    |                  |                  | * `args`: Arguments passed to the variable file as a list.     |
    |                  |                  | * `source`: An absolute path to the imported variable file.    |
@@ -253,21 +292,30 @@ synonym to `start_suite`.
    |                  |                  |                                                                |
    |                  |                  | New in Robot Framework 2.9.                                    |
    +------------------+------------------+----------------------------------------------------------------+
-   | output_file      | path             | Called when writing to an output file is                       |
-   |                  |                  | finished. The path is an absolute path to the file.            |
+   | output_file      | path             | Called when writing to an `output file`_ is ready.             |
+   |                  |                  |                                                                |
+   |                  |                  | `path` is an absolute path to the file.                        |
    +------------------+------------------+----------------------------------------------------------------+
-   | log_file         | path             | Called when writing to a log file is                           |
-   |                  |                  | finished. The path is an absolute path to the file.            |
+   | log_file         | path             | Called when writing to a `log file`_ is ready.                 |
+   |                  |                  |                                                                |
+   |                  |                  | `path` is an absolute path to the file.                        |
    +------------------+------------------+----------------------------------------------------------------+
-   | report_file      | path             | Called when writing to a report file is                        |
-   |                  |                  | finished. The path is an absolute path to the file.            |
+   | report_file      | path             | Called when writing to a `report file`_ is ready.              |
+   |                  |                  |                                                                |
+   |                  |                  | `path` is an absolute path to the file.                        |
    +------------------+------------------+----------------------------------------------------------------+
-   | debug_file       | path             | Called when writing to a debug file is                         |
-   |                  |                  | finished. The path is an absolute path to the file.            |
+   | xunit_file       | path             | Called when writing to an `xunit file`_ is ready.              |
+   |                  |                  |                                                                |
+   |                  |                  | `path` is an absolute path to the file.                        |
    +------------------+------------------+----------------------------------------------------------------+
-   | close            |                  | Called after all test suites, and test cases in                |
-   |                  |                  | them, have been executed. With `library listeners`__ called    |
-   |                  |                  | when the library goes out of scope.                            |
+   | debug_file       | path             | Called when writing to a `debug file`_ is ready.               |
+   |                  |                  |                                                                |
+   |                  |                  | `path` is an absolute path to the file.                        |
+   +------------------+------------------+----------------------------------------------------------------+
+   | close            |                  | Called when the whole test execution ends.                     |
+   |                  |                  |                                                                |
+   |                  |                  | With `library listeners`_ called when the library goes out     |
+   |                  |                  | of scope.                                                      |
    +------------------+------------------+----------------------------------------------------------------+
 
 The available methods and their arguments are also shown in a formal Java
@@ -295,8 +343,96 @@ to implement any explicit interface or have all these methods.
    }
 
 __ https://github.com/robotframework/robotframework/issues/2248
-__ `Setting log level`_
-__ `Test libraries as listeners`_
+
+Listener version 3
+~~~~~~~~~~~~~~~~~~
+
+Listener version 3 has mostly the same methods as `listener version 2`_
+but arguments of the methods related to test execution are different.
+This API gets actual running and result model objects used by Robot
+Framework itself, and listeners can both directly query information
+they need and also change the model objects on the fly.
+
+Listener version 3 was introduced in Robot Framework 3.0. At least
+initially it does not have all methods that the version 2 has. The
+main reason is that `suitable model objects are not available internally`__.
+The `close` method and methods related to output files are called exactly
+same way in both versions.
+
+__ https://github.com/robotframework/robotframework/issues/1208#issuecomment-164910769
+
+.. table:: Methods in the listener API 3
+   :class: tabular
+
+   +------------------+------------------+----------------------------------------------------------------+
+   |    Method        |    Arguments     |                          Documentation                         |
+   +==================+==================+================================================================+
+   | start_suite      | data, result     | Called when a test suite starts.                               |
+   |                  |                  |                                                                |
+   |                  |                  | `data` and `result` are model objects representing             |
+   |                  |                  | the `executed test suite <running.TestSuite_>`_ and `its       |
+   |                  |                  | execution results <result.TestSuite_>`_, respectively.         |
+   +------------------+------------------+----------------------------------------------------------------+
+   | end_suite        | data, result     | Called when a test suite ends.                                 |
+   |                  |                  |                                                                |
+   |                  |                  | Same arguments as with `start_suite`.                          |
+   +------------------+------------------+----------------------------------------------------------------+
+   | start_test       | data, result     | Called when a test case starts.                                |
+   |                  |                  |                                                                |
+   |                  |                  | `data` and `result` are model objects representing             |
+   |                  |                  | the `executed test case <running.TestCase_>`_ and `its         |
+   |                  |                  | execution results <result.TestCase_>`_, respectively.          |
+   +------------------+------------------+----------------------------------------------------------------+
+   | end_test         | data, result     | Called when a test case ends.                                  |
+   |                  |                  |                                                                |
+   |                  |                  | Same arguments as with `start_test`.                           |
+   +------------------+------------------+----------------------------------------------------------------+
+   | start_keyword    | N/A              | Not implemented in RF 3.0.                                     |
+   +------------------+------------------+----------------------------------------------------------------+
+   | end_keyword      | N/A              | Not implemented in RF 3.0.                                     |
+   +------------------+------------------+----------------------------------------------------------------+
+   | log_message      | message          | Called when an executed keyword writes a log message.          |
+   |                  |                  | `message` is a model object representing the `logged           |
+   |                  |                  | message <result.Message_>`_.                                   |
+   |                  |                  |                                                                |
+   |                  |                  | This method is not called if the message has level below       |
+   |                  |                  | the current `threshold level <Log levels_>`_.                  |
+   +------------------+------------------+----------------------------------------------------------------+
+   | message          | message          | Called when the framework itself writes a syslog_ message.     |
+   |                  |                  |                                                                |
+   |                  |                  | `message` is same object as with `log_message`.                |
+   +------------------+------------------+----------------------------------------------------------------+
+   | library_import   | N/A              | Not implemented in RF 3.0.                                     |
+   +------------------+------------------+----------------------------------------------------------------+
+   | resource_import  | N/A              | Not implemented in RF 3.0.                                     |
+   +------------------+------------------+----------------------------------------------------------------+
+   | variables_import | N/A              | Not implemented in RF 3.0.                                     |
+   +------------------+------------------+----------------------------------------------------------------+
+   | output_file      | path             | Called when writing to an `output file`_ is ready.             |
+   |                  |                  |                                                                |
+   |                  |                  | `path` is an absolute path to the file.                        |
+   +------------------+------------------+----------------------------------------------------------------+
+   | log_file         | path             | Called when writing to a `log file`_ is ready.                 |
+   |                  |                  |                                                                |
+   |                  |                  | `path` is an absolute path to the file.                        |
+   +------------------+------------------+----------------------------------------------------------------+
+   | report_file      | path             | Called when writing to a `report file`_ is ready.              |
+   |                  |                  |                                                                |
+   |                  |                  | `path` is an absolute path to the file.                        |
+   +------------------+------------------+----------------------------------------------------------------+
+   | xunit_file       | path             | Called when writing to an `xunit file`_ is ready.              |
+   |                  |                  |                                                                |
+   |                  |                  | `path` is an absolute path to the file.                        |
+   +------------------+------------------+----------------------------------------------------------------+
+   | debug_file       | path             | Called when writing to a `debug file`_ is ready.               |
+   |                  |                  |                                                                |
+   |                  |                  | `path` is an absolute path to the file.                        |
+   +------------------+------------------+----------------------------------------------------------------+
+   | close            |                  | Called when the whole test execution ends.                     |
+   |                  |                  |                                                                |
+   |                  |                  | With `library listeners`_ called when the library goes out     |
+   |                  |                  | of scope.                                                      |
+   +------------------+------------------+----------------------------------------------------------------+
 
 Listeners logging
 -----------------
@@ -332,26 +468,47 @@ methods can log messages is explained in the table below.
 Listener examples
 -----------------
 
-The first simple example is implemented in a Python module. It mainly
-illustrates that using the listener interface is not very complicated.
+This section contains examples using the listener interface. There are
+first examples that just receive information from Robot Framework and then
+examples that modify executed tests and created results.
+
+Getting information
+~~~~~~~~~~~~~~~~~~~
+
+The first example is implemented as Python module and uses the `listener
+version 2`_.
 
 .. sourcecode:: python
 
+   """Listener that stops execution if a test fails."""
+
    ROBOT_LISTENER_API_VERSION = 2
 
-   def start_test(name, attrs):
-       print 'Executing test %s' % name
+   def end_test(name, attrs):
+       if attrs['status'] == 'FAIL':
+           print 'Test "%s" failed: %s' % (name, attrs['message'])
+           raw_input('Press enter to continue.')
 
-   def start_keyword(name, attrs):
-       print 'Executing keyword %s with arguments %s' % (name, attrs['args'])
+If the above example would be saved to, for example, :file:`PauseExecution.py`
+file, it could be used from the command line like this::
 
-   def log_file(path):
-       print 'Test log available at %s' % path
+   robot --listener path/to/PauseExecution.py tests.robot
 
-   def close():
-       print 'All tests executed'
+The same example could also be implemented also using the newer
+`listener version 3`_ and used exactly the same way from the command line.
 
-The second example, which still uses Python, is slightly more complicated. It
+.. sourcecode:: python
+
+   """Listener that stops execution if a test fails."""
+
+   ROBOT_LISTENER_API_VERSION = 3
+
+   def end_test(data, result):
+       if not result.passed:
+           print 'Test "%s" failed: %s' % (result.name, result.message)
+           raw_input('Press enter to continue.')
+
+The next example, which still uses Python, is slightly more complicated. It
 writes all the information it gets into a text file in a temporary directory
 without much formatting. The filename may be given from the command line, but
 also has a default value. Note that in real usage, the `debug file`_
@@ -365,7 +522,6 @@ probably more useful than this example.
 
 
    class PythonListener:
-
        ROBOT_LISTENER_API_VERSION = 2
 
        def __init__(self, filename='listen.txt'):
@@ -391,7 +547,8 @@ probably more useful than this example.
         def close(self):
             self.outfile.close()
 
-The third example implements the same functionality as the previous one, but uses Java instead of Python.
+The following example implements the same functionality as the previous one,
+but uses Java instead of Python.
 
 .. sourcecode:: java
 
@@ -401,7 +558,6 @@ The third example implements the same functionality as the previous one, but use
 
 
    public class JavaListener {
-
        public static final int ROBOT_LISTENER_API_VERSION = 2;
        public static final String DEFAULT_FILENAME = "listen_java.txt";
        private BufferedWriter outfile = null;
@@ -447,8 +603,106 @@ The third example implements the same functionality as the previous one, but use
        public void close() throws IOException {
            outfile.close();
        }
-
    }
+
+Modifying execution and results
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These examples illustrate how to modify the executed tests and suites
+as well as the execution results. All these examples require using
+the `listener version 3`_.
+
+Modifying executed suites and tests
+'''''''''''''''''''''''''''''''''''
+
+Changing what is executed requires modifying the model object containing
+the executed `test suite <running.TestSuite_>`_ or `test case
+<running.TestCase_>`_ objects passed as the first argument to `start_suite`
+and `start_test` methods. This is illustrated by the example below that
+adds a new test to each executed test suite and a new keyword to each test.
+
+.. sourcecode:: python
+
+   ROBOT_LISTENER_API_VERSION = 3
+
+   def start_suite(suite, result):
+       suite.tests.create(name='New test')
+
+   def start_test(test, result):
+       test.keywords.create(name='Log', args=['Keyword added by listener!'])
+
+Trying to modify execution in `end_suite` or `end_test` methods does not work,
+simply because that suite or test has already been executed. Trying to modify
+the name, documentation or other similar metadata of the current suite or
+test in `start_suite` or `start_test` method does not work either, because
+the corresponding result object has already been created. Only changes to
+child tests or keywords actually have an effect.
+
+This API is very similar to the `pre-run modifier`_ API that can be used
+to modify suites and tests before the whole test execution starts. The main
+benefit of using the listener API is that modifications can be done
+dynamically based on execution results or otherwise. This allows, for example,
+interesting possibilities for model based testing.
+
+Unlike the pre-run modifier API, listener API is not build on top of
+Robot Framework's internal `visitor interface`_, but listeners can still
+use visitors if needed. For example, the `SelectEveryXthTest` visitor used
+in `pre-run modifier`_ examples could be used like this:
+
+.. sourcecode:: python
+
+   from SelectEveryXthTest import SelectEveryXthTest
+
+   ROBOT_LISTENER_API_VERSION = 3
+
+   def start_suite(suite, result):
+       selector = SelectEveryXthTest(x=2)
+       suite.visit(selector)
+
+Modifying results
+'''''''''''''''''
+
+Test execution results can be altered by modifying `test suite
+<result.TestSuite_>`_ and `test case <result.TestCase_>`_ result objects
+passed as the second argument to `start_suite` and `start_test` methods,
+respectively, and by modifying the `message <result.Message_>`_ object passed
+to the `log_message` method. This is demonstrated by the following listener
+that is implemented as a class.
+
+.. sourcecode:: python
+
+    class ResultModifier(object):
+        ROBOT_LISTENER_API_VERSION = 3
+
+        def __init__(self, max_seconds=10):
+            self.max_milliseconds = float(max_seconds) * 1000
+
+       def start_suite(self, data, suite):
+           suite.doc = 'Documentation set by listener.'
+           # Information about tests only available via data at this point.
+           smoke_tests = [test for test in data.tests if 'smoke' in test.tags]
+           suite.metadata['Smoke tests'] = len(smoke_tests)
+
+        def end_test(self, data, test):
+            if test.status == 'PASS' and test.elapsedtime > self.max_milliseconds:
+                test.status = 'FAIL'
+                test.message = 'Test execution took too long.'
+
+        def log_message(self, msg):
+            if msg.level == 'WARN' and not msg.html:
+                msg.message = '<b style="font-size: 1.5em">%s</b>' % msg.message
+                msg.html = True
+
+A limitation is that modifying the name of the current test suite or test
+case is not possible because it has already been written to the `output.xml`_
+file when listeners are called. Due to the same reason modifying already
+finished tests in the `end_suite` method has no effect either.
+
+This API is very similar to the `pre-Rebot modifier`_ API that can be used
+to modify results before report and log are generated. The main difference is
+that listeners modify also the created :file:`output.xml` file.
+
+.. _library listeners:
 
 Test libraries as listeners
 ---------------------------
@@ -522,5 +776,5 @@ according to the `test library scope`_.
 In addition to the previously listed listener methods, `close`
 method is called when the library goes out of the scope.
 
-See `Listener interface method signatures`_ section above
-for more information about all these methods.
+See `Listener interface methods`_ section above for more information about
+all these methods.

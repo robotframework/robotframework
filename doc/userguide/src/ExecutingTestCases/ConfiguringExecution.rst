@@ -444,6 +444,8 @@ Examples::
 
 __ `Free test suite metadata`_
 
+.. _pre-run modifier:
+
 Programmatic modification of test data
 --------------------------------------
 
@@ -455,9 +457,9 @@ option.
 
 Model modifiers should be implemented as visitors that can traverse through
 the executable test suite structure and modify it as needed. The visitor
-interface is explained as part of the `Robot Framework API documentation`__,
-and the example below ought to give an idea of how it can be used and how
-powerful this functionality is.
+interface is explained as part of the `Robot Framework API documentation
+<visitor interface_>`_, and the example below ought to give an idea of how
+it can be used and how powerful this functionality is.
 
 .. sourcecode:: python
 
@@ -492,7 +494,6 @@ the :option:`--prerunmodifier` option multiple times. If similar modifying
 is needed before creating results, `programmatic modification of results`_
 can be enabled using the :option:`--prerebotmodifier` option.
 
-__ https://robot-framework.readthedocs.org/en/latest/autodoc/robot.model.html#module-robot.model.visitor
 __ `Specifying library to import`_
 
 Controlling console output
@@ -621,5 +622,5 @@ Setting listeners
 Listeners_ can be used to monitor the test execution. When they are taken into
 use from the command line, they are specified using the :option:`--listener`
 command line option. The value can either be a path to a listener or
-a listener name. See the `Using listener interface`_ section for more details
+a listener name. See the `Listener interface`_ section for more details
 about importing listeners and using them in general.
