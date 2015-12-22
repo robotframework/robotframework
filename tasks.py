@@ -6,6 +6,7 @@ and run `invoke --help` and `invode --list` for details how to execute tasks.
 See BUILD.rst for packaging and releasing instructions.
 """
 
+from __future__ import print_function
 import os
 import re
 import shutil
@@ -72,7 +73,7 @@ def set_version(version, push=False):
         write_version_file(version)
         write_pom_file(version)
     version = get_version_from_file()
-    print 'Version:', version
+    print('Version:', version)
     if push:
         git_commit([VERSION_FILE, 'pom.xml'],
                    'Updated version to {}'.format(version), push=True)
@@ -159,10 +160,10 @@ def sdist(deploy=False, remove_dist=False):
     announce()
 
 def announce():
-    print
-    print 'Distributions:'
+    print()
+    print('Distributions:')
     for name in os.listdir('dist'):
-        print os.path.join('dist', name)
+        print(os.path.join('dist', name))
 
 
 @task
@@ -193,7 +194,7 @@ def jar(jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
     """
     clean(remove_dist, create_dirs=True)
     jython_jar = get_jython_jar(jython_version)
-    print 'Using {0}'.format(jython_jar)
+    print('Using {0}'.format(jython_jar))
     compile_java_files(jython_jar)
     unzip_jar(jython_jar)
     copy_robot_files()
@@ -220,7 +221,7 @@ def get_extlib_file(filename, url):
     path = os.path.join(lib, filename)
     if os.path.exists(path):
         return path
-    print '{0} not found, downloading it from {1}.'.format(filename, url)
+    print('{0} not found, downloading it from {1}.'.format(filename, url))
     if not os.path.exists(lib):
         os.mkdir(lib)
     urllib.urlretrieve(url, path)
@@ -231,7 +232,7 @@ def extract_and_copy_pyyaml_files(version, filename, build_dir='build'):
     extracted = os.path.join(tempfile.gettempdir(), 'pyyaml-for-robot')
     if os.path.isdir(extracted):
         shutil.rmtree(extracted)
-    print 'Extracting {0} to {1}'.format(filename, extracted)
+    print('Extracting {0} to {1}'.format(filename, extracted))
     t.extractall(extracted)
     source = os.path.join(extracted, 'PyYAML-{0}'.format(version), 'lib', 'yaml')
     target = os.path.join(build_dir, 'Lib', 'yaml')
@@ -241,7 +242,7 @@ def compile_java_files(jython_jar, build_dir='build'):
     root = os.path.join('src', 'java', 'org', 'robotframework')
     files = [os.path.join(root, name) for name in os.listdir(root)
              if name.endswith('.java')]
-    print 'Compiling {0} Java files.'.format(len(files))
+    print('Compiling {0} Java files.'.format(len(files)))
     run('javac -d {target} -target 1.7 -source 1.7 -cp {cp} {files}'.format(
         target=build_dir, cp=jython_jar, files=' '.join(files)))
 
