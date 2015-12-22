@@ -2,7 +2,7 @@
 
 """Create release notes template based on issues on GitHub.
 
-Usage: ./generate.py version [login] [password]
+Usage: {prog} version [login] [password]
 
 Template is written to the standard output. Redirect it to a file if needed.
 
@@ -49,16 +49,21 @@ class ReleaseNoteGenerator(object):
         milestone, _, _, _, preview, preview_number = match.groups()
         return milestone, preview, preview_number
 
-    def _get_issues(self, milestone, preview, preview_number, login=None,
-                    password=None):
+    def _get_issues(self, milestone, preview, preview_number, login, password):
+        issues = self._get_issues_in_milestone(milestone, login, password)
+        matcher = PreviewMatcher(preview, preview_number)
+        if matcher:
+            issues = [issue for issue in issues if matcher.matches(issue.labels)]
+        return sorted(issues)
+
+    def _get_issues_in_milestone(self, milestone, login, password):
         repo = Github(login_or_token=login,
                       password=password).get_repo(self.repository)
         milestone = self._get_milestone(repo, milestone)
-        issues = [Issue(issue) for issue in repo.get_issues(milestone=milestone, state='all')]
-        preview_matcher = PreviewMatcher(preview, preview_number)
-        if preview_matcher:
-            issues = [issue for issue in issues if preview_matcher.matches(issue.labels)]
-        return sorted(issues)
+        for data in repo.get_issues(milestone=milestone, state='all'):
+            issue = Issue(data)
+            if not issue.ignored:
+                yield issue
 
     def _get_milestone(self, repo, milestone):
         for m in repo.get_milestones(state='all'):
@@ -84,8 +89,10 @@ and possible bugs `submitted to the issue tracker
 If you have `pip <http://pip-installer.org>`_ installed, just run
 `pip install --upgrade robotframework` to install or upgrade to the latest
 version or use `pip install robotframework=={version}` to install exactly
-this version.  For more details and other installation approaches, see
-`installation instructions <../../INSTALL.rst>`_.
+this version. Alternatively you can download the source distribution from
+`PyPI <https://pypi.python.org/pypi/robotframework>`_ and install it manually.
+For more details and other installation approaches, see the `installation
+instructions <../../INSTALL.rst>`_.
 
 Robot Framework {version} was released on **CHECK** {date}.
 
@@ -161,11 +168,11 @@ Robot Framework {version} was released on **CHECK** {date}.
         self._write_header(header)
         self._write('**EXPLAIN** or remove these.', newlines=2)
         for issue in issues:
-            self._write('- {} {}', issue.id, issue.summary, newlines=0)
+            self._write('- {} ({}', issue.summary, issue.id, newlines=0)
             if issue.preview:
-                self._write(' ({})', issue.preview)
+                self._write(', {})', issue.preview)
             else:
-                self._write()
+                self._write(')')
 
     def _write(self, message='', *args, **kwargs):
         message += ('\n' * kwargs.pop('newlines', 1))
@@ -174,7 +181,7 @@ Robot Framework {version} was released on **CHECK** {date}.
             message = message.format(*args, **kwargs)
         if link_issues:
             message = re.sub(r'(#\d+)', r'`\1`_', message)
-        self._stream.write(message)
+        self._stream.write(message.encode('UTF-8'))
 
 
 class Issue(object):
@@ -191,7 +198,7 @@ class Issue(object):
         for value in values:
             if value in self.labels:
                 return value
-        return None
+        return ''
 
     def _get_priority(self):
         labels = ['prio-' + p for p in self.PRIORITIES if p]
@@ -213,6 +220,10 @@ class Issue(object):
             if label.startswith(('alpha ', 'beta ', 'rc ')):
                 return label
         return ''
+
+    @property
+    def ignored(self):
+        return 'task' in self.labels
 
 
 class PreviewMatcher(object):
@@ -238,8 +249,8 @@ class PreviewMatcher(object):
 
 
 if __name__ == '__main__':
-    generator = ReleaseNoteGenerator()
-    try:
-        generator.generate(*sys.argv[1:])
-    except TypeError:
-        sys.exit(__doc__)
+    args = sys.argv[1:]
+    if 1 <= len(args) <= 3:
+        ReleaseNoteGenerator().generate(*args)
+    else:
+        sys.exit(__doc__.format(prog=sys.argv[0]))
