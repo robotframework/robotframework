@@ -93,9 +93,6 @@ the results is possible using the
     ResultWriter(result).write_results(report='skynet.html', log=None)
     # Generating log files requires processing the earlier generated output XML.
     ResultWriter('skynet.xml').write_results()
-
-Package methods
----------------
 """
 
 from .builder import TestSuiteBuilder, ResourceFileBuilder
