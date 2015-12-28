@@ -15,11 +15,12 @@
 """Interface to ease traversing through a test suite structure.
 
 Visitors make it easy to modify test suite structures or to collect information
-from them. They work both with the :class:`executable suite <robot.running.model.TestSuite>`
-and the :class:`result suite <robot.result.testsuite.TestSuite>`, but the
-objects passed to the visitor methods are slightly different. The main
-difference is that the result objects have attributes like :attr:`status` and
-:attr:`starttime` that do not exist in the executable objects.
+from them. They work both with the :mod:`executable model <robot.running.model>`
+and the :mod:`result model <robot.result.model>`, but the objects passed to
+the visitor methods are slightly different depending on the model they are
+used with. The main differences are that on the execution side keywords do
+not have child keywords nor messages, and that only the result objects have
+status related attributes like :attr:`status` and :attr:`starttime`.
 
 This module contains :class:`SuiteVisitor` that implements the core logic to
 visit a test suite structure, and the :mod:`~robot.result` package contains
@@ -45,9 +46,9 @@ then calls :meth:`visit` for all child objects of the :obj:`x` object, and
 finally calls the corresponding :meth:`end_x` method. The default
 implementations of :meth:`start_x` and :meth:`end_x` do nothing.
 
-Custom visitors can stop visiting at a certain level either by overriding
-suitable :meth:`visit_x` method or by returning an explicit ``False`` from
-any :meth:`start_x` method.
+Visitors extending the :class:`SuiteVisitor` can stop visiting at a certain
+level either by overriding suitable :meth:`visit_x` method or by returning
+an explicit ``False`` from any :meth:`start_x` method.
 
 Examples
 --------
