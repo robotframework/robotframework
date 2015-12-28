@@ -3,7 +3,7 @@
 import os
 import shutil
 from optparse import OptionParser
-from os.path import abspath, dirname, join
+from os.path import abspath, dirname, join, normpath
 from subprocess import call
 from sys import exit
 
@@ -11,7 +11,7 @@ from sys import exit
 class GenerateApiDocs(object):
     BUILD_DIR = abspath(dirname(__file__))
     AUTODOC_DIR = join(BUILD_DIR, 'autodoc')
-    ROOT = join(BUILD_DIR, '..', '..')
+    ROOT = normpath(join(BUILD_DIR, '..', '..'))
     ROBOT_DIR = join(ROOT, 'src', 'robot')
     JAVA_SRC = join(ROOT, 'src', 'java')
     JAVA_TARGET = join(BUILD_DIR, '_static', 'javadoc')
@@ -35,16 +35,29 @@ class GenerateApiDocs(object):
         exit(rc)
 
     def create_autodoc(self):
+        print 'Generating autodoc'
         self._clean_directory(self.AUTODOC_DIR)
-        print 'Genearting autodoc'
-        call(['sphinx-apidoc', '--output-dir', self.AUTODOC_DIR, '--force',
-              '--no-toc', '--maxdepth', '2', '--module-first', self.ROBOT_DIR])
+        command = ['sphinx-apidoc',
+                   '--output-dir', self.AUTODOC_DIR,
+                   '--force',
+                   '--no-toc',
+                   '--maxdepth', '2',
+                   '--module-first',
+                   self.ROBOT_DIR]
+        print ' '.join(command)
+        call(command)
 
     def create_javadoc(self):
-        self._clean_directory(self.JAVA_TARGET)
         print 'Generating javadoc'
-        call(['javadoc', '-locale', 'en_US', '-sourcepath', self.JAVA_SRC,
-              '-d', self.JAVA_TARGET, '-notimestamp',  'org.robotframework'])
+        self._clean_directory(self.JAVA_TARGET)
+        command = ['javadoc',
+                   '-locale', 'en_US',
+                   '-sourcepath', self.JAVA_SRC,
+                   '-d', self.JAVA_TARGET,
+                   '-notimestamp',
+                   'org.robotframework']
+        print ' '.join(command)
+        call(command)
 
     def _clean_directory(self, dirname):
         if os.path.exists(dirname):

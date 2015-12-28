@@ -23,7 +23,7 @@ from robot.version import get_version
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#needs_sphinx = '1.0'
+needs_sphinx = '1.3'
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
@@ -31,6 +31,17 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode']
 autoclass_content = 'both'
 autodoc_default_flags = ['members', 'undoc-members', 'inherited-members']
 autodoc_member_order = 'bysource'
+autodoc_mock_imports = [
+    # Standard libs. Prevents errors from Py2 incompatible imports in Py3 code.
+    'collections',
+    # Java code related to the standalone jar.
+    'org.robotframework',  'org.robotframework.RobotRunner',
+    # Java standard libs.
+    'java.io', 'java.lang', 'java.awt', 'java.awt.event',
+    'javax.swing', 'javax.swing.JOptionPane',
+    # .NET standard libs.
+    'System.Threading', 'System.Drawing', 'System.Windows',
+    'System.Windows.Controls', 'wpf']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
