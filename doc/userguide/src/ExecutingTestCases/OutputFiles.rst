@@ -591,10 +591,9 @@ activating it using the :option:`--prerebotmodifier` option.
 
 This functionality works nearly exactly like `programmatic modification of
 test data`_ that can be enabled with the :option:`--prerunmodifier` option.
-The only difference is that the modified model is Robot Framework's
-result model and not the executable test suite model. For example, the
-following modifier marks all passed tests that have taken more time than
-allowed as failed:
+The obvious difference is that this time modifiers operate with the
+`result model`_, not the `running model`_. For example, the following modifier
+marks all passed tests that have taken more time than allowed as failed:
 
 .. sourcecode:: python
 

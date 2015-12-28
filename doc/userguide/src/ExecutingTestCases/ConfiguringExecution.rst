@@ -458,8 +458,10 @@ option.
 Model modifiers should be implemented as visitors that can traverse through
 the executable test suite structure and modify it as needed. The visitor
 interface is explained as part of the `Robot Framework API documentation
-<visitor interface_>`_, and the example below ought to give an idea of how
-it can be used and how powerful this functionality is.
+<visitor interface_>`_, and it possible to modify executed `test suites
+<running.TestSuite_>`_, `test cases <running.TestCase_>`_ and `keywords
+<running.Keyword_>`_ using it. The example below ought to give an idea of
+how model modifiers can be used and how powerful this functionality is.
 
 .. sourcecode:: python
 

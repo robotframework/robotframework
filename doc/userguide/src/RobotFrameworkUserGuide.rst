@@ -216,9 +216,13 @@ __ http://creativecommons.org/licenses/by/3.0/
 .. _visitor interface: http://robot-framework.readthedocs.org/en/master/autodoc/robot.model.html#module-robot.model.visitor
 .. _running.TestSuite: http://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#robot.running.model.TestSuite
 .. _running.TestCase: http://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#robot.running.model.TestCase
+.. _running.Keyword: http://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#robot.running.model.Keyword
+.. _running model: http://robot-framework.readthedocs.org/en/master/autodoc/robot.running.html#module-robot.running.model
 .. _result.TestSuite: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.TestSuite
 .. _result.TestCase: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.TestCase
+.. _result.Keyword: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.Keyword
 .. _result.Message: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#robot.result.model.Message
+.. _result model: http://robot-framework.readthedocs.org/en/master/autodoc/robot.result.html#module-robot.result.model
 
 .. External link targets
 
