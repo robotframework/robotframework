@@ -111,7 +111,7 @@ Countdown should not have stopped
     [Arguments]    ${handle}=${None}
     ${result}=    Wait For Process    ${handle}
     Should Not Be Equal    ${result.rc}    ${0}
-    Wait Until Keyword Succeeds    1.2s    0.2s    Blastoff Successful
+    Wait Until Keyword Succeeds    2.2s    0.2s    Blastoff Successful
 
 Blastoff Successful
     ${content} =    Get File    ${TEMPFILE}
