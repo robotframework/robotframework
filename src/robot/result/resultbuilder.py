@@ -26,14 +26,16 @@ from .xmlelementhandlers import XmlElementHandler
 def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
 
-    :param sources: Path(s) to output XML file(s).
-    :param options: Configuration options. ``merge`` with True value causes
-                    multiple results to be combined so that tests in the latter
-                    results replace the ones in the original. Other options
-                    are passed further to :py:class:`~ExecutionResultBuilder`.
+    :param sources: Path(s) to the XML output file(s).
+    :param options: Configuration options.
+        Using ``merge=True`` causes multiple results to be combined so that
+        tests in the latter results replace the ones in the original. Other
+        options are passed directly to the :class:`ExecutionResultBuilder`
+        object used internally.
     :returns: :class:`~.executionresult.Result` instance.
 
-    See :mod:`~robot.result` package for a usage example.
+    Should be imported by external code via the :mod:`robot.api` package.
+    See the :mod:`robot.result` package for a usage example.
     """
     if not sources:
         raise DataError('One or more data source needed.')
@@ -69,14 +71,22 @@ def _single_result(source, options):
 
 
 class ExecutionResultBuilder(object):
+    """Builds :class:`~.executionresult.Result` objects based on output files.
+
+    Instead of using this builder directly, it is recommended to use the
+    :func:`ExecutionResult` factory method.
+    """
 
     def __init__(self, source, include_keywords=True, flattened_keywords=None):
-        """Builds :class:`~.executionresult.Result` objects from existing
-        output XML files on the file system.
-
-        :param source: Path to output XML file.
-        :param include_keywords: Include keyword information to the
-            :class:`~.executionresult.Result` objects
+        """
+        :param source: Path to the XML output file to build
+            :class:`~.executionresult.Result` objects from.
+        :param include_keywords: Boolean controlling whether to include
+            keyword information in the result or not. Keywords are
+            not needed when generating only report.
+        :param flatten_keywords: List of patterns controlling what keywords to
+            flatten. See the documentation of ``--flattenkeywords`` option for
+            more details.
         """
         self._source = source \
             if isinstance(source, ETSource) else ETSource(source)

@@ -14,16 +14,19 @@
 
 """Implements the core test execution logic.
 
-The public API of this package consists of the following two classes:
-
-* :class:`~robot.running.model.TestSuite` for creating an executable
-  test suite structure programmatically.
+The public entry points of this package are of the following two classes:
 
 * :class:`~robot.running.builder.TestSuiteBuilder` for creating executable
   test suites based on existing test case files and directories.
 
+* :class:`~robot.running.model.TestSuite` for creating an executable
+  test suite structure programmatically.
+
 It is recommended to import both of these classes via the :mod:`robot.api`
-package like in the examples below.
+package like in the examples below. Also :class:`~robot.running.model.TestCase`
+and :class:`~robot.running.model.Keyword` classes used internally by the
+:class:`~robot.running.model.TestSuite` class are part of the public API,
+but they should not generally be imported directly.
 
 This package and especially all public code was rewritten in Robot Framework
 2.8 to make it easier to generate and execute test suites programmatically.
@@ -67,8 +70,8 @@ Not that complicated either, especially considering the flexibility. Notice
 that the suite created based on the file could also be edited further using
 the same API.
 
-Now that we have a test suite ready, let's
-:meth:`run <robot.running.model.TestSuite.run>` it and verify that the returned
+Now that we have a test suite ready, let's :meth:`execute it
+<robot.running.model.TestSuite.run>` and verify that the returned
 :class:`~robot.result.executionresult.Result` object contains correct
 information::
 

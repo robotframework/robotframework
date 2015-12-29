@@ -22,14 +22,23 @@ from .model import ForLoop, Keyword, ResourceFile, TestSuite
 
 
 class TestSuiteBuilder(object):
+    """Creates executable :class:`~robot.running.model.TestSuite` objects.
+
+    Suites are build based on existing test data on the file system.
+
+    See the overall documentation of the :mod:`robot.running` package for
+    more information and examples.
+    """
 
     def __init__(self, include_suites=None, warn_on_skipped=False):
-        """Create executable :class:`~robot.running.model.TestSuite` objects.
-
-        Suites are build based on existing data on the file system.
-
-        See the overall documentation of the :mod:`.running` package for
-        a usage example.
+        """
+        :param include_suites: List of suite names to include. If ``None`` or
+            an empty list, all suites are included. When executing tests
+            normally, these names are specified using the ``--suite`` option.
+        :param warn_on_skipped: Boolean to control should a warning be emitted
+            if a file is skipped because it cannot be parsed or should it be
+            ignored silently. When executing tests normally, this value is set
+            with the ``--warnonskippedfiles`` option.
         """
         self.include_suites = include_suites
         self.warn_on_skipped = warn_on_skipped
@@ -38,6 +47,10 @@ class TestSuiteBuilder(object):
         self._build_step = builder.build_step
 
     def build(self, *paths):
+        """
+        :param paths: Paths to test data files or directories.
+        :return: :class:`~robot.running.model.TestSuite` instance.
+        """
         if not paths:
             raise DataError('One or more source paths required.')
         if len(paths) == 1:

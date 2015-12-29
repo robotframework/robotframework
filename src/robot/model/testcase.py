@@ -21,46 +21,55 @@ from .tags import Tags
 
 
 class TestCase(ModelObject):
-    """Base model for single test case."""
+    """Base model for a single test case.
+
+    Extended by :class:`robot.running.model.TestCase` and
+    :class:`robot.result.model.TestCase`.
+    """
     __slots__ = ['parent', 'name', 'doc', 'timeout']
-    keyword_class = Keyword
+    keyword_class = Keyword  #: Internal usage only
 
     def __init__(self, name='', doc='', tags=None, timeout=None):
-        #: :class:`~.model.testsuite.TestSuite` that contains this test.
-        self.parent = None
-        #: Test case name.
-        self.name = name
-        #: Test case documentation.
-        self.doc = doc
-        #: Test case tags as a list like :class:`~.model.tags.Tags` object.
+        self.parent = None      #: Parent suite.
+        self.name = name        #: Test case name.
+        self.doc = doc          #: Test case documentation.
+        self.timeout = timeout  #: Test case timeout.
         self.tags = tags
-        #: Test case timeout.
-        self.timeout = timeout
-        #: Keyword results, a list of :class:`~.model.keyword.Keyword`
-        #: instances and contains also possible setup and teardown keywords.
         self.keywords = None
 
     @setter
     def tags(self, tags):
+        """Test tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
 
     @setter
     def keywords(self, keywords):
+        """Keywords as a :class:`~.Keywords` object.
+
+        Contains also possible setup and teardown keywords.
+        """
         return Keywords(self.keyword_class, self, keywords)
 
     @property
     def id(self):
+        """Test case id in format like ``s1-t3``.
+
+        See :attr:`TestSuite.id <robot.model.testsuite.TestSuite.id>` for
+        more information.
+        """
         if not self.parent:
             return 't1'
         return '%s-t%d' % (self.parent.id, self.parent.tests.index(self)+1)
 
     @property
     def longname(self):
+        """Test name prefixed with the long name of the parent suite."""
         if not self.parent:
             return self.name
         return '%s.%s' % (self.parent.longname, self.name)
 
     def visit(self, visitor):
+        """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_test(self)
 
 

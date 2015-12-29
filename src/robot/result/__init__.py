@@ -14,18 +14,27 @@
 
 """Implements parsing execution results from XML output files.
 
-The public API of this package is the :func:`~.ExecutionResult` factory
-method, which returns :class:`~.Result` objects, and :class:`~.ResultVisitor`
-abstract class to ease further processing the results. It is highly
-recommended to use the public API via the :mod:`robot.api` package like in
-the example below.
+The main public API of this package consists of the :func:`~.ExecutionResult`
+factory method, that returns :class:`~.Result` objects, and of the
+:class:`~.ResultVisitor` abstract class, that eases further processing
+the results.
 
-This package is considered stable.
+The model objects in the :mod:`~.model` module can also be considered to be
+part of the public API, because they can be found inside the :class:`~.Result`
+object. They can also be inspected and modified as part of the normal test
+execution by `pre-Rebot modifiers`__ and `listeners`__.
+
+It is highly recommended to import the public entry-points via the
+:mod:`robot.api` package like in the example below. This package is considered
+stable.
 
 Example
 -------
 
 .. literalinclude:: /../../doc/api/code_examples/check_test_times.py
+
+__ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#programmatic-modification-of-results
+__ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 """
 
 from .executionresult import Result

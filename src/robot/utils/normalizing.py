@@ -22,7 +22,7 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     """Normalizes given string according to given spec.
 
     By default string is turned to lower case and all whitespace is removed.
-    Additional characters can be removed by giving them in `ignore` list.
+    Additional characters can be removed by giving them in ``ignore`` list.
     """
     if spaceless:
         string = ''.join(string.split())
@@ -48,12 +48,13 @@ class NormalizedDict(MutableMapping):
     """Custom dictionary implementation automatically normalizing keys."""
 
     def __init__(self, initial=None, ignore=(), caseless=True, spaceless=True):
-        """Initializes with possible initial value and normalizing spec.
+        """Initialized with possible initial value and normalizing spec.
 
         Initial values can be either a dictionary or an iterable of name/value
         pairs. In the latter case items are added in the given order.
 
-        Normalizing spec has exact same semantics as with `normalize` method.
+        Normalizing spec has exact same semantics as with the :func:`normalize`
+        function.
         """
         self._data = {}
         self._keys = {}

@@ -26,11 +26,11 @@ from .htmltemplate import TEMPLATE_START, TEMPLATE_END
 
 
 def FileWriter(context):
-    """Creates and returns a FileWriter object.
+    """Creates and returns a ``FileWriter`` object.
 
-    :param context: Type of returned FileWriter is determined based on
-        `context.format`. `context` is also passed to created writer.
-    :type context: :py:class:`WritingContext`
+    :param context: The type of the returned ``FileWriter`` is determined based
+        on ``context.format``. ``context`` is also passed to created writer.
+    :type context: :class:`~robot.writer.datafilewriter.WritingContext`
     """
     if context.format == context.html_format:
         return HtmlFileWriter(context)
