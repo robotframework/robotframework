@@ -38,15 +38,15 @@ Currently exposed APIs are:
   for creating such suites based on existing test data on the file system.
 
 * :class:`~robot.model.visitor.SuiteVisitor` abstract class for processing testdata
-  before execution. This can be used as a base for implementing a pre run 
-  modifier that is taken into use with `--prerunmodifier` commandline option.
+  before execution. This can be used as a base for implementing a pre-run
+  modifier that is taken into use with ``--prerunmodifier`` commandline option.
 
 * :func:`~robot.result.resultbuilder.ExecutionResult` factory method
   for reading execution results from XML output files and
   :class:`~robot.result.visitor.ResultVisitor` abstract class to ease
   further processing the results. 
   :class:`~robot.result.visitor.ResultVisitor` can also be used as a base
-  for pre rebot modifier that is taken into use with `--prerebotmodifier` 
+  for pre-Rebot modifier that is taken into use with ``--prerebotmodifier``
   commandline option.
 
 * :class:`~robot.reporting.resultwriter.ResultWriter` class for writing
