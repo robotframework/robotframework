@@ -1,12 +1,5 @@
 import os
 
-_dirs = __file__.split(os.sep)
-while True:
-    if _dirs.pop() == 'atest':
-        break
-
-_BITMAP = os.path.join(os.sep.join(_dirs), 'robot.bmp')
-
 
 class BinaryDataLibrary:
 
@@ -21,7 +14,5 @@ class BinaryDataLibrary:
                              % (chr(0), chr(10), chr(127), chr(255)))
 
     def print_binary_data(self):
-        bitmap = open(_BITMAP, 'rb')
-        print(bitmap.read())
-        bitmap.close()
+        print(os.urandom(100))
         print("*INFO* Binary data printed successfully")
