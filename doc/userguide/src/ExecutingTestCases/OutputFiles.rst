@@ -172,7 +172,7 @@ the extension and the base name of each file. The example below would,
 for example, create such output files as
 :file:`output-20080604-163225.xml` and :file:`mylog-20080604-163225.html`::
 
-   robot --timestampoutputs --log mylog.html --report NONE tests.html
+   robot --timestampoutputs --log mylog.html --report NONE tests.robot
 
 Setting titles
 ~~~~~~~~~~~~~~
@@ -501,9 +501,9 @@ or warnings`__ are not removed except when using the `ALL` mode.
 Examples::
 
    rebot --removekeywords all --output removed.xml output.xml
-   robot --removekeywords passed --removekeywords for tests.txt
-   robot --removekeywords name:HugeKeyword --removekeywords name:resource.* tests.txt
-   robot --removekeywords tag:huge tests.txt
+   robot --removekeywords passed --removekeywords for tests.robot
+   robot --removekeywords name:HugeKeyword --removekeywords name:resource.* tests.robot
+   robot --removekeywords tag:huge tests.robot
 
 Removing keywords is done after parsing the `output file`_ and generating
 an internal model based on it. Thus it does not reduce memory usage as much
@@ -543,7 +543,7 @@ supports the following modes:
 
 Examples::
 
-   robot --flattenkeywords name:HugeKeyword --flattenkeywords name:resource.* tests.txt
+   robot --flattenkeywords name:HugeKeyword --flattenkeywords name:resource.* tests.robot
    rebot --flattenkeywords foritem --output flattened.xml original.xml
 
 Flattening keywords is done already when the `output file`_ is parsed

@@ -209,11 +209,11 @@ when `post-processing outputs`_ with ``rebot``, you need to
 use :option:`--critical` and/or :option:`--noncritical` also with it::
 
   # Use rebot to create new log and report from the output created during execution
-  robot --critical regression --outputdir all my_tests.html
+  robot --critical regression --outputdir all tests.robot
   rebot --name Smoke --include smoke --critical regression --outputdir smoke all/output.xml
 
   # No need to use --critical/--noncritical when no log or report is created
-  robot --log NONE --report NONE my_tests.html
+  robot --log NONE --report NONE tests.robot
   rebot --critical feature1 output.xml
 
 __ `By tag names`_
@@ -439,7 +439,7 @@ what was randomized and what seed was used.
 
 Examples::
 
-    robot --randomize tests my_test.txt
+    robot --randomize tests my_test.robot
     robot --randomize all:12345 path/to/tests
 
 __ `Free test suite metadata`_

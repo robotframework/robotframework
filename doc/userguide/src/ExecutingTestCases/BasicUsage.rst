@@ -67,9 +67,9 @@ __ `Test suite name and documentation`_
 
 ::
 
-   robot test_cases.html
+   robot tests.robot
    robot path/to/my_tests/
-   robot c:\robot\tests.txt
+   robot c:\robot\tests.robot
 
 It is also possible to give paths to several test case files or
 directories at once, separated with spaces. In this case, Robot
@@ -83,8 +83,8 @@ often quite long and complicated. In most cases, it is thus better to
 use the :option:`--name` option for overriding it, as in the second
 example below::
 
-   robot my_tests.html your_tests.html
-   robot --name Example path/to/tests/pattern_*.html
+   robot my_tests.robot your_tests.robot
+   robot --name Example path/to/tests/pattern_*.robot
 
 Using command line options
 --------------------------
@@ -101,7 +101,7 @@ Using options
 When options are used, they must always be given between the runner
 script and the data sources. For example::
 
-   robot -L debug my_tests.txt
+   robot -L debug my_tests.robot
    robot --include smoke --variable HOST:10.0.0.42 path/to/tests/
 
 Short and long options
@@ -233,7 +233,7 @@ avoid the need to repeat them every time tests are run or ``rebot`` used.
 .. sourcecode:: bash
 
    export ROBOT_OPTIONS="--critical regression --tagdoc 'mytag:Example doc with spaces'"
-   robot tests.txt
+   robot tests.robot
    export REBOT_OPTIONS="--reportbackground green:yellow:red"
    rebot --name example output.xml
 
@@ -345,7 +345,7 @@ Example below illustrates how errors and warnings look like in the log file.
      <tr>
        <td class="time">20090322&nbsp;19:58:42.528</td>
        <td class="error level">ERROR</td>
-       <td class="msg">Error in file '/home/robot/tests.html' in table 'Setting' in element on row 2: Resource file 'resource.html' does not exist</td>
+       <td class="msg">Error in file '/home/robot/tests.robot' in table 'Setting' in element on row 2: Resource file 'resource.robot' does not exist</td>
      </tr>
      <tr>
        <td class="time">20090322&nbsp;19:58:43.931</td>
@@ -464,10 +464,10 @@ option was. This means that options in argument files can override options
 before it, and its options can be overridden by options after it. It is possible
 to use :option:`--argumentfile` option multiple times or even recursively::
 
-   robot --argumentfile all_arguments.txt
-   robot --name Example --argumentfile other_options_and_paths.txt
-   robot --argumentfile default_options.txt --name Example my_tests.html
-   robot -A first.txt -A second.txt -A third.txt tests.txt
+   robot --argumentfile all_arguments.robot
+   robot --name Example --argumentfile other_options_and_paths.robot
+   robot --argumentfile default_options.txt --name Example my_tests.robot
+   robot -A first.txt -A second.txt -A third.txt tests.robot
 
 Reading argument files from standard input
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -477,7 +477,7 @@ standard input stream instead of a file. This can be useful when generating
 arguments with a script::
 
    generate_arguments.sh | robot --argumentfile STDIN
-   generate_arguments.sh | robot --name Example --argumentfile STDIN tests.txt
+   generate_arguments.sh | robot --name Example --argumentfile STDIN tests.robot
 
 Getting help and version information
 ------------------------------------
@@ -606,7 +606,7 @@ outputs are very big. There are several ways to configure JVM options:
    script that will pass them forward to Java. This is especially easy when
    using `direct entry points`_::
 
-      jython -J-Xmx1024m -m robot.run some_tests.txt
+      jython -J-Xmx1024m -m robot some_tests.robot
 
 Debugging problems
 ------------------
