@@ -598,8 +598,8 @@ Python, and examples below illustrate using them also with other interpreters.
 
 .. sourcecode:: bash
 
-   # Run tests with Python by executing `robot.run` module.
-   python -m robot.run
+   # Run tests with Python by executing `robot` module. On Python 2.6 the earlier alternative `robot.run` can be used
+   python -m robot
 
    # Run tests with Jython by running `robot/run.py` script.
    jython path/to/robot/run.py
