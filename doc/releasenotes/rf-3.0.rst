@@ -24,9 +24,8 @@ this version. Alternatively you can download the source distribution from
 For more details and other installation approaches, see the `installation
 instructions <../../INSTALL.rst>`_.
 
-Separate Windows installers are not created anymore. The standalone jar
-distribution can be and the standalone JAR
-with Jython 2.7 is available at `Maven central
+Separate Windows installers are not created anymore.
+The standalone jar with Jython 2.7 is available at `Maven central
 <http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework>`_.
 
 Robot Framework 3.0 was released on Thursday December 31, 2015.
@@ -60,11 +59,11 @@ currently supported Python versions are 2.6, 2.7, and 3.3 and newer.
 Installation on Python 3 works exactly as it does for Python 2, and
 the recommended installation method is with pip::
 
-    pip3 install --pre robotframework
-    python3 -m pip install --pre robotframework
+    pip3 install robotframework
+    python3 -m pip install robotframework
 
 Note that while the standard libraries distributed with Robot Framework do work
-with Python 3, most other external libraries currently do not.
+with Python 3, most other external libraries and tools currently do not.
 
 New listener interface that can modify executed tests and results
 -----------------------------------------------------------------
@@ -79,7 +78,7 @@ For more information about the new listener API, including interesting
 usage examples, see the `Listener interface`__ section from Robot
 Framework User Guide.
 
-__ http://robotframework.org/robotframework/3.0/RobotFrameworkUserGuide.html#listener-interface
+__ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 
 New `robot` start-up script
 ---------------------------
@@ -105,6 +104,11 @@ multiple Python interpreters like, for example,  `python3 -m robot`,
 A limitation of the `python -m robot` approach is that it does not work with
 Python 2.6. The old `python -m robot.run` version can be used instead.
 
+The same enhancement that made `python -m robot` possible also made it possible
+to execute the `robot` installation directory like `python path/to/robot`.
+This works the same way as `python path/to/robot/run.py` that works also
+with the earlier versions.
+
 Listeners no longer slow down execution
 ---------------------------------------
 
@@ -125,12 +129,12 @@ installers, but we have decided not to continue making them in Robot Framework
 
 1. Using pip online::
 
-     pip install --pre robotframework
+     pip install robotframework
 
 2. Downloading the source distribution from PyPI_ and installing it using
    pip locally::
 
-      pip install robotframework-3.0b1.tar.gz
+      pip install robotframework-3.0.tar.gz
 
 3. Extracting the aforementioned source distribution, navigating to the created
    directory on the command line, and installing manually::
