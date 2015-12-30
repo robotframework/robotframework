@@ -27,10 +27,9 @@ Introduction
 `Robot Framework <http://robotframework.org>`_ is implemented with `Python
 <http://python.org>`_ and also runs on `Jython <http://jython.org>`_ (JVM) and
 `IronPython <http://ironpython.net>`_ (.NET). Before installing the framework,
-an obvious precondition_ is installing at least one of these interpreters. Note
-that Python 3 will be supported by the upcoming Robot Framework 3.0, and there
-is also an `un-official Python 3 port
-<https://pypi.python.org/pypi/robotframework-python3>`_ available.
+an obvious precondition_ is installing at least one of these interpreters.
+Robot Framework 3.0 and newer support Python versions 2.6, 2.7, and versions 3.3
+and later.
 
 Different ways to install Robot Framework itself are listed below and explained
 more thoroughly in subsequent sections.
@@ -50,11 +49,6 @@ more thoroughly in subsequent sections.
     extracting a source distribution from `PyPI
     <https://pypi.python.org/pypi/robotframework>`_ or by cloning the
     `GitHub repository <https://github.com/robotframework/robotframework>`_ .
-
-`Using Windows installer`_
-    There are graphical installers for both 32 bit and 64 bit Windows systems,
-    both available on PyPI_. They will not created for upcoming Robot Framework
-    3.0 anymore.
 
 `Standalone JAR distribution`_
     If running tests with Jython is enough, the easiest approach is downloading
@@ -96,22 +90,12 @@ a good place to start is http://python.org. There you can download a suitable
 installer and get more information about the installation process and Python
 in general.
 
-Robot Framework 2.9 supports Python 2.6 and 2.7, and upcoming Robot Framework
-3.0 supports those and also Python versions 3.3 and up. If you need Python 3
-support earlier, you can use the `un-official Python 3 port`_. If you need to
-use older Python versions, Robot Framework 2.5-2.8 support Python 2.5 and Robot
-Framework 2.0-2.1 support Python 2.3 and 2.4.
-
-On Windows it is recommended to install Python to all users and to run the
-installer as an administrator. Additionally, environment variable
-``PYTHONCASEOK`` must not be set.
+Robot Framework 3.0 later support Python 2.6 and 2.7, and versions 3.3 and up.
+If you need to use older Python versions, Robot Framework 2.5-2.8 support
+Python 2.5 and Robot Framework 2.0-2.1 support Python 2.3 and 2.4.
 
 After installing Python, you probably still want to `configure PATH`_ to make
 the ``pybot`` `runner script`_ executable on the command prompt.
-
-.. tip:: Latest Python Windows installers allow setting ``PATH`` as part of
-         the installation. This is disabled by default, but `Add python.exe
-         to Path` can be enabled on the `Customize Python` screen.
 
 Jython installation
 ~~~~~~~~~~~~~~~~~~~
@@ -168,12 +152,6 @@ When using Python on UNIX-like machines both Python itself and scripts
 installed with should be automatically in the ``PATH`` and no extra actions
 needed. On Windows and with other interpreters the ``PATH`` must be configured
 separately.
-
-.. tip:: Latest Python Windows installers allow setting ``PATH`` as part of
-         the installation. This is disabled by default, but `Add python.exe
-         to Path` can be enabled on the `Customize Python` screen. It will
-         set both Python installation directory and :file:`Scripts` directory
-         to ``PATH``.
 
 What directories to add to ``PATH``
 '''''''''''''''''''''''''''''''''''
@@ -343,7 +321,7 @@ and examples.
     pip uninstall robotframework
 
     # Install a local file (works without network connection)
-    pip install robotframework-2.9.tar.gz
+    pip install robotframework-3.0.tar.gz
 
 Notice that pip 1.4 and newer will only install stable releases by default.
 If you want to install an alpha, beta or release candidate, you need to either
@@ -394,13 +372,13 @@ it from the command line using any of the supported interpreters:
 
 .. sourcecode:: bash
 
-   # Installing with Python. Creates `pybot` and `rebot` scripts.
+   # Installing with Python. Creates `robot`, `pybot` and `rebot` scripts.
    python setup.py install
 
-   # Installing with Jython. Creates `jybot` and `jyrebot` scripts.
+   # Installing with Jython. Creates `robot`, `rebot`, `jybot` and `jyrebot` scripts.
    jython setup.py install
 
-   # Installing with IronPython. Creates `ipybot` and `ipyrebot` scripts.
+   # Installing with IronPython. Creates `robot`, `rebot`, `ipybot` and `ipyrebot` scripts.
    ipy setup.py install
 
 The ``setup.py`` script accepts several arguments allowing, for example,
@@ -411,26 +389,8 @@ rights. It is also used for creating different distribution packages. Run
 Using Windows installer
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-There are separate graphical installers for 32 bit and 64 bit Windows systems
-with names in format ``robotframework-<version>.win32.exe`` and
-``robotframework-<version>.win-amd64.exe``, respectively. Newer installers
-are on PyPI_ and Robot Framework 2.8.1 and older on the old `Google Code
-download page`_. Running the installer requires double-clicking it and
-following the simple instructions.
-
-Windows installers always run on Python and create the standard ``pybot`` and
-``rebot`` `runner scripts`_. Unlike the other provided installers, these
-installers also automatically create ``jybot`` and ``ipybot`` scripts. To be
-able to use the created runner scripts, both the :file:`Scripts` directory
-containing them and the appropriate interpreters need to be in PATH_.
-
-Installing Robot Framework may require administrator privileges. In that case
-select `Run as administrator` from the context menu when starting the
-installer.
-
-.. note:: Windows installers will no longer be created for upcoming Robot
-   Framework 3.0. Please see `using pip`_ or `installing from source`_ for
-   alternatives.
+Windows installers are no longer be created for Robot Framework 3.0 and later.
+Please see `using pip`_ or `installing from source`_ for alternatives.
 
 
 Standalone JAR distribution
@@ -447,8 +407,8 @@ with it like:
 
 .. sourcecode:: bash
 
-  java -jar robotframework-2.9.jar mytests.robot
-  java -jar robotframework-2.9.jar --variable name:value mytests.robot
+  java -jar robotframework-3.0.jar mytests.robot
+  java -jar robotframework-3.0.jar --variable name:value mytests.robot
 
 If you want to `post-process outputs`_ using Rebot or use other built-in
 `supporting tools`_, you need to give the command name ``rebot``, ``libdoc``,
@@ -456,8 +416,8 @@ If you want to `post-process outputs`_ using Rebot or use other built-in
 
 .. sourcecode:: bash
 
-  java -jar robotframework-2.9.jar rebot output.xml
-  java -jar robotframework-2.9.jar libdoc MyLibrary list
+  java -jar robotframework-3.0.jar rebot output.xml
+  java -jar robotframework-3.0.jar libdoc MyLibrary list
 
 For more information about the different commands, execute the JAR without
 arguments.
@@ -492,13 +452,13 @@ interpreter versions as a result:
 .. sourcecode:: bash
 
    $ pybot --version
-   Robot Framework 2.9 (Python 2.7.10 on linux2)
+   Robot Framework 3.0 (Python 2.7.10 on linux2)
 
    $ rebot --version
-   Rebot 2.9 (Python 2.7.10 on linux2)
+   Rebot 3.0 (Python 2.7.10 on linux2)
 
    $ jybot --version
-   Robot Framework 2.9 (Jython 2.7 on java1.7.0_60)
+   Robot Framework 3.0 (Jython 2.7 on java1.7.0_60)
 
 If running the runner scripts fails with a message saying that the command is
 not found or recognized, a good first step is double-checking the PATH_
@@ -550,7 +510,8 @@ been done using some other approach.
 Uninstallation after using Windows installer
 ''''''''''''''''''''''''''''''''''''''''''''
 
-If `Windows installer`_  has been used, uninstallation can be done using
+If `Windows installer`_  was used to install an earlier version of Robot
+Framework, uninstallation can be done using
 `Control Panel > Add/Remove Programs`. Robot Framework is listed under
 Python applications.
 
@@ -589,7 +550,7 @@ Runner scripts
 ~~~~~~~~~~~~~~
 
 Robot Framework has different runner scripts for executing test cases and for
-post-processing outputs based on earlier test results. Starting from upcoming
+post-processing outputs based on earlier test results. Starting from
 Robot Framework 3.0, the scripts are always the same regardless of the
 interpreter that was used for installation:
 
