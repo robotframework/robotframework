@@ -16,12 +16,12 @@ new higher-level keywords from existing ones using the same syntax that is used
 for creating test cases.
 
 Robot Framework is operating system and application independent. The core
-framework is implemented using `Python <http://python.org>`_ and runs also on
-`Jython <http://jython.org>`_ (JVM) and `IronPython <http://ironpython.net>`_
-(.NET). The framework has a rich ecosystem around it consisting of various
-generic test libraries and tools that are developed as separate projects.
-For more information about Robot Framework and the ecosystem, see
-http://robotframework.org.
+framework is implemented using `Python <http://python.org>`_, supports both
+Python 2 and Python 3, and runs also on `Jython <http://jython.org>`_ (JVM)
+and `IronPython <http://ironpython.net>`_ (.NET). The framework has a rich
+ecosystem around it consisting of various generic test libraries and tools
+that are developed as separate projects. For more information about Robot
+Framework and the ecosystem, see http://robotframework.org.
 
 Robot Framework project is hosted on GitHub_ where you can find source code,
 an issue tracker, and some further documentation. See `<CONTRIBUTING.rst>`__
@@ -57,8 +57,8 @@ you can simply run::
     pip install robotframework
 
 Alternatively you can get Robot Framework source code by downloading the source
-distribution from PyPI_ or cloning the project from GitHub_. After that you can
-install the framework with::
+distribution from PyPI_ and extracting it, or by cloning the project repository
+from GitHub_. After that you can install the framework with::
 
     python setup.py install
 
@@ -93,18 +93,24 @@ http://robotframework.org.
 Usage
 -----
 
-Robot Framework is executed from the command line using ``pybot``, ``jybot``
-or ``ipybot`` scripts, depending is it run on Python, Jython or IronPython.
-The basic usage is giving a path to a test case file or directory as
-an argument with possible command line options before the path. Additionally
-there is ``rebot`` tool for combining results and otherwise post-processing
-outputs::
+Starting from Robot Framework 3.0, tests are executed from the command line
+using the ``robot`` script or by executing the ``robot`` module directly
+like ``python -m robot`` or ``jython -m robot``. Older Robot Framework
+versions have Python interpreter specific ``pybot``, ``jybot`` and ``ipybot``
+scripts that still work but will be deprecated and removed in the future.
 
-    pybot tests.robot
-    jybot --variable HOST:example.com --outputdir results path/to/tests/
+The basic usage is giving a path to a test case file or directory as an
+argument with possible command line options before the path::
+
+    robot tests.robot
+    robot --variable HOST:example.com --outputdir results path/to/tests/
+
+Additionally there is ``rebot`` tool for combining results and otherwise
+post-processing outputs::
+
     rebot --name Example output1.xml output2.xml
 
-Run ``pybot --help`` and ``rebot --help`` for more information about the command
+Run ``robot --help`` and ``rebot --help`` for more information about the command
 line usage. For a complete reference manual see `Robot Framework User Guide`_.
 
 Documentation
