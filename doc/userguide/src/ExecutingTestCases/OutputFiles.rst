@@ -267,11 +267,11 @@ threshold level. A special value `NONE` can also be used to
 disable logging altogether.
 
 It is possible to use the :option:`--loglevel` option also when
-`post-processing outputs`_ with ``rebot``. This allows, for example,
+`post-processing outputs`_ with Rebot. This allows, for example,
 running tests initially with the `TRACE` level, and generating smaller
 log files for normal viewing later with the `INFO` level. By default
 all the messages included during execution will be included also with
-``rebot``. Messages ignored during the execution cannot be recovered.
+Rebot. Messages ignored during the execution cannot be recovered.
 
 Another possibility to change the log level is using the BuiltIn_
 keyword :name:`Set Log Level` in the test data. It takes the same
@@ -556,7 +556,7 @@ deeply nested keyword structures.
 Setting start and end time of execution
 ---------------------------------------
 
-When `combining outputs`_ using ``rebot``, it is possible to set the start
+When `combining outputs`_ using Rebot, it is possible to set the start
 and end time of the combined test suite using the options :option:`--starttime`
 and :option:`--endtime`, respectively. This is convenient, because by default,
 combined suites do not have these values. When both the start and end time are
@@ -564,7 +564,7 @@ given, the elapsed time is also calculated based on them. Otherwise the elapsed
 time is got by adding the elapsed times of the child test suites together.
 
 It is also possible to use the above mentioned options to set start and end
-times for a single suite when using ``rebot``.  Using these options with a
+times for a single suite when using Rebot.  Using these options with a
 single output always affects the elapsed time of the suite.
 
 Times must be given as timestamps in the format `YYYY-MM-DD

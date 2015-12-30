@@ -17,7 +17,7 @@ Selecting test cases
 
 Robot Framework offers several command line options for selecting
 which test cases to execute. The same options also work when
-post-processing outputs with the ``rebot`` tool.
+post-processing outputs with Rebot_.
 
 By test suite and test case names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -155,10 +155,10 @@ also in this case. As a result normal outputs are created but show zero
 executed tests. The same option can be used also to alter the behavior when
 an empty directory or a test case file containing no tests is executed.
 
-Similar situation can occur also when processing output files with rebot_.
+Similar situation can occur also when processing output files with Rebot_.
 It is possible that no test match the used filtering criteria or that
 the output file contained no tests to begin with. By default executing
-``rebot`` fails in these cases, but it has a separate
+Rebot fails in these cases, but it has a separate
 :option:`--ProcessEmptySuite` option that can be used to alter the behavior.
 In practice this option works the same way as :option:`--RunEmptySuite` when
 running tests.
@@ -205,7 +205,7 @@ they start to pass.
 
 Criticality set when tests are
 executed is not stored anywhere. If you want to keep same criticality
-when `post-processing outputs`_ with ``rebot``, you need to
+when `post-processing outputs`_ with Rebot, you need to
 use :option:`--critical` and/or :option:`--noncritical` also with it::
 
   # Use rebot to create new log and report from the output created during execution

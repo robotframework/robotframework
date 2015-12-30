@@ -4,7 +4,7 @@ Post-processing outputs
 =======================
 
 `XML output files`_ that are generated during the test execution can be
-post-processed afterwards by the ``rebot`` tool, which is an integral
+post-processed afterwards by the Rebot tool, which is an integral
 part of Robot Framework. It is used automatically when test
 reports and logs are generated during the test execution, and using it
 separately allows creating custom reports and logs as well as combining
@@ -14,8 +14,8 @@ and merging results.
    :depth: 2
    :local:
 
-Using ``rebot`` tool
---------------------
+Using Rebot
+-----------
 
 Synopsis
 ~~~~~~~~
@@ -37,22 +37,22 @@ any interpreter, or use the `standalone JAR distribution`_.
 Specifying options and arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The basic syntax for using ``rebot`` is exactly the same as when
+The basic syntax for using Rebot is exactly the same as when
 `starting test execution`_ and also most of the command line options are
-identical. The main difference is that arguments to ``rebot`` are
+identical. The main difference is that arguments to Rebot are
 `XML output files`_ instead of test data files or directories.
 
-Return codes with ``rebot``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Return codes with Rebot
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Return codes from ``rebot`` are exactly same as when `running tests`__.
+Return codes from Rebot are exactly same as when `running tests`__.
 
 __ `Return codes`_
 
 Creating different reports and logs
 -----------------------------------
 
-You can use ``rebot`` for creating the same reports and logs that
+You can use Rebot for creating the same reports and logs that
 are created automatically during the test execution. Of course, it is
 not sensible to create the exactly same files, but, for example,
 having one report with all test cases and another with only some
@@ -69,12 +69,12 @@ for example, be executed on different environments, output files collected
 to a central place, and reports and logs created there. This approach can
 also work very well if generating reports and logs takes a lot of time when
 running tests on Jython. Disabling log and report generation and generating
-them later with ``rebot`` can save a lot of time and use less memory.
+them later with Rebot can save a lot of time and use less memory.
 
 Combining outputs
 -----------------
 
-An important feature in ``rebot`` is its ability to combine
+An important feature in Rebot is its ability to combine
 outputs from different test execution rounds. This capability allows,
 for example, running the same test cases on different environments and
 generating an overall report from all outputs. Combining outputs is
@@ -105,7 +105,7 @@ If same tests are re-executed or a single test suite executed in pieces,
 combining results like discussed above creates an unnecessary top-level
 test suite. In these cases it is typically better to merge results instead.
 Merging is done by using :option:`--merge` option which changes the way how
-``rebot`` combines two or more output files. This option itself takes no
+Rebot combines two or more output files. This option itself takes no
 arguments and all other command line options can be used with it normally::
 
    rebot --merge --name Example --critical regression original.xml merged.xml
@@ -126,7 +126,7 @@ Combining re-execution results with the original results using the default
 `combining outputs`_ approach does not work too well. The main problem is
 that you get separate test suites and possibly already fixed failures are
 also shown. In this situation it is better to use :option:`--merge (-R)`
-option to tell ``rebot`` to merge the results instead. In practice this
+option to tell Rebot to merge the results instead. In practice this
 means that tests from the latter test runs replace tests in the original.
 The usage is best illustrated by a practical example using
 :option:`--rerunfailed` and :option:`--merge` together::

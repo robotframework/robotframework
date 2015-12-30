@@ -4,7 +4,7 @@ Basic usage
 Robot Framework test cases are executed from the command line, and the
 end result is, by default, an `output file`_ in XML format and an HTML
 report_ and log_. After the execution, output files can be combined and
-otherwise `post-processed`__ with the ``rebot`` tool.
+otherwise `post-processed`__ with the Rebot tool.
 
 __ `Post-processing outputs`_
 
@@ -228,7 +228,7 @@ post-processing`__, respectively. The options and their values must be
 defined as a space separated list and they are placed in front of any
 explicit options on the command line. The main use case for these
 environment variables is setting global default values for certain options to
-avoid the need to repeat them every time tests are run or ``rebot`` used.
+avoid the need to repeat them every time tests are run or Rebot used.
 
 .. sourcecode:: bash
 
@@ -324,7 +324,7 @@ the :option:`--NoStatusRC` command line option. This might be useful, for
 example, in continuous integration servers where post-processing of results
 is needed before the overall status of test execution can be determined.
 
-.. note:: Same return codes are also used with rebot_.
+.. note:: Same return codes are also used with Rebot_.
 
 Errors and warnings during execution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -533,8 +533,8 @@ another:
 
 Implementing the above example with Windows batch files is not very
 complicated, either. The most important thing to remember is that
-because ``robot`` and ``rebot`` are implemented as batch
-files, ``call`` must be used when running them from another batch
+because ``robot`` and ``rebot`` scripts are implemented as batch files on
+Windows, ``call`` must be used when running them from another batch
 file. Otherwise execution would end when the first batch file is
 finished.
 
