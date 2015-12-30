@@ -67,7 +67,7 @@ more thoroughly in the subsequent sections.
 
 __ https://github.com/robotframework/robotframework/issues/2218
 
-.. _precondition:
+.. _precondition: `Preconditions`_
 
 Preconditions
 -------------
@@ -181,7 +181,7 @@ After installing IronPython, you probably still want to configure PATH_ to make
 IronPython itself as well as the ``robot`` and ``rebot`` `runner scripts`_
 executable on the command line.
 
-.. _PATH:
+.. _PATH: `Configuring PATH`_
 
 Configuring ``PATH``
 ~~~~~~~~~~~~~~~~~~~~
@@ -261,7 +261,7 @@ On UNIX-like systems you typically need to edit either some system wide or user
 specific configuration file. Which file to edit and how depends on the system,
 and you need to consult your operating system documentation for more details.
 
-.. _https_proxy:
+.. _https_proxy: `Setting https_proxy`_
 
 Setting ``https_proxy``
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -406,7 +406,7 @@ This installation method can be used on any operating system with any of the
 supported interpreters. Installing *from source* can sound a bit scary, but
 the procedure is actually pretty straightforward.
 
-.. _source distribution:
+.. _source distribution: `Getting source code`_
 
 Getting source code
 ~~~~~~~~~~~~~~~~~~~
@@ -573,8 +573,8 @@ a new major version.
 Executing Robot Framework
 -------------------------
 
-.. _runner script:
-.. _runner scripts:
+.. _runner script: `Using robot and rebot scripts`_
+.. _runner scripts: `Using robot and rebot scripts`_
 
 Using ``robot`` and ``rebot`` scripts
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
