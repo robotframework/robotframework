@@ -38,6 +38,9 @@ alternative is using the `standalone JAR distribution`_.
     IronPython, respectively. These scripts are still installed, but the plan
     is to deprecate and remove them in the future.
 
+__ `Executing installed robot module`_
+__ `Executing installed robot directory`_
+
 Specifying options and arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

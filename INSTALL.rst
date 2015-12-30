@@ -597,9 +597,6 @@ specific scripts ``pybot``, ``jybot`` and ``ipybot`` for test execution and
 ``jyrebot`` and ``ipyrebot`` for post-processing outputs. These scripts still
 work, but they will be deprecated and removed in the future.
 
-__ `Executing installed robot module`_
-__ `Executing installed robot directory`_
-
 Executing installed ``robot`` module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -642,7 +639,8 @@ installed :file:`robot` directory or :file:`run.py` file inside it directly:
 Running the directory is a new feature in Robot Framework 3.0, but the older
 versions support running the :file:`robot/run.py` file.
 
-Post-processing outputs using :file:`robot/rebot.py` works the same way too:
+Post-processing outputs using the :file:`robot/rebot.py` file works the same
+way too:
 
 .. sourcecode:: bash
 
