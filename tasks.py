@@ -167,19 +167,6 @@ def announce():
 
 
 @task
-def wininst(remove_dist=False):
-    """Create Windows installer.
-
-    Args:
-        remove_dist:  Control is 'dist' directory initially removed or not.
-    """
-    clean(remove_dist, create_dirs=True)
-    run('python setup.py bdist_wininst '
-        '--bitmap robot.bmp --install-script robot_postinstall.py')
-    announce()
-
-
-@task
 def jar(jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
     """Create JAR distribution.
 

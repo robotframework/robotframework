@@ -116,15 +116,7 @@ Creating distributions
 
        pip install robotframework --upgrade
 
-3. Windows installers
-
-   - Create 32bit and 64bit variants on suitable machines/interpreters::
-
-       invoke wininst
-
-   - Manually upload to https://pypi.python.org/pypi/robotframework/.
-
-4. JAR distribution
+3. JAR distribution
 
    - Create::
 
@@ -135,7 +127,7 @@ Creating distributions
        java -jar dist/robotframework-$VERSION.jar --version
        java -jar dist/robotframework-$VERSION.jar atest/testdata/misc/pass_and_fail.robot
 
-5. Upload JAR to Sonatype
+4. Upload JAR to Sonatype
 
    - Sonatype offers a service where users can upload JARs and they will be synced
      to the maven central repository. Below are the instructions to upload the JAR.
@@ -170,7 +162,7 @@ __ https://issues.sonatype.org/secure/Dashboard.jspa
 __ http://central.sonatype.org/pages/working-with-pgp-signatures.html
 __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
-6. User Guide
+5. User Guide
 
    - Create package (updates also library docs)::
 

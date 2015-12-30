@@ -64,9 +64,6 @@ else:
 SCRIPTS = [join('src', 'bin', s) for s in SCRIPTS + ['robot', 'rebot']]
 if WINDOWS:
     SCRIPTS = [s+'.bat' for s in SCRIPTS]
-if 'bdist_wininst' in sys.argv:
-    SCRIPTS.append('robot_postinstall.py')
-    LONG_DESCRIPTION = WINDOWS_DESCRIPTION
 
 
 class custom_install_scripts(install_scripts):
