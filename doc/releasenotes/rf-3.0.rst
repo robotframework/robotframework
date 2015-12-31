@@ -227,8 +227,8 @@ Other backwards incompatible changes
 Deprecated features
 ===================
 
-Deprecated synonyms for settings
---------------------------------
+Synonyms for settings
+---------------------
 
 Setting names `Document` and `Suite/Test Pre/Post Condition` have been
 deprecated in favour of `Documentation` and `Suite/Test Setup/Teardown`,
@@ -239,8 +239,8 @@ have used these deprecated forms, and we assume that they are not widely used.
 If, however, some of them are in common use, we can still consider removing
 the deprecation warning and supporting them in the future.
 
-Deprecated synonyms for tables
-------------------------------
+Synonyms for tables
+-------------------
 
 Table names `Metadata` and `User Keyword` have been deprecated in favour of
 `Settings` and `Keywords`, respectively (`#2208`_). Similarly as with
