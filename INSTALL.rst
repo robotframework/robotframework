@@ -360,9 +360,11 @@ Using pip
 Once you have pip_ installed, and have set https_proxy_ is you are behind
 a proxy, using it on the command line is very easy. The easiest way to use
 pip is letting it find and download packages it installs from the
-`Python Package Index (PyPI) <PyPI_>`__, but it can also install packages
+`Python Package Index (PyPI)`__, but it can also install packages
 downloaded from the PyPI separately. The most common usages are shown below
 and pip_ documentation has more information and examples.
+
+__ PyPI_
 
 .. sourcecode:: bash
 
@@ -479,7 +481,9 @@ you can always install it manually following these steps:
 
 2. Copy the source code where you want to.
 
-3. Decide `how to run tests <Executing Robot Framework_>`__.
+3. Decide `how to run tests`__.
+
+__ `Executing Robot Framework`_
 
 Verifying installation
 ----------------------
