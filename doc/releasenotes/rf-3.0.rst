@@ -4,29 +4,15 @@ Robot Framework 3.0
 
 .. default-role:: code
 
-Robot Framework 3.0 a new major release with Python 3 support and a new
-listener interface that allows modifying executed tests as well as execution
-results. Also start-up scripts have been enhanced and it is now possible to
-run tests with new `robot` command and like `python -m robot`. All issues
-targeted for RF 3.0 can be found from the `issue tracker
-<https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0>`_.
+Robot Framework 3.0 is a new major release with Python 3 support and a new
+powerful listener interface that allows modifying executed tests as well as
+execution results. Also start-up scripts have been enhanced and it is now
+possible to run tests with new `robot` command and like `python -m robot`.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users <http://groups.google.com/group/robotframework-users>`_
 and possible bugs `submitted to the issue tracker
 <https://github.com/robotframework/robotframework/issues>`__.
-
-If you have `pip <http://pip-installer.org>`_ installed, just run
-`pip install --upgrade robotframework` to install or upgrade to the latest
-version or use `pip install robotframework==3.0` to install exactly
-this version. Alternatively you can download the source distribution from
-`PyPI <https://pypi.python.org/pypi/robotframework>`_ and install it manually.
-For more details and other installation approaches, see the `installation
-instructions <../../INSTALL.rst>`_.
-
-Separate Windows installers are not created anymore.
-The standalone jar with Jython 2.7 is available at `Maven central
-<http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework>`_.
 
 Robot Framework 3.0 was released on Thursday December 31, 2015.
 
@@ -34,8 +20,29 @@ Robot Framework 3.0 was released on Thursday December 31, 2015.
    :depth: 2
    :local:
 
+Installation
+============
+
+The easiest way to install or upgrade to the latest version is using
+`pip <http://pip-installer.org>`_::
+
+    pip install --upgrade robotframework
+
+Alternatively you can download the source distribution from `PyPI
+<https://pypi.python.org/pypi/robotframework>`_, extract it, and install it
+by running::
+
+    python setup.py install
+
+For more details, including installing Python, Jython and IronPython, see
+the `installation instructions <../../INSTALL.rst>`_.
+
+The standalone JAR distribution with Jython 2.7 is available at `Maven central
+<http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework>`_.
+Separate Windows installers `are not created anymore <#2218_>`_.
+
 Upgrading from earlier versions
-===============================
+-------------------------------
 
 As usual with new major releases, there are some `backwards incompatible
 changes`_ and `deprecated features`_ that should be taken into account
