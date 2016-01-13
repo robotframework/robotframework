@@ -65,7 +65,7 @@ class ItemList(object):
         self._items = ()
 
     def visit(self, visitor):
-        for item in self:
+        for item in self._items:
             item.visit(visitor)
 
     def __iter__(self):
