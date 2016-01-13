@@ -67,33 +67,35 @@ def printable_name(string, code_style=False):
     parts = string.split()
     if not parts:
         return ''
-    if code_style and len(parts) == 1:
-        parts = _splitCamelCaseString(parts[0])
-    return ' '.join(part[0].upper() + part[1:] for part in parts if part != '')
+    if code_style and len(parts) == 1 \
+            and not (string.isalpha() and string.islower()):
+        parts = _camelCaseSplit(list(string))
+    return ' '.join(part[0].upper() + part[1:] for part in parts)
 
 
-def _splitCamelCaseString(string):
-    parts = []
-    current_part = []
-    string = ' ' + string + ' '  # extra spaces make going through string easier
-    for i in range(1, len(string)-1):
-        # on 1st/last round prev/next is ' ' and char is 1st/last real char
-        prev, char, next = string[i-1:i+2]
-        if _isWordBoundary(prev, char, next):
-            parts.append(''.join(current_part))
-            current_part = [char]
+def _camelCaseSplit(chars):
+    token = []
+    for prev, char, next in zip([''] + chars, chars, chars[1:] + ['']):
+        if _isCamelCaseBoundary(prev, char, next):
+            if token:
+                yield ''.join(token)
+            token = [char]
         else:
-            current_part.append(char)
-    parts.append(''.join(current_part))   # append last part
-    return parts
+            token.append(char)
+    if token:
+        yield ''.join(token)
 
 
-def _isWordBoundary(prev, char, next):
+def _isCamelCaseBoundary(prev, char, next):
+    if prev.isdigit():
+        return not char.isdigit()
+    if not prev.isalpha():
+        return False
     if char.isupper():
-        return (prev.islower() or next.islower()) and prev.isalnum()
+        return not (prev.isupper() and (not next or next.isupper()))
     if char.isdigit():
-        return prev.isalpha()
-    return prev.isdigit()
+        return not prev.isdigit()
+    return False
 
 
 def plural_or_not(item):

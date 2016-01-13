@@ -75,6 +75,7 @@ class TestMiscUtils(unittest.TestCase):
                          ('camelCaseName', 'CamelCaseName'),
                          ('with89numbers', 'With89numbers'),
                          ('with 89 numbers', 'With 89 Numbers'),
+                         ('with 89_numbers', 'With 89_numbers'),
                          ('', '')]:
             assert_equal(printable_name(inp), exp)
 
@@ -84,12 +85,17 @@ class TestMiscUtils(unittest.TestCase):
                          ('under_score_name', 'Under Score Name'),
                          ('under_score and spaces', 'Under Score And Spaces'),
                          ('miXed_CAPS_nAMe', 'MiXed CAPS NAMe'),
+                         ('with 89_numbers', 'With 89 Numbers'),
                          ('camelCaseName', 'Camel Case Name'),
-                         ('camelCaseWithDigit1', 'Camel Case With Digit 1'),
-                         ('name42WithNumbers666', 'Name 42 With Numbers 666'),
-                         ('12more34numbers', '12 More 34 Numbers'),
                          ('mixedCAPSCamelName', 'Mixed CAPS Camel Name'),
+                         ('camelCaseWithDigit1', 'Camel Case With Digit 1'),
+                         ('teamX', 'Team X'),
+                         ('name42WithNumbers666', 'Name 42 With Numbers 666'),
+                         ('name42WITHNumbers666', 'Name 42 WITH Numbers 666'),
+                         ('12more34numbers', '12 More 34 Numbers'),
                          ('foo-bar', 'Foo-bar'),
+                         ('Foo-b:a;r!', 'Foo-b:a;r!'),
+                         ('Foo-B:A;R!', 'Foo-B:A;R!'),
                          ('', '')]:
             assert_equal(printable_name(inp, code_style=True), exp)
 
