@@ -171,7 +171,7 @@ When a variable is used as a scalar like `${EXAMPLE}`, its value will be
 used as-is. If a variable value is a list or list-like, it is also possible
 to use as a list variable like `@{EXAMPLE}`. In this case individual list
 items are passed in as arguments separately. This is easiest to explain with
-an example. Assuming that a variable `@{USER}` has value `['robot','secret']`,
+an example. Assuming that a variable `@{USER}` has value `['robot', 'secret']`,
 the following two test cases are equivalent:
 
 .. sourcecode:: robotframework
@@ -228,7 +228,7 @@ similarly as scalar variables.
 
    *** Test Cases ***
    List Variable Item
-       Login    @{USER}
+       Login    @{USER}[0]    @{USER}[1]
        Title Should Be    Welcome @{USER}[0]!
 
    Negative Index
@@ -313,18 +313,26 @@ Accessing individual dictionary items
 It is possible to access a certain value of a dictionary variable
 with the syntax `&{NAME}[key]`, where `key` is the name of the
 selected value. Keys are considered to be strings, but non-strings
-keys can be used as variables. Dictionary items accessed in this
-manner can be used similarly as scalar variables:
+keys can be used as variables. Dictionary values accessed in this
+manner can be used similarly as scalar variables.
+
+If a key is a string, it is possible to access its value also using
+attribute access syntax `${NAME.key}`. See `Creating dictionary variables`_
+for more details about this syntax.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Dict Variable Item
-       Login    &{USER}
+       Login    &{USER}[name]    &{USER}[password]
        Title Should Be    Welcome &{USER}[name]!
 
-   Variable Key
+   Key As Variable
        Log Many    &{DICT}[${KEY}]    &{DICT}[${42}]
+
+   Attribute Access
+       Login    ${USER.name}    ${USER.password}
+       Title Should Be    Welcome ${USER.name}!
 
 Using dictionary variables with settings
 ''''''''''''''''''''''''''''''''''''''''
@@ -464,7 +472,7 @@ Dictionary variables can be created in the variable table similarly as
 list variables. The difference is that items need to be created using
 `name=value` syntax or existing dictionary variables. If there are multiple
 items with same name, the last value has precedence. If a name contains
-an equal sign, it can be escaped__ with a backslash like `\=`.
+a literal equal sign, it can be escaped__ with a backslash like `\=`.
 
 .. sourcecode:: robotframework
 
@@ -475,16 +483,16 @@ an equal sign, it can be escaped__ with a backslash like `\=`.
    &{EVEN MORE}    &{MANY}       first=override      empty=
    ...             =empty        key\=here=value
 
-Dictionary variables created in variable table have two extra properties
+Dictionary variables have two extra properties
 compared to normal Python dictionaries. First of all, values of these
 dictionaries can be accessed like attributes, which means that it is possible
 to use `extended variable syntax`_ like `${VAR.key}`. This only works if the
 key is a valid attribute name and does not match any normal attribute
 Python dictionaries have. For example, individual value `&{USER}[name]` can
 also be accessed like `${USER.name}` (notice that `$` is needed in this
-context), but `&{MANY}[${3}]` does not work as `${MANY.3}`.
+context), but using `${MANY.3}` is not possible.
 
-Another special property of dictionaries created in the variable table is
+Another special property of dictionary variables is
 that they are ordered. This means that if these dictionaries are iterated,
 their items always come in the order they are defined. This can be useful
 if dictionaries are used as `list variables`_ with `for loops`_ or otherwise.
@@ -568,7 +576,7 @@ Assigning scalar variables
 ''''''''''''''''''''''''''
 
 Any value returned by a keyword can be assigned to a `scalar variable`_.
-As illustrated by the example below, the required syntax is very simple.
+As illustrated by the example below, the required syntax is very simple:
 
 .. sourcecode:: robotframework
 
@@ -599,7 +607,7 @@ Assigning list variables
 ''''''''''''''''''''''''
 
 If a keyword returns a list or any list-like object, it is possible to
-assign it to a `list variable`_.
+assign it to a `list variable`_:
 
 .. sourcecode:: robotframework
 
@@ -609,7 +617,7 @@ assign it to a `list variable`_.
        Length Should Be    ${list}    3
        Log Many    @{list}
 
-Because all Robot Framework variables are stored in same namespace, there is
+Because all Robot Framework variables are stored in the same namespace, there is
 not much difference between assigning a value to a scalar variable or a list
 variable. This can be seen by comparing the last two examples above. The main
 differences are that when creating a list variable, Robot Framework
@@ -622,7 +630,7 @@ Assigning dictionary variables
 ''''''''''''''''''''''''''''''
 
 If a keyword returns a dictionary or any dictionary-like object, it is possible
-to assign it to a `dictionary variable`_.
+to assign it to a `dictionary variable`_:
 
 .. sourcecode:: robotframework
 
@@ -633,16 +641,18 @@ to assign it to a `dictionary variable`_.
        Do Something    &{dict}
        Log    ${dict.first}
 
-Because all Robot Framework variables are stored in same namespace, it would
+Because all Robot Framework variables are stored in the same namespace, it would
 also be possible to assign a dictionary into a scalar variable and use it
 later as a dictionary when needed. There are, however, some actual benefits
 in creating a dictionary variable explicitly. First of all, Robot Framework
 verifies that the returned value is a dictionary or dictionary-like similarly
 as it verifies that list variables can only get a list-like value.
-Another benefit is that Robot Framework converts the value into a special
-dictionary it uses also when `creating dictionary variables`_ in the variable
-table. These dictionaries are sortable and their values can be accessed using
-attribute access like `${dict.first}` in the above example.
+
+A bigger benefit is that the value is converted into a special dictionary
+that it uses also when `creating dictionary variables`_ in the variable table.
+Values in these dictionaries can be accessed using attribute access like
+`${dict.first}` in the above example. These dictionaries are also ordered, but
+if the original dictionary was not ordered, the resulting order is arbitrary.
 
 Assigning multiple variables
 ''''''''''''''''''''''''''''
