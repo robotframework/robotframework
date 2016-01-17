@@ -5,6 +5,7 @@ dist
 MANIFEST
 atest/results
 utest/jasmine-results
+*~
 .idea
 .*project
 *.pyc
