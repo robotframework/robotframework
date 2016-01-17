@@ -1,6 +1,7 @@
 tmp
 build
 dist
+*~
 MANIFEST
 atest/results
 utest/jasmine-results
