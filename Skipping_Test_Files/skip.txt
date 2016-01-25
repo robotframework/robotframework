@@ -1,0 +1,3 @@
+*** Test Cases ***
+Skip Normal
+    Skip Execution  Testing Keyword

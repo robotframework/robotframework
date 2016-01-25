@@ -1,0 +1,15 @@
+*** Settings ***
+Documentation
+...    Objective:  Test Skipped Testcase Reporting
+...
+
+Library          BuiltIn
+Default Tags     smoke_test
+
+*** Test Cases ***
+Test_Skip_Dynamic_Tag
+    [Tags]    my_skip
+    # Run the testcase
+    # ----------------
+
+    Log  ===========> *** RUNNING TEST_SKIP_DYNAMIC_TAG *** <===========

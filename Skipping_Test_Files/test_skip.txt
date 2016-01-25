@@ -1,0 +1,29 @@
+*** Settings ***
+Documentation
+...    Objective:  Test Skipped Testcase Reporting
+...
+
+Library          BuiltIn
+Default Tags     smoke_test
+
+*** Keywords ***
+Skip Test
+    Set Test Variable    ${release}      R1
+    Run Keyword If      '${release}' == 'R1'
+    ...    Skip Execution  Skipping Testcase (it is not relevant to this image)
+
+Frank's Skip
+    [TAGS]  skip-frank
+    Log  I did this
+
+*** Test Cases ***
+Test_Skip_With_Keyword
+    # Check if Testcase is Relevant (should be skipped)
+    # -------------------------------------------------
+    Skip Test
+
+    Log  ===========> *** RUNNING TEST_SKIP *** <===========
+Test Pass
+    log  hi
+Test Fail
+    fail

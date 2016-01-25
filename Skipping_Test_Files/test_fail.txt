@@ -1,0 +1,16 @@
+*** Settings ***
+Documentation
+...    Objective: Test Failed Testcase Reporting
+...
+
+Library          BuiltIn
+Default Tags     smoke_test
+
+*** Test Cases ***
+Test_Fail
+    Log  ===========> *** RUNNING TEST_FAIL *** <===========
+
+    # Force a testcase failure
+    Set Test Variable     ${result}    FORCE_FAILURE
+    Should Be Equal       ${result}    Passed 
+

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20160408 14:18:11.794" generator="Robot 3.0.1.dev20151231 (Python 2.7.6 on linux2)">
+<suite source="/home/dev/Documents/RobotFrameworkSkip/SkipVE/robotframework/Skipping_Test_Files" id="s1" name="Skipping Test Files">
+<suite source="/home/dev/Documents/RobotFrameworkSkip/SkipVE/robotframework/Skipping_Test_Files/skip.txt" id="s1-s1" name="Skip">
+<test id="s1-s1-t1" name="Skip Normal">
+<kw name="Skip Execution" library="BuiltIn">
+<doc>Skips rest of the current test, setup, or teardown with SKIP status.</doc>
+<arguments>
+<arg>Testing Keyword</arg>
+</arguments>
+<msg timestamp="20160408 14:18:11.811" level="INFO">Execution skipped with message:
+Testing Keyword</msg>
+<status status="SKIP" endtime="20160408 14:18:11.811" starttime="20160408 14:18:11.811"></status>
+</kw>
+<status status="SKIP" endtime="20160408 14:18:11.812" critical="yes" starttime="20160408 14:18:11.811">Testing Keyword</status>
+</test>
+<status status="SKIP" endtime="20160408 14:18:11.812" starttime="20160408 14:18:11.809"></status>
+</suite>
+<suite source="/home/dev/Documents/RobotFrameworkSkip/SkipVE/robotframework/Skipping_Test_Files/test_fail.txt" id="s1-s2" name="Test Fail">
+<test id="s1-s2-t1" name="Test_Fail">
+<kw name="Log" library="BuiltIn">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>===========&gt; *** RUNNING TEST_FAIL *** &lt;===========</arg>
+</arguments>
+<msg timestamp="20160408 14:18:11.815" level="INFO">===========&gt; *** RUNNING TEST_FAIL *** &lt;===========</msg>
+<status status="PASS" endtime="20160408 14:18:11.815" starttime="20160408 14:18:11.815"></status>
+</kw>
+<kw name="Set Test Variable" library="BuiltIn">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>FORCE_FAILURE</arg>
+</arguments>
+<msg timestamp="20160408 14:18:11.816" level="INFO">${result} = FORCE_FAILURE</msg>
+<status status="PASS" endtime="20160408 14:18:11.816" starttime="20160408 14:18:11.815"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>Passed</arg>
+</arguments>
+<msg timestamp="20160408 14:18:11.816" level="FAIL">FORCE_FAILURE != Passed</msg>
+<status status="FAIL" endtime="20160408 14:18:11.816" starttime="20160408 14:18:11.816"></status>
+</kw>
+<tags>
+<tag>smoke_test</tag>
+</tags>
+<status status="FAIL" endtime="20160408 14:18:11.817" critical="yes" starttime="20160408 14:18:11.814">FORCE_FAILURE != Passed</status>
+</test>
+<doc>Objective: Test Failed Testcase Reporting
+</doc>
+<status status="FAIL" endtime="20160408 14:18:11.817" starttime="20160408 14:18:11.813"></status>
+</suite>
+<suite source="/home/dev/Documents/RobotFrameworkSkip/SkipVE/robotframework/Skipping_Test_Files/test_pass.txt" id="s1-s3" name="Test Pass">
+<test id="s1-s3-t1" name="Test_Pass">
+<kw name="Skip Test">
+<kw name="Set Test Variable" library="BuiltIn">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${release}</arg>
+<arg>R2</arg>
+</arguments>
+<msg timestamp="20160408 14:18:11.820" level="INFO">${release} = R2</msg>
+<status status="PASS" endtime="20160408 14:18:11.820" starttime="20160408 14:18:11.820"></status>
+</kw>
+<kw name="Run Keyword If" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<arguments>
+<arg>'${release}' == 'R1'</arg>
+<arg>Skip Execution</arg>
+<arg>Skipping Testcase (it is not relevant to this image)</arg>
+</arguments>
+<status status="PASS" endtime="20160408 14:18:11.821" starttime="20160408 14:18:11.821"></status>
+</kw>
+<status status="PASS" endtime="20160408 14:18:11.821" starttime="20160408 14:18:11.820"></status>
+</kw>
+<kw name="Log" library="BuiltIn">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>===========&gt; *** RUNNING TEST_PASS *** &lt;===========</arg>
+</arguments>
+<msg timestamp="20160408 14:18:11.822" level="INFO">===========&gt; *** RUNNING TEST_PASS *** &lt;===========</msg>
+<status status="PASS" endtime="20160408 14:18:11.822" starttime="20160408 14:18:11.821"></status>
+</kw>
+<tags>
+<tag>smoke_test</tag>
+</tags>
+<status status="PASS" endtime="20160408 14:18:11.822" critical="yes" starttime="20160408 14:18:11.819"></status>
+</test>
+<doc>Objective: Test Passed Testcase Reporting
+</doc>
+<status status="PASS" endtime="20160408 14:18:11.822" starttime="20160408 14:18:11.817"></status>
+</suite>
+<suite source="/home/dev/Documents/RobotFrameworkSkip/SkipVE/robotframework/Skipping_Test_Files/test_skip.txt" id="s1-s4" name="Test Skip">
+<test id="s1-s4-t1" name="Test_Skip_With_Keyword">
+<kw name="Skip Test">
+<kw name="Set Test Variable" library="BuiltIn">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${release}</arg>
+<arg>R1</arg>
+</arguments>
+<msg timestamp="20160408 14:18:11.828" level="INFO">${release} = R1</msg>
+<status status="PASS" endtime="20160408 14:18:11.828" starttime="20160408 14:18:11.827"></status>
+</kw>
+<kw name="Run Keyword If" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<arguments>
+<arg>'${release}' == 'R1'</arg>
+<arg>Skip Execution</arg>
+<arg>Skipping Testcase (it is not relevant to this image)</arg>
+</arguments>
+<kw name="Skip Execution" library="BuiltIn">
+<doc>Skips rest of the current test, setup, or teardown with SKIP status.</doc>
+<arguments>
+<arg>Skipping Testcase (it is not relevant to this image)</arg>
+</arguments>
+<msg timestamp="20160408 14:18:11.829" level="INFO">Execution skipped with message:
+Skipping Testcase (it is not relevant to this image)</msg>
+<status status="SKIP" endtime="20160408 14:18:11.830" starttime="20160408 14:18:11.829"></status>
+</kw>
+<status status="SKIP" endtime="20160408 14:18:11.830" starttime="20160408 14:18:11.828"></status>
+</kw>
+<status status="SKIP" endtime="20160408 14:18:11.830" starttime="20160408 14:18:11.826"></status>
+</kw>
+<tags>
+<tag>smoke_test</tag>
+</tags>
+<status status="SKIP" endtime="20160408 14:18:11.830" critical="yes" starttime="20160408 14:18:11.825">Skipping Testcase (it is not relevant to this image)</status>
+</test>
+<test id="s1-s4-t2" name="Test Pass">
+<kw name="Log" library="BuiltIn">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>hi</arg>
+</arguments>
+<msg timestamp="20160408 14:18:11.832" level="INFO">hi</msg>
+<status status="PASS" endtime="20160408 14:18:11.832" starttime="20160408 14:18:11.832"></status>
+</kw>
+<tags>
+<tag>smoke_test</tag>
+</tags>
+<status status="PASS" endtime="20160408 14:18:11.832" critical="yes" starttime="20160408 14:18:11.831"></status>
+</test>
+<test id="s1-s4-t3" name="Test Fail">
+<kw name="Fail" library="BuiltIn">
+<doc>Fails the test with the given message and optionally alters its tags.</doc>
+<msg timestamp="20160408 14:18:11.833" level="FAIL">AssertionError</msg>
+<status status="FAIL" endtime="20160408 14:18:11.833" starttime="20160408 14:18:11.833"></status>
+</kw>
+<tags>
+<tag>smoke_test</tag>
+</tags>
+<status status="FAIL" endtime="20160408 14:18:11.833" critical="yes" starttime="20160408 14:18:11.832">AssertionError</status>
+</test>
+<doc>Objective: Test Skipped Testcase Reporting
+</doc>
+<status status="FAIL" endtime="20160408 14:18:11.834" starttime="20160408 14:18:11.823"></status>
+</suite>
+<suite source="/home/dev/Documents/RobotFrameworkSkip/SkipVE/robotframework/Skipping_Test_Files/test_skip_dynamic_tag.txt" id="s1-s5" name="Test Skip Dynamic Tag">
+<test id="s1-s5-t1" name="Test_Skip_Dynamic_Tag">
+<kw name="Log" library="BuiltIn">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>===========&gt; *** RUNNING TEST_SKIP_DYNAMIC_TAG *** &lt;===========</arg>
+</arguments>
+<msg timestamp="20160408 14:18:11.840" level="INFO">===========&gt; *** RUNNING TEST_SKIP_DYNAMIC_TAG *** &lt;===========</msg>
+<status status="PASS" endtime="20160408 14:18:11.840" starttime="20160408 14:18:11.840"></status>
+</kw>
+<tags>
+<tag>my_skip</tag>
+</tags>
+<status status="PASS" endtime="20160408 14:18:11.840" critical="yes" starttime="20160408 14:18:11.839"></status>
+</test>
+<doc>Objective: Test Skipped Testcase Reporting
+</doc>
+<status status="PASS" endtime="20160408 14:18:11.841" starttime="20160408 14:18:11.835"></status>
+</suite>
+<status status="FAIL" endtime="20160408 14:18:11.842" starttime="20160408 14:18:11.795"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="2" skip="2" pass="3">Critical Tests</stat>
+<stat fail="2" skip="2" pass="3">All Tests</stat>
+</total>
+<tag>
+<stat fail="0" skip="0" pass="1">my_skip</stat>
+<stat fail="2" skip="1" pass="2">smoke_test</stat>
+</tag>
+<suite>
+<stat fail="2" skip="2" id="s1" name="Skipping Test Files" pass="3">Skipping Test Files</stat>
+<stat fail="0" skip="1" id="s1-s1" name="Skip" pass="0">Skipping Test Files.Skip</stat>
+<stat fail="1" skip="0" id="s1-s2" name="Test Fail" pass="0">Skipping Test Files.Test Fail</stat>
+<stat fail="0" skip="0" id="s1-s3" name="Test Pass" pass="1">Skipping Test Files.Test Pass</stat>
+<stat fail="1" skip="1" id="s1-s4" name="Test Skip" pass="1">Skipping Test Files.Test Skip</stat>
+<stat fail="0" skip="0" id="s1-s5" name="Test Skip Dynamic Tag" pass="1">Skipping Test Files.Test Skip Dynamic Tag</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

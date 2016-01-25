@@ -1,0 +1,21 @@
+*** Settings ***
+Documentation
+...    Objective:  Test Passed Testcase Reporting
+...
+
+Library          BuiltIn
+Default Tags     smoke_test
+
+*** Keywords ***
+Skip Test
+    Set Test Variable    ${release}      R2
+    Run Keyword If      '${release}' == 'R1'
+    ...    Skip Execution   Skipping Testcase (it is not relevant to this image)
+
+*** Test Cases ***
+Test_Pass 
+    # Check if Testcase is Relevant (should be skipped)
+    # -------------------------------------------------
+    Skip Test
+    Log  ===========> *** RUNNING TEST_PASS *** <=========== 
+

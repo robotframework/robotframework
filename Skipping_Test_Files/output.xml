@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20160412 14:42:44.418" generator="Robot 3.0.1.dev20151231 (Python 2.7.6 on linux2)">
+<suite source="/home/dev/Documents/RobotFrameworkSkip/SkipVE/robotframework/Skipping_Test_Files/skip.txt" id="s1" name="Skip">
+<test id="s1-t1" name="Skip Normal">
+<kw name="Skip Execution" library="BuiltIn">
+<doc>Skips rest of the current test, setup, or teardown with SKIP status.</doc>
+<arguments>
+<arg>Testing Keyword</arg>
+</arguments>
+<msg timestamp="20160412 14:42:44.436" level="INFO">Execution skipped with message:
+Testing Keyword</msg>
+<status status="SKIP" endtime="20160412 14:42:44.436" starttime="20160412 14:42:44.436"></status>
+</kw>
+<status status="SKIP" endtime="20160412 14:42:44.436" critical="yes" starttime="20160412 14:42:44.435">Testing Keyword</status>
+</test>
+<status status="SKIP" endtime="20160412 14:42:44.437" starttime="20160412 14:42:44.418"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="0" skip="1" pass="0">Critical Tests</stat>
+<stat fail="0" skip="1" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="0" skip="1" id="s1" name="Skip" pass="0">Skip</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

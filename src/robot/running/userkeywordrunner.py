@@ -14,7 +14,7 @@
 
 from robot.errors import (ExecutionFailed, ReturnFromKeyword, ExecutionPassed,
                           UserKeywordExecutionFailed, DataError, VariableError,
-                          PassExecution)
+                          ExecutionSkipped,SkipExecution,PassExecution)
 from robot.result import Keyword as KeywordResult
 from robot.utils import DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_var, VariableAssignment
@@ -141,6 +141,9 @@ class UserKeywordRunner(object):
             return_ = exception
             error = exception.earlier_failures
         except ExecutionPassed as exception:
+            pass_ = exception
+            error = exception.earlier_failures
+        except ExecutionSkipped as exception:
             pass_ = exception
             error = exception.earlier_failures
         except ExecutionFailed as exception:
