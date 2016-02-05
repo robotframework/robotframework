@@ -33,6 +33,7 @@ Operating System :: OS Independent
 Programming Language :: Python :: 2
 Programming Language :: Python :: 3
 Topic :: Software Development :: Testing
+Framework :: Robot Framework
 """.strip().splitlines()
 KEYWORDS = 'robotframework testing testautomation acceptancetesting atdd bdd'
 # Maximum width in Windows installer seems to be 70 characters -------|
