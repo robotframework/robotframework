@@ -101,5 +101,7 @@ class XmlWriter(_MarkupWriter):
 
 
 class NullMarkupWriter(object):
-    """Null implementation of _MarkupWriter interface."""
-    __init__ = start = content = element = end = close = lambda *args: None
+    """Null implementation of the _MarkupWriter interface."""
+
+    __init__ = start = content = element = end = close = \
+        lambda *args, **kwargs: None
