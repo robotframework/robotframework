@@ -69,7 +69,7 @@ def printable_name(string, code_style=False):
         return ''
     if code_style and len(parts) == 1 \
             and not (string.isalpha() and string.islower()):
-        parts = _camelCaseSplit(list(string))
+        parts = _camelCaseSplit(list(parts[0]))
     return ' '.join(part[0].upper() + part[1:] for part in parts)
 
 
@@ -89,10 +89,8 @@ def _camelCaseSplit(chars):
 def _isCamelCaseBoundary(prev, char, next):
     if prev.isdigit():
         return not char.isdigit()
-    if not prev.isalpha():
-        return False
     if char.isupper():
-        return not (prev.isupper() and (not next or next.isupper()))
+        return next.islower() or prev.isalpha() and not prev.isupper()
     if char.isdigit():
         return not prev.isdigit()
     return False
