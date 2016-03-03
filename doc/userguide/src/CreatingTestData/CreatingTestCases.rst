@@ -339,7 +339,6 @@ library keywords, user keywords, and when importing the Telnet_ test library.
    *** Keywords ***
    List files
        [Arguments]    ${path}=.    ${options}=
-       List files    options=-lh
        Execute command    ls ${options} ${path}
 
 Free keyword arguments
