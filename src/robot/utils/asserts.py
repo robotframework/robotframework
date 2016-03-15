@@ -1,4 +1,4 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2016 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ used freely in same terms as unittest.
 
 unittest license::
 
-    Copyright (c) 1999-2003 Steve Purcell
+#  Copyright 2008-2016 Nokia Solutions and Networks
     This module is free software, and you may redistribute it and/or modify
     it under the same terms as Python itself, so long as this copyright message
     and disclaimer are retained in their original form.
