@@ -14,6 +14,7 @@
 
 from contextlib import contextmanager
 import inspect
+import socket
 import re
 import struct
 import telnetlib
@@ -718,6 +719,7 @@ class TelnetConnection(telnetlib.Telnet):
 
         See `Logging` section for more information about log levels.
         """
+        self.sock.shutdown(socket.SHUT_RDWR)
         self.close()
         output = self._decode(self.read_all())
         self._log(output, loglevel)
