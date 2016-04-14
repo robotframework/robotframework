@@ -14,8 +14,8 @@
 
 from contextlib import contextmanager
 import inspect
-import socket
 import re
+import socket
 import struct
 import telnetlib
 import time
