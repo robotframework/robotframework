@@ -611,7 +611,7 @@ class OperatingSystem(object):
         self._link("Created binary file '%s'.", path)
 
     def append_to_file(self, path, content, encoding='UTF-8'):
-        """Appends the given contend to the specified file.
+        """Appends the given content to the specified file.
 
         If the file does not exists, this keyword works exactly the same
         way as `Create File`.
