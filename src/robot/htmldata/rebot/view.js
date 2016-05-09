@@ -97,18 +97,17 @@ function addTooltipsToElapsedTimes() {
 function enableStatisticsSorter() {
     $.tablesorter.addParser({
         id: 'statName',
-        type: 'numeric',
-        is: function(s) {
-            return false;  // do not auto-detect
-        },
-        format: function(string, table, cell, cellIndex) {
-            // Rows have class in format 'row-<index>'.
-            var index = $(cell).parent().attr('class').substring(4);
-            return parseInt(index);
+        type: 'text',
+        format: function(s, table, cell, cellIndex) {
+            // Ignore Case
+            return s.toLowerCase();
         }
     });
+    //$.tablesorter.defaults.sortList = [[0,0]];
     $(".statistics").tablesorter({
         sortInitialOrder: 'desc',
+        sortReset: false,
+        sortRestart: false,
         headers: {0: {sorter:'statName', sortInitialOrder: 'asc'},
                   5: {sorter: false}}
     });
