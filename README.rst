@@ -65,6 +65,17 @@ from GitHub_. After that you can install the framework with::
 For more detailed installation instructions, including installing
 Python, Jython and IronPython, see `<INSTALL.rst>`__.
 
+Run Robot inside Docker
+------------
+
+To build a Robot Docker image::
+
+    docker build -t robot-docker .
+
+To run tests and output the results to your host, mount a directory::
+
+    docker run --rm -v /path/to/tests/:/path/to/tests/ -ti robot-docker robot --variable HOST:example.com --outputdir results /path/to/tests/
+
 Example
 -------
 
