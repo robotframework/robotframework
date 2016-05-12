@@ -638,11 +638,11 @@ class XML(object):
         keyword.
 
         This keyword returns all the text of the specified element, including
-        all the text its children and grandchildren contains. If the element
+        all the text its children and grandchildren contain. If the element
         has no text, an empty string is returned. The returned text is thus not
         always the same as the `text` attribute of the element.
 
-        Be default all whitespace, including newlines and indentation, inside
+        By default all whitespace, including newlines and indentation, inside
         the element is returned as-is. If ``normalize_whitespace`` is given
         a true value (see `Boolean arguments`), then leading and trailing
         whitespace is stripped, newlines and tabs converted to spaces, and
