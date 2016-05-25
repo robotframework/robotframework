@@ -295,7 +295,7 @@ class TestSignalHandlers(unittest.TestCase):
             signal.signal(signal.SIGINT, orig_sigint)
             signal.signal(signal.SIGTERM, orig_sigterm)
 
-    def test_dont_register_signal_handlers_then_run_on_thread(self):
+    def test_dont_register_signal_handlers_when_run_on_thread(self):
         stream = StringIO()
         thread = threading.Thread(target=run_without_outputs, args=(self.data,),
                                   kwargs=dict(stdout=stream, stderr=stream))
