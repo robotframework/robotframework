@@ -7,5 +7,3 @@ copyright statement.
 
 .. include:: ../../../../COPYRIGHT.txt
    :literal:
-
-
