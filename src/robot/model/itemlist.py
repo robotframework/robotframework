@@ -59,6 +59,12 @@ class ItemList(object):
         items.insert(index, item)
         self._items = tuple(items)
 
+    def pop(self, *index):
+        items = list(self._items)
+        result = items.pop(*index)
+        self._items = tuple(items)
+        return result
+
     def index(self, item, *start_and_end):
         return self._items.index(item, *start_and_end)
 
