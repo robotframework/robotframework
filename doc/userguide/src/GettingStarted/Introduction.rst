@@ -7,6 +7,15 @@ acceptance-test-driven development (ATDD). It can be used for testing
 distributed, heterogeneous applications, where verification requires
 touching several technologies and interfaces.
 
+The framework has a rich ecosystem around it consisting of various generic
+test libraries and tools that are developed as separate projects. For more
+information about Robot Framework and the ecosystem, see
+http://robotframework.org.
+
+Robot Framework is open source software released under the `Apache License
+2.0`_. Its development is sponsored by the `Robot Framework Foundation
+<http://robotframework.org/foundation>`_.
+
 .. contents::
    :depth: 2
    :local:
