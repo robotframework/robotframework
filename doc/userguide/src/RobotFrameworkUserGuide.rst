@@ -10,7 +10,8 @@
   Version |version|
 ---------------------
 
-| Copyright |copy| 2008-2015 Nokia Solutions and Networks
+| Copyright |copy| 2008-2015 Nokia Networks
+| Copyright |copy| 2016- Robot Framework Foundation
 | Licensed under the `Creative Commons Attribution 3.0 Unported`__ license
 
 __ http://creativecommons.org/licenses/by/3.0/
