@@ -438,42 +438,43 @@ class _Converter(_BuiltInBase):
 
     @run_keyword_variant(resolve=0)
     def create_dictionary(self, *items):
-        """Creates and returns a dictionary based on given items.
+        """Creates and returns a dictionary based on the given ``items``.
 
-        Items are given using ``key=value`` syntax same way as ``&{dictionary}``
-        variables are created in the Variable table. Both keys and values
-        can contain variables, and possible equal sign in key can be escaped
-        with a backslash like ``escaped\\=key=value``. It is also possible to
-        get items from existing dictionaries by simply using them like
-        ``&{dict}``.
+        Items are typically given using the ``key=value`` syntax same way as
+        ``&{dictionary}`` variables are created in the Variable table. Both
+        keys and values can contain variables, and possible equal sign in key
+        can be escaped with a backslash like ``escaped\\=key=value``. It is
+        also possible to get items from existing dictionaries by simply using
+        them like ``&{dict}``.
+
+        Alternatively items can be specified so that keys and values are given
+        separately. This and the ``key=value`` syntax can even be combined,
+        but separately given items must be first.
 
         If same key is used multiple times, the last value has precedence.
         The returned dictionary is ordered, and values with strings as keys
-        can also be accessed using convenient dot-access syntax like
+        can also be accessed using a convenient dot-access syntax like
         ``${dict.key}``.
 
         Examples:
-        | &{dict} = | Create Dictionary | key=value | foo=bar |
+        | &{dict} = | Create Dictionary | key=value | foo=bar | | | # key=value syntax |
         | Should Be True | ${dict} == {'key': 'value', 'foo': 'bar'} |
-        | &{dict} = | Create Dictionary | ${1}=${2} | &{dict} | foo=new |
+        | &{dict2} = | Create Dictionary | key | value | foo | bar | # separate key and value |
+        | Should Be Equal | ${dict} | ${dict2} |
+        | &{dict} = | Create Dictionary | ${1}=${2} | &{dict} | foo=new | | # using variables |
         | Should Be True | ${dict} == {1: 2, 'key': 'value', 'foo': 'new'} |
-        | Should Be Equal | ${dict.key} | value |
+        | Should Be Equal | ${dict.key} | value | | | | # dot-access |
 
         This keyword was changed in Robot Framework 2.9 in many ways:
         - Moved from ``Collections`` library to ``BuiltIn``.
         - Support also non-string keys in ``key=value`` syntax.
-        - Deprecated old syntax to give keys and values separately.
         - Returned dictionary is ordered and dot-accessible.
+        - Old syntax to give keys and values separately was deprecated, but
+          deprecation was later removed in RF 3.0.1.
         """
         separate, combined = self._split_dict_items(items)
-        if separate:
-            # TODO: Deprecated in 2.9. Remove support for this in 3.1.
-            self.log("Giving keys and values separately to 'Create Dictionary' "
-                     "keyword is deprecated. Use 'key=value' syntax instead.",
-                     level='WARN')
-        separate = self._format_separate_dict_items(separate)
+        result = DotDict(self._format_separate_dict_items(separate))
         combined = DictVariableTableValue(combined).resolve(self._variables)
-        result = DotDict(separate)
         result.update(combined)
         return result
 
