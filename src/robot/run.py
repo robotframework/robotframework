@@ -66,7 +66,7 @@ of the normal installation. Alternatively it is possible to execute the `robot`
 module directly using `python -m robot`, where `python` can be replaced with
 any supported Python interpreter like `jython`, `ipy` or `python3`. Yet another
 alternative is running the `robot` directory like `python path/to/robot`.
-Finally, there is a standalone JAR distribution.
+Finally, there is a standalone JAR distribution available.
 
 Data sources given to Robot Framework are either test case files or directories
 containing them and/or other directories. Single test case file creates a test
@@ -79,11 +79,11 @@ By default Robot Framework creates an XML output file and a log and a report in
 HTML format, but this can be configured using various options listed below.
 Outputs in HTML format are for human consumption and XML output for integration
 with other systems. XML outputs can also be combined and otherwise further
-processed with `rebot` tool. Run `rebot --help` for more information.
+processed with Rebot tool. Run `rebot --help` for more information.
 
-Robot Framework is open source software released under Apache License 2.0. Its
-copyrights are owned and development supported by Nokia Solutions and Networks.
-For more information about the framework see http://robotframework.org/.
+Robot Framework is open source software released under Apache License 2.0.
+For more information about the framework and the rich ecosystem around it
+see http://robotframework.org/.
 
 Options
 =======
