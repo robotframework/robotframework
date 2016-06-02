@@ -28,6 +28,9 @@ an issue tracker, and some further documentation. See `<CONTRIBUTING.rst>`__
 if you are interested to contribute. Downloads are hosted on PyPI_, except
 for the standalone JAR distribution that is on `Maven central`_.
 
+Robot Framework development is sponsored by `Robot Framework Foundation
+<http://robotframework.org/foundation>`_.
+
 .. _GitHub: https://github.com/robotframework/robotframework
 .. _PyPI: https://pypi.python.org/pypi/robotframework
 .. _Maven central: http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework
@@ -141,10 +144,10 @@ Support and contact
 License
 -------
 
-Robot Framework is open source software provided under under `Apache License
-2.0`__. Robot Framework documentation and other similar content use `Creative
-Commons Attribution 3.0 Unported`__ license. Most libraries and tools in
-the ecosystem are also open source, but they may use different licenses.
+Robot Framework is open source software provided under the `Apache License
+2.0`__. Robot Framework documentation and other similar content use the
+`Creative Commons Attribution 3.0 Unported`__ license. Most libraries and tools
+in the ecosystem are also open source, but they may use different licenses.
 
 __ http://apache.org/licenses/LICENSE-2.0
 __ http://creativecommons.org/licenses/by/3.0
