@@ -2245,7 +2245,7 @@ class _Control(_BuiltInBase):
         """
         if self._is_true(condition):
             message = self._variables.replace_string(message)
-            tags = [self._variables.replace_string(tag) for tag in tags]
+            tags = self._variables.replace_list(tags)
             self.pass_execution(message, *tags)
 
 
