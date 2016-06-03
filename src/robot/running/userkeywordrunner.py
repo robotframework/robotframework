@@ -144,6 +144,8 @@ class UserKeywordRunner(object):
         except ExecutionPassed as exception:
             pass_ = exception
             error = exception.earlier_failures
+            if error:
+                error.continue_on_failure = False
         except ExecutionFailed as exception:
             error = exception
         with context.keyword_teardown(error):

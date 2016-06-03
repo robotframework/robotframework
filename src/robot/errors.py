@@ -218,7 +218,7 @@ class ExecutionPassed(ExecutionFailed):
 
     def set_earlier_failures(self, failures):
         if failures:
-            self._earlier_failures.extend(failures)
+            self._earlier_failures = list(failures) + self._earlier_failures
 
     @property
     def earlier_failures(self):
