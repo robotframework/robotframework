@@ -838,6 +838,60 @@ class _Verify(_BuiltInBase):
             raise AssertionError(self._get_string_msg(container, item, msg,
                                                       values, 'does not contain'))
 
+    def should_contain_any(self, container, *items, **configuration):
+        """Fails if ``container`` does not contain any of the ``*items``.
+
+        Works with strings, lists, and anything that supports Python's ``in``
+        operator. See `Should Be Equal` for an explanation on how to override
+        the default error message with ``msg=`` and ``values=``. Both arguments
+        must be given after all ``*items`` and use ``name=value`` syntax.
+
+        Note that possible equal signs in ``*items`` must be escaped
+        with a backslash (e.g. ``name\=value``) to avoid them to be passed in
+        as ``**configuration``.
+
+        Examples:
+        | Should Contain Any | ${some list} | item 1 | item 2 |
+        | Should Contain Any | ${string} | substring | letter | punctuation! |
+        | Should Contain Any | ${container} | item 1 | ... | item n | msg=Keyword Failed | values=False |
+        """
+        msg = configuration.pop('msg', None)
+        values = configuration.pop('values', True)
+        if configuration:
+            raise RuntimeError("Unsupported configuration parameters were used: %s."
+                               % unic(configuration.keys()))
+
+        if not any(item in container for item in items):
+            raise AssertionError(self._get_string_msg(container, items, msg,
+                                                      values, 'does not contain any of'))
+
+    def should_not_contain_any(self, container, *items, **configuration):
+        """Fails if ``container`` contains one or more of the ``*items``.
+
+        Works with strings, lists, and anything that supports Python's ``in``
+        operator. See `Should Be Equal` for an explanation on how to override
+        the default error message with ``msg=`` and ``values=``. Both arguments
+        must be given after all ``*items`` and use ``name=value`` syntax.
+
+        Note that possible equal signs in ``*items`` must be escaped
+        with a backslash (e.g. ``name\=value``) to avoid them to be passed in
+        as ``**configuration``.
+
+        Examples:
+        | Should Not Contain Any | ${some list} | item 1 | item 2 |
+        | Should Not Contain Any | ${string} | substring | letter | punctuation! |
+        | Should Not Contain Any | ${container} | item 1 | ... | item n | msg=Keyword Failed | values=False |
+        """
+        msg = configuration.pop('msg', None)
+        values = configuration.pop('values', True)
+        if configuration:
+            raise RuntimeError("Unsupported configuration parameters were used: %s."
+                               % configuration.keys())
+
+        if any(item in container for item in items):
+            raise AssertionError(self._get_string_msg(container, items, msg,
+                                                      values, 'contains one or more of'))
+
     def should_contain_x_times(self, item1, item2, count, msg=None):
         """Fails if ``item1`` does not contain ``item2`` ``count`` times.
 
