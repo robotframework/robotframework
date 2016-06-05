@@ -149,7 +149,28 @@ Should Not Contain With Non-String Values
 Should Contain
     Check test case    ${TESTNAME}
 
+Should Contain With False Values Argument
+    Check test case    ${TESTNAME}
+
 Should Contain With Non-String Values
+    Check test case    ${TESTNAME}
+
+Should Contain Any
+    Check test case    ${TESTNAME}
+
+Should Contain Any With Incorrect Configuration
+    Check test case    ${TESTNAME}
+
+Should Contain Any With Non-String Values
+    Check test case    ${TESTNAME}
+
+Should Not Contain Any
+    Check test case    ${TESTNAME}
+
+Should Not Contain Any With Incorrect Configuration
+    Check test case    ${TESTNAME}
+
+Should Not Contain Any With Non-String Values
     Check test case    ${TESTNAME}
 
 Should Not Match
