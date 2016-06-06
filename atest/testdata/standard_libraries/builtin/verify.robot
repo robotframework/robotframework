@@ -298,7 +298,7 @@ Should Contain With Non-String Values
     Should Contain    ${dict}    c
 
 Should Contain Any
-    [Documentation]    FAIL Message: 'abcdefg' does not contain any of '(u'A', u'X', u'\\u0424')'
+    [Documentation]    FAIL Message: 'abcdefg' does not contain any of ''A', 'X' or 'Ф''
     [Template]    Should Contain Any
     abcdefg    c
     abcdefg    a    b    e    f
@@ -306,8 +306,8 @@ Should Contain Any
     abcdefg    A    X    Ф    msg=Message
 
 Should Contain Any With Incorrect Configuration
-    [Documentation]    FAIL Unsupported configuration parameters were used: [u'bad parameter'].
-    Should Contain Any    abcdefg    +    \=    msg=Message    bad parameter=True
+    [Documentation]    FAIL Unsupported configuration parameters were used: 'bad parameter' and 'шта'.
+    Should Contain Any    abcdefg    +    \=    msg=Message    bad parameter=True    шта=?
 
 Should Contain Any With Non-String Values
     [Documentation]    FAIL Fail Message
@@ -318,13 +318,13 @@ Should Contain Any With Non-String Values
     Should Contain Any    ${dict}    c    1    msg=Fail Message    values=False
 
 Should Not Contain Any
-    [Documentation]    FAIL 'Hello yet again' contains one or more of '(u'yet', u'yes', u'no')'
+    [Documentation]    FAIL 'Hello yet again' contains one or more of ''yet', 'yes' or 'no''
     [Template]    Should Not Contain Any
     Hello again    yet    yes     no
     Hello yet again    yet    yes    no
 
 Should Not Contain Any With Incorrect Configuration
-    [Documentation]    FAIL Unsupported configuration parameters were used: [u'bad parameter'].
+    [Documentation]    FAIL Unsupported configuration parameters were used: 'bad parameter'.
     Should Not Contain Any    abcdefg    +    \=    msg=Message    bad parameter=True
 
 Should Not Contain Any With Non-String Values

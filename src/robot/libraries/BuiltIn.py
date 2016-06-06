@@ -859,10 +859,11 @@ class _Verify(_BuiltInBase):
         values = configuration.pop('values', True)
         if configuration:
             raise RuntimeError("Unsupported configuration parameters were used: %s."
-                               % unic(configuration.keys()))
+                               % unic(seq2str(configuration.keys())))
 
         if not any(item in container for item in items):
-            raise AssertionError(self._get_string_msg(container, items, msg,
+            raise AssertionError(self._get_string_msg(container,
+                                                      seq2str(items, lastsep=' or '), msg,
                                                       values, 'does not contain any of'))
 
     def should_not_contain_any(self, container, *items, **configuration):
@@ -886,10 +887,11 @@ class _Verify(_BuiltInBase):
         values = configuration.pop('values', True)
         if configuration:
             raise RuntimeError("Unsupported configuration parameters were used: %s."
-                               % configuration.keys())
+                               % unic(seq2str(configuration.keys())))
 
         if any(item in container for item in items):
-            raise AssertionError(self._get_string_msg(container, items, msg,
+            raise AssertionError(self._get_string_msg(container,
+                                                      seq2str(items, lastsep=' or '), msg,
                                                       values, 'contains one or more of'))
 
     def should_contain_x_times(self, item1, item2, count, msg=None):
