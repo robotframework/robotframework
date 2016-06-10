@@ -52,3 +52,6 @@ With Continuable Failure After
 
 With Continuable Failure Before
     Check Test Case    ${TESTNAME}
+
+With Continuable Failure In User Keyword
+    Check Test Case    ${TESTNAME}
