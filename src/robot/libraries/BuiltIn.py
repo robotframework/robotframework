@@ -1894,6 +1894,36 @@ class _RunKeyword(_BuiltInBase):
             return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=1)
+    def run_keyword_if_keyword_failed(self, name, *args):
+        """Runs the given keyword with the given arguments, if the keyword failed.
+
+        This keyword can only be used in a keyword teardown. Trying to use it
+        anywhere else results in an error.
+
+        Otherwise, this keyword works exactly like `Run Keyword`, see its
+        documentation for more details.
+        """
+        kw = self._get_parent_keyword_in_teardown(
+            'Run Keyword If Keyword Failed')
+        if not kw.passed:
+            return self.run_keyword(name, *args)
+
+    @run_keyword_variant(resolve=1)
+    def run_keyword_if_keyword_passed(self, name, *args):
+        """Runs the given keyword with the given arguments, if the keyword passed.
+
+        This keyword can only be used in a keyword teardown. Trying to use it
+        anywhere else results in an error.
+
+        Otherwise, this keyword works exactly like `Run Keyword`, see its
+        documentation for more details.
+        """
+        kw = self._get_parent_keyword_in_teardown(
+            'Run Keyword If Keyword Passed')
+        if kw.passed:
+            return self.run_keyword(name, *args)
+
+    @run_keyword_variant(resolve=1)
     def run_keyword_if_timeout_occurred(self, name, *args):
         """Runs the given keyword if either a test or a keyword timeout has occurred.
 
@@ -1912,6 +1942,13 @@ class _RunKeyword(_BuiltInBase):
         if ctx.test and ctx.in_test_teardown:
             return ctx.test
         raise RuntimeError("Keyword '%s' can only be used in test teardown."
+                           % kwname)
+
+    def _get_parent_keyword_in_teardown(self, kwname):
+        ctx = self._context
+        if ctx.keyword and ctx.in_keyword_teardown:
+            return ctx.parent_keyword
+        raise RuntimeError("Keyword '%s' can only be used in keyword teardown."
                            % kwname)
 
     @run_keyword_variant(resolve=1)
