@@ -121,21 +121,22 @@ support both Python 2 and Python 3.
 Whitespace
 ''''''''''
 
-We are pretty picky about using whitespace. We use blank lines and whitespace
-in expressions as dictated by `PEP-8`_, but we also follow these rules:
+We are pretty picky about using whitespace. We follow `PEP-8`_ in how to use
+blank lines and whitespace in general, but we also have some stricter rules:
 
+- No blank lines inside functions.
 - Indentation using spaces, not tabs.
 - No trailing spaces.
 - No extra empty lines at the end of the file.
 - Files must end with a newline.
 
-The above rules are good with most other code too. Any decent editor or IDE
-can be configured to automatically format files according to them.
+Most of these rules are such that any decent text editor or IDE can be
+configured to automatically format files according to them.
 
 Docstrings
 ''''''''''
 
-Docstrings should be added to public APIs but are not generally needed in
+Docstrings should be added to public APIs, but they are not generally needed in
 internal code. When docstrings are added, they should follow `PEP-257
 <https://www.python.org/dev/peps/pep-0257/>`_. See `API documentation`_
 section below for more details about documentation syntax, generating
