@@ -228,7 +228,7 @@ When Robot Framework parses test data, `test suite names are created
 from file and directory names`__. The name of the top-level test suite
 can, however, be overridden with the command line option
 :option:`--name (-N)`. Underscores in the given name are converted to
-spaces automatically, and words in the name capitalized.
+spaces automatically.
 
 __ `Test suite name and documentation`_
 
