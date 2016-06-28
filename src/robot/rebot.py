@@ -228,6 +228,30 @@ Options
                                    operators.
                                    Examples: --removekeywords foo
                                              --removekeywords fooANDbar*
+    --removetestcases all|passed|name:<pattern>|tag:<pattern> *
+                          Remove test case data from all generated outputs.
+                          Test cases containing warnings are not removed except
+                          in `all` mode.
+                          all:     remove data from all test cases
+                          passed:  remove data only from test cases in passed
+                                   test cases and suites
+                          name:<pattern>:  remove data from test cases that match
+                                   the given pattern. The pattern is matched
+                                   against the full name of the test case (e.g.
+                                   'MyLib.Keyword', 'resource.Second Keyword'),
+                                   is case, space, and underscore insensitive,
+                                   and may contain `*` and `?` as wildcards.
+                                   Examples: --removetestcases name:Lib.HugeKw
+                                             --removetestcases name:myresource.*
+                          tag:<pattern>:  remove data from test cases that match
+                                   the given pattern. Tags are case and space
+                                   insensitive and it is possible to use
+                                   patterns with `*` and `?` as wildcards.
+                                   Tags and patterns can also be combined
+                                   together with `AND`, `OR`, and `NOT`
+                                   operators.
+                                   Examples: --removetestcases foo
+                                             --removetestcases fooANDbar*
     --flattenkeywords for|foritem|name:<pattern>|tag:<pattern> *
                           Flattens matching keywords in all generated outputs.
                           Matching keywords get all log messages from their

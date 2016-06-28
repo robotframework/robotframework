@@ -21,6 +21,7 @@ import time
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
+from robot.result.testcaseremover import TestCaseRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
 from robot.utils import (abspath, escape, format_time, get_link_path,
                          html_escape, is_list_like, py2to3,
@@ -59,6 +60,7 @@ class _BaseSettings(object):
                  'TagDoc'           : ('tagdoc', []),
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
+                 'RemoveTestCases'  : ('removetestcases', []),
                  'FlattenKeywords'  : ('flattenkeywords', []),
                  'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
@@ -123,6 +125,8 @@ class _BaseSettings(object):
             return self._process_randomize_value(value)
         if name == 'RemoveKeywords':
             self._validate_remove_keywords(value)
+        if name == 'RemoveTestCases':
+            self._validate_remove_test_cases(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
         return value
@@ -282,6 +286,13 @@ class _BaseSettings(object):
             except DataError as err:
                 raise DataError("Invalid value for option '--removekeywords'. %s" % err)
 
+    def _validate_remove_test_cases(self,values):
+        for value in values:
+            try:
+                TestCaseRemover(value)
+            except DataError as err:
+                raise DataError("Invalid value for option '--removetestcases'. %s" % err)
+
     def _validate_flatten_keywords(self, values):
         try:
             validate_flatten_keyword(values)
@@ -353,6 +364,10 @@ class _BaseSettings(object):
     @property
     def remove_keywords(self):
         return self['RemoveKeywords']
+
+    @property
+    def remove_test_cases(self):
+        return self['RemoveTestCases']
 
     @property
     def flatten_keywords(self):
@@ -528,6 +543,7 @@ class RebotSettings(_BaseSettings):
             'include_tests': self['TestNames'],
             'empty_suite_ok': self.process_empty_suite,
             'remove_keywords': self.remove_keywords,
+            'remove_test_cases': self.remove_test_cases,
             'log_level': self['LogLevel'],
             'critical_tags': self.critical_tags,
             'non_critical_tags': self.non_critical_tags,
