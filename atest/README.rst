@@ -11,9 +11,10 @@ test data they need.
 License and copyright
 ---------------------
 
-All the content in ``atest`` folder is the under following copyright::
+All content in the ``atest`` folder is under the following copyright::
 
-    Copyright 2008-2015 Nokia Solutions and Networks
+    Copyright 2008-2015 Nokia Networks
+    Copyright 2016-     Robot Framework Foundation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,9 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import (ExecutionFailed, ReturnFromKeyword, ExecutionPassed,
-                          UserKeywordExecutionFailed, DataError, VariableError,
-                          PassExecution)
+from robot.errors import (ExecutionFailed, ExecutionPassed, ExitForLoop,
+                          ContinueForLoop, DataError, PassExecution,
+                          ReturnFromKeyword, UserKeywordExecutionFailed,
+                          VariableError)
 from robot.result import Keyword as KeywordResult
 from robot.utils import DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_var, VariableAssignment
@@ -75,13 +77,13 @@ class UserKeywordRunner(object):
             if timeout is not None:
                 result.timeout = str(timeout)
             with context.timeout(timeout):
-                error, return_ = self._execute(context)
-                if error and not error.can_continue(context.in_teardown):
-                    raise error
+                exception, return_ = self._execute(context)
+                if exception and not exception.can_continue(context.in_teardown):
+                    raise exception
                 return_value = self._get_return_value(variables, return_)
-                if error:
-                    error.return_value = return_value
-                    raise error
+                if exception:
+                    exception.return_value = return_value
+                    raise exception
                 return return_value
 
     def _get_timeout(self, variables=None):
@@ -140,9 +142,13 @@ class UserKeywordRunner(object):
         except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures
+        except (ExitForLoop, ContinueForLoop) as exception:
+            pass_ = exception
         except ExecutionPassed as exception:
             pass_ = exception
             error = exception.earlier_failures
+            if error:
+                error.continue_on_failure = False
         except ExecutionFailed as exception:
             error = exception
         with context.keyword_teardown(error):

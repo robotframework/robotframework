@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -136,8 +137,8 @@ class HandlerExecutionFailed(ExecutionFailed):
 
     def __init__(self, details):
         timeout = isinstance(details.error, TimeoutError)
-        syntax = isinstance(details.error, DataError) \
-                 and not isinstance(details.error, VariableError)
+        syntax = (isinstance(details.error, DataError) and
+                  not isinstance(details.error, VariableError))
         exit_on_failure = self._get(details.error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(details.error, 'CONTINUE_ON_FAILURE')
         ExecutionFailed.__init__(self, details.message, timeout, syntax,
@@ -159,16 +160,18 @@ class ExecutionFailures(ExecutionFailed):
     def _format_message(self, messages):
         if len(messages) == 1:
             return messages[0]
-        lines = ['Several failures occurred:'] \
-                + ['%d) %s' % (i+1, m) for i, m in enumerate(messages)]
-        return '\n\n'.join(lines)
+        return '\n\n'.join(
+            ['Several failures occurred:'] +
+            ['%d) %s' % (i, m) for i, m in enumerate(messages, start=1)]
+        )
 
     def _get_attrs(self, errors):
-        return {'timeout': any(err.timeout for err in errors),
-                'syntax': any(err.syntax for err in errors),
-                'exit': any(err.exit for err in errors),
-                'continue_on_failure': all(err.continue_on_failure for err in errors)
-                }
+        return {
+            'timeout': any(e.timeout for e in errors),
+            'syntax': any(e.syntax for e in errors),
+            'exit': any(e.exit for e in errors),
+            'continue_on_failure': all(e.continue_on_failure for e in errors)
+        }
 
     def get_errors(self):
         return self._errors
@@ -210,12 +213,12 @@ class ExecutionPassed(ExecutionFailed):
 
     def _get_message(self):
         from robot.utils import printable_name
-        return "Invalid '%s' usage." \
-               % printable_name(self.__class__.__name__, code_style=True)
+        return ("Invalid '%s' usage."
+                % printable_name(type(self).__name__, code_style=True))
 
     def set_earlier_failures(self, failures):
         if failures:
-            self._earlier_failures.extend(failures)
+            self._earlier_failures = list(failures) + self._earlier_failures
 
     @property
     def earlier_failures(self):

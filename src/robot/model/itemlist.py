@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -57,6 +58,12 @@ class ItemList(object):
         items = list(self._items)
         items.insert(index, item)
         self._items = tuple(items)
+
+    def pop(self, *index):
+        items = list(self._items)
+        result = items.pop(*index)
+        self._items = tuple(items)
+        return result
 
     def index(self, item, *start_and_end):
         return self._items.index(item, *start_and_end)

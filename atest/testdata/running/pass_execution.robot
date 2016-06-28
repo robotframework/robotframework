@@ -5,224 +5,249 @@ Suite Setup       Pass Execution    Hello, world!
 Suite Teardown    Pass Execution    Hi, tellus!
 
 *** Test Cases ***
-
 Message is required
-    [Documentation]    FAIL Keyword 'BuiltIn.Pass Execution' expected at least 1 argument, got 0.
+    [Documentation]    FAIL    Keyword 'BuiltIn.Pass Execution' expected at least 1 argument, got 0.
     Pass Execution
-    Fail    should not go here
+    Should Not Be Executed
 
 With message
-    [Documentation]    PASS exception message
-    Pass Execution    ${EMPTY}exception message ${SPACE}
-    Fail    should not go here
+    [Documentation]    PASS    My message
+    Pass Execution    ${EMPTY} My message ${SPACE}
+    Should Not Be Executed
 
 With HTML message
-    [Documentation]    PASS *HTML*<b>message</b>
-    Pass Execution    *HTML*<b>message</b>
-    Fail    this should not execute
+    [Documentation]    PASS    *HTML*<b>Message</b>
+    Pass Execution    *HTML*<b>Message</b>
+    Should Not Be Executed
 
-With empty string as a message
-    [Documentation]    FAIL Message cannot be empty.
+Empty message is not allowed
+    [Documentation]    FAIL    Message cannot be empty.
     Pass Execution    ${EMPTY}
-    Fail    this should not execute
+    Should Not Be Executed
 
-With only whitespace as a message
-    [Documentation]    FAIL Message cannot be empty.
+Only whitesapce message is not allowed
+    [Documentation]    FAIL    Message cannot be empty.
     Pass Execution    ${SPACE} ${SPACE}
-    Fail    this should not execute
+    Should Not Be Executed
 
-Remove one tag
-    [Documentation]    PASS message
-    Pass Execution    message    -force1
-    Fail    should not go here
+Used in user keyword
+    [Documentation]    PASS    Message
+    Keyword    Message
+    Should Not Be Executed
 
-Remove multiple tags
-    [Documentation]    PASS message
-    Pass Execution    message    -force1    -force2
-    Fail    should not go here
+Used in nested user keyword
+    [Documentation]    PASS    Message
+    Nested Keyword    Message
+    Should Not Be Executed
 
-Remove tags with pattern
-    [Documentation]    PASS message
-    Pass Execution    message    -force?
-    Fail    should not go here
+Used in library keyword raising `PassExecution` exception
+    [Documentation]    PASS    Message
+    Raise Pass Execution Exception    Message
+    Should Not Be Executed
 
-Set one tag
-    [Documentation]    PASS message
-    Pass Execution    message    tag
-    Fail    should not go here
+Used in library keyword calling `BuiltIn.pass_execution()` method
+    [Documentation]    PASS    Message
+    Call Pass Execution Method    Message
+    Should Not Be Executed
 
-Set multiple tags
-    [Documentation]    PASS message
-    Pass Execution    message    tag1    tag2
-    Fail    should not go here
-
-Set and remove tags
-    [Documentation]    PASS message
-    Pass Execution    message    -force?    tag1    tag2
-    Fail    should not go here
-
-Set tags are not removed
-    [Documentation]    PASS message
-    Pass Execution    message    tag1    tag2    -tag?
-    Fail    should not go here
-
-With template
-    [Documentation]    PASS message
+Used in template keyword
+    [Documentation]    PASS    Message
     [Template]    Template keyword
-    message
+    Message
 
-Inside user keyword
-    [Documentation]    PASS message
-    A Keyword    message
-
-Inside nested user keyword
-    [Documentation]    PASS message
-    A Nested Keyword    message
-
-With continuable failure
-    [Documentation]    FAIL failure
-    Run Keyword And Continue On Failure    Fail    failure
-    Pass Execution    message
-    Fail    should not go here
-
-With continuable failure in user keyword
-    [Documentation]    FAIL this fails
-    Keyword with continuable failure    this fails
-
-With continuable failure in FOR loop
-    [Documentation]    FAIL failure
+Used in for loop
+    [Documentation]    PASS    Message with 'foo'
     :FOR    ${var}    IN    foo    bar
-    \    Run Keyword And Continue On Failure    Fail    failure
-    \    Pass Execution    message
-    Should Be Equal    ${var}    foo
+    \    Pass Execution    Message with '${var}'
+    \    Should Not Be Executed
+    Should Not Be Executed
 
-With continuable failure and test case teardown fails
-    [Documentation]    FAIL failure
-    ...
-    ...                     Also teardown failed:
-    ...                     teardown failure
-    Run Keyword And Continue On Failure    Fail    failure
-    Pass Execution    message
-    Fail    this should not run
-    [Teardown]    Fail    teardown failure
+Used in setup
+    [Documentation]    PASS    Message
+    [Setup]    Run Keywords
+    ...    Pass Execution    Message    AND
+    ...    Should Not Be Executed
+    Should Be Executed
+    [Teardown]    Should Be Executed
 
-With test case setup
-    [Documentation]    FAIL Setup should succeed
-    [Setup]    Pass Execution    message    tag   -force1
-    Fail    Setup should succeed
-
-If test case setup fails
-    [Documentation]   FAIL Setup failed:
-    ...                    setup fail
-    [Setup]    Keyword with continuable failure    setup fail
-    Fail    this should not be executed
-
-With test case teardown
-    [Documentation]    FAIL This message is used.
+Used in teardown
+    [Documentation]    FAIL    This message is used.
     Fail    This message is NOT used.
     [Teardown]    Run Keywords
     ...    Pass Execution    This message is used.    AND
-    ...    Fail    This keyword is not executed.
+    ...    Should Not Be Executed
 
-If test case teardown fails
-    [Documentation]    FAIL Teardown failed:\nThis message is used.
+Before failing teardown
+    [Documentation]    FAIL
+    ...    Teardown failed:
+    ...    This message is used.
     Pass Execution    This message is NOT used.
     [Teardown]    Fail    This message is used.
 
-Modifying tags in test case teardown should succeed
-    [Documentation]    PASS message
-    [Teardown]    Pass Execution    message    -force?    tag1    tag2
-    No Operation
+After continuable failure
+    [Documentation]    FAIL    Failure
+    Run Keyword And Continue On Failure    Fail    Failure
+    Pass Execution    This message is not used
+    Should Not Be Executed
 
-With for loop
-    [Documentation]    PASS message
-    :FOR    ${var}    IN    foo    bar    baz
-    \    Pass Execution    message    tag
-    \    Fail    this should not execute
+After continuable failure in user keyword
+    [Documentation]    FAIL    My failure
+    Keyword With Continuable Failure    My failure
+    Should Not Be Executed
 
-With library throwing exception
-    [Documentation]    PASS message
-    Keyword From Library Throws Exception    message
-    Fail    this should not execute
-
-With library calling Pass Execution keyword
-    [Documentation]    PASS message
-    Keyword From Library Calls Builtin    message
-    Fail    this should not execute
-
-Should pass execution if condition true
-    [Documentation]    PASS message
-    Pass Execution If     1 == 1    message    tag1    tag2
-    Fail    this should not execute
-
-Should not pass execution if condition false
-    [Documentation]   FAIL this should execute
-    Pass Execution If     ${False}    message    tag1    tag2
-    Fail    this should execute
-
-Should not resolve variables if condition false
-    [Documentation]   FAIL this should execute
-    Pass Execution If     ${False}    message    ${not_exists}
-    Fail    this should execute
-
-Should fail if non-existing variable if condition true
-    [Documentation]    FAIL Variable '${not exist}' not found.
-    Pass Execution If    ${True}    my message    ${not exist}
-    Fail    this should not execute
-
-With multiple variables
-    [Documentation]    PASS my message
-    ${tag}=    Set Variable    my tag
-    ${msg}=    Set Variable    my message
-    Pass Execution If    ${True}    ${msg}    ${tag}
-    Fail    this should not execute
-
-With continuable failure in test setup
-    [Documentation]    FAIL Setup failed:\nmy message
-    [Setup]    Keyword with continuable failure    my message
-    Fail    should not execute
-
-With continuable failure in test teardown
+After continuable failure in FOR loop
     [Documentation]    FAIL
-    ...    hello
+    ...    Several failures occurred:
+    ...
+    ...    1) Failure 1
+    ...
+    ...    2) Failure 2
+    ...
+    ...    3) Failure 3
+    :FOR    ${i}    IN RANGE   1    10
+    \    Run Keyword And Continue On Failure    Fail    Failure ${i}
+    \    Run Keyword If    $i > 2    Run Keywords
+    \    ...    Pass Execution    This message is NOT used    AND
+    \    ...    Should Not Be Executed
+    Should Not Be Executed
+
+After continuable failure and before failing teardown
+    [Documentation]    FAIL
+    ...    The failure
     ...
     ...    Also teardown failed:
-    ...    my message
-    Fail    hello
-    [Teardown]    Keyword with continuable failure    my message
+    ...    Teardown failure
+    Run Keyword And Continue On Failure    Fail    The failure
+    Pass Execution    This message is NOT used
+    Should Not Be Executed
+    [Teardown]    Fail    Teardown failure
 
-With continuable failure in keyword teardown
+After continuable failure in setup
     [Documentation]    FAIL
-    ...    kw fails
+    ...    Setup failed:
+    ...    My failure
+    [Setup]    Keyword With Continuable Failure    My failure
+    Should Not Be Executed
+
+After continuable failure in teardown
+    [Documentation]    FAIL
+    ...    Hello
+    ...
+    ...    Also teardown failed:
+    ...    My bad
+    Fail    Hello
+    [Teardown]    Keyword With Continuable Failure    My bad
+
+After continuable failure in nested user keyword
+    [Documentation]    FAIL    Nested keyword fails
+    Nested Keyword With Continuable Failure
+    Should Not Be Executed
+
+After continuable failure in keyword teardown
+    [Documentation]    FAIL
+    ...    Keyword fails
     ...
     ...    Also keyword teardown failed:
-    ...    teardown fails
-    Keyword with continuable failure in keyword teardown
+    ...    Teardown fails
+    Keyword With Continuable Failure In Keyword Teardown
+    Should Not Be Executed
 
+Pass Execution If when condition is true
+    [Documentation]    PASS    Message
+    Pass Execution If     1 == 1    Message    tag1    tag2
+    Should Not Be Executed
+
+Pass Execution If when condition is false
+    Pass Execution If     1 < 0    Message    tag1    tag2
+    Should Be Executed
+
+Pass Execution If resolves variables only condition is true
+    [Documentation]    FAIL    Variable '${this is not ok}' not found.
+    Pass Execution If    False    Message    ${ok not to exist}
+    Should Be Executed
+    Pass Execution If    True    Message    ${this is not ok}
+    Should Not Be Executed
+
+Pass Execution If with multiple variables
+    [Documentation]    PASS    My message
+    ${msg}=    Set Variable    My message
+    @{tags}=    Create List    my    tags
+    Pass Execution If    ${True}    ${msg}    @{tags}
+    Should Not Be Executed
+
+Remove one tag
+    [Documentation]    PASS    Message
+    Pass Execution    Message    -force1
+    Should Not Be Executed
+
+Remove multiple tags
+    [Documentation]    PASS    Message
+    Pass Execution    Message    -force1    -force2
+    Should Not Be Executed
+
+Remove tags with pattern
+    [Documentation]    PASS    Message
+    Pass Execution    Message    -force?
+    Should Not Be Executed
+
+Set one tag
+    [Documentation]    PASS    Message
+    Pass Execution    Message    tag
+    Should Not Be Executed
+
+Set multiple tags
+    [Documentation]    PASS    Message
+    Pass Execution    Message    tag1    tag2
+    Should Not Be Executed
+
+Set and remove tags
+    [Documentation]    PASS    Message
+    Pass Execution    Message    -force?    tag1    tag2
+    Should Not Be Executed
+
+Set tags are not removed
+    [Documentation]    PASS    Message
+    Pass Execution    Message    tag1    tag2    -tag?
+    Should Not Be Executed
+
+Set tags in teardown
+    [Documentation]    PASS    Message
+    No Operation
+    [Teardown]    Pass Execution    Message    -force?    tag1    tag2
 
 *** Keywords ***
+Keyword
+    [Arguments]    ${message}
+    Pass Execution    ${message}
+    Should Not Be Executed
+
+Nested Keyword
+    [Arguments]    ${message}
+    Keyword    ${message}
+    Should Not Be Executed
 
 Template keyword
     [Arguments]    ${message}
     Pass Execution    ${message}
-    Fail    should not go here
+    Should Not Be Executed
 
-A Keyword
-    [Arguments]    ${message}
-    Pass Execution    ${message}
-    Fail    should not go here
+Keyword With Continuable Failure
+    [Arguments]    ${failure}
+    Run Keyword And Continue On Failure    Fail    ${failure}
+    Pass Execution    This message DOES NOT override previous failure
+    Should Not Be Executed
 
-A Nested Keyword
-    [Arguments]    ${message}
-    A Keyword   ${message}
-    Fail   should not go here either
+Nested Keyword With Continuable Failure
+    Keyword With Continuable Failure    Nested keyword fails
+    Should Not Be Executed
 
-Keyword with continuable failure
-    [Arguments]    ${msg}
-    Run Keyword And Continue On Failure    Fail    ${msg}
-    Pass Execution    message
-    Fail    Should not go here
+Keyword With Continuable Failure In Keyword Teardown
+    Keyword With Continuable Failure    Keyword fails
+    Should Not Be Executed
+    [Teardown]    Keyword With Continuable Failure    Teardown fails
 
-Keyword with continuable failure in keyword teardown
-    Keyword with continuable failure    kw fails
-    [Teardown]    Keyword with continuable failure    teardown fails
+Should Not Be Executed
+    Fail    This keyword should not have been executed
+
+Should Be Executed
+    No Operation

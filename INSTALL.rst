@@ -357,9 +357,9 @@ __ http://blog.ironpython.net/2014/12/pip-in-ironpython-275.html
 Using pip
 ~~~~~~~~~
 
-Once you have pip_ installed, and have set https_proxy_ is you are behind
+Once you have pip_ installed, and have set https_proxy_ if you are behind
 a proxy, using it on the command line is very easy. The easiest way to use
-pip is letting it find and download packages it installs from the
+pip is by letting it find and download packages it installs from the
 `Python Package Index (PyPI)`__, but it can also install packages
 downloaded from the PyPI separately. The most common usages are shown below
 and pip_ documentation has more information and examples.

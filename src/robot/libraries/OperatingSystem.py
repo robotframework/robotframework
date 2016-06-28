@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -549,8 +550,8 @@ class OperatingSystem(object):
     def create_file(self, path, content='', encoding='UTF-8'):
         """Creates a file with the given content and encoding.
 
-        If the directory where to create file does not exist it, and possible
-        intermediate missing directories, are created.
+        If the directory for the file does not exist, it is created, along
+        with missing intermediate directories.
 
         See `Get File` for more information about possible ``encoding`` values,
         including special values ``SYSTEM`` and ``CONSOLE``.
@@ -592,8 +593,8 @@ class OperatingSystem(object):
 
         Byte strings, and possible other types, are written to the file as is.
 
-        If the directory where to create file does not exist it, and possible
-        intermediate missing directories, are created.
+        If the directory for the file does not exist, it is created, along
+        with missing intermediate directories.
 
         Examples:
         | Create Binary File | ${dir}/example.png | ${image content}     |
@@ -611,7 +612,7 @@ class OperatingSystem(object):
         self._link("Created binary file '%s'.", path)
 
     def append_to_file(self, path, content, encoding='UTF-8'):
-        """Appends the given contend to the specified file.
+        """Appends the given content to the specified file.
 
         If the file does not exists, this keyword works exactly the same
         way as `Create File`.

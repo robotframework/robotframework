@@ -146,7 +146,6 @@ class TestRun(RunningTestCase):
                                "failed: AttributeError: ", 1)])
 
 
-
 class TestRebot(RunningTestCase):
     data = join(ROOT, 'atest', 'testdata', 'rebot', 'created_normal.xml')
     nonex = join(TEMP, 'non-existing-file-this-is.xml')
@@ -172,16 +171,16 @@ class TestRebot(RunningTestCase):
     def test_custom_stdout(self):
         stdout = StringIO()
         assert_equal(rebot(self.data, report='None', stdout=stdout,
-                            outputdir=TEMP), 1)
+                           outputdir=TEMP), 1)
         self._assert_output(stdout, [('Log:', 1), ('Report:', 0)])
         self._assert_outputs()
 
     def test_custom_stdout_and_stderr_with_minimal_implementation(self):
         output = StreamWithOnlyWriteAndFlush()
         assert_equal(rebot(self.data, log='NONE', report='NONE', stdout=output,
-                            stderr=output), 252)
+                           stderr=output), 252)
         assert_equal(rebot(self.data, report='NONE', stdout=output,
-                            stderr=output, outputdir=TEMP), 1)
+                           stderr=output, outputdir=TEMP), 1)
         self._assert_output(output, [('[ ERROR ] No outputs created', 1),
                                      ('--help', 1), ('Log:', 1), ('Report:', 0)])
         self._assert_outputs()
@@ -195,7 +194,7 @@ class TestRebot(RunningTestCase):
                 test.status = 'FAIL'
         modifier = Modifier()
         assert_equal(rebot(self.data, outputdir=TEMP,
-                            prerebotmodifier=modifier), 3)
+                           prerebotmodifier=modifier), 3)
         assert_equal(modifier.tests, ['Test 1.1', 'Test 1.2', 'Test 2.1'])
 
 
@@ -266,8 +265,8 @@ class TestTimestampOutputs(RunningTestCase):
     def run_tests(self):
         data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot')
         assert_equal(run(data, timestampoutputs=True, outputdir=TEMP,
-                          output='output-ts.xml', report='report-ts.html',
-                          log='log-ts'), 1)
+                         output='output-ts.xml', report='report-ts.html',
+                         log='log-ts'), 1)
 
     def find_results(self, pattern, expected):
         matches = glob.glob(pattern)
@@ -296,7 +295,7 @@ class TestSignalHandlers(unittest.TestCase):
             signal.signal(signal.SIGINT, orig_sigint)
             signal.signal(signal.SIGTERM, orig_sigterm)
 
-    def test_dont_register_signal_handlers_then_run_on_thread(self):
+    def test_dont_register_signal_handlers_when_run_on_thread(self):
         stream = StringIO()
         thread = threading.Thread(target=run_without_outputs, args=(self.data,),
                                   kwargs=dict(stdout=stream, stderr=stream))
