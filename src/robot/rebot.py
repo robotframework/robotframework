@@ -238,7 +238,7 @@ Options
                           name:<pattern>:  remove data from test cases that match
                                    the given pattern. The pattern is matched
                                    against the full name of the test case (e.g.
-                                   'MyLib.Keyword', 'resource.Second Keyword'),
+                                   'MyLib.TestCase', 'resource.Second TestCase'),
                                    is case, space, and underscore insensitive,
                                    and may contain `*` and `?` as wildcards.
                                    Examples: --removetestcases name:Lib.HugeKw
