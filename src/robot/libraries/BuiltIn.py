@@ -854,13 +854,14 @@ class _Verify(_BuiltInBase):
         | Should Contain Any | ${some list} | item 1 | item 2 |
         | Should Contain Any | ${string} | substring | letter | punctuation! |
         | Should Contain Any | ${container} | item 1 | ... | item n | msg=Keyword Failed | values=False |
+
+        New in Robot Framework 3.0.1.
         """
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
         if configuration:
             raise RuntimeError("Unsupported configuration parameters were used: %s."
-                               % unic(seq2str(configuration.keys())))
-
+                               % seq2str(configuration.keys()))
         if not any(item in container for item in items):
             raise AssertionError(self._get_string_msg(container,
                                                       seq2str(items, lastsep=' or '), msg,
@@ -882,13 +883,14 @@ class _Verify(_BuiltInBase):
         | Should Not Contain Any | ${some list} | item 1 | item 2 |
         | Should Not Contain Any | ${string} | substring | letter | punctuation! |
         | Should Not Contain Any | ${container} | item 1 | ... | item n | msg=Keyword Failed | values=False |
+
+        New in Robot Framework 3.0.1.
         """
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
         if configuration:
             raise RuntimeError("Unsupported configuration parameters were used: %s."
-                               % unic(seq2str(configuration.keys())))
-
+                               % seq2str(configuration.keys()))
         if any(item in container for item in items):
             raise AssertionError(self._get_string_msg(container,
                                                       seq2str(items, lastsep=' or '), msg,
