@@ -47,6 +47,10 @@ Non-existing variable as keyword name
     [Documentation]    FAIL Variable '\${NONEXISTING}' not found.${ATD ERR}
     Run keywords    Not Executed    ${NONEXISTING}    Not Executed
 
+Non-existing variable inside executed keyword
+    [Documentation]    FAIL Variable '\${this variable does not exist}' not found.${ATD ERR}
+    Run keywords    Passing    Non-existing Variable    Failing
+
 Non-existing keyword
     [Documentation]    FAIL No keyword with name 'Non-Existing' found.${ATD ERR}
     Run keywords    Passing    Non-Existing    Non-Existing But Not Executed
@@ -62,19 +66,21 @@ In test setup
     No Operation
 
 In test teardown
-    [Documentation]    FAIL Teardown failed:
+    [Documentation]    In teardowns execution continues after failures except for syntax errors.
+    ...    FAIL Teardown failed:
     ...    Several failures occurred:
     ...
     ...    1) Expected error message
     ...
-    ...    2) AssertionError
+    ...    2) Variable '\${this variable does not exist}' not found.
     ...
-    ...    3) No keyword with name 'Executed but doesn't exist' found.
+    ...    3) AssertionError
     ...
-    ...    4) No keyword with name 'Executed after syntax error in teardown' found.${ATD ERR}
+    ...    4) No keyword with name 'Non-Existing Keyword' found.${ATD ERR}
     No Operation
-    [Teardown]    Run keywords    Passing    ${NOOP}    Failing    ${NOOP}    Fail
-    ...    Executed but doesn't exist    Executed after syntax error in teardown
+    [Teardown]    Run keywords    Passing    ${NOOP}    Failing    ${NOOP}
+    ...    Non-existing Variable    Fail    Non-Existing Keyword
+    ...    Not Executed After Previous Missing Keyword
 
 In test teardown with ExecutionPassed exception
     [Documentation]    FAIL Stop here${ATD ERR}
@@ -112,3 +118,6 @@ Multiple continuables
 Returning keyword
     Run Keywords    Return From Keyword
     Fail    Do not run me please
+
+Non-existing Variable
+    Log    ${this variable does not exist}

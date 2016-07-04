@@ -32,10 +32,9 @@ Execution Continues If Variable Does Not Exist
     ${tc} =    Check Test Case    ${TESTNAME}
     Length Should Be    ${tc.teardown.kws}    3
 
-Execution Continues After Syntax Error
-    [Documentation]    This should probably be changed!
+Execution Stops After Syntax Error
     ${tc} =    Check Test Case    ${TESTNAME}
-    Length Should Be    ${tc.teardown.kws}    3
+    Length Should Be    ${tc.teardown.kws}    1
 
 Fatal Error
     ${tc} =    Check Test Case    ${TESTNAME} 1

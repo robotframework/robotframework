@@ -86,13 +86,9 @@ Execution Continues If Variable Does Not Exist
     No Operation
     [Teardown]    Missing Variables
 
-Execution Continues After Syntax Error
+Execution Stops After Syntax Error
     [Documentation]    FAIL    Teardown failed:
-    ...    Several failures occurred:
-    ...
-    ...    1) No keyword with name 'Keyword Missing' found.
-    ...
-    ...    2) No keyword with name 'Another Missing Keyword' found.
+    ...    No keyword with name 'Keyword Missing' found.
     ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
