@@ -29,7 +29,7 @@ from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          is_unicode, normpath, parse_time, plural_or_not,
                          secs_to_timestamp, secs_to_timestr, seq2str,
                          set_env_var, timestr_to_secs, unic, CONSOLE_ENCODING,
-                         IRONPYTHON, PY2, SYSTEM_ENCODING)
+                         IRONPYTHON, JYTHON, PY2, SYSTEM_ENCODING, WINDOWS)
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes.')
@@ -890,7 +890,12 @@ class OperatingSystem(object):
         """
         source, destination \
             = self._prepare_copy_and_move_directory(source, destination)
-        shutil.copytree(source, destination)
+        try:
+            shutil.copytree(source, destination)
+        except shutil.Error:
+            # https://github.com/robotframework/robotframework/issues/2321
+            if not (WINDOWS and JYTHON):
+                raise
         self._link("Copied directory from '%s' to '%s'.", source, destination)
 
     def _prepare_copy_and_move_directory(self, source, destination):
