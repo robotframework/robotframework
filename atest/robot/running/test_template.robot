@@ -63,10 +63,16 @@ Templates with Run Keyword
 Templates with continuable failures
     Check Test Case    ${TESTNAME}
 
-Templates and timeouts
+Templated test ends after test timeout
     Check Test Case    ${TESTNAME}
 
-Templates, timeouts, and for loops
+Templated test with for loop ends after test timeout
+    Check Test Case    ${TESTNAME}
+
+Templated test continues after keyword timeout
+    Check Test Case    ${TESTNAME}
+
+Templated test with for loop continues after keyword timeout
     Check Test Case    ${TESTNAME}
 
 Templated test ends after syntax errors

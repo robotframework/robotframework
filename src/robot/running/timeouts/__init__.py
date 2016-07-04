@@ -79,10 +79,12 @@ class _Timeout(Sortable):
         if not self.active:
             raise FrameworkError('Timeout is not active')
         timeout = self.time_left()
+        error = TimeoutError(self._timeout_error,
+                             test_timeout=self.type == 'Test')
         if timeout <= 0:
-            raise TimeoutError(self.get_message())
+            raise error
         executable = lambda: runnable(*(args or ()), **(kwargs or {}))
-        return Timeout(timeout, self._timeout_error).execute(executable)
+        return Timeout(timeout, error).execute(executable)
 
     def get_message(self):
         if not self.active:

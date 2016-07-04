@@ -194,7 +194,7 @@ Templates with continuable failures
     3
     5
 
-Templates and timeouts
+Templated test ends after test timeout
     [Documentation]    FAIL    Test timeout 100 milliseconds exceeded.
     [Timeout]    0.1 seconds
     [Template]    Sleep
@@ -202,12 +202,40 @@ Templates and timeouts
     0.2 seconds
     0.1 seconds
 
-Templates, timeouts, and for loops
+Templated test with for loop ends after test timeout
     [Documentation]    FAIL    Test timeout 100 milliseconds exceeded.
     [Timeout]    0.1 seconds
     [Template]    Sleep
     :FOR    ${i}    IN RANGE    10
     \    0.05 seconds
+
+Templated test continues after keyword timeout
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) Failing after 0s sleep and before 10s timeout.
+    ...
+    ...    2) Keyword timeout 1 millisecond exceeded.
+    ...
+    ...    3) Failing after 0.01s sleep and before 1min timeout.
+    ...
+    ...    4) Keyword timeout 2 milliseconds exceeded.
+    [Template]    Template with timeout
+    sleep=0s
+    sleep=1s      timeout=0.001s
+    sleep=0.01s   timeout=1min
+    sleep=2s      timeout=0.002s
+
+Templated test with for loop continues after keyword timeout
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) Keyword timeout 1 millisecond exceeded.
+    ...
+    ...    2) Failing after 0s sleep and before 15s timeout.
+    [Template]    Template with timeout
+    :FOR    ${sleep}    ${timeout}    IN    1    0.001    0    15
+    \    ${sleep}s    ${timeout}s
 
 Templated test ends after syntax errors
     [Documentation]    FAIL   Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 5.
@@ -269,3 +297,9 @@ Continuable failures
     [Arguments]    ${count}
     :FOR    ${i}    IN RANGE    ${count}
     \    Run keyword and continue on failure    Fail    Continuable ${i+1}
+
+Template with timeout
+    [Arguments]    ${sleep}=0s    ${timeout}=10s
+    [Timeout]    ${timeout}
+    Sleep    ${sleep}
+    Fail    Failing after ${sleep} sleep and before ${timeout} timeout.

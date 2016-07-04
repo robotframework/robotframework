@@ -82,6 +82,14 @@ class TimeoutError(RobotError):
     Error`).
     """
 
+    def __init__(self, message='', test_timeout=True):
+        RobotError.__init__(self, message)
+        self.test_timeout = test_timeout
+
+    @property
+    def keyword_timeout(self):
+        return not self.test_timeout
+
 
 class Information(RobotError):
     """Used by argument parser with --help or --version."""
@@ -90,17 +98,23 @@ class Information(RobotError):
 class ExecutionFailed(RobotError):
     """Used for communicating failures in test execution."""
 
-    def __init__(self, message, timeout=False, syntax=False, exit=False,
-                 continue_on_failure=False, return_value=None):
+    def __init__(self, message, test_timeout=False, keyword_timeout=False,
+                 syntax=False, exit=False, continue_on_failure=False,
+                 return_value=None):
         if '\r\n' in message:
             message = message.replace('\r\n', '\n')
         from robot.utils import cut_long_message
         RobotError.__init__(self, cut_long_message(message))
-        self.timeout = timeout
+        self.test_timeout = test_timeout
+        self.keyword_timeout = keyword_timeout
         self.syntax = syntax
         self.exit = exit
         self._continue_on_failure = continue_on_failure
         self.return_value = return_value
+
+    @property
+    def timeout(self):
+        return self.test_timeout or self.keyword_timeout
 
     @property
     def dont_continue(self):
@@ -119,9 +133,13 @@ class ExecutionFailed(RobotError):
     def can_continue(self, teardown=False, templated=False, dry_run=False):
         if dry_run:
             return True
-        if self.dont_continue:
+        if self.syntax or self.exit or self.test_timeout:
             return False
-        if teardown or templated:
+        if templated:
+            return True
+        if self.keyword_timeout:
+            return False
+        if teardown:
             return True
         return self.continue_on_failure
 
@@ -137,12 +155,15 @@ class HandlerExecutionFailed(ExecutionFailed):
 
     def __init__(self, details):
         timeout = isinstance(details.error, TimeoutError)
+        test_timeout = timeout and details.error.test_timeout
+        keyword_timeout = timeout and details.error.keyword_timeout
         syntax = (isinstance(details.error, DataError) and
                   not isinstance(details.error, VariableError))
         exit_on_failure = self._get(details.error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(details.error, 'CONTINUE_ON_FAILURE')
-        ExecutionFailed.__init__(self, details.message, timeout, syntax,
-                                 exit_on_failure, continue_on_failure)
+        ExecutionFailed.__init__(self, details.message, test_timeout,
+                                 keyword_timeout, syntax, exit_on_failure,
+                                 continue_on_failure)
         self.full_message = details.message
         self.traceback = details.traceback
 
@@ -167,7 +188,8 @@ class ExecutionFailures(ExecutionFailed):
 
     def _get_attrs(self, errors):
         return {
-            'timeout': any(e.timeout for e in errors),
+            'test_timeout': any(e.test_timeout for e in errors),
+            'keyword_timeout': any(e.keyword_timeout for e in errors),
             'syntax': any(e.syntax for e in errors),
             'exit': any(e.exit for e in errors),
             'continue_on_failure': all(e.continue_on_failure for e in errors)
