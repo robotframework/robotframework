@@ -1,6 +1,5 @@
 ﻿*** Settings ***
-Library           Exceptions
-Suite Teardown    Suite Teardown With Errors
+Suite Teardown    Suite Teardown With Failures
 
 *** Variables ***
 ${SUITE TEARDOWN FAILED}    SEPARATOR=\n
@@ -11,18 +10,18 @@ ${SUITE TEARDOWN FAILED}    SEPARATOR=\n
 ...    ${EMPTY}
 ...    2) Suite Message 2 (with ∏ön ÄßÇïï €§)
 ...    ${EMPTY}
-...    3) No keyword with name 'Missing Keyword' found.
+...    3) Variable '\${it is ok not to exist}' not found.
 
 *** Test Cases ***
-One Error In Teardown
+One Failure
     [Documentation]    FAIL    Teardown failed:
     ...    Message
     ...    
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
-    [Teardown]    One Error
+    [Teardown]    One Failure
 
-Many Errors In Teardown
+Multiple Failures
     [Documentation]    FAIL    Teardown failed:
     ...    Several failures occurred:
     ...
@@ -32,17 +31,17 @@ Many Errors In Teardown
     ...    
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
-    [Teardown]    Many Errors
+    [Teardown]    Multiple Failures
 
-Errors In Teardown When Setting Variables
+Failure When Setting Variables
     [Documentation]    FAIL    Teardown failed:
-    ...    no return value is set
+    ...    Return values is None
     ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
-    [Teardown]    Errors when setting variables
+    [Teardown]    Failure when setting variables
 
-Errors In For Loop In Teardown
+Failure In For Loop
     [Documentation]    FAIL    Teardown failed:
     ...    Several failures occurred:
     ...
@@ -56,94 +55,108 @@ Errors In For Loop In Teardown
     ...    
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
-    [Teardown]    Errors In For Loop
+    [Teardown]    Failures In For Loop
 
-Keyword Timeout In Teardown
+Execution Continues After Test Timeout
+    [Documentation]    FAIL    Teardown failed:
+    ...    This should be executed
+    ...
+    ...    ${SUITE TEARDOWN FAILED}
+    [Timeout]    0.3 seconds
+    No Operation
+    [Teardown]    Test Timeout Occurs
+
+Execution Stops After Keyword Timeout
     [Documentation]    FAIL    Teardown failed:
     ...    Keyword timeout 42 milliseconds exceeded.
     ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
-    [Teardown]    Timeout
+    [Teardown]    Keyword Timeout Occurs
 
-Syntax Error in Teardown
+Execution Continues If Variable Does Not Exist
     [Documentation]    FAIL    Teardown failed:
     ...    Several failures occurred:
     ...
-    ...    1) Variable '\${non existing variable}' not found.
+    ...    1) Variable '\${this var does not exist}' not found.
     ...
-    ...    2) No keyword with name 'Keyword Missing' found.
+    ...    2) Variable '\${neither does this one}' not found.
     ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
-    [Teardown]    Syntax Error
+    [Teardown]    Missing Variables
 
-Syntax Error in For Loop in Teardown
+Execution Continues After Syntax Error
     [Documentation]    FAIL    Teardown failed:
     ...    Several failures occurred:
     ...
-    ...    1) Variable '${non existing variable}' not found.
+    ...    1) No keyword with name 'Keyword Missing' found.
     ...
-    ...    2) This should be executed
-    ...
-    ...    3) Variable '${non existing variable}' not found.
-    ...
-    ...    4) This should be executed
+    ...    2) No keyword with name 'Another Missing Keyword' found.
     ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
-    [Teardown]    Syntax Errors In For Loop
+    [Teardown]    Missing Keywords
 
-Fatal Error In Teardown
+Fatal Error 1
     [Documentation]    FAIL    Teardown failed:
-    ...  FatalCatastrophyException
+    ...  The End
     ...
     ...  ${SUITE TEARDOWN FAILED}
     No Operation
-    [Teardown]    Fatal Error
+    [Teardown]    Keyword With Fatal Error
 
+Fatal Error 2
+    [Documentation]    FAIL    Test execution stopped due to a fatal error.
+    ...
+    ...  ${SUITE TEARDOWN FAILED}
+    Fail    This should not be executed
 
 *** Keywords ***
-Suite Teardown With Errors
-    Fail    Suite Message 1
-    Fail    Suite Message 2 (with ∏ön ÄßÇïï €§)
-    Missing Keyword
-    Log    This As Well Should Be Executed
-
-One Error
+One Failure
     Fail    Message
-    Log    This Should Be executed
+    Log    This should be executed
 
-Many Errors
+Multiple Failures
     Fail    Message 1
     Fail    Message 2
-    Log    This Should Also Be Executed
+    Log    This should also be executed
 
-Errors when setting variables
-    ${ret} =    Fail    no return value is set
+Failure when setting variables
+    ${ret} =    Fail    Return values is None
     Should Be Equal    ${ret}    ${None}
 
-Errors In For Loop
+Failures In For Loop
     :FOR    ${animal}    IN    cat    dog
     \    Fail    ${animal}
     \    Fail    again
 
-Timeout
+Test Timeout Occurs
+    Sleep    1 s
+    Fail    This should be executed
+
+Keyword Timeout Occurs
     [Timeout]    42 ms
     Sleep    1 s
-    Fail    This Should Not Be Executed
+    Fail    This should not be executed
 
-Syntax Error
-    Log    ${non existing variable}
-    Keyword Missing
-    Log    This Should Be Executed
-
-Syntax Errors In For Loop
-    :FOR    ${i}    IN RANGE    2
-    \    Log    ${non existing variable}
-    \    Fail    This should be executed
+Missing Variables
+    Log    ${this var does not exist}
     Log    This should be executed
+    :FOR    ${i}    IN RANGE    1
+    \    Fail    ${neither does this one}
 
-Fatal Error
-    Exit On Failure
+Missing Keywords
+    Keyword Missing
+    Log    This should be executed
+    Another Missing Keyword
+
+Keyword With Fatal Error
+    Fatal Error    The End
     Fail    This Should Not Be Executed
+
+Suite Teardown With Failures
+    Fail    Suite Message 1
+    Fail    Suite Message 2 (with ∏ön ÄßÇïï €§)
+    Log    ${it is ok not to exist}
+    Log    This should be executed
