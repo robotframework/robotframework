@@ -17,8 +17,6 @@ import ctypes
 import time
 from threading import current_thread, Lock, Timer
 
-from robot.errors import TimeoutError
-
 
 class Timeout(object):
 
@@ -41,7 +39,7 @@ class Timeout(object):
             return result
         finally:
             if self._timeout_occurred:
-                raise TimeoutError(self._error)
+                raise self._error
 
     def _start_timer(self):
         self._timer.start()
@@ -67,7 +65,7 @@ class Timeout(object):
         # See, for example, http://tomerfiliba.com/recipes/Thread2/
         # for more information about using PyThreadState_SetAsyncExc
         tid = ctypes.c_long(self._runner_thread_id)
-        error = ctypes.py_object(TimeoutError)
+        error = ctypes.py_object(type(self._error))
         while ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, error) > 1:
             ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
             time.sleep(0)  # give time for other threads

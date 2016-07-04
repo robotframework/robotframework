@@ -18,8 +18,6 @@ import threading
 
 from System.Threading import Thread, ThreadStart
 
-from robot.errors import TimeoutError
-
 
 class Timeout(object):
 
@@ -34,7 +32,7 @@ class Timeout(object):
         thread.Start()
         if not thread.Join(self._timeout * 1000):
             thread.Abort()
-            raise TimeoutError(self._error)
+            raise self._error
         return runner.get_result()
 
 
