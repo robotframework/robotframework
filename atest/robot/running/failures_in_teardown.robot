@@ -1,5 +1,5 @@
 ﻿*** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  running/errors_in_test_teardown.robot
+Suite Setup     Run Tests  ${EMPTY}  running/failures_in_teardown.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
