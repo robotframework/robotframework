@@ -119,7 +119,7 @@ class ExecutionFailed(RobotError):
     def can_continue(self, teardown=False, templated=False, dry_run=False):
         if dry_run:
             return True
-        if self.dont_continue and not (teardown and self.syntax):
+        if self.dont_continue:
             return False
         if teardown or templated:
             return True

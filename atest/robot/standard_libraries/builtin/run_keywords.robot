@@ -25,6 +25,10 @@ Non-existing variable as keyword name
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Be Empty    ${tc.kws[0].kws}
 
+Non-existing variable inside executed keyword
+    Test Should Have Correct Keywords
+    ...    Passing    Non-existing Variable
+
 Non-existing keyword
     Test Should Have Correct Keywords
     ...    Passing    Non-Existing
