@@ -205,3 +205,9 @@ Assign Mark Can Be Used Only With The Last Variable
 
 Files are not lists
     Check Test Case    ${TESTNAME}
+
+Invalid count error is catchable
+    Check Test Case    ${TESTNAME}
+
+Invalid type error is catchable
+    Check Test Case    ${TESTNAME}

@@ -19,6 +19,9 @@ Set attribute not directly in base
 Trying to set un-settable attribute
     Check Test Case    ${TESTNAME}
 
+Un-settable attribute error is catchable
+    Check Test Case    ${TESTNAME}
+
 Using extended syntax when base variable does not exists creates new variable
     Check Test Case    ${TESTNAME}
 
