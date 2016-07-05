@@ -36,7 +36,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
-                             variable_not_found)
+                             variable_not_found,Variables)
 from robot.version import get_version
 
 if JYTHON:
@@ -1061,7 +1061,7 @@ class _Verify(_BuiltInBase):
 
 class _Variables(_BuiltInBase):
 
-    def get_variables(self, no_decoration=False):
+    def get_variables(self, no_decoration=False,scopes='ALL'):
         """Returns a dictionary containing all variables in the current scope.
 
         Variables are returned as a special dictionary that allows accessing
@@ -1091,7 +1091,20 @@ class _Variables(_BuiltInBase):
         Note: Prior to Robot Framework 2.7.4 variables were returned as
         a custom object that did not support all dictionary methods.
         """
-        return self._variables.as_dict(decoration=is_falsy(no_decoration))
+        variable = Variables()
+        if scopes == 'LOCAL':
+            variable_lists = self._variables.scope_of_variable['GLOBAL']+self._variables.scope_of_variable['TEST_CASE']+self._variables.scope_of_variable['TEST_SUITE']
+            for keys in self._variables.as_dict().__iter__():
+                if keys not in variable_lists:
+                    variable[keys]=self.get_variable_value(keys)
+        elif scopes == 'ALL':
+            variable = self._variables
+        else:
+            variable_list = self._variables.scope_of_variable[scopes]
+            for key in variable_list:
+                variable[key]=self.get_variable_value(key)
+
+        return variable.as_dict(decoration=is_falsy(no_decoration))
 
     @run_keyword_variant(resolve=0)
     def get_variable_value(self, name, default=None):
@@ -1117,9 +1130,19 @@ class _Variables(_BuiltInBase):
         except DataError:
             return self._variables.replace_scalar(default)
 
-    def log_variables(self, level='INFO'):
-        """Logs all variables in the current scope with given log level."""
-        variables = self.get_variables()
+    def log_variables(self, level='INFO',scope='ALL'):
+        """Logs all variables in the current scope with given log level.
+
+           The different scopes which can be used are GLOBAL,TEST_SUITE,
+           TEST_CASE,LOCAL and ALL.
+           Based on the scope, log_variables will retrieve and log variables
+           from that particular scope.
+
+           Examples:
+           | Log Variables |
+           | Log Variables | scope=TEST_CASE
+        """
+        variables = self.get_variables(scopes=scope)
         for name in sorted(variables, key=lambda s: s[2:-1].lower()):
             msg = format_assign_message(name, variables[name], cut_long=False)
             self.log(msg, level)

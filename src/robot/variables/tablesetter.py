@@ -26,10 +26,14 @@ class VariableTableSetter(object):
 
     def __init__(self, store):
         self._store = store
+        self.vars = []
 
     def set(self, variables, overwrite=False):
         for name, value in VariableTableReader().read(variables):
-            self._store.add(name, value, overwrite, decorated=False)
+            self.vars.append(name)
+            stripped_name = name[2:-1]
+            self._store.add(stripped_name, value, overwrite, decorated=False)
+        return self.vars
 
 
 class VariableTableReader(object):
@@ -45,7 +49,7 @@ class VariableTableReader(object):
                 var.report_invalid_syntax(err)
 
     def _get_name_and_value(self, name, value, error_reporter):
-        return name[2:-1], VariableTableValue(value, name, error_reporter)
+        return name[0]+'{'+name[2:-1]+'}', VariableTableValue(value, name, error_reporter)
 
 
 def VariableTableValue(value, name, error_reporter=None):
