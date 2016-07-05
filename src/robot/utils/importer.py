@@ -70,7 +70,8 @@ class Importer(object):
             imported = self._instantiate_if_needed(imported, instantiate_with_args)
         except DataError as err:
             self._raise_import_failed(name, err)
-        return (imported, source) if return_source else imported
+        else:
+            return (imported, source) if return_source else imported
 
     def _import_class_or_module(self, name):
         for importer in self._importers:
