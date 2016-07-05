@@ -4,7 +4,7 @@ from os.path import abspath, join
 
 from robot import api, model, parsing, reporting, result, running
 
-from robot.utils.asserts import assert_equal
+from robot.utils.asserts import assert_equal, assert_true
 
 
 class TestExposedApi(unittest.TestCase):
@@ -33,6 +33,25 @@ class TestExposedApi(unittest.TestCase):
     def test_visitors(self):
         assert_equal(api.SuiteVisitor, model.SuiteVisitor)
         assert_equal(api.ResultVisitor, result.ResultVisitor)
+
+
+class TestModelObjects(unittest.TestCase):
+    """These model objects are part of the public API.
+
+    They are only seldom needed directly and thus not exposed via the robot.api
+    package. Tests just validate they are not removed accidentally.
+    """
+
+    def test_running_objects(self):
+        assert_true(running.TestSuite)
+        assert_true(running.TestCase)
+        assert_true(running.Keyword)
+
+    def test_result_objects(self):
+        assert_true(result.TestSuite)
+        assert_true(result.TestCase)
+        assert_true(result.Keyword)
+        assert_true(result.Message)
 
 
 class TestTestSuiteBuilder(unittest.TestCase):
