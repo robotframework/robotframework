@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
+from robot.errors import DataError, VariableError
 from robot.utils import (DotDict, is_dict_like, is_list_like, NormalizedDict,
                          type_name)
 
@@ -83,8 +83,8 @@ class VariableStore(object):
         return name[2:-1], value
 
     def _raise_cannot_set_type(self, name, value, expected):
-        raise DataError("Cannot set variable '%s': Expected %s-like value, "
-                        "got %s." % (name, expected, type_name(value)))
+        raise VariableError("Cannot set variable '%s': Expected %s-like value, "
+                            "got %s." % (name, expected, type_name(value)))
 
     def remove(self, name):
         if name in self.data:

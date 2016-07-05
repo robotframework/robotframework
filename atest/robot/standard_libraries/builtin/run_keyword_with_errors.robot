@@ -49,6 +49,9 @@ Ignore Error When Syntax Error At Run Time
 Ignore Error When Syntax Error In Setting Variables
     Check Test Case    ${TEST NAME}
 
+Ignore Error When Invalid Return Values When Setting Variables
+    Check Test Case    ${TEST NAME}
+
 Ignore Error When Syntax Error In For Loop
     Check Test Case    ${TEST NAME}
 
@@ -118,6 +121,9 @@ Expect Error When Syntax Error At Run Time
     Check Test Case    ${TEST NAME}
 
 Expect Error When Syntax Error In Setting Variables
+    Check Test Case    ${TEST NAME}
+
+Expect Error When Invalid Return Values When Setting Variables
     Check Test Case    ${TEST NAME}
 
 Expect Error When Syntax Error In For Loop
