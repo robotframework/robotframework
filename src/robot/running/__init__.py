@@ -15,7 +15,7 @@
 
 """Implements the core test execution logic.
 
-The public entry points of this package are of the following two classes:
+The main public entry points of this package are of the following two classes:
 
 * :class:`~robot.running.builder.TestSuiteBuilder` for creating executable
   test suites based on existing test case files and directories.
@@ -26,8 +26,9 @@ The public entry points of this package are of the following two classes:
 It is recommended to import both of these classes via the :mod:`robot.api`
 package like in the examples below. Also :class:`~robot.running.model.TestCase`
 and :class:`~robot.running.model.Keyword` classes used internally by the
-:class:`~robot.running.model.TestSuite` class are part of the public API,
-but they should not generally be imported directly.
+:class:`~robot.running.model.TestSuite` class are part of the public API.
+In those rare cases where these classes are needed directly, they can be
+imported from this package.
 
 This package and especially all public code was rewritten in Robot Framework
 2.8 to make it easier to generate and execute test suites programmatically.
