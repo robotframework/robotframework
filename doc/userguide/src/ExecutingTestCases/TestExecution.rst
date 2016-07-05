@@ -293,9 +293,11 @@ __ `Stopping test execution`_
 Stopping when first test case fails
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If option :option:`--exitonfailure` is used, test execution stops
-immediately if any `critical test`_ fails. Also the remaining tests
-are marked as failed.
+If option :option:`--exitonfailure (-X)` is used, test execution stops
+immediately if any `critical test`_ fails. The remaining tests are marked
+as failed without actually executing them.
+
+.. note:: The short option :option:`-X` is new in Robot Framework 3.0.1.
 
 Stopping on parsing or execution error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
