@@ -283,7 +283,7 @@ Options
                           is not an error that no test matches the condition.
     --dryrun              Verifies test data and runs tests so that library
                           keywords are not executed.
-    --exitonfailure       Stops test execution if any critical test fails.
+ -X --exitonfailure       Stops test execution if any critical test fails.
     --exitonerror         Stops test execution if any error occurs when parsing
                           test data, importing libraries, and so on.
     --skipteardownonexit  Causes teardowns to be skipped if test execution is

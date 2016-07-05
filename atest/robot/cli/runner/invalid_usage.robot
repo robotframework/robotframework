@@ -19,7 +19,7 @@ Non-Existing Input With Non-Ascii Characters
 
 Invalid Options
     --invalid option    option --invalid not recognized
-    --name valid -X tests.txt    option -X not recognized
+    --name valid -Q tests.txt    option -Q not recognized
 
 Invalid --SuiteStatLevel
     --suitestatlevel not_int tests.txt

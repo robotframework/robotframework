@@ -63,7 +63,7 @@ Command line options for test execution
   --dryrun                In the `dry run`_ mode tests are run without executing
                           keywords originating from test libraries. Useful for
                           validating test data syntax.
-  --exitonfailure         `Stops test execution <Stopping when first test case fails_>`__
+  -X, --exitonfailure     `Stops test execution <Stopping when first test case fails_>`__
                           if any critical test fails.
   --exitonerror           `Stops test execution <Stopping on parsing or execution error_>`__
                           if any error occurs when parsing test data, importing libraries, and so on.
