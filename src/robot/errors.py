@@ -181,10 +181,22 @@ class ExecutionFailures(ExecutionFailed):
     def _format_message(self, messages):
         if len(messages) == 1:
             return messages[0]
+        prefix = 'Several failures occurred:'
+        if any(msg.startswith('*HTML*') for msg in messages):
+            prefix = '*HTML* ' + prefix
+            messages = self._format_html_messages(messages)
         return '\n\n'.join(
-            ['Several failures occurred:'] +
+            [prefix] +
             ['%d) %s' % (i, m) for i, m in enumerate(messages, start=1)]
         )
+
+    def _format_html_messages(self, messages):
+        from robot.utils import html_escape
+        for msg in messages:
+            if msg.startswith('*HTML*'):
+                yield msg[6:].lstrip()
+            else:
+                yield html_escape(msg)
 
     def _get_attrs(self, errors):
         return {
