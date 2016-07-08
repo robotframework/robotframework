@@ -29,18 +29,18 @@ function setTitle(suiteName, type) {
 }
 
 function addHeader() {
-    $.tmpl('<h1>${title}</h1>' +
-           '<div id="generated">' +
-             '<span>Generated<br>${generated}</span><br>' +
-             '<span id="generated-ago">${ago} ago</span>' +
-           '</div>' +
-           '<div id="top-right-header">' +
-             '<div id="report-or-log-link"><a href="#"></a></div>' +
-           '</div>', {
+     $.tmpl('<h3>${title}</h3>' +
+            '<div id="generated">' +
+              '<span>Generated<br>${generated}</span><br>' +
+              '<span id="generated-ago">${ago} ago</span>' +
+            '</div>' +
+            '<div id="top-right-header">' +
+           '<div id="report-or-log-link"><a href="#"></a></div>' +
+            '</div>', {
         generated: window.output.generatedTimestamp,
         ago: util.createGeneratedAgoString(window.output.generatedMillis),
-        title: document.title
-    }).appendTo($('#header'));
+       title: document.title
+     }).appendTo($('#header'));
 }
 
 function addReportOrLogLink(myType) {
@@ -69,7 +69,7 @@ function addStatistics() {
         '<th class="stats-col-stat">Fail</th>' +
         '<th class="stats-col-elapsed">Elapsed</th>' +
         '<th class="stats-col-graph">Pass / Fail</th>';
-    var statTable =
+    var statTable = '<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp"><div class="mdl-card__supporting-text">'+
         '<h2>Test Statistics</h2>' +
         '<table class="statistics" id="total-stats"><thead><tr>' +
         '<th class="stats-col-name">Total Statistics</th>' + statHeaders +
@@ -79,7 +79,7 @@ function addStatistics() {
         '</tr></thead></table>' +
         '<table class="statistics" id="suite-stats"><thead><tr>' +
         '<th class="stats-col-name">Statistics by Suite</th>' + statHeaders +
-        '</tr></thead></table>';
+        '</tr></thead></table></div></section>';
     $(statTable).appendTo('#statistics-container');
     util.map(['total', 'tag', 'suite'], addStatTable);
     addTooltipsToElapsedTimes();

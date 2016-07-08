@@ -24,6 +24,7 @@ class HtmlTemplate(object):
         self._path = normpath(join(self._base_dir, filename.replace('/', os.sep)))
 
     def __iter__(self):
-        with open(self._path) as file:
+        import codecs
+        with codecs.open(self._path,encoding='utf-8') as file:
             for line in file:
                 yield line.rstrip()

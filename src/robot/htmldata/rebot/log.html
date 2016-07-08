@@ -4,11 +4,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="Generator" content="">
 <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAEAAAAAAAAAAAAAAAJEBoACtnfgA5cYYAERsiAEx2lAAbKkQAcazBACZCVwAcM1cAK0ucAAMDBQAnQncASG+FABkoVQAyWmgA6f8SgvH/Ij99+GLyIinyJfn/Yi//KSLzUy9iZogpIld3/4JVVTkid7vyUjNVNVJEAGOZ6Z7pXwAABpmZkRiLAAAGiJZpmGAAAEEt3SXdxAAATC7o/u3EAAC8MRZpjasAAAY1VVVTYAAABKqqqqpAAAAADKqq4AAAAAAAv4sAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMADAADgAwAA4AcAAOAHAADgBwAAwAcAAOAHAADgDwAA8A8AAPg/AAD+fwAA">
 <link rel="stylesheet" type="text/css" href="common.css" media="all">
 <link rel="stylesheet" type="text/css" href="log.css" media="all">
+<link rel="stylesheet" type="text/css" href="material.min.css" media="all">
+<link rel="stylesheet" type="text/css" href="styles.css" media="all">
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <link rel="stylesheet" type="text/css" href="../common/js_disabled.css" media="all">
 <link rel="stylesheet" type="text/css" href="../common/doc_formatting.css" media="all">
@@ -22,11 +25,13 @@
 <script type="text/javascript" src="util.js"></script>
 <script type="text/javascript" src="testdata.js"></script>
 <script type="text/javascript" src="view.js"></script>
+<script type="text/javascript" src="material.min.js"></script>
 <!-- JS MODEL --><script type="text/javascript" src="../testdata/data.js"></script>
 <title></title>
 </head>
-<body>
-<div id="javascript-disabled">
+<body class="mdl-demo mdl-color-text--grey-700">
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <div id="javascript-disabled">
   <h1>Opening Robot Framework log failed</h1>
   <ul>
     <li>Verify that you have <b>JavaScript enabled</b> in your browser.</li>
@@ -36,9 +41,31 @@
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
 
-<div id="header"></div>
-<div id="statistics-container"></div>
-
+<header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
+        <div class="mdl-layout__header-row">
+        </div>
+        <div id="header" class="mdl-layout__header-row">
+        </div>
+        <div class="mdl-layout__header-row">
+        </div>
+        <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark">
+          <a href="#statistics-container" class="mdl-layout__tab is-active">Test Stats</a>
+          <a href="#test-execution" class="mdl-layout__tab">Test Execution</a>
+          <a href="#test-errors" class="mdl-layout__tab">Test Errors</a>
+        </div>
+</header>
+<main class="mdl-layout__content">
+<div id="statistics-container" class="mdl-layout__tab-panel  is-active"></div>
+<div id="test-execution" class="mdl-layout__tab-panel">
+  <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+  <div class="mdl-card__supporting-text">
+  <h2 id="ter">Test Execution Logs</h2>
+  <div id="tel"></div>
+</div>
+</section>
+</div>
+<div id="test-errors" class="mdl-layout__tab-panel"></div>
+</main>
 <script type="text/javascript">
 $(document).ready(function() {
     try {
@@ -73,8 +100,11 @@ function addLogLevelSelector(minLevel, defaultLevel) {
 function addErrors() {
     var errors = window.testdata.errorIterator();
     if (errors.hasNext()) {
-        $.tmpl('errorHeaderTemplate').appendTo($('body'));
+        $.tmpl('errorHeaderTemplate').appendTo($('#test-errors'));
         drawErrorsRecursively(errors, $('#errors'));
+    }
+    else{
+      $.tmpl('noErrorsTemplate').appendTo($('#test-errors'));
     }
 }
 
@@ -128,8 +158,7 @@ function makeElementVisible(id) {
 }
 
 function addTestExecutionLog(main) {
-    $('body').append($('<h2>Test Execution Log</h2>'),
-                     $.tmpl('suiteTemplate', main));
+                     $.tmpl('suiteTemplate',main).appendTo($('#tel'));
 }
 </script>
 
@@ -173,8 +202,12 @@ function addTestExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="errorHeaderTemplate">
-  <h2>Test Execution Errors</h2>
+<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+<div class="mdl-card__supporting-text">
+<h2 id="ter">Test Execution Errors</h2>
   <table id="errors"></table>
+  </div>
+  </section>
 </script>
 
 <script type="text/x-jquery-tmpl" id="errorTemplate">
@@ -193,6 +226,14 @@ function addTestExecutionLog(main) {
     </td>
   </tr>
 </script>
+
+<script type="text/x-jquery-tmpl" id="noErrorsTemplate">
+<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+<div class="mdl-card__supporting-text">
+  <h2>Hooray! There is no test execution errors to report</h2>
+  </div>
+  </section>
+  </script>
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
@@ -254,6 +295,8 @@ function addTestExecutionLog(main) {
       </table>
     </div>
   </div>
+  </div>
+  </section>
 </script>
 
 <script type="text/x-jquery-tmpl" id="testTemplate">

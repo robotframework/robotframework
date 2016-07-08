@@ -11,13 +11,19 @@ th {
     color: black;
 }
 /* Summary and total/tag/suite details */
+@media  screen (min-width:680px){
 .details {
     border: 1px solid #ccc;
     border-collapse: collapse;
     clear: both;
-    width: 65em;
-    margin-bottom: 1em;
+    width: 60%;
+    margin-bottom: 10%;
+    margin-left: 10%
+    text-align: center;
 }
+}
+
+
 .details th {
     background: white;
     width: 10em;
@@ -187,3 +193,9 @@ th {
 th.hidden:hover {
     background-color: #ccc;
 }
+.test-details-container {
+  text-align: center;
+}
+/*#generated{
+  float: right;
+}*/

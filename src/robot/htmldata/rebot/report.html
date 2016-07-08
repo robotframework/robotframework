@@ -4,11 +4,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="Generator" content="">
 <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAEAAAAAAAAAAAAAAAJEBoACtnfgA5cYYAERsiAEx2lAAbKkQAcazBACZCVwAcM1cAK0ucAAMDBQAnQncASG+FABkoVQAyWmgA6f8SgvH/Ij99+GLyIinyJfn/Yi//KSLzUy9iZogpIld3/4JVVTkid7vyUjNVNVJEAGOZ6Z7pXwAABpmZkRiLAAAGiJZpmGAAAEEt3SXdxAAATC7o/u3EAAC8MRZpjasAAAY1VVVTYAAABKqqqqpAAAAADKqq4AAAAAAAv4sAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMADAADgAwAA4AcAAOAHAADgBwAAwAcAAOAHAADgDwAA8A8AAPg/AAD+fwAA">
 <link rel="stylesheet" type="text/css" href="common.css" media="all">
 <link rel="stylesheet" type="text/css" href="report.css" media="all">
+<link rel="stylesheet" type="text/css" href="material.min.css" media="all">
+<link rel="stylesheet" type="text/css" href="styles.css" media="all"/>
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <link rel="stylesheet" type="text/css" href="../common/js_disabled.css" media="all">
 <link rel="stylesheet" type="text/css" href="../common/doc_formatting.css" media="all">
@@ -21,11 +24,13 @@
 <script type="text/javascript" src="util.js"></script>
 <script type="text/javascript" src="testdata.js"></script>
 <script type="text/javascript" src="view.js"></script>
+<script type="text/javascript" src="material.min.js"></script>
 <script type="text/javascript" src="../common/storage.js"></script>
 <!-- JS MODEL --><script type="text/javascript" src="../testdata/data.js"></script>
 <title></title>
 </head>
-<body>
+<body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 <div id="javascript-disabled">
   <h1>Opening Robot Framework report failed</h1>
   <ul>
@@ -36,9 +41,33 @@
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
 
-<div id="header"></div>
-<div id="statistics-container"></div>
-<div id="test-details-container"></div>
+<header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
+        <div class="mdl-layout__header-row">
+        </div>
+        <div id="header" class="mdl-layout__header-row">
+          <!-- <h3>Name &amp; Title</h3> -->
+        </div>
+        <div class="mdl-layout__header-row">
+        </div>
+        <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark">
+          <a href="#summary" class="mdl-layout__tab is-active">Summary</a>
+          <a href="#statistics-container" class="mdl-layout__tab">Test Stats</a>
+          <a href="#test-details-container-shell" class="mdl-layout__tab">Test Details</a>
+        </div>
+</header>
+ <main class="mdl-layout__content">
+   <div id="summary" class="mdl-layout__tab-panel is-active"></div>
+   <div id="statistics-container" class="mdl-layout__tab-panel"></div>
+   <div id="test-details-container-shell" class="mdl-layout__tab-panel">
+     <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+       <div class="mdl-card__supporting-text">
+         <div id="test-details-container"></div>
+       </div>
+     </section>
+   </div>
+</main>
+<!-- <div id="header" class="mdl-layout--large-screen-only mdl-layout__header-row mdl-color--primary"></div> -->
+
 
 <script type="text/javascript">
 $(document).ready(function () {
@@ -59,19 +88,28 @@ $(document).ready(function () {
 });
 
 function setBackground(topsuite) {
-    var color;
+    var color_primary;
+    var color_primary_dark;
     if (topsuite.criticalFailed)
-        color = window.settings.background.fail;
-    else if (topsuite.totalFailed)
-        color = window.settings.background.nonCriticalFail;
+        {
+          color_primary = "#F44336";
+          color_primary_dark = "#D32F2F";
+          console.log('here');
+        }
+    // else if (topsuite.totalFailed)
+    //     color = window.settings.background.nonCriticalFail;
     else
-        color = window.settings.background.pass;
-    $('body').css('background-color', color);
+    {
+      color_primary = '#4CAF50';
+      color_primary_dark = '#388E3C';
+    }
+    $('.mdl-color--primary').css('background-color', color_primary);
+    $('.mdl-color--primary-dark').css('background-color',color_primary_dark);
 }
 
 function addSummary(topsuite) {
     var opts = {logURL: window.settings.logURL};
-    $.tmpl('summaryTableTemplate', topsuite, opts).insertAfter($('#header'));
+    $.tmpl('summaryTableTemplate', topsuite, opts).appendTo($('#summary'));
 }
 
 function addDetails() {
@@ -387,7 +425,8 @@ function hideHiddenDetailsColumns(elem) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="summaryTableTemplate">
-  <h2>Summary Information</h2>
+  <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+  <div class="mdl-card__supporting-text">
   <table class="details">
     <tr>
       <th>Status:</th>
@@ -437,6 +476,8 @@ function hideHiddenDetailsColumns(elem) {
     </tr>
     {{/if}}
   </table>
+  </div>
+  </section>
 </script>
 
 <script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
@@ -480,6 +521,7 @@ function hideHiddenDetailsColumns(elem) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
+
   <h2 id="${linkTarget}">Test Details</h2>
   <ul id="detail-tabs">
     <li class="${totalTabStatus} detail-tab">
@@ -610,7 +652,7 @@ function hideHiddenDetailsColumns(elem) {
             <table class="search-help-examples">
               <col class="help-item">
               <col class="help-explanation">
-              <col class="help-examples>
+              <col class="help-examples">
               <tr>
                 <th>Field</th>
                 <th>Explanation</th>
@@ -836,6 +878,6 @@ function hideHiddenDetailsColumns(elem) {
     <td class="details-col-times"><div>${times.startTime}<br>${times.endTime}</div></td>
   </tr>
 </script>
-
+</div>
 </body>
 </html>
