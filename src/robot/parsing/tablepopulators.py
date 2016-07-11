@@ -137,6 +137,42 @@ class KeywordTablePopulator(_StepContainingTablePopulator):
     def _get_populator(self, row):
         return UserKeywordPopulator(self._table.add)
 
+class IfPopulator(Populator):
+
+    def __init__(self, if_condition_creator):
+        self._if_condition_creator = if_condition_creator
+        self._condition = None
+        self._populator = NullPopulator()
+        self._declaration = []
+        self._declaration_comments = []
+        
+    def add(self, row):
+        dedented_row = row.dedent()
+        if not self._condition:
+            declaration_ready = self._populate_declaration(row)
+            if not declaration_ready:
+                return
+            self._create_if_condition()
+        if not row.is_continuing():
+            self._populator.populate()
+            self._populator = StepPopulator(self._condition.add_step)
+        self._populator.add(dedented_row)
+        
+    def _populate_declaration(self, row):
+        if row.starts_if() or row.is_continuing():
+            self._declaration.extend(row.dedent().data)
+            self._declaration_comments.extend(row.comments)
+            return False
+        return True
+    
+    def _create_if_condition(self):
+        self._condition = self._if_condition_creator(self._declaration,
+                                            self._declaration_comments)
+        
+    def populate(self):
+        if not self._condition:
+            self._create_if_condition()
+        self._populator.populate()
 
 class ForLoopPopulator(Populator):
 
@@ -222,11 +258,14 @@ class _TestCaseUserKeywordPopulator(Populator):
             return SettingPopulator(setter)
         if row.starts_for_loop():
             return ForLoopPopulator(self._test_or_uk.add_for_loop)
+        if row.starts_if():
+            return IfPopulator(self._test_or_uk.add_if)
         return StepPopulator(self._test_or_uk.add_step)
 
     def _continues(self, row):
         return row.is_continuing() and self._populator or \
-            (isinstance(self._populator, ForLoopPopulator) and row.is_indented())
+            (isinstance(self._populator, ForLoopPopulator) and row.is_indented())or\
+            (isinstance(self._populator, IfPopulator) and row.is_indented())
 
     def _setting_setter(self, row):
         setting_name = row.test_or_user_keyword_setting_name()

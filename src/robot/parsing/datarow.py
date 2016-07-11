@@ -72,6 +72,11 @@ class DataRow(object):
         if self.head and self.head.startswith(':'):
             return self.head.replace(':', '').replace(' ', '').upper() == 'FOR'
         return False
+    
+    def starts_if(self):
+        if self.head and self.head.startswith(':'):
+            return self.head.replace(':', '').replace(' ', '').upper() == 'IF'
+        return False
 
     def starts_test_or_user_keyword_setting(self):
         head = self.head

@@ -62,6 +62,20 @@ class Keyword(model.Keyword):
         """
         return StepRunner(context).run_step(self)
 
+class Ifcase(Keyword):
+    __slots__ = ['range']
+    keyword_class = Keyword
+
+    def __init__(self, condition):
+        Keyword.__init__(self, args=condition, type=Keyword.FOR_IF_TYPE)
+    
+    @property
+    def condition(self):
+        return self.args
+    
+    @property
+    def steps(self):
+        return self.keywords
 
 class ForLoop(Keyword):
     """Represents a for loop in test data.

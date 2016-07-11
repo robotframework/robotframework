@@ -557,6 +557,10 @@ class TestCase(_WithSteps, _WithSettings):
     def add_for_loop(self, declaration, comment=None):
         self.steps.append(ForLoop(declaration, comment))
         return self.steps[-1]
+    
+    def add_if(self, declaration, comment=None):
+        self.steps.append(Ifcase(declaration, comment))
+        return self.steps[-1]
 
     def report_invalid_syntax(self, message, level='ERROR'):
         type_ = 'test case' if type(self) is TestCase else 'keyword'
@@ -610,6 +614,24 @@ class UserKeyword(TestCase):
                         + self.steps + [self.teardown, self.return_]:
             yield element
 
+class Ifcase(_WithSteps):
+
+    def __init__(self, declaration, comment=None):
+        self.vars = declaration[0]
+        self.comment = Comment(comment)
+        self.steps = []
+        
+    def is_comment(self):
+        return False
+    
+    def is_for_loop(self):
+        return 0
+    
+    def __iter__(self):
+        return iter(self.steps)
+    
+    def is_set(self):
+        return True
 
 class ForLoop(_WithSteps):
     """The parsed representation of a for-loop.

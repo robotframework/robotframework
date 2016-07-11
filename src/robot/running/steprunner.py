@@ -51,6 +51,9 @@ class StepRunner(object):
         if step.type == step.FOR_LOOP_TYPE:
             runner = ForRunner(context, self._templated, step.flavor)
             return runner.run(step)
+        if step.type == step.FOR_IF_TYPE:
+            runner = IfCaseRunner(context, self._templated)
+            return runner.run(step)
         runner = context.get_runner(name or step.name)
         if context.dry_run:
             return runner.dry_run(step, context)
@@ -68,6 +71,63 @@ def ForRunner(context, templated=False, flavor='IN'):
         return InvalidForRunner(context, flavor)
     return runner(context, templated)
 
+class IfCaseRunner(object):
+
+    def __init__(self, context, templated=False):
+        self._context = context
+        self._templated = templated
+
+    def run(self, data, name=None):
+        result = KeywordResult(kwname=self._get_name(data),
+                               type=data.FOR_IF_TYPE)
+        with StatusReporter(self._context, result):
+            self._validate(data)
+            self._run(data)
+
+    def _validate(self, data):
+        if not data.condition:
+            raise DataError('IF case has no expressions.')
+        if not data.keywords:
+            raise DataError('IF case has no keywords.')
+    
+    def _get_name(self, data):
+        expression=self._context.variables.replace_scalar(data.condition)
+        return 'If Expression:[ %s ]' % (expression)
+    
+    def _run(self, data):
+        errors = []
+        exception = None
+        expression=self._context.variables.replace_scalar(data.condition)
+        try:
+            if isinstance(expression, basestring):
+                expression = eval(expression, {})
+            result = bool(expression)
+        except:
+            raise RuntimeError("IfCase expression :%s is not valid!"
+                               % str(expression))
+            return
+        if result:
+            exception = self._run_with_error_handling(data)
+        if exception:
+                if isinstance(exception, ExecutionPassed):
+                    exception.set_earlier_failures(errors)
+                    raise exception
+                errors.extend(exception.get_errors())
+        if errors:
+            raise ExecutionFailures(errors)
+
+    def _run_with_error_handling(self, data):
+        try:
+            runner = StepRunner(self._context, self._templated)
+            runner.run_steps(data.keywords)
+        except ExecutionFailed, err:
+            return err
+        except DataError, err:
+            msg = unicode(err)
+            context.output.fail(msg)
+            return ExecutionFailed(msg, syntax=True)
+        else:
+            return None
 
 class ForInRunner(object):
 
