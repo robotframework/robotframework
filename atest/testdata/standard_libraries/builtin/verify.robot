@@ -298,7 +298,7 @@ Should Contain With Non-String Values
     Should Contain    ${dict}    c
 
 Should Contain Any
-    [Documentation]    FAIL Message: 'abcdefg' does not contain any of ''A', 'X' or 'Ф''
+    [Documentation]    FAIL Message: 'abcdefg' does not contain any of 'A', 'X' or 'Ф'
     [Template]    Should Contain Any
     abcdefg    c
     abcdefg    a    b    e    f
@@ -317,8 +317,12 @@ Should Contain Any With Non-String Values
     Should Contain Any    ${dict}    a    z\=1
     Should Contain Any    ${dict}    c    1    msg=Fail Message    values=False
 
+Should Contain Any Fails With Single Item
+    [Documentation]    FAIL 'abcdefg' does not contain any of 'A'
+    Should Contain Any    abcdefg    A
+
 Should Not Contain Any
-    [Documentation]    FAIL 'Hello yet again' contains one or more of ''yet', 'yes' or 'no''
+    [Documentation]    FAIL 'Hello yet again' contains one or more of 'yet', 'yes' or 'no'
     [Template]    Should Not Contain Any
     Hello again    yet    yes     no
     Hello yet again    yet    yes    no

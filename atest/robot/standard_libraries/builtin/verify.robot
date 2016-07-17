@@ -164,6 +164,9 @@ Should Contain Any With Incorrect Configuration
 Should Contain Any With Non-String Values
     Check test case    ${TESTNAME}
 
+Should Contain Any Fails With Single Item
+    Check test case    ${TESTNAME}
+
 Should Not Contain Any
     Check test case    ${TESTNAME}
 
