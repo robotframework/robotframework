@@ -30,3 +30,6 @@ Non-ASCII directory name with ordinals < 255
 
 Non-ASCII directory name with ordinals > 255
     Check Test Case    ${TESTNAME}
+
+Generate UUID
+    Check Test Case    ${TESTNAME}

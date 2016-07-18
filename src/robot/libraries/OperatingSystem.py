@@ -1052,6 +1052,15 @@ class OperatingSystem(object):
             self._log('%s = %s' % (name, variables[name]), level)
         return variables
 
+    def generate_uuid(self):
+        """Generates a random UUID.
+
+        Example:
+        | ${uuid} = | Generate UUID
+
+        """
+        return str(uuid.uuid4())
+
     # Path
 
     def join_path(self, base, *parts):
