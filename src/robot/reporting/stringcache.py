@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,12 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from operator import itemgetter
-
-from robot.utils import compress_text
+from robot.utils import OrderedDict, compress_text
 
 
-class StringIndex(long):
+class StringIndex(int):
     pass
 
 
@@ -27,7 +26,7 @@ class StringCache(object):
     _zero_index = StringIndex(0)
 
     def __init__(self):
-        self._cache = {'*': self._zero_index}
+        self._cache = OrderedDict({'*': self._zero_index})
 
     def add(self, text):
         if not text:
@@ -50,5 +49,4 @@ class StringCache(object):
         return '*'+text
 
     def dump(self):
-        return tuple(item[0] for item in sorted(self._cache.iteritems(),
-                                                key=itemgetter(1)))
+        return tuple(self._cache)

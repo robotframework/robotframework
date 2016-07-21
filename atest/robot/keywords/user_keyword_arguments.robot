@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation     Handling valid and invalid user keyword arguments.
 Suite Setup       Run Tests    ${EMPTY}    keywords/user_keyword_arguments.robot
-Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -42,10 +41,34 @@ Too Few Arguments With Defaults And Varargs
 Default With Variable
     Check Test Case    ${TESTNAME}
 
+Default With Non-Existing Variable
+    Check Test Case    ${TESTNAME}
+
+Local Variable Does Not Affect Variable In Default Value
+    Check Test Case    ${TESTNAME}
+
+Explicitly Set Variable Affects Variable In Default Value
+    Check Test Case    ${TESTNAME}
+
 Default With Automatic Variable
     Check Test Case    ${TESTNAME}
 
 Default With Extended Variable Syntax
+    Check Test Case    ${TESTNAME}
+
+Default With Variable Based On Earlier Argument
+    Check Test Case    ${TESTNAME}
+
+Default With List Variable
+    Check Test Case    ${TESTNAME}
+
+Default With Invalid List Variable
+    Check Test Case    ${TESTNAME}
+
+Default With Dict Variable
+    Check Test Case    ${TESTNAME}
+
+Default With Invalid Dict Variable
     Check Test Case    ${TESTNAME}
 
 Calling Using List Variables
@@ -67,5 +90,9 @@ Invalid Arguments Spec
 Verify Invalid Argument Spec
     [Arguments]    ${index}    ${name}    ${error}
     Check Test Case    ${TEST NAME} - ${name}
-    Check Log Message    ${ERRORS[${index}]}
-    ...    Creating user keyword '${name}' failed: Invalid argument specification: ${error}    ERROR
+    ${source} =    Normalize Path    ${DATADIR}/keywords/user_keyword_arguments.robot
+    ${message} =    Catenate
+    ...    Error in test case file '${source}':
+    ...    Creating keyword '${name}' failed:
+    ...    Invalid argument specification: ${error}
+    Check Log Message    ${ERRORS[${index}]}    ${message}    ERROR

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,10 +15,11 @@
 
 from robot.errors import DataError
 from robot.model import SuiteVisitor
-from robot.utils import ET, ETSource, get_error_message
+from robot.utils import ET, ETSource, get_error_message, unic
 
 from .executionresult import Result, CombinedResult
-from .flattenkeywordmatcher import FlattenKeywordMatcher
+from .flattenkeywordmatcher import (FlattenByNameMatcher, FlattenByTypeMatcher,
+                                    FlattenByTagMatcher)
 from .merger import Merger
 from .xmlelementhandlers import XmlElementHandler
 
@@ -25,14 +27,16 @@ from .xmlelementhandlers import XmlElementHandler
 def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
 
-    :param sources: Path(s) to output XML file(s).
-    :param options: Configuration options. `rerun_merge` with True value causes
-                    multiple results to be combined so that tests in the latter
-                    results replace the ones in the original. Other options
-                    are passed further to :py:class:`~ExecutionResultBuilder`.
+    :param sources: Path(s) to the XML output file(s).
+    :param options: Configuration options.
+        Using ``merge=True`` causes multiple results to be combined so that
+        tests in the latter results replace the ones in the original. Other
+        options are passed directly to the :class:`ExecutionResultBuilder`
+        object used internally.
     :returns: :class:`~.executionresult.Result` instance.
 
-    See :mod:`~robot.result` package for a usage example.
+    Should be imported by external code via the :mod:`robot.api` package.
+    See the :mod:`robot.result` package for a usage example.
     """
     if not sources:
         raise DataError('One or more data source needed.')
@@ -64,18 +68,26 @@ def _single_result(source, options):
         error = err.strerror
     except:
         error = get_error_message()
-    raise DataError("Reading XML source '%s' failed: %s" % (unicode(ets), error))
+    raise DataError("Reading XML source '%s' failed: %s" % (unic(ets), error))
 
 
 class ExecutionResultBuilder(object):
+    """Builds :class:`~.executionresult.Result` objects based on output files.
+
+    Instead of using this builder directly, it is recommended to use the
+    :func:`ExecutionResult` factory method.
+    """
 
     def __init__(self, source, include_keywords=True, flattened_keywords=None):
-        """Builds :class:`~.executionresult.Result` objects from existing
-        output XML files on the file system.
-
-        :param source: Path to output XML file.
-        :param include_keywords: Include keyword information to the
-            :class:`~.executionresult.Result` objects
+        """
+        :param source: Path to the XML output file to build
+            :class:`~.executionresult.Result` objects from.
+        :param include_keywords: Boolean controlling whether to include
+            keyword information in the result or not. Keywords are
+            not needed when generating only report.
+        :param flatten_keywords: List of patterns controlling what keywords to
+            flatten. See the documentation of ``--flattenkeywords`` option for
+            more details.
         """
         self._source = source \
             if isinstance(source, ETSource) else ETSource(source)
@@ -121,24 +133,57 @@ class ExecutionResultBuilder(object):
                 omitted_kws -= 1
 
     def _flatten_keywords(self, context, flattened):
-        match = FlattenKeywordMatcher(flattened).match
-        started = -1
+        # Performance optimized. Do not change without profiling!
+        name_match, by_name = self._get_matcher(FlattenByNameMatcher, flattened)
+        type_match, by_type = self._get_matcher(FlattenByTypeMatcher, flattened)
+        tags_match, by_tags = self._get_matcher(FlattenByTagMatcher, flattened)
+        started = -1  # if 0 or more, we are flattening
+        tags = []
+        inside_kw = 0  # to make sure we don't read tags from a test
+        seen_doc = False
         for event, elem in context:
             tag = elem.tag
-            if event == 'start' and tag == 'kw':
+            start = event == 'start'
+            end = not start
+            if start and tag == 'kw':
+                inside_kw += 1
                 if started >= 0:
                     started += 1
-                elif match(elem.get('name'), elem.get('type')):
+                elif by_name and name_match(elem.get('name', ''), elem.get('library')):
                     started = 0
-            if started == 0 and event == 'end' and tag == 'doc':
+                    seen_doc = False
+                elif by_type and type_match(elem.get('type', 'kw')):
+                    started = 0
+                    seen_doc = False
+            elif started < 0 and by_tags and inside_kw:
+                if end and tag == 'tag':
+                    tags.append(elem.text or '')
+                elif end and tag == 'tags':
+                    if tags_match(tags):
+                        started = 0
+                        seen_doc = False
+                    tags = []
+            if end and tag == 'kw':
+                inside_kw -= 1
+                if started == 0 and not seen_doc:
+                    doc = ET.Element('doc')
+                    doc.text = '_*Keyword content flattened.*_'
+                    yield 'start', doc
+                    yield 'end', doc
+            if started == 0 and end and tag == 'doc':
+                seen_doc = True
                 elem.text = ('%s\n\n_*Keyword content flattened.*_'
                              % (elem.text or '')).strip()
             if started <= 0 or tag == 'msg':
                 yield event, elem
             else:
                 elem.clear()
-            if started >= 0 and event == 'end' and tag == 'kw':
+            if started >= 0 and end and tag == 'kw':
                 started -= 1
+
+    def _get_matcher(self, matcher_class, flattened):
+        matcher = matcher_class(flattened)
+        return matcher.match, bool(matcher)
 
 
 class RemoveKeywords(SuiteVisitor):

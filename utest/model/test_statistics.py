@@ -1,26 +1,30 @@
 import unittest
 
-from robot.utils.asserts import assert_equals, assert_true
+from robot.utils.asserts import assert_equal
 from robot.model.statistics import Statistics
-from robot.result.testsuite import TestSuite
-from robot.result.testcase import TestCase
+from robot.result import TestCase, TestSuite
 
 
-def verify_stat(stat, name, passed, failed, critical=None, non_crit=None,
+def verify_stat(stat, name, passed, failed, critical=None, combined=None,
                 id=None, elapsed=0):
-    assert_equals(stat.name, name, 'stat.name')
-    assert_equals(stat.passed, passed)
-    assert_equals(stat.failed, failed)
-    if critical is not None:
-        assert_equals(stat.critical, critical)
-    if non_crit is not None:
-        assert_equals(stat.non_critical, non_crit)
-    if id:
-        assert_equals(stat.id, id)
-    assert_equals(stat.elapsed, elapsed)
+    assert_equal(stat.name, name, 'stat.name')
+    assert_equal(stat.passed, passed)
+    assert_equal(stat.failed, failed)
+    assert_equal(stat.total, passed + failed)
+    if hasattr(stat, 'critical'):
+        assert_equal(stat.critical,
+                     False if critical is None else bool(critical))
+        assert_equal(stat.non_critical,
+                     False if critical is None else not bool(critical))
+        assert_equal(stat.combined, combined)
+    if hasattr(stat, 'id'):
+        assert_equal(stat.id, id)
+    assert_equal(stat.elapsed, elapsed)
+
 
 def verify_suite(suite, name, id, passed, failed):
     verify_stat(suite.stat, name, passed, failed, id=id)
+
 
 def generate_suite():
     suite = TestSuite(name='Root Suite')
@@ -56,7 +60,7 @@ class TestStatisticsSimple(unittest.TestCase):
         verify_suite(self.statistics.suite, 'Hello', 's1', 2, 1)
 
     def test_tags(self):
-        assert_equals(list(self.statistics.tags), [])
+        assert_equal(list(self.statistics.tags), [])
 
 
 class TestStatisticsNotSoSimple(unittest.TestCase):
@@ -77,17 +81,23 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         [s1, s2] = suite.suites
         verify_suite(s1, 'Root Suite.First Sub Suite', 's1-s1', 4, 2)
         verify_suite(s2, 'Root Suite.Second Sub Suite', 's1-s2', 0, 1)
-        assert_equals(len(s1.suites), 0)
-        assert_equals(len(s2.suites), 0)
+        assert_equal(len(s1.suites), 0)
+        assert_equal(len(s2.suites), 0)
 
     def test_tags(self):
         # Tag stats are tested more thoroughly in test_tagstatistics.py
         tags = self.statistics.tags
-        verify_stat(tags.tags['smoke'], 'smoke', 2, 2, True, False)
-        verify_stat(tags.tags['t1'], 't1', 3, 2, False, False)
-        verify_stat(tags.tags['t2'], 't2', 2, 1, False, False)
-        expected = [('smoke', 4), ('a title', 0), ('t? & smoke', 4), ('t1', 5), ('t2', 3)]
-        assert_equals([(t.name, t.total) for t in tags], expected)
+        verify_stat(tags.tags['smoke'], 'smoke', 2, 2)
+        verify_stat(tags.tags['t1'], 't1', 3, 2)
+        verify_stat(tags.tags['t2'], 't2', 2, 1)
+        expected = [('smoke', 2, 2, True),
+                    ('a title', 0, 0, None, 'none NOT t1'),
+                    ('t? & smoke', 2, 2, None, 't? & smoke'),
+                    ('t1', 3, 2),
+                    ('t2', 2, 1)]
+        assert_equal(len(list(tags)), len(expected))
+        for t, e in zip(tags, expected):
+            verify_stat(t, *e)
 
 
 class TestSuiteStatistics(unittest.TestCase):
@@ -108,7 +118,7 @@ class TestSuiteStatistics(unittest.TestCase):
     def test_only_root_level(self):
         suite = Statistics(generate_suite(), suite_stat_level=1).suite
         verify_suite(suite, 'Root Suite', 's1', 4, 3)
-        assert_equals(len(suite.suites), 0)
+        assert_equal(len(suite.suites), 0)
 
     def test_deeper_level(self):
         PASS = TestCase(status='PASS')
@@ -133,7 +143,7 @@ class TestSuiteStatistics(unittest.TestCase):
         [s121, s122] = s12.suites
         verify_suite(s121, '1.2.1', 's1-s2-s1', 3, 1)
         verify_suite(s122, '1.2.2', 's1-s2-s2', 2, 2)
-        assert_equals(len(s111.suites), 0)
+        assert_equal(len(s111.suites), 0)
 
     def test_iter_only_one_level(self):
         [stat] = list(Statistics(generate_suite(), suite_stat_level=1).suite)
@@ -170,8 +180,8 @@ class TestElapsedTime(unittest.TestCase):
         self.stats = Statistics(suite, tag_stat_combine=[('?2', 'combined')])
 
     def test_total_stats(self):
-        assert_equals(self.stats.total.all.elapsed, 11001)
-        assert_equals(self.stats.total.critical.elapsed, 11000)
+        assert_equal(self.stats.total.all.elapsed, 11001)
+        assert_equal(self.stats.total.critical.elapsed, 11000)
 
     def test_tag_stats(self):
         t1, t2, t3 = self.stats.tags.tags.values()
@@ -181,23 +191,23 @@ class TestElapsedTime(unittest.TestCase):
 
     def test_combined_tag_stats(self):
         combined = self.stats.tags.combined[0]
-        verify_stat(combined, 'combined', 0, 2, elapsed=11000)
+        verify_stat(combined, 'combined', 0, 2, combined='?2', elapsed=11000)
 
     def test_suite_stats(self):
-        assert_equals(self.stats.suite.stat.elapsed, 59999)
-        assert_equals(self.stats.suite.suites[0].stat.elapsed, 30000)
-        assert_equals(self.stats.suite.suites[1].stat.elapsed, 12042)
+        assert_equal(self.stats.suite.stat.elapsed, 59999)
+        assert_equal(self.stats.suite.suites[0].stat.elapsed, 30000)
+        assert_equal(self.stats.suite.suites[1].stat.elapsed, 12042)
 
     def test_suite_stats_when_suite_has_no_times(self):
         suite = TestSuite()
-        assert_equals(Statistics(suite).suite.stat.elapsed, 0)
+        assert_equal(Statistics(suite).suite.stat.elapsed, 0)
         ts = '20120816 00:00:'
         suite.tests = [TestCase(starttime=ts+'00.000', endtime=ts+'00.001'),
                        TestCase(starttime=ts+'00.001', endtime=ts+'01.001')]
-        assert_equals(Statistics(suite).suite.stat.elapsed, 1001)
+        assert_equal(Statistics(suite).suite.stat.elapsed, 1001)
         suite.suites = [TestSuite(starttime=ts+'02.000', endtime=ts+'12.000'),
                         TestSuite()]
-        assert_equals(Statistics(suite).suite.stat.elapsed, 11001)
+        assert_equal(Statistics(suite).suite.stat.elapsed, 11001)
 
     def test_elapsed_from_get_attributes(self):
         for time, expected in [('00:00:00.000', '00:00:00'),
@@ -214,7 +224,7 @@ class TestElapsedTime(unittest.TestCase):
                               endtime='20120817 ' + time)
             stat = Statistics(suite).suite.stat
             elapsed = stat.get_attributes(include_elapsed=True)['elapsed']
-            assert_equals(elapsed, expected)
+            assert_equal(elapsed, expected, time)
 
 
 if __name__ == "__main__":

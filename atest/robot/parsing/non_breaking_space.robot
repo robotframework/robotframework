@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation  Regard non-breaking spaces as normal spaces in parsing
 Suite Setup    Run Tests  ${EMPTY}  parsing/nbsp.*
-Force Tags     regression   pybot  jybot
 Resource       atest_resource.robot
 
 

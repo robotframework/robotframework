@@ -1,11 +1,9 @@
 import unittest
-from StringIO import StringIO
 import time
 
-from robot import utils
-from robot.utils.asserts import *
-
 from robot.output.filelogger import FileLogger
+from robot.utils import StringIO, robottime
+from robot.utils.asserts import *
 from robot.utils.robottime import TimestampCache
 
 
@@ -15,19 +13,19 @@ class _FakeTimeCache(TimestampCache):
         self.fake = time.mktime((2006, 6, 13, 8, 37, 42, 0, 0, 1)) + 0.123
         TimestampCache.__init__(self)
 
-    def  _get_epoch(self):
+    def _get_epoch(self):
         return self.fake
 
 
 class TestFileLogger(unittest.TestCase):
 
     def setUp(self):
-        utils.robottime.TIMESTAMP_CACHE = _FakeTimeCache()
+        robottime.TIMESTAMP_CACHE = _FakeTimeCache()
         FileLogger._get_writer = lambda *args: StringIO()
         self.logger = FileLogger('whatever', 'INFO')
 
     def tearDown(self):
-        utils.robottime.TIMESTAMP_CACHE = TimestampCache()
+        robottime.TIMESTAMP_CACHE = TimestampCache()
 
     def test_write(self):
         self.logger.write('my message', 'INFO')
@@ -53,8 +51,8 @@ class TestFileLogger(unittest.TestCase):
         self._verify_message('20060613 08:37:42.123 | DEBUG | msg\n')
 
     def _verify_message(self, expected):
-        assert_equals(self.logger._writer.getvalue(), expected)
+        assert_equal(self.logger._writer.getvalue(), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
-

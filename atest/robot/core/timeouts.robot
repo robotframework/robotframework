@@ -1,8 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  core/timeouts.robot
 Suite Teardown  Remove Directory  ${TIMEOUT TEMP}  recursive
-Force Tags      regression
-Default Tags    jybot  pybot
 Resource        atest_resource.robot
 
 *** Variables ***
@@ -19,8 +17,7 @@ Timeouted Test Fails Before Timeout
     Check Test Case    Failing Before Timeout
 
 Show Correct Trace Back When Failing Before Timeout
-    [Documentation]    For some reason IronPython loses the traceback in this case.
-    Run Keyword If    "${IRONPYTHON}"    Remove Tags    regression
+    [Tags]    no-ipy    # For some reason IronPython loses the traceback in this case.
     ${tc} =   Check Test Case    ${TEST NAME}
     ${expected} =    Catenate    SEPARATOR=\n
     ...    Traceback (most recent call last):
@@ -29,14 +26,19 @@ Show Correct Trace Back When Failing Before Timeout
     Check Log Message    ${tc.kws[0].msgs[-1]}    ${expected}    pattern=yes    level=DEBUG
 
 Show Correct Trace Back When Failing In Java Before Timeout
-    [tags]  jybot
+    [tags]  require-jython
     ${tc} =   Check Test Case    ${TEST NAME}
     Should Contain    ${tc.kws[0].msgs[-1].message}    at ExampleJavaLibrary.exception(
 
 Timeouted Test Timeouts
     Check Test Case    Sleeping And Timeouting
-    Check Test Case    Total Time Too Long
     Check Test Case    Looping Forever And Timeouting
+
+Total Time Too Long
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
+    Check Test Case    ${TEST NAME} 4
 
 Timout Defined For One Test
     Check Test Case    ${TEST NAME}
@@ -62,6 +64,23 @@ Stopped After Keyword Timeout
     File Should Be Empty  ${KW STOPPED}
 
 Test Timeouts When Also Keywords Are Timeouted
+    Check Test Case    ${TEST NAME}
+
+Keyword Timeout From Variable
+    ${tc} =   Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].timeout}    1 millisecond
+
+Keyword Timeout From Argument
+    ${tc} =   Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].timeout}    1 second
+    Should Be Equal    ${tc.kws[1].timeout}    2 milliseconds
+
+Embedded Arguments Timeout From Argument
+    ${tc} =   Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].timeout}    1 second
+    Should Be Equal    ${tc.kws[1].timeout}    3 milliseconds
+
+Local Variables Are Not Visible In Child Keyword Timeout
     Check Test Case    ${TEST NAME}
 
 Timeout Format
@@ -123,7 +142,7 @@ Output Capture With Timeouts
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Testing outputcapture in timeouted keyword
 
 It Should Be Possible To Print From Java Libraries When Test Timeout Has Been Set
-    [Tags]  jybot
+    [Tags]  require-jython
     ${tc} =   Check Test Case    ${TEST NAME}
     Check Log message    ${tc.kws[0].msgs[0]}    My message from java lib
 

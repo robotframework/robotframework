@@ -2,9 +2,11 @@
 Library           Process
 Library           Collections
 Library           OperatingSystem
+Library           PlatformLib.py
 
 *** Variables ***
 ${SCRIPT}         ${CURDIR}${/}files${/}script.py
+${ENCODING SCRIPT}    ${CURDIR}${/}files${/}encoding.py
 ${COUNTDOWN}      ${CURDIR}${/}files${/}countdown.py
 ${TEMPFILE}       %{TEMPDIR}${/}terminate-process-temp.txt
 ${STDOUT}         %{TEMPDIR}/process-stdout-file.txt
@@ -14,18 +16,17 @@ ${CWD}            %{TEMPDIR}/process-cwd
 *** Keywords ***
 Some process
     [Arguments]    ${alias}=${null}    ${stderr}=STDOUT
-    ${handle}=    Start Python Process    print raw_input()    alias=${alias}    stderr=${stderr}
+    ${handle}=    Start Python Process    print(input())    alias=${alias}    stderr=${stderr}
     Process should be running
     [Return]    ${handle}
 
 Stop some process
-    [Arguments]    ${handle}=${null}    ${message}=
+    [Arguments]    ${handle}=${NONE}    ${message}=
     ${running}=    Is Process Running    ${handle}
-    Return From Keyword If    not ${running}
+    Return From Keyword If    not $running
     ${process}=    Get Process Object    ${handle}
-    ${stdout}    ${_} =    Call Method    ${process}    communicate    ${message}\n
-    # Python 2.5 adds null bytes
-    [Return]    ${stdout.replace('\x00', '').rstrip()}
+    ${stdout}    ${_} =    Call Method    ${process}    communicate    ${message.encode('ASCII') + b'\n'}
+    [Return]    ${stdout.decode('ASCII').rstrip()}
 
 Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0
@@ -48,9 +49,9 @@ Result should match
 
 Custom stream should contain
     [Arguments]    ${path}    ${expected}
-    Return From Keyword If    not "${path}"    ${NONE}
+    Return From Keyword If    not $path
     ${path} =    Normalize Path    ${path}
-    ${encoding} =    Evaluate    robot.utils.encoding.OUTPUT_ENCODING    robot
+    ${encoding} =    Evaluate    robot.utils.encoding.CONSOLE_ENCODING    robot
     ${content} =    Get File    ${path}    encoding=${encoding}
     Should Be Equal    ${content.rstrip()}    ${expected}
     [Return]    ${path}
@@ -88,6 +89,11 @@ Check Precondition
     Run Keyword If    not ${ok}
     ...    Fail    Precondition '${precondition}' was not true.    precondition-fail
 
+Precondition not OSX
+    ${platform} =     Get os platform
+    Run Keyword If    $platform in ('darwin', 'mac os x')
+    ...    Fail    Platform is OSX, where this test wont work.    precondition-fail
+
 Wait until countdown started
     Wait Until Created    ${TEMPFILE}
 
@@ -105,7 +111,7 @@ Countdown should not have stopped
     [Arguments]    ${handle}=${None}
     ${result}=    Wait For Process    ${handle}
     Should Not Be Equal    ${result.rc}    ${0}
-    Wait Until Keyword Succeeds    1.2s    0.2s    Blastoff Successful
+    Wait Until Keyword Succeeds    2.2s    0.2s    Blastoff Successful
 
 Blastoff Successful
     ${content} =    Get File    ${TEMPFILE}

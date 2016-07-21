@@ -2,7 +2,6 @@
 Documentation     Testing rebot's include/exclude functionality. Tests also include/exclude first during test execution and then with rebot.
 Suite Setup       Create Input Files
 Suite Teardown    Remove File    ${INPUT FILE}
-Default Tags      regression    pybot    jybot
 Test Template     Run And Check Include And Exclude
 Resource          rebot_resource.robot
 
@@ -11,7 +10,7 @@ ${TEST FILE}      tags/include_and_exclude.robot
 ${TEST FILE2}     tags/no_force_no_default_tags.robot
 ${INPUT FILE}     %{TEMPDIR}/robot-tags-input.xml
 ${INPUT FILE 2}    %{TEMPDIR}/robot-tags-input-2.xml
-@{INPUT FILES}    ${INPUT FILE}
+${INPUT FILES}    ${INPUT FILE}
 ${ESCAPES}        --escape star:STAR --escape quest:QUEST --escape amp:AMP
 @{INCL_ALL}       Incl-1    Incl-12    Incl-123
 @{EXCL_ALL}       excl-1    Excl-12    Excl-123
@@ -86,11 +85,11 @@ Include and Exclude with NOT
     --include incl1NOTincl3 --exclude incl1NOTincl2    Incl-12
 
 Select tests without any tags
-    [Setup]    Set Test Variable    @{INPUT FILES}    ${INPUT FILE 2}
+    [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE 2}
     --exclude STAR    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
 
 Select tests with any tag
-    [Setup]    Set Test Variable    @{INPUT FILES}    ${INPUT FILE 2}
+    [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE 2}
     --include STAR    Own Tags No Force Nor Default
 
 Non Matching Include
@@ -109,7 +108,7 @@ Non Matching Include And Exclude
     --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3    tags 'nonex' or 'incl?' and without tags '*1', '*2' or '*3'
 
 Non Matching When Reboting Multiple Outputs
-    [Setup]    Set Test Variable    @{INPUT FILES}    ${INPUT FILE}    ${INPUT FILE 2}
+    [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE} ${INPUT FILE 2}
     [Template]    Run And Check Error
     --include nonex    tag 'nonex'    Include And Exclude & No Force No Default Tags
     --include nonex --name MyName   tag 'nonex'    MyName
@@ -136,7 +135,8 @@ Elapsed Time
     Check Times    ${SUITE}    20061227 11:59:59.000    20061227 12:00:08.999    9999
     Length Should Be    ${SUITE.tests}    6
     Comment    2) Filter ouput created in earlier step and check    that times are set accordingly.
-    Run Rebot    --include incl2 --include excl3 ${ESCAPES}    ${OUTFILE}
+    Copy Previous Outfile
+    Run Rebot    --include incl2 --include excl3 ${ESCAPES}    ${OUTFILE COPY}
     Check Times    ${SUITE}    ${NONE}    ${NONE}    6004
     Check Times    ${SUITE.tests[0]}    20061227 12:00:01.000    20061227 12:00:03.000    2000
     Check Times    ${SUITE.tests[1]}    20061227 12:00:03.000    20061227 12:00:07.000    4000
@@ -150,7 +150,7 @@ Create Input Files
 
 Run And Check Include And Exclude
     [Arguments]    ${params}    @{tests}
-    Run Rebot    ${params} ${ESCAPES}    @{INPUT FILES}
+    Run Rebot    ${params} ${ESCAPES}    ${INPUT FILES}
     Stderr Should Be Empty
     Should Contain Tests    ${SUITE}    @{tests}
     Should Be True    ${SUITE.statistics.all.passed} == len(@{tests})
@@ -159,12 +159,12 @@ Run And Check Include And Exclude
     ${exp end} =    Set Variable If    "${params}"    ${NONE}    ${ORIG END}
     Should Be Equal    ${SUITE.starttime}    ${exp start}
     Should Be Equal    ${SUITE.endtime}    ${exp end}
-    Is Valid Elapsed Time    ${SUITE.elapsedtime}
+    Elapsed Time Should Be Valid    ${SUITE.elapsedtime}
     Should Be True    ${SUITE.elapsedtime} <= ${ORIG ELAPSED}
 
 Run And Check Error
     [Arguments]    ${params}    ${filter msg}    ${suite name}=Include And Exclude
-    Run Rebot Without Processing Output    ${params} ${ESCAPES}    @{INPUT FILES}
+    Run Rebot Without Processing Output    ${params} ${ESCAPES}    ${INPUT FILES}
     Stderr Should Be Equal To    SEPARATOR=
     ...    [ ERROR ] Suite '${suite name}' contains no tests with ${filter msg}.
     ...    ${USAGE TIP}\n

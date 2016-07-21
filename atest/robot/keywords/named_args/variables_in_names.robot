@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    keywords/named_args/variables_in_names.robot
-Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -14,7 +13,6 @@ Kwargs with variables in names
     Check Test Case    ${TESTNAME}
 
 Kwargs with variables with non-ASCII value in names
-    Run on Python 2.5    Remove tags    Regression
     Check Test Case    ${TESTNAME}
 
 Escaping variable syntax in kwarg names

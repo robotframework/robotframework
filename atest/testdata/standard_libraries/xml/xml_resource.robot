@@ -23,20 +23,15 @@ Parse XML To Test Variable
     Set Test Variable    ${var}    ${result}
 
 Element Should Have Attributes
-    [Arguments]    ${source}    ${xpath}    @{attributes}
+    [Arguments]    ${source}    ${xpath}    &{expected}
     ${elem} =    Get Element    ${source}    ${xpath}
-    ${expected} =    Create Dictionary    @{attributes}
     Dictionaries Should Be Equal    ${elem.attrib}    ${expected}
 
 Saved XML Should Equal
     [Arguments]    ${tree}    @{expected}
     Save XML    ${tree}    ${OUTPUT}
-    ${content} =    Get File    ${OUTPUT}
-    ${content} =    Split To Lines    ${content}
-    ${expected} =    Catenate    SEPARATOR=\n
-    ...    <?xml version='1.0' encoding='UTF-8'?>    @{expected}
-    ${expected} =    Split To Lines    ${expected}
-    Lists Should Be Equal    ${content}    ${expected}
+    ${expected} =    Catenate    SEPARATOR=\n    @{expected}
+    XML Content Should Be    ${expected}
 
 Saved XML Should Equal File
     [Arguments]    ${tree}    ${expected}
@@ -77,3 +72,11 @@ Test Attribute Namespace Parsing With lxml
 Set lxml availability to suite metadata
      ${lib} =    Get Library Instance    XML
      Set Suite Metadata    lxml    ${lib.lxml_etree}
+
+XML Content Should Be
+    [Arguments]    ${expected}    ${encoding}=UTF-8
+    ${actual} =    Get File    ${OUTPUT}    ${encoding}
+    @{actual} =    Split To Lines    ${actual}
+    ${expected} =    Split To Lines    ${expected}
+    Should Be Equal    ${actual[0].lower()}    <?xml version='1.0' encoding='${encoding.lower()}'?>
+    Lists Should Be Equal    ${actual[1:]}    ${expected}

@@ -1,7 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    test_libraries/library_version.robot
-Force Tags        regression
-Default Tags      jybot    pybot
 Resource          atest_resource.robot
 
 *** Test Case ***
@@ -15,9 +13,9 @@ Module Library Version
     Check Syslog Contains    Imported library 'module_library' with arguments [ ] (version test, module type,
 
 Java Library Version
-    [Tags]    jybot
+    [Tags]    require-jython
     Check Syslog Contains    Imported library 'JavaVersionLibrary' with arguments [ ] (version 1.0, class type,
 
 Version Undefined In Java Library
-    [Tags]    jybot
+    [Tags]    require-jython
     Check Syslog Contains    Imported library 'ExampleJavaLibrary' with arguments [ ] (version <unknown>, class type,

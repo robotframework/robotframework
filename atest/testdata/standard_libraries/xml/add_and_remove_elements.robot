@@ -9,7 +9,6 @@ ${WITH TAIL}      <p>text with <b>bold</b>&amp;<i>italics</i>...</p>
 ${WITH TAIL 2}    <p><b>bold</b><i>italics</i>...</p>
 
 *** Test Cases ***
-
 Add Element
     ${elem} =    Parse XML    ${NEW}
     Add Element    ${XML}    ${elem}
@@ -55,7 +54,7 @@ Remove Element Keeps Tail By Default
 Remove Element Keeps Tail When Parent or Sibling Contains No Text
     ${p} =    Remove Element    ${WITH TAIL2}   i
     Elements Should Be Equal    ${p}    <p><b>bold</b>...</p>
-    Remove Element    ${p}    b
+    Remove Element    ${p}    b    remove_tail=false
     Elements Should Be Equal    ${p}    <p>...</p>
 
 Remove Element Can Be Configured To Remove Tail
@@ -99,7 +98,7 @@ Remove Elements Does Not Fail If No Element Match
 Remove Elements Keeps Tail By Default
     ${p} =    Remove Elements    ${WITH TAIL}    xpath=*
     Elements Should Be Equal    ${p}    <p>text with &amp;...</p>
-    ${p} =    Remove Elements    ${WITH TAIL 2}    xpath=*
+    ${p} =    Remove Elements    ${WITH TAIL 2}    xpath=*    remove_tail=
     Elements Should Be Equal    ${p}    <p>...</p>
 
 Remove Elements Can Be Configured To Remove Tail

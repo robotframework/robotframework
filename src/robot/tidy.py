@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -27,6 +28,20 @@ Instead of ``python`` it is possible to use also other Python interpreters.
 This module also provides :class:`Tidy` class and :func:`tidy_cli` function
 that can be used programmatically. Other code is for internal usage.
 """
+
+import os
+import sys
+
+# Allows running as a script. __name__ check needed with multiprocessing:
+# https://github.com/robotframework/robotframework/issues/1137
+if 'robot' not in sys.modules and __name__ == '__main__':
+    import pythonpathsetter
+
+from robot.errors import DataError
+from robot.parsing import (ResourceFile, TestDataDirectory, TestCaseFile,
+                           disable_curdir_processing)
+from robot.utils import Application, binary_file_writer, file_writer, PY2
+
 
 USAGE = """robot.tidy -- Robot Framework test data clean-up tool
 
@@ -111,20 +126,6 @@ For more information about Tidy and other built-in tools, see
 http://robotframework.org/robotframework/#built-in-tools.
 """
 
-import os
-import sys
-from StringIO import StringIO
-
-# Allows running as a script. __name__ check needed with multiprocessing:
-# http://code.google.com/p/robotframework/issues/detail?id=1137
-if 'robot' not in sys.modules and __name__ == '__main__':
-    import pythonpathsetter
-
-from robot.errors import DataError
-from robot.parsing import (ResourceFile, TestDataDirectory, TestCaseFile,
-                           disable_curdir_processing)
-from robot.utils import Application
-
 
 class Tidy(object):
     """Programmatic API for the `Tidy` tool.
@@ -150,13 +151,19 @@ class Tidy(object):
         Use :func:`inplace` to tidy files in-place.
         """
         data = self._parse_data(path)
-        outfile = open(output, 'wb') if output else StringIO()
-        try:
-            self._save_file(data, outfile)
+        with self._get_writer(path, output) as writer:
+            self._save_file(data, writer)
             if not output:
-                return outfile.getvalue().replace('\r\n', '\n').decode('UTF-8')
-        finally:
-            outfile.close()
+                return writer.getvalue().replace('\r\n', '\n')
+
+    def _get_writer(self, inpath, outpath):
+        if PY2 and self._is_tsv(inpath):
+            return binary_file_writer(outpath)
+        return file_writer(outpath, newline=self._options['line_separator'])
+
+    def _is_tsv(self, path):
+        format = self._options['format'] or os.path.splitext(path)[1][1:]
+        return format.upper() == 'TSV'
 
     def inplace(self, *paths):
         """Tidy file(s) in-place.

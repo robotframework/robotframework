@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup    Run tests with options containing </script>
 Resource       atest_resource.robot
-Force Tags     pybot    jybot    regression
 
 *** Test Cases ***
 Strings like </script> are escaped in JS model

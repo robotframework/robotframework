@@ -30,22 +30,18 @@ after the setting name.
 If the path is given in an absolute format, it is used directly. In other
 cases, the resource file is first searched relatively to the directory
 where the importing file is located. If the file is not found there,
-it is then searched from the directories in ``PYTHONPATH``. The path can
-contain variables, and it is recommended to use them to make paths
+it is then searched from the directories in Python's `module search path`_.
+The path can contain variables, and it is recommended to use them to make paths
 system-independent (for example, :file:`${RESOURCES}/login_resources.html` or
 :file:`${RESOURCE_PATH}`). Additionally, slashes (`/`) in the path
 are automatically changed to backslashes (:codesc:`\\`) on Windows.
 
-.. table:: Importing resource files
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  =======================  =======
-    Setting            Value            Value
-   =========  =======================  =======
-   Resource   myresources.html
-   Resource   ../data/resources.html
-   Resource   ${RESOURCES}/common.tsv
-   =========  =======================  =======
+   *** Settings ***
+   Resource    myresources.html
+   Resource    ../data/resources.html
+   Resource    ${RESOURCES}/common.tsv
 
 The user keywords and variables defined in a resource file are
 available in the file that takes that resource file into
@@ -80,7 +76,7 @@ Keywords created in a resource file can be documented__ using
 :setting:`Documentation` in the Setting table similarly as
 `test suites`__.
 
-Both `libdoc`_ and `RIDE`_ use these documentations, and they
+Both Libdoc_ and RIDE_ use these documentations, and they
 are naturally available for anyone opening resource files.  The
 first line of the documentation of a keyword is logged when it is run,
 but otherwise resource file documentations are ignored during the test
@@ -92,45 +88,32 @@ __ `Test suite name and documentation`_
 Example resource file
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. table::
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ========================  =======  =======
-      Setting               Value            Value    Value
-   =============  ========================  =======  =======
-   Documentation  An example resource file
-   Library        SeleniumLibrary
-   Resource       ${RESOURCES}/common.html
-   =============  ========================  =======  =======
+   *** Settings ***
+   Documentation     An example resource file
+   Library           Selenium2Library
+   Resource          ${RESOURCES}/common.robot
 
-.. table::
-   :class: example
+   *** Variables ***
+   ${HOST}           localhost:7272
+   ${LOGIN URL}      http://${HOST}/
+   ${WELCOME URL}    http://${HOST}/welcome.html
+   ${BROWSER}        Firefox
 
-   ==============  ============================  =======  =======
-      Variable                Value               Value    Value
-   ==============  ============================  =======  =======
-   ${HOST}         localhost:7272
-   ${LOGIN_URL}    \http://${HOST}/
-   ${WELCOME_URL}  \http://${HOST}/welcome.html
-   ${BROWSER}      Firefox
-   ==============  ============================  =======  =======
+   *** Keywords ***
+   Open Login Page
+       [Documentation]    Opens browser to login page
+       Open Browser    ${LOGIN URL}    ${BROWSER}
+       Title Should Be    Login Page
 
-.. table::
-   :class: example
+   Input Name
+       [Arguments]    ${name}
+       Input Text    username_field    ${name}
 
-   ===============  ===============  ==============  ==============  ========
-       Keyword         Action           Argument        Argument     Argument
-   ===============  ===============  ==============  ==============  ========
-   Open Login Page  [Documentation]  Opens browser   to login page
-   \                Open Browser     ${LOGIN_URL}    ${BROWSER}
-   \                Title Should Be  Login Page
-   \
-   Input Name       [Arguments]      ${name}
-   \                Input Text       username_field  ${name}
-   \
-   Input Password   [Arguments]      ${password}
-   \                Input Text       password_field  ${password}
-   ===============  ===============  ==============  ==============  ========
+   Input Password
+       [Arguments]    ${password}
+       Input Text    password_field    ${password}
 
 Variable files
 --------------
@@ -172,25 +155,21 @@ All test data files can import variables using the
 setting. Similarly to resource files, the path to the imported
 variable file is considered relative to the directory where the
 importing file is, and if not found, it is searched from the
-directories in ``PYTHONPATH``. The path can also contain variables, and
-slashes are converted to backslashes on Windows. If an `argument file takes
+directories in the `module search path`_. The path can also contain variables,
+and slashes are converted to backslashes on Windows. If an `argument file takes
 arguments`__, they are specified in the cells after the path and also they
 can contain variables.
 
 __ `Taking resource files into use`_
 __ `Getting variables from a special function`_
 
-.. table:: Importing a variable file
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  =======================  =======  =======
-    Setting             Value           Value    Value
-   =========  =======================  =======  =======
-   Variables  myvariables.py
-   Variables  ../data/variables.py
-   Variables   ${RESOURCES}/common.py
-   Variables  taking_arguments.py      arg1     ${ARG2}
-   =========  =======================  =======  =======
+   *** Settings ***
+   Variables    myvariables.py
+   Variables    ../data/variables.py
+   Variables    ${RESOURCES}/common.py
+   Variables    taking_arguments.py    arg1    ${ARG2}
 
 All variables from a variable file are available in the test data file
 that imports it. If several variable files are imported and they
@@ -211,13 +190,13 @@ and possible arguments are joined to the path with a colon (`:`)::
    --variablefile taking_arguments.py:arg1:arg2
 
 Starting from Robot Framework 2.8.2, variable files taken into use from the
-command line are also searched from the ``PYTHONPATH`` similarly as
+command line are also searched from the `module search path`_ similarly as
 variable files imported in the Setting table.
 
 If a variable file is given as an absolute Windows path, the colon after the
 drive letter is not considered a separator::
 
-   --variablefile C:\\path\\variables.py
+   --variablefile C:\path\variables.py
 
 Starting from Robot Framework 2.8.7, it is also possible to use a semicolon
 (`;`) as an argument separator. This is useful if variable file arguments
@@ -225,7 +204,7 @@ themselves contain colons, but requires surrounding the whole value with
 quotes on UNIX-like operating systems::
 
    --variablefile "myvariables.py;argument:with:colons"
-   --variablefile C:\\path\\variables.py;D:\\data.xls
+   --variablefile C:\path\variables.py;D:\data.xls
 
 Variables in these variable files are globally available in all test data
 files, similarly as `individual variables`__ set with the
@@ -289,21 +268,17 @@ ordered.
 The variables in both the examples above could be created also using the
 Variable table below.
 
-.. table::
-   :class: example
+.. sourcecode:: robotframework
 
-   ===================  ====================  ==========  ==========  =========
-         Variable              Value            Value       Value       Value
-   ===================  ====================  ==========  ==========  =========
-   ${VARIABLE}          An example string
-   ${ANOTHER_VARIABLE}  This is pretty easy!
-   ${INTEGER}           ${42}
-   @{STRINGS}           one                   two         kolme       four
-   @{NUMBERS}           ${1}                  ${INTEGER}  ${3.14}
-   &{MAPPING}           one=${1}              two=${2}    three=${3}
-   @{ANIMALS}           cat                   dog
-   &{FINNISH}           cat=kissa             dog=koira
-   ===================  ====================  ==========  ==========  =========
+   *** Variables ***
+   ${VARIABLE}            An example string
+   ${ANOTHER VARIABLE}    This is pretty easy!
+   ${INTEGER}             ${42}
+   @{STRINGS}             one          two           kolme         four
+   @{NUMBERS}             ${1}         ${INTEGER}    ${3.14}
+   &{MAPPING}             one=${1}     two=${2}      three=${3}
+   @{ANIMALS}             cat          dog
+   &{FINNISH}             cat=kissa    dog=koira
 
 .. note:: Variables are not replaced in strings got from variable files.
           For example, `VAR = "an ${example}"` would create
@@ -450,7 +425,7 @@ identical to the first `creating variables directly`_ example.
 
     def get_variables():
         variables = {"VARIABLE ": "An example string",
-                     "ANOTHER_VARIABLE": "This is pretty easy!",
+                     "ANOTHER VARIABLE": "This is pretty easy!",
                      "INTEGER": 42,
                      "STRINGS": ["one", "two", "kolme", "four"],
                      "NUMBERS": [1, 42, 3.14],
@@ -563,3 +538,63 @@ them create only one variable `${DYNAMIC VARIABLE}`.
             return variables;
         }
     }
+
+Variable file as YAML
+~~~~~~~~~~~~~~~~~~~~~
+
+Variable files can also be implemented as `YAML <http://yaml.org>`_ files.
+YAML is a data serialization language with a simple and human-friendly syntax.
+The following example demonstrates a simple YAML file:
+
+.. sourcecode:: yaml
+
+    string:   Hello, world!
+    integer:  42
+    list:
+      - one
+      - two
+    dict:
+      one: yksi
+      two: kaksi
+      with spaces: kolme
+
+.. note:: Using YAML files with Robot Framework requires `PyYAML
+          <http://pyyaml.org>`_ module to be installed. If you have
+          pip_ installed, you can install it simply by running
+          `pip install pyyaml`.
+
+          YAML support is new in Robot Framework 2.9. Starting from
+          version 2.9.2, the `standalone JAR distribution`_ has
+          PyYAML included by default.
+
+YAML variable files can be used exactly like normal variable files
+from the command line using :option:`--variablefile` option, in the settings
+table using :setting:`Variables` setting, and dynamically using the
+:name:`Import Variables` keyword. The only thing to remember is that paths to
+YAML files must always end with :file:`.yaml` extension.
+
+If the above YAML file is imported, it will create exactly the same
+variables as the following variable table:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   ${STRING}     Hello, world!
+   ${INTEGER}    ${42}
+   @{LIST}       one         two
+   &{DICT}       one=yksi    two=kaksi
+
+YAML files used as variable files must always be mappings in the top level.
+As the above example demonstrates, keys and values in the mapping become
+variable names and values, respectively. Variable values can be any data
+types supported by YAML syntax. If names or values contain non-ASCII
+characters, YAML variables files must be UTF-8 encoded.
+
+Mappings used as values are automatically converted to special dictionaries
+that are used also when `creating dictionary variables`_ in the variable table.
+Most importantly, values of these dictionaries are accessible as attributes
+like `${DICT.one}`, assuming their names are valid as Python attribute names.
+If the name contains spaces or is otherwise not a valid attribute name, it is
+always possible to access dictionary values using syntax like
+`&{DICT}[with spaces]` syntax. The created dictionaries are also ordered, but
+unfortunately the original source order of in the YAML file is not preserved.

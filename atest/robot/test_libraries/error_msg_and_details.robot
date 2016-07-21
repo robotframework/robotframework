@@ -1,7 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/error_msg_and_details.robot
-Force Tags        regression
-Default Tags      pybot    jybot
 Resource          atest_resource.robot
 Test Template     Verify Test Case And Error In Log
 
@@ -10,14 +8,14 @@ Exception Type is Removed From Generic Failures
     Generic Failure    foo != bar
 
 Exception Type is Removed From Generic Java Failures
-    [Tags]    jybot
+    [Tags]    require-jython
     Generic Failure In Java    bar != foo    2
 
 Exception Type is Removed with Exception Attribute
     Exception Name Suppressed in Error Message    No Exception Name
 
 Exception Type is Removed with Exception Attribute in Java
-    [Tags]    jybot
+    [Tags]    require-jython
     Exception Name Suppressed in Error Message In Java    No Exception Name
 
 Exception Type is Included In Non-Generic Failures
@@ -28,7 +26,7 @@ Message Contains Only Class Name When Raising Only Class
     Non-Generic Python class    ZeroDivisionError
 
 Exception Type is Included In Non-Generic Java Failures
-    [Tags]    jybot
+    [Tags]    require-jython
     Non Generic Failure In Java    ArrayStoreException: My message
 
 Message Is Got Correctly If Python Exception Has Non-String Message
@@ -41,14 +39,14 @@ Multiline Error
     ${TESTNAME}   First line\n2nd\n3rd and last
 
 Multiline Java Error
-    [Tags]   jybot
+    [Tags]    require-jython
     ${TESTNAME}   ArrayStoreException: First line\n2nd\n3rd and last
 
 Multiline Error With CRLF
     ${TESTNAME}   First line\n2nd\n3rd and last
 
 Message Is Got Correctly If Java Exception Has 'null' Message
-    [Tags]    jybot
+    [Tags]    require-jython
     Java Exception With 'null' Message    ArrayStoreException
 
 Message And Internal Trace Are Removed From Details When Exception In Library
@@ -59,7 +57,7 @@ Message And Internal Trace Are Removed From Details When Exception In Library
     Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception(msg)
 
 Message And Internal Trace Are Removed From Details When Exception In Java Library
-    [Tags]    jybot
+    [Tags]    require-jython
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    Generic Failure In Java    bar != foo    2
     Verify Java Stack Trace    ${tc.kws[2].msgs[1]}    java.lang.AssertionError: \    ExampleJavaLibrary.checkInHashtable
@@ -72,7 +70,7 @@ Message and Internal Trace Are Removed From Details When Exception In External C
     Verify Python Traceback    ${tc.kws[0].msgs[1]}    external_exception    ObjectToReturn('failure').exception(name, msg)    exception    raise exception(msg)
 
 Message and Internal Trace Are Removed From Details When Exception In External Java Code
-    [Tags]    jybot
+    [Tags]    require-jython
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    External Failure In Java    IllegalArgumentException: Illegal initial capacity: -1
     Verify Java Stack Trace    ${tc.kws[0].msgs[1]}    java.lang.IllegalArgumentException: \    java.util.HashMap.    java.util.HashMap.    JavaObject.exception    ExampleJavaLibrary
@@ -89,6 +87,17 @@ No Details For Non Existing Variables
     [Template]    Verify Test Case, Error In Log And No Details
     Non Existing Scalar Variable    Variable '\${non existing}' not found.
     Non Existing List Variable    Variable '\@{non existing}' not found.
+
+Include internal traces when ROBOT_INTERNAL_TRACE is set
+    [Template]    NONE
+    Set Environment Variable    ROBOT_INTERNAL_TRACES    show, please
+    Run Tests    -L DEBUG -t "Generic Failure"    test_libraries/error_msg_and_details.robot
+    ${tc} =    Check Test Case    Generic Failure
+    ${tb} =    Set Variable    ${tc.kws[0].msgs[1].message}
+    Should Start With    ${tb}    Traceback (most recent call last):
+    Should End With    ${tb}    raise exception(msg)
+    Should Be True    len($tb.splitlines()) > 5
+    [Teardown]    Remove Environment Variable    ROBOT_INTERNAL_TRACES
 
 *** Keyword ***
 Verify Test Case And Error In Log
@@ -119,4 +128,3 @@ Verify Java Stack Trace
     \    ${exp} =    Set Variable    ${exp}\n \\s+at ${func}.+
     Should Match Regexp    ${msg.message}    ${exp}
     Should Be Equal    ${msg.level}    DEBUG
-

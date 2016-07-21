@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -26,14 +27,12 @@ Benefits:
 
 Drawbacks:
   - unittest is not able to filter as much non-interesting traceback away
-    as with its own methods because AssertionErrors occur outside
-
+    as with its own methods because AssertionErrors occur outside.
 
 Most of the functions are copied more or less directly from unittest.TestCase
 which comes with the following license. Further information about unittest in
 general can be found from http://pyunit.sourceforge.net/. This module can be
 used freely in same terms as unittest.
-
 
 unittest license::
 
@@ -53,43 +52,39 @@ unittest license::
     AND THERE IS NO OBLIGATION WHATSOEVER TO PROVIDE MAINTENANCE,
     SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-
 Examples::
 
     import unittest
-    from robot.util.asserts import *
+    from robot.utils.asserts import assert_equal
 
     class MyTests(unittest.TestCase):
 
         def test_old_style(self):
-            self.assertEquals(1, 2, 'my msg')
+            self.assertEqual(1, 2, 'my msg')
 
         def test_new_style(self):
-            assert_equals(1, 2, 'my msg')
-
+            assert_equal(1, 2, 'my msg')
 
 Example output::
 
     FF
     ======================================================================
-    FAIL: test_old_style (__main__.MyTests)
+    FAIL: test_old_style (example.MyTests)
     ----------------------------------------------------------------------
     Traceback (most recent call last):
-    File "example.py", line 7, in test_old_style
-        self.assertEquals(1, 2, 'my msg')
+      File "example.py", line 7, in test_old_style
+        self.assertEqual(1, 2, 'my msg')
     AssertionError: my msg
 
     ======================================================================
-    FAIL: test_new_style (__main__.MyTests)
+    FAIL: test_new_style (example.MyTests)
     ----------------------------------------------------------------------
     Traceback (most recent call last):
-    File "example.py", line 10, in test_new_style
-        assert_equals(1, 2, 'my msg')
-    File "/path/to/robot/asserts.py", line 142, in fail_unless_equal
-        _report_unequality_failure(first, second, msg, values, '!=')
-    File "/path/to/robot/src/robot/asserts.py", line 209, in _report_unequality_failure
-        raise _report_failure(msg)
-    File "/path/to/robot/src/robot/asserts.py", line 200, in _report_failure
+      File "example.py", line 10, in test_new_style
+        assert_equal(1, 2, 'my msg')
+      File "/path/to/robot/utils/asserts.py", line 181, in assert_equal
+        _report_inequality_failure(first, second, msg, values, '!=')
+      File "/path/to/robot/utils/asserts.py", line 229, in _report_inequality_failure
         raise AssertionError(msg)
     AssertionError: my msg: 1 != 2
 
@@ -107,19 +102,20 @@ def fail(msg=None):
     """Fail test immediately with the given message."""
     _report_failure(msg)
 
-def error(msg=None):
-    """Error test immediately with the given message."""
-    _report_error(msg)
 
-def fail_if(expr, msg=None):
+def assert_false(expr, msg=None):
     """Fail the test if the expression is True."""
-    if expr: _report_failure(msg)
+    if expr:
+        _report_failure(msg)
 
-def fail_unless(expr, msg=None):
+
+def assert_true(expr, msg=None):
     """Fail the test unless the expression is True."""
-    if not expr: _report_failure(msg)
+    if not expr:
+        _report_failure(msg)
 
-def fail_if_none(obj, msg=None, values=True):
+
+def assert_not_none(obj, msg=None, values=True):
     """Fail the test if given object is None."""
     _msg = 'is None'
     if obj is None:
@@ -129,7 +125,8 @@ def fail_if_none(obj, msg=None, values=True):
             msg = '%s: %s' % (msg, _msg)
         _report_failure(msg)
 
-def fail_unless_none(obj, msg=None, values=True):
+
+def assert_none(obj, msg=None, values=True):
     """Fail the test if given object is not None."""
     _msg = '%r is not None' % obj
     if obj is not None:
@@ -139,7 +136,8 @@ def fail_unless_none(obj, msg=None, values=True):
             msg = '%s: %s' % (msg, _msg)
         _report_failure(msg)
 
-def fail_unless_raises(exc_class, callable_obj, *args, **kwargs):
+
+def assert_raises(exc_class, callable_obj, *args, **kwargs):
     """Fail unless an exception of class exc_class is thrown by callable_obj.
 
     callable_obj is invoked with arguments args and keyword arguments
@@ -161,13 +159,15 @@ def fail_unless_raises(exc_class, callable_obj, *args, **kwargs):
             exc_name = str(exc_class)
         _report_failure('%s not raised' % exc_name)
 
-def fail_unless_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
-                                **kwargs):
+
+def assert_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
+                           **kwargs):
     """Similar to fail_unless_raises but also checks the exception message."""
     try:
         callable_obj(*args, **kwargs)
     except exc_class as err:
-        assert_equal(expected_msg, unic(err), 'Correct exception but wrong message')
+        assert_equal(expected_msg, unic(err),
+                     'Correct exception but wrong message')
     else:
         if hasattr(exc_class,'__name__'):
             exc_name = exc_class.__name__
@@ -176,73 +176,59 @@ def fail_unless_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
         _report_failure('%s not raised' % exc_name)
 
 
-def fail_unless_equal(first, second, msg=None, values=True):
+def assert_equal(first, second, msg=None, values=True):
     """Fail if given objects are unequal as determined by the '==' operator."""
     if not first == second:
-        _report_unequality_failure(first, second, msg, values, '!=')
+        _report_inequality_failure(first, second, msg, values, '!=')
 
-def fail_if_equal(first, second, msg=None, values=True):
+
+def assert_not_equal(first, second, msg=None, values=True):
     """Fail if given objects are equal as determined by the '==' operator."""
     if first == second:
-        _report_unequality_failure(first, second, msg, values, '==')
+        _report_inequality_failure(first, second, msg, values, '==')
 
-def fail_unless_almost_equal(first, second, places=7, msg=None, values=True):
+
+def assert_almost_equal(first, second, places=7, msg=None, values=True):
     """Fail if the two objects are unequal after rounded to given places.
 
-    Unequality is determined by object's difference rounded to the
+    inequality is determined by object's difference rounded to the
     given number of decimal places (default 7) and comparing to zero.
     Note that decimal places (from zero) are usually not the same as
     significant digits (measured from the most signficant digit).
     """
     if round(second - first, places) != 0:
         extra = 'within %r places' % places
-        _report_unequality_failure(first, second, msg, values, '!=', extra)
+        _report_inequality_failure(first, second, msg, values, '!=', extra)
 
-def fail_if_almost_equal(first, second, places=7, msg=None, values=True):
+
+def assert_not_almost_equal(first, second, places=7, msg=None, values=True):
     """Fail if the two objects are unequal after rounded to given places.
 
     Equality is determined by object's difference rounded to to the
     given number of decimal places (default 7) and comparing to zero.
     Note that decimal places (from zero) are usually not the same as
-    significant digits (measured from the most signficant digit).
+    significant digits (measured from the most significant digit).
     """
     if round(second-first, places) == 0:
         extra = 'within %r places' % places
-        _report_unequality_failure(first, second, msg, values, '==', extra)
+        _report_inequality_failure(first, second, msg, values, '==', extra)
 
-# Synonyms for assertion methods
-
-assert_equal = assert_equals = fail_unless_equal
-assert_not_equal = assert_not_equals = fail_if_equal
-assert_almost_equal = assert_almost_equals = fail_unless_almost_equal
-assert_not_almost_equal = assert_not_almost_equals = fail_if_almost_equal
-assert_raises = fail_unless_raises
-assert_raises_with_msg = fail_unless_raises_with_msg
-assert_ = assert_true = fail_unless
-assert_false = fail_if
-assert_none = fail_unless_none
-assert_not_none = fail_if_none
-
-# Helpers
 
 def _report_failure(msg):
     if msg is None:
         raise AssertionError()
     raise AssertionError(msg)
 
-def _report_error(msg):
-    if msg is None:
-        raise Exception()
-    raise Exception(msg)
 
-def _report_unequality_failure(obj1, obj2, msg, values, delim, extra=None):
+def _report_inequality_failure(obj1, obj2, msg, values, delim, extra=None):
     if not msg:
         msg = _get_default_message(obj1, obj2, delim)
     elif values:
         msg = '%s: %s' % (msg, _get_default_message(obj1, obj2, delim))
     if values and extra:
         msg += ' ' + extra
-    _report_failure(msg)
+    raise AssertionError(msg)
+
 
 def _get_default_message(obj1, obj2, delim):
     str1 = unic(obj1)

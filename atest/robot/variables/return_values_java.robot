@@ -4,16 +4,16 @@ Documentation     Tests for return values from keywords. Tests include e.g.
 ...               messages that are automatically logged when variables are set.
 ...               See also return_values.robot
 Suite Setup       Run Tests    ${EMPTY}    variables/return_values_java.robot
-Force Tags        regression    jybot
+Force Tags        require-jython
 Resource          atest_resource.robot
 
 *** Test Cases ***
 Set Multiple Scalar Variables Using Array
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    ExampleJavaLibrary.Get String Array    \${var1}, \${var2}    first value, second value
+    Check Keyword Data    ${tc.kws[0]}    ExampleJavaLibrary.Get String Array    \${var1}, \${var2}    first value, second value
     Check Log Message    ${tc.kws[0].msgs[0]}    \${var1} = first value
     Check Log Message    ${tc.kws[0].msgs[1]}    \${var2} = second value
-    Keyword Data Should Be    ${tc.kws[3]}    ExampleJavaLibrary.Get Array Of Three Ints    \${i1}, \${i2}, \${i42}
+    Check Keyword Data    ${tc.kws[3]}    ExampleJavaLibrary.Get Array Of Three Ints    \${i1}, \${i2}, \${i42}
     Check Log Message    ${tc.kws[3].msgs[0]}    \${i1} = 1
     Check Log Message    ${tc.kws[3].msgs[1]}    \${i2} = 2
     Check Log Message    ${tc.kws[3].msgs[2]}    \${i42} = 42
@@ -25,7 +25,7 @@ Set Object To Scalar Variable
 Set List Variable Using Array
     ${tc} =    Check Test Case    ${TEST NAME}
     Verify List Variable Assigment    ${tc}    Get String Array
-    Keyword Data Should Be    ${tc.kws[3]}    ExampleJavaLibrary.Get Array Of Three Ints    \@{listvar}
+    Check Keyword Data    ${tc.kws[3]}    ExampleJavaLibrary.Get Array Of Three Ints    \@{listvar}
     Check Log Message    ${tc.kws[3].msgs[0]}    \@{listvar} = [ 1 | 2 | 42 ]
 
 Set List Variable Using Vector
@@ -55,17 +55,17 @@ Set Multiple Scalars With Too Few Values Using Array
 
 Set List To Scalar And List Variables Using Array
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    ExampleJavaLibrary.Get Array Of Three Ints    \${a}, \${b}, \@{c}
+    Check Keyword Data    ${tc.kws[0]}    ExampleJavaLibrary.Get Array Of Three Ints    \${a}, \${b}, \@{c}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${a} = 1
     Check Log Message    ${tc.kws[0].msgs[1]}    \${b} = 2
     Check Log Message    ${tc.kws[0].msgs[2]}    \@{c} = [ 42 ]
 
 Return Unrepresentable Object
-    [Documentation]    See http://code.google.com/p/robotframework/issues/detail?id=967
+    [Documentation]    See https://github.com/robotframework/robotframework/issues/967
     Check Test Case    ${TEST NAME}
 
 *** Keywords ***
 Verify List Variable Assigment
     [Arguments]    ${tc}    ${kw name}
-    Keyword Data Should Be    ${tc.kws[0]}    ExampleJavaLibrary.${kw name}    \@{listvar}    v1, v2, v3
+    Check Keyword Data    ${tc.kws[0]}    ExampleJavaLibrary.${kw name}    \@{listvar}    v1, v2, v3
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{listvar} = [ v1 | v2 | v3 ]

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -18,13 +19,14 @@ import copy
 from robot.errors import DataError
 from robot.variables import is_var
 from robot.output import LOGGER
-from robot import utils
 from robot.writer import DataFileWriter
+from robot.utils import abspath, is_string, normalize, py2to3, NormalizedDict
 
 from .comments import Comment
 from .populators import FromFilePopulator, FromDirectoryPopulator
-from .settings import (Documentation, Fixture, Timeout, Tags, Metadata, Library,
-    Resource, Variables, Arguments, Return, Template, MetadataList, ImportList)
+from .settings import (Documentation, Fixture, Timeout, Tags, Metadata,
+                       Library, Resource, Variables, Arguments, Return,
+                       Template, MetadataList, ImportList)
 
 
 def TestData(parent=None, source=None, include_suites=None,
@@ -47,12 +49,15 @@ class _TestData(object):
     _variable_table_names = 'Variable', 'Variables'
     _testcase_table_names = 'Test Case', 'Test Cases'
     _keyword_table_names = 'Keyword', 'Keywords', 'User Keyword', 'User Keywords'
+    _deprecated = NormalizedDict({'Metadata': 'Settings',
+                                  'User Keyword': 'Keywords',
+                                  'User Keywords': 'Keywords'})
 
     def __init__(self, parent=None, source=None):
         self.parent = parent
-        self.source = utils.abspath(source) if source else None
+        self.source = abspath(source) if source else None
         self.children = []
-        self._tables = utils.NormalizedDict(self._get_tables())
+        self._tables = NormalizedDict(self._get_tables())
 
     def _get_tables(self):
         for names, table in [(self._setting_table_names, self.setting_table),
@@ -64,13 +69,20 @@ class _TestData(object):
 
     def start_table(self, header_row):
         try:
-            table = self._tables[header_row[0]]
+            name = header_row[0]
+            table = self._tables[name]
+            if name in self._deprecated:
+                self._report_deprecated(name)
         except (KeyError, IndexError):
             return None
         if not self._table_is_allowed(table):
             return None
         table.set_header(header_row)
         return table
+
+    def _report_deprecated(self, name):
+        self.report_invalid_syntax("Table name '%s' is deprecated. Please use '%s' instead." %
+                                   (name, self._deprecated[name]), level='WARN')
 
     @property
     def name(self):
@@ -231,6 +243,7 @@ class TestDataDirectory(_TestData):
             yield table
 
 
+@py2to3
 class _Table(object):
 
     def __init__(self, parent):
@@ -274,19 +287,34 @@ class _Table(object):
 
 
 class _WithSettings(object):
+    _deprecated = {'document': 'Documentation',
+                   'suiteprecondition': 'Suite Setup',
+                   'suitepostcondition': 'Suite Teardown',
+                   'testprecondition': 'Test Setup',
+                   'testpostcondition': 'Test Teardown',
+                   'precondition': 'Setup',
+                   'postcondition': 'Teardown'}
 
     def get_setter(self, setting_name):
         normalized = self.normalize(setting_name)
+        if normalized in self._deprecated:
+            self._report_deprecated(setting_name, self._deprecated[normalized])
+            normalized = self.normalize(self._deprecated[normalized])
         if normalized in self._setters:
             return self._setters[normalized](self)
         self.report_invalid_syntax("Non-existing setting '%s'." % setting_name)
+
+    def _report_deprecated(self, deprecated, use_instead):
+         self.report_invalid_syntax(
+             "Setting '%s' is deprecated. Use '%s' instead."
+             % (deprecated.rstrip(':'), use_instead), level='WARN')
 
     def is_setting(self, setting_name):
         return self.normalize(setting_name) in self._setters
 
     def normalize(self, setting):
-        result = utils.normalize(setting)
-        return result[0:-1] if result and result[-1]==':' else result
+        result = normalize(setting)
+        return result[:-1] if result[-1:] == ':' else result
 
 
 class _SettingTable(_Table, _WithSettings):
@@ -333,15 +361,10 @@ class _SettingTable(_Table, _WithSettings):
 class TestCaseFileSettingTable(_SettingTable):
 
     _setters = {'documentation': lambda s: s.doc.populate,
-                'document': lambda s: s.doc.populate,
                 'suitesetup': lambda s: s.suite_setup.populate,
-                'suiteprecondition': lambda s: s.suite_setup.populate,
                 'suiteteardown': lambda s: s.suite_teardown.populate,
-                'suitepostcondition': lambda s: s.suite_teardown.populate,
                 'testsetup': lambda s: s.test_setup.populate,
-                'testprecondition': lambda s: s.test_setup.populate,
                 'testteardown': lambda s: s.test_teardown.populate,
-                'testpostcondition': lambda s: s.test_teardown.populate,
                 'forcetags': lambda s: s.force_tags.populate,
                 'defaulttags': lambda s: s.default_tags.populate,
                 'testtemplate': lambda s: s.test_template.populate,
@@ -362,7 +385,6 @@ class TestCaseFileSettingTable(_SettingTable):
 class ResourceFileSettingTable(_SettingTable):
 
     _setters = {'documentation': lambda s: s.doc.populate,
-                'document': lambda s: s.doc.populate,
                 'library': lambda s: s.imports.populate_library,
                 'resource': lambda s: s.imports.populate_resource,
                 'variables': lambda s: s.imports.populate_variables}
@@ -375,15 +397,10 @@ class ResourceFileSettingTable(_SettingTable):
 class InitFileSettingTable(_SettingTable):
 
     _setters = {'documentation': lambda s: s.doc.populate,
-                'document': lambda s: s.doc.populate,
                 'suitesetup': lambda s: s.suite_setup.populate,
-                'suiteprecondition': lambda s: s.suite_setup.populate,
                 'suiteteardown': lambda s: s.suite_teardown.populate,
-                'suitepostcondition': lambda s: s.suite_teardown.populate,
                 'testsetup': lambda s: s.test_setup.populate,
-                'testprecondition': lambda s: s.test_setup.populate,
                 'testteardown': lambda s: s.test_teardown.populate,
-                'testpostcondition': lambda s: s.test_teardown.populate,
                 'testtimeout': lambda s: s.test_timeout.populate,
                 'forcetags': lambda s: s.force_tags.populate,
                 'library': lambda s: s.imports.populate_library,
@@ -416,6 +433,7 @@ class VariableTable(_Table):
         return iter(self.variables)
 
 
+@py2to3
 class TestCaseTable(_Table):
     type = 'test case'
 
@@ -460,6 +478,7 @@ class KeywordTable(_Table):
         return iter(self.keywords)
 
 
+@py2to3
 class Variable(object):
 
     def __init__(self, parent, name, value, comment=None):
@@ -467,7 +486,7 @@ class Variable(object):
         self.name = name.rstrip('= ')
         if name.startswith('$') and value == []:
             value = ''
-        if isinstance(value, basestring):
+        if is_string(value):
             value = [value]
         self.value = value
         self.comment = Comment(comment)
@@ -521,12 +540,9 @@ class TestCase(_WithSteps, _WithSettings):
         self.steps = []
 
     _setters = {'documentation': lambda s: s.doc.populate,
-                'document': lambda s: s.doc.populate,
                 'template': lambda s: s.template.populate,
                 'setup': lambda s: s.setup.populate,
-                'precondition': lambda s: s.setup.populate,
                 'teardown': lambda s: s.teardown.populate,
-                'postcondition': lambda s: s.teardown.populate,
                 'tags': lambda s: s.tags.populate,
                 'timeout': lambda s: s.timeout.populate}
 
@@ -572,43 +588,56 @@ class UserKeyword(TestCase):
         self.return_ = Return('[Return]', self)
         self.timeout = Timeout('[Timeout]', self)
         self.teardown = Fixture('[Teardown]', self)
+        self.tags = Tags('[Tags]', self)
         self.steps = []
 
     _setters = {'documentation': lambda s: s.doc.populate,
-                'document': lambda s: s.doc.populate,
                 'arguments': lambda s: s.args.populate,
                 'return': lambda s: s.return_.populate,
                 'timeout': lambda s: s.timeout.populate,
-                'teardown': lambda s: s.teardown.populate}
+                'teardown': lambda s: s.teardown.populate,
+                'tags': lambda s: s.tags.populate}
 
     def _add_to_parent(self, test):
         self.parent.keywords.append(test)
 
     @property
     def settings(self):
-        return [self.args, self.doc, self.timeout, self.teardown, self.return_]
+        return [self.args, self.doc, self.tags, self.timeout, self.teardown, self.return_]
 
     def __iter__(self):
-        for element in [self.args, self.doc, self.timeout] \
+        for element in [self.args, self.doc, self.tags, self.timeout] \
                         + self.steps + [self.teardown, self.return_]:
             yield element
 
 
 class ForLoop(_WithSteps):
+    """The parsed representation of a for-loop.
+
+    :param list declaration: The literal cell values that declare the loop
+                             (excluding ":FOR").
+    :param str comment: A comment, default None.
+    :ivar str flavor: The value of the 'IN' item, uppercased.
+                      Typically 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
+    :ivar list vars: Variables set per-iteration by this loop.
+    :ivar list items: Loop values that come after the 'IN' item.
+    :ivar str comment: A comment, or None.
+    :ivar list steps: A list of steps in the loop.
+    """
 
     def __init__(self, declaration, comment=None):
-        self.range, index = self._get_range_and_index(declaration)
+        self.flavor, index = self._get_flavors_and_index(declaration)
         self.vars = declaration[:index]
         self.items = declaration[index+1:]
         self.comment = Comment(comment)
         self.steps = []
 
-    def _get_range_and_index(self, declaration):
+    def _get_flavors_and_index(self, declaration):
         for index, item in enumerate(declaration):
-            item = item.upper().replace(' ', '')
-            if item in ['IN', 'INRANGE']:
-                return item == 'INRANGE', index
-        return False, len(declaration)
+            item = item.upper()
+            if item.replace(' ', '').startswith('IN'):
+                return item, index
+        return 'IN', len(declaration)
 
     def is_comment(self):
         return False
@@ -617,9 +646,8 @@ class ForLoop(_WithSteps):
         return True
 
     def as_list(self, indent=False, include_comment=True):
-        IN = ['IN RANGE' if self.range else 'IN']
         comments = self.comment.as_list() if include_comment else []
-        return  [': FOR'] + self.vars + IN + self.items + comments
+        return  [': FOR'] + self.vars + [self.flavor] + self.items + comments
 
     def __iter__(self):
         return iter(self.steps)
@@ -631,19 +659,16 @@ class ForLoop(_WithSteps):
 class Step(object):
 
     def __init__(self, content, comment=None):
-        self.assign = list(self._get_assigned_vars(content))
-        try:
-            self.name = content[len(self.assign)]
-        except IndexError:
-            self.name = None
-        self.args = content[len(self.assign)+1:]
+        self.assign = self._get_assign(content)
+        self.name = content.pop(0) if content else None
+        self.args = content
         self.comment = Comment(comment)
 
-    def _get_assigned_vars(self, content):
-        for item in content:
-            if not is_var(item.rstrip('= ')):
-                return
-            yield item
+    def _get_assign(self, content):
+        assign = []
+        while content and is_var(content[0].rstrip('= ')):
+            assign.append(content.pop(0))
+        return assign
 
     def is_comment(self):
         return not (self.assign or self.name or self.args)

@@ -1,7 +1,7 @@
 import unittest
 
 from robot.writer.rowsplitter import RowSplitter
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 
 
 class TestRowSplitter(unittest.TestCase):
@@ -9,7 +9,7 @@ class TestRowSplitter(unittest.TestCase):
     def _test(self, data, expected, cols=3, table_type='settings'):
         splitter = RowSplitter(cols=cols)
         actual = list(splitter.split(data, table_type))
-        assert_equals(actual, expected)
+        assert_equal(actual, expected)
 
     def test_escaping_empty_cells_at_eol(self):
         self._test(['First', 'second', ''],

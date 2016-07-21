@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,31 +15,32 @@
 
 from functools import partial
 
-from robot.errors import DataError
+from robot.errors import VariableError
 from robot.utils import (is_dict_like, is_list_like, normalize,
                          RecommendationFinder)
 
 
-def raise_not_found(name, candidates, msg=None):
+def variable_not_found(name, candidates, msg=None, deco_braces=True):
     """Raise DataError for missing variable name.
 
     Return recommendations for similar variable names if any are found.
     """
     if msg is None:
         msg = "Variable '%s' not found." % name
-    candidates = _decorate_candidates(name[0], candidates)
+    candidates = _decorate_candidates(name[0], candidates, deco_braces)
     normalizer = partial(normalize, ignore='$@%&*{}_', caseless=True,
                          spaceless=True)
     finder = RecommendationFinder(normalizer)
     recommendations = finder.find_recommendations(name, candidates)
     msg = finder.format_recommendations(msg, recommendations)
-    raise DataError(msg)
+    raise VariableError(msg)
 
 
-def _decorate_candidates(identifier, candidates):
+def _decorate_candidates(identifier, candidates, deco_braces=True):
+    template = '%s{%s}' if deco_braces else '%s%s'
     is_included = {'$': lambda value: True,
                    '@': is_list_like,
                    '&': is_dict_like,
                    '%': lambda value: True}[identifier]
-    return ['%s{%s}' % (identifier, name)
+    return [template % (identifier, name)
             for name in candidates if is_included(candidates[name])]

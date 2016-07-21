@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -18,7 +19,8 @@ from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
-from robot.utils import unic, lower
+from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
+                         unic, PY3)
 from robot.version import get_version
 
 
@@ -97,7 +99,7 @@ class String(object):
 
         New in Robot Framework 2.7.7.
         """
-        return string.encode(encoding, errors)
+        return bytes(string.encode(encoding, errors))
 
     def decode_bytes_to_string(self, bytes, encoding, errors='strict'):
         """Decodes the given ``bytes`` to a Unicode string using the given ``encoding``.
@@ -121,6 +123,8 @@ class String(object):
 
         New in Robot Framework 2.7.7.
         """
+        if PY3 and is_unicode(bytes):
+            raise TypeError('Can not decode strings on Python 3.')
         return bytes.decode(encoding, errors)
 
     def get_line_count(self, string):
@@ -175,10 +179,14 @@ class String(object):
     def get_lines_containing_string(self, string, pattern, case_insensitive=False):
         """Returns lines of the given ``string`` that contain the ``pattern``.
 
-        The ``pattern`` is always considered to be a normal string and a
-        line matches if the ``pattern`` is found anywhere in it. By
-        default the match is case-sensitive, but setting
-        ``case_insensitive`` to any value makes it case-insensitive.
+        The ``pattern`` is always considered to be a normal string, not a glob
+        or regexp pattern. A line matches if the ``pattern`` is found anywhere
+        on it.
+
+        The match is case-sensitive by default, but giving ``case_insensitive``
+        a true value makes it case-insensitive. The value is considered true
+        if it is a non-empty string that is not equal to ``false`` or ``no``.
+        If the value is not a string, its truth value is got directly in Python.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -191,7 +199,7 @@ class String(object):
         See `Get Lines Matching Pattern` and `Get Lines Matching Regexp`
         if you need more complex pattern matching.
         """
-        if case_insensitive:
+        if is_truthy(case_insensitive):
             pattern = pattern.lower()
             contains = lambda line: pattern in line.lower()
         else:
@@ -207,9 +215,12 @@ class String(object):
         | ``[chars]``  | matches any character inside square brackets (e.g. ``[abc]`` matches either ``a``, ``b`` or ``c``) |
         | ``[!chars]`` | matches any character not inside square brackets |
 
-        A line matches only if it matches the ``pattern`` fully.  By
-        default the match is case-sensitive, but setting
-        ``case_insensitive`` to any value makes it case-insensitive.
+        A line matches only if it matches the ``pattern`` fully.
+
+        The match is case-sensitive by default, but giving ``case_insensitive``
+        a true value makes it case-insensitive. The value is considered true
+        if it is a non-empty string that is not equal to ``false`` or ``no``.
+        If the value is not a string, its truth value is got directly in Python.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -217,48 +228,102 @@ class String(object):
 
         Examples:
         | ${lines} = | Get Lines Matching Pattern | ${result} | Wild???? example |
-        | ${ret} = | Get Lines Matching Pattern | ${ret} | FAIL: * | case-insensitive |
+        | ${ret} = | Get Lines Matching Pattern | ${ret} | FAIL: * | case_insensitive=true |
 
         See `Get Lines Matching Regexp` if you need more complex
         patterns and `Get Lines Containing String` if searching
         literal strings is enough.
         """
-        if case_insensitive:
+        if is_truthy(case_insensitive):
             pattern = pattern.lower()
             matches = lambda line: fnmatchcase(line.lower(), pattern)
         else:
             matches = lambda line: fnmatchcase(line, pattern)
         return self._get_matching_lines(string, matches)
 
-    def get_lines_matching_regexp(self, string, pattern):
+    def get_lines_matching_regexp(self, string, pattern, partial_match=False):
         """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
         See `BuiltIn.Should Match Regexp` for more information about
         Python regular expression syntax in general and how to use it
-        in Robot Framework test data in particular. A line matches
-        only if it matches the ``pattern`` fully. Notice that to make
-        the match case-insensitive, you need to embed case-insensitive
-        flag into the pattern.
+        in Robot Framework test data in particular.
 
-        Lines are returned as one string catenated back together with
+        By default lines match only if they match the pattern fully, but
+        partial matching can be enabled by giving the ``partial_match``
+        argument a true value. The value is considered true if it is a
+        non-empty string that is not equal to ``false`` or ``no``. If the
+        value is not a string, its truth value is got directly in Python.
+
+        If the pattern is empty, it matches only empty lines by default.
+        When partial matching is enabled, empty pattern matches all lines.
+
+        Notice that to make the match case-insensitive, you need to prefix
+        the pattern with case-insensitive flag ``(?i)``.
+
+        Lines are returned as one string concatenated back together with
         newlines. Possible trailing newline is never returned. The
         number of matching lines is automatically logged.
 
         Examples:
         | ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example |
-        | ${ret} = | Get Lines Matching Regexp | ${ret} | (?i)FAIL: .* |
+        | ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example | partial_match=true |
+        | ${ret} =   | Get Lines Matching Regexp | ${ret}    | (?i)FAIL: .* |
 
-        See `Get Lines Matching Pattern` and `Get Lines Containing String` if
-        you do not need full regular expression powers (and complexity).
+        See `Get Lines Matching Pattern` and `Get Lines Containing
+        String` if you do not need full regular expression powers (and
+        complexity).
+
+        ``partial_match`` argument is new in Robot Framework 2.9. In earlier
+         versions exact match was always required.
         """
-        regexp = re.compile('^%s$' % pattern)
-        return self._get_matching_lines(string, regexp.match)
+        if not is_truthy(partial_match):
+            pattern = '^%s$' % pattern
+        return self._get_matching_lines(string, re.compile(pattern).search)
 
     def _get_matching_lines(self, string, matches):
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
         logger.info('%d out of %d lines matched' % (len(matching), len(lines)))
         return '\n'.join(matching)
+
+    def get_regexp_matches(self, string, pattern, *groups):
+        """Returns a list of all non-overlapping matches in the given string.
+
+        ``string`` is the string to find matches from and ``pattern`` is the
+        regular expression. See `BuiltIn.Should Match Regexp` for more
+        information about Python regular expression syntax in general and how
+        to use it in Robot Framework test data in particular.
+
+        If no groups are used, the returned list contains full matches. If one
+        group is used, the list contains only contents of that group. If
+        multiple groups are used, the list contains tuples that contain
+        individual group contents. All groups can be given as indexes (starting
+        from 1) and named groups also as names.
+
+        Examples:
+        | ${no match} =    | Get Regexp Matches | the string | xxx     |
+        | ${matches} =     | Get Regexp Matches | the string | t..     |
+        | ${one group} =   | Get Regexp Matches | the string | t(..)   | 1 |
+        | ${named group} = | Get Regexp Matches | the string | t(?P<name>..) | name |
+        | ${two groups} =  | Get Regexp Matches | the string | t(.)(.) | 1 | 2 |
+        =>
+        | ${no match} = []
+        | ${matches} = ['the', 'tri']
+        | ${one group} = ['he', 'ri']
+        | ${named group} = ['he', 'ri']
+        | ${two groups} = [('h', 'e'), ('r', 'i')]
+
+        New in Robot Framework 2.9.
+        """
+        regexp = re.compile(pattern)
+        groups = [self._parse_group(g) for g in groups]
+        return [m.group(*groups) for m in regexp.finditer(string)]
+
+    def _parse_group(self, group):
+        try:
+            return int(group)
+        except ValueError:
+            return group
 
     def replace_string(self, string, search_for, replace_with, count=-1):
         """Replaces ``search_for`` in the given ``string`` with ``replace_with``.
@@ -446,7 +511,7 @@ class String(object):
                             ('[NUMBERS]', digits)]:
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
-        return ''.join(chars[randint(0, maxi)] for _ in xrange(length))
+        return ''.join(chars[randint(0, maxi)] for _ in range(length))
 
     def get_substring(self, string, start, end=None):
         """Returns a substring from ``start`` index to ``end`` index.
@@ -466,6 +531,38 @@ class String(object):
         end = self._convert_to_index(end, 'end')
         return string[start:end]
 
+    def strip_string(self, string, mode='both', characters=None):
+        """Remove leading and/or trailing whitespaces from the given string.
+
+        ``mode`` is either ``left`` to remove leading characters, ``right`` to
+        remove trailing characters, ``both`` (default) to remove the
+        characters from both sides of the string or ``none`` to return the
+        unmodified string.
+
+        If the optional ``characters`` is given, it must be a string and the
+        characters in the string will be stripped in the string. Please note,
+        that this is not a substring to be removed but a list of characters,
+        see the example below.
+
+        Examples:
+        | ${stripped}=  | Strip String | ${SPACE}Hello${SPACE} | |
+        | Should Be Equal | ${stripped} | Hello | |
+        | ${stripped}=  | Strip String | ${SPACE}Hello${SPACE} | mode=left |
+        | Should Be Equal | ${stripped} | Hello${SPACE} | |
+        | ${stripped}=  | Strip String | aabaHelloeee | characters=abe |
+        | Should Be Equal | ${stripped} | Hello | |
+
+        New in Robot Framework 3.0.
+        """
+        try:
+            method = {'BOTH': string.strip,
+                      'LEFT': string.lstrip,
+                      'RIGHT': string.rstrip,
+                      'NONE': lambda characters: string}[mode.upper()]
+        except KeyError:
+            raise ValueError("Invalid mode '%s'." % mode)
+        return method(characters)
+
     def should_be_string(self, item, msg=None):
         """Fails if the given ``item`` is not a string.
 
@@ -476,7 +573,7 @@ class String(object):
         The default error message can be overridden with the optional
         ``msg`` argument.
         """
-        if not isinstance(item, basestring):
+        if not is_string(item):
             self._fail(msg, "'%s' is not a string.", item)
 
     def should_not_be_string(self, item, msg=None):
@@ -485,7 +582,7 @@ class String(object):
         The default error message can be overridden with the optional
         ``msg`` argument.
         """
-        if isinstance(item, basestring):
+        if is_string(item):
             self._fail(msg, "'%s' is a string.", item)
 
     def should_be_unicode_string(self, item, msg=None):
@@ -500,7 +597,7 @@ class String(object):
 
         New in Robot Framework 2.7.7.
         """
-        if not isinstance(item, unicode):
+        if not is_unicode(item):
             self._fail(msg, "'%s' is not a Unicode string.", item)
 
     def should_be_byte_string(self, item, msg=None):
@@ -515,7 +612,7 @@ class String(object):
 
         New in Robot Framework 2.7.7.
         """
-        if not isinstance(item, str):
+        if not is_bytes(item):
             self._fail(msg, "'%s' is not a byte string.", item)
 
     def should_be_lowercase(self, string, msg=None):

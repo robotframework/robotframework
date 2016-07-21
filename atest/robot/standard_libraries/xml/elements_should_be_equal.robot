@@ -1,10 +1,8 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/elements_should_be_equal.robot
-Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
 
 *** Test Cases ***
-
 Elements should be equal
     Check Test Case    ${TESTNAME}
 

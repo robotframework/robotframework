@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,8 +15,12 @@
 
 import sys
 from threading import currentThread
-from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
-                     BOTH, END, LEFT, W)
+try:
+    from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
+                         BOTH, END, LEFT, W)
+except ImportError:
+    from tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
+                         BOTH, END, LEFT, W)
 
 
 class _TkDialog(Toplevel):
@@ -45,15 +50,15 @@ class _TkDialog(Toplevel):
     def _initialize_dialog(self):
         self.title('Robot Framework')
         self.grab_set()
-        self.protocol("WM_DELETE_WINDOW", self._right_button_clicked)
-        self.bind("<Escape>", self._right_button_clicked)
+        self.protocol("WM_DELETE_WINDOW", self._close)
+        self.bind("<Escape>", self._close)
         self.minsize(250, 80)
         self.geometry("+%d+%d" % self._get_center_location())
         self._bring_to_front()
 
     def _get_center_location(self):
-        x = (self.winfo_screenwidth() - self.winfo_reqwidth()) / 2
-        y = (self.winfo_screenheight() - self.winfo_reqheight()) / 2
+        x = (self.winfo_screenwidth() - self.winfo_reqwidth()) // 2
+        y = (self.winfo_screenheight() - self.winfo_reqheight()) // 2
         return x, y
 
     def _bring_to_front(self):
@@ -96,7 +101,7 @@ class _TkDialog(Toplevel):
     def _get_value(self):
         return None
 
-    def _close(self):
+    def _close(self, event=None):
         # self.destroy() is not enough on Linux
         self._parent.destroy()
 

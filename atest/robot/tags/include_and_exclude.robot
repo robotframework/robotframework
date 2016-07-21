@@ -1,10 +1,9 @@
 *** Settings ***
-Force Tags        regression    jybot    pybot
 Test Template     Run And Check Include And Exclude
 Resource          atest_resource.robot
 
 *** Variables ***
-@{DATA SOURCES}   tags/include_and_exclude.robot
+${DATA SOURCES}   tags/include_and_exclude.robot
 ${ESCAPES}        --escape star:STAR --escape quest:QUEST --escape amp:AMP
 @{INCL_ALL}       Incl-1    Incl-12    Incl-123
 @{EXCL_ALL}       excl-1    Excl-12    Excl-123
@@ -79,11 +78,11 @@ Include and Exclude with NOT
     --include incl1NOTincl3 --exclude incl1NOTincl2    Incl-12
 
 Select tests without any tags
-    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.robot
+    [Setup]    Set Test Variable    ${DATA SOURCES}    tags/no_force_no_default_tags.robot
     --exclude STAR    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
 
 Select tests with any tag
-    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.robot
+    [Setup]    Set Test Variable    ${DATA SOURCES}    tags/no_force_no_default_tags.robot
     --include STAR    Own Tags No Force Nor Default
 
 Non Matching Include
@@ -102,7 +101,7 @@ Non Matching Include And Exclude
     --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3    tags 'nonex' or 'incl?' and without tags '*1', '*2' or '*3'
 
 Non Matching When Running Multiple Suites
-    [Setup]    Set Test Variable    @{DATA SOURCES}    misc/pass_and_fail.robot    misc/normal.robot
+    [Setup]    Set Test Variable    ${DATA SOURCES}    misc/pass_and_fail.robot misc/normal.robot
     [Template]    Run And Check Error
     --include nonex    tag 'nonex'    Pass And Fail & Normal
     --include nonex --name MyName   tag 'nonex'    MyName
@@ -110,13 +109,13 @@ Non Matching When Running Multiple Suites
 *** Keywords ***
 Run And Check Include And Exclude
     [Arguments]    ${params}    @{tests}
-    Run Tests    ${params} ${ESCAPES}    @{DATA SOURCES}
+    Run Tests    ${params} ${ESCAPES}    ${DATA SOURCES}
     Stderr Should Be Empty
     Should Contain Tests    ${SUITE}    @{tests}
 
 Run And Check Error
     [Arguments]    ${params}    ${filter_msg}    ${suite name}=Include And Exclude
-    Run Tests Without Processing Output    ${params} ${ESCAPES}    @{DATA SOURCES}
+    Run Tests Without Processing Output    ${params} ${ESCAPES}    ${DATA SOURCES}
     Stderr Should Be Equal To    SEPARATOR=
     ...    [ ERROR ] Suite '${suite name}' contains no tests with ${filter_msg}.
     ...    ${USAGE TIP}\n

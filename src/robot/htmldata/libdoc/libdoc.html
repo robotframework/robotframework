@@ -39,10 +39,13 @@
         parseTemplates();
         document.title = libdoc.name;
         renderTemplate('base', libdoc, $('body'));
-        if (libdoc.inits.length > 0) {
+        if (libdoc.inits.length) {
             renderTemplate('importing', libdoc);
         }
         renderTemplate('shortcuts', libdoc);
+        if (libdoc.contains_tags) {
+            renderTemplate('tags', libdoc);
+        }
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
         scrollToHash();
@@ -82,6 +85,13 @@
         }
     }
 
+    function tagSearch(tag) {
+        var include = {tags: true, tagsExact: true};
+        markMatches(tag, include);
+        highlightMatches(tag, include);
+        $('#keywords-container').find('.kw-row').addClass('hide-unmatched');
+    }
+
     function doSearch() {
         var string = $('#search-string').val();
         var include = getIncludesAndDisableIfOnlyOneLeft();
@@ -98,38 +108,52 @@
         var name = $('#include-name');
         var args = $('#include-args');
         var doc = $('#include-doc');
+        var tags = $('#include-tags');
         var include = {name: name.prop('checked'),
                        args: args.prop('checked'),
-                       doc: doc.prop('checked')};
-        if ((!include.name) && (!include.args)) {
+                       doc: doc.prop('checked'),
+                       tags: !!tags.prop('checked')};
+        if ((!include.name) && (!include.args) && (!include.doc)) {
+            tags.prop('disabled', true);
+        } else if ((!include.name) && (!include.args) && (!include.tags)) {
             doc.prop('disabled', true);
-        } else if ((!include.name) && (!include.doc)) {
+        } else if ((!include.name) && (!include.doc) && (!include.tags)) {
             args.prop('disabled', true);
-        } else if ((!include.args) && (!include.doc)) {
+        } else if ((!include.args) && (!include.doc) && (!include.tags)) {
             name.prop('disabled', true);
         } else {
             name.prop('disabled', false);
             args.prop('disabled', false);
             doc.prop('disabled', false);
+            tags.prop('disabled', false);
         }
         return include;
     }
 
-    function markMatches(string, include) {
-        var regexp = new RegExp(util.regexpEscape(string), 'i');
-        var result = {};
+    function markMatches(pattern, include) {
+        pattern = util.regexpEscape(pattern);
+        if (include.tagsExact) {
+            pattern = '^' + pattern + '$';
+        }
+        var regexp = new RegExp(pattern, 'i');
+        var test = regexp.test.bind(regexp);
+        var result = {contains_tags: libdoc.contains_tags};
         var matchCount = 0;
         result.keywords = util.map(libdoc.keywords, function (kw) {
             kw = $.extend({}, kw);
-            kw.matched = (include.name && regexp.test(kw.name) ||
-                          include.args && regexp.test(kw.args) ||
-                          include.doc && regexp.test($(kw.doc).text()));
+            kw.matched = (include.name && test(kw.name) ||
+                          include.args && test(kw.args) ||
+                          include.doc && test($(kw.doc).text()) ||
+                          include.tags && util.any(util.map(kw.tags, test)));
             if (kw.matched)
                 matchCount++;
             return kw
         });
         renderTemplate('shortcuts', result);
         renderTemplate('keywords', result);
+        if (libdoc.contains_tags) {
+            renderTemplate('tags', libdoc);
+        }
         var ending = matchCount != 1 ? 's.' : '.';
         $('#match-count').show().text(matchCount + ' matched keyword' + ending);
         $('#altogether-count').hide();
@@ -149,6 +173,16 @@
         }
         if (include.doc) {
             keywords.find('.doc').highlight(string);
+        }
+        if (include.tags) {
+            var matches = keywords.find('.tags').find('a').add(
+                    $('#tags-container').find('a'));
+            if (include.tagsExact) {
+                matches = matches.filter(function (index, tag) {
+                    return $(tag).text().toUpperCase() == string.toUpperCase();
+                });
+            }
+            matches.highlight(string);
         }
     }
 
@@ -176,6 +210,9 @@
     function resetKeywords() {
         renderTemplate('shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
+        if (libdoc.contains_tags) {
+            renderTemplate('tags', libdoc);
+        }
         $('#match-count').hide();
         $('#altogether-count').show();
     }
@@ -210,6 +247,7 @@
     </div>
     <div id="importing-container"></div>
     <div id="shortcuts-container"></div>
+    <div id="tags-container"></div>
     <div id="keywords-container"></div>
     <div id="footer-container"></div>
     <form id="search" action="javascript:void(0)">
@@ -224,6 +262,10 @@
                 <label for="include-args">Arguments</label>
                 <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
                 <label for="include-doc">Documentation</label>
+                {{if libdoc.contains_tags}}
+                <input type="checkbox" id="include-tags" onclick="doSearch()" checked>
+                <label for="include-tags">Tags</label>
+                {{/if}}
             </fieldset>
             <input type="checkbox" id="hide-unmatched" onclick="setMatchVisibility()" checked>
             <label for="hide-unmatched">Hide unmatched keywords</label>
@@ -247,7 +289,11 @@
         </tr>
         {{each inits}}
         <tr class="kw-row">
-            <td class="args">${$value.args}</td>
+            <td class="args">
+            {{each args}}
+              <span>${$value}</span>{{if $index < args.length-1}}, {{/if}}
+            {{/each}}
+            </td>
             <td class="doc">{{html $value.doc}}</td>
         </tr>
         {{/each}}
@@ -266,23 +312,58 @@
     </div>
 </script>
 
+<script type="text/x-jquery-tmpl" id="tags-template">
+    <h2 id="Tags">Tags</h2>
+    <div class='shortcuts'>
+        {{each all_tags}}
+        <a href="javascript:tagSearch('${$value}')"
+           title="Show tests with this tag">${$value}</a> &middot;
+        {{/each}}
+        <a href="javascript:resetKeywords()" class="normal-first-letter"
+           title="Show all tests">[Reset]</a>
+    </div>
+</script>
+
 <script type="text/x-jquery-tmpl" id="keywords-template">
     <h2 id="Keywords">Keywords</h2>
     <table border="1" class="keywords">
         <tr>
             <th class="kw">Keyword</th>
             <th class="args">Arguments</th>
+            {{if libdoc.contains_tags}}
+            <th class="tags">Tags</th>
+            {{/if}}
             <th class="doc">Documentation</th>
         </tr>
         {{each keywords}}
-        <tr class="kw-row {{if $value.matched === false}}no-{{/if}}match">
-            <td class="kw"><a name="${encodeURIComponent($value.name)}"></a>${$value.name}</td>
-            <td class="args">${$value.args}</td>
-            <td class="doc">{{html $value.doc}}</td>
-        </tr>
+            {{tmpl($value) 'keyword-template'}}
         {{/each}}
     </table>
 </script>
+
+<script type="text/x-jquery-tmpl" id="keyword-template">
+    <tr class="kw-row {{if matched === false}}no-{{/if}}match">
+        <td class="kw">
+            <a name="${name}" href="#${encodeURIComponent(name)}"
+               title="Link to this keyword">${name}</a>
+        </td>
+        <td class="args">
+            {{each args}}
+            <span>${$value}</span>{{if $index < args.length-1}}, {{/if}}
+            {{/each}}
+        </td>
+        {{if libdoc.contains_tags}}
+        <td class="tags">
+            {{each tags}}
+            <a href="javascript:tagSearch('${$value}')"
+               title="Show tests with this tag">${$value}</a>{{if $index < tags.length-1}}, {{/if}}
+            {{/each}}
+        </td>
+        {{/if}}
+        <td class="doc">{{html doc}}</td>
+    </tr>
+</script>
+
 
 <script type="text/x-jquery-tmpl" id="footer-template">
     <p class="footer">

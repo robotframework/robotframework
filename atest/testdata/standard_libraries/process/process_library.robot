@@ -10,7 +10,7 @@ Library Namespace should be global
 
 Error in exit code and stderr output
     ${result}=    Run Python Process    1/0
-    Result should match    ${result}    stderr=*ZeroDivisionError: integer division or modulo by zero*    rc=1
+    Result should match    ${result}    stderr=*ZeroDivisionError:*    rc=1
 
 Start And Wait Process
     ${handle}=    Start Python Process    import time;time.sleep(0.1)
@@ -19,30 +19,29 @@ Start And Wait Process
     Process Should Be Stopped    ${handle}
 
 Change Current Working Directory
-    ${result}=    Run Process    python    -c    import os; print os.path.abspath(os.curdir);    cwd=.
-    ${result2}=    Run Process    python    -c    import os; print os.path.abspath(os.curdir);    cwd=..
+    ${result}=    Run Process    python    -c    import os; print(os.path.abspath(os.curdir))    cwd=.
+    ${result2}=    Run Process    python    -c    import os; print(os.path.abspath(os.curdir))    cwd=..
     Should Not Be Equal    ${result.stdout}    ${result2.stdout}
 
 Running a process in a shell
-    ${result}=    Run Process    python -c "print 'hello'"    shell=True
+    ${result}=    Run Process    python -c "print('hello')"    shell=True
     Result should equal    ${result}    stdout=hello
-    ${result}=    Run Process    python -c "print 'hello'"    shell=0
+    ${result}=    Run Process    python -c "print('hello')"    shell=0
     Result should equal    ${result}    stdout=hello
-    Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=${False}
-    Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=${0}
-    Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=False
-    Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=false
+    Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=${False}
+    Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=${0}
+    Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=False
+    Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=false
 
 Input things to process
-    Start Process    python -c "print 'inp %s' % raw_input()"    shell=True
+    Start Process    python -c "print('inp %s' % input())"    shell=True
     ${process}=    Get Process Object
-    Log   ${process.stdin.write("some input\n")}
+    Log   ${process.stdin.write(b"42\n")}
     Log   ${process.stdin.flush()}
     ${result}=    Wait For Process
-    Should Match    ${result.stdout}    *inp some input*
+    Should Match    ${result.stdout}    *inp 42*
 
 Get process id
-    Check Precondition    not (sys.platform.startswith('java') and sys.version_info < (2, 7))
     ${handle}=    Some process
     ${pid}=    Get Process Id    ${handle}
     Should Not Be Equal   ${pid}   ${None}

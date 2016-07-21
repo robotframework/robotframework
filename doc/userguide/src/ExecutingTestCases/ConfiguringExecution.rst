@@ -17,7 +17,7 @@ Selecting test cases
 
 Robot Framework offers several command line options for selecting
 which test cases to execute. The same options also work when
-post-processing outputs with the ``rebot`` tool.
+post-processing outputs with Rebot_.
 
 By test suite and test case names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -118,8 +118,8 @@ iteratively fix failing test cases.
 
 ::
 
-  pybot tests                             # first execute all tests
-  pybot --rerunfailed output.xml tests    # then re-execute failing
+  robot tests                             # first execute all tests
+  robot --rerunfailed output.xml tests    # then re-execute failing
 
 Behind the scenes this option selects the failed tests as they would have been
 selected individually with the :option:`--test` option. It is possible to further
@@ -155,10 +155,10 @@ also in this case. As a result normal outputs are created but show zero
 executed tests. The same option can be used also to alter the behavior when
 an empty directory or a test case file containing no tests is executed.
 
-Similar situation can occur also when processing output files with rebot_.
+Similar situation can occur also when processing output files with Rebot_.
 It is possible that no test match the used filtering criteria or that
 the output file contained no tests to begin with. By default executing
-``rebot`` fails in these cases, but it has a separate
+Rebot fails in these cases, but it has a separate
 :option:`--ProcessEmptySuite` option that can be used to alter the behavior.
 In practice this option works the same way as :option:`--RunEmptySuite` when
 running tests.
@@ -205,15 +205,15 @@ they start to pass.
 
 Criticality set when tests are
 executed is not stored anywhere. If you want to keep same criticality
-when `post-processing outputs`_ with ``rebot``, you need to
+when `post-processing outputs`_ with Rebot, you need to
 use :option:`--critical` and/or :option:`--noncritical` also with it::
 
   # Use rebot to create new log and report from the output created during execution
-  pybot --critical regression --outputdir all my_tests.html
+  robot --critical regression --outputdir all tests.robot
   rebot --name Smoke --include smoke --critical regression --outputdir smoke all/output.xml
 
   # No need to use --critical/--noncritical when no log or report is created
-  jybot --log NONE --report NONE my_tests.html
+  robot --log NONE --report NONE tests.robot
   rebot --critical feature1 output.xml
 
 __ `By tag names`_
@@ -228,7 +228,7 @@ When Robot Framework parses test data, `test suite names are created
 from file and directory names`__. The name of the top-level test suite
 can, however, be overridden with the command line option
 :option:`--name (-N)`. Underscores in the given name are converted to
-spaces automatically, and words in the name capitalized.
+spaces automatically.
 
 __ `Test suite name and documentation`_
 
@@ -260,83 +260,112 @@ The command line option :option:`--settag (-G)` can be used to set
 the given tag to all executed test cases. This option may be used
 several times to set multiple tags.
 
-Adjusting library search path
------------------------------
+.. _module search path:
 
-When a `test library is taken into use`__, Robot Framework uses the Python
-or Jython interpreter to import a module implementing the library from
-the system. The location where these modules are searched from is called
-``PYTHONPATH``, and when running tests on Jython or using the jar distribution,
-also Java ``CLASSPATH`` is used.
+Configuring where to search libraries and other extensions
+----------------------------------------------------------
 
-Adjusting the library search path so that libraries are found is
-a requirement for successful test execution. In addition to
-find test libraries, the search path is also used to find `listeners
-set on the command line`__. There are various ways to alter
-``PYTHONPATH`` and ``CLASSPATH``, but regardless of the selected approach, it is
-recommended to use a `custom start-up script`__.
+When Robot Framework imports a `test library`__, `listener`__, or some other
+Python based extension, it uses the Python interpreter to import the module
+containing the extension from the system. The list of locations where modules
+are looked for is called *the module search path*, and its contents can be
+configured using different approaches explained in this section.
+When importing Java based libraries or other extensions on Jython, Java
+classpath is used in addition to the normal module search path.
 
-__ `Taking test libraries into use`_
+Robot Framework uses Python's module search path also when importing `resource
+and variable files`_ if the specified path does not match any file directly.
+
+The module search path being set correctly so that libraries and other
+extensions are found is a requirement for successful test execution. If
+you need to customize it using approaches explained below, it is often
+a good idea to create a custom `start-up script`_.
+
+__ `Specifying library to import`_
 __ `Setting listeners`_
-__ `Creating start-up scripts`_
 
-Locations automatically in ``PYTHONPATH``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Locations automatically in module search path
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Python and Jython installations put their own library directories into
-``PYTHONPATH`` automatically. This means that test libraries `packaged
-using Python's own packaging system`__ are automatically installed
-into a location that is in the library search path. Robot Framework
-also puts the directory containing its `standard libraries`_ and the
-directory where tests are executed from into ``PYTHONPATH``.
+Python interpreters have their own standard library as well as a directory
+where third party modules are installed automatically in the module search
+path. This means that test libraries `packaged using Python's own packaging
+system`__ are automatically installed so that they can be imported without
+any additional configuration.
 
 __ `Packaging libraries`_
 
-Setting ``PYTHONPATH``
-~~~~~~~~~~~~~~~~~~~~~~
+``PYTHONPATH``, ``JYTHONPATH`` and ``IRONPYTHONPATH``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are several ways to alter ``PYTHONPATH`` in the system, but the most
-common one is setting an environment variable with the same name
-before the test execution. Jython actually does not use ``PYTHONPATH``
-environment variable normally, but Robot Framework ensures that
-locations listed in it are added into the library search path
-regardless of the interpreter.
+Python, Jython and IronPython read additional locations to be added to
+the module search path from ``PYTHONPATH``, ``JYTHONPATH`` and
+``IRONPYTHONPATH`` environment variables, respectively. If you want to
+specify more than one location in any of them, you need to separate
+the locations with a colon on UNIX-like machines (e.g.
+`/opt/libs:$HOME/testlibs`) and with a semicolon on Windows (e.g.
+`D:\libs;%HOMEPATH%\testlibs`).
 
-Setting ``CLASSPATH``
-~~~~~~~~~~~~~~~~~~~~~
+Environment variables can be configured permanently system wide or so that
+they affect only a certain user. Alternatively they can be set temporarily
+before running a command, something that works extremely well in custom
+`start-up scripts`_.
 
-``CLASSPATH`` is used with Jython or when using the standalone jar.
+.. note:: Prior to Robot Framework 2.9, contents of ``PYTHONPATH`` environment
+          variable were added to the module search path by the framework itself
+          when running on Jython and IronPython. Nowadays that is not done
+          anymore and ``JYTHONPATH`` and ``IRONPYTHONPATH`` must be used with
+          these interpreters.
 
-When using Jython the most common way to alter ``CLASSPATH`` is setting an
-environment variable similarly as with ``PYTHONPATH``. Note that instead of
-``CLASSPATH``, it is always possible to use ``PYTHONPATH`` with Jython, even with
-libraries and listeners implemented with Java.
+Using `--pythonpath` option
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When using the standalone jar distribution, the ``CLASSPATH`` has to be set a
-bit differently, due to the fact that `java -jar` command does not read
-the ``CLASSPATH`` environment variable. In this case, there are two different
-ways to configure ``CLASSPATH``, which are shown in the examples below::
+Robot Framework has a separate command line option :option:`--pythonpath (-P)`
+for adding locations to the module search path. Although the option name has
+the word Python in it, it works also on Jython and IronPython.
 
-  java -cp lib/testlibrary.jar:lib/app.jar:robotframework-2.7.1.jar org.robotframework.RobotFramework example.txt
-  java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-2.7.1.jar example.txt
-
-Using --pythonpath option
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Robot Framework also has a separate command line option
-:option:`--pythonpath (-P)` for adding directories or archives into
-``PYTHONPATH``. Multiple paths can be given by separating them with a
-colon (:) or using this option several times. The given path can also be
-a glob pattern matching multiple paths, but then it normally must be
-escaped__.
+Multiple locations can be given by separating them with a colon, regardless
+the operating system, or by using this option several times. The given path
+can also be a glob pattern matching multiple paths, but then it typically
+needs to be escaped__.
 
 __ `Escaping complicated characters`_
 
 Examples::
 
-   --pythonpath libs/
+   --pythonpath libs
    --pythonpath /opt/testlibs:mylibs.zip:yourlibs
    --pythonpath mylib.jar --pythonpath lib/STAR.jar --escape star:STAR
+
+Configuring `sys.path` programmatically
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Python interpreters store the module search path they use as a list of strings
+in `sys.path <https://docs.python.org/2/library/sys.html#sys.path>`__
+attribute. This list can be updated dynamically during execution, and changes
+are taken into account next time when something is imported.
+
+Java classpath
+~~~~~~~~~~~~~~
+
+When libraries implemented in Java are imported with Jython, they can be
+either in Jython's normal module search path or in `Java classpath`__. The most
+common way to alter classpath is setting the ``CLASSPATH`` environment variable
+similarly as ``PYTHONPATH``, ``JYTHONPATH`` or ``IRONPYTHONPATH``.
+Alternatively it is possible to use Java's :option:`-cp` command line option.
+This option is not exposed to the ``robot`` `runner script`_, but it is
+possible to use it with Jython by adding :option:`-J` prefix like
+`jython -J-cp example.jar -m robot.run tests.robot`.
+
+When using the standalone JAR distribution, the classpath has to be set a
+bit differently, due to the fact that `java -jar` command does support
+the ``CLASSPATH`` environment variable nor the :option:`-cp` option. There are
+two different ways to configure the classpath::
+
+  java -cp lib/testlibrary.jar:lib/app.jar:robotframework-2.9.jar org.robotframework.RobotFramework tests.robot
+  java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-2.9.jar tests.robot
+
+__ https://docs.oracle.com/javase/8/docs/technotes/tools/findingclasses.html
 
 Setting variables
 -----------------
@@ -410,27 +439,127 @@ what was randomized and what seed was used.
 
 Examples::
 
-    pybot --randomize tests my_test.txt
-    pybot --randomize all:12345 path/to/tests
+    robot --randomize tests my_test.robot
+    robot --randomize all:12345 path/to/tests
 
 __ `Free test suite metadata`_
 
+.. _pre-run modifier:
+
+Programmatic modification of test data
+--------------------------------------
+
+If the provided built-in features to modify test data before execution
+are not enough, Robot Framework 2.9 and newer provide a possible to do
+custom modifications programmatically. This is accomplished by creating
+a model modifier and activating it using the :option:`--prerunmodifier`
+option.
+
+Model modifiers should be implemented as visitors that can traverse through
+the executable test suite structure and modify it as needed. The visitor
+interface is explained as part of the `Robot Framework API documentation
+<visitor interface_>`_, and it possible to modify executed `test suites
+<running.TestSuite_>`_, `test cases <running.TestCase_>`_ and `keywords
+<running.Keyword_>`_ using it. The example below ought to give an idea of
+how model modifiers can be used and how powerful this functionality is.
+
+.. sourcecode:: python
+
+   ../api/code_examples/select_every_xth_test.py
+
+When a model modifier is taken into use on the command line using the
+:option:`--prerunmodifier` option, it can be specified either as a name of
+the modifier class or a path to the modifier file. If the modifier is given
+as a class name, the module containing the class must be in the `module search
+path`_, and if the module name is different than the class name, the given
+name must include both like `module.ModifierClass`. If the modifier is given
+as a path, the class name must be same as the file name. For most parts this
+works exactly like when `specifying a test library to import`__.
+
+If a modifier requires arguments, like the example above does, they can be
+specified after the modifier name or path using either a colon (`:`) or a
+semicolon (`;`) as a separator. If both are used in the value, the one first
+is considered the actual separator.
+
+For example, if the above model modifier would be in a file
+:file:`SelectEveryXthTest.py`, it could be used like this::
+
+    # Specify the modifier as a path. Run every second test.
+    robot --prerunmodifier path/to/SelectEveryXthTest.py:2 tests.robot
+
+    # Specify the modifier as a name. Run every third test, starting from the second.
+    # SelectEveryXthTest.py must be in the module search path.
+    robot --prerunmodifier SelectEveryXthTest:3:1 tests.robot
+
+If more than one model modifier is needed, they can be specified by using
+the :option:`--prerunmodifier` option multiple times. If similar modifying
+is needed before creating results, `programmatic modification of results`_
+can be enabled using the :option:`--prerebotmodifier` option.
+
+__ `Specifying library to import`_
+
 Controlling console output
 --------------------------
+
+There are various command line options to control how test execution is
+reported on the console.
+
+Console output type
+~~~~~~~~~~~~~~~~~~~
+
+The overall console output type is set with the :option:`--console` option.
+It supports the following case-insensitive values:
+
+`verbose`
+    Every test suite and test case is reported individually. This is
+    the default.
+
+`dotted`
+    Only show `.` for passed test, `f` for failed non-critical tests, `F`
+    for failed critical tests, and `x` for tests which are skipped because
+    `test execution exit`__. Failed critical tests are listed separately
+    after execution. This output type makes it easy to see are there any
+    failures during execution even if there would be a lot of tests.
+
+`quiet`
+    No output except for `errors and warnings`_.
+
+`none`
+    No output whatsoever. Useful when creating a custom output using,
+    for example, listeners_.
+
+__ `Stopping test execution gracefully`_
+
+Separate convenience options :option:`--dotted (-.)` and :option:`--quiet`
+are shortcuts for `--console dotted` and `--console quiet`, respectively.
+
+Examples::
+
+    robot --console quiet tests.robot
+    robot --dotted tests.robot
+
+.. note:: :option:`--console`, :option:`--dotted` and :option:`--quiet`
+          are new options in Robot Framework 2.9. Prior to that the output
+          was always the same as in the current `verbose` mode.
 
 Console width
 ~~~~~~~~~~~~~
 
 The width of the test execution output in the console can be set using
-the option :option:`--monitorwidth (-W)`. The default width is 78 characters.
+the option :option:`--consolewidth (-W)`. The default width is 78 characters.
 
 .. tip:: On many UNIX-like machines you can use handy `$COLUMNS`
-         variable like `--monitorwidth $COLUMNS`.
+         environment variable like `--consolewidth $COLUMNS`.
+
+.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
+          :option:`--monitorwidth` option that was first deprecated and is
+          nowadays removed. The short option :option:`-W` works the same way
+          in all versions.
 
 Console colors
 ~~~~~~~~~~~~~~
 
-The :option:`--monitorcolors (-C)` option is used to control whether
+The :option:`--consolecolors (-C)` option is used to control whether
 colors should be used in the console output. Colors are implemented
 using `ANSI colors`__ except on Windows where, by default, Windows
 APIs are used instead. Accessing these APIs from Jython is not possible,
@@ -453,18 +582,23 @@ This option supports the following case-insensitive values:
 `off`
     Colors are disabled.
 
+.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
+          :option:`--monitorcolors` option that was first deprecated and is
+          nowadays removed. The short option :option:`-C` works the same way
+          in all versions.
+
 __ http://en.wikipedia.org/wiki/ANSI_escape_code
 
 Console markers
 ~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.7, special markers `.` (success) and
-`F` (failure) are shown on the console when top level keywords in
-test cases end. The markers allow following the test execution in high level,
-and they are erased when test cases end.
+`F` (failure) are shown on the console when using the `verbose output`__
+and top level keywords in test cases end. The markers allow following
+the test execution in high level, and they are erased when test cases end.
 
 Starting from Robot Framework 2.7.4, it is possible to configure when markers
-are used with :option:`--monitormarkers (-K)` option. It supports the following
+are used with :option:`--consolemarkers (-K)` option. It supports the following
 case-insensitive values:
 
 `auto`
@@ -477,10 +611,18 @@ case-insensitive values:
 `off`
     Markers are disabled.
 
+.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
+          :option:`--monitormarkers` option that was first deprecated and is
+          nowadays removed. The short option :option:`-K` works the same way
+          in all versions.
+
+__ `Console output type`_
+
 Setting listeners
 -----------------
 
-So-called listeners_ can be used for monitoring the test
-execution. They are taken into use with the command line option
-:option:`--listener`, and the specified listeners must be in the `module
-search path`_ similarly as test libraries.
+Listeners_ can be used to monitor the test execution. When they are taken into
+use from the command line, they are specified using the :option:`--listener`
+command line option. The value can either be a path to a listener or
+a listener name. See the `Listener interface`_ section for more details
+about importing listeners and using them in general.

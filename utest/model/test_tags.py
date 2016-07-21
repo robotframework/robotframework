@@ -1,9 +1,12 @@
 import unittest
-import sys
 
 from robot.utils.asserts import assert_equal, assert_true, assert_false
-from robot import utils
+from robot.utils import seq2str, IRONPYTHON, PY2, PY3
 from robot.model.tags import *
+
+
+if PY3:
+    unicode = str
 
 
 class TestTags(unittest.TestCase):
@@ -18,8 +21,11 @@ class TestTags(unittest.TestCase):
         for inp in [['T 1', 't2', 't_3'],
                     ('t2', 'T 1', 't_3'),
                     ('t2', 'T 2', '__T__2__', 'T 1', 't1', 't_1', 't_3', 't3'),
-                    ('', 'T 1', '', 't2', 't_3', 'NONE')]:
+                    ('', 'T 1', '', 't2', 't_3', 'NONE', 'None')]:
             assert_equal(list(Tags(inp)), ['T 1', 't2', 't_3'])
+
+    def test_init_with_non_strings(self):
+        assert_equal(list(Tags([2, True, None])), ['2', 'True'])
 
     def test_init_with_none(self):
         assert_equal(list(Tags(None)), [])
@@ -90,13 +96,14 @@ class TestTags(unittest.TestCase):
         assert_equal(unicode(Tags(['y', "X'X", 'Y'])), "[X'X, y]")
         assert_equal(unicode(Tags([u'\xe4', 'a'])), u'[a, \xe4]')
 
-    def test_str(self):
-        assert_equal(str(Tags()), '[]')
-        assert_equal(str(Tags(['y', "X'X"])), "[X'X, y]")
-        assert_equal(str(Tags([u'\xe4', 'a'])), '[a, \xc3\xa4]')
+    if PY2:
+        def test_str(self):
+            assert_equal(str(Tags()), '[]')
+            assert_equal(str(Tags(['y', "X'X"])), "[X'X, y]")
+            assert_equal(str(Tags([u'\xe4', 'a'])), '[a, \xc3\xa4]')
 
     def test_repr(self):
-        for tags in ([], ['y', "X'X"], [u'\xe4', 'a']):
+        for tags in ([], [u'y', u"X'X"], [u'\xe4', u'a']):
             assert_equal(repr(Tags(tags)), repr(sorted(tags)))
 
     def test__add__list(self):
@@ -219,7 +226,7 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match(['x', 'y']))
         assert_true(patterns.match(['x', 'Y', 'z']))
 
-    if not utils.IRONPYTHON:  # eval below sometimes fails on IronPython
+    if not IRONPYTHON:  # eval below sometimes fails on IronPython
 
         def test_ands_and_ors(self):
             for pattern in AndOrPatternGenerator(max_length=5):
@@ -301,9 +308,34 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(all(not patterns.match(['a', 'b', c]) for c in 'cdef'))
         assert_true(patterns.match(['a', 'x']))
 
+    def test_starts_with_not(self):
+        patterns = TagPatterns('NOTe')
+        assert_true(patterns.match('d'))
+        assert_false(patterns.match('e'))
+        patterns = TagPatterns('NOT e OR f')
+        assert_true(patterns.match('d'))
+        assert_false(patterns.match('e'))
+        assert_false(patterns.match('f'))
+
+    def test_str(self):
+        for pattern in ['a', 'NOT a', 'a NOT b', 'a AND b', 'a OR b', 'a*',
+                        'a OR b NOT c OR d AND e OR ??']:
+            assert_equal(str(TagPatterns(pattern)),
+                         '[%s]' % pattern)
+            assert_equal(str(TagPatterns(pattern.replace(' ', ''))),
+                         '[%s]' % pattern)
+            assert_equal(str(TagPatterns([pattern, 'x', pattern, 'y'])),
+                         '[%s, x, y]' % pattern)
+
+    def test_unicode(self):
+        pattern = u'\xe4 OR \xe5 NOT \xe6 AND \u2603 OR ??'
+        expected = '[%s]' % pattern
+        assert_equal(unicode(TagPatterns(pattern)), expected)
+        assert_equal(unicode(TagPatterns(pattern.replace(' ', ''))), expected)
+
     def test_seq2str(self):
         patterns = TagPatterns([u'is\xe4', u'\xe4iti'])
-        assert_equal(utils.seq2str(patterns), u"'is\xe4' and '\xe4iti'")
+        assert_equal(seq2str(patterns), u"'is\xe4' and '\xe4iti'")
 
 
 class AndOrPatternGenerator(object):

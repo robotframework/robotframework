@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 
 from robot.utils.markuputils import html_escape, html_format, attribute_escape
 from robot.utils.htmlformatters import TableFormatter
@@ -16,20 +16,20 @@ def assert_escape_and_format(inp, exp_escape=None, exp_format=None):
     exp_format = '<p>%s</p>' % exp_format.replace('\n', ' ')
     escape = html_escape(inp)
     format = html_format(inp)
-    assert_equals(escape, exp_escape,
+    assert_equal(escape, exp_escape,
                   'ESCAPE:\n%r   =!\n%r' % (escape, exp_escape), values=False)
-    assert_equals(format, exp_format,
+    assert_equal(format, exp_format,
                   'FORMAT:\n%r   =!\n%r' % (format, exp_format), values=False)
 
 def assert_format(inp, exp=None, p=False):
     exp = exp if exp is not None else inp
     if p:
         exp = '<p>%s</p>' % exp
-    assert_equals(html_format(inp), exp)
+    assert_equal(html_format(inp), exp)
 
 def assert_escape(inp, exp=None):
     exp = exp if exp is not None else inp
-    assert_equals(html_escape(inp), exp)
+    assert_equal(html_escape(inp), exp)
 
 
 class TestHtmlEscape(unittest.TestCase):
@@ -721,7 +721,7 @@ class TestFormatTable(unittest.TestCase):
 <td>3</td>
 </tr>
 </table>'''
-        assert_equals(_format_table(inp), exp)
+        assert_equal(_format_table(inp), exp)
 
     def test_multi_row_table(self):
         inp = [['1.1','1.2'], ['2.1','2.2'], ['3.1','3.2']]
@@ -739,7 +739,7 @@ class TestFormatTable(unittest.TestCase):
 <td>3.2</td>
 </tr>
 </table>'''
-        assert_equals(_format_table(inp), exp)
+        assert_equal(_format_table(inp), exp)
 
     def test_fix_ragged_table(self):
         inp = [['1.1','1.2','1.3'], ['2.1'], ['3.1','3.2']]
@@ -760,7 +760,7 @@ class TestFormatTable(unittest.TestCase):
 <td></td>
 </tr>
 </table>'''
-        assert_equals(_format_table(inp), exp)
+        assert_equal(_format_table(inp), exp)
 
     def test_th(self):
         inp = [['=h1.1=', '=  h  1.2   ='], ['== _h2.1_ =', '= not h 2.2']]
@@ -774,29 +774,29 @@ class TestFormatTable(unittest.TestCase):
 <td>= not h 2.2</td>
 </tr>
 </table>'''
-        assert_equals(_format_table(inp), exp)
+        assert_equal(_format_table(inp), exp)
 
 
 class TestAttributeEscape(unittest.TestCase):
 
     def test_nothing_to_escape(self):
         for inp in ['', 'whatever', 'nothing here, move along']:
-            assert_equals(attribute_escape(inp), inp)
+            assert_equal(attribute_escape(inp), inp)
 
     def test_html_entities(self):
         for inp, exp in [('"', '&quot;'), ('<', '&lt;'), ('>', '&gt;'),
                          ('&', '&amp;'), ('&<">&', '&amp;&lt;&quot;&gt;&amp;'),
                          ('Sanity < "check"', 'Sanity &lt; &quot;check&quot;')]:
-            assert_equals(attribute_escape(inp), exp)
+            assert_equal(attribute_escape(inp), exp)
 
     def test_newlines_and_tabs(self):
         for inp, exp in [('\n', '&#10;'), ('\t', '&#09;'), ('"\n\t"', '&quot;&#10;&#09;&quot;'),
                          ('N1\nN2\n\nT1\tT3\t\t\t', 'N1&#10;N2&#10;&#10;T1&#09;T3&#09;&#09;&#09;')]:
-            assert_equals(attribute_escape(inp), exp)
+            assert_equal(attribute_escape(inp), exp)
 
     def test_illegal_chars_in_xml(self):
         for c in u'\x00\x08\x0B\x0C\x0E\x1F\uFFFE\uFFFF':
-            assert_equals(attribute_escape(c), '')
+            assert_equal(attribute_escape(c), '')
 
 
 if __name__ == '__main__':

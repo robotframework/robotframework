@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,6 +15,8 @@
 
 import re
 
+from robot.utils import py2to3
+
 from .comments import CommentCache, Comments
 from .settings import Documentation, MetadataList
 
@@ -28,6 +31,7 @@ class Populator(object):
         raise NotImplementedError
 
 
+@py2to3
 class NullPopulator(Populator):
 
     def add(self, row):
@@ -85,13 +89,12 @@ class _TablePopulator(Populator):
 class SettingTablePopulator(_TablePopulator):
 
     def _get_populator(self, row):
-        row.handle_old_style_metadata()
         setter = self._table.get_setter(row.head)
         if not setter:
             return NullPopulator()
-        if setter.im_class is Documentation:
+        if isinstance(setter.__self__, Documentation):
             return DocumentationPopulator(setter)
-        if setter.im_class is MetadataList:
+        if isinstance(setter.__self__, MetadataList):
             return MetadataPopulator(setter)
         return SettingPopulator(setter)
 
@@ -214,7 +217,7 @@ class _TestCaseUserKeywordPopulator(Populator):
             setter = self._setting_setter(row)
             if not setter:
                 return NullPopulator()
-            if setter.im_class is Documentation:
+            if isinstance(setter.__self__, Documentation):
                 return DocumentationPopulator(setter)
             return SettingPopulator(setter)
         if row.starts_for_loop():

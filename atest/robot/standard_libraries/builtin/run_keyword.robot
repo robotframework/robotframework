@@ -1,23 +1,22 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword.robot
-Force Tags        regression      jybot    pybot
+Suite Setup       Run Tests    --listener ${CURDIR}${/}listener_printing_start_end_kw.py    standard_libraries/builtin/run_keyword.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***
 Run Keyword
     ${tc} =    Check test Case    ${TEST NAME}
     Check Run Keyword    ${tc.kws[0]}    BuiltIn.Log    This is logged with Run Keyword
-    Keyword Data Should Be    ${tc.kws[1].kws[0]}    BuiltIn.No Operation
+    Check Keyword Data    ${tc.kws[1].kws[0]}    BuiltIn.No Operation
     Check Run Keyword    ${tc.kws[2]}    BuiltIn.Log Many    1    2    3    4    5
     Check Run Keyword    ${tc.kws[4]}    BuiltIn.Log    Run keyword with variable: Log
     Check Run Keyword    ${tc.kws[6]}    BuiltIn.Log Many    one    two
 
 Run Keyword Returning Value
     ${tc} =    Check test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    BuiltIn.Run Keyword    \${ret}    Set Variable, hello world
-    Keyword Data Should Be    ${tc.kws[0].kws[0]}    BuiltIn.Set Variable    args=hello world
-    Keyword Data Should Be    ${tc.kws[2]}    BuiltIn.Run Keyword    \${ret}    Evaluate, 1+2
-    Keyword Data Should Be    ${tc.kws[2].kws[0]}    BuiltIn.Evaluate    args=1+2
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Run Keyword    \${ret}    Set Variable, hello world
+    Check Keyword Data    ${tc.kws[0].kws[0]}    BuiltIn.Set Variable    args=hello world
+    Check Keyword Data    ${tc.kws[2]}    BuiltIn.Run Keyword    \${ret}    Evaluate, 1+2
+    Check Keyword Data    ${tc.kws[2].kws[0]}    BuiltIn.Evaluate    args=1+2
 
 Run Keyword With Arguments That Needs To Be Escaped
     ${tc} =    Check test Case    ${TEST NAME}
@@ -54,6 +53,19 @@ Run Keyword With KW Timeout
 
 Run Keyword With Invalid Keyword Name
     Check Test Case    ${TEST NAME}
+
+Stdout and stderr are not captured when running Run Keyword
+    ${expected} =    Catenate    SEPARATOR=\n
+    ...    start keyword BuiltIn.Run Keyword
+    ...    start keyword My UK
+    ...    start keyword BuiltIn.Run Keyword
+    ...    start keyword BuiltIn.Log
+    ...    end keyword BuiltIn.Log
+    ...    end keyword BuiltIn.Run Keyword
+    ...    end keyword My UK
+    ...    end keyword BuiltIn.Run Keyword
+    Check Stdout Contains    ${expected}
+    Check Stderr Contains    ${expected}
 
 *** Keywords ***
 Check Run Keyword

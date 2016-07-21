@@ -12,9 +12,13 @@ First One
     logs on trace
 
 Second One
+    [Documentation]    Nothing interesting here
+    [Timeout]    1 day
     Log    Test 2
     Sleep    0.01    # Make sure elapsed time > 0
 
 *** Keyword ***
 logs on trace
+    [Timeout]    1 hour
+    [Tags]    kw    tags
     Log    Log on ${TEST NAME}    TRACE

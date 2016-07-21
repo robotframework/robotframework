@@ -1,8 +1,7 @@
 import unittest
-import sys
 
 from robot.variables import Variables
-from robot.errors import DataError
+from robot.errors import DataError, VariableError
 from robot.utils.asserts import assert_equal, assert_raises
 from robot.utils import JYTHON
 
@@ -38,7 +37,7 @@ class TestVariables(unittest.TestCase):
         for var in SCALARS + LISTS:
             self.varz[var] = value
             assert_equal(self.varz[var], value)
-            assert_equal(self.varz[var.lower().replace(' ', '')] , value)
+            assert_equal(self.varz[var.lower().replace(' ', '')], value)
             self.varz.clear()
 
     def test_set_invalid(self):
@@ -121,18 +120,18 @@ class TestVariables(unittest.TestCase):
         assert_equal(res, 'Another "Hello world" example')
 
     def test_replace_list_item_invalid(self):
-        self.varz['@{L}'] = ['v0','v1','v3']
+        self.varz['@{L}'] = ['v0', 'v1', 'v3']
         for inv in ['@{L}[3]', '@{NON}[0]', '@{L[2]}']:
-            self.assertRaises(DataError, self.varz.replace_list, [inv])
+            assert_raises(VariableError, self.varz.replace_list, [inv])
 
     def test_replace_non_existing_list(self):
-        self.assertRaises(DataError, self.varz.replace_list, ['${nonexisting}'])
+        assert_raises(VariableError, self.varz.replace_list, ['${nonexisting}'])
 
     def test_replace_non_existing_scalar(self):
-        self.assertRaises(DataError, self.varz.replace_scalar, '${nonexisting}')
+        assert_raises(VariableError, self.varz.replace_scalar, '${nonexisting}')
 
     def test_replace_non_existing_string(self):
-        self.assertRaises(DataError, self.varz.replace_string, '${nonexisting}')
+        assert_raises(VariableError, self.varz.replace_string, '${nonexisting}')
 
     def test_replace_escaped(self):
         self.varz['${foo}'] = 'bar'
@@ -203,7 +202,7 @@ class TestVariables(unittest.TestCase):
         assert_equal(self.varz.replace_scalar('${${1}+${2}}'), 3)
         assert_equal(self.varz.replace_scalar('${${1}-${2}}'), -1)
         assert_equal(self.varz.replace_scalar('${${1}*${2}}'), 2)
-        assert_equal(self.varz.replace_scalar('${${1}/${2}}'), 0)
+        assert_equal(self.varz.replace_scalar('${${1}//${2}}'), 0)
 
     def test_math_with_internal_vars_with_spaces(self):
         assert_equal(self.varz.replace_scalar('${${1} + ${2.5}}'), 3.5)
@@ -212,10 +211,10 @@ class TestVariables(unittest.TestCase):
         assert_equal(self.varz.replace_scalar('${${1} / ${2.0}}'), 0.5)
 
     def test_math_with_internal_vars_does_not_work_if_first_var_is_float(self):
-        assert_raises(DataError, self.varz.replace_scalar, '${${1.1}+${2}}')
-        assert_raises(DataError, self.varz.replace_scalar, '${${1.1} - ${2}}')
-        assert_raises(DataError, self.varz.replace_scalar, '${${1.1} * ${2}}')
-        assert_raises(DataError, self.varz.replace_scalar, '${${1.1}/${2}}')
+        assert_raises(VariableError, self.varz.replace_scalar, '${${1.1}+${2}}')
+        assert_raises(VariableError, self.varz.replace_scalar, '${${1.1} - ${2}}')
+        assert_raises(VariableError, self.varz.replace_scalar, '${${1.1} * ${2}}')
+        assert_raises(VariableError, self.varz.replace_scalar, '${${1.1}/${2}}')
 
     def test_list_variable_as_scalar(self):
         self.varz['@{name}'] = exp = ['spam', 'eggs']
@@ -241,6 +240,21 @@ class TestVariables(unittest.TestCase):
             obj = JavaObject('my name')
             self.varz['${obj}'] = obj
             assert_equal(self.varz.replace_list(['${obj.name}']), ['my name'])
+
+    def test_ignore_error(self):
+        v = Variables()
+        v['${X}'] = 'x'
+        v['@{Y}'] = [1, 2, 3]
+        for item in ['${foo}', 'foo${bar}', '${foo}', '@{zap}', '@{Y}[7]']:
+            assert_equal(v.replace_string(item, ignore_errors=True), item)
+            assert_equal(v.replace_string('${x}'+item+'${x}', ignore_errors=True),
+                         'x'+item+'x')
+            assert_equal(v.replace_scalar(item, ignore_errors=True), item)
+            assert_equal(v.replace_scalar('${x}'+item+'${x}', ignore_errors=True),
+                         'x'+item+'x')
+            assert_equal(v.replace_list([item], ignore_errors=True), [item])
+            assert_equal(v.replace_list(['${X}', item, '@{Y}'], ignore_errors=True),
+                         ['x', item, 1, 2, 3])
 
 
 if __name__ == '__main__':

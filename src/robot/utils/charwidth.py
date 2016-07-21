@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -25,8 +26,8 @@ to issue 1096. Big thanks for xieyanbo for the script and the original patch.
 Note that Python's `unicodedata` module is not used here because importing
 it takes several seconds on Jython.
 
-[1] http://code.google.com/p/robotframework/issues/detail?id=604
-[2] http://code.google.com/p/robotframework/issues/detail?id=1096
+[1] https://github.com/robotframework/robotframework/issues/604
+[2] https://github.com/robotframework/robotframework/issues/1096
 """
 
 def get_char_width(char):

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,11 +14,13 @@
 #  limitations under the License.
 
 import time
+
 from java.awt import GridLayout
 from java.awt.event import WindowAdapter
 from javax.swing import JLabel, JOptionPane, JPanel, JPasswordField, JTextField
-from javax.swing.JOptionPane import PLAIN_MESSAGE, UNINITIALIZED_VALUE, \
-    YES_NO_OPTION, OK_CANCEL_OPTION, OK_OPTION, DEFAULT_OPTION
+from javax.swing.JOptionPane import (DEFAULT_OPTION, OK_CANCEL_OPTION,
+                                     OK_OPTION, PLAIN_MESSAGE,
+                                     UNINITIALIZED_VALUE, YES_NO_OPTION)
 
 
 class _SwingDialog(object):
@@ -87,7 +90,8 @@ class PassFailDialog(_SwingDialog):
         _SwingDialog.__init__(self, pane)
 
     def _get_value(self, pane):
-        return pane.getValue() == 'PASS'
+        value = pane.getValue()
+        return value == 'PASS' if value in ['PASS', 'FAIL'] else None
 
 
 class WrappedOptionPane(JOptionPane):

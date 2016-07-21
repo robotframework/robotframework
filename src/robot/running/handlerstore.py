@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,34 +14,38 @@
 #  limitations under the License.
 
 from operator import attrgetter
-from os.path import splitext
 
 from robot.errors import DataError
-from robot.parsing import VALID_EXTENSIONS as RESOURCE_EXTENSIONS
 from robot.utils import NormalizedDict
+
+from .usererrorhandler import UserErrorHandler
 
 
 class HandlerStore(object):
+    TEST_LIBRARY_TYPE = 'Test library'
+    TEST_CASE_FILE_TYPE = 'Test case file'
+    RESOURCE_FILE_TYPE = 'Resource file'
 
-    def __init__(self, source):
-        self._source = source
+    def __init__(self, source, source_type):
+        self.source = source
+        self.source_type = source_type
         self._normal = NormalizedDict(ignore='_')
         self._embedded = []
 
     def add(self, handler, embedded=False):
         if embedded:
             self._embedded.append(handler)
-        else:
+        elif handler.name not in self._normal:
             self._normal[handler.name] = handler
-
-    def remove(self, name):
-        if name in self._normal:
-            self._normal.pop(name)
-        self._embedded = [e for e in self._embedded if not e.matches(name)]
+        else:
+            error = 'Keyword with same name defined multiple times.'
+            self._normal[handler.name] = UserErrorHandler(handler.name, error,
+                                                          handler.libname)
+            raise DataError(error)
 
     def __iter__(self):
-        return iter(sorted(self._normal.values() + self._embedded,
-                           key=attrgetter('name')))
+        handlers = list(self._normal.values()) + self._embedded
+        return iter(sorted(handlers, key=attrgetter('name')))
 
     def __len__(self):
         return len(self._normal) + len(self._embedded)
@@ -50,6 +55,9 @@ class HandlerStore(object):
             return True
         return any(template.matches(name) for template in self._embedded)
 
+    def create_runner(self, name):
+        return self[name].create_runner(name)
+
     def __getitem__(self, name):
         try:
             return self._normal[name]
@@ -57,27 +65,21 @@ class HandlerStore(object):
             return self._find_embedded(name)
 
     def _find_embedded(self, name):
-        embedded = [template.create(name) for template in self._embedded
+        embedded = [template for template in self._embedded
                     if template.matches(name)]
         if len(embedded) == 1:
             return embedded[0]
         self._raise_no_single_match(name, embedded)
 
     def _raise_no_single_match(self, name, found):
-        if self._source is None:
-            where = "Test case file"
-        elif self._is_resource(self._source):
-            where = "Resource file '%s'" % self._source
+        if self.source_type == self.TEST_CASE_FILE_TYPE:
+            source = self.source_type
         else:
-            where = "Test library '%s'" % self._source
+            source = "%s '%s'" % (self.source_type, self.source)
         if not found:
             raise DataError("%s contains no keywords matching name '%s'."
-                            % (where, name))
+                            % (source, name))
         error = ["%s contains multiple keywords matching name '%s':"
-                 % (where, name)]
-        names = sorted(handler.orig_name for handler in found)
+                 % (source, name)]
+        names = sorted(handler.name for handler in found)
         raise DataError('\n    '.join(error + names))
-
-    def _is_resource(self, source):
-        extension = splitext(source)[1][1:].lower()
-        return extension in RESOURCE_EXTENSIONS

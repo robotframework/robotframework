@@ -2,12 +2,9 @@ import os
 import re
 
 from robot import utils
-from robot.utils.asserts import assert_equals
-from robot.result.resultbuilder import ExecutionResultBuilder
-from robot.result.executionresult import Result
-from robot.result.testsuite import TestSuite
-from robot.result.testcase import TestCase
-from robot.result.keyword import Keyword
+from robot.utils.asserts import assert_equal
+from robot.result import (ExecutionResultBuilder, Keyword, TestCase, TestSuite,
+                          Result)
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -25,20 +22,29 @@ class NoSlotsTestSuite(TestSuite):
 class TestCheckerLibrary:
 
     def process_output(self, path):
+        set_suite_variable = BuiltIn().set_suite_variable
+        if not path or path.upper() == 'NONE':
+            set_suite_variable('$SUITE', None)
+            print "Not processing output."
+            return
         path = path.replace('/', os.sep)
         try:
-            print "Processing output '%s'" % path
+            print "Processing output '%s'." % path
             result = Result(root_suite=NoSlotsTestSuite())
             ExecutionResultBuilder(path).build(result)
         except:
+            set_suite_variable('$SUITE', None)
             raise RuntimeError('Processing output failed: %s'
                                % utils.get_error_message())
-        setter = BuiltIn().set_suite_variable
-        setter('$SUITE', process_suite(result.suite))
-        setter('$STATISTICS', result.statistics)
-        setter('$ERRORS', process_errors(result.errors))
+        set_suite_variable('$SUITE', process_suite(result.suite))
+        set_suite_variable('$STATISTICS', result.statistics)
+        set_suite_variable('$ERRORS', process_errors(result.errors))
 
-    def get_test_from_suite(self, suite, name):
+    def get_test_case(self, name):
+        suite = BuiltIn().get_variable_value('${SUITE}')
+        return self._get_test_from_suite(suite, name)
+
+    def _get_test_from_suite(self, suite, name):
         tests = self.get_tests_from_suite(suite, name)
         if len(tests) == 1:
             return tests[0]
@@ -53,21 +59,27 @@ class TestCheckerLibrary:
             tests.extend(self.get_tests_from_suite(subsuite, name))
         return tests
 
-    def get_suite_from_suite(self, suite, name):
-        suites = self.get_suites_from_suite(suite, name)
+    def get_test_suite(self, name):
+        suite = BuiltIn().get_variable_value('${SUITE}')
+        suites = self._get_suites_from_suite(suite, name)
         if len(suites) == 1:
             return suites[0]
         err = "No suite '%s' found from suite '%s'" if not suites \
             else "More than one suite '%s' found from suite '%s'"
         raise RuntimeError(err % (name, suite.name))
 
-    def get_suites_from_suite(self, suite, name):
+    def _get_suites_from_suite(self, suite, name):
         suites = [suite] if utils.eq(suite.name, name) else []
         for subsuite in suite.suites:
-            suites.extend(self.get_suites_from_suite(subsuite, name))
+            suites.extend(self._get_suites_from_suite(subsuite, name))
         return suites
 
-    def check_test_status(self, test, status=None, message=None):
+    def check_test_case(self, testname, status=None, message=None):
+        test = self._get_test_from_suite(BuiltIn().get_variable_value('${SUITE}'), testname)
+        self._check_test_status(test, status=status, message=message)
+        return test
+
+    def _check_test_status(self, test, status=None, message=None):
         """Verifies that test's status and message are as expected.
 
         Expected status and message can be given as parameters. If expected
@@ -142,7 +154,7 @@ class TestCheckerLibrary:
                 status, message = status.split(':', 1)
             else:
                 message = None
-            self.check_test_status(test, status, message)
+            self._check_test_status(test, status, message)
         assert not expected
 
     def _find_expected_status(self, test, expected):
@@ -173,26 +185,33 @@ class TestCheckerLibrary:
 
     def should_contain_tags(self, test, *tags):
         print 'Test has tags', test.tags
-        assert_equals(len(test.tags), len(tags), 'Wrong number of tags')
+        assert_equal(len(test.tags), len(tags), 'Wrong number of tags')
         tags = sorted(tags, key=lambda s: s.lower().replace('_', '').replace(' ', ''))
         for act, exp in zip(test.tags, tags):
-            assert_equals(act, exp)
+            assert_equal(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
         actual_names = [kw.name for kw in item.keywords]
-        assert_equals(len(actual_names), len(kw_names), 'Wrong number of keywords')
+        assert_equal(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
-            assert_equals(act, exp)
+            assert_equal(act, exp)
 
     def test_should_have_correct_keywords(self, *kw_names, **config):
         get_var = BuiltIn().get_variable_value
         suite = get_var('${SUITE}')
         name = config.get('name', get_var('${TEST NAME}'))
         kw_index = int(config.get('kw_index', 0))
-        test = self.get_test_from_suite(suite, name)
-        self.check_test_status(test)
+        test = self._get_test_from_suite(suite, name)
+        self._check_test_status(test)
         self.should_contain_keywords(test.keywords[kw_index], *kw_names)
         return test
+
+    def check_log_message(self, item, msg, level='INFO', html=False, pattern=''):
+        b = BuiltIn()
+        matcher = b.should_match if pattern else b.should_be_equal
+        matcher(item.message.rstrip(), msg.rstrip(), 'Wrong log message')
+        b.should_be_equal(item.level, 'INFO' if level == 'HTML' else level, 'Wrong log level')
+        b.should_be_equal(str(item.html), str(html or level == 'HTML'), 'Wrong HTML status')
 
 
 def process_suite(suite):
@@ -205,6 +224,7 @@ def process_suite(suite):
     suite.setup = suite.keywords.setup
     suite.teardown = suite.keywords.teardown
     return suite
+
 
 def process_test(test):
     if 'FAIL' in test.doc:
@@ -220,6 +240,7 @@ def process_test(test):
     test.keywords = test.kws = list(test.keywords.normal)
     test.keyword_count = test.kw_count = len(test.keywords)
 
+
 def process_keyword(kw):
     if kw is None:
         return
@@ -229,6 +250,7 @@ def process_keyword(kw):
     kw.keyword_count = kw.kw_count = len(list(kw.keywords.normal))
     for subkw in kw.keywords:
         process_keyword(subkw)
+
 
 def process_errors(errors):
     errors.msgs = errors.messages

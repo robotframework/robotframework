@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    variables/list_and_dict_from_variable_file.robot
-Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -39,6 +38,19 @@ Scalar dicts can be used as dicts
     Check Test Case    ${TESTNAME}
 
 Scalar dicts are not converted to DotDicts
+    Check Test Case    ${TESTNAME}
+
+Failing list
+    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} in for loop
+
+Failing dict
+    Check Test Case    ${TESTNAME}
+
+Open files are not lists
+    Check Test Case    ${TESTNAME}
+
+Closed files are not lists
     Check Test Case    ${TESTNAME}
 
 *** Keywords ***

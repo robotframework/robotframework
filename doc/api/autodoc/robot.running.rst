@@ -1,6 +1,11 @@
 robot.running package
 =====================
 
+.. automodule:: robot.running
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -68,10 +73,18 @@ robot.running.importer module
     :undoc-members:
     :show-inheritance:
 
-robot.running.keywords module
------------------------------
+robot.running.librarykeywordrunner module
+-----------------------------------------
 
-.. automodule:: robot.running.keywords
+.. automodule:: robot.running.librarykeywordrunner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.libraryscopes module
+----------------------------------
+
+.. automodule:: robot.running.libraryscopes
     :members:
     :undoc-members:
     :show-inheritance:
@@ -140,6 +153,22 @@ robot.running.status module
     :undoc-members:
     :show-inheritance:
 
+robot.running.statusreporter module
+-----------------------------------
+
+.. automodule:: robot.running.statusreporter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.steprunner module
+-------------------------------
+
+.. automodule:: robot.running.steprunner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.running.testlibraries module
 ----------------------------------
 
@@ -164,11 +193,12 @@ robot.running.userkeyword module
     :undoc-members:
     :show-inheritance:
 
+robot.running.userkeywordrunner module
+--------------------------------------
 
-Module contents
----------------
-
-.. automodule:: robot.running
+.. automodule:: robot.running.userkeywordrunner
     :members:
     :undoc-members:
     :show-inheritance:
+
+

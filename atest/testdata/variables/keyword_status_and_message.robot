@@ -34,12 +34,31 @@ Status and message are not available if not in teardown
     Variable should not exist    ${KEYWORD MESSAGE}
     Status and message are not available if not in teardown
 
+Status and message are not available after teardown
+    Passing keyword message
+    Variable should not exist    ${KEYWORD STATUS}
+    Variable should not exist    ${KEYWORD MESSAGE}
+    Status and message are not available if not in teardown
+
+Previous status and message are not overwritten
+    [Documentation]    FAIL    My message
+    ${KEYWORD STATUS}=    Set variable    1
+    ${KEYWORD MESSAGE}=    Set variable    2
+    Keyword teardown with keyword teardown
+    [Teardown]    Should be equal    ${KEYWORD STATUS}-${KEYWORD MESSAGE}    1-2
+
 Status and message always contain latest values
-    [Documentation]    FAIL    1\n\nAlso keyword teardown failed:\n2\n\nAlso keyword teardown failed:\n3
+    [Documentation]    FAIL
+    ...    1
+    ...
+    ...    Also keyword teardown failed:
+    ...    2
+    ...
+    ...    Also keyword teardown failed:
+    ...    3
     Status and message always contain latest values
 
 *** Keywords ***
-
 Passing keyword status
     No operation
     [Teardown]    Should be equal    ${KEYWORD STATUS}    PASS
@@ -109,4 +128,15 @@ Status and message always contain latest values 5
     Keyword status should be    PASS
     [Teardown]    Keyword status should be    PASS
 
+Keyword teardown with keyword teardown
+    Fail      My message
+    [Teardown]   Another keyword teardown
 
+Another keyword teardown
+    Should be equal    ${KEYWORD STATUS}    FAIL
+    Should be equal    ${KEYWORD MESSAGE}    My message
+    Passing keyword status
+    Passing keyword message
+    Should be equal    ${KEYWORD STATUS}    FAIL
+    Should be equal    ${KEYWORD MESSAGE}    My message
+    [Teardown]      Should be equal    ${KEYWORD STATUS}-${KEYWORD MESSAGE}    PASS-

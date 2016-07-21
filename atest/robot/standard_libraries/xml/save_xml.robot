@@ -1,12 +1,13 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/save_xml.robot
-Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
 
 *** Test Cases ***
-
 Save XML Element
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    ${path} =    Normalize Path    %{TEMPDIR}/xmllib.xml
+    Check Log Message    ${tc.kws[1].msgs[0]}
+    ...    XML saved to <a href="file://${path}">${path}</a>.    html=True
 
 Save XML String
     Check Test Case    ${TESTNAME}
@@ -29,5 +30,17 @@ Save to Invalid File
 Save Using Invalid Encoding
     Check Test Case    ${TESTNAME}
 
-Save Non-ASCII Using ASCII
+Save Non-ASCII Using ASCII On Python 2
+    [Tags]    no-py3
+    Check Test Case    ${TESTNAME}
+
+Save Non-ASCII Using ASCII On Python 3
+    [Tags]    no-py2
+    Check Test Case    ${TESTNAME}
+
+Doctype is not preserved
+    [Tags]    no-ipy
+    Check Test Case    ${TESTNAME}
+
+Comments and processing instructions are removed
     Check Test Case    ${TESTNAME}

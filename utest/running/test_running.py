@@ -2,16 +2,19 @@ import logging
 import signal
 import sys
 import unittest
-from StringIO import StringIO
-from os.path import abspath, dirname, normpath, join
+from os.path import abspath, dirname, join
 
-from robot.utils.asserts import assert_equals
 from robot.running import TestSuite, TestSuiteBuilder
+from robot.utils import StringIO
+from robot.utils.asserts import assert_equal
+
 from resources.runningtestcase import RunningTestCase
+from resources.Listener import Listener
 
 
 CURDIR = dirname(abspath(__file__))
-DATADIR = normpath(join(CURDIR, '..', '..', 'atest', 'testdata', 'misc'))
+ROOTDIR = dirname(dirname(CURDIR))
+DATADIR = join(ROOTDIR, 'atest', 'testdata', 'misc')
 
 
 def run(suite, **kwargs):
@@ -27,17 +30,17 @@ def build(path):
 
 
 def assert_suite(suite, name, status, message='', tests=1):
-    assert_equals(suite.name, name)
-    assert_equals(suite.status, status)
-    assert_equals(suite.message, message)
-    assert_equals(len(suite.tests), tests)
+    assert_equal(suite.name, name)
+    assert_equal(suite.status, status)
+    assert_equal(suite.message, message)
+    assert_equal(len(suite.tests), tests)
 
 
 def assert_test(test, name, status, tags=(), msg=''):
-    assert_equals(test.name, name)
-    assert_equals(test.status, status)
-    assert_equals(test.message, msg)
-    assert_equals(tuple(test.tags), tags)
+    assert_equal(test.name, name)
+    assert_equal(test.status, status)
+    assert_equal(test.message, msg)
+    assert_equal(tuple(test.tags), tags)
 
 
 class TestRunning(unittest.TestCase):
@@ -97,6 +100,14 @@ class TestRunning(unittest.TestCase):
         assert_suite(result, 'Suite', 'FAIL', tests=2)
         assert_test(result.tests[0], 'T1', 'FAIL', msg='Error message')
         assert_test(result.tests[1], 'T2', 'FAIL', ('added tag',), 'Error')
+
+    def test_modifiers_are_not_used(self):
+        # These options are valid but not used. Modifiers can be passed to
+        # suite.visit() explicitly if needed.
+        suite = TestSuite(name='Suite')
+        suite.tests.create(name='Test').keywords.create('No Operation')
+        result = run(suite, prerunmodifier='not used', prerebotmodifier=42)
+        assert_suite(result, 'Suite', 'PASS', tests=1)
 
 
 class TestTestSetupAndTeardown(unittest.TestCase):
@@ -235,20 +246,38 @@ class TestPreservingSignalHandlers(unittest.TestCase):
         suite = TestSuite(name='My Suite')
         suite.tests.create(name='My Test').keywords.create('Log', args=['Hi!'])
         run(suite)
-        assert_equals(signal.getsignal(signal.SIGINT), self.orig_sigint)
-        assert_equals(signal.getsignal(signal.SIGTERM), my_sigterm)
+        assert_equal(signal.getsignal(signal.SIGINT), self.orig_sigint)
+        assert_equal(signal.getsignal(signal.SIGTERM), my_sigterm)
 
 
 class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_reset_logging_conf(self):
-        assert_equals(logging.getLogger().handlers, [])
-        assert_equals(logging.raiseExceptions, 1)
+        assert_equal(logging.getLogger().handlers, [])
+        assert_equal(logging.raiseExceptions, 1)
         suite = TestSuite(name='My Suite')
         suite.tests.create(name='My Test').keywords.create('Log', args=['Hi!'])
         run(suite)
-        assert_equals(logging.getLogger().handlers, [])
-        assert_equals(logging.raiseExceptions, 1)
+        assert_equal(logging.getLogger().handlers, [])
+        assert_equal(logging.raiseExceptions, 1)
+
+
+class TestListeners(RunningTestCase):
+
+    def test_listeners(self):
+        module_file = join(ROOTDIR, 'utest', 'resources', 'Listener.py')
+        suite = build('setups_and_teardowns.robot')
+        suite.run(output=None, log=None, report=None, listener=[module_file+":1", Listener(2)])
+        self._assert_outputs([("[from listener 1]", 1), ("[from listener 2]", 1)])
+
+    def test_listeners_unregistration(self):
+        module_file = join(ROOTDIR, 'utest', 'resources', 'Listener.py')
+        suite = build('setups_and_teardowns.robot')
+        suite.run(output=None, log=None, report=None, listener=module_file+":1")
+        self._assert_outputs([("[from listener 1]", 1), ("[listener close]", 1)])
+        self._clear_outputs()
+        suite.run(output=None, log=None, report=None)
+        self._assert_outputs([("[from listener 1]", 0), ("[listener close]", 0)])
 
 
 if __name__ == '__main__':

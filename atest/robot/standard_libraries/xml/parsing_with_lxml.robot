@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/parsing_with_lxml.robot
-Test Teardown    Make test non-critical if lxml not available
-Force Tags       regression    pybot    jybot
+Force Tags       require-lxml
 Resource         xml_resource.robot
 
 *** Test Cases ***
@@ -12,6 +11,9 @@ Parse file using system path separator
     Check Test Case    ${TESTNAME}
 
 Parse string
+    Check Test Case    ${TESTNAME}
+
+Comments and processing instructions are removed
     Check Test Case    ${TESTNAME}
 
 Parse invalid file

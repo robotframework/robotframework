@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,58 +14,58 @@
 #  limitations under the License.
 
 import ctypes
-import thread
 import time
-from threading import Timer
-
-from robot.errors import TimeoutError
+from threading import current_thread, Lock, Timer
 
 
 class Timeout(object):
 
-    def __init__(self, timeout, timeout_error):
-        self._runner_thread_id = thread.get_ident()
-        self._timeout_error = self._create_timeout_error_class(timeout_error)
-        self._timer = Timer(timeout, self._raise_timeout_error)
+    def __init__(self, timeout, error):
+        self._runner_thread_id = current_thread().ident
+        self._timer = Timer(timeout, self._timed_out)
+        self._error = error
         self._timeout_occurred = False
-
-    def _create_timeout_error_class(self, timeout_error):
-        return type(TimeoutError.__name__,
-                   (TimeoutError,),
-                   {'__unicode__': lambda self: timeout_error})
+        self._finished = False
+        self._lock = Lock()
 
     def execute(self, runnable):
-        self._start_timer()
         try:
-            return runnable()
+            self._start_timer()
+            try:
+                result = runnable()
+            finally:
+                self._cancel_timer()
+            self._wait_for_raised_timeout()
+            return result
         finally:
-            self._stop_timer()
+            if self._timeout_occurred:
+                raise self._error
 
     def _start_timer(self):
         self._timer.start()
 
-    def _stop_timer(self):
-        self._timer.cancel()
-        # In case timeout has occurred but the exception has not yet been
-        # thrown we need to do this to ensure that the exception
-        # is not thrown in an unsafe location
+    def _cancel_timer(self):
+        with self._lock:
+            self._finished = True
+            self._timer.cancel()
+
+    def _wait_for_raised_timeout(self):
         if self._timeout_occurred:
-            self._cancel_exception()
-            raise self._timeout_error()
+            while True:
+                time.sleep(0)
 
-    def _raise_timeout_error(self):
-        self._timeout_occurred = True
-        return_code = self._try_to_raise_timeout_error_in_runner_thread()
-        # return code tells how many threads have been influenced
-        while return_code > 1: # if more than one then cancel and retry
-            self._cancel_exception()
-            time.sleep(0) # yield so that other threads will get time
-            return_code = self._try_to_raise_timeout_error_in_runner_thread()
+    def _timed_out(self):
+        with self._lock:
+            if self._finished:
+                return
+            self._timeout_occurred = True
+        self._raise_timeout()
 
-    def _try_to_raise_timeout_error_in_runner_thread(self):
-        return ctypes.pythonapi.PyThreadState_SetAsyncExc(
-            self._runner_thread_id,
-            ctypes.py_object(self._timeout_error))
-
-    def _cancel_exception(self):
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(self._runner_thread_id, None)
+    def _raise_timeout(self):
+        # See, for example, http://tomerfiliba.com/recipes/Thread2/
+        # for more information about using PyThreadState_SetAsyncExc
+        tid = ctypes.c_long(self._runner_thread_id)
+        error = ctypes.py_object(type(self._error))
+        while ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, error) > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+            time.sleep(0)  # give time for other threads

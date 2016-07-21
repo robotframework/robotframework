@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,6 +14,9 @@
 #  limitations under the License.
 
 import sys
+
+from .argumentmapper import ArgumentMapper
+from .argumentresolver import ArgumentResolver
 
 
 class ArgumentSpec(object):
@@ -33,4 +37,14 @@ class ArgumentSpec(object):
 
     @property
     def maxargs(self):
-        return len(self.positional) if not self.varargs else sys.maxint
+        return len(self.positional) if not self.varargs else sys.maxsize
+
+    def resolve(self, arguments, variables=None, resolve_named=True,
+                resolve_variables_until=None, dict_to_kwargs=False):
+        resolver = ArgumentResolver(self, resolve_named,
+                                    resolve_variables_until, dict_to_kwargs)
+        return resolver.resolve(arguments, variables)
+
+    def map(self, positional, named, replace_defaults=True):
+        mapper = ArgumentMapper(self)
+        return mapper.map(positional, named, replace_defaults)

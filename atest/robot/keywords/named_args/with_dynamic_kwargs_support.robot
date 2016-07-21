@@ -4,9 +4,7 @@ Documentation     Tests dynamic library that accepts **kwargs.
 ...               but there are tests at the end that actually use **kwargs.
 Suite Setup       Run Tests
 ...    --variable DynamicLibrary:DynamicLibraryWithKwargsSupport
-...    keywords/named_args/with_dynamic_keywords.robot
-...    keywords/named_args/with_dynamic_kwargs_support.robot
-Force Tags        pybot    jybot    regression
+...    keywords/named_args/with_dynamic_keywords.robot keywords/named_args/with_dynamic_kwargs_support.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***

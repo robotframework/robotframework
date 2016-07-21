@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup       Suite initialization
 Suite Teardown    Remove Directory    ${RERUN DIR}    recursive
-Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
 
 *** Variables ***
@@ -30,19 +29,6 @@ Non-existing failing from output file is not executed
     Test Should Not Have Been Executed    Only in one suite
 
 Suite teardown failures are noticed
-    Test Should Have Been Executed    Test passed but suite teardown fails
-
---runfailed is deprecated
-    [Documentation]    --rerunfailed added in 2.8.4, --runfailed deprecated with warning in 2.9
-    Run Tests    --runfailed ${RUN FAILED FROM} --test Selected --exclude tag    ${SUITE DIR}
-    Length Should Be    ${ERRORS}    1
-    Check Log Message    @{ERRORS}[0]     Option --runfailed is deprecated and will be removed in the future. Use --rerunfailed instead.    WARN
-    Test Should Not Have Been Executed    Passing
-    Test Should Have Been Executed    Failing
-    Test Should Have Been Executed    Really Failing
-    Test Should Have Been Executed    Selected
-    Test Should Not Have Been Executed    Failing with tag
-    Test Should Not Have Been Executed    Only in one suite
     Test Should Have Been Executed    Test passed but suite teardown fails
 
 *** Keywords ***

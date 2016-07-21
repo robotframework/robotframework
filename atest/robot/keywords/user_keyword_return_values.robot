@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  keywords/user_keyword_return_values.robot
-Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -29,4 +28,7 @@ Return List Variable Containing Multiple Items
     Check Test Case  ${TESTNAME}
 
 Return Non-Existing Variable
+    Check Test Case  ${TESTNAME}
+
+Error About Non-Existing Variable In Return Value Can Be Caught
     Check Test Case  ${TESTNAME}

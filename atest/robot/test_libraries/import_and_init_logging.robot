@@ -1,8 +1,6 @@
 *** Settings ***
 Documentation   Tests for libs logging during import and in init/constructor.
 Suite Setup     Run Tests  --PYTHONPATH "${DATADIR}/test_libraries"  test_libraries/import_and_init_logging.robot
-Force Tags      regression
-Default Tags    pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -39,7 +37,7 @@ Python library logging in import via logging API
     Check stderr contains  [ WARN ] Warning via API in init 2\n
 
 Java library logging in constructor via stdout and stderr
-    [Tags]  jybot
+    [Tags]  require-jython
     ${tc} =  Check test case  No import/init time messages in Java either
     Should be empty  ${tc.kws[0].msgs}
     Check syslog contains  | WARN \ | Warning via stdout in constructor 1\n

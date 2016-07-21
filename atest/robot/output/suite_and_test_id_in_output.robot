@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags      regression    pybot    jybot
 Resource        atest_resource.robot
 Suite Setup     Run Tests    ${EMPTY}    misc/suites
 
@@ -8,7 +7,8 @@ Ids in output after test run
     Suite And Test Ids Should Be Correct
 
 Ids in output after rebot
-    Run Rebot    ${EMPTY}    ${OUTFILE}
+    Copy Previous Outfile
+    Run Rebot    ${EMPTY}    ${OUTFILE COPY}
     Suite And Test Ids Should Be Correct
 
 *** Keywords ***

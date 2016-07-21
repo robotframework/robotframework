@@ -22,7 +22,7 @@ class MyObject:
     def __init__(self, value):
         self.value = value
     def __int__(self):
-        return 42 / self.value
+        return 42 // self.value
     def __str__(self):
         return 'MyObject'
 

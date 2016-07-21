@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -42,12 +43,14 @@ class JavaDocBuilder(object):
         return self._get_attr(doc, 'VERSION')
 
     def _get_scope(self, doc):
-        return self._get_attr(doc, 'SCOPE', default='TESTCASE', upper=True)
+        scope = self._get_attr(doc, 'SCOPE', upper=True)
+        return {'TESTSUITE': 'test suite',
+                'GLOBAL': 'global'}.get(scope, 'test suite')
 
     def _get_doc_format(self, doc):
         return self._get_attr(doc, 'DOC_FORMAT', upper=True)
 
-    def _get_attr(self, doc, name, default='', upper=False):
+    def _get_attr(self, doc, name, upper=False):
         name = 'ROBOT_LIBRARY_' + name
         for field in doc.fields():
             if field.name() == name and field.isPublic():
@@ -55,7 +58,7 @@ class JavaDocBuilder(object):
                 if upper:
                     value = utils.normalize(value, ignore='_').upper()
                 return value
-        return default
+        return ''
 
     def _initializers(self, doc):
         inits = [self._keyword_doc(init) for init in doc.constructors()]
@@ -67,10 +70,12 @@ class JavaDocBuilder(object):
         return [self._keyword_doc(m) for m in doc.methods()]
 
     def _keyword_doc(self, method):
+        doc, tags = utils.split_tags_from_doc(self._get_doc(method))
         return KeywordDoc(
             name=utils.printable_name(method.name(), code_style=True),
             args=self._get_keyword_arguments(method),
-            doc=self._get_doc(method)
+            doc=doc,
+            tags=tags
         )
 
     def _get_keyword_arguments(self, method):

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/run.robot
-Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -41,5 +40,5 @@ Trailing Newline Is Removed Automatically
     Check Test Case    ${TESTNAME}
 
 It Is Possible To Start Background Processes
-    Run Keyword If    "${JYTHON}"    Remove Tags    regression
+    [Tags]    no-jython
     Check Test Case    ${TESTNAME}

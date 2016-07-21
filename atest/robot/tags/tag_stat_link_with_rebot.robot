@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests And Rebot With Tag Stat Links
-Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 Test Template   Tag link should be correct in output
 
@@ -35,7 +34,8 @@ Run Tests And Rebot With Tag Stat Links
     ...  --tagstatcombine d*:DX
     ...  --tagstatlink d?:http://%1:Rebot_%1
     ...  --TAGSTATLINK D1:1:more:link:title
-    Run Rebot  ${opts}  ${OUTFILE}
+    Copy Previous Outfile
+    Run Rebot  ${opts}  ${OUTFILE COPY}
 
 Tag link should be correct in output
     [Arguments]  ${index}  ${tag}  ${links}

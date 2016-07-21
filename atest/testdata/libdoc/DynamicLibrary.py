@@ -1,4 +1,6 @@
 # coding=UTF-8
+from __future__ import print_function
+
 
 class DynamicLibrary(object):
     """This is overwritten and not shown in docs"""
@@ -13,7 +15,7 @@ class DynamicLibrary(object):
                 'Em${bed}ed ${args} 2']
 
     def run_keyword(self, name, args, kwargs):
-        print name, args
+        print(name, args)
 
     def get_keyword_arguments(self, name):
         if name == 'no arg spec':
@@ -23,9 +25,9 @@ class DynamicLibrary(object):
 
     def get_keyword_documentation(self, name):
         if name == u'nön-äscii ÜTF-8':
-            return 'Hyvää yötä.\n\nСпасибо! (UTF-8)'
+            return 'Hyvää yötä.\n\nСпасибо! (UTF-8)\n\nTags: hyvää, yötä'
         if name == u'nön-äscii Ünicöde':
-            return u'Hyvää yötä.\n\nСпасибо! (Unicode)'
+            return u'Hyvää yötä.\n\nСпасибо! (Unicode)\n\nTags: hyvää, yötä'
         short = 'Dummy documentation for `%s`.' % name
         if name.startswith('__'):
             return short

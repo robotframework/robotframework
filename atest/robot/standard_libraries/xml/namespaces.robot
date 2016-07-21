@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation    Tests for XML library's default namespace handling.
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/namespaces.robot
-Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
 
 *** Test Cases ***

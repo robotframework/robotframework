@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_and_continue_on_failure.robot
-Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -28,6 +27,12 @@ Run Keyword And Continue On Failure With Syntax Error
     Check Test Case    ${TESTNAME}
 
 Run Keyword And Continue On Failure With Timeout
+    Check Test Case    ${TESTNAME}
+
+Run Keyword And Continue On Failure With Nonexisting Variable
+    Check Test Case    ${TESTNAME}
+
+Run Keyword And Continue On Failure With Nonexisting Extended Variable
     Check Test Case    ${TESTNAME}
 
 Run Keyword And Continue On Failure With Fatal Error

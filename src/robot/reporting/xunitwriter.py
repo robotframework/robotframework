@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,10 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-
-from robot.result.visitor import ResultVisitor
-from robot.utils import XmlWriter
+from robot.result import ResultVisitor
+from robot.utils import roundup, XmlWriter
 
 
 class XUnitWriter(object):
@@ -25,7 +24,7 @@ class XUnitWriter(object):
         self._skip_noncritical = skip_noncritical
 
     def write(self, output):
-        writer = XUnitFileWriter(XmlWriter(output, encoding='UTF-8'), self._skip_noncritical)
+        writer = XUnitFileWriter(XmlWriter(output), self._skip_noncritical)
         self._execution_result.visit(writer)
 
 
@@ -86,7 +85,7 @@ class XUnitFileWriter(ResultVisitor):
                                                'type': 'AssertionError'})
 
     def _time_as_seconds(self, millis):
-        return str(int(round(millis, -3) / 1000))
+        return str(roundup(millis, -3) // 1000)
 
     def visit_keyword(self, kw):
         pass

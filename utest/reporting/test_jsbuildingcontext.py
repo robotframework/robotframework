@@ -3,7 +3,7 @@ import unittest
 from robot.output.loggerhelper import LEVELS
 
 from robot.reporting.jsmodelbuilders import JsBuildingContext
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 
 
 class TestStringContext(unittest.TestCase):
@@ -33,8 +33,8 @@ class TestStringContext(unittest.TestCase):
         exp_strings = tuple('*'+s for s in [''] + exp_strings)
         ctx = JsBuildingContext()
         results = [ctx.string(s, escape=escape) for s in strings]
-        assert_equals(results, exp_ids)
-        assert_equals(ctx.strings, exp_strings)
+        assert_equal(results, exp_ids)
+        assert_equal(ctx.strings, exp_strings)
 
 
 class TestTimestamp(unittest.TestCase):
@@ -43,15 +43,15 @@ class TestTimestamp(unittest.TestCase):
         self._context = JsBuildingContext()
 
     def test_timestamp(self):
-        assert_equals(self._context.timestamp('20110603 12:00:00.042'), 0)
-        assert_equals(self._context.timestamp('20110603 12:00:00.043'), 1)
-        assert_equals(self._context.timestamp('20110603 12:00:00.000'), -42)
-        assert_equals(self._context.timestamp('20110603 12:00:01.041'), 999)
-        assert_equals(self._context.timestamp('20110604 12:00:00.042'),
+        assert_equal(self._context.timestamp('20110603 12:00:00.042'), 0)
+        assert_equal(self._context.timestamp('20110603 12:00:00.043'), 1)
+        assert_equal(self._context.timestamp('20110603 12:00:00.000'), -42)
+        assert_equal(self._context.timestamp('20110603 12:00:01.041'), 999)
+        assert_equal(self._context.timestamp('20110604 12:00:00.042'),
                       24 * 60 * 60 * 1000)
 
     def test_none_timestamp(self):
-        assert_equals(self._context.timestamp(None), None)
+        assert_equal(self._context.timestamp(None), None)
 
 
 class TestMinLogLevel(unittest.TestCase):
@@ -60,16 +60,16 @@ class TestMinLogLevel(unittest.TestCase):
         self._context = JsBuildingContext()
 
     def test_trace_is_identified_as_smallest_log_level(self):
-        self._messages(LEVELS.keys())
-        assert_equals('TRACE', self._context.min_level)
+        self._messages(list(LEVELS))
+        assert_equal('TRACE', self._context.min_level)
 
     def test_debug_is_identified_when_no_trace(self):
         self._messages([l for l in LEVELS if l != 'TRACE'])
-        assert_equals('DEBUG', self._context.min_level)
+        assert_equal('DEBUG', self._context.min_level)
 
     def test_info_is_smallest_when_no_debug_or_trace(self):
         self._messages(['INFO', 'WARN', 'ERROR', 'FAIL'])
-        assert_equals('INFO', self._context.min_level)
+        assert_equal('INFO', self._context.min_level)
 
     def _messages(self, levels):
         levels = levels[:]

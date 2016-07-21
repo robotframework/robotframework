@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,28 +14,64 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import MultiMatcher
+from robot.model import TagPatterns
+from robot.utils import MultiMatcher, is_list_like, py2to3
 
 
-class FlattenKeywordMatcher(object):
+def validate_flatten_keyword(options):
+    for opt in options:
+        low = opt.lower()
+        if not (low in ('for', 'foritem') or
+                low.startswith('name:') or
+                low.startswith('tag:')):
+            raise DataError("Expected 'FOR', 'FORITEM', 'TAG:<pattern>', or "
+                            "'NAME:<pattern>' but got '%s'." % opt)
 
-    def __init__(self, flattened):
-        self._types = []
-        names = self._yield_names_and_set_types(flattened, self._types)
-        self._name_matcher = MultiMatcher(names)
 
-    def _yield_names_and_set_types(self, flattened, types):
-        if isinstance(flattened, basestring):
-            flattened = [flattened]
-        for flat in flattened:
-            upper = flat.upper()
-            if upper in ('FOR', 'FORITEM'):
-                types.append(flat.lower())
-            elif upper.startswith('NAME:'):
-                yield flat[5:]
-            else:
-                raise DataError("Expected 'FOR', 'FORITEM', or "
-                                "'NAME:<pattern>' but got '%s'." % flat)
+@py2to3
+class FlattenByTypeMatcher(object):
 
-    def match(self, name, type):
-        return self._name_matcher.match(name) or type in self._types
+    def __init__(self, flatten):
+        if not is_list_like(flatten):
+            flatten = [flatten]
+        flatten = [f.lower() for f in flatten]
+        self._types = [f for f in flatten if f in ('for', 'foritem')]
+
+    def match(self, kwtype):
+        return kwtype in self._types
+
+    def __nonzero__(self):
+        return bool(self._types)
+
+
+@py2to3
+class FlattenByNameMatcher(object):
+
+    def __init__(self, flatten):
+        if not is_list_like(flatten):
+            flatten = [flatten]
+        names = [n[5:] for n in flatten if n[:5].lower() == 'name:']
+        self._matcher = MultiMatcher(names)
+
+    def match(self, kwname, libname=None):
+        name = '%s.%s' % (libname, kwname) if libname else kwname
+        return self._matcher.match(name)
+
+    def __nonzero__(self):
+        return bool(self._matcher)
+
+
+@py2to3
+class FlattenByTagMatcher(object):
+
+    def __init__(self, flatten):
+        if not is_list_like(flatten):
+            flatten = [flatten]
+        patterns = [p[4:] for p in flatten if p[:4].lower() == 'tag:']
+        self._matcher = TagPatterns(patterns)
+
+    def match(self, kwtags):
+        return self._matcher.match(kwtags)
+
+    def __nonzero__(self):
+        return bool(self._matcher)

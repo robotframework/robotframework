@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_libraries_with_invalid_argspec.robot
-Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -33,7 +32,7 @@ Argspec has kwargs before varargs
     ...    Only last argument can be kwargs.
 
 Keywords with valid arg spec can be used
-    Check Test Case
+    Check Test Case    ${TESTNAME}
 
 *** Keywords ***
 Error message should be correct

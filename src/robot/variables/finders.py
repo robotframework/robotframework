@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -21,13 +22,13 @@ except ImportError:
     get_java_property = lambda name: None
     get_java_properties = lambda: {}
 
-from robot.errors import DataError
+from robot.errors import DataError, VariableError
 from robot.utils import (get_env_var, get_env_vars, get_error_message,
                          is_dict_like, is_list_like, normalize, DotDict,
                          NormalizedDict)
 
 from .isvar import validate_var
-from .notfound import raise_not_found
+from .notfound import variable_not_found
 
 
 class VariableFinder(object):
@@ -49,19 +50,25 @@ class VariableFinder(object):
                     value = finder.find(name)
                 except (KeyError, ValueError):
                     continue
-                return self._validate_value(value, identifier, name)
-        raise_not_found(name, self._store.data)
+                try:
+                    return self._validate_value(value, identifier, name)
+                except VariableError:
+                    raise
+                except:
+                    raise VariableError("Resolving variable '%s' failed: %s"
+                                        % (name, get_error_message()))
+        variable_not_found(name, self._store.data)
 
     def _validate_value(self, value, identifier, name):
         if identifier == '@':
             if not is_list_like(value):
-                raise DataError("Value of variable '%s' is not list or "
-                                "list-like." % name)
+                raise VariableError("Value of variable '%s' is not list or "
+                                    "list-like." % name)
             return list(value)
         if identifier == '&':
             if not is_dict_like(value):
-                raise DataError("Value of variable '%s' is not dictionary "
-                                "or dictionary-like." % name)
+                raise VariableError("Value of variable '%s' is not dictionary "
+                                    "or dictionary-like." % name)
             return DotDict(value)
         return value
 
@@ -73,7 +80,7 @@ class StoredFinder(object):
         self._store = store
 
     def find(self, name):
-        return self._store.find(name[2:-1])
+        return self._store[name[2:-1]]
 
 
 class NumberFinder(object):
@@ -117,13 +124,13 @@ class ExtendedFinder(object):
         try:
             variable = self._find_variable('${%s}' % base_name)
         except DataError as err:
-            raise DataError("Resolving variable '%s' failed: %s"
-                            % (name, unicode(err)))
+            raise VariableError("Resolving variable '%s' failed: %s"
+                                % (name, err.message))
         try:
             return eval('_BASE_VAR_' + extended, {'_BASE_VAR_': variable})
         except:
-            raise DataError("Resolving variable '%s' failed: %s"
-                            % (name, get_error_message()))
+            raise VariableError("Resolving variable '%s' failed: %s"
+                                % (name, get_error_message()))
 
 
 class EnvironmentFinder(object):
@@ -134,8 +141,8 @@ class EnvironmentFinder(object):
             value = getter(name[2:-1])
             if value is not None:
                 return value
-        raise_not_found(name, self._get_candidates(),
-                        "Environment variable '%s' not found." % name)
+        variable_not_found(name, self._get_candidates(),
+                           "Environment variable '%s' not found." % name)
 
     def _get_candidates(self):
         candidates = dict(get_java_properties())

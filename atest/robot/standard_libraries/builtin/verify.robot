@@ -1,7 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/verify.robot
-Force Tags        regression
-Default Tags      jybot    pybot
+Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/builtin/verify.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -26,6 +24,9 @@ Should Be True With Invalid Expression
 Should (Not) Be True is evaluated with os- and sys-modules
     Check test case    ${TESTNAME}
 
+Should (Not) Be True is evaluated with robot's variables
+    Check test case    ${TESTNAME}
+
 Should Not Be Equal
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    unicode
@@ -44,6 +45,28 @@ Should Be Equal
     Verify argument type message    ${tc.kws[1].msgs[0]}    int    int
     Verify argument type message    ${tc.kws[2].msgs[0]}    str    str
     Verify argument type message    ${tc.kws[3].msgs[0]}    unicode    unicode
+
+Should Be Equal fails with values
+    Check test case    ${TESTNAME}
+
+Should Be Equal fails without values
+    Check test case    ${TESTNAME}
+
+Should be equal with multiline text uses diff
+    [Tags]    no-python26    # diff contains extra spaces on python 2.6
+    Check test case    ${TESTNAME}
+
+Should be equal with multiline diff text requires both multiline
+    Check test case    ${TESTNAME}
+
+Should be equal with multiline text will not use diff if values are not included
+    Check test case    ${TESTNAME}
+
+Should Be Equal Tuple and List With Same Values Does Not Work
+    Check test case    ${TESTNAME}
+
+Should Equal Dictionaries Of Different Type With Same Keys Works
+    Check test case    ${TESTNAME}
 
 Should Be Equal with bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
@@ -95,16 +118,26 @@ Should Be Equal As Strings
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    int    unicode
 
+Should Be Equal As Strings Multiline
+    [Tags]    no-python26    # diff contains extra spaces on python 2.6
+    Check test case    ${TESTNAME}
+
 Should Not Start With
     Check test case    ${TESTNAME}
 
 Should Start With
     Check test case    ${TESTNAME}
 
+Should Start With without values
+    Check test case    ${TESTNAME}
+
 Should Not End With
     Check test case    ${TESTNAME}
 
 Should End With
+    Check test case    ${TESTNAME}
+
+Should End With without values
     Check test case    ${TESTNAME}
 
 Should Not Contain
@@ -153,7 +186,8 @@ Length Should Be
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[-1].msgs[0]}    Length is 2
     Check Log Message    ${tc.kws[-1].msgs[1]}    Length of '*' should be 3 but is 2.    FAIL    pattern=yep
-    Length Should Be    ${tc.kws[-1].msgs}    2
+    Check Log Message    ${tc.kws[-1].msgs[2]}    Traceback*    DEBUG    pattern=yep
+    Length Should Be    ${tc.kws[-1].msgs}    3
 
 Length Should Be With Non Default Message
     Check Test Case    ${TESTNAME}
@@ -184,7 +218,7 @@ Length With Length Attribute
 
 Length Of Java Types
     [Documentation]    Tests that it's possible to get the lenght of String, Vector, Hashtable and array
-    [Tags]    jybot
+    [Tags]    require-jython
     Check test case    ${TESTNAME}
 
 Should Contain X Times With String
@@ -203,7 +237,7 @@ Should Contain X Times With Tuple
     Check test case    ${TESTNAME}
 
 Should Contain X With Java Array And Vector
-    [Tags]    jybot
+    [Tags]    require-jython
     Check test case    ${TESTNAME}
 
 Should Contain X With Invalid Item
@@ -213,7 +247,9 @@ Should Contain X Times With Invalid Count
     Check test case    ${TESTNAME}
 
 Should Contain X Times Failing With Default Message
-    Check test case    ${TESTNAME}
+    Check test case    ${TESTNAME} 1
+    Check test case    ${TESTNAME} 2
+    Check test case    ${TESTNAME} 3
 
 Should Contain X Times Failing With Defined Message
     Check test case    ${TESTNAME}
@@ -230,11 +266,12 @@ Get Count
 *** Keywords ***
 Verify argument type message
     [Arguments]    ${msg}    ${type1}    ${type2}
-    ${type1} =    Str Type to Unicode On IronPython    ${type1}
-    ${type2} =    Str Type to Unicode On IronPython    ${type2}
-    Check log message    ${msg}    Argument types are:\n<type '${type1}'>\n<type '${type2}'>
+    ${type1} =    Str Type to Unicode On IronPython and Py3    ${type1}
+    ${type2} =    Str Type to Unicode On IronPython and Py3    ${type2}
+    ${level} =    Evaluate   'DEBUG' if $type1 == $type2 else 'INFO'
+    Check log message    ${msg}    Argument types are:\n<* '${type1}'>\n<* '${type2}'>    ${level}    pattern=True
 
-Str Type to Unicode On IronPython
+Str Type to Unicode On IronPython and Py3
     [Arguments]    ${type}
-    ${type} =    Set Variable If    "${IRONPYTHON}" and "${type}" == "str"    unicode    ${type}
-    [Return]    ${type}
+    Return From Keyword If    ($INTERPRETER.is_ironpython or $INTERPRETER.is_py3) and $type == "str"    unicode
+    Return From Keyword    ${type}

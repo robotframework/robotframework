@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,17 +13,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from .misc import roundup
+from .robottypes import is_integer, is_string
+
 
 def frange(*args):
     """Like ``range()`` but accepts float arguments."""
-    if all(isinstance(arg, (int, long)) for arg in args):
-        return range(*args)
+    if all(is_integer(arg) for arg in args):
+        return list(range(*args))
     start, stop, step = _get_start_stop_step(args)
     digits = max(_digits(start), _digits(stop), _digits(step))
     factor = pow(10, digits)
-    return [x/float(factor) for x in range(int(round(start*factor)),
-                                           int(round(stop*factor)),
-                                           int(round(step*factor)))]
+    return [x/float(factor) for x in range(roundup(start*factor),
+                                           roundup(stop*factor),
+                                           roundup(step*factor))]
 
 
 def _get_start_stop_step(args):
@@ -36,7 +40,7 @@ def _get_start_stop_step(args):
 
 
 def _digits(number):
-    if not isinstance(number, str):
+    if not is_string(number):
         number = repr(number)
     if 'e' in number:
         return _digits_with_exponent(number)

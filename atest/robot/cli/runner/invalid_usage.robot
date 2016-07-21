@@ -1,12 +1,11 @@
 *** Settings ***
 Test Setup      Create Output Directory
-Force Tags      regression  pybot  jybot
 Resource        cli_resource.robot
 Test Template   Run Should Fail
 
 *** Test Cases ***
-
 No Input
+    [Tags]    no-standalone
     ${EMPTY}    Expected at least 1 argument, got 0\\.
 
 Argument File Option Without Value As Last Argument
@@ -20,7 +19,7 @@ Non-Existing Input With Non-Ascii Characters
 
 Invalid Options
     --invalid option    option --invalid not recognized
-    --name valid -X tests.txt    option -X not recognized
+    --name valid -Q tests.txt    option -Q not recognized
 
 Invalid --SuiteStatLevel
     --suitestatlevel not_int tests.txt

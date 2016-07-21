@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -19,11 +20,11 @@ from .platform import JYTHON, WINDOWS, UNIXY
 
 
 if UNIXY:
+    DEFAULT_CONSOLE_ENCODING = 'UTF-8'
     DEFAULT_SYSTEM_ENCODING = 'UTF-8'
-    DEFAULT_OUTPUT_ENCODING = 'UTF-8'
 else:
+    DEFAULT_CONSOLE_ENCODING = 'cp437'
     DEFAULT_SYSTEM_ENCODING = 'cp1252'
-    DEFAULT_OUTPUT_ENCODING = 'cp437'
 
 
 def get_system_encoding():
@@ -34,11 +35,11 @@ def get_system_encoding():
     return _get_encoding(platform_getters, DEFAULT_SYSTEM_ENCODING)
 
 
-def get_output_encoding():
+def get_console_encoding():
     platform_getters = [(True, _get_stream_output_encoding),
                         (UNIXY, _get_unixy_encoding),
                         (WINDOWS, _get_windows_output_encoding)]
-    return _get_encoding(platform_getters, DEFAULT_OUTPUT_ENCODING)
+    return _get_encoding(platform_getters, DEFAULT_CONSOLE_ENCODING)
 
 
 def _get_encoding(platform_getters, default):
@@ -70,8 +71,8 @@ def _get_unixy_encoding():
 
 
 def _get_stream_output_encoding():
-    # Stream may not have encoding attribute if it is intercepted outside RF
-    # in Python. Encoding is None if process's outputs are redirected.
+    # Stream may not have encoding attribute if it is intercepted outside RF in
+    # Python. Encoding is None if process output is redirected and Python < 3.
     for stream in sys.__stdout__, sys.__stderr__, sys.__stdin__:
         encoding = getattr(stream, 'encoding', None)
         if _is_valid(encoding):
@@ -91,9 +92,9 @@ def _get_code_page(method_name):
     from ctypes import cdll
     try:
         method = getattr(cdll.kernel32, method_name)
-    except TypeError:       # Sometimes occurs w/ IronPython (mainly on CI)
+    except TypeError:       # Occurred few times with IronPython (mainly on CI).
         return None
-    method.argtypes = ()    # Needed w/ Jython (at least 2.5)
+    method.argtypes = ()    # Needed with Jython.
     return 'cp%s' % method()
 
 

@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags       regression    pybot    jybot
 Resource         libdoc_resource.robot
 Test Template    Run Libdoc And Verify Created Output File
 

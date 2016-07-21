@@ -1,106 +1,109 @@
 *** Settings ***
-Test Setup      Create Base Test Directory
-Suite Teardown  Remove Base Test Directory
-Resource        os_resource.robot
-Library         ../builtin/times.py
+Suite Teardown    Remove Base Test Directory
+Test Setup        Create Base Test Directory
+Resource          os_resource.robot
+Library           ../builtin/times.py
 
 *** Test Cases ***
 Get Modified Time As Timestamp
-    ${time1} =  Get Modified Time  ${CURDIR}
-    Create File  ${TESTFILE}  hello
-    ${time2} =  Get Modified Time  ${TESTFILE}
-    Should Be True  '${time2}' >= '${time1}'
-    Should Match Regexp  ${time1}  \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}
+    ${time1} =    Get Modified Time    ${CURDIR}
+    Create File    ${TESTFILE}    hello
+    ${time2} =    Get Modified Time    ${TESTFILE}
+    Should Be True    '${time2}' >= '${time1}'
+    Should Match Regexp    ${time1}    \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}
 
 Get Modified Time As Seconds After Epoch
-    ${dirtime} =  Get Modified Time  ${CURDIR}  epoch
-    Should Be True  1000000000 < ${dirtime} < 2000000000
-    ${current} =  Get Time  epoch
-    Should Be True  ${current} >= ${dirtime}
+    ${dirtime} =    Get Modified Time    ${CURDIR}    epoch
+    Should Be True    1000000000 < ${dirtime} < 2000000000
+    ${current} =    Get Time    epoch
+    Should Be True    ${current} >= ${dirtime}
 
 Get Modified Time As Parts
-    ${year} =  Get Modified Time  ${CURDIR}  year
-    Should Be True  2000 < ${year} < 2100
-    ${yyyy}  ${mm}  ${dd} =  Get Modified Time  ${CURDIR}  year, month, day
-    Should Be Equal  ${yyyy}  ${year}
+    ${year} =    Get Modified Time    ${CURDIR}    year
+    Should Be True    2000 < ${year} < 2100
+    ${yyyy}    ${mm}    ${dd} =    Get Modified Time    ${CURDIR}    year, month, day
+    Should Be Equal    ${yyyy}    ${year}
     # Must use `int('x')` because otherwise 08 and 09 are considered octal
-    Should Be True  1 <= int('${mm}') <= 12
-    Should Be True  1 <= int('${dd}') <= 31
-    @{time} =  Get Modified Time  ${CURDIR}  year, sec, min, hour
-    Should Be Equal  @{time}[0]  ${year}
-    Should Be True  0 <= int('@{time}[1]') <= 23
-    Should Be True  0 <= int('@{time}[2]') <= 59
-    Should Be True  0 <= int('@{time}[3]') <= 59
+    Should Be True    1 <= int('${mm}') <= 12
+    Should Be True    1 <= int('${dd}') <= 31
+    @{time} =    Get Modified Time    ${CURDIR}    year, sec, min, hour
+    Should Be Equal    @{time}[0]    ${year}
+    Should Be True    0 <= int('@{time}[1]') <= 23
+    Should Be True    0 <= int('@{time}[2]') <= 59
+    Should Be True    0 <= int('@{time}[3]') <= 59
 
 Get Modified Time Fails When Path Does Not Exist
-    [Documentation]  FAIL Getting modified time of '${CURDIR}${/}does_not_exist' failed: Path does not exist
-    Get Modified Time  ${CURDIR}${/}does_not_exist
+    [Documentation]    FAIL Path '${CURDIR}${/}does_not_exist' does not exist.
+    Get Modified Time    ${CURDIR}/does_not_exist
 
 Set Modified Time Using Epoch
-    [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Epoch time must be positive (got -1)
-    Create File  ${TESTFILE}
-    ${epoch} =  Evaluate  1177586540 + time.altzone  modules=time
-    Set Modified Time  ${TESTFILE}  ${epoch}
-    ${mtime} =  Get Modified Time  ${TESTFILE}
-    Should Be Equal  ${mtime}  2007-04-26 11:22:20
-    Set Modified time  ${TESTFILE}  -1
+    [Documentation]    FAIL ValueError: Epoch time must be positive (got -1).
+    Create File    ${TESTFILE}
+    ${epoch} =    Evaluate    1177586540 + time.altzone    modules=time
+    Set Modified Time    ${TESTFILE}    ${epoch}
+    ${mtime} =    Get Modified Time    ${TESTFILE}
+    Should Be Equal    ${mtime}    2007-04-26 11:22:20
+    Set Modified time    ${TESTFILE}    -1
 
 Set Modified Time Using Timestamp
-    Create File  ${TESTFILE}
-    ${expected} =  Evaluate  1177586550 + time.altzone  modules=time
-    :FOR  ${timestamp}  IN  2007-04-26 11:22:30  20070426 11:22:30  20070426 112230  20070426-112230  20070426 11:22:30.456
-    \  Set Modified Time  ${TESTFILE}  ${timestamp}
-    \  ${mtime} =  Get Modified Time  ${TESTFILE}  epoch
-    \  Should Be Equal  ${mtime}  ${expected}
+    Create File    ${TESTFILE}
+    ${expected} =    Evaluate    1177586550 + time.altzone    modules=time
+    : FOR    ${timestamp}    IN    2007-04-26 11:22:30    20070426 11:22:30
+    ...    20070426 112230    20070426-112230    20070426 11:22:30.456
+    \    Set Modified Time    ${TESTFILE}    ${timestamp}
+    \    ${mtime} =    Get Modified Time    ${TESTFILE}    epoch
+    \    Should Be Equal    ${mtime}    ${expected}
 
 Set Modified Time Using Invalid Timestamp
-    [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Invalid time format 'invalid'
-    Create File  ${TESTFILE}
-    Set Modified Time  ${TESTFILE}  invalid
+    [Documentation]    FAIL ValueError: Invalid time format 'invalid time'.
+    Create File    ${TESTFILE}
+    Set Modified Time    ${TESTFILE}    invalid time
 
 Set Modified Time Using NOW
-    [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Invalid time string 'invalid'.
-    Create File  ${TESTFILE}
-    ${t0} =  Get Modified Time  ${TESTFILE}  epoch
-    Sleep  2.5 s
-    Set Modified Time  ${TESTFILE}  NOW
-    ${t1} =  Get Modified Time  ${TESTFILE}  epoch
-    Should Be True  ${t0} < ${t1} < ${t0}+5
-    Set Modified Time  ${TESTFILE}  NOW-1day
-    ${t2} =  Get Modified Time  ${TESTFILE}  epoch
-    Should Be True  ${t2}-4 <= ${t1} - 24*60*60 <= ${t2}
-    Set Modified Time  ${TESTFILE}  now + 1 day 2 hour 3 min 4 seconds 10 ms
-    ${t3} =  Get Modified Time  ${TESTFILE}  epoch
-    Should Be True  ${t3}-9 <= ${t1} + (24*60*60 + 2*60*60 + 3*60 + 4) <= ${t3}
-    Set Modified Time  ${TESTFILE}  NOW + invalid
+    Create File    ${TESTFILE}
+    ${t0} =    Get Modified Time    ${TESTFILE}    epoch
+    Sleep    1.1 seconds
+    Set Modified Time    ${TESTFILE}    NOW
+    ${t1} =    Get Modified Time    ${TESTFILE}    epoch
+    Should Be True    ${t0} < ${t1} < ${t0}+5
+    Set Modified Time    ${TESTFILE}    NOW-1day
+    ${t2} =    Get Modified Time    ${TESTFILE}    epoch
+    Should Be True    ${t2}-4 <= ${t1} - 24*60*60 <= ${t2}
+    Set Modified Time    ${TESTFILE}    now + 1 day 2 hour 3 min 4 seconds 10 ms
+    ${t3} =    Get Modified Time    ${TESTFILE}    epoch
+    Should Be True    ${t3}-9 <= ${t1} + (24*60*60 + 2*60*60 + 3*60 + 4) <= ${t3}
 
 Set Modified Time Using UTC
-    Create File  ${TESTFILE}
-    ${now} =  Get Time  epoch
-    Set Modified Time  ${TESTFILE}  UTC
-    ${mtime} =  Get Modified Time  ${TESTFILE}  epoch
-    ${zone} =  Get Current Time Zone
-    Should Be True  ${now} <= ${mtime} - ${zone} <= ${now} + 2
-    Set Modified Time  ${TESTFILE}  utc - ${zone}
-    ${mtime} =  Get Modified Time  ${TESTFILE}  epoch
-    Should Be True  ${now} <= ${mtime} <= ${now} + 4
+    Create File    ${TESTFILE}
+    ${now} =    Get Time    epoch
+    Set Modified Time    ${TESTFILE}    UTC
+    ${mtime} =    Get Modified Time    ${TESTFILE}    epoch
+    ${zone} =    Get Current Time Zone
+    Should Be True    ${now} <= ${mtime} - ${zone} <= ${now} + 2
+    Set Modified Time    ${TESTFILE}    utc - ${zone}
+    ${mtime} =    Get Modified Time    ${TESTFILE}    epoch
+    Should Be True    ${now} <= ${mtime} <= ${now} + 4
+
+Set Modified Time Using NOW + invalid
+    [Documentation]    FAIL ValueError: Invalid time string 'invalid'.
+    Set Modified Time    ${TESTFILE}    NOW + invalid
 
 Set Modified Time Fails When Path Does Not Exist
-    [Documentation]  FAIL Setting modified time of '${CURDIR}${/}does_not_exist' failed: File does not exist
-    Set Modified Time  ${CURDIR}${/}does_not_exist  0
+    [Documentation]    FAIL File '${CURDIR}${/}does_not_exist' does not exist.
+    Set Modified Time    ${CURDIR}/does_not_exist    0
 
 Set Modified Time Fails When Path Is Directory
-    [Documentation]  FAIL Setting modified time of '${CURDIR}' failed: Modified time can only be set to regular files
-    Set Modified Time  ${CURDIR}  0
+    [Documentation]    FAIL Path '${CURDIR}' is not a regular file.
+    Set Modified Time    ${CURDIR}    0
 
 Set And Get Modified Time Of Non-ASCII File
-    Create File  ${NON ASCII}
-    Set Modified Time  ${NON ASCII}  2010-09-26 21:22:42
-    ${time} =  Get Modified Time  ${NON ASCII}
-    Should Be Equal  ${time}  2010-09-26 21:22:42
+    Create File    ${NON ASCII}
+    Set Modified Time    ${NON ASCII}    2010-09-26 21:22:42
+    ${time} =    Get Modified Time    ${NON ASCII}
+    Should Be Equal    ${time}    2010-09-26 21:22:42
 
 Set And Get Modified Time Of File With Spaces In Name
-    Create File  ${WITH SPACE}
-    Set Modified Time  ${WITH SPACE}  2010-09-26 21:24
-    ${time} =  Get Modified Time  ${WITH SPACE}
-    Should Be Equal  ${time}  2010-09-26 21:24:00
+    Create File    ${WITH SPACE}
+    Set Modified Time    ${WITH SPACE}    2010-09-26 21:24
+    ${time} =    Get Modified Time    ${WITH SPACE}
+    Should Be Equal    ${time}    2010-09-26 21:24:00

@@ -1,10 +1,7 @@
 import unittest
 from robot.utils.asserts import assert_equal, assert_raises, assert_true, assert_false
 
-from robot.result.testsuite import TestSuite
-from robot.result.testcase import TestCase
-from robot.result.keyword import Keyword
-from robot.result.message import Message
+from robot.result import Message, Keyword, TestCase, TestSuite
 
 
 class TestSuiteStats(unittest.TestCase):
@@ -162,8 +159,50 @@ class TestCriticality(unittest.TestCase):
         assert_equal(TestCase().critical, True)
 
     def _verify_criticality(self, suite, crit, non_crit):
-        assert_equal([unicode(t) for t in suite.criticality.critical_tags], crit)
-        assert_equal([unicode(t) for t in suite.criticality.non_critical_tags], non_crit)
+        assert_equal([str(t) for t in suite.criticality.critical_tags], crit)
+        assert_equal([str(t) for t in suite.criticality.non_critical_tags], non_crit)
+
+
+class TestModel(unittest.TestCase):
+
+    def test_keyword_name(self):
+        kw = Keyword('keyword')
+        assert_equal(kw.name, 'keyword')
+        kw = Keyword('keyword', 'lib')
+        assert_equal(kw.name, 'lib.keyword')
+        kw.kwname = 'Kekkonen'
+        kw.libname = 'Urho'
+        assert_equal(kw.name, 'Urho.Kekkonen')
+
+    def test_keyword_name_cannot_be_set_directly(self):
+        assert_raises(AttributeError, setattr, Keyword(), 'name', 'value')
+
+    def test_test_passed(self):
+        self._test_passed(TestCase())
+
+    def test_keyword_passed(self):
+        self._test_passed(Keyword())
+
+    def test_keyword_passed_after_dry_run(self):
+        self._test_passed(Keyword(status='NOT_RUN'),
+                          initial_status='NOT_RUN')
+
+    def _test_passed(self, item, initial_status='FAIL'):
+        assert_equal(item.passed, False)
+        assert_equal(item.status, initial_status)
+        item.passed = True
+        assert_equal(item.passed, True)
+        assert_equal(item.status, 'PASS')
+        item.passed = False
+        assert_equal(item.passed, False)
+        assert_equal(item.status, 'FAIL')
+
+    def test_suite_passed(self):
+        suite = TestSuite()
+        assert_equal(suite.passed, True)
+        suite.tests.create(status='FAIL')
+        assert_equal(suite.passed, False)
+        assert_raises(AttributeError, setattr, TestSuite(), 'passed', True)
 
 
 if __name__ == '__main__':

@@ -1,24 +1,17 @@
 .. _testdoc:
 
-Test data documentation tool (``testdoc``)
-==========================================
+Test data documentation tool (Testdoc)
+======================================
 
 .. contents::
    :depth: 1
    :local:
 
-``testdoc`` is tool for generating high level documentation based
-on Robot Framework test cases. The created documentation is in HTML
+Testdoc is Robot Framework's built-in tool for generating high level
+documentation based on test cases. The created documentation is in HTML
 format and it includes name, documentation and other metadata of each
 test suite and test case, as well as the top-level keywords and their
 arguments.
-
-``testdoc`` is built-in into Robot Framework and automatically included
-in the installation starting from version 2.7. With earlier versions you
-need to download `testdoc.py script`__ separately. The command line usage
-has changed slightly between these versions.
-
-__ http://code.google.com/p/robotframework/wiki/TestDataDocumentationTool
 
 General usage
 -------------

@@ -48,6 +48,10 @@ Get Lines Matching Regexp When Input Is Empty
 
 Get Lines Matching Regexp When Pattern Is Empty
     Test Get Lines Matching Regexp    ${INPUT}    ${EMPTY}    ${EMPTY}
+    Test Get Lines Matching Regexp    3 empty\n\n\n\n    ${EMPTY}    \n\n
+
+Get Lines Matching Regexp Requires Exact Match By Default
+    Test Get Lines Matching Regexp    ${INPUT}    more|row    ${EMPTY}
 
 Get Lines Matching Regexp Matching One Line
     Test Get Lines Matching Regexp    ${INPUT}    Third.*    Third line
@@ -64,18 +68,48 @@ Get Lines Matching Regexp With Case-Insensitive
     Test Get Lines Matching Regexp    ${INPUT}    (?i).*LINE    Third line
     Test Get Lines Matching Regexp    ${INPUT}    .*LINE.*    ${EMPTY}
 
+Get Lines Matching Regexp With Partial Match
+    Test Get Lines Containing Regexp    ${INPUT}    more|row    One more row here
+
+Get Lines Matching Regexp With Partial Match Matching One Line
+    Test Get Lines Containing Regexp    ${INPUT}    One    One more row here
+    Test Get Lines Containing Regexp    ${INPUT}    here    One more row here
+    Test Get Lines Containing Regexp    ${INPUT}    1    Line 1
+
+Get Lines Matching Regexp With Partial Match Matching Some Lines
+    Test Get Lines Containing Regexp    ${INPUT}    .* \\d    Line 1\nLine 2
+    Test Get Lines Containing Regexp    ${INPUT}    (Line|Wine) [1-9]    Line 1\nLine 2
+    Test Get Lines Containing Regexp    ${INPUT}    1|2    Line 1\nLine 2
+    Test Get Lines Containing Regexp    ${INPUT}    ^.*e$    Third line\nOne more row here
+    Test Get Lines Containing Regexp    ${INPUT}    .{6}    Line 1\nLine 2\nThird line\nOne more row here
+    Test Get Lines Containing Regexp    ${INPUT}    .*    ${INPUT}
+
+Get Lines Matching Regexp With Partial Match And Case-Insensitive
+    Test Get Lines Containing Regexp    ${INPUT}    (?i)line    Line 1\nLine 2\nThird line
+    Test Get Lines Containing Regexp    ${INPUT}    (?i)LINE    Line 1\nLine 2\nThird line
+    Test Get Lines Containing Regexp    ${INPUT}    LINE    ${EMPTY}
+
+Get Lines Matching Regexp With Partial Match When Pattern Is Empty
+    Test Get Lines Containing Regexp    ${INPUT}    ${EMPTY}    ${INPUT}
+    Test Get Lines Containing Regexp    3 empty\n\n\n\n    ${EMPTY}    3 empty\n\n\n
+
 *** Keywords ***
 Test Get Lines Containing String
-    [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=${False}
+    [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=false
     ${actual} =    Get Lines Containing String    ${input}    ${pattern}    ${case-insensitive}
     Should Be Equal    ${actual}    ${expected}
 
 Test Get Lines Matching Pattern
-    [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=${False}
+    [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=no
     ${actual} =    Get Lines Matching Pattern    ${input}    ${pattern}    ${case-insensitive}
     Should Be Equal    ${actual}    ${expected}
 
 Test Get Lines Matching Regexp
     [Arguments]    ${input}    ${pattern}    ${expected}
     ${actual} =    Get Lines Matching Regexp    ${input}    ${pattern}
+    Should Be Equal    ${actual}    ${expected}
+
+Test Get Lines Containing Regexp
+    [Arguments]    ${input}    ${pattern}    ${expected}
+    ${actual} =    Get Lines Matching Regexp    ${input}    ${pattern}    partial_match=true
     Should Be Equal    ${actual}    ${expected}

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -18,7 +19,7 @@ except ImportError:
     # csv module is missing from IronPython < 2.7.1
     csv = None
 
-from robot import utils
+from robot.utils import HtmlWriter, PY2
 
 from .formatters import TsvFormatter, TxtFormatter, PipeFormatter
 from .htmlformatter import HtmlFormatter
@@ -26,11 +27,11 @@ from .htmltemplate import TEMPLATE_START, TEMPLATE_END
 
 
 def FileWriter(context):
-    """Creates and returns a FileWriter object.
+    """Creates and returns a ``FileWriter`` object.
 
-    :param context: Type of returned FileWriter is determined based on
-        `context.format`. `context` is also passed to created writer.
-    :type context: :py:class:`WritingContext`
+    :param context: The type of the returned ``FileWriter`` is determined based
+        on ``context.format``. ``context`` is also passed to created writer.
+    :type context: :class:`~robot.writer.datafilewriter.WritingContext`
     """
     if context.format == context.html_format:
         return HtmlFileWriter(context)
@@ -46,8 +47,6 @@ class _DataFileWriter(object):
     def __init__(self, formatter, configuration):
         self._formatter = formatter
         self._output = configuration.output
-        self._line_separator = configuration.line_separator
-        self._encoding = configuration.encoding
 
     def write(self, datafile):
         tables = [table for table in datafile if table]
@@ -70,9 +69,6 @@ class _DataFileWriter(object):
     def _write_empty_row(self, table):
         self._write_row(self._formatter.empty_row_after(table))
 
-    def _encode(self, row):
-        return row.encode(self._encoding)
-
     def _write_row(self, row):
         raise NotImplementedError
 
@@ -85,8 +81,8 @@ class SpaceSeparatedTxtWriter(_DataFileWriter):
         _DataFileWriter.__init__(self, formatter, configuration)
 
     def _write_row(self, row):
-        line = self._separator.join(row).rstrip() + self._line_separator
-        self._output.write(self._encode(line))
+        line = self._separator.join(row).rstrip() + '\n'
+        self._output.write(line)
 
 
 class PipeSeparatedTxtWriter(_DataFileWriter):
@@ -100,7 +96,7 @@ class PipeSeparatedTxtWriter(_DataFileWriter):
         row = self._separator.join(row)
         if row:
             row = '| ' + row + ' |'
-        self._output.write(self._encode(row + self._line_separator))
+        self._output.write(row + '\n')
 
 
 class TsvFileWriter(_DataFileWriter):
@@ -117,11 +113,13 @@ class TsvFileWriter(_DataFileWriter):
         # Custom dialect needed as a workaround for
         # http://ironpython.codeplex.com/workitem/33627
         dialect = csv.excel_tab()
-        dialect.lineterminator = configuration.line_separator
+        dialect.lineterminator = configuration.line_separator if PY2 else '\n'
         return csv.writer(configuration.output, dialect=dialect)
 
     def _write_row(self, row):
-        self._writer.writerow([self._encode(c) for c in row])
+        if PY2:
+            row = [c.encode('UTF-8') for c in row]
+        self._writer.writerow(row)
 
 
 class HtmlFileWriter(_DataFileWriter):
@@ -130,15 +128,12 @@ class HtmlFileWriter(_DataFileWriter):
         formatter = HtmlFormatter(configuration.html_column_count)
         _DataFileWriter.__init__(self, formatter, configuration)
         self._name = configuration.datafile.name
-        self._writer = utils.HtmlWriter(configuration.output,
-                                        configuration.line_separator,
-                                        encoding=self._encoding)
+        self._writer = HtmlWriter(configuration.output)
 
     def write(self, datafile):
-        self._writer.content(TEMPLATE_START % {'NAME': self._name},
-                             escape=False, replace_newlines=True)
+        self._writer.content(TEMPLATE_START % {'NAME': self._name}, escape=False)
         _DataFileWriter.write(self, datafile)
-        self._writer.content(TEMPLATE_END, escape=False, replace_newlines=True)
+        self._writer.content(TEMPLATE_END, escape=False)
 
     def _write_table(self, table, is_last):
         self._writer.start('table', {'id': table.type.replace(' ', ''),

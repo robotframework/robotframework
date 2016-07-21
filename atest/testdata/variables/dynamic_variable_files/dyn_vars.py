@@ -1,8 +1,8 @@
-from UserDict import UserDict
+from collections import Mapping
 try:
-    from collections import Mapping
-except ImportError:
-    Mapping = None
+    from UserDict import UserDict
+except ImportError:  # Python 3
+    from collections import UserDict
 
 
 def get_variables(type):
@@ -26,8 +26,6 @@ class MyDict(dict):
 
 def get_MyMapping():
     data = {'from Mapping': 'This From Mapping', 'from Mapping2': 2}
-    if not Mapping:
-        return data
 
     class MyMapping(Mapping):
 

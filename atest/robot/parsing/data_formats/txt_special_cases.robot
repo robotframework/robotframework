@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  parsing/data_formats/txt_special_cases
-Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 
 *** Test Cases ***

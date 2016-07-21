@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -15,24 +16,26 @@
 from robot.model import Statistics
 
 from .executionerrors import ExecutionErrors
-from .testsuite import TestSuite
+from .model import TestSuite
 
 
 class Result(object):
     """Test execution results.
 
-    Can be created based on XML output files using
-    the :func:`~.resultbuilder.ExecutionResult` factory method.
-    Also returned by executed :class:`~robot.running.model.TestSuite`.
+    Can be created based on XML output files using the
+    :func:`~.resultbuilder.ExecutionResult`
+    factory method. Also returned by the
+    :meth:`robot.running.TestSuite.run <robot.running.model.TestSuite.run>`
+    method.
     """
 
     def __init__(self, source=None, root_suite=None, errors=None):
         #: Path to the XML file where results are read from.
         self.source = source
         #: Hierarchical execution results as a
-        #: :class:`~.result.testsuite.TestSuite` object.
+        #: :class:`~.result.model.TestSuite` object.
         self.suite = root_suite or TestSuite()
-        #: Execution errors as a
+        #: Execution errors as an
         #: :class:`~.executionerrors.ExecutionErrors` object.
         self.errors = errors or ExecutionErrors()
         self.generated_by_robot = True

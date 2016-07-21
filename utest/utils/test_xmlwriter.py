@@ -72,6 +72,10 @@ class TestXmlWriter(unittest.TestCase):
         self.writer.element(u'robot-log', None)
         self._verify_node(None, 'robot-log')
 
+    def test_none_and_empty_attrs(self):
+        self.writer.element('foo', attrs={'empty': '', 'none': None})
+        self._verify_node(None, 'foo', attrs={'empty': '', 'none': ''})
+
     def test_content_with_invalid_command_char(self):
         self.writer.element('robot-log', '\033[31m\033[32m\033[33m\033[m')
         self._verify_node(None, 'robot-log', '[31m[32m[33m[m')
@@ -94,26 +98,30 @@ class TestXmlWriter(unittest.TestCase):
         self._verify_content('Me, Myself &amp; I &gt; you')
 
     def test_remove_illegal_chars(self):
-        assert_equals(self.writer._escape(u'\x1b[31m'), '[31m')
-        assert_equals(self.writer._escape(u'\x00'), '')
+        assert_equal(self.writer._escape(u'\x1b[31m'), '[31m')
+        assert_equal(self.writer._escape(u'\x00'), '')
 
     def test_ioerror_when_file_is_invalid(self):
         assert_raises(IOError, XmlWriter, os.path.dirname(__file__))
 
-    def test_custom_encoding(self):
-        self.writer.close()
-        self.writer = XmlWriter(PATH, encoding='ISO-8859-1')
-        self.writer.element('test', u'hyv\xe4')
-        self._verify_content('encoding="ISO-8859-1"')
-        self._verify_node(None, 'test', u'hyv\xe4')
+    def test_dont_write_empty(self):
+        self.tearDown()
+        class NoPreamble(XmlWriter):
+            def _preamble(self):
+                pass
+        self.writer = NoPreamble(PATH, write_empty=False)
+        self.writer.element('foo1', content='', attrs={})
+        self.writer.element('foo2', attrs={'bar': '', 'None': None})
+        self.writer.element('foo3', attrs={'bar': '', 'value': 'value'})
+        assert_equal(self._get_content(), '<foo3 value="value"></foo3>\n')
 
     def _verify_node(self, node, name, text=None, attrs={}):
         if node is None:
             node = self._get_root()
-        assert_equals(node.tag, name)
+        assert_equal(node.tag, name)
         if text is not None:
-            assert_equals(node.text, text)
-        assert_equals(node.attrib, attrs)
+            assert_equal(node.text, text)
+        assert_equal(node.attrib, attrs)
 
     def _verify_content(self, expected):
         content = self._get_content()

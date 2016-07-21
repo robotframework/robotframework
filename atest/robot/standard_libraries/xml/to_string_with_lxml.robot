@@ -1,11 +1,13 @@
 *** Settings ***
 Suite Setup      Run Tests    --loglevel debug    standard_libraries/xml/to_string_with_lxml.robot
-Test Teardown    Make test non-critical if lxml not available
-Force Tags       regression    pybot    jybot
+Force Tags       require-lxml
 Resource         xml_resource.robot
 
 *** Test Cases ***
 Element to string
+    Check Test Case    ${TESTNAME}
+
+Element to string with encoding
     Check Test Case    ${TESTNAME}
 
 Child element to string

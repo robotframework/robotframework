@@ -47,7 +47,7 @@ Cwd does not affect absolute custom streams
 
 Lot of output to custom stream
     [Tags]    performance
-    ${result}=    Run Process    python -c "for i in xrange(100000):\tprint 'a'*99"    shell=True    stdout=${STDOUT}
+    ${result}=    Run Process    python -c "for i in range(100000):\tprint('a'*99)"    shell=True    stdout=${STDOUT}
     Length Should Be    ${result.stdout}    9999999
     File Should Not Be Empty    ${STDOUT}
 
@@ -63,8 +63,8 @@ Run multiple times using custom streams
 
 Read standard streams when they are already closed externally
     Some Process    stderr=${NONE}
-    ${stdout} =    Stop Some Process    message=hello
-    Should Be Equal    ${stdout}    hello
+    ${stdout} =    Stop Some Process    message=42
+    Should Be Equal    ${stdout}    42
     ${process} =    Get Process Object
     Run Keyword If    not ${process.stdout.closed}
     ...    Call Method    ${process.stdout}    close

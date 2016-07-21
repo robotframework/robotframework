@@ -1,6 +1,6 @@
 *** Setting ***
 Suite Teardown    ${SUITE_TEARDOWN_KW}    ${SUITE_TEARDOWN_ARG}
-Library           Operating System
+Library           OperatingSystem
 
 *** Variable ***
 ${SUITE_TEARDOWN_KW}    Log

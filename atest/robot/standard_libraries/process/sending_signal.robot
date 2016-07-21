@@ -1,8 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/sending_signal.robot
-Force Tags       regression    pybot    jybot
-Test Setup       Check Precondition
-Resource         process_resource.robot
+Force Tags       no-windows
+Resource         atest_resource.robot
 
 *** Test Cases ***
 Sending INT signal
@@ -25,15 +24,18 @@ Send other well-known signals
     Check Test Case    ${TESTNAME}
 
 By default signal is not sent to process running in shell
+    [Tags]    no-osx
     Check Test Case    ${TESTNAME}
 
 By default signal is sent only to parent process
     Check Test Case    ${TESTNAME}
 
 Signal can be sent to process running in shell
+    [Tags]    no-jython
     Check Test Case    ${TESTNAME}
 
 Signal can be sent to child processes
+    [Tags]    no-jython
     Check Test Case    ${TESTNAME}
 
 Sending an unknown signal

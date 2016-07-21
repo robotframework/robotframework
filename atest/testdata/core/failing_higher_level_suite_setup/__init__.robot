@@ -1,2 +1,2 @@
 *** Settings ***
-Suite Setup  Fail  Expected failure in higher level setup
+Suite Setup       Fail    Expected failure in higher level setup

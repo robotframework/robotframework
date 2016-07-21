@@ -1,6 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests And Remove Keywords
-Default Tags    regression  pybot  jybot
+Suite Setup     Run Tests And Remove Keywords
 Resource        atest_resource.robot
 
 *** Variables ***
@@ -16,7 +15,6 @@ ${REMOVED BY PATTERN MESSAGE}    -BYPATTERN -ALL
 ${KEPT BY PATTERN MESSAGE}    +BYPATTERN -ALL
 
 *** Test Cases ***
-
 PASSED option when test passes
     Log should not contain    ${PASS MESSAGE}
     Output should contain pass message
@@ -45,8 +43,16 @@ NAME option with pattern
     Log should contain    ${KEPT BY PATTERN MESSAGE}
     Output should contain NAME messages with patterns
 
-*** Keywords ***
+TAGged keywords
+    Log should contain     This is not removed by TAG
+    Log should not contain    This is removed by TAG
 
+Warnings and errors are preserved
+    Output should contain warning and error
+    Log should contain    Keywords with warnings are not removed
+    Log should contain    Keywords with errors are not removed
+
+*** Keywords ***
 Run tests and remove keywords
     ${opts} =    Catenate
     ...    --removekeywords passed
@@ -55,6 +61,7 @@ Run tests and remove keywords
     ...    --removekeywords name:RemoveByName
     ...    --removekeywords name:Thisshouldbe*
     ...    --removekeywords name:Remove???
+    ...    --removekeywords tag:removeANDkitty
     ...    --log log.html
     Run tests    ${opts}    cli/remove_keywords/all_combinations.robot
     ${LOG} =    Get file    ${OUTDIR}/log.html
@@ -108,8 +115,9 @@ Test should contain NAME messages
     [Arguments]    ${name}
     ${tc}=    Check test case    ${name}
     Check log message    ${tc.kws[0].kws[0].msgs[0]}   ${REMOVED BY NAME MESSAGE}
-    Check log message    ${tc.kws[1].kws[0].kws[0].msgs[0]}   ${REMOVED BY NAME MESSAGE}
-    Check log message    ${tc.kws[1].kws[1].msgs[0]}   ${KEPT BY NAME MESSAGE}
+    Check log message    ${tc.kws[1].kws[0].msgs[0]}   ${REMOVED BY NAME MESSAGE}
+    Check log message    ${tc.kws[2].kws[0].kws[0].msgs[0]}   ${REMOVED BY NAME MESSAGE}
+    Check log message    ${tc.kws[2].kws[1].msgs[0]}   ${KEPT BY NAME MESSAGE}
 
 Output should contain NAME messages with patterns
     Test should contain NAME messages with * pattern    NAME with * pattern when test passes
@@ -122,8 +130,9 @@ Test should contain NAME messages with * pattern
     ${tc}=    Check test case    ${name}
     Check log message    ${tc.kws[0].kws[0].msgs[0]}   ${REMOVED BY PATTERN MESSAGE}
     Check log message    ${tc.kws[1].kws[0].msgs[0]}   ${REMOVED BY PATTERN MESSAGE}
-    Check log message    ${tc.kws[2].kws[0].kws[0].msgs[0]}    ${REMOVED BY PATTERN MESSAGE}
-    Check log message    ${tc.kws[2].kws[1].msgs[0]}    ${KEPT BY PATTERN MESSAGE}
+    Check log message    ${tc.kws[2].kws[0].msgs[0]}   ${REMOVED BY PATTERN MESSAGE}
+    Check log message    ${tc.kws[3].kws[0].kws[0].msgs[0]}    ${REMOVED BY PATTERN MESSAGE}
+    Check log message    ${tc.kws[3].kws[1].msgs[0]}    ${KEPT BY PATTERN MESSAGE}
 
 Test should contain NAME messages with ? pattern
     [Arguments]    ${name}
@@ -131,3 +140,8 @@ Test should contain NAME messages with ? pattern
     Check log message    ${tc.kws[0].kws[0].msgs[0]}    ${REMOVED BY PATTERN MESSAGE}
     Check log message    ${tc.kws[1].kws[0].kws[0].msgs[0]}    ${REMOVED BY PATTERN MESSAGE}
     Check log message    ${tc.kws[1].kws[1].msgs[0]}    ${KEPT BY PATTERN MESSAGE}
+
+Output should contain warning and error
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Keywords with warnings are not removed    WARN
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Keywords with errors are not removed    ERROR

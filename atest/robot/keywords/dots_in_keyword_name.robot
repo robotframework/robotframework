@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    --pythonpath ${DATADIR}/keywords    keywords/dots_in_keyword_name.robot
-Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***

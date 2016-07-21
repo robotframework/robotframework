@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/builtin/convert_to_bytes.robot
-Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -23,6 +22,9 @@ Characters as a list
     Check Test Case    ${TESTNAME}
 
 Byte string
+    Check Test Case    ${TESTNAME}
+
+Bytearray
     Check Test Case    ${TESTNAME}
 
 Integers

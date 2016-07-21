@@ -1,7 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    running/continue_for_loop.robot
-Force Tags        regression
-Default Tags      pybot    jybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -50,4 +48,7 @@ With Continuable Failure After
     Check Test Case    ${TESTNAME}
 
 With Continuable Failure Before
+    Check Test Case    ${TESTNAME}
+
+With Continuable Failure In User Keyword
     Check Test Case    ${TESTNAME}

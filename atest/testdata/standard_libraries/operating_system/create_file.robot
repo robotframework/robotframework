@@ -1,7 +1,7 @@
 *** Settings ***
-Test Setup      Create Base Test Directory
-Suite Teardown  Remove Base Test Directory
-Resource        os_resource.robot
+Suite Teardown    Remove Base Test Directory
+Test Setup        Create Base Test Directory
+Resource          os_resource.robot
 
 *** Test Cases ***
 Create File With Default Content
@@ -26,6 +26,10 @@ Create File With Encoding
     Hyvää yötä!    ISO-8859-1
     Спасибо        UTF-8
     Спасибо        ISO-8859-5
+    Hyvää yötä!    SYSTEM
+    Hyvää yötä!    sysTEM
+    Hyvää yötä!    console
+    Hyvää yötä!    CONsole
 
 Create File With Non-ASCII Name
     [Template]    Create and Verify File
@@ -86,6 +90,6 @@ Create And Verify Binary File Using Unicode
     Verify Binary File    ${file}    ${expected}
 
 Verify Binary File
-    [Arguments]    ${path}    ${expected}
+    [Arguments]    ${file}    ${expected}
     ${content} =    Get Binary File    ${file}
     Should Be Equal    ${content}    ${expected}

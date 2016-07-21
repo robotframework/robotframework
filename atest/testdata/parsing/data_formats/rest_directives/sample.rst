@@ -21,6 +21,20 @@ We have a devious plan to rule the world with robots.
    | Variables  | ../resources/variables.py
    | Library    | OperatingSystem | | | | | | | | | | | | | | | |
 
+The following are non-standard docutils directives, and we should ignore
+errors when parsing this.
+
+Testing also a :term:`test` as it should generate an error.
+
+.. highlight:: robotframework
+
+.. todo::
+   This is not really a todo so you have to do nothing.
+
+.. automodule:: some_module
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Please ignore me and the non-robotframework code blocks below.
 
@@ -58,10 +72,10 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
 
 .. sourcecode:: robotframework
 
-   Failing        [Document]   FAIL    Failing test case.
-      Fail                     Failing test case.
-   User Keyword   [Document]   FAIL    A cunning argument. != something
-      My Keyword With Arg      A cunning argument.
+   Failing        [Documentation]   FAIL    Failing test case.
+      Fail                          Failing test case.
+   User Keyword   [DocumentAtion]   FAIL    A cunning argument. != something
+      My Keyword With Arg           A cunning argument.
 
    Nön-äscïï
       [Documentation]   FAIL Nön-äscïï error
@@ -90,27 +104,27 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
    Library Import   Directory Should Not Be Empty   ${CURDIR}
 
    Test Timeout   [Timeout]   0.01s
-      [Document]   FAIL   Test timeout 10 milliseconds exceeded.
+      [Documentation]   FAIL   Test timeout 10 milliseconds exceeded.
       Sleep   2
 
-   Keyword Timeout   [Document]   FAIL   Keyword timeout 2 milliseconds exceeded.
+   Keyword Timeout   [Documentation]   FAIL   Keyword timeout 2 milliseconds exceeded.
       Timeouted Keyword
 
    Empty Rows
-      [Document]   Testing that empty rows are ignored.   FAIL Expected failure.
+      [Documentation]   Testing that empty rows are ignored.   FAIL Expected failure.
 
       No operation
 
       Fail   Expected failure.
 
-   Document   [Document]   Testing the metadata parsing.
+   Document   [Documentation]   Testing the metadata parsing.
       no operation
 
    Default Fixture   No operation
 
    Overridden Fixture   [Teardown]   Fail   Failing Teardown
       [Setup]   Log   Own Setup
-      [Document]   FAIL   Teardown failed:\n Failing Teardown
+      [Documentation]   FAIL   Teardown failed:\n Failing Teardown
       No Operation
 
    Quotes   Should Be Equal   ${quoted}   """this has """"many "" quotes """""
@@ -121,7 +135,7 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
 
 .. code:: robotframework
 
-   *User Keywords*   *Action*   *Argument*   *Argument*   *Argument*
+   *Keywords*   *Action*   *Argument*   *Argument*   *Argument*
 
    My Keyword With Arg   [Arguments]   ${arg1}
       Keyword with no arguments

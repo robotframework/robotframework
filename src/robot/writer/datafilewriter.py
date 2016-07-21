@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -15,6 +16,7 @@
 import os
 
 from robot.errors import DataError
+from robot.utils import binary_file_writer, file_writer, PY2
 
 from .filewriters import FileWriter
 
@@ -42,7 +44,6 @@ class DataFileWriter(object):
 
 class WritingContext(object):
     """Contains configuration used in writing a test data file to disk."""
-    encoding = 'UTF-8'
     txt_format = 'txt'
     html_format = 'html'
     tsv_format = 'tsv'
@@ -92,7 +93,11 @@ class WritingContext(object):
 
     def __enter__(self):
         if not self.output:
-            self.output = open(self._output_path(), 'wb')
+            path = self._output_path()
+            if PY2 and self.format == self.tsv_format:
+                self.output = binary_file_writer(path)
+            else:
+                self.output = file_writer(path, newline=self.line_separator)
         return self
 
     def __exit__(self, *exc_info):

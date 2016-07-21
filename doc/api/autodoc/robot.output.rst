@@ -1,6 +1,18 @@
 robot.output package
 ====================
 
+.. automodule:: robot.output
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+
+    robot.output.console
+
 Submodules
 ----------
 
@@ -20,26 +32,26 @@ robot.output.filelogger module
     :undoc-members:
     :show-inheritance:
 
-robot.output.highlighting module
---------------------------------
-
-.. automodule:: robot.output.highlighting
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-robot.output.librarylisteners module
-------------------------------------
-
-.. automodule:: robot.output.librarylisteners
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 robot.output.librarylogger module
 ---------------------------------
 
 .. automodule:: robot.output.librarylogger
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.output.listenerarguments module
+-------------------------------------
+
+.. automodule:: robot.output.listenerarguments
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.output.listenermethods module
+-----------------------------------
+
+.. automodule:: robot.output.listenermethods
     :members:
     :undoc-members:
     :show-inheritance:
@@ -64,14 +76,6 @@ robot.output.loggerhelper module
 --------------------------------
 
 .. automodule:: robot.output.loggerhelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-robot.output.monitor module
----------------------------
-
-.. automodule:: robot.output.monitor
     :members:
     :undoc-members:
     :show-inheritance:
@@ -109,10 +113,3 @@ robot.output.xmllogger module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.output
-    :members:
-    :undoc-members:
-    :show-inheritance:

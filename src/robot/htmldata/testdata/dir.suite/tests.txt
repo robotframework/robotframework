@@ -100,6 +100,10 @@ Long messages
     Run Keyword And Continue on Failure    Fail    ${msg1}
     Fail    ${msg2}
 
+Tags
+    [Tags]    test    haz    own    tagz
+    Keyword with tags
+
 *** Keywords **
 User Kw
     Log   in User Kw
@@ -108,4 +112,8 @@ User Kw
     Fail    </script>
 
 kw http://url.com
+    No Operation
+
+Keyword with tags
+    [Tags]    i    can    haz    tägs    ?!?!?!    <&§¢'"</script>
     No Operation

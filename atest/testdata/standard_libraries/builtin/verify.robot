@@ -7,6 +7,15 @@ ${STR1}           1
 ${INT0}           ${0}
 ${INT1}           ${1}
 @{LIST}           a    b    cee    b    ${42}
+${LONG}           This is a bit longer sentence and it even has a friend here.
+...               This is the friend of the previous sentence and it is also
+...               quite long, actually even longer than its friend.
+&{D1}             a=${1}    b=${2}
+&{D2}             a=${1}    b=${2}    ${3}=${None}
+@{L1}             1
+@{L2}             41    ${42}    43    44
+@{L3}             11    ${12}    13
+@{L3B}            10    12    14
 
 *** Test Cases ***
 Should Not Be True
@@ -46,6 +55,12 @@ Should (Not) Be True is evaluated with os- and sys-modules
     Should Not Be True    'os.sep' == 'wrong'
     Should Not Be True    'sys.platform' == 'hurd'    # let's see when this starts failing
 
+Should (Not) Be True is evaluated with robot's variables
+    ${list} =    Create list   foo    bar
+    Should Be True    $list[0] == 'foo'
+    Should Be True   len($list) == 2
+    Should Not Be True   len($list) == 3
+
 Should Not Be Equal
     [Documentation]    FAIL 1 == 1
     [Template]    Should Not Be Equal
@@ -65,7 +80,50 @@ Should Be Equal
     ${STR1}    1
     ${INT1}    ${1}
     ${BYTES WITHOUT NON ASCII}    ${BYTES WITHOUT NON ASCII}
-    A    B    Error message
+    A    B    Error message    values=yes
+
+Should Be Equal fails with values
+    [Documentation]    FAIL Several failures occurred:\n\n 1) 3: 1 != 2\n\n 2) c: a != b\n\n 3) z: x != y
+    [Template]    Should Be Equal
+    1    2    3
+    a    b    c    values=true
+    x    y    z    values=${42}
+
+Should Be Equal fails without values
+    [Documentation]    FAIL Several failures occurred:\n\n 1) 3\n\n 2) c\n\n 3) z\n\n 4) -
+    [Template]    Should Be Equal
+    1    2    3    values=FALSE
+    a    b    c    No Values
+    x    y    z    values=no
+    .    ,    -    ${NONE}
+
+Should be equal with multiline text uses diff
+    [Documentation]    FAIL Multiline strings are different:
+                       ...    --- first
+                       ...    +++ second
+                       ...    @@ -1,3 +1,4 @@
+                       ...    \ foo
+                       ...    \ bar
+                       ...    +gar
+                       ...    \ dar\n
+    Should be equal    foo\nbar\ndar    foo\nbar\ngar\ndar
+
+Should be equal with multiline diff text requires both multiline
+    [Documentation]    FAIL foo\nbar\ndar != foobar
+    Should be equal    foo\nbar\ndar    foobar
+
+Should be equal with multiline text will not use diff if values are not included
+    [Documentation]    FAIL Custom message
+    Should be equal    foo\nbar\ndar    foo\nbar\ngar\ndar   Custom message    values=FALSE
+
+Should Be Equal Tuple and List With Same Values Does Not Work
+    [Documentation]    FAIL not same
+    ${t1} =   Evaluate   tuple($L3)
+    Should be equal    ${t1}    ${L3}    not same    values=false
+
+Should Equal Dictionaries Of Different Type With Same Keys Works
+    ${D2B} =    Evaluate    dict($D2)
+    Should Be Equal    ${D2}    ${D2B}
 
 Should Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} != ${BYTES WITHOUT NON ASCII}
@@ -114,11 +172,11 @@ Should Be Equal As Integers With Base
     0x1    0o1
 
 Should Not Be Equal As Numbers
-    [Documentation]    FAIL Fails again: 1.1 == 1.1
+    [Documentation]    FAIL Fails again: 1.0 == 1.0
     [Template]    Should Not Be Equal As Numbers
     ${STR1}.${STR1}    1.2
     ${STR1}.${STR1}    ${1.2}
-    ${STR1}.${STR1}    1.1    Fails again
+    ${STR1}.0    1.0    Fails again
 
 Should Not Be Equal As Numbers With Precision
     [Documentation]    FAIL Failing: 1.0 == 1.0
@@ -160,6 +218,17 @@ Should Be Equal As Strings
     ${None}    None
     foo    bar
 
+Should Be Equal As Strings Multiline
+    [Documentation]    FAIL Multiline strings are different:
+                      ...    --- first
+                      ...    +++ second
+                      ...    @@ -1,3 +1,4 @@
+                      ...    \ foo
+                      ...    \ bar
+                      ...    +gar
+                      ...    \ dar\n
+    Should Be Equal As Strings    foo\nbar\ndar    foo\nbar\ngar\ndar
+
 Should Not Start With
     [Documentation]    FAIL 'Hello, world!' starts with 'Hello'
     [Template]    Should Not Start With
@@ -168,17 +237,25 @@ Should Not Start With
     Hello, world!    Hello
 
 Should Start With
-    [Documentation]    FAIL My message: 'This is a big longer sentence and it even has a friend here. This is the friend of the previous sentence -- also this is quite long, actually even longer than its friend.' does not start with 'Whatever'
+    [Documentation]    FAIL My message: '${LONG}' does not start with 'Does not start'
     [Template]    Should Start With
     Hello, world!    Hello
     Hello, world!    Hello, world!
-    This is a big longer sentence and it even has a friend here. This is the friend of the previous sentence -- also this is quite long, actually even longer than its friend.    Whatever    My message
+    ${LONG}    Does not start    My message    values=true
+
+Should Start With without values
+    [Documentation]    FAIL My message
+    Should Start With    ${LONG}    Nope    My message    values=No values
 
 Should Not End With
     [Documentation]    FAIL Message only
     [Template]    Should Not End With
     Hello!    Hello
     Hillo!    !    Message only    No Values
+
+Should End With without values
+    [Documentation]    FAIL My message
+    Should End With    ${LONG}    Nope    My message    values=No values
 
 Should End With
     [Documentation]    FAIL 'Hello, world!' does not end with '?'
@@ -370,9 +447,17 @@ Should Contain X Times With Invalid Count
     [Documentation]    FAIL STARTS: 'invalid' cannot be converted to an integer: ValueError:
     Should Contain X Times    hello    l    invalid
 
-Should Contain X Times Failing With Default Message
-    [Documentation]    FAIL 'hello' does not contain 'l' 3 times.
+Should Contain X Times Failing With Default Message 1
+    [Documentation]    FAIL 'hello' contains 'l' 2 times, not 3 times.
     Should Contain X Times    hello    l    3
+
+Should Contain X Times Failing With Default Message 2
+    [Documentation]    FAIL 'hello' contains 'lo' 1 time, not 0 times.
+    Should Contain X Times    hello    lo    0
+
+Should Contain X Times Failing With Default Message 3
+    [Documentation]    FAIL 'hello' contains 'l' 2 times, not 1 time.
+    Should Contain X Times    hello    l    1
 
 Should Contain X Times Failing With Defined Message
     [Documentation]    FAIL My message

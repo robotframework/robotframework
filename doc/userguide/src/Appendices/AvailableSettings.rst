@@ -20,7 +20,7 @@ importing libraries, resources, and variables.
    +-----------------+--------------------------------------------------------+
    |       Name      |                         Description                    |
    +=================+========================================================+
-   | Library         | Used for `taking test libraries into use`_.            |
+   | Library         | Used for `importing libraries`_.                       |
    +-----------------+--------------------------------------------------------+
    | Resource        | Used for `taking resource files into use`_.            |
    +-----------------+--------------------------------------------------------+
@@ -35,12 +35,6 @@ importing libraries, resources, and variables.
    +-----------------+--------------------------------------------------------+
    | Suite Teardown  | Used for specifying the `suite teardown`_.             |
    +-----------------+--------------------------------------------------------+
-   | Suite           | A synonym for Suite Setup.                             |
-   | Precondition    |                                                        |
-   +-----------------+--------------------------------------------------------+
-   | Suite           | A synonym for Suite Teardown.                          |
-   | Postcondition   |                                                        |
-   +-----------------+--------------------------------------------------------+
    | Force Tags      | Used for specifying forced values for tags when        |
    |                 | `tagging test cases`_.                                 |
    +-----------------+--------------------------------------------------------+
@@ -50,12 +44,6 @@ importing libraries, resources, and variables.
    | Test Setup      | Used for specifying a default `test setup`_.           |
    +-----------------+--------------------------------------------------------+
    | Test Teardown   | Used for specifying a default `test teardown`_.        |
-   +-----------------+--------------------------------------------------------+
-   | Test            | A synonym for Test Setup.                              |
-   | Precondition    |                                                        |
-   +-----------------+--------------------------------------------------------+
-   | Test            | A synonym for Test Teardown.                           |
-   | Postcondition   |                                                        |
    +-----------------+--------------------------------------------------------+
    | Test Template   | Used for specifying a default `template keyword`_      |
    |                 | for test cases.                                        |
@@ -91,10 +79,6 @@ default values defined in the Settings table.
    +-----------------+--------------------------------------------------------+
    | [Teardown]      | Used for specifying a `test teardown`_.                |
    +-----------------+--------------------------------------------------------+
-   | [Precondition]  | A synonym for [Setup].                                 |
-   +-----------------+--------------------------------------------------------+
-   | [Postcondition] | A synonym for [Teardown].                              |
-   +-----------------+--------------------------------------------------------+
    | [Template]      | Used for specifying a `template keyword`_.             |
    +-----------------+--------------------------------------------------------+
    | [Timeout]       | Used for specifying a `test case timeout`_.            |
@@ -113,6 +97,8 @@ which they are defined.
    |      Name       |                         Description                    |
    +=================+========================================================+
    | [Documentation] | Used for specifying a `user keyword documentation`_.   |
+   +-----------------+--------------------------------------------------------+
+   | [Tags]          | Used for specifying `user keyword tags`_.              |
    +-----------------+--------------------------------------------------------+
    | [Arguments]     | Used for specifying `user keyword arguments`_.         |
    +-----------------+--------------------------------------------------------+

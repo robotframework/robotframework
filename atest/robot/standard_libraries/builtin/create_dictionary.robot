@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/builtin/create_dictionary.robot
-Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -8,14 +7,8 @@ Empty
     Check Test Case    ${TESTNAME}
 
 Separate keys and values
-    ${tc} =    Check Test Case    ${TESTNAME}
-    ${deprecated} =    Catenate    Giving keys and values separately to 'Create
-    ...    Dictionary' keyword is deprecated. Use 'key=value' syntax instead.
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${deprecated}    WARN
-    Check Log Message    ${tc.kws[2].msgs[0]}    ${deprecated}    WARN
-    Length Should Be    ${ERRORS}    13
-    :FOR    ${err}    IN    @{ERRORS}
-    \    Check Log Message    ${err}    ${deprecated}    WARN
+    Check Test Case    ${TESTNAME}
+    Should Be Empty    ${ERRORS}
 
 Separate keys and values using non-string keys
     Check Test Case    ${TESTNAME}

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,26 +13,28 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import html_escape, setter
+from robot.utils import html_escape, py2to3, setter
 
 from .itemlist import ItemList
 from .modelobject import ModelObject
 
 
+@py2to3
 class Message(ModelObject):
-    """A message outputted during the test execution.
+    """A message created during the test execution.
 
-    The message can be a log message triggered by a keyword, or a warning
-    or an error occurred during the test execution.
+    Can be a log message triggered by a keyword, or a warning or an error
+    that occurred during parsing or test execution.
     """
-    __slots__ = ['message', 'level', 'html', 'timestamp', 'parent', '_sort_key']
+    __slots__ = ['message', 'level', 'html', 'timestamp', '_sort_key']
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  parent=None):
         #: The message content as a string.
         self.message = message
-        #: Severity of the message. Either ``TRACE``, ``INFO``,
-        #: ``WARN``, ``DEBUG`` or ``FAIL``/``ERROR``.
+        #: Severity of the message. Either ``TRACE``, ``DEBUG``, ``INFO``,
+        #: ``WARN``, ``ERROR``, or ``FAIL``. The latest one is only used with
+        #: keyword failure messages.
         self.level = level
         #: ``True`` if the content is in HTML, ``False`` otherwise.
         self.html = html
@@ -53,6 +56,7 @@ class Message(ModelObject):
         return self.message if self.html else html_escape(self.message)
 
     def visit(self, visitor):
+        """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_message(self)
 
     def __unicode__(self):

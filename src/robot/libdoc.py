@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -29,6 +30,19 @@ that can be used programmatically. Other code is for internal usage.
 
 Libdoc itself is implemented in the :mod:`~robot.libdocpkg` package.
 """
+
+import sys
+import os
+
+# Allows running as a script. __name__ check needed with multiprocessing:
+# https://github.com/robotframework/robotframework/issues/1137
+if 'robot' not in sys.modules and __name__ == '__main__':
+    import pythonpathsetter
+
+from robot.utils import Application, seq2str
+from robot.errors import DataError
+from robot.libdocpkg import LibraryDocumentation, ConsoleViewer
+
 
 USAGE = """robot.libdoc -- Robot Framework library documentation generator
 
@@ -124,18 +138,6 @@ installed module, but it can also be executed as a script like
 For more information about Libdoc and other built-in tools, see
 http://robotframework.org/robotframework/#built-in-tools.
 """
-
-import sys
-import os
-
-# Allows running as a script. __name__ check needed with multiprocessing:
-# http://code.google.com/p/robotframework/issues/detail?id=1137
-if 'robot' not in sys.modules and __name__ == '__main__':
-    import pythonpathsetter
-
-from robot.utils import Application, seq2str
-from robot.errors import DataError
-from robot.libdocpkg import LibraryDocumentation, ConsoleViewer
 
 
 class LibDoc(Application):

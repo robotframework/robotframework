@@ -28,8 +28,7 @@ test suite:
    Used for setting `free test suite metadata`_ as name-value
    pairs.
 `Suite Setup`:setting:, `Suite Teardown`:setting:
-   Specify `suite setup and teardown`_. Have also synonyms
-   :setting:`Suite Precondition` and :setting:`Suite Postcondition`, respectively.
+   Specify `suite setup and teardown`_.
 
 .. note:: All setting names can optionally include a colon at the end, for
       example :setting:`Documentation:`. This can make reading the settings easier
@@ -112,37 +111,22 @@ initialization files is explained below.
 `Default Tags`:setting:, `Test Template`:setting:
    Not supported in initialization files.
 
-.. table:: An example test suite initialization file
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  =============  =============
-      Setting         Value          Value
-   =============  =============  =============
-   Documentation  Example suite
-   Suite Setup    Do Something   ${MESSAGE}
-   Force Tags     example
-   Library        SomeLibrary
-   =============  =============  =============
+   *** Settings ***
+   Documentation    Example suite
+   Suite Setup      Do Something    ${MESSAGE}
+   Force Tags       example
+   Library          SomeLibrary
 
-.. table::
-   :class: example
+   *** Variables ***
+   ${MESSAGE}       Hello, world!
 
-   =============  =============  =============
-      Variable        Value          Value
-   =============  =============  =============
-   ${MESSAGE}     Hello, world!
-   =============  =============  =============
-
-.. table::
-   :class: example
-
-   =============  ===============  ================  ================
-      Keyword          Action          Argument          Argument
-   =============  ===============  ================  ================
-   Do Something   [Arguments]      ${arg}
-   \              Some Keyword     ${arg}
-   \              Another Keyword
-   =============  ===============  ================  ================
+   *** Keywords ***
+   Do Something
+       [Arguments]    ${args}
+       Some Keyword    ${arg}
+       Another Keyword
 
 __ `Test case related settings in the Setting table`_
 
@@ -170,15 +154,11 @@ suite documentation has exactly the same characteristics regarding to where
 it is shown and how it can be created as `test case
 documentation`_.
 
-.. table:: Test suite documentation example
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ======================  ======================  ======================
-      Setting             Value                   Value                   Value
-   =============  ======================  ======================  ======================
-   Documentation  An example test suite   documentation with      \*some\* _formatting_.
-   ...            See test documentation  for more documentation  examples.
-   =============  ======================  ======================  ======================
+   *** Settings ***
+   Documentation    An example test suite documentation with *some* _formatting_.
+   ...              See test documentation for more documentation examples.
 
 Both the name and documentation of the top-level test suite can be
 overridden in test execution. This can be done with the command line
@@ -199,18 +179,14 @@ or `into several rows`__ (joined together with newlines),
 simple `HTML formatting`_ works and even variables_ can be used.
 
 __ `Dividing test data to several rows`_
-__ `Automatic newlines in test data`_
+__ `Newlines in test data`_
 
-.. table:: Metadata examples
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===========  ====================  =========================  ==============================
-    Setting      Value            Value                   Value                          Value
-   =========  ===========  ====================  =========================  ==============================
-   Metadata   Version      2.0
-   Metadata   More Info    For more information  about \*Robot Framework\*  see \http://robotframework.org
-   Metadata   Executed At  ${HOST}
-   =========  ===========  ====================  =========================  ==============================
+   *** Settings ***
+   Metadata    Version        2.0
+   Metadata    More Info      For more information about *Robot Framework* see http://robotframework.org
+   Metadata    Executed At    ${HOST}
 
 For top-level test suites, it is possible to set metadata also with the
 :option:`--metadata` command line option. This is discussed in more
@@ -231,9 +207,7 @@ __ `Test setup and teardown`_
 Similarly as with test cases, a suite setup and teardown are keywords
 that may take arguments. They are defined in the Setting table with
 :setting:`Suite Setup` and :setting:`Suite Teardown` settings,
-respectively. They also have similar synonyms, :setting:`Suite
-Precondition` and :setting:`Suite Postcondition`, as a test case setup
-and teardown have. Keyword names and possible arguments are located in
+respectively. Keyword names and possible arguments are located in
 the columns after the setting name.
 
 If a suite setup fails, all test cases in it and its child test suites

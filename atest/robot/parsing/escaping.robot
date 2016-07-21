@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  parsing/escaping.robot
-Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 
 *** Test Cases ***

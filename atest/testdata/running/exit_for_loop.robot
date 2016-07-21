@@ -83,6 +83,13 @@ With Continuable Failure Before
     \       Exit For Loop If    '${var}' == 'three'
     Should Be Equal    ${var}    three
 
+With Continuable Failure In User Keyword
+    [Documentation]    FAIL    Several failures occurred:\n\n1) å\n\n2) ä\n\n3) The End
+    :FOR    ${var}    IN    å    ä    ö
+    \       With Continuable Failure In User Keyword    ${var}
+    Should Be Equal    ${var}    ä
+    Fail    The End
+
 *** Keyword ***
 With Loop
     :FOR    ${var}    IN    one    two
@@ -115,3 +122,7 @@ Invalid Exit For Loop In User Keyword Teardown
     No Operation
     [Teardown]    Exit For Loop
 
+With Continuable Failure In User Keyword
+    [Arguments]    ${arg}
+    Run Keyword And Continue On Failure    Fail    ${arg}
+    Exit For Loop If    '${arg}' == 'ä'

@@ -1,12 +1,9 @@
 *** Settings ***
-Force Tags      regression    pybot  jybot
 Resource        atest_resource.robot
 Library         ProcessManager.py
-Test Teardown   Run Keyword If Test Failed    Log Stdout And Stderr
 
 *** Variables ***
 ${TEST FILE}    %{TEMPDIR}${/}signal-tests.txt
-
 
 *** Test Cases ***
 SIGINT Signal Should Stop Test Execution Gracefully
@@ -15,14 +12,13 @@ SIGINT Signal Should Stop Test Execution Gracefully
     Check Test Cases Have Failed Correctly
 
 SIGTERM Signal Should Stop Test Execution Gracefully
-    [Tags]  x-exclude-on-windows
+    [Tags]  no-windows
     Start And Send Signal  without_any_timeout.robot  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 Execution Is Stopped Even If Keyword Swallows Exception
-    [Documentation]  This only works with Python.
-    Run Keyword If    not "${PYTHON}"    Remove Tags    regression
+    [Tags]    no-ipy    no-jython
     Start And Send Signal  swallow_exception.robot  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
@@ -47,7 +43,7 @@ Two SIGINT Signals Should Stop Test Execution Forcefully
     Check Tests Have Been Forced To Shutdown
 
 Two SIGTERM Signals Should Stop Test Execution Forcefully
-    [Tags]  x-exclude-on-windows
+    [Tags]  no-windows
     Start And Send Signal  without_any_timeout.robot  Two SIGTERMs  2s
     Check Tests Have Been Forced To Shutdown
 
@@ -93,22 +89,19 @@ Start And Send Signal
 
 Start Run
     [Arguments]    ${datasource}    ${sleep}    @{extra options}
-    Set Runners
-    ${datasource} =    Set Variables And Get Datasources    running/stopping_with_signal/${datasource}
-    @{runner} =    Get Runner    ${INTERPRETER}    ${ROBOTPATH}
     @{command} =    Create List
-    ...    @{runner}
+    ...    @{INTERPRETER.runner}
     ...    --output    ${OUTFILE}    --report    NONE    --log    NONE
     ...    --variable    TESTSIGNALFILE:${TEST FILE}
     ...    --variable    TEARDOWNSLEEP:${sleep}
     ...    @{extra options}
-    ...    ${datasource}
+    ...    ${DATADIR}${/}running${/}stopping_with_signal${/}${datasource}
     Log Many    @{command}
     ProcessManager.start process    @{command}
 
 Check Test Cases Have Failed Correctly
-    Check Test Case    Test    FAIL    Execution terminated by signal
-    Check Test Case    Test2    FAIL    Test execution stopped due to a fatal error.
+    Check Test Tags    Test
+    Check Test Tags    Test2    robot-exit
 
 Check Tests Have Been Forced To Shutdown
     ${stderr} =    ProcessManager.Get Stderr

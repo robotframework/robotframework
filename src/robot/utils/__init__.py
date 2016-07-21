@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -32,15 +33,16 @@ or::
     assert Matcher('H?llo').match('Hillo')
 """
 
-from .argumentparser import ArgumentParser
+from .argumentparser import ArgumentParser, cmdline2list
 from .application import Application
+from .compat import isatty, py2to3, StringIO, with_metaclass
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .dotdict import DotDict, OrderedDict
-from .encoding import (decode_output, encode_output,
-                       decode_from_system, encode_to_system)
-from .error import (get_error_message, get_error_details, ErrorDetails,
-                    RERAISED_EXCEPTIONS)
+from .encoding import (console_decode, console_encode,
+                       system_decode, system_encode, CONSOLE_ENCODING,
+                       SYSTEM_ENCODING)
+from .error import (get_error_message, get_error_details, ErrorDetails)
 from .escaping import escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource
 from .frange import frange
@@ -48,29 +50,27 @@ from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
-from .misc import (isatty, getdoc, plural_or_not, printable_name,
-                   seq2str, seq2str2)
+from .misc import (getdoc, plural_or_not, printable_name, roundup, seq2str,
+                   seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
-from .platform import IRONPYTHON, JYTHON, UNIXY, WINDOWS
+from .platform import (IRONPYTHON, JYTHON, PY2, PY3, PYTHON, UNIXY, WINDOWS,
+                       RERAISED_EXCEPTIONS)
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method
+from .robotio import binary_file_writer, file_writer
 from .robotpath import abspath, find_file, get_link_path, normpath
 from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
                         parse_time)
-from .robottypes import is_dict_like, is_list_like, is_str_like, type_name
-from .setter import setter
+from .robottypes import (is_bytes, is_dict_like, is_falsy, is_integer,
+                         is_list_like, is_number, is_string, is_truthy,
+                         is_unicode, type_name)
+from .setter import setter, SetterAwareType
+from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,
-                   pad_console_length, get_console_length)
+                   pad_console_length, get_console_length, split_tags_from_doc,
+                   split_args_from_name_or_path)
 from .unic import prepr, unic
 from .utf8reader import Utf8Reader
-
-
-# Still used by old SeleniumLibrary. Cannot be removed until that library is
-# updated or officially retired.
-# https://code.google.com/p/robotframework-seleniumlibrary/issues/detail?id=261
-def html_attr_escape(attr):
-    """Deprecated!! Use attribute_escape instead."""
-    return attribute_escape(attr)

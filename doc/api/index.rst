@@ -9,7 +9,7 @@ covered by the `Robot Framework User Guide`__.
 Main API entry points are documented here, but the lower level
 implementation details are not always that well documented. If the
 documentation is insufficient, it is possible to view the source code
-by clicking `[source]` link in the documentation. In case viewing the
+by clicking ``[source]`` link in the documentation. In case viewing the
 source is not helpful either, questions may be sent to the
 `robotframework-users`__ mailing list.
 

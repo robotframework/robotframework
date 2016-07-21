@@ -1,15 +1,14 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  keywords/embedded_arguments_library_keywords.robot
-Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
 Embedded Arguments In Library Keyword Name
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message  ${tc.kws[0].msgs[0]}    This is always executed
-    Keyword Data Should Be    ${tc.kws[0]}    embedded_args_in_lk_1.User Peke Selects Advanced Python From Webshop    \${name}, \${book}
+    Check Keyword Data    ${tc.kws[0]}    embedded_args_in_lk_1.User Peke Selects Advanced Python From Webshop    \${name}, \${book}
     Check Log Message  ${tc.kws[2].msgs[0]}    This is always executed
-    Keyword Data Should Be    ${tc.kws[2]}    embedded_args_in_lk_1.User Juha selects Playboy from webshop    \${name}, \${book}
+    Check Keyword Data    ${tc.kws[2]}    embedded_args_in_lk_1.User Juha selects Playboy from webshop    \${name}, \${book}
 
 Complex Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -19,9 +18,9 @@ Complex Embedded Arguments
 
 Embedded Arguments with BDD Prefixes
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    embedded_args_in_lk_1.Given user x selects y from webshop
-    Keyword Data Should Be    ${tc.kws[1]}    embedded_args_in_lk_1.When user x selects y from webshop
-    Keyword Data Should Be    ${tc.kws[2]}    embedded_args_in_lk_1.Then user x selects y from webshop    \${x}, \${y}
+    Check Keyword Data    ${tc.kws[0]}    embedded_args_in_lk_1.Given user x selects y from webshop
+    Check Keyword Data    ${tc.kws[1]}    embedded_args_in_lk_1.When user x selects y from webshop
+    Check Keyword Data    ${tc.kws[2]}    embedded_args_in_lk_1.Then user x selects y from webshop    \${x}, \${y}
 
 Argument Namespaces with Embedded Arguments
     Check Test Case    ${TEST NAME}
@@ -31,7 +30,7 @@ Embedded Arguments as Variables
 
 Non-Existing Variable in Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    embedded_args_in_lk_1.User \${non existing} Selects \${variables} From Webshop
+    Check Keyword Data    ${tc.kws[0]}    embedded_args_in_lk_1.User \${non existing} Selects \${variables} From Webshop
 
 Custom Embedded Argument Regexp
     Check Test Case    ${TEST NAME}
@@ -51,9 +50,11 @@ Custom Regexp Matching Variables
 Custom Regexp Matching Variables When Regexp Does No Match Them
     Check Test Case    ${TEST NAME}
 
-Embedded Arguments Syntax is Space and Underscore Sensitive
-    Check Test Case    Embedded Arguments Syntax is Space Sensitive
-    Check Test Case    Embedded Arguments Syntax is Underscore Sensitive
+Embedded Arguments Syntax is Space Sensitive
+    Check Test Case    ${TEST NAME}
+
+Embedded Arguments Syntax is Underscore Sensitive
+    Check Test Case    ${TEST NAME}
 
 Keyword matching multiple keywords in library file
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -73,7 +74,7 @@ Keyword with embedded args cannot be used as "normal" keyword
 Embedded argument count must match accepted arguments
     Check Test Case    ${TESTNAME}
     ${msg} =    Catenate
-    ...    Adding keyword 'Wrong \${number} Of Embedded \${args}' to library 'embedded_args_in_lk_1' failed:
+    ...    Adding keyword 'Wrong \${number} of embedded \${args}' to library 'embedded_args_in_lk_1' failed:
     ...    Embedded argument count does not match number of accepted arguments.
     Check Log Message    ${ERRORS[0]}    ${msg}    ERROR
 
@@ -82,3 +83,15 @@ Optional Non-Embedded Args Are Okay
 
 Star Args With Embedded Args Are Okay
     Check Test Case    ${TESTNAME}
+
+Same name with different regexp works
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    a car
+    Check Log Message    ${tc.kws[1].msgs[0]}    a dog
+    Check Log Message    ${tc.kws[2].msgs[0]}    a cow
+
+Same name with different regexp matching multiple fails
+    Check Test Case    ${TEST NAME}
+
+Same name with same regexp fails
+    Check Test Case    ${TEST NAME}

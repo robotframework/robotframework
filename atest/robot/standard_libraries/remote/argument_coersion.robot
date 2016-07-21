@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Remote Tests    argument_coersion.robot    arguments.py
-Force Tags       regression    pybot    jybot
 Resource         remote_resource.robot
 
 *** Test Cases ***
@@ -14,14 +13,13 @@ Binary
     Check Test Case    ${TESTNAME}
 
 Binary in non-ASCII range
-    [Tags]    x-fails-on-ipy
     Check Test Case    ${TESTNAME}
 
 Binary with too big Unicode characters
     Check Test Case    ${TESTNAME}
 
 Unrepresentable Unicode
-    [Tags]    x-fails-on-ipy
+    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 Integer
@@ -55,7 +53,6 @@ List with non-ASCII values
     Check Test Case    ${TESTNAME}
 
 List with non-ASCII byte values
-    [Tags]    x-fails-on-ipy
     Check Test Case    ${TESTNAME}
 
 List with binary values
@@ -74,14 +71,17 @@ Dictionary with non-string keys and values
     Check Test Case    ${TESTNAME}
 
 Dictionary with non-ASCII keys
-    [Tags]    x-fails-on-ipy
+    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 Dictionary with non-ASCII values
     Check Test Case    ${TESTNAME}
 
-Dictionary with non-ASCII byte keys and values
-    [Tags]    x-fails-on-ipy
+Dictionary with non-ASCII byte keys
+    [Tags]    no-ipy
+    Check Test Case    ${TESTNAME}
+
+Dictionary with non-ASCII byte values
     Check Test Case    ${TESTNAME}
 
 Dictionary with binary keys is not supported

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import is_string, py2to3
+
 
 class VariableSplitter(object):
 
@@ -23,7 +26,7 @@ class VariableSplitter(object):
         self.end = -1
         self._identifiers = identifiers
         self._may_have_internal_variables = False
-        if not isinstance(string, basestring):
+        if not is_string(string):
             self._max_end = -1
             return
         self._max_end = len(string)
@@ -154,6 +157,7 @@ class VariableSplitter(object):
             raise StopIteration
 
 
+@py2to3
 class VariableIterator(object):
 
     def __init__(self, string, identifiers='$@%&*'):
@@ -176,7 +180,7 @@ class VariableIterator(object):
 
     def __nonzero__(self):
         try:
-            iter(self).next()
+            next(iter(self))
         except StopIteration:
             return False
         else:

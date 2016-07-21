@@ -1,7 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/timestamps_for_stdout_messages.robot
-Force Tags      regression
-Default Tags    pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -13,7 +11,7 @@ Library adds timestamp as float
     Test's timestamps should be correct
 
 Java library adds timestamp
-    [Tags]  jybot
+    [Tags]  require-jython
     Test's timestamps should be correct
 
 

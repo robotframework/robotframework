@@ -4,7 +4,6 @@ Library           OperatingSystem
 *** Variables ***
 #                 Usage of prog.py: prog.py rc=0 stdout='' stderr='' count=1
 ${PROG}           python ${CURDIR}${/}files${/}prog.py
-${RESULT}         Hyvää üötä
 
 *** Test Cases ***
 Run
@@ -69,8 +68,10 @@ Run And Return RC And Output
     Should Be Equal    ${output}    hello
 
 Run Non-ascii Command Returning Non-ascii Output
-    ${output} =    Run    echo ${result}
-    Should Be Equal    ${output.strip()}    ${result}
+    ${cmd} =    Set Variable If    sys.version[0] == '2' or os.sep == '/'
+    ...    echo Hyvää üötä    python -c "print('Hyvää üötä')"
+    ${output} =    Run    ${cmd}
+    Should Be Equal    ${output.strip()}    Hyvää üötä
 
 Trailing Newline Is Removed Automatically
     ${output} =    Run    echo hello

@@ -1,11 +1,9 @@
-import os
 import unittest
-from StringIO import StringIO
 
 from robot.parsing import TestCaseFile
 from robot.parsing.model import TestCaseTable
-from robot.utils.asserts import assert_equals
-from robot.utils import ET, ETSource
+from robot.utils import ET, ETSource, StringIO
+from robot.utils.asserts import assert_equal
 
 
 def create_test_case_file():
@@ -22,7 +20,7 @@ class _WriterTestCase(unittest.TestCase):
 
     def _test_rows_are_not_split_if_there_are_headers(self, format='txt'):
         output = self._add_long_step_and_save(format)
-        assert_equals(len(output.splitlines()), 3)
+        assert_equal(len(output.splitlines()), 3)
 
     def _add_long_step_and_save(self, format):
         data = create_test_case_file()
@@ -41,7 +39,7 @@ class TestSpaceSeparatedWriter(_WriterTestCase):
 *** test case ***     some    and other
 A test                A kw    an arg
 '''
-        assert_equals(repr(expected), repr(output.getvalue()))
+        assert_equal(output.getvalue(), expected)
 
     def test_rows_are_not_split_if_there_are_headers(self):
         self._test_rows_are_not_split_if_there_are_headers()
@@ -53,7 +51,7 @@ A test                A kw    an arg
 *** test case ***         some        and other
 A test                    A kw        an arg
 '''
-        assert_equals(repr(expected), repr(output.getvalue()))
+        assert_equal(output.getvalue(), expected)
 
 
 class TestTsvWriter(_WriterTestCase):
@@ -74,10 +72,10 @@ class TestHtmlWriter(_WriterTestCase):
         with ETSource('\n'.join(output.splitlines()[1:])) as source:
             tree = ET.parse(source)
         lines = tree.findall('body/table/tr')
-        assert_equals(len(lines), 3)
+        assert_equal(len(lines), 3)
         for l in lines:
             cols = l.findall('td') or l.findall('th')
-            assert_equals(len(cols), 9)
+            assert_equal(len(cols), 9)
 
 
 if __name__ == '__main__':

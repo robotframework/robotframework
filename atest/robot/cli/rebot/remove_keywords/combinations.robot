@@ -1,9 +1,7 @@
 *** Settings ***
 Suite Setup       Create Output
-Force Tags        regression    pybot    jybot
 Test Template     Run Rebot With RemoveKeywords
 Resource          remove_keywords_resource.robot
-Library           String
 
 *** Test Cases ***          rem1      rem2      etc.
 
@@ -38,6 +36,7 @@ Validate Tests
     ...    NAME when test fails    NAME when test passes
     ...    NAME with * pattern when test fails    NAME with * pattern when test passes
     ...    NAME with ? pattern when test fails    NAME with ? pattern when test passes
+    ...    TAGged keywords    Warnings and errors are preserved
 
 Create Output
     Create Output With Robot    ${INPUTFILE}    ${EMPTY}    cli/remove_keywords/all_combinations.robot

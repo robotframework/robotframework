@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,10 +14,10 @@
 #  limitations under the License.
 
 import sys
-from StringIO import StringIO
+from robot.utils import StringIO
 
 from robot.output import LOGGER
-from robot.utils import decode_output, encode_output, JYTHON
+from robot.utils import console_decode, console_encode, JYTHON
 
 
 class OutputCapturer(object):
@@ -45,7 +46,7 @@ class OutputCapturer(object):
             LOGGER.log_output(stdout)
         if stderr:
             LOGGER.log_output(stderr)
-            sys.__stderr__.write(encode_output(stderr+'\n'))
+            sys.__stderr__.write(console_encode(stderr, stream=sys.__stderr__))
 
     def _release(self):
         stdout = self._python_out.release() + self._java_out.release()
@@ -82,11 +83,11 @@ class PythonCapturer(object):
 
     def _get_value(self, stream):
         try:
-            return decode_output(stream.getvalue())
+            return console_decode(stream.getvalue())
         except UnicodeError:
             # Error occurs if non-ASCII chars logged both as str and unicode.
-            stream.buf = decode_output(stream.buf)
-            stream.buflist = [decode_output(item) for item in stream.buflist]
+            stream.buf = console_decode(stream.buf)
+            stream.buflist = [console_decode(item) for item in stream.buflist]
             return stream.getvalue()
 
     def _avoid_at_exit_errors(self, stream):

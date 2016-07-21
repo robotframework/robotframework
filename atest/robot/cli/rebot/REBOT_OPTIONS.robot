@@ -1,9 +1,9 @@
 *** Settings ***
-Force Tags        regression    pybot    jybot
 Resource          rebot_cli_resource.robot
 Suite Setup       Run Keywords
 ...               Run tests to create input file for Rebot    ${TESTS}    ${INPUT}    AND
-...               Set Environment Variable    REBOT_OPTIONS    --name Default --settag default
+...               Set Environment Variable    REBOT_OPTIONS
+...               --name Default --settag "default with spaces"
 Suite Teardown    Remove Environment Variable    REBOT_OPTIONS
 
 *** Variables ***
@@ -14,9 +14,9 @@ ${INPUT}          %{TEMPDIR}${/}rebot_options.xml
 Use defaults
     Run Rebot    ${EMPTY}    ${INPUT}
     Should Be Equal    ${SUITE.name}    Default
-    Check Test Tags    Pass    force    pass    default
+    Check Test Tags    Pass    force    pass    default with spaces
 
 Override defaults
     Run Rebot    -N Given -G given   ${INPUT}
     Should Be Equal    ${SUITE.name}    Given
-    Check Test Tags    Pass    force    pass    default    given
+    Check Test Tags    Pass    force    pass    default with spaces    given

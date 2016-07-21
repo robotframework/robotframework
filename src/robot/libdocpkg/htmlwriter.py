@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,7 +14,10 @@
 #  limitations under the License.
 
 import re
-import urllib
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import quote
 
 from robot.errors import DataError
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
@@ -58,7 +62,9 @@ class JsonConverter(object):
             'scope': libdoc.scope,
             'generated': get_timestamp(daysep='-', millissep=None),
             'inits': self._get_keywords(libdoc.inits),
-            'keywords': self._get_keywords(libdoc.keywords)
+            'keywords': self._get_keywords(libdoc.keywords),
+            'all_tags': tuple(libdoc.all_tags),
+            'contains_tags': bool(libdoc.all_tags)
         }
 
     def _get_keywords(self, keywords):
@@ -67,9 +73,11 @@ class JsonConverter(object):
     def _convert_keyword(self, kw):
         return {
             'name': kw.name,
-            'args': ', '.join(kw.args),
+            'args': kw.args,
             'doc': self._doc_formatter.html(kw.doc),
-            'shortdoc': kw.shortdoc
+            'shortdoc': kw.shortdoc,
+            'tags': tuple(kw.tags),
+            'matched': True
         }
 
 
@@ -107,11 +115,11 @@ class DocFormatter(object):
 
     def _escape_and_encode_targets(self, targets):
         return NormalizedDict((html_escape(key), self._encode_uri_component(value))
-                              for key, value in targets.iteritems())
+                              for key, value in targets.items())
 
     def _encode_uri_component(self, value):
         # Emulates encodeURIComponent javascript function
-        return urllib.quote(value.encode('UTF-8'), safe="-_.!~*'()")
+        return quote(value.encode('UTF-8'), safe="-_.!~*'()")
 
     def html(self, doc, intro=False):
         doc = self._doc_to_html(doc)

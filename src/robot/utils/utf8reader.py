@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,11 +15,13 @@
 
 from codecs import BOM_UTF8
 
+from .robottypes import is_string
+
 
 class Utf8Reader(object):
 
     def __init__(self, path_or_file):
-        if isinstance(path_or_file, basestring):
+        if is_string(path_or_file):
             self._file = open(path_or_file, 'rb')
             self._close = True
         else:

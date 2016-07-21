@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -15,7 +16,7 @@
 from contextlib import contextmanager
 
 from robot.errors import DataError
-from robot.utils import split_from_equals, unic, DotDict
+from robot.utils import DotDict, is_string, split_from_equals, unic
 
 from .isvar import validate_var
 from .splitter import VariableSplitter
@@ -85,14 +86,14 @@ class VariableTableValueBase(object):
 
     def report_error(self, error):
         if self._error_reporter:
-            self._error_reporter(unicode(error))
+            self._error_reporter(unic(error))
 
 
 class ScalarVariableTableValue(VariableTableValueBase):
 
     def _format_values(self, values):
         separator = None
-        if isinstance(values, basestring):
+        if is_string(values):
             values = [values]
         elif values and values[0].startswith('SEPARATOR='):
             separator = values.pop(0)[10:]

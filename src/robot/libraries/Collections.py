@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,16 +14,22 @@
 #  limitations under the License.
 
 from robot.api import logger
-from robot.utils import (plural_or_not, seq2str, seq2str2, type_name, unic,
-                         Matcher)
-from robot.utils.asserts import assert_equals
+from robot.utils import (is_dict_like, is_string, is_truthy, plural_or_not,
+                         seq2str, seq2str2, type_name, unic, Matcher)
+from robot.utils.asserts import assert_equal
 from robot.version import get_version
 
 
-class _List:
+class NotSet(object):
+    def __repr__(self):
+        return ""
+NOT_SET = NotSet()
+
+
+class _List(object):
 
     def convert_to_list(self, item):
-        """Converts the given ``item`` to a list.
+        """Converts the given ``item`` to a Python ``list`` type.
 
         Mainly useful for converting tuples and other iterable to lists.
         Use `Create List` from the BuiltIn library for constructing new lists.
@@ -328,16 +335,18 @@ class _List:
         The keyword first verifies that the lists have equal lengths, and then
         it checks are all their values equal. Possible differences between the
         values are listed in the default error message like ``Index 4: ABC !=
-        Abc``.
+        Abc``. The types of the lists do not need to be the same. For example,
+        Python tuple and list with same content are considered equal.
+
 
         The error message can be configured using ``msg`` and ``values``
         arguments:
         - If ``msg`` is not given, the default error message is used.
-        - If ``msg`` is given and ``values`` is either Boolean ``False`` or
-           a string ``'False'`` or ``'No Values'``, the error message is simply
-           ``msg``.
-        - Otherwise the error message starts with ``msg`` followed by a newline
-          character and the default message.
+        - If ``msg`` is given and ``values`` gets a value considered true
+          (see `Boolean arguments`), the error message starts with the given
+          ``msg`` followed by a newline and the default message.
+        - If ``msg`` is given and ``values``  is not given a true value,
+          the error message is just the given ``msg``.
 
         Optional ``names`` argument can be used for naming the indices shown in
         the default error message. It can either be a list of names matching
@@ -368,7 +377,7 @@ class _List:
     def _get_list_index_name_mapping(self, names, list_length):
         if not names:
             return {}
-        if isinstance(names, dict):
+        if is_dict_like(names):
             return dict((int(index), names[index]) for index in names)
         return dict(zip(range(list_length), names))
 
@@ -376,7 +385,7 @@ class _List:
         for index, (item1, item2) in enumerate(zip(list1, list2)):
             name = ' (%s)' % names[index] if index in names else ''
             try:
-                assert_equals(item1, item2, msg='Index %d%s' % (index, name))
+                assert_equal(item1, item2, msg='Index %d%s' % (index, name))
             except AssertionError as err:
                 yield unic(err)
 
@@ -386,8 +395,8 @@ class _List:
         The order of values and the number of values are not taken into
         account.
 
-        See the use of ``msg`` and ``values`` from the `Lists Should Be Equal`
-        keyword.
+        See `Lists Should Be Equal` for more information about configuring
+        the error message with ``msg`` and ``values`` arguments.
         """
         diffs = ', '.join(unic(item) for item in list2 if item not in list1)
         default = 'Following values were not found from first list: ' + diffs
@@ -426,7 +435,18 @@ class _List:
                          % (index, len(list_)-1))
 
 
-class _Dictionary:
+class _Dictionary(object):
+
+    def convert_to_dictionary(self, item):
+        """Converts the given ``item`` to a Python ``dict`` type.
+
+        Mainly useful for converting other mappings to dictionaries. Use
+        `Create Dictionary` from the BuiltIn library for constructing new
+        dictionaries.
+
+        New in Robot Framework 2.9.
+        """
+        return dict(item)
 
     def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
         """Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.
@@ -474,6 +494,26 @@ class _Dictionary:
             else:
                 logger.info("Key '%s' not found." % key)
 
+    def pop_from_dictionary(self, dictionary, key, default=NOT_SET):
+        """Pops the given ``key`` from the ``dictionary`` and returns its value.
+
+        By default the keyword fails if the given ``key`` cannot be found from
+        the ``dictionary``. If optional ``default`` value is given, it will be
+        returned instead of failing.
+
+        Example:
+        | ${val}= | Pop From Dictionary | ${D3} | b |
+        =>
+        | ${val} = 2
+        | ${D3} = {'a': 1, 'c': 3}
+
+        New in Robot Framework 2.9.2.
+        """
+        if default is NOT_SET:
+            self.dictionary_should_contain_key(dictionary, key)
+            return dictionary.pop(key)
+        return dictionary.pop(key, default)
+
     def keep_in_dictionary(self, dictionary, *keys):
         """Keeps the given ``keys`` in the ``dictionary`` and removes all other.
 
@@ -498,8 +538,8 @@ class _Dictionary:
     def get_dictionary_keys(self, dictionary):
         """Returns keys of the given ``dictionary``.
 
-        Keys are returned in sorted order. The given ``dictionary`` is never
-        altered by this keyword.
+        If keys are sortable, they are returned in sorted order. The given
+        ``dictionary`` is never altered by this keyword.
 
         Example:
         | ${keys} = | Get Dictionary Keys | ${D3} |
@@ -507,7 +547,11 @@ class _Dictionary:
         | ${keys} = ['a', 'b', 'c']
         """
         # TODO: Possibility to disable sorting. Can be handy with OrderedDicts.
-        return sorted(dictionary)
+        keys = dictionary.keys()
+        try:
+            return sorted(keys)
+        except TypeError:
+            return list(keys)
 
     def get_dictionary_values(self, dictionary):
         """Returns values of the given dictionary.
@@ -585,7 +629,7 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         self.dictionary_should_contain_key(dictionary, key, msg)
-        actual, expected = unicode(dictionary[key]), unicode(value)
+        actual, expected = unic(dictionary[key]), unic(value)
         default = "Value of dictionary key '%s' does not match: %s != %s" % (key, actual, expected)
         _verify_condition(actual == expected, default, msg)
 
@@ -614,9 +658,12 @@ class _Dictionary:
 
         First the equality of dictionaries' keys is checked and after that all
         the key value pairs. If there are differences between the values, those
-        are listed in the error message.
+        are listed in the error message. The types of the dictionaries do not
+        need to be same.
 
-        See `Lists Should Be Equal` for an explanation of ``msg``.
+        See `Lists Should Be Equal` for more information about configuring
+        the error message with ``msg`` and ``values`` arguments.
+
         The given dictionaries are never altered by this keyword.
         """
         keys = self._keys_should_be_equal(dict1, dict2, msg, values)
@@ -626,7 +673,9 @@ class _Dictionary:
                                                  values=True):
         """Fails unless all items in ``dict2`` are found from ``dict1``.
 
-        See `Lists Should Be Equal` for an explanation of ``msg``.
+        See `Lists Should Be Equal` for more information about configuring
+        the error message with ``msg`` and ``values`` arguments.
+
         The given dictionaries are never altered by this keyword.
         """
         keys = self.get_dictionary_keys(dict2)
@@ -679,13 +728,12 @@ class _Dictionary:
     def _yield_dict_diffs(self, keys, dict1, dict2):
         for key in keys:
             try:
-                assert_equals(dict1[key], dict2[key], msg='Key %s' % (key,))
+                assert_equal(dict1[key], dict2[key], msg='Key %s' % (key,))
             except AssertionError as err:
                 yield unic(err)
 
 
 class Collections(_List, _Dictionary):
-
     """A test library providing keywords for handling lists and dictionaries.
 
     ``Collections`` is Robot Framework's standard library that provides a
@@ -695,8 +743,11 @@ class Collections(_List, _Dictionary):
     From Dictionary`) and for verifying their contents (e.g. `Lists
     Should Be Equal`, `Dictionary Should Contain Value`).
 
-    Following keywords from the BuiltIn library can also be used with
+    = Related keywords in BuiltIn =
+
+    Following keywords in the BuiltIn library can also be used with
     lists and dictionaries:
+
     | = Keyword Name =             | = Applicable With = | = Comment = |
     | `Create List`                | lists |
     | `Create Dictionary`          | dicts | Was in Collections until RF 2.9. |
@@ -710,12 +761,46 @@ class Collections(_List, _Dictionary):
     | `Should Not Contain X Times` | lists |
     | `Get Count`                  | lists |
 
+    = Using with list-like and dictionary-like objects =
+
     List keywords that do not alter the given list can also be used
     with tuples, and to some extend also with other iterables.
     `Convert To List` can be used to convert tuples and other iterables
-    to lists.
+    to Python ``list`` objects.
 
-    -------
+    Similarly dictionary keywords can, for most parts, be used with other
+    mappings. `Convert To Dictionary` can be used if real Python ``dict``
+    objects are needed.
+
+    = Boolean arguments =
+
+    Some keywords accept arguments that are handled as Boolean values true or
+    false. If such an argument is given as a string, it is considered false if
+    it is either empty or case-insensitively equal to ``false`` or ``no``.
+    Keywords verifying something that allow dropping actual and expected values
+    from the possible error message also consider string ``no values`` as false.
+    Other strings are considered true regardless their value, and other
+    argument types are tested using same
+    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+    as in Python].
+
+    True examples:
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=True    | # Strings are generally true.    |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=yes     | # Same as the above.             |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${TRUE} | # Python ``True`` is true.       |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${42}   | # Numbers other than 0 are true. |
+
+    False examples:
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=False    | # String ``false`` is false.   |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=no       | # Also string ``no`` is false. |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${EMPTY} | # Empty string is false.       |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${FALSE} | # Python ``False`` is false.   |
+    | `Lists Should Be Equal` | ${x}   | ${y} | Custom error | values=no values | # ``no values`` works with ``values`` argument |
+
+    Note that prior to Robot Framework 2.9 some keywords considered all
+    non-empty strings, including ``False``, to be true.
+
+    = Data in examples =
 
     List related keywords use variables in format ``${Lx}`` in their examples.
     They mean lists with as many alphabetic characters as specified by ``x``.
@@ -724,8 +809,6 @@ class Collections(_List, _Dictionary):
 
     Dictionary keywords use similar ``${Dx}`` variables. For example, ``${D1}``
     means ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.
-
-    --------
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
@@ -750,10 +833,11 @@ class Collections(_List, _Dictionary):
         be escaped with another backslash (e.g. ``regexp=\\\\d{6}`` to search for
         ``\\d{6}``). See `BuiltIn.Should Match Regexp` for more details.
 
-        If ``case_insensitive`` is True, the pattern matching will ignore case.
+        If ``case_insensitive`` is given a true value (see `Boolean arguments`),
+        the pattern matching will ignore case.
 
-        If ``whitespace_insensitive`` is True, the pattern matching will ignore
-        whitespace.
+        If ``whitespace_insensitive`` is given a true value (see `Boolean
+        arguments`), the pattern matching will ignore whitespace.
 
         Non-string values in lists are ignored when matching patterns.
 
@@ -762,37 +846,36 @@ class Collections(_List, _Dictionary):
         See also ``Should Not Contain Match``.
 
         Examples:
-        | Should Contain Match | ${list} | a* | # List should contain any string beginning with 'a' |
-        | Should Contain Match | ${list} | regexp=a.* | # List should contain any string beginning with 'a' (regexp version) |
-        | Should Contain Match | ${list} | regexp=\\\\d{6} | # List should contain any string which contains six decimal digits |
-        | Should Contain Match | ${list} | a* | case_insensitive=${True} | # List should contain any string beginning with 'a' or 'A' |
-        | Should Contain Match | ${list} | ab* | whitespace_insensitive=${True} | # List should contain any string beginning with 'ab' or 'a b' or any other combination of whitespace |
-        | Should Contain Match | ${list} | ab* | whitespace_insensitive=${True} | case_insensitive=${True} | # List should contain any string beginning with 'ab' or 'a b' or 'AB' or 'A B' or any other combination of whitespace and upper/lower case 'a' and 'b' |
+        | Should Contain Match | ${list} | a*              | | | # Match strings beginning with 'a'. |
+        | Should Contain Match | ${list} | regexp=a.*      | | | # Same as the above but with regexp. |
+        | Should Contain Match | ${list} | regexp=\\\\d{6} | | | # Match strings containing six digits. |
+        | Should Contain Match | ${list} | a*  | case_insensitive=True       | | # Match strings beginning with 'a' or 'A'. |
+        | Should Contain Match | ${list} | ab* | whitespace_insensitive=yes  | | # Match strings beginning with 'ab' with possible whitespace ignored. |
+        | Should Contain Match | ${list} | ab* | whitespace_insensitive=true | case_insensitive=true | # Same as the above but also ignore case. |
 
         New in Robot Framework 2.8.6.
         """
-        default = "%s does not contain match for pattern '%s'." % (
-            seq2str2(list), pattern)
-        _verify_condition(
-            _get_matches_in_iterable(list, pattern, case_insensitive,
-                                     whitespace_insensitive), default, msg)
+        matches = _get_matches_in_iterable(list, pattern, case_insensitive,
+                                           whitespace_insensitive)
+        default = "%s does not contain match for pattern '%s'." \
+                  % (seq2str2(list), pattern)
+        _verify_condition(matches, default, msg)
 
     def should_not_contain_match(self, list, pattern, msg=None,
                                  case_insensitive=False,
                                  whitespace_insensitive=False):
         """Fails if ``pattern`` is found in ``list``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
-        See `Should Contain Match` for usage details and examples.
+        Exact opposite of `Should Contain Match` keyword. See that keyword
+        for information about arguments and usage in general.
 
         New in Robot Framework 2.8.6.
         """
-        default = "%s contains match for pattern '%s'." % (
-            seq2str2(list), pattern)
-        _verify_condition(
-            not _get_matches_in_iterable(list, pattern, case_insensitive,
-                                         whitespace_insensitive), default, msg)
+        matches = _get_matches_in_iterable(list, pattern, case_insensitive,
+                                           whitespace_insensitive)
+        default = "%s contains match for pattern '%s'." \
+                  % (seq2str2(list), pattern)
+        _verify_condition(not matches, default, msg)
 
     def get_matches(self, list, pattern, case_insensitive=False,
                     whitespace_insensitive=False):
@@ -829,35 +912,29 @@ class Collections(_List, _Dictionary):
                                     whitespace_insensitive))
 
 
-def _verify_condition(condition, default_msg, given_msg, include_default=False):
-    if not condition:
-        if not given_msg:
-            raise AssertionError(default_msg)
-        if _include_default_message(include_default):
-            raise AssertionError(given_msg + '\n' + default_msg)
-        raise AssertionError(given_msg)
-
-def _include_default_message(include):
-    if isinstance(include, basestring):
-        return include.lower() not in ['no values', 'false']
-    return bool(include)
+def _verify_condition(condition, default_msg, msg, values=False):
+    if condition:
+        return
+    if not msg:
+        msg = default_msg
+    elif is_truthy(values) and str(values).upper() != 'NO VALUES':
+        msg += '\n' + default_msg
+    raise AssertionError(msg)
 
 
 def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
                              whitespace_insensitive=False):
-    if not iterable:
-        return []
+    if not is_string(pattern):
+        raise TypeError("Pattern must be string, got '%s'." % type_name(pattern))
     regexp = False
-    if not isinstance(pattern, basestring):
-        raise TypeError("Pattern must be string, got '%s'."
-                        % type_name(pattern))
     if pattern.startswith('regexp='):
         pattern = pattern[7:]
         regexp = True
     elif pattern.startswith('glob='):
         pattern = pattern[5:]
-    matcher = Matcher(pattern, caseless=case_insensitive,
-                      spaceless=whitespace_insensitive, regexp=regexp)
+    matcher = Matcher(pattern,
+                      caseless=is_truthy(case_insensitive),
+                      spaceless=is_truthy(whitespace_insensitive),
+                      regexp=regexp)
     return [string for string in iterable
-            if isinstance(string, basestring)
-            and matcher.match(string)]
+            if is_string(string) and matcher.match(string)]

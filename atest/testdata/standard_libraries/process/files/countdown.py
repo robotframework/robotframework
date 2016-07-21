@@ -4,11 +4,11 @@ import time
 
 
 def countdown(path):
-    with open(path, 'w') as f:
-        for i in range(10, 0, -1):
+    for i in range(10, 0, -1):
+        with open(path, 'w') as f:
             f.write('%d\n' % i)
-            f.flush()
-            time.sleep(0.1)
+        time.sleep(0.2)
+    with open(path, 'w') as f:
         f.write('BLASTOFF')
 
 

@@ -1,34 +1,87 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}
-...      test_libraries/as_listener/suite_scope.robot
-...      test_libraries/as_listener/test_scope.robot
-...      test_libraries/as_listener/global_scope.robot
-Force Tags      regression  jybot  pybot
+Suite Setup     Run Tests    ${EMPTY}    ${SOURCES}
 Resource        atest_resource.robot
+
+*** Variables ***
+${SOURCES}      test_libraries/as_listener/test_scope.robot
+...             test_libraries/as_listener/suite_scope.robot
+...             test_libraries/as_listener/global_scope.robot
+...             test_libraries/as_listener/test_scope_2.robot
+...             test_libraries/as_listener/suite_scope_2.robot
+...             test_libraries/as_listener/global_scope_2.robot
+...             test_libraries/as_listener/multiple_listeners.robot
 
 *** Test Cases ***
 Test scope library gets events
-    Check Test Case  ${TESTNAME}
-New test gets empty events
-    Check Test Case  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} 2
+
+Test scope library gets no previous events
+    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} 2
+
 Suite scope library gets events
-    Check Test Case  ${TESTNAME}
-New test gets previous suite scope events
-    Check Test Case  ${TESTNAME}
-Listener methods in library are keywords
-    Check Test Case  ${TESTNAME}
-Listener methods starting with underscore are not keywords
-    Check Test Case  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} 2
+
+Suite scope library gets previous events in suite
+    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} 2
+
 Global scope library gets events
-    Check Test Case  ${TESTNAME}
-New test gets previous global scope events
-    Check Test Case  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} 2
+
+Global scope library gets all previous events
+    [Documentation]    They don't, however, get events from suites where they are not used.
+    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} 2
+
+Listener methods in library are keywords
+    Check Test Case    ${TESTNAME}
+
+Listener methods starting with underscore are not keywords
+    Check Test Case    ${TESTNAME}
+
+Multiple library listeners gets events
+    Check Test Case    ${TESTNAME}
+
+All listeners are disabled if one fails
+    Check Test Case    ${TESTNAME}
+
 Check closing
-    Stderr Should Match
-    ...     SEPARATOR=\n
-    ...     *CLOSING TEST SUITE
-    ...     CLOSING TEST CASE
-    ...     CLOSING TEST CASE
-    ...     CLOSING GLOBAL
+    Stderr Should Be Equal To    SEPARATOR=\n
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (suite)
+    ...    CLOSING TEST SUITE
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (suite)
+    ...    CLOSING TEST SUITE
+    ...    [ ERROR ] Registering listeners for library 'lib_not_works' failed: Taking listener 'NoVersionListener' into use failed: Listener 'NoVersionListener' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (suite)
+    ...    CLOSING TEST CASE (suite)
+    ...    CLOSING GLOBAL\n
+
 Library listener should be in syslog
-    Check Syslog Contains RegExp     Imported library '.*suite_listenerlibrary.py' with arguments \\[ \\] \\(version <unknown>, class type, testsuite scope, 4 keywords, with listener\\)
+    Syslog Should Contain Regexp    Imported library '.*suite_listenerlibrary.py' with arguments \\[ \\] \\(version <unknown>, class type, test suite scope, 5 keywords, with listener\\)
+
+Nested scopes
+    Run Tests    sources=test_libraries/as_listener/nested_scopes
+    Check Test Case    No Listener 1
+    Check Test Case    Yes Listener
+    Check Test Case    No Listener 2
+    Stderr Should Be Equal To    SEPARATOR=\n
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (suite)
+    ...    CLOSING TEST SUITE
+    ...    CLOSING TEST CASE (suite)
+    ...    CLOSING TEST SUITE
+    ...    CLOSING GLOBAL\n

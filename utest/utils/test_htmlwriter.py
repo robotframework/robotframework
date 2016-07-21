@@ -1,16 +1,14 @@
-import os
 import unittest
-from StringIO import StringIO
 
-from robot.utils import HtmlWriter
-from robot.utils.asserts import assert_equals
+from robot.utils import HtmlWriter, StringIO
+from robot.utils.asserts import assert_equal
 
 
 class TestHtmlWriter(unittest.TestCase):
 
     def setUp(self):
         self.output = StringIO()
-        self.writer = HtmlWriter(self.output, encoding=None)
+        self.writer = HtmlWriter(self.output)
 
     def test_start(self):
         self.writer.start('r')
@@ -97,34 +95,24 @@ class TestHtmlWriter(unittest.TestCase):
         self._verify('<div id="1">content</div>\n<i></i>')
 
     def test_line_separator(self):
-        self._test_line_separator('\n')
-        self._test_line_separator(os.linesep)
-        self._test_line_separator('LINESEP')
-
-    def _test_line_separator(self, linesep):
         output = StringIO()
-        writer = HtmlWriter(output, line_separator=linesep)
+        writer = HtmlWriter(output)
         writer.start('b')
         writer.end('b')
         writer.element('i')
-        expected = '<b>%(LS)s</b>%(LS)s<i></i>%(LS)s' % {'LS': linesep}
-        assert_equals(repr(output.getvalue()), repr(expected))
+        assert_equal(output.getvalue(), '<b>\n</b>\n<i></i>\n')
 
-    def test_encoding(self):
-        self._test_encoding('UTF-8')
-        self._test_encoding('ISO-8859-1')
-
-    def _test_encoding(self, encoding):
+    def test_non_ascii(self):
         self.output = StringIO()
-        writer = HtmlWriter(self.output, encoding=encoding)
+        writer = HtmlWriter(self.output)
         writer.start(u'p', attrs={'name': u'hyv\xe4\xe4'}, newline=False)
         writer.content(u'y\xf6')
         writer.element('i', u't\xe4', newline=False)
         writer.end('p', newline=False)
-        self._verify(u'<p name="hyv\xe4\xe4">y\xf6<i>t\xe4</i></p>'.encode(encoding))
+        self._verify(u'<p name="hyv\xe4\xe4">y\xf6<i>t\xe4</i></p>')
 
     def _verify(self, expected):
-        assert_equals(self.output.getvalue(), expected)
+        assert_equal(self.output.getvalue(), expected)
 
 
 if __name__ == '__main__':

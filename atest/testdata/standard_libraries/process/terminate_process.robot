@@ -1,7 +1,5 @@
 *** Settings ***
-Test Setup        Run Keywords
-...               Check Precondition    sys.version_info >= (2,6)    AND
-...               Remove File    ${TEMPFILE}
+Test Setup        Remove File    ${TEMPFILE}
 Test Teardown     Run Keywords
 ...               Remove File    ${TEMPFILE}    AND
 ...               Terminate All Processes    kill=True

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -15,7 +16,7 @@
 from java.lang import Byte, Short, Integer, Long, Boolean, Float, Double
 
 from robot.variables import contains_var
-from robot.utils import is_list_like
+from robot.utils import is_string, is_list_like
 
 
 class JavaArgumentCoercer(object):
@@ -30,7 +31,7 @@ class JavaArgumentCoercer(object):
         arguments = [c.coerce(a, dryrun)
                      for c, a in zip(self._coercers, arguments)]
         if self._argspec.kwargs:
-            arguments.append(named)
+            arguments.append(dict(named))
         return arguments
 
 
@@ -76,7 +77,7 @@ class _Coercer(object):
         return type in self._types or type.__name__ in self._primitives
 
     def coerce(self, argument, dryrun=False):
-        if not isinstance(argument, basestring) \
+        if not is_string(argument) \
                 or (dryrun and contains_var(argument)):
             return argument
         try:

@@ -1,6 +1,5 @@
 *** Settings ***
 Resource        atest_resource.robot
-Force Tags      regression  pybot  jybot
 Library         nolog.py
 Test Template   Run With Options
 
@@ -13,12 +12,7 @@ Should be same
 
 *** Keywords ***
 Run With Options  [Arguments]   ${options}
-    Run Tests  ${options} -r pybotreport.html   misc/pass_and_fail.robot
-    Copy File   ${OUTDIR}${/}pybotreport.html   %{TEMPDIR}${/}pybotreport.html
-    Run Rebot  -r rebotreport.html ${options}   ${OUTFILE}
-    Copy File   ${OUTDIR}${/}rebotreport.html   %{TEMPDIR}${/}rebotreport.html
-    Difference between stuff   %{TEMPDIR}${/}pybotreport.html   %{TEMPDIR}${/}rebotreport.html
-    [Teardown]   Remove Files    %{TEMPDIR}${/}pybotreport.html   %{TEMPDIR}${/}rebotreport.html
-
-
-
+    Run Tests  ${options} -r %{TEMPDIR}/robot-report.html   misc/pass_and_fail.robot
+    Copy Previous Outfile
+    Run Rebot  -r %{TEMPDIR}/rebot-report.html ${options}   ${OUTFILE COPY}
+    Reports should be equal   %{TEMPDIR}/robot-report.html   %{TEMPDIR}/rebot-report.html

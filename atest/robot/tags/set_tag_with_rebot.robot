@@ -1,7 +1,6 @@
 *** Setting ***
 Suite Setup       Run Tests And Read Outputs
 Suite Teardown    Remove Files    ${INFILE1}    ${INFILE2}
-Force Tags        pybot    jybot    regression
 Resource          atest_resource.robot
 
 *** Variable ***
@@ -27,7 +26,7 @@ Process One File Using Set Tag Multiple Times
     ...    t2
 
 Process Multiple Files Using set Tag
-    Run Rebot    --settag rebottag    ${INFILE1}    ${INFILE2}
+    Run Rebot    --settag rebottag    ${INFILE1} ${INFILE2}
     Check Test Tags    First One    f1    rebottag    robottag    t1    t2
     Check Test Tags    SubSuite1 First    f1    rebottag    t1
 

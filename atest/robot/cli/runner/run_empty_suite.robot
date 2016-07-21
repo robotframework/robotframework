@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags      pybot  jybot  regression
 Resource        cli_resource.robot
 
 *** Variables ***
@@ -25,13 +24,13 @@ Empty suite after filtering by names
      Run empty suite   --RunEmptySuite --test nonex   ${TEST FILE}
 
 Empty multi source suite after filtering
-     Run empty suite   --RunEmptySuite --test nonex   ${TEST FILE}  ${TEST FILE}
+     Run empty suite   --RunEmptySuite --test nonex   ${TEST FILE} ${TEST FILE}
 
 
 *** Keywords ***
 Run empty suite
-     [Arguments]    ${options}    @{sources}
-     Run tests     ${options} -l log.html -r report.html    @{sources}
-     Should be empty  ${SUITE.tests}
-     Should be empty  ${SUITE.suites}
+     [Arguments]    ${options}    ${sources}
+     Run tests     ${options} -l log.html -r report.html    ${sources}
+     Should be empty    ${SUITE.tests}
+     Should be empty    ${SUITE.suites}
      Stderr should be empty

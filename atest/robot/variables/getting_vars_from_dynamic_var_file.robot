@@ -1,7 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  variables/dynamic_variable_files/getting_vars_from_dynamic_var_file.robot
-Force Tags      regression
-Default Tags    pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -21,5 +19,5 @@ Variables From My UserDict Should Be Loaded
     Check Test Case  ${TEST NAME}
 
 Variables From Java Map Should Be Loaded
-    [tags]  jybot
+    [tags]  require-jython
     Check Test Case  ${TEST NAME}

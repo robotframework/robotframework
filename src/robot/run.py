@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -23,34 +24,49 @@ approaches::
     python path/to/robot/run.py
 
 Instead of ``python`` it is possible to use also other Python interpreters.
-This module is also used by the installed ``pybot``, ``jybot`` and
-``ipybot`` start-up scripts.
+This module is also used by the installed ``robot`` start-up script.
 
 This module also provides :func:`run` and :func:`run_cli` functions
 that can be used programmatically. Other code is for internal usage.
 """
 
+import sys
+
+# Allows running as a script. __name__ check needed with multiprocessing:
+# https://github.com/robotframework/robotframework/issues/1137
+if 'robot' not in sys.modules and __name__ == '__main__':
+    import pythonpathsetter
+
+from robot.conf import RobotSettings
+from robot.model import ModelModifier
+from robot.output import LOGGER, pyloggingconf
+from robot.reporting import ResultWriter
+from robot.running import TestSuiteBuilder
+from robot.utils import Application, unic
+
+
 USAGE = """Robot Framework -- A generic test automation framework
 
 Version:  <VERSION>
 
-Usage:  pybot|jybot|ipybot [options] data_sources
-   or:  python|jython|ipy -m robot.run [options] data_sources
-   or:  python|jython|ipy path/to/robot/run.py [options] data_sources
-   or:  java -jar robotframework.jar run [options] data_sources
+Usage:  robot [options] data_sources
+   or:  python -m robot [options] data_sources
+   or:  python path/to/robot [options] data_sources
+   or:  java -jar robotframework.jar [options] data_sources
 
 Robot Framework is a Python-based keyword-driven test automation framework for
 acceptance level testing and acceptance test-driven development (ATDD). It has
 an easy-to-use tabular syntax for creating test cases and its testing
 capabilities can be extended by test libraries implemented either with Python
-or Java. Users can also create new keywords from existing ones using the same
-simple syntax that is used for creating test cases.
+or Java. Users can also create new higher level keywords from existing ones
+using the same simple syntax that is used for creating test cases.
 
-Depending is Robot Framework installed using Python, Jython, or IronPython
-interpreter, it has a start-up script, `pybot`, `jybot` or `ipybot`,
-respectively. Alternatively, it is possible to directly execute `robot.run`
-module (e.g. `python -m robot.run`) or `robot/run.py` script using a selected
-interpreter. Finally, there is also a standalone JAR distribution.
+The easiest way to execute tests is using the `robot` script created as part
+of the normal installation. Alternatively it is possible to execute the `robot`
+module directly using `python -m robot`, where `python` can be replaced with
+any supported Python interpreter like `jython`, `ipy` or `python3`. Yet another
+alternative is running the `robot` directory like `python path/to/robot`.
+Finally, there is a standalone JAR distribution available.
 
 Data sources given to Robot Framework are either test case files or directories
 containing them and/or other directories. Single test case file creates a test
@@ -63,11 +79,11 @@ By default Robot Framework creates an XML output file and a log and a report in
 HTML format, but this can be configured using various options listed below.
 Outputs in HTML format are for human consumption and XML output for integration
 with other systems. XML outputs can also be combined and otherwise further
-processed with `rebot` tool. Run `rebot --help` for more information.
+processed with Rebot tool. Run `rebot --help` for more information.
 
-Robot Framework is open source software released under Apache License 2.0. Its
-copyrights are owned and development supported by Nokia Solutions and Networks.
-For more information about the framework see http://robotframework.org/.
+Robot Framework is open source software released under Apache License 2.0.
+For more information about the framework and the rich ecosystem around it
+see http://robotframework.org/.
 
 Options
 =======
@@ -109,32 +125,25 @@ Options
  -R --rerunfailed output  Select failed tests from an earlier output file to be
                           re-executed. Equivalent to selecting same tests
                           individually using --test option.
-    --runfailed output    Deprecated since RF 2.8.4. Use --rerunfailed instead.
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
                           can be given as a pattern like with --include.
  -n --noncritical tag *   Tests with given tag are not critical even if they
                           have a tag set with --critical. Tag can be a pattern.
  -v --variable name:value *  Set variables in the test data. Only scalar
-                          variables are supported and name is given without
-                          `${}`. See --escape for how to use special characters
-                          and --variablefile for a more powerful variable
-                          setting mechanism that allows also list variables.
+                          variables with string value are supported and name is
+                          given without `${}`. See --escape for how to use
+                          special characters and --variablefile for a more
+                          powerful variable setting mechanism.
                           Examples:
-                          --variable str:Hello  =>  ${str} = `Hello`
-                          -v str:Hi_World -E space:_  =>  ${str} = `Hi World`
-                          -v x: -v y:42  =>  ${x} = ``, ${y} = `42`
- -V --variablefile path *  File to read variables from (e.g. `path/vars.py`).
-                          Example file:
-                          |  import random
-                          |  __all__ = [`scalar`, `LIST__var`, `integer`]
-                          |  scalar = `Hello world!`
-                          |  LIST__var = [`Hello`, `list`, `world`]
-                          |  integer = random.randint(1,10)
-                          =>
-                          ${scalar} = `Hello world!`
-                          @{var} = [`Hello`,`list`,`world`]
-                          ${integer} = <random integer from 1 to 10>
+                          --variable str:Hello       =>  ${str} = `Hello`
+                          -v hi:Hi_World -E space:_  =>  ${hi} = `Hi World`
+                          -v x: -v y:42              =>  ${x} = ``, ${y} = `42`
+ -V --variablefile path *  Python or YAML file file to read variables from.
+                          Possible arguments to the variable file can be given
+                          after the path using colon or semicolon as separator.
+                          Examples: --variablefile path/vars.yaml
+                                    --variablefile environment.py:testing
  -d --outputdir dir       Where to create output files. The default is the
                           directory where tests are run from and the given path
                           is considered relative to that unless it is absolute.
@@ -218,9 +227,10 @@ Options
                           automatically converted to spaces.
                           Examples: --tagstatlink mytag:http://my.domain:Link
                           --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
-    --removekeywords all|passed|for|wuks|name:<pattern> *  Remove keyword data
-                          from the generated log file. Keywords containing
-                          warnings are not removed except in `all` mode.
+    --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
+                          Remove keyword data from the generated log file.
+                          Keywords containing warnings are not removed except
+                          in `all` mode.
                           all:     remove data from all keywords
                           passed:  remove data only from keywords in passed
                                    test cases and suites
@@ -235,20 +245,33 @@ Options
                                    and may contain `*` and `?` as wildcards.
                                    Examples: --removekeywords name:Lib.HugeKw
                                              --removekeywords name:myresource.*
-    --flattenkeywords for|foritem|name:<pattern> *  Flattens matching keywords
-                          in the generated log file. Matching keywords get all
-                          log messages from their child keywords and children
-                          are discarded otherwise.
+                          tag:<pattern>:  remove data from keywords that match
+                                   the given pattern. Tags are case and space
+                                   insensitive and it is possible to use
+                                   patterns with `*` and `?` as wildcards.
+                                   Tags and patterns can also be combined
+                                   together with `AND`, `OR`, and `NOT`
+                                   operators.
+                                   Examples: --removekeywords foo
+                                             --removekeywords fooANDbar*
+    --flattenkeywords for|foritem|name:<pattern>|tag:<pattern> *
+                          Flattens matching keywords in the generated log file.
+                          Matching keywords get all log messages from their
+                          child keywords and children are discarded otherwise.
                           for:     flatten for loops fully
                           foritem: flatten individual for loop iterations
                           name:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords name:<pattern>`
+                          tag:<pattern>:  flatten matched keywords using same
+                                   matching rules as with
+                                   `--removekeywords tag:<pattern>`
     --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when a test case starts and ends.
-                          Arguments to listener class can be given after class
-                          name, using colon as separator. For example:
-                          --listener MyListenerClass:arg1:arg2
+                          Arguments to the listener class can be given after
+                          the name using colon or semicolon as a separator.
+                          Examples: --listener MyListenerClass
+                                    --listener path/to/Listener.py:arg1:arg2
     --warnonskippedfiles  If this option is used, skipped test data files will
                           cause a warning that is visible in the console output
                           and the log file. By default skipped files only cause
@@ -260,7 +283,7 @@ Options
                           is not an error that no test matches the condition.
     --dryrun              Verifies test data and runs tests so that library
                           keywords are not executed.
-    --exitonfailure       Stops test execution if any critical test fails.
+ -X --exitonfailure       Stops test execution if any critical test fails.
     --exitonerror         Stops test execution if any error occurs when parsing
                           test data, importing libraries, and so on.
     --skipteardownonexit  Causes teardowns to be skipped if test execution is
@@ -274,22 +297,36 @@ Options
                           The seed must be an integer.
                           Examples: --randomize all
                                     --randomize tests:1234
- -W --monitorwidth chars  Width of the monitor output. Default is 78.
- -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
+    --prerunmodifier class *  Class to programmatically modify the test suite
+                          structure before execution.
+    --prerebotmodifier class *  Class to programmatically modify the result
+                          model before creating reports and logs.
+    --console type        How to report execution on the console.
+                          verbose:  report every suite and test (default)
+                          dotted:   only show `.` for passed test, `f` for
+                                    failed non-critical tests, and `F` for
+                                    failed critical tests
+                          quiet:    no output except for errors and warnings
+                          none:     no output whatsoever
+ -. --dotted              Shortcut for `--console dotted`.
+    --quiet               Shortcut for `--console quiet`.
+ -W --consolewidth chars  Width of the monitor output. Default is 78.
+ -C --consolecolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
                           on:   always use colors
                           ansi: like `on` but use ANSI colors also on Windows
                           off:  disable colors altogether
                           Note that colors do not work with Jython on Windows.
- -K --monitormarkers auto|on|off  Show `.` (success) or `F` (failure) on
-                          console when top level keywords in test cases end.
-                          Values have same semantics as with --monitorcolors.
+ -K --consolemarkers auto|on|off  Show markers on the console when top level
+                          keywords in a test case end. Values have same
+                          semantics as with --consolecolors.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
-                          to search test libraries from when they are imported.
-                          Multiple paths can be given by separating them with a
-                          colon (`:`) or using this option several times. Given
-                          path can also be a glob pattern matching multiple
-                          paths but then it normally must be escaped or quoted.
+                          to search test libraries and other extensions when
+                          they are imported. Multiple paths can be given by
+                          separating them with a colon (`:`) or by using this
+                          option several times. Given path can also be a glob
+                          pattern matching multiple paths but then it normally
+                          must be escaped or quoted.
                           Examples:
                           --pythonpath libs/
                           --pythonpath /opt/testlibs:mylibs.zip:yourlibs
@@ -345,48 +382,37 @@ ROBOT_OPTIONS             Space separated list of default options to be placed
 ROBOT_SYSLOG_FILE         Path to a file where Robot Framework writes internal
                           information about parsing test case files and running
                           tests. Can be useful when debugging problems. If not
-                          set, or set to special value `NONE`, writing to the
+                          set, or set to a special value `NONE`, writing to the
                           syslog file is disabled.
 ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
-                          Available levels are the same as for --loglevel
+                          Available levels are the same as with --loglevel
                           command line option and the default is INFO.
+ROBOT_INTERNAL_TRACES     When set to any non-empty value, Robot Framework's
+                          internal methods are included in error tracebacks.
 
 Examples
 ========
 
-# Simple test run with `pybot` without options.
-$ pybot tests.html
+# Simple test run with `robot` without options.
+$ robot tests.robot
 
-# Using options and running with `jybot`.
-$ jybot --include smoke --name Smoke_Tests path/to/tests.txt
+# Using options.
+$ robot --include smoke --name Smoke_Tests path/to/tests.robot
 
-# Executing `robot.run` module using Python.
-$ python -m robot.run --test test1 --test test2 test_directory
+# Executing `robot` module using Python.
+$ python -m robot test_directory
 
-# Running `robot/run.py` script with Jython.
-$ jython /path/to/robot/run.py tests.robot
+# Running `robot` directory with Jython.
+$ jython /opt/robot tests.robot
 
 # Executing multiple test case files and using case-insensitive long options.
-$ pybot --SuiteStatLevel 2 /my/tests/*.html /your/tests.html
+$ robot --SuiteStatLevel 2 --Metadata Version:3 tests/*.robot more/tests.robot
 
 # Setting default options and syslog file before running tests.
 $ export ROBOT_OPTIONS="--critical regression --suitestatlevel 2"
 $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
-$ pybot tests.tsv
+$ robot tests.robot
 """
-
-import sys
-
-# Allows running as a script. __name__ check needed with multiprocessing:
-# http://code.google.com/p/robotframework/issues/detail?id=1137
-if 'robot' not in sys.modules and __name__ == '__main__':
-    import pythonpathsetter
-
-from robot.conf import RobotSettings
-from robot.output import LOGGER, pyloggingconf
-from robot.reporting import ResultWriter
-from robot.running import TestSuiteBuilder
-from robot.utils import Application
 
 
 class RobotFramework(Application):
@@ -397,12 +423,14 @@ class RobotFramework(Application):
 
     def main(self, datasources, **options):
         settings = RobotSettings(options)
-        LOGGER.register_console_logger(**settings.console_logger_config)
-        LOGGER.info('Settings:\n%s' % unicode(settings))
+        LOGGER.register_console_logger(**settings.console_output_config)
+        LOGGER.info('Settings:\n%s' % unic(settings))
         suite = TestSuiteBuilder(settings['SuiteNames'],
-                                 settings['WarnOnSkipped'],
-                                 settings['RunEmptySuite']).build(*datasources)
+                                 settings['WarnOnSkipped']).build(*datasources)
         suite.configure(**settings.suite_config)
+        if settings.pre_run_modifiers:
+            suite.visit(ModelModifier(settings.pre_run_modifiers,
+                                      settings.run_empty_suite, LOGGER))
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             result = suite.run(settings)
             LOGGER.info("Tests execution ended. Statistics:\n%s"
@@ -443,13 +471,17 @@ def run(*datasources, **options):
     """Executes given Robot Framework data sources with given options.
 
     Data sources are paths to files and directories, similarly as when running
-    `pybot` command from the command line. Options are given as keyword
+    `robot` command from the command line. Options are given as keyword
     arguments and their names are same as long command line options except
     without hyphens.
 
     Options that can be given on the command line multiple times can be
     passed as lists like `include=['tag1', 'tag2']`. If such option is used
     only once, it can be given also as a single string like `include='tag'`.
+
+    Additionally listener, prerunmodifier and prerebotmodifier options support
+    passing values as instances in addition to module names. For example,
+    `run('tests.robot', listener=Listener(), prerunmodifier=Modifier())`.
 
     To capture stdout and/or stderr streams, pass open file objects in as
     special keyword arguments `stdout` and `stderr`, respectively.
@@ -466,8 +498,8 @@ def run(*datasources, **options):
 
     Equivalent command line usage::
 
-        pybot --include tag1 --include tag2 path/to/tests.html
-        pybot --report r.html --log NONE t1.txt t2.txt > stdout.txt
+        robot --include tag1 --include tag2 path/to/tests.html
+        robot --report r.html --log NONE t1.txt t2.txt > stdout.txt
     """
     return RobotFramework().execute(*datasources, **options)
 

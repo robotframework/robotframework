@@ -2,6 +2,8 @@ import logging
 import time
 import sys
 
+from robot.utils import py2to3
+
 logging.getLogger().addHandler(logging.StreamHandler())
 
 
@@ -17,16 +19,16 @@ nonprop.propagate = False
 nonprop.addHandler(CustomHandler())
 
 
+@py2to3
 class Message(object):
     def __init__(self, msg=''):
         self.msg = msg
     def __unicode__(self):
         return self.msg
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
     def __repr__(self):
         return repr(str(self))
 
+@py2to3
 class InvalidMessage(Message):
     def __unicode__(self):
         raise AssertionError('Should not have been logged')
@@ -36,15 +38,16 @@ def log_with_default_levels():
     logging.debug('debug message')
     logging.info('%s %s', 'info', 'message')
     logging.warning(Message('warning message'))
-    # error and critical are considered warnings
     logging.error('error message')
+    #critical is considered a warning
     logging.critical('critical message')
 
 def log_with_custom_levels():
     logging.log(logging.DEBUG-1, Message('below debug'))
     logging.log(logging.INFO-1, 'between debug and info')
     logging.log(logging.INFO+1, 'between info and warning')
-    logging.log(logging.WARNING*100, 'above warning')
+    logging.log(logging.WARNING+5, 'between warning and error')
+    logging.log(logging.ERROR*100,'above error')
 
 def log_invalid_message():
     logging.info(InvalidMessage())

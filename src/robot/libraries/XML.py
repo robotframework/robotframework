@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,6 +15,7 @@
 
 import copy
 import re
+import os
 
 try:
     from lxml import etree as lxml_etree
@@ -22,11 +24,12 @@ except ImportError:
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import asserts, ET, ETSource, plural_or_not as s
+from robot.utils import (asserts, ET, ETSource, is_string, is_truthy,
+                         plural_or_not as s)
 from robot.version import get_version
 
 
-should_be_equal = asserts.assert_equals
+should_be_equal = asserts.assert_equal
 should_match = BuiltIn().should_match
 
 
@@ -49,20 +52,15 @@ class XML(object):
     - Modifying XML and saving it (e.g. `Set Element Text`, `Add Element`
       and `Save XML`).
 
-    By default this library uses ElementTree module for parsing XML, but it
-    can be configured to use [http://lxml.de|lxml] instead when `importing`
-    the library. The main benefit of using lxml is that it supports richer
-    xpath syntax than the standard ElementTree. It also enables using
-    `Evaluate Xpath` keyword and preserves possible namespace prefixes when
-    saving XML. The lxml support is new in Robot Framework 2.8.5.
-
     == Table of contents ==
 
     - `Parsing XML`
+    - `Using lxml`
     - `Example`
     - `Finding elements with xpath`
     - `Element attributes`
     - `Handling XML namespaces`
+    - `Boolean arguments`
     - `Shortcuts`
     - `Keywords`
 
@@ -71,7 +69,14 @@ class XML(object):
     XML can be parsed into an element structure using `Parse XML` keyword.
     It accepts both paths to XML files and strings that contain XML. The
     keyword returns the root element of the structure, which then contains
-    other elements as its children and their children.
+    other elements as its children and their children. Possible comments and
+    processing instructions in the source XML are removed.
+
+    XML is not validated during parsing even if has a schema defined. How
+    possible doctype elements are handled otherwise depends on the used XML
+    module and on the platform. The standard ElementTree strips doctypes
+    altogether but when `using lxml` they are preserved when XML is saved.
+    With IronPython parsing XML with a doctype is not supported at all.
 
     The element structure returned by `Parse XML`, as well as elements
     returned by keywords such as `Get Element`, can be used as the ``source``
@@ -79,7 +84,7 @@ class XML(object):
     structure, other keywords also accept paths to XML files and strings
     containing XML similarly as `Parse XML`. Notice that keywords that modify
     XML do not write those changes back to disk even if the source would be
-    given as a path to a fike. Changes must always saved explicitly using
+    given as a path to a file. Changes must always saved explicitly using
     `Save XML` keyword.
 
     When the source is given as a path to a file, the forward slash character
@@ -87,6 +92,21 @@ class XML(object):
     On Windows also the backslash works, but it the test data it needs to be
     escaped by doubling it (``\\\\``). Using the built-in variable ``${/}``
     naturally works too.
+
+    = Using lxml =
+
+    By default this library uses Python's standard
+    [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree]
+    module for parsing XML, but it can be configured to use
+    [http://lxml.de|lxml] module instead when `importing` the library.
+    The resulting element structure has same API regardless which module
+    is used for parsing.
+
+    The main benefits of using lxml is that it supports richer xpath syntax
+    than the standard ElementTree and enables using `Evaluate Xpath` keyword.
+    It also preserves the doctype and possible namespace prefixes saving XML.
+
+    The lxml support is new in Robot Framework 2.8.5.
 
     = Example =
 
@@ -363,11 +383,11 @@ class XML(object):
     Also this output is semantically same as the original. If the original XML
     had only default namespaces, the output would also look identical.
 
-    == Namespaces with lxml ==
+    == Namespaces when using lxml ==
 
-    Namespaces are handled the same way also if lxml mode is enabled when
-    `importing` the library. The only difference is that lxml stores information
-    about namespace prefixes and thus they are preserved if XML is saved.
+    Namespaces are handled the same way also when `using lxml`. The only
+    difference is that lxml stores information about namespace prefixes and
+    thus they are preserved if XML is saved.
 
     == Attribute namespaces ==
 
@@ -384,22 +404,45 @@ class XML(object):
     | ${root} = | `Parse XML` | <root id="1" ns:id="2" xmlns:ns="http://my.ns"/> |
     | `Element Attribute Should Be` | ${root} | id | 1 |
     | `Element Attribute Should Be` | ${root} | {http://my.ns}id | 2 |
+
+    = Boolean arguments =
+
+    Some keywords accept arguments that are handled as Boolean values true or
+    false. If such an argument is given as a string, it is considered false if
+    it is either empty or case-insensitively equal to ``false`` or ``no``.
+    Other strings are considered true regardless their value, and other
+    argument types are tested using same
+    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+    as in Python].
+
+    True examples:
+    | `Parse XML` | ${XML} | keep_clark_notation=True    | # Strings are generally true.    |
+    | `Parse XML` | ${XML} | keep_clark_notation=yes     | # Same as the above.             |
+    | `Parse XML` | ${XML} | keep_clark_notation=${TRUE} | # Python ``True`` is true.       |
+    | `Parse XML` | ${XML} | keep_clark_notation=${42}   | # Numbers other than 0 are true. |
+
+    False examples:
+    | `Parse XML` | ${XML} | keep_clark_notation=False    | # String ``false`` is false.   |
+    | `Parse XML` | ${XML} | keep_clark_notation=no       | # Also string ``no`` is false. |
+    | `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.       |
+    | `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python ``False`` is false.   |
+
+    Note that prior to Robot Framework 2.9, all non-empty strings, including
+    ``false`` and ``no``, were considered true.
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
-    _whitespace = re.compile('\s+')
-    _xml_declaration = re.compile('^<\?xml .*\?>\n')
+    _xml_declaration = re.compile('^<\?xml .*\?>')
 
     def __init__(self, use_lxml=False):
         """Import library with optionally lxml mode enabled.
 
         By default this library uses Python's standard
         [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree]
-        module for parsing XML. If ``use_lxml`` argument is given any true
-        value (e.g. any non-empty string), the library will use
-        [http://lxml.de|lxml] instead. See `introduction` for benefits
-        provided by lxml.
+        module for parsing XML. If ``use_lxml`` argument is given a true value
+        (see `Boolean arguments`), the library will use [http://lxml.de|lxml]
+        module instead. See `Using lxml` section for benefits provided by lxml.
 
         Using lxml requires that the lxml module is installed on the system.
         If lxml mode is enabled but the module is not installed, this library
@@ -407,6 +450,7 @@ class XML(object):
 
         The support for lxml is new in Robot Framework 2.8.5.
         """
+        use_lxml = is_truthy(use_lxml)
         if use_lxml and lxml_etree:
             self.etree = lxml_etree
             self.modern_etree = True
@@ -425,7 +469,8 @@ class XML(object):
         The ``source`` can either be a path to an XML file or a string
         containing XML. In both cases the XML is parsed into ElementTree
         [http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element|element structure]
-        and the root element is returned.
+        and the root element is returned. Possible comments and processing
+        instructions in the source XML are removed.
 
         As discussed in `Handling XML namespaces` section, this keyword, by
         default, strips possible namespaces added by ElementTree into tag names.
@@ -433,8 +478,7 @@ class XML(object):
         considerably. If you do not want that to happen, or want to avoid
         the small overhead of going through the element structure when your
         XML does not have namespaces, you can disable this feature by giving
-        ``keep_clark_notation`` argument a true value (e.g. any non-empty
-        string).
+        ``keep_clark_notation`` argument a true value (see `Boolean arguments`).
 
         Examples:
         | ${root} = | Parse XML | <root><child/></root> |
@@ -447,19 +491,14 @@ class XML(object):
         Stripping namespaces is a new feature in Robot Framework 2.7.5.
         """
         with ETSource(source) as source:
-            root = self.etree.parse(source).getroot()
+            tree = self.etree.parse(source)
         if self.lxml_etree:
-            self._remove_comments(root)
-        if not keep_clark_notation:
+            strip = (lxml_etree.Comment, lxml_etree.ProcessingInstruction)
+            lxml_etree.strip_elements(tree, *strip, **dict(with_tail=False))
+        root = tree.getroot()
+        if not is_truthy(keep_clark_notation):
             NameSpaceStripper().strip(root)
         return root
-
-    def _remove_comments(self, node):
-        for comment in node.xpath('//comment()'):
-            parent = comment.getparent()
-            if parent:
-                self._preserve_tail(comment, parent)
-                parent.remove(comment)
 
     def get_element(self, source, xpath='.'):
         """Returns an element in the ``source`` matching the ``xpath``.
@@ -521,7 +560,7 @@ class XML(object):
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
         """
-        if isinstance(source, basestring):
+        if is_string(source):
             source = self.parse_xml(source)
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)
@@ -600,13 +639,13 @@ class XML(object):
         keyword.
 
         This keyword returns all the text of the specified element, including
-        all the text its children and grandchildren contains. If the element
+        all the text its children and grandchildren contain. If the element
         has no text, an empty string is returned. The returned text is thus not
         always the same as the `text` attribute of the element.
 
-        Be default all whitespace, including newlines and indentation, inside
-        the element is returned as-is. If ``normalize_whitespace`` is given any
-        true value (e.g. any non-empty string), then leading and trailing
+        By default all whitespace, including newlines and indentation, inside
+        the element is returned as-is. If ``normalize_whitespace`` is given
+        a true value (see `Boolean arguments`), then leading and trailing
         whitespace is stripped, newlines and tabs converted to spaces, and
         multiple spaces collapsed into one. This is especially useful when
         dealing with HTML data.
@@ -625,7 +664,7 @@ class XML(object):
         """
         element = self.get_element(source, xpath)
         text = ''.join(self._yield_texts(element))
-        if normalize_whitespace:
+        if is_truthy(normalize_whitespace):
             text = self._normalize_whitespace(text)
         return text
 
@@ -639,7 +678,7 @@ class XML(object):
             yield element.tail
 
     def _normalize_whitespace(self, text):
-        return self._whitespace.sub(' ', text.strip())
+        return ' '.join(text.split())
 
     def get_elements_texts(self, source, xpath, normalize_whitespace=False):
         """Returns text of all elements matching ``xpath`` as a list.
@@ -832,12 +871,12 @@ class XML(object):
         The keyword passes if the ``source`` element and ``expected`` element
         are equal. This includes testing the tag names, texts, and attributes
         of the elements. By default also child elements are verified the same
-        way, but this can be disabled by setting ``exclude_children`` to any
-        true value (e.g. any non-empty string).
+        way, but this can be disabled by setting ``exclude_children`` to a
+        true value (see `Boolean arguments`).
 
         All texts inside the given elements are verified, but possible text
         outside them is not. By default texts must match exactly, but setting
-        ``normalize_whitespace`` to any true value makes text verification
+        ``normalize_whitespace`` to a true value makes text verification
         independent on newlines, tabs, and the amount of spaces. For more
         details about handling text see `Get Element Text` keyword and
         discussion about elements' `text` and `tail` attributes in the
@@ -882,7 +921,8 @@ class XML(object):
 
     def _compare_elements(self, source, expected, comparator, exclude_children,
                           normalize_whitespace):
-        normalizer = self._normalize_whitespace if normalize_whitespace else None
+        normalizer = self._normalize_whitespace \
+            if is_truthy(normalize_whitespace) else None
         comparator = ElementComparator(comparator, normalizer, exclude_children)
         comparator.compare(self.get_element(source), self.get_element(expected))
 
@@ -1128,8 +1168,8 @@ class XML(object):
         Use `Remove Elements` to remove all matched elements.
 
         Element's tail text is not removed by default, but that can be changed
-        by giving ``remove_tail`` a true value (e.g. any non-empty string).
-        See ``Element attributes`` section for more information about `tail` in
+        by giving ``remove_tail`` a true value (see `Boolean arguments`). See
+        `Element attributes` section for more information about `tail` in
         general.
 
         Examples using ``${XML}`` structure from `Example`:
@@ -1172,7 +1212,7 @@ class XML(object):
 
     def _remove_element(self, root, element, remove_tail=False):
         parent = self._find_parent(root, element)
-        if not remove_tail:
+        if not is_truthy(remove_tail):
             self._preserve_tail(element, parent)
         parent.remove(element)
 
@@ -1203,8 +1243,8 @@ class XML(object):
 
         Clearing the element means removing its text, attributes, and children.
         Element's tail text is not removed by default, but that can be changed
-        by giving ``clear_tail`` a true value (e.g. any non-empty string).
-        See `Element attributes` section for more information about tail in
+        by giving ``clear_tail`` a true value (see `Boolean arguments`). See
+        `Element attributes` section for more information about tail in
         general.
 
         Examples using ``${XML}`` structure from `Example`:
@@ -1224,7 +1264,7 @@ class XML(object):
         element = self.get_element(source, xpath)
         tail = element.tail
         element.clear()
-        if not clear_tail:
+        if not is_truthy(clear_tail):
             element.tail = tail
         return source
 
@@ -1251,20 +1291,25 @@ class XML(object):
         """
         return copy.deepcopy(self.get_element(source, xpath))
 
-    def element_to_string(self, source, xpath='.'):
+    def element_to_string(self, source, xpath='.', encoding=None):
         """Returns the string representation of the specified element.
 
         The element to convert to a string is specified using ``source`` and
         ``xpath``. They have exactly the same semantics as with `Get Element`
         keyword.
 
-        The returned string is in Unicode format and it does not contain any
-        XML declaration.
+        By default the string is returned as Unicode. If ``encoding`` argument
+        is given any value, the string is returned as bytes in the specified
+        encoding. The resulting string never contains the XML declaration.
 
         See also `Log Element` and `Save XML`.
         """
-        string = self.etree.tostring(self.get_element(source, xpath), encoding='UTF-8')
-        return self._xml_declaration.sub('', string.decode('UTF-8')).strip()
+        source = self.get_element(source, xpath)
+        string = self.etree.tostring(source, encoding='UTF-8').decode('UTF-8')
+        string = self._xml_declaration.sub('', string).strip()
+        if encoding:
+            string = string.encode(encoding)
+        return string
 
     def log_element(self, source, level='INFO', xpath='.'):
         """Logs the string representation of the specified element.
@@ -1286,23 +1331,32 @@ class XML(object):
         semantics as with `Get Element` keyword.
 
         The file where the element is saved is denoted with ``path`` and the
-        encoding to use with ``encoding``. The resulting file contains an XML
-        declaration.
+        encoding to use with ``encoding``. The resulting file always contains
+        the XML declaration.
+
+        The resulting XML file may not be exactly the same as the original:
+        - Comments and processing instructions are always stripped.
+        - Possible doctype and namespace prefixes are only preserved when
+          `using lxml`.
+        - Other small differences are possible depending on the ElementTree
+          or lxml version.
 
         Use `Element To String` if you just need a string representation of
-        the element,
+        the element.
 
         New in Robot Framework 2.7.5.
         """
+        path = os.path.abspath(path.replace('/', os.sep))
         elem = self.get_element(source)
         if self.lxml_etree:
             NameSpaceStripper().unstrip(elem)
         tree = self.etree.ElementTree(elem)
         xml_declaration = {'xml_declaration': True} if self.modern_etree else {}
-        # Need to explicitly open/close files because older ET versions don't
-        # close files they open and Jython/IPY don't close them implicitly.
-        with open(path, 'w') as output:
+        # Need to open/close output due to http://bugs.jython.org/issue2413
+        with open(path, 'wb') as output:
             tree.write(output, encoding=encoding, **xml_declaration)
+        logger.info('XML saved to <a href="file://%s">%s</a>.' % (path, path),
+                    html=True)
 
     def evaluate_xpath(self, source, expression, context='.'):
         """Evaluates the given xpath expression and returns results.
@@ -1390,7 +1444,7 @@ class ElementComparator(object):
     def __init__(self, comparator, normalizer=None, exclude_children=False):
         self._comparator = comparator
         self._normalizer = normalizer or (lambda text: text)
-        self._exclude_children = exclude_children
+        self._exclude_children = is_truthy(exclude_children)
 
     def compare(self, actual, expected, location=None):
         if not location:

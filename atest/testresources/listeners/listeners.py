@@ -53,10 +53,20 @@ class KeywordType(object):
     ROBOT_LISTENER_API_VERSION = '2'
 
     def start_keyword(self, name, attrs):
-        expected = attrs['args'][0] if name.startswith('BuiltIn.') else name
+        expected = self._get_expected_kw_type(name, attrs['args'])
         if attrs['type'] != expected:
             raise RuntimeError("Wrong keyword type '%s', expected '%s'."
                                % (attrs['type'], expected))
+
+    def _get_expected_kw_type(self, name, args):
+        if 'IN' in name:
+            return 'For'
+        if '=' in name:
+            return 'For Item'
+        expected = args[0] if name.startswith('BuiltIn.') else name
+        return {'Suite Setup': 'Setup', 'Suite Teardown': 'Teardown',
+                'Test Setup': 'Setup', 'Test Teardown': 'Teardown',
+                'Keyword Teardown': 'Teardown'}.get(expected, 'Keyword')
 
     end_keyword = start_keyword
 
@@ -106,11 +116,24 @@ class SuiteSource(object):
         verifier = {'Root': lambda source: source == '',
                     'Subsuites': os.path.isdir}.get(suite, default)
         if (source and not os.path.isabs(source)) or not verifier(source):
-            raise AssertionError("Suite '%s' has wrong source '%s'"
-                                 % (suite, source, verifier))
+            raise AssertionError("Suite '%s' has wrong source '%s'."
+                                 % (suite, source))
 
     def close(self):
         if not (self._started == self._ended == 5):
             raise AssertionError("Wrong number of started (%d) or ended (%d) "
                                  "suites. Expected 5."
                                  % (self._started, self._ended))
+
+
+class Messages(object):
+    ROBOT_LISTENER_API_VERSION = '2'
+
+    def __init__(self, path):
+        self.output = open(path, 'w')
+
+    def log_message(self, msg):
+        self.output.write('%s: %s\n' % (msg['level'], msg['message']))
+
+    def close(self):
+        self.output.close()

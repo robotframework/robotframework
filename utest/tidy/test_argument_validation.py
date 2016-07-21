@@ -3,22 +3,22 @@ import os
 
 from robot.errors import DataError
 from robot.tidy import TidyCommandLine
-from robot.utils.asserts import assert_raises_with_msg, assert_equals, assert_true
+from robot.utils.asserts import assert_raises_with_msg, assert_equal, assert_true
 
 
 class TestArgumentValidation(unittest.TestCase):
 
     def test_valid_explicit_format(self):
         opts, _ = self._validate(format='txt')
-        assert_equals(opts['format'], 'TXT')
+        assert_equal(opts['format'], 'TXT')
 
     def test_valid_implicit_format(self):
         opts, _ = self._validate(args=[__file__, 'out.robot'])
-        assert_equals(opts['format'], 'ROBOT')
+        assert_equal(opts['format'], 'ROBOT')
 
     def test_no_format(self):
         opts, _ = self._validate()
-        assert_equals(opts['format'], None)
+        assert_equal(opts['format'], None)
 
     def test_invalid_explicit_format(self):
         self._validate(format='invalid', error="Invalid format 'INVALID'.")
@@ -33,7 +33,7 @@ class TestArgumentValidation(unittest.TestCase):
 
     def test_valid_space_count(self):
         opts, _ = self._validate(spacecount='42')
-        assert_equals(opts['spacecount'], 42)
+        assert_equal(opts['spacecount'], 42)
 
     def test_invalid_space_count(self):
         error = '--spacecount must be an integer greater than 1.'
@@ -84,7 +84,7 @@ class TestArgumentValidation(unittest.TestCase):
         for input, expected in [(None, os.linesep), ('Native', os.linesep),
                                 ('windows', '\r\n'), ('UNIX', '\n')]:
             opts, _ =  self._validate(lineseparator=input)
-            assert_equals(opts['lineseparator'], expected)
+            assert_equal(opts['lineseparator'], expected)
 
     def test_invalid_line_separator(self):
         self._validate(lineseparator='invalid',

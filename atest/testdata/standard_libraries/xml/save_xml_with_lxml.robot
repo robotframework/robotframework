@@ -11,7 +11,6 @@ ${NON-ASCII}          <hyvää>yötä</hyvää>
 ${NON-ASCII SAVED}    <hyv&#228;&#228;>y&#246;t&#228;</hyv&#228;&#228;>
 
 *** Test Cases ***
-
 Save XML Element
     ${xml} =    Parse XML    ${SIMPLE}
     Save XML    ${xml}    ${OUTPUT}
@@ -34,11 +33,11 @@ Save Non-ASCII XML
     XML Content Should Be    ${NON-ASCII}
 
 Save Non-ASCII XML Using Custom Encoding
-    Save XML    ${NON-ASCII}    ${OUTPUT}    iso-8859-1
-    XML Content Should Be    ${NON-ASCII}    iso-8859-1
+    Save XML    ${NON-ASCII}    ${OUTPUT}    ISO-8859-1
+    XML Content Should Be    ${NON-ASCII}    ISO-8859-1
 
 Save to Invalid File
-    [Documentation]    FAIL STARTS: IOError:
+    [Documentation]    FAIL REGEXP: (IOError|IsADirectoryError|PermissionError): .*
     Save XML    ${SIMPLE}    %{TEMPDIR}
 
 Save Using Invalid Encoding
@@ -49,9 +48,14 @@ Save Non-ASCII Using ASCII
     Save XML    ${NON-ASCII}    ${OUTPUT}    ASCII
     XML Content Should Be    ${NON-ASCII SAVED}   ASCII
 
-*** Keywords ***
+Doctype is preserved
+    Save XML    <!DOCTYPE foo><foo/>    ${OUTPUT}
+    XML Content Should Be    <!DOCTYPE foo>\n<foo/>
+    Save XML    <!DOCTYPE bar SYSTEM "bar.dtd">\n<bar>baari</bar>    ${OUTPUT}
+    XML Content Should Be    <!DOCTYPE bar SYSTEM "bar.dtd">\n<bar>baari</bar>
 
-XML Content Should Be
-    [Arguments]    ${expected}    ${encoding}=UTF-8
-    ${actual} =    Get File    ${OUTPUT}    ${encoding}
-    Should Be Equal    ${actual}    <?xml version='1.0' encoding='${encoding.upper()}'?>\n${expected}
+Comments and processing instructions are removed
+    ${xml} =    Replace String    ${SIMPLE}    <    <!--c--><?p?><
+    ${xml} =    Replace String    ${xml}    >    ><!--c--><?p?>
+    Save XML    ${xml}    ${OUTPUT}
+    XML Content Should Be    ${SIMPLE SAVED}

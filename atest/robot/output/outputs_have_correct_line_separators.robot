@@ -1,5 +1,4 @@
 *** Settings ***
-Default Tags    regression  pybot  jybot
 Resource        atest_resource.robot
 
 *** Variables ***

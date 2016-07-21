@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,8 +15,7 @@
 
 from . import pyloggingconf
 from .debugfile import DebugFile
-from .librarylisteners import LibraryListeners
-from .listeners import Listeners
+from .listeners import LibraryListeners, Listeners
 from .logger import LOGGER
 from .loggerhelper import AbstractLogger
 from .xmllogger import XmlLogger
@@ -25,17 +25,17 @@ class Output(AbstractLogger):
 
     def __init__(self, settings):
         AbstractLogger.__init__(self)
-        self._xmllogger = XmlLogger(settings['Output'], settings['LogLevel'])
-        self._register_loggers(settings['Listeners'], settings['DebugFile'])
+        self._xmllogger = XmlLogger(settings.output, settings.log_level)
+        self.listeners = Listeners(settings.listeners, settings.log_level)
+        self.library_listeners = LibraryListeners(settings.log_level)
+        self._register_loggers(DebugFile(settings.debug_file))
         self._settings = settings
 
-    def _register_loggers(self, listeners, debugfile):
-        LOGGER.register_context_changing_logger(self._xmllogger)
-        for logger in (Listeners(listeners), LibraryListeners(),
-                       DebugFile(debugfile)):
-            if logger:
-                LOGGER.register_logger(logger)
-        LOGGER.disable_message_cache()
+    def _register_loggers(self, debug_file):
+        LOGGER.register_xml_logger(self._xmllogger)
+        LOGGER.register_listeners(self.listeners or None, self.library_listeners)
+        if debug_file:
+            LOGGER.register_logger(debug_file)
 
     def register_error_listener(self, listener):
         LOGGER.register_error_listener(listener)
@@ -43,7 +43,7 @@ class Output(AbstractLogger):
     def close(self, result):
         self._xmllogger.visit_statistics(result.statistics)
         self._xmllogger.close()
-        LOGGER.unregister_logger(self._xmllogger)
+        LOGGER.unregister_xml_logger()
         LOGGER.output_file('Output', self._settings['Output'])
 
     def start_suite(self, suite):
@@ -69,5 +69,6 @@ class Output(AbstractLogger):
 
     def set_log_level(self, level):
         pyloggingconf.set_level(level)
+        self.listeners.set_log_level(level)
+        self.library_listeners.set_log_level(level)
         return self._xmllogger.set_log_level(level)
-

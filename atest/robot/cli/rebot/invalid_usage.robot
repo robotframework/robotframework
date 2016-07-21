@@ -1,57 +1,55 @@
 *** Settings ***
-Force Tags        regression    pybot    jybot
 Resource          rebot_cli_resource.robot
 Suite Setup       Run tests to create input file for Rebot
 Test Template     Rebot Should Fail
 
 *** Test Cases ***
-
 Invalid Options
-    --invalid option    option --invalid not recognized
-    --name valid -I     option -I not recognized
+    option --invalid not recognized    --invalid option
+    option -I not recognized           --name valid -I
 
 No Input
-    ${EMPTY}    Expected at least 1 argument, got 0.
+    Expected at least 1 argument, got 0.    source=
 
 Non-Existing Input
-    nönéx.xml    Reading XML source 'nönéx\\.xml' failed: .*
+    Reading XML source '.*nönéx.xml' failed: .*    source=nönéx.xml
 
 Existing And Non-Existing Input
-    ${MYINPUT} nönéx.xml nonex2.xml    Reading XML source 'nönéx\\.xml' failed: .*
+    Reading XML source '.*nönéx.xml' failed: .*    source=${INPUTFILE} nönéx.xml nonex2.xml
 
 Non-XML Input
-    [Setup]    Create File    ${MYOUTDIR}/invalid.robot    Hello, world
-    ${MYOUTDIR}${/}invalid.robot    (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Reading XML source '.*invalid.robot' failed: .*
+    [Setup]    Create File    %{TEMPDIR}/invalid.robot    Hello, world
+    (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Reading XML source '.*invalid.robot' failed: .*
+    ...    source=%{TEMPDIR}/invalid.robot
 
 Incompatible XML
-    [Setup]    Create File    ${MYOUTDIR}/invalid.xml    <not><our>type</our></not>
-    ${MYOUTDIR}${/}invalid.xml    Reading XML source '.*invalid.xml' failed: Incompatible XML element 'not'.
+    [Setup]    Create File    %{TEMPDIR}/invalid.xml    <not><our>type</our></not>
+    Reading XML source '.*invalid.xml' failed: Incompatible XML element 'not'.
+    ...    source=%{TEMPDIR}/invalid.xml
 
 Invalid Output Directory
-    [Setup]    Create File    ${MYOUTDIR}${/}not-dir
-    -d ${MYOUTDIR}${/}not-dir${/}dir ${MYINPUT}
-    ...    Creating log file directory '.*' failed: .*
-    -d ${MYOUTDIR}${/}not-dir${/}dir -o out.xml -l none -r none ${MYINPUT}
-    ...    Creating output file directory '.*' failed: .*
+    [Setup]    Create File    %{TEMPDIR}/not-dir
+    Creating log file directory '.*not-dir.dir' failed: .*
+    ...    -d %{TEMPDIR}/not-dir/dir
+    Creating output file directory '.*not-dir.dir' failed: .*
+    ...    -d %{TEMPDIR}/not-dir/dir -o out.xml -l none -r none
 
 Invalid --SuiteStatLevel
-    --suitestatlevel not_int ${MYINPUT}
-    ...    Option '--suitestatlevel' expected integer value but got 'not_int'.
+    Option '--suitestatlevel' expected integer value but got 'not_int'.
+    ...    --suitestatlevel not_int
 
 Invalid --TagStatLink
-    --tagstatlink a:b:c --TagStatLink less_than_3x_: ${MYINPUT}
-    ...    Invalid format for option '--tagstatlink'. Expected 'tag:link:title' but got 'less_than_3x_:'.
+    Invalid format for option '--tagstatlink'. Expected 'tag:link:title' but got 'less_than_3x_:'.
+    ...    --tagstatlink a:b:c --TagStatLink less_than_3x_:
 
 Invalid --RemoveKeywords
-    --removekeywords wuks --removek name:xxx --RemoveKeywords Invalid ${MYINPUT}
-    ...    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'FOR', or 'WUKS' but got 'Invalid'.
+    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'FOR', or 'WUKS' but got 'Invalid'.
+    ...    --removekeywords wuks --removek name:xxx --RemoveKeywords Invalid
 
 *** Keywords ***
-
 Rebot Should Fail
-    [Arguments]    ${options}    ${exp msg}
-    Set Runners
-    ${rc}    ${output} =    Run And Return RC and Output    ${REBOT} ${options}
-    Log    ${output}
-    Should Be Equal As Integers    ${rc}    252
-    Should Match Regexp    ${output}    ^\\[ .*ERROR.* \\] ${exp msg}${USAGETIP}$
+    [Arguments]    ${error}    ${options}=    ${source}=${INPUTFILE}
+    ${result} =    Run Rebot    ${options}    ${source}    default options=    output=
+    Should Be Equal As Integers   ${result.rc}    252
+    Should Be Empty    ${result.stdout}
+    Should Match Regexp    ${result.stderr}    ^\\[ .*ERROR.* \\] ${error}${USAGETIP}$

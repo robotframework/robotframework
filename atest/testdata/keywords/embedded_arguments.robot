@@ -171,6 +171,25 @@ Keyword Matching Multiple Keywords In One And Different Resource Files
     ...    ${INDENT}\${a}-r1-\${b}
     -r1-r2-+r1+
 
+Same name with different regexp works
+    It is a car
+    It is a dog
+    It is a cow
+
+Same name with different regexp matching multiple fails
+    [Documentation]    FAIL
+    ...    Test case file contains multiple keywords matching name 'It is a cat':
+    ...    ${INDENT}It is \${animal:a (cat|cow)}
+    ...    ${INDENT}It is \${animal:a (dog|cat)}
+    It is a cat
+
+Same name with same regexp fails
+    [Documentation]    FAIL
+    ...    Test case file contains multiple keywords matching name 'It is totally same':
+    ...    ${INDENT}It is totally \${same}
+    ...    ${INDENT}It is totally \${same}
+    It is totally same
+
 *** Keywords ***
 User ${user} Selects ${item} From Webshop
     Log    This is always executed
@@ -238,3 +257,18 @@ Regexp extensions like ${x:(?x)re} are not supported
 
 Invalid ${x:(} Regexp
     This is not executed
+
+It is ${vehicle:a (car|ship)}
+    Log    ${vehicle}
+
+It is ${animal:a (dog|cat)}
+    Log    ${animal}
+
+It is ${animal:a (cat|cow)}
+    Log    ${animal}
+
+It is totally ${same}
+    Fail    Not executed
+
+It is totally ${same}
+    Fail    Not executed

@@ -1,7 +1,5 @@
 *** Settings ***
 Suite Setup       My Setup
-Force Tags        regression
-Default Tags      pybot    jybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -28,15 +26,17 @@ Tag statistics should be Correct
     ...    5    1    info=combined    combined=f1 AND t1
     Tag Node Should Be Correct    ${stats[4]}    F1 NOT T1
     ...    4    0    info=combined    combined=F1 NOT T1
-    Tag Node Should Be Correct    ${stats[5]}    d1
+    Tag Node Should Be Correct    ${stats[5]}    NOT t1
+    ...    5    0    info=combined    combined=NOT t1
+    Tag Node Should Be Correct    ${stats[6]}    d1
     ...    1    0    links=title:url
-    Tag Node Should Be Correct    ${stats[6]}    d2
+    Tag Node Should Be Correct    ${stats[7]}    d2
     ...    1    0
-    Tag Node Should Be Correct    ${stats[7]}    f1
+    Tag Node Should Be Correct    ${stats[8]}    f1
     ...    9    1    doc=this is tagdoc    links=title:url
-    Tag Node Should Be Correct    ${stats[8]}    sub3
+    Tag Node Should Be Correct    ${stats[9]}    sub3
     ...    2    0
-    Tag Node Should Be Correct    ${stats[9]}    XXX
+    Tag Node Should Be Correct    ${stats[10]}    XXX
     ...    10    1
 
 Combined Tag Statistics Name Can Be Given
@@ -62,6 +62,7 @@ My Setup
     ...    --tagstatlink t*:http://url.to:my_title
     ...    --tagstatlink ?1:url:title
     ...    --tagstatcombine f1ANDt1
+    ...    --tagstatcombine NOTt1
     ...    --tagstatcombine D1ORsub3ORt2_OR_or_and_not
     ...    --tagstatcombine d1ANDd2:Combined_tag_with_new_name_AND-OR-NOT
     ...    --suitestatlevel 2
@@ -79,10 +80,10 @@ Node Should Be Correct
 Tag Node Should Be Correct
     [Arguments]    ${node}    ${name}    ${pass}    ${fail}    ${info}=    ${doc}=    ${links}=    ${combined}=
     Node Should Be Correct    ${node}    ${name}    ${pass}    ${fail}
-    Should be equal    ${node.attrib['info']}    ${info}
-    Should be equal    ${node.attrib['doc']}     ${doc}
-    Should be equal    ${node.attrib['links']}    ${links}
-    Should be equal    ${node.attrib['combined']}    ${combined}
+    Should be equal    ${node.attrib.get('info', '')}    ${info}
+    Should be equal    ${node.attrib.get('doc', '')}     ${doc}
+    Should be equal    ${node.attrib.get('links', '')}    ${links}
+    Should be equal    ${node.attrib.get('combined', '')}    ${combined}
 
 Suite Node Should Be Correct
     [Arguments]    ${node}    ${name}    ${pass}    ${fail}

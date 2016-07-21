@@ -1,6 +1,6 @@
+from __future__ import print_function
 import sys
 import time
-import exceptions
 
 from robot import utils
 
@@ -11,30 +11,29 @@ class ExampleLibrary:
 
     def print_(self, msg, stream='stdout'):
         """Print given message to selected stream (stdout or stderr)"""
-        out_stream = getattr(sys, stream)
-        out_stream.write(msg)
+        print(msg, file=getattr(sys, stream))
 
     def print_n_times(self, msg, count, delay=0):
         """Print given message n times"""
         for i in range(int(count)):
-            print msg
+            print(msg)
             self._sleep(delay)
 
     def print_many(self, *msgs):
         """Print given messages"""
         for msg in msgs:
-            print msg,
-        print
+            print(msg, end=' ')
+        print()
 
     def print_to_stdout_and_stderr(self, msg):
-        sys.stdout.write('stdout: ' + msg)
-        sys.stderr.write('stderr: ' + msg)
+        print('stdout: ' + msg, file=sys.stdout)
+        print('stderr: ' + msg, file=sys.stderr)
 
     def print_to_python_and_java_streams(self):
         import ExampleJavaLibrary
-        print '*INFO* First message to Python'
+        print('*INFO* First message to Python')
         getattr(ExampleJavaLibrary(), 'print')('*INFO* Second message to Java')
-        print '*INFO* Last message to Python'
+        print('*INFO* Last message to Python')
 
     def single_line_doc(self):
         """One line keyword documentation."""
@@ -50,7 +49,7 @@ class ExampleLibrary:
 
     def exception(self, name, msg="", class_only=False):
         """Raise exception with given name and message"""
-        exception = getattr(exceptions, name)
+        exception = __builtins__[name]
         if class_only:
             raise exception
         raise exception(msg)
@@ -101,17 +100,17 @@ class ExampleLibrary:
     def read_and_log_file(self, path, binary=False):
         mode = binary and 'rb' or 'r'
         _file = open(path, mode)
-        print _file.read()
+        print(_file.read())
         _file.close()
 
     def print_control_chars(self):
-        print '\033[31mRED\033[m\033[32mGREEN\033[m'
+        print('\033[31mRED\033[m\033[32mGREEN\033[m')
 
     def long_message(self, line_length, line_count, chars='a'):
         line_length = int(line_length)
         line_count = int(line_count)
         msg = chars*line_length + '\n'
-        print msg*line_count
+        print(msg*line_count)
 
     def loop_forever(self, no_print=False):
         i = 0
@@ -119,7 +118,7 @@ class ExampleLibrary:
             i += 1
             self._sleep(1)
             if not no_print:
-                print 'Looping forever: %d' % i
+                print('Looping forever: %d' % i)
 
     def write_to_file_after_sleeping(self, path, sec, msg=None):
         f = open(path, 'w')
@@ -139,7 +138,7 @@ class ExampleLibrary:
             remaining = endtime - time.time()
             if remaining <= 0:
                 break
-            time.sleep(min(remaining, 0.1))
+            time.sleep(min(remaining, 0.001))
 
     def return_consumable_iterable(self, *values):
         return iter(values)
@@ -160,6 +159,8 @@ class ExampleLibrary:
                 self.identifier = identifier
             def __unicode__(self):
                 raise ValueError
+            if sys.version_info[0] > 2:
+                __str__ = __unicode__
         if just_one:
             return FailiningStr()
         return FailiningStr(), FailiningUnicode()

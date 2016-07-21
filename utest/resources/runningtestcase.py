@@ -1,9 +1,10 @@
 import sys
+import unittest
+from glob import glob
 from os import remove
 from os.path import exists
-import unittest
-from StringIO import StringIO
-from glob import glob
+
+from robot.utils import StringIO, is_integer
 
 
 class RunningTestCase(unittest.TestCase):
@@ -15,10 +16,7 @@ class RunningTestCase(unittest.TestCase):
         self.orig__stderr__ = sys.__stderr__
         self.orig_stdout = sys.stdout
         self.orig_stderr = sys.stderr
-        sys.__stdout__ = StringIO()
-        sys.__stderr__ = StringIO()
-        sys.stdout = StringIO()
-        sys.stderr = StringIO()
+        self._setup_output_streams()
         self._remove_files()
 
     def tearDown(self):
@@ -27,6 +25,15 @@ class RunningTestCase(unittest.TestCase):
         sys.stdout = self.orig_stdout
         sys.stderr = self.orig_stderr
         self._remove_files()
+
+    def _setup_output_streams(self):
+        sys.__stdout__ = StringIO()
+        sys.__stderr__ = StringIO()
+        sys.stdout = StringIO()
+        sys.stderr = StringIO()
+
+    def _clear_outputs(self):
+        self._setup_output_streams()
 
     def _assert_outputs(self, stdout=None, stderr=None):
         self._assert_output(sys.__stdout__, stdout)
@@ -47,9 +54,15 @@ class RunningTestCase(unittest.TestCase):
             raise AssertionError('Expected output to be empty:\n%s' % output)
 
     def _assert_output_contains(self, output, content, count):
-        if output.count(content) != count:
-            raise AssertionError("'%s' not %d times in output:\n%s"
-                                 % (content, count, output))
+        if is_integer(count):
+            if output.count(content) != count:
+                raise AssertionError("'%s' not %d times in output:\n%s"
+                                     % (content, count, output))
+        else:
+            min_count, max_count = count
+            if not (min_count <= output.count(content) <= max_count):
+                raise AssertionError("'%s' not %d-%d times in output:\n%s"
+                                     % (content, min_count,max_count, output))
 
     def _remove_files(self):
         for pattern in self.remove_files:

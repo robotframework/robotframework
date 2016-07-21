@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
+from robot.utils import get_timestamp, file_writer, seq2str2
 
 from .logger import LOGGER
 from .loggerhelper import IsLogged
@@ -23,7 +24,7 @@ def DebugFile(path):
         LOGGER.info('No debug file')
         return None
     try:
-        outfile = open(path, 'w')
+        outfile = file_writer(path)
     except EnvironmentError as err:
         LOGGER.error("Opening debug file '%s' failed: %s" % (path, err.strerror))
         return None
@@ -90,7 +91,7 @@ class _DebugFileWriter:
         return 'KW'
 
     def _start(self, type_, name, args=''):
-        args = ' ' + utils.seq2str2(args)
+        args = ' ' + seq2str2(args)
         self._write('+%s START %s: %s%s' % ('-'*self._indent, type_, name, args))
         self._indent += 1
 
@@ -105,8 +106,7 @@ class _DebugFileWriter:
         if separator and self._separator_written_last:
             return
         if not separator:
-            text = '%s - %s - %s' % (timestamp or utils.get_timestamp(),
-                                     level, text)
-        self._outfile.write(text.encode('UTF-8').rstrip() + '\n')
+            text = '%s - %s - %s' % (timestamp or get_timestamp(), level, text)
+        self._outfile.write(text.rstrip() + '\n')
         self._outfile.flush()
         self._separator_written_last = separator

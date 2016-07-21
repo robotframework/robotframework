@@ -86,7 +86,7 @@ Too Few Arguments With Varargs List
     A 1 List
 
 Varargs Work Also With Arrays
-    ${list} =    List    Hello    string    array    world
+    ${list} =    Create List    Hello    string    array    world
     ${array1} =    Get String Array    ${list}
     ${array2} =    Get String Array    ${array1}
     ${array3} =    Get String Array    Hello    string    array    world
@@ -94,7 +94,7 @@ Varargs Work Also With Arrays
     Should Be Equal    ${array2}    ${array3}
 
 Varargs Work Also With Lists
-    ${list} =      List    Hello    string    array    world
+    ${list} =      Create List    Hello    string    array    world
     ${array1} =    Get String Array    ${list}
     @{list1} =     Get String Array    ${list}
     ${list2} =     Get String List    ${list}

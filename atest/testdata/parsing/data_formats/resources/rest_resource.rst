@@ -17,7 +17,7 @@ Resource   rest_resource2.rest
 .. table:: Finally some keywords
 
    ==========================  ============
-         User Keyword           Whatever
+         Keywords                Whatever
    ==========================  ============
    Keyword from REST resource  No Operation
    ==========================  ============

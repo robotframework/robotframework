@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,6 +12,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
+from robot.utils import PY2
 
 
 class JsonWriter(object):
@@ -51,7 +54,7 @@ class JsonDumper(object):
             if dumper.handles(data, mapping):
                 dumper.dump(data, mapping)
                 return
-        raise ValueError('Dumping %s not supported' % type(data))
+        raise ValueError('Dumping %s not supported.' % type(data))
 
     def write(self, data):
         self._output.write(data)
@@ -72,22 +75,23 @@ class _Dumper(object):
 
 
 class StringDumper(_Dumper):
-    _handled_types = basestring
+    _handled_types = (str, unicode) if PY2 else str
     _search_and_replace = [('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
                            ('\n', '\\n'), ('\r', '\\r'), ('</', '\\x3c/')]
 
     def dump(self, data, mapping):
-        self._write('"%s"' % (self._encode(data) if data else ''))
+        self._write('"%s"' % (self._escape(data) if data else ''))
 
-    def _encode(self, string):
+    def _escape(self, string):
         for search, replace in self._search_and_replace:
             if search in string:
                 string = string.replace(search, replace)
-        return string.encode('UTF-8')
+        return string
 
 
 class IntegerDumper(_Dumper):
-    _handled_types = (int, long, bool)
+    # Handles also bool
+    _handled_types = (int, long) if PY2 else int
 
     def dump(self, data, mapping):
         self._write(str(data).lower())

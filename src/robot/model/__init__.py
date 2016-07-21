@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,17 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Package with reusable and extendable model classes.
+"""Package with generic, reusable and extensible model classes.
 
-This package contains base classes, for example, for
-:class:`test suites <robot.model.testsuite.TestSuite>`,
-:class:`test cases <robot.model.testcase.TestCase>` and
-:class:`keywords <robot.model.keyword.Keyword>`, and for other generic
-functionality, such as :mod:`visitors <robot.model.visitor>`.
-
-These classes are extended both in :mod:`robot.result` and :mod:`robot.running`
-packages and used also elsewhere. There should, however, be no need to
-externally use these classes directly, and they are not part of the public API.
+This package contains, for example, :class:`~robot.model.testsuite.TestSuite`,
+:class:`~robot.model.testcase.TestCase`, :class:`~robot.model.keyword.Keyword`
+and :class:`~robot.model.visitor.SuiteVisitor` base classes.
+These classes are extended both by :mod:`execution <robot.running.model>`
+and :mod:`result <robot.result.model>` related model objects and used also
+elsewhere.
 
 This package is considered stable.
 """
@@ -32,10 +30,11 @@ from .testsuite import TestSuite
 from .testcase import TestCase
 from .keyword import Keyword, Keywords
 from .message import Message
-from .tags import Tags, TagPatterns
+from .modifier import ModelModifier
+from .tags import Tags, TagPattern, TagPatterns
 from .criticality import Criticality
 from .namepatterns import SuiteNamePatterns, TestNamePatterns
-from .visitor import SuiteVisitor, SkipAllVisitor
+from .visitor import SuiteVisitor
 from .totalstatistics import TotalStatisticsBuilder
 from .statistics import Statistics
 from .imports import Imports

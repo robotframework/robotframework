@@ -1,7 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  variables/environment_variables.robot
-Force Tags      regression
-Default Tags    pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -9,7 +7,7 @@ Environment Variables In Keyword Argument
     Check Test Case  ${TESTNAME}
 
 Java System Properties Can Be Used
-    [Tags]  jybot
+    [Tags]  require-jython
     Check Test Case  ${TESTNAME}
 
 Non-ASCII Environment Variable
@@ -40,10 +38,10 @@ Environment Variables In Variable Table
 
 Environment Variables In Settings Table
     Check Test Case  ${TESTNAME}
-    Should Be Equal  ${SUITE.doc}  %{PATH} used in suite documentation
-    Should Be Equal  ${SUITE.metadata['PATH']}  %{PATH}
-    Should Contain  ${SUITE.doc}  ${:}  Make sure %{PATH} is ...
-    Should Contain  ${SUITE.metadata['PATH']}  ${:}  ... actually resolved
+    Should Be Equal  ${SUITE.doc}  %{TEMPDIR} used in suite documentation
+    Should Be Equal  ${SUITE.metadata['TEMPDIR']}  %{TEMPDIR}
+    Should Contain  ${SUITE.doc}  ${/}  Make sure %{TEMPDIR} is ...
+    Should Contain  ${SUITE.metadata['TEMPDIR']}  ${/}  ... actually resolved
 
 Environment Variables In Test Metadata
     ${tc} =  Check Test Case  ${TESTNAME}

@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/stdout_and_stderr.robot
-Force Tags       regression    pybot    jybot
-Resource         process_resource.robot
+Resource         atest_resource.robot
 
 *** Test Cases ***
 Default stdout and stderr

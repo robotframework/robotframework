@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -18,12 +19,16 @@ import inspect
 
 from robot.errors import DataError
 
-from .encoding import decode_from_system
+from .encoding import system_decode
 from .error import get_error_details
-from .platform import JYTHON
+from .platform import JYTHON, IRONPYTHON, PY3
 from .robotpath import abspath, normpath
-from .robottypes import type_name
+from .robottypes import type_name, is_unicode
 
+if PY3:
+    from importlib import invalidate_caches as invalidate_import_caches
+else:
+    invalidate_import_caches = lambda: None
 if JYTHON:
     from java.lang.System import getProperty
 
@@ -40,7 +45,8 @@ class Importer(object):
                            DottedImporter(logger))
         self._by_path_importer = self._importers[0]
 
-    def import_class_or_module(self, name, instantiate_with_args=None):
+    def import_class_or_module(self, name, instantiate_with_args=None,
+                               return_source=False):
         """Imports Python class/module or Java class with given name.
 
         Class can either live in a module/package or be standalone Java class.
@@ -61,9 +67,11 @@ class Importer(object):
         try:
             imported, source = self._import_class_or_module(name)
             self._log_import_succeeded(imported, name, source)
-            return self._instantiate_if_needed(imported, instantiate_with_args)
+            imported = self._instantiate_if_needed(imported, instantiate_with_args)
         except DataError as err:
             self._raise_import_failed(name, err)
+        else:
+            return (imported, source) if return_source else imported
 
     def _import_class_or_module(self, name):
         for importer in self._importers:
@@ -104,8 +112,8 @@ class Importer(object):
         yield '%s:' % type
         for item in items:
             if item:
-                yield '  %s' % (item if isinstance(item, unicode)
-                                else decode_from_system(item))
+                yield '  %s' % (item if is_unicode(item)
+                                else system_decode(item))
 
     def _instantiate_if_needed(self, imported, args):
         if args is None:
@@ -136,19 +144,22 @@ class _Importer(object):
         self._logger = logger
 
     def _import(self, name, fromlist=None, retry=True):
+        invalidate_import_caches()
         try:
             try:
                 return __import__(name, fromlist=fromlist)
             except ImportError:
                 # Hack to support standalone Jython. For more information, see:
-                # http://code.google.com/p/robotframework/issues/detail?id=515
+                # https://github.com/robotframework/robotframework/issues/515
                 # http://bugs.jython.org/issue1778514
                 if JYTHON and fromlist and retry:
                     __import__('%s.%s' % (name, fromlist[0]))
                     return self._import(name, fromlist, retry=False)
-                # Cannot use plain raise due to
-                # http://ironpython.codeplex.com/workitem/32332
-                raise sys.exc_type, sys.exc_value, sys.exc_traceback
+                # IronPython loses traceback when using plain raise.
+                # https://github.com/IronLanguages/main/issues/989
+                if IRONPYTHON:
+                    exec('raise sys.exc_type, sys.exc_value, sys.exc_traceback')
+                raise
         except:
             raise DataError(*get_error_details())
 
@@ -162,9 +173,11 @@ class _Importer(object):
         klass = getattr(module, name or module.__name__, None)
         return klass if inspect.isclass(klass) else None
 
-    def _get_source(self, module):
-        source = getattr(module, '__file__', None)
-        return abspath(source) if source else None
+    def _get_source(self, imported):
+        try:
+            return abspath(inspect.getfile(imported))
+        except TypeError:
+            return None
 
 
 class ByPathImporter(_Importer):
@@ -238,7 +251,7 @@ class NonDottedImporter(_Importer):
     def import_(self, name):
         module = self._import(name)
         imported = self._get_class_from_module(module) or module
-        return self._verify_type(imported), self._get_source(module)
+        return self._verify_type(imported), self._get_source(imported)
 
 
 class DottedImporter(_Importer):
@@ -255,4 +268,4 @@ class DottedImporter(_Importer):
             raise DataError("Module '%s' does not contain '%s'."
                             % (parent_name, lib_name))
         imported = self._get_class_from_module(imported, lib_name) or imported
-        return self._verify_type(imported), self._get_source(parent)
+        return self._verify_type(imported), self._get_source(imported)

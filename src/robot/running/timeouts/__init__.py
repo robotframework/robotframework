@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,7 +15,7 @@
 
 import time
 
-from robot.utils import (secs_to_timestr, timestr_to_secs,
+from robot.utils import (Sortable, py2to3, secs_to_timestr, timestr_to_secs,
                          IRONPYTHON, JYTHON, WINDOWS)
 from robot.errors import TimeoutError, DataError, FrameworkError
 
@@ -28,7 +29,8 @@ else:
     from .posix import Timeout
 
 
-class _Timeout(object):
+@py2to3
+class _Timeout(Sortable):
 
     def __init__(self, timeout=None, message='', variables=None):
         self.string = timeout or ''
@@ -52,9 +54,9 @@ class _Timeout(object):
             self.string = secs_to_timestr(self.secs)
             self.message = variables.replace_string(self.message)
         except (DataError, ValueError) as err:
-            self.secs = 0.000001 # to make timeout active
-            self.error = 'Setting %s timeout failed: %s' \
-                    % (self.type.lower(), unicode(err))
+            self.secs = 0.000001  # to make timeout active
+            self.error = (u'Setting %s timeout failed: %s'
+                          % (self.type.lower(), err))
 
     def start(self):
         if self.secs > 0:
@@ -71,29 +73,18 @@ class _Timeout(object):
     def timed_out(self):
         return self.active and self.time_left() <= 0
 
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
-    def __unicode__(self):
-        return self.string
-
-    def __cmp__(self, other):
-        return cmp(not self.active, not other.active) \
-            or cmp(self.time_left(), other.time_left())
-
-    def __nonzero__(self):
-        return bool(self.string and self.string.upper() != 'NONE')
-
     def run(self, runnable, args=None, kwargs=None):
         if self.error:
             raise DataError(self.error)
         if not self.active:
             raise FrameworkError('Timeout is not active')
         timeout = self.time_left()
+        error = TimeoutError(self._timeout_error,
+                             test_timeout=self.type == 'Test')
         if timeout <= 0:
-            raise TimeoutError(self.get_message())
+            raise error
         executable = lambda: runnable(*(args or ()), **(kwargs or {}))
-        return Timeout(timeout, self._timeout_error).execute(executable)
+        return Timeout(timeout, error).execute(executable)
 
     def get_message(self):
         if not self.active:
@@ -108,6 +99,22 @@ class _Timeout(object):
         if self.message:
             return self.message
         return '%s timeout %s exceeded.' % (self.type, self.string)
+
+    def __unicode__(self):
+        return self.string
+
+    def __nonzero__(self):
+        return bool(self.string and self.string.upper() != 'NONE')
+
+    @property
+    def _sort_key(self):
+        return not self.active, self.time_left()
+
+    def __eq__(self, other):
+        return self is other
+
+    def __hash__(self):
+        return id(self)
 
 
 class TestTimeout(_Timeout):

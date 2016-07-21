@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,22 +15,44 @@
 
 from pprint import PrettyPrinter
 
-from .dotdict import DotDict
-from .platform import IRONPYTHON, JYTHON
+from .platform import IRONPYTHON, JYTHON, PY2
+from .robottypes import is_bytes, is_unicode
 
 
-def unic(item, *args):
-    # Based on a recipe from http://code.activestate.com/recipes/466341
-    try:
-        return unicode(item, *args)
-    except UnicodeError:
+if PY2:
+
+    def unic(item):
+        if isinstance(item, unicode):
+            return item
+        if isinstance(item, (bytes, bytearray)):
+            try:
+                return item.decode('ASCII')
+            except UnicodeError:
+                return u''.join(chr(b) if b < 128 else '\\x%x' % b
+                                for b in bytearray(item))
         try:
-            return u''.join(c if ord(c) < 128 else c.encode('string_escape')
-                            for c in str(item))
+            try:
+                return unicode(item)
+            except UnicodeError:
+                return unic(str(item))
         except:
             return _unrepresentable_object(item)
-    except:
-        return _unrepresentable_object(item)
+
+else:
+
+    def unic(item):
+        if isinstance(item, str):
+            return item
+        if isinstance(item, (bytes, bytearray)):
+            try:
+                return item.decode('ASCII')
+            except UnicodeError:
+                return ''.join(chr(b) if b < 128 else '\\x%x' % b
+                               for b in item)
+        try:
+            return str(item)
+        except:
+            return _unrepresentable_object(item)
 
 
 # JVM and .NET seem to handle Unicode normalization automatically. Importing
@@ -39,8 +62,8 @@ if not (JYTHON or IRONPYTHON):
     from unicodedata import normalize
     _unic = unic
 
-    def unic(item, *args):
-        return normalize('NFC', _unic(item, *args))
+    def unic(item):
+        return normalize('NFC', _unic(item))
 
 
 def prepr(item, width=400):
@@ -50,11 +73,11 @@ def prepr(item, width=400):
 class PrettyRepr(PrettyPrinter):
 
     def format(self, object, context, maxlevels, level):
-        if isinstance(object, unicode):
-            return repr(object).lstrip('u'), True, False
-        if isinstance(object, str):
-            return 'b' + repr(object), True, False
         try:
+            if is_unicode(object):
+                return repr(object).lstrip('u'), True, False
+            if is_bytes(object):
+                return 'b' + repr(object).lstrip('b'), True, False
             return PrettyPrinter.format(self, object, context, maxlevels, level)
         except:
             return _unrepresentable_object(object), True, False

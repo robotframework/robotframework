@@ -1,6 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/import_variables.robot
-Force Tags      regression  jybot  pybot
+Suite Setup     Run Tests  --PYTHONPATH ${DATADIR}/../testresources/res_and_var_files/  standard_libraries/builtin/import_variables.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -25,5 +24,8 @@ Import Variables Arguments Are Resolved Only Once
     Check Test Case  ${TEST NAME}
 
 Import Variables Failure Is Catchable
+    Check Test Case  ${TESTNAME}
+
+Import Variables from Path
     Check Test Case  ${TESTNAME}
 

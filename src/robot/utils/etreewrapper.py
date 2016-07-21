@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
-from StringIO import StringIO
+from io import BytesIO
 
+from .compat import py2to3
 from .platform import IRONPYTHON
+from .robottypes import is_string
 
 
 _ERROR = 'No valid ElementTree XML parser module found'
@@ -44,6 +46,7 @@ else:
         from elementtree import ElementTree as ET
     except ImportError:
         raise ImportError(_ERROR)
+    from StringIO import StringIO
 
 
 # cElementTree.VERSION seems to always be 1.0.6. We want real API version.
@@ -51,6 +54,7 @@ if ET.VERSION < '1.3' and hasattr(ET, 'tostringlist'):
     ET.VERSION = '1.3'
 
 
+@py2to3
 class ETSource(object):
 
     def __init__(self, source):
@@ -65,7 +69,7 @@ class ETSource(object):
         if self._opened:
             self._opened.close()
 
-    def __str__(self):
+    def __unicode__(self):
         if self._source_is_file_name():
             return self._source
         if hasattr(self._source, 'name'):
@@ -73,37 +77,12 @@ class ETSource(object):
         return '<in-memory file>'
 
     def _source_is_file_name(self):
-        return isinstance(self._source, basestring) \
+        return is_string(self._source) \
                 and not self._source.lstrip().startswith('<')
 
     def _open_source_if_necessary(self):
-        if self._source_is_file_name():
-            return self._open_file(self._source)
-        if isinstance(self._source, basestring):
-            return self._open_string_io(self._source)
-        return None
-
-    if not IRONPYTHON:
-
-        # File is opened, and later closed, because ElementTree had a bug that
-        # it didn't close files it had opened. This caused problems with Jython
-        # especially on Windows: http://bugs.jython.org/issue1598
-        # The bug has now been fixed in ET and worked around in Jython 2.5.2.
-        def _open_file(self, source):
-            return open(source, 'rb')
-
-        def _open_string_io(self, source):
-            return StringIO(source.encode('UTF-8'))
-
-    else:
-
-        # File cannot be opened on IronPython, however, as ET does not seem to
-        # handle non-ASCII characters correctly in that case. We want to check
-        # that the file exists even in that case, though.
-        def _open_file(self, source):
-            if not os.path.exists(source):
-                raise IOError(2, 'No such file', source)
+        if self._source_is_file_name() or not is_string(self._source):
             return None
-
-        def _open_string_io(self, source):
-            return StringIO(source)
+        if IRONPYTHON:
+            return StringIO(self._source)
+        return BytesIO(self._source.encode('UTF-8'))

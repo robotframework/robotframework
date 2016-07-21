@@ -1,10 +1,10 @@
 import unittest
 
 from robot.model import Criticality
-from robot.utils.asserts import assert_equals, assert_none
+from robot.utils.asserts import assert_equal, assert_none
 from robot.model.tagstatistics import TagStatisticsBuilder, TagStatLink
 from robot.model import Tags
-from robot.result.testcase import TestCase
+from robot.result import TestCase
 from robot.utils import MultiMatcher
 
 
@@ -22,19 +22,19 @@ class TestTagStatistics(unittest.TestCase):
 
     def test_include(self):
         for incl, tags in self._incl_excl_data:
-            builder = TagStatisticsBuilder(Criticality(), incl, [])
+            builder = TagStatisticsBuilder(included=incl)
             builder.add_test(TestCase(status='PASS', tags=tags))
             matcher = MultiMatcher(incl, match_if_no_patterns=True)
             expected = [tag for tag in tags if matcher.match(tag)]
-            assert_equals([s.name for s in builder.stats], sorted(expected))
+            assert_equal([s.name for s in builder.stats], sorted(expected))
 
     def test_exclude(self):
         for excl, tags in self._incl_excl_data:
-            builder = TagStatisticsBuilder(Criticality(), [], excl)
+            builder = TagStatisticsBuilder(excluded=excl)
             builder.add_test(TestCase(status='PASS', tags=tags))
             matcher = MultiMatcher(excl)
             expected = [tag for tag in tags if not matcher.match(tag)]
-            assert_equals([s.name for s in builder.stats], sorted(expected))
+            assert_equal([s.name for s in builder.stats], sorted(expected))
 
     def test_include_and_exclude(self):
         for incl, excl, tags, exp in [
@@ -46,39 +46,31 @@ class TestTagStatistics(unittest.TestCase):
                (['t1','t2','t3','not'], ['t2','t0'],
                 ['t0','t1','t2','t3','x'], ['t1','t3'] )
               ]:
-            builder = TagStatisticsBuilder(Criticality(), incl, excl)
+            builder = TagStatisticsBuilder(included=incl, excluded=excl)
             builder.add_test(TestCase(status='PASS', tags=tags))
-            assert_equals([s.name for s in builder.stats], exp),
+            assert_equal([s.name for s in builder.stats], exp),
 
-    def test_iter(self):
-        builder = TagStatisticsBuilder(Criticality())
-        assert_equals(list(builder.stats), [])
-        builder.add_test(TestCase())
-        assert_equals(list(builder.stats), [])
-        builder.add_test(TestCase(tags=['a']))
-        assert_equals(len(list(builder.stats)), 1)
-        builder.add_test(TestCase(tags=['A', 'B']))
-        assert_equals(len(list(builder.stats)), 2)
-
-    def test_iter_with_combine(self):
-        builder = TagStatisticsBuilder(Criticality(), combined=[('x*', 'title')])
-        assert_equals(len(list(builder.stats)), 1)
-        builder.add_test(TestCase(tags=['xxx', 'yyy']))
-        assert_equals(len(list(builder.stats)), 3)
+    def test_criticality(self):
+        for c in range(10):
+            crit = ['c%s' % (i+1) for i in range(c)]
+            for n in range(10):
+                nonc = ['n%s' % (i+1) for i in range(n)]
+                builder = TagStatisticsBuilder(Criticality(crit, nonc))
+                assert_equal([s.name for s in builder.stats], crit + nonc),
 
     def test_combine_with_name(self):
         for comb_tags, expected_name in [
-                ([], '' ),
+                ([], ''),
                 ([('t1&t2', 'my name')], 'my name'),
                 ([('t1NOTt3', 'Others')], 'Others'),
                 ([('1:2&2:3', 'nAme')], 'nAme'),
-                ([('3*', '')], '3*' ),
+                ([('3*', '')], '3*'),
                 ([('4NOT5', 'Some new name')], 'Some new name')
                ]:
-            builder = TagStatisticsBuilder(Criticality(), combined=comb_tags)
-            assert_equals(bool(list(builder.stats)), expected_name != '')
+            builder = TagStatisticsBuilder(combined=comb_tags)
+            assert_equal(bool(list(builder.stats)), bool(expected_name))
             if expected_name:
-                assert_equals([s.name for s in builder.stats], [expected_name])
+                assert_equal([s.name for s in builder.stats], [expected_name])
 
     def test_is_combined_with_and_statements(self):
         for comb_tags, test_tags, expected_count in [
@@ -95,9 +87,9 @@ class TestTagStatistics(unittest.TestCase):
             self._verify_combined_statistics(comb_tags, test_tags, expected_count)
 
     def _verify_combined_statistics(self, comb_tags, test_tags, expected_count):
-        builder = TagStatisticsBuilder(Criticality(), combined=[(comb_tags, 'name')])
-        builder._add_to_combined_statistics(TestCase(tags=test_tags))
-        assert_equals([s.total for s in builder.stats if s.combined], [expected_count])
+        builder = TagStatisticsBuilder(combined=[(comb_tags, 'name')])
+        builder.add_test(TestCase(tags=test_tags))
+        assert_equal([s.total for s in builder.stats if s.combined], [expected_count])
 
     def test_is_combined_with_not_statements(self):
         for comb_tags, test_tags, expected_count in [
@@ -119,14 +111,97 @@ class TestTagStatistics(unittest.TestCase):
                 ('tNOTs*NOTr', ['t','s'], 0),
                 ('tNOTs*NOTr', ['S','T'], 0),
                 ('tNOTs*NOTr', ['R','T','s'], 0),
-               ]:
+                ('*NOTt', ['t'], 0),
+                ('*NOTt', ['e'], 1),
+                ('*NOTt', [], 0),
+                ]:
+            self._verify_combined_statistics(comb_tags, test_tags, expected_count)
+
+    def test_starting_with_not(self):
+        for comb_tags, test_tags, expected_count in [
+                ('NOTt', ['t'], 0),
+                ('NOTt', ['e'], 1),
+                ('NOTt', [], 1),
+                ('NOTtORe', ['e'], 0),
+                ('NOTtORe', ['e', 't'], 0),
+                ('NOTtORe', ['h'], 1),
+                ('NOTtORe', [], 1),
+                ('NOTtANDe', [], 1),
+                ('NOTtANDe', ['t'], 1),
+                ('NOTtANDe', ['t', 'e'], 0),
+                ('NOTtNOTe', ['t', 'e'], 0),
+                ('NOTtNOTe', ['t'], 0),
+                ('NOTtNOTe', ['e'], 0),
+                ('NOTtNOTe', ['d'], 1),
+                ('NOTtNOTe', [], 1),
+                ('NOT*', ['t'], 0),
+                ('NOT*', [], 1),
+                ]:
             self._verify_combined_statistics(comb_tags, test_tags, expected_count)
 
     def test_combine_with_same_name_as_existing_tag(self):
-        builder = TagStatisticsBuilder(Criticality(), combined=[('x*', 'name')])
+        builder = TagStatisticsBuilder(combined=[('x*', 'name')])
         builder.add_test(TestCase(tags=['name', 'another']))
-        assert_equals([(s.name, s.combined) for s in builder.stats],
-                      [('name', 'x*'), ('another', ''), ('name', '')])
+        assert_equal([(s.name, s.combined) for s in builder.stats],
+                      [('name', 'x*'),
+                       ('another', None),
+                       ('name', None)])
+
+    def test_iter(self):
+        builder = TagStatisticsBuilder()
+        assert_equal(list(builder.stats), [])
+        builder.add_test(TestCase())
+        assert_equal(list(builder.stats), [])
+        builder.add_test(TestCase(tags=['a']))
+        assert_equal(len(list(builder.stats)), 1)
+        builder.add_test(TestCase(tags=['A', 'B']))
+        assert_equal(len(list(builder.stats)), 2)
+
+    def test_iter_with_critical_and_combined(self):
+        builder = TagStatisticsBuilder(Criticality('crit'),
+                                       combined=[('x*', 'title')])
+        assert_equal(len(list(builder.stats)), 2)
+        builder.add_test(TestCase(tags=['xxx', 'yyy']))
+        assert_equal(len(list(builder.stats)), 4)
+
+    def test_iter_sorting(self):
+        builder = TagStatisticsBuilder(Criticality(['c2', 'c1'], ['n*']),
+                                       combined=[('c*', ''), ('xxx', 'a title')])
+        builder.add_test(TestCase(tags=['c1', 'c2', 't1']))
+        builder.add_test(TestCase(tags=['c1', 'n2', 't2']))
+        builder.add_test(TestCase(tags=['n1', 'n2', 't1', 't3']))
+        assert_equal([(s.name, s.info, s.total) for s in builder.stats],
+                     [('c1', 'critical', 2),
+                      ('c2', 'critical', 1),
+                      ('n*', 'non-critical', 2),
+                      ('a title', 'combined', 0),
+                      ('c*', 'combined', 2),
+                      ('n1', '', 1),
+                      ('n2', '', 2),
+                      ('t1', '', 2),
+                      ('t2', '', 1),
+                      ('t3', '', 1)])
+
+    def test_tags_equal_to_critical_or_non_critical_are_removed_in_iter(self):
+        builder = TagStatisticsBuilder(Criticality('smoke', 'not-ready'),
+                                       combined=[('xxx',)])
+        builder.add_test(TestCase(tags=['smoke']))
+        builder.add_test(TestCase(tags=['SMOKE', 'not-ready', 'xxx']))
+        builder.add_test(TestCase(tags=['_ _ S M O K E _ _', 'X_X_X', 'YYY']))
+        assert_equal([(s.name, s.info, s.total) for s in builder.stats],
+                     [('smoke', 'critical', 3),
+                      ('not-ready', 'non-critical', 1),
+                      ('xxx', 'combined', 2),
+                      ('xxx', '', 2),
+                      ('YYY', '', 1)])
+
+    def test_tags_equal_to_critical_or_non_critical_pattern_are_not_removed(self):
+        builder = TagStatisticsBuilder(Criticality('sORry'))
+        builder.add_test(TestCase(tags=['sorry']))
+        builder.add_test(TestCase(tags=['s OR ry']))
+        assert_equal([(s.name, s.info, s.total) for s in builder.stats],
+                     [('s OR ry', 'critical', 0),
+                      ('sorry', '', 2)])
 
     def test_combine(self):
         # This is more like an acceptance test than a unit test ...
@@ -141,7 +216,7 @@ class TestTagStatistics(unittest.TestCase):
                 (['tNOTs','t&s','tNOTsNOTu', 't&sNOTu'],
                   [['t','u'],['t','s'],['s','t','u'],['t'],['t','v']], ['t']),
                 (['nonex'], [['t1'],['t1,t2'],[]], [])
-               ]:
+                ]:
             # 1) Create tag stats
             builder = TagStatisticsBuilder(Criticality(crit_tags),
                                            combined=[(t, '') for t in comb_tags])
@@ -160,19 +235,7 @@ class TestTagStatistics(unittest.TestCase):
                     exp_noncr.append(tag)
             exp_names = exp_crit + sorted(comb_tags) + exp_noncr
             # 4) Verify names (match counts were already verified)
-            assert_equals(names, exp_names)
-
-    def test_sorting(self):
-        builder = TagStatisticsBuilder(Criticality(['c2', 'c1'], ['n*']),
-                                       combined=[('c*', ''), ('xxx', 'a title')])
-        builder.add_test(TestCase(tags=['c1', 'c2', 't1']))
-        builder.add_test(TestCase(tags=['c1', 'n2', 't2']))
-        builder.add_test(TestCase(tags=['n1', 'n2', 't1', 't3']))
-        assert_equals([(s.name, s.info, s.total) for s in builder.stats],
-                       [('c1', 'critical', 2), ('c2', 'critical', 1),
-                        ('n1', 'non-critical', 1), ('n2', 'non-critical', 2),
-                        ('a title', 'combined', 0), ('c*', 'combined', 2),
-                        ('t1', '', 2), ('t2', '', 1), ('t3', '', 1)])
+            assert_equal(names, exp_names)
 
 
 class TestTagStatDoc(unittest.TestCase):
@@ -198,10 +261,33 @@ class TestTagStatDoc(unittest.TestCase):
         self._verify_stats(builder.stats.tags['t1'], 'd1 & d2', 1)
         self._verify_stats(builder.stats.tags['t2'], 'd2', 1)
 
-    def _verify_stats(self, stat, doc, failed, passed=0):
-        assert_equals(stat.doc, doc)
-        assert_equals(stat.failed, failed)
-        assert_equals(stat.passed, passed)
+    def test_critical_and_combined(self):
+        builder = TagStatisticsBuilder(Criticality('crit', 'nonc'),
+                                       combined=[('non*',)],
+                                       docs=[('crit', 'critical doc'),
+                                             ('non?', 'not so critical doc')])
+        crit, nonc, comb = builder.stats
+        self._verify_stats(crit, 'critical doc', 0, critical=True)
+        self._verify_stats(nonc, 'not so critical doc', 0, non_critical=True)
+        self._verify_stats(comb, 'not so critical doc', 0, combined='non*')
+        builder.add_test(TestCase(tags=['xxx', 'crit']))
+        builder.add_test(TestCase(tags=['Crit', 'NoNo', 'NoNc']))
+        crit, nonc, comb, nono, xxx = builder.stats
+        self._verify_stats(crit, 'critical doc', 2, critical=True)
+        self._verify_stats(nonc, 'not so critical doc', 1, non_critical=True)
+        self._verify_stats(comb, 'not so critical doc', 1, combined='non*')
+        self._verify_stats(nono, 'not so critical doc', 1)
+        self._verify_stats(xxx, '', 1)
+
+    def _verify_stats(self, stat, doc, failed, passed=0, critical=False,
+                      non_critical=False, combined=None):
+        assert_equal(stat.doc, doc)
+        assert_equal(stat.failed, failed)
+        assert_equal(stat.passed, passed)
+        assert_equal(stat.total, passed + failed)
+        assert_equal(stat.critical, critical)
+        assert_equal(stat.non_critical, non_critical)
+        assert_equal(stat.combined, combined)
 
 
 class TestTagStatLink(unittest.TestCase):
@@ -214,9 +300,9 @@ class TestTagStatLink(unittest.TestCase):
                           ('^hello$', 'gopher://hello.world:8090/hello.html',
                            'Hello World'))]:
             link = TagStatLink(*arg)
-            assert_equals(exp[0], link._regexp.pattern)
-            assert_equals(exp[1], link._link)
-            assert_equals(exp[2], link._title)
+            assert_equal(exp[0], link._regexp.pattern)
+            assert_equal(exp[1], link._link)
+            assert_equal(exp[2], link._title)
 
     def test_valid_string_containing_patterns_is_parsed_correctly(self):
         for arg, exp_pattern in [('*', '^(.*)$'), ('f*r', '^f(.*)r$'),
@@ -224,11 +310,11 @@ class TestTagStatLink(unittest.TestCase):
                                  ('??', '^(..)$'), ('f???ar', '^f(...)ar$'),
                                  ('F*B?R*?', '^F(.*)B(.)R(.*)(.)$')]:
             link = TagStatLink(arg, 'some_url', 'some_title')
-            assert_equals(exp_pattern, link._regexp.pattern)
+            assert_equal(exp_pattern, link._regexp.pattern)
 
     def test_underscores_in_title_are_converted_to_spaces(self):
         link = TagStatLink('', '', 'my_name')
-        assert_equals(link._title, 'my name')
+        assert_equal(link._title, 'my name')
 
     def test_get_link_returns_correct_link_when_matches(self):
         for arg, exp in [(('smoke', 'http://tobacco.com', 'Lung_cancer'),
@@ -236,7 +322,7 @@ class TestTagStatLink(unittest.TestCase):
                          (('tag', 'ftp://foo:809/bar.zap', 'Foo_in a Bar'),
                           ('ftp://foo:809/bar.zap', 'Foo in a Bar'))]:
             link = TagStatLink(*arg)
-            assert_equals(exp, link.get_link(arg[0]))
+            assert_equal(exp, link.get_link(arg[0]))
 
     def test_get_link_returns_none_when_no_match(self):
         link = TagStatLink('smoke', 'http://tobacco.com', 'Lung cancer')
@@ -247,38 +333,38 @@ class TestTagStatLink(unittest.TestCase):
         exp = 'http://tobacco.com', 'Lung cancer'
         link = TagStatLink('smoke', *exp)
         for tag in ['Smoke', 'SMOKE', 'smoke']:
-            assert_equals(exp, link.get_link(tag))
+            assert_equal(exp, link.get_link(tag))
 
     def test_pattern_matches_when_spaces(self):
         exp = 'http://tobacco.com', 'Lung cancer'
         link = TagStatLink('smoking kills', *exp)
         for tag in ['Smoking Kills', 'SMOKING KILLS']:
-            assert_equals(exp, link.get_link(tag))
+            assert_equal(exp, link.get_link(tag))
 
     def test_pattern_match(self):
         link = TagStatLink('f?o*r', 'http://foo/bar.html', 'FooBar')
         for tag in ['foobar', 'foor', 'f_ofoobarfoobar', 'fOoBAr']:
-            assert_equals(link.get_link(tag), ('http://foo/bar.html', 'FooBar'))
+            assert_equal(link.get_link(tag), ('http://foo/bar.html', 'FooBar'))
 
     def test_pattern_substitution_with_one_match(self):
         link = TagStatLink('tag-*', 'http://tracker/?id=%1', 'Tracker')
         for id in ['1', '23', '456']:
             exp = ('http://tracker/?id=%s' % id, 'Tracker')
-            assert_equals(exp, link.get_link('tag-%s' % id))
+            assert_equal(exp, link.get_link('tag-%s' % id))
 
     def test_pattern_substitution_with_multiple_matches(self):
         link = TagStatLink('?-*', 'http://tracker/?id=%1-%2', 'Tracker')
         for id1, id2 in [('1', '2'), ('3', '45'), ('f', 'bar')]:
             exp = ('http://tracker/?id=%s-%s' % (id1, id2), 'Tracker')
-            assert_equals(exp, link.get_link('%s-%s' % (id1, id2)))
+            assert_equal(exp, link.get_link('%s-%s' % (id1, id2)))
 
     def test_pattern_substitution_with_multiple_substitutions(self):
         link = TagStatLink('??-?-*', '%3-%3-%1-%2-%3', 'Tracker')
-        assert_equals(link.get_link('aa-b-XXX'), ('XXX-XXX-aa-b-XXX', 'Tracker'))
+        assert_equal(link.get_link('aa-b-XXX'), ('XXX-XXX-aa-b-XXX', 'Tracker'))
 
     def test_matches_are_ignored_in_pattern_substitution(self):
         link = TagStatLink('???-*-*-?', '%4-%2-%2-%4', 'Tracker')
-        assert_equals(link.get_link('AAA-XXX-ABC-B'), ('B-XXX-XXX-B', 'Tracker'))
+        assert_equal(link.get_link('AAA-XXX-ABC-B'), ('B-XXX-XXX-B', 'Tracker'))
 
 
 if __name__ == "__main__":

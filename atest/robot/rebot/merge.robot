@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression    pybot    jybot
 Suite Setup       Run original tests
 Test Teardown     Remove Files    ${MERGE 1}    ${MERGE 2}
 Suite Teardown    Remove Files    ${ORIGINAL}
@@ -45,6 +44,12 @@ Add nested suite
     Run merge
     Suite add should have been successful
 
+Merge warnings
+    Re-run tests    --variable LEVEL:WARN --variable MESSAGE:Override
+    Run merge
+    Test merge should have been successful
+    Warnings should have been merged
+
 Non-matching root suite
     Run incompatible suite
     Run incompatible merge
@@ -59,17 +64,9 @@ Using other options
     Test merge should have been successful    suite name=Custom
     Log should have been created with all Log keywords flattened
 
---rerunmerge is deprecated
-    Re-run tests
-    Run Rebot    --rerunmerge    ${ORIGINAL}    ${MERGE 1}
-    Test merge should have been successful
-    Stderr Should Be Equal To    [ WARN ]
-    ...    Option --rerunmerge is deprecated and will be removed in the future.
-    ...    Use --merge instead.\n
-
 *** Keywords ***
 Run original tests
-    Create Output With Robot    ${ORIGINAL}    --variable FAIL:YES    ${SUITES}
+    Create Output With Robot    ${ORIGINAL}    --variable FAIL:YES --variable LEVEL:WARN    ${SUITES}
     Verify original tests
 
 Verify original tests
@@ -81,7 +78,8 @@ Verify original tests
     ...    SubSuite1 First=FAIL:This test was doomed to fail: YES != NO
 
 Re-run tests
-    Create Output With Robot    ${MERGE 1}    --rerunfailed ${ORIGINAL}    ${SUITES}
+    [Arguments]    ${options}=
+    Create Output With Robot    ${MERGE 1}    --rerunfailed ${ORIGINAL} ${options}    ${SUITES}
     Should Be Equal    ${SUITE.name}    Suites
     Should Contain Suites    ${SUITE}    @{RERUN SUITES}
     Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}[0]
@@ -101,15 +99,15 @@ Run incompatible suite
 
 Run merge
     [Arguments]    ${options}=
-    Run Rebot    --merge ${options}    ${ORIGINAL}    ${MERGE 1}
+    Run Rebot    --merge ${options}    ${ORIGINAL} ${MERGE 1}
     Stderr Should Be Empty
 
 Run multi-merge
-    Run Rebot    -R    ${ORIGINAL}    ${MERGE 1}    ${MERGE 2}
+    Run Rebot    -R    ${ORIGINAL} ${MERGE 1} ${MERGE 2}
     Stderr Should Be Empty
 
 Run incompatible merge
-    Run Rebot Without Processing Output    --merge    ${ORIGINAL}    ${MERGE 1}
+    Run Rebot Without Processing Output    --merge    ${ORIGINAL} ${MERGE 1}
 
 Test merge should have been successful
     [Arguments]    ${suite name}=Suites    ${status 1}=FAIL    ${message 1}=
@@ -190,6 +188,13 @@ Suite add should have been successful
     ...    ${SUITE.suites[5]}
     ...    ${SUITE.suites[6]}
 
+Warnings should have been merged
+    Length Should Be    ${ERRORS}    2
+    Check Log Message    ${ERRORS[0]}    Original message    WARN
+    Check Log Message    ${ERRORS[1]}    Override    WARN
+    ${tc} =    Check Test Case    SubSuite1 First
+    Check Log Message    ${tc.kws[0].msgs[0]}    Override    WARN
+
 Merge should have failed
     Stderr Should Be Equal To
     ...    [ ERROR ] Cannot merge outputs containing different root suites.
@@ -204,8 +209,8 @@ Timestamps should be cleared
 Timestamps should be set
     [Arguments]    @{suites}
     :FOR    ${suite}    IN    @{suites}
-    \    Is Valid Timestamp    ${suite.starttime}
-    \    Is Valid Timestamp    ${suite.endtime}
+    \    Timestamp Should Be Valid    ${suite.starttime}
+    \    Timestamp Should Be Valid    ${suite.endtime}
 
 Create expected merge message
     [Arguments]    ${message}    ${new status}    ${new message}    ${old status}    ${old message}

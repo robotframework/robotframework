@@ -1,7 +1,7 @@
 import unittest
 
 from robot.running import TestSuite, TestCase
-from robot.utils.asserts import assert_equals, assert_not_equals
+from robot.utils.asserts import assert_equal, assert_not_equal
 
 class TestRandomizing(unittest.TestCase):
     names = [str(i) for i in range(100)]
@@ -22,10 +22,10 @@ class TestRandomizing(unittest.TestCase):
         return [TestCase(name=n) for n in self.names]
 
     def _assert_randomized(self, items):
-        assert_not_equals([i.name for i in items], self.names)
+        assert_not_equal([i.name for i in items], self.names)
 
     def _assert_not_randomized(self, items):
-        assert_equals([i.name for i in items], self.names)
+        assert_equal([i.name for i in items], self.names)
 
     def test_randomize_nothing(self):
         self.suite.randomize(suites=False, tests=False)
@@ -55,14 +55,14 @@ class TestRandomizing(unittest.TestCase):
         self._assert_randomized(self.suite.suites[1].tests)
 
     def test_randomizing_changes_ids(self):
-        assert_equals([s.id for s in self.suite.suites],
+        assert_equal([s.id for s in self.suite.suites],
                       ['s1-s%d' % i for i in range(1, 101)])
-        assert_equals([t.id for t in self.suite.tests],
+        assert_equal([t.id for t in self.suite.tests],
                       ['s1-t%d' % i for i in range(1, 101)])
         self.suite.randomize(suites=True, tests=True)
-        assert_equals([s.id for s in self.suite.suites],
+        assert_equal([s.id for s in self.suite.suites],
                       ['s1-s%d' % i for i in range(1, 101)])
-        assert_equals([t.id for t in self.suite.tests],
+        assert_equal([t.id for t in self.suite.tests],
                       ['s1-t%d' % i for i in range(1, 101)])
 
     def _gen_random_suite(self, seed):
@@ -80,8 +80,8 @@ class TestRandomizing(unittest.TestCase):
         """
         (random_order_suites1, random_order_tests1) = self._gen_random_suite(1234)
         (random_order_suites2, random_order_tests2) = self._gen_random_suite(1234)
-        assert_equals( random_order_suites1, random_order_suites2 )
-        assert_equals( random_order_tests1, random_order_tests2 )
+        assert_equal( random_order_suites1, random_order_suites2 )
+        assert_equal( random_order_tests1, random_order_tests2 )
 
 if __name__ == '__main__':
     unittest.main()

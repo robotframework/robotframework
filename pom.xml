@@ -1,13 +1,12 @@
 <!-- This pom is used only for releasing the jar distribution to Sonatype repositories.
-     More information at http://code.google.com/p/robotframework/wiki/Releasing
-     -->
+     More information in BUILD.rst. -->
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.robotframework</groupId>
   <artifactId>robotframework</artifactId>
   <packaging>jar</packaging>
   <name>Robot Framework</name>
-  <version>2.9.dev20150410</version>
+  <version>3.0.1.dev20151231</version>
   <description>High level test automation framework</description>
   <url>http://robotframework.org</url>
   <licenses>
@@ -18,8 +17,9 @@
     </license>
   </licenses>
   <scm>
-      <url>http://robotframework.googlecode.com/svn</url>
-      <connection>http://robotframework.googlecode.com/svn</connection>
+      <url>https://github.com/robotframework/robotframework</url>
+      <connection>scm:git:https://github.com/robotframework/robotframework</connection>
+      <developerConnection>scm:git:https://github.com/robotframework/robotframework</developerConnection>
   </scm>
   <developers>
     <developer>

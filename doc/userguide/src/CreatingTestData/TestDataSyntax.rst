@@ -531,35 +531,40 @@ file. When executing a single reST file, Robot Framework will show the error
 on the console. When executing a directory, such parsing errors will
 generally be ignored.
 
+Starting from Robot Framework 2.9.2, errors below level `SEVERE` are ignored
+when running tests to avoid noise about non-standard directives and other such
+markup. This may hide also real errors, but they can be seen when processing
+files normally.
+
 Test data tables
 ----------------
 
 Test data is structured in four types of tables listed below. These
-test data tables are identified by the first cell of the table, and
-the last column in the table below lists different aliases that can be
-used as a table name.
+test data tables are identified by the first cell of the table. Recognized
+table names are `Settings`, `Variables`, `Test Cases`, and `Keywords`. Matching
+is case-insensitive and also singular variants like `Setting` and `Test Case`
+are accepted.
 
 .. table:: Different test data tables
    :class: tabular
 
-   +--------------+-------------------------------------------+-------------------+
-   |  Table name  |                 Used for                  |      Aliases      |
-   +==============+===========================================+===================+
-   | Setting      | | 1) Importing `test libraries`_,         | Setting, Settings,|
-   | table        |   `resource files`_ and `variable files`_ | Metadata          |
-   |              | | 2) Defining metadata for `test suites`_ |                   |
-   |              |   and `test cases`_                       |                   |
-   +--------------+-------------------------------------------+-------------------+
-   | Variable     | Defining variables_ that can be used      | Variable,         |
-   | table        | elsewhere in the test data                | Variables         |
-   +--------------+-------------------------------------------+-------------------+
-   | Test case    | `Creating test cases`_ from available     | Test Case,        |
-   | table        | keywords                                  | Test Cases        |
-   +--------------+-------------------------------------------+-------------------+
-   | Keyword      | `Creating user keywords`_ from existing   | Keyword, Keywords,|
-   | table        | lower-level keywords                      | User Keyword,     |
-   |              |                                           | User Keywords     |
-   +--------------+-------------------------------------------+-------------------+
+   +--------------+--------------------------------------------+
+   |    Table     |                 Used for                   |
+   +==============+============================================+
+   | Settings     | | 1) Importing `test libraries`_,          |
+   |              |   `resource files`_ and `variable files`_. |
+   |              | | 2) Defining metadata for `test suites`_  |
+   |              |   and `test cases`_.                       |
+   +--------------+--------------------------------------------+
+   | Variables    | Defining variables_ that can be used       |
+   |              | elsewhere in the test data.                |
+   +--------------+--------------------------------------------+
+   | Test Cases   | `Creating test cases`_ from available      |
+   |              | keywords.                                  |
+   +--------------+--------------------------------------------+
+   | Keywords     | `Creating user keywords`_ from existing    |
+   |              | lower-level keywords                       |
+   +--------------+--------------------------------------------+
 
 Rules for parsing the data
 --------------------------
@@ -770,7 +775,7 @@ Dividing test data to several rows
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If there is more data than readily fits a row, it possible to use ellipsis
-(`...`) to continue the previous line. In test case and user keyword tables,
+(`...`) to continue the previous line. In test case and keyword tables,
 the ellipsis must be preceded by at least one empty cell.  In settings and
 variable tables, it can be placed directly under the setting or variable name.
 In all tables, all empty cells before the ellipsis are ignored.
@@ -787,7 +792,7 @@ In the first three tables test data has not been split, and
 the following three illustrate how fewer columns are needed after
 splitting the data to several rows.
 
-__ `Automatic newlines in test data`_
+__ `Newlines in test data`_
 
 .. table:: Test data that has not been split
    :class: example

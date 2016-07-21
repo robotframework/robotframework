@@ -1,7 +1,5 @@
 *** Settings ***
 Suite Setup       My Setup
-Force Tags        regression
-Default Tags      pybot    jybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -49,7 +47,7 @@ Suite statistics should be Correct
 *** Keywords ***
 My Setup
     Run Tests    ${EMPTY}    misc/suites
-    Move File    ${OUTFILE}    ${OUTDIR}/statistics.xml
+    Copy Previous Outfile
     ${options} =    Catenate
     ...    --critical t1
     ...    --tagstatcombine d1_AND_d2:Custom_title_AND-OR-NOT
@@ -57,7 +55,7 @@ My Setup
     ...    --tagstatexclude t2
     ...    --TagStatComb F1NOTT_1
     ...    --SetTag XxX
-    Run Rebot    ${options}    ${OUTDIR}/statistics.xml
+    Run Rebot    ${options}    ${OUTFILE COPY}
 
 Node Should Be Correct
     [Arguments]    ${node}    ${name}    ${pass}    ${fail}
@@ -68,5 +66,5 @@ Node Should Be Correct
 Tag Node Should Be Correct
     [Arguments]    ${node}    ${name}    ${pass}    ${fail}    ${info}=    ${combined}=
     Node Should Be Correct    ${node}    ${name}    ${pass}    ${fail}
-    Element Attribute Should Be      ${node}      info      ${info}
-    Element Attribute Should Be      ${node}      combined      ${combined}
+    Should be equal    ${node.attrib.get('info', '')}    ${info}
+    Should be equal    ${node.attrib.get('combined', '')}    ${combined}

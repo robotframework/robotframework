@@ -3,9 +3,14 @@ import unittest
 from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
 
 from robot.errors import DataError
-from robot.result.testsuite import TestSuite
-from robot.result.testcase import TestCase
+from robot.result import Keyword, TestCase, TestSuite
 from robot.result.configurer import SuiteConfigurer
+
+
+SETUP = Keyword.SETUP_TYPE
+TEARDOWN = Keyword.TEARDOWN_TYPE
+FOR_LOOP = Keyword.FOR_LOOP_TYPE
+FOR_ITEM = Keyword.FOR_ITEM_TYPE
 
 
 class TestSuiteAttributes(unittest.TestCase):
@@ -130,8 +135,8 @@ class TestRemoveKeywords(unittest.TestCase):
     def test_remove_passed_removes_setup_and_teardown_from_passed_suite(self):
         suite = TestSuite()
         suite.tests.create(status='PASS')
-        suite.keywords.create(status='PASS', type='setup').keywords.create()
-        suite.keywords.create(status='PASS', type='teardown').messages.create(message='message')
+        suite.keywords.create(status='PASS', type=SETUP).keywords.create()
+        suite.keywords.create(status='PASS', type=TEARDOWN).messages.create(message='message')
         self._remove_passed(suite)
         for keyword in suite.keywords:
             self._should_contain_no_messages_or_keywords(keyword)
@@ -166,8 +171,8 @@ class TestRemoveKeywords(unittest.TestCase):
 
     def test_remove_passed_does_not_remove_setup_and_teardown_from_failed_suite(self):
         suite = TestSuite()
-        suite.keywords.create(type='setup').messages.create(message='some')
-        suite.keywords.create(type='teardown').keywords.create()
+        suite.keywords.create(type=SETUP).messages.create(message='some')
+        suite.keywords.create(type=TEARDOWN).keywords.create()
         suite.tests.create(status='FAIL')
         self._remove_passed(suite)
         assert_equal(len(suite.keywords.setup.messages), 1)
@@ -176,8 +181,8 @@ class TestRemoveKeywords(unittest.TestCase):
     def test_remove_passed_does_now_remove_setup_and_teardown_from_suite_with_noncritical_failure(self):
         suite = TestSuite()
         suite.set_criticality([], ['non'])
-        suite.keywords.create(type='setup').messages.create(message='some')
-        suite.keywords.create(type='teardown').keywords.create()
+        suite.keywords.create(type=SETUP).messages.create(message='some')
+        suite.keywords.create(type=TEARDOWN).keywords.create()
         suite.tests.create(status='FAIL', tags='non')
         assert_equal(suite.status, 'PASS')
         self._remove_passed(suite)
@@ -194,10 +199,10 @@ class TestRemoveKeywords(unittest.TestCase):
     def suite_with_forloop(self):
         suite = TestSuite()
         test = suite.tests.create(status='PASS')
-        forloop = test.keywords.create(status='PASS', type='for')
+        forloop = test.keywords.create(status='PASS', type=FOR_LOOP)
         for i in range(100):
             forloop.keywords.create(status='PASS',
-                                    type='foritem').messages.create(
+                                    type=FOR_ITEM).messages.create(
                 message='something')
         return suite, forloop
 
@@ -223,9 +228,9 @@ class TestRemoveKeywords(unittest.TestCase):
         t1.keywords.create().messages.create()
         t2 = suite.tests.create(status='FAIL')
         t2.keywords.create().messages.create()
-        t2.keywords.create(type='for')
+        t2.keywords.create(type=FOR_LOOP)
         for i in range(10):
-            t2.keywords[1].keywords.create(type='foritem', status='PASS')
+            t2.keywords[1].keywords.create(type=FOR_ITEM, status='PASS')
         self._remove(['passed', 'for'], suite)
         assert_equal(len(t1.keywords[0].messages), 0)
         assert_equal(len(t2.keywords[0].messages), 1)
@@ -233,9 +238,8 @@ class TestRemoveKeywords(unittest.TestCase):
 
     def _suite_with_setup_and_teardown_and_test_with_keywords(self):
         suite = TestSuite()
-        suite.keywords.create(type='setup').messages.create('setup message')
-        suite.keywords.create(type='teardown').messages.create(
-            'teardown message')
+        suite.keywords.create(type=SETUP).messages.create('setup message')
+        suite.keywords.create(type=TEARDOWN).messages.create('teardown message')
         test = suite.tests.create()
         test.keywords.create().keywords.create()
         test.keywords.create().messages.create('kw with message')

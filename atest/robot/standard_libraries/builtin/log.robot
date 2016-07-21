@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/log.robot
-Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
 
 *** Variables ***
@@ -16,16 +15,15 @@ Log
 
 Log with different levels
     ${tc} =    Check Test Case    ${TEST NAME}
-    Comment    Test set log level to trace so    the logged message is second    and first contains resolved args
     Check Log Message    ${tc.kws[0].msgs[1]}    Log says: Hello from tests!    INFO
     Check Log Message    ${tc.kws[1].msgs[1]}    Trace level    TRACE
     Check Log Message    ${tc.kws[2].msgs[1]}    Debug level    DEBUG
-    Check Log Message    ${tc.kws[3].msgs[1]}    Info level    INFO
-    Check Log Message    ${tc.kws[4].msgs[1]}    Warn level    WARN
-    Length Should Be    ${tc.kws[4].msgs}    3
-    Check Log Message    ${ERRORS.msgs[0]}    Warn level    WARN
-    Check Log Message    ${tc.kws[5].msgs[1]}    Fail level    FAIL
-    Check Log Message    ${tc.kws[6].msgs[1]}    Error level    ERROR
+    Check Log Message    ${tc.kws[3].msgs[1]}    Info level     INFO
+    Check Log Message    ${tc.kws[4].msgs[1]}    Warn level     WARN
+    Check Log Message    ${tc.kws[5].msgs[1]}    Error level    ERROR
+    Check Log Message    ${ERRORS[0]}            Warn level     WARN
+    Check Log Message    ${ERRORS[1]}            Error level    ERROR
+    Length Should Be     ${ERRORS}               2
 
 HTML is escaped by default
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -43,6 +41,9 @@ Explicit HTML
     Check Log Message    ${tc.kws[1].msgs[0]}    ${HTML}    DEBUG    html=True
     Check Log Message    ${tc.kws[2].msgs[0]}    ${HTML}    DEBUG
 
+FAIL is not valid log level
+    Check Test Case    ${TEST NAME}
+
 Log also to console
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    Hello, console!
@@ -52,30 +53,38 @@ Log also to console
 
 Log repr
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
-    Check Log Message    ${tc.kws[1].msgs[0]}    42    DEBUG
-    ${bytes} =    Set Variable If    not "${IRONPYTHON}"    b'\\x00\\xff'    '\\x00\\xff'
-    Check Log Message    ${tc.kws[3].msgs[0]}    ${bytes}
-    Check Log Message    ${tc.kws[5].msgs[0]}    ['Hyv\\xe4', '\\u2603', 42, ${bytes}]
-    Check Stdout Contains    ['Hyv\\xe4', '\\u2603', 42, ${bytes}]
+    Check Log Message    ${tc.kws[0].msgs[0]}    'Nothing special here'
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}    'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'    'Hyv\xe4\xe4 y\xf6t\xe4 \u2603!'
+    Check Log Message    ${tc.kws[1].msgs[0]}    ${expected}
+    Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
+    Check Log Message    ${tc.kws[4].msgs[0]}    b'\\x00\\xff'
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}    ['Hyv\\xe4', '\\u2603', 42, b'\\x00\\xff']    ['Hyv\xe4', '\u2603', 42, b'\\x00\\xff']
+    Check Log Message    ${tc.kws[6].msgs[0]}    ${expected}
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2} or not ${INTERPRETER.is_windows}    ${expected}    ['Hyv\xe4', '?', 42, b'\\x00\\xff']
+    Check Stdout Contains    ${expected}
 
 Log pprint
     ${tc} =    Check Test Case    ${TEST NAME}
-    ${b} =    Set Variable If    not "${IRONPYTHON}"    b    ${EMPTY}
     Check Log Message    ${tc.kws[1].msgs[0]}    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}'a longer string!',\n${SPACE * 10}'a much, much, much, much, much, much longer string']}
     Check Stdout Contains    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}'a longer string!',\n${SPACE * 10}'a much, much, much, much, much, much longer string']}
-    Check Log Message    ${tc.kws[3].msgs[0]}    [${b}'One', 'Two', 3]
-    Check Stdout Contains    [${b}'One', 'Two', 3]
-    Check Log Message    ${tc.kws[5].msgs[0]}    [${b}'a long string',\n${SPACE}'a longer string!',\n${SPACE}'a much, much, much, much, much, much longer string']
-    Check Stdout Contains    [${b}'a long string',\n${SPACE}'a longer string!',\n${SPACE}'a much, much, much, much, much, much longer string']
+    Check Log Message    ${tc.kws[3].msgs[0]}    [b'One', 'Two', 3]
+    Check Stdout Contains    [b'One', 'Two', 3]
+    Check Log Message    ${tc.kws[5].msgs[0]}    [b'a long string',\n${SPACE}'a longer string!',\n${SPACE}'a much, much, much, much, much, much longer string']
+    Check Stdout Contains    [b'a long string',\n${SPACE}'a longer string!',\n${SPACE}'a much, much, much, much, much, much longer string']
     Check Log Message    ${tc.kws[7].msgs[0]}    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}'a longer string!',\n${SPACE * 10}'a much, much, much, much, much, much longer string']}
-    Check Log Message    ${tc.kws[9].msgs[0]}    ['One', ${b}'Two', 3]
-    Check Log Message    ${tc.kws[11].msgs[0]}    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}${b}'\\x00\\xff']}
-    Check Stdout Contains    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}${b}'\\x00\\xff']}
+    Check Log Message    ${tc.kws[9].msgs[0]}    ['One', b'Two', 3]
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
+    ...    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
+    ...    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\xe4\xe4 y\xf6t\xe4 \u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
+    Check Log Message    ${tc.kws[11].msgs[0]}    ${expected}
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2} or not ${INTERPRETER.is_windows}    ${expected}
+    ...    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\xe4\xe4 y\xf6t\xe4 ?!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
+    Check Stdout Contains    ${expected}
 
 Log callable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    objects_for_call_method.MyObject
+    Check Log Message    ${tc.kws[0].msgs[0]}    *objects_for_call_method.MyObject*    pattern=yes
+    Check Log Message    ${tc.kws[2].msgs[0]}    <function <lambda*> at *>    pattern=yes
 
 Log Many
     ${tc} =    Check Test Case    ${TEST NAME}

@@ -1,6 +1,11 @@
 robot.api package
 =================
 
+.. automodule:: robot.api
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -21,10 +26,3 @@ robot.api.logger module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.api
-    :members:
-    :undoc-members:
-    :show-inheritance:

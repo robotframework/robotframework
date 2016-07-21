@@ -16,15 +16,28 @@ from os.path import abspath, dirname, exists, join
 import os
 import sys
 
+
 if len(sys.argv) == 1:
     sys.exit(__doc__)
 
 curdir = dirname(abspath(__file__))
+src = join(curdir, 'src')
 tmp = join(curdir, 'tmp')
+tmp2 = join(tmp, 'rundevel')
 if not exists(tmp):
     os.mkdir(tmp)
+if not exists(tmp2):
+    os.mkdir(tmp2)
 
-sys.path.insert(0, join(curdir, 'src'))
+os.environ['ROBOT_SYSLOG_FILE'] = join(tmp, 'syslog.txt')
+os.environ['ROBOT_INTERNAL_TRACES'] = 'yes'
+os.environ['TEMPDIR'] = tmp2          # Used by tests under atest/testdata
+if 'PYTHONPATH' not in os.environ:    # Allow executed scripts to import robot
+    os.environ['PYTHONPATH'] = src
+else:
+    os.environ['PYTHONPATH'] = os.pathsep.join([src, os.environ['PYTHONPATH']])
+
+sys.path.insert(0, src)
 from robot import run_cli, rebot_cli
 
 if sys.argv[1] == 'rebot':
@@ -33,8 +46,8 @@ if sys.argv[1] == 'rebot':
 else:
     runner = run_cli
     args = ['--pythonpath', join(curdir, 'atest', 'testresources', 'testlibs'),
-            '--pythonpath', tmp, '--loglevel', 'DEBUG']
+            '--pythonpath', tmp,
+            '--loglevel', 'DEBUG']
     args += sys.argv[2:] if sys.argv[1] == 'run' else sys.argv[1:]
 
-os.environ['ROBOT_SYSLOG_FILE'] = join(tmp, 'syslog.txt')
 runner(['--outputdir', tmp] + args)

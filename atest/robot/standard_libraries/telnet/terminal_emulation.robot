@@ -1,6 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/telnet/terminal_emulation.robot
-Force Tags        jybot    pybot
 Resource          telnet_resource.robot
 
 *** Test Cases ***
@@ -11,6 +10,12 @@ Read Until Regex
     Check Test Case    ${TEST NAME}
 
 Read Until Multiple Regexp
+    Check Test Case    ${TEST NAME}
+
+Read Until Precompiled Regexp
+    Check Test Case    ${TEST NAME}
+
+Read Until Non-ASCII Regexp
     Check Test Case    ${TEST NAME}
 
 Reads Only the Necessary Amount

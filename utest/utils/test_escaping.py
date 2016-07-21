@@ -1,12 +1,12 @@
 import unittest
 
 
-from robot.utils.asserts import assert_equals, assert_raises
+from robot.utils.asserts import assert_equal, assert_raises
 from robot.utils.escaping import escape, unescape, split_from_equals
 
 
 def assert_unescape(inp, exp):
-    assert_equals(unescape(inp), exp, repr(inp))
+    assert_equal(unescape(inp), exp, repr(inp))
 
 
 class TestUnEscape(unittest.TestCase):
@@ -155,14 +155,14 @@ class TestEscape(unittest.TestCase):
                          ('*{reserved}', '\\*{reserved}'),
                          ('x{notreserved}', 'x{notreserved}'),
                          ('named=arg', 'named\\=arg')]:
-            assert_equals(escape(inp), exp, inp)
+            assert_equal(escape(inp), exp, inp)
 
     def test_escape_control_words(self):
         for inp in ['ELSE', 'ELSE IF', 'AND']:
-            assert_equals(escape(inp), '\\' + inp)
-            assert_equals(escape(inp.lower()), inp.lower())
-            assert_equals(escape('other' + inp), 'other' + inp)
-            assert_equals(escape(inp + ' '), inp + ' ')
+            assert_equal(escape(inp), '\\' + inp)
+            assert_equal(escape(inp.lower()), inp.lower())
+            assert_equal(escape('other' + inp), 'other' + inp)
+            assert_equal(escape(inp + ' '), inp + ' ')
 
 
 class TestSplitFromEquals(unittest.TestCase):
@@ -181,7 +181,7 @@ class TestSplitFromEquals(unittest.TestCase):
             self._test(inp, (inp, None))
 
     def _test(self, inp, exp):
-        assert_equals(split_from_equals(inp), tuple(exp))
+        assert_equal(split_from_equals(inp), tuple(exp))
 
 
 if __name__ == '__main__':

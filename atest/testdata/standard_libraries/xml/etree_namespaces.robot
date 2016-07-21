@@ -27,8 +27,8 @@ Clarck Notation must be used in xpaths
 
 xmlns attributes are removed
     [Template]    Element Should Have Attributes
-    ${ROOT}    .    name    root
-    ${ROOT}    {default}child1    id    1
+    ${ROOT}    .    name=root
+    ${ROOT}    {default}child1    id=1
     ${ROOT}    {http://uri}child2
     ${ROOT}    {whatever.xsd}child3
     ${ROOT}    {whatever.xsd}child3/{whatever.xsd}grand-child

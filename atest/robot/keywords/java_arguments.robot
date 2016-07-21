@@ -2,7 +2,7 @@
 Documentation     Handling valid and invalid arguments with Java keywords.
 ...               Related tests also in test_libraries/java_libraries.robot.
 Suite Setup       Run Tests    ${EMPTY}    keywords/java_arguments.robot
-Force Tags        regression    jybot
+Force Tags        require-jython
 Resource          atest_resource.robot
 
 *** Test Cases ***

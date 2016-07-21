@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,15 +15,21 @@
 
 import re
 
+from .platform import PY3
+from .robottypes import is_string
 
-_CONTROL_WORDS_TO_BE_ESCAPED = ('ELSE', 'ELSE IF', 'AND')
+
+if PY3:
+    unichr = chr
+
+_CONTROL_WORDS = frozenset(('ELSE', 'ELSE IF', 'AND', 'WITH NAME'))
 _SEQUENCES_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{', '=')
 
 
 def escape(item):
-    if not isinstance(item, basestring):
+    if not is_string(item):
         return item
-    if item in _CONTROL_WORDS_TO_BE_ESCAPED:
+    if item in _CONTROL_WORDS:
         return '\\' + item
     for seq in _SEQUENCES_TO_BE_ESCAPED:
         if seq in item:
@@ -31,13 +38,12 @@ def escape(item):
 
 
 def unescape(item):
-    if not (isinstance(item, basestring) and '\\' in item):
+    if not (is_string(item) and '\\' in item):
         return item
     return Unescaper().unescape(item)
 
 
 class Unescaper(object):
-    _escaped = re.compile(r'(\\+)([^\\]*)')
 
     def unescape(self, string):
         return ''.join(self._yield_unescaped(string))

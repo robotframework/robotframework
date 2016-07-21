@@ -1,6 +1,5 @@
 *** Settings ***
 Documentation     Setting critical and non-critical tags
-Force Tags        regression    pybot    jybot
 Test Template     Test Criticality
 Resource          atest_resource.robot
 

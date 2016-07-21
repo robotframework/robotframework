@@ -11,7 +11,7 @@ ${NON ASCII}      HYVÄÄ_YÖTÄ
 
 *** Test Case ***
 Get Environment Variable
-    [Documentation]    FAIL Environment variable 'non_existing_2' does not exist
+    [Documentation]    FAIL Environment variable 'non_existing_2' does not exist.
     ${var} =    Get Environment Variable    PATH
     Should Contain    ${var}    ${:}
     ${var} =    Get Environment Variable    non_existing    default value
@@ -58,7 +58,7 @@ Remove Multiple Environment Variables
     Environment Variable Should Not Be Set    ${NAME}_3
 
 Environment Variable Should Be Set
-    [Documentation]    FAIL Environment variable 'not_set_var' is not set
+    [Documentation]    FAIL Environment variable 'not_set_var' is not set.
     Set Environment Variable    ${NAME}    Hello
     Environment Variable Should Be Set    ${NAME}
     Environment Variable Should Be Set    not_set_var
@@ -70,30 +70,30 @@ Environment Variable Should Be Set With Non Default Error
     Environment Variable Should Be Set    NON_EXISTING    My error message
 
 Environment Variable Should Not Be Set
-    [Documentation]    FAIL Environment variable '${NAME}' is set to 'Hello'
+    [Documentation]    FAIL Environment variable '${NAME}' is set to 'Hello'.
     Environment Variable Should Not Be Set    ${NAME}
     Set Environment Variable    ${NAME}    Hello
     Environment Variable Should Not Be Set    ${NAME}
 
 Environment Variable Should Not Be Set With Non Default Error
-    [Documentation]    FAIL My error message
+    [Documentation]    FAIL My error message!!
     Environment Variable Should Not Be Set    ${NAME}    This does not fail
     Set Environment Variable    ${NAME}    Hello
-    Environment Variable Should Not Be Set    ${NAME}    My error message
+    Environment Variable Should Not Be Set    ${NAME}    My error message!!
 
 Set Environment Variable In One Test And Use In Another, Part 1
     Set Environment Variable    ${NAME}    Hello another test case!
-    [Teardown]  NONE
+    [Teardown]    NONE
 
 Set Environment Variable In One Test And Use In Another, Part 2
     ${value}=    Get Environment Variable    ${NAME}
-    Should Be Equal    ${value}      Hello another test case!
+    Should Be Equal    ${value}    Hello another test case!
     Should Be Equal    %{${NAME}}    Hello another test case!
 
 Get And Log Environment Variables
-    Set Environment Variable     0   value
-    Set Environment Variable     1   äiti
-    Set Environment Variable     isä   äiti
+    Set Environment Variable    0    value
+    Set Environment Variable    1    äiti
+    Set Environment Variable    isä    äiti
     ${vars} =    Get Environment Variables
     Should Contain    ${vars}    PATH
     Should Be Equal    ${vars['0']}    value
@@ -108,18 +108,18 @@ Non-string names and values are converted to strings automatically
     Set Environment Variable    ${NON STRING}    ${NON STRING}
     ${value} =    Get Environment Variable    ${NON STRING}
     Should Be Equal As Strings    ${value}    ${NON STRING}
-    Environment Variable Should Be Set     ${NON STRING}
+    Environment Variable Should Be Set    ${NON STRING}
     Remove Environment Variable    ${NON STRING}
-    Environment Variable Should Not Be Set     ${NON STRING}
+    Environment Variable Should Not Be Set    ${NON STRING}
     [Teardown]    Remove Environment Variable    ${NON STRING}
 
 Non-ASCII names and values are encoded automatically
     Set Environment Variable    ${NON ASCII}    ${NON ASCII}
     ${value} =    Get Environment Variable    ${NON ASCII}
     Should Be Equal    ${value}    ${NON ASCII}
-    Environment Variable Should Be Set     ${NON ASCII}
+    Environment Variable Should Be Set    ${NON ASCII}
     Remove Environment Variable    ${NON ASCII}
-    Environment Variable Should Not Be Set     ${NON ASCII}
+    Environment Variable Should Not Be Set    ${NON ASCII}
     [Teardown]    Remove Environment Variable    ${NON ASCII}
 
 Non-ASCII variable set before execution
@@ -132,4 +132,3 @@ Non-ASCII variable set before execution
 Use NON-ASCII variable in child process
     Set Environment Variable    ${NAME}    ${NON ASCII}
     Test Env Var In Child Process    ${NAME}
-

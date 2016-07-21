@@ -1,5 +1,5 @@
 *** Settings ***
-Library         Operating System
+Library         OperatingSystem
 
 *** Variables ***
 @{NEEDS ESCAPING}  c:\\temp\\foo  \${notvar}  ${42}
@@ -74,7 +74,7 @@ Run Keyword With KW Timeout Exceeded
     Run Keyword  Timeoutted UK Timeouting
 
 Run Keyword With Invalid Keyword Name
-    [Documentation]  FAIL Keyword name must be string.
+    [Documentation]  FAIL Keyword name must be a string.
     Run Keyword  ${42}  arg 1  arg 2
 
 *** Keywords ***

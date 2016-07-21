@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,46 +13,50 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .markuputils import html_escape, xml_escape, attribute_escape
+from .markuputils import attribute_escape, html_escape, xml_escape
+from .robottypes import is_string
+from .robotio import file_writer
 
 
 class _MarkupWriter(object):
 
-    def __init__(self, output, line_separator='\n', encoding='UTF-8'):
+    def __init__(self, output, write_empty=True):
         """
         :param output: Either an opened, file like object, or a path to the
             desired output file. In the latter case, the file is created
             and clients should use :py:meth:`close` method to close it.
-        :param line_separator: Defines the used line separator.
-        :param encoding: Encoding to be used to encode all text written to the
-            output file. If `None`, text will not be encoded.
+        :param write_empty: Whether to write empty elements and attributes.
         """
-        if isinstance(output, basestring):
-            output = open(output, 'w')
+        if is_string(output):
+            output = file_writer(output)
         self.output = output
-        self._line_separator = line_separator
-        self._encoding = encoding
+        self._write_empty = write_empty
         self._preamble()
 
     def _preamble(self):
         pass
 
     def start(self, name, attrs=None, newline=True):
-        self._write('<%s %s>' % (name, self._format_attrs(attrs))
-                    if attrs else '<%s>' % name, newline)
+        attrs = self._format_attrs(attrs)
+        self._start(name, attrs, newline)
+
+    def _start(self, name, attrs, newline):
+        self._write('<%s %s>' % (name, attrs) if attrs else '<%s>' % name,
+                    newline)
 
     def _format_attrs(self, attrs):
-        return ' '.join('%s="%s"' % (name, attribute_escape(attrs[name]))
-                        for name in self._order_attrs(attrs))
+        if not attrs:
+            return ''
+        attrs = [(k, attribute_escape(attrs[k] or ''))
+                 for k in self._order_attrs(attrs)]
+        write_empty = self._write_empty
+        return ' '.join('%s="%s"' % a for a in attrs if write_empty or a[1])
 
     def _order_attrs(self, attrs):
         return attrs
 
-    def content(self, content=None, escape=True, newline=False,
-                replace_newlines=False):
+    def content(self, content=None, escape=True, newline=False):
         if content:
-            if replace_newlines:
-                content = content.replace('\n', self._line_separator)
             self._write(self._escape(content) if escape else content, newline)
 
     def _escape(self, content):
@@ -62,21 +67,20 @@ class _MarkupWriter(object):
 
     def element(self, name, content=None, attrs=None, escape=True,
                 newline=True, replace_newlines=False):
-        self.start(name, attrs, newline=False)
-        self.content(content, escape, replace_newlines)
-        self.end(name, newline)
+        attrs = self._format_attrs(attrs)
+        if self._write_empty or content or attrs:
+            self._start(name, attrs, newline=False)
+            self.content(content, escape, replace_newlines)
+            self.end(name, newline)
 
     def close(self):
         """Closes the underlying output file."""
         self.output.close()
 
     def _write(self, text, newline=False):
-        self.output.write(self._encode(text))
+        self.output.write(text)
         if newline:
-            self.output.write(self._line_separator)
-
-    def _encode(self, text):
-        return text.encode(self._encoding) if self._encoding else text
+            self.output.write('\n')
 
 
 class HtmlWriter(_MarkupWriter):
@@ -91,13 +95,14 @@ class HtmlWriter(_MarkupWriter):
 class XmlWriter(_MarkupWriter):
 
     def _preamble(self):
-        self._write('<?xml version="1.0" encoding="%s"?>' % self._encoding,
-                    newline=True)
+        self._write('<?xml version="1.0" encoding="UTF-8"?>', newline=True)
 
     def _escape(self, text):
         return xml_escape(text)
 
 
 class NullMarkupWriter(object):
-    """Null implementation of _MarkupWriter interface"""
-    __init__ = start = content = element = end = close = lambda *args: None
+    """Null implementation of the _MarkupWriter interface."""
+
+    __init__ = start = content = element = end = close = \
+        lambda *args, **kwargs: None

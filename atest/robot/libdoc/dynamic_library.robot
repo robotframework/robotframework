@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/DynamicLibrary.py::required
-Force Tags        regression    pybot    jybot
 Resource          libdoc_resource.robot
 
 *** Test Cases ***
@@ -62,3 +61,7 @@ Non-ASCII UTF-8
 
 No Argspec
     Keyword Arguments Should be     5     *varargs   **kwargs
+
+Keyword Tags
+    Keyword Tags Should Be    6    hyvää   yötä
+    Keyword Tags Should Be    7    hyvää   yötä

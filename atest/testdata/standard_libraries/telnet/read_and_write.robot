@@ -37,7 +37,7 @@ Write ASCII-Only Unicode When Encoding Is Disabled
     Set Encoding    NONE
     Write    echo Only ASCII
     ${out} =    Read Until Prompt
-    Should Be Equal    ${out}    Only ASCII\r\n${FULL PROMPT}
+    Should Be Equal    ${out.decode('ASCII')}    Only ASCII\r\n${FULL PROMPT}
     Write    Tämä ei toimi
 
 Write Does Not Allow Newlines

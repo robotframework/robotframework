@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,9 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import is_string, py2to3, PY3
+
 from .comments import Comment
 
 
+if PY3:
+    unicode = str
+
+
+@py2to3
 class Setting(object):
 
     def __init__(self, setting_name, parent=None, comment=None):
@@ -22,6 +30,7 @@ class Setting(object):
         self.parent = parent
         self._set_initial_value()
         self._set_comment(comment)
+        self._populated = False
 
     def _set_initial_value(self):
         self.value = []
@@ -42,8 +51,15 @@ class Setting(object):
 
     def populate(self, value, comment=None):
         """Mainly used at parsing time, later attributes can be set directly."""
-        self._populate(value)
-        self._set_comment(comment)
+        if not self._populated:
+            self._populate(value)
+            self._set_comment(comment)
+            self._populated = True
+        else:
+            self._set_initial_value()
+            self._set_comment(None)
+            self.report_invalid_syntax("Setting '%s' used multiple times."
+                                       % self.setting_name, 'ERROR')
 
     def _populate(self, value):
         self.value = value
@@ -58,7 +74,7 @@ class Setting(object):
         self.parent.report_invalid_syntax(message, level)
 
     def _string_value(self, value):
-        return value if isinstance(value, basestring) else ' '.join(value)
+        return value if is_string(value) else ' '.join(value)
 
     def _concat_string_with_value(self, string, value):
         if string:
@@ -78,7 +94,7 @@ class Setting(object):
         return self.is_set()
 
     def __iter__(self):
-        return iter(self.value)
+        return iter(self.value or ())
 
     def __unicode__(self):
         return unicode(self.value or '')
@@ -95,7 +111,7 @@ class StringValueJoiner(object):
         return self.string_value(value)
 
     def string_value(self, value):
-        if isinstance(value, basestring):
+        if is_string(value):
             return value
         return self._separator.join(value)
 
@@ -109,7 +125,7 @@ class Documentation(Setting):
         self.value = self._concat_string_with_value(self.value, value)
 
     def _string_value(self, value):
-        return value if isinstance(value, basestring) else ''.join(value)
+        return value if is_string(value) else ''.join(value)
 
     def _data_as_list(self):
         return [self.setting_name, self.value]
@@ -266,23 +282,44 @@ class _Import(Setting):
     def _data_as_list(self):
         return [self.type, self.name] + self.args
 
+    def report_invalid_syntax(self, message, level='ERROR', parent=None):
+        parent = parent or getattr(self, 'parent', None)
+        if parent:
+            parent.report_invalid_syntax(message, level)
+        else:
+            from robot.api import logger
+            logger.write(message, level)
+
 
 class Library(_Import):
 
     def __init__(self, parent, name, args=None, alias=None, comment=None):
         if args and not alias:
-            args, alias = self._split_alias(args)
+            args, alias = self._split_alias(args, parent)
         _Import.__init__(self, parent, name, args, alias, comment)
 
-    def _split_alias(self, args):
-        if len(args) >= 2 and isinstance(args[-2], basestring) \
-                and args[-2].upper() == 'WITH NAME':
-            return args[:-2], args[-1]
+    def _split_alias(self, args, parent):
+        if len(args) > 1 and is_string(args[-2]):
+            with_name = args[-2]
+            if with_name.upper() == 'WITH NAME':
+                # TODO: Require all uppercase 'WITH NAME' in RF 3.1.
+                # https://github.com/robotframework/robotframework/issues/2263
+                if with_name != 'WITH NAME':
+                    self._deprecation_warning(with_name, parent)
+                return args[:-2], args[-1]
         return args, None
 
+    def _deprecation_warning(self, with_name, parent):
+        message = ("Using 'WITH NAME' syntax when importing libraries case "
+                   "insensitively like '%s' is deprecated. Use all upper case "
+                   "format 'WITH NAME' instead." % with_name)
+        self.report_invalid_syntax(message, 'WARN', parent)
+
     def _data_as_list(self):
-        alias = ['WITH NAME', self.alias] if self.alias else []
-        return ['Library', self.name] + self.args + alias
+        data = ['Library', self.name] + self.args
+        if self.alias:
+            data += ['WITH NAME', self.alias]
+        return data
 
 
 class Resource(_Import):

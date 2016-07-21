@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,9 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from .compat import py2to3
 from .normalizing import NormalizedDict
+from .robottypes import is_string
 
 
+@py2to3
 class ConnectionCache(object):
     """Cache for test libs to use with concurrent connections, processes, etc.
 
@@ -34,18 +38,18 @@ class ConnectionCache(object):
         self._connections = []
         self._aliases = NormalizedDict()
 
-    def _get_current_index(self):
+    @property
+    def current_index(self):
         if not self:
             return None
         for index, conn in enumerate(self):
             if conn is self.current:
                 return index + 1
 
-    def _set_current_index(self, index):
+    @current_index.setter
+    def current_index(self, index):
         self.current = self._connections[index - 1] \
             if index is not None else self._no_current
-
-    current_index = property(_get_current_index, _set_current_index)
 
     def register(self, connection, alias=None):
         """Registers given connection with optional alias and returns its index.
@@ -61,7 +65,7 @@ class ConnectionCache(object):
         self.current = connection
         self._connections.append(connection)
         index = len(self._connections)
-        if isinstance(alias, basestring):
+        if is_string(alias):
             self._aliases[alias] = index
         return index
 
@@ -139,7 +143,7 @@ class ConnectionCache(object):
             return self._resolve_index(alias_or_index)
 
     def _resolve_alias(self, alias):
-        if isinstance(alias, basestring):
+        if is_string(alias):
             try:
                 return self._aliases[alias]
             except KeyError:
@@ -156,6 +160,7 @@ class ConnectionCache(object):
         return index
 
 
+@py2to3
 class NoConnection(object):
 
     def __init__(self, message):

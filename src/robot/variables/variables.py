@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,21 +13,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import is_list_like
+
 from .filesetter import VariableFileSetter
 from .finders import VariableFinder
 from .replacer import VariableReplacer
 from .store import VariableStore
 from .tablesetter import VariableTableSetter
 
-from robot.utils import is_list_like
-
 
 class Variables(object):
-    """Represents a set of variables including both ${scalars} and @{lists}.
+    """Represents a set of variables.
 
     Contains methods for replacing variables from list, scalars, and strings.
-    On top of ${scalar} and @{list} variables these methods handle also
-    %{environment} variables.
+    On top of ${scalar}, @{list} and &{dict} variables, these methods handle
+    also %{environment} variables.
     """
 
     def __init__(self):
@@ -40,16 +41,19 @@ class Variables(object):
     def __getitem__(self, name):
         return self._finder.find(name)
 
+    def __contains__(self, name):
+        return name in self.store
+
     def resolve_delayed(self):
         self.store.resolve_delayed()
 
-    def replace_list(self, items, replace_until=None):
+    def replace_list(self, items, replace_until=None, ignore_errors=False):
         if not is_list_like(items):
             raise ValueError("'replace_list' requires list-like input.")
-        return self._replacer.replace_list(items, replace_until)
+        return self._replacer.replace_list(items, replace_until, ignore_errors)
 
-    def replace_scalar(self, item):
-        return self._replacer.replace_scalar(item)
+    def replace_scalar(self, item, ignore_errors=False):
+        return self._replacer.replace_scalar(item, ignore_errors)
 
     def replace_string(self, item, ignore_errors=False):
         return self._replacer.replace_string(item, ignore_errors)
@@ -62,25 +66,16 @@ class Variables(object):
         setter = VariableTableSetter(self.store)
         setter.set(variables, overwrite)
 
-    # TODO: Try to get rid of all/most of the methods below.
-    # __iter__ and __len__ may be useful.
-
     def clear(self):
         self.store.clear()
 
     def copy(self):
-        # TODO: This is fugly!
         variables = Variables()
         variables.store.data = self.store.data.copy()
         return variables
 
     def update(self, variables):
-        # TODO: Fugly!
-        self.store.data.update(variables.store.data)
+        self.store.update(variables.store)
 
-    def __iter__(self):
-        # TODO: Returns names w/o decoration -- cannot be used w/ __getitem__
-        return iter(self.store)
-
-    def __len__(self):
-        return len(self.store)
+    def as_dict(self, decoration=True):
+        return self.store.as_dict(decoration=decoration)

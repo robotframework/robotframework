@@ -1,8 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}
-...    standard_libraries/builtin/set_test_message.robot
-...    standard_libraries/builtin/set_test_message_in_suite_level.robot
-Force Tags        regression    pybot    jybot
+...    standard_libraries/builtin/set_test_message.robot standard_libraries/builtin/set_test_message_in_suite_level.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -57,6 +55,9 @@ Set Message In Setup
     Check Test Case    ${TEST NAME}    PASS    Message set in setup
 
 Check Message From Previous Test
+    Check Test Case    ${TEST NAME}
+
+Test Message Variable Reacts On Set Test Message
     Check Test Case    ${TEST NAME}
 
 Not Allowed In Suite Setup or Teardown

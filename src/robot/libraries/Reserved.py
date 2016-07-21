@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -23,4 +24,8 @@ class Reserved(object):
         return RESERVED_KEYWORDS
 
     def run_keyword(self, name, args):
-        raise Exception("'%s' is a reserved keyword" % name.title())
+        error = "'%s' is a reserved keyword." % name.title()
+        if name in ('else', 'else if'):
+            error += (" It must be in uppercase (%s) when used as a marker"
+                      " with 'Run Keyword If'." % name.upper())
+        raise Exception(error)

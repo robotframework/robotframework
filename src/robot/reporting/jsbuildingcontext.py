@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,11 +14,12 @@
 #  limitations under the License.
 
 from contextlib import contextmanager
-import os.path
+from os.path import exists, dirname
 
 from robot.output.loggerhelper import LEVELS
-from robot.utils import (html_escape, html_format, get_link_path,
-                         timestamp_to_secs)
+from robot.utils import (attribute_escape, get_link_path, html_escape,
+                         html_format, is_string, is_unicode, timestamp_to_secs,
+                         unic)
 
 from .stringcache import StringCache
 
@@ -26,8 +28,7 @@ class JsBuildingContext(object):
 
     def __init__(self, log_path=None, split_log=False, prune_input=False):
         # log_path can be a custom object in unit tests
-        self._log_dir = os.path.dirname(log_path) \
-                if isinstance(log_path, basestring) else None
+        self._log_dir = dirname(log_path) if is_string(log_path) else None
         self._split_log = split_log
         self._prune_input = prune_input
         self._strings = self._top_level_strings = StringCache()
@@ -36,11 +37,11 @@ class JsBuildingContext(object):
         self.min_level = 'NONE'
         self._msg_links = {}
 
-    def string(self, string, escape=True):
+    def string(self, string, escape=True, attr=False):
         if escape and string:
-            if not isinstance(string, unicode):
-                string = unicode(string)
-            string = html_escape(string)
+            if not is_unicode(string):
+                string = unic(string)
+            string = (html_escape if not attr else attribute_escape)(string)
         return self._strings.add(string)
 
     def html(self, string):
@@ -48,14 +49,13 @@ class JsBuildingContext(object):
 
     def relative_source(self, source):
         rel_source = get_link_path(source, self._log_dir) \
-            if self._log_dir and source and os.path.exists(source) else ''
+            if self._log_dir and source and exists(source) else ''
         return self.string(rel_source)
 
     def timestamp(self, time):
         if not time:
             return None
-        # Must use `long` due to http://ironpython.codeplex.com/workitem/31549
-        millis = long(round(timestamp_to_secs(time) * 1000))
+        millis = int(timestamp_to_secs(time) * 1000)
         if self.basemillis is None:
             self.basemillis = millis
         return millis - self.basemillis

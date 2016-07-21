@@ -1,18 +1,12 @@
-import sys
-
-
 class Listener(object):
 
-    def start_test(self, name, doc, tags):
-        self._stderr("START TEST %s %s %s" % (name, doc, tags))
+    def close(self):
+        pass
 
-    def end_test(self, status, message):
-        self._stderr("END TEST %s %s" % (status, message))
+class Listener2(object):
 
     def close(self):
-        self._stderr("CLOSE")
+        pass
 
-    def _stderr(self, msg):
-        sys.__stderr__.write("%s\n" % msg)
 
-ROBOT_LIBRARY_LISTENER = Listener()
+ROBOT_LIBRARY_LISTENER = [Listener(), Listener2()]

@@ -1,7 +1,7 @@
 import unittest
 
 from robot.variables import VariableSplitter, VariableIterator
-from robot.utils.asserts import assert_equals, assert_false, assert_true
+from robot.utils.asserts import assert_equal, assert_false, assert_true
 
 
 class TestVariableSplitter(unittest.TestCase):
@@ -173,16 +173,16 @@ class TestVariableSplitter(unittest.TestCase):
                 end += len(index) + 2
                 is_var = inp == '%s[%s]' % (variable, index)
         res = VariableSplitter(inp, identifiers)
-        assert_equals(res.base, base, "'%s' base" % inp)
-        assert_equals(res.start, start, "'%s' start" % inp)
-        assert_equals(res.end, end, "'%s' end" % inp)
-        assert_equals(res.identifier, identifier, "'%s' identifier" % inp)
-        assert_equals(res.index, index, "'%s' index" % inp)
-        assert_equals(res._may_have_internal_variables, internal,
+        assert_equal(res.base, base, "'%s' base" % inp)
+        assert_equal(res.start, start, "'%s' start" % inp)
+        assert_equal(res.end, end, "'%s' end" % inp)
+        assert_equal(res.identifier, identifier, "'%s' identifier" % inp)
+        assert_equal(res.index, index, "'%s' index" % inp)
+        assert_equal(res._may_have_internal_variables, internal,
                       "'%s' internal" % inp)
-        assert_equals(res.is_variable(), is_var)
-        assert_equals(res.is_list_variable(), is_list_var)
-        assert_equals(res.is_dict_variable(), is_dict_var)
+        assert_equal(res.is_variable(), is_var)
+        assert_equal(res.is_list_variable(), is_list_var)
+        assert_equal(res.is_dict_variable(), is_dict_var)
 
     def test_is_variable(self):
         for no in ['', 'xxx', '${var} not alone', '\\${notvat}', '\\\\${var}',
@@ -203,32 +203,32 @@ class TestVariableIterator(unittest.TestCase):
 
     def test_no_variables(self):
         iterator = VariableIterator('no vars here', identifiers='$')
-        assert_equals(list(iterator), [])
-        assert_equals(bool(iterator), False)
-        assert_equals(len(iterator), 0)
+        assert_equal(list(iterator), [])
+        assert_equal(bool(iterator), False)
+        assert_equal(len(iterator), 0)
 
     def test_one_variable(self):
         iterator = VariableIterator('one ${var} here', identifiers='$')
-        assert_equals(list(iterator), [('one ', '${var}', ' here')])
-        assert_equals(bool(iterator), True)
-        assert_equals(len(iterator), 1)
+        assert_equal(list(iterator), [('one ', '${var}', ' here')])
+        assert_equal(bool(iterator), True)
+        assert_equal(len(iterator), 1)
 
     def test_multiple_variables(self):
         iterator = VariableIterator('${1} @{2} and %{3}', identifiers='$@%')
-        assert_equals(list(iterator), [('', '${1}', ' @{2} and %{3}'),
+        assert_equal(list(iterator), [('', '${1}', ' @{2} and %{3}'),
                                        (' ', '@{2}', ' and %{3}'),
                                        (' and ', '%{3}', '')])
-        assert_equals(bool(iterator), True)
-        assert_equals(len(iterator), 3)
+        assert_equal(bool(iterator), True)
+        assert_equal(len(iterator), 3)
 
     def test_can_be_iterated_many_times(self):
         iterator = VariableIterator('one ${var} here', identifiers='$')
-        assert_equals(list(iterator), [('one ', '${var}', ' here')])
-        assert_equals(list(iterator), [('one ', '${var}', ' here')])
-        assert_equals(bool(iterator), True)
-        assert_equals(bool(iterator), True)
-        assert_equals(len(iterator), 1)
-        assert_equals(len(iterator), 1)
+        assert_equal(list(iterator), [('one ', '${var}', ' here')])
+        assert_equal(list(iterator), [('one ', '${var}', ' here')])
+        assert_equal(bool(iterator), True)
+        assert_equal(bool(iterator), True)
+        assert_equal(len(iterator), 1)
+        assert_equal(len(iterator), 1)
 
 
 if __name__ == '__main__':

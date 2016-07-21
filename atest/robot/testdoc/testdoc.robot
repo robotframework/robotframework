@@ -1,9 +1,7 @@
 *** Settings ***
-Force Tags    regression   pybot   jybot
 Resource      atest_resource.robot
 
 *** Variables ***
-${CMD}    ${INTERPRETER} ${CURDIR}${/}..${/}..${/}..${/}src${/}robot${/}testdoc.py
 ${INPUT 1}    ${CURDIR}${/}..${/}..${/}testdata${/}misc${/}pass_and_fail.robot
 ${INPUT 2}    ${CURDIR}${/}..${/}..${/}testdata${/}misc${/}suites
 ${INPUT 3}    ${CURDIR}${/}..${/}..${/}testdata${/}testdoc
@@ -38,9 +36,10 @@ Invalid usage
 *** Keyword ***
 Run TestDoc
     [Arguments]    ${args}    ${expected rc}=0
-    ${rc}    ${output}=   Run And Return Rc And Output  ${CMD} ${args} ${OUTFILE}
-    Should Be Equal As Numbers   ${rc}    ${expected rc}
-    [Return]    ${output}
+    @{args} =    Split Command line    ${args}
+    ${result}=   Run Process  @{INTERPRETER.testdoc}  @{args}  ${OUTFILE}
+    Should Be Equal As Numbers   ${result.rc}    ${expected rc}
+    [Return]    ${result.stdout}
 
 Testdoc Should Contain
     [Arguments]    @{expected}

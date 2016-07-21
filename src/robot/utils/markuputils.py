@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -37,11 +38,12 @@ def html_format(text):
 
 
 def attribute_escape(attr):
-    return _escape(attr, _attribute_escapes)
+    attr = _escape(attr, _attribute_escapes)
+    return _illegal_chars_in_xml.sub('', attr)
 
 
 def _escape(text, escapes=_generic_escapes):
     for name, value in escapes:
         if name in text:  # performance optimization
             text = text.replace(name, value)
-    return _illegal_chars_in_xml.sub('', text)
+    return text

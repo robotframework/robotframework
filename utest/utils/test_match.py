@@ -1,7 +1,7 @@
 import unittest
 
 from robot.utils.match import eq, Matcher, MultiMatcher
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 
 
 class TestEq(unittest.TestCase):
@@ -119,31 +119,31 @@ class TestMultiMatcher(unittest.TestCase):
         assert MultiMatcher(match_if_no_patterns=True, regexp=True).match('xxx')
 
     def test_len(self):
-        assert_equals(len(MultiMatcher()), 0)
-        assert_equals(len(MultiMatcher([])), 0)
-        assert_equals(len(MultiMatcher(['one', 'two'])), 2)
-        assert_equals(len(MultiMatcher(regexp=True)), 0)
-        assert_equals(len(MultiMatcher([], regexp=True)), 0)
-        assert_equals(len(MultiMatcher(['one', 'two'], regexp=True)), 2)
+        assert_equal(len(MultiMatcher()), 0)
+        assert_equal(len(MultiMatcher([])), 0)
+        assert_equal(len(MultiMatcher(['one', 'two'])), 2)
+        assert_equal(len(MultiMatcher(regexp=True)), 0)
+        assert_equal(len(MultiMatcher([], regexp=True)), 0)
+        assert_equal(len(MultiMatcher(['one', 'two'], regexp=True)), 2)
 
     def test_iter(self):
-        assert_equals(tuple(MultiMatcher()), ())
-        assert_equals(list(MultiMatcher(['1', 'xxx', '3'])), ['1', 'xxx', '3'])
-        assert_equals(tuple(MultiMatcher(regexp=True)), ())
-        assert_equals(list(MultiMatcher(['1', 'xxx', '3'], regexp=True)),
+        assert_equal(tuple(MultiMatcher()), ())
+        assert_equal(list(MultiMatcher(['1', 'xxx', '3'])), ['1', 'xxx', '3'])
+        assert_equal(tuple(MultiMatcher(regexp=True)), ())
+        assert_equal(list(MultiMatcher(['1', 'xxx', '3'], regexp=True)),
                       ['1', 'xxx', '3'])
 
     def test_single_string_is_converted_to_list(self):
         matcher = MultiMatcher('one string')
         assert matcher.match('one string')
         assert not matcher.match('o')
-        assert_equals(len(matcher), 1)
+        assert_equal(len(matcher), 1)
 
     def test_regexp_single_string_is_converted_to_list(self):
         matcher = MultiMatcher('one string', regexp=True)
         assert matcher.match('one string')
         assert not matcher.match('o')
-        assert_equals(len(matcher), 1)
+        assert_equal(len(matcher), 1)
 
     def test_match_any(self):
         matcher = MultiMatcher(['H?llo', 'w*'])

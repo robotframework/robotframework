@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -17,29 +18,31 @@ import random
 import sys
 import time
 
-from robot import utils
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
-from robot.result.flattenkeywordmatcher import FlattenKeywordMatcher
+from robot.result.flattenkeywordmatcher import validate_flatten_keyword
+from robot.utils import (abspath, escape, format_time, get_link_path,
+                         html_escape, is_list_like, py2to3,
+                         split_args_from_name_or_path)
 
 from .gatherfailed import gather_failed_tests
 
 
+@py2to3
 class _BaseSettings(object):
     _cli_opts = {'Name'             : ('name', None),
                  'Doc'              : ('doc', None),
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
                  'ReRunFailed'      : ('rerunfailed', 'NONE'),
-                 'DeprecatedRunFailed': ('runfailed', 'NONE'),  # TODO: Remove in RF 2.10/3.0.
                  'SuiteNames'       : ('suite', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
                  'Exclude'          : ('exclude', []),
                  'Critical'         : ('critical', None),
                  'NonCritical'      : ('noncritical', None),
-                 'OutputDir'        : ('outputdir', utils.abspath('.')),
+                 'OutputDir'        : ('outputdir', abspath('.')),
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
                  'XUnit'            : ('xunit', None),
@@ -48,7 +51,7 @@ class _BaseSettings(object):
                  'LogTitle'         : ('logtitle', None),
                  'ReportTitle'      : ('reporttitle', None),
                  'ReportBackground' : ('reportbackground',
-                                       ('#99FF66', '#99FF66', '#FF3333')),
+                                       ('#9e9', '#9e9', '#f66')),
                  'SuiteStatLevel'   : ('suitestatlevel', -1),
                  'TagStatInclude'   : ('tagstatinclude', []),
                  'TagStatExclude'   : ('tagstatexclude', []),
@@ -57,15 +60,16 @@ class _BaseSettings(object):
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
                  'FlattenKeywords'  : ('flattenkeywords', []),
+                 'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
-                 'MonitorColors'    : ('monitorcolors', 'AUTO'),
+                 'ConsoleColors'    : ('consolecolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
                  'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
-        self.start_timestamp = utils.format_time(time.time(), '', '-', '')
+        self.start_timestamp = format_time(time.time(), '', '-', '')
         self._opts = {}
         self._cli_opts = self._cli_opts.copy()
         self._cli_opts.update(self._extra_cli_opts)
@@ -74,27 +78,19 @@ class _BaseSettings(object):
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
             value = opts[cli_name] if cli_name in opts else default
-            if default == [] and isinstance(value, basestring):
+            if default == [] and not is_list_like(value):
                 value = [value]
             self[name] = self._process_value(name, value)
-        self['TestNames'] += self['ReRunFailed'] or self['DeprecatedRunFailed']
+        self['TestNames'] += self['ReRunFailed']
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
-            raise KeyError("Non-existing settings '%s'" % name)
+            raise KeyError("Non-existing option '%s'." % name)
         self._opts[name] = value
 
     def _process_value(self, name, value):
         if name == 'ReRunFailed':
             return gather_failed_tests(value)
-        if name == 'DeprecatedRunFailed':
-            if value.upper() != 'NONE':
-                LOGGER.warn('Option --runfailed is deprecated and will be '
-                            'removed in the future. Use --rerunfailed instead.')
-            return gather_failed_tests(value)
-        if name == 'DeprecatedMerge' and value is True:
-            LOGGER.warn('Option --rerunmerge is deprecated and will be '
-                        'removed in the future. Use --merge instead.')
         if name == 'LogLevel':
             return self._process_log_level(value)
         if value == self._get_default_value(name):
@@ -112,11 +108,11 @@ class _BaseSettings(object):
         if name in self._output_opts and (not value or value.upper() == 'NONE'):
             return None
         if name == 'OutputDir':
-            return utils.abspath(value)
-        if name in ['SuiteStatLevel', 'MonitorWidth']:
+            return abspath(value)
+        if name in ['SuiteStatLevel', 'ConsoleWidth']:
             return self._convert_to_positive_integer_or_default(name, value)
-        if name in ['Listeners', 'VariableFiles']:
-            return [self._split_args_from_name_or_path(item) for item in value]
+        if name == 'VariableFiles':
+            return [split_args_from_name_or_path(item) for item in value]
         if name == 'ReportBackground':
             return self._process_report_background(value)
         if name == 'TagStatCombine':
@@ -161,7 +157,7 @@ class _BaseSettings(object):
         if ':' in value:
             value, seed = value.split(':', 1)
         else:
-            seed = random.randint(0, sys.maxint)
+            seed = random.randint(0, sys.maxsize)
         if value in ('test', 'suite'):
             value += 's'
         if value not in ('tests', 'suites', 'none', 'all'):
@@ -178,7 +174,7 @@ class _BaseSettings(object):
 
     def __getitem__(self, name):
         if name not in self._opts:
-            raise KeyError("Non-existing setting '%s'" % name)
+            raise KeyError("Non-existing option '%s'." % name)
         if name in self._output_opts:
             return self._get_output_file(name)
         return self._opts[name]
@@ -196,7 +192,7 @@ class _BaseSettings(object):
             LOGGER.error('Log file is not created if output.xml is disabled.')
             return None
         name = self._process_output_name(option, name)
-        path = utils.abspath(os.path.join(self['OutputDir'], name))
+        path = abspath(os.path.join(self['OutputDir'], name))
         self._create_output_dir(os.path.dirname(path), option)
         return path
 
@@ -254,6 +250,8 @@ class _BaseSettings(object):
                 pattern = pattern.replace(search, replace)
         while '  ' in pattern:
             pattern = pattern.replace('  ', ' ')
+        if pattern.startswith(' NOT'):
+            pattern = pattern[1:]
         return pattern
 
     def _process_tag_stat_link(self, value):
@@ -277,30 +275,6 @@ class _BaseSettings(object):
     def _get_default_value(self, name):
         return self._cli_opts[name][1]
 
-    def _split_args_from_name_or_path(self, name):
-        if os.path.exists(name):
-            return os.path.abspath(name), []
-        index = self._get_arg_separator_index_from_name_or_path(name)
-        if index == -1:
-            return name, []
-        args = name[index+1:].split(name[index])
-        name = name[:index]
-        if os.path.exists(name):
-            name = os.path.abspath(name)
-        return name, args
-
-    def _get_arg_separator_index_from_name_or_path(self, name):
-        colon_index = name.find(':')
-        # Handle absolute Windows paths
-        if colon_index == 1 and name[2:3] in ('/', '\\'):
-            colon_index = name.find(':', colon_index+1)
-        semicolon_index = name.find(';')
-        if colon_index == -1:
-            return semicolon_index
-        if semicolon_index == -1:
-            return colon_index
-        return min(colon_index, semicolon_index)
-
     def _validate_remove_keywords(self, values):
         for value in values:
             try:
@@ -309,11 +283,10 @@ class _BaseSettings(object):
                 raise DataError("Invalid value for option '--removekeywords'. %s" % err)
 
     def _validate_flatten_keywords(self, values):
-        for value in values:
-            try:
-                FlattenKeywordMatcher(value)
-            except DataError as err:
-                raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
+        try:
+            validate_flatten_keyword(values)
+        except DataError as err:
+            raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
 
     def __contains__(self, setting):
         return setting in self._cli_opts
@@ -321,6 +294,10 @@ class _BaseSettings(object):
     def __unicode__(self):
         return '\n'.join('%s: %s' % (name, self._opts[name])
                          for name in sorted(self._opts))
+
+    @property
+    def output_directory(self):
+        return self['OutputDir']
 
     @property
     def output(self):
@@ -337,6 +314,10 @@ class _BaseSettings(object):
     @property
     def xunit(self):
         return self['XUnit']
+
+    @property
+    def log_level(self):
+        return self['LogLevel']
 
     @property
     def split_log(self):
@@ -377,6 +358,14 @@ class _BaseSettings(object):
     def flatten_keywords(self):
         return self['FlattenKeywords']
 
+    @property
+    def pre_rebot_modifiers(self):
+        return self['PreRebotModifiers']
+
+    @property
+    def console_colors(self):
+        return self['ConsoleColors']
+
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'             : ('output', 'output.xml'),
@@ -390,9 +379,13 @@ class RobotSettings(_BaseSettings):
                        'WarnOnSkipped'      : ('warnonskippedfiles', False),
                        'Variables'          : ('variable', []),
                        'VariableFiles'      : ('variablefile', []),
+                       'PreRunModifiers'    : ('prerunmodifier', []),
                        'Listeners'          : ('listener', []),
-                       'MonitorWidth'       : ('monitorwidth', 78),
-                       'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
+                       'ConsoleType'        : ('console', 'verbose'),
+                       'ConsoleTypeDotted'  : ('dotted', False),
+                       'ConsoleTypeQuiet'   : ('quiet', False),
+                       'ConsoleWidth'       : ('consolewidth', 78),
+                       'ConsoleMarkers'     : ('consolemarkers', 'AUTO'),
                        'DebugFile'          : ('debugfile', None)}
 
     def get_rebot_settings(self):
@@ -413,7 +406,15 @@ class RobotSettings(_BaseSettings):
         return self.output is None
 
     def _escape_as_data(self, value):
-        return utils.escape(value)
+        return escape(value)
+
+    @property
+    def listeners(self):
+        return self['Listeners']
+
+    @property
+    def debug_file(self):
+        return self['DebugFile']
 
     @property
     def suite_config(self):
@@ -426,7 +427,7 @@ class RobotSettings(_BaseSettings):
             'exclude_tags': self['Exclude'],
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
-            'empty_suite_ok': self['RunEmptySuite'],
+            'empty_suite_ok': self.run_empty_suite,
             'randomize_suites': self.randomize_suites,
             'randomize_tests': self.randomize_tests,
             'randomize_seed': self.randomize_seed,
@@ -460,18 +461,47 @@ class RobotSettings(_BaseSettings):
         return self['SkipTeardownOnExit']
 
     @property
-    def log_level(self):
-        return self['LogLevel']
-
-    @property
-    def console_logger_config(self):
+    def console_output_config(self):
         return {
-            'width':   self['MonitorWidth'],
-            'colors':  self['MonitorColors'],
-            'markers': self['MonitorMarkers'],
+            'type':    self.console_type,
+            'width':   self.console_width,
+            'colors':  self.console_colors,
+            'markers': self.console_markers,
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
         }
+
+    @property
+    def console_type(self):
+        if self['ConsoleTypeQuiet']:
+            return 'quiet'
+        if self['ConsoleTypeDotted']:
+            return 'dotted'
+        return self['ConsoleType']
+
+    @property
+    def console_width(self):
+        return self['ConsoleWidth']
+
+    @property
+    def console_markers(self):
+        return self['ConsoleMarkers']
+
+    @property
+    def pre_run_modifiers(self):
+        return self['PreRunModifiers']
+
+    @property
+    def run_empty_suite(self):
+        return self['RunEmptySuite']
+
+    @property
+    def variables(self):
+        return self['Variables']
+
+    @property
+    def variable_files(self):
+        return self['VariableFiles']
 
 
 class RebotSettings(_BaseSettings):
@@ -480,8 +510,7 @@ class RebotSettings(_BaseSettings):
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
                        'EndTime'           : ('endtime', None),
-                       'Merge'             : ('merge', False),
-                       'DeprecatedMerge'   : ('rerunmerge', False)}
+                       'Merge'             : ('merge', False)}
 
     def _output_disabled(self):
         return False
@@ -497,7 +526,7 @@ class RebotSettings(_BaseSettings):
             'exclude_tags': self['Exclude'],
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
-            'empty_suite_ok': self['ProcessEmptySuite'],
+            'empty_suite_ok': self.process_empty_suite,
             'remove_keywords': self.remove_keywords,
             'log_level': self['LogLevel'],
             'critical_tags': self.critical_tags,
@@ -511,7 +540,7 @@ class RebotSettings(_BaseSettings):
         if not self.log:
             return {}
         return {
-            'title': utils.html_escape(self['LogTitle'] or ''),
+            'title': html_escape(self['LogTitle'] or ''),
             'reportURL': self._url_from_path(self.log, self.report),
             'splitLogBase': os.path.basename(os.path.splitext(self.log)[0]),
             'defaultLevel': self['VisibleLogLevel']
@@ -522,7 +551,7 @@ class RebotSettings(_BaseSettings):
         if not self.report:
             return {}
         return {
-            'title': utils.html_escape(self['ReportTitle'] or ''),
+            'title': html_escape(self['ReportTitle'] or ''),
             'logURL': self._url_from_path(self.report, self.log),
             'background' : self._resolve_background_colors(),
         }
@@ -530,7 +559,7 @@ class RebotSettings(_BaseSettings):
     def _url_from_path(self, source, destination):
         if not destination:
             return None
-        return utils.get_link_path(destination, os.path.dirname(source))
+        return get_link_path(destination, os.path.dirname(source))
 
     def _resolve_background_colors(self):
         colors = self['ReportBackground']
@@ -538,12 +567,16 @@ class RebotSettings(_BaseSettings):
 
     @property
     def merge(self):
-        return self['Merge'] or self['DeprecatedMerge']
+        return self['Merge']
 
     @property
-    def console_logger_config(self):
+    def console_output_config(self):
         return {
-            'colors':  self['MonitorColors'],
+            'colors':  self.console_colors,
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
         }
+
+    @property
+    def process_empty_suite(self):
+        return self['ProcessEmptySuite']

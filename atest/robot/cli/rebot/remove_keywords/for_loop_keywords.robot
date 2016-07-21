@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup       Remove For Loop Keywords With Rebot
 Suite Teardown    Remove File    ${INPUTFILE}
-Force Tags        pybot    jybot    regression
 Resource          remove_keywords_resource.robot
 
 *** Variables ***

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,16 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
+from robot.utils import JYTHON
 
-from .argumentmapper import ArgumentMapper
+from .argumentmapper import DefaultValue
 from .argumentparser import (PythonArgumentParser, UserKeywordArgumentParser,
                              DynamicArgumentParser, JavaArgumentParser)
-from .argumentresolver import ArgumentResolver
 from .argumentspec import ArgumentSpec
-from .argumentvalidator import ArgumentValidator
 from .embedded import EmbeddedArguments
-if sys.platform.startswith('java'):
+if JYTHON:
     from .javaargumentcoercer import JavaArgumentCoercer
 else:
-    JavaArgumentCoercer = lambda *args: None
+    JavaArgumentCoercer = None

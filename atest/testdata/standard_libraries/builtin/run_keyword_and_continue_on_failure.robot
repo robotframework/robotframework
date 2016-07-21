@@ -57,6 +57,17 @@ Run Keyword And Continue On Failure With Timeout
     Run keyword And Continue On Failure    Sleep    1 second
     Fail    This Should Not Be Executed!
 
+Run Keyword And Continue On Failure With Nonexisting Variable
+    [Documentation]    FAIL  Several failures occurred:\n\n 1) Variable '${nonexisting}' not found.\n\n 2) Normal failure after continuable failure
+    Run keyword And Continue On Failure    Log    ${nonexisting}
+    Fail    Normal failure after continuable failure
+
+Run Keyword And Continue On Failure With Nonexisting Extended Variable
+    [Documentation]    FAIL   GLOB: Several failures occurred:\n\n 1) Resolving variable '${list[2]}' failed: IndexError:*\n\n 2) Normal failure after continuable failure
+    ${list} =  Create list    1    2
+    Run keyword And Continue On Failure    Log  ${list[2]}
+    Fail    Normal failure after continuable failure
+
 Run Keyword And Continue On Failure With Fatal Error
     [Documentation]    FAIL    FatalCatastrophyException
     Run keyword And Continue On Failure    Exit On Failure

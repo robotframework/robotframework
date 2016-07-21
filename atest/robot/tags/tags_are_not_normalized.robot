@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  --include upper --include onespace --include HYP-HENandD.O.T.S. --include A? --include HeLLo --include TAG --exclude exclude --exclude EXCLUDE2 --critical HELLO  tags/tags_are_not_normalized.robot
-Force Tags      regression  jybot  pybot  smoke
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -30,7 +29,8 @@ Criticality Works In Normalized Manner
     Check Stdout Contains  1 critical test, 1 passed, 0 failed\n 10 tests total, 5 passed, 5 failed
 
 Rebot Keeps Tags In Original Format
-    Run Rebot  --exclude LOWER --exclude 2spaces --exclude *D?O?T?S* --settag AddedSPACEtag --escape space:SPACE  ${OUTFILE}
+    Copy Previous Outfile
+    Run Rebot  --exclude LOWER --exclude 2spaces --exclude *D?O?T?S* --settag AddedSPACEtag --escape space:SPACE  ${OUTFILE COPY}
     Check Test Tags  Sorting Is Normalized  A 0  a1  A2  Added tag
     Check Test Tags  Normalized Duplicates Are Removed  Added tag  hello
     Should Be Equal  ${STATISTICS.tags.tags['tag'].failed}  ${5}

@@ -23,15 +23,18 @@ Documentation  *URL:*    http://robotframework.org
 One paragraph
     [Arguments]    ${one}
     [Documentation]    Hello, world!
+    [Tags]    tag
 
-Multiple paragraps
+Multiple paragraphs
     [Arguments]    ${one}    ${two}    ${three}=default
     [Documentation]    Hell, world!
     ...
     ...    Second paragraph *has formatting* and [http://example.com|link].
+    ...    It also refers to argument ``one`` using ``code`` style.
     ...    This is still part of second paragraph.
     ...
     ...    Third paragraph is _short_.
+    [Tags]    tag    another tag
 
 Tables alone
     [Documentation]
@@ -39,6 +42,7 @@ Tables alone
     ...    | 1st | table | here |
     ...
     ...    | 2nd | table | has | only | one | row |
+    [Tags]    another tag
 
 Preformatted
     [Documentation]
@@ -46,6 +50,7 @@ Preformatted
     ...    | has two lines
     ...
     ...    | Second has only one
+    [Tags]    TAG
 
 Lists
     [Arguments]    @{list}
@@ -82,6 +87,7 @@ Nön-ÄSCÏÏ
     [Arguments]    ${ärg}=öööööööö
     [Documentation]
     ...    Älsö döc häs nön-äscïï stüff. Ïnclüdïng \u2603.
+    [Tags]    Nön    äscïï    tägß
 
 Special ½!"#¤%&/()=?<|>+-_.!~*'() chars
     [Documentation]

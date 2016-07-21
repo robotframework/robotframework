@@ -10,14 +10,14 @@ Heikki Hulkko                  2007 - 2009
 Anna Tevaniemi                 2008
 Kari Husa                      2009 - 2011
 Jussi Malinen                  2010 -
-Mikko Korpela                  2010 -
+Mikko Korpela                  2010 - 2014
 Ismo Aro                       2010 - 2012
 Ilmari Kontulainen             2010 - 2013
 Tommi Asiala                   2012
 Mika Hänninen                  2012 - 2013
-Tatu Kairi                     2012 -
-Anssi Syrjäsalo                2013 -
-Janne Piironen                 2013 -
+Tatu Kairi                     2012 - 2014
+Anssi Syrjäsalo                2013
+Janne Piironen                 2013 - 2014
 
 Other contributors:
 Elisabeth Hendrickson          Quick Start Guide (2.0)
@@ -39,6 +39,7 @@ Guy Kisel                      How-to use decorators when creating libraries (2.
                                New pattern matching keywords in Collections (2.8.6)
                                Keyword/variable not found recommendations (2.8.6)
                                Tidy ELSE and ELSE IF onto separate lines (2.8.7)
+                               Initial contribution guidelines (2.9, #1805)
 Mike Terzo                     Better connection errors to Remote library (2.7.7)
 Asko Soukka                    reST (plain text) support (2.8.2)
 Vivek Kumar Verma              reST (plain text) support (2.8.2)
@@ -50,8 +51,22 @@ Diogo Sa-Chaves De Oliveira    Terminal emulation for Telnet library (2.8.2)
 Lionel Perrin                  Giving custom seed to --randomize (2.8.5)
 Michael Walle                  Telnet.Write Control Character keyword (2.8.5)
                                Telnet.Read Until Prompt strip_prompt option (2.8.7)
+                               String.Strip String (3.0)
 Tero Kinnunen                  BDD 'But' prefix ignored (2.8.7)
 Heiko Thiery                   Enable log level config option for TelnetLibrary (2.8.7)
 Nicolae Chedea                 Float parameters in FOR IN RANGE (2.8.7)
 Jared Hellman                  Custom keyword names (2.9)
                                Embedded arguments for library keywords (2.9)
+Vinicius K. Ruoso              Support multiple listeners per library (2.9)
+                               Allowing control over connection timeout in Telnet library (2.9.2)
+                               Supress docutils errors/warnings with reST format (2.9.2)
+Joseph Lorenzini               Exposed ERROR log level for keywords (2.9)
+Guillaume Grossetie            Less flashy report and log styles (2.9, #1943)
+Ed Brannin                     FOR ... IN ZIP, FOR ... IN ENUMERATE (2.9, #1989)
+Moon SungHoon                  String.Get Regexp Matches keyword (2.9, #1985)
+Hélio Guilherme                Support partial match with String.Get Lines Matching Regexp (2.9, #1836)
+Jean-Charles Deville           Make variable errors not exit `Runner keywords` (2.9, #1869)
+Laurent Bristiel               Convert examples in User Guide to plain text format (2.9, #1972)
+Tim Orling                     IronPython support for `Dialogs` library (2.9.2, #1235)
+Jozef Behran                   Fix ${TEST_MESSAGE} to reflect current test message (3.0, #2188)
+Joong-Hee Lee                  Extend 'Repeat Keyword' to support timeout (3.0, #2245)

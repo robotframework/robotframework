@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,15 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
-
-from robot.output import LOGGER
+from robot.utils import py2to3
 
 
+@py2to3
 class DataRow(object):
     _row_continuation_marker = '...'
-    _whitespace_regexp = re.compile('\s+')
-    _ye_olde_metadata_prefix = 'meta:'
 
     def __init__(self, cells):
         self.cells, self.comments = self._parse(cells)
@@ -30,14 +28,14 @@ class DataRow(object):
         comments = []
         for cell in row:
             cell = self._collapse_whitespace(cell)
-            if cell.startswith('#') or comments:
+            if cell and cell[0] == '#' or comments:
                 comments.append(cell)
             else:
                 data.append(cell)
         return self._purge_empty_cells(data), self._purge_empty_cells(comments)
 
     def _collapse_whitespace(self, cell):
-        return self._whitespace_regexp.sub(' ', cell).strip()
+        return ' '.join(cell.split())
 
     def _purge_empty_cells(self, row):
         while row and not row[-1]:
@@ -69,20 +67,6 @@ class DataRow(object):
         datarow.cells = self.tail
         datarow.comments = self.comments
         return datarow
-
-    def handle_old_style_metadata(self):
-        if self._is_metadata_with_olde_prefix(self.head):
-            self.cells = self._convert_to_new_style_metadata()
-
-    def _is_metadata_with_olde_prefix(self, value):
-        return value.lower().startswith(self._ye_olde_metadata_prefix)
-
-    def _convert_to_new_style_metadata(self):
-        # TODO: Remove support for olde style metadata in RF 2.10.
-        LOGGER.warn("Setting suite metadata using '%s' syntax is deprecated. "
-                    "Use 'Metadata' setting with name and value in separate "
-                    "cells instead." % self.head)
-        return ['Metadata'] + [self.head.split(':', 1)[1].strip()] + self.tail
 
     def starts_for_loop(self):
         if self.head and self.head.startswith(':'):

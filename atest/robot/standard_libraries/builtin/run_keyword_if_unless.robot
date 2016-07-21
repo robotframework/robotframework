@@ -1,7 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_if_unless.robot
-Force Tags        regression
-Default Tags      jybot    pybot
 Resource          atest_resource.robot
 
 *** Variable ***
@@ -118,8 +116,8 @@ Run Keyword Unless With True Expression
 
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Run Keyword In User Keyword
-    Check KW Arguments    ${tc.kws[0].kws[0]}    '\${status}' == 'PASS'    Log    \${message}
-    Check KW Arguments    ${tc.kws[0].kws[0].kws[0]}    \${message}
+    Check Keyword Data    ${tc.kws[0].kws[0]}    BuiltIn.Run Keyword If    args='\${status}' == 'PASS', Log, \${message}
+    Check Keyword Data    ${tc.kws[0].kws[0].kws[0]}    BuiltIn.Log    args=\${message}
 
 *** Keywords ***
 Test ELSE (IF) Escaping

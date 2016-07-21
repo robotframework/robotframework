@@ -13,22 +13,20 @@ section.
    :depth: 2
    :local:
 
-Taking test libraries into use
-------------------------------
+Importing libraries
+-------------------
 
-Instructions for taking test libraries into use are given in the
-subsections below.
+Test libraries are typically imported using the :setting:`Library` setting,
+but it is also possible to use the :name:`Import Library` keyword.
 
-Using Library setting
-~~~~~~~~~~~~~~~~~~~~~
+Using `Library` setting
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Test libraries are normally imported using the :setting:`Library`
 setting in the Setting table and having the library name in the
-subsequent column. The library name is case-sensitive (it is the name
-of the module or class implementing the library and must be exactly
-correct), but any spaces in it are ignored. With Python libraries in
-modules or Java libraries in packages, the full name including the
-module or package name must be used.
+subsequent column. Unlike most of the other data, the library name
+is both case- and space-sensitive. If a library is in a package,
+the full name including the package name must be used.
 
 In those cases where the library needs arguments, they are listed in
 the columns after the library name. It is possible to use default
@@ -38,26 +36,22 @@ library name and arguments can be set using variables.
 
 __ `Using arguments`_
 
-.. table:: Importing test libraries
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===================  =======  =======
-    Setting          Value          Value    Value
-   =========  ===================  =======  =======
-   Library    OperatingSystem      \        \
-   Library    com.company.TestLib  \        \
-   Library    MyLibrary            arg1     arg2
-   Library    ${LIBRARY}           \        \
-   =========  ===================  =======  =======
-
+   *** Settings ***
+   Library    OperatingSystem 
+   Library    my.package.TestLibrary
+   Library    MyLibrary    arg1    arg2
+   Library    ${LIBRARY}
+   
 It is possible to import test libraries in `test case files`_,
 `resource files`_ and `test suite initialization files`_. In all these
 cases, all the keywords in the imported library are available in that
 file. With resource files, those keywords are also available in other
 files using them.
 
-Using Import Library keyword
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using `Import Library` keyword
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Another possibility to take a test library into use is using the
 keyword :name:`Import Library` from the BuiltIn_ library. This keyword
@@ -68,41 +62,38 @@ used. This approach is useful in cases where the library is not
 available when the test execution starts and only some other keywords
 make it available.
 
-.. table:: Using Import Library keyword
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  =================  ==========  ==========  ==========
-    Test Case       Action          Argument    Argument    Argument
-   ===========  =================  ==========  ==========  ==========
-   Example      Do Something       \           \           \
-   \            Import Library     MyLibrary   arg1        arg2
-   \            KW From Mylibrary  \           \           \
-   ===========  =================  ==========  ==========  ==========
+   *** Test Cases ***
+   Example
+       Do Something 
+       Import Library    MyLibrary    arg1    arg2
+       KW From MyLibrary
 
-Library search path
-~~~~~~~~~~~~~~~~~~~
+Specifying library to import
+----------------------------
+
+Libraries to import can be specified either by using the library name
+or the path to the library. These approaches work the same way regardless
+is the library imported using the :setting:`Library` setting or the
+:name:`Import Library` keyword.
+
+Using library name
+~~~~~~~~~~~~~~~~~~
 
 The most common way to specify a test library to import is using its
 name, like it has been done in all the examples in this section. In
 these cases Robot Framework tries to find the class or module
-implementing the library from the *library search path*. Basically,
-this means that the library code and all its possible dependencies
-must be in ``PYTHONPATH`` or, when running tests on Jython, in a
-``CLASSPATH``. `Setting the library search path`__ is explained in
-a section of its own. Libraries can also set the search path
-automatically or have special instructions on how to do it. All
-`standard libraries`_, for example, are in the library search path
-automatically.
+implementing the library from the `module search path`_. Libraries that
+are installed somehow ought to be in the module search path automatically,
+but with other libraries the search path may need to be configured separately.
 
-The biggest benefit of this approach is that when the library search
-path has been configured, often using a `custom start-up script`__,
+The biggest benefit of this approach is that when the module search
+path has been configured, often using a custom `start-up script`_,
 normal users do not need to think where libraries actually are
 installed. The drawback is that getting your own, possible
 very simple, libraries into the search path may require some
 additional configuration.
-
-__ `Adjusting library search path`_
-__ `Creating start-up scripts`_
 
 Using physical path to library
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,7 +102,7 @@ Another mechanism for specifying the library to import is using a
 path to it in the file system. This path is considered relative to the
 directory where current test data file is situated similarly as paths
 to `resource and variable files`_. The main benefit of this approach
-is that there is no need to configure the library search path.
+is that there is no need to configure the module search path.
 
 If the library is a file, the path to it must contain extension. For
 Python libraries the extension is naturally :file:`.py` and for Java
@@ -120,17 +111,14 @@ class file must always be available. If Python library is implemented
 as a directory, the path to it must have a trailing forward slash (`/`).
 Following examples demonstrate these different usages.
 
-.. table:: Importing test libraries using physical paths to them
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===========================  ========  =========
-    Setting               Value             Value      Value
-   =========  ===========================  ========  =========
-   Library    PythonLib.py                 \         \
-   Library    /absolute/path/JavaLib.java  \         \
-   Library    relative/path/PythonDirLib/  possible  arguments
-   Library    ${RESOURCES}/Example.class   \         \
-   =========  ===========================  ========  =========
+   *** Settings ***
+   Library    PythonLibrary.py
+   Library    /absolute/path/JavaLibrary.java
+   Library    relative/path/PythonDirLib/    possible    arguments
+   Library    ${RESOURCES}/Example.class
+
 
 A limitation of this approach is that libraries implemented as Python classes `must
 be in a module with the same name as the class`__. Additionally, importing
@@ -163,46 +151,33 @@ __ `Handling keywords with same names`_
 
 
 The basic syntax for specifying the new name is having the text
-`WITH NAME` (case-insensitive) after the library name and then
+`WITH NAME` (case-sensitive) after the library name and then
 having the new name in the next cell. The specified name is shown in
 logs and must be used in the test data when using keywords' full name
 (:name:`LibraryName.Keyword Name`).
 
-.. table:: Importing libraries with custom names
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===================  =========  =========
-    Setting          Value           Value      Value
-   =========  ===================  =========  =========
-   Library    com.company.TestLib  WITH NAME  TestLib
-   Library    ${LIBRARY}           WITH NAME  MyName
-   =========  ===================  =========  =========
+   *** Settings ***
+   Library    com.company.TestLib    WITH NAME    TestLib
+   Library    ${LIBRARY}             WITH NAME    MyName
 
 Possible arguments to the library are placed into cells between the
 original library name and the `WITH NAME` text. The following example
 illustrates how the same library can be imported several times with
 different arguments:
 
-.. table:: Importing the same library several times with a different name
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===========  =============  =======  =========  =========
-    Setting      Value          Value      Value     Value      Value
-   =========  ===========  =============  =======  =========  =========
-   Library    SomeLibrary  localhost      1234     WITH NAME  LocalLib
-   Library    SomeLibrary  server.domain  8080     WITH NAME  RemoteLib
-   =========  ===========  =============  =======  =========  =========
+   *** Settings ***
+   Library    SomeLibrary    localhost        1234    WITH NAME    LocalLib
+   Library    SomeLibrary    server.domain    8080    WITH NAME    RemoteLib
 
-.. table::
-   :class: example
-
-   ===========  ========================  ===========  ==========
-    Test Case             Action           Argument     Argument
-   ===========  ========================  ===========  ==========
-   My Test      LocalLib.Some Keyword     some arg     second arg
-   \            RemoteLib.Some Keyword    another arg  whatever
-   \            LocalLib.Another Keyword  \            \
-   ===========  ========================  ===========  ==========
+   *** Test Cases ***
+   My Test
+       LocalLib.Some Keyword     some arg       second arg
+       RemoteLib.Some Keyword    another arg    whatever
+       LocalLib.Another Keyword
 
 Setting a custom name to a test library works both when importing a
 library in the Setting table and when using the :name:`Import Library` keyword.

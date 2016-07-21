@@ -6,11 +6,12 @@ and run `invoke --help` and `invode --list` for details how to execute tasks.
 See BUILD.rst for packaging and releasing instructions.
 """
 
+from __future__ import print_function
 import os
-import os.path
 import re
 import shutil
-import sys
+import tarfile
+import tempfile
 import time
 import urllib
 import zipfile
@@ -20,7 +21,7 @@ from invoke import task, run
 
 assert os.getcwd() == os.path.dirname(os.path.abspath(__file__))
 
-VERSION_RE = re.compile('^((2\.\d+)(\.\d+)?)((a|b|rc|.dev)(\d+))?$')
+VERSION_RE = re.compile('^(((?:2|3)\.\d+)(\.\d+)?)((a|b|rc|.dev)(\d+))?$')
 VERSION_FILE = os.path.join('src', 'robot', 'version.py')
 
 
@@ -72,7 +73,7 @@ def set_version(version, push=False):
         write_version_file(version)
         write_pom_file(version)
     version = get_version_from_file()
-    print 'Version:', version
+    print('Version:', version)
     if push:
         git_commit([VERSION_FILE, 'pom.xml'],
                    'Updated version to {}'.format(version), push=True)
@@ -154,71 +155,82 @@ def sdist(deploy=False, remove_dist=False):
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
     clean(remove_dist, create_dirs=True)
-    run('python setup.py sdist --force-manifest'
+    run('python setup.py sdist'
         + (' register upload' if deploy else ''))
     announce()
 
 def announce():
-    print
-    print 'Distributions:'
+    print()
+    print('Distributions:')
     for name in os.listdir('dist'):
-        print os.path.join('dist', name)
+        print(os.path.join('dist', name))
 
 
 @task
-def wininst(remove_dist=False):
-    """Create Windows installer.
-
-    Args:
-        remove_dist:  Control is 'dist' directory initially removed or not.
-    """
-    clean(remove_dist, create_dirs=True)
-    run('python setup.py bdist_wininst '
-        '--bitmap robot.bmp --install-script robot_postinstall.py')
-    announce()
-
-
-@task
-def jar(jython_version='2.5.3', remove_dist=False):
+def jar(jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
     """Create JAR distribution.
 
-    Downloads Jython JAR if needed.
+    Downloads Jython JAR and PyYAML if needed.
 
     Args:
         remove_dist:  Control is 'dist' directory initially removed or not.
         jython_version: Jython version to use as a base. Must match version in
             `jython-standalone-<version>.jar` found from Maven central.
-            Currently `2.5.3` by default.
+        pyyaml_version: Version of PyYAML that will be included in the
+            standalone jar. The version must be available from PyPI.
     """
     clean(remove_dist, create_dirs=True)
     jython_jar = get_jython_jar(jython_version)
-    print 'Using {}'.format(jython_jar)
+    print('Using {0}'.format(jython_jar))
     compile_java_files(jython_jar)
     unzip_jar(jython_jar)
     copy_robot_files()
+    pyaml_archive = get_pyyaml(pyyaml_version)
+    extract_and_copy_pyyaml_files(pyyaml_version, pyaml_archive)
     compile_python_files(jython_jar)
-    create_robot_jar(get_version_from_file())
+    filename = create_robot_jar(get_version_from_file())
     announce()
+    return os.path.abspath(filename)
 
 def get_jython_jar(version):
-    lib = 'ext-lib'
-    jar = os.path.join(lib, 'jython-standalone-{}.jar'.format(version))
-    if os.path.exists(jar):
-        return jar
+    filename = 'jython-standalone-{0}.jar'.format(version)
     url = ('http://search.maven.org/remotecontent?filepath=org/python/'
-           'jython-standalone/{0}/jython-standalone-{0}.jar').format(version)
-    print 'Jython not found, downloading it from {}.'.format(url)
+           'jython-standalone/{0}/{1}').format(version, filename)
+    return get_extlib_file(filename, url)
+
+def get_pyyaml(version):
+    filename = 'PyYAML-{0}.tar.gz'.format(version)
+    url = 'https://pypi.python.org/packages/source/P/PyYAML/{0}'.format(filename)
+    return get_extlib_file(filename, url)
+
+def get_extlib_file(filename, url):
+    lib = 'ext-lib'
+    path = os.path.join(lib, filename)
+    if os.path.exists(path):
+        return path
+    print('{0} not found, downloading it from {1}.'.format(filename, url))
     if not os.path.exists(lib):
         os.mkdir(lib)
-    urllib.urlretrieve(url, jar)
-    return jar
+    urllib.urlretrieve(url, path)
+    return path
+
+def extract_and_copy_pyyaml_files(version, filename, build_dir='build'):
+    t = tarfile.open(filename)
+    extracted = os.path.join(tempfile.gettempdir(), 'pyyaml-for-robot')
+    if os.path.isdir(extracted):
+        shutil.rmtree(extracted)
+    print('Extracting {0} to {1}'.format(filename, extracted))
+    t.extractall(extracted)
+    source = os.path.join(extracted, 'PyYAML-{0}'.format(version), 'lib', 'yaml')
+    target = os.path.join(build_dir, 'Lib', 'yaml')
+    shutil.copytree(source, target, ignore=shutil.ignore_patterns('*.pyc'))
 
 def compile_java_files(jython_jar, build_dir='build'):
     root = os.path.join('src', 'java', 'org', 'robotframework')
     files = [os.path.join(root, name) for name in os.listdir(root)
              if name.endswith('.java')]
-    print 'Compiling {} Java files.'.format(len(files))
-    run('javac -d {target} -target 1.5 -source 1.5 -cp {cp} {files}'.format(
+    print('Compiling {0} Java files.'.format(len(files)))
+    run('javac -d {target} -target 1.7 -source 1.7 -cp {cp} {files}'.format(
         target=build_dir, cp=jython_jar, files=' '.join(files)))
 
 def unzip_jar(path, target='build'):
@@ -231,7 +243,7 @@ def copy_robot_files(build_dir='build'):
     shutil.rmtree(os.path.join(target, 'htmldata', 'testdata'))
 
 def compile_python_files(jython_jar, build_dir='build'):
-    run('java -jar {} -m compileall {}'.format(jython_jar, build_dir))
+    run("java -jar {0} -m compileall -x '.*3.py' {1}".format(jython_jar, build_dir))
     # Jython will not work without its py-files, but robot will
     for directory, _, files in os.walk(os.path.join(build_dir, 'Lib', 'robot')):
         for name in files:
@@ -240,8 +252,9 @@ def compile_python_files(jython_jar, build_dir='build'):
 
 def create_robot_jar(version, source='build'):
     write_manifest(version, source)
-    target = os.path.join('dist', 'robotframework-{}.jar'.format(version))
-    run('jar cvfM {} -C {} .'.format(target, source))
+    target = os.path.join('dist', 'robotframework-{0}.jar'.format(version))
+    run('jar cvfM {0} -C {1} .'.format(target, source))
+    return target
 
 def write_manifest(version, build_dir='build'):
     with open(os.path.join(build_dir, 'META-INF', 'MANIFEST.MF'), 'w') as mf:
@@ -251,137 +264,3 @@ Main-Class: org.robotframework.RobotFramework
 Specification-Version: 2
 Implementation-Version: {version}
 '''.format(version=version))
-
-
-@task
-def release_notes(version=get_version_from_file(), login=None, password=None):
-    """Create release notes template based on issues on GitHub.
-
-    Requires PyGithub <https://github.com/jacquev6/PyGithub>. Install it with:
-        pip install PyGithub
-
-    Args:
-        version:  Version to get the issues for. By default the current version.
-        login:    GitHub login. If not given, anonymous login is used. GitHub
-                  API has 60 request/hour limit in that case.
-        password: The password for GitHub login.
-    """
-    issues = _get_issues(version, login, password)
-    _print_header("Robot Framework {}".format(version), level=1)
-    _print_intro(version)
-    _print_if_label("Most important enhancements", issues, "prio-critical", "prio-high")
-    _print_if_label("Backwards incompatible changes", issues, "bwic")
-    _print_if_label("Deprecated features", issues, "depr")
-    _print_header("Acknowledgements")
-    print("*UPDATE* based on AUTHORS.txt.")
-    _print_issue_table(issues, version)
-
-def _get_issues(version, login=None, password=None):
-    try:
-        from github import Github
-    except ImportError:
-        sys.exit("You need to install PyGithub:\n\tpip install PyGithub\n")
-    match = VERSION_RE.match(version)
-    if not match:
-        raise ValueError("Invalid version '{}'".format(version))
-    milestone, _, _, _, preview, preview_number = match.groups()
-    if preview:
-        preview = {'a': 'alpha', 'b': 'beta', 'rc': 'rc'}[preview]
-        preview_label = '{} {}'.format(preview, preview_number)
-    else:
-        preview_label = None
-    repo = Github(login_or_token=login, password=password).get_repo("robotframework/robotframework")
-    issues = [Issue(issue) for issue in repo.get_issues(milestone=_get_milestone(repo, milestone), state="all")]
-    if preview_label:
-        issues = [issue for issue in issues if preview_label in issue.labels]
-    return sorted(issues)
-
-def _get_milestone(repo, milestone):
-    for m in repo.get_milestones(state="all"):
-        if m.title == milestone:
-            return m
-    raise AssertionError("Milestone {} not found from repository {}!".format(milestone, repo.name))
-
-def _print_header(header, level=2):
-    if level > 1:
-        print
-    print "{} {}\n".format('#'*level, header)
-
-def _print_if_label(header, issues, *labels):
-    filtered = [issue for issue in issues
-                if any(label in issue.labels for label in labels)]
-    if filtered:
-        _print_header(header)
-        print '*EXPLAIN* or remove these.\n'
-        for issue in filtered:
-            print "* {} {}".format(issue.id, issue.summary)
-
-def _print_intro(version):
-    print """
-Robot Framework {version} is a new release with *UPDATE* \
-enhancements and bug fixes. It was released on {date}.
-
-Questions and comments related to the release can be sent to the \
-[robotframework-users](http://groups.google.com/group/robotframework-users) and \
-possible bugs submitted to the \
-[issue tracker](https://github.com/robotframework/robotframework/issues).
-
-If you have pip just run `pip install --update robotframework`. Otherwise see \
-[installation instructions](https://github.com/robotframework/robotframework/blob/master/INSTALL.rst).
-""".format(version=version, date=time.strftime("%A %B %d, %Y")).strip()
-
-def _print_issue_table(issues, version):
-    _print_header("Full list of fixes and enhancements")
-    print "ID  | Type | Priority | Summary"
-    print "--- | ---- | -------- | -------"
-    for issue in issues:
-        print "{} | {} | {} | {} ".format(issue.id, issue.type, issue.priority, issue.summary)
-    print
-    print "Altogether {} issues.".format(len(issues)),
-    version = VERSION_RE.match(version).group(1)
-    print "See on [issue tracker](https://github.com/robotframework/robotframework/issues?q=milestone%3A{}).".format(version)
-
-
-@task
-def print_issues(version=get_version_from_file(), login=None, password=None):
-    """Get issues from GitHub issue tracker.
-
-    Requires PyGithub <https://github.com/jacquev6/PyGithub>. Install it with:
-        pip install PyGithub
-
-    Args:
-        version:  Version to get the issues for. By default the current version.
-        login:    GitHub login. If not given, anonymous login is used. GitHub
-                  API has 60 request/hour limit in that case.
-        password: The password for GitHub login.
-    """
-    issues = _get_issues(version, login, password)
-    print "{:4}  {:11}  {:8}  {}".format("id", "type", "priority", "summary")
-    for issue in issues:
-        print "{:4}  {:11}  {:8}  {}".format(issue.id, issue.type, issue.priority, issue.summary)
-
-
-class Issue(object):
-    PRIORITIES = ["prio-critical", "prio-high", "prio-medium", "prio-low"]
-
-    def __init__(self, issue):
-        self.id = "#{}".format(issue.number)
-        self.summary = issue.title
-        self.labels = [label.name for label in issue.get_labels()]
-        self.type = self._get_label("bug", "enhancement")
-        self.priority = self._get_label(*self.PRIORITIES).split('-')[1]
-
-    @property
-    def order(self):
-        return (self.PRIORITIES.index('prio-' + self.priority),
-                0 if self.type == 'bug' else 1,
-                self.id)
-
-    def _get_label(self, *values):
-        for value in values:
-            if value in self.labels:
-                return value
-        return None
-
-    def __cmp__(self, other):
-        return cmp(self.order, other.order)

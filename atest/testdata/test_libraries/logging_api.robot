@@ -2,12 +2,18 @@
 Library  LibUsingLoggingApi.py
 
 *** Test Cases ***
-
 Log Levels
-    [Documentation]  FAIL Invalid log level 'INVALID'
     Set log level  TRACE
     Log with all levels
     [Teardown]  Set log level  INFO
+
+Invalid level
+    [Documentation]    FAIL Invalid log level 'INVALID'.
+    Write    This fails    INVALID
+
+FAIL is not valid log level
+    [Documentation]    FAIL Invalid log level 'FAIL'.
+    Write    This fails too    FAIL
 
 Timestamps are accurate
     Log messages different time

@@ -4,13 +4,15 @@ Basic usage
 Robot Framework test cases are executed from the command line, and the
 end result is, by default, an `output file`_ in XML format and an HTML
 report_ and log_. After the execution, output files can be combined and
-otherwise `post-processed`__ with the ``rebot`` tool.
+otherwise `post-processed`__ with the Rebot tool.
 
 __ `Post-processing outputs`_
 
 .. contents::
    :depth: 2
    :local:
+
+.. _executing test cases:
 
 Starting test execution
 -----------------------
@@ -20,22 +22,29 @@ Synopsis
 
 ::
 
-    pybot|jybot|ipybot [options] data_sources
-    python|jython|ipy -m robot.run [options] data_sources
-    python|jython|ipy path/to/robot/run.py [options] data_sources
+    robot [options] data_sources
+    python|jython|ipy -m robot [options] data_sources
+    python|jython|ipy path/to/robot/ [options] data_sources
     java -jar robotframework.jar [options] data_sources
 
-Test execution is normally started using ``pybot``, ``jybot``
-or ``ipybot`` `runner script`_. These scripts are otherwise identical, but
-the first one executes tests using Python_, the second using Jython_, and the
-last one using IronPython_. Alternatively it is possible to use
-``robot.run`` `entry point`_ either as a module or a script using
-any interpreter, or use the `standalone JAR distribution`_.
+Test execution is normally started using the ``robot`` `runner script`_.
+Alternatively it is possible to execute the installed `robot module`__ or
+`robot directory`__ directly using the selected interpreter. The final
+alternative is using the `standalone JAR distribution`_.
+
+.. note::
+    Versions prior to Robot Framework 3.0 did not have the ``robot`` script.
+    Instead they had ``pybot``, ``jybot`` and ``ipybot`` scripts that executed
+    tests using Python, Jython and IronPython, respectively. These scripts are
+    still installed, but the plan is to deprecate and remove them in the future.
 
 Regardless of execution approach, the path (or paths) to the test data to be
 executed is given as an argument after the command. Additionally, different
 command line options can be used to alter the test execution or generated
-outputs in some way.
+outputs in many ways.
+
+__ `Executing installed robot module`_
+__ `Executing installed robot directory`_
 
 Specifying test data to be executed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,7 +57,7 @@ from. The given file or directory creates the top-level test suite,
 which gets its name, unless overridden with the :option:`--name` option__,
 from the `file or directory name`__. Different execution possibilities
 are illustrated in the examples below. Note that in these examples, as
-well as in other examples in this section, only the ``pybot`` script
+well as in other examples in this section, only the ``robot`` script
 is used, but other execution approaches could be used similarly.
 
 __ `Test case files`_
@@ -58,9 +67,9 @@ __ `Test suite name and documentation`_
 
 ::
 
-   pybot test_cases.html
-   pybot path/to/my_tests/
-   pybot c:\robot\tests.txt
+   robot tests.robot
+   robot path/to/my_tests/
+   robot c:\robot\tests.robot
 
 It is also possible to give paths to several test case files or
 directories at once, separated with spaces. In this case, Robot
@@ -74,8 +83,8 @@ often quite long and complicated. In most cases, it is thus better to
 use the :option:`--name` option for overriding it, as in the second
 example below::
 
-   pybot my_tests.html your_tests.html
-   pybot --name Example path/to/tests/pattern_*.html
+   robot my_tests.robot your_tests.robot
+   robot --name Example path/to/tests/pattern_*.robot
 
 Using command line options
 --------------------------
@@ -92,8 +101,8 @@ Using options
 When options are used, they must always be given between the runner
 script and the data sources. For example::
 
-   pybot -L debug my_tests.txt
-   pybot --include smoke --variable HOST:10.0.0.42 path/to/tests/
+   robot -L debug my_tests.robot
+   robot --include smoke --variable HOST:10.0.0.42 path/to/tests/
 
 Short and long options
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -105,10 +114,8 @@ long as they are unique. For example, `--logle DEBUG` works,
 while `--lo log.html` does not, because the former matches only
 :option:`--loglevel`, but the latter matches several options. Short
 and shortened options are practical when executing test cases
-manually, but long options are recommended in `start-up scripts`__,
+manually, but long options are recommended in `start-up scripts`_,
 because they are easier to understand.
-
-__ `Creating start-up scripts`_
 
 The long option format is case-insensitive, which facilitates writing option
 names in an easy-to-read format. For example, :option:`--SuiteStatLevel`
@@ -188,6 +195,12 @@ used for combining two or more individual tags or patterns together.
       --include fooNOTbar     # Matches tests containing tag 'foo' but not tag 'bar'.
       --exclude xxNOTyyNOTzz  # Matches tests containing tag 'xx' but not tag 'yy' or tag 'zz'.
 
+   Starting from Robot Framework 2.9 the pattern can also start with `NOT`
+   in which case the pattern matches if the pattern after `NOT` does not match::
+
+      --include NOTfoo        # Matches tests not containing tag 'foo'
+      --include NOTfooANDbar  # Matches tests not containing tags 'foo' and 'bar'
+
 The above operators can also be used together. The operator precedence,
 from highest to lowest, is `AND`, `OR` and `NOT`::
 
@@ -215,17 +228,20 @@ post-processing`__, respectively. The options and their values must be
 defined as a space separated list and they are placed in front of any
 explicit options on the command line. The main use case for these
 environment variables is setting global default values for certain options to
-avoid the need to repeat them every time tests are run or ``rebot`` used.
+avoid the need to repeat them every time tests are run or Rebot used.
 
 .. sourcecode:: bash
 
-   export ROBOT_OPTIONS="--critical regression --tagdoc mytag:Example_doc"
-   pybot tests.txt
+   export ROBOT_OPTIONS="--critical regression --tagdoc 'mytag:Example doc with spaces'"
+   robot tests.robot
    export REBOT_OPTIONS="--reportbackground green:yellow:red"
    rebot --name example output.xml
 
 .. note:: Support for ``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` environment
           variables was added in Robot Framework 2.8.2.
+
+          Possibility to have spaces in values by surrounding them in quotes
+          is new in Robot Framework 2.9.2.
 
 __ `Post-processing outputs`_
 
@@ -308,7 +324,7 @@ the :option:`--NoStatusRC` command line option. This might be useful, for
 example, in continuous integration servers where post-processing of results
 is needed before the overall status of test execution can be determined.
 
-.. note:: Same return codes are also used with rebot_.
+.. note:: Same return codes are also used with Rebot_.
 
 Errors and warnings during execution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -319,10 +335,9 @@ deprecated__. Depending on the severity such problems are categorized
 as errors or warnings and they are written into the console (using the
 standard error stream), shown on a separate *Test Execution Errors*
 section in log files, and also written into Robot Framework's own
-`system log`_. Normally these errors are generated by Robot Framework
-core, but libraries can use `log level WARN`__ to write warnings.
-Example below illustrates how errors and warnings look like in the log
-file.
+`system log`_. Normally these errors and warnings are generated by Robot
+Framework itself, but libraries can also log `errors and warnings`_.
+Example below illustrates how errors and warnings look like in the log file.
 
 .. raw:: html
 
@@ -330,7 +345,7 @@ file.
      <tr>
        <td class="time">20090322&nbsp;19:58:42.528</td>
        <td class="error level">ERROR</td>
-       <td class="msg">Error in file '/home/robot/tests.html' in table 'Setting' in element on row 2: Resource file 'resource.html' does not exist</td>
+       <td class="msg">Error in file '/home/robot/tests.robot' in table 'Setting' in element on row 2: Resource file 'resource.robot' does not exist</td>
      </tr>
      <tr>
        <td class="time">20090322&nbsp;19:58:43.931</td>
@@ -340,7 +355,6 @@ file.
    </table>
 
 __ `Deprecating keywords`_
-__ `Logging information`_
 
 Escaping complicated characters
 -------------------------------
@@ -450,10 +464,10 @@ option was. This means that options in argument files can override options
 before it, and its options can be overridden by options after it. It is possible
 to use :option:`--argumentfile` option multiple times or even recursively::
 
-   pybot --argumentfile all_arguments.txt
-   pybot --name Example --argumentfile other_options_and_paths.txt
-   pybot --argumentfile default_options.txt --name Example my_tests.html
-   pybot -A first.txt -A second.txt -A third.txt tests.txt
+   robot --argumentfile all_arguments.robot
+   robot --name Example --argumentfile other_options_and_paths.robot
+   robot --argumentfile default_options.txt --name Example my_tests.robot
+   robot -A first.txt -A second.txt -A third.txt tests.robot
 
 Reading argument files from standard input
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -462,8 +476,8 @@ Special argument file name `STDIN` can be used to read arguments from the
 standard input stream instead of a file. This can be useful when generating
 arguments with a script::
 
-   generate_arguments.sh | pybot --argumentfile STDIN
-   generate_arguments.sh | pybot --name Example --argumentfile STDIN tests.txt
+   generate_arguments.sh | robot --argumentfile STDIN
+   generate_arguments.sh | robot --name Example --argumentfile STDIN tests.robot
 
 Getting help and version information
 ------------------------------------
@@ -477,14 +491,14 @@ All runner scripts also support getting the version information with
 the option :option:`--version`. This information also contains Python
 or Jython version and the platform type::
 
-   $ pybot --version
-   Robot Framework 2.7 (Python 2.6.6 on linux2)
-
-   $ jybot --version
-   Robot Framework 2.7 (Jython 2.5.2 on java1.6.0_21)
+   $ robot --version
+   Robot Framework 3.0 (Jython 2.7.0 on java1.7.0_45)
 
    C:\>rebot --version
-   Rebot 2.7 (Python 2.7.1 on win32)
+   Rebot 3.0 (Python 2.7.10 on win32)
+
+.. _start-up script:
+.. _start-up scripts:
 
 Creating start-up scripts
 -------------------------
@@ -513,22 +527,22 @@ another:
 .. sourcecode:: bash
 
    #!/bin/bash
-   pybot --variable BROWSER:Firefox --name Firefox --log none --report none --output out/fx.xml login
-   pybot --variable BROWSER:IE --name IE --log none --report none --output out/ie.xml login
+   robot --variable BROWSER:Firefox --name Firefox --log none --report none --output out/fx.xml login
+   robot --variable BROWSER:IE --name IE --log none --report none --output out/ie.xml login
    rebot --name Login --outputdir out --output login.xml out/fx.xml out/ie.xml
 
 Implementing the above example with Windows batch files is not very
 complicated, either. The most important thing to remember is that
-because ``pybot`` and ``rebot`` are implemented as batch
-files, ``call`` must be used when running them from another batch
+because ``robot`` and ``rebot`` scripts are implemented as batch files on
+Windows, ``call`` must be used when running them from another batch
 file. Otherwise execution would end when the first batch file is
 finished.
 
 .. sourcecode:: bat
 
    @echo off
-   call pybot --variable BROWSER:Firefox --name Firefox --log none --report none --output out\fx.xml login
-   call pybot --variable BROWSER:IE --name IE --log none --report none --output out\ie.xml login
+   call robot --variable BROWSER:Firefox --name Firefox --log none --report none --output out\fx.xml login
+   call robot --variable BROWSER:IE --name IE --log none --report none --output out\ie.xml login
    call rebot --name Login --outputdir out --output login.xml out\fx.xml out\ie.xml
 
 In the next examples, jar files under the :file:`lib` directory are
@@ -548,7 +562,7 @@ script. All this is relatively straight-forward using bash:
    done
    export CLASSPATH=$cp
 
-   jybot --ouputdir /tmp/logs --suitestatlevel 2 $*
+   robot --ouputdir /tmp/logs --suitestatlevel 2 $*
 
 Implementing this using Windows batch files is slightly more complicated. The
 difficult part is setting the variable containing the needed JARs inside a For
@@ -565,7 +579,7 @@ function.
    )
    set CLASSPATH=%CP%
 
-   jybot --ouputdir c:\temp\logs --suitestatlevel 2 %*
+   robot --ouputdir c:\temp\logs --suitestatlevel 2 %*
 
    goto :eof
 
@@ -580,19 +594,16 @@ Modifying Java startup parameters
 Sometimes when using Jython there is need to alter the Java startup parameters.
 The most common use case is increasing the JVM maximum memory size as the
 default value may not be enough for creating reports and logs when
-outputs are very big. There are several ways to configure JVM options:
+outputs are very big. There are two easy ways to configure JVM options:
 
-1. Modify Jython start-up script (``jython`` shell script or
-   ``jython.bat`` batch file) directly. This is a permanent configuration.
-
-2. Set ``JYTHON_OPTS`` environment variable. This can be done permanently
+1. Set ``JYTHON_OPTS`` environment variable. This can be done permanently
    in operating system level or per execution in a custom start-up script.
 
-3. Pass the needed Java parameters wit :option:`-J` option to Jython start-up
-   script that will pass them forward to Java. This is especially easy when
-   using `direct entry points`_::
+2. Pass the needed Java parameters with :option:`-J` option to Jython that
+   will pass them forward to Java. This is especially easy when `executing
+   installed robot module`_ directly::
 
-      jython -J-Xmx1024m -m robot.run some_tests.txt
+      jython -J-Xmx1024m -m robot tests.robot
 
 Debugging problems
 ------------------
@@ -625,7 +636,13 @@ If the log file does not provide enough information by default, it is
 possible to execute tests with a lower `log level`_. For example
 tracebacks showing where in the code the failure occurred are logged
 using the `DEBUG` level, and this information is invaluable when
-the problem is in an individual keyword.
+the problem is in an individual library keyword.
+
+Logged tracebacks do not contain information about methods inside Robot
+Framework itself. If you suspect an error is caused by a bug in the framework,
+you can enable showing internal traces by setting environment variable
+``ROBOT_INTERNAL_TRACES`` to any non-empty value. This functionality is
+new in Robot Framework 2.9.2.
 
 If the log file still does not have enough information, it is a good
 idea to enable the syslog_ and see what information it provides. It is

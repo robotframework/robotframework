@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Remote Tests    arguments.robot    arguments.py
-Force Tags       regression    pybot    jybot
 Resource         remote_resource.robot
 
 *** Test Cases ***

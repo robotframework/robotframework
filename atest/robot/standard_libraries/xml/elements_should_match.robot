@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/elements_should_match.robot
-Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
 
 *** Test Cases ***

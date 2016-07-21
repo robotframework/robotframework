@@ -1,43 +1,46 @@
 *** Settings ***
-Test Setup      Empty Directory  ${MYOUTDIR}
-Suite Setup     Set Runners
-Force Tags      regression  pybot  jybot
-Resource        atest_resource.robot
-Resource        rebot_cli_resource.robot
+Suite Teardown    Reset syslog
+Test Setup        Reset syslog
+Resource          rebot_cli_resource.robot
+
+*** Variables ***
+${SYSLOG}         %{TEMPDIR}${/}syslog.txt
 
 *** Test Cases ***
 Setting Syslog File
-    Set Environment Variable  ROBOT_SYSLOG_FILE  ${MYOUTDIR}${/}syslog.txt
+    Set Environment Variable    ROBOT_SYSLOG_FILE    ${SYSLOG}
     Rebot Something
-    File Should Not Be Empty  ${MYOUTDIR}${/}syslog.txt
-    Remove File  ${MYOUTDIR}${/}syslog.txt
-    Remove Environment Variable  ROBOT_SYSLOG_FILE
-    Log Environment Variables
+    File Should Not Be Empty    ${SYSLOG}
+
+No syslog
     Rebot Something
-    File Should Not Exist  ${MYOUTDIR}${/}syslog.txt
-    Set Environment Variable  ROBOT_SYSLOG_FILE  none
+    File Should Not Exist    ${SYSLOG}
+
+NONE syslog
+    Set Environment Variable    ROBOT_SYSLOG_FILE    NoNe
     Rebot Something
-    File Should Not Exist  ${MYOUTDIR}${/}syslog.txt
-    [Teardown]  Remove syslog environment variables
+    File Should Not Exist    ${SYSLOG}
 
 Setting Syslog Level
-    Set Environment Variable  ROBOT_SYSLOG_FILE  ${MYOUTDIR}${/}syslog.txt
-    Set Environment Variable  ROBOT_SYSLOG_LEVEL  INFO
+    Set Environment Variable    ROBOT_SYSLOG_FILE    ${SYSLOG}
+    Set Environment Variable    ROBOT_SYSLOG_LEVEL    INFO
     Rebot Something
-    ${size1} =  Get File Size  ${MYOUTDIR}${/}syslog.txt
-    Set Environment Variable  ROBOT_SYSLOG_LEVEL  DEBUG
+    ${size1} =    Get File Size    ${SYSLOG}
+    Set Environment Variable    ROBOT_SYSLOG_LEVEL    DEBUG
     Rebot Something
-    ${size2} =  Get File Size  ${MYOUTDIR}${/}syslog.txt
-    Should Be True  0 < ${size1} <= ${size2}
-    Set Environment Variable  ROBOT_SYSLOG_LEVEL  warn
+    ${size2} =    Get File Size    ${SYSLOG}
+    Should Be True    0 < ${size1} <= ${size2}
+    Set Environment Variable    ROBOT_SYSLOG_LEVEL    warn
     Rebot Something
-    File Should Be Empty  ${MYOUTDIR}${/}syslog.txt
-    [Teardown]  Remove syslog environment variables
+    File Should Be Empty    ${SYSLOG}
 
 *** Keywords ***
-Remove syslog environment variables
-    Remove Environment Variable  ROBOT_SYSLOG_FILE
-    Remove Environment Variable  ROBOT_SYSLOG_LEVEL
-
 Rebot Something
-    Run  ${REBOT} --outputdir ${MYOUTDIR} ${MYINPUT}
+    ${result} =    Run Rebot Without Processing Output    ${INPUT FILE}
+    Should Be Equal    ${result.rc}    ${0}
+
+Reset syslog
+    Set Suite Variable    ${SET SYSLOG}    False
+    Remove Environment Variable    ROBOT_SYSLOG_FILE
+    Remove Environment Variable    ROBOT_SYSLOG_LEVEL
+    Remove File    ${SYSLOG}

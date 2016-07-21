@@ -31,7 +31,8 @@ Dict is dotted
 Dict is ordered
     Should Be Equal    @{ORDERED}[0]    a
     Should Be Equal    @{ORDERED}[-1]    j
-    Should Be Equal    ${ORDERED.keys()}    ${EXP KEYS}
+    ${keys} =    Create List    @{ORDERED}
+    Should Be Equal    ${keys}    ${EXP KEYS}
 
 Invalid list
     Variable Should Not Exist    ${INV LIST}
@@ -63,3 +64,24 @@ Scalar dicts can be used as dicts
 
 Scalar dicts are not converted to DotDicts
     Variable Should Not Exist    ${SCALAR DICT.a}
+
+Failing list
+    [Documentation]    FAIL STARTS: Resolving variable '\@{FAILING GENERATOR()}' failed: ZeroDivisionError:
+    Log Many   @{FAILING GENERATOR()}
+
+Failing list in for loop
+    [Documentation]    FAIL STARTS: Resolving variable '\@{FAILING GENERATOR()}' failed: ZeroDivisionError:
+    :FOR    ${i}    IN    @{FAILING GENERATOR()}
+    \    Fail    Not executed
+
+Failing dict
+    [Documentation]    FAIL Resolving variable '\&{FAILING DICT}' failed: Bang
+    Log Many   &{FAILING DICT}
+
+Open files are not lists
+    [Documentation]    FAIL Value of variable '\@{OPEN FILE}' is not list or list-like.
+    Log Many    @{OPEN FILE}
+
+Closed files are not lists
+    [Documentation]    FAIL Value of variable '\@{CLOSED FILE}' is not list or list-like.
+    Log Many    @{CLOSED FILE}

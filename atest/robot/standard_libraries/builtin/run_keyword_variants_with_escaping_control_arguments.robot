@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_variants_with_escaping_control_arguments.robot
-Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
 
 *** Test Cases ***

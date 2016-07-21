@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -77,7 +78,7 @@ class SuiteBuilder(_Builder):
     def build(self, suite):
         with self._context.prune_input(suite.suites, suite.tests, suite.keywords):
             stats = self._get_statistics(suite)  # Must be done before pruning
-            return (self._string(suite.name),
+            return (self._string(suite.name, attr=True),
                     self._string(suite.source),
                     self._context.relative_source(suite.source),
                     self._html(suite.doc),
@@ -89,7 +90,7 @@ class SuiteBuilder(_Builder):
                     stats)
 
     def _yield_metadata(self, suite):
-        for name, value in suite.metadata.iteritems():
+        for name, value in suite.metadata.items():
             yield self._string(name)
             yield self._html(value)
 
@@ -109,7 +110,7 @@ class TestBuilder(_Builder):
 
     def build(self, test):
         with self._context.prune_input(test.keywords):
-            return (self._string(test.name),
+            return (self._string(test.name, attr=True),
                     self._string(test.timeout),
                     int(test.critical),
                     self._html(test.doc),
@@ -129,11 +130,13 @@ class KeywordBuilder(_Builder):
     def build(self, kw, split=False):
         with self._context.prune_input(kw.messages, kw.keywords):
             return (self._types[kw.type],
-                    self._string(kw.name),
+                    self._string(kw.kwname, attr=True),
+                    self._string(kw.libname, attr=True),
                     self._string(kw.timeout),
                     self._html(kw.doc),
                     self._string(', '.join(kw.args)),
                     self._string(', '.join(kw.assign)),
+                    self._string(', '.join(kw.tags)),
                     self._get_status(kw),
                     self._build_keywords(kw.keywords, split),
                     tuple(self._build_message(m) for m in kw.messages))
@@ -142,7 +145,7 @@ class KeywordBuilder(_Builder):
 class MessageBuilder(_Builder):
 
     def build(self, msg):
-        if msg.level == 'WARN':
+        if msg.level in ('WARN','ERROR'):
             self._context.create_link_target(msg)
         self._context.message_level(msg.level)
         return self._build(msg)
@@ -161,8 +164,9 @@ class StatisticsBuilder(object):
                 self._build_stats(statistics.suite))
 
     def _build_stats(self, stats):
-        return tuple(stat.get_attributes(include_label=True, include_elapsed=True,
-                                         exclude_empty=True, html_escape=True)
+        return tuple(stat.get_attributes(include_label=True,
+                                         include_elapsed=True,
+                                         html_escape=True)
                      for stat in stats)
 
 

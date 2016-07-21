@@ -1,6 +1,4 @@
 *** Settings ***
-Force Tags       regression
-Default Tags     pybot    jybot
 Resource         libdoc_resource.robot
 Test Setup       Remove Output Files
 Test Template    Test Format in HTML
@@ -23,7 +21,7 @@ HTML format
 
 reST format
     [Template]    NONE
-    [Setup]    Fail test non-critically if docutils is not installed
+    [Tags]    require-docutils
     Test Format in HTML    <em>bold</em> or &lt;b&gt;bold&lt;/b&gt; <a
     ...    --docformat rest    expected2=Link to <cite>Keyword</cite>.
     Doc Should Contain In HTML    ${MODEL['keywords'][2]}
@@ -36,7 +34,7 @@ Format from CLI overrides format from library
     <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    -F robot    DocFormatHtml.py
 
 Format from Java library
-    [Tags]    jybot
+    [Tags]    require-jython    require-tools.jar
     *bold* or <b>bold</b> ${EXAMPLE URL}                      ${EMPTY}    DocFormatHtml.java
     <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    -F robot    DocFormatHtml.java
 
@@ -74,8 +72,3 @@ Test Format In XML
 Format should be
     [Arguments]    ${expected}
     Element Attribute Should Be    ${LIBDOC}    format    ${expected}
-
-Fail test non-critically if docutils is not installed
-    ${output} =  Run  ${INTERPRETER} -c "import docutils; print 'OK'"
-    Run Keyword If    """${output}""" != "OK"
-    ...    Fail    This test requires `docutils` to be installed   -regression

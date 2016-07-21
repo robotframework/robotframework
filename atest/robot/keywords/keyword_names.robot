@@ -3,7 +3,6 @@ Documentation     Tests for how keyword names are logged in outputs. Should
 ...               always use full names (e.g. 'MyLib.My Keyword') and use format
 ...               defined in library or resource, not format that is used.
 Suite Setup       Run Tests    --pythonpath ${RESDIR}    keywords/keyword_names.robot
-Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
 
 *** Variables ***
@@ -62,20 +61,25 @@ User Keyword Name Ending With Dot
 
 Name Set Using 'robot_name' Attribute
     ${tc} =    Check Test Case    ${TESTNAME}
-     Check Log Message    ${tc.kws[0].msgs[0]}    My name was set using 'robot_name' attribute!
+    Should Be Equal    ${tc.kws[0].name}    MyLibrary1.Name set using 'robot_name' attribute
+    Check Log Message    ${tc.kws[0].msgs[0]}    My name was set using 'robot_name' attribute!
 
 Name Set Using 'robot.api.deco.keyword' Decorator
     ${tc} =    Check Test Case    ${TESTNAME}
-     Check Log Message    ${tc.kws[0].msgs[0]}    My name was set using 'robot.api.deco.keyword' decorator!
+    Should Be Equal    ${tc.kws[0].name}    MyLibrary1.Name set using 'robot.api.deco.keyword' decorator
+    Check Log Message    ${tc.kws[0].msgs[0]}    My name was set using 'robot.api.deco.keyword' decorator!
 
 Custom non-ASCII name
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.kws[0].name}    MyLibrary1.Custom nön-ÄSCII name
 
 Old Name Doesn't Work If Name Set Using 'robot_name'
     Check Test Case    ${TESTNAME}
 
 Keyword can just be marked without changing its name
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.kws[0].name}    MyLibrary1.No Custom Name Given 1
+    Should Be Equal    ${tc.kws[1].name}    MyLibrary1.No Custom Name Given 2
 
 Assignment is not part of name
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -83,6 +87,14 @@ Assignment is not part of name
     Keyword name and assign should be    ${tc.kws[1]}    BuiltIn.Set Variable    \${var}
     Keyword name and assign should be    ${tc.kws[2]}    BuiltIn.Set Variable    \${v1}    \${v2}
     Keyword name and assign should be    ${tc.kws[3]}    BuiltIn.Evaluate    \${first}    \@{rest}
+
+Library name and keyword name are separate
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Keyword and library names should be    ${tc.kws[0]}    Keyword Only In Test Case File
+    Keyword and library names should be    ${tc.kws[1]}    Keyword Only In Resource 1    my_resource_1
+    Keyword and library names should be    ${tc.kws[2]}    Keyword Only In Resource 1    my_resource_1
+    Keyword and library names should be    ${tc.kws[3]}    Log    BuiltIn
+    Keyword and library names should be    ${tc.kws[4]}    Log    BuiltIn
 
 *** Keywords ***
 Check Test And Three Keyword Names
@@ -105,3 +117,12 @@ Keyword name and assign should be
     [Arguments]    ${kw}    ${name}    @{assign}
     Should Be Equal    ${kw.name}    ${name}
     Lists Should Be Equal    ${kw.assign}    ${assign}
+
+Keyword and library names should be
+    [Arguments]    ${kw}    ${kwname}    ${libname}=
+    Should Be Equal    ${kw.kwname}    ${kwname}
+    Should Be Equal    ${kw.libname}    ${libname}
+    Run Keyword If    "${libname}"
+    ...    Should Be Equal    ${kw.name}    ${libname}.${kwname}
+    ...    ELSE
+    ...    Should Be Equal    ${kw.name}    ${kwname}

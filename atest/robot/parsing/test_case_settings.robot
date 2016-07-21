@@ -2,7 +2,6 @@
 Documentation     Validating parsing of test case settings. Using tags,
 ...               setups, teardowns and timeouts are tested elsewhere.
 Suite Setup       Run Tests    ${EMPTY}    parsing/test_case_settings.robot
-Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -15,9 +14,6 @@ Name
 Documentation
     Verify Documentation    Documentation for this test case
 
-Documentaion using old [Document] setting
-    Verify Documentation    This should be deprecated...
-
 Documentation in multiple columns
     Verify Documentation    Documentation for this test case in multiple columns
 
@@ -25,11 +21,6 @@ Documentation in multiple rows
     Verify Documentation    1st line is shortdoc.
     ...    Documentation for this test case
     ...    in multiple rows.
-
-Documentation multiple times
-    Verify Documentation
-    ...   This functionality should be deprecated. Documentation for this test case
-    ...    multiple times.
 
 Documentation with variables
     Verify Documentation    Variables work in documentation since Robot 1.2.
@@ -59,9 +50,6 @@ Duplicate tags are ignored and first used format has precedence
 Tags in multiple rows
     Verify Tags        force-1    test-0    test-1    test-2    test-3    test-4    test-5
 
-Tags multiple times
-    Verify Tags        deprecate    force-1    Should    this
-
 No own tags
     Verify Tags        default-1    default-2    default-3    force-1
 
@@ -72,11 +60,10 @@ Override default tags using NONE
     Verify Tags        force-1
 
 Tags with variables
-    [Documentation]    Check that variables work in test case tags and invalid variables are handled correctly
     Verify Tags        force-1    test-1    test-2    test-3    test-4    test-5
 
 Tags with non-existing variables
-    Verify Tags         \${non_existing}    \@{non_existing}    force-1
+    Verify Tags         \${non_existing}    42    \@{non_existing}    force-1    test
 
 Setup
     Verify Setup    Test case setup
@@ -143,7 +130,7 @@ Multiple settings
 Invalid setting
     Check Test Case    ${TEST NAME}
     ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
-    Check Log Message    @{ERRORS}
+    Check Log Message    @{ERRORS}[0]
     ...    Error in file '${path}': Invalid syntax in test case '${TEST NAME}': Non-existing setting 'Invalid'.    ERROR
 
 *** Keywords ***

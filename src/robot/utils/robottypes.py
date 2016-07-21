@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,37 +13,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import Mapping
-from UserDict import UserDict
-from UserString import UserString
-try:
-    from java.lang import String
-except ImportError:
-    String = ()
+from .platform import PY2
 
 
-def type_name(item):
-    cls = item.__class__ if hasattr(item, '__class__') else type(item)
-    named_types = {str: 'string', unicode: 'string', bool: 'boolean',
-                   int: 'integer', long: 'integer', type(None): 'None',
-                   dict: 'dictionary'}
-    return named_types.get(cls, cls.__name__)
+if PY2:
+    from .robottypes2 import (is_bytes, is_dict_like, is_integer, is_list_like,
+                              is_number, is_string, is_unicode, type_name)
+
+else:
+    from .robottypes3 import (is_bytes, is_dict_like, is_integer, is_list_like,
+                              is_number, is_string, is_unicode, type_name)
 
 
-def is_str_like(item):
-    return isinstance(item, (basestring, UserString, String))
+def is_truthy(item):
+    if is_string(item):
+        return item.upper() not in ('FALSE', 'NO', '')
+    return bool(item)
 
 
-def is_list_like(item):
-    if is_str_like(item):
-        return False
-    try:
-        iter(item)
-    except TypeError:
-        return False
-    else:
-        return True
-
-
-def is_dict_like(item):
-    return isinstance(item, (Mapping, UserDict))
+def is_falsy(item):
+    return not is_truthy(item)

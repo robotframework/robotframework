@@ -1,53 +1,73 @@
-*** Setting ***
-Documentation     These tests are somewhat related to variable_priorities.html tests
-
 *** Test Case ***
-Variables Set In Test Case Are Seen By User Keywords
-    [Documentation]    FAIL Recursion limit exceeded
-    ${test_var} =    Set Variable    Variable in test level
-    Set Variable In UK
-    Variable Should Not Exist    $uk_var    Variable set in uk must not be visible in test level
-    Check UK Var Does Not Exists In Another UK
-    Check Test Var Exists in UK Recursively
+Variables Set In One Test Are Not Visible In Another 1
+    ${test_var} =      Set Variable    Variable in test level
+    Set Test Variable    ${test_var_2}    Variable in test level
 
-Variables Set In One Test Are Not Visible In Another
-    Variable Should Not Exist    $test_var    Variable set in one test must not be visible in another
+Variables Set In One Test Are Not Visible In Another 2
+    Variable Should Not Exist    $test_var
+    Variable Should Not Exist    $test_var_2
 
-Variables Set In User Keyword Are Seen Only By Lower Level User Keywords
-    ${var} =    Set Variable    Variable in test level
-    Check Overriding Var In UK
-    Should Be Equal    ${var}    Variable in test level    Overridden value must not be visible in test level
+Variables do not leak
+    ${test}=    Set variable    test
+    Keyword should not see local variables
+    Variable should not exist    ${kw}
+    Should be equal   ${test}    test
+
+Variables can be passed as arguments
+    ${test}=    Set variable    test
+    ${test}=    Set variable    ${test}
+    ${test}=   Keyword should see passed values   ${test}
+    Should be equal    ${test}    kw2
+
+Set test variable
+    Set test variable    ${test}    test
+    Keyword should see test scope variables
+    Should be equal   ${test}    kw2
+    Should be equal   ${kw}    kw2
 
 *** Keyword ***
-Set Variable In UK
-    ${uk_var} =    Set Variable    Variable in user keyword level
+Keyword should not see local variables
+    Variable should not exist    ${test}
+    ${kw}=    Set variable    local
+    Keyword should not see local variables 2
+    Should be equal   ${kw}    local
+    Variable should not exist    ${test}
 
-Check UK Var Does Not Exists In Another UK
-    Variable Should Not Exist    $uk_var
+Keyword should not see local variables 2
+    Variable should not exist    ${test}
+    Variable should not exist    ${kw}
+    ${test}=   Set variable    kw
+    ${kw}=   Set variable    kw
 
-Check Test Var Exists in UK Recursively
-    [Arguments]    ${recursion_level}=${10}
-    Should Be Equal    ${test_var}    Variable in test level
-    Should Not Be Equal As Integers    ${recursion_level}    0    Recursion limit exceeded    No values
-    Check Test Var Exists in UK Recursively    ${recursion_level - 1}
+Keyword should see passed values
+    [Arguments]    ${arg}
+    Should be equal   ${arg}    test
+    Variable should not exist    ${test}
+    ${arg}=   Set variable    kw
+    ${arg}=   Keyword should see passed values 2    ${arg}
+    [Return]    ${arg}
 
-Check Overriding Var In UK
-    Should Be Equal    ${var}    Variable in test level
-    ${var} =    Set Variable    Variable overridden in uk
-    Should Be Equal    ${var}    Variable overridden in uk    It must be possible to override the value set in test level
-    Check Overriding Var In UK 2    Override again with this value
-    Should Be Equal    ${var}    Variable overridden in uk    Value overridden again in sub keywords must not be visible to the calling keyword
-    Check Overriding Var In UK 2    And once more with this
-    Should Be Equal    ${var}    Variable overridden in uk    Value overridden again in sub keywords must not be visible to the calling keyword
+Keyword should see passed values 2
+    [Arguments]    ${arg2}
+    Should be equal   ${arg2}    kw
+    Variable should not exist    ${test}
+    Variable should not exist    ${arg}
+    [Return]    kw2
 
-Check Overriding Var In UK 2
-    [Arguments]    ${new_value}
-    Should Be Equal    ${var}    Variable overridden in uk
-    Check Overriding Var In UK 3    Variable overridden in uk
-    ${var} =    Set Variable    ${new_value}
-    Should Be Equal    ${var}    ${new_value}
-    Check Overriding Var In UK 3    ${new_value}
+Keyword should see test scope variables
+    Should be equal   ${test}    test
+    Set test variable   ${test}    kw
+    Set test variable   ${kw}    kw
+    ${kw}=    Set variable    local
+    Should be equal   ${kw}    local
+    Keyword should see test scope variables 2
+    Should be equal   ${test}    kw2
+    Should be equal   ${kw}    kw2
+    ${kw}=    Set variable    local
+    Should be equal   ${kw}    local
 
-Check Overriding Var In UK 3
-    [Arguments]    ${expected_value}
-    Should Be Equal    ${var}    ${expected_value}
+Keyword should see test scope variables 2
+    Should be equal   ${test}    kw
+    Should be equal   ${kw}    kw
+    Set test variable   ${test}    kw2
+    Set test variable   ${kw}    kw2

@@ -1,7 +1,6 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/move_copy_files.robot
-Force Tags       regression    pybot    jybot
-Resource         atest_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/move_copy_files.robot
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Move One File With Move Files
@@ -68,4 +67,10 @@ Copying Non-existing Files
     Check Test Case    ${TESTNAME}
 
 Copying And Moving With backslash in glob pattern
+    Check Test Case    ${TESTNAME}
+
+Copying From Name With Glob
+    Check Test Case    ${TESTNAME}
+
+Moving From Name With Glob
     Check Test Case    ${TESTNAME}

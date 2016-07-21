@@ -1,5 +1,5 @@
 *** Settings ***
-Library           XML
+Library           XML    use_lxml=false
 Resource          xml_resource.robot
 Test Setup        Remove File    ${OUTPUT}
 Suite Teardown    Remove File    ${OUTPUT}
@@ -25,16 +25,16 @@ Namespaces are not needed in xpath
 
 xmlns attributes with default namespaces are added when needed
     [Template]    Element Should Have Attributes
-    ${NS}    .    name    root    xmlns    default
-    ${ns}    child1    id    1
-    ${NS}    child2    xmlns    http://uri
-    ${NS}    child3    xmlns    whatever.xsd
+    ${NS}    .    name=root    xmlns=default
+    ${NS}    child1    id=1
+    ${NS}    child2    xmlns=http://uri
+    ${NS}    child3    xmlns=whatever.xsd
     ${NS}    child3/grand-child
-    ${NS}    child3/grand-child-2    xmlns    http://uri
+    ${NS}    child3/grand-child-2    xmlns=http://uri
     ${NS}    child3/grand-child-2/ggc
-    ${NS}    child3/grand-child-2/ggc2    xmlns    default
+    ${NS}    child3/grand-child-2/ggc2    xmlns=default
     ${NS}    child3/grand-child-3
-    ${NS}    another    xmlns    default2
+    ${NS}    another    xmlns=default2
     ${NS}    another/child
     ${NS}    back
 
@@ -72,12 +72,5 @@ Element without namepace inside element with namespace
     Element Text Should Be    ${NO NS IN NS}    .    xpath=no/yes/no
 
 Attribute namespaces are not handled
-    ${elem} =    Parse XML    ${ATTR NS}
+    ${elem} =    Parse XML    ${ATTR NS}    keep_clark_notation=false
     Test Attribute Namespace Parsing    ${elem}
-
-*** Keywords ***
-Element Should Have Attributes
-    [Arguments]    ${source}    ${xpath}    @{attributes}
-    ${elem} =    Get Element    ${source}    ${xpath}
-    ${expected} =    Create Dictionary    @{attributes}
-    Dictionaries Should Be Equal    ${elem.attrib}    ${expected}

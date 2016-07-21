@@ -1,5 +1,6 @@
 *** Settings ***
 Library           Collections
+Library           get_user_dict.py
 
 *** Variables ***
 @{HELLO}          Hello    world
@@ -24,11 +25,11 @@ Evaluate
     Evaluate    INVALID
 
 Evaluate With Modules
-    [Documentation]    FAIL REGEXP: ImportError: [Nn]o module named nonex_module
+    [Documentation]    FAIL REGEXP: ImportError: [Nn]o module named .*
     ${ceil} =    Evaluate    math.ceil(1.001)    math
     Should Be Equal    ${ceil}    ${2}
-    ${random} =    Evaluate    random.randint(0, sys.maxint)    modules=random,sys
-    ${maxint}    ${sep}    ${x}    ${y} =    Evaluate    sys.maxint, os.sep, re.escape('+'), '\\+'    sys, re,,,,, glob, os,robot,,,
+    ${random} =    Evaluate    random.randint(0, sys.maxsize)    modules=random,sys
+    ${maxint}    ${sep}    ${x}    ${y} =    Evaluate    sys.maxsize, os.sep, re.escape('+'), '\\+'    sys, re,,,,, glob, os,robot,,,
     Should Be True    0 <= ${random} <= ${maxint}
     Should Be Equal    ${x}    ${y}
     Evaluate    1    nonex_module
@@ -40,11 +41,107 @@ Evaluate With Namespace
     ${result} =    Evaluate    math.pow(b, 3)    math    ${ns}
     Should Be Equal    ${result}    ${8}
 
+Evaluate with Get Variables Namespace
+    ${foo} =    Set variable    value
+    ${ns} =    Get variables    no_decoration=Yes
+    ${res} =    Evaluate     foo == 'value'    namespace=${ns}
+    Should be Equal    ${res}    ${True}
+
+Evaluate with Non-dict Namespace
+    ${ns} =    Get user dict   foo=value
+    ${res} =    Evaluate     foo == 'value'    namespace=${ns}
+    Should be Equal    ${res}    ${True}
+
+Evaluate gets variables automatically
+    ${foo} =    Set variable    value
+    ${res} =    Evaluate     $foo == 'value'
+    Should be Equal    ${res}    ${True}
+
+Automatic variables don't work in strings
+    ${foo} =    Set variable    value
+    ${res} =    Evaluate     '$foo'
+    Should be Equal    ${res}    $foo
+
+Automatic variables don't override Python built-ins
+    ${len} =    Set variable    value
+    ${res} =    Evaluate     len($len)
+    Should be Equal    ${res}    ${5}
+
+Automatic variables don't override custom namespace
+    ${ns} =    Create Dictionary    key=value 1
+    ${key} =    Set variable    value 2
+    ${res} =    Evaluate    key == 'value 1' and $key == 'value 2'    namespace=${ns}
+    Should be Equal    ${res}    ${True}
+
+Automatic variables don't override modules
+    ${posixpath} =    Set variable    xxx
+    ${res} =    Evaluate    posixpath.join($posixpath, $posixpath)    modules=posixpath
+    Should be Equal    ${res}    xxx/xxx
+
+Automatic variables are case and underscore insensitive
+    ${foo} =    Set variable    value
+    ${foo with space} =    Set variable    value with space
+    ${res} =    Evaluate     $FOO == 'value' and $FOO_with_SPACE == 'value with space'
+    Should be Equal    ${res}    ${True}
+
+Automatic variable from variable
+    ${auto} =    Set variable    $hello
+    ${result} =    Evaluate    ' '.join(${auto})
+    Should be Equal    ${result}    Hello world
+
+Non-existing automatic variable
+    [Documentation]    FAIL Variable '$i_do_not_exit' not found.
+    Evaluate    $i_do_not_exit
+
+Non-existing automatic variable with recommendation 1
+    [Documentation]    FAIL Variable '$HILLO' not found. Did you mean:\n${SPACE * 4}$HELLO
+    Evaluate    $HILLO
+
+Non-existing automatic variable with recommendation 2
+    [Documentation]    FAIL Variable '\$hell' not found. Did you mean:\n${SPACE * 4}$HELLO\n${SPACE * 4}$hella
+    ${hella} =    Set Variable    xxx
+    Evaluate    $hell
+
+Invalid $ usage 1
+    [Documentation]    FAIL STARTS: Evaluating expression '$' failed: SyntaxError:
+    Evaluate   $
+
+Invalid $ usage 2
+    [Documentation]    FAIL STARTS: Evaluating expression '$$' failed: SyntaxError:
+    Evaluate   $$
+
+Invalid $ usage 3
+    [Documentation]    FAIL STARTS: Evaluating expression '$RF_VAR_hello' failed: SyntaxError:
+    Evaluate   $$hello
+
+Invalid $ usage 4
+    [Documentation]    FAIL STARTS: Evaluating expression 'len($)' failed: SyntaxError:
+    Evaluate    len($)
+
+Invalid $ usage 5
+    [Documentation]    FAIL STARTS: Evaluating expression '$""' failed: SyntaxError:
+    Evaluate    $""
+
+Invalid $ usage 6
+    [Documentation]    FAIL STARTS: Evaluating expression '"" $' failed: SyntaxError:
+    Evaluate    "" $
+
+Invalid $ usage 7
+    [Documentation]    FAIL REGEXP: Evaluating expression 'raise +RF_VAR_HELLO' failed: SyntaxError: .*
+    Evaluate    raise $HELLO
+
+Invalid $ usage 8
+    [Documentation]    FAIL REGEXP: Evaluating expression 'RF_VAR_HELLO  +\\$' failed: SyntaxError: .*
+    Evaluate    $HELLO $
+
 Evaluate Empty
     [Documentation]    FAIL Evaluating expression '' failed: ValueError: Expression cannot be empty.
     Evaluate    ${EMPTY}
 
 Evaluate Nonstring
     [Documentation]    FAIL Evaluating expression '5' failed: TypeError: Expression must be string, got integer.
-    ${nonstring}=    Evaluate    5
-    Evaluate    ${nonstring}
+    Evaluate    ${5}
+
+Evaluate doesn't see module globals
+    [Documentation]    FAIL Evaluating expression 'BuiltIn' failed: NameError: name 'BuiltIn' is not defined
+    Evaluate    BuiltIn

@@ -1,6 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    variables/automatic_variables/
-Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
 
 *** Test Case ***

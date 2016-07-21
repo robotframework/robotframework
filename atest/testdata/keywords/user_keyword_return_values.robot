@@ -1,5 +1,3 @@
-*** Settings ***
-
 *** Test Cases ***
 Return Nothing
     ${ret} =  No Return At All
@@ -48,6 +46,12 @@ Return List Variable Containing Multiple Items
 Return Non-Existing Variable
     [Documentation]  FAIL  Replacing variables from keyword return value failed: Variable '\${nonexisting}' not found.
     Return Non-Existing Variable
+
+Error About Non-Existing Variable In Return Value Can Be Caught
+    Run Keyword And Ignore Error    Return Non-Existing Variable
+    Run Keyword And Expect Error
+    ...    Replacing variables from keyword return value failed: Variable '\${nonexisting}' not found.
+    ...    Return Non-Existing Variable
 
 
 *** Keywords ***

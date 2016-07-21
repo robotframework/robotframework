@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,11 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 import time
 
-from robot import utils
+from robot.utils import format_time, OrderedDict, IRONPYTHON
 
 from .stringcache import StringIndex
+
+
+# http://ironpython.codeplex.com/workitem/31549
+if IRONPYTHON and sys.version_info < (2, 7, 2):
+    int = long
 
 
 class JsExecutionResult(object):
@@ -31,13 +38,13 @@ class JsExecutionResult(object):
 
     def _get_data(self, statistics, errors, basemillis):
         gentime = time.localtime()
-        return {
-            'stats': statistics,
-            'errors': errors,
-            'baseMillis': basemillis,
-            'generatedMillis': long(time.mktime(gentime) * 1000) - basemillis,
-            'generatedTimestamp': utils.format_time(gentime, gmtsep=' ')
-        }
+        return OrderedDict([
+            ('stats', statistics),
+            ('errors', errors),
+            ('baseMillis', basemillis),
+            ('generatedMillis', int(time.mktime(gentime) * 1000 - basemillis)),
+            ('generatedTimestamp', format_time(gentime, gmtsep=' '))
+            ])
 
     def remove_data_not_needed_in_report(self):
         self.data.pop('errors')

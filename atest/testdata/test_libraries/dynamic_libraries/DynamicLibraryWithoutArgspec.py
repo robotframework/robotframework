@@ -1,3 +1,6 @@
+from __future__ import print_function
+
+
 class DynamicLibraryWithoutArgspec(object):
 
     def get_keyword_names(self):
@@ -7,10 +10,10 @@ class DynamicLibraryWithoutArgspec(object):
         return getattr(self, name)(*args)
 
     def do_something(self, x):
-        print x
+        print(x)
 
     def do_something_else(self, x, y=0):
-        print 'x: %s, y: %s' % (x, y)
+        print('x: %s, y: %s' % (x, y))
 
     def do_something_third(self, a, b=2, c=3):
-        print a, b, c
+        print(a, b, c)

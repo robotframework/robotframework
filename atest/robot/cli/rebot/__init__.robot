@@ -1,4 +1,3 @@
-***Settings***
+*** Settings ***
 Suite Setup     Run tests to create input file for Rebot
-Suite Teardown  Remove temporary files
 Resource        rebot_cli_resource.robot

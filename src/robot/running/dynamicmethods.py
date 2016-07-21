@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,7 +14,8 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import get_error_message, unic, is_java_method
+from robot.utils import (get_error_message, is_java_method, is_bytes,
+                         is_unicode, py2to3)
 
 from .arguments import JavaArgumentParser, PythonArgumentParser
 
@@ -22,6 +24,7 @@ def no_dynamic_method(*args):
     pass
 
 
+@py2to3
 class _DynamicMethod(object):
     _underscore_name = NotImplemented
 
@@ -55,9 +58,11 @@ class _DynamicMethod(object):
         raise NotImplementedError
 
     def _to_string(self, value):
-        if not isinstance(value, basestring):
-            raise DataError('Return value must be string.')
-        return value if isinstance(value, unicode) else unic(value, 'UTF-8')
+        if is_unicode(value):
+            return value
+        if is_bytes(value):
+            return value.decode('UTF-8')
+        raise DataError('Return value must be string.')
 
     def _to_list_of_strings(self, value):
         try:
@@ -73,7 +78,15 @@ class GetKeywordNames(_DynamicMethod):
     _underscore_name = 'get_keyword_names'
 
     def _handle_return_value(self, value):
-        return self._to_list_of_strings(value or [])
+        names = self._to_list_of_strings(value or [])
+        return list(self._remove_duplicates(names))
+
+    def _remove_duplicates(self, names):
+        seen = set()
+        for name in names:
+            if name not in seen:
+                seen.add(name)
+                yield name
 
 
 class RunKeyword(_DynamicMethod):

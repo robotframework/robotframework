@@ -1,6 +1,11 @@
 robot.result package
 ====================
 
+.. automodule:: robot.result
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -36,14 +41,6 @@ robot.result.flattenkeywordmatcher module
     :undoc-members:
     :show-inheritance:
 
-robot.result.keyword module
----------------------------
-
-.. automodule:: robot.result.keyword
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 robot.result.keywordremover module
 ----------------------------------
 
@@ -60,18 +57,18 @@ robot.result.merger module
     :undoc-members:
     :show-inheritance:
 
-robot.result.message module
----------------------------
-
-.. automodule:: robot.result.message
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 robot.result.messagefilter module
 ---------------------------------
 
 .. automodule:: robot.result.messagefilter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.result.model module
+-------------------------
+
+.. automodule:: robot.result.model
     :members:
     :undoc-members:
     :show-inheritance:
@@ -88,22 +85,6 @@ robot.result.suiteteardownfailed module
 ---------------------------------------
 
 .. automodule:: robot.result.suiteteardownfailed
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-robot.result.testcase module
-----------------------------
-
-.. automodule:: robot.result.testcase
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-robot.result.testsuite module
------------------------------
-
-.. automodule:: robot.result.testsuite
     :members:
     :undoc-members:
     :show-inheritance:
@@ -125,10 +106,3 @@ robot.result.xmlelementhandlers module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.result
-    :members:
-    :undoc-members:
-    :show-inheritance:

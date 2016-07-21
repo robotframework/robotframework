@@ -1,31 +1,39 @@
 import json
 import os
 import pprint
+import shlex
 import tempfile
 from os.path import join, dirname, abspath
 from subprocess import call, STDOUT
 
 from robot.api import logger
-from robot.utils import decode_output
+from robot.utils import console_decode
 
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
+
 
 class LibDocLib(object):
 
     def __init__(self, interpreter):
-        self._interpreter = interpreter
-        self._cmd = [interpreter, '-m', 'robot.libdoc']
+        self._libdoc = interpreter.libdoc
+        self._encoding = 'CONSOLE' if interpreter.is_ironpython else 'SYSTEM'
 
     def run_libdoc(self, args):
-        cmd = self._cmd + [a for a in args.split(' ') if a]
+        cmd = self._libdoc + self._split_args(args)
         cmd[-1] = cmd[-1].replace('/', os.sep)
         logger.info(' '.join(cmd))
         stdout = tempfile.TemporaryFile()
-        call(cmd, cwd=ROBOT_SRC, stdout=stdout, stderr=STDOUT, shell=os.sep=='\\')
+        call(cmd, cwd=ROBOT_SRC, stdout=stdout, stderr=STDOUT)
         stdout.seek(0)
         output = stdout.read().replace('\r\n', '\n')
         logger.info(output)
-        return decode_output(output)
+        return console_decode(output, encoding=self._encoding)
+
+    def _split_args(self, args):
+        lexer = shlex.shlex(args.encode('UTF-8'), posix=True)
+        lexer.escape = ''
+        lexer.whitespace_split = True
+        return [token.decode('UTF-8') for token in lexer]
 
     def get_libdoc_model_from_html(self, path):
         with open(path) as html_file:

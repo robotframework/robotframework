@@ -61,16 +61,12 @@ different to how other libraries are used. If you need to use the Remote
 library multiple times in a test suite, or just want to give it a more
 descriptive name, you can import it using the `WITH NAME syntax`_.
 
-.. table:: Importing Remote library
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===========  =========================  =========  =========  =========
-    Setting      Value                Value             Value      Value      Value
-   =========  ===========  =========================  =========  =========  =========
-   Library    Remote       \http://127.0.0.1:8270     WITH NAME  Example1
-   Library    Remote       \http://example.com:8080/  WITH NAME  Example2
-   Library    Remote       \http://10.0.0.2/example   1 minute   WITH NAME  Example3
-   =========  ===========  =========================  =========  =========  =========
+   *** Settings ***
+   Library    Remote    http://127.0.0.1:8270       WITH NAME    Example1
+   Library    Remote    http://example.com:8080/    WITH NAME    Example2
+   Library    Remote    http://10.0.0.2/example    1 minute    WITH NAME    Example3
 
 The URL used by the first example above is also the default address
 that the Remote library uses if no address is given. Similarly port
@@ -237,7 +233,7 @@ returned as a list of strings in the `same format as with dynamic
 libraries`__, and documentation must be returned `as a string`__.
 
 Remote servers can also provide `general library documentation`__ to
-be used when generating documenation with `libdoc`_ tool
+be used when generating documentation with the Libdoc_ tool.
 
 __ `Getting keyword arguments`_
 __ `Getting keyword documentation`_

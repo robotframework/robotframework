@@ -15,14 +15,13 @@ Log
     Log    ${OBJ}
 
 Log with different levels
-    [Documentation]    FAIL Invalid log level 'INVALID'
+    [Documentation]    FAIL Invalid log level 'INVALID'.
     [Setup]    Set Log Level    TRACE
     Log    Log says: Hello from tests!
     Log    Trace level    TRACE
     Log    Debug level    debug
     Log    Info level    Info
     Log    Warn level    wArN
-    Log    Fail level    FAIL
     Log    Error level    ERROR
     Log    Invalid level    INVALID
 
@@ -40,36 +39,43 @@ Explicit HTML
     Log    ${HTML}    DEBUG    xxx
     Log    ${HTML}    html=${FALSE}    level=debug
 
+FAIL is not valid log level
+    [Documentation]    FAIL Invalid log level 'FAIL'.
+    Log    This fails    FAIL
+
 Log also to console
     [Setup]    Set Log Level    DEBUG
-    Log    Hello, console!    console=yepyep
+    Log    Hello, console!    console=yepyep    repr=no    html=false
     Log    ${HTML}    debug    enable both html    and console
 
 Log repr
     [Setup]    Set Log Level    DEBUG
+    Log    Nothing special here    repr=yes
     Log    Hyvää yötä \u2603!    repr=True
     Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
-    ${bytes} =    Evaluate    chr(0) + chr(255)
-    Log    ${bytes}    repr=yes
+    ${bytes} =    Evaluate    b'\\x00\\xff'
+    Log    ${bytes}    repr=${42}
     ${list} =    Create List    Hyvä    \u2603    ${42}    ${bytes}
     Log    ${list}    repr=yes    console=please
 
 Log pprint
     ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']}
-    Log    ${dict}    repr=yes    console=please
-    ${list} =    Evaluate    ['One', u'Two', 3]
+    Log    ${dict}    repr=true    console=please
+    ${list} =    Evaluate    [b'One', u'Two', 3]
     Log    ${list}    repr=yes    console=please
-    ${list} =    Evaluate    ['a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']
-    Log    ${list}    repr=yes    console=please
+    ${list} =    Evaluate    [b'a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']
+    Log    ${list}    repr=${1}    console=please
     ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']}
-    Log    ${dict}    repr=yes
-    ${list} =    Evaluate    [u'One', 'Two', 3]
+    Log    ${dict}    repr=yes    console=no    html=NO
+    ${list} =    Evaluate    [u'One', b'Two', 3]
     Log    ${list}    repr=yes
-    ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', ${42}, u'Hyvää yötä \u2603!', u'a much, much, much, much, much, much longer string', '\\x00\\xff']}
+    ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', ${42}, u'Hyvää yötä \u2603!', u'a much, much, much, much, much, much longer string', b'\\x00\\xff']}
     Log    ${dict}    repr=yes    console=please
 
 Log callable
     Log    ${MyObject}
+    ${lambda} =    Evaluate    lambda: None
+    Log    ${lambda}
 
 Log Many
     Log Many    Log Many says:    1    2    ${3}    ${OBJ}

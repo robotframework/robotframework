@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    keywords/user_keyword_kwargs.robot
-Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -55,5 +54,9 @@ Invalid arguments spec
 Verify Invalid Argument Spec
     [Arguments]    ${index}    ${name}    ${error}
     Check Test Case    ${TEST NAME}: ${name}
-    Check Log Message    ${ERRORS[${index}]}
-    ...    Creating user keyword '${name}' failed: Invalid argument specification: ${error}    ERROR
+    ${source} =    Normalize Path    ${DATADIR}/keywords/user_keyword_kwargs.robot
+    ${message} =    Catenate
+    ...    Error in test case file '${source}':
+    ...    Creating keyword '${name}' failed:
+    ...    Invalid argument specification: ${error}
+    Check Log Message    ${ERRORS[${index}]}    ${message}    ERROR

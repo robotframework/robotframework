@@ -1,11 +1,12 @@
 *** Settings ***
 Suite Setup      Run Tests    --loglevel debug    standard_libraries/xml/to_string.robot
-Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
 
 *** Test Cases ***
-
 Element to string
+    Check Test Case    ${TESTNAME}
+
+Element to string with encoding
     Check Test Case    ${TESTNAME}
 
 Child element to string

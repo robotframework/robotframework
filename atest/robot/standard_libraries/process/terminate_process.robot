@@ -1,8 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/terminate_process.robot
-Test Setup       Check Precondition
-Force Tags       regression    pybot    jybot
-Resource         process_resource.robot
+Resource         atest_resource.robot
 
 *** Test Cases ***
 Terminate process
@@ -14,18 +12,23 @@ Kill process
     Check Log Message    ${tc.kws[1].msgs[0]}    Forcefully killing process.
 
 Terminate process running on shell
+    [Tags]    no-windows-python26   no-jython
     Check Test Case    ${TESTNAME}
 
 Kill process running on shell
+    [Tags]    no-windows   no-jython
     Check Test Case    ${TESTNAME}
 
 Also child processes are terminated
+    [Tags]    no-windows-python26   no-jython
     Check Test Case    ${TESTNAME}
 
 Also child processes are killed
+    [Tags]    no-windows   no-jython
     Check Test Case    ${TESTNAME}
 
 Kill process when terminate fails
+    [Tags]    no-windows-python26    no-windows-jython
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[5].msgs[0]}    Gracefully terminating process.
     Check Log Message    ${tc.kws[5].msgs[1]}    Graceful termination failed.

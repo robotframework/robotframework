@@ -2,10 +2,9 @@ import unittest
 
 from robot.errors import DataError
 from robot.model import Keywords
-from robot.running.userkeyword import (EmbeddedArgs, EmbeddedArgsTemplate,
-                                       UserKeywordHandler)
+from robot.running.userkeyword import EmbeddedArgumentsHandler
 from robot.running.arguments import EmbeddedArguments, UserKeywordArgumentParser
-from robot.utils.asserts import assert_equals, assert_true, assert_raises
+from robot.utils.asserts import assert_equal, assert_true, assert_raises
 
 
 class Fake(object):
@@ -43,13 +42,14 @@ class HandlerDataMock:
         self.doc = Fake()
         self.timeout = Fake()
         self.return_ = Fake()
+        self.tags = ()
         self.teardown = None
 
 
 def EAT(name, args=[]):
     handler = HandlerDataMock(name, args)
     embedded = EmbeddedArguments(name)
-    return EmbeddedArgsTemplate(handler, 'resource', embedded)
+    return EmbeddedArgumentsHandler(handler, 'resource', embedded)
 
 
 class TestEmbeddedArgs(unittest.TestCase):
@@ -63,65 +63,59 @@ class TestEmbeddedArgs(unittest.TestCase):
         assert_true(EmbeddedArguments('${Yes} embedded args here'))
 
     def test_get_embedded_arg_and_regexp(self):
-        assert_equals(self.tmp1.embedded_args, ['item'])
-        assert_equals(self.tmp1.embedded_name.pattern,
-                      '^User\\ selects\\ (.*?)\\ from\\ list$')
-        assert_equals(self.tmp1.name, 'User selects ${item} from list')
+        assert_equal(self.tmp1.embedded_args, ['item'])
+        assert_equal(self.tmp1.embedded_name.pattern,
+                     '^User\\ selects\\ (.*?)\\ from\\ list$')
+        assert_equal(self.tmp1.name, 'User selects ${item} from list')
 
     def test_get_multiple_embedded_args_and_regexp(self):
-        assert_equals(self.tmp2.embedded_args, ['x', 'y', 'z'])
-        assert_equals(self.tmp2.embedded_name.pattern,
-                      '^(.*?)\\ \\*\\ (.*?)\\ from\\ \\"(.*?)\\"$')
+        assert_equal(self.tmp2.embedded_args, ['x', 'y', 'z'])
+        assert_equal(self.tmp2.embedded_name.pattern,
+                     '^(.*?)\\ \\*\\ (.*?)\\ from\\ \\"(.*?)\\"$')
 
-    def test_create_handler_when_no_match(self):
-        assert_raises(ValueError, EmbeddedArgs, 'Not matching', self.tmp1)
+    def test_create_runner_when_no_match(self):
+        assert_raises(ValueError, self.tmp1.create_runner, 'Not matching')
 
-    def test_create_handler_with_one_embedded_arg(self):
-        handler = EmbeddedArgs('User selects book from list', self.tmp1)
-        assert_equals(handler.embedded_args, [('item', 'book')])
-        assert_equals(handler.name, 'User selects book from list')
-        assert_equals(handler.longname, 'resource.User selects book from list')
-        handler = EmbeddedArgs('User selects radio from list', self.tmp1)
-        assert_equals(handler.embedded_args, [('item', 'radio')])
-        assert_equals(handler.name, 'User selects radio from list')
-        assert_equals(handler.longname, 'resource.User selects radio from list')
+    def test_create_runner_with_one_embedded_arg(self):
+        runner = self.tmp1.create_runner('User selects book from list')
+        assert_equal(runner.embedded_args, [('item', 'book')])
+        assert_equal(runner.name, 'User selects book from list')
+        assert_equal(runner.longname, 'resource.User selects book from list')
+        runner = self.tmp1.create_runner('User selects radio from list')
+        assert_equal(runner.embedded_args, [('item', 'radio')])
+        assert_equal(runner.name, 'User selects radio from list')
+        assert_equal(runner.longname, 'resource.User selects radio from list')
 
-    def test_create_handler_with_many_embedded_args(self):
-        handler = EmbeddedArgs('User * book from "list"', self.tmp2)
-        assert_equals(handler.embedded_args,
-                      [('x', 'User'), ('y', 'book'), ('z', 'list')])
+    def test_create_runner_with_many_embedded_args(self):
+        runner = self.tmp2.create_runner('User * book from "list"')
+        assert_equal(runner.embedded_args,
+                     [('x', 'User'), ('y', 'book'), ('z', 'list')])
 
-    def test_create_handler_with_empty_embedded_arg(self):
-        handler = EmbeddedArgs('User selects  from list', self.tmp1)
-        assert_equals(handler.embedded_args, [('item', '')])
+    def test_create_runner_with_empty_embedded_arg(self):
+        runner = self.tmp1.create_runner('User selects  from list')
+        assert_equal(runner.embedded_args, [('item', '')])
 
-    def test_create_handler_with_special_characters_in_embedded_args(self):
-        handler = EmbeddedArgs('Janne & Heikki * "enjoy" from """', self.tmp2)
-        assert_equals(handler.embedded_args,
-                      [('x', 'Janne & Heikki'), ('y', '"enjoy"'), ('z', '"')])
+    def test_create_runner_with_special_characters_in_embedded_args(self):
+        runner = self.tmp2.create_runner('Janne & Heikki * "enjoy" from """')
+        assert_equal(runner.embedded_args,
+                     [('x', 'Janne & Heikki'), ('y', '"enjoy"'), ('z', '"')])
 
     def test_embedded_args_without_separators(self):
         template = EAT('This ${does}${not} work so well')
-        handler = EmbeddedArgs('This doesnot work so well', template)
-        assert_equals(handler.embedded_args, [('does', ''), ('not', 'doesnot')])
+        runner = template.create_runner('This doesnot work so well')
+        assert_equal(runner.embedded_args, [('does', ''), ('not', 'doesnot')])
 
     def test_embedded_args_with_separators_in_values(self):
         template = EAT('This ${could} ${work}-${OK}')
-        handler = EmbeddedArgs("This doesn't really work---", template)
-        assert_equals(handler.embedded_args,
-                      [('could', "doesn't"), ('work', 'really work'), ('OK', '--')])
+        runner = template.create_runner("This doesn't really work---")
+        assert_equal(runner.embedded_args,
+                     [('could', "doesn't"), ('work', 'really work'), ('OK', '--')])
 
-    def test_creating_handlers_is_case_insensitive(self):
-        handler = EmbeddedArgs('User SELECts book frOm liST', self.tmp1)
-        assert_equals(handler.embedded_args, [('item', 'book')])
-        assert_equals(handler.name, 'User SELECts book frOm liST')
-        assert_equals(handler.longname, 'resource.User SELECts book frOm liST')
-
-    def test_embedded_args_handler_has_all_needed_attributes(self):
-        normal = UserKeywordHandler(HandlerDataMock('My name'), None)
-        embedded = EmbeddedArgs('My name', EAT('My ${name}'))
-        for attr in dir(normal):
-            assert_true(hasattr(embedded, attr), "'%s' missing" % attr)
+    def test_creating_runners_is_case_insensitive(self):
+        runner = self.tmp1.create_runner('User SELECts book frOm liST')
+        assert_equal(runner.embedded_args, [('item', 'book')])
+        assert_equal(runner.name, 'User SELECts book frOm liST')
+        assert_equal(runner.longname, 'resource.User SELECts book frOm liST')
 
 
 class TestGetArgSpec(unittest.TestCase):
@@ -150,9 +144,9 @@ class TestGetArgSpec(unittest.TestCase):
 
     def _verify(self, in_args, exp_args=[], exp_defaults=[], exp_varargs=None):
         argspec = self._parse(in_args)
-        assert_equals(argspec.positional, exp_args)
-        assert_equals(argspec.defaults, exp_defaults)
-        assert_equals(argspec.varargs, exp_varargs)
+        assert_equal(argspec.positional, exp_args)
+        assert_equal(argspec.defaults, exp_defaults)
+        assert_equal(argspec.varargs, exp_varargs)
 
     def _parse(self, in_args):
         return UserKeywordArgumentParser().parse(in_args.split())

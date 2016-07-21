@@ -57,6 +57,10 @@ describe("Searching by tags", function () {
     it("should find tags combined with NOT", function() {
         expect(model.containsTagPattern(['x', 'y'], 'xNOTz')).toBeTruthy();
         expect(model.containsTagPattern(['X X', 'Y Y'], 'xx NOT yy')).not.toBeTruthy();
+        expect(model.containsTagPattern(['xx'], 'NOTyy')).toBeTruthy();
+        expect(model.containsTagPattern([], 'NOTyy')).toBeTruthy();
+        expect(model.containsTagPattern([], ' NOT yy')).toBeTruthy();
+        expect(model.containsTagPattern(['yy'], ' NOT yy')).not.toBeTruthy();
     });
 
     it("should find tags combined with multiple NOTs", function() {

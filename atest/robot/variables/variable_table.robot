@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run tests  ${EMPTY}  variables/variable_table.robot
-Force Tags      pybot  jybot  regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

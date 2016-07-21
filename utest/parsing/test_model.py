@@ -116,7 +116,7 @@ class TestSettingTable(unittest.TestCase):
         assert_equal(len(self.table.imports), 5)
         assert_true(all(isinstance(im, _Import) for im in self.table.imports))
         self.table.imports[1] = self.table.imports[0]
-        assert_equals(self.table.imports[1].name, 'Name')
+        assert_equal(self.table.imports[1].name, 'Name')
 
     def test_resource_with_invalid_args(self):
         reso = self.table.add_resource('reso.txt', ['invalid', 'args'])
@@ -125,7 +125,7 @@ class TestSettingTable(unittest.TestCase):
     def test_library_with_name(self):
         lib = self.table.add_library('Name', ['WITH NAME', 'New name'])
         self._verify_import(lib, 'Name', [], 'New name')
-        lib = self.table.add_library('Orig', ['a1', 'a2', 'with name', 'New'])
+        lib = self.table.add_library('Orig', ['a1', 'a2', 'WITH NAME', 'New'])
         self._verify_import(lib, 'Orig', ['a1', 'a2'], 'New')
 
     def _verify_import(self, imp, name, args=[], alias=None):
@@ -136,15 +136,15 @@ class TestSettingTable(unittest.TestCase):
 
     def test_old_style_headers_are_ignored(self):
         self.table.set_header(['Settings', 'Value', 'value', 'Value'])
-        assert_equals(self.table.header, ['Settings'])
+        assert_equal(self.table.header, ['Settings'])
 
     def test_len(self):
-        assert_equals(len(self.table), 0)
+        assert_equal(len(self.table), 0)
         self.table.add_library('SomeLib')
-        assert_equals(len(self.table), 1)
+        assert_equal(len(self.table), 1)
         self.table.doc.value = 'Some doc'
         self.table.add_metadata('meta name', 'content')
-        assert_equals(len(self.table), 3)
+        assert_equal(len(self.table), 3)
 
 
 class TestVariableTable(unittest.TestCase):
@@ -180,14 +180,14 @@ class TestVariableTable(unittest.TestCase):
 
     def test_old_style_headers_are_ignored(self):
         self.table.set_header(['Variable', 'value', 'Value'])
-        assert_equals(self.table.header, ['Variable'])
+        assert_equal(self.table.header, ['Variable'])
 
     def test_len(self):
         self.table.set_header(['Variable', 'value', 'Value'])
-        assert_equals(len(self.table), 0)
+        assert_equal(len(self.table), 0)
         self.table.add('${a var}', 'some')
         self.table.add('@{b var}', 's', 'ome')
-        assert_equals(len(self.table), 2)
+        assert_equal(len(self.table), 2)
 
 
 class TestTestCaseTable(unittest.TestCase):
@@ -198,6 +198,11 @@ class TestTestCaseTable(unittest.TestCase):
 
     def test_init(self):
         assert_equal(self.table.tests, [])
+
+    def test_testcase_table_is_always_true(self):
+        assert_true(self.table)
+        self.table.add('Name')
+        assert_true(self.table)
 
     def test_add_test(self):
         test = self.table.add('My name')
@@ -230,14 +235,14 @@ class TestTestCaseTable(unittest.TestCase):
 
     def test_old_style_headers_are_ignored(self):
         self.table.set_header(['test case', 'Action', 'Arg', 'Argument'])
-        assert_equals(self.table.header, ['test case'])
+        assert_equal(self.table.header, ['test case'])
 
     def test_len(self):
         self.table.set_header(['Test Case'])
-        assert_equals(len(self.table), 0)
+        assert_equal(len(self.table), 0)
         self.table.add('A test')
         self.table.add('B test')
-        assert_equals(len(self.table), 2)
+        assert_equal(len(self.table), 2)
 
 
 class TestKeywordTable(unittest.TestCase):
@@ -280,14 +285,14 @@ class TestKeywordTable(unittest.TestCase):
 
     def test_old_style_headers_are_ignored(self):
         self.table.set_header(['keywords', 'Action', 'Arg', 'Argument'])
-        assert_equals(self.table.header, ['keywords'])
+        assert_equal(self.table.header, ['keywords'])
 
     def test_len(self):
         self.table.set_header(['Keywords'])
-        assert_equals(len(self.table), 0)
+        assert_equal(len(self.table), 0)
         self.table.add('A kw')
         self.table.add('B keyword')
-        assert_equals(len(self.table), 2)
+        assert_equal(len(self.table), 2)
 
 
 class TestStep(unittest.TestCase):
@@ -316,7 +321,7 @@ class TestStep(unittest.TestCase):
         assert_false(Step(['KW'], comment="comment").is_comment())
 
     def test_representation(self):
-        assert_equals(Step(['${v}, @{list}=', 'KW', 'arg']).as_list(),
+        assert_equal(Step(['${v}, @{list}=', 'KW', 'arg']).as_list(),
                       ['${v}, @{list}=', 'KW', 'arg'])
 
     def _test(self, content, kw='KW', args=[], assign=[]):
@@ -349,57 +354,64 @@ class TestForLoop(unittest.TestCase):
         self._test(['whatever', 'here'], ['whatever', 'here'], [])
 
     def test_in_range(self):
-        self._test(['${i}', 'IN RANGE', '100'], ['${i}'], ['100'], range=True)
+        self._test(['${i}', 'IN RANGE', '100'], ['${i}'], ['100'],
+                flavor='IN RANGE')
         self._test(['what', 'ever', 'in range', 'IN', 'whatever'],
-                   ['what', 'ever'], ['IN', 'whatever'], range=True)
+                   ['what', 'ever'], ['IN', 'whatever'],
+                   flavor='IN RANGE')
 
     def test_representation(self):
-        assert_equals(ForLoop(['${var}', 'IN', 'value1', 'value2']).as_list(),
+        assert_equal(ForLoop(['${var}', 'IN', 'value1', 'value2']).as_list(),
                       [': FOR', '${var}', 'IN', 'value1', 'value2'])
-        assert_equals(ForLoop(['${v2}', '${v2}', 'IN RANGE', '100']).as_list(),
+        assert_equal(ForLoop(['${v2}', '${v2}', 'IN RANGE', '100']).as_list(),
                       [': FOR', '${v2}', '${v2}', 'IN RANGE', '100'])
 
-    def _test(self, content, vars, items, range=False):
+    def test_in_zip(self):
+        self._test(['${i}', '${item}', 'in zip', '${list1}', '${list2}'],
+                   ['${i}', '${item}'], ['${list1}', '${list2}'],
+                   flavor='IN ZIP')
+
+    def _test(self, content, vars, items, flavor='IN'):
         loop = ForLoop(content)
         assert_equal(loop.vars, vars)
         assert_equal(loop.items, items)
-        assert_equal(loop.range, range)
+        assert_equal(loop.flavor, flavor)
 
 
 class TestSettings(unittest.TestCase):
 
     def test_timeout(self):
         timeout = Timeout('Timeout')
-        assert_equals(timeout.as_list(), ['Timeout'])
+        assert_equal(timeout.as_list(), ['Timeout'])
         timeout.message='boo'
-        assert_equals(timeout.as_list(), ['Timeout', '', 'boo'])
+        assert_equal(timeout.as_list(), ['Timeout', '', 'boo'])
         timeout.message=''
         timeout.value='1 second'
-        assert_equals(timeout.as_list(), ['Timeout', '1 second'])
+        assert_equal(timeout.as_list(), ['Timeout', '1 second'])
         timeout.message='boo'
-        assert_equals(timeout.as_list(), ['Timeout', '1 second', 'boo'])
+        assert_equal(timeout.as_list(), ['Timeout', '1 second', 'boo'])
 
     def test_tags(self):
         tags = Tags('Tags')
-        assert_equals(tags.as_list(), ['Tags'])
+        assert_equal(tags.as_list(), ['Tags'])
         tags.value = ['tag1','tag2']
-        assert_equals(tags.as_list(), ['Tags', 'tag1', 'tag2'])
+        assert_equal(tags.as_list(), ['Tags', 'tag1', 'tag2'])
 
     def test_fixtures(self):
         fixture = Fixture('Teardown')
-        assert_equals(fixture.as_list(), ['Teardown'])
+        assert_equal(fixture.as_list(), ['Teardown'])
         fixture.name = 'Keyword'
-        assert_equals(fixture.as_list(), ['Teardown', 'Keyword'])
+        assert_equal(fixture.as_list(), ['Teardown', 'Keyword'])
         fixture.args = ['arg1', 'arg2']
-        assert_equals(fixture.as_list(), ['Teardown', 'Keyword', 'arg1', 'arg2'])
+        assert_equal(fixture.as_list(), ['Teardown', 'Keyword', 'arg1', 'arg2'])
         fixture.name = ''
-        assert_equals(fixture.as_list(), ['Teardown', '', 'arg1', 'arg2'])
+        assert_equal(fixture.as_list(), ['Teardown', '', 'arg1', 'arg2'])
 
     def test_template(self):
         template = Template('Template')
-        assert_equals(template.as_list(), ['Template'])
+        assert_equal(template.as_list(), ['Template'])
         template.value = 'value'
-        assert_equals(template.as_list(), ['Template', 'value'])
+        assert_equal(template.as_list(), ['Template', 'value'])
 
 
 class TestCopy(unittest.TestCase):
@@ -407,17 +419,17 @@ class TestCopy(unittest.TestCase):
     def test_test_case_copy(self):
         test = self._create_test()
         copied = test.copy('Copied')
-        assert_equals(copied.name, 'Copied')
-        assert_equals(copied.tags.value, test.tags.value)
-        assert_not_equals(copied.steps[0], test.steps[0])
+        assert_equal(copied.name, 'Copied')
+        assert_equal(copied.tags.value, test.tags.value)
+        assert_not_equal(copied.steps[0], test.steps[0])
         test.add_step(['A new KW'])
         assert_not_equal(len(test.steps), len(copied.steps))
 
     def test_keyword_copy(self):
         kw = self._create_keyword()
         copied = kw.copy('New KW')
-        assert_equals(copied.name, 'New KW')
-        assert_equals(copied.args.value, kw.args.value)
+        assert_equal(copied.name, 'New KW')
+        assert_equal(copied.args.value, kw.args.value)
 
     def _create_test(self):
         test = TestCase(TestCaseTable(None), 'Test name')

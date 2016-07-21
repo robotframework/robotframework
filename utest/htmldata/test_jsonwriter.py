@@ -1,4 +1,3 @@
-from StringIO import StringIO
 try:
     import json
 except ImportError:
@@ -8,8 +7,13 @@ except ImportError:
         json = None
 import unittest
 
-from robot.utils.asserts import assert_equals, assert_raises
+from robot.utils import StringIO, PY3
+from robot.utils.asserts import assert_equal, assert_raises
 from robot.htmldata.jsonwriter import JsonDumper
+
+
+if PY3:
+    long = int
 
 
 class TestJsonDumper(unittest.TestCase):
@@ -20,7 +24,7 @@ class TestJsonDumper(unittest.TestCase):
         return output.getvalue()
 
     def _test(self, data, expected):
-        assert_equals(self._dump(data), expected)
+        assert_equal(self._dump(data), expected)
 
     def test_dump_string(self):
         self._test('', '""')
@@ -28,7 +32,7 @@ class TestJsonDumper(unittest.TestCase):
         self._test('123', '"123"')
 
     def test_dump_non_ascii_string(self):
-        self._test(u'hyv\xe4', u'"hyv\xe4"'.encode('UTF-8'))
+        self._test(u'hyv\xe4', u'"hyv\xe4"')
 
     def test_escape_string(self):
         self._test('"-\\-\n-\t-\r', '"\\"-\\\\-\\n-\\t-\\r"')
@@ -47,8 +51,8 @@ class TestJsonDumper(unittest.TestCase):
         self._test(1, '1')
 
     def test_dump_long(self):
-        self._test(12345678901234567890L, '12345678901234567890')
-        self._test(0L, '0')
+        self._test(long(12345678901234567890), '12345678901234567890')
+        self._test(long(0), '0')
 
     def test_dump_list(self):
         self._test([1, 2, True, 'hello', 'world'], '[1,2,true,"hello","world"]')
@@ -60,7 +64,7 @@ class TestJsonDumper(unittest.TestCase):
 
     def test_dump_dictionary(self):
         self._test({'key': 1}, '{"key":1}')
-        self._test({'nested': [-1L, {42: None}]}, '{"nested":[-1,{42:null}]}')
+        self._test({'nested': [-1, {42: None}]}, '{"nested":[-1,{42:null}]}')
 
     def test_dictionaries_are_sorted(self):
         self._test({'key': 1, 'hello': ['wor', 'ld'], 'z': 'a', 'a': 'z'},
@@ -76,12 +80,12 @@ class TestJsonDumper(unittest.TestCase):
         mapped2 = 'string'
         dumper.dump([mapped1, [mapped2, {mapped2: mapped1}]],
                     mapping={mapped1: '1', mapped2: 'a'})
-        assert_equals(output.getvalue(), '[1,[a,{a:1}]]')
+        assert_equal(output.getvalue(), '[1,[a,{a:1}]]')
         assert_raises(ValueError, dumper.dump, [mapped1])
 
     if json:
         def test_against_standard_json(self):
-            data = ['\\\'\"\r\t\n' + ''.join(chr(i) for i in xrange(32, 127)),
+            data = ['\\\'\"\r\t\n' + ''.join(chr(i) for i in range(32, 127)),
                     {'A': 1, 'b': 2, 'C': ()}, None, (1, 2, 3)]
             try:
                 expected = json.dumps(data, sort_keys=True,

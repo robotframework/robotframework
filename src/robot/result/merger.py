@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -19,11 +20,12 @@ from robot.model import SuiteVisitor
 class Merger(SuiteVisitor):
 
     def __init__(self, result):
-        self.root = result.suite
+        self.result = result
         self.current = None
 
     def merge(self, merged):
         merged.suite.visit(self)
+        self.result.errors.add(merged.errors)
 
     def start_suite(self, suite):
         try:
@@ -42,11 +44,12 @@ class Merger(SuiteVisitor):
         return suite
 
     def _find_root(self, name):
-        if self.root.name == name:
-            return self.root
-        raise DataError("Cannot merge outputs containing different root "
-                        "suites. Original suite is '%s' and merged is '%s'."
-                        % (self.root.name, name))
+        root = self.result.suite
+        if root.name != name:
+            raise DataError("Cannot merge outputs containing different root "
+                            "suites. Original suite is '%s' and merged is '%s'."
+                            % (root.name, name))
+        return root
 
     def _find(self, items, name):
         for item in items:

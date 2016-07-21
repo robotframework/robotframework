@@ -8,15 +8,15 @@ ${ORIG_ELAPSED}   -- ;; --
 
 *** Keyword ***
 Create Output With Robot
-    [Arguments]    ${outputname}    ${arguments}    @{datasource}
-    Run Tests    ${arguments}    @{datasource}
-    Is Valid Timestamp    ${SUITE.starttime}
-    Is Valid Timestamp    ${SUITE.endtime}
-    Is Valid Elapsed Time    ${SUITE.elapsedtime}
+    [Arguments]    ${outputname}    ${options}    ${sources}
+    Run Tests    ${options}    ${sources}
+    Timestamp Should Be Valid    ${SUITE.starttime}
+    Timestamp Should Be Valid    ${SUITE.endtime}
+    Elapsed Time Should Be Valid    ${SUITE.elapsedtime}
     Set Suite Variable    $ORIG_START    ${SUITE.starttime}
     Set Suite Variable    $ORIG_END    ${SUITE.endtime}
     Set Suite Variable    $ORIG_ELAPSED    ${SUITE.elapsedtime}
-    Run Keyword If    "${outputname}"    Move File    ${OUTFILE}    ${outputname}
+    Run Keyword If    $outputname    Move File    ${OUTFILE}    ${outputname}
 
 Check times
     [Arguments]    ${item}    ${start}    ${end}    ${elapsed}

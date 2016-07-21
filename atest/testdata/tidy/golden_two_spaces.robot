@@ -23,6 +23,7 @@ Another Test
 *** Keywords ***
 My Keyword
   [Documentation]  Documentation  # Comment for doc
+  [Tags]  keyword  tags
   # Comment row
   # Comment row 2
   My Step 1  args  args 2  args 3  args 4  args 5  args 6

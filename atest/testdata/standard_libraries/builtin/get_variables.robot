@@ -39,17 +39,14 @@ Resource File
 Variable File
     Variables Should Contain    \${var_in_variable_file}
 
-Local Variables in Test Case Leak
+Local Variables in Test Case do not Leak
     Variables Should Not Contain    \${local}
     ${local}=    Set Variable    lolcat
-    Variables Should Contain    \${local}
+    Variables Should Not Contain    \${local}
 
 Test Case Variable
     Set Test Variable    ${tc var}    tc
     Variables Should Contain    \${tc var}
-
-Set Variable in User Keyword
-    Set Var In UK
 
 Variables Are Returned as NormalizedDict
     ${variables}=    Get Variables
@@ -61,18 +58,26 @@ Variables Are Returned as NormalizedDict
     Dictionary Should Contain Key    ${copy}    \${__Scala__ R}
 
 Modifying Returned Variables Has No Effect On Real Variables
-    ${variables}=    Get Variables
+    ${variables}=    Get Variables    no_decoration=false
     Set To Dictionary    ${variables}    \${name}    value
     Variable Should Not Exist    ${name}
+
+Getting variables without decoration
+    ${variables} =    Get Variables    no_decoration=true
+    Should be equal   ${variables['SCALAR']}    ${SCALAR}
+
+Getting variables without decoration has no effect on real variables
+    ${original} =    Set variable  ${SCALAR}
+    ${variables} =    Get Variables    no_decoration=yes
+    Should be equal   ${variables['SCALAR']}    ${SCALAR}
+    Set to dictionary   ${variables}    scalar    MY_VALUE
+    Should be equal   ${variables['SCALAR']}    MY_VALUE
+    Should be equal   ${SCALAR}    ${original}
 
 *** Keywords ***
 Set Some Variables
     Set Suite Variable    ${Suite Var from suite setup}    Some value
     Set Global Variable    ${Global from Suite setup}    Some value
-
-Set Var In UK
-    ${uk var}=    Set Variable    foo
-    Variables Should Contain    \${uk var}
 
 Variables Should Contain
     [Arguments]    @{keys}

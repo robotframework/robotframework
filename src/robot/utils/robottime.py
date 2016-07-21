@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -17,7 +18,8 @@ import time
 import re
 
 from .normalizing import normalize
-from .misc import plural_or_not
+from .misc import plural_or_not, roundup
+from .robottypes import is_number, is_string
 
 
 _timer_re = re.compile('([+-])?(\d+:)?(\d+):(\d+)(.\d+)?')
@@ -32,17 +34,17 @@ def _get_timetuple(epoch_secs=None):
 
 def _float_secs_to_secs_and_millis(secs):
     isecs = int(secs)
-    millis = int(round((secs - isecs) * 1000))
+    millis = roundup((secs - isecs) * 1000)
     return (isecs, millis) if millis < 1000 else (isecs+1, 0)
 
 
 def timestr_to_secs(timestr, round_to=3):
     """Parses time like '1h 10s', '01:00:10' or '42' and returns seconds."""
-    if isinstance(timestr, (basestring, int, long, float)):
+    if is_string(timestr) or is_number(timestr):
         for converter in _number_to_secs, _timer_to_secs, _time_string_to_secs:
             secs = converter(timestr)
             if secs is not None:
-                return secs if round_to is None else round(secs, round_to)
+                return secs if round_to is None else roundup(secs, round_to)
     raise ValueError("Invalid time string '%s'." % timestr)
 
 def _number_to_secs(number):
@@ -121,6 +123,7 @@ def secs_to_timestr(secs, compact=False):
     """
     return _SecsToTimestrHelper(secs, compact).get_value()
 
+
 class _SecsToTimestrHelper:
 
     def __init__(self, float_secs, compact):
@@ -155,10 +158,10 @@ class _SecsToTimestrHelper:
         else:
             sign = ''
         int_secs, millis = _float_secs_to_secs_and_millis(float_secs)
-        secs  = int_secs % 60
-        mins  = int(int_secs / 60) % 60
-        hours = int(int_secs / (60*60)) % 24
-        days  = int(int_secs / (60*60*24))
+        secs = int_secs % 60
+        mins = int_secs // 60 % 60
+        hours = int_secs // (60 * 60) % 24
+        days = int_secs // (60 * 60 * 24)
         return sign, millis, secs, mins, hours, days
 
 
@@ -175,7 +178,7 @@ def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
 
     Seconds after epoch can be either an integer or a float.
     """
-    if isinstance(timetuple_or_epochsecs, (int, long, float)):
+    if is_number(timetuple_or_epochsecs):
         timetuple = _get_timetuple(timetuple_or_epochsecs)
     else:
         timetuple = timetuple_or_epochsecs
@@ -257,7 +260,7 @@ def parse_time(timestr):
         seconds = method(timestr)
         if seconds is not None:
             return int(seconds)
-    raise ValueError("Invalid time format '%s'" % timestr)
+    raise ValueError("Invalid time format '%s'." % timestr)
 
 def _parse_time_epoch(timestr):
     try:
@@ -265,7 +268,7 @@ def _parse_time_epoch(timestr):
     except ValueError:
         return None
     if ret < 0:
-        raise ValueError("Epoch time must be positive (got %s)" % timestr)
+        raise ValueError("Epoch time must be positive (got %s)." % timestr)
     return ret
 
 def _parse_time_timestamp(timestr):
@@ -308,9 +311,9 @@ def timestamp_to_secs(timestamp, seps=None):
     try:
         secs = _timestamp_to_millis(timestamp, seps) / 1000.0
     except (ValueError, OverflowError):
-        raise ValueError("Invalid timestamp '%s'" % timestamp)
+        raise ValueError("Invalid timestamp '%s'." % timestamp)
     else:
-        return round(secs, 3)
+        return roundup(secs, 3)
 
 
 def secs_to_timestamp(secs, seps=None, millis=False):
@@ -319,7 +322,7 @@ def secs_to_timestamp(secs, seps=None, millis=False):
     ttuple = time.localtime(secs)[:6]
     if millis:
         millis = (secs - int(secs)) * 1000
-        ttuple = ttuple + (int(round(millis)),)
+        ttuple = ttuple + (roundup(millis),)
     return format_time(ttuple, *seps)
 
 
@@ -342,20 +345,20 @@ def elapsed_time_to_string(elapsed, include_millis=True):
     """
     prefix = ''
     if elapsed < 0:
-        elapsed = abs(elapsed)
         prefix = '-'
+        elapsed = abs(elapsed)
     if include_millis:
         return prefix + _elapsed_time_to_string(elapsed)
     return prefix + _elapsed_time_to_string_without_millis(elapsed)
 
 def _elapsed_time_to_string(elapsed):
-    secs, millis = divmod(int(round(elapsed)), 1000)
+    secs, millis = divmod(roundup(elapsed), 1000)
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
     return '%02d:%02d:%02d.%03d' % (hours, mins, secs, millis)
 
 def _elapsed_time_to_string_without_millis(elapsed):
-    secs = int(round(elapsed, -3)) / 1000
+    secs = roundup(elapsed, ndigits=-3) // 1000
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
     return '%02d:%02d:%02d' % (hours, mins, secs)
@@ -366,7 +369,7 @@ def _timestamp_to_millis(timestamp, seps=None):
         timestamp = _normalize_timestamp(timestamp, seps)
     Y, M, D, h, m, s, millis = _split_timestamp(timestamp)
     secs = time.mktime(datetime.datetime(Y, M, D, h, m, s).timetuple())
-    return int(round(1000*secs + millis))
+    return roundup(1000*secs + millis)
 
 def _normalize_timestamp(ts, seps):
     for sep in seps:
@@ -414,7 +417,7 @@ class TimestampCache(object):
 
     def _cached_timestamp(self, millis, millissep):
         if millissep:
-            return '%s%s%03d' % (self._previous_timestamp, millissep, millis)
+            return self._previous_timestamp + millissep + format(millis, '03d')
         return self._previous_timestamp
 
     def _cache_timestamp(self, secs, timestamp, daysep, daytimesep, timesep, millissep):

@@ -2,10 +2,9 @@ All command line options
 ========================
 
 This appendix lists all the command line options that are available
-when `executing test cases`__ with ``pybot`` or ``jybot``, and when
-`post-processing outputs`_ with ``rebot``.
-
-__ `Starting test execution`_
+when `executing test cases`_  and when `post-processing outputs`_.
+Also environment variables affecting execution and post-processing
+are listed.
 
 .. contents::
    :depth: 2
@@ -21,7 +20,8 @@ Command line options for test execution
   -t, --test <name>       `Selects the test cases by name`_.
   -s, --suite <name>      `Selects the test suites`_ by name.
   -R, --rerunfailed <file>  `Selects failed tests`_ from an earlier `output file`_ to be re-executed.
-  --runfailed <file>      Deprecated since RF 2.8.4. Use :option:`--rerunfailed` instead.
+  --runfailed <file>      Deprecated since Robot Framework 2.8.4.
+                          Use :option:`--rerunfailed` instead.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
@@ -51,9 +51,10 @@ Command line options for test execution
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
-  --removekeywords <all|passed|name:pattern|for|wuks>  `Removes keyword data`_ from the
-                          generated log file.
-  --flattenkeywords <name:pattern>  `Flattens keywords`_ in the generated log file.
+  --removekeywords <all|passed|name:pattern|tag:pattern|for|wuks>  `Removes keyword data`_
+                          from the generated log file.
+  --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_
+                          in the generated log file.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
   --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
@@ -62,17 +63,22 @@ Command line options for test execution
   --dryrun                In the `dry run`_ mode tests are run without executing
                           keywords originating from test libraries. Useful for
                           validating test data syntax.
-  --exitonfailure         `Stops test execution <Stopping when first test case fails_>`__
+  -X, --exitonfailure     `Stops test execution <Stopping when first test case fails_>`__
                           if any critical test fails.
   --exitonerror           `Stops test execution <Stopping on parsing or execution error_>`__
                           if any error occurs when parsing test data, importing libraries, and so on.
   --skipteardownonexit    `Skips teardowns`_ is test execution is prematurely stopped.
+  --prerunmodifier <name:args>    Activate `programmatic modification of test data`_.
+  --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
-  -W, --monitorwidth <chars>  `Sets the width`_ of the console output.
-  -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used on the console.
-  -K, --monitormarkers <on|off|force>  Specifies are `console markers`_
-                          (`.` and `F`) used.
-  -P, --pythonpath <path>   Additional locations where to `search test libraries`_ from when they are imported.
+  --console <verbose|dotted|quiet|none>  `Console output type`_.
+  --dotted                Shortcut for `--console dotted`.
+  --quiet                 Shortcut for `--console quiet`.
+  -W, --consolewidth <width>  `Sets the width`_ of the console output.
+  -C, --consolecolors <auto|on|ansi|off>  `Specifies are colors`_ used on the console.
+  -K, --consolemarkers <auto|on|off>  Show `markers on the console`_ when top level
+                                      keywords in a test case end.
+  -P, --pythonpath <path>  Additional locations to add to the `module search path`_.
   -E, --escape <what:with>   `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
@@ -82,7 +88,8 @@ Command line options for post-processing outputs
 ------------------------------------------------
 
   -R, --merge             Changes result combining behavior to `merging <merging outputs_>`__.
-  --rerunmerge            Deprecated since RF 2.8.6. Use :option:`--merge` instead.
+  --rerunmerge            Deprecated since Robot Framework 2.8.6.
+                          Use :option:`--merge` instead.
   -N, --name <name>       `Sets the name`_ of the top level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top-level test suite.
@@ -115,8 +122,10 @@ Command line options for post-processing outputs
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
-  --removekeywords <all|passed|name:pattern|for|wuks>  `Removes keyword data`_ from the generated outputs.
-  --flattenkeywords <name:pattern>  `Flattens keywords`_ in the generated outputs.
+  --removekeywords <all|passed|name:pattern|tag:pattern|for|wuks>  `Removes keyword data`_
+                          from the generated outputs.
+  --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_
+                          in the generated outputs.
   --starttime <timestamp>  Sets the `starting time`_ of test execution when creating
                           reports.
   --endtime <timestamp>   Sets the `ending time`_ of test execution when creating reports.
@@ -124,6 +133,9 @@ Command line options for post-processing outputs
                           in test cases. Error codes are returned normally.
   --processemptysuite     Processes output files even if files contain
                           `empty test suites`_.
+  --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
+  -C, --consolecolors <auto|on|ansi|off>  `Specifies are colors`_ used on the console.
+  -P, --pythonpath <path>   Additional locations to add to the `module search path`_.
   -E, --escape <what:with>  `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
@@ -167,7 +179,7 @@ Command line options for post-processing outputs
 .. _empty test suites: `test suites are empty`_
 .. _Sets the width: `Console width`_
 .. _Specifies are colors: `Console colors`_
-.. _search test libraries: `library search path`_
+.. _markers on the console: `Console markers`_
 .. _Escapes characters: `Escaping complicated characters`_
 .. _read more arguments: `Argument files`_
 .. _usage instructions: `Getting help and version information`_
@@ -177,3 +189,26 @@ Command line options for post-processing outputs
 .. _Flattens keywords: `Removes keyword data`_
 .. _starting time: `Setting start and end time of execution`_
 .. _ending time: `starting time`_
+
+
+Environment variables for execution and post-processing
+-------------------------------------------------------
+
+``ROBOT_OPTIONS`` and ``REBOT_OPTIONS``
+    Space separated list of default options to be placed
+    `in front of any explicit options`__ on the command line.
+
+``ROBOT_SYSLOG_FILE``
+    Path to a syslog_ file where Robot Framework writes internal
+    information about parsing test case files and running
+    tests.
+
+``ROBOT_SYSLOG_LEVEL``
+    Log level to use when writing to the syslog_ file.
+
+``ROBOT_INTERNAL_TRACES``
+    When set to any non-empty value, Robot Framework's
+    internal methods are included in `error tracebacks`__.
+
+__ `ROBOT_OPTIONS and REBOT_OPTIONS environment variables`_
+__ `Debugging problems`_

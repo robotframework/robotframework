@@ -1,6 +1,5 @@
 *** Settings ***
-Library    empty_listenerlibrary.py
-
+Library           empty_listenerlibrary.py
 
 *** Test Cases ***
 Dummy test

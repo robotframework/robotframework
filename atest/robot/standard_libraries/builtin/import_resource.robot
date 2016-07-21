@@ -1,6 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --variable WINDOWS:${WINDOWS}  standard_libraries/builtin/import_resource.robot
-Force Tags      regression  pybot  jybot
+Suite Setup     Run Tests  --variable WINDOWS:${WINDOWS} --PYTHONPATH ${DATADIR}/../testresources/res_and_var_files/  standard_libraries/builtin/import_resource.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -24,4 +23,7 @@ Re-Import Resource
     Check Test Case  ${TESTNAME}
 
 Import Resource Failure Is Catchable
+    Check Test Case  ${TESTNAME}
+
+Import Resource From Pythonpath
     Check Test Case  ${TESTNAME}

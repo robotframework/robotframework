@@ -2,7 +2,6 @@
 Variables    extended_assign_vars.py
 
 *** Test Cases ***
-
 Set attributes to Python object
     [Setup]    Should Be Equal    ${VAR.attr}-${VAR.attr2}    value-v2
     ${VAR.attr} =    Set Variable    new value
@@ -24,6 +23,19 @@ Set attribute not directly in base
 Trying to set un-settable attribute
     [Documentation]    FAIL STARTS: Setting attribute 'not_settable' to variable '\${VAR}' failed: AttributeError:
     ${VAR.not_settable} =    Set Variable    whatever
+
+Un-settable attribute error is catchable
+    [Documentation]    FAIL GLOB:
+    ...    Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) Setting attribute 'not_settable' to variable '\${VAR}' failed: AttributeError: *
+    ...
+    ...    2) AssertionError
+    Run Keyword And Expect Error
+    ...    Setting attribute 'not_settable' to variable '\${VAR}' failed: AttributeError: *
+    ...    Setting unsettable attribute
+    [Teardown]    Run Keywords    Setting unsettable attribute    Fail
 
 Using extended syntax when base variable does not exists creates new variable
     ${new.var} =    Set Variable    value
@@ -55,7 +67,6 @@ Extended syntax is ignored with list variables
     @{list.new} =    Create List    1    2    3
     Should Be Equal    ${list}    ${list.new}
 
-
 *** Keywords ***
 Extended assignment is disabled
     [Arguments]   ${value}
@@ -63,3 +74,5 @@ Extended assignment is disabled
     ${var.xxx} =    Set Variable    creates new variable
     Should Be Equal    ${var.xxx}    creates new variable
 
+Setting unsettable attribute
+    ${VAR.not_settable} =    Set Variable    fails

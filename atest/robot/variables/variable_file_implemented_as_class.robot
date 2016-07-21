@@ -1,7 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    variables/variable_file_implemented_as_class.robot
-Force Tags       regression
-Default Tags     pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -19,19 +17,19 @@ Dynamic Python Class
     Check Test Case    ${TESTNAME}
 
 Java Class
-    [Tags]    jybot
+    [Tags]    require-jython
     Check Test Case    ${TESTNAME}
 
 Methods in Java Class Do Not Create Variables
-    [Tags]    jybot
+    [Tags]    require-jython
     Check Test Case    ${TESTNAME}
 
 Properties in Java Class
-    [Tags]    jybot
+    [Tags]    require-jython
     Check Test Case    ${TESTNAME}
 
 Dynamic Java Class
-    [Tags]    jybot
+    [Tags]    require-jython
     Check Test Case    ${TESTNAME}
 
 Instantiating Fails

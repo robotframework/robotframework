@@ -1,5 +1,5 @@
 *** Settings ***
-Test template    Correct bytes should be created
+Test Template    Correct bytes should be created
 Library          String
 
 *** Variables ***
@@ -45,6 +45,13 @@ Byte string
     ${b1} =    Convert To Bytes    \x00-a-ä-\xff
     ${b2} =    Convert To Bytes    ${b1}
     Should Be Equal    ${b1}    ${b2}
+
+Bytearray
+    [Template]    NONE
+    ${bytearray} =    Evaluate    bytearray([0, 1, 2, 255])
+    ${bytes} =    Convert To Bytes    ${bytearray}
+    ${expected} =    Convert To Bytes    \x00\x01\x02\xff
+    Should Be Equal    ${bytes}    ${expected}
 
 Integers
     4                      int    4
@@ -153,7 +160,7 @@ Correct bytes should be created
 
 Bytes should be equal to
     [Arguments]    ${bytes}    ${expected}
-    ${expected} =    Evaluate    ''.join(chr(int(i)) for i in [${expected}])
+    ${expected} =    Evaluate    bytes(bytearray(int(i) for i in [${expected}]))
     Should Be Equal    ${bytes}   ${expected}
     Should Be Byte String    ${bytes}
 

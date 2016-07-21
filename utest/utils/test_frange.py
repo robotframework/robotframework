@@ -1,7 +1,7 @@
 import unittest
 
 from robot.utils.frange import frange, _digits
-from robot.utils.asserts import assert_equals, assert_true, assert_raises
+from robot.utils.asserts import assert_equal, assert_true, assert_raises
 
 
 class TestFrange(unittest.TestCase):
@@ -11,22 +11,22 @@ class TestFrange(unittest.TestCase):
                                 ([6.01], [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]),
                                 ([-2.4, 2.1], [-2.4, -1.4, -0.4, 0.6, 1.6]),
                                 ([0, 0.5, 0.1], [0, 0.1, 0.2, 0.3, 0.4])]:
-            assert_equals(frange(*input), expected)
+            assert_equal(frange(*input), expected)
 
     def test_numbers_with_e(self):
         for input, expected in [([1e20, 1e21, 2e20], [1e20, 3e20, 5e20, 7e20, 9e20]),
                                 ([1e-21, 1.1e-20, 3e-21], [1e-21, 4e-21, 7e-21, 1e-20]),
                                 ([1.1e-20, 1.1e-21, -5e-21], [1.1e-20, 6e-21])]:
             result = frange(*input)
-            assert_equals(len(result), len(expected))
+            assert_equal(len(result), len(expected))
             # Floats are not accurate and values depend on Python versions
             diffs = [round(r-e, 30) for r, e in zip(result, expected)]
-            assert_equals(sum(diffs), 0)
+            assert_equal(sum(diffs), 0)
 
     def test_compatibility_with_range(self):
         for input in [(10,), (-10,), (1, 10), (1, 10, 2), (10, -5, -2)]:
-            assert_equals(frange(*input), range(*input))
-            assert_equals(frange(*(float(i) for i in input)), range(*input))
+            assert_equal(frange(*input), list(range(*input)))
+            assert_equal(frange(*(float(i) for i in input)), list(range(*input)))
 
     def test_preserve_type(self):
         for input in [(2,), (0, 2), (0, 2, 1)]:
@@ -59,7 +59,7 @@ class TestFrange(unittest.TestCase):
                                 ('1.23e0', 2),
                                 ('1.23e-1', 3),
                                 ('1.23e-2', 4)]:
-            assert_equals(_digits(input), expected, input)
+            assert_equal(_digits(input), expected, input)
 
 
 if __name__ == "__main__":

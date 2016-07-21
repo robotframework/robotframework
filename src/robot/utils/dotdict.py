@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -41,8 +42,11 @@ class DotDict(OrderedDict):
     def __eq__(self, other):
         return dict.__eq__(self, other)
 
+    def __ne__(self, other):
+        return not self == other
+
     def __str__(self):
-        return '{%s}' % ', '.join('%r: %r' % item for item in self.iteritems())
+        return '{%s}' % ', '.join('%r: %r' % (key, self[key]) for key in self)
 
     # Must use original dict.__repr__ to allow customising PrettyPrinter.
     __repr__ = dict.__repr__

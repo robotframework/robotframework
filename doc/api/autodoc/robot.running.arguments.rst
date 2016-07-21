@@ -1,6 +1,11 @@
 robot.running.arguments package
 ===============================
 
+.. automodule:: robot.running.arguments
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -61,10 +66,3 @@ robot.running.arguments.javaargumentcoercer module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.running.arguments
-    :members:
-    :undoc-members:
-    :show-inheritance:

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup  Run Tests With Failing Listener
-Force Tags  regression  pybot  jybot
 Resource  listener_resource.robot
 
 *** Test Cases ***
@@ -13,7 +12,7 @@ Listener errors are shown
     :FOR  ${method}  IN  start_suite  end_suite  start_test  end_test
     ...  start_keyword  end_keyword  log_message  message
     ...  output_file  log_file  report_file  close
-    \  Check syslog matches regexp  | ERROR | Calling listener method '${method}' of listener '.*' failed: ${method}
+    \  Syslog Should Match Regexp  | ERROR | Calling listener method '${method}' of listener '.*' failed: ${method}
 
 
 *** Keywords ***

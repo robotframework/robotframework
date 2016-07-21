@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/env_config.robot
-Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -20,4 +19,7 @@ Invividually given overrides system variable
     Check Test Case    ${TESTNAME}
 
 Invividually given overrides value in given environ
+    Check Test Case    ${TESTNAME}
+
+Non-ASCII value
     Check Test Case    ${TESTNAME}

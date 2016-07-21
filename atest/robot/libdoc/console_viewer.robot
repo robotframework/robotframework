@@ -1,9 +1,9 @@
 *** Settings ***
-Force Tags        regression    pybot    jybot
 Resource          libdoc_resource.robot
 
 *** Test Cases ***
 List all keywords
+    [Tags]    require-tkinter
     Run Libdoc And Verify Output    Dialogs list
     ...   Execute Manual Step
     ...   Get Selection From User
@@ -19,8 +19,10 @@ List some keywords
     ...   kw 3
     ...   kw 4
     ...   kw 5
+    ...   kw 6
 
 Show whole library
+    [Tags]    require-tkinter
     Run Libdoc And Set Output    Dialogs show
     Should Contain Intro    Dialogs    Version:
     Should Contain Keyword    Execute Manual Step    message, default_error=
@@ -35,21 +37,21 @@ Show whole library
     ...   ``message`` is the message shown in the dialog.
 
 Show intro only
-    ${output}=    Run Libdoc    Telnet SHOW intro
+    Run Libdoc and set output    Telnet SHOW intro
     Should Contain Intro    Telnet    Version:
     ${args} =    Catenate    SEPARATOR=\n${SPACE*12}
     ...    timeout=3 seconds, newline=CRLF, prompt=None,
     ...    prompt_is_regexp=False, encoding=UTF-8, encoding_errors=ignore,
     ...    default_log_level=INFO, window_size=None, environ_user=None,
     ...    terminal_emulation=False, terminal_type=None,
-    ...    telnetlib_log_level=TRACE
+    ...    telnetlib_log_level=TRACE, connection_timeout=None
     Should Contain Importing    ${args}
     ...    Telnet library can be imported with optional configuration parameters.
     Should Not Contain Keyword    Open Connection
     Should Not Contain Keyword    Write
 
 Show intro and keywords
-    ${output}=    Run Libdoc    ${TESTDATADIR}/resource.robot SHOW NONASC* INTRO
+    Run Libdoc and set output    ${TESTDATADIR}/resource.robot SHOW NONASC* INTRO
     Should Contain Intro    resource    Named arguments:${SPACE*2}supported
     Should Contain Keyword    non ascii doc    ${EMPTY}
     ...    Hyvää yötä.

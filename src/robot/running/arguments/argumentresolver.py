@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,7 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import is_dict_like, split_from_equals, DotDict
+from robot.utils import is_string, is_dict_like, split_from_equals
 from robot.variables import VariableSplitter
 
 from .argumentvalidator import ArgumentValidator
@@ -59,11 +60,11 @@ class NamedArgumentResolver(object):
         return positional, named
 
     def _is_dict_var(self, arg):
-        return (isinstance(arg, basestring) and
+        return (is_string(arg) and arg[:2] == '&{' and arg[-1] == '}' and
                 VariableSplitter(arg).is_dict_variable())
 
     def _is_named(self, arg, variables=None):
-        if not (isinstance(arg, basestring) and '=' in arg):
+        if not (is_string(arg) and '=' in arg):
             return False
         name, value = split_from_equals(arg)
         if value is None:
@@ -95,7 +96,7 @@ class DictToKwargs(object):
 
     def handle(self, positional, named):
         if self._enabled and self._extra_arg_has_kwargs(positional, named):
-            named = positional.pop()
+            named = positional.pop().items()
         return positional, named
 
     def _extra_arg_has_kwargs(self, positional, named):
@@ -110,19 +111,19 @@ class VariableReplacer(object):
         self._resolve_until = resolve_until
 
     def replace(self, positional, named, variables=None):
-        # `variables` is None in dry-run mode and when using Libdoc
+        # `variables` is None in dry-run mode and when using Libdoc.
         if variables:
             positional = variables.replace_list(positional, self._resolve_until)
-            named = DotDict(self._replace_named(named, variables.replace_scalar))
+            named = list(self._replace_named(named, variables.replace_scalar))
         else:
             positional = list(positional)
-            named = DotDict(item for item in named if isinstance(item, tuple))
+            named = [item for item in named if isinstance(item, tuple)]
         return positional, named
 
     def _replace_named(self, named, replace_scalar):
         for item in named:
             for name, value in self._get_replaced_named(item, replace_scalar):
-                if not isinstance(name, basestring):
+                if not is_string(name):
                     raise DataError('Argument names must be strings.')
                 yield name, value
 

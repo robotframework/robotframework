@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,8 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from HTMLParser import HTMLParser
-from htmlentitydefs import entitydefs
+from robot.utils import PY2
+
+if PY2:
+    from htmlentitydefs import entitydefs
+    from HTMLParser import HTMLParser
+
+else:
+    from html.entities import entitydefs
+    from html.parser import HTMLParser
+
+    unichr = chr
 
 
 NON_BREAKING_SPACE = u'\xA0'
@@ -84,7 +94,9 @@ class HtmlReader(HTMLParser):
             return '&'+name+';'
         if value.startswith('&#'):
             return unichr(int(value[2:-1]))
-        return value.decode('ISO-8859-1')
+        if PY2:
+            return value.decode('ISO-8859-1')
+        return value
 
     def handle_charref(self, number):
         value = self._handle_charref(number)

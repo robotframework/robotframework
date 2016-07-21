@@ -1,24 +1,35 @@
 *** Settings ***
-Library    suite_listenerlibrary.py
+Library           suite_listenerlibrary.py
+Suite Setup       Events should be    Start suite: Suite Scope
+                  ...                 Start kw: suite_listenerlibrary.Events Should Be
+Suite Teardown    Events should be    Start suite: Suite Scope
+                  ...                 Start kw: suite_listenerlibrary.Events Should Be
+                  ...                 End kw: suite_listenerlibrary.Events Should Be
+                  ...                 Start test: Suite scope library gets events
+                  ...                 Start kw: suite_listenerlibrary.Events Should Be
+                  ...                 End kw: suite_listenerlibrary.Events Should Be
+                  ...                 End test: Suite scope library gets events
+                  ...                 Start test: Suite scope library gets previous events in suite
+                  ...                 Start kw: suite_listenerlibrary.Events Should Be
+                  ...                 End kw: suite_listenerlibrary.Events Should Be
+                  ...                 End test: Suite scope library gets previous events in suite
+                  ...                 Start kw: suite_listenerlibrary.Events Should Be
 
 *** Test Cases ***
 Suite scope library gets events
-    Events should be    start suite Suite Scope
-        ...             start test Suite scope library gets events
-        ...             start kw suite_listenerlibrary.Events Should Be
+    Events should be    Start suite: Suite Scope
+    ...                 Start kw: suite_listenerlibrary.Events Should Be
+    ...                 End kw: suite_listenerlibrary.Events Should Be
+    ...                 Start test: ${TEST NAME}
+    ...                 Start kw: suite_listenerlibrary.Events Should Be
 
-New test gets previous suite scope events
-    Events should be    start suite Suite Scope
-            ...         start test Suite scope library gets events
-            ...         start kw suite_listenerlibrary.Events Should Be
-            ...         end kw suite_listenerlibrary.Events Should Be
-            ...         end test Suite scope library gets events
-            ...         start test New test gets previous suite scope events
-            ...         start kw suite_listenerlibrary.Events Should Be
-
-Listener methods in library are keywords
-    end_test   foo   zap
-
-Listener methods starting with underscore are not keywords
-    [Documentation]         FAIL No keyword with name '_end_keyword' found.
-    _end_keyword   bar  zap
+Suite scope library gets previous events in suite
+    Events should be    Start suite: Suite Scope
+    ...                 Start kw: suite_listenerlibrary.Events Should Be
+    ...                 End kw: suite_listenerlibrary.Events Should Be
+    ...                 Start test: ${PREV TEST NAME}
+    ...                 Start kw: suite_listenerlibrary.Events Should Be
+    ...                 End kw: suite_listenerlibrary.Events Should Be
+    ...                 End test: ${PREV TEST NAME}
+    ...                 Start test: ${TEST NAME}
+    ...                 Start kw: suite_listenerlibrary.Events Should Be

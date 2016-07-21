@@ -39,23 +39,46 @@ Preparation
 
      doc/api/generate.py
      git diff doc/api
-     git commit doc/api -m "Regenerated"   # if needed
+     git commit doc/api -m "Regenerated API docs"   # if needed
 
 3. Repository status
 
    - Check that you have nothing left to commit, pull, or push::
 
        git status
-       git pull
+       git pull --rebase
        git push
 
    - Clean up::
 
        invoke clean
 
-4. Set ``$VERSION`` shell variable to ease copy-pasting further commands::
+4. Set version and GitHub login related shell variable to ease copy-pasting further commands::
 
-     VERSION=x.y.z
+     VERSION=<x.y.z>
+     LOGIN=<GitHub Login>
+     PASSWORD=<GitHub Password>
+
+   GitHub login details are needed only when generating release notes.
+
+Release notes
+-------------
+
+1. Generate a template for the release notes::
+
+     doc/releasenotes/generate.py $VERSION $LOGIN $PASSWORD >> doc/releasenotes/rf-$VERSION.rst
+
+2. Fill the missing details in the template.
+
+3. Add, commit and push::
+
+     git add doc/releasenotes/rf-$VERSION.rst
+     git commit -m "Release notes for $VERSION" doc/releasenotes/rf-$VERSION.rst
+     git push
+
+4. Add short release notes to GitHub's `releases page
+   <https://github.com/robotframework/robotframework/releases>`_
+   with a link to the full release notes.
 
 Tagging
 -------
@@ -93,15 +116,7 @@ Creating distributions
 
        pip install robotframework --upgrade
 
-3. Windows installers
-
-   - Create 32bit and 64bit variants on suitable machines/interpreters::
-
-       invoke wininst
-
-   - Manually upload to https://pypi.python.org/pypi/robotframework/.
-
-4. JAR distribution
+3. JAR distribution
 
    - Create::
 
@@ -112,7 +127,7 @@ Creating distributions
        java -jar dist/robotframework-$VERSION.jar --version
        java -jar dist/robotframework-$VERSION.jar atest/testdata/misc/pass_and_fail.robot
 
-5. Upload JAR to Sonatype
+4. Upload JAR to Sonatype
 
    - Sonatype offers a service where users can upload JARs and they will be synced
      to the maven central repository. Below are the instructions to upload the JAR.
@@ -144,10 +159,10 @@ Creating distributions
    - After that, the released JAR is synced to Maven central within an hour.
 
 __ https://issues.sonatype.org/secure/Dashboard.jspa
-__ https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven#HowToGeneratePGPSignaturesWithMaven-MavenGPGPlugin
+__ http://central.sonatype.org/pages/working-with-pgp-signatures.html
 __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
-6. User Guide
+5. User Guide
 
    - Create package (updates also library docs)::
 
@@ -159,21 +174,14 @@ __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Us
         invoke add_docs $VERSION --push
         git checkout master
 
-Release notes
--------------
-
-- Generate a template for the release notes::
-
-   invoke release_notes --login <github login> --password <github password>
-
-- Create a new release at https://github.com/robotframework/robotframework/releases
-
 Announcements
 -------------
 
-- Twitter http://twitter.com/robotframework
+- Twitter:
+  http://twitter.com/robotframework
 - Users and announcements mailing lists
-- Robot Framework LinkedIn group https://www.linkedin.com/groups/Robot-Framework-3710899
+- Robot Framework LinkedIn group:
+  https://www.linkedin.com/groups/Robot-Framework-3710899
 - With major releases can also consider:
 
   - http://opensourcetesting.org

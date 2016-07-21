@@ -1,26 +1,15 @@
 *** Settings ***
-Documentation   Robot unit tests
-Suite Setup     Set Variables  unit
-Force Tags      smoke  regression
+Force Tags      no-standalone
 Resource        atest_resource.robot
+Suite Setup     Create Directory    ${OUTDIR}
 
 *** Variables ***
-${TESTPATH}  ${CURDIR}${/}..${/}..${/}..${/}utest${/}run_utests.py
+${TESTPATH}     ${CURDIR}${/}..${/}..${/}..${/}utest${/}run.py
 
 *** Test Cases ***
-Unit Tests With Python
-    [Tags]  pybot
-    Run Unit Tests
-
-Unit Tests With Jython
-    [Tags]  jybot
-    Run Unit Tests
-
-*** Keywords ***
-Run Unit Tests
-    [Timeout]
-    ${rc} =  Run And Return RC  ${INTERPRETER} ${TESTPATH} --quiet 1>${STDOUTFILE} 2> ${STDERRFILE}
-    Get Stderr
-    Get Stdout
-    Should Be Equal As Integers  ${rc}  0  Unit tests failed with rc ${rc}.  False
-
+Unit Tests
+    ${result} =    Run Process    @{INTERPRETER.interpreter}     ${TESTPATH}   --quiet
+    ...    stdout=${STDOUT FILE}    stderr=STDOUT
+    Log    ${result.stdout}
+    Should Be Equal As Integers  ${result.rc}    0
+    ...    Unit tests failed with RC ${result.rc}.    values=False

@@ -1,11 +1,14 @@
 import unittest
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+    from io import BytesIO
+except ImportError:
+    from io import BytesIO, StringIO
 
 from robot.result import ExecutionResult
 from robot.reporting.outputwriter import OutputWriter
-from robot.utils import XmlWriter
-from robot.utils.asserts import assert_equals
-from robot.utils import ET, ETSource
+from robot.utils import ET, ETSource, XmlWriter
+from robot.utils.asserts import assert_equal
 
 from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE
 
@@ -22,7 +25,7 @@ class StreamXmlWriter(XmlWriter):
 class TestableOutputWriter(OutputWriter):
 
     def _get_writer(self, output, generator):
-        writer = StreamXmlWriter(output, encoding='UTF-8')
+        writer = StreamXmlWriter(output, write_empty=False)
         writer.start('robot')
         return writer
 
@@ -39,14 +42,14 @@ class TestResultSerializer(unittest.TestCase):
     def _xml_lines(self, text):
         with ETSource(text) as source:
             tree = ET.parse(source)
-        output = StringIO()
+        output = BytesIO()
         tree.write(output)
         return output.getvalue().splitlines()
 
     def _assert_xml_content(self, actual, expected):
-        assert_equals(len(actual), len(expected))
-        for index, (act, exp) in enumerate(zip(actual, expected)[2:]):
-            assert_equals(act, exp.strip(), 'Different values on line %d' % index)
+        assert_equal(len(actual), len(expected))
+        for index, (act, exp) in enumerate(list(zip(actual, expected))[2:]):
+            assert_equal(act, exp.strip(), 'Different values on line %d' % index)
 
     def test_combining_results(self):
         output = StringIO()

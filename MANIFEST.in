@@ -1,4 +1,4 @@
-include src/bin/*ybot src/bin/*rebot src/bin/*.bat
+include src/bin/*bot src/bin/*.bat
 include src/robot/htmldata/*/*.html src/robot/htmldata/*/*.js src/robot/htmldata/*/*.css
-include MANIFEST.in LICENSE.txt COPYRIGHT.txt README.rst INSTALL.rst AUTHORS.txt BUILD.rst tasks.py
+include AUTHORS.txt BUILD.rst CONTRIBUTING.rst COPYRIGHT.txt INSTALL.rst LICENSE.txt README.rst MANIFEST.in tasks.py
 prune src/robot/htmldata/testdata

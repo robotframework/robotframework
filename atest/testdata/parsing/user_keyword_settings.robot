@@ -18,9 +18,6 @@ Names are not formatted
 Documentation
     Documentation
 
-Documentaion using old [Document] setting
-    Documentaion using old [Document] setting
-
 Documentation in multiple columns
     Documentation in multiple columns
 
@@ -99,10 +96,6 @@ Documentation
     [Documentation]    Documentation for this user keyword
     No Operation
 
-Documentaion using old [Document] setting
-    [Document]    This should be deprecated...
-    No Operation
-
 Documentation in multiple columns
     [Documentation]    Documentation    for this user keyword    in multiple columns
     No Operation
@@ -110,7 +103,7 @@ Documentation in multiple columns
 Documentation in multiple rows
     [DOCUMENTATION]    ${1}st line is shortdoc.
     ...                Documentation for this user keyword
-    [DOCUMENT]         in\nmultiple\nlines
+    ...                in\nmultiple\nlines
     No Operation
 
 Documentation with variables

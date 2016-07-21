@@ -1,7 +1,7 @@
 import unittest
 from os.path import abspath, dirname, join, normpath
 
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 from robot.testdoc import JsonConverter, TestSuiteFactory
 
 DATADIR = join(dirname(abspath(__file__)), '..', '..', 'atest', 'testdata', 'misc')
@@ -9,7 +9,7 @@ DATADIR = join(dirname(abspath(__file__)), '..', '..', 'atest', 'testdata', 'mis
 
 def test_convert(item, **expected):
     for name in expected:
-        assert_equals(item[name], expected[name])
+        assert_equal(item[name], expected[name])
 
 
 class TestJsonConverter(unittest.TestCase):
@@ -30,7 +30,7 @@ class TestJsonConverter(unittest.TestCase):
                      fullName='Misc',
                      doc='<p>My doc</p>',
                      metadata=[('1', '<p>2</p>'), ('abc', '<p>123</p>')],
-                     numberOfTests=175,
+                     numberOfTests=176,
                      tests=[],
                      keywords=[])
         test_convert(self.suite['suites'][0],
@@ -147,11 +147,11 @@ class TestJsonConverter(unittest.TestCase):
 
     def test_test_setup_and_teardown(self):
         test_convert(self.suite['suites'][7]['tests'][0]['keywords'][0],
-                     name='Test Setup',
+                     name='${TEST SETUP}',
                      arguments='',
                      type='SETUP')
         test_convert(self.suite['suites'][7]['tests'][0]['keywords'][2],
-                     name='Test Teardown',
+                     name='${TEST TEARDOWN}',
                      arguments='',
                      type='TEARDOWN')
 

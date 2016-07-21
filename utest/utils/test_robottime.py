@@ -48,8 +48,13 @@ class TestTime(unittest.TestCase):
                          ('1e2', 100),
                          ('-1.5e3', -1500)]:
             assert_equal(timestr_to_secs(inp), exp, inp)
-            if not isinstance(inp, basestring):
+            if not isinstance(inp, str):
                 assert_equal(timestr_to_secs(str(inp)), exp, inp)
+
+    def test_timestr_to_secs_rounds_up(self):
+        assert_equal(timestr_to_secs(0.5, 0), 1)
+        assert_equal(timestr_to_secs(0.9, 0), 1)
+        assert_equal(timestr_to_secs(0.1, 0), 0)
 
     def test_timestr_to_secs_with_time_string(self):
         for inp, exp in [('1s', 1),
@@ -313,13 +318,13 @@ class TestTime(unittest.TestCase):
             assert_true(expected <= parsed <= expected + 1),
 
     def test_parse_modified_time_with_invalid_times(self):
-        for value, msg in [("-100", "Epoch time must be positive (got -100)"),
+        for value, msg in [("-100", "Epoch time must be positive (got -100)."),
                            ("YYYY-MM-DD hh:mm:ss",
-                            "Invalid time format 'YYYY-MM-DD hh:mm:ss'"),
+                            "Invalid time format 'YYYY-MM-DD hh:mm:ss'."),
                            ("now + foo", "Invalid time string 'foo'."),
                            ("now -    2a ", "Invalid time string '2a'."),
                            ("now+", "Invalid time string ''."),
-                           ("nowadays", "Invalid time format 'nowadays'")]:
+                           ("nowadays", "Invalid time format 'nowadays'.")]:
             assert_raises_with_msg(ValueError, msg, parse_time, value)
 
     def test_parse_time_and_get_time_must_round_seconds_down(self):

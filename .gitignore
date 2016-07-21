@@ -1,6 +1,7 @@
 tmp
 build
 dist
+*~
 MANIFEST
 atest/results
 utest/jasmine-results
@@ -14,3 +15,4 @@ ext-lib
 doc/api/_build
 doc/libraries/*.html
 doc/userguide/RobotFrameworkUserGuide.html
+src/robotframework.egg-info

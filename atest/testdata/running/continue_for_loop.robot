@@ -87,6 +87,27 @@ With Continuable Failure Before
     \       Fail    This is not executed
     Should Be Equal    ${var}    two
 
+With Continuable Failure In User Keyword
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) å/1
+    ...
+    ...    2) å/2
+    ...
+    ...    3) ä/1
+    ...
+    ...    4) ö/1
+    ...
+    ...    5) ö/2
+    ...
+    ...    6) The End
+    :FOR    ${var}    IN    å    ä    ö
+    \       With Continuable Failure In User Keyword    ${var}/1
+    \       Run Keyword And Continue On Failure    Fail    ${var}/2
+    Should Be Equal    ${var}    ö
+    Fail    The End
+
 *** Keyword ***
 With Loop
     :FOR    ${var}    IN    one    two
@@ -118,3 +139,8 @@ Continue For Loop In Keyword Teardown
 Invalid Continue For Loop In User Keyword Teardown
     No Operation
     [Teardown]    Continue For Loop
+
+With Continuable Failure In User Keyword
+    [Arguments]    ${arg}
+    Run Keyword And Continue On Failure    Fail    ${arg}
+    Continue For Loop If    'ä' in '${arg}'

@@ -3,7 +3,7 @@ Suite Setup       Set Environment Variable    v1    system
 Resource          process_resource.robot
 
 *** Variables ***
-@{COMMAND}        python    -c    import os; print os.getenv('v1', '-'), os.getenv('v2', '-'), os.getenv('v3', '-')
+@{COMMAND}        python    -c    import os; print(' '.join([os.getenv('v1', '-'), os.getenv('v2', '-'), os.getenv('v3', '-')]))
 
 *** Test Cases ***
 By default environ is got from system
@@ -32,10 +32,19 @@ Invividually given overrides value in given environ
     ${result} =    Run Process    @{COMMAND}    env:v3=new    env=${env}    env:v1=override
     Should Be Equal    ${result.stdout}    override environ2 new
 
+Non-ASCII value
+    ${code} =    Catenate    SEPARATOR=;
+    ...    import os, sys
+    ...    py2 = sys.version_info[0] < 3
+    ...    xxx = os.getenv('XXX')
+    ...    xxx = xxx.decode(sys.getfilesystemencoding()) if py2 else xxx
+    ...    print('PASS' if xxx == u'hyv\\xe4' else 'FAIL')
+    ${result} =   Run Process    python    -c    ${code}    env:XXX=hyvä    stderr=STDOUT
+    Result should equal    ${result}    stdout=PASS
+
 *** Keywords ***
 Create environ
     [Arguments]    @{environ}
-    ${comspec} =    Get Environment Variable    COMSPEC    default=.
     ${path} =    Get Environment Variable    PATH    default=.
     ${systemroot} =    Get Environment Variable    SYSTEMROOT    default=.
     ${environ} =    Create Dictionary    @{environ}    PATH=${path}    SYSTEMROOT=${SYSTEMROOT}

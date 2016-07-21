@@ -9,7 +9,7 @@ This text should be ignored.
 .. Warning:: We have a devious plan to rule the world with robots.
 
 =============  =========  ==============  ===============
-  Metadata       Value         Value           Value
+  Settings       Value         Value           Value
 =============  =========  ==============  ===============
 Documentation  A complex  testdata file   in rst format.
 # Default      Tags       are in          include.rst
@@ -190,7 +190,7 @@ Library    OperatingSystem
 
 
 +---------------------+-----------------+---------------+------------------+--+
-|    User Keywords    |     Action      |   Argument    |     Argument     |  |
+|    Keywords         |     Action      |   Argument    |     Argument     |  |
 +=====================+=================+===============+==================+==+
 |                     |                 |               |                  |  |
 +---------------------+-----------------+---------------+------------------+--+
@@ -221,3 +221,20 @@ Library    OperatingSystem
 +---------------------+-----------------+---------------+------------------+--+
 |                     |                 |               |                  |  |
 +---------------------+-----------------+---------------+------------------+--+
+
+
+
+The following are non-standard docutils directives, and we should ignore
+errors when parsing this.
+
+Testing also a :term:`test` as it should generate an error.
+
+.. highlight:: robotframework
+
+.. todo::
+   This is not really a todo so you have to do nothing.
+
+.. automodule:: some_module
+    :members:
+    :undoc-members:
+    :show-inheritance:

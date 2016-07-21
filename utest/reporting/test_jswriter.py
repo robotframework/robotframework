@@ -1,9 +1,9 @@
-from StringIO import StringIO
 import unittest
 
-from robot.utils.asserts import assert_equals, assert_true
 from robot.reporting.jsexecutionresult import JsExecutionResult
 from robot.reporting.jswriter import JsResultWriter
+from robot.utils import StringIO
+from robot.utils.asserts import assert_equal, assert_true
 
 
 def get_lines(suite=(), strings=(), basemillis=100, start_block='',
@@ -18,7 +18,7 @@ def get_lines(suite=(), strings=(), basemillis=100, start_block='',
 def assert_separators(lines, separator, end_separator=False):
     for index, line in enumerate(lines):
         if index % 2 == int(end_separator):
-            assert_equals(line, separator)
+            assert_equal(line, separator)
         else:
             assert_true(line.startswith('window.'), line)
 
@@ -40,8 +40,8 @@ class TestDataModelWrite(unittest.TestCase):
         lines = get_lines(strings=['data' for _ in range(100)],
                                 split_threshold=9, end_block='?\n')
         parts = [l for l in lines if l.startswith('window.output["strings')]
-        assert_equals(len(parts), 13)
-        assert_equals(parts[0], 'window.output["strings"] = [];')
+        assert_equal(len(parts), 13)
+        assert_equal(parts[0], 'window.output["strings"] = [];')
         for line in parts[1:]:
             assert_true(line.startswith('window.output["strings"] = window.output["strings"].concat(['), line)
         assert_separators(lines, '?', end_separator=True)
@@ -96,7 +96,7 @@ class TestSuiteWriter(unittest.TestCase):
         lines = get_lines(suite, split_threshold=threshold, start_block='foo\n')
         parts = [l for l in lines if l.startswith(('window.sPart',
                                                    'window.output["suite"]'))]
-        assert_equals(parts, expected)
+        assert_equal(parts, expected)
         assert_separators(lines, 'foo')
 
 

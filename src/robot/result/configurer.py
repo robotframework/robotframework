@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
 from robot import model
+from robot.utils import is_string, secs_to_timestamp, timestamp_to_secs
 
 
 class SuiteConfigurer(model.SuiteConfigurer):
@@ -23,7 +24,7 @@ class SuiteConfigurer(model.SuiteConfigurer):
     :meth:`~robot.result.testsuite.TestSuite.remove_keywords`,
     :meth:`~robot.result.testsuite.TestSuite.filter_messages` and
     :meth:`~robot.result.testsuite.TestSuite.set_criticality` methods
-    and sets it's start and end time based on the given named parameters.
+    and sets its start and end time based on the given named parameters.
 
     ``base_config`` is forwarded to
     :class:`robot.model.SuiteConfigurer <robot.model.configurer.SuiteConfigurer>`
@@ -44,7 +45,7 @@ class SuiteConfigurer(model.SuiteConfigurer):
     def _get_remove_keywords(self, value):
         if value is None:
             return []
-        if isinstance(value, basestring):
+        if is_string(value):
             return [value]
         return value
 
@@ -52,10 +53,10 @@ class SuiteConfigurer(model.SuiteConfigurer):
         if not timestamp:
             return None
         try:
-            secs = utils.timestamp_to_secs(timestamp, seps=' :.-_')
+            secs = timestamp_to_secs(timestamp, seps=' :.-_')
         except ValueError:
             return None
-        return utils.secs_to_timestamp(secs, millis=True)
+        return secs_to_timestamp(secs, millis=True)
 
     def visit_suite(self, suite):
         model.SuiteConfigurer.visit_suite(self, suite)

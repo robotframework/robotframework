@@ -1,5 +1,4 @@
 *** Settings ***
-Test Setup        Check Precondition         sys.version_info >= (2,6)
 Test Teardown     Terminate All Processes    kill=True
 Library           Process
 Library           DateTime
@@ -7,7 +6,7 @@ Resource          process_resource.robot
 
 *** Test Cases ***
 Wait For Process
-    ${process} =    Start Python Process    print 'Robot Framework'
+    ${process} =    Start Python Process    print('Robot Framework')
     ${result} =    Wait For Process    ${process}
     Process Should Be Stopped    ${process}
     Should Be Equal As Integers    ${result.rc}    0

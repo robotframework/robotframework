@@ -1,7 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_with_errors.robot
-Force Tags        regression
-Default Tags      jybot    pybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -24,7 +22,7 @@ Ignore Error Returns When Keyword Fails
 Ignore Error With User Keyword When Keywords Pass
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Hello world
-    Keyword data should be    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
+    Check Keyword Data    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
 
 Ignore Error With User Keyword When Keyword Fails
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -51,8 +49,25 @@ Ignore Error When Syntax Error At Run Time
 Ignore Error When Syntax Error In Setting Variables
     Check Test Case    ${TEST NAME}
 
+Ignore Error When Invalid Return Values When Setting Variables
+    Check Test Case    ${TEST NAME}
+
 Ignore Error When Syntax Error In For Loop
     Check Test Case    ${TEST NAME}
+
+Ignore Error When Non Existing Variable In For Loop
+    Check Test Case    ${TEST NAME}
+
+Ignore Error When Access To Nonexisting Variable
+    Check Test Case    ${TEST NAME}
+
+Ignore Error When Access To List Variable Nonexisting Index Syntax
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+
+Ignore Error When Access To Dictionary Nonexisting Key Syntax
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
 
 Expect Error When Error Occurs
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -79,7 +94,7 @@ Expected Error Should Be Returned
 Expect Error With User Keyword When Keywords Pass
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Hello world
-    Keyword data should be    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
+    Check Keyword Data    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
 
 Expect Error With User Keyword When Keyword Fails
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -108,9 +123,26 @@ Expect Error When Syntax Error At Run Time
 Expect Error When Syntax Error In Setting Variables
     Check Test Case    ${TEST NAME}
 
+Expect Error When Invalid Return Values When Setting Variables
+    Check Test Case    ${TEST NAME}
+
 Expect Error When Syntax Error In For Loop
     Check Test Case    ${TEST NAME}
 
+Expect Error When Non Existing Variable In For Loop
+    Check Test Case    ${TEST NAME}
+
+Expect Error When Access To Nonexisting Variable
+    Check Test Case    ${TEST NAME}
+
+Expect Error When Access To List Variable Nonexisting Index Syntax
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+
+Expect Error When Access To Dictionary Nonexisting Key Syntax
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Ignore Error With Arguments That Needs To be Escaped
-    Check KW Arguments    ${tc.kws[3].kws[0]}    \@{NEEDS ESCAPING}
+    Check Keyword Data    ${tc.kws[3].kws[0]}    BuiltIn.Create List    args=\@{NEEDS ESCAPING}

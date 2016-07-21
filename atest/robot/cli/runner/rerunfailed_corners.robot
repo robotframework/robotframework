@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression  pybot  jybot
 Resource          atest_resource.robot
 Suite Teardown    Remove File  ${RUN FAILED FROM}
 
@@ -28,8 +27,7 @@ Stops on error when output does not exist
     Run Tests Without Processing Output  --rerunfailed nonex.xml  cli/runfailed/onlypassing
     Stderr Should Match
     ...  [ ERROR ] Collecting failed tests from 'nonex.xml' failed:
-    ...  Reading XML source 'nonex.xml' failed:
-    ...  No such file*${USAGE TIP}\n
+    ...  Reading XML source 'nonex.xml' failed:*${USAGE TIP}\n
 
 Stops on error when output is invalid
     Create File  ${RUN FAILED FROM}  <xml><but not='correct'/></xml>

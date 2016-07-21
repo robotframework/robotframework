@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,6 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os.path
+import re
+
 from .charwidth import get_char_width
 from .misc import seq2str2
 from .unic import unic
@@ -21,6 +25,7 @@ _MAX_ASSIGN_LENGTH = 200
 _MAX_ERROR_LINES = 40
 _MAX_ERROR_LINE_LENGTH = 78
 _ERROR_CUT_EXPLN = '    [ Message content over the limit has been removed. ]'
+_TAGS_RE = re.compile(r'\s*tags:(.*)', re.IGNORECASE)
 
 
 def cut_long_message(msg):
@@ -38,7 +43,7 @@ def _prune_excess_lines(lines, lengths, from_end=False):
         lengths.reverse()
     ret = []
     total = 0
-    limit = _MAX_ERROR_LINES/2
+    limit = _MAX_ERROR_LINES // 2
     for line, length in zip(lines[:limit], lengths[:limit]):
         if total + length >= limit:
             ret.append(_cut_long_line(line, total, from_end))
@@ -50,7 +55,7 @@ def _prune_excess_lines(lines, lengths, from_end=False):
     return ret
 
 def _cut_long_line(line, used, from_end):
-    available_lines = _MAX_ERROR_LINES/2 - used
+    available_lines = _MAX_ERROR_LINES // 2 - used
     available_chars = available_lines * _MAX_ERROR_LINE_LENGTH - 3
     if len(line) > available_chars:
         if not from_end:
@@ -105,3 +110,42 @@ def _lose_width(text, diff):
         lost += get_console_length(text[-1])
         text = text[:-1]
     return text
+
+
+def split_args_from_name_or_path(name):
+    if os.path.exists(name):
+        return os.path.abspath(name), []
+    index = _get_arg_separator_index_from_name_or_path(name)
+    if index == -1:
+        return name, []
+    args = name[index+1:].split(name[index])
+    name = name[:index]
+    if os.path.exists(name):
+        name = os.path.abspath(name)
+    return name, args
+
+
+def _get_arg_separator_index_from_name_or_path(name):
+    colon_index = name.find(':')
+    # Handle absolute Windows paths
+    if colon_index == 1 and name[2:3] in ('/', '\\'):
+        colon_index = name.find(':', colon_index+1)
+    semicolon_index = name.find(';')
+    if colon_index == -1:
+        return semicolon_index
+    if semicolon_index == -1:
+        return colon_index
+    return min(colon_index, semicolon_index)
+
+
+def split_tags_from_doc(doc):
+    doc = doc.rstrip()
+    tags = []
+    if not doc:
+        return doc, tags
+    lines = doc.splitlines()
+    match = _TAGS_RE.match(lines[-1])
+    if match:
+        doc = '\n'.join(lines[:-1]).rstrip()
+        tags = [tag.strip() for tag in match.group(1).split(',')]
+    return doc, tags

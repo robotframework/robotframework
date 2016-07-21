@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/named_args_in_imports.robot
-Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***

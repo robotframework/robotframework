@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,9 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import Matcher, NormalizedDict, setter
+from robot.utils import (Matcher, NormalizedDict, is_string, py2to3, setter,
+                         unic)
 
 
+@py2to3
 class Tags(object):
 
     def __init__(self, tags=None):
@@ -24,12 +27,12 @@ class Tags(object):
     def _tags(self, tags):
         if not tags:
             return ()
-        if isinstance(tags, basestring):
+        if is_string(tags):
             tags = (tags,)
         return self._normalize(tags)
 
     def _normalize(self, tags):
-        normalized = NormalizedDict(((t, 1) for t in tags), ignore='_')
+        normalized = NormalizedDict(((unic(t), 1) for t in tags), ignore='_')
         for removed in '', 'NONE':
             if removed in normalized:
                 normalized.pop(removed)
@@ -60,9 +63,6 @@ class Tags(object):
     def __repr__(self):
         return repr(list(self))
 
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
-
     def __getitem__(self, index):
         item = self._tags[index]
         return item if not isinstance(index, slice) else Tags(item)
@@ -71,6 +71,7 @@ class Tags(object):
         return Tags(tuple(self) + tuple(Tags(other)))
 
 
+@py2to3
 class TagPatterns(object):
 
     def __init__(self, patterns):
@@ -92,18 +93,23 @@ class TagPatterns(object):
     def __getitem__(self, index):
         return self._patterns[index]
 
+    def __unicode__(self):
+        return u'[%s]' % u', '.join(pattern.__unicode__() for pattern in self)
+
 
 def TagPattern(pattern):
+    pattern = pattern.replace(' ', '')
     if 'NOT' in pattern:
-        return _NotTagPattern(*pattern.split('NOT'))
+        return NotTagPattern(*pattern.split('NOT'))
     if 'OR' in pattern:
-        return _OrTagPattern(pattern.split('OR'))
+        return OrTagPattern(pattern.split('OR'))
     if 'AND' in pattern or '&' in pattern:
-        return _AndTagPattern(pattern.replace('&', 'AND').split('AND'))
-    return _SingleTagPattern(pattern)
+        return AndTagPattern(pattern.replace('&', 'AND').split('AND'))
+    return SingleTagPattern(pattern)
 
 
-class _SingleTagPattern(object):
+@py2to3
+class SingleTagPattern(object):
 
     def __init__(self, pattern):
         self._matcher = Matcher(pattern, ignore='_')
@@ -111,11 +117,18 @@ class _SingleTagPattern(object):
     def match(self, tags):
         return self._matcher.match_any(tags)
 
+    def __iter__(self):
+        yield self
+
     def __unicode__(self):
         return self._matcher.pattern
 
+    def __nonzero__(self):
+        return bool(self._matcher)
 
-class _AndTagPattern(object):
+
+@py2to3
+class AndTagPattern(object):
 
     def __init__(self, patterns):
         self._patterns = tuple(TagPattern(p) for p in patterns)
@@ -123,8 +136,15 @@ class _AndTagPattern(object):
     def match(self, tags):
         return all(p.match(tags) for p in self._patterns)
 
+    def __iter__(self):
+        return iter(self._patterns)
 
-class _OrTagPattern(object):
+    def __unicode__(self):
+        return ' AND '.join(pattern.__unicode__() for pattern in self)
+
+
+@py2to3
+class OrTagPattern(object):
 
     def __init__(self, patterns):
         self._patterns = tuple(TagPattern(p) for p in patterns)
@@ -132,12 +152,29 @@ class _OrTagPattern(object):
     def match(self, tags):
         return any(p.match(tags) for p in self._patterns)
 
+    def __iter__(self):
+        return iter(self._patterns)
 
-class _NotTagPattern(object):
+    def __unicode__(self):
+        return ' OR '.join(pattern.__unicode__() for pattern in self)
+
+
+@py2to3
+class NotTagPattern(object):
 
     def __init__(self, must_match, *must_not_match):
         self._first = TagPattern(must_match)
-        self._rest = _OrTagPattern(must_not_match)
+        self._rest = OrTagPattern(must_not_match)
 
     def match(self, tags):
+        if not self._first:
+            return not self._rest.match(tags)
         return self._first.match(tags) and not self._rest.match(tags)
+
+    def __iter__(self):
+        yield self._first
+        for pattern in self._rest:
+            yield pattern
+
+    def __unicode__(self):
+        return ' NOT '.join(pattern.__unicode__() for pattern in self).lstrip()

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      My Setup
-Force Tags       regression   jybot   pybot
 Resource         atest_resource.robot
 
 *** Variables ***

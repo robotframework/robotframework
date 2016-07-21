@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,7 +15,7 @@
 
 import textwrap
 
-from robot.utils import MultiMatcher, encode_output
+from robot.utils import MultiMatcher, console_encode
 from robot.errors import DataError
 
 
@@ -55,7 +56,7 @@ class ConsoleViewer(object):
         self._console(self._libdoc.version or 'N/A')
 
     def _console(self, msg):
-        print encode_output(msg)
+        print(console_encode(msg))
 
     def _show_intro(self, lib):
         self._header(lib.name, underline='=')

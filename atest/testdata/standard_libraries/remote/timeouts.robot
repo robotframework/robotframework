@@ -21,6 +21,7 @@ Test initial connection failure
     # Would be better to test the actual error, but it depends on network
     # configuation etc.
     ${error} =    Catenate
+    ...    Getting keyword names from library 'Remote' failed:
     ...    Calling dynamic method 'get_keyword_names' failed:
     ...    Connecting remote server at http://1.2.3.4:666 failed: *
     ${start} =    Get Current Date

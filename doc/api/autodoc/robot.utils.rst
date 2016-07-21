@@ -1,6 +1,11 @@
 robot.utils package
 ===================
 
+.. automodule:: robot.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -32,6 +37,14 @@ robot.utils.charwidth module
 ----------------------------
 
 .. automodule:: robot.utils.charwidth
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.utils.compat module
+-------------------------
+
+.. automodule:: robot.utils.compat
     :members:
     :undoc-members:
     :show-inheritance:
@@ -204,6 +217,14 @@ robot.utils.robotinspect module
     :undoc-members:
     :show-inheritance:
 
+robot.utils.robotio module
+--------------------------
+
+.. automodule:: robot.utils.robotio
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.utils.robotpath module
 ----------------------------
 
@@ -228,10 +249,34 @@ robot.utils.robottypes module
     :undoc-members:
     :show-inheritance:
 
+robot.utils.robottypes2 module
+------------------------------
+
+.. automodule:: robot.utils.robottypes2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.utils.robottypes3 module
+------------------------------
+
+.. automodule:: robot.utils.robottypes3
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.utils.setter module
 -------------------------
 
 .. automodule:: robot.utils.setter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.utils.sortable module
+---------------------------
+
+.. automodule:: robot.utils.sortable
     :members:
     :undoc-members:
     :show-inheritance:
@@ -261,10 +306,3 @@ robot.utils.utf8reader module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:

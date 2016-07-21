@@ -1,6 +1,11 @@
 robot.reporting package
 =======================
 
+.. automodule:: robot.reporting
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -77,10 +82,3 @@ robot.reporting.xunitwriter module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: robot.reporting
-    :members:
-    :undoc-members:
-    :show-inheritance:

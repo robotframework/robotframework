@@ -37,6 +37,8 @@ public class Example {
     /**
      * Does nothing & <doc> has "stuff" to 'escape'!!
      *     and ignored indentation
+     *
+     * Tags: foo, bar
      */
     public void myKeyword() {
     }

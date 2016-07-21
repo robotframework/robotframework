@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -16,84 +17,118 @@ import os
 
 from robot.errors import DataError
 
+from .console import ConsoleOutput
 from .filelogger import FileLogger
 from .loggerhelper import AbstractLogger, AbstractLoggerProxy
-from .monitor import CommandLineMonitor
 from .stdoutlogsplitter import StdoutLogSplitter
 
 
 class Logger(AbstractLogger):
-    """A global logger proxy to which new loggers may be registered.
+    """A global logger proxy to delegating messages to registered loggers.
 
     Whenever something is written to LOGGER in code, all registered loggers are
     notified.  Messages are also cached and cached messages written to new
     loggers when they are registered.
 
-    Tools using Robot Framework's internal modules should register their own
-    loggers at least to get notifications about errors and warnings. A shortcut
-    to get errors/warnings into console is using 'register_console_logger'.
+    NOTE: This API is likely to change in future versions.
     """
 
     def __init__(self, register_console_logger=True):
-        self._loggers = LoggerCollection()
-        self._message_cache = []
         self._console_logger = None
+        self._syslog = None
+        self._xml_logger = None
+        self._listeners = None
+        self._library_listeners = None
+        self._other_loggers = []
+        self._message_cache = []
         self._started_keywords = 0
         self._error_occurred = False
         self._error_listener = None
         self._prev_log_message_handlers = []
+        self._enabled = 0
         if register_console_logger:
             self.register_console_logger()
 
-    def disable_message_cache(self):
-        self._message_cache = None
+    @property
+    def start_loggers(self):
+        loggers = [self._console_logger, self._syslog, self._xml_logger,
+                   self._listeners, self._library_listeners]
+        return [logger for logger in self._other_loggers + loggers if logger]
 
-    def register_logger(self, *loggers):
-        for log in loggers:
-            logger = self._loggers.register_regular_logger(log)
-            self._relay_cached_messages_to(logger)
+    @property
+    def end_loggers(self):
+        loggers = [self._listeners, self._library_listeners,
+                   self._console_logger, self._syslog, self._xml_logger]
+        return [logger for logger in loggers + self._other_loggers if logger]
 
-    def register_context_changing_logger(self, logger):
-        log = self._loggers.register_context_changing_logger(logger)
-        self._relay_cached_messages_to(log)
+    def __iter__(self):
+        return iter(self.end_loggers)
 
-    def _relay_cached_messages_to(self, logger):
+    def __enter__(self):
+        if not self._enabled:
+            self.register_syslog()
+        self._enabled += 1
+
+    def __exit__(self, *exc_info):
+        self._enabled -= 1
+        if not self._enabled:
+            self.close()
+
+    def register_console_logger(self, type='verbose', width=78, colors='AUTO',
+                                markers='AUTO', stdout=None, stderr=None):
+        logger = ConsoleOutput(type, width, colors, markers, stdout, stderr)
+        self._console_logger = self._wrap_and_relay(logger)
+
+    def _wrap_and_relay(self, logger):
+        logger = LoggerProxy(logger)
+        self._relay_cached_messages(logger)
+        return logger
+
+    def _relay_cached_messages(self, logger):
         if self._message_cache:
             for msg in self._message_cache[:]:
                 logger.message(msg)
 
-    def unregister_logger(self, *loggers):
-        for log in loggers:
-            self._loggers.unregister_logger(log)
-
-    def register_console_logger(self, width=78, colors='AUTO', markers='AUTO',
-                                stdout=None, stderr=None):
-        logger = CommandLineMonitor(width, colors, markers, stdout, stderr)
-        if self._console_logger:
-            self._loggers.unregister_logger(self._console_logger)
-        self._console_logger = logger
-        self._loggers.register_regular_logger(logger)
-
     def unregister_console_logger(self):
-        if not self._console_logger:
-            return None
-        logger = self._console_logger
-        self._loggers.unregister_logger(logger)
         self._console_logger = None
-        return logger
 
-    def register_file_logger(self, path=None, level='INFO'):
+    def register_syslog(self, path=None, level='INFO'):
         if not path:
             path = os.environ.get('ROBOT_SYSLOG_FILE', 'NONE')
             level = os.environ.get('ROBOT_SYSLOG_LEVEL', level)
         if path.upper() == 'NONE':
             return
         try:
-            logger = FileLogger(path, level)
+            syslog = FileLogger(path, level)
         except DataError as err:
-            self.error("Opening syslog file '%s' failed: %s" % (path, unicode(err)))
+            self.error("Opening syslog file '%s' failed: %s" % (path, err.message))
         else:
-            self.register_logger(logger)
+            self._syslog = self._wrap_and_relay(syslog)
+
+    def register_xml_logger(self, logger):
+        self._xml_logger = self._wrap_and_relay(logger)
+
+    def unregister_xml_logger(self):
+        self._xml_logger = None
+
+    def register_listeners(self, listeners, library_listeners):
+        self._listeners = listeners
+        self._library_listeners = library_listeners
+        if listeners:
+            self._relay_cached_messages(listeners)
+
+    def register_logger(self, *loggers):
+        for logger in loggers:
+            logger = self._wrap_and_relay(logger)
+            self._other_loggers.append(logger)
+
+    def unregister_logger(self, *loggers):
+        for logger in loggers:
+            self._other_loggers = [proxy for proxy in self._other_loggers
+                                   if proxy.logger is not logger]
+
+    def disable_message_cache(self):
+        self._message_cache = None
 
     def register_error_listener(self, listener):
         self._error_listener = listener
@@ -102,7 +137,7 @@ class Logger(AbstractLogger):
 
     def message(self, msg):
         """Messages about what the framework is doing, warnings, errors, ..."""
-        for logger in self._loggers.all_loggers():
+        for logger in self:
             logger.message(msg)
         if self._message_cache is not None:
             self._message_cache.append(msg)
@@ -112,10 +147,10 @@ class Logger(AbstractLogger):
                 self._error_listener()
 
     def _log_message(self, msg):
-        """Log messages written (mainly) by libraries"""
-        for logger in self._loggers.all_loggers():
+        """Log messages written (mainly) by libraries."""
+        for logger in self:
             logger.log_message(msg)
-        if msg.level == 'WARN':
+        if msg.level in ('WARN', 'ERROR'):
             self.message(msg)
 
     log_message = message
@@ -131,88 +166,55 @@ class Logger(AbstractLogger):
     def disable_library_import_logging(self):
         self.log_message = self._prev_log_message_handlers.pop()
 
-    def output_file(self, name, path):
-        """Finished output, report, log, debug, or xunit file"""
-        for logger in self._loggers.all_loggers():
-            logger.output_file(name, path)
-
-    def close(self):
-        for logger in self._loggers.all_loggers():
-            logger.close()
-        self._loggers = LoggerCollection()
-        self._message_cache = []
-
     def start_suite(self, suite):
-        for logger in self._loggers.starting_loggers():
+        for logger in self.start_loggers:
             logger.start_suite(suite)
 
     def end_suite(self, suite):
-        for logger in self._loggers.ending_loggers():
+        for logger in self.end_loggers:
             logger.end_suite(suite)
 
     def start_test(self, test):
-        for logger in self._loggers.starting_loggers():
+        for logger in self.start_loggers:
             logger.start_test(test)
 
     def end_test(self, test):
-        for logger in self._loggers.ending_loggers():
+        for logger in self.end_loggers:
             logger.end_test(test)
 
     def start_keyword(self, keyword):
+        # TODO: Could _prev_log_message_handlers be used also here?
         self._started_keywords += 1
         self.log_message = self._log_message
-        for logger in self._loggers.starting_loggers():
+        for logger in self.start_loggers:
             logger.start_keyword(keyword)
 
     def end_keyword(self, keyword):
         self._started_keywords -= 1
-        for logger in self._loggers.ending_loggers():
+        for logger in self.end_loggers:
             logger.end_keyword(keyword)
         if not self._started_keywords:
             self.log_message = self.message
 
-    def __iter__(self):
-        return iter(self._loggers)
+    def imported(self, import_type, name, **attrs):
+        for logger in self:
+            logger.imported(import_type, name, attrs)
+
+    def output_file(self, file_type, path):
+        """Finished output, report, log, debug, or xunit file"""
+        for logger in self:
+            logger.output_file(file_type, path)
+
+    def close(self):
+        for logger in self:
+            logger.close()
+        self.__init__(register_console_logger=False)
 
 
-class LoggerCollection(object):
-
-    def __init__(self):
-        self._regular_loggers = []
-        self._context_changing_loggers = []
-
-    def register_regular_logger(self, logger):
-        self._regular_loggers.append(_LoggerProxy(logger))
-        return self._regular_loggers[-1]
-
-    def register_context_changing_logger(self, logger):
-        self._context_changing_loggers.append(_LoggerProxy(logger))
-        return self._context_changing_loggers[-1]
-
-    def unregister_logger(self, logger):
-        self._regular_loggers = [proxy for proxy in self._regular_loggers
-                                 if proxy.logger is not logger]
-        self._context_changing_loggers = [proxy for proxy
-                                          in self._context_changing_loggers
-                                          if proxy.logger is not logger]
-
-    def starting_loggers(self):
-        return self.all_loggers()
-
-    def ending_loggers(self):
-        return self._regular_loggers + self._context_changing_loggers
-
-    def all_loggers(self):
-        return self._context_changing_loggers + self._regular_loggers
-
-    def __iter__(self):
-        return iter(self.all_loggers())
-
-
-class _LoggerProxy(AbstractLoggerProxy):
-    _methods = ['message', 'log_message', 'output_file', 'close',
-                'start_suite', 'end_suite', 'start_test', 'end_test',
-                'start_keyword', 'end_keyword']
+class LoggerProxy(AbstractLoggerProxy):
+    _methods = ('start_suite', 'end_suite', 'start_test', 'end_test',
+                'start_keyword', 'end_keyword', 'message', 'log_message',
+                'imported', 'output_file', 'close')
 
 
 LOGGER = Logger()

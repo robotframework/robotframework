@@ -1,11 +1,19 @@
 import unittest
-from robot.utils.asserts import assert_equal, assert_true, assert_raises_with_msg
+from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
+                                 assert_raises_with_msg)
 
 from robot.model.itemlist import ItemList
+from robot.utils import PY3
+
+
+if PY3:
+    unicode = str
 
 
 class Object(object):
     attr = 1
+    def __init__(self, id=None):
+        self.id = id
 
 class OldStyle:
     pass
@@ -41,16 +49,29 @@ class TestItemLists(unittest.TestCase):
         items.extend((3, 4))
         assert_equal(list(items), [1, 2, 3, 4])
 
+    def test_extend_with_generator(self):
+        items = ItemList(str)
+        items.extend((c for c in 'Hello, world!'))
+        assert_equal(list(items), list('Hello, world!'))
+
+    def test_insert(self):
+        items = ItemList(str)
+        items.insert(0, 'a')
+        items.insert(0, 'b')
+        items.insert(3, 'c')
+        items.insert(1, 'd')
+        assert_equal(list(items), ['b', 'd', 'a', 'c'])
+
     def test_only_matching_types_can_be_added(self):
         assert_raises_with_msg(TypeError,
                                'Only int objects accepted, got str.',
                                ItemList(int).append, 'not integer')
         assert_raises_with_msg(TypeError,
                                'Only OldStyle objects accepted, got Object.',
-                               ItemList(OldStyle).append, Object())
+                               ItemList(OldStyle).extend, [Object()])
         assert_raises_with_msg(TypeError,
                                'Only Object objects accepted, got OldStyle.',
-                               ItemList(Object).append, OldStyle())
+                               ItemList(Object).insert, 0, OldStyle())
 
     def test_common_attrs(self):
         item1 = Object()
@@ -72,17 +93,40 @@ class TestItemLists(unittest.TestCase):
         assert_true(items[1] is item2)
         assert_true(items[-1] is item2)
 
-    def test_getitem_slice_is_not_supported(self):
-        assert_raises_with_msg(TypeError,
-                               'ItemList instances do not support slicing.',
-                               ItemList(int).__getitem__, slice(0))
-        assert_raises_with_msg(TypeError,
-                               'CustomItems instances do not support slicing.',
-                               CustomItems(int).__getitem__, slice(0))
+    def test_getitem_slice(self):
+        items = ItemList(int, items=range(10))
+        sub = items[:5]
+        assert_true(isinstance(sub, ItemList))
+        assert_equal(list(sub), list(range(5)))
+        assert_equal(list(items), list(range(10)))
+        sub.append(5)
+        assert_equal(list(sub), list(range(6)))
+        assert_equal(list(items), list(range(10)))
+        backwards = items[::-1]
+        assert_true(isinstance(backwards, ItemList))
+        assert_equal(list(backwards), list(reversed(items)))
+        empty = items[100:]
+        assert_true(isinstance(empty, ItemList))
+        assert_equal(list(empty), [])
+
     def test_index(self):
         items = ItemList(str, items=('first', 'second'))
         assert_equal(items.index('first'), 0)
         assert_equal(items.index('second'), 1)
+        assert_raises(ValueError, items.index, 'nonex')
+
+    def test_index_with_start_and_stop(self):
+        numbers = [0, 1, 2, 3, 2, 1, 0]
+        items = ItemList(int, items=numbers)
+        for num in sorted(set(numbers)):
+            for start in range(len(numbers)):
+                if num in numbers[start:]:
+                    assert_equal(items.index(num, start),
+                                 numbers.index(num, start))
+                    for end in range(start, len(numbers)):
+                        if num in numbers[start:end]:
+                            assert_equal(items.index(num, start, end),
+                                         numbers.index(num, start, end))
 
     def test_setitem(self):
         orig1, orig2 = Object(), Object()
@@ -95,13 +139,31 @@ class TestItemLists(unittest.TestCase):
         assert_equal(list(items), [new1, new2])
         assert_equal(new2.attr, 2)
 
-    def test_setitem_slice_is_not_supported(self):
+    def test_setitem_slice(self):
+        items = ItemList(int, items=range(10))
+        items[:5] = []
+        items[-2:] = [42]
+        assert_equal(list(items), [5, 6, 7, 42])
+        items = CustomItems(Object, {'a': 1}, [Object(i) for i in range(10)])
+        items[1::3] = tuple(Object(c) for c in 'abc')
+        assert_true(all(obj.a == 1 for obj in items))
+        assert_equal([obj.id for obj in items],
+                     [0, 'a', 2, 3, 'b', 5, 6, 'c', 8, 9])
+
+    def test_setitem_slice_invalid_type(self):
         assert_raises_with_msg(TypeError,
-                               'ItemList instances do not support slicing.',
-                               ItemList(int).__setitem__, slice(0), [])
-        assert_raises_with_msg(TypeError,
-                               'CustomItems instances do not support slicing.',
-                               CustomItems(int).__setitem__, slice(0), [])
+                               'Only int objects accepted, got float.',
+                               ItemList(int).__setitem__, slice(0), [1, 1.1])
+
+    def test_pop(self):
+        items = ItemList(str, items='abcde')
+        assert_equal(items.pop(), 'e')
+        assert_equal(items.pop(0), 'a')
+        assert_equal(items.pop(-2), 'c')
+        assert_equal(list(items), ['b', 'd'])
+        assert_raises(IndexError, items.pop, 7)
+        assert_equal(list(items), ['b', 'd'])
+        assert_raises(IndexError, ItemList(int).pop)
 
     def test_len(self):
         items = ItemList(object)

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/sleep.robot
-Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
 
 *** Test Cases ***

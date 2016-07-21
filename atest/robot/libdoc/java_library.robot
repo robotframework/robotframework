@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/Example.java
-Force Tags        regression    jybot
+Force Tags        require-jython    require-tools.jar
 Resource          libdoc_resource.robot
 
 *** Test Cases ***
@@ -75,3 +75,6 @@ Only last list is varargs
 
 Last argument overrides
     Keyword Arguments Should Be     3    normalArray  normalMap  normal
+
+Keyword tags
+    Keyword Tags Should Be    4    bar    foo

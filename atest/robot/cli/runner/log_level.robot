@@ -1,6 +1,5 @@
 *** Settings ***
 Documentation   Tests for setting log level from command line with --loglevel option. Setting log level while executing tests (BuiltIn.Set Log Level) is tested with BuiltIn library keywords.
-Default Tags    regression  pybot  jybot
 Resource        atest_resource.robot
 
 *** Variables ***
@@ -56,8 +55,14 @@ Warnings Should Be Written To Syslog
     Check Syslog Contains  | WARN \ |  Hello says "Pass"!
     Check Syslog Contains  | WARN \ |  Hello says "Fail"!
 
+Error Level
+    Run Tests  --loglevel ERROR --variable LEVEL1:ERROR --variable LEVEL2:WARN  ${TESTDATA}
+    Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[0]}  Hello says "Pass"!  ERROR
+    Should Be Equal As Integers  ${SUITE.tests[0].kws[0].kws[1].message_count}  0
+    Check Log Message  ${SUITE.tests[1].kws[1].msgs[0]}  Expected failure  FAIL
+
 None Level
-    Run Tests  --loglevel NONE --log ${LOG NAME} --variable LEVEL1:ERROR --variable LEVEL2:FAIL  ${TESTDATA}
+    Run Tests  --loglevel NONE --log ${LOG NAME} --variable LEVEL1:ERROR --variable LEVEL2:WARN  ${TESTDATA}
     Should Be Equal As Integers  ${SUITE.tests[0].kws[0].kws[0].message_count}  0
     Should Be Equal As Integers  ${SUITE.tests[0].kws[0].kws[1].message_count}  0
     Should Be Equal As Integers  ${SUITE.tests[1].kws[1].message_count}  0
