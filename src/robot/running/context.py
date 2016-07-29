@@ -65,8 +65,8 @@ class _ExecutionContext(object):
         self.in_suite_teardown = False
         self.in_test_teardown = False
         self.in_keyword_teardown = 0
-        self._started_keywords = 0
         self.timeout_occurred = False
+        self._keyword_stack = []
 
     @contextmanager
     def suite_teardown(self):
@@ -124,6 +124,20 @@ class _ExecutionContext(object):
     def variables(self):
         return self.namespace.variables
 
+    @property
+    def keyword(self):
+        return self._keyword_stack[-1] if self._keyword_stack else None
+
+    @property
+    def parent_keyword(self):
+        if len(self._keyword_stack) > 1:
+            return self._keyword_stack[-2]
+        return None
+
+    @property
+    def _started_keywords(self):
+        return len(self._keyword_stack)
+
     def end_suite(self, suite):
         for name in ['${PREV_TEST_NAME}',
                      '${PREV_TEST_STATUS}',
@@ -170,14 +184,14 @@ class _ExecutionContext(object):
         self.timeout_occurred = False
 
     def start_keyword(self, keyword):
-        self._started_keywords += 1
+        self._keyword_stack.append(keyword)
         if self._started_keywords > self._started_keywords_threshold:
             raise DataError('Maximum limit of started keywords exceeded.')
         self.output.start_keyword(keyword)
 
     def end_keyword(self, keyword):
+        self._keyword_stack.pop()
         self.output.end_keyword(keyword)
-        self._started_keywords -= 1
 
     def get_runner(self, name):
         return self.namespace.get_runner(name)
