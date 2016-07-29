@@ -3,6 +3,11 @@ Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keywor
 Resource          atest_resource.robot
 
 *** Test Case ***
+Run Keyword If test Failed Can't Be Used In Suite Setup or Teardown
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${SUITE.suites[0].setup.msgs[0]}    Keyword 'Run Keyword If Test Failed' can only be used in test teardown.    FAIL
+    Check Log Message    ${SUITE.suites[0].teardown.msgs[0]}    Keyword 'Run Keyword If Test Failed' can only be used in test teardown.    FAIL
+
 Run Keyword If test Failed When Test Fails
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.teardown.kws[0].name}    BuiltIn.Log
@@ -25,11 +30,6 @@ Run Keyword If Test Failed Uses User Keyword
 
 Run Keyword If Test Failed Fails
     Check Test Case    ${TEST NAME}
-
-Run Keyword If test Failed Can't Be Used In Suite Setup or Teardown
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${SUITE.suites[0].setup.msgs[0]}    Keyword 'Run Keyword If Test Failed' can only be used in test teardown.    FAIL
-    Check Log Message    ${SUITE.suites[0].teardown.msgs[0]}    Keyword 'Run Keyword If Test Failed' can only be used in test teardown.    FAIL
 
 Run Keyword If Test Passed When Test Passes
     ${tc} =    Check Test Case    ${TEST NAME}
