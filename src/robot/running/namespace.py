@@ -291,7 +291,7 @@ class KeywordStore(object):
         return runner
 
     def _get_bdd_style_runner(self, name):
-        for prefix in ['given ', 'when ', 'then ', 'and ', 'but ']:
+        for prefix in ['given ', 'when ', 'then ', 'and ', 'but ', '给定 ', '当 ', '那么 ', '并且 ', '但是 ']:
             if name.lower().startswith(prefix):
                 runner = self._get_runner(name[len(prefix):])
                 if runner:
