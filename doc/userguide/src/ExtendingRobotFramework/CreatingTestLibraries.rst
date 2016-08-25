@@ -1269,7 +1269,7 @@ The final option is using the `public logging API`_:
    def log_to_console(arg):
       logger.console('Got arg %s' % arg)
 
-   def log_to_console_and_log_file(arg)
+   def log_to_console_and_log_file(arg):
       logger.info('Got arg %s' % arg, also_console=True)
 
 Logging example
