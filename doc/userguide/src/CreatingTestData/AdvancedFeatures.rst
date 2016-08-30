@@ -395,7 +395,7 @@ lower limit, upper limit and step.
        \    Log    ${index}
 
    Float parameters
-       [Documentation]  Loops over values 3.14, 4.34, and 5.34
+       [Documentation]  Loops over values 3.14, 4.34, and 5.54
        :FOR    ${index}    IN RANGE    3.14    6.09    1.2
        \    Log    ${index}
 
