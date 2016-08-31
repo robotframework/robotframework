@@ -19,6 +19,24 @@ class TestRobotAndRebotSettings(unittest.TestCase):
         RebotSettings()
         assert_equal(RobotSettings()._opts, orig_opts)
 
+    def test_robot_and_rebot_settings_not_modify_class_level_default_values(self):
+        rebot_settings = RebotSettings()
+        assert_equal(rebot_settings['TestNames'], [])
+
+        robot_settings = RobotSettings()
+        robot_settings['TestNames'] += ['test_file1', 'test_file2']
+
+        assert_equal(rebot_settings['TestNames'], [])
+
+    def test_robot_settings_are_independent(self):
+        s0 = RobotSettings()
+        assert_equal(s0['TestNames'], [])
+
+        s1 = RobotSettings()
+        s1['TestNames'] += ['test_file1', 'test_file2']
+
+        assert_equal(s0['TestNames'], [])
+
     def test_extra_options(self):
         assert_equal(RobotSettings(name='My Name')['Name'], 'My Name')
         assert_equal(RobotSettings({'name': 'Override'}, name='Set')['Name'],'Set')
