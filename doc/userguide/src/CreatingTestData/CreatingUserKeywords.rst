@@ -259,6 +259,20 @@ at the end the list variable gets all the leftover arguments that do not match
 other arguments. The list variable can thus have any number of items, even zero.
 
 .. sourcecode:: robotframework
+    *** Test Cases ***
+    Varargs with user keywords
+       @{argList}    Create List        argOne    argTwo    argThree   argFour    argTen
+       Any Number Of Arguments
+       Any Number Of Arguments    argOne
+       Any Number Of Arguments    argOne    argTwo
+       Any Number Of Arguments    argOne    argTwo    argThree   argFour    argTen
+       Any Number Of Arguments    @{argList}
+       One Or More Arguments    justOneArg
+       One Or More Arguments    argOne    argTwo    argThree   argFour    argTen
+       One Or More Arguments    oneArgAnd    @{argList}
+       Required, Default, Varargs    rqArg    @{argList}
+       Required, Default, Varargs    rqArg    ${opt}=optional    @{argList}
+       Required, Default, Varargs    rqArg    argOne    argTwo    argThree   argFour    argTen
 
    *** Keywords ***
    Any Number Of Arguments
