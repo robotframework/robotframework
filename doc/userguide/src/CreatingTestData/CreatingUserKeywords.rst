@@ -259,20 +259,6 @@ at the end the list variable gets all the leftover arguments that do not match
 other arguments. The list variable can thus have any number of items, even zero.
 
 .. sourcecode:: robotframework
-    *** Test Cases ***
-    Varargs with user keywords
-       @{argList}    Create List        argOne    argTwo    argThree   argFour    argTen
-       Any Number Of Arguments
-       Any Number Of Arguments    argOne
-       Any Number Of Arguments    argOne    argTwo
-       Any Number Of Arguments    argOne    argTwo    argThree   argFour    argTen
-       Any Number Of Arguments    @{argList}
-       One Or More Arguments    justOneArg
-       One Or More Arguments    argOne    argTwo    argThree   argFour    argTen
-       One Or More Arguments    oneArgAnd    @{argList}
-       Required, Default, Varargs    rqArg    @{argList}
-       Required, Default, Varargs    rqArg    ${opt}=optional    @{argList}
-       Required, Default, Varargs    rqArg    argOne    argTwo    argThree   argFour    argTen
 
    *** Keywords ***
    Any Number Of Arguments
@@ -298,6 +284,27 @@ value is empty. The last example also illustrates how a variable
 number of arguments accepted by a user keyword can be used in a `for
 loop`__. This combination of two rather advanced functions can
 sometimes be very useful.
+
+The keywords in the examples above could be used, for example, like this:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Varargs with user keywords
+       @{arg list}=    Create List    arg1    arg2    arg3   arg4    arg10
+       Any Number Of Arguments
+       Any Number Of Arguments    arg1
+       Any Number Of Arguments    arg1    arg2
+       Any Number Of Arguments    arg1    arg2    arg3   arg4    arg10
+       Any Number Of Arguments    @{arg list}
+       One Or More Arguments    arg1
+       One Or More Arguments    arg1    arg2    arg3   arg4    arg10
+       One Or More Arguments    extra arg    @{arg list}
+       One Or More Arguments    @{arg list}
+       Required, Default, Varargs    rqArg    @{argl list}
+       Required, Default, Varargs    required argument    optional argument    @{arg list}
+       Required, Default, Varargs    required argument    arg1    arg2    arg3   arg4    arg10
+       Required, Default, Varargs    @{argl list}
 
 Again, Pythonistas probably notice that the variable number of
 arguments syntax is very close to the one in Python.
