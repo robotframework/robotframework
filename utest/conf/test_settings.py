@@ -13,29 +13,26 @@ class SettingWrapper(_BaseSettings):
 
 class TestRobotAndRebotSettings(unittest.TestCase):
 
-    def test_robot_and_rebot_settings_are_independent(self):
+    def test_robot_and_rebot_settings_are_independent_1(self):
         # https://github.com/robotframework/robotframework/issues/881
         orig_opts = RobotSettings()._opts
         RebotSettings()
         assert_equal(RobotSettings()._opts, orig_opts)
 
-    def test_robot_and_rebot_settings_not_modify_class_level_default_values(self):
-        rebot_settings = RebotSettings()
-        assert_equal(rebot_settings['TestNames'], [])
-
-        robot_settings = RobotSettings()
-        robot_settings['TestNames'] += ['test_file1', 'test_file2']
-
-        assert_equal(rebot_settings['TestNames'], [])
+    def test_robot_and_rebot_settings_are_independent_2(self):
+        # https://github.com/robotframework/robotframework/pull/2438
+        rebot = RebotSettings()
+        assert_equal(rebot['TestNames'], [])
+        robot = RobotSettings()
+        robot['TestNames'].extend(['test1', 'test2'])
+        assert_equal(rebot['TestNames'], [])
 
     def test_robot_settings_are_independent(self):
-        s0 = RobotSettings()
-        assert_equal(s0['TestNames'], [])
-
-        s1 = RobotSettings()
-        s1['TestNames'] += ['test_file1', 'test_file2']
-
-        assert_equal(s0['TestNames'], [])
+        settings1 = RobotSettings()
+        assert_equal(settings1['Include'], [])
+        settings2 = RobotSettings()
+        settings2['Include'].append('tag')
+        assert_equal(settings1['Include'], [])
 
     def test_extra_options(self):
         assert_equal(RobotSettings(name='My Name')['Name'], 'My Name')
