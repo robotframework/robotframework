@@ -28,8 +28,9 @@ LOG = 'Log:     %s' % LOG_PATH
 
 
 def run_without_outputs(*args, **kwargs):
-    kwargs.update(output='NONE', log='NoNe', report=None)
-    return run(*args, **kwargs)
+    options = {'output': 'NONE', 'log': 'NoNe', 'report': None}
+    options.update(kwargs)
+    return run(*args, **options)
 
 
 class StreamWithOnlyWriteAndFlush(object):
@@ -209,8 +210,11 @@ class TestStateBetweenTestRuns(RunningTestCase):
         assert_true(lib is not self._import_library())
         assert_true(res is not self._import_resource())
 
-    def _run(self, data, **config):
-        return run_without_outputs(data, outputdir=TEMP, **config)
+    def _run(self, data, rc=None, **config):
+        self._clear_outputs()
+        returned_rc = run_without_outputs(data, outputdir=TEMP, **config)
+        if rc is not None:
+            assert_equal(returned_rc, rc)
 
     def _import_library(self):
         return namespace.IMPORTER.import_library('BuiltIn', None, None, None)
@@ -221,10 +225,8 @@ class TestStateBetweenTestRuns(RunningTestCase):
 
     def test_clear_namespace_between_runs(self):
         data = join(ROOT, 'atest', 'testdata', 'variables', 'commandline_variables.robot')
-        rc = self._run(data, test=['NormalText'], variable=['NormalText:Hello'])
-        assert_equal(rc, 0)
-        rc = self._run(data, test=['NormalText'])
-        assert_equal(rc, 1)
+        self._run(data, test=['NormalText'], variable=['NormalText:Hello'], rc=0)
+        self._run(data, test=['NormalText'], rc=1)
 
     def test_reset_logging_conf(self):
         assert_equal(logging.getLogger().handlers, [])
@@ -235,10 +237,9 @@ class TestStateBetweenTestRuns(RunningTestCase):
 
     def test_listener_unregistration(self):
         listener = join(ROOT, 'utest', 'resources', 'Listener.py')
-        assert_equal(run_without_outputs(self.data, listener=listener+':1'), 0)
+        self._run(self.data, listener=listener+':1', rc=0)
         self._assert_outputs([("[from listener 1]", 1), ("[listener close]", 1)])
-        self._clear_outputs()
-        assert_equal(run_without_outputs(self.data), 0)
+        self._run(self.data, rc=0)
         self._assert_outputs([("[from listener 1]", 0), ("[listener close]", 0)])
 
 
