@@ -135,8 +135,8 @@ is same as not specifying this option at all.
          using the :option:`--merge` command line option.
 
 .. note:: Re-executing failed tests is a new feature in Robot Framework 2.8.
-          Prior Robot Framework 2.8.4 the option was named :option:`--runfailed`.
-          The old name still works, but it will be removed in the future.
+          Prior to Robot Framework 2.8.4 the option was named
+          :option:`--runfailed`.
 
 __ `Merging outputs`_
 
