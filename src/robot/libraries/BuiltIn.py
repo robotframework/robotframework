@@ -597,7 +597,7 @@ class _Verify(_BuiltInBase):
         if not self._is_true(condition):
             raise AssertionError(msg or "'%s' should be true." % condition)
 
-    def should_be_equal(self, first, second, msg=None, values=True):
+    def should_be_equal(self, first, second, msg=None, values=True, ignore_case=False):
         """Fails if the given objects are unequal.
 
         Optional ``msg`` and ``values`` arguments specify how to construct
@@ -613,9 +613,16 @@ class _Verify(_BuiltInBase):
         for example, string ``false`` or ``no values``. See `Boolean arguments`
         section for more details.
 
+        ``ignore_case`` is False by default.  It is a boolean value, and if True
+        indicates that 'first' and 'second' should be compared case-insensitively,
+        provided that 'first' and 'second' are string types.
+
         If both arguments are multiline strings, the comparison is done using
         `multiline string comparisons`.
         """
+        if ignore_case and is_string(first) and is_string(second):
+            first = str(first).lower()
+            second = str(second).lower()
         self._log_types_at_info_if_different(first, second)
         self._should_be_equal(first, second, msg, values)
 
@@ -755,17 +762,23 @@ class _Verify(_BuiltInBase):
         first, second = [self._convert_to_string(i) for i in (first, second)]
         self._should_not_be_equal(first, second, msg, values)
 
-    def should_be_equal_as_strings(self, first, second, msg=None, values=True):
+    def should_be_equal_as_strings(self, first, second, msg=None, values=True, ignore_case=False):
         """Fails if objects are unequal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
+
+        ``ignore_case`` is False by default.  Indicates whether the resulting strings
+        should be compared case-insensitively
 
         If both arguments are multiline strings, the comparison is done using
         `multiline string comparisons`.
         """
         self._log_types_at_info_if_different(first, second)
         first, second = [self._convert_to_string(i) for i in (first, second)]
+        if ignore_case:
+            first = str(first).lower()
+            second = str(second).lower()
         self._should_be_equal(first, second, msg, values)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True):

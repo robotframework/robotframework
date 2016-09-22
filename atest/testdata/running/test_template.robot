@@ -238,8 +238,8 @@ Templated test with for loop continues after keyword timeout
     \    ${sleep}s    ${timeout}s
 
 Templated test ends after syntax errors
-    [Documentation]    FAIL   Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 5.
-    Syntax    error    makes    test    end
+    [Documentation]    FAIL   Keyword 'BuiltIn.Should Be Equal' expected 2 to 5 arguments, got 6.
+    Syntax    error    makes    test    end     early
     Not compared    anymore
 
 Templated test continues after variable error
