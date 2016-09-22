@@ -77,10 +77,6 @@ class _BaseSettings(object):
 
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
-            if isinstance(default, list):
-                # redirect to a new list, prevent from modifying class default in instance level
-                default = default[:]
-
             value = opts[cli_name] if cli_name in opts else default
             if isinstance(default, list):
                 # Copy mutable values and support list values as scalars.
