@@ -74,6 +74,10 @@ Should Not Be Equal with bytes containing non-ascii characters
     Should Not Be Equal    ${BYTES WITH NON ASCII}    unicode
     Should Not Be Equal    ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
 
+Should Be Equal With Case Insensitivity
+    Should Be Equal     "test value"     "TEST VALUE"     ignore_case=True
+    Should Be Equal As Strings  "test value"     "TEST VALUE"     ignore_case=True
+
 Should Be Equal
     [Documentation]    FAIL Error message: A != B
     [Template]    Should Be Equal
