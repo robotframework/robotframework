@@ -242,6 +242,14 @@ class TestStateBetweenTestRuns(RunningTestCase):
         self._run(self.data, rc=0)
         self._assert_outputs([("[from listener 1]", 0), ("[listener close]", 0)])
 
+    def test_rerunfailed_is_not_persistent(self):
+        # https://github.com/robotframework/robotframework/issues/2437
+        data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot')
+        self._run(data, output=OUTPUT_PATH, rc=1)
+        self._run(data, rerunfailed=OUTPUT_PATH, rc=1)
+        self._run(self.data, output=OUTPUT_PATH, rc=0)
+        assert_equal(rebot(OUTPUT_PATH, log=LOG_PATH, report=None), 0)
+
 
 class TestTimestampOutputs(RunningTestCase):
     output = join(TEMP, 'output-ts-*.xml')
