@@ -33,6 +33,9 @@ Should Not Be Equal
     Verify argument type message    ${tc.kws[1].msgs[0]}    unicode    int
     Verify argument type message    ${tc.kws[2].msgs[0]}    unicode    unicode
 
+Should Not Be Equal With Case Insensitivity
+    Check Test Case     ${TESTNAME}
+
 Should Not Be Equal with bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    str    str
@@ -45,6 +48,9 @@ Should Be Equal
     Verify argument type message    ${tc.kws[1].msgs[0]}    int    int
     Verify argument type message    ${tc.kws[2].msgs[0]}    str    str
     Verify argument type message    ${tc.kws[3].msgs[0]}    unicode    unicode
+
+Should Be Equal With Case Insensitivity
+    Check Test Case    ${TESTNAME}
 
 Should Be Equal fails with values
     Check test case    ${TESTNAME}
@@ -114,9 +120,15 @@ Should Not Be Equal As Strings
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    float
 
+Should Not Be Equal As Strings With Case Insensitivity
+    Check Test Case    ${TESTNAME}
+
 Should Be Equal As Strings
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    int    unicode
+
+Should Be Equal As Strings With Case Insensitivity
+    Check Test Case     ${TESTNAME}
 
 Should Be Equal As Strings Multiline
     [Tags]    no-python26    # diff contains extra spaces on python 2.6
@@ -125,8 +137,15 @@ Should Be Equal As Strings Multiline
 Should Not Start With
     Check test case    ${TESTNAME}
 
+Should Not Start With Case Insensitive
+    [Tags]      ShouldNot
+    Check Test Case    ${TESTNAME}
+
 Should Start With
     Check test case    ${TESTNAME}
+
+Should Start With Case Insensitive
+    Check Test Case    ${TESTNAME}
 
 Should Start With without values
     Check test case    ${TESTNAME}
@@ -137,11 +156,20 @@ Should Not End With
 Should End With
     Check test case    ${TESTNAME}
 
+Should Not End With Case Insensitive
+    Check Test Case    ${TESTNAME}
+
+Should End With Case Insensitive
+    Check Test Case    ${TESTNAME}
+
 Should End With without values
     Check test case    ${TESTNAME}
 
 Should Not Contain
     Check test case    ${TESTNAME}
+
+Should Not Contain With Case Insensitivity
+    Check Test Case    ${TESTNAME}
 
 Should Not Contain With Non-String Values
     Check test case    ${TESTNAME}
@@ -149,14 +177,23 @@ Should Not Contain With Non-String Values
 Should Contain
     Check test case    ${TESTNAME}
 
+Should Contain With Case Insensitivity
+    Check Test Case     ${TESTNAME}
+
 Should Contain With Non-String Values
     Check test case    ${TESTNAME}
 
 Should Not Match
     Check test case    ${TESTNAME}
 
+Should Not Match With Case Insensitivity
+    Check Test Case    ${TESTNAME}
+
 Should Match
     Check test case    ${TESTNAME}
+
+Should Match With Case Insensitivity
+    Check Test Case    ${TESTNAME}
 
 Should Match with bytes containing non-ascii characters
     Check test case    ${TESTNAME}
@@ -226,6 +263,9 @@ Should Contain X Times With String
     Check Log Message    ${tc.kws[0].msgs[0]}    Item found from the first item 2 times
     Check Log Message    ${tc.kws[1].msgs[0]}    Item found from the first item 1 time
     Check Log Message    ${tc.kws[3].msgs[0]}    Item found from the first item 0 times
+
+Should Contain X Times With Case Insensitivity
+    Check Test Case     ${TESTNAME}
 
 Should Contain X Times With List
     ${tc} =    Check test case    ${TESTNAME}

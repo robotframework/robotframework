@@ -68,11 +68,20 @@ Should Not Be Equal
     ${STR1}    ${INT1}
     ${STR1}    1
 
+Should Not Be Equal With Case Insensitivity
+    [Template]      Should Not Be Equal
+    test value      TEST VALUE1      ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
+
 Should Not Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} == ${BYTES WITH NON ASCII}
     Should Not Be Equal    ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
     Should Not Be Equal    ${BYTES WITH NON ASCII}    unicode
     Should Not Be Equal    ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
+
+Should Be Equal With Case Insensitivity
+    Should Be Equal     "test value"     "TEST VALUE"     ignore_case=True
+    Should Be Equal As Strings  "test value"     "TEST VALUE"     ignore_case=True
 
 Should Be Equal
     [Documentation]    FAIL Error message: A != B
@@ -81,6 +90,11 @@ Should Be Equal
     ${INT1}    ${1}
     ${BYTES WITHOUT NON ASCII}    ${BYTES WITHOUT NON ASCII}
     A    B    Error message    values=yes
+
+Should Be Equal With Case Insensitivity
+    [Template]  Should Be Equal
+    test value      TEST VALUE      ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää yötä      ignore_case=True
 
 Should Be Equal fails with values
     [Documentation]    FAIL Several failures occurred:\n\n 1) 3: 1 != 2\n\n 2) c: a != b\n\n 3) z: x != y
@@ -211,12 +225,22 @@ Should Not Be Equal As Strings
     False    ${True}
     bar    bar    These strings most certainly should not be equal    False
 
+Should Not Be Equal As Strings With Case Insensitivity
+    [Template]  should not be equal as strings
+    test value      TEST VALUE1      ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
+
 Should Be Equal As Strings
     [Documentation]    FAIL foo != bar
     [Template]    Should Be Equal As Strings
     ${1}    1
     ${None}    None
     foo    bar
+
+Should Be Equal As Strings With Case Insensitivity
+    [Template]  should be equal as strings
+    test value      TEST VALUE      ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää yötä      ignore_case=True
 
 Should Be Equal As Strings Multiline
     [Documentation]    FAIL Multiline strings are different:
@@ -236,12 +260,23 @@ Should Not Start With
     Hello, world!    HELLO
     Hello, world!    Hello
 
+Should Not Start With Case Insensitive
+    [Documentation]    FAIL 'Hello, world!' starts with 'HELLO'
+    [Template]  Should Not Start With
+    Hello, world!    Hi     ignore_case=True
+    Hello, world!    HELLO  ignore_case=True
+
 Should Start With
     [Documentation]    FAIL My message: '${LONG}' does not start with 'Does not start'
     [Template]    Should Start With
     Hello, world!    Hello
     Hello, world!    Hello, world!
     ${LONG}    Does not start    My message    values=true
+
+Should Start With Case Insensitive
+    [Template]  Should Start With
+    Hello, world!    HELLO      ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää      ignore_case=True
 
 Should Start With without values
     [Documentation]    FAIL My message
@@ -252,6 +287,12 @@ Should Not End With
     [Template]    Should Not End With
     Hello!    Hello
     Hillo!    !    Message only    No Values
+
+Should Not End With Case Insensitive
+    [Template]  Should Not End With
+    Hello!    Hello
+    test value      VALU      ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää     ignore_case=True
 
 Should End With without values
     [Documentation]    FAIL My message
@@ -264,11 +305,25 @@ Should End With
     Hello, world!    Hello, world!
     Hello, world!    ?
 
+Should End With Case Insensitive
+    [Template]    Should End With
+    test value      VALUE      ignore_case=True
+    Hello, world!    WORLD!     ignore_case=True
+    HYVÄÄ YÖTÄ      yötä      ignore_case=True
+
 Should Not Contain
     [Documentation]    FAIL 'Hello yet again' contains 'yet'
     [Template]    Should Not Contain
     Hello again    yet
     Hello yet again    yet
+
+Should Not Contain With Case Insensitivity
+    [Documentation]    FAIL 'Hello yet again' contains 'YET'
+    [Template]  Should Not Contain
+    Hello again    yet  ignore_case=True
+    test value      VALUE1      ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää1     ignore_case=True
+    Hello yet again    YET  ignore_case=True
 
 Should Not Contain With Non-String Values
     [Documentation]    FAIL '(1, 2)' contains '1'
@@ -285,6 +340,11 @@ Should Contain
     abcdefg    abcdefg    Massage
     abcdefg    ABCDEFG    Message
 
+Should Contain With Case Insensitivity
+    [Template]      Should Contain
+    testvalue      ES      ignore_case=True
+    HYVÄÄYÖTÄ      ää      ignore_case=True
+
 Should Contain With Non-String Values
     [Documentation]    FAIL '{'a': 1}' does not contain 'c'
     ${list}    ${tuple}    ${dict} =    Evaluate    ['a'], (1,2), {'a':1}
@@ -299,10 +359,23 @@ Should Not Match
     Should Not Match    Case matters    case matters
     Should Not Match    Hello world    ?ello*
 
+Should Not Match With Case Insensitivity
+    [Documentation]  FAIL 'Hello world' matches '?ELLO*'
+    [Template]  Should Not Match
+    this string does not    match this pattern  ignore_case=True
+    Case does not matter    case does not matters   ignore_case=True
+    Hello world    ?ELLO*   ignore_case=True
+
 Should Match
     [Documentation]    FAIL Failure: 'NOK' does not match 'OK'
     Should Match    abcdefghijklmnopqrstuvwxyz    ?*?efg*p*t?vw*z
     Should Match    NOK    OK    Failure
+
+Should Match With Case Insensitivity
+    [Template]  Should Match
+    abcdefghijklmnopqrstuvwxyz    ?*?EFG*P*T?VW*Z   ignore_case=True
+    test value      TEST?*?UE      ignore_case=True
+    HYVÄÄ YÖTÄ      HYV?ä *tä      ignore_case=True
 
 Should Match with bytes containing non-ascii characters
     [Documentation]    FAIL '${BYTES WITH NON ASCII}' does not match 'aaappaa'
@@ -425,6 +498,12 @@ Should Contain X Times With String
     Should Contain X Times    hello    ello    1
     Should Contain X Times    hello    hello    1
     Should Contain X Times    hello    x    0
+
+Should Contain X Times With Case Insensitivity
+    Should Contain X Times    hello    L    2   ignore_case=True
+    Should Contain X Times    hello    ELLO    1    ignore_case=True
+    Should Contain X Times    hello    HELLO    1   ignore_case=True
+    Should Contain X Times    hello    X    0   ignore_case=True
 
 Should Contain X Times With List
     Should Contain X Times    ${LIST}    cee    1
