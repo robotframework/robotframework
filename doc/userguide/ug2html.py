@@ -90,26 +90,22 @@ VARIANTS = {
 from docutils import nodes
 from docutils.parsers.rst import directives
 
-from pygments import highlight
-from pygments.lexers import get_lexer_by_name, TextLexer
+from pygments import highlight, __version__ as pygments_version
+from pygments.lexers import get_lexer_by_name
+
+
+pygments_version = tuple(int(v) for v in pygments_version.split('.')[:2])
+if pygments_version < (2, 1):
+    sys.exit('Pygments version 2.1 or newer is required.')
 
 
 def pygments_directive(name, arguments, options, content, lineno,
                        content_offset, block_text, state, state_machine):
     try:
-        if arguments[0] == 'robotframework':
-            try:
-                from robotframeworklexer import RobotFrameworkLexer
-                lexer = RobotFrameworkLexer()
-            except ImportError:
-                sys.exit('RobotFrameworkLexer needed for syntax highlighting '
-                         'until Pygments version with RF 2.9 syntax is released.\n\n'
-                         '\tpip install -U robotframeworklexer')
-        else:
-            lexer = get_lexer_by_name(arguments[0])
-    except ValueError:
-        # no lexer found - use the text one instead of an exception
-        lexer = TextLexer()
+        lexer = get_lexer_by_name(arguments[0])
+    except ValueError as err:
+        raise ValueError('Invalid syntax highlighting language "%s".'
+                         % arguments[0])
     # take an arbitrary option if more than one is given
     formatter = options and VARIANTS[options.keys()[0]] or DEFAULT
     # possibility to read the content from an external file
