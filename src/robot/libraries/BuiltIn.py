@@ -613,16 +613,17 @@ class _Verify(_BuiltInBase):
         for example, string ``false`` or ``no values``. See `Boolean arguments`
         section for more details.
 
-        ``ignore_case`` is False by default.  It is a boolean value, and if True
-        indicates that 'first' and 'second' should be compared case-insensitively,
-        provided that 'first' and 'second' are string types.
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``first`` and ``second`` should be compared case-insensitively,
+        provided that ``first`` and ``second`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
 
         If both arguments are multiline strings, the comparison is done using
         `multiline string comparisons`.
         """
-        if ignore_case and is_string(first) and is_string(second):
-            first = str(first).lower()
-            second = str(second).lower()
+        if is_truthy(ignore_case) and is_string(first) and is_string(second):
+            first = first.lower()
+            second = second.lower()
         self._log_types_at_info_if_different(first, second)
         self._should_be_equal(first, second, msg, values)
 
@@ -653,12 +654,20 @@ class _Verify(_BuiltInBase):
     def _include_values(self, values):
         return is_truthy(values) and str(values).upper() != 'NO VALUES'
 
-    def should_not_be_equal(self, first, second, msg=None, values=True):
+    def should_not_be_equal(self, first, second, msg=None, values=True, ignore_case=False):
         """Fails if the given objects are equal.
+
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``first`` and ``second`` should be compared case-insensitively,
+        provided that ``first`` and ``second`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
+        if is_truthy(ignore_case) and is_string(first) and is_string(second):
+            first = first.lower()
+            second = second.lower()
         self._log_types_at_info_if_different(first, second)
         self._should_not_be_equal(first, second, msg, values)
 
@@ -752,14 +761,22 @@ class _Verify(_BuiltInBase):
         second = self._convert_to_number(second, precision)
         self._should_be_equal(first, second, msg, values)
 
-    def should_not_be_equal_as_strings(self, first, second, msg=None, values=True):
+    def should_not_be_equal_as_strings(self, first, second, msg=None, values=True, ignore_case=False):
         """Fails if objects are equal after converting them to strings.
+
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``first`` and ``second`` should be compared case-insensitively,
+        provided that ``first`` and ``second`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
         self._log_types_at_info_if_different(first, second)
         first, second = [self._convert_to_string(i) for i in (first, second)]
+        if is_truthy(ignore_case) and is_string(first) and is_string(second):
+            first = first.lower()
+            second = second.lower()
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True, ignore_case=False):
@@ -768,76 +785,129 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
 
-        ``ignore_case`` is False by default.  Indicates whether the resulting strings
-        should be compared case-insensitively
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``first`` and ``second`` should be compared case-insensitively,
+        provided that ``first`` and ``second`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
 
         If both arguments are multiline strings, the comparison is done using
         `multiline string comparisons`.
         """
         self._log_types_at_info_if_different(first, second)
         first, second = [self._convert_to_string(i) for i in (first, second)]
-        if ignore_case:
-            first = str(first).lower()
-            second = str(second).lower()
+        if is_truthy(ignore_case) and is_string(first) and is_string(second):
+            first = first.lower()
+            second = second.lower()
         self._should_be_equal(first, second, msg, values)
 
-    def should_not_start_with(self, str1, str2, msg=None, values=True):
+    def should_not_start_with(self, str1, str2, msg=None, values=True, ignore_case=False):
         """Fails if the string ``str1`` starts with the string ``str2``.
+
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``str1`` and ``str2`` should be compared case-insensitively,
+        provided that ``str1`` and ``str2`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        if str1.startswith(str2):
+        prv_str1 = str1
+        prv_str2 = str2
+        if is_truthy(ignore_case) and is_string(str1) and is_string(str2):
+            prv_str1 = str1.lower()
+            prv_str2 = str2.lower()
+        if prv_str1.startswith(prv_str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'starts with'))
 
-    def should_start_with(self, str1, str2, msg=None, values=True):
+    def should_start_with(self, str1, str2, msg=None, values=True, ignore_case=False):
         """Fails if the string ``str1`` does not start with the string ``str2``.
+
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``str1`` and ``str2`` should be compared case-insensitively,
+        provided that ``str1`` and ``str2`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        if not str1.startswith(str2):
+        prv_str1 = str1
+        prv_str2 = str2
+        if is_truthy(ignore_case) and is_string(str1) and is_string(str2):
+            prv_str1 = str1.lower()
+            prv_str2 = str2.lower()
+        if not prv_str1.startswith(prv_str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not start with'))
 
-    def should_not_end_with(self, str1, str2, msg=None, values=True):
+    def should_not_end_with(self, str1, str2, msg=None, values=True, ignore_case=False):
         """Fails if the string ``str1`` ends with the string ``str2``.
+
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``str1`` and ``str2`` should be compared case-insensitively,
+        provided that ``str1`` and ``str2`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
+        if is_truthy(ignore_case) and is_string(str1) and is_string(str2):
+            str1 = str1.lower()
+            str2 = str2.lower()
         if str1.endswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'ends with'))
 
-    def should_end_with(self, str1, str2, msg=None, values=True):
+    def should_end_with(self, str1, str2, msg=None, values=True, ignore_case=False):
         """Fails if the string ``str1`` does not end with the string ``str2``.
+
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``str1`` and ``str2`` should be compared case-insensitively,
+        provided that ``str1`` and ``str2`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
+        if is_truthy(ignore_case) and is_string(str1) and is_string(str2):
+            str1 = str1.lower()
+            str2 = str2.lower()
         if not str1.endswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not end with'))
 
-    def should_not_contain(self, container, item, msg=None, values=True):
+    def should_not_contain(self, container, item, msg=None, values=True, ignore_case=False):
         """Fails if ``container`` contains ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
         operator. See `Should Be Equal` for an explanation on how to override
         the default error message with ``msg`` and ``values``.
 
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``container`` and ``item`` should be compared case-insensitively,
+        provided that ``container`` and ``item`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
+
         Examples:
         | Should Not Contain | ${output}    | FAILED |
         | Should Not Contain | ${some list} | value  |
         """
-        if item in container:
+        prv_container = container
+        prv_item = item
+        if is_truthy(ignore_case) and is_string(container) and is_string(item):
+            prv_container = container.lower()
+            prv_item = item.lower()
+        if prv_item in prv_container:
             raise AssertionError(self._get_string_msg(container, item, msg,
                                                       values, 'contains'))
 
-    def should_contain(self, container, item, msg=None, values=True):
+    def should_contain(self, container, item, msg=None, values=True, ignore_case=False):
         """Fails if ``container`` does not contain ``item`` one or more times.
+
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``container`` and ``item`` should be compared case-insensitively,
+        provided that ``container`` and ``item`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
 
         Works with strings, lists, and anything that supports Python's ``in``
         operator. See `Should Be Equal` for an explanation on how to override
@@ -847,22 +917,33 @@ class _Verify(_BuiltInBase):
         | Should Contain | ${output}    | PASS  |
         | Should Contain | ${some list} | value |
         """
+        if is_truthy(ignore_case) and is_string(container) and is_string(item):
+            container = container.lower()
+            item = item.lower()
         if item not in container:
             raise AssertionError(self._get_string_msg(container, item, msg,
                                                       values, 'does not contain'))
 
-    def should_contain_x_times(self, item1, item2, count, msg=None):
+    def should_contain_x_times(self, item1, item2, count, msg=None, ignore_case=False):
         """Fails if ``item1`` does not contain ``item2`` ``count`` times.
 
         Works with strings, lists and all objects that `Get Count` works
         with. The default error message can be overridden with ``msg`` and
         the actual count is always logged.
 
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``item1`` and ``item2`` should be compared case-insensitively,
+        provided that ``item1`` and ``item2`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
+
         Examples:
         | Should Contain X Times | ${output}    | hello  | 2 |
         | Should Contain X Times | ${some list} | value  | 3 |
         """
         count = self._convert_to_integer(count)
+        if is_truthy(ignore_case) and is_string(item1) and is_string(item2):
+            item1 = item1.lower()
+            item2 = item2.lower()
         x = self.get_count(item1, item2)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
@@ -889,31 +970,51 @@ class _Verify(_BuiltInBase):
         self.log('Item found from the first item %d time%s' % (count, s(count)))
         return count
 
-    def should_not_match(self, string, pattern, msg=None, values=True):
+    def should_not_match(self, string, pattern, msg=None, values=True, ignore_case=False):
         """Fails if the given ``string`` matches the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell, and it is
         always case-sensitive. In the pattern ``*`` matches to anything and
         ``?`` matches to any single character.
 
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``first`` and ``second`` should be compared case-insensitively,
+        provided that ``first`` and ``second`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
+
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        if self._matches(string, pattern):
+        prv_string = string
+        prv_pattern = pattern
+        if is_truthy(ignore_case) and is_string(string) and is_string(pattern):
+            prv_string = string.lower()
+            prv_pattern = pattern.lower()
+        if self._matches(prv_string, prv_pattern):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
 
-    def should_match(self, string, pattern, msg=None, values=True):
+    def should_match(self, string, pattern, msg=None, values=True, ignore_case=False):
         """Fails unless the given ``string`` matches the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell, and it is
         always case-sensitive. In the pattern, ``*`` matches to anything and
         ``?`` matches to any single character.
 
+        ``ignore_case`` is False by default.  If True, it indicates that
+        ``string`` and ``pattern`` should be compared case-insensitively,
+        provided that ``string`` and ``pattern`` are string types.  See `Boolean
+        arguments` section for more details.  (New in RF 3.0.1)
+
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        if not self._matches(string, pattern):
+        prv_string = string
+        prv_pattern = pattern
+        if is_truthy(ignore_case) and is_string(string) and is_string(pattern):
+            prv_string = string.lower()
+            prv_pattern = pattern.lower()
+        if not self._matches(prv_string, prv_pattern):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
 
