@@ -401,12 +401,12 @@ What methods are considered keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When the static library API is used, Robot Framework uses reflection
-to find out what public methods the library class or module
-implements. It will exclude all methods starting with an underscore,
-and with Java libraries also methods that are implemented only in
-`java.lang.Object` are ignored. All the methods that are not
-ignored are considered keywords. For example, the Python and Java
-libraries below implement single keyword :name:`My Keyword`.
+to find out what public methods the library class or module contains.
+It will exclude all methods starting with an underscore, and with Java
+libraries also methods implemented only in the implicit base class
+`java.lang.Object`. All the methods that are not ignored are considered
+keywords. For example, the Python and Java libraries below implement
+a single keyword :name:`My Keyword`.
 
 .. sourcecode:: python
 
@@ -431,32 +431,54 @@ libraries below implement single keyword :name:`My Keyword`.
         }
     }
 
-When the library is implemented as a Python module, it is also
-possible to limit what methods are keywords by using Python's
-`__all__` attribute. If `__all__` is used, only methods
-listed in it can be keywords. For example, the library below
-implements keywords :name:`Example Keyword` and :name:`Second
-Example`. Without `__all__`, it would implement also keywords
-:name:`Not Exposed As Keyword` and :name:`Current Thread`. The most
-important usage for `__all__` is making sure imported helper
-methods, such as `current_thread` in the example below, are not
-accidentally exposed as keywords.
+When implementing a library as a Python or Java class, also methods in
+possible base classes are considered keywords. When implementing a library
+as a Python module, also possible functions imported into the module namespace
+become keywords. For example, if the module below would be used as a library,
+it would contain keywords :name:`Example Keyword`, :name:`Second Example` and
+also :name:`Current Thread`.
 
 .. sourcecode:: python
 
    from threading import current_thread
 
-   __all__ = ['example_keyword', 'second_example']
 
    def example_keyword():
-       if current_thread().name == 'MainThread':
-           print 'Running in main thread'
+       print 'Running in thread "%s".' % current_thread().name
+
+   def second_example():
+       pass
+
+A simple way to avoid imported functions becoming keywords is to only
+import modules (e.g. `import threading`) and use functions via the module
+(e.g `threading.current_thread()`). Alternatively functions could be
+given an alias starting with an underscore at the import time (e.g.
+`from threading import current_thread as _current_thread`).
+
+A more explicit way to limit what functions become keywords is using
+the module level `__all__` attribute that `Python itself uses for similar
+purposes`__. If it is used, only the listed functions can be keywords.
+For example, the library below implements only keywords
+:name:`Example Keyword` and :name:`Second Example`.
+
+.. sourcecode:: python
+
+   from threading import current_thread
+
+
+   __all__ = ['example_keyword', 'second_example']
+
+
+   def example_keyword():
+       print 'Running in thread "%s".' % current_thread().name
 
    def second_example():
        pass
 
    def not_exposed_as_keyword():
        pass
+
+__ https://docs.python.org/2/tutorial/modules.html#importing-from-a-package
 
 Keyword names
 ~~~~~~~~~~~~~
