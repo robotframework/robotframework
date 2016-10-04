@@ -149,6 +149,8 @@ normal status rc.
           Robot Framework 2.9. In earlier versions options accepting no
           values could be disabled by using the exact same option again.
 
+.. _wildcards:
+
 Simple patterns
 ~~~~~~~~~~~~~~~
 
