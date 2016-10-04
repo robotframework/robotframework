@@ -52,6 +52,13 @@ contain possible arguments to the specified keyword.
        ${value} =    Get Some Value
        Should Be Equal    ${value}    Expected value
 
+.. note:: Although test case names can contain any character, using `?` and
+          especially `*` is not generally recommended because they are
+          considered to be `wildcards`_ when `selecting test cases`_.
+          For example, trying to run only a test with name :name:`Example *`
+          like `--test 'Example *'` will actually run any test starting with
+          :name:`Example`.
+
 Settings in the Test Case table
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
