@@ -103,19 +103,18 @@ def plural_or_not(item):
 
 
 def seq2str(sequence, quote="'", sep=', ', lastsep=' and '):
-    """Returns sequence in format 'item 1', 'item 2' and 'item 3'"""
-    quote_elem = lambda string: quote + unic(string) + quote
+    """Returns sequence in format `'item 1', 'item 2' and 'item 3'`."""
+    sequence = [quote + unic(item) + quote for item in sequence]
     if not sequence:
         return ''
     if len(sequence) == 1:
-        return quote_elem(sequence[0])
-    elems = [quote_elem(s) for s in sequence[:-2]]
-    elems.append(quote_elem(sequence[-2]) + lastsep + quote_elem(sequence[-1]))
-    return sep.join(elems)
+        return sequence[0]
+    last_two = lastsep.join(sequence[-2:])
+    return sep.join(sequence[:-2] + [last_two])
 
 
 def seq2str2(sequence):
-    """Returns sequence in format [ item 1 | item 2 | ... ] """
+    """Returns sequence in format `[ item 1 | item 2 | ... ]`."""
     if not sequence:
         return '[ ]'
     return '[ %s ]' % ' | '.join(unic(item) for item in sequence)
