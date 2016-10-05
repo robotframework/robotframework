@@ -838,6 +838,66 @@ class _Verify(_BuiltInBase):
             raise AssertionError(self._get_string_msg(container, item, msg,
                                                       values, 'does not contain'))
 
+    def should_contain_any(self, container, *items, **configuration):
+        """Fails if ``container`` does not contain any of the ``*items``.
+
+        Works with strings, lists, and anything that supports Python's ``in``
+        operator. See `Should Be Equal` for an explanation on how to override
+        the default error message with ``msg=`` and ``values=``. Both arguments
+        must be given after all ``*items`` and use ``name=value`` syntax.
+
+        Note that possible equal signs in ``*items`` must be escaped
+        with a backslash (e.g. ``name\=value``) to avoid them to be passed in
+        as ``**configuration``.
+
+        Examples:
+        | Should Contain Any | ${some list} | item 1 | item 2 |
+        | Should Contain Any | ${string} | substring | letter | punctuation! |
+        | Should Contain Any | ${container} | item 1 | ... | item n | msg=Keyword Failed | values=False |
+
+        New in Robot Framework 3.0.1.
+        """
+        msg = configuration.pop('msg', None)
+        values = configuration.pop('values', True)
+        if configuration:
+            raise RuntimeError("Unsupported configuration parameters were used: %s."
+                               % seq2str(configuration.keys()))
+        if not any(item in container for item in items):
+            raise AssertionError(self._get_string_msg(container,
+                                                      seq2str(items, lastsep=' or '), msg,
+                                                      values, 'does not contain any of',
+                                                      quote_str1=True, quote_str2=False))
+
+    def should_not_contain_any(self, container, *items, **configuration):
+        """Fails if ``container`` contains one or more of the ``*items``.
+
+        Works with strings, lists, and anything that supports Python's ``in``
+        operator. See `Should Be Equal` for an explanation on how to override
+        the default error message with ``msg=`` and ``values=``. Both arguments
+        must be given after all ``*items`` and use ``name=value`` syntax.
+
+        Note that possible equal signs in ``*items`` must be escaped
+        with a backslash (e.g. ``name\=value``) to avoid them to be passed in
+        as ``**configuration``.
+
+        Examples:
+        | Should Not Contain Any | ${some list} | item 1 | item 2 |
+        | Should Not Contain Any | ${string} | substring | letter | punctuation! |
+        | Should Not Contain Any | ${container} | item 1 | ... | item n | msg=Keyword Failed | values=False |
+
+        New in Robot Framework 3.0.1.
+        """
+        msg = configuration.pop('msg', None)
+        values = configuration.pop('values', True)
+        if configuration:
+            raise RuntimeError("Unsupported configuration parameters were used: %s."
+                               % seq2str(configuration.keys()))
+        if any(item in container for item in items):
+            raise AssertionError(self._get_string_msg(container,
+                                                      seq2str(items, lastsep=' or '), msg,
+                                                      values, 'contains one or more of',
+                                                      quote_str1=True, quote_str2=False))
+
     def should_contain_x_times(self, item1, item2, count, msg=None):
         """Fails if ``item1`` does not contain ``item2`` ``count`` times.
 
@@ -1050,13 +1110,20 @@ class _Verify(_BuiltInBase):
         if self.get_length(item) == 0:
             raise AssertionError(msg or "'%s' should not be empty." % item)
 
-    def _get_string_msg(self, str1, str2, msg, values, delim):
-        default = "'%s' %s '%s'" % (unic(str1), delim, unic(str2))
+    def _get_string_msg(self, str1, str2, msg, values, delim, quote_str1=True, quote_str2=True):
+        default = "%s %s %s" % (self._quotes(unic(str1), quote_str1),
+                                delim,
+                                self._quotes(unic(str2), quote_str2))
         if not msg:
             msg = default
         elif self._include_values(values):
             msg = '%s: %s' % (msg, default)
         return msg
+
+    def _quotes(self, string, quotation=True):
+        if not quotation:
+            return string
+        return "'%s'" % string
 
 
 class _Variables(_BuiltInBase):

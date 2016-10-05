@@ -285,6 +285,10 @@ Should Contain
     abcdefg    abcdefg    Massage
     abcdefg    ABCDEFG    Message
 
+Should Contain With False Values Argument
+    [Documentation]    FAIL Message
+    Should Contain    abcdefg    ABCDEFG    Message    False
+
 Should Contain With Non-String Values
     [Documentation]    FAIL '{'a': 1}' does not contain 'c'
     ${list}    ${tuple}    ${dict} =    Evaluate    ['a'], (1,2), {'a':1}
@@ -292,6 +296,48 @@ Should Contain With Non-String Values
     Should Contain    ${tuple}    ${2}
     Should Contain    ${dict}    a
     Should Contain    ${dict}    c
+
+Should Contain Any
+    [Documentation]    FAIL Message: 'abcdefg' does not contain any of 'A', 'X' or 'Ф'
+    [Template]    Should Contain Any
+    abcdefg    c
+    abcdefg    a    b    e    f
+    abcdefg    e    x    y    z
+    abcdefg    A    X    Ф    msg=Message
+
+Should Contain Any With Incorrect Configuration
+    [Documentation]    FAIL Unsupported configuration parameters were used: 'bad parameter' and 'шта'.
+    Should Contain Any    abcdefg    +    \=    msg=Message    bad parameter=True    шта=?
+
+Should Contain Any With Non-String Values
+    [Documentation]    FAIL Fail Message
+    ${list}    ${tuple}    ${dict} =    Evaluate    ['a', 'b'], (1,2), {'a':1, 'b':2}
+    Should Contain Any    ${list}    a    z
+    Should Contain Any    ${tuple}    ${2}    2
+    Should Contain Any    ${dict}    a    z\=1
+    Should Contain Any    ${dict}    c    1    msg=Fail Message    values=False
+
+Should Contain Any Fails With Single Item
+    [Documentation]    FAIL 'abcdefg' does not contain any of 'A'
+    Should Contain Any    abcdefg    A
+
+Should Not Contain Any
+    [Documentation]    FAIL 'Hello yet again' contains one or more of 'yet', 'yes' or 'no'
+    [Template]    Should Not Contain Any
+    Hello again    yet    yes     no
+    Hello yet again    yet    yes    no
+
+Should Not Contain Any With Incorrect Configuration
+    [Documentation]    FAIL Unsupported configuration parameters were used: 'bad parameter'.
+    Should Not Contain Any    abcdefg    +    \=    msg=Message    bad parameter=True
+
+Should Not Contain Any With Non-String Values
+    [Documentation]    FAIL Fail Message
+    ${list}    ${tuple}    ${dict} =    Evaluate    ['a', 'b'], (1,2), {'a':1, 'b':2}
+    Should Not Contain Any    ${list}    c    d
+    Should Not Contain Any    ${tuple}    ${3}    2
+    Should Not Contain Any    ${dict}    c    z\=1
+    Should Not Contain Any    ${dict}    a    1    msg=Fail Message     values=False
 
 Should Not Match
     [Documentation]    FAIL 'Hello world' matches '?ello*'
