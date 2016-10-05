@@ -306,7 +306,7 @@ Should Contain Any
     abcdefg    A    X    Ф    msg=Message
 
 Should Contain Any With Incorrect Configuration
-    [Documentation]    FAIL Unsupported configuration parameters were used: 'bad parameter' and 'шта'.
+    [Documentation]    FAIL Unsupported configuration parameters: 'bad parameter' and 'шта'.
     Should Contain Any    abcdefg    +    \=    msg=Message    bad parameter=True    шта=?
 
 Should Contain Any With Non-String Values
@@ -328,7 +328,7 @@ Should Not Contain Any
     Hello yet again    yet    yes    no
 
 Should Not Contain Any With Incorrect Configuration
-    [Documentation]    FAIL Unsupported configuration parameters were used: 'bad parameter'.
+    [Documentation]    FAIL Unsupported configuration parameter: 'bad parameter'.
     Should Not Contain Any    abcdefg    +    \=    msg=Message    bad parameter=True
 
 Should Not Contain Any With Non-String Values

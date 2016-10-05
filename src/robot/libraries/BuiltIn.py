@@ -860,13 +860,16 @@ class _Verify(_BuiltInBase):
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
         if configuration:
-            raise RuntimeError("Unsupported configuration parameters were used: %s."
-                               % seq2str(configuration.keys()))
+            raise RuntimeError("Unsupported configuration parameter%s: %s."
+                               % (s(configuration),
+                                  seq2str(sorted(configuration))))
         if not any(item in container for item in items):
-            raise AssertionError(self._get_string_msg(container,
-                                                      seq2str(items, lastsep=' or '), msg,
-                                                      values, 'does not contain any of',
-                                                      quote_str1=True, quote_str2=False))
+            msg = self._get_string_msg(container,
+                                       seq2str(items, lastsep=' or '),
+                                       msg, values,
+                                       'does not contain any of',
+                                       quote_str2=False)
+            raise AssertionError(msg)
 
     def should_not_contain_any(self, container, *items, **configuration):
         """Fails if ``container`` contains one or more of the ``*items``.
@@ -890,13 +893,16 @@ class _Verify(_BuiltInBase):
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
         if configuration:
-            raise RuntimeError("Unsupported configuration parameters were used: %s."
-                               % seq2str(configuration.keys()))
+            raise RuntimeError("Unsupported configuration parameter%s: %s."
+                               % (s(configuration),
+                                  seq2str(sorted(configuration))))
         if any(item in container for item in items):
-            raise AssertionError(self._get_string_msg(container,
-                                                      seq2str(items, lastsep=' or '), msg,
-                                                      values, 'contains one or more of',
-                                                      quote_str1=True, quote_str2=False))
+            msg = self._get_string_msg(container,
+                                       seq2str(items, lastsep=' or '),
+                                       msg, values,
+                                       'contains one or more of',
+                                       quote_str2=False)
+            raise AssertionError(msg)
 
     def should_contain_x_times(self, item1, item2, count, msg=None):
         """Fails if ``item1`` does not contain ``item2`` ``count`` times.
