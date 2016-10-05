@@ -98,17 +98,21 @@ class TestPrettyRepr(unittest.TestCase):
             expected = repr(item)
         assert_equal(prepr(item), expected)
 
-    def test_no_u_prefix(self):
+    def test_ascii_unicode(self):
         self._verify(u'foo', "'foo'")
         self._verify(u"f'o'o", "\"f'o'o\"")
-        if PY2:
-            self._verify(u'hyv\xe4', "'hyv\\xe4'")
-        else:
-            self._verify(u'hyv\xe4', "'hyv\xe4'")
 
-    def test_b_prefix(self):
-        self._verify(b'foo', "b'foo'")
-        self._verify(b'hyv\xe4', "b'hyv\\xe4'")
+    def test_non_ascii_unicode(self):
+        self._verify(u'hyv\xe4', "'hyv\\xe4'" if PY2 else "'hyv\xe4'")
+
+    def test_ascii_bytes(self):
+        self._verify(b'ascii', "b'ascii'")
+
+    def test_non_ascii_bytes(self):
+        self._verify(b'non-\xe4scii', "b'non-\\xe4scii'")
+
+    def test_bytearray(self):
+        self._verify(bytearray(b'foo'), "bytearray(b'foo')")
 
     def test_non_strings(self):
         for inp in [1, -2.0, True, None, -2.0, (), [], {},
@@ -139,11 +143,11 @@ class TestPrettyRepr(unittest.TestCase):
 
     def test_collections(self):
         self._verify([u'foo', b'bar', 3], "['foo', b'bar', 3]")
-        self._verify([u'foo', b'bar', (u'x', b'y')], "['foo', b'bar', ('x', b'y')]")
-        self._verify({b'x': u'y'}, "{b'x': 'y'}")
+        self._verify([u'foo', b'b\xe4r', (u'x', b'y')], "['foo', b'b\\xe4r', ('x', b'y')]")
+        self._verify({u'x': b'\xe4'}, "{'x': b'\\xe4'}")
 
     def test_dotdict(self):
-        self._verify(DotDict({b'x': u'y'}), "{b'x': 'y'}")
+        self._verify(DotDict({u'x': b'\xe4'}), "{'x': b'\\xe4'}")
 
     def test_recursive(self):
         x = [1, 2]

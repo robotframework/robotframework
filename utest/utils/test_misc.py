@@ -56,14 +56,36 @@ class TestRoundup(unittest.TestCase):
                 assert_equal(type(roundup(n, d, return_type=float)), float)
 
 
-class TestMiscUtils(unittest.TestCase):
+class TestSeg2Str(unittest.TestCase):
 
-    def test_seq2str(self):
-        for seq, expected in [((), ''), ([], ''), (set(), ''),
-                              (['One'], "'One'"),
+    def _verify(self, input, expected, **config):
+        assert_equal(seq2str(input, **config), expected)
+
+    def test_empty(self):
+        for seq in [[], (), set()]:
+            self._verify(seq, '')
+
+    def test_one_or_more(self):
+        for seq, expected in [(['One'], "'One'"),
                               (['1', '2'], "'1' and '2'"),
-                              (['a', 'b', 'c', 'd'], "'a', 'b', 'c' and 'd'")]:
-            assert_equal(seq2str(seq), expected)
+                              (['a', 'b', 'c', 'd'], "'a', 'b', 'c' and 'd'"),
+                              ([u'Unicode', u'ASCII'], "'Unicode' and 'ASCII'")]:
+            self._verify(seq, expected)
+
+    def test_non_ascii_unicode(self):
+        self._verify([u'hyv\xe4'], u"'hyv\xe4'")
+
+    def test_ascii_bytes(self):
+        self._verify([b'ascii'], "'ascii'" if PY2 else "b'ascii'")
+
+    def test_non_ascii_bytes(self):
+        self._verify([b'non-\xe4scii'], "'non-\\xe4scii'")
+
+    def test_other_objects(self):
+        self._verify([None, 1, True], "'None', '1' and 'True'")
+
+
+class TestPrintableName(unittest.TestCase):
 
     def test_printable_name(self):
         for inp, exp in [('simple', 'Simple'),
