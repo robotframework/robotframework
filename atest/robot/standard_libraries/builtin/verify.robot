@@ -35,15 +35,15 @@ Should Not Be Equal
 
 Should Not Be Equal with bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}    str    str
-    Verify argument type message    ${tc.kws[1].msgs[0]}    str    unicode
-    Verify argument type message    ${tc.kws[2].msgs[0]}    str    str
+    Verify argument type message    ${tc.kws[0].msgs[0]}    bytes    bytes
+    Verify argument type message    ${tc.kws[1].msgs[0]}    bytes    unicode
+    Verify argument type message    ${tc.kws[2].msgs[0]}    bytes    bytes
 
 Should Be Equal
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    unicode
     Verify argument type message    ${tc.kws[1].msgs[0]}    int    int
-    Verify argument type message    ${tc.kws[2].msgs[0]}    str    str
+    Verify argument type message    ${tc.kws[2].msgs[0]}    bytes    bytes
     Verify argument type message    ${tc.kws[3].msgs[0]}    unicode    unicode
 
 Should Be Equal fails with values
@@ -70,13 +70,12 @@ Should Equal Dictionaries Of Different Type With Same Keys Works
 
 Should Be Equal with bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}    str    str
-    Verify argument type message    ${tc.kws[1].msgs[0]}    str    str
+    Verify argument type message    ${tc.kws[0].msgs[0]}    bytes    bytes
+    Verify argument type message    ${tc.kws[1].msgs[0]}    bytes    bytes
 
 Should Be Equal with unicode and bytes with non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
-    Verify argument type message    ${tc.kws[0].msgs[0]}    str    unicode
-    Verify argument type message    ${tc.kws[1].msgs[0]}    str    unicode
+    Verify argument type message    ${tc.kws[0].msgs[0]}    bytes    unicode
 
 Should Be Equal When Types Differ But String Representations Are Same
     ${tc}=    Check test case    ${TESTNAME}
@@ -179,10 +178,15 @@ Should Not Contain Any With Non-String Values
 Should Not Match
     Check test case    ${TESTNAME}
 
+Should Not Match with bytes containing non-ascii characters
+    [Tags]    no-ipy
+    Check test case    ${TESTNAME}
+
 Should Match
     Check test case    ${TESTNAME}
 
 Should Match with bytes containing non-ascii characters
+    [Tags]    no-ipy
     Check test case    ${TESTNAME}
 
 Should Not Match Regexp
@@ -290,12 +294,13 @@ Get Count
 *** Keywords ***
 Verify argument type message
     [Arguments]    ${msg}    ${type1}    ${type2}
-    ${type1} =    Str Type to Unicode On IronPython and Py3    ${type1}
-    ${type2} =    Str Type to Unicode On IronPython and Py3    ${type2}
+    ${type1} =    Map String Types    ${type1}
+    ${type2} =    Map String Types    ${type2}
     ${level} =    Evaluate   'DEBUG' if $type1 == $type2 else 'INFO'
     Check log message    ${msg}    Argument types are:\n<* '${type1}'>\n<* '${type2}'>    ${level}    pattern=True
 
-Str Type to Unicode On IronPython and Py3
+Map String Types
     [Arguments]    ${type}
-    Return From Keyword If    ($INTERPRETER.is_ironpython or $INTERPRETER.is_py3) and $type == "str"    unicode
+    Return From Keyword If    ($INTERPRETER.is_py2 and not $INTERPRETER.is_ironpython) and $type == "bytes"    str
+    Return From Keyword If    ($INTERPRETER.is_py3 or $INTERPRETER.is_ironpython) and $type == "str"    unicode
     Return From Keyword    ${type}
