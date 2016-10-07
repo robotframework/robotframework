@@ -132,7 +132,6 @@ Should Be Equal with bytes containing non-ascii characters
 
 Should Be Equal with unicode and bytes with non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} != this fails
-    Should be equal    ${BYTES WITHOUT NON ASCII}    hyva
     Should be equal    ${BYTES WITH NON ASCII}    this fails
 
 Should Be Equal When Types Differ But String Representations Are Same
@@ -345,14 +344,20 @@ Should Not Match
     Should Not Match    Case matters    case matters
     Should Not Match    Hello world    ?ello*
 
+Should Not Match with bytes containing non-ascii characters
+    [Documentation]    FAIL '${BYTES WITH NON ASCII}' matches '${BYTES WITH NON ASCII}'
+    Should Not Match    ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
+    Should Not Match    ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
+
 Should Match
     [Documentation]    FAIL Failure: 'NOK' does not match 'OK'
     Should Match    abcdefghijklmnopqrstuvwxyz    ?*?efg*p*t?vw*z
     Should Match    NOK    OK    Failure
 
 Should Match with bytes containing non-ascii characters
-    [Documentation]    FAIL '${BYTES WITH NON ASCII}' does not match 'aaappaa'
-    Should match    ${BYTES WITH NON ASCII}    aaappaa
+    [Documentation]    FAIL '${BYTES WITH NON ASCII}' does not match 'hyva'
+    Should match    ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
+    Should match    ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
 
 Should Not Match Regexp
     [Documentation]    FAIL 'James Bond 007' matches '^J\\w{4}\\sB[donkey]+ \\d*$'
@@ -366,8 +371,8 @@ Should Match Regexp
     Should Match Regexp    ${EMPTY}    whatever    Something failed    No values
 
 Should Match Regexp with bytes containing non-ascii characters
-    [Documentation]    FAIL '${BYTES WITH NON ASCII}' does not match 'aappaa'
-    Should Match Regexp    ${BYTES WITH NON ASCII}    aappaa
+    [Documentation]    FAIL '${BYTES WITH NON ASCII}' does not match 'hyva'
+    Should Match Regexp    ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
 
 Should Match Regexp Returns Match And Groups
     ${ret} =    Should Match Regexp    This is a multiline\nstring!!    (?im)^STR\\w+!!

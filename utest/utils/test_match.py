@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils.match import eq, Matcher, MultiMatcher
+from robot.utils import eq, Matcher, MultiMatcher, IRONPYTHON
 from robot.utils.asserts import assert_equal
 
 
@@ -87,6 +87,13 @@ class TestMatcher(unittest.TestCase):
         assert matcher.match_any(['jam', 'is', 'hillo'])
         assert not matcher.match_any(('no', 'match', 'here'))
         assert not matcher.match_any(())
+
+    def test_bytes(self):
+        if IRONPYTHON:
+            return
+        assert Matcher(b'foo').match(b'foo')
+        assert Matcher(b'f*').match(b'foo')
+        assert Matcher(b'f.*', regexp=True).match(b'foo')
 
     def _matches(self, string, pattern, **config):
         assert Matcher(pattern, **config).match(string), pattern
