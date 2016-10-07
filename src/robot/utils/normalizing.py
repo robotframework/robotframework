@@ -16,6 +16,7 @@
 import sys
 from collections import MutableMapping
 
+from .platform import PY3
 from .robottypes import is_dict_like
 
 
@@ -25,14 +26,18 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     By default string is turned to lower case and all whitespace is removed.
     Additional characters can be removed by giving them in ``ignore`` list.
     """
+    empty = type(string)()
+    if PY3 and isinstance(ignore, bytes):
+        # Iterating bytes in Python3 yields integers.
+        ignore = [bytes([i]) for i in ignore]
     if spaceless:
-        string = ''.join(string.split())
+        string = empty.join(string.split())
     if caseless:
         string = lower(string)
         ignore = [lower(i) for i in ignore]
     for ign in ignore:
         if ign in string:  # performance optimization
-            string = string.replace(ign, '')
+            string = string.replace(ign, empty)
     return string
 
 
