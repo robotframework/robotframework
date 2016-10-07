@@ -851,9 +851,9 @@ class _Verify(_BuiltInBase):
         as ``**configuration``.
 
         Examples:
-        | Should Contain Any | ${some list} | item 1 | item 2 |
-        | Should Contain Any | ${string} | substring | letter | punctuation! |
-        | Should Contain Any | ${container} | item 1 | ... | item n | msg=Keyword Failed | values=False |
+        | Should Contain Any | ${string} | substring 1 | substring 2 |
+        | Should Contain Any | ${list}   | item 1 | item 2 | item 3 |
+        | Should Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
 
         New in Robot Framework 3.0.1.
         """
@@ -863,6 +863,8 @@ class _Verify(_BuiltInBase):
             raise RuntimeError("Unsupported configuration parameter%s: %s."
                                % (s(configuration),
                                   seq2str(sorted(configuration))))
+        if not items:
+            raise RuntimeError('One or more items required.')
         if not any(item in container for item in items):
             msg = self._get_string_msg(container,
                                        seq2str(items, lastsep=' or '),
@@ -884,9 +886,9 @@ class _Verify(_BuiltInBase):
         as ``**configuration``.
 
         Examples:
-        | Should Not Contain Any | ${some list} | item 1 | item 2 |
-        | Should Not Contain Any | ${string} | substring | letter | punctuation! |
-        | Should Not Contain Any | ${container} | item 1 | ... | item n | msg=Keyword Failed | values=False |
+        | Should Not Contain Any | ${string} | substring 1 | substring 2 |
+        | Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 |
+        | Should Not Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
 
         New in Robot Framework 3.0.1.
         """
@@ -896,6 +898,8 @@ class _Verify(_BuiltInBase):
             raise RuntimeError("Unsupported configuration parameter%s: %s."
                                % (s(configuration),
                                   seq2str(sorted(configuration))))
+        if not items:
+            raise RuntimeError('One or more items required.')
         if any(item in container for item in items):
             msg = self._get_string_msg(container,
                                        seq2str(items, lastsep=' or '),
