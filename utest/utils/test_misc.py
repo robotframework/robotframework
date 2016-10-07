@@ -76,7 +76,7 @@ class TestSeg2Str(unittest.TestCase):
         self._verify([u'hyv\xe4'], u"'hyv\xe4'")
 
     def test_ascii_bytes(self):
-        self._verify([b'ascii'], "'ascii'" if PY2 else "b'ascii'")
+        self._verify([b'ascii'], "'ascii'")
 
     def test_non_ascii_bytes(self):
         self._verify([b'non-\xe4scii'], "'non-\\xe4scii'")
