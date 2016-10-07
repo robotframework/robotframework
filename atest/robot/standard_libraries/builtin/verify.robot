@@ -160,10 +160,13 @@ Should Contain Any
 Should Contain Any With Incorrect Configuration
     Check test case    ${TESTNAME}
 
-Should Contain Any With Non-String Values
+Should Contain Any With Non-String Container
     Check test case    ${TESTNAME}
 
 Should Contain Any Fails With Single Item
+    Check test case    ${TESTNAME}
+
+Should Contain Any Without Items
     Check test case    ${TESTNAME}
 
 Should Not Contain Any
@@ -172,7 +175,10 @@ Should Not Contain Any
 Should Not Contain Any With Incorrect Configuration
     Check test case    ${TESTNAME}
 
-Should Not Contain Any With Non-String Values
+Should Not Contain Any With Non-String Container
+    Check test case    ${TESTNAME}
+
+Should Not Contain Any Without Items
     Check test case    ${TESTNAME}
 
 Should Not Match

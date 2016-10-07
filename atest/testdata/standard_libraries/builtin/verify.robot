@@ -308,7 +308,7 @@ Should Contain Any With Incorrect Configuration
     [Documentation]    FAIL Unsupported configuration parameters: 'bad parameter' and 'шта'.
     Should Contain Any    abcdefg    +    \=    msg=Message    bad parameter=True    шта=?
 
-Should Contain Any With Non-String Values
+Should Contain Any With Non-String Container
     [Documentation]    FAIL Fail Message
     ${list}    ${tuple}    ${dict} =    Evaluate    ['a', 'b'], (1,2), {'a':1, 'b':2}
     Should Contain Any    ${list}    a    z
@@ -320,6 +320,10 @@ Should Contain Any Fails With Single Item
     [Documentation]    FAIL 'abcdefg' does not contain any of 'A'
     Should Contain Any    abcdefg    A
 
+Should Contain Any Without Items
+    [Documentation]    FAIL One or more items required.
+    Should Contain Any    foo
+
 Should Not Contain Any
     [Documentation]    FAIL 'Hello yet again' contains one or more of 'yet', 'yes' or 'no'
     [Template]    Should Not Contain Any
@@ -330,13 +334,17 @@ Should Not Contain Any With Incorrect Configuration
     [Documentation]    FAIL Unsupported configuration parameter: 'bad parameter'.
     Should Not Contain Any    abcdefg    +    \=    msg=Message    bad parameter=True
 
-Should Not Contain Any With Non-String Values
+Should Not Contain Any With Non-String Container
     [Documentation]    FAIL Fail Message
     ${list}    ${tuple}    ${dict} =    Evaluate    ['a', 'b'], (1,2), {'a':1, 'b':2}
     Should Not Contain Any    ${list}    c    d
     Should Not Contain Any    ${tuple}    ${3}    2
     Should Not Contain Any    ${dict}    c    z\=1
     Should Not Contain Any    ${dict}    a    1    msg=Fail Message     values=False
+
+Should Not Contain Any Without Items
+    [Documentation]    FAIL One or more items required.
+    Should Not Contain Any    foo
 
 Should Not Match
     [Documentation]    FAIL 'Hello world' matches '?ello*'
