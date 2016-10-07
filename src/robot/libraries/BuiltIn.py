@@ -868,7 +868,7 @@ class _Verify(_BuiltInBase):
                                        seq2str(items, lastsep=' or '),
                                        msg, values,
                                        'does not contain any of',
-                                       quote_str2=False)
+                                       quote_item2=False)
             raise AssertionError(msg)
 
     def should_not_contain_any(self, container, *items, **configuration):
@@ -901,7 +901,7 @@ class _Verify(_BuiltInBase):
                                        seq2str(items, lastsep=' or '),
                                        msg, values,
                                        'contains one or more of',
-                                       quote_str2=False)
+                                       quote_item2=False)
             raise AssertionError(msg)
 
     def should_contain_x_times(self, item1, item2, count, msg=None):
@@ -1116,20 +1116,16 @@ class _Verify(_BuiltInBase):
         if self.get_length(item) == 0:
             raise AssertionError(msg or "'%s' should not be empty." % item)
 
-    def _get_string_msg(self, str1, str2, msg, values, delim, quote_str1=True, quote_str2=True):
-        default = "%s %s %s" % (self._quotes(unic(str1), quote_str1),
-                                delim,
-                                self._quotes(unic(str2), quote_str2))
-        if not msg:
-            msg = default
-        elif self._include_values(values):
-            msg = '%s: %s' % (msg, default)
-        return msg
-
-    def _quotes(self, string, quotation=True):
-        if not quotation:
-            return string
-        return "'%s'" % string
+    def _get_string_msg(self, item1, item2, custom_message, include_values,
+                        delimiter, quote_item1=True, quote_item2=True):
+        if custom_message and not self._include_values(include_values):
+            return custom_message
+        item1 = "'%s'" % unic(item1) if quote_item1 else unic(item1)
+        item2 = "'%s'" % unic(item2) if quote_item2 else unic(item2)
+        default_message = '%s %s %s' % (item1, delimiter, item2)
+        if not custom_message:
+            return default_message
+        return '%s: %s' % (custom_message, default_message)
 
 
 class _Variables(_BuiltInBase):
