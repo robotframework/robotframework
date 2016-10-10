@@ -32,7 +32,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          Matcher, normalize, NormalizedDict, parse_time, prepr,
                          RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
                          secs_to_timestr, seq2str, split_from_equals, StringIO,
-                         timestr_to_secs, type_name, unic)
+                         timestr_to_secs, type_name, unic, is_list_like)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
@@ -614,9 +614,8 @@ class _Verify(_BuiltInBase):
         section for more details.
 
         ``ignore_case`` is False by default.  If True, it indicates that
-        ``first`` and ``second`` should be compared case-insensitively,
-        provided that ``first`` and ``second`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        ``first`` and ``second`` should be compared case-insensitively.  See `Boolean
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         If both arguments are multiline strings, the comparison is done using
         `multiline string comparisons`.
@@ -658,9 +657,8 @@ class _Verify(_BuiltInBase):
         """Fails if the given objects are equal.
 
         ``ignore_case`` is False by default.  If True, it indicates that
-        ``first`` and ``second`` should be compared case-insensitively,
-        provided that ``first`` and ``second`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        ``first`` and ``second`` should be compared case-insensitively.  See `Boolean
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
@@ -765,16 +763,15 @@ class _Verify(_BuiltInBase):
         """Fails if objects are equal after converting them to strings.
 
         ``ignore_case`` is False by default.  If True, it indicates that
-        ``first`` and ``second`` should be compared case-insensitively,
-        provided that ``first`` and ``second`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        ``first`` and ``second`` should be compared case-insensitively.  See `Boolean
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
         self._log_types_at_info_if_different(first, second)
         first, second = [self._convert_to_string(i) for i in (first, second)]
-        if is_truthy(ignore_case) and is_string(first) and is_string(second):
+        if is_truthy(ignore_case):
             first = first.lower()
             second = second.lower()
         self._should_not_be_equal(first, second, msg, values)
@@ -786,16 +783,15 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``.
 
         ``ignore_case`` is False by default.  If True, it indicates that
-        ``first`` and ``second`` should be compared case-insensitively,
-        provided that ``first`` and ``second`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        ``first`` and ``second`` should be compared case-insensitively.  See `Boolean
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         If both arguments are multiline strings, the comparison is done using
         `multiline string comparisons`.
         """
         self._log_types_at_info_if_different(first, second)
         first, second = [self._convert_to_string(i) for i in (first, second)]
-        if is_truthy(ignore_case) and is_string(first) and is_string(second):
+        if is_truthy(ignore_case):
             first = first.lower()
             second = second.lower()
         self._should_be_equal(first, second, msg, values)
@@ -806,17 +802,15 @@ class _Verify(_BuiltInBase):
         ``ignore_case`` is False by default.  If True, it indicates that
         ``str1`` and ``str2`` should be compared case-insensitively,
         provided that ``str1`` and ``str2`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        prv_str1 = str1
-        prv_str2 = str2
         if is_truthy(ignore_case) and is_string(str1) and is_string(str2):
-            prv_str1 = str1.lower()
-            prv_str2 = str2.lower()
-        if prv_str1.startswith(prv_str2):
+            str1 = str1.lower()
+            str2 = str2.lower()
+        if str1.startswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'starts with'))
 
@@ -826,7 +820,7 @@ class _Verify(_BuiltInBase):
         ``ignore_case`` is False by default.  If True, it indicates that
         ``str1`` and ``str2`` should be compared case-insensitively,
         provided that ``str1`` and ``str2`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
@@ -846,7 +840,7 @@ class _Verify(_BuiltInBase):
         ``ignore_case`` is False by default.  If True, it indicates that
         ``str1`` and ``str2`` should be compared case-insensitively,
         provided that ``str1`` and ``str2`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
@@ -864,7 +858,7 @@ class _Verify(_BuiltInBase):
         ``ignore_case`` is False by default.  If True, it indicates that
         ``str1`` and ``str2`` should be compared case-insensitively,
         provided that ``str1`` and ``str2`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
@@ -886,7 +880,7 @@ class _Verify(_BuiltInBase):
         ``ignore_case`` is False by default.  If True, it indicates that
         ``container`` and ``item`` should be compared case-insensitively,
         provided that ``container`` and ``item`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         Examples:
         | Should Not Contain | ${output}    | FAILED |
@@ -894,9 +888,10 @@ class _Verify(_BuiltInBase):
         """
         prv_container = container
         prv_item = item
-        if is_truthy(ignore_case) and is_string(container) and is_string(item):
-            prv_container = container.lower()
+        if is_truthy(ignore_case)and is_string(item):
             prv_item = item.lower()
+            if is_list_like(container):
+                prv_container = set([x.lower() if is_string(x) else x for x in prv_container])
         if prv_item in prv_container:
             raise AssertionError(self._get_string_msg(container, item, msg,
                                                       values, 'contains'))
@@ -907,7 +902,7 @@ class _Verify(_BuiltInBase):
         ``ignore_case`` is False by default.  If True, it indicates that
         ``container`` and ``item`` should be compared case-insensitively,
         provided that ``container`` and ``item`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         Works with strings, lists, and anything that supports Python's ``in``
         operator. See `Should Be Equal` for an explanation on how to override
@@ -934,7 +929,7 @@ class _Verify(_BuiltInBase):
         ``ignore_case`` is False by default.  If True, it indicates that
         ``item1`` and ``item2`` should be compared case-insensitively,
         provided that ``item1`` and ``item2`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         Examples:
         | Should Contain X Times | ${output}    | hello  | 2 |
@@ -978,16 +973,15 @@ class _Verify(_BuiltInBase):
         ``?`` matches to any single character.
 
         ``ignore_case`` is False by default.  If True, it indicates that
-        ``first`` and ``second`` should be compared case-insensitively,
-        provided that ``first`` and ``second`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        ``first`` and ``second`` should be compared case-insensitively.  See `Boolean
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
         prv_string = string
         prv_pattern = pattern
-        if is_truthy(ignore_case) and is_string(string) and is_string(pattern):
+        if is_truthy(ignore_case):
             prv_string = string.lower()
             prv_pattern = pattern.lower()
         if self._matches(prv_string, prv_pattern):
@@ -1004,14 +998,14 @@ class _Verify(_BuiltInBase):
         ``ignore_case`` is False by default.  If True, it indicates that
         ``string`` and ``pattern`` should be compared case-insensitively,
         provided that ``string`` and ``pattern`` are string types.  See `Boolean
-        arguments` section for more details.  (New in RF 3.0.1)
+        arguments` section for more details.  (This option is new in Robot Framework 3.0.1.)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
         prv_string = string
         prv_pattern = pattern
-        if is_truthy(ignore_case) and is_string(string) and is_string(pattern):
+        if is_truthy(ignore_case):
             prv_string = string.lower()
             prv_pattern = pattern.lower()
         if not self._matches(prv_string, prv_pattern):
