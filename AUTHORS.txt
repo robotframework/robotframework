@@ -71,4 +71,4 @@ Tim Orling                     IronPython support for `Dialogs` library (2.9.2, 
 Jozef Behran                   Fix ${TEST_MESSAGE} to reflect current test message (3.0, #2188)
 Joong-Hee Lee                  Extend 'Repeat Keyword' to support timeout (3.0, #2245)
 Anton Nikitin                  Should (Not) Contain Any (3.0.1, #2120)
-Chris Callan                   Added feature to compare case insensitively (3.0.1, #<##>)
+Chris Callan                   Added feature to compare case insensitively (3.0.1, #2461)
