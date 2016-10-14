@@ -33,6 +33,9 @@ Should Not Be Equal
     Verify argument type message    ${tc.kws[1].msgs[0]}    unicode    int
     Verify argument type message    ${tc.kws[2].msgs[0]}    unicode    unicode
 
+Should Not Be Equal With Case Insensitivity
+    Check Test Case     ${TESTNAME}
+
 Should Not Be Equal with bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    bytes    bytes
@@ -45,6 +48,9 @@ Should Be Equal
     Verify argument type message    ${tc.kws[1].msgs[0]}    int    int
     Verify argument type message    ${tc.kws[2].msgs[0]}    bytes    bytes
     Verify argument type message    ${tc.kws[3].msgs[0]}    unicode    unicode
+
+Should Be Equal With Case Insensitivity
+    Check Test Case     ${TESTNAME}
 
 Should Be Equal fails with values
     Check test case    ${TESTNAME}

@@ -92,7 +92,7 @@ Invalid syntax in UK
 
 Multiple Failures
     [Documentation]  FAIL Several failures occurred:\n\n
-    ...  1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.\n\n
+    ...  1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 5 arguments, got 1.\n\n
     ...  2) Invalid argument specification: Invalid argument syntax '${arg'.\n\n
     ...  3) Keyword 'BuiltIn.Log' expected 1 to 5 arguments, got 6.\n\n
     ...  4) No keyword with name 'Yet another non-existing keyword' found.\n\n
