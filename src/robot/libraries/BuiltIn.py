@@ -32,7 +32,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          Matcher, normalize, NormalizedDict, parse_time, prepr,
                          RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
                          secs_to_timestr, seq2str, split_from_equals, StringIO,
-                         timestr_to_secs, type_name, unic, is_list_like)
+                         timestr_to_secs, type_name, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
@@ -665,7 +665,6 @@ class _Verify(_BuiltInBase):
         are string types.  See `Boolean  arguments` section for more details.
         This option is new in Robot Framework 3.0.1.
         """
-        print("first: {0}, second: {1}".format(first, second))
         self._log_types_at_info_if_different(first, second)
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
                 first = first.lower()
