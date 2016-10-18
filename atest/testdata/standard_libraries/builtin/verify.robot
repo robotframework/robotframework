@@ -70,8 +70,9 @@ Should Not Be Equal
 
 Should Not Be Equal With Case Insensitivity
     [Template]  Should Not Be Equal
-    test value      TEST VALUE1      ignore_case=True
+    test value      TEST VALUE1     ignore_case=True
     HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
+    foo             FOO             ignore_case=False
 
 Should Not Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} == ${BYTES WITH NON ASCII}
@@ -91,6 +92,7 @@ Should Be Equal With Case Insensitivity
     [Template]  Should Be Equal
     test value      TEST VALUE      ignore_case=True
     HYVÄÄ YÖTÄ      hyvää yötä      ignore_case=True
+
 
 Should Be Equal fails with values
     [Documentation]    FAIL Several failures occurred:\n\n 1) 3: 1 != 2\n\n 2) c: a != b\n\n 3) z: x != y
