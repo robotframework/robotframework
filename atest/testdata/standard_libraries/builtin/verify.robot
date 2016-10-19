@@ -69,10 +69,11 @@ Should Not Be Equal
     ${STR1}    1
 
 Should Not Be Equal With Case Insensitivity
+    [Documentation]     FAIL foo == foo
     [Template]  Should Not Be Equal
     test value      TEST VALUE1     ignore_case=True
     HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
-    foo             FOO             ignore_case=False
+    foo             FOO             ignore_case=True
 
 Should Not Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} == ${BYTES WITH NON ASCII}
