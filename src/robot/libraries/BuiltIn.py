@@ -767,27 +767,43 @@ class _Verify(_BuiltInBase):
         second = self._convert_to_number(second, precision)
         self._should_be_equal(first, second, msg, values)
 
-    def should_not_be_equal_as_strings(self, first, second, msg=None, values=True):
+    def should_not_be_equal_as_strings(self, first, second, msg=None, values=True, ignore_case=False):
         """Fails if objects are equal after converting them to strings.
+
+        If ignore_case is True, it indicates that ``first`` and ``second`` should be
+        compared case-insensitively.  This option only applies if ``first`` and ``second``
+        are string types.  See `Boolean  arguments` section for more details.
+        This option is new in Robot Framework 3.0.1.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
         self._log_types_at_info_if_different(first, second)
         first, second = [self._convert_to_string(i) for i in (first, second)]
+        if is_truthy(ignore_case):
+            first = first.lower()
+            second = second.lower()
         self._should_not_be_equal(first, second, msg, values)
 
-    def should_be_equal_as_strings(self, first, second, msg=None, values=True):
+    def should_be_equal_as_strings(self, first, second, msg=None, values=True, ignore_case=False):
         """Fails if objects are unequal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
+
+        If ignore_case is True, it indicates that ``first`` and ``second`` should be
+        compared case-insensitively.  This option only applies if ``first`` and ``second``
+        are string types.  See `Boolean  arguments` section for more details.
+        This option is new in Robot Framework 3.0.1.
 
         If both arguments are multiline strings, the comparison is done using
         `multiline string comparisons`.
         """
         self._log_types_at_info_if_different(first, second)
         first, second = [self._convert_to_string(i) for i in (first, second)]
+        if is_truthy(ignore_case):
+            first = first.lower()
+            second = second.lower()
         self._should_be_equal(first, second, msg, values)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True):

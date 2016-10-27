@@ -220,12 +220,25 @@ Should Not Be Equal As Strings
     False    ${True}
     bar    bar    These strings most certainly should not be equal    False
 
+Should Not Be Equal As String With Case Insensitivity
+    [Documentation]  FAIL foo == foo
+    [Template]      Should Not Be Equal As Strings
+    test value      TEST VALUE1     ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
+    Foo             foo             ignore_case=True
+
 Should Be Equal As Strings
     [Documentation]    FAIL foo != bar
     [Template]    Should Be Equal As Strings
     ${1}    1
     ${None}    None
     foo    bar
+
+Should Be Equal As Strings With Case Insensitivity
+    [Template]      Should Be Equal As Strings
+    test value      TEST VALUE1     ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
+    Foo             foo             ignore_case=True
 
 Should Be Equal As Strings Multiline
     [Documentation]    FAIL Multiline strings are different:
