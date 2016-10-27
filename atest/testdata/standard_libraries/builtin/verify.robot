@@ -220,7 +220,7 @@ Should Not Be Equal As Strings
     False    ${True}
     bar    bar    These strings most certainly should not be equal    False
 
-Should Not Be Equal As String With Case Insensitivity
+Should Not Be Equal As Strings With Case Insensitivity
     [Documentation]  FAIL foo == foo
     [Template]      Should Not Be Equal As Strings
     test value      TEST VALUE1     ignore_case=True
