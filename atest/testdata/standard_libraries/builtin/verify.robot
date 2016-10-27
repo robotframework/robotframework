@@ -236,8 +236,8 @@ Should Be Equal As Strings
 
 Should Be Equal As Strings With Case Insensitivity
     [Template]      Should Be Equal As Strings
-    test value      TEST VALUE1     ignore_case=True
-    HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
+    test value      TEST VALUE      ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää yötä      ignore_case=True
     Foo             foo             ignore_case=True
 
 Should Be Equal As Strings Multiline
