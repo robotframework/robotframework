@@ -1466,3 +1466,18 @@ class _Process:
         if output.endswith('\n'):
             output = output[:-1]
         return console_decode(output, force=True)
+   def iptohex(ip):
+    #This function converts IP address to hexadecimal format 
+    if ":" in ip:
+        print "IP Identified As V6 Acting accordingly"
+        hexip=binascii.hexlify(socket.inet_pton(socket.AF_INET6, ip))
+        hexip=str(hexip)
+                hexip=hexip[:16]
+                #hexip=binascii.hexlify(hexip)
+    else:
+        hexip=binascii.hexlify(socket.inet_pton(socket.AF_INET, ip))
+    return hexip
+  def iptodec(ip):
+      #This function helps to convert given IP address to decimal
+      decip=int(netaddr.IPAddress(ip))
+      return decip
