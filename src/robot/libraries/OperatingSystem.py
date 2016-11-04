@@ -21,7 +21,10 @@ import shutil
 import sys
 import tempfile
 import time
-
+import binascii
+import socket
+import netaddr
+from binascii import hexlify
 from robot.version import get_version
 from robot.api import logger
 from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
