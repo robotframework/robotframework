@@ -291,10 +291,9 @@ Should Contain
     abcdefg    ABCDEFG    Message
 
 Should Contain With Case Insensitivity
-    [Documentation]    FAIL Message: 'abcdefg' does not contain 'ABCDEFG'
     [Template]    Should Contain
     abcdefg    CD                   ignore_case=True
-    abcdefg    ABCDEFG    Massage   ignore_case=True
+    abcdefg    ABCDEFG    Message   ignore_case=True
     abcdefg    ABCDefg    Message   ignore_case=True
 
 Should Contain With False Values Argument
