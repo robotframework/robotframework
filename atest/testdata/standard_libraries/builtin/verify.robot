@@ -269,7 +269,7 @@ Should Not Contain
     Hello again    yet
     Hello yet again    yet
 
-Should Not Contain With Case Sensitivity
+Should Not Contain With Case Insensitivity
     [Documentation]    FAIL 'Hello yet again' contains 'yet'
     [Template]    Should Not Contain
     Hello again    yet          ignore_case=True
@@ -290,7 +290,7 @@ Should Contain
     abcdefg    abcdefg    Massage
     abcdefg    ABCDEFG    Message
 
-Should Contain With Case Sensitivity
+Should Contain With Case Insensitivity
     [Documentation]    FAIL Message: 'abcdefg' does not contain 'ABCDEFG'
     [Template]    Should Contain
     abcdefg    CD                   ignore_case=True
