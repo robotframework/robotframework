@@ -1,3 +1,4 @@
+import copy
 import unittest
 from robot.utils.asserts import (assert_equal, assert_raises,
                                  assert_raises_with_msg, assert_true)
@@ -44,6 +45,22 @@ class TestTestCase(unittest.TestCase):
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, self.test, 'attr', 'value')
+
+    def test_copy_testcase(self):
+        new_case = copy.copy(self.test)
+        self.assertEqual(new_case.name, self.test.name)
+
+        new_case.name = self.test.name + '_1'
+        self.assertNotEqual(new_case.name, self.test.name)
+
+        self.assertEqual(id(new_case.tags), id(self.test.tags))
+        new_case.tags = "123"
+        self.assertNotEqual(id(new_case.tags), id(self.test.tags))
+
+    def test_deep_copy_testcase(self):
+        new_case = copy.deepcopy(self.test)
+        self.assertEqual(new_case.name, self.test.name)
+        self.assertNotEqual(id(new_case.tags), id(self.test.tags))
 
 
 class TestStringRepresentation(unittest.TestCase):
