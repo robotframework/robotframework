@@ -26,7 +26,7 @@ from robot.utils import (abspath, escape, format_time, get_link_path,
                          html_escape, is_list_like, py2to3,
                          split_args_from_name_or_path)
 
-from .gatherfailed import gather_failed_tests
+from .gatherfailed import gather_failed_tests, gather_failed_suites
 
 
 @py2to3
@@ -36,6 +36,7 @@ class _BaseSettings(object):
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
                  'ReRunFailed'      : ('rerunfailed', 'NONE'),
+                 'ReRunFailedSuites': ('rerunfailedsuites', 'NONE'),
                  'SuiteNames'       : ('suite', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
@@ -83,6 +84,7 @@ class _BaseSettings(object):
                 value = list(value) if is_list_like(value) else [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['ReRunFailed']
+        self['SuiteNames'] += self['ReRunFailedSuites']
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
@@ -92,6 +94,8 @@ class _BaseSettings(object):
     def _process_value(self, name, value):
         if name == 'ReRunFailed':
             return gather_failed_tests(value)
+        if name == 'ReRunFailedSuites':
+            return gather_failed_suites(value)
         if name == 'LogLevel':
             return self._process_log_level(value)
         if value == self._get_default_value(name):

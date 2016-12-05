@@ -73,3 +73,4 @@ Joong-Hee Lee                  Extend 'Repeat Keyword' to support timeout (3.0, 
 Anton Nikitin                  Should (Not) Contain Any (3.0.1, #2120)
 Yang Qian                      Support to copy/deepcopy model objects (3.0.1, #2484)
 Chris Callan                   Case-insensitivity support to various comparison keywords (3.0.1, #2461)
+Benjamin Einaudi               Add --rerunfailedsuites option (3.0.1, #2487)

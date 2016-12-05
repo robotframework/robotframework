@@ -125,6 +125,8 @@ Options
  -R --rerunfailed output  Select failed tests from an earlier output file to be
                           re-executed. Equivalent to selecting same tests
                           individually using --test option.
+ -S --rerunfailedsuites output  Select failed suite from an earlier output file
+                          to be re-executed (New in RF 3.0.1).
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
                           can be given as a pattern like with --include.
