@@ -210,7 +210,7 @@ Should Not Be Equal As Strings
     False    ${True}
     bar    bar    These strings most certainly should not be equal    False
 
-Should Not Be Equal As Strings With Case Inensitivity
+Should Not Be Equal As Strings With Case Insensitivity
     [Documentation]     FAIL These strings were equal
     [Template]      Should Not Be Equal As Strings
     1    ${1.1}         ignore_case=True
