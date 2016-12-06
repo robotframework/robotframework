@@ -522,6 +522,16 @@ Should Contain X Times Failing With Defined Message
     [Documentation]    FAIL My message
     Should Contain X Times    hello    nonex    3    My message
 
+Should Contain X Times With Case Insensitivity
+    [Template]      Should Contain X Times
+    hello    L    2           ignore_case=True
+    hello    eLLo    1        ignore_case=True
+    ${LIST}    cEE    1       ignore_case=True
+    ${LIST}    B    2         ignore_case=True
+    ${TUPLE3}    A    1       ignore_case=True
+    ${ARRAY3}    A    1       ignore_case=True
+    ${VECTOR3}    A    1      ignore_case=True
+
 Get Count
     [Documentation]    This keyword is already tested pretty well by Should Contain X Times keyword that uses this one as a helper. FAIL STARTS: Converting 'None' to list failed: TypeError:
     Verify Get Count    Hello, world!    o    2

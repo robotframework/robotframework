@@ -288,6 +288,9 @@ Should Contain X Times Failing With Default Message
 Should Contain X Times Failing With Defined Message
     Check test case    ${TESTNAME}
 
+Should Contain X Times With Case Insensitivity
+    Check Test Case    ${TESTNAME}
+
 Get Count
     [Documentation]    This keyword is also tested by Should (Not) Contain X Times keywords that use this keyword internally
     ${tc} =    Check test case    ${TESTNAME}
