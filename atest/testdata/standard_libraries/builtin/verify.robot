@@ -527,7 +527,9 @@ Should Contain X Times With Case Insensitivity
     hello    L    2           ignore_case=True
     hello    eLLo    1        ignore_case=True
     ["This", "is", "it"]    IS      1   ignore_case=True
+    ["This", "is", "it", 12, 22, {"a": "value", "b": 2}]    ["IS", "IT"]      1   ignore_case=True
     ${LIST}    cEE    1       ignore_case=True
+    ${LIST}    12       0     ignore_case=True
     ${LIST}    B    2         ignore_case=True
     ${TUPLE3}    A    1       ignore_case=True
 
