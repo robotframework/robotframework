@@ -32,7 +32,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          Matcher, normalize, NormalizedDict, parse_time, prepr,
                          RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
                          secs_to_timestr, seq2str, split_from_equals, StringIO,
-                         timestr_to_secs, type_name, unic, is_list_like)
+                         timestr_to_secs, type_name, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
