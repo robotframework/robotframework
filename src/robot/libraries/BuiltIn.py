@@ -926,8 +926,10 @@ class _Verify(_BuiltInBase):
         """
         count = self._convert_to_integer(count)
         if is_truthy(ignore_case):
-            item1 = item1.lower() if is_string(item1) else [x.lower() if is_string(x) else x for x in item1]
-            item2 = item2.lower() if is_string(item2) else item2
+            item1 = item1.lower() if is_string(item1) else \
+                [x.lower() if is_string(x) else x for x in item1]
+            item2 = item2.lower() if is_string(item2) else \
+                [x.lower() if is_string(x) else x for x in item2]
         x = self.get_count(item1, item2)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
