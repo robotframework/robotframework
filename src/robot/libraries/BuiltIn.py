@@ -32,7 +32,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          Matcher, normalize, NormalizedDict, parse_time, prepr,
                          RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
                          secs_to_timestr, seq2str, split_from_equals, StringIO,
-                         timestr_to_secs, type_name, unic)
+                         timestr_to_secs, type_name, unic, is_list_like)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
@@ -926,8 +926,8 @@ class _Verify(_BuiltInBase):
         """
         count = self._convert_to_integer(count)
         if is_truthy(ignore_case):
-            item1 = [x.lower() if is_string(x) else x for x in item1]
-            item2 = [x.lower() if is_string(x) else x for x in item2]
+            item1 = item1.lower() if is_string(item1) else [x.lower() if is_string(x) else x for x in item1]
+            item2 = item2.lower() if is_string(item2) else item2
         x = self.get_count(item1, item2)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
