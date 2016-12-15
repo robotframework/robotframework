@@ -788,22 +788,36 @@ class _Verify(_BuiltInBase):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not start with'))
 
-    def should_not_end_with(self, str1, str2, msg=None, values=True):
+    def should_not_end_with(self, str1, str2, msg=None, values=True, ignore_case=False):
         """Fails if the string ``str1`` ends with the string ``str2``.
+
+        If ignore_case is True, it indicates that ``str1`` and ``str2``
+        should be compared case-insensitively.  See `Boolean  arguments` section
+        for more details.  (This option is new in Robot Framework 3.0.1)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
+        if is_truthy(ignore_case):
+            str1 = str1.lower()
+            str2 = str2.lower()
         if str1.endswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'ends with'))
 
-    def should_end_with(self, str1, str2, msg=None, values=True):
+    def should_end_with(self, str1, str2, msg=None, values=True, ignore_case=False):
         """Fails if the string ``str1`` does not end with the string ``str2``.
+
+        If ignore_case is True, it indicates that ``str1`` and ``str2``
+        should be compared case-insensitively.  See `Boolean  arguments` section
+        for more details.  (This option is new in Robot Framework 3.0.1)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
+        if is_truthy(ignore_case):
+            str1 = str1.lower()
+            str2 = str2.lower()
         if not str1.endswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not end with'))
