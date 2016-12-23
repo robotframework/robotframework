@@ -68,6 +68,11 @@ Should Not Be Equal
     ${STR1}    ${INT1}
     ${STR1}    1
 
+Should Not Be Equal With Case Insensitivity
+    [Template]  Should Not Be Equal
+    test value      TEST VALUE1      ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
+
 Should Not Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} == ${BYTES WITH NON ASCII}
     Should Not Be Equal    ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
@@ -81,6 +86,11 @@ Should Be Equal
     ${INT1}    ${1}
     ${BYTES WITHOUT NON ASCII}    ${BYTES WITHOUT NON ASCII}
     A    B    Error message    values=yes
+
+Should Be Equal With Case Insensitivity
+    [Template]  Should Be Equal
+    test value      TEST VALUE      ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää yötä      ignore_case=True
 
 Should Be Equal fails with values
     [Documentation]    FAIL Several failures occurred:\n\n 1) 3: 1 != 2\n\n 2) c: a != b\n\n 3) z: x != y
@@ -210,12 +220,25 @@ Should Not Be Equal As Strings
     False    ${True}
     bar    bar    These strings most certainly should not be equal    False
 
+Should Not Be Equal As Strings With Case Insensitivity
+    [Documentation]  FAIL foo == foo
+    [Template]      Should Not Be Equal As Strings
+    test value      TEST VALUE1     ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
+    Foo             foo             ignore_case=True
+
 Should Be Equal As Strings
     [Documentation]    FAIL foo != bar
     [Template]    Should Be Equal As Strings
     ${1}    1
     ${None}    None
     foo    bar
+
+Should Be Equal As Strings With Case Insensitivity
+    [Template]      Should Be Equal As Strings
+    test value      TEST VALUE      ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää yötä      ignore_case=True
+    Foo             foo             ignore_case=True
 
 Should Be Equal As Strings Multiline
     [Documentation]    FAIL Multiline strings are different:
