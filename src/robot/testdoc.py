@@ -146,12 +146,10 @@ class TestdocModelWriter(ModelWriter):
         self._output.write('</script>\n')
 
     def write_data(self):
-        generated_time = time.localtime()
         model = {
             'suite': JsonConverter(self._output_path).convert(self._suite),
             'title': self._title,
-            'generated': format_time(generated_time, gmtsep=' '),
-            'generatedMillis': int(time.mktime(generated_time) * 1000)
+            'generated': int(time.time() * 1000)
         }
         JsonWriter(self._output).write_json('testdoc = ', model)
 

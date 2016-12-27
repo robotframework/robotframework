@@ -16,7 +16,7 @@
 import sys
 import time
 
-from robot.utils import format_time, OrderedDict, IRONPYTHON
+from robot.utils import OrderedDict, IRONPYTHON
 
 from .stringcache import StringIndex
 
@@ -37,14 +37,12 @@ class JsExecutionResult(object):
         self.split_results = split_results or []
 
     def _get_data(self, statistics, errors, basemillis):
-        gentime = time.localtime()
         return OrderedDict([
             ('stats', statistics),
             ('errors', errors),
             ('baseMillis', basemillis),
-            ('generatedMillis', int(time.mktime(gentime) * 1000 - basemillis)),
-            ('generatedTimestamp', format_time(gentime, gmtsep=' '))
-            ])
+            ('generated', int(time.time() * 1000) - basemillis)
+        ])
 
     def remove_data_not_needed_in_report(self):
         self.data.pop('errors')

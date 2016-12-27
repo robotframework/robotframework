@@ -29,6 +29,7 @@ function setTitle(suiteName, type) {
 }
 
 function addHeader() {
+    var generated = util.timestamp(window.output.generated);
     $.tmpl('<h1>${title}</h1>' +
            '<div id="generated">' +
              '<span>Generated<br>${generated}</span><br>' +
@@ -37,8 +38,8 @@ function addHeader() {
            '<div id="top-right-header">' +
              '<div id="report-or-log-link"><a href="#"></a></div>' +
            '</div>', {
-        generated: window.output.generatedTimestamp,
-        ago: util.createGeneratedAgoString(window.output.generatedMillis),
+        generated: util.createGeneratedString(generated),
+        ago: util.createGeneratedAgoString(generated),
         title: document.title
     }).appendTo($('#header'));
 }
