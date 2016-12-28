@@ -32,6 +32,10 @@ License :: OSI Approved :: Apache Software License
 Operating System :: OS Independent
 Programming Language :: Python :: 2
 Programming Language :: Python :: 3
+Programming Language :: Python :: Implementation :: CPython
+Programming Language :: Python :: Implementation :: Jython
+Programming Language :: Python :: Implementation :: IronPython
+Programming Language :: Python :: Implementation :: PyPy
 Topic :: Software Development :: Testing
 Framework :: Robot Framework
 """.strip().splitlines()
