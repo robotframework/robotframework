@@ -6,13 +6,13 @@ Library           dir_for_libs/MyLibFile2.py
 Library           dir_for_libs/lib1/Lib.py    WITH NAME    lib1
 Library           dir_for_libs/lib2/Lib.py    WITH NAME    lib2
 Library           ${MYVAR}/MyLibDir2/
-Library           MyJavaLib.java
-Library           MyJavaLib2.class
 Library           MyInvalidLibFile.py
 Library           library_import_by_path.robot
 Library           library_scope/
 Library           spaces in path/SpacePathLib.py
 Library           this_does_not_exist.py
+Library           MyJavaLib.java
+Library           MyJavaLib2.class
 
 *** Variables ***
 ${MYVAR}          ${CURDIR}${/}dir_for_libs

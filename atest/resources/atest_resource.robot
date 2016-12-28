@@ -317,3 +317,11 @@ Reset PYTHONPATH
     Remove Environment Variable    PYTHONPATH
     Remove Environment Variable    JYTHONPATH
     Remove Environment Variable    IRONPYTHONPATH
+
+Import should have failed
+    [Arguments]    ${index}    ${path}    ${message}    ${traceback}=*
+    ${path} =    Normalize Path    ${DATADIR}/${path}
+    ${error} =    Set Variable    Error in file '${path}': ${message}
+    ${error} =    Set Variable If    not $traceback    ${error}
+    ...    ${error}\nTraceback (most recent call last):\n*${traceback}*
+    Check Log Message    @{ERRORS}[${index}]    ${error}    level=ERROR    pattern=yes

@@ -38,16 +38,23 @@ Importing By Path Having Spaces
 
 Importing Invalid Python File Fails
     ${path} =    Normalize Path    ${DATADIR}/test_libraries/MyInvalidLibFile.py
-    Check Stderr Contains    Importing test library '${path}' failed: ImportError: I'm not really a library!
+    Import should have failed    1    test_libraries/library_import_by_path.robot
+    ...    Importing test library '${path}' failed: ImportError: I'm not really a library!
 
 Importing Dir Library Without Trailing "/" Fails
-    Check Stderr Contains    Importing test library 'MyLibDir' failed: ImportError:
+    Import should have failed    0    test_libraries/library_import_by_path.robot
+    ...    Importing test library 'MyLibDir' failed: ImportError: *
 
 Importing Non Python File Fails
-    Check Stderr Contains    Importing test library 'library_import_by_path.robot' failed: ImportError:
+    Import should have failed    2    test_libraries/library_import_by_path.robot
+    ...    Importing test library 'library_import_by_path.robot' failed: ImportError: *
 
 Importing Non Python Dir Fails
-    Check Stderr Contains    Test library 'library_scope' does not exist.
+    Import should have failed    3    test_libraries/library_import_by_path.robot
+    ...    Test library 'library_scope' does not exist.
+    ...    traceback=
 
 Importing Non Existing Py File
-    Check Stderr Contains    Test library 'this_does_not_exist.py' does not exist.
+    Import should have failed    4    test_libraries/library_import_by_path.robot
+    ...    Test library 'this_does_not_exist.py' does not exist.
+    ...    traceback=

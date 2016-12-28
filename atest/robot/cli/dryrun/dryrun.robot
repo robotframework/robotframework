@@ -99,9 +99,14 @@ Multiple Failures
     Check Test Case    ${TESTNAME}
 
 Invalid imports
-    Check Stderr Contains    Importing test library 'DoesNotExist' failed: ImportError:
-    Check Stderr Contains    Variable file 'wrong_path.py' does not exist
-    Check Stderr Contains    Resource file 'NonExisting.robot' does not exist
+    Import should have failed    1    cli/dryrun/dryrun.robot
+    ...    Importing test library 'DoesNotExist' failed: ImportError: *
+    Import should have failed    2    cli/dryrun/dryrun.robot
+    ...    Variable file 'wrong_path.py' does not exist.
+    ...    traceback=
+    Import should have failed    3    cli/dryrun/dryrun.robot
+    ...    Resource file 'NonExisting.robot' does not exist.
+    ...    traceback=
 
 Test from other suite
     Check Test Case    Some Other Test
