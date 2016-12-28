@@ -1,21 +1,23 @@
 *** Settings ***
-Library  OperatingSystem
-Variables  vars.py
-Resource  ${RESOURCE PATH_FROM_VARS}
+Library           OperatingSystem
+Variables         vars.py
+Resource          ${RESOURCE PATH_FROM_VARS}
 
-Library  DoesNotExist
-Variables  wrong_path.py
-Resource  NonExisting.tsv
+Library           DoesNotExist
+Variables         wrong_path.py
+Resource          NonExisting.robot
 
+# Non-existing variables in suite setups should be fine
+Suite Setup       ${SUITE SETUP}
 # Library keywords get NOT_RUN status. That should be OK teardown status.
 Suite Teardown    No Operation
 
 
 *** Variables ***
-${value}    value
+${SETUP}          No Operation
+${TEARDOWN}       Teardown
 
 *** Test Cases ***
-
 Passing keywords
     Log  Hello from test
     ${contents}=  List Directory  .
@@ -47,6 +49,16 @@ Variables are not checked in when arguments are embedded
     [Documentation]  See the doc of the previous test
     Embedded ${TESTNAME} here
     Embedded ${nonex} here
+
+Setup/teardown with non-existing variable is ignored
+    [Setup]    ${nonex setup}
+    No operation
+    [Teardown]   ${nonex teardown}    ${nonex arg}
+
+Setup/teardown with existing variable is resolved and executed
+    [Setup]    ${SETUP}
+    No operation
+    [Teardown]    ${TEARDOWN}    ${nonex arg}
 
 User keyword return value
     ${quux}=  Some Return Value  ${foo}  ${bar}
@@ -110,3 +122,7 @@ UK with multiple failures
     Invalid Syntax UK
     Log  too  many  arguments  here  we  have
     Yet another non-existing keyword
+
+Teardown
+    [Arguments]    ${arg}
+    Log    ${arg}

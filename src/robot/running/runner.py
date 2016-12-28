@@ -192,6 +192,8 @@ class Runner(SuiteVisitor):
         try:
             name = self._variables.replace_string(data.name)
         except DataError as err:
+            if self._settings.dry_run:
+                return None
             return err
         if name.upper() in ('', 'NONE'):
             return None

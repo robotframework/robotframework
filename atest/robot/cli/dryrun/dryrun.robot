@@ -46,6 +46,20 @@ Variables are not checked in when arguments are embedded
     Name and status should be    ${tc.kws[1]}    Embedded \${nonex} here    PASS
     Name and status should be    ${tc.kws[1].kws[0]}    BuiltIn.No Operation    NOT_RUN
 
+Setup/teardown with non-existing variable is ignored
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${SUITE.setup}    ${NONE}
+    Should Be Equal    ${tc.setup}    ${NONE}
+    Should Be Equal    ${tc.teardown}    ${NONE}
+
+Setup/teardown with existing variable is resolved and executed
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.setup.name}    BuiltIn.No Operation
+    Should Be Equal    ${tc.teardown.name}    Teardown
+    ${args} =    Create List    \${nonex arg}
+    Lists Should Be Equal    ${tc.teardown.args}    ${args}
+    Lists Should Be Equal    ${tc.teardown.keywords[0].name}    BuiltIn.Log
+
 User keyword return value
     Check Test Case    ${TESTNAME}
 
@@ -87,7 +101,7 @@ Multiple Failures
 Invalid imports
     Check Stderr Contains    Importing test library 'DoesNotExist' failed: ImportError:
     Check Stderr Contains    Variable file 'wrong_path.py' does not exist
-    Check Stderr Contains    Resource file 'NonExisting.tsv' does not exist
+    Check Stderr Contains    Resource file 'NonExisting.robot' does not exist
 
 Test from other suite
     Check Test Case    Some Other Test
