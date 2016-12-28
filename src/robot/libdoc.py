@@ -15,7 +15,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Module implementing the command line entry point for the `Libdoc` tool.
+"""Module implementing the command line entry point for the Libdoc tool.
 
 This module can be executed from the command line using the following
 approaches::
@@ -199,10 +199,20 @@ def libdoc_cli(arguments):
 
 
 def libdoc(library_or_resource, outfile, name='', version='', format=None):
-    """Executes libdoc.
+    """Executes Libdoc.
+
+    :param library_or_resource: Name or path of the test library or resource
+        file to be documented.
+    :param outfile: Path path to the file where to write outputs.
+    :param name: Custom name to give to the documented library or resource.
+    :param version: Version to give to the documented library or resource.
+    :param format: Documentation source format. Possible values are ``ROBOT``,
+        ``reST``, ``HTML`` and ``TEXT``. Default value is ``ROBOT`` but
+        libraries can override it themselves.
 
     Arguments have same semantics as Libdoc command line options with
-    same names.
+    same names. Run ``python -m robot.libdoc --help`` or consult the Libdoc
+    section in the Robot Framework User Guide for more details.
 
     Example::
 
