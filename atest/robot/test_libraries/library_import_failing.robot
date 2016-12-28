@@ -31,7 +31,7 @@ Initializing Fails Due To Invalid Named Argument Usage
 
 Non-existing Library
     Import Should Have Failed    5    test_libraries/library_import_failing.robot
-    ...  Importing test library 'NonExistingLibrary' failed: ImportError: *
+    ...  Importing test library 'NonExistingLibrary' failed: *Error: *
 
 Non-existing Variable In Library Name
     Import Should Have Failed    6    test_libraries/library_import_failing.robot

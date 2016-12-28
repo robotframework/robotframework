@@ -100,7 +100,7 @@ Multiple Failures
 
 Invalid imports
     Import should have failed    1    cli/dryrun/dryrun.robot
-    ...    Importing test library 'DoesNotExist' failed: ImportError: *
+    ...    Importing test library 'DoesNotExist' failed: *Error: *
     Import should have failed    2    cli/dryrun/dryrun.robot
     ...    Variable file 'wrong_path.py' does not exist.
     ...    traceback=

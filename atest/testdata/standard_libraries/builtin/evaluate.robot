@@ -25,7 +25,7 @@ Evaluate
     Evaluate    INVALID
 
 Evaluate With Modules
-    [Documentation]    FAIL REGEXP: ImportError: [Nn]o module named .*
+    [Documentation]    FAIL REGEXP: (ModuleNotFound|Import)Error: [Nn]o module named .*
     ${ceil} =    Evaluate    math.ceil(1.001)    math
     Should Be Equal    ${ceil}    ${2}
     ${random} =    Evaluate    random.randint(0, sys.maxsize)    modules=random,sys

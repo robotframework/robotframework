@@ -43,11 +43,11 @@ Importing Invalid Python File Fails
 
 Importing Dir Library Without Trailing "/" Fails
     Import should have failed    0    test_libraries/library_import_by_path.robot
-    ...    Importing test library 'MyLibDir' failed: ImportError: *
+    ...    Importing test library 'MyLibDir' failed: *Error: *
 
 Importing Non Python File Fails
     Import should have failed    2    test_libraries/library_import_by_path.robot
-    ...    Importing test library 'library_import_by_path.robot' failed: ImportError: *
+    ...    Importing test library 'library_import_by_path.robot' failed: *Error: *
 
 Importing Non Python Dir Fails
     Import should have failed    3    test_libraries/library_import_by_path.robot
