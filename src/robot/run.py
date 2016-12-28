@@ -449,14 +449,14 @@ class RobotFramework(Application):
                     if value not in (None, []))
 
 
-def run_cli(arguments):
+def run_cli(arguments, exit=True):
     """Command line execution entry point for running tests.
 
     :param arguments: Command line arguments as a list of strings.
+    :param exit: If `True`, call `sys.exit` with the return code denoting
+        execution status, otherwise just return the rc. New in 3.0.1.
 
-    For programmatic usage the :func:`run` function is typically better. It has
-    a better API for that usage and does not call :func:`sys.exit` like this
-    function.
+    For programmatic usage the :func:`run` function is typically better.
 
     Example::
 
@@ -464,7 +464,7 @@ def run_cli(arguments):
 
         run_cli(['--include', 'tag', 'path/to/tests.html'])
     """
-    RobotFramework().execute_cli(arguments)
+    return RobotFramework().execute_cli(arguments, exit=exit)
 
 
 def run(*datasources, **options):

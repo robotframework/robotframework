@@ -9,11 +9,11 @@ import logging
 from os.path import abspath, dirname, join, exists, curdir
 from os import chdir
 
-from robot import run, rebot
+from robot import run, run_cli, rebot, rebot_cli
 from robot.model import SuiteVisitor
 from robot.running import namespace
 from robot.utils import StringIO
-from robot.utils.asserts import assert_equal, assert_true
+from robot.utils.asserts import assert_equal, assert_raises, assert_true
 
 from resources.runningtestcase import RunningTestCase
 from resources.Listener import Listener
@@ -146,6 +146,14 @@ class TestRun(RunningTestCase):
                              [("[ ERROR ] Executing model modifier 'integer' "
                                "failed: AttributeError: ", 1)])
 
+    def test_run_cli_system_exits_by_default(self):
+        exit = assert_raises(SystemExit, run_cli, [self.data])
+        assert_equal(exit.code, 1)
+
+    def test_run_cli_optionally_returns_rc(self):
+        rc = run_cli([self.data], exit=False)
+        assert_equal(rc, 1)
+
 
 class TestRebot(RunningTestCase):
     data = join(ROOT, 'atest', 'testdata', 'rebot', 'created_normal.xml')
@@ -197,6 +205,14 @@ class TestRebot(RunningTestCase):
         assert_equal(rebot(self.data, outputdir=TEMP,
                            prerebotmodifier=modifier), 3)
         assert_equal(modifier.tests, ['Test 1.1', 'Test 1.2', 'Test 2.1'])
+
+    def test_rebot_cli_system_exits_by_default(self):
+        exit = assert_raises(SystemExit, rebot_cli, [self.data])
+        assert_equal(exit.code, 1)
+
+    def test_rebot_cli_optionally_returns_rc(self):
+        rc = rebot_cli([self.data], exit=False)
+        assert_equal(rc, 1)
 
 
 class TestStateBetweenTestRuns(RunningTestCase):

@@ -39,12 +39,14 @@ class Application(object):
     def validate(self, options, arguments):
         return options, arguments
 
-    def execute_cli(self, cli_arguments):
+    def execute_cli(self, cli_arguments, exit=True):
         with self._logger:
             self._logger.info('%s %s' % (self._ap.name, self._ap.version))
             options, arguments = self._parse_arguments(cli_arguments)
             rc = self._execute(arguments, options)
-        self._exit(rc)
+        if exit:
+            self._exit(rc)
+        return rc
 
     def console(self, msg):
         if msg:

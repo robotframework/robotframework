@@ -353,14 +353,14 @@ class Rebot(RobotFramework):
         return rc
 
 
-def rebot_cli(arguments):
+def rebot_cli(arguments, exit=True):
     """Command line execution entry point for running rebot.
 
     :param arguments: Command line arguments as a list of strings.
+    :param exit: If `True`, call `sys.exit` with the return code denoting
+        execution status, otherwise just return the rc. New in 3.0.1.
 
-    For programmatic usage the :func:`rebot` method is typically better. It has
-    a better API for that usage and does not call :func:`sys.exit` like this
-    method.
+    For programmatic usage the :func:`rebot` method is typically better.
 
     Example::
 
@@ -368,7 +368,7 @@ def rebot_cli(arguments):
 
         rebot_cli(['--report', 'r.html', '--log', 'NONE', 'o1.xml', 'o2.xml'])
     """
-    Rebot().execute_cli(arguments)
+    return Rebot().execute_cli(arguments, exit=exit)
 
 
 def rebot(*datasources, **options):
