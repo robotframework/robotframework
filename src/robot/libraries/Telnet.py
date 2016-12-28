@@ -720,7 +720,8 @@ class TelnetConnection(telnetlib.Telnet):
 
         See `Logging` section for more information about log levels.
         """
-        self.sock.shutdown(socket.SHUT_RDWR)
+        if self.sock:
+            self.sock.shutdown(socket.SHUT_RDWR)
         self.close()
         output = self._decode(self.read_all())
         self._log(output, loglevel)
