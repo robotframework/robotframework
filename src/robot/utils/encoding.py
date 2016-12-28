@@ -54,7 +54,9 @@ def console_encode(string, errors='replace', stream=sys.__stdout__):
     Uses console encoding if the given `stream` is a console and system
     encoding otherwise.
     """
-    encoding = CONSOLE_ENCODING if isatty(stream) else SYSTEM_ENCODING
+    encoding = getattr(stream, 'encoding', None)
+    if not encoding:
+        encoding = CONSOLE_ENCODING if isatty(stream) else SYSTEM_ENCODING
     if PY3 and encoding != 'UTF-8':
         return string.encode(encoding, errors).decode(encoding)
     if PY3 or IRONPYTHON:
