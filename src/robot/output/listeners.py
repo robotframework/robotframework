@@ -129,7 +129,9 @@ class ListenerProxy(AbstractLoggerProxy):
 
     def _import_listener(self, listener):
         if not is_string(listener):
-            return listener, type_name(listener)
+            # Modules have `__name__`, with others better to use `type_name`.
+            name = getattr(listener, '__name__') or type_name(listener)
+            return listener, name
         name, args = split_args_from_name_or_path(listener)
         importer = Importer('listener')
         listener = importer.import_class_or_module(os.path.normpath(name),

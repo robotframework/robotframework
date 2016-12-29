@@ -21,7 +21,7 @@ from robot.libraries import STDLIBS
 from robot.output import LOGGER
 from robot.utils import (getdoc, get_error_details, Importer, is_java_init,
                          is_java_method, JYTHON, normalize, seq2str2, unic,
-                         is_list_like)
+                         is_list_like, type_name)
 
 from .arguments import EmbeddedArguments
 from .context import EXECUTION_CONTEXTS
@@ -193,10 +193,20 @@ class _BaseTestLibrary(object):
     def close_global_listeners(self):
         if self.scope.is_global:
             for listener in self.get_listeners():
-                if hasattr(listener, 'close'):
-                    listener.close()
-                elif hasattr(listener, '_close'):
-                    listener._close()
+                self._close_listener(listener)
+
+    def _close_listener(self, listener):
+        method = (getattr(listener, 'close', None) or
+                  getattr(listener, '_close', None))
+        try:
+            if method:
+                method()
+        except:
+            message, details = get_error_details()
+            name = getattr(listener, '__name__', None) or type_name(listener)
+            LOGGER.error("Calling method '%s' of listener '%s' failed: %s"
+                         % (method.__name__, name, message))
+            LOGGER.info("Details:\n%s" % details)
 
     def _create_handlers(self, libcode):
         try:
