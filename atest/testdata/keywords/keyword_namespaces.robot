@@ -79,6 +79,10 @@ Keyword In More Than One Custom Library And Standard Library
     ...    ${SPACE*4}MyLibrary1.No Operation
     No Operation
 
+Keywords are first searched from test case file even if they contain dot
+    my_resource_1.Overrided in test case file with full name
+    BuiltIn.Log    Using keyword in test case file here!
+
 *** Keywords ***
 Keyword Only In Test Case File
     Log    Keyword from test case file
@@ -91,3 +95,12 @@ Keyword In TC File Overrides Others
 
 Keyword In Test Case And Resource Files
     Log    Keyword from test case file
+
+my_resource_1.Overrided in test case file with full name
+    Log    Keyword in test case file overriding keyword in my_resource_1
+    Overrided in test case file with full name    # This is from resource
+
+BuiltIn.Log
+    [Arguments]    ${arg}
+    Log    Keyword in test case file overriding keyword in BuiltIn
+    Log    ${arg}    # This is from BuiltIn

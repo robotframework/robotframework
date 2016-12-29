@@ -37,3 +37,6 @@ Using Base Keywords In Resource
     Keyword only in library 1
     mylibrary1.keyword ONLY IN library1
     M Y L I B R A R Y 1 . keywordonlyinlibrary1
+
+Overrided in test case file with full name
+    Log    Keyword in resource 1

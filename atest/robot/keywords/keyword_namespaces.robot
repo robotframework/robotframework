@@ -43,6 +43,13 @@ Keyword In More Than One Custom Library And Standard Library
     Check Test Case    ${TEST NAME}
     Check Syslog Does Not Contain    BuiltIn.No Operation
 
+Keywords are first searched from test case file even if they contain dot
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check log message    ${tc.kws[0].kws[0].msgs[0]}    Keyword in test case file overriding keyword in my_resource_1
+    Check log message    ${tc.kws[0].kws[1].kws[0].msgs[0]}    Keyword in resource 1
+    Check log message    ${tc.kws[1].kws[0].msgs[0]}    Keyword in test case file overriding keyword in BuiltIn
+    Check log message    ${tc.kws[1].kws[1].msgs[0]}    Using keyword in test case file here!
+
 *** Keywords ***
 Verify override message
     [Arguments]    ${error msg}    ${kw msg}    ${kw}    ${standard}    ${custom}=MyLibrary1
