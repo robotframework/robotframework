@@ -130,7 +130,7 @@ Multiple settings
 Invalid setting
     Check Test Case    ${TEST NAME}
     ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
-    Check Log Message    @{ERRORS}[0]
+    Check Log Message    @{ERRORS}[2]
     ...    Error in file '${path}': Invalid syntax in test case '${TEST NAME}': Non-existing setting 'Invalid'.    ERROR
 
 *** Keywords ***

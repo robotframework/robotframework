@@ -80,9 +80,11 @@ class _TestData(object):
         table.set_header(header_row)
         return table
 
+    # TODO: Remove support for deprecated tables altogether in RF 3.1.
     def _report_deprecated(self, name):
-        self.report_invalid_syntax("Table name '%s' is deprecated. Please use '%s' instead." %
-                                   (name, self._deprecated[name]), level='WARN')
+        self.report_invalid_syntax(
+            "Table name '%s' is deprecated. Please use '%s' instead."
+            % (name, self._deprecated[name]), level='WARN')
 
     @property
     def name(self):
