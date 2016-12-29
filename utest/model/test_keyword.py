@@ -1,3 +1,4 @@
+import copy
 import unittest
 from robot.utils.asserts import (assert_equal, assert_none, assert_true,
                                  assert_raises, assert_raises_with_msg)
@@ -32,6 +33,22 @@ class TestKeyword(unittest.TestCase):
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, Keyword(), 'attr', 'value')
+
+    def test_copy_keyword(self):
+        kw = Keyword()
+        kw_new = copy.copy(kw)
+        self.assertEqual(kw.name, kw_new.name)
+
+        kw_new.name = kw.name + '1'
+        self.assertNotEqual(kw.name, kw_new.name)
+
+        self.assertEqual(id(kw.tags), id(kw_new.tags))
+
+    def test_deepcopy_keyword(self):
+        kw = Keyword()
+        kw_new = copy.deepcopy(kw)
+        self.assertEqual(kw.name, kw_new.name)
+        self.assertNotEqual(id(kw.tags), id(kw_new.tags))
 
 
 class TestChildren(unittest.TestCase):
