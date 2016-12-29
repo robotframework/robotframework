@@ -8,10 +8,14 @@ Failing listener does not break output file
     Log and report should be created
 
 Listener errors are shown
-    : FOR    ${method}    IN    start_suite    end_suite    start_test    end_test
-    ...    start_keyword    end_keyword    log_message    message
-    ...    output_file    log_file    report_file    close
-    \    Syslog Should Match Regexp    | ERROR | Calling listener method '${method}' of listener '.*' failed: ${method}
+    ${path} =    Normalize Path    ${DATADIR}/output/listeners/failing_listener.py
+    : FOR    ${index}    ${method}    IN ENUMERATE
+    ...    message    start_suite    start_keyword    log_message    end_keyword
+    ...    start_test    end_test    end_suite
+    \    Check log message    @{ERRORS}[${index}]
+    \    ...  Calling method '${method}' of listener '${path}' failed: Expected failure in ${method}!    ERROR
+    : FOR    ${method}    IN    output_file    log_file    report_file    close
+    \    Check stderr contains    [ ERROR ] Calling method '${method}' of listener '${path}' failed: Expected failure in ${method}!
 
 *** Keywords ***
 Run Tests With Failing Listener
