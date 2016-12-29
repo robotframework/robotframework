@@ -30,4 +30,10 @@ class DocFormat:
                 pass
 
         __ http://docutils.sourceforge.net
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Example
+                Log    How cool is this!?!?!1!
         """
