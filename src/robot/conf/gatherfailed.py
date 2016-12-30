@@ -32,6 +32,22 @@ class GatherFailedTests(SuiteVisitor):
         pass
 
 
+class GatherFailedSuites(SuiteVisitor):
+
+    def __init__(self):
+        self.suites = []
+
+    def start_suite(self, suite):
+        if any(not test.passed for test in suite.tests):
+            self.suites.append(suite.longname)
+
+    def visit_test(self, test):
+        pass
+
+    def visit_keyword(self, kw):
+        pass
+
+
 def gather_failed_tests(output):
     if output.upper() == 'NONE':
         return []
@@ -44,3 +60,17 @@ def gather_failed_tests(output):
         raise DataError("Collecting failed tests from '%s' failed: %s"
                         % (output, get_error_message()))
     return gatherer.tests
+
+
+def gather_failed_suites(output):
+    if output.upper() == 'NONE':
+        return []
+    gatherer = GatherFailedSuites()
+    try:
+        ExecutionResult(output, include_keywords=False).suite.visit(gatherer)
+        if not gatherer.suites:
+            raise DataError('All suites passed.')
+    except:
+        raise DataError("Collecting failed suites from '%s' failed: %s"
+                        % (output, get_error_message()))
+    return gatherer.suites
