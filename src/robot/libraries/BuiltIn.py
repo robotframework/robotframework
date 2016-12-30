@@ -870,14 +870,11 @@ class _Verify(_BuiltInBase):
         """Fails if ``container`` contains ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
-        operator. See `Should Be Equal` for an explanation on how to override
-        the default error message with ``msg`` and ``values``.
+        operator.
 
-        If ``ignore_case`` is given a true value (see `Boolean arguments`) and
-        compared items are strings, it indicates that comparison should be
-        case-insensitive. If the ``container`` is a list-like object, string
-        items in it are compared case-insensitively. New option in Robot
-        Framework 3.0.1.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with arguments ``msg`` and ``values``. ``ignore_case``
+        has exactly the same semantics as with `Should Contain`.
 
         Examples:
         | Should Not Contain | ${some list} | value  |
@@ -904,8 +901,10 @@ class _Verify(_BuiltInBase):
         """Fails if ``container`` does not contain ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
-        operator. See `Should Be Equal` for an explanation on how to override
-        the default error message with ``msg`` and ``values``.
+        operator.
+
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with arguments ``msg`` and ``values``.
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         compared items are strings, it indicates that comparison should be
@@ -915,7 +914,8 @@ class _Verify(_BuiltInBase):
 
         Examples:
         | Should Contain | ${output}    | PASS  |
-        | Should Contain | ${some list} | value |
+        | Should Contain | ${some list} | value | msg=Failure! | values=False |
+        | Should Contain | ${some list} | value | case_insensitive=True |
         """
         orig_container = container
         if is_truthy(ignore_case) and is_string(item):
@@ -932,31 +932,43 @@ class _Verify(_BuiltInBase):
         """Fails if ``container`` does not contain any of the ``*items``.
 
         Works with strings, lists, and anything that supports Python's ``in``
-        operator. See `Should Be Equal` for an explanation on how to override
-        the default error message with ``msg=`` and ``values=``. Both arguments
-        must be given after all ``*items`` and use ``name=value`` syntax.
+        operator.
 
-        Note that possible equal signs in ``*items`` must be escaped
-        with a backslash (e.g. ``name\=value``) to avoid them to be passed in
+        Supports additional configuration parameters ``msg``, ``values``
+        and ``ignore_case``, which have exactly the same semantics as arguments
+        with same names have with `Should Contain`. These arguments must
+        always be given using ``name=value`` syntax after all ``items``.
+
+        Note that possible equal signs in ``items`` must be escaped with
+        a backslash (e.g. ``foo\\=bar``) to avoid them to be passed in
         as ``**configuration``.
 
         Examples:
         | Should Contain Any | ${string} | substring 1 | substring 2 |
         | Should Contain Any | ${list}   | item 1 | item 2 | item 3 |
+        | Should Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
         | Should Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
 
         New in Robot Framework 3.0.1.
         """
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
+        ignore_case = configuration.pop('ignore_case', False)
         if configuration:
             raise RuntimeError("Unsupported configuration parameter%s: %s."
                                % (s(configuration),
                                   seq2str(sorted(configuration))))
         if not items:
             raise RuntimeError('One or more items required.')
+        orig_container = container
+        if is_truthy(ignore_case):
+            items = [x.lower() if is_string(x) else x for x in items]
+            if is_string(container):
+                container = container.lower()
+            elif is_list_like(container):
+                container = set(x.lower() if is_string(x) else x for x in container)
         if not any(item in container for item in items):
-            msg = self._get_string_msg(container,
+            msg = self._get_string_msg(orig_container,
                                        seq2str(items, lastsep=' or '),
                                        msg, values,
                                        'does not contain any of',
@@ -967,31 +979,43 @@ class _Verify(_BuiltInBase):
         """Fails if ``container`` contains one or more of the ``*items``.
 
         Works with strings, lists, and anything that supports Python's ``in``
-        operator. See `Should Be Equal` for an explanation on how to override
-        the default error message with ``msg=`` and ``values=``. Both arguments
-        must be given after all ``*items`` and use ``name=value`` syntax.
+        operator.
 
-        Note that possible equal signs in ``*items`` must be escaped
-        with a backslash (e.g. ``name\=value``) to avoid them to be passed in
+        Supports additional configuration parameters ``msg``, ``values``
+        and ``ignore_case``, which have exactly the same semantics as arguments
+        with same names have with `Should Contain`. These arguments must
+        always be given using ``name=value`` syntax after all ``items``.
+
+        Note that possible equal signs in ``items`` must be escaped with
+        a backslash (e.g. ``foo\\=bar``) to avoid them to be passed in
         as ``**configuration``.
 
         Examples:
         | Should Not Contain Any | ${string} | substring 1 | substring 2 |
         | Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 |
+        | Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
         | Should Not Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
 
         New in Robot Framework 3.0.1.
         """
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
+        ignore_case = configuration.pop('ignore_case', False)
         if configuration:
             raise RuntimeError("Unsupported configuration parameter%s: %s."
                                % (s(configuration),
                                   seq2str(sorted(configuration))))
         if not items:
             raise RuntimeError('One or more items required.')
+        orig_container = container
+        if is_truthy(ignore_case):
+            items = [x.lower() if is_string(x) else x for x in items]
+            if is_string(container):
+                container = container.lower()
+            elif is_list_like(container):
+                container = set(x.lower() if is_string(x) else x for x in container)
         if any(item in container for item in items):
-            msg = self._get_string_msg(container,
+            msg = self._get_string_msg(orig_container,
                                        seq2str(items, lastsep=' or '),
                                        msg, values,
                                        'contains one or more of',
