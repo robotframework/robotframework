@@ -822,12 +822,13 @@ class _Verify(_BuiltInBase):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not start with'))
 
-    def should_not_end_with(self, str1, str2, msg=None, values=True, ignore_case=False):
+    def should_not_end_with(self, str1, str2, msg=None, values=True,
+                            ignore_case=False):
         """Fails if the string ``str1`` ends with the string ``str2``.
 
-        If ignore_case is True, it indicates that ``str1`` and ``str2``
-        should be compared case-insensitively.  See `Boolean  arguments` section
-        for more details.  (This option is new in Robot Framework 3.0.1)
+        If ``ignore_case`` is given a true value (see `Boolean arguments`), it
+        indicates that comparison should be case-insensitive. New option in
+        Robot Framework 3.0.1.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
@@ -839,12 +840,13 @@ class _Verify(_BuiltInBase):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'ends with'))
 
-    def should_end_with(self, str1, str2, msg=None, values=True, ignore_case=False):
+    def should_end_with(self, str1, str2, msg=None, values=True,
+                        ignore_case=False):
         """Fails if the string ``str1`` does not end with the string ``str2``.
 
-        If ignore_case is True, it indicates that ``str1`` and ``str2``
-        should be compared case-insensitively.  See `Boolean  arguments` section
-        for more details.  (This option is new in Robot Framework 3.0.1)
+        If ``ignore_case`` is given a true value (see `Boolean arguments`), it
+        indicates that comparison should be case-insensitive. New option in
+        Robot Framework 3.0.1.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.

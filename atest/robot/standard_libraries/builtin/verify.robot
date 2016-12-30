@@ -145,13 +145,13 @@ Should Start With without values
 Should Not End With
     Check test case    ${TESTNAME}
 
-Should Not End With Case Insensitively
+Should Not End With case-insensitive
     Check test case    ${TESTNAME}
 
 Should End With
     Check test case    ${TESTNAME}
 
-Should End With Case Insensitively
+Should End With case-insensitive
     Check test case    ${TESTNAME}
 
 Should End With without values

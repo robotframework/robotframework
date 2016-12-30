@@ -289,13 +289,12 @@ Should Not End With
     Hello!    Hello
     Hillo!    !    Message only    No Values
 
-Should Not End With Case Insensitively
+Should Not End With case-insensitive
     [Documentation]     FAIL  'hello, world!' ends with 'hello, world!'
     [Template]    Should Not End With
-    Hello!              HELLo               ignore_case=True
-    Hillo!              ?    Message only    No Values    ignore_case=True
-    HYVÄÄ YÖTÄ          hyvää               ignore_case=True
-    Hello, world!       Hello, WORLD!       ignore_case=True
+    Hello!              hELLo            ignore_case=True
+    HYVÄÄ YÖTÄ          hyvää            ignore_case=yeah
+    Hello, world!       hello, WORLD!    ignore_case=True
 
 Should End With without values
     [Documentation]    FAIL My message
@@ -308,11 +307,10 @@ Should End With
     Hello, world!    Hello, world!
     Hello, world!    ?
 
-Should End With Case Insensitively
+Should End With case-insensitive
     [Template]      Should End With
     This is it          Is IT           ignore_case=True
-    Hello, world!       !               ignore_case=True
-    Hello, world!       Hello, WORLD!   ignore_case=True
+    Hello, world!       hello, WORLD!   ignore_case=True
     HYVÄÄ YÖTÄ          ä yötä          ignore_case=True
 
 Should Not Contain
