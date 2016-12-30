@@ -6,11 +6,17 @@ Resource          builtin_resource.robot
 Should Match
     Check test case    ${TESTNAME}
 
+Should Match case-insensitive
+    Check test case    ${TESTNAME}
+
 Should Match with bytes containing non-ascii characters
     [Tags]    no-ipy
     Check test case    ${TESTNAME}
 
 Should Not Match
+    Check test case    ${TESTNAME}
+
+Should Not Match case-insensitive
     Check test case    ${TESTNAME}
 
 Should Not Match with bytes containing non-ascii characters

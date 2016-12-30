@@ -1078,7 +1078,8 @@ class _Verify(_BuiltInBase):
         self.log('Item found from the first item %d time%s' % (count, s(count)))
         return count
 
-    def should_not_match(self, string, pattern, msg=None, values=True):
+    def should_not_match(self, string, pattern, msg=None, values=True,
+                         ignore_case=False):
         """Fails if the given ``string`` matches the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell, and it is
@@ -1086,13 +1087,18 @@ class _Verify(_BuiltInBase):
         ``?`` matches to any single character.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            string = string.lower()
+            pattern = pattern.lower()
         if self._matches(string, pattern):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
 
-    def should_match(self, string, pattern, msg=None, values=True):
+    def should_match(self, string, pattern, msg=None, values=True,
+                     ignore_case=False):
         """Fails unless the given ``string`` matches the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell, and it is
@@ -1100,8 +1106,12 @@ class _Verify(_BuiltInBase):
         ``?`` matches to any single character.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            string = string.lower()
+            pattern = pattern.lower()
         if not self._matches(string, pattern):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
