@@ -908,18 +908,28 @@ class _Verify(_BuiltInBase):
                                        quote_item2=False)
             raise AssertionError(msg)
 
-    def should_contain_x_times(self, item1, item2, count, msg=None):
+    def should_contain_x_times(self, item1, item2, count, msg=None,
+                               ignore_case=False):
         """Fails if ``item1`` does not contain ``item2`` ``count`` times.
 
         Works with strings, lists and all objects that `Get Count` works
         with. The default error message can be overridden with ``msg`` and
         the actual count is always logged.
 
+        If ignore_case is True, it indicates that ``item1`` and ``item2``
+        should be compared case-insensitively.  See `Boolean  arguments` section
+        for more details.  (This option is new in Robot Framework 3.0.1)
+
         Examples:
         | Should Contain X Times | ${output}    | hello  | 2 |
         | Should Contain X Times | ${some list} | value  | 3 |
         """
         count = self._convert_to_integer(count)
+        if is_truthy(ignore_case):
+            item1 = item1.lower() if is_string(item1) else \
+                [x.lower() if is_string(x) else x for x in item1]
+            item2 = item2.lower() if is_string(item2) else \
+                [x.lower() if is_string(x) else x for x in item2]
         x = self.get_count(item1, item2)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
