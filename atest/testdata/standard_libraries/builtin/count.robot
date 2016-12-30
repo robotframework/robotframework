@@ -34,7 +34,8 @@ Should Contain X Times with Java types
     ${VECTOR3}    a    1
 
 Should Contain X Times failing
-    [Documentation]    FAIL Several failures occurred:
+    [Documentation]    FAIL
+    ...    Several failures occurred:
     ...
     ...    1) 'hello' contains 'l' 2 times, not 3 times.
     ...
@@ -47,6 +48,14 @@ Should Contain X Times failing
     hello    lo     0
     hello    l      1
     hello    xxx    3    My message
+
+Should Contain X Times case-insensitive
+    [Documentation]    FAIL    '{'a': 1}' contains 'a' 1 time, not 100 times.
+    XxX          X     3      ignore_case=True
+    XxX          xx    1      ignore_case=True
+    ${DICT}      a     2      ignore_case=yes
+    ${DICT}      Ä     2      ignore_case=yes
+    ${DICT 1}    a     100    ignore_case=yes, please
 
 Should Contain X Times with invalid item
     [Documentation]    FAIL STARTS: Converting '10' to list failed: TypeError:

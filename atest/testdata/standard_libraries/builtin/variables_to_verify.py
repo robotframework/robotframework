@@ -22,8 +22,8 @@ def get_variables():
         LIST_1=['a'],
         LIST_2=['a', 2],
         LIST_3=['a', 'b', 'c'],
-        DICT={'a': 1, u'\xe4': 2, 'B': 3, u'\xd6': 4},  # \xe4=auml; \xd6=Ouml;
-        ORDERED_DICT=OrderedDict([('a', 1), (u'\xe4', 2), ('B', 3), (u'\xd6', 4)]),
+        DICT={'a': 1, 'A': 2, u'\xe4': 3, u'\xc4': 4},
+        ORDERED_DICT=OrderedDict([('a', 1), ('A', 2), (u'\xe4', 3), (u'\xc4', 4)]),
         DICT_0={},
         DICT_1={'a': 1},
         DICT_2={'a': 1, 2: 'b'},

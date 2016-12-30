@@ -30,7 +30,6 @@ Should Contain case-insensitive
     HYVÄ        vä     ignore_case=yes
     ${LIST}     CEE    ignore_case=!!!
     ${DICT}     Ä      ignore_case=yes
-    ${DICT}     ö      ignore_case=yes
     ${DICT1}    XXX    ignore_case=yes
 
 Should Not Contain

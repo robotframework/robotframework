@@ -893,7 +893,7 @@ class _Verify(_BuiltInBase):
             item = item.lower()
             if is_string(container):
                 container = container.lower()
-            if is_list_like(container):
+            elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
         if item in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
@@ -922,7 +922,7 @@ class _Verify(_BuiltInBase):
             item = item.lower()
             if is_string(container):
                 container = container.lower()
-            if is_list_like(container):
+            elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
         if item not in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
@@ -998,22 +998,40 @@ class _Verify(_BuiltInBase):
                                        quote_item2=False)
             raise AssertionError(msg)
 
-    def should_contain_x_times(self, item1, item2, count, msg=None):
+    def should_contain_x_times(self, item1, item2, count, msg=None,
+                               ignore_case=False):
         """Fails if ``item1`` does not contain ``item2`` ``count`` times.
 
         Works with strings, lists and all objects that `Get Count` works
         with. The default error message can be overridden with ``msg`` and
         the actual count is always logged.
 
+        If ``ignore_case`` is given a true value (see `Boolean arguments`) and
+        compared items are strings, it indicates that comparison should be
+        case-insensitive. If the ``item1`` is a list-like object, string
+        items in it are compared case-insensitively. New option in Robot
+        Framework 3.0.1.
+
         Examples:
-        | Should Contain X Times | ${output}    | hello  | 2 |
-        | Should Contain X Times | ${some list} | value  | 3 |
+        | Should Contain X Times | ${output}    | hello | 2 |
+        | Should Contain X Times | ${some list} | value | 3 | ignore_case=True |
         """
+        # TODO: Rename 'item1' and 'item2' to 'container' and 'item' in RF 3.1.
+        # Other 'contain' keywords use these names. And 'Get Count' should too.
+        # Cannot be done in minor release due to backwards compatibility.
+        # Remember to update it also in the docstring!!
         count = self._convert_to_integer(count)
+        orig_item1 = item1
+        if is_truthy(ignore_case) and is_string(item2):
+            item2 = item2.lower()
+            if is_string(item1):
+                item1 = item1.lower()
+            elif is_list_like(item1):
+                item1 = [x.lower() if is_string(x) else x for x in item1]
         x = self.get_count(item1, item2)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
-                    % (unic(item1), unic(item2), x, s(x), count, s(count))
+                    % (unic(orig_item1), unic(item2), x, s(x), count, s(count))
         self.should_be_equal_as_integers(x, count, msg, values=False)
 
     def get_count(self, item1, item2):

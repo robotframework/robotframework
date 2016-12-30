@@ -32,6 +32,9 @@ Should Contain X Times with Java types
 Should Contain X Times failing
     Check test case    ${TESTNAME}
 
+Should Contain X Times case-insensitive
+    Check test case    ${TESTNAME}
+
 Should Contain X Times with invalid item
     Check test case    ${TESTNAME}
 
