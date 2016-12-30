@@ -1,8 +1,11 @@
 import copy
+import os.path
 import unittest
 
 from robot import model
+from robot.model.modelobject import ModelObject
 from robot.running.model import TestSuite, TestCase, Keyword
+from robot.running import TestSuiteBuilder
 from robot.utils.asserts import assert_equal, assert_not_equal
 
 
@@ -24,42 +27,64 @@ class TestModelTypes(unittest.TestCase):
         assert_not_equal(type(kw), model.Keyword)
 
 
-class TestRunningCase(unittest.TestCase):
-    def test_copy_testcase(self):
-        case = TestCase()
-        new_case = copy.copy(case)
-        self.assertEqual(new_case.name, case.name)
+class TestCopy(unittest.TestCase):
 
-        new_case.name = case.name + '_1'
-        self.assertNotEqual(new_case.name, case.name)
+    def setUp(self):
+        path = os.path.normpath(os.path.join(__file__, '..', '..', '..',
+                                             'atest', 'testdata', 'misc'))
+        self.suite = TestSuiteBuilder().build(path)
 
-        self.assertEqual(id(new_case.tags), id(case.tags))
-        new_case.tags = "123"
-        self.assertNotEqual(id(new_case.tags), id(case.tags))
+    def test_copy(self):
+        self.assert_copy(self.suite, copy.copy(self.suite))
 
-    def test_deep_copy_testcase(self):
-        case = TestCase()
-        new_case = copy.deepcopy(case)
-        self.assertEqual(new_case.name, case.name)
-        self.assertNotEqual(id(new_case.tags), id(case.tags))
+    def assert_copy(self, original, copied):
+        assert_not_equal(id(original), id(copied))
+        self.assert_same_attrs_and_values(original, copied)
+        for attr in ['suites', 'tests', 'keywords']:
+            for child in getattr(original, attr, []):
+                self.assert_copy(child, copy.copy(child))
 
+    def assert_same_attrs_and_values(self, model1, model2):
+        assert_equal(dir(model1), dir(model2))
+        for attr, value1, value2 in self.get_non_property_attrs(model1, model2):
+            if callable(value1) and callable(value2):
+                continue
+            assert_equal(id(value1), id(value2), attr)
+            if isinstance(value1, ModelObject):
+                self.assert_same_attrs_and_values(value1, value2)
 
-class TestRunningKeyword(unittest.TestCase):
-    def test_copy_keyword(self):
-        kw = Keyword()
-        kw_new = copy.copy(kw)
-        self.assertEqual(kw.name, kw_new.name)
+    def get_non_property_attrs(self, model1, model2):
+        for attr in dir(model1):
+            if isinstance(getattr(type(model1), attr, None), property):
+                continue
+            value1 = getattr(model1, attr)
+            value2 = getattr(model2, attr)
+            yield attr, value1, value2
 
-        kw_new.name = kw.name + '1'
-        self.assertNotEqual(kw.name, kw_new.name)
+    def test_deepcopy(self):
+        self.assert_deepcopy(self.suite, copy.deepcopy(self.suite))
 
-        self.assertEqual(id(kw.tags), id(kw_new.tags))
+    def assert_deepcopy(self, original, copied):
+        assert_not_equal(id(original), id(copied))
+        self.assert_same_attrs_and_different_values(original, copied)
+        # It would be too slow to test deepcopy recursively like we test copy.
 
-    def test_deepcopy_keyword(self):
-        kw = Keyword()
-        kw_new = copy.deepcopy(kw)
-        self.assertEqual(kw.name, kw_new.name)
-        self.assertNotEqual(id(kw.tags), id(kw_new.tags))
+    def assert_same_attrs_and_different_values(self, model1, model2):
+        assert_equal(dir(model1), dir(model2))
+        for attr, value1, value2 in self.get_non_property_attrs(model1, model2):
+            if attr.startswith('__') or self.cannot_differ(value1, value2):
+                continue
+            assert_not_equal(id(value1), id(value2), attr)
+            if isinstance(value1, ModelObject):
+                self.assert_same_attrs_and_different_values(value1, value2)
+
+    def cannot_differ(self, value1, value2):
+        if isinstance(value1, ModelObject):
+            return False
+        if type(value1) is not type(value2):
+            return False
+        # None, Booleans, small numbers, etc. are singletons.
+        return id(value1) == id(copy.deepcopy(value1))
 
 
 if __name__ == '__main__':

@@ -27,32 +27,24 @@ class ModelObject(with_metaclass(SetterAwareType, object)):
         return repr(str(self))
 
     def __setstate__(self, state):
-        """Customize the attribute updating when using `copy.copy` or `copy.deepcopy`
+        """Customize attribute updating when using `copy` module.
+
+        This may not be needed in the future if we fix the mess we have with
+        different timeout types.
+
+        We have __slots__ so state is always a two-tuple.
+        Refer to: https://www.python.org/dev/peps/pep-0307
         """
-
-        # We should consider the state format per pickle protocol version
-        # Refer to: https://www.python.org/dev/peps/pep-0307
-        if isinstance(state, tuple) and len(state) == 2:
-            dictstate, slotstate = state
-        else:
-            dictstate = state
-            slotstate = None
-
+        dictstate, slotstate = state
         if dictstate is not None:
             self.__dict__.update(dictstate)
-
-        def get_setter_name(x):
-            return '_setter__' + x
-
-        if slotstate is not None:
-            for k, v in slotstate.iteritems():
-                setter_name = get_setter_name(k)
-                # If we have defined the attribute both in __slots__ and with @setter,
-                # we just need to set the setter attribute.
-                if setter_name in slotstate:
-                    continue
-
-                setattr(self, k, v)
-
-
-
+        for name in slotstate:
+            # If attribute is defined in __slots__ and overridden by @setter
+            # (this is the case at least with 'timeout' of 'running.TestCase')
+            # we must not set the "real" attribute value because that would run
+            # the setter method and that would recreate the object when it
+            # should not. With timeouts recreating object using the object
+            # itself would also totally fail.
+            setter_name = '_setter__' + name
+            if setter_name not in slotstate:
+                setattr(self, name, slotstate[name])

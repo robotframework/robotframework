@@ -1,7 +1,7 @@
 import copy
 import unittest
-from robot.utils.asserts import (assert_equal, assert_none, assert_true,
-                                 assert_raises, assert_raises_with_msg)
+from robot.utils.asserts import (assert_equal, assert_none, assert_not_equal,
+                                 assert_true, assert_raises, assert_raises_with_msg)
 
 from robot.model import TestSuite, Message
 from robot.model.keyword import Keyword, Keywords
@@ -34,21 +34,19 @@ class TestKeyword(unittest.TestCase):
     def test_slots(self):
         assert_raises(AttributeError, setattr, Keyword(), 'attr', 'value')
 
-    def test_copy_keyword(self):
-        kw = Keyword()
-        kw_new = copy.copy(kw)
-        self.assertEqual(kw.name, kw_new.name)
+    def test_copy(self):
+        k = Keyword()
+        c = copy.copy(k)
+        assert_equal(k.name, c.name)
+        c.name += ' copy'
+        assert_not_equal(k.name, c.name)
+        assert_equal(id(k.tags), id(c.tags))
 
-        kw_new.name = kw.name + '1'
-        self.assertNotEqual(kw.name, kw_new.name)
-
-        self.assertEqual(id(kw.tags), id(kw_new.tags))
-
-    def test_deepcopy_keyword(self):
-        kw = Keyword()
-        kw_new = copy.deepcopy(kw)
-        self.assertEqual(kw.name, kw_new.name)
-        self.assertNotEqual(id(kw.tags), id(kw_new.tags))
+    def test_deepcopy(self):
+        k = Keyword()
+        c = copy.deepcopy(k)
+        assert_equal(k.name, c.name)
+        assert_not_equal(id(k.tags), id(c.tags))
 
 
 class TestChildren(unittest.TestCase):
