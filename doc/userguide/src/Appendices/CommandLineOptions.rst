@@ -19,11 +19,10 @@ Command line options for test execution
   -G, --settag <tag>      `Sets the tag(s)`_ to all executed test cases.
   -t, --test <name>       `Selects the test cases by name`_.
   -s, --suite <name>      `Selects the test suites`_ by name.
-  -R, --rerunfailed <file>  `Selects failed tests`_ from an earlier `output file`_ to be re-executed.
-  --runfailed <file>      Deprecated since Robot Framework 2.8.4.
-                          Use :option:`--rerunfailed` instead.
-  -S, --rerunfailedsuites <file>  `Selects failed test suite`_ from an earlier `output file`_ to be re-executed.
-
+  -R, --rerunfailed <file>  `Selects failed tests`_ from an earlier `output file`_
+                          to be re-executed.
+  -S, --rerunfailedsuites <file>  `Selects failed test suites`_ from an earlier
+                          `output file`_ to be re-executed.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
@@ -90,8 +89,6 @@ Command line options for post-processing outputs
 ------------------------------------------------
 
   -R, --merge             Changes result combining behavior to `merging <merging outputs_>`__.
-  --rerunmerge            Deprecated since Robot Framework 2.8.6.
-                          Use :option:`--merge` instead.
   -N, --name <name>       `Sets the name`_ of the top level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top-level test suite.
@@ -150,7 +147,7 @@ Command line options for post-processing outputs
 .. _Sets the tag(s): `Setting tags`_
 .. _Selects the test cases by name: `By test suite and test case names`_
 .. _Selects the test suites: `Selects the test cases by name`_
-.. _Selects failed tests suites: `Re-executing failed test suites`_
+.. _Selects failed test suites: `Re-executing failed test suites`_
 .. _Selects failed tests: `Re-executing failed test cases`_
 .. _Selects the test cases: `By tag names`_
 .. _considered critical: `Setting criticality`_

@@ -126,7 +126,7 @@ Options
                           re-executed. Equivalent to selecting same tests
                           individually using --test option.
  -S --rerunfailedsuites output  Select failed suite from an earlier output file
-                          to be re-executed (New in RF 3.0.1).
+                          to be re-executed. New in RF 3.0.1.
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
                           can be given as a pattern like with --include.
@@ -286,6 +286,7 @@ Options
     --dryrun              Verifies test data and runs tests so that library
                           keywords are not executed.
  -X --exitonfailure       Stops test execution if any critical test fails.
+                          Short option -X is new in RF 3.0.1.
     --exitonerror         Stops test execution if any error occurs when parsing
                           test data, importing libraries, and so on.
     --skipteardownonexit  Causes teardowns to be skipped if test execution is
