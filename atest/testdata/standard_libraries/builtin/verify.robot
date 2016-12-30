@@ -68,7 +68,7 @@ Should Not Be Equal
     ${STR1}    ${INT1}
     ${STR1}    1
 
-Should Not Be Equal With Case Insensitivity
+Should Not Be Equal case-insensitive
     [Documentation]     FAIL foo == foo
     [Template]  Should Not Be Equal
     test value      TEST VALUE1     ignore_case=True
@@ -89,14 +89,22 @@ Should Be Equal
     ${BYTES WITHOUT NON ASCII}    ${BYTES WITHOUT NON ASCII}
     A    B    Error message    values=yes
 
-Should Be Equal With Case Insensitivity
-    [Template]  Should Be Equal
+Should Be Equal case-insensitive
+    [Documentation]    FAIL yötä != päivää
+    [Template]    Should Be Equal
     test value      TEST VALUE      ignore_case=True
-    HYVÄÄ YÖTÄ      hyvää yötä      ignore_case=True
-
+    HYVÄÄ YÖTÄ      hyvää yötä      ignore_case=yes
+    ${42}           ${42}           ignore_case=True
+    Yötä            Päivää          ignore_case=yep!
 
 Should Be Equal fails with values
-    [Documentation]    FAIL Several failures occurred:\n\n 1) 3: 1 != 2\n\n 2) c: a != b\n\n 3) z: x != y
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 3: 1 != 2
+    ...
+    ...    2) c: a != b
+    ...
+    ...    3) z: x != y
     [Template]    Should Be Equal
     1    2    3
     a    b    c    values=true
@@ -219,14 +227,16 @@ Should Be Equal As Numbers With Precision
 Should Not Be Equal As Strings
     [Documentation]    FAIL These strings most certainly should not be equal
     [Template]    Should Not Be Equal As Strings
-    1    ${1.1}
+    1        ${1.1}
     False    ${True}
-    bar    bar    These strings most certainly should not be equal    False
+    bar      bar    These strings most certainly should not be equal    False
 
-Should Not Be Equal As Strings With Case Insensitivity
+Should Not Be Equal As Strings case-insensitive
+    [Documentation]    FAIL true == true
     [Template]    Should Not Be Equal As Strings
-    1    ${1.1}     ignore_case=True
-    False    ${True}    ignore_case=True
+    1        ${1.1}     ignore_case=True
+    Hyvää    päivää     ignore_case=yes
+    true     ${True}    ignore_case=yeah
 
 Should Be Equal As Strings
     [Documentation]    FAIL foo != bar
@@ -235,10 +245,12 @@ Should Be Equal As Strings
     ${None}    None
     foo    bar
 
-Should Be Equal As Strings With Case Insensitivity
-    [Template]  Should Be Equal As Strings
-    test value      TEST VALUE      ignore_case=True
-    HYVÄÄ YÖTÄ      hyvää yötä      ignore_case=True
+Should Be Equal As Strings case-insensitive
+    [Documentation]    FAIL yötä != päivää
+    [Template]    Should Be Equal As Strings
+    test value    TEST VALUE    ignore_case=True
+    HYVÄÄ YÖTÄ    hyvää yötä    ignore_case=yes
+    YÖTÄ          PÄIVÄÄ        ignore_case=True
 
 Should Be Equal As Strings Multiline
     [Documentation]    FAIL Multiline strings are different:
