@@ -1,4 +1,3 @@
-import copy
 import unittest
 from robot.utils.asserts import (assert_equal, assert_not_equal, assert_raises,
                                  assert_raises_with_msg, assert_true)
@@ -47,18 +46,30 @@ class TestTestCase(unittest.TestCase):
         assert_raises(AttributeError, setattr, self.test, 'attr', 'value')
 
     def test_copy(self):
-        t = self.test
-        c = copy.copy(self.test)
-        assert_equal(t.name, c.name)
-        c.name += 'copy'
-        assert_not_equal(t.name, c.name)
-        assert_equal(id(t.tags), id(c.tags))
+        test = self.test
+        copy = test.copy()
+        assert_equal(test.name, copy.name)
+        copy.name += 'copy'
+        assert_not_equal(test.name, copy.name)
+        assert_equal(id(test.tags), id(copy.tags))
+
+    def test_copy_with_attributes(self):
+        test = TestCase(name='Orig', doc='Orig', tags=['orig'])
+        copy = test.copy(name='New', doc='New', tags=['new'])
+        assert_equal(copy.name, 'New')
+        assert_equal(copy.doc, 'New')
+        assert_equal(list(copy.tags), ['new'])
 
     def test_deepcopy_(self):
-        t = self.test
-        c = copy.deepcopy(self.test)
-        assert_equal(t.name, c.name)
-        assert_not_equal(id(t.tags), id(c.tags))
+        test = self.test
+        copy = test.deepcopy()
+        assert_equal(test.name, copy.name)
+        assert_not_equal(id(test.tags), id(copy.tags))
+
+    def test_deepcopy_with_attributes(self):
+        copy = TestCase(name='Orig').deepcopy(name='New', doc='New')
+        assert_equal(copy.name, 'New')
+        assert_equal(copy.doc, 'New')
 
 
 class TestStringRepresentation(unittest.TestCase):

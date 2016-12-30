@@ -1,4 +1,3 @@
-import copy
 import unittest
 from robot.utils.asserts import (assert_equal, assert_none, assert_not_equal,
                                  assert_true, assert_raises, assert_raises_with_msg)
@@ -35,18 +34,30 @@ class TestKeyword(unittest.TestCase):
         assert_raises(AttributeError, setattr, Keyword(), 'attr', 'value')
 
     def test_copy(self):
-        k = Keyword()
-        c = copy.copy(k)
-        assert_equal(k.name, c.name)
-        c.name += ' copy'
-        assert_not_equal(k.name, c.name)
-        assert_equal(id(k.tags), id(c.tags))
+        kw = Keyword(name='Keyword')
+        copy = kw.copy()
+        assert_equal(kw.name, copy.name)
+        copy.name += ' copy'
+        assert_not_equal(kw.name, copy.name)
+        assert_equal(id(kw.tags), id(copy.tags))
+
+    def test_copy_with_attributes(self):
+        kw = Keyword(name='Orig', doc='Orig', tags=['orig'])
+        copy = kw.copy(name='New', doc='New', tags=['new'])
+        assert_equal(copy.name, 'New')
+        assert_equal(copy.doc, 'New')
+        assert_equal(list(copy.tags), ['new'])
 
     def test_deepcopy(self):
-        k = Keyword()
-        c = copy.deepcopy(k)
-        assert_equal(k.name, c.name)
-        assert_not_equal(id(k.tags), id(c.tags))
+        kw = Keyword(name='Keyword')
+        copy = kw.deepcopy()
+        assert_equal(kw.name, copy.name)
+        assert_not_equal(id(kw.tags), id(copy.tags))
+
+    def test_deepcopy_with_attributes(self):
+        copy = Keyword(name='Orig').deepcopy(name='New', doc='New')
+        assert_equal(copy.name, 'New')
+        assert_equal(copy.doc, 'New')
 
 
 class TestChildren(unittest.TestCase):

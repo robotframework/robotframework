@@ -35,14 +35,14 @@ class TestCopy(unittest.TestCase):
         self.suite = TestSuiteBuilder().build(path)
 
     def test_copy(self):
-        self.assert_copy(self.suite, copy.copy(self.suite))
+        self.assert_copy(self.suite, self.suite.copy())
 
     def assert_copy(self, original, copied):
         assert_not_equal(id(original), id(copied))
         self.assert_same_attrs_and_values(original, copied)
         for attr in ['suites', 'tests', 'keywords']:
             for child in getattr(original, attr, []):
-                self.assert_copy(child, copy.copy(child))
+                self.assert_copy(child, child.copy())
 
     def assert_same_attrs_and_values(self, model1, model2):
         assert_equal(dir(model1), dir(model2))
@@ -62,7 +62,7 @@ class TestCopy(unittest.TestCase):
             yield attr, value1, value2
 
     def test_deepcopy(self):
-        self.assert_deepcopy(self.suite, copy.deepcopy(self.suite))
+        self.assert_deepcopy(self.suite, self.suite.deepcopy())
 
     def assert_deepcopy(self, original, copied):
         assert_not_equal(id(original), id(copied))
