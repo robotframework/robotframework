@@ -135,9 +135,9 @@ require-jython
 require-windows
   Require the operating system to be Windows.
 
-require-yaml, require-docutils, require-lxml, require-screenshot
-  Require lxml, docutils, PyYAML, or platform specific screenshot module to
-  be installed, respectively. See `Required modules`_ for details.
+require-yaml, require-docutils, require-pygments, require-lxml, require-screenshot
+  Require lxml, docutils, Pygments, PyYAML, or platform specific screenshot
+  module to be installed, respectively. See `Required modules`_ for details.
 
 require-et13
   Require ElementTree version 1.3. Automatically excluded when running with
@@ -173,7 +173,10 @@ installed, and naturally tests related to these features require same modules
 as well:
 
 - `docutils <http://docutils.sourceforge.net/>`_ is needed with tests related
-  to parsing test data in reStructuredText format.
+  to parsing test data in reStructuredText format and with Libdoc tests
+  for documentation in reST format.
+- `Pygments <http://pygments.org/>`_ is needed by Libdoc tests for syntax
+  highlighting.
 - `PyYAML <http://pyyaml.org/>`__ is required with tests related to YAML
   variable files.
 - `lxml <http://lxml.de/>`__ is needed with XML library tests.
@@ -189,6 +192,7 @@ individually or by using the provided `<requirements.txt>`__ file:
 
     # Install individually
     pip install 'docutils>=0.9'
+    pip install pygments
     pip install pyyaml
     pip install lxml
 

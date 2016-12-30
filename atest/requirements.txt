@@ -1,4 +1,5 @@
 docutils >= 0.9
+pygments
 pyyaml
 # On Linux installing lxml with pip requires compilation. You may want to use 
 # your platform package manager to install precompiled lxml. For example: 

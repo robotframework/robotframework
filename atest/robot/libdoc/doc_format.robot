@@ -19,7 +19,7 @@ HTML format
 
 reST format
     [Template]    NONE
-    [Tags]    require-docutils
+    [Tags]    require-docutils    require-pygments
     Test Format in HTML    <em>bold</em> or &lt;b&gt;bold&lt;/b&gt; <a
     ...    --docformat rest    expected2=Link to <cite>Keyword</cite>.
     Doc Should Contain In HTML    ${MODEL['keywords'][2]}
