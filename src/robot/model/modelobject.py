@@ -23,10 +23,10 @@ class ModelObject(with_metaclass(SetterAwareType, object)):
     __slots__ = []
 
     def copy(self, **attributes):
-        """Return shallow copy of the model object.
+        """Return shallow copy of this object.
 
-        :param attributes: Attributes to be set for the returned copy.
-            For example, ``suite.copy(name='New name')``.
+        :param attributes: Attributes to be set for the returned copy
+            automatically. For example, ``test.copy(name='New name')``.
 
         See also :meth:`deepcopy`. The difference between these two is the same
         as with the standard ``copy.copy`` and ``copy.deepcopy`` functions
@@ -40,10 +40,10 @@ class ModelObject(with_metaclass(SetterAwareType, object)):
         return copied
 
     def deepcopy(self, **attributes):
-        """Return deep copy of the model object.
+        """Return deep copy of this object.
 
-        :param attributes: Attributes to be set for the returned copy.
-            For example, ``suite.deepcopy(name='New name')``.
+        :param attributes: Attributes to be set for the returned copy
+            automatically. For example, ``test.deepcopy(name='New name')``.
 
         See also :meth:`copy`. The difference between these two is the same
         as with the standard ``copy.copy`` and ``copy.deepcopy`` functions
