@@ -113,9 +113,15 @@ Should Not Be Equal As Strings
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    float
 
+Should Not Be Equal As Strings With Case Insensitivity
+    ${tc}=    Check test case    ${TESTNAME}
+
 Should Be Equal As Strings
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    int    unicode
+
+Should Be Equal As Strings With Case Insensitivity
+    ${tc}=    Check test case    ${TESTNAME}
 
 Should Be Equal As Strings Multiline
     [Tags]    no-python26    # diff contains extra spaces on python 2.6
