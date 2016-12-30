@@ -154,11 +154,17 @@ Should End With without values
 Should Not Contain
     Check test case    ${TESTNAME}
 
+Should Not Contain With Case Insensitivity
+    Check Test Case    ${TESTNAME}
+
 Should Not Contain With Non-String Values
     Check test case    ${TESTNAME}
 
 Should Contain
     Check test case    ${TESTNAME}
+
+Should Contain With Case Insensitivity
+    Check Test Case    ${TESTNAME}
 
 Should Contain With False Values Argument
     Check test case    ${TESTNAME}

@@ -304,6 +304,12 @@ Should Not Contain
     Hello again    yet
     Hello yet again    yet
 
+Should Not Contain With Case Insensitivity
+    [Documentation]    FAIL 'Hello yet again' contains 'yet'
+    [Template]    Should Not Contain
+    Hello again    yet          ignore_case=True
+    Hello yet again    YET      ignore_case=True
+
 Should Not Contain With Non-String Values
     [Documentation]    FAIL '(1, 2)' contains '1'
     ${list}    ${tuple}    ${dict} =    Evaluate    ['a'], (1,2), {'a':1, 'b':2}
@@ -318,6 +324,12 @@ Should Contain
     abcdefg    cd
     abcdefg    abcdefg    Massage
     abcdefg    ABCDEFG    Message
+
+Should Contain With Case Insensitivity
+    [Template]    Should Contain
+    abcdefg    CD                   ignore_case=True
+    abcdefg    ABCDEFG    Message   ignore_case=True
+    abcdefg    ABCDefg    Message   ignore_case=True
 
 Should Contain With False Values Argument
     [Documentation]    FAIL Message
