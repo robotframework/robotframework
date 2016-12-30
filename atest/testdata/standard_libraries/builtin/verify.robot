@@ -272,12 +272,25 @@ Should Not Start With
     Hello, world!    HELLO
     Hello, world!    Hello
 
+Should Not Start With case-insensitive
+    [Documentation]     FAIL  'hello, world?' starts with 'hello, world'
+    [Template]    Should Not Start With
+    !Hello!             hELLo            ignore_case=True
+    HYVÄÄ YÖTÄ          pahaa            ignore_case=yeah
+    Hello, world?       hello, WORLD     ignore_case=True
+
 Should Start With
     [Documentation]    FAIL My message: '${LONG}' does not start with 'Does not start'
     [Template]    Should Start With
     Hello, world!    Hello
     Hello, world!    Hello, world!
     ${LONG}    Does not start    My message    values=true
+
+Should Start With case-insensitive
+    [Template]    Should Start With
+    Hello!              hELLo            ignore_case=True
+    HYVÄÄ YÖTÄ          hyvää            ignore_case=yeah
+    Hello, world!       hello, WORLD!    ignore_case=True
 
 Should Start With without values
     [Documentation]    FAIL My message

@@ -136,7 +136,13 @@ Should Be Equal As Strings Multiline
 Should Not Start With
     Check test case    ${TESTNAME}
 
+Should Not Start With case-insensitive
+    Check test case    ${TESTNAME}
+
 Should Start With
+    Check test case    ${TESTNAME}
+
+Should Start With case-insensitive
     Check test case    ${TESTNAME}
 
 Should Start With without values

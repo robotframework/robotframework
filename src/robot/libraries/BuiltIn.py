@@ -605,21 +605,24 @@ class _Verify(_BuiltInBase):
         the error message if this keyword fails:
 
         - If ``msg`` is not given, the error message is ``<first> != <second>``.
-        - If ``msg`` is given and ``values`` gets a true value, the error
-          message is ``<msg>: <first> != <second>``.
+        - If ``msg`` is given and ``values`` gets a true value (default),
+          the error message is ``<msg>: <first> != <second>``.
         - If ``msg`` is given and ``values`` gets a false value, the error
-          message is simply ``<msg>``.
-
-        ``values`` is true by default, but can be turned to false by using,
-        for example, string ``false`` or ``no values``. See `Boolean arguments`
-        section for more details.
+          message is simply ``<msg>``. See `Boolean arguments` for more details
+          about using false values.
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
-        both arguments are strings, it indicates that comparison should be
+        arguments are strings, it indicates that comparison should be
         case-insensitive. New option in Robot Framework 3.0.1.
 
         If both arguments are multiline strings, the comparison is done using
         `multiline string comparisons`.
+
+        Examples:
+        | Should Be Equal | ${x} | expected |
+        | Should Be Equal | ${x} | expected | Custom error message |
+        | Should Be Equal | ${x} | expected | Custom message | values=False |
+        | Should Be Equal | ${x} | expected | ignore_case=True |
         """
         self._log_types_at_info_if_different(first, second)
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
@@ -802,22 +805,32 @@ class _Verify(_BuiltInBase):
             second = second.lower()
         self._should_be_equal(first, second, msg, values)
 
-    def should_not_start_with(self, str1, str2, msg=None, values=True):
+    def should_not_start_with(self, str1, str2, msg=None, values=True,
+                              ignore_case=False):
         """Fails if the string ``str1`` starts with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            str1 = str1.lower()
+            str2 = str2.lower()
         if str1.startswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'starts with'))
 
-    def should_start_with(self, str1, str2, msg=None, values=True):
+    def should_start_with(self, str1, str2, msg=None, values=True,
+                          ignore_case=False):
         """Fails if the string ``str1`` does not start with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            str1 = str1.lower()
+            str2 = str2.lower()
         if not str1.startswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not start with'))
@@ -826,12 +839,9 @@ class _Verify(_BuiltInBase):
                             ignore_case=False):
         """Fails if the string ``str1`` ends with the string ``str2``.
 
-        If ``ignore_case`` is given a true value (see `Boolean arguments`), it
-        indicates that comparison should be case-insensitive. New option in
-        Robot Framework 3.0.1.
-
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -844,12 +854,9 @@ class _Verify(_BuiltInBase):
                         ignore_case=False):
         """Fails if the string ``str1`` does not end with the string ``str2``.
 
-        If ``ignore_case`` is given a true value (see `Boolean arguments`), it
-        indicates that comparison should be case-insensitive. New option in
-        Robot Framework 3.0.1.
-
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
