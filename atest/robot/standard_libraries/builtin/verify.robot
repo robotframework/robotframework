@@ -154,7 +154,7 @@ Should End With without values
 Should Not Contain
     Check test case    ${TESTNAME}
 
-Should Not Contain With Case Insensitivity
+Should Not Contain case-insensitive
     Check Test Case    ${TESTNAME}
 
 Should Not Contain With Non-String Values
@@ -163,7 +163,7 @@ Should Not Contain With Non-String Values
 Should Contain
     Check test case    ${TESTNAME}
 
-Should Contain With Case Insensitivity
+Should Contain case-insensitive
     Check Test Case    ${TESTNAME}
 
 Should Contain With False Values Argument

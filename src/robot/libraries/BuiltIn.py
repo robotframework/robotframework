@@ -842,52 +842,67 @@ class _Verify(_BuiltInBase):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not end with'))
 
-    def should_not_contain(self, container, item, msg=None, values=True, ignore_case=False):
+    def should_not_contain(self, container, item, msg=None, values=True,
+                           ignore_case=False):
         """Fails if ``container`` contains ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
         operator. See `Should Be Equal` for an explanation on how to override
         the default error message with ``msg`` and ``values``.
 
-        If ignore_case is True, it indicates that ``item`` and ``container`` should be
-        compared case-insensitively.  See `Boolean  arguments` section for more details.
-        (This option is new in Robot Framework 3.0.1)
+        If ``ignore_case`` is given a true value (see `Boolean arguments`) and
+        compared items are strings, it indicates that comparison should be
+        case-insensitive. If the ``container`` is a list-like object, string
+        items in it are compared case-insensitively. New option in Robot
+        Framework 3.0.1.
 
         Examples:
-        | Should Not Contain | ${output}    | FAILED |
         | Should Not Contain | ${some list} | value  |
+        | Should Not Contain | ${output}    | FAILED | ignore_case=True |
         """
-        prv_container = container
+        # TODO: It is inconsistent that errors show original case in 'container'
+        # 'item' is in lower case. Should rather show original case everywhere
+        # and add separate '(case-insensitive)' not to the error message.
+        # This same logic should be used with all keywords supporting
+        # case-insensitive comparisons.
+        orig_container = container
         if is_truthy(ignore_case) and is_string(item):
             item = item.lower()
+            if is_string(container):
+                container = container.lower()
             if is_list_like(container):
-                prv_container = set([x.lower() if is_string(x) else x for x in container])
-        if item in prv_container:
-            raise AssertionError(self._get_string_msg(container, item, msg,
+                container = set(x.lower() if is_string(x) else x for x in container)
+        if item in container:
+            raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'contains'))
 
-    def should_contain(self, container, item, msg=None, values=True, ignore_case=False):
+    def should_contain(self, container, item, msg=None, values=True,
+                       ignore_case=False):
         """Fails if ``container`` does not contain ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
         operator. See `Should Be Equal` for an explanation on how to override
         the default error message with ``msg`` and ``values``.
 
-        If ignore_case is True, it indicates that ``item`` and ``container`` should be
-        compared case-insensitively.  See `Boolean  arguments` section for more details.
-        (This option is new in Robot Framework 3.0.1)
+        If ``ignore_case`` is given a true value (see `Boolean arguments`) and
+        compared items are strings, it indicates that comparison should be
+        case-insensitive. If the ``container`` is a list-like object, string
+        items in it are compared case-insensitively. New option in Robot
+        Framework 3.0.1.
 
         Examples:
         | Should Contain | ${output}    | PASS  |
         | Should Contain | ${some list} | value |
         """
-        prv_container = container
+        orig_container = container
         if is_truthy(ignore_case) and is_string(item):
             item = item.lower()
+            if is_string(container):
+                container = container.lower()
             if is_list_like(container):
-                prv_container = set([x.lower() if is_string(x) else x for x in container])
-        if item not in prv_container:
-            raise AssertionError(self._get_string_msg(container, item, msg,
+                container = set(x.lower() if is_string(x) else x for x in container)
+        if item not in container:
+            raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'does not contain'))
 
     def should_contain_any(self, container, *items, **configuration):

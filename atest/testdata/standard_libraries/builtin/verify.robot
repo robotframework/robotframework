@@ -16,6 +16,8 @@ ${LONG}           This is a bit longer sentence and it even has a friend here.
 @{L2}             41    ${42}    43    44
 @{L3}             11    ${12}    13
 @{L3B}            10    12    14
+&{DICT}           a=1    ä=2    B=3    Ö=4
+&{SIMPLE DICT}    Key=${42}
 
 *** Test Cases ***
 Should Not Be True
@@ -304,11 +306,20 @@ Should Not Contain
     Hello again    yet
     Hello yet again    yet
 
-Should Not Contain With Case Insensitivity
-    [Documentation]    FAIL 'Hello yet again' contains 'yet'
+Should Not Contain case-insensitive
+    [Documentation]    FAIL GLOB: Several failures occurred:
+    ...
+    ...    1) 'abcdefg' contains 'cd'
+    ...
+    ...    2) 'HYVÄ' contains 'vä'
+    ...
+    ...    3) '{*'Key': 42}' contains 'key'
     [Template]    Should Not Contain
-    Hello again    yet          ignore_case=True
-    Hello yet again    YET      ignore_case=True
+    abcdefg           CD     ignore_case=True
+    HYVÄ              vä     ignore_case=yes
+    ${DICT}           Å      ignore_case=yes
+    ${SIMPLE DICT}    KEY    ignore_case=yes
+
 
 Should Not Contain With Non-String Values
     [Documentation]    FAIL '(1, 2)' contains '1'
@@ -325,11 +336,15 @@ Should Contain
     abcdefg    abcdefg    Massage
     abcdefg    ABCDEFG    Message
 
-Should Contain With Case Insensitivity
+Should Contain case-insensitive
+    [Documentation]    FAIL REGEXP: '{u?'Key': 42}' does not contain 'xxx'
     [Template]    Should Contain
-    abcdefg    CD                   ignore_case=True
-    abcdefg    ABCDEFG    Message   ignore_case=True
-    abcdefg    ABCDefg    Message   ignore_case=True
+    abcdefg           CD         ignore_case=True
+    HYVÄ              vä         ignore_case=yes
+    ${LIST}           CEE        ignore_case=!!!
+    ${DICT}           Ä          ignore_case=yes
+    ${DICT}           ö          ignore_case=yes
+    ${SIMPLE DICT}    XXX        ignore_case=yes
 
 Should Contain With False Values Argument
     [Documentation]    FAIL Message
