@@ -105,15 +105,15 @@ class FromDirectoryPopulator(object):
     ignored_dirs = ('CVS',)
 
     def populate(self, path, datadir, include_suites=None,
-                 warn_on_skipped=False, recurse=True):
+                 warn_on_skipped=False, extensions=None, recurse=True):
         LOGGER.info("Parsing test data directory '%s'" % path)
         include_suites = self._get_include_suites(path, include_suites or [])
-        init_file, children = self._get_children(path, include_suites)
+        init_file, children = self._get_children(path, extensions, include_suites)
         if init_file:
             self._populate_init_file(datadir, init_file)
         if recurse:
             self._populate_children(datadir, children, include_suites,
-                                   warn_on_skipped)
+                                    extensions, warn_on_skipped)
 
     def _populate_init_file(self, datadir, init_file):
         datadir.initfile = init_file
@@ -122,10 +122,12 @@ class FromDirectoryPopulator(object):
         except DataError as err:
             LOGGER.error(err.message)
 
-    def _populate_children(self, datadir, children, include_suites, warn_on_skipped):
+    def _populate_children(self, datadir, children, include_suites, extensions,
+                           warn_on_skipped):
         for child in children:
             try:
-                datadir.add_child(child, include_suites)
+                datadir.add_child(child, include_suites, extensions,
+                                  warn_on_skipped)
             except DataError as err:
                 self._log_failed_parsing("Parsing data source '%s' failed: %s"
                                          % (child, err.message), warn_on_skipped)
@@ -157,45 +159,49 @@ class FromDirectoryPopulator(object):
         name = os.path.basename(os.path.normpath(path))
         return self._is_in_included_suites(name, incl_suites)
 
-    def _get_children(self, dirpath, incl_suites):
+    def _get_children(self, dirpath, extensions, incl_suites):
         init_file = None
         children = []
-        for name, path in self._list_dir(dirpath):
-            if self._is_init_file(name, path):
+        for path, base in self._list_dir(dirpath, extensions, incl_suites):
+            if self._is_init_file(path, base):
                 if not init_file:
                     init_file = path
                 else:
                     LOGGER.error("Ignoring second test suite init file '%s'." % path)
-            elif self._is_included(name, path, incl_suites):
-                children.append(path)
             else:
-                LOGGER.info("Ignoring file or directory '%s'." % name)
+                children.append(path)
         return init_file, children
 
-    def _list_dir(self, path):
+    def _list_dir(self, dir_path, extensions, incl_suites):
         # os.listdir returns Unicode entries when path is Unicode
-        names = os.listdir(unic(path))
+        names = os.listdir(unic(dir_path))
         for name in sorted(names, key=lambda item: item.lower()):
-            # unic needed to handle nfc/nfd normalization on OSX
-            yield unic(name), unic(os.path.join(path, name))
+            name = unic(name)  # needed to handle nfc/nfd normalization on OSX
+            base, ext = os.path.splitext(name)
+            ext = ext[1:].lower()
+            path = os.path.join(dir_path, name)
+            if self._is_included(path, base, ext, extensions, incl_suites):
+                yield path, base
+            else:
+                LOGGER.info("Ignoring file or directory '%s'." % name)
 
-    def _is_init_file(self, name, path):
-        if not os.path.isfile(path):
-            return False
-        base, extension = os.path.splitext(name.lower())
-        return base == '__init__' and extension[1:] in READERS
-
-    def _is_included(self, name, path, incl_suites):
-        if name.startswith(self.ignored_prefixes):
+    def _is_included(self, path, base, ext, extensions, incl_suites):
+        if base.startswith(self.ignored_prefixes) and base.lower() != '__init__':
             return False
         if os.path.isdir(path):
-            return name not in self.ignored_dirs
-        base, extension = os.path.splitext(name.lower())
-        return (extension[1:] in READERS and
-                self._is_in_included_suites(base, incl_suites))
+            return base not in self.ignored_dirs or ext
+        if extensions and ext not in extensions:
+            return False
+        if ext not in READERS:
+            return False
+        return self._is_in_included_suites(base, incl_suites)
 
     def _is_in_included_suites(self, name, incl_suites):
         return not incl_suites or incl_suites.match(self._split_prefix(name))
+
+    def _is_init_file(self, path, base):
+        # TODO: Should only support `__init__`, not `__INIT__`.
+        return os.path.isfile(path) and base.lower() == '__init__'
 
     def _split_prefix(self, name):
         return name.split('__', 1)[-1]

@@ -12,6 +12,38 @@ __ `Created outputs`_
    :depth: 2
    :local:
 
+Selecting files to parse
+------------------------
+
+Robot Framework supports test data in `various formats`__, but nowadays the
+`plain text format`_ in dedicated `*.robot` files is most commonly used.
+If only one file format is used in a project, it can be a good idea to limit
+parsing test data to only these files by using the :option:`--format (-F)`
+option. This is especially useful if the executed directory contains large
+files that contain no test data, but have an extension that Robot Framework
+would parse otherwise. Especially large HTML files, such as reports and logs
+you can get from Robot Framework itself, can be pretty slow to process.
+
+The :option:`--format` option takes a file extension as an argument, and only
+files with that extension are parsed. It only has an effect when executing
+directories, though, not when running explicitly specified individual files.
+It does not affect which files can be used as `resource files`_ either. If
+there is a need to parse more than one kind of files, it is possible to use
+a colon `:` to separate extensions. Matching extensions is case insensitive.
+
+::
+
+  robot --format robot path/to/tests
+  robot --format ROBOT:TXT path/to/tests
+
+If files in one format use different extensions like ``*.html`` and ``*.htm``,
+you need to specify those extensions separately. Using just one of them would
+mean that other files in that format are skipped.
+
+__ `Supported file formats`_
+
+.. note:: Selecting files to parse is a new functionality in Robot Framework 3.0.1.
+
 Selecting test cases
 --------------------
 

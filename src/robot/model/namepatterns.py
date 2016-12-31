@@ -20,7 +20,7 @@ from robot.utils import MultiMatcher, py2to3
 class _NamePatterns(object):
 
     def __init__(self, patterns=None):
-        self._matcher = MultiMatcher(patterns, ignore=['_'])
+        self._matcher = MultiMatcher(patterns, ignore='_')
 
     def match(self, name, longname=None):
         return self._match(name) or longname and self._match_longname(longname)

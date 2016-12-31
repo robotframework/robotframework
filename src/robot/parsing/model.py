@@ -30,17 +30,21 @@ from .settings import (Documentation, Fixture, Timeout, Tags, Metadata,
 
 
 def TestData(parent=None, source=None, include_suites=None,
-             warn_on_skipped=False):
+             warn_on_skipped=False, extensions=None):
     """Parses a file or directory to a corresponding model object.
 
-    :param parent: (optional) parent to be used in creation of the model object.
-    :param source: path where test data is read from.
+    :param parent: Optional parent to be used in creation of the model object.
+    :param source: Path where test data is read from.
+    :param warn_on_skipped: Boolean to control warning about skipped files.
+    :param extensions: List/set of extensions to parse. If None, all files
+        supported by Robot Framework are parsed when searching test cases.
     :returns: :class:`~.model.TestDataDirectory`  if `source` is a directory,
         :class:`~.model.TestCaseFile` otherwise.
     """
     if os.path.isdir(source):
         return TestDataDirectory(parent, source).populate(include_suites,
-                                                          warn_on_skipped)
+                                                          warn_on_skipped,
+                                                          extensions)
     return TestCaseFile(parent, source).populate()
 
 
@@ -217,9 +221,10 @@ class TestDataDirectory(_TestData):
         self.keyword_table = KeywordTable(self)
         _TestData.__init__(self, parent, source)
 
-    def populate(self, include_suites=None, warn_on_skipped=False, recurse=True):
+    def populate(self, include_suites=None, warn_on_skipped=False,
+                 extensions=None, recurse=True):
         FromDirectoryPopulator().populate(self.source, self, include_suites,
-                                          warn_on_skipped, recurse)
+                                          warn_on_skipped, extensions, recurse)
         self.children = [ch for ch in self.children if ch.has_tests()]
         return self
 
@@ -233,9 +238,13 @@ class TestDataDirectory(_TestData):
             return False
         return True
 
-    def add_child(self, path, include_suites):
-        self.children.append(TestData(parent=self,source=path,
-                                      include_suites=include_suites))
+    def add_child(self, path, include_suites, extensions=None,
+                  warn_on_skipped=False):
+        self.children.append(TestData(parent=self,
+                                      source=path,
+                                      include_suites=include_suites,
+                                      extensions=extensions,
+                                      warn_on_skipped=warn_on_skipped))
 
     def has_tests(self):
         return any(ch.has_tests() for ch in self.children)
