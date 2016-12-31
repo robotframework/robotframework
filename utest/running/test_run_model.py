@@ -84,7 +84,10 @@ class TestCopy(unittest.TestCase):
         if type(value1) is not type(value2):
             return False
         # None, Booleans, small numbers, etc. are singletons.
-        return id(value1) == id(copy.deepcopy(value1))
+        try:
+            return id(value1) == id(copy.deepcopy(value1))
+        except TypeError:  # Got in some cases at least with Python 2.6
+            return True
 
 
 if __name__ == '__main__':

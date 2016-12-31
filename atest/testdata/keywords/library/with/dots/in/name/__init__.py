@@ -8,5 +8,5 @@ class name(object):
                 'Conflict']
 
     def run_keyword(self, name, args):
-        print("Running keyword '{}'.".format(name))
+        print("Running keyword '%s'." % name)
         return '-'.join(args)
