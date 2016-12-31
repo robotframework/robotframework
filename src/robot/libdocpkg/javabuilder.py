@@ -1,5 +1,4 @@
-#  Copyright 2008-2015 Nokia Networks
-#  Copyright 2016-     Robot Framework Foundation
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -75,7 +74,8 @@ class JavaDocBuilder(object):
             name=utils.printable_name(method.name(), code_style=True),
             args=self._get_keyword_arguments(method),
             doc=doc,
-            tags=tags
+            tags=tags,
+            position=str(method.position())
         )
 
     def _get_keyword_arguments(self, method):

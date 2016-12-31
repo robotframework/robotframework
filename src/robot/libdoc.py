@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-#  Copyright 2008-2015 Nokia Networks
-#  Copyright 2016-     Robot Framework Foundation
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -77,6 +76,8 @@ Options
  -n --name newname        Sets the name of the documented library or resource.
  -v --version newversion  Sets the version of the documented library or
                           resource.
+ -S --sourcelines         Search source lines for source code keywords where is possible (Jython,
+                            Python).
  -P --pythonpath path *   Additional locations where to search for libraries
                           and resources.
  -E --escape what:with *  Escapes characters which are problematic in console.
@@ -148,16 +149,22 @@ class LibDoc(Application):
     def validate(self, options, arguments):
         if ConsoleViewer.handles(arguments[1]):
             ConsoleViewer.validate_command(arguments[1], arguments[2:])
-        elif len(arguments) > 2:
-            raise DataError('Only two arguments allowed when writing output.')
+        elif len(arguments) > 3:
+            raise DataError('Only three arguments allowed when writing output.')
         return options, arguments
 
-    def main(self, args, name='', version='', format=None, docformat=None):
+    def main(self, args, **kwargs):
+        source_lines_to_discover = False
+        if 'sourcelines' in kwargs and kwargs['sourcelines'] is True:
+            source_lines_to_discover = True
+        self._imain(args, **kwargs)
+
+    def _imain(self, args, name='', version='', format=None, docformat=None, sourcelines=False):
         lib_or_res, output = args[:2]
         libdoc = LibraryDocumentation(lib_or_res, name, version,
-                                      self._get_doc_format(docformat))
+                                      self._get_doc_format(docformat), sourcelines)
         if ConsoleViewer.handles(output):
-            ConsoleViewer(libdoc).view(output, *args[2:])
+            ConsoleViewer(libdoc, sourcelines).view(output, *args[2:])
         else:
             libdoc.save(output, self._get_output_format(format, output))
             self.console(os.path.abspath(output))

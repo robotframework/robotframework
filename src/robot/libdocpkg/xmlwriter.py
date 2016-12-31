@@ -1,5 +1,4 @@
-#  Copyright 2008-2015 Nokia Networks
-#  Copyright 2016-     Robot Framework Foundation
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -28,11 +27,11 @@ class LibdocXmlWriter(object):
         writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
         writer.element('doc', libdoc.doc)
         self._write_keywords('init', libdoc.inits, writer)
-        self._write_keywords('kw', libdoc.keywords, writer)
+        self._write_keywords('kw', libdoc.keywords, writer, libdoc.source_lines)
         writer.end('keywordspec')
         writer.close()
 
-    def _write_keywords(self, type, keywords, writer):
+    def _write_keywords(self, type, keywords, writer, source_lines=False):
         for kw in keywords:
             writer.start(type, {'name': kw.name} if type == 'kw' else {})
             writer.start('arguments')
@@ -44,4 +43,6 @@ class LibdocXmlWriter(object):
             for tag in kw.tags:
                 writer.element('tag', tag)
             writer.end('tags')
+            if source_lines:
+                writer.element('sourceline', kw.position)
             writer.end(type)

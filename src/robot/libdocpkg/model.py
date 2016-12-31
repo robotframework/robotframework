@@ -1,5 +1,4 @@
-#  Copyright 2008-2015 Nokia Networks
-#  Copyright 2016-     Robot Framework Foundation
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -55,7 +54,8 @@ class LibraryDoc(object):
 
 class KeywordDoc(Sortable):
 
-    def __init__(self, name='', args=(), doc='', tags=()):
+    def __init__(self, name='', args=(), doc='', tags=(), position=''):
+        self.position = position
         self.name = name
         self.args = args
         self.doc = doc

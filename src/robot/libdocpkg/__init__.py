@@ -1,5 +1,4 @@
-#  Copyright 2008-2015 Nokia Networks
-#  Copyright 2016-     Robot Framework Foundation
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -29,7 +28,7 @@ from .consoleviewer import ConsoleViewer
 
 
 def LibraryDocumentation(library_or_resource, name=None, version=None,
-                         doc_format=None):
+                         doc_format=None, source_lines=False):
     builder = DocumentationBuilder(library_or_resource)
     try:
         libdoc = builder.build(library_or_resource)
@@ -44,4 +43,5 @@ def LibraryDocumentation(library_or_resource, name=None, version=None,
         libdoc.version = version
     if doc_format:
         libdoc.doc_format = doc_format
+    libdoc.source_lines = source_lines
     return libdoc

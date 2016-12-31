@@ -1,5 +1,4 @@
-#  Copyright 2008-2015 Nokia Networks
-#  Copyright 2016-     Robot Framework Foundation
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -97,8 +96,12 @@ class KeywordDocBuilder(object):
 
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)
-        return KeywordDoc(name=kw.name, args=self._get_args(kw.arguments),
-                          doc=doc, tags=tags)
+        if self._resource:
+            return KeywordDoc(name=kw.name, args=self._get_args(kw.arguments),
+                              doc=doc, tags=tags)
+        else:
+            return KeywordDoc(name=kw.name, args=self._get_args(kw.arguments),
+                              doc=doc, tags=tags, position=self._source_position_find(kw))
 
     def _get_doc_and_tags(self, kw):
         doc = self._get_doc(kw)
@@ -110,6 +113,63 @@ class KeywordDocBuilder(object):
             return unescape(kw.doc)
         return kw.doc
 
+    def _source_position_find(self, kw):
+        method = None
+        jmethod = None
+        source_file = None
+
+        from robot.running.testlibraries import _BaseTestLibrary, _DynamicLibrary
+        from robot.running.handlers import _DynamicHandler, _JavaHandler
+
+        if kw._method and not isinstance(kw.library, _DynamicLibrary):
+            method = kw._method
+        elif isinstance(kw, _DynamicHandler):
+            method = kw.library._libcode.__dict__[kw._run_keyword_method_name]
+            print str(method)
+        elif isinstance(kw, _JavaHandler):
+            storeclass = kw.library._libcode
+            import java.net.URLDecoder as URLDecoder
+            source_file = kw.library.source
+            if source_file:
+                source_file = URLDecoder.decode(source_file, "utf-8")
+            # find method and class where is declared i.e. JavaHeroBase->getMyHero2 method
+            for mmethod in kw.library._libcode.getMethods():
+                from java.lang import Object
+                if not mmethod.getDeclaringClass() == Object:
+                    if mmethod.getName() == kw._handler_name:
+                        storeclass = mmethod.getDeclaringClass()
+                        source_file = storeclass.getResource(storeclass.getName() + ".class").getPath()
+                        if source_file:
+                            source_file = URLDecoder.decode(source_file, "utf-8")
+                        jmethod = mmethod
+                        break
+
+        if source_file and source_file.endswith('.java'):
+            source_file = '.class'.join(file.rsplit('.java', 1))
+        import sys
+        ver = sys.platform.lower()
+        if ver.startswith('java'):
+            import java.lang
+            ver = java.lang.System.getProperty("os.name").lower()
+        is_windows = 'windows' in ver or ver.startswith("win") or ver.startswith("cygwin")
+        if source_file:
+            if is_windows and source_file.startswith("/"):
+                source_file = source_file.replace("/", "", 1)
+            import com.sun.org.apache.bcel.internal.classfile.ClassParser as ClassParser
+            javaClass = ClassParser(source_file).parse()
+            lines = javaClass.getMethod(jmethod).getLineNumberTable().getLineNumberTable()
+        else:
+            if method is None:
+                method = kw.current_handler()
+
+        pos_link = ''
+        if method:
+            import inspect
+            pos_link = inspect.getfile(method) + ":" + str(method.func_name) + ":" + str(inspect.getsourcelines(method)[1])
+        elif jmethod:
+            pos_link = source_file + ":" + jmethod.getName() + ":" + str(lines[0].getLineNumber())
+        return pos_link
+
     def _get_args(self, argspec):
         required = argspec.positional[:argspec.minargs]
         defaults = zip(argspec.positional[argspec.minargs:], argspec.defaults)
@@ -119,3 +179,4 @@ class KeywordDocBuilder(object):
         if argspec.kwargs:
             args.append('**%s' % argspec.kwargs)
         return args
+
