@@ -31,7 +31,7 @@ class TestSuiteBuilder(object):
     more information and examples.
     """
 
-    def __init__(self, include_suites=None, warn_on_skipped=False, format=None):
+    def __init__(self, include_suites=None, warn_on_skipped=False, extension=None):
         """
         :param include_suites: List of suite names to include. If ``None`` or
             an empty list, all suites are included. When executing tests
@@ -40,24 +40,23 @@ class TestSuiteBuilder(object):
             if a file is skipped because it cannot be parsed or should it be
             ignored silently. When executing tests normally, this value is set
             with the ``--warnonskippedfiles`` option.
-        :param format: Limit parsing test data to only this format. Format is
-            given as an extension and multiple formats can be given so that
-            they are separated with a colon. Same as ``--format`` on the
-            command line.
+        :param extension: Limit parsing test data to only these files. Files
+            are specified as an extension that is handled case-insensitively.
+            Same as ``--extension`` on the command line.
         """
         self.include_suites = include_suites
         self.warn_on_skipped = warn_on_skipped
-        self.extensions = self._get_extensions(format)
+        self.extensions = self._get_extensions(extension)
         builder = StepBuilder()
         self._build_steps = builder.build_steps
         self._build_step = builder.build_step
 
-    def _get_extensions(self, format):
-        if not format:
+    def _get_extensions(self, extension):
+        if not extension:
             return None
-        extensions = set(ext.lower().lstrip('.') for ext in format.split(':'))
+        extensions = set(ext.lower().lstrip('.') for ext in extension.split(':'))
         if not all(ext in VALID_EXTENSIONS for ext in extensions):
-            raise DataError("Invalid test data format '%s'." % format)
+            raise DataError("Invalid extension to limit parsing '%s'." % extension)
         return extensions
 
     def build(self, *paths):

@@ -88,11 +88,11 @@ see http://robotframework.org/.
 Options
 =======
 
- -F --format extension    Parse only files with this extension when executing
+ -F --extension value     Parse only files with this extension when executing
                           a directory. Has no effect when running individual
                           files or when using resource files. If more than one
                           extension is needed, separate them with a colon.
-                          Examples: `--format robot`, `--format robot:rest`
+                          Examples: `--extension robot`, `-F robot:txt`
                           New in RF 3.0.1.
  -N --name name           Set the name of the top level test suite. Underscores
                           in the name are converted to spaces. Default name is
@@ -436,7 +436,7 @@ class RobotFramework(Application):
         LOGGER.info('Settings:\n%s' % unic(settings))
         suite = TestSuiteBuilder(settings['SuiteNames'],
                                  settings['WarnOnSkipped'],
-                                 settings['Format']).build(*datasources)
+                                 settings['Extension']).build(*datasources)
         suite.configure(**settings.suite_config)
         if settings.pre_run_modifiers:
             suite.visit(ModelModifier(settings.pre_run_modifiers,

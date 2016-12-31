@@ -13,7 +13,7 @@ are listed.
 Command line options for test execution
 ---------------------------------------
 
-  -F, --format <extension>  `Parse only these files`_ when executing a directory.
+  -F, --extension <value>  `Parse only these files`_ when executing a directory.
   -N, --name <name>       `Sets the name`_ of the top-level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top level test suite.
