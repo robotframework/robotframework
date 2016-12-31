@@ -36,7 +36,7 @@ Most important enhancements
 The most important new features in RF 3.0.1 are the ability to limit parsing
 of test data file to a certain file type (e.g. `--extension robot`, `#2365`_)
 and case-insensitivity support added to most comparison keywords in the
-BuildIn library (e.g. `| Should Be Equal | ${x} | ${y} | ignore_case=True,
+BuildIn library (e.g. `| Should Be Equal | ${x} | ${y} | ignore_case=True`,
 `#2439`_).
 
 There are also some high priority bug fixes in the release:
@@ -63,7 +63,7 @@ Acknowledgements
 
 This release has been sponsored by the `Robot Framework Foundation`__ and
 would not have been possible, at least with this scope, without that. Big
-thank you for all the member companies in the foundation for your support!
+thank you for all the member companies of the foundation for your support!
 
 There have also been several great `contributions <../../CONTRIBUTING.rst>`_
 by the community:
