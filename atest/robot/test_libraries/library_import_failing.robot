@@ -52,4 +52,4 @@ Initializing Java Library Fails
     [Tags]  require-jython
     Import Should Have Failed    9    test_libraries/library_import_failing.robot
     ...  Initializing test library 'InitializationFailJavaLibrary' with no arguments failed: Initialization failed!
-    ...  at InitializationFailJavaLibrary.<init>(InitializationFailJavaLibrary.java:4)
+    ...  stacktrace=at InitializationFailJavaLibrary.<init>(InitializationFailJavaLibrary.java:4)

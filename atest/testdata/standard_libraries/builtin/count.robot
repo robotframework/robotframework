@@ -29,9 +29,10 @@ Should Contain X Times with containers
     ${DICT}    a        1
 
 Should Contain X Times with Java types
-    ${STRING1}    a    1
-    ${ARRAY3}     a    1
-    ${VECTOR3}    a    1
+    ${HASHTABLE1}    a    1
+    ${ARRAY3}        b    1
+    ${VECTOR3}       c    1
+    ${VECTOR3}       d    0
 
 Should Contain X Times failing
     [Documentation]    FAIL
@@ -64,7 +65,6 @@ Should Contain X Times with invalid item
 Should Contain X Times with invalid count
     [Documentation]    FAIL STARTS: 'invalid' cannot be converted to an integer: ValueError:
     hello    l    invalid
-
 
 *** Keywords ***
 Verify Get Count

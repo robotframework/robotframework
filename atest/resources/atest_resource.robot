@@ -320,8 +320,13 @@ Reset PYTHONPATH
 
 Import should have failed
     [Arguments]    ${index}    ${path}    ${message}    ${traceback}=*
+    ...    ${stacktrace}=
     ${path} =    Normalize Path    ${DATADIR}/${path}
     ${error} =    Set Variable    Error in file '${path}': ${message}
-    ${error} =    Set Variable If    not $traceback    ${error}
+    ${error} =    Set Variable If    $traceback and not $stacktrace
     ...    ${error}\nTraceback (most recent call last):\n*${traceback}*
+    ...    ${error}
+    ${error} =    Set Variable If    $stacktrace
+    ...    ${error}\n*${stacktrace}*
+    ...    ${error}
     Check Log Message    @{ERRORS}[${index}]    ${error}    level=ERROR    pattern=yes
