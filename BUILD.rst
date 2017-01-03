@@ -53,20 +53,24 @@ Preparation
 
        invoke clean
 
-4. Set version and GitHub login related shell variable to ease copy-pasting further commands::
+4. Set version information to a shell variable to ease copy-pasting further
+   commands. Add `aN`, `bN` or `rcN` postfix if creating a pre-release::
 
-     VERSION=<x.y.z>
-     LOGIN=<GitHub Login>
-     PASSWORD=<GitHub Password>
+     VERSION=<version>
 
-   GitHub login details are needed only when generating release notes.
+   For example, `VERSION=3.0.1` or `VERSION=3.1a2`.
 
 Release notes
 -------------
 
-1. Generate a template for the release notes::
+1. Generate a template for the release notes. Either first create shell
+   variables with GitHub login info or just replace them in the command
+   to actually generate the notes::
 
-     doc/releasenotes/generate.py $VERSION $LOGIN $PASSWORD >> doc/releasenotes/rf-$VERSION.rst
+     GITHUB_USERNAME=<username>
+     GITHUB_PASSWORD=<password>
+
+     doc/releasenotes/generate.py $VERSION $GITHUB_USERNAME $GITHUB_PASSWORD >> doc/releasenotes/rf-$VERSION.rst
 
 2. Fill the missing details in the template.
 
