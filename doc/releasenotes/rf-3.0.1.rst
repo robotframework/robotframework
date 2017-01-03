@@ -1,13 +1,15 @@
 ==========================
-Robot Framework 3.0.1 RC 1
+Robot Framework 3.0.1 RC 2
 ==========================
 
 .. default-role:: code
 
-Robot Framework 3.0.1 release candidate 1 is the first and only planned
+Robot Framework 3.0.1 release candidate 2 is the second and hopefully last
 preview release of the forthcoming Robot Framework 3.0.1 release. It contains
-all features and fixes planned to be included in the final release. All issues
-targeted for RF 3.0.1 can be found from the `issue tracker
+all features and fixes planned to be included in the final release. The only
+change after RC 1 was fixing a regression related to using the `--suite`
+option (`#2515 <https://github.com/robotframework/robotframework/issues/2515>`__).
+All issues targeted for RF 3.0.1 can be found from the `issue tracker
 <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0.1>`_.
 
 Questions and comments related to the release can be sent to the
@@ -23,8 +25,9 @@ Alternatively you can download the source distribution from
 For more details and other installation approaches, see the `installation
 instructions <../../INSTALL.rst>`_.
 
-Robot Framework 3.0.1 RC 1 was released on Saturday December 31, 2016.
-The final release is planned for Friday January 6, 2017.
+Robot Framework 3.0.1 RC 2 was released on Tuesday January 3, 2017 after RC 1
+that was released on Saturday December 31, 2016. The final release is planned
+for Friday January 6, 2017.
 
 .. contents::
    :depth: 2
