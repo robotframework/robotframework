@@ -54,11 +54,11 @@ Preparation
        invoke clean
 
 4. Set version information to a shell variable to ease copy-pasting further
-   commands. Add `aN`, `bN` or `rcN` postfix if creating a pre-release::
+   commands. Add ``aN``, ``bN`` or ``rcN`` postfix if creating a pre-release::
 
      VERSION=<version>
 
-   For example, `VERSION=3.0.1` or `VERSION=3.1a2`.
+   For example, ``VERSION=3.0.1`` or ``VERSION=3.1a2``.
 
 Release notes
 -------------
