@@ -36,6 +36,7 @@ class Interpreter(object):
         except (subprocess.CalledProcessError, OSError):
             raise ValueError('Invalid interpreter: %s' % self.path)
         name, version = output.split()[:2]
+        name = name if 'PyPy' not in output else 'PyPy'
         version = '.'.join(version.split('.')[:2])
         return name, version
 
@@ -89,6 +90,10 @@ class Interpreter(object):
     @property
     def is_ironpython(self):
         return self.name == 'IronPython'
+
+    @property
+    def is_pypy(self):
+        return self.name == 'PyPy'
 
     @property
     def is_py2(self):

@@ -143,5 +143,5 @@ Evaluate Nonstring
     Evaluate    ${5}
 
 Evaluate doesn't see module globals
-    [Documentation]    FAIL Evaluating expression 'BuiltIn' failed: NameError: name 'BuiltIn' is not defined
+    [Documentation]    FAIL REGEXP: Evaluating expression 'BuiltIn' failed: NameError: (global )?name 'BuiltIn' is not defined
     Evaluate    BuiltIn
