@@ -66,8 +66,8 @@ from GitHub_. After that you can install the framework with::
 
     python setup.py install
 
-For more detailed installation instructions, including installing
-Python, Jython and IronPython, see `<INSTALL.rst>`__.
+For more detailed installation instructions, including installing Python,
+Jython, IronPython and PyPy, see `<INSTALL.rst>`__.
 
 Example
 -------
