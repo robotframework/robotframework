@@ -19,7 +19,8 @@ import sys
 
 JYTHON = sys.platform.startswith('java')
 IRONPYTHON = sys.platform == 'cli'
-PYTHON = not (JYTHON or IRONPYTHON)
+PYPY = 'PyPy' in sys.version
+PYTHON = not (JYTHON or IRONPYTHON)  # PyPY and CPython work mostly same way
 PY2 = sys.version_info[0] == 2
 PY3 = not PY2
 UNIXY = os.sep == '/'
