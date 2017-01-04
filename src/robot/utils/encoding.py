@@ -51,8 +51,9 @@ def console_decode(string, encoding=CONSOLE_ENCODING, force=False):
 def console_encode(string, errors='replace', stream=sys.__stdout__):
     """Encodes Unicode to bytes in console or system encoding.
 
-    Uses console encoding if the given `stream` is a console and system
-    encoding otherwise.
+    Uses the encoding of the `stream` if it has one. Otherwise uses the console
+    encoding or the system encoding depending is the stream a console (as
+    detected by `isatty`) or not.
     """
     encoding = getattr(stream, 'encoding', None)
     if not encoding:
