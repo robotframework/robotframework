@@ -1,12 +1,12 @@
 Robot Framework acceptance tests
 ================================
 
-Introduction
-------------
-
 Acceptance tests for Robot Framework are naturally created using Robot
 Framework itself. This folder contains all those acceptance tests and other
 test data they need.
+
+.. contents::
+   :local:
 
 License and copyright
 ---------------------
@@ -35,9 +35,9 @@ run.py
     A script for running acceptance tests. See below for further instructions.
 
 genrunner.py
-    Script to generate atest runners based on plain text data files.
+    Script to generate atest runners based on test data files.
 
-    Usage:  genrunner.py testdata/path/data.robot [robot/path/runner.robot]
+    Usage:  ``atest/genrunner.py atest/testdata/path/data.robot [atest/robot/path/runner.robot]``
 
 robot/
     Contains actual acceptance test cases. See `Test data`_ section for details.
@@ -51,7 +51,7 @@ testdata/
 
 testresources/
     Contains resources needed by test cases in the ``testdata`` folder.
-    Some of these resources are also used by unit tests.
+    Some of these resources are also used by `unit tests <../utest/README.rst>`_.
 
 results/
     The place for test execution results. This directory is generated when
@@ -65,13 +65,13 @@ Robot Framework's acceptance tests are run using `<run.py>`__. See its
 documentation our run it with ``--help`` to see the usage. To run all the
 acceptance tests, execute the ``atest/robot`` folder entirely::
 
-    python atest/run.py python atest/robot
+    atest/run.py python atest/robot
 
 The command above will execute all tests, but often you may want to skip
-for example `telnet tests`_ and tests requiring manual interaction. These
+for example `Telnet tests`_ and tests requiring manual interaction. These
 tests are marked with the ``no-ci`` tag and can be excluded from the test run::
 
-    python atest/run.py python --exclude no-ci atest/robot
+    atest/run.py python --exclude no-ci atest/robot
 
 A sub test suite can be executed simply by running the folder or file
 containing it. On modern machines running all acceptance tests ought to
@@ -209,7 +209,6 @@ take screenshots. See `Screenshot library documentation`__ for details.
 
 __ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
 
-
 ``tools.jar``
 ~~~~~~~~~~~~~
 
@@ -217,7 +216,7 @@ Libdoc requires ``tools.jar``, which is part of the standard JDK installation,
 to be in ``CLASSPATH`` when reading library documentation from Java source
 files. In addition to setting ``CLASSPATH`` explicitly, it is possible to
 put ``tools.jar`` into the ``ext-lib`` directory in the project root and
-`<atest/run.py>`_ sets ``CLASSPATH`` automatically.
+``CLASSPATH`` is set automatically.
 
 Telnet tests
 ------------
