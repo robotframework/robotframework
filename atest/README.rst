@@ -8,26 +8,6 @@ test data they need.
 .. contents::
    :local:
 
-License and copyright
----------------------
-
-All content in the ``atest`` folder is under the following copyright::
-
-    Copyright 2008-2015 Nokia Networks
-    Copyright 2016-     Robot Framework Foundation
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
 Directory contents
 ------------------
 
@@ -61,11 +41,18 @@ results/
 Running acceptance tests
 ------------------------
 
-Robot Framework's acceptance tests are run using `<run.py>`__. See its
-documentation our run it with ``--help`` to see the usage. To run all the
-acceptance tests, execute the ``atest/robot`` folder entirely::
+Robot Framework's acceptance tests are executed using the `<run.py>`__
+script. It has two mandatory arguemnts, the Python interpreter to use
+when running tests and path to tests to be executed, and it accepts also
+all same options as Robot Framework. The script itself should always be
+executed with Python. Run it with ``--help`` or see its `source code
+<run.py>`__ for more information.
+
+To run all the acceptance tests, execute the ``atest/robot`` folder
+entirely using the selected interpreter::
 
     atest/run.py python atest/robot
+    atest/run.py jython atest/robot
 
 The command above will execute all tests, but often you may want to skip
 for example `Telnet tests`_ and tests requiring manual interaction. These
@@ -80,10 +67,10 @@ is considerably longer. This is due to Jython being somewhat slower than
 Python in general, but the main reason is that the JVM is started by
 acceptance dozens of times and it always takes few seconds.
 
-Before a release tests should be executed separately using  Python, Jython, and
-IronPython to verify interoperability with all supported interpreters. Tests
-should also be run using different interpreter versions (when applicable) and
-on different operating systems.
+Before a release tests should be executed separately using  Python, Jython,
+IronPython and PyPy to verify interoperability with all supported interpreters.
+Tests should also be run using different interpreter versions (when applicable)
+and on different operating systems.
 
 The results of the test execution are written into an interpreter specific
 directory under the ``atest/results`` directory. Temporary outputs created
@@ -146,14 +133,14 @@ Examples:
 .. code:: bash
 
     # Exclude tests requiring manual interaction or running telnet server.
-    python atest/run.py python --exclude no-ci atest/robot
+    atest/run.py python --exclude no-ci atest/robot
 
     # Same as the above but also exclude tests requiring docutils and lxml
-    python atest/run.py python -e no-ci -e require-docutils -e require-lxml atest/robot
+    atest/run.py python -e no-ci -e require-docutils -e require-lxml atest/robot
 
     # Run only tests related to Java integration. This is considerably faster
     # than running all tests on Jython.
-    python atest/run.py jython --include require-jython atest/robot
+    atest/run.py jython --include require-jython atest/robot
 
 Preconditions
 -------------
@@ -225,3 +212,23 @@ Running telnet tests requires some extra setup. Instructions how to run them
 can be found from `<testdata/standard_libraries/telnet/README.rst>`_.
 If you don't want to run an unprotected telnet server on your machine, you can
 always skip these tests by excluding tests with a tag ``telnet`` or ``no-ci``.
+
+License and copyright
+---------------------
+
+All content in the ``atest`` folder is under the following copyright::
+
+    Copyright 2008-2015 Nokia Networks
+    Copyright 2016-     Robot Framework Foundation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
