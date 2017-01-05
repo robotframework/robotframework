@@ -140,7 +140,7 @@ Support and contact
 - `#robotframework <http://webchat.freenode.net/?channels=robotframework&prompt=1>`_
   IRC channel on freenode
 - `@robotframework <https://twitter.com/robotframework>`_ on Twitter
-- `Other forums <http://robotframework.org/#support-contact>`_
+- `Other forums <http://robotframework.org/#support>`_
 
 License
 -------
