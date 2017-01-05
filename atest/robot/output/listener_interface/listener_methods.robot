@@ -71,7 +71,7 @@ Keyword Tags
     Should Contain X Times    ${status}    PASSED | tags: [force, keyword, tags]    6
 
 Suite And Test Counts
-    Run Tests    --listener listeners.SuiteAndTestCounts    misc/suites/sub*
+    Run Tests    --listener listeners.SuiteAndTestCounts    misc/suites/subsuites misc/suites/subsuites2
     Stderr Should Be Empty
 
 Suite Source
@@ -84,7 +84,7 @@ Keyword Type
 
 Suite And Test Counts With Java
     [Tags]    require-jython
-    Run Tests    --listener JavaSuiteAndTestCountListener    misc/suites/sub*
+    Run Tests    --listener JavaSuiteAndTestCountListener    misc/suites/subsuites misc/suites/subsuites2
     Stderr Should Be Empty
 
 Executing Keywords from Listeners
