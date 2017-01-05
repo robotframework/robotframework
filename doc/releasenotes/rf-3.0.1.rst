@@ -39,8 +39,9 @@ Most important enhancements
 The most important new features in RF 3.0.1 are the ability to limit parsing
 of test data file to a certain file type (e.g. `--extension robot`, `#2365`_)
 and case-insensitivity support added to most comparison keywords in the
-BuildIn library (e.g. `| Should Be Equal | ${x} | ${y} | ignore_case=True |`,
-`#2439`_).
+BuiltIn library (`#2439`_). Robot Framework nowadays also officially supports
+`PyPy <http://pypy.org>`_, an alternative and in some contexts faster and more
+memory efficient implementation of the Python language (`#2513`_).
 
 There are also some high priority bug fixes in the release:
 
@@ -48,7 +49,7 @@ There are also some high priority bug fixes in the release:
 - Using HTML in failure messages is not possible in setups/teardowns or with continuable failures (`#2360`_)
 - Programmatically re-running failed tests prevents subsequent Robot and Rebot usage in same process (`#2437`_)
 - Copying model objects doesn't always work (`#2483`_)
-- Redirecting console output with nonrepresentable characters crashes execution on Windows with Python 3.6 (`#2505`_)
+- Redirecting console output with non-representable characters crashes execution on Windows with Python 3.6 (`#2505`_)
 
 Backwards incompatible changes
 ==============================
@@ -65,16 +66,19 @@ Acknowledgements
 ================
 
 This release has been sponsored by the `Robot Framework Foundation`__ and
-would not have been possible, at least with this scope, without that. Big
-thank you for all the member companies of the foundation for your support!
+would not have been possible with this scope otherwise. Big thanks for all
+the member companies of the foundation for your support!
 
 There have also been several great `contributions <../../CONTRIBUTING.rst>`_
 by the community:
 
 - Anton Nikitin implemented `Should (Not) Contain Any` keywords  (`#2120`_)
 - Yang Qian fixed copying model objects (`#2483`_)
-- Chris Callan added case-insensitivity support to various comparison keywords (`#2439`_)
 - Benjamin Einaudi implemented `--rerunfailedsuites` option (`#2117`_)
+- Chris Callan added case-insensitivity support to various comparison keywords (`#2439`_)
+
+Thanks also for everyone who has submitted or commented issues, tested the
+preview releases, or otherwise helped to make RF 3.0.1 a great release!
 
 __ http://robotframework.org/foundation/
 
@@ -108,6 +112,10 @@ Full list of fixes and enhancements
       - bug
       - high
       - Redirecting console output with nonrepresentable characters crashes execution on Windows with Python 3.6
+    * - `#2309`_
+      - enhancement
+      - high
+      - Add Robot Framework Foundation as copyright holder for 2016->
     * - `#2365`_
       - enhancement
       - high
@@ -116,6 +124,10 @@ Full list of fixes and enhancements
       - enhancement
       - high
       - Builtin: Add case-insensitivity support to comparison keywords
+    * - `#2513`_
+      - enhancement
+      - high
+      - Official PyPy support
     * - `#2315`_
       - bug
       - medium
@@ -136,6 +148,10 @@ Full list of fixes and enhancements
       - bug
       - medium
       - Test case with template should continue if keyword timeout occurs
+    * - `#2460`_
+      - bug
+      - medium
+      - Dialogs: Opening dialogs fails with Python on Linux if mouse button hold down
     * - `#2509`_
       - bug
       - medium
@@ -148,10 +164,6 @@ Full list of fixes and enhancements
       - enhancement
       - medium
       - New `Should Contain Any` and `Should Not Contain Any` keywords
-    * - `#2309`_
-      - enhancement
-      - medium
-      - Add Robot Framework Foundation as copyright holder for 2016->
     * - `#2386`_
       - enhancement
       - medium
@@ -191,7 +203,7 @@ Full list of fixes and enhancements
     * - `#2392`_
       - bug
       - low
-      - Not possible to pass tags `Pass Execution If` using a list variable
+      - Not possible to pass tags to `Pass Execution If` using list variable
     * - `#2404`_
       - bug
       - low
@@ -200,10 +212,6 @@ Full list of fixes and enhancements
       - bug
       - low
       - `Should (Not) Match` does not work with bytes on Python 3
-    * - `#2460`_
-      - bug
-      - low
-      - Dialogs: Opening dialogs fails with Python on Linux if mouse button hold down
     * - `#2475`_
       - bug
       - low
@@ -249,7 +257,7 @@ Full list of fixes and enhancements
       - low
       - Allow `run_cli` and `rebot_cli` functions to return rc without exiting
 
-Altogether 40 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0.1>`__.
+Altogether 41 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0.1>`__.
 
 .. _User Guide: http://robotframework.org/robotframework/#user-guide
 .. _#2326: https://github.com/robotframework/robotframework/issues/2326
@@ -257,17 +265,19 @@ Altogether 40 issues. View on `issue tracker <https://github.com/robotframework/
 .. _#2437: https://github.com/robotframework/robotframework/issues/2437
 .. _#2483: https://github.com/robotframework/robotframework/issues/2483
 .. _#2505: https://github.com/robotframework/robotframework/issues/2505
+.. _#2309: https://github.com/robotframework/robotframework/issues/2309
 .. _#2365: https://github.com/robotframework/robotframework/issues/2365
 .. _#2439: https://github.com/robotframework/robotframework/issues/2439
+.. _#2513: https://github.com/robotframework/robotframework/issues/2513
 .. _#2315: https://github.com/robotframework/robotframework/issues/2315
 .. _#2318: https://github.com/robotframework/robotframework/issues/2318
 .. _#2321: https://github.com/robotframework/robotframework/issues/2321
 .. _#2351: https://github.com/robotframework/robotframework/issues/2351
 .. _#2373: https://github.com/robotframework/robotframework/issues/2373
+.. _#2460: https://github.com/robotframework/robotframework/issues/2460
 .. _#2509: https://github.com/robotframework/robotframework/issues/2509
 .. _#2117: https://github.com/robotframework/robotframework/issues/2117
 .. _#2120: https://github.com/robotframework/robotframework/issues/2120
-.. _#2309: https://github.com/robotframework/robotframework/issues/2309
 .. _#2386: https://github.com/robotframework/robotframework/issues/2386
 .. _#2387: https://github.com/robotframework/robotframework/issues/2387
 .. _#2407: https://github.com/robotframework/robotframework/issues/2407
@@ -280,7 +290,6 @@ Altogether 40 issues. View on `issue tracker <https://github.com/robotframework/
 .. _#2392: https://github.com/robotframework/robotframework/issues/2392
 .. _#2404: https://github.com/robotframework/robotframework/issues/2404
 .. _#2456: https://github.com/robotframework/robotframework/issues/2456
-.. _#2460: https://github.com/robotframework/robotframework/issues/2460
 .. _#2475: https://github.com/robotframework/robotframework/issues/2475
 .. _#2489: https://github.com/robotframework/robotframework/issues/2489
 .. _#2490: https://github.com/robotframework/robotframework/issues/2490
