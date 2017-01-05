@@ -12,10 +12,11 @@ Directory contents
 ------------------
 
 run.py
-    A script for running acceptance tests. See below for further instructions.
+    A script for running acceptance tests. See `Running acceptance tests`_
+    for further instructions.
 
 genrunner.py
-    Script to generate atest runners based on test data files.
+    Script to generate acceptance test runners based on test data files.
 
     Usage:  ``atest/genrunner.py atest/testdata/path/data.robot [atest/robot/path/runner.robot]``
 
@@ -42,11 +43,11 @@ Running acceptance tests
 ------------------------
 
 Robot Framework's acceptance tests are executed using the `<run.py>`__
-script. It has two mandatory arguemnts, the Python interpreter to use
+script. It has two mandatory arguments, the Python interpreter to use
 when running tests and path to tests to be executed, and it accepts also
 all same options as Robot Framework. The script itself should always be
-executed with Python. Run it with ``--help`` or see its `source code
-<run.py>`__ for more information.
+executed with Python. Run it with ``--help`` or see documentation in its
+`source code <run.py>`__ for more information.
 
 To run all the acceptance tests, execute the ``atest/robot`` folder
 entirely using the selected interpreter::
@@ -54,9 +55,9 @@ entirely using the selected interpreter::
     atest/run.py python atest/robot
     atest/run.py jython atest/robot
 
-The command above will execute all tests, but often you may want to skip
-for example `Telnet tests`_ and tests requiring manual interaction. These
-tests are marked with the ``no-ci`` tag and can be excluded from the test run::
+The commands above will execute all tests, but you typically want to skip
+`Telnet tests`_ and tests requiring manual interaction. These tests are marked
+with the ``no-ci`` tag and can be easily excluded::
 
     atest/run.py python --exclude no-ci atest/robot
 
@@ -65,7 +66,7 @@ containing it. On modern machines running all acceptance tests ought to
 take less than ten minutes with Python, but with Jython the execution time
 is considerably longer. This is due to Jython being somewhat slower than
 Python in general, but the main reason is that the JVM is started by
-acceptance dozens of times and it always takes few seconds.
+acceptance dozens of times and that always takes few seconds.
 
 Before a release tests should be executed separately using  Python, Jython,
 IronPython and PyPy to verify interoperability with all supported interpreters.
