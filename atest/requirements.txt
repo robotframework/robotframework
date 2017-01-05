@@ -1,7 +1,12 @@
+# External Python modules required by acceptance tests.
+# See atest/README.rst for more information.
+
 docutils >= 0.9
 pygments
 pyyaml
-# On Linux installing lxml with pip requires compilation. You may want to use 
-# your platform package manager to install precompiled lxml. For example: 
-# sudo apt-get install python-lxml
+
+# On Linux installing lxml with pip may require compilation and development
+# headers. Alternatively it can be installed using a package manager like
+# `sudo apt-get install python-lxml`.
+# Notice also that lxml is not compatible with Jython or IronPython.
 lxml

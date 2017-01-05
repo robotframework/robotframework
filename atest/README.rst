@@ -115,7 +115,7 @@ The tests on the running side (``atest/robot``) contains tags that are used
 to include or exclude them based on the platform and required dependencies.
 Selecting tests based on the platform is done automatically by the `<run.py>`__
 script, but additional selection can be done by the user to avoid running
-tests that require dependencies that are not available.
+tests with `precondtions`_ that are not met.
 
 manual
   Require manual interaction from user. Used with Dialogs library tests.
@@ -128,28 +128,18 @@ no-ci
   Tests which are not executed at continuous integration. Contains all tests
   tagged with ``manual`` or ``telnet``.
 
-require-jython
-  Require the interpreter to be Jython. Mainly used with tests related to
-  Java integration.
+require-yaml, require-docutils, require-pygments, require-lxml, require-screenshot, require-tools.jar
+  Require specified Python module or some other external tool to be installed.
+  See `Preconditions`_ for details and exclude like ``--exclude require-lxml``
+  if needed.
 
-require-windows
-  Require the operating system to be Windows.
-
-require-yaml, require-docutils, require-pygments, require-lxml, require-screenshot
-  Require lxml, docutils, Pygments, PyYAML, or platform specific screenshot
-  module to be installed, respectively. See `Required modules`_ for details.
-
-require-et13
-  Require ElementTree version 1.3. Automatically excluded when running with
-  Python 2.6 or IronPython.
-
-require-tools.jar
-  Require the tools.jar from JVM to be in ``CLASSPATH`` environment variable.
-  This is only needed on some Libdoc tests on Jython.
+require-windows, require-jython, ...
+  Tests that require certain operating system or Python interpreter.
+  Excluded automatically outside these platforms.
 
 no-windows, no-osx, no-jython, no-ipy,  ...
-  Tests to be excluded on different operating systems or Python interpreter
-  versions. Excluded automatically.
+  Tests to be excluded on certain operating systems or Python interpreters.
+  Excluded automatically on these platforms.
 
 Examples:
 
@@ -165,12 +155,19 @@ Examples:
     # than running all tests on Jython.
     python atest/run.py jython --include require-jython atest/robot
 
-Required modules
-----------------
+Preconditions
+-------------
 
-Certain Robot Framework features require optional external modules to be
-installed, and naturally tests related to these features require same modules
-as well:
+Certain Robot Framework features require optional external modules or tools
+to be installed, and naturally tests related to these features require same
+modules/tools as well. This section lists what preconditions are needed to
+run all tests successfully. See `Test tags`_ for instructions how to avoid
+running certain tests if all preconditions are not met.
+
+Required Python modules
+~~~~~~~~~~~~~~~~~~~~~~~
+
+These Python modules need to be installed:
 
 - `docutils <http://docutils.sourceforge.net/>`_ is needed with tests related
   to parsing test data in reStructuredText format and with Libdoc tests
@@ -179,13 +176,10 @@ as well:
   highlighting.
 - `PyYAML <http://pyyaml.org/>`__ is required with tests related to YAML
   variable files.
-- `lxml <http://lxml.de/>`__ is needed with XML library tests.
-- Screenshot library tests require a platform dependent module that can take
-  screenshots. See `Screenshot library documentation`__ for details.
+- `lxml <http://lxml.de/>`__ is needed with XML library tests. Not compatible
+  with Jython or IronPython.
 
-__ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
-
-It is possible to install docutils, PyYAML and lxml using using ``pip`` either
+It is possible to install the above modules using ``pip`` either
 individually or by using the provided `<requirements.txt>`__ file:
 
 .. code:: bash
@@ -199,13 +193,31 @@ individually or by using the provided `<requirements.txt>`__ file:
     # Install using requirements.txt
     pip install -r atest/requirements.txt
 
-Notice that the lxml module requires compilation on Linux. You can also install
-it using a system package manager like ``apt-get install python-lxml``.
-Additionally, lxml is not compatible with Jython or IronPython.
+Notice that the lxml module may require compilation on Linux, which in turn
+may require installing development headers of lxml dependencies. Alternatively
+lxml can be installed using a system package manager like
+``sudo apt-get install python-lxml``.
 
-If a required module is not installed, it is possible to exclude tests
-from the execution by using tags as explained in the `Test tags`_ section.
-The lxml related tests are excluded with Jython and IronPython automatically.
+Because lxml is not compatible with Jython or IronPython, tests requiring it
+are excluded automatically when using these interpreters.
+
+Screenshot module or tool
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Screenshot library tests require a platform dependent module or tool that can
+take screenshots. See `Screenshot library documentation`__ for details.
+
+__ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
+
+
+``tools.jar``
+~~~~~~~~~~~~~
+
+Libdoc requires ``tools.jar``, which is part of the standard JDK installation,
+to be in ``CLASSPATH`` when reading library documentation from Java source
+files. In addition to setting ``CLASSPATH`` explicitly, it is possible to
+put ``tools.jar`` into the ``ext-lib`` directory in the project root and
+`<atest/run.py>`_ sets ``CLASSPATH`` automatically.
 
 Telnet tests
 ------------
