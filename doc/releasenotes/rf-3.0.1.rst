@@ -10,20 +10,18 @@ in the previous releases, but also adds some really nice enhancements. The
 most important features and fixes are explained below, and a full list of
 altogether 41 issues included in this release is at the end.
 
-Questions and comments related to the release can be sent to the
-`robotframework-users <http://groups.google.com/group/robotframework-users>`_
-and possible bugs submitted to the `issue tracker
-<https://github.com/robotframework/robotframework/issues>`__.
-
 If you have `pip <http://pip-installer.org>`_ package manager installed, just
 run `pip install --upgrade robotframework` to install or upgrade to this (or
 newer) release or use `pip install robotframework==3.0.1` to install exactly
-this version.
-
-Alternatively you can download the source distribution from
+this version. Alternatively you can download the source distribution from
 `PyPI <https://pypi.python.org/pypi/robotframework>`_ and install it manually.
 For more details and other installation approaches, see the `installation
 instructions <../../INSTALL.rst>`_.
+
+Questions and comments related to the release can be sent to the
+`robotframework-users <http://groups.google.com/group/robotframework-users>`_
+mailing list and possible bugs submitted to the `issue tracker
+<https://github.com/robotframework/robotframework/issues>`__.
 
 Robot Framework 3.0.1 was released on Friday January 6, 2017.
 
