@@ -18,12 +18,11 @@ this version. Alternatively you can download the source distribution from
 For more details and other installation approaches, see the `installation
 instructions <../../INSTALL.rst>`_.
 
-Questions and comments related to the release can be sent to the
+Robot Framework 3.0.1 was released on Friday January 6, 2017. Questions and
+comments related to the release can be sent to the
 `robotframework-users <http://groups.google.com/group/robotframework-users>`_
 mailing list and possible bugs submitted to the `issue tracker
 <https://github.com/robotframework/robotframework/issues>`__.
-
-Robot Framework 3.0.1 was released on Friday January 6, 2017.
 
 .. contents::
    :depth: 2
