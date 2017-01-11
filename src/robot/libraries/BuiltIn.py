@@ -768,25 +768,45 @@ class _Verify(_BuiltInBase):
         first, second = [self._convert_to_string(i) for i in (first, second)]
         self._should_be_equal(first, second, msg, values)
 
-    def should_not_start_with(self, str1, str2, msg=None, values=True):
+    def should_not_start_with(self, str1, str2, msg=None, values=True,
+                              ignore_case=False):
         """Fails if the string ``str1`` starts with the string ``str2``.
 
+        If ignore_case is True, it indicates that ``str1`` and ``str2``
+        should be compared case-insensitively.  See `Boolean  arguments` section
+        for more details.  (This option is new in Robot Framework 3.0.1)
+
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
+        str_assertion = 'starts with'
+        if is_truthy(ignore_case):
+            str1 = str1.lower()
+            str2 = str2.lower()
+            str_assertion += " (case-insensitive)"
         if str1.startswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
-                                                      'starts with'))
+                                                      str_assertion))
 
-    def should_start_with(self, str1, str2, msg=None, values=True):
+    def should_start_with(self, str1, str2, msg=None, values=True,
+                          ignore_case=False):
         """Fails if the string ``str1`` does not start with the string ``str2``.
+
+        If ignore_case is True, it indicates that ``str1`` and ``str2``
+        should be compared case-insensitively.  See `Boolean  arguments` section
+        for more details.  (This option is new in Robot Framework 3.0.1)
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
+        str_assertion = 'does not start with'
+        if is_truthy(ignore_case):
+            str1 = str1.lower()
+            str2 = str2.lower()
+            str_assertion += " (case-insensitive)"
         if not str1.startswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
-                                                      'does not start with'))
+                                                      str_assertion))
 
     def should_not_end_with(self, str1, str2, msg=None, values=True):
         """Fails if the string ``str1`` ends with the string ``str2``.

@@ -235,12 +235,28 @@ Should Not Start With
     Hello, world!    HELLO
     Hello, world!    Hello
 
+Should Not Start With Case Insensitivity
+    [Documentation]    FAIL 'hello, world!' starts with (case-insensitive) 'hello'
+    [Template]    Should Not Start With
+    [Tags]  Mine
+    Hello, world!   Hi          ignore_case=True
+    Hello, world!   ELLO        ignore_case=True
+    HYVÄÄ YÖTÄ      zyvää       ignore_case=True
+    Hello, world!   hello       ignore_case=True
+
 Should Start With
     [Documentation]    FAIL My message: '${LONG}' does not start with 'Does not start'
     [Template]    Should Start With
     Hello, world!    Hello
     Hello, world!    Hello, world!
     ${LONG}    Does not start    My message    values=true
+
+Should Start With Case Insensitivity
+    [Template]    Should Start With
+    [Tags]  Mine
+    Hello, world!   hello               ignore_case=True
+    Hello, world!   HELLO, WORLD!       ignore_case=True
+    HYVÄÄ YÖTÄ      hyvää               ignore_case=True
 
 Should Start With without values
     [Documentation]    FAIL My message
