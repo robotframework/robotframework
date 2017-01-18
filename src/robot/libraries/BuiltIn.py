@@ -2950,9 +2950,7 @@ class _Misc(_BuiltInBase):
         | ${result} = 42
         """
         if is_string(expression) and '$' in expression:
-            variables = self._variables.as_dict(decoration=False)
-            expression = self._handle_variables_in_expression(expression, variables)
-            variables = self._decorate_variables_for_evaluation(variables)
+            expression, variables = self._handle_variables_in_expression(expression)
         else:
             variables = {}
         namespace = self._create_evaluation_namespace(namespace, modules)
@@ -2967,18 +2965,20 @@ class _Misc(_BuiltInBase):
             raise RuntimeError("Evaluating expression '%s' failed: %s"
                                % (expression, get_error_message()))
 
-    def _handle_variables_in_expression(self, expression, variables):
+    def _handle_variables_in_expression(self, expression):
+        variables = None
+        variable_started = False
         tokens = []
-        variable_started = seen_variable = False
         generated = generate_tokens(StringIO(expression).readline)
         for toknum, tokval, _, _, _ in generated:
             if variable_started:
                 if toknum == token.NAME:
+                    if variables is None:
+                        variables = self._variables.as_dict(decoration=False)
                     if tokval not in variables:
                         variable_not_found('$%s' % tokval, variables,
                                            deco_braces=False)
                     tokval = 'RF_VAR_' + tokval
-                    seen_variable = True
                 else:
                     tokens.append((token.ERRORTOKEN, '$'))
                 variable_started = False
@@ -2986,9 +2986,10 @@ class _Misc(_BuiltInBase):
                 variable_started = True
             else:
                 tokens.append((toknum, tokval))
-        if seen_variable:
-            return untokenize(tokens).strip()
-        return expression
+        if variables is None:
+            return expression, {}
+        variables = self._decorate_variables_for_evaluation(variables)
+        return untokenize(tokens).strip(), variables
 
     def _create_evaluation_namespace(self, namespace, modules):
         namespace = dict(namespace or {})
