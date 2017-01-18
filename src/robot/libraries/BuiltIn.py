@@ -2988,19 +2988,14 @@ class _Misc(_BuiltInBase):
                 tokens.append((toknum, tokval))
         if variables is None:
             return expression, {}
-        variables = self._decorate_variables_for_evaluation(variables)
-        return untokenize(tokens).strip(), variables
+        decorated = [('RF_VAR_' + name, variables[name]) for name in variables]
+        return untokenize(tokens).strip(), NormalizedDict(decorated, ignore='_')
 
     def _create_evaluation_namespace(self, namespace, modules):
         namespace = dict(namespace or {})
         modules = modules.replace(' ', '').split(',') if modules else []
         namespace.update((m, __import__(m)) for m in modules if m)
         return namespace
-
-    def _decorate_variables_for_evaluation(self, variables):
-        decorated = [('RF_VAR_' + name, value)
-                     for name, value in variables.items()]
-        return NormalizedDict(decorated, ignore='_')
 
     def call_method(self, object, method_name, *args, **kwargs):
         """Calls the named method of the given object with the provided arguments.
