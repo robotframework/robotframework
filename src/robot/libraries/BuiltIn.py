@@ -3331,8 +3331,14 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | `Run Keyword If` | 'FAIL' in $output | `Log` | Output contains FAIL |
     | `Should Be True` | len($result) > 1 and $result[1] == 'OK' |
 
+    Using the ``$variable`` syntax slows down expression evaluation a little.
+    This should not typically matter, but should be taken into account if
+    complex expressions are evaluated often and there are strict time
+    constrains.
+
     Notice that instead of creating complicated expressions, it is often better
-    to move the logic into a test library.
+    to move the logic into a test library. That eases maintenance and can also
+    enhance execution speed.
 
     = Boolean arguments =
 
@@ -3351,7 +3357,6 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=yes     | # Same as the above.             |
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${TRUE} | # Python ``True`` is true.       |
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${42}   | # Numbers other than 0 are true. |
-
 
     False examples:
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=False     | # String ``false`` is false.   |
