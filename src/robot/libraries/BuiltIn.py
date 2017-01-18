@@ -2949,10 +2949,13 @@ class _Misc(_BuiltInBase):
         | ${random} = <random integer>
         | ${result} = 42
         """
-        variables = self._variables.as_dict(decoration=False)
-        expression = self._handle_variables_in_expression(expression, variables)
+        if is_string(expression) and '$' in expression:
+            variables = self._variables.as_dict(decoration=False)
+            expression = self._handle_variables_in_expression(expression, variables)
+            variables = self._decorate_variables_for_evaluation(variables)
+        else:
+            variables = {}
         namespace = self._create_evaluation_namespace(namespace, modules)
-        variables = self._decorate_variables_for_evaluation(variables)
         try:
             if not is_string(expression):
                 raise TypeError("Expression must be string, got %s."
@@ -2965,8 +2968,6 @@ class _Misc(_BuiltInBase):
                                % (expression, get_error_message()))
 
     def _handle_variables_in_expression(self, expression, variables):
-        if not is_string(expression):
-            return expression
         tokens = []
         variable_started = seen_variable = False
         generated = generate_tokens(StringIO(expression).readline)
