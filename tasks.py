@@ -33,16 +33,6 @@ VERSION_RE = re.compile('^(((?:2|3)\.\d+)(\.\d+)?)((a|b|rc|.dev)(\d+))?$')
 VERSION_FILE = os.path.join('src', 'robot', 'version.py')
 
 
-@task(default=True)
-def help(ctx):
-    """Show help, basically an alias for --help.
-
-    This task can be removed once the fix to this issue is released:
-    https://github.com/pyinvoke/invoke/issues/180
-    """
-    ctx.run('invoke --help')
-
-
 @task
 def tag_release(ctx, version):
     """Tag specified release.
