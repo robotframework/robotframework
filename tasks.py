@@ -10,19 +10,24 @@ from __future__ import print_function
 import os
 import re
 import shutil
+import sys
 import tarfile
 import tempfile
 import time
 import urllib
 import zipfile
 
-from invoke import task, __version_info__
-from sys import exit
+try:
+    from invoke import task, __version_info__ as invoke_version
 
-if __version_info__ < (0, 13):
-    exit('invoke 0.13 or newer needed')
+    if invoke_version < (0, 13):
+        raise ImportError
+except ImportError:
+    sys.exit('invoke 0.13 or newer required. See BUILD.rst for details.')
+
 
 assert os.getcwd() == os.path.dirname(os.path.abspath(__file__))
+
 
 VERSION_RE = re.compile('^(((?:2|3)\.\d+)(\.\d+)?)((a|b|rc|.dev)(\d+))?$')
 VERSION_FILE = os.path.join('src', 'robot', 'version.py')
