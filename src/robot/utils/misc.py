@@ -66,35 +66,33 @@ def printable_name(string, code_style=False):
     if code_style and '_' in string:
         string = string.replace('_', ' ')
     parts = string.split()
-    if not parts:
-        return ''
     if code_style and len(parts) == 1 \
             and not (string.isalpha() and string.islower()):
-        parts = _camelCaseSplit(list(parts[0]))
+        parts = _split_camel_case(parts[0])
     return ' '.join(part[0].upper() + part[1:] for part in parts)
 
 
-def _camelCaseSplit(chars):
+def _split_camel_case(string):
+    tokens = []
     token = []
-    for prev, char, next in zip([''] + chars, chars, chars[1:] + ['']):
-        if _isCamelCaseBoundary(prev, char, next):
+    for prev, char, next in zip(' ' + string, string, string[1:] + ' '):
+        if _is_camel_case_boundary(prev, char, next):
             if token:
-                yield ''.join(token)
+                tokens.append(''.join(token))
             token = [char]
         else:
             token.append(char)
     if token:
-        yield ''.join(token)
+        tokens.append(''.join(token))
+    return tokens
 
 
-def _isCamelCaseBoundary(prev, char, next):
+def _is_camel_case_boundary(prev, char, next):
     if prev.isdigit():
         return not char.isdigit()
     if char.isupper():
         return next.islower() or prev.isalpha() and not prev.isupper()
-    if char.isdigit():
-        return not prev.isdigit()
-    return False
+    return char.isdigit()
 
 
 def plural_or_not(item):

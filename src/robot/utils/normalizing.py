@@ -16,7 +16,7 @@
 import sys
 from collections import MutableMapping
 
-from .platform import PY3
+from .platform import PY3, IRONPYTHON
 from .robottypes import is_dict_like
 
 
@@ -35,14 +35,16 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     if caseless:
         string = lower(string)
         ignore = [lower(i) for i in ignore]
-    for ign in ignore:
-        if ign in string:  # performance optimization
-            string = string.replace(ign, empty)
+    # both if statements below enhance performance a little
+    if ignore:
+        for ign in ignore:
+            if ign in string:
+                string = string.replace(ign, empty)
     return string
 
 
 # http://ironpython.codeplex.com/workitem/33133
-if sys.platform == 'cli' and sys.version_info < (2, 7, 5):
+if IRONPYTHON and sys.version_info < (2, 7, 5):
     def lower(string):
         return ('A' + string).lower()[1:]
 else:
