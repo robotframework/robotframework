@@ -138,10 +138,12 @@ def clean(ctx, remove_dist=True, create_dirs=False):
             shutil.rmtree(name)
         if create_dirs and not os.path.isdir(name):
             os.mkdir(name)
-    for directory, _, files in os.walk('.'):
+    for directory, dirs, files in os.walk('.'):
         for name in files:
             if name.endswith(('.pyc', '$py.class')):
                 os.remove(os.path.join(directory, name))
+        if '__pycache__' in dirs:
+            shutil.rmtree(os.path.join(directory, '__pycache__'))
 
 
 @task
