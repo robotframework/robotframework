@@ -291,7 +291,9 @@ class OperatingSystem(object):
         path = self._absnorm(path)
         self._link("Getting file '%s'.", path)
         with open(path, 'rb') as f:
-            return bytes(f.read())
+            result = bytes(f.read())
+            f.close()
+            return result
 
     def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict'):
         """Returns the lines of the specified file that match the ``pattern``.
