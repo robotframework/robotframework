@@ -220,6 +220,21 @@ environments and interpreters (Windows, Linux, OS X, Python, Jython,
 IronPython, Python 3, etc). Pull requests are also automatically tested on
 continuous integration.
 
+Executing changed code
+''''''''''''''''''''''
+
+If you want to manually verify the changes, an easy approach is directly
+running the `<src/robot/run.py>`_ script that is part of Robot Framework
+itself. Alternatively you can use the `<rundevel.py>`_ script that sets
+some command line options and environment variables to ease executing tests
+under the `<atest/testdata>`_ directory. It also automatically creates a
+``tmp`` directory in the project root and writes all outputs there.
+
+If you want to install the current code locally, you can do it like
+``python setup.py install`` as explained in `<INSTALL.rst>`_. For
+instructions how to create a distribution that allows installing elsewhere
+see `<BUILD.rst>`_.
+
 Acceptance tests
 ''''''''''''''''
 

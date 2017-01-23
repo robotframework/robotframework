@@ -1,15 +1,20 @@
 #!/usr/bin/env python
 
-"""rundevel.py -- script to run current code
+"""rundevel.py -- script to run the current Robot Framework code
 
 Usage: [interpreter] rundevel.py [run|rebot] [options] [arguments]
 
+Options and arguments are same as Robot Framework itself accepts. Sets some
+command line options and environment variables to ease executing tests under
+the `atest/testdata` directory. Writes all outputs into `tmp` directory in
+the project root.
+
 Examples:
-    ./rundevel.py --name Example tests.txt          # run with python
-    ./rundevel.py run --name Example tests.txt      # same as above
-    jython rundevel.py --name Example tests.txt     # run with jython
-    ./rundevel.py rebot --name Example out.xml      # rebot with python
-    ipy rundevel.py rebot --name Example out.xml    # rebot with ipy
+    ./rundevel.py --name Example tests.robot          # Run with default Python
+    ./rundevel.py run --name Example tests.robot      # Same as the above
+    jython rundevel.py --name Example tests.robot     # Run with Jython
+    ./rundevel.py rebot --name Example out.robot      # Rebot with Jython
+    ipy rundevel.py rebot --name Example out.robot    # Rebot with IronPython
 """
 
 from os.path import abspath, dirname, exists, join
