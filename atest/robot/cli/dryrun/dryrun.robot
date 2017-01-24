@@ -1,11 +1,12 @@
 *** Settings ***
 Suite Setup       Run Tests    --dryrun    cli/dryrun/dryrun.robot cli/dryrun/more_tests.robot
+Test Teardown     Last keyword should have been validated
 Resource          atest_resource.robot
 
 *** Test Cases ***
 Passing keywords
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    3
+    Should have correct number of keywords    ${tc}    4
     Check Keyword Data    ${tc.kws[0]}    BuiltIn.Log    status=NOT_RUN    args=Hello from test
     Check Keyword Data    ${tc.kws[1]}    OperatingSystem.List Directory    status=NOT_RUN    assign=\${contents}    args=.
     Check Keyword Data    ${tc.kws[2]}    resource.Simple UK
@@ -13,7 +14,7 @@ Passing keywords
 
 Keywords with embedded arguments
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    2
+    Should have correct number of keywords    ${tc}    3
     Check Keyword Data    ${tc.kws[0]}    Embedded arguments here
     Check Keyword Data    ${tc.kws[0].kws[0]}    BuiltIn.No Operation    status=NOT_RUN
     Check Keyword Data    ${tc.kws[1]}    Embedded args rock here
@@ -65,18 +66,18 @@ User keyword return value
 
 Test Setup and Teardown
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    1
+    Should have correct number of keywords    ${tc}    2
     Should Be Equal    ${tc.setup.name}    BuiltIn.Log
     Should Be Equal    ${tc.teardown.name}    Does not exist
 
 Keyword Teardown
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    1
+    Should have correct number of keywords    ${tc}    2
     Should Be Equal    ${tc.kws[0].kws[1].name}    Does not exist
 
 For Loops
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    3
+    Should have correct number of keywords    ${tc}    4
     Should have correct number of keywords    ${tc.kws[0]}    1
     Should have correct number of keywords    ${tc.kws[0].kws[0]}    2
     Should have correct number of keywords    ${tc.kws[1]}    3
@@ -116,9 +117,11 @@ Invalid imports
     Import should have failed    3    cli/dryrun/dryrun.robot
     ...    Resource file 'NonExisting.robot' does not exist.
     ...    traceback=
+    [Teardown]    NONE
 
 Test from other suite
     Check Test Case    Some Other Test
+    [Teardown]    NONE
 
 *** Keywords ***
 Should have correct number of keywords
@@ -135,3 +138,7 @@ Keyword should have been validated
     [Arguments]    ${kw}
     Check Keyword Data    ${kw}    This is validated
     Check Keyword Data    ${kw.kws[0]}    BuiltIn.Log    status=NOT_RUN    args=This is validated
+
+Last keyword should have been validated
+    ${tc} =    Get test case    ${TEST NAME}
+    Keyword should have been validated    ${tc.kws[-1]}
