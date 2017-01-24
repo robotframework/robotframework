@@ -134,11 +134,14 @@ class UserKeywordRunner(object):
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
     def _execute(self, context):
-        if not (self._handler.keywords or self._handler.return_value):
+        handler = self._handler
+        if not (handler.keywords or handler.return_value):
             raise DataError("User keyword '%s' contains no keywords." % self.name)
+        if context.dry_run and 'robot:no-dry-run' in handler.tags:
+            return None, None
         error = return_ = pass_ = None
         try:
-            StepRunner(context).run_steps(self._handler.keywords)
+            StepRunner(context).run_steps(handler.keywords)
         except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures

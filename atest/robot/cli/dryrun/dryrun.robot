@@ -98,6 +98,15 @@ Invalid syntax in UK
 Multiple Failures
     Check Test Case    ${TESTNAME}
 
+Avoid keyword in dry-run
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Keyword should have been skipped with tag    ${tc.kws[0]}    Keyword not run in dry-run    robot:no-dry-run
+    Keyword should have been skipped with tag    ${tc.kws[1]}    Another keyword not run in dry-run    ROBOT: no-dry-run
+    Keyword should have been skipped with tag    ${tc.kws[2].kws[0]}    Keyword not run in dry-run    robot:no-dry-run
+    Keyword should have been skipped with tag    ${tc.kws[2].kws[1]}    Another keyword not run in dry-run    ROBOT: no-dry-run
+    Keyword should have been validated    ${tc.kws[2].kws[2]}
+    Keyword should have been validated    ${tc.kws[3]}
+
 Invalid imports
     Import should have failed    1    cli/dryrun/dryrun.robot
     ...    Importing test library 'DoesNotExist' failed: *Error: *
@@ -117,3 +126,12 @@ Should have correct number of keywords
     Log    ${test or uk.kws}
     Should Be Equal As Integers    ${test or uk.kw_count}    ${exp number of kws}
 
+Keyword should have been skipped with tag
+    [Arguments]    ${kw}    ${name}    ${tags}
+    Check Keyword Data    ${kw}    ${name}    status=PASS    tags=${tags}
+    Should Be Empty    ${kw.kws}
+
+Keyword should have been validated
+    [Arguments]    ${kw}
+    Check Keyword Data    ${kw}    This is validated
+    Check Keyword Data    ${kw.kws[0]}    BuiltIn.Log    status=NOT_RUN    args=This is validated

@@ -104,6 +104,12 @@ Multiple Failures
     UK with multiple failures
     Does not exist
 
+Avoid keyword in dry-run
+    Keyword not run in dry-run
+    Another keyword not run in dry-run
+    Keyword with keywords not run in dry-run
+    This is validated
+
 *** Keywords ***
 Embedded ${args} here
     No Operation
@@ -128,3 +134,22 @@ UK with multiple failures
 Teardown
     [Arguments]    ${arg}
     Log    ${arg}
+
+Keyword not run in dry-run
+    [Tags]    robot:no-dry-run
+    I don't exist and I'm OK (at least in dry-run)
+    Should Be Equal    More arguments would be needed
+    Invalid Syntax UK
+
+Another keyword not run in dry-run
+    [Tags]    ROBOT: no-dry-run
+    non-existing
+    ${invalid}
+
+Keyword with keywords not run in dry-run
+    Keyword not run in dry-run
+    Another keyword not run in dry-run
+    This is validated
+
+This is validated
+    Log    This is validated

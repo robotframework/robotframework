@@ -114,13 +114,15 @@ Check Test Tags
     [Return]    ${tc}
 
 Check Keyword Data
-    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS
+    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=
     Should be equal    ${kw.name}    ${name}
     Should be equal    ${kw.status}    ${status}
     ${kwassign}=    Catenate    SEPARATOR=,${SPACE}    @{kw.assign}
     Should be equal    ${kwassign}    ${assign}
     ${kwargs}=    Catenate    SEPARATOR=,${SPACE}    @{kw.args}
     Should match    ${kwargs}    ${args}
+    ${kwtags}=    Catenate    SEPARATOR=,${SPACE}    @{kw.tags}
+    Should be equal    ${kwtags}    ${tags}
 
 Get Output File
     [Arguments]    ${path}
