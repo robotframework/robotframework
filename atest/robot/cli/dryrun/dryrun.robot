@@ -6,33 +6,33 @@ Resource          atest_resource.robot
 Passing keywords
     ${tc}=    Check Test Case    ${TESTNAME}
     Should have correct number of keywords    ${tc}    3
-    Name and status should be    ${tc.kws[0]}    BuiltIn.Log    NOT_RUN
-    Name and status should be    ${tc.kws[1]}    OperatingSystem.List Directory    NOT_RUN    \${contents}
-    Name and status should be    ${tc.kws[2]}    resource.Simple UK    PASS
-    Name and status should be    ${tc.kws[2].kws[0]}    BuiltIn.Log    NOT_RUN
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Log    status=NOT_RUN    args=Hello from test
+    Check Keyword Data    ${tc.kws[1]}    OperatingSystem.List Directory    status=NOT_RUN    assign=\${contents}    args=.
+    Check Keyword Data    ${tc.kws[2]}    resource.Simple UK
+    Check Keyword Data    ${tc.kws[2].kws[0]}    BuiltIn.Log    status=NOT_RUN    args=Hello from UK
 
 Keywords with embedded arguments
     ${tc}=    Check Test Case    ${TESTNAME}
     Should have correct number of keywords    ${tc}    2
-    Name and status should be    ${tc.kws[0]}    Embedded arguments here    PASS
-    Name and status should be    ${tc.kws[0].kws[0]}    BuiltIn.No Operation    NOT_RUN
-    Name and status should be    ${tc.kws[1]}    Embedded args rock here    PASS
-    Name and status should be    ${tc.kws[1].kws[0]}    BuiltIn.No Operation    NOT_RUN
+    Check Keyword Data    ${tc.kws[0]}    Embedded arguments here
+    Check Keyword Data    ${tc.kws[0].kws[0]}    BuiltIn.No Operation    status=NOT_RUN
+    Check Keyword Data    ${tc.kws[1]}    Embedded args rock here
+    Check Keyword Data    ${tc.kws[1].kws[0]}    BuiltIn.No Operation    status=NOT_RUN
 
 Keywords that would fail
     ${tc}=    Check Test Case    ${TESTNAME}
     Should have correct number of keywords    ${tc}    3
-    Name and status should be    ${tc.kws[0]}    BuiltIn.Fail    NOT_RUN
-    Name and status should be    ${tc.kws[1]}    resource.Fail In UK    PASS
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Fail    status=NOT_RUN    args=Not actually executed so won't fail.
+    Check Keyword Data    ${tc.kws[1]}    resource.Fail In UK
     Should have correct number of keywords    ${tc.kws[1]}    2
-    Name and status should be    ${tc.kws[1].kws[0]}    BuiltIn.Fail    NOT_RUN
-    Name and status should be    ${tc.kws[1].kws[1]}    BuiltIn.Fail    NOT_RUN
+    Check Keyword Data    ${tc.kws[1].kws[0]}    BuiltIn.Fail    status=NOT_RUN    args=
+    Check Keyword Data    ${tc.kws[1].kws[1]}    BuiltIn.Fail    status=NOT_RUN    args=And again
 
 Scalar variables are not checked in keyword arguments
     [Documentation]    Variables are too often set somehow dynamically that we cannot expect them to always exist.
     ${tc}=    Check Test Case    ${TESTNAME}
-    Name and status should be    ${tc.kws[0]}    BuiltIn.Log    NOT_RUN
-    Name and status should be    ${tc.kws[1]}    BuiltIn.Log    NOT_RUN
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Log    status=NOT_RUN    args=\${TESTNAME}
+    Check Keyword Data    ${tc.kws[1]}    BuiltIn.Log    status=NOT_RUN    args=\${this does not exist}
 
 List variables are not checked in keyword arguments
     [Documentation]    See the doc of the previous test
@@ -41,10 +41,10 @@ List variables are not checked in keyword arguments
 Variables are not checked in when arguments are embedded
     [Documentation]    See the doc of the previous test
     ${tc}=    Check Test Case    ${TESTNAME}
-    Name and status should be    ${tc.kws[0]}    Embedded \${TESTNAME} here    PASS
-    Name and status should be    ${tc.kws[0].kws[0]}    BuiltIn.No Operation    NOT_RUN
-    Name and status should be    ${tc.kws[1]}    Embedded \${nonex} here    PASS
-    Name and status should be    ${tc.kws[1].kws[0]}    BuiltIn.No Operation    NOT_RUN
+    Check Keyword Data    ${tc.kws[0]}    Embedded \${TESTNAME} here
+    Check Keyword Data    ${tc.kws[0].kws[0]}    BuiltIn.No Operation    status=NOT_RUN
+    Check Keyword Data    ${tc.kws[1]}    Embedded \${nonex} here
+    Check Keyword Data    ${tc.kws[1].kws[0]}    BuiltIn.No Operation    status=NOT_RUN
 
 Setup/teardown with non-existing variable is ignored
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -117,8 +117,3 @@ Should have correct number of keywords
     Log    ${test or uk.kws}
     Should Be Equal As Integers    ${test or uk.kw_count}    ${exp number of kws}
 
-Name and status should be
-    [Arguments]    ${kw}    ${name}    ${status}    @{assign}
-    Should Be Equal    ${kw.name}    ${name}
-    Should Be Equal    ${kw.status}    ${status}
-    Lists should be equal    ${kw.assign}    ${assign}

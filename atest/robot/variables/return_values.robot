@@ -182,11 +182,11 @@ Big Items In Dictionary
 
 No Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    ${EMPTY}    \${nokeyword}
+    Check Keyword Data    ${tc.kws[0]}    ${EMPTY}    \${nokeyword}    status=FAIL
 
 Failing Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Fail    \${ret}    Failing instead of returning
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Fail    \${ret}    Failing instead of returning    status=FAIL
 
 Failing Keyword And Teardown
     Check Test Case    ${TESTNAME}

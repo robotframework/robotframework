@@ -63,14 +63,14 @@ With Name Has No Effect If Not Second Last
 
 With Name After Normal Import
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    B2.Fail    args=This failure comes from B2!
+    Check Keyword Data    ${tc.kws[0]}    B2.Fail    args=This failure comes from B2!    status=FAIL
     Check Syslog Contains    Imported library 'BuiltIn' with name 'B2'
 
 Module Library
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    MOD1.Argument    args=Hello
     Check Keyword Data    ${tc.kws[1]}    mod 2.Keyword From Submodule    \${s}    Tellus
-    Check Keyword Data    ${tc.kws[3]}    MOD1.Failing
+    Check Keyword Data    ${tc.kws[3]}    MOD1.Failing    status=FAIL
     Check Syslog Contains    Imported library 'module_library' with name 'MOD1'
     Check Syslog Contains    Imported library 'pythonmodule.library' with name 'mod 2'
 
