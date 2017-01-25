@@ -4,7 +4,7 @@ Remote library interface
 The remote library interface provides means for having test libraries
 on different machines than where Robot Framework itself is running,
 and also for implementing libraries using other languages than the
-natively supported Python and Java. For a test library user remote
+natively supported Python and Java. For a test library, user remote
 libraries look pretty much the same as any other test library, and
 developing test libraries using the remote library interface is also
 very close to creating `normal test libraries`__.
@@ -49,10 +49,10 @@ illustrated in the picture below:
 __ https://code.google.com/p/robotframework/wiki/RemoteLibrary#Available_remote_servers
 __ http://docs.python.org/2/library/xmlrpclib.html
 
-Taking Remote library into use
-------------------------------
+Putting the Remote Library to Use
+---------------------------------
 
-Importing Remote library
+Importing Remote Library
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Remote library needs to know the address of the remote server but
@@ -212,8 +212,8 @@ keyword to allow using it in the test data regardless of the test
 library. Allowing users to stop the server is not always desirable,
 and servers may support disabling this functionality somehow.
 The method, and also the exposed keyword, should return `True`
-or `False` depending was stopping allowed or not. That makes it
-possible for external tools to know did stopping the server succeed.
+or `False` depending on whether stopping is allowed or not. That makes it
+possible for external tools to know if stopping the server succeeded.
 
 The provided Python remote server can be used as a reference
 implementation.
@@ -228,7 +228,7 @@ return the keyword names as a list of strings.
 Remote servers can, and should, also implement
 `get_keyword_arguments` and `get_keyword_documentation`
 methods to provide more information about the keywords. Both of these
-keywords get the name of the keyword as an argument. Arguments must be
+methods take the name of the keyword as an argument. Arguments must be
 returned as a list of strings in the `same format as with dynamic
 libraries`__, and documentation must be returned `as a string`__.
 
@@ -243,7 +243,7 @@ Executing remote keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When the Remote library wants the server to execute some keyword, it
-calls remote server's `run_keyword` method and passes it the
+calls the remote server's `run_keyword` method and passes it the
 keyword name, a list of arguments, and possibly a dictionary of
 `free keyword arguments`__. Base types can be used as
 arguments directly, but more complex types are `converted to supported
