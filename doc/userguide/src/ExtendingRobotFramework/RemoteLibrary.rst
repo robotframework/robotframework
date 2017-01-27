@@ -81,7 +81,7 @@ is shorter than keyword execution time will interrupt the keyword. Setting
 a custom timeout does not work with IronPython.
 
 .. note:: Port `8270` is the default port that remote servers are expected
-          to use and it has been `registered by ANSI`__ for this purpose.
+          to use and it has been `registered by IANA`__ for this purpose.
           This port number was selected because 82 and 70 are the ASCII codes
           of letters `R` and `F`, respectively.
 
