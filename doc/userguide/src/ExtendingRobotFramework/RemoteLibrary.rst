@@ -69,39 +69,37 @@ descriptive name, you can import it using the `WITH NAME syntax`_.
    Library    Remote    http://10.0.0.2/example    1 minute    WITH NAME    Example3
 
 The URL used by the first example above is also the default address
-that the Remote library uses if no address is given. Similarly port
-`8270` is the port that remote servers are expected to use by default.
-(82 and 70 are the ASCII codes of letters `R` and `F`, respectively.)
-
-.. note:: When connecting to the local machine, it is recommended to use
-          address `127.0.0.1` instead of `localhost`. This avoids
-          address resolution that can be extremely slow `at least on Windows`__.
-          Prior to Robot Framework 2.8.4 the Remote library itself used the
-          potentially slow `localhost` by default.
-
-.. note:: Notice that if the URI contains no path after the server address,
-          `xmlrpclib module`__ used by the Remote library will use
-          `/RPC2` path by default. In practice using
-          `http://127.0.0.1:8270` is thus identical to using
-          `http://127.0.0.1:8270/RPC2`. Depending on the remote server
-          this may or may not be a problem. No extra path is appended if
-          the address has a path even if the path is just `/`. For
-          example, neither `http://127.0.0.1:8270/` nor
-          `http://127.0.0.1:8270/my/path` will be modified.
+that the Remote library uses if no address is given.
 
 The last example above shows how to give a custom timeout to the Remote library
 as an optional second argument. The timeout is used when initially connecting
 to the server and if a connection accidentally closes. Timeout can be
 given in Robot Framework `time format`_ like `60s` or `2 minutes 10 seconds`.
+The default timeout is typically several minutes, but it depends on the
+operating system and its configuration. Notice that setting a timeout that
+is shorter than keyword execution time will interrupt the keyword. Setting
+a custom timeout does not work with IronPython.
 
-The default timeout is typically several minutes, but it depends on
-the operating system and its configuration. Notice that setting
-a timeout that is shorter than keyword execution time will interrupt
-the keyword.
+.. note:: Port `8270` is the default port that remote servers are expected
+          to use and it has been `registered by ANSI`__ for this purpose.
+          This port number was selected because 82 and 70 are the ASCII codes
+          of letters `R` and `F`, respectively.
 
-.. note:: Support for timeouts is a new feature in Robot Framework 2.8.6.
-          Timeouts do not work with Python/Jython 2.5 nor with IronPython.
+.. note:: When connecting to the local machine, it is recommended to use
+          IP address `127.0.0.1` instead of machine name `localhost`. This
+          avoids address resolution that can be extremely slow `at least on
+          Windows`__.
 
+.. note:: If the URI contains no path after the server address, `xmlrpclib
+          module`__ used by the Remote library will use `/RPC2` path by
+          default. In practice using `http://127.0.0.1:8270` is thus identical
+          to using `http://127.0.0.1:8270/RPC2`. Depending on the remote server
+          this may or may not be a problem. No extra path is appended if the
+          address has a path even if the path is just `/`. For example, neither
+          `http://127.0.0.1:8270/` nor `http://127.0.0.1:8270/my/path` will be
+          modified.
+
+__ http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=8270
 __ http://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one-second-per-call
 __ https://docs.python.org/2/library/xmlrpclib.html
 
