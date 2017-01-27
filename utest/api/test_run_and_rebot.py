@@ -147,11 +147,11 @@ class TestRun(RunningTestCase):
                                "failed: AttributeError: ", 1)])
 
     def test_run_cli_system_exits_by_default(self):
-        exit = assert_raises(SystemExit, run_cli, [self.data])
+        exit = assert_raises(SystemExit, run_cli, ['-d', TEMP, self.data])
         assert_equal(exit.code, 1)
 
     def test_run_cli_optionally_returns_rc(self):
-        rc = run_cli([self.data], exit=False)
+        rc = run_cli(['-d', TEMP, self.data], exit=False)
         assert_equal(rc, 1)
 
 
@@ -207,11 +207,11 @@ class TestRebot(RunningTestCase):
         assert_equal(modifier.tests, ['Test 1.1', 'Test 1.2', 'Test 2.1'])
 
     def test_rebot_cli_system_exits_by_default(self):
-        exit = assert_raises(SystemExit, rebot_cli, [self.data])
+        exit = assert_raises(SystemExit, rebot_cli, ['-d', TEMP, self.data])
         assert_equal(exit.code, 1)
 
     def test_rebot_cli_optionally_returns_rc(self):
-        rc = rebot_cli([self.data], exit=False)
+        rc = rebot_cli(['-d', TEMP, self.data], exit=False)
         assert_equal(rc, 1)
 
 
