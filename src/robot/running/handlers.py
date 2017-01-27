@@ -60,7 +60,10 @@ class _RunnableHandler(object):
 
     def _get_name(self, handler_name, handler_method):
         robot_name = getattr(handler_method, 'robot_name', None)
-        return robot_name or utils.printable_name(handler_name, code_style=True)
+        name = robot_name or utils.printable_name(handler_name, code_style=True)
+        if not name:
+            raise DataError('Keyword name cannot be empty.')
+        return name
 
     def _parse_arguments(self, handler_method):
         raise NotImplementedError

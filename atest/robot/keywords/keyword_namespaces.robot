@@ -27,12 +27,12 @@ Keyword From Resource Overrides Keywords From Libraries
 
 Keyword From Custom Library Overrides Keywords From Standard Library
     ${tc} =    Check Test Case    ${TEST NAME}
-    Verify Override Message    ${ERRORS.msgs[0]}    ${tc.kws[0].msgs[0]}    Comment    BuiltIn
-    Verify Override Message    ${ERRORS.msgs[1]}    ${tc.kws[1].msgs[0]}    Copy Directory    OperatingSystem
+    Verify Override Message    ${ERRORS[1]}    ${tc.kws[0].msgs[0]}    Comment    BuiltIn
+    Verify Override Message    ${ERRORS[2]}    ${tc.kws[1].msgs[0]}    Copy Directory    OperatingSystem
 
 Keyword From Custom Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
     ${tc} =    Check Test Case    ${TEST NAME}
-    Verify Override Message    ${ERRORS.msgs[2]}    ${tc.kws[0].msgs[0]}    Replace String
+    Verify Override Message    ${ERRORS[3]}    ${tc.kws[0].msgs[0]}    Replace String
     ...    String    MyLibrary2    Std With Name    My With Name
 
 No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword

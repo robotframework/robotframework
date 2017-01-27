@@ -236,7 +236,14 @@ class _BaseTestLibrary(object):
 
     def _get_handler_names(self, libcode):
         return [name for name in dir(libcode)
-                if not name.startswith(('_', 'ROBOT_'))]
+                if name[:1] != '_' or self._has_robot_name(name, libcode)]
+
+    def _has_robot_name(self, name, libcode):
+        try:
+            handler = self._get_handler_method(libcode, name)
+        except DataError:
+            return False
+        return hasattr(handler, 'robot_name')
 
     def _try_to_get_handler_method(self, libcode, name):
         try:

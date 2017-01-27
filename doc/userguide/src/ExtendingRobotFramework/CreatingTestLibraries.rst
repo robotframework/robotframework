@@ -402,11 +402,11 @@ What methods are considered keywords
 
 When the static library API is used, Robot Framework uses reflection
 to find out what public methods the library class or module contains.
-It will exclude all methods starting with an underscore, and with Java
-libraries also methods implemented only in the implicit base class
-`java.lang.Object`. All the methods that are not ignored are considered
-keywords. For example, the Python and Java libraries below implement
-a single keyword :name:`My Keyword`.
+It will exclude all methods starting with an underscore (unless `using
+a custom keyword name`_), and with Java libraries also methods implemented
+only in the implicit base class `java.lang.Object` are excluded. All
+the methods that are not ignored are considered keywords. For example, the
+Python and Java libraries below implement a single keyword :name:`My Keyword`.
 
 .. sourcecode:: python
 
@@ -536,8 +536,8 @@ Using a custom keyword name
 It is possible to expose a different name for a keyword instead of the
 default keyword name which maps to the method name.  This can be accomplished
 by setting the `robot_name` attribute on the method to the desired custom name.
-The decorator `robot.api.deco.keyword` may be used as a shortcut for setting
-this attribute when used as follows:
+This is typically easiest done by using the `robot.api.deco.keyword` decorator
+as follows:
 
 .. sourcecode:: python
 
@@ -554,9 +554,11 @@ this attribute when used as follows:
        Login Via User Panel    ${username}    ${password}
 
 Using this decorator without an argument will have no effect on the exposed
-keyword name, but will still create the `robot_name` attribute.  This can be useful
-for `Marking methods to expose as keywords`_ without actually changing
-keyword names.
+keyword name, but will still set the `robot_name` attribute.  This allows
+`marking methods to expose as keywords`_ without actually changing keyword
+names. Starting from Robot Framework 3.0.2, methods that have the `robot_name`
+attribute also create keywords even if the method name itself would start with
+an underscore.
 
 Setting a custom keyword name can also enable library keywords to accept
 arguments using `Embedded Arguments`__ syntax.
