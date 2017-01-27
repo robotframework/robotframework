@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from robot.api import deco
+from robot.api.deco import keyword
 
 
 def passing_handler(*args):
@@ -8,12 +8,9 @@ def passing_handler(*args):
         print(arg, end=' ')
     return ', '.join(args)
 
+
 def failing_handler(*args):
-    if len(args) == 0:
-        msg = 'Failure'
-    else:
-        msg = 'Failure: %s' % ' '.join(args)
-    raise AssertionError(msg)
+    raise AssertionError('Failure: %s' % ' '.join(args) if args else 'Failure')
 
 
 class GetKeywordNamesLibrary:
@@ -22,11 +19,12 @@ class GetKeywordNamesLibrary:
         self.this_is_not_keyword = 'This is just an attribute!!'
 
     def get_keyword_names(self):
-        marked_keywords = [name for name in dir(self) if hasattr(getattr(self, name), 'robot_name')]
-        other_keywords = ['Get Keyword That Passes', 'Get Keyword That Fails',
-                          'keyword_in_library_itself', 'non_existing_kw',
-                          'this_is_not_keyword']
-        return marked_keywords + other_keywords
+        marked = [name for name in dir(self)
+                  if hasattr(getattr(self, name), 'robot_name')]
+        other = ['Get Keyword That Passes', 'Get Keyword That Fails',
+                 'keyword_in_library_itself', '_starting_with_underscore_is_ok',
+                 'non_existing_kw', 'this_is_not_keyword']
+        return marked + other
 
     def __getattr__(self, name):
         if name == 'Get Keyword That Passes':
@@ -40,14 +38,17 @@ class GetKeywordNamesLibrary:
         print(msg)
         return msg
 
-    @deco.keyword('Name Set Using Robot Name Attribute')
+    def _starting_with_underscore_is_ok(self):
+        print("This is explicitly returned from 'get_keyword_names' anyway.")
+
+    @keyword("Name set using 'robot_name' attribute")
     def name_set_in_method_signature(self):
         pass
 
-    @deco.keyword
+    @keyword
     def keyword_name_should_not_change(self):
         pass
 
-    @deco.keyword('Add ${count} Copies Of ${item} To Cart')
+    @keyword('Add ${count} copies of ${item} to cart')
     def add_copies_to_cart(self, count, item):
         return count, item
