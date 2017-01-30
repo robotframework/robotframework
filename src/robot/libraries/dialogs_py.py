@@ -158,6 +158,7 @@ class SelectionDialog(_TkDialog):
         self._listbox = Listbox(parent)
         for item in values:
             self._listbox.insert(END, item)
+        self._listbox.config(width=0)
         return self._listbox
 
     def _validate_value(self):
