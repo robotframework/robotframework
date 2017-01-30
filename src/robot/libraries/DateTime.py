@@ -101,6 +101,9 @@ Examples:
 | ${date} =       | Convert Date | ${date}                 | result_format=%d.%m.%Y |
 | Should Be Equal | ${date}      | 28.05.2014              |
 
+Notice that locale aware directives like ``%b``  do not work correctly with
+Jython on non-English locales: http://bugs.jython.org/issue2285
+
 == Python datetime ==
 
 Python's standard
