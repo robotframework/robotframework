@@ -1348,13 +1348,21 @@ class XML(object):
         """
         path = os.path.abspath(path.replace('/', os.sep))
         elem = self.get_element(source)
-        if self.lxml_etree:
-            NameSpaceStripper().unstrip(elem)
         tree = self.etree.ElementTree(elem)
-        xml_declaration = {'xml_declaration': True} if self.modern_etree else {}
-        # Need to open/close output due to http://bugs.jython.org/issue2413
+        config = {'encoding': encoding}
+        if self.modern_etree:
+            config['xml_declaration'] = True
+        if self.lxml_etree:
+            elem = NameSpaceStripper().unstrip(elem)
+            # https://bugs.launchpad.net/lxml/+bug/1660433
+            if tree.docinfo.doctype:
+                config['doctype'] = tree.docinfo.doctype
+            tree = self.etree.ElementTree(elem)
         with open(path, 'wb') as output:
-            tree.write(output, encoding=encoding, **xml_declaration)
+            if 'doctype' in config:
+                output.write(self.etree.tostring(tree, **config))
+            else:
+                tree.write(output, **config)
         logger.info('XML saved to <a href="file://%s">%s</a>.' % (path, path),
                     html=True)
 
@@ -1399,12 +1407,15 @@ class NameSpaceStripper(object):
         for child in elem:
             self.strip(child, current_ns)
 
-    def unstrip(self, elem, current_ns=None):
+    def unstrip(self, elem, current_ns=None, copied=False):
+        if not copied:
+            elem = copy.deepcopy(elem)
         ns = elem.attrib.pop('xmlns', current_ns)
         if ns:
             elem.tag = '{%s}%s' % (ns, elem.tag)
         for child in elem:
-            self.unstrip(child, ns)
+            self.unstrip(child, ns, copied=True)
+        return elem
 
 
 class ElementFinder(object):
