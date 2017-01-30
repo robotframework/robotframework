@@ -307,7 +307,7 @@ the default visible level in the log file is `INFO`.
 Splitting logs
 --------------
 
-Normally the log file is just a single HTML file. When the amount of he test
+Normally the log file is just a single HTML file. When the amount of the test
 cases increases, the size of the file can grow so large that opening it into
 a browser is inconvenient or even impossible. Hence, it is possible to use
 the :option:`--splitlog` option to split parts of the log into external files
