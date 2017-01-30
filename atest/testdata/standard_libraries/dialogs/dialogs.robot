@@ -53,6 +53,11 @@ Get Selection From User
     ...    zip    zap    foo    value    bar
     Should Be Equal    ${value}    value
 
+Get Selection From User Long
+    ${value} =    Get Selection From User    Select 'value' and press OK.
+    ...    zip    zap    foo    value    bar    This is a really long string and the window should change the size properly to content
+    Should Be Equal    ${value}    value
+
 Get Selection From User Cancelled
     [Documentation]  FAIL No value provided by user.
     Get Selection From User    Press Cancel.    zip    zap    foo
