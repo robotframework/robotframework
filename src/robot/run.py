@@ -360,7 +360,7 @@ Options
                           |  --include regression
                           |  --name Regression Tests
                           |  # This is a comment line
-                          |  my_tests.html
+                          |  my_tests.robot
                           |  path/to/test/directory/
                           Examples:
                           --argumentfile argfile.txt --argumentfile STDIN
