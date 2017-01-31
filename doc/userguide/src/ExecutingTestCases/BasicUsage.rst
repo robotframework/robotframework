@@ -427,6 +427,14 @@ the command line growing too long.
 Argument files are taken into use with :option:`--argumentfile (-A)` option
 along with possible other command line options.
 
+.. note:: Unlike other `long command line options`__, :option:`--argumentfile`
+          cannot be given in shortened format like :option:`--argumentf`.
+          Additionally, using it case-insensitively like
+          :option:`--ArgumentFile` is only supported by Robot Framework 3.0.2
+          and newer.
+
+__ `Short and long options`_
+
 Argument file syntax
 ~~~~~~~~~~~~~~~~~~~~
 
