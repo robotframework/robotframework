@@ -1,5 +1,6 @@
 *** Settings ***
 Test Setup        Create Output Directory
+Suite Teardown    Remove Files    ${ARGFILE}    ${ARGFILE 2}    ${ÄRGFÏLË}
 Resource          cli_resource.robot
 
 *** Variables ***
@@ -81,6 +82,12 @@ Option And Argument File Together
     Should Be Equal    ${SUITE.name}    My name
     Should Be Equal    ${SUITE.doc}    My docu
 
+Shortening --argumentfile is not possible
+    Create Argument File    ${ARGFILE}    --name My name
+    ${result} =    Run Tests Without Processing Output    --argumentfil ${ARGFILE}    ${TESTFILE}
+    Execution Should Have Failed    ${result}
+    ...    Using '--argumentfile' option in shortened format like '--argumentf' is not supported.
+
 *** Keywords ***
 Create Argument File
     [Arguments]    ${path}    @{lines}
@@ -97,3 +104,8 @@ Execution Should Have Succeeded
     [Arguments]    ${result}    ${rc}=0
     Should Be Equal As Integers    ${result.rc}    ${rc}
     Should Be Empty    ${result.stderr}
+
+Execution Should Have Failed
+    [Arguments]    ${result}    ${error}    ${rc}=252
+    Should Be Equal As Integers    ${result.rc}    ${rc}
+    Should Be Equal    ${result.stderr}    [ ERROR ] ${error}${USAGE TIP}
