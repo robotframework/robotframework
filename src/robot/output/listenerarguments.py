@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_list_like, is_dict_like
+from robot.utils import is_list_like, is_dict_like, is_string, unic
 
 
 class ListenerArguments(object):
@@ -126,13 +126,14 @@ class EndTestArguments(StartTestArguments):
 
 
 class StartKeywordArguments(_ListenerArgumentsFromItem):
-    _attribute_names = ('kwname', 'libname', 'doc', 'args', 'assign', 'tags',
+    _attribute_names = ('kwname', 'libname', 'doc', 'assign', 'tags',
                         'starttime')
     _types = {'kw': 'Keyword', 'setup': 'Setup', 'teardown': 'Teardown',
               'for': 'For', 'foritem': 'For Item'}
 
     def _get_extra_attributes(self, kw):
-        return {'type': self._types[kw.type]}
+        args = [a if is_string(a) else unic(a) for a in kw.args]
+        return {'args': args, 'type': self._types[kw.type]}
 
 
 class EndKeywordArguments(StartKeywordArguments):

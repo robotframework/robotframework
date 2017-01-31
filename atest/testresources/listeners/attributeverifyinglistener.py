@@ -1,10 +1,11 @@
 import os
-import sys
 
-
-if sys.version_info[0] > 2:
-    long = int
+try:
+    basestring
+    long
+except NameError:
     basestring = str
+    long = int
 
 
 ROBOT_LISTENER_API_VERSION = '2'
@@ -15,9 +16,10 @@ END = START + 'endtime elapsedtime status '
 SUITE = 'id longname metadata source tests suites totaltests '
 TEST = 'id longname tags critical template '
 KW = ' kwname libname args assign tags type '
-EXPECTED_TYPES = {'elapsedtime': (int, long), 'tags': list, 'args': list,
-                  'assign': list, 'metadata': dict, 'tests': list,
-                  'suites': list, 'totaltests': int}
+EXPECTED_TYPES = {'tags': [basestring], 'args': [basestring],
+                  'assign': [basestring], 'metadata': {basestring: basestring},
+                  'tests': [basestring], 'suites': [basestring],
+                  'totaltests': int, 'elapsedtime': (int, long)}
 
 
 def start_suite(name, attrs):
@@ -56,11 +58,27 @@ def _verify_attrs(method_name, attrs, names):
     for name in names:
         value = attrs[name]
         exp_type = EXPECTED_TYPES.get(name, basestring)
-        if isinstance(value, exp_type):
-            OUTFILE.write('PASSED | %s: %s\n' % (name, _format(value)))
+        if isinstance(exp_type, list):
+            _verify_attr(name, value, list)
+            for index, item in enumerate(value):
+                _verify_attr('%s[%s]' % (name, index), item, exp_type[0])
+        elif isinstance(exp_type, dict):
+            _verify_attr(name, value, dict)
+            key_type, value_type = dict(exp_type).popitem()
+            for key, value in value.items():
+                _verify_attr('%s[%s] (key)' % (name, key), key, key_type)
+                _verify_attr('%s[%s] (value)' % (name, key), value, value_type)
         else:
-            OUTFILE.write('FAILED | %s: %r, Expected: %s, Actual: %s\n'
-                          % (name, value, exp_type, type(value)))
+            _verify_attr(name, value, exp_type)
+
+
+def _verify_attr(name, value, exp_type):
+    if isinstance(value, exp_type):
+        OUTFILE.write('PASSED | %s: %s\n' % (name, _format(value)))
+    else:
+        OUTFILE.write('FAILED | %s: %r, Expected: %s, Actual: %s\n'
+                      % (name, value, exp_type, type(value)))
+
 
 def _format(value):
     if isinstance(value, basestring):
@@ -72,7 +90,7 @@ def _format(value):
     if isinstance(value, dict):
         return '{%s}' % ', '.join('%s: %s' % (_format(k), _format(v))
                                   for k, v in value.items())
-    raise ValueError(value)
+    return 'FAILED! Invalid argument type %s.' % type(value)
 
 
 def _verify_name(name, kwname=None, libname=None, **ignored):
