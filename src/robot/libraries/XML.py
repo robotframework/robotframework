@@ -608,8 +608,6 @@ class XML(object):
         with `Get Elements` keyword that this keyword uses internally.
 
         See also `Element Should Exist` and `Element Should Not Exist`.
-
-        New in Robot Framework 2.7.5.
         """
         count = len(self.get_elements(source, xpath))
         logger.info("%d element%s matched '%s'." % (count, s(count), xpath))
@@ -625,8 +623,6 @@ class XML(object):
 
         See also `Element Should Not Exist` as well as `Get Element Count`
         that this keyword uses internally.
-
-        New in Robot Framework 2.7.5.
         """
         count = self.get_element_count(source, xpath)
         if not count:
@@ -642,8 +638,6 @@ class XML(object):
 
         See also `Element Should Exist` as well as `Get Element Count`
         that this keyword uses internally.
-
-        New in Robot Framework 2.7.5.
         """
         count = self.get_element_count(source, xpath)
         if count:
@@ -869,8 +863,6 @@ class XML(object):
 
         See also `Get Element Attribute`, `Get Element Attributes`,
         `Element Text Should Be` and `Element Text Should Match`.
-
-        New in Robot Framework 2.7.5.
         """
         attr = self.get_element_attribute(source, name, xpath)
         if attr is not None:
@@ -961,8 +953,6 @@ class XML(object):
 
         Can only set the tag of a single element. Use `Set Elements Tag` to set
         the tag of multiple elements in one call.
-
-        New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
         self.get_element(source, xpath).tag = tag
@@ -1001,8 +991,6 @@ class XML(object):
 
         Can only set the text/tail of a single element. Use `Set Elements Text`
         to set the text/tail of multiple elements in one call.
-
-        New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
         element = self.get_element(source, xpath)
@@ -1043,8 +1031,6 @@ class XML(object):
 
         Can only set an attribute of a single element. Use `Set Elements
         Attribute` to set an attribute of multiple elements in one call.
-
-        New in Robot Framework 2.7.5.
         """
         if not name:
             raise RuntimeError('Attribute name can not be empty.')
@@ -1081,8 +1067,6 @@ class XML(object):
 
         Can only remove an attribute from a single element. Use `Remove Elements
         Attribute` to remove an attribute of multiple elements in one call.
-
-        New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
         attrib = self.get_element(source, xpath).attrib
@@ -1118,8 +1102,6 @@ class XML(object):
 
         Can only remove attributes from a single element. Use `Remove Elements
         Attributes` to remove all attributes of multiple elements in one call.
-
-        New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
         self.get_element(source, xpath).attrib.clear()
@@ -1162,8 +1144,6 @@ class XML(object):
         | Elements Should Be Equal | ${new} | <new id="x"><c1/><c3/><c2/></new> |
 
         Use `Remove Element` or `Remove Elements` to remove elements.
-
-        New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
         parent = self.get_element(source, xpath)
@@ -1195,8 +1175,6 @@ class XML(object):
         | Element Should Not Exist | ${XML} | xpath=second |
         | Remove Element           | ${XML} | xpath=html/p/b | remove_tail=yes |
         | Element Text Should Be   | ${XML} | Text with italics. | xpath=html/p | normalize_whitespace=yes |
-
-        New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
         self._remove_element(source, self.get_element(source, xpath), remove_tail)
@@ -1220,8 +1198,6 @@ class XML(object):
         | Remove Elements          | ${XML} | xpath=*/child      |
         | Element Should Not Exist | ${XML} | xpath=second/child |
         | Element Should Not Exist | ${XML} | xpath=third/child  |
-
-        New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
         for element in self.get_elements(source, xpath):
@@ -1275,8 +1251,6 @@ class XML(object):
         | Elements Should Be Equal | ${XML}   | <example/> |
 
         Use `Remove Element` to remove the whole element.
-
-        New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
         element = self.get_element(source, xpath)
@@ -1304,8 +1278,6 @@ class XML(object):
         | Elements Should Be Equal | ${elem}  | <first id="1">new text</first> |
         | Elements Should Be Equal | ${copy1} | <first id="new">text</first>   |
         | Elements Should Be Equal | ${copy2} | <first id="1">text</first>     |
-
-        New in Robot Framework 2.7.5.
         """
         return copy.deepcopy(self.get_element(source, xpath))
 
@@ -1361,8 +1333,6 @@ class XML(object):
 
         Use `Element To String` if you just need a string representation of
         the element.
-
-        New in Robot Framework 2.7.5.
         """
         path = os.path.abspath(path.replace('/', os.sep))
         elem = self.get_element(source)
