@@ -1,8 +1,6 @@
 *** Settings ***
-Suite Setup       Run Keywords    Set lxml availability to suite metadata
-...               AND    Remove File    ${OUTPUT}
-Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    keep clark notation
-Test Teardown     Remove File    ${OUTPUT}
+Suite Setup       Set lxml availability to suite metadata
+Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    keep_clark_notation=yes
 Library           XML    use_lxml=yes
 Resource          xml_resource.robot
 
@@ -45,9 +43,11 @@ Parsed XML is semantically same as original
     Save XML    ${ROOT}    ${OUTPUT}
     ${root2} =    Parse XML    ${OUTPUT}    keep_clark_notation=yes please
     Elements Should Be Equal    ${ROOT}    ${root2}
+    [Teardown]    Remove Output File
 
 Saved XML has same namespaces as original
     Saved XML Should Equal File    ${ROOT}    ${NS}
+    [Teardown]    Remove Output File
 
 Attribute namespaces
     ${elem} =    Parse XML    ${ATTR NS}    keep_clark_notation=yes

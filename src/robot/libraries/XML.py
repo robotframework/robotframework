@@ -24,7 +24,7 @@ except ImportError:
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import (asserts, ET, ETSource, is_string, is_truthy,
+from robot.utils import (asserts, ET, ETSource, is_falsy, is_string, is_truthy,
                          plural_or_not as s)
 from robot.version import get_version
 
@@ -313,8 +313,9 @@ class XML(object):
     inconvenient especially with xpaths, and by default this library strips
     those namespaces away and moves them to ``xmlns`` attribute instead. That
     can be avoided by passing ``keep_clark_notation`` argument to `Parse XML`
-    keyword. The pros and cons of both approaches are discussed in more detail
-    below.
+    keyword. Alternatively `Parse XML` supports stripping namespace information
+    altogether by using ``strip_namespaces`` argument. The pros and cons of
+    different approaches are discussed in more detail below.
 
     == How ElementTree handles namespaces ==
 
@@ -385,9 +386,20 @@ class XML(object):
 
     == Namespaces when using lxml ==
 
-    Namespaces are handled the same way also when `using lxml`. The only
-    difference is that lxml stores information about namespace prefixes and
-    thus they are preserved if XML is saved.
+    This library handles namespaces same way both when `using lxml` and when
+    not using it. There are, however, differences how lxml internally handles
+    namespaces compared to the standard ElementTree. The main difference is
+    that lxml stores information about namespace prefixes and they are thus
+    preserved if XML is saved. Another visible difference is that lxml includes
+    namespace information in child elements got with `Get Element` if the
+    parent element has namespaces.
+
+    == Stripping namespaces altogether ==
+
+    Because namespaces often add unnecessary complexity, `Parse XML` supports
+    stripping them altogether by using ``strip_namespaces=True``. When this
+    option is enabled, namespaces are not shown anywhere nor are they included
+    if XML is saved.
 
     == Attribute namespaces ==
 
@@ -462,8 +474,9 @@ class XML(object):
         if use_lxml and not lxml_etree:
             logger.warn('XML library reverted to use standard ElementTree '
                         'because lxml module is not installed.')
+        self._ns_stripper = NameSpaceStripper(self.etree, self.lxml_etree)
 
-    def parse_xml(self, source, keep_clark_notation=False):
+    def parse_xml(self, source, keep_clark_notation=False, strip_namespaces=False):
         """Parses the given XML file or string into an element structure.
 
         The ``source`` can either be a path to an XML file or a string
@@ -473,22 +486,27 @@ class XML(object):
         instructions in the source XML are removed.
 
         As discussed in `Handling XML namespaces` section, this keyword, by
-        default, strips possible namespaces added by ElementTree into tag names.
-        This typically eases handling XML documents with namespaces
-        considerably. If you do not want that to happen, or want to avoid
-        the small overhead of going through the element structure when your
-        XML does not have namespaces, you can disable this feature by giving
-        ``keep_clark_notation`` argument a true value (see `Boolean arguments`).
+        default, removes namespace information ElementTree has added to tag
+        names and moves it into ``xmlns`` attributes. This typically eases
+        handling XML documents with namespaces considerably. If you do not
+        want that to happen, or want to avoid the small overhead of going
+        through the element structure when your XML does not have namespaces,
+        you can disable this feature by giving ``keep_clark_notation`` argument
+        a true value (see `Boolean arguments`).
+
+        If you want to strip namespace information altogether so that it is
+        not included even if XML is saved, you can give a true value to
+        ``strip_namespaces`` argument. This functionality is new in Robot
+        Framework 3.0.2.
 
         Examples:
         | ${root} = | Parse XML | <root><child/></root> |
-        | ${xml} =  | Parse XML | ${CURDIR}/test.xml    | no namespace cleanup |
+        | ${xml} = | Parse XML | ${CURDIR}/test.xml | keep_clark_notation=True |
+        | ${xml} = | Parse XML | ${CURDIR}/test.xml | strip_namespaces=True |
 
         Use `Get Element` keyword if you want to get a certain element and not
         the whole structure. See `Parsing XML` section for more details and
         examples.
-
-        Stripping namespaces is a new feature in Robot Framework 2.7.5.
         """
         with ETSource(source) as source:
             tree = self.etree.parse(source)
@@ -497,7 +515,7 @@ class XML(object):
             lxml_etree.strip_elements(tree, *strip, **dict(with_tail=False))
         root = tree.getroot()
         if not is_truthy(keep_clark_notation):
-            NameSpaceStripper().strip(root)
+            self._ns_stripper.strip(root, preserve=is_falsy(strip_namespaces))
         return root
 
     def get_element(self, source, xpath='.'):
@@ -1353,7 +1371,7 @@ class XML(object):
         if self.modern_etree:
             config['xml_declaration'] = True
         if self.lxml_etree:
-            elem = NameSpaceStripper().unstrip(elem)
+            elem = self._ns_stripper.unstrip(elem)
             # https://bugs.launchpad.net/lxml/+bug/1660433
             if tree.docinfo.doctype:
                 config['doctype'] = tree.docinfo.doctype
@@ -1395,17 +1413,23 @@ class XML(object):
 
 class NameSpaceStripper(object):
 
-    def strip(self, elem, current_ns=None):
+    def __init__(self, etree, lxml_etree=False):
+        self.etree = etree
+        self.lxml_tree = lxml_etree
+
+    def strip(self, elem, preserve=True, current_ns=None, top=True):
         if elem.tag.startswith('{') and '}' in elem.tag:
             ns, elem.tag = elem.tag[1:].split('}', 1)
-            if ns != current_ns:
+            if preserve and ns != current_ns:
                 elem.attrib['xmlns'] = ns
                 current_ns = ns
         elif current_ns:
             elem.attrib['xmlns'] = ''
             current_ns = None
         for child in elem:
-            self.strip(child, current_ns)
+            self.strip(child, preserve, current_ns, top=False)
+        if top and not preserve and self.lxml_tree:
+            self.etree.cleanup_namespaces(elem)
 
     def unstrip(self, elem, current_ns=None, copied=False):
         if not copied:

@@ -1,9 +1,7 @@
 *** Settings ***
 Library           XML
 Resource          xml_resource.robot
-Suite Setup       Remove File    ${OUTPUT}
-Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    keep clark notation
-Test Teardown     Remove File    ${OUTPUT}
+Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    keep_clark_notation=yeah!
 
 *** Test Cases ***
 Tag names contain namespace in Clark Notation
@@ -44,12 +42,14 @@ Parsed XML is semantically same as original
     Save XML    ${ROOT}    ${OUTPUT}
     ${root2} =    Parse XML    ${OUTPUT}    keep_clark_notation=yes please
     Elements Should Be Equal    ${ROOT}    ${root2}
+    [Teardown]    Remove Output File
 
 Prefixes are mangled when XML is saved
     @{expected} =    Run Keyword Depending On Etree Version
     ...    Get Expected Etree 1.3 Output
     ...    Get Expected Etree 1.2 Output
     Saved XML Should Equal    ${ROOT}    @{expected}
+    [Teardown]    Remove Output File
 
 Attribute namespaces
     ${elem} =    Parse XML    ${ATTR NS}    keep_clark_notation=yes
