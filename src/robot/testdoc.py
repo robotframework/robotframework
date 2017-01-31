@@ -78,6 +78,20 @@ Options
   -s --suite name *      Include suites by name.
   -i --include tag *     Include tests by tags.
   -e --exclude tag *     Exclude tests by tags.
+  -A --argumentfile path *  Text file to read more arguments from. Use special
+                          path `STDIN` to read contents from the standard input
+                          stream. File can have both options and data sources
+                          one per line. Contents do not need to be escaped but
+                          spaces in the beginning and end of lines are removed.
+                          Empty lines and lines starting with a hash character
+                          (#) are ignored. New in Robot Framework 3.0.2.
+                          Example file:
+                          |  --name Example
+                          |  # This is a comment line
+                          |  my_tests.robot
+                          |  output.html
+                          Examples:
+                          --argumentfile argfile.txt --argumentfile STDIN
   -h -? --help           Print this help.
 
 All options except --title have exactly same semantics as same options have
