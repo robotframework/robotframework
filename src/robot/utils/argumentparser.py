@@ -148,7 +148,7 @@ class ArgumentParser(object):
         if self._auto_argumentfile:
             args = self._process_possible_argfile(args)
         opts, args = self._parse_args(args)
-        if self._auto_argumentfile and opts['argumentfile']:
+        if self._auto_argumentfile and opts.get('argumentfile'):
             raise DataError("Using '--argumentfile' option in shortened format "
                             "like '--argumentf' is not supported.")
         opts, args = self._handle_special_options(opts, args)
