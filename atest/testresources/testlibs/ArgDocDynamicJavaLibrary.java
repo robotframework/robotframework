@@ -54,4 +54,8 @@ public class ArgDocDynamicJavaLibrary {
             throw new RuntimeException("Get args failure");
         return null;
     }
+
+    public String[] getKeywordTags(String name) {
+        return new String[] {"tag", name};
+    }
 }

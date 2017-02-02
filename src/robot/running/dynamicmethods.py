@@ -136,3 +136,10 @@ class GetKeywordArguments(_DynamicMethod):
                 return ['*varargs', '**kwargs']
             return ['*varargs']
         return self._to_list_of_strings(value)
+
+
+class GetKeywordTags(_DynamicMethod):
+    _underscore_name = 'get_keyword_tags'
+
+    def _handle_return_value(self, value):
+        return self._to_list_of_strings(value or [])

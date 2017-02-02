@@ -26,7 +26,7 @@ from robot.utils import (getdoc, get_error_details, Importer, is_java_init,
 from .arguments import EmbeddedArguments
 from .context import EXECUTION_CONTEXTS
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
-                             GetKeywordNames, RunKeyword)
+                             GetKeywordNames, GetKeywordTags, RunKeyword)
 from .handlers import Handler, InitHandler, DynamicHandler, EmbeddedArgumentsHandler
 from .handlerstore import HandlerStore
 from .libraryscopes import LibraryScope
@@ -386,12 +386,16 @@ class _DynamicLibrary(_BaseTestLibrary):
                          _BaseTestLibrary.doc.fget(self))
         return self._doc
 
-    def _get_kw_doc(self, name, instance=None):
-        getter = GetKeywordDocumentation(instance or self.get_instance())
+    def _get_kw_doc(self, name):
+        getter = GetKeywordDocumentation(self.get_instance())
         return getter(name)
 
-    def _get_kw_args(self, name, instance=None):
-        getter = GetKeywordArguments(instance or self.get_instance())
+    def _get_kw_args(self, name):
+        getter = GetKeywordArguments(self.get_instance())
+        return getter(name)
+
+    def _get_kw_tags(self, name):
+        getter = GetKeywordTags(self.get_instance())
         return getter(name)
 
     def _get_handler_names(self, instance):
@@ -401,9 +405,10 @@ class _DynamicLibrary(_BaseTestLibrary):
         return RunKeyword(instance)
 
     def _create_handler(self, name, method):
-        doc = self._get_kw_doc(name)
         argspec = self._get_kw_args(name)
-        return DynamicHandler(self, name, method, doc, argspec)
+        tags = self._get_kw_tags(name)
+        doc = self._get_kw_doc(name)
+        return DynamicHandler(self, name, method, doc, argspec, tags)
 
     def _create_init_handler(self, libcode):
         docgetter = lambda: self._get_kw_doc('__init__')
