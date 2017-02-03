@@ -248,6 +248,8 @@ class _BaseTestLibrary(object):
     def _try_to_get_handler_method(self, libcode, name):
         try:
             return self._get_handler_method(libcode, name)
+        # TODO: RF 3.1: Catch only DataError or at least consider others errors.
+        # Don't want to do that in a minor release.
         except:
             self._report_adding_keyword_failed(name)
             return None
@@ -273,6 +275,8 @@ class _BaseTestLibrary(object):
         except DataError as err:
             self._report_adding_keyword_failed(name, err.message, level='ERROR')
             return None, False
+        # TODO: RF 3.1: Catch only DataError or at least consider others errors.
+        # Don't want to do that in a minor release.
         except:
             self._report_adding_keyword_failed(name)
             return None, False
@@ -334,13 +338,9 @@ class _ClassLibrary(_BaseTestLibrary):
             return False
         for signature in handler.argslist[:handler.nargs]:
             cls = signature.declaringClass
-            if not (cls is Object or self._is_created_by_jython(handler, cls)):
+            if not (cls is Object or cls.__module__ == 'org.python.proxies'):
                 return False
         return True
-
-    def _is_created_by_jython(self, handler, cls):
-        proxy_methods = getattr(cls, '__supernames__', []) + ['classDictInit']
-        return handler.__name__ in proxy_methods
 
 
 class _ModuleLibrary(_BaseTestLibrary):
