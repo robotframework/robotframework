@@ -49,13 +49,10 @@ Get Value From User Exited
     Get Value From User    Press <Esc>.
 
 Get Selection From User
-    ${value} =    Get Selection From User    Select 'value' and press OK.
-    ...    zip    zap    foo    value    bar
-    Should Be Equal    ${value}    value
-
-Get Selection From User Long
-    ${value} =    Get Selection From User    Select 'value' and press OK.
-    ...    zip    zap    foo    value    bar    This is a really long string and the window should change the size properly to content
+    ${value} =    Get Selection From User
+    ...    Select 'value' and press OK.\n\nAlso verify that selector is resized properly.
+    ...    zip    zap    - - - - -    value    - - - - -
+    ...    This is a really long string and the window should change the size properly to content.
     Should Be Equal    ${value}    value
 
 Get Selection From User Cancelled
