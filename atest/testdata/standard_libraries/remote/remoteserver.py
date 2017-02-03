@@ -14,6 +14,8 @@ class RemoteServer(SimpleXMLRPCServer):
         self._shutdown = False
         self.register_function(self.get_keyword_names)
         self.register_function(self.get_keyword_arguments)
+        self.register_function(self.get_keyword_tags)
+        self.register_function(self.get_keyword_documentation)
         self.register_function(self.run_keyword)
         announce_port(self.socket, port_file)
         self.serve_forever()
@@ -37,6 +39,14 @@ class RemoteServer(SimpleXMLRPCServer):
         if kwargs:
             args.append('**%s' % kwargs)
         return args
+
+    def get_keyword_tags(self, name):
+        kw = getattr(self.library, name)
+        return getattr(kw, 'robot_tags', None)
+
+    def get_keyword_documentation(self, name):
+        kw = getattr(self.library, name)
+        return inspect.getdoc(kw)
 
     def run_keyword(self, name, args, kwargs=None):
         try:
