@@ -318,20 +318,16 @@ class _ClassLibrary(_BaseTestLibrary):
         for item in (libinst,) + inspect.getmro(libinst.__class__):
             if item in (object, Object):
                 continue
-            if not (hasattr(item, '__dict__') and name in item.__dict__):
-                continue
-            self._validate_handler(item.__dict__[name])
-            return getattr(libinst, name)
+            if hasattr(item, '__dict__') and name in item.__dict__:
+                self._validate_handler(item.__dict__[name])
+                return getattr(libinst, name)
         raise DataError('No non-implicit implementation found')
 
     def _validate_handler(self, handler):
-        if not self._is_routine(handler):
+        if not inspect.isroutine(handler):
             raise DataError('Not a method or function')
         if self._is_implicit_java_or_jython_method(handler):
             raise DataError('Implicit methods are ignored')
-
-    def _is_routine(self, handler):
-        return inspect.isroutine(handler) or is_java_method(handler)
 
     def _is_implicit_java_or_jython_method(self, handler):
         if not is_java_method(handler):
