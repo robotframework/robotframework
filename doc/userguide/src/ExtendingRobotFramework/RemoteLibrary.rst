@@ -49,10 +49,10 @@ illustrated in the picture below:
 __ https://code.google.com/p/robotframework/wiki/RemoteLibrary#Available_remote_servers
 __ http://docs.python.org/2/library/xmlrpclib.html
 
-Putting the Remote Library to Use
----------------------------------
+Putting Remote library to use
+-----------------------------
 
-Importing Remote Library
+Importing Remote library
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Remote library needs to know the address of the remote server but
