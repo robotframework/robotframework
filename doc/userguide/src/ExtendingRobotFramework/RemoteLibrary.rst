@@ -25,8 +25,8 @@ There are two main reasons for using the remote library API:
   possibilities for distributed testing.
 
 * Test libraries can be implemented using any language that supports
-  `XML-RPC`_ protocol. At the time of this writing `there exists ready-made
-  remote servers`__ for Python, Java, Ruby, .NET, Clojure, Perl and node.js.
+  `XML-RPC`_ protocol. There exists ready-made `generic remote servers`_
+  for various languages like Python, Java, Ruby, .NET, and so on.
 
 The remote library interface is provided by the Remote library that is
 one of the `standard libraries`_.
@@ -42,12 +42,12 @@ illustrated in the picture below:
 
    Robot Framework architecture with Remote library
 
-.. note:: The remote client uses Python's standard xmlrpclib__ module. It does
+.. note:: The remote client uses Python's standard xmlrpclib_ module. It does
           not support custom XML-RPC extensions implemented by some XML-RPC
           servers.
 
-__ https://code.google.com/p/robotframework/wiki/RemoteLibrary#Available_remote_servers
-__ http://docs.python.org/2/library/xmlrpclib.html
+.. _generic remote servers: https://github.com/robotframework/RemoteInterface#available-remote-servers
+.. _xmlrpclib: http://docs.python.org/2/library/xmlrpclib.html
 
 Putting Remote library to use
 -----------------------------
@@ -90,8 +90,8 @@ a custom timeout does not work with IronPython.
           avoids address resolution that can be extremely slow `at least on
           Windows`__.
 
-.. note:: If the URI contains no path after the server address, `xmlrpclib
-          module`__ used by the Remote library will use `/RPC2` path by
+.. note:: If the URI contains no path after the server address, the xmlrpclib_
+          module used by the Remote library will use `/RPC2` path by
           default. In practice using `http://127.0.0.1:8270` is thus identical
           to using `http://127.0.0.1:8270/RPC2`. Depending on the remote server
           this may or may not be a problem. No extra path is appended if the
@@ -101,7 +101,6 @@ a custom timeout does not work with IronPython.
 
 __ http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=8270
 __ http://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one-second-per-call
-__ https://docs.python.org/2/library/xmlrpclib.html
 
 Starting and stopping remote servers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -192,16 +191,16 @@ mainstream languages (Python, Java, C, Ruby, Perl, Javascript, PHP,
 Required methods
 ~~~~~~~~~~~~~~~~
 
-A remote server is an XML-RPC server that must have the same methods
-in its public interface as the `dynamic library API`_ has. Only
-`get_keyword_names` and `run_keyword` are actually
-required, but `get_keyword_arguments` and
-`get_keyword_documentation` are also recommended. Notice that
-using camelCase format in method names is not possible currently. How
+A remote server is an XML-RPC server that must have the same methods in its
+public interface as the `dynamic library API`_ has. Only `get_keyword_names`
+and `run_keyword` are actually required, but `get_keyword_arguments`,
+`get_keyword_tags` and `get_keyword_documentation` are also recommended.
+Notice that using the camelCase format like `getKeywordNames` in method names
+is not possible similarly as in the normal dynamic API. How
 the actual keywords are implemented is not relevant for the Remote
-library.  A remote server can either act as a wrapper for real test
-libraries, like the provided Python and Ruby servers do, or it can
-implement keywords itself.
+library. Remote servers can either act as wrappers for the real test
+libraries, like the available `generic remote servers`_ do, or they can
+implement keywords themselves.
 
 Remote servers should additionally have `stop_remote_server`
 method in their public interface to ease stopping them. They should
@@ -213,29 +212,36 @@ The method, and also the exposed keyword, should return `True`
 or `False` depending on whether stopping is allowed or not. That makes it
 possible for external tools to know if stopping the server succeeded.
 
-The provided Python remote server can be used as a reference
-implementation.
+The `Python remote server`__ can be used as a reference implementation.
+
+__ https://github.com/robotframework/PythonRemoteServer
 
 Getting remote keyword names and other information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Remote library gets a list of keywords that the remote server
-provides using `get_keyword_names` method. This method must
-return the keyword names as a list of strings.
+The Remote library gets the list of keywords that a remote server provides
+by using the `get_keyword_names` method. Remote servers must implement this
+method and the method must return keyword names as a list of strings.
 
-Remote servers can, and should, also implement
-`get_keyword_arguments` and `get_keyword_documentation`
-methods to provide more information about the keywords. Both of these
-methods take the name of the keyword as an argument. Arguments must be
-returned as a list of strings in the `same format as with dynamic
-libraries`__, and documentation must be returned `as a string`__.
+Remote servers can, and should, also implement `get_keyword_arguments`,
+`get_keyword_tags` and `get_keyword_documentation` methods to provide more
+information about the keywords. All these methods take the name of the keyword
+as an argument. Arguments must be returned as a list of strings in the `same
+format as with dynamic libraries`__, tags `as a list of strings`__, and
+documentation `as a string`__.
 
 Remote servers can also provide `general library documentation`__ to
 be used when generating documentation with the Libdoc_ tool.
 
+.. note:: `get_keyword_tags` is new in Robot Framework 3.0.2.
+          With earlier versions keyword tags can be `embedded into the
+          keyword documentation`__.
+
 __ `Getting keyword arguments`_
+__ `Getting keyword tags`_
 __ `Getting keyword documentation`_
 __ `Getting general library documentation`_
+__ `Getting keyword tags`_
 
 Executing remote keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~
