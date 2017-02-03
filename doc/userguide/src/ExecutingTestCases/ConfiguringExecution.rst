@@ -452,10 +452,16 @@ In addition to these failures, normal `execution errors`__ are shown,
 for example, when test library or resource file imports cannot be
 resolved.
 
-.. note:: The dry run mode does not validate variables. This
-          limitation may be lifted in the future releases.
+It is possible to disable dry run validation of specific `user keywords`_
+by adding a special `robot:no-dry-run` `keyword tag`__ to them. This is useful
+if a keyword fails in the dry run mode for some reason, but work fine when
+executed normally. Disabling the dry run more is a new feature in Robot
+Framework 3.0.2.
+
+.. note:: The dry run mode does not validate variables.
 
 __ `Errors and warnings during execution`_
+__ `User keyword tags`_
 
 Randomizing execution order
 ---------------------------
