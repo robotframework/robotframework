@@ -291,20 +291,14 @@ The keywords in the examples above could be used, for example, like this:
 
     *** Test Cases ***
     Varargs with user keywords
-       @{arg list}=    Create List    arg1    arg2    arg3   arg4    arg10
-       Any Number Of Arguments
-       Any Number Of Arguments    arg1
-       Any Number Of Arguments    arg1    arg2
-       Any Number Of Arguments    arg1    arg2    arg3   arg4    arg10
-       Any Number Of Arguments    @{arg list}
-       One Or More Arguments    arg1
-       One Or More Arguments    arg1    arg2    arg3   arg4    arg10
-       One Or More Arguments    extra arg    @{arg list}
-       One Or More Arguments    @{arg list}
-       Required, Default, Varargs    rqArg    @{argl list}
-       Required, Default, Varargs    required argument    optional argument    @{arg list}
-       Required, Default, Varargs    required argument    arg1    arg2    arg3   arg4    arg10
-       Required, Default, Varargs    @{argl list}
+        Any Number Of Arguments
+        Any Number Of Arguments    arg
+        Any Number Of Arguments    arg1    arg2    arg3   arg4
+        One Or More Arguments    required
+        One Or More Arguments    arg1    arg2    arg3   arg4
+        Required, Default, Varargs    required
+        Required, Default, Varargs    required    optional
+        Required, Default, Varargs    arg1    arg2    arg3    arg4    arg5
 
 Again, Pythonistas probably notice that the variable number of
 arguments syntax is very close to the one in Python.
