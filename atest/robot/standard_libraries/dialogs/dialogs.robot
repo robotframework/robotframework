@@ -40,6 +40,9 @@ Get Value From User Exited
 Get Selection From User
     Check Test Case    ${TESTNAME}
 
+Get Selection From User Long
+    Check Test Case    ${TESTNAME}
+
 Get Selection From User Cancelled
     Check Test Case    ${TESTNAME}
 
