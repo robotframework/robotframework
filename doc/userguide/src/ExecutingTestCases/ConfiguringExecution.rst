@@ -515,12 +515,8 @@ the executable test suite structure and modify it as needed. The visitor
 interface is explained as part of the `Robot Framework API documentation
 <visitor interface_>`_, and it possible to modify executed `test suites
 <running.TestSuite_>`_, `test cases <running.TestCase_>`_ and `keywords
-<running.Keyword_>`_ using it. The example below ought to give an idea of
+<running.Keyword_>`_ using it. The examples below ought to give an idea of
 how model modifiers can be used and how powerful this functionality is.
-
-.. sourcecode:: python
-
-   ../api/code_examples/select_every_xth_test.py
 
 When a model modifier is taken into use on the command line using the
 :option:`--prerunmodifier` option, it can be specified either as a name of
@@ -531,12 +527,25 @@ name must include both like `module.ModifierClass`. If the modifier is given
 as a path, the class name must be same as the file name. For most parts this
 works exactly like when `specifying a test library to import`__.
 
-If a modifier requires arguments, like the example above does, they can be
+If a modifier requires arguments, like the examples below do, they can be
 specified after the modifier name or path using either a colon (`:`) or a
 semicolon (`;`) as a separator. If both are used in the value, the one first
 is considered the actual separator.
 
-For example, if the above model modifier would be in a file
+If more than one model modifier is needed, they can be specified by using
+the :option:`--prerunmodifier` option multiple times. If similar modifying
+is needed before creating results, `programmatic modification of results`_
+can be enabled using the :option:`--prerebotmodifier` option.
+
+Example: Select Every Xth Test
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In this code snippet, the prerun modifier causes the framework to skip over or filter out any test case that isn't Xth one, where Xth is a number passed in as an argument on the command line. 
+
+.. sourcecode:: python
+
+   ../api/code_examples/select_every_xth_test.py
+
+If the above model modifier is in a file
 :file:`SelectEveryXthTest.py`, it could be used like this::
 
     # Specify the modifier as a path. Run every second test.
@@ -546,10 +555,46 @@ For example, if the above model modifier would be in a file
     # SelectEveryXthTest.py must be in the module search path.
     robot --prerunmodifier SelectEveryXthTest:3:1 tests.robot
 
-If more than one model modifier is needed, they can be specified by using
-the :option:`--prerunmodifier` option multiple times. If similar modifying
-is needed before creating results, `programmatic modification of results`_
-can be enabled using the :option:`--prerebotmodifier` option.
+
+Example: Filter Out Test Cases or Suite By Name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The following prerun modifier removes any test case in which the user-defined string is found in the test name or in the test's parent or ancestor suites. This prerun modifier is like a negative version of the flags --suite and --test because test cases or test suites are excluded from the test run by name instead of tag.
+
+.. sourcecode:: python
+
+   ../api/code_examples/filtertc.py
+
+Assuming the module that contained this prerun modifier is in the module search path and the module name is filtertc, then it could be used like this::
+
+  ##Specify modifier by name where the namespace requires the module name since it differs from the class name. 
+  robot --prerunmodifier filtertc.Tests:'Create Table' --prerunmodifier filtertc.Suites:'database'
+
+This means that any test case in any of the data sources that has the string 'Create Table' in the test name is excluded from the test run. In addition, any test case whose parent or ancester suites have the string database are also excluded from the test run.
+
+
+Example: Skip Setups and Teardowns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When debugging test cases, a tester may need to temporarily disable a teardown or setup so that system under test is in a state that can be easily debugged. The following prerun modifier can disable setups and teardowns in either suites or test cases.
+
+.. sourcecode:: python
+
+  ../api/code_examples/disable.py
+
+Assuming the module that contained this prerun modifier is in the module search path and the module name is disable, then execute this command to disable setup and teardowns for both suites and test cases.::
+
+  ##Specify modifier by name where the namespace requires the module name since it differs from the class name. 
+  robot --prerunmodifier disable.Setup --prerunmodifier disable.Teardown
+
+To disable just suite teardown and suite setup, execute this command:::
+
+  ##Specify modifier by name where the namespace requires the module name since it differs from the class name. 
+  robot --prerunmodifier disable.Setup:suite --prerunmodifier disable.Teardown:suite
+
+
+To disable just test setup and test teardown, execute this command::
+
+  ##Specify modifier by name where the namespace requires the module name since it differs from the class name. 
+  robot --prerunmodifier disable.Setup:test --prerunmodifier disable.Teardown:test
 
 __ `Specifying library to import`_
 
