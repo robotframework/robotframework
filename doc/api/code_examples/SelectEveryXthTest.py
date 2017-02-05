@@ -1,8 +1,12 @@
+"""Pre-run modifier that selects only every Xth test for execution.
+
+Starts from the first test by default. Tests are selected per suite.
+"""
+
 from robot.api import SuiteVisitor
 
 
 class SelectEveryXthTest(SuiteVisitor):
-    """Visitor that keeps only every Xth test in the visited suite structure."""
 
     def __init__(self, x, start=0):
         self.x = int(x)
@@ -17,5 +21,5 @@ class SelectEveryXthTest(SuiteVisitor):
         suite.suites = [s for s in suite.suites if s.test_count > 0]
 
     def visit_test(self, test):
-        """Save time to avoid visiting tests and their keywords."""
+        """Avoid visiting tests and their keywords to save a little time."""
         pass

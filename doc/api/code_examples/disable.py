@@ -1,40 +1,27 @@
-#!/usr/bin/python
+"""Pre-run modifiers for disabling suite and test setups and teardowns."""
 
 from robot.api import SuiteVisitor
-import re
 
 
-class Setup(SuiteVisitor):
-    """Visitor that disables setup for suite or test case"""
-
-    def __init__(self, phase='all'):
-        self.phase = phase
-        
+class SuiteSetup(SuiteVisitor):
 
     def start_suite(self, suite):
-        """Remove setup for test suite"""
-        if self.phase in ['suite','all']:
-            suite.keywords.setup = None
-
-    def visit_test(self, test):      
-        """Remove setup for test case"""
-        if self.phase in ['test','all']:
-            test.keywords.setup = None
+        suite.keywords.setup = None
 
 
-class Teardown(SuiteVisitor):
-    """Visitor that disables teardown for suite or test case"""
-
-    def __init__(self, phase='all'):
-        self.phase = phase
-        
+class SuiteTeardown(SuiteVisitor):
 
     def start_suite(self, suite):
-        """Remove teardown for test suite"""
-        if self.phase in ['suite','all']:
-            suite.keywords.teardown = None
+        suite.keywords.teardown = None
 
-    def visit_test(self, test):  
-        """Remove teardown for test cases"""
-        if self.phase in ['test','all']:
-            test.keywords.teardown = None
+
+class TestSetup(SuiteVisitor):
+
+    def start_test(self, test):
+        test.keywords.setup = None
+
+
+class TestTeardown(SuiteVisitor):
+
+    def start_test(self, test):
+        test.keywords.teardown = None
