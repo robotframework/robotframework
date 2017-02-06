@@ -39,7 +39,9 @@ def is_bytes(item):
 
 
 def is_string(item):
-    return isinstance(item, basestring)
+    # Returns False with `b'bytes'` on IronPython on purpose. Results of
+    # `isinstance(item, basestring)` would depend on IronPython 2.7.x version.
+    return isinstance(item, (str, unicode))
 
 
 def is_unicode(item):
@@ -47,7 +49,7 @@ def is_unicode(item):
 
 
 def is_list_like(item):
-    if isinstance(item, (basestring, bytes, bytearray, UserString, String,
+    if isinstance(item, (str, unicode, bytes, bytearray, UserString, String,
                          file)):
         return False
     try:
