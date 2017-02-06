@@ -393,7 +393,7 @@ Using pip
 ~~~~~~~~~
 
 Once you have pip_ installed, and have set https_proxy_ if you are behind
-a proxy, using it on the command line is very easy. The easiest way to use
+a proxy, using pip on the command line is very easy. The easiest way to use
 pip is by letting it find and download packages it installs from the
 `Python Package Index (PyPI)`__, but it can also install packages
 downloaded from the PyPI separately. The most common usages are shown below
@@ -429,6 +429,17 @@ specify the version explicitly or use the :option:`--pre` option:
 
     # Upgrade to the latest version even if it is a pre-release
     pip install --pre --upgrade robotframework
+
+Notice that on Windows pip, by default, does not recreate `robot.bat and
+rebot.bat`__ start-up scripts if the same Robot Framework version is installed
+multiple times using the same Python version. This mainly causes problems
+when `using virtual environments`_, but is something to take into account
+also if doing custom installations using pip. A workaround if using the
+``--no-cache-dir`` option like ``pip install --no-cache-dir robotframework``.
+Alternatively it is possible to ignore the start-up scripts altogether and
+just use ``python -m robot`` and ``python -m robot.rebot`` commands instead.
+
+__ `Executing Robot Framework`_
 
 Installing from source
 ----------------------
@@ -665,7 +676,8 @@ Executing installed ``robot`` directory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you know where Robot Framework is installed, you can also execute the
-installed :file:`robot` directory or :file:`run.py` file inside it directly:
+installed :file:`robot` directory or the :file:`run.py` file inside it
+directly:
 
 .. sourcecode:: bash
 
@@ -684,6 +696,28 @@ way too:
 
 Executing Robot Framework this way is especially handy if you have done
 a `manual installation`_.
+
+Using virtual environments
+--------------------------
+
+Python `virtual environments`__ allow Python packages to be installed in
+an isolated location for a particular system or application, rather than
+installing all packages into the same global location. Virtual environments
+can be created using the virtualenv__ tool or, starting from Python 3.3,
+using the standard venv__ module.
+
+Robot Framework in general works fine with virtual environments. The only
+problem is that when `using pip`_ on Windows, ``robot.bat`` and ``rebot.bat``
+scripts are not recreated by default. This means that if Robot Framework is
+installed into multiple virtual environments, the ``robot.bat`` and
+``rebot.bat`` scripts in the latter ones refer to the Python installation
+in the first virtual environment. A workaround is using the ``--no-cache-dir``
+option when installing. Alternatively the start-up scripts can be ignored
+and ``python -m robot`` and ``python -m robot.rebot`` commands used instead.
+
+__ https://packaging.python.org/installing/#creating-virtual-environments
+__ https://virtualenv.pypa.io
+__ https://docs.python.org/3/library/venv.html
 
 .. These aliases need an explicit target to work in GitHub
 .. _precondition: `Preconditions`_
