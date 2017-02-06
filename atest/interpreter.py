@@ -47,6 +47,8 @@ class Interpreter(object):
         if self.is_python and self.version == '2.6':
             yield 'no-python26'
             yield 'require-et13'
+        else:
+            yield 'require-python26'
         if self.is_jython:
             yield 'no-jython'
             yield 'require-lxml'

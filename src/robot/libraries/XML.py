@@ -1439,8 +1439,8 @@ class ElementFinder(object):
             if not xpath.replace('/', '').isalnum():
                 logger.warn('XPATHs containing non-ASCII characters and '
                             'other than tag names do not always work with '
-                            'Python/Jython versions prior to 2.7. Verify '
-                            'results manually and consider upgrading to 2.7.')
+                            'Python versions prior to 2.7. Verify results '
+                            'manually and consider upgrading to 2.7.')
             return xpath
 
 
