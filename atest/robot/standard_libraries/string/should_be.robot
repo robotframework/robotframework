@@ -18,6 +18,9 @@ Bytes are not strings in Python 3
     Check Test Case    Bytes are not strings in Python 3 and IronPython
 
 Bytes are not strings in IronPython
+    [Documentation]
+    ...    `isinstance(b'', basestring) is True` on IronPython 2.7.7 but it wasn't on earlier 2.7 versions.
+    ...    For us it is easier to handle IronPython same way regardless the minor version.
     [Tags]    require-ipy
     Check Test Case    Bytes are not strings in Python 3 and IronPython
 
