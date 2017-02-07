@@ -72,6 +72,12 @@ Release notes
 
      doc/releasenotes/generate.py $VERSION $GITHUB_USERNAME $GITHUB_PASSWORD >> doc/releasenotes/rf-$VERSION.rst
 
+   When generating release notes for a preview release like ``3.0.2rc1``,
+   the list of issues is only going to contain issues with a matching label
+   like ``rc1``. If such labels are not used with this release (typical with
+   minor releases), the version must be given without the preview specifier
+   like ``3.0.2``.
+
 2. Fill the missing details in the template.
 
 3. Add, commit and push::

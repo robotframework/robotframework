@@ -78,7 +78,10 @@ class ReleaseNoteGenerator(object):
 .. default-role:: code
 
 Robot Framework {version} is a new release with **UPDATE** enhancements and bug
-fixes. All issues targeted for RF {milestone} can be found from the `issue tracker
+fixes. **MORE intro stuff...**
+
+**REMOVE reference to tracker if release notes contain all issues.***
+All issues targeted for RF {milestone} can be found from the `issue tracker
 <https://github.com/robotframework/robotframework/issues?q=milestone%3A{milestone}>`_.
 
 Questions and comments related to the release can be sent to the
@@ -86,6 +89,7 @@ Questions and comments related to the release can be sent to the
 and possible bugs `submitted to the issue tracker
 <https://github.com/robotframework/robotframework/issues>`__.
 
+**ADD --pre with preview releases.**
 If you have `pip <http://pip-installer.org>`_ installed, just run
 `pip install --upgrade robotframework` to install or upgrade to the latest
 version or use `pip install robotframework=={version}` to install exactly
@@ -101,7 +105,7 @@ Robot Framework {version} was released on **CHECK** {date}.
    :local:
 '''.strip()
         self._write(intro, version=version, milestone=milestone,
-                    date=time.strftime("%A %B %d, %Y"))
+                    date=time.strftime("%A %B %-d, %Y"))
 
     def _write_most_important_enhancements(self, issues):
         self._write_issues_with_label('Most important enhancements',
@@ -147,6 +151,7 @@ Robot Framework {version} was released on **CHECK** {date}.
     def _write_targets(self, issues):
         self._write()
         self._write('.. _User Guide: http://robotframework.org/robotframework/#user-guide')
+        self._write('.. _Robot Framework Foundation: http://robotframework.org/foundation')
         for issue in issues:
             self._write('.. _{}: https://github.com/robotframework/robotframework/issues/{}',
                         issue.id, issue.id[1:], link_issues=False)
