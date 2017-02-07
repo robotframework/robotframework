@@ -40,10 +40,6 @@ Robot Framework development is sponsored by `Robot Framework Foundation
    :target: https://pypi.python.org/pypi/robotframework
    :alt: Latest version
 
-.. image:: https://img.shields.io/pypi/dm/robotframework.svg
-   :target: https://pypi.python.org/pypi/robotframework
-   :alt: Number of downloads
-
 .. image:: https://img.shields.io/pypi/l/robotframework.svg
    :target: http://www.apache.org/licenses/LICENSE-2.0.html
    :alt: License
