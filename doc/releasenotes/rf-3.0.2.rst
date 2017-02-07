@@ -33,7 +33,7 @@ Most important enhancements
 ===========================
 
 The biggest reason this release was created somewhat soon after
-`RF 3.0.1 <rf-3.0.1.rst>`_ is fixing a performance regression in BuiltIn
+`RF 3.0.1 <rf-3.0.1.rst>`_ is fixing a performance regression in BuiltIn__
 keywords like `Evaluate`, `Should Be True` and `Run Keyword If` that evaluate
 expression in Python (`#2523`_). This regression originates from from RF 2.9,
 but it is normally small enough not to be noticed. It can, however, slow
@@ -45,6 +45,7 @@ to disable validation of certain keywords in the dry-run mode (`#2528`_).
 The Remote Protocol default port 8270 has also been `officially registered
 with IANA`__ (`#2367`_).
 
+__ http://robotframework.org/robotframework/latest/libraries/BuiltIn.html
 __ http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=8270
 
 Acknowledgements
@@ -53,7 +54,7 @@ Acknowledgements
 This release has been sponsored by the `Robot Framework Foundation`_.
 Additionally Nokia Networks has been sponsoring the work related to
 performance enhancements. Thanks also for `@cjnewman`__ for registering
-the Remote protocol default port.
+the Remote Protocol default port.
 
 __ https://github.com/cjnewman
 
