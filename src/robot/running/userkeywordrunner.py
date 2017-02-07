@@ -199,7 +199,7 @@ class UserKeywordRunner(object):
             self._dry_run(context, kw.args, result)
 
     def _dry_run(self, context, args, result):
-        self._resolve_arguments(args)
+        self._resolve_arguments(args, context.variables)
         with context.user_keyword:
             timeout = self._get_timeout()
             if timeout:

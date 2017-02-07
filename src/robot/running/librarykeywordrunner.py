@@ -113,7 +113,7 @@ class LibraryKeywordRunner(object):
         if self._handler.longname in self._executed_in_dry_run:
             self._run(context, args)
         else:
-            self._handler.resolve_arguments(args)
+            self._handler.resolve_arguments(args, context.variables)
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
