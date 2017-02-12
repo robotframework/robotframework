@@ -452,12 +452,10 @@ Getting source code
 ~~~~~~~~~~~~~~~~~~~
 
 You typically get the source by downloading a *source distribution package*
-in `.tar.gz` format. Newer packages are available on PyPI_, but Robot Framework
-2.8.1 and older can be found from the old `Google Code download page
-<https://code.google.com/p/robotframework/downloads/list?can=1>`_.
-Once you have downloaded the package, you need to extract it somewhere and,
-as a result, you get a directory named `robotframework-<version>`. The
-directory contains the source code and scripts needed for installing it.
+from on PyPI_ in `.tar.gz` or `.zip` format. Once you have downloaded the
+package, you need to extract it somewhere and, as a result, you get a directory
+named `robotframework-<version>`. The directory contains the source code and
+a ``setup.py`` script needed for installing it.
 
 An alternative approach for getting the source code is cloning project's
 `GitHub repository`_ directly. By default you will get the latest code, but

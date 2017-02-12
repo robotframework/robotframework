@@ -125,8 +125,8 @@ def git_commit(ctx, paths, message, push=False):
 def clean(ctx, remove_dist=True, create_dirs=False):
     """Clean workspace.
 
-    By default deletes 'build' and 'dist' directories and removes '*.pyc'
-    and '$py.class' files.
+    By default deletes 'build' and 'dist' directories and removes '*.pyc',
+    '*$py.class' and '*~' files.
 
     Args:
         remove_dist:  Remove also 'dist' (default).
@@ -140,7 +140,7 @@ def clean(ctx, remove_dist=True, create_dirs=False):
             os.mkdir(name)
     for directory, dirs, files in os.walk('.'):
         for name in files:
-            if name.endswith(('.pyc', '$py.class')):
+            if name.endswith(('.pyc', '$py.class', '~')):
                 os.remove(os.path.join(directory, name))
         if '__pycache__' in dirs:
             shutil.rmtree(os.path.join(directory, '__pycache__'))
@@ -155,7 +155,7 @@ def sdist(ctx, deploy=False, remove_dist=False):
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
     clean(ctx, remove_dist, create_dirs=True)
-    ctx.run('python setup.py sdist'
+    ctx.run('python setup.py sdist --formats gztar,zip'
         + (' register upload' if deploy else ''))
     announce()
 
