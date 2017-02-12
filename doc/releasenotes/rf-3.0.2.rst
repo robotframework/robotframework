@@ -1,14 +1,14 @@
-==========================
-Robot Framework 3.0.2 RC 1
-==========================
+=====================
+Robot Framework 3.0.2
+=====================
 
 .. default-role:: code
 
-Robot Framework 3.0.2 release candidate 1 is the first and hopefully last
-preview releases of the forthcoming Robot Framework 3.0.2 release. The main
-motivation for this releases is fixing a performance regression with evaluating
-expressions using some BuiltIn keywords occurring since RF 2.9 (`#2523`_), but
-there are also few other fixes and several nice enhancements.
+Robot Framework 3.0.2 is the second and hopefully last minor release in the
+Robot Framework 3.0.x series. The main motivation for this releases is fixing
+a performance regression with evaluating expressions using some BuiltIn
+keywords occurring since RF 2.9 (`#2523`_), but there are also few other
+fixes and several nice enhancements.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users <http://groups.google.com/group/robotframework-users>`_
@@ -16,34 +16,39 @@ and possible bugs `submitted to the issue tracker
 <https://github.com/robotframework/robotframework/issues>`__.
 
 If you have `pip <http://pip-installer.org>`_ installed, just run
-`pip install --upgrade --pre robotframework` to install or upgrade to the latest
-version or use `pip install robotframework==3.0.2rc1` to install exactly
+`pip install --upgrade robotframework` to install or upgrade to the latest
+version or use `pip install robotframework==3.0.2` to install exactly
 this version. Alternatively you can download the source distribution from
 `PyPI <https://pypi.python.org/pypi/robotframework>`_ and install it manually.
 For more details and other installation approaches, see the `installation
 instructions <../../INSTALL.rst>`_.
 
-Robot Framework 3.0.2 RC 1 was released on Tuesday February 7, 2017.
+Robot Framework 3.0.2 will be released on Monday February 13, 2017.
 
 .. contents::
    :depth: 2
    :local:
 
-Most important enhancements
-===========================
+Most important fixes
+====================
 
 The biggest reason this release was created somewhat soon after
 `RF 3.0.1 <rf-3.0.1.rst>`_ is fixing a performance regression in BuiltIn__
 keywords like `Evaluate`, `Should Be True` and `Run Keyword If` that evaluate
-expression in Python (`#2523`_). This regression originates from from RF 2.9,
+expression in Python (`#2523`_). This regression originates already from RF 2.9,
 but it is normally small enough not to be noticed. It can, however, slow
 down execution considerably if the affected keywords are used a lot.
+
+Most important enhancements
+===========================
 
 The most important new features in this release are the new `get_keyword_tags`
 method in the dynamic and remote library interfaces (`#2538`_) and possibility
 to disable validation of certain keywords in the dry-run mode (`#2528`_).
-The Remote Protocol default port 8270 has also been `officially registered
-with IANA`__ (`#2367`_).
+Having the source distribution available as a zip package (`#2542`_) isn't
+really a new feature, but it eases installation on Windows if `pip` cannot be
+used for some reason. The Remote Protocol default port 8270 has also been
+`officially registered by IANA`__ (`#2367`_).
 
 __ http://robotframework.org/robotframework/latest/libraries/BuiltIn.html
 __ http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=8270
@@ -84,6 +89,10 @@ Full list of fixes and enhancements
       - enhancement
       - high
       - Add `get_keyword_tags` to dynamic library API and remote interface
+    * - `#2542`_
+      - enhancement
+      - high
+      - Provide source distribution as a zip package in addition to tar.gz
     * - `#2532`_
       - bug
       - medium
@@ -120,12 +129,16 @@ Full list of fixes and enhancements
       - bug
       - low
       - Ensure `args` passed to `start/end_keyword` listener methods are always strings
+    * - `#2541`_
+      - bug
+      - low
+      - Importing library with same name as Python built-in module fails with bad error message
     * - `#2306`_
       - enhancement
       - low
       - DateTime: Document that locale aware directives like `%b` don't work with Jython on non-English locales
 
-Altogether 14 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0.2>`__.
+Altogether 16 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0.2>`__.
 
 .. _User Guide: http://robotframework.org/robotframework/#user-guide
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -133,6 +146,7 @@ Altogether 14 issues. View on `issue tracker <https://github.com/robotframework/
 .. _#2367: https://github.com/robotframework/robotframework/issues/2367
 .. _#2528: https://github.com/robotframework/robotframework/issues/2528
 .. _#2538: https://github.com/robotframework/robotframework/issues/2538
+.. _#2542: https://github.com/robotframework/robotframework/issues/2542
 .. _#2532: https://github.com/robotframework/robotframework/issues/2532
 .. _#2299: https://github.com/robotframework/robotframework/issues/2299
 .. _#2420: https://github.com/robotframework/robotframework/issues/2420
@@ -142,4 +156,5 @@ Altogether 14 issues. View on `issue tracker <https://github.com/robotframework/
 .. _#2534: https://github.com/robotframework/robotframework/issues/2534
 .. _#2535: https://github.com/robotframework/robotframework/issues/2535
 .. _#2428: https://github.com/robotframework/robotframework/issues/2428
+.. _#2541: https://github.com/robotframework/robotframework/issues/2541
 .. _#2306: https://github.com/robotframework/robotframework/issues/2306
