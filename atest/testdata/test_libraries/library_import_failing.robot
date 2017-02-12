@@ -9,7 +9,16 @@ Library         ${non existing nön äscii}
 Library         InitializationFailLibrary.py    ${nön existing}    ${vars here}
 Library         # Missing name causes error
 Library         InitializationFailJavaLibrary.java
+Library         OperatingSystem    # This succeeds after all failed imports
+
+*** Variables ***
+${CLASH WITH BUILTIN}    %{TEMPDIR}${/}sys.py
 
 *** Test Cases ***
-Dummy test
-    Comment    Only testing imports here
+Name clash with Python builtin-module
+    [Documentation]    FAIL
+    ...    Importing test library '${CLASH WITH BUILTIN}' failed:\
+    ...    Cannot import custom module with same name as Python built-in module.
+    Create File    ${CLASH WITH BUILTIN}    def kw(): pass
+    Import library    ${CLASH WITH BUILTIN}
+    [Teardown]    Remove File    ${CLASH WITH BUILTIN}

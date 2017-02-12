@@ -144,6 +144,9 @@ class _Importer(object):
         self._logger = logger
 
     def _import(self, name, fromlist=None, retry=True):
+        if name in sys.builtin_module_names:
+            raise DataError('Cannot import custom module with same name as '
+                            'Python built-in module.')
         invalidate_import_caches()
         try:
             try:

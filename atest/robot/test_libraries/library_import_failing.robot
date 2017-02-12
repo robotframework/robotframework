@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_failing.robot
+Suite Setup     Run Tests    ${EMPTY}    test_libraries/library_import_failing.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -53,3 +53,6 @@ Initializing Java Library Fails
     Import Should Have Failed    9    test_libraries/library_import_failing.robot
     ...  Initializing test library 'InitializationFailJavaLibrary' with no arguments failed: Initialization failed!
     ...  stacktrace=at InitializationFailJavaLibrary.<init>(InitializationFailJavaLibrary.java:4)
+
+Importing library with same name as Python built-in module
+    Check Test Case    Name clash with Python builtin-module
