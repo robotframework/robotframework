@@ -44,10 +44,8 @@ Most important enhancements
 The most important new features in this release are the new `get_keyword_tags`
 method in the dynamic and remote library interfaces (`#2538`_) and possibility
 to disable validation of certain keywords in the dry-run mode (`#2528`_).
-Having the source distribution available as a zip package (`#2542`_) isn't
-really a new feature, but it eases installation on Windows if `pip` cannot be
-used for some reason. The Remote Protocol default port 8270 has also been
-`officially registered by IANA`__ (`#2367`_).
+The Remote Protocol default port 8270 has also been `officially registered by
+IANA`__ (`#2367`_).
 
 __ http://robotframework.org/robotframework/latest/libraries/BuiltIn.html
 __ http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml?search=8270
@@ -88,10 +86,6 @@ Full list of fixes and enhancements
       - enhancement
       - high
       - Add `get_keyword_tags` to dynamic library API and remote interface
-    * - `#2542`_
-      - enhancement
-      - high
-      - Provide source distribution as a zip package in addition to tar.gz
     * - `#2532`_
       - bug
       - medium
@@ -137,7 +131,7 @@ Full list of fixes and enhancements
       - low
       - DateTime: Document that locale aware directives like `%b` don't work with Jython on non-English locales
 
-Altogether 16 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0.2>`__.
+Altogether 15 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0.2>`__.
 
 .. _User Guide: http://robotframework.org/robotframework/#user-guide
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -145,7 +139,6 @@ Altogether 16 issues. View on `issue tracker <https://github.com/robotframework/
 .. _#2367: https://github.com/robotframework/robotframework/issues/2367
 .. _#2528: https://github.com/robotframework/robotframework/issues/2528
 .. _#2538: https://github.com/robotframework/robotframework/issues/2538
-.. _#2542: https://github.com/robotframework/robotframework/issues/2542
 .. _#2532: https://github.com/robotframework/robotframework/issues/2532
 .. _#2299: https://github.com/robotframework/robotframework/issues/2299
 .. _#2420: https://github.com/robotframework/robotframework/issues/2420
