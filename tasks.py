@@ -155,8 +155,7 @@ def sdist(ctx, deploy=False, remove_dist=False):
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
     clean(ctx, remove_dist, create_dirs=True)
-    ctx.run('python setup.py sdist --formats gztar,zip'
-        + (' register upload' if deploy else ''))
+    ctx.run('python setup.py sdist' + (' register upload' if deploy else ''))
     announce()
 
 def announce():
