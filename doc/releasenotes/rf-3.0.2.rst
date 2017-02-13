@@ -4,26 +4,25 @@ Robot Framework 3.0.2
 
 .. default-role:: code
 
-Robot Framework 3.0.2 is the second and hopefully last minor release in the
-Robot Framework 3.0.x series. The main motivation for this releases is fixing
-a performance regression with evaluating expressions using some BuiltIn
-keywords occurring since RF 2.9 (`#2523`_), but there are also few other
-fixes and several nice enhancements.
+Robot Framework 3.0.2 is the second minor release in the Robot Framework 3.0.x
+series. The main motivation for this releases is fixing a performance regression
+with evaluating expressions using some BuiltIn keywords occurring since RF 2.9
+(`#2523`_), but there are also some other fixes and several nice enhancements.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users <http://groups.google.com/group/robotframework-users>`_
-and possible bugs `submitted to the issue tracker
+mailing list and possible bugs submitted to the `issue tracker
 <https://github.com/robotframework/robotframework/issues>`__.
 
 If you have `pip <http://pip-installer.org>`_ installed, just run
-`pip install --upgrade robotframework` to install or upgrade to the latest
-version or use `pip install robotframework==3.0.2` to install exactly
+`pip install --upgrade robotframework` to install the latest
+release or use `pip install robotframework==3.0.2` to install exactly
 this version. Alternatively you can download the source distribution from
 `PyPI <https://pypi.python.org/pypi/robotframework>`_ and install it manually.
 For more details and other installation approaches, see the `installation
 instructions <../../INSTALL.rst>`_.
 
-Robot Framework 3.0.2 will be released on Monday February 13, 2017.
+Robot Framework 3.0.2 was released on Monday February 13, 2017.
 
 .. contents::
    :depth: 2
@@ -58,8 +57,8 @@ Acknowledgements
 
 This release has been sponsored by the `Robot Framework Foundation`_.
 Additionally Nokia Networks has been sponsoring the work related to
-performance enhancements. Thanks also for `@cjnewman`__ for registering
-the Remote Protocol default port.
+performance enhancements. Thanks also for `@cjnewman`__ for getting
+the Remote Protocol default port registered.
 
 __ https://github.com/cjnewman
 
