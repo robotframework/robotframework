@@ -39,4 +39,5 @@ Wait for process uses minimum of timeout or internal timeout for polling
     Wait For Process    ${process}    0.001
     ${now}=      Get Current Date
     ${result} =   Subtract Date From Date    ${now}    ${start}
-    Should be true   ${result} < 0.1   Maximum time of 0.1s exceeded. Took ${result}s.
+    # Should be a lot faster than 0.2 but at least IronPython is a bit slow.
+    Should be true   ${result} < 0.2   Maximum time of 0.2s exceeded. Took ${result}s.
