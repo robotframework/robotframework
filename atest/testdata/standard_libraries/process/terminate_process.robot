@@ -3,7 +3,7 @@ Test Setup        Remove File    ${TEMPFILE}
 Test Teardown     Run Keywords
 ...               Remove File    ${TEMPFILE}    AND
 ...               Terminate All Processes    kill=True
-Library           Collections
+Library           DateTime
 Resource          process_resource.robot
 
 *** Variables ***

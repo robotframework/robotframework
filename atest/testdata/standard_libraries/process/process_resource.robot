@@ -9,6 +9,7 @@ ${SCRIPT}         ${CURDIR}${/}files${/}script.py
 ${ENCODING SCRIPT}    ${CURDIR}${/}files${/}encoding.py
 ${COUNTDOWN}      ${CURDIR}${/}files${/}countdown.py
 ${TEMPFILE}       %{TEMPDIR}${/}terminate-process-temp.txt
+${STARTED}        %{TEMPDIR}${/}some-process-started.txt
 ${STDOUT}         %{TEMPDIR}/process-stdout-file.txt
 ${STDERR}         %{TEMPDIR}/process-stderr-file.txt
 ${CWD}            %{TEMPDIR}/process-cwd
@@ -16,8 +17,11 @@ ${CWD}            %{TEMPDIR}/process-cwd
 *** Keywords ***
 Some process
     [Arguments]    ${alias}=${null}    ${stderr}=STDOUT
-    ${handle}=    Start Python Process    print(input())    alias=${alias}    stderr=${stderr}
-    Process should be running
+    Remove File    ${STARTED}
+    ${handle}=    Start Python Process    open(r'${STARTED}', 'w').close(); print(input())
+    ...    alias=${alias}    stderr=${stderr}
+    Wait Until Created    ${STARTED}    timeout=10s
+    Process Should Be Running
     [Return]    ${handle}
 
 Stop some process
