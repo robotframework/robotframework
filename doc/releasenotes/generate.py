@@ -86,14 +86,14 @@ All issues targeted for RF {milestone} can be found from the `issue tracker
 
 Questions and comments related to the release can be sent to the
 `robotframework-users <http://groups.google.com/group/robotframework-users>`_
-and possible bugs `submitted to the issue tracker
+mailing list and possible bugs submitted to the `issue tracker
 <https://github.com/robotframework/robotframework/issues>`__.
 
 **ADD --pre with preview releases.**
 If you have `pip <http://pip-installer.org>`_ installed, just run
-`pip install --upgrade robotframework` to install or upgrade to the latest
-version or use `pip install robotframework=={version}` to install exactly
-this version. Alternatively you can download the source distribution from
+`pip install --upgrade robotframework` to install the latest release or use
+`pip install robotframework=={version}` to install exactly this version.
+Alternatively you can download the source distribution from
 `PyPI <https://pypi.python.org/pypi/robotframework>`_ and install it manually.
 For more details and other installation approaches, see the `installation
 instructions <../../INSTALL.rst>`_.
