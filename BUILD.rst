@@ -13,7 +13,7 @@ Using Invoke
 ------------
 
 Some tasks are automated using `Invoke <http://pyinvoke.org>`_ (version 0.13 or
- newer). Generating releases requires it to be installed::
+newer). Generating releases requires it to be installed::
 
     pip install invoke
 
