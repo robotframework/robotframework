@@ -11,13 +11,49 @@ if sys.platform == 'cli':
     verbose.isatty = lambda stream: hasattr(stream, 'isatty') and stream.isatty()
 
 
-class TestKeywordNotification(unittest.TestCase):
+class TestBaseKeywordNotification(unittest.TestCase):
 
     def setUp(self, markers='AUTO', isatty=True):
         self.stream = StreamStub(isatty)
         self.console = VerboseOutput(width=16, colors='off', markers=markers,
                                      stdout=self.stream, stderr=self.stream)
         self.console.start_test(Stub())
+
+    def test_markers_off(self):
+        self.setUp(markers='OFF')
+        self._write_marker()
+        self._write_marker('FAIL')
+        self._verify()
+
+    def test_markers_auto_off(self):
+        self.setUp(markers='AUTO', isatty=False)
+        self._write_marker()
+        self._write_marker('FAIL')
+        self._verify()
+
+    def _write_marker(self, status='PASS', count=1):
+        for i in range(count):
+            self.console.start_keyword(Stub(name=i))
+            self.console.end_keyword(Stub(name=i, status=status))
+
+    def _verify(self, after='', before=''):
+        assert_equal(str(self.stream), '%sX :: D  %s' % (before, after))
+
+    def _get_keyword(self, name, status):
+        name_indented = '    ' + name
+        pad_len = 16 - len(name_indented) - len(status)
+        pad = ' ' * pad_len
+        return '%s%s%s\n' % (name_indented, pad, status)
+
+    def _verify_keyword(self, name='', status=''):
+        assert_equal(str(self.stream), self._get_keyword(name, status))
+
+
+class TestKeywordNotification(TestBaseKeywordNotification):
+
+    def test_write_notrun_marker(self):
+        self._write_marker(status='NOT-RUN')
+        self._verify('.')
 
     def test_write_pass_marker(self):
         self._write_marker()
@@ -56,40 +92,56 @@ class TestKeywordNotification(unittest.TestCase):
         self._write_marker(count=2)
         self._verify(before='[ WARN ] Message\n', after='..')
 
-    def test_markers_off(self):
-        self.setUp(markers='OFF')
-        self._write_marker()
-        self._write_marker('FAIL')
-        self._verify()
-
     def test_markers_on(self):
         self.setUp(markers='on', isatty=False)
         self._write_marker()
         self._write_marker('FAIL')
         self._verify('.F')
 
-    def test_markers_auto_off(self):
-        self.setUp(markers='AUTO', isatty=False)
+
+class TestDepthKeywordNotification(TestBaseKeywordNotification):
+
+    def setUp(self, markers='AUTO', isatty=True):
+        self.stream = StreamStub(isatty)
+        self.console = VerboseOutput(width=16, colors='off', markers=markers,
+                                     stdout=self.stream, stderr=self.stream)
+        self.console.verbose_keywords()
+        self.console.start_test(Stub())
+
+    def test_write_pass_marker(self):
         self._write_marker()
+        self._verify_keyword('0', '| PASS |')
+
+    def test_write_fail_marker(self):
         self._write_marker('FAIL')
-        self._verify()
+        self._verify_keyword('0', '| FAIL |')
 
-    def _write_marker(self, status='PASS', count=1):
-        for i in range(count):
-            self.console.start_keyword(Stub())
-            self.console.end_keyword(Stub(status=status))
+    def test_multiple_markers(self):
+        self.console.start_keyword(Stub(name='0'))
+        self.console.start_keyword(Stub(name='1'))
+        self._verify('\n    0   ')
+        self.console.end_keyword(Stub(name='1', status='PASS'))
+        self._verify('\n    0   .')
+        self.console.end_keyword(Stub(name='0', status='PASS'))
+        self._verify_keyword('0', '| PASS |')
 
-    def _verify(self, after='', before=''):
-        assert_equal(str(self.stream), '%sX :: D  %s' % (before, after))
+    def test_markers_on(self):
+        self.setUp(markers='on', isatty=False)
+        self._write_marker()
+        self._verify_keyword('0', '| PASS |')
+        self._write_marker('FAIL')
+        self._verify_keyword('0', '| FAIL |')
 
 
 class Stub(object):
 
-    def __init__(self, name='X', doc='D', status='PASS', message=''):
+    def __init__(self, name='X', args=[], doc='D', status='PASS', message=''):
         self.name = name
+        self.args = args
         self.doc = doc
         self.status = status
         self.message = message
+        self.type = None
 
     @property
     def passed(self):

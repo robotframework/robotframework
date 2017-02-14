@@ -311,7 +311,9 @@ Options
     --prerebotmodifier class *  Class to programmatically modify the result
                           model before creating reports and logs.
     --console type        How to report execution on the console.
-                          verbose:  report every suite and test (default)
+                          verbose:  report every suite, test and top level
+                                    keywords
+                          normal:   report every suite and test (default)
                           dotted:   only show `.` for passed test, `f` for
                                     failed non-critical tests, and `F` for
                                     failed critical tests

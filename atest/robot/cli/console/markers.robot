@@ -15,7 +15,9 @@ Few Pass Markers
 
 Few Pass And Fail Markers
     Check Stdout Contains    SEPARATOR=
-    ...    ${TESTNAME}${SPACE * 45}..F.F..\r
+    ...    ${TESTNAME}${SPACE * 45}..FF.FF.\r
+    ...    ${SPACE * 78}\r
+    ...    ${TESTNAME}${SPACE * 45}.\r
     ...    ${SPACE * 78}\r
     ...    ${TESTNAME}${SPACE * 45}| FAIL |\n
     ...    Several failures occurred:\n

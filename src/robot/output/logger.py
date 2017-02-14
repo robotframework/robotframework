@@ -74,7 +74,7 @@ class Logger(AbstractLogger):
         if not self._enabled:
             self.close()
 
-    def register_console_logger(self, type='verbose', width=78, colors='AUTO',
+    def register_console_logger(self, type='normal', width=78, colors='AUTO',
                                 markers='AUTO', stdout=None, stderr=None):
         logger = ConsoleOutput(type, width, colors, markers, stdout, stderr)
         self._console_logger = self._wrap_and_relay(logger)
