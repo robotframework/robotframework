@@ -95,6 +95,32 @@ class TestMatcher(unittest.TestCase):
         assert Matcher(b'f*').match(b'foo')
         assert Matcher(b'f.*', regexp=True).match(b'foo')
 
+    def test_glob_range_pattern(self):
+        pattern = 'GlobTest[1-2]'
+        self._matches('GlobTest1', pattern)
+        self._matches('GlobTest2', pattern)
+        self._matches_not('GlobTest3', pattern)
+
+    def test_glob_pattern_not_in_range(self):
+        pattern = 'GlobTest[!1-2]'
+        self._matches_not('GlobTest1', pattern)
+        self._matches_not('GlobTest2', pattern)
+        self._matches('GlobTest3', pattern)
+
+    def test_glob_pattern_with_wildcard(self):
+        pattern = 'GlobTest*[CR]at'
+        self._matches('GlobTest Case Cat', pattern)
+        self._matches('GlobTest Case Rat', pattern)
+        self._matches_not('GlobTest Case Bat', pattern)
+
+    def test_glob_pattern_with_brackets(self):
+        pattern = 'Weird*[[name]]'
+        self._matches('Weird my[name]', pattern)
+
+    def test_glob_pattern_with_brackets_not_in_range(self):
+        pattern = 'Weird*[[!name]]'
+        self._matches('Weird my[game]', pattern)
+
     def _matches(self, string, pattern, **config):
         assert Matcher(pattern, **config).match(string), pattern
 

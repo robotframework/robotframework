@@ -159,11 +159,18 @@ Many command line options take arguments as *simple patterns*. These
 
 - `*` is a wildcard matching any string, even an empty string.
 - `?` is a wildcard matching any single character.
+- `[abc]` is a character matching any single character in the bracket.
+- `[!abc]` is a character matching any single character that is not given in the bracket.
+- `[a-z]` is a range matching any single character from the range given in the bracket.
+- `[!a-z]` is a range matching any single character from the range that is not given in the bracket.
 - Unless noted otherwise, pattern matching is case, space, and underscore insensitive.
 
 Examples::
 
    --test Example*     # Matches tests with name starting 'Example', case insensitively.
+   --test Example[1-2] # Matches tests with name starting 'Example', follow by '1' or '2'. For example 'Example1' and 'Example2' are matched by this pattern.
+   --test Example[!1-2]# Matches tests with name starting 'Example', follow by any character that is not '1' or '2'
+   --test Example[[5]] # Matches tests with name Example[5].
    --include f??       # Matches tests with a tag that starts with 'f' or 'F' and is three characters long.
 
 __ http://en.wikipedia.org/wiki/Glob_(programming)
