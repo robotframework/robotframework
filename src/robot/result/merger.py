@@ -72,16 +72,23 @@ class Merger(SuiteVisitor):
             self.current.tests[index] = test
 
     def _create_add_message(self, item, test=True):
-        prefix = '%s added from merged output.' % ('Test' if test else 'Suite')
+        prefix = '*HTML*%s added from merged output.' % ('Test' if test else 'Suite')
         if not item.message:
             return prefix
-        return '\n'.join([prefix, '-  -  -', item.message])
+        return ''.join([prefix, '<hr>', self._format_html_message(item.message)])
+
+    def _format_html_message(self, message):
+        from robot.utils import html_escape
+        if message.startswith('*HTML*'):
+            return message[6:].lstrip()
+        else:
+            return html_escape(message)
 
     def _create_merge_message(self, new, old):
-        return '\n'.join(['Re-executed test has been merged.',
-                          '-  -  -',
-                          'New status:  %s' % new.status,
-                          'New message:  %s' % new.message,
-                          '-  -  -',
-                          'Old status:  %s' % old.status,
-                          'Old message:  %s' % old.message])
+        new.message = self._format_html_message(new.message)
+        old.message = self._format_html_message(old.message)
+        return ''.join(['*HTML*Re-executed test has been merged.',
+                          '<hr>New status:  <span class="%s">%s</span>' % (new.status.lower(), new.status),
+                          '<br>New message:  %s' % new.message,
+                          '<hr>Old status:  <span class="%s">%s</span>' % (old.status.lower(), old.status),
+                          '<br>Old message:  %s' % old.message])
