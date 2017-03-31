@@ -42,7 +42,7 @@ scripts or tools as separate processes.
 
 __ http://docs.python.org/c-api/index.html
 __ http://docs.python.org/library/ctypes.html
-__ http://code.google.com/p/robotframework/wiki/PythonTutorial
+__ https://github.com/robotframework/robotframework/blob/master/doc/python/PythonTutorial.rst
 
 Different test library APIs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
