@@ -108,7 +108,7 @@ class FromDirectoryPopulator(object):
                  warn_on_skipped=False, include_extensions=None, recurse=True):
         LOGGER.info("Parsing test data directory '%s'" % path)
         include_suites = self._get_include_suites(path, include_suites or [])
-        init_file, children = self._get_children(path, include_extensions,
+        init_file, children = self._get_children(path, datadir, include_extensions,
                                                  include_suites)
         if init_file:
             self._populate_init_file(datadir, init_file)
@@ -160,10 +160,10 @@ class FromDirectoryPopulator(object):
         name = os.path.basename(os.path.normpath(path))
         return self._is_in_included_suites(name, incl_suites)
 
-    def _get_children(self, dirpath, incl_extensions, incl_suites):
+    def _get_children(self, dirpath, datadir, incl_extensions, incl_suites):
         init_file = None
         children = []
-        for path, is_init_file in self._list_dir(dirpath, incl_extensions,
+        for path, is_init_file in self._list_dir(dirpath, datadir, incl_extensions,
                                                  incl_suites):
             if is_init_file:
                 if not init_file:
@@ -174,7 +174,7 @@ class FromDirectoryPopulator(object):
                 children.append(path)
         return init_file, children
 
-    def _list_dir(self, dir_path, incl_extensions, incl_suites):
+    def _list_dir(self, dir_path, datadir, incl_extensions, incl_suites):
         # os.listdir returns Unicode entries when path is Unicode
         names = os.listdir(unic(dir_path))
         for name in sorted(names, key=lambda item: item.lower()):
@@ -184,7 +184,7 @@ class FromDirectoryPopulator(object):
             ext = ext[1:].lower()
             if self._is_init_file(path, base, ext, incl_extensions):
                 yield path, True
-            elif self._is_included(path, base, ext, incl_extensions, incl_suites):
+            elif self._is_included(path, datadir, base, ext, incl_extensions, incl_suites):
                 yield path, False
             else:
                 LOGGER.info("Ignoring file or directory '%s'." % name)
@@ -199,17 +199,27 @@ class FromDirectoryPopulator(object):
             return ext in incl_extensions
         return ext in READERS
 
-    def _is_included(self, path, base, ext, incl_extensions, incl_suites):
+    def _is_included(self, path, datadir, base, ext, incl_extensions, incl_suites):
         if base.startswith(self.ignored_prefixes):
             return False
         if os.path.isdir(path):
             return base not in self.ignored_dirs or ext
         if not self._extension_is_accepted(ext, incl_extensions):
             return False
-        return self._is_in_included_suites(base, incl_suites)
+        return self._is_in_included_suites(base, incl_suites, self._get_longname(base, datadir, incl_suites))
 
-    def _is_in_included_suites(self, name, incl_suites):
+    def _is_in_included_suites(self, name, incl_suites, longname=None):
+        if longname:
+            return not incl_suites or incl_suites._match_longname(longname)
         return not incl_suites or incl_suites.match(self._split_prefix(name))
 
     def _split_prefix(self, name):
         return name.split('__', 1)[-1]
+
+    def _get_longname(self, base, datadir, include_suites):
+        if datadir.parent and len(include_suites._matcher) > 1:
+            longname = self._split_prefix(base)
+            while datadir.parent:
+                longname = '%s.%s' % (datadir.name, longname)
+                datadir = datadir.parent
+            return longname
