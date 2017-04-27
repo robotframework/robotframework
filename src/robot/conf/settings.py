@@ -130,6 +130,7 @@ class _BaseSettings(object):
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
+
         return value
 
     def _escape_as_data(self, value):
@@ -325,6 +326,10 @@ class _BaseSettings(object):
         return self['LogLevel']
 
     @property
+    def max_error_lines(self):
+        return self['MaxErrorLines']
+
+    @property
     def split_log(self):
         return self['SplitLog']
 
@@ -376,6 +381,7 @@ class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Extension'          : ('extension', None),
                        'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
+                       'MaxErrorLines'      : ('maxerr', 40),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'ExitOnError'        : ('exitonerror', False),
@@ -406,6 +412,7 @@ class RobotSettings(_BaseSettings):
         settings._opts['Output'] = None
         settings._opts['LogLevel'] = 'TRACE'
         settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
+        settings._opts['MaxErrorLines'] = 40
         return settings
 
     def _output_disabled(self):
@@ -513,6 +520,7 @@ class RobotSettings(_BaseSettings):
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'            : ('output', None),
                        'LogLevel'          : ('loglevel', 'TRACE'),
+                       'MaxErrorLines'     : ('maxerr', 40),
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
                        'EndTime'           : ('endtime', None),
