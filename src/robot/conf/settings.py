@@ -132,7 +132,6 @@ class _BaseSettings(object):
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
-
         return value
 
     def _escape_as_data(self, value):
