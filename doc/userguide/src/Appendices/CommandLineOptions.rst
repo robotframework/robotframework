@@ -113,7 +113,7 @@ Command line options for post-processing outputs
   --logtitle <title>      `Sets a title`_ for the generated test log.
   --reporttitle <title>   `Sets a title`_ for the generated test report.
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
-  --maxerr <value>    Limits the number of error lines displayed. The default limit is 40.
+  --maxerrorlines <value>  Limits the number of error lines displayed. The default limit is 40.
   -L, --loglevel <level>  `Sets the threshold level`_ to select log messages.
                           Optionally the default `visible log level`_ can be given
                           separated with a colon (:).

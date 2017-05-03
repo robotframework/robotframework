@@ -27,6 +27,9 @@ _MAX_ERROR_LINE_LENGTH = 78
 _ERROR_CUT_EXPLN = '    [ Message content over the limit has been removed. ]'
 _TAGS_RE = re.compile(r'\s*tags:(.*)', re.IGNORECASE)
 
+def set_max_error_lines(limit):
+    global _MAX_ERROR_LINES
+    _MAX_ERROR_LINES = limit
 
 def cut_long_message(msg):
     lines = msg.splitlines()

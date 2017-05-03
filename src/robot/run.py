@@ -192,7 +192,7 @@ Options
                           `passed:failed`. Both color names and codes work.
                           Examples: --reportbackground green:yellow:red
                                     --reportbackground #00E:#E00
-    --maxerr lines        Limit for the number of error lines displayed. The
+    --maxerrorlines lines  Limit for the number of error lines displayed. The
                           default limit is 40.
  -L --loglevel level      Threshold level for logging. Available levels: TRACE,
                           DEBUG, INFO (default), WARN, NONE (no logging). Use
@@ -444,11 +444,11 @@ class RobotFramework(Application):
             suite.visit(ModelModifier(settings.pre_run_modifiers,
                                       settings.run_empty_suite, LOGGER))
         with pyloggingconf.robot_handler_enabled(settings.log_level):
-            text._MAX_ERROR_LINES=int(settings.max_error_lines)
+            text.set_max_error_lines(settings.max_error_lines)
             result = suite.run(settings)
             LOGGER.info("Tests execution ended. Statistics:\n%s"
                         % result.suite.stat_message)
-            if settings.log or settings.report or settings.xcunit:
+            if settings.log or settings.report or settings.xunit:
                 writer = ResultWriter(settings.output if settings.log
                                       else result)
                 writer.write_results(settings.get_rebot_settings())

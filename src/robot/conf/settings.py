@@ -126,6 +126,8 @@ class _BaseSettings(object):
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'Randomize':
             return self._process_randomize_value(value)
+        if name == 'MaxErrorLines':
+            return self._convert_to_integer(name, value)
         if name == 'RemoveKeywords':
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
@@ -381,7 +383,7 @@ class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Extension'          : ('extension', None),
                        'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
-                       'MaxErrorLines'      : ('maxerr', 40),
+                       'MaxErrorLines'      : ('maxerrorlines', 40),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'ExitOnError'        : ('exitonerror', False),
@@ -520,7 +522,7 @@ class RobotSettings(_BaseSettings):
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'            : ('output', None),
                        'LogLevel'          : ('loglevel', 'TRACE'),
-                       'MaxErrorLines'     : ('maxerr', 40),
+                       'MaxErrorLines'     : ('maxerrorlines', 40),
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
                        'EndTime'           : ('endtime', None),
