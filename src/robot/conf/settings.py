@@ -127,7 +127,7 @@ class _BaseSettings(object):
         if name == 'Randomize':
             return self._process_randomize_value(value)
         if name == 'MaxErrorLines':
-            return self._convert_to_integer(name, value)
+            return self._process_max_error_lines(name, value)
         if name == 'RemoveKeywords':
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
@@ -158,6 +158,13 @@ class _BaseSettings(object):
         if not loggerhelper.IsLogged(log_level)(default):
             raise DataError("Default visible log level '%s' is lower than "
                             "log level '%s'" % (default, log_level))
+
+    def _process_max_error_lines(self, name, value):
+        value = self._convert_to_integer(name, value)
+        if value < 0:
+            raise DataError("Option '--%s' expected positive integer value but got '%s'."
+                            % (name.lower(), value))
+        return value
 
     def _process_randomize_value(self, original):
         value = original.lower()
