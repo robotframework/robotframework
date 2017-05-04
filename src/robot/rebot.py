@@ -157,8 +157,6 @@ Options
                           `passed:failed`. Both color names and codes work.
                           Examples: --reportbackground green:yellow:red
                                     --reportbackground #00E:#E00
-    --maxerr lines        Limit for the number of error lines displayed. The
-                          default limit is 40.
  -L --loglevel level      Threshold for selecting messages. Available levels:
                           TRACE (default), DEBUG, INFO, WARN, NONE (no msgs).
                           Use syntax `LOGLEVEL:DEFAULT` to define the default
