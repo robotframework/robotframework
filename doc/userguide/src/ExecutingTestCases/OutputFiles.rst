@@ -585,7 +585,7 @@ Programmatic modification of results
 ------------------------------------
 
 If the provided built-in features to modify results are are not enough,
-Robot Framework 2.9 and newer provide a possible to do custom modifications
+Robot Framework 2.9 and newer makes it possible to do custom modifications
 programmatically. This is accomplished by creating a model modifier and
 activating it using the :option:`--prerebotmodifier` option.
 

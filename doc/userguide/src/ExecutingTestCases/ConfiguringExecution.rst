@@ -505,7 +505,7 @@ Programmatic modification of test data
 --------------------------------------
 
 If the provided built-in features to modify test data before execution
-are not enough, Robot Framework 2.9 and newer provide a possible to do
+are not enough, Robot Framework 2.9 and newer makes it possible to do
 custom modifications programmatically. This is accomplished by creating
 a so called *pre-run modifier* and activating it using the
 :option:`--prerunmodifier` option.
