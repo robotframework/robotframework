@@ -43,7 +43,8 @@ Command line options for test execution
   --logtitle <title>      `Sets a title`_ for the generated test log.
   --reporttitle <title>   `Sets a title`_ for the generated test report.
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
-  -E, --maxerr <value>  `Sets the threshold level`_ for logging. Optionally
+  --maxerrorlines <lines>  Sets the limit for the number of `error lines`_ created by a test case.
+                          By default the limit is set to 40.
   -L, --loglevel <level>  `Sets the threshold level`_ for logging. Optionally
                           the default `visible log level`_ can be given
                           separated with a colon (:).
@@ -113,7 +114,6 @@ Command line options for post-processing outputs
   --logtitle <title>      `Sets a title`_ for the generated test log.
   --reporttitle <title>   `Sets a title`_ for the generated test report.
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
-  --maxerrorlines <value>  Limits the number of error lines displayed. The default limit is 40.
   -L, --loglevel <level>  `Sets the threshold level`_ to select log messages.
                           Optionally the default `visible log level`_ can be given
                           separated with a colon (:).

@@ -193,7 +193,7 @@ Options
                           Examples: --reportbackground green:yellow:red
                                     --reportbackground #00E:#E00
     --maxerrorlines lines  Limit for the number of error lines displayed. The
-                          default limit is 40.
+                          default limit is 40 lines.
  -L --loglevel level      Threshold level for logging. Available levels: TRACE,
                           DEBUG, INFO (default), WARN, NONE (no logging). Use
                           syntax `LOGLEVEL:DEFAULT` to define the default
