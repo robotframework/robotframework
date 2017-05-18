@@ -47,8 +47,8 @@ def keyword(name=None, tags=()):
     """
     if callable(name):
         return keyword()(name)
-    def _method_wrapper(func):
+    def decorator(func):
         func.robot_name = name
         func.robot_tags = tags
         return func
-    return _method_wrapper
+    return decorator
