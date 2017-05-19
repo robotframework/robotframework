@@ -334,10 +334,6 @@ class _BaseSettings(object):
         return self['LogLevel']
 
     @property
-    def max_error_lines(self):
-        return self['MaxErrorLines']
-
-    @property
     def split_log(self):
         return self['SplitLog']
 
@@ -506,6 +502,10 @@ class RobotSettings(_BaseSettings):
     @property
     def console_markers(self):
         return self['ConsoleMarkers']
+
+    @property
+    def max_error_lines(self):
+        return self['MaxErrorLines']
 
     @property
     def pre_run_modifiers(self):
