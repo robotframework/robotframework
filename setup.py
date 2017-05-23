@@ -49,34 +49,17 @@ PACKAGES = ['robot', 'robot.api', 'robot.conf', 'robot.htmldata',
 PACKAGE_DATA = [join('htmldata', directory, pattern)
                 for directory in ('rebot', 'libdoc', 'testdoc', 'lib', 'common')
                 for pattern in ('*.html', '*.css', '*.js')]
-WINDOWS = os.sep == '\\'
 if sys.platform.startswith('java'):
-    SCRIPTS = ['jybot', 'jyrebot']
+    ENTRY_POINTS = {'jybot': 'robot:run', 'jyrebot': 'robot:rebot'}
 elif sys.platform == 'cli':
-    SCRIPTS = ['ipybot', 'ipyrebot']
+    ENTRY_POINTS = {'ipybot': 'robot:run', 'ipyrebot': 'robot:rebot'}
 else:
-    SCRIPTS = ['pybot']
-SCRIPTS = [join('src', 'bin', s) for s in SCRIPTS + ['robot', 'rebot']]
-if WINDOWS:
-    SCRIPTS = [s+'.bat' for s in SCRIPTS]
+    ENTRY_POINTS = {'pybot': 'robot:run'}
 
-
-class custom_install_scripts(install_scripts):
-
-    def run(self):
-        install_scripts.run(self)
-        if WINDOWS:
-            self._replace_interpreter_in_bat_files()
-
-    def _replace_interpreter_in_bat_files(self):
-        print("replacing interpreter in robot.bat and rebot.bat.")
-        interpreter = list2cmdline([sys.executable])
-        for path in self.get_outputs():
-            if path.endswith(('robot.bat', 'rebot.bat')):
-                with open(path, 'r') as input:
-                    replaced = input.read().replace('python', interpreter)
-                with open(path, 'w') as output:
-                    output.write(replaced)
+ENTRY_POINTS.update({
+    'robot': 'robot:run',
+    'rebot': 'robot:rebot'
+})
 
 
 setup(
@@ -95,6 +78,7 @@ setup(
     package_dir  = {'': 'src'},
     package_data = {'robot': PACKAGE_DATA},
     packages     = PACKAGES,
-    scripts      = SCRIPTS,
-    cmdclass     = {'install_scripts': custom_install_scripts}
+    entry_points = {
+        'console_scripts': ['{} = {}'.format(k, ENTRY_POINTS[k]) for k in ENTRY_POINTS]
+    }
 )
