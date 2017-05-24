@@ -147,7 +147,7 @@ None To Dict
 
 Dictionary is dot-accessible
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \&{dotted} = { key=value }
+    Check Log Message    ${tc.kws[0].msgs[0]}    \&{dotted} = { key=value | nested={'key': 'value'} }
 
 Scalar dictionary is not dot-accessible
     ${tc} =    Check Test Case    ${TEST NAME}

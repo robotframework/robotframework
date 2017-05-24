@@ -18,8 +18,21 @@ try:
 except ImportError:  # New in Python 2.7
     from .ordereddict import OrderedDict
 
+from .robottypes import is_dict_like, is_list_like
+
 
 class DotDict(OrderedDict):
+
+    def __setitem__(self, key, value):
+        value = self._convert_nested_dicts(value)
+        OrderedDict.__setitem__(self, key, value)
+
+    def _convert_nested_dicts(self, value):
+        if is_dict_like(value):
+            return DotDict(value)
+        if is_list_like(value):
+            return [self._convert_nested_dicts(item) for item in value]
+        return value
 
     def __getattr__(self, key):
         try:

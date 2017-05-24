@@ -183,9 +183,10 @@ None To Dict
     Should Be True    &{ret} == {}
 
 Dictionary is dot-accessible
-    &{dotted} =    Evaluate    {'key': 'value'}
+    &{dotted} =    Evaluate    {'key': 'value', 'nested': {'key': 'value'}}
     Should Be Equal    ${dotted['key']}    value
     Should Be Equal    ${dotted.key}    value
+    Should Be Equal    ${dotted.nested.key}    value
 
 Scalar dictionary is not dot-accessible
     [Documentation]     FAIL STARTS: Resolving variable '${normal.key}' failed: AttributeError:
