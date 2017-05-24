@@ -20,6 +20,11 @@ Keywords with embedded arguments
     Check Keyword Data    ${tc.kws[1]}    Embedded args rock here
     Check Keyword Data    ${tc.kws[1].kws[0]}    BuiltIn.No Operation    status=NOT_RUN
 
+Library keyword with embedded arguments
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Should have correct number of keywords    ${tc}    2
+    Check Keyword Data    ${tc.kws[0]}    EmbeddedArgs.Log 42 times    status=NOT_RUN
+
 Keywords that would fail
     ${tc}=    Check Test Case    ${TESTNAME}
     Should have correct number of keywords    ${tc}    3

@@ -128,6 +128,9 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
                             "embedded arguments.")
         return LibraryKeywordRunner._run(self, context, self._embedded_args)
 
+    def _dry_run(self, context, args):
+        return LibraryKeywordRunner._dry_run(self, context, self._embedded_args)
+
 
 class RunKeywordRunner(LibraryKeywordRunner):
 
