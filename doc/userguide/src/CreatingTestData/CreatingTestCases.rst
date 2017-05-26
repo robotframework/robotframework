@@ -529,6 +529,54 @@ instead of adding extra documentation. Finally, metadata, such as the
 environment and user information in the last example above, is often
 better specified using tags_.
 
+Using wildcards '?' and '*' in test cases names
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The symbols '?' and '*' have special meaning when used at operative system
+context. The question mark ('?') would match any character at the corresponding
+position in an argument value. The asterisk or star ('*') would match any
+sequence of characters from that position. See `Simple patterns`__ section for 
+more examples.
+
+When using those wildcards in test cases names, they will be used like they 
+usually are. This could cause undesired consequences when running tests by
+test case name. We strongly advise not to use them in test cases names.
+
+The next example would run all test cases (expected use):
+
+   robot --test Test*  my_tests.robot
+   
+The next example would run three test cases:
+
+   robot --test "Test ?" my_tests.robot
+
+The next example would run three test cases:
+
+   robot --test "Test*1" my_tests.robot
+   
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Test 1
+      [Documentation]    The first
+      No Operation
+
+  Test 2
+      [Documentation]    The second
+      No Operation
+
+  Test that is problematic 1
+      [Documentation]    Don't run this one
+      Fail
+
+  Test*1
+      [Documentation]    Another one
+      No Operation
+
+  Test ?
+      [Documentation]    Don't run this too
+      Fail
+
 .. _test case tags:
 
 Tagging test cases
