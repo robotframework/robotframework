@@ -860,6 +860,49 @@ class TelnetConnection(telnetlib.Telnet):
                 pass
         raise NoMatchError(expected, timeout)
 
+    def write_until_expected_output_and_read_all(self, text, expected, timeout,
+                                    retry_interval, loglevel=None):
+        """Writes the given ``text`` repeatedly, until ``expected`` appears in the output.
+        Returns back all output received.
+
+        ``text`` is written without appending a newline and it is consumed from
+        the output before trying to find ``expected``. If ``expected`` does not
+        appear in the output within ``timeout``, this keyword fails.
+
+        ``retry_interval`` defines the time to wait ``expected`` to appear before
+        writing the ``text`` again. Consuming the written ``text`` is subject to
+        the normal [#Configuration|configured timeout].
+
+        Both ``timeout`` and ``retry_interval`` must be given in `time string
+        format`. See `Logging` section for more information about log levels.
+
+        Example:
+        | Write Until Expected Output | ps -ef| grep myprocess\\r\\n | myprocess |
+        | ...                         | 5 s                          | 0.5 s     |
+
+        The above example writes command ``ps -ef | grep myprocess\\r\\n`` until
+        ``myprocess`` appears in the output. The command is written every 0.5
+        seconds and the keyword fails if ``myprocess`` does not appear in
+        the output in 5 seconds.
+        """
+        timeout = timestr_to_secs(timeout)
+        retry_interval = timestr_to_secs(retry_interval)
+        maxtime = time.time() + timeout
+        result = ''
+        while time.time() < maxtime:
+            self.write_bare(text)
+            self.read_until(text, loglevel)
+            try:
+                with self._custom_timeout(retry_interval):
+                    success, output = self._read_until(expected)
+                    self._log(output, loglevel)
+                    result += output
+                    if success:
+                        return result
+            except AssertionError:
+                pass
+        raise NoMatchError(expected, timeout)
+
     def write_control_character(self, character):
         """Writes the given control character into the connection.
 
