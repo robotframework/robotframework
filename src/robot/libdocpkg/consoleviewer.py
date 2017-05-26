@@ -1,5 +1,4 @@
-#  Copyright 2008-2015 Nokia Networks
-#  Copyright 2016-     Robot Framework Foundation
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -21,9 +20,10 @@ from robot.errors import DataError
 
 class ConsoleViewer(object):
 
-    def __init__(self, libdoc):
+    def __init__(self, libdoc, show_keyword_lines):
         self._libdoc = libdoc
         self._keywords = KeywordMatcher(libdoc)
+        self.show_keyword_lines = show_keyword_lines
 
     @classmethod
     def handles(cls, command):
@@ -75,6 +75,9 @@ class ConsoleViewer(object):
             self._header(kw.name, underline='-')
         self._data([('Arguments', '[%s]' % ', '.join(kw.args))])
         self._doc(kw.doc)
+        if self.show_keyword_lines:
+            self._console('Source %s' % kw.position)
+            self._console('')
 
     def _header(self, name, underline):
         self._console('%s\n%s' % (name, underline * len(name)))
