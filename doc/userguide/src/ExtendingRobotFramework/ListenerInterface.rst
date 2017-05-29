@@ -508,6 +508,35 @@ The same example could also be implemented also using the newer
            print 'Test "%s" failed: %s' % (result.name, result.message)
            raw_input('Press enter to continue.')
 
+The next example implements the both examples above in two Python classes in a single Python module (e.g. :file:`MultipleListeners.py`).  Note that you have to define ROBOT_LISTENER_API_VERSION in each class.
+
+.. sourcecode:: python
+
+   """Listener that stops execution if a test fails."""
+
+   class MyListener:
+   
+      ROBOT_LISTENER_API_VERSION = 2
+
+      def end_test(name, attrs):
+       if attrs['status'] == 'FAIL':
+           print 'Test "%s" failed: %s' % (name, attrs['message'])
+           raw_input('Press enter to continue.')
+   
+   class YourListener:
+   
+      ROBOT_LISTENER_API_VERSION = 3
+
+      def end_test(data, result):
+          if not result.passed:
+              print 'Test "%s" failed: %s' % (result.name, result.message)
+              raw_input('Press enter to continue.')
+
+If saved in :file:`MultipleListeners.py` file usage from the command line would look like this::
+
+   robot --listener MultipleListeners.MyListener tests.robot    # for MyListener
+   robot --listener MultipleListeners.YourListener tests.robot  # for YourListener
+
 The next example, which still uses Python, is slightly more complicated. It
 writes all the information it gets into a text file in a temporary directory
 without much formatting. The filename may be given from the command line, but
@@ -546,6 +575,11 @@ probably more useful than this example.
 
         def close(self):
             self.outfile.close()
+
+Command line usage would look like this (if saved in file :file:`listener.py`)::
+
+   robot --listener listener.PythonListener tests.robot
+   robot --listener listener.PythonListener:another_listener.txt tests.robot   # overwrite defaul filename
 
 The following example implements the same functionality as the previous one,
 but uses Java instead of Python.
