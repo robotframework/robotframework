@@ -8,10 +8,10 @@ started with it.
     Introduces the most important features of Robot Framework and acts as
     an executable demo.
 
-`Robot Framework demo <https://bitbucket.org/robotframework/robotdemo/wiki/Home>`__
+`Robot Framework demo <https://bitbucket.org/robotframework/robotdemo>`__
     Simple example test cases. Demonstrates also creating custom test libraries.
 
-`Web testing demo <https://bitbucket.org/robotframework/webdemo/wiki/Home>`__
+`Web testing demo <https://bitbucket.org/robotframework/webdemo>`__
     Demonstrates how to create tests and higher level keywords. The system
     under test is a simple web page that is tested using Selenium2Library_.
 
