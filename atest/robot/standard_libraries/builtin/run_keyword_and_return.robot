@@ -21,6 +21,9 @@ Nested usage
 Keyword fails
     Check Test Case    ${TESTNAME}
 
+Keyword fails in teardown
+    Check Test Case    ${TESTNAME}
+
 Inside Run Keyword variants
     ${tc} =    Check Test Case    ${TESTNAME}
     Check log message    ${tc.kws[2].kws[0].kws[0].msgs[0]}    First keyword

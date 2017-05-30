@@ -23,6 +23,11 @@ Keyword fails
     [Documentation]    FAIL    Expected error
     Keyword fails
 
+Keyword fails in teardown
+    [Documentation]    FAIL    Teardown failed:\nExpected error
+    No Operation
+    [Teardown]    Keyword fails
+
 Inside Run Keyword variants
     [Documentation]    FAIL    Continuable\n\nAlso teardown failed:\nContinuable
     ${ret} =    Inside Run Keyword If

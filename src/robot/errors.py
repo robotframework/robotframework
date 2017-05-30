@@ -111,6 +111,7 @@ class ExecutionFailed(RobotError):
         self.exit = exit
         self._continue_on_failure = continue_on_failure
         self.return_value = return_value
+        self._return_requested = False
 
     @property
     def timeout(self):
@@ -130,6 +131,9 @@ class ExecutionFailed(RobotError):
         for child in getattr(self, '_errors', []):
             child.continue_on_failure = continue_on_failure
 
+    def set_return_requested(self):
+        self._return_requested = True
+
     def can_continue(self, teardown=False, templated=False, dry_run=False):
         if dry_run:
             return True
@@ -138,6 +142,8 @@ class ExecutionFailed(RobotError):
         if templated:
             return True
         if self.keyword_timeout:
+            return False
+        if self._return_requested:
             return False
         if teardown:
             return True

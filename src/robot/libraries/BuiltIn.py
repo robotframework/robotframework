@@ -2365,7 +2365,11 @@ class _Control(_BuiltInBase):
 
         New in Robot Framework 2.8.2.
         """
-        ret = self.run_keyword(name, *args)
+        try:
+            ret = self.run_keyword(name, *args)
+        except ExecutionFailed as err:
+            err.set_return_requested()
+            raise
         self.return_from_keyword(escape(ret))
 
     @run_keyword_variant(resolve=2)
