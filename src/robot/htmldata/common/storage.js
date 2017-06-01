@@ -8,21 +8,19 @@ storage = function () {
 
     function get(name, defaultValue) {
         try {
-            if (!localStorage)
-                return defaultValue;
             var value = localStorage[prefix + name];
-            if (typeof value === 'undefined')
-                return defaultValue;
-            return value;
         } catch (exception) {
             return defaultValue;
         }
+        if (typeof value === 'undefined')
+            return defaultValue;
+        return value;
+
     }
 
     function set(name, value) {
         try {
-            if (localStorage)
-                localStorage[prefix + name] = value;
+            localStorage[prefix + name] = value;
         } catch (exception) {}
     }
 
