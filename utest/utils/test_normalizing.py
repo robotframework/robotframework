@@ -9,9 +9,12 @@ from robot.utils.asserts import (assert_equal, assert_true, assert_false,
                                  assert_raises)
 
 
-class TestNormalizing(unittest.TestCase):
+class TestNormalize(unittest.TestCase):
 
-    def test_normalize_with_defaults(self):
+    def _verify(self, string, expected, **config):
+        assert_equal(normalize(string, **config), expected)
+
+    def test_defaults(self):
         for inp, exp in [('', ''),
                          ('            ', ''),
                          (' \n\t\r', ''),
@@ -22,29 +25,36 @@ class TestNormalizing(unittest.TestCase):
                          ('Fo OBar\r\n', 'foobar'),
                          ('foo\tbar', 'foobar'),
                          ('\n \n \n \n F o O \t\tBaR \r \r \r   ', 'foobar')]:
-            assert_equal(normalize(inp), exp)
+            self._verify(inp, exp)
 
-    def test_normalize_with_caseless(self):
-        assert_equal(normalize('Fo o BaR', caseless=False), 'FooBaR')
-        assert_equal(normalize('Fo O B AR', caseless=True), 'foobar')
+    def test_caseless(self):
+        self._verify('Fo o BaR', 'FooBaR', caseless=False)
+        self._verify('Fo o BaR', 'foobar', caseless=True)
 
-    def test_normalize_with_caseless_non_ascii(self):
-        assert_equal(normalize(u'\xc4iti', caseless=False), u'\xc4iti')
+    def test_caseless_non_ascii(self):
+        self._verify(u'\xc4iti', u'\xc4iti', caseless=False)
         for mother in [u'\xc4ITI', u'\xc4iTi', u'\xe4iti', u'\xe4iTi']:
-            assert_equal(normalize(mother, caseless=True), u'\xe4iti')
+            self._verify(mother, u'\xe4iti', caseless=True)
 
-    def test_normalize_with_spaceless(self):
-        assert_equal(normalize('Fo o BaR', spaceless=False), 'fo o bar')
-        assert_equal(normalize('Fo O B AR', spaceless=True), 'foobar')
+    def test_spaceless(self):
+        self._verify('Fo o BaR', 'fo o bar', spaceless=False)
+        self._verify('Fo o BaR', 'foobar', spaceless=True)
 
-    def test_normalize_with_ignore(self):
-        assert_equal(normalize('Foo_ bar', ignore=['_']), 'foobar')
-        assert_equal(normalize('Foo_ bar', ignore=['_', 'f', 'o']), 'bar')
-        assert_equal(normalize('Foo_ bar', ignore=['_', 'F', 'o']), 'bar')
-        assert_equal(normalize('Foo_ bar', ignore=['_', 'f', 'o'],
-                                caseless=False), 'Fbar')
-        assert_equal(normalize('Foo_\n bar\n', ignore=['\n'],
-                                spaceless=False), 'foo_ bar')
+    def test_ignore(self):
+        self._verify('Foo_ bar', 'fbar', ignore=['_', 'x', 'o'])
+        self._verify('Foo_ bar', 'fbar', ignore=('_', 'x', 'o'))
+        self._verify('Foo_ bar', 'fbar', ignore='_xo')
+        self._verify('Foo_ bar', 'bar', ignore=['_', 'f', 'o'])
+        self._verify('Foo_ bar', 'bar', ignore=['_', 'F', 'O'])
+        self._verify('Foo_ bar', 'Fbar', ignore=['_', 'f', 'o'], caseless=False)
+        self._verify('Foo_\n bar\n', 'foo_ bar', ignore=['\n'], spaceless=False)
+
+    def test_bytes(self):
+        self._verify(b'FOO & Bar', b'foo&bar')
+        self._verify(b'FOO & Bar', b'oobar', ignore=[b'F', b'&'])
+        self._verify(b'FOO & Bar', b'oo  bar', ignore=[b'F', b'&'], spaceless=False)
+        self._verify(b'FOO & Bar', b'bar', ignore=b'F&o')
+        self._verify(b'FOO & Bar', b'OOBar', ignore=b'F&o', caseless=False)
 
 
 class TestNormalizedDict(unittest.TestCase):

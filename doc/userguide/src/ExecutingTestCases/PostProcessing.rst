@@ -111,7 +111,7 @@ Merging outputs
 If same tests are re-executed or a single test suite executed in pieces,
 combining results like discussed above creates an unnecessary top-level
 test suite. In these cases it is typically better to merge results instead.
-Merging is done by using :option:`--merge` option which changes the way how
+Merging is done by using :option:`--merge (-R)` option which changes the way how
 Rebot combines two or more output files. This option itself takes no
 arguments and all other command line options can be used with it normally::
 
@@ -127,7 +127,7 @@ There is often a need to re-execute a subset of tests, for example, after
 fixing a bug in the system under test or in the tests themselves. This can be
 accomplished by `selecting test cases`_ by names (:option:`--test` and
 :option:`--suite` options), tags (:option:`--include` and :option:`--exclude`),
-or by previous status (:option:`--rerunfailed`).
+or by previous status (:option:`--rerunfailed` or :option:`--rerunfailedsuites`).
 
 Combining re-execution results with the original results using the default
 `combining outputs`_ approach does not work too well. The main problem is
@@ -152,8 +152,7 @@ section.
 
 .. note:: Merging re-executed results is a new feature in Robot Framework 2.8.4.
           Prior to Robot Framework 2.8.6 new tests or suites in merged outputs
-          were skipped and merging was done using nowadays deprecated
-          :option:`--rerunmerge` option.
+          were skipped and merging was done using :option:`--rerunmerge` option.
 
 Merging suites executed in pieces
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

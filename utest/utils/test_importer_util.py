@@ -27,6 +27,8 @@ def assert_prefix(error, expected):
     message = unicode(error)
     count = 3 if WINDOWS_PATH_IN_ERROR.search(message) else 2
     prefix = ':'.join(message.split(':')[:count]) + ':'
+    if 'ImportError:' in expected and sys.version_info >= (3, 6):
+        expected = expected.replace('ImportError:', 'ModuleNotFoundError:')
     assert_equal(prefix, expected)
 
 
@@ -392,8 +394,10 @@ class TestErrorDetails(unittest.TestCase):
 
     def test_structure(self):
         error = self._failing_import('NoneExisting')
-        message = ("Importing 'NoneExisting' failed: ImportError: No module "
-                   "named {q}NoneExisting{q}".format(q="'" if PY3 else ""))
+        quote = "'" if PY3 else ''
+        type = 'Import' if sys.version_info < (3, 6) else 'ModuleNotFound'
+        message = ("Importing 'NoneExisting' failed: {type}Error: No module "
+                   "named {q}NoneExisting{q}".format(q=quote, type=type))
         expected = (message, self._get_traceback(error),
                     self._get_pythonpath(error), self._get_classpath(error))
         assert_equal(unicode(error), '\n'.join(expected).strip())

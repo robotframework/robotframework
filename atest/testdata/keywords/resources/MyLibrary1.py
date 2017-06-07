@@ -56,3 +56,23 @@ class MyLibrary1:
     @keyword('Add ${number:\d+} Copies Of ${product:\w+} To Cart')
     def add_copies_to_cart(self, num, thing):
         return num, thing
+
+    @keyword
+    def _i_start_with_an_underscore_and_i_am_ok(self):
+        print("I'm marked with @keyword")
+
+    @keyword("Function name can be whatever")
+    def _(self):
+        print('Real name set by @keyword')
+
+    @keyword
+    def __(self):
+        print('This name reduces to an empty string and is invalid')
+
+    @property
+    def should_not_be_accessed(self):
+        raise SystemExit("Shouldn't be accessed when inspecting library")
+
+    @property
+    def _should_not_be_accessed(self):
+        raise SystemExit("Shouldn't be accessed when inspecting library")

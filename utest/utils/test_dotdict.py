@@ -79,6 +79,23 @@ class TestDotDict(unittest.TestCase):
                 assert_equal(d2, d1)
         assert_not_equal(od1, od2)
 
+    def test_nested_dicts(self):
+        leaf = {'key': 'value'}
+        d = DotDict({'nested': leaf, 'deeper': {'nesting': leaf}}, nested2=leaf)
+        assert_equal(d.nested.key, 'value')
+        assert_equal(d.deeper.nesting.key, 'value')
+        assert_equal(d.nested2.key, 'value')
+
+    def test_nested_dicts_inside_list_likes(self):
+        leaf = {'key': 'value'}
+        d = DotDict(list=[leaf, leaf, [leaf]], tuple=(leaf, {'deeper': leaf}))
+        assert_equal(d.list[0].key, 'value')
+        assert_equal(d.list[1].key, 'value')
+        assert_equal(d.list[2][0].key, 'value')
+        assert_equal(d.tuple[0].key, 'value')
+        assert_equal(d.tuple[1].deeper.key, 'value')
+        assert_true(isinstance(d.tuple, list))
+
 
 if __name__ == '__main__':
     unittest.main()

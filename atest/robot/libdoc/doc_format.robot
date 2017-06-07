@@ -3,13 +3,11 @@ Resource         libdoc_resource.robot
 Test Setup       Remove Output Files
 Test Template    Test Format in HTML
 
-
 *** Variables ***
 ${EXAMPLE URL}     http://example.com
 ${EXAMPLE LINK}    <a href="${EXAMPLE URL}">${EXAMPLE URL}</a>
 
 *** Test Cases ***
-
 Robot format
     <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    --docformat Robot
 
@@ -21,11 +19,13 @@ HTML format
 
 reST format
     [Template]    NONE
-    [Tags]    require-docutils
+    [Tags]    require-docutils    require-pygments
     Test Format in HTML    <em>bold</em> or &lt;b&gt;bold&lt;/b&gt; <a
     ...    --docformat rest    expected2=Link to <cite>Keyword</cite>.
     Doc Should Contain In HTML    ${MODEL['keywords'][2]}
     ...    This link to <a href="#Keyword" class="name">Keyword</a>
+    Doc Should Contain In HTML    ${MODEL['keywords'][2]}
+    ...    <span class=\"gh\">*** Test Cases ***\x3c/span>
 
 Format from Python library
     *bold* or <b>bold</b> ${EXAMPLE URL}    lib=DocFormatHtml.py
@@ -50,9 +50,7 @@ Format from XML spec
     Copy File    ${OUTXML}    ${OUTPREFIX}-2.xml
     Test Format In XML    HTML    lib=${OUTPREFIX}-2.xml
 
-
 *** Keywords ***
-
 Test Format In HTML
     [Arguments]    ${expected}    ${cli}=    ${lib}=DocFormat.py
     ...    ${expected2}=Link to <a href="#Keyword" class="name">Keyword</a>.

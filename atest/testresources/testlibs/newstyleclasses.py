@@ -6,6 +6,10 @@ class NewStyleClassLibrary(object):
         return ''.join(arg)
 
     @property
+    def property_getter(self):
+        raise SystemExit('This should not be called, ever!!!')
+
+    @property
     def _property_getter(self):
         raise SystemExit('This should not be called, ever!!!')
     

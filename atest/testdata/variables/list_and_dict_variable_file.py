@@ -6,7 +6,7 @@ def get_variables(*args):
         return dict((args[i], args[i+1]) for i in range(0, len(args), 2))
     list_ = ['1', '2', 3]
     tuple_ = tuple(list_)
-    dict_ = {'a': 1, 2: 'b'}
+    dict_ = {'a': 1, 2: 'b', 'nested': {'key': 'value'}}
     ordered = OrderedDict((chr(o), o) for o in range(97, 107))
     open_file = open(__file__)
     closed_file = open(__file__)

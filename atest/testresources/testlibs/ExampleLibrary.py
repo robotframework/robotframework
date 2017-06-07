@@ -48,8 +48,10 @@ class ExampleLibrary:
         pass
 
     def exception(self, name, msg="", class_only=False):
-        """Raise exception with given name and message"""
-        exception = __builtins__[name]
+        try:
+            exception = getattr(__builtins__, name)
+        except AttributeError:  # __builtins__ is sometimes a dict, go figure
+            exception = __builtins__[name]
         if class_only:
             raise exception
         raise exception(msg)

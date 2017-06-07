@@ -155,6 +155,16 @@ class TestItemLists(unittest.TestCase):
                                'Only int objects accepted, got float.',
                                ItemList(int).__setitem__, slice(0), [1, 1.1])
 
+    def test_pop(self):
+        items = ItemList(str, items='abcde')
+        assert_equal(items.pop(), 'e')
+        assert_equal(items.pop(0), 'a')
+        assert_equal(items.pop(-2), 'c')
+        assert_equal(list(items), ['b', 'd'])
+        assert_raises(IndexError, items.pop, 7)
+        assert_equal(list(items), ['b', 'd'])
+        assert_raises(IndexError, ItemList(int).pop)
+
     def test_len(self):
         items = ItemList(object)
         assert_equal(len(items), 0)

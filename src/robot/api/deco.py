@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -46,8 +47,8 @@ def keyword(name=None, tags=()):
     """
     if callable(name):
         return keyword()(name)
-    def _method_wrapper(func):
+    def decorator(func):
         func.robot_name = name
         func.robot_tags = tags
         return func
-    return _method_wrapper
+    return decorator

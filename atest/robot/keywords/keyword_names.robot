@@ -81,6 +81,13 @@ Keyword can just be marked without changing its name
     Should Be Equal    ${tc.kws[0].name}    MyLibrary1.No Custom Name Given 1
     Should Be Equal    ${tc.kws[1].name}    MyLibrary1.No Custom Name Given 2
 
+Functions decorated with @keyword can start with underscrore
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.kws[0].name}    MyLibrary1.I Start With An Underscore And I Am Ok
+    Check Log Message    ${tc.kws[0].msgs[0]}    I'm marked with @keyword
+    Should Be Equal    ${tc.kws[1].name}    MyLibrary1.Function name can be whatever
+    Check Log Message    ${tc.kws[1].msgs[0]}    Real name set by @keyword
+
 Assignment is not part of name
     ${tc} =    Check Test Case    ${TESTNAME}
     Keyword name and assign should be    ${tc.kws[0]}    BuiltIn.Log
@@ -95,6 +102,9 @@ Library name and keyword name are separate
     Keyword and library names should be    ${tc.kws[2]}    Keyword Only In Resource 1    my_resource_1
     Keyword and library names should be    ${tc.kws[3]}    Log    BuiltIn
     Keyword and library names should be    ${tc.kws[4]}    Log    BuiltIn
+
+Empty keyword name is not allowed
+    Check log message    ${ERRORS[0]}    Adding keyword '__' to library 'MyLibrary1' failed: Keyword name cannot be empty.    ERROR
 
 *** Keywords ***
 Check Test And Three Keyword Names

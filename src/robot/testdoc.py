@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -77,6 +78,20 @@ Options
   -s --suite name *      Include suites by name.
   -i --include tag *     Include tests by tags.
   -e --exclude tag *     Exclude tests by tags.
+  -A --argumentfile path *  Text file to read more arguments from. Use special
+                          path `STDIN` to read contents from the standard input
+                          stream. File can have both options and data sources
+                          one per line. Contents do not need to be escaped but
+                          spaces in the beginning and end of lines are removed.
+                          Empty lines and lines starting with a hash character
+                          (#) are ignored. New in Robot Framework 3.0.2.
+                          Example file:
+                          |  --name Example
+                          |  # This is a comment line
+                          |  my_tests.robot
+                          |  output.html
+                          Examples:
+                          --argumentfile argfile.txt --argumentfile STDIN
   -h -? --help           Print this help.
 
 All options except --title have exactly same semantics as same options have
@@ -145,12 +160,10 @@ class TestdocModelWriter(ModelWriter):
         self._output.write('</script>\n')
 
     def write_data(self):
-        generated_time = time.localtime()
         model = {
             'suite': JsonConverter(self._output_path).convert(self._suite),
             'title': self._title,
-            'generated': format_time(generated_time, gmtsep=' '),
-            'generatedMillis': int(time.mktime(generated_time) * 1000)
+            'generated': int(time.time() * 1000)
         }
         JsonWriter(self._output).write_json('testdoc = ', model)
 

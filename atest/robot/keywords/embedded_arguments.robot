@@ -32,7 +32,7 @@ Embedded Arguments as Variables
 
 Non-Existing Variable in Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Keyword Data    ${tc.kws[0]}    User \${non existing} Selects \${variables} From Webshop
+    Check Keyword Data    ${tc.kws[0]}    User \${non existing} Selects \${variables} From Webshop    status=FAIL
 
 Non-Existing Variable in Embedded Arguments and Positional Arguments
     Check Test Case    ${TEST NAME}

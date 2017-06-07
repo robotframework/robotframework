@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -99,6 +100,9 @@ Examples:
 | Should Be Equal | ${date}      | 2014-05-28 12:05:00.000 |
 | ${date} =       | Convert Date | ${date}                 | result_format=%d.%m.%Y |
 | Should Be Equal | ${date}      | 28.05.2014              |
+
+Notice that locale aware directives like ``%b``  do not work correctly with
+Jython on non-English locales: http://bugs.jython.org/issue2285
 
 == Python datetime ==
 

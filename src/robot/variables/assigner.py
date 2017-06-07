@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,7 +15,8 @@
 
 import re
 
-from robot.errors import DataError, ExecutionFailed, HandlerExecutionFailed
+from robot.errors import (DataError, ExecutionFailed, HandlerExecutionFailed,
+                          VariableError)
 from robot.utils import (ErrorDetails, format_assign_message, get_error_message,
                          is_number, is_string, prepr, type_name)
 
@@ -123,8 +125,8 @@ class VariableAssigner(object):
         try:
             setattr(var, attr, value)
         except:
-            raise DataError("Setting attribute '%s' to variable '%s' failed: %s"
-                            % (attr, base, get_error_message()))
+            raise VariableError("Setting attribute '%s' to variable '%s' "
+                                "failed: %s" % (attr, base, get_error_message()))
         return True
 
     def _split_extended_assign(self, name):
@@ -196,7 +198,7 @@ class _MultiReturnValueResolver(object):
         self._raise('Expected list-like value, got %s.' % type_name(ret))
 
     def _raise(self, error):
-        raise DataError('Cannot set variables: %s' % error)
+        raise VariableError('Cannot set variables: %s' % error)
 
     def _validate(self, return_count):
         raise NotImplementedError

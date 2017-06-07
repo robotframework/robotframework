@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,7 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import ExecutionFailed, PassExecution
-from robot.utils import py2to3, unic
+from robot.utils import html_escape, py2to3, unic
 
 
 @py2to3
@@ -155,20 +156,38 @@ class _Message(object):
 
     @property
     def message(self):
-        msg = self._get_message_before_teardown()
-        return self._get_message_after_teardown(msg)
+        message = self._get_message_before_teardown()
+        return self._get_message_after_teardown(message)
 
     def _get_message_before_teardown(self):
         if self.failure.setup:
-            return self.setup_message % self.failure.setup
+            return self._format_setup_or_teardown_message(self.setup_message,
+                                                          self.failure.setup)
         return self.failure.test or ''
 
-    def _get_message_after_teardown(self, msg):
+    def _format_setup_or_teardown_message(self, prefix, message):
+        if message.startswith('*HTML*'):
+            prefix = '*HTML* ' + prefix
+            message = message[6:].lstrip()
+        return prefix % message
+
+    def _get_message_after_teardown(self, message):
         if not self.failure.teardown:
-            return msg
-        if not msg:
-            return self.teardown_message % self.failure.teardown
-        return self.also_teardown_message % (msg, self.failure.teardown)
+            return message
+        if not message:
+            return self._format_setup_or_teardown_message(self.teardown_message,
+                                                          self.failure.teardown)
+        return self._format_message_with_teardown_message(message)
+
+    def _format_message_with_teardown_message(self, message):
+        teardown = self.failure.teardown
+        if teardown.startswith('*HTML*'):
+            teardown = teardown[6:].lstrip()
+            if not message.startswith('*HTML*'):
+                message = '*HTML* ' + html_escape(message)
+        elif message.startswith('*HTML*'):
+            teardown = html_escape(teardown)
+        return self.also_teardown_message % (message, teardown)
 
 
 class TestMessage(_Message):

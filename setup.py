@@ -32,19 +32,14 @@ License :: OSI Approved :: Apache Software License
 Operating System :: OS Independent
 Programming Language :: Python :: 2
 Programming Language :: Python :: 3
+Programming Language :: Python :: Implementation :: CPython
+Programming Language :: Python :: Implementation :: Jython
+Programming Language :: Python :: Implementation :: IronPython
+Programming Language :: Python :: Implementation :: PyPy
 Topic :: Software Development :: Testing
+Framework :: Robot Framework
 """.strip().splitlines()
 KEYWORDS = 'robotframework testing testautomation acceptancetesting atdd bdd'
-# Maximum width in Windows installer seems to be 70 characters -------|
-WINDOWS_DESCRIPTION = """
-Robot Framework is a generic test automation framework for acceptance
-testing and acceptance test-driven development (ATDD). It has
-easy-to-use tabular test data syntax and utilizes the keyword-driven
-testing approach. Its testing capabilities can be extended by test
-libraries implemented either with Python or Java, and users can create
-new keywords from existing ones using the same syntax that is used for
-creating test cases.
-""".strip()
 PACKAGES = ['robot', 'robot.api', 'robot.conf', 'robot.htmldata',
             'robot.libdocpkg', 'robot.libraries', 'robot.model',
             'robot.output', 'robot.output.console', 'robot.parsing',

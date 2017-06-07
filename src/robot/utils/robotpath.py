@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -21,6 +22,7 @@ from robot.errors import DataError
 from .encoding import system_decode
 from .platform import WINDOWS, PY2
 from .robottypes import is_unicode
+from .unic import unic
 
 
 if sys.version_info < (2,7):
@@ -51,13 +53,15 @@ else:
 def normpath(path, case_normalize=False):
     """Replacement for os.path.normpath with some enhancements.
 
-    1. Non-Unicode paths are converted to Unicode using file system encoding.
-    2. Optionally lower-case paths on case-insensitive file systems.
+    1. Convert non-Unicode paths to Unicode using the file system encoding.
+    2. NFC normalize Unicode paths (affects mainly OSX).
+    3. Optionally lower-case paths on case-insensitive file systems.
        That includes Windows and also OSX in default configuration.
-    3. Turn ``c:`` into ``c:\\`` on Windows instead of keeping it as ``c:``.
+    4. Turn ``c:`` into ``c:\\`` on Windows instead of keeping it as ``c:``.
     """
     if not is_unicode(path):
         path = system_decode(path)
+    path = unic(path)  # Handles NFC normalization on OSX
     path = os.path.normpath(path)
     if case_normalize and CASE_INSENSITIVE_FILESYSTEM:
         path = path.lower()

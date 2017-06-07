@@ -25,7 +25,7 @@ Evaluate
     Evaluate    INVALID
 
 Evaluate With Modules
-    [Documentation]    FAIL REGEXP: ImportError: [Nn]o module named .*
+    [Documentation]    FAIL REGEXP: (ModuleNotFound|Import)Error: [Nn]o module named .*
     ${ceil} =    Evaluate    math.ceil(1.001)    math
     Should Be Equal    ${ceil}    ${2}
     ${random} =    Evaluate    random.randint(0, sys.maxsize)    modules=random,sys
@@ -143,5 +143,5 @@ Evaluate Nonstring
     Evaluate    ${5}
 
 Evaluate doesn't see module globals
-    [Documentation]    FAIL Evaluating expression 'BuiltIn' failed: NameError: name 'BuiltIn' is not defined
+    [Documentation]    FAIL REGEXP: Evaluating expression 'BuiltIn' failed: NameError: (global )?name 'BuiltIn' is not defined
     Evaluate    BuiltIn

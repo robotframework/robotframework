@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -52,8 +53,8 @@ from .match import eq, Matcher, MultiMatcher
 from .misc import (getdoc, plural_or_not, printable_name, roundup, seq2str,
                    seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
-from .platform import (IRONPYTHON, JYTHON, PY2, PY3, PYTHON, UNIXY, WINDOWS,
-                       RERAISED_EXCEPTIONS)
+from .platform import (IRONPYTHON, JYTHON, PY2, PY3, PYPY, PYTHON, UNIXY,
+                       WINDOWS, RERAISED_EXCEPTIONS)
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method

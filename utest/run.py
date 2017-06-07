@@ -29,13 +29,15 @@ for path in ['../src', '../atest/testresources/testlibs']:
 testfile = re.compile("^test_.*\.py$", re.IGNORECASE)
 imported = {}
 
+
 def get_tests(directory=None):
     if directory is None:
         directory = base
     sys.path.insert(0, directory)
     tests = []
-    for name in os.listdir(directory):
-        if name.startswith("."): continue
+    for name in sorted(os.listdir(directory)):
+        if name.startswith("."):
+            continue
         fullname = os.path.join(directory, name)
         if os.path.isdir(fullname):
             tests.extend(get_tests(fullname))

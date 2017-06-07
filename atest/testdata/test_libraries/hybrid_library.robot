@@ -24,7 +24,7 @@ Named Keyword Is Not Method
     This is not keyword
 
 Name Set Using 'robot_name' Attribute
-    Name Set Using Robot Name Attribute
+    Name Set Using 'robot_name' Attribute
 
 Old Name Doesn't Work If Name Set Using 'robot_name'
     [Documentation]  FAIL No keyword with name 'Name Set In Method Signature' found.
@@ -36,3 +36,6 @@ Old Name Doesn't Work If Name Set Using 'robot_name'
 Embedded Keyword Arguments
     ${count}  ${item} =  Add 7 Copies Of Coffee To Cart
     Should Be Equal  ${count}-${item}  7-Coffee
+
+Name starting with an underscore is OK
+    Starting with underscore is OK

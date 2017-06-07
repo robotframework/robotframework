@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -17,6 +18,7 @@ from functools import partial
 
 from .compat import py2to3
 from .normalizing import normalize
+from .platform import PY3
 from .robottypes import is_string
 
 
@@ -28,8 +30,7 @@ def eq(str1, str2, ignore=(), caseless=True, spaceless=True):
 
 @py2to3
 class Matcher(object):
-    _pattern_tokenizer = re.compile('(\*|\?)')
-    _wildcards = {'*': '.*', '?': '.'}
+    _wildcards = {'*': '.*', '?': '.', b'*': b'.*', b'?': b'.'}
 
     def __init__(self, pattern, ignore=(), caseless=True, spaceless=True,
                  regexp=False):
@@ -41,11 +42,21 @@ class Matcher(object):
 
     def _get_and_compile_regexp(self, pattern, regexp=False):
         if not regexp:
-            pattern = '^%s$' % ''.join(self._glob_pattern_to_regexp(pattern))
+            pattern = self._glob_pattern_to_regexp(pattern)
         return re.compile(pattern, re.DOTALL)
 
     def _glob_pattern_to_regexp(self, pattern):
-        for token in self._pattern_tokenizer.split(pattern):
+        if PY3 and isinstance(pattern, bytes):
+            tokenizer = re.compile(b'(\*|\?)')
+            start, end, empty = b'^', b'$', b''
+        else:
+            tokenizer = re.compile('(\*|\?)')
+            start, end, empty = '^', '$', ''
+        tokens = self._tokenize_glob_pattern(tokenizer, pattern)
+        return start + empty.join(tokens) + end
+
+    def _tokenize_glob_pattern(self, tokenizer, pattern):
+        for token in tokenizer.split(pattern):
             if token in self._wildcards:
                 yield self._wildcards[token]
             else:

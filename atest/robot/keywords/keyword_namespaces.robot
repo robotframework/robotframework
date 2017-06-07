@@ -27,12 +27,12 @@ Keyword From Resource Overrides Keywords From Libraries
 
 Keyword From Custom Library Overrides Keywords From Standard Library
     ${tc} =    Check Test Case    ${TEST NAME}
-    Verify Override Message    ${ERRORS.msgs[0]}    ${tc.kws[0].msgs[0]}    Comment    BuiltIn
-    Verify Override Message    ${ERRORS.msgs[1]}    ${tc.kws[1].msgs[0]}    Copy Directory    OperatingSystem
+    Verify Override Message    ${ERRORS[1]}    ${tc.kws[0].msgs[0]}    Comment    BuiltIn
+    Verify Override Message    ${ERRORS[2]}    ${tc.kws[1].msgs[0]}    Copy Directory    OperatingSystem
 
 Keyword From Custom Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
     ${tc} =    Check Test Case    ${TEST NAME}
-    Verify Override Message    ${ERRORS.msgs[2]}    ${tc.kws[0].msgs[0]}    Replace String
+    Verify Override Message    ${ERRORS[3]}    ${tc.kws[0].msgs[0]}    Replace String
     ...    String    MyLibrary2    Std With Name    My With Name
 
 No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword
@@ -42,6 +42,13 @@ No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And I
 Keyword In More Than One Custom Library And Standard Library
     Check Test Case    ${TEST NAME}
     Check Syslog Does Not Contain    BuiltIn.No Operation
+
+Keywords are first searched from test case file even if they contain dot
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check log message    ${tc.kws[0].kws[0].msgs[0]}    Keyword in test case file overriding keyword in my_resource_1
+    Check log message    ${tc.kws[0].kws[1].kws[0].msgs[0]}    Keyword in resource 1
+    Check log message    ${tc.kws[1].kws[0].msgs[0]}    Keyword in test case file overriding keyword in BuiltIn
+    Check log message    ${tc.kws[1].kws[1].msgs[0]}    Using keyword in test case file here!
 
 *** Keywords ***
 Verify override message

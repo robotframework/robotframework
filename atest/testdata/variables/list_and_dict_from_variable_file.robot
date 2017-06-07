@@ -6,7 +6,8 @@ Variables           list_and_dict_variable_file.py    DICT__inv_dict    ${EXP LI
 *** Variables ***
 @{EXP LIST}         1    2    ${3}
 @{EXP GENERATOR}    ${0}    ${1}    ${2}    ${3}    ${4}
-&{EXP DICT}         a=${1}    ${2}=b
+&{NESTED}           key=value
+&{EXP DICT}         a=${1}    ${2}=b    nested=${NESTED}
 @{EXP KEYS}         a    b    c    d    e    f    g    h    i    j
 
 *** Test Cases ***
@@ -26,6 +27,7 @@ List is list
 
 Dict is dotted
     Should Be Equal    ${DICT.a}    ${1}
+    Should Be Equal    ${DICT.nested.key}    value
     Should Be Equal    ${ORDERED.a}    ${97}
 
 Dict is ordered

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -17,7 +18,7 @@ import sys
 
 # Version number typically updated by running `invoke set_version <version>`.
 # Run `invoke --help set_version` or see tasks.py for details.
-VERSION = '3.0.1.dev20151231'
+VERSION = '3.0.3.dev20170213'
 
 
 def get_version(naked=False):

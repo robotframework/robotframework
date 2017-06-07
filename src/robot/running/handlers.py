@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -33,10 +34,10 @@ def Handler(library, name, method):
         return _PythonHandler(library, name, method)
 
 
-def DynamicHandler(library, name, method, doc, argspec):
+def DynamicHandler(library, name, method, doc, argspec, tags=None):
     if RUN_KW_REGISTER.is_run_keyword(library.orig_name, name):
-        return _DynamicRunKeywordHandler(library, name, method, doc, argspec)
-    return _DynamicHandler(library, name, method, doc, argspec)
+        return _DynamicRunKeywordHandler(library, name, method, doc, argspec, tags)
+    return _DynamicHandler(library, name, method, doc, argspec, tags)
 
 
 def InitHandler(library, method, docgetter=None):
@@ -46,20 +47,26 @@ def InitHandler(library, method, docgetter=None):
 
 class _RunnableHandler(object):
 
-    def __init__(self, library, handler_name, handler_method, doc=''):
+    def __init__(self, library, handler_name, handler_method, doc='', tags=None):
         self.library = library
         self.name = self._get_name(handler_name, handler_method)
         self.arguments = self._parse_arguments(handler_method)
         self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
-        doc, tags = utils.split_tags_from_doc(doc)
+        doc, tags_from_doc = utils.split_tags_from_doc(doc or '')
+        tags_from_attr = self._get_tags_from_attribute(handler_method)
         self._doc = doc
-        self.tags = self._get_tags_from_attribute(handler_method) + tags
+        self.tags = Tags(tuple(tags_from_doc) +
+                         tuple(tags_from_attr) +
+                         tuple(tags or ()))
 
     def _get_name(self, handler_name, handler_method):
         robot_name = getattr(handler_method, 'robot_name', None)
-        return robot_name or utils.printable_name(handler_name, code_style=True)
+        name = robot_name or utils.printable_name(handler_name, code_style=True)
+        if not name:
+            raise DataError('Keyword name cannot be empty.')
+        return name
 
     def _parse_arguments(self, handler_method):
         raise NotImplementedError
@@ -69,7 +76,7 @@ class _RunnableHandler(object):
         if not utils.is_list_like(tags):
             raise DataError("Expected tags to list like, got %s."
                             % utils.type_name(tags))
-        return Tags(tags)
+        return tags
 
     def _get_initial_handler(self, library, name, method):
         if library.scope.is_global:
@@ -146,10 +153,10 @@ class _JavaHandler(_RunnableHandler):
 class _DynamicHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, dynamic_method, doc='',
-                 argspec=None):
+                 argspec=None, tags=None):
         self._argspec = argspec
         _RunnableHandler.__init__(self, library, handler_name,
-                                  dynamic_method.method, utils.unic(doc or ''))
+                                  dynamic_method.method, doc, tags)
         self._run_keyword_method_name = dynamic_method.name
         self._supports_kwargs = dynamic_method.supports_kwargs
         if argspec and argspec[-1].startswith('**'):

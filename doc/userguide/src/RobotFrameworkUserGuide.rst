@@ -10,10 +10,9 @@
   Version |version|
 ---------------------
 
-| Copyright |copy| 2008-2015 Nokia Solutions and Networks
-| Licensed under the `Creative Commons Attribution 3.0 Unported`__ license
-
-__ http://creativecommons.org/licenses/by/3.0/
+| Copyright |copy| 2008-2015 Nokia Networks
+| Copyright |copy| 2016- Robot Framework Foundation
+| Licensed under the `Creative Commons Attribution 3.0 Unported`_ license
 
 .. contents:: Table of Contents
    :depth: 2
@@ -115,6 +114,8 @@ __ http://creativecommons.org/licenses/by/3.0/
 
 .. 1. Getting started
 
+.. _Creative Commons Attribution 3.0 Unported: http://creativecommons.org/licenses/by/3.0
+.. _Apache License 2.0: http://apache.org/licenses/LICENSE-2.0
 .. _mailing list: `Mailing lists`_
 
 .. 2. Creating test data

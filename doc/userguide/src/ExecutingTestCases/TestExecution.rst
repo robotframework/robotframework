@@ -257,7 +257,12 @@ Starting from Robot Framework 2.9 the tests that are automatically failed get
 `combined tag pattern`__ to easily see those tests that were not skipped. Note
 that the test in which the exit happened does not get the `robot-exit` tag.
 
+.. note:: The prefix used with the `reserved tags`_ is likely to be changed
+          to `robot:` in the future, which means the `robot-exit` tag will be
+          renamed. See issue `#2539`__ for more details.
+
 __ `Generating combined tag statistics`_
+__ https://github.com/robotframework/robotframework/issues/2539
 
 Pressing `Ctrl-C`
 ~~~~~~~~~~~~~~~~~
@@ -293,9 +298,11 @@ __ `Stopping test execution`_
 Stopping when first test case fails
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If option :option:`--exitonfailure` is used, test execution stops
-immediately if any `critical test`_ fails. Also the remaining tests
-are marked as failed.
+If option :option:`--exitonfailure (-X)` is used, test execution stops
+immediately if any `critical test`_ fails. The remaining tests are marked
+as failed without actually executing them.
+
+.. note:: The short option :option:`-X` is new in Robot Framework 3.0.1.
 
 Stopping on parsing or execution error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

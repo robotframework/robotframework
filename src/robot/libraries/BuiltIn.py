@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -31,7 +32,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          Matcher, normalize, NormalizedDict, parse_time, prepr,
                          RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
                          secs_to_timestr, seq2str, split_from_equals, StringIO,
-                         timestr_to_secs, type_name, unic)
+                         timestr_to_secs, type_name, unic, is_list_like)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
@@ -437,42 +438,43 @@ class _Converter(_BuiltInBase):
 
     @run_keyword_variant(resolve=0)
     def create_dictionary(self, *items):
-        """Creates and returns a dictionary based on given items.
+        """Creates and returns a dictionary based on the given ``items``.
 
-        Items are given using ``key=value`` syntax same way as ``&{dictionary}``
-        variables are created in the Variable table. Both keys and values
-        can contain variables, and possible equal sign in key can be escaped
-        with a backslash like ``escaped\\=key=value``. It is also possible to
-        get items from existing dictionaries by simply using them like
-        ``&{dict}``.
+        Items are typically given using the ``key=value`` syntax same way as
+        ``&{dictionary}`` variables are created in the Variable table. Both
+        keys and values can contain variables, and possible equal sign in key
+        can be escaped with a backslash like ``escaped\\=key=value``. It is
+        also possible to get items from existing dictionaries by simply using
+        them like ``&{dict}``.
+
+        Alternatively items can be specified so that keys and values are given
+        separately. This and the ``key=value`` syntax can even be combined,
+        but separately given items must be first.
 
         If same key is used multiple times, the last value has precedence.
         The returned dictionary is ordered, and values with strings as keys
-        can also be accessed using convenient dot-access syntax like
+        can also be accessed using a convenient dot-access syntax like
         ``${dict.key}``.
 
         Examples:
-        | &{dict} = | Create Dictionary | key=value | foo=bar |
+        | &{dict} = | Create Dictionary | key=value | foo=bar | | | # key=value syntax |
         | Should Be True | ${dict} == {'key': 'value', 'foo': 'bar'} |
-        | &{dict} = | Create Dictionary | ${1}=${2} | &{dict} | foo=new |
+        | &{dict2} = | Create Dictionary | key | value | foo | bar | # separate key and value |
+        | Should Be Equal | ${dict} | ${dict2} |
+        | &{dict} = | Create Dictionary | ${1}=${2} | &{dict} | foo=new | | # using variables |
         | Should Be True | ${dict} == {1: 2, 'key': 'value', 'foo': 'new'} |
-        | Should Be Equal | ${dict.key} | value |
+        | Should Be Equal | ${dict.key} | value | | | | # dot-access |
 
         This keyword was changed in Robot Framework 2.9 in many ways:
         - Moved from ``Collections`` library to ``BuiltIn``.
         - Support also non-string keys in ``key=value`` syntax.
-        - Deprecated old syntax to give keys and values separately.
         - Returned dictionary is ordered and dot-accessible.
+        - Old syntax to give keys and values separately was deprecated, but
+          deprecation was later removed in RF 3.0.1.
         """
         separate, combined = self._split_dict_items(items)
-        if separate:
-            # TODO: Deprecated in 2.9. Remove support for this in 3.1.
-            self.log("Giving keys and values separately to 'Create Dictionary' "
-                     "keyword is deprecated. Use 'key=value' syntax instead.",
-                     level='WARN')
-        separate = self._format_separate_dict_items(separate)
+        result = DotDict(self._format_separate_dict_items(separate))
         combined = DictVariableTableValue(combined).resolve(self._variables)
-        result = DotDict(separate)
         result.update(combined)
         return result
 
@@ -595,26 +597,37 @@ class _Verify(_BuiltInBase):
         if not self._is_true(condition):
             raise AssertionError(msg or "'%s' should be true." % condition)
 
-    def should_be_equal(self, first, second, msg=None, values=True):
+    def should_be_equal(self, first, second, msg=None, values=True,
+                        ignore_case=False):
         """Fails if the given objects are unequal.
 
         Optional ``msg`` and ``values`` arguments specify how to construct
         the error message if this keyword fails:
 
         - If ``msg`` is not given, the error message is ``<first> != <second>``.
-        - If ``msg`` is given and ``values`` gets a true value, the error
-          message is ``<msg>: <first> != <second>``.
+        - If ``msg`` is given and ``values`` gets a true value (default),
+          the error message is ``<msg>: <first> != <second>``.
         - If ``msg`` is given and ``values`` gets a false value, the error
-          message is simply ``<msg>``.
+          message is simply ``<msg>``. See `Boolean arguments` for more details
+          about using false values.
 
-        ``values`` is true by default, but can be turned to false by using,
-        for example, string ``false`` or ``no values``. See `Boolean arguments`
-        section for more details.
+        If ``ignore_case`` is given a true value (see `Boolean arguments`) and
+        arguments are strings, it indicates that comparison should be
+        case-insensitive. New option in Robot Framework 3.0.1.
 
         If both arguments are multiline strings, the comparison is done using
         `multiline string comparisons`.
+
+        Examples:
+        | Should Be Equal | ${x} | expected |
+        | Should Be Equal | ${x} | expected | Custom error message |
+        | Should Be Equal | ${x} | expected | Custom message | values=False |
+        | Should Be Equal | ${x} | expected | ignore_case=True |
         """
         self._log_types_at_info_if_different(first, second)
+        if is_truthy(ignore_case) and is_string(first) and is_string(second):
+            first = first.lower()
+            second = second.lower()
         self._should_be_equal(first, second, msg, values)
 
     def _should_be_equal(self, first, second, msg, values):
@@ -644,13 +657,21 @@ class _Verify(_BuiltInBase):
     def _include_values(self, values):
         return is_truthy(values) and str(values).upper() != 'NO VALUES'
 
-    def should_not_be_equal(self, first, second, msg=None, values=True):
+    def should_not_be_equal(self, first, second, msg=None, values=True,
+                            ignore_case=False):
         """Fails if the given objects are equal.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
+
+        If ``ignore_case`` is given a true value (see `Boolean arguments`) and
+        both arguments are strings, it indicates that comparison should be
+        case-insensitive. New option in Robot Framework 3.0.1.
         """
         self._log_types_at_info_if_different(first, second)
+        if is_truthy(ignore_case) and is_string(first) and is_string(second):
+            first = first.lower()
+            second = second.lower()
         self._should_not_be_equal(first, second, msg, values)
 
     def _should_not_be_equal(self, first, second, msg, values):
@@ -743,115 +764,298 @@ class _Verify(_BuiltInBase):
         second = self._convert_to_number(second, precision)
         self._should_be_equal(first, second, msg, values)
 
-    def should_not_be_equal_as_strings(self, first, second, msg=None, values=True):
+    def should_not_be_equal_as_strings(self, first, second, msg=None,
+                                       values=True, ignore_case=False):
         """Fails if objects are equal after converting them to strings.
+
+        If ``ignore_case`` is given a true value (see `Boolean arguments`), it
+        indicates that comparison should be case-insensitive. New option in
+        Robot Framework 3.0.1.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
         self._log_types_at_info_if_different(first, second)
-        first, second = [self._convert_to_string(i) for i in (first, second)]
+        first = self._convert_to_string(first)
+        second = self._convert_to_string(second)
+        if is_truthy(ignore_case):
+            first = first.lower()
+            second = second.lower()
         self._should_not_be_equal(first, second, msg, values)
 
-    def should_be_equal_as_strings(self, first, second, msg=None, values=True):
+    def should_be_equal_as_strings(self, first, second, msg=None, values=True,
+                                   ignore_case=False):
         """Fails if objects are unequal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
 
+        If ``ignore_case`` is given a true value (see `Boolean arguments`), it
+        indicates that comparison should be case-insensitive. New option in
+        Robot Framework 3.0.1.
+
         If both arguments are multiline strings, the comparison is done using
         `multiline string comparisons`.
         """
         self._log_types_at_info_if_different(first, second)
-        first, second = [self._convert_to_string(i) for i in (first, second)]
+        first = self._convert_to_string(first)
+        second = self._convert_to_string(second)
+        if is_truthy(ignore_case):
+            first = first.lower()
+            second = second.lower()
         self._should_be_equal(first, second, msg, values)
 
-    def should_not_start_with(self, str1, str2, msg=None, values=True):
+    def should_not_start_with(self, str1, str2, msg=None, values=True,
+                              ignore_case=False):
         """Fails if the string ``str1`` starts with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            str1 = str1.lower()
+            str2 = str2.lower()
         if str1.startswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'starts with'))
 
-    def should_start_with(self, str1, str2, msg=None, values=True):
+    def should_start_with(self, str1, str2, msg=None, values=True,
+                          ignore_case=False):
         """Fails if the string ``str1`` does not start with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            str1 = str1.lower()
+            str2 = str2.lower()
         if not str1.startswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not start with'))
 
-    def should_not_end_with(self, str1, str2, msg=None, values=True):
+    def should_not_end_with(self, str1, str2, msg=None, values=True,
+                            ignore_case=False):
         """Fails if the string ``str1`` ends with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            str1 = str1.lower()
+            str2 = str2.lower()
         if str1.endswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'ends with'))
 
-    def should_end_with(self, str1, str2, msg=None, values=True):
+    def should_end_with(self, str1, str2, msg=None, values=True,
+                        ignore_case=False):
         """Fails if the string ``str1`` does not end with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            str1 = str1.lower()
+            str2 = str2.lower()
         if not str1.endswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not end with'))
 
-    def should_not_contain(self, container, item, msg=None, values=True):
+    def should_not_contain(self, container, item, msg=None, values=True,
+                           ignore_case=False):
         """Fails if ``container`` contains ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
-        operator. See `Should Be Equal` for an explanation on how to override
-        the default error message with ``msg`` and ``values``.
+        operator.
+
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with arguments ``msg`` and ``values``. ``ignore_case``
+        has exactly the same semantics as with `Should Contain`.
 
         Examples:
-        | Should Not Contain | ${output}    | FAILED |
         | Should Not Contain | ${some list} | value  |
+        | Should Not Contain | ${output}    | FAILED | ignore_case=True |
         """
+        # TODO: It is inconsistent that errors show original case in 'container'
+        # 'item' is in lower case. Should rather show original case everywhere
+        # and add separate '(case-insensitive)' not to the error message.
+        # This same logic should be used with all keywords supporting
+        # case-insensitive comparisons.
+        orig_container = container
+        if is_truthy(ignore_case) and is_string(item):
+            item = item.lower()
+            if is_string(container):
+                container = container.lower()
+            elif is_list_like(container):
+                container = set(x.lower() if is_string(x) else x for x in container)
         if item in container:
-            raise AssertionError(self._get_string_msg(container, item, msg,
+            raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'contains'))
 
-    def should_contain(self, container, item, msg=None, values=True):
+    def should_contain(self, container, item, msg=None, values=True,
+                       ignore_case=False):
         """Fails if ``container`` does not contain ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
-        operator. See `Should Be Equal` for an explanation on how to override
-        the default error message with ``msg`` and ``values``.
+        operator.
+
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with arguments ``msg`` and ``values``.
+
+        If ``ignore_case`` is given a true value (see `Boolean arguments`) and
+        compared items are strings, it indicates that comparison should be
+        case-insensitive. If the ``container`` is a list-like object, string
+        items in it are compared case-insensitively. New option in Robot
+        Framework 3.0.1.
 
         Examples:
         | Should Contain | ${output}    | PASS  |
-        | Should Contain | ${some list} | value |
+        | Should Contain | ${some list} | value | msg=Failure! | values=False |
+        | Should Contain | ${some list} | value | case_insensitive=True |
         """
+        orig_container = container
+        if is_truthy(ignore_case) and is_string(item):
+            item = item.lower()
+            if is_string(container):
+                container = container.lower()
+            elif is_list_like(container):
+                container = set(x.lower() if is_string(x) else x for x in container)
         if item not in container:
-            raise AssertionError(self._get_string_msg(container, item, msg,
+            raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'does not contain'))
 
-    def should_contain_x_times(self, item1, item2, count, msg=None):
+    def should_contain_any(self, container, *items, **configuration):
+        """Fails if ``container`` does not contain any of the ``*items``.
+
+        Works with strings, lists, and anything that supports Python's ``in``
+        operator.
+
+        Supports additional configuration parameters ``msg``, ``values``
+        and ``ignore_case``, which have exactly the same semantics as arguments
+        with same names have with `Should Contain`. These arguments must
+        always be given using ``name=value`` syntax after all ``items``.
+
+        Note that possible equal signs in ``items`` must be escaped with
+        a backslash (e.g. ``foo\\=bar``) to avoid them to be passed in
+        as ``**configuration``.
+
+        Examples:
+        | Should Contain Any | ${string} | substring 1 | substring 2 |
+        | Should Contain Any | ${list}   | item 1 | item 2 | item 3 |
+        | Should Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
+        | Should Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
+
+        New in Robot Framework 3.0.1.
+        """
+        msg = configuration.pop('msg', None)
+        values = configuration.pop('values', True)
+        ignore_case = configuration.pop('ignore_case', False)
+        if configuration:
+            raise RuntimeError("Unsupported configuration parameter%s: %s."
+                               % (s(configuration),
+                                  seq2str(sorted(configuration))))
+        if not items:
+            raise RuntimeError('One or more items required.')
+        orig_container = container
+        if is_truthy(ignore_case):
+            items = [x.lower() if is_string(x) else x for x in items]
+            if is_string(container):
+                container = container.lower()
+            elif is_list_like(container):
+                container = set(x.lower() if is_string(x) else x for x in container)
+        if not any(item in container for item in items):
+            msg = self._get_string_msg(orig_container,
+                                       seq2str(items, lastsep=' or '),
+                                       msg, values,
+                                       'does not contain any of',
+                                       quote_item2=False)
+            raise AssertionError(msg)
+
+    def should_not_contain_any(self, container, *items, **configuration):
+        """Fails if ``container`` contains one or more of the ``*items``.
+
+        Works with strings, lists, and anything that supports Python's ``in``
+        operator.
+
+        Supports additional configuration parameters ``msg``, ``values``
+        and ``ignore_case``, which have exactly the same semantics as arguments
+        with same names have with `Should Contain`. These arguments must
+        always be given using ``name=value`` syntax after all ``items``.
+
+        Note that possible equal signs in ``items`` must be escaped with
+        a backslash (e.g. ``foo\\=bar``) to avoid them to be passed in
+        as ``**configuration``.
+
+        Examples:
+        | Should Not Contain Any | ${string} | substring 1 | substring 2 |
+        | Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 |
+        | Should Not Contain Any | ${list}   | item 1 | item 2 | item 3 | ignore_case=True |
+        | Should Not Contain Any | ${list}   | @{items} | msg=Custom message | values=False |
+
+        New in Robot Framework 3.0.1.
+        """
+        msg = configuration.pop('msg', None)
+        values = configuration.pop('values', True)
+        ignore_case = configuration.pop('ignore_case', False)
+        if configuration:
+            raise RuntimeError("Unsupported configuration parameter%s: %s."
+                               % (s(configuration),
+                                  seq2str(sorted(configuration))))
+        if not items:
+            raise RuntimeError('One or more items required.')
+        orig_container = container
+        if is_truthy(ignore_case):
+            items = [x.lower() if is_string(x) else x for x in items]
+            if is_string(container):
+                container = container.lower()
+            elif is_list_like(container):
+                container = set(x.lower() if is_string(x) else x for x in container)
+        if any(item in container for item in items):
+            msg = self._get_string_msg(orig_container,
+                                       seq2str(items, lastsep=' or '),
+                                       msg, values,
+                                       'contains one or more of',
+                                       quote_item2=False)
+            raise AssertionError(msg)
+
+    def should_contain_x_times(self, item1, item2, count, msg=None,
+                               ignore_case=False):
         """Fails if ``item1`` does not contain ``item2`` ``count`` times.
 
         Works with strings, lists and all objects that `Get Count` works
         with. The default error message can be overridden with ``msg`` and
         the actual count is always logged.
 
+        If ``ignore_case`` is given a true value (see `Boolean arguments`) and
+        compared items are strings, it indicates that comparison should be
+        case-insensitive. If the ``item1`` is a list-like object, string
+        items in it are compared case-insensitively. New option in Robot
+        Framework 3.0.1.
+
         Examples:
-        | Should Contain X Times | ${output}    | hello  | 2 |
-        | Should Contain X Times | ${some list} | value  | 3 |
+        | Should Contain X Times | ${output}    | hello | 2 |
+        | Should Contain X Times | ${some list} | value | 3 | ignore_case=True |
         """
+        # TODO: Rename 'item1' and 'item2' to 'container' and 'item' in RF 3.1.
+        # Other 'contain' keywords use these names. And 'Get Count' should too.
+        # Cannot be done in minor release due to backwards compatibility.
+        # Remember to update it also in the docstring!!
         count = self._convert_to_integer(count)
+        orig_item1 = item1
+        if is_truthy(ignore_case) and is_string(item2):
+            item2 = item2.lower()
+            if is_string(item1):
+                item1 = item1.lower()
+            elif is_list_like(item1):
+                item1 = [x.lower() if is_string(x) else x for x in item1]
         x = self.get_count(item1, item2)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
-                    % (unic(item1), unic(item2), x, s(x), count, s(count))
+                    % (unic(orig_item1), unic(item2), x, s(x), count, s(count))
         self.should_be_equal_as_integers(x, count, msg, values=False)
 
     def get_count(self, item1, item2):
@@ -874,7 +1078,8 @@ class _Verify(_BuiltInBase):
         self.log('Item found from the first item %d time%s' % (count, s(count)))
         return count
 
-    def should_not_match(self, string, pattern, msg=None, values=True):
+    def should_not_match(self, string, pattern, msg=None, values=True,
+                         ignore_case=False):
         """Fails if the given ``string`` matches the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell, and it is
@@ -882,13 +1087,18 @@ class _Verify(_BuiltInBase):
         ``?`` matches to any single character.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            string = string.lower()
+            pattern = pattern.lower()
         if self._matches(string, pattern):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
 
-    def should_match(self, string, pattern, msg=None, values=True):
+    def should_match(self, string, pattern, msg=None, values=True,
+                     ignore_case=False):
         """Fails unless the given ``string`` matches the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell, and it is
@@ -896,8 +1106,12 @@ class _Verify(_BuiltInBase):
         ``?`` matches to any single character.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg`` and ``values``, as well as for semantics
+        of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            string = string.lower()
+            pattern = pattern.lower()
         if not self._matches(string, pattern):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
@@ -1048,13 +1262,16 @@ class _Verify(_BuiltInBase):
         if self.get_length(item) == 0:
             raise AssertionError(msg or "'%s' should not be empty." % item)
 
-    def _get_string_msg(self, str1, str2, msg, values, delim):
-        default = "'%s' %s '%s'" % (unic(str1), delim, unic(str2))
-        if not msg:
-            msg = default
-        elif self._include_values(values):
-            msg = '%s: %s' % (msg, default)
-        return msg
+    def _get_string_msg(self, item1, item2, custom_message, include_values,
+                        delimiter, quote_item1=True, quote_item2=True):
+        if custom_message and not self._include_values(include_values):
+            return custom_message
+        item1 = "'%s'" % unic(item1) if quote_item1 else unic(item1)
+        item2 = "'%s'" % unic(item2) if quote_item2 else unic(item2)
+        default_message = '%s %s %s' % (item1, delimiter, item2)
+        if not custom_message:
+            return default_message
+        return '%s: %s' % (custom_message, default_message)
 
 
 class _Variables(_BuiltInBase):
@@ -2243,7 +2460,7 @@ class _Control(_BuiltInBase):
         """
         if self._is_true(condition):
             message = self._variables.replace_string(message)
-            tags = [self._variables.replace_string(tag) for tag in tags]
+            tags = self._variables.replace_list(tags)
             self.pass_execution(message, *tags)
 
 
@@ -2732,10 +2949,11 @@ class _Misc(_BuiltInBase):
         | ${random} = <random integer>
         | ${result} = 42
         """
-        variables = self._variables.as_dict(decoration=False)
-        expression = self._handle_variables_in_expression(expression, variables)
+        if is_string(expression) and '$' in expression:
+            expression, variables = self._handle_variables_in_expression(expression)
+        else:
+            variables = {}
         namespace = self._create_evaluation_namespace(namespace, modules)
-        variables = self._decorate_variables_for_evaluation(variables)
         try:
             if not is_string(expression):
                 raise TypeError("Expression must be string, got %s."
@@ -2747,20 +2965,20 @@ class _Misc(_BuiltInBase):
             raise RuntimeError("Evaluating expression '%s' failed: %s"
                                % (expression, get_error_message()))
 
-    def _handle_variables_in_expression(self, expression, variables):
-        if not is_string(expression):
-            return expression
+    def _handle_variables_in_expression(self, expression):
+        variables = None
+        variable_started = False
         tokens = []
-        variable_started = seen_variable = False
         generated = generate_tokens(StringIO(expression).readline)
         for toknum, tokval, _, _, _ in generated:
             if variable_started:
                 if toknum == token.NAME:
+                    if variables is None:
+                        variables = self._variables.as_dict(decoration=False)
                     if tokval not in variables:
                         variable_not_found('$%s' % tokval, variables,
                                            deco_braces=False)
                     tokval = 'RF_VAR_' + tokval
-                    seen_variable = True
                 else:
                     tokens.append((token.ERRORTOKEN, '$'))
                 variable_started = False
@@ -2768,20 +2986,16 @@ class _Misc(_BuiltInBase):
                 variable_started = True
             else:
                 tokens.append((toknum, tokval))
-        if seen_variable:
-            return untokenize(tokens).strip()
-        return expression
+        if variables is None:
+            return expression, {}
+        decorated = [('RF_VAR_' + name, variables[name]) for name in variables]
+        return untokenize(tokens).strip(), NormalizedDict(decorated, ignore='_')
 
     def _create_evaluation_namespace(self, namespace, modules):
         namespace = dict(namespace or {})
         modules = modules.replace(' ', '').split(',') if modules else []
         namespace.update((m, __import__(m)) for m in modules if m)
         return namespace
-
-    def _decorate_variables_for_evaluation(self, variables):
-        decorated = [('RF_VAR_' + name, value)
-                     for name, value in variables.items()]
-        return NormalizedDict(decorated, ignore='_')
 
     def call_method(self, object, method_name, *args, **kwargs):
         """Calls the named method of the given object with the provided arguments.
@@ -3112,8 +3326,14 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | `Run Keyword If` | 'FAIL' in $output | `Log` | Output contains FAIL |
     | `Should Be True` | len($result) > 1 and $result[1] == 'OK' |
 
+    Using the ``$variable`` syntax slows down expression evaluation a little.
+    This should not typically matter, but should be taken into account if
+    complex expressions are evaluated often and there are strict time
+    constrains.
+
     Notice that instead of creating complicated expressions, it is often better
-    to move the logic into a test library.
+    to move the logic into a test library. That eases maintenance and can also
+    enhance execution speed.
 
     = Boolean arguments =
 
@@ -3132,7 +3352,6 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=yes     | # Same as the above.             |
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${TRUE} | # Python ``True`` is true.       |
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${42}   | # Numbers other than 0 are true. |
-
 
     False examples:
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=False     | # String ``false`` is false.   |

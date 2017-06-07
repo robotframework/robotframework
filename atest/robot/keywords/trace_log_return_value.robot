@@ -48,7 +48,7 @@ Return Object With Unicode Repr
 Return Object with Unicode Repr With Non Ascii Chars
     [Documentation]    How the return value is logged depends on the interpreter.
     ${test} =    Check Test Case    ${TESTNAME}
-    ${ret} =    Set Variable If    $INTERPRETER.is_python and $INTERPRETER.is_py2
+    ${ret} =    Set Variable If    ($INTERPRETER.is_python or $INTERPRETER.is_pypy) and $INTERPRETER.is_py2
     ...    <Unrepresentable object InvalidRepr. Error: UnicodeEncodeError: *    Hyv*
     Check Log Message    ${test.kws[0].msgs[1]}    Return: ${ret}    TRACE    pattern=yes
 

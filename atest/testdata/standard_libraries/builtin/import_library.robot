@@ -42,7 +42,7 @@ Import Library With Named Arguments
     Named.Parameters Should Be    first    ${2}
 
 Import Library Failure Is Catchable
-    Run Keyword And Expect Error    Importing test library 'NonExistingLib' failed: ImportError: *    Import Library    NonExistingLib
+    Run Keyword And Expect Error    Importing test library 'NonExistingLib' failed: *Error: *    Import Library    NonExistingLib
 
 Import Library From Path
     Run Keyword And Expect Error    *    Keyword should exist    Print

@@ -65,18 +65,23 @@ Suite With Two Args
     Should Contain Suites    ${SUITE}    Tsuite1   Tsuite2
     Should Contain Tests    ${SUITE}   Suite1 First    Suite1 Second    Third In Suite1    Suite2 First
 
+Parent suite init files are processed
+    Should Be True    ${SUITE.teardown}
+    Check log message    ${SUITE.teardown.msgs[0]}    Default suite teardown
+
 Correct Files Processed With --suite Matches Files
-    [Documentation]    Testing that only files matching to --suite are processed.
-    ${suitedir} =    Join Path    ${DATA DIR}    ${SUITE DIR}
-    ${subsuitedir} =    Join Path    ${suitedir}    subsuites
-    Check Syslog Contains    Parsing test data directory '${suitedir}'
+    [Documentation]    Test that only files matching --suite are processed.
+    ...                Additionally __init__ files should never be ignored.
+    ${root} =    Normalize Path    ${DATA DIR}/${SUITE DIR}
+    Check Syslog Contains    Parsing test data directory '${root}'
     Check Syslog Contains    Ignoring file or directory 'fourth.robot'
     Check Syslog Contains    Ignoring file or directory 'tsuite3.robot'
-    Check Syslog Contains    Parsing test data directory '${subsuitedir}'
+    Check Syslog Contains    Parsing test data directory '${root}${/}subsuites'
     Check Syslog Contains    Ignoring file or directory 'sub1.robot'
     Check Syslog Contains    Ignoring file or directory 'sub2.robot'
-    Check Syslog Contains    Parsing file '${suitedir}${/}tsuite1.robot
-    Check Syslog Contains    Parsing file '${suitedir}${/}tsuite2.robot
+    Check Syslog Contains    Parsing file '${root}${/}tsuite1.robot
+    Check Syslog Contains    Parsing file '${root}${/}tsuite2.robot
+    Check Syslog Does Not Contain    Ignoring file or directory '__init__.robot'
 
 Non-Existing Suite
     Run Failing Test

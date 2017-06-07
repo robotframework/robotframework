@@ -12,6 +12,38 @@ __ `Created outputs`_
    :depth: 2
    :local:
 
+Selecting files to parse
+------------------------
+
+Robot Framework supports test data in `various formats`__, but nowadays the
+`plain text format`_ in dedicated `*.robot` files is most commonly used.
+If only one file format is used in a project, it can be a good idea to limit
+parsing test data to only these files by using the :option:`--extension (-F)`
+option. This is especially useful if the executed directory contains large
+files that contain no test data, but have an extension that Robot Framework
+would parse otherwise. Especially large HTML files, such as reports and logs
+you can get from Robot Framework itself, can be pretty slow to process.
+
+The :option:`--extension` option takes a file extension as an argument, and only
+files with that extension are parsed. It only has an effect when executing
+directories, though, not when running explicitly specified individual files.
+It does not affect which files can be used as `resource files`_ either. If
+there is a need to parse more than one kind of files, it is possible to use
+a colon `:` to separate extensions. Matching extensions is case insensitive.
+
+::
+
+  robot --extension robot path/to/tests
+  robot --extension ROBOT:TXT path/to/tests
+
+If files in one format use different extensions like ``*.html`` and ``*.htm``,
+you need to specify those extensions separately. Using just one of them would
+mean that other files in that format are skipped.
+
+__ `Supported file formats`_
+
+.. note:: Selecting files to parse is a new functionality in Robot Framework 3.0.1.
+
 Selecting test cases
 --------------------
 
@@ -135,10 +167,27 @@ is same as not specifying this option at all.
          using the :option:`--merge` command line option.
 
 .. note:: Re-executing failed tests is a new feature in Robot Framework 2.8.
-          Prior Robot Framework 2.8.4 the option was named :option:`--runfailed`.
-          The old name still works, but it will be removed in the future.
+          Prior to Robot Framework 2.8.4 the option was named
+          :option:`--runfailed`.
 
 __ `Merging outputs`_
+
+Re-executing failed test suites
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Command line option :option:`rerunfailedsuites (-S)` can be used to select all
+failed suites from an earlier `output file`_ for re-execution. Like
+:option:`--rerunfailed (-R)`, this option is useful when full test execution
+takes a lot of time. Note that all tests from a failed test suite will be
+re-executed, even passing ones. This option is useful when the tests in
+a test suite depends on each other.
+
+Behind the scenes this option selects the failed suites as they would have been
+selected individually with the :option:`--suite` option. It is possible to further
+fine-tune the list of selected tests by using :option:`--test`, :option:`--suite`,
+:option:`--include` and :option:`--exclude` options.
+
+.. note:: :option:`--rerunfailedsuites` option was added in Robot Framework 3.0.1.
 
 When no tests match selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -228,7 +277,7 @@ When Robot Framework parses test data, `test suite names are created
 from file and directory names`__. The name of the top-level test suite
 can, however, be overridden with the command line option
 :option:`--name (-N)`. Underscores in the given name are converted to
-spaces automatically, and words in the name capitalized.
+spaces automatically.
 
 __ `Test suite name and documentation`_
 
@@ -403,10 +452,16 @@ In addition to these failures, normal `execution errors`__ are shown,
 for example, when test library or resource file imports cannot be
 resolved.
 
-.. note:: The dry run mode does not validate variables. This
-          limitation may be lifted in the future releases.
+It is possible to disable dry run validation of specific `user keywords`_
+by adding a special `robot:no-dry-run` `keyword tag`__ to them. This is useful
+if a keyword fails in the dry run mode for some reason, but work fine when
+executed normally. Disabling the dry run more is a new feature in Robot
+Framework 3.0.2.
+
+.. note:: The dry run mode does not validate variables.
 
 __ `Errors and warnings during execution`_
+__ `User keyword tags`_
 
 Randomizing execution order
 ---------------------------
@@ -450,53 +505,101 @@ Programmatic modification of test data
 --------------------------------------
 
 If the provided built-in features to modify test data before execution
-are not enough, Robot Framework 2.9 and newer provide a possible to do
+are not enough, Robot Framework 2.9 and newer makes it possible to do
 custom modifications programmatically. This is accomplished by creating
-a model modifier and activating it using the :option:`--prerunmodifier`
-option.
+a so called *pre-run modifier* and activating it using the
+:option:`--prerunmodifier` option.
 
-Model modifiers should be implemented as visitors that can traverse through
+Pre-run modifiers should be implemented as visitors that can traverse through
 the executable test suite structure and modify it as needed. The visitor
 interface is explained as part of the `Robot Framework API documentation
 <visitor interface_>`_, and it possible to modify executed `test suites
 <running.TestSuite_>`_, `test cases <running.TestCase_>`_ and `keywords
-<running.Keyword_>`_ using it. The example below ought to give an idea of
-how model modifiers can be used and how powerful this functionality is.
+<running.Keyword_>`_ using it. The examples below ought to give an idea of
+how pre-run modifiers can be used and how powerful this functionality is.
 
-.. sourcecode:: python
-
-   ../api/code_examples/select_every_xth_test.py
-
-When a model modifier is taken into use on the command line using the
+When a pre-run modifier is taken into use on the command line using the
 :option:`--prerunmodifier` option, it can be specified either as a name of
 the modifier class or a path to the modifier file. If the modifier is given
 as a class name, the module containing the class must be in the `module search
 path`_, and if the module name is different than the class name, the given
 name must include both like `module.ModifierClass`. If the modifier is given
 as a path, the class name must be same as the file name. For most parts this
-works exactly like when `specifying a test library to import`__.
+works exactly like when `importing a test library`__.
 
-If a modifier requires arguments, like the example above does, they can be
+If a modifier requires arguments, like the examples below do, they can be
 specified after the modifier name or path using either a colon (`:`) or a
 semicolon (`;`) as a separator. If both are used in the value, the one first
-is considered the actual separator.
+is considered to be the actual separator.
 
-For example, if the above model modifier would be in a file
-:file:`SelectEveryXthTest.py`, it could be used like this::
+If more than one pre-run modifier is needed, they can be specified by using
+the :option:`--prerunmodifier` option multiple times. If similar modifying
+is needed before creating logs and reports, `programmatic modification of
+results`_ can be enabled using the :option:`--prerebotmodifier` option.
+
+__ `Specifying library to import`_
+
+Example: Select every Xth test
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The first example shows how a pre-run-modifier can remove tests from the
+executed test suite structure. In this example only every Xth tests is
+preserved, and the X is given from the command line along with an optional
+start index.
+
+.. sourcecode:: python
+
+   ../api/code_examples/SelectEveryXthTest.py
+
+If the above pre-run modifier is in a file :file:`SelectEveryXthTest.py` and
+the file is in the `module search path`_, it could be used like this::
 
     # Specify the modifier as a path. Run every second test.
     robot --prerunmodifier path/to/SelectEveryXthTest.py:2 tests.robot
 
     # Specify the modifier as a name. Run every third test, starting from the second.
-    # SelectEveryXthTest.py must be in the module search path.
     robot --prerunmodifier SelectEveryXthTest:3:1 tests.robot
 
-If more than one model modifier is needed, they can be specified by using
-the :option:`--prerunmodifier` option multiple times. If similar modifying
-is needed before creating results, `programmatic modification of results`_
-can be enabled using the :option:`--prerebotmodifier` option.
+Example: Exclude tests by name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-__ `Specifying library to import`_
+Also the second example removes tests, this time based on a given name pattern.
+In practice it works like a negative version of the built-in :option:`--test`
+option.
+
+.. sourcecode:: python
+
+   ../api/code_examples/ExcludeTests.py
+
+Assuming the above modifier is in a file named :file:`ExcludeTests.py`, it
+could be used like this::
+
+  # Exclude test named 'Example'.
+  robot --prerunmodifier path/to/ExcludeTests.py:Example tests.robot
+
+  # Exclude all tests ending with 'something'.
+  robot --prerunmodifier path/to/ExcludeTests.py:*something tests.robot
+
+Example: Skip setups and teardowns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Sometimes when debugging tests it can be useful to disable setups or teardowns.
+This can be accomplished by editing the test data, but pre-run modifiers make
+it easy to do that temporarily for a single run:
+
+.. sourcecode:: python
+
+  ../api/code_examples/disable.py
+
+Assuming that the above modifiers are all in a file named :file:`disable.py`
+and this file is in the `module search path`_, setups and teardowns could be
+disabled, for example, as follows::
+
+  # Disable suite teardowns.
+  robot --prerunmodifier disable.SuiteTeardown tests.robot
+
+  # Disable both test setups and teardowns by using '--prerunmodifier' twice.
+  robot --prerunmodifier disable.TestSetup --prerunmodifier disable.TestTeardown tests.robot
 
 Controlling console output
 --------------------------

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -276,12 +277,12 @@ class KeywordStore(object):
         raise DataError(msg)
 
     def _get_runner(self, name):
-        runner = None
         if not name:
             raise DataError('Keyword name cannot be empty.')
         if not is_string(name):
             raise DataError('Keyword name must be a string.')
-        if '.' in name:
+        runner = self._get_runner_from_test_case_file(name)
+        if not runner and '.' in name:
             runner = self._get_explicit_runner(name)
         if not runner:
             runner = self._get_implicit_runner(name)
@@ -300,19 +301,16 @@ class KeywordStore(object):
         return None
 
     def _get_implicit_runner(self, name):
-        for method in [self._get_runner_from_test_case_file_user_keywords,
-                       self._get_runner_from_resource_file_user_keywords,
-                       self._get_runner_from_library_keywords]:
-            runner = method(name)
-            if runner:
-                return runner
-        return None
+        runner = self._get_runner_from_resource_files(name)
+        if not runner:
+            runner = self._get_runner_from_libraries(name)
+        return runner
 
-    def _get_runner_from_test_case_file_user_keywords(self, name):
+    def _get_runner_from_test_case_file(self, name):
         if name in self.user_keywords.handlers:
             return self.user_keywords.handlers.create_runner(name)
 
-    def _get_runner_from_resource_file_user_keywords(self, name):
+    def _get_runner_from_resource_files(self, name):
         found = [lib.handlers.create_runner(name)
                  for lib in self.resources.values()
                  if name in lib.handlers]
@@ -324,7 +322,7 @@ class KeywordStore(object):
             return found[0]
         self._raise_multiple_keywords_found(name, found)
 
-    def _get_runner_from_library_keywords(self, name):
+    def _get_runner_from_libraries(self, name):
         found = [lib.handlers.create_runner(name) for lib in self.libraries.values()
                  if name in lib.handlers]
         if not found:

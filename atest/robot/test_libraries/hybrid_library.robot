@@ -34,6 +34,11 @@ Old Name Doesn't Work If Name Set Using 'robot_name'
 Embedded Keyword Arguments
     Check Test Case  ${TESTNAME}
 
+Name starting with an underscore is OK
+    ${tc} =    Check Test Case  ${TESTNAME}
+    Should be equal    ${tc.kws[0].name}    GetKeywordNamesLibrary.Starting With Underscore Is Ok
+    Check log message    ${tc.kws[0].msgs[0]}    This is explicitly returned from 'get_keyword_names' anyway.
+
 Invalid get_keyword_names
     ${path} =    Normalize Path    ${DATADIR}/test_libraries/hybrid_library.robot
     ${error} =    Catenate

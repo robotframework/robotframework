@@ -55,9 +55,29 @@ Doctype is not preserved
     XML Content Should Be    <foo />
     Save XML    <!DOCTYPE bar SYSTEM "bar.dtd">\n<bar>baari</bar>    ${OUTPUT}
     XML Content Should Be    <bar>baari</bar>
+    Save XML    <!DOCTYPE foo><foo/>    ${OUTPUT}    encoding=ASCII
+    XML Content Should Be    <foo />    encoding=ASCII
 
 Comments and processing instructions are removed
     ${xml} =    Replace String    ${SIMPLE}    <    <!--c--><?p?><
     ${xml} =    Replace String    ${xml}    >    ><!--c--><?p?>
     Save XML    ${xml}    ${OUTPUT}
     XML Content Should Be    ${SIMPLE}
+
+Element can be further modified after saving
+    ${xml} =    Parse XML    <root><child>text</child></root>
+    Save XML    ${xml}    ${OUTPUT}
+    XML Content Should Be    <root><child>text</child></root>
+    Remove Element    ${xml}    child
+    Add Element    ${xml}    <new>elem</new>
+    Save XML    ${xml}    ${OUTPUT}
+    XML Content Should Be    <root><new>elem</new></root>
+
+Element with namespaces can be further modified after saving
+    ${xml} =    Parse XML    <root xmlns="xxx"><child>text</child></root>
+    Save XML    ${xml}    ${OUTPUT}
+    XML Content Should Be    <root xmlns="xxx"><child>text</child></root>
+    Remove Element    ${xml}    child
+    Add Element    ${xml}    <new>elem</new>
+    Save XML    ${xml}    ${OUTPUT}
+    XML Content Should Be    <root xmlns="xxx"><new>elem</new></root>

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -50,15 +51,29 @@ def console_decode(string, encoding=CONSOLE_ENCODING, force=False):
 def console_encode(string, errors='replace', stream=sys.__stdout__):
     """Encodes Unicode to bytes in console or system encoding.
 
-    Uses console encoding if the given `stream` is a console and system
-    encoding otherwise.
+    Determines the encoding to use based on the given stream and system
+    configuration. On Python 3 and IronPython returns Unicode, otherwise
+    returns bytes.
     """
-    encoding = CONSOLE_ENCODING if isatty(stream) else SYSTEM_ENCODING
+    encoding = _get_console_encoding(stream)
     if PY3 and encoding != 'UTF-8':
         return string.encode(encoding, errors).decode(encoding)
     if PY3 or IRONPYTHON:
         return string
     return string.encode(encoding, errors)
+
+
+def _get_console_encoding(stream):
+    # On Python 2 stdout and stderr don't have encoding set reliably if outputs
+    # are redirected outside Python itself. With Python encoding is None in
+    # this case, and with Jython and IronPython encoding seems to be set to
+    # the same value as when streams are not redirected (which is wrong and
+    # can cause problems on Windows).
+    if PY3 or isatty(stream):
+        encoding = getattr(stream, 'encoding', None)
+        if encoding:
+            return encoding
+    return CONSOLE_ENCODING if isatty(stream) else SYSTEM_ENCODING
 
 
 # These interpreters handle communication with system APIs using Unicode.

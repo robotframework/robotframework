@@ -3,4 +3,7 @@
 import sys
 from robot import run_cli
 
-run_cli(sys.argv[1:])
+# Multiprocessing guard
+# https://github.com/robotframework/robotframework/issues/2315
+if __name__ == '__main__':
+    run_cli(sys.argv[1:])

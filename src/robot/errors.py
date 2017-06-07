@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -81,6 +82,14 @@ class TimeoutError(RobotError):
     Error`).
     """
 
+    def __init__(self, message='', test_timeout=True):
+        RobotError.__init__(self, message)
+        self.test_timeout = test_timeout
+
+    @property
+    def keyword_timeout(self):
+        return not self.test_timeout
+
 
 class Information(RobotError):
     """Used by argument parser with --help or --version."""
@@ -89,17 +98,23 @@ class Information(RobotError):
 class ExecutionFailed(RobotError):
     """Used for communicating failures in test execution."""
 
-    def __init__(self, message, timeout=False, syntax=False, exit=False,
-                 continue_on_failure=False, return_value=None):
+    def __init__(self, message, test_timeout=False, keyword_timeout=False,
+                 syntax=False, exit=False, continue_on_failure=False,
+                 return_value=None):
         if '\r\n' in message:
             message = message.replace('\r\n', '\n')
         from robot.utils import cut_long_message
         RobotError.__init__(self, cut_long_message(message))
-        self.timeout = timeout
+        self.test_timeout = test_timeout
+        self.keyword_timeout = keyword_timeout
         self.syntax = syntax
         self.exit = exit
         self._continue_on_failure = continue_on_failure
         self.return_value = return_value
+
+    @property
+    def timeout(self):
+        return self.test_timeout or self.keyword_timeout
 
     @property
     def dont_continue(self):
@@ -118,9 +133,13 @@ class ExecutionFailed(RobotError):
     def can_continue(self, teardown=False, templated=False, dry_run=False):
         if dry_run:
             return True
-        if self.dont_continue and not (teardown and self.syntax):
+        if self.syntax or self.exit or self.test_timeout:
             return False
-        if teardown or templated:
+        if templated:
+            return True
+        if self.keyword_timeout:
+            return False
+        if teardown:
             return True
         return self.continue_on_failure
 
@@ -136,12 +155,15 @@ class HandlerExecutionFailed(ExecutionFailed):
 
     def __init__(self, details):
         timeout = isinstance(details.error, TimeoutError)
-        syntax = isinstance(details.error, DataError) \
-                 and not isinstance(details.error, VariableError)
+        test_timeout = timeout and details.error.test_timeout
+        keyword_timeout = timeout and details.error.keyword_timeout
+        syntax = (isinstance(details.error, DataError) and
+                  not isinstance(details.error, VariableError))
         exit_on_failure = self._get(details.error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(details.error, 'CONTINUE_ON_FAILURE')
-        ExecutionFailed.__init__(self, details.message, timeout, syntax,
-                                 exit_on_failure, continue_on_failure)
+        ExecutionFailed.__init__(self, details.message, test_timeout,
+                                 keyword_timeout, syntax, exit_on_failure,
+                                 continue_on_failure)
         self.full_message = details.message
         self.traceback = details.traceback
 
@@ -159,16 +181,31 @@ class ExecutionFailures(ExecutionFailed):
     def _format_message(self, messages):
         if len(messages) == 1:
             return messages[0]
-        lines = ['Several failures occurred:'] \
-                + ['%d) %s' % (i+1, m) for i, m in enumerate(messages)]
-        return '\n\n'.join(lines)
+        prefix = 'Several failures occurred:'
+        if any(msg.startswith('*HTML*') for msg in messages):
+            prefix = '*HTML* ' + prefix
+            messages = self._format_html_messages(messages)
+        return '\n\n'.join(
+            [prefix] +
+            ['%d) %s' % (i, m) for i, m in enumerate(messages, start=1)]
+        )
+
+    def _format_html_messages(self, messages):
+        from robot.utils import html_escape
+        for msg in messages:
+            if msg.startswith('*HTML*'):
+                yield msg[6:].lstrip()
+            else:
+                yield html_escape(msg)
 
     def _get_attrs(self, errors):
-        return {'timeout': any(err.timeout for err in errors),
-                'syntax': any(err.syntax for err in errors),
-                'exit': any(err.exit for err in errors),
-                'continue_on_failure': all(err.continue_on_failure for err in errors)
-                }
+        return {
+            'test_timeout': any(e.test_timeout for e in errors),
+            'keyword_timeout': any(e.keyword_timeout for e in errors),
+            'syntax': any(e.syntax for e in errors),
+            'exit': any(e.exit for e in errors),
+            'continue_on_failure': all(e.continue_on_failure for e in errors)
+        }
 
     def get_errors(self):
         return self._errors
@@ -210,12 +247,12 @@ class ExecutionPassed(ExecutionFailed):
 
     def _get_message(self):
         from robot.utils import printable_name
-        return "Invalid '%s' usage." \
-               % printable_name(self.__class__.__name__, code_style=True)
+        return ("Invalid '%s' usage."
+                % printable_name(type(self).__name__, code_style=True))
 
     def set_earlier_failures(self, failures):
         if failures:
-            self._earlier_failures.extend(failures)
+            self._earlier_failures = list(failures) + self._earlier_failures
 
     @property
     def earlier_failures(self):

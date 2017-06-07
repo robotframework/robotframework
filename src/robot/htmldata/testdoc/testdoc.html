@@ -39,7 +39,7 @@
 $(document).ready(function(){
     parseTemplates();
     addTitle(window.testdoc.title);
-    addGenerated(window.testdoc.generated, window.testdoc.generatedMillis);
+    addGenerated(window.testdoc.generated);
     addSuite(window.testdoc.suite, 'body');
     if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
@@ -59,12 +59,12 @@ function addTitle(title) {
     $('h1').text(title);
 }
 
-function addGenerated(timestamp, millis) {
+function addGenerated(millis) {
     $.tmpl('<div id="generated">' +
              '<span>Generated<br>${generated}</span><br>' +
              '<span id="generated-ago">${generatedAgo} ago</span>' +
            '</div>', {
-        generated: timestamp,
+        generated: util.createGeneratedString(millis),
         generatedAgo: util.createGeneratedAgoString(millis)
     }).appendTo($('#header'));
 }

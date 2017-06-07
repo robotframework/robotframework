@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -191,6 +192,8 @@ class Runner(SuiteVisitor):
         try:
             name = self._variables.replace_string(data.name)
         except DataError as err:
+            if self._settings.dry_run:
+                return None
             return err
         if name.upper() in ('', 'NONE'):
             return None

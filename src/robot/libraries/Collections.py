@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -296,7 +297,7 @@ class _List(object):
         _verify_condition(value in list_, default, msg)
 
     def list_should_not_contain_value(self, list_, value, msg=None):
-        """Fails if the ``value`` is not found from ``list``.
+        """Fails if the ``value`` is found from ``list``.
 
         See `List Should Contain Value` for an explanation of ``msg``.
         """

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -78,10 +79,12 @@ class _Timeout(Sortable):
         if not self.active:
             raise FrameworkError('Timeout is not active')
         timeout = self.time_left()
+        error = TimeoutError(self._timeout_error,
+                             test_timeout=self.type == 'Test')
         if timeout <= 0:
-            raise TimeoutError(self.get_message())
+            raise error
         executable = lambda: runnable(*(args or ()), **(kwargs or {}))
-        return Timeout(timeout, self._timeout_error).execute(executable)
+        return Timeout(timeout, error).execute(executable)
 
     def get_message(self):
         if not self.active:

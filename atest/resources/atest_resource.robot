@@ -114,12 +114,15 @@ Check Test Tags
     [Return]    ${tc}
 
 Check Keyword Data
-    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=
+    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=
     Should be equal    ${kw.name}    ${name}
+    Should be equal    ${kw.status}    ${status}
     ${kwassign}=    Catenate    SEPARATOR=,${SPACE}    @{kw.assign}
     Should be equal    ${kwassign}    ${assign}
     ${kwargs}=    Catenate    SEPARATOR=,${SPACE}    @{kw.args}
     Should match    ${kwargs}    ${args}
+    ${kwtags}=    Catenate    SEPARATOR=,${SPACE}    @{kw.tags}
+    Should be equal    ${kwtags}    ${tags}
 
 Get Output File
     [Arguments]    ${path}
@@ -317,3 +320,16 @@ Reset PYTHONPATH
     Remove Environment Variable    PYTHONPATH
     Remove Environment Variable    JYTHONPATH
     Remove Environment Variable    IRONPYTHONPATH
+
+Import should have failed
+    [Arguments]    ${index}    ${path}    ${message}    ${traceback}=*
+    ...    ${stacktrace}=
+    ${path} =    Normalize Path    ${DATADIR}/${path}
+    ${error} =    Set Variable    Error in file '${path}': ${message}
+    ${error} =    Set Variable If    $traceback and not $stacktrace
+    ...    ${error}\nTraceback (most recent call last):\n*${traceback}*
+    ...    ${error}
+    ${error} =    Set Variable If    $stacktrace
+    ...    ${error}\n*${stacktrace}*
+    ...    ${error}
+    Check Log Message    @{ERRORS}[${index}]    ${error}    level=ERROR    pattern=yes

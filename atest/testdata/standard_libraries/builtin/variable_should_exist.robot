@@ -1,5 +1,6 @@
 *** Settings ***
 Variables         variables_to_verify.py
+Variables         length_variables.py
 
 *** Variables ***
 ${scalar}         Hi tellus

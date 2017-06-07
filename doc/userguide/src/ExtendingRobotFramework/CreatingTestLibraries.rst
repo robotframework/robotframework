@@ -401,12 +401,12 @@ What methods are considered keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When the static library API is used, Robot Framework uses reflection
-to find out what public methods the library class or module
-implements. It will exclude all methods starting with an underscore,
-and with Java libraries also methods that are implemented only in
-`java.lang.Object` are ignored. All the methods that are not
-ignored are considered keywords. For example, the Python and Java
-libraries below implement single keyword :name:`My Keyword`.
+to find out what public methods the library class or module contains.
+It will exclude all methods starting with an underscore (unless `using
+a custom keyword name`_), and with Java libraries also methods implemented
+only in the implicit base class `java.lang.Object` are excluded. All
+the methods that are not ignored are considered keywords. For example, the
+Python and Java libraries below implement a single keyword :name:`My Keyword`.
 
 .. sourcecode:: python
 
@@ -431,32 +431,54 @@ libraries below implement single keyword :name:`My Keyword`.
         }
     }
 
-When the library is implemented as a Python module, it is also
-possible to limit what methods are keywords by using Python's
-`__all__` attribute. If `__all__` is used, only methods
-listed in it can be keywords. For example, the library below
-implements keywords :name:`Example Keyword` and :name:`Second
-Example`. Without `__all__`, it would implement also keywords
-:name:`Not Exposed As Keyword` and :name:`Current Thread`. The most
-important usage for `__all__` is making sure imported helper
-methods, such as `current_thread` in the example below, are not
-accidentally exposed as keywords.
+When implementing a library as a Python or Java class, also methods in
+possible base classes are considered keywords. When implementing a library
+as a Python module, also possible functions imported into the module namespace
+become keywords. For example, if the module below would be used as a library,
+it would contain keywords :name:`Example Keyword`, :name:`Second Example` and
+also :name:`Current Thread`.
 
 .. sourcecode:: python
 
    from threading import current_thread
 
-   __all__ = ['example_keyword', 'second_example']
 
    def example_keyword():
-       if current_thread().name == 'MainThread':
-           print 'Running in main thread'
+       print 'Running in thread "%s".' % current_thread().name
+
+   def second_example():
+       pass
+
+A simple way to avoid imported functions becoming keywords is to only
+import modules (e.g. `import threading`) and use functions via the module
+(e.g `threading.current_thread()`). Alternatively functions could be
+given an alias starting with an underscore at the import time (e.g.
+`from threading import current_thread as _current_thread`).
+
+A more explicit way to limit what functions become keywords is using
+the module level `__all__` attribute that `Python itself uses for similar
+purposes`__. If it is used, only the listed functions can be keywords.
+For example, the library below implements only keywords
+:name:`Example Keyword` and :name:`Second Example`.
+
+.. sourcecode:: python
+
+   from threading import current_thread
+
+
+   __all__ = ['example_keyword', 'second_example']
+
+
+   def example_keyword():
+       print 'Running in thread "%s".' % current_thread().name
 
    def second_example():
        pass
 
    def not_exposed_as_keyword():
        pass
+
+__ https://docs.python.org/2/tutorial/modules.html#importing-from-a-package
 
 Keyword names
 ~~~~~~~~~~~~~
@@ -514,8 +536,8 @@ Using a custom keyword name
 It is possible to expose a different name for a keyword instead of the
 default keyword name which maps to the method name.  This can be accomplished
 by setting the `robot_name` attribute on the method to the desired custom name.
-The decorator `robot.api.deco.keyword` may be used as a shortcut for setting
-this attribute when used as follows:
+This is typically easiest done by using the `robot.api.deco.keyword` decorator
+as follows:
 
 .. sourcecode:: python
 
@@ -532,9 +554,11 @@ this attribute when used as follows:
        Login Via User Panel    ${username}    ${password}
 
 Using this decorator without an argument will have no effect on the exposed
-keyword name, but will still create the `robot_name` attribute.  This can be useful
-for `Marking methods to expose as keywords`_ without actually changing
-keyword names.
+keyword name, but will still set the `robot_name` attribute.  This allows
+`marking methods to expose as keywords`_ without actually changing keyword
+names. Starting from Robot Framework 3.0.2, methods that have the `robot_name`
+attribute also create keywords even if the method name itself would start with
+an underscore.
 
 Setting a custom keyword name can also enable library keywords to accept
 arguments using `Embedded Arguments`__ syntax.
@@ -1269,7 +1293,7 @@ The final option is using the `public logging API`_:
    def log_to_console(arg):
       logger.console('Got arg %s' % arg)
 
-   def log_to_console_and_log_file(arg)
+   def log_to_console_and_log_file(arg):
       logger.info('Got arg %s' % arg, also_console=True)
 
 Logging example
@@ -1788,11 +1812,14 @@ Framework and dynamic libraries. It does not matter for Robot
 Framework how these libraries are actually implemented (for example,
 how calls to the `run_keyword` method are mapped to a correct
 keyword implementation), and many different approaches are
-possible. However, if you use Java, you may want to examine
-`JavalibCore <https://github.com/robotframework/JavalibCore>`__
-before implementing your own system. This collection of
-reusable tools supports several ways of creating keywords, and it is
+possible. However, if you use Java, you may want to examine the
+JavaLibCore__ project before implementing your own system. This collection
+of reusable tools supports several ways of creating keywords, and it is
 likely that it already has a mechanism that suites your needs.
+Python users may also find the similar PythonLibCore__ project useful.
+
+__ https://github.com/robotframework/JavalibCore
+__ https://github.com/robotframework/PythonLibCore
 
 .. _`Getting dynamic keyword names`:
 
@@ -1954,14 +1981,32 @@ accepting all arguments. This automatic argument spec is either
 __ `Named argument syntax with dynamic libraries`_
 __ `Free keyword arguments with dynamic libraries`_
 
+Getting keyword tags
+~~~~~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 3.0.2, dynamic libraries can report `keyword
+tags`_ by using the `get_keyword_tags` method (alias `getKeywordTags`). It
+gets a keyword name as an argument, and should return corresponding tags
+as a list of strings.
+
+Alternatively it is possible to specify tags on the last row of the
+documentation returned by the `get_keyword_documentation` method discussed
+below. This requires starting the last row with `Tags:` and listing tags
+after it like `Tags: first tag, second, third`. This approach works also
+with Robot Framework versions prior to 3.0.2.
+
+.. tip:: The `get_keyword_tags` method is guaranteed to be called before
+         the `get_keyword_documentation` method. This makes it easy to
+         embed tags into the documentation only if the `get_keyword_tags`
+         method is not called.
+
 Getting keyword documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The final special method that dynamic libraries can implement is
-`get_keyword_documentation` (alias
-`getKeywordDocumentation`). It takes a keyword name as an
-argument and, as the method name implies, returns its documentation as
-a string.
+If dynamic libraries want to provide keyword documentation, they can implement
+the `get_keyword_documentation` method (alias `getKeywordDocumentation`). It
+takes a keyword name as an argument and, as the method name implies, returns
+its documentation as a string.
 
 The returned documentation is used similarly as the keyword
 documentation string with static libraries implemented with
@@ -1969,14 +2014,6 @@ Python. The main use case is getting keywords' documentations into a
 library documentation generated by Libdoc_. Additionally,
 the first line of the documentation (until the first `\n`) is
 shown in test logs.
-
-Getting keyword tags
-~~~~~~~~~~~~~~~~~~~~
-
-Dynamic libraries do not have any other way for defining `keyword tags`_
-than by specifying them on the last row of the documentation with `Tags:`
-prefix. Separate `get_keyword_tags` method can be added to the dynamic API
-later if there is a need.
 
 Getting general library documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

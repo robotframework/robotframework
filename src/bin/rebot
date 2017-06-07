@@ -3,4 +3,7 @@
 import sys
 from robot import rebot_cli
 
-rebot_cli(sys.argv[1:])
+# Multiprocessing guard
+# https://github.com/robotframework/robotframework/issues/2315
+if __name__ == '__main__':
+    rebot_cli(sys.argv[1:])

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -187,6 +188,8 @@ def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
     millis = millissep and '%s%03d' % (millissep, timetuple[6]) or ''
     return day + daytimesep + time_ + millis + _diff_to_gmt(gmtsep)
 
+# TODO: Remove broken helper below and `gmtsep` above in 3.1. For details see
+# https://github.com/robotframework/robotframework/issues/2501
 def _diff_to_gmt(sep):
     if not sep:
         return ''

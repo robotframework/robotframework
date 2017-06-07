@@ -52,6 +52,13 @@ contain possible arguments to the specified keyword.
        ${value} =    Get Some Value
        Should Be Equal    ${value}    Expected value
 
+.. note:: Although test case names can contain any character, using `?` and
+          especially `*` is not generally recommended because they are
+          considered to be `wildcards`_ when `selecting test cases`_.
+          For example, trying to run only a test with name :name:`Example *`
+          like `--test 'Example *'` will actually run any test starting with
+          :name:`Example`.
+
 Settings in the Test Case table
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -339,7 +346,6 @@ library keywords, user keywords, and when importing the Telnet_ test library.
    *** Keywords ***
    List files
        [Arguments]    ${path}=.    ${options}=
-       List files    options=-lh
        Execute command    ls ${options} ${path}
 
 Free keyword arguments
@@ -616,12 +622,21 @@ Users are generally free to use whatever tags that work in their context.
 There are, however, certain tags that have a predefined meaning for Robot
 Framework itself, and using them for other purposes can have unexpected
 results. All special tags Robot Framework has and will have in the future
-have a `robot-` prefix. To avoid problems, users should thus not use any
-tag with a `robot-` prefix unless actually activating the special functionality.
+have either `robot-` or `robot:` prefix. To avoid problems, users should thus
+not use any tag with these prefixes unless actually activating the special
+functionality.
 
-At the time of writing, the only special tag is `robot-exit` that is
-automatically added to tests when `stopping test execution gracefully`_.
-More usages are likely to be added in the future, though.
+At the time of writing, the only special tags are `robot-exit`, that is
+automatically added to tests when `stopping test execution gracefully`_,
+and `robot:no-dry-run`, that can be used to disable the `dry run`_ mode.
+More usages are likely to be added in the future.
+
+.. note:: The plan is to unify reserved prefixes in the future. Most likely
+          the `robot:` prefix will be used with all reserved tags, but it
+          best to avoid both of these prefixes at the moment. See issue
+          `#2539`__ for details.
+
+__ https://github.com/robotframework/robotframework/issues/2539
 
 Test setup and teardown
 -----------------------

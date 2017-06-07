@@ -7,5 +7,8 @@ class ObjectToReturn:
         return self.name
 
     def exception(self, name, msg=""):
-        exception = __builtins__[name]
+        try:
+            exception = getattr(__builtins__, name)
+        except AttributeError:  # __builtins__ is sometimes a dict, go figure
+            exception = __builtins__[name]
         raise exception(msg)

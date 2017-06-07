@@ -13,15 +13,17 @@ are listed.
 Command line options for test execution
 ---------------------------------------
 
+  -F, --extension <value>  `Parse only these files`_ when executing a directory.
   -N, --name <name>       `Sets the name`_ of the top-level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top level test suite.
   -G, --settag <tag>      `Sets the tag(s)`_ to all executed test cases.
   -t, --test <name>       `Selects the test cases by name`_.
   -s, --suite <name>      `Selects the test suites`_ by name.
-  -R, --rerunfailed <file>  `Selects failed tests`_ from an earlier `output file`_ to be re-executed.
-  --runfailed <file>      Deprecated since Robot Framework 2.8.4.
-                          Use :option:`--rerunfailed` instead.
+  -R, --rerunfailed <file>  `Selects failed tests`_ from an earlier `output file`_
+                          to be re-executed.
+  -S, --rerunfailedsuites <file>  `Selects failed test suites`_ from an earlier
+                          `output file`_ to be re-executed.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
@@ -63,7 +65,7 @@ Command line options for test execution
   --dryrun                In the `dry run`_ mode tests are run without executing
                           keywords originating from test libraries. Useful for
                           validating test data syntax.
-  --exitonfailure         `Stops test execution <Stopping when first test case fails_>`__
+  -X, --exitonfailure     `Stops test execution <Stopping when first test case fails_>`__
                           if any critical test fails.
   --exitonerror           `Stops test execution <Stopping on parsing or execution error_>`__
                           if any error occurs when parsing test data, importing libraries, and so on.
@@ -88,8 +90,6 @@ Command line options for post-processing outputs
 ------------------------------------------------
 
   -R, --merge             Changes result combining behavior to `merging <merging outputs_>`__.
-  --rerunmerge            Deprecated since Robot Framework 2.8.6.
-                          Use :option:`--merge` instead.
   -N, --name <name>       `Sets the name`_ of the top level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top-level test suite.
@@ -142,12 +142,14 @@ Command line options for post-processing outputs
   --version               Prints the `version information`_.
 
 
+.. _Parse only these files: `Selecting files to parse`_
 .. _Sets the name: `Setting the name`_
 .. _Sets the documentation: `Setting the documentation`_
 .. _Sets free metadata: `Setting free metadata`_
 .. _Sets the tag(s): `Setting tags`_
 .. _Selects the test cases by name: `By test suite and test case names`_
 .. _Selects the test suites: `Selects the test cases by name`_
+.. _Selects failed test suites: `Re-executing failed test suites`_
 .. _Selects failed tests: `Re-executing failed test cases`_
 .. _Selects the test cases: `By tag names`_
 .. _considered critical: `Setting criticality`_

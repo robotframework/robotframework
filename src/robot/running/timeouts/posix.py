@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,8 +14,6 @@
 #  limitations under the License.
 
 from signal import setitimer, signal, SIGALRM, ITIMER_REAL
-
-from robot.errors import TimeoutError
 
 
 class Timeout(object):
@@ -35,7 +34,7 @@ class Timeout(object):
         setitimer(ITIMER_REAL, self._timeout)
 
     def _raise_timeout_error(self, signum, frame):
-        raise TimeoutError(self._error)
+        raise self._error
 
     def _stop_timer(self):
         setitimer(ITIMER_REAL, 0)

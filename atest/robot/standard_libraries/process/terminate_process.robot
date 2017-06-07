@@ -6,10 +6,12 @@ Resource         atest_resource.robot
 Terminate process
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    Gracefully terminating process.
+    Check Log Message    ${tc.kws[1].msgs[1]}    Process completed.
 
 Kill process
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    Forcefully killing process.
+    Check Log Message    ${tc.kws[1].msgs[1]}    Process completed.
 
 Terminate process running on shell
     [Tags]    no-windows-python26   no-jython

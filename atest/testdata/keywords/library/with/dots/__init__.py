@@ -1,7 +1,8 @@
+from robot.api.deco import keyword
+
+
 class dots(object):
 
-    def get_keyword_names(self):
-        return ['In.name.conflict']
-
-    def run_keyword(self, name, args):
-        return '-'.join(args)
+    @keyword(name='In.name.conflict')
+    def keyword(self):
+        print("Executing keyword 'In.name.conflict'.")

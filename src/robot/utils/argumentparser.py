@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -147,6 +148,9 @@ class ArgumentParser(object):
         if self._auto_argumentfile:
             args = self._process_possible_argfile(args)
         opts, args = self._parse_args(args)
+        if self._auto_argumentfile and opts.get('argumentfile'):
+            raise DataError("Using '--argumentfile' option in shortened format "
+                            "like '--argumentf' is not supported.")
         opts, args = self._handle_special_options(opts, args)
         self._arg_limit_validator(args)
         if self._validator:
@@ -416,11 +420,12 @@ class ArgFileParser(object):
         for opt in self._options:
             start = opt + '=' if opt.startswith('--') else opt
             for index, arg in enumerate(args):
+                normalized_arg = arg.lower() if opt.startswith('--') else arg
                 # Handles `--argumentfile foo` and `-A foo`
-                if arg == opt and index + 1 < len(args):
+                if normalized_arg == opt and index + 1 < len(args):
                     return args[index+1], slice(index, index+2)
                 # Handles `--argumentfile=foo` and `-Afoo`
-                if arg.startswith(start):
+                if normalized_arg.startswith(start):
                     return arg[len(start):], slice(index, index+1)
         return None, -1
 

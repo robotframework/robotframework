@@ -74,7 +74,7 @@ def atests(interpreter, *arguments):
         sys.exit(err)
     outputdir, tempdir = _get_directories(interpreter)
     arguments = list(_get_arguments(interpreter, outputdir)) + list(arguments)
-    return _run(arguments, tempdir)
+    return _run(arguments, tempdir, interpreter.classpath)
 
 
 def _get_directories(interpreter):
@@ -102,10 +102,10 @@ def _get_arguments(interpreter, outputdir):
         yield exclude
 
 
-def _run(args, tempdir):
+def _run(args, tempdir, classpath):
     runner = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
     command = [sys.executable, runner] + args
-    environ = dict(os.environ, TEMPDIR=tempdir)
+    environ = dict(os.environ, TEMPDIR=tempdir, CLASSPATH=classpath or '')
     print('Running command:\n%s\n' % ' '.join(command))
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)

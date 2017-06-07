@@ -1,42 +1,24 @@
 Robot Framework acceptance tests
 ================================
 
-Introduction
-------------
-
 Acceptance tests for Robot Framework are naturally created using Robot
 Framework itself. This folder contains all those acceptance tests and other
 test data they need.
 
-License and copyright
----------------------
-
-All the content in ``atest`` folder is the under following copyright::
-
-    Copyright 2008-2015 Nokia Solutions and Networks
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+.. contents::
+   :local:
 
 Directory contents
 ------------------
 
 run.py
-    A script for running acceptance tests. See below for further instructions.
+    A script for running acceptance tests. See `Running acceptance tests`_
+    for further instructions.
 
 genrunner.py
-    Script to generate atest runners based on plain text data files.
+    Script to generate acceptance test runners based on test data files.
 
-    Usage:  genrunner.py testdata/path/data.robot [robot/path/runner.robot]
+    Usage:  ``atest/genrunner.py atest/testdata/path/data.robot [atest/robot/path/runner.robot]``
 
 robot/
     Contains actual acceptance test cases. See `Test data`_ section for details.
@@ -50,7 +32,7 @@ testdata/
 
 testresources/
     Contains resources needed by test cases in the ``testdata`` folder.
-    Some of these resources are also used by unit tests.
+    Some of these resources are also used by `unit tests <../utest/README.rst>`_.
 
 results/
     The place for test execution results. This directory is generated when
@@ -60,29 +42,36 @@ results/
 Running acceptance tests
 ------------------------
 
-Robot Framework's acceptance tests are run using `<run.py>`__. See its
-documentation our run it with ``--help`` to see the usage. To run all the
-acceptance tests, execute the ``atest/robot`` folder entirely::
+Robot Framework's acceptance tests are executed using the `<run.py>`__
+script. It has two mandatory arguments, the Python interpreter to use
+when running tests and path to tests to be executed, and it accepts also
+all same options as Robot Framework. The script itself should always be
+executed with Python. Run it with ``--help`` or see documentation in its
+`source code <run.py>`__ for more information.
 
-    python atest/run.py python atest/robot
+To run all the acceptance tests, execute the ``atest/robot`` folder
+entirely using the selected interpreter::
 
-The command above will execute all tests, but often you may want to skip
-for example `telnet tests`_ and tests requiring manual interaction. These
-tests are marked with the ``no-ci`` tag and can be excluded from the test run::
+    atest/run.py python atest/robot
+    atest/run.py jython atest/robot
 
-    python atest/run.py python --exclude no-ci atest/robot
+The commands above will execute all tests, but you typically want to skip
+`Telnet tests`_ and tests requiring manual interaction. These tests are marked
+with the ``no-ci`` tag and can be easily excluded::
+
+    atest/run.py python --exclude no-ci atest/robot
 
 A sub test suite can be executed simply by running the folder or file
 containing it. On modern machines running all acceptance tests ought to
 take less than ten minutes with Python, but with Jython the execution time
 is considerably longer. This is due to Jython being somewhat slower than
 Python in general, but the main reason is that the JVM is started by
-acceptance dozens of times and it always takes few seconds.
+acceptance dozens of times and that always takes few seconds.
 
-Before a release tests should be executed separately using  Python, Jython, and
-IronPython to verify interoperability with all supported interpreters. Tests
-should also be run using different interpreter versions (when applicable) and
-on different operating systems.
+Before a release tests should be executed separately using  Python, Jython,
+IronPython and PyPy to verify interoperability with all supported interpreters.
+Tests should also be run using different interpreter versions (when applicable)
+and on different operating systems.
 
 The results of the test execution are written into an interpreter specific
 directory under the ``atest/results`` directory. Temporary outputs created
@@ -114,7 +103,7 @@ The tests on the running side (``atest/robot``) contains tags that are used
 to include or exclude them based on the platform and required dependencies.
 Selecting tests based on the platform is done automatically by the `<run.py>`__
 script, but additional selection can be done by the user to avoid running
-tests that require dependencies that are not available.
+tests with `precondtions`_ that are not met.
 
 manual
   Require manual interaction from user. Used with Dialogs library tests.
@@ -127,80 +116,95 @@ no-ci
   Tests which are not executed at continuous integration. Contains all tests
   tagged with ``manual`` or ``telnet``.
 
-require-jython
-  Require the interpreter to be Jython. Mainly used with tests related to
-  Java integration.
+require-yaml, require-docutils, require-pygments, require-lxml, require-screenshot, require-tools.jar
+  Require specified Python module or some other external tool to be installed.
+  See `Preconditions`_ for details and exclude like ``--exclude require-lxml``
+  if needed.
 
-require-windows
-  Require the operating system to be Windows.
-
-require-yaml, require-docutils, require-lxml, require-screenshot
-  Require lxml, docutils, PyYAML, or platform specific screenshot module to
-  be installed, respectively. See `Required modules`_ for details.
-
-require-et13
-  Require ElementTree version 1.3. Automatically excluded when running with
-  Python 2.6 or IronPython.
-
-require-tools.jar
-  Require the tools.jar from JVM to be in ``CLASSPATH`` environment variable.
-  This is only needed on some Libdoc tests on Jython.
+require-windows, require-jython, ...
+  Tests that require certain operating system or Python interpreter.
+  Excluded automatically outside these platforms.
 
 no-windows, no-osx, no-jython, no-ipy,  ...
-  Tests to be excluded on different operating systems or Python interpreter
-  versions. Excluded automatically.
+  Tests to be excluded on certain operating systems or Python interpreters.
+  Excluded automatically on these platforms.
 
 Examples:
 
 .. code:: bash
 
     # Exclude tests requiring manual interaction or running telnet server.
-    python atest/run.py python --exclude no-ci atest/robot
+    atest/run.py python --exclude no-ci atest/robot
 
     # Same as the above but also exclude tests requiring docutils and lxml
-    python atest/run.py python -e no-ci -e require-docutils -e require-lxml atest/robot
+    atest/run.py python -e no-ci -e require-docutils -e require-lxml atest/robot
 
     # Run only tests related to Java integration. This is considerably faster
     # than running all tests on Jython.
-    python atest/run.py jython --include require-jython atest/robot
+    atest/run.py jython --include require-jython atest/robot
 
-Required modules
-----------------
+Preconditions
+-------------
 
-Certain Robot Framework features require optional external modules to be
-installed, and naturally tests related to these features require same modules
-as well:
+Certain Robot Framework features require optional external modules or tools
+to be installed, and naturally tests related to these features require same
+modules/tools as well. This section lists what preconditions are needed to
+run all tests successfully. See `Test tags`_ for instructions how to avoid
+running certain tests if all preconditions are not met.
+
+Required Python modules
+~~~~~~~~~~~~~~~~~~~~~~~
+
+These Python modules need to be installed:
 
 - `docutils <http://docutils.sourceforge.net/>`_ is needed with tests related
-  to parsing test data in reStructuredText format.
+  to parsing test data in reStructuredText format and with Libdoc tests
+  for documentation in reST format.
+- `Pygments <http://pygments.org/>`_ is needed by Libdoc tests for syntax
+  highlighting.
 - `PyYAML <http://pyyaml.org/>`__ is required with tests related to YAML
   variable files.
-- `lxml <http://lxml.de/>`__ is needed with XML library tests.
-- Screenshot library tests require a platform dependent module that can take
-  screenshots. See `Screenshot library documentation`__ for details.
+- `lxml <http://lxml.de/>`__ is needed with XML library tests. Not compatible
+  with Jython or IronPython.
 
-__ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
-
-It is possible to install docutils, PyYAML and lxml using using ``pip`` either
+It is possible to install the above modules using ``pip`` either
 individually or by using the provided `<requirements.txt>`__ file:
 
 .. code:: bash
 
     # Install individually
     pip install 'docutils>=0.9'
+    pip install pygments
     pip install pyyaml
     pip install lxml
 
     # Install using requirements.txt
     pip install -r atest/requirements.txt
 
-Notice that the lxml module requires compilation on Linux. You can also install
-it using a system package manager like ``apt-get install python-lxml``.
-Additionally, lxml is not compatible with Jython or IronPython.
+Notice that the lxml module may require compilation on Linux, which in turn
+may require installing development headers of lxml dependencies. Alternatively
+lxml can be installed using a system package manager like
+``sudo apt-get install python-lxml``.
 
-If a required module is not installed, it is possible to exclude tests
-from the execution by using tags as explained in the `Test tags`_ section.
-The lxml related tests are excluded with Jython and IronPython automatically.
+Because lxml is not compatible with Jython or IronPython, tests requiring it
+are excluded automatically when using these interpreters.
+
+Screenshot module or tool
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Screenshot library tests require a platform dependent module or tool that can
+take screenshots. See `Screenshot library documentation`__ for details.
+
+__ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
+
+``tools.jar``
+~~~~~~~~~~~~~
+
+Libdoc requires ``tools.jar``, which is part of the standard JDK installation,
+to be in ``CLASSPATH`` when reading library documentation from Java source
+files. In addition to setting ``CLASSPATH`` explicitly, it is possible to
+put ``tools.jar`` into the ``ext-lib`` directory in the project root and
+``CLASSPATH`` is set automatically.
 
 Telnet tests
 ------------
@@ -209,3 +213,23 @@ Running telnet tests requires some extra setup. Instructions how to run them
 can be found from `<testdata/standard_libraries/telnet/README.rst>`_.
 If you don't want to run an unprotected telnet server on your machine, you can
 always skip these tests by excluding tests with a tag ``telnet`` or ``no-ci``.
+
+License and copyright
+---------------------
+
+All content in the ``atest`` folder is under the following copyright::
+
+    Copyright 2008-2015 Nokia Networks
+    Copyright 2016-     Robot Framework Foundation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.

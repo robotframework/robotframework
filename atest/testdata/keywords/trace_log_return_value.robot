@@ -30,7 +30,7 @@ Return Object with Unicode Repr With Non Ascii Chars
 Return Object with Non Ascii String from Repr
     Return Object With Non Ascii String Repr
 
-*** User Keywords ***
+*** Keywords ***
 Return Value From UK
     ${return} =    Set Variable    value
     [Return]    ${return}

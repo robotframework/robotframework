@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -158,7 +159,8 @@ class DocToHtml(object):
             from docutils.core import publish_parts
         except ImportError:
             raise DataError("reST format requires 'docutils' module to be installed.")
-        parts = publish_parts(doc, writer_name='html')
+        parts = publish_parts(doc, writer_name='html',
+                              settings_overrides={'syntax_highlight': 'short'})
         return self._format_html(parts['html_body'])
 
     def __call__(self, doc):

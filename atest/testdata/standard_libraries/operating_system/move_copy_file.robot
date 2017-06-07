@@ -167,8 +167,3 @@ Copy File returns destination path
     Should Be Equal    ${path}    ${BASE}${/}new.txt
     ${path} =    Copy File    ${BASE}/f*.txt    ${BASE}/dir
     Should Be Equal    ${path}    ${BASE}${/}dir${/}file.txt
-
-*** Keywords ***
-Remove Just Name Dirs
-    Remove Directory    rf_test_1    recursive
-    Remove Directory    rf_test_2    recursive

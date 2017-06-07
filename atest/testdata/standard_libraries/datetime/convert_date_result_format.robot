@@ -71,10 +71,10 @@ Should exclude milliseconds
 
 Epoch time is float regardless are millis included or not
                       [Template]    Epoch time format should be
-                      ${1000.123}                1000.123             false
-                      ${1000}                    1000.0               ${EMPTY}
-                      ${1000.123}                1000.0               true
-                      ${1000}                    1000.0               no millis
+                      ${1000000.123}             1000000.123          false
+                      ${1000000}                 1000000.0            ${EMPTY}
+                      ${1000000.123}             1000000.0            true
+                      ${1000000}                 1000000.0            no millis
 
 Formatted with %f in middle
     [Template]    NONE

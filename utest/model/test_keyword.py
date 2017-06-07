@@ -1,5 +1,6 @@
 import unittest
-from robot.utils.asserts import assert_equal, assert_true, assert_raises
+from robot.utils.asserts import (assert_equal, assert_none, assert_not_equal,
+                                 assert_true, assert_raises, assert_raises_with_msg)
 
 from robot.model import TestSuite, Message
 from robot.model.keyword import Keyword, Keywords
@@ -31,6 +32,32 @@ class TestKeyword(unittest.TestCase):
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, Keyword(), 'attr', 'value')
+
+    def test_copy(self):
+        kw = Keyword(name='Keyword')
+        copy = kw.copy()
+        assert_equal(kw.name, copy.name)
+        copy.name += ' copy'
+        assert_not_equal(kw.name, copy.name)
+        assert_equal(id(kw.tags), id(copy.tags))
+
+    def test_copy_with_attributes(self):
+        kw = Keyword(name='Orig', doc='Orig', tags=['orig'])
+        copy = kw.copy(name='New', doc='New', tags=['new'])
+        assert_equal(copy.name, 'New')
+        assert_equal(copy.doc, 'New')
+        assert_equal(list(copy.tags), ['new'])
+
+    def test_deepcopy(self):
+        kw = Keyword(name='Keyword')
+        copy = kw.deepcopy()
+        assert_equal(kw.name, copy.name)
+        assert_not_equal(id(kw.tags), id(copy.tags))
+
+    def test_deepcopy_with_attributes(self):
+        copy = Keyword(name='Orig').deepcopy(name='New', doc='New')
+        assert_equal(copy.name, 'New')
+        assert_equal(copy.doc, 'New')
 
 
 class TestChildren(unittest.TestCase):
@@ -95,15 +122,76 @@ class TestStringRepresentation(unittest.TestCase):
 
 class TestKeywords(unittest.TestCase):
 
-    def test_setup(self):
-        assert_equal(Keywords().setup, None)
+    def test_get_setup(self):
+        assert_none(Keywords().setup)
         setup = Keyword(type='setup')
-        assert_true(Keywords(keywords=[setup, Keyword(), Keyword()]).setup is setup)
+        kws = Keywords(keywords=[setup, Keyword(), Keyword()])
+        assert_true(kws.setup is setup)
 
-    def test_teardown(self):
+    def test_set_setup(self):
+        s1, s2, kw = Keyword(type='setup'), Keyword(type='setup'), Keyword()
+        kws = Keywords(keywords=[kw])
+        kws.setup = s1
+        assert_true(kws.setup is s1)
+        assert_equal(list(kws), [s1, kw])
+        kws.setup = s2
+        assert_true(kws.setup is s2)
+        assert_equal(list(kws), [s2, kw])
+
+    def test_setup_is_removed_when_set_to_none(self):
+        kw = Keyword()
+        kws = Keywords(keywords=[Keyword(type='setup'), kw])
+        kws.setup = None
+        assert_none(kws.setup)
+        assert_equal(list(kws), [kw])
+        kws.setup = None
+        assert_none(kws.setup)
+        assert_equal(list(kws), [kw])
+
+    def test_setting_non_setup_keyword_to_setup_is_not_supported(self):
+
+        kws = Keywords(keywords=[Keyword(type='setup'), Keyword(), Keyword()])
+        orig = list(kws)
+        assert_raises_with_msg(TypeError,
+                               "Setup keyword type must be 'setup', got 'kw'.",
+                               setattr, kws, 'setup', Keyword())
+        assert_equal(list(kws), orig)
+
+    def test_get_teardown(self):
         assert_equal(Keywords().teardown, None)
         teardown = Keyword(type='teardown')
-        assert_true(Keywords(keywords=[Keyword(), teardown]).teardown is teardown)
+        kws = Keywords(keywords=[Keyword(), teardown])
+        assert_true(kws.teardown is teardown)
+
+    def test_set_teardown(self):
+        kw, t1, t2 = Keyword(), Keyword(type='teardown'), Keyword(type='teardown')
+        kws = Keywords(keywords=[kw])
+        kws.teardown = t1
+        assert_true(kws.teardown is t1)
+        assert_equal(list(kws), [kw, t1])
+        kws.teardown = t2
+        assert_true(kws.teardown is t2)
+        assert_equal(list(kws), [kw, t2])
+
+    def test_teardown_is_removed_when_set_to_none(self):
+        kw = Keyword()
+        kws = Keywords(keywords=[kw, Keyword(type='teardown')])
+        kws.teardown = None
+        assert_none(kws.teardown)
+        assert_equal(list(kws), [kw])
+        kws.teardown = None
+        assert_none(kws.teardown)
+        assert_equal(list(kws), [kw])
+
+    def test_setting_non_teardown_keyword_to_teardown_is_not_supported(self):
+        kws = Keywords(keywords=[Keyword(), Keyword(type='teardown')])
+        orig = list(kws)
+        assert_raises_with_msg(
+            TypeError,
+            "Teardown keyword type must be 'teardown', got 'setup'.",
+            setattr, kws, 'teardown', Keyword(type='setup')
+        )
+        assert_equal(list(kws), orig)
 
     def test_for_loops_are_included(self):
         kws = [Keyword(type='for'), Keyword(), Keyword(type='foritem')]

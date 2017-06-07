@@ -56,14 +56,14 @@ Java Listener
 Correct Attributes To Listener Methods
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain    attributeverifyinglistener
-    Should Not Contain    ${status}    FAILED
-    Should Contain X Times    ${status}    PASSED    306
+    Should Contain X Times    ${status}    FAILED    0
+    Should Contain X Times    ${status}    PASSED    384
 
 Correct Attributes To Java Listener Methods
     [Tags]    require-jython
     ${status} =    Log File    %{TEMPDIR}/${JAVA_ATTR_TYPE_FILE}
     Check Stderr Does Not Contain    JavaAttributeVerifyingListener
-    Should Not Contain    ${status}    FAILED
+    Should Contain X Times    ${status}    FAILED    0
     Should Contain X Times    ${status}    PASSED    306
 
 Keyword Tags
@@ -71,7 +71,7 @@ Keyword Tags
     Should Contain X Times    ${status}    PASSED | tags: [force, keyword, tags]    6
 
 Suite And Test Counts
-    Run Tests    --listener listeners.SuiteAndTestCounts    misc/suites/sub*
+    Run Tests    --listener listeners.SuiteAndTestCounts    misc/suites/subsuites misc/suites/subsuites2
     Stderr Should Be Empty
 
 Suite Source
@@ -84,7 +84,7 @@ Keyword Type
 
 Suite And Test Counts With Java
     [Tags]    require-jython
-    Run Tests    --listener JavaSuiteAndTestCountListener    misc/suites/sub*
+    Run Tests    --listener JavaSuiteAndTestCountListener    misc/suites/subsuites misc/suites/subsuites2
     Stderr Should Be Empty
 
 Executing Keywords from Listeners
@@ -98,6 +98,15 @@ Test Template
     File Should Exist    ${listener}
     Run Tests    --listener ${listener}    output/listeners/test_template.robot
     Stderr Should Be Empty
+
+Keyword Arguments Are Always Strings
+    ${result} =    Run Tests    --listener attributeverifyinglistener    output/listeners/keyword_argument_types.robot
+    Should Be Empty    ${result.stderr}
+    Check Test Tags    Run Keyword with already resolved non-string arguments in test data    1    2
+    Check Test Case    Run Keyword with non-string arguments in library
+    ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
+    Should Contain X Times    ${status}    FAILED    0
+    Should Contain X Times    ${status}    PASSED    211
 
 *** Keywords ***
 Run Tests With Listeners

@@ -20,6 +20,8 @@ Closing already closed connection is OK
     Open Connection    ${HOST}
     Close Connection
     Close Connection
+    Sleep    0.1s    Give sockets a little time to *really* close.
+    Close Connection
 
 Close All Connections 1
     [Documentation]    FAIL No connection open

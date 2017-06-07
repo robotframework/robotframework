@@ -1,5 +1,6 @@
 *** Settings ***
 Test Setup        Create Output Directory
+Suite Teardown    Remove Files    ${ARGFILE}    ${ARGFILE 2}    ${ÄRGFÏLË}
 Resource          cli_resource.robot
 
 *** Variables ***
@@ -23,7 +24,7 @@ Argument File
     ...    -l=none
     ...    --report=none
     ...    -o${SPACE*5}output.xml
-    ${result} =    Run Tests    -M Meta1:Overwritten -A ${ARGFILE} -M Meta2:cli    ${TESTFILE}
+    ${result} =    Run Tests    -M Meta1:Overwritten --argumentfile ${ARGFILE} -M Meta2:cli    ${TESTFILE}
     ...    output=${CLI OUTDIR}/output.xml
     Execution Should Have Succeeded    ${result}
     Should Be Equal    ${SUITE.name}    From Argfile With Spaces
@@ -32,13 +33,13 @@ Argument File
 Two Argument Files
     Create Argument File    ${ARGFILE}    --metadata A1:Value1    --metadata A2:to be overridden
     Create Argument File    ${ARGFILE2}    --metadata A2:Value2
-    ${result} =    Run Tests    -A ${ARGFILE} --argumentfile ${ARGFILE2}    ${TESTFILE}
+    ${result} =    Run Tests    -A ${ARGFILE} --ArgumentFile ${ARGFILE2}    ${TESTFILE}
     Execution Should Have Succeeded    ${result}
     Should Be Equal    ${SUITE.metadata['A1']}    Value1
     Should Be Equal    ${SUITE.metadata['A2']}    Value2
 
 Recursive Argument File
-    Create Argument File    ${ARGFILE}    -M First:1    -M Second:overwritten    --argumentfile ${ARGFILE2}
+    Create Argument File    ${ARGFILE}    -M First:1    -M Second:overwritten    --ARGUMENTFILE ${ARGFILE2}
     Create Argument File    ${ARGFILE2}    --metadata Second:2
     ${result} =    Run Tests    -A ${ARGFILE}    ${TESTFILE}
     Execution Should Have Succeeded    ${result}
@@ -81,6 +82,12 @@ Option And Argument File Together
     Should Be Equal    ${SUITE.name}    My name
     Should Be Equal    ${SUITE.doc}    My docu
 
+Shortening --argumentfile is not possible
+    Create Argument File    ${ARGFILE}    --name My name
+    ${result} =    Run Tests Without Processing Output    --argumentfil ${ARGFILE}    ${TESTFILE}
+    Execution Should Have Failed    ${result}
+    ...    Using '--argumentfile' option in shortened format like '--argumentf' is not supported.
+
 *** Keywords ***
 Create Argument File
     [Arguments]    ${path}    @{lines}
@@ -97,3 +104,8 @@ Execution Should Have Succeeded
     [Arguments]    ${result}    ${rc}=0
     Should Be Equal As Integers    ${result.rc}    ${rc}
     Should Be Empty    ${result.stderr}
+
+Execution Should Have Failed
+    [Arguments]    ${result}    ${error}    ${rc}=252
+    Should Be Equal As Integers    ${result.rc}    ${rc}
+    Should Be Equal    ${result.stderr}    [ ERROR ] ${error}${USAGE TIP}

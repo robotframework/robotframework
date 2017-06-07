@@ -133,10 +133,10 @@ where the keywords can also be searched based on tags. The `--removekeywords`__
 and `--flattenkeywords`__ commandline options also support selecting keywords by
 tag, and new usages for keywords tags are possibly added in later releases.
 
-Similarly as with `test case tags`_, user keyword tags with a `robot-` prefix
-are reserved__ for special features by Robot Framework itself. Users should
-thus not use any tag with a `robot-` prefix unless actually activating
-the special functionality.
+Similarly as with `test case tags`_, user keyword tags with `robot-` and
+`robot:` prefixes are reserved__ for special features by Robot Framework
+itself. Users should thus not use any tag with these prefixes unless actually
+activating the special functionality.
 
 __ `Removing keywords`_
 __ `Flattening keywords`_
@@ -284,6 +284,21 @@ value is empty. The last example also illustrates how a variable
 number of arguments accepted by a user keyword can be used in a `for
 loop`__. This combination of two rather advanced functions can
 sometimes be very useful.
+
+The keywords in the examples above could be used, for example, like this:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Varargs with user keywords
+        Any Number Of Arguments
+        Any Number Of Arguments    arg
+        Any Number Of Arguments    arg1    arg2    arg3   arg4
+        One Or More Arguments    required
+        One Or More Arguments    arg1    arg2    arg3   arg4
+        Required, Default, Varargs    required
+        Required, Default, Varargs    required    optional
+        Required, Default, Varargs    arg1    arg2    arg3    arg4    arg5
 
 Again, Pythonistas probably notice that the variable number of
 arguments syntax is very close to the one in Python.

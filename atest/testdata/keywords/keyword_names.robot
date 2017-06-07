@@ -68,6 +68,10 @@ Keyword can just be marked without changing its name
     No Custom Name Given 1
     No Custom Name Given 2
 
+Functions decorated with @keyword can start with underscrore
+    I start with an underscore and I am OK
+    Function name can be whatever
+
 Embedded Args Keyword
     ${count}  ${item} =  Add 7 Copies of Coffee To Cart
     Should Be Equal  ${count}-${item}  7-Coffee

@@ -17,7 +17,7 @@ Imports Are Skipped On Exit
     Should be empty    ${ERRORS.messages}
 
 Correct Suite Teardown Is Executed When ExitOnFailure Is Used
-    [Setup]    Run Tests    --exitonfailure    misc/suites
+    [Setup]    Run Tests    -X    misc/suites
     ${tsuite} =    Get Test Suite    Suites
     Should Be Equal    ${tsuite.teardown.name}    BuiltIn.Log
     ${tsuite} =    Get Test Suite    Fourth
@@ -35,7 +35,7 @@ Exit On Failure With Skip Teardown On Exit
     Test Should Have Been Skipped    Suite3 First
 
 Test setup fails
-    [Setup]    Run Tests    --ExitOnFail    misc/setups_and_teardowns.robot
+    [Setup]    Run Tests    -X    misc/setups_and_teardowns.robot
     Check Test Case    Test with setup and teardown
     Check Test Case    Test with failing setup
     Test Should Have Been Skipped    Test with failing teardown

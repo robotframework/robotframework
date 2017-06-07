@@ -12,8 +12,8 @@ executed on the command line.
 Using Invoke
 ------------
 
-Some tasks are automated using `Invoke <http://pyinvoke.org>`_. Generating
-releases requires it to be installed::
+Some tasks are automated using `Invoke <http://pyinvoke.org>`_ (version 0.13 or
+newer). Generating releases requires it to be installed::
 
     pip install invoke
 
@@ -53,20 +53,30 @@ Preparation
 
        invoke clean
 
-4. Set version and GitHub login related shell variable to ease copy-pasting further commands::
+4. Set version information to a shell variable to ease copy-pasting further
+   commands. Add ``aN``, ``bN`` or ``rcN`` postfix if creating a pre-release::
 
-     VERSION=<x.y.z>
-     LOGIN=<GitHub Login>
-     PASSWORD=<GitHub Password>
+     VERSION=<version>
 
-   GitHub login details are needed only when generating release notes.
+   For example, ``VERSION=3.0.1`` or ``VERSION=3.1a2``.
 
 Release notes
 -------------
 
-1. Generate a template for the release notes::
+1. Generate a template for the release notes. Either first create shell
+   variables with GitHub login info or just replace them in the command
+   to actually generate the notes::
 
-     doc/releasenotes/generate.py $VERSION $LOGIN $PASSWORD >> doc/releasenotes/rf-$VERSION.rst
+     GITHUB_USERNAME=<username>
+     GITHUB_PASSWORD=<password>
+
+     doc/releasenotes/generate.py $VERSION $GITHUB_USERNAME $GITHUB_PASSWORD >> doc/releasenotes/rf-$VERSION.rst
+
+   When generating release notes for a preview release like ``3.0.2rc1``,
+   the list of issues is only going to contain issues with a matching label
+   like ``rc1``. If such labels are not used with this release (typical with
+   minor releases), the version must be given without the preview specifier
+   like ``3.0.2``.
 
 2. Fill the missing details in the template.
 

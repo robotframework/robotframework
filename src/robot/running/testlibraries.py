@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -20,12 +21,12 @@ from robot.libraries import STDLIBS
 from robot.output import LOGGER
 from robot.utils import (getdoc, get_error_details, Importer, is_java_init,
                          is_java_method, JYTHON, normalize, seq2str2, unic,
-                         is_list_like)
+                         is_list_like, PY2, PYPY, type_name)
 
 from .arguments import EmbeddedArguments
 from .context import EXECUTION_CONTEXTS
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
-                             GetKeywordNames, RunKeyword)
+                             GetKeywordNames, GetKeywordTags, RunKeyword)
 from .handlers import Handler, InitHandler, DynamicHandler, EmbeddedArgumentsHandler
 from .handlerstore import HandlerStore
 from .libraryscopes import LibraryScope
@@ -132,10 +133,15 @@ class _BaseTestLibrary(object):
         return InitHandler(self, self._resolve_init_method(libcode))
 
     def _resolve_init_method(self, libcode):
-        init_method = getattr(libcode, '__init__', None)
-        return init_method if self._valid_init(init_method) else lambda: None
+        init = getattr(libcode, '__init__', None)
+        return init if init and self._valid_init(init) else lambda: None
 
     def _valid_init(self, method):
+        # https://bitbucket.org/pypy/pypy/issues/2462/
+        if PYPY:
+            if PY2:
+                return method.__func__ is not object.__init__.__func__
+            return method is not object.__init__
         return (inspect.ismethod(method) or     # PY2
                 inspect.isfunction(method) or   # PY3
                 is_java_init(method))
@@ -192,10 +198,20 @@ class _BaseTestLibrary(object):
     def close_global_listeners(self):
         if self.scope.is_global:
             for listener in self.get_listeners():
-                if hasattr(listener, 'close'):
-                    listener.close()
-                elif hasattr(listener, '_close'):
-                    listener._close()
+                self._close_listener(listener)
+
+    def _close_listener(self, listener):
+        method = (getattr(listener, 'close', None) or
+                  getattr(listener, '_close', None))
+        try:
+            if method:
+                method()
+        except:
+            message, details = get_error_details()
+            name = getattr(listener, '__name__', None) or type_name(listener)
+            LOGGER.error("Calling method '%s' of listener '%s' failed: %s"
+                         % (method.__name__, name, message))
+            LOGGER.info("Details:\n%s" % details)
 
     def _create_handlers(self, libcode):
         try:
@@ -220,11 +236,20 @@ class _BaseTestLibrary(object):
 
     def _get_handler_names(self, libcode):
         return [name for name in dir(libcode)
-                if not name.startswith(('_', 'ROBOT_'))]
+                if name[:1] != '_' or self._has_robot_name(name, libcode)]
+
+    def _has_robot_name(self, name, libcode):
+        try:
+            handler = self._get_handler_method(libcode, name)
+        except DataError:
+            return False
+        return hasattr(handler, 'robot_name')
 
     def _try_to_get_handler_method(self, libcode, name):
         try:
             return self._get_handler_method(libcode, name)
+        # TODO: RF 3.1: Catch only DataError or at least consider others errors.
+        # Don't want to do that in a minor release.
         except:
             self._report_adding_keyword_failed(name)
             return None
@@ -250,6 +275,8 @@ class _BaseTestLibrary(object):
         except DataError as err:
             self._report_adding_keyword_failed(name, err.message, level='ERROR')
             return None, False
+        # TODO: RF 3.1: Catch only DataError or at least consider others errors.
+        # Don't want to do that in a minor release.
         except:
             self._report_adding_keyword_failed(name)
             return None, False
@@ -295,33 +322,25 @@ class _ClassLibrary(_BaseTestLibrary):
         for item in (libinst,) + inspect.getmro(libinst.__class__):
             if item in (object, Object):
                 continue
-            if not (hasattr(item, '__dict__') and name in item.__dict__):
-                continue
-            self._validate_handler(item.__dict__[name])
-            return getattr(libinst, name)
+            if hasattr(item, '__dict__') and name in item.__dict__:
+                self._validate_handler(item.__dict__[name])
+                return getattr(libinst, name)
         raise DataError('No non-implicit implementation found')
 
     def _validate_handler(self, handler):
-        if not self._is_routine(handler):
+        if not inspect.isroutine(handler):
             raise DataError('Not a method or function')
         if self._is_implicit_java_or_jython_method(handler):
             raise DataError('Implicit methods are ignored')
-
-    def _is_routine(self, handler):
-        return inspect.isroutine(handler) or is_java_method(handler)
 
     def _is_implicit_java_or_jython_method(self, handler):
         if not is_java_method(handler):
             return False
         for signature in handler.argslist[:handler.nargs]:
             cls = signature.declaringClass
-            if not (cls is Object or self._is_created_by_jython(handler, cls)):
+            if not (cls is Object or cls.__module__ == 'org.python.proxies'):
                 return False
         return True
-
-    def _is_created_by_jython(self, handler, cls):
-        proxy_methods = getattr(cls, '__supernames__', []) + ['classDictInit']
-        return handler.__name__ in proxy_methods
 
 
 class _ModuleLibrary(_BaseTestLibrary):
@@ -363,12 +382,16 @@ class _DynamicLibrary(_BaseTestLibrary):
                          _BaseTestLibrary.doc.fget(self))
         return self._doc
 
-    def _get_kw_doc(self, name, instance=None):
-        getter = GetKeywordDocumentation(instance or self.get_instance())
+    def _get_kw_doc(self, name):
+        getter = GetKeywordDocumentation(self.get_instance())
         return getter(name)
 
-    def _get_kw_args(self, name, instance=None):
-        getter = GetKeywordArguments(instance or self.get_instance())
+    def _get_kw_args(self, name):
+        getter = GetKeywordArguments(self.get_instance())
+        return getter(name)
+
+    def _get_kw_tags(self, name):
+        getter = GetKeywordTags(self.get_instance())
         return getter(name)
 
     def _get_handler_names(self, instance):
@@ -378,9 +401,10 @@ class _DynamicLibrary(_BaseTestLibrary):
         return RunKeyword(instance)
 
     def _create_handler(self, name, method):
-        doc = self._get_kw_doc(name)
         argspec = self._get_kw_args(name)
-        return DynamicHandler(self, name, method, doc, argspec)
+        tags = self._get_kw_tags(name)
+        doc = self._get_kw_doc(name)
+        return DynamicHandler(self, name, method, doc, argspec, tags)
 
     def _create_init_handler(self, libcode):
         docgetter = lambda: self._get_kw_doc('__init__')

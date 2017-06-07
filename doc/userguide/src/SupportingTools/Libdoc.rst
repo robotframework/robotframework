@@ -435,7 +435,7 @@ like :codesc:`\`My Keyword\``.
     ROBOT_LIBRARY_DOC_FORMAT = 'text'
 
     def my_keyword():
-        """Nothing more to see here"""
+        """Nothing more to see here."""
 
 reStructuredText documentation syntax
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -447,6 +447,12 @@ documentation using it. Because backtick characters have special meaning in
 reStructuredText, `linking to keywords`_ requires them to be escaped like
 :codesc:`\\\`My Keyword\\\``.
 
+One of the nice features that reStructured supports is the ability to mark code
+blocks that can be syntax highlighted. The code block syntax has always worked
+with Robot Framework, but they are highlighted only in RF 3.0.1 and newer.
+Syntax highlight requires additional Pygments_ module and supports all the
+languages that Pygments supports.
+
 .. sourcecode:: python
 
     """Example library in reStructuredText format.
@@ -457,11 +463,17 @@ reStructuredText, `linking to keywords`_ requires them to be escaped like
     - Linking to \`My Keyword\` works but requires backtics to be escaped.
 
     __ http://docutils.sourceforge.net
+
+    .. code:: robotframework
+
+        *** Test Cases ***
+        Example
+            My keyword    # How cool is this!!?!!?!1!!
     """
     ROBOT_LIBRARY_DOC_FORMAT = 'reST'
 
     def my_keyword():
-        """Nothing more to see here"""
+        """Nothing more to see here."""
 
 .. _internal linking:
 

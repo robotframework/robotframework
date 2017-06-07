@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -130,13 +131,39 @@ class Keywords(ItemList):
 
     @property
     def setup(self):
-        """Keyword used as the setup or ``None`` if no setup."""
+        """Keyword used as the setup or ``None`` if no setup.
+
+        Can be set to a new setup keyword or ``None`` since RF 3.0.1.
+        """
         return self[0] if (self and self[0].type == 'setup') else None
+
+    @setup.setter
+    def setup(self, kw):
+        if kw is not None and kw.type != 'setup':
+            raise TypeError("Setup keyword type must be 'setup', "
+                            "got '%s'." % kw.type)
+        if self.setup is not None:
+            self.pop(0)
+        if kw is not None:
+            self.insert(0, kw)
 
     @property
     def teardown(self):
-        """Keyword used as the teardown or ``None`` if no teardown."""
+        """Keyword used as the teardown or ``None`` if no teardown.
+
+        Can be set to a new teardown keyword or ``None`` since RF 3.0.1.
+        """
         return self[-1] if (self and self[-1].type == 'teardown') else None
+
+    @teardown.setter
+    def teardown(self, kw):
+        if kw is not None and kw.type != 'teardown':
+            raise TypeError("Teardown keyword type must be 'teardown', "
+                            "got '%s'." % kw.type)
+        if self.teardown is not None:
+            self.pop()
+        if kw is not None:
+            self.append(kw)
 
     @property
     def all(self):

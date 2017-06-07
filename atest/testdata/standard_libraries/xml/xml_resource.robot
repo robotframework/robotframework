@@ -18,8 +18,8 @@ Get Etree Version
     [Return]    ${et.VERSION}
 
 Parse XML To Test Variable
-    [Arguments]    ${input}    ${var}    ${keep clark notation}=
-    ${result} =    Parse XML    ${input}    ${keep clark notation}
+    [Arguments]    ${input}    ${var}    &{config}
+    ${result} =    Parse XML    ${input}    &{config}
     Set Test Variable    ${var}    ${result}
 
 Element Should Have Attributes
@@ -29,12 +29,15 @@ Element Should Have Attributes
 
 Saved XML Should Equal
     [Arguments]    ${tree}    @{expected}
+    Remove File    ${OUTPUT}
     Save XML    ${tree}    ${OUTPUT}
     ${expected} =    Catenate    SEPARATOR=\n    @{expected}
     XML Content Should Be    ${expected}
 
+
 Saved XML Should Equal File
     [Arguments]    ${tree}    ${expected}
+    Remove File    ${OUTPUT}
     Save XML    ${tree}    ${OUTPUT}
     ${content} =    Get File    ${OUTPUT}
     ${content} =    Split To Lines    ${content}
@@ -80,3 +83,6 @@ XML Content Should Be
     ${expected} =    Split To Lines    ${expected}
     Should Be Equal    ${actual[0].lower()}    <?xml version='1.0' encoding='${encoding.lower()}'?>
     Lists Should Be Equal    ${actual[1:]}    ${expected}
+
+Remove Output File
+    Remove File    ${OUTPUT}

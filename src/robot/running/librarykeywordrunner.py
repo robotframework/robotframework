@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -126,6 +127,9 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
             raise DataError("Positional arguments are not allowed when using "
                             "embedded arguments.")
         return LibraryKeywordRunner._run(self, context, self._embedded_args)
+
+    def _dry_run(self, context, args):
+        return LibraryKeywordRunner._dry_run(self, context, self._embedded_args)
 
 
 class RunKeywordRunner(LibraryKeywordRunner):

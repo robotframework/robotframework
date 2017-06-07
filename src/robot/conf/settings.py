@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -25,7 +26,7 @@ from robot.utils import (abspath, escape, format_time, get_link_path,
                          html_escape, is_list_like, py2to3,
                          split_args_from_name_or_path)
 
-from .gatherfailed import gather_failed_tests
+from .gatherfailed import gather_failed_tests, gather_failed_suites
 
 
 @py2to3
@@ -35,6 +36,7 @@ class _BaseSettings(object):
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
                  'ReRunFailed'      : ('rerunfailed', 'NONE'),
+                 'ReRunFailedSuites': ('rerunfailedsuites', 'NONE'),
                  'SuiteNames'       : ('suite', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
@@ -77,10 +79,12 @@ class _BaseSettings(object):
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
             value = opts[cli_name] if cli_name in opts else default
-            if default == [] and not is_list_like(value):
-                value = [value]
+            if isinstance(default, list):
+                # Copy mutable values and support list values as scalars.
+                value = list(value) if is_list_like(value) else [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['ReRunFailed']
+        self['SuiteNames'] += self['ReRunFailedSuites']
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
@@ -90,6 +94,8 @@ class _BaseSettings(object):
     def _process_value(self, name, value):
         if name == 'ReRunFailed':
             return gather_failed_tests(value)
+        if name == 'ReRunFailedSuites':
+            return gather_failed_suites(value)
         if name == 'LogLevel':
             return self._process_log_level(value)
         if value == self._get_default_value(name):
@@ -367,7 +373,8 @@ class _BaseSettings(object):
 
 
 class RobotSettings(_BaseSettings):
-    _extra_cli_opts = {'Output'             : ('output', 'output.xml'),
+    _extra_cli_opts = {'Extension'          : ('extension', None),
+                       'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),

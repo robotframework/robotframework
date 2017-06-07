@@ -10,44 +10,42 @@ from __future__ import print_function
 import os
 import re
 import shutil
+import sys
 import tarfile
 import tempfile
 import time
 import urllib
 import zipfile
 
-from invoke import task, run
+try:
+    from invoke import task, __version_info__ as invoke_version
+
+    if invoke_version < (0, 13):
+        raise ImportError
+except ImportError:
+    sys.exit('invoke 0.13 or newer required. See BUILD.rst for details.')
 
 
 assert os.getcwd() == os.path.dirname(os.path.abspath(__file__))
+
 
 VERSION_RE = re.compile('^(((?:2|3)\.\d+)(\.\d+)?)((a|b|rc|.dev)(\d+))?$')
 VERSION_FILE = os.path.join('src', 'robot', 'version.py')
 
 
-@task(default=True)
-def help():
-    """Show help, basically an alias for --help.
-
-    This task can be removed once the fix to this issue is released:
-    https://github.com/pyinvoke/invoke/issues/180
-    """
-    run('invoke --help')
-
-
 @task
-def tag_release(version):
+def tag_release(ctx, version):
     """Tag specified release.
 
     Updates version using `set_version`, creates tag, and pushes changes.
     """
-    version = set_version(version, push=True)
-    run("git tag -a {0} -m 'Release {0}'".format(version))
-    run("git push --tags")
+    version = set_version(ctx, version, push=True)
+    ctx.run("git tag -a {0} -m 'Release {0}'".format(version))
+    ctx.run("git push --tags")
 
 
 @task
-def set_version(version, push=False):
+def set_version(ctx, version, push=False):
     """Set version in `src/robot/version.py`.
 
     Version can have these values:
@@ -75,7 +73,7 @@ def set_version(version, push=False):
     version = get_version_from_file()
     print('Version:', version)
     if push:
-        git_commit([VERSION_FILE, 'pom.xml'],
+        git_commit(ctx, [VERSION_FILE, 'pom.xml'],
                    'Updated version to {}'.format(version), push=True)
     return version
 
@@ -116,19 +114,19 @@ def get_version_from_file():
     execfile(VERSION_FILE, namespace)
     return namespace['get_version']()
 
-def git_commit(paths, message, push=False):
+def git_commit(ctx, paths, message, push=False):
     paths = paths if isinstance(paths, basestring) else ' '.join(paths)
-    run("git commit -m '{}' {}".format(message, paths))
+    ctx.run("git commit -m '{}' {}".format(message, paths))
     if push:
-        run('git push')
+        ctx.run('git push')
 
 
 @task
-def clean(remove_dist=True, create_dirs=False):
+def clean(ctx, remove_dist=True, create_dirs=False):
     """Clean workspace.
 
-    By default deletes 'build' and 'dist' directories and removes '*.pyc'
-    and '$py.class' files.
+    By default deletes 'build' and 'dist' directories and removes '*.pyc',
+    '*$py.class' and '*~' files.
 
     Args:
         remove_dist:  Remove also 'dist' (default).
@@ -140,23 +138,24 @@ def clean(remove_dist=True, create_dirs=False):
             shutil.rmtree(name)
         if create_dirs and not os.path.isdir(name):
             os.mkdir(name)
-    for directory, _, files in os.walk('.'):
+    for directory, dirs, files in os.walk('.'):
         for name in files:
-            if name.endswith(('.pyc', '$py.class')):
+            if name.endswith(('.pyc', '$py.class', '~')):
                 os.remove(os.path.join(directory, name))
+        if '__pycache__' in dirs:
+            shutil.rmtree(os.path.join(directory, '__pycache__'))
 
 
 @task
-def sdist(deploy=False, remove_dist=False):
+def sdist(ctx, deploy=False, remove_dist=False):
     """Create source distribution.
 
     Args:
         deploy:       Register and upload sdist to PyPI.
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
-    clean(remove_dist, create_dirs=True)
-    run('python setup.py sdist'
-        + (' register upload' if deploy else ''))
+    clean(ctx, remove_dist, create_dirs=True)
+    ctx.run('python setup.py sdist' + (' register upload' if deploy else ''))
     announce()
 
 def announce():
@@ -167,7 +166,7 @@ def announce():
 
 
 @task
-def jar(jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
+def jar(ctx, jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
     """Create JAR distribution.
 
     Downloads Jython JAR and PyYAML if needed.
@@ -179,16 +178,16 @@ def jar(jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
         pyyaml_version: Version of PyYAML that will be included in the
             standalone jar. The version must be available from PyPI.
     """
-    clean(remove_dist, create_dirs=True)
+    clean(ctx, remove_dist, create_dirs=True)
     jython_jar = get_jython_jar(jython_version)
     print('Using {0}'.format(jython_jar))
-    compile_java_files(jython_jar)
+    compile_java_files(ctx, jython_jar)
     unzip_jar(jython_jar)
     copy_robot_files()
     pyaml_archive = get_pyyaml(pyyaml_version)
     extract_and_copy_pyyaml_files(pyyaml_version, pyaml_archive)
-    compile_python_files(jython_jar)
-    filename = create_robot_jar(get_version_from_file())
+    compile_python_files(ctx, jython_jar)
+    filename = create_robot_jar(ctx, get_version_from_file())
     announce()
     return os.path.abspath(filename)
 
@@ -225,12 +224,12 @@ def extract_and_copy_pyyaml_files(version, filename, build_dir='build'):
     target = os.path.join(build_dir, 'Lib', 'yaml')
     shutil.copytree(source, target, ignore=shutil.ignore_patterns('*.pyc'))
 
-def compile_java_files(jython_jar, build_dir='build'):
+def compile_java_files(ctx, jython_jar, build_dir='build'):
     root = os.path.join('src', 'java', 'org', 'robotframework')
     files = [os.path.join(root, name) for name in os.listdir(root)
              if name.endswith('.java')]
     print('Compiling {0} Java files.'.format(len(files)))
-    run('javac -d {target} -target 1.7 -source 1.7 -cp {cp} {files}'.format(
+    ctx.run('javac -d {target} -target 1.7 -source 1.7 -cp {cp} {files}'.format(
         target=build_dir, cp=jython_jar, files=' '.join(files)))
 
 def unzip_jar(path, target='build'):
@@ -242,18 +241,18 @@ def copy_robot_files(build_dir='build'):
     shutil.copytree(source, target, ignore=shutil.ignore_patterns('*.pyc'))
     shutil.rmtree(os.path.join(target, 'htmldata', 'testdata'))
 
-def compile_python_files(jython_jar, build_dir='build'):
-    run("java -jar {0} -m compileall -x '.*3.py' {1}".format(jython_jar, build_dir))
+def compile_python_files(ctx, jython_jar, build_dir='build'):
+    ctx.run("java -jar {0} -m compileall -x '.*3.py' {1}".format(jython_jar, build_dir))
     # Jython will not work without its py-files, but robot will
     for directory, _, files in os.walk(os.path.join(build_dir, 'Lib', 'robot')):
         for name in files:
             if name.endswith('.py'):
                 os.remove(os.path.join(directory, name))
 
-def create_robot_jar(version, source='build'):
+def create_robot_jar(ctx, version, source='build'):
     write_manifest(version, source)
     target = os.path.join('dist', 'robotframework-{0}.jar'.format(version))
-    run('jar cvfM {0} -C {1} .'.format(target, source))
+    ctx.run('jar cvfM {0} -C {1} .'.format(target, source))
     return target
 
 def write_manifest(version, build_dir='build'):

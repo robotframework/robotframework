@@ -119,7 +119,7 @@ Dictionary with non-ASCII byte values
     {'xx': b'\\xe4'}    binary=yes
 
 Dictionary with binary keys is not supported
-    [Documentation]    FAIL GLOB: TypeError: unhashable *
+    [Documentation]    FAIL GLOB: TypeError: *unhashable*
     {'\\x00': 'value'}
 
 Dictionary with binary values

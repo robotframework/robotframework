@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -76,6 +77,12 @@ class Remote(object):
             return self._client.get_keyword_arguments(name)
         except TypeError:
             return ['*args']
+
+    def get_keyword_tags(self, name):
+        try:
+            return self._client.get_keyword_tags(name)
+        except TypeError:
+            return None
 
     def get_keyword_documentation(self, name):
         try:
@@ -202,6 +209,12 @@ class XmlRpcRemoteClient(object):
     def get_keyword_arguments(self, name):
         try:
             return self._server.get_keyword_arguments(name)
+        except xmlrpclib.Error:
+            raise TypeError
+
+    def get_keyword_tags(self, name):
+        try:
+            return self._server.get_keyword_tags(name)
         except xmlrpclib.Error:
             raise TypeError
 

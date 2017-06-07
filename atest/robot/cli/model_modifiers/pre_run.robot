@@ -26,7 +26,7 @@ Non-existing modifier
     Run Tests    --prerunmodifier NobodyHere -l ${LOG}   ${TEST DATA}
     ${quote} =    Set Variable If    ${INTERPRETER.is_py3}    '    ${EMPTY}
     Stderr Should Match
-    ...    [ ERROR ] Importing model modifier 'NobodyHere' failed: ImportError:
+    ...    [ ERROR ] Importing model modifier 'NobodyHere' failed: *Error:
     ...    No module named ${quote}NobodyHere${quote}\nTraceback (most recent call last):\n*
     Output should not be modified
     Log should not be modified

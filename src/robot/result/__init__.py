@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -25,8 +26,11 @@ object. They can also be inspected and modified as part of the normal test
 execution by `pre-Rebot modifiers`__ and `listeners`__.
 
 It is highly recommended to import the public entry-points via the
-:mod:`robot.api` package like in the example below. This package is considered
-stable.
+:mod:`robot.api` package like in the example below. In those rare cases
+where the aforementioned model objects are needed directly, they can be
+imported from this package.
+
+This package is considered stable.
 
 Example
 -------

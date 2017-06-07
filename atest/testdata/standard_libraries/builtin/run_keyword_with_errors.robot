@@ -60,8 +60,12 @@ Ignore Error When Syntax Error At Run Time
     Run Keyword And Ignore Error    No Operation    wrong    number    of    arguments
 
 Ignore Error When Syntax Error In Setting Variables
-    [Documentation]    FAIL Cannot set variable '\@{incompatible}': Expected list-like value, got string.
+    [Documentation]    FAIL Assignment can contain only one list variable.
     Run Keyword And Ignore Error    Invalid Syntax When Setting Variable
+
+Ignore Error When Invalid Return Values When Setting Variables
+    ${status}    ${error} =    Run Keyword And Ignore Error    Invalid Return Values When Setting Variables
+    Should Be Equal    ${status}: ${error}    FAIL: Cannot set variables: Expected 2 return values, got 3.
 
 Ignore Error When Syntax Error In For Loop
     [Documentation]    FAIL Invalid FOR loop type 'IN KEKKONEN'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
@@ -94,7 +98,7 @@ Expect Error When Different Error Occurs
     Fail    This should not be executed
 
 Expect Error When Different Error Occurs 2
-    [Documentation]    FAIL REGEXP:Expected error 'My error' but got 'Evaluating expression 'foo == bar' failed: NameError: (name 'foo' is not defined|foo)'.
+    [Documentation]    FAIL STARTS: Expected error 'My error' but got 'Evaluating expression 'foo == bar' failed: NameError:
     Run Keyword And Expect Error    My error    Evaluate    foo == bar
     Fail    This should not be executed
 
@@ -145,8 +149,13 @@ Expect Error When Syntax Error At Run Time
     Run Keyword And Expect Error    *    Non existing keyword
 
 Expect Error When Syntax Error In Setting Variables
-    [Documentation]    FAIL Cannot set variable '\@{incompatible}': Expected list-like value, got string.
+    [Documentation]    FAIL Assignment can contain only one list variable.
     Run Keyword And Expect Error    *    Invalid Syntax When Setting Variable
+
+Expect Error When Invalid Return Values When Setting Variables
+    Run Keyword And Expect Error
+    ...    Cannot set variables: Expected 2 return values, got 3.
+    ...    Invalid Return Values When Setting Variables
 
 Expect Error When Syntax Error In For Loop
     [Documentation]    FAIL Invalid FOR loop type 'IN KEKKONEN'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
@@ -167,7 +176,7 @@ Expect Error When Access To List Variable Nonexisting Index Syntax 2
     Run Keyword And Expect Error    ${expected_err_msg}    Access To List Variable Nonexisting Index Syntax 2
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 1
-    ${expected_err_msg} =  Set Variable   Resolving variable '\${dict[c]}' failed: NameError: name 'c' is not defined
+    ${expected_err_msg} =  Set Variable   Resolving variable '\${dict[c]}' failed: NameError: *
     Run Keyword And Expect Error    ${expected_err_msg}    Access To Dictionary Variable Nonexisting Key Syntax 1
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 2
@@ -190,8 +199,11 @@ Timeouting UK
     [Timeout]    0.1 seconds
     Run Keyword And Ignore Error    Sleep    1 hour
 
+Invalid Return Values When Setting Variables
+    ${one}    ${two} =    Create List    too    many    args
+
 Invalid Syntax When Setting Variable
-    @{incompatible} =    Set Variable    string
+    @{this}    @{is}    @{invalid} =    Create List
 
 For Loop With Syntax Error
     : FOR    ${a}    IN KEKKONEN   foo    bar

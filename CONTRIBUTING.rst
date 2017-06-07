@@ -121,21 +121,22 @@ support both Python 2 and Python 3.
 Whitespace
 ''''''''''
 
-We are pretty picky about using whitespace. We use blank lines and whitespace
-in expressions as dictated by `PEP-8`_, but we also follow these rules:
+We are pretty picky about using whitespace. We follow `PEP-8`_ in how to use
+blank lines and whitespace in general, but we also have some stricter rules:
 
+- No blank lines inside functions.
 - Indentation using spaces, not tabs.
 - No trailing spaces.
 - No extra empty lines at the end of the file.
 - Files must end with a newline.
 
-The above rules are good with most other code too. Any decent editor or IDE
-can be configured to automatically format files according to them.
+Most of these rules are such that any decent text editor or IDE can be
+configured to automatically format files according to them.
 
 Docstrings
 ''''''''''
 
-Docstrings should be added to public APIs but are not generally needed in
+Docstrings should be added to public APIs, but they are not generally needed in
 internal code. When docstrings are added, they should follow `PEP-257
 <https://www.python.org/dev/peps/pep-0257/>`_. See `API documentation`_
 section below for more details about documentation syntax, generating
@@ -218,6 +219,21 @@ that your changes do not break anything. If you can, test in multiple
 environments and interpreters (Windows, Linux, OS X, Python, Jython,
 IronPython, Python 3, etc). Pull requests are also automatically tested on
 continuous integration.
+
+Executing changed code
+''''''''''''''''''''''
+
+If you want to manually verify the changes, an easy approach is directly
+running the `<src/robot/run.py>`_ script that is part of Robot Framework
+itself. Alternatively you can use the `<rundevel.py>`_ script that sets
+some command line options and environment variables to ease executing tests
+under the `<atest/testdata>`_ directory. It also automatically creates a
+``tmp`` directory in the project root and writes all outputs there.
+
+If you want to install the current code locally, you can do it like
+``python setup.py install`` as explained in `<INSTALL.rst>`_. For
+instructions how to create a distribution that allows installing elsewhere
+see `<BUILD.rst>`_.
 
 Acceptance tests
 ''''''''''''''''

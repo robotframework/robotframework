@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -23,8 +24,7 @@ approaches::
     python path/to/robot/rebot.py
 
 Instead of ``python`` it is possible to use also other Python interpreters.
-This module is also used by the installed ``rebot``, ``jyrebot`` and
-``ipyrebot`` start-up scripts.
+This module is also used by the installed ``rebot`` start-up script.
 
 This module also provides :func:`rebot` and :func:`rebot_cli` functions
 that can be used programmatically. Other code is for internal usage.
@@ -352,39 +352,44 @@ class Rebot(RobotFramework):
         return rc
 
 
-def rebot_cli(arguments):
-    """Command line execution entry point for running rebot.
+def rebot_cli(arguments, exit=True):
+    """Command line execution entry point for post-processing outputs.
 
-    :param arguments: Command line arguments as a list of strings.
+    :param arguments: Command line options and arguments as a list of strings.
+    :param exit: If ``True``, call ``sys.exit`` with the return code denoting
+        execution status, otherwise just return the rc. New in RF 3.0.1.
 
-    For programmatic usage the :func:`rebot` method is typically better. It has
-    a better API for that usage and does not call :func:`sys.exit` like this
-    method.
+    Entry point used when post-processing outputs from the command line, but
+    can also be used by custom scripts. Especially useful if the script itself
+    needs to accept same arguments as accepted by Rebot, because the script can
+    just pass them forward directly along with the possible default values it
+    sets itself.
 
     Example::
 
         from robot import rebot_cli
 
-        rebot_cli(['--report', 'r.html', '--log', 'NONE', 'o1.xml', 'o2.xml'])
+        rebot_cli(['--name', 'Example', '--log', 'NONE', 'o1.xml', 'o2.xml'])
+
+    See also the :func:`rebot` function that allows setting options as keyword
+    arguments like ``name="Example"`` and generally has a richer API for
+    programmatic Rebot execution.
     """
-    Rebot().execute_cli(arguments)
+    return Rebot().execute_cli(arguments, exit=exit)
 
 
-def rebot(*datasources, **options):
-    """Creates reports/logs from given Robot output files with given options.
+def rebot(*outputs, **options):
+    """Programmatic entry point for post-processing outputs.
 
-    Given input files are paths to Robot output files similarly as when running
-    rebot from the command line. Options are given as keywords arguments and
-    their names are same as long command line options without hyphens.
+    :param outputs: Paths to Robot Framework output files similarly
+        as when running the ``rebot`` command on the command line.
+    :param options: Options to configure processing outputs. Accepted
+        options are mostly same as normal command line options to the ``rebot``
+        command. Option names match command line option long names without
+        hyphens so that, for example, ``--name`` becomes ``name``.
 
-    Options that can be given on the command line multiple times can be
-    passed as lists like `include=['tag1', 'tag2']`. If such option is used
-    only once, it can be given also as a single string like `include='tag'`.
-
-    To capture stdout and/or stderr streams, pass open file objects in as
-    special keyword arguments `stdout` and `stderr`, respectively.
-
-    A return code is returned similarly as when running on the command line.
+    The semantics related to passing options are exactly the same as with the
+    :func:`~robot.run.run` function. See its documentation for more details.
 
     Examples::
 
@@ -392,14 +397,14 @@ def rebot(*datasources, **options):
 
         rebot('path/to/output.xml')
         with open('stdout.txt', 'w') as stdout:
-            rebot('o1.xml', 'o2.xml', report='r.html', log='NONE', stdout=stdout)
+            rebot('o1.xml', 'o2.xml', name='Example', log=None, stdout=stdout)
 
     Equivalent command line usage::
 
         rebot path/to/output.xml
-        rebot --report r.html --log NONE o1.xml o2.xml > stdout.txt
+        rebot --name Example --log NONE o1.xml o2.xml > stdout.txt
     """
-    return Rebot().execute(*datasources, **options)
+    return Rebot().execute(*outputs, **options)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -135,3 +136,10 @@ class GetKeywordArguments(_DynamicMethod):
                 return ['*varargs', '**kwargs']
             return ['*varargs']
         return self._to_list_of_strings(value)
+
+
+class GetKeywordTags(_DynamicMethod):
+    _underscore_name = 'get_keyword_tags'
+
+    def _handle_return_value(self, value):
+        return self._to_list_of_strings(value or [])

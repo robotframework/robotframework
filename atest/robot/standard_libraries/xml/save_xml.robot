@@ -44,3 +44,9 @@ Doctype is not preserved
 
 Comments and processing instructions are removed
     Check Test Case    ${TESTNAME}
+
+Element can be further modified after saving
+    Check Test Case    ${TESTNAME}
+
+Element with namespaces can be further modified after saving
+    Check Test Case    ${TESTNAME}

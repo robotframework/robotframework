@@ -1,7 +1,11 @@
-from os.path import abspath, dirname, join, normpath
+from os.path import abspath, dirname, exists, join
 import os
 import subprocess
 import sys
+
+
+PROJECT_ROOT = dirname(dirname(abspath(__file__)))
+ROBOT_PATH = join(PROJECT_ROOT, 'src', 'robot')
 
 
 def get_variables(path, name=None, version=None):
@@ -23,8 +27,6 @@ class Interpreter(object):
             name, version = self._get_name_and_version()
         self.name = name
         self.version = version
-        self._robot_path = normpath(join(dirname(abspath(__file__)),
-                                         '..', 'src', 'robot'))
 
     def _get_interpreter(self, path):
         return [path] if os.path.exists(path) else path.split()
@@ -36,6 +38,7 @@ class Interpreter(object):
         except (subprocess.CalledProcessError, OSError):
             raise ValueError('Invalid interpreter: %s' % self.path)
         name, version = output.split()[:2]
+        name = name if 'PyPy' not in output else 'PyPy'
         version = '.'.join(version.split('.')[:2])
         return name, version
 
@@ -44,6 +47,8 @@ class Interpreter(object):
         if self.is_python and self.version == '2.6':
             yield 'no-python26'
             yield 'require-et13'
+        else:
+            yield 'require-python26'
         if self.is_jython:
             yield 'no-jython'
             yield 'require-lxml'
@@ -79,6 +84,20 @@ class Interpreter(object):
                 yield 'no-osx-python'
 
     @property
+    def classpath(self):
+        if not self.is_jython:
+            return None
+        classpath = os.environ.get('CLASSPATH')
+        if classpath and 'tools.jar' in classpath:
+            return classpath
+        tools_jar = join(PROJECT_ROOT, 'ext-lib', 'tools.jar')
+        if not exists(tools_jar):
+            return classpath
+        if classpath:
+            return classpath + os.pathsep + tools_jar
+        return tools_jar
+
+    @property
     def is_python(self):
         return self.name == 'Python'
 
@@ -89,6 +108,10 @@ class Interpreter(object):
     @property
     def is_ironpython(self):
         return self.name == 'IronPython'
+
+    @property
+    def is_pypy(self):
+        return self.name == 'PyPy'
 
     @property
     def is_py2(self):
@@ -121,23 +144,23 @@ class Interpreter(object):
 
     @property
     def runner(self):
-        return self.interpreter + [join(self._robot_path, 'run.py')]
+        return self.interpreter + [join(ROBOT_PATH, 'run.py')]
 
     @property
     def rebot(self):
-        return self.interpreter + [join(self._robot_path, 'rebot.py')]
+        return self.interpreter + [join(ROBOT_PATH, 'rebot.py')]
 
     @property
     def libdoc(self):
-        return self.interpreter + [join(self._robot_path, 'libdoc.py')]
+        return self.interpreter + [join(ROBOT_PATH, 'libdoc.py')]
 
     @property
     def testdoc(self):
-        return self.interpreter + [join(self._robot_path, 'testdoc.py')]
+        return self.interpreter + [join(ROBOT_PATH, 'testdoc.py')]
 
     @property
     def tidy(self):
-        return self.interpreter + [join(self._robot_path, 'tidy.py')]
+        return self.interpreter + [join(ROBOT_PATH, 'tidy.py')]
 
 
 class StandaloneInterpreter(Interpreter):
@@ -148,7 +171,7 @@ class StandaloneInterpreter(Interpreter):
 
     def _get_interpreter(self, path):
         interpreter = ['java', '-jar', path]
-        classpath = os.environ.get('CLASSPATH')
+        classpath = self.classpath
         if classpath:
             interpreter.insert(1, '-Xbootclasspath/a:%s' % classpath)
         return interpreter

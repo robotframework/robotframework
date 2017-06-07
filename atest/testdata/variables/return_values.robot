@@ -183,9 +183,10 @@ None To Dict
     Should Be True    &{ret} == {}
 
 Dictionary is dot-accessible
-    &{dotted} =    Evaluate    {'key': 'value'}
+    &{dotted} =    Evaluate    {'key': 'value', 'nested': {'key': 'value'}}
     Should Be Equal    ${dotted['key']}    value
     Should Be Equal    ${dotted.key}    value
+    Should Be Equal    ${dotted.nested.key}    value
 
 Scalar dictionary is not dot-accessible
     [Documentation]     FAIL STARTS: Resolving variable '${normal.key}' failed: AttributeError:
@@ -288,6 +289,59 @@ Assign Mark Can Be Used Only With The Last Variable
     ${v1} =    ${v2} =    Set Variable    a    b
 
 Files are not lists
-   [Documentation]    FAIL Cannot set variable '\@{works not}': Expected list-like value, got file.
-   ${works} =    Get open file
-   @{works not} =    Get open file
+    [Documentation]    FAIL Cannot set variable '\@{works not}': Expected list-like value, got file.
+    ${works} =    Get open file
+    @{works not} =    Get open file
+
+Invalid count error is catchable
+    [Documentation]    FAIL
+    ...    Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) Cannot set variables: Expected 2 return values, got 3.
+    ...
+    ...    2) Also this is executed!
+    Run Keyword And Expect Error
+    ...    Cannot set variables: Expected 2 return values, got 3.
+    ...    Assign multiple variables    too    many    args
+    Run Keyword And Expect Error
+    ...    Cannot set variables: Expected 1 or more return values, got 0.
+    ...    Assign multiple variables
+    [Teardown]    Run Keywords
+    ...    Assign multiple variables    too    many    args    AND
+    ...    Fail    Also this is executed!
+
+Invalid type error is catchable
+    [Documentation]    FAIL
+    ...    Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) Cannot set variable '\@{x}': Expected list-like value, got boolean.
+    ...
+    ...    2) Cannot set variable '\&{x}': Expected dictionary-like value, got string.
+    ...
+    ...    3) Also this is executed!
+    Run Keyword And Expect Error
+    ...    Cannot set variable '\@{x}': Expected list-like value, got string.
+    ...    Assign list variable    not list
+    Run Keyword And Expect Error
+    ...    Cannot set variable '\&{x}': Expected dictionary-like value, got integer.
+    ...    Assign dict variable    ${42}
+    [Teardown]    Run Keywords
+    ...    Assign list variable    ${False}               AND
+    ...    Assign dict variable    not dict               AND
+    ...    Fail    Also this is executed!
+
+*** Keywords ***
+Assign multiple variables
+     [Arguments]    @{args}
+     ${x}    @{y} =    Create List    @{args}
+     ${x}    ${y} =    Create List    @{args}
+
+Assign list variable
+     [Arguments]    ${arg}
+     @{x} =    Set Variable    ${arg}
+
+Assign dict variable
+     [Arguments]    ${arg}
+     &{x} =    Set Variable    ${arg}

@@ -70,3 +70,7 @@ Laurent Bristiel               Convert examples in User Guide to plain text form
 Tim Orling                     IronPython support for `Dialogs` library (2.9.2, #1235)
 Jozef Behran                   Fix ${TEST_MESSAGE} to reflect current test message (3.0, #2188)
 Joong-Hee Lee                  Extend 'Repeat Keyword' to support timeout (3.0, #2245)
+Anton Nikitin                  Should (Not) Contain Any (3.0.1, #2120)
+Yang Qian                      Support to copy/deepcopy model objects (3.0.1, #2483)
+Chris Callan                   Case-insensitivity support to various comparison keywords (3.0.1, #2439)
+Benjamin Einaudi               Add --rerunfailedsuites option (3.0.1, #2117)

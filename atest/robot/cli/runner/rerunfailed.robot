@@ -12,6 +12,7 @@ ${RUN FAILED FROM}    ${RERUN DIR}/rerun-output.xml
 *** Test Cases ***
 Passing is not re-executed
     Test Should Not Have Been Executed    Passing
+    Test Should Not Have Been Executed    Not Failing
 
 Failing is re-executed
     Test Should Have Been Executed    Failing
@@ -38,7 +39,7 @@ Suite initialization
     Run Tests    ${EMPTY}    ${SUITE DIR}
     Copy File    ${OUTFILE}    ${RUN FAILED FROM}
     Copy File    ${ORIG DIR}/runfailed2.robot    ${SUITE DIR}/runfailed.txt
-    Run Tests    --rerunfailed ${RUN FAILED FROM} --test Selected --exclude tag    ${SUITE DIR}
+    Run Tests    --rerunfailed ${RUN FAILED FROM} --test Selected --exclude excluded_tag    ${SUITE DIR}
 
 Test Should Have Been Executed
     [Arguments]    ${name}

@@ -135,8 +135,17 @@ window.util = function () {
         return new Date(base + millis);
     }
 
-    function createGeneratedAgoString(generatedMillis) {
-        generatedMillis = timestamp(generatedMillis);
+    function createGeneratedString(timestamp) {
+        var date = new Date(timestamp);
+        var dt = dateTimeFromDate(date).slice(0, 17);  // drop millis
+        var offset = date.getTimezoneOffset();
+        var sign = offset > 0 ? '-' : '+';
+        var hours = Math.floor(Math.abs(offset) / 60);
+        var mins = Math.abs(offset) % 60;
+        return dt + ' GMT' + sign + padTo(hours, 2) + ':' + padTo(mins, 2);
+    }
+
+    function createGeneratedAgoString(timestamp) {
         function timeString(time, shortUnit) {
             var unit = {y: 'year', d: 'day', h: 'hour', m: 'minute',
                         s: 'second'}[shortUnit];
@@ -147,7 +156,7 @@ window.util = function () {
             // Not a perfect algorithm but ought to be enough
             return days - Math.floor(years / 4);
         }
-        var generated = Math.round(generatedMillis / 1000);
+        var generated = Math.round(timestamp / 1000);
         var current = Math.round(new Date().getTime() / 1000);
         var elapsed = current - generated;
         var prefix = '';
@@ -208,6 +217,7 @@ window.util = function () {
         dateTimeFromDate: dateTimeFromDate,
         formatElapsed: formatElapsed,
         timestamp: timestamp,
+        createGeneratedString: createGeneratedString,
         createGeneratedAgoString: createGeneratedAgoString,
         parseQueryString: parseQueryString
     };

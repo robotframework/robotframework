@@ -1,4 +1,5 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -128,7 +129,9 @@ class ListenerProxy(AbstractLoggerProxy):
 
     def _import_listener(self, listener):
         if not is_string(listener):
-            return listener, type_name(listener)
+            # Modules have `__name__`, with others better to use `type_name`.
+            name = getattr(listener, '__name__', None) or type_name(listener)
+            return listener, name
         name, args = split_args_from_name_or_path(listener)
         importer = Importer('listener')
         listener = importer.import_class_or_module(os.path.normpath(name),
