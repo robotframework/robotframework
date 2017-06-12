@@ -75,7 +75,10 @@ class RowSplitter(object):
             current, row = self._split(row)
             yield self._escape_last_cell_if_empty(current)
             if row:
-                row = self._continue_row(row, indent)
+                if self._comment_mark in current:
+                    row = self._continue_row(row, indent, True)
+                else:
+                    row = self._continue_row(row, indent)
 
     def _split(self, data):
         index = min(self._get_possible_split_indices(data))
@@ -101,8 +104,10 @@ class RowSplitter(object):
             row = row[:-1] + [self._empty_cell_escape]
         return row
 
-    def _continue_row(self, row, indent):
+    def _continue_row(self, row, indent, is_comment = False):
         row = [self._line_continuation] + row
+        if is_comment:
+            row = [self._comment_mark] + row
         if indent + 1 < self._cols:
             row = [''] * indent + row
         return row
