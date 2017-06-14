@@ -75,7 +75,6 @@ class RowSplitter(object):
             current, row = self._split(row)
             yield self._escape_last_cell_if_empty(current)
             if row:
-                print(row)
                 row = self._continue_row(row, indent)
 
     def _split(self, data):
