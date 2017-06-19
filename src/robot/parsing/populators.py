@@ -28,11 +28,11 @@ from .htmlreader import HtmlReader
 from .tsvreader import TsvReader
 from .txtreader import TxtReader
 from .restreader import RestReader
-
+from .mdreader import MarkDownReader
 
 READERS = {'html': HtmlReader, 'htm': HtmlReader, 'xhtml': HtmlReader,
-           'tsv': TsvReader , 'rst': RestReader, 'rest': RestReader,
-           'txt': TxtReader, 'robot': TxtReader}
+           'tsv': TsvReader, 'rst': RestReader, 'rest': RestReader,
+           'txt': TxtReader, 'robot': TxtReader, 'md': MarkDownReader}
 
 # Hook for external tools for altering ${CURDIR} processing
 PROCESS_CURDIR = True
@@ -50,7 +50,7 @@ class FromFilePopulator(object):
         self._curdir = self._get_curdir(datafile.directory)
 
     def _get_curdir(self, path):
-        return path.replace('\\','\\\\') if path else None
+        return path.replace('\\', '\\\\') if path else None
 
     def populate(self, path):
         LOGGER.info("Parsing file '%s'." % path)
@@ -83,7 +83,7 @@ class FromFilePopulator(object):
         self._populator.populate()
         table = self._datafile.start_table(DataRow(header).all)
         self._populator = self._populators[table.type](table) \
-                if table is not None else NullPopulator()
+            if table is not None else NullPopulator()
         return bool(self._populator)
 
     def eof(self):
@@ -141,7 +141,8 @@ class FromDirectoryPopulator(object):
 
     def _get_include_suites(self, path, incl_suites):
         if not isinstance(incl_suites, SuiteNamePatterns):
-            incl_suites = SuiteNamePatterns(self._create_included_suites(incl_suites))
+            incl_suites = SuiteNamePatterns(self._create_included_suites(
+                                            incl_suites))
         if not incl_suites:
             return incl_suites
         # If a directory is included, also all its children should be included.

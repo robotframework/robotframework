@@ -4,7 +4,7 @@ from robot.parsing.htmlreader import HtmlReader
 from robot.utils.asserts import *
 
 
-VALID_TABLES = [ "Variable", "Setting", "Test Case", "Test Suite", "Keyword" ]
+VALID_TABLES = ["Variable", "Setting", "Test Case", "Test Suite", "Keyword"]
 ROW_TEMPLATE = '<tr><td>%s</td><td>%s</td><td>%s</td></tr>'
 
 
@@ -51,7 +51,7 @@ class TestHtmlReader(unittest.TestCase):
             assert_equal(self.reader.state, self.reader.IGNORE)
 
     def test_process_invalid_table(self):
-        for name in [ "Foo", "VaribleTable" ]:
+        for name in ["Foo", "VaribleTable"]:
             self.reader.feed('<table>')
             self.reader.feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
             assert_equal(self.reader.state, self.reader.IGNORE)
@@ -70,7 +70,7 @@ class TestHtmlReader(unittest.TestCase):
             self.reader.feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
             self.reader.feed(ROW_TEMPLATE % inp)
             self.reader.feed('</table>')
-            assert_equal(self.reader.populator.tables[name], [ exp ])
+            assert_equal(self.reader.populator.tables[name], [exp])
 
     def test_processing(self):
         self._row_processing(ROW_TEMPLATE)
