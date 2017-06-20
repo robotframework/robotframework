@@ -43,7 +43,7 @@ Invalid --TagStatLink
     ...    --tagstatlink a:b:c --TagStatLink less_than_3x_:
 
 Invalid --RemoveKeywords
-    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'FOR', or 'WUKS' but got 'Invalid'.
+    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'TAG:<pattern>', 'FOR', or 'WUKS' but got 'Invalid'.
     ...    --removekeywords wuks --removek name:xxx --RemoveKeywords Invalid
 
 *** Keywords ***

@@ -31,4 +31,4 @@ Invalid --TagStatLink
 
 Invalid --RemoveKeywords
     --removekeywords wuks --removek name:xxx --RemoveKeywords Invalid tests.txt
-    ...    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'FOR', or 'WUKS' but got 'Invalid'.
+    ...    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'TAG:<pattern>', 'FOR', or 'WUKS' but got 'Invalid'.
