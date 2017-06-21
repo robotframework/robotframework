@@ -36,7 +36,7 @@ Supported file formats
 
 Robot Framework test data is defined in tabular format, using either
 hypertext markup language (HTML), tab-separated values (TSV),
-plain text, or reStructuredText (reST) formats. The details of these
+plain text, markdown (MD), or reStructuredText (reST) formats. The details of these
 formats, as well as the main benefits and problems with them, are explained
 in the subsequent sections. Which format to use depends on the context,
 but the plain text format is recommended if there are no special needs.
@@ -44,8 +44,8 @@ but the plain text format is recommended if there are no special needs.
 Robot Framework selects a parser for the test data based on the file extension.
 The extension is case-insensitive, and the recognized extensions are
 :file:`.html`, :file:`.htm` and :file:`.xhtml` for HTML, :file:`.tsv`
-for TSV, :file:`.txt` and special :file:`.robot` for plain text, and
-:file:`.rst` and :file:`.rest` for reStructuredText.
+for TSV, :file:`.txt` and special :file:`.robot` for plain text, :file:`.md`
+for Markdown, and :file:`.rst` and :file:`.rest` for reStructuredText.
 
 Different `test data templates`_ are available for HTML and TSV
 formats to make it easier to get started writing tests.
@@ -341,6 +341,90 @@ Starting from Robot Framework 2.7.6, it is possible to save plain text
 test data files using a special :file:`.robot` extension in addition to
 the normal :file:`.txt` extension. The new extension makes it easier to
 distinguish test data files from other plain text files.
+
+Markdown format
+~~~~~~~~~~~~~~~
+
+Markdown_ (MD) is an easy-to-read plain text markup syntax that
+is commonly used for documentation of open source github projects.
+MD documents are most often compiled to HTML.
+
+Using MD with Robot Framework allows you to mix richly formatted documents
+and test data in a concise text format that is easy to work with
+using simple text editors, diff tools, and source control systems.
+In practice it combines many of the benefits of plain text and HTML formats.
+
+When using MD files with Robot Framework, it is easy to define test data within
+a markdown code block . Either you can use `markdown code blocks`__ and define 
+test cases in them using the `plain text format`_ or tables__ exactly like 
+you would with the `HTML format`_.
+
+
+__ `Markdown code blocks`_
+
+Markdown code blocks
+''''''''''''''''''''
+
+Markdown documents can contain code in so called markdown code blocks.
+When these documents are compiled into HTML or other formats, the code blocks
+are syntax highlighted. Markdown code blocks are
+enclosed using the ```````` directive. The name of the programming language in
+the code block is given as an argument to the directive in the first line. For 
+example, following code blocks contain Robot Framework examples:
+
+```robotframework
+   *** Test Cases ***
+   Example Test
+       Example Keyword
+```
+
+It is required to have a blank line before and after the code block. When Robot 
+Framework parses markdown files, it first searches for possible markdown code
+blocks containing Robot Framework test data. If such code blocks are found, data
+they contain is written into an in-memory file and executed. All data outside
+the code blocks is ignored.
+
+The test data in the code blocks must be defined using the `plain text format`_.
+As the example below illustrates, both space and pipe separated variants are
+supported:
+
+.. sourcecode:: robotframework
+
+    Example
+    -------
+
+    This text is outside code blocks and thus ignored.
+
+    ```robotframework
+
+    *** Settings ***
+    Library       OperatingSystem
+
+    *** Variables ***
+    ${MESSAGE}    Hello, world!
+
+    *** Test Cases ***
+    My Test
+        [Documentation]    Example test
+        Log    ${MESSAGE}
+        My Keyword    /tmp
+
+    Another Test
+        Should Be Equal    ${MESSAGE}    Hello, world!
+    ```
+
+    Also this text is outside code blocks and ignored. Above block used
+    the space separated plain text format and the block below uses the pipe
+    separated variant.
+
+    ```robotframework
+    | *** Keyword ***  |                        |         |
+    | My Keyword       | [Arguments]            | ${path} |
+    |                  | Directory Should Exist | ${path} |
+    ```
+
+.. note:: Escaping_ using the backslash character works normally in this format.
+          No double escaping is needed like when using HTML tables.
 
 reStructuredText format
 ~~~~~~~~~~~~~~~~~~~~~~~

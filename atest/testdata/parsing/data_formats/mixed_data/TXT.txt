@@ -1,6 +1,7 @@
 *Setting
 Document    Test suite in TXT file
 Resource    ../resources/html_resource.html            
+Resource    ../resources/md_resource.md            
 Resource    ../resources/rest_resource.rst            
 Resource    ../resources/tsv_resource.tsv            
 
@@ -15,6 +16,10 @@ HTML Resource    Keyword from HTML resource
     Keyword from HTML resource 2        
     Should Be Equal    ${html_resource_var}    HTML Resource Variable
     Should Be Equal    ${html_resource_var2}    HTML Resource Variable From Recursive Resource
+MD Resource    Keyword from MD resource
+    Keyword from MD resource 2        
+    Should Be Equal    ${md_resource_var}      MD Resource Variable
+    Should Be Equal    ${md_resource_var2}      MD Resource Variable From Recursive Resource
 ReST Resource    Keyword from ReST resource
     Keyword from ReST resource 2        
     Should Be Equal    ${rest_resource_var}    ReST Resource Variable

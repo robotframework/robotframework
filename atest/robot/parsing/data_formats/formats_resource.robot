@@ -8,6 +8,7 @@ ${TSV DIR}        ${DATA ROOT}${/}tsv
 ${TXT DIR}        ${DATA ROOT}${/}txt
 ${ROBOT DIR}      ${DATA ROOT}${/}robot
 ${REST DIR}       ${DATA ROOT}${/}rest
+${MD DIR}         ${DATA ROOT}${/}md
 ${MIXED DIR}      ${DATA ROOT}${/}mixed_data
 @{SAMPLE TESTS}    Passing    Failing    User Keyword    Nön-äscïï    Own Tags    Default Tags    Variable Table
 ...               Resource File    Variable File    Library Import    Test Timeout    Keyword Timeout    Empty Rows    Document

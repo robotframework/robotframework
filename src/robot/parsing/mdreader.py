@@ -12,28 +12,10 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-r'''
-A Test Case TextReader for markdown files
-    Robot Test Case file in markdown files (*.md) parsing support
-    Original Contributor: https://gist.github.com/Tset-Noitamotua
-    Any text in a markdown file within textblock that starts  with
-    ```robotframework and ends with ``` in a separate line is treated as a
-    valid robot script block
-    for example a file testme.md contains the following markdown content
-    with valid robotframework test script containing a single test case :
-    # Introduction
-    This is an example markdown text
-    ## Script Example
-    ```robotframework
-    *** Test Cases ***
-    My Test
-        Log hello world from markdown    console=yes
-    ```
-    ## Some more documentation
-'''
 from io import BytesIO
 from io import StringIO
 
+from robot.utils import Utf8Reader
 from .txtreader import TxtReader
 
 
@@ -44,10 +26,11 @@ def MarkDownReader():
             self.robot_data = ''
 
         def robotize(self, md_file):
-            f = StringIO(md_file.read().decode('UTF-8'))
+            # f = StringIO(md_file.read().decode('UTF-8'))
             try:
                 include_line = False
-                for line in f.readlines():
+                # for line in f.readlines():
+                for line in Utf8Reader(md_file).readlines():
                     if not include_line:
                         include_line = (line.strip().lower() ==
                                         "```robotframework")
@@ -55,9 +38,9 @@ def MarkDownReader():
                         include_line = False
                     else:
                         self.robot_lines.append(line)
-                self.robot_data = str(''.join(self.robot_lines))
+                self.robot_data = ''.join(self.robot_lines)
             finally:
-                f.close()
+                # f.close()
                 return self.robot_data
 
         def read(self, md_file, rawdata):

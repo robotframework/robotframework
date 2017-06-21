@@ -1,9 +1,10 @@
+```robotframework
 ============= ===============================
 Setting       \
 ============= ===============================
 Documentation Test suite in ReST file
 Resource      ../resources/html_resource.html
-Resource      ../resources/md_resource.md
+Resource      ../resources/rest_resource.rst
 Resource      ../resources/tsv_resource.tsv
 Resource      ../resources/txt_resource.txt
 ============= ===============================
@@ -19,9 +20,9 @@ ${msg}   \*ERROR* \     \     \     \
 +---------------+-----------------+----------------------+--------------------+
 |   TEST CASE   |                 |                      |                    |
 +---------------+-----------------+----------------------+--------------------+
-| ReST Passing  | No Operation    |                      |                    |
+| MD Passing    | No Operation    |                      |                    |
 +---------------+-----------------+----------------------+--------------------+
-| ReST Failing  | [Documentation] | FAIL                 | \*\*ERROR**        |
+| MD Failing    | [Documentation] | FAIL                 | \*\*ERROR**        |
 +---------------+-----------------+----------------------+--------------------+
 |               | Fail            | \*${msg}*            |                    |
 +---------------+-----------------+----------------------+--------------------+
@@ -38,16 +39,16 @@ ${msg}   \*ERROR* \     \     \     \
 |               |                 |                      | Variable From      |
 |               |                 |                      | Recursive Resource |
 +---------------+-----------------+----------------------+--------------------+
-| MD Resource   | Keyword from    |                      |                    |
-|               | MD   resource   |                      |                    |
+| Rest Resource | Keyword from    |                      |                    |
+|               | Rest resource   |                      |                    |
 +---------------+-----------------+----------------------+--------------------+
 |               | Keyword from    |                      |                    |
-|               | MD resource 2   |                      |                    |
+|               | Rest resource 2 |                      |                    |
 +---------------+-----------------+----------------------+--------------------+
-|               | Should Be Equal | ${md_resource_var}   | MD Resource        |
+|               | Should Be Equal | ${html_resource_var} | HTML Resource      |
 |               |                 |                      | Variable           |
 +---------------+-----------------+----------------------+--------------------+
-|               | Should Be Equal | ${md_resource_var2}  | MD Resource        |
+|               | Should Be Equal | ${html_resource_var2}| HTML Resource      |
 |               |                 |                      | Variable From      |
 |               |                 |                      | Recursive Resource |
 +---------------+-----------------+----------------------+--------------------+
@@ -83,3 +84,4 @@ User Keyword  \           \
 Failing       [Arguments] ${msg}
 \             Fail        ${msg}
 ============  =========== ======
+```
