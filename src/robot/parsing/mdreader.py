@@ -26,10 +26,8 @@ def MarkDownReader():
             self.robot_data = ''
 
         def robotize(self, md_file):
-            # f = StringIO(md_file.read().decode('UTF-8'))
             try:
                 include_line = False
-                # for line in f.readlines():
                 for line in Utf8Reader(md_file).readlines():
                     if not include_line:
                         include_line = (line.strip().lower() ==
@@ -40,7 +38,6 @@ def MarkDownReader():
                         self.robot_lines.append(line)
                 self.robot_data = ''.join(self.robot_lines)
             finally:
-                # f.close()
                 return self.robot_data
 
         def read(self, md_file, rawdata):
