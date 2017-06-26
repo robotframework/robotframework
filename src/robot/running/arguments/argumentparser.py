@@ -40,11 +40,13 @@ class _ArgumentParser(object):
 class PythonArgumentParser(_ArgumentParser):
 
     def _get_arg_spec(self, handler):
-        args, varargs, kwargs, defaults = inspect.getargspec(handler)
+        args_tuple = inspect.getfullargspec(handler)
         if inspect.ismethod(handler) or handler.__name__ == '__init__':
-            args = args[1:]  # drop 'self'
-        defaults = list(defaults) if defaults else []
-        return args, defaults, varargs, kwargs
+            args = args_tuple.args[1:]  # drop 'self'
+        else:
+            args = args_tuple.args
+        defaults = list(args_tuple.defaults) if args_tuple.defaults else []
+        return args, defaults, args_tuple.varargs, args_tuple.varkw
 
 
 class JavaArgumentParser(_ArgumentParser):
