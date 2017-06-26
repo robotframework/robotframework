@@ -42,7 +42,8 @@ class PythonArgumentParser(_ArgumentParser):
     def _get_arg_spec(self, handler):
         if sys.version_info[0] == 2:
             args, varargs, kwargs, defaults = inspect.getargspec(handler)
-        elif sys.version_info[0] == 3:
+            varkw = kwargs
+        else:
             args, varargs, varkw, defaults, _, _, _ = inspect.getfullargspec(handler)
         if inspect.ismethod(handler) or handler.__name__ == '__init__':
             args = args[1:]  # drop 'self'
