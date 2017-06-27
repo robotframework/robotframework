@@ -105,8 +105,6 @@ class Runner(SuiteVisitor):
         self._suite = self._suite.parent
         self._suite_status = self._suite_status.parent
         self._output.library_listeners.discard_suite_scope()
-        if not suite.parent:
-            IMPORTER.close_global_library_listeners()
 
     def visit_test(self, test):
         if test.name in self._executed_tests:
