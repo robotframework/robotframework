@@ -21,8 +21,8 @@ if sys.platform.startswith('java'):
 
 from robot.errors import DataError
 from robot.variables import is_dict_var, is_list_var, is_scalar_var
-
 from .argumentspec import ArgumentSpec
+from robot.utils import PY2
 
 
 class _ArgumentParser(object):
@@ -40,15 +40,14 @@ class _ArgumentParser(object):
 class PythonArgumentParser(_ArgumentParser):
 
     def _get_arg_spec(self, handler):
-        if sys.version_info[0] == 2:
+        if PY2:
             args, varargs, kwargs, defaults = inspect.getargspec(handler)
-            varkw = kwargs
         else:
-            args, varargs, varkw, defaults, _, _, _ = inspect.getfullargspec(handler)
+            args, varargs, kwargs, defaults, _, _, _ = inspect.getfullargspec(handler)
         if inspect.ismethod(handler) or handler.__name__ == '__init__':
             args = args[1:]  # drop 'self'
         defaults = list(defaults) if defaults else []
-        return args, defaults, varargs, varkw
+        return args, defaults, varargs, kwargs
 
 
 class JavaArgumentParser(_ArgumentParser):
