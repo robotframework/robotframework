@@ -21,7 +21,7 @@ from robot.variables import VariableScopes
 
 from .context import EXECUTION_CONTEXTS
 from .steprunner import StepRunner
-from .namespace import IMPORTER, Namespace
+from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
 
