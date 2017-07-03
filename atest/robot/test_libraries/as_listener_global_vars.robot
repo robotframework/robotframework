@@ -1,10 +1,9 @@
 *** Settings ***
-Documentation    Suite description
 Test Setup       Run Tests    ${EMPTY}    test_libraries/as_listener/global_vars_listener.robot
-Resource          atest_resource.robot
+Resource         atest_resource.robot
 
 *** Test Cases ***
-Check global variables in 'close' listener method Global scope
+Check global variables in 'close' listener method
     Stderr Should Be Equal To    SEPARATOR=\n
         ...  Suite name:Global Vars Listener
         ...  Suite documentation:Test global variables in 'close' listener method
