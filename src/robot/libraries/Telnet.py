@@ -795,14 +795,22 @@ class TelnetConnection(telnetlib.Telnet):
             return self._encode(self._newline)
         return self._newline
 
-    def write_bare(self, text):
+    def write_bare(self, text, char_delay=None):
         """Writes the given text, and nothing else, into the connection.
+
+        If char_delay parameter specified function sends characters one by one
+        with delay defined in seconds.
 
         This keyword does not append a newline nor consume the written text.
         Use `Write` if these features are needed.
         """
         self._verify_connection()
-        telnetlib.Telnet.write(self, self._encode(text))
+        if char_delay:
+            for ch in list(text):
+                telnetlib.Telnet.write(self, self._encode(ch))
+                time.sleep(float(char_delay))
+        else:
+            telnetlib.Telnet.write(self, self._encode(text))
 
     def write_until_expected_output(self, text, expected, timeout,
                                     retry_interval, loglevel=None):
