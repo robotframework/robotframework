@@ -16,9 +16,9 @@ try:
 except ImportError:
     pass
 
-from robot.utils import (is_bytes, is_dict_like, is_list_like, is_string,
-                         type_name, JYTHON, PY3)
-from robot.utils.asserts import assert_equal
+from robot.utils import (is_bytes, is_falsy, is_dict_like, is_list_like,
+                         is_noney, is_string, is_truthy, type_name, JYTHON, PY3)
+from robot.utils.asserts import assert_equal, assert_true
 
 
 if PY3:
@@ -154,6 +154,23 @@ class TestTypeName(unittest.TestCase):
             for item, exp in [(String(), 'String'), (String, 'Class'),
                               (java.lang, 'javapackage'), (java, 'javapackage')]:
                 assert_equal(type_name(item), exp)
+
+
+class TestIsY(unittest.TestCase):
+
+    def test_is_truthy_and_is_falsy(self):
+        for item in [True, 1, [False], unittest.TestCase, 'foo', 'True']:
+            assert_true(is_truthy(item) is True)
+            assert_true(is_falsy(item) is False)
+        for item in [False, 0, [], None, 'False', 'FALSE', 'No', 'nO', '']:
+            assert_true(is_truthy(item) is False)
+            assert_true(is_falsy(item) is True)
+
+    def test_noney(self):
+        for item in [None, 'None', 'NONE', 'none']:
+            assert_true(is_noney(item) is True)
+        for item in [True, False, 1, '', 'xxx']:
+            assert_true(is_noney(item) is False)
 
 
 if __name__ == '__main__':
