@@ -25,13 +25,17 @@ else:
                               is_number, is_string, is_unicode, type_name)
 
 
+FALSE_STRINGS = set(['FALSE', 'NONE', 'NO', ''])
+
+
 def is_truthy(item):
     """Returns `True` or `False` depending is the item considered true or not.
 
     Validation rules:
 
     - If the value is a string, it is considered `True` if it is not `FALSE`,
-      `NO` or and empty string, case-insensitively.
+      `NO`, 'NONE' or '', case-insensitively. Considering 'NONE' not `True`
+      is new in RF 3.0.3.
     - Other values are handled by using the standard `bool()` function.
 
     Designed to be used also by external test libraries that want to handle
@@ -39,26 +43,10 @@ def is_truthy(item):
     :func:`is_falsy` and :func:`is_noney`.
     """
     if is_string(item):
-        return item.upper() not in ('FALSE', 'NO', '')
+        return item.upper() not in FALSE_STRINGS
     return bool(item)
 
 
 def is_falsy(item):
     """Opposite of :func:`is_truthy`."""
     return not is_truthy(item)
-
-
-def is_noney(item):
-    """Returns `True` or `False` depending is the item considered `None` or not.
-
-    Validation rules:
-
-    - If the value is a string, it is considered `None` if it is equal to
-      `NONE`, case-insensitively.
-    - Otherwise the value is considerd `None` only if it is the actual `None`.
-
-    Designed to be used also by external test libraries that want to handle
-    `NONE` similarly as Robot Framework itself. New in Robot Framework 3.0.3.
-    See also :func:`is_truthy` and :func:`is_falsy`.
-    """
-    return item is None or is_string(item) and item.upper() == 'NONE'
