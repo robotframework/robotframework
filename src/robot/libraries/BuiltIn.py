@@ -3339,11 +3339,11 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     Some keywords accept arguments that are handled as Boolean values true or
     false. If such an argument is given as a string, it is considered false if
-    it is either empty or case-insensitively equal to ``false`` or ``no``.
-    Keywords verifying something that allow dropping actual and expected values
-    from the possible error message also consider string ``no values`` as false.
-    Other strings are considered true regardless their value, and other
-    argument types are tested using same
+    it is either an empty string or case-insensitively equal to ``false``,
+    ``none`` or ``no``. Keywords verifying something that allow dropping actual
+    and expected values from the possible error message also consider string
+    ``no values`` to be false. Other strings are considered true regardless
+    their value, and other argument types are tested using the same
     [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
     as in Python].
 
@@ -3360,8 +3360,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${FALSE}  | # Python ``False`` is false.   |
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=no values | # ``no values`` works with ``values`` argument |
 
-    Note that prior to Robot Framework 2.9 some keywords considered all
+    Prior to Robot Framework 2.9 some keywords considered all
     non-empty strings, including ``false`` and ``no``, to be true.
+    Considering ``none`` false is new in Robot Framework 3.0.3.
 
     = Multiline string comparisons =
 

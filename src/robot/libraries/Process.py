@@ -257,9 +257,9 @@ class Process(object):
 
     Some keywords accept arguments that are handled as Boolean values true or
     false. If such an argument is given as a string, it is considered false if
-    it is either empty or case-insensitively equal to ``false`` or ``no``.
-    Other strings are considered true regardless their value, and other
-    argument types are tested using same
+    it is either an empty string or case-insensitively equal to ``false``,
+    ``none`` or ``no``. Other strings are considered true regardless
+    their value, and other argument types are tested using the same
     [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
     as in Python].
 
@@ -275,9 +275,9 @@ class Process(object):
     | `Terminate Process` | kill=${EMPTY} | # Empty string is false.       |
     | `Terminate Process` | kill=${FALSE} | # Python ``False`` is false.   |
 
-    Note that prior to Robot Framework 2.8 all non-empty strings, including
-    ``false``, were considered true. Additionally, ``no`` is considered false
-    only in Robot Framework 2.9 and newer.
+    Prior to Robot Framework 2.9, all non-empty strings, including ``false``
+    and ``no``, were considered to be true. Considering ``none`` false is
+    new in Robot Framework 3.0.3.
 
     = Example =
 

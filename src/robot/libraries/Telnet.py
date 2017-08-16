@@ -276,9 +276,9 @@ class Telnet(object):
 
     Some keywords accept arguments that are handled as Boolean values true or
     false. If such an argument is given as a string, it is considered false if
-    it is either empty or case-insensitively equal to ``false`` or ``no``.
-    Other strings are considered true regardless their value, and other
-    argument types are tested using same
+    it is either an empty string or case-insensitively equal to ``false``,
+    ``none`` or ``no``. Other strings are considered true regardless
+    their value, and other argument types are tested using the same
     [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
     as in Python].
 
@@ -294,8 +294,9 @@ class Telnet(object):
     | `Open Connection` | lolcathost | terminal_emulation=${EMPTY} | # Empty string is false.       |
     | `Open Connection` | lolcathost | terminal_emulation=${FALSE} | # Python ``False`` is false.   |
 
-    Note that prior to Robot Framework 2.9 some keywords considered all
-    non-empty strings, including ``false`` and ``no``, to be true.
+    Prior to Robot Framework 2.9, all non-empty strings, including ``false``
+    and ``no``, were considered to be true. Considering ``none`` false is
+    new in Robot Framework 3.0.3.
     """
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
