@@ -45,6 +45,24 @@ class TestSuite(ModelObject):
         self.tests = None
         self.keywords = None
         self._my_visitors = []
+        self.default_tags = None
+        self.force_tags = None
+
+    @property
+    def default_tags(self):
+        return self.default_tags
+
+    @setter
+    def default_tags(self, default_tags):
+        return default_tags
+		
+    @property
+    def force_tags(self):
+        return self.force_tags
+
+    @setter
+    def force_tags(self, force_tags):
+        return force_tags
 
     @property
     def _visitors(self):

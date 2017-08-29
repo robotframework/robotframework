@@ -93,6 +93,8 @@ class TestSuiteBuilder(object):
                           source=data.source,
                           doc=unic(data.setting_table.doc),
                           metadata=self._get_metadata(data.setting_table))
+        suite.default_tags = data.setting_table.default_tags
+        suite.force_tags = data.setting_table.force_tags
         self._build_setup(suite, data.setting_table.suite_setup)
         self._build_teardown(suite, data.setting_table.suite_teardown)
         for test_data in data.testcase_table.tests:
