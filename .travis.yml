@@ -1,0 +1,26 @@
+language: python
+python:
+  - "2.7"
+  - "3.5"
+  - "3.6"
+  - "pypy"
+  - "pypy3"
+env:
+  - PYTHON_EXE=python
+matrix:
+  include:
+  - python: "2.7"
+    sudo: required
+    env: PYTHON_EXE=jython
+    addons:
+      apt:
+        packages:
+          - jython
+install:
+  - pip install .
+  - pip install invoke -r atest/requirements.txt
+script:
+  - $PYTHON_EXE utest/run.py
+  - if [ "$TRAVIS_PYTHON_VERSION" == "2.7" ];
+    then atest/run.py "$PYTHON_EXE" --exclude no-ciORrequire-screenshot atest/robot;
+    else echo "We only run atest from the py2.7 part of the build matrix."; fi
