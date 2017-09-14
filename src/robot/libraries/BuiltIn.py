@@ -1901,6 +1901,38 @@ class _RunKeyword(_BuiltInBase):
 
         Specifying ``repeat`` as a timeout is new in Robot Framework 3.0.
         """
+        _, keywords = self._repeat_keyword(repeat, name, *args)
+        self._run_keywords(keywords)
+
+    @run_keyword_variant(resolve=2)
+    def repeat_keyword_and_ignore_errors(self, repeat, name, *args):
+        """ Executes the specified keyword multiple times and ignores possible error.
+
+        The keyword behavior is similar to the the `Repeat Keyword`, except that it doesn't fail
+        immediately after any of the execution round fails, but it repeats the execution to the
+        specified number of times.
+
+        If an iteration fails at the end provides a statistic of how many iterations
+        failed out of the specified number of repeats. If at least an execution round fails, the
+        keyword status will be "FAIL".
+
+         Examples:
+        | Repeat Keyword And Ignore Errors | 5 times   | Go to Previous Page |
+        | Repeat Keyword And Ignore Errors | ${var}    | Some Keyword | arg1 | arg2 |
+        | Repeat Keyword And Ignore Errors | 2 minutes | Some Keyword | arg1 | arg2 |
+        """
+        repeat_count, keywords = self._repeat_keyword(repeat, name, *args)
+        passing, failures_count = True, 0
+        for kw, args in keywords:
+            status, _ = self.run_keyword_and_ignore_error(kw, *args)
+            if status == 'FAIL':
+                failures_count += 1
+                passing = False
+        if not passing:
+            raise AssertionError("%d tests out of %d tests failed." % (failures_count, repeat_count))
+
+    def _repeat_keyword(self, repeat, name, *args):
+        count = 0
         try:
             count = self._get_repeat_count(repeat)
         except RuntimeError as err:
@@ -1910,7 +1942,7 @@ class _RunKeyword(_BuiltInBase):
             keywords = self._keywords_repeated_by_timeout(timeout, name, args)
         else:
             keywords = self._keywords_repeated_by_count(count, name, args)
-        self._run_keywords(keywords)
+        return count, keywords
 
     def _get_repeat_count(self, times, require_postfix=False):
         times = normalize(str(times))
