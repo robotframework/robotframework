@@ -635,19 +635,19 @@ class _Verify(_BuiltInBase):
             return
         include_values = self._include_values(values)
         if include_values and is_string(first) and is_string(second):
-            self._raise_multi_diff(first, second)
+            self._raise_multi_diff(first, second, msg)
         assert_equal(first, second, msg, include_values)
 
     def _log_types_at_info_if_different(self, first, second):
         level = 'DEBUG' if type(first) == type(second) else 'INFO'
         self._log_types_at_level(level, first, second)
 
-    def _raise_multi_diff(self, first, second):
+    def _raise_multi_diff(self, first, second, msg):
         first_lines, second_lines = first.splitlines(), second.splitlines()
         if len(first_lines) < 3 or len(second_lines) < 3:
             return
         self.log("%s\n!=\n%s" % (first, second))
-        err = 'Multiline strings are different:\n'
+        err = 'Multiline strings are different:\n' if msg==None else msg+'\n'
         for line in difflib.unified_diff(first_lines, second_lines,
                                          fromfile='first', tofile='second',
                                          lineterm=''):
