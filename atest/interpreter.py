@@ -45,11 +45,6 @@ class Interpreter(object):
 
     @property
     def excludes(self):
-        if self.is_python and self.version == '2.6':
-            yield 'no-python26'
-            yield 'require-et13'
-        else:
-            yield 'require-python26'
         if self.is_jython:
             yield 'no-jython'
             yield 'require-lxml'
@@ -75,8 +70,6 @@ class Interpreter(object):
             yield 'no-windows'
             if self.is_jython:
                 yield 'no-windows-jython'
-            if self.is_python and self.version == '2.6':
-                yield 'no-windows-python26'
         if not self.is_windows:
             yield 'require-windows'
         if self.is_osx:

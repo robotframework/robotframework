@@ -262,22 +262,6 @@ class TimeoutTransport(xmlrpclib.Transport):
         return self._connection[1]
 
 
-if sys.version_info[:2] == (2, 6):
-
-    class TimeoutTransport(TimeoutTransport):
-
-        def make_connection(self, host):
-            host, extra_headers, x509 = self.get_host_info(host)
-            return TimeoutHTTP(host, timeout=self.timeout)
-
-    class TimeoutHTTP(httplib.HTTP):
-
-        def __init__(self, host='', port=None, strict=None, timeout=None):
-            if port == 0:
-                port = None
-            self._setup(self._connection_class(host, port, strict, timeout=timeout))
-
-
 if IRONPYTHON:
 
     class TimeoutTransport(xmlrpclib.Transport):

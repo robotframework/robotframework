@@ -12,7 +12,7 @@ See its help (e.g. `robot --help`) for more information.
 The specified interpreter is used by acceptance tests under `atest/robot` to
 run test cases under `atest/testdata`. It can be the name of the interpreter
 like (e.g. `python` or `jython`, a path to the selected interpreter like
-`/usr/bin/python26`, or a path to the standalone jar distribution (e.g.
+`/usr/bin/python36`, or a path to the standalone jar distribution (e.g.
 `dist/robotframework-2.9dev234.jar`). If the interpreter itself needs
 arguments, the interpreter and arguments need to be quoted like `"py -3"`.
 

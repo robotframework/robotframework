@@ -83,7 +83,7 @@ def abspath(path, case_normalize=False):
     3. Turn ``c:`` into ``c:\\`` on Windows instead of ``c:\\current\\path``.
     """
     path = normpath(path, case_normalize)
-    return normpath(_abspath(path), case_normalize)
+    return normpath(os.path.abspath(path), case_normalize)
 
 
 def get_link_path(target, base):
