@@ -13,7 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import OrderedDict, compress_text
+from robot.utils import compress_text
+from collections import OrderedDict
 
 
 class StringIndex(int):

@@ -21,13 +21,15 @@ from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
 from robot.parsing.settings import Library, Variables, Resource
-from robot.utils import (eq, find_file, is_string, OrderedDict, printable_name,
+from robot.utils import (eq, find_file, is_string, printable_name,
                          seq2str2, RecommendationFinder)
 
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
 from .importer import Importer, ImportCache
 from .runkwregister import RUN_KW_REGISTER
+
+from collections import OrderedDict
 
 
 IMPORTER = Importer()

@@ -38,7 +38,7 @@ from .application import Application
 from .compat import isatty, py2to3, StringIO, with_metaclass
 from .compress import compress_text
 from .connectioncache import ConnectionCache
-from .dotdict import DotDict, OrderedDict
+from .dotdict import DotDict
 from .encoding import (console_decode, console_encode,
                        system_decode, system_encode, CONSOLE_ENCODING,
                        SYSTEM_ENCODING)
@@ -74,3 +74,4 @@ from .text import (cut_long_message, format_assign_message,
                    split_args_from_name_or_path)
 from .unic import prepr, unic
 from .utf8reader import Utf8Reader
+from collections import OrderedDict

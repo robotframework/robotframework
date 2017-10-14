@@ -1,4 +1,4 @@
-from robot.utils import OrderedDict
+from collections import OrderedDict
 
 
 def get_variables(*args):
