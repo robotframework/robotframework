@@ -118,7 +118,7 @@ Dictionaries Should Be Equal
     Dictionaries Should Be Equal    ${BIG}    ${BIG}
 
 Dictionaries Of Different Type Should Be Equal
-    ${big2}=    Evaluate    collections.OrderedDict($BIG)    modules=robot
+    ${big2}=    Evaluate    collections.OrderedDict($BIG)    modules=collections
     Dictionaries Should Be Equal    ${BIG}    ${big2}
 
 Dictionaries Should Equal With First Dictionary Missing Keys
