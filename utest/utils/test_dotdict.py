@@ -1,9 +1,10 @@
 import unittest
+from collections import OrderedDict
 
+from robot.utils import IRONPYTHON, DotDict
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
                                  assert_raises, assert_true)
-from robot.utils import DotDict, IRONPYTHON
-from collections import OrderedDict
+
 
 class TestDotDict(unittest.TestCase):
 
