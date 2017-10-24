@@ -84,6 +84,15 @@ Repeat Keyword And Ignore Errors
     [Documentation]  FAIL  3 tests out of 3 tests failed.
     Repeat Keyword And Ignore Errors  3x  Fail
 
+Repeat Keyword And Ignore Failure With Pass Execution
+    [Documentation]    PASS
+    Repeat Keyword And Ignore Errors    3x    Log    Message
+
+Repeat Keyword And Ignore Failure On Third Round
+    [Documentation]    FAIL 998 tests out of 1000 tests failed.
+    Set Suite Variable    ${COUNT}  0
+    Repeat Keyword And Ignore Errors    1000 times    Keyword Failing On Third Run
+
 *** Keywords ***
 Keyword Failing On Third Run
     ${COUNT} =    Evaluate    ${COUNT} + 1

@@ -73,6 +73,12 @@ Repeat Keyword With Pass Execution After Continuable Failure
 Repeat Keyword And Ignore Errors
     ${tc} =    Check Test Case    ${TESTNAME}
 
+Repeat Keyword And Ignore Failure With Pass Execution
+    ${tc} =    Check Test Case    ${TESTNAME}
+
+Repeat Keyword And Ignore Failure On Third Round
+    ${tc} =    Check Test Case    ${TESTNAME}
+
 *** Keywords ***
 Check Repeated Messages
     [Arguments]    ${kw}    ${count}    ${msg}=${None}
