@@ -70,6 +70,9 @@ Repeat Keyword With Pass Execution After Continuable Failure
     ${tc} =    Check Test Case    ${TEST_NAME}
     Length Should Be    ${tc.kws[0].kws}    2
 
+Repeat Keyword And Ignore Errors
+    ${tc} =    Check Test Case    ${TESTNAME}
+
 *** Keywords ***
 Check Repeated Messages
     [Arguments]    ${kw}    ${count}    ${msg}=${None}

@@ -80,6 +80,10 @@ Repeat Keyword With Pass Execution After Continuable Failure
     [Documentation]    FAIL Continuable
     Repeat Keyword    3x    First Continuable Failure And Then Pass Execution
 
+Repeat Keyword And Ignore Errors
+    [Documentation]  FAIL  3 tests out of 3 tests failed.
+    Repeat Keyword And Ignore Errors  3x  Fail
+
 *** Keywords ***
 Keyword Failing On Third Run
     ${COUNT} =    Evaluate    ${COUNT} + 1
