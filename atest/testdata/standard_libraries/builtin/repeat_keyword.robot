@@ -81,7 +81,7 @@ Repeat Keyword With Pass Execution After Continuable Failure
     Repeat Keyword    3x    First Continuable Failure And Then Pass Execution
 
 Repeat Keyword And Ignore Errors
-    [Documentation]  FAIL  3 tests out of 3 tests failed.
+    [Documentation]  FAIL  3 out of 3 executions failed.
     Repeat Keyword And Ignore Errors  3x  Fail
 
 Repeat Keyword And Ignore Failure With Pass Execution
@@ -89,7 +89,7 @@ Repeat Keyword And Ignore Failure With Pass Execution
     Repeat Keyword And Ignore Errors    3x    Log    Message
 
 Repeat Keyword And Ignore Failure On Third Round
-    [Documentation]    FAIL 998 tests out of 1000 tests failed.
+    [Documentation]    FAIL 998 out of 1000 executions failed.
     Set Suite Variable    ${COUNT}  0
     Repeat Keyword And Ignore Errors    1000 times    Keyword Failing On Third Run
 

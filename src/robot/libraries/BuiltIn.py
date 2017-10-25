@@ -1901,7 +1901,7 @@ class _RunKeyword(_BuiltInBase):
 
         Specifying ``repeat`` as a timeout is new in Robot Framework 3.0.
         """
-        _, keywords = self._repeat_keyword(repeat, name, *args)
+        keywords, _ = self._get_keywords_and_repeat_count(repeat, name, *args)
         self._run_keywords(keywords)
 
     @run_keyword_variant(resolve=2)
@@ -1921,7 +1921,7 @@ class _RunKeyword(_BuiltInBase):
         | Repeat Keyword And Ignore Errors | ${var}    | Some Keyword | arg1 | arg2 |
         | Repeat Keyword And Ignore Errors | 2 minutes | Some Keyword | arg1 | arg2 |
         """
-        repeat_count, keywords = self._repeat_keyword(repeat, name, *args)
+        keywords, repeat_count = self._get_keywords_and_repeat_count(repeat, name, *args)
         passing, failures_count = True, 0
         for kw, args in keywords:
             status, _ = self.run_keyword_and_ignore_error(kw, *args)
@@ -1929,9 +1929,9 @@ class _RunKeyword(_BuiltInBase):
                 failures_count += 1
                 passing = False
         if not passing:
-            raise AssertionError("%d tests out of %d tests failed." % (failures_count, repeat_count))
+            raise AssertionError("%d out of %d executions failed." % (failures_count, repeat_count))
 
-    def _repeat_keyword(self, repeat, name, *args):
+    def _get_keywords_and_repeat_count(self, repeat, name, *args):
         count = 0
         try:
             count = self._get_repeat_count(repeat)
@@ -1942,7 +1942,7 @@ class _RunKeyword(_BuiltInBase):
             keywords = self._keywords_repeated_by_timeout(timeout, name, args)
         else:
             keywords = self._keywords_repeated_by_count(count, name, args)
-        return count, keywords
+        return keywords, count
 
     def _get_repeat_count(self, times, require_postfix=False):
         times = normalize(str(times))
