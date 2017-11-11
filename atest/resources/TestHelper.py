@@ -28,4 +28,5 @@ class TestHelper:
         logger.info(repr(output).replace('\\n', '\\n\n'))
         failure = AssertionError(message)
         failure.ROBOT_CONTINUE_ON_FAILURE = True
+        failure.ROBOT_SKIP_ON_FAILURE = True
         raise failure

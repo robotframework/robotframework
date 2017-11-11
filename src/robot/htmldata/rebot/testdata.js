@@ -4,7 +4,7 @@ window.testdata = function () {
     var idCounter = 0;
     var _statistics = null;
     var LEVELS = ['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FAIL'];
-    var STATUSES = ['FAIL', 'PASS', 'NOT_RUN'];
+    var STATUSES = ['FAIL', 'PASS', 'NOT_RUN', 'SKIP'];
     var KEYWORDS = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'VAR'];
 
     function addElement(elem) {
@@ -156,15 +156,25 @@ window.testdata = function () {
         }
         return metadata;
     }
-
+    
+    /*  This function gets the execution status results from the suites ran and calculates the total
+        passed, failed and skippped for critical and non critical tests. 
+        Stat[0] = Total tests ran
+        Stat[1] = Total tests passed
+        Stat[2] = Total tests skipped
+        stat[3] = Total critical tests ran
+        stat[4] = Total critical tests passed
+        stat[5] = Total critical tests failed
+    */
     function suiteStats(stats) {
         return {
             total: stats[0],
             totalPassed: stats[1],
-            totalFailed: stats[0] - stats[1],
-            critical: stats[2],
-            criticalPassed: stats[3],
-            criticalFailed: stats[2] - stats[3]
+            totalFailed: stats[0] - stats[1] -  stats[2],
+            totalSkipped: stats[2],
+            critical: stats[3],
+            criticalPassed: stats[4],
+            criticalFailed: stats[3] - stats[4] - stats[2]
         };
     }
 

@@ -22,6 +22,7 @@ from tokenize import generate_tokens, untokenize
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
+                          ExecutionSkipped, SkipExecution,
                           PassExecution, ReturnFromKeyword)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
@@ -1639,6 +1640,9 @@ class _RunKeyword(_BuiltInBase):
             except ExecutionPassed as err:
                 err.set_earlier_failures(errors)
                 raise err
+            except ExecutionSkipped, err:
+                err.set_earlier_failures(errors)
+                raise err
             except ExecutionFailed as err:
                 errors.extend(err.get_errors())
                 if not err.can_continue(self._context.in_teardown):
@@ -2463,7 +2467,59 @@ class _Control(_BuiltInBase):
             tags = self._variables.replace_list(tags)
             self.pass_execution(message, *tags)
 
+    def skip_execution(self, message, *tags):
+        """Skips rest of the current test, setup, or teardown with SKIP status.
 
+        This keyword can be used anywhere in the test data, but the place where
+        used affects the behavior:
+
+        - When used in any setup or teardown (suite, test or keyword), passes
+          that setup or teardown. Possible keyword teardowns of the started
+          keywords are executed. Does not affect execution or statuses
+          otherwise.
+        - When used in a test outside setup or teardown, passes that particular
+          test case. Possible test and keyword teardowns are executed.
+
+        Possible continuable failures before this keyword is used, as well as
+        failures in executed teardowns, will fail the execution.
+
+        It is mandatory to give a message explaining why execution was passed.
+        By default the message is considered plain text, but starting it with
+        `*HTML*` allows using HTML formatting.
+
+        It is also possible to modify test tags passing tags after the message
+        similarly as with `Fail` keyword. Tags starting with a hyphen
+        (e.g. `-regression`) are removed and others added. Tags are modified
+        using `Set Tags` and `Remove Tags` internally, and the semantics
+        setting and removing them are the same as with these keywords.
+
+        Examples:
+        | Skip Execution | All features available in this version tested. |
+        | Skip Execution | Deprecated test. | deprecated | -regression    |
+
+        This keyword is typically wrapped to some other keyword, such as
+        `Run Keyword If`, to pass based on a condition. The most common case
+        can be handled also with `Pass Execution If`:
+
+        | Run Keyword If    | ${rc} < 0 | Pass Execution | Negative values are cool. |
+        | Skip Execution If | ${rc} < 0 | Negative values are cool. |
+
+        Passing execution in the middle of a test, setup or teardown should be
+        used with care. In the worst case it leads to tests that skip all the
+        parts that could actually uncover problems in the tested application.
+        In cases where execution cannot continue do to external factors,
+        it is often safer to fail the test case and make it non-critical.
+
+        New in Robot Framework 2.9.
+        """
+        message = message.strip()
+        if not message:
+            raise RuntimeError('Message cannot be empty.')
+        self._set_and_remove_tags(tags)
+        log_message, level = self._get_logged_test_message_and_level(message)
+        self.log('Execution skipped with message:\n%s' % log_message, level)
+        raise SkipExecution(message)
+        
 class _Misc(_BuiltInBase):
 
     def no_operation(self):

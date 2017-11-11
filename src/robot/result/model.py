@@ -143,10 +143,15 @@ class TestCase(model.TestCase):
     def passed(self):
         """``True/False`` depending on the :attr:`status`."""
         return self.status == 'PASS'
-
+        
     @passed.setter
     def passed(self, passed):
         self.status = 'PASS' if passed else 'FAIL'
+
+    @property
+    def skipped(self):
+        """``True`` if the test case did skip, ``False`` otherwise."""
+        return self.status == 'SKIP'
 
     @property
     def critical(self):
@@ -179,16 +184,33 @@ class TestSuite(model.TestSuite):
         #: Suite execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
         self._criticality = None
-
     @property
     def passed(self):
-        """``True`` if no critical test has failed, ``False`` otherwise."""
-        return not self.statistics.critical.failed
-
+        """``True`` if all critical tests id not fail and were not skipped, or
+        passed and skipped and did not fail, ``False`` otherwise."""
+        return ((not self.statistics.critical.failed and
+                not self.statistics.critical.skipped) or
+                (self.statistics.critical.passed and
+                self.statistics.critical.skipped and
+                not self.statistics.critical.failed))
+                 
+    @property
+    def skipped(self):
+        """``True`` if all critical tests skipped and did not fail,
+        ``False`` otherwise."""
+        return (self.statistics.critical.skipped and
+                not self.statistics.critical.failed)
+                
     @property
     def status(self):
-        """``'PASS'`` if no critical test has failed, ``'FAIL'`` otherwise."""
-        return 'PASS' if self.passed else 'FAIL'
+        """``'PASS'`` if all critical tests passed, ``'PASS'`` if all critical
+        tests skipped, ``'FAIL'`` otherwise."""
+        if self.passed:
+            return 'PASS'
+        elif self.skipped:
+            return 'SKIP'
+        else:
+            return 'FAIL'
 
     @property
     def statistics(self):

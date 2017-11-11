@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
+from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed, ExecutionSkipped,
                           ExitForLoop, ContinueForLoop, DataError)
 from robot.result import Keyword as KeywordResult
 from robot.utils import (format_assign_message, frange, get_error_message,
@@ -28,13 +28,16 @@ class StepRunner(object):
     def __init__(self, context, templated=False):
         self._context = context
         self._templated = bool(templated)
-
+        
     def run_steps(self, steps):
         errors = []
         for step in steps:
             try:
                 self.run_step(step)
             except ExecutionPassed as exception:
+                exception.set_earlier_failures(errors)
+                raise exception
+            except ExecutionSkipped as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
             except ExecutionFailed as exception:
@@ -117,6 +120,9 @@ class ForInRunner(object):
             except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
+            except ExecutionSkipped as exception:
+            	exception.set_earlier_failures(errors)
+            	raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
                 if not exception.can_continue(self._context.in_teardown,
