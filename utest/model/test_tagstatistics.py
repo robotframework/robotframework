@@ -279,12 +279,13 @@ class TestTagStatDoc(unittest.TestCase):
         self._verify_stats(nono, 'not so critical doc', 1)
         self._verify_stats(xxx, '', 1)
 
-    def _verify_stats(self, stat, doc, failed, passed=0, critical=False,
+    def _verify_stats(self, stat, doc, failed, passed=0, skipped=0, critical=False,
                       non_critical=False, combined=None):
         assert_equal(stat.doc, doc)
         assert_equal(stat.failed, failed)
         assert_equal(stat.passed, passed)
-        assert_equal(stat.total, passed + failed)
+        assert_equal(stat.skipped,skipped)
+        assert_equal(stat.total, passed + failed + skipped)
         assert_equal(stat.critical, critical)
         assert_equal(stat.non_critical, non_critical)
         assert_equal(stat.combined, combined)

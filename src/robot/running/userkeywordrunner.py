@@ -13,10 +13,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# <<<<<<< HEAD
+# from robot.errors import (ExecutionFailed, ExecutionPassed, ExitForLoop,
+#                           ContinueForLoop, DataError, PassExecution,
+#                           ReturnFromKeyword, UserKeywordExecutionFailed,
+#                           VariableError)
+# =======
+# from robot.errors import (ExecutionFailed, ReturnFromKeyword, ExecutionPassed,
+#                           UserKeywordExecutionFailed, DataError, VariableError,
+#                           ExecutionSkipped,SkipExecution,PassExecution)
+# >>>>>>> 9e50352183f9b84f748207147646616f0f357174
+
 from robot.errors import (ExecutionFailed, ExecutionPassed, ExitForLoop,
                           ContinueForLoop, DataError, PassExecution,
                           ReturnFromKeyword, UserKeywordExecutionFailed,
-                          VariableError)
+                          VariableError, ExecutionSkipped, SkipExecution)
+
+
 from robot.result import Keyword as KeywordResult
 from robot.utils import DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_var, VariableAssignment
@@ -150,8 +163,14 @@ class UserKeywordRunner(object):
         except ExecutionPassed as exception:
             pass_ = exception
             error = exception.earlier_failures
+# <<<<<<< HEAD
             if error:
                 error.continue_on_failure = False
+# =======
+        except ExecutionSkipped as exception:
+            pass_ = exception
+            error = exception.earlier_failures
+# >>>>>>> 9e50352183f9b84f748207147646616f0f357174
         except ExecutionFailed as exception:
             error = exception
         with context.keyword_teardown(error):

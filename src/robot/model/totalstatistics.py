@@ -38,18 +38,18 @@ class TotalStatistics(object):
 
         For example::
 
-            2 critical tests, 1 passed, 1 failed
-            2 tests total, 1 passed, 1 failed
+            2 critical tests, 1 passed, 1 failed,1 skipped
+            2 tests total, 1 passed, 1 failed, 1 skipped
         """
-        ctotal, cend, cpass, cfail = self._get_counts(self.critical)
-        atotal, aend, apass, afail = self._get_counts(self.all)
-        return ('%d critical test%s, %d passed, %d failed\n'
-                '%d test%s total, %d passed, %d failed'
-                % (ctotal, cend, cpass, cfail, atotal, aend, apass, afail))
+        ctotal, cend, cpass, cfail, cskip = self._get_counts(self.critical)
+        atotal, aend, apass, afail, askip = self._get_counts(self.all)
+        return ('%d critical test%s, %d passed, %d failed, %d skipped\n'
+                '%d test%s total, %d passed, %d failed, %d skipped'
+                % (ctotal, cend, cpass, cfail, cskip, atotal, aend, apass, afail, askip))
 
     def _get_counts(self, stat):
         ending = 's' if stat.total != 1 else ''
-        return stat.total, ending, stat.passed, stat.failed
+        return stat.total, ending, stat.passed, stat.failed, stat.skipped
 
 
 class TotalStatisticsBuilder(SuiteVisitor):

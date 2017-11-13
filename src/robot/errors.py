@@ -96,7 +96,8 @@ class Information(RobotError):
 
 
 class ExecutionFailed(RobotError):
-    """Used for communicating failures in test execution."""
+    """Used for communicating failures in test execution, will check to ensure that the
+    that the step is not an instance of SKIP before failing."""
 
     def __init__(self, message, test_timeout=False, keyword_timeout=False,
                  syntax=False, exit=False, continue_on_failure=False,
@@ -148,7 +149,10 @@ class ExecutionFailed(RobotError):
 
     @property
     def status(self):
-        return 'FAIL'
+        if isinstance(self, ExecutionSkipped):
+            return 'SKIP'
+        else:
+            return 'FAIL'
 
 
 class HandlerExecutionFailed(ExecutionFailed):
@@ -270,7 +274,44 @@ class PassExecution(ExecutionPassed):
 
     def __init__(self, message):
         ExecutionPassed.__init__(self, message)
+        self.earlier_failures = []
+ 
 
+class ExecutionSkipped(ExecutionFailed):
+    """Base class for all exceptions communicating that execution skipped.
+
+    Should not be raised directly, but more detailed exceptions used instead.
+    """
+
+    def __init__(self, message=None, **kwargs):
+        ExecutionFailed.__init__(self, message or self._get_message(), **kwargs)
+        self._earlier_failures = []
+        self.skipped = None
+
+    def _get_message(self):
+        return "Invalid '%s' usage." \
+               % utils.printable_name(self.__class__.__name__, code_style=True)
+
+    def set_earlier_failures(self, failures):
+        if failures:
+            self._earlier_failures.extend(failures)
+
+    @property
+    def earlier_failures(self):
+        if not self._earlier_failures:
+            return None
+        return ExecutionFailures(self._earlier_failures)
+
+    def skip(self):
+        self.skipped = True
+
+
+class SkipExecution(ExecutionSkipped):
+    """Used by 'Skip Execution' keyword."""
+
+    def __init__(self, message):
+        ExecutionSkipped.__init__(self, message)
+        self.skip()
 
 class ContinueForLoop(ExecutionPassed):
     """Used by 'Continue For Loop' keyword."""

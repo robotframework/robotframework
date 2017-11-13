@@ -130,7 +130,6 @@ class VerboseWriter(object):
     def message(self, message):
         if message:
             self._stdout.write(message.strip() + '\n')
-
     def keyword_marker(self, status):
         if self._keyword_marker.marker_count == self._status_length:
             self._clear_status()

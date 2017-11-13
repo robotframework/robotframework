@@ -60,9 +60,10 @@ class TagStatistics(object):
 class TagStatisticsBuilder(object):
 
     def __init__(self, criticality=None, included=None, excluded=None,
-                 combined=None, docs=None, links=None):
+                 skipped=None, combined=None, docs=None, links=None):
         self._included = TagPatterns(included)
         self._excluded = TagPatterns(excluded)
+        self._skipped = TagPatterns(skipped)
         self._info = TagStatInfo(docs, links)
         self.stats = TagStatistics(
             self._info.get_critical_stats(criticality),

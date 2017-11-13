@@ -70,9 +70,14 @@ h2 {
 .fail {
     color: #f33 !important;
     font-weight: bold;
+    
 }
 .pass {
     color: #393 !important;
+}
+
+.skip {
+    color: #30EEEE !important;
 }
 .label {
     padding: 2px 5px;
@@ -86,15 +91,19 @@ h2 {
 .label.debug, .label.trace, .label.error, .label.keyword {
     letter-spacing: 0;
 }
-.label.error, .label.fail, .label.pass, .label.warn {
+.label.error, .label.fail, .label.pass, .label.warn, .label.skip {
     color: #fff !important;
     font-weight: bold;
 }
+
 .label.error, .label.fail {
     background-color: #d9534f;
 }
 .label.pass {
     background-color: #5cb85c;
+}
+.label.skip{
+    background-color: #1E90FF
 }
 .label.warn {
     background-color: #ec971f;
@@ -188,12 +197,15 @@ th.stats-col-graph:hover {
 .empty-graph {
     background: #eee;
 }
-.pass-bar, .fail-bar {
+.pass-bar, .fail-bar, .skip-bar {
     float: left;
     height: 100%;
 }
 .pass-bar {
     background: #1d4;
+}
+.skip-bar {
+    background: #1E90FF;
 }
 /* Tablesorter - adapted from provided Blue Skin */
 .tablesorter-header {

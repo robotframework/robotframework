@@ -47,8 +47,8 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_suite_with_values(self):
         suite = TestSuite('Name', 'Doc', {'m1': 'v1', 'M2': 'V2'}, None, 'Message',
                           '20111204 19:00:00.000', '20111204 19:00:42.001')
-        self._verify_suite(suite, 'Name', 'Doc', ('m1', '<p>v1</p>', 'M2', '<p>V2</p>'),
-                           message='Message', start=0, elapsed=42001)
+        self._verify_suite(suite, u'Name', 'Doc', (u'm1', '<p>v1</p>', u'M2', '<p>V2</p>'),
+                           message=u'Message', start=0, elapsed=42001)
 
     def test_relative_source(self):
         self._verify_suite(TestSuite(source='non-existing'), source='non-existing')
@@ -130,10 +130,10 @@ class TestBuildTestSuite(unittest.TestCase):
         K2 = self._verify_keyword(suite.keywords[1], type=2)
         suite.suites = [TestSuite()]
         suite.suites[0].tests = [TestCase(tags=['crit', 'xxx'])]
-        t = self._verify_test(suite.suites[0].tests[0], tags=('crit', 'xxx'))
+        t = self._verify_test(suite.suites[0].tests[0], tags=(u'crit', u'xxx'))
         suite.tests = [TestCase(), TestCase(status='PASS')]
         S1 = self._verify_suite(suite.suites[0],
-                                status=0, tests=(t,), stats=(1, 0, 1, 0))
+                                status=0, tests=(t,), stats=(1, 0, 0, 1, 0))
         suite.tests[0].keywords = [Keyword(type=Keyword.FOR_LOOP_TYPE), Keyword()]
         suite.tests[0].keywords[0].keywords = [Keyword(type=Keyword.FOR_ITEM_TYPE)]
         suite.tests[0].keywords[0].messages = [Message()]
@@ -148,7 +148,7 @@ class TestBuildTestSuite(unittest.TestCase):
         T1 = self._verify_test(suite.tests[0], critical=0, keywords=(k1, k2))
         T2 = self._verify_test(suite.tests[1], critical=0, status=1)
         self._verify_suite(suite, status=0, keywords=(K1, K2), suites=(S1,),
-                           tests=(T1, T2), stats=(3, 1, 1, 0))
+                           tests=(T1, T2), stats=(3, 1, 0, 1, 0))
         self._verify_min_message_level('TRACE')
 
     def test_timestamps(self):
@@ -170,7 +170,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def _verify_suite(self, suite, name='', doc='', metadata=(), source='',
                       relsource='', status=1, message='', start=None, elapsed=0,
-                      suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0)):
+                      suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0, 0)):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''
@@ -348,23 +348,23 @@ class TestBuildStatistics(unittest.TestCase):
 
     def test_total_stats(self):
         critical, all = self._build_statistics()[0]
-        self._verify_stat(all, 2, 2, 'All Tests', '00:00:33')
-        self._verify_stat(critical, 2, 0, 'Critical Tests', '00:00:22')
+        self._verify_stat(all, 2, 2, 0, 'All Tests', '00:00:33')
+        self._verify_stat(critical, 2, 0, 0, 'Critical Tests', '00:00:22')
 
     def test_tag_stats(self):
         t2, comb, t1, t3 = self._build_statistics()[1]
-        self._verify_stat(t2, 2, 0, 't2', '00:00:22',
+        self._verify_stat(t2, 2, 0, 0, 't2', '00:00:22',
                           info='critical', doc='doc', links='t:url')
-        self._verify_stat(comb, 2, 0, 'name', '00:00:22',
+        self._verify_stat(comb, 2, 0, 0, 'name', '00:00:22',
                           info='combined', combined='t1&amp;t2')
-        self._verify_stat(t1, 2, 2, 't1', '00:00:33')
-        self._verify_stat(t3, 0, 1, 't3', '00:00:01')
+        self._verify_stat(t1, 2, 2, 0, 't1', '00:00:33')
+        self._verify_stat(t3, 0, 1, 0, 't3', '00:00:01')
 
     def test_suite_stats(self):
         root, sub1, sub2 = self._build_statistics()[2]
-        self._verify_stat(root, 2, 2, 'root', '00:00:42', name='root', id='s1')
-        self._verify_stat(sub1, 1, 1, 'root.sub1', '00:00:10', name='sub1', id='s1-s1')
-        self._verify_stat(sub2, 1, 1, 'root.sub2', '00:00:30', name='sub2', id='s1-s2')
+        self._verify_stat(root, 2, 2, 0, 'root', '00:00:42', name='root', id='s1')
+        self._verify_stat(sub1, 1, 1, 0, 'root.sub1', '00:00:10', name='sub1', id='s1-s1')
+        self._verify_stat(sub2, 1, 1, 0, 'root.sub2', '00:00:30', name='sub2', id='s1-s2')
 
     def _build_statistics(self):
         return StatisticsBuilder().build(self._get_statistics())
@@ -394,8 +394,8 @@ class TestBuildStatistics(unittest.TestCase):
                 .tests.create(tags=['t1'], status='FAIL', starttime=ts(30), endtime=ts(40))
         return suite
 
-    def _verify_stat(self, stat, pass_, fail, label, elapsed, **attrs):
-        attrs.update({'pass': pass_, 'fail': fail, 'label': label,
+    def _verify_stat(self, stat, pass_, fail, skip, label, elapsed, **attrs):
+        attrs.update({'pass': pass_, 'fail': fail, 'skip': skip, 'label': label,
                       'elapsed': elapsed})
         assert_equal(stat, attrs)
 
