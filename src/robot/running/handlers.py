@@ -251,7 +251,7 @@ class _JavaInitHandler(_JavaHandler):
 class EmbeddedArgumentsHandler(object):
 
     def __init__(self, name_regexp, orig_handler):
-        self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
+        self.arguments = orig_handler.arguments or ArgumentSpec()  # Show empty argument spec for Libdoc
         self._orig_handler = orig_handler
         self.name_regexp = name_regexp
 
