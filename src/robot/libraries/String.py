@@ -89,7 +89,7 @@ class String(object):
 
         New in Robot Framework 3.0.2.
         """
-        return  (c.upper() if i == 0 or string[i-1] == ' ' else c) for i, c in enumerate(string)
+        return  ''.join( (c.upper() if i == 0 or string[i-1] == ' ' else c) for i, c in enumerate(string))
 
 
     def encode_string_to_bytes(self, string, encoding, errors='strict'):

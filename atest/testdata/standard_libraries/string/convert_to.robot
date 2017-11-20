@@ -19,6 +19,16 @@ Convert To Lowercases
     ${EMPTY}    ${EMPTY}
     ÖÖÄÄÅÅ    ööääåå
 
+Convert To Titlecases
+    [Template]    Do titlecases
+    abcd    Abcd
+    jUnit    JUnit
+    aBBbcd    ABBbcd
+    1234    1234
+    a1b2 C3d4e    A1b2 C3d4e
+    a1b2 c3d4e    A1b2 C3d4e
+    ${EMPTY}    ${EMPTY}
+
 *** Keywords ***
 Do uppercase
     [Arguments]    ${arg1}    ${arg2}
@@ -28,4 +38,9 @@ Do uppercase
 Do lowercase
     [Arguments]    ${arg1}    ${arg2}
     ${result} =    Convert To Lowercase    ${arg1}
+    Should be Equal    ${result}    ${arg2}
+
+Do titlecases
+    [Arguments]    ${arg1}    ${arg2}
+    ${result} =    Convert To Titlecase    ${arg1}
     Should be Equal    ${result}    ${arg2}
