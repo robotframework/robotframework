@@ -91,7 +91,6 @@ class String(object):
         """
         return  ''.join( (c.upper() if i == 0 or string[i-1] == ' ' else c) for i, c in enumerate(string))
 
-
     def encode_string_to_bytes(self, string, encoding, errors='strict'):
         """Encodes the given Unicode ``string`` to bytes using the given ``encoding``.
 
