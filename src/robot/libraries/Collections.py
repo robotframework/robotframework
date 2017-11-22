@@ -16,13 +16,16 @@
 from robot.api import logger
 from robot.utils import (is_dict_like, is_string, is_truthy, plural_or_not,
                          seq2str, seq2str2, type_name, unic, Matcher)
-from robot.utils.asserts import assert_equal
+from robot.utils.asserts import assert_equal, assert_true
 from robot.version import get_version
+from collections import Counter
 
 
 class NotSet(object):
     def __repr__(self):
         return ""
+
+
 NOT_SET = NotSet()
 
 
@@ -329,7 +332,7 @@ class _List(object):
                                  '%s found multiple times.' % seq2str(dupes))
 
     def lists_should_be_equal(self, list1, list2, msg=None, values=True,
-                              names=None):
+                              names=None, ignore_order=False):
         """Fails if given lists are unequal.
 
         The keyword first verifies that the lists have equal lengths, and then
@@ -370,7 +373,7 @@ class _List(object):
         default = 'Lengths are different: %d != %d' % (len1, len2)
         _verify_condition(len1 == len2, default, msg, values)
         names = self._get_list_index_name_mapping(names, len1)
-        diffs = list(self._yield_list_diffs(list1, list2, names))
+        diffs = list(self._yield_list_diffs(list1, list2, names,ignore_order))
         default = 'Lists are different:\n' + '\n'.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
 
@@ -381,13 +384,16 @@ class _List(object):
             return dict((int(index), names[index]) for index in names)
         return dict(zip(range(list_length), names))
 
-    def _yield_list_diffs(self, list1, list2, names):
-        for index, (item1, item2) in enumerate(zip(list1, list2)):
-            name = ' (%s)' % names[index] if index in names else ''
-            try:
-                assert_equal(item1, item2, msg='Index %d%s' % (index, name))
-            except AssertionError as err:
-                yield unic(err)
+    def _yield_list_diffs(self, list1, list2, names, ignore_order=False):
+        if is_truthy(ignore_order):
+            assert_true(Counter(list1) == Counter(list2), msg='Lists  are  different')
+        else:
+            for index, (item1, item2) in enumerate(zip(list1, list2)):         
+                name = ' (%s)' % names[index] if index in names else ''
+                try:
+                    assert_equal(item1, item2, msg='Index %d%s' % (index, name))
+                except AssertionError as err:
+                    yield unic(err)
 
     def list_should_contain_sub_list(self, list1, list2, msg=None, values=True):
         """Fails if not all of the elements in ``list2`` are found in ``list1``.
@@ -432,7 +438,7 @@ class _List(object):
 
     def _index_error(self, list_, index):
         raise IndexError('Given index %s is out of the range 0-%d.'
-                         % (index, len(list_)-1))
+                         % (index, len(list_) - 1))
 
 
 class _Dictionary(object):
@@ -472,7 +478,7 @@ class _Dictionary(object):
             raise ValueError("Adding data to a dictionary failed. There "
                              "should be even number of key-value-pairs.")
         for i in range(0, len(key_value_pairs), 2):
-            dictionary[key_value_pairs[i]] = key_value_pairs[i+1]
+            dictionary[key_value_pairs[i]] = key_value_pairs[i + 1]
         dictionary.update(items)
         return dictionary
 

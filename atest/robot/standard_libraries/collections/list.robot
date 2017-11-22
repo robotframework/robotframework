@@ -316,3 +316,51 @@ List Should Not Contain Value, Value Found and Own Error Message Regexp
 
 List Should Not Contain Value, Value Found and Own Error Message Glob
     Check Test Case    ${TEST NAME}
+
+Lists Should Be Equal
+    Check Test Case    ${TEST NAME}
+
+List and Tuple should be equal
+    Check Test Case    ${TEST NAME}
+
+Lists Should Be equal With Different Lengths Ignore_order
+    Check Test Case    ${TEST NAME}
+
+Lists Should Be equal With Different Lengths And Own Error Message Ignore_order
+    Check Test Case    ${TEST NAME}
+
+Lists Should Be equal With Different Lengths And Own And Default Error Messages Ignore_order
+    Check Test Case    ${TEST NAME}
+
+Lists Should Be equal With Different Values Ignore_order
+    Check Test Case    ${TEST NAME}
+
+Lists Should Be equal With Different Values And Own Error Message Ignore_order
+    Check Test Case    ${TEST NAME}
+
+Lists Should Be equal With Different Values And Own And Default Error Messages Ignore_order
+    Check Test Case    ${TEST NAME}
+
+Lists Should Be Equal With Named Indices As List Ignore_order
+    Check Test Case    ${TEST NAME}
+
+Lists Should Be Equal With Named Indices As List With Too Few Values Ignore_order
+    Check Test Case    ${TEST NAME}
+
+Lists Should Be Equal With Named Indices As Dictionary
+    Check Test Case    ${TEST NAME}
+
+Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
+    Check Test Case    ${TEST NAME} 
+
+Lists Should Be Equal With Duplicate Value Ignore_order
+	Check Test Case    ${TEST NAME}
+
+Lists Should Be Equal With Duplicate Value Second Small List
+	Check Test Case    ${TEST NAME}
+	
+Lists Should Be Equal With Two Duplicate Value Ignore_order
+	Check Test Case    ${TEST NAME}
+
+Lists Should Be Equal With Duplicate And Different Value Ignore_order
+	Check Test Case    ${TEST NAME}
