@@ -551,6 +551,82 @@ List Should Not Contain Value, Value Found And Own Error Message Glob
     [Documentation]    FAIL My error message!
     Should Not Contain Match    ${STRING}    glob=*    My error message!
 
+Lists Should Be Equal With Different Lengths Ignore_order
+    [Documentation]    FAIL Lengths are different: 1 != 4
+    Lists Should Be Equal    ${L1}    ${L3C}    ignore_order=True
+
+Lists Should Be Equal With Different Lengths And Own Error Message Ignore_order
+    [Documentation]    FAIL My error message!
+    Lists Should Be Equal    ${L1}    ${L3C}    My error message!    False    ignore_order=True
+
+Lists Should Be Equal With Different Lengths And Own And Default Error Messages Ignore_order
+    [Documentation]    FAIL My error message!
+    ...    Lengths are different: 1 != 4
+    Lists Should Be Equal    ${L1}    ${L3C}    My error message!    ignore_order=True
+
+Lists Should Be Equal With Different Values Ignore_order
+    [Documentation]    FAIL Lists are different:
+    ...    Index 0: 11 != 10
+    ...    Index 1: 12 (integer) != 12 (string)
+    ...    Index 2: 13 != 14
+    Lists Should Be Equal    ${L3}    ${L3C}    ignore_order=True
+
+Lists Should Be Equal With Different Values And Own Error Message Ignore_order
+    [Documentation]    FAIL My error message!
+    Lists Should Be Equal    ${L3}    ${L3C}    My error message!    False    ignore_order=True
+
+Lists Should Be Equal With Different Values And Own And Default Error Messages Ignore_order
+    [Documentation]    FAIL My error message!
+    ...    Lists are different:
+    ...    Index 0: 11 != 10
+    ...    Index 1: 12 (integer) != 12 (string)
+    ...    Index 2: 13 != 14
+    Lists Should Be Equal    ${L3}    ${L3C}    My error message!    ignore_order=True
+
+Lists Should Be Equal With Named Indices As List Ignore_order
+    [Documentation]    FAIL Lists are different:
+    ...    Index 0 (a): 11 != 10
+    ...    Index 1 (b): 12 (integer) != 12 (string)
+    ...    Index 2 (c): 13 != 14
+    ${names} =    Create List    a    b    c    ignored
+    Lists Should Be Equal    ${L3}    ${L3C}    ignore_order=False    names=${names}
+
+Lists Should Be Equal With Named Indices As List With Too Few Values Ignore_order
+    [Documentation]    FAIL My message
+    ...    Lists are different:
+    ...    Index 0 (a): 11 != 10
+    ...    Index 1 (b): 12 (integer) != 12 (string)
+    ...    Index 2: 13 != 14
+    ${names} =    Create List    a    b
+    Lists Should Be Equal    ${L3}    ${L3C}    My message    ignore_order=True    names=${names}
+    
+Lists Should Be Equal With Duplicate Value Ignore_order
+    [Documentation]    PASS list are equal
+    ${names1} =    Create List    A	B	C	D
+    ${names2} =    Create List    D	B	C	A
+    
+    Lists Should Be Equal    ${names1}    ${names2}    ignore_order=True
+
+Lists Should Be Equal With Duplicate Value Second Small List
+    [Documentation]    FAIL list are Not equal
+    ${names1} =    Create List    A	B	A	D
+    ${names2} =    Create List    A	B	B	B
+    
+    Lists Should Be Equal    ${names1}    ${names2}    ignore_order=True
+
+Lists Should Be Equal With Two Duplicate Value Ignore_order
+    [Documentation]    FAIL list are not equal
+    ${names1} =    Create List    A	B	A	D
+    ${names2} =    Create List    A	B	A	D
+    
+    Lists Should Be Equal    ${names1}    ${names2}    ignore_order=False
+
+Lists Should Be Equal With Duplicate And Different Value Ignore_order
+    [Documentation]    FAIL list are different
+    ${names1} =    Create List    A	B	A	D
+    ${names2} =    Create List    A	B	E	A
+    
+    Lists Should Be Equal    ${names1}    ${names2}
 *** Keywords ***
 Create Lists For The Tests
     ${L0} =    Create List
