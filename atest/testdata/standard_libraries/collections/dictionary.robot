@@ -116,6 +116,29 @@ Dictionaries Should Be Equal
     Dictionaries Should Be Equal    ${D0}    ${D0}
     Dictionaries Should Be Equal    ${D3}    ${D3}
     Dictionaries Should Be Equal    ${BIG}    ${BIG}
+    
+Dictionaries Should Be Equal New
+    Dictionaries Should Be Equal New    ${D0}    ${D0}
+    Dictionaries Should Be Equal New    ${D3}    ${D3}
+    Dictionaries Should Be Equal New    ${BIG}    ${BIG}  
+    ${l1}=    Create List    1    2    3    4    5
+    ${sd1}=    Create Dictionary    6    7    8    9    10    11    12    13    14    15
+    
+    ${d1}=    Create Dictionary    16    17    18    19    20    ${l1}    21    22    23    ${sd1}    
+    ${d11}=    Create Dictionary    24    ${d1}  
+    ${d21}=    Create Dictionary    25    ${d11}               
+    Log Dictionary    ${d21}
+    
+    ${sd1}=    Create Dictionary    8    9    10    11    12    13    14    15
+    ${d2}=    Create Dictionary    16    17    18    19    20    ${l1}    21    22    23    ${sd1}    
+    
+    ${d22}=    Create Dictionary    25    ${d2}               
+    Log Dictionary    ${d22}
+    
+     ${l1111}=    Create List    6
+    
+     
+    Dictionaries Should Be Equal New	${d22}	${d21}		${l1111}        
 
 Dictionaries Of Different Type Should Be Equal
     ${big2}=    Evaluate    robot.utils.OrderedDict($BIG)    modules=robot

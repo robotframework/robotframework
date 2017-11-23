@@ -16,7 +16,7 @@
 from robot.api import logger
 from robot.utils import (is_dict_like, is_string, is_truthy, plural_or_not,
                          seq2str, seq2str2, type_name, unic, Matcher)
-from robot.utils.asserts import assert_equal
+from robot.utils.asserts import assert_equal, assert_true
 from robot.version import get_version
 
 
@@ -732,7 +732,52 @@ class _Dictionary(object):
             except AssertionError as err:
                 yield unic(err)
 
+    # flatten the dict and return the as dict
+    def flatten_dict(self,d):
+        def expand(key, value):
+            if isinstance(value, dict):
+                return [(key + '.' + k, v) for k, v in self.flatten_dict(value).items()]
+            elif isinstance(value, list):
+              return [(key, value.sort())]
+            else:
+                return [(key, value)]
 
+        items = [item for k, v in d.items() for item in expand(k, v)]
+        return dict(items)
+    
+    def _yield_dict_diffs_new(self, actual_dict_all_keys_dict, expected_dict_all_keys_dict, ignore_keys=[]):
+        print actual_dict_all_keys_dict
+        print expected_dict_all_keys_dict
+        print ignore_keys
+        for key, val in expected_dict_all_keys_dict.items():
+            print "====="+str(ignore_keys)
+            try:
+                
+                if any(ele in key for ele in ignore_keys):            
+                    print "Ignored {}".format(key)
+                    continue
+                else:
+                    print "Not ignored {}".format(key)
+                assert_true(key in actual_dict_all_keys_dict, msg="key {} not found in actual dictionary".format(key))
+                assert_equal(val, actual_dict_all_keys_dict.get(key), msg="for key {} value {} is not matching".format(key, val))
+            
+            except AssertionError as err:
+                    yield unic(err)
+    
+    def dictionaries_should_be_equal_new(self,actual_dict, expected_dict,ignore_keys=[], msg=None, values=True,):
+        ret_val = True
+        if not isinstance(ignore_keys, list):
+            ignore_keys = list(ignore_keys)
+        expected_dict_all_keys_dict = self.flatten_dict(expected_dict)
+        actual_dict_all_keys_dict = self.flatten_dict(actual_dict)
+        print ignore_keys
+        diffs = list(self._yield_dict_diffs_new(actual_dict_all_keys_dict, expected_dict_all_keys_dict,ignore_keys))
+        default = 'Following keys have different values:\n' + '\n'.join(diffs)
+        _verify_condition(diffs == [], default, msg, values)
+        # if ret_val==False: 
+        #     raise AssertionError("Dictionaries are not matching !!")      
+        # return ret_val
+                 
 class Collections(_List, _Dictionary):
     """A test library providing keywords for handling lists and dictionaries.
 
