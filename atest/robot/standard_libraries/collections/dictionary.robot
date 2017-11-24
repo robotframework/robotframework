@@ -157,3 +157,39 @@ Pop From Dictionary Without Default
 
 Pop From Dictionary With Default
     Check Test Case    ${TEST NAME}
+    
+T1 Dictionaries Should Be Equal New
+	Check Test Case    ${TEST NAME}
+    
+T2 Missing HIGHEST_CONFIDENCE In First Dict New Keyword
+	Check Test Case    ${TEST NAME}
+    
+T2 Missing HIGHEST_CONFIDENCE In First Dict Original Keword
+	Check Test Case    ${TEST NAME}
+	
+T2 Missing HIGHEST_CONFIDENCE In First Dict Ignore IT New Keyword
+    Check Test Case    ${TEST NAME}  
+   
+T3 Missing HIGHEST_CONFIDENCE In Second Dict New Keyword 
+	Check Test Case    ${TEST NAME}
+    
+T3 Missing HIGHEST_CONFIDENCE In Second Dict Original Keword
+	Check Test Case    ${TEST NAME}
+
+T4 Few Key Missing and Values Changed New Keyword 
+	Check Test Case    ${TEST NAME}
+
+T4 Few Key Missing and Values Changed Original Keword
+	Check Test Case    ${TEST NAME}
+
+T5 Few Key Missing And Values Changed And Ignore One Key New Keyword
+	Check Test Case    ${TEST NAME}
+
+T5 Few Key Missing And Values Changed And Ignore One Key Original Keword
+	Check Test Case    ${TEST NAME}
+
+T6 List Mismatched At Inner Level New Keyword
+	Check Test Case    ${TEST NAME}
+
+T6 List Mismatched At Inner Level New Keyword Original Keword
+	Check Test Case    ${TEST NAME}

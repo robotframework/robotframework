@@ -733,12 +733,15 @@ class _Dictionary(object):
                 yield unic(err)
 
     # flatten the dict and return the as dict
-    def flatten_dict(self,d):
+    def flatten_dict(self,d,unorder_list=False):
         def expand(key, value):
             if isinstance(value, dict):
                 return [(key + '.' + k, v) for k, v in self.flatten_dict(value).items()]
             elif isinstance(value, list):
-              return [(key, value.sort())]
+                if  is_truthy(unorder_list):
+                    return [(key, value.sort())]
+                else:
+                    return [(key, value)]
             else:
                 return [(key, value)]
 
@@ -750,33 +753,44 @@ class _Dictionary(object):
         print expected_dict_all_keys_dict
         print ignore_keys
         for key, val in expected_dict_all_keys_dict.items():
-            print "====="+str(ignore_keys)
             try:
-                
-                if any(ele in key for ele in ignore_keys):            
-                    print "Ignored {}".format(key)
+                if any(ele in key for ele in ignore_keys):
                     continue
-                else:
-                    print "Not ignored {}".format(key)
-                assert_true(key in actual_dict_all_keys_dict, msg="key {} not found in actual dictionary".format(key))
-                assert_equal(val, actual_dict_all_keys_dict.get(key), msg="for key {} value {} is not matching".format(key, val))
-            
+                assert_true(key in actual_dict_all_keys_dict, msg="\n\tFollowing keys missing {} ".format(key))
+                assert_equal(val, actual_dict_all_keys_dict.get(key), msg="\n\tFor key {} value {} is not matching".format(key, val))
             except AssertionError as err:
                     yield unic(err)
     
-    def dictionaries_should_be_equal_new(self,actual_dict, expected_dict,ignore_keys=[], msg=None, values=True,):
-        ret_val = True
+    def dictionaries_should_be_equal_new(self,actual_dict, expected_dict,ignore_keys=[], msg=None, values=True, unorder_list=False):
+        """Fails if the given dictionaries are not equal.
+
+        First the equality of dictionaries' keys is checked and after that all
+        the key value pairs. If there are differences between the values, those
+        are listed in the error message. The types of the dictionaries do not
+        need to be same.
+
+        See `Lists Should Be Equal` for more information about configuring
+        the error message with ``msg`` and ``values`` arguments.
+
+        The given dictionaries are never altered by this keyword.
+        """
         if not isinstance(ignore_keys, list):
             ignore_keys = list(ignore_keys)
-        expected_dict_all_keys_dict = self.flatten_dict(expected_dict)
-        actual_dict_all_keys_dict = self.flatten_dict(actual_dict)
-        print ignore_keys
-        diffs = list(self._yield_dict_diffs_new(actual_dict_all_keys_dict, expected_dict_all_keys_dict,ignore_keys))
+        expected_dict_all_keys_dict = self.flatten_dict(expected_dict,unorder_list)
+        actual_dict_all_keys_dict = self.flatten_dict(actual_dict,unorder_list)
+        miss1 = list(self._yield_dict_diffs_new(actual_dict_all_keys_dict, expected_dict_all_keys_dict,ignore_keys))
+        error = []
+        if miss1:
+            error += ['Mistmatch found in first dictionary: %s\n'
+                      % ', '.join(miss1)]
+       
+        miss2 = list(self._yield_dict_diffs_new(expected_dict_all_keys_dict,actual_dict_all_keys_dict,ignore_keys))
+        if miss2:
+            error += ['Mistmatch found in second dictionary: %s\n'
+                      % ', '.join(miss2)]
+        diffs = miss2 + miss2        
         default = 'Following keys have different values:\n' + '\n'.join(diffs)
-        _verify_condition(diffs == [], default, msg, values)
-        # if ret_val==False: 
-        #     raise AssertionError("Dictionaries are not matching !!")      
-        # return ret_val
+        _verify_condition(not error, '\n'.join(error), msg, values)
                  
 class Collections(_List, _Dictionary):
     """A test library providing keywords for handling lists and dictionaries.

@@ -2,6 +2,7 @@
 Test Setup        Create Dictionaries For Testing
 Resource          collections_resources.robot
 Library           CollectionsHelperLibrary.py
+Library           ./testdataLibrary.py
 
 *** Test Cases ***
 Convert To Dictionary
@@ -117,28 +118,88 @@ Dictionaries Should Be Equal
     Dictionaries Should Be Equal    ${D3}    ${D3}
     Dictionaries Should Be Equal    ${BIG}    ${BIG}
     
-Dictionaries Should Be Equal New
-    Dictionaries Should Be Equal New    ${D0}    ${D0}
-    Dictionaries Should Be Equal New    ${D3}    ${D3}
-    Dictionaries Should Be Equal New    ${BIG}    ${BIG}  
-    ${l1}=    Create List    1    2    3    4    5
-    ${sd1}=    Create Dictionary    6    7    8    9    10    11    12    13    14    15
+T1 Dictionaries Should Be Equal New
+	${a}=	testdataLibrary.retrund1
+	Log Dictionary    ${a}	
+	${b}=	testdataLibrary.retrund2
+	Log Dictionary    ${b}
+    Dictionaries Should Be Equal New	${a}		${b}
     
-    ${d1}=    Create Dictionary    16    17    18    19    20    ${l1}    21    22    23    ${sd1}    
-    ${d11}=    Create Dictionary    24    ${d1}  
-    ${d21}=    Create Dictionary    25    ${d11}               
-    Log Dictionary    ${d21}
+T2 Missing HIGHEST_CONFIDENCE In First Dict New Keyword
+	${a}=	testdataLibrary.retrund3
+	Log Dictionary    ${a}	
+	${b}=	testdataLibrary.retrund4
+	Log Dictionary    ${b}     
+    Dictionaries Should Be Equal New    ${a}		${b} 
     
-    ${sd1}=    Create Dictionary    8    9    10    11    12    13    14    15
-    ${d2}=    Create Dictionary    16    17    18    19    20    ${l1}    21    22    23    ${sd1}    
+T2 Missing HIGHEST_CONFIDENCE In First Dict Original Keword
+	${a}=	testdataLibrary.retrund3
+	Log Dictionary    ${a}	
+	${b}=	testdataLibrary.retrund4
+	Log Dictionary    ${b}     
+    Dictionaries Should Be Equal    ${a}		${b}
+
+T2 Missing HIGHEST_CONFIDENCE In First Dict Ignore IT New Keyword
+	${a}=	testdataLibrary.retrund3
+	Log Dictionary    ${a}	
+	${b}=	testdataLibrary.retrund4
+	Log Dictionary    ${b}
+	${ignore_keys}=    Create List   HIGHEST_CONFIDENCE
+	Dictionaries Should Be Equal New	${a}		${b}    ${ignore_keys}      
+        
+   
+T3 Missing HIGHEST_CONFIDENCE In Second Dict New Keyword 
+	${a}=	testdataLibrary.retrund5
+	Log Dictionary    ${a}	
+	${b}=	testdataLibrary.retrund6
+	Log Dictionary    ${b}     
+    Dictionaries Should Be Equal New    ${a}		${b}
     
-    ${d22}=    Create Dictionary    25    ${d2}               
-    Log Dictionary    ${d22}
-    
-     ${l1111}=    Create List    6
-    
-     
-    Dictionaries Should Be Equal New	${d22}	${d21}		${l1111}        
+T3 Missing HIGHEST_CONFIDENCE In Second Dict Original Keword
+	${a}=	testdataLibrary.retrund5
+	Log Dictionary    ${a}	
+	${b}=	testdataLibrary.retrund6
+	Log Dictionary    ${b}     
+    Dictionaries Should Be Equal    ${a}		${b}         
+
+T4 Few Key Missing and Values Changed New Keyword 
+	${a}=	testdataLibrary.retrund7
+	Log Dictionary    ${a}	
+	${b}=	testdataLibrary.retrund8
+	Log Dictionary    ${b}     
+    Dictionaries Should Be Equal New	${a}		${b}
+
+T4 Few Key Missing and Values Changed Original Keword
+	${a}=	testdataLibrary.retrund7
+	Log Dictionary    ${a}	
+	${b}=	testdataLibrary.retrund8
+	Log Dictionary    ${b}     
+    Dictionaries Should Be Equal    ${a}		${b}
+
+T5 Few Key Missing And Values Changed And Ignore One Key New Keyword
+	${a}=	testdataLibrary.retrund7
+	Log Dictionary    ${a}	
+	${b}=	testdataLibrary.retrund8
+	Log Dictionary    ${b}     
+	${ignore_keys}=    Create List   HIGHEST_CONFIDENCE
+	Dictionaries Should Be Equal New	${a}		${b}    ${ignore_keys}
+
+T5 Few Key Missing And Values Changed And Ignore One Key Original Keword
+	Log To Console     No keyword to ignore key
+
+T6 List Mismatched At Inner Level New Keyword
+	${a}=	testdataLibrary.retrund9
+	Log Dictionary    ${a}	
+	${b}=	testdataLibrary.retrund10
+	Log Dictionary    ${b}     
+    Dictionaries Should Be Equal New	${a}		${b}
+
+T6 List Mismatched At Inner Level New Keyword Original Keword
+	${a}=	testdataLibrary.retrund9
+	Log Dictionary    ${a}	
+	${b}=	testdataLibrary.retrund10
+	Log Dictionary    ${b}     
+    Dictionaries Should Be Equal    ${a}		${b}      
 
 Dictionaries Of Different Type Should Be Equal
     ${big2}=    Evaluate    robot.utils.OrderedDict($BIG)    modules=robot
