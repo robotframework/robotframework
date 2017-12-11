@@ -900,9 +900,10 @@ class XML(object):
         | Elements Should Be Equal | ${p} | <p>Text with <b>bold</b> and <i>italics</i>.</p> | normalize_whitespace=yes |
         | Elements Should Be Equal | ${p} | <p>Text with</p> | exclude | normalize |
 
-        The last example may look a bit strange because the ``<p>`` element only
-        has text ``Text with``. The reason is that rest of the text inside
-        ``<p>`` actually belongs to the child elements.
+        The last example may look a bit strange because the ``<p>`` element
+        only has text ``Text with``. The reason is that rest of the text
+        inside ``<p>`` actually belongs to the child elements. This includes
+        the ``.`` at the end that is the `tail` text of the ``<i>`` element.
 
         See also `Elements Should Match`.
         """
