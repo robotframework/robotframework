@@ -55,7 +55,7 @@ contains are processed recursively as follows:
 - Directories with the name :file:`CVS` are ignored (case-sensitive).
 - Files not having one of the `recognized extensions`__ (:file:`.html`,
   :file:`.xhtml`, :file:`.htm`, :file:`.tsv`, :file:`.txt`, :file:`.rst`,
-  or :file:`.rest`) are ignored (case-insensitive).
+  :file:`.rest` or :file:`.robot`) are ignored (case-insensitive).
 - Other files and directories are processed.
 
 If a file or directory that is processed does not contain any test
