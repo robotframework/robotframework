@@ -24,6 +24,15 @@ Set Multiline Message
     ${tc} =    Check Test Case    ${TEST NAME}    PASS    1\n2\n3
     Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\n1\n2\n3
 
+Use the HTML
+    Check Test Case     ${TEST NAME}
+
+Use the HTML first
+    Check Test Case     ${TEST NAME}
+
+Use the HTML combination
+    Check Test Case     ${TEST NAME}
+
 Set Non-String Message
     Check Test Case    ${TEST NAME}    PASS    42
 
