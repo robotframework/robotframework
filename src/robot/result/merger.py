@@ -15,6 +15,7 @@
 
 from robot.errors import DataError
 from robot.model import SuiteVisitor
+from robot.utils import html_escape
 
 
 class Merger(SuiteVisitor):
@@ -78,7 +79,6 @@ class Merger(SuiteVisitor):
         return ''.join([prefix, '<hr>', self._format_html_message(item.message)])
 
     def _format_html_message(self, message):
-        from robot.utils import html_escape
         if message.startswith('*HTML*'):
             return message[6:].lstrip()
         else:
