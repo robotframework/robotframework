@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import absolute_import
+
 import re
 from fnmatch import fnmatchcase
 from random import randint
@@ -181,8 +183,9 @@ class String(object):
 
         The match is case-sensitive by default, but giving ``case_insensitive``
         a true value makes it case-insensitive. The value is considered true
-        if it is a non-empty string that is not equal to ``false`` or ``no``.
-        If the value is not a string, its truth value is got directly in Python.
+        if it is a non-empty string that is not equal to ``false``, ``none`` or
+        ``no``. If the value is not a string, its truth value is got directly
+        in Python. Considering ``none`` false is new in RF 3.0.3.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -215,8 +218,9 @@ class String(object):
 
         The match is case-sensitive by default, but giving ``case_insensitive``
         a true value makes it case-insensitive. The value is considered true
-        if it is a non-empty string that is not equal to ``false`` or ``no``.
-        If the value is not a string, its truth value is got directly in Python.
+        if it is a non-empty string that is not equal to ``false``, ``none`` or
+        ``no``. If the value is not a string, its truth value is got directly
+        in Python. Considering ``none`` false is new in RF 3.0.3.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -246,9 +250,10 @@ class String(object):
 
         By default lines match only if they match the pattern fully, but
         partial matching can be enabled by giving the ``partial_match``
-        argument a true value. The value is considered true if it is a
-        non-empty string that is not equal to ``false`` or ``no``. If the
-        value is not a string, its truth value is got directly in Python.
+        argument a true value. The value is considered true
+        if it is a non-empty string that is not equal to ``false``, ``none`` or
+        ``no``. If the value is not a string, its truth value is got directly
+        in Python. Considering ``none`` false is new in RF 3.0.3.
 
         If the pattern is empty, it matches only empty lines by default.
         When partial matching is enabled, empty pattern matches all lines.

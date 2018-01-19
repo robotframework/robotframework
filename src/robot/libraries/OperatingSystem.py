@@ -104,9 +104,9 @@ class OperatingSystem(object):
 
     Some keywords accept arguments that are handled as Boolean values true or
     false. If such an argument is given as a string, it is considered false if
-    it is either empty or case-insensitively equal to ``false`` or ``no``.
-    Other strings are considered true regardless their value, and other
-    argument types are tested using same
+    it is either an empty string or case-insensitively equal to ``false``,
+    ``none`` or ``no``. Other strings are considered true regardless
+    their value, and other argument types are tested using the same
     [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
     as in Python].
 
@@ -122,8 +122,9 @@ class OperatingSystem(object):
     | `Remove Directory` | ${path} | recursive=${EMPTY} | # Empty string is false.       |
     | `Remove Directory` | ${path} | recursive=${FALSE} | # Python ``False`` is false.   |
 
-    Note that prior to Robot Framework 2.9, all non-empty strings, including
-    ``false`` and ``no``, were considered true.
+    Prior to Robot Framework 2.9, all non-empty strings, including ``false``
+    and ``no``, were considered true. Considering ``none`` false is new in
+    Robot Framework 3.0.3.
 
     = Example =
 
@@ -1084,9 +1085,9 @@ class OperatingSystem(object):
         See `Join Path` for more information.
 
         Examples:
-        | @{p1} = | Join Path | base     | example       | other |          |
-        | @{p2} = | Join Path | /my/base | /example      | other |          |
-        | @{p3} = | Join Path | my/base  | example/path/ | other | one/more |
+        | @{p1} = | Join Paths | base     | example       | other |          |
+        | @{p2} = | Join Paths | /my/base | /example      | other |          |
+        | @{p3} = | Join Paths | my/base  | example/path/ | other | one/more |
         =>
         - @{p1} = ['base/example', 'base/other']
         - @{p2} = ['/example', '/my/base/other']

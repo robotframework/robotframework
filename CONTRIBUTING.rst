@@ -249,27 +249,6 @@ Unit tests
 Unit tests are great for testing internal logic and should be added when
 appropriate. For more details see `<utest/README.rst>`_.
 
-Continuous integration
-''''''''''''''''''''''
-
-Robot Framework's continuous integration (CI) servers are visible through
-http://robot.radiaatto.ri.fi/. They automatically test all new commits
-to the repository both on Linux and on Windows, and pull requests can be
-tested there too.
-
-When a new pull request comes in, the CI will ask if one of the admins
-can verify the pull request. The admins are currently @jussimalinen and
-@pekkaklarck. The commands are:
-
--  ``robotci: once`` (run once)
--  ``robotci: enable`` (run whenever this pull request changes)
--  ``robotci: whitelist user`` (enable CI for all pull requests coming
-   from this user)
-
-The commands can be anywhere on the comment. Adding the skip statement
-(``[skip ci]``, with the square brackets) to the pull request body will
-cause the job not to be executed.
-
 Finalizing pull requests
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

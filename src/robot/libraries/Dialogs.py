@@ -78,8 +78,8 @@ def get_value_from_user(message, default_value='', hidden=False):
 
     If ``hidden`` is given a true value, the value typed by the user is hidden.
     ``hidden`` is considered true if it is a non-empty string not equal to
-    ``false`` or ``no``, case-insensitively. If it is not a string, its truth
-    value is got directly using same
+    ``false``, ``none`` or ``no``, case-insensitively. If it is not a string,
+    its truth value is got directly using same
     [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
     as in Python].
 
@@ -88,7 +88,8 @@ def get_value_from_user(message, default_value='', hidden=False):
     | ${password} = | Get Value From User | Input password  | hidden=yes |
 
     Possibility to hide the typed in value is new in Robot Framework 2.8.4.
-    Considering strings ``false`` and ``no`` to be false is new in 2.9.
+    Considering strings ``false`` and ``no`` to be false is new in RF 2.9
+    and considering string ``none`` false is new in RF 3.0.3.
     """
     return _validate_user_input(InputDialog(message, default_value,
                                             is_truthy(hidden)))

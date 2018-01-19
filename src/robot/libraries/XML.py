@@ -421,9 +421,9 @@ class XML(object):
 
     Some keywords accept arguments that are handled as Boolean values true or
     false. If such an argument is given as a string, it is considered false if
-    it is either empty or case-insensitively equal to ``false`` or ``no``.
-    Other strings are considered true regardless their value, and other
-    argument types are tested using same
+    it is either an empty string or case-insensitively equal to ``false``,
+    ``none`` or ``no``. Other strings are considered true regardless
+    their value, and other argument types are tested using the same
     [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
     as in Python].
 
@@ -439,8 +439,9 @@ class XML(object):
     | `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.       |
     | `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python ``False`` is false.   |
 
-    Note that prior to Robot Framework 2.9, all non-empty strings, including
-    ``false`` and ``no``, were considered true.
+    Prior to Robot Framework 2.9, all non-empty strings, including ``false``
+    and ``no``, were considered to be true. Considering ``none`` false is
+    new in Robot Framework 3.0.3.
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -899,9 +900,10 @@ class XML(object):
         | Elements Should Be Equal | ${p} | <p>Text with <b>bold</b> and <i>italics</i>.</p> | normalize_whitespace=yes |
         | Elements Should Be Equal | ${p} | <p>Text with</p> | exclude | normalize |
 
-        The last example may look a bit strange because the ``<p>`` element only
-        has text ``Text with``. The reason is that rest of the text inside
-        ``<p>`` actually belongs to the child elements.
+        The last example may look a bit strange because the ``<p>`` element
+        only has text ``Text with``. The reason is that rest of the text
+        inside ``<p>`` actually belongs to the child elements. This includes
+        the ``.`` at the end that is the `tail` text of the ``<i>`` element.
 
         See also `Elements Should Match`.
         """

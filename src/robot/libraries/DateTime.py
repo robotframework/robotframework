@@ -258,10 +258,11 @@ may also be included even if there would be none.
 All keywords returning dates or times have an option to leave milliseconds out
 by giving a true value to ``exclude_millis`` argument. If the argument is given
 as a string, it is considered true unless it is empty or case-insensitively
-equal to ``false`` or ``no``. Other argument types are tested using same
-[http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules as in
-Python]. Notice that prior to Robot Framework 2.9, all strings except the empty
-string were considered true.
+equal to ``false``, ``none`` or ``no``. Other argument types are tested using
+same [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+as in Python]. Notice that prior to Robot Framework 2.9, all strings except
+the empty string were considered true, and that considering ``none`` false is
+new in Robot Framework 3.0.3.
 
 When milliseconds are excluded, seconds in returned dates and times are
 rounded to the nearest full second. With `timestamp` and `timer string`
@@ -303,6 +304,8 @@ Additionally helper classes ``Date`` and ``Time`` can be used directly:
 |     interval = Time(interval).convert('number')
 |     # ...
 """
+
+from __future__ import absolute_import
 
 from datetime import datetime, timedelta
 import time

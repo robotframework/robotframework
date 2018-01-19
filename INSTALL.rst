@@ -122,10 +122,6 @@ to `drop Python 2.6 support in RF 3.1`__. If you need to use older versions,
 Robot Framework 2.5-2.8 support Python 2.5 and Robot Framework 2.0-2.1
 support Python 2.3 and 2.4.
 
-On Windows it is recommended to install Python to all users and to run the
-installer as an administrator. Additionally, environment variable
-``PYTHONCASEOK`` must not be set.
-
 After installing Python, you probably still want to configure PATH_ to make
 Python itself as well as the ``robot`` and ``rebot`` `runner scripts`_
 executable on the command line.
