@@ -20,9 +20,10 @@ if sys.platform.startswith('java'):
     from java.util import List, Map
 
 from robot.errors import DataError
-from robot.variables import is_dict_var, is_list_var, is_scalar_var
-from .argumentspec import ArgumentSpec
 from robot.utils import PY2
+from robot.variables import is_dict_var, is_list_var, is_scalar_var
+
+from .argumentspec import ArgumentSpec
 
 
 class _ArgumentParser(object):
