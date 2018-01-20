@@ -4,8 +4,8 @@ Suite Teardown    Remove Files    ${ORIGINAL}
 Resource          rebot_resource.robot
 
 *** Variables ***
-${MISC}             ${DATADIR}/rebot/
-${SUITES}           ${DATADIR}/rebot/suites
+${MISC}             ${DATADIR}/rebot
+${SUITES}           ${DATADIR}/rebot
 ${ORIGINAL}         %{TEMPDIR}/merge-original.xml
 ${MERGE 1}          %{TEMPDIR}/merge-1.xml
 @{ALL TESTS}        Html1   Html2   Html3   Html4
@@ -36,10 +36,6 @@ Merge re-executed tests
 *** Keywords ***
 Run original tests
     Create Output With Robot    ${ORIGINAL}    ${EMPTY}    ${SUITES}
-    Verify original tests
-
-Verify original tests
-    Should Be Equal    ${SUITE.name}    Suites
     Should Contain Tests    ${SUITE}    @{ALL TESTS}
 
 Re-run tests
