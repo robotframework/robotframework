@@ -3089,7 +3089,7 @@ class _Misc(_BuiltInBase):
             new = unic(new)
         if is_truthy(append) and initial:
 
-            if new.startswith('*HTMgit L*'):
+            if new.startswith('*HTML*'):
                 new = new[6:].lstrip()
                 if initial.startswith('*HTML*'):
                     return '%s %s' % (initial, new)
