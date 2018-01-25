@@ -25,7 +25,9 @@ from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           PassExecution, ReturnFromKeyword)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
+from robot.running.timeouts import KeywordTimeout
 from robot.running.usererrorhandler import UserErrorHandler
+
 from robot.utils import (DotDict, escape, format_assign_message,
                          get_error_message, get_time, is_falsy, is_integer,
                          is_string, is_truthy, is_unicode, IRONPYTHON, JYTHON,
@@ -1871,6 +1873,31 @@ class _RunKeyword(_BuiltInBase):
             raise AssertionError("Expected error '%s' but got '%s'."
                                  % (expected_error, error))
         return unic(error)
+
+    @run_keyword_variant(resolve=2)
+    def run_keyword_with_maximum_time(self, timeout_value, name, *args):
+        """Executes the specified keyword and fails if the underlying keyword
+        doesn't return in the specified time.
+
+        The ``timeout_value`` must be in Robot Framework's time format
+        (e.g. ``1 minute``, ``2 min 3 s``). Using a number alone
+        (e.g. ``1`` or ``1.5``) does not work in this context.
+
+        ``name`` and ``args`` define the keyword that is executed similarly
+        as with `Run Keyword`.
+
+        Example:
+        | Run Keyword With Maximum Time | 5 seconds | Some Keyword | arg1 | arg2 |
+        """
+        if not is_string(name):
+            raise RuntimeError('Keyword name must be a string.')
+        timeout = KeywordTimeout(timeout_value, variables=self._variables)
+        kw = Keyword(name, timeout=timeout, args=args)
+        with self._context.timeout(kw.timeout):
+            try:
+                return kw.run(self._context)
+            except ExecutionFailed:
+                raise
 
     @run_keyword_variant(resolve=2)
     def repeat_keyword(self, repeat, name, *args):
