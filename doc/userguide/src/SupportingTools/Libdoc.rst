@@ -160,11 +160,11 @@ insensitive. Both also accept `*` and `?` as wildcards.
 Examples::
 
   python -m robot.libdoc Dialogs list
-  python -m robot.libdoc Selenium2Library list browser
+  python -m robot.libdoc SeleniumLibrary list browser
   python -m robot.libdoc Remote::10.0.0.42:8270 show
   python -m robot.libdoc Dialogs show PauseExecution execute*
-  python -m robot.libdoc Selenium2Library show intro
-  python -m robot.libdoc Selenium2Library version
+  python -m robot.libdoc SeleniumLibrary show intro
+  python -m robot.libdoc SeleniumLibrary version
 
 Writing documentation
 ---------------------

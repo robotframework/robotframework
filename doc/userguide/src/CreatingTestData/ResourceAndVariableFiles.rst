@@ -92,7 +92,7 @@ Example resource file
 
    *** Settings ***
    Documentation     An example resource file
-   Library           Selenium2Library
+   Library           SeleniumLibrary
    Resource          ${RESOURCES}/common.robot
 
    *** Variables ***
