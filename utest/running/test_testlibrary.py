@@ -184,6 +184,9 @@ class TestLibraryInit(unittest.TestCase):
     def test_library_with_metaclass(self):
         self._test_init_handler('newstyleclasses.MetaClassLibrary')
 
+    def test_library_with_zero_len(self):
+        self._test_init_handler('LenLibrary')
+
     def _test_init_handler(self, libname, args=None, min=0, max=0):
         lib = TestLibrary(libname, args)
         assert_equal(lib.init.arguments.minargs, min)
