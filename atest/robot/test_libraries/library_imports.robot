@@ -52,6 +52,10 @@ Library Import With Variables From Resource File
     Check Test Case    Verify Library Import With Variable In Name
     Check Test Case    Verify Library Import With List Variable
 
+Importing Zero Length Library
+    Run Tests    ${EMPTY}     test_libraries/library_import_zero_len.robot
+    Check Test Case    Verify Zero Length Library Import
+
 Arguments To Library
     ${sources} =    Catenate
     ...    test_libraries/library_with_0_parameters.robot
