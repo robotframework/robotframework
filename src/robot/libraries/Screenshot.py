@@ -346,7 +346,7 @@ class ScreenshotTaker(object):
             self._wx_app_reference = wx.App(False)
         context = wx.ScreenDC()
         width, height = context.GetSize()
-        bitmap = wx.EmptyBitmap(width, height, -1)
+        bitmap = wx.Bitmap(width, height, -1)
         memory = wx.MemoryDC()
         memory.SelectObject(bitmap)
         memory.Blit(0, 0, width, height, context, -1, -1)
