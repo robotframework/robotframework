@@ -57,7 +57,13 @@ Options
                   - *unix*: use Unix line separators (LF)
 
                   New in Robot Framework 2.7.6.
- -h, --help       Show this help.
+ -m, --maxlinelength <number>
+                 The line length before the line is split onto the next line.
+                 Only available with space separated and pipe (|) separated
+                 txt output file format. Tidy reformats test suites to have 80
+                 character long lines by default.
+                 New in Robot Framework 3.0.3.
+ -h, --help      Show this help.
 
 Alternative execution
 ~~~~~~~~~~~~~~~~~~~~~

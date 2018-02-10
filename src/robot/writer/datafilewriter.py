@@ -54,7 +54,8 @@ class WritingContext(object):
     _formats = [txt_format, html_format, tsv_format, robot_format]
 
     def __init__(self, datafile, format='', output=None, pipe_separated=False,
-                 txt_separating_spaces=4, line_separator='\n'):
+                 txt_separating_spaces=4, line_separator='\n',
+                 max_line_length=80):
         """
         :param datafile: The datafile to be written.
         :type datafile: :py:class:`~robot.parsing.model.TestCaseFile`,
@@ -70,6 +71,8 @@ class WritingContext(object):
         :param int txt_separating_spaces: Number of separating spaces between
             cells in space separated format.
         :param str line_separator: Line separator used in output files.
+        :param int max_line_length: Maximum length of the line before
+            splittling
 
         If `output` is not given, an output file is created based on the source
         of the given datafile and value of `format`. Examples:
@@ -86,6 +89,7 @@ class WritingContext(object):
         self.datafile = datafile
         self.pipe_separated = pipe_separated
         self.line_separator = line_separator
+        self.max_line_length = max_line_length
         self._given_output = output
         self.format = self._validate_format(format) or self._format_from_file()
         self.txt_separating_spaces = txt_separating_spaces

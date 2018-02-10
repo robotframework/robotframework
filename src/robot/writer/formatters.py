@@ -50,7 +50,7 @@ class _DataFileFormatter(object):
 
     def _split_rows(self, original_rows, table):
         for original in original_rows:
-            for split in self._splitter.split(original, table.type):
+            for split in self._splitter.split(original, table):
                 yield split
 
     def _should_align_columns(self, table):
@@ -98,6 +98,13 @@ class TsvFormatter(_DataFileFormatter):
 class TxtFormatter(_DataFileFormatter):
     _test_or_keyword_name_width = 18
     _setting_and_variable_name_width = 14
+
+    def __init__(self, column_count, max_line_length, make_row):
+        _DataFileFormatter.__init__(self, column_count=column_count)
+        self._max_line_length = max_line_length
+        self._make_row = make_row
+        self._splitter = RowSplitter(column_count, self._split_multiline_doc,
+                                     self._max_line_length, make_row=self._make_row, format_row=self._format_row)
 
     def _format_row(self, row, table=None):
         row = self._escape(row)

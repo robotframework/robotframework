@@ -82,6 +82,12 @@ Options
                  windows: use Windows line separators (CRLF)
                  unix:    use Unix line separators (LF)
                  New in Robot Framework 2.7.6.
+ -m --maxlinelength number
+                 The line length before the line is split onto the next line.
+                 Only available with space separated and pipe (`|`) separated
+                 txt output file format. Tidy reformats test suites to have 80
+                 character long lines by default.
+                 New in Robot Framework 3.0.3
  -h -? --help    Show this help.
 
 Cleaning up the test data
@@ -135,11 +141,13 @@ class Tidy(object):
     """
 
     def __init__(self, format='txt', use_pipes=False,
-                 space_count=4, line_separator=os.linesep):
+                 space_count=4, line_separator=os.linesep,
+                 max_line_length=80):
         self._options = dict(format=format,
                              pipe_separated=use_pipes,
                              txt_separating_spaces=space_count,
-                             line_separator=line_separator)
+                             line_separator=line_separator,
+                             max_line_length=max_line_length)
 
     def file(self, path, output=None):
         """Tidy a file.
@@ -230,9 +238,11 @@ class TidyCommandLine(Application):
         Application.__init__(self, USAGE, arg_limits=(1,))
 
     def main(self, arguments, recursive=False, inplace=False, format='txt',
-             usepipes=False, spacecount=4, lineseparator=os.linesep):
+             usepipes=False, spacecount=4, lineseparator=os.linesep,
+             maxlinelength=80):
         tidy = Tidy(format=format, use_pipes=usepipes,
-                    space_count=spacecount, line_separator=lineseparator)
+                    space_count=spacecount, line_separator=lineseparator,
+                    max_line_length=maxlinelength)
         if recursive:
             tidy.directory(arguments[0])
         elif inplace:
@@ -251,6 +261,10 @@ class TidyCommandLine(Application):
             opts.pop('spacecount')
         else:
             opts['spacecount'] = validator.spacecount(opts['spacecount'])
+        if not opts['maxlinelength']:
+            opts.pop('maxlinelength')
+        else:
+            opts['maxlinelength'] = validator.maxlinelength(opts['maxlinelength'], opts['format'])
         return opts, args
 
 
@@ -310,6 +324,17 @@ class ArgumentValidator(object):
         except ValueError:
             raise DataError('--spacecount must be an integer greater than 1.')
         return spacecount
+
+    def maxlinelength(self, maxlinelength, file_format):
+        if file_format in ['TSV', 'HTML']:
+            raise DataError('--maxlinelength can only be used with TXT or ROBOT format')
+        try:
+            maxlinelength = int(maxlinelength)
+            if maxlinelength <= 0:
+                raise ValueError
+            return maxlinelength
+        except ValueError:
+            raise DataError('--maxlinelength must be a positive integer')
 
 
 def tidy_cli(arguments):

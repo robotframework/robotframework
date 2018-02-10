@@ -24,17 +24,22 @@ class RowSplitter(object):
     _indented_tables = ('test case', 'keyword')
     _split_from = ('ELSE', 'ELSE IF', 'AND')
 
-    def __init__(self, cols=8, split_multiline_doc=True):
+    def __init__(self, cols=8, split_multiline_doc=True,
+                 max_line_length=None, make_row=None, format_row=None):
         self._cols = cols
         self._split_multiline_doc = split_multiline_doc
+        self._max_line_length = max_line_length
+        self._make_row = make_row
+        self._format_row = format_row
 
-    def split(self, row, table_type):
+    def split(self, row, table):
+        table_type = table.type
         if not row:
             return self._split_empty_row()
         indent = self._get_indent(row, table_type)
         if self._split_multiline_doc and self._is_doc_row(row, table_type):
             return self._split_doc_row(row, indent)
-        return self._split_row(row, indent)
+        return self._split_row(row, indent, table)
 
     def _split_empty_row(self):
         yield []
@@ -70,25 +75,48 @@ class RowSplitter(object):
             doc = doc.replace('\\n ', '\\n')
         return doc.split('\\n', 1)
 
-    def _split_row(self, row, indent):
+    def _split_row(self, row, indent, table):
         while row:
-            current, row = self._split(row)
+            current, row = self._split(row, table)
             yield self._escape_last_cell_if_empty(current)
             if row:
                 row = self._continue_row(row, indent)
 
-    def _split(self, data):
-        index = min(self._get_possible_split_indices(data))
+    def _split(self, data, table):
+        index = min(self._get_possible_split_indices(data, table))
         current, rest = data[:index], data[index:]
         rest = self._comment_rest_if_needed(current, rest)
         return current, rest
 
-    def _get_possible_split_indices(self, data):
+    def _get_possible_split_indices(self, data, table):
         min_index = self._get_first_non_empty_index(data, indented=True) + 1
         for marker in self._split_from:
             if marker in data[min_index:]:
                 yield data[min_index:].index(marker) + min_index
-        yield self._cols
+        if not self._max_line_length:
+            yield self._cols
+        if (self._max_line_length and
+                self._get_row_length(data, table) > self._max_line_length):
+            index = min_index
+            while (self._get_row_length(data[:index], table) <= self._max_line_length and
+                    index <= len(data)):
+                index += 1
+            if index != min_index:
+                index -= 1
+            yield index
+        else:
+            yield len(data)
+
+    def _get_row_length(self, row, table):
+        formatted_row = self._make_row(self._format_row(row, table))
+        row_length = len(formatted_row)
+        if formatted_row.endswith('\n'):
+            return row_length - 1
+        elif formatted_row.endswith('\r\n'):
+            return row_length - 2
+        else:
+            return row_length
+
 
     def _comment_rest_if_needed(self, current, rest):
         if rest and any(c.startswith(self._comment_mark) for c in current) \

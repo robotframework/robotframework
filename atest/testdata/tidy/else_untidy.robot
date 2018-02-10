@@ -21,10 +21,10 @@ Test Case With Line Continuation Before Expression
     ...    expression    No Operation    ELSE    No Operation
 
 Test Case With Long Internal Lines
-    Some Keyword  1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16  17  18
-    ...  ELSE IF  1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16  17  18
-    ...  ELSE IF  1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16  17  18
-    ...  ELSE     1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16  17  18
+    Some Keyword  1  2  3  4  LooooooooooooooooooongArg  5  6  7  8  9  10  11  12  13  14  15  16  17  18
+    ...  ELSE IF  1  2  3  4  LooooooooooooooooooongArg  5  6  7  8  9  10  11  12  13  14  15  16  17  18
+    ...  ELSE IF  1  2  3  4  LooooooooooooooooooongArg  5  6  7  8  9  10  11  12  13  14  15  16  17  18
+    ...  ELSE     1  2  3  4  LooooooooooooooooooongArg  5  6  7  8  9  10  11  12  13  14  15  16  17  18
 
 Escaping
     Log Many    \ELSE    \ELSE IF    \AND
@@ -48,4 +48,4 @@ Keyword With Line Continuation Before Expression
     ...    expression    No Operation    ELSE    No Operation
 
 Keyword With Long Line
-    Run Keyword If    expression    No Operation    ELSE IF     expression    No Operation    ELSE    No Operation    1    2    3    4    5    6
+    Run Keyword If    expression    No Operation    ELSE IF     expression    No Operation    ELSE    No Operation    1    2    3    4    LooooooooooooooooooongArg    5    6

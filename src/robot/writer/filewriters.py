@@ -76,12 +76,17 @@ class _DataFileWriter(object):
 class SpaceSeparatedTxtWriter(_DataFileWriter):
 
     def __init__(self, configuration):
-        formatter = TxtFormatter(configuration.txt_column_count)
         self._separator = ' ' * configuration.txt_separating_spaces
+        formatter = TxtFormatter(configuration.txt_column_count,
+                                 configuration.max_line_length,
+                                 self._make_row)
         _DataFileWriter.__init__(self, formatter, configuration)
 
+    def _make_row(self, row):
+        return self._separator.join(row).rstrip() + '\n'
+
     def _write_row(self, row):
-        line = self._separator.join(row).rstrip() + '\n'
+        line = self._make_row(row)
         self._output.write(line)
 
 
@@ -89,14 +94,21 @@ class PipeSeparatedTxtWriter(_DataFileWriter):
     _separator = ' | '
 
     def __init__(self, configuration):
-        formatter = PipeFormatter(configuration.txt_column_count)
+        formatter = PipeFormatter(configuration.txt_column_count,
+                                  configuration.max_line_length,
+                                  self._make_row)
         _DataFileWriter.__init__(self, formatter, configuration)
 
-    def _write_row(self, row):
+    def _make_row(self, row):
         row = self._separator.join(row)
         if row:
             row = '| ' + row + ' |'
-        self._output.write(row + '\n')
+        row += '\n'
+        return row
+
+    def _write_row(self, row):
+        row = self._make_row(row)
+        self._output.write(row)
 
 
 class TsvFileWriter(_DataFileWriter):
