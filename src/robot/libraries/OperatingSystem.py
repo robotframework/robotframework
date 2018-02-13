@@ -1085,9 +1085,9 @@ class OperatingSystem(object):
         See `Join Path` for more information.
 
         Examples:
-        | @{p1} = | Join Path | base     | example       | other |          |
-        | @{p2} = | Join Path | /my/base | /example      | other |          |
-        | @{p3} = | Join Path | my/base  | example/path/ | other | one/more |
+        | @{p1} = | Join Paths | base     | example       | other |          |
+        | @{p2} = | Join Paths | /my/base | /example      | other |          |
+        | @{p3} = | Join Paths | my/base  | example/path/ | other | one/more |
         =>
         - @{p1} = ['base/example', 'base/other']
         - @{p2} = ['/example', '/my/base/other']

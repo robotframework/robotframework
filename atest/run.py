@@ -105,7 +105,8 @@ def _get_arguments(interpreter, outputdir):
 def _run(args, tempdir, classpath):
     runner = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
     command = [sys.executable, runner] + args
-    environ = dict(os.environ, TEMPDIR=tempdir, CLASSPATH=classpath or '')
+    environ = dict(os.environ, TEMPDIR=tempdir, CLASSPATH=classpath or '',
+                   PYTHONCASEOK='True')
     print('Running command:\n%s\n' % ' '.join(command))
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)

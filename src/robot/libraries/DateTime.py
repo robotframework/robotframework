@@ -305,6 +305,8 @@ Additionally helper classes ``Date`` and ``Time`` can be used directly:
 |     # ...
 """
 
+from __future__ import absolute_import
+
 from datetime import datetime, timedelta
 import time
 import re
