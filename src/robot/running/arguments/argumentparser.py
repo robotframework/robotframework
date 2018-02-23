@@ -32,7 +32,11 @@ class _ArgumentParser(object):
         self._type = type
 
     def parse(self, source, name=None):
-        return ArgumentSpec(name, self._type, *self._get_arg_spec(source))
+        try:
+            return ArgumentSpec(name, self._type, **self._get_arg_spec(source))
+        except TypeError:
+            # Support original style *args return from _get_arg_spec
+            return ArgumentSpec(name, self._type, *self._get_arg_spec(source))
 
     def _get_arg_spec(self, source):
         raise NotImplementedError
@@ -42,13 +46,17 @@ class PythonArgumentParser(_ArgumentParser):
 
     def _get_arg_spec(self, handler):
         if PY2:
-            args, varargs, kwargs, defaults = inspect.getargspec(handler)
+            args, varargs, varkw, defaults = inspect.getargspec(handler)
+            kwonlyargs = kwonlydefaults = None
         else:
-            args, varargs, kwargs, defaults, _, _, _ = inspect.getfullargspec(handler)
+            args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, _ = inspect.getfullargspec(handler)
         if inspect.ismethod(handler) or handler.__name__ == '__init__':
             args = args[1:]  # drop 'self'
         defaults = list(defaults) if defaults else []
-        return args, defaults, varargs, kwargs
+        return {
+            'positional': args, 'defaults': defaults, 'varargs': varargs, 'kwargs': varkw, 'kwonlyargs': kwonlyargs,
+            'kwonlydefaults': kwonlydefaults
+        }
 
 
 class JavaArgumentParser(_ArgumentParser):

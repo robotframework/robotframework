@@ -66,3 +66,10 @@ class ArgumentValidator(object):
             if name not in named:
                 raise DataError("%s '%s' missing value for argument '%s'."
                                 % (spec.type, spec.name, name))
+        self._raise_missing_keyword_only(named, spec)
+
+    def _raise_missing_keyword_only(self, named, spec):
+        if spec.reqkwargs:
+            missing_kwonly = set(spec.reqkwargs) - set(named)
+            if missing_kwonly:
+                raise DataError("Missing keyword-only argument(s) '%s'" % missing_kwonly)

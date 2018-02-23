@@ -22,7 +22,7 @@ from .argumentresolver import ArgumentResolver
 class ArgumentSpec(object):
 
     def __init__(self, name=None, type='Keyword', positional=None,
-                 defaults=None, varargs=None, kwargs=None, supports_named=True):
+                 defaults=None, varargs=None, kwargs=None, supports_named=True, kwonlyargs=None, kwonlydefaults=None):
         self.name = name
         self.type = type
         self.positional = positional or []
@@ -30,6 +30,8 @@ class ArgumentSpec(object):
         self.varargs = varargs
         self.kwargs = kwargs
         self.supports_named = supports_named
+        self.kwonlyargs = kwonlyargs or []
+        self.kwonlydefaults = kwonlydefaults or {}
 
     @property
     def minargs(self):
@@ -38,6 +40,10 @@ class ArgumentSpec(object):
     @property
     def maxargs(self):
         return len(self.positional) if not self.varargs else sys.maxsize
+
+    @property
+    def reqkwargs(self):
+        return set(self.kwonlyargs) - set(self.kwonlydefaults.keys())
 
     def resolve(self, arguments, variables=None, resolve_named=True,
                 resolve_variables_until=None, dict_to_kwargs=False):
