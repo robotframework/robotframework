@@ -277,7 +277,7 @@ Pipe and space separated format
 '''''''''''''''''''''''''''''''
 
 The biggest problem of the space delimited format is that visually
-separating keywords form arguments can be tricky. This is a problem
+separating keywords from arguments can be tricky. This is a problem
 especially if keywords take a lot of arguments and/or arguments
 contain spaces. In such cases the pipe and space delimited variant can
 work better because it makes the cell boundary more visible.
