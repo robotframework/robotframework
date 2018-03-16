@@ -38,9 +38,18 @@ this package are for for internal usage and may change without prior notice.
 .. tip:: More public APIs are exposed by the :mod:`robot.api` package.
 """
 
+import sys
+import warnings
+
 from robot.rebot import rebot, rebot_cli
 from robot.run import run, run_cli
 from robot.version import get_version
+
+
+# Avoid warnings when using `python -m robot.run` with Python 3.5.2 or newer.
+# https://github.com/robotframework/robotframework/issues/2552
+if not sys.warnoptions:
+    warnings.filterwarnings('ignore', category=RuntimeWarning, module='runpy')
 
 
 __all__ = ['run', 'run_cli', 'rebot', 'rebot_cli']
