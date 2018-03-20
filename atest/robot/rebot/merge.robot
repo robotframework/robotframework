@@ -31,7 +31,7 @@ Merge re-executed and re-re-executed tests
     Re-run tests
     Re-re-run tests
     Run multi-merge
-    ${message} =    Create expected multi-merge message
+    ${message} =    Create expected multi-merge message     html marker=${EMPTY}
     Test merge should have been successful    status 2=FAIL    message 2=${message}
 
 Add new tests
@@ -145,8 +145,8 @@ Test add should have been successful
     Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 2}
     Should Contain Tests    ${SUITE}    @{ALL TESTS}
     ...    SubSuite1 First=FAIL:This test was doomed to fail: YES != NO
-    ...    Pass=PASS:Test added from merged output.
-    ...    Fail=FAIL:Test added from merged output.\n- \ - \ -\nExpected failure
+    ...    Pass=PASS:*HTML*Test added from merged output.
+    ...    Fail=FAIL:*HTML*Test added from merged output.<hr>Expected failure
     Timestamps should be cleared
     ...    ${SUITE}
     Timestamps should be set
@@ -172,7 +172,7 @@ Suite add should have been successful
     ...    SubSuite1 First=FAIL:This test was doomed to fail: YES != NO
     Should Be Equal    ${SUITE.suites[6].name}    Pass And Fail
     Should Contain Tests    ${SUITE.suites[6]}    Pass    Fail
-    Should Be Equal    ${SUITE.suites[6].message}    Suite added from merged output.
+    Should Be Equal    ${SUITE.suites[6].message}    *HTML*Suite added from merged output.
     Timestamps should be cleared
     ...    ${SUITE}
     Timestamps should be set
@@ -213,20 +213,23 @@ Timestamps should be set
     \    Timestamp Should Be Valid    ${suite.endtime}
 
 Create expected merge message
-    [Arguments]    ${message}    ${new status}    ${new message}    ${old status}    ${old message}
+    [Arguments]    ${message}    ${new status}    ${new message}    ${old status}    ${old message}   ${html marker}=*HTML*
     Return From Keyword If    """${message}"""    ${message}
-    Run Keyword And Return    Catenate    SEPARATOR=\n
-    ...    Re-executed test has been merged.
-    ...    - \ - \ -
-    ...    New status: \ ${new status}
-    ...    New message: \ ${new message}
-    ...    - \ - \ -
-    ...    Old status: \ ${old status}
-    ...    Old message: \ ${old message}
+    ${new status formatted} =   Run Keyword If   '${new status}' == 'PASS'  Set Variable   <span class="pass">PASS</span>
+    ...                         ELSE                                        Set Variable   <span class="fail">FAIL</span>
+    ${old status formatted} =   Run Keyword If   '${old status}' == 'PASS'  Set Variable   <span class="pass">PASS</span>
+    ...                         ELSE                                        Set Variable   <span class="fail">FAIL</span>
+    Run Keyword And Return    Catenate    SEPARATOR=${EMPTY}
+    ...    ${html marker}Re-executed test has been merged.
+    ...    <hr>New status: \ ${new status formatted}
+    ...    <br>New message: \ ${new message}
+    ...    <hr>Old status: \ ${old status formatted}
+    ...    <br>Old message: \ ${old message}
 
 Create expected multi-merge message
+    [Arguments]    ${html marker}=*HTML*
     ${message} =    Create expected merge message    ${EMPTY}
-    ...    PASS    ${EMPTY}    FAIL    This test was doomed to fail: YES != NO
+    ...    PASS    ${EMPTY}    FAIL    This test was doomed to fail: YES != NO   html marker=${html marker}
     ${message} =    Create expected merge message    ${EMPTY}
     ...    FAIL    This test was doomed to fail: again != NO    PASS    ${message}
     [Return]    ${message}
