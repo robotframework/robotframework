@@ -4,7 +4,7 @@ Documentation     Merge test cases for test doc HTML formatting
 *** Variables ***
 ${USE_HTML}       ${false}
 ${TEXT MESSAGE}   Test message
-${HTML MESSAGE}   *HTML*<b>Test</b> message
+${HTML MESSAGE}   *HTML* <b>Test</b> message
 
 *** Test Case ***
 Html1
