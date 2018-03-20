@@ -4,7 +4,7 @@ Suite Teardown    Remove Files    ${ORIGINAL}
 Resource          rebot_resource.robot
 
 *** Variables ***
-${DATA}                   ${DATADIR}/rebot/htmlsuite.robot
+${DATA}                   ${DATADIR}/rebot/merge_html.robot
 ${ORIGINAL}               %{TEMPDIR}/merge-original.xml
 ${MERGE}                  %{TEMPDIR}/merge.xml
 @{ALL TESTS}              Html1   Html2   Html3   Html4
