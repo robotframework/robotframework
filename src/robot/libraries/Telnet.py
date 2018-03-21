@@ -219,7 +219,7 @@ class Telnet(object):
     = Terminal emulation =
 
     Starting from Robot Framework 2.8.2, Telnet library supports terminal
-    emulation with [https://github.com/selectel/pyte|Pyte]. Terminal emulation
+    emulation with [https://pyte.readthedocs.io|Pyte]. Terminal emulation
     will process the output in a virtual screen. This means that ANSI escape
     codes, like cursor movements, and also control characters, like
     carriage returns and backspaces, have the same effect on the result as they
@@ -238,12 +238,18 @@ class Telnet(object):
     When terminal emulation is used, the `newline` and `encoding` can not be
     changed anymore after opening the connection.
 
-    As a prerequisite for using terminal emulation you need to have
-    [https://github.com/selectel/pyte|Pyte] installed. This is easiest done
-    with [http://pip-installer.org|pip] by running ``pip install pyte``.
-
     Examples:
     | `Open Connection` | lolcathost | terminal_emulation=True | terminal_type=vt100 | window_size=400x100 |
+
+    As a prerequisite for using terminal emulation, you need to have Pyte
+    installed. Due to backwards incompatible changes in Pyte, different
+    Robot Framework versions support different Pyte versions:
+
+    - Pyte 0.6 and newer are supported by Robot Framework 3.0.3.
+      Latest Pyte version can be installed (or upgraded) with
+      ``pip install --upgrade pyte``.
+    - Pyte 0.5.2 and older are supported by Robot Framework 3.0.2 and earlier.
+      Pyte 0.5.2 can be installed with ``pip install pyte==0.5.2``.
 
     = Logging =
 
@@ -906,12 +912,10 @@ class TelnetConnection(telnetlib.Telnet):
         information about log levels.
         """
         self._verify_connection()
-        output = self.read_very_eager()
+        output = self._decode(self.read_very_eager())
         if self._terminal_emulator:
             self._terminal_emulator.feed(output)
             output = self._terminal_emulator.read()
-        else:
-            output = self._decode(output)
         self._log(output, loglevel)
         return output
 
@@ -945,16 +949,16 @@ class TelnetConnection(telnetlib.Telnet):
 
     def _terminal_read_until(self, expected):
         max_time = time.time() + self._timeout
-        out = self._terminal_emulator.read_until(expected)
-        if out:
-            return True, out
+        output = self._terminal_emulator.read_until(expected)
+        if output:
+            return True, output
         while time.time() < max_time:
-            input_bytes = telnetlib.Telnet.read_until(self, self._encode(expected),
-                                                      self._terminal_frequency)
-            self._terminal_emulator.feed(input_bytes)
-            out = self._terminal_emulator.read_until(expected)
-            if out:
-                return True, out
+            output = telnetlib.Telnet.read_until(self, self._encode(expected),
+                                                 self._terminal_frequency)
+            self._terminal_emulator.feed(self._decode(output))
+            output = self._terminal_emulator.read_until(expected)
+            if output:
+                return True, output
         return False, self._terminal_emulator.read()
 
     def _read_until_regexp(self, *expected):
@@ -975,7 +979,7 @@ class TelnetConnection(telnetlib.Telnet):
             return True, out
         while time.time() < max_time:
             output = self.expect(regexps_bytes, self._terminal_frequency)[-1]
-            self._terminal_emulator.feed(output)
+            self._terminal_emulator.feed(self._decode(output))
             out = self._terminal_emulator.read_until_regexp(regexps_unicode)
             if out:
                 return True, out
@@ -1183,21 +1187,19 @@ class TelnetConnection(telnetlib.Telnet):
             raise RuntimeError("Terminal emulation requires pyte module!\n"
                                "https://pypi.python.org/pypi/pyte/")
         return TerminalEmulator(window_size=self._window_size,
-                                newline=self._newline, encoding=self._encoding)
+                                newline=self._newline)
 
 
 class TerminalEmulator(object):
 
-    def __init__(self, window_size=None, newline="\r\n",
-                 encoding=('UTF-8', 'ignore')):
+    def __init__(self, window_size=None, newline="\r\n"):
         self._rows, self._columns = window_size or (200, 200)
         self._newline = newline
-        self._stream = pyte.ByteStream(encodings=[encoding])
+        self._stream = pyte.Stream()
         self._screen = pyte.HistoryScreen(self._rows,
                                           self._columns,
                                           history=100000)
         self._stream.attach(self._screen)
-        self._screen.set_charset('B', '(')
         self._buffer = ''
         self._whitespace_after_last_feed = ''
 
@@ -1206,25 +1208,27 @@ class TerminalEmulator(object):
         return self._buffer + self._dump_screen()
 
     def _dump_screen(self):
-        return self._get_history() + \
+        return self._get_history(self._screen) + \
                self._get_screen(self._screen) + \
                self._whitespace_after_last_feed
 
-    def _get_history(self):
-        if self._screen.history.top:
-            return self._get_history_screen(self._screen.history.top) + self._newline
-        return ''
-
-    def _get_history_screen(self, deque):
-        return self._newline.join(''.join(c.data for c in row).rstrip()
-                                  for row in deque).rstrip(self._newline)
+    def _get_history(self, screen):
+        if not screen.history.top:
+            return ''
+        rows = []
+        for row in screen.history.top:
+            # Newer pyte versions store row data in mappings
+            data = (char.data for _, char in sorted(row.items()))
+            rows.append(''.join(data).rstrip())
+        return self._newline.join(rows).rstrip(self._newline) + self._newline
 
     def _get_screen(self, screen):
-        return self._newline.join(row.rstrip() for row in screen.display).rstrip(self._newline)
+        rows = (row.rstrip() for row in screen.display)
+        return self._newline.join(rows).rstrip(self._newline)
 
-    def feed(self, input_bytes):
-        self._stream.feed(input_bytes)
-        self._whitespace_after_last_feed = input_bytes[len(input_bytes.rstrip()):].decode('ASCII')
+    def feed(self, text):
+        self._stream.feed(text)
+        self._whitespace_after_last_feed = text[len(text.rstrip()):]
 
     def read(self):
         current_out = self.current_output
@@ -1252,7 +1256,6 @@ class TerminalEmulator(object):
         self._buffer = terminal_buffer
         self._whitespace_after_last_feed = ''
         self._screen.reset()
-        self._screen.set_charset('B', '(')
 
 
 class NoMatchError(AssertionError):
