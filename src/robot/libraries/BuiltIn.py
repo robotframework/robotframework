@@ -3077,29 +3077,26 @@ class _Misc(_BuiltInBase):
         if not test:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
                                "suite setup or teardown.")
-        test.message = self._get_possibly_appended_value(test.message, message,
-                                                         append)
+        test.message = self._get_new_text(test.message, message,
+                                          append, handle_html=True)
         if self._context.in_test_teardown:
             self._variables.set_test("${TEST_MESSAGE}", test.message)
         message, level = self._get_logged_test_message_and_level(test.message)
         self.log('Set test message to:\n%s' % message, level)
 
-    def _get_possibly_appended_value(self, initial, new, append):
+    def _get_new_text(self, old, new, append, handle_html=False):
         if not is_unicode(new):
             new = unic(new)
-        if is_truthy(append) and initial:
-
+        if not (is_truthy(append) and old):
+            return new
+        if handle_html:
             if new.startswith('*HTML*'):
                 new = new[6:].lstrip()
-                if initial.startswith('*HTML*'):
-                    return '%s %s' % (initial, new)
-                else:
-                    initial = '*HTML* ' + initial
-            else:
+                if not old.startswith('*HTML*'):
+                    old = '*HTML* %s' % html_escape(old)
+            elif old.startswith('*HTML*'):
                 new = html_escape(new)
-            return '%s %s' % (initial, new)
-
-        return new
+        return '%s %s' % (old, new)
 
     def _get_logged_test_message_and_level(self, message):
         if message.startswith('*HTML*'):
@@ -3123,7 +3120,7 @@ class _Misc(_BuiltInBase):
         if not test:
             raise RuntimeError("'Set Test Documentation' keyword cannot be "
                                "used in suite setup or teardown.")
-        test.doc = self._get_possibly_appended_value(test.doc, doc, append)
+        test.doc = self._get_new_text(test.doc, doc, append)
         self._variables.set_test('${TEST_DOCUMENTATION}', test.doc)
         self.log('Set test documentation to:\n%s' % test.doc)
 
@@ -3147,7 +3144,7 @@ class _Misc(_BuiltInBase):
         """
         top = is_truthy(top)
         suite = self._get_context(top).suite
-        suite.doc = self._get_possibly_appended_value(suite.doc, doc, append)
+        suite.doc = self._get_new_text(suite.doc, doc, append)
         self._variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc, top)
         self.log('Set suite documentation to:\n%s' % suite.doc)
 
@@ -3174,7 +3171,7 @@ class _Misc(_BuiltInBase):
             name = unic(name)
         metadata = self._get_context(top).suite.metadata
         original = metadata.get(name, '')
-        metadata[name] = self._get_possibly_appended_value(original, value, append)
+        metadata[name] = self._get_new_text(original, value, append)
         self._variables.set_suite('${SUITE_METADATA}', metadata.copy(), top)
         self.log("Set suite metadata '%s' to value '%s'." % (name, metadata[name]))
 
