@@ -47,7 +47,7 @@ class UserLibrary(object):
             try:
                 handler = self._create_handler(kw)
             except DataError as error:
-                handler = UserErrorHandler(kw.name, error, self.name)
+                handler = UserErrorHandler(error, kw.name, self.name)
                 self._log_creating_failed(handler, error)
             embedded = isinstance(handler, EmbeddedArgumentsHandler)
             try:

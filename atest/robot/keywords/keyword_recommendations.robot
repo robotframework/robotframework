@@ -39,22 +39,44 @@ Explicit Special Character Garbage Keyword
 Implicit Keyword Similar To User Keyword
     Check Test Case    ${TESTNAME}
 
-Wrapped By Run Keyword
-    Check Test Case    ${TESTNAME} Implicit Missing
-    Check Test Case    ${TESTNAME} Explicit Missing
-    Check Test Case    ${TESTNAME} Implicit Missing Similar To Both Libraries
-    Check Test Case    ${TESTNAME} Explicit Missing Similar To Both Libraries
-    Check Test Case    ${TESTNAME} And Ignore Error
-    Check Test Case    ${TESTNAME} Whitespace
+Wrapped By Run Keyword Implicit Missing
+    Check Test Case    ${TESTNAME}
 
-Misspelled Keyword
-    Check Test Case    ${TESTNAME} Capitalized
-    Check Test Case    ${TESTNAME} Lowercase
-    Check Test Case    ${TESTNAME} All Caps
-    Check Test Case    ${TESTNAME} Underscore
-    Check Test Case    ${TESTNAME} Explicit
-    Check Test Case    ${TESTNAME} Spacing
-    Check Test Case    ${TESTNAME} No Whitespace
+Wrapped By Run Keyword Explicit Missing
+    Check Test Case    ${TESTNAME}
+
+Wrapped By Run Keyword Implicit Missing Similar To Both Libraries
+    Check Test Case    ${TESTNAME}
+
+Wrapped By Run Keyword Explicit Missing Similar To Both Libraries
+    Check Test Case    ${TESTNAME}
+
+Wrapped By Run Keyword And Ignore Error
+    Check Test Case    ${TESTNAME}
+
+Wrapped By Run Keyword Whitespace
+    Check Test Case    ${TESTNAME}
+
+Misspelled Keyword Capitalized
+    Check Test Case    ${TESTNAME}
+
+Misspelled Keyword Lowercase
+    Check Test Case    ${TESTNAME}
+
+Misspelled Keyword All Caps
+    Check Test Case    ${TESTNAME}
+
+Misspelled Keyword Underscore
+    Check Test Case    ${TESTNAME}
+
+Misspelled Keyword Explicit
+    Check Test Case    ${TESTNAME}
+
+Misspelled Keyword Spacing
+    Check Test Case    ${TESTNAME}
+
+Misspelled Keyword No Whitespace
+    Check Test Case    ${TESTNAME}
 
 Keyword With Period
     Check Test Case    ${TESTNAME}

@@ -2825,10 +2825,10 @@ class _Misc(_BuiltInBase):
         """
         try:
             runner = self._namespace.get_runner(name)
-        except DataError as err:
-            raise AssertionError(msg or unic(err))
+        except DataError as error:
+            raise AssertionError(msg or error.message)
         if isinstance(runner, UserErrorHandler):
-            raise AssertionError(msg or runner.error)
+            raise AssertionError(msg or runner.error.message)
 
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.

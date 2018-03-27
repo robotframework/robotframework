@@ -17,7 +17,7 @@ import os
 import copy
 from itertools import chain
 
-from robot.errors import DataError
+from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
 from robot.parsing.settings import Library, Variables, Resource
@@ -222,8 +222,8 @@ class Namespace(object):
     def get_runner(self, name):
         try:
             return self._kw_store.get_runner(name)
-        except DataError as err:
-            return UserErrorHandler(name, err.message)
+        except DataError as error:
+            return UserErrorHandler(error, name)
 
 
 class KeywordStore(object):
@@ -274,7 +274,7 @@ class KeywordStore(object):
                                              self.resources)
         recommendations = finder.recommend_similar_keywords(name)
         msg = finder.format_recommendations(msg, recommendations)
-        raise DataError(msg)
+        raise KeywordError(msg)
 
     def _get_runner(self, name):
         if not name:
@@ -396,7 +396,7 @@ class KeywordStore(object):
         if implicit:
             error += ". Give the full name of the keyword you want to use"
         names = sorted(runner.longname for runner in found)
-        raise DataError('\n    '.join([error+':'] + names))
+        raise KeywordError('\n    '.join([error+':'] + names))
 
 
 class KeywordRecommendationFinder(object):
