@@ -21,6 +21,23 @@ Set Multiline Message
     Set Test Message    1\n2\n3
     [Teardown]    Should Be Equal    ${TEST MESSAGE}    1\n2\n3
 
+Use the HTML
+    [Documentation]    PASS *HTML* custom message and another custom message in <HR> with a line
+    Set Test Message  custom message
+	Set Test Message  *HTML* and another custom message in <HR> with a line  append=True
+
+Use the HTML first
+    [Documentation]    PASS *HTML* and another custom message in <HR> with a line custom message
+    Set Test Message    *HTML* and another custom message in <HR> with a line
+	Set Test Message    custom message  append=True
+
+Use the HTML combination
+    [Documentation]    PASS *HTML* and another custom message in <HR> with a line custom message custom &lt;message&gt; and another custom message in <HR> with a line
+    Set Test Message    *HTML* and another custom message in <HR> with a line
+	Set Test Message    custom message  append=True
+	Set Test Message    custom <message>  append=True
+	Set Test Message    *HTML* and another custom message in <HR> with a line  append=True
+
 Set Non-String Message
     Set Test Message    ${42}
     [Teardown]    Should Be Equal    ${TEST MESSAGE}    42

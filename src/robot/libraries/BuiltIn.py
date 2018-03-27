@@ -27,7 +27,7 @@ from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (DotDict, escape, format_assign_message,
-                         get_error_message, get_time, is_falsy, is_integer,
+                         get_error_message, get_time, html_escape, is_falsy, is_integer,
                          is_string, is_truthy, is_unicode, IRONPYTHON, JYTHON,
                          Matcher, normalize, NormalizedDict, parse_time, prepr,
                          RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
@@ -3088,7 +3088,17 @@ class _Misc(_BuiltInBase):
         if not is_unicode(new):
             new = unic(new)
         if is_truthy(append) and initial:
+
+            if new.startswith('*HTML*'):
+                new = new[6:].lstrip()
+                if initial.startswith('*HTML*'):
+                    return '%s %s' % (initial, new)
+                else:
+                    initial = '*HTML* ' + initial
+            else:
+                new = html_escape(new)
             return '%s %s' % (initial, new)
+
         return new
 
     def _get_logged_test_message_and_level(self, message):
