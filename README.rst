@@ -58,14 +58,8 @@ from GitHub_. After that you can install the framework with::
 
     python setup.py install
 
-With recent versions of pip it is possible to install directly from the GitHub repository. To install latest source from the master branch, use this command:
-
-    pip install git+https://github.com/robotframework/RobotFramework.git
-
-Please note that installation will take some time, because pip will clone the RobotFramework project to a temporary directory and then perform the installation.
-
 For more detailed installation instructions, including installing Python,
-Jython, IronPython and PyPy, see `<INSTALL.rst>`__.
+Jython, IronPython and PyPy or installing from GitHub, see `<INSTALL.rst>`__.
 
 Example
 -------

@@ -47,6 +47,10 @@ more thoroughly in the subsequent sections.
     source distribution from `PyPI <https://pypi.python.org/pypi/robotframework>`_
     and extracting it, or by cloning the
     `GitHub repository <https://github.com/robotframework/robotframework>`_ .
+`Installing with pip`_
+    If you are using pip 0.3 or greater, you can install from github::
+
+    pip install git+https://github.com/robotframework/RobotFramework.git
 
 `Standalone JAR distribution`_
     If running tests with Jython is enough, the easiest approach is downloading
