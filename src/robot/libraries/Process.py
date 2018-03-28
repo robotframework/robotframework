@@ -919,6 +919,10 @@ class ProcessConfiguration(object):
                   'shell': self.shell,
                   'cwd': self.cwd,
                   'env': self.env}
+        # Close file descriptors regardless the Python version:
+        # https://github.com/robotframework/robotframework/issues/2794
+        if not WINDOWS:
+            config['close_fds'] = True
         if not JYTHON:
             self._add_process_group_config(config)
         return config
