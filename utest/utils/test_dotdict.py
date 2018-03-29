@@ -10,6 +10,14 @@ class TestDotDict(unittest.TestCase):
     def setUp(self):
         self.dd = DotDict([('z', 1), (2, 'y'), ('x', 3)])
 
+    def test_init(self):
+        assert_true(DotDict() == DotDict({}) == DotDict([]))
+        assert_true(DotDict(a=1) == DotDict({'a': 1}) == DotDict([('a', 1)]))
+        assert_true(DotDict({'a': 1}, b=2) ==
+                    DotDict({'a': 1, 'b': 2}) ==
+                    DotDict([('a', 1), ('b', 2)]))
+        assert_raises(TypeError, DotDict, None)
+
     def test_get(self):
         assert_equal(self.dd[2], 'y')
         assert_equal(self.dd.x, 3)
