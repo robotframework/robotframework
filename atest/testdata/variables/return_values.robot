@@ -183,7 +183,7 @@ None To Dict
     Should Be True    &{ret} == {}
 
 Dictionary is dot-accessible
-    &{dotted} =    Evaluate    {'key': 'value', 'nested': {'key': 'value'}}
+    &{dotted} =    Evaluate    robot.utils.OrderedDict([('key', 'value'), ('nested', {'key': 'value'})])    modules=robot
     Should Be Equal    ${dotted['key']}    value
     Should Be Equal    ${dotted.key}    value
     Should Be Equal    ${dotted.nested.key}    value

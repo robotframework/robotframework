@@ -19,9 +19,25 @@ except ImportError:  # New in Python 2.7
     from .ordereddict import OrderedDict
 
 from .robottypes import is_dict_like, is_list_like
+from .platform import PY2, PYPY
 
 
 class DotDict(OrderedDict):
+
+    # With PyPy 2 __setitem__ isn't called with initial items and thus
+    # __init__ needs to be overridden to handle initial nested dicts.
+
+    if PYPY and PY2:
+
+        def __init__(self, *args, **kwds):
+            args = [self._convert_nested_initial_dicts(a) for a in args]
+            kwds = self._convert_nested_initial_dicts(kwds)
+            OrderedDict.__init__(self, *args, **kwds)
+
+        def _convert_nested_initial_dicts(self, value):
+            items = value.items() if is_dict_like(value) else value
+            return OrderedDict((key, self._convert_nested_dicts(value))
+                               for key, value in items)
 
     def __setitem__(self, key, value):
         value = self._convert_nested_dicts(value)
