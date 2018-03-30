@@ -41,7 +41,7 @@ more thoroughly in the subsequent sections.
 
         pip install robotframework
 
-    If you are using pip 0.3 or greater, you can use a git url to get latest::
+    You can use pip and github url to get latest (possibily unreleased) version::
 
         pip install git+https://github.com/robotframework/RobotFramework.git
 
