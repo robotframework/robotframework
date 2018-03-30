@@ -41,6 +41,11 @@ more thoroughly in the subsequent sections.
 
         pip install robotframework
 
+    You can use pip and github url to get latest (possibily unreleased) version::
+
+        pip install git+https://github.com/robotframework/RobotFramework.git
+
+
 `Installing from source`_
     This approach works regardless the operating system and the Python
     interpreter used. You can get the source code either by downloading a
