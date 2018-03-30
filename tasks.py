@@ -1,10 +1,11 @@
 """Tasks to help Robot Framework packaging and other development.
 
 Executed by Invoke <http://pyinvoke.org>. Install it with `pip install invoke`
-and run `invoke --help` and `invode --list` for details how to execute tasks.
+and run `invoke --help` and `invoke --list` for details how to execute tasks.
 
 See BUILD.rst for packaging and releasing instructions.
 """
+
 from pathlib import Path
 from urllib.request import urlretrieve
 import os
@@ -35,12 +36,11 @@ and bug fixes. **MORE intro stuff...**
 
 **REMOVE reference to tracker if release notes contain all issues.**
 All issues targeted for Robot Framework {version.milestone} can be found
-from the `issue tracker`_.
+from the `issue tracker milestone`_.
 
 Questions and comments related to the release can be sent to the
-`robotframework-users <http://groups.google.com/group/robotframework-users>`_
-mailing list and possible bugs submitted to the `issue tracker
-<https://github.com/robotframework/robotframework/issues>`__.
+`robotframework-users`_ mailing list or to `Robot Framework Slack`_,
+and possible bugs submitted to the `issue tracker`_.
 
 **REMOVE ``--pre`` from the next command with final releases.**
 If you have pip_ installed, just run
@@ -64,7 +64,10 @@ Robot Framework {version} was released on {date}.
 .. _Robot Framework: http://robotframework.org
 .. _pip: http://pip-installer.org
 .. _PyPI: https://pypi.python.org/pypi/robotframework
-.. _issue tracker: https://github.com/robotframework/robotframework/issues?q=milestone%3A{version.milestone}
+.. _issue tracker milestone: https://github.com/robotframework/robotframework/issues?q=milestone%3A{version.milestone}
+.. _issue tracker: https://github.com/robotframework/robotframework/issues
+.. _robotframework-users: http://groups.google.com/group/robotframework-users
+.. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
 .. _installation instructions: ../../INSTALL.rst
 '''
 
