@@ -67,6 +67,12 @@ keywords, like `Wait Until Keyword Succeeds`, can catch these errors and
 the test is not failed immediately. Although the change is
 backwards-incompatible, it is not expected to cause problems in real usage.
 
+Acknowledgements
+================
+
+Robot Framework 3.0.3 development has been sponsored by
+`Robot Framework Foundation <http://robotframework.org/foundation/>`_.
+
 Full list of fixes and enhancements
 ===================================
 
