@@ -144,8 +144,6 @@ def init_labels(ctx, username=None, password=None):
     """
     initialize_labels(REPOSITORY, username, password)
 
-# TODO: Fix jar
-
 
 @task
 def jar(ctx, jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
@@ -171,6 +169,7 @@ def jar(ctx, jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
     compile_python_files(ctx, jython_jar)
     version = Version(path=VERSION_PATH, pattern=VERSION_PATTERN)
     create_robot_jar(ctx, str(version))
+
 
 def get_jython_jar(version):
     filename = 'jython-standalone-{0}.jar'.format(version)
