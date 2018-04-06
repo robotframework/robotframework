@@ -252,7 +252,7 @@ __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Us
    - Update docs at http://robotframework.org/robotframework/::
 
         git checkout gh-pages
-        invoke add_docs $VERSION --push
+        invoke add-docs $VERSION --push
         git checkout master
 
 Post actions
@@ -294,7 +294,7 @@ Announcements
    Should include a link to more information. Possibly a link to the full
    release notes or an email to the aforementioned mailing lists.
 
-3. ``#general`` channel on Slack.
+3. ``#devel`` and ``#general`` channels on Slack.
 
 4. `Robot Framework LinkedIn
    <https://www.linkedin.com/groups/Robot-Framework-3710899>`_ group.
