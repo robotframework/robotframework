@@ -15,12 +15,13 @@ import tarfile
 import tempfile
 import zipfile
 
-from invoke import task
+assert Path.cwd() == Path(__file__).parent
+sys.path.insert(0, 'src')
+
+from invoke import Exit, task
 from rellu import initialize_labels, ReleaseNotesGenerator, Version
 from rellu.tasks import clean
-
-
-assert Path.cwd() == Path(__file__).parent
+from robot.libdoc import libdoc
 
 
 REPOSITORY = 'robotframework/robotframework'
@@ -104,8 +105,30 @@ def print_version(ctx):
 
 
 @task
+def library_docs(ctx, name):
+    """Generate standard library documentation.
+
+    Args:
+        name:  Name of the library or ``all`` to generate docs for all libs.
+               Name can be shortened as long as it is a unique prefix.
+               For example, ``b`` is equivalent to ``BuiltIn`` and ``di``
+               equivalent to ``Dialogs``.
+    """
+    libraries = ['BuiltIn', 'Collections', 'DateTime', 'Dialogs',
+                 'OperatingSystem', 'Process', 'Screenshot', 'String',
+                 'Telnet', 'XML']
+    name = name.lower()
+    if name != 'all':
+        libraries = [lib for lib in libraries if lib.lower().startswith(name)]
+        if len(libraries) != 1:
+            raise Exit(f"'{name}' is not a unique library prefix.")
+    for lib in libraries:
+        libdoc(lib, str(Path(f'doc/libraries/{lib}.html')))
+
+
+@task
 def release_notes(ctx, version=None, username=None, password=None, write=False):
-    """Generates release notes based on issues in the issue tracker.
+    """Generate release notes based on issues in the issue tracker.
 
     Args:
         version:  Generate release notes for this version. If not given,

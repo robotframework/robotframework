@@ -239,9 +239,13 @@ __ https://issues.sonatype.org/secure/Dashboard.jspa
 __ http://central.sonatype.org/pages/working-with-pgp-signatures.html
 __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
-9. User Guide
+9. Documentation
 
-   - Create package (updates also library docs)::
+   - Generate library documentation::
+
+       invoke library-docs all
+
+   - Create User Guide package::
 
        doc/userguide/ug2html.py zip
 
