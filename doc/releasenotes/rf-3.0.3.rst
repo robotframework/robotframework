@@ -1,35 +1,31 @@
-=========================================
-Robot Framework 3.0.3 Release Candidate 1
-=========================================
+=====================
+Robot Framework 3.0.3
+=====================
 
 .. default-role:: code
 
 `Robot Framework`_ 3.0.3 is a new release containing mainly bug fixes but
-also few nice enhancements. This release candidate is its first and
-also last planned preview release.
-
-Questions and comments related to the release can be sent to the
-`robotframework-users`_ mailing list or to `Robot Framework Slack`_,
-and possible bugs submitted to the `issue tracker`_.
+also few nice enhancements. Questions and comments related to the release
+can be sent to the `robotframework-users`_ mailing list or to
+`Robot Framework Slack`_, and possible bugs submitted to the `issue tracker`_.
 
 If you have pip_ installed, just run
 
 ::
 
-   pip install --pre --upgrade robotframework
+   pip install --upgrade robotframework
 
 to install the latest available release or use
 
 ::
 
-   pip install robotframework==3.0.3rc1
+   pip install robotframework==3.0.3
 
 to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 3.0.3 RC 1 was released on Friday March 30, 2018. The target
-release date for Robot Framework 3.0.3 final is Friday April 6, 2018.
+Robot Framework 3.0.3 was released on Friday April 6, 2018.
 
 .. _Robot Framework: http://robotframework.org
 .. _pip: http://pip-installer.org
@@ -45,15 +41,18 @@ release date for Robot Framework 3.0.3 final is Friday April 6, 2018.
    :depth: 2
    :local:
 
-Most important enhancements
-===========================
+Most important fixes and enhancements
+=====================================
 
-- Using typing hints or keyword-only-arguments prevents using function as keyword (`#2627`_)
+- Using typing hints or keyword-only-arguments prevented using function as keyword (`#2627`_)
 - `RuntimeWarning` printed on console when using `robot` command with Python 3.6 on Windows (`#2552`_)
 - Use new logo as favicon in output files (`#2793`_)
 
 Backwards incompatible changes
 ==============================
+
+Supported version of pyte module used by Telnet library changed
+---------------------------------------------------------------
 
 The Telnet library has optional support for terminal emulation that utilizes
 the `pyte <https://pyte.readthedocs.io/>`_ module. Due to changes in pyte 0.6,
@@ -61,17 +60,26 @@ earlier Telnet library versions were not compatible with it and pyte 0.5.2
 was needed instead. This has now been fixed, but nowadays the Telnet library
 only supports pyte 0.6 or newer. For more details see issue `#2693`_.
 
+Keywords finding errors are not syntax errors
+---------------------------------------------
+
 Errors related to finding keywords are not be considered syntax errors
 anymore (`#2792`_). In practice this means that keywords executing other
 keywords, like `Wait Until Keyword Succeeds`, can catch these errors and
 the test is not failed immediately. Although the change is
 backwards-incompatible, it is not expected to cause problems in real usage.
 
+The main reason this change was done in a minor release was to allow
+teardowns to continue execution if keywords are not found. This was changed
+in RF 3.0.1 and that change did cause real problems (`#2648`_).
+
 Acknowledgements
 ================
 
 Robot Framework 3.0.3 development has been sponsored by
 `Robot Framework Foundation <http://robotframework.org/foundation/>`_.
+Thanks also everyone submitting issues, testing preview releases, helping
+others on support forums, and so on.
 
 Full list of fixes and enhancements
 ===================================
