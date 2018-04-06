@@ -46,6 +46,8 @@ Most important fixes and enhancements
 
 - Using typing hints or keyword-only-arguments prevented using function as keyword (`#2627`_)
 - `RuntimeWarning` printed on console when using `robot` command with Python 3.6 on Windows (`#2552`_)
+- Content Security Policy (CSP) causes problems with report (`#2606`_)
+- Terminal emulation in Telnet library is not compatible with latest `pyte` versions (`#2693`_)
 - Use new logo as favicon in output files (`#2793`_)
 
 Backwards incompatible changes
