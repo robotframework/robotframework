@@ -686,7 +686,7 @@ from within a python library or alternativley:
 
 .. sourcecode:: robotframework
 
-  evaluate  pdb.Pdb(stdout=sys.__stdout__).set_trace()  sys  pdb
+  evaluate  pdb.Pdb(stdout=sys.__stdout__).set_trace()  sys, pdb
 
 can be used directly in a test case.
 
