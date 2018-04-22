@@ -49,6 +49,11 @@ try:
 except ImportError:
     def jar(*args, **kwargs):
         raise RuntimeError("Creating jar distribution requires 'invoke'.")
+except SyntaxError:
+    def jar(*args, **kwargs):
+        raise RuntimeError("Creating jar distribution is not supported "
+                           "until running tests is ported to Python 3.6. "
+                           "Use 'invoke jar' to create it separately.")
 
 
 ARGUMENTS = '''
