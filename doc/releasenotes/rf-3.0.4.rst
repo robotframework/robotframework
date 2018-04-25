@@ -1,14 +1,12 @@
-=========================================
-Robot Framework 3.0.4 Release Candidate 1
-=========================================
-
+=====================
+Robot Framework 3.0.4
+=====================
 
 .. default-role:: code
 
 
 `Robot Framework`_ 3.0.4 is a new minor release fixing regressions in
-Robot Framework 3.0.3 related to using dictionary variables. This
-release candidate contains all the planned changes.
+Robot Framework 3.0.3 related to using dictionary variables.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users`_ mailing list or to `Robot Framework Slack`_,
@@ -18,20 +16,19 @@ If you have pip_ installed, just run
 
 ::
 
-   pip install --pre --upgrade robotframework
+   pip install --upgrade robotframework
 
 to install the latest available release or use
 
 ::
 
-   pip install robotframework==3.0.4rc1
+   pip install robotframework==3.0.4
 
 to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 3.0.4 RC 1 was released on Sunday April 22, 2018.
-The final release is targeted for Tuesday April 24, 2018.
+Robot Framework 3.0.4 was released on Wednesday April 25, 2018.
 
 .. _Robot Framework: http://robotframework.org
 .. _pip: http://pip-installer.org
