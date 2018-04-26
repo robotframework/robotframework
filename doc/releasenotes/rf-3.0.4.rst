@@ -39,11 +39,6 @@ Robot Framework 3.0.4 was released on Wednesday April 25, 2018.
 .. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
 .. _installation instructions: ../../INSTALL.rst
 
-
-.. contents::
-   :depth: 2
-   :local:
-
 List of fixed issues
 ====================
 
