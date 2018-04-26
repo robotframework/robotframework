@@ -74,7 +74,7 @@ class _RunnableHandler(object):
     def _get_tags_from_attribute(self, handler_method):
         tags = getattr(handler_method, 'robot_tags', ())
         if not utils.is_list_like(tags):
-            raise DataError("Expected tags to list like, got %s."
+            raise DataError("Expected tags to be list-like, got %s."
                             % utils.type_name(tags))
         return tags
 

@@ -668,18 +668,26 @@ Using the Python debugger (pdb)
 
 It is also possible to use the pdb__ module from the Python standard
 library to set a break point and interactively debug a running test.
-The typical way of invoking pdb by inserting
+The typical way of invoking pdb by inserting:
 
 .. sourcecode:: python
 
    import pdb; pdb.set_trace()
 
 at the location you want to break into debugger will not work correctly
-with Robot Framework, though, as the standard output stream is
+with Robot Framework, as the standard output stream is
 redirected during keyword execution. Instead, you can use the following:
 
 .. sourcecode:: python
 
    import sys, pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
+
+from within a python library or alternativley:
+
+.. sourcecode:: robotframework
+
+  Evaluate    pdb.Pdb(stdout=sys.__stdout__).set_trace()    modules=sys, pdb
+
+can be used directly in a test case.
 
 __ http://docs.python.org/2/library/pdb.html

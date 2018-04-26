@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 """ug2html.py -- Creates HTML version of Robot Framework User Guide
 
@@ -9,8 +9,7 @@ create .. Creates the user guide so that it has relative links to images,
 
 dist .... Creates the user guide under 'robotframework-userguide-<version>'
           directory and also copies all needed images and other link targets
-          there. Also compiles library docs to ensure latest versions are
-          included. The created output directory can thus be distributed
+          there. The created output directory can thus be distributed
           independently.
 
 zip ..... Uses 'dist' to create a stand-alone distribution and then packages
@@ -209,11 +208,6 @@ def create_distribution():
         shutil.rmtree(outdir)
     elif not os.path.exists(dist):
         os.mkdir(dist)
-
-    print 'Recompiling library docs'
-    sys.path.insert(0, os.path.join(CURDIR, '..', 'libraries'))
-    import lib2html
-    lib2html.create_all()
 
     for dirname in [outdir, templates, libraries, images]:
         print "Creating output directory '%s'" % dirname

@@ -73,6 +73,14 @@ class VariableError(DataError):
     """
 
 
+class KeywordError(DataError):
+    """Used when no keyword is found or there is more than one match.
+
+    KeywordErrors are caught by keywords that run other keywords
+    (e.g. `Run Keyword And Expect Error`).
+    """
+
+
 class TimeoutError(RobotError):
     """Used when a test or keyword timeout occurs.
 
@@ -154,13 +162,14 @@ class ExecutionFailed(RobotError):
 class HandlerExecutionFailed(ExecutionFailed):
 
     def __init__(self, details):
-        timeout = isinstance(details.error, TimeoutError)
-        test_timeout = timeout and details.error.test_timeout
-        keyword_timeout = timeout and details.error.keyword_timeout
-        syntax = (isinstance(details.error, DataError) and
-                  not isinstance(details.error, VariableError))
-        exit_on_failure = self._get(details.error, 'EXIT_ON_FAILURE')
-        continue_on_failure = self._get(details.error, 'CONTINUE_ON_FAILURE')
+        error = details.error
+        timeout = isinstance(error, TimeoutError)
+        test_timeout = timeout and error.test_timeout
+        keyword_timeout = timeout and error.keyword_timeout
+        syntax = (isinstance(error, DataError)
+                  and not isinstance(error, (KeywordError, VariableError)))
+        exit_on_failure = self._get(error, 'EXIT_ON_FAILURE')
+        continue_on_failure = self._get(error, 'CONTINUE_ON_FAILURE')
         ExecutionFailed.__init__(self, details.message, test_timeout,
                                  keyword_timeout, syntax, exit_on_failure,
                                  continue_on_failure)

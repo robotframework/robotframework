@@ -18,6 +18,11 @@ th, td {
 br {
     mso-data-placement: same-cell; /* maintain line breaks in Excel */
 }
+hr {
+    background: #ccc;
+    height: 1px;
+    border: 0;
+}
 a, a:link, a:visited {
     text-decoration: none;
     color: #15c;

@@ -198,7 +198,8 @@ def libdoc_cli(arguments):
     LibDoc().execute_cli(arguments)
 
 
-def libdoc(library_or_resource, outfile, name='', version='', format=None):
+def libdoc(library_or_resource, outfile, name='', version='', format=None,
+           docformat=None):
     """Executes Libdoc.
 
     :param library_or_resource: Name or path of the test library or resource
@@ -206,9 +207,13 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None):
     :param outfile: Path path to the file where to write outputs.
     :param name: Custom name to give to the documented library or resource.
     :param version: Version to give to the documented library or resource.
-    :param format: Documentation source format. Possible values are ``ROBOT``,
-        ``reST``, ``HTML`` and ``TEXT``. Default value is ``ROBOT`` but
-        libraries can override it themselves.
+    :param format: Specifies whether to generate HTML or XML output. If this
+        options is not used, the format is got from the extension of
+        the output file. Possible values are ``'HTML'`` and ``'XML'``.
+    :param docformat: Documentation source format. Possible values are
+        ``'ROBOT'``, ``'reST'``, ``'HTML'`` and ``'TEXT'``. The default value
+        can be specified in test library source code and the initial default
+        is ``'ROBOT'``. New in Robot Framework 3.0.3.
 
     Arguments have same semantics as Libdoc command line options with
     same names. Run ``python -m robot.libdoc --help`` or consult the Libdoc
@@ -221,7 +226,7 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None):
         libdoc('MyLibrary.py', 'MyLibraryDoc.html', version='1.0')
     """
     LibDoc().execute(library_or_resource, outfile, name=name, version=version,
-                     format=format)
+                     format=format, docformat=docformat)
 
 
 if __name__ == '__main__':
