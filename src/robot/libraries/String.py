@@ -170,6 +170,27 @@ class String(object):
         line_number = self._convert_to_integer(line_number, 'line_number')
         return string.splitlines()[line_number]
 
+    def get_line_number_containing_string(self, string, pattern, case_insensitive=False):
+        """Returns line number of the given ``string`` that contain the ``pattern``.
+
+        The ``pattern`` is always considered to be a normal string, not a glob
+        or regexp pattern. A line matches if the ``pattern`` is found anywhere
+        on it.
+
+        Examples:
+        | ${lines} = | Get Line Number Containing String | ${result} | An example |
+        | ${ret} =   | Get Line Number Containing String | ${ret} | FAIL | case-insensitive |
+
+        If multiple line match only line number of first occurrence is returned.
+
+        """
+        for n,l in enumerate(string.splitlines()):
+            if pattern in l:
+                return n
+            else:
+                ret = 0
+        return ret
+
     def get_lines_containing_string(self, string, pattern, case_insensitive=False):
         """Returns lines of the given ``string`` that contain the ``pattern``.
 
