@@ -102,5 +102,10 @@ setup(
     package_data = {'robot': PACKAGE_DATA},
     packages     = PACKAGES,
     scripts      = SCRIPTS,
-    cmdclass     = {'install_scripts': custom_install_scripts}
+    cmdclass     = {'install_scripts': custom_install_scripts},
+    entry_points = {
+        'distutils.commands': [
+            'build_rf_docs = robot.libdocpkg.setup_command:BuildLibdoc',
+        ],
+    }
 )
