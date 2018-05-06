@@ -5,6 +5,8 @@ Resource          os_resource.robot
 Library           String
 
 *** Variables ***
+${SYSTEM_ENCODING}          ASCII    # Should be overridden from CLI
+${CONSOLE_ENCODING}         ASCII    # Should be overridden from CLI
 ${UTF-8 FILE}               ${CURDIR}${/}files${/}utf-8.txt
 ${ASCII FILE}               ${CURDIR}${/}files${/}ascii.txt
 ${LATIN-1 FILE}             ${CURDIR}${/}files${/}latin-1.txt
@@ -48,14 +50,12 @@ Get Latin-1 With Default Encoding
     Get File    ${LATIN-1 FILE}
 
 Get file with system encoding
-    ${encoding} =    Evaluate    robot.utils.SYSTEM_ENCODING    modules=robot
-    Create File    ${TEST FILE}    ${RESULT}    encoding=${encoding}
+    Create File    ${TEST FILE}    ${RESULT}    encoding=${SYSTEM_ENCODING}
     ${file} =    Get file    ${TEST FILE}    encoding=SYStem
     Should Be Equal    ${file}    ${RESULT}
 
 Get file with console encoding
-    ${encoding} =    Evaluate    robot.utils.CONSOLE_ENCODING    modules=robot
-    Create File    ${TEST FILE}    ${RESULT}     encoding=${encoding}
+    Create File    ${TEST FILE}    ${RESULT}     encoding=${CONSOLE_ENCODING}
     ${file} =    Get file    ${TEST FILE}    encoding=COnsoLE
     Should Be Equal    ${file}    ${RESULT}
 

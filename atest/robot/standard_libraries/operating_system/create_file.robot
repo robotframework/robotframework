@@ -1,5 +1,7 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/create_file.robot
+Suite Setup       Run Tests
+...    -v SYSTEM_ENCODING:${SYSTEM_ENCODING} -v CONSOLE_ENCODING:${CONSOLE_ENCODING}
+...    standard_libraries/operating_system/create_file.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -13,6 +15,12 @@ Create Non-ASCII File With Default Encoding
     Check Test Case    ${TESTNAME}
 
 Create File With Encoding
+    Check Test Case    ${TESTNAME}
+
+Create File With System Encoding
+    Check Test Case    ${TESTNAME}
+
+Create File With Console Encoding
     Check Test Case    ${TESTNAME}
 
 Create File With Non-ASCII Name
