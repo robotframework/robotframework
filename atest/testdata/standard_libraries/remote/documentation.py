@@ -1,7 +1,7 @@
 # coding=UTF-8
 
 import sys
-from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpc.server import SimpleXMLRPCServer
 
 from remoteserver import announce_port
 

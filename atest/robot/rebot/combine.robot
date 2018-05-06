@@ -135,7 +135,7 @@ Elapsed Time Should Be Written To Output When Start And End Time Are Not Known
     ${combined} =    Get Element    ${COMB OUT 1}    suite/status
     Element Attribute Should Be    ${combined}    starttime    N/A
     Element Attribute Should Be    ${combined}    endtime    N/A
-    Should Be True    $combined.get('elapsedtime') >= 0
+    Should Be True    int($combined.get('elapsedtime')) >= 0
     ${originals} =    Get Elements    ${COMB OUT 1}    suite/suite/status
     Element Attribute Should Match    ${originals[0]}    starttime    20?????? ??:??:??.???
     Element Attribute Should Match    ${originals[0]}    endtime    20?????? ??:??:??.???

@@ -2566,7 +2566,7 @@ class _Misc(_BuiltInBase):
         bytes containing invisible characters, or when working with nested data
         structures. The custom version differs from the standard one so that it
         omits the ``u`` prefix from Unicode strings and adds ``b`` prefix to
-        byte strings.
+        byte strings on Python 2.
 
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |

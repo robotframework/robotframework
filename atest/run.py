@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.6
 
 """A script for running Robot Framework's acceptance tests.
 
@@ -20,7 +20,7 @@ As a special case the interpreter value `standalone` will compile a new
 standalone jar from the current sources and execute the acceptance tests with
 it.
 
-Note that this script itself must always be executed with Python 2.7.
+Note that this script itself must always be executed with Python 3.6 or newer.
 
 Examples:
 $ atest/run.py python --test example atest/robot
@@ -28,7 +28,6 @@ $ atest/run.py /opt/jython27/bin/jython atest/robot/tags/tag_doc.robot
 > atest\\run.py "py -3" -e no-ci atest\\robot
 """
 
-from __future__ import print_function
 import os
 import shutil
 import signal
@@ -48,12 +47,7 @@ try:
     from tasks import jar
 except ImportError:
     def jar(*args, **kwargs):
-        raise RuntimeError("Creating jar distribution requires 'invoke'.")
-except SyntaxError:
-    def jar(*args, **kwargs):
-        raise RuntimeError("Creating jar distribution is not supported "
-                           "until running tests is ported to Python 3.6. "
-                           "Use 'invoke jar' to create it separately.")
+        raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
 
 
 ARGUMENTS = '''

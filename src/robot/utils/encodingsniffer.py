@@ -54,9 +54,8 @@ def _get_encoding(platform_getters, default):
 
 def _get_python_system_encoding():
     # `locale.getpreferredencoding(False)` returns exactly what we want, but
-    # but it doesn't seem to work outside Windows on Python 2. Luckily on
-    # those platforms `sys.getfilesystemencoding()` ought to do the right
-    # thing as well.
+    # it doesn't seem to work outside Windows on Python 2. Luckily on these
+    # platforms `sys.getfilesystemencoding()` seems to do the right thing.
     if PY2 and not WINDOWS:
         return sys.getfilesystemencoding()
     return locale.getpreferredencoding(False)

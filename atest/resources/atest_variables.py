@@ -14,12 +14,10 @@ ROBOTPATH = dirname(abspath(robot.__file__))
 ROBOT_VERSION = robot.version.get_version()
 DATADIR = normpath(join(dirname(abspath(__file__)), '..', 'testdata'))
 
-# FIXME: Always use locale.getpreferredencoding when atests are run on Py 3.6!
+SYSTEM_ENCODING = locale.getpreferredencoding(False)
+# Python 3.6+ uses UTF-8 internally on Windows. We want real console encoding.
 if os.name == 'nt':
-    SYSTEM_ENCODING = locale.getpreferredencoding(False)
-    # FIXME: Add encoding when running atests on Py 3.6
-    cp = subprocess.check_output('chcp', shell=True).split()[-1]
-    CONSOLE_ENCODING = 'cp' + cp
+    output = subprocess.check_output('chcp', shell=True, encoding='ASCII')
+    CONSOLE_ENCODING = 'cp' + output.split()[-1]
 else:
-    SYSTEM_ENCODING = 'UTF-8'
     CONSOLE_ENCODING = locale.getdefaultlocale()[-1]

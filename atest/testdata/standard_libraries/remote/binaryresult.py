@@ -1,5 +1,5 @@
 import sys
-from xmlrpclib import Binary
+from xmlrpc.client import Binary
 
 from remoteserver import DirectResultRemoteServer
 
@@ -28,11 +28,11 @@ class BinaryResult(object):
         return self._result(output=self._binary(ordinals))
 
     def fail_binary(self, *ordinals):
-        return self._result(error=self._binary(ordinals, 'Error: '),
-                            traceback=self._binary(ordinals, 'Traceback: '))
+        return self._result(error=self._binary(ordinals, b'Error: '),
+                            traceback=self._binary(ordinals, b'Traceback: '))
 
-    def _binary(self, ordinals, extra=''):
-        return Binary(extra + ''.join(chr(int(o)) for o in ordinals))
+    def _binary(self, ordinals, extra=b''):
+        return Binary(extra + bytes(int(o) for o in ordinals))
 
     def _result(self, return_='', output='', error='', traceback=''):
         return {'status': 'PASS' if not error else 'FAIL',

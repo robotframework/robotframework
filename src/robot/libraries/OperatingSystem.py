@@ -29,7 +29,7 @@ from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          is_unicode, normpath, parse_time, plural_or_not,
                          secs_to_timestamp, secs_to_timestr, seq2str,
                          set_env_var, timestr_to_secs, unic, CONSOLE_ENCODING,
-                         IRONPYTHON, JYTHON, PY2, SYSTEM_ENCODING, WINDOWS)
+                         IRONPYTHON, JYTHON, PY2, PY3, SYSTEM_ENCODING, WINDOWS)
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes.')
@@ -280,6 +280,9 @@ class OperatingSystem(object):
         return content.replace('\r\n', '\n')
 
     def _map_encoding(self, encoding):
+        # Python 3 opens files in native system encoding by default.
+        if PY3 and encoding.upper() == 'SYSTEM':
+            return None
         return {'SYSTEM': SYSTEM_ENCODING,
                 'CONSOLE': CONSOLE_ENCODING}.get(encoding.upper(), encoding)
 
@@ -578,9 +581,11 @@ class OperatingSystem(object):
         parent = os.path.dirname(path)
         if not os.path.exists(parent):
             os.makedirs(parent)
-        if encoding:
-            content = content.encode(encoding)
-        with open(path, mode+'b') as f:
+        # io.open() only accepts Unicode, not byte-strings, in text mode.
+        # We expect possible byte-strings to be all ASCII.
+        if PY2 and isinstance(content, str) and 'b' not in mode:
+            content = unicode(content)
+        with io.open(path, mode, encoding=encoding) as f:
             f.write(content)
         return path
 
@@ -609,7 +614,7 @@ class OperatingSystem(object):
         """
         if is_unicode(content):
             content = bytes(bytearray(ord(c) for c in content))
-        path = self._write_to_file(path, content)
+        path = self._write_to_file(path, content, mode='wb')
         self._link("Created binary file '%s'.", path)
 
     def append_to_file(self, path, content, encoding='UTF-8'):

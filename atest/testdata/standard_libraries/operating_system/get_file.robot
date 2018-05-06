@@ -100,14 +100,13 @@ Log File with 'replace' Error Handler
     replace    Hyv\ufffd\ufffd \ufffd\ufffdt\ufffd
 
 Get Binary File preserves CRLF line endings
-    Create File    ${TESTFILE}    hello world\r\nbinary
-    ${file}=    Get Binary File    ${TESTFILE}
-    ${expected}=    Convert to bytes    hello world\r\nbinary
+    ${file}=    Get Binary File    ${UTF-8 WINDOWS FILE}
+    ${expected}=    Encode String To Bytes    foo\r\nbar\r\n\foo bar\r\n\r\nÅÄÖ Föö\r\n    UTF-8
     Should Be Equal    ${file}    ${expected}
 
 Get Binary File returns bytes as-is
     ${file}=    Get Binary File    ${LATIN-1 FILE}
-    ${expected}=    Convert To Bytes    Hyv\xe4\xe4 \xfc\xf6t\xe4
+    ${expected}=    Encode String To Bytes    Hyvää üötä    Latin-1
     Should Be Byte String    ${file}
     Should Be Equal    ${file}    ${expected}
 

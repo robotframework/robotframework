@@ -15,7 +15,7 @@ import tarfile
 import tempfile
 import zipfile
 
-assert Path.cwd() == Path(__file__).parent
+assert Path.cwd().resolve() == Path(__file__).resolve().parent
 sys.path.insert(0, 'src')
 
 from invoke import Exit, task

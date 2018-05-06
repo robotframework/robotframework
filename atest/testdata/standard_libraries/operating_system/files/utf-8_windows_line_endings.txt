@@ -2,4 +2,4 @@ foo
 bar
 foo bar
 
-A Foo
+ÅÄÖ Föö

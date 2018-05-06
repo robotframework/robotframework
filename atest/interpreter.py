@@ -34,8 +34,9 @@ class Interpreter(object):
     def _get_name_and_version(self):
         try:
             output = subprocess.check_output(self.interpreter + ['-V'],
-                                             stderr=subprocess.STDOUT)
-        except (subprocess.CalledProcessError, OSError):
+                                             stderr=subprocess.STDOUT,
+                                             encoding='UTF-8')
+        except subprocess.CalledProcessError:
             raise ValueError('Invalid interpreter: %s' % self.path)
         name, version = output.split()[:2]
         name = name if 'PyPy' not in output else 'PyPy'
