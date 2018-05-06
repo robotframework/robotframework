@@ -459,10 +459,11 @@ class RobotFramework(Application):
                     if value not in (None, []))
 
 
-def run_cli(arguments, exit=True):
+def run_cli(arguments=None, exit=True):
     """Command line execution entry point for running tests.
 
     :param arguments: Command line options and arguments as a list of strings.
+        Starting from RF 3.1, defaults to ``sys.argv[1:]`` if not given.
     :param exit: If ``True``, call ``sys.exit`` with the return code denoting
         execution status, otherwise just return the rc. New in RF 3.0.1.
 
@@ -486,6 +487,8 @@ def run_cli(arguments, exit=True):
     arguments like ``name="Example"`` and generally has a richer API for
     programmatic test execution.
     """
+    if arguments is None:
+        arguments = sys.argv[1:]
     return RobotFramework().execute_cli(arguments, exit=exit)
 
 
