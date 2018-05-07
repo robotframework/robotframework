@@ -19,6 +19,7 @@ import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
+from os.path import isfile
 
 from robot.api import logger
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
@@ -120,6 +121,44 @@ class String(object):
         if PY3 and is_unicode(bytes):
             raise TypeError('Can not decode strings on Python 3.')
         return bytes.decode(encoding, errors)
+
+    def format_string(self, template_or_str, *posicional_search_replace,
+                      **named_search_replace):
+        """Formats a ``string`` using the given ``args`` and ``kwargs``.
+
+        If the given ``string`` is a valid file path, opens the file in read mode
+        and then format its content using the given ``args`` and ``kwargs``.
+
+        This keyword uses python's string format. For more information see:
+        [https://docs.python.org/2.7/library/string.html#formatstrings]|Python2 format syntax]
+        or
+        [https://docs.python.org/3.6/library/string.html#formatstrings]|Python3 format syntax]
+
+        Examples:
+
+        `Considering the file C:\\template.txt contents as "My {test} String"`
+        | ${formatted_string} = | Format String | C:\\template.txt | | test=awesome |
+        | Should Be Equal | ${formatted_string} | My awesome String |
+        | ${formatted_string} = | Format String | User {} is not a admin user. | non-admin | |
+        | Should Be Equal | ${formatted_string} | User non-admin is not a admin user. |
+        | ${formatted_string} = | Format String | Username: {username} - Password: {password} | | username=Robot | password=Framework |
+        | Should Be Equal | ${formatted_string} | Username: Robot - Password: Framework |
+        | ${formatted_string} = | Format String | Document {} is missing | tests.robot | |
+        | Should Be Equal | ${formatted_string} | Document tests.robot is missing |
+        | ${formatted_string} = | Format String | Uploaded file: {} should not be bigger than {}. | photo.jpg | 5MB |
+        | Should Be Equal | ${formatted_string} | Uploaded file: photo.jpg should not be bigger than 5MB. |
+
+        New in Robot Framework 3.1
+        """
+        if isfile(template_or_str):
+            logger.info('Opening file %s to be formated' % (template_or_str,))
+            format_file = open(template_or_str, 'r')
+            format_string = format_file.read()
+            format_file.close()
+        else:
+            format_string = template_or_str
+        logger.info('Formating string')
+        return format_string.format(*args, **kwargs)
 
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given string."""
