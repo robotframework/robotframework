@@ -124,10 +124,12 @@ class String(object):
 
     def format_string(self, template_or_str, *posicional_search_replace,
                       **named_search_replace):
-        """Formats a ``string`` using the given ``args`` and ``kwargs``.
+        """Formats a ``string`` using the given ``posicional_search_replace``
+        and ``named_search_replace``.
 
-        If the given ``string`` is a valid file path, opens the file in read mode
-        and then format its content using the given ``args`` and ``kwargs``.
+        If the given ``string`` is a valid file path, opens the file in read
+        mode and then format its content using the given
+        ``posicional_search_replace`` and ``named_search_replace``.
 
         This keyword uses python's string format. For more information see:
         [https://docs.python.org/2.7/library/string.html#formatstrings]|Python2 format syntax]
@@ -158,7 +160,9 @@ class String(object):
         else:
             format_string = template_or_str
         logger.info('Formating string')
-        return format_string.format(*args, **kwargs)
+        return format_string.format(
+            *posicional_search_replace, **named_search_replace
+        )
 
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given string."""
