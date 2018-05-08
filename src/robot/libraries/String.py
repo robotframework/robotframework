@@ -145,8 +145,8 @@ class String(object):
         | Should Be Equal | ${formatted_string} | User non-admin is not a admin user. |
         | ${formatted_string} = | Format String | Username: {username} - Password: {password} | | username=Robot | password=Framework |
         | Should Be Equal | ${formatted_string} | Username: Robot - Password: Framework |
-        | ${formatted_string} = | Format String | Document {} is missing | tests.robot | |
-        | Should Be Equal | ${formatted_string} | Document tests.robot is missing |
+        | ${formatted_string} = | Format String | Document {} is missing on folder {folder} | tests.robot | folder=/home |
+        | Should Be Equal | ${formatted_string} | Document tests.robot is missing on folder /home |
         | ${formatted_string} = | Format String | Uploaded file: {} should not be bigger than {}. | photo.jpg | 5MB |
         | Should Be Equal | ${formatted_string} | Uploaded file: photo.jpg should not be bigger than 5MB. |
 
