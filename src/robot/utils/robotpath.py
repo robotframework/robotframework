@@ -20,7 +20,7 @@ import sys
 from robot.errors import DataError
 
 from .encoding import system_decode
-from .platform import WINDOWS, PY2
+from .platform import IRONPYTHON, PY2, WINDOWS
 from .robottypes import is_unicode
 from .unic import unic
 
@@ -30,6 +30,15 @@ if sys.version_info < (2,7):
         if WINDOWS and os.path.splitunc(path)[0]:
             return os.path.abspath(path)
         return os.path.abspath(os.path.join(os.getcwdu(), path))
+elif IRONPYTHON and sys.version_info[:3] == (2, 7, 8):
+    # https://github.com/IronLanguages/ironpython2/issues/371
+    def _abspath(path):
+        if os.path.isabs(path):
+            if not os.path.splitdrive(path)[0]:
+                drive = os.path.splitdrive(os.getcwd())[0]
+                return drive + path
+            return path
+        return os.path.abspath(path)
 else:
     _abspath = os.path.abspath
 
