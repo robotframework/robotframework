@@ -46,7 +46,7 @@ Get Ascii File With Default Encoding
     Should Be Equal    ${file}    Hyvaa yota
 
 Get Latin-1 With Default Encoding
-    [Documentation]    FAIL REGEXP: (UnicodeDecodeError|UnicodeError): .*
+    [Documentation]    FAIL REGEXP: (UnicodeDecodeError|UnicodeError)(: .*)?
     Get File    ${LATIN-1 FILE}
 
 Get file with system encoding
@@ -64,7 +64,7 @@ Get Latin-1 With Latin-1 Encoding
     Should Be Equal    ${file}    ${result}
 
 Get Utf-16 File with Default Encoding
-    [Documentation]    FAIL REGEXP: (UnicodeDecodeError|UnicodeError): .*
+    [Documentation]    FAIL REGEXP: (UnicodeDecodeError|UnicodeError)(: .*)?
     ${file}=    Get File    ${UTF-16LEfile}
 
 Get File with 'ignore' Error Handler
