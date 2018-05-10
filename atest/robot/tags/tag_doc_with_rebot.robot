@@ -1,11 +1,9 @@
 *** Settings ***
-Suite Setup     Run Tests And Rebot With Tag Doc
-Resource        atest_resource.robot
-Test Template   Tag doc should be correct in output
-
+Suite Setup       Run Tests And Rebot With Tag Doc
+Resource          atest_resource.robot
+Test Template     Tag doc should be correct in output
 
 *** Test Cases ***
-
 Simple Tag Doc
     3    f1    Some documentation for rebot
 
@@ -25,19 +23,19 @@ Tag Doc For Combined Statistics
 *** Keywords ***
 
 Run Tests And Rebot With Tag Doc
-    Run Tests Without Processing Output  ${EMPTY}  misc/normal.robot
-    ${opts} =  Catenate
-    ...  --tagdoc f1:Some_documentation_for_rebot
-    ...  --tagdoc t_1:http://some.url_*bold*
-    ...  --tagdoc _d_?_:Doc_for_many_rebot_tags
-    ...  --tagdoc D2:More_doc
-    ...  --tagstatcombine d*:DX
+    Run Tests Without Processing Output    ${EMPTY}    misc/normal.robot
+    ${opts} =    Catenate
+    ...    --tagdoc f1:Some_documentation_for_rebot
+    ...    --tagdoc t_1:http://some.url_*bold*
+    ...    --tagdoc _d_?_:Doc_for_many_rebot_tags
+    ...    --tagdoc D2:More_doc
+    ...    --tagstatcombine d*:DX
     Copy Previous Outfile
-    Run Rebot  ${opts}  ${OUTFILE COPY}
+    Run Rebot    ${opts}    ${OUTFILE COPY}
 
 Tag doc should be correct in output
-    [Arguments]  ${index}  ${tag}  ${doc}
-    ${stats} =  Get Tag Stat Nodes
-    Should Be Equal  ${stats[${index}].text}  ${tag}
-    Should Be Equal  ${stats[${index}].attrib['doc']}  ${doc}
+    [Arguments]    ${index}    ${tag}    ${doc}
+    ${stats} =    Get Tag Stat Nodes
+    Should Be Equal    ${stats[${index}].text}    ${tag}
+    Should Be Equal    ${stats[${index}].attrib['doc']}    ${doc}
 
