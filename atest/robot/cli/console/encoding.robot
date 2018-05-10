@@ -7,13 +7,13 @@ ${STDOUT FILE}    %{TEMPDIR}/redirect_stdout.txt
 ${STDERR FILE}    %{TEMPDIR}/redirect_stderr.txt
 
 *** Test Cases ***
-Invalid Encoding In Environment Variables
+Invalid encoding configuration
     [Tags]    no-windows
-    ${stdout}    ${stderr} =    Run Some Tests With Std Streams Redirected
+    ${stdout}    ${stderr} =    Run Tests With Invalid Encoding And Streams Redirected
     Should Contain    ${stdout}    Pass And Fail :: Some tests here
 
 *** Keywords ***
-Run Some Tests With Std Streams Redirected
+Run Tests With Invalid Encoding And Streams Redirected
     ${cmd} =    Join command line
     ...    LANG=invalid
     ...    LC_TYPE=invalid
