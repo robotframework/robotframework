@@ -45,7 +45,7 @@ Non-existing YAML file
 
 YAML with invalid encoding
     Processing should have failed    4    invalid_encoding.yaml
-    ...    ${EMPTY}    UnicodeDecodeError
+    ...    ${EMPTY}    UnicodeDecodeError*
 
 *** Keywords ***
 Processing should have failed
