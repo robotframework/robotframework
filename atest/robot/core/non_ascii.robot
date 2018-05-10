@@ -35,7 +35,7 @@ Non-ASCII Failure In Teardown
 Non-ASCII Failure In Teardown After Normal Failure
     Check Test Case    ${TESTNAME}    FAIL    Just ASCII here\n\n Also teardown failed:\n ${MESSAGES}
 
-Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës
+Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
     ${tc} =    Check Test Case    ${TESTNAME}
     Should Be Equal    ${tc.kws[0].name}    Ñöñ-ÄŚÇÏÏ Këywörd Nämë
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Hyvää päivää

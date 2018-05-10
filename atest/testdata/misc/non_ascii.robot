@@ -30,7 +30,7 @@ Non-ASCII Failure In Teardown After Normal Failure
     Fail  Just ASCII here
     [Teardown]  Raise NonASCII Error
 
-Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës
+Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
     Ñöñ-ÄŚÇÏÏ Këywörd Nämë
 
 *** Keywords ***

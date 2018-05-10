@@ -26,7 +26,7 @@ XUnit Option Given
     Should Be Equal    ${root.tag}    testsuite
     ${tests} =    Get Elements    ${root}    testcase
     Length Should Be    ${tests}    19
-    Should Be Equal    ${tests[7].attrib['name']}    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës
+    Should Be Equal    ${tests[7].attrib['name']}    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
     ${failures} =    Get Elements    ${root}    testcase/failure
     Length Should Be    ${failures}    5
     Should Be Equal    ${failures[0].attrib['message']}    ${MESSAGES}

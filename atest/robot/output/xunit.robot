@@ -27,7 +27,7 @@ File Structure Is Correct
 
 Non-ASCII Content
     ${tests} =    Get XUnit Nodes    testcase
-    Should Be Equal    ${tests[-1].attrib['name']}    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës
+    Should Be Equal    ${tests[-1].attrib['name']}    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
     ${failures} =    Get XUnit Nodes    testcase/failure
     Should Be Equal    ${failures[0].attrib['message']}    ${MESSAGES}
 

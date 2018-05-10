@@ -55,7 +55,7 @@ Writing Non-ASCII To Debugfile
     Stderr Should Be Empty
     ${content} =    Get File    ${CLI OUTDIR}/debug.txt
     Debugfile should contain    ${content}    ${TIMESTAMP} - FAIL - Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ
-    Debugfile should contain    ${content}    ${TIMESTAMP} - INFO - +- START TEST: Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës [ ]
+    Debugfile should contain    ${content}    ${TIMESTAMP} - INFO - +- START TEST: Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо [ ]
 
 No Debugfile
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile NoNe -o o.xml  ${TESTFILE}
