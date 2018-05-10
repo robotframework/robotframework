@@ -63,7 +63,7 @@ class TestBuilding(unittest.TestCase):
         assert_keyword(kw, (), 'My Keyword', ('Pass',))
 
     def test_assign(self):
-        kw = build('unicode.robot').tests[1].keywords[0]
+        kw = build('non_ascii.robot').tests[1].keywords[0]
         assert_keyword(kw, ('${msg} =',), 'Evaluate', (r"u'Fran\\xe7ais'",))
 
     def test_directory_suite(self):

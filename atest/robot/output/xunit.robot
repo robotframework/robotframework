@@ -5,7 +5,7 @@ Variables           unicode_vars.py
 Suite Setup         Run Tests    -x xunit.xml -l log.html    ${TESTDATA}
 
 *** Variables ***
-${TESTDATA}         misc/unicode.robot
+${TESTDATA}         misc/non_ascii.robot
 ${PASS AND FAIL}    misc/pass_and_fail.robot
 ${INVALID}          %{TEMPDIR}${/}ïnvälïd-xünït.xml
 
@@ -27,7 +27,7 @@ File Structure Is Correct
 
 Non-ASCII Content
     ${tests} =    Get XUnit Nodes    testcase
-    Should Be Equal    ${tests[-1].attrib['name']}    Ünïcödë Tëst änd Këywörd Nämës
+    Should Be Equal    ${tests[-1].attrib['name']}    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës
     ${failures} =    Get XUnit Nodes    testcase/failure
     Should Be Equal    ${failures[0].attrib['message']}    ${MESSAGES}
 
