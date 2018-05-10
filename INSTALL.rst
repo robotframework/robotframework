@@ -412,7 +412,7 @@ __ PyPI_
     pip install robotframework-3.0.tar.gz
 
     # Install latest (possibly unreleased) code directly from GitHub
-    pip install git+https://github.com/robotframework/RobotFramework.git
+    pip install https://github.com/robotframework/robotframework/archive/master.zip
 
     # Uninstall
     pip uninstall robotframework
