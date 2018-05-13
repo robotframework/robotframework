@@ -63,7 +63,7 @@ No matching tests when reboting multiple inputs
     ...    --test nonex    ${INPUT FILE} ${INPUT FILE}
     Failing Rebot
     ...    Suite 'My Name' contains no tests named 'nonex'.
-    ...    --test nonex -N My_Name    ${INPUT FILE} ${INPUT FILE}
+    ...    --test nonex -N "My Name"    ${INPUT FILE} ${INPUT FILE}
 
 No matching suites
     Failing Rebot

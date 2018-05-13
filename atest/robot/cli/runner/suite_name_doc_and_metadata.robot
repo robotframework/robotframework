@@ -14,10 +14,10 @@ Overriding Name, Doc & Metadata And Escaping
     ${options} =    Catenate
     ...    -l log.html
     ...    -N this_is_overridden_next
-    ...    --name my_COOL_Name.EXEX.
-    ...    --doc Even_\\coooolerBS_docEXQU
+    ...    --name "my COOL Name.EXEX."
+    ...    --doc "Even \\coooolerBS docEXQU"
     ...    --metadata something:new
-    ...    --metadata Two_Parts:three_part_VALUE
+    ...    --metadata "Two Parts:three part VALUE"
     ...    -M path:c:\\tempBSnew.txt
     ...    -M esc:STQUDOAMHAEXEX
     ...    --escape star:ST

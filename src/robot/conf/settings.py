@@ -100,10 +100,8 @@ class _BaseSettings(object):
             return self._process_log_level(value)
         if value == self._get_default_value(name):
             return value
-        if name in ['Name', 'Doc', 'LogTitle', 'ReportTitle']:
-            if name == 'Doc':
-                value = self._escape_as_data(value)
-            return value.replace('_', ' ')
+        if name == 'Doc':
+            return self._escape_as_data(value)
         if name in ['Metadata', 'TagDoc']:
             if name == 'Metadata':
                 value = [self._escape_as_data(v) for v in value]
@@ -228,7 +226,6 @@ class _BaseSettings(object):
                             % (type_.lower(), path, err.strerror))
 
     def _process_metadata_or_tagdoc(self, value):
-        value = value.replace('_', ' ')
         if ':' in value:
             return value.split(':', 1)
         return value, ''
@@ -246,7 +243,7 @@ class _BaseSettings(object):
             pattern, title = pattern.rsplit(':', 1)
         else:
             title = ''
-        return self._format_tag_patterns(pattern), title.replace('_', ' ')
+        return self._format_tag_patterns(pattern), title
 
     def _format_tag_patterns(self, pattern):
         for search, replace in [('&', 'AND'), ('AND', ' AND '), ('OR', ' OR '),

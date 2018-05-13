@@ -32,7 +32,7 @@ Non-Existing Test When Running Multiple Suites
     ...    --test notexists    ${SUITE FILE} ${SUITE DIR}
     Run Failing Test
     ...    Suite 'My Name' contains no tests named 'notexists'.
-    ...    --name My_Name --test notexists    ${SUITE FILE} ${SUITE DIR}
+    ...    --name "My Name" --test notexists    ${SUITE FILE} ${SUITE DIR}
 
 Two Calls To Test With One Nonexisting Test Name
     Run And Check Tests    --test notexists --test First    First

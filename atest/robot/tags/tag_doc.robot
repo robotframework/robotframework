@@ -5,27 +5,27 @@ Resource          atest_resource.robot
 
 *** Test Cases ***
 Simple Tag Doc
-    3    f1    Some documentation
+    3    f1    Doc with spaces and _under_scores_
 
 Specify Tag Doc With Pattern
-    1    d1    Doc for many tags
+    1    d1    Doc-for-many-tags
 
 Tag Doc With Multiple Matches
-    2    d_2    Doc for many tags & More doc
+    2    d_2    Doc-for-many-tags & More
 
 Tag Doc With Formatting
     4    t1    http://some.url *bold*
 
 Tag Doc For Combined Statistics
-    0    DX    Doc for many tags
+    0    DX    Doc-for-many-tags
 
 *** Keywords ***
 Run Tests With Tag Docs
     ${opts} =    Catenate
-    ...    --tagdoc f1:Some_documentation
-    ...    --tagdoc t_1:http://some.url_*bold*
-    ...    --tagdoc _d_?_:Doc_for_many_tags
-    ...    --tagdoc D2:More_doc
+    ...    --tagdoc "f1:Doc with spaces and _under_scores_"
+    ...    --tagdoc "t_1:http://some.url *bold*"
+    ...    --tagdoc _d_?_:Doc-for-many-tags
+    ...    --tagdoc D2:More
     ...    --tagstatcombine d*:DX
     Run Tests    ${opts}    misc/normal.robot
 

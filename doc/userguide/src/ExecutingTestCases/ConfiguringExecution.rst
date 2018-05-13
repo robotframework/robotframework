@@ -276,8 +276,11 @@ Setting the name
 When Robot Framework parses test data, `test suite names are created
 from file and directory names`__. The name of the top-level test suite
 can, however, be overridden with the command line option
-:option:`--name (-N)`. Underscores in the given name are converted to
-spaces automatically.
+:option:`--name (-N)`.
+
+.. note:: Prior to Robot Framework 3.1, underscores in the value were
+          converted to spaces. Nowadays values containing spaces need
+          to be escaped or quoted like, for example, `--name "My example"`.
 
 __ `Test suite name and documentation`_
 
@@ -287,8 +290,10 @@ Setting the documentation
 
 In addition to `defining documentation in the test data`__, documentation
 of the top-level suite can be given from the command line with the
-option :option:`--doc (-D)`. Underscores in the given documentation
-are converted to spaces, and it may contain simple `HTML formatting`_.
+option :option:`--doc (-D)` The value can contain simple `HTML formatting`_.
+
+.. note:: Prior to Robot Framework 3.1, underscores in the value were
+          converted to spaces same way as with the :option:`--name` option.
 
 __ `Test suite name and documentation`_
 
@@ -298,9 +303,11 @@ Setting free metadata
 `Free test suite metadata`_ may also be given from the command line with the
 option :option:`--metadata (-M)`. The argument must be in the format
 `name:value`, where `name` the name of the metadata to set and
-`value` is its value. Underscores in the name and value are converted to
-spaces, and the latter may contain simple `HTML formatting`_. This option may
-be used several times to set multiple metadata.
+`value` is its value. The value can contain simple `HTML formatting`_.
+This option may be used several times to set multiple metadata values.
+
+.. note:: Prior to Robot Framework 3.1, underscores in the value were
+          converted to spaces same way as with the :option:`--name` option.
 
 Setting tags
 ~~~~~~~~~~~~

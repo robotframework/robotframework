@@ -181,12 +181,11 @@ Combine without options
 
 Combine with options
     ${options} =    Catenate
-    ...    --name New_Name
-    ...    --doc MySPfineSPdoc
+    ...    --name "New Name"
+    ...    --doc "My fine doc"
     ...    --metadata Name:value
-    ...    -M Other_Meta:AnotherSPvalue
+    ...    -M "Other Meta:Another value"
     ...    --critical force
-    ...    --escape space:SP
     Run Rebot    ${options}    ${TEMP OUT 1} ${TEMP OUT 2}
     Set Suite Variable    $SUITE2    ${SUITE}
     Copy File    ${OUT FILE}    ${COMB OUT 2}

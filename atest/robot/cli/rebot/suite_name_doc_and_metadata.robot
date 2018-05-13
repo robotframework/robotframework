@@ -15,10 +15,10 @@ Overriding Name, Doc & Metadata And Escaping
     [Documentation]    Overriding name, doc and metadata. Also tests escaping values.
     ${options} =    Catenate
     ...    -N this_is_overridden_next
-    ...    --name my_COOL_NameEXEX
-    ...    --doc Even_\\coooolerBS_docEXQU
+    ...    --name "my COOL NameEXEX"
+    ...    --doc "Even \\coooolerBS docEXQU"
     ...    --metadata something:New
-    ...    --metadata two_parts:three_parts_here
+    ...    --metadata "two parts:three parts here"
     ...    -M path:c:\\tempBSnew.txt
     ...    -M esc:STQUDOAMHAEXEX
     ...    --escape star:ST

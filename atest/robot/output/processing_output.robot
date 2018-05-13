@@ -17,7 +17,7 @@ Test Case File Suite
 
 Directory Suite
     [Documentation]    Testing suite created from a test suite directory. Also testing metadata from cli.
-    My Run Robot And Rebot    --metadata x:y -M a:b --name My_Name --doc Something    misc/suites
+    My Run Robot And Rebot    --metadata x:y -M a:b --name "My Name" --doc Something    misc/suites
     Should Be Equal    ${SUITE.name}    My Name
     Should Be Equal    ${SUITE.doc}    Something
     Should Be Equal    ${SUITE.metadata['x']}    y

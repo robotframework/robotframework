@@ -12,7 +12,7 @@ ${BOM}            \uFEFF
 *** Test Cases ***
 Argument File
     Create Argument File    ${ARGFILE}
-    ...    --name=From Argfile_With Spaces
+    ...    --name=From Argfile With Spaces
     ...    --metadata${SPACE*10}Meta1:From AF
     ...    -M=Meta2:Overwritten
     ...    --RunEmptySuite

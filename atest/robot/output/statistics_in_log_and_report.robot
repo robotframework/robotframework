@@ -5,7 +5,6 @@ Library         html_output_stats.py
 Suite Setup     Run tests with stat related options
 
 *** Test Cases ***
-
 Log contains total stats
     Verify total stats    log.html
 
@@ -26,7 +25,6 @@ Report contains suite stats
 
 
 *** Keywords ***
-
 Run tests with stat related options
     ${opts} =    Catenate
     ...    --Critical t1
@@ -35,7 +33,7 @@ Run tests with stat related options
     ...    --TagStatInclude t?
     ...    --TagStatInclude d1
     ...    --TagStatCombine f1ANDt1
-    ...    --TagDoc t1:the_doc
+    ...    --TagDoc "t1:the doc"
     ...    --TagStatLink t?:http://t/%1:T%1
     ...    --log log.html
     ...    --report report.html

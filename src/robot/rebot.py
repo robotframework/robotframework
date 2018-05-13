@@ -83,16 +83,15 @@ Options
  -R --merge               When combining results, merge outputs together
                           instead of putting them under a new top level suite.
                           Example: rebot --merge orig.xml rerun.xml
- -N --name name           Set the name of the top level test suite. Underscores
-                          in the name are converted to spaces. Default name is
-                          created from the name of the executed data source.
+ -N --name name           Set the name of the top level test suite. Default
+                          name is created from the name of the executed data
+                          source.
  -D --doc documentation   Set the documentation of the top level test suite.
-                          Underscores in the documentation are converted to
-                          spaces and it may also contain simple HTML formatting
-                          (e.g. *bold* and http://url/).
- -M --metadata name:value *  Set metadata of the top level suite. Underscores
-                          in the name and value are converted to spaces. Value
-                          can contain same HTML formatting as --doc.
+                          Simple formatting is supported (e.g. *bold*). If
+                          the documentation contains spaces, it must be quoted.
+                          Example: --doc "Very *good* example"
+ -M --metadata name:value *  Set metadata of the top level suite. Value can
+                          contain formatting similarly as --doc.
                           Example: --metadata version:1.2
  -G --settag tag *        Sets given tag(s) to all executed test cases.
  -t --test name *         Select test cases by name or long name. Name is case
@@ -148,8 +147,7 @@ Options
     --splitlog            Split log file into smaller pieces that open in
                           browser transparently.
     --logtitle title      Title for the generated test log. The default title
-                          is `<Name Of The Suite> Test Log`. Underscores in
-                          the title are converted into spaces in all titles.
+                          is `<Name Of The Suite> Test Log`.
     --reporttitle title   Title for the generated test report. The default
                           title is `<Name Of The Suite> Test Report`.
     --reportbackground colors  Background colors to use in the report file.
@@ -188,18 +186,16 @@ Options
                           characters `*` (matches anything) and `?` (matches
                           any char). Documentation can contain formatting
                           similarly as with --doc option.
-                          Examples: --tagdoc mytag:My_documentation
-                                    --tagdoc regression:*See*_http://info.html
-                                    --tagdoc owner-*:Original_author
+                          Examples: --tagdoc mytag:Example
+                                    --tagdoc "owner-*:Original author"
     --tagstatlink pattern:link:title *  Add external links into `Statistics by
                           Tag`. Pattern can contain characters `*` (matches
                           anything) and `?` (matches any char). Characters
                           matching to wildcard expressions can be used in link
                           and title with syntax %N, where N is index of the
-                          match (starting from 1). In title underscores are
-                          automatically converted to spaces.
-                          Examples: --tagstatlink mytag:http://my.domain:Link
-                          --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
+                          match (starting from 1).
+                          Examples: --tagstatlink mytag:http://my.domain:Title
+                          --tagstatlink "bug-*:http://url/id=%1:Issue Tracker"
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
                           Remove keyword data from all generated outputs.
                           Keywords containing warnings are not removed except
