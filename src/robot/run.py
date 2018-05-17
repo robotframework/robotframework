@@ -430,9 +430,11 @@ class RobotFramework(Application):
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.info('Settings:\n%s' % unic(settings))
-        suite = TestSuiteBuilder(settings['SuiteNames'],
-                                 settings['WarnOnSkipped'],
-                                 settings['Extension']).build(*datasources)
+        builder = TestSuiteBuilder(settings['SuiteNames'],
+                                   settings['WarnOnSkipped'],
+                                   settings['Extension'])
+        suite = builder.build(*datasources)
+        settings.execution_style = builder.execution_style
         suite.configure(**settings.suite_config)
         if settings.pre_run_modifiers:
             suite.visit(ModelModifier(settings.pre_run_modifiers,

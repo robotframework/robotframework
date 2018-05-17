@@ -31,7 +31,8 @@ from .gatherfailed import gather_failed_tests, gather_failed_suites
 
 @py2to3
 class _BaseSettings(object):
-    _cli_opts = {'Name'             : ('name', None),
+    _cli_opts = {'ExecutionStyle'   : ('style', 'tests'),
+                 'Name'             : ('name', None),
                  'Doc'              : ('doc', None),
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
@@ -368,6 +369,15 @@ class _BaseSettings(object):
     def console_colors(self):
         return self['ConsoleColors']
 
+    @property
+    def execution_style(self):
+        return self['ExecutionStyle']
+
+    @execution_style.setter
+    def execution_style(self, value):
+        if value:
+            self['ExecutionStyle'] = value
+
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Extension'          : ('extension', None),
@@ -543,6 +553,7 @@ class RebotSettings(_BaseSettings):
         if not self.log:
             return {}
         return {
+            'executionStyle': self.execution_style,
             'title': html_escape(self['LogTitle'] or ''),
             'reportURL': self._url_from_path(self.log, self.report),
             'splitLogBase': os.path.basename(os.path.splitext(self.log)[0]),
@@ -554,6 +565,7 @@ class RebotSettings(_BaseSettings):
         if not self.report:
             return {}
         return {
+            'executionStyle': self.execution_style,
             'title': html_escape(self['ReportTitle'] or ''),
             'logURL': self._url_from_path(self.report, self.log),
             'background' : self._resolve_background_colors(),

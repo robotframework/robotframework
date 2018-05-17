@@ -50,7 +50,7 @@ $(document).ready(function() {
     initLayout(topsuite.name, 'Log');
     addStatistics();
     addErrors();
-    addTestExecutionLog(topsuite);
+    addExecutionLog(topsuite);
     addLogLevelSelector(window.settings['minLevel'], window.settings['defaultLevel']);
     if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
@@ -127,8 +127,8 @@ function makeElementVisible(id) {
     });
 }
 
-function addTestExecutionLog(main) {
-    $('body').append($('<h2>Test Execution Log</h2>'),
+function addExecutionLog(main) {
+    $('body').append($(testOrTask('<h2>{Test} Execution Log</h2>')),
                      $.tmpl('suiteTemplate', main));
 }
 </script>
@@ -173,7 +173,7 @@ function addTestExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="errorHeaderTemplate">
-  <h2>Test Execution Errors</h2>
+  <h2>{{= testOrTask('{Test}')}} Execution Errors</h2>
   <table id="errors"></table>
 </script>
 
@@ -261,14 +261,14 @@ function addTestExecutionLog(main) {
     <div class="element-header closed" onclick="toggleTest('${id}')">
       <div class="element-header-left" title="{{html fullName}}">
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
-        <span class="label ${status.toLowerCase()}">TEST</span>
+        <span class="label ${status.toLowerCase()}">{{= testOrTask('{TEST}')}}</span>
         <span class="name">{{html name}}</span>
         {{if !isCritical}}(non-critical){{/if}}
       </div>
       <div class="element-header-right" onclick="stopPropagation(event)" title="">
         <a class="expand" title="Expand all" href="javascript:expandAll('${id}')"></a>
         <a class="collapse" title="Collapse all" href="javascript:collapseAll('${id}')"></a>
-        <a class="link" title="Link to this test" href="#${id}" onclick="makeElementVisible('${id}')"></a>
+        <a class="link" title="Link to this {{= testOrTask('{test}')}}" href="#${id}" onclick="makeElementVisible('${id}')"></a>
       </div>
       <div class="element-header-toggle" title="Toggle visibility"></div>
     </div>

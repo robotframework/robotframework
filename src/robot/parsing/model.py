@@ -51,7 +51,7 @@ def TestData(parent=None, source=None, include_suites=None,
 class _TestData(object):
     _setting_table_names = 'Setting', 'Settings', 'Metadata'
     _variable_table_names = 'Variable', 'Variables'
-    _testcase_table_names = 'Test Case', 'Test Cases'
+    _testcase_table_names = 'Test Case', 'Test Cases', 'Task', 'Tasks'
     _keyword_table_names = 'Keyword', 'Keywords', 'User Keyword', 'User Keywords'
     _deprecated = NormalizedDict({'Metadata': 'Settings',
                                   'User Keyword': 'Keywords',

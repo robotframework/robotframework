@@ -7,4 +7,4 @@ window.output["errors"] = [[35,3,48,47],[43,4,185],[3286,3,138,137],[3303,3,168,
 window.output["baseMillis"] = 1448373237679;
 window.output["generatedMillis"] = 3321;
 window.output["generatedTimestamp"] = "20151124 15:54:01 GMT +03:00";
-window.settings = {"background":{"fail":"DeepPink"},"defaultLevel":"DEBUG","logURL":"log.html","minLevel":"DEBUG","reportURL":"report.html","title":"This is a long long title. A very long title indeed. And it even contains some stuff to <esc&ape>. Yet it should still look good."};
+window.settings = {"background":{"fail":"DeepPink"},"defaultLevel":"DEBUG","logURL":"log.html","minLevel":"DEBUG","reportURL":"report.html","style":"tests","title":"This is a long long title. A very long title indeed. And it even contains some stuff to <esc&ape>. Yet it should still look good."};

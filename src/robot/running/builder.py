@@ -16,7 +16,7 @@
 from robot.errors import DataError
 from robot.parsing import TestData, ResourceFile as ResourceData, VALID_EXTENSIONS
 from robot.running.defaults import TestDefaults
-from robot.utils import abspath, is_string, unic
+from robot.utils import abspath, is_string, normalize, unic
 from robot.variables import VariableIterator
 
 from .model import ForLoop, Keyword, ResourceFile, TestSuite
@@ -50,6 +50,7 @@ class TestSuiteBuilder(object):
         builder = StepBuilder()
         self._build_steps = builder.build_steps
         self._build_step = builder.build_step
+        self.execution_style = None
 
     def _get_extensions(self, extension):
         if not extension:
@@ -88,6 +89,8 @@ class TestSuiteBuilder(object):
             raise DataError("Parsing '%s' failed: %s" % (path, err.message))
 
     def _build_suite(self, data, parent_defaults=None):
+        if data.testcase_table.is_started():
+            self._set_execution_style(data.testcase_table.header[0])
         defaults = TestDefaults(data.setting_table, parent_defaults)
         suite = TestSuite(name=data.name,
                           source=data.source,
@@ -101,6 +104,12 @@ class TestSuiteBuilder(object):
             suite.suites.append(self._build_suite(child, defaults))
         ResourceFileBuilder().build(data, target=suite.resource)
         return suite
+
+    def _set_execution_style(self, value):
+        style = 'tests' if normalize(value) in ('testcase',
+                                                'testcases') else 'tasks'
+        # FIXME: Handle conflicting execution styles
+        self.execution_style = style
 
     def _get_metadata(self, settings):
         # Must return as a list to preserve ordering
