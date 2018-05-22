@@ -1002,11 +1002,11 @@ When writing static keywords, it is sometimes useful to modify them with
 Python's decorators. However, decorators modify function signatures,
 and can confuse Robot Framework's introspection when determining which
 arguments keywords accept. This is especially problematic when creating
-library documentation with Libdoc_ and when using  RIDE_. To avoid this
+library documentation with Libdoc_ and when using RIDE_. To avoid this
 issue, either do not use decorators, or use the handy `decorator module`__
 to create signature-preserving decorators.
 
-__ http://micheles.googlecode.com/hg/decorator/documentation.html
+__ https://decorator.readthedocs.io
 
 Embedding arguments into keyword names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
