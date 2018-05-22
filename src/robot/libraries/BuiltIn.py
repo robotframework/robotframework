@@ -1760,9 +1760,11 @@ class _RunKeyword(_BuiltInBase):
 
     @run_keyword_variant(resolve=2)
     def run_keyword_unless(self, condition, name, *args):
-        """Runs the given keyword with the given arguments, if ``condition`` is false.
+        """Runs the given keyword with the given arguments if ``condition`` is false.
 
-        See `Run Keyword If` for more information and an example.
+        See `Run Keyword If` for more information and an example. Notice that
+        this keyword does not support ``ELSE`` or ``ELSE IF`` branches like
+        `Run Keyword If` does, though.
         """
         if not self._is_true(condition):
             return self.run_keyword(name, *args)
