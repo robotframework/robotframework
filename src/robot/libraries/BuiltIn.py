@@ -915,7 +915,7 @@ class _Verify(_BuiltInBase):
         Examples:
         | Should Contain | ${output}    | PASS  |
         | Should Contain | ${some list} | value | msg=Failure! | values=False |
-        | Should Contain | ${some list} | value | case_insensitive=True |
+        | Should Contain | ${some list} | value | ignore_case=True |
         """
         orig_container = container
         if is_truthy(ignore_case) and is_string(item):
