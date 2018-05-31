@@ -24,7 +24,7 @@ function parseTemplates() {
 
 function testOrTask(text) {
     return text.replace(/{(.*)}/, function (match, group, offset, string) {
-        if (window.settings.executionStyle === 'tests')
+        if (!window.settings.rpa)
             return group;
         return {'TEST': 'TASK', 'Test': 'Task', 'test': 'task'}[group];
     });

@@ -31,11 +31,12 @@ from .gatherfailed import gather_failed_tests, gather_failed_suites
 
 @py2to3
 class _BaseSettings(object):
-    _cli_opts = {'ExecutionStyle'   : ('style', 'tests'),
+    _cli_opts = {'RPA'              : ('rpa', None),
                  'Name'             : ('name', None),
                  'Doc'              : ('doc', None),
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
+                 'TaskNames'        : ('task', []),
                  'ReRunFailed'      : ('rerunfailed', 'NONE'),
                  'ReRunFailedSuites': ('rerunfailedsuites', 'NONE'),
                  'SuiteNames'       : ('suite', []),
@@ -84,7 +85,7 @@ class _BaseSettings(object):
                 # Copy mutable values and support list values as scalars.
                 value = list(value) if is_list_like(value) else [value]
             self[name] = self._process_value(name, value)
-        self['TestNames'] += self['ReRunFailed']
+        self['TestNames'] += self['ReRunFailed'] + self['TaskNames']
         self['SuiteNames'] += self['ReRunFailedSuites']
 
     def __setitem__(self, name, value):
@@ -370,13 +371,12 @@ class _BaseSettings(object):
         return self['ConsoleColors']
 
     @property
-    def execution_style(self):
-        return self['ExecutionStyle']
+    def rpa(self):
+        return self['RPA']
 
-    @execution_style.setter
-    def execution_style(self, value):
-        if value:
-            self['ExecutionStyle'] = value
+    @rpa.setter
+    def rpa(self, value):
+        self['RPA'] = value
 
 
 class RobotSettings(_BaseSettings):
@@ -553,7 +553,7 @@ class RebotSettings(_BaseSettings):
         if not self.log:
             return {}
         return {
-            'executionStyle': self.execution_style,
+            'rpa': self.rpa,
             'title': html_escape(self['LogTitle'] or ''),
             'reportURL': self._url_from_path(self.log, self.report),
             'splitLogBase': os.path.basename(os.path.splitext(self.log)[0]),
@@ -565,7 +565,7 @@ class RebotSettings(_BaseSettings):
         if not self.report:
             return {}
         return {
-            'executionStyle': self.execution_style,
+            'rpa': self.rpa,
             'title': html_escape(self['ReportTitle'] or ''),
             'logURL': self._url_from_path(self.report, self.log),
             'background' : self._resolve_background_colors(),

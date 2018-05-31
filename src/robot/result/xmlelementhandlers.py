@@ -69,6 +69,8 @@ class RobotHandler(_Handler):
     def start(self, elem, result):
         generator = elem.get('generator', 'unknown').split()[0].upper()
         result.generated_by_robot = generator == 'ROBOT'
+        if result.rpa is None:
+            result.rpa = elem.get('rpa', 'false') == 'true'
         return result
 
     def _children(self):

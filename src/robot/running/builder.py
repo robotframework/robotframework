@@ -31,7 +31,8 @@ class TestSuiteBuilder(object):
     more information and examples.
     """
 
-    def __init__(self, include_suites=None, warn_on_skipped=False, extension=None):
+    def __init__(self, include_suites=None, warn_on_skipped=False,
+                 extension=None, rpa=None):
         """
         :param include_suites: List of suite names to include. If ``None`` or
             an empty list, all suites are included. When executing tests
@@ -43,6 +44,9 @@ class TestSuiteBuilder(object):
         :param extension: Limit parsing test data to only these files. Files
             are specified as an extension that is handled case-insensitively.
             Same as ``--extension`` on the command line.
+        :param rpa: Explicit test execution mode. ``True`` for RPA and
+           ``False`` for test automation. By default mode is got from test
+           data headers and possible conflicting headers cause an error.
         """
         self.include_suites = include_suites
         self.warn_on_skipped = warn_on_skipped
@@ -50,7 +54,8 @@ class TestSuiteBuilder(object):
         builder = StepBuilder()
         self._build_steps = builder.build_steps
         self._build_step = builder.build_step
-        self.execution_style = None
+        self.rpa = rpa
+        self._rpa_not_given = rpa is None
 
     def _get_extensions(self, extension):
         if not extension:
@@ -89,8 +94,8 @@ class TestSuiteBuilder(object):
             raise DataError("Parsing '%s' failed: %s" % (path, err.message))
 
     def _build_suite(self, data, parent_defaults=None):
-        if data.testcase_table.is_started():
-            self._set_execution_style(data.testcase_table.header[0])
+        if self._rpa_not_given and data.testcase_table.is_started():
+            self._set_execution_mode(data)
         defaults = TestDefaults(data.setting_table, parent_defaults)
         suite = TestSuite(name=data.name,
                           source=data.source,
@@ -105,11 +110,17 @@ class TestSuiteBuilder(object):
         ResourceFileBuilder().build(data, target=suite.resource)
         return suite
 
-    def _set_execution_style(self, value):
-        style = 'tests' if normalize(value) in ('testcase',
-                                                'testcases') else 'tasks'
-        # FIXME: Handle conflicting execution styles
-        self.execution_style = style
+    def _set_execution_mode(self, data):
+        rpa = normalize(data.testcase_table.header[0]) in ('task', 'tasks')
+        if self.rpa is None:
+            self.rpa = rpa
+        elif self.rpa is not rpa:
+            this, that = ('tasks', 'tests') if rpa else ('tests', 'tasks')
+            raise DataError("Conflicting execution modes. File '%s' has %s "
+                            "but files parsed earlier have %s. Fix headers "
+                            "or use '--rpa' or '--norpa' options to set the "
+                            "execution mode explicitly."
+                            % (data.source, this, that))
 
     def _get_metadata(self, settings):
         # Must return as a list to preserve ordering

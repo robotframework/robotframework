@@ -88,6 +88,10 @@ see http://robotframework.org/.
 Options
 =======
 
+    --rpa                 Turn on generic automation mode. Mainly affects
+                          terminology so that "test" is replaced with "task"
+                          in logs and reports. By default the mode is got
+                          from test/task header in data files. New in RF 3.1.
  -F --extension value     Parse only files with this extension when executing
                           a directory. Has no effect when running individual
                           files or when using resource files. If more than one
@@ -110,6 +114,7 @@ Options
                           simple pattern where `*` matches anything and `?`
                           matches any char. If using `*` and `?` in the console
                           is problematic see --escape and --argumentfile.
+    --task name *         Alias to --test. Especially applicable with --rpa.
  -s --suite name *        Select test suites to run by name. When this option
                           is used with --test, --include or --exclude, only
                           test cases in matching suites and also matching other
@@ -432,9 +437,10 @@ class RobotFramework(Application):
         LOGGER.info('Settings:\n%s' % unic(settings))
         builder = TestSuiteBuilder(settings['SuiteNames'],
                                    settings['WarnOnSkipped'],
-                                   settings['Extension'])
+                                   settings['Extension'],
+                                   settings.rpa)
         suite = builder.build(*datasources)
-        settings.execution_style = builder.execution_style
+        settings.rpa = builder.rpa
         suite.configure(**settings.suite_config)
         if settings.pre_run_modifiers:
             suite.visit(ModelModifier(settings.pre_run_modifiers,

@@ -80,6 +80,10 @@ about Robot Framework in general, go to http://robotframework.org.
 Options
 =======
 
+    --rpa                 Turn on generic automation mode. Mainly affects
+                          terminology so that "test" is replaced with "task"
+                          in logs and reports. By default the mode is got
+                          from output files. New in RF 3.1.
  -R --merge               When combining results, merge outputs together
                           instead of putting them under a new top level suite.
                           Example: rebot --merge orig.xml rerun.xml
@@ -99,6 +103,7 @@ Options
                           pattern where `*` matches anything and `?` matches
                           any char. If using `*` and `?` in the console is
                           problematic, see --escape and --argumentfile.
+    --task name *         Alias to --test. Especially applicable with --rpa.
  -s --suite name *        Select test suites by name. When this option is used
                           with --test, --include or --exclude, only test cases
                           in matching suites and also matching other filtering

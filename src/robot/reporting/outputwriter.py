@@ -18,9 +18,8 @@ from robot.output.xmllogger import XmlLogger
 
 class OutputWriter(XmlLogger):
 
-    def __init__(self, output):
-        # FIXME: Need to set, and use, execution style also with Rebot!
-        XmlLogger.__init__(self, output, generator='Rebot')
+    def __init__(self, output, rpa=False):
+        XmlLogger.__init__(self, output, rpa=rpa, generator='Rebot')
 
     def start_message(self, msg):
         self._write_message(msg)
