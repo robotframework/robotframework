@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import copy
+
 from robot.api import logger
 from robot.utils import (is_dict_like, is_string, is_truthy, plural_or_not,
                          seq2str, seq2str2, type_name, unic, Matcher)
@@ -257,7 +259,7 @@ class _List(object):
 
         The given list is never altered by this keyword.
         """
-        return list_[:]
+        return copy.deepcopy(list_)
 
     def reverse_list(self, list_):
         """Reverses the given list in place.
@@ -533,7 +535,7 @@ class _Dictionary(object):
 
         The given dictionary is never altered by this keyword.
         """
-        return dictionary.copy()
+        return copy.deepcopy(dictionary)
 
     def get_dictionary_keys(self, dictionary):
         """Returns keys of the given ``dictionary``.
