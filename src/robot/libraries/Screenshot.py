@@ -153,7 +153,7 @@ class Screenshot(object):
         self._given_screenshot_dir = path
         return old
 
-    def take_screenshot(self, name="screenshot", width="800px"):
+    def take_screenshot(self, name="screenshot", width="800px", filetype="jpeg", quality=100):
         """Takes a screenshot in JPEG format and embeds it into the log file.
 
         Name of the file where the screenshot is stored is derived from the
@@ -178,7 +178,7 @@ class Screenshot(object):
 
         The path where the screenshot is saved is returned.
         """
-        path = self._save_screenshot(name)
+        path = self._save_screenshot(name, filetype, quality)
         self._embed_screenshot(path, width)
         return path
 
@@ -193,16 +193,16 @@ class Screenshot(object):
         self._link_screenshot(path)
         return path
 
-    def _save_screenshot(self, basename, directory=None):
+    def _save_screenshot(self, basename, filetype, quality, directory=None):
         path = self._get_screenshot_path(basename, directory)
-        return self._screenshot_to_file(path)
+        return self._screenshot_to_file(path, filetype, quality)
 
-    def _screenshot_to_file(self, path):
+    def _screenshot_to_file(self, path, filetype, quality):
         path = self._validate_screenshot_path(path)
         logger.debug('Using %s module/tool for taking screenshot.'
                      % self._screenshot_taker.module)
         try:
-            self._screenshot_taker(path)
+            self._screenshot_taker(path, filetype, quality)
         except:
             logger.warn('Taking screenshot failed: %s\n'
                         'Make sure tests are run with a physical or virtual '
@@ -246,8 +246,8 @@ class ScreenshotTaker(object):
         self.module = self._screenshot.__name__.split('_')[1]
         self._wx_app_reference = None
 
-    def __call__(self, path):
-        self._screenshot(path)
+    def __call__(self, path, filetype, quality):
+        self._screenshot(path, filetype, quality)
 
     def __nonzero__(self):
         return self.module != 'no'
@@ -356,7 +356,7 @@ class ScreenshotTaker(object):
         memory.SelectObject(wx.NullBitmap)
         bitmap.SaveFile(path, wx.BITMAP_TYPE_JPEG)
 
-    def _gtk_screenshot(self, path):
+    def _gtk_screenshot(self, path, filetype, quality):
         window = gdk.get_default_root_window()
         if not window:
             raise RuntimeError('Taking screenshot failed.')
@@ -366,7 +366,7 @@ class ScreenshotTaker(object):
                                   0, 0, 0, 0, width, height)
         if not pb:
             raise RuntimeError('Taking screenshot failed.')
-        pb.save(path, 'jpeg')
+        pb.save(path, filetype, {'quality': str(quality)})
 
     def _pil_screenshot(self, path):
         ImageGrab.grab().save(path, 'JPEG')
