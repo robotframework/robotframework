@@ -195,7 +195,8 @@ class Screenshot(object):
 
     def _save_screenshot(self, basename, filetype, quality, directory=None):
         path = self._get_screenshot_path(basename, directory, filetype)
-        quality = self._convert_quality(filetype, quality)
+        if self._screenshot_taker.module != 'scrot':
+            quality = self._convert_quality(filetype, quality)
         return self._screenshot_to_file(path, filetype, quality)
 
     def _screenshot_to_file(self, path, filetype, quality):
@@ -343,11 +344,11 @@ class ScreenshotTaker(object):
     def _scrot(self):
         return os.sep == '/' and self._call('scrot', '--version') == 0
 
-    def _scrot_screenshot(self, path, quality):
+    def _scrot_screenshot(self, path, filetype, quality):
         if not path.endswith(('.jpg', '.jpeg', '.png')):
             raise RuntimeError("Scrot requires extension to be '.jpg', "
                                "'.jpeg' or '.png', got '%s'." % os.path.splitext(path)[1])
-        if self._call('scrot', '-q %s' % quality, '--silent', path) != 0:
+        if self._call('scrot', '-q %s' % quality, path) != 0:
             raise RuntimeError("Using 'scrot' failed.")
 
     def _wx_screenshot(self, path, filetype, quality):
