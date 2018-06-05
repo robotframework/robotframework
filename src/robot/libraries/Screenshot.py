@@ -154,7 +154,7 @@ class Screenshot(object):
         return old
 
     def take_screenshot(self, name="screenshot", width="800px", filetype="jpeg", quality=100):
-        """Takes a screenshot in JPEG format and embeds it into the log file.
+        """Takes a screenshot in JPEG or PNG format and embeds it into the log file.
 
         Name of the file where the screenshot is stored is derived from the
         given ``name``. If the ``name`` ends with extension ``.jpg`` or
@@ -194,7 +194,8 @@ class Screenshot(object):
         return path
 
     def _save_screenshot(self, basename, filetype, quality, directory=None):
-        path = self._get_screenshot_path(basename, directory)
+        path = self._get_screenshot_path(basename, directory, filetype)
+        quality = self._convert_quality(filetype, quality)
         return self._screenshot_to_file(path, filetype, quality)
 
     def _screenshot_to_file(self, path, filetype, quality):
@@ -216,14 +217,14 @@ class Screenshot(object):
                                "does not exist" % os.path.dirname(path))
         return path
 
-    def _get_screenshot_path(self, basename, directory):
+    def _get_screenshot_path(self, basename, directory, filetype):
         directory = self._norm_path(directory) if directory else self._screenshot_dir
-        if basename.lower().endswith(('.jpg', '.jpeg')):
+        if basename.lower().endswith(('.jpg', '.jpeg', '.png')):
             return os.path.join(directory, basename)
         index = 0
         while True:
             index += 1
-            path = os.path.join(directory, "%s_%d.jpg" % (basename, index))
+	    path = os.path.join(directory, "%s_%d.%s" % (basename, index, filetype))
             if not os.path.exists(path):
                 return path
 
@@ -236,6 +237,13 @@ class Screenshot(object):
         link = get_link_path(path, self._log_dir)
         logger.info("Screenshot saved to '<a href=\"%s\">%s</a>'."
                     % (link, path), html=True)
+
+    def _convert_quality(self, filetype, quality):
+	if filetype.lower() == 'png':
+	    if quality == 100:
+		return 0
+	    return 9 - (int(quality) / 11)
+	return int(quality)
 
 
 @py2to3
@@ -334,14 +342,14 @@ class ScreenshotTaker(object):
     def _scrot(self):
         return os.sep == '/' and self._call('scrot', '--version') == 0
 
-    def _scrot_screenshot(self, path):
-        if not path.endswith(('.jpg', '.jpeg')):
-            raise RuntimeError("Scrot requires extension to be '.jpg' or "
-                               "'.jpeg', got '%s'." % os.path.splitext(path)[1])
-        if self._call('scrot', '--silent', path) != 0:
+    def _scrot_screenshot(self, path, quality):
+        if not path.endswith(('.jpg', '.jpeg', '.png')):
+            raise RuntimeError("Scrot requires extension to be '.jpg', "
+                               "'.jpeg' or '.png', got '%s'." % os.path.splitext(path)[1])
+        if self._call('scrot', '-q %s' % quality, '--silent', path) != 0:
             raise RuntimeError("Using 'scrot' failed.")
 
-    def _wx_screenshot(self, path):
+    def _wx_screenshot(self, path, filetype, quality):
         if not self._wx_app_reference:
             self._wx_app_reference = wx.App(False)
         context = wx.ScreenDC()
@@ -354,7 +362,21 @@ class ScreenshotTaker(object):
         memory.SelectObject(bitmap)
         memory.Blit(0, 0, width, height, context, -1, -1)
         memory.SelectObject(wx.NullBitmap)
-        bitmap.SaveFile(path, wx.BITMAP_TYPE_JPEG)
+        image = bitmap.ConvertToImage()
+        if filetype.lower() == 'png':
+            image.SetOption(wx.IMAGE_OPTION_PNG_COMPRESSION_LEVEL, quality)
+            image.SaveFile(path, wx.BITMAP_TYPE_PNG)
+        else:
+            image.SetOption(wx.IMAGE_OPTION_QUALITY, quality)
+            image.SaveFile(path, wx.BITMAP_TYPE_JPEG)
+
+    def _gtk_quality(self, filetype, quality):
+    	quality_setting = {}
+    	if filetype.lower() == 'png':
+    	    quality_setting['compression']=str(quality)
+        else:
+            quality_setting['quality']=str(quality)
+    	return quality_setting
 
     def _gtk_screenshot(self, path, filetype, quality):
         window = gdk.get_default_root_window()
@@ -366,10 +388,14 @@ class ScreenshotTaker(object):
                                   0, 0, 0, 0, width, height)
         if not pb:
             raise RuntimeError('Taking screenshot failed.')
-        pb.save(path, filetype, {'quality': str(quality)})
+        quality_setting = self._gtk_quality(filetype, quality)
+        pb.save(path, filetype, quality_setting)
 
-    def _pil_screenshot(self, path):
-        ImageGrab.grab().save(path, 'JPEG')
+    def _pil_screenshot(self, path, filetype, quality):
+        if filetype.lower() == 'png':
+            ImageGrab.grab().save(path, 'PNG', compress_level=quality)
+        else:
+            ImageGrab.grab().save(path, 'JPEG', quality=quality)
 
     def _no_screenshot(self, path):
         raise RuntimeError('Taking screenshots is not supported on this platform '
