@@ -82,7 +82,8 @@ class SuiteHandler(_Handler):
 
     def start(self, elem, result):
         return result.suites.create(name=elem.get('name', ''),
-                                    source=elem.get('source'))
+                                    source=elem.get('source'),
+                                    rpa=result.rpa)
 
     def _children(self):
         return [DocHandler(), MetadataHandler(), SuiteStatusHandler(),
@@ -94,6 +95,7 @@ class RootSuiteHandler(SuiteHandler):
     def start(self, elem, result):
         result.suite.name = elem.get('name', '')
         result.suite.source = elem.get('source')
+        result.suite.rpa = result.rpa
         return result.suite
 
     def _children(self):

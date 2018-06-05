@@ -49,11 +49,12 @@ class Runner(SuiteVisitor):
                            name=suite.name,
                            doc=suite.doc,
                            metadata=suite.metadata,
-                           starttime=get_timestamp())
+                           starttime=get_timestamp(),
+                           rpa=self._settings.rpa)
         if not self.result:
             result.set_criticality(self._settings.critical_tags,
                                    self._settings.non_critical_tags)
-            self.result = Result(root_suite=result)
+            self.result = Result(root_suite=result, rpa=self._settings.rpa)
             self.result.configure(status_rc=self._settings.status_rc,
                                   stat_config=self._settings.statistics_config)
         else:

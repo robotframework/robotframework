@@ -165,12 +165,12 @@ class TestSuite(model.TestSuite):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['message', 'starttime', 'endtime', '_criticality']
+    __slots__ = ['message', 'starttime', 'endtime', 'rpa', '_criticality']
     test_class = TestCase
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', metadata=None, source=None,
-                 message='', starttime=None, endtime=None):
+                 message='', starttime=None, endtime=None, rpa=False):
         model.TestSuite.__init__(self, name, doc, metadata, source)
         #: Possible suite setup or teardown error message.
         self.message = message
@@ -178,6 +178,7 @@ class TestSuite(model.TestSuite):
         self.starttime = starttime
         #: Suite execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
+        self.rpa = rpa
         self._criticality = None
 
     @property
@@ -198,11 +199,11 @@ class TestSuite(model.TestSuite):
         to a variable and inspecting it is often a good idea::
 
             stats = suite.statistics
-            print stats.critical.failed
-            print stats.all.total
-            print stats.message
+            print(stats.critical.failed)
+            print(stats.all.total)
+            print(stats.message)
         """
-        return TotalStatisticsBuilder(self).stats
+        return TotalStatisticsBuilder(self, self.rpa).stats
 
     @property
     def full_message(self):

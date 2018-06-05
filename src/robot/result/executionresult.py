@@ -67,7 +67,7 @@ class Result(object):
             print stats.total.critical.passed
             print stats.tags.combined[0].total
         """
-        return Statistics(self.suite, **self._stat_config)
+        return Statistics(self.suite, rpa=self.rpa, **self._stat_config)
 
     @property
     def return_code(self):
