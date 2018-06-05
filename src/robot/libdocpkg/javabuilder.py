@@ -107,7 +107,10 @@ def ClassDoc(path):
     http://docs.oracle.com/javase/7/docs/jdk/api/javadoc/doclet/
     """
     try:
-        from com.sun.tools.javadoc import JavadocTool, Messager, ModifierFilter
+        if sys.platform[4:7] < '1.9':  # Java 9 has these classes in different package
+            from com.sun.tools.javadoc import JavadocTool, Messager, ModifierFilter
+        else:
+            from com.sun.tools.javadoc.main import JavadocTool, Messager, ModifierFilter
         from com.sun.tools.javac.util import List, Context
         from com.sun.tools.javac.code.Flags import PUBLIC
     except ImportError:
