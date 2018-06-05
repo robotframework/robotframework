@@ -194,8 +194,12 @@ class Screenshot(object):
         return path
 
     def _save_screenshot(self, basename, filetype, quality, directory=None):
+<<<<<<< HEAD
         path = self._get_screenshot_path(basename, directory, filetype)
         quality = self._convert_quality(filetype, quality)
+=======
+        path = self._get_screenshot_path(basename, directory,filetype)
+>>>>>>> 28fd4b9a9d1dd72087c13be61f1382ced847f933
         return self._screenshot_to_file(path, filetype, quality)
 
     def _screenshot_to_file(self, path, filetype, quality):
@@ -337,6 +341,22 @@ class ScreenshotTaker(object):
                                    stderr=subprocess.STDOUT)
         except OSError:
             return -1
+    
+    def convert_quality(self, filetype, quality):
+	if filetype.lower() == 'png':
+	    if quality == 100:
+		return 0
+	    return 9 - (int(quality) / 11)
+	return quality	
+
+    def _gtk_quality(self, filetype, quality):
+	qualitydict ={}	
+	if filetype=="jpeg":
+	    qualitydict['quality']=str(self.convert_quality(filetype, quality))
+	    return qualitydict
+	elif filetype=="png":
+	    qualitydict['compression']=str(self.convert_quality(filetype, quality))
+	    return qualitydict
 
     @property
     def _scrot(self):
@@ -388,8 +408,13 @@ class ScreenshotTaker(object):
                                   0, 0, 0, 0, width, height)
         if not pb:
             raise RuntimeError('Taking screenshot failed.')
+<<<<<<< HEAD
         quality_setting = self._gtk_quality(filetype, quality)
         pb.save(path, filetype, quality_setting)
+=======
+	
+        pb.save(path, filetype, self._gtk_quality(filetype, quality))
+>>>>>>> 28fd4b9a9d1dd72087c13be61f1382ced847f933
 
     def _pil_screenshot(self, path, filetype, quality):
         if filetype.lower() == 'png':
