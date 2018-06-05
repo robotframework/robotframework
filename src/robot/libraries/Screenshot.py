@@ -194,12 +194,8 @@ class Screenshot(object):
         return path
 
     def _save_screenshot(self, basename, filetype, quality, directory=None):
-<<<<<<< HEAD
         path = self._get_screenshot_path(basename, directory, filetype)
         quality = self._convert_quality(filetype, quality)
-=======
-        path = self._get_screenshot_path(basename, directory,filetype)
->>>>>>> 28fd4b9a9d1dd72087c13be61f1382ced847f933
         return self._screenshot_to_file(path, filetype, quality)
 
     def _screenshot_to_file(self, path, filetype, quality):
@@ -228,7 +224,7 @@ class Screenshot(object):
         index = 0
         while True:
             index += 1
-	    path = os.path.join(directory, "%s_%d.%s" % (basename, index, filetype))
+            path = os.path.join(directory, "%s_%d.%s" % (basename, index, filetype))
             if not os.path.exists(path):
                 return path
 
@@ -242,12 +238,13 @@ class Screenshot(object):
         logger.info("Screenshot saved to '<a href=\"%s\">%s</a>'."
                     % (link, path), html=True)
 
-    def _convert_quality(self, filetype, quality):
-	if filetype.lower() == 'png':
-	    if quality == 100:
-		return 0
-	    return 9 - (int(quality) / 11)
-	return int(quality)
+    @staticmethod
+    def _convert_quality(filetype, quality):
+        if filetype.lower() == 'png':
+            if quality == 100:
+                return 0
+            return 9 - (int(quality) / 11)
+        return int(quality)
 
 
 @py2to3
@@ -264,7 +261,7 @@ class ScreenshotTaker(object):
     def __nonzero__(self):
         return self.module != 'no'
 
-    def test(self, path=None):
+    def test(self, path=None, filetype=None, quality=None):
         if not self:
             print("Cannot take screenshots.")
             return False
@@ -274,7 +271,7 @@ class ScreenshotTaker(object):
             return True
         print("Taking test screenshot to '%s'." % path)
         try:
-            self(path)
+            self(path, filetype, quality)
         except:
             print("Failed: %s" % get_error_message())
             return False
@@ -341,22 +338,6 @@ class ScreenshotTaker(object):
                                    stderr=subprocess.STDOUT)
         except OSError:
             return -1
-    
-    def convert_quality(self, filetype, quality):
-	if filetype.lower() == 'png':
-	    if quality == 100:
-		return 0
-	    return 9 - (int(quality) / 11)
-	return quality	
-
-    def _gtk_quality(self, filetype, quality):
-	qualitydict ={}	
-	if filetype=="jpeg":
-	    qualitydict['quality']=str(self.convert_quality(filetype, quality))
-	    return qualitydict
-	elif filetype=="png":
-	    qualitydict['compression']=str(self.convert_quality(filetype, quality))
-	    return qualitydict
 
     @property
     def _scrot(self):
@@ -390,13 +371,14 @@ class ScreenshotTaker(object):
             image.SetOption(wx.IMAGE_OPTION_QUALITY, quality)
             image.SaveFile(path, wx.BITMAP_TYPE_JPEG)
 
-    def _gtk_quality(self, filetype, quality):
-    	quality_setting = {}
-    	if filetype.lower() == 'png':
-    	    quality_setting['compression']=str(quality)
+    @staticmethod
+    def _gtk_quality(filetype, quality):
+        quality_setting = {}
+        if filetype.lower() == 'png':
+            quality_setting['compression'] = str(quality)
         else:
-            quality_setting['quality']=str(quality)
-    	return quality_setting
+            quality_setting['quality'] = str(quality)
+        return quality_setting
 
     def _gtk_screenshot(self, path, filetype, quality):
         window = gdk.get_default_root_window()
@@ -408,15 +390,22 @@ class ScreenshotTaker(object):
                                   0, 0, 0, 0, width, height)
         if not pb:
             raise RuntimeError('Taking screenshot failed.')
-<<<<<<< HEAD
         quality_setting = self._gtk_quality(filetype, quality)
         pb.save(path, filetype, quality_setting)
-=======
-	
-        pb.save(path, filetype, self._gtk_quality(filetype, quality))
->>>>>>> 28fd4b9a9d1dd72087c13be61f1382ced847f933
+
+    @staticmethod
+    def _pil_quality_covert(quality):
+        """
+        PIL has the image quality, on a scale from 1 (worst) to 95 (best)
+        """
+        if quality == 0:
+            return 1
+        elif quality >= 95:
+            return 95
+        return quality
 
     def _pil_screenshot(self, path, filetype, quality):
+        quality = self._pil_quality_covert(quality)
         if filetype.lower() == 'png':
             ImageGrab.grab().save(path, 'PNG', compress_level=quality)
         else:
