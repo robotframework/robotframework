@@ -194,7 +194,7 @@ class Screenshot(object):
         return path
 
     def _save_screenshot(self, basename, filetype, quality, directory=None):
-        path = self._get_screenshot_path(basename, directory)
+        path = self._get_screenshot_path(basename, directory,filetype)
         return self._screenshot_to_file(path, filetype, quality)
 
     def _screenshot_to_file(self, path, filetype, quality):
@@ -216,14 +216,14 @@ class Screenshot(object):
                                "does not exist" % os.path.dirname(path))
         return path
 
-    def _get_screenshot_path(self, basename, directory):
+    def _get_screenshot_path(self, basename, directory, filetype):
         directory = self._norm_path(directory) if directory else self._screenshot_dir
-        if basename.lower().endswith(('.jpg', '.jpeg')):
+        if basename.lower().endswith(('.jpg', '.jpeg', '.png')):
             return os.path.join(directory, basename)
         index = 0
         while True:
             index += 1
-            path = os.path.join(directory, "%s_%d.jpg" % (basename, index))
+	    path = os.path.join(directory, "%s_%d.%s" % (basename, index, filetype))
             if not os.path.exists(path):
                 return path
 
@@ -329,6 +329,22 @@ class ScreenshotTaker(object):
                                    stderr=subprocess.STDOUT)
         except OSError:
             return -1
+    
+    def convert_quality(self, filetype, quality):
+	if filetype.lower() == 'png':
+	    if quality == 100:
+		return 0
+	    return 9 - (int(quality) / 11)
+	return quality	
+
+    def _gtk_quality(self, filetype, quality):
+	qualitydict ={}	
+	if filetype=="jpeg":
+	    qualitydict['quality']=str(self.convert_quality(filetype, quality))
+	    return qualitydict
+	elif filetype=="png":
+	    qualitydict['compression']=str(self.convert_quality(filetype, quality))
+	    return qualitydict
 
     @property
     def _scrot(self):
@@ -366,7 +382,8 @@ class ScreenshotTaker(object):
                                   0, 0, 0, 0, width, height)
         if not pb:
             raise RuntimeError('Taking screenshot failed.')
-        pb.save(path, filetype, {'quality': str(quality)})
+	
+        pb.save(path, filetype, self._gtk_quality(filetype, quality))
 
     def _pil_screenshot(self, path):
         ImageGrab.grab().save(path, 'JPEG')
