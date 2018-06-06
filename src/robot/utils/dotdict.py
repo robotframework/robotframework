@@ -13,10 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-try:
-    from collections import OrderedDict
-except ImportError:  # New in Python 2.7
-    from .ordereddict import OrderedDict
+from collections import OrderedDict
 
 from .robottypes import is_dict_like
 

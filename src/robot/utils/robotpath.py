@@ -25,12 +25,7 @@ from .robottypes import is_unicode
 from .unic import unic
 
 
-if sys.version_info < (2,7):
-    def _abspath(path):
-        if WINDOWS and os.path.splitunc(path)[0]:
-            return os.path.abspath(path)
-        return os.path.abspath(os.path.join(os.getcwdu(), path))
-elif IRONPYTHON and sys.version_info[:3] == (2, 7, 8):
+if IRONPYTHON and sys.version_info[:3] == (2, 7, 8):
     # https://github.com/IronLanguages/ironpython2/issues/371
     def _abspath(path):
         if os.path.isabs(path):
@@ -86,8 +81,6 @@ def abspath(path, case_normalize=False):
     2. Optionally lower-case paths on case-insensitive file systems.
        That includes Windows and also OSX in default configuration.
     3. Turn ``c:`` into ``c:\\`` on Windows instead of ``c:\\current\\path``.
-    4. Handle non-ASCII characters on working directory with Python < 2.6.5:
-       http://bugs.python.org/issue3426
     """
     path = normpath(path, case_normalize)
     return normpath(_abspath(path), case_normalize)

@@ -25,7 +25,7 @@ else:
                               is_number, is_string, is_unicode, type_name)
 
 
-FALSE_STRINGS = set(['FALSE', 'NONE', 'NO', ''])
+FALSE_STRINGS = {'FALSE', 'NONE', 'NO', ''}
 
 
 def is_truthy(item):

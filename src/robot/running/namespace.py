@@ -343,7 +343,7 @@ class KeywordStore(object):
         return runners
 
     def _filter_stdlib_runner(self, runner1, runner2):
-        stdlibs_without_remote = STDLIBS - set(['Remote'])
+        stdlibs_without_remote = STDLIBS - {'Remote'}
         if runner1.library.orig_name in stdlibs_without_remote:
             standard, custom = runner1, runner2
         elif runner2.library.orig_name in stdlibs_without_remote:
