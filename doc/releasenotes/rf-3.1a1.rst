@@ -6,9 +6,9 @@ Robot Framework 3.1 alpha 1
 .. default-role:: code
 
 
-`Robot Framework`_ 3.1 is a new release with terminology configuration to
-support Robotic Process Automation (RPA) and several other nice planned
-features. RF 3.1 alpha 1 is the first preview release which only contains
+`Robot Framework`_ 3.1 is a new major release with terminology configuration
+to support Robotic Process Automation (RPA) and several other nice planned
+features. RF 3.1 alpha 1 is its first preview release which mainly contains
 initial RPA support as well as enhancements to installation.
 
 All issues targeted for Robot Framework v3.1 can be found
@@ -70,7 +70,7 @@ the RPA mode:
 1. Use the new `*** Tasks ***` (or `*** Task ***`) header in test data files
    instead of the normal `*** Test Cases ***` header. This is useful when it
    is important that data contains tasks, not tests. It is an error to run
-   multiple files together so that some have tasks and others have tasks.
+   multiple files together so that some have tasks and others have tests.
 
 2. Use the new command line option `--rpa`. This is convenient when executing
    data that needs to be compatible with earlier Robot Framework versions
