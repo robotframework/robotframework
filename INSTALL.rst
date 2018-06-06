@@ -301,6 +301,11 @@ Which versions contain it and how to possibly activate it is discussed in
 sections below. See pip_ project pages if for the latest installation
 instructions if you need to install it.
 
+.. note:: Robot Framework 3.1 and newer are distributed as `wheels
+          <http://pythonwheels.com>`_, but earlier versions are available only
+          as source distributions in tar.gz format. It is possible to install
+          both using pip, but installing wheels is a lot faster.
+
 .. note:: Only Robot Framework 2.7 and newer can be installed using pip. If you
           need an older version, you must use other installation approaches.
 
@@ -457,11 +462,12 @@ the procedure is actually pretty straightforward.
 Getting source code
 ~~~~~~~~~~~~~~~~~~~
 
-You typically get the source by downloading a *source distribution* from PyPI_
-as a `.tar.gz` package. Once you have downloaded the package, you need to
-extract it somewhere and, as a result, you get a directory named
-`robotframework-<version>`. The directory contains the source code and a
-``setup.py`` script needed for installing it.
+You typically get the source code by downloading a *source distribution* from
+PyPI_. Starting from Robot Framework 3.1 the source distribution is a zip
+package and with earlier versions it is in tar.gz format. Once you have
+downloaded the package, you need to extract it somewhere and, as a result,
+you get a directory named `robotframework-<version>`. The directory contains
+the source code and a ``setup.py`` script needed for installing it.
 
 An alternative approach for getting the source code is cloning project's
 `GitHub repository`_ directly. By default you will get the latest code, but
