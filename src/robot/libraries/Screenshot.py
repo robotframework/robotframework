@@ -329,13 +329,18 @@ class ScreenshotTaker(object):
                 return screenshot_taker
 
     def _java_screenshot(self, path, image_format, quality):
+        if quality != 100:
+            raise RuntimeError('Changing the image format quality is not supported '
+                               'on this platform.')
         size = Toolkit.getDefaultToolkit().getScreenSize()
         rectangle = Rectangle(0, 0, size.width, size.height)
         image = Robot().createScreenCapture(rectangle)
-        print('!!!!! %s    %s', image_format, path)
         ImageIO.write(image, image_format, File(path))
 
     def _cli_screenshot(self, path, image_format, quality):
+        if quality != 100:
+            raise RuntimeError('Changing the image format quality is not supported '
+                               'on this platform.')
         bmp = Bitmap(Screen.PrimaryScreen.Bounds.Width,
                      Screen.PrimaryScreen.Bounds.Height)
         graphics = Graphics.FromImage(bmp)
@@ -349,6 +354,9 @@ class ScreenshotTaker(object):
                 bmp.Save(path, Imaging.ImageFormat.Jpeg)
 
     def _osx_screenshot(self, path, image_format, quality):
+        if quality != 100:
+            raise RuntimeError('Changing the image format quality is not supported '
+                               'on this platform.')
         if image_format == 'jpeg':
             image_format = 'jpg'
         if self._call('screencapture', '-t', image_format, path) != 0:
