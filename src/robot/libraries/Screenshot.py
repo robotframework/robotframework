@@ -153,7 +153,7 @@ class Screenshot(object):
         self._given_screenshot_dir = path
         return old
 
-    def take_screenshot(self, name="screenshot", width="800px", image_format="jpeg", quality=100):
+    def take_screenshot(self, name="screenshot", width="800px", image_format="jpg", quality=100):
         """Takes a screenshot in JPEG or PNG format and embeds it into the log file.
 
         Name of the file where the screenshot is stored is derived from the
@@ -193,7 +193,7 @@ class Screenshot(object):
         self._embed_screenshot(path, width)
         return path
 
-    def take_screenshot_without_embedding(self, name="screenshot", image_format="jpeg", quality=100):
+    def take_screenshot_without_embedding(self, name="screenshot", image_format="jpg", quality=100):
         """Takes a screenshot and links it from the log file.
 
         This keyword is otherwise identical to `Take Screenshot` but the saved
