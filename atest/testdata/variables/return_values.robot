@@ -92,7 +92,7 @@ List Variable From Dictionary
     Should Be Equal    @{list}    name
     Should Be True    ${list} == ['name']
     @{list} =    Create Dictionary    a=1    b=2    c=3
-    Should Be True    set(${list}) == set(['a', 'b', 'c'])
+    Should Be True    set(${list}) == {'a', 'b', 'c'}
 
 Unrepresentable objects to list variables
     @{unrepr} =    Return Unrepresentable Objects    identifier=list

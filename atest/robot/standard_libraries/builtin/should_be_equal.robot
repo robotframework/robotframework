@@ -20,7 +20,6 @@ Should Be Equal fails without values
     Check test case    ${TESTNAME}
 
 Should Be Equal with multiline text uses diff
-    [Tags]    no-python26    # diff contains extra spaces on python 2.6
     Check test case    ${TESTNAME}
 
 Should Be Equal with multiline diff text requires both multiline

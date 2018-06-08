@@ -15,11 +15,11 @@
 
 import sys
 import time
+from collections import OrderedDict
 
-from robot.utils import OrderedDict, IRONPYTHON
+from robot.utils import IRONPYTHON
 
 from .stringcache import StringIndex
-
 
 # http://ironpython.codeplex.com/workitem/31549
 if IRONPYTHON and sys.version_info < (2, 7, 2):

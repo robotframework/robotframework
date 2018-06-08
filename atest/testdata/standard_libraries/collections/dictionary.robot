@@ -118,7 +118,7 @@ Dictionaries Should Be Equal
     Dictionaries Should Be Equal    ${BIG}    ${BIG}
 
 Dictionaries Of Different Type Should Be Equal
-    ${big2}=    Evaluate    robot.utils.OrderedDict($BIG)    modules=robot
+    ${big2}=    Evaluate    collections.OrderedDict($BIG)    modules=collections
     Dictionaries Should Be Equal    ${BIG}    ${big2}
 
 Dictionaries Should Equal With First Dictionary Missing Keys
@@ -212,7 +212,7 @@ Log Dictionary With Different Log Levels
 Log Dictionary With Different Dictionaries
     Log Dictionary    ${D0}
     Log Dictionary    ${D1}
-    ${dict} =    Evaluate    robot.utils.OrderedDict(((True, 'xxx'), ('foo', []), ((1, 2, 3), 3.14)))   modules=robot
+    ${dict} =    Evaluate    collections.OrderedDict(((True, 'xxx'), ('foo', []), ((1, 2, 3), 3.14)))   modules=collections
     Log Dictionary    ${dict}
 
 Pop From Dictionary Without Default
