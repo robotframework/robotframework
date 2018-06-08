@@ -12,7 +12,7 @@ ${FIRST_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_1.jpg
 ${SECOND_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_2.jpg
 ${PNG_SCREENSHOT}  ${BASENAME}_1.png
 ${PNG_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo.png
-${JPEG_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_3,jpg
+${JPEG_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_3.jpg
 ${PNG_FORMAT}  png
 ${JPEG_FORMAT}  jpg
 
@@ -63,7 +63,7 @@ Take Screenshot And Verify  [Arguments]  @{expected files}
     [Return]  ${path}
 
 Compare Size 
-    [Arguments]  ${screenshot_name}  ${image_format}
+    [Arguments]  ${screenshot_name}  ${screenshot_format}
     Take Screenshot  ${screenshot_name}  ${screenshot_format}  quality=100
     ${first}=  Get File Size  ${screenshot_name}
     Take Screenshot  ${screenshot_name}  ${screenshot_format}  quality=1
