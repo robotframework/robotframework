@@ -453,6 +453,17 @@ class TestCaseTable(_Table):
         _Table.__init__(self, parent)
         self.tests = []
 
+    def set_header(self, header):
+        if self._header and header:
+            self._validate_mode(self._header[0], header[0])
+        _Table.set_header(self, header)
+
+    def _validate_mode(self, name1, name2):
+        tasks1 = normalize(name1) in ('task', 'tasks')
+        tasks2 = normalize(name2) in ('task', 'tasks')
+        if tasks1 is not tasks2:
+            raise DataError('One file cannot have both tests and tasks.')
+
     @property
     def _old_header_matcher(self):
         return OldStyleTestAndKeywordTableHeaderMatcher()

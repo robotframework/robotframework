@@ -1,4 +1,6 @@
 *** Settings ***
+Suite Setup       Initialize tests and tasks data
+Suite Teardown    Purge tests and tasks data
 Test Template     Run and validate RPA tasks
 Resource          atest_resource.robot
 
@@ -19,17 +21,34 @@ Task header with --norpa
     [Template]    Run and validate test cases
     --norpa       rpa/tasks                            Task    Another task
 
-Conflickting headers cause error
+Conflicting headers cause error
     [Template]    Run and validate conflict
     rpa/tests.robot rpa/tasks     rpa/tasks/stuff.robot    tasks    tests
     rpa/                          rpa/tests.robot          tests    tasks
 
-Conflickting headers with --rpa are fine
+Conflicting headers with --rpa are fine
     --RPA       rpa/tasks rpa/tests.robot    Task    Another task    Test
 
-Conflickting headers with --norpa are fine
+Conflicting headers with --norpa are fine
     [Template]    Run and validate test cases
     --NorPA     rpa/    Task    Another task    Task    Failing    Passing    Test
+
+Conflicting headers in same file cause error
+    [Documentation]    Using --rpa or --norpa doesn't affect the behavior.
+    [Template]    NONE
+    Run tests without processing output    --rpa    %{TEMPDIR}/rpa/tasks_and_tests.robot
+    ${path} =    Normalize path    %{TEMPDIR}/rpa/tasks_and_tests.robot
+    ${message} =    Catenate
+    ...    [ ERROR ] Parsing '${path}' failed:
+    ...    One file cannot have both tests and tasks.
+    Stderr Should Be Equal To    ${message}${USAGE TIP}\n
+
+Conflicting headers in same file cause error when executing directory
+    [Template]    NONE
+    Run tests    ${EMPTY}    %{TEMPDIR}/rpa/
+    Should contain tests    ${SUITE}    Task
+    ${path} =    Normalize path    %{TEMPDIR}/rpa/tasks_and_tests.robot
+    Check log message    ${ERRORS[0]}    Parsing '${path}' failed: One file cannot have both tests and tasks.    ERROR
 
 --task as alias for --test
     --task task                            rpa/tasks    Task
@@ -72,3 +91,11 @@ Outputs should contain correct mode information
     File should contain regexp     ${OUTDIR}/log.html       window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"All ${title}s",.*\\}\\]\\];
     File should contain regexp     ${OUTDIR}/report.html    window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"All ${title}s",.*\\}\\]\\];
     Check Stdout Contains Regexp    \\d+ critical ${lower}s?, \\d+ passed, \\d+ failed\n\\d+ ${lower}s? total, \\d+ passed, \\d+ failed\n
+
+Initialize tests and tasks data
+    Create directory    ${TEMPDIR}/rpa
+    Copy file    ${DATADIR}/rpa/_tasks_and_tests.robot    %{TEMPDIR}/rpa/tasks_and_tests.robot
+    Copy file    ${DATADIR}/rpa/tasks1.robot              %{TEMPDIR}/rpa/tasks.robot
+
+Purge tests and tasks data
+    Remove directory    ${TEMPDIR}/rpa    recursive=True

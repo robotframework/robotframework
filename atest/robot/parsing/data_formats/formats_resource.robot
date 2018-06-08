@@ -63,7 +63,7 @@ Run Suite Dir And Check Results
     Check Syslog Contains    | INFO \ | Ignoring file or directory 'not_a_picture.jpg'.
     ${invenc} =    Normalize Path    ${DATADIR}/${path}/invalid_encoding.${type}
     Run Keyword If    "${type}" not in ("html", "rest")
-    ...    Check Syslog Contains    | ERROR | Parsing data source '${invenc}' failed: UnicodeDecodeError
+    ...    Check Syslog Contains    | ERROR | Parsing '${invenc}' failed: UnicodeDecodeError
 
 Check Suite With Init
     [Arguments]    ${suite}
