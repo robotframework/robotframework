@@ -74,4 +74,3 @@ from .text import (cut_long_message, format_assign_message,
                    split_args_from_name_or_path)
 from .unic import prepr, unic
 from .utf8reader import Utf8Reader
-from collections import OrderedDict
