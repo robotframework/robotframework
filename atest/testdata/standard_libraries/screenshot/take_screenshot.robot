@@ -13,6 +13,8 @@ ${SECOND_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_2.jpg
 ${PNG_SCREENSHOT}  ${BASENAME}_1.png
 ${PNG_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo.png
 ${JPEG_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_3,jpg
+${PNG_FORMAT}  png
+${JPEG_FORMAT}  jpg
 
 *** Test Cases ***
 Screenshot Is Embedded in Log File
@@ -32,20 +34,10 @@ Screenshot With Png Extension
     Screenshots Should Exist  ${OUTPUTDIR}  ${PNG_SCREENSHOT}
 
 Png Screenshot Quality
-    Take Screenshot  ${PNG_CUSTOM_SCREENSHOT}  png  quality=100
-    ${first}=  Get File Size  ${PNG_CUSTOM_SCREENSHOT}
-    Take Screenshot  ${PNG_CUSTOM_SCREENSHOT}  png  quality=1
-    ${second}=  Get File Size  ${PNG_CUSTOM_SCREENSHOT}
-    ${result}=  Evaluate  ${second} * 100 / ${first}
-    ${status}=  Evaluate  ${result} < 30
+    Compare Size  ${PNG_CUSTOM_SCREENSHOT}  ${PNG_FORMAT}
 
 Jpg Screenshot Quality
-    Take Screenshot  ${FIRST_CUSTOM_SCREENSHOT}  jpg  quality=100
-    ${first}=  Get File Size  ${FIRST_CUSTOM_SCREENSHOT}
-    Take Screenshot  ${FIRST_CUSTOM_SCREENSHOT}  jpg  quality=1
-    ${second}=  Get File Size  ${FIRST_CUSTOM_SCREENSHOT}
-    ${result}=  Evaluate  ${second} * 100 / ${first}
-    ${status}=  Evaluate  ${result} < 30 
+    Compare Size  ${JPEG_CUSTOM_SCREENSHOT}  ${JPEG_FORMAT}
 
 Basename With Extension Turns Off Index Generation
     Repeat Keyword  3  Take Screenshot  xxx.jpg
@@ -69,3 +61,12 @@ Take Screenshot And Verify  [Arguments]  @{expected files}
     ${path}=  Take Screenshot
     Screenshots Should Exist  ${OUTPUTDIR}  @{expected files}
     [Return]  ${path}
+
+Compare Size 
+    [Arguments]  ${screenshot_name}  ${image_format}
+    Take Screenshot  ${screenshot_name}  ${screenshot_format}  quality=100
+    ${first}=  Get File Size  ${screenshot_name}
+    Take Screenshot  ${screenshot_name}  ${screenshot_format}  quality=1
+    ${second}=  Get File Size  ${screenshot_name}
+    ${result}=  Evaluate  ${second} * 100 / ${first}
+    Should Be True  ${result} < 30
