@@ -11,10 +11,8 @@ ${SECOND_SCREENSHOT}  ${BASENAME}_2.jpg
 ${FIRST_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_1.jpg
 ${SECOND_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_2.jpg
 ${PNG_SCREENSHOT}  ${BASENAME}_1.png
-${PNG_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo.png
+${PNG_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_1.png
 ${JPEG_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_3.jpg
-${PNG_FORMAT}  png
-${JPEG_FORMAT}  jpg
 
 *** Test Cases ***
 Screenshot Is Embedded in Log File
@@ -34,10 +32,10 @@ Screenshot With Png Extension
     Screenshots Should Exist  ${OUTPUTDIR}  ${PNG_SCREENSHOT}
 
 Png Screenshot Quality
-    Compare Size  ${PNG_CUSTOM_SCREENSHOT}  ${PNG_FORMAT}
-
+    Compare Size  ${PNG_CUSTOM_SCREENSHOT}  png
+    
 Jpg Screenshot Quality
-    Compare Size  ${JPEG_CUSTOM_SCREENSHOT}  ${JPEG_FORMAT}
+    Compare Size  ${JPEG_CUSTOM_SCREENSHOT}  jpg
 
 Basename With Extension Turns Off Index Generation
     Repeat Keyword  3  Take Screenshot  xxx.jpg
@@ -64,9 +62,9 @@ Take Screenshot And Verify  [Arguments]  @{expected files}
 
 Compare Size 
     [Arguments]  ${screenshot_name}  ${screenshot_format}
-    Take Screenshot  ${screenshot_name}  ${screenshot_format}  quality=100
+    Take Screenshot  ${screenshot_name}  ${screenshot_format}  quality=0
     ${first}=  Get File Size  ${screenshot_name}
-    Take Screenshot  ${screenshot_name}  ${screenshot_format}  quality=1
+    Take Screenshot  ${screenshot_name}  ${screenshot_format}  quality=0
     ${second}=  Get File Size  ${screenshot_name}
     ${result}=  Evaluate  ${second} * 100 / ${first}
     Should Be True  ${result} < 30

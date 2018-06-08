@@ -23,7 +23,7 @@ Png Screenshot Quality
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].kws[0].msg[1]}  foo_1.png
     
-Jpeg Screenshot
+Jpeg Screenshot Quality
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].kws[0].msg[1]}  foo_3.jpg
 
