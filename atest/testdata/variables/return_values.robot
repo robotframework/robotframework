@@ -183,10 +183,11 @@ None To Dict
     Should Be True    &{ret} == {}
 
 Dictionary is dot-accessible
-    &{dotted} =    Evaluate    robot.utils.OrderedDict([('key', 'value'), ('nested', {'key': 'value'})])    modules=robot
-    Should Be Equal    ${dotted['key']}    value
-    Should Be Equal    ${dotted.key}    value
-    Should Be Equal    ${dotted.nested.key}    value
+    &{dict} =    Evaluate    {'key': 'value'}
+    Should Be Equal    ${dict.key}    value
+    &{nested} =    Evaluate    collections.OrderedDict([('key', 'value'), ('nested', {'key': 'nested value'})])    modules=collections
+    Should Be Equal    ${nested.key}    value
+    Should Be Equal    ${nested.nested.key}    nested value
 
 Scalar dictionary is not dot-accessible
     [Documentation]     FAIL STARTS: Resolving variable '${normal.key}' failed: AttributeError:
