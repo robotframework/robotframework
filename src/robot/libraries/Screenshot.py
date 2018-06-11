@@ -206,7 +206,7 @@ class Screenshot(object):
 
     def _save_screenshot(self, basename, image_format, quality, directory=None):
         path = self._get_screenshot_path(basename, directory, image_format)
-        if self._screenshot_taker.module != 'scrot':
+        if self._screenshot_taker.module not in ['cli', 'java', 'darwin', 'scrot']:
             quality = self._convert_quality(image_format, quality)
         return self._screenshot_to_file(path, image_format, quality)
 
@@ -259,7 +259,7 @@ class Screenshot(object):
         if image_format == 'png':
             if quality == 100:
                 return 0
-            return 9 - (int(quality) / 11)
+            return int(9 - (int(quality) / 11))
         return int(quality)
 
 
@@ -329,7 +329,7 @@ class ScreenshotTaker(object):
                 return screenshot_taker
 
     def _java_screenshot(self, path, image_format, quality):
-        if quality != 100:
+        if int(quality) != 100:
             raise RuntimeError('Changing the image format quality is not supported '
                                'on this platform.')
         size = Toolkit.getDefaultToolkit().getScreenSize()
@@ -338,7 +338,7 @@ class ScreenshotTaker(object):
         ImageIO.write(image, image_format, File(path))
 
     def _cli_screenshot(self, path, image_format, quality):
-        if quality != 100:
+        if int(quality) != 100:
             raise RuntimeError('Changing the image format quality is not supported '
                                'on this platform.')
         bmp = Bitmap(Screen.PrimaryScreen.Bounds.Width,
@@ -354,7 +354,7 @@ class ScreenshotTaker(object):
                 bmp.Save(path, Imaging.ImageFormat.Jpeg)
 
     def _osx_screenshot(self, path, image_format, quality):
-        if quality != 100:
+        if int(quality) != 100:
             raise RuntimeError('Changing the image format quality is not supported '
                                'on this platform.')
         if image_format == 'jpeg':
@@ -423,19 +423,7 @@ class ScreenshotTaker(object):
         quality_setting = self._gtk_quality(image_format, quality)
         pb.save(path, image_format, quality_setting)
 
-    @staticmethod
-    def _pil_quality_covert(quality):
-        """
-        PIL has the image quality on a scale from 1 (worst) to 95 (best)
-        """
-        if quality == 0:
-            return 1
-        elif quality >= 95:
-            return 95
-        return quality
-
     def _pil_screenshot(self, path, image_format, quality):
-        quality = self._pil_quality_covert(quality)
         if image_format == 'png':
             ImageGrab.grab().save(path, 'PNG', compress_level=quality)
         else:
@@ -452,4 +440,4 @@ if __name__ == "__main__":
                  % os.path.basename(sys.argv[0]))
     path = sys.argv[1] if sys.argv[1] != 'test' else None
     module = sys.argv[2] if len(sys.argv) > 2 else None
-    ScreenshotTaker(module).test(path, 'jpeg', 100)
+    ScreenshotTaker(module).test(path, 'jpg', 100)

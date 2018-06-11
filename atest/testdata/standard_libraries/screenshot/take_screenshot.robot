@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Remove Files  ${OUTPUTDIR}/*.jp*g  ${OUTPUTDIR}/*.png
-Test Setup	Save Start Time
+Test Setup	    Save Start Time
 Test Teardown   Remove Files  ${OUTPUTDIR}/*.jp*g  ${OUTPUTDIR}/*.png
 Resource        screenshot_resource.robot
 
@@ -11,31 +11,19 @@ ${SECOND_SCREENSHOT}  ${BASENAME}_2.jpg
 ${FIRST_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_1.jpg
 ${SECOND_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_2.jpg
 ${PNG_SCREENSHOT}  ${BASENAME}_1.png
-${PNG_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_1.png
-${JPEG_CUSTOM_SCREENSHOT}  ${OUTPUTDIR}${/}foo_3.jpg
 
 *** Test Cases ***
 Screenshot Is Embedded in Log File
-    ${path}=  Take Screenshot and Verify  ${FIRST_SCREENSHOT} 
+    ${path}=  Take Screenshot and Verify  jpg  ${FIRST_SCREENSHOT}
     Should Be Equal  ${path}  ${FIRST_SCREENSHOT}
 
 Each Screenshot Gets Separate Index
-    Take Screenshot and Verify  ${FIRST_SCREENSHOT} 
-    Take Screenshot and Verify  ${FIRST_SCREENSHOT}  ${SECOND_SCREENSHOT} 
+    Take Screenshot and Verify  jpg  ${FIRST_SCREENSHOT}
+    Take Screenshot and Verify  jpg  ${FIRST_SCREENSHOT}  ${SECOND_SCREENSHOT}
 
 Basename May Be Defined
     Repeat Keyword  2  Take Screenshot  foo
     Screenshots Should Exist  ${OUTPUTDIR}  ${FIRST_CUSTOM_SCREENSHOT}  ${SECOND_CUSTOM_SCREENSHOT}
-
-Screenshot With Png Extension
-    Take Screenshot  image_format=png
-    Screenshots Should Exist  ${OUTPUTDIR}  ${PNG_SCREENSHOT}
-
-Png Screenshot Quality
-    Compare Size  ${PNG_CUSTOM_SCREENSHOT}  png
-    
-Jpg Screenshot Quality
-    Compare Size  ${JPEG_CUSTOM_SCREENSHOT}  jpg
 
 Basename With Extension Turns Off Index Generation
     Repeat Keyword  3  Take Screenshot  xxx.jpg
@@ -53,18 +41,34 @@ Basename With Non-existing Directories Fails
 Without Embedding
     Take Screenshot Without Embedding  no_embed.jpeg
 
+Png Screenshot Is Embedded in Log File
+    ${path}=  Take Screenshot and Verify  png  ${PNG_SCREENSHOT}
+    Should Be Equal  ${path}  ${PNG_SCREENSHOT}
+
+Jpg Screenshot Quality
+    Take Screenshots And Compare Size  jpg
+
+Png Screenshot Quality
+    Take Screenshots And Compare Size  png
 
 *** Keywords ***
-Take Screenshot And Verify  [Arguments]  @{expected files}
-    ${path}=  Take Screenshot
+Take Screenshot And Verify  [Arguments]  ${format}  @{expected files}
+    ${path}=  Take Screenshot  image_format=${format}
     Screenshots Should Exist  ${OUTPUTDIR}  @{expected files}
     [Return]  ${path}
 
-Compare Size 
-    [Arguments]  ${screenshot_name}  ${screenshot_format}
-    Take Screenshot  ${screenshot_name}  ${screenshot_format}  quality=0
-    ${first}=  Get File Size  ${screenshot_name}
-    Take Screenshot  ${screenshot_name}  ${screenshot_format}  quality=0
-    ${second}=  Get File Size  ${screenshot_name}
-    ${result}=  Evaluate  ${second} * 100 / ${first}
-    Should Be True  ${result} < 30
+Take Screenshots And Compare Size
+    [Arguments]  ${format}
+    ${low_quality_size}=  Take Screenshot And Get Size  ${format}  quality=0
+    ${high_quality_size}=  Take Screenshot And Get Size  ${format}  quality=100
+    ${size_delta}=  Evaluate  ${high_quality_size} / ${low_quality_size}
+    Should Be True  ${size_delta} > 2
+
+Take Screenshot And Get Size
+    [Arguments]  ${format}  ${quality}
+    ${path}=  Take Screenshot  image_format=${format}  quality=${quality}
+    ${status}  ${size}=  Run Keyword and Ignore Error  Get File Size  ${path}
+    Run Keyword If  '${status}' == 'FAIL'
+    ...  Run Keywords  Set Test Documentation  PASS Changing the image format quality is not supported on this platform.  AND
+    ...                Pass Execution  Changing the image format quality is not supported on this platform.
+    [Return]  ${size}

@@ -15,18 +15,6 @@ Basename May Be Defined
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  foo_1.jpg
 
-Screenshot With Png Extension
-    ${tc}=  Check Test Case  ${TESTNAME}
-    Check Embedding In Log  ${tc.kws[0].kws[0].msg[1]}  screenshot_1.png
-
-Png Screenshot Quality
-    ${tc}=  Check Test Case  ${TESTNAME}
-    Check Embedding In Log  ${tc.kws[0].kws[0].msg[1]}  foo_1.png
-    
-Jpeg Screenshot Quality
-    ${tc}=  Check Test Case  ${TESTNAME}
-    Check Embedding In Log  ${tc.kws[0].kws[0].msg[1]}  foo_3.jpg
-
 Basename With Extension Turns Off Index Generation
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  xxx.jpg
@@ -42,6 +30,16 @@ Basename With Non-existing Directories Fails
 Without Embedding
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Linking In Log  ${tc.kws[0].msgs[1]}  no_embed.jpeg
+
+Png Screenshot Is Embedded in Log File
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  screenshot_1.png
+
+Jpg Screenshot Quality
+    Check Test Case  ${TESTNAME}
+
+Png Screenshot Quality
+    Check Test Case  ${TESTNAME}
 
 *** Keywords ***
 Check Embedding In Log
