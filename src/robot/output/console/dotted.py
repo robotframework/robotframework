@@ -31,8 +31,10 @@ class DottedOutput(object):
 
     def start_suite(self, suite):
         if not suite.parent:
-            self._stdout.write("Running suite '%s' with %d tests.\n"
-                               % (suite.name, suite.test_count))
+            self._stdout.write("Running suite '%s' with %d %s%s.\n"
+                               % (suite.name, suite.test_count,
+                                  'test' if not suite.rpa else 'task',
+                                  plural_or_not(suite.test_count)))
             self._stdout.write('=' * self._width + '\n')
 
     def end_test(self, test):
@@ -72,9 +74,10 @@ class StatusReporter(SuiteVisitor):
     def report(self, suite):
         suite.visit(self)
         stats = suite.statistics
-        self._stream.write("%s\nRun suite '%s' with %d test%s in %s.\n\n"
-                           % ('=' * self._width, suite.name,
-                              stats.all.total, plural_or_not(stats.all.total),
+        self._stream.write("%s\nRun suite '%s' with %d %s%s in %s.\n\n"
+                           % ('=' * self._width, suite.name, stats.all.total,
+                              'test' if not suite.rpa else 'task',
+                              plural_or_not(stats.all.total),
                               secs_to_timestr(suite.elapsedtime/1000.0)))
         self._stream.highlight(suite.status + 'ED', suite.status)
         self._stream.write('\n%s\n' % stats.message)
