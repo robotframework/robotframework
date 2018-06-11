@@ -65,7 +65,7 @@ def _combine_results(sources, options):
 
 def _single_result(source, options):
     ets = ETSource(source)
-    result = Result(source, rpa=options.pop('rpa', False))
+    result = Result(source, rpa=options.pop('rpa', None))
     try:
         return ExecutionResultBuilder(ets, **options).build(result)
     except IOError as err:

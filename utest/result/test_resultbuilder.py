@@ -2,7 +2,7 @@ import unittest
 from os.path import join, dirname
 
 from robot.errors import DataError
-from robot.result import ExecutionResult
+from robot.result import ExecutionResult, Result
 from robot.utils import StringIO
 from robot.utils.asserts import assert_equal, assert_true, assert_raises
 
@@ -91,6 +91,23 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.errors.messages[0].message,
                      "Error in file 'normal.html' in table 'Settings': "
                      "Resource file 'nope' does not exist.")
+
+    def test_rpa(self):
+        rpa_false = GOLDEN_XML
+        self._validate_rpa(ExecutionResult(StringIO(rpa_false)), False)
+        self._validate_rpa(ExecutionResult(StringIO(rpa_false), rpa=True), True)
+        rpa_true = GOLDEN_XML.replace('rpa="false"', 'rpa="true"')
+        self._validate_rpa(ExecutionResult(StringIO(rpa_true)), True)
+        self._validate_rpa(ExecutionResult(StringIO(rpa_true), rpa=False), False)
+
+    def _validate_rpa(self, result, expected):
+        assert_equal(result.rpa, expected)
+        if isinstance(result, Result):
+            children = [result.suite]
+        else:
+            children = result.suites
+        for child in children:
+            self._validate_rpa(child, expected)
 
 
 class TestCombiningSuites(unittest.TestCase):
