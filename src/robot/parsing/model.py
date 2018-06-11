@@ -156,7 +156,7 @@ class TestCaseFile(_TestData):
 
     def _validate(self):
         if not self.testcase_table.is_started():
-            raise NoTestsFound('File has no test case table.')
+            raise NoTestsFound('File has no tests or tasks.')
 
     def _table_is_allowed(self, table):
         return True
@@ -198,8 +198,8 @@ class ResourceFile(_TestData):
 
     def _table_is_allowed(self, table):
         if table is self.testcase_table:
-            raise DataError("Resource file '%s' contains a test case table "
-                            "which is not allowed." % self.source)
+            raise DataError("Resource file '%s' cannot contain tests or "
+                            "tasks." % self.source)
         return True
 
     def __iter__(self):
@@ -236,8 +236,8 @@ class TestDataDirectory(_TestData):
 
     def _table_is_allowed(self, table):
         if table is self.testcase_table:
-            LOGGER.error("Test suite init file in '%s' contains a test case "
-                         "table which is not allowed." % self.source)
+            LOGGER.error("Test suite initialization file in '%s' cannot "
+                         "contain tests or tasks." % self.source)
             return False
         return True
 

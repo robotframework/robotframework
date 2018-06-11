@@ -5,7 +5,7 @@ Resource          data_formats/formats_resource.robot
 ${PARSING}            parsing
 ${NO TESTS}           ${PARSING}${/}notests
 ${EMPTY TC TABLE}     ${PARSING}${/}empty_testcase_table.robot
-${NO TC TABLE MSG}    File has no test case table.
+${NO TC TABLE MSG}    File has no tests or tasks.
 
 *** Test Cases ***
 Invalid Input

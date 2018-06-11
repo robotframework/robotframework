@@ -119,7 +119,7 @@ Invalid Setting In Resource File
     ...  Non-existing setting 'Non Existing'.
     ${invres} =  Normalize Path  ${RESDIR}/resource_with_testcase_table.robot
     Stderr Should Contain Error    ${RESDIR}/resources.robot
-    ...  Resource file '${invres}' contains a test case table which is not allowed.
+    ...  Resource file '${invres}' cannot contain tests or tasks.
     Check Stderr Does Not Contain  AttributeError:
 
 Invalid Variable File
