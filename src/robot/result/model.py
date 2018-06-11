@@ -165,20 +165,19 @@ class TestSuite(model.TestSuite):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['message', 'starttime', 'endtime', 'rpa', '_criticality']
+    __slots__ = ['message', 'starttime', 'endtime', '_criticality']
     test_class = TestCase
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', metadata=None, source=None,
                  message='', starttime=None, endtime=None, rpa=False):
-        model.TestSuite.__init__(self, name, doc, metadata, source)
+        model.TestSuite.__init__(self, name, doc, metadata, source, rpa)
         #: Possible suite setup or teardown error message.
         self.message = message
         #: Suite execution start time in format ``%Y%m%d %H:%M:%S.%f``.
         self.starttime = starttime
         #: Suite execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
-        self.rpa = rpa
         self._criticality = None
 
     @property

@@ -79,6 +79,7 @@ class TestSuiteBuilder(object):
         root = TestSuite()
         for path in paths:
             root.suites.append(self._parse_and_build(path))
+        root.rpa = self.rpa
         return root
 
     def _parse_and_build(self, path):
@@ -108,6 +109,7 @@ class TestSuiteBuilder(object):
             self._build_test(suite, test_data, defaults)
         for child in data.children:
             suite.suites.append(self._build_suite(child, defaults))
+        suite.rpa = self.rpa
         ResourceFileBuilder().build(data, target=suite.resource)
         return suite
 

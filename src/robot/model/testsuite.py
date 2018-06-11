@@ -31,16 +31,17 @@ class TestSuite(ModelObject):
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
-    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors']
+    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
     test_class = TestCase    #: Internal usage only.
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, name='', doc='', metadata=None, source=None):
+    def __init__(self, name='', doc='', metadata=None, source=None, rpa=False):
         self.parent = None  #: Parent suite. ``None`` with the root suite.
         self._name = name
         self.doc = doc  #: Test suite documentation.
         self.metadata = metadata
         self.source = source  #: Path to the source file or directory.
+        self.rpa = rpa
         self.suites = None
         self.tests = None
         self.keywords = None
