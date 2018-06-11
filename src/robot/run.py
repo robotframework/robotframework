@@ -435,10 +435,12 @@ class RobotFramework(Application):
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.info('Settings:\n%s' % unic(settings))
+        if settings['WarnOnSkipped'] is not None:
+            LOGGER.error("Option '--warnonskippedfiles is deprecated and "
+                         "has no effect.")
         builder = TestSuiteBuilder(settings['SuiteNames'],
-                                   settings['WarnOnSkipped'],
-                                   settings['Extension'],
-                                   settings.rpa)
+                                   extension=settings.extension,
+                                   rpa=settings.rpa)
         suite = builder.build(*datasources)
         settings.rpa = builder.rpa
         suite.configure(**settings.suite_config)

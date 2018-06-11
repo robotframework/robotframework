@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import warnings
+
 from robot.errors import DataError
 from robot.parsing import TestData, ResourceFile as ResourceData, VALID_EXTENSIONS
 from robot.running.defaults import TestDefaults
@@ -31,16 +33,13 @@ class TestSuiteBuilder(object):
     more information and examples.
     """
 
-    def __init__(self, include_suites=None, warn_on_skipped=False,
+    def __init__(self, include_suites=None, warn_on_skipped='DEPRECATED',
                  extension=None, rpa=None):
         """
         :param include_suites: List of suite names to include. If ``None`` or
             an empty list, all suites are included. When executing tests
             normally, these names are specified using the ``--suite`` option.
-        :param warn_on_skipped: Boolean to control should a warning be emitted
-            if a file is skipped because it cannot be parsed or should it be
-            ignored silently. When executing tests normally, this value is set
-            with the ``--warnonskippedfiles`` option.
+        :param warn_on_skipped: Deprecated.
         :param extension: Limit parsing test data to only these files. Files
             are specified as an extension that is handled case-insensitively.
             Same as ``--extension`` on the command line.
@@ -49,13 +48,16 @@ class TestSuiteBuilder(object):
            data headers and possible conflicting headers cause an error.
         """
         self.include_suites = include_suites
-        self.warn_on_skipped = warn_on_skipped
         self.extensions = self._get_extensions(extension)
         builder = StepBuilder()
         self._build_steps = builder.build_steps
         self._build_step = builder.build_step
         self.rpa = rpa
         self._rpa_not_given = rpa is None
+        # TODO: Remove in RF 3.2.
+        if warn_on_skipped != 'DEPRECATED':
+            warnings.warn("Option 'warn_on_skipped' is deprecated and has no "
+                          "effect.", DeprecationWarning)
 
     def _get_extensions(self, extension):
         if not extension:
@@ -88,7 +90,6 @@ class TestSuiteBuilder(object):
         try:
             return TestData(source=abspath(path),
                             include_suites=self.include_suites,
-                            warn_on_skipped=self.warn_on_skipped,
                             extensions=self.extensions)
         except DataError as err:
             raise DataError("Parsing '%s' failed: %s" % (path, err.message))

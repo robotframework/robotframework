@@ -38,6 +38,10 @@ READERS = {'html': HtmlReader, 'htm': HtmlReader, 'xhtml': HtmlReader,
 PROCESS_CURDIR = True
 
 
+class NoTestsFound(DataError):
+    pass
+
+
 class FromFilePopulator(object):
     _populators = {'setting': SettingTablePopulator,
                    'variable': VariableTablePopulator,
@@ -105,7 +109,7 @@ class FromDirectoryPopulator(object):
     ignored_dirs = ('CVS',)
 
     def populate(self, path, datadir, include_suites=None,
-                 warn_on_skipped=False, include_extensions=None, recurse=True):
+                 include_extensions=None, recurse=True):
         LOGGER.info("Parsing test data directory '%s'" % path)
         include_suites = self._get_include_suites(path, include_suites or [])
         init_file, children = self._get_children(path, include_extensions,
@@ -114,7 +118,7 @@ class FromDirectoryPopulator(object):
             self._populate_init_file(datadir, init_file)
         if recurse:
             self._populate_children(datadir, children, include_extensions,
-                                    include_suites, warn_on_skipped)
+                                    include_suites)
 
     def _populate_init_file(self, datadir, init_file):
         datadir.initfile = init_file
@@ -124,20 +128,15 @@ class FromDirectoryPopulator(object):
             LOGGER.error(err.message)
 
     def _populate_children(self, datadir, children, include_extensions,
-                           include_suites, warn_on_skipped):
+                           include_suites):
         for child in children:
             try:
-                datadir.add_child(child, include_suites, include_extensions,
-                                  warn_on_skipped)
+                datadir.add_child(child, include_suites, include_extensions)
+            except NoTestsFound:
+                LOGGER.info("Data source '%s' has no tests or tasks." % child)
             except DataError as err:
-                self._log_failed_parsing("Parsing data source '%s' failed: %s"
-                                         % (child, err.message), warn_on_skipped)
-
-    def _log_failed_parsing(self, message, warn):
-        if warn:
-            LOGGER.warn(message)
-        else:
-            LOGGER.info(message)
+                LOGGER.error("Parsing data source '%s' failed: %s"
+                             % (child, err.message))
 
     def _get_include_suites(self, path, incl_suites):
         if not isinstance(incl_suites, SuiteNamePatterns):

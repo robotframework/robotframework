@@ -40,16 +40,6 @@ Empty TSV File
 Empty TXT File
     Check Parsing Error    empty.txt    ${NO TC TABLE MSG}    ${TXTDIR}/empty.txt
 
-Run Suite Dir And Warn On Skipped
-    Run Tests    --warnonskippedfiles    ${HTMLDIR}
-    ${empty} =    Join Path    ${DATADIR}    ${HTMLDIR}    empty.html
-    Check Syslog Contains    Parsing data source '${empty}' failed:    File has no test case table.
-    Check Log Message    ${ERRORS.msgs[0]}    Parsing data source '${empty}' failed: File has no test case table.    level=WARN
-    ${invalid} =    Join Path    ${DATADIR}    ${HTMLDIR}    invalid.html
-    Check Syslog Contains    Parsing data source '${invalid}' failed:    File has no test case table.
-    Check Log Message    ${ERRORS.msgs[1]}    Parsing data source '${invalid}' failed: File has no test case table.    level=WARN
-    Check Syslog Contains    Ignoring file or directory 'not_a_picture.jpg'.
-
 *** Keywords ***
 Check Parsing Error
     [Arguments]    ${file}    ${error}    ${paths}

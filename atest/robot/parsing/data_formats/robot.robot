@@ -15,4 +15,3 @@ ROBOT Directory
 Directory With ROBOT Init
     Previous Run Should Have Been Successful
     Check Suite With Init  ${SUITE.suites[1]}
-

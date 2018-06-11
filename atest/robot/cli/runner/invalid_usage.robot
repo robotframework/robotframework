@@ -32,3 +32,10 @@ Invalid --TagStatLink
 Invalid --RemoveKeywords
     --removekeywords wuks --removek name:xxx --RemoveKeywords Invalid tests.txt
     ...    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'TAG:<pattern>', 'FOR', or 'WUKS' but got 'Invalid'.
+
+Deprecated --WarnOnSkipped
+    [Template]    NONE
+    Run Tests    --warnonskippedfiles    misc/pass_and_fail.robot
+    Check Test Case    Pass
+    Check Test Case    Fail
+    Check Log Message    ${ERRORS[0]}    Option '--warnonskippedfiles is deprecated and has no effect.    ERROR

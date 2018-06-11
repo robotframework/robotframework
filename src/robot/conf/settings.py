@@ -389,7 +389,7 @@ class RobotSettings(_BaseSettings):
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunEmptySuite'      : ('runemptysuite', False),
-                       'WarnOnSkipped'      : ('warnonskippedfiles', False),
+                       'WarnOnSkipped'      : ('warnonskippedfiles', None),
                        'Variables'          : ('variable', []),
                        'VariableFiles'      : ('variablefile', []),
                        'PreRunModifiers'    : ('prerunmodifier', []),
@@ -515,6 +515,10 @@ class RobotSettings(_BaseSettings):
     @property
     def variable_files(self):
         return self['VariableFiles']
+
+    @property
+    def extension(self):
+        return self['Extension']
 
 
 class RebotSettings(_BaseSettings):

@@ -24,7 +24,7 @@ Creating logs and reports should succeed
 
 Failures processing files are handled gracefully
     ${path} =    Normalize Path    ${BASEDIR}/Työ/tyhjä.txt
-    Check syslog contains    Parsing data source '${path}' failed: File has no test case table.
+    Check syslog contains    Data source '${path}' has no tests or tasks.
 
 *** Keywords ***
 Create input data and run tests

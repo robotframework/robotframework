@@ -11,8 +11,8 @@ HTML With HTML Resource
 
 HTML Directory
     Run Suite Dir And Check Results    ${HTMLDIR}
-    ${malformed} =    Join Path    ${DATADIR}/${HTMLDIR}    malformed.html
-    Check Syslog Contains    Parsing data source '${malformed}' failed:
+    ${malformed} =    Normalize Path    ${DATADIR}/${HTMLDIR}/malformed.html
+    Check Syslog Contains    Data source '${malformed}' has no tests or tasks.
 
 Directory With HTML Init
     Previous Run Should Have Been Successful

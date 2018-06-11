@@ -15,6 +15,7 @@
 
 import os
 import copy
+import warnings
 
 from robot.errors import DataError
 from robot.variables import is_var
@@ -23,27 +24,30 @@ from robot.writer import DataFileWriter
 from robot.utils import abspath, is_string, normalize, py2to3, NormalizedDict
 
 from .comments import Comment
-from .populators import FromFilePopulator, FromDirectoryPopulator
+from .populators import FromFilePopulator, FromDirectoryPopulator, NoTestsFound
 from .settings import (Documentation, Fixture, Timeout, Tags, Metadata,
                        Library, Resource, Variables, Arguments, Return,
                        Template, MetadataList, ImportList)
 
 
 def TestData(parent=None, source=None, include_suites=None,
-             warn_on_skipped=False, extensions=None):
+             warn_on_skipped='DEPRECATED', extensions=None):
     """Parses a file or directory to a corresponding model object.
 
     :param parent: Optional parent to be used in creation of the model object.
     :param source: Path where test data is read from.
-    :param warn_on_skipped: Boolean to control warning about skipped files.
+    :param warn_on_skipped: Deprecated.
     :param extensions: List/set of extensions to parse. If None, all files
         supported by Robot Framework are parsed when searching test cases.
     :returns: :class:`~.model.TestDataDirectory`  if `source` is a directory,
         :class:`~.model.TestCaseFile` otherwise.
     """
+    # TODO: Remove in RF 3.2.
+    if warn_on_skipped != 'DEPRECATED':
+        warnings.warn("Option 'warn_on_skipped' is deprecated and has no "
+                      "effect.", DeprecationWarning)
     if os.path.isdir(source):
         return TestDataDirectory(parent, source).populate(include_suites,
-                                                          warn_on_skipped,
                                                           extensions)
     return TestCaseFile(parent, source).populate()
 
@@ -152,7 +156,7 @@ class TestCaseFile(_TestData):
 
     def _validate(self):
         if not self.testcase_table.is_started():
-            raise DataError('File has no test case table.')
+            raise NoTestsFound('File has no test case table.')
 
     def _table_is_allowed(self, table):
         return True
@@ -221,10 +225,9 @@ class TestDataDirectory(_TestData):
         self.keyword_table = KeywordTable(self)
         _TestData.__init__(self, parent, source)
 
-    def populate(self, include_suites=None, warn_on_skipped=False,
-                 extensions=None, recurse=True):
+    def populate(self, include_suites=None, extensions=None, recurse=True):
         FromDirectoryPopulator().populate(self.source, self, include_suites,
-                                          warn_on_skipped, extensions, recurse)
+                                          extensions, recurse)
         self.children = [ch for ch in self.children if ch.has_tests()]
         return self
 
@@ -238,13 +241,11 @@ class TestDataDirectory(_TestData):
             return False
         return True
 
-    def add_child(self, path, include_suites, extensions=None,
-                  warn_on_skipped=False):
+    def add_child(self, path, include_suites, extensions=None):
         self.children.append(TestData(parent=self,
                                       source=path,
                                       include_suites=include_suites,
-                                      extensions=extensions,
-                                      warn_on_skipped=warn_on_skipped))
+                                      extensions=extensions))
 
     def has_tests(self):
         return any(ch.has_tests() for ch in self.children)

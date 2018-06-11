@@ -56,10 +56,14 @@ Run Suite Dir And Check Results
     Should Contain Suites    ${SUITE}    Sample    With Init
     Should Contain Suites    ${SUITE.suites[1]}    Sub Suite1    Sub Suite2
     Should Contain Tests    ${SUITE}    @{SAMPLE_TESTS}    @{SUBSUITE_TESTS}
-    ${invalid} =    Join Path    ${DATADIR}    ${path}    invalid.${type}
-    Check Syslog Contains    Parsing data source '${invalid}' failed:    File has no test case table.
-    ${empty} =    Join Path    ${DATADIR}    ${path}    empty.${type}
-    Check Syslog Contains    Parsing data source '${empty}' failed:    File has no test case table.
+    ${invalid} =    Normalize Path    ${DATADIR}/${path}/invalid.${type}
+    Check Syslog Contains    | INFO \ | Data source '${invalid}' has no tests or tasks.
+    ${empty} =    Normalize Path    ${DATADIR}/${path}/empty.${type}
+    Check Syslog Contains    | INFO \ | Data source '${empty}' has no tests or tasks.
+    Check Syslog Contains    | INFO \ | Ignoring file or directory 'not_a_picture.jpg'.
+    ${invenc} =    Normalize Path    ${DATADIR}/${path}/invalid_encoding.${type}
+    Run Keyword If    "${type}" not in ("html", "rest")
+    ...    Check Syslog Contains    | ERROR | Parsing data source '${invenc}' failed: UnicodeDecodeError
 
 Check Suite With Init
     [Arguments]    ${suite}
