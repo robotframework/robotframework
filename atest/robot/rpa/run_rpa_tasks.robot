@@ -54,6 +54,12 @@ Conflicting headers in same file cause error when executing directory
     --task task                            rpa/tasks    Task
     --rpa --task Test --test "An* T???"    rpa/         Another task    Test
 
+Error message is correct if no task match --task or other options
+    [Template]    Run and validate no task found
+    --task nonex                   named 'nonex'
+    --include xxx --exclude yyy    with tag 'xxx' and without tag 'yyy'
+    --suite nonex --task task      named 'task' in suite 'nonex'
+
 *** Keywords ***
 Run and validate RPA tasks
     [Arguments]    ${options}    ${sources}    @{tasks}
@@ -76,6 +82,11 @@ Run and validate conflict
     ...    File '${conflicting}' has ${this} but files parsed earlier have ${that}.
     ...    Fix headers or use '--rpa' or '--norpa' options to set the execution mode explicitly.
     Stderr Should Be Equal To    ${message}${USAGE TIP}\n
+
+Run and validate no task found
+    [Arguments]    ${options}    ${message}
+    Run tests without processing output    --rpa ${options}    rpa/tasks
+    Stderr Should Be Equal To    [ ERROR ] Suite 'Tasks' contains no tasks ${message}.${USAGE TIP}\n
 
 Outputs should contain correct mode information
     [Arguments]    ${rpa}

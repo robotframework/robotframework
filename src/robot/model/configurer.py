@@ -60,13 +60,14 @@ class SuiteConfigurer(SuiteVisitor):
         suite.filter(self.include_suites, self.include_tests,
                      self.include_tags, self.exclude_tags)
         if not (suite.test_count or self.empty_suite_ok):
-            self._raise_no_tests_error(name)
+            self._raise_no_tests_error(name, suite.rpa)
 
-    def _raise_no_tests_error(self, suite):
-        selectors = '%s %s' % (self._get_test_selector_msgs(),
-                               self._get_suite_selector_msg())
-        msg = "Suite '%s' contains no tests %s" % (suite, selectors.strip())
-        raise DataError(msg.strip() + '.')
+    def _raise_no_tests_error(self, suite, rpa=False):
+        parts = ['tests' if not rpa else 'tasks',
+                 self._get_test_selector_msgs(),
+                 self._get_suite_selector_msg()]
+        raise DataError("Suite '%s' contains no %s."
+                        % (suite, ' '.join(p for p in parts if p)))
 
     def _get_test_selector_msgs(self):
         parts = []

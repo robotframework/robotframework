@@ -46,6 +46,12 @@ Conflicting output files with --norpa are fine
 --task as alias for --test
     --task Passing    ${TASKS 2}    Passing
 
+Error message is correct if no task match --task or other options
+    [Template]    Rebot and validate no task found
+    --task nonex                   named 'nonex'
+    --include xxx --exclude yyy    with tag 'xxx' and without tag 'yyy'
+    --suite nonex --task task      named 'task' in suite 'nonex'
+
 *** Keywords ***
 Create inputs for Rebot
     Create output with Robot    ${TASKS 1}    --name "Same name to support merging"    rpa/tasks1.robot
@@ -73,6 +79,11 @@ Rebot and validate conflict
     ...    File '${conflicting}' has ${this} but files parsed earlier have ${that}.
     ...    Use '--rpa' or '--norpa' options to set the execution mode explicitly.
     Stderr Should Be Equal To    ${message}${USAGE TIP}\n
+
+Rebot and validate no task found
+    [Arguments]    ${options}    ${message}
+    Run Rebot without processing output    ${options} --rpa --name Tasks    ${TASKS 1}
+    Stderr Should Be Equal To    [ ERROR ] Suite 'Tasks' contains no tasks ${message}.${USAGE TIP}\n
 
 Outputs should contain correct mode information
     [Arguments]    ${rpa}
