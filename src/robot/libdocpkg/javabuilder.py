@@ -24,7 +24,10 @@ from .model import LibraryDoc, KeywordDoc
 class JavaDocBuilder(object):
 
     def build(self, path):
-        doc = ClassDoc(path)
+        if sys.platform[4:7] < '1.9':
+            doc = ClassDoc(path)
+        else:
+            doc = ClassDocLike(path)
         libdoc = LibraryDoc(name=doc.qualifiedName(),
                             doc=self._get_doc(doc),
                             version=self._get_version(doc),
@@ -107,10 +110,7 @@ def ClassDoc(path):
     http://docs.oracle.com/javase/7/docs/jdk/api/javadoc/doclet/
     """
     try:
-        if sys.platform[4:7] < '1.9':  # Java 9 has these classes in different package
-            from com.sun.tools.javadoc import JavadocTool, Messager, ModifierFilter
-        else:
-            from com.sun.tools.javadoc.main import JavadocTool, Messager, ModifierFilter
+        from com.sun.tools.javadoc import JavadocTool, Messager, ModifierFilter
         from com.sun.tools.javac.util import List, Context
         from com.sun.tools.javac.code.Flags import PUBLIC
     except ImportError:
@@ -130,3 +130,155 @@ def ClassDoc(path):
                                        List.nil(), List.nil(), False, List.nil(),
                                        List.nil(), False, False, True)
     return root.classes()[0]
+
+
+def ClassDocLike(path):
+    """Process the given Java source file and return an instance that acts like the deprecated ClassDoc. """
+
+    try:
+        from javax.tools import ToolProvider, DiagnosticListener
+        from java.util import Locale
+        from java.nio.charset import Charset, StandardCharsets
+        from javax.lang.model.element import Modifier
+        from javax.lang.model.type import TypeKind
+        from javax.lang.model.util import ElementFilter
+        from java.lang import Class
+    except ImportError:
+        raise DataError("Can not find JavaDoc related classes.")
+
+    class __ClassDocLike(object):
+        """ Replacement for deprecated ClassDoc. """
+
+        def __init__(self, qualifiedName, rawCommentText, fields, constructors, methods):
+            self.__qualifiedName = qualifiedName
+            self.__rawCommentText = rawCommentText
+            self.__fields = fields
+            self.__constructors = constructors
+            self.__methods = methods
+
+        def qualifiedName(self):
+            return self.__qualifiedName
+
+        def getRawCommentText(self):
+            if self.__rawCommentText is None:
+                return ''
+            return self.__rawCommentText
+
+        def fields(self):
+            return self.__fields
+
+        def constructors(self):
+            return self.__constructors
+
+        def methods(self):
+            return self.__methods
+
+    class __FieldDocLike(object):
+        """ Replacement for deprecated FieldDoc. """
+
+        def __init__(self, name, isPublic, constantValue):
+            self.__name = name
+            self.__isPublic = isPublic
+            self.__constantValue = constantValue
+
+        def name(self):
+            return self.__name
+
+        def isPublic(self):
+            return self.__isPublic
+
+        def constantValue(self):
+            return self.__constantValue
+
+    class __MethodDocLike(object):
+        """ Replacement for deprecated ConstructorDoc and MethodDoc classes. """
+
+        def __init__(self, name, rawCommentText, parameters):
+            self.__name = name
+            self.__rawCommentText = rawCommentText
+            self.__parameters = parameters
+
+        def name(self):
+            return self.__name
+
+        def getRawCommentText(self):
+            if self.__rawCommentText is None:
+                return ''
+            return self.__rawCommentText
+
+        def parameters(self):
+            return self.__parameters
+
+    class __ParameterLike(object):
+        """ Replacement for deprecated coms.sun.javadoc.Parameter class. """
+
+        def __init__(self, name, typeName, type):
+            self.__name = name
+            self.__typeName = typeName
+            self.__type = type
+
+        def name(self):
+            return self.__name
+
+        def typeName(self):
+            return self.__typeName
+
+        def type(self):
+            return self.__type
+
+    class __TypeLike(object):
+        """ Replacement for deprecated com.sun.javadoc.Type class. """
+
+        def __init__(self, typeMirror):
+            self.__typeMirror = typeMirror
+
+        def dimension(self):
+            return self.__dimension(self.__typeMirror)
+
+        def __dimension(self, typeMirror):
+            if typeMirror.getKind != TypeKind.ARRAY:
+                return ''
+            return '[]' + self.__dimension(typeMirror.getComponentType())
+
+    def create_parameters(method):
+        return [
+            __ParameterLike(
+                param.getSimpleName().toString(), param.asType().toString(), __TypeLike(param.asType())
+            ) for param in method.getParameters()
+        ]
+
+    # Need to get the instance with reflection, or we ending up trying to
+    # access an internal class not exported.
+    doctool = ToolProvider.getSystemDocumentationTool()
+    fileManager = Class.forName("javax.tools.DocumentationTool") \
+        .getMethod("getStandardFileManager", DiagnosticListener, Locale, Charset) \
+        .invoke(doctool, None, Locale.US, StandardCharsets.UTF_8)
+
+    compiler = ToolProvider.getSystemJavaCompiler()
+    task = compiler.getTask(None, None, None, None, None,
+                            fileManager.getJavaFileObjectsFromStrings([path]))
+    typeElement = task.analyze().iterator().next()
+    elements = task.getElements()
+    members = elements.getAllMembers(typeElement)
+
+    fields = [
+        __FieldDocLike(
+            field.getSimpleName().toString(), Modifier.PUBLIC in field.getModifiers(), field.getConstantValue())
+        for field in ElementFilter.fieldsIn(members)
+    ]
+    constructors = [
+        __MethodDocLike(
+            constructor.getSimpleName().toString(), elements.getDocComment(constructor), create_parameters(constructor))
+        for constructor in ElementFilter.constructorsIn(members)
+    ]
+    methods = [
+        __MethodDocLike(
+            method.getSimpleName().toString(), elements.getDocComment(method), create_parameters(method))
+        for method in ElementFilter.methodsIn(members)
+    ]
+
+    return __ClassDocLike(typeElement.getQualifiedName().toString(),
+                          elements.getDocComment(typeElement),
+                          fields,
+                          constructors,
+                          methods)
