@@ -299,27 +299,12 @@ class _Table(object):
 
 
 class _WithSettings(object):
-    _deprecated = {'document': 'Documentation',
-                   'suiteprecondition': 'Suite Setup',
-                   'suitepostcondition': 'Suite Teardown',
-                   'testprecondition': 'Test Setup',
-                   'testpostcondition': 'Test Teardown',
-                   'precondition': 'Setup',
-                   'postcondition': 'Teardown'}
 
     def get_setter(self, setting_name):
         normalized = self.normalize(setting_name)
-        if normalized in self._deprecated:
-            self._report_deprecated(setting_name, self._deprecated[normalized])
-            normalized = self.normalize(self._deprecated[normalized])
         if normalized in self._setters:
             return self._setters[normalized](self)
         self.report_invalid_syntax("Non-existing setting '%s'." % setting_name)
-
-    def _report_deprecated(self, deprecated, use_instead):
-         self.report_invalid_syntax(
-             "Setting '%s' is deprecated. Use '%s' instead."
-             % (deprecated.rstrip(':'), use_instead), level='WARN')
 
     def is_setting(self, setting_name):
         return self.normalize(setting_name) in self._setters
