@@ -1,5 +1,6 @@
 import unittest
-from robot.utils.asserts import assert_equal, assert_raises, assert_true, assert_false
+from robot.utils.asserts import (assert_equal, assert_false, assert_raises,
+                                 assert_raises_with_msg, assert_true)
 
 from robot.result import Message, Keyword, TestCase, TestSuite
 
@@ -137,7 +138,10 @@ class TestCriticality(unittest.TestCase):
         self._verify_criticality(self.sub, ['c1', 'c2'], ['non'])
 
     def test_cannot_set_criticality_for_child_suites(self):
-        assert_raises(TypeError, self.sub.set_criticality)
+        assert_raises_with_msg(
+            ValueError, 'Criticality can only be set to the root suite.',
+            self.sub.set_criticality
+        )
 
     def test_criticality_set_for_child_suites_earlier_is_ignored(self):
         self.suite.set_criticality('use', 'us')

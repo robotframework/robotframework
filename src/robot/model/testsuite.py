@@ -147,11 +147,17 @@ class TestSuite(ModelObject):
     def configure(self, **options):
         """A shortcut to configure a suite using one method call.
 
+        Can only be used with the root test suite.
+
         :param options: Passed to
             :class:`~robot.model.configurer.SuiteConfigurer` that will then
             set suite attributes, call :meth:`filter`, etc. as needed.
         """
-        self.visit(SuiteConfigurer(**options))
+        if self.parent is not None:
+            raise ValueError("'TestSuite.configure()' can only be used with "
+                             "the root test suite.")
+        if options:
+            self.visit(SuiteConfigurer(**options))
 
     def remove_empty_suites(self):
         """Removes all child suites not containing any tests, recursively."""

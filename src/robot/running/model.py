@@ -155,6 +155,8 @@ class TestSuite(model.TestSuite):
                   randomize_seed=None, **options):
         """A shortcut to configure a suite using one method call.
 
+        Can only be used with the root test suite.
+
         :param randomize_xxx: Passed to :meth:`randomize`.
         :param options: Passed to
             :class:`~robot.model.configurer.SuiteConfigurer` that will then
