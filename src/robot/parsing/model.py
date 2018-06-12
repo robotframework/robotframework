@@ -53,13 +53,11 @@ def TestData(parent=None, source=None, include_suites=None,
 
 
 class _TestData(object):
-    _setting_table_names = 'Setting', 'Settings', 'Metadata'
+    _setting_table_names = 'Setting', 'Settings'
     _variable_table_names = 'Variable', 'Variables'
     _testcase_table_names = 'Test Case', 'Test Cases', 'Task', 'Tasks'
-    _keyword_table_names = 'Keyword', 'Keywords', 'User Keyword', 'User Keywords'
-    _deprecated = NormalizedDict({'Metadata': 'Settings',
-                                  'User Keyword': 'Keywords',
-                                  'User Keywords': 'Keywords'})
+    _keyword_table_names = 'Keyword', 'Keywords'
+    _comment_table_names = 'Comment', 'Comments'
 
     def __init__(self, parent=None, source=None):
         self.parent = parent
@@ -71,28 +69,33 @@ class _TestData(object):
         for names, table in [(self._setting_table_names, self.setting_table),
                              (self._variable_table_names, self.variable_table),
                              (self._testcase_table_names, self.testcase_table),
-                             (self._keyword_table_names, self.keyword_table)]:
+                             (self._keyword_table_names, self.keyword_table),
+                             (self._comment_table_names, None)]:
             for name in names:
                 yield name, table
 
     def start_table(self, header_row):
-        try:
-            name = header_row[0]
-            table = self._tables[name]
-            if name in self._deprecated:
-                self._report_deprecated(name)
-        except (KeyError, IndexError):
-            return None
-        if not self._table_is_allowed(table):
+        table = self._find_table(header_row)
+        if table is None or not self._table_is_allowed(table):
             return None
         table.set_header(header_row)
         return table
 
-    # TODO: Remove support for deprecated tables altogether in RF 3.1.
-    def _report_deprecated(self, name):
-        self.report_invalid_syntax(
-            "Table name '%s' is deprecated. Please use '%s' instead."
-            % (name, self._deprecated[name]), level='WARN')
+    def _find_table(self, header_row):
+        name = header_row[0] if header_row else ''
+        try:
+            return self._tables[name]
+        except KeyError:
+            self.report_invalid_syntax(
+                "Unrecognized table header '%s'. Available headers for "
+                "data: 'Setting(s)', 'Variable(s)', 'Test Case(s)', "
+                "'Task(s)' and 'Keyword(s)'. Use 'Comment(s)' to embedded "
+                "additional data." % name
+            )
+            return None
+
+    def _table_is_allowed(self, table):
+        return True
 
     @property
     def name(self):
@@ -157,9 +160,6 @@ class TestCaseFile(_TestData):
     def _validate(self):
         if not self.testcase_table.is_started():
             raise NoTestsFound('File has no tests or tasks.')
-
-    def _table_is_allowed(self, table):
-        return True
 
     def has_tests(self):
         return True

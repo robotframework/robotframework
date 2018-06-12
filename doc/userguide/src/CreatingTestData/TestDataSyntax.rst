@@ -541,30 +541,39 @@ Test data tables
 
 Test data is structured in four types of tables listed below. These
 test data tables are identified by the first cell of the table. Recognized
-table names are `Settings`, `Variables`, `Test Cases`, and `Keywords`. Matching
-is case-insensitive and also singular variants like `Setting` and `Test Case`
-are accepted.
+table names are `Settings`, `Variables`, `Test Cases`, and `Keywords`. In
+addition to the test data tables processed by Robot Framework, it is possible
+to use `Comments` tables to embed additional data to test data files.
+Matching table names is case-insensitive and also singular variants like
+`Setting` and `Test Case` are accepted.
 
 .. table:: Different test data tables
    :class: tabular
 
-   +--------------+--------------------------------------------+
-   |    Table     |                 Used for                   |
-   +==============+============================================+
-   | Settings     | | 1) Importing `test libraries`_,          |
-   |              |   `resource files`_ and `variable files`_. |
-   |              | | 2) Defining metadata for `test suites`_  |
-   |              |   and `test cases`_.                       |
-   +--------------+--------------------------------------------+
-   | Variables    | Defining variables_ that can be used       |
-   |              | elsewhere in the test data.                |
-   +--------------+--------------------------------------------+
-   | Test Cases   | `Creating test cases`_ from available      |
-   |              | keywords.                                  |
-   +--------------+--------------------------------------------+
-   | Keywords     | `Creating user keywords`_ from existing    |
-   |              | lower-level keywords                       |
-   +--------------+--------------------------------------------+
+   +------------+--------------------------------------------+
+   |   Table    |                 Used for                   |
+   +============+============================================+
+   | Settings   | | 1) Importing `test libraries`_,          |
+   |            |   `resource files`_ and `variable files`_. |
+   |            | | 2) Defining metadata for `test suites`_  |
+   |            |   and `test cases`_.                       |
+   +------------+--------------------------------------------+
+   | Variables  | Defining variables_ that can be used       |
+   |            | elsewhere in the test data.                |
+   +------------+--------------------------------------------+
+   | Test Cases | `Creating test cases`_ from available      |
+   |            | keywords.                                  |
+   +------------+--------------------------------------------+
+   | Keywords   | `Creating user keywords`_ from existing    |
+   |            | lower-level keywords                       |
+   +------------+--------------------------------------------+
+   | Comments   | Additional comments or data. Ignored by    |
+   |            | Robot Framework.                           |
+   +------------+--------------------------------------------+
+
+.. note:: Prior to Robot Framework 3.1 all unrecognized tables were silently
+          ignored, but nowadays they cause an error. `Comment` tables can
+          be used if tables not containing actual test data are needed.
 
 Rules for parsing the data
 --------------------------
