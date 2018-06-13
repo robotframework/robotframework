@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Remove Files  ${OUTPUTDIR}/*.jp*g  ${OUTPUTDIR}/*.png
-Test Setup	    Save Start Time
+Test Setup      Save Start Time
 Test Teardown   Remove Files  ${OUTPUTDIR}/*.jp*g  ${OUTPUTDIR}/*.png
 Resource        screenshot_resource.robot
 

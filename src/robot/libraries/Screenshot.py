@@ -171,10 +171,7 @@ class Screenshot(object):
         ``image_format`` can be either jpg, jpeg or png.
 
         ``quality`` can take values in range [0, 100]. In case of JPEG format it can drastically reduce
-        the file size of the image. If the format is PNG, which uses lossless compression, the quality is
-        indirectly proportional with compression. As standard PNG compression is in range [0, 9], when
-        setting quality to 0 is equivalent to compression value 9 and when setting quality 100 is equivalent
-        to compression value 0.
+        the file size of the image.
 
         The ``quality`` argument does not work on OSX's screencapture, Jython or IronPython.
 
