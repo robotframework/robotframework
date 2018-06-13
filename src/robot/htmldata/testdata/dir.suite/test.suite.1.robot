@@ -1,12 +1,11 @@
-*** settings ***
-Library   Collections
-Suite Setup    User Keyword
+*** Settings ***
+Suite Setup          User Keyword
 
-*** test cases ***
+*** Test Cases ***
 list test
-    ${list}=  Create List  foo  bar  quux
-    Log  ${list}
-    [Tags]   collections
+    [Tags]    collections
+    ${list} =    Create List    foo    bar    quux
+    Log    ${list}
 
 *** Keywords ***
 User Keyword

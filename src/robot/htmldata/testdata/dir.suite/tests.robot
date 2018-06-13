@@ -1,20 +1,19 @@
 *** Settings ***
-Documentation   Some suite _docs_ with links: http://robotframework.org
-Suite Setup     Log  Suite setup
-Suite Teardown  Fail
-Test Setup      Log   Test Setup
-Test Teardown   Log   Test Teardown
-Metadata        home *page*   http://robotframework.org
-Metadata        < &lt; ä      < &lt; ä
-Force Tags      force  with space   < &lt; ä
-Default Tags    default with percent %
-Library         pölkü/myLib.py
-
+Documentation     Some suite _docs_ with links: http://robotframework.org
+Suite Setup       Log    Suite setup
+Suite Teardown    Fail
+Test Setup        Log    Test Setup
+Test Teardown     Log    Test Teardown
+Metadata          home *page*    http://robotframework.org
+Metadata          < &lt; ä       < &lt; ä
+Force Tags        force    with space    < &lt; ä
+Default Tags      default with percent %
+Library           pölkü/myLib.py
 
 *** Variables ***
-@{list}  1  2  3  4
+@{list}           1    2    3    4
 
-*** Test cases ***
+*** Test Cases ***
 Simple
     Log  do nothing
 
@@ -30,9 +29,10 @@ Longest
     [Tags]    long3    *kek*kone*
     Sleep    2 seconds
 
-Log HTML  [tags]   !"#%&/()=
+Log HTML
     [Documentation]    This test uses _*formatted*_ HTML.
     ...  | Isn't | that | _cool?_ |
+    [Tags]   !"#%&/()=
     Log   <blink><b><font face="comic sans ms" size="42" color="red">CAN HAZ HMTL & NO CSS?!?!??!!?</font></b></blink>  HTML
     Log   <table><tr><td>This table<td>should have<tr><td>no special<td>formatting</table>  HTML
     Log   escape < &lt; <b>no bold</b>
@@ -104,7 +104,7 @@ Tags
     [Tags]    test    haz    own    tagz
     Keyword with tags
 
-*** Keywords **
+*** Keywords ***
 User Kw
     Log   in User Kw
 
