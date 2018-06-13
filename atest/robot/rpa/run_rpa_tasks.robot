@@ -4,6 +4,10 @@ Suite Teardown    Purge tests and tasks data
 Test Template     Run and validate RPA tasks
 Resource          atest_resource.robot
 
+*** Variables ***
+@{ALL TASKS}      Task    Another task    Task    Failing    Passing    Test
+...               Defaults    Override    Task timeout exceeded    Invalid task timeout
+
 *** Test Cases ***
 Task header
     ${EMPTY}      rpa/tasks1.robot                     Task
@@ -31,7 +35,7 @@ Conflicting headers with --rpa are fine
 
 Conflicting headers with --norpa are fine
     [Template]    Run and validate test cases
-    --NorPA     rpa/    Task    Another task    Task    Failing    Passing    Test
+    --NorPA -v TIMEOUT:Test    rpa/    @{ALL TASKS}
 
 Conflicting headers in same file cause error
     [Documentation]    Using --rpa or --norpa doesn't affect the behavior.

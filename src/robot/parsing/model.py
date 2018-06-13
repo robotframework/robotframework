@@ -299,9 +299,13 @@ class _Table(object):
 
 
 class _WithSettings(object):
+    _setters = {}
+    _aliases = {}
 
     def get_setter(self, setting_name):
         normalized = self.normalize(setting_name)
+        if normalized in self._aliases:
+            normalized = self._aliases[normalized]
         if normalized in self._setters:
             return self._setters[normalized](self)
         self.report_invalid_syntax("Non-existing setting '%s'." % setting_name)
@@ -356,7 +360,6 @@ class _SettingTable(_Table, _WithSettings):
 
 
 class TestCaseFileSettingTable(_SettingTable):
-
     _setters = {'documentation': lambda s: s.doc.populate,
                 'suitesetup': lambda s: s.suite_setup.populate,
                 'suiteteardown': lambda s: s.suite_teardown.populate,
@@ -370,6 +373,10 @@ class TestCaseFileSettingTable(_SettingTable):
                 'resource': lambda s: s.imports.populate_resource,
                 'variables': lambda s: s.imports.populate_variables,
                 'metadata': lambda s: s.metadata.populate}
+    _aliases = {'tasksetup': 'testsetup',
+                'taskteardown': 'testteardown',
+                'tasktemplate': 'testtemplate',
+                'tasktimeout': 'testtimeout'}
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
@@ -380,7 +387,6 @@ class TestCaseFileSettingTable(_SettingTable):
 
 
 class ResourceFileSettingTable(_SettingTable):
-
     _setters = {'documentation': lambda s: s.doc.populate,
                 'library': lambda s: s.imports.populate_library,
                 'resource': lambda s: s.imports.populate_resource,
@@ -392,7 +398,6 @@ class ResourceFileSettingTable(_SettingTable):
 
 
 class InitFileSettingTable(_SettingTable):
-
     _setters = {'documentation': lambda s: s.doc.populate,
                 'suitesetup': lambda s: s.suite_setup.populate,
                 'suiteteardown': lambda s: s.suite_teardown.populate,
