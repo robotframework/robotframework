@@ -10,7 +10,7 @@ Set Variable
     Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = Hello
 
 Set Variable With More Or Less Than One Value
-    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Set Test Variable - Scalars
     Check Test Case    ${TESTNAME}
@@ -28,6 +28,10 @@ Dict Set To Scalar Is Dot Accessible
 Set Test Variable Needing Escaping
     Check Test Case    ${TESTNAME}
 
+Set Test Variable Affect Subsequent Keywords
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.kws[0].doc}    Makes a variable available everywhere within the scope of the current test.
+
 Set Test Variable In User Keyword
     Check Test Case    ${TESTNAME}
 
@@ -36,6 +40,10 @@ Set Test Variable Not Affecting Other Tests
 
 Test Variables Set In One Suite Are Not Available In Another
     Check Test Case    ${TESTNAME}
+
+Set Task Variable as alias for Set Test Variable
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.kws[0].doc}    Makes a variable available everywhere within the scope of the current task.
 
 Set Suite Variable
     Check Test Case    ${TESTNAME} 1

@@ -1445,6 +1445,15 @@ class _Variables(_BuiltInBase):
         self._log_set_variable(name, value)
 
     @run_keyword_variant(resolve=0)
+    def set_task_variable(self, name, *values):
+        """Makes a variable available everywhere within the scope of the current task.
+
+        This is an alias for `Set Test Variable` that is more applicable when
+        creating tasks, not tests. New in RF 3.1.
+        """
+        self.set_test_variable(name, *values)
+
+    @run_keyword_variant(resolve=0)
     def set_suite_variable(self, name, *values):
         """Makes a variable available everywhere within the scope of the current suite.
 
