@@ -1,7 +1,7 @@
 jquery.min
 ----------
-version 1.8.3
 http://jquery.com/download
+Version: 3.3.1
 
 jquery.tmpl.min
 ---------------
@@ -14,13 +14,13 @@ https://github.com/jquery/jquery-tmpl/issues/79
 
 jsxcompressor.min
 -----------------
-from http://jsxgraph.uni-bayreuth.de/distrib/jsxcompressor.zip
-Version 0.98.2
+https://jsxgraph.org/wp/jsxcompressor/index.html
+Downloaded: 2018-06-13
 
 jquery.tablesorter.min
 ----------------------
-version 2.7.8
 https://github.com/Mottie/tablesorter
+Version: 2.30.5
 
 jquery.highlight.min
 --------------------
