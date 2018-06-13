@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import sys
 from os.path import abspath, dirname, join, normpath
 
@@ -18,5 +20,4 @@ with open(OUTPUT, 'w') as output:
     libdoc = LibraryDocumentation(INPUT)
     LibdocModelWriter(output, libdoc).write_data()
 
-print OUTPUT
-
+print(OUTPUT)
