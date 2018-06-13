@@ -1,17 +1,17 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.6
 
 """Script to generate atest runners based on plain text data files.
 
-Usage:  %s testdata/path/data.robot [robot/path/runner.robot]
+Usage:  {tool} testdata/path/data.robot [robot/path/runner.robot]
 """
 
-from os.path import abspath, basename, dirname, exists, join, splitext
+from __future__ import print_function
+from os.path import abspath, basename, dirname, exists, join
 import os
 import sys
 
 if len(sys.argv) not in [2, 3] or not all(a.endswith('.robot') for a in sys.argv[1:]):
-    print __doc__ % basename(sys.argv[0])
-    sys.exit(1)
+    sys.exit(__doc__.format(tool=basename(sys.argv[0])))
 
 INPATH = abspath(sys.argv[1])
 if join('atest', 'testdata') not in INPATH:
@@ -31,11 +31,11 @@ with open(INPATH) as input:
         line = line.rstrip()
         if line.startswith('*'):
             name = line.split('  ')[0].replace('*', '').replace(' ', '').upper()
-            process = name in ('TESTCASE', 'TESTCASES')
+            process = name in ('TESTCASE', 'TESTCASES', 'TASK', 'TASKS')
         elif process and line and line[0] != ' ':
             TESTS.append(line.split('  ')[0])
 
-with open(OUTPATH, 'wb') as output:
+with open(OUTPATH, 'w') as output:
     path = INPATH.split(join('atest', 'testdata'))[1][1:].replace(os.sep, '/')
     output.write("""\
 *** Settings ***
@@ -49,4 +49,4 @@ Resource         atest_resource.robot
         if test is not TESTS[-1]:
             output.write('\n')
 
-print OUTPATH
+print(OUTPATH)
