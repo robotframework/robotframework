@@ -84,7 +84,7 @@ class OperatingSystem(object):
     Unless otherwise noted, matching is case-insensitive on
     case-insensitive operating systems such as Windows. Pattern
     matching is implemented using
-    [http://docs.python.org/library/fnmatch.html|fnmatch module].
+    [http://docs.python.org/3/library/fnmatch.html|fnmatch module].
 
     Starting from Robot Framework 2.9.1, globbing is not done if the given path
     matches an existing file even if it would contain a glob pattern.
@@ -107,8 +107,7 @@ class OperatingSystem(object):
     it is either an empty string or case-insensitively equal to ``false``,
     ``none`` or ``no``. Other strings are considered true regardless
     their value, and other argument types are tested using the same
-    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
-    as in Python].
+    [http://docs.python.org/3/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
     | `Remove Directory` | ${path} | recursive=True    | # Strings are generally true.    |

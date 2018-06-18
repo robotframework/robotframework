@@ -38,7 +38,7 @@ class XML(object):
 
     As the name implies, _XML_ is a test library for verifying contents of XML
     files. In practice it is a pretty thin wrapper on top of Python's
-    [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree XML API].
+    [https://docs.python.org/3/library/xml.etree.elementtree.html|ElementTree XML API].
 
     The library has the following main usages:
 
@@ -96,7 +96,7 @@ class XML(object):
     = Using lxml =
 
     By default this library uses Python's standard
-    [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree]
+    [https://docs.python.org/3/library/xml.etree.elementtree.html|ElementTree]
     module for parsing XML, but it can be configured to use
     [http://lxml.de|lxml] module instead when `importing` the library.
     The resulting element structure has same API regardless which module
@@ -253,7 +253,7 @@ class XML(object):
 
     All keywords returning elements, such as `Parse XML`, and `Get Element`,
     return ElementTree's
-    [http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element|Element objects].
+    [https://docs.python.org/3/library/xml.etree.elementtree.html#element-objects|Element objects].
     These elements can be used as inputs for other keywords, but they also
     contain several useful attributes that can be accessed directly using
     the extended variable syntax.
@@ -424,8 +424,7 @@ class XML(object):
     it is either an empty string or case-insensitively equal to ``false``,
     ``none`` or ``no``. Other strings are considered true regardless
     their value, and other argument types are tested using the same
-    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
-    as in Python].
+    [http://docs.python.org/3/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
     | `Parse XML` | ${XML} | keep_clark_notation=True    | # Strings are generally true.    |
@@ -452,7 +451,7 @@ class XML(object):
         """Import library with optionally lxml mode enabled.
 
         By default this library uses Python's standard
-        [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree]
+        [https://docs.python.org/3/library/xml.etree.elementtree.html|ElementTree]
         module for parsing XML. If ``use_lxml`` argument is given a true value
         (see `Boolean arguments`), the library will use [http://lxml.de|lxml]
         module instead. See `Using lxml` section for benefits provided by lxml.
@@ -482,7 +481,7 @@ class XML(object):
 
         The ``source`` can either be a path to an XML file or a string
         containing XML. In both cases the XML is parsed into ElementTree
-        [http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element|element structure]
+        [https://docs.python.org/3/library/xml.etree.elementtree.html#element-objects|element structure]
         and the root element is returned. Possible comments and processing
         instructions in the source XML are removed.
 
