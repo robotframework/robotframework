@@ -45,30 +45,8 @@ Png Screenshot Is Embedded in Log File
     ${path}=  Take Screenshot and Verify  png  ${PNG_SCREENSHOT}
     Should Be Equal  ${path}  ${PNG_SCREENSHOT}
 
-Jpg Screenshot Quality
-    Take Screenshots And Compare Size  jpg
-
-Png Screenshot Quality
-    Take Screenshots And Compare Size  png
-
 *** Keywords ***
 Take Screenshot And Verify  [Arguments]  ${format}  @{expected files}
-    ${path}=  Take Screenshot  image_format=${format}
+    ${path}=  Take Screenshot  format=${format}
     Screenshots Should Exist  ${OUTPUTDIR}  @{expected files}
     [Return]  ${path}
-
-Take Screenshots And Compare Size
-    [Arguments]  ${format}
-    ${low_quality_size}=  Take Screenshot And Get Size  ${format}  quality=0
-    ${high_quality_size}=  Take Screenshot And Get Size  ${format}  quality=100
-    ${size_delta}=  Evaluate  ${high_quality_size} / ${low_quality_size}
-    Should Be True  ${size_delta} > 2
-
-Take Screenshot And Get Size
-    [Arguments]  ${format}  ${quality}
-    ${path}=  Take Screenshot  image_format=${format}  quality=${quality}
-    ${status}  ${size}=  Run Keyword and Ignore Error  Get File Size  ${path}
-    Run Keyword If  '${status}' == 'FAIL'
-    ...  Run Keywords  Set Test Documentation  PASS Changing the image format quality is not supported on this platform.  AND
-    ...                Pass Execution  Changing the image format quality is not supported on this platform.
-    [Return]  ${size}

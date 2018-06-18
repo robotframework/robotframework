@@ -91,13 +91,14 @@ class Screenshot(object):
     It is possible to specify a custom location for screenshots using
     ``screenshot_directory`` argument when `importing` the library and
     using `Set Screenshot Directory` keyword during execution. It is also
-    possible to save screenshots using an absolute path.
+    possible to save screenshots using an absolute path or specify the
+    image format in which the screenshot is saved: jpg or png.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, screenshot_directory=None, screenshot_module=None):
+    def __init__(self, screenshot_directory=None, screenshot_module=None, format='jpg'):
         """Configure where screenshots are saved.
 
         If ``screenshot_directory`` is not given, screenshots are saved into
@@ -110,16 +111,19 @@ class Screenshot(object):
         given, the first module/tool found is used in that order. See `Using
         with Python` for more information.
 
+        ``format`` specifies the format of the image file. It can be jpg, jpeg, or png.
+
         Examples (use only one of these):
         | =Setting= |  =Value=   |  =Value=   |
         | Library   | Screenshot |            |
         | Library   | Screenshot | ${TEMPDIR} |
         | Library   | Screenshot | screenshot_module=PyGTK |
 
-        Specifying explicit screenshot module is new in Robot Framework 2.9.2.
+        Specifying image format is new in Robot Framework 3.1.
         """
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
         self._screenshot_taker = ScreenshotTaker(screenshot_module)
+        self._format = format
 
     def _norm_path(self, path):
         if not path:
@@ -153,7 +157,7 @@ class Screenshot(object):
         self._given_screenshot_dir = path
         return old
 
-    def take_screenshot(self, name="screenshot", width="800px", image_format="jpg", quality=100):
+    def take_screenshot(self, name="screenshot", width="800px", format=None):
         """Takes a screenshot in JPEG or PNG format and embeds it into the log file.
 
         Name of the file where the screenshot is stored is derived from the
@@ -168,51 +172,46 @@ class Screenshot(object):
 
         ``width`` specifies the size of the screenshot in the log file.
 
-        ``image_format`` can be either jpg, jpeg or png.
-
-        ``quality`` can take values in range [0, 100]. In case of JPEG format it can drastically reduce
-        the file size of the image.
-
-        The ``quality`` argument does not work on OSX's screencapture, Jython or IronPython.
+        ``format`` can be either jpg, jpeg or png.
 
         Examples: (LOGDIR is determined automatically by the library)
-        | Take Screenshot |                  |            | # LOGDIR/screenshot_1.jpg (index automatically incremented) |
-        | Take Screenshot | mypic            |            | # LOGDIR/mypic_1.jpg (index automatically incremented) |
-        | Take Screenshot | ${TEMPDIR}/mypic |            | # /tmp/mypic_1.jpg (index automatically incremented) |
-        | Take Screenshot | pic.jpg          |            | # LOGDIR/pic.jpg (always uses this file) |
-        | Take Screenshot | images/login.jpg | 80%        | # Specify both name and width. |
-        | Take Screenshot | width=550px      |            | # Specify only width. |
-        | Take Screenshot | image_format=png | quality=50 | # Specify both image format and quality. |
+        | Take Screenshot |                  |     | # LOGDIR/screenshot_1.jpg (index automatically incremented) |
+        | Take Screenshot | mypic            |     | # LOGDIR/mypic_1.jpg (index automatically incremented) |
+        | Take Screenshot | ${TEMPDIR}/mypic |     | # /tmp/mypic_1.jpg (index automatically incremented) |
+        | Take Screenshot | pic.jpg          |     | # LOGDIR/pic.jpg (always uses this file) |
+        | Take Screenshot | images/login.jpg | 80% | # Specify both name and width. |
+        | Take Screenshot | width=550px      |     | # Specify only width. |
+        | Take Screenshot | format=png |     | # Specify image format. |
 
         The path where the screenshot is saved is returned.
         """
-        path = self._save_screenshot(name, image_format.lower(), quality)
+        format = (format or self._format).lower()
+        path = self._save_screenshot(name, format)
         self._embed_screenshot(path, width)
         return path
 
-    def take_screenshot_without_embedding(self, name="screenshot", image_format="jpg", quality=100):
+    def take_screenshot_without_embedding(self, name="screenshot", format=None):
         """Takes a screenshot and links it from the log file.
 
         This keyword is otherwise identical to `Take Screenshot` but the saved
         screenshot is not embedded into the log file. The screenshot is linked
         so it is nevertheless easily available.
         """
-        path = self._save_screenshot(name, image_format.lower(), quality)
+        format = (format or self._format).lower()
+        path = self._save_screenshot(name, format)
         self._link_screenshot(path)
         return path
 
-    def _save_screenshot(self, basename, image_format, quality, directory=None):
-        path = self._get_screenshot_path(basename, directory, image_format)
-        if self._screenshot_taker.module not in ['cli', 'java', 'darwin', 'scrot']:
-            quality = self._convert_quality(image_format, quality)
-        return self._screenshot_to_file(path, image_format, quality)
+    def _save_screenshot(self, basename, format, directory=None):
+        path = self._get_screenshot_path(basename, directory, format)
+        return self._screenshot_to_file(path, format)
 
-    def _screenshot_to_file(self, path, image_format, quality):
+    def _screenshot_to_file(self, path, format):
         path = self._validate_screenshot_path(path)
         logger.debug('Using %s module/tool for taking screenshot.'
                      % self._screenshot_taker.module)
         try:
-            self._screenshot_taker(path, image_format, quality)
+            self._screenshot_taker(path, format)
         except:
             logger.warn('Taking screenshot failed: %s\n'
                         'Make sure tests are run with a physical or virtual '
@@ -226,14 +225,14 @@ class Screenshot(object):
                                "does not exist" % os.path.dirname(path))
         return path
 
-    def _get_screenshot_path(self, basename, directory, image_format):
+    def _get_screenshot_path(self, basename, directory, format):
         directory = self._norm_path(directory) if directory else self._screenshot_dir
         if basename.lower().endswith(('.jpg', '.jpeg', '.png')):
             return os.path.join(directory, basename)
         index = 0
         while True:
             index += 1
-            path = os.path.join(directory, "%s_%d.%s" % (basename, index, image_format))
+            path = os.path.join(directory, "%s_%d.%s" % (basename, index, format))
             if not os.path.exists(path):
                 return path
 
@@ -247,18 +246,6 @@ class Screenshot(object):
         logger.info("Screenshot saved to '<a href=\"%s\">%s</a>'."
                     % (link, path), html=True)
 
-    @staticmethod
-    def _convert_quality(image_format, quality):
-        """
-        PNG uses compression with values in range [0, 9]. Thus the quality
-        must be converted accordingly.
-        """
-        if image_format == 'png':
-            if quality == 100:
-                return 0
-            return int(9 - (int(quality) / 11))
-        return int(quality)
-
 
 @py2to3
 class ScreenshotTaker(object):
@@ -268,13 +255,13 @@ class ScreenshotTaker(object):
         self.module = self._screenshot.__name__.split('_')[1]
         self._wx_app_reference = None
 
-    def __call__(self, path, image_format, quality):
-        self._screenshot(path, image_format, quality)
+    def __call__(self, path, format):
+        self._screenshot(path, format)
 
     def __nonzero__(self):
         return self.module != 'no'
 
-    def test(self, path=None, image_format=None, quality=None):
+    def test(self, path=None, format=None):
         if not self:
             print("Cannot take screenshots.")
             return False
@@ -284,7 +271,7 @@ class ScreenshotTaker(object):
             return True
         print("Taking test screenshot to '%s'." % path)
         try:
-            self(path, image_format, quality)
+            self(path, format)
         except:
             print("Failed: %s" % get_error_message())
             return False
@@ -325,19 +312,13 @@ class ScreenshotTaker(object):
             if module:
                 return screenshot_taker
 
-    def _java_screenshot(self, path, image_format, quality):
-        if int(quality) != 100:
-            raise RuntimeError('Changing the image format quality is not supported '
-                               'on this platform.')
+    def _java_screenshot(self, path, format):
         size = Toolkit.getDefaultToolkit().getScreenSize()
         rectangle = Rectangle(0, 0, size.width, size.height)
         image = Robot().createScreenCapture(rectangle)
-        ImageIO.write(image, image_format, File(path))
+        ImageIO.write(image, format, File(path))
 
-    def _cli_screenshot(self, path, image_format, quality):
-        if int(quality) != 100:
-            raise RuntimeError('Changing the image format quality is not supported '
-                               'on this platform.')
+    def _cli_screenshot(self, path, format):
         bmp = Bitmap(Screen.PrimaryScreen.Bounds.Width,
                      Screen.PrimaryScreen.Bounds.Height)
         graphics = Graphics.FromImage(bmp)
@@ -345,18 +326,15 @@ class ScreenshotTaker(object):
             graphics.CopyFromScreen(0, 0, 0, 0, bmp.Size)
         finally:
             graphics.Dispose()
-            if image_format == 'png':
+            if format == 'png':
                 bmp.Save(path, Imaging.ImageFormat.Png)
             else:
                 bmp.Save(path, Imaging.ImageFormat.Jpeg)
 
-    def _osx_screenshot(self, path, image_format, quality):
-        if int(quality) != 100:
-            raise RuntimeError('Changing the image format quality is not supported '
-                               'on this platform.')
-        if image_format == 'jpeg':
-            image_format = 'jpg'
-        if self._call('screencapture', '-t', image_format, path) != 0:
+    def _osx_screenshot(self, path, format):
+        if format == 'jpeg':
+            format = 'jpg'
+        if self._call('screencapture', '-t', format, path) != 0:
             raise RuntimeError("Using 'screencapture' failed.")
 
     def _call(self, *command):
@@ -370,14 +348,14 @@ class ScreenshotTaker(object):
     def _scrot(self):
         return os.sep == '/' and self._call('scrot', '--version') == 0
 
-    def _scrot_screenshot(self, path, image_format, quality):
+    def _scrot_screenshot(self, path, format):
         if not path.endswith(('.jpg', '.jpeg', '.png')):
             raise RuntimeError("Scrot requires extension to be '.jpg', "
                                "'.jpeg' or '.png', got '%s'." % os.path.splitext(path)[1])
-        if self._call('scrot', '-q %s' % quality, path) != 0:
+        if self._call('scrot', '--silent', path) != 0:
             raise RuntimeError("Using 'scrot' failed.")
 
-    def _wx_screenshot(self, path, image_format, quality):
+    def _wx_screenshot(self, path, format):
         if not self._wx_app_reference:
             self._wx_app_reference = wx.App(False)
         context = wx.ScreenDC()
@@ -390,24 +368,12 @@ class ScreenshotTaker(object):
         memory.SelectObject(bitmap)
         memory.Blit(0, 0, width, height, context, -1, -1)
         memory.SelectObject(wx.NullBitmap)
-        image = bitmap.ConvertToImage()
-        if image_format == 'png':
-            image.SetOption(wx.IMAGE_OPTION_PNG_COMPRESSION_LEVEL, quality)
-            image.SaveFile(path, wx.BITMAP_TYPE_PNG)
+        if format == 'png':
+            bitmap.SaveFile(path, wx.BITMAP_TYPE_PNG)
         else:
-            image.SetOption(wx.IMAGE_OPTION_QUALITY, quality)
-            image.SaveFile(path, wx.BITMAP_TYPE_JPEG)
+            bitmap.SaveFile(path, wx.BITMAP_TYPE_JPEG)
 
-    @staticmethod
-    def _gtk_quality(image_format, quality):
-        quality_setting = {}
-        if image_format == 'png':
-            quality_setting['compression'] = str(quality)
-        else:
-            quality_setting['quality'] = str(quality)
-        return quality_setting
-
-    def _gtk_screenshot(self, path, image_format, quality):
+    def _gtk_screenshot(self, path, format):
         window = gdk.get_default_root_window()
         if not window:
             raise RuntimeError('Taking screenshot failed.')
@@ -417,14 +383,16 @@ class ScreenshotTaker(object):
                                   0, 0, 0, 0, width, height)
         if not pb:
             raise RuntimeError('Taking screenshot failed.')
-        quality_setting = self._gtk_quality(image_format, quality)
-        pb.save(path, image_format, quality_setting)
-
-    def _pil_screenshot(self, path, image_format, quality):
-        if image_format == 'png':
-            ImageGrab.grab().save(path, 'PNG', compress_level=quality)
+        if format == 'png':
+            pb.save(path, format)
         else:
-            ImageGrab.grab().save(path, 'JPEG', quality=quality)
+            pb.save(path, 'jpeg')
+
+    def _pil_screenshot(self, path, format):
+        if format == 'png':
+            ImageGrab.grab().save(path, 'PNG')
+        else:
+            ImageGrab.grab().save(path, 'JPEG')
 
     def _no_screenshot(self, path):
         raise RuntimeError('Taking screenshots is not supported on this platform '
@@ -433,8 +401,8 @@ class ScreenshotTaker(object):
 
 if __name__ == "__main__":
     if len(sys.argv) not in [2, 3]:
-        sys.exit("Usage: %s <path>|test [wx|pygtk|pil|scrot]"
+        sys.exit("Usage: %s <path>|test [wxPython|pygtk|pil|scrot]"
                  % os.path.basename(sys.argv[0]))
     path = sys.argv[1] if sys.argv[1] != 'test' else None
     module = sys.argv[2] if len(sys.argv) > 2 else None
-    ScreenshotTaker(module).test(path, 'jpg', 100)
+    ScreenshotTaker(module).test(path, 'jpg')

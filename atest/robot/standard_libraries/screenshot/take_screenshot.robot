@@ -35,12 +35,6 @@ Png Screenshot Is Embedded in Log File
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  screenshot_1.png
 
-Jpg Screenshot Quality
-    Check Test Case  ${TESTNAME}
-
-Png Screenshot Quality
-    Check Test Case  ${TESTNAME}
-
 *** Keywords ***
 Check Embedding In Log
     [Arguments]  ${message}  ${path}  ${width}=800px
