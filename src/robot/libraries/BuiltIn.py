@@ -269,6 +269,11 @@ class _Converter(_BuiltInBase):
         - http://docs.python.org/3/tutorial/floatingpoint.html
         - http://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition
 
+        If you want to avoid possible problems with floating point numbers,
+        you can implement custom keywords using Python's
+        [https://docs.python.org/3/library/decimal.html|decimal] or
+        [https://docs.python.org/3/library/fractions.html|fractions] modules.
+
         If you need an integer number, use `Convert To Integer` instead.
         """
         self._log_types(item)
@@ -754,6 +759,11 @@ class _Verify(_BuiltInBase):
         floats, and ideas on how to implement your own context specific
         comparison algorithm, see
         http://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/.
+
+        If you want to avoid possible problems with floating point numbers,
+        you can implement custom keywords using Python's
+        [https://docs.python.org/3/library/decimal.html|decimal] or
+        [https://docs.python.org/3/library/fractions.html|fractions] modules.
 
         See `Should Not Be Equal As Numbers` for a negative version of this
         keyword and `Should Be Equal` for an explanation on how to override

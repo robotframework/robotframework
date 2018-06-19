@@ -13,6 +13,7 @@ class TestRoundup(unittest.TestCase):
                 extra /= 10.0
                 assert_equal(roundup(number + extra), number, +extra)
                 assert_equal(roundup(number - extra), number, -extra)
+            assert_equal(roundup(number + 0.5), number+1)
 
     def test_negative(self):
         for number in range(1000):
@@ -21,6 +22,7 @@ class TestRoundup(unittest.TestCase):
                 extra /= 10.0
                 assert_equal(roundup(number + extra), number)
                 assert_equal(roundup(number - extra), number)
+            assert_equal(roundup(number - 0.5), number-1)
 
     def test_ndigits_below_zero(self):
         assert_equal(roundup(7, -1), 10)
@@ -44,6 +46,7 @@ class TestRoundup(unittest.TestCase):
     def test_round_even_down_when_negative(self):
         assert_equal(roundup(-0.5), -1)
         assert_equal(roundup(-5, -1), -10)
+        assert_equal(roundup(-5.0, -1), -10)
         assert_equal(roundup(-500, -3), -1000)
         assert_equal(roundup(-0.05, 1), -0.1)
         assert_equal(roundup(-0.49951, 3), -0.5)
@@ -54,6 +57,10 @@ class TestRoundup(unittest.TestCase):
                 assert_equal(type(roundup(n, d)), float if d > 0 else int)
                 assert_equal(type(roundup(n, d, return_type=int)), int)
                 assert_equal(type(roundup(n, d, return_type=float)), float)
+
+    def test_problems(self):
+        assert_equal(roundup(59.85, 1), 59.9)  # This causes #2872
+        assert_equal(roundup(1.15, 1), 1.1)    # 1.15 is actually 1.49999..
 
 
 class TestSeg2Str(unittest.TestCase):
