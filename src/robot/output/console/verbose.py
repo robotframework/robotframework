@@ -173,3 +173,33 @@ class KeywordMarker(object):
 
     def reset_count(self):
         self.marker_count = 0
+
+
+class EnterpriseOutput(VerboseOutput):
+
+    def __init__(self, width=78, colors='AUTO', markers='AUTO', stdout=None,
+                 stderr=None):
+        self._writer = VerboseWriter(width, colors, markers, stdout, stderr)
+        self._started = False
+        self._started_keywords = 0
+        self._running_test = False
+        self._keyword_log = []
+
+    def end_test(self, test):
+        self._writer.status(test.status, clear=True)
+        if test.status == "FAIL":
+            for s in self._keyword_log:
+                self._writer.message(s)
+        self._writer.message(test.message)
+        self._writer.test_separator()
+        self._running_test = False
+        
+
+    def end_keyword(self, kw):
+        self._started_keywords -= 1
+        if self._running_test and not self._started_keywords:
+            self._keyword_log.append(self.keyword_line(kw))
+            self._writer.keyword_marker(kw.status)
+    
+    def keyword_line(self, kw):
+        return "-- %s.%s  %s - %s    %s" % (kw.libname, kw.kwname, kw.starttime, kw.endtime,kw.status)

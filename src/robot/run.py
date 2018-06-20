@@ -312,12 +312,14 @@ Options
     --prerebotmodifier class *  Class to programmatically modify the result
                           model before creating reports and logs.
     --console type        How to report execution on the console.
-                          verbose:  report every suite and test (default)
-                          dotted:   only show `.` for passed test, `f` for
-                                    failed non-critical tests, and `F` for
-                                    failed critical tests
-                          quiet:    no output except for errors and warnings
-                          none:     no output whatsoever
+                          verbose:    report every suite and test (default)
+                          enterprise: report every suite, test and keyword 
+                                      for error 
+                          dotted:     only show `.` for passed test, `f` for
+                                      failed non-critical tests, and `F` for
+                                      failed critical tests
+                          quiet:      no output except for errors and warnings
+                          none:       no output whatsoever
  -. --dotted              Shortcut for `--console dotted`.
     --quiet               Shortcut for `--console quiet`.
  -W --consolewidth chars  Width of the monitor output. Default is 78.
