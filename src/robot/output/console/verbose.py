@@ -191,11 +191,11 @@ class EnterpriseOutput(VerboseOutput):
         if test.status == "FAIL":
             for s in self._keyword_log:
                 self._writer.message(s)
+            self._keyword_log = []
         self._writer.message(test.message)
         self._writer.test_separator()
         self._running_test = False
         
-
     def end_keyword(self, kw):
         self._started_keywords -= 1
         if self._running_test and not self._started_keywords:
