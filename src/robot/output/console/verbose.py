@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #  Copyright 2008-2015 Nokia Networks
 #  Copyright 2016-     Robot Framework Foundation
 #
@@ -202,4 +203,7 @@ class EnterpriseOutput(VerboseOutput):
             self._writer.keyword_marker(kw.status)
     
     def keyword_line(self, kw):
-        return "-- %s.%s  %s - %s    %s" % (kw.libname, kw.kwname, kw.starttime, kw.endtime,kw.status)
+        return "%s  %s" % (self.short_status(kw.status), kw.kwname)
+
+    def short_status(self, status):
+        return u"√" if status == "PASS" else "X"
