@@ -106,8 +106,6 @@ class XML(object):
     than the standard ElementTree and enables using `Evaluate Xpath` keyword.
     It also preserves the doctype and possible namespace prefixes saving XML.
 
-    The lxml support is new in Robot Framework 2.8.5.
-
     = Example =
 
     The following simple example demonstrates parsing XML and verifying its
@@ -459,8 +457,6 @@ class XML(object):
         Using lxml requires that the lxml module is installed on the system.
         If lxml mode is enabled but the module is not installed, this library
         will emit a warning and revert back to using the standard ElementTree.
-
-        The support for lxml is new in Robot Framework 2.8.5.
         """
         use_lxml = is_truthy(use_lxml)
         if use_lxml and lxml_etree:
@@ -964,8 +960,6 @@ class XML(object):
 
         Like `Set Element Tag` but sets the tag of all elements matching
         the given ``xpath``.
-
-        New in Robot Framework 2.8.6.
         """
         for elem in self.get_elements(source, xpath):
             self.set_element_tag(elem, tag)
@@ -1006,8 +1000,6 @@ class XML(object):
 
         Like `Set Element Text` but sets the text or tail of all elements
         matching the given ``xpath``.
-
-        New in Robot Framework 2.8.6.
         """
         for elem in self.get_elements(source, xpath):
             self.set_element_text(elem, text, tail)
@@ -1044,8 +1036,6 @@ class XML(object):
 
         Like `Set Element Attribute` but sets the attribute of all elements
         matching the given ``xpath``.
-
-        New in Robot Framework 2.8.6.
         """
         for elem in self.get_elements(source, xpath):
             self.set_element_attribute(elem, name, value)
@@ -1080,8 +1070,6 @@ class XML(object):
 
         Like `Remove Element Attribute` but removes the attribute of all
         elements matching the given ``xpath``.
-
-        New in Robot Framework 2.8.6.
         """
         for elem in self.get_elements(source, xpath):
             self.remove_element_attribute(elem, name)
@@ -1113,8 +1101,6 @@ class XML(object):
 
         Like `Remove Element Attributes` but removes all attributes of all
         elements matching the given ``xpath``.
-
-        New in Robot Framework 2.8.6.
         """
         for elem in self.get_elements(source, xpath):
             self.remove_element_attributes(elem)
@@ -1375,7 +1361,7 @@ class XML(object):
         | Should Be Equal | ${bold}        | ${True} |
 
         This keyword works only if lxml mode is taken into use when `importing`
-        the library. New in Robot Framework 2.8.5.
+        the library.
         """
         if not self.lxml_etree:
             raise RuntimeError("'Evaluate Xpath' keyword only works in lxml mode.")

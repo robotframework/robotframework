@@ -151,8 +151,6 @@ class _List(object):
         list so that one item can appear only once. Order of the items in
         the new list is the same as in the original except for missing
         duplicates. Number of the removed duplicates is logged.
-
-        New in Robot Framework 2.7.5.
         """
         ret = []
         for item in list_:
@@ -457,9 +455,6 @@ class _Dictionary(object):
         | Set To Dictionary | ${D1} | key | value | second | ${2} |
         =>
         | ${D1} = {'a': 1, 'key': 'value', 'second': 2}
-
-        Starting from Robot Framework 2.8.1, items can also be given as kwargs
-        using ``key=value`` syntax:
 
         | Set To Dictionary | ${D1} | key=value | second=${2} |
 
@@ -852,8 +847,6 @@ class Collections(_List, _Dictionary):
         | Should Contain Match | ${list} | a*  | case_insensitive=True       | | # Match strings beginning with 'a' or 'A'. |
         | Should Contain Match | ${list} | ab* | whitespace_insensitive=yes  | | # Match strings beginning with 'ab' with possible whitespace ignored. |
         | Should Contain Match | ${list} | ab* | whitespace_insensitive=true | case_insensitive=true | # Same as the above but also ignore case. |
-
-        New in Robot Framework 2.8.6.
         """
         matches = _get_matches_in_iterable(list, pattern, case_insensitive,
                                            whitespace_insensitive)
@@ -868,8 +861,6 @@ class Collections(_List, _Dictionary):
 
         Exact opposite of `Should Contain Match` keyword. See that keyword
         for information about arguments and usage in general.
-
-        New in Robot Framework 2.8.6.
         """
         matches = _get_matches_in_iterable(list, pattern, case_insensitive,
                                            whitespace_insensitive)
@@ -888,8 +879,6 @@ class Collections(_List, _Dictionary):
         | ${matches}= | Get Matches | ${list} | a* | # ${matches} will contain any string beginning with 'a' |
         | ${matches}= | Get Matches | ${list} | regexp=a.* | # ${matches} will contain any string beginning with 'a' (regexp version) |
         | ${matches}= | Get Matches | ${list} | a* | case_insensitive=${True} | # ${matches} will contain any string beginning with 'a' or 'A' |
-
-        New in Robot Framework 2.8.6.
         """
         return _get_matches_in_iterable(list, pattern, case_insensitive,
                                         whitespace_insensitive)
@@ -905,8 +894,6 @@ class Collections(_List, _Dictionary):
         | ${count}= | Get Match Count | ${list} | a* | # ${count} will be the count of strings beginning with 'a' |
         | ${count}= | Get Match Count | ${list} | regexp=a.* | # ${matches} will be the count of strings beginning with 'a' (regexp version) |
         | ${count}= | Get Match Count | ${list} | a* | case_insensitive=${True} | # ${matches} will be the count of strings beginning with 'a' or 'A' |
-
-        New in Robot Framework 2.8.6.
         """
         return len(self.get_matches(list, pattern, case_insensitive,
                                     whitespace_insensitive))

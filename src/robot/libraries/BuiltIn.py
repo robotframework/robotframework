@@ -375,8 +375,6 @@ class _Converter(_BuiltInBase):
 
         Use `Encode String To Bytes` in ``String`` library if you need to
         convert text to bytes using a certain encoding.
-
-        New in Robot Framework 2.8.2.
         """
         try:
             try:
@@ -532,9 +530,6 @@ class _Verify(_BuiltInBase):
         | Fail | My message       | tag    | -t*  | # Removes all tags starting with 't' except the newly added 'tag'. |
 
         See `Fatal Error` if you need to stop the whole test execution.
-
-        Support for modifying tags was added in Robot Framework 2.7.4 and
-        HTML message support in 2.8.
         """
         self._set_and_remove_tags(tags)
         raise AssertionError(msg) if msg else AssertionError()
@@ -589,8 +584,8 @@ class _Verify(_BuiltInBase):
         | Should Be True | $rc < 10          |
         | Should Be True | $status == 'PASS' | # Expected string must be quoted |
 
-        Starting from Robot Framework 2.8, `Should Be True` automatically
-        imports Python's [http://docs.python.org/3/library/os.html|os] and
+        `Should Be True` automatically imports Python's
+        [http://docs.python.org/3/library/os.html|os] and
         [http://docs.python.org/3/library/sys.html|sys] modules that contain
         several useful attributes:
 
@@ -1312,9 +1307,6 @@ class _Variables(_BuiltInBase):
         | Variable Should Not Exist     | \\${name}    |           |           |
         | ${no decoration} =            | Get Variables | no_decoration=Yes |
         | Dictionary Should Contain Key | ${no decoration} | example_variable |
-
-        Note: Prior to Robot Framework 2.7.4 variables were returned as
-        a custom object that did not support all dictionary methods.
         """
         return self._variables.as_dict(decoration=is_falsy(no_decoration))
 
@@ -1501,8 +1493,8 @@ class _Variables(_BuiltInBase):
         variables ``${EMPTY}``, ``@{EMPTY}`` or ``&{EMPTY}``:
 
         | Set Suite Variable | ${SCALAR} | ${EMPTY} |
-        | Set Suite Variable | @{LIST}   | @{EMPTY} | # New in RF 2.7.4 |
-        | Set Suite Variable | &{DICT}   | &{EMPTY} | # New in RF 2.9   |
+        | Set Suite Variable | @{LIST}   | @{EMPTY} |
+        | Set Suite Variable | &{DICT}   | &{EMPTY} |
 
         *NOTE:* If the variable has value which itself is a variable (escaped
         or not), you must always use the escaped format to set the variable:
@@ -1627,21 +1619,21 @@ class _RunKeyword(_BuiltInBase):
         By default all arguments are expected to be keywords to be executed.
 
         Examples:
-        | Run Keywords | Initialize database | Start servers | Clear logs |
-        | Run Keywords | ${KW 1} | ${KW 2} |
-        | Run Keywords | @{KEYWORDS} |
+        | `Run Keywords` | `Initialize database` | `Start servers` | `Clear logs` |
+        | `Run Keywords` | ${KW 1} | ${KW 2} |
+        | `Run Keywords` | @{KEYWORDS} |
 
-        Starting from Robot Framework 2.7.6, keywords can also be run with
-        arguments using upper case ``AND`` as a separator between keywords.
-        The keywords are executed so that the first argument is the first
-        keyword and proceeding arguments until the first ``AND`` are arguments
-        to it. First argument after the first ``AND`` is the second keyword and
-        proceeding arguments until the next ``AND`` are its arguments. And so on.
+        Keywords can also be run with arguments using upper case ``AND`` as
+        a separator between keywords. The keywords are executed so that the
+        first argument is the first keyword and proceeding arguments until
+        the first ``AND`` are arguments to it. First argument after the first
+        ``AND`` is the second keyword and proceeding arguments until the next
+        ``AND`` are its arguments. And so on.
 
         Examples:
-        | Run Keywords | Initialize database | db1 | AND | Start servers | server1 | server2 |
-        | Run Keywords | Initialize database | ${DB NAME} | AND | Start servers | @{SERVERS} | AND | Clear logs |
-        | Run Keywords | ${KW} | AND | @{KW WITH ARGS} |
+        | `Run Keywords` | `Initialize database` | db1 | AND | `Start servers` | server1 | server2 |
+        | `Run Keywords` | `Initialize database` | ${DB NAME} | AND | `Start servers` | @{SERVERS} | AND | `Clear logs` |
+        | `Run Keywords` | ${KW} | AND | @{KW WITH ARGS} |
 
         Notice that the ``AND`` control argument must be used explicitly and
         cannot itself come from a variable. If you need to use literal ``AND``
@@ -1712,25 +1704,25 @@ class _RunKeyword(_BuiltInBase):
         Example:
         | `Run Keyword If` | $result is None or $result == 'FAIL' | `Keyword` |
 
-        Starting from Robot version 2.7.4, this keyword supports also optional
-        ELSE and ELSE IF branches. Both of these are defined in ``*args`` and
-        must use exactly format ``ELSE`` or ``ELSE IF``, respectively. ELSE
-        branches must contain first the name of the keyword to execute and then
-        its possible arguments. ELSE IF branches must first contain a condition,
-        like the first argument to this keyword, and then the keyword to execute
-        and its possible arguments. It is possible to have ELSE branch after
-        ELSE IF and to have multiple ELSE IF branches.
+        This keyword supports also optional ELSE and ELSE IF branches. Both
+        of them are defined in ``*args`` and must use exactly format ``ELSE``
+        or ``ELSE IF``, respectively. ELSE branches must contain first the
+        name of the keyword to execute and then its possible arguments. ELSE
+        IF branches must first contain a condition, like the first argument
+        to this keyword, and then the keyword to execute and its possible
+        arguments. It is possible to have ELSE branch after ELSE IF and to
+        have multiple ELSE IF branches.
 
         Given previous example, if/else construct can also be created like this:
         | ${status} | ${value} = | `Run Keyword And Ignore Error` | My Keyword |
         | `Run Keyword If` | '${status}' == 'PASS' | `Some Action` | arg | ELSE | `Another Action` |
 
-        The return value is the one of the keyword that was executed or None if
-        no keyword was executed (i.e. if ``condition`` was false). Hence, it is
-        recommended to use ELSE and/or ELSE IF branches to conditionally assign
-        return values from keyword to variables (to conditionally assign fixed
-        values to variables, see `Set Variable If`). This is illustrated by the
-        example below:
+        The return value of this keyword is the return value of the actually
+        executed keyword or Python ``None`` if no keyword was executed (i.e.
+        if ``condition`` was false). Hence, it is recommended to use ELSE
+        and/or ELSE IF branches to conditionally assign return values from
+        keyword to variables (see `Set Variable If` if you need to set fixed
+        values conditionally). This is illustrated by the example below:
 
         | ${var1} =   | `Run Keyword If` | ${rc} == 0     | `Some keyword returning a value` |
         | ...         | ELSE IF          | 0 < ${rc} < 42 | `Another keyword` |
@@ -1738,15 +1730,15 @@ class _RunKeyword(_BuiltInBase):
         | ...         | ELSE             | `Final keyword to handle abnormal cases` | ${rc} |
         | ${var2} =   | `Run Keyword If` | ${condition}  | `Some keyword` |
 
-        In this example, ${var2} will be set to None if ${condition} is false.
+        In this example, ${var2} will be set to ``None`` if ${condition} is
+        false.
 
         Notice that ``ELSE`` and ``ELSE IF`` control words must be used
         explicitly and thus cannot come from variables. If you need to use
         literal ``ELSE`` and ``ELSE IF`` strings as arguments, you can escape
         them with a backslash like ``\\ELSE`` and ``\\ELSE IF``.
 
-        Starting from Robot Framework 2.8, Python's
-        [http://docs.python.org/3/library/os.html|os] and
+        Python's [http://docs.python.org/3/library/os.html|os] and
         [http://docs.python.org/3/library/sys.html|sys] modules are
         automatically imported when evaluating the ``condition``.
         Attributes they contain can thus be used in the condition:
@@ -1829,8 +1821,6 @@ class _RunKeyword(_BuiltInBase):
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword. Otherwise this keyword itself never fails.
-
-        New in Robot Framework 2.7.6.
         """
         status, _ = self.run_keyword_and_ignore_error(name, *args)
         return status == 'PASS'
@@ -2004,9 +1994,8 @@ class _RunKeyword(_BuiltInBase):
 
         Running the same keyword multiple times inside this keyword can create
         lots of output and considerably increase the size of the generated
-        output files. Starting from Robot Framework 2.7, it is possible to
-        remove unnecessary keywords from the outputs using
-        ``--RemoveKeywords WUKS`` command line option.
+        output files. It is possible to remove unnecessary keywords from
+        the outputs using ``--RemoveKeywords WUKS`` command line option.
 
         Support for specifying ``retry`` as a number of times to retry is
         a new feature in Robot Framework 2.9.
@@ -2231,8 +2220,6 @@ class _Control(_BuiltInBase):
 
         See `Continue For Loop If` to conditionally continue a for loop without
         using `Run Keyword If` or other wrapper keywords.
-
-        New in Robot Framework 2.8.
         """
         self.log("Continuing for loop from the next iteration.")
         raise ContinueForLoop()
@@ -2248,8 +2235,6 @@ class _Control(_BuiltInBase):
         | :FOR | ${var}               | IN                     | @{VALUES} |
         |      | Continue For Loop If | '${var}' == 'CONTINUE' |
         |      | Do Something         | ${var}                 |
-
-        New in Robot Framework 2.8.
         """
         if self._is_true(condition):
             self.continue_for_loop()
@@ -2282,8 +2267,6 @@ class _Control(_BuiltInBase):
         | :FOR | ${var}           | IN                 | @{VALUES} |
         |      | Exit For Loop If | '${var}' == 'EXIT' |
         |      | Do Something     | ${var}             |
-
-        New in Robot Framework 2.8.
         """
         if self._is_true(condition):
             self.exit_for_loop()
@@ -2330,10 +2313,8 @@ class _Control(_BuiltInBase):
         |    Return From Keyword    ${-1}    # Also [Return] would work here.
 
         The most common use case, returning based on an expression, can be
-        accomplished directly with `Return From Keyword If`. Both of these
-        keywords are new in Robot Framework 2.8.
-
-        See also `Run Keyword And Return` and `Run Keyword And Return If`.
+        accomplished directly with `Return From Keyword If`. See also
+        `Run Keyword And Return` and `Run Keyword And Return If`.
         """
         self.log('Returning from the enclosing user keyword.')
         raise ReturnFromKeyword(return_values)
@@ -2359,8 +2340,6 @@ class _Control(_BuiltInBase):
         |    Return From Keyword    ${-1}    # Also [Return] would work here.
 
         See also `Run Keyword And Return` and `Run Keyword And Return If`.
-
-        New in Robot Framework 2.8.
         """
         if self._is_true(condition):
             self.return_from_keyword(*return_values)
@@ -2383,8 +2362,6 @@ class _Control(_BuiltInBase):
 
         Use `Run Keyword And Return If` if you want to run keyword and return
         based on a condition.
-
-        New in Robot Framework 2.8.2.
         """
         ret = self.run_keyword(name, *args)
         self.return_from_keyword(escape(ret))
@@ -2404,8 +2381,6 @@ class _Control(_BuiltInBase):
 
         Use `Return From Keyword If` if you want to return a certain value
         based on a condition.
-
-        New in Robot Framework 2.8.2.
         """
         if self._is_true(condition):
             self.run_keyword_and_return(name, *args)
@@ -2452,8 +2427,6 @@ class _Control(_BuiltInBase):
         parts that could actually uncover problems in the tested application.
         In cases where execution cannot continue do to external factors,
         it is often safer to fail the test case and make it non-critical.
-
-        New in Robot Framework 2.8.
         """
         message = message.strip()
         if not message:
@@ -2476,8 +2449,6 @@ class _Control(_BuiltInBase):
         | :FOR | ${var}            | IN                     | @{VALUES}               |
         |      | Pass Execution If | '${var}' == 'EXPECTED' | Correct value was found |
         |      | Do Something      | ${var}                 |
-
-        New in Robot Framework 2.8.
         """
         if self._is_true(condition):
             message = self._variables.replace_string(message)
@@ -2600,13 +2571,6 @@ class _Misc(_BuiltInBase):
 
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
-
-        Arguments ``html``, ``console``, and ``repr`` are new in Robot Framework
-        2.8.2.
-
-        Pprint support when ``repr`` is used is new in Robot Framework 2.8.6,
-        and it was changed to drop the ``u`` prefix and add the ``b`` prefix
-        in Robot Framework 2.9.
         """
         if is_truthy(repr):
             message = prepr(message, width=80)
@@ -2662,8 +2626,6 @@ class _Misc(_BuiltInBase):
 
         This keyword does not log the message to the normal log file. Use
         `Log` keyword, possibly with argument ``console``, if that is desired.
-
-        New in Robot Framework 2.8.2.
         """
         logger.console(message, newline=is_falsy(no_newline), stream=stream)
 
@@ -2854,9 +2816,9 @@ class _Misc(_BuiltInBase):
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.
 
-        *NOTE:* DateTime library added in Robot Framework 2.8.5 contains
-        much more flexible keywords for getting the current date and time
-        and for date and time handling in general.
+        *NOTE:* DateTime library contains much more flexible keywords for
+        getting the current date and time and for date and time handling in
+        general.
 
         How time is returned is determined based on the given ``format``
         string as follows. Note that all checks are case-insensitive.
@@ -2933,9 +2895,6 @@ class _Misc(_BuiltInBase):
         | @{time} = ['16', '08', '24']
         | @{utc} = ['12', '06', '21']
         | ${hour} = '11'
-
-        Support for UTC time was added in Robot Framework 2.7.5 but it did not
-        work correctly until 2.7.7.
         """
         return get_time(format, parse_time(time_))
 
@@ -2951,7 +2910,7 @@ class _Misc(_BuiltInBase):
 
         ``namespace`` argument can be used to pass a custom evaluation
         namespace as a dictionary. Possible ``modules`` are added to this
-        namespace. This is a new feature in Robot Framework 2.8.4.
+        namespace.
 
         Variables used like ``${variable}`` are replaced in the expression
         before evaluation. Variables are also available in the evaluation
@@ -3090,9 +3049,6 @@ class _Misc(_BuiltInBase):
         | Set Test Message | `*`HTML`*` <b>Hello!</b> |                      |
 
         This keyword can not be used in suite setup or suite teardown.
-
-        Support for ``append`` was added in Robot Framework 2.7.7 and support
-        for HTML format in 2.8.
         """
         test = self._context.test
         if not test:
@@ -3134,8 +3090,6 @@ class _Misc(_BuiltInBase):
         The current test documentation is available as a built-in variable
         ``${TEST DOCUMENTATION}``. This keyword can not be used in suite
         setup or suite teardown.
-
-        New in Robot Framework 2.7. Support for ``append`` was added in 2.7.7.
         """
         test = self._context.test
         if not test:
@@ -3159,9 +3113,6 @@ class _Misc(_BuiltInBase):
 
         The documentation of the current suite is available as a built-in
         variable ``${SUITE DOCUMENTATION}``.
-
-        New in Robot Framework 2.7. Support for ``append`` and ``top`` were
-        added in 2.7.7.
         """
         top = is_truthy(top)
         suite = self._get_context(top).suite
@@ -3183,9 +3134,6 @@ class _Misc(_BuiltInBase):
         The metadata of the current suite is available as a built-in variable
         ``${SUITE METADATA}`` in a Python dictionary. Notice that modifying this
         variable directly has no effect on the actual metadata the suite has.
-
-        New in Robot Framework 2.7.4. Support for ``append`` and ``top`` were
-        added in 2.7.7.
         """
         top = is_truthy(top)
         if not is_unicode(name):
@@ -3306,10 +3254,10 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     = HTML error messages =
 
     Many of the keywords accept an optional error message to use if the keyword
-    fails. Starting from Robot Framework 2.8, it is possible to use HTML in
-    these messages by prefixing them with ``*HTML*``. See `Fail` keyword for
-    a usage example. Notice that using HTML in messages is not limited to
-    BuiltIn library but works with any error message.
+    fails, and it is possible to use HTML in these messages by prefixing them
+    with ``*HTML*``. See `Fail` keyword for a usage example. Notice that using
+    HTML in messages is not limited to BuiltIn library but works with any
+    error message.
 
     = Evaluating expressions =
 

@@ -21,8 +21,6 @@ as well as doing simple calculations with them (e.g. `Subtract Time From Date`,
 `Add Time To Time`). It supports dates and times in various formats, and can
 also be used by other libraries programmatically.
 
-This library is new in Robot Framework 2.8.5.
-
 = Table of Contents =
 
 - `Terminology`
@@ -636,10 +634,7 @@ class Time(object):
 
     def _convert_time_to_seconds(self, time):
         if isinstance(time, timedelta):
-            # timedelta.total_seconds() is new in Python 2.7
-            return (time.days * 24 * 60 * 60 +
-                    time.seconds +
-                    time.microseconds / 1e6)
+            return time.total_seconds()
         return timestr_to_secs(time, round_to=None)
 
     @property

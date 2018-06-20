@@ -97,8 +97,7 @@ class OperatingSystem(object):
     ``C:\\Users\\<user>\\robot`` on Windows and ``/home/<user>/robot`` on
     Unixes.
 
-    Tilde expansion is a new feature in Robot Framework 2.8. The ``~username``
-    form does not work on Jython
+    The ``~username`` form does not work on Jython.
 
     = Boolean arguments =
 
@@ -262,8 +261,7 @@ class OperatingSystem(object):
         - ``replace``: Replace characters that cannot be decoded with
           a replacement character.
 
-        ``encoding_errors`` argument was added in Robot Framework 2.8.5 and the
-        support for ``SYSTEM`` and ``CONSOLE`` encodings in Robot Framework 3.0.
+        Support for ``SYSTEM`` and ``CONSOLE`` encodings in Robot Framework 3.0.
         """
         path = self._absnorm(path)
         self._link("Getting file '%s'.", path)
@@ -318,8 +316,6 @@ class OperatingSystem(object):
         If more complex pattern matching is needed, it is possible to use
         `Get File` in combination with String library keywords like `Get
         Lines Matching Regexp`.
-
-        ``encoding_errors`` argument is new in Robot Framework 2.8.5.
         """
         pattern = '*%s*' % pattern
         path = self._absnorm(path)
@@ -344,8 +340,6 @@ class OperatingSystem(object):
 
         See `Get File` for more information about ``encoding`` and
         ``encoding_errors`` arguments.
-
-        ``encoding_errors`` argument is new in Robot Framework 2.8.5.
         """
         content = self.get_file(path, encoding, encoding_errors)
         self._info(content)
@@ -608,8 +602,6 @@ class OperatingSystem(object):
         Use `Create File` if you want to create a text file using a certain
         encoding. `File Should Not Exist` can be used to avoid overwriting
         existing files.
-
-        New in Robot Framework 2.8.5.
         """
         if is_unicode(content):
             content = bytes(bytearray(ord(c) for c in content))
@@ -714,9 +706,9 @@ class OperatingSystem(object):
     def copy_file(self, source, destination):
         """Copies the source file into the destination.
 
-        Source must be an existing file. Starting from Robot Framework 2.8.4,
-        it can be given as a glob pattern (see `Pattern matching`) that matches
-        exactly one file. How the destination is interpreted is explained below.
+        Source must be a path to an existing file or a glob pattern (see
+        `Pattern matching`) that matches exactly one file. How the
+        destination is interpreted is explained below.
 
         1) If the destination is an existing file, the source file is copied
         over it.
@@ -850,8 +842,6 @@ class OperatingSystem(object):
         | Copy Files | ${dir}/file-*.txt | ${dir2}          |         |
 
         See also `Copy File`, `Move File`, and `Move Files`.
-
-        New in Robot Framework 2.8.4.
         """
         sources, destination \
             = self._prepare_copy_and_move_files(sources_and_destination)
@@ -878,8 +868,6 @@ class OperatingSystem(object):
         Arguments have exactly same semantics as with `Copy Files` keyword.
 
         See also `Move File`, `Copy File`, and `Copy Files`.
-
-        New in Robot Framework 2.8.4.
         """
         sources, destination \
             = self._prepare_copy_and_move_files(sources_and_destination)
@@ -941,8 +929,8 @@ class OperatingSystem(object):
         If no such environment variable is set, returns the default value, if
         given. Otherwise fails the test case.
 
-        Starting from Robot Framework 2.7, returned variables are automatically
-        decoded to Unicode using the system encoding.
+        Returned variables are automatically decoded to Unicode using
+        the system encoding.
 
         Note that you can also access environment variables directly using
         the variable syntax ``%{ENV_VAR_NAME}``.
@@ -955,9 +943,8 @@ class OperatingSystem(object):
     def set_environment_variable(self, name, value):
         """Sets an environment variable to a specified value.
 
-        Values are converted to strings automatically. Starting from Robot
-        Framework 2.7, set variables are automatically encoded using the system
-        encoding.
+        Values are converted to strings automatically. Set variables are
+        automatically encoded using the system encoding.
         """
         set_env_var(name, value)
         self._info("Environment variable '%s' set to value '%s'."
@@ -983,8 +970,6 @@ class OperatingSystem(object):
         | Should Be Equal                | %{NAME2} | first  |                 |
         | Append To Environment Variable | NAME2    | second | separator=-     |
         | Should Be Equal                | %{NAME2} | first-second             |
-
-        New in Robot Framework 2.8.4.
         """
         sentinel = object()
         initial = self.get_environment_variable(name, sentinel)
@@ -1002,8 +987,8 @@ class OperatingSystem(object):
 
         Does nothing if the environment variable is not set.
 
-        Starting from Robot Framework 2.7, it is possible to remove multiple
-        variables by passing them to this keyword as separate arguments.
+        It is possible to remove multiple variables by passing them to this
+        keyword as separate arguments.
         """
         for name in names:
             value = del_env_var(name)
@@ -1039,8 +1024,6 @@ class OperatingSystem(object):
         Both keys and values are decoded to Unicode using the system encoding.
         Altering the returned dictionary has no effect on the actual environment
         variables.
-
-        New in Robot Framework 2.7.
         """
         return get_env_vars()
 
@@ -1049,8 +1032,6 @@ class OperatingSystem(object):
 
         Environment variables are also returned the same way as with
         `Get Environment Variables` keyword.
-
-        New in Robot Framework 2.7.
         """
         variables = get_env_vars()
         for name in sorted(variables, key=lambda item: item.lower()):
@@ -1263,8 +1244,6 @@ class OperatingSystem(object):
         | Set Modified Time | /path/file | NOW                | # The local time of execution |
         | Set Modified Time | /path/file | NOW - 1 day        | # 1 day subtracted from the local time |
         | Set Modified Time | /path/file | UTC + 1h 2min 3s   | # 1h 2min 3s added to the UTC time |
-
-        Support for UTC time is a new feature in Robot Framework 2.7.5.
         """
         mtime = parse_time(mtime)
         path = self._absnorm(path)

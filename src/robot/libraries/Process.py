@@ -44,8 +44,6 @@ class Process(object):
     - Waiting started process to complete using `Wait For Process` or
       stopping them with `Terminate Process` or `Terminate All Processes`.
 
-    This library is new in Robot Framework 2.8.
-
     == Table of contents ==
 
     - `Specifying command and arguments`
@@ -76,8 +74,7 @@ class Process(object):
     | `Run Process` | java | -jar | ${jars}${/}example.jar | --option | value |
     | `Run Process` | prog.py "one arg" && tool.sh | shell=yes | cwd=${tools} |
 
-    Starting from Robot Framework 2.8.6, possible non-string arguments are
-    converted to strings automatically.
+    Possible non-string arguments are converted to strings automatically.
 
     = Process configuration =
 
@@ -332,9 +329,6 @@ class Process(object):
         | ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} |
 
         This keyword does not change the `active process`.
-
-        ``timeout`` and ``on_timeout`` arguments are new in Robot Framework
-        2.8.4.
         """
         current = self._processes.current
         timeout = configuration.pop('timeout', None)
@@ -355,10 +349,9 @@ class Process(object):
         Makes the started process new `active process`. Returns an identifier
         that can be used as a handle to activate the started process if needed.
 
-        Starting from Robot Framework 2.8.5, processes are started so that
-        they create a new process group. This allows sending signals to and
-        terminating also possible child processes. This is not supported by
-        Jython in general nor by Python versions prior to 2.7 on Windows.
+        Processes are started so that they create a new process group. This
+        allows sending signals to and terminating also possible child
+        processes. This is not supported on Jython.
         """
         conf = ProcessConfiguration(**configuration)
         command = conf.get_command(command, list(arguments))
@@ -447,8 +440,6 @@ class Process(object):
         | ${result} =                 | Wait For Process | timeout=1min 30s | on_timeout=kill |
         | Process Should Be Stopped   |                  |                  |
         | Should Be Equal As Integers | ${result.rc}     | -9               |
-
-        ``timeout`` and ``on_timeout`` are new in Robot Framework 2.8.2.
         """
         process = self._processes[handle]
         logger.info('Waiting for process to complete.')
@@ -504,17 +495,11 @@ class Process(object):
         | Terminate Process           | myproc            | kill=true |
 
         Limitations:
-        - Graceful termination is not supported on Windows by Jython nor by
-          Python versions prior to 2.7. Process is killed instead.
-        - Stopping the whole process group is not supported by Jython at all
-          nor by Python versions prior to 2.7 on Windows.
+        - Graceful termination is not supported on Windows when using Jython.
+          Process is killed instead.
+        - Stopping the whole process group is not supported when using Jython.
         - On Windows forceful kill only stops the main process, not possible
           child processes.
-
-        Automatically killing the process if termination fails as well as
-        returning a result object are new features in Robot Framework 2.8.2.
-        Terminating also possible child processes, including using
-        ``CTRL_BREAK_EVENT`` on Windows, is new in Robot Framework 2.8.5.
         """
         process = self._processes[handle]
         if not hasattr(process, 'terminate'):
@@ -599,9 +584,6 @@ class Process(object):
         To send the signal to the whole process group, ``group`` argument can
         be set to any true value (see `Boolean arguments`). This is not
         supported by Jython, however.
-
-        New in Robot Framework 2.8.2. Support for ``group`` argument is new
-        in Robot Framework 2.8.5.
         """
         if os.sep == '\\':
             raise RuntimeError('This keyword does not work on Windows.')
@@ -686,8 +668,6 @@ class Process(object):
         over the remote library interface. The remote interface does not
         support returning the whole result object, but individual attributes
         can be returned without problems.
-
-        New in Robot Framework 2.8.2.
         """
         result = self._results[self._processes[handle]]
         if result.rc is None:
