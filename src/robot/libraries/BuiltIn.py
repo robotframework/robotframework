@@ -1711,10 +1711,11 @@ class _RunKeyword(_BuiltInBase):
         IF branches must first contain a condition, like the first argument
         to this keyword, and then the keyword to execute and its possible
         arguments. It is possible to have ELSE branch after ELSE IF and to
-        have multiple ELSE IF branches.
+        have multiple ELSE IF branches. Nested `Run Keyword If` usage is not
+        supported when using ELSE and/or ELSE IF branches.
 
         Given previous example, if/else construct can also be created like this:
-        | ${status} | ${value} = | `Run Keyword And Ignore Error` | My Keyword |
+        | ${status} | ${value} = | `Run Keyword And Ignore Error` | `My Keyword` |
         | `Run Keyword If` | '${status}' == 'PASS' | `Some Action` | arg | ELSE | `Another Action` |
 
         The return value of this keyword is the return value of the actually
