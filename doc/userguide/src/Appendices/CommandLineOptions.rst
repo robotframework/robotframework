@@ -58,7 +58,7 @@ Command line options for test execution
   --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_
                           in the generated log file.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
-  --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
+  --warnonskippedfiles    Deprecated. Nowadays all skipped files are reported.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
                           in test cases. Error codes are returned normally.
   --runemptysuite         Executes tests also if the selected `test suites are empty`_.
@@ -176,7 +176,6 @@ Command line options for post-processing outputs
 .. _external links: `Creating links from tag names`_
 
 .. _Sets a listener: `Setting listeners`_
-.. _an invalid file is skipped: `Warning on invalid files`_
 .. _test suites are empty: `When no tests match selection`_
 .. _empty test suites: `test suites are empty`_
 .. _Sets the width: `Console width`_

@@ -130,6 +130,11 @@ class _BaseSettings(object):
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
+        if name == 'WarnOnSkipped':
+            with LOGGER.cache_only:
+                LOGGER.warn("Option '--warnonskippedfiles' is deprecated and "
+                            "has no effect. Nowadays all skipped files are "
+                            "reported.")
         return value
 
     def _escape_as_data(self, value):

@@ -281,10 +281,7 @@ Options
                           the name using colon or semicolon as a separator.
                           Examples: --listener MyListenerClass
                                     --listener path/to/Listener.py:arg1:arg2
-    --warnonskippedfiles  If this option is used, skipped test data files will
-                          cause a warning that is visible in the console output
-                          and the log file. By default skipped files only cause
-                          an info level syslog message.
+    --warnonskippedfiles  Deprecated. Nowadays all skipped files are reported.
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
     --runemptysuite       Executes tests also if the top level test suite is
@@ -435,9 +432,6 @@ class RobotFramework(Application):
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.info('Settings:\n%s' % unic(settings))
-        if settings['WarnOnSkipped'] is not None:
-            LOGGER.error("Option '--warnonskippedfiles is deprecated and "
-                         "has no effect.")
         builder = TestSuiteBuilder(settings['SuiteNames'],
                                    extension=settings.extension,
                                    rpa=settings.rpa)

@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from contextlib import contextmanager
 import os
 
 from robot.errors import DataError
@@ -46,6 +47,7 @@ class Logger(AbstractLogger):
         self._error_listener = None
         self._prev_log_message_handlers = []
         self._enabled = 0
+        self._cache_only = False
         if register_console_logger:
             self.register_console_logger()
 
@@ -137,14 +139,24 @@ class Logger(AbstractLogger):
 
     def message(self, msg):
         """Messages about what the framework is doing, warnings, errors, ..."""
-        for logger in self:
-            logger.message(msg)
+        if not self._cache_only:
+            for logger in self:
+                logger.message(msg)
         if self._message_cache is not None:
             self._message_cache.append(msg)
         if msg.level == 'ERROR':
             self._error_occurred = True
             if self._error_listener:
                 self._error_listener()
+
+    @property
+    @contextmanager
+    def cache_only(self):
+        self._cache_only = True
+        try:
+            yield
+        finally:
+            self._cache_only = False
 
     def _log_message(self, msg):
         """Log messages written (mainly) by libraries."""

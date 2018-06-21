@@ -64,16 +64,6 @@ and the processing continues.
 
 __ `Supported file formats`_
 
-Warning on invalid files
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Normally files that do not have a valid test case table are silently ignored
-with a message written to the syslog_. It is possible to use a command line
-option :option:`--warnonskippedfiles`, which turns the message into a warning
-shown in `test execution errors`__.
-
-__ `Errors and warnings during execution`_
-
 Initialization files
 ~~~~~~~~~~~~~~~~~~~~
 

@@ -38,4 +38,7 @@ Deprecated --WarnOnSkipped
     Run Tests    --warnonskippedfiles    misc/pass_and_fail.robot
     Check Test Case    Pass
     Check Test Case    Fail
-    Check Log Message    ${ERRORS[0]}    Option '--warnonskippedfiles is deprecated and has no effect.    ERROR
+    ${msg} =    Catenate
+    ...    Option '--warnonskippedfiles' is deprecated and has no effect.
+    ...    Nowadays all skipped files are reported.
+    Check Log Message    ${ERRORS[0]}   ${msg}    WARN
