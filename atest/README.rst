@@ -15,11 +15,6 @@ run.py
     A script for running acceptance tests. See `Running acceptance tests`_
     for further instructions.
 
-genrunner.py
-    Script to generate acceptance test runners based on test data files.
-
-    Usage:  ``atest/genrunner.py atest/testdata/path/data.robot [atest/robot/path/runner.robot]``
-
 robot/
     Contains actual acceptance test cases. See `Test data`_ section for details.
 
@@ -38,6 +33,14 @@ results/
     The place for test execution results. This directory is generated when
     acceptance tests are executed. It is in ``.gitignore`` and can be safely
     deleted any time.
+
+genrunner.py
+    Script to generate acceptance test runners (i.e. files under the ``robot``
+    directory) based on the test data files (i.e. files under the ``testdata``
+    directory). Mainly useful if there is one-to-one mapping between tests in
+    the ``testdata`` and ``robot`` directories.
+
+    Usage:  ``atest/genrunner.py atest/testdata/path/data.robot [atest/robot/path/runner.robot]``
 
 Running acceptance tests
 ------------------------
