@@ -10,7 +10,6 @@ ${SUITE FILE}     misc${/}many_tests.robot
 ${SUITE DIR}      misc${/}suites
 ${MYOUTDIR}       %{TEMPDIR}${/}robot-test-145567
 ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
-${ESCAPES}        --escape star:STAR --escape quest:QUEST
 
 *** Test Cases ***
 One Call To Test
@@ -26,10 +25,10 @@ Two Calls to Test with one nonexisting test name
     Run And Check Tests    --test notexists --test First    First
 
 One Call To test with pattern
-    Run And Check Tests    --test STARoneSTAR    Second One    Third One    Fourth One With More Complex Name
+    Run And Check Tests    --test *one*    Second One    Third One    Fourth One With More Complex Name
 
 Two Calls To test with patterns
-    Run And Check Tests    --test STARone --test FiQUESTst    First    Second One    Third One
+    Run And Check Tests    --test *one --test Fi?st    First    Second One    Third One
 
 Suite With One Arg
     Run And Check Suites    --suite tsuite1   Tsuite1
@@ -41,16 +40,16 @@ Suite With Matching and nonMatching args
     Run And Check Suites    --suite tsuite1 --suite notexists   Tsuite1
 
 Suite With Pattern in arg
-    Run And Check Suites    --suite tSTAR    Tsuite1   Tsuite2   Tsuite3
+    Run And Check Suites    --suite t*    Tsuite1   Tsuite2   Tsuite3
 
 Suite Under Subdirectory
     Run And Check Suites Within Subdirs    --suite sub1   Sub1
 
 Suite Under Subdirectory Using Pattern
-    Run And Check Suites Within Subdirs    --suite subQUEST    Sub1    Sub2
+    Run And Check Suites Within Subdirs    --suite sub?    Sub1    Sub2
 
 Suite and test together
-    Run And Check Suites and Tests    --suite tsuite1 --suite tsuite3 --test STAR1first --test STAR2STAR    Tsuite1    Suite1 First
+    Run And Check Suites and Tests    --suite tsuite1 --suite tsuite3 --test *1first --test *2*    Tsuite1    Suite1 First
 
 No matching tests
     Failing Rebot
@@ -81,7 +80,7 @@ No matching suites when reboting multiple inputs
 No Matching Tests In Matching Suites
     Failing Rebot
     ...     Suite 'Many Tests & Suites' contains no tests named 'first', 'nonex' or '*one' in suites 'nonex' or 'suites'.
-    ...    --suite nonex --suite suites --test first --test nonex --test STARone ${ESCAPES}    ${INPUT FILE}
+    ...    --suite nonex --suite suites --test first --test nonex --test *one    ${INPUT FILE}
 
 Elapsed Time
     [Documentation]    Test setting start, end and elapsed times correctly when filtering by tags
@@ -97,7 +96,7 @@ Elapsed Time
     Should Be Equal As Integers    ${SUITE.test_count}    6
     Comment    2) Filter output created in earlier step and check    that times are set accordingly.
     Copy Previous Outfile
-    Run Rebot    --test ExcSTAR --test Incl-1 ${ESCAPES}    ${OUTFILE COPY}
+    Run Rebot    --test Exc* --test Incl-1    ${OUTFILE COPY}
     Check Times    ${SUITE.tests[0]}    20061227 12:00:00.000    20061227 12:00:01.000    1000    # Incl-1
     Check Times    ${SUITE.tests[1]}    20061227 12:00:07.000    20061227 12:00:07.001    0001    # Excl-1
     Check Times    ${SUITE.tests[2]}    20061227 12:00:07.001    20061227 12:00:07.003    0002    # Excl-12
@@ -116,7 +115,7 @@ Remove Temps
 
 Run and check Tests
     [Arguments]    ${params}    @{tests}
-    Run Rebot    ${params} ${ESCAPES}    ${INPUT FILE}
+    Run Rebot    ${params}    ${INPUT FILE}
     Stderr Should Be Empty
     Should Contain Tests    ${SUITE}    @{tests}
     Should Be True    ${SUITE.statistics.all.passed} == len(@{tests})
@@ -151,10 +150,10 @@ Run And Check Suites and Tests
 
 Run Suites
     [Arguments]    ${options}
-    Run Rebot    ${options} ${ESCAPES}    ${INPUT FILE}
+    Run Rebot    ${options}    ${INPUT FILE}
     Stderr Should Be Empty
 
 Failing Rebot
     [Arguments]    ${error}    ${options}    ${sources}
-    Run Rebot Without Processing Output    ${options} ${ESCAPES}    ${sources}
+    Run Rebot Without Processing Output    ${options}    ${sources}
     Stderr Should Be Equal To    [ ERROR ] ${error}${USAGE TIP}\n

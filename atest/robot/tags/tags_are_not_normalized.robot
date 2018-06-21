@@ -30,7 +30,7 @@ Criticality Works In Normalized Manner
 
 Rebot Keeps Tags In Original Format
     Copy Previous Outfile
-    Run Rebot    --exclude LOWER --exclude 2spaces --exclude *D?O?T?S* --settag AddedSPACEtag --escape space:SPACE    ${OUTFILE COPY}
+    Run Rebot    --exclude LOWER --exclude 2spaces --exclude *D?O?T?S* --settag "Added tag"    ${OUTFILE COPY}
     Check Test Tags    Sorting Is Normalized    A 0    a1    A2    Added tag
     Check Test Tags    Normalized Duplicates Are Removed    Added tag    hello
     Should Be Equal    ${STATISTICS.tags.tags['tag'].failed}    ${5}
