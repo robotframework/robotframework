@@ -236,7 +236,7 @@ def ClassDocLike(path):
             return self.__dimension(self.__typeMirror)
 
         def __dimension(self, typeMirror):
-            if typeMirror.getKind != TypeKind.ARRAY:
+            if typeMirror.getKind() != TypeKind.ARRAY:
                 return ''
             return '[]' + self.__dimension(typeMirror.getComponentType())
 
@@ -271,10 +271,13 @@ def ClassDocLike(path):
             constructor.getSimpleName().toString(), elements.getDocComment(constructor), create_parameters(constructor))
         for constructor in ElementFilter.constructorsIn(members)
     ]
+
+    declaredMethods = filter(lambda member: member.getEnclosingElement() is typeElement, ElementFilter.methodsIn(members))
+
     methods = [
         __MethodDocLike(
             method.getSimpleName().toString(), elements.getDocComment(method), create_parameters(method))
-        for method in ElementFilter.methodsIn(members)
+        for method in declaredMethods
     ]
 
     return __ClassDocLike(typeElement.getQualifiedName().toString(),
