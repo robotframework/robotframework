@@ -529,18 +529,12 @@ The syntax for setting individual variables is :option:`--variable
 name:value`, where `name` is the name of the variable without
 `${}` and `value` is its value. Several variables can be
 set by using this option several times. Only scalar variables can be
-set using this syntax and they can only get string values. Many
-special characters are difficult to represent in the
-command line, but they can be escaped__ with the :option:`--escape`
-option.
-
-__ `Escaping complicated characters`_
+set using this syntax and they can only get string values.
 
 .. sourcecode:: bash
 
    --variable EXAMPLE:value
    --variable HOST:localhost:7272 --variable USER:robot
-   --variable ESCAPED:Qquotes_and_spacesQ --escape quot:Q --escape space:_
 
 In the examples above, variables are set so that
 

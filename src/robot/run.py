@@ -112,8 +112,7 @@ Options
  -t --test name *         Select test cases to run by name or long name. Name
                           is case and space insensitive and it can also be a
                           simple pattern where `*` matches anything and `?`
-                          matches any char. If using `*` and `?` in the console
-                          is problematic see --escape and --argumentfile.
+                          matches any char.
     --task name *         Alias to --test. Especially applicable with --rpa.
  -s --suite name *        Select test suites to run by name. When this option
                           is used with --test, --include or --exclude, only
@@ -144,8 +143,7 @@ Options
                           have a tag set with --critical. Tag can be a pattern.
  -v --variable name:value *  Set variables in the test data. Only scalar
                           variables with string value are supported and name is
-                          given without `${}`. See --escape for how to use
-                          special characters and --variablefile for a more
+                          given without `${}`. See --variablefile for a more
                           powerful variable setting mechanism.
                           Examples:
                           --variable str:Hello       =>  ${str} = `Hello`
@@ -332,21 +330,11 @@ Options
                           they are imported. Multiple paths can be given by
                           separating them with a colon (`:`) or by using this
                           option several times. Given path can also be a glob
-                          pattern matching multiple paths but then it normally
-                          must be escaped or quoted.
+                          pattern matching multiple paths.
                           Examples:
-                          --pythonpath libs/
+                          --pythonpath libs/ --pythonpath resources/*.jar
                           --pythonpath /opt/testlibs:mylibs.zip:yourlibs
-                          -E star:STAR -P lib/STAR.jar -P mylib.jar
- -E --escape what:with *  Escape characters which are problematic in console.
-                          `what` is the name of the character to escape and
-                          `with` is the string to escape it with. Note that
-                          all given arguments, incl. data sources, are escaped
-                          so escape characters ought to be selected carefully.
-                          <--------------------ESCAPES------------------------>
-                          Examples:
-                          --escape space:_ --metadata X:Value_with_spaces
-                          -E space:SP -E quot:Q -v var:QhelloSPworldQ
+ -E --escape what:with *  Deprecated. Use console escape mechanism instead.
  -A --argumentfile path *  Text file to read more arguments from. Use special
                           path `STDIN` to read contents from the standard input
                           stream. File can have both options and data sources
@@ -503,8 +491,8 @@ def run(*tests, **options):
         hyphens so that, for example, ``--name`` becomes ``name``.
 
     Most options that can be given from the command line work. An exception
-    is that options ``--pythonpath``, ``--argumentfile``, ``--escape`` ,
-    ``--help`` and ``--version`` are not supported.
+    is that options ``--pythonpath``, ``--argumentfile``, ``--help`` and
+    ``--version`` are not supported.
 
     Options that can be given on the command line multiple times can be
     passed as lists. For example, ``include=['tag1', 'tag2']`` is equivalent

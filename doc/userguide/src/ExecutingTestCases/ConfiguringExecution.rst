@@ -383,15 +383,13 @@ the word Python in it, it works also on Jython and IronPython.
 Multiple locations can be given by separating them with a colon, regardless
 the operating system, or by using this option several times. The given path
 can also be a glob pattern matching multiple paths, but then it typically
-needs to be escaped__.
-
-__ `Escaping complicated characters`_
+needs to be escaped when used on the console.
 
 Examples::
 
    --pythonpath libs
    --pythonpath /opt/testlibs:mylibs.zip:yourlibs
-   --pythonpath mylib.jar --pythonpath lib/STAR.jar --escape star:STAR
+   --pythonpath mylib.jar --pythonpath lib/\*.jar    # '*' is escaped
 
 Configuring `sys.path` programmatically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
