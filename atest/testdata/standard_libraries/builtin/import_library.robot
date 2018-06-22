@@ -49,7 +49,6 @@ Import Library From Path
     Import Library    ExampleLibrary.py
     Print    hello
 
-Extra Spaces In Name Are Deprecated
+Extra Spaces In Name Are Not Supported
+    [Documentation]    FAIL STARTS: Importing test library 'Date Time' failed: ImportError:
     Import Library    Date Time
-    Get Current Date
-    DateTime.Get Current Date

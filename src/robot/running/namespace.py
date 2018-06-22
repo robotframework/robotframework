@@ -155,14 +155,6 @@ class Namespace(object):
 
     def _get_name(self, name, import_setting):
         if import_setting.type == 'Library' and not self._is_library_by_path(name):
-            if ' ' in name:
-                # TODO: Remove support for extra spaces in name in RF 3.1.
-                # https://github.com/robotframework/robotframework/issues/2264
-                warning = ("Importing library with extra spaces in name like "
-                           "'%s' is deprecated. Remove spaces and use '%s' "
-                           "instead." % (name, name.replace(' ', '')))
-                import_setting.report_invalid_syntax(warning, 'WARN')
-                name = name.replace(' ', '')
             return name
         return find_file(name, import_setting.directory,
                          file_type=import_setting.type)
