@@ -101,7 +101,9 @@ class FromFilePopulator(object):
             self._populator.add(data)
 
     def _replace_curdirs_in(self, row):
-        return [cell.replace('${CURDIR}', self._curdir) for cell in row]
+        old, new = '${CURDIR}', self._curdir
+        return [cell if old not in cell else cell.replace(old, new)
+                for cell in row]
 
 
 class FromDirectoryPopulator(object):
