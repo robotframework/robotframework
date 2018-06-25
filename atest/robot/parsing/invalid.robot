@@ -19,17 +19,16 @@ HTML File Not Containing Tests
 
 Directory Containing No Test Cases
     Run Tests Without Processing Output    ${EMPTY}    ${NO TESTS}
-    Check Stderr Contains    [ ERROR ] Suite 'Notests' contains no tests.${USAGE_TIP}
+    Stderr Should Be Equal To    [ ERROR ] Suite 'Notests' contains no tests.${USAGE_TIP}\n
 
 File Containing No Test Cases
     Run Tests Without Processing Output    ${EMPTY}    ${EMPTY TC TABLE}
-    Check Stderr Contains    [ ERROR ] Suite 'Empty Testcase Table' contains no tests.${USAGE_TIP}
+    Stderr Should Be Equal To    [ ERROR ] Suite 'Empty Testcase Table' contains no tests.${USAGE_TIP}\n
 
 Multisource Containing No Test Cases
-    Run Tests Without Processing Output    ${EMPTY}    ${HTMLDIR}/empty.html ${TSVDIR}/empty.tsv
-    ${html} =    Normalize Path    ${DATADIR}/${HTMLDIR}/empty.html
-    ${tsv} =    Normalize Path    ${DATADIR}/${TSVDIR}/empty.tsv
-    Check Stderr Contains    [ ERROR ] Parsing '${html}' failed: ${NO TC TABLE MSG}
+    Run Tests Without Processing Output    ${EMPTY}    ${ROBOTDIR}/empty.robot ${ROBOTDIR}/sample.robot
+    ${path} =    Normalize Path    ${ROBOTDIR}/empty.robot
+    Stderr Should Be Equal To    [ ERROR ] Parsing '${path}' failed: ${NO TC TABLE MSG}${USAGE TIP}\n
 
 Empty HTML File
     Check Parsing Error    empty.html    ${NO TC TABLE MSG}    ${HTMLDIR}/empty.html

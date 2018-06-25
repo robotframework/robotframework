@@ -23,25 +23,25 @@ Creating logs and reports should succeed
     Stderr should be empty
 
 Failures processing files are handled gracefully
-    ${path} =    Normalize Path    ${BASEDIR}/Työ/tyhjä.txt
+    ${path} =    Normalize Path    ${BASEDIR}/Työ/tyhjä.robot
     Check syslog contains    Data source '${path}' has no tests or tasks.
 
 *** Keywords ***
 Create input data and run tests
     Create input data
-    Run Tests    --log ulog.html --report ureport.html    parsing/non_ascii_paths/testäö.txt parsing/non_ascii_paths/Työ
+    Run Tests    --log ulog.html --report ureport.html    parsing/non_ascii_paths/testäö.robot parsing/non_ascii_paths/Työ
 
 Create input data
     [Documentation]    Mercurial doesn't seem to handle non-ASCII file names too well.
     ...    Need to store files with ASCII names and rename them during execution.
-    Move File    ${BASEDIR}/test-auml-ouml.robot    ${BASEDIR}/testäö.txt
-    Move Directory    ${BASEDIR}/Ty-ouml    ${BASEDIR}/Työ
-    Move File    ${BASEDIR}/Työ/tyhj-auml.robot    ${BASEDIR}/Työ/tyhjä.txt
-    Move File    ${BASEDIR}/Työ/sect-test-sect.robot    ${BASEDIR}/Työ/§test§.txt
+    Move Directory    ${BASEDIR}/Ty-ouml                     ${BASEDIR}/Työ
+    Move File         ${BASEDIR}/Työ/tyhj-auml.robot         ${BASEDIR}/Työ/tyhjä.robot
+    Move File         ${BASEDIR}/Työ/sect-test-sect.robot    ${BASEDIR}/Työ/§test§.robot
+    Move File         ${BASEDIR}/test-auml-ouml.robot        ${BASEDIR}/testäö.robot
 
 Revert input data
     [Documentation]    Revert ASCII -> non-ASCII conversion done by `Create input data`.
-    Move File    ${BASEDIR}/Työ/§test§.txt    ${BASEDIR}/Työ/sect-test-sect.robot
-    Move File    ${BASEDIR}/Työ/tyhjä.txt    ${BASEDIR}/Työ/tyhj-auml.robot
-    Move Directory    ${BASEDIR}/Työ    ${BASEDIR}/Ty-ouml
-    Move File    ${BASEDIR}/testäö.txt    ${BASEDIR}/test-auml-ouml.robot
+    Move File         ${BASEDIR}/Työ/§test§.robot   ${BASEDIR}/Työ/sect-test-sect.robot
+    Move File         ${BASEDIR}/Työ/tyhjä.robot    ${BASEDIR}/Työ/tyhj-auml.robot
+    Move Directory    ${BASEDIR}/Työ                ${BASEDIR}/Ty-ouml
+    Move File         ${BASEDIR}/testäö.robot       ${BASEDIR}/test-auml-ouml.robot

@@ -47,7 +47,7 @@ Recursive Argument File
     Should Be Equal    ${SUITE.metadata['Second']}    2
 
 Argument File with Non-ASCII Characters
-    ${path} =    Copy File    ${DATADIR}/parsing/non_ascii_paths/test-auml-ouml.robot    %{TEMPDIR}/testäö.txt
+    ${path} =    Copy File    ${DATADIR}/parsing/non_ascii_paths/test-auml-ouml.robot    %{TEMPDIR}/testäö.robot
     Create Argument File    ${ÄRGFÏLË}    -D äëïöüÿ    -C off    ${path}
     ${result} =    Run Tests    --argumentfile ${ÄRGFÏLË}
     Execution Should Have Succeeded    ${result}
