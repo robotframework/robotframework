@@ -11,7 +11,7 @@ Normal Library Import
 Library Import With Spaces In Name Does Not Work
     Check Test Case    ${TESTNAME}
     Check Log Message    ${ERRORS[0]}
-    ...    Error in file '*': Importing test library 'Date Time' failed: ImportError: *
+    ...    Error in file '*': Importing test library 'Date Time' failed: *Error: *
     ...    ERROR    pattern=true
 
 Importing Library Class Should Have Been Syslogged
