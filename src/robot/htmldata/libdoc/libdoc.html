@@ -82,6 +82,7 @@
     function scrollToHash() {
         if (window.location.hash) {
             var hash = window.location.hash.substring(1).replace('+', ' ');
+            window.location.hash = '';
             window.location.hash = hash;
         }
     }

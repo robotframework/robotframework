@@ -48,13 +48,13 @@ $(document).ready(function () {
         addJavaScriptDisabledWarning(error);
         return;
     }
+    window.prevLocationHash = '';
     setBackground(topsuite);
     initLayout(topsuite.name, 'Report');
     storage.init('report');
     addSummary(topsuite);
     addStatistics();
     addDetails();
-    window.prevLocationHash = '';
     window.onhashchange = showDetailsByHash;
 });
 
@@ -118,7 +118,7 @@ function showDetailsByHash() {
         var params = util.parseQueryString(query);
         searchExecuted(params.suite || '', params.test || '',
                        params.include || '', params.exclude || '');
-        return
+        return;
     }
     query = decodeURIComponent(query);
     var action = {'totals': totalDetailSelected,
@@ -272,6 +272,7 @@ function searchTests(suitePattern, testPattern, includePattern, excludePattern) 
 function scrollToSelector(base, query) {
     $('#test-details-container').css('min-height', $(window).height());
     var anchor = query ? base + '?' + encodeURIComponent(query) : base;
+    window.location.hash = '';
     window.location.hash = window.prevLocationHash = anchor;
 }
 
