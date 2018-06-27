@@ -161,15 +161,5 @@ class ClosableOutput(object):
         return self._path
 
 
-if os.name == 'java':
-    from java.io import OutputStream
-    from java.lang import String
-
-    class ClosableOutput(ClosableOutput, OutputStream):
-
-        def write(self, *args):
-            self._output.write(String(args[0]))
-
-
 if __name__ == '__main__':
     unittest.main()
