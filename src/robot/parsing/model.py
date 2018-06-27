@@ -137,6 +137,7 @@ class _TestData(object):
         return DataFileWriter(**options).write(self)
 
 
+@py2to3
 class TestCaseFile(_TestData):
     """The parsed test case file object.
 
@@ -168,6 +169,9 @@ class TestCaseFile(_TestData):
         for table in [self.setting_table, self.variable_table,
                       self.testcase_table, self.keyword_table]:
             yield table
+
+    def __nonzero__(self):
+        return any(table for table in self)
 
 
 class ResourceFile(_TestData):
@@ -435,7 +439,6 @@ class VariableTable(_Table):
         return iter(self.variables)
 
 
-@py2to3
 class TestCaseTable(_Table):
     type = 'test case'
 
@@ -467,9 +470,6 @@ class TestCaseTable(_Table):
 
     def is_started(self):
         return bool(self._header)
-
-    def __nonzero__(self):
-        return True
 
 
 class KeywordTable(_Table):

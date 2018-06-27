@@ -13,9 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os.path
 import warnings
 
 from robot.errors import DataError
+from robot.output import LOGGER
 from robot.parsing import TestData, ResourceFile as ResourceData, VALID_EXTENSIONS
 from robot.running.defaults import TestDefaults
 from robot.utils import abspath, is_string, normalize, unic
@@ -98,6 +100,7 @@ class TestSuiteBuilder(object):
     def _build_suite(self, data, parent_defaults=None):
         if self._rpa_not_given and data.testcase_table.is_started():
             self._set_execution_mode(data)
+        self._check_deprecated_extensions(data.source)
         defaults = TestDefaults(data.setting_table, parent_defaults)
         suite = TestSuite(name=data.name,
                           source=data.source,
@@ -124,6 +127,20 @@ class TestSuiteBuilder(object):
                             "or use '--rpa' or '--norpa' options to set the "
                             "execution mode explicitly."
                             % (data.source, this, that))
+
+    def _check_deprecated_extensions(self, source):
+        if os.path.isdir(source):
+            return
+        ext = os.path.splitext(source)[1][1:].lower()
+        if self.extensions and ext in self.extensions:
+            return
+        # HTML files cause deprecation warning that cannot be avoided with
+        # --extension at parsing time. No need for double warning.
+        if ext not in ('robot', 'html', 'htm', 'xhtml'):
+            LOGGER.warn("Automatically parsing other than '*.robot' files is "
+                        "deprecated. Convert '%s' to '*.robot' format or use "
+                        "'--extension' to explicitly configure which files to "
+                        "parse." % source)
 
     def _get_metadata(self, settings):
         # Must return as a list to preserve ordering

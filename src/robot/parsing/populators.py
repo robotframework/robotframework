@@ -26,13 +26,13 @@ from .tablepopulators import (SettingTablePopulator, VariableTablePopulator,
                               NullPopulator)
 from .htmlreader import HtmlReader
 from .tsvreader import TsvReader
-from .txtreader import TxtReader
+from .robotreader import RobotReader
 from .restreader import RestReader
 
 
 READERS = {'html': HtmlReader, 'htm': HtmlReader, 'xhtml': HtmlReader,
            'tsv': TsvReader , 'rst': RestReader, 'rest': RestReader,
-           'txt': TxtReader, 'robot': TxtReader}
+           'txt': RobotReader, 'robot': RobotReader}
 
 # Hook for external tools for altering ${CURDIR} processing
 PROCESS_CURDIR = True
@@ -92,6 +92,8 @@ class FromFilePopulator(object):
 
     def eof(self):
         self._populator.populate()
+        self._populator = NullPopulator()
+        return bool(self._datafile)
 
     def add(self, row):
         if PROCESS_CURDIR and self._curdir:
