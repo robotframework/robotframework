@@ -586,12 +586,13 @@ function hideHiddenDetailsColumns(elem) {
                  onclick="searchExecuted($('#search-suite').val(),
                                          $('#search-test').val(),
                                          $('#search-include').val(),
-                                         $('#search-exclude').val())">
+                                         $('#search-exclude').val());
+                          return false;">
           <input type="button" value="Clear"
                  onclick="$('#search-suite').val('');
                           $('#search-test').val('');
                           $('#search-include').val('');
-                          $('#search-exclude').val('')">
+                          $('#search-exclude').val('');">
           <a href="javascript:void(0)" onclick="$('#search-help').toggle()"
              title="Toggle search help.">Help</a>
         </td>
