@@ -3,6 +3,9 @@ Test Setup        Create Dictionaries For Testing
 Resource          collections_resources.robot
 Library           CollectionsHelperLibrary.py
 
+*** Variables ***
+${D4}    a=${1}    b=${2}
+
 *** Test Cases ***
 Convert To Dictionary
     ${dotted} =    Create Dictionary    a=1    b=2
@@ -232,6 +235,11 @@ Pop From Dictionary With Default
     Should be equal    ${a}    foo
     Should be True   $dict == {'b': 'val2'}
 
+Check dict error
+    [Documentation]    FAIL
+    ...    TypeError: Item must be dictionary, got 'string'.
+    ${value} =    Get from dictionary    ${D4}    a
+
 *** Keywords ***
 Create Dictionaries For Testing
     ${D0}    Create Dictionary
@@ -248,3 +256,4 @@ Create Dictionaries For Testing
     Set Test Variable    \${D3B}
     ${BIG} =    Evaluate    {'a': 1, 'B': 2, 3: [42], 'd': '', '': 'e', (): {}}
     Set Test Variable    \${BIG}
+    Set Test Variable    \${D4}

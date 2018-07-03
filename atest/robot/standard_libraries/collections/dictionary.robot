@@ -157,3 +157,6 @@ Pop From Dictionary Without Default
 
 Pop From Dictionary With Default
     Check Test Case    ${TEST NAME}
+
+Check dict error
+    Check Test Case    ${TEST NAME}

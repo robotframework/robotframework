@@ -590,6 +590,8 @@ class _Dictionary(object):
         =>
         | ${value} = 2
         """
+
+        self._check_if_is_dictionary(dictionary)
         try:
             return dictionary[key]
         except KeyError:
@@ -726,6 +728,12 @@ class _Dictionary(object):
                 assert_equal(dict1[key], dict2[key], msg='Key %s' % (key,))
             except AssertionError as err:
                 yield unic(err)
+
+    def _check_if_is_dictionary(self, dictionary):
+        if not is_dict_like(dictionary):
+            raise TypeError("Item must be dictionary, got '%s'." % type_name(dictionary))
+        else:
+            return
 
 
 class Collections(_List, _Dictionary):
