@@ -4,7 +4,8 @@ Resource          collections_resources.robot
 Library           CollectionsHelperLibrary.py
 
 *** Variables ***
-${D4}    a=${1}    b=${2}
+${dict_string}    This is a string not a dictionary.
+${dict_error}     TypeError: Item must be dictionary, got 'string'.
 
 *** Test Cases ***
 Convert To Dictionary
@@ -236,9 +237,24 @@ Pop From Dictionary With Default
     Should be True   $dict == {'b': 'val2'}
 
 Check dict error
-    [Documentation]    FAIL
-    ...    TypeError: Item must be dictionary, got 'string'.
-    ${value} =    Get from dictionary    ${D4}    a
+    [Template]    Run keyword and expect error
+    ${dict_error}    Copy dictionary                            ${dict_string}
+    ${dict_error}    Dictionary Should Contain Item             ${dict_string}    a    b
+    # ${dict_error}    Dictionaries Should Be Equal               ${dict_string}    ${dict_string}
+    ${dict_error}    Dictionary Should Contain Key              ${dict_string}    a
+    # ${dict_error}    Dictionary Should Contain Sub Dictionary   ${dict_string}    ${dict_string}
+    ${dict_error}    Dictionary Should Contain Value            ${dict_string}    a
+    ${dict_error}    Dictionary Should Not Contain Key          ${dict_string}    a
+    ${dict_error}    Dictionary Should Not Contain Value        ${dict_string}    a
+    ${dict_error}    Get Dictionary Items                       ${dict_string}
+    # ${dict_error}    Get Dictionary Keys                        ${dict_string}
+    ${dict_error}    Get Dictionary Values                      ${dict_string}
+    ${dict_error}    Get from dictionary                        ${dict_string}    a
+    ${dict_error}    Keep in dictionary                         ${dict_string}    a
+    ${dict_error}    Log Dictionary                             ${dict_string}
+    ${dict_error}    Pop From Dictionary                        ${dict_string}    a
+    ${dict_error}    Remove From Dictionary                     ${dict_string}    a
+    ${dict_error}    Set To Dictionary                          ${dict_string}    a    1
 
 *** Keywords ***
 Create Dictionaries For Testing
@@ -256,4 +272,3 @@ Create Dictionaries For Testing
     Set Test Variable    \${D3B}
     ${BIG} =    Evaluate    {'a': 1, 'B': 2, 3: [42], 'd': '', '': 'e', (): {}}
     Set Test Variable    \${BIG}
-    Set Test Variable    \${D4}

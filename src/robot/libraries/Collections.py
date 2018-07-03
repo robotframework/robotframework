@@ -463,6 +463,7 @@ class _Dictionary(object):
 
         If given keys already exist in the dictionary, their values are updated.
         """
+        self._check_if_is_dictionary(dictionary)
         if len(key_value_pairs) % 2 != 0:
             raise ValueError("Adding data to a dictionary failed. There "
                              "should be even number of key-value-pairs.")
@@ -482,6 +483,7 @@ class _Dictionary(object):
         =>
         | ${D3} = {'a': 1, 'c': 3}
         """
+        self._check_if_is_dictionary(dictionary)
         for key in keys:
             if key in dictionary:
                 value = dictionary.pop(key)
@@ -504,6 +506,7 @@ class _Dictionary(object):
 
         New in Robot Framework 2.9.2.
         """
+        self._check_if_is_dictionary(dictionary)
         if default is NOT_SET:
             self.dictionary_should_contain_key(dictionary, key)
             return dictionary.pop(key)
@@ -520,6 +523,7 @@ class _Dictionary(object):
         =>
         | ${D5} = {'b': 2, 'd': 4}
         """
+        self._check_if_is_dictionary(dictionary)
         remove_keys = [k for k in dictionary if k not in keys]
         self.remove_from_dictionary(dictionary, *remove_keys)
 
@@ -528,6 +532,7 @@ class _Dictionary(object):
 
         The given dictionary is never altered by this keyword.
         """
+        self._check_if_is_dictionary(dictionary)
         return dictionary.copy()
 
     def get_dictionary_keys(self, dictionary):
@@ -559,6 +564,7 @@ class _Dictionary(object):
         =>
         | ${values} = [1, 2, 3]
         """
+        self._check_if_is_dictionary(dictionary)
         return [dictionary[k] for k in self.get_dictionary_keys(dictionary)]
 
     def get_dictionary_items(self, dictionary):
@@ -572,6 +578,7 @@ class _Dictionary(object):
         =>
         | ${items} = ['a', 1, 'b', 2, 'c', 3]
         """
+        self._check_if_is_dictionary(dictionary)
         ret = []
         for key in self.get_dictionary_keys(dictionary):
             ret.extend((key, dictionary[key]))
@@ -604,6 +611,7 @@ class _Dictionary(object):
 
         The given dictionary is never altered by this keyword.
         """
+        self._check_if_is_dictionary(dictionary)
         default = "Dictionary does not contain key '%s'." % key
         _verify_condition(key in dictionary, default, msg)
 
@@ -614,6 +622,7 @@ class _Dictionary(object):
 
         The given dictionary is never altered by this keyword.
         """
+        self._check_if_is_dictionary(dictionary)
         default = "Dictionary contains key '%s'." % key
         _verify_condition(key not in dictionary, default, msg)
 
@@ -625,6 +634,7 @@ class _Dictionary(object):
         See `Lists Should Be Equal` for an explanation of ``msg``.
         The given dictionary is never altered by this keyword.
         """
+        self._check_if_is_dictionary(dictionary)
         self.dictionary_should_contain_key(dictionary, key, msg)
         actual, expected = unic(dictionary[key]), unic(value)
         default = "Value of dictionary key '%s' does not match: %s != %s" % (key, actual, expected)
@@ -637,6 +647,7 @@ class _Dictionary(object):
 
         The given dictionary is never altered by this keyword.
         """
+        self._check_if_is_dictionary(dictionary)
         default = "Dictionary does not contain value '%s'." % value
         _verify_condition(value in dictionary.values(), default, msg)
 
@@ -647,6 +658,7 @@ class _Dictionary(object):
 
         The given dictionary is never altered by this keyword.
         """
+        self._check_if_is_dictionary(dictionary)
         default = "Dictionary contains value '%s'." % value
         _verify_condition(not value in dictionary.values(), default, msg)
 
@@ -675,6 +687,8 @@ class _Dictionary(object):
 
         The given dictionaries are never altered by this keyword.
         """
+        self._check_if_is_dictionary(dict1)
+        self._check_if_is_dictionary(dict2)
         keys = self.get_dictionary_keys(dict2)
         diffs = [unic(k) for k in keys if k not in dict1]
         default = "Following keys missing from first dictionary: %s" \
@@ -690,6 +704,7 @@ class _Dictionary(object):
         If you only want to log the size, use keyword `Get Length` from
         the BuiltIn library.
         """
+        self._check_if_is_dictionary(dictionary)
         logger.write('\n'.join(self._log_dictionary(dictionary)), level)
 
     def _log_dictionary(self, dictionary):
@@ -732,8 +747,6 @@ class _Dictionary(object):
     def _check_if_is_dictionary(self, dictionary):
         if not is_dict_like(dictionary):
             raise TypeError("Item must be dictionary, got '%s'." % type_name(dictionary))
-        else:
-            return
 
 
 class Collections(_List, _Dictionary):
