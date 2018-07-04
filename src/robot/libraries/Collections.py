@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.api import logger
-from robot.utils import (is_dict_like, is_string, is_truthy, plural_or_not,
+from robot.utils import (is_dict_like, is_number, is_string, is_truthy, plural_or_not,
                          seq2str, seq2str2, type_name, unic, Matcher)
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
@@ -747,9 +747,8 @@ class _Dictionary(object):
                 yield unic(err)
 
     def _validate_dictionary(self, dictionary, position='first'):
-        if not is_dict_like(dictionary):
+        if is_string(dictionary) or is_number(dictionary):
             raise TypeError("Expected %s argument to be a dictionary, got '%s' instead." % (position, type_name(dictionary)))
-
 
 class Collections(_List, _Dictionary):
     """A test library providing keywords for handling lists and dictionaries.
