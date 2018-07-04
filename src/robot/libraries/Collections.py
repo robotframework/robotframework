@@ -546,6 +546,7 @@ class _Dictionary(object):
         =>
         | ${keys} = ['a', 'b', 'c']
         """
+        self._validate_dictionary(dictionary)
         # TODO: Possibility to disable sorting. Can be handy with OrderedDicts.
         keys = dictionary.keys()
         try:
@@ -674,6 +675,8 @@ class _Dictionary(object):
 
         The given dictionaries are never altered by this keyword.
         """
+        self._validate_dictionary(dict1)
+        self._validate_dictionary(dict2, 'second')
         keys = self._keys_should_be_equal(dict1, dict2, msg, values)
         self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
 
@@ -687,7 +690,7 @@ class _Dictionary(object):
         The given dictionaries are never altered by this keyword.
         """
         self._validate_dictionary(dict1)
-        self._validate_dictionary(dict2)
+        self._validate_dictionary(dict2, 'second')
         keys = self.get_dictionary_keys(dict2)
         diffs = [unic(k) for k in keys if k not in dict1]
         default = "Following keys missing from first dictionary: %s" \
@@ -743,9 +746,9 @@ class _Dictionary(object):
             except AssertionError as err:
                 yield unic(err)
 
-    def _validate_dictionary(self, dictionary):
+    def _validate_dictionary(self, dictionary, position='first'):
         if not is_dict_like(dictionary):
-            raise TypeError("Item must be dictionary, got '%s'." % type_name(dictionary))
+            raise TypeError("Expected %s argument to be a dictionary, got '%s' instead." % (position, type_name(dictionary)))
 
 
 class Collections(_List, _Dictionary):

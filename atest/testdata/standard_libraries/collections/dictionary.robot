@@ -5,7 +5,7 @@ Library           CollectionsHelperLibrary.py
 
 *** Variables ***
 ${dict_string}    This is a string not a dictionary.
-${dict_error}     TypeError: Item must be dictionary, got 'string'.
+${dict_error}     TypeError: Expected first argument to be a dictionary, got 'string' instead.
 
 *** Test Cases ***
 Convert To Dictionary
@@ -236,27 +236,34 @@ Pop From Dictionary With Default
     Should be equal    ${a}    foo
     Should be True   $dict == {'b': 'val2'}
 
-Check dict error
-    [Template]    Run keyword and expect error
-    ${dict_error}    Copy dictionary                            ${dict_string}
-    ${dict_error}    Dictionary Should Contain Item             ${dict_string}    a    b
-    # ${dict_error}    Dictionaries Should Be Equal               ${dict_string}    ${dict_string}
-    ${dict_error}    Dictionary Should Contain Key              ${dict_string}    a
-    # ${dict_error}    Dictionary Should Contain Sub Dictionary   ${dict_string}    ${dict_string}
-    ${dict_error}    Dictionary Should Contain Value            ${dict_string}    a
-    ${dict_error}    Dictionary Should Not Contain Key          ${dict_string}    a
-    ${dict_error}    Dictionary Should Not Contain Value        ${dict_string}    a
-    ${dict_error}    Get Dictionary Items                       ${dict_string}
-    # ${dict_error}    Get Dictionary Keys                        ${dict_string}
-    ${dict_error}    Get Dictionary Values                      ${dict_string}
-    ${dict_error}    Get from dictionary                        ${dict_string}    a
-    ${dict_error}    Keep in dictionary                         ${dict_string}    a
-    ${dict_error}    Log Dictionary                             ${dict_string}
-    ${dict_error}    Pop From Dictionary                        ${dict_string}    a
-    ${dict_error}    Remove From Dictionary                     ${dict_string}    a
-    ${dict_error}    Set To Dictionary                          ${dict_string}    a    1
+Check invalid dictionary argument errors
+    [Template]    Validate invalid argument error
+    Copy dictionary
+    Dictionary Should Contain Item             string    first     I'm not a dict, I'm string.    a    b
+    Dictionaries Should Be Equal               string    first     I'm not a dict, I'm string.    ${D2}
+    Dictionaries Should Be Equal               string    second    ${D2}    I'm not a dict, I'm string.
+    Dictionary Should Contain Key              string    first     I'm not a dict, I'm string.    a
+    Dictionary Should Contain Sub Dictionary   string    first     I'm not a dict, I'm string.    ${D2}
+    Dictionary Should Contain Sub Dictionary   string    second    ${D2}    I'm not a dict, I'm string.
+    Dictionary Should Contain Value            string    first     I'm not a dict, I'm string.    a
+    Dictionary Should Not Contain Key          string    first     I'm not a dict, I'm string.    a
+    Dictionary Should Not Contain Value        string    first     I'm not a dict, I'm string.    a
+    Get Dictionary Items
+    Get Dictionary Keys
+    Get Dictionary Values
+    Get from dictionary                        string    first     I'm not a dict, I'm string.    a
+    Keep in dictionary                         string    first     I'm not a dict, I'm string.    a
+    Log Dictionary
+    Pop From Dictionary                        string    first     I'm not a dict, I'm string.    a
+    Remove From Dictionary                     string    first     I'm not a dict, I'm string.    a
+    Set To Dictionary                          string    first     I'm not a dict, I'm string.    a    b
 
 *** Keywords ***
+Validate invalid argument error
+    [Arguments]  ${keyword}    ${type}=string    ${position}=first    ${argument}=I'm not a dict, I'm string.    @{kwargs}
+    ${error} =    Set variable    TypeError: Expected ${position} argument to be a dictionary, got '${type}' instead.
+    Run keyword and expect error    ${error}    ${keyword}    ${argument}    @{kwargs}
+
 Create Dictionaries For Testing
     ${D0}    Create Dictionary
     Set Test Variable    \${D0}

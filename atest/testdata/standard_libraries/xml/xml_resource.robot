@@ -25,7 +25,8 @@ Parse XML To Test Variable
 Element Should Have Attributes
     [Arguments]    ${source}    ${xpath}    &{expected}
     ${elem} =    Get Element    ${source}    ${xpath}
-    Dictionaries Should Be Equal    ${elem.attrib}    ${expected}
+    ${dict} =    convert to dictionary    ${elem.attrib}
+    Dictionaries Should Be Equal    ${dict}    ${expected}
 
 Saved XML Should Equal
     [Arguments]    ${tree}    @{expected}
