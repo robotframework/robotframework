@@ -236,7 +236,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   should be interpreted as HTML or not.                        |
    |                  |                  |                                                                |
    |                  |                  | Starting from RF 3.0, this method is not called if the message |
-   |                  |                  | has level below the current `threshold level <Log levels_>`_.  |
+   |                  |                  | has level below the current `threshold level <Log levels_>`__. |
    +------------------+------------------+----------------------------------------------------------------+
    | message          | message          | Called when the framework itself writes a syslog_ message.     |
    |                  |                  |                                                                |
@@ -370,8 +370,8 @@ __ https://github.com/robotframework/robotframework/issues/1208#issuecomment-164
    | start_suite      | data, result     | Called when a test suite starts.                               |
    |                  |                  |                                                                |
    |                  |                  | `data` and `result` are model objects representing             |
-   |                  |                  | the `executed test suite <running.TestSuite_>`_ and `its       |
-   |                  |                  | execution results <result.TestSuite_>`_, respectively.         |
+   |                  |                  | the `executed test suite <running.TestSuite_>`__ and `its      |
+   |                  |                  | execution results <result.TestSuite_>`__, respectively.        |
    +------------------+------------------+----------------------------------------------------------------+
    | end_suite        | data, result     | Called when a test suite ends.                                 |
    |                  |                  |                                                                |
@@ -380,8 +380,8 @@ __ https://github.com/robotframework/robotframework/issues/1208#issuecomment-164
    | start_test       | data, result     | Called when a test case starts.                                |
    |                  |                  |                                                                |
    |                  |                  | `data` and `result` are model objects representing             |
-   |                  |                  | the `executed test case <running.TestCase_>`_ and `its         |
-   |                  |                  | execution results <result.TestCase_>`_, respectively.          |
+   |                  |                  | the `executed test case <running.TestCase_>`__ and `its        |
+   |                  |                  | execution results <result.TestCase_>`__, respectively.         |
    +------------------+------------------+----------------------------------------------------------------+
    | end_test         | data, result     | Called when a test case ends.                                  |
    |                  |                  |                                                                |
@@ -393,10 +393,10 @@ __ https://github.com/robotframework/robotframework/issues/1208#issuecomment-164
    +------------------+------------------+----------------------------------------------------------------+
    | log_message      | message          | Called when an executed keyword writes a log message.          |
    |                  |                  | `message` is a model object representing the `logged           |
-   |                  |                  | message <result.Message_>`_.                                   |
+   |                  |                  | message <result.Message_>`__.                                  |
    |                  |                  |                                                                |
    |                  |                  | This method is not called if the message has level below       |
-   |                  |                  | the current `threshold level <Log levels_>`_.                  |
+   |                  |                  | the current `threshold level <Log levels_>`__.                 |
    +------------------+------------------+----------------------------------------------------------------+
    | message          | message          | Called when the framework itself writes a syslog_ message.     |
    |                  |                  |                                                                |
@@ -616,8 +616,8 @@ Modifying executed suites and tests
 '''''''''''''''''''''''''''''''''''
 
 Changing what is executed requires modifying the model object containing
-the executed `test suite <running.TestSuite_>`_ or `test case
-<running.TestCase_>`_ objects passed as the first argument to `start_suite`
+the executed `test suite <running.TestSuite_>`__ or `test case
+<running.TestCase_>`__ objects passed as the first argument to `start_suite`
 and `start_test` methods. This is illustrated by the example below that
 adds a new test to each executed test suite and a new keyword to each test.
 
@@ -664,9 +664,9 @@ Modifying results
 '''''''''''''''''
 
 Test execution results can be altered by modifying `test suite
-<result.TestSuite_>`_ and `test case <result.TestCase_>`_ result objects
+<result.TestSuite_>`__ and `test case <result.TestCase_>`__ result objects
 passed as the second argument to `start_suite` and `start_test` methods,
-respectively, and by modifying the `message <result.Message_>`_ object passed
+respectively, and by modifying the `message <result.Message_>`__ object passed
 to the `log_message` method. This is demonstrated by the following listener
 that is implemented as a class.
 
