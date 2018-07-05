@@ -120,8 +120,8 @@ directory, it is possible to add prefixes like :file:`01` and
 included in the generated test suite name if they are separated from
 the base name of the suite with two underscores::
 
-   01__my_suite.html -> My Suite
-   02__another_suite.html -> Another Suite
+   01__my_suite.robot -> My Suite
+   02__another_suite.robot -> Another Suite
 
 If the alphabetical ordering of test suites inside suites is
 problematic, a good workaround is giving them separately in the

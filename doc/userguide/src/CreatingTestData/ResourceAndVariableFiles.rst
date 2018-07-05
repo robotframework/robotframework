@@ -32,16 +32,16 @@ cases, the resource file is first searched relatively to the directory
 where the importing file is located. If the file is not found there,
 it is then searched from the directories in Python's `module search path`_.
 The path can contain variables, and it is recommended to use them to make paths
-system-independent (for example, :file:`${RESOURCES}/login_resources.html` or
+system-independent (for example, :file:`${RESOURCES}/login_resources.robot` or
 :file:`${RESOURCE_PATH}`). Additionally, slashes (`/`) in the path
 are automatically changed to backslashes (:codesc:`\\`) on Windows.
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Resource    myresources.html
-   Resource    ../data/resources.html
-   Resource    ${RESOURCES}/common.tsv
+   Resource    myresources.robot
+   Resource    ../data/resources.robot
+   Resource    ${RESOURCES}/common.robot
 
 The user keywords and variables defined in a resource file are
 available in the file that takes that resource file into

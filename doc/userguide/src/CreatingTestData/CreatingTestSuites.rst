@@ -53,16 +53,12 @@ contains are processed recursively as follows:
 - Files and directories with names starting with a dot (:file:`.`) or an
   underscore (:file:`_`) are ignored.
 - Directories with the name :file:`CVS` are ignored (case-sensitive).
-- Files not having one of the `recognized extensions`__ (:file:`.html`,
-  :file:`.xhtml`, :file:`.htm`, :file:`.tsv`, :file:`.txt`, :file:`.rst`,
-  :file:`.rest` or :file:`.robot`) are ignored (case-insensitive).
-- Other files and directories are processed.
+- Files in `supported file formats`_ are processed.
+- Other files are ignored.
 
 If a file or directory that is processed does not contain any test
 cases, it is silently ignored (a message is written to the syslog_)
 and the processing continues.
-
-__ `Supported file formats`_
 
 Initialization files
 ~~~~~~~~~~~~~~~~~~~~
@@ -72,7 +68,7 @@ created from a test case file. Because a directory alone cannot have that
 kind of information, it must be placed into a special test suite initialization
 file. An initialization file name must always be of the format
 :file:`__init__.ext`, where the extension must be one of the `supported
-file formats`_ (for example, :file:`__init__.robot` or :file:`__init__.html`).
+file formats`_ (typically :file:`__init__.robot`).
 The name format is borrowed from Python, where files named in this manner
 denote that a directory is a module.
 
@@ -126,7 +122,7 @@ Test suite name and documentation
 The test suite name is constructed from the file or directory name. The name
 is created so that the extension is ignored, possible underscores are
 replaced with spaces, and names fully in lower case are title cased. For
-example, :file:`some_tests.html` becomes :name:`Some Tests` and
+example, :file:`some_tests.robot` becomes :name:`Some Tests` and
 :file:`My_test_directory` becomes :name:`My test directory`.
 
 The file or directory name can contain a prefix to control the `execution
