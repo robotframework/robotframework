@@ -163,10 +163,6 @@ is same as not specifying this option at all.
 .. tip:: Re-execution results and original results can be `merged together`__
          using the :option:`--merge` command line option.
 
-.. note:: Re-executing failed tests is a new feature in Robot Framework 2.8.
-          Prior to Robot Framework 2.8.4 the option was named
-          :option:`--runfailed`.
-
 __ `Merging outputs`_
 
 Re-executing failed test suites
@@ -208,8 +204,6 @@ Rebot fails in these cases, but it has a separate
 :option:`--ProcessEmptySuite` option that can be used to alter the behavior.
 In practice this option works the same way as :option:`--RunEmptySuite` when
 running tests.
-
-.. note:: :option:`--ProcessEmptySuite` option was added in Robot Framework 2.7.2.
 
 Setting criticality
 -------------------
@@ -392,9 +386,11 @@ Configuring `sys.path` programmatically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Python interpreters store the module search path they use as a list of strings
-in `sys.path <https://docs.python.org/2/library/sys.html#sys.path>`__
+in `sys.path`__
 attribute. This list can be updated dynamically during execution, and changes
 are taken into account next time when something is imported.
+
+__ http://docs.python.org/library/sys.html#sys.path
 
 Java classpath
 ~~~~~~~~~~~~~~
@@ -413,8 +409,8 @@ bit differently, due to the fact that `java -jar` command does support
 the ``CLASSPATH`` environment variable nor the :option:`-cp` option. There are
 two different ways to configure the classpath::
 
-  java -cp lib/testlibrary.jar:lib/app.jar:robotframework-2.9.jar org.robotframework.RobotFramework tests.robot
-  java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-2.9.jar tests.robot
+  java -cp lib/testlibrary.jar:lib/app.jar:robotframework-3.1.jar org.robotframework.RobotFramework tests.robot
+  java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-3.1.jar tests.robot
 
 __ https://docs.oracle.com/javase/8/docs/technotes/tools/findingclasses.html
 
@@ -486,7 +482,7 @@ The test execution order can be randomized using option
     This value can be used to override the earlier value set with
     :option:`--randomize`.
 
-Starting from Robot Framework 2.8.5, it is possible to give a custom seed
+It is possible to give a custom seed
 to initialize the random generator. This is useful if you want to re-run tests
 using the same order as earlier. The seed is given as part of the value for
 :option:`--randomize` in format `<what>:<seed>` and it must be an integer.
@@ -682,7 +678,6 @@ This option supports the following case-insensitive values:
 `ansi`
     Same as `on` but uses ANSI colors also on Windows. Useful, for example,
     when redirecting output to a program that understands ANSI colors.
-    New in Robot Framework 2.7.5.
 
 `off`
     Colors are disabled.
@@ -697,12 +692,12 @@ __ http://en.wikipedia.org/wiki/ANSI_escape_code
 Console markers
 ~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7, special markers `.` (success) and
+Special markers `.` (success) and
 `F` (failure) are shown on the console when using the `verbose output`__
 and top level keywords in test cases end. The markers allow following
 the test execution in high level, and they are erased when test cases end.
 
-Starting from Robot Framework 2.7.4, it is possible to configure when markers
+It is possible to configure when markers
 are used with :option:`--consolemarkers (-K)` option. It supports the following
 case-insensitive values:
 

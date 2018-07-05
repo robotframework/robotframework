@@ -549,7 +549,7 @@ does not actually match the specified regexp. For example, variable
 
 __ http://en.wikipedia.org/wiki/Regular_expression
 __ `Embedded arguments matching too much`_
-__ https://docs.python.org/2/library/re.html
+__ http://docs.python.org/library/re.html
 __ `Errors and warnings during execution`_
 __ Escaping_
 
@@ -682,9 +682,6 @@ demonstrates returning conditionally inside a `for loop`_.
        \    Return From Keyword If    '${item}' == '${element}'    ${index}
        \    ${index} =    Set Variable    ${index + 1}
        Return From Keyword    ${-1}    # Could also use [Return]
-
-.. note:: Both :name:`Return From Keyword` and :name:`Return From Keyword If`
-          are available since Robot Framework 2.8.
 
 User keyword teardown
 ---------------------

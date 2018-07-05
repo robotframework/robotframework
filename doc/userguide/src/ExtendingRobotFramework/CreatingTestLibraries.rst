@@ -34,15 +34,8 @@ programming languages. A good example of this approach is the `Remote
 library`_, and another widely used approaches is running external
 scripts or tools as separate processes.
 
-.. tip:: `Python Tutorial for Robot Framework Test Library Developers`__
-         covers enough of Python language to get started writing test
-         libraries using it. It also contains a simple example library
-         and test cases that you can execute and otherwise investigate
-         on your machine.
-
 __ http://docs.python.org/c-api/index.html
 __ http://docs.python.org/library/ctypes.html
-__ http://code.google.com/p/robotframework/wiki/PythonTutorial
 
 Different test library APIs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -120,10 +113,6 @@ taken into use using both module and class names, such as
 Java classes in a non-default package must be taken into use with the
 full name. For example, class `MyLib` in `com.mycompany.myproject`
 package must be imported with name :name:`com.mycompany.myproject.MyLib`.
-
-.. note:: Dropping class names with submodules works only in Robot Framework
-          2.8.4 and newer. With earlier versions you need to include also
-          the class name like :name:`parent.MyLib.MyLib`.
 
 .. tip:: If the library name is really long, for example when the Java
          package name is long, it is recommended to give the library a
@@ -317,7 +306,7 @@ A Java class using `ROBOT_LIBRARY_VERSION`:
 Specifying documentation format
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7.5, library documentation tool Libdoc_
+Library documentation tool Libdoc_
 supports documentation in multiple formats. If you want to use something
 else than Robot Framework's own `documentation formatting`_, you can specify
 the format in the source code using  `ROBOT_LIBRARY_DOC_FORMAT` attribute
@@ -478,7 +467,7 @@ For example, the library below implements only keywords
    def not_exposed_as_keyword():
        pass
 
-__ https://docs.python.org/2/tutorial/modules.html#importing-from-a-package
+__ https://docs.python.org/tutorial/modules.html#importing-from-a-package
 
 Keyword names
 ~~~~~~~~~~~~~
@@ -774,8 +763,7 @@ to the above Python examples with same names:
   }
 
 It is also possible to use variable number of arguments also by
-having an array or, starting from Robot Framework 2.8.3,
-`java.util.List` as the last argument, or second to last
+having an array or `java.util.List` as the last argument, or second to last
 if `free keyword arguments (**kwargs)`_ are used. This is illustrated
 by the following examples that are functionally identical to
 the previous ones:
@@ -802,16 +790,13 @@ the previous ones:
 The support for variable number of arguments with Java keywords has one
 limitation: it works only when methods have one signature. Thus it is not
 possible to have Java keywords with both default values and varargs.
-In addition to that, only Robot Framework 2.8 and newer support using
-varargs with `library constructors`__.
 
 __ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
-__ `Providing arguments to test libraries`_
 
 Free keyword arguments (`**kwargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework 2.8 added the support for free keyword arguments using Python's
+Robot Framework supports free keyword arguments using Python's
 `**kwargs` syntax. How to use the syntax in the test data is discussed
 in `Free keyword arguments`_ section under `Creating test cases`_. In this
 section we take a look at how to actually use it in custom test libraries.
@@ -883,7 +868,7 @@ __ Escaping_
 Free keyword arguments with Java
 ''''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 2.8.3, also Java libraries support the free
+Also Java libraries support the free
 keyword arguments syntax. Java itself has no kwargs syntax, but keywords
 can have `java.util.Map` as the last argument to specify that they
 accept kwargs.
@@ -990,8 +975,7 @@ conflicting signatures.
        Conflicting Types    1       ${2}    # must use variables
        Conflicting Types    ${1}    2
 
-Starting from Robot Framework 2.8, argument type coercion works also with
-`Java library constructors`__.
+Argument type coercion works also with `Java library constructors`__.
 
 __ `Providing arguments to test libraries`_
 
@@ -1056,7 +1040,7 @@ example, `AssertionError`, `Exception`, and
 others, the message is created in the format `ExceptionType:
 Actual message`.
 
-Starting from Robot Framework 2.8.2, it is possible to avoid adding the
+It is possible to avoid adding the
 exception type as a prefix to failure message also with non generic exceptions.
 This is done by adding a special `ROBOT_SUPPRESS_NAME` attribute with
 value `True` to your exception.
@@ -1082,7 +1066,7 @@ informative as possible.
 HTML in error messages
 ''''''''''''''''''''''
 
-Starting from Robot Framework 2.8, it is also possible have HTML formatted
+It is also possible to have HTML formatted
 error messages by starting the message with text `*HTML*`:
 
 .. sourcecode:: python
@@ -1399,10 +1383,9 @@ a simple usage example:
        logger.console('Hello, console!')
 
 An obvious limitation is that test libraries using this logging API have
-a dependency to Robot Framework. Before version 2.8.7 Robot also had
-to be running for the logging to work. Starting from Robot Framework 2.8.7
-if Robot is not running the messages are redirected automatically to Python's
-standard logging__ module.
+a dependency to Robot Framework. If Robot Framework is not running,
+the messages are redirected automatically to Python's standard logging__
+module.
 
 __ https://robot-framework.readthedocs.org/en/latest/autodoc/robot.api.html#module-robot.api.logger
 __ http://docs.python.org/library/logging.html
@@ -1653,7 +1636,7 @@ at runtime.
 By default documentation is considered to follow Robot Framework's
 `documentation formatting`_ rules. This simple format allows often used
 styles like `*bold*` and `_italic_`, tables, lists, links, etc.
-Starting from Robot Framework 2.7.5, it is possible to use also HTML, plain
+It is possible to use also HTML, plain
 text and reStructuredText_ formats. See `Specifying documentation format`_
 section for information how to set the format in the library source code and
 Libdoc_ chapter for more information about the formats in general.
@@ -1705,11 +1688,10 @@ complicated libraries should be packaged to make the installation
 easier.
 
 Since libraries are normal programming code, they can be packaged
-using normal packaging tools. With Python, good options include
-distutils_, contained by Python's standard library, and the newer
-setuptools_. A benefit of these tools is that library modules are
-installed into a location that is automatically in the `module
-search path`_.
+using normal packaging tools. For information about packaging and
+distributing Python code see https://packaging.python.org/. When such
+a package is installed using pip_ or other tools, it is automatically
+in the `module search path`_.
 
 When using Java, it is natural to package libraries into a JAR
 archive. The JAR package must be put into the `module search path`_
@@ -2039,7 +2021,7 @@ got both directly from the code and from the
 Named argument syntax with dynamic libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.8, also the dynamic library API supports
+Also the dynamic library API supports
 the `named argument syntax`_. Using the syntax works based on the
 argument names and default values `got from the library`__ using the
 `get_keyword_arguments` method.
@@ -2079,7 +2061,7 @@ __ `Getting keyword arguments`_
 Free keyword arguments with dynamic libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.8.2, dynamic libraries can also support
+Dynamic libraries can also support
 `free keyword arguments`_ (`**kwargs`). A mandatory precondition for
 this support is that the `run_keyword` method `takes three arguments`__:
 the third one will get kwargs when they are used. Kwargs are passed to the
@@ -2284,7 +2266,7 @@ versions.
 Available APIs
 ~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7, `API documentation`_ is hosted separately
+`API documentation`_ is hosted separately
 at the excellent `Read the Docs`_ service. If you are unsure how to use
 certain API or is using them forward compatible, please send a question
 to `mailing list`_.

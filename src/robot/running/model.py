@@ -174,7 +174,6 @@ class TestSuite(model.TestSuite):
 
         To capture stdout and/or stderr streams, pass open file objects in as
         special keyword arguments ``stdout`` and ``stderr``, respectively.
-        Note that this works only in version 2.8.4 and newer.
 
         Only options related to the actual test execution have an effect.
         For example, options related to selecting test cases or creating

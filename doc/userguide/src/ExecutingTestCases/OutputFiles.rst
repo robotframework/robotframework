@@ -42,10 +42,9 @@ Output files contain all the test execution results in machine readable XML
 format. Log_, report_ and xUnit_ files are typically generated based on them,
 and they can also be combined and otherwise post-processed with Rebot_.
 
-.. tip:: Starting from Robot Framework 2.8, generating report_ and xUnit_
-         files as part of test execution does not anymore require processing
-         output files. Disabling log_ generation when running tests can thus
-         save memory.
+.. tip:: Generating report_ and xUnit_ files as part of test execution
+         does not require processing output files. Disabling log_ generation
+         when running tests can thus save memory.
 
 The command line option :option:`--output (-o)` determines the path where
 the output file is created relative to the `output directory`_. The default
@@ -55,10 +54,9 @@ When `post-processing outputs`_ with Rebot, new output files are not created
 unless the :option:`--output` option is explicitly used.
 
 It is possible to disable creation of the output file when running tests by
-giving a special value `NONE` to the :option:`--output` option. Prior to Robot
-Framework 2.8 this also automatically disabled creating log and report files,
-but nowadays that is not done anymore. If no outputs are needed, they should
-all be explicitly disabled using `--output NONE --report NONE --log NONE`.
+giving a special value `NONE` to the :option:`--output` option. If no outputs
+are needed, they should all be explicitly disabled using
+`--output NONE --report NONE --log NONE`.
 
 Log file
 ~~~~~~~~
@@ -140,8 +138,6 @@ distinction between critical and non-critical tests. If this is a problem,
 :option:`--xunitskipnoncritical` option can be used to mark non-critical tests
 as skipped. Skipped tests will get a message containing the actual status and
 possible message of the test case in a format like `FAIL: Error message`.
-
-.. note:: :option:`--xunitskipnoncritical` is a new option in Robot Framework 2.8.
 
 __ http://en.wikipedia.org/wiki/XUnit
 __ http://jenkins-ci.org
@@ -285,7 +281,7 @@ teardown`_.
 Visible log level
 ~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7.2, if the log file contains messages at
+If the log file contains messages at
 `DEBUG` or `TRACE` levels, a visible log level drop down is shown
 in the upper right corner. This allows users to remove messages below chosen
 level from the view. This can be useful especially when running test at
@@ -521,12 +517,7 @@ as `flattening keywords`_.
 __ `Errors and warnings`_
 __ `Keyword tags`_
 
-.. note:: The support for using :option:`--removekeywords` when executing tests
-          as well as `FOR` and `WUKS` modes were added in Robot
-          Framework 2.7.
-
-.. note:: `NAME:<pattern>` mode was added in Robot Framework 2.8.2 and
-          `TAG:<pattern>` in 2.9.
+.. note:: `TAG:<pattern>` mode was added in Robot Framework 2.9.
 
 Flattening keywords
 ~~~~~~~~~~~~~~~~~~~
@@ -559,8 +550,7 @@ Flattening keywords is done already when the `output file`_ is parsed
 initially. This can save a significant amount of memory especially with
 deeply nested keyword structures.
 
-.. note:: Flattening keywords is a new feature in Robot Framework 2.8.2, `FOR`
-          and `FORITEM` modes were added in 2.8.5 and `TAG:<pattern>` in 2.9.
+.. note:: `TAG:<pattern>` mode was added in Robot Framework 2.9.
 
 Setting start and end time of execution
 ---------------------------------------

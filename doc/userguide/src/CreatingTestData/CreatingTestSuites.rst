@@ -92,8 +92,6 @@ initialization files is explained below.
 `Test Setup`:setting:, `Test Teardown`:setting:, `Test Timeout`:setting:
    Set the default value for test setup/teardown or test timeout to all test
    cases this directory contains. Can be overridden on lower level.
-   Support for defining test timeout in initialization files was added in
-   Robot Framework 2.7.
 `Default Tags`:setting:, `Test Template`:setting:
    Not supported in initialization files.
 

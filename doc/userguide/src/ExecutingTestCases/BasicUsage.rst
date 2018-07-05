@@ -219,8 +219,6 @@ using lower case letters to avoid accidental operator usage::
     --include PORT          # Matches tests containing tag 'P' or 'T', case-insensitively
     --exclude handoverORportNOTnotification
 
-.. note:: `OR` operator is new in Robot Framework 2.8.4.
-
 ``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` environment variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -239,10 +237,7 @@ avoid the need to repeat them every time tests are run or Rebot used.
    export REBOT_OPTIONS="--reportbackground green:yellow:red"
    rebot --name example output.xml
 
-.. note:: Support for ``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` environment
-          variables was added in Robot Framework 2.8.2.
-
-          Possibility to have spaces in values by surrounding them in quotes
+.. note:: Possibility to have spaces in values by surrounding them in quotes
           is new in Robot Framework 2.9.2.
 
 __ `Post-processing outputs`_
@@ -274,7 +269,7 @@ output from executing a simple test suite with only two test cases::
    Report:  /path/to/report.html
    Log:     /path/to/log.html
 
-Starting from Robot Framework 2.7, there is also a notification on the console
+There is also a notification on the console
 whenever a top-level keyword in a test case ends. A green dot is used if
 a keyword passes and a red F if it fails. These markers are written to the end
 of line and they are overwritten by the test status when the test itself ends.
@@ -395,7 +390,7 @@ lines starting with a hash mark (#) are ignored::
    path/to/my/tests
 
 In the above example the separator between options and their values is a single
-space. In Robot Framework 2.7.6 and newer it is possible to use either an equal
+space. It is possible to use either an equal
 sign (=) or any number of spaces. As an example, the following three lines are
 identical::
 
@@ -445,10 +440,10 @@ the option :option:`--version`. This information also contains Python
 or Jython version and the platform type::
 
    $ robot --version
-   Robot Framework 3.0 (Jython 2.7.0 on java1.7.0_45)
+   Robot Framework 3.1 (Jython 2.7.0 on java1.7.0_45)
 
    C:\>rebot --version
-   Rebot 3.0 (Python 2.7.10 on win32)
+   Rebot 3.1 (Python 3.7.0 on win32)
 
 .. _start-up script:
 .. _start-up scripts:
@@ -633,4 +628,4 @@ from within a python library or alternativley:
 
 can be used directly in a test case.
 
-__ http://docs.python.org/2/library/pdb.html
+__ http://docs.python.org/library/pdb.html

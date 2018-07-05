@@ -189,7 +189,7 @@ and possible arguments are joined to the path with a colon (`:`)::
    --variablefile /absolute/path/common.py
    --variablefile taking_arguments.py:arg1:arg2
 
-Starting from Robot Framework 2.8.2, variable files taken into use from the
+Variable files taken into use from the
 command line are also searched from the `module search path`_ similarly as
 variable files imported in the Setting table.
 
@@ -198,7 +198,7 @@ drive letter is not considered a separator::
 
    --variablefile C:\path\variables.py
 
-Starting from Robot Framework 2.8.7, it is also possible to use a semicolon
+It is also possible to use a semicolon
 (`;`) as an argument separator. This is useful if variable file arguments
 themselves contain colons, but requires surrounding the whole value with
 quotes on UNIX-like operating systems::
@@ -460,8 +460,7 @@ or database where to read variables from.
 Implementing variable file as Python or Java class
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7, it is possible to implement variables files
-as Python or Java classes.
+It is possible to implement variables files also as Python or Java classes.
 
 Implementation
 ''''''''''''''

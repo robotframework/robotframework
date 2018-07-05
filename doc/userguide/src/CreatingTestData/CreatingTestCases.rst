@@ -221,7 +221,7 @@ The named argument syntax makes using arguments with `default values`_ more
 flexible, and allows explicitly labeling what a certain argument value means.
 Technically named arguments work exactly like `keyword arguments`__ in Python.
 
-__ http://docs.python.org/2/tutorial/controlflow.html#keyword-arguments
+__ http://docs.python.org/tutorial/controlflow.html#keyword-arguments
 
 Basic syntax
 ''''''''''''
@@ -249,11 +249,7 @@ like `arg2=override`.
 
 Using normal positional arguments after named arguments like, for example,
 `| Keyword | arg=value | positional |`, does not work.
-Starting from Robot Framework 2.8 this causes an explicit error.
 The relative order of the named arguments does not matter.
-
-.. note:: Prior to Robot Framework 2.8 it was not possible to name arguments
-          that did not have a default value.
 
 Named arguments with variables
 ''''''''''''''''''''''''''''''
@@ -266,8 +262,7 @@ will pass the variable `${object}` to the keyword without converting it to
 a string.
 
 If variables are used in named argument names, variables are resolved before
-matching them against argument names. This is a new feature in Robot Framework
-2.8.6.
+matching them against argument names.
 
 The named argument syntax requires the equal sign to be written literally
 in the keyword call. This means that variable alone can never trigger the
@@ -323,9 +318,6 @@ The only exception are Java based libraries that use the `static library API`_.
 Library documentation generated with Libdoc_ has a note does the library
 support named arguments or not.
 
-.. note:: Prior to Robot Framework 2.8 named argument syntax did not work
-          with test libraries using the `dynamic library API`_.
-
 Named arguments example
 '''''''''''''''''''''''
 
@@ -351,7 +343,7 @@ library keywords, user keywords, and when importing the Telnet_ test library.
 Free keyword arguments
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework 2.8 added support for `Python style free keyword arguments`__
+Robot Framework supports `Python style free keyword arguments`__
 (`**kwargs`). What this means is that keywords can receive all arguments that
 use the `name=value` syntax and do not match any other arguments as kwargs.
 
@@ -360,18 +352,9 @@ Free keyword arguments support variables similarly as `named arguments
 can be used both in names and values, but the escape sign must always be
 visible literally. For example, both `foo=${bar}` and `${foo}=${bar}` are
 valid, as long as the variables that are used exist. An extra limitation is
-that free keyword argument names must always be strings. Support for variables
-in names is a new feature in Robot Framework 2.8.6, prior to that possible
-variables were left un-resolved.
+that free keyword argument names must always be strings.
 
-Initially free keyword arguments only worked with Python based libraries, but
-Robot Framework 2.8.2 extended the support to the `dynamic library API`_
-and Robot Framework 2.8.3 extended it further to Java based libraries and to
-the `remote library interface`_. Finally, user keywords got `kwargs support
-<Kwargs with user keywords_>`__ in Robot Framework 2.9. In other words,
-all keywords can nowadays support kwargs.
-
-__ http://docs.python.org/2/tutorial/controlflow.html#keyword-arguments
+__ http://docs.python.org/tutorial/controlflow.html#keyword-arguments
 
 Kwargs examples
 '''''''''''''''
@@ -451,7 +434,7 @@ error messages are always visible in log_ file as a message of the failed
 keyword.
 
 By default error messages are normal text, but
-starting from Robot Framework 2.8 they can `contain HTML formatting`__. This
+they can `contain HTML formatting`__. This
 is enabled by starting the error message with marker string `*HTML*`.
 This marker will be removed from the final error message shown in reports
 and logs. Using HTML in a custom message is shown in the second example below.
@@ -782,7 +765,7 @@ supported normally.
 Templates with embedded arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.8.2, templates support a variation of
+Templates support a variation of
 the `embedded argument syntax`_. With templates this syntax works so
 that if the template keyword has variables in its name, they are considered
 placeholders for arguments and replaced with the actual arguments
@@ -966,8 +949,6 @@ user keyword either with or without the word :name:`Given`. Ignoring prefixes
 also allows using the same keyword with different prefixes. For example
 :name:`Welcome page should be open` could also used as :name:`And welcome page
 should be open`.
-
-.. note:: Ignoring :name:`But` prefix is new in Robot Framework 2.8.7.
 
 Embedding data to keywords
 ''''''''''''''''''''''''''

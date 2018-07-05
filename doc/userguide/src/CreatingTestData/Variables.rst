@@ -439,9 +439,6 @@ can be changed by having `SEPARATOR=<sep>` in the first cell.
    ...             Second line     Third line
 
 Joining long values like above is a new feature in Robot Framework 2.9.
-Creating a scalar variable with multiple values was a syntax error in
-Robot Framework 2.8 and with earlier versions it created a variable with
-a list value.
 
 __ `Dividing test data to several rows`_
 
@@ -764,8 +761,8 @@ operating-system-agnostic.
    | ${:}       | The system path element separator. `:` in UNIX-like              |
    |            | systems and `;` in Windows.                                      |
    +------------+------------------------------------------------------------------+
-   | ${\\n}     | The system line separator. :codesc:`\\n` in UNIX-like systems and|
-   |            | :codesc:`\\r\\n` in Windows. New in version 2.7.5.               |
+   | ${\\n}     | The system line separator. :codesc:`\\n` in UNIX-like systems    |
+   |            | and :codesc:`\\r\\n` in Windows.                                 |
    +------------+------------------------------------------------------------------+
 
 .. sourcecode:: robotframework
@@ -885,8 +882,7 @@ scopes. Modifying the value of `@{EMPTY}` or `&{EMPTY}` is not possible.
        Set Global Variable    @{LIST}    @{EMPTY}
        Set Suite Variable     &{DICT}    &{EMPTY}
 
-.. note:: `@{EMPTY}` is new in Robot Framework 2.7.4 and `&{EMPTY}` in
-          Robot Framework 2.9.
+.. note:: `&{EMPTY}` is new in Robot Framework 2.9.
 
 __ Escaping_
 __ https://groups.google.com/group/robotframework-users/browse_thread/thread/ccc9e1cd77870437/4577836fe946e7d5?lnk=gst&q=templates#4577836fe946e7d5
@@ -914,7 +910,7 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +------------------------+-------------------------------------------------------+------------+
    | ${TEST DOCUMENTATION}  | The documentation of the current test case. Can be set| Test case  |
    |                        | dynamically using using :name:`Set Test Documentation`|            |
-   |                        | keyword. New in Robot Framework 2.7.                  |            |
+   |                        | keyword.                                              |            |
    +------------------------+-------------------------------------------------------+------------+
    | ${TEST STATUS}         | The status of the current test case, either PASS or   | `Test      |
    |                        | FAIL.                                                 | teardown`_ |
@@ -937,11 +933,10 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +------------------------+-------------------------------------------------------+------------+
    | ${SUITE DOCUMENTATION} | The documentation of the current test suite. Can be   | Everywhere |
    |                        | set dynamically using using :name:`Set Suite          |            |
-   |                        | Documentation` keyword. New in Robot Framework 2.7.   |            |
+   |                        | Documentation` keyword.                               |            |
    +------------------------+-------------------------------------------------------+------------+
    | &{SUITE METADATA}      | The free metadata of the current test suite. Can be   | Everywhere |
    |                        | set using :name:`Set Suite Metadata` keyword.         |            |
-   |                        | New in Robot Framework 2.7.4.                         |            |
    +------------------------+-------------------------------------------------------+------------+
    | ${SUITE STATUS}        | The status of the current test suite, either PASS or  | `Suite     |
    |                        | FAIL.                                                 | teardown`_ |
@@ -950,14 +945,14 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    |                        | statistics.                                           | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
    | ${KEYWORD STATUS}      | The status of the current keyword, either PASS or     | `User      |
-   |                        | FAIL. New in Robot Framework 2.7                      | keyword    |
+   |                        | FAIL.                                                 | keyword    |
    |                        |                                                       | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
    | ${KEYWORD MESSAGE}     | The possible error message of the current keyword.    | `User      |
-   |                        | New in Robot Framework 2.7.                           | keyword    |
+   |                        |                                                       | keyword    |
    |                        |                                                       | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
-   | ${LOG LEVEL}           | Current `log level`_. New in Robot Framework 2.8.     | Everywhere |
+   | ${LOG LEVEL}           | Current `log level`_.                                 | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
    | ${OUTPUT FILE}         | An absolute path to the `output file`_.               | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
@@ -975,8 +970,7 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
 
 Suite related variables `${SUITE SOURCE}`, `${SUITE NAME}`,
 `${SUITE DOCUMENTATION}` and `&{SUITE METADATA}` are
-available already when test libraries and variable files are imported,
-except to Robot Framework 2.8 and 2.8.1 where this support was broken.
+available already when test libraries and variable files are imported.
 Possible variables in these automatic variables are not yet resolved
 at the import time, though.
 
@@ -1267,7 +1261,7 @@ used as a list variable `@{EXTENDED.attribute}`.
 Extended variable assignment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7, it is possible to set attributes of
+It is possible to set attributes of
 objects stored to scalar variables using `keyword return values`__ and
 a variation of the `extended variable syntax`_. Assuming we have
 variable `${OBJECT}` from the previous examples, attributes could

@@ -54,7 +54,6 @@ class Remote(object):
         a timeout that is shorter than keyword execution time will interrupt
         the keyword.
 
-        Support for timeouts is a new feature in Robot Framework 2.8.6.
         Timeouts do not work with IronPython.
         """
         if '://' not in uri:

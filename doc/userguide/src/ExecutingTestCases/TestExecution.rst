@@ -137,8 +137,8 @@ Passing execution
 ~~~~~~~~~~~~~~~~~
 
 Typically test cases, setups and teardowns are considered passed if
-all keywords they contain are executed and none of them fail. From
-Robot Framework 2.8 onwards, it is also possible to use BuiltIn_ keywords
+all keywords they contain are executed and none of them fail. It is
+also possible to use BuiltIn_ keywords
 :name:`Pass Execution` and :name:`Pass Execution If` to stop execution with
 PASS status and skip the remaining keywords.
 
@@ -315,8 +315,6 @@ themselves do not fail tests or affect execution otherwise. If
 fatal and execution stopped so that remaining tests are marked failed. With
 parsing errors encountered before execution even starts, this means that no
 tests are actually run.
-
-.. note:: :option:`--exitonerror` is new in Robot Framework 2.8.6.
 
 __ `Errors and warnings during execution`_
 

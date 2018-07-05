@@ -40,8 +40,8 @@ into use by using this option several times::
 It is also possible to give arguments to listener classes from the command
 line. Arguments are specified after the listener name (or path) using a colon
 (`:`) as a separator. If a listener is given as an absolute Windows path,
-the colon after the drive letter is not considered a separator. Starting from
-Robot Framework 2.8.7, it is possible to use a semicolon (`;`) as an
+the colon after the drive letter is not considered a separator.
+Additionally it is possible to use a semicolon (`;`) as an
 alternative argument separator. This is useful if listener arguments
 themselves contain colons, but requires surrounding the whole value with
 quotes on UNIX-like operating systems::
@@ -111,12 +111,12 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | * `id`: Suite id. `s1` for the top level suite, `s1-s1`        |
    |                  |                  |   for its first child suite, `s1-s2` for the second            |
-   |                  |                  |   child, and so on. New in RF 2.8.5.                           |
+   |                  |                  |   child, and so on.                                            |
    |                  |                  | * `longname`: Suite name including parent suites.              |
    |                  |                  | * `doc`: Suite documentation.                                  |
    |                  |                  | * `metadata`: `Free test suite metadata`_ as a dictionary/map. |
    |                  |                  | * `source`: An absolute path of the file/directory the suite   |
-   |                  |                  |   was created from. New in RF 2.7.                             |
+   |                  |                  |   was created from.                                            |
    |                  |                  | * `suites`: Names of the direct child suites this suite has    |
    |                  |                  |   as a list.                                                   |
    |                  |                  | * `tests`: Names of the tests this suite has as a list.        |
@@ -150,7 +150,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | * `id`: Test id in format like `s1-s2-t2`, where               |
    |                  |                  |   the beginning is the parent suite id and the last part       |
-   |                  |                  |   shows test index in that suite. New in RF 2.8.5.             |
+   |                  |                  |   shows test index in that suite.                              |
    |                  |                  | * `longname`: Test name including parent suites.               |
    |                  |                  | * `doc`: Test documentation.                                   |
    |                  |                  | * `tags`: Test tags as a list of strings.                      |
@@ -711,8 +711,6 @@ Test libraries as listeners
 Sometimes it is useful also for `test libraries`_ to get notifications about
 test execution. This allows them, for example, to perform certain clean-up
 activities automatically when a test suite or the whole test execution ends.
-
-.. note:: This functionality is new in Robot Framework 2.8.5.
 
 Registering listener
 ~~~~~~~~~~~~~~~~~~~~

@@ -229,10 +229,6 @@
 .. _docutils: https://pypi.python.org/pypi/docutils
 .. _Sphinx: http://sphinx-doc.org/
 .. _Pygments: http://pygments.org/
-.. _distutils: http://docs.python.org/dist/dist.html
-.. _setuptools: http://peak.telecommunity.com/DevCenter/setuptools
-.. _easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall
-.. _Easy Install: easy_install_
 .. _pip: http://pip-installer.org
 .. _Read the Docs: http://readthedocs.org
 .. _AutoIT: http://www.autoitscript.com/autoit3
