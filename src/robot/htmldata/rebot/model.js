@@ -257,9 +257,6 @@ window.stats = (function () {
         var stat = statElem(data);
         stat.fullName = stat.label;
         stat.formatParentName = function () { return util.formatParentName(stat); };
-        // compatibility with RF 2.5 outputs
-        if (!stat.name)
-            stat.name = stat.label.split('.').pop();
         return stat;
     }
 
