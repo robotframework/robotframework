@@ -551,7 +551,43 @@ List Should Not Contain Value, Value Found And Own Error Message Glob
     [Documentation]    FAIL My error message!
     Should Not Contain Match    ${STRING}    glob=*    My error message!
 
+Check List Error
+    [Template]    Validate invalid argument error
+    Append to list                        string    1    I am a string. Not a list.    xyz
+    Combine Lists                         string    1    I am a string. Not a list.    I am a string. Not a list.
+    Combine Lists                         string    2    ${L0}    I am a string. Not a list.
+    Combine Lists                         string    1    I am a string. Not a list.    ${L0}
+    Copy list
+    Count values in list                  string    1    I am a string. Not a list.    xyz
+    Get from list                         string    1    I am a string. Not a list.    0
+    Get Index From List                   string    1    I am a string. Not a list.    a
+    Get Match Count                       string    1    I am a string. Not a list.    abc
+    Get Matches                           string    1    I am a string. Not a list.    abc
+    Get slice from list
+    Insert into list                      string    1    I am a string. Not a list.    0    a
+    List Should Contain Sub List          string    1    I am a string. Not a list.    ${L0}
+    List Should Contain Sub List          string    2    ${L0}    I am a string. Not a list.
+    List should contain value             string    1    I am a string. Not a list.    a
+    List Should Not Contain Duplicates    string    1    xyz
+    List Should Not Contain Value         string    1    I am a string. Not a list.    x
+    Lists Should Be Equal                 string    1    I am a string. Not a list.    ${L0}
+    Lists Should Be Equal                 string    2    ${L0}    I am a string. Not a list.
+    Log List
+    Remove Duplicates
+    Remove From List                      string    1    I am a string. Not a list.    0
+    Remove Values From List               string    1    I am a string. Not a list.    a
+    Reverse List
+    Set List Value                        string    1    I am a string. Not a list.    0    a
+    Should Contain Match                  string    1    I am a string. Not a list.    a
+    Should Not Contain Match              string    1    I am a string. Not a list.    xyz
+    Sort List
+
 *** Keywords ***
+Validate invalid argument error
+    [Arguments]    ${keyword}    ${type}=string    ${position}=1    ${argument}=I'm not a dict, I'm a string.    @{kwargs}
+    ${error} =    Set variable    TypeError: Expected ${position}. argument to be a list, got '${type}' instead.
+    Run keyword and expect error    ${error}    ${keyword}    ${argument}    @{kwargs}
+
 Create Lists For The Tests
     ${L0} =    Create List
     Set Test Variable    \${L0}

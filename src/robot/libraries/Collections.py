@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.api import logger
-from robot.utils import (is_dict_like, is_number, is_string, is_truthy, plural_or_not,
+from robot.utils import (is_dict_like, is_list_like, is_number, is_string, is_truthy, plural_or_not,
                          seq2str, seq2str2, type_name, unic, Matcher)
 from robot.utils.asserts import assert_equal
 from robot.version import get_version
@@ -46,6 +46,7 @@ class _List(object):
         | ${L1} = ['a', 'xxx']
         | ${L2} = ['a', 'b', 'x', 'y', 'z']
         """
+        self._validate_list(list_)
         for value in values:
             list_.append(value)
 
@@ -70,6 +71,7 @@ class _List(object):
         | ${L1} = ['xxx', 'a']
         | ${L2} = ['a', 'xxx', 'b']
         """
+        self._validate_list(list_)
         list_.insert(self._index_to_int(index), value)
 
     def combine_lists(self, *lists):
@@ -85,6 +87,7 @@ class _List(object):
         | ${y} = ['a', 'a', 'b', 'a']
         | ${L1} and ${L2} are not changed.
         """
+        self._validate_lists(*lists)
         ret = []
         for item in lists:
             ret.extend(item)
@@ -105,6 +108,7 @@ class _List(object):
         =>
         | ${L3} = ['a', 'xxx', 'yyy']
         """
+        self._validate_list(list_)
         try:
             list_[self._index_to_int(index)] = value
         except IndexError:
@@ -120,6 +124,7 @@ class _List(object):
         =>
         | ${L4} = ['b', 'd']
         """
+        self._validate_list(list_)
         for value in values:
             while value in list_:
                 list_.remove(value)
@@ -139,6 +144,7 @@ class _List(object):
         | ${x} = 'a'
         | ${L2} = ['b']
         """
+        self._validate_list(list_)
         try:
             return list_.pop(self._index_to_int(index))
         except IndexError:
@@ -152,6 +158,7 @@ class _List(object):
         the new list is the same as in the original except for missing
         duplicates. Number of the removed duplicates is logged.
         """
+        self._validate_list(list_)
         ret = []
         for item in list_:
             if item not in ret:
@@ -179,6 +186,7 @@ class _List(object):
         | ${y} = 'd'
         | ${L5} is not changed
         """
+        self._validate_list(list_)
         try:
             return list_[self._index_to_int(index)]
         except IndexError:
@@ -208,6 +216,7 @@ class _List(object):
         | ${z} = ['a', 'b', 'c']
         | ${L5} is not changed
         """
+        self._validate_list(list_)
         start = self._index_to_int(start, True)
         if end is not None:
             end = self._index_to_int(end)
@@ -226,6 +235,7 @@ class _List(object):
         | ${x} = 1
         | ${L3} is not changed
         """
+        self._validate_list(list_)
         return self.get_slice_from_list(list_, start, end).count(value)
 
     def get_index_from_list(self, list_, value, start=0, end=None):
@@ -242,6 +252,7 @@ class _List(object):
         | ${x} = 3
         | ${L5} is not changed
         """
+        self._validate_list(list_)
         if start == '':
             start = 0
         list_ = self.get_slice_from_list(list_, start, end)
@@ -255,6 +266,7 @@ class _List(object):
 
         The given list is never altered by this keyword.
         """
+        self._validate_list(list_)
         return list_[:]
 
     def reverse_list(self, list_):
@@ -267,6 +279,7 @@ class _List(object):
         =>
         | ${L3} = ['c', 'b', 'a']
         """
+        self._validate_list(list_)
         list_.reverse()
 
     def sort_list(self, list_):
@@ -282,6 +295,7 @@ class _List(object):
         =>
         | ${L} = [1, 2, 'a', 'b', 'c']
         """
+        self._validate_list(list_)
         list_.sort()
 
     def list_should_contain_value(self, list_, value, msg=None):
@@ -291,6 +305,7 @@ class _List(object):
         not contain value '<value>'``. A custom message can be given using
         the ``msg`` argument.
         """
+        self._validate_list(list_)
         default = "%s does not contain value '%s'." % (seq2str2(list_), value)
         _verify_condition(value in list_, default, msg)
 
@@ -299,6 +314,7 @@ class _List(object):
 
         See `List Should Contain Value` for an explanation of ``msg``.
         """
+        self._validate_list(list_)
         default = "%s contains value '%s'." % (seq2str2(list_), value)
         _verify_condition(value not in list_, default, msg)
 
@@ -313,6 +329,7 @@ class _List(object):
         This keyword works with all iterables that can be converted to a list.
         The original iterable is never altered.
         """
+        self._validate_list(list_)
         if not isinstance(list_, list):
             list_ = list(list_)
         dupes = []
@@ -363,6 +380,8 @@ class _List(object):
         message would contain a row like ``Index 2 (email): name@foo.com !=
         name@bar.com``.
         """
+        self._validate_list(list1, 1)
+        self._validate_list(list2, 2)
         len1 = len(list1)
         len2 = len(list2)
         default = 'Lengths are different: %d != %d' % (len1, len2)
@@ -396,6 +415,8 @@ class _List(object):
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
         """
+        self._validate_list(list1)
+        self._validate_list(list2, 2)
         diffs = ', '.join(unic(item) for item in list2 if item not in list1)
         default = 'Following values were not found from first list: ' + diffs
         _verify_condition(not diffs, default, msg, values)
@@ -408,6 +429,7 @@ class _List(object):
         If you only want to the length, use keyword `Get Length` from
         the BuiltIn library.
         """
+        self._validate_list(list_)
         logger.write('\n'.join(self._log_list(list_)), level)
 
     def _log_list(self, list_):
@@ -432,6 +454,13 @@ class _List(object):
         raise IndexError('Given index %s is out of the range 0-%d.'
                          % (index, len(list_)-1))
 
+    def _validate_list(self, list, position=1):
+        if not is_list_like(list):
+            raise TypeError("Expected %i. argument to be a list, got '%s' instead." % (position, type_name(list)))
+
+    def _validate_lists(self, *lists):
+        for item in lists:
+            self._validate_list(item, lists.index(item)+1)
 
 class _Dictionary(object):
 
@@ -676,7 +705,7 @@ class _Dictionary(object):
         The given dictionaries are never altered by this keyword.
         """
         self._validate_dictionary(dict1)
-        self._validate_dictionary(dict2, 'second')
+        self._validate_dictionary(dict2, 2)
         keys = self._keys_should_be_equal(dict1, dict2, msg, values)
         self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
 
@@ -690,7 +719,7 @@ class _Dictionary(object):
         The given dictionaries are never altered by this keyword.
         """
         self._validate_dictionary(dict1)
-        self._validate_dictionary(dict2, 'second')
+        self._validate_dictionary(dict2, 2)
         keys = self.get_dictionary_keys(dict2)
         diffs = [unic(k) for k in keys if k not in dict1]
         default = "Following keys missing from first dictionary: %s" \
@@ -746,9 +775,9 @@ class _Dictionary(object):
             except AssertionError as err:
                 yield unic(err)
 
-    def _validate_dictionary(self, dictionary, position='first'):
+    def _validate_dictionary(self, dictionary, position=1):
         if is_string(dictionary) or is_number(dictionary):
-            raise TypeError("Expected %s argument to be a dictionary, got '%s' instead." % (position, type_name(dictionary)))
+            raise TypeError("Expected %i. argument to be a dictionary, got '%s' instead." % (position, type_name(dictionary)))
 
 class Collections(_List, _Dictionary):
     """A test library providing keywords for handling lists and dictionaries.
@@ -870,6 +899,7 @@ class Collections(_List, _Dictionary):
         | Should Contain Match | ${list} | ab* | whitespace_insensitive=yes  | | # Match strings beginning with 'ab' with possible whitespace ignored. |
         | Should Contain Match | ${list} | ab* | whitespace_insensitive=true | case_insensitive=true | # Same as the above but also ignore case. |
         """
+        _List._validate_list(self, list)
         matches = _get_matches_in_iterable(list, pattern, case_insensitive,
                                            whitespace_insensitive)
         default = "%s does not contain match for pattern '%s'." \
@@ -884,6 +914,7 @@ class Collections(_List, _Dictionary):
         Exact opposite of `Should Contain Match` keyword. See that keyword
         for information about arguments and usage in general.
         """
+        _List._validate_list(self, list)
         matches = _get_matches_in_iterable(list, pattern, case_insensitive,
                                            whitespace_insensitive)
         default = "%s contains match for pattern '%s'." \
@@ -902,6 +933,7 @@ class Collections(_List, _Dictionary):
         | ${matches}= | Get Matches | ${list} | regexp=a.* | # ${matches} will contain any string beginning with 'a' (regexp version) |
         | ${matches}= | Get Matches | ${list} | a* | case_insensitive=${True} | # ${matches} will contain any string beginning with 'a' or 'A' |
         """
+        _List._validate_list(self, list)
         return _get_matches_in_iterable(list, pattern, case_insensitive,
                                         whitespace_insensitive)
 
@@ -917,6 +949,7 @@ class Collections(_List, _Dictionary):
         | ${count}= | Get Match Count | ${list} | regexp=a.* | # ${matches} will be the count of strings beginning with 'a' (regexp version) |
         | ${count}= | Get Match Count | ${list} | a* | case_insensitive=${True} | # ${matches} will be the count of strings beginning with 'a' or 'A' |
         """
+        _List._validate_list(self, list)
         return len(self.get_matches(list, pattern, case_insensitive,
                                     whitespace_insensitive))
 
