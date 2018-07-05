@@ -9,24 +9,39 @@ __version__ = '0.1-alpha'
 
 
 def keyword(a1='d', *a2):
-    """A keyword
+    """A keyword.
 
-    See `get hello` for details"""
+    See `get hello` for details.
+    """
     pass
 
 
 def get_hello():
-    """Get the intialization variables
+    """Get hello.
 
-    See `importing` for explanation of arguments
-    and `introduction` for introduction"""
+    See `importing` for explanation of nothing
+    and `introduction` for no more information.
+    """
     return 'foo'
 
+
+def multiline_doc_with_split_short_doc():
+    """This is short doc.
+    It can span multiple
+    physical
+    lines.
+
+    This is body. It can naturally also
+    contain multiple lines.
+
+    And paragraphs.
+    """
 
 def non_ascii_doc():
     u"""Hyv\u00E4\u00E4 y\u00F6t\u00E4.
 
-    \u0421\u043F\u0430\u0441\u0438\u0431\u043E!"""
+    \u0421\u043F\u0430\u0441\u0438\u0431\u043E!
+    """
 
 
 def non_ascii_doc_with_bytes():
@@ -47,8 +62,7 @@ def name_set_in_method_signature(a, b, *args, **kwargs):
 
 @deco.keyword('Takes ${embedded} ${args}')
 def takes_embedded_args(a=1, b=2, c=3):
-    """A keyword which uses embedded args
-    """
+    """A keyword which uses embedded args."""
     pass
 
 

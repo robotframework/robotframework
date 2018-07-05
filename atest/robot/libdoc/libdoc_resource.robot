@@ -19,7 +19,7 @@ Run Libdoc And Parse Output
     [Arguments]    ${arguments}
     Remove File    ${OUTXML}
     Run Libdoc And Set Output    ${arguments} ${OUTXML}
-    Should Not Contain    ${output}    --help    Execution failed:\n\n${output}    no values
+    Should Not Contain    ${OUTPUT}    --help    Execution failed:\n\n${output}    no values
     Log File    ${OUTXML}
     ${LIBDOC}=    Parse Xml    ${OUTXML}
     Set Suite Variable    ${LIBDOC}
@@ -35,10 +35,6 @@ Run Libdoc And Parse Model From HTML
     Run Libdoc    ${args} ${OUT HTML}
     ${MODEL} =    Get Libdoc Model From HTML    ${OUT HTML}
     Set Suite Variable    ${MODEL}
-
-Doc Should Contain In HTML
-    [Arguments]    ${object}    ${expected}
-    Should Contain    ${object['doc']}    ${expected}
 
 Name Should Be
     [Arguments]    ${name}
