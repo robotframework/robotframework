@@ -93,17 +93,44 @@ use-case-like test cases, the highest-level keywords are often
 formulated as sentences or even paragraphs.
 
 User keywords can have a documentation that is set with the
-:setting:`[Documentation]` setting, exactly as `test case documentation`_.
+:setting:`[Documentation]` setting. It supports same formatting,
+splitting to multiple lines, and other features as `test case documentation`_.
 This setting documents the user keyword in the test data. It is also shown
 in a more formal keyword documentation, which the Libdoc_ tool can create
-from `resource files`_. Finally, the first row of the documentation is
-shown as a keyword documentation in `test logs`_.
+from `resource files`_. Finally, the first logical row of the documentation,
+until the first empty row, is shown as a keyword documentation in `test logs`_.
+
+.. sourcecode:: robotframework
+
+   *** Keywords ***
+   One line documentation
+       [Documentation]    One line documentation.
+       No Operation
+
+   Multiline documentation
+       [Documentation]    The first line creates the short doc.
+       ...
+       ...                This is the body of the documentation.
+       ...                It is not shown in Libdoc outputs but only
+       ...                the short doc is shown in logs.
+       No Operation
+
+   Short documentation in multiple lines
+       [Documentation]    If the short doc gets longer, it can span
+       ...                multiple physical lines.
+       ...
+       ...                The body is separated from the short doc with
+       ...                an empty line.
+       No Operation
 
 Sometimes keywords need to be removed, replaced with new ones, or
 deprecated for other reasons.  User keywords can be marked deprecated
 by starting the documentation with `*DEPRECATED*`, which will
 cause a warning when the keyword is used. For more information, see
-`Deprecating keywords`_ section.
+the `Deprecating keywords`_ section.
+
+.. note:: Prior to Robot Framework 3.1, the short documentation contained
+          only the first physical line of the keyword documentation.
 
 User keyword tags
 -----------------

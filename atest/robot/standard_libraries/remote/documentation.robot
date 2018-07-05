@@ -12,7 +12,7 @@ Single
     Single line documentation    Single line documentation    3
 
 Multi
-    Multi    Multi\nline\ndocumentation    1
+    Short doc\nin two lines.    Short doc\nin two lines.\n\nDoc body\nin\nthree.    1
 
 Nön-ÄSCII
     [Tags]    no-ipy

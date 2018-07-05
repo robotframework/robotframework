@@ -10,6 +10,9 @@ Name
     : FOR    ${kw}    IN    @{tc.kws}
     \    Should Be Equal    ${kw.name}  user_keyword nameS _are_not_ FORmatted
 
+No documentation
+    Verify Documentation    ${EMPTY}    test=Normal name
+
 Documentation
     Verify Documentation    Documentation for this user keyword
 
@@ -17,14 +20,16 @@ Documentation in multiple columns
     Verify Documentation    Documentation for this user keyword in multiple columns
 
 Documentation in multiple rows
-    [Documentation]    Only first line is used when running tests
     Verify Documentation    1st line is shortdoc.
+
+Short doc consists of first logical, not physical, line
+    Verify Documentation    1st logical line is shortdoc.\nIt can be split to\nmultiple\nphysical\nlines.
 
 Documentation with variables
     Verify Documentation    Variables work in documentation since Robot 1.2.
 
 Documentation with non-existing variables
-    Verify Documentation    Starting from RF 2.1 \${NONEX} variables are just
+    Verify Documentation    Starting from RF 2.1 \${NONEX} variables are left unchanged.
 
 Documentation with escaping
     Verify Documentation    \${XXX} c:\\temp${SPACE*2}\\
@@ -87,8 +92,8 @@ Invalid setting
 
 *** Keywords ***
 Verify Documentation
-    [Arguments]    ${doc}
-    ${tc} =    Check Test Case    ${TEST NAME}
+    [Arguments]    ${doc}    ${test}=${TEST NAME}
+    ${tc} =    Check Test Case    ${test}
     Should Be Equal    ${tc.kws[0].doc}    ${doc}
 
 Verify Teardown

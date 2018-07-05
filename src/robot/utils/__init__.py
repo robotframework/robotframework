@@ -70,7 +70,7 @@ from .robottypes import (is_bytes, is_dict_like, is_falsy, is_integer,
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,
-                   get_console_length, getdoc, pad_console_length,
+                   get_console_length, getdoc, getshortdoc, pad_console_length,
                    split_tags_from_doc, split_args_from_name_or_path)
 from .unic import prepr, unic
 from .utf8reader import Utf8Reader

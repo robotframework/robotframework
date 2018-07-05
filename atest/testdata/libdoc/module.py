@@ -37,6 +37,7 @@ def multiline_doc_with_split_short_doc():
     And paragraphs.
     """
 
+
 def non_ascii_doc():
     u"""Hyv\u00E4\u00E4 y\u00F6t\u00E4.
 
@@ -74,3 +75,10 @@ def keyword_with_tags_1():
 @deco.keyword('Keyword with tags 2', ('2', 2, 'two', 'kaksi'))
 def setting_both_name_and_tags_by_decorator():
     pass
+
+
+def keyword_with_tags_3():
+    """Set tags in documentation.
+
+    Tags: tag1, tag2
+    """

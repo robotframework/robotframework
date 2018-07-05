@@ -4,11 +4,12 @@ from os.path import abspath
 
 from robot.utils.asserts import assert_equal, assert_true
 from robot.utils import IRONPYTHON, PY2
-from robot.utils.text import (cut_long_message, get_console_length, getdoc,
-                              pad_console_length, split_tags_from_doc,
-                              split_args_from_name_or_path,
-                              _count_line_lengths, _MAX_ERROR_LINES,
-                              _MAX_ERROR_LINE_LENGTH, _ERROR_CUT_EXPLN)
+from robot.utils.text import (
+    cut_long_message, get_console_length, getdoc, getshortdoc,
+    pad_console_length, split_tags_from_doc, split_args_from_name_or_path,
+    _count_line_lengths, _MAX_ERROR_LINES, _MAX_ERROR_LINE_LENGTH,
+    _ERROR_CUT_EXPLN
+)
 
 
 _HALF_ERROR_LINES = _MAX_ERROR_LINES // 2
@@ -318,6 +319,50 @@ class TestGetdoc(unittest.TestCase):
             expected = 'Hyv\\xe4 \\xe4iti!' \
                 if not IRONPYTHON else u'Hyv\xe4 \xe4iti!'
             assert_equal(getdoc(func), expected)
+
+
+class TestGetshortdoc(unittest.TestCase):
+
+    def test_empty(self):
+        self._verify('', '')
+
+    def test_one_line(self):
+        self._verify('Hello, world!', 'Hello, world!')
+
+    def test_multiline_with_one_line_short_doc(self):
+        self._verify('''\
+This is the short doc. Nicely in one line.
+
+This is the remainder of the doc.
+''', 'This is the short doc. Nicely in one line.')
+
+    def test_only_short_doc_split_to_many_lines(self):
+        self._verify('This time short doc is\nsplit to multiple lines.',
+                     'This time short doc is\nsplit to multiple lines.')
+
+    def test_multiline_with_multiline_short_doc(self):
+        self._verify('''\
+This is the short doc.
+Nicely in multiple
+lines.
+
+This is the remainder of the doc.
+''', 'This is the short doc.\nNicely in multiple\nlines.')
+
+    def test_line_with_only_spaces_is_considered_empty(self):
+        self._verify('Short\ndoc\n\n    \nignored', 'Short\ndoc')
+
+    def test_doc_from_object(self):
+        def func():
+            """This is short doc
+            in multiple lines.
+
+            This is the remainder.
+            """
+        self._verify(func, 'This is short doc\nin multiple lines.')
+
+    def _verify(self, doc, expected):
+        assert_equal(getshortdoc(doc), expected)
 
 
 if __name__ == '__main__':

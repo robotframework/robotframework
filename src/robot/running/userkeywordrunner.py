@@ -18,7 +18,7 @@ from robot.errors import (ExecutionFailed, ExecutionPassed, ExitForLoop,
                           ReturnFromKeyword, UserKeywordExecutionFailed,
                           VariableError)
 from robot.result import Keyword as KeywordResult
-from robot.utils import DotDict, prepr, split_tags_from_doc
+from robot.utils import getshortdoc, DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_var, VariableAssignment
 
 from .arguments import DefaultValue
@@ -62,7 +62,7 @@ class UserKeywordRunner(object):
         tags = variables.replace_list(handler.tags, ignore_errors=True) + tags
         return KeywordResult(kwname=self.name,
                              libname=handler.libname,
-                             doc=doc.splitlines()[0] if doc else '',
+                             doc=getshortdoc(doc),
                              args=kw.args,
                              assign=tuple(assignment),
                              tags=tags,

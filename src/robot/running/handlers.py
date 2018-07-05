@@ -13,8 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import (getdoc, is_java_init, is_java_method, is_list_like,
-                         printable_name, split_tags_from_doc, type_name)
+from robot.utils import (getdoc, getshortdoc, is_java_init, is_java_method,
+                         is_list_like, printable_name, split_tags_from_doc,
+                         type_name)
 from robot.errors import DataError
 from robot.model import Tags
 
@@ -97,7 +98,7 @@ class _RunnableHandler(object):
 
     @property
     def shortdoc(self):
-        return self.doc.splitlines()[0] if self.doc else ''
+        return getshortdoc(self.doc)
 
     @property
     def libname(self):

@@ -19,22 +19,29 @@ Documentation And Argument Boundaries Work With Varargs
 Documentation and Argument Boundaries Work When Argspec is None
     Keyword documentation for No Arg Spec
 
+Multiline Documentation
+    Multiline\nshort doc!
+
 Keyword Not Created And Warning Shown When Getting Documentation Fails
     [Template]    Check Creating Keyword Failed Due To Invalid Doc Message
     0    Many Args
-    1    No Arg
-    3    One Arg
-    4    One or Two Args
-    [Teardown]    Check Log Message    ${ERRORS.msgs[5]}
+    1    Multiline
+    2    No Arg
+    3    No Arg Spec
+    4    One Arg
+    5    One or Two Args
+    [Teardown]    Check Log Message    ${ERRORS[6]}
     ...    Imported library 'classes.InvalidGetDocDynamicLibrary' contains no keywords.    WARN
 
 Keyword Not Created And Warning Shown When Getting Arguments Fails
     [Template]    Check Creating Keyword Failed Due To Invalid Args Message
-    6     Many Args
-    7     No Arg
-    9     One Arg
-    10    One or Two Args
-    [Teardown]    Check Log Message    ${ERRORS.msgs[11]}
+    7    Many Args
+    8    Multiline
+    9    No Arg
+    10    No Arg Spec
+    11   One Arg
+    12   One or Two Args
+    [Teardown]    Check Log Message    ${ERRORS[13]}
     ...    Imported library 'classes.InvalidGetArgsDynamicLibrary' contains no keywords.    WARN
 
 Documentation And Argument Boundaries Work With No Args In Java
@@ -56,19 +63,19 @@ Documentation And Argument Boundaries Work With Varargs In Java
 Keyword With Kwargs Not Created And Warning Shown When No Run Keyword With Kwargs Support In Java
     [Tags]    require-jython
     [Template]    NONE
-    Check Log Message    ${ERRORS.msgs[12]}
+    Check Log Message    ${ERRORS[14]}
     ...    Adding keyword 'Unsupported Java Kwargs' to library 'ArgDocDynamicJavaLibrary' failed: Too few 'runKeyword' method parameters for **kwargs support.    ERROR
 
 Keyword Not Created And Warning Shown When Getting Documentation Fails In Java
     [Tags]    require-jython
     [Template]    NONE
-    Check Log Message    ${ERRORS.msgs[13]}
+    Check Log Message    ${ERRORS[15]}
     ...    Adding keyword 'Invalid Java Args' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordArguments' failed: Get args failure    ERROR
 
 Keyword Not Created And Warning Shown When Getting Arguments Fails In Java
     [Tags]    require-jython
     [Template]    NONE
-    Check Log Message    ${ERRORS.msgs[14]}
+    Check Log Message    ${ERRORS[16]}
     ...    Adding keyword 'Invalid Java Doc' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordDocumentation' failed: Get doc failure    ERROR
 
 *** Keywords ***

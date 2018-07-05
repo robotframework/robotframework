@@ -58,6 +58,9 @@ Keyword Short Doc
     ${MODEL['keywords'][6]['shortdoc']}    Hyvää yötä.
     ${MODEL['keywords'][8]['shortdoc']}    Hyvää yötä.
 
+Keyword Short Doc Spanning Multiple Physical Lines
+    ${MODEL['keywords'][5]['shortdoc']}    This is short doc. It can span multiple physical lines.
+
 Keyword tags
     [Template]    Should Be Equal As Strings
     ${MODEL['keywords'][1]['tags']}    []

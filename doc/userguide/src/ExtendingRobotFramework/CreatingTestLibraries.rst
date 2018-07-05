@@ -1625,13 +1625,12 @@ create a library documentation from both Python and Java libraries
 using the static library API, such as the ones above, but it also handles
 libraries using the `dynamic library API`_ and `hybrid library API`_.
 
-The first line of a keyword documentation is used for a special
-purpose and should contain a short overall description of the
-keyword. It is used as a *short documentation*, for example as a tool
-tip, by Libdoc_ and also shown in the test logs. However, the latter
-does not work with Java libraries using the static API,
-because their documentations are lost in compilation and not available
-at runtime.
+The first logical line of a keyword documentation, until the first empty line,
+is used for a special purpose and should contain a short overall description
+of the keyword. It is used as a *short documentation* by Libdoc_ (for example,
+as a tool tip) and also shown in the `test logs`_. The latter does not work
+with Java libraries using the static API, though, because their documentation
+is not available at runtime.
 
 By default documentation is considered to follow Robot Framework's
 `documentation formatting`_ rules. This simple format allows often used
@@ -1641,9 +1640,13 @@ text and reStructuredText_ formats. See `Specifying documentation format`_
 section for information how to set the format in the library source code and
 Libdoc_ chapter for more information about the formats in general.
 
+.. note:: Prior to Robot Framework 3.1, the short documentation contained
+          only the first physical line of the keyword documentation.
+
 .. note:: If you want to use non-ASCII characters in the documentation of
           Python libraries, you must either use UTF-8 as your `source code
-          encoding`__ or create docstrings as Unicode.
+          encoding`__ or create docstrings as Unicode. When using Python 3,
+          UTF-8 is the default source encoding.
 
 .. _docstrings: http://www.python.org/dev/peps/pep-0257
 .. _javadoc: http://java.sun.com/j2se/javadoc/writingdoccomments/index.html

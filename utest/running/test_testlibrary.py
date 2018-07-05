@@ -454,11 +454,14 @@ class TestDynamicLibrary(unittest.TestCase):
 
     def test_get_keyword_doc_is_used_if_present(self):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
-        assert_equal(lib.handlers['No Arg'].doc, 'Keyword documentation for No Arg')
+        assert_equal(lib.handlers['No Arg'].doc,
+                     'Keyword documentation for No Arg')
+        assert_equal(lib.handlers['Multiline'].doc,
+                     'Multiline\nshort doc!\n\nBody\nhere.')
 
     def test_get_keyword_doc_and_args_are_ignored_if_not_callable(self):
         lib = TestLibrary('classes.InvalidAttributeDynamicLibrary')
-        assert_equal(len(lib.handlers), 5)
+        assert_equal(len(lib.handlers), 6)
         assert_equal(lib.handlers['No Arg'].doc, '')
         assert_handler_args(lib.handlers['No Arg'], 0, sys.maxsize)
 

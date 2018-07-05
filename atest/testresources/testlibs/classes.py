@@ -41,7 +41,7 @@ class NameLibrary:
 
 
 class DocLibrary:
-    handler_count = 3
+    handler_count = 4
 
     def no_doc(self):
         pass
@@ -56,13 +56,42 @@ class DocLibrary:
     one_line_doc.expected_shortdoc = 'One line doc'
 
     def multiline_doc(self):
-        """Multiline doc.
+        """First line is short doc.
 
-        Spans multiple lines.
+        Full doc spans
+        multiple lines.
         """
 
-    multiline_doc.expected_doc = 'Multiline doc.\n\nSpans multiple lines.'
-    multiline_doc.expected_shortdoc = 'Multiline doc.'
+    multiline_doc.expected_doc = 'First line is short doc.\n\nFull doc spans\nmultiple lines.'
+    multiline_doc.expected_shortdoc = 'First line is short doc.'
+
+    def multiline_doc_with_split_short_doc(self):
+        """Short doc can be split into
+        multiple
+        physical
+        lines.
+
+        This is documentation body and not included
+        in short doc.
+
+        Still body.
+        """
+
+    multiline_doc_with_split_short_doc.expected_doc = '''\
+Short doc can be split into
+multiple
+physical
+lines.
+
+This is documentation body and not included
+in short doc.
+
+Still body.'''
+    multiline_doc_with_split_short_doc.expected_shortdoc = '''\
+Short doc can be split into
+multiple
+physical
+lines.'''
 
 
 class ArgInfoLibrary:
@@ -174,16 +203,17 @@ class RecordingLibrary(object):
 class ArgDocDynamicLibrary:
 
     def __init__(self):
-        kws = [('No Arg', []),
-               ('One Arg', ['arg']),
-               ('One or Two Args', ['arg', 'darg=dvalue']),
-               ('Many Args', ['*args']),
-               ('No Arg Spec', None)]
-        self._keywords = dict((name, _KeywordInfo(name, argspec))
-                              for name, argspec in kws)
+        kws = [('No Arg', [], None),
+               ('One Arg', ['arg'], None),
+               ('One or Two Args', ['arg', 'darg=dvalue'], None),
+               ('Many Args', ['*args'], None),
+               ('No Arg Spec', None, None),
+               ('Multiline', None, 'Multiline\nshort doc!\n\nBody\nhere.')]
+        self._keywords = dict((name, _KeywordInfo(name, argspec, doc))
+                              for name, argspec, doc in kws)
 
     def get_keyword_names(self):
-        return sorted(self._keywords.keys())
+        return sorted(self._keywords)
 
     def run_keyword(self, name, *args):
         print('*INFO* Executed keyword %s with arguments %s' % (name, args))
@@ -212,8 +242,8 @@ class ArgDocDynamicLibraryWithKwargsSupport(ArgDocDynamicLibrary):
 class _KeywordInfo:
     doc_template = 'Keyword documentation for %s'
 
-    def __init__(self, name, argspec):
-        self.doc = self.doc_template % name
+    def __init__(self, name, argspec, doc=None):
+        self.doc = doc or self.doc_template % name
         self.argspec = argspec
 
 

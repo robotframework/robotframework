@@ -29,6 +29,9 @@ Documentation and Argument Boundaries Work When Argspec is None
     No Arg Spec
     No Arg Spec    1    2    3    4    5    6    7    8    9    10    11    12    13
 
+Multiline Documentation
+    Multiline
+
 Documentation and Argument Boundaries Work With No Args In Java
     [Documentation]    FAIL Keyword 'ArgDocDynamicJavaLibrary.Java No Arg' expected 0 arguments, got 1.
     Java No Arg
