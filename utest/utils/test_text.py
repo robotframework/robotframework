@@ -2,9 +2,9 @@ import unittest
 import os
 from os.path import abspath
 
-from robot.utils.asserts import *
-
-from robot.utils.text import (cut_long_message, get_console_length,
+from robot.utils.asserts import assert_equal, assert_true
+from robot.utils import IRONPYTHON, PY2
+from robot.utils.text import (cut_long_message, get_console_length, getdoc,
                               pad_console_length, split_tags_from_doc,
                               split_args_from_name_or_path,
                               _count_line_lengths, _MAX_ERROR_LINES,
@@ -273,6 +273,51 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
             assert_equal(self.method(path), (abspath(path), []))
         finally:
             os.rmdir(path)
+
+
+class TestGetdoc(unittest.TestCase):
+
+    def test_no_doc(self):
+        def func():
+            pass
+        assert_equal(getdoc(func), '')
+
+    def test_one_line_doc(self):
+        def func():
+            """My documentation."""
+        assert_equal(getdoc(func), 'My documentation.')
+
+    def test_multiline_doc(self):
+        class Class:
+            """My doc.
+
+            In multiple lines.
+            """
+        assert_equal(getdoc(Class), 'My doc.\n\nIn multiple lines.')
+        assert_equal(getdoc(Class), getdoc(Class()))
+
+    def test_unicode_doc(self):
+        class Class:
+            def meth(self):
+                u"""Hyv\xe4 \xe4iti!"""
+        assert_equal(getdoc(Class.meth), u'Hyv\xe4 \xe4iti!')
+        assert_equal(getdoc(Class.meth), getdoc(Class().meth))
+
+    if PY2:
+
+        def test_non_ascii_doc_in_utf8(self):
+            def func():
+                """Hyv\xc3\xa4 \xc3\xa4iti!"""
+            expected = u'Hyv\xe4 \xe4iti!' \
+                if not IRONPYTHON else u'Hyv\xc3\xa4 \xc3\xa4iti!'
+            assert_equal(getdoc(func), expected)
+
+        def test_non_ascii_doc_not_in_utf8(self):
+            def func():
+                """Hyv\xe4 \xe4iti!"""
+            expected = 'Hyv\\xe4 \\xe4iti!' \
+                if not IRONPYTHON else u'Hyv\xe4 \xe4iti!'
+            assert_equal(getdoc(func), expected)
 
 
 if __name__ == '__main__':

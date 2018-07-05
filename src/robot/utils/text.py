@@ -13,11 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import inspect
 import os.path
 import re
 
 from .charwidth import get_char_width
 from .misc import seq2str2
+from .robottypes import is_unicode
 from .unic import unic
 
 
@@ -149,3 +151,13 @@ def split_tags_from_doc(doc):
         doc = '\n'.join(lines[:-1]).rstrip()
         tags = [tag.strip() for tag in match.group(1).split(',')]
     return doc, tags
+
+
+def getdoc(item):
+    doc = inspect.getdoc(item) or u''
+    if is_unicode(doc):
+        return doc
+    try:
+        return doc.decode('UTF-8')
+    except UnicodeDecodeError:
+        return unic(doc)

@@ -15,11 +15,10 @@
 
 from __future__ import division
 
-import inspect
 from operator import add, sub
 
 from .platform import PY2
-from .robottypes import is_integer, is_unicode
+from .robottypes import is_integer
 from .unic import unic
 
 
@@ -125,13 +124,3 @@ def seq2str2(sequence):
     if not sequence:
         return '[ ]'
     return '[ %s ]' % ' | '.join(unic(item) for item in sequence)
-
-
-def getdoc(item):
-    doc = inspect.getdoc(item) or u''
-    if is_unicode(doc):
-        return doc
-    try:
-        return doc.decode('UTF-8')
-    except UnicodeDecodeError:
-        return unic(doc)

@@ -50,7 +50,7 @@ from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
-from .misc import (getdoc, plural_or_not, printable_name, roundup, seq2str,
+from .misc import (plural_or_not, printable_name, roundup, seq2str,
                    seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
 from .platform import (IRONPYTHON, JYTHON, PY2, PY3, PYPY, PYTHON, UNIXY,
@@ -70,7 +70,7 @@ from .robottypes import (is_bytes, is_dict_like, is_falsy, is_integer,
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,
-                   pad_console_length, get_console_length, split_tags_from_doc,
-                   split_args_from_name_or_path)
+                   get_console_length, getdoc, pad_console_length,
+                   split_tags_from_doc, split_args_from_name_or_path)
 from .unic import prepr, unic
 from .utf8reader import Utf8Reader

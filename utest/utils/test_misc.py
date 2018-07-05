@@ -1,8 +1,7 @@
 import unittest
 
-from robot.utils import IRONPYTHON, PY2
 from robot.utils.asserts import assert_equal
-from robot.utils.misc import getdoc, printable_name, seq2str, roundup
+from robot.utils.misc import printable_name, seq2str, roundup
 
 
 class TestRoundup(unittest.TestCase):
@@ -139,51 +138,6 @@ class TestPrintableName(unittest.TestCase):
                          ('Foo-B:A;R!', 'Foo-B:A;R!'),
                          ('', '')]:
             assert_equal(printable_name(inp, code_style=True), exp)
-
-
-class TestGetdoc(unittest.TestCase):
-
-    def test_no_doc(self):
-        def func():
-            pass
-        assert_equal(getdoc(func), '')
-
-    def test_one_line_doc(self):
-        def func():
-            """My documentation."""
-        assert_equal(getdoc(func), 'My documentation.')
-
-    def test_multiline_doc(self):
-        class Class:
-            """My doc.
-
-            In multiple lines.
-            """
-        assert_equal(getdoc(Class), 'My doc.\n\nIn multiple lines.')
-        assert_equal(getdoc(Class), getdoc(Class()))
-
-    def test_unicode_doc(self):
-        class Class:
-            def meth(self):
-                u"""Hyv\xe4 \xe4iti!"""
-        assert_equal(getdoc(Class.meth), u'Hyv\xe4 \xe4iti!')
-        assert_equal(getdoc(Class.meth), getdoc(Class().meth))
-
-    if PY2:
-
-        def test_non_ascii_doc_in_utf8(self):
-            def func():
-                """Hyv\xc3\xa4 \xc3\xa4iti!"""
-            expected = u'Hyv\xe4 \xe4iti!' \
-                if not IRONPYTHON else u'Hyv\xc3\xa4 \xc3\xa4iti!'
-            assert_equal(getdoc(func), expected)
-
-        def test_non_ascii_doc_not_in_utf8(self):
-            def func():
-                """Hyv\xe4 \xe4iti!"""
-            expected = 'Hyv\\xe4 \\xe4iti!' \
-                if not IRONPYTHON else u'Hyv\xe4 \xe4iti!'
-            assert_equal(getdoc(func), expected)
 
 
 if __name__ == "__main__":
