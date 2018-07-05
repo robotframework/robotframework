@@ -101,7 +101,6 @@
 
 .. include:: Appendices/AvailableSettings.rst
 .. include:: Appendices/CommandLineOptions.rst
-.. include:: Appendices/Templates.rst
 .. include:: Appendices/DocumentationFormatting.rst
 .. include:: Appendices/TimeFormat.rst
 .. include:: Appendices/BooleanArguments.rst
