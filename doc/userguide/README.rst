@@ -19,10 +19,17 @@ installing Docutils_ and Pygments_::
 
     pip install docutils pygments
 
-Robot Framework User Guide can then be generated with `<ug2html.py>`__ script.
+Note: The script currently is in python 2, you may have to use `pip2 install docutils pygments` to get the versions for your version of python.
+
+
+Robot Framework User Guide can then be generated with `<ug2html.py>`__ script run from this location inside the project.
 Run it without arguments to get the usage::
 
     python ug2html.py
+
+Or with python2 (or python2.7 or whatever python2 executable you have):
+
+    python2 ug2html.py
 
 Source files are under `<src>`__ directory. `<src/RobotFrameworkUserGuide.rst>`__
 includes other section specific files.
