@@ -200,7 +200,7 @@ class Timeout(Setting):
             self.value = value[0] if value else ''
             value = value[1:]
         self.message = self._concat_string_with_value(self.message, value)
-        # TODO: Remove custom timeout message support in RF 3.1.
+        # TODO: Remove custom timeout message support in RF 3.2.
         if value and self.parent:
             self.parent.report_invalid_syntax(
                 'Using custom timeout messages is deprecated since Robot '
