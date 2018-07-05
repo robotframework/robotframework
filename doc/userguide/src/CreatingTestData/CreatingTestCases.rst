@@ -878,7 +878,7 @@ Data-driven style
 ~~~~~~~~~~~~~~~~~
 
 Another style to write test cases is the *data-driven* approach where
-test cases use only one higher-level keyword, normally created as a
+test cases use only one higher-level keyword, often created as a
 `user keyword`_, that hides the actual test workflow. These tests are
 very useful when there is a need to test the same scenario with
 different input and/or output data. It would be possible to repeat the
@@ -924,7 +924,7 @@ context and personal preferences.
        ${VALID USER}    ${EMPTY}
        ${EMPTY}         ${EMPTY}
 
-__ `Ignored data`_
+__ `Test data sections`_
 
 Behavior-driven style
 ~~~~~~~~~~~~~~~~~~~~~

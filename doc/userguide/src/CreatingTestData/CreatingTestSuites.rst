@@ -129,7 +129,7 @@ The file or directory name can contain a prefix to control the `execution
 order`_ of the suites. The prefix is separated from the base name by two
 underscores and, when constructing the actual test suite name, both
 the prefix and underscores are removed. For example files
-:file:`01__some_tests.txt` and :file:`02__more_tests.txt` create test
+:file:`01__some_tests.robot` and :file:`02__more_tests.robot` create test
 suites :name:`Some Tests` and :name:`More Tests`, respectively, and
 the former is executed before the latter.
 

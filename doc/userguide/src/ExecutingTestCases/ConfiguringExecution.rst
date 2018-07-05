@@ -16,33 +16,30 @@ Selecting files to parse
 ------------------------
 
 Robot Framework supports test data in `various formats`__, but nowadays the
-`plain text format`_ in dedicated `*.robot` files is most commonly used.
-If only one file format is used in a project, it can be a good idea to limit
-parsing test data to only these files by using the :option:`--extension (-F)`
-option. This is especially useful if the executed directory contains large
-files that contain no test data, but have an extension that Robot Framework
-would parse otherwise. Especially large HTML files, such as reports and logs
-you can get from Robot Framework itself, can be pretty slow to process.
+`plain text format`_ in dedicated `*.robot` files is the most commonly used.
+Prior to Robot Framework 3.1, all files in all supported formats were parsed,
+meaning that also files not containing any test data could be parsed.
+To avoid parsing non-data files, especially large and slow to parse files,
+Robot Framework 3.0.1 added the :option:`--extension (-F)` option to select
+which files to parse. In Robot Framework 3.1 parsing other than `*.robot`
+files was deprecated and the :option:`--extension` option can be used to
+explicitly tell the framework to parse other files.
 
-The :option:`--extension` option takes a file extension as an argument, and only
-files with that extension are parsed. It only has an effect when executing
-directories, though, not when running explicitly specified individual files.
-It does not affect which files can be used as `resource files`_ either. If
-there is a need to parse more than one kind of files, it is possible to use
-a colon `:` to separate extensions. Matching extensions is case insensitive.
+The :option:`--extension` option takes a file extension as an argument, and
+only files with that extension are parsed. If there is a need to parse more
+than one kind of files, it is possible to use a colon `:` to separate
+extensions. Matching extensions is case insensitive.
 
 ::
 
-  robot --extension robot path/to/tests
-  robot --extension ROBOT:TXT path/to/tests
+  robot --extension robot path/to/tests        # Only parse *.robot files
+  robot --extension ROBOT:TXT path/to/tests    # Parse *.robot and *.txt files
 
-If files in one format use different extensions like ``*.html`` and ``*.htm``,
+If files in one format use different extensions like ``*.rst`` and ``*.rest``,
 you need to specify those extensions separately. Using just one of them would
 mean that other files in that format are skipped.
 
 __ `Supported file formats`_
-
-.. note:: Selecting files to parse is a new functionality in Robot Framework 3.0.1.
 
 Selecting test cases
 --------------------

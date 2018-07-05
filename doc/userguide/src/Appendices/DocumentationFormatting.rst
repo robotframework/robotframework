@@ -26,10 +26,7 @@ Newlines in test data
 ~~~~~~~~~~~~~~~~~~~~~
 
 When documenting test suites, test cases and keywords or adding metadata
-to test suites, newlines can be added manually using the `literal newline
-character sequence`__ (`\n`).
-
-__ `Handling whitespace`_
+to test suites, newlines can be added manually using `\n` `escape sequence`_.
 
 .. sourcecode:: robotframework
 
@@ -361,8 +358,8 @@ The above documentation is formatted like this:
   </div>
 
 When documenting suites, tests or keywords in Robot Framework test data,
-having multiple spaces requires escaping with a backslash to `prevent
-ignoring spaces`_. The example above would thus be written like this::
+having multiple spaces requires escaping_ with a backslash to prevent
+ignoring spaces. The example above would thus be written like this::
 
   Doc before block:
   | inside block
