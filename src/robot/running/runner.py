@@ -128,7 +128,7 @@ class Runner(SuiteVisitor):
             status.test_failed('Test case contains no keywords.')
         if status.exit:
             self._add_exit_combine()
-            result.tags.add('robot-exit')
+            result.tags.add('robot:exit')
         self._run_setup(test.keywords.setup, status, result)
         try:
             if not status.failures:
@@ -161,7 +161,7 @@ class Runner(SuiteVisitor):
         self._context.end_test(result)
 
     def _add_exit_combine(self):
-        exit_combine = ('NOT robot-exit', '')
+        exit_combine = ('NOT robot:exit', '')
         if exit_combine not in self._settings['TagStatCombine']:
             self._settings['TagStatCombine'].append(exit_combine)
 

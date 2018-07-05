@@ -68,4 +68,4 @@ Suite teardown fails
 Test Should Have Been Skipped
     [Arguments]    ${name}
     ${tc} =    Check Test Case    ${name}    FAIL    ${EXIT ON FAILURE}
-    Should Contain    ${tc.tags}    robot-exit
+    Should Contain    ${tc.tags}    robot:exit
