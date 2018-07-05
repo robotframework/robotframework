@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
+from robot.utils import seq2str
 from robot.errors import DataError
 
 from .visitor import SuiteVisitor
@@ -76,12 +76,12 @@ class SuiteConfigurer(SuiteVisitor):
                                       ('named', self.include_tests)]:
             if selector:
                 parts.append(self._format_selector_msg(explanation, selector))
-        return utils.seq2str(parts, quote='')
+        return seq2str(parts, quote='')
 
     def _format_selector_msg(self, explanation, selector):
         if len(selector) == 1 and explanation[-1] == 's':
             explanation = explanation[:-1]
-        return '%s %s' % (explanation, utils.seq2str(selector, lastsep=' or '))
+        return '%s %s' % (explanation, seq2str(selector, lastsep=' or '))
 
     def _get_suite_selector_msg(self):
         if not self.include_suites:
