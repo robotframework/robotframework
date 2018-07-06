@@ -525,6 +525,7 @@ so that their literal values are used.
    ===========  ================================================================  ==============================
    `\$`         Dollar sign, never starts a `scalar variable`_.                   `\${notvar}`
    `\@`         At sign, never starts a `list variable`_.                         `\@{notvar}`
+   `\&`         Ampersand, never starts a `dictionary variable`_.                 `\&{notvar}`
    `\%`         Percent sign, never starts an `environment variable`_.            `\%{notvar}`
    `\#`         Hash sign, never starts a comment_.                               `\# not comment`
    `\=`         Equal sign, never part of `named argument syntax`_.               `not\=named`
