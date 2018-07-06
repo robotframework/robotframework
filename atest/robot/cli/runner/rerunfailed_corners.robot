@@ -32,7 +32,7 @@ Stops on error when output contains only non-existing failing test cases
 Stops on error when output does not exist
     Run Tests Without Processing Output  --rerunfailed nonex.xml  cli/runfailed/onlypassing
     Stderr Should Match
-    ...  [ ERROR ] Collecting failed tests or tasks from 'nonex.xml' failed:
+    ...  ? ERROR ? Collecting failed tests or tasks from 'nonex.xml' failed:
     ...  Reading XML source 'nonex.xml' failed:*${USAGE TIP}\n
 
 Stops on error when output is invalid

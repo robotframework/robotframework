@@ -36,7 +36,7 @@ Non-mapping YAML file
 
 YAML files do not accept arguments
     Processing should have failed    2    valid.yaml
-    ...    with arguments [ arguments | not | accepted ]${SPACE}
+    ...    with arguments ? arguments | not | accepted ?${SPACE}
     ...    YAML variable files do not accept arguments.
 
 Non-existing YAML file

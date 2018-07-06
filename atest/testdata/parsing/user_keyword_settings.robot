@@ -135,7 +135,7 @@ Documentation with escaping
 
 Arguments
     [Arguments]    ${arg1}    ${arg2}=default    @{varargs}    &{kwargs}
-    Log    ${arg1}-${arg2}-@{varargs}-&{kwargs}
+    Log Many    ${arg1}    ${arg2}    @{varargs}    &{kwargs}
 
 Teardown
     No Operation

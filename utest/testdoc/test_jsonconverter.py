@@ -30,7 +30,7 @@ class TestJsonConverter(unittest.TestCase):
                      fullName='Misc',
                      doc='<p>My doc</p>',
                      metadata=[('1', '<p>2</p>'), ('abc', '<p>123</p>')],
-                     numberOfTests=176,
+                     numberOfTests=182,
                      tests=[],
                      keywords=[])
         test_convert(self.suite['suites'][0],
@@ -99,7 +99,7 @@ class TestJsonConverter(unittest.TestCase):
                      doc='',
                      tags=[],
                      timeout='')
-        test_convert(self.suite['suites'][3]['tests'][-1],
+        test_convert(self.suite['suites'][3]['tests'][-7],
                      id='s1-s4-t5',
                      name='Fifth',
                      fullName='Misc.Many Tests.Fifth',
@@ -130,7 +130,7 @@ class TestJsonConverter(unittest.TestCase):
                      name='dummykw',
                      arguments='',
                      type='KEYWORD')
-        test_convert(self.suite['suites'][3]['tests'][-1]['keywords'][0],
+        test_convert(self.suite['suites'][3]['tests'][-7]['keywords'][0],
                      name='Log',
                      arguments='Test 5',
                      type='KEYWORD')
