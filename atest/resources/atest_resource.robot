@@ -8,7 +8,6 @@ Library           String
 Library           TestCheckerLibrary
 Library           TestHelper           # Combine with TestCheckerLibrary?
 Library           XML
-Library           read_interpreter.py
 Variables         atest_variables.py
 
 *** Variables ***
