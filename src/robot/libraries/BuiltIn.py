@@ -74,9 +74,9 @@ class _BuiltInBase(object):
     def _variables(self):
         return self._namespace.variables
 
-    def _matches(self, string, pattern):
+    def _matches(self, string, pattern, caseless=False):
         # Must use this instead of fnmatch when string may contain newlines.
-        matcher = Matcher(pattern, caseless=False, spaceless=False)
+        matcher = Matcher(pattern, caseless=caseless, spaceless=False)
         return matcher.match(string)
 
     def _is_true(self, condition):
@@ -266,13 +266,13 @@ class _Converter(_BuiltInBase):
         and also when they are rounded. For more information see, for example,
         these resources:
 
-        - http://docs.python.org/3/tutorial/floatingpoint.html
+        - http://docs.python.org/tutorial/floatingpoint.html
         - http://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition
 
         If you want to avoid possible problems with floating point numbers,
         you can implement custom keywords using Python's
-        [https://docs.python.org/3/library/decimal.html|decimal] or
-        [https://docs.python.org/3/library/fractions.html|fractions] modules.
+        [http://docs.python.org/library/decimal.html|decimal] or
+        [http://docs.python.org/library/fractions.html|fractions] modules.
 
         If you need an integer number, use `Convert To Integer` instead.
         """
@@ -321,7 +321,7 @@ class _Converter(_BuiltInBase):
 
         Handles strings ``True`` and ``False`` (case-insensitive) as expected,
         otherwise returns item's
-        [http://docs.python.org/3/library/stdtypes.html#truth|truth value]
+        [http://docs.python.org/library/stdtypes.html#truth|truth value]
         using Python's ``bool()`` method.
         """
         self._log_types(item)
@@ -563,7 +563,7 @@ class _Verify(_BuiltInBase):
         a Python expression as explained in `Evaluating expressions` and the
         keyword status is decided based on the result. If a non-string item is
         given, the status is got directly from its
-        [http://docs.python.org/3/library/stdtypes.html#truth|truth value].
+        [http://docs.python.org/library/stdtypes.html#truth|truth value].
 
         The default error message (``<condition> should be true``) is not very
         informative, but it can be overridden with the ``msg`` argument.
@@ -585,8 +585,8 @@ class _Verify(_BuiltInBase):
         | Should Be True | $status == 'PASS' | # Expected string must be quoted |
 
         `Should Be True` automatically imports Python's
-        [http://docs.python.org/3/library/os.html|os] and
-        [http://docs.python.org/3/library/sys.html|sys] modules that contain
+        [http://docs.python.org/library/os.html|os] and
+        [http://docs.python.org/library/sys.html|sys] modules that contain
         several useful attributes:
 
         | Should Be True | os.linesep == '\\n'             | # Unixy   |
@@ -757,8 +757,8 @@ class _Verify(_BuiltInBase):
 
         If you want to avoid possible problems with floating point numbers,
         you can implement custom keywords using Python's
-        [https://docs.python.org/3/library/decimal.html|decimal] or
-        [https://docs.python.org/3/library/fractions.html|fractions] modules.
+        [http://docs.python.org/library/decimal.html|decimal] or
+        [http://docs.python.org/library/fractions.html|fractions] modules.
 
         See `Should Not Be Equal As Numbers` for a negative version of this
         keyword and `Should Be Equal` for an explanation on how to override
@@ -1087,69 +1087,51 @@ class _Verify(_BuiltInBase):
                          ignore_case=False):
         """Fails if the given ``string`` matches the given ``pattern``.
 
-        Pattern matching is similar as matching files in a shell, and it is
-        always case-sensitive. In the pattern ``*`` matches to anything and
-        ``?`` matches to any single character.
+        Pattern matching is similar as matching files in a shell with
+        ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
+        `Glob patterns` section for more information.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
-        if is_truthy(ignore_case):
-            string = string.lower()
-            pattern = pattern.lower()
-        if self._matches(string, pattern):
+        if self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
 
     def should_match(self, string, pattern, msg=None, values=True,
                      ignore_case=False):
-        """Fails unless the given ``string`` matches the given ``pattern``.
+        """Fails if the given ``string`` does not match the given ``pattern``.
 
-        Pattern matching is similar as matching files in a shell, and it is
-        always case-sensitive. In the pattern, ``*`` matches to anything and
-        ``?`` matches to any single character.
+        Pattern matching is similar as matching files in a shell with
+        ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
+        `Glob patterns` section for more information.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
-        if is_truthy(ignore_case):
-            string = string.lower()
-            pattern = pattern.lower()
-        if not self._matches(string, pattern):
+        if not self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
 
     def should_match_regexp(self, string, pattern, msg=None, values=True):
         """Fails if ``string`` does not match ``pattern`` as a regular expression.
 
-        Regular expression check is implemented using the Python
-        [http://docs.python.org/3/library/re.html|re module]. Python's regular
-        expression syntax is derived from Perl, and it is thus also very
-        similar to the syntax used, for example, in Java, Ruby and .NET.
+        See the `Regular expressions` section for more information about
+        regular expressions and how to use then in Robot Framework test data.
 
-        Things to note about the regexp syntax in Robot Framework test data:
+        Notice that the given pattern does not need to match the whole string.
+        For example, the pattern ``ello`` matches the string ``Hello world!``.
+        If a full match is needed, the ``^`` and ``$`` characters can be used
+        to denote the beginning and end of the string, respectively.
+        For example, ``^ello$`` only matches the exact string ``ello``.
 
-        1) Backslash is an escape character in the test data, and possible
-        backslashes in the pattern must thus be escaped with another backslash
-        (e.g. ``\\\\d\\\\w+``).
-
-        2) Strings that may contain special characters, but should be handled
-        as literal strings, can be escaped with the `Regexp Escape` keyword.
-
-        3) The given pattern does not need to match the whole string. For
-        example, the pattern ``ello`` matches the string ``Hello world!``. If
-        a full match is needed, the ``^`` and ``$`` characters can be used to
-        denote the beginning and end of the string, respectively. For example,
-        ``^ello$`` only matches the exact string ``ello``.
-
-        4) Possible flags altering how the expression is parsed (e.g.
-        ``re.IGNORECASE``, ``re.MULTILINE``) can be set by prefixing the
-        pattern with the ``(?iLmsux)`` group like ``(?im)pattern``. The
-        available flags are ``i`` (case-insensitive), ``m`` (multiline mode),
-        ``s`` (dotall mode), ``x`` (verbose), ``u`` (Unicode dependent) and
-        ``L`` (locale dependent).
+        Possible flags altering how the expression is parsed (e.g.
+        ``re.IGNORECASE``, ``re.MULTILINE``) must be embedded to the
+        pattern like ``(?im)pattern``. The most useful flags are ``i``
+        (case-insensitive), ``m`` (multiline mode), ``s`` (dotall mode)
+        and ``x`` (verbose).
 
         If this keyword passes, it returns the portion of the string that
         matched the pattern. Additionally, the possible captured groups are
@@ -1739,8 +1721,8 @@ class _RunKeyword(_BuiltInBase):
         literal ``ELSE`` and ``ELSE IF`` strings as arguments, you can escape
         them with a backslash like ``\\ELSE`` and ``\\ELSE IF``.
 
-        Python's [http://docs.python.org/3/library/os.html|os] and
-        [http://docs.python.org/3/library/sys.html|sys] modules are
+        Python's [http://docs.python.org/library/os.html|os] and
+        [http://docs.python.org/library/sys.html|sys] modules are
         automatically imported when evaluating the ``condition``.
         Attributes they contain can thus be used in the condition:
 
@@ -1852,13 +1834,14 @@ class _RunKeyword(_BuiltInBase):
         """Runs the keyword and checks that the expected error occurred.
 
         The expected error must be given in the same format as in
-        Robot Framework reports. It can be a pattern containing
-        characters ``?``, which matches to any single character and
-        ``*``, which matches to any number of any characters. ``name`` and
-        ``*args`` have same semantics as with `Run Keyword`.
+        Robot Framework reports. It is interpreted as a glob pattern
+        with ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
+        `Glob patterns` section for more information.
+
+        ``name`` and ``*args`` have same semantics as with `Run Keyword`.
 
         If the expected error occurs, the error message is returned and it can
-        be further processed/tested, if needed. If there is no error, or the
+        be further processed or tested if needed. If there is no error, or the
         error does not match the expected error, this keyword fails.
 
         Examples:
@@ -3173,8 +3156,9 @@ class _Misc(_BuiltInBase):
     def remove_tags(self, *tags):
         """Removes given ``tags`` from the current test or all tests in a suite.
 
-        Tags can be given exactly or using a pattern where ``*`` matches
-        anything and ``?`` matches one character.
+        Tags can be given exactly or using a pattern with ``*``, ``?`` and
+        ``[chars]`` acting as wildcards. See the `Glob patterns` section
+        for more information.
 
         This keyword can affect either one test case or all test cases in a
         test suite similarly as `Set Tags` keyword.
@@ -3248,6 +3232,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     - `HTML error messages`
     - `Evaluating expressions`
     - `Boolean arguments`
+    - `Pattern matching`
     - `Multiline string comparisons`
     - `Shortcuts`
     - `Keywords`
@@ -3265,11 +3250,11 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Many keywords, such as `Evaluate`, `Run Keyword If` and `Should Be True`,
     accept an expression that is evaluated in Python. These expressions are
     evaluated using Python's
-    [https://docs.python.org/3/library/functions.html#eval|eval] function so
+    [http://docs.python.org/library/functions.html#eval|eval] function so
     that all Python built-ins like ``len()`` and ``int()`` are available.
     `Evaluate` allows configuring the execution namespace with custom modules,
-    and other keywords have [https://docs.python.org/3/library/os.html|os]
-    and [https://docs.python.org/3/library/sys.html|sys] modules available
+    and other keywords have [http://docs.python.org/library/os.html|os]
+    and [http://docs.python.org/library/sys.html|sys] modules available
     automatically.
 
     Examples:
@@ -3321,7 +3306,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     and expected values from the possible error message also consider string
     ``no values`` to be false. Other strings are considered true regardless
     their value, and other argument types are tested using the same
-    [http://docs.python.org/3/library/stdtypes.html#truth|rules as in Python].
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=True    | # Strings are generally true.    |
@@ -3340,10 +3325,49 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     non-empty strings, including ``false`` and ``no``, to be true.
     Considering ``none`` false is new in Robot Framework 3.0.3.
 
+    = Pattern matching =
+
+    Many keywords accepts arguments as either glob or regular expression
+    patterns.
+
+    == Glob patterns ==
+
+    Some keywords, for example `Should Match`, support so called
+    [http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:
+
+    | ``*``        | matches any string, even an empty string                |
+    | ``?``        | matches any single character                            |
+    | ``[chars]``  | matches one character in the bracket                    |
+    | ``[!chars]`` | matches one character not in the bracket                |
+    | ``[a-z]``    | matches one character from the range in the bracket     |
+    | ``[!a-z]``   | matches one character not from the range in the bracket |
+
+    Unlike with glob patterns normally, path separator characters ``/`` and
+    ``\\`` and the newline character ``\\n`` are matches by the above
+    wildcards.
+
+    Support for brackets like ``[abc]`` and ``[!a-z]`` is new in
+    Robot Framework 3.1
+
+    == Regular expressions ==
+
+    Some keywords, for example `Should Match Regexp`, support
+    [http://en.wikipedia.org/wiki/Regular_expression|regular expressions]
+    that are more powerful but also more complicated that glob patterns.
+    The regular expression support is implemented using Python's
+    [http://docs.python.org/library/re.html|re module] and its documentation
+    should be consulted for more information about the syntax.
+
+    Because the backslash character (``\\``) is an escape character in
+    Robot Framework test data, possible backslash characters in regular
+    expressions need to be escaped with another backslash like ``\\\\d\\\\w+``.
+    Strings that may contain special characters but should be handled
+    as literal strings, can be escaped with the `Regexp Escape` keyword.
+
     = Multiline string comparisons =
 
     `Should Be Equal` and `Should Be Equal As Strings` report the failures using
-    [https://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff
+    [http://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff
     format] if both strings have more than two lines. New in Robot Framework
     2.9.1.
 

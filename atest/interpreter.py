@@ -9,7 +9,9 @@ ROBOT_PATH = join(PROJECT_ROOT, 'src', 'robot')
 
 
 def get_variables(path, name=None, version=None):
-    return {'INTERPRETER': InterpreterFactory(path, name, version)}
+    interpreter = InterpreterFactory(path, name, version)
+    u = '' if interpreter.is_py3 or interpreter.is_ironpython else 'u'
+    return {'INTERPRETER': interpreter, 'UNICODE PREFIX': u}
 
 
 def InterpreterFactory(path, name=None, version=None):

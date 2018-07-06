@@ -67,9 +67,9 @@ class Screenshot(object):
       Framework users already have this module installed.
     - PyGTK :: http://pygtk.org :: This module is available by default on most
       Linux distributions.
-    - Pillow :: https://python-pillow.github.io ::
+    - Pillow :: http://python-pillow.github.io ::
       Only works on Windows. Also the original PIL package is supported.
-    - Scrot :: https://en.wikipedia.org/wiki/Scrot :: Not used on Windows.
+    - Scrot :: http://en.wikipedia.org/wiki/Scrot :: Not used on Windows.
       Install with ``apt-get install scrot`` or similar.
 
     Using ``screencapture`` on OSX and specifying explicit screenshot module

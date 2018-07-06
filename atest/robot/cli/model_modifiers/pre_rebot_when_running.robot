@@ -32,23 +32,23 @@ Non-existing modifier
     Run Tests    --prerebotmodifier NobodyHere -l ${LOG}    ${TEST DATA}
     ${quote} =    Set Variable If    ${INTERPRETER.is_py3}    '    ${EMPTY}
     Stderr Should Match
-    ...    [ ERROR ] Importing model modifier 'NobodyHere' failed: *Error:
+    ...    ? ERROR ? Importing model modifier 'NobodyHere' failed: *Error:
     ...    No module named ${quote}NobodyHere${quote}\nTraceback (most recent call last):\n*
     Output should not be modified
     Log should not be modified
 
 Invalid modifier
     Run Tests    --prerebotmodifier ${CURDIR}/ModelModifier.py:FAIL:Message -l ${LOG}    ${TEST DATA}
-    Stderr Should Match
+    Stderr Should Start With
     ...    [ ERROR ] Executing model modifier 'ModelModifier' failed:
-    ...    Message\nTraceback (most recent call last):\n*
+    ...    Message\nTraceback (most recent call last):\n
     Output should not be modified
     Log should not be modified
 
 Error if all tests removed
     Run Tests    --prerebot ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS -l ${LOG}    ${TEST DATA}
-    Stderr Should Match
-    ...    [ ERROR ] Suite 'Pass And Fail' contains no tests after model modifiers.${USAGE TIP}
+    Stderr Should Be Equal To
+    ...    [ ERROR ] Suite 'Pass And Fail' contains no tests after model modifiers.${USAGE TIP}\n
     Output should not be modified
     File Should Not Exist    ${LOG}
 

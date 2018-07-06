@@ -776,7 +776,7 @@ class Collections(_List, _Dictionary):
     and expected values from the possible error message also consider string
     ``no values`` to be false. Other strings are considered true regardless
     their value, and other argument types are tested using the same
-    [http://docs.python.org/3/library/stdtypes.html#truth|rules as in Python].
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
     | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=True    | # Strings are generally true.    |
@@ -823,7 +823,7 @@ class Collections(_List, _Dictionary):
 
         If you prepend ``regexp=`` to your pattern, your pattern will be used
         according to the Python
-        [http://docs.python.org/3/library/re.html|re module] regular expression
+        [http://docs.python.org/library/re.html|re module] regular expression
         syntax. Important note: Backslashes are an escape character, and must
         be escaped with another backslash (e.g. ``regexp=\\\\d{6}`` to search for
         ``\\d{6}``). See `BuiltIn.Should Match Regexp` for more details.

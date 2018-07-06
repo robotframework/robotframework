@@ -80,7 +80,7 @@ def get_value_from_user(message, default_value='', hidden=False):
     ``hidden`` is considered true if it is a non-empty string not equal to
     ``false``, ``none`` or ``no``, case-insensitively. If it is not a string,
     its truth value is got directly using same
-    [http://docs.python.org/3/library/stdtypes.html#truth|rules as in Python].
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     Example:
     | ${username} = | Get Value From User | Input user name | default    |

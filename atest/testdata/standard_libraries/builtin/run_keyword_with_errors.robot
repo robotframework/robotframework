@@ -112,8 +112,12 @@ Expected Error Is Pattern
     Run Keyword And Expect Error    C*a? e*rro?    Fail    Critical error
 
 Expected Error Is Multiline
-    Run Keyword And Expect Error    My error message\nIn multiple\nLines    Fail    My error message\nIn multiple\nLines
-    Run Keyword And Expect Error    My error message*Lines    Fail    My error message\nIn multiple\nLines
+    Run Keyword And Expect Error
+    ...    My error message\nIn multiple\nLines
+    ...    Fail    My error message\nIn multiple\nLines
+    Run Keyword And Expect Error
+    ...    My error message*Lines
+    ...    Fail    My error message\nIn multiple\nLines
 
 Expected Error Should Be Returned
     ${error} =    Run Keyword And Expect Error    *    Fail    Critical error
@@ -128,8 +132,12 @@ Expect Error With User Keyword When Keyword Fails
 
 Expect Error With Arguments That Needs To Be Escaped
     [Documentation]    FAIL Expected error 'There are no errors' did not occur.
-    Run Keyword And Expect Error    Directory '%{TEMPDIR}' exists.    Directory Should Not Exist    %{TEMPDIR}
-    Run Keyword And Expect Error    There are no errors    Log Many    @{NEEDS ESCAPING}
+    Run Keyword And Expect Error
+    ...    Directory '%{TEMPDIR}' exists.
+    ...    Directory Should Not Exist    %{TEMPDIR}
+    Run Keyword And Expect Error
+    ...    There are no errors
+    ...    Log Many    @{NEEDS ESCAPING}
 
 Expect Error When Timeout Occurs
     [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
@@ -145,7 +153,9 @@ Expect Error When Syntax Error At Parsing Time
     Run Keyword And Expect Error    *    Broken User Keyword
 
 Expect Error When Syntax Error At Run Time
-    Run Keyword And Expect Error    No keyword with name 'Non existing keyword' found.    Non existing keyword
+    Run Keyword And Expect Error
+    ...    No keyword with name 'Non existing keyword' found.
+    ...    Non existing keyword
 
 Expect Error When Syntax Error In Setting Variables
     [Documentation]    FAIL Assignment can contain only one list variable.
@@ -161,26 +171,34 @@ Expect Error When Syntax Error In For Loop
     Run Keyword And Expect Error    *    For Loop With Syntax Error
 
 Expect Error When Non Existing Variable In For Loop
-    Run Keyword And Expect Error    Variable '\${non existing}' not found.   For Loop With Non Existing Variable
+    Run Keyword And Expect Error
+    ...    Variable '\${non existing}' not found.
+    ...    For Loop With Non Existing Variable
 
 Expect Error When Access To Nonexisting Variable
-    Run Keyword And Expect Error    Variable '\${nonexisting}' not found.    Access To Nonexisting Variable
+    Run Keyword And Expect Error
+    ...    Variable '\${nonexisting}' not found.
+    ...    Access To Nonexisting Variable
 
 Expect Error When Access To List Variable Nonexisting Index Syntax 1
-    ${expected_err_msg} =  Set Variable    Resolving variable '\${list[2]}' failed: IndexError:*
-    Run Keyword And Expect Error    ${expected_err_msg}    Access To List Variable Nonexisting Index Syntax 1
+    Run Keyword And Expect Error
+    ...    Resolving variable '\${list?2?}' failed: IndexError:*
+    ...    Access To List Variable Nonexisting Index Syntax 1
 
 Expect Error When Access To List Variable Nonexisting Index Syntax 2
-    ${expected_err_msg} =  Set Variable    List variable '\@{list}' has no item in index 2.
-    Run Keyword And Expect Error    ${expected_err_msg}    Access To List Variable Nonexisting Index Syntax 2
+    Run Keyword And Expect Error
+    ...    List variable '\@{list}' has no item in index 2.
+    ...    Access To List Variable Nonexisting Index Syntax 2
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 1
-    ${expected_err_msg} =  Set Variable   Resolving variable '\${dict[c]}' failed: NameError: *
-    Run Keyword And Expect Error    ${expected_err_msg}    Access To Dictionary Variable Nonexisting Key Syntax 1
+    Run Keyword And Expect Error
+    ...    Resolving variable '\${dict?c?}' failed: NameError: *
+    ...    Access To Dictionary Variable Nonexisting Key Syntax 1
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 2
-    ${expected_err_msg} =  Set Variable    Dictionary variable '\&{dict}' has no key 'c'.
-    Run Keyword And Expect Error    ${expected_err_msg}    Access To Dictionary Variable Nonexisting Key Syntax 2
+    Run Keyword And Expect Error
+    ...    Dictionary variable '\&{dict}' has no key 'c'.
+    ...    Access To Dictionary Variable Nonexisting Key Syntax 2
 
 *** Keywords ***
 Passing UK

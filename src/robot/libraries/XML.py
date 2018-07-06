@@ -38,7 +38,7 @@ class XML(object):
 
     As the name implies, _XML_ is a test library for verifying contents of XML
     files. In practice it is a pretty thin wrapper on top of Python's
-    [https://docs.python.org/3/library/xml.etree.elementtree.html|ElementTree XML API].
+    [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].
 
     The library has the following main usages:
 
@@ -61,6 +61,7 @@ class XML(object):
     - `Element attributes`
     - `Handling XML namespaces`
     - `Boolean arguments`
+    - `Pattern matching`
     - `Shortcuts`
     - `Keywords`
 
@@ -96,7 +97,7 @@ class XML(object):
     = Using lxml =
 
     By default this library uses Python's standard
-    [https://docs.python.org/3/library/xml.etree.elementtree.html|ElementTree]
+    [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]
     module for parsing XML, but it can be configured to use
     [http://lxml.de|lxml] module instead when `importing` the library.
     The resulting element structure has same API regardless which module
@@ -251,7 +252,7 @@ class XML(object):
 
     All keywords returning elements, such as `Parse XML`, and `Get Element`,
     return ElementTree's
-    [https://docs.python.org/3/library/xml.etree.elementtree.html#element-objects|Element objects].
+    [http://docs.python.org/library/xml.etree.elementtree.html#element-objects|Element objects].
     These elements can be used as inputs for other keywords, but they also
     contain several useful attributes that can be accessed directly using
     the extended variable syntax.
@@ -422,7 +423,7 @@ class XML(object):
     it is either an empty string or case-insensitively equal to ``false``,
     ``none`` or ``no``. Other strings are considered true regardless
     their value, and other argument types are tested using the same
-    [http://docs.python.org/3/library/stdtypes.html#truth|rules as in Python].
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
     | `Parse XML` | ${XML} | keep_clark_notation=True    | # Strings are generally true.    |
@@ -439,8 +440,26 @@ class XML(object):
     Prior to Robot Framework 2.9, all non-empty strings, including ``false``
     and ``no``, were considered to be true. Considering ``none`` false is
     new in Robot Framework 3.0.3.
-    """
 
+    == Pattern matching ==
+
+    Some keywords, for example `Elements Should Match`, support so called
+    [http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:
+
+    | ``*``        | matches any string, even an empty string                |
+    | ``?``        | matches any single character                            |
+    | ``[chars]``  | matches one character in the bracket                    |
+    | ``[!chars]`` | matches one character not in the bracket                |
+    | ``[a-z]``    | matches one character from the range in the bracket     |
+    | ``[!a-z]``   | matches one character not from the range in the bracket |
+
+    Unlike with glob patterns normally, path separator characters ``/`` and
+    ``\\`` and the newline character ``\\n`` are matches by the above
+    wildcards.
+
+    Support for brackets like ``[abc]`` and ``[!a-z]`` is new in
+    Robot Framework 3.1
+    """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
     _xml_declaration = re.compile('^<\?xml .*\?>')
@@ -449,7 +468,7 @@ class XML(object):
         """Import library with optionally lxml mode enabled.
 
         By default this library uses Python's standard
-        [https://docs.python.org/3/library/xml.etree.elementtree.html|ElementTree]
+        [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree]
         module for parsing XML. If ``use_lxml`` argument is given a true value
         (see `Boolean arguments`), the library will use [http://lxml.de|lxml]
         module instead. See `Using lxml` section for benefits provided by lxml.
@@ -477,7 +496,7 @@ class XML(object):
 
         The ``source`` can either be a path to an XML file or a string
         containing XML. In both cases the XML is parsed into ElementTree
-        [https://docs.python.org/3/library/xml.etree.elementtree.html#element-objects|element structure]
+        [http://docs.python.org/library/xml.etree.elementtree.html#element-objects|element structure]
         and the root element is returned. Possible comments and processing
         instructions in the source XML are removed.
 
@@ -743,9 +762,9 @@ class XML(object):
         the expected value can be given as a pattern that the text of the
         element must match.
 
-        Pattern matching is similar as matching files in a shell, and it is
-        always case-sensitive. In the pattern, '*' matches anything and '?'
-        matches any single character.
+        Pattern matching is similar as matching files in a shell with
+        ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
+        `Pattern matching` section for more information.
 
         Examples using ``${XML}`` structure from `Example`:
         | Element Text Should Match | ${XML}       | t???   | xpath=first  |
@@ -830,9 +849,9 @@ class XML(object):
         that the expected value can be given as a pattern that the attribute of
         the element must match.
 
-        Pattern matching is similar as matching files in a shell, and it is
-        always case-sensitive. In the pattern, '*' matches anything and '?'
-        matches any single character.
+        Pattern matching is similar as matching files in a shell with
+        ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
+        `Pattern matching` section for more information.
 
         Examples using ``${XML}`` structure from `Example`:
         | Element Attribute Should Match | ${XML} | id | ?   | xpath=first |
@@ -913,9 +932,9 @@ class XML(object):
         texts and attribute values in the expected value can be given as
         patterns.
 
-        Pattern matching is similar as matching files in a shell, and it is
-        always case-sensitive. In the pattern, '*' matches anything and '?'
-        matches any single character.
+        Pattern matching is similar as matching files in a shell with
+        ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
+        `Pattern matching` section for more information.
 
         Examples using ``${XML}`` structure from `Example`:
         | ${first} =            | Get Element | ${XML} | first          |

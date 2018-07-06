@@ -202,7 +202,7 @@ class Telnet(object):
     = Terminal emulation =
 
     Telnet library supports terminal
-    emulation with [https://pyte.readthedocs.io|Pyte]. Terminal emulation
+    emulation with [http://pyte.readthedocs.io|Pyte]. Terminal emulation
     will process the output in a virtual screen. This means that ANSI escape
     codes, like cursor movements, and also control characters, like
     carriage returns and backspaces, have the same effect on the result as they
@@ -244,7 +244,7 @@ class Telnet(object):
     and ``WARN``. Levels below ``INFO`` are not shown in log files by default
     whereas warnings are shown more prominently.
 
-    The [http://docs.python.org/3/library/telnetlib.html|telnetlib module]
+    The [http://docs.python.org/library/telnetlib.html|telnetlib module]
     used by this library has a custom logging system for logging content it
     sends and receives. By default these messages are written using ``TRACE``
     level, but the level is configurable with the ``telnetlib_log_level``
@@ -268,7 +268,7 @@ class Telnet(object):
     it is either an empty string or case-insensitively equal to ``false``,
     ``none`` or ``no``. Other strings are considered true regardless
     their value, and other argument types are tested using the same
-    [http://docs.python.org/3/library/stdtypes.html#truth|rules as in Python].
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
     | `Open Connection` | lolcathost | terminal_emulation=True    | # Strings are generally true.    |
@@ -584,7 +584,7 @@ class TelnetConnection(telnetlib.Telnet):
         | `Set Prompt` | ${prompt} | ${regexp} |
 
         See the documentation of
-        [http://docs.python.org/3/library/re.html|Python re module]
+        [http://docs.python.org/library/re.html|Python re module]
         for more information about the supported regular expression syntax.
         Notice that possible backslashes need to be escaped in Robot Framework
         test data.
@@ -991,7 +991,7 @@ class TelnetConnection(telnetlib.Telnet):
         as ``loglevel`` similarly as with `Read Until` keyword.
 
         See the documentation of
-        [http://docs.python.org/3/library/re.html|Python re module]
+        [http://docs.python.org/library/re.html|Python re module]
         for more information about the supported regular expression syntax.
         Notice that possible backslashes need to be escaped in Robot Framework
         test data.
@@ -1158,7 +1158,7 @@ class TelnetConnection(telnetlib.Telnet):
             return False
         if not pyte:
             raise RuntimeError("Terminal emulation requires pyte module!\n"
-                               "https://pypi.python.org/pypi/pyte/")
+                               "http://pypi.python.org/pypi/pyte/")
         return TerminalEmulator(window_size=self._window_size,
                                 newline=self._newline)
 

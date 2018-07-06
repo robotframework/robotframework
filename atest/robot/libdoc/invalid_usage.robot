@@ -45,9 +45,9 @@ Non-XML spec
 
 Invalid resource
     ${CURDIR}/invalid_usage.robot ${OUT HTML}
-    ...   [ ERROR ] *: Non-existing setting 'Test Setup'.
-    ...   [ ERROR ] *: Non-existing setting 'Test Template'.
-    ...   [ ERROR ] *: Non-existing setting 'Test Teardown'.
+    ...   ? ERROR ? *: Non-existing setting 'Test Setup'.
+    ...   ? ERROR ? *: Non-existing setting 'Test Template'.
+    ...   ? ERROR ? *: Non-existing setting 'Test Teardown'.
     ...   Resource file '*' cannot contain tests or tasks.
 
 *** Keywords ***

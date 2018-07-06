@@ -37,12 +37,19 @@ Documentation with escaping
 Arguments
     [Documentation]    Tested more thoroughly elsewhere.
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    mandatory-default-[]-{}
-    Should Be True    ${tc.kws[0].args} == ('mandatory',)
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    1-2-[]-{}
-    Should Be True    ${tc.kws[1].args} == ('1', '2')
-    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    1-2-[3, 4, 5]-{*'key': 6}    pattern=yes
-    Should Be True    ${tc.kws[2].args} == ('\${1}', '\${2}', '\${3}', '\${4}', '\${5}', 'key=\${6}')
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    mandatory
+    Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    default
+    Should Be True       ${tc.kws[0].args} == ('mandatory',)
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    1
+    Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    2
+    Should Be True       ${tc.kws[1].args} == ('1', '2')
+    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    1
+    Check Log Message    ${tc.kws[2].kws[0].msgs[1]}    2
+    Check Log Message    ${tc.kws[2].kws[0].msgs[2]}    3
+    Check Log Message    ${tc.kws[2].kws[0].msgs[3]}    4
+    Check Log Message    ${tc.kws[2].kws[0].msgs[4]}    5
+    Check Log Message    ${tc.kws[2].kws[0].msgs[5]}    key=6
+    Should Be True       ${tc.kws[2].args} == ('\${1}', '\${2}', '\${3}', '\${4}', '\${5}', 'key=\${6}')
 
 Teardown
     Verify Teardown    Keyword teardown

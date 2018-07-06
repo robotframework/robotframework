@@ -41,10 +41,10 @@ meanings:
 - ``time``: A time interval. For example, ``1 hour 20 minutes`` or ``01:20:00``.
 
 This terminology differs from what Python's standard
-[https://docs.python.org/3/library/datetime.html|datetime] module uses.
+[http://docs.python.org/library/datetime.html|datetime] module uses.
 Basically its
-[https://docs.python.org/3/library/datetime.html#datetime-objects|datetime] and
-[https://docs.python.org/3/library/datetime.html#timedelta-objects|timedelta]
+[http://docs.python.org/library/datetime.html#datetime-objects|datetime] and
+[http://docs.python.org/library/datetime.html#timedelta-objects|timedelta]
 objects match ``date`` and ``time`` as defined by this library.
 
 = Date formats =
@@ -84,7 +84,7 @@ Examples:
 
 It is possible to use custom timestamps in both input and output.
 The custom format is same as accepted by Python's
-[https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior|
+[http://docs.python.org/library/datetime.html#strftime-strptime-behavior|
 datatime.strptime] function. For example, the default timestamp discussed
 in the previous section would match ``%Y-%m-%d %H:%M:%S.%f``.
 
@@ -105,7 +105,7 @@ Jython on non-English locales: http://bugs.jython.org/issue2285
 == Python datetime ==
 
 Python's standard
-[https://docs.python.org/3/library/datetime.html#datetime-objects|datetime]
+[http://docs.python.org/library/datetime.html#datetime-objects|datetime]
 objects can be used both in input and output. In input they are recognized
 automatically, and in output it is possible to get them by giving ``datetime``
 value to ``result_format`` argument.
@@ -237,7 +237,7 @@ Examples:
 == Python timedelta ==
 
 Python's standard
-[https://docs.python.org/2/library/datetime.html#datetime.timedelta|timedelta]
+[http://docs.python.org/library/datetime.html#datetime.timedelta|timedelta]
 objects are also supported both in input and in output. In input they are
 recognized automatically, and in output it is possible to receive them by
 giving ``timedelta`` value to ``result_format`` argument.
@@ -257,7 +257,7 @@ All keywords returning dates or times have an option to leave milliseconds out
 by giving a true value to ``exclude_millis`` argument. If the argument is given
 as a string, it is considered true unless it is empty or case-insensitively
 equal to ``false``, ``none`` or ``no``. Other argument types are tested using
-same [http://docs.python.org/3/library/stdtypes.html#truth|rules as in
+same [http://docs.python.org/library/stdtypes.html#truth|rules as in
 Python]. Notice that prior to Robot Framework 2.9, all strings except
 the empty string were considered true, and that considering ``none`` false is
 new in Robot Framework 3.0.3.
