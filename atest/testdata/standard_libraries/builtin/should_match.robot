@@ -8,7 +8,13 @@ Should Match
     abcdefghijklmnopqrstuvwxyz    *
     abcdefghijklmnopqrstuvwxyz    ?*?efg*p*t?vw*z
     NOK                           ???
+    foo\n                         foo\n
     NOK                           H*K    Failure
+
+Should Match with extra trailing newline
+    [Template]    Run Keyword And Expect Error
+    'foo\n' does not match 'foo'    Should Match    foo\n    foo
+    'foo' does not match 'foo\n'    Should Match    foo      foo\n
 
 Should Match case-insensitive
     [Template]    Should Match
@@ -26,6 +32,8 @@ Should Not Match
     [Template]    Should Not Match
     this string does not    match this pattern
     Case matters            case matters
+    foo\n                   foo
+    foo                     foo\n
     Hello world             ?ello*
 
 Should Not Match case-insensitive

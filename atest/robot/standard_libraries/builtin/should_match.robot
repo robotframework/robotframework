@@ -6,6 +6,9 @@ Resource          builtin_resource.robot
 Should Match
     Check test case    ${TESTNAME}
 
+Should Match with extra trailing newline
+    Check test case    ${TESTNAME}
+
 Should Match case-insensitive
     Check test case    ${TESTNAME}
 

@@ -121,6 +121,15 @@ class TestMatcher(unittest.TestCase):
         pattern = 'Weird*[[!name]]'
         self._matches('Weird my[game]', pattern)
 
+    def test_spaceless(self):
+        for text in ['fbar', 'foobar']:
+            assert Matcher('f*bar').match(text)
+            assert Matcher('f * b a r').match(text)
+            assert Matcher('f*bar', spaceless=False).match(text)
+        for text in ['f b a r', 'f o o b a r', '   foo bar   ', 'fbar\n']:
+            assert Matcher('f*bar').match(text)
+            assert not Matcher('f*bar', spaceless=False).match(text)
+
     def _matches(self, string, pattern, **config):
         assert Matcher(pattern, **config).match(string), pattern
 
