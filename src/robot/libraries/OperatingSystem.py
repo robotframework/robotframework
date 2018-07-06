@@ -74,17 +74,18 @@ class OperatingSystem(object):
 
     = Pattern matching =
 
-    Some keywords allow their arguments to be specified as _glob patterns_
-    where:
-    | ``*``        | matches anything, even an empty string |
-    | ``?``        | matches any single character |
-    | ``[chars]``  | matches any character inside square brackets (e.g. ``[abc]`` matches either ``a``, ``b`` or ``c``) |
-    | ``[!chars]`` | matches any character not inside square brackets |
+    Some keywords allow their arguments to be specified as
+    [https://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:
+
+    | ``*``        | matches any string, even an empty string                |
+    | ``?``        | matches any single character                            |
+    | ``[chars]``  | matches one character in the bracket                    |
+    | ``[!chars]`` | matches one character not in the bracket                |
+    | ``[a-z]``    | matches one character from the range in the bracket     |
+    | ``[!a-z]``   | matches one character not from the range in the bracket |
 
     Unless otherwise noted, matching is case-insensitive on
-    case-insensitive operating systems such as Windows. Pattern
-    matching is implemented using
-    [http://docs.python.org/3/library/fnmatch.html|fnmatch module].
+    case-insensitive operating systems such as Windows.
 
     Starting from Robot Framework 2.9.1, globbing is not done if the given path
     matches an existing file even if it would contain a glob pattern.

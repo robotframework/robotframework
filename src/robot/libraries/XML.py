@@ -61,6 +61,7 @@ class XML(object):
     - `Element attributes`
     - `Handling XML namespaces`
     - `Boolean arguments`
+    - `Pattern matching`
     - `Shortcuts`
     - `Keywords`
 
@@ -439,8 +440,26 @@ class XML(object):
     Prior to Robot Framework 2.9, all non-empty strings, including ``false``
     and ``no``, were considered to be true. Considering ``none`` false is
     new in Robot Framework 3.0.3.
-    """
 
+    == Pattern matching ==
+
+    Some keywords, for example `Elements Should Match`, support so called
+    [http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:
+
+    | ``*``        | matches any string, even an empty string                |
+    | ``?``        | matches any single character                            |
+    | ``[chars]``  | matches one character in the bracket                    |
+    | ``[!chars]`` | matches one character not in the bracket                |
+    | ``[a-z]``    | matches one character from the range in the bracket     |
+    | ``[!a-z]``   | matches one character not from the range in the bracket |
+
+    Unlike with glob patterns normally, path separator characters ``/`` and
+    ``\\`` and the newline character ``\\n`` are matches by the above
+    wildcards.
+
+    Support for brackets like ``[abc]`` and ``[!a-z]`` is new in
+    Robot Framework 3.1
+    """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
     _xml_declaration = re.compile('^<\?xml .*\?>')
@@ -743,9 +762,9 @@ class XML(object):
         the expected value can be given as a pattern that the text of the
         element must match.
 
-        Pattern matching is similar as matching files in a shell, and it is
-        always case-sensitive. In the pattern, '*' matches anything and '?'
-        matches any single character.
+        Pattern matching is similar as matching files in a shell with
+        ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
+        `Pattern matching` section for more information.
 
         Examples using ``${XML}`` structure from `Example`:
         | Element Text Should Match | ${XML}       | t???   | xpath=first  |
@@ -830,9 +849,9 @@ class XML(object):
         that the expected value can be given as a pattern that the attribute of
         the element must match.
 
-        Pattern matching is similar as matching files in a shell, and it is
-        always case-sensitive. In the pattern, '*' matches anything and '?'
-        matches any single character.
+        Pattern matching is similar as matching files in a shell with
+        ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
+        `Pattern matching` section for more information.
 
         Examples using ``${XML}`` structure from `Example`:
         | Element Attribute Should Match | ${XML} | id | ?   | xpath=first |
@@ -913,9 +932,9 @@ class XML(object):
         texts and attribute values in the expected value can be given as
         patterns.
 
-        Pattern matching is similar as matching files in a shell, and it is
-        always case-sensitive. In the pattern, '*' matches anything and '?'
-        matches any single character.
+        Pattern matching is similar as matching files in a shell with
+        ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
+        `Pattern matching` section for more information.
 
         Examples using ``${XML}`` structure from `Example`:
         | ${first} =            | Get Element | ${XML} | first          |
