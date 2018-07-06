@@ -157,21 +157,28 @@ Simple patterns
 Many command line options take arguments as *simple patterns*. These
 `glob-like patterns`__ are matched according to the following rules:
 
-- `*` is a wildcard matching any string, even an empty string.
-- `?` is a wildcard matching any single character.
-- `[abc]` is a character matching any single character in the bracket.
-- `[!abc]` is a character matching any single character that is not given in the bracket.
-- `[a-z]` is a range matching any single character from the range given in the bracket.
-- `[!a-z]` is a range matching any single character from the range that is not given in the bracket.
+- `*` matches any string, even an empty string.
+- `?` matches any single character.
+- `[abc]` matches one character in the bracket.
+- `[!abc]` matches one character not in the bracket.
+- `[a-z]` matches one character from the range in the bracket.
+- `[!a-z]` matches one character not from the range in the bracket.
+- Unlike with glob patterns normally, path separator characters `/` and
+  :codesc:`\\` and the newline character `\n` are matches by the above
+  wildcards.
 - Unless noted otherwise, pattern matching is case, space, and underscore insensitive.
 
 Examples::
 
-   --test Example*     # Matches tests with name starting 'Example', case insensitively.
-   --test Example[1-2] # Matches tests with name starting 'Example', follow by '1' or '2'. For example 'Example1' and 'Example2' are matched by this pattern.
-   --test Example[!1-2]# Matches tests with name starting 'Example', follow by any character that is not '1' or '2'
-   --test Example[[5]] # Matches tests with name Example[5].
-   --include f??       # Matches tests with a tag that starts with 'f' or 'F' and is three characters long.
+   --test Example*        # Matches tests with name starting 'Example'.
+   --test Example[1-2]    # Matches tests 'Example1' and 'Example2'.
+   --include f??          # Matches tests with a tag that starts with 'f' is three characters long.
+
+All matching in above examples is case, space and underscore insensitive.
+For example, the second example would also match test named `example 1`.
+
+.. note:: Support for brackets like `[abc]` and `[!a-z]` is new in
+          Robot Framework 3.1.
 
 __ http://en.wikipedia.org/wiki/Glob_(programming)
 

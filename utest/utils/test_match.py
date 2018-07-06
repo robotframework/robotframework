@@ -101,31 +101,32 @@ class TestMatcher(unittest.TestCase):
             assert_raises(TypeError, Matcher, b'foo')
             assert_raises(TypeError, Matcher('foo').match, b'foo')
 
-    def test_glob_range_pattern(self):
+    def test_glob_sequence(self):
+        pattern = '[Tre]est [CR]at'
+        self._matches('Test Cat', pattern)
+        self._matches('Rest Rat', pattern)
+        self._matches('rest Rat', pattern, caseless=False)
+        self._matches_not('rest rat', pattern, caseless=False)
+        self._matches_not('Test Bat', pattern)
+        self._matches_not('Best Bat', pattern)
+
+    def test_glob_sequence_negative(self):
+        pattern = '[!Tre]est [!CR]at'
+        self._matches_not('Test Bat', pattern)
+        self._matches_not('Best Rat', pattern)
+        self._matches('Best Bat', pattern)
+
+    def test_glob_range(self):
         pattern = 'GlobTest[1-2]'
         self._matches('GlobTest1', pattern)
         self._matches('GlobTest2', pattern)
         self._matches_not('GlobTest3', pattern)
 
-    def test_glob_pattern_not_in_range(self):
+    def test_glob_range_negative(self):
         pattern = 'GlobTest[!1-2]'
         self._matches_not('GlobTest1', pattern)
         self._matches_not('GlobTest2', pattern)
         self._matches('GlobTest3', pattern)
-
-    def test_glob_pattern_with_wildcard(self):
-        pattern = 'GlobTest*[CR]at'
-        self._matches('GlobTest Case Cat', pattern)
-        self._matches('GlobTest Case Rat', pattern)
-        self._matches_not('GlobTest Case Bat', pattern)
-
-    def test_glob_pattern_with_brackets(self):
-        pattern = 'Weird*[[name]]'
-        self._matches('Weird my[name]', pattern)
-
-    def test_glob_pattern_with_brackets_not_in_range(self):
-        pattern = 'Weird*[[!name]]'
-        self._matches('Weird my[game]', pattern)
 
     def test_spaceless(self):
         for text in ['fbar', 'foobar']:

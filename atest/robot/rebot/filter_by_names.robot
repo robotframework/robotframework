@@ -30,6 +30,12 @@ One Call To test with pattern
 Two Calls To test with patterns
     Run And Check Tests    --test *one --test Fi?st    First    Second One    Third One
 
+Test Filtering With Glob Bracket
+    Run And Check Tests    --test [Great]Lob[sterB]estCase[1-2]    GlobTestCase1    GlobTestCase2
+
+Test Filtering With Negative Glob Bracket
+    Run And Check Tests    --test Glob[!BAD]est*[!1-3]    GlobTestCase[5]    GlobTest Cat    GlobTest Rat
+
 Suite With One Arg
     Run And Check Suites    --suite tsuite1   Tsuite1
 
