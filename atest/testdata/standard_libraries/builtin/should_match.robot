@@ -27,6 +27,14 @@ Should Match with bytes containing non-ascii characters
     ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
     ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
 
+Should Match does not work with bytes on Python 3
+    [Documentation]    FAIL    GLOB: Several failures occurred:\n\n
+    ...    1) TypeError: *\n\n
+    ...    2) TypeError: Matching bytes is not supported on Python 3.
+    [Template]    Should Match
+    ${BYTES WITHOUT NON ASCII}    pattern
+    text                          ${BYTES WITHOUT NON ASCII}
+
 Should Not Match
     [Documentation]    FAIL    'Hello world' matches '?ello*'
     [Template]    Should Not Match

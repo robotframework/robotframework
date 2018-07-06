@@ -34,26 +34,17 @@ class Matcher(object):
 
     def __init__(self, pattern, ignore=(), caseless=True, spaceless=True,
                  regexp=False):
+        if PY3 and isinstance(pattern, bytes):
+            raise TypeError('Matching bytes is not supported on Python 3.')
         self.pattern = pattern
-
         self._normalize = partial(normalize, ignore=ignore, caseless=caseless,
                                   spaceless=spaceless)
-        self._regexp = self._get_and_compile_regexp(self._normalize(pattern),
-                                                    regexp=regexp)
+        self._regexp = self._compile(self._normalize(pattern), regexp=regexp)
 
-    def _get_and_compile_regexp(self, pattern, regexp=False):
+    def _compile(self, pattern, regexp=False):
         if not regexp:
-            pattern = self._glob_pattern_to_regexp(pattern)
+            pattern = fnmatch.translate(pattern)
         return re.compile(pattern, re.DOTALL)
-
-    def _glob_pattern_to_regexp(self, pattern):
-        glob_pattern_regex = fnmatch.translate(pattern)
-        tokenizer = re.compile(glob_pattern_regex)
-        if PY3 and isinstance(pattern, bytes):
-            start = b'^'
-        else:
-            start = '^'
-        return start + tokenizer.pattern
 
     def match(self, string):
         return self._regexp.match(self._normalize(string)) is not None

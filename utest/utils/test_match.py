@@ -1,7 +1,7 @@
 import unittest
 
-from robot.utils import eq, Matcher, MultiMatcher, IRONPYTHON
-from robot.utils.asserts import assert_equal
+from robot.utils import eq, Matcher, MultiMatcher, IRONPYTHON, PY2
+from robot.utils.asserts import assert_equal, assert_raises
 
 
 class TestEq(unittest.TestCase):
@@ -91,9 +91,15 @@ class TestMatcher(unittest.TestCase):
     def test_bytes(self):
         if IRONPYTHON:
             return
-        assert Matcher(b'foo').match(b'foo')
-        assert Matcher(b'f*').match(b'foo')
-        assert Matcher(b'f.*', regexp=True).match(b'foo')
+        elif PY2:
+            assert Matcher(b'foo').match(b'foo')
+            assert Matcher(b'f*').match(b'foo')
+            assert Matcher('f*').match(b'foo')
+            assert Matcher(b'f*').match('foo')
+            assert Matcher(b'f.*', regexp=True).match(b'foo')
+        else:
+            assert_raises(TypeError, Matcher, b'foo')
+            assert_raises(TypeError, Matcher('foo').match, b'foo')
 
     def test_glob_range_pattern(self):
         pattern = 'GlobTest[1-2]'
@@ -200,6 +206,7 @@ class TestMultiMatcher(unittest.TestCase):
         assert matcher.match_any(['jam', 'is', 'hillo'])
         assert not matcher.match_any(('no', 'match', 'here'))
         assert not matcher.match_any(())
+
 
 if __name__ == '__main__':
     unittest.main()
