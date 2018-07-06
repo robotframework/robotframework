@@ -42,6 +42,18 @@ One Call To Test With Pattern
 Two Calls To Test With Patterns
     Run And Check Tests    --test *one --test Fi?st    First    Second One    Third One
 
+Test Filtering With Glob Range Pattern
+    Run And Check Tests    --test GlobTest*[1-2]    GlobTestCase1    GlobTestCase2
+
+Test Filtering With Glob Pattern Not In Range
+    Run And Check Tests    --test GlobTest*[!1-3]    GlobTestCase[5]    GlobTest Cat    GlobTest Rat
+
+Test Filtering With Glob Pattern Escaping Brackets
+    Run And Check Tests    --test GlobTest*[[5]]    GlobTestCase[5]
+
+Test Filtering With Glob Pattern With Name
+    Run And Check Tests    --test GlobTest*[CR]at    GlobTest Cat    GlobTest Rat
+
 Suite With One Arg
     Run Suites    --suite tsuite1
     Should Contain Suites   ${SUITE}    TSuite1

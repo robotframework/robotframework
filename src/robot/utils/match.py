@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import re
+import fnmatch
 from functools import partial
 
 from .compat import py2to3
@@ -30,11 +31,11 @@ def eq(str1, str2, ignore=(), caseless=True, spaceless=True):
 
 @py2to3
 class Matcher(object):
-    _wildcards = {'*': '.*', '?': '.', b'*': b'.*', b'?': b'.'}
 
     def __init__(self, pattern, ignore=(), caseless=True, spaceless=True,
                  regexp=False):
         self.pattern = pattern
+
         self._normalize = partial(normalize, ignore=ignore, caseless=caseless,
                                   spaceless=spaceless)
         self._regexp = self._get_and_compile_regexp(self._normalize(pattern),
@@ -46,21 +47,13 @@ class Matcher(object):
         return re.compile(pattern, re.DOTALL)
 
     def _glob_pattern_to_regexp(self, pattern):
+        glob_pattern_regex = fnmatch.translate(pattern)
+        tokenizer = re.compile(glob_pattern_regex)
         if PY3 and isinstance(pattern, bytes):
-            tokenizer = re.compile(b'(\*|\?)')
-            start, end, empty = b'^', b'$', b''
+            start = b'^'
         else:
-            tokenizer = re.compile('(\*|\?)')
-            start, end, empty = '^', '$', ''
-        tokens = self._tokenize_glob_pattern(tokenizer, pattern)
-        return start + empty.join(tokens) + end
-
-    def _tokenize_glob_pattern(self, tokenizer, pattern):
-        for token in tokenizer.split(pattern):
-            if token in self._wildcards:
-                yield self._wildcards[token]
-            else:
-                yield re.escape(token)
+            start = '^'
+        return start + tokenizer.pattern
 
     def match(self, string):
         return self._regexp.match(self._normalize(string)) is not None
