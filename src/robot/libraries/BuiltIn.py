@@ -74,9 +74,9 @@ class _BuiltInBase(object):
     def _variables(self):
         return self._namespace.variables
 
-    def _matches(self, string, pattern):
+    def _matches(self, string, pattern, caseless=False):
         # Must use this instead of fnmatch when string may contain newlines.
-        matcher = Matcher(pattern, caseless=False, spaceless=False)
+        matcher = Matcher(pattern, caseless=caseless, spaceless=False)
         return matcher.match(string)
 
     def _is_true(self, condition):
@@ -1087,18 +1087,15 @@ class _Verify(_BuiltInBase):
                          ignore_case=False):
         """Fails if the given ``string`` matches the given ``pattern``.
 
-        Pattern matching is similar as matching files in a shell, and it is
-        always case-sensitive. In the pattern ``*`` matches to anything and
-        ``?`` matches to any single character.
+        Pattern matching is similar as matching files in a shell.
+        In the pattern ``*`` matches to anything and ``?`` matches to any
+        single character.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
-        if is_truthy(ignore_case):
-            string = string.lower()
-            pattern = pattern.lower()
-        if self._matches(string, pattern):
+        if self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
 
@@ -1106,18 +1103,15 @@ class _Verify(_BuiltInBase):
                      ignore_case=False):
         """Fails unless the given ``string`` matches the given ``pattern``.
 
-        Pattern matching is similar as matching files in a shell, and it is
-        always case-sensitive. In the pattern, ``*`` matches to anything and
-        ``?`` matches to any single character.
+        Pattern matching is similar as matching files in a shell.
+        In the pattern, ``*`` matches to anything and ``?`` matches to any
+        single character.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
-        if is_truthy(ignore_case):
-            string = string.lower()
-            pattern = pattern.lower()
-        if not self._matches(string, pattern):
+        if not self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
 
