@@ -109,12 +109,13 @@ Robot Framework test data can be defined in few different formats:
 Prior to Robot Framework 3.1, all aforementioned file formats were parsed
 automatically unless the :option:`--extension` option was used to `limit
 parsing`__. In Robot Framework 3.1 automatically parsing other than
-`*.robot` files as well as support for the HTML format in general
-were deprecated. In the future only :file:`.robot` files will be
-parsed unless explicitly configured otherwise. The support for the HTML
-format will be removed altogether.
+`*.robot` files was deprecated, and in the future other files are parsed
+only if that is `explicitly configured`__ using the :option:`--extension` option.
+The support for the HTML format has bee deprecated in general it will be
+removed altogether in the future.
 
 __ `reStructuredText format`_
+__ `Selecting files to parse`_
 __ `Selecting files to parse`_
 
 Plain text format
@@ -248,8 +249,9 @@ Recognized extensions
 '''''''''''''''''''''
 
 The recommended extension for test data files in the plain text format is
-:file:`.robot`. Also :file:`.txt` can be used, but starting from
-Robot Framework 3.1 the :option:`--extension` option must be used to
+:file:`.robot`. Files using this extension are parsed automatically.
+Also the :file:`.txt` extension can be used, but starting from Robot
+Framework 3.1 the :option:`--extension` option must be used to
 explicitly tell that `these files should be parsed`__.
 
 __ `Selecting files to parse`_
