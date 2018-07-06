@@ -266,13 +266,13 @@ class _Converter(_BuiltInBase):
         and also when they are rounded. For more information see, for example,
         these resources:
 
-        - http://docs.python.org/3/tutorial/floatingpoint.html
+        - http://docs.python.org/tutorial/floatingpoint.html
         - http://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition
 
         If you want to avoid possible problems with floating point numbers,
         you can implement custom keywords using Python's
-        [https://docs.python.org/3/library/decimal.html|decimal] or
-        [https://docs.python.org/3/library/fractions.html|fractions] modules.
+        [http://docs.python.org/library/decimal.html|decimal] or
+        [http://docs.python.org/library/fractions.html|fractions] modules.
 
         If you need an integer number, use `Convert To Integer` instead.
         """
@@ -321,7 +321,7 @@ class _Converter(_BuiltInBase):
 
         Handles strings ``True`` and ``False`` (case-insensitive) as expected,
         otherwise returns item's
-        [http://docs.python.org/3/library/stdtypes.html#truth|truth value]
+        [http://docs.python.org/library/stdtypes.html#truth|truth value]
         using Python's ``bool()`` method.
         """
         self._log_types(item)
@@ -563,7 +563,7 @@ class _Verify(_BuiltInBase):
         a Python expression as explained in `Evaluating expressions` and the
         keyword status is decided based on the result. If a non-string item is
         given, the status is got directly from its
-        [http://docs.python.org/3/library/stdtypes.html#truth|truth value].
+        [http://docs.python.org/library/stdtypes.html#truth|truth value].
 
         The default error message (``<condition> should be true``) is not very
         informative, but it can be overridden with the ``msg`` argument.
@@ -585,8 +585,8 @@ class _Verify(_BuiltInBase):
         | Should Be True | $status == 'PASS' | # Expected string must be quoted |
 
         `Should Be True` automatically imports Python's
-        [http://docs.python.org/3/library/os.html|os] and
-        [http://docs.python.org/3/library/sys.html|sys] modules that contain
+        [http://docs.python.org/library/os.html|os] and
+        [http://docs.python.org/library/sys.html|sys] modules that contain
         several useful attributes:
 
         | Should Be True | os.linesep == '\\n'             | # Unixy   |
@@ -757,8 +757,8 @@ class _Verify(_BuiltInBase):
 
         If you want to avoid possible problems with floating point numbers,
         you can implement custom keywords using Python's
-        [https://docs.python.org/3/library/decimal.html|decimal] or
-        [https://docs.python.org/3/library/fractions.html|fractions] modules.
+        [http://docs.python.org/library/decimal.html|decimal] or
+        [http://docs.python.org/library/fractions.html|fractions] modules.
 
         See `Should Not Be Equal As Numbers` for a negative version of this
         keyword and `Should Be Equal` for an explanation on how to override
@@ -1721,8 +1721,8 @@ class _RunKeyword(_BuiltInBase):
         literal ``ELSE`` and ``ELSE IF`` strings as arguments, you can escape
         them with a backslash like ``\\ELSE`` and ``\\ELSE IF``.
 
-        Python's [http://docs.python.org/3/library/os.html|os] and
-        [http://docs.python.org/3/library/sys.html|sys] modules are
+        Python's [http://docs.python.org/library/os.html|os] and
+        [http://docs.python.org/library/sys.html|sys] modules are
         automatically imported when evaluating the ``condition``.
         Attributes they contain can thus be used in the condition:
 
@@ -3250,11 +3250,11 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Many keywords, such as `Evaluate`, `Run Keyword If` and `Should Be True`,
     accept an expression that is evaluated in Python. These expressions are
     evaluated using Python's
-    [https://docs.python.org/library/functions.html#eval|eval] function so
+    [http://docs.python.org/library/functions.html#eval|eval] function so
     that all Python built-ins like ``len()`` and ``int()`` are available.
     `Evaluate` allows configuring the execution namespace with custom modules,
-    and other keywords have [https://docs.python.org/library/os.html|os]
-    and [https://docs.python.org/library/sys.html|sys] modules available
+    and other keywords have [http://docs.python.org/library/os.html|os]
+    and [http://docs.python.org/library/sys.html|sys] modules available
     automatically.
 
     Examples:
@@ -3306,7 +3306,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     and expected values from the possible error message also consider string
     ``no values`` to be false. Other strings are considered true regardless
     their value, and other argument types are tested using the same
-    [http://docs.python.org/3/library/stdtypes.html#truth|rules as in Python].
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
     | `Should Be Equal` | ${x} | ${y}  | Custom error | values=True    | # Strings are generally true.    |
@@ -3333,7 +3333,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     == Glob patterns ==
 
     Some keywords, for example `Should Match`, support so called
-    [https://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:
+    [http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:
 
     | ``*``        | matches any string, even an empty string                |
     | ``?``        | matches any single character                            |
@@ -3352,7 +3352,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     == Regular expressions ==
 
     Some keywords, for example `Should Match Regexp`, support
-    [https://en.wikipedia.org/wiki/Regular_expression|regular expressions]
+    [http://en.wikipedia.org/wiki/Regular_expression|regular expressions]
     that are more powerful but also more complicated that glob patterns.
     The regular expression support is implemented using Python's
     [http://docs.python.org/library/re.html|re module] and its documentation
@@ -3367,7 +3367,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     = Multiline string comparisons =
 
     `Should Be Equal` and `Should Be Equal As Strings` report the failures using
-    [https://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff
+    [http://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff
     format] if both strings have more than two lines. New in Robot Framework
     2.9.1.
 

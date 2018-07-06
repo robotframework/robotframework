@@ -75,7 +75,7 @@ class OperatingSystem(object):
     = Pattern matching =
 
     Some keywords allow their arguments to be specified as
-    [https://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:
+    [http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:
 
     | ``*``        | matches any string, even an empty string                |
     | ``?``        | matches any single character                            |
@@ -107,7 +107,7 @@ class OperatingSystem(object):
     it is either an empty string or case-insensitively equal to ``false``,
     ``none`` or ``no``. Other strings are considered true regardless
     their value, and other argument types are tested using the same
-    [http://docs.python.org/3/library/stdtypes.html#truth|rules as in Python].
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
     | `Remove Directory` | ${path} | recursive=True    | # Strings are generally true.    |

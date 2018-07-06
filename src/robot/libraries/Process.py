@@ -31,9 +31,9 @@ class Process(object):
     """Robot Framework test library for running processes.
 
     This library utilizes Python's
-    [http://docs.python.org/3/library/subprocess.html|subprocess]
+    [http://docs.python.org/library/subprocess.html|subprocess]
     module and its
-    [https://docs.python.org/3/library/subprocess.html#popen-constructor|Popen]
+    [http://docs.python.org/library/subprocess.html#popen-constructor|Popen]
     class.
 
     The library has following main usages:
@@ -257,7 +257,7 @@ class Process(object):
     it is either an empty string or case-insensitively equal to ``false``,
     ``none`` or ``no``. Other strings are considered true regardless
     their value, and other argument types are tested using the same
-    [http://docs.python.org/3/library/stdtypes.html#truth|rules as in Python].
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
     | `Terminate Process` | kill=True     | # Strings are generally true.    |
