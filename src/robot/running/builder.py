@@ -18,7 +18,7 @@ import warnings
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.parsing import TestData, ResourceFile as ResourceData, VALID_EXTENSIONS
+from robot.parsing import TestData, ResourceFile as ResourceData, TEST_EXTENSIONS
 from robot.running.defaults import TestDefaults
 from robot.utils import abspath, is_string, normalize, unic
 from robot.variables import VariableIterator
@@ -65,7 +65,7 @@ class TestSuiteBuilder(object):
         if not extension:
             return None
         extensions = set(ext.lower().lstrip('.') for ext in extension.split(':'))
-        if not all(ext in VALID_EXTENSIONS for ext in extensions):
+        if not all(ext in TEST_EXTENSIONS for ext in extensions):
             raise DataError("Invalid extension to limit parsing '%s'." % extension)
         return extensions
 

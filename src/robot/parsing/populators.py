@@ -56,11 +56,11 @@ class FromFilePopulator(object):
     def _get_curdir(self, path):
         return path.replace('\\','\\\\') if path else None
 
-    def populate(self, path):
+    def populate(self, path, resource=False):
         LOGGER.info("Parsing file '%s'." % path)
         source = self._open(path)
         try:
-            self._get_reader(path).read(source, self)
+            self._get_reader(path, resource).read(source, self)
         except:
             raise DataError(get_error_message())
         finally:
@@ -76,12 +76,14 @@ class FromFilePopulator(object):
         except:
             raise DataError(get_error_message())
 
-    def _get_reader(self, path):
-        extension = os.path.splitext(path.lower())[-1][1:]
+    def _get_reader(self, path, resource=False):
+        file_format = os.path.splitext(path.lower())[-1][1:]
+        if resource and file_format == 'resource':
+            file_format = 'robot'
         try:
-            return READERS[extension]()
+            return READERS[file_format]()
         except KeyError:
-            raise DataError("Unsupported file format '%s'." % extension)
+            raise DataError("Unsupported file format '%s'." % file_format)
 
     def start_table(self, header):
         self._populator.populate()

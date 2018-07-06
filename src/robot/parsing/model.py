@@ -189,7 +189,7 @@ class ResourceFile(_TestData):
         _TestData.__init__(self, source=source)
 
     def populate(self):
-        FromFilePopulator(self).populate(self.source)
+        FromFilePopulator(self).populate(self.source, resource=True)
         self._report_status()
         return self
 

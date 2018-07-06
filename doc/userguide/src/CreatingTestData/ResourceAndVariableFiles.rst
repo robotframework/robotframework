@@ -33,21 +33,29 @@ where the importing file is located. If the file is not found there,
 it is then searched from the directories in Python's `module search path`_.
 The path can contain variables, and it is recommended to use them to make paths
 system-independent (for example, :file:`${RESOURCES}/login_resources.robot` or
-:file:`${RESOURCE_PATH}`). Additionally, slashes (`/`) in the path
+:file:`${RESOURCE_PATH}`). Additionally, forward slashes (`/`) in the path
 are automatically changed to backslashes (:codesc:`\\`) on Windows.
+
+Resource files can use all the same extensions as test case files created
+using the `supported file formats`_. When using the `plain text format`_,
+it is possible to use a special :file:`.resource` extension in addition
+to the normal :file:`.robot` extensions. This makes it easier to separate
+test case files and resource files from each others.
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Resource    myresources.robot
+   Resource    example.resource
    Resource    ../data/resources.robot
-   Resource    ${RESOURCES}/common.robot
+   Resource    ${RESOURCES}/common.resource
 
 The user keywords and variables defined in a resource file are
 available in the file that takes that resource file into
 use. Similarly available are also all keywords and variables from the
 libraries, resource files and variable files imported by the said
 resource file.
+
+.. note:: The :file:`.resource` extension is new in Robot Framework 3.1.
 
 Resource file structure
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -78,9 +86,9 @@ Keywords created in a resource file can be documented__ using
 
 Both Libdoc_ and RIDE_ use these documentations, and they
 are naturally available for anyone opening resource files.  The
-first line of the documentation of a keyword is logged when it is run,
-but otherwise resource file documentations are ignored during the test
-execution.
+first logical line of the documentation of a keyword, until the first
+empty line, is logged when the keyword is run, but otherwise resource
+file documentation is ignored during the test execution.
 
 __ `User keyword name and documentation`_
 __ `Test suite name and documentation`_
@@ -93,7 +101,7 @@ Example resource file
    *** Settings ***
    Documentation     An example resource file
    Library           SeleniumLibrary
-   Resource          ${RESOURCES}/common.robot
+   Resource          ${RESOURCES}/common.resource
 
    *** Variables ***
    ${HOST}           localhost:7272

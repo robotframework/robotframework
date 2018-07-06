@@ -79,3 +79,9 @@ Keyword tags
 
 Non ASCII
     Keyword Doc Should Be    8    Hyvää yötä.\n\nСпасибо!
+
+'*.resource' extension is accepted
+    Run Libdoc And Parse Output    ${TESTDATADIR}/resource.resource
+    Keyword Name Should Be         0    Yay, I got new extension!
+    Keyword Arguments Should Be    0    Awesome!!
+    Keyword Doc Should Be          0    Yeah!!!

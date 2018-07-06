@@ -248,11 +248,18 @@ __ http://robotframework.org/#tools
 Recognized extensions
 '''''''''''''''''''''
 
-The recommended extension for test data files in the plain text format is
+The recommended extension for `test case files`_ in the plain text format is
 :file:`.robot`. Files using this extension are parsed automatically.
 Also the :file:`.txt` extension can be used, but starting from Robot
 Framework 3.1 the :option:`--extension` option must be used to
 explicitly tell that `these files should be parsed`__.
+
+When creating `resource files`_, it is possible to use the special
+:file:`.resource` extension in addition to the aforementioned
+:file:`.robot` and :file:`.txt` extensions. This way resource files and
+test cases files are easily separated from each others.
+
+.. note:: The :file:`.resource` extension is new in Robot Framework 3.1.
 
 __ `Selecting files to parse`_
 
