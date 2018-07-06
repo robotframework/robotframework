@@ -380,7 +380,7 @@ class _List(object):
         message would contain a row like ``Index 2 (email): name@foo.com !=
         name@bar.com``.
         """
-        self._validate_list(list1, 1)
+        self._validate_list(list1)
         self._validate_list(list2, 2)
         len1 = len(list1)
         len2 = len(list2)
