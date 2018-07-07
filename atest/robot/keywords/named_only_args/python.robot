@@ -10,6 +10,9 @@ Mandatory arguments
 Default values
     Check Test Case    ${TESTNAME}
 
+Mandatory Can Be After Default
+    Check Test Case    ${TESTNAME}
+
 Annotation
     Check Test Case    ${TESTNAME}
 

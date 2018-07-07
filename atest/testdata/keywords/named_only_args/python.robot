@@ -1,5 +1,5 @@
 *** Settings ***
-Library           KWOArgs.py
+Library           KwOnlyArgs.py
 
 *** Test Cases ***
 Mandatory arguments
@@ -16,6 +16,12 @@ Default values
     ${result} =    Kw Only Arg With Default    another=${2}    kwo=1
     Should Be Equal    ${result}    1-2
 
+Mandatory Can Be After Default
+    ${result} =    Mandatory After Defaults    mandatory=yyy
+    Should Be Equal    ${result}    xxx-yyy-zzz
+    ${result} =    Mandatory After Defaults    default2=3    mandatory=2    default1=1
+    Should Be Equal    ${result}    1-2-3
+
 Annotation
     ${result} =    Kw Only Arg With Annotation    kwo=Annotations are OK!
     Should Be Equal    ${result}    Annotations are OK!
@@ -31,27 +37,27 @@ Last given value has precedence
     Should Be Equal    ${result}    used
 
 Missing value
-    [Documentation]    FAIL Keyword 'KWOArgs.Kw Only Arg' missing named-only argument 'kwo'.
+    [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' missing named-only argument 'kwo'.
     Kw Only Arg
 
 Missing multiple values
-    [Documentation]    FAIL Keyword 'KWOArgs.Many Kw Only Args' missing named-only arguments 'first' and 'third'.
+    [Documentation]    FAIL Keyword 'KwOnlyArgs.Many Kw Only Args' missing named-only arguments 'first' and 'third'.
     Many Kw Only Args    second=xxx
 
 Unexpected keyword argumemt
-    [Documentation]    FAIL Keyword 'KWOArgs.Kw Only Arg' got unexpected named argument 'invalid'.
+    [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got unexpected named argument 'invalid'.
     Kw Only Arg    kwo=value    invalid=ooops
 
 Multiple unexpected keyword argumemt
-    [Documentation]    FAIL Keyword 'KWOArgs.Kw Only Arg' got unexpected named arguments 'invalid' and 'ooops'.
+    [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got unexpected named arguments 'invalid' and 'ooops'.
     Kw Only Arg    kwo=value    invalid=ooops    ooops=invalid
 
 Unexpected positional argument 1
-    [Documentation]    FAIL Keyword 'KWOArgs.Kw Only Arg' expected 0 non-named arguments, got 1.
+    [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' expected 0 non-named arguments, got 1.
     Kw Only Arg    ooops
 
 Unexpected positional argument 2
-    [Documentation]    FAIL Keyword 'KWOArgs.Kw Only Arg' expected 0 non-named arguments, got 1.
+    [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' expected 0 non-named arguments, got 1.
     Kw Only Arg    ooops    kwo=value
 
 With varargs
