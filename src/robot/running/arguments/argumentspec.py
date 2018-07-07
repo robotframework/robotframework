@@ -22,7 +22,8 @@ from .argumentresolver import ArgumentResolver
 class ArgumentSpec(object):
 
     def __init__(self, name=None, type='Keyword', positional=None,
-                 defaults=None, varargs=None, kwargs=None, supports_named=True, kwonlyargs=None, kwonlydefaults=None):
+                 defaults=None, varargs=None, kwargs=None, kwonlyargs=None,
+                 kwonlydefaults=None, supports_named=True):
         self.name = name
         self.type = type
         self.positional = positional or []
@@ -43,7 +44,7 @@ class ArgumentSpec(object):
 
     @property
     def reqkwargs(self):
-        return set(self.kwonlyargs) - set(self.kwonlydefaults.keys())
+        return set(self.kwonlyargs) - set(self.kwonlydefaults)
 
     def resolve(self, arguments, variables=None, resolve_named=True,
                 resolve_variables_until=None, dict_to_kwargs=False):

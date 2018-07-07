@@ -32,6 +32,7 @@ class _ArgumentParser(object):
         self._type = type
 
     def parse(self, source, name=None):
+        # FIXME: Unify _get_arg_spec return value format
         try:
             return ArgumentSpec(name, self._type, **self._get_arg_spec(source))
         except TypeError:
@@ -49,12 +50,14 @@ class PythonArgumentParser(_ArgumentParser):
             args, varargs, varkw, defaults = inspect.getargspec(handler)
             kwonlyargs = kwonlydefaults = None
         else:
-            args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, _ = inspect.getfullargspec(handler)
+            args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, _ \
+                    = inspect.getfullargspec(handler)
         if inspect.ismethod(handler) or handler.__name__ == '__init__':
             args = args[1:]  # drop 'self'
         defaults = list(defaults) if defaults else []
         return {
-            'positional': args, 'defaults': defaults, 'varargs': varargs, 'kwargs': varkw, 'kwonlyargs': kwonlyargs,
+            'positional': args, 'defaults': defaults, 'varargs': varargs,
+            'kwargs': varkw, 'kwonlyargs': kwonlyargs,
             'kwonlydefaults': kwonlydefaults
         }
 

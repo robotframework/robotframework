@@ -1,0 +1,35 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    keywords/kw_only_args/python.robot
+Force Tags       no-py2
+Resource         atest_resource.robot
+
+*** Test Cases ***
+Mandatory arguments
+    Check Test Case    ${TESTNAME}
+
+Default values
+    Check Test Case    ${TESTNAME}
+
+Annotation
+    Check Test Case    ${TESTNAME}
+
+Annotation and default value
+    Check Test Case    ${TESTNAME}
+
+Last given value has precedence
+    Check Test Case    ${TESTNAME}
+
+Missing value
+    Check Test Case    ${TESTNAME}
+
+Missing multiple values
+    Check Test Case    ${TESTNAME}
+
+Unexpected keyword argumemt
+    Check Test Case    ${TESTNAME}
+
+Multiple unexpected keyword argumemt
+    Check Test Case    ${TESTNAME}
+
+Unexpected positional argument
+    Check Test Case    ${TESTNAME}
