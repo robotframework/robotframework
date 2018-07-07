@@ -32,4 +32,11 @@ Multiple unexpected keyword argumemt
     Check Test Case    ${TESTNAME}
 
 Unexpected positional argument
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
+With varargs
+    Check Test Case    ${TESTNAME}
+
+With other arguments
     Check Test Case    ${TESTNAME}

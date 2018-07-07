@@ -46,6 +46,26 @@ Multiple unexpected keyword argumemt
     [Documentation]    FAIL Keyword 'KWOArgs.Kw Only Arg' got unexpected named arguments 'invalid' and 'ooops'.
     Kw Only Arg    kwo=value    invalid=ooops    ooops=invalid
 
-Unexpected positional argument
+Unexpected positional argument 1
+    [Documentation]    FAIL Keyword 'KWOArgs.Kw Only Arg' expected 0 non-named arguments, got 1.
+    Kw Only Arg    ooops
+
+Unexpected positional argument 2
     [Documentation]    FAIL Keyword 'KWOArgs.Kw Only Arg' expected 0 non-named arguments, got 1.
     Kw Only Arg    ooops    kwo=value
+
+With varargs
+    ${result} =    Kw Only Arg With Varargs    kwo=xxx
+    Should Be Equal    ${result}    xxx
+    ${result} =    Kw Only Arg With Varargs    1    2    3    kwo=4
+    Should Be Equal    ${result}    1-2-3-4
+
+With other arguments
+    ${result} =    All Arg Types    pos    kwo_req=kwo
+    Should Be Equal    ${result}    pos-pd-kwo-kd
+    ${result} =    All Arg Types    p1    p2    kwo_def=k2    kwo_req=k1
+    Should Be Equal    ${result}    p1-p2-k1-k2
+    ${result} =    All Arg Types    p1    p2    p3    p4    k3=3    kwo_def=k2    kwo_req=k1    k4=4
+    Should Be Equal    ${result}    p1-p2-p3-p4-k1-k2-k3=3-k4=4
+    ${result} =    All Arg Types    k4=!!!    kwo_def=k2    k3=!    pos_req=p1    pos_def=p2    kwo_req=k1
+    Should Be Equal    ${result}    p1-p2-k1-k2-k3=!-k4=!!!

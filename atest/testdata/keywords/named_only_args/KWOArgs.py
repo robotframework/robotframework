@@ -16,3 +16,14 @@ def kw_only_arg_with_annotation(*, kwo: str):
 
 def kw_only_arg_with_annotation_and_default(*, kwo: str='default'):
     return kwo
+
+
+def kw_only_arg_with_varargs(*varargs, kwo):
+    return '-'.join(varargs + (kwo,))
+
+
+def all_arg_types(pos_req, pos_def='pd', *varargs,
+                  kwo_req, kwo_def='kd', **kwargs):
+    varargs = list(varargs)
+    kwargs = ['%s=%s' % item for item in sorted(kwargs.items())]
+    return '-'.join([pos_req, pos_def] + varargs + [kwo_req, kwo_def] + kwargs)
