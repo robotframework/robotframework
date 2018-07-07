@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.6
 
 """ug2html.py -- Creates HTML version of Robot Framework User Guide
 
@@ -17,8 +17,7 @@ dist .... Creates the user guide under 'robotframework-userguide-<version>'
 zip ..... Uses 'dist' to create a stand-alone distribution and then packages
           it into 'robotframework-userguide-<version>.zip'
 
-Version number to use is got automatically from 'src/robot/version.py' file
-created by 'package.py'.
+Version number to use is got automatically from 'src/robot/version.py' file.
 """
 
 import os
