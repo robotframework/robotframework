@@ -69,7 +69,7 @@ class NamedArgumentResolver(object):
         name, value = split_from_equals(arg)
         if value is None:
             return False
-        if self._argspec.kwargs:
+        if self._argspec.kwargs or self._argspec.kwonlyargs:
             return True
         if not self._argspec.supports_named:
             return False

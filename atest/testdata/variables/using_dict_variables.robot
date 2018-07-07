@@ -92,18 +92,18 @@ Using with named
     Keyword    &{EMPTY}    &{args}    &{EMPTY}
 
 Using with non-existing keys
-    [Documentation]    FAIL Non-existing named argument 'nonex'.
+    [Documentation]    FAIL Keyword 'Keyword' got unexpected named argument 'nonex'.
     ${args} =    Create Dictionary    arg1=Urho    nonex=Not accepted
     Keyword    &{args}
 
 Using when no named or kwargs accepted 1
-    [Documentation]    FAIL Non-existing named argument 'not_accepted'.
+    [Documentation]    FAIL Keyword 'No args' got unexpected named argument 'not_accepted'.
     No args    &{EMPTY}
     ${args} =    Create Dictionary    not_accepted=
     No args    &{args}
 
 Using when no named or kwargs accepted 2
-    [Documentation]    FAIL Non-existing named argument 'not_accepted'.
+    [Documentation]    FAIL Keyword 'Varargs' got unexpected named argument 'not_accepted'.
     Varargs    &{EMPTY}
     ${args} =    Create Dictionary    not_accepted=
     Varargs    &{args}
