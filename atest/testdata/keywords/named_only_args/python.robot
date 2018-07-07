@@ -47,5 +47,5 @@ Multiple unexpected keyword argumemt
     Kw Only Arg    kwo=value    invalid=ooops    ooops=invalid
 
 Unexpected positional argument
-    [Documentation]    FAIL Keyword 'KWOArgs.Kw Only Arg' expected 0 non-keyword arguments, got 1.
+    [Documentation]    FAIL Keyword 'KWOArgs.Kw Only Arg' expected 0 non-named arguments, got 1.
     Kw Only Arg    ooops    kwo=value

@@ -99,7 +99,7 @@ Using Arguments When No Accepted
     No Arguments    not allowed
 
 Using Positional Arguments When Only Kwargs Accepted
-    [Documentation]    FAIL Keyword 'Remote.Kwargs' expected 0 non-keyword arguments, got 1.
+    [Documentation]    FAIL Keyword 'Remote.Kwargs' expected 0 non-named arguments, got 1.
     Kwargs    not allowed
 
 Too Few Arguments When Using Only Required Args

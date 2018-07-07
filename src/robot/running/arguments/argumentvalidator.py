@@ -52,7 +52,7 @@ class ArgumentValidator(object):
         else:
             expected = 'at least %d argument%s' % (spec.minargs, minend)
         if spec.kwargs or spec.kwonlyargs:
-            expected = expected.replace('argument', 'non-keyword argument')    # FIXME: Use 'non-named', not 'non-keyword'
+            expected = expected.replace('argument', 'non-named argument')
         raise DataError("%s '%s' expected %s, got %d."
                         % (spec.type, spec.name, expected, count))
 
