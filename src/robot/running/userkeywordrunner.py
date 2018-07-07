@@ -105,8 +105,9 @@ class UserKeywordRunner(object):
         context.output.trace(lambda: self._trace_log_args_message(variables))
 
     def _set_variables(self, positional, kwargs, variables):
-        before_varargs, varargs = self._split_args_and_varargs(positional)
-        for name, value in zip(self.arguments.positional, before_varargs):
+        args, varargs = self._split_args_and_varargs(positional)
+        kwonly, kwargs = self._split_kwonly_and_kwargs(kwargs)
+        for name, value in list(zip(self.arguments.positional, args)) + kwonly:
             if isinstance(value, DefaultValue):
                 value = value.resolve(variables)
             variables['${%s}' % name] = value
@@ -120,6 +121,14 @@ class UserKeywordRunner(object):
             return args, []
         positional = len(self.arguments.positional)
         return args[:positional], args[positional:]
+
+    def _split_kwonly_and_kwargs(self, all_kwargs):
+        kwonly = []
+        kwargs = []
+        for name, value in all_kwargs:
+            target = kwonly if name in self.arguments.kwonlyargs else kwargs
+            target.append((name, value))
+        return kwonly, kwargs
 
     def _trace_log_args_message(self, variables):
         args = ['${%s}' % arg for arg in self.arguments.positional]

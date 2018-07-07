@@ -114,31 +114,42 @@ class JavaArgumentParser(_ArgumentParser):
 
 
 class _ArgumentSpecParser(_ArgumentParser):
+    kw_only_args_supported = False
 
     def parse(self, argspec, name=None):
         result = ArgumentSpec(name, self._type)
+        kw_only_args = False
         for arg in argspec:
             if result.kwargs:
                 self._raise_invalid_spec('Only last argument can be kwargs.')
             if self._is_kwargs(arg):
                 self._add_kwargs(arg, result)
                 continue
-            if result.varargs:
+            if result.varargs and not self.kw_only_args_supported:
                 self._raise_invalid_spec('Positional argument after varargs.')
             if self._is_varargs(arg):
+                if result.varargs:
+                    self._raise_invalid_spec('Cannot have multiple varargs.')
                 self._add_varargs(arg, result)
+                kw_only_args = True
+                continue
+            if self._is_kw_only_separator(arg):
+                kw_only_args = True
                 continue
             if '=' in arg:
-                self._add_arg_with_default(arg, result)
+                self._add_arg_with_default(arg, result, kw_only_args)
                 continue
-            if result.defaults:
+            if result.defaults and not kw_only_args:
                 self._raise_invalid_spec('Non-default argument after default '
                                          'arguments.')
-            self._add_arg(arg, result)
+            self._add_arg(arg, result, kw_only_args)
         return result
 
     def _raise_invalid_spec(self, error):
         raise DataError('Invalid argument specification: %s' % error)
+
+    def _is_kw_only_separator(self, arg):
+        return False
 
     def _is_kwargs(self, arg):
         raise NotImplementedError
@@ -158,13 +169,18 @@ class _ArgumentSpecParser(_ArgumentParser):
     def _format_varargs(self, varargs):
         raise NotImplementedError
 
-    def _add_arg_with_default(self, arg, result):
+    def _add_arg_with_default(self, arg, result, kw_only_arg=False):
         arg, default = arg.split('=', 1)
-        self._add_arg(arg, result)
-        result.defaults.append(default)
+        self._add_arg(arg, result, kw_only_arg)
+        if not kw_only_arg:
+            result.defaults.append(default)
+        else:
+            arg = self._format_arg(arg)
+            result.kwonlydefaults[arg] = default
 
-    def _add_arg(self, arg, result):
-        result.positional.append(self._format_arg(arg))
+    def _add_arg(self, arg, result, kw_only_arg=False):
+        target = result.positional if not kw_only_arg else result.kwonlyargs
+        target.append(self._format_arg(arg))
 
     def _format_arg(self, arg):
         return arg
@@ -186,6 +202,10 @@ class DynamicArgumentParser(_ArgumentSpecParser):
 
 
 class UserKeywordArgumentParser(_ArgumentSpecParser):
+    kw_only_args_supported = True
+
+    def _is_kw_only_separator(self, arg):
+        return arg == '@{}'
 
     def _is_kwargs(self, arg):
         return is_dict_var(arg)
