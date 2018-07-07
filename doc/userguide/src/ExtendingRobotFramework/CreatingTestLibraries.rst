@@ -863,6 +863,9 @@ For a real world example of using a signature exactly like in the above
 example, see :name:`Run Process` and :name:`Start Keyword` keywords in the
 Process_ library.
 
+.. note:: Keyword only arguments are supported as long as you are running
+          a version of python that supports them (python3, pypy3).
+
 __ Escaping_
 
 Free keyword arguments with Java

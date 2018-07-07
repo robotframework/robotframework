@@ -48,3 +48,27 @@ Calling Using Annotations
 Calling Using Annotations With Defaults
     [Tags]    no-py2
     Check Test Case    ${TESTNAME}
+
+Keyword Only Argument
+    [Tags]    no-py2
+    Check Test Case    ${TESTNAME}
+
+Keyword Only Argument With Default
+    [Tags]    no-py2
+    Check Test Case    ${TESTNAME}
+
+Keyword Only Argument With Annotation
+    [Tags]    no-py2
+    Check Test Case    ${TESTNAME}
+
+Keyword Only Argument With Annotation And Default
+    [Tags]    no-py2
+    Check Test Case    ${TESTNAME}
+
+Keyword Only Argument Use Default
+    [Tags]    no-py2
+    Check Test Case    ${TESTNAME}
+
+Keyword Only Argument Duplicate Input
+    [Tags]    no-py2
+    Check Test Case    ${TESTNAME}
