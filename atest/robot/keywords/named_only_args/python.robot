@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    keywords/kw_only_args/python.robot
+Suite Setup      Run Tests    ${EMPTY}    keywords/named_only_args/python.robot
 Force Tags       no-py2
 Resource         atest_resource.robot
 
