@@ -32,20 +32,12 @@ class _ArgumentParser(object):
         self._type = type
 
     def parse(self, source, name=None):
-        # FIXME: Unify _get_arg_spec return value format
-        try:
-            return ArgumentSpec(name, self._type, **self._get_arg_spec(source))
-        except TypeError:
-            # Support original style *args return from _get_arg_spec
-            return ArgumentSpec(name, self._type, *self._get_arg_spec(source))
-
-    def _get_arg_spec(self, source):
         raise NotImplementedError
 
 
 class PythonArgumentParser(_ArgumentParser):
 
-    def _get_arg_spec(self, handler):
+    def parse(self, handler, name=None):
         if PY2:
             args, varargs, varkw, defaults = inspect.getargspec(handler)
             kwonlyargs = kwonlydefaults = None
@@ -55,31 +47,34 @@ class PythonArgumentParser(_ArgumentParser):
         if inspect.ismethod(handler) or handler.__name__ == '__init__':
             args = args[1:]  # drop 'self'
         defaults = list(defaults) if defaults else []
-        return {
-            'positional': args, 'defaults': defaults, 'varargs': varargs,
-            'kwargs': varkw, 'kwonlyargs': kwonlyargs,
-            'kwonlydefaults': kwonlydefaults
-        }
+        return ArgumentSpec(name, self._type,
+                            positional=args,
+                            defaults=defaults,
+                            varargs=varargs,
+                            kwargs=varkw,
+                            kwonlyargs=kwonlyargs,
+                            kwonlydefaults=kwonlydefaults)
 
 
 class JavaArgumentParser(_ArgumentParser):
 
-    def _get_arg_spec(self, signatures):
+    def parse(self, signatures, name=None):
         if not signatures:
-            return self._no_signatures_arg_spec()
+            return self._no_signatures_arg_spec(name)
         elif len(signatures) == 1:
-            return self._single_signature_arg_spec(signatures[0])
+            return self._single_signature_arg_spec(signatures[0], name)
         else:
-            return self._multi_signature_arg_spec(signatures)
+            return self._multi_signature_arg_spec(signatures, name)
 
-    def _no_signatures_arg_spec(self):
+    def _no_signatures_arg_spec(self, name):
         # Happens when a class has no public constructors
-        return self._format_arg_spec()
+        return self._format_arg_spec(name)
 
-    def _single_signature_arg_spec(self, signature):
+    def _single_signature_arg_spec(self, signature, name):
         varargs, kwargs = self._get_varargs_and_kwargs_support(signature.args)
         positional = len(signature.args) - int(varargs) - int(kwargs)
-        return self._format_arg_spec(positional, varargs=varargs, kwargs=kwargs)
+        return self._format_arg_spec(name, positional, varargs=varargs,
+                                     kwargs=kwargs)
 
     def _get_varargs_and_kwargs_support(self, args):
         if not args:
@@ -98,21 +93,24 @@ class JavaArgumentParser(_ArgumentParser):
     def _is_kwargs_type(self, arg):
         return arg is Map
 
-    def _multi_signature_arg_spec(self, signatures):
+    def _multi_signature_arg_spec(self, signatures, name):
         mina = maxa = len(signatures[0].args)
         for sig in signatures[1:]:
             argc = len(sig.args)
             mina = min(argc, mina)
             maxa = max(argc, maxa)
-        return self._format_arg_spec(maxa, maxa-mina)
+        return self._format_arg_spec(name, maxa, maxa-mina)
 
-    def _format_arg_spec(self, positional=0, defaults=0, varargs=False, kwargs=False):
+    def _format_arg_spec(self, name, positional=0, defaults=0, varargs=False,
+                         kwargs=False):
         positional = ['arg%d' % (i+1) for i in range(positional)]
         defaults = [''] * defaults
-        varargs = '*varargs' if varargs else None
-        kwargs = '**kwargs' if kwargs else None
-        supports_named = False
-        return positional, defaults, varargs, kwargs, supports_named
+        return ArgumentSpec(name, self._type,
+                            positional=positional,
+                            defaults=defaults,
+                            varargs='*varargs' if varargs else None,
+                            kwargs='**kwargs' if kwargs else None,
+                            supports_named=False)
 
 
 class _ArgumentSpecParser(_ArgumentParser):
