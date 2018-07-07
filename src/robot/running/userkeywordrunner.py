@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from itertools import chain
+
 from robot.errors import (ExecutionFailed, ExecutionPassed, ExitForLoop,
                           ContinueForLoop, DataError, PassExecution,
                           ReturnFromKeyword, UserKeywordExecutionFailed,
@@ -105,16 +107,17 @@ class UserKeywordRunner(object):
         context.output.trace(lambda: self._trace_log_args_message(variables))
 
     def _set_variables(self, positional, kwargs, variables):
+        spec = self.arguments
         args, varargs = self._split_args_and_varargs(positional)
         kwonly, kwargs = self._split_kwonly_and_kwargs(kwargs)
-        for name, value in list(zip(self.arguments.positional, args)) + kwonly:
+        for name, value in chain(zip(spec.positional, args), kwonly):
             if isinstance(value, DefaultValue):
                 value = value.resolve(variables)
             variables['${%s}' % name] = value
-        if self.arguments.varargs:
-            variables['@{%s}' % self.arguments.varargs] = varargs
-        if self.arguments.kwargs:
-            variables['&{%s}' % self.arguments.kwargs] = DotDict(kwargs)
+        if spec.varargs:
+            variables['@{%s}' % spec.varargs] = varargs
+        if spec.kwargs:
+            variables['&{%s}' % spec.kwargs] = DotDict(kwargs)
 
     def _split_args_and_varargs(self, args):
         if not self.arguments.varargs:

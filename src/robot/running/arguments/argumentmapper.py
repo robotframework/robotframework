@@ -33,11 +33,7 @@ class ArgumentMapper(object):
 class KeywordCallTemplate(object):
 
     def __init__(self, argspec):
-        self._positional = argspec.positional
-        self._kw_only = argspec.kwonlyargs
-        self._kw_only_defaults = argspec.kwonlydefaults
-        self._supports_kwargs = bool(argspec.kwargs)
-        self._supports_named = argspec.supports_named
+        self._argspec = argspec
         self.args = [None] * argspec.minargs \
                     + [DefaultValue(d) for d in argspec.defaults]
         self.kwargs = []
@@ -46,18 +42,19 @@ class KeywordCallTemplate(object):
         self.args[:len(positional)] = positional
 
     def fill_named(self, named):
+        spec = self._argspec
         for name, value in named:
-            if name in self._positional and self._supports_named:
-                index = self._positional.index(name)
+            if name in spec.positional and spec.supports_named:
+                index = spec.positional.index(name)
                 self.args[index] = value
-            elif self._supports_kwargs or name in self._kw_only:
+            elif spec.kwargs or name in spec.kwonlyargs:
                 self.kwargs.append((name, value))
             else:
                 raise DataError("Non-existing named argument '%s'." % name)
-        named_names = [name for name, _ in named]
-        for name in self._kw_only:
+        named_names = {name for name, _ in named}
+        for name in spec.kwonlyargs:
             if name not in named_names:
-                value = DefaultValue(self._kw_only_defaults[name])
+                value = DefaultValue(spec.kwonlydefaults[name])
                 self.kwargs.append((name, value))
 
     def replace_defaults(self):
