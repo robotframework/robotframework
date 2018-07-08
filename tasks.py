@@ -125,6 +125,49 @@ def library_docs(ctx, name):
     for lib in libraries:
         libdoc(lib, str(Path(f'doc/libraries/{lib}.html')))
 
+@task
+def create_user_guide(ctx):
+    """Generate User Guide HTML document.
+
+    It calls ug2html.py -- Creates HTML version of Robot Framework User Guide
+    passing the ``create`` argument.
+
+        ``create`` .. Creates the user guide so that it has relative links to images,
+                      library docs, etc. Mainly used to test how changes look in HTML.
+    """
+    from doc.userguide.ug2html import create_userguide
+    create_userguide()
+
+@task
+def create_doc_distro(ctx,  name):
+    """Generate User Guide and Libraries full documentation (and zip package).
+
+    It calls ug2html.py -- Creates HTML version of Robot Framework User Guide
+    passing the ``dist`` or `zip` arguments.
+    ``dist`` .... Creates the user guide under 'robotframework-userguide-<version>'
+                  directory and also copies all needed images and other link targets
+                  there. The created output directory can thus be distributed
+                  independently.
+                  Note: Before running this command, you must generate documents at
+                  project root, for example, with: invoke library-docs all
+                  ``invoke create-doc-distro dist``
+
+    ``zip`` ..... Uses 'dist' to create a stand-alone distribution and then packages
+                  it into 'robotframework-userguide-<version>.zip
+                  ``invoke create-doc-distro zip``
+    """
+    from doc.userguide.ug2html import create_distribution,  create_zip
+    name = name.lower()
+    if name == 'dist':
+        library_docs(ctx, 'all')
+        create_distribution() 
+    else:
+        if name == 'zip':
+            library_docs(ctx, 'all')
+            create_zip()
+        else:
+            raise Exit(create_doc_distro.__doc__)
+    
 
 @task
 def release_notes(ctx, version=None, username=None, password=None, write=False):
