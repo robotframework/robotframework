@@ -198,8 +198,8 @@ class TestGetArgSpec(unittest.TestCase):
                            'Non-default argument after default arguments.')
 
     def test_multiple_varargs(self):
-        self._verify_error('@{varargs} @{varargs2}',
-                           'Cannot have multiple varargs.')
+        for spec in ['@{v1} @{v2}', '@{} @{v}', '@{v} @{}', '@{} @{}']:
+            self._verify_error(spec, 'Cannot have multiple varargs.')
 
     def test_args_after_kwargs(self):
         self._verify_error('&{kws} ${arg}',

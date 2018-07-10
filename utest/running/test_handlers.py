@@ -97,10 +97,10 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_fails('Return value must be string.', doc=True)
 
     def test_none_argspec(self):
-        self._assert_spec(None, maxargs=sys.maxsize, vararg='varargs', kwarg=False)
+        self._assert_spec(None, maxargs=sys.maxsize, varargs='varargs', kwargs=False)
 
     def test_none_argspec_when_kwargs_supported(self):
-        self._assert_spec(None, maxargs=sys.maxsize, vararg='varargs', kwarg='kwargs')
+        self._assert_spec(None, maxargs=sys.maxsize, varargs='varargs', kwargs='kwargs')
 
     def test_empty_argspec(self):
         self._assert_spec([])
@@ -117,24 +117,61 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_spec(['d=foo=bar'], 0, 1, ['d'], ['foo=bar'])
 
     def test_varargs(self):
-        self._assert_spec(['*vararg'], 0, sys.maxsize, vararg='vararg')
+        self._assert_spec(['*vararg'], 0, sys.maxsize, varargs='vararg')
 
     def test_kwargs(self):
-        self._assert_spec(['**kwarg'], 0, 0, kwarg='kwarg')
+        self._assert_spec(['**kwarg'], 0, 0, kwargs='kwarg')
 
     def test_varargs_and_kwargs(self):
         self._assert_spec(['*vararg', '**kwarg'],
-                          0, sys.maxsize, vararg='vararg', kwarg='kwarg')
+                          0, sys.maxsize, varargs='vararg', kwargs='kwarg')
+
+    def test_kwonlyargs(self):
+        self._assert_spec(['*', 'kwo'], kwonlyargs=['kwo'])
+        self._assert_spec(['*vars', 'kwo'], varargs='vars', kwonlyargs=['kwo'])
+        self._assert_spec(['*', 'x', 'y', 'z'], kwonlyargs=['x', 'y', 'z'])
+
+    def test_kwonlydefaults(self):
+        self._assert_spec(['*', 'kwo=default'],
+                          kwonlyargs=['kwo'],
+                          kwonlydefaults={'kwo': 'default'})
+        self._assert_spec(['*vars', 'kwo=default'],
+                          varargs='vars',
+                          kwonlyargs=['kwo'],
+                          kwonlydefaults={'kwo': 'default'})
+        self._assert_spec(['*', 'x=1', 'y', 'z=3'],
+                          kwonlyargs=['x', 'y', 'z'],
+                          kwonlydefaults={'x': '1', 'z': '3'})
 
     def test_integration(self):
-        self._assert_spec(['arg', 'default=value'], 1, 2,
-                          ['arg', 'default'], ['value'])
-        self._assert_spec(['arg', 'default=value', '*var'], 1, sys.maxsize,
-                          ['arg', 'default'], ['value'], 'var')
-        self._assert_spec(['arg', 'default=value', '**kw'], 1, 2,
-                          ['arg', 'default'], ['value'], None, 'kw')
-        self._assert_spec(['arg', 'default=value', '*var', '**kw'], 1, sys.maxsize,
-                          ['arg', 'default'], ['value'], 'var', 'kw')
+        self._assert_spec(['arg', 'default=value'],
+                          1, 2,
+                          positional=['arg', 'default'],
+                          defaults=['value'])
+        self._assert_spec(['arg', 'default=value', '*var'],
+                          1, sys.maxsize,
+                          positional=['arg', 'default'],
+                          defaults=['value'],
+                          varargs='var')
+        self._assert_spec(['arg', 'default=value', '**kw'],
+                          1, 2,
+                          positional=['arg', 'default'],
+                          defaults=['value'],
+                          kwargs='kw')
+        self._assert_spec(['arg', 'default=value', '*var', '**kw'],
+                          1, sys.maxsize,
+                          positional=['arg', 'default'],
+                          defaults=['value'],
+                          varargs='var',
+                          kwargs='kw')
+        self._assert_spec(['a', 'b=1', 'c=2', '*d', 'e', 'f=3', 'g', '**h'],
+                          1, sys.maxsize,
+                          positional=['a', 'b', 'c'],
+                          defaults=['1', '2'],
+                          varargs='d',
+                          kwonlyargs=['e', 'f', 'g'],
+                          kwonlydefaults={'f': '3'},
+                          kwargs='h')
 
     def test_invalid_argspec_type(self):
         for argspec in [True, [1, 2]]:
@@ -146,11 +183,21 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                                'Non-default argument after default arguments.',
                                argspec)
 
-    def test_positional_after_vararg(self):
-        for argspec in [['*foo', 'arg'], ['arg', '*var', 'arg'],
-                        ['a', 'b=d', '*var', 'c'], ['*var', '*vararg']]:
-            self._assert_fails('Invalid argument specification: '
-                               'Positional argument after varargs.', argspec)
+    def test_multiple_vararg(self):
+        self._assert_fails('Invalid argument specification: '
+                           'Cannot have multiple varargs.',
+                           ['*first', '*second'])
+
+    def test_vararg_with_kwonly_separator(self):
+        self._assert_fails('Invalid argument specification: '
+                           'Cannot have multiple varargs.',
+                           ['*', '*varargs'])
+        self._assert_fails('Invalid argument specification: '
+                           'Cannot have multiple varargs.',
+                           ['*varargs', '*'])
+        self._assert_fails('Invalid argument specification: '
+                           'Cannot have multiple varargs.',
+                           ['*', '*'])
 
     def test_kwarg_not_last(self):
         for argspec in [['**foo', 'arg'], ['arg', '**kw', 'arg'],
@@ -160,21 +207,24 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                                'Only last argument can be kwargs.', argspec)
 
     def test_missing_kwargs_support(self):
-        self._assert_fails("Too few 'run_keyword' method parameters"
-                           " for **kwargs support.",
+        self._assert_fails("Too few 'run_keyword' method parameters "
+                           "for **kwargs support.",
                            ['**kwargs'])
 
     def _assert_doc(self, doc, expected=None):
         expected = doc if expected is None else expected
         assert_equal(self._create_handler(doc=doc).doc, expected)
 
-    def _assert_spec(self, argspec, minargs=0, maxargs=0, positional=[],
-                     defaults=[], vararg=None, kwarg=None):
-        if kwarg is None:
+    def _assert_spec(self, argspec, minargs=0, maxargs=0,
+                     positional=[], defaults=[], varargs=None,
+                     kwonlyargs=[], kwonlydefaults={}, kwargs=None):
+        if varargs and not maxargs:
+            maxargs = sys.maxsize
+        if kwargs is None:
             kwargs_support_modes = [True, False]
-        elif kwarg is False:
+        elif kwargs is False:
             kwargs_support_modes = [False]
-            kwarg = None
+            kwargs = None
         else:
             kwargs_support_modes = [True]
         for kwargs_support in kwargs_support_modes:
@@ -185,8 +235,10 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             assert_equal(arguments.maxargs, maxargs)
             assert_equal(arguments.positional, positional)
             assert_equal(arguments.defaults, defaults)
-            assert_equal(arguments.varargs, vararg)
-            assert_equal(arguments.kwargs, kwarg)
+            assert_equal(arguments.varargs, varargs)
+            assert_equal(arguments.kwonlyargs, kwonlyargs)
+            assert_equal(arguments.kwonlydefaults, kwonlydefaults)
+            assert_equal(arguments.kwargs, kwargs)
 
     def _assert_fails(self, error, argspec=None, doc=None):
         assert_raises_with_msg(DataError, error,

@@ -114,7 +114,6 @@ class JavaArgumentParser(_ArgumentParser):
 
 
 class _ArgumentSpecParser(_ArgumentParser):
-    kw_only_args_supported = False
 
     def parse(self, argspec, name=None):
         result = ArgumentSpec(name, self._type)
@@ -124,14 +123,14 @@ class _ArgumentSpecParser(_ArgumentParser):
                 self._raise_invalid_spec('Only last argument can be kwargs.')
             elif self._is_kwargs(arg):
                 self._add_kwargs(arg, result)
-            elif result.varargs and not self.kw_only_args_supported:
-                self._raise_invalid_spec('Positional argument after varargs.')
+            elif self._is_kw_only_separator(arg):
+                if result.varargs or kw_only_args:
+                    self._raise_invalid_spec('Cannot have multiple varargs.')
+                kw_only_args = True
             elif self._is_varargs(arg):
-                if result.varargs:
+                if result.varargs or kw_only_args:
                     self._raise_invalid_spec('Cannot have multiple varargs.')
                 self._add_varargs(arg, result)
-                kw_only_args = True
-            elif self._is_kw_only_separator(arg):
                 kw_only_args = True
             elif '=' in arg:
                 self._add_arg_with_default(arg, result, kw_only_args)
@@ -154,6 +153,9 @@ class _ArgumentSpecParser(_ArgumentParser):
     def _format_kwargs(self, kwargs):
         raise NotImplementedError
 
+    def _is_kw_only_separator(self, arg):
+        raise NotImplementedError
+
     def _is_varargs(self, arg):
         raise NotImplementedError
 
@@ -162,9 +164,6 @@ class _ArgumentSpecParser(_ArgumentParser):
 
     def _format_varargs(self, varargs):
         raise NotImplementedError
-
-    def _is_kw_only_separator(self, arg):
-        return False
 
     def _add_arg_with_default(self, arg, result, kw_only_arg=False):
         arg, default = arg.split('=', 1)
@@ -191,6 +190,9 @@ class DynamicArgumentParser(_ArgumentSpecParser):
     def _format_kwargs(self, kwargs):
         return kwargs[2:]
 
+    def _is_kw_only_separator(self, arg):
+        return arg == '*'
+
     def _is_varargs(self, arg):
         return arg.startswith('*') and not self._is_kwargs(arg)
 
@@ -199,7 +201,6 @@ class DynamicArgumentParser(_ArgumentSpecParser):
 
 
 class UserKeywordArgumentParser(_ArgumentSpecParser):
-    kw_only_args_supported = True
 
     def _is_kwargs(self, arg):
         return is_dict_var(arg)
