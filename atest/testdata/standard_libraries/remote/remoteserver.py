@@ -1,9 +1,6 @@
 import inspect
 import sys
-try:
-    from SimpleXMLRPCServer import SimpleXMLRPCServer
-except ImportError:
-    from xmlrpc.server import SimpleXMLRPCServer
+from xmlrpc.server import SimpleXMLRPCServer
 
 
 class RemoteServer(SimpleXMLRPCServer):
@@ -70,7 +67,7 @@ class DirectResultRemoteServer(RemoteServer):
 
 def announce_port(socket, port_file=None):
     port = socket.getsockname()[1]
-    sys.stdout.write('Remote server starting on port %s.\n' % port)
+    sys.stdout.write(f'Remote server starting on port {port}.\n')
     sys.stdout.flush()
     if port_file:
         with open(port_file, 'w') as f:

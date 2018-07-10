@@ -1,10 +1,6 @@
 import sys
 
-try:
-    from xmlrpclib import Binary
-except ImportError:
-    from xmlrpc.client import Binary
-    basestring = str
+from xmlrpc.client import Binary
 
 from remoteserver import RemoteServer
 
@@ -74,14 +70,12 @@ class Arguments(object):
         return self._format_args(arg1, arg2, *varargs, **kwargs)
 
     def _format_args(self, *args, **kwargs):
-        args += tuple('%s:%s' % (k, self._type(v))
-                      for k, v in sorted(kwargs.items()))
-        return ', '.join(self._type(a) for a in args)
+        args += tuple(f'{k}:{self._format(kwargs[k])}' for k in sorted(kwargs))
+        return ', '.join(self._format(a) for a in args)
 
-    def _type(self, arg):
-        if not isinstance(arg, basestring):
-            return '%s (%s)' % (arg, type(arg).__name__)
-        return arg
+    def _format(self, arg):
+        type_name = type(arg).__name__
+        return arg if isinstance(arg, str) else f'{arg} ({type_name})'
 
 
 if __name__ == '__main__':
