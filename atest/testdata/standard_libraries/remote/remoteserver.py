@@ -26,16 +26,26 @@ class RemoteServer(SimpleXMLRPCServer):
 
     def get_keyword_arguments(self, name):
         kw = getattr(self.library, name)
-        args, varargs, kwargs, defaults = inspect.getargspec(kw)
+        args, varargs, kwargs, defaults, kwoargs, kwodefaults, _ \
+            = inspect.getfullargspec(kw)
         args = args[1:]  # drop 'self'
         if defaults:
             args, names = args[:-len(defaults)], args[-len(defaults):]
-            args += ['%s=%s' % (n, d) for n, d in zip(names, defaults)]
+            args += [f'{n}={d}' for n, d in zip(names, defaults)]
         if varargs:
-            args.append('*%s' % varargs)
+            args.append(f'*{varargs}')
+        if kwoargs:
+            if not varargs:
+                args.append('*')
+            args += [self._format_kwo(arg, kwodefaults) for arg in kwoargs]
         if kwargs:
-            args.append('**%s' % kwargs)
+            args.append(f'**{kwargs}')
         return args
+
+    def _format_kwo(self, arg, defaults):
+        if defaults and arg in defaults:
+            return f'{arg}={defaults[arg]}'
+        return arg
 
     def get_keyword_tags(self, name):
         kw = getattr(self.library, name)

@@ -48,6 +48,13 @@ One kwarg
 Multiple kwargs
     a:1, b:2, c:3, d:4       Kwargs                           a=1    c=3    d=4    b=2
 
+Keyword-only args
+    kwo:value                Kw Only Arg                      kwo=value
+
+Keyword-only args with default
+    k1:default, k2:value     Kw Only Arg With Default         k2=value
+    k1:xxx, k2:yyy           Kw Only Arg With Default         k2=yyy    k1=xxx
+
 Args and kwargs
     arg, default2            Args and kwargs                  arg
     arg, default2, kw:foo    Args and kwargs                  arg    kw=foo
@@ -60,13 +67,19 @@ Varargs and kwargs
     arg, foo:bar             Varargs and kwargs               arg    foo=bar
    a, b, c, d:4, e:5, f:6    Varargs and kwargs               a    b    c    d=4    e=5    f=6
 
-Args, varargs and kwargs
-    arg, default2            Args varargs and kwargs          arg
-    arg, default2, kw:foo    Args varargs and kwargs          arg    kw=foo
-    default1, foo, kw:foo    Args varargs and kwargs          arg2=foo    kw=foo
-    a, b, c:3                Args varargs and kwargs          a    arg2=b    c=3
-    a, b, c:3, d:4           Args varargs and kwargs          c=3    arg1=a    d=4    arg2=b
-    a, b, c, d, e:5, f:6     Args varargs and kwargs          a    b    c    d    e=5    f=6
+All arg types
+    arg, default, kwo1:default, kwo2:2
+    ...                      All arg types                    arg    kwo2=2
+    arg, default, kw:foo, kwo1:default, kwo2:bar
+    ...                      All arg types                    arg    kw=foo    kwo2=bar
+    1, 2, kw:3, kwo1:4, kwo2:5
+    ...                      All arg types                    arg2=2    kwo2=5    kwo1=4    kw=3    arg1=1
+    a, b, c:3, kwo1:default, kwo2:x
+    ...                      All arg types                    a    arg2=b    c=3    kwo2=x
+    a, b, c:3, d:4, kwo1:default, kwo2:
+    ...                      All arg types                    c=3    arg1=a    kwo2=    d=4    arg2=b
+    a, b, c, d, e:5, f:6, kwo1:7, kwo2:8
+    ...                      All arg types                    a    b    c    d    e=5    f=6    kwo2=8    kwo1=7
 
 Using Arguments When No Accepted
     [Documentation]    FAIL Keyword 'Remote.No Arguments' expected 0 arguments, got 1.
