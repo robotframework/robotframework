@@ -116,6 +116,16 @@ class KeywordDocBuilder(object):
         args = required + ['%s=%s' % item for item in defaults]
         if argspec.varargs:
             args.append('*%s' % argspec.varargs)
+        if argspec.kwonlyargs:
+            if not argspec.varargs:
+                args.append('*')
+            args.extend(self._format_kwo(name, argspec.kwonlydefaults)
+                        for name in argspec.kwonlyargs)
         if argspec.kwargs:
             args.append('**%s' % argspec.kwargs)
         return args
+
+    def _format_kwo(self, name, defaults):
+        if name not in defaults:
+            return name
+        return '%s=%s' % (name, defaults[name])

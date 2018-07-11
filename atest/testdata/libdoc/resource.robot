@@ -54,6 +54,10 @@ kw 6
     ...                 Tags: foo, bar
     [Tags]              foo    dar
 
+Different argument types
+    [Arguments]    ${mandatory}    ${optional}=default    @{varargs}
+    ...            ${kwo}=default    ${another}    &{kwargs}
+
 Embedded ${arguments}
 
 curdir  [Documentation]  ${CURDIR}
