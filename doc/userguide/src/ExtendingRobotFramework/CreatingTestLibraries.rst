@@ -1932,28 +1932,28 @@ should use Java lists or String arrays instead.
 .. table:: Representing different arguments with `get_keyword_arguments`
    :class: tabular
 
-   +--------------------+----------------------------+------------------------------+----------+
-   |    Expected        |      How to represent      |            Examples          | Limits   |
-   |    arguments       |                            |                              | (min/max)|
-   +====================+============================+==============================+==========+
-   | No arguments       | Empty list.                | | `[]`                       | | 0/0    |
-   +--------------------+----------------------------+------------------------------+----------+
-   | One or more        | List of strings containing | | `['one_argument']`         | | 1/1    |
-   | argument           | argument names.            | | `['a1', 'a2', 'a3']`       | | 3/3    |
-   +--------------------+----------------------------+------------------------------+----------+
-   | Default values     | Default values separated   | | `['arg=default value']`    | | 0/1    |
-   | for arguments      | from names with `=`.       | | `['a', 'b=1', 'c=2']`      | | 1/3    |
-   |                    | Default values are always  |                              |          |
-   |                    | considered to be strings.  |                              |          |
-   +--------------------+----------------------------+------------------------------+----------+
-   | Variable number    | Last (or second last with  | | `['*varargs']`             | | 0/any  |
-   | of arguments       | kwargs) argument has `*`   | | `['a', 'b=42', '*rest']`   | | 1/any  |
-   | (varargs)          | before its name.           |                              |          |
-   +--------------------+----------------------------+------------------------------+----------+
-   | Free named         | Last arguments has         | | `['**named']`              | | 0/0    |
-   | arguments (kwargs) | `**` before its name.      | | `['a', 'b=42', '**c']`     | | 1/2    |
-   |                    |                            | | `['*varargs', '**kwargs']` | | 0/any  |
-   +--------------------+----------------------------+------------------------------+----------+
+   +--------------------+----------------------------+----------------------------+
+   |    Expected        |      How to represent      |          Examples          |
+   |    arguments       |                            |                            |
+   +====================+============================+============================+
+   | No arguments       | Empty list.                | `[]`                       |
+   +--------------------+----------------------------+----------------------------+
+   | One or more        | List of strings containing | `['one_argument']`,        |
+   | argument           | argument names.            | `['a1', 'a2', 'a3']`       |
+   +--------------------+----------------------------+----------------------------+
+   | Default values     | Default values separated   | `['arg=default value']`,   |
+   | for arguments      | from names with `=`.       | `['a', 'b=1', 'c=2']`      |
+   |                    | Default values are always  |                            |
+   |                    | considered to be strings.  |                            |
+   +--------------------+----------------------------+----------------------------+
+   | Variable number    | Last (or second last with  | `['*varargs']`,            |
+   | of arguments       | kwargs) argument has `*`   | `['a', 'b=42', '*rest']`   |
+   | (varargs)          | before its name.           |                            |
+   +--------------------+----------------------------+----------------------------+
+   | Free named         | Last arguments has         | `['**named']`,             |
+   | arguments (kwargs) | `**` before its name.      | `['a', 'b=42', '**c']`,    |
+   |                    |                            | `['*varargs', '**kwargs']` |
+   +--------------------+----------------------------+----------------------------+
 
 When the `get_keyword_arguments` is used, Robot Framework automatically
 calculates how many positional arguments the keyword requires and does it
