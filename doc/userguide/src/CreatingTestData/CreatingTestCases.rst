@@ -424,7 +424,7 @@ syntax supported by Python 3.
 
 For most parts named-only arguments work the same way as `named arguments`_.
 The main difference is that libraries implemented with Python 2 using
-the `static library API`_ do not support this syntax.
+the `static library API`_ `do not support this syntax`__.
 
 As an example of using the `named-only arguments with user keywords`_, here
 is a variation of the :name:`Run Program` in the above `free named argument
@@ -443,6 +443,7 @@ examples`_ that only supports configuring `shell`:
        Run Process    program.py    @{args}    shell=${shell}
 
 __ https://www.python.org/dev/peps/pep-3102
+__ `Keyword-only arguments`_
 
 Arguments embedded to keyword names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -867,9 +867,6 @@ For a real world example of using a signature exactly like in the above
 example, see :name:`Run Process` and :name:`Start Keyword` keywords in the
 Process_ library.
 
-.. note:: Keyword only arguments are supported as long as you are running
-          a version of python that supports them (python3, pypy3).
-
 __ Escaping_
 
 Free keyword arguments with Java
@@ -905,6 +902,31 @@ example keywords can be used exactly like the previous Python examples:
           kwargs cannot have more than one signature.
 
 __ `Variable number of arguments with Java`_
+
+Keyword-only arguments
+~~~~~~~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 3.1, it is possible to use `named-only
+arguments`_ with different keywords. When implementing libraries using Python,
+this support is provided by Python's `keyword-only arguments`__:
+
+.. sourcecode:: python
+
+    def sort_words(*words, case_sensitive=False):
+        key = str.lower if case_sensitive else None
+        return sorted(words, key=key)
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       Sort Words    Foo    bar    baZ
+       Sort Words    Foo    bar    baZ    case_sensitive=True
+
+Due to keyword-only arguments being a Python 3 feature, libraries using
+Python 2 cannot use it. Time to upgrade!
+
+__ https://www.python.org/dev/peps/pep-3102
 
 Argument types
 ~~~~~~~~~~~~~~
