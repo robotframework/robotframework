@@ -285,9 +285,9 @@ This is illustrated by the example below.
        Run Process    program.py    @{args}    # Named arguments are not recognized from inside @{args}
 
 If keyword needs to accept and pass forward any named arguments, it must be
-changed to accept `free keyword arguments`_. See `kwargs examples`_ for
-a wrapper keyword version that can pass both positional and named arguments
-forward.
+changed to accept `free named arguments`_. See `free named argument examples`_
+for a wrapper keyword version that can pass both positional and named
+arguments forward.
 
 Escaping named arguments syntax
 '''''''''''''''''''''''''''''''
@@ -340,30 +340,42 @@ library keywords, user keywords, and when importing the Telnet_ test library.
        [Arguments]    ${path}=.    ${options}=
        Execute command    ls ${options} ${path}
 
-Free keyword arguments
-~~~~~~~~~~~~~~~~~~~~~~
+Free named arguments
+~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework supports `Python style free keyword arguments`__
-(`**kwargs`). What this means is that keywords can receive all arguments that
-use the `name=value` syntax and do not match any other arguments as kwargs.
+Robot Framework supports *free named arguments*, often also called *free
+keyword arguments*, similarly as `Python supports **kwargs`__. What this
+means is that a keyword can receive all arguments that use the named
+arguments syntax (`name=value`) and do not match any arguments specified
+in the signature of the keyword.
 
-Free keyword arguments support variables similarly as `named arguments
+Free named arguments are supported by same keyword types than `normal named
+arguments`__. How keywords specify that they accept free named arguments
+depends on the keyword type. For example, `Python based keywords`__ simply use
+`**kwargs` and `user keywords`__ use `&{kwargs}`.
+
+Free named arguments support variables similarly as `named arguments
 <Named arguments with variables_>`__. In practice that means that variables
 can be used both in names and values, but the escape sign must always be
 visible literally. For example, both `foo=${bar}` and `${foo}=${bar}` are
 valid, as long as the variables that are used exist. An extra limitation is
-that free keyword argument names must always be strings.
+that free argument names must always be strings.
 
 __ http://docs.python.org/tutorial/controlflow.html#keyword-arguments
+__ `Where named arguments are supported`_
+__ `Free keyword arguments (**kwargs)`_
+__ `Free named arguments with user keywords`_
 
-Kwargs examples
-'''''''''''''''
+.. _free named argument examples:
 
-As the first example of using kwargs, let's take a look at
+Examples
+''''''''
+
+As the first example of using free named arguments, let's take a look at
 :name:`Run Process` keyword in the Process_ library. It has a signature
 `command, *arguments, **configuration`, which means that it takes the command
 to execute (`command`), its arguments as `variable number of arguments`_
-(`*arguments`) and finally optional configuration parameters as free keyword
+(`*arguments`) and finally optional configuration parameters as free named
 arguments (`**configuration`). The example below also shows that variables
 work with free keyword arguments exactly like when `using the named argument
 syntax`__.
@@ -371,30 +383,30 @@ syntax`__.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Using Kwargs
+   Free Named Arguments
        Run Process    program.py    arg1    arg2    cwd=/home/user
        Run Process    program.py    argument    shell=True    env=${ENVIRON}
 
 See `Free keyword arguments (**kwargs)`_ section under `Creating test
-libraries`_ for more information about using the kwargs syntax in
-your custom test libraries.
+libraries`_ for more information about using the free named arguments syntax
+in your custom test libraries.
 
 As the second example, let's create a wrapper `user keyword`_ for running the
 `program.py` in the above example. The wrapper keyword :name:`Run Program`
-accepts any number of arguments and kwargs, and passes them forward for
+accepts all positional and named arguments and passes them forward to
 :name:`Run Process` along with the name of the command to execute.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Using Kwargs
+   Free Named Arguments
        Run Program    arg1    arg2    cwd=/home/user
        Run Program    argument    shell=True    env=${ENVIRON}
 
    *** Keywords ***
    Run Program
-       [Arguments]    @{arguments}    &{configuration}
-       Run Process    program.py    @{arguments}    &{configuration}
+       [Arguments]    @{args}    &{config}
+       Run Process    program.py    @{args}    &{config}
 
 __ `Named arguments with variables`_
 
@@ -750,7 +762,7 @@ the templated tests the mode is on automatically.
        third round 1     third round 2
 
 Using arguments with `default values`_ or `varargs`_, as well as using
-`named arguments`_ and `free keyword arguments`_, work with templates
+`named arguments`_ and `free named arguments`_, work with templates
 exactly like they work otherwise. Using variables_ in arguments is also
 supported normally.
 

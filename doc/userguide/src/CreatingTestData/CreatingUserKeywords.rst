@@ -274,8 +274,8 @@ function default values.
 
 __ `Variable priorities and scopes`_
 
-Varargs with user keywords
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Variable number of arguments with user keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes even default values are not enough and there is a need
 for a keyword accepting `variable number of arguments`_. User keywords
@@ -332,10 +332,10 @@ arguments syntax is very close to the one in Python.
 
 __ `for loops`_
 
-Kwargs with user keywords
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Free named arguments with user keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-User keywords can also accept `free keyword arguments`_ by having a `dictionary
+User keywords can also accept `free named arguments`_ by having a `dictionary
 variable`_ like `&{kwargs}` as the last argument after possible positional
 arguments and varargs. When the keyword is called, this variable will get all
 `named arguments`_ that do not match any positional argument in the keyword
@@ -354,12 +354,12 @@ signature.
        Log Many    ${required}    @{extra}
 
    Run Program
-       [Arguments]    @{varargs}    &{kwargs}
-       Run Process    program.py    @{varargs}    &{kwargs}
+       [Arguments]    @{args}    &{config}
+       Run Process    program.py    @{args}    &{config}
 
 The last example above shows how to create a wrapper keyword that
 accepts any positional or named argument and passes them forward.
-See `kwargs examples`_ for a full example with same keyword.
+See `free named argument examples`_ for a full example with same keyword.
 
 Also kwargs support with user keywords works very similarly as kwargs work
 in Python. In the signature and also when passing arguments forward,

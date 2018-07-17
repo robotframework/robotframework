@@ -796,10 +796,14 @@ __ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
 Free keyword arguments (`**kwargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework supports free keyword arguments using Python's
-`**kwargs` syntax. How to use the syntax in the test data is discussed
-in `Free keyword arguments`_ section under `Creating test cases`_. In this
-section we take a look at how to actually use it in custom test libraries.
+Robot Framework supports `Python's **kwargs syntax`__ and extends that support
+also to Java. How to use use keywords that accept *free keyword arguments*,
+also known as *free named arguments*, is `discussed under the Creating test
+cases section`__. In this section we take a look at how to create such keywords
+using Python and Java.
+
+__ https://docs.python.org/tutorial/controlflow.html#keyword-arguments
+__ `Free named arguments`_
 
 Free keyword arguments with Python
 ''''''''''''''''''''''''''''''''''
@@ -1874,8 +1878,8 @@ format as returned by `get_keyword_names`. The second argument is
 a list or array of arguments given to the keyword in the test data.
 
 The optional third argument is a dictionary (map in Java) that gets
-possible `free keyword arguments`_ (`**kwargs`) passed to the
-keyword. See `free keyword arguments with dynamic libraries`_ section
+possible `free named arguments`_ (`**kwargs`) passed to the
+keyword. See `free named arguments with dynamic libraries`_ section
 for more details about using kwargs with dynamic test libraries.
 
 After getting keyword name and arguments, the library can execute
@@ -1920,7 +1924,7 @@ containing the arguments accepted by that keyword.
 
 Similarly as static keywords, dynamic keywords can require any number
 of arguments, have default values, and accept variable number of
-arguments and free keyword arguments. The syntax for how to represent
+arguments and free named arguments. The syntax for how to represent
 all these different variables is explained in the following table.
 Note that the examples use Python syntax for lists, but Java developers
 should use Java lists or String arrays instead.
@@ -1946,14 +1950,14 @@ should use Java lists or String arrays instead.
    | of arguments       | kwargs) argument has `*`   | | `['a', 'b=42', '*rest']`   | | 1/any  |
    | (varargs)          | before its name.           |                              |          |
    +--------------------+----------------------------+------------------------------+----------+
-   | Free keyword       | Last arguments has         | | `['**kwargs']`             | | 0/0    |
-   | arguments (kwargs) | `**` before its name.      | | `['a', 'b=42', '**kws']`   | | 1/2    |
+   | Free named         | Last arguments has         | | `['**named']`              | | 0/0    |
+   | arguments (kwargs) | `**` before its name.      | | `['a', 'b=42', '**c']`     | | 1/2    |
    |                    |                            | | `['*varargs', '**kwargs']` | | 0/any  |
    +--------------------+----------------------------+------------------------------+----------+
 
 When the `get_keyword_arguments` is used, Robot Framework automatically
 calculates how many positional arguments the keyword requires and does it
-support free keyword arguments or not. If a keyword is used with invalid
+support free named arguments or not. If a keyword is used with invalid
 arguments, an error occurs and `run_keyword` is not even called.
 
 The actual argument names and default values that are returned are also
@@ -1967,7 +1971,7 @@ accepting all arguments. This automatic argument spec is either
 `run_keyword` `support kwargs`__ by having three arguments or not.
 
 __ `Named argument syntax with dynamic libraries`_
-__ `Free keyword arguments with dynamic libraries`_
+__ `Free named arguments with dynamic libraries`_
 
 Getting keyword tags
 ~~~~~~~~~~~~~~~~~~~~
@@ -2064,11 +2068,11 @@ The comment shows the arguments that the keyword is actually called with.
 
 __ `Getting keyword arguments`_
 
-Free keyword arguments with dynamic libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Free named arguments with dynamic libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Dynamic libraries can also support
-`free keyword arguments`_ (`**kwargs`). A mandatory precondition for
+`free named arguments`_ (`**kwargs`). A mandatory precondition for
 this support is that the `run_keyword` method `takes three arguments`__:
 the third one will get kwargs when they are used. Kwargs are passed to the
 keyword as a dictionary (Python) or Map (Java).
@@ -2077,7 +2081,7 @@ What arguments a keyword accepts depends on what `get_keyword_arguments`
 `returns for it`__. If the last argument starts with `**`, that keyword is
 recognized to accept kwargs.
 
-Using the free keyword argument syntax with dynamic libraries is illustrated
+Using the free named argument syntax with dynamic libraries is illustrated
 by the following examples. All the examples use a keyword :name:`Dynamic`
 that has been specified to have argument specification
 `[arg1=xxx, arg2=yyy, **kwargs]`.

@@ -243,7 +243,7 @@ Executing remote keywords
 When the Remote library wants the server to execute some keyword, it
 calls the remote server's `run_keyword` method and passes it the
 keyword name, a list of arguments, and possibly a dictionary of
-`free keyword arguments`__. Base types can be used as
+`free named arguments`__. Base types can be used as
 arguments directly, but more complex types are `converted to supported
 types`__.
 
@@ -299,12 +299,12 @@ dynamic library.
 This includes mandatory arguments, default values, varargs, as well
 as `named argument syntax`__.
 
-Also free keyword arguments (`**kwargs`) works mostly the `same way
+Also free named arguments (`**kwargs`) works mostly the `same way
 as with other dynamic libraries`__. First of all, the
 `get_keyword_arguments` must return an argument specification that
 contains `**kwargs` exactly like with any other dynamic library.
 The main difference is that
-remote servers' `run_keyword` method must have optional third argument
+remote servers' `run_keyword` method must have an **optional** third argument
 that gets the kwargs specified by the user. The third argument must be optional
 because, for backwards-compatibility reasons, the Remote library passes kwargs
 to the `run_keyword` method only when they have been used in the test data.
@@ -331,4 +331,4 @@ arguments.
 
 __ `Getting keyword arguments`_
 __ `Named argument syntax with dynamic libraries`_
-__ `Free keyword arguments with dynamic libraries`_
+__ `Free named arguments with dynamic libraries`_
