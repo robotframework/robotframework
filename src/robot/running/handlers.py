@@ -157,17 +157,22 @@ class _DynamicHandler(_RunnableHandler):
     def __init__(self, library, handler_name, dynamic_method, doc='',
                  argspec=None, tags=None):
         self._argspec = argspec
-        _RunnableHandler.__init__(self, library, handler_name,
-                                  dynamic_method.method, doc, tags)
         self._run_keyword_method_name = dynamic_method.name
         self._supports_kwargs = dynamic_method.supports_kwargs
-        if argspec and argspec[-1].startswith('**'):
-            if not self._supports_kwargs:
-                raise DataError("Too few '%s' method parameters for **kwargs "
-                                "support." % self._run_keyword_method_name)
+        _RunnableHandler.__init__(self, library, handler_name,
+                                  dynamic_method.method, doc, tags)
 
     def _parse_arguments(self, handler_method):
-        return DynamicArgumentParser().parse(self._argspec, self.longname)
+        spec = DynamicArgumentParser().parse(self._argspec, self.longname)
+        if not self._supports_kwargs:
+            if spec.kwargs:
+                raise DataError("Too few '%s' method parameters for **kwargs "
+                                "support." % self._run_keyword_method_name)
+            if spec.kwonlyargs:
+                raise DataError("Too few '%s' method parameters for "
+                                "keyword-only arguments support."
+                                % self._run_keyword_method_name)
+        return spec
 
     def resolve_arguments(self, arguments, variables=None):
         positional, named = self.arguments.resolve(arguments, variables)

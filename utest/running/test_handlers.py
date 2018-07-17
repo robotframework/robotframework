@@ -207,9 +207,14 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                                'Only last argument can be kwargs.', argspec)
 
     def test_missing_kwargs_support(self):
-        self._assert_fails("Too few 'run_keyword' method parameters "
-                           "for **kwargs support.",
-                           ['**kwargs'])
+        for spec in (['**kwargs'], ['arg', '**kws'], ['a', '*v', '**k']):
+            self._assert_fails("Too few 'run_keyword' method parameters "
+                               "for **kwargs support.", spec)
+
+    def test_missing_kwonlyargs_support(self):
+        for spec in (['*', 'kwo'], ['*vars', 'kwo1', 'kwo2=default']):
+            self._assert_fails("Too few 'run_keyword' method parameters "
+                               "for keyword-only arguments support.", spec)
 
     def _assert_doc(self, doc, expected=None):
         expected = doc if expected is None else expected
@@ -220,7 +225,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                      kwonlyargs=[], kwonlydefaults={}, kwargs=None):
         if varargs and not maxargs:
             maxargs = sys.maxsize
-        if kwargs is None:
+        if kwargs is None and not kwonlyargs:
             kwargs_support_modes = [True, False]
         elif kwargs is False:
             kwargs_support_modes = [False]
@@ -240,9 +245,9 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             assert_equal(arguments.kwonlydefaults, kwonlydefaults)
             assert_equal(arguments.kwargs, kwargs)
 
-    def _assert_fails(self, error, argspec=None, doc=None):
+    def _assert_fails(self, error, *args, **kwargs):
         assert_raises_with_msg(DataError, error,
-                               self._create_handler, argspec, doc)
+                               self._create_handler, *args, **kwargs)
 
     def _create_handler(self, argspec=None, doc=None, kwargs_support=False):
         lib = LibraryMock('TEST CASE')
