@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 from robot.errors import DataError
@@ -71,8 +72,9 @@ class TestEmbeddedArgs(unittest.TestCase):
 
     def test_get_multiple_embedded_args_and_regexp(self):
         assert_equal(self.tmp2.embedded_args, ['x', 'y', 'z'])
+        quote = '"' if sys.version_info[:2] >= (3, 7) else '\\"'
         assert_equal(self.tmp2.embedded_name.pattern,
-                     '^(.*?)\\ \\*\\ (.*?)\\ from\\ \\"(.*?)\\"$')
+                     '^(.*?)\\ \\*\\ (.*?)\\ from\\ {0}(.*?){0}$'.format(quote))
 
     def test_create_runner_when_no_match(self):
         assert_raises(ValueError, self.tmp1.create_runner, 'Not matching')
