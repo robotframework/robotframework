@@ -375,7 +375,7 @@ code blocks contain Python and Robot Framework examples, respectively:
     .. code:: python
 
        def example_keyword():
-           print 'Hello, world!'
+           print('Hello, world!')
 
     .. code:: robotframework
 

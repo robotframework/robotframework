@@ -237,7 +237,7 @@ Example Python library using the `TEST SUITE` scope:
 
         def count(self):
             self._counter += 1
-            print self._counter
+            print(self._counter)
 
         def clear_counter(self):
             self._counter = 0
@@ -433,7 +433,7 @@ also :name:`Current Thread`.
 
 
    def example_keyword():
-       print 'Running in thread "%s".' % current_thread().name
+       print('Running in thread "%s".' % current_thread().name)
 
    def second_example():
        pass
@@ -459,7 +459,7 @@ For example, the library below implements only keywords
 
 
    def example_keyword():
-       print 'Running in thread "%s".' % current_thread().name
+       print('Running in thread "%s".' % current_thread().name)
 
    def second_example():
        pass
@@ -485,7 +485,7 @@ Example Python library implemented as a module in the :file:`MyLibrary.py` file:
 .. sourcecode:: python
 
   def hello(name):
-      print "Hello, %s!" % name
+      print("Hello, %s!" % name)
 
   def do_nothing():
       pass
@@ -611,13 +611,13 @@ Example Python keywords taking different numbers of arguments:
 .. sourcecode:: python
 
   def no_arguments():
-      print "Keyword got no arguments."
+      print("Keyword got no arguments.")
 
   def one_argument(arg):
-      print "Keyword got one argument '%s'." % arg
+      print("Keyword got one argument '%s'." % arg)
 
   def three_arguments(a1, a2, a3):
-      print "Keyword got three arguments '%s', '%s' and '%s'." % (a1, a2, a3)
+      print("Keyword got three arguments '%s', '%s' and '%s'." % (a1, a2, a3))
 
 .. note:: A major limitation with Java libraries using the static library API
           is that they do not support the `named argument syntax`_. If this
@@ -642,10 +642,10 @@ which is familiar to all Python programmers, is illustrated below:
 .. sourcecode:: python
 
    def one_default(arg='default'):
-       print "Argument has value %s" % arg
+       print("Argument has value %s" % arg)
 
    def multiple_defaults(arg1, arg2='default 1', arg3='default 2'):
-       print "Got arguments %s, %s and %s" % (arg1, arg2, arg3)
+       print("Got arguments %s, %s and %s" % (arg1, arg2, arg3))
 
 The first example keyword above can be used either with zero or one
 arguments. If no arguments are given, `arg` gets the value
@@ -714,17 +714,17 @@ be combined with other ways of specifying arguments:
 .. sourcecode:: python
 
   def any_arguments(*args):
-      print "Got arguments:"
+      print("Got arguments:")
       for arg in args:
-          print arg
+          print(arg)
 
   def one_required(required, *others):
-      print "Required: %s\nOthers:" % required
+      print("Required: %s\nOthers:" % required)
       for arg in others:
-          print arg
+          print(arg)
 
   def also_defaults(req, def1="default 1", def2="default 2", *rest):
-      print req, def1, def2, rest
+      print(req, def1, def2, rest)
 
 .. sourcecode:: robotframework
 
@@ -816,7 +816,7 @@ below shows the basic functionality:
 
     def example_keyword(**stuff):
         for name, value in stuff.items():
-            print name, value
+            print(name, value)
 
 .. sourcecode:: robotframework
 
@@ -837,11 +837,11 @@ work together:
 .. sourcecode:: python
 
   def various_args(arg, *varargs, **kwargs):
-      print 'arg:', arg
+      print('arg:', arg)
       for value in varargs:
-          print 'vararg:', value
+          print('vararg:', value)
       for name, value in sorted(kwargs.items()):
-          print 'kwarg:', name, value
+          print('kwarg:', name, value)
 
 .. sourcecode:: robotframework
 
@@ -1261,7 +1261,7 @@ Python:
     import time
 
     def example_keyword():
-        print '*INFO:%d* Message with timestamp' % (time.time()*1000)
+        print('*INFO:%d* Message with timestamp' % (time.time()*1000))
 
 Java:
 
@@ -1320,20 +1320,20 @@ be used to make messages more visible and `HTML` is useful if any
 kind of formatting is needed.
 
 The following examples clarify how logging with different levels
-works. Java programmers should regard the code `print 'message'`
+works. Java programmers should regard the code `print('message')`
 as pseudocode meaning `System.out.println("message");`.
 
 .. sourcecode:: python
 
-   print 'Hello from a library.'
-   print '*WARN* Warning from a library.'
-   print '*ERROR* Something unexpected happen that may indicate a problem in the test.'
-   print '*INFO* Hello again!'
-   print 'This will be part of the previous message.'
-   print '*INFO* This is a new message.'
-   print '*INFO* This is <b>normal text</b>.'
-   print '*HTML* This is <b>bold</b>.'
-   print '*HTML* <a href="http://robotframework.org">Robot Framework</a>'
+   print('Hello from a library.')
+   print('*WARN* Warning from a library.')
+   print('*ERROR* Something unexpected happen that may indicate a problem in the test.')
+   print('*INFO* Hello again!')
+   print('This will be part of the previous message.')
+   print('*INFO* This is a new message.')
+   print('*INFO* This is <b>normal text</b>.')
+   print('*HTML* This is <b>bold</b>.')
+   print('*HTML* <a href="http://robotframework.org">Robot Framework</a>')
 
 .. raw:: html
 
@@ -1393,7 +1393,7 @@ Public logging API
 Robot Framework has a Python based logging API for writing
 messages to the log file and to the console. Test libraries can use
 this API like `logger.info('My message')` instead of logging
-through the standard output like `print '*INFO* My message'`. In
+through the standard output like `print('*INFO* My message')`. In
 addition to a programmatic interface being a lot cleaner to use, this
 API has a benefit that the log messages have accurate timestamps_.
 
@@ -1921,7 +1921,7 @@ trivial, dynamic library implemented in Python.
            return ['first keyword', 'second keyword']
 
        def run_keyword(self, name, args, kwargs):
-           print "Running keyword '%s' with arguments %s and %s." % (name, args, kwargs)
+           print("Running keyword '%s' with arguments %s and %s." % (name, args, kwargs))
 
 __ `Free named arguments with dynamic libraries`_
 __ `Named-only arguments with dynamic libraries`_
@@ -2283,7 +2283,7 @@ __ http://docs.python.org/reference/datamodel.html#attribute-access
            return ['my_keyword', 'external_keyword']
 
        def my_keyword(self, arg):
-           print "My Keyword called with '%s'" % arg
+           print("My Keyword called with '%s'" % arg)
 
        def __getattr__(self, name):
            if name == 'external_keyword':
@@ -2381,7 +2381,7 @@ using `set_test_variable`, `set_suite_variable` and
        f = open(path, 'w')
        f.write(output)
        f.close()
-       print '*HTML* Output written to <a href="results.txt">results.txt</a>'
+       print('*HTML* Output written to <a href="results.txt">results.txt</a>')
 
 The only catch with using methods from `BuiltIn` is that all
 `run_keyword` method variants must be handled specially.

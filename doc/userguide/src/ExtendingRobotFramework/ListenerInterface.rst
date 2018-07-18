@@ -486,7 +486,7 @@ version 2`_.
 
    def end_test(name, attrs):
        if attrs['status'] == 'FAIL':
-           print 'Test "%s" failed: %s' % (name, attrs['message'])
+           print('Test "%s" failed: %s' % (name, attrs['message']))
            raw_input('Press enter to continue.')
 
 If the above example would be saved to, for example, :file:`PauseExecution.py`
@@ -505,7 +505,7 @@ The same example could also be implemented also using the newer
 
    def end_test(data, result):
        if not result.passed:
-           print 'Test "%s" failed: %s' % (result.name, result.message)
+           print('Test "%s" failed: %s' % (result.name, result.message))
            raw_input('Press enter to continue.')
 
 The next example, which still uses Python, is slightly more complicated. It
@@ -748,7 +748,7 @@ acting as a listener itself:
            self.ROBOT_LIBRARY_LISTENER = self
 
        def _end_suite(self, name, attrs):
-           print 'Suite %s (%s) ending.' % (name, attrs['id'])
+           print('Suite %s (%s) ending.' % (name, attrs['id']))
 
        # actual library code here ...
 
