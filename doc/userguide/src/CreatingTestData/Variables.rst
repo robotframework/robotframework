@@ -884,8 +884,12 @@ scopes. Modifying the value of `@{EMPTY}` or `&{EMPTY}` is not possible.
 
 .. note:: `&{EMPTY}` is new in Robot Framework 2.9.
 
+.. note:: `${SPACE}` represents the ASCII space (`\x20`) and `other spaces`__ should be specified using the `escape sequences`__.
+
 __ Escaping_
 __ https://groups.google.com/group/robotframework-users/browse_thread/thread/ccc9e1cd77870437/4577836fe946e7d5?lnk=gst&q=templates#4577836fe946e7d5
+__ http://jkorpela.fi/chars/spaces.html
+__ Escaping_
 
 Automatic variables
 ~~~~~~~~~~~~~~~~~~~
