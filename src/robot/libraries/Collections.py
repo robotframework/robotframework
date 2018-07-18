@@ -380,8 +380,7 @@ class _List(object):
         message would contain a row like ``Index 2 (email): name@foo.com !=
         name@bar.com``.
         """
-        self._validate_list(list1)
-        self._validate_list(list2, 2)
+        self._validate_lists(list1, list2)
         len1 = len(list1)
         len2 = len(list2)
         default = 'Lengths are different: %d != %d' % (len1, len2)
@@ -415,8 +414,7 @@ class _List(object):
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
         """
-        self._validate_list(list1)
-        self._validate_list(list2, 2)
+        self._validate_lists(list1, list2)
         diffs = ', '.join(unic(item) for item in list2 if item not in list1)
         default = 'Following values were not found from first list: ' + diffs
         _verify_condition(not diffs, default, msg, values)
@@ -459,8 +457,8 @@ class _List(object):
             raise TypeError("Expected %i. argument to be a list, got '%s' instead." % (position, type_name(list)))
 
     def _validate_lists(self, *lists):
-        for item in lists:
-            self._validate_list(item, lists.index(item)+1)
+        for index, item in enumerate(lists, start=1):
+            self._validate_list(item, index)
 
 class _Dictionary(object):
 

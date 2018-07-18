@@ -3,10 +3,6 @@ Test Setup        Create Dictionaries For Testing
 Resource          collections_resources.robot
 Library           CollectionsHelperLibrary.py
 
-*** Variables ***
-${dict_string}    This is a string not a dictionary.
-${dict_error}     TypeError: Expected first argument to be a dictionary, got 'string' instead.
-
 *** Test Cases ***
 Convert To Dictionary
     ${dotted} =    Create Dictionary    a=1    b=2
