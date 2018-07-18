@@ -1890,25 +1890,22 @@ attribute on every method in the library during `get_keyword_names`.  See
 Running keywords
 ~~~~~~~~~~~~~~~~
 
-Dynamic libraries have a special `run_keyword` (alias
-`runKeyword`) method for executing their keywords. When a
-keyword from a dynamic library is used in the test data, Robot
-Framework uses the library's `run_keyword` method to get it
-executed. This method takes two or three arguments. The first argument is a
-string containing the name of the keyword to be executed in the same
-format as returned by `get_keyword_names`. The second argument is
-a list or array of arguments given to the keyword in the test data.
-
+Dynamic libraries have a special `run_keyword` (alias `runKeyword`)
+method for executing their keywords. When a keyword from a dynamic
+library is used in the test data, Robot Framework uses the `run_keyword`
+method to get it executed. This method takes two or three arguments.
+The first argument is a string containing the name of the keyword to be
+executed in the same format as returned by `get_keyword_names`. The second
+argument is a list of arguments given to the keyword in the test data.
 The optional third argument is a dictionary (map in Java) that gets
-possible `free named arguments`_ (`**kwargs`) passed to the
-keyword. See `free named arguments with dynamic libraries`_ section
-for more details about using kwargs with dynamic test libraries.
+possible `free named arguments`__ and `named-only arguments`__ passed to
+the keyword.
 
 After getting keyword name and arguments, the library can execute
 the keyword freely, but it must use the same mechanism to
 communicate with the framework as static libraries. This means using
 exceptions for reporting keyword status, logging by writing to
-the standard output or by using provided logging APIs, and using
+the standard output or by using the provided logging APIs, and using
 the return statement in `run_keyword` for returning something.
 
 Every dynamic library must have both the `get_keyword_names` and
@@ -1923,33 +1920,36 @@ trivial, dynamic library implemented in Python.
        def get_keyword_names(self):
            return ['first keyword', 'second keyword']
 
-       def run_keyword(self, name, args):
-           print "Running keyword '%s' with arguments %s." % (name, args)
+       def run_keyword(self, name, args, kwargs):
+           print "Running keyword '%s' with arguments %s and %s." % (name, args, kwargs)
+
+__ `Free named arguments with dynamic libraries`_
+__ `Named-only arguments with dynamic libraries`_
 
 Getting keyword arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If a dynamic library only implements the `get_keyword_names` and
 `run_keyword` methods, Robot Framework does not have any information
-about the arguments that the implemented keywords need. For example,
+about the arguments that the implemented keywords accept. For example,
 both :name:`First Keyword` and :name:`Second Keyword` in the example above
-could be used with any number of arguments. This is problematic,
+could be used with any arguments. This is problematic,
 because most real keywords expect a certain number of keywords, and
 under these circumstances they would need to check the argument counts
 themselves.
 
-Dynamic libraries can tell Robot Framework what arguments the keywords
-it implements expect by using the `get_keyword_arguments`
-(alias `getKeywordArguments`) method. This method takes the name
-of a keyword as an argument, and returns a list or array of strings
-containing the arguments accepted by that keyword.
+Dynamic libraries can communicate what arguments their keywords expect
+by using the `get_keyword_arguments` (alias `getKeywordArguments`) method.
+This method gets the name of a keyword as an argument, and it must return
+a list of strings containing the arguments accepted by that keyword.
 
-Similarly as static keywords, dynamic keywords can require any number
-of arguments, have default values, and accept variable number of
-arguments and free named arguments. The syntax for how to represent
-all these different variables is explained in the following table.
-Note that the examples use Python syntax for lists, but Java developers
-should use Java lists or String arrays instead.
+Similarly as other keywords, dynamic keywords can require any number
+of `positional arguments`_, have `default values`_, accept `variable number of
+arguments`_, accept `free named arguments`_ and have `named-only arguments`_.
+The syntax how to represent all these different variables is derived from how
+they are specified in Python and explained in the following table. Note that
+the examples use Python syntax for lists, but Java developers should use
+Java lists or String arrays instead.
 
 .. table:: Representing different arguments with `get_keyword_arguments`
    :class: tabular
@@ -1960,21 +1960,33 @@ should use Java lists or String arrays instead.
    +====================+============================+============================+
    | No arguments       | Empty list.                | `[]`                       |
    +--------------------+----------------------------+----------------------------+
-   | One or more        | List of strings containing | `['one_argument']`,        |
-   | argument           | argument names.            | `['a1', 'a2', 'a3']`       |
+   | One or more        | List of strings containing | `['argument']`,            |
+   | `positional        | argument names.            | `['arg1', 'arg2', 'arg3']` |
+   | argument`_         |                            |                            |
    +--------------------+----------------------------+----------------------------+
-   | Default values     | Default values separated   | `['arg=default value']`,   |
-   | for arguments      | from names with `=`.       | `['a', 'b=1', 'c=2']`      |
-   |                    | Default values are always  |                            |
-   |                    | considered to be strings.  |                            |
+   | `Default values`_  | Default values separated   | `['arg=default value']`,   |
+   | for arguments      | from argument names with   | `['a', 'b=1', 'c=2']`      |
+   |                    | `=`. Default values are    |                            |
+   |                    | always considered to be    |                            |
+   |                    | strings.                   |                            |
    +--------------------+----------------------------+----------------------------+
-   | Variable number    | Last (or second last with  | `['*varargs']`,            |
-   | of arguments       | kwargs) argument has `*`   | `['a', 'b=42', '*rest']`   |
-   | (varargs)          | before its name.           |                            |
+   | `Variable number   | Argument after possible    | `['*varargs']`,            |
+   | of arguments`_     | positional arguments and   | `['argument', '*rest']`,   |
+   | (varargs)          | their defaults has `*`     | `['a', 'b=42', '*c']`      |
+   | (varargs)          | prefix.                    |                            |
    +--------------------+----------------------------+----------------------------+
-   | Free named         | Last arguments has         | `['**named']`,             |
-   | arguments (kwargs) | `**` before its name.      | `['a', 'b=42', '**c']`,    |
-   |                    |                            | `['*varargs', '**kwargs']` |
+   | `Free named        | Last arguments has `**`    | `['**named']`,             |
+   | arguments`_        | prefix. Requires           | `['a', 'b=42', '**c']`,    |
+   | (kwargs)           | `run_keyword` to `support  | `['*varargs', '**kwargs']` |
+   |                    | free named arguments`__.   |                            |
+   +--------------------+----------------------------+----------------------------+
+   | `Named-only        | Arguments after varargs or | `['*varargs', 'named']`,   |
+   | arguments`_        | a lone `*` if there are no | `['*', 'named'],           |
+   |                    | varargs. With or without   | `['*', 'x', 'y=default']`, |
+   |                    | defaults. Requires         | `['a', '*b', 'c', '**d']`  |
+   |                    | `run_keyword` to `support  |                            |
+   |                    | named-only arguments`__.   |                            |
+   |                    | New in Robot Framework 3.1.|                            |
    +--------------------+----------------------------+----------------------------+
 
 When the `get_keyword_arguments` is used, Robot Framework automatically
@@ -1986,12 +1998,14 @@ The actual argument names and default values that are returned are also
 important. They are needed for `named argument support`__ and the Libdoc_
 tool needs them to be able to create a meaningful library documentation.
 
-If `get_keyword_arguments` is missing or returns `None` or
+If `get_keyword_arguments` is missing or returns Python `None` or Java
 `null` for a certain keyword, that keyword gets an argument specification
 accepting all arguments. This automatic argument spec is either
 `[*varargs, **kwargs]` or `[*varargs]`, depending does
-`run_keyword` `support kwargs`__ by having three arguments or not.
+`run_keyword` `support free named arguments`__ or not.
 
+__ `Free named arguments with dynamic libraries`_
+__ `Named-only arguments with dynamic libraries`_
 __ `Named argument syntax with dynamic libraries`_
 __ `Free named arguments with dynamic libraries`_
 
@@ -2068,13 +2082,13 @@ by the `get_keyword_arguments` method.
 Using the named argument syntax with dynamic libraries is illustrated
 by the following examples. All the examples use a keyword :name:`Dynamic`
 that has been specified to have argument specification
-`[arg1, arg2=xxx, arg3=yyy]`.
-The comment shows the arguments that the keyword is actually called with.
+`[arg1, arg2=xxx, arg3=yyy]`. The comment shows the arguments that
+the `run_keyword` method is actually called with.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Only positional
+   Positional only
        Dynamic    a                             # [a]
        Dynamic    a         b                   # [a, b]
        Dynamic    a         b         c         # [a, b, c]
@@ -2083,7 +2097,7 @@ The comment shows the arguments that the keyword is actually called with.
        Dynamic    a         arg2=b              # [a, b]
        Dynamic    a         b         arg3=c    # [a, b, c]
        Dynamic    a         arg2=b    arg3=c    # [a, b, c]
-       Dynamic    arg1=a    arg2=b    arg3=c    # [a, b, c]
+       Dynamic    arg3=c    arg1=a    arg2=b    # [a, b, c]
 
    Fill skipped
        Dynamic    a         arg3=c              # [a, xxx, c]
@@ -2094,10 +2108,10 @@ Free named arguments with dynamic libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Dynamic libraries can also support
-`free named arguments`_ (`**kwargs`). A mandatory precondition for
+`free named arguments`_ (`**named`). A mandatory precondition for
 this support is that the `run_keyword` method `takes three arguments`__:
-the third one will get kwargs when they are used. Kwargs are passed to the
-keyword as a dictionary (Python) or Map (Java).
+the third one will get the free named arguments when they are used. These
+arguments are passed to the keyword as a dictionary (Python) or Map (Java).
 
 What arguments a keyword accepts depends on what `get_keyword_arguments`
 `returns for it`__. If the last argument starts with `**`, that keyword is
@@ -2106,8 +2120,8 @@ recognized to accept kwargs.
 Using the free named argument syntax with dynamic libraries is illustrated
 by the following examples. All the examples use a keyword :name:`Dynamic`
 that has been specified to have argument specification
-`[arg1=xxx, arg2=yyy, **kwargs]`.
-The comment shows the arguments that the keyword is actually called with.
+`[arg1=xxx, arg2=yyy, **named]`. The comment shows the arguments that
+the `run_keyword` method is actually called with.
 
 .. sourcecode:: robotframework
 
@@ -2115,23 +2129,62 @@ The comment shows the arguments that the keyword is actually called with.
    No arguments
        Dynamic                            # [], {}
 
-   Only positional
+   Positional only
        Dynamic    a                       # [a], {}
        Dynamic    a         b             # [a, b], {}
 
-   Only kwargs
+   Free named only
        Dynamic    a=1                     # [], {a: 1}
        Dynamic    a=1       b=2    c=3    # [], {a: 1, b: 2, c: 3}
 
-   Positional and kwargs
+   Positional and free named
        Dynamic    a         b=2           # [a], {b: 2}
        Dynamic    a         b=2    c=3    # [a], {b: 2, c: 3}
 
-   Named and kwargs
+   Named and free named
        Dynamic    arg1=a    b=2           # [a], {b: 2}
        Dynamic    arg2=a    b=2    c=3    # [xxx, a], {b: 2, c: 3}
 
 __ `Running dynamic keywords`_
+__ `Getting keyword arguments`_
+
+Named-only arguments with dynamic libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 3.1, dynamic libraries can have `named-only
+arguments`_. This requires that the `run_keyword` method `takes three
+arguments`__: the third getting the named-only arguments along with possible
+`free named arguments`__.
+
+In the `argument specification`__ returned by the `get_keyword_arguments`
+method named-only arguments are specified after possible variable number
+of arguments (`*varargs`) or a lone asterisk (`*`) if the keyword does not
+accept varargs. Named-only arguments can have default values, and the order
+of arguments with and without default values does not matter.
+
+Using the named-only argument syntax with dynamic libraries is illustrated
+by the following examples. All the examples use a keyword :name:`Dynamic`
+that has been specified to have argument specification
+`[positional=default, *varargs, named, named2=default, **free]`. The comment
+shows the arguments that the `run_keyword` method is actually called with.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Named-only only
+       Dynamic    named=value                            # [], {named: value}
+       Dynamic    named=value    named2=2                # [], {named: value, named2: 2}
+
+   With positional and varargs
+       Dynamic    argument       named=xxx               # [argument], {named: xxx}
+       Dynamic    a1             a2           named=3    # [a1, a2], {named: 3}
+
+   With free named
+       Dynamic    a=1            named=xxx    b=2        # [], {named: xxx, a: 1, b: 2}
+       Dynamic    named2=2       named=1      third=3    # [], {named: 1, named2: 2, third: 3}
+
+__ `Running dynamic keywords`_
+__ `Free named arguments with dynamic libraries`_
 __ `Getting keyword arguments`_
 
 Summary

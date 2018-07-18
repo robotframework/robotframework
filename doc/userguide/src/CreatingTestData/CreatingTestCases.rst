@@ -346,10 +346,10 @@ Free named arguments
 ~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework supports *free named arguments*, often also called *free
-keyword arguments*, similarly as `Python supports **kwargs`__. What this
-means is that a keyword can receive all arguments that use the named
-arguments syntax (`name=value`) and do not match any arguments specified
-in the signature of the keyword.
+keyword arguments* or *kwargs*, similarly as `Python supports **kwargs`__.
+What this means is that a keyword can receive all arguments that use
+the `named argument syntax`_ (`name=value`) and do not match any arguments
+specified in the signature of the keyword.
 
 Free named arguments are supported by same keyword types than `normal named
 arguments`__. How keywords specify that they accept free named arguments
