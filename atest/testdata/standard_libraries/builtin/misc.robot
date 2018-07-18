@@ -1,3 +1,6 @@
+*** Settings ***
+Library           Collections
+
 *** Variables ***
 @{HELLO}          Hello    world
 ${TEXT}           foo\nbar\nfoo bar\nFoo
@@ -41,6 +44,6 @@ Regexp Escape
     ${escaped} =    Regexp Escape    f$o^o$b[a]r()?\\
     Should Be Equal    ${escaped}    f\\$o\\^o\\$b\\[a\\]r\\(\\)\\?\\\\
     Should Match Regexp    f$o^o$b[a]r()?\\    ${escaped}
-    @{patterns} =    Create List    $    ^    $    [    ]    so%me&te[]?*x*t
-    @{escaped} =    Regexp Escape    @{patterns}
-    Should Be True    @{escaped} == ['\\$', '\\^', '\\$', '\\[', '\\]', 'so\\%me\\&te\\[\\]\\?\\*x\\*t']
+    @{escaped} =    Regexp Escape    $    ^    $    [    ]    so%me&te[]?*x*t
+    @{expected} =    Create List    \\$    \\^    \\$    \\[    \\]    so\\%me\\&te\\[\\]\\?\\*x\\*t
+    Lists Should Be Equal    ${escaped}    ${expected}
