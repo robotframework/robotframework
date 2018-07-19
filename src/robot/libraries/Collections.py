@@ -454,7 +454,7 @@ class _List(object):
 
     def _validate_list(self, list_, position=1):
         if not is_list_like(list_):
-            raise TypeError("Expected %d argument to be a list or list-like, "
+            raise TypeError("Expected argument %d to be a list or list-like, "
                             "got %s instead." % (position, type_name(list_)))
 
     def _validate_lists(self, *lists):
@@ -777,7 +777,7 @@ class _Dictionary(object):
 
     def _validate_dictionary(self, dictionary, position=1):
         if is_string(dictionary) or is_number(dictionary):
-            raise TypeError("Expected %d argument to be a dictionary or dictionary-like, "
+            raise TypeError("Expected argument %d to be a dictionary or dictionary-like, "
                             "got %s instead." % (position, type_name(dictionary)))
 
 

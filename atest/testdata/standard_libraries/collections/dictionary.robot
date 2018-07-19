@@ -257,8 +257,9 @@ Check invalid dictionary argument errors
 *** Keywords ***
 Validate invalid argument error
     [Arguments]  ${keyword}    ${type}=string    ${position}=1    ${argument}=I'm not a dict, I'm a string.    @{args}
-    ${error} =    Set variable    TypeError: Expected ${position} argument to be a dictionary or dictionary-like, got ${type} instead.
-    Run keyword and expect error    ${error}    ${keyword}    ${argument}    @{args}
+    Run keyword and expect error
+    ...    TypeError: Expected argument ${position} to be a dictionary or dictionary-like, got ${type} instead.
+    ...    ${keyword}    ${argument}    @{args}
 
 Create Dictionaries For Testing
     ${D0}    Create Dictionary
