@@ -206,20 +206,21 @@ class FromDirectoryPopulator(object):
             return base not in self.ignored_dirs or ext
         if not self._extension_is_accepted(ext, incl_extensions):
             return False
-        return self._is_in_included_suites(base, incl_suites, self._get_longname(base, datadir, incl_suites))
+        longname = self._get_longname(base, datadir, incl_suites)
+        return self._is_in_included_suites(base, incl_suites, longname)
 
     def _is_in_included_suites(self, name, incl_suites, longname=None):
-        if longname:
-            return not incl_suites or incl_suites._match_longname(longname)
-        return not incl_suites or incl_suites.match(self._split_prefix(name))
+        return not incl_suites or incl_suites.match(longname or self._split_prefix(name), longname)
 
     def _split_prefix(self, name):
         return name.split('__', 1)[-1]
 
     def _get_longname(self, base, datadir, include_suites):
-        if datadir.parent and len(include_suites._matcher) > 1:
+        if datadir.parent and include_suites:
+            if not ['.' in x for x in include_suites][0]:
+                return
             longname = self._split_prefix(base)
-            while datadir.parent:
+            while datadir:
                 longname = '%s.%s' % (datadir.name, longname)
                 datadir = datadir.parent
             return longname
