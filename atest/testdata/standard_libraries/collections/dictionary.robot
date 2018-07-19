@@ -235,28 +235,28 @@ Pop From Dictionary With Default
 Check invalid dictionary argument errors
     [Template]    Validate invalid argument error
     Copy dictionary
-    Dictionary Should Contain Item             string    1    I'm not a dict, I'm string.    a    b
-    Dictionaries Should Be Equal               string    1    I'm not a dict, I'm string.    ${D2}
-    Dictionaries Should Be Equal               string    2    ${D2}    I'm not a dict, I'm string.
-    Dictionary Should Contain Key              string    1    I'm not a dict, I'm string.    a
-    Dictionary Should Contain Sub Dictionary   string    1    I'm not a dict, I'm string.    ${D2}
-    Dictionary Should Contain Sub Dictionary   string    2    ${D2}    I'm not a dict, I'm string.
-    Dictionary Should Contain Value            string    1    I'm not a dict, I'm string.    a
-    Dictionary Should Not Contain Key          string    1    I'm not a dict, I'm string.    a
-    Dictionary Should Not Contain Value        string    1    I'm not a dict, I'm string.    a
+    Dictionary Should Contain Item             a    b
+    Dictionaries Should Be Equal               ${D2}
+    Dictionaries Should Be Equal               I'm not a dict, I'm string.    argument=${D2}    position=2
+    Dictionary Should Contain Key              a
+    Dictionary Should Contain Sub Dictionary   ${D2}
+    Dictionary Should Contain Sub Dictionary   I'm not a dict, I'm string.    argument=${D2}    position=2
+    Dictionary Should Contain Value            a
+    Dictionary Should Not Contain Key          a
+    Dictionary Should Not Contain Value        a
     Get Dictionary Items
     Get Dictionary Keys
     Get Dictionary Values
-    Get from dictionary                        string    1    I'm not a dict, I'm string.    a
-    Keep in dictionary                         string    1    I'm not a dict, I'm string.    a
+    Get from dictionary                        a
+    Keep in dictionary                         a
     Log Dictionary
-    Pop From Dictionary                        string    1    I'm not a dict, I'm string.    a
-    Remove From Dictionary                     string    1    I'm not a dict, I'm string.    a
-    Set To Dictionary                          string    1    I'm not a dict, I'm string.    a    b
+    Pop From Dictionary                        a
+    Remove From Dictionary                     a
+    Set To Dictionary                          a    b
 
 *** Keywords ***
 Validate invalid argument error
-    [Arguments]  ${keyword}    ${type}=string    ${position}=1    ${argument}=I'm not a dict, I'm a string.    @{args}
+    [Arguments]  ${keyword}    @{args}    ${argument}=I'm not a dict, I'm a string.    ${type}=string    ${position}=1
     Run keyword and expect error
     ...    TypeError: Expected argument ${position} to be a dictionary or dictionary-like, got ${type} instead.
     ...    ${keyword}    ${argument}    @{args}
