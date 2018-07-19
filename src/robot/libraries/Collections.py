@@ -452,13 +452,15 @@ class _List(object):
         raise IndexError('Given index %s is out of the range 0-%d.'
                          % (index, len(list_)-1))
 
-    def _validate_list(self, list, position=1):
-        if not is_list_like(list):
-            raise TypeError("Expected %i. argument to be a list, got '%s' instead." % (position, type_name(list)))
+    def _validate_list(self, list_, position=1):
+        if not is_list_like(list_):
+            raise TypeError("Expected %d argument to be a list or list-like, "
+                            "got %s instead." % (position, type_name(list_)))
 
     def _validate_lists(self, *lists):
         for index, item in enumerate(lists, start=1):
             self._validate_list(item, index)
+
 
 class _Dictionary(object):
 
@@ -775,7 +777,9 @@ class _Dictionary(object):
 
     def _validate_dictionary(self, dictionary, position=1):
         if is_string(dictionary) or is_number(dictionary):
-            raise TypeError("Expected %i. argument to be a dictionary, got '%s' instead." % (position, type_name(dictionary)))
+            raise TypeError("Expected %d argument to be a dictionary or dictionary-like, "
+                            "got %s instead." % (position, type_name(dictionary)))
+
 
 class Collections(_List, _Dictionary):
     """A test library providing keywords for handling lists and dictionaries.

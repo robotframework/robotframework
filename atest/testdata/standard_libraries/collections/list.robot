@@ -584,9 +584,9 @@ Check List Error
 
 *** Keywords ***
 Validate invalid argument error
-    [Arguments]    ${keyword}    ${type}=string    ${position}=1    ${argument}=I'm not a dict, I'm a string.    @{kwargs}
-    ${error} =    Set variable    TypeError: Expected ${position}. argument to be a list, got '${type}' instead.
-    Run keyword and expect error    ${error}    ${keyword}    ${argument}    @{kwargs}
+    [Arguments]    ${keyword}    ${type}=string    ${position}=1    ${argument}=I'm not a list, I'm a string.    @{args}
+    ${error} =    Set variable    TypeError: Expected ${position} argument to be a list or list-like, got ${type} instead.
+    Run keyword and expect error    ${error}    ${keyword}    ${argument}    @{args}
 
 Create Lists For The Tests
     ${L0} =    Create List
