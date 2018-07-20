@@ -553,38 +553,38 @@ List Should Not Contain Value, Value Found And Own Error Message Glob
 
 Check List Error
     [Template]    Validate invalid argument error
-    Append to list                        string    1    I am a string. Not a list.    xyz
-    Combine Lists                         string    1    I am a string. Not a list.    I am a string. Not a list.
-    Combine Lists                         string    2    ${L0}    I am a string. Not a list.
-    Combine Lists                         string    1    I am a string. Not a list.    ${L0}
+    Append to list                        xyz
+    Combine Lists                         I am a string. Not a list.
+    Combine Lists                         ${L0}    I am a string. Not a list.    position=2
+    Combine Lists                         I am a string. Not a list.    ${L0}
     Copy list
-    Count values in list                  string    1    I am a string. Not a list.    xyz
-    Get from list                         string    1    I am a string. Not a list.    0
-    Get Index From List                   string    1    I am a string. Not a list.    a
-    Get Match Count                       string    1    I am a string. Not a list.    abc
-    Get Matches                           string    1    I am a string. Not a list.    abc
+    Count values in list                  I am a string. Not a list.    xyz
+    Get from list                         I am a string. Not a list.    0
+    Get Index From List                   I am a string. Not a list.    a
+    Get Match Count                       I am a string. Not a list.    abc
+    Get Matches                           I am a string. Not a list.    abc
     Get slice from list
-    Insert into list                      string    1    I am a string. Not a list.    0    a
-    List Should Contain Sub List          string    1    I am a string. Not a list.    ${L0}
-    List Should Contain Sub List          string    2    ${L0}    I am a string. Not a list.
-    List should contain value             string    1    I am a string. Not a list.    a
-    List Should Not Contain Duplicates    string    1    xyz
-    List Should Not Contain Value         string    1    I am a string. Not a list.    x
-    Lists Should Be Equal                 string    1    I am a string. Not a list.    ${L0}
-    Lists Should Be Equal                 string    2    ${L0}    I am a string. Not a list.
+    Insert into list                      I am a string. Not a list.    0    a
+    List Should Contain Sub List          I am a string. Not a list.    ${L0}
+    List Should Contain Sub List          ${L0}    I am a string. Not a list.    position=2
+    List should contain value             I am a string. Not a list.    a
+    List Should Not Contain Duplicates    xyz
+    List Should Not Contain Value         I am a string. Not a list.    x
+    Lists Should Be Equal                 I am a string. Not a list.    ${L0}
+    Lists Should Be Equal                 ${L0}    I am a string. Not a list.    position=2
     Log List
     Remove Duplicates
-    Remove From List                      string    1    I am a string. Not a list.    0
-    Remove Values From List               string    1    I am a string. Not a list.    a
+    Remove From List                      I am a string. Not a list.    0
+    Remove Values From List               I am a string. Not a list.    a
     Reverse List
-    Set List Value                        string    1    I am a string. Not a list.    0    a
-    Should Contain Match                  string    1    I am a string. Not a list.    a
-    Should Not Contain Match              string    1    I am a string. Not a list.    xyz
+    Set List Value                        I am a string. Not a list.    0    a
+    Should Contain Match                  I am a string. Not a list.    a
+    Should Not Contain Match              I am a string. Not a list.    xyz
     Sort List
 
 *** Keywords ***
 Validate invalid argument error
-    [Arguments]    ${keyword}    ${type}=string    ${position}=1    ${argument}=I'm not a list, I'm a string.    @{args}
+    [Arguments]    ${keyword}    ${argument}=I'm not a list, I'm a string.    @{args}    ${type}=string    ${position}=1
     Run keyword and expect error
     ...    TypeError: Expected argument ${position} to be a list or list-like, got ${type} instead.
     ...    ${keyword}    ${argument}    @{args}
