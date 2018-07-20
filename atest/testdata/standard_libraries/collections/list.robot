@@ -555,36 +555,36 @@ Check List Error
     [Template]    Validate invalid argument error
     Append to list                        xyz
     Combine Lists                         I am a string. Not a list.
-    Combine Lists                         I am a string. Not a list.    argument=${L0}    position=2
-    Combine Lists                         ${L0}
+    Combine Lists                         ${L0}    I am a string. Not a list.    position=2
+    Combine Lists                         I am a string. Not a list.    ${L0}
     Copy list
-    Count values in list                  xyz
-    Get from list                         0
-    Get Index From List                   a
-    Get Match Count                       abc
-    Get Matches                           abc
+    Count values in list                  I am a string. Not a list.    xyz
+    Get from list                         I am a string. Not a list.    0
+    Get Index From List                   I am a string. Not a list.    a
+    Get Match Count                       I am a string. Not a list.    abc
+    Get Matches                           I am a string. Not a list.    abc
     Get slice from list
-    Insert into list                      0    a
-    List Should Contain Sub List          ${L0}
-    List Should Contain Sub List          I am a string. Not a list.    argument=${L0}    position=2
-    List should contain value             a
-    List Should Not Contain Duplicates    argument=xyz
-    List Should Not Contain Value         x
-    Lists Should Be Equal                 ${L0}
-    Lists Should Be Equal                 I am a string. Not a list.    argument=${L0}    position=2
+    Insert into list                      I am a string. Not a list.    0    a
+    List Should Contain Sub List          I am a string. Not a list.    ${L0}
+    List Should Contain Sub List          ${L0}    I am a string. Not a list.    position=2
+    List should contain value             I am a string. Not a list.    a
+    List Should Not Contain Duplicates    xyz
+    List Should Not Contain Value         I am a string. Not a list.    x
+    Lists Should Be Equal                 I am a string. Not a list.    ${L0}
+    Lists Should Be Equal                 ${L0}    I am a string. Not a list.    position=2
     Log List
     Remove Duplicates
-    Remove From List                      0
-    Remove Values From List               a
+    Remove From List                      I am a string. Not a list.    0
+    Remove Values From List               I am a string. Not a list.    a
     Reverse List
-    Set List Value                        0    a
-    Should Contain Match                  a
-    Should Not Contain Match              xyz
+    Set List Value                        I am a string. Not a list.    0    a
+    Should Contain Match                  I am a string. Not a list.    a
+    Should Not Contain Match              I am a string. Not a list.    xyz
     Sort List
 
 *** Keywords ***
 Validate invalid argument error
-    [Arguments]    ${keyword}    @{args}    ${argument}=I'm not a list, I'm a string.    ${type}=string    ${position}=1
+    [Arguments]    ${keyword}    ${argument}=I'm not a list, I'm a string.    @{args}    ${type}=string    ${position}=1
     Run keyword and expect error
     ...    TypeError: Expected argument ${position} to be a list or list-like, got ${type} instead.
     ...    ${keyword}    ${argument}    @{args}
