@@ -40,10 +40,10 @@ class PythonArgumentParser(_ArgumentParser):
     def parse(self, handler, name=None):
         if PY2:
             args, varargs, varkw, defaults = inspect.getargspec(handler)
-            kwonlyargs = kwonlydefaults = None
+            kwonlyargs = kwonlydefaults = annotations = None
         else:
-            args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, _ \
-                    = inspect.getfullargspec(handler)
+            args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, \
+                    annotations = inspect.getfullargspec(handler)
         if inspect.ismethod(handler) or handler.__name__ == '__init__':
             args = args[1:]  # drop 'self'
         defaults = list(defaults) if defaults else []
@@ -53,7 +53,8 @@ class PythonArgumentParser(_ArgumentParser):
                             varargs=varargs,
                             kwargs=varkw,
                             kwonlyargs=kwonlyargs,
-                            kwonlydefaults=kwonlydefaults)
+                            kwonlydefaults=kwonlydefaults,
+                            types=annotations)
 
 
 class JavaArgumentParser(_ArgumentParser):

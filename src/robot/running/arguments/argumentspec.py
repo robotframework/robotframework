@@ -17,13 +17,14 @@ import sys
 
 from .argumentmapper import ArgumentMapper
 from .argumentresolver import ArgumentResolver
+from .typeconverter import TypeConverter
 
 
 class ArgumentSpec(object):
 
     def __init__(self, name=None, type='Keyword', positional=None,
                  defaults=None, varargs=None, kwargs=None, kwonlyargs=None,
-                 kwonlydefaults=None, supports_named=True):
+                 kwonlydefaults=None, types=None, supports_named=True):
         self.name = name
         self.type = type
         self.positional = positional or []
@@ -33,6 +34,7 @@ class ArgumentSpec(object):
         self.supports_named = supports_named
         self.kwonlyargs = kwonlyargs or []
         self.kwonlydefaults = kwonlydefaults or {}
+        self.types = types
 
     @property
     def minargs(self):
@@ -50,7 +52,11 @@ class ArgumentSpec(object):
                 resolve_variables_until=None, dict_to_kwargs=False):
         resolver = ArgumentResolver(self, resolve_named,
                                     resolve_variables_until, dict_to_kwargs)
-        return resolver.resolve(arguments, variables)
+        positional, named = resolver.resolve(arguments, variables)
+        if self.types:
+            converter = TypeConverter(self)
+            positional, named = converter.convert(positional, named)
+        return positional, named
 
     def map(self, positional, named, replace_defaults=True):
         mapper = ArgumentMapper(self)
