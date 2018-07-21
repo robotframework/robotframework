@@ -106,7 +106,7 @@ The tests on the running side (``atest/robot``) contains tags that are used
 to include or exclude them based on the platform and required dependencies.
 Selecting tests based on the platform is done automatically by the `<run.py>`__
 script, but additional selection can be done by the user to avoid running
-tests with `precondtions`_ that are not met.
+tests with `preconditions`_ that are not met.
 
 manual
   Require manual interaction from user. Used with Dialogs library tests.
