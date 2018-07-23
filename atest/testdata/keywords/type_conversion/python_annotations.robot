@@ -99,6 +99,14 @@ String None is converted to None object
     Dictionary
     Set
 
+Enum
+    Enum          BAR                 Foo.BAR
+
+Invalid Enum
+    Run Keyword And Expect Error
+    ...    ValueError: Argument 'argument' cannot be converted to Foo, got 'foobar'.
+    ...    Enum    foobar
+
 *** Keywords ***
 Conversion Should Fail
     [Arguments]    ${kw}    ${arg}

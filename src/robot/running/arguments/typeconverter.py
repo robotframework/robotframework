@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from ast import literal_eval
+from enum import EnumMeta
 
 from robot.utils import is_string
 
@@ -39,12 +40,17 @@ class TypeConverter(object):
     def _convert(self, name, value):
         if name not in self._argspec.types or not is_string(value):
             return value
+        if value.upper() == 'NONE':
+            return None
         type_ = self._argspec.types[name]
+        if isinstance(type_, EnumMeta):
+            try:
+                return type_[value]
+            except KeyError:
+                self._raise_convert_failed(name, type_.__name__, value)
         converter = self._converters.get(type_)
         if not converter:
             return value
-        if value.upper() == 'NONE':
-            return None
         return converter(name, value)
 
     def _convert_int(self, name, value):

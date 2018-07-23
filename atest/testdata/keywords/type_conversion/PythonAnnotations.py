@@ -1,3 +1,10 @@
+from enum import Enum
+
+
+class Foo(Enum):
+    BAR = 1
+
+
 def integer(argument: int, expected=None):
     _validate_type(argument, expected)
 
@@ -23,6 +30,10 @@ def dictionary(argument: dict, expected=None):
 
 
 def set_(argument: set, expected=None):
+    _validate_type(argument, expected)
+
+
+def enum_(argument: Foo, expected=None):
     _validate_type(argument, expected)
 
 
