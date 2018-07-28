@@ -103,16 +103,15 @@ Enum
     Enum          BAR                 Foo.BAR
 
 Invalid Enum
-    Run Keyword And Expect Error
-    ...    ValueError: Argument 'argument' cannot be converted to Foo, got 'foobar'.
-    ...    Enum    foobar
+    [Template]    Conversion Should Fail
+    Enum          foobar    type=Foo
 
 *** Keywords ***
 Conversion Should Fail
-    [Arguments]    ${kw}    ${arg}
+    [Arguments]    ${kw}    ${arg}    ${type}=${kw.lower()}
     ${error} =    Run Keyword And Expect Error    *    ${kw}    ${arg}
     Should Be Equal    ${error}
-    ...    ValueError: Argument 'argument' cannot be converted to ${kw.lower()}, got '${arg}'.
+    ...    ValueError: Argument 'argument' cannot be converted to ${type}, got '${arg}'.
 
 Non-string is not converted
     [Arguments]    ${kw}
