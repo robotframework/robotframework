@@ -79,6 +79,13 @@ Invalid set
     Set           {}
     Set           ooops
 
+Enum
+    Enum          BAR                 Foo.BAR
+
+Invalid Enum
+    [Template]    Conversion Should Fail
+    Enum          foobar    type=Foo
+
 Non-strings are not converted
     [Template]    Non-string is not converted
     Integer
@@ -98,13 +105,6 @@ String None is converted to None object
     Tuple
     Dictionary
     Set
-
-Enum
-    Enum          BAR                 Foo.BAR
-
-Invalid Enum
-    [Template]    Conversion Should Fail
-    Enum          foobar    type=Foo
 
 *** Keywords ***
 Conversion Should Fail

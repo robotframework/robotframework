@@ -49,6 +49,12 @@ Set
 Invalid set
     Check Test Case    ${TESTNAME}
 
+Enum
+    Check Test Case    ${TESTNAME}
+
+Invalid Enum
+    Check Test Case    ${TESTNAME}
+
 Non-strings are not converted
     Check Test Case    ${TESTNAME}
 
