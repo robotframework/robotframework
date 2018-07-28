@@ -37,6 +37,10 @@ def enum_(argument: Foo, expected=None):
     _validate_type(argument, expected)
 
 
+def bytes_(argument: bytes, expected=None):
+    _validate_type(argument, expected)
+
+
 def _validate_type(argument, expected):
     if isinstance(expected, str) and not isinstance(argument, str):
         expected = eval(expected)

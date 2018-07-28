@@ -16,7 +16,7 @@
 from ast import literal_eval
 from enum import EnumMeta
 
-from robot.utils import is_string
+from robot.utils import is_unicode
 
 
 class TypeConverter(object):
@@ -29,7 +29,8 @@ class TypeConverter(object):
                             list: self._convert_list,
                             tuple: self._convert_tuple,
                             dict: self._convert_dict,
-                            set: self._convert_set}
+                            set: self._convert_set,
+                            bytes: self._convert_bytes}
 
     def convert(self, positional, named):
         positional = zip(self._argspec.positional, positional)
@@ -38,7 +39,7 @@ class TypeConverter(object):
         return positional, named
 
     def _convert(self, name, value):
-        if name not in self._argspec.types or not is_string(value):
+        if name not in self._argspec.types or not is_unicode(value):
             return value
         type_ = self._argspec.types[name]
         if isinstance(type_, EnumMeta):
@@ -82,6 +83,12 @@ class TypeConverter(object):
         if value == 'set()':
             return set()
         return self._literal_eval(name, value, set, 'set')
+
+    def _convert_bytes(self, name, value):
+        try:
+            return value.encode('latin-1')
+        except UnicodeEncodeError:
+            self._raise_convert_failed(name, 'bytes', value)
 
     def _enum_converter_for(self, enum_):
         def _convert_enum(name, value):

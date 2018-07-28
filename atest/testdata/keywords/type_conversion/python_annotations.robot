@@ -80,11 +80,20 @@ Invalid set
     Set           ooops
 
 Enum
-    Enum          BAR                 Foo.BAR
+    Enum          BAR                     Foo.BAR
 
 Invalid Enum
     [Template]    Conversion Should Fail
-    Enum          foobar    type=Foo
+    Enum          foobar                  type=Foo
+
+Bytes
+    Bytes         foo                     b'foo'
+    Bytes         \x00\x01\xFF\u00FF      b'\\x00\\x01\\xFF\\xFF'
+    Bytes         Hyvä esimerkki!         b'Hyv\\xE4 esimerkki!'
+
+Invalid bytes
+    [Template]    Conversion Should Fail
+    Bytes         \u0100
 
 Non-strings are not converted
     [Template]    Non-string is not converted

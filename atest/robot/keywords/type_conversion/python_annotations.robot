@@ -55,6 +55,13 @@ Enum
 Invalid Enum
     Check Test Case    ${TESTNAME}
 
+
+Bytes
+    Check Test Case    ${TESTNAME}
+
+Invalid bytes
+    Check Test Case    ${TESTNAME}
+
 Non-strings are not converted
     Check Test Case    ${TESTNAME}
 
