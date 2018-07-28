@@ -40,17 +40,15 @@ class TypeConverter(object):
     def _convert(self, name, value):
         if name not in self._argspec.types or not is_string(value):
             return value
-        if value.upper() == 'NONE':
-            return None
         type_ = self._argspec.types[name]
         if isinstance(type_, EnumMeta):
-            try:
-                return type_[value]
-            except KeyError:
-                self._raise_convert_failed(name, type_.__name__, value)
-        converter = self._converters.get(type_)
+            converter = self._enum_converter_for(type_)
+        else:
+            converter = self._converters.get(type_)
         if not converter:
             return value
+        if value.upper() == 'NONE':
+            return None
         return converter(name, value)
 
     def _convert_int(self, name, value):
@@ -84,6 +82,14 @@ class TypeConverter(object):
         if value == 'set()':
             return set()
         return self._literal_eval(name, value, set, 'set')
+
+    def _enum_converter_for(self, enum_):
+        def _convert_enum(name, value):
+            try:
+                return enum_[value]
+            except KeyError:
+                self._raise_convert_failed(name, enum_.__name__, value)
+        return _convert_enum
 
     def _literal_eval(self, name, value, expected, expected_name):
         try:
