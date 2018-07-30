@@ -55,7 +55,6 @@ Enum
 Invalid Enum
     Check Test Case    ${TESTNAME}
 
-
 Bytes
     Check Test Case    ${TESTNAME}
 
@@ -66,4 +65,7 @@ Non-strings are not converted
     Check Test Case    ${TESTNAME}
 
 String None is converted to None object
+    Check Test Case    ${TESTNAME}
+
+Unknown types are not converted
     Check Test Case    ${TESTNAME}

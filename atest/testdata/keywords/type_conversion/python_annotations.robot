@@ -2,10 +2,8 @@
 Library           PythonAnnotations.py
 
 *** Variables ***
-@{LIST}           foo      bar
-@{EMPTY LIST}
-@{NUMBER LIST}    ${1}     ${2}    ${3.14}    ${-42}
-&{DICT}           foo=1    bar=2
+@{LIST}           foo         bar
+&{DICT}           foo=${1}    bar=${2}
 
 *** Test Cases ***
 Integer
@@ -31,14 +29,17 @@ Invalid float
 Boolean
     Boolean       True                    ${True}
     Boolean       false                   ${False}
+    Boolean       no                      ${False}
+    Boolean       none                    ${None}
 
 Invalid boolean is accepted as-is
-    Boolean       foobar                  foobar
+    Boolean       FooBar                  "FooBar"
+    Boolean       ${EMPTY}                ""
 
 List
-    List          []                      ${EMPTY LIST}
+    List          []                      []
     List          ['foo', 'bar']          ${LIST}
-    List          [1, 2, 3.14, -42]       ${NUMBER LIST}
+    List          [1, 2, 3.14, -42]       [1, 2, 3.14, -42]
 
 Invalid list
     [Template]    Conversion Should Fail
@@ -47,9 +48,9 @@ Invalid list
     List          ooops
 
 Tuple
-    Tuple         ()                      tuple(${EMPTY LIST})
-    Tuple         ('foo', 'bar')          tuple(${LIST})
-    Tuple         (1, 2, 3.14, -42)       tuple(${NUMBER LIST})
+    Tuple         ()                      ()
+    Tuple         ('foo', "bar")          tuple(${LIST})
+    Tuple         (1, 2, 3.14, -42)       (1, 2, 3.14, -42)
 
 Invalid tuple
     [Template]    Conversion Should Fail
@@ -59,7 +60,7 @@ Invalid tuple
 
 Dictionary
     Dictionary    {}                      {}
-    Dictionary    {'foo': 1, 'bar': 2}    {'foo': 1, 'bar': 2}
+    Dictionary    {'foo': 1, "bar": 2}    dict(${DICT})
     Dictionary    {1: 2, 3.14: -42}       {1: 2, 3.14: -42}
 
 Invalid dictionary
@@ -95,6 +96,13 @@ Invalid bytes
     [Template]    Conversion Should Fail
     Bytes         \u0100
 
+Unknown types are not converted
+    Unknown       foo                     "foo"
+    Unknown       1                       "1"
+    Unknown       true                    "true"
+    Unknown       None                    "None"
+    Unknown       none                    "none"
+
 Non-strings are not converted
     [Template]    Non-string is not converted
     Integer
@@ -104,6 +112,8 @@ Non-strings are not converted
     Tuple
     Dictionary
     Set
+    Enum
+    Bytes
 
 String None is converted to None object
     [Template]    String None is converted to None object
@@ -114,6 +124,8 @@ String None is converted to None object
     Tuple
     Dictionary
     Set
+    Enum
+    Bytes
 
 *** Keywords ***
 Conversion Should Fail

@@ -16,7 +16,7 @@
 from ast import literal_eval
 from enum import EnumMeta
 
-from robot.utils import is_unicode
+from robot.utils import FALSE_STRINGS, is_unicode
 
 
 class TypeConverter(object):
@@ -68,7 +68,12 @@ class TypeConverter(object):
             self._raise_convert_failed(name, 'float', value)
 
     def _convert_bool(self, name, value):
-        return {'TRUE': True, 'FALSE': False}.get(value.upper(), value)
+        upper = value.upper()
+        if upper == 'TRUE':
+            return True
+        if value and upper in FALSE_STRINGS:
+            return False
+        return value
 
     def _convert_list(self, name, value):
         return self._literal_eval(name, value, list, 'list')
