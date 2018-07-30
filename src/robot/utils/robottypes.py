@@ -40,7 +40,7 @@ def is_truthy(item):
 
     Designed to be used also by external test libraries that want to handle
     Boolean values similarly as Robot Framework itself. See also
-    :func:`is_falsy` and :func:`is_noney`.
+    :func:`is_falsy`.
     """
     if is_string(item):
         return item.upper() not in FALSE_STRINGS
