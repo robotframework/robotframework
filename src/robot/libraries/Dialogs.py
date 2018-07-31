@@ -36,12 +36,11 @@ if JYTHON:
 elif IRONPYTHON:
     from .dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
 else:
-    from .dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
-
+    from .dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog, MultipleSelectionDialog
 
 __version__ = get_version()
 __all__ = ['execute_manual_step', 'get_value_from_user',
-           'get_selection_from_user', 'pause_execution']
+           'get_selection_from_user', 'pause_execution', 'get_selections_from_user']
 
 
 def pause_execution(message='Test execution paused. Press OK to continue.'):
@@ -105,6 +104,10 @@ def get_selection_from_user(message, *values):
     | ${username} = | Get Selection From User | Select user name | user1 | user2 | admin |
     """
     return _validate_user_input(SelectionDialog(message, values))
+
+
+def get_selections_from_user(message, *values):
+    return _validate_user_input(MultipleSelectionDialog(message, values))
 
 
 def _validate_user_input(dialog):

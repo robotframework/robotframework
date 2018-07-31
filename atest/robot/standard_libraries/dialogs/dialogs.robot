@@ -46,6 +46,9 @@ Get Selection From User Cancelled
 Get Selection From User Exited
     Check Test Case    ${TESTNAME}
 
+Get Selections From User
+    Check Test Case    ${TESTNAME}
+
 Multiple dialogs in a row
     Check Test Case    ${TESTNAME}
 
