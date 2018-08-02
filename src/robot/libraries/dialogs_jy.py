@@ -17,7 +17,7 @@ import time
 
 from java.awt import GridLayout
 from java.awt.event import WindowAdapter
-from javax.swing import JLabel, JOptionPane, JPanel, JPasswordField, JTextField
+from javax.swing import JLabel, JOptionPane, JPanel, JPasswordField, JTextField, JList, JScrollPane
 from javax.swing.JOptionPane import (DEFAULT_OPTION, OK_CANCEL_OPTION,
                                      OK_OPTION, PLAIN_MESSAGE,
                                      UNINITIALIZED_VALUE, YES_NO_OPTION)
@@ -80,6 +80,24 @@ class SelectionDialog(_SwingDialog):
         pane.setWantsInput(True)
         pane.setSelectionValues(options)
         _SwingDialog.__init__(self, pane)
+
+
+class MultipleSelectionDialog(_SwingDialog):
+
+    def __init__(self, message, options):
+        self._selection_list = JList(options)
+        self._selection_list.setVisibleRowCount(4)
+        selected_message = JLabel(message)
+        panel = JPanel(layout=GridLayout(2, 1))
+        panel.add(selected_message)
+        panel.add(JScrollPane(self._selection_list))
+        pane = WrappedOptionPane(panel, PLAIN_MESSAGE, OK_CANCEL_OPTION)
+        _SwingDialog.__init__(self, pane)
+
+    def _get_value(self, pane):
+        if pane.getValue() != OK_OPTION:
+            return None
+        return self._selection_list.getSelectedValuesList()
 
 
 class PassFailDialog(_SwingDialog):
