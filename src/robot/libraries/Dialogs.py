@@ -34,7 +34,7 @@ from robot.utils import IRONPYTHON, JYTHON, is_truthy
 if JYTHON:
     from .dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog, MultipleSelectionDialog
 elif IRONPYTHON:
-    from .dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    from .dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog, MultipleSelectionDialog
 else:
     from .dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog, MultipleSelectionDialog
 
