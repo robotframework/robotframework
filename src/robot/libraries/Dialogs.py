@@ -38,6 +38,7 @@ elif IRONPYTHON:
 else:
     from .dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog, MultipleSelectionDialog
 
+
 __version__ = get_version()
 __all__ = ['execute_manual_step', 'get_value_from_user',
            'get_selection_from_user', 'pause_execution', 'get_selections_from_user']

@@ -66,7 +66,7 @@ Get Selection From User Exited
 Get Selections From Users
     [Documentation]  FAIL No value provided by user.
     Get Selections From User
-    ...    Select more values and press OK
+    ...    Select multiple values and press OK.
     ...    value    value2    value3     value 4
 
 Multiple dialogs in a row
