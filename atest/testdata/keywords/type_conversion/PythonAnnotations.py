@@ -1,3 +1,4 @@
+from decimal import Decimal
 from enum import Enum
 
 
@@ -14,6 +15,10 @@ def integer(argument: int, expected=None):
 
 
 def float_(argument: float, expected=None):
+    _validate_type(argument, expected)
+
+
+def decimal(argument: Decimal, expected=None):
     _validate_type(argument, expected)
 
 

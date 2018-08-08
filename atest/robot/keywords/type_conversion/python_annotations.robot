@@ -19,6 +19,12 @@ Float
 Invalid float
     Check Test Case    ${TESTNAME}
 
+Decimal
+    Check Test Case    ${TESTNAME}
+
+Invalid decimal
+    Check Test Case    ${TESTNAME}
+
 Boolean
     Check Test Case    ${TESTNAME}
 

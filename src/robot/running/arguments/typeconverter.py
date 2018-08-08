@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from ast import literal_eval
+from decimal import InvalidOperation, Decimal
 from enum import EnumMeta
 
 from robot.utils import FALSE_STRINGS, is_unicode
@@ -25,6 +26,7 @@ class TypeConverter(object):
         self._argspec = argspec
         self._converters = {int: self._convert_int,
                             float: self._convert_float,
+                            Decimal: self._convert_decimal,
                             bool: self._convert_bool,
                             list: self._convert_list,
                             tuple: self._convert_tuple,
@@ -66,6 +68,12 @@ class TypeConverter(object):
             return float(value)
         except ValueError:
             self._raise_convert_failed(name, 'float', value)
+
+    def _convert_decimal(self, name, value):
+        try:
+            return Decimal(value)
+        except InvalidOperation:
+            self._raise_convert_failed(name, 'decimal', value)
 
     def _convert_bool(self, name, value):
         upper = value.upper()

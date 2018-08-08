@@ -26,6 +26,15 @@ Invalid float
     [Template]    Conversion Should Fail
     Float         foobar
 
+Decimal
+    Decimal       3.14                    Decimal('3.14')
+    Decimal       -1                      Decimal('-1')
+    Decimal       1e6                     Decimal('1000000')
+
+Invalid decimal
+    [Template]    Conversion Should Fail
+    Decimal       foobar
+
 Boolean
     Boolean       True                    ${True}
     Boolean       false                   ${False}
@@ -108,6 +117,7 @@ Non-strings are not converted
     Integer
     Float
     Boolean
+    Decimal
     List
     Tuple
     Dictionary
@@ -120,6 +130,7 @@ String None is converted to None object
     Integer
     Float
     Boolean
+    Decimal
     List
     Tuple
     Dictionary
