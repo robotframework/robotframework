@@ -197,7 +197,7 @@ class RemoteResult(object):
 class XmlRpcRemoteClient(object):
 
     def __init__(self, uri, timeout=None):
-        if 'https' in uri:
+        if uri.startswith('https://'):
             transport = TimeoutHTTPSTransport(timeout=timeout)
         else:
             transport = TimeoutHTTPTransport(timeout=timeout)
@@ -249,6 +249,7 @@ class XmlRpcRemoteClient(object):
 
 
 class TimeoutHTTPTransport(xmlrpclib.Transport):
+    _connection_class = httplib.HTTPConnection
 
     def __init__(self, use_datetime=0, timeout=None):
         xmlrpclib.Transport.__init__(self, use_datetime)
@@ -260,23 +261,12 @@ class TimeoutHTTPTransport(xmlrpclib.Transport):
         if self._connection and host == self._connection[0]:
             return self._connection[1]
         chost, self._extra_headers, x509 = self.get_host_info(host)
-        self._connection = host, httplib.HTTPConnection(chost, timeout=self.timeout)
+        self._connection = host, self._connection_class(chost, timeout=self.timeout)
         return self._connection[1]
 
-class TimeoutHTTPSTransport(xmlrpclib.Transport):
 
-    def __init__(self, use_datetime=0, timeout=None):
-        xmlrpclib.Transport.__init__(self, use_datetime)
-        if not timeout:
-            timeout = socket._GLOBAL_DEFAULT_TIMEOUT
-        self.timeout = timeout
-
-    def make_connection(self, host):
-        if self._connection and host == self._connection[0]:
-            return self._connection[1]
-        chost, self._extra_headers, x509 = self.get_host_info(host)
-        self._connection = host, httplib.HTTPSConnection(chost, timeout=self.timeout)
-        return self._connection[1]
+class TimeoutHTTPSTransport(TimeoutHTTPTransport):
+    _connection_class = httplib.HTTPSConnection
 
 
 if IRONPYTHON:
