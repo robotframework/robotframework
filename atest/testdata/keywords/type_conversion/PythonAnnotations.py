@@ -1,3 +1,4 @@
+from datetime import datetime, date, timedelta
 from decimal import Decimal
 from enum import Enum
 
@@ -47,6 +48,18 @@ def enum_(argument: Foo, expected=None):
 
 
 def bytes_(argument: bytes, expected=None):
+    _validate_type(argument, expected)
+
+
+def datetime_(argument: datetime, expected=None):
+    _validate_type(argument, expected)
+
+
+def date_(argument: date, expected=None):
+    _validate_type(argument, expected)
+
+
+def timedelta_(argument: timedelta, expected=None):
     _validate_type(argument, expected)
 
 

@@ -14,9 +14,11 @@
 #  limitations under the License.
 
 from ast import literal_eval
+from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 from enum import EnumMeta
 
+from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import FALSE_STRINGS, is_unicode
 
 
@@ -32,7 +34,10 @@ class TypeConverter(object):
                             tuple: self._convert_tuple,
                             dict: self._convert_dict,
                             set: self._convert_set,
-                            bytes: self._convert_bytes}
+                            bytes: self._convert_bytes,
+                            datetime: self._convert_datetime,
+                            date: self._convert_date,
+                            timedelta: self._convert_timedelta}
 
     def convert(self, positional, named):
         positional = zip(self._argspec.positional, positional)
@@ -102,6 +107,27 @@ class TypeConverter(object):
             return value.encode('latin-1')
         except UnicodeEncodeError:
             self._raise_convert_failed(name, 'bytes', value)
+
+    def _convert_datetime(self, name, value):
+        try:
+            return convert_date(value, result_format='datetime')
+        except ValueError:
+            self._raise_convert_failed(name, 'datetime', value)
+
+    def _convert_date(self, name, value):
+        try:
+            dt = convert_date(value, result_format='datetime')
+            if dt.hour or dt.minute or dt.second or dt.microsecond:
+                raise ValueError
+            return dt.date()
+        except ValueError:
+            self._raise_convert_failed(name, 'date', value)
+
+    def _convert_timedelta(self, name, value):
+        try:
+            return convert_time(value, result_format='timedelta')
+        except ValueError:
+            self._raise_convert_failed(name, 'timedelta', value)
 
     def _enum_converter_for(self, enum_):
         def _convert_enum(name, value):

@@ -105,6 +105,49 @@ Invalid bytes
     [Template]    Conversion Should Fail
     Bytes         \u0100
 
+Datetime
+    DateTime      2014-06-11T10:07:42     datetime(2014, 6, 11, 10, 7, 42)
+    DateTime      20180808144342123456    datetime(2018, 8, 8, 14, 43, 42, 123456)
+    DateTime      1975:06:04              datetime(1975, 6, 4)
+
+Invalid datetime
+    [Template]    Conversion Should Fail
+    DateTime      foobar
+    DateTime      1975:06
+    DateTime      2018
+    DateTime      201808081443421234567
+
+Date
+    Date          2014-06-11              date(2014, 6, 11)
+    Date          20180808                date(2018, 8, 8)
+    Date          20180808000000000000    date(2018, 8, 8)
+
+Invalid date
+    [Template]    Conversion Should Fail
+    Date          foobar
+    Date          1975:06
+    Date          2018
+    Date          2014-06-11T10:07:42
+    Date          20180808000000000001
+
+Timedelta
+    Timedelta     10                      timedelta(seconds=10)
+    Timedelta     -1.5                    timedelta(seconds=-1.5)
+    Timedelta     2 days 1 second         timedelta(2, 1)
+    Timedelta     5d 4h 3min 2s 1ms       timedelta(5, 4*60*60 + 3*60 + 2 + 0.001)
+    Timedelta     - 1 day 2 seconds       timedelta(-1, -2)
+    Timedelta     1.5 minutes             timedelta(seconds=90)
+    Timedelta     04:03:02.001            timedelta(seconds=4*60*60 + 3*60 + 2 + 0.001)
+    Timedelta     4:3:2.1                 timedelta(seconds=4*60*60 + 3*60 + 2 + 0.1)
+    Timedelta     100:00:00               timedelta(seconds=100*60*60)
+    Timedelta     -00:01                  timedelta(seconds=-1)
+
+Invalid timedelta
+    [Template]    Conversion Should Fail
+    Timedelta     foobar
+    Timedelta     1 foo
+    Timedelta     01:02:03:04
+
 Unknown types are not converted
     Unknown       foo                     "foo"
     Unknown       1                       "1"
@@ -124,6 +167,9 @@ Non-strings are not converted
     Set
     Enum
     Bytes
+    DateTime
+    Date
+    Timedelta
 
 String None is converted to None object
     [Template]    String None is converted to None object
@@ -137,6 +183,9 @@ String None is converted to None object
     Set
     Enum
     Bytes
+    DateTime
+    Date
+    Timedelta
 
 *** Keywords ***
 Conversion Should Fail

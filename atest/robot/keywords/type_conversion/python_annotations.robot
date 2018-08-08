@@ -67,11 +67,29 @@ Bytes
 Invalid bytes
     Check Test Case    ${TESTNAME}
 
+Datetime
+    Check Test Case    ${TESTNAME}
+
+Invalid datetime
+    Check Test Case    ${TESTNAME}
+
+Date
+    Check Test Case    ${TESTNAME}
+
+Invalid date
+    Check Test Case    ${TESTNAME}
+
+Timedelta
+    Check Test Case    ${TESTNAME}
+
+Invalid timedelta
+    Check Test Case    ${TESTNAME}
+
+Unknown types are not converted
+    Check Test Case    ${TESTNAME}
+
 Non-strings are not converted
     Check Test Case    ${TESTNAME}
 
 String None is converted to None object
-    Check Test Case    ${TESTNAME}
-
-Unknown types are not converted
     Check Test Case    ${TESTNAME}
