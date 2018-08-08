@@ -69,8 +69,11 @@ Timedelta             ${timedelta(1)}                       86400
                       ${timedelta(hours=-1)}                -3600
                       ${timedelta(microseconds=1234567)}    1.234567
 
-Invalid               [Documentation]    FAIL ValueError: Invalid time string 'kekkonen'.
-                      kekkonen                              0
+Invalid               [Template]    Time conversion should fail
+                      kekkonen
+                      1 foo
+                      01:02:03:04
+                      01:02foo
 
 *** Keywords ***
 Time conversion should succeed
@@ -78,3 +81,9 @@ Time conversion should succeed
     ${expected} =    Convert To Number    ${expected}
     ${result} =    Convert Time    ${input}
     Should Be Equal    ${result}    ${expected}
+
+Time conversion should fail
+    [Arguments]    ${input}
+    Run Keyword And Expect Error
+    ...    ValueError: Invalid time string '${input}'.
+    ...    Convert Time    ${input}
