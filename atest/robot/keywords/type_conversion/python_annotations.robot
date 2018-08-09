@@ -55,6 +55,24 @@ Set
 Invalid set
     Check Test Case    ${TESTNAME}
 
+Iterable abc
+    Check Test Case    ${TESTNAME}
+
+Invalid iterable abc
+    Check Test Case    ${TESTNAME}
+
+Mapping abc
+    Check Test Case    ${TESTNAME}
+
+Invalid mapping abc
+    Check Test Case    ${TESTNAME}
+
+Set abc
+    Check Test Case    ${TESTNAME}
+
+Invalid set abc
+    Check Test Case    ${TESTNAME}
+
 Enum
     Check Test Case    ${TESTNAME}
 

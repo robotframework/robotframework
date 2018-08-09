@@ -1,3 +1,4 @@
+from collections import abc
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 from enum import Enum
@@ -40,6 +41,26 @@ def dictionary(argument: dict, expected=None):
 
 
 def set_(argument: set, expected=None):
+    _validate_type(argument, expected)
+
+
+def iterable(argument: abc.Iterable, expected=None):
+    _validate_type(argument, expected)
+
+
+def mapping(argument: abc.Mapping, expected=None):
+    _validate_type(argument, expected)
+
+
+def mutable_mapping(argument: abc.MutableMapping, expected=None):
+    _validate_type(argument, expected)
+
+
+def set_abc(argument: abc.Set, expected=None):
+    _validate_type(argument, expected)
+
+
+def mutable_set(argument: abc.MutableSet, expected=None):
     _validate_type(argument, expected)
 
 

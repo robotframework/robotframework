@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from ast import literal_eval
+from collections import abc, OrderedDict
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 from enum import EnumMeta
@@ -26,18 +27,23 @@ class TypeConverter(object):
 
     def __init__(self, argspec):
         self._argspec = argspec
-        self._converters = {int: self._convert_int,
-                            float: self._convert_float,
-                            Decimal: self._convert_decimal,
-                            bool: self._convert_bool,
-                            list: self._convert_list,
-                            tuple: self._convert_tuple,
-                            dict: self._convert_dict,
-                            set: self._convert_set,
-                            bytes: self._convert_bytes,
-                            datetime: self._convert_datetime,
-                            date: self._convert_date,
-                            timedelta: self._convert_timedelta}
+        self._converters = OrderedDict([
+            (dict, self._convert_dict),
+            (set, self._convert_set),
+            (list, self._convert_list),
+            (tuple, self._convert_tuple),
+            (abc.Mapping, self._convert_mapping),
+            (abc.Set, self._convert_set),
+            (abc.Iterable, self._convert_iterable),
+            (bool, self._convert_bool),
+            (int, self._convert_int),
+            (float, self._convert_float),
+            (Decimal, self._convert_decimal),
+            (bytes, self._convert_bytes),
+            (datetime, self._convert_datetime),
+            (date, self._convert_date),
+            (timedelta, self._convert_timedelta),
+        ])
 
     def convert(self, positional, named):
         positional = zip(self._argspec.positional, positional)
@@ -49,15 +55,30 @@ class TypeConverter(object):
         if name not in self._argspec.types or not is_unicode(value):
             return value
         type_ = self._argspec.types[name]
-        if isinstance(type_, EnumMeta):
-            converter = self._enum_converter_for(type_)
-        else:
-            converter = self._converters.get(type_)
+        converter = self._get_converter(type_)
         if not converter:
             return value
         if value.upper() == 'NONE':
             return None
         return converter(name, value)
+
+    def _get_converter(self, type_):
+        if type_ in self._converters:
+            return self._converters[type_]
+        if isinstance(type_, EnumMeta):
+            return self._get_enum_converter(type_)
+        for converter_type in self._converters:
+            if issubclass(type_, converter_type):
+                return self._converters[converter_type]
+        return None
+
+    def _get_enum_converter(self, enum_):
+        def _convert_enum(name, value):
+            try:
+                return enum_[value]
+            except KeyError:
+                self._raise_convert_failed(name, enum_.__name__, value)
+        return _convert_enum
 
     def _convert_int(self, name, value):
         try:
@@ -94,13 +115,25 @@ class TypeConverter(object):
     def _convert_tuple(self, name, value):
         return self._literal_eval(name, value, tuple, 'tuple')
 
-    def _convert_dict(self, name, value):
-        return self._literal_eval(name, value, dict, 'dictionary')
+    def _convert_dict(self, name, value, type_name='dictionary'):
+        return self._literal_eval(name, value, dict, type_name)
 
     def _convert_set(self, name, value):
         if value == 'set()':
             return set()
         return self._literal_eval(name, value, set, 'set')
+
+    def _convert_iterable(self, name, value):
+        for converter in (self._convert_list, self._convert_tuple,
+                          self._convert_set, self._convert_dict):
+            try:
+                return converter(name, value)
+            except ValueError:
+                pass
+        self._raise_convert_failed(name, 'iterable', value)
+
+    def _convert_mapping(self, name, value):
+        return self._convert_dict(name, value, 'mapping')
 
     def _convert_bytes(self, name, value):
         try:
@@ -128,14 +161,6 @@ class TypeConverter(object):
             return convert_time(value, result_format='timedelta')
         except ValueError:
             self._raise_convert_failed(name, 'timedelta', value)
-
-    def _enum_converter_for(self, enum_):
-        def _convert_enum(name, value):
-            try:
-                return enum_[value]
-            except KeyError:
-                self._raise_convert_failed(name, enum_.__name__, value)
-        return _convert_enum
 
     def _literal_eval(self, name, value, expected, expected_name):
         try:

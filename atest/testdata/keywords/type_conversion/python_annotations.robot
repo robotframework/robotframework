@@ -89,6 +89,42 @@ Invalid set
     Set           {}
     Set           ooops
 
+Iterable abc
+    Iterable      ['list', 'is', 'ok']    ['list', 'is', 'ok']
+    Iterable      ('tuple',)              ('tuple',)
+    Iterable      set()                   set()
+    Iterable      {'dict': 'accepted'}    {'dict': 'accepted'}
+
+Invalid iterable abc
+    [Template]    Conversion Should Fail
+    Iterable      foobar
+
+Mapping abc
+    Mapping            {'foo': 1, 2: 'bar'}    {'foo': 1, 2: 'bar'}
+    Mutable mapping    {'foo': 1, 2: 'bar'}    {'foo': 1, 2: 'bar'}
+
+Invalid mapping abc
+    [Template]    Conversion Should Fail
+    Mapping            foobar
+    Mutable mapping    barfoo                  type=mapping
+
+Set abc
+    Set abc       set()                   set()
+    Set abc       {'foo', 'bar'}          {'foo', 'bar'}
+    Set abc       {1, 2, 3.14, -42}       {1, 2, 3.14, -42}
+    Mutable set   set()                   set()
+    Mutable set   {'foo', 'bar'}          {'foo', 'bar'}
+    Mutable set   {1, 2, 3.14, -42}       {1, 2, 3.14, -42}
+
+Invalid set abc
+    [Template]    Conversion Should Fail
+    Set abc       {1, ooops}              type=set
+    Set abc       {}                      type=set
+    Set abc       ooops                   type=set
+    Mutable set   {1, ooops}              type=set
+    Mutable set   {}                      type=set
+    Mutable set   ooops                   type=set
+
 Enum
     Enum          BAR                     Foo.BAR
 
