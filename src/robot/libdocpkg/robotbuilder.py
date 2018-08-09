@@ -63,7 +63,8 @@ class ResourceDocBuilder(object):
 
     def build(self, path):
         res = self._import_resource(path)
-        libdoc = LibraryDoc(name=res.name, doc=self._get_doc(res),
+        libdoc = LibraryDoc(name=res.name,
+                            doc=self._get_doc(res),
                             type='resource')
         libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(res)
         return libdoc
@@ -97,8 +98,10 @@ class KeywordDocBuilder(object):
 
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)
-        return KeywordDoc(name=kw.name, args=self._get_args(kw.arguments),
-                          doc=doc, tags=tags)
+        return KeywordDoc(name=kw.name,
+                          args=self._get_args(kw.arguments),
+                          doc=doc,
+                          tags=tags)
 
     def _get_doc_and_tags(self, kw):
         doc = self._get_doc(kw)
@@ -111,21 +114,32 @@ class KeywordDocBuilder(object):
         return kw.doc
 
     def _get_args(self, argspec):
-        required = argspec.positional[:argspec.minargs]
-        defaults = zip(argspec.positional[argspec.minargs:], argspec.defaults)
+        positional = [self._format_arg(arg, argspec)
+                      for arg in argspec.positional]
+        required = positional[:argspec.minargs]
+        defaults = zip(positional[argspec.minargs:], argspec.defaults)
         args = required + ['%s=%s' % item for item in defaults]
         if argspec.varargs:
-            args.append('*%s' % argspec.varargs)
+            args.append('*%s' % self._format_arg(argspec.varargs, argspec))
         if argspec.kwonlyargs:
             if not argspec.varargs:
                 args.append('*')
-            args.extend(self._format_kwo(name, argspec.kwonlydefaults)
-                        for name in argspec.kwonlyargs)
+            args.extend(self._format_kwo(arg, argspec)
+                        for arg in argspec.kwonlyargs)
         if argspec.kwargs:
-            args.append('**%s' % argspec.kwargs)
+            args.append('**%s' % self._format_arg(argspec.kwargs, argspec))
         return args
 
-    def _format_kwo(self, name, defaults):
-        if name not in defaults:
-            return name
-        return '%s=%s' % (name, defaults[name])
+    def _format_arg(self, name, argspec):
+        if name in argspec.annotations:
+            annotation = argspec.annotations[name]
+            if isinstance(annotation, type):
+                annotation = annotation.__name__
+            return '%s: %s' % (name, annotation)
+        return name
+
+    def _format_kwo(self, name, argspec):
+        arg = self._format_arg(name, argspec)
+        if name in argspec.kwonlydefaults:
+            return '%s=%s' % (arg, argspec.kwonlydefaults[name])
+        return arg

@@ -54,7 +54,7 @@ class PythonArgumentParser(_ArgumentParser):
                             kwargs=varkw,
                             kwonlyargs=kwonlyargs,
                             kwonlydefaults=kwonlydefaults,
-                            types=annotations)
+                            annotations=annotations)
 
 
 class JavaArgumentParser(_ArgumentParser):

@@ -24,7 +24,7 @@ class ArgumentSpec(object):
 
     def __init__(self, name=None, type='Keyword', positional=None,
                  defaults=None, varargs=None, kwargs=None, kwonlyargs=None,
-                 kwonlydefaults=None, types=None, supports_named=True):
+                 kwonlydefaults=None, annotations=None, supports_named=True):
         self.name = name
         self.type = type
         self.positional = positional or []
@@ -34,7 +34,7 @@ class ArgumentSpec(object):
         self.supports_named = supports_named
         self.kwonlyargs = kwonlyargs or []
         self.kwonlydefaults = kwonlydefaults or {}
-        self.types = types
+        self.annotations = annotations or {}
 
     @property
     def minargs(self):
@@ -53,7 +53,7 @@ class ArgumentSpec(object):
         resolver = ArgumentResolver(self, resolve_named,
                                     resolve_variables_until, dict_to_kwargs)
         positional, named = resolver.resolve(arguments, variables)
-        if self.types:
+        if self.annotations:
             converter = TypeConverter(self)
             positional, named = converter.convert(positional, named)
         return positional, named

@@ -56,9 +56,9 @@ class TypeConverter(object):
         return positional, named
 
     def _convert(self, name, value):
-        if name not in self._argspec.types or not is_unicode(value):
+        if name not in self._argspec.annotations or not is_unicode(value):
             return value
-        type_ = self._argspec.types[name]
+        type_ = self._argspec.annotations[name]
         converter = self._get_converter(type_)
         if not converter:
             return value
