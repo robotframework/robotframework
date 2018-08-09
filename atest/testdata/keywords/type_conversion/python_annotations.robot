@@ -49,12 +49,15 @@ List
     List          []                      []
     List          ['foo', 'bar']          ${LIST}
     List          [1, 2, 3.14, -42]       [1, 2, 3.14, -42]
+    List          ['\\x00', '\\x52']      ['\\x00', 'R']
 
 Invalid list
     [Template]    Conversion Should Fail
     List          [1, ooops]
     List          {}
     List          ooops
+    List          ${EMPTY}
+    List          !"#¤%&/()=?
 
 Tuple
     Tuple         ()                      ()
@@ -77,6 +80,7 @@ Invalid dictionary
     Dictionary    {1: ooops}
     Dictionary    []
     Dictionary    ooops
+    Dictionary    {{'not': 'hashable'}: 'value'}
 
 Set
     Set           set()                   set()
@@ -88,6 +92,7 @@ Invalid set
     Set           {1, ooops}
     Set           {}
     Set           ooops
+    Set           {{'not', 'hashable'}}
 
 Iterable abc
     Iterable      ['list', 'is', 'ok']    ['list', 'is', 'ok']
@@ -183,6 +188,10 @@ Invalid timedelta
     Timedelta     foobar
     Timedelta     1 foo
     Timedelta     01:02:03:04
+
+String is not converted
+    String        Hello, world!           "Hello, world!"
+    String        åäö                     "åäö"
 
 Unknown types are not converted
     Unknown       foo                     "foo"

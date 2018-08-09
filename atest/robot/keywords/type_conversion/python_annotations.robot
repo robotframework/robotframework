@@ -103,6 +103,9 @@ Timedelta
 Invalid timedelta
     Check Test Case    ${TESTNAME}
 
+String is not converted
+    Check Test Case    ${TESTNAME}
+
 Unknown types are not converted
     Check Test Case    ${TESTNAME}
 

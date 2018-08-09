@@ -84,6 +84,10 @@ def timedelta_(argument: timedelta, expected=None):
     _validate_type(argument, expected)
 
 
+def string(argument: str, expected=None):
+    _validate_type(argument, expected)
+
+
 def unknown(argument: Unknown, expected=None):
     _validate_type(argument, expected)
 

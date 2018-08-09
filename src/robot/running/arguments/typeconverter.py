@@ -71,6 +71,8 @@ class TypeConverter(object):
             return self._converters[type_]
         if isinstance(type_, EnumMeta):
             return self._get_enum_converter(type_)
+        if issubclass(type_, str):
+            return None
         for converter_type in self._converters:
             if issubclass(type_, converter_type):
                 return self._converters[converter_type]
@@ -114,10 +116,10 @@ class TypeConverter(object):
         return value
 
     def _convert_list(self, name, value):
-        return self._literal_eval(name, value, list, 'list')
+        return self._literal_eval(name, value, list)
 
     def _convert_tuple(self, name, value):
-        return self._literal_eval(name, value, tuple, 'tuple')
+        return self._literal_eval(name, value, tuple)
 
     def _convert_dict(self, name, value, type_name='dictionary'):
         return self._literal_eval(name, value, dict, type_name)
@@ -125,7 +127,7 @@ class TypeConverter(object):
     def _convert_set(self, name, value):
         if value == 'set()':
             return set()
-        return self._literal_eval(name, value, set, 'set')
+        return self._literal_eval(name, value, set)
 
     def _convert_iterable(self, name, value):
         for converter in (self._convert_list, self._convert_tuple,
@@ -166,12 +168,14 @@ class TypeConverter(object):
         except ValueError:
             self._raise_convert_failed(name, 'timedelta', value)
 
-    def _literal_eval(self, name, value, expected, expected_name):
+    def _literal_eval(self, name, value, expected, expected_name=None):
+        if not expected_name:
+            expected_name = expected.__name__
         try:
             value = literal_eval(value)
-            if not isinstance(value, expected):
-                raise ValueError
-        except ValueError:
+        except (ValueError, SyntaxError, TypeError):
+            self._raise_convert_failed(name, expected_name, value)
+        if not isinstance(value, expected):
             self._raise_convert_failed(name, expected_name, value)
         return value
 
