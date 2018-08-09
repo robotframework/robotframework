@@ -31,11 +31,11 @@ Save Using Invalid Encoding
     Check Test Case    ${TESTNAME}
 
 Save Non-ASCII Using ASCII On Python 2
-    [Tags]    no-py3
+    [Tags]    require-py2
     Check Test Case    ${TESTNAME}
 
 Save Non-ASCII Using ASCII On Python 3
-    [Tags]    no-py2
+    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Doctype is not preserved

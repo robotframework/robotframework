@@ -124,11 +124,11 @@ require-yaml, require-docutils, require-pygments, require-lxml, require-screensh
   See `Preconditions`_ for details and exclude like ``--exclude require-lxml``
   if needed.
 
-require-windows, require-jython, ...
+require-windows, require-jython, require-py2, require-py3, ...
   Tests that require certain operating system or Python interpreter.
   Excluded automatically outside these platforms.
 
-no-windows, no-osx, no-jython, no-ipy,  ...
+no-windows, no-osx, no-jython, no-ipy, ...
   Tests to be excluded on certain operating systems or Python interpreters.
   Excluded automatically on these platforms.
 

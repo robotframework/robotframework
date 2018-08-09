@@ -64,7 +64,7 @@ KwArgs and VarArgs
     Keyword Arguments Should Be      7    command    *arguments    **configuration
 
 Keyword-only Arguments
-    [Tags]    no-py2
+    [Tags]    require-py3
     Run Libdoc And Parse Output      ${TESTDATADIR}/KeywordOnlyArgs.py
     Keyword Arguments Should Be      0    *    kwo
     Keyword Arguments Should Be      1    *varargs    kwo    another=default

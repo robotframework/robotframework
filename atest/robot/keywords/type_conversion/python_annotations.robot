@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    keywords/type_conversion/python_annotations.robot
-Force Tags       no-py2
+Force Tags       require-py3
 Resource         atest_resource.robot
 
 *** Test Cases ***

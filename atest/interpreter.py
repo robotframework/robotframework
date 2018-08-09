@@ -66,9 +66,9 @@ class Interpreter(object):
     @property
     def _platform_excludes(self):
         if self.is_py3:
-            yield 'no-py3'
+            yield 'require-py2'
         else:
-            yield 'no-py2'
+            yield 'require-py3'
         if self.version_info < (3, 5):
             yield 'require-py3.5'
         if self.is_windows:
