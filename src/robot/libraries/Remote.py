@@ -197,7 +197,10 @@ class RemoteResult(object):
 class XmlRpcRemoteClient(object):
 
     def __init__(self, uri, timeout=None):
-        transport = TimeoutTransport(timeout=timeout)
+        if uri.startswith('https://'):
+            transport = TimeoutHTTPSTransport(timeout=timeout)
+        else:
+            transport = TimeoutHTTPTransport(timeout=timeout)
         self._server = xmlrpclib.ServerProxy(uri, encoding='UTF-8',
                                              transport=transport)
 
@@ -245,7 +248,8 @@ class XmlRpcRemoteClient(object):
 # http://stackoverflow.com/questions/2425799/timeout-for-xmlrpclib-client-requests
 
 
-class TimeoutTransport(xmlrpclib.Transport):
+class TimeoutHTTPTransport(xmlrpclib.Transport):
+    _connection_class = httplib.HTTPConnection
 
     def __init__(self, use_datetime=0, timeout=None):
         xmlrpclib.Transport.__init__(self, use_datetime)
@@ -257,8 +261,12 @@ class TimeoutTransport(xmlrpclib.Transport):
         if self._connection and host == self._connection[0]:
             return self._connection[1]
         chost, self._extra_headers, x509 = self.get_host_info(host)
-        self._connection = host, httplib.HTTPConnection(chost, timeout=self.timeout)
+        self._connection = host, self._connection_class(chost, timeout=self.timeout)
         return self._connection[1]
+
+
+class TimeoutHTTPSTransport(TimeoutHTTPTransport):
+    _connection_class = httplib.HTTPSConnection
 
 
 if IRONPYTHON:
