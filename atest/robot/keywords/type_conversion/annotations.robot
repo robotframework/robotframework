@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    keywords/type_conversion/python_annotations.robot
+Suite Setup      Run Tests    ${EMPTY}    keywords/type_conversion/annotations.robot
 Force Tags       require-py3
 Resource         atest_resource.robot
 

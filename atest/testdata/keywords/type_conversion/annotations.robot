@@ -1,5 +1,5 @@
 *** Settings ***
-Library           PythonAnnotations.py
+Library           Annotations.py
 
 *** Variables ***
 @{LIST}           foo         bar
