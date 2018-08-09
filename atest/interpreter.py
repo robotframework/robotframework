@@ -29,6 +29,7 @@ class Interpreter(object):
             name, version = self._get_name_and_version()
         self.name = name
         self.version = version
+        self.version_info = tuple(int(item) for item in version.split('.'))
 
     def _get_interpreter(self, path):
         return [path] if os.path.exists(path) else path.split()
@@ -68,6 +69,8 @@ class Interpreter(object):
             yield 'no-py3'
         else:
             yield 'no-py2'
+        if self.version_info < (3, 5):
+            yield 'require-py3.5'
         if self.is_windows:
             yield 'no-windows'
             if self.is_jython:
