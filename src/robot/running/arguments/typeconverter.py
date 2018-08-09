@@ -14,7 +14,11 @@
 #  limitations under the License.
 
 from ast import literal_eval
-from collections import abc, OrderedDict
+from collections import OrderedDict
+try:
+    from collections import abc
+except ImportError:    # Python 2
+    import collections as abc
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 from enum import EnumMeta
