@@ -39,9 +39,8 @@ from .compat import isatty, py2to3, StringIO, with_metaclass
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .dotdict import DotDict
-from .encoding import (console_decode, console_encode,
-                       system_decode, system_encode, CONSOLE_ENCODING,
-                       SYSTEM_ENCODING)
+from .encoding import (CONSOLE_ENCODING, SYSTEM_ENCODING, console_decode,
+                       console_encode, system_decode, system_encode)
 from .error import (get_error_message, get_error_details, ErrorDetails)
 from .escaping import escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource
@@ -64,9 +63,9 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
                         parse_time)
-from .robottypes import (FALSE_STRINGS, is_bytes, is_dict_like, is_falsy,
-                         is_integer, is_list_like, is_number, is_string,
-                         is_truthy, is_unicode, type_name)
+from .robottypes import (FALSE_STRINGS, TRUE_STRINGS, is_bytes, is_dict_like,
+                         is_falsy, is_integer, is_list_like, is_number,
+                         is_string, is_truthy, is_unicode, type_name)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,

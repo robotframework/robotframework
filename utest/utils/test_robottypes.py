@@ -158,12 +158,17 @@ class TestTypeName(unittest.TestCase):
 
 class TestIsTruthyFalsy(unittest.TestCase):
 
-    def test_is_truthy_falsy(self):
-        for item in [True, 1, [False], unittest.TestCase, 'truE', 'fOo']:
+    def test_truthy_values(self):
+        for item in [True, 1, [False], unittest.TestCase, 'truE', 'whatEver']:
             for item in self._strings_also_in_different_cases(item):
                 assert_true(is_truthy(item) is True)
                 assert_true(is_falsy(item) is False)
-        for item in [False, 0, [], None,  '', 'faLse', 'nO', 'nOne']:
+
+    def test_falsy_values(self):
+        class AlwaysFalse(object):
+            __bool__ = __nonzero__ = lambda self: False
+        falsy_strings = ['', 'faLse', 'nO', 'nOne', 'oFF', '0']
+        for item in falsy_strings + [False, None, 0, [], {}, AlwaysFalse()]:
             for item in self._strings_also_in_different_cases(item):
                 assert_true(is_truthy(item) is False)
                 assert_true(is_falsy(item) is True)
