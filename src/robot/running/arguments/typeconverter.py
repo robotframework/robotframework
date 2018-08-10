@@ -24,7 +24,7 @@ from decimal import InvalidOperation, Decimal
 from enum import EnumMeta
 
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import FALSE_STRINGS, is_unicode
+from robot.utils import FALSE_STRINGS, TRUE_STRINGS, is_unicode
 
 
 class TypeConverter(object):
@@ -109,9 +109,9 @@ class TypeConverter(object):
 
     def _convert_bool(self, name, value):
         upper = value.upper()
-        if upper == 'TRUE':
+        if upper in TRUE_STRINGS:
             return True
-        if value and upper in FALSE_STRINGS:
+        if upper in FALSE_STRINGS:
             return False
         return value
 

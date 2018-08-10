@@ -37,13 +37,19 @@ Invalid decimal
 
 Boolean
     Boolean              True                      ${True}
+    Boolean              YES                       ${True}
+    Boolean              on                        ${True}
+    Boolean              1                         ${True}
     Boolean              false                     ${False}
-    Boolean              no                        ${False}
+    Boolean              No                        ${False}
+    Boolean              oFF                       ${False}
+    Boolean              0                         ${False}
+    Boolean              ${EMPTY}                  ${False}
     Boolean              none                      ${None}
 
 Invalid boolean is accepted as-is
     Boolean              FooBar                    "FooBar"
-    Boolean              ${EMPTY}                  ""
+    Boolean              42                        "42"
 
 List
     List                 []                        []
