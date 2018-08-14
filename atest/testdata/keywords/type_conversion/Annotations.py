@@ -6,6 +6,7 @@ from enum import Enum
 
 class Foo(Enum):
     BAR = 1
+    ZAP = 'xxx'
 
 
 class Unknown(object):

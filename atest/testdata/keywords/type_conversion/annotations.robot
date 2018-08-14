@@ -21,6 +21,8 @@ Invalid integer
 Float
     Float                1.5                       ${1.5}
     Float                -1                        ${-1.0}
+    Float                1e6                       ${1000000.0}
+    Float                -1.2e-3                   ${-0.0012}
 
 Invalid float
     [Template]           Conversion Should Fail
@@ -63,7 +65,8 @@ Invalid list
     List                 {}
     List                 ooops
     List                 ${EMPTY}
-    List                 !"#¤%&/()=?
+    List                 !"#¤%&/(invalid expression)=?
+    List                 1 / 0
 
 Tuple
     Tuple                ()                        ()
@@ -86,7 +89,7 @@ Invalid dictionary
     Dictionary           {1: ooops}
     Dictionary           []
     Dictionary           ooops
-    Dictionary           {{'not': 'hashable'}: 'value'}
+    Dictionary           {{'not': 'hashable'}: 'xxx'}
 
 Set
     Set                  set()                     set()
@@ -117,6 +120,7 @@ Mapping abc
 Invalid mapping abc
     [Template]           Conversion Should Fail
     Mapping              foobar
+    Mapping              []
     Mutable mapping      barfoo                    type=mapping
 
 Set abc
@@ -138,10 +142,12 @@ Invalid set abc
 
 Enum
     Enum                 BAR                       Foo.BAR
+    Enum                 ZAP                       Foo.ZAP
 
 Invalid Enum
     [Template]           Conversion Should Fail
     Enum                 foobar                    type=Foo
+    Enum                 bar                       type=Foo
 
 Bytes
     Bytes                foo                       b'foo'

@@ -71,7 +71,7 @@ class TypeConverter(object):
             return self._converters[type_]
         if isinstance(type_, EnumMeta):
             return self._get_enum_converter(type_)
-        if issubclass(type_, str):
+        if issubclass(type_, str) or not isinstance(type_, type):
             return None
         for converter_type in self._converters:
             if issubclass(type_, converter_type):
