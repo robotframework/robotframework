@@ -29,6 +29,38 @@ def boolean(argument: bool, expected=None):
     _validate_type(argument, expected)
 
 
+def string(argument: str, expected=None):
+    _validate_type(argument, expected)
+
+
+def bytes_(argument: bytes, expected=None):
+    _validate_type(argument, expected)
+
+
+def bytearray_(argument: bytearray, expected=None):
+    _validate_type(argument, expected)
+
+
+def datetime_(argument: datetime, expected=None):
+    _validate_type(argument, expected)
+
+
+def date_(argument: date, expected=None):
+    _validate_type(argument, expected)
+
+
+def timedelta_(argument: timedelta, expected=None):
+    _validate_type(argument, expected)
+
+
+def enum_(argument: MyEnum, expected=None):
+    _validate_type(argument, expected)
+
+
+def nonetype(argument: type(None), expected=None):
+    _validate_type(argument, expected)
+
+
 def list_(argument: list, expected=None):
     _validate_type(argument, expected)
 
@@ -66,38 +98,6 @@ def set_abc(argument: abc.Set, expected=None):
 
 
 def mutable_set(argument: abc.MutableSet, expected=None):
-    _validate_type(argument, expected)
-
-
-def enum_(argument: MyEnum, expected=None):
-    _validate_type(argument, expected)
-
-
-def bytes_(argument: bytes, expected=None):
-    _validate_type(argument, expected)
-
-
-def bytearray_(argument: bytearray, expected=None):
-    _validate_type(argument, expected)
-
-
-def datetime_(argument: datetime, expected=None):
-    _validate_type(argument, expected)
-
-
-def date_(argument: date, expected=None):
-    _validate_type(argument, expected)
-
-
-def timedelta_(argument: timedelta, expected=None):
-    _validate_type(argument, expected)
-
-
-def nonetype(argument: type(None), expected=None):
-    _validate_type(argument, expected)
-
-
-def string(argument: str, expected=None):
     _validate_type(argument, expected)
 
 

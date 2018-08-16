@@ -1,5 +1,6 @@
 *** Settings ***
 Library                  DefaultValues.py
+Resource                 conversion.resource
 
 *** Variables ***
 @{LIST}                  foo                       bar
@@ -9,6 +10,7 @@ Library                  DefaultValues.py
 Integer
     Integer              42                        ${42}
     Integer              -1                        ${-1}
+    Integer              9999999999999999999999    ${9999999999999999999999}
 
 Integer as float
     Integer              1.0                       ${1.0}
@@ -36,6 +38,18 @@ Boolean
     Boolean              0                         ${False}
     Boolean              ${EMPTY}                  ${False}
     Boolean              none                      ${None}
+
+String
+    String               Hello, world!             u'Hello, world!'
+    String               åäö                       u'åäö'
+    String               None                      u'None'
+    String               True                      u'True'
+    String               []                        u'[]'
+    Unicode              Hello, world!             u'Hello, world!'
+    Unicode              åäö                       u'åäö'
+    Unicode              None                      u'None'
+    Unicode              True                      u'True'
+    Unicode              []                        u'[]'
 
 Bytes
     [Tags]               require-py3
@@ -79,6 +93,13 @@ Enum
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
 
+None
+    None                 None                      None
+    None                 NONE                      None
+    None                 Hello, world!             u'Hello, world!'
+    None                 True                      u'True'
+    None                 []                        u'[]'
+
 List
     List                 []                        []
     List                 ['foo', 'bar']            ${LIST}
@@ -110,18 +131,11 @@ Frozenset
 
 Sets are not supported in Python 2
     [Tags]               require-py2
-    Set                  set()                     u"set()"
+    Set                  set()                     u'set()'
     Set                  {'foo', 'bar'}            u"{'foo', 'bar'}"
-    Frozenset            set()                     u"set()"
-    Frozenset            frozenset()               u"frozenset()"
+    Frozenset            set()                     u'set()'
+    Frozenset            frozenset()               u'frozenset()'
     Frozenset            {'foo', 'bar'}            u"{'foo', 'bar'}"
-
-None
-    None                 None                      None
-    None                 NONE                      None
-    None                 Hello, world!             u"Hello, world!"
-    None                 True                      u"True"
-    None                 []                        u"[]"
 
 Invalid values are passed as-is
     [Template]           Invalid value is passed as-is
@@ -142,18 +156,13 @@ Invalid values are passed as-is
     Frozenset
     None
 
-Strings are not converted
-    String               Hello, world!             u"Hello, world!"
-    String               åäö                       u"åäö"
-    Unicode              Hello, world!             u"Hello, world!"
-    Unicode              åäö                       u"åäö"
-
 Unknown types are not converted
-    Unknown              foo                       u"foo"
-    Unknown              1                         u"1"
-    Unknown              true                      u"true"
-    Unknown              None                      u"None"
-    Unknown              none                      u"none"
+    Unknown              foo                       u'foo'
+    Unknown              1                         u'1'
+    Unknown              true                      u'true'
+    Unknown              None                      u'None'
+    Unknown              none                      u'none'
+    Unknown              []                        u'[]'
 
 String None is converted to None object
     [Template]           String None is converted to None object
@@ -180,18 +189,3 @@ Invalid value is passed as-is
     Run Keyword    ${kw}    (o,ps)${extra}    u'(o,ps)${extra}'
     Run Keyword    ${kw}    {o:ps}${extra}    u'{o:ps}${extra}'
     Run Keyword    ${kw}    {oops}${extra}    u'{oops}${extra}'
-
-Non-string is not converted
-    [Arguments]    ${kw}
-    Run Keyword    ${kw}    ${1}       ${1}
-    Run Keyword    ${kw}    ${1.5}     ${1.5}
-    Run Keyword    ${kw}    ${True}    ${True}
-    Run Keyword    ${kw}    ${None}    ${None}
-    Run Keyword    ${kw}    ${LIST}    ${LIST}
-    Run Keyword    ${kw}    ${DICT}    ${DICT}
-
-String None is converted to None object
-    [Arguments]    ${kw}
-    Run Keyword    ${kw}    None       ${None}
-    Run Keyword    ${kw}    NONE       ${None}
-    Run Keyword    ${kw}    none       ${None}

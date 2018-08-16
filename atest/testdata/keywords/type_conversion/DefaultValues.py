@@ -36,6 +36,14 @@ def boolean(argument=True, expected=None):
     _validate_type(argument, expected)
 
 
+def string(argument='', expected=None):
+    _validate_type(argument, expected)
+
+
+def unicode_(argument=u'', expected=None):
+    _validate_type(argument, expected)
+
+
 def bytes_(argument=b'', expected=None):
     _validate_type(argument, expected)
 
@@ -60,6 +68,10 @@ def enum(argument=MyEnum.FOO, expected=None):
     _validate_type(argument, expected)
 
 
+def none(argument=None, expected=None):
+    _validate_type(argument, expected)
+
+
 def list_(argument=['mutable', 'defaults', 'are', 'bad'], expected=None):
     _validate_type(argument, expected)
 
@@ -77,18 +89,6 @@ def set_(argument={'mutable', 'defaults', 'are', 'bad'}, expected=None):
 
 
 def frozenset_(argument=frozenset({'immutable', 'ok'}), expected=None):
-    _validate_type(argument, expected)
-
-
-def none(argument=None, expected=None):
-    _validate_type(argument, expected)
-
-
-def string(argument='', expected=None):
-    _validate_type(argument, expected)
-
-
-def unicode_(argument=u'', expected=None):
     _validate_type(argument, expected)
 
 

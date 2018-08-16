@@ -1,5 +1,6 @@
 *** Settings ***
 Library                       AnnotationsWithTyping.py
+Resource                      conversion.resource
 
 *** Test Cases ***
 Dict
@@ -81,10 +82,3 @@ Invalid mapping
     Mapping                   {1: ooops}
     Mapping                   []
     Mapping with params       ooops                       type=mapping
-
-*** Keywords ***
-Conversion Should Fail
-    [Arguments]    ${kw}    ${arg}    ${type}=${kw.lower()}
-    ${error} =    Run Keyword And Expect Error    *    ${kw}    ${arg}
-    Should Be Equal    ${error}
-    ...    ValueError: Argument 'argument' cannot be converted to ${type}, got '${arg}'.

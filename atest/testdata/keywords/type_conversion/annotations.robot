@@ -1,5 +1,6 @@
 *** Settings ***
 Library                  Annotations.py
+Resource                 conversion.resource
 Force Tags               require-py3
 
 *** Variables ***
@@ -49,8 +50,96 @@ Boolean
     Boolean              none                      ${None}
 
 Invalid boolean is accepted as-is
-    Boolean              FooBar                    "FooBar"
-    Boolean              42                        "42"
+    Boolean              FooBar                    'FooBar'
+    Boolean              42                        '42'
+
+String
+    String               Hello, world!             'Hello, world!'
+    String               åäö                       'åäö'
+    String               None                      'None'
+    String               True                      'True'
+    String               []                        '[]'
+
+Bytes
+    Bytes                foo                       b'foo'
+    Bytes                \x00\x01\xFF\u00FF        b'\\x00\\x01\\xFF\\xFF'
+    Bytes                Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
+    Bytes                None                      b'None'
+    Bytes                NONE                      b'NONE'
+
+Invalid bytes
+    [Template]           Conversion Should Fail
+    Bytes                \u0100
+
+Bytearray
+    Bytearray            foo                       bytearray(b'foo')
+    Bytearray            \x00\x01\xFF\u00FF        bytearray(b'\\x00\\x01\\xFF\\xFF')
+    Bytearray            Hyvä esimerkki!           bytearray(b'Hyv\\xE4 esimerkki!')
+    Bytearray            None                      bytearray(b'None')
+    Bytearray            NONE                      bytearray(b'NONE')
+
+Invalid bytearray
+    [Template]           Conversion Should Fail
+    Bytearray            \u0100
+
+Datetime
+    DateTime             2014-06-11T10:07:42       datetime(2014, 6, 11, 10, 7, 42)
+    DateTime             20180808144342123456      datetime(2018, 8, 8, 14, 43, 42, 123456)
+    DateTime             1975:06:04                datetime(1975, 6, 4)
+
+Invalid datetime
+    [Template]           Conversion Should Fail
+    DateTime             foobar
+    DateTime             1975:06
+    DateTime             2018
+    DateTime             201808081443421234567
+
+Date
+    Date                 2014-06-11                date(2014, 6, 11)
+    Date                 20180808                  date(2018, 8, 8)
+    Date                 20180808000000000000      date(2018, 8, 8)
+
+Invalid date
+    [Template]           Conversion Should Fail
+    Date                 foobar
+    Date                 1975:06
+    Date                 2018
+    Date                 2014-06-11T10:07:42
+    Date                 20180808000000000001
+
+Timedelta
+    Timedelta            10                        timedelta(seconds=10)
+    Timedelta            -1.5                      timedelta(seconds=-1.5)
+    Timedelta            2 days 1 second           timedelta(2, 1)
+    Timedelta            5d 4h 3min 2s 1ms         timedelta(5, 4*60*60 + 3*60 + 2 + 0.001)
+    Timedelta            - 1 day 2 seconds         timedelta(-1, -2)
+    Timedelta            1.5 minutes               timedelta(seconds=90)
+    Timedelta            04:03:02.001              timedelta(seconds=4*60*60 + 3*60 + 2 + 0.001)
+    Timedelta            4:3:2.1                   timedelta(seconds=4*60*60 + 3*60 + 2 + 0.1)
+    Timedelta            100:00:00                 timedelta(seconds=100*60*60)
+    Timedelta            -00:01                    timedelta(seconds=-1)
+
+Invalid timedelta
+    [Template]           Conversion Should Fail
+    Timedelta            foobar
+    Timedelta            1 foo
+    Timedelta            01:02:03:04
+
+Enum
+    Enum                 FOO                       MyEnum.FOO
+    Enum                 bar                       MyEnum.bar
+
+Invalid Enum
+    [Template]           Conversion Should Fail
+    Enum                 foobar                    type=MyEnum
+    Enum                 BAR                       type=MyEnum
+
+NoneType
+    NoneType             None                      None
+    NoneType             NONE                      None
+    NoneType             Hello, world!             'Hello, world!'
+    NoneType             True                      'True'
+    NoneType             []                        '[]'
 
 List
     List                 []                        []
@@ -153,97 +242,13 @@ Invalid set abc
     Mutable set          {}                        type=set
     Mutable set          ooops                     type=set
 
-Enum
-    Enum                 FOO                       MyEnum.FOO
-    Enum                 bar                       MyEnum.bar
-
-Invalid Enum
-    [Template]           Conversion Should Fail
-    Enum                 foobar                    type=MyEnum
-    Enum                 BAR                       type=MyEnum
-
-Bytes
-    Bytes                foo                       b'foo'
-    Bytes                \x00\x01\xFF\u00FF        b'\\x00\\x01\\xFF\\xFF'
-    Bytes                Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
-    Bytes                None                      b'None'
-    Bytes                NONE                      b'NONE'
-
-Invalid bytes
-    [Template]           Conversion Should Fail
-    Bytes                \u0100
-
-Bytearray
-    Bytearray            foo                       bytearray(b'foo')
-    Bytearray            \x00\x01\xFF\u00FF        bytearray(b'\\x00\\x01\\xFF\\xFF')
-    Bytearray            Hyvä esimerkki!           bytearray(b'Hyv\\xE4 esimerkki!')
-    Bytearray            None                      bytearray(b'None')
-    Bytearray            NONE                      bytearray(b'NONE')
-
-Invalid bytearray
-    [Template]           Conversion Should Fail
-    Bytearray            \u0100
-
-Datetime
-    DateTime             2014-06-11T10:07:42       datetime(2014, 6, 11, 10, 7, 42)
-    DateTime             20180808144342123456      datetime(2018, 8, 8, 14, 43, 42, 123456)
-    DateTime             1975:06:04                datetime(1975, 6, 4)
-
-Invalid datetime
-    [Template]           Conversion Should Fail
-    DateTime             foobar
-    DateTime             1975:06
-    DateTime             2018
-    DateTime             201808081443421234567
-
-Date
-    Date                 2014-06-11                date(2014, 6, 11)
-    Date                 20180808                  date(2018, 8, 8)
-    Date                 20180808000000000000      date(2018, 8, 8)
-
-Invalid date
-    [Template]           Conversion Should Fail
-    Date                 foobar
-    Date                 1975:06
-    Date                 2018
-    Date                 2014-06-11T10:07:42
-    Date                 20180808000000000001
-
-Timedelta
-    Timedelta            10                        timedelta(seconds=10)
-    Timedelta            -1.5                      timedelta(seconds=-1.5)
-    Timedelta            2 days 1 second           timedelta(2, 1)
-    Timedelta            5d 4h 3min 2s 1ms         timedelta(5, 4*60*60 + 3*60 + 2 + 0.001)
-    Timedelta            - 1 day 2 seconds         timedelta(-1, -2)
-    Timedelta            1.5 minutes               timedelta(seconds=90)
-    Timedelta            04:03:02.001              timedelta(seconds=4*60*60 + 3*60 + 2 + 0.001)
-    Timedelta            4:3:2.1                   timedelta(seconds=4*60*60 + 3*60 + 2 + 0.1)
-    Timedelta            100:00:00                 timedelta(seconds=100*60*60)
-    Timedelta            -00:01                    timedelta(seconds=-1)
-
-Invalid timedelta
-    [Template]           Conversion Should Fail
-    Timedelta            foobar
-    Timedelta            1 foo
-    Timedelta            01:02:03:04
-
-NoneType
-    NoneType             None                      None
-    NoneType             NONE                      None
-    NoneType             Hello, world!             "Hello, world!"
-    NoneType             True                      "True"
-    NoneType             []                        "[]"
-
-String is not converted
-    String               Hello, world!             "Hello, world!"
-    String               åäö                       "åäö"
-
 Unknown types are not converted
-    Unknown              foo                       "foo"
-    Unknown              1                         "1"
-    Unknown              true                      "true"
-    Unknown              None                      "None"
-    Unknown              none                      "none"
+    Unknown              foo                       'foo'
+    Unknown              1                         '1'
+    Unknown              true                      'true'
+    Unknown              None                      'None'
+    Unknown              none                      'none'
+    Unknown              []                        '[]'
 
 Non-strings are not converted
     [Template]           Non-string is not converted
@@ -279,25 +284,3 @@ String None is converted to None object
     DateTime
     Date
     Timedelta
-
-*** Keywords ***
-Conversion Should Fail
-    [Arguments]    ${kw}    ${arg}    ${type}=${kw.lower()}
-    ${error} =    Run Keyword And Expect Error    *    ${kw}    ${arg}
-    Should Be Equal    ${error}
-    ...    ValueError: Argument 'argument' cannot be converted to ${type}, got '${arg}'.
-
-Non-string is not converted
-    [Arguments]    ${kw}
-    Run Keyword    ${kw}    ${1}       ${1}
-    Run Keyword    ${kw}    ${1.5}     ${1.5}
-    Run Keyword    ${kw}    ${True}    ${True}
-    Run Keyword    ${kw}    ${None}    ${None}
-    Run Keyword    ${kw}    ${LIST}    ${LIST}
-    Run Keyword    ${kw}    ${DICT}    ${DICT}
-
-String None is converted to None object
-    [Arguments]    ${kw}
-    Run Keyword    ${kw}    None       ${None}
-    Run Keyword    ${kw}    NONE       ${None}
-    Run Keyword    ${kw}    none       ${None}

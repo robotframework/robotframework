@@ -18,6 +18,9 @@ Decimal
 Boolean
     Check Test Case    ${TESTNAME}
 
+String
+    Check Test Case    ${TESTNAME}
+
 Bytes
     [Tags]    require-py3
     Check Test Case    ${TESTNAME}
@@ -36,6 +39,9 @@ Timedelta
 
 Enum
     [Tags]    require-py3
+    Check Test Case    ${TESTNAME}
+
+None
     Check Test Case    ${TESTNAME}
 
 List
@@ -59,13 +65,7 @@ Sets are not supported in Python 2
     [Tags]    require-py2
     Check Test Case    ${TESTNAME}
 
-None
-    Check Test Case    ${TESTNAME}
-
 Invalid values are passed as-is
-    Check Test Case    ${TESTNAME}
-
-Strings are not converted
     Check Test Case    ${TESTNAME}
 
 Unknown types are not converted
