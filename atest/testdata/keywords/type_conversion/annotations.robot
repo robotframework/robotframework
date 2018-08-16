@@ -1,5 +1,6 @@
 *** Settings ***
 Library                  Annotations.py
+Force Tags               require-py3
 
 *** Variables ***
 @{LIST}                  foo                       bar
@@ -9,14 +10,12 @@ Library                  Annotations.py
 Integer
     Integer              42                        ${42}
     Integer              -1                        ${-1}
-
-Float as integer
-    Integer              1.0                       ${1.0}
-    Integer              1.5                       ${1.5}
+    Integer              9999999999999999999999    ${9999999999999999999999}
 
 Invalid integer
     [Template]           Conversion Should Fail
     Integer              foobar
+    Integer              1.0
 
 Float
     Float                1.5                       ${1.5}
@@ -102,6 +101,20 @@ Invalid set
     Set                  {}
     Set                  ooops
     Set                  {{'not', 'hashable'}}
+    Set                  frozenset()
+
+Frozenset
+    Frozenset            frozenset()               frozenset()
+    Frozenset            set()                     frozenset()
+    Frozenset            {'foo', 'bar'}            frozenset({'foo', 'bar'})
+    Frozenset            {1, 2, 3.14, -42}         frozenset({1, 2, 3.14, -42})
+
+Invalid frozenset
+    [Template]           Conversion Should Fail
+    Frozenset            {1, ooops}                type=set
+    Frozenset            {}                        type=set
+    Frozenset            ooops                     type=set
+    Frozenset            {{'not', 'hashable'}}     type=set
 
 Iterable abc
     Iterable             ['list', 'is', 'ok']      ['list', 'is', 'ok']
@@ -141,22 +154,35 @@ Invalid set abc
     Mutable set          ooops                     type=set
 
 Enum
-    Enum                 BAR                       Foo.BAR
-    Enum                 ZAP                       Foo.ZAP
+    Enum                 FOO                       MyEnum.FOO
+    Enum                 bar                       MyEnum.bar
 
 Invalid Enum
     [Template]           Conversion Should Fail
-    Enum                 foobar                    type=Foo
-    Enum                 bar                       type=Foo
+    Enum                 foobar                    type=MyEnum
+    Enum                 BAR                       type=MyEnum
 
 Bytes
     Bytes                foo                       b'foo'
     Bytes                \x00\x01\xFF\u00FF        b'\\x00\\x01\\xFF\\xFF'
     Bytes                Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
+    Bytes                None                      b'None'
+    Bytes                NONE                      b'NONE'
 
 Invalid bytes
     [Template]           Conversion Should Fail
     Bytes                \u0100
+
+Bytearray
+    Bytearray            foo                       bytearray(b'foo')
+    Bytearray            \x00\x01\xFF\u00FF        bytearray(b'\\x00\\x01\\xFF\\xFF')
+    Bytearray            Hyvä esimerkki!           bytearray(b'Hyv\\xE4 esimerkki!')
+    Bytearray            None                      bytearray(b'None')
+    Bytearray            NONE                      bytearray(b'NONE')
+
+Invalid bytearray
+    [Template]           Conversion Should Fail
+    Bytearray            \u0100
 
 Datetime
     DateTime             2014-06-11T10:07:42       datetime(2014, 6, 11, 10, 7, 42)
@@ -201,6 +227,13 @@ Invalid timedelta
     Timedelta            1 foo
     Timedelta            01:02:03:04
 
+NoneType
+    NoneType             None                      None
+    NoneType             NONE                      None
+    NoneType             Hello, world!             "Hello, world!"
+    NoneType             True                      "True"
+    NoneType             []                        "[]"
+
 String is not converted
     String               Hello, world!             "Hello, world!"
     String               åäö                       "åäö"
@@ -222,11 +255,14 @@ Non-strings are not converted
     Tuple
     Dictionary
     Set
+    Frozenset
     Enum
     Bytes
+    Bytearray
     DateTime
     Date
     Timedelta
+    NoneType
 
 String None is converted to None object
     [Template]           String None is converted to None object
@@ -238,8 +274,8 @@ String None is converted to None object
     Tuple
     Dictionary
     Set
+    Frozenset
     Enum
-    Bytes
     DateTime
     Date
     Timedelta

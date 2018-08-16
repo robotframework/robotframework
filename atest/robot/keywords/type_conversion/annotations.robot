@@ -7,9 +7,6 @@ Resource         atest_resource.robot
 Integer
     Check Test Case    ${TESTNAME}
 
-Float as integer
-    Check Test Case    ${TESTNAME}
-
 Invalid integer
     Check Test Case    ${TESTNAME}
 
@@ -55,6 +52,12 @@ Set
 Invalid set
     Check Test Case    ${TESTNAME}
 
+Frozenset
+    Check Test Case    ${TESTNAME}
+
+Invalid frozenset
+    Check Test Case    ${TESTNAME}
+
 Iterable abc
     Check Test Case    ${TESTNAME}
 
@@ -85,6 +88,12 @@ Bytes
 Invalid bytes
     Check Test Case    ${TESTNAME}
 
+Bytearray
+    Check Test Case    ${TESTNAME}
+
+Invalid bytearray
+    Check Test Case    ${TESTNAME}
+
 Datetime
     Check Test Case    ${TESTNAME}
 
@@ -101,6 +110,9 @@ Timedelta
     Check Test Case    ${TESTNAME}
 
 Invalid timedelta
+    Check Test Case    ${TESTNAME}
+
+NoneType
     Check Test Case    ${TESTNAME}
 
 String is not converted

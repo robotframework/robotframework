@@ -4,9 +4,9 @@ from decimal import Decimal
 from enum import Enum
 
 
-class Foo(Enum):
-    BAR = 1
-    ZAP = 'xxx'
+class MyEnum(Enum):
+    FOO = 1
+    bar = 'xxx'
 
 
 class Unknown(object):
@@ -45,6 +45,10 @@ def set_(argument: set, expected=None):
     _validate_type(argument, expected)
 
 
+def frozenset_(argument: frozenset, expected=None):
+    _validate_type(argument, expected)
+
+
 def iterable(argument: abc.Iterable, expected=None):
     _validate_type(argument, expected)
 
@@ -65,11 +69,15 @@ def mutable_set(argument: abc.MutableSet, expected=None):
     _validate_type(argument, expected)
 
 
-def enum_(argument: Foo, expected=None):
+def enum_(argument: MyEnum, expected=None):
     _validate_type(argument, expected)
 
 
 def bytes_(argument: bytes, expected=None):
+    _validate_type(argument, expected)
+
+
+def bytearray_(argument: bytearray, expected=None):
     _validate_type(argument, expected)
 
 
@@ -82,6 +90,10 @@ def date_(argument: date, expected=None):
 
 
 def timedelta_(argument: timedelta, expected=None):
+    _validate_type(argument, expected)
+
+
+def nonetype(argument: type(None), expected=None):
     _validate_type(argument, expected)
 
 

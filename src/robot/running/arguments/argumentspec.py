@@ -48,12 +48,17 @@ class ArgumentSpec(object):
     def reqkwargs(self):
         return set(self.kwonlyargs) - set(self.kwonlydefaults)
 
+    # FIXME: Change ArgumentSpec.defaults to be a mapping and then remove this.
+    @property
+    def default_values(self):
+        return dict(zip(self.positional[self.minargs:], self.defaults))
+
     def resolve(self, arguments, variables=None, resolve_named=True,
                 resolve_variables_until=None, dict_to_kwargs=False):
         resolver = ArgumentResolver(self, resolve_named,
                                     resolve_variables_until, dict_to_kwargs)
         positional, named = resolver.resolve(arguments, variables)
-        if self.annotations:
+        if self.annotations or self.defaults:
             converter = TypeConverter(self)
             positional, named = converter.convert(positional, named)
         return positional, named
