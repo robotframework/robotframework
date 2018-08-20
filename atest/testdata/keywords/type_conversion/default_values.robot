@@ -142,7 +142,7 @@ Invalid values are passed as-is
     Integer
     Float
     Decimal
-    Boolean
+    Boolean              extra=xx
     Bytes                extra=\u0100
     Bytearray            extra=\u0100
     Datetime
@@ -150,8 +150,11 @@ Invalid values are passed as-is
     Timedelta
     Enum
     List
+    List                 extra=()
     Tuple
+    Tuple                extra=[1, 2, 3]
     Dictionary
+    Dictionary           extra=[1, 2, 3]
     Set
     Frozenset
     None
@@ -189,3 +192,4 @@ Invalid value is passed as-is
     Run Keyword    ${kw}    (o,ps)${extra}    u'(o,ps)${extra}'
     Run Keyword    ${kw}    {o:ps}${extra}    u'{o:ps}${extra}'
     Run Keyword    ${kw}    {oops}${extra}    u'{oops}${extra}'
+    Run Keyword    ${kw}    ${extra}          u'${extra}'

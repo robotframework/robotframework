@@ -217,10 +217,10 @@ class TypeConverter(object):
         if not expected_name:
             expected_name = expected.__name__
         try:
-            value = literal_eval(value)
-            if not isinstance(value, expected):
+            converted = literal_eval(value)
+            if not isinstance(converted, expected):
                 raise TypeError
-            return value
+            return converted
         except (ValueError, SyntaxError, TypeError):
             return self._handle_error(name, value, expected_name, explicit_type)
 
