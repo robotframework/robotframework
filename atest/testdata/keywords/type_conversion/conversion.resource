@@ -1,7 +1,8 @@
 *** Keywords ***
 Conversion Should Fail
-    [Arguments]    ${kw}    ${arg}    ${type}=${kw.lower()}
-    ${error} =    Run Keyword And Expect Error    *    ${kw}    ${arg}
+    [Arguments]    ${kw}    @{args}    ${type}=${kw.lower()}    &{kwargs}
+    ${error} =    Run Keyword And Expect Error    *    ${kw}    @{args}    &{kwargs}
+    ${arg} =    Evaluate    (list($args) + list($kwargs.values()))[0]
     Should Be Equal    ${error}
     ...    ValueError: Argument 'argument' cannot be converted to ${type}, got '${arg}'.
 

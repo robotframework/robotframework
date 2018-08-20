@@ -121,6 +121,30 @@ Invalid set abc
 Unknown types are not converted
     Check Test Case    ${TESTNAME}
 
+Positional as named
+    Check Test Case    ${TESTNAME}
+
+Invalid positional as named
+    Check Test Case    ${TESTNAME}
+
+Varargs
+    Check Test Case    ${TESTNAME}
+
+Invalid varargs
+    Check Test Case    ${TESTNAME}
+
+Kwargs
+    Check Test Case    ${TESTNAME}
+
+Invalid Kwargs
+    Check Test Case    ${TESTNAME}
+
+Kwonly
+    Check Test Case    ${TESTNAME}
+
+Invalid kwonly
+    Check Test Case    ${TESTNAME}
+
 Non-strings are not converted
     Check Test Case    ${TESTNAME}
 

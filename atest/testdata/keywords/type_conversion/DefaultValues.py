@@ -96,6 +96,15 @@ def unknown(argument=Unknown(), expected=None):
     _validate_type(argument, expected)
 
 
+try:
+    exec('''
+def kwonly(*, argument=0.0, expected=None):
+    _validate_type(argument, expected)
+''')
+except SyntaxError:
+    pass
+
+
 def _validate_type(argument, expected):
     if isinstance(expected, unicode):
         expected = eval(expected)

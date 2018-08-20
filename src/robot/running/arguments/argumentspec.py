@@ -49,6 +49,7 @@ class ArgumentSpec(object):
         return set(self.kwonlyargs) - set(self.kwonlydefaults)
 
     # FIXME: Change ArgumentSpec.defaults to be a mapping and then remove this.
+    # Also consider adding kwonlydefaults into the same mapping.
     @property
     def default_values(self):
         return dict(zip(self.positional[self.minargs:], self.defaults))
@@ -58,7 +59,7 @@ class ArgumentSpec(object):
         resolver = ArgumentResolver(self, resolve_named,
                                     resolve_variables_until, dict_to_kwargs)
         positional, named = resolver.resolve(arguments, variables)
-        if self.annotations or self.defaults:
+        if self.annotations or self.defaults or self.kwonlydefaults:
             converter = TypeConverter(self)
             positional, named = converter.convert(positional, named)
         return positional, named

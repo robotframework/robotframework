@@ -105,6 +105,18 @@ def unknown(argument: Unknown, expected=None):
     _validate_type(argument, expected)
 
 
+def varargs(*argument: int, expected=None):
+    _validate_type(argument, expected)
+
+
+def kwargs(expected=None, **argument: int):
+    _validate_type(argument, expected)
+
+
+def kwonly(*, argument: float, expected=None):
+    _validate_type(argument, expected)
+
+
 def _validate_type(argument, expected):
     if isinstance(expected, str):
         expected = eval(expected)

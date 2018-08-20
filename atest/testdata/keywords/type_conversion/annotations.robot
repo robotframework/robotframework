@@ -153,7 +153,7 @@ Invalid list
     List                 {}
     List                 ooops
     List                 ${EMPTY}
-    List                 !"#¤%&/(invalid expression)=?
+    List                 !"#¤%&/(invalid expression)\=?
     List                 1 / 0
 
 Tuple
@@ -249,6 +249,40 @@ Unknown types are not converted
     Unknown              None                      'None'
     Unknown              none                      'none'
     Unknown              []                        '[]'
+
+Positional as named
+    Integer              argument=-1               expected=-1
+    Float                argument=1e2              expected=100.0
+    Dictionary           argument={'a': 1}         expected={'a': 1}
+
+Invalid positional as named
+    [Template]           Conversion Should Fail
+    Integer              argument=1.0
+    Float                argument=xxx
+    Dictionary           argument=[0]
+
+Varargs
+    Varargs              1    2    3               expected=(1, 2, 3)
+    Varargs              ${TRUE}    ${NONE}        expected=(True, None)
+
+Invalid varargs
+    [Template]           Conversion Should Fail
+    Varargs              foobar                    type=integer
+
+Kwargs
+    Kwargs               a=1    b=2    c=3         expected={'a': 1, 'b': 2, 'c': 3}
+    Kwargs               x=${TRUE}    y=${NONE}    expected={'x': True, 'y': None}
+
+Invalid Kwargs
+    [Template]           Conversion Should Fail
+    Kwargs               kwarg=ooops               type=integer
+
+Kwonly
+    Kwonly               argument=1.0              expected=1.0
+
+Invalid kwonly
+    [Template]           Conversion Should Fail
+    Kwonly               argument=foobar           type=float
 
 Non-strings are not converted
     [Template]           Non-string is not converted

@@ -73,3 +73,17 @@ Unknown types are not converted
 
 String None is converted to None object
     Check Test Case    ${TESTNAME}
+
+Positional as named
+    Check Test Case    ${TESTNAME}
+
+Invalid positional as named
+    Check Test Case    ${TESTNAME}
+
+Kwonly
+    [Tags]    require-py3
+    Check Test Case    ${TESTNAME}
+
+Invalid kwonly
+    [Tags]    require-py3
+    Check Test Case    ${TESTNAME}

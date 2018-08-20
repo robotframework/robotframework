@@ -58,12 +58,22 @@ class TypeConverter(object):
         ])
 
     def convert(self, positional, named):
+        return self._convert_positional(positional), self._convert_named(named)
+
+    def _convert_positional(self, positional):
         names = self._argspec.positional
-        positional, varargs = positional[:len(names)], positional[len(names):]
-        positional = [self._convert(name, value)
-                      for name, value in zip(names, positional)]
-        named = [(name, self._convert(name, value)) for name, value in named]
-        return positional + varargs, named
+        converted = [self._convert(name, value)
+                     for name, value in zip(names, positional)]
+        if self._argspec.varargs:
+            converted.extend(self._convert(self._argspec.varargs, value)
+                             for value in positional[len(names):])
+        return converted
+
+    def _convert_named(self, named):
+        names = set(self._argspec.positional) | set(self._argspec.kwonlyargs)
+        kwargs = self._argspec.kwargs
+        return [(name, self._convert(name if name in names else kwargs, value))
+                for name, value in named]
 
     def _convert(self, name, value):
         if not is_unicode(value):
@@ -73,6 +83,9 @@ class TypeConverter(object):
             explicit_type = True
         elif name in self._argspec.default_values:
             type_ = type(self._argspec.default_values[name])
+            explicit_type = False
+        elif name in self._argspec.kwonlydefaults:
+            type_ = type(self._argspec.kwonlydefaults[name])
             explicit_type = False
         else:
             return value

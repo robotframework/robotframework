@@ -183,6 +183,24 @@ String None is converted to None object
     Set
     Frozenset
 
+Positional as named
+    Integer              argument=-1               expected=-1
+    Float                argument=1e2              expected=100.0
+    Dictionary           argument={'a': 1}         expected={'a': 1}
+
+Invalid positional as named
+    Integer              argument=1.0              expected=1.0
+    Float                argument=xxx              expected=u'xxx'
+    Dictionary           argument=[0]              expected=u'[0]'
+
+Kwonly
+    [Tags]               require-py3
+    Kwonly               argument=1.0              expected=1.0
+
+Invalid kwonly
+    [Tags]               require-py3
+    Kwonly               argument=foobar           expected='foobar'
+
 *** Keywords ***
 Invalid value is passed as-is
     [Arguments]    ${kw}    ${extra}=
