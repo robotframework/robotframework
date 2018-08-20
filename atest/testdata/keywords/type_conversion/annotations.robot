@@ -150,6 +150,7 @@ List
 Invalid list
     [Template]           Conversion Should Fail
     List                 [1, ooops]
+    List                 ()
     List                 {}
     List                 ooops
     List                 ${EMPTY}
@@ -164,6 +165,7 @@ Tuple
 Invalid tuple
     [Template]           Conversion Should Fail
     Tuple                (1, ooops)
+    Tuple                []
     Tuple                {}
     Tuple                ooops
 
@@ -176,6 +178,7 @@ Invalid dictionary
     [Template]           Conversion Should Fail
     Dictionary           {1: ooops}
     Dictionary           []
+    Dictionary           ()
     Dictionary           ooops
     Dictionary           {{'not': 'hashable'}: 'xxx'}
 
@@ -188,6 +191,8 @@ Invalid set
     [Template]           Conversion Should Fail
     Set                  {1, ooops}
     Set                  {}
+    Set                  ()
+    Set                  []
     Set                  ooops
     Set                  {{'not', 'hashable'}}
     Set                  frozenset()

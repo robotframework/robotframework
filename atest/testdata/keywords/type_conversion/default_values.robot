@@ -16,16 +16,28 @@ Integer as float
     Integer              1.0                       ${1.0}
     Integer              1.5                       ${1.5}
 
+Invalid integer
+    [Template]           Invalid value is passed as-is
+    Integer              foobar
+
 Float
     Float                1.5                       ${1.5}
     Float                -1                        ${-1.0}
     Float                1e6                       ${1000000.0}
     Float                -1.2e-3                   ${-0.0012}
 
+Invalid float
+    [Template]           Invalid value is passed as-is
+    Float                foobar
+
 Decimal
     Decimal              3.14                      Decimal('3.14')
     Decimal              -1                        Decimal('-1')
     Decimal              1e6                       Decimal('1000000')
+
+Invalid decimal
+    [Template]           Invalid value is passed as-is
+    Decimal              foobar
 
 Boolean
     Boolean              True                      ${True}
@@ -38,6 +50,10 @@ Boolean
     Boolean              0                         ${False}
     Boolean              ${EMPTY}                  ${False}
     Boolean              none                      ${None}
+
+Invalid boolean
+    [Template]           Invalid value is passed as-is
+    Boolean              foobar
 
 String
     String               Hello, world!             u'Hello, world!'
@@ -59,6 +75,11 @@ Bytes
     Bytes                None                      b'None'
     Bytes                NONE                      b'NONE'
 
+Invalid bytes
+    [Tags]               require-py3
+    [Template]           Invalid value is passed as-is
+    Bytes                \u0100
+
 Bytearray
     Bytearray            foo                       bytearray(b'foo')
     Bytearray            \x00\x01\xFF\u00FF        bytearray(b'\\x00\\x01\\xFF\\xFF')
@@ -66,15 +87,30 @@ Bytearray
     Bytearray            None                      bytearray(b'None')
     Bytearray            NONE                      bytearray(b'NONE')
 
+Invalid bytearray
+    [Template]           Invalid value is passed as-is
+    Bytearray            \u0100
+
 Datetime
     DateTime             2014-06-11T10:07:42       datetime(2014, 6, 11, 10, 7, 42)
     DateTime             20180808144342123456      datetime(2018, 8, 8, 14, 43, 42, 123456)
     DateTime             1975:06:04                datetime(1975, 6, 4)
 
+Invalid datetime
+    [Template]           Invalid value is passed as-is
+    DateTime             foobar
+    DateTime             1975:06
+
 Date
     Date                 2014-06-11                date(2014, 6, 11)
     Date                 20180808                  date(2018, 8, 8)
     Date                 20180808000000000000      date(2018, 8, 8)
+
+Invalid date
+    [Template]           Invalid value is passed as-is
+    Date                 foobar
+    Date                 1975:06
+    Date                 2018:08:20 22:22
 
 Timedelta
     Timedelta            10                        timedelta(seconds=10)
@@ -88,10 +124,19 @@ Timedelta
     Timedelta            100:00:00                 timedelta(seconds=100*60*60)
     Timedelta            -00:01                    timedelta(seconds=-1)
 
+Invalid timedelta
+    [Template]           Invalid value is passed as-is
+    Timedelta            foobar
+    Timedelta            01:02:03:04
+
 Enum
     [Tags]               require-py3
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
+
+Invalid enum
+    [Template]           Invalid value is passed as-is
+    Enum                 foobar
 
 None
     None                 None                      None
@@ -106,21 +151,56 @@ List
     List                 [1, 2, 3.14, -42]         [1, 2, 3.14, -42]
     List                 ['\\x00', '\\x52']        ['\\x00', 'R']
 
+Invalid list
+    [Template]           Invalid value is passed as-is
+    List                 [1, ooops]
+    List                 ()
+    List                 {}
+    List                 ooops
+    List                 ${EMPTY}
+    List                 !"#¤%&/(invalid expression)\=?
+    List                 1 / 0
+
 Tuple
     Tuple                ()                        ()
     Tuple                ('foo', "bar")            tuple(${LIST})
     Tuple                (1, 2, 3.14, -42)         (1, 2, 3.14, -42)
+
+Invalid tuple
+    [Template]           Invalid value is passed as-is
+    Tuple                (1, ooops)
+    Tuple                []
+    Tuple                {}
+    Tuple                ooops
 
 Dictionary
     Dictionary           {}                        {}
     Dictionary           {'foo': 1, "bar": 2}      dict(${DICT})
     Dictionary           {1: 2, 3.14: -42}         {1: 2, 3.14: -42}
 
+Invalid dictionary
+    [Template]           Invalid value is passed as-is
+    Dictionary           {1: ooops}
+    Dictionary           []
+    Dictionary           ()
+    Dictionary           ooops
+    Dictionary           {{'not': 'hashable'}: 'xxx'}
+
 Set
     [Tags]               require-py3
     Set                  set()                     set()
     Set                  {'foo', 'bar'}            {'foo', 'bar'}
     Set                  {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
+
+Invalid set
+    [Template]           Invalid value is passed as-is
+    Set                  {1, ooops}
+    Set                  {}
+    Set                  ()
+    Set                  []
+    Set                  ooops
+    Set                  {{'not', 'hashable'}}
+    Set                  frozenset()
 
 Frozenset
     [Tags]               require-py3
@@ -129,6 +209,13 @@ Frozenset
     Frozenset            {'foo', 'bar'}            frozenset({'foo', 'bar'})
     Frozenset            {1, 2, 3.14, -42}         frozenset({1, 2, 3.14, -42})
 
+Invalid frozenset
+    [Template]           Invalid value is passed as-is
+    Frozenset            {1, ooops}
+    Frozenset            {}
+    Frozenset            ooops
+    Frozenset            {{'not', 'hashable'}}
+
 Sets are not supported in Python 2
     [Tags]               require-py2
     Set                  set()                     u'set()'
@@ -136,28 +223,6 @@ Sets are not supported in Python 2
     Frozenset            set()                     u'set()'
     Frozenset            frozenset()               u'frozenset()'
     Frozenset            {'foo', 'bar'}            u"{'foo', 'bar'}"
-
-Invalid values are passed as-is
-    [Template]           Invalid value is passed as-is
-    Integer
-    Float
-    Decimal
-    Boolean              extra=xx
-    Bytes                extra=\u0100
-    Bytearray            extra=\u0100
-    Datetime
-    Date
-    Timedelta
-    Enum
-    List
-    List                 extra=()
-    Tuple
-    Tuple                extra=[1, 2, 3]
-    Dictionary
-    Dictionary           extra=[1, 2, 3]
-    Set
-    Frozenset
-    None
 
 Unknown types are not converted
     Unknown              foo                       u'foo'
@@ -203,11 +268,5 @@ Invalid kwonly
 
 *** Keywords ***
 Invalid value is passed as-is
-    [Arguments]    ${kw}    ${extra}=
-    Run Keyword    ${kw}    foobar${extra}    u'foobar${extra}'
-    Run Keyword    ${kw}    !"#¤%&${extra}    u'!"#¤%&${extra}'
-    Run Keyword    ${kw}    [oops]${extra}    u'[oops]${extra}'
-    Run Keyword    ${kw}    (o,ps)${extra}    u'(o,ps)${extra}'
-    Run Keyword    ${kw}    {o:ps}${extra}    u'{o:ps}${extra}'
-    Run Keyword    ${kw}    {oops}${extra}    u'{oops}${extra}'
-    Run Keyword    ${kw}    ${extra}          u'${extra}'
+    [Arguments]    ${kw}    ${arg}
+    Run Keyword    ${kw}    ${arg}    u'''${arg}'''
