@@ -5,12 +5,19 @@ Resource          rebot_cli_resource.robot
 
 *** Variables ***
 ${SYSLOG}         %{TEMPDIR}${/}syslog.txt
+${SUBSYSLOG}      %{TEMPDIR}${/}subdir${/}syslog.txt
 
 *** Test Cases ***
 Setting Syslog File
     Set Environment Variable    ROBOT_SYSLOG_FILE    ${SYSLOG}
     Rebot Something
     File Should Not Be Empty    ${SYSLOG}
+
+Setting syslog file to non existing sub directory
+    [Documentation]    Syslog should be generated along with its sub directory
+    Set Environment Variable    ROBOT_SYSLOG_FILE    ${SUBSYSLOG}
+    Run Some Tests
+    File Should Not Be Empty    ${SUBSYSLOG}
 
 No syslog
     Rebot Something
@@ -44,3 +51,5 @@ Reset syslog
     Remove Environment Variable    ROBOT_SYSLOG_FILE
     Remove Environment Variable    ROBOT_SYSLOG_LEVEL
     Remove File    ${SYSLOG}
+    Remove File    ${SUBSYSLOG}
+    Remove Directory    %{TEMPDIR}${/}subdir

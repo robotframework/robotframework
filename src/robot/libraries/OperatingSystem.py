@@ -29,7 +29,8 @@ from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          is_unicode, normpath, parse_time, plural_or_not,
                          secs_to_timestamp, secs_to_timestr, seq2str,
                          set_env_var, timestr_to_secs, unic, CONSOLE_ENCODING,
-                         IRONPYTHON, JYTHON, PY2, PY3, SYSTEM_ENCODING, WINDOWS)
+                         IRONPYTHON, JYTHON, PY2, PY3, SYSTEM_ENCODING,
+                         WINDOWS, ensure_basepath)
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes.')
@@ -570,10 +571,7 @@ class OperatingSystem(object):
         self._link("Created file '%s'.", path)
 
     def _write_to_file(self, path, content, encoding=None, mode='w'):
-        path = self._absnorm(path)
-        parent = os.path.dirname(path)
-        if not os.path.exists(parent):
-            os.makedirs(parent)
+        ensure_basepath(path)
         # io.open() only accepts Unicode, not byte-strings, in text mode.
         # We expect possible byte-strings to be all ASCII.
         if PY2 and isinstance(content, str) and 'b' not in mode:
@@ -904,9 +902,7 @@ class OperatingSystem(object):
             base = os.path.basename(source)
             destination = os.path.join(destination, base)
         else:
-            parent = os.path.dirname(destination)
-            if not os.path.exists(parent):
-                os.makedirs(parent)
+            ensure_basepath(destination)
         return source, destination
 
     def move_directory(self, source, destination):
@@ -1380,7 +1376,7 @@ class OperatingSystem(object):
         path = self.normalize_path(path)
         try:
             return abspath(path)
-        except ValueError:  # http://ironpython.codeplex.com/workitem/29489
+        except ValueError:  # https://github.com/IronLanguages/ironpython2/issues/137
             return path
 
     def _fail(self, *messages):

@@ -58,7 +58,8 @@ from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method
 from .robotio import binary_file_writer, file_writer
-from .robotpath import abspath, find_file, get_link_path, normpath
+from .robotpath import (abspath, find_file, get_link_path, normpath,
+                        ensure_basepath)
 from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,

@@ -22,6 +22,7 @@ from .console import ConsoleOutput
 from .filelogger import FileLogger
 from .loggerhelper import AbstractLogger, AbstractLoggerProxy
 from .stdoutlogsplitter import StdoutLogSplitter
+from robot.utils import ensure_basepath
 
 
 class Logger(AbstractLogger):
@@ -100,6 +101,8 @@ class Logger(AbstractLogger):
             level = os.environ.get('ROBOT_SYSLOG_LEVEL', level)
         if path.upper() == 'NONE':
             return
+        else:
+            ensure_basepath(path)
         try:
             syslog = FileLogger(path, level)
         except DataError as err:

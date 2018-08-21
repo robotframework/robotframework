@@ -174,3 +174,13 @@ def _find_relative_path(path, basedir):
 def _is_valid_file(path):
     return os.path.isfile(path) or \
         (os.path.isdir(path) and os.path.isfile(os.path.join(path, '__init__.py')))
+
+def ensure_basepath(path):
+    path = normpath(path)
+    parent = os.path.dirname(path)
+    try:
+        if not os.path.exists(parent):
+            os.makedirs(parent)
+    except EnvironmentError as err:
+        raise DataError("Creating directory '%s' failed: %s"
+                        % (parent, err.strerror))

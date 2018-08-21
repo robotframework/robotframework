@@ -6,18 +6,25 @@ Resource          cli_resource.robot
 
 *** Variables ***
 ${SYSLOG}         %{TEMPDIR}${/}syslog.txt
+${SUBSYSLOG}      %{TEMPDIR}${/}subdir${/}syslog.txt
 
 *** Test Cases ***
 No syslog environment variable file
     Run Some Tests
     File Should Not Exist    ${SYSLOG}
 
-Setting syslog sile
+Setting syslog file
     [Documentation]    Also tests that syslog has correct line separators
     Set Environment Variable    ROBOT_SYSLOG_FILE    ${SYSLOG}
     Run Some Tests
     File Should Not Be Empty    ${SYSLOG}
     File Should Have Correct Line Separators    ${SYSLOG}
+
+Setting syslog file in non existing sub directory
+    [Documentation]    Syslog should be generated along with its sub directory
+    Set Environment Variable    ROBOT_SYSLOG_FILE    ${SUBSYSLOG}
+    Run Some Tests
+    File Should Not Be Empty    ${SUBSYSLOG}
 
 Syslog file set to NONE
     Set Environment Variable    ROBOT_SYSLOG_FILE    none
@@ -54,3 +61,5 @@ Reset syslog
     Remove Environment Variable    ROBOT_SYSLOG_FILE
     Remove Environment Variable    ROBOT_SYSLOG_LEVEL
     Remove File    ${SYSLOG}
+    Remove File    ${SUBSYSLOG}
+    Remove Directory    %{TEMPDIR}${/}subdir
