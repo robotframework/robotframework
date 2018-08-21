@@ -102,6 +102,9 @@ class Remote(object):
                               result.continuable)
         return result.return_
 
+    def reset_connection(self, timeout=None):
+        self._client.reset_connection(timeout=timeout)
+
 
 class ArgumentCoercer(object):
     binary = re.compile('[\x00-\x08\x0B\x0C\x0E-\x1F]')
@@ -197,12 +200,27 @@ class RemoteResult(object):
 class XmlRpcRemoteClient(object):
 
     def __init__(self, uri, timeout=None):
+        self.uri = uri
+        self.timeout = timeout
+        self._create_connection(uri, timeout)
+
+    def _create_connection(self, uri, timeout):
         if uri.startswith('https://'):
             transport = TimeoutHTTPSTransport(timeout=timeout)
         else:
             transport = TimeoutHTTPTransport(timeout=timeout)
         self._server = xmlrpclib.ServerProxy(uri, encoding='UTF-8',
                                              transport=transport)
+
+    def reset_connection(self, uri=None, timeout=None):
+        uri = self.uri if uri is None else uri
+        timeout = self.timeout if timeout is None else timeout
+        try:
+            self._server.close()
+            self._server = None
+        except:
+            pass
+        self._create_connection(uri, timeout)
 
     def get_keyword_names(self):
         try:
