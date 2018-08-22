@@ -13,17 +13,25 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-import inspect
-if sys.platform.startswith('java'):
-    from java.lang import Class
-    from java.util import List, Map
-
 from robot.errors import DataError
-from robot.utils import PY2
+from robot.utils import JYTHON, PY2
 from robot.variables import is_dict_var, is_list_var, is_scalar_var
 
 from .argumentspec import ArgumentSpec
+
+
+if PY2:
+    from inspect import getargspec, ismethod
+
+    def getfullargspec(func):
+        return getargspec(func) + (None, None, None)
+
+else:
+    from inspect import getfullargspec, ismethod
+
+if JYTHON:
+    from java.lang import Class
+    from java.util import List, Map
 
 
 class _ArgumentParser(object):
@@ -38,23 +46,33 @@ class _ArgumentParser(object):
 class PythonArgumentParser(_ArgumentParser):
 
     def parse(self, handler, name=None):
-        if PY2:
-            args, varargs, varkw, defaults = inspect.getargspec(handler)
-            kwonlyargs = kwonlydefaults = annotations = None
-        else:
-            args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, \
-                    annotations = inspect.getfullargspec(handler)
-        if inspect.ismethod(handler) or handler.__name__ == '__init__':
+        args, varargs, kwargs, defaults, kwonly, kwonlydefaults, annotations \
+                = getfullargspec(handler)
+        if ismethod(handler) or handler.__name__ == '__init__':
             args = args[1:]  # drop 'self'
-        defaults = list(defaults) if defaults else []
-        return ArgumentSpec(name, self._type,
-                            positional=args,
-                            defaults=defaults,
-                            varargs=varargs,
-                            kwargs=varkw,
-                            kwonlyargs=kwonlyargs,
-                            kwonlydefaults=kwonlydefaults,
-                            annotations=annotations)
+        return ArgumentSpec(
+            name, self._type,
+            positional=args,
+            varargs=varargs,
+            kwargs=kwargs,
+            kwonlyargs=kwonly,
+            defaults=self._get_defaults(args, defaults, kwonlydefaults),
+            types=self._get_types(annotations)
+        )
+
+    def _get_defaults(self, args, default_values, kwonlydefaults):
+        if default_values:
+            defaults = dict(zip(args[-len(default_values):], default_values))
+        else:
+            defaults = {}
+        if kwonlydefaults:
+            defaults.update(kwonlydefaults)
+        return defaults
+
+    def _get_types(self, annotations):
+        if not annotations:
+            return {}
+        return {n: v for n, v in annotations.items() if isinstance(v, type)}
 
 
 class JavaArgumentParser(_ArgumentParser):
@@ -105,12 +123,15 @@ class JavaArgumentParser(_ArgumentParser):
     def _format_arg_spec(self, name, positional=0, defaults=0, varargs=False,
                          kwargs=False):
         positional = ['arg%d' % (i+1) for i in range(positional)]
-        defaults = [''] * defaults
+        if defaults:
+            defaults = {name: '' for name in positional[-defaults:]}
+        else:
+            defaults = {}
         return ArgumentSpec(name, self._type,
                             positional=positional,
-                            defaults=defaults,
                             varargs='*varargs' if varargs else None,
                             kwargs='**kwargs' if kwargs else None,
+                            defaults=defaults,
                             supports_named=False)
 
 
@@ -168,19 +189,17 @@ class _ArgumentSpecParser(_ArgumentParser):
 
     def _add_arg_with_default(self, arg, result, kw_only_arg=False):
         arg, default = arg.split('=', 1)
-        self._add_arg(arg, result, kw_only_arg)
-        if not kw_only_arg:
-            result.defaults.append(default)
-        else:
-            arg = self._format_arg(arg)
-            result.kwonlydefaults[arg] = default
+        arg = self._add_arg(arg, result, kw_only_arg)
+        result.defaults[arg] = default
 
     def _format_arg(self, arg):
         return arg
 
     def _add_arg(self, arg, result, kw_only_arg=False):
+        arg = self._format_arg(arg)
         target = result.positional if not kw_only_arg else result.kwonlyargs
-        target.append(self._format_arg(arg))
+        target.append(arg)
+        return arg
 
 
 class DynamicArgumentParser(_ArgumentSpecParser):

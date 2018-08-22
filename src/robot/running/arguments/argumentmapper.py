@@ -19,6 +19,7 @@ from robot.errors import DataError
 class ArgumentMapper(object):
 
     def __init__(self, argspec):
+        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
 
     def map(self, positional, named, replace_defaults=True):
@@ -33,9 +34,11 @@ class ArgumentMapper(object):
 class KeywordCallTemplate(object):
 
     def __init__(self, argspec):
+        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
-        self.args = [None] * argspec.minargs \
-                    + [DefaultValue(d) for d in argspec.defaults]
+        self.args = [None if arg not in argspec.defaults
+                     else DefaultValue(argspec.defaults[arg])
+                     for arg in argspec.positional]
         self.kwargs = []
 
     def fill_positional(self, positional):
@@ -54,7 +57,7 @@ class KeywordCallTemplate(object):
         named_names = {name for name, _ in named}
         for name in spec.kwonlyargs:
             if name not in named_names:
-                value = DefaultValue(spec.kwonlydefaults[name])
+                value = DefaultValue(spec.defaults[name])
                 self.kwargs.append((name, value))
 
     def replace_defaults(self):

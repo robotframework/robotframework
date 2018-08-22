@@ -114,32 +114,23 @@ class KeywordDocBuilder(object):
         return kw.doc
 
     def _get_args(self, argspec):
-        positional = [self._format_arg(arg, argspec)
-                      for arg in argspec.positional]
-        required = positional[:argspec.minargs]
-        defaults = zip(positional[argspec.minargs:], argspec.defaults)
-        args = required + ['%s=%s' % item for item in defaults]
+        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
+        args = [self._format_arg(arg, argspec) for arg in argspec.positional]
         if argspec.varargs:
             args.append('*%s' % self._format_arg(argspec.varargs, argspec))
         if argspec.kwonlyargs:
             if not argspec.varargs:
                 args.append('*')
-            args.extend(self._format_kwo(arg, argspec)
+            args.extend(self._format_arg(arg, argspec)
                         for arg in argspec.kwonlyargs)
         if argspec.kwargs:
             args.append('**%s' % self._format_arg(argspec.kwargs, argspec))
         return args
 
-    def _format_arg(self, name, argspec):
-        if name in argspec.annotations:
-            annotation = argspec.annotations[name]
-            if isinstance(annotation, type):
-                annotation = annotation.__name__
-            return '%s: %s' % (name, annotation)
-        return name
-
-    def _format_kwo(self, name, argspec):
-        arg = self._format_arg(name, argspec)
-        if name in argspec.kwonlydefaults:
-            return '%s=%s' % (arg, argspec.kwonlydefaults[name])
-        return arg
+    def _format_arg(self, arg, argspec):
+        result = arg
+        if arg in argspec.types:
+            result = '%s: %s' % (result, argspec.types[arg].__name__)
+        if arg in argspec.defaults:
+            result = '%s=%s' % (result, argspec.defaults[arg])
+        return result

@@ -133,15 +133,15 @@ class TestGetArgSpec(unittest.TestCase):
     def test_defaults(self):
         self._verify('${arg1} ${arg2}=default @{varargs}',
                      args=['arg1', 'arg2'],
-                     defaults=['default'],
+                     defaults={'arg2': 'default'},
                      varargs='varargs')
         self._verify('${arg1} ${arg2}= @{varargs}',
                      args=['arg1', 'arg2'],
-                     defaults=[''],
+                     defaults={'arg2': ''},
                      varargs='varargs')
-        self._verify('${arg1}=default1 ${arg2}=default2 ${arg3}=default3',
+        self._verify('${arg1}=d1 ${arg2}=d2 ${arg3}=d3',
                      args=['arg1', 'arg2', 'arg3'],
-                     defaults=['default1', 'default2', 'default3'])
+                     defaults={'arg1': 'd1', 'arg2': 'd2', 'arg3': 'd3'})
 
     def test_vararg(self):
         self._verify('@{varargs}', varargs='varargs')
@@ -157,14 +157,14 @@ class TestGetArgSpec(unittest.TestCase):
     def test_kwonlydefaults(self):
         self._verify('@{} ${ko1} ${ko2}=xxx',
                      kwonlyargs=['ko1', 'ko2'],
-                     kwonlydefaults={'ko2': 'xxx'})
+                     defaults={'ko2': 'xxx'})
         self._verify('@{} ${ko1}=xxx ${ko2}',
                      kwonlyargs=['ko1', 'ko2'],
-                     kwonlydefaults={'ko1': 'xxx'})
+                     defaults={'ko1': 'xxx'})
         self._verify('@{v} ${ko1}=foo ${ko2} ${ko3}=',
                      varargs='v',
                      kwonlyargs=['ko1', 'ko2', 'ko3'],
-                     kwonlydefaults={'ko1': 'foo', 'ko3': ''})
+                     defaults={'ko1': 'foo', 'ko3': ''})
 
     def test_kwargs(self):
         self._verify('&{kwargs}', kwargs='kwargs')
@@ -176,20 +176,18 @@ class TestGetArgSpec(unittest.TestCase):
                      kwargs='kwargs')
         self._verify('${a1} ${a2}=ad @{vars} ${k1} ${k2}=kd &{kws}',
                      args=['a1', 'a2'],
-                     defaults=['ad'],
                      varargs='vars',
                      kwonlyargs=['k1', 'k2'],
-                     kwonlydefaults={'k2': 'kd'},
+                     defaults={'a2': 'ad', 'k2': 'kd'},
                      kwargs='kws')
 
-    def _verify(self, in_args, args=[], defaults=[], varargs=None,
-                kwonlyargs=[], kwonlydefaults={}, kwargs=None):
+    def _verify(self, in_args, args=[], defaults={}, varargs=None,
+                kwonlyargs=[], kwargs=None):
         argspec = self._parse(in_args)
         assert_equal(argspec.positional, args)
         assert_equal(argspec.defaults, defaults)
         assert_equal(argspec.varargs, varargs)
         assert_equal(argspec.kwonlyargs, kwonlyargs)
-        assert_equal(argspec.kwonlydefaults, kwonlydefaults)
         assert_equal(argspec.kwargs, kwargs)
 
     def _parse(self, in_args):

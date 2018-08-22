@@ -69,14 +69,17 @@ Keyword-only Arguments
     Keyword Arguments Should Be      0    *    kwo
     Keyword Arguments Should Be      1    *varargs    kwo    another=default
 
-Annotations
+Type Annotations
     [Tags]    require-py3
     Run Libdoc And Parse Output      ${TESTDATADIR}/Annotations.py
     Keyword Arguments Should Be      0    integer: int    boolean: bool    string: str
-    Keyword Arguments Should Be      1    argument: One of the usages in PEP-3107
-    Keyword Arguments Should Be      2    integer: int=42    list_: list=None
-    Keyword Arguments Should Be      3    *    kwo: int    with_default: str=value
-    Keyword Arguments Should Be      4    *varargs: int    **kwargs: This feels odd...
+    Keyword Arguments Should Be      1    integer: int=42    list_: list=None
+    Keyword Arguments Should Be      2    *    kwo: int    with_default: str=value
+    Keyword Arguments Should Be      3    *varargs: int    **kwargs: bool
+
+Non-type Annotations are ignored
+    [Tags]    require-py3
+    Keyword Arguments Should Be      4    arg    *varargs
 
 Documentation set in __init__
     Run Libdoc And Parse Output      ${TESTDATADIR}/DocSetInInit.py

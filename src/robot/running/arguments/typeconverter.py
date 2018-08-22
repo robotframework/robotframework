@@ -35,6 +35,7 @@ from robot.utils import FALSE_STRINGS, TRUE_STRINGS, PY2, is_unicode
 class TypeConverter(object):
 
     def __init__(self, argspec):
+        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
         self._converters = OrderedDict([
             (dict, self._convert_dict),
@@ -78,14 +79,11 @@ class TypeConverter(object):
     def _convert(self, name, value):
         if not is_unicode(value):
             return value
-        if name in self._argspec.annotations:
-            type_ = self._argspec.annotations[name]
+        if name in self._argspec.types:
+            type_ = self._argspec.types[name]
             explicit_type = True
-        elif name in self._argspec.default_values:
-            type_ = type(self._argspec.default_values[name])
-            explicit_type = False
-        elif name in self._argspec.kwonlydefaults:
-            type_ = type(self._argspec.kwonlydefaults[name])
+        elif name in self._argspec.defaults:
+            type_ = type(self._argspec.defaults[name])
             explicit_type = False
         else:
             return value

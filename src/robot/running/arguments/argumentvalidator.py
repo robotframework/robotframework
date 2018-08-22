@@ -21,6 +21,7 @@ from robot.variables import is_list_var
 class ArgumentValidator(object):
 
     def __init__(self, argspec):
+        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
 
     def validate(self, positional, named, dryrun=False):
@@ -70,7 +71,8 @@ class ArgumentValidator(object):
                                 % (spec.type, spec.name, name))
 
     def _validate_no_named_only_missing(self, named, spec):
-        missing = set(spec.reqkwargs) - set(named)
+        defined = set(named) | set(spec.defaults)
+        missing = [arg for arg in spec.kwonlyargs if arg not in defined]
         if missing:
             raise DataError("%s '%s' missing named-only argument%s %s."
                             % (spec.type, spec.name, plural_or_not(missing),
