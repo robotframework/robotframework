@@ -38,6 +38,10 @@ Copy Dictionary
     Remove From Dictionary    ${copy}    a    ${3}
     Compare To Expected String    ${copy}    {'b':2}
     Compare To Expected String    ${D3}    {'a': 1, 'b': 2, 3: None}
+    ${inner_dict} =    Create Dictionary    c=${D4C}
+    ${deep_copy} =    Copy Dictionary    ${inner_dict}    deepcopy=${True}
+    Set To Dictionary    ${D4C}    d=3
+    Compare To Expected String    ${deep_copy}    {'c':{'a': '1', 'b': '2'}}
 
 Get Dictionary Keys
     ${keys} =    Get Dictionary Keys    ${D3B}
@@ -274,5 +278,7 @@ Create Dictionaries For Testing
     Set Test Variable    \${D3}
     ${D3B}    Create Dictionary    a=${1}    b=${2}    c=
     Set Test Variable    \${D3B}
+    ${D4C} =    Create Dictionary    a=1    b=2
+    Set Test Variable    \${D4C}
     ${BIG} =    Evaluate    {'a': 1, 'B': 2, 3: [42], 'd': '', '': 'e', (): {}}
     Set Test Variable    \${BIG}

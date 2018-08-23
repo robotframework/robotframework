@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import copy
 from robot.api import logger
 from robot.utils import (is_dict_like, is_list_like, is_number, is_string, is_truthy, plural_or_not,
                          seq2str, seq2str2, type_name, unic, Matcher)
@@ -261,13 +262,17 @@ class _List(object):
         except ValueError:
             return -1
 
-    def copy_list(self, list_):
+    def copy_list(self, list_, deepcopy=False):
         """Returns a copy of the given list.
 
         The given list is never altered by this keyword.
+
+        The type of the copy can be altered by deepcopy argument:
+        | True | Return a deep copy of the list |
+        | False | Return a shallow copy of the list |
         """
         self._validate_list(list_)
-        return list_[:]
+        return copy.deepcopy(list_) if deepcopy else list_[:]
 
     def reverse_list(self, list_):
         """Reverses the given list in place.
@@ -556,13 +561,17 @@ class _Dictionary(object):
         remove_keys = [k for k in dictionary if k not in keys]
         self.remove_from_dictionary(dictionary, *remove_keys)
 
-    def copy_dictionary(self, dictionary):
+    def copy_dictionary(self, dictionary, deepcopy=False):
         """Returns a copy of the given dictionary.
 
         The given dictionary is never altered by this keyword.
+
+        The type of the copy can be altered by deepcopy argument:
+        | True | Return a deep copy of the list |
+        | False | Return a shallow copy of the list |
         """
         self._validate_dictionary(dictionary)
-        return dictionary.copy()
+        return copy.deepcopy(dictionary) if deepcopy else dictionary.copy()
 
     def get_dictionary_keys(self, dictionary):
         """Returns keys of the given ``dictionary``.

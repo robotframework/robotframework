@@ -137,6 +137,10 @@ Copy List
     ${copy} =    Copy List    ${L2}
     Append To List    ${L2}    1    2    3
     Compare To Expected String    ${copy}    ['1', 2]
+    ${inner_list} =    Create List    ${6}   ${L5C}
+    ${deep_copy} =   Copy List    ${inner_list}    deepcopy=${True}
+    Append To List    ${L5C}    7
+    Compare To Expected String    ${deep_copy}    [6, ['4', 5]]
 
 Reserve List
     Reverse List    ${LONG}
@@ -602,6 +606,8 @@ Create Lists For The Tests
     Set Test Variable    \${L3B}
     ${L4} =    Create List    41    ${42}    43    44
     Set Test Variable    \${L4}
+    ${L5C} =    Create List   4   ${5}
+    Set Test Variable    \${L5C}
     ${LONG} =    Combine Lists    ${L1}    ${L2}    ${L4}    ${L2}
     Set Test Variable    \${LONG}
     ${STRINGS} =    Create List    a    B    b    wOrD    WOrd
