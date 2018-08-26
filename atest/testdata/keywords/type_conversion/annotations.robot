@@ -226,9 +226,9 @@ Mapping abc
 
 Invalid mapping abc
     [Template]           Conversion Should Fail
-    Mapping              foobar
-    Mapping              []
-    Mutable mapping      barfoo                    type=mapping
+    Mapping              foobar                    type=dictionary
+    Mapping              []                        type=dictionary
+    Mutable mapping      barfoo                    type=dictionary
 
 Set abc
     Set abc              set()                     set()

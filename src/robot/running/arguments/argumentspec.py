@@ -15,9 +15,9 @@
 
 import sys
 
+from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
 from .argumentresolver import ArgumentResolver
-from .typeconverter import TypeConverter
 
 
 class ArgumentSpec(object):
@@ -50,7 +50,7 @@ class ArgumentSpec(object):
                                     resolve_variables_until, dict_to_kwargs)
         positional, named = resolver.resolve(arguments, variables)
         if self.types or self.defaults:
-            converter = TypeConverter(self)
+            converter = ArgumentConverter(self)
             positional, named = converter.convert(positional, named)
         return positional, named
 

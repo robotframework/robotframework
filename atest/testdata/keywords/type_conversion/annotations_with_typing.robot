@@ -79,6 +79,6 @@ Mapping with params
 
 Invalid mapping
     [Template]                Conversion Should Fail
-    Mapping                   {1: ooops}
-    Mapping                   []
-    Mapping with params       ooops                       type=mapping
+    Mapping                   {1: ooops}                  type=dictionary
+    Mapping                   []                          type=dictionary
+    Mapping with params       ooops                       type=dictionary
