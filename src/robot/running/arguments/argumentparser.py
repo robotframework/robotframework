@@ -57,7 +57,7 @@ class PythonArgumentParser(_ArgumentParser):
             kwargs=kwargs,
             kwonlyargs=kwonly,
             defaults=self._get_defaults(args, defaults, kwonlydefaults),
-            types=self._get_types(annotations)
+            types=self._get_types(handler, annotations)
         )
 
     def _get_defaults(self, args, default_values, kwonlydefaults):
@@ -69,10 +69,11 @@ class PythonArgumentParser(_ArgumentParser):
             defaults.update(kwonlydefaults)
         return defaults
 
-    def _get_types(self, annotations):
-        if not annotations:
+    def _get_types(self, handler, annotations):
+        types = getattr(handler, 'robot_types', annotations)
+        if not types:
             return {}
-        return {n: v for n, v in annotations.items() if isinstance(v, type)}
+        return {n: v for n, v in types.items() if isinstance(v, type)}
 
 
 class JavaArgumentParser(_ArgumentParser):

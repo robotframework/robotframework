@@ -50,7 +50,7 @@ class TypeConverter(object):
 
     @classmethod
     def converter_for(cls, type_):
-        if issubclass(type_, (str, unicode)) or not isinstance(type_, type):
+        if issubclass(type_, unicode) or not isinstance(type_, type):
             return None
         if type_ in cls._converters:
             return cls._converters[type_]
@@ -88,7 +88,7 @@ class TypeConverter(object):
         if expected is set:
             # On Python 2 it doesn't handle sets at all.
             if PY2:
-                return value
+                raise ValueError    # FIXME: Better error reporting needed
             # There is no way to define an empty set.
             if value == 'set()':
                 return set()
@@ -154,9 +154,12 @@ class DecimalConverter(TypeConverter):
 class BytesConverter(TypeConverter):
     type = bytes
     abc = getattr(abc, 'ByteString', None)    # ByteString is new in Python 3
+    type_name = 'bytes'                       # Needed on Python 2
     convert_none = False
 
     def _convert(self, value, explicit_type=True):
+        if PY2 and not explicit_type:
+            return value
         try:
             return value.encode('latin-1')
         except UnicodeEncodeError:
@@ -253,9 +256,7 @@ class FrozenSetConverter(TypeConverter):
 
     def _convert(self, value, explicit_type=True):
         # There are issues w/ literal_eval. See self._literal_eval for details.
-        if PY2:
-            return value
-        if value == 'frozenset()':
+        if value == 'frozenset()' and not PY2:
             return frozenset()
         return frozenset(self._literal_eval(value, set))
 
