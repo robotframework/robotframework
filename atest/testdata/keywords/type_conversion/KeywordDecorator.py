@@ -11,11 +11,7 @@ except ImportError:
         pass
 
 from robot.api.deco import keyword
-from robot.utils import PY2
-
-
-if not PY2:
-    unicode = str
+from robot.utils import PY2, unicode
 
 
 class MyEnum(Enum):

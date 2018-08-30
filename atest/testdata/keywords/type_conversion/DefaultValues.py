@@ -5,10 +5,7 @@ except ImportError:    # Python < 3.4, unless installed separately
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 
-try:
-    unicode
-except NameError:
-    unicode = str
+from robot.utils import unicode
 
 
 class MyEnum(Enum):

@@ -17,7 +17,6 @@ from ast import literal_eval
 from collections import OrderedDict
 try:
     from collections import abc
-    unicode = str
 except ImportError:    # Python 2
     import collections as abc
 from datetime import datetime, date, timedelta
@@ -30,7 +29,7 @@ except ImportError:    # Standard in Py 3.4+ but can be separately installed
 from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import FALSE_STRINGS, TRUE_STRINGS, PY2
+from robot.utils import FALSE_STRINGS, TRUE_STRINGS, PY2, unicode
 
 
 class TypeConverter(object):

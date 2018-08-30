@@ -3,20 +3,19 @@ from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
                                  assert_raises_with_msg)
 
 from robot.model.itemlist import ItemList
-from robot.utils import PY3
-
-
-if PY3:
-    unicode = str
+from robot.utils import unicode
 
 
 class Object(object):
     attr = 1
+
     def __init__(self, id=None):
         self.id = id
 
+
 class OldStyle:
     pass
+
 
 class CustomItems(ItemList):
     pass

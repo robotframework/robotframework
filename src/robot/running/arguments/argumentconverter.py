@@ -13,13 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_unicode, PY3
+from robot.utils import is_unicode
 
 from .typeconverters import TypeConverter
-
-
-if PY3:
-    unicode = str
 
 
 class ArgumentConverter(object):
