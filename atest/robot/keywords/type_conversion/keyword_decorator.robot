@@ -173,5 +173,5 @@ Invalid type spec causes error
     Check Test Case    ${TESTNAME}
     ${error} =    Catenate
     ...    Adding keyword 'invalid_type_spec' to library 'KeywordDecorator' failed:
-    ...    Type information must be given as a dictionary, got string.
+    ...    Type information must be given as a dictionary or a list, got string.
     Check Log Message    ${ERRORS[0]}    ${error}    ERROR
