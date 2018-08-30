@@ -121,6 +121,9 @@ Invalid set abc
 Unknown types are not converted
     Check Test Case    ${TESTNAME}
 
+Non-type values don't cause errors
+    Check Test Case    ${TESTNAME}
+
 Positional as named
     Check Test Case    ${TESTNAME}
 

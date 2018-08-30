@@ -105,6 +105,10 @@ def unknown(argument: Unknown, expected=None):
     _validate_type(argument, expected)
 
 
+def non_type(argument: 'this is string, not type', expected=None):
+    _validate_type(argument, expected)
+
+
 def varargs(*argument: int, expected=None):
     _validate_type(argument, expected)
 

@@ -15,6 +15,9 @@
 
 import sys
 
+from robot.errors import DataError
+from robot.utils import is_dict_like, plural_or_not as s, seq2str, type_name
+
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
 from .argumentresolver import ArgumentResolver
@@ -34,6 +37,22 @@ class ArgumentSpec(object):
         self.defaults = defaults or {}
         self.types = types or {}
         self.supports_named = supports_named
+        if types:
+            self._validate_types(types)
+
+    def _validate_types(self, types):
+        if not is_dict_like(types):
+            raise DataError('Type information must be given as a dictionary, '
+                            'got %s.' % type_name(types))
+        names = set(self.positional + self.kwonlyargs + ['return'])
+        if self.varargs:
+            names.add(self.varargs)
+        if self.kwargs:
+            names.add(self.kwargs)
+        extra = sorted(t for t in types if t not in names)
+        if extra:
+            raise DataError('Type information given to non-existing '
+                            'argument%s %s.' % (s(extra), seq2str(extra)))
 
     @property
     def minargs(self):

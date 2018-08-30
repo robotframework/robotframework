@@ -49,7 +49,7 @@ class TypeConverter(object):
 
     @classmethod
     def converter_for(cls, type_):
-        if issubclass(type_, unicode) or not isinstance(type_, type):
+        if not isinstance(type_, type) or issubclass(type_, unicode):
             return None
         if type_ in cls._converters:
             return cls._converters[type_]

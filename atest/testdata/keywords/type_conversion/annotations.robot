@@ -255,6 +255,14 @@ Unknown types are not converted
     Unknown              none                      'none'
     Unknown              []                        '[]'
 
+Non-type values don't cause errors
+    Non type             foo                       'foo'
+    Non type             1                         '1'
+    Non type             true                      'true'
+    Non type             None                      'None'
+    Non type             none                      'none'
+    Non type             []                        '[]'
+
 Positional as named
     Integer              argument=-1               expected=-1
     Float                argument=1e2              expected=100.0

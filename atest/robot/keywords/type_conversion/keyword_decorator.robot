@@ -127,6 +127,9 @@ Invalid set abc
 Unknown types are not converted
     Check Test Case    ${TESTNAME}
 
+Non-type values don't cause errors
+    Check Test Case    ${TESTNAME}
+
 Positional as named
     Check Test Case    ${TESTNAME}
 
@@ -158,3 +161,17 @@ Non-strings are not converted
 
 String None is converted to None object
     Check Test Case    ${TESTNAME}
+
+Non-matching argument name causes error
+    Check Test Case    ${TESTNAME}
+    ${error} =    Catenate
+    ...    Adding keyword 'non_matching_name' to library 'KeywordDecorator' failed:
+    ...    Type information given to non-existing arguments 'no_match' and 'xxx'.
+    Check Log Message    ${ERRORS[1]}    ${error}    ERROR
+
+Invalid type spec causes error
+    Check Test Case    ${TESTNAME}
+    ${error} =    Catenate
+    ...    Adding keyword 'invalid_type_spec' to library 'KeywordDecorator' failed:
+    ...    Type information must be given as a dictionary, got string.
+    Check Log Message    ${ERRORS[0]}    ${error}    ERROR
