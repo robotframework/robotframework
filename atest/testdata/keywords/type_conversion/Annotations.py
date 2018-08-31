@@ -3,6 +3,8 @@ from datetime import datetime, date, timedelta
 from decimal import Decimal
 from enum import Enum
 
+from robot.api.deco import keyword
+
 
 class MyEnum(Enum):
     FOO = 1
@@ -118,6 +120,26 @@ def kwargs(expected=None, **argument: int):
 
 
 def kwonly(*, argument: float, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types={'argument': timedelta})
+def types_via_keyword_deco_override(argument: int, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(name='Empty type dict via @keyword overrides', types={})
+def empty_type_dict_via_keyword_deco_overrides(argument: int, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(name='Empty type list via @keyword overrides', types=[])
+def empty_type_list_via_keyword_deco_overrides(argument: int, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(name="@keyword without types doesn't override")
+def keyword_deco_alone_does_not_override(argument: int, expected=None):
     _validate_type(argument, expected)
 
 

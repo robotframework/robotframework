@@ -331,3 +331,9 @@ String None is converted to None object
     DateTime
     Date
     Timedelta
+
+@keyword decorator overrides annotations
+    Types via keyword deco override            42    timedelta(seconds=42)
+    Empty type dict via @keyword overrides     42    u'42'
+    Empty type list via @keyword overrides     42    u'42'
+    @keyword without types doesn't override    42    42

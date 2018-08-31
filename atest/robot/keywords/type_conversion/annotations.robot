@@ -153,3 +153,6 @@ Non-strings are not converted
 
 String None is converted to None object
     Check Test Case    ${TESTNAME}
+
+@keyword decorator overrides annotations
+    Check Test Case    ${TESTNAME}
