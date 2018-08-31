@@ -39,12 +39,21 @@ class Interpreter(object):
             output = subprocess.check_output(self.interpreter + ['-V'],
                                              stderr=subprocess.STDOUT,
                                              encoding='UTF-8')
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             raise ValueError('Invalid interpreter: %s' % self.path)
         name, version = output.split()[:2]
         name = name if 'PyPy' not in output else 'PyPy'
         version = '.'.join(version.split('.')[:2])
         return name, version
+
+    @property
+    def os(self):
+        for condition, name in [(self.is_linux, 'Linux'),
+                                (self.is_osx, 'OS X'),
+                                (self.is_windows, 'Windows')]:
+            if condition:
+                return name
+        return sys.platform
 
     @property
     def excludes(self):
@@ -133,15 +142,6 @@ class Interpreter(object):
         return os.name == 'nt'
 
     @property
-    def os(self):
-        for condition, name in [(self.is_linux, 'Linux'),
-                                (self.is_osx, 'OS X'),
-                                (self.is_windows, 'Windows')]:
-            if condition:
-                return name
-        return sys.platform
-
-    @property
     def runner(self):
         return self.interpreter + [join(ROBOT_PATH, 'run.py')]
 
@@ -160,6 +160,9 @@ class Interpreter(object):
     @property
     def tidy(self):
         return self.interpreter + [join(ROBOT_PATH, 'tidy.py')]
+
+    def __str__(self):
+        return '%s %s on %s' % (self.name, self.version, self.os)
 
 
 class StandaloneInterpreter(Interpreter):
