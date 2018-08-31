@@ -23,7 +23,8 @@ def keyword(name=None, tags=(), types=None):
     name, tags, and argument types, respectively.
 
     Name must be given as a string, tags as a list of strings, and types
-    as a dictionary mapping argument names to types. It is OK to specify
+    either as a dictionary mapping argument names to types or as a list
+    of types mapped to arguments based on position. It is OK to specify
     only some of these, and when specifying types all arguments do not need
     to be typed.
 
@@ -37,8 +38,12 @@ def keyword(name=None, tags=(), types=None):
         def logout():
             # ...
 
-        @keyword(types={'first': float, 'third': bool})
-        def example(first, second, third):
+        @keyword(types={'length': int, 'case_insensitive': bool})
+        def types_as_dict(length, case_insensitive=False):
+            # ...
+
+        @keyword(types=[int, bool])
+        def types_as_list(length, case_insensitive=False):
             # ...
 
     tests.robot::
