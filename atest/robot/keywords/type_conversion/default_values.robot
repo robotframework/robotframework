@@ -66,7 +66,7 @@ Invalid timedelta
     Check Test Case    ${TESTNAME}
 
 Enum
-    [Tags]    require-py3
+    [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
 Invalid enum

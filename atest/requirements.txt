@@ -4,9 +4,9 @@
 docutils >= 0.9
 pygments
 pyyaml
+enum34; python_version < '3.0'
 
 # On Linux installing lxml with pip may require compilation and development
 # headers. Alternatively it can be installed using a package manager like
 # `sudo apt-get install python-lxml`.
-# Notice also that lxml is not compatible with Jython or IronPython.
-lxml
+lxml; platform_python_implementation == 'CPython' or platform_python_implementation == 'PyPy'

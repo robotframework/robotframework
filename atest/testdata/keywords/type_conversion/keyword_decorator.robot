@@ -125,10 +125,12 @@ Invalid timedelta
     Timedelta            01:02:03:04
 
 Enum
+    [Tags]               require-enum
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
 
 Invalid Enum
+    [Tags]               require-enum
     [Template]           Conversion Should Fail
     Enum                 foobar                    type=MyEnum
     Enum                 BAR                       type=MyEnum
@@ -339,7 +341,6 @@ String None is converted to None object
     Dictionary
     Set
     Frozenset
-    Enum
     DateTime
     Date
     Timedelta

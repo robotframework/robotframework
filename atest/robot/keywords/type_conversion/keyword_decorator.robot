@@ -61,9 +61,11 @@ Invalid timedelta
     Check Test Case    ${TESTNAME}
 
 Enum
+    [Tags]             require-enum
     Check Test Case    ${TESTNAME}
 
 Invalid Enum
+    [Tags]             require-enum
     Check Test Case    ${TESTNAME}
 
 NoneType

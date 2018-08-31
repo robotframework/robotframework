@@ -119,7 +119,7 @@ no-ci
   Tests which are not executed at continuous integration. Contains all tests
   tagged with ``manual`` or ``telnet``.
 
-require-yaml, require-docutils, require-pygments, require-lxml, require-screenshot, require-tools.jar
+require-yaml, require-enum, require-docutils, require-pygments, require-lxml, require-screenshot, require-tools.jar
   Require specified Python module or some other external tool to be installed.
   See `Preconditions`_ for details and exclude like ``--exclude require-lxml``
   if needed.
@@ -167,6 +167,9 @@ These Python modules need to be installed:
   highlighting.
 - `PyYAML <http://pyyaml.org/>`__ is required with tests related to YAML
   variable files.
+- `enum34 <https://pypi.org/project/enum34/>`__ (or older
+  `enum <https://pypi.org/project/enum/>`__) by enum conversion tests.
+  This module is included by default in Python 3.4 and newer.
 - `lxml <http://lxml.de/>`__ is needed with XML library tests. Not compatible
   with Jython or IronPython.
 
@@ -179,6 +182,7 @@ individually or by using the provided `<requirements.txt>`__ file:
     pip install 'docutils>=0.9'
     pip install pygments
     pip install pyyaml
+    pip install enum34    # Needed only with Python 2.
     pip install lxml
 
     # Install using requirements.txt
@@ -186,7 +190,7 @@ individually or by using the provided `<requirements.txt>`__ file:
 
 Notice that the lxml module may require compilation on Linux, which in turn
 may require installing development headers of lxml dependencies. Alternatively
-lxml can be installed using a system package manager like
+lxml can be installed using a system package manager with a command like
 ``sudo apt-get install python-lxml``.
 
 Because lxml is not compatible with Jython or IronPython, tests requiring it

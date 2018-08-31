@@ -130,7 +130,7 @@ Invalid timedelta
     Timedelta            01:02:03:04
 
 Enum
-    [Tags]               require-py3
+    [Tags]               require-enum
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
 

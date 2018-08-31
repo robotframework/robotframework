@@ -205,6 +205,30 @@ class TimeDeltaConverter(TypeConverter):
 
 
 @TypeConverter.register
+class EnumConverter(TypeConverter):
+    type = Enum
+
+    def __init__(self, enum=None):
+        self._enum = enum
+
+    @property
+    def type_name(self):
+        return self._enum.__name__ if self._enum else 'enum'
+
+    def get_converter(self, type_):
+        return EnumConverter(type_)
+
+    def _convert(self, value, explicit_type=True):
+        try:
+            # This is compatible with the enum module in Python 3.4, its
+            # enum34 backport, and the older enum module. `self._enum[value]`
+            # wouldn't work with the enum module.
+            return getattr(self._enum, value)
+        except AttributeError:
+            raise ValueError
+
+
+@TypeConverter.register
 class NoneConverter(TypeConverter):
     type = type(None)
 
@@ -284,24 +308,3 @@ class IterableConverter(TypeConverter):
             except ValueError:
                 pass
         raise ValueError
-
-
-@TypeConverter.register
-class EnumConverter(TypeConverter):
-    type = Enum
-
-    def __init__(self, enum=None):
-        self._enum = enum
-
-    @property
-    def type_name(self):
-        return self._enum.__name__ if self._enum else 'enum'
-
-    def get_converter(self, type_):
-        return EnumConverter(type_)
-
-    def _convert(self, value, explicit_type=True):
-        try:
-            return self._enum[value]
-        except KeyError:
-            raise ValueError
