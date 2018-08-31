@@ -164,14 +164,19 @@ except SyntaxError:
     pass
 
 
+@keyword(types='invalid')
+def invalid_type_spec():
+    raise RuntimeError('Should not be executed')
+
+
 @keyword(types={'no_match': int, 'xxx': 42})
 def non_matching_name(argument):
     raise RuntimeError('Should not be executed')
 
 
-@keyword(types='invalid')
-def invalid_type_spec():
-    raise RuntimeError('Should not be executed')
+@keyword(types={'argument': int, 'return': float})
+def return_type(argument, expected=None):
+    _validate_type(argument, expected)
 
 
 def _validate_type(argument, expected):

@@ -25,6 +25,8 @@ class TypeValidator(object):
         self._argspec = argspec
 
     def validate(self, types):
+        if not types:
+            return {}
         if is_dict_like(types):
             return self.validate_type_dict(types)
         if is_list_like(types):
@@ -33,6 +35,8 @@ class TypeValidator(object):
                         'a list, got %s.' % type_name(types))
 
     def validate_type_dict(self, types):
+        # 'return' isn't used for anything yet but it may be shown by Libdoc
+        # in the future. Trying to be forward compatible.
         names = set(self._argspec.argument_names + ['return'])
         extra = [t for t in types if t not in names]
         if extra:

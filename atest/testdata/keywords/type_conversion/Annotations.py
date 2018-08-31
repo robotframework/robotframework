@@ -123,6 +123,11 @@ def kwonly(*, argument: float, expected=None):
     _validate_type(argument, expected)
 
 
+def return_value_annotation(argument: int, expected=None) -> float:
+    _validate_type(argument, expected)
+    return float(argument)
+
+
 @keyword(types={'argument': timedelta})
 def types_via_keyword_deco_override(argument: int, expected=None):
     _validate_type(argument, expected)

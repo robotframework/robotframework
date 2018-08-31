@@ -162,6 +162,13 @@ Non-strings are not converted
 String None is converted to None object
     Check Test Case    ${TESTNAME}
 
+Invalid type spec causes error
+    Check Test Case    ${TESTNAME}
+    ${error} =    Catenate
+    ...    Adding keyword 'invalid_type_spec' to library 'KeywordDecorator' failed:
+    ...    Type information must be given as a dictionary or a list, got string.
+    Check Log Message    ${ERRORS[0]}    ${error}    ERROR
+
 Non-matching argument name causes error
     Check Test Case    ${TESTNAME}
     ${error} =    Catenate
@@ -169,9 +176,6 @@ Non-matching argument name causes error
     ...    Type information given to non-existing arguments 'no_match' and 'xxx'.
     Check Log Message    ${ERRORS[1]}    ${error}    ERROR
 
-Invalid type spec causes error
+Type can be given to `return` without an error
+    [Documentation]    `return` isn't used for anything yet, though.
     Check Test Case    ${TESTNAME}
-    ${error} =    Catenate
-    ...    Adding keyword 'invalid_type_spec' to library 'KeywordDecorator' failed:
-    ...    Type information must be given as a dictionary or a list, got string.
-    Check Log Message    ${ERRORS[0]}    ${error}    ERROR

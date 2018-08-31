@@ -344,10 +344,13 @@ String None is converted to None object
     Date
     Timedelta
 
+Invalid type spec causes error
+    [Documentation]    FAIL No keyword with name 'Invalid type spec' found.
+    Invalid type spec
+
 Non-matching argument name causes error
     [Documentation]    FAIL No keyword with name 'Non matching name' found.
     Non matching name
 
-Invalid type spec causes error
-    [Documentation]    FAIL No keyword with name 'Invalid type spec' found.
-    Invalid type spec
+Type can be given to `return` without an error
+    Return type          42                        42

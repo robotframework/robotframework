@@ -37,7 +37,7 @@ class ArgumentSpec(object):
         self.kwonlyargs = kwonlyargs or []
         self.kwargs = kwargs
         self.defaults = defaults or {}
-        self.types = TypeValidator(self).validate(types) if types else {}
+        self.types = TypeValidator(self).validate(types)
         self.supports_named = supports_named
 
     @property

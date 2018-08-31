@@ -332,6 +332,9 @@ String None is converted to None object
     Date
     Timedelta
 
+Return value annotation causes no error
+    Return value annotation                    42    42
+
 @keyword decorator overrides annotations
     Types via keyword deco override            42    timedelta(seconds=42)
     Empty type dict via @keyword overrides     42    u'42'
