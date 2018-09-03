@@ -250,7 +250,6 @@ class XmlRpcRemoteClient(object):
 # Custom XML-RPC timeouts based on
 # http://stackoverflow.com/questions/2425799/timeout-for-xmlrpclib-client-requests
 
-
 class TimeoutHTTPTransport(xmlrpclib.Transport):
     _connection_class = httplib.HTTPConnection
 
@@ -268,15 +267,15 @@ class TimeoutHTTPTransport(xmlrpclib.Transport):
         return self._connection[1]
 
 
-class TimeoutHTTPSTransport(TimeoutHTTPTransport):
-    _connection_class = httplib.HTTPSConnection
-
-
 if IRONPYTHON:
 
-    class TimeoutTransport(xmlrpclib.Transport):
+    class TimeoutHTTPTransport(xmlrpclib.Transport):
 
         def __init__(self, use_datetime=0, timeout=None):
             xmlrpclib.Transport.__init__(self, use_datetime)
             if timeout:
                 raise RuntimeError('Timeouts are not supported on IronPython.')
+
+
+class TimeoutHTTPSTransport(TimeoutHTTPTransport):
+    _connection_class = httplib.HTTPSConnection
