@@ -162,7 +162,8 @@ These Python modules need to be installed:
 
 - `docutils <http://docutils.sourceforge.net/>`_ is needed with tests related
   to parsing test data in reStructuredText format and with Libdoc tests
-  for documentation in reST format.
+  for documentation in reST format. `Not compatible with IronPython
+  <https://github.com/IronLanguages/ironpython2/issues/113>`__.
 - `Pygments <http://pygments.org/>`_ is needed by Libdoc tests for syntax
   highlighting.
 - `PyYAML <http://pyyaml.org/>`__ is required with tests related to YAML
