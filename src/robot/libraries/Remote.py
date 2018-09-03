@@ -151,20 +151,23 @@ class ArgumentCoercer(object):
 
     def _to_key(self, item):
         item = self._to_string(item)
-        if IRONPYTHON:
-            self._validate_key_on_ironpython(item)
+        self._validate_key(item)
         return item
 
     def _to_string(self, item):
         item = unic(item) if item is not None else ''
         return self._handle_string(item)
 
-    def _validate_key_on_ironpython(self, item):
-        try:
-            return str(item)
-        except UnicodeError:
-            raise ValueError('Dictionary keys cannot contain non-ASCII '
-                             'characters on IronPython. Got %r.' % item)
+    def _validate_key(self, key):
+        if isinstance(key, xmlrpclib.Binary):
+            raise ValueError('Dictionary keys cannot be binary. Got %r.'
+                             % key.data)
+        if IRONPYTHON:
+            try:
+                key.encode('ASCII')
+            except UnicodeError:
+                raise ValueError('Dictionary keys cannot contain non-ASCII '
+                                 'characters on IronPython. Got %r.' % key)
 
 
 class RemoteResult(object):
