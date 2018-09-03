@@ -29,7 +29,7 @@ except ImportError:    # Standard in Py 3.4+ but can be separately installed
 from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import FALSE_STRINGS, TRUE_STRINGS, PY2, unicode
+from robot.utils import FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY2, unicode
 
 
 class TypeConverter(object):
@@ -160,9 +160,10 @@ class BytesConverter(TypeConverter):
         if PY2 and not explicit_type:
             return value
         try:
-            return value.encode('latin-1')
+            value = value.encode('latin-1')
         except UnicodeEncodeError:
             raise ValueError
+        return value if not IRONPYTHON else bytes(value)
 
 
 @TypeConverter.register
@@ -222,7 +223,7 @@ class EnumConverter(TypeConverter):
         try:
             # This is compatible with the enum module in Python 3.4, its
             # enum34 backport, and the older enum module. `self._enum[value]`
-            # wouldn't work with the enum module.
+            # wouldn't work with the old enum module.
             return getattr(self._enum, value)
         except AttributeError:
             raise ValueError
