@@ -40,6 +40,15 @@ Iterable with params
 Invalid iterable
     Check Test Case    ${TESTNAME}
 
+Sequence
+    Check Test Case    ${TESTNAME}
+
+Sequence with params
+    Check Test Case    ${TESTNAME}
+
+Invalid sequence
+    Check Test Case    ${TESTNAME}
+
 Mapping
     Check Test Case    ${TESTNAME}
 

@@ -106,6 +106,12 @@ Iterable abc
 Invalid iterable abc
     Check Test Case    ${TESTNAME}
 
+Sequence abc
+    Check Test Case    ${TESTNAME}
+
+Invalid sequence abc
+    Check Test Case    ${TESTNAME}
+
 Mapping abc
     Check Test Case    ${TESTNAME}
 

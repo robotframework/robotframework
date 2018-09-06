@@ -1,10 +1,11 @@
 *** Keywords ***
 Conversion Should Fail
-    [Arguments]    ${kw}    @{args}    ${type}=${kw.lower()}    &{kwargs}
-    ${error} =    Run Keyword And Expect Error    *    ${kw}    @{args}    &{kwargs}
-    ${arg} =    Evaluate    (list($args) + list($kwargs.values()))[0]
-    Should Be Equal    ${error}
-    ...    ValueError: Argument 'argument' cannot be converted to ${type}, got '${arg}'.
+    [Arguments]    ${kw}    @{args}    ${error}=    ${type}=${kw.lower()}    &{kwargs}
+    ${arg} =    Evaluate    (list($args) + list($kwargs.values()))[0].replace('[', '?')
+    ${end} =    Set Variable If    $error    : ${error}    .
+    Run Keyword And Expect Error
+    ...    ValueError: Argument 'argument' got value '${arg}' that cannot be converted to ${type}${end}
+    ...    ${kw}    @{args}    &{kwargs}
 
 Non-string is not converted
     [Arguments]    ${kw}

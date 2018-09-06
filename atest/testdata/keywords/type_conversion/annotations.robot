@@ -69,7 +69,9 @@ Bytes
 
 Invalid bytes
     [Template]           Conversion Should Fail
-    Bytes                \u0100
+    Bytes                \u0100                                          error=Character '\u0100' cannot be mapped to a byte.
+    Bytes                \u00ff\u0100\u0101                              error=Character '\u0100' cannot be mapped to a byte.
+    Bytes                Hyvä esimerkki! \u2603                          error=Character '\u2603' cannot be mapped to a byte.
 
 Bytearray
     Bytearray            foo                       bytearray(b'foo')
@@ -80,7 +82,9 @@ Bytearray
 
 Invalid bytearray
     [Template]           Conversion Should Fail
-    Bytearray            \u0100
+    Bytearray            \u0100                                          error=Character '\u0100' cannot be mapped to a byte.
+    Bytearray            \u00ff\u0100\u0101                              error=Character '\u0100' cannot be mapped to a byte.
+    Bytearray            Hyvä esimerkki! \u2603                          error=Character '\u2603' cannot be mapped to a byte.
 
 Datetime
     DateTime             2014-06-11T10:07:42       datetime(2014, 6, 11, 10, 7, 42)
@@ -89,10 +93,10 @@ Datetime
 
 Invalid datetime
     [Template]           Conversion Should Fail
-    DateTime             foobar
-    DateTime             1975:06
-    DateTime             2018
-    DateTime             201808081443421234567
+    DateTime             foobar                                          error=Invalid timestamp 'foobar'.
+    DateTime             1975:06                                         error=Invalid timestamp '1975:06'.
+    DateTime             2018                                            error=Invalid timestamp '2018'.
+    DateTime             201808081443421234567                           error=Invalid timestamp '201808081443421234567'.
 
 Date
     Date                 2014-06-11                date(2014, 6, 11)
@@ -101,11 +105,11 @@ Date
 
 Invalid date
     [Template]           Conversion Should Fail
-    Date                 foobar
-    Date                 1975:06
-    Date                 2018
-    Date                 2014-06-11T10:07:42
-    Date                 20180808000000000001
+    Date                 foobar                                          error=Invalid timestamp 'foobar'.
+    Date                 1975:06                                         error=Invalid timestamp '1975:06'.
+    Date                 2018                                            error=Invalid timestamp '2018'.
+    Date                 2014-06-11T10:07:42                             error=Value is datetime, not date.
+    Date                 20180808000000000001                            error=Value is datetime, not date.
 
 Timedelta
     Timedelta            10                        timedelta(seconds=10)
@@ -121,18 +125,18 @@ Timedelta
 
 Invalid timedelta
     [Template]           Conversion Should Fail
-    Timedelta            foobar
-    Timedelta            1 foo
-    Timedelta            01:02:03:04
-
+    Timedelta            foobar                                          error=Invalid time string 'foobar'.
+    Timedelta            1 foo                                           error=Invalid time string '1 foo'.
+    Timedelta            01:02:03:04                                     error=Invalid time string '01:02:03:04'.
 Enum
+
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
 
 Invalid Enum
     [Template]           Conversion Should Fail
-    Enum                 foobar                    type=MyEnum
-    Enum                 BAR                       type=MyEnum
+    Enum                 foobar                    type=MyEnum           error=MyEnum does not have member 'foobar'. Available: 'FOO' and 'bar'
+    Enum                 BAR                       type=MyEnum           error=MyEnum does not have member 'BAR'. Available: 'FOO' and 'bar'
 
 NoneType
     NoneType             None                      None
@@ -149,13 +153,13 @@ List
 
 Invalid list
     [Template]           Conversion Should Fail
-    List                 [1, ooops]
-    List                 ()
-    List                 {}
-    List                 ooops
-    List                 ${EMPTY}
-    List                 !"#¤%&/(invalid expression)\=?
-    List                 1 / 0
+    List                 [1, ooops]                                      error=Invalid expression.
+    List                 ()                                              error=Value is tuple, not list.
+    List                 {}                                              error=Value is dictionary, not list.
+    List                 ooops                                           error=Invalid expression.
+    List                 ${EMPTY}                                        error=Invalid expression.
+    List                 !"#¤%&/(invalid expression)\=?                  error=Invalid expression.
+    List                 1 / 0                                           error=Invalid expression.
 
 Tuple
     Tuple                ()                        ()
@@ -164,10 +168,10 @@ Tuple
 
 Invalid tuple
     [Template]           Conversion Should Fail
-    Tuple                (1, ooops)
-    Tuple                []
-    Tuple                {}
-    Tuple                ooops
+    Tuple                (1, ooops)                                      error=Invalid expression.
+    Tuple                []                                              error=Value is list, not tuple.
+    Tuple                {}                                              error=Value is dictionary, not tuple.
+    Tuple                ooops                                           error=Invalid expression.
 
 Dictionary
     Dictionary           {}                        {}
@@ -176,11 +180,11 @@ Dictionary
 
 Invalid dictionary
     [Template]           Conversion Should Fail
-    Dictionary           {1: ooops}
-    Dictionary           []
-    Dictionary           ()
-    Dictionary           ooops
-    Dictionary           {{'not': 'hashable'}: 'xxx'}
+    Dictionary           {1: ooops}                                      error=Invalid expression.
+    Dictionary           []                                              error=Value is list, not dict.
+    Dictionary           ()                                              error=Value is tuple, not dict.
+    Dictionary           ooops                                           error=Invalid expression.
+    Dictionary           {{'not': 'hashable'}: 'xxx'}                    error=Evaluating expression failed: *
 
 Set
     Set                  set()                     set()
@@ -189,13 +193,13 @@ Set
 
 Invalid set
     [Template]           Conversion Should Fail
-    Set                  {1, ooops}
-    Set                  {}
-    Set                  ()
-    Set                  []
-    Set                  ooops
-    Set                  {{'not', 'hashable'}}
-    Set                  frozenset()
+    Set                  {1, ooops}                                      error=Invalid expression.
+    Set                  {}                                              error=Value is dictionary, not set.
+    Set                  ()                                              error=Value is tuple, not set.
+    Set                  []                                              error=Value is list, not set.
+    Set                  ooops                                           error=Invalid expression.
+    Set                  {{'not', 'hashable'}}                           error=Evaluating expression failed: *
+    Set                  frozenset()                                     error=Invalid expression.
 
 Frozenset
     Frozenset            frozenset()               frozenset()
@@ -205,10 +209,10 @@ Frozenset
 
 Invalid frozenset
     [Template]           Conversion Should Fail
-    Frozenset            {1, ooops}                type=set
-    Frozenset            {}                        type=set
-    Frozenset            ooops                     type=set
-    Frozenset            {{'not', 'hashable'}}     type=set
+    Frozenset            {1, ooops}                type=set              error=Invalid expression.
+    Frozenset            {}                        type=set              error=Value is dictionary, not set.
+    Frozenset            ooops                     type=set              error=Invalid expression.
+    Frozenset            {{'not', 'hashable'}}     type=set              error=Evaluating expression failed: *
 
 Iterable abc
     Iterable             ['list', 'is', 'ok']      ['list', 'is', 'ok']
@@ -218,7 +222,17 @@ Iterable abc
 
 Invalid iterable abc
     [Template]           Conversion Should Fail
-    Iterable             foobar
+    Iterable             foobar                                          error=Failed to convert to list, tuple, set or dictionary.
+
+Sequence abc
+    Sequence             ['list', 'is', 'ok']      ['list', 'is', 'ok']
+    Sequence             ('tuple',)                ('tuple',)
+
+Invalid sequence abc
+    [Template]           Conversion Should Fail
+    Sequence             foobar                                          error=Failed to convert to list or tuple.
+    Sequence             {'a': 1, 'b': 2}                                error=Failed to convert to list or tuple.
+    Sequence             {1, 2, 3}                                       error=Failed to convert to list or tuple.
 
 Mapping abc
     Mapping              {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
@@ -226,9 +240,9 @@ Mapping abc
 
 Invalid mapping abc
     [Template]           Conversion Should Fail
-    Mapping              foobar                    type=dictionary
-    Mapping              []                        type=dictionary
-    Mutable mapping      barfoo                    type=dictionary
+    Mapping              foobar                    type=dictionary       error=Invalid expression.
+    Mapping              []                        type=dictionary       error=Value is list, not dict.
+    Mutable mapping      barfoo                    type=dictionary       error=Invalid expression.
 
 Set abc
     Set abc              set()                     set()
@@ -240,12 +254,12 @@ Set abc
 
 Invalid set abc
     [Template]           Conversion Should Fail
-    Set abc              {1, ooops}                type=set
-    Set abc              {}                        type=set
-    Set abc              ooops                     type=set
-    Mutable set          {1, ooops}                type=set
-    Mutable set          {}                        type=set
-    Mutable set          ooops                     type=set
+    Set abc              {1, ooops}                type=set              error=Invalid expression.
+    Set abc              {}                        type=set              error=Value is dictionary, not set.
+    Set abc              ooops                     type=set              error=Invalid expression.
+    Mutable set          {1, ooops}                type=set              error=Invalid expression.
+    Mutable set          {}                        type=set              error=Value is dictionary, not set.
+    Mutable set          ooops                     type=set              error=Invalid expression.
 
 Unknown types are not converted
     Unknown              foo                       'foo'
@@ -272,7 +286,7 @@ Invalid positional as named
     [Template]           Conversion Should Fail
     Integer              argument=1.0
     Float                argument=xxx
-    Dictionary           argument=[0]
+    Dictionary           argument=[0]                                    error=Value is list, not dict.
 
 Varargs
     Varargs              1    2    3               expected=(1, 2, 3)

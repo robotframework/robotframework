@@ -15,9 +15,9 @@ Dict with params
 
 Invalid dictionary
     [Template]                Conversion Should Fail
-    Dict                      {1: ooops}                  type=dictionary
-    Dict                      []                          type=dictionary
-    Dict with params          ooops                       type=dictionary
+    Dict                      {1: ooops}                  type=dictionary      error=Invalid expression.
+    Dict                      []                          type=dictionary      error=Value is list, not dict.
+    Dict with params          ooops                       type=dictionary      error=Invalid expression.
 
 List
     List                      []                          []
@@ -31,9 +31,9 @@ List with params
 
 Invalid list
     [Template]                Conversion Should Fail
-    List                      [1, oops]
-    List                      ()
-    List with params          ooops                       type=list
+    List                      [1, oops]                                        error=Invalid expression.
+    List                      ()                                               error=Value is tuple, not list.
+    List with params          ooops                       type=list            error=Invalid expression.
 
 Set
     Set                       set()                       set()
@@ -47,9 +47,9 @@ Set with params
 
 Invalid Set
     [Template]                Conversion Should Fail
-    Set                       {1, ooops}
-    Set                       {}
-    Set                       ooops
+    Set                       {1, ooops}                                       error=Invalid expression.
+    Set                       {}                                               error=Value is dictionary, not set.
+    Set                       ooops                                            error=Invalid expression.
 
 Iterable
     Iterable                  ['list', 'is', 'ok']        ['list', 'is', 'ok']
@@ -65,7 +65,21 @@ Iterable with params
 
 Invalid iterable
     [Template]                Conversion Should Fail
-    Iterable                  foobar
+    Iterable                  foobar                                           error=Failed to convert to list, tuple, set or dictionary.
+
+Sequence
+    Sequence                  ['list', 'is', 'ok']        ['list', 'is', 'ok']
+    Sequence                  ('tuple',)                  ('tuple',)
+
+Sequence with params
+    Sequence with params      ['list', 'is', 'ok']        ['list', 'is', 'ok']
+    Sequence with params      ('tuple',)                  ('tuple',)
+
+Invalid sequence
+    [Template]                Conversion Should Fail
+    Sequence                  foobar                                           error=Failed to convert to list or tuple.
+    Sequence                  {'a': 1, 'b': 2}                                 error=Failed to convert to list or tuple.
+    Sequence with params      {1, 2, 3}                   type=sequence        error=Failed to convert to list or tuple.
 
 Mapping
     Mapping                   {}                          {}
@@ -79,6 +93,6 @@ Mapping with params
 
 Invalid mapping
     [Template]                Conversion Should Fail
-    Mapping                   {1: ooops}                  type=dictionary
-    Mapping                   []                          type=dictionary
-    Mapping with params       ooops                       type=dictionary
+    Mapping                   {1: ooops}                  type=dictionary      error=Invalid expression.
+    Mapping                   []                          type=dictionary      error=Value is list, not dict.
+    Mapping with params       ooops                       type=dictionary      error=Invalid expression.

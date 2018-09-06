@@ -87,6 +87,10 @@ def iterable(argument: abc.Iterable, expected=None):
     _validate_type(argument, expected)
 
 
+def sequence(argument: abc.Sequence, expected=None):
+    _validate_type(argument, expected)
+
+
 def mapping(argument: abc.Mapping, expected=None):
     _validate_type(argument, expected)
 

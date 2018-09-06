@@ -113,6 +113,11 @@ def iterable(argument, expected=None):
     _validate_type(argument, expected)
 
 
+@keyword(types={'argument': abc.Sequence})
+def sequence(argument, expected=None):
+    _validate_type(argument, expected)
+
+
 @keyword(types={'argument': abc.Mapping})
 def mapping(argument, expected=None):
     _validate_type(argument, expected)

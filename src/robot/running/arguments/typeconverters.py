@@ -30,7 +30,8 @@ from numbers import Integral, Real
 import sys
 
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY2, unicode
+from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY2,
+                         seq2str, type_name, unicode)
 
 
 class TypeConverter(object):
@@ -75,33 +76,39 @@ class TypeConverter(object):
             return None
         try:
             return self._convert(value, explicit_type)
-        except ValueError:
-            return self._handle_error(name, value, explicit_type)
+        except ValueError as error:
+            return self._handle_error(name, value, error, explicit_type)
 
     def _convert(self, value, explicit_type=True):
         raise NotImplementedError
 
-    def _handle_error(self, name, value, explicit_type=True):
-        if explicit_type:
-            raise ValueError("Argument '%s' cannot be converted to %s, "
-                             "got '%s'." % (name, self.type_name, value))
-        return value
+    def _handle_error(self, name, value, error, explicit_type=True):
+        if not explicit_type:
+            return value
+        ending = u': %s' % error if error.args else '.'
+        raise ValueError("Argument '%s' got value '%s' that cannot be "
+                         "converted to %s%s"
+                         % (name, value, self.type_name, ending))
 
     def _literal_eval(self, value, expected):
         # ast.literal_eval has some issues with sets:
         if expected is set:
             # On Python 2 it doesn't handle sets at all.
             if PY2:
-                raise ValueError    # FIXME: Better error reporting needed
+                raise ValueError('Sets are not supported on Python 2.')
             # There is no way to define an empty set.
             if value == 'set()':
                 return set()
         try:
             value = literal_eval(value)
-        except (SyntaxError, TypeError):
-            raise ValueError
+        except (ValueError, SyntaxError):
+            # Original errors aren't too informative in these cases.
+            raise ValueError('Invalid expression.')
+        except TypeError as err:
+            raise ValueError('Evaluating expression failed: %s' % err)
         if not isinstance(value, expected):
-            raise ValueError
+            raise ValueError('Value is %s, not %s.' % (type_name(value),
+                                                       expected.__name__))
         return value
 
 
@@ -129,9 +136,12 @@ class IntegerConverter(TypeConverter):
         try:
             return int(value)
         except ValueError:
-            if explicit_type:
-                raise
-            return float(value)
+            if not explicit_type:
+                try:
+                    return float(value)
+                except ValueError:
+                    pass
+        raise ValueError
 
 
 @TypeConverter.register
@@ -140,7 +150,10 @@ class FloatConverter(TypeConverter):
     abc = Real
 
     def _convert(self, value, explicit_type=True):
-        return float(value)
+        try:
+            return float(value)
+        except ValueError:
+            raise ValueError
 
 
 @TypeConverter.register
@@ -151,6 +164,9 @@ class DecimalConverter(TypeConverter):
         try:
             return Decimal(value)
         except InvalidOperation:
+            # With Python 3 error messages by decimal module are not very
+            # useful and cannot be included in our error messages:
+            # https://bugs.python.org/issue26208
             raise ValueError
 
 
@@ -166,8 +182,9 @@ class BytesConverter(TypeConverter):
             return value
         try:
             value = value.encode('latin-1')
-        except UnicodeEncodeError:
-            raise ValueError
+        except UnicodeEncodeError as err:
+            raise ValueError("Character '%s' cannot be mapped to a byte."
+                             % value[err.start:err.start+1])
         return value if not IRONPYTHON else bytes(value)
 
 
@@ -179,8 +196,9 @@ class ByteArrayConverter(TypeConverter):
     def _convert(self, value, explicit_type=True):
         try:
             return bytearray(value, 'latin-1')
-        except UnicodeEncodeError:
-            raise ValueError
+        except UnicodeEncodeError as err:
+            raise ValueError("Character '%s' cannot be mapped to a byte."
+                             % value[err.start:err.start+1])
 
 
 @TypeConverter.register
@@ -198,7 +216,7 @@ class DateConverter(TypeConverter):
     def _convert(self, value, explicit_type=True):
         dt = convert_date(value, result_format='datetime')
         if dt.hour or dt.minute or dt.second or dt.microsecond:
-            raise ValueError
+            raise ValueError("Value is datetime, not date.")
         return dt.date()
 
 
@@ -231,7 +249,15 @@ class EnumConverter(TypeConverter):
             # wouldn't work with the old enum module.
             return getattr(self._enum, value)
         except AttributeError:
-            raise ValueError
+            members = self._get_members(self._enum)
+            raise ValueError("%s does not have member '%s'. Available: %s"
+                             % (self.type_name, value, seq2str(members)))
+
+    def _get_members(self, enum):
+        try:
+            return list(enum.__members__)
+        except AttributeError:    # old enum module
+            return [attr for attr in dir(enum) if not attr.startswith('_')]
 
 
 @TypeConverter.register
@@ -300,7 +326,7 @@ class SequenceConverter(TypeConverter):
                 return self._literal_eval(value, type_)
             except ValueError:
                 pass
-        raise ValueError
+        raise ValueError('Failed to convert to list or tuple.')
 
 
 @TypeConverter.register
@@ -313,4 +339,4 @@ class IterableConverter(TypeConverter):
                 return self._literal_eval(value, type_)
             except ValueError:
                 pass
-        raise ValueError
+        raise ValueError('Failed to convert to list, tuple, set or dictionary.')

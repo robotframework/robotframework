@@ -1,4 +1,4 @@
-from typing import Dict, List, Set, Iterable, Mapping
+from typing import Dict, List, Set, Iterable, Mapping, Sequence
 
 
 def dict_(argument: Dict, expected=None):
@@ -30,6 +30,14 @@ def iterable(argument: Iterable, expected=None):
 
 
 def iterable_with_params(argument: Iterable[bool], expected=None):
+    _validate_type(argument, expected)
+
+
+def sequence(argument: Sequence, expected=None):
+    _validate_type(argument, expected)
+
+
+def sequence_with_params(argument: Sequence[bool], expected=None):
     _validate_type(argument, expected)
 
 
