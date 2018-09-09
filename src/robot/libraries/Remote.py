@@ -34,8 +34,8 @@ except ImportError:   # No expat in IronPython 2.7
 
 from robot.errors import RemoteError
 from robot.utils import (is_bytes, is_dict_like, is_list_like, is_number,
-                         is_string, prepr, timestr_to_secs, unic, DotDict,
-                         IRONPYTHON, JYTHON)
+                         is_string, timestr_to_secs, unic, DotDict,
+                         IRONPYTHON, JYTHON, PY2)
 
 
 class Remote(object):
@@ -159,16 +159,17 @@ class ArgumentCoercer(object):
         return self._handle_string(item)
 
     def _validate_key(self, key):
+        byte_prefix = 'b' if PY2 else ''
         if isinstance(key, xmlrpclib.Binary):
-            raise ValueError('Dictionary keys cannot be binary. Got %s.'
-                             % prepr(key.data))
+            raise ValueError('Dictionary keys cannot be binary. Got %s%s.'
+                             % (byte_prefix, repr(key.data)))
         if IRONPYTHON:
             try:
                 key.encode('ASCII')
             except UnicodeError:
                 raise ValueError('Dictionary keys cannot contain non-ASCII '
-                                 'characters on IronPython. Got %s.'
-                                 % prepr(key))
+                                 'characters on IronPython. Got %s%s.'
+                                 % (byte_prefix, repr(key.data)))
 
 
 class RemoteResult(object):
