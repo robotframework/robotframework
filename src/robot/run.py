@@ -31,6 +31,9 @@ that can be used programmatically. Other code is for internal usage.
 """
 
 import sys
+reload(sys)
+sys.setdefaultencoding('UTF-8')
+from xml.dom import minidom
 
 # Allows running as a script. __name__ check needed with multiprocessing:
 # https://github.com/robotframework/robotframework/issues/1137
@@ -92,6 +95,7 @@ Options
                           terminology so that "test" is replaced with "task"
                           in logs and reports. By default the mode is got
                           from test/task header in data files. New in RF 3.1.
+ -U --retry retry   　　  Number of run times for failed test case.
  -F --extension value     Parse only files with this extension when executing
                           a directory. Has no effect when running individual
                           files or when using resource files. If more than one
@@ -433,6 +437,7 @@ class RobotFramework(Application):
             result = suite.run(settings)
             LOGGER.info("Tests execution ended. Statistics:\n%s"
                         % result.suite.stat_message)
+            self.make(settings.output)
             if settings.log or settings.report or settings.xunit:
                 writer = ResultWriter(settings.output if settings.log
                                       else result)
@@ -446,6 +451,34 @@ class RobotFramework(Application):
         return dict((name, value) for name, value in options.items()
                     if value not in (None, []))
 
+    def make(self,outxml):
+        xmldoc = minidom.parse(outxml)
+        suiteElementList = xmldoc.getElementsByTagName('suite')
+        mySuite = []
+        for suiteElement in suiteElementList:
+            if suiteElement.childNodes is not None:
+                for element in suiteElement.childNodes:
+                    if element.nodeName == 'test':
+                        mySuite.append(suiteElement)
+                        break
+        for suite in mySuite:
+            testElements = {}
+            for element in suite.childNodes:
+                if element.nodeName == 'test':
+                    name = element.getAttribute('name')
+                    if testElements.get(name) == None:
+                        testElements.update({name:[element]})
+                    else:
+                        testElements.get(name).append(element)
+            for n,el in testElements.iteritems():
+                for i in el[0:-1]:
+                    textElement = i.nextSibling
+                    suite.removeChild(i)
+                    suite.removeChild(textElement)
+        savefile = open(outxml,'w')
+        root = xmldoc.documentElement
+        root.writexml(savefile)
+        savefile.close()
 
 def run_cli(arguments=None, exit=True):
     """Command line execution entry point for running tests.

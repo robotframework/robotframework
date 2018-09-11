@@ -68,8 +68,19 @@ class ItemList(object):
         self._items = ()
 
     def visit(self, visitor):
-        for item in self._items:
-            item.visit(visitor)
+        for item in self:
+            if self.__module__ == 'robot.model.testcase' and hasattr(visitor,"_context"):
+                testStatus = ''
+                for i in range(0,int(visitor._settings._opts['Retry'])):
+                    if testStatus != 'PASS':
+                        if item.name in visitor._executed_tests:
+                            visitor._executed_tests.pop(item.name)
+                        item.visit(visitor)
+                        testStatus = visitor._context.variables['${PREV_TEST_STATUS}']
+                    else:
+                        break
+            else:
+                item.visit(visitor)
 
     def __iter__(self):
         return iter(self._items)
