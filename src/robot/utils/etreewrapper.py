@@ -14,16 +14,18 @@
 #  limitations under the License.
 
 from io import BytesIO
+import sys
 
 from .compat import py2to3
 from .platform import IRONPYTHON
 from .robottypes import is_string
 
 
-_ERROR = 'No valid ElementTree XML parser module found'
+IRONPYTHON_WITH_BROKEN_ETREE = IRONPYTHON and sys.version_info < (2, 7, 9)
+NO_ETREE_ERROR = 'No valid ElementTree XML parser module found'
 
 
-if not IRONPYTHON:
+if not IRONPYTHON_WITH_BROKEN_ETREE:
     try:
         from xml.etree import cElementTree as ET
     except ImportError:
@@ -36,7 +38,7 @@ if not IRONPYTHON:
                 try:
                     from elementtree import ElementTree as ET
                 except ImportError:
-                    raise ImportError(_ERROR)
+                    raise ImportError(NO_ETREE_ERROR)
 else:
     # Cannot use standard ET available on IronPython because it is broken
     # both in 2.7.0 and 2.7.1:
@@ -45,7 +47,8 @@ else:
     try:
         from elementtree import ElementTree as ET
     except ImportError:
-        raise ImportError(_ERROR)
+        raise ImportError(NO_ETREE_ERROR)
+
     from StringIO import StringIO
 
 
@@ -83,6 +86,6 @@ class ETSource(object):
     def _open_source_if_necessary(self):
         if self._source_is_file_name() or not is_string(self._source):
             return None
-        if IRONPYTHON:
+        if IRONPYTHON_WITH_BROKEN_ETREE:
             return StringIO(self._source)
         return BytesIO(self._source.encode('UTF-8'))

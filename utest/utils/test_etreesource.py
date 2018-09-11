@@ -2,8 +2,8 @@ import os
 import unittest
 
 from robot.utils.asserts import assert_equal, assert_true
-from robot.utils.etreewrapper import ETSource, ET
-from robot.utils import IRONPYTHON, unicode
+from robot.utils.etreewrapper import ETSource, ET, IRONPYTHON_WITH_BROKEN_ETREE
+from robot.utils import unicode
 
 
 PATH = os.path.join(os.path.dirname(__file__), 'test_etreesource.py')
@@ -36,7 +36,7 @@ class TestETSource(unittest.TestCase):
         source = ETSource(xml)
         with source as src:
             content = src.read()
-            if not IRONPYTHON:
+            if not IRONPYTHON_WITH_BROKEN_ETREE:
                 content = content.decode('UTF-8')
             assert_equal(content, xml)
         self._verify_string_representation(source, '<in-memory file>')
