@@ -68,7 +68,8 @@ class _BaseSettings(object):
                  'ConsoleColors'    : ('consolecolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
-                 'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
+                 'XUnitSkipNonCritical' : ('xunitskipnoncritical', False),
+                 'Retry':('retry',1)}
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
