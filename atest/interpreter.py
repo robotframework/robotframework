@@ -64,7 +64,6 @@ class Interpreter(object):
             yield 'require-jython'
         if self.is_ironpython:
             yield 'no-ipy'
-            yield 'require-et13'
             yield 'require-lxml'
             yield 'require-docutils'  # https://github.com/IronLanguages/main/issues/1230
         else:

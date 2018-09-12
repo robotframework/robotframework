@@ -39,7 +39,6 @@ Save Non-ASCII Using ASCII On Python 3
     Check Test Case    ${TESTNAME}
 
 Doctype is not preserved
-    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 Comments and processing instructions are removed

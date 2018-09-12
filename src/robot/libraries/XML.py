@@ -77,7 +77,6 @@ class XML(object):
     possible doctype elements are handled otherwise depends on the used XML
     module and on the platform. The standard ElementTree strips doctypes
     altogether but when `using lxml` they are preserved when XML is saved.
-    With IronPython parsing XML with a doctype is not supported at all.
 
     The element structure returned by `Parse XML`, as well as elements
     returned by keywords such as `Get Element`, can be used as the ``source``
@@ -158,13 +157,10 @@ class XML(object):
 
     ElementTree, and thus also this library, supports finding elements using
     xpath expressions. ElementTree does not, however, support the full xpath
-    syntax, and what is supported depends on its version. ElementTree 1.3 that
-    is distributed with Python 2.7 supports richer syntax than earlier versions.
-
-    The supported xpath syntax is explained below and
-    [http://effbot.org/zone/element-xpath.htm|ElementTree documentation]
-    provides more details. In the examples ``${XML}`` refers to the same XML
-    structure as in the earlier example.
+    standard. The supported xpath syntax is explained below and
+    [https://docs.python.org/library/xml.etree.elementtree.html#xpath-support|
+    ElementTree documentation] provides more details. In the examples
+    ``${XML}`` refers to the same XML structure as in the earlier example.
 
     If lxml support is enabled when `importing` the library, the whole
     [http://www.w3.org/TR/xpath/|xpath 1.0 standard] is supported.
@@ -211,8 +207,7 @@ class XML(object):
 
     The parent element of another element is denoted with two dots (``..``).
     Notice that it is not possible to refer to the parent of the current
-    element. This syntax is supported only in ElementTree 1.3 (i.e.
-    Python/Jython 2.7 and newer).
+    element.
 
     | ${elem} =         | `Get Element` | ${XML} | */second/.. |
     | `Should Be Equal` | ${elem.tag}   | third  |             |
@@ -233,11 +228,8 @@ class XML(object):
     Predicates allow selecting elements using also other criteria than tag
     names, for example, attributes or position. They are specified after the
     normal tag name or path using syntax ``path[predicate]``. The path can have
-    wildcards and other special syntax explained above.
-
-    What predicates ElementTree supports is explained in the table below.
-    Notice that predicates in general are supported only in ElementTree 1.3
-    (i.e. Python/Jython 2.7 and newer).
+    wildcards and other special syntax explained earlier. What predicates
+    the standard ElementTree supports is explained in the table below.
 
     |  = Predicate =  |             = Matches =           |    = Example =     |
     | @attrib         | Elements with attribute ``attrib``. | second[@id]        |
