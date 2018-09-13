@@ -271,7 +271,7 @@ class NoneConverter(TypeConverter):
 @TypeConverter.register
 class ListConverter(TypeConverter):
     type = list
-    abc = abc.MutableSequence
+    abc = abc.Sequence
 
     def _convert(self, value, explicit_type=True):
         return self._literal_eval(value, list)
@@ -314,29 +314,3 @@ class FrozenSetConverter(TypeConverter):
         if value == 'frozenset()' and not PY2:
             return frozenset()
         return frozenset(self._literal_eval(value, set))
-
-
-@TypeConverter.register
-class SequenceConverter(TypeConverter):
-    type = abc.Sequence
-
-    def _convert(self, value, explicit_type=True):
-        for type_ in [list, tuple]:
-            try:
-                return self._literal_eval(value, type_)
-            except ValueError:
-                pass
-        raise ValueError('Failed to convert to list or tuple.')
-
-
-@TypeConverter.register
-class IterableConverter(TypeConverter):
-    type = abc.Iterable
-
-    def _convert(self, value, explicit_type=True):
-        for type_ in [list, tuple, set, dict]:
-            try:
-                return self._literal_eval(value, type_)
-            except ValueError:
-                pass
-        raise ValueError('Failed to convert to list, tuple, set or dictionary.')

@@ -10,10 +10,22 @@ Integer
 Invalid integer
     Check Test Case    ${TESTNAME}
 
+Integral (abc)
+    Check Test Case    ${TESTNAME}
+
+Invalid integral (abc)
+    Check Test Case    ${TESTNAME}
+
 Float
     Check Test Case    ${TESTNAME}
 
 Invalid float
+    Check Test Case    ${TESTNAME}
+
+Real (abc)
+    Check Test Case    ${TESTNAME}
+
+Invalid real (abc)
     Check Test Case    ${TESTNAME}
 
 Decimal
@@ -35,6 +47,12 @@ Bytes
     Check Test Case    ${TESTNAME}
 
 Invalid bytes
+    Check Test Case    ${TESTNAME}
+
+Bytestring
+    Check Test Case    ${TESTNAME}
+
+Invalid bytesstring
     Check Test Case    ${TESTNAME}
 
 Bytearray
@@ -76,6 +94,12 @@ List
 Invalid list
     Check Test Case    ${TESTNAME}
 
+Sequence (abc)
+    Check Test Case    ${TESTNAME}
+
+Invalid sequence (abc)
+    Check Test Case    ${TESTNAME}
+
 Tuple
     Check Test Case    ${TESTNAME}
 
@@ -88,40 +112,28 @@ Dictionary
 Invalid dictionary
     Check Test Case    ${TESTNAME}
 
+Mapping (abc)
+    Check Test Case    ${TESTNAME}
+
+Invalid mapping (abc)
+    Check Test Case    ${TESTNAME}
+
 Set
     Check Test Case    ${TESTNAME}
 
 Invalid set
     Check Test Case    ${TESTNAME}
 
+Set (abc)
+    Check Test Case    ${TESTNAME}
+
+Invalid set (abc)
+    Check Test Case    ${TESTNAME}
+
 Frozenset
     Check Test Case    ${TESTNAME}
 
 Invalid frozenset
-    Check Test Case    ${TESTNAME}
-
-Iterable abc
-    Check Test Case    ${TESTNAME}
-
-Invalid iterable abc
-    Check Test Case    ${TESTNAME}
-
-Sequence abc
-    Check Test Case    ${TESTNAME}
-
-Invalid sequence abc
-    Check Test Case    ${TESTNAME}
-
-Mapping abc
-    Check Test Case    ${TESTNAME}
-
-Invalid mapping abc
-    Check Test Case    ${TESTNAME}
-
-Set abc
-    Check Test Case    ${TESTNAME}
-
-Invalid set abc
     Check Test Case    ${TESTNAME}
 
 Unknown types are not converted

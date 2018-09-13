@@ -4,15 +4,6 @@ Force Tags       require-py3.5
 Resource         atest_resource.robot
 
 *** Test Cases ***
-Dict
-    Check Test Case    ${TESTNAME}
-
-Dict with params
-    Check Test Case    ${TESTNAME}
-
-Invalid dictionary
-    Check Test Case    ${TESTNAME}
-
 List
     Check Test Case    ${TESTNAME}
 
@@ -22,31 +13,22 @@ List with params
 Invalid list
     Check Test Case    ${TESTNAME}
 
-Set
-    Check Test Case    ${TESTNAME}
-
-Set with params
-    Check Test Case    ${TESTNAME}
-
-Invalid Set
-    Check Test Case    ${TESTNAME}
-
-Iterable
-    Check Test Case    ${TESTNAME}
-
-Iterable with params
-    Check Test Case    ${TESTNAME}
-
-Invalid iterable
-    Check Test Case    ${TESTNAME}
-
 Sequence
     Check Test Case    ${TESTNAME}
 
 Sequence with params
     Check Test Case    ${TESTNAME}
 
-Invalid sequence
+Invalid Sequence
+    Check Test Case    ${TESTNAME}
+
+Dict
+    Check Test Case    ${TESTNAME}
+
+Dict with params
+    Check Test Case    ${TESTNAME}
+
+Invalid dictionary
     Check Test Case    ${TESTNAME}
 
 Mapping
@@ -56,4 +38,13 @@ Mapping with params
     Check Test Case    ${TESTNAME}
 
 Invalid mapping
+    Check Test Case    ${TESTNAME}
+
+Set
+    Check Test Case    ${TESTNAME}
+
+Set with params
+    Check Test Case    ${TESTNAME}
+
+Invalid Set
     Check Test Case    ${TESTNAME}
