@@ -1,5 +1,6 @@
 *** Settings ***
 Library       Collections
+Library       XML
 
 *** Variables ***
 &{DICT}       A=1    B=2    C=3    ${1}=${2}    3=4    ${NONE}=${NONE}  =
@@ -18,6 +19,26 @@ Valid index using variable
     Should Be Equal    &{DICT}[${1}]        ${2}
     Should Be Equal    &{DICT}[${NONE}]     ${NONE}
     Should Be Equal    &{DICT}[${EMPTY}]    ${EMPTY}
+
+Values can be mutated
+    @{list} =    Create List    A
+    &{dict} =    Create Dictionary    list=${list}
+    Set To Dictionary    ${dict}    dict=${dict}
+    Append To List    ${list}    B
+    Append To List    &{dict}[list]    C
+    Set To Dictionary    ${dict}    X=1
+    Set To Dictionary    &{dict}[dict]    Y=2
+    @{expected} =    Create List    A    B    C
+    Lists Should Be Equal    &{dict}[list]    ${expected}
+    @{expected} =    Create List    list    dict    X    Y
+    Lists Should Be Equal    &{dict}[dict]    ${expected}
+
+List-like values are not manipulated
+    ${element} =    Parse XML    <element><child/></element>
+    ${tuple} =    Evaluate    (1, 2, 3)
+    &{dict} =    Create Dictionary    element=${element}    tuple=${tuple}
+    Should Be Equal    &{dict}[element]    ${element}
+    Should Be Equal    &{dict}[tuple]    ${tuple}
 
 Integer key cannot be accessed as string
     [Documentation]    FAIL Dictionary variable '\&{DICT}' has no key '1'.

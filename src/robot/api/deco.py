@@ -14,12 +14,19 @@
 #  limitations under the License.
 
 
-def keyword(name=None, tags=()):
-    """Decorator to set custom keyword names and tags to functions and methods.
+def keyword(name=None, tags=(), types=None):
+    """Decorator to set custom name, tags and argument types to keywords.
 
-    This decorator creates the ``robot_name`` and ``robot_tags`` attributes on
-    the decorated keyword method or function.  Robot Framework checks them to
-    determine the keyword's name and tags, respectively.
+    This decorator creates ``robot_name``, ``robot_tags`` and ``robot_types``
+    attributes on the decorated keyword method or function based on the
+    provided arguments. Robot Framework checks them to determine the keyword's
+    name, tags, and argument types, respectively.
+
+    Name must be given as a string, tags as a list of strings, and types
+    either as a dictionary mapping argument names to types or as a list
+    of types mapped to arguments based on position. It is OK to specify
+    only some of these, and when specifying types all arguments do not need
+    to be typed.
 
     library.py::
 
@@ -29,6 +36,14 @@ def keyword(name=None, tags=()):
 
         @keyword(name='Logout Via User Panel', tags=['example', 'tags'])
         def logout():
+            # ...
+
+        @keyword(types={'length': int, 'case_insensitive': bool})
+        def types_as_dict(length, case_insensitive=False):
+            # ...
+
+        @keyword(types=[int, bool])
+        def types_as_list(length, case_insensitive=False):
             # ...
 
     tests.robot::
@@ -47,8 +62,9 @@ def keyword(name=None, tags=()):
     """
     if callable(name):
         return keyword()(name)
-    def _method_wrapper(func):
+    def decorator(func):
         func.robot_name = name
         func.robot_tags = tags
+        func.robot_types = types
         return func
-    return _method_wrapper
+    return decorator

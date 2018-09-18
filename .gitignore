@@ -17,3 +17,6 @@ doc/api/_build
 doc/libraries/*.html
 doc/userguide/RobotFrameworkUserGuide.html
 src/robotframework.egg-info
+log.html
+output.xml
+report.html

@@ -36,6 +36,11 @@ Invalid
     Stdout Should Be    warnings_and_errors_stdout_dotted.txt
     Stderr Should Be    warnings_and_errors_stderr.txt
 
+--dotted with --rpa
+    Run and verify tests    --dotted --rpa
+    Stdout Should Be    warnings_and_errors_stdout_dotted.txt    tests=tasks
+    Stderr Should Be    warnings_and_errors_stderr.txt
+
 --quiet
     Run and verify tests    --Quiet
     Stdout Should Be    empty.txt

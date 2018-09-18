@@ -1,7 +1,5 @@
 import os
-
-from robot.utils import OrderedDict
-
+from collections import OrderedDict
 
 if os.name == 'java':
     from java.lang import String

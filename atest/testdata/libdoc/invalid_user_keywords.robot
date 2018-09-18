@@ -1,6 +1,6 @@
 *** Keywords ***
 Invalid arg spec
-    [Arguments]    @{varargs}    ${invalid}
+    [Arguments]    &{kwargs}    ${invalid}
 
 Same Twice
     [Documentation]    Having same keyword twice is an error.

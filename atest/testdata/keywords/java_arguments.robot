@@ -122,11 +122,11 @@ All args
    Should be equal    ${res}    javaAllArgs: arg hello kitty bar:two foo:one
 
 Too many positional with kwargs 1
-    [Documentation]     FAIL Keyword 'ArgumentsJava.Java KW Args' expected 0 non-keyword arguments, got 3.
+    [Documentation]     FAIL Keyword 'ArgumentsJava.Java KW Args' expected 0 non-named arguments, got 3.
     Java kwargs    too    many    positional    foo=bar
 
 Too many positional with kwargs 2
-    [Documentation]     FAIL Keyword 'ArgumentsJava.Java Normal And KW Args' expected 1 non-keyword argument, got 3.
+    [Documentation]     FAIL Keyword 'ArgumentsJava.Java Normal And KW Args' expected 1 non-named argument, got 3.
     Java normal and kwargs    too    many    positional    foo=bar
 
 Java kwargs wont be interpreted as values for positional arguments

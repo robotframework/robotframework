@@ -7,8 +7,7 @@ Not Executed
     [Documentation]  FAIL Can be continued
     No Operation
 
-
-*** User Keywords ***
+*** Keywords ***
 Continuable Failure In User Keyword In ${where}
     Raise Continuable Failure
     Log  This should be executed in ${where} (with ∏ön ÄßÇïï €§)

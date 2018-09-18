@@ -22,12 +22,8 @@ class TestIsATty(unittest.TestCase):
     def test_with_detached_io_buffer(self):
         with io.StringIO() as stream:
             wrapper = io.TextIOWrapper(stream, 'UTF-8')
-            if sys.version_info >= (2, 7):
-                wrapper.detach()
-                exc_type = ValueError if PYTHON else AttributeError
-            else:
-                wrapper.buffer = None
-                exc_type = AttributeError
+            wrapper.detach()
+            exc_type = ValueError if PYTHON else AttributeError
             assert_raises(exc_type, wrapper.isatty)
             assert_false(isatty(wrapper))
 

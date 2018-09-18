@@ -13,6 +13,9 @@ Import Variables
 Import Variables With Arguments
     Check Test Case  ${TESTNAME}
 
+Inport Variables With Invalid Arguments
+    Check Test Case  ${TESTNAME}
+
 Import Variables In User Keyword
     Check Test Case  ${TESTNAME} 1
     Check Test Case  ${TESTNAME} 2

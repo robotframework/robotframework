@@ -199,11 +199,6 @@ class TestTestCaseTable(unittest.TestCase):
     def test_init(self):
         assert_equal(self.table.tests, [])
 
-    def test_testcase_table_is_always_true(self):
-        assert_true(self.table)
-        self.table.add('Name')
-        assert_true(self.table)
-
     def test_add_test(self):
         test = self.table.add('My name')
         assert_true(len(self.table.tests), 1)

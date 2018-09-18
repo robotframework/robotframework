@@ -43,8 +43,8 @@ class LogWriter(_LogReportWriter):
             self._write_split_logs(splitext(path)[0])
 
     def _write_split_logs(self, base):
-        for index, (keywords, strings) in enumerate(self._js_model.split_results):
-            index += 1  # enumerate accepts start index only in Py 2.6+
+        for index, (keywords, strings) in enumerate(self._js_model.split_results,
+                                                    start=1):
             self._write_split_log(index, keywords, strings, '%s-%d.js' % (base, index))
 
     def _write_split_log(self, index, keywords, strings, path):

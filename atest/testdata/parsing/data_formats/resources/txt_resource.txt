@@ -7,5 +7,5 @@ Resource   txt_resource2.txt
 ${txt_resource_var}  TXT Resource Variable      
 
 
-*User Keywords  Action  Argument  Argument  Argument
+*Keywords  Action  Argument  Argument  Argument
 Keyword from TXT resource  No operation      

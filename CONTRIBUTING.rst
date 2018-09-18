@@ -1,8 +1,9 @@
 Contribution guidelines
 =======================
 
-These guidelines instruct how to submit issues and contribute code to the
-`Robot Framework project <https://github.com/robotframework/robotframework>`_.
+These guidelines instruct how to submit issues and contribute code or
+documentation to the `Robot Framework project
+<https://github.com/robotframework/robotframework>`_.
 There are also many other projects in the larger `Robot Framework ecosystem
 <http://robotframework.org>`_ that you can contribute to. If you notice
 a library or tool missing, there is hardly any better way to contribute
@@ -11,6 +12,11 @@ answering questions and participating discussion on `robotframework-users
 <https://groups.google.com/forum/#!forum/robotframework-users>`_ mailing list
 and other forums, as well as spreading the word about the framework one way or
 the other.
+
+These guidelines expect readers to have a basic knowledge about open source
+as well as why and how to contribute to open source projects. If you are
+totally new to these topics, it may be a good idea to look at the generic
+`Open Source Guides <https://opensource.guide/>`_ first.
 
 .. contents::
    :depth: 2
@@ -25,7 +31,7 @@ unsure if something is a bug or is a feature worth implementing, you can
 first ask on `robotframework-users`_ mailing list, on `IRC
 <http://webchat.freenode.net/?channels=robotframework&prompt=1>`_
 (#robotframework on irc.freenode.net), or on `Slack
-<https://robotframework-slack.herokuapp.com>`_. These and other similar
+<https://robotframework-slack-invite.herokuapp.com>`_. These and other similar
 forums, not the issue tracker, are also places where to ask general questions.
 
 Before submitting a new issue, it is always a good idea to check is the
@@ -41,8 +47,8 @@ and preferably also reproduce it. Key things to have in good bug report:
 1. Version information
 
    - Robot Framework version
-   - Python interpreter type (Python, Jython or IronPython) and version
-   - Operating system name and version
+   - Python interpreter type (Python, Jython, IronPython, PyPy) and version
+   - Operating system and its version
 
 2. Steps to reproduce the problem. With more complex problems it is often
    a good idea to create a `short, self contained, correct example (SSCCE)
@@ -77,7 +83,19 @@ Often you already have a bug or an enhancement you want to work on in your
 mind, but you can also look at the `issue tracker`_ to find bugs and
 enhancements submitted by others. The issues vary significantly in complexity
 and difficulty, so you can try to find something that matches your skill level
-and knowledge.
+and knowledge. There are two specific labels to look when looking for
+something to contribute:
+
+`good first issue`__
+   These issues typically do not require any knowledge of Robot Framework
+   internals and are generally easy to implement or fix. Thus these issues
+   are especially good for new contributors.
+
+`help wanted`__
+   These issues require external help to get implemented or fixed.
+
+__ https://github.com/robotframework/robotframework/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22
+__ https://github.com/robotframework/robotframework/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22
 
 Pull requests
 ~~~~~~~~~~~~~
@@ -94,8 +112,8 @@ GitHub has good articles explaining how to
 `set up Git <https://help.github.com/articles/set-up-git/>`_,
 `fork a repository <https://help.github.com/articles/fork-a-repo/>`_ and
 `use pull requests <https://help.github.com/articles/using-pull-requests>`_
-and we do not go through them in more detail. We do, however,
-recommend to create dedicated branches for pull requests instead of creating
+and we do not go through them in more detail. We do, however, recommend to
+create dedicated topic branches for pull requests instead of creating
 them based on the master branch. This is especially important if you plan to
 work on multiple pull requests at the same time.
 
@@ -179,11 +197,24 @@ and follow these guidelines:
   not trivial.
 
 - All new enhancements or changes should have a note telling when the change
-  was introduced. Often adding something like ``New in Robot Framework 2.9.``
+  was introduced. Often adding something like ``New in Robot Framework 3.1.``
   is enough.
 
-Library documentation can be easily created using `<doc/libraries/lib2html.py>`_
-script. Resulting docs should be verified before the code is committed.
+Library documentation can be generated using `Invoke <http://pyinvoke.org>`_
+by running command
+
+::
+
+    invoke library-docs <name>
+
+where ``<name>`` if a name of the library or its unique prefix. Run
+
+::
+
+    invoke --help library-docs
+
+for more information and see `<BUILD.rst>`_ for details about installing and
+using Invoke.
 
 API documentation
 '''''''''''''''''
@@ -249,27 +280,6 @@ Unit tests
 Unit tests are great for testing internal logic and should be added when
 appropriate. For more details see `<utest/README.rst>`_.
 
-Continuous integration
-''''''''''''''''''''''
-
-Robot Framework's continuous integration (CI) servers are visible through
-http://robot.radiaatto.ri.fi/. They automatically test all new commits
-to the repository both on Linux and on Windows, and pull requests can be
-tested there too.
-
-When a new pull request comes in, the CI will ask if one of the admins
-can verify the pull request. The admins are currently @jussimalinen and
-@pekkaklarck. The commands are:
-
--  ``robotci: once`` (run once)
--  ``robotci: enable`` (run whenever this pull request changes)
--  ``robotci: whitelist user`` (enable CI for all pull requests coming
-   from this user)
-
-The commands can be anywhere on the comment. Adding the skip statement
-(``[skip ci]``, with the square brackets) to the pull request body will
-cause the job not to be executed.
-
 Finalizing pull requests
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -297,13 +307,11 @@ luckily fixing those conflicts is typically easy.
 Squashing commits
 '''''''''''''''''
 
-If the pull request contains multiple commits, it is recommended that you
-squash them into a single commit before the pull request is merged.
-See `Squashing Github pull requests into a single commit
-<http://eli.thegreenplace.net/2014/02/19/squashing-github-pull-requests-into-a-single-commit>`_
-article for more details about why and how.
+If the pull request contains multiple commits, you may want to `squash them
+into a single commit`__ before the pull request is merged. This is a good idea
+especially if the pull request contains lots of temporary commits and changes
+that have been later reverted or redone. Nowadays GitHub makes it easy to
+squash commits when the pull request is merged, so squashing them beforehand
+is not that important.
 
-Squashing is especially important if the pull request contains lots of
-temporary commits and changes that have been later reverted or redone.
-Squashing is not needed if the commit history is clean and individual
-commits are meaningful alone.
+__ http://eli.thegreenplace.net/2014/02/19/squashing-github-pull-requests-into-a-single-commit

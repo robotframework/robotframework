@@ -1,0 +1,7 @@
+.. sourcecode:: robotframework
+
+    * Variable
+    ${rest_resource_var2}        ReST Resource Variable From Recursive Resource
+
+    * Keyword
+    Keyword from ReST resource 2      No Operation

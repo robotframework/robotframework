@@ -25,4 +25,5 @@ Get OS Independent Home Path
     ${homepath}=    Get Environment Variable    HOMEPATH    NotSet
     ${homedrive}=    Get Environment Variable    HOMEDRIVE    NotSet
     ${home}=    Get Environment Variable    HOME    ${homedrive}${homepath}
+    ${home}=    Normalize Path    ${home}
     [Return]    ${home}

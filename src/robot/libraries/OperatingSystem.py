@@ -29,7 +29,7 @@ from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          is_unicode, normpath, parse_time, plural_or_not,
                          secs_to_timestamp, secs_to_timestr, seq2str,
                          set_env_var, timestr_to_secs, unic, CONSOLE_ENCODING,
-                         IRONPYTHON, JYTHON, PY2, SYSTEM_ENCODING, WINDOWS)
+                         IRONPYTHON, JYTHON, PY2, PY3, SYSTEM_ENCODING, WINDOWS)
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes.')
@@ -74,17 +74,18 @@ class OperatingSystem(object):
 
     = Pattern matching =
 
-    Some keywords allow their arguments to be specified as _glob patterns_
-    where:
-    | ``*``        | matches anything, even an empty string |
-    | ``?``        | matches any single character |
-    | ``[chars]``  | matches any character inside square brackets (e.g. ``[abc]`` matches either ``a``, ``b`` or ``c``) |
-    | ``[!chars]`` | matches any character not inside square brackets |
+    Some keywords allow their arguments to be specified as
+    [http://en.wikipedia.org/wiki/Glob_(programming)|glob patterns] where:
+
+    | ``*``        | matches any string, even an empty string                |
+    | ``?``        | matches any single character                            |
+    | ``[chars]``  | matches one character in the bracket                    |
+    | ``[!chars]`` | matches one character not in the bracket                |
+    | ``[a-z]``    | matches one character from the range in the bracket     |
+    | ``[!a-z]``   | matches one character not from the range in the bracket |
 
     Unless otherwise noted, matching is case-insensitive on
-    case-insensitive operating systems such as Windows. Pattern
-    matching is implemented using
-    [http://docs.python.org/library/fnmatch.html|fnmatch module].
+    case-insensitive operating systems such as Windows.
 
     Starting from Robot Framework 2.9.1, globbing is not done if the given path
     matches an existing file even if it would contain a glob pattern.
@@ -97,18 +98,16 @@ class OperatingSystem(object):
     ``C:\\Users\\<user>\\robot`` on Windows and ``/home/<user>/robot`` on
     Unixes.
 
-    Tilde expansion is a new feature in Robot Framework 2.8. The ``~username``
-    form does not work on Jython
+    The ``~username`` form does not work on Jython.
 
     = Boolean arguments =
 
     Some keywords accept arguments that are handled as Boolean values true or
     false. If such an argument is given as a string, it is considered false if
-    it is either empty or case-insensitively equal to ``false`` or ``no``.
-    Other strings are considered true regardless their value, and other
-    argument types are tested using same
-    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
-    as in Python].
+    it is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or
+    ``0``, case-insensitively. Other strings are considered true regardless
+    their value, and other argument types are tested using the same
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
     | `Remove Directory` | ${path} | recursive=True    | # Strings are generally true.    |
@@ -122,8 +121,8 @@ class OperatingSystem(object):
     | `Remove Directory` | ${path} | recursive=${EMPTY} | # Empty string is false.       |
     | `Remove Directory` | ${path} | recursive=${FALSE} | # Python ``False`` is false.   |
 
-    Note that prior to Robot Framework 2.9, all non-empty strings, including
-    ``false`` and ``no``, were considered true.
+    Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
+    considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
 
     = Example =
 
@@ -262,8 +261,7 @@ class OperatingSystem(object):
         - ``replace``: Replace characters that cannot be decoded with
           a replacement character.
 
-        ``encoding_errors`` argument was added in Robot Framework 2.8.5 and the
-        support for ``SYSTEM`` and ``CONSOLE`` encodings in Robot Framework 3.0.
+        Support for ``SYSTEM`` and ``CONSOLE`` encodings in Robot Framework 3.0.
         """
         path = self._absnorm(path)
         self._link("Getting file '%s'.", path)
@@ -279,6 +277,9 @@ class OperatingSystem(object):
         return content.replace('\r\n', '\n')
 
     def _map_encoding(self, encoding):
+        # Python 3 opens files in native system encoding by default.
+        if PY3 and encoding.upper() == 'SYSTEM':
+            return None
         return {'SYSTEM': SYSTEM_ENCODING,
                 'CONSOLE': CONSOLE_ENCODING}.get(encoding.upper(), encoding)
 
@@ -315,8 +316,6 @@ class OperatingSystem(object):
         If more complex pattern matching is needed, it is possible to use
         `Get File` in combination with String library keywords like `Get
         Lines Matching Regexp`.
-
-        ``encoding_errors`` argument is new in Robot Framework 2.8.5.
         """
         pattern = '*%s*' % pattern
         path = self._absnorm(path)
@@ -341,8 +340,6 @@ class OperatingSystem(object):
 
         See `Get File` for more information about ``encoding`` and
         ``encoding_errors`` arguments.
-
-        ``encoding_errors`` argument is new in Robot Framework 2.8.5.
         """
         content = self.get_file(path, encoding, encoding_errors)
         self._info(content)
@@ -577,9 +574,11 @@ class OperatingSystem(object):
         parent = os.path.dirname(path)
         if not os.path.exists(parent):
             os.makedirs(parent)
-        if encoding:
-            content = content.encode(encoding)
-        with open(path, mode+'b') as f:
+        # io.open() only accepts Unicode, not byte-strings, in text mode.
+        # We expect possible byte-strings to be all ASCII.
+        if PY2 and isinstance(content, str) and 'b' not in mode:
+            content = unicode(content)
+        with io.open(path, mode, encoding=encoding) as f:
             f.write(content)
         return path
 
@@ -603,12 +602,10 @@ class OperatingSystem(object):
         Use `Create File` if you want to create a text file using a certain
         encoding. `File Should Not Exist` can be used to avoid overwriting
         existing files.
-
-        New in Robot Framework 2.8.5.
         """
         if is_unicode(content):
             content = bytes(bytearray(ord(c) for c in content))
-        path = self._write_to_file(path, content)
+        path = self._write_to_file(path, content, mode='wb')
         self._link("Created binary file '%s'.", path)
 
     def append_to_file(self, path, content, encoding='UTF-8'):
@@ -709,9 +706,9 @@ class OperatingSystem(object):
     def copy_file(self, source, destination):
         """Copies the source file into the destination.
 
-        Source must be an existing file. Starting from Robot Framework 2.8.4,
-        it can be given as a glob pattern (see `Pattern matching`) that matches
-        exactly one file. How the destination is interpreted is explained below.
+        Source must be a path to an existing file or a glob pattern (see
+        `Pattern matching`) that matches exactly one file. How the
+        destination is interpreted is explained below.
 
         1) If the destination is an existing file, the source file is copied
         over it.
@@ -845,8 +842,6 @@ class OperatingSystem(object):
         | Copy Files | ${dir}/file-*.txt | ${dir2}          |         |
 
         See also `Copy File`, `Move File`, and `Move Files`.
-
-        New in Robot Framework 2.8.4.
         """
         sources, destination \
             = self._prepare_copy_and_move_files(sources_and_destination)
@@ -873,8 +868,6 @@ class OperatingSystem(object):
         Arguments have exactly same semantics as with `Copy Files` keyword.
 
         See also `Move File`, `Copy File`, and `Copy Files`.
-
-        New in Robot Framework 2.8.4.
         """
         sources, destination \
             = self._prepare_copy_and_move_files(sources_and_destination)
@@ -936,8 +929,8 @@ class OperatingSystem(object):
         If no such environment variable is set, returns the default value, if
         given. Otherwise fails the test case.
 
-        Starting from Robot Framework 2.7, returned variables are automatically
-        decoded to Unicode using the system encoding.
+        Returned variables are automatically decoded to Unicode using
+        the system encoding.
 
         Note that you can also access environment variables directly using
         the variable syntax ``%{ENV_VAR_NAME}``.
@@ -950,9 +943,8 @@ class OperatingSystem(object):
     def set_environment_variable(self, name, value):
         """Sets an environment variable to a specified value.
 
-        Values are converted to strings automatically. Starting from Robot
-        Framework 2.7, set variables are automatically encoded using the system
-        encoding.
+        Values are converted to strings automatically. Set variables are
+        automatically encoded using the system encoding.
         """
         set_env_var(name, value)
         self._info("Environment variable '%s' set to value '%s'."
@@ -978,8 +970,6 @@ class OperatingSystem(object):
         | Should Be Equal                | %{NAME2} | first  |                 |
         | Append To Environment Variable | NAME2    | second | separator=-     |
         | Should Be Equal                | %{NAME2} | first-second             |
-
-        New in Robot Framework 2.8.4.
         """
         sentinel = object()
         initial = self.get_environment_variable(name, sentinel)
@@ -997,8 +987,8 @@ class OperatingSystem(object):
 
         Does nothing if the environment variable is not set.
 
-        Starting from Robot Framework 2.7, it is possible to remove multiple
-        variables by passing them to this keyword as separate arguments.
+        It is possible to remove multiple variables by passing them to this
+        keyword as separate arguments.
         """
         for name in names:
             value = del_env_var(name)
@@ -1034,8 +1024,6 @@ class OperatingSystem(object):
         Both keys and values are decoded to Unicode using the system encoding.
         Altering the returned dictionary has no effect on the actual environment
         variables.
-
-        New in Robot Framework 2.7.
         """
         return get_env_vars()
 
@@ -1044,8 +1032,6 @@ class OperatingSystem(object):
 
         Environment variables are also returned the same way as with
         `Get Environment Variables` keyword.
-
-        New in Robot Framework 2.7.
         """
         variables = get_env_vars()
         for name in sorted(variables, key=lambda item: item.lower()):
@@ -1084,9 +1070,9 @@ class OperatingSystem(object):
         See `Join Path` for more information.
 
         Examples:
-        | @{p1} = | Join Path | base     | example       | other |          |
-        | @{p2} = | Join Path | /my/base | /example      | other |          |
-        | @{p3} = | Join Path | my/base  | example/path/ | other | one/more |
+        | @{p1} = | Join Paths | base     | example       | other |          |
+        | @{p2} = | Join Paths | /my/base | /example      | other |          |
+        | @{p3} = | Join Paths | my/base  | example/path/ | other | one/more |
         =>
         - @{p1} = ['base/example', 'base/other']
         - @{p2} = ['/example', '/my/base/other']
@@ -1258,8 +1244,6 @@ class OperatingSystem(object):
         | Set Modified Time | /path/file | NOW                | # The local time of execution |
         | Set Modified Time | /path/file | NOW - 1 day        | # 1 day subtracted from the local time |
         | Set Modified Time | /path/file | UTC + 1h 2min 3s   | # 1h 2min 3s added to the UTC time |
-
-        Support for UTC time is a new feature in Robot Framework 2.7.5.
         """
         mtime = parse_time(mtime)
         path = self._absnorm(path)

@@ -12,7 +12,7 @@ ${BOM}            \uFEFF
 *** Test Cases ***
 Argument File
     Create Argument File    ${ARGFILE}
-    ...    --name=From Argfile_With Spaces
+    ...    --name=From Argfile With Spaces
     ...    --metadata${SPACE*10}Meta1:From AF
     ...    -M=Meta2:Overwritten
     ...    --RunEmptySuite
@@ -47,7 +47,7 @@ Recursive Argument File
     Should Be Equal    ${SUITE.metadata['Second']}    2
 
 Argument File with Non-ASCII Characters
-    ${path} =    Copy File    ${DATADIR}/parsing/non_ascii_paths/test-auml-ouml.robot    %{TEMPDIR}/testäö.txt
+    ${path} =    Copy File    ${DATADIR}/parsing/non_ascii_paths/test-auml-ouml.robot    %{TEMPDIR}/testäö.robot
     Create Argument File    ${ÄRGFÏLË}    -D äëïöüÿ    -C off    ${path}
     ${result} =    Run Tests    --argumentfile ${ÄRGFÏLË}
     Execution Should Have Succeeded    ${result}

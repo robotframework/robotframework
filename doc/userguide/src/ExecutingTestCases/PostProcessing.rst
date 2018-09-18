@@ -150,10 +150,6 @@ in merged outputs that are not found from the original output are added into
 the resulting output. How this works in practice is discussed in the next
 section.
 
-.. note:: Merging re-executed results is a new feature in Robot Framework 2.8.4.
-          Prior to Robot Framework 2.8.6 new tests or suites in merged outputs
-          were skipped and merging was done using :option:`--rerunmerge` option.
-
 Merging suites executed in pieces
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

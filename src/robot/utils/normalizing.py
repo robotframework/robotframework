@@ -17,7 +17,7 @@ import sys
 from collections import MutableMapping
 
 from .platform import PY3, IRONPYTHON
-from .robottypes import is_dict_like
+from .robottypes import is_dict_like, is_unicode
 
 
 def normalize(string, ignore=(), caseless=True, spaceless=True):
@@ -26,7 +26,7 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     By default string is turned to lower case and all whitespace is removed.
     Additional characters can be removed by giving them in ``ignore`` list.
     """
-    empty = type(string)()
+    empty = u'' if is_unicode(string) else b''
     if PY3 and isinstance(ignore, bytes):
         # Iterating bytes in Python3 yields integers.
         ignore = [bytes([i]) for i in ignore]

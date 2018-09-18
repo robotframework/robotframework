@@ -9,8 +9,15 @@ Deprecated keywords
     ...    Use keyword `Not Deprecated With Doc` instead!
     Verify Deprecation Warning    ${tc.kws[1]}    Deprecated User Keyword
     ...    Use keyword `Not Deprecated User Keyword` instead.
-    Check Syslog Does Not Contain    ignore this
 
+Multiline message
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Verify Deprecation Warning    ${tc.kws[0]}    DeprecatedKeywords.Deprecated Library Keyword With Multiline Message
+    ...    Multiline\nmessage.
+    Verify Deprecation Warning    ${tc.kws[1]}    Deprecated User Keyword With Multiline Message
+    ...    Message in\nmultiple\nlines.
+    Check Syslog Does Not Contain    Ignore this
+    Check Syslog Does Not Contain    ignore this
 
 Deprecated keywords without extra doc
     ${tc} =    Check Test Case    ${TESTNAME}

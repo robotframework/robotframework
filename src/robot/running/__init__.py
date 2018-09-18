@@ -30,11 +30,6 @@ and :class:`~robot.running.model.Keyword` classes used internally by the
 In those rare cases where these classes are needed directly, they can be
 imported from this package.
 
-This package and especially all public code was rewritten in Robot Framework
-2.8 to make it easier to generate and execute test suites programmatically.
-Rewriting of the test execution logic will continue in future releases,
-but changes to the public API ought to be relatively small.
-
 Examples
 --------
 

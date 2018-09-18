@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import (ExecutionFailed, DataError, HandlerExecutionFailed,
-                          VariableError)
+                          KeywordError, VariableError)
 from robot.utils import ErrorDetails, get_timestamp
 
 
@@ -63,7 +63,8 @@ class StatusReporter(object):
         if isinstance(exc_value, DataError):
             msg = exc_value.message
             context.fail(msg)
-            return ExecutionFailed(msg, syntax=exc_type is not VariableError)
+            syntax = not isinstance(exc_value, (KeywordError, VariableError))
+            return ExecutionFailed(msg, syntax=syntax)
         exc_info = (exc_type, exc_value, exc_tb)
         failure = HandlerExecutionFailed(ErrorDetails(exc_info))
         if failure.timeout:

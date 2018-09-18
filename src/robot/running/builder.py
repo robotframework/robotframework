@@ -13,10 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os.path
+import warnings
+
 from robot.errors import DataError
-from robot.parsing import TestData, ResourceFile as ResourceData, VALID_EXTENSIONS
+from robot.output import LOGGER
+from robot.parsing import TestData, ResourceFile as ResourceData, TEST_EXTENSIONS
 from robot.running.defaults import TestDefaults
-from robot.utils import abspath, is_string, unic
+from robot.utils import abspath, is_string, normalize, unic
 from robot.variables import VariableIterator
 
 from .model import ForLoop, Keyword, ResourceFile, TestSuite
@@ -31,31 +35,37 @@ class TestSuiteBuilder(object):
     more information and examples.
     """
 
-    def __init__(self, include_suites=None, warn_on_skipped=False, extension=None):
+    def __init__(self, include_suites=None, warn_on_skipped='DEPRECATED',
+                 extension=None, rpa=None):
         """
         :param include_suites: List of suite names to include. If ``None`` or
             an empty list, all suites are included. When executing tests
             normally, these names are specified using the ``--suite`` option.
-        :param warn_on_skipped: Boolean to control should a warning be emitted
-            if a file is skipped because it cannot be parsed or should it be
-            ignored silently. When executing tests normally, this value is set
-            with the ``--warnonskippedfiles`` option.
+        :param warn_on_skipped: Deprecated.
         :param extension: Limit parsing test data to only these files. Files
             are specified as an extension that is handled case-insensitively.
             Same as ``--extension`` on the command line.
+        :param rpa: Explicit test execution mode. ``True`` for RPA and
+           ``False`` for test automation. By default mode is got from test
+           data headers and possible conflicting headers cause an error.
         """
         self.include_suites = include_suites
-        self.warn_on_skipped = warn_on_skipped
         self.extensions = self._get_extensions(extension)
         builder = StepBuilder()
         self._build_steps = builder.build_steps
         self._build_step = builder.build_step
+        self.rpa = rpa
+        self._rpa_not_given = rpa is None
+        # TODO: Remove in RF 3.2.
+        if warn_on_skipped != 'DEPRECATED':
+            warnings.warn("Option 'warn_on_skipped' is deprecated and has no "
+                          "effect.", DeprecationWarning)
 
     def _get_extensions(self, extension):
         if not extension:
             return None
         extensions = set(ext.lower().lstrip('.') for ext in extension.split(':'))
-        if not all(ext in VALID_EXTENSIONS for ext in extensions):
+        if not all(ext in TEST_EXTENSIONS for ext in extensions):
             raise DataError("Invalid extension to limit parsing '%s'." % extension)
         return extensions
 
@@ -71,6 +81,7 @@ class TestSuiteBuilder(object):
         root = TestSuite()
         for path in paths:
             root.suites.append(self._parse_and_build(path))
+        root.rpa = self.rpa
         return root
 
     def _parse_and_build(self, path):
@@ -82,12 +93,14 @@ class TestSuiteBuilder(object):
         try:
             return TestData(source=abspath(path),
                             include_suites=self.include_suites,
-                            warn_on_skipped=self.warn_on_skipped,
                             extensions=self.extensions)
         except DataError as err:
             raise DataError("Parsing '%s' failed: %s" % (path, err.message))
 
     def _build_suite(self, data, parent_defaults=None):
+        if self._rpa_not_given and data.testcase_table.is_started():
+            self._set_execution_mode(data)
+        self._check_deprecated_extensions(data.source)
         defaults = TestDefaults(data.setting_table, parent_defaults)
         suite = TestSuite(name=data.name,
                           source=data.source,
@@ -99,8 +112,35 @@ class TestSuiteBuilder(object):
             self._build_test(suite, test_data, defaults)
         for child in data.children:
             suite.suites.append(self._build_suite(child, defaults))
+        suite.rpa = self.rpa
         ResourceFileBuilder().build(data, target=suite.resource)
         return suite
+
+    def _set_execution_mode(self, data):
+        rpa = normalize(data.testcase_table.header[0]) in ('task', 'tasks')
+        if self.rpa is None:
+            self.rpa = rpa
+        elif self.rpa is not rpa:
+            this, that = ('tasks', 'tests') if rpa else ('tests', 'tasks')
+            raise DataError("Conflicting execution modes. File '%s' has %s "
+                            "but files parsed earlier have %s. Fix headers "
+                            "or use '--rpa' or '--norpa' options to set the "
+                            "execution mode explicitly."
+                            % (data.source, this, that))
+
+    def _check_deprecated_extensions(self, source):
+        if os.path.isdir(source):
+            return
+        ext = os.path.splitext(source)[1][1:].lower()
+        if self.extensions and ext in self.extensions:
+            return
+        # HTML files cause deprecation warning that cannot be avoided with
+        # --extension at parsing time. No need for double warning.
+        if ext not in ('robot', 'html', 'htm', 'xhtml'):
+            LOGGER.warn("Automatically parsing other than '*.robot' files is "
+                        "deprecated. Convert '%s' to '*.robot' format or use "
+                        "'--extension' to explicitly configure which files to "
+                        "parse." % source)
 
     def _get_metadata(self, settings):
         # Must return as a list to preserve ordering

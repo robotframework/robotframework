@@ -13,13 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_string, py2to3, PY3
+from robot.utils import is_string, py2to3, unicode
 
 from .comments import Comment
-
-
-if PY3:
-    unicode = str
 
 
 @py2to3
@@ -200,7 +196,7 @@ class Timeout(Setting):
             self.value = value[0] if value else ''
             value = value[1:]
         self.message = self._concat_string_with_value(self.message, value)
-        # TODO: Remove custom timeout message support in RF 3.1.
+        # TODO: Remove custom timeout message support in RF 3.2.
         if value and self.parent:
             self.parent.report_invalid_syntax(
                 'Using custom timeout messages is deprecated since Robot '
@@ -301,25 +297,13 @@ class Library(_Import):
 
     def __init__(self, parent, name, args=None, alias=None, comment=None):
         if args and not alias:
-            args, alias = self._split_alias(args, parent)
+            args, alias = self._split_possible_alias(args)
         _Import.__init__(self, parent, name, args, alias, comment)
 
-    def _split_alias(self, args, parent):
-        if len(args) > 1 and is_string(args[-2]):
-            with_name = args[-2]
-            if with_name.upper() == 'WITH NAME':
-                # TODO: Require all uppercase 'WITH NAME' in RF 3.1.
-                # https://github.com/robotframework/robotframework/issues/2263
-                if with_name != 'WITH NAME':
-                    self._deprecation_warning(with_name, parent)
-                return args[:-2], args[-1]
+    def _split_possible_alias(self, args):
+        if len(args) > 1 and args[-2] == 'WITH NAME':
+            return args[:-2], args[-1]
         return args, None
-
-    def _deprecation_warning(self, with_name, parent):
-        message = ("Using 'WITH NAME' syntax when importing libraries case "
-                   "insensitively like '%s' is deprecated. Use all upper case "
-                   "format 'WITH NAME' instead." % with_name)
-        self.report_invalid_syntax(message, 'WARN', parent)
 
     def _data_as_list(self):
         data = ['Library', self.name] + self.args

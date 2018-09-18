@@ -8,7 +8,7 @@ import re
 from os.path import basename, dirname, exists, join, normpath
 
 from robot.errors import DataError
-from robot.utils import abspath, JYTHON, WINDOWS, PY3
+from robot.utils import abspath, JYTHON, WINDOWS, PY3, unicode
 from robot.utils.importer import Importer, ByPathImporter
 from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
                                  assert_raises_with_msg)
@@ -19,8 +19,6 @@ LIBDIR = normpath(join(CURDIR, '..', '..', 'atest', 'testresources', 'testlibs')
 TEMPDIR = tempfile.gettempdir()
 TESTDIR = join(TEMPDIR, 'robot-importer-testing')
 WINDOWS_PATH_IN_ERROR = re.compile(r"'\w:\\")
-if PY3:
-    unicode = str
 
 
 def assert_prefix(error, expected):

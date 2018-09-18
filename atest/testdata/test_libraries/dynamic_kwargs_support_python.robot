@@ -16,7 +16,7 @@ Unexpected keyword argument
     Do something third    x    y=1
 
 Documentation and Argument Boundaries Work With Kwargs
-    [Documentation]  FAIL Keyword 'classes.ArgDocDynamicLibraryWithKwargsSupport.Kwargs' expected 0 non-keyword arguments, got 1.
+    [Documentation]  FAIL Keyword 'classes.ArgDocDynamicLibraryWithKwargsSupport.Kwargs' expected 0 non-named arguments, got 1.
     Kwargs  key=value
     Kwargs  1
 

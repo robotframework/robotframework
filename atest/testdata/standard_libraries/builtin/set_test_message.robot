@@ -1,27 +1,53 @@
 *** Test Cases ***
 Set Message To Successful Test
-    Set Test Message    My Test Message
-    [Teardown]    Should Be Equal    ${TEST MESSAGE}    My Test Message
+    [Documentation]    PASS My Test <Message>
+    Set Test Message    My Test <Message>
+    [Teardown]    Should Be Equal    ${TEST MESSAGE}    My Test <Message>
 
 Reset Message
+    [Documentation]    PASS My Real Test Message
     Set Test Message    My Test Message
     Set Test Message    My Real Test Message
     [Teardown]    Should Be Equal    ${TEST MESSAGE}    My Real Test Message
 
 Append To Message
-    Set Test Message    My message    append please
-    Set Test Message    is continued    append=please
-    [Teardown]    Should Be Equal    ${TEST MESSAGE}    My message is continued
+    [Documentation]    PASS My <message> & its continuation <>
+    Set Test Message    My <message>    append please
+    Set Test Message    & its continuation <>    append=please
+    [Teardown]    Should Be Equal    ${TEST MESSAGE}    My <message> & its continuation <>
 
 Set Non-ASCII Message
+    [Documentation]    PASS Hyvää yötä & huomenta!
     Set Test Message    Hyvää yötä
-    [Teardown]    Should Be Equal    ${TEST MESSAGE}    Hyvää yötä
+    Set Test Message    & huomenta!    append=jep
+    [Teardown]    Should Be Equal    ${TEST MESSAGE}    Hyvää yötä & huomenta!
 
 Set Multiline Message
+    [Documentation]    PASS 1\n2\n3
     Set Test Message    1\n2\n3
     [Teardown]    Should Be Equal    ${TEST MESSAGE}    1\n2\n3
 
+Set HTML Message
+    [Documentation]    PASS *HTML* My <b>HTML</b> message
+    Set Test Message    *HTML* My <b>HTML</b> message
+
+Append HTML to non-HTML
+    [Documentation]    PASS *HTML* My non-HTML &lt;message&gt; &amp; its <b>HTML</b> continuation
+    Set Test Message    My non-HTML <message> &
+    Set Test Message    *HTML* its <b>HTML</b> continuation    append=true
+
+Append non-HTML to HTML
+    [Documentation]    PASS *HTML* My <b>HTML</b> message &amp; its non-HTML &lt;continuation&gt;
+    Set Test Message    *HTML* My <b>HTML</b> message
+    Set Test Message    & its non-HTML <continuation>    append=True
+
+Append HTML to HTML
+    [Documentation]    PASS *HTML* My <b>HTML</b> message &amp; its <b>HTML</b> continuation
+    Set Test Message    *HTML* My <b>HTML</b> message
+    Set Test Message    *HTML* &amp; its <b>HTML</b> continuation    append=yeah
+
 Set Non-String Message
+    [Documentation]    PASS 42
     Set Test Message    ${42}
     [Teardown]    Should Be Equal    ${TEST MESSAGE}    42
 
@@ -71,6 +97,7 @@ Fail In Teardown And Set Message Afterwards
     [Teardown]    Fail In Teardown And Set Message Afterwards
 
 Set Message In Setup
+    [Documentation]    PASS Message set in setup
     [Setup]    Set Test Message    Message set in setup
     Variable Should Not Exist    ${TEST MESSAGE}
     [Teardown]    Should Be Equal    ${TEST MESSAGE}    Message set in setup

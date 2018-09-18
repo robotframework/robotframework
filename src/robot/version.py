@@ -16,9 +16,9 @@
 import re
 import sys
 
-# Version number typically updated by running `invoke set_version <version>`.
-# Run `invoke --help set_version` or see tasks.py for details.
-VERSION = '3.0.3.dev20170213'
+# Version number typically updated by running `invoke set-version <version>`.
+# Run `invoke --help set-version` or see tasks.py for details.
+VERSION = '3.1a2.dev1'
 
 
 def get_version(naked=False):

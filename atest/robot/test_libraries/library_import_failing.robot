@@ -16,7 +16,7 @@ Initializing Fails Without Arguments
 
 Initializing Fails With Arguments
     Import Should Have Failed    2    test_libraries/library_import_failing.robot
-    ...  Initializing test library 'InitializationFailLibrary' with arguments [ 1 | arg2=2 ] failed: Initialization failed with arguments 1 and 2!
+    ...  Initializing test library 'InitializationFailLibrary' with arguments ? 1 | arg2=2 ? failed: Initialization failed with arguments 1 and 2!
     ...  InitializationFailLibrary.py", line 4, in __init__
 
 Initializing Fails Due To Too Many Arguments

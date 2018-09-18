@@ -32,22 +32,30 @@ cases, the resource file is first searched relatively to the directory
 where the importing file is located. If the file is not found there,
 it is then searched from the directories in Python's `module search path`_.
 The path can contain variables, and it is recommended to use them to make paths
-system-independent (for example, :file:`${RESOURCES}/login_resources.html` or
-:file:`${RESOURCE_PATH}`). Additionally, slashes (`/`) in the path
+system-independent (for example, :file:`${RESOURCES}/login_resources.robot` or
+:file:`${RESOURCE_PATH}`). Additionally, forward slashes (`/`) in the path
 are automatically changed to backslashes (:codesc:`\\`) on Windows.
+
+Resource files can use all the same extensions as test case files created
+using the `supported file formats`_. When using the `plain text format`_,
+it is possible to use a special :file:`.resource` extension in addition
+to the normal :file:`.robot` extensions. This makes it easier to separate
+test case files and resource files from each others.
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Resource    myresources.html
-   Resource    ../data/resources.html
-   Resource    ${RESOURCES}/common.tsv
+   Resource    example.resource
+   Resource    ../data/resources.robot
+   Resource    ${RESOURCES}/common.resource
 
 The user keywords and variables defined in a resource file are
 available in the file that takes that resource file into
 use. Similarly available are also all keywords and variables from the
 libraries, resource files and variable files imported by the said
 resource file.
+
+.. note:: The :file:`.resource` extension is new in Robot Framework 3.1.
 
 Resource file structure
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -78,9 +86,9 @@ Keywords created in a resource file can be documented__ using
 
 Both Libdoc_ and RIDE_ use these documentations, and they
 are naturally available for anyone opening resource files.  The
-first line of the documentation of a keyword is logged when it is run,
-but otherwise resource file documentations are ignored during the test
-execution.
+first logical line of the documentation of a keyword, until the first
+empty line, is logged when the keyword is run, but otherwise resource
+file documentation is ignored during the test execution.
 
 __ `User keyword name and documentation`_
 __ `Test suite name and documentation`_
@@ -92,8 +100,8 @@ Example resource file
 
    *** Settings ***
    Documentation     An example resource file
-   Library           Selenium2Library
-   Resource          ${RESOURCES}/common.robot
+   Library           SeleniumLibrary
+   Resource          ${RESOURCES}/common.resource
 
    *** Variables ***
    ${HOST}           localhost:7272
@@ -189,7 +197,7 @@ and possible arguments are joined to the path with a colon (`:`)::
    --variablefile /absolute/path/common.py
    --variablefile taking_arguments.py:arg1:arg2
 
-Starting from Robot Framework 2.8.2, variable files taken into use from the
+Variable files taken into use from the
 command line are also searched from the `module search path`_ similarly as
 variable files imported in the Setting table.
 
@@ -198,7 +206,7 @@ drive letter is not considered a separator::
 
    --variablefile C:\path\variables.py
 
-Starting from Robot Framework 2.8.7, it is also possible to use a semicolon
+It is also possible to use a semicolon
 (`;`) as an argument separator. This is useful if variable file arguments
 themselves contain colons, but requires surrounding the whole value with
 quotes on UNIX-like operating systems::
@@ -460,8 +468,7 @@ or database where to read variables from.
 Implementing variable file as Python or Java class
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7, it is possible to implement variables files
-as Python or Java classes.
+It is possible to implement variables files also as Python or Java classes.
 
 Implementation
 ''''''''''''''

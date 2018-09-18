@@ -44,10 +44,6 @@ Robot Framework development is sponsored by `Robot Framework Foundation
    :target: http://www.apache.org/licenses/LICENSE-2.0.html
    :alt: License
 
-.. image:: https://robotframework-slack.herokuapp.com/badge.svg
-   :target: https://robotframework-slack.herokuapp.com
-   :alt: Slack channel
-
 Installation
 ------------
 
@@ -63,7 +59,7 @@ from GitHub_. After that you can install the framework with::
     python setup.py install
 
 For more detailed installation instructions, including installing Python,
-Jython, IronPython and PyPy, see `<INSTALL.rst>`__.
+Jython, IronPython and PyPy or installing from git, see `<INSTALL.rst>`__.
 
 Example
 -------
@@ -132,7 +128,7 @@ Support and contact
 
 - `robotframework-users
   <https://groups.google.com/group/robotframework-users/>`_ mailing list
-- `Slack <https://robotframework-slack.herokuapp.com>`_ community
+- `Slack <https://robotframework-slack-invite.herokuapp.com>`_ community
 - `#robotframework <http://webchat.freenode.net/?channels=robotframework&prompt=1>`_
   IRC channel on freenode
 - `@robotframework <https://twitter.com/robotframework>`_ on Twitter

@@ -13,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 import os
+import sys
+import locale
 
-from .platform import JYTHON, WINDOWS, UNIXY
+from .platform import JYTHON, PY2, PY3, UNIXY, WINDOWS
 
 
 if UNIXY:
@@ -52,7 +53,12 @@ def _get_encoding(platform_getters, default):
 
 
 def _get_python_system_encoding():
-    return sys.getfilesystemencoding()
+    # `locale.getpreferredencoding(False)` returns exactly what we want, but
+    # it doesn't seem to work outside Windows on Python 2. Luckily on these
+    # platforms `sys.getfilesystemencoding()` seems to do the right thing.
+    if PY2 and not WINDOWS:
+        return sys.getfilesystemencoding()
+    return locale.getpreferredencoding(False)
 
 
 def _get_java_system_encoding():
@@ -61,7 +67,10 @@ def _get_java_system_encoding():
 
 
 def _get_unixy_encoding():
-    for name in 'LANG', 'LC_CTYPE', 'LANGUAGE', 'LC_ALL':
+    # Cannot use `locale.getdefaultlocale()` because it raises ValueError
+    # if encoding is invalid. Using same environment variables here anyway.
+    # https://docs.python.org/3/library/locale.html#locale.getdefaultlocale
+    for name in 'LC_ALL', 'LC_CTYPE', 'LANG', 'LANGUAGE':
         if name in os.environ:
             # Encoding can be in format like `UTF-8` or `en_US.UTF-8`
             encoding = os.environ[name].split('.')[-1]
@@ -71,7 +80,12 @@ def _get_unixy_encoding():
 
 
 def _get_stream_output_encoding():
-    # Stream may not have encoding attribute if it is intercepted outside RF in
+    # Python < 3.6 on Windows returns different encoding depending on are
+    # outputs redirected or not, and Python >= 3.6 always use UTF-8. We
+    # want the real console encoding regardless the platform.
+    if WINDOWS and PY3:
+        return None
+    # Stream may not have encoding attribute if intercepted outside RF in
     # Python. Encoding is None if process output is redirected and Python < 3.
     for stream in sys.__stdout__, sys.__stderr__, sys.__stdin__:
         encoding = getattr(stream, 'encoding', None)
@@ -92,7 +106,7 @@ def _get_code_page(method_name):
     from ctypes import cdll
     try:
         method = getattr(cdll.kernel32, method_name)
-    except TypeError:       # Occurred few times with IronPython (mainly on CI).
+    except TypeError:       # Occurred few times with IronPython on CI.
         return None
     method.argtypes = ()    # Needed with Jython.
     return 'cp%s' % method()

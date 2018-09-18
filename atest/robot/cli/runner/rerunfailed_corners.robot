@@ -17,6 +17,12 @@ Stops on error when output contains only passing test cases
     Stderr Should Be Equal To
     ...  [ ERROR ] Collecting failed tests from '${RUN FAILED FROM}' failed: All tests passed.${USAGE TIP}\n
 
+Stops on error when output contains only passing tasks
+    Generate output  cli/runfailed/onlypassing    options=--rpa
+    Run Tests Without Processing Output  -R ${RUN FAILED FROM}  cli/runfailed/onlypassing
+    Stderr Should Be Equal To
+    ...  [ ERROR ] Collecting failed tasks from '${RUN FAILED FROM}' failed: All tasks passed.${USAGE TIP}\n
+
 Stops on error when output contains only non-existing failing test cases
     Generate output  cli/runfailed/runfailed1.robot
     Run Tests Without Processing Output  --RERUNFAILED ${RUN FAILED FROM}  cli/runfailed/onlypassing
@@ -26,19 +32,19 @@ Stops on error when output contains only non-existing failing test cases
 Stops on error when output does not exist
     Run Tests Without Processing Output  --rerunfailed nonex.xml  cli/runfailed/onlypassing
     Stderr Should Match
-    ...  [ ERROR ] Collecting failed tests from 'nonex.xml' failed:
+    ...  ? ERROR ? Collecting failed tests or tasks from 'nonex.xml' failed:
     ...  Reading XML source 'nonex.xml' failed:*${USAGE TIP}\n
 
 Stops on error when output is invalid
     Create File  ${RUN FAILED FROM}  <xml><but not='correct'/></xml>
     Run Tests Without Processing Output  --rerunfailed ${RUN FAILED FROM}  cli/runfailed/onlypassing
     Stderr Should Be Equal To
-    ...  [ ERROR ] Collecting failed tests from '${RUN FAILED FROM}' failed:
+    ...  [ ERROR ] Collecting failed tests or tasks from '${RUN FAILED FROM}' failed:
     ...  Reading XML source '${RUN FAILED FROM}' failed:
     ...  Incompatible XML element 'xml'.${USAGE TIP}\n
 
 *** Keywords ***
 Generate Output
-    [Arguments]  ${datafile}
-    Run Tests  ${EMPTY}  ${datafile}
-    Copy File  ${OUTFILE}  ${RUN FAILED FROM}
+    [Arguments]    ${datafile}    ${options}=${EMPTY}
+    Run Tests    ${options}    ${datafile}
+    Copy File    ${OUTFILE}    ${RUN FAILED FROM}

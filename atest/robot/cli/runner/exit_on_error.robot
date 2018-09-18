@@ -50,7 +50,7 @@ Skipped due to error
     [Arguments]    @{tests}
     :FOR    ${name}    IN    @{tests}
     \    ${tc} =    Check Test Case    ${name}    FAIL    ${MESSAGE}
-    \    Should Contain    ${tc.tags}    robot-exit
+    \    Should Contain    ${tc.tags}    robot:exit
 
 Teardowns not executed
     [Arguments]    ${name}

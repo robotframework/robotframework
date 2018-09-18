@@ -1,5 +1,7 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/get_file.robot
+Suite Setup       Run Tests
+...    -v SYSTEM_ENCODING:${SYSTEM_ENCODING} -v CONSOLE_ENCODING:${CONSOLE_ENCODING}
+...    standard_libraries/operating_system/get_file.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***

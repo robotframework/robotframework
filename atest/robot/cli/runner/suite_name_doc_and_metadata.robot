@@ -14,19 +14,12 @@ Overriding Name, Doc & Metadata And Escaping
     ${options} =    Catenate
     ...    -l log.html
     ...    -N this_is_overridden_next
-    ...    --name my_COOL_Name.EXEX.
-    ...    --doc Even_\\coooolerBS_docEXQU
+    ...    --name "my COOL Name.!!."
+    ...    --doc "Even \\cooooler\\ doc!?"
     ...    --metadata something:new
-    ...    --metadata Two_Parts:three_part_VALUE
-    ...    -M path:c:\\tempBSnew.txt
-    ...    -M esc:STQUDOAMHAEXEX
-    ...    --escape star:ST
-    ...    -E quest:QU
-    ...    -E dollar:DO
-    ...    -E amp:AM
-    ...    -E hash:HA
-    ...    -E exclam:EX
-    ...    --escape bslash:BS
+    ...    --metadata "Two Parts:three part VALUE"
+    ...    -M path:c:\\temp\\new.txt
+    ...    -M esc:*?$&#!!
     Run Tests    ${options}    ${TESTFILE}
     Check Names    ${SUITE}    my COOL Name.!!.
     Check Names    ${SUITE.tests[0]}    First One    my COOL Name.!!..

@@ -16,9 +16,9 @@ Create Status Line
     [Return]    ${name}${SPACE * ${padding}}| ${status} |
 
 Stdout Should Be
-    [Arguments]    ${expected}
-    Output Should Be     ${STDOUT FILE}    ${expected}
+    [Arguments]    ${expected}    &{replaced}
+    Output Should Be     ${STDOUT FILE}    ${expected}    &{replaced}
 
 Stderr Should Be
-    [Arguments]    ${expected}
-    Output Should Be     ${STDERR FILE}    ${expected}
+    [Arguments]    ${expected}    &{replaced}
+    Output Should Be     ${STDERR FILE}    ${expected}    &{replaced}

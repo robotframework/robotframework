@@ -14,7 +14,7 @@ Kill process
     Check Log Message    ${tc.kws[1].msgs[1]}    Process completed.
 
 Terminate process running on shell
-    [Tags]    no-windows-python26   no-jython
+    [Tags]    no-jython
     Check Test Case    ${TESTNAME}
 
 Kill process running on shell
@@ -22,7 +22,7 @@ Kill process running on shell
     Check Test Case    ${TESTNAME}
 
 Also child processes are terminated
-    [Tags]    no-windows-python26   no-jython
+    [Tags]    no-jython
     Check Test Case    ${TESTNAME}
 
 Also child processes are killed
@@ -30,7 +30,7 @@ Also child processes are killed
     Check Test Case    ${TESTNAME}
 
 Kill process when terminate fails
-    [Tags]    no-windows-python26    no-windows-jython
+    [Tags]    no-windows-jython
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[5].msgs[0]}    Gracefully terminating process.
     Check Log Message    ${tc.kws[5].msgs[1]}    Graceful termination failed.

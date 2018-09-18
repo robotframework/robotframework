@@ -14,7 +14,7 @@ Run Keyword
     Should Be Equal  ${ret}  Hitellussome:more
 
 Documentation and Argument Boundaries Work With Kwargs In Java
-    [Documentation]  FAIL Keyword 'ArgDocDynamicJavaLibraryWithKwargsSupport.Java Kwargs' expected 0 non-keyword arguments, got 1.
+    [Documentation]  FAIL Keyword 'ArgDocDynamicJavaLibraryWithKwargsSupport.Java Kwargs' expected 0 non-named arguments, got 1.
     Java Kwargs  key=value
     Java Kwargs  1
 

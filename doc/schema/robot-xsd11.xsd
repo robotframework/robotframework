@@ -10,6 +10,7 @@
             </xs:sequence>
             <xs:attribute name="generator" type="xs:string"/>
             <xs:attribute name="generated" type="xs:string"/>
+            <xs:attribute name="rpa" type="xs:boolean"/>
             <xs:anyAttribute processContents="lax"/>
         </xs:complexType>
     </xs:element>

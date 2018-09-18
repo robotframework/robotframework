@@ -29,7 +29,7 @@ has a benefit that the log messages have accurate timestamps.
 
 If the logging methods are used when Robot Framework is not running,
 the messages are redirected to the standard Python ``logging`` module
-using logger named ``RobotFramework``. This feature was added in RF 2.8.7.
+using logger named ``RobotFramework``.
 
 Log levels
 ----------
@@ -139,6 +139,6 @@ def console(msg, newline=True, stream='stdout'):
 
     By default the message is written to the standard output stream.
     Using the standard error stream is possibly by giving the ``stream``
-    argument value ``'stderr'``. This is a new feature in RF 2.8.2.
+    argument value ``'stderr'``.
     """
     librarylogger.console(msg, newline, stream)

@@ -1,8 +1,9 @@
 import unittest
 import sys
 
-from robot.utils.encodingsniffer import get_console_encoding
 from robot.utils.asserts import assert_equal, assert_not_none
+from robot.utils.encodingsniffer import get_console_encoding
+from robot.utils import PY3, WINDOWS
 
 
 class StreamStub(object):
@@ -11,7 +12,11 @@ class StreamStub(object):
         self.encoding = encoding
 
 
-class TestGetConsoleEncodingFromStandardStreams(unittest.TestCase):
+# We don't look at streams on Windows with Python 3. Cannot run tests either.
+BASE = unittest.TestCase if not (WINDOWS and PY3) else object
+
+
+class TestGetConsoleEncodingFromStandardStreams(BASE):
 
     def setUp(self):
         self._orig_streams = sys.__stdout__, sys.__stderr__, sys.__stdin__

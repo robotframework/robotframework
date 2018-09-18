@@ -39,7 +39,6 @@ Should Be Equal As Strings case-insensitive
     Check test case    ${TESTNAME}
 
 Should Be Equal As Strings multiline
-    [Tags]    no-python26    # diff contains extra spaces on python 2.6
     Check test case    ${TESTNAME}
 
 Should Not Be Equal As Strings

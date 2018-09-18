@@ -23,7 +23,7 @@ Mandatory And Default Arguments
 Multiple Default Values
     Check Argument Value Trace
     ...    \${a1}='10' | \${a2}='2' | \${a3}='30' | \${a4}=4
-    ...    '10' | a3='30'
+    ...    10 | a3=30
 
 Named Arguments
     Check Argument Value Trace

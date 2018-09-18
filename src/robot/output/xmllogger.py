@@ -23,13 +23,13 @@ from .loggerhelper import IsLogged
 
 class XmlLogger(ResultVisitor):
 
-    def __init__(self, path, log_level='TRACE', generator='Robot'):
+    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
         self._log_message_is_logged = IsLogged(log_level)
         self._error_message_is_logged = IsLogged('WARN')
-        self._writer = self._get_writer(path, generator)
+        self._writer = self._get_writer(path, rpa, generator)
         self._errors = []
 
-    def _get_writer(self, path, generator):
+    def _get_writer(self, path, rpa, generator):
         if not path:
             return NullMarkupWriter()
         try:
@@ -38,7 +38,8 @@ class XmlLogger(ResultVisitor):
             raise DataError("Opening output file '%s' failed: %s" %
                             (path, err.strerror))
         writer.start('robot', {'generator': get_full_version(generator),
-                               'generated': get_timestamp()})
+                               'generated': get_timestamp(),
+                               'rpa': 'true' if rpa else 'false'})
         return writer
 
     def close(self):

@@ -439,9 +439,6 @@ can be changed by having `SEPARATOR=<sep>` in the first cell.
    ...             Second line     Third line
 
 Joining long values like above is a new feature in Robot Framework 2.9.
-Creating a scalar variable with multiple values was a syntax error in
-Robot Framework 2.8 and with earlier versions it created a variable with
-a list value.
 
 __ `Dividing test data to several rows`_
 
@@ -492,6 +489,10 @@ Python dictionaries have. For example, individual value `&{USER}[name]` can
 also be accessed like `${USER.name}` (notice that `$` is needed in this
 context), but using `${MANY.3}` is not possible.
 
+.. note:: Starting from Robot Framework 3.0.3, dictionary variable keys are
+          accessible recursively like `${VAR.nested.key}`. This eases working
+          with nested data structures.
+
 Another special property of dictionary variables is
 that they are ordered. This means that if these dictionaries are iterated,
 their items always come in the order they are defined. This can be useful
@@ -525,18 +526,12 @@ The syntax for setting individual variables is :option:`--variable
 name:value`, where `name` is the name of the variable without
 `${}` and `value` is its value. Several variables can be
 set by using this option several times. Only scalar variables can be
-set using this syntax and they can only get string values. Many
-special characters are difficult to represent in the
-command line, but they can be escaped__ with the :option:`--escape`
-option.
-
-__ `Escaping complicated characters`_
+set using this syntax and they can only get string values.
 
 .. sourcecode:: bash
 
    --variable EXAMPLE:value
    --variable HOST:localhost:7272 --variable USER:robot
-   --variable ESCAPED:Qquotes_and_spacesQ --escape quot:Q --escape space:_
 
 In the examples above, variables are set so that
 
@@ -766,8 +761,8 @@ operating-system-agnostic.
    | ${:}       | The system path element separator. `:` in UNIX-like              |
    |            | systems and `;` in Windows.                                      |
    +------------+------------------------------------------------------------------+
-   | ${\\n}     | The system line separator. :codesc:`\\n` in UNIX-like systems and|
-   |            | :codesc:`\\r\\n` in Windows. New in version 2.7.5.               |
+   | ${\\n}     | The system line separator. :codesc:`\\n` in UNIX-like systems    |
+   |            | and :codesc:`\\r\\n` in Windows.                                 |
    +------------+------------------------------------------------------------------+
 
 .. sourcecode:: robotframework
@@ -887,11 +882,16 @@ scopes. Modifying the value of `@{EMPTY}` or `&{EMPTY}` is not possible.
        Set Global Variable    @{LIST}    @{EMPTY}
        Set Suite Variable     &{DICT}    &{EMPTY}
 
-.. note:: `@{EMPTY}` is new in Robot Framework 2.7.4 and `&{EMPTY}` in
-          Robot Framework 2.9.
+.. note:: `${SPACE}` represents the ASCII space (`\x20`) and `other spaces`__
+          should be specified using the `escape sequences`__ like `\xA0`
+          (NO-BREAK SPACE) and `\u3000` (IDEOGRAPHIC SPACE).
+
+.. note:: `&{EMPTY}` is new in Robot Framework 2.9.
 
 __ Escaping_
 __ https://groups.google.com/group/robotframework-users/browse_thread/thread/ccc9e1cd77870437/4577836fe946e7d5?lnk=gst&q=templates#4577836fe946e7d5
+__ http://jkorpela.fi/chars/spaces.html
+__ Escaping_
 
 Automatic variables
 ~~~~~~~~~~~~~~~~~~~
@@ -916,7 +916,7 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +------------------------+-------------------------------------------------------+------------+
    | ${TEST DOCUMENTATION}  | The documentation of the current test case. Can be set| Test case  |
    |                        | dynamically using using :name:`Set Test Documentation`|            |
-   |                        | keyword. New in Robot Framework 2.7.                  |            |
+   |                        | keyword.                                              |            |
    +------------------------+-------------------------------------------------------+------------+
    | ${TEST STATUS}         | The status of the current test case, either PASS or   | `Test      |
    |                        | FAIL.                                                 | teardown`_ |
@@ -939,11 +939,10 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +------------------------+-------------------------------------------------------+------------+
    | ${SUITE DOCUMENTATION} | The documentation of the current test suite. Can be   | Everywhere |
    |                        | set dynamically using using :name:`Set Suite          |            |
-   |                        | Documentation` keyword. New in Robot Framework 2.7.   |            |
+   |                        | Documentation` keyword.                               |            |
    +------------------------+-------------------------------------------------------+------------+
    | &{SUITE METADATA}      | The free metadata of the current test suite. Can be   | Everywhere |
    |                        | set using :name:`Set Suite Metadata` keyword.         |            |
-   |                        | New in Robot Framework 2.7.4.                         |            |
    +------------------------+-------------------------------------------------------+------------+
    | ${SUITE STATUS}        | The status of the current test suite, either PASS or  | `Suite     |
    |                        | FAIL.                                                 | teardown`_ |
@@ -952,14 +951,14 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    |                        | statistics.                                           | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
    | ${KEYWORD STATUS}      | The status of the current keyword, either PASS or     | `User      |
-   |                        | FAIL. New in Robot Framework 2.7                      | keyword    |
+   |                        | FAIL.                                                 | keyword    |
    |                        |                                                       | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
    | ${KEYWORD MESSAGE}     | The possible error message of the current keyword.    | `User      |
-   |                        | New in Robot Framework 2.7.                           | keyword    |
+   |                        |                                                       | keyword    |
    |                        |                                                       | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
-   | ${LOG LEVEL}           | Current `log level`_. New in Robot Framework 2.8.     | Everywhere |
+   | ${LOG LEVEL}           | Current `log level`_.                                 | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
    | ${OUTPUT FILE}         | An absolute path to the `output file`_.               | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
@@ -977,8 +976,7 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
 
 Suite related variables `${SUITE SOURCE}`, `${SUITE NAME}`,
 `${SUITE DOCUMENTATION}` and `&{SUITE METADATA}` are
-available already when test libraries and variable files are imported,
-except to Robot Framework 2.8 and 2.8.1 where this support was broken.
+available already when test libraries and variable files are imported.
 Possible variables in these automatic variables are not yet resolved
 at the import time, though.
 
@@ -1269,7 +1267,7 @@ used as a list variable `@{EXTENDED.attribute}`.
 Extended variable assignment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7, it is possible to set attributes of
+It is possible to set attributes of
 objects stored to scalar variables using `keyword return values`__ and
 a variation of the `extended variable syntax`_. Assuming we have
 variable `${OBJECT}` from the previous examples, attributes could
