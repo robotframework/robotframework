@@ -145,7 +145,7 @@ class FromDirectoryPopulator(object):
 
     def _get_include_suites(self, path, incl_suites):
         if not isinstance(incl_suites, SuiteNamePatterns):
-            incl_suites = SuiteNamePatterns(self._create_included_suites(incl_suites))
+            incl_suites = SuiteNamePatterns(incl_suites)
         if not incl_suites:
             return incl_suites
         # If a directory is included, also all its children should be included.
@@ -214,15 +214,13 @@ class FromDirectoryPopulator(object):
         return self._is_in_included_suites(base, incl_suites, longname)
 
     def _is_in_included_suites(self, name, incl_suites, longname=None):
-        return not incl_suites or incl_suites.match(longname or self._split_prefix(name), longname)
+        return not incl_suites or incl_suites.match(self._split_prefix(name), longname)
 
     def _split_prefix(self, name):
         return name.split('__', 1)[-1]
 
     def _get_longname(self, base, datadir, include_suites):
-        if datadir.parent and include_suites:
-            if not ['.' in x for x in include_suites][0]:
-                return
+        if include_suites:
             longname = self._split_prefix(base)
             while datadir:
                 longname = '%s.%s' % (datadir.name, longname)
