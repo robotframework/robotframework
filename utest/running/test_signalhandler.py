@@ -115,18 +115,13 @@ class TestRestoringOriginalHandlers(unittest.TestCase):
         If a signal isn't registered within Python, signal.getsignal() returns None.
         This tests to make sure _StopSignalMonitor.__exit__ can handle that.
         """
-        try:
-            with _StopSignalMonitor() as monitor:
-                assert_equal(self.get_int(), monitor)
-                assert_equal(self.get_term(), monitor)
-                monitor._orig_sigint = None
-                monitor._orig_sigterm = None
-                assert_equal(None, monitor._orig_sigint)
-                assert_equal(None, monitor._orig_sigterm)
-        except TypeError:
-            raise AssertionError
-        else:
-            pass
+        with _StopSignalMonitor() as monitor:
+            assert_equal(self.get_int(), monitor)
+            assert_equal(self.get_term(), monitor)
+            monitor._orig_sigint = None
+            monitor._orig_sigterm = None
+            assert_equal(None, monitor._orig_sigint)
+            assert_equal(None, monitor._orig_sigterm)
         assert_equal(self.get_int(), signal.SIG_DFL)
         assert_equal(self.get_term(), signal.SIG_DFL)
 
