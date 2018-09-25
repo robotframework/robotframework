@@ -92,6 +92,9 @@ initialization files is explained below.
 `Test Setup`:setting:, `Test Teardown`:setting:, `Test Timeout`:setting:
    Set the default value for test setup/teardown or test timeout to all test
    cases this directory contains. Can be overridden on lower level.
+   Notice that keywords used as setups and teardowns must be available in
+   test case files where tests using them are. Defining keywords in the
+   initialization file itself is not enough.
 `Default Tags`:setting:, `Test Template`:setting:
    Not supported in initialization files.
 
