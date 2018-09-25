@@ -120,8 +120,6 @@ class TestRestoringOriginalHandlers(unittest.TestCase):
             assert_equal(self.get_term(), monitor)
             monitor._orig_sigint = None
             monitor._orig_sigterm = None
-            assert_equal(None, monitor._orig_sigint)
-            assert_equal(None, monitor._orig_sigterm)
         assert_equal(self.get_int(), signal.SIG_DFL)
         assert_equal(self.get_term(), signal.SIG_DFL)
 
