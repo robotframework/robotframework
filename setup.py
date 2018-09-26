@@ -44,8 +44,8 @@ PACKAGE_DATA = [join('htmldata', directory, pattern)
 setup(
     name         = 'robotframework',
     version      = VERSION,
-    author       = 'Robot Framework Developers',
-    author_email = 'robotframework@gmail.com',
+    author       = u'Pekka Klärck',
+    author_email = 'peke@eliga.fi',
     url          = 'http://robotframework.org',
     download_url = 'https://pypi.python.org/pypi/robotframework',
     license      = 'Apache License 2.0',
