@@ -240,10 +240,11 @@ __ https://github.com/IronLanguages/ironpython2/issues/370
 Backwards incompatible changes
 ==============================
 
-Old Python versions are not supported anymore
----------------------------------------------
+Python 2.6 and 3.3 are not supported anymore
+--------------------------------------------
 
-Neither Python 2.6 nor Python 3.3 are supported anymore. (`#2276`_)
+Neither Python 2.6 nor Python 3.3 are supported anymore. Both have
+reached their end-of-life, the former already in 2013. (`#2276`_)
 
 Old start-up scripts like `pybot` are removed
 ---------------------------------------------
@@ -286,8 +287,8 @@ was interpreted as `Underscores used here`, but nowadays the value is used
 as-is. A simple fix is quoting or escaping spaces on the command line like
 `--doc "We got spaces"` or `--doc We\ got\ spaces`. (`#2399`_)
 
-Deprecated syntax removed
--------------------------
+Some deprecated syntax removed
+------------------------------
 
 Syntax that has been deprecated earlier has now been removed altogether:
 
