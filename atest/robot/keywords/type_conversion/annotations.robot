@@ -175,5 +175,8 @@ String None is converted to None object
 Return value annotation causes no error
     Check Test Case    ${TESTNAME}
 
+Forward references
+    Check Test Case    ${TESTNAME}
+
 @keyword decorator overrides annotations
     Check Test Case    ${TESTNAME}

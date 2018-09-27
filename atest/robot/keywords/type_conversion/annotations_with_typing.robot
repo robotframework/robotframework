@@ -48,3 +48,6 @@ Set with params
 
 Invalid Set
     Check Test Case    ${TESTNAME}
+
+Forward references
+    Check Test Case    ${TESTNAME}

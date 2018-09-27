@@ -128,6 +128,11 @@ def non_type(argument: 'this is string, not type', expected=None):
     _validate_type(argument, expected)
 
 
+# Causes SyntaxError with `typing.get_type_hints`
+def invalid(argument: 'import sys', expected=None):
+    _validate_type(argument, expected)
+
+
 def varargs(*argument: int, expected=None):
     _validate_type(argument, expected)
 
@@ -137,6 +142,14 @@ def kwargs(expected=None, **argument: int):
 
 
 def kwonly(*, argument: float, expected=None):
+    _validate_type(argument, expected)
+
+
+def forward_referenced_concrete_type(argument: 'int', expected=None):
+    _validate_type(argument, expected)
+
+
+def forward_referenced_abc(argument: 'abc.Sequence', expected=None):
     _validate_type(argument, expected)
 
 

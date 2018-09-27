@@ -305,6 +305,12 @@ Non-type values don't cause errors
     Non type             None                      'None'
     Non type             none                      'none'
     Non type             []                        '[]'
+    Invalid              foo                       'foo'
+    Invalid              1                         '1'
+    Invalid              true                      'true'
+    Invalid              None                      'None'
+    Invalid              none                      'none'
+    Invalid              []                        '[]'
 
 Positional as named
     Integer              argument=-1               expected=-1
@@ -377,6 +383,10 @@ String None is converted to None object
 
 Return value annotation causes no error
     Return value annotation                    42    42
+
+Forward references
+    Forward referenced concrete type           42    42
+    Forward referenced ABC                     []    []
 
 @keyword decorator overrides annotations
     Types via keyword deco override            42    timedelta(seconds=42)

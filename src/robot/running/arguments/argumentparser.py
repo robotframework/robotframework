@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+
 from robot.errors import DataError
 from robot.utils import JYTHON, PY2
 from robot.variables import is_dict_var, is_list_var, is_scalar_var
@@ -25,9 +27,13 @@ if PY2:
 
     def getfullargspec(func):
         return getargspec(func) + (None, None, None)
-
 else:
     from inspect import getfullargspec, ismethod
+
+if sys.version_info > (3, 4):
+    import typing
+else:
+    typing = None
 
 if JYTHON:
     from java.lang import Class
@@ -71,7 +77,14 @@ class PythonArgumentParser(_ArgumentParser):
 
     def _get_types(self, handler, annotations):
         types = getattr(handler, 'robot_types', None)
-        return types if types is not None else annotations
+        if types is not None:
+            return types
+        if typing:
+            try:
+                return typing.get_type_hints(handler)
+            except Exception:  # Can raise pretty much anything
+                pass
+        return annotations
 
 
 class JavaArgumentParser(_ArgumentParser):

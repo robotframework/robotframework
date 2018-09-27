@@ -67,6 +67,14 @@ def mutable_set_with_params(argument: MutableSet[bool], expected=None):
     _validate_type(argument, expected)
 
 
+def forward_reference(argument: 'List', expected=None):
+    _validate_type(argument, expected)
+
+
+def forward_ref_with_params(argument: 'List[int]', expected=None):
+    _validate_type(argument, expected)
+
+
 def _validate_type(argument, expected):
     if isinstance(expected, str):
         expected = eval(expected)
