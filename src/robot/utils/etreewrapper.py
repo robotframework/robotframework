@@ -14,14 +14,13 @@
 #  limitations under the License.
 
 from io import BytesIO
-import sys
 
 from .compat import py2to3
-from .platform import IRONPYTHON
+from .platform import IRONPYTHON, PY_VERSION
 from .robottypes import is_string
 
 
-IRONPYTHON_WITH_BROKEN_ETREE = IRONPYTHON and sys.version_info < (2, 7, 9)
+IRONPYTHON_WITH_BROKEN_ETREE = IRONPYTHON and PY_VERSION < (2, 7, 9)
 NO_ETREE_ERROR = 'No valid ElementTree XML parser module found'
 
 

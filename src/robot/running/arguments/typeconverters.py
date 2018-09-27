@@ -27,11 +27,10 @@ except ImportError:    # Standard in Py 3.4+ but can be separately installed
     class Enum(object):
         pass
 from numbers import Integral, Real
-import sys
 
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY2,
-                         seq2str, type_name, unicode)
+from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION,
+                         PY2, seq2str, type_name, unicode)
 
 
 class TypeConverter(object):
@@ -53,7 +52,7 @@ class TypeConverter(object):
     def converter_for(cls, type_):
         # Types defined in the typing module in Python 3.7+. For details see
         # https://bugs.python.org/issue34568
-        if sys.version_info >= (3, 7) and hasattr(type_, '__origin__'):
+        if PY_VERSION >= (3, 7) and hasattr(type_, '__origin__'):
             type_ = type_.__origin__
         if not isinstance(type_, type) or issubclass(type_, unicode):
             return None

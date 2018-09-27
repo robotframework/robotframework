@@ -176,6 +176,7 @@ Return value annotation causes no error
     Check Test Case    ${TESTNAME}
 
 Forward references
+    [Tags]    require-py3.5
     Check Test Case    ${TESTNAME}
 
 @keyword decorator overrides annotations

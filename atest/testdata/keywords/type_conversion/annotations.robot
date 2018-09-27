@@ -385,6 +385,7 @@ Return value annotation causes no error
     Return value annotation                    42    42
 
 Forward references
+    [Tags]    require-py3.5
     Forward referenced concrete type           42    42
     Forward referenced ABC                     []    []
 

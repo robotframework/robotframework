@@ -52,8 +52,8 @@ from .match import eq, Matcher, MultiMatcher
 from .misc import (plural_or_not, printable_name, roundup, seq2str,
                    seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
-from .platform import (IRONPYTHON, JYTHON, PY2, PY3, PYPY, PYTHON, UNIXY,
-                       WINDOWS, RERAISED_EXCEPTIONS)
+from .platform import (IRONPYTHON, JYTHON, PY_VERSION, PY2, PY3, PYPY, PYTHON,
+                       UNIXY, WINDOWS, RERAISED_EXCEPTIONS)
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method

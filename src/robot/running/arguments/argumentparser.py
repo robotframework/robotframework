@@ -13,10 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-
 from robot.errors import DataError
-from robot.utils import JYTHON, PY2
+from robot.utils import JYTHON, PY_VERSION, PY2
 from robot.variables import is_dict_var, is_list_var, is_scalar_var
 
 from .argumentspec import ArgumentSpec
@@ -30,7 +28,7 @@ if PY2:
 else:
     from inspect import getfullargspec, ismethod
 
-if sys.version_info > (3, 4):
+if PY_VERSION >= (3, 5):
     import typing
 else:
     typing = None

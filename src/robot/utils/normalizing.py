@@ -13,10 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 from collections import MutableMapping
 
-from .platform import PY3, IRONPYTHON
+from .platform import IRONPYTHON, PY_VERSION, PY3
 from .robottypes import is_dict_like, is_unicode
 
 
@@ -44,7 +43,7 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
 
 
 # http://ironpython.codeplex.com/workitem/33133
-if IRONPYTHON and sys.version_info < (2, 7, 5):
+if IRONPYTHON and PY_VERSION < (2, 7, 5):
     def lower(string):
         return ('A' + string).lower()[1:]
 else:
