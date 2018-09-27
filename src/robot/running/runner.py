@@ -122,13 +122,13 @@ class Runner(SuiteVisitor):
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(test, result))
         status = TestStatus(self._suite_status, result.critical)
+        if status.exit:
+            self._add_exit_combine()
+            result.tags.add('robot:exit')
         if not status.failures and not test.name:
             status.test_failed('Test case name cannot be empty.')
         if not status.failures and not test.keywords.normal:
             status.test_failed('Test case contains no keywords.')
-        if status.exit:
-            self._add_exit_combine()
-            result.tags.add('robot:exit')
         self._run_setup(test.keywords.setup, status, result)
         try:
             if not status.failures:
