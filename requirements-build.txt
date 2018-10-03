@@ -1,0 +1,5 @@
+# Requirements needed when generating releases. See BUILD.rst for details.
+invoke >= 0.20
+rellu >= 0.7
+twine >= 1.12
+wheel

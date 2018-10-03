@@ -19,13 +19,16 @@ from .platform import PY2
 if PY2:
     from .robottypes2 import (is_bytes, is_dict_like, is_integer, is_list_like,
                               is_number, is_string, is_unicode, type_name)
+    unicode = unicode
 
 else:
     from .robottypes3 import (is_bytes, is_dict_like, is_integer, is_list_like,
                               is_number, is_string, is_unicode, type_name)
+    unicode = str
 
 
-FALSE_STRINGS = set(['FALSE', 'NONE', 'NO', ''])
+TRUE_STRINGS = {'TRUE', 'YES', 'ON', '1'}
+FALSE_STRINGS = {'FALSE', 'NO', 'OFF', '0', 'NONE', ''}
 
 
 def is_truthy(item):
@@ -33,14 +36,16 @@ def is_truthy(item):
 
     Validation rules:
 
-    - If the value is a string, it is considered `True` if it is not `FALSE`,
-      `NO`, 'NONE' or '', case-insensitively. Considering 'NONE' not `True`
-      is new in RF 3.0.3.
+    - If the value is a string, it is considered false if it is `'FALSE'`,
+      `'NO'`, `'OFF'`, `'0'`, `'NONE'` or `''`, case-insensitively.
+      Considering `'NONE'` false is new in RF 3.0.3 and considering `'OFF'`
+      and `'0'` false is new in RF 3.1.
+    - Other strings are considered true.
     - Other values are handled by using the standard `bool()` function.
 
     Designed to be used also by external test libraries that want to handle
     Boolean values similarly as Robot Framework itself. See also
-    :func:`is_falsy` and :func:`is_noney`.
+    :func:`is_falsy`.
     """
     if is_string(item):
         return item.upper() not in FALSE_STRINGS

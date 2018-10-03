@@ -8,7 +8,13 @@ Should Match
     abcdefghijklmnopqrstuvwxyz    *
     abcdefghijklmnopqrstuvwxyz    ?*?efg*p*t?vw*z
     NOK                           ???
+    foo\n                         foo\n
     NOK                           H*K    Failure
+
+Should Match with extra trailing newline
+    [Template]    Run Keyword And Expect Error
+    'foo\n' does not match 'foo'    Should Match    foo\n    foo
+    'foo' does not match 'foo\n'    Should Match    foo      foo\n
 
 Should Match case-insensitive
     [Template]    Should Match
@@ -21,15 +27,25 @@ Should Match with bytes containing non-ascii characters
     ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
     ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
 
+Should Match does not work with bytes on Python 3
+    [Documentation]    FAIL    GLOB: Several failures occurred:\n\n
+    ...    1) TypeError: *\n\n
+    ...    2) TypeError: Matching bytes is not supported on Python 3.
+    [Template]    Should Match
+    ${BYTES WITHOUT NON ASCII}    pattern
+    text                          ${BYTES WITHOUT NON ASCII}
+
 Should Not Match
     [Documentation]    FAIL    'Hello world' matches '?ello*'
     [Template]    Should Not Match
     this string does not    match this pattern
     Case matters            case matters
+    foo\n                   foo
+    foo                     foo\n
     Hello world             ?ello*
 
 Should Not Match case-insensitive
-    [Documentation]    FAIL    Fails: 'hillo?' matches 'h?ll*'
+    [Documentation]    FAIL    Fails: 'Hillo?' matches 'h?ll*'
     [Template]    Should Not Match
     Hello!    heLLo    ignore_case=True
     Hillo?    h?ll*    ignore_case=yes    msg=Fails

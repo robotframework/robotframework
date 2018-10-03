@@ -161,11 +161,12 @@ class StatisticsBuilder(object):
     def build(self, statistics):
         return (self._build_stats(statistics.total),
                 self._build_stats(statistics.tags),
-                self._build_stats(statistics.suite))
+                self._build_stats(statistics.suite, exclude_empty=False))
 
-    def _build_stats(self, stats):
+    def _build_stats(self, stats, exclude_empty=True):
         return tuple(stat.get_attributes(include_label=True,
                                          include_elapsed=True,
+                                         exclude_empty=exclude_empty,
                                          html_escape=True)
                      for stat in stats)
 

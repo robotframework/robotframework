@@ -8,7 +8,7 @@ ${ARG FILE}     %{TEMPDIR}/arguments.txt
 *** Test Cases ***
 Argument File
     ${content} =    Catenate    SEPARATOR=\n
-    ...    --name From_Arg File
+    ...    --name From Arg File
     ...    -D= Leading space
     ...    -M${SPACE*5}No:Spaces
     ...    \# comment line

@@ -1,14 +1,23 @@
 import unittest
+from collections import OrderedDict
 
+from robot.utils import IRONPYTHON, DotDict
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
                                  assert_raises, assert_true)
-from robot.utils import DotDict, OrderedDict, IRONPYTHON
 
 
 class TestDotDict(unittest.TestCase):
 
     def setUp(self):
         self.dd = DotDict([('z', 1), (2, 'y'), ('x', 3)])
+
+    def test_init(self):
+        assert_true(DotDict() == DotDict({}) == DotDict([]))
+        assert_true(DotDict(a=1) == DotDict({'a': 1}) == DotDict([('a', 1)]))
+        assert_true(DotDict({'a': 1}, b=2) ==
+                    DotDict({'a': 1, 'b': 2}) ==
+                    DotDict([('a', 1), ('b', 2)]))
+        assert_raises(TypeError, DotDict, None)
 
     def test_get(self):
         assert_equal(self.dd[2], 'y')
@@ -79,22 +88,52 @@ class TestDotDict(unittest.TestCase):
                 assert_equal(d2, d1)
         assert_not_equal(od1, od2)
 
-    def test_nested_dicts(self):
+class TestNestedDotDict(unittest.TestCase):
+
+    def test_nested_dicts_are_converted_to_dotdicts_at_init(self):
         leaf = {'key': 'value'}
         d = DotDict({'nested': leaf, 'deeper': {'nesting': leaf}}, nested2=leaf)
         assert_equal(d.nested.key, 'value')
         assert_equal(d.deeper.nesting.key, 'value')
         assert_equal(d.nested2.key, 'value')
 
-    def test_nested_dicts_inside_list_likes(self):
+    def test_dicts_inside_lists_are_converted(self):
         leaf = {'key': 'value'}
-        d = DotDict(list=[leaf, leaf, [leaf]], tuple=(leaf, {'deeper': leaf}))
+        d = DotDict(list=[leaf, leaf, [leaf]], deeper=[leaf, {'deeper': leaf}])
         assert_equal(d.list[0].key, 'value')
         assert_equal(d.list[1].key, 'value')
         assert_equal(d.list[2][0].key, 'value')
-        assert_equal(d.tuple[0].key, 'value')
-        assert_equal(d.tuple[1].deeper.key, 'value')
-        assert_true(isinstance(d.tuple, list))
+        assert_equal(d.deeper[0].key, 'value')
+        assert_equal(d.deeper[1].deeper.key, 'value')
+
+    def test_other_list_like_items_are_not_touched(self):
+        value = ({'key': 'value'}, [{}])
+        d = DotDict(key=value)
+        assert_equal(d.key[0]['key'], 'value')
+        assert_false(hasattr(d.key[0], 'key'))
+        assert_true(isinstance(d.key[0], dict))
+        assert_true(isinstance(d.key[1][0], dict))
+
+    def test_items_inserted_outside_init_are_not_converted(self):
+        d = DotDict()
+        d['dict'] = {'key': 'value'}
+        d['list'] = [{}]
+        assert_equal(d.dict['key'], 'value')
+        assert_false(hasattr(d.dict, 'key'))
+        assert_true(isinstance(d.dict, dict))
+        assert_true(isinstance(d.list[0], dict))
+
+    def test_dotdicts_are_not_recreated(self):
+        value = DotDict(key=1)
+        d = DotDict(key=value)
+        assert_true(d.key is value)
+        assert_equal(d.key.key, 1)
+
+    def test_lists_are_not_recreated(self):
+        value = [{'key': 1}]
+        d = DotDict(key=value)
+        assert_true(d.key is value)
+        assert_equal(d.key[0].key, 1)
 
 
 if __name__ == '__main__':

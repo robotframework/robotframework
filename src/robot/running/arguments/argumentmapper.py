@@ -19,6 +19,7 @@ from robot.errors import DataError
 class ArgumentMapper(object):
 
     def __init__(self, argspec):
+        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
 
     def map(self, positional, named, replace_defaults=True):
@@ -33,31 +34,38 @@ class ArgumentMapper(object):
 class KeywordCallTemplate(object):
 
     def __init__(self, argspec):
-        self._positional = argspec.positional
-        self._supports_kwargs = bool(argspec.kwargs)
-        self._supports_named = argspec.supports_named
-        self.args = [None] * argspec.minargs \
-                    + [DefaultValue(d) for d in argspec.defaults]
+        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
+        self._argspec = argspec
+        self.args = [None if arg not in argspec.defaults
+                     else DefaultValue(argspec.defaults[arg])
+                     for arg in argspec.positional]
         self.kwargs = []
 
     def fill_positional(self, positional):
         self.args[:len(positional)] = positional
 
     def fill_named(self, named):
+        spec = self._argspec
         for name, value in named:
-            if name in self._positional and self._supports_named:
-                index = self._positional.index(name)
+            if name in spec.positional and spec.supports_named:
+                index = spec.positional.index(name)
                 self.args[index] = value
-            elif self._supports_kwargs:
+            elif spec.kwargs or name in spec.kwonlyargs:
                 self.kwargs.append((name, value))
             else:
                 raise DataError("Non-existing named argument '%s'." % name)
+        named_names = {name for name, _ in named}
+        for name in spec.kwonlyargs:
+            if name not in named_names:
+                value = DefaultValue(spec.defaults[name])
+                self.kwargs.append((name, value))
 
     def replace_defaults(self):
-        while self.args and isinstance(self.args[-1], DefaultValue):
+        is_default = lambda arg: isinstance(arg, DefaultValue)
+        while self.args and is_default(self.args[-1]):
             self.args.pop()
-        self.args = [arg if not isinstance(arg, DefaultValue) else arg.value
-                     for arg in self.args]
+        self.args = [a if not is_default(a) else a.value for a in self.args]
+        self.kwargs = [(n, v) for n, v in self.kwargs if not is_default(v)]
 
 
 class DefaultValue(object):

@@ -59,7 +59,7 @@ from GitHub_. After that you can install the framework with::
     python setup.py install
 
 For more detailed installation instructions, including installing Python,
-Jython, IronPython and PyPy, see `<INSTALL.rst>`__.
+Jython, IronPython and PyPy or installing from git, see `<INSTALL.rst>`__.
 
 Example
 -------
@@ -91,9 +91,7 @@ Usage
 
 Starting from Robot Framework 3.0, tests are executed from the command line
 using the ``robot`` script or by executing the ``robot`` module directly
-like ``python -m robot`` or ``jython -m robot``. Older Robot Framework
-versions have Python interpreter specific ``pybot``, ``jybot`` and ``ipybot``
-scripts that still work but will be deprecated and removed in the future.
+like ``python -m robot`` or ``jython -m robot``.
 
 The basic usage is giving a path to a test case file or directory as an
 argument with possible command line options before the path::

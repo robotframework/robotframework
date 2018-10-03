@@ -16,33 +16,30 @@ Selecting files to parse
 ------------------------
 
 Robot Framework supports test data in `various formats`__, but nowadays the
-`plain text format`_ in dedicated `*.robot` files is most commonly used.
-If only one file format is used in a project, it can be a good idea to limit
-parsing test data to only these files by using the :option:`--extension (-F)`
-option. This is especially useful if the executed directory contains large
-files that contain no test data, but have an extension that Robot Framework
-would parse otherwise. Especially large HTML files, such as reports and logs
-you can get from Robot Framework itself, can be pretty slow to process.
+`plain text format`_ in dedicated `*.robot` files is the most commonly used.
+Prior to Robot Framework 3.1, all files in all supported formats were parsed,
+meaning that also files not containing any test data could be parsed.
+To avoid parsing non-data files, especially large and slow to parse files,
+Robot Framework 3.0.1 added the :option:`--extension (-F)` option to select
+which files to parse. In Robot Framework 3.1 parsing other than `*.robot`
+files was deprecated and the :option:`--extension` option can be used to
+explicitly tell the framework to parse other files.
 
-The :option:`--extension` option takes a file extension as an argument, and only
-files with that extension are parsed. It only has an effect when executing
-directories, though, not when running explicitly specified individual files.
-It does not affect which files can be used as `resource files`_ either. If
-there is a need to parse more than one kind of files, it is possible to use
-a colon `:` to separate extensions. Matching extensions is case insensitive.
+The :option:`--extension` option takes a file extension as an argument, and
+only files with that extension are parsed. If there is a need to parse more
+than one kind of files, it is possible to use a colon `:` to separate
+extensions. Matching extensions is case insensitive.
 
 ::
 
-  robot --extension robot path/to/tests
-  robot --extension ROBOT:TXT path/to/tests
+  robot --extension robot path/to/tests        # Only parse *.robot files
+  robot --extension ROBOT:TXT path/to/tests    # Parse *.robot and *.txt files
 
-If files in one format use different extensions like ``*.html`` and ``*.htm``,
+If files in one format use different extensions like ``*.rst`` and ``*.rest``,
 you need to specify those extensions separately. Using just one of them would
 mean that other files in that format are skipped.
 
 __ `Supported file formats`_
-
-.. note:: Selecting files to parse is a new functionality in Robot Framework 3.0.1.
 
 Selecting test cases
 --------------------
@@ -166,10 +163,6 @@ is same as not specifying this option at all.
 .. tip:: Re-execution results and original results can be `merged together`__
          using the :option:`--merge` command line option.
 
-.. note:: Re-executing failed tests is a new feature in Robot Framework 2.8.
-          Prior to Robot Framework 2.8.4 the option was named
-          :option:`--runfailed`.
-
 __ `Merging outputs`_
 
 Re-executing failed test suites
@@ -211,8 +204,6 @@ Rebot fails in these cases, but it has a separate
 :option:`--ProcessEmptySuite` option that can be used to alter the behavior.
 In practice this option works the same way as :option:`--RunEmptySuite` when
 running tests.
-
-.. note:: :option:`--ProcessEmptySuite` option was added in Robot Framework 2.7.2.
 
 Setting criticality
 -------------------
@@ -276,8 +267,11 @@ Setting the name
 When Robot Framework parses test data, `test suite names are created
 from file and directory names`__. The name of the top-level test suite
 can, however, be overridden with the command line option
-:option:`--name (-N)`. Underscores in the given name are converted to
-spaces automatically.
+:option:`--name (-N)`.
+
+.. note:: Prior to Robot Framework 3.1, underscores in the value were
+          converted to spaces. Nowadays values containing spaces need
+          to be escaped or quoted like, for example, `--name "My example"`.
 
 __ `Test suite name and documentation`_
 
@@ -287,8 +281,10 @@ Setting the documentation
 
 In addition to `defining documentation in the test data`__, documentation
 of the top-level suite can be given from the command line with the
-option :option:`--doc (-D)`. Underscores in the given documentation
-are converted to spaces, and it may contain simple `HTML formatting`_.
+option :option:`--doc (-D)` The value can contain simple `HTML formatting`_.
+
+.. note:: Prior to Robot Framework 3.1, underscores in the value were
+          converted to spaces same way as with the :option:`--name` option.
 
 __ `Test suite name and documentation`_
 
@@ -298,9 +294,11 @@ Setting free metadata
 `Free test suite metadata`_ may also be given from the command line with the
 option :option:`--metadata (-M)`. The argument must be in the format
 `name:value`, where `name` the name of the metadata to set and
-`value` is its value. Underscores in the name and value are converted to
-spaces, and the latter may contain simple `HTML formatting`_. This option may
-be used several times to set multiple metadata.
+`value` is its value. The value can contain simple `HTML formatting`_.
+This option may be used several times to set multiple metadata values.
+
+.. note:: Prior to Robot Framework 3.1, underscores in the value were
+          converted to spaces same way as with the :option:`--name` option.
 
 Setting tags
 ~~~~~~~~~~~~
@@ -376,23 +374,23 @@ the word Python in it, it works also on Jython and IronPython.
 Multiple locations can be given by separating them with a colon, regardless
 the operating system, or by using this option several times. The given path
 can also be a glob pattern matching multiple paths, but then it typically
-needs to be escaped__.
-
-__ `Escaping complicated characters`_
+needs to be escaped when used on the console.
 
 Examples::
 
    --pythonpath libs
    --pythonpath /opt/testlibs:mylibs.zip:yourlibs
-   --pythonpath mylib.jar --pythonpath lib/STAR.jar --escape star:STAR
+   --pythonpath mylib.jar --pythonpath lib/\*.jar    # '*' is escaped
 
 Configuring `sys.path` programmatically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Python interpreters store the module search path they use as a list of strings
-in `sys.path <https://docs.python.org/2/library/sys.html#sys.path>`__
+in `sys.path`__
 attribute. This list can be updated dynamically during execution, and changes
 are taken into account next time when something is imported.
+
+__ http://docs.python.org/library/sys.html#sys.path
 
 Java classpath
 ~~~~~~~~~~~~~~
@@ -411,8 +409,8 @@ bit differently, due to the fact that `java -jar` command does support
 the ``CLASSPATH`` environment variable nor the :option:`-cp` option. There are
 two different ways to configure the classpath::
 
-  java -cp lib/testlibrary.jar:lib/app.jar:robotframework-2.9.jar org.robotframework.RobotFramework tests.robot
-  java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-2.9.jar tests.robot
+  java -cp lib/testlibrary.jar:lib/app.jar:robotframework-3.1.jar org.robotframework.RobotFramework tests.robot
+  java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-3.1.jar tests.robot
 
 __ https://docs.oracle.com/javase/8/docs/technotes/tools/findingclasses.html
 
@@ -484,7 +482,7 @@ The test execution order can be randomized using option
     This value can be used to override the earlier value set with
     :option:`--randomize`.
 
-Starting from Robot Framework 2.8.5, it is possible to give a custom seed
+It is possible to give a custom seed
 to initialize the random generator. This is useful if you want to re-run tests
 using the same order as earlier. The seed is given as part of the value for
 :option:`--randomize` in format `<what>:<seed>` and it must be an integer.
@@ -680,7 +678,6 @@ This option supports the following case-insensitive values:
 `ansi`
     Same as `on` but uses ANSI colors also on Windows. Useful, for example,
     when redirecting output to a program that understands ANSI colors.
-    New in Robot Framework 2.7.5.
 
 `off`
     Colors are disabled.
@@ -695,12 +692,12 @@ __ http://en.wikipedia.org/wiki/ANSI_escape_code
 Console markers
 ~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7, special markers `.` (success) and
+Special markers `.` (success) and
 `F` (failure) are shown on the console when using the `verbose output`__
 and top level keywords in test cases end. The markers allow following
 the test execution in high level, and they are erased when test cases end.
 
-Starting from Robot Framework 2.7.4, it is possible to configure when markers
+It is possible to configure when markers
 are used with :option:`--consolemarkers (-K)` option. It supports the following
 case-insensitive values:
 

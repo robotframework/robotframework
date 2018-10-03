@@ -17,14 +17,12 @@ Run tests with options containing </script>
     ${options} =    Catenate
     ...    --log log.html
     ...    --report report.html
-    ...    --escape lt:LT
-    ...    --escape gt:GT
-    ...    --name LT/scriptGT
-    ...    --logtitle LT/scriptGT
-    ...    --reporttitle LT/scriptGT
-    ...    --tagdoc *:LT/scriptGT
-    ...    --tagstatlink LT/scriptGT:LT/scriptGT:LT/scriptGT
-    ...    --tagstatcombine *:LT/scriptGT:LT/scriptGT
+    ...    --name </script>
+    ...    --logtitle </script>
+    ...    --reporttitle </script>
+    ...    --tagdoc *:</script>
+    ...    --tagstatlink </script>:</script>:</script>
+    ...    --tagstatcombine *:</script>:</script>
     Run tests    ${options}    output/js_model.robot
 
 Model should contain escaped strings

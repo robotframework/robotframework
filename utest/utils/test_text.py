@@ -2,13 +2,14 @@ import unittest
 import os
 from os.path import abspath
 
-from robot.utils.asserts import *
-
-from robot.utils.text import (cut_long_message, get_console_length,
-                              pad_console_length, split_tags_from_doc,
-                              split_args_from_name_or_path,
-                              _count_line_lengths, _MAX_ERROR_LINES,
-                              _MAX_ERROR_LINE_LENGTH, _ERROR_CUT_EXPLN)
+from robot.utils.asserts import assert_equal, assert_true
+from robot.utils import IRONPYTHON, PY2
+from robot.utils.text import (
+    cut_long_message, get_console_length, getdoc, getshortdoc,
+    pad_console_length, split_tags_from_doc, split_args_from_name_or_path,
+    _count_line_lengths, _MAX_ERROR_LINES, _MAX_ERROR_LINE_LENGTH,
+    _ERROR_CUT_EXPLN
+)
 
 
 _HALF_ERROR_LINES = _MAX_ERROR_LINES // 2
@@ -273,6 +274,95 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
             assert_equal(self.method(path), (abspath(path), []))
         finally:
             os.rmdir(path)
+
+
+class TestGetdoc(unittest.TestCase):
+
+    def test_no_doc(self):
+        def func():
+            pass
+        assert_equal(getdoc(func), '')
+
+    def test_one_line_doc(self):
+        def func():
+            """My documentation."""
+        assert_equal(getdoc(func), 'My documentation.')
+
+    def test_multiline_doc(self):
+        class Class:
+            """My doc.
+
+            In multiple lines.
+            """
+        assert_equal(getdoc(Class), 'My doc.\n\nIn multiple lines.')
+        assert_equal(getdoc(Class), getdoc(Class()))
+
+    def test_unicode_doc(self):
+        class Class:
+            def meth(self):
+                u"""Hyv\xe4 \xe4iti!"""
+        assert_equal(getdoc(Class.meth), u'Hyv\xe4 \xe4iti!')
+        assert_equal(getdoc(Class.meth), getdoc(Class().meth))
+
+    if PY2:
+
+        def test_non_ascii_doc_in_utf8(self):
+            def func():
+                """Hyv\xc3\xa4 \xc3\xa4iti!"""
+            expected = u'Hyv\xe4 \xe4iti!' \
+                if not IRONPYTHON else u'Hyv\xc3\xa4 \xc3\xa4iti!'
+            assert_equal(getdoc(func), expected)
+
+        def test_non_ascii_doc_not_in_utf8(self):
+            def func():
+                """Hyv\xe4 \xe4iti!"""
+            expected = 'Hyv\\xe4 \\xe4iti!' \
+                if not IRONPYTHON else u'Hyv\xe4 \xe4iti!'
+            assert_equal(getdoc(func), expected)
+
+
+class TestGetshortdoc(unittest.TestCase):
+
+    def test_empty(self):
+        self._verify('', '')
+
+    def test_one_line(self):
+        self._verify('Hello, world!', 'Hello, world!')
+
+    def test_multiline_with_one_line_short_doc(self):
+        self._verify('''\
+This is the short doc. Nicely in one line.
+
+This is the remainder of the doc.
+''', 'This is the short doc. Nicely in one line.')
+
+    def test_only_short_doc_split_to_many_lines(self):
+        self._verify('This time short doc is\nsplit to multiple lines.',
+                     'This time short doc is\nsplit to multiple lines.')
+
+    def test_multiline_with_multiline_short_doc(self):
+        self._verify('''\
+This is the short doc.
+Nicely in multiple
+lines.
+
+This is the remainder of the doc.
+''', 'This is the short doc.\nNicely in multiple\nlines.')
+
+    def test_line_with_only_spaces_is_considered_empty(self):
+        self._verify('Short\ndoc\n\n    \nignored', 'Short\ndoc')
+
+    def test_doc_from_object(self):
+        def func():
+            """This is short doc
+            in multiple lines.
+
+            This is the remainder.
+            """
+        self._verify(func, 'This is short doc\nin multiple lines.')
+
+    def _verify(self, doc, expected):
+        assert_equal(getshortdoc(doc), expected)
 
 
 if __name__ == '__main__':

@@ -4,11 +4,7 @@ from robot.utils.asserts import (assert_equal, assert_not_equal, assert_raises,
 
 from robot.model.testcase import TestCase, TestCases
 from robot.model import TestSuite
-from robot.utils import PY2, PY3
-
-
-if PY3:
-    unicode = str
+from robot.utils import PY2, unicode
 
 
 class TestTestCase(unittest.TestCase):

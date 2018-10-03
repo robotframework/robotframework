@@ -40,8 +40,8 @@ into use by using this option several times::
 It is also possible to give arguments to listener classes from the command
 line. Arguments are specified after the listener name (or path) using a colon
 (`:`) as a separator. If a listener is given as an absolute Windows path,
-the colon after the drive letter is not considered a separator. Starting from
-Robot Framework 2.8.7, it is possible to use a semicolon (`;`) as an
+the colon after the drive letter is not considered a separator.
+Additionally it is possible to use a semicolon (`;`) as an
 alternative argument separator. This is useful if listener arguments
 themselves contain colons, but requires surrounding the whole value with
 quotes on UNIX-like operating systems::
@@ -111,12 +111,12 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | * `id`: Suite id. `s1` for the top level suite, `s1-s1`        |
    |                  |                  |   for its first child suite, `s1-s2` for the second            |
-   |                  |                  |   child, and so on. New in RF 2.8.5.                           |
+   |                  |                  |   child, and so on.                                            |
    |                  |                  | * `longname`: Suite name including parent suites.              |
    |                  |                  | * `doc`: Suite documentation.                                  |
    |                  |                  | * `metadata`: `Free test suite metadata`_ as a dictionary/map. |
    |                  |                  | * `source`: An absolute path of the file/directory the suite   |
-   |                  |                  |   was created from. New in RF 2.7.                             |
+   |                  |                  |   was created from.                                            |
    |                  |                  | * `suites`: Names of the direct child suites this suite has    |
    |                  |                  |   as a list.                                                   |
    |                  |                  | * `tests`: Names of the tests this suite has as a list.        |
@@ -150,7 +150,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | * `id`: Test id in format like `s1-s2-t2`, where               |
    |                  |                  |   the beginning is the parent suite id and the last part       |
-   |                  |                  |   shows test index in that suite. New in RF 2.8.5.             |
+   |                  |                  |   shows test index in that suite.                              |
    |                  |                  | * `longname`: Test name including parent suites.               |
    |                  |                  | * `doc`: Test documentation.                                   |
    |                  |                  | * `tags`: Test tags as a list of strings.                      |
@@ -236,7 +236,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   should be interpreted as HTML or not.                        |
    |                  |                  |                                                                |
    |                  |                  | Starting from RF 3.0, this method is not called if the message |
-   |                  |                  | has level below the current `threshold level <Log levels_>`_.  |
+   |                  |                  | has level below the current `threshold level <Log levels_>`__. |
    +------------------+------------------+----------------------------------------------------------------+
    | message          | message          | Called when the framework itself writes a syslog_ message.     |
    |                  |                  |                                                                |
@@ -370,8 +370,8 @@ __ https://github.com/robotframework/robotframework/issues/1208#issuecomment-164
    | start_suite      | data, result     | Called when a test suite starts.                               |
    |                  |                  |                                                                |
    |                  |                  | `data` and `result` are model objects representing             |
-   |                  |                  | the `executed test suite <running.TestSuite_>`_ and `its       |
-   |                  |                  | execution results <result.TestSuite_>`_, respectively.         |
+   |                  |                  | the `executed test suite <running.TestSuite_>`__ and `its      |
+   |                  |                  | execution results <result.TestSuite_>`__, respectively.        |
    +------------------+------------------+----------------------------------------------------------------+
    | end_suite        | data, result     | Called when a test suite ends.                                 |
    |                  |                  |                                                                |
@@ -380,8 +380,8 @@ __ https://github.com/robotframework/robotframework/issues/1208#issuecomment-164
    | start_test       | data, result     | Called when a test case starts.                                |
    |                  |                  |                                                                |
    |                  |                  | `data` and `result` are model objects representing             |
-   |                  |                  | the `executed test case <running.TestCase_>`_ and `its         |
-   |                  |                  | execution results <result.TestCase_>`_, respectively.          |
+   |                  |                  | the `executed test case <running.TestCase_>`__ and `its        |
+   |                  |                  | execution results <result.TestCase_>`__, respectively.         |
    +------------------+------------------+----------------------------------------------------------------+
    | end_test         | data, result     | Called when a test case ends.                                  |
    |                  |                  |                                                                |
@@ -393,10 +393,10 @@ __ https://github.com/robotframework/robotframework/issues/1208#issuecomment-164
    +------------------+------------------+----------------------------------------------------------------+
    | log_message      | message          | Called when an executed keyword writes a log message.          |
    |                  |                  | `message` is a model object representing the `logged           |
-   |                  |                  | message <result.Message_>`_.                                   |
+   |                  |                  | message <result.Message_>`__.                                  |
    |                  |                  |                                                                |
    |                  |                  | This method is not called if the message has level below       |
-   |                  |                  | the current `threshold level <Log levels_>`_.                  |
+   |                  |                  | the current `threshold level <Log levels_>`__.                 |
    +------------------+------------------+----------------------------------------------------------------+
    | message          | message          | Called when the framework itself writes a syslog_ message.     |
    |                  |                  |                                                                |
@@ -486,7 +486,7 @@ version 2`_.
 
    def end_test(name, attrs):
        if attrs['status'] == 'FAIL':
-           print 'Test "%s" failed: %s' % (name, attrs['message'])
+           print('Test "%s" failed: %s' % (name, attrs['message']))
            raw_input('Press enter to continue.')
 
 If the above example would be saved to, for example, :file:`PauseExecution.py`
@@ -505,7 +505,7 @@ The same example could also be implemented also using the newer
 
    def end_test(data, result):
        if not result.passed:
-           print 'Test "%s" failed: %s' % (result.name, result.message)
+           print('Test "%s" failed: %s' % (result.name, result.message))
            raw_input('Press enter to continue.')
 
 The next example, which still uses Python, is slightly more complicated. It
@@ -616,8 +616,8 @@ Modifying executed suites and tests
 '''''''''''''''''''''''''''''''''''
 
 Changing what is executed requires modifying the model object containing
-the executed `test suite <running.TestSuite_>`_ or `test case
-<running.TestCase_>`_ objects passed as the first argument to `start_suite`
+the executed `test suite <running.TestSuite_>`__ or `test case
+<running.TestCase_>`__ objects passed as the first argument to `start_suite`
 and `start_test` methods. This is illustrated by the example below that
 adds a new test to each executed test suite and a new keyword to each test.
 
@@ -664,9 +664,9 @@ Modifying results
 '''''''''''''''''
 
 Test execution results can be altered by modifying `test suite
-<result.TestSuite_>`_ and `test case <result.TestCase_>`_ result objects
+<result.TestSuite_>`__ and `test case <result.TestCase_>`__ result objects
 passed as the second argument to `start_suite` and `start_test` methods,
-respectively, and by modifying the `message <result.Message_>`_ object passed
+respectively, and by modifying the `message <result.Message_>`__ object passed
 to the `log_message` method. This is demonstrated by the following listener
 that is implemented as a class.
 
@@ -712,8 +712,6 @@ Sometimes it is useful also for `test libraries`_ to get notifications about
 test execution. This allows them, for example, to perform certain clean-up
 activities automatically when a test suite or the whole test execution ends.
 
-.. note:: This functionality is new in Robot Framework 2.8.5.
-
 Registering listener
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -750,7 +748,7 @@ acting as a listener itself:
            self.ROBOT_LIBRARY_LISTENER = self
 
        def _end_suite(self, name, attrs):
-           print 'Suite %s (%s) ending.' % (name, attrs['id'])
+           print('Suite %s (%s) ending.' % (name, attrs['id']))
 
        # actual library code here ...
 

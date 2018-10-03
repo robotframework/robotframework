@@ -16,7 +16,7 @@
 import sys
 
 from robot.errors import DataError
-from robot import utils
+from robot.utils import normalize, split_tags_from_doc, printable_name
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -56,7 +56,7 @@ class JavaDocBuilder(object):
             if field.name() == name and field.isPublic():
                 value = field.constantValue()
                 if upper:
-                    value = utils.normalize(value, ignore='_').upper()
+                    value = normalize(value, ignore='_').upper()
                 return value
         return ''
 
@@ -70,9 +70,9 @@ class JavaDocBuilder(object):
         return [self._keyword_doc(m) for m in doc.methods()]
 
     def _keyword_doc(self, method):
-        doc, tags = utils.split_tags_from_doc(self._get_doc(method))
+        doc, tags = split_tags_from_doc(self._get_doc(method))
         return KeywordDoc(
-            name=utils.printable_name(method.name(), code_style=True),
+            name=printable_name(method.name(), code_style=True),
             args=self._get_keyword_arguments(method),
             doc=doc,
             tags=tags

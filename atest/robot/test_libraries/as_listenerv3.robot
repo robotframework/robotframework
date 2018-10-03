@@ -33,7 +33,7 @@ Log messages and timestamps can be changed
    Should be equal    ${tc.kws[0].msgs[0].timestamp}    20151216 15:51:20.141
 
 Message to syslog can be changed
-   Syslog Should Contain Match    20151216 15:51:20.141 | WARN \ | Foo [log_message] [message]
+   Check Syslog Contains    20151216 15:51:20.141 | WARN \ | Foo [log_message] [message]
    Check log message    ${ERRORS[0]}    Foo [log_message] [message]    WARN
 
 Close is called

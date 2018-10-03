@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import codecs
 import os
 from os.path import abspath, dirname, join, normpath
 
@@ -24,6 +25,6 @@ class HtmlTemplate(object):
         self._path = normpath(join(self._base_dir, filename.replace('/', os.sep)))
 
     def __iter__(self):
-        with open(self._path) as file:
+        with codecs.open(self._path, encoding='UTF-8') as file:
             for line in file:
                 yield line.rstrip()

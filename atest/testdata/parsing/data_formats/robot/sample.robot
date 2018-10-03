@@ -3,7 +3,7 @@ We have a devious plan to rule the world with robots.
 
 *Setting*      *Value*
 
-Document       A complex testdata file   in robot format.
+Documentation  A complex testdata file   in robot format.
 Default Tags   default1
 Force Tags     force1   force2
 
@@ -26,9 +26,9 @@ ${single_quoted}   s'ingle'qu'ot'es''
 
 Passing   Log   Passing test case.
 
-Failing        [Document]   FAIL    Failing test case.
+Failing        [Documentation]   FAIL    Failing test case.
    Fail                     Failing test case.
-User Keyword   [Document]   FAIL    A cunning argument. != something
+User Keyword   [Documentation]   FAIL    A cunning argument. != something
    My Keyword With Arg      A cunning argument.
 Nön-äscïï
       [Documentation]   FAIL Nön-äscïï error
@@ -62,10 +62,10 @@ Library Import   Directory Should Not Be Empty   ${CURDIR}
 
 
 Test Timeout   [Timeout]   0.01second
-   [Document]   FAIL   Test timeout 10 milliseconds exceeded.
+   [Documentation]   FAIL   Test timeout 10 milliseconds exceeded.
    Sleep   1
 
-Keyword Timeout   [Document]   FAIL   Keyword timeout 2 milliseconds exceeded.
+Keyword Timeout   [Documentation]   FAIL   Keyword timeout 2 milliseconds exceeded.
    Timeouted Keyword
 
 
@@ -75,21 +75,21 @@ Keyword Timeout   [Document]   FAIL   Keyword timeout 2 milliseconds exceeded.
 
 
 Empty Rows
-   [Document]   Testing that empty rows are ignored.   FAIL Expected failure.
+   [Documentation]   Testing that empty rows are ignored.   FAIL Expected failure.
 
 
    No operation
 
    Fail   Expected failure.
 
-Document   [Document]   Testing the metadata parsing.
+Document   [Documentation]   Testing the metadata parsing.
    no operation
 
 Default Fixture   No operation
 
 Overridden Fixture   [Teardown]   Fail   Failing Teardown
    [Setup]   Log   Own Setup
-   [Document]   FAIL   Teardown failed:\n Failing Teardown
+   [Documentation]   FAIL   Teardown failed:\n Failing Teardown
    No Operation
 
 Quotes   Should Be Equal   ${quoted}   """this has """"many "" quotes """""
@@ -99,7 +99,7 @@ Escaping
        Should Be Equal    -c:\\temp-\t-\x00-\${x}-    ${ESCAPING}
 
 
-*User Keywords*   *Action*   *Argument*   *Argument*   *Argument*
+*Keywords*   *Action*   *Argument*   *Argument*   *Argument*
 
 My Keyword With Arg   [Arguments]   ${arg1}
    Keyword with no arguments

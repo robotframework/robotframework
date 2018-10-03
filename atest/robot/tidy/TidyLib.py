@@ -1,13 +1,11 @@
 import os
 import re
+import shlex
 from os.path import abspath, dirname, join
-from subprocess import call, STDOUT
-from shlex import split
-import tempfile
+from subprocess import run, PIPE, STDOUT
 
 
 from robot.utils.asserts import assert_equal, assert_true
-from robot.utils import console_decode
 
 
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
@@ -25,19 +23,16 @@ class TidyLib(object):
         """Runs tidy in the operating system and returns output."""
         command = (tidy or self._tidy)[:]
         if options:
-            command.extend([e.decode('utf8') for e in split(options.encode('utf8'))])
+            command.extend(shlex.split(options))
         command.append(self._path(input))
         if output:
             command.append(output)
-        print ' '.join(command)
-        with tempfile.TemporaryFile() as stdout:
-            rc = call(command, stdout=stdout, stderr=STDOUT,
-                      cwd=ROBOT_SRC, shell=os.sep=='\\')
-            stdout.seek(0)
-            content = console_decode(stdout.read().strip())
-            if rc:
-                raise RuntimeError(content)
-            return content
+        print(' '.join(command))
+        result = run(command, cwd=ROBOT_SRC, stdout=PIPE, stderr=STDOUT,
+                     universal_newlines=True, shell=os.sep == '\\')
+        if result.returncode != 0:
+            raise RuntimeError(result.stdout)
+        return result.stdout.rstrip()
 
     def run_tidy_and_check_result(self, options, input, output=TEMP_FILE,
                                   expected=None):
@@ -66,7 +61,7 @@ class TidyLib(object):
         for res, exp in zip(result_lines, expected_lines):
             filter = self._filter_matches(filters, exp)
             if not filter:
-                assert_equal(repr(unicode(res)), repr(unicode(exp)), msg)
+                assert_equal(repr(res), repr(exp), msg)
             else:
                 assert_true(filter.match(res),
                             '%s: %r does not match %r' % (msg, res, filter.pattern))

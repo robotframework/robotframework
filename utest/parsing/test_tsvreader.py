@@ -36,7 +36,7 @@ Keyword*\tNot a table because doesn't start with '*'
         tsv = BytesIO(b'''Ignored text before tables...
 Mote\tignored\text
 *Setting*\t*Value*\t*Value*
-Document\tWhatever\t\t\\\t
+Documentation\tWhatever\t\t\\\t
 Default Tags\tt1\tt2\tt3\t\t
 
 *Variable*\tWhatever

@@ -52,13 +52,16 @@ def gather_failed_tests(output):
     if output.upper() == 'NONE':
         return []
     gatherer = GatherFailedTests()
+    tests_or_tasks = 'tests or tasks'
     try:
-        ExecutionResult(output, include_keywords=False).suite.visit(gatherer)
+        suite = ExecutionResult(output, include_keywords=False).suite
+        suite.visit(gatherer)
+        tests_or_tasks = 'tests' if not suite.rpa else 'tasks'
         if not gatherer.tests:
-            raise DataError('All tests passed.')
+            raise DataError('All %s passed.' % tests_or_tasks)
     except:
-        raise DataError("Collecting failed tests from '%s' failed: %s"
-                        % (output, get_error_message()))
+        raise DataError("Collecting failed %s from '%s' failed: %s"
+                        % (tests_or_tasks, output, get_error_message()))
     return gatherer.tests
 
 

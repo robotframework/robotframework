@@ -343,7 +343,10 @@ Earlier for loops always iterated over a sequence, and this is also the most
 common use case. Sometimes it is still convenient to have a for loop
 that is executed a certain number of times, and Robot Framework has a
 special `FOR index IN RANGE limit` syntax for this purpose. This
-syntax is derived from the similar Python idiom.
+syntax is derived from the similar Python idiom using the `built-in
+range() function`__.
+
+__ http://docs.python.org/library/functions.html#func-range
 
 Similarly as other for loops, the for-in-range loop starts with
 `:FOR` and the loop variable is in the next cell. In this format
@@ -361,10 +364,8 @@ is negative, it is used as decrement.
 
 It is possible to use simple arithmetics such as addition and subtraction
 with the range limits. This is especially useful when the limits are
-specified with variables.
-
-Starting from Robot Framework 2.8.7, it is possible to use float values for
-lower limit, upper limit and step.
+specified with variables. Start, end and step are typically given as
+integers, but using float values is possible as well.
 
 .. sourcecode:: robotframework
 
@@ -391,7 +392,7 @@ lower limit, upper limit and step.
 
    Arithmetics
        [Documentation]  Arithmetics with variable
-       :FOR    ${index}    IN RANGE    ${var}+1
+       :FOR    ${index}    IN RANGE    ${var} + 1
        \    Log    ${index}
 
    Float parameters
@@ -405,8 +406,9 @@ For-in-enumerate loop
 Sometimes it is useful to loop over a list and also keep track of your location
 inside the list.  Robot Framework has a special
 `FOR index ... IN ENUMERATE ...` syntax for this situation.
-This syntax is derived from the
-`Python built-in function <https://docs.python.org/2/library/functions.html#enumerate>`_.
+This syntax is derived from the `Python built-in enumerate() function`__.
+
+__ http://docs.python.org/library/functions.html#enumerate
 
 For-in-enumerate loops work just like regular for loops,
 except the cell after its loop variables must say `IN ENUMERATE`,
@@ -453,8 +455,9 @@ For-in-zip loop
 
 Some tests build up several related lists, then loop over them together.
 Robot Framework has a shortcut for this case: `FOR ... IN ZIP ...`, which
-is derived from the
-`Python built-in zip function <https://docs.python.org/2/library/functions.html#zip>`_.
+is derived from the `Python built-in zip() function`__.
+
+__ http://docs.python.org/library/functions.html#zip
 
 This may be easiest to show with an example:
 
@@ -516,8 +519,6 @@ instead of using :name:`Exit For Loop` with :name:`Run Keyword If`.
 For more information about these keywords, including more usage examples,
 see their documentation in the BuiltIn_ library.
 
-.. note:: :name:`Exit For Loop If` keyword was added in Robot Framework 2.8.
-
 Continuing for loop
 ~~~~~~~~~~~~~~~~~~~
 
@@ -547,17 +548,13 @@ outside a for loop.
 For more information about these keywords, including usage examples, see their
 documentation in the BuiltIn_ library.
 
-.. note::  Both :name:`Continue For Loop` and :name:`Continue For Loop If`
-           were added in Robot Framework 2.8.
-
 Removing unnecessary keywords from outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For loops with multiple iterations often create lots of output and
 considerably increase the size of the generated output_ and log_ files.
-Starting from Robot Framework 2.7, it is possible to `remove unnecessary
-keywords`__ from the outputs using :option:`--RemoveKeywords FOR` command line
-option.
+It is possible to `remove unnecessary keywords`__ from the outputs using
+:option:`--RemoveKeywords FOR` command line option.
 
 __ `Removing and flattening keywords`_
 

@@ -7,5 +7,5 @@ Resource   robot_resource2.robot
 ${ROBOT RESOURCE VAR}  ROBOT Resource Variable      
 
 
-*User Keywords  Action  Argument  Argument  Argument
+*Keywords  Action  Argument  Argument  Argument
 Keyword from ROBOT resource  No operation      

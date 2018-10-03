@@ -1,6 +1,8 @@
 *** Settings ***
 Documentation     Tests for logging using stdout/stderr
-Suite Setup       Run Tests    ${EMPTY}    test_libraries/print_logging.robot
+Suite Setup       Run Tests
+...    -v CONSOLE_ENCODING:${CONSOLE_ENCODING}
+...    test_libraries/print_logging.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -45,15 +47,15 @@ Logging Non-ASCII As Bytes
     [Tags]    no-ipy
     ${tc} =    Check Test Case    ${TEST NAME}
     ${expected} =    Get Expected Bytes    Hyvää päivää!
+    Check Log Message    ${tc.kws[1].msgs[0]}    ${expected}
     Check Log Message    ${tc.kws[2].msgs[0]}    ${expected}
-    Check Log Message    ${tc.kws[3].msgs[0]}    ${expected}
     Check Stderr Contains    ${expected}
 
 Logging Mixed Non-ASCII Unicode And Bytes
     [Tags]    no-ipy
     ${tc} =    Check Test Case    ${TEST NAME}
     ${bytes} =    Get Expected Bytes    Hyvä byte!
-    Check Log Message    ${tc.kws[2].msgs[0]}    ${bytes} Hyvä Unicode!
+    Check Log Message    ${tc.kws[1].msgs[0]}    ${bytes} Hyvä Unicode!
 
 Logging HTML
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -72,6 +74,5 @@ FAIL is not valid log level
 Get Expected Bytes
     [Arguments]    ${string}
     Return From Keyword If    ${INTERPRETER.is_py2}    ${string}
-    ${encoding} =    Evaluate    robot.utils.encoding.SYSTEM_ENCODING    modules=robot
-    ${bytes} =    Encode String To Bytes    ${string}    ${encoding}
+    ${bytes} =    Encode String To Bytes    ${string}    ${CONSOLE_ENCODING}
     [Return]    b'${bytes}'

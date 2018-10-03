@@ -199,6 +199,10 @@ class ArgumentParser(object):
         return '%s=%s' % (opt.lower(), value)
 
     def _unescape_opts_and_args(self, opts, args):
+        from robot.output import LOGGER
+        with LOGGER.cache_only:
+            LOGGER.warn("Option '--escape' is deprecated. Use console escape "
+                        "mechanism instead.")
         try:
             escape_strings = opts['escape']
         except KeyError:

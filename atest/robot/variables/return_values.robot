@@ -22,7 +22,7 @@ Empty Scalar Variable
 
 List To Scalar Variable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${setvar} = [*'a', 2]    pattern=yep
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${setvar} = [${UNICODE PREFIX}'a', 2]
 
 Python Object To Scalar Variable
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -83,8 +83,8 @@ List Variable From Dictionary
 
 Unrepresentable objects to list variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = [ ${UNREPR STR} | ${UNREPR UNIC} ]    pattern=yes
-    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = [ ${UNREPR STR} | ${UNREPR UNIC} ]    pattern=yes
+    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = ? ${UNREPR STR} | ${UNREPR UNIC} ?    pattern=yes
+    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = ? ${UNREPR STR} | ${UNREPR UNIC} ?    pattern=yes
     Should Match         ${tc.kws[2].kws[0].name}    \${obj} = ${UNREPR STR}
     Check Log Message    ${tc.kws[2].kws[0].kws[1].msgs[0]}    $\{var} = ${UNREPR STR}    pattern=yes
     Should Match         ${tc.kws[2].kws[1].name}    \${obj} = ${UNREPR UNIC}
@@ -147,7 +147,8 @@ None To Dict
 
 Dictionary is dot-accessible
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \&{dotted} = { key=value | nested={'key': 'value'} }
+    Check Log Message    ${tc.kws[0].msgs[0]}    \&{dict} = { key=value }
+    Check Log Message    ${tc.kws[2].msgs[0]}    \&{nested} = { key=value | nested={'key': 'nested value'} }
 
 Scalar dictionary is not dot-accessible
     ${tc} =    Check Test Case    ${TEST NAME}

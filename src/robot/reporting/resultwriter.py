@@ -119,7 +119,10 @@ class Results(object):
             self._result = ExecutionResult(include_keywords=include_keywords,
                                            flattened_keywords=flattened,
                                            merge=self._settings.merge,
+                                           rpa=self._settings.rpa,
                                            *self._sources)
+            if self._settings.rpa is None:
+                self._settings.rpa = self._result.rpa
             self._result.configure(self._settings.status_rc,
                                    self._settings.suite_config,
                                    self._settings.statistics_config)

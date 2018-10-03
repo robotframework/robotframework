@@ -26,16 +26,20 @@ from .tablepopulators import (SettingTablePopulator, VariableTablePopulator,
                               NullPopulator)
 from .htmlreader import HtmlReader
 from .tsvreader import TsvReader
-from .txtreader import TxtReader
+from .robotreader import RobotReader
 from .restreader import RestReader
 
 
 READERS = {'html': HtmlReader, 'htm': HtmlReader, 'xhtml': HtmlReader,
            'tsv': TsvReader , 'rst': RestReader, 'rest': RestReader,
-           'txt': TxtReader, 'robot': TxtReader}
+           'txt': RobotReader, 'robot': RobotReader}
 
 # Hook for external tools for altering ${CURDIR} processing
 PROCESS_CURDIR = True
+
+
+class NoTestsFound(DataError):
+    pass
 
 
 class FromFilePopulator(object):
@@ -52,11 +56,11 @@ class FromFilePopulator(object):
     def _get_curdir(self, path):
         return path.replace('\\','\\\\') if path else None
 
-    def populate(self, path):
+    def populate(self, path, resource=False):
         LOGGER.info("Parsing file '%s'." % path)
         source = self._open(path)
         try:
-            self._get_reader(path).read(source, self)
+            self._get_reader(path, resource).read(source, self)
         except:
             raise DataError(get_error_message())
         finally:
@@ -72,12 +76,14 @@ class FromFilePopulator(object):
         except:
             raise DataError(get_error_message())
 
-    def _get_reader(self, path):
-        extension = os.path.splitext(path.lower())[-1][1:]
+    def _get_reader(self, path, resource=False):
+        file_format = os.path.splitext(path.lower())[-1][1:]
+        if resource and file_format == 'resource':
+            file_format = 'robot'
         try:
-            return READERS[extension]()
+            return READERS[file_format]()
         except KeyError:
-            raise DataError("Unsupported file format '%s'." % extension)
+            raise DataError("Unsupported file format '%s'." % file_format)
 
     def start_table(self, header):
         self._populator.populate()
@@ -88,6 +94,8 @@ class FromFilePopulator(object):
 
     def eof(self):
         self._populator.populate()
+        self._populator = NullPopulator()
+        return bool(self._datafile)
 
     def add(self, row):
         if PROCESS_CURDIR and self._curdir:
@@ -97,7 +105,9 @@ class FromFilePopulator(object):
             self._populator.add(data)
 
     def _replace_curdirs_in(self, row):
-        return [cell.replace('${CURDIR}', self._curdir) for cell in row]
+        old, new = '${CURDIR}', self._curdir
+        return [cell if old not in cell else cell.replace(old, new)
+                for cell in row]
 
 
 class FromDirectoryPopulator(object):
@@ -105,7 +115,7 @@ class FromDirectoryPopulator(object):
     ignored_dirs = ('CVS',)
 
     def populate(self, path, datadir, include_suites=None,
-                 warn_on_skipped=False, include_extensions=None, recurse=True):
+                 include_extensions=None, recurse=True):
         LOGGER.info("Parsing test data directory '%s'" % path)
         include_suites = self._get_include_suites(path, include_suites or [])
         init_file, children = self._get_children(path, include_extensions,
@@ -114,7 +124,7 @@ class FromDirectoryPopulator(object):
             self._populate_init_file(datadir, init_file)
         if recurse:
             self._populate_children(datadir, children, include_extensions,
-                                    include_suites, warn_on_skipped)
+                                    include_suites)
 
     def _populate_init_file(self, datadir, init_file):
         datadir.initfile = init_file
@@ -124,20 +134,14 @@ class FromDirectoryPopulator(object):
             LOGGER.error(err.message)
 
     def _populate_children(self, datadir, children, include_extensions,
-                           include_suites, warn_on_skipped):
+                           include_suites):
         for child in children:
             try:
-                datadir.add_child(child, include_suites, include_extensions,
-                                  warn_on_skipped)
+                datadir.add_child(child, include_suites, include_extensions)
+            except NoTestsFound:
+                LOGGER.info("Data source '%s' has no tests or tasks." % child)
             except DataError as err:
-                self._log_failed_parsing("Parsing data source '%s' failed: %s"
-                                         % (child, err.message), warn_on_skipped)
-
-    def _log_failed_parsing(self, message, warn):
-        if warn:
-            LOGGER.warn(message)
-        else:
-            LOGGER.info(message)
+                LOGGER.error("Parsing '%s' failed: %s" % (child, err.message))
 
     def _get_include_suites(self, path, incl_suites):
         if not isinstance(incl_suites, SuiteNamePatterns):

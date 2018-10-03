@@ -9,6 +9,12 @@ Valid key
 Valid index using variable
     Check Test Case    ${TESTNAME}
 
+Values can be mutated
+    Check Test Case    ${TESTNAME}
+
+List-like values are not manipulated
+    Check Test Case    ${TESTNAME}
+
 Integer key cannot be accessed as string
     Check Test Case    ${TESTNAME}
 

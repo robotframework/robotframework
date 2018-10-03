@@ -5,7 +5,6 @@ Resource           atest_resource.robot
 *** Variables ***
 ${SUITE FILE}      misc/many_tests.robot
 ${SUITE DIR}       misc/suites
-${ESCAPES}         --escape star:STAR --escape quest:QUEST --escape space:SPACE
 
 *** Test Cases ***
 One Call To Test
@@ -13,7 +12,7 @@ One Call To Test
 
 Test Name With Spaces, Underscores And Mixed Case
     [Documentation]    Testing that spaces, underscores and case are ignored in suite names.
-    Run And Check Tests    --test sec_SPACE_ondONE    Second One
+    Run And Check Tests    --test "sec_ _ondONE"    Second One
 
 One Call To Test With Normalized Test Name
     Run And Check Tests    --test secondone    Second One
@@ -32,16 +31,22 @@ Non-Existing Test When Running Multiple Suites
     ...    --test notexists    ${SUITE FILE} ${SUITE DIR}
     Run Failing Test
     ...    Suite 'My Name' contains no tests named 'notexists'.
-    ...    --name My_Name --test notexists    ${SUITE FILE} ${SUITE DIR}
+    ...    --name "My Name" --test notexists    ${SUITE FILE} ${SUITE DIR}
 
 Two Calls To Test With One Nonexisting Test Name
     Run And Check Tests    --test notexists --test First    First
 
 One Call To Test With Pattern
-    Run And Check Tests    --test STARoneSTAR    Second One    Third One    Fourth One With More Complex Name
+    Run And Check Tests    --test *one*    Second One    Third One    Fourth One With More Complex Name
 
 Two Calls To Test With Patterns
-    Run And Check Tests    --test STARone --test FiQUESTst    First    Second One    Third One
+    Run And Check Tests    --test *one --test Fi?st    First    Second One    Third One
+
+Test Filtering With Glob Bracket
+    Run And Check Tests    --test [Great]Lob[sterB]estCase[1-2]    GlobTestCase1    GlobTestCase2
+
+Test Filtering With Negative Glob Bracket
+    Run And Check Tests    --test Glob[!BAD]est*[!1-3]    GlobTestCase[5]    GlobTest Cat    GlobTest Rat
 
 Suite With One Arg
     Run Suites    --suite tsuite1
@@ -50,7 +55,7 @@ Suite With One Arg
 
 Suite Name With Spaces, Underscores And Mixed Case
     [Documentation]    Testing that spaces, underscores and case are ignored in suite names.
-    Run Suites    --suite t_SPACE_SuiTe_1
+    Run Suites    --suite "t_ _SuiTe_1"
     Should Contain Suites   ${SUITE}    TSuite1
     Should Contain Tests   ${SUITE}    Suite1 First    Suite1 Second    Third In Suite1
 
@@ -102,7 +107,7 @@ Suite With Matching And NonMatching Args
     Should Contain Tests   ${SUITE}    Suite1 First    Suite1 Second    Third In Suite1
 
 Suite With Pattern In Arg
-    Run Suites    --suite tSTAR
+    Run Suites    --suite t*
     Should Contain Suites    ${SUITE}    Tsuite1    Tsuite2    Tsuite3
     Should Contain Tests   ${SUITE}    Suite1 First    Suite1 Second    Third In Suite1    Suite2 First    Suite3 First
 
@@ -126,7 +131,7 @@ Correct Files Processed When --suite Matches Directory
     Check Syslog Contains    Parsing file '${subsuitedir}${/}sub2.robot'
 
 Suite Under Subdirectory Using Pattern
-    Run And Check Suites Within Subdirs    --suite subQUEST    Sub1    Sub2
+    Run And Check Suites Within Subdirs    --suite sub?    Sub1    Sub2
     Should Contain Tests   ${SUITE.suites[0]}    SubSuite1 First    SubSuite2 First
 
 Suite And Test Together
@@ -136,12 +141,12 @@ Suite And Test Together
     Should Contain Tests   ${SUITE}    SubSuite1 First
 
 Suite With Include And Exclude
-    Run Suites    --suite tsuiteQUEST --include tSTAR --exclude t2
+    Run Suites    --suite tsuite? --include t* --exclude t2
     Should Contain Suites    ${SUITE}    Tsuite1    Tsuite2    Tsuite3
     Should Contain Tests    ${SUITE}    Suite1 First    Suite2 First    Suite3 First
 
 Suite, Test Include And Exclude Together
-    Run Suites    --suite subSTAR --test STARfirst -s nosuite -t notest --include t1 --exclude sub3
+    Run Suites    --suite sub* --test *first -s nosuite -t notest --include t1 --exclude sub3
     Should Contain Suites   ${SUITE}    Subsuites
     Should Contain Tests    ${SUITE}    SubSuite1 First
 
@@ -171,7 +176,7 @@ Filter Suite When Suites Are Ordered With Prefix
 *** Keywords ***
 Run And Check Tests
     [Arguments]    ${params}    @{tests}
-    Run Tests    ${params} ${ESCAPES}    ${SUITE FILE}
+    Run Tests    ${params}    ${SUITE FILE}
     Stderr Should Be Empty
     Should Contain Tests    ${suite}    @{tests}
 
@@ -182,10 +187,10 @@ Run And Check Suites Within Subdirs
 
 Run Suites
     [Arguments]    ${options}    ${testdata}=${SUITE DIR}
-    Run Tests    ${options} ${ESCAPES}    ${testdata}
+    Run Tests    ${options}    ${testdata}
     Stderr Should Be Empty
 
 Run Failing Test
     [Arguments]    ${error}    ${options}    ${sources}
-    Run Tests Without Processing Output    ${options} ${ESCAPES}    ${sources}
+    Run Tests Without Processing Output    ${options}    ${sources}
     Stderr Should Be Equal To    [ ERROR ] ${error}${USAGE TIP}\n

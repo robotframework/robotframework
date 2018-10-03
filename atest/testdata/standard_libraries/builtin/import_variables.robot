@@ -22,7 +22,6 @@ Import Variables 2
     Should Be Equal  ${IMPORT_VARIABLES_1}  Simple variable file
 
 Import Variables With Arguments
-    [Documentation]  FAIL GLOB: Processing variable file '*variables_to_import_2.py' with arguments [ 1 | 2 | 3 ] failed: TypeError: *
     Import Variables  ${VAR FILE 2}  my  args
     Should Be Equal  ${IMPORT_VARIABLES_2}  Dynamic variable file
     Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  my args
@@ -31,10 +30,11 @@ Import Variables With Arguments
     Should Be Equal  ${IMPORT_VARIABLES_2}  Dynamic variable file
     Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  one arg only default
     Should Be Equal  ${COMMON VARIABLE}  ${2}
-    Comment  Copy to (hopefully) shorter path to prevent cutting error message
-    Copy File  ${CURDIR}/variables_to_import_2.py  %{TEMPDIR}/variables_to_import_2.py
-    Import Variables  %{TEMPDIR}/variables_to_import_2.py  1  2  3
-    [Teardown]  Remove File  %{TEMPDIR}/variables_to_import_2.py
+
+Inport Variables With Invalid Arguments
+    [Documentation]  FAIL REGEXP:
+    ...    Processing variable file '.*variables_to_import_2.py' with arguments \\[ 1 \\| 2 \\| 3 \\] failed: TypeError: .*
+    Import Variables  ${VAR FILE 2}  1  2  3
 
 Import Variables In User Keyword 1
     Import Variables In User Keyword  Set in  user keyword

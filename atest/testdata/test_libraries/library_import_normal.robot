@@ -1,6 +1,6 @@
 *** Settings ***
 Library           OperatingSystem
-Library           E x a m p l e L i b r a r y
+Library           Date Time
 Library           libmodule.LibClass1
 Library           libmodule.LibClass2
 Library           libmodule
@@ -11,9 +11,9 @@ Normal Library Import
     Directory Should Not Be Empty    ${CURDIR}
     Directory Should Exist    %{TEMPDIR}
 
-Library Import With Spaces In Name Is Deprecated
-    Print    It works!
-    example Library. print many    But it is    DEPRECATED!!!
+Library Import With Spaces In Name Does Not Work
+    [Documentation]    FAIL No keyword with name 'Get Current Date' found.
+    Get Current Date
 
 Importing Python Class From Module
     ${ret1} =    Verify Lib Class 1

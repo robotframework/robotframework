@@ -5,8 +5,10 @@ Many keywords in Robot Framework `standard libraries`_ accept arguments that
 are handled as Boolean values true or false. If such an argument is given as
 a string, it is considered false if it is either empty or case-insensitively
 equal to `false` or `no`. Other strings are considered true regardless
-their value, and other argument types are tested using same `rules as in Python
-<http://docs.python.org/2/library/stdtypes.html#truth-value-testing>`__.
+their value, and other argument types are tested using same `rules as in
+Python`__.
+
+__ http://docs.python.org/library/stdtypes.html#truth-value-testing
 
 Keyword can also accept other special strings than `false` and `no` that are
 to be considered false. For example, BuiltIn_ keyword `Should Be True` used

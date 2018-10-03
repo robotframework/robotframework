@@ -1,10 +1,6 @@
 import sys
 
-try:
-    from xmlrpclib import Binary
-except ImportError:
-    from xmlrpc.client import Binary
-    basestring = str
+from xmlrpc.client import Binary
 
 from remoteserver import RemoteServer
 
@@ -63,25 +59,31 @@ class Arguments(object):
     def kwargs(self, **kwargs):
         return self._format_args(**kwargs)
 
+    def kw_only_arg(self, *, kwo):
+        return self._format_args(kwo=kwo)
+
+    def kw_only_arg_with_default(self, *, k1='default', k2):
+        return self._format_args(k1=k1, k2=k2)
+
     def args_and_kwargs(self, arg1='default1', arg2='default2', **kwargs):
         return self._format_args(arg1, arg2, **kwargs)
 
     def varargs_and_kwargs(self, *varargs, **kwargs):
         return self._format_args(*varargs, **kwargs)
 
-    def args_varargs_and_kwargs(self, arg1='default1', arg2='default2',
-                                *varargs, **kwargs):
-        return self._format_args(arg1, arg2, *varargs, **kwargs)
+    def all_arg_types(self, arg1, arg2='default', *varargs,
+                      kwo1='default', kwo2, **kwargs):
+        return self._format_args(arg1, arg2, *varargs,
+                                 kwo1=kwo1, kwo2=kwo2, **kwargs)
 
     def _format_args(self, *args, **kwargs):
-        args += tuple('%s:%s' % (k, self._type(v))
-                      for k, v in sorted(kwargs.items()))
-        return ', '.join(self._type(a) for a in args)
+        args = [self._format(a) for a in args]
+        kwargs = [f'{k}:{self._format(kwargs[k])}' for k in sorted(kwargs)]
+        return ', '.join(args + kwargs)
 
-    def _type(self, arg):
-        if not isinstance(arg, basestring):
-            return '%s (%s)' % (arg, type(arg).__name__)
-        return arg
+    def _format(self, arg):
+        type_name = type(arg).__name__
+        return arg if isinstance(arg, str) else f'{arg} ({type_name})'
 
 
 if __name__ == '__main__':

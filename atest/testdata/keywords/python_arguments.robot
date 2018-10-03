@@ -1,5 +1,6 @@
 *** Settings ***
 Library           ArgumentsPython
+Library           Annotations.py
 
 *** Variables ***
 @{LIST}           With    three    values
@@ -93,3 +94,11 @@ Calling Using List Variables
     A 1 3    @{LIST}
     A 3    @{LIST}    @{EMPTY}
     A 0 1    @{LIST}    @{EMPTY}
+
+Calling Using Annotations
+    ${ret}=    Annotations    one    two_type_str
+    Should Be Equal    ${ret}    annotations: one two_type_str
+
+Calling Using Annotations With Defaults
+    ${ret}=    Annotations With Defaults    one
+    Should Be Equal    ${ret}    annotations: one default

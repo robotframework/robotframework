@@ -1,7 +1,6 @@
 KEYWORDS = [('argspec with other than strings', [1, 2]),
             ('named args before positional', ['a=1', 'b']),
-            ('varargs before positional args', ['*varargs', 'a']),
-            ('varargs before named args', ['*varargs', 'a=1']),
+            ('multiple varargs', ['*first', '*second']),
             ('kwargs before positional args', ['**kwargs', 'a']),
             ('kwargs before named args', ['**kwargs', 'a=1']),
             ('kwargs before varargs', ['**kwargs', '*varargs']),

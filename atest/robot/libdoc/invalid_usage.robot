@@ -4,11 +4,7 @@ Test Setup       Remove File    ${OUT HTML}
 Test Template    Run libdoc and verify error
 Test Teardown    Should Not Exist    ${OUT HTML}
 
-*** Variable ***
-${USAGE TIP}    \nTry --help for usage information.\n
-
 *** Test Cases ***
-
 No arguments
     ${EMPTY}          Expected at least 2 arguments, got 0.
 
@@ -49,13 +45,12 @@ Non-XML spec
 
 Invalid resource
     ${CURDIR}/invalid_usage.robot ${OUT HTML}
-    ...   [ ERROR ] *: Non-existing setting 'Test Setup'.
-    ...   [ ERROR ] *: Non-existing setting 'Test Template'.
-    ...   [ ERROR ] *: Non-existing setting 'Test Teardown'.
-    ...   Resource file '*' contains a test case table which is not allowed.
-
+    ...   ? ERROR ? *: Non-existing setting 'Test Setup'.
+    ...   ? ERROR ? *: Non-existing setting 'Test Template'.
+    ...   ? ERROR ? *: Non-existing setting 'Test Teardown'.
+    ...   Resource file '*' cannot contain tests or tasks.
 
 *** Keywords ***
 Run libdoc and verify error
     [Arguments]    ${args}    @{error}
-    Run libdoc and verify output    ${args}    @{error}    ${USAGE TIP}
+    Run libdoc and verify output    ${args}    @{error}    ${USAGE TIP[1:]}

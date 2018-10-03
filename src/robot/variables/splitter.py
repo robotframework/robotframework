@@ -79,8 +79,7 @@ class VariableSplitter(object):
         self._index_chars = []
         self._string = string
         start_index += 2
-        for index, char in enumerate(string[start_index:]):
-            index += start_index  # Giving start to enumerate only in Py 2.6+
+        for index, char in enumerate(string[start_index:], start=start_index):
             try:
                 self._state(char, index)
             except StopIteration:

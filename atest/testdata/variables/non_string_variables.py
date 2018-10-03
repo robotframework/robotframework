@@ -29,8 +29,8 @@ def _get_interpreter_specific_strs(interpreter):
 
 
 def _python3(interpreter=None):
-    return interpreter and interpreter.is_py3 or sys.version_info[0] > 2
+    return interpreter.is_py3 if interpreter else sys.version_info[0] > 2
 
 
 def _ironpython(interpreter=None):
-    return interpreter and interpreter.is_ironpython or sys.platform == 'cli'
+    return interpreter.is_ironpython if interpreter else sys.platform == 'cli'

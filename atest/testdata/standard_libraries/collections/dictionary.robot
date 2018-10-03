@@ -118,7 +118,7 @@ Dictionaries Should Be Equal
     Dictionaries Should Be Equal    ${BIG}    ${BIG}
 
 Dictionaries Of Different Type Should Be Equal
-    ${big2}=    Evaluate    robot.utils.OrderedDict($BIG)    modules=robot
+    ${big2}=    Evaluate    collections.OrderedDict($BIG)    modules=collections
     Dictionaries Should Be Equal    ${BIG}    ${big2}
 
 Dictionaries Should Equal With First Dictionary Missing Keys
@@ -212,7 +212,7 @@ Log Dictionary With Different Log Levels
 Log Dictionary With Different Dictionaries
     Log Dictionary    ${D0}
     Log Dictionary    ${D1}
-    ${dict} =    Evaluate    robot.utils.OrderedDict(((True, 'xxx'), ('foo', []), ((1, 2, 3), 3.14)))   modules=robot
+    ${dict} =    Evaluate    collections.OrderedDict(((True, 'xxx'), ('foo', []), ((1, 2, 3), 3.14)))   modules=collections
     Log Dictionary    ${dict}
 
 Pop From Dictionary Without Default
@@ -232,7 +232,35 @@ Pop From Dictionary With Default
     Should be equal    ${a}    foo
     Should be True   $dict == {'b': 'val2'}
 
+Check invalid dictionary argument errors
+    [Template]    Validate invalid argument error
+    Copy dictionary
+    Dictionary Should Contain Item             I'm not a dict, I'm string.    a    b
+    Dictionaries Should Be Equal               I'm not a dict, I'm string.    ${D2}
+    Dictionaries Should Be Equal               ${D2}    I'm not a dict, I'm string.    position=2
+    Dictionary Should Contain Key              I'm not a dict, I'm string.    a
+    Dictionary Should Contain Sub Dictionary   I'm not a dict, I'm string.    ${D2}
+    Dictionary Should Contain Sub Dictionary   ${D2}    I'm not a dict, I'm string.    position=2
+    Dictionary Should Contain Value            I'm not a dict, I'm string.    a
+    Dictionary Should Not Contain Key          I'm not a dict, I'm string.    a
+    Dictionary Should Not Contain Value        I'm not a dict, I'm string.    a
+    Get Dictionary Items
+    Get Dictionary Keys
+    Get Dictionary Values
+    Get from dictionary                        I'm not a dict, I'm string.    a
+    Keep in dictionary                         I'm not a dict, I'm string.    a
+    Log Dictionary
+    Pop From Dictionary                        I'm not a dict, I'm string.    a
+    Remove From Dictionary                     I'm not a dict, I'm string.    a
+    Set To Dictionary                          I'm not a dict, I'm string.    a    b
+
 *** Keywords ***
+Validate invalid argument error
+    [Arguments]  ${keyword}    ${argument}=I'm not a dict, I'm a string.    @{args}    ${type}=string    ${position}=1
+    Run keyword and expect error
+    ...    TypeError: Expected argument ${position} to be a dictionary or dictionary-like, got ${type} instead.
+    ...    ${keyword}    ${argument}    @{args}
+
 Create Dictionaries For Testing
     ${D0}    Create Dictionary
     Set Test Variable    \${D0}

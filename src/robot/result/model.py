@@ -170,8 +170,8 @@ class TestSuite(model.TestSuite):
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', metadata=None, source=None,
-                 message='', starttime=None, endtime=None):
-        model.TestSuite.__init__(self, name, doc, metadata, source)
+                 message='', starttime=None, endtime=None, rpa=False):
+        model.TestSuite.__init__(self, name, doc, metadata, source, rpa)
         #: Possible suite setup or teardown error message.
         self.message = message
         #: Suite execution start time in format ``%Y%m%d %H:%M:%S.%f``.
@@ -198,11 +198,11 @@ class TestSuite(model.TestSuite):
         to a variable and inspecting it is often a good idea::
 
             stats = suite.statistics
-            print stats.critical.failed
-            print stats.all.total
-            print stats.message
+            print(stats.critical.failed)
+            print(stats.all.total)
+            print(stats.message)
         """
-        return TotalStatisticsBuilder(self).stats
+        return TotalStatisticsBuilder(self, self.rpa).stats
 
     @property
     def full_message(self):
@@ -252,8 +252,8 @@ class TestSuite(model.TestSuite):
 
         Criticality can be set only to the root test suite.
         """
-        if self.parent:
-            raise TypeError('Criticality can only be set to the root suite.')
+        if self.parent is not None:
+            raise ValueError('Criticality can only be set to the root suite.')
         self._criticality = Criticality(critical_tags, non_critical_tags)
 
     def remove_keywords(self, how):
@@ -274,6 +274,8 @@ class TestSuite(model.TestSuite):
     def configure(self, **options):
         """A shortcut to configure a suite using one method call.
 
+        Can only be used with the root test suite.
+
         :param options: Passed to
             :class:`~robot.result.configurer.SuiteConfigurer` that will then
             set suite attributes, call :meth:`filter`, etc. as needed.
@@ -284,6 +286,7 @@ class TestSuite(model.TestSuite):
                             critical_tags='smoke',
                             doc='Smoke test results.')
         """
+        model.TestSuite.configure(self)    # Parent validates call is allowed.
         self.visit(SuiteConfigurer(**options))
 
     def handle_suite_teardown_failures(self):

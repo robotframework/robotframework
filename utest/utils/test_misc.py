@@ -1,8 +1,7 @@
 import unittest
 
-from robot.utils import IRONPYTHON, PY2
 from robot.utils.asserts import assert_equal
-from robot.utils.misc import getdoc, printable_name, seq2str, roundup
+from robot.utils import printable_name, seq2str, roundup, IRONPYTHON
 
 
 class TestRoundup(unittest.TestCase):
@@ -13,6 +12,7 @@ class TestRoundup(unittest.TestCase):
                 extra /= 10.0
                 assert_equal(roundup(number + extra), number, +extra)
                 assert_equal(roundup(number - extra), number, -extra)
+            assert_equal(roundup(number + 0.5), number+1)
 
     def test_negative(self):
         for number in range(1000):
@@ -21,6 +21,7 @@ class TestRoundup(unittest.TestCase):
                 extra /= 10.0
                 assert_equal(roundup(number + extra), number)
                 assert_equal(roundup(number - extra), number)
+            assert_equal(roundup(number - 0.5), number-1)
 
     def test_ndigits_below_zero(self):
         assert_equal(roundup(7, -1), 10)
@@ -44,6 +45,7 @@ class TestRoundup(unittest.TestCase):
     def test_round_even_down_when_negative(self):
         assert_equal(roundup(-0.5), -1)
         assert_equal(roundup(-5, -1), -10)
+        assert_equal(roundup(-5.0, -1), -10)
         assert_equal(roundup(-500, -3), -1000)
         assert_equal(roundup(-0.05, 1), -0.1)
         assert_equal(roundup(-0.49951, 3), -0.5)
@@ -54,6 +56,13 @@ class TestRoundup(unittest.TestCase):
                 assert_equal(type(roundup(n, d)), float if d > 0 else int)
                 assert_equal(type(roundup(n, d, return_type=int)), int)
                 assert_equal(type(roundup(n, d, return_type=float)), float)
+
+    def test_problems(self):
+        assert_equal(roundup(59.85, 1), 59.9)    # This caused #2872
+        if not IRONPYTHON:
+            assert_equal(roundup(1.15, 1), 1.1)  # 1.15 is actually 1.49999..
+        else:
+            assert_equal(roundup(1.15, 1), 1.2)  # but ipy still rounds it up
 
 
 class TestSeg2Str(unittest.TestCase):
@@ -132,51 +141,6 @@ class TestPrintableName(unittest.TestCase):
                          ('Foo-B:A;R!', 'Foo-B:A;R!'),
                          ('', '')]:
             assert_equal(printable_name(inp, code_style=True), exp)
-
-
-class TestGetdoc(unittest.TestCase):
-
-    def test_no_doc(self):
-        def func():
-            pass
-        assert_equal(getdoc(func), '')
-
-    def test_one_line_doc(self):
-        def func():
-            """My documentation."""
-        assert_equal(getdoc(func), 'My documentation.')
-
-    def test_multiline_doc(self):
-        class Class:
-            """My doc.
-
-            In multiple lines.
-            """
-        assert_equal(getdoc(Class), 'My doc.\n\nIn multiple lines.')
-        assert_equal(getdoc(Class), getdoc(Class()))
-
-    def test_unicode_doc(self):
-        class Class:
-            def meth(self):
-                u"""Hyv\xe4 \xe4iti!"""
-        assert_equal(getdoc(Class.meth), u'Hyv\xe4 \xe4iti!')
-        assert_equal(getdoc(Class.meth), getdoc(Class().meth))
-
-    if PY2:
-
-        def test_non_ascii_doc_in_utf8(self):
-            def func():
-                """Hyv\xc3\xa4 \xc3\xa4iti!"""
-            expected = u'Hyv\xe4 \xe4iti!' \
-                if not IRONPYTHON else u'Hyv\xc3\xa4 \xc3\xa4iti!'
-            assert_equal(getdoc(func), expected)
-
-        def test_non_ascii_doc_not_in_utf8(self):
-            def func():
-                """Hyv\xe4 \xe4iti!"""
-            expected = 'Hyv\\xe4 \\xe4iti!' \
-                if not IRONPYTHON else u'Hyv\xe4 \xe4iti!'
-            assert_equal(getdoc(func), expected)
 
 
 if __name__ == "__main__":

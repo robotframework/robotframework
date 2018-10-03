@@ -5,8 +5,8 @@ Resource          libdoc_resource.robot
 *** Test Cases ***
 Invalid arg spec
     Keyword Name Should Be    0    Invalid arg spec
-    Keyword Doc Should Be     0    *Creating keyword failed:* Invalid argument specification: Positional argument after varargs.
-    Stdout should contain error    Invalid arg spec    Invalid argument specification: Positional argument after varargs.
+    Keyword Doc Should Be     0    *Creating keyword failed:* Invalid argument specification: Only last argument can be kwargs.
+    Stdout should contain error    Invalid arg spec    Invalid argument specification: Only last argument can be kwargs.
 
 Dublicate name
     Keyword Name Should Be    3    Same twice

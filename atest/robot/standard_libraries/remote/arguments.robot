@@ -30,13 +30,19 @@ One kwarg
 Multiple kwargs
     Check Test Case    ${TESTNAME}
 
+Keyword-only args
+    Check Test Case    ${TESTNAME}
+
+Keyword-only args with default
+    Check Test Case    ${TESTNAME}
+
 Args and kwargs
     Check Test Case    ${TESTNAME}
 
 Varargs and kwargs
     Check Test Case    ${TESTNAME}
 
-Args, varargs and kwargs
+All arg types
     Check Test Case    ${TESTNAME}
 
 Using Arguments When No Accepted
