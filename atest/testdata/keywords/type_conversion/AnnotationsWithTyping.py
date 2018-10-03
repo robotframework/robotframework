@@ -67,6 +67,10 @@ def mutable_set_with_params(argument: MutableSet[bool], expected=None):
     _validate_type(argument, expected)
 
 
+def none_as_default(argument: List = None, expected=None):
+    _validate_type(argument, expected)
+
+
 def forward_reference(argument: 'List', expected=None):
     _validate_type(argument, expected)
 

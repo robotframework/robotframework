@@ -86,6 +86,10 @@ Invalid Set
     Set                       {}                                               error=Value is dictionary, not set.
     Set                       ooops                                            error=Invalid expression.
 
+None as default
+    None as default
+    None as default           [1, 2, 3, 4]                [1, 2, 3, 4]
+
 Forward references
     Forward reference         [1, 2, 3, 4]                [1, 2, 3, 4]
     Forward ref with params   [1, 2, 3, 4]                [1, 2, 3, 4]

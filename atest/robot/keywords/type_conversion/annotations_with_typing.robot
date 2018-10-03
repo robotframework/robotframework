@@ -49,5 +49,8 @@ Set with params
 Invalid Set
     Check Test Case    ${TESTNAME}
 
+None as default
+    Check Test Case    ${TESTNAME}
+
 Forward references
     Check Test Case    ${TESTNAME}
