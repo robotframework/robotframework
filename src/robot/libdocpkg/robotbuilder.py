@@ -51,7 +51,7 @@ class LibraryDocBuilder(object):
         return library
 
     def _get_doc(self, lib):
-        return lib.doc or "Documentation for test library ``%s``." % lib.name
+        return lib.doc or "Documentation for library ``%s``." % lib.name
 
     def _get_initializers(self, lib):
         if lib.init.arguments.maxargs:
