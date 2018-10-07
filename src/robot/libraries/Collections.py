@@ -656,7 +656,7 @@ class _Dictionary(object):
         _verify_condition(key not in dictionary, default, msg)
 
     def dictionary_should_contain_item(self, dictionary, key, value, msg=None):
-        """An item of ``key``/``value`` must be found in a `dictionary`.
+        """An item of ``key`` / ``value`` must be found in a ``dictionary``.
 
         Value is converted to unicode for comparison.
 
