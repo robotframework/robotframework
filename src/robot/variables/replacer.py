@@ -15,7 +15,8 @@
 
 from robot.errors import DataError, VariableError
 from robot.output import LOGGER
-from robot.utils import escape, unescape, unic, is_string
+from robot.utils import (escape, is_dict_like, is_list_like, is_string,
+                         type_name, unescape, unic)
 
 from .splitter import VariableSplitter
 
@@ -132,11 +133,18 @@ class VariableReplacer(object):
     def _get_variable(self, splitter):
         if splitter.identifier not in '$@&%':
             return self._get_reserved_variable(splitter)
+        name = splitter.get_replaced_variable(self)
+        variable = self._variables[name]
         if splitter.index is None:
-            return self._get_normal_variable(splitter)
-        if splitter.identifier == '@':
-            return self._get_list_variable_item(splitter)
-        return self._get_dict_variable_item(splitter)
+            return variable
+        if is_dict_like(variable):
+            return self._get_dict_variable_item(name, variable, splitter)
+        if is_list_like(variable):
+            return self._get_list_variable_item(name, variable, splitter)
+        raise VariableError("Variable '%s' is %s, not list or dictionary, "
+                            "and thus accessing item '%s' from it is not "
+                            "possible."
+                            % (name, type_name(variable), splitter.index))
 
     def _get_reserved_variable(self, splitter):
         value = splitter.get_replaced_variable(self)
@@ -144,13 +152,7 @@ class VariableReplacer(object):
                     "escape it like '\\%s'." % (value, value))
         return value
 
-    def _get_normal_variable(self, splitter):
-        name = splitter.get_replaced_variable(self)
-        return self._variables[name]
-
-    def _get_list_variable_item(self, splitter):
-        name = splitter.get_replaced_variable(self)
-        variable = self._variables[name]
+    def _get_list_variable_item(self, name, variable, splitter):
         index = self.replace_string(splitter.index)
         try:
             index = int(index)
@@ -163,9 +165,7 @@ class VariableReplacer(object):
             raise VariableError("List variable '%s' has no item in index %d."
                                 % (name, index))
 
-    def _get_dict_variable_item(self, splitter):
-        name = splitter.get_replaced_variable(self)
-        variable = self._variables[name]
+    def _get_dict_variable_item(self, name, variable, splitter):
         key = self.replace_scalar(splitter.index)
         try:
             return variable[key]

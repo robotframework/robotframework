@@ -30,11 +30,19 @@ Invalid key using variable
 Non-hashable key
     Check Test Case    ${TESTNAME}
 
-Non-existing dict variable
+Non-existing variable
     Check Test Case    ${TESTNAME}
 
 Non-existing index variable
     Check Test Case    ${TESTNAME}
 
+Non-dict variable
+    Check Test Case    ${TESTNAME}
+
 Sanity check
+    Check Test Case    ${TESTNAME}
+
+Old syntax with `&` still works like earlier
+    [Documentation]    `${dict}[key]` and `&{dict}[key]` work same way still.
+    ...                In the future latter is deprecated and then changed.
     Check Test Case    ${TESTNAME}

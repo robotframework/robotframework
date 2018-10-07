@@ -25,8 +25,16 @@ Non-int index using variable
 Empty index
     Check Test Case    ${TESTNAME}
 
-Non-existing list variable
+Non-existing variable
     Check Test Case    ${TESTNAME}
 
 Non-existing index variable
+    Check Test Case    ${TESTNAME}
+
+Non-list variable
+    Check Test Case    ${TESTNAME}
+
+Old syntax with `@` still works like earlier
+    [Documentation]    `${list}[1]` and `@{list}[1]` work same way still.
+    ...                In the future latter is deprecated and changed.
     Check Test Case    ${TESTNAME}

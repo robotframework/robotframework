@@ -42,7 +42,7 @@ class VariableSplitter(object):
             base = replacer.replace_string(self.base)
         else:
             base = self.base
-        # This omits possible list/dict variable index.
+        # This omits possible variable index.
         return '%s{%s}' % (self.identifier, base)
 
     def is_variable(self):
@@ -133,7 +133,7 @@ class VariableSplitter(object):
             self._state = self._internal_variable_start_state
 
     def _can_contain_index(self):
-        return self._variable_chars[0] in '@&'
+        return self._variable_chars[0] in '$@&'
 
     def _internal_variable_start_state(self, char, index):
         self._state = self._variable_state
