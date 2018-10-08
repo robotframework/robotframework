@@ -30,11 +30,7 @@ class VariableSplitter(object):
             self._max_end = -1
             return
         self._max_end = len(string)
-        try:
-            self._split(string)
-        except ValueError:
-            pass
-        else:
+        if self._split(string):
             self._finalize()
 
     def get_replaced_variable(self, replacer):
@@ -68,6 +64,8 @@ class VariableSplitter(object):
 
     def _split(self, string):
         start_index, max_index = self._find_variable(string)
+        if start_index == -1:
+            return False
         self.start = start_index
         self._open_curly = 1
         self._state = self._variable_state
@@ -79,9 +77,10 @@ class VariableSplitter(object):
             try:
                 self._state(char, index)
             except StopIteration:
-                return
+                break
             if index == max_index and not self._scanning_item():
-                return
+                break
+        return True
 
     def _scanning_item(self):
         return self._state in (self._waiting_item_state, self._item_state)
@@ -89,12 +88,12 @@ class VariableSplitter(object):
     def _find_variable(self, string):
         max_end_index = string.rfind('}')
         if max_end_index == -1:
-            raise ValueError('No variable end found')
+            return -1, -1
         if self._is_escaped(string, max_end_index):
             return self._find_variable(string[:max_end_index])
         start_index = self._find_start_index(string, 1, max_end_index)
         if start_index == -1:
-            raise ValueError('No variable start found')
+            return -1, -1
         return start_index, max_end_index
 
     def _find_start_index(self, string, start, end):
@@ -107,8 +106,8 @@ class VariableSplitter(object):
             start = index + 2
 
     def _start_index_is_ok(self, string, index):
-        return string[index] in self._identifiers \
-            and not self._is_escaped(string, index)
+        return (string[index] in self._identifiers
+                and not self._is_escaped(string, index))
 
     def _is_escaped(self, string, index):
         escaped = False
