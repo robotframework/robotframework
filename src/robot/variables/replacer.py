@@ -135,16 +135,20 @@ class VariableReplacer(object):
             return self._get_reserved_variable(splitter)
         name = splitter.get_replaced_variable(self)
         variable = self._variables[name]
-        if splitter.index is None:
-            return variable
+        for item in splitter.items:
+            variable = self._get_variable_item(name, variable, item)
+            name = '%s[%s]' % (name, item)
+        return variable
+
+    def _get_variable_item(self, name, variable, item):
         if is_dict_like(variable):
-            return self._get_dict_variable_item(name, variable, splitter)
+            return self._get_dict_variable_item(name, variable, item)
         if is_list_like(variable):
-            return self._get_list_variable_item(name, variable, splitter)
+            return self._get_list_variable_item(name, variable, item)
         raise VariableError("Variable '%s' is %s, not list or dictionary, "
                             "and thus accessing item '%s' from it is not "
                             "possible."
-                            % (name, type_name(variable), splitter.index))
+                            % (name, type_name(variable), item))
 
     def _get_reserved_variable(self, splitter):
         value = splitter.get_replaced_variable(self)
@@ -152,26 +156,26 @@ class VariableReplacer(object):
                     "escape it like '\\%s'." % (value, value))
         return value
 
-    def _get_list_variable_item(self, name, variable, splitter):
-        index = self.replace_string(splitter.index)
+    def _get_list_variable_item(self, name, variable, index):
+        index = self.replace_string(index)
         try:
             index = int(index)
         except ValueError:
-            raise VariableError("List variable '%s' used with invalid index '%s'."
+            raise VariableError("List '%s' used with invalid index '%s'."
                                 % (name, index))
         try:
             return variable[index]
         except IndexError:
-            raise VariableError("List variable '%s' has no item in index %d."
+            raise VariableError("List '%s' has no item in index %d."
                                 % (name, index))
 
-    def _get_dict_variable_item(self, name, variable, splitter):
-        key = self.replace_scalar(splitter.index)
+    def _get_dict_variable_item(self, name, variable, key):
+        key = self.replace_scalar(key)
         try:
             return variable[key]
         except KeyError:
-            raise VariableError("Dictionary variable '%s' has no key '%s'."
+            raise VariableError("Dictionary '%s' has no key '%s'."
                                 % (name, key))
         except TypeError as err:
-            raise VariableError("Dictionary variable '%s' used with invalid key: %s"
+            raise VariableError("Dictionary '%s' used with invalid key: %s"
                                 % (name, err))

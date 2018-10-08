@@ -41,23 +41,23 @@ List-like values are not manipulated
     Should Be Equal    ${dict}[tuple]    ${tuple}
 
 Integer key cannot be accessed as string
-    [Documentation]    FAIL Dictionary variable '\${DICT}' has no key '1'.
+    [Documentation]    FAIL Dictionary '\${DICT}' has no key '1'.
     Log    ${DICT}[1]
 
 String key cannot be accessed as integer
-    [Documentation]    FAIL Dictionary variable '\${DICT}' has no key '3'.
+    [Documentation]    FAIL Dictionary '\${DICT}' has no key '3'.
     Log    ${DICT}[${3}]
 
 Invalid key
-    [Documentation]    FAIL Dictionary variable '\${DICT}' has no key 'nonex'.
+    [Documentation]    FAIL Dictionary '\${DICT}' has no key 'nonex'.
     Log    ${DICT}[nonex]
 
 Invalid key using variable
-    [Documentation]    FAIL Dictionary variable '\${DICT}' has no key 'xxx'.
+    [Documentation]    FAIL Dictionary '\${DICT}' has no key 'xxx'.
     Log    ${DICT}[${INVALID}]
 
 Non-hashable key
-    [Documentation]    FAIL STARTS: Dictionary variable '\${DICT}' used with invalid key:
+    [Documentation]    FAIL STARTS: Dictionary '\${DICT}' used with invalid key:
     Log    ${DICT}[@{DICT}]
 
 Non-existing variable
@@ -82,7 +82,7 @@ Sanity check
     Should Be Equal    ${items}    A: 1, B: 2, C: 3, 1: 2, 3: 4, None: None, :${SPACE}
 
 Old syntax with `&` still works like earlier
-    [Documentation]    FAIL Dictionary variable '\&{DICT}' has no key 'nonex'.
+    [Documentation]    FAIL Dictionary '\&{DICT}' has no key 'nonex'.
     Should Be Equal    &{DICT}[A]     1
     Should Be Equal    &{DICT}[${1}]        ${2}
     Log    &{DICT}[nonex]

@@ -187,7 +187,7 @@ Expect Error When Access To List Variable Nonexisting Index Syntax 1
 
 Expect Error When Access To List Variable Nonexisting Index Syntax 2
     Run Keyword And Expect Error
-    ...    List variable '\@{list}' has no item in index 2.
+    ...    List '\@{list}' has no item in index 2.
     ...    Access To List Variable Nonexisting Index Syntax 2
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 1
@@ -197,7 +197,7 @@ Expect Error When Access To Dictionary Nonexisting Key Syntax 1
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 2
     Run Keyword And Expect Error
-    ...    Dictionary variable '\&{dict}' has no key 'c'.
+    ...    Dictionary '\&{dict}' has no key 'c'.
     ...    Access To Dictionary Variable Nonexisting Key Syntax 2
 
 *** Keywords ***
