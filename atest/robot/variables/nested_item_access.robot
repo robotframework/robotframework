@@ -12,6 +12,9 @@ Nested dict access
 Nested mixed access
     Check Test Case    ${TESTNAME}
 
+Nested access with slicing
+    Check Test Case    ${TESTNAME}
+
 Non-existing nested list item
     Check Test Case    ${TESTNAME}
 

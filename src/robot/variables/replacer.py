@@ -159,7 +159,7 @@ class VariableReplacer(object):
     def _get_list_variable_item(self, name, variable, index):
         index = self.replace_string(index)
         try:
-            index = int(index)
+            index = self._parse_list_variable_index(index, name[0] == '$')
         except ValueError:
             raise VariableError("List '%s' used with invalid index '%s'."
                                 % (name, index))
@@ -168,6 +168,13 @@ class VariableReplacer(object):
         except IndexError:
             raise VariableError("List '%s' has no item in index %d."
                                 % (name, index))
+
+    def _parse_list_variable_index(self, index, support_slice=True):
+        if ':' not in index:
+            return int(index)
+        if index.count(':') > 2 or not support_slice:
+            raise ValueError
+        return slice(*[int(i) if i else None for i in index.split(':')])
 
     def _get_dict_variable_item(self, name, variable, key):
         key = self.replace_scalar(key)

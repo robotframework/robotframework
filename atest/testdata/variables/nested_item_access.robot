@@ -23,6 +23,10 @@ Nested mixed access
     ${MIXED}[x][0][0]                   ${1}
     ${MIXED}[x][0][1][y][z][-1][][0]    ${42}
 
+Nested access with slicing
+    ${LIST}[1:][:-1]                    ${LIST[1:-1]}
+    ${LIST}[1:-1][-1][-2:1:-2][0][0]    ${3}
+
 Non-existing nested list item
     [Documentation]    FAIL List '\${LIST}[1][2]' has no item in index 666.
     ${LIST}[1][2][666]                  whatever
