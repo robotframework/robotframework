@@ -91,45 +91,45 @@ class TestVariableSplitter(unittest.TestCase):
                 ('\\${\\${hi\\\\${hi}}}', '${hi}', len('\\${\\${hi\\\\'))]:
             self._test(inp, var, start, internal=var.count('{') > 1)
 
-    def test_list_index(self):
-        self._test('${x}[0]', '${x}', index='0')
-        self._test('.${x}[42]..', '${x}', start=1, index='42')
-        self._test('${x}[]', '${x}', index='')
-        self._test('${x}[inv]', '${x}', index='inv')
+    def test_list_item(self):
+        self._test('${x}[0]', '${x}', item='0')
+        self._test('.${x}[42]..', '${x}', start=1, item='42')
+        self._test('${x}[]', '${x}', item='')
+        self._test('${x}[inv]', '${x}', item='inv')
         self._test('${x}[0', '${x}')
         self._test('${x}}[0]', '${x}')
 
-    def test_list_index_with_internal_vars(self):
-        self._test('${x}[${i}]', '${x}', index='${i}')
-        self._test('xx ${x}[${i}] ${xyz}', '${x}', start=3, index='${i}')
+    def test_list_item_with_internal_vars(self):
+        self._test('${x}[${i}]', '${x}', item='${i}')
+        self._test('xx ${x}[${i}] ${xyz}', '${x}', start=3, item='${i}')
         self._test('$$$$${X{X}[${${i}-${${${i}}}}]', '${X{X}', start=4,
-                   index='${${i}-${${${i}}}}')
-        self._test('${${i}}[${j{}]', '${${i}}', index='${j{}', internal=True)
+                   item='${${i}-${${${i}}}}')
+        self._test('${${i}}[${j{}]', '${${i}}', item='${j{}', internal=True)
 
-    def test_dict_index(self):
-        self._test('${x}[key]', '${x}', index='key')
-        self._test('.${x}[42]..', '${x}', start=1, index='42')
-        self._test('${x}[]', '${x}', index='')
+    def test_dict_item(self):
+        self._test('${x}[key]', '${x}', item='key')
+        self._test('.${x}[42]..', '${x}', start=1, item='42')
+        self._test('${x}[]', '${x}', item='')
         self._test('${x}[k', '${x}')
         self._test('${x}}[0]', '${x}')
 
-    def test_dict_index_with_internal_vars(self):
-        self._test('${x}[${i}]', '${x}', index='${i}')
-        self._test('xx ${x}[${i}] ${xyz}', '${x}', start=3, index='${i}')
+    def test_dict_item_with_internal_vars(self):
+        self._test('${x}[${i}]', '${x}', item='${i}')
+        self._test('xx ${x}[${i}] ${xyz}', '${x}', start=3, item='${i}')
         self._test('$$$$${X{X}[${${i}-${${${i}}}}]', '${X{X}', start=4,
-                   index='${${i}-${${${i}}}}')
-        self._test('${${i}}[${j{}]', '${${i}}', index='${j{}', internal=True)
+                   item='${${i}-${${${i}}}}')
+        self._test('${${i}}[${j{}]', '${${i}}', item='${j{}', internal=True)
 
     def test_old_list_and_dict_item_syntax(self):
-        self._test('@{x}[0]', '@{x}', index='0')
-        self._test('&{x}[key]', '&{x}', index='key')
+        self._test('@{x}[0]', '@{x}', item='0')
+        self._test('&{x}[key]', '&{x}', item='key')
 
-    def test_escape_index(self):
-        self._test('${x}\\[0]', '${x}', index=None)
-        self._test('@{x}\\[0]', '@{x}', index=None)
-        self._test('&{x}\\[key]', '&{x}', index=None)
+    def test_escape_item(self):
+        self._test('${x}\\[0]', '${x}', item=None)
+        self._test('@{x}\\[0]', '@{x}', item=None)
+        self._test('&{x}\\[key]', '&{x}', item=None)
 
-    def test_no_index_with_others_vars(self):
+    def test_no_item_with_others_vars(self):
         self._test('%{x}[0]', '%{x}')
         self._test('*{x}[0]', '*{x}')
 
@@ -164,7 +164,7 @@ class TestVariableSplitter(unittest.TestCase):
         self._test('{}'*10000)
         self._test('{{}}'*1000 + '${var}', '${var}', start=4000)
 
-    def _test(self, inp, variable=None, start=0, index=None,
+    def _test(self, inp, variable=None, start=0, item=None,
               identifiers=_identifiers, internal=False):
         if variable is None:
             identifier = base = None
@@ -177,17 +177,17 @@ class TestVariableSplitter(unittest.TestCase):
             is_var = inp == variable
             is_list_var = is_var and inp[0] == '@'
             is_dict_var = is_var and inp[0] == '&'
-            if index is not None:
-                end += len(index) + 2
-                is_var = inp == '%s[%s]' % (variable, index)
+            if item is not None:
+                end += len(item) + 2
+                is_var = inp == '%s[%s]' % (variable, item)
         res = VariableSplitter(inp, identifiers)
         assert_equal(res.base, base, "'%s' base" % inp)
         assert_equal(res.start, start, "'%s' start" % inp)
         assert_equal(res.end, end, "'%s' end" % inp)
         assert_equal(res.identifier, identifier, "'%s' identifier" % inp)
-        assert_equal(res.index, index, "'%s' index" % inp)
+        assert_equal(res.index, item, "'%s' item" % inp)
         assert_equal(res._may_have_internal_variables, internal,
-                      "'%s' internal" % inp)
+                     "'%s' internal" % inp)
         assert_equal(res.is_variable(), is_var)
         assert_equal(res.is_list_variable(), is_list_var)
         assert_equal(res.is_dict_variable(), is_dict_var)
