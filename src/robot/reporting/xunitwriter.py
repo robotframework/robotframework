@@ -46,22 +46,22 @@ class XUnitFileWriter(ResultVisitor):
         if self._root_suite:
             return
         self._root_suite = suite
-        tests, failures, skip = self._get_stats(suite.statistics)
+        tests, failures, skipped = self._get_stats(suite.statistics)
         attrs = {'name': suite.name,
                  'tests': tests,
                  'errors': '0',
                  'failures': failures,
-                 'skip': skip}
+                 'skipped': skipped}
         self._writer.start('testsuite', attrs)
 
     def _get_stats(self, statistics):
         if self._skip_noncritical:
             failures = statistics.critical.failed
-            skip = statistics.all.total - statistics.critical.total
+            skipped = statistics.all.total - statistics.critical.total
         else:
             failures = statistics.all.failed
-            skip = 0
-        return str(statistics.all.total), str(failures), str(skip)
+            skipped = 0
+        return str(statistics.all.total), str(failures), str(skipped)
 
     def end_suite(self, suite):
         if suite is self._root_suite:
