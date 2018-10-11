@@ -154,9 +154,8 @@ class String(object):
         """
         if isfile(template_or_str):
             logger.info('Opening file %s to be formated' % (template_or_str,))
-            format_file = open(template_or_str, 'r')
-            format_string = format_file.read()
-            format_file.close()
+            with open(template_or_str, 'r') as format_file:
+                format_string = format_file.read()
         else:
             format_string = template_or_str
         logger.info('Formating string')
