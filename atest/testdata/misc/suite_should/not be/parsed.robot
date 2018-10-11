@@ -1,6 +1,6 @@
 *** Settings ***
-Non-Existing       Causes error
+Non-Existing    Causes error
 
 *** Test Cases ***
-A Test
-  Log  Not relevant!
+Not Executed
+    No Operation

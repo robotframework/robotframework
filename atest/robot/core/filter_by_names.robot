@@ -157,8 +157,10 @@ Filter Using Suite Long Name
     Run Suites    --suite Subsuites.Sub1
     Should Contain Suites    ${SUITE}    Subsuites
     Should Contain Tests   ${SUITE}   SubSuite1 First
-    Run Suites    --suite suite_should.be.parsed  ${DATA DIR}/misc
-    Stderr Should Be Empty
+    Run Suites    --suite suite_should.be.parsed    ${DATA DIR}/misc
+    Should Contain Suites    ${SUITE.suites[0]}    Be
+    Should Contain Tests    ${SUITE}    Executed
+    Should Not Contain Tests    ${SUITE}    Not Executed
 
 Filter Using Long Suite Name WIth Pattern
     Run Suites    --suite suites.*.SUB?

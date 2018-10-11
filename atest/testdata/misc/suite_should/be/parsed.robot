@@ -1,3 +1,3 @@
 *** Test Cases ***
-A Test
-  Log  Passing!
+Executed
+    No Operation

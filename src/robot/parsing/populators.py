@@ -153,13 +153,6 @@ class FromDirectoryPopulator(object):
             return SuiteNamePatterns()
         return incl_suites
 
-    def _create_included_suites(self, incl_suites):
-        for suite in incl_suites:
-            yield suite
-            while '.' in suite:
-                suite = suite.split('.', 1)[1]
-                yield suite
-
     def _directory_is_included(self, path, incl_suites):
         name = os.path.basename(os.path.normpath(path))
         return self._is_in_included_suites(name, incl_suites)
