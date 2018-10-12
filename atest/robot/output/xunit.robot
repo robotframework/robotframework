@@ -82,8 +82,8 @@ Get XUnit Nodes
     [Return]    ${nodes}
 
 Stats Should Be
-    [Arguments]    ${elem}    ${tests}    ${failures}    ${skip}
+    [Arguments]    ${elem}    ${tests}    ${failures}    ${skipped}
     Element Attribute Should Be    ${elem}    tests       ${tests}
     Element Attribute Should Be    ${elem}    failures    ${failures}
-    Element Attribute Should Be    ${elem}    skip        ${skip}
+    Element Attribute Should Be    ${elem}    skipped     ${skipped}
     Element Attribute Should Be    ${elem}    errors      0
