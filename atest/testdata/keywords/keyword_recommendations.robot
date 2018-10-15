@@ -88,8 +88,9 @@ Wrapped By Run Keyword Explicit Missing
     Run Keyword    RecLibrary1.missing keyword
 
 Wrapped By Run Keyword And Ignore Error
-    [Documentation]    FAIL    No keyword with name 'missing keyword' found.
-    Run Keyword And Ignore Error    missing keyword
+    ${status}    ${error} =    Run Keyword And Ignore Error    missing keyword
+    Should Be Equal    ${status}    FAIL
+    Should Be Equal    ${error}    No keyword with name 'missing keyword' found.
 
 Wrapped By Run Keyword Whitespace
     [Documentation]    FAIL    No keyword with name ' ' found.

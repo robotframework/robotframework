@@ -19,7 +19,7 @@ Run Libdoc And Parse Output
     [Arguments]    ${arguments}
     Remove File    ${OUTXML}
     Run Libdoc And Set Output    ${arguments} ${OUTXML}
-    Should Not Contain    ${output}    --help    Execution failed:\n\n${output}    no values
+    Should Not Contain    ${OUTPUT}    --help    Execution failed:\n\n${output}    no values
     Log File    ${OUTXML}
     ${LIBDOC}=    Parse Xml    ${OUTXML}
     Set Suite Variable    ${LIBDOC}
@@ -28,17 +28,13 @@ Run Libdoc And Verify Output
     [Arguments]    ${args}    @{expected}
     ${output}=    Run Libdoc    ${args}
     ${expected}=    Catenate    SEPARATOR=\n    @{expected}
-    Should Match    ${output}   ${expected}
+    Should Match    ${output}   ${expected}\n
 
 Run Libdoc And Parse Model From HTML
     [Arguments]    ${args}
     Run Libdoc    ${args} ${OUT HTML}
     ${MODEL} =    Get Libdoc Model From HTML    ${OUT HTML}
     Set Suite Variable    ${MODEL}
-
-Doc Should Contain In HTML
-    [Arguments]    ${object}    ${expected}
-    Should Contain    ${object['doc']}    ${expected}
 
 Name Should Be
     [Arguments]    ${name}
@@ -78,20 +74,21 @@ Generated Should Be Defined
     Element Attribute Should Match    ${LIBDOC}    generated    *
 
 Should Have No Init
-    ${inits} =    Get Elements    ${LIBDOC}    init
+    ${inits} =    Get Elements    ${LIBDOC}    xpath=init
     Should Be Empty    ${inits}
 
 Init Doc Should Start With
     [Arguments]    ${index}    @{doc}
-    ${kws}=   Get Elements    ${LIBDOC}   init
+    ${inits}=   Get Elements    ${LIBDOC}   xpath=init
     ${doc}=    Catenate     SEPARATOR=    @{doc}
-    Element Text Should Match    ${kws[${index}]}    ${doc}*    doc
+    ${text} =    Get Element Text    ${inits[${index}]}    xpath=doc
+    Should Start With    ${text}    ${doc}
 
 Init Doc Should Be
     [Arguments]    ${index}    @{doc}
-    ${kws}=   Get Elements    ${LIBDOC}    init
+    ${kws}=   Get Elements    ${LIBDOC}    xpath=init
     ${doc}=    Catenate     SEPARATOR=    @{doc}
-    Element Text Should Be    ${kws[${index}]}    ${doc}    doc
+    Element Text Should Be    ${kws[${index}]}    ${doc}    xpath=doc
 
 Init Arguments Should Be
     [Arguments]    ${index}   @{expected}
@@ -100,7 +97,7 @@ Init Arguments Should Be
 
 Keyword Name Should Be
     [Arguments]    ${index}   ${name}
-    ${elements}=   Get Elements    ${LIBDOC}    kw
+    ${elements}=   Get Elements    ${LIBDOC}    xpath=kw
     Element Attribute Should Be    ${elements[${index}]}    name    ${name}
 
 Keyword Arguments Should Be
@@ -110,31 +107,32 @@ Keyword Arguments Should Be
 
 Keyword Doc Should Start With
     [Arguments]    ${index}    @{doc}
-    ${kws}=   Get Elements    ${LIBDOC}   kw
+    ${kws}=   Get Elements    ${LIBDOC}   xpath=kw
     ${doc}=    Catenate     SEPARATOR=    @{doc}
-    Element Text Should Match    ${kws[${index}]}    ${doc}*    doc
+    ${text} =    Get Element Text    ${kws[${index}]}    xpath=doc
+    Should Start With    ${text}    ${doc}
 
 Keyword Doc Should Be
     [Arguments]    ${index}    @{doc}
-    ${kws}=   Get Elements    ${LIBDOC}    kw
+    ${kws}=   Get Elements    ${LIBDOC}    xpath=kw
     ${doc}=    Catenate     SEPARATOR=    @{doc}
-    Element Text Should Be    ${kws[${index}]}    ${doc}    doc
+    Element Text Should Be    ${kws[${index}]}    ${doc}    xpath=doc
 
 Keyword Tags Should Be
     [Arguments]    ${index}    @{expected}
-    ${kws}=    Get Elements    ${LIBDOC}    kw
-    ${tags}=   Get Elements Texts    ${kws[${index}]}    tags/tag
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
+    ${tags}=   Get Elements Texts    ${kws[${index}]}    xpath=tags/tag
     Should Be Equal    ${tags}    ${expected}
 
 Get Keyword Arguments
     [Arguments]    ${index}   ${type}=kw
-    ${kws}=    Get Elements    ${LIBDOC}    ${type}
-    ${args}=    Get Elements Texts   ${kws[${index}]}    arguments/arg
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
+    ${args}=    Get Elements Texts   ${kws[${index}]}    xpath=arguments/arg
     [Return]    ${args}
 
 Keyword Count Should Be
     [Arguments]    ${expected}   ${type}=kw
-    ${kws}=    Get Elements    ${LIBDOC}    ${type}
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
     Length Should Be    ${kws}    ${expected}
 
 Remove Output Files

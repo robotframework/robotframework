@@ -10,7 +10,7 @@ Resource          formats_resource.robot
 
 *** Test Cases ***
 HTML Suite With TSV Resource
-    Run Tests And Verify Status    ${MIXEDDIR}/HTML.html
+    Run Tests And Verify Status    ${EMPTY}    ${MIXEDDIR}/HTML.html
     Check Test Case    TSV Resource
 
 HTML Suite With ReST Resource
@@ -22,7 +22,7 @@ HTML Suite With TXT Resource
     Check Test Case    TXT Resource
 
 TSV Suite With HTML Resource
-    Run Tests And Verify Status    ${MIXEDDIR}/TSV.tsv
+    Run Tests And Verify Status    ${EMPTY}    ${MIXEDDIR}/TSV.tsv
     Check Test Case    HTML Resource
 
 TSV Suite With ReST Resource
@@ -34,7 +34,7 @@ TSV Suite With TXT Resource
     Check Test Case    TXT Resource
 
 ReST Suite With HTML Resource
-    Run Tests And Verify Status    ${MIXEDDIR}/REST.rest
+    Run Tests And Verify Status    ${EMPTY}    ${MIXEDDIR}/REST.rest
     Check Test Case    HTML Resource
 
 ReST Suite With TSV Resource
@@ -46,7 +46,7 @@ ReST Suite With TXT Resource
     Check Test Case    TXT Resource
 
 TXT Suite With HTML Resource
-    Run Tests And Verify Status    ${MIXEDDIR}/TXT.txt
+    Run Tests And Verify Status    ${EMPTY}    ${MIXEDDIR}/TXT.txt
     Check Test Case    HTML Resource
 
 TXT Suite With ReST Resource
@@ -58,15 +58,15 @@ TXT Suite With TSV Resource
     Check Test Case    TSV Resource
 
 Directory With Mixed Data
-    Run Tests And Verify Status    ${MIXEDDIR}
+    Run Tests And Verify Status    ${EMPTY}    ${MIXEDDIR}
     Verify Directory with Mixed Data With ReST
 
 Multiple Data Sources Without reST
-    Run Tests And Verify Status    ${HTMLDIR}/sample.html ${TSVDIR}/sample.tsv ${TXTDIR}/sample.txt ${MIXEDDIR}
+    Run Tests And Verify Status    ${EMPTY}    ${HTMLDIR}/sample.html ${TSVDIR}/sample.tsv ${TXTDIR}/sample.txt ${MIXEDDIR}
     Verify Multiple Data Sources Without ReST
 
 Multiple Data Sources With reST
-    Run Tests And Verify Status    ${HTMLDIR}/sample.html ${TSVDIR}/sample.tsv ${RESTDIR}/sample.rst ${TXTDIR}/sample.txt ${MIXEDDIR}
+    Run Tests And Verify Status    ${EMPTY}    ${HTMLDIR}/sample.html ${TSVDIR}/sample.tsv ${RESTDIR}/sample.rst ${TXTDIR}/sample.txt ${MIXEDDIR}
     Verify Multiple Data Sources With ReST
 
 *** Keywords ***

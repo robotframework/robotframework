@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import absolute_import
+
 import re
 from fnmatch import fnmatchcase
 from random import randint
@@ -56,8 +58,6 @@ class String(object):
         | ${str2} = | Convert To Lowercase | 1A2c3D |
         | Should Be Equal | ${str1} | abc |
         | Should Be Equal | ${str2} | 1a2c3d |
-
-        New in Robot Framework 2.8.6.
         """
         # Custom `lower` needed due to IronPython bug. See its code and
         # comments for more details.
@@ -71,8 +71,6 @@ class String(object):
         | ${str2} = | Convert To Uppercase | 1a2C3d |
         | Should Be Equal | ${str1} | ABC |
         | Should Be Equal | ${str2} | 1A2C3D |
-
-        New in Robot Framework 2.8.6.
         """
         return string.upper()
 
@@ -181,8 +179,9 @@ class String(object):
 
         The match is case-sensitive by default, but giving ``case_insensitive``
         a true value makes it case-insensitive. The value is considered true
-        if it is a non-empty string that is not equal to ``false`` or ``no``.
-        If the value is not a string, its truth value is got directly in Python.
+        if it is a non-empty string that is not equal to ``false``, ``none`` or
+        ``no``. If the value is not a string, its truth value is got directly
+        in Python. Considering ``none`` false is new in RF 3.0.3.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -215,8 +214,9 @@ class String(object):
 
         The match is case-sensitive by default, but giving ``case_insensitive``
         a true value makes it case-insensitive. The value is considered true
-        if it is a non-empty string that is not equal to ``false`` or ``no``.
-        If the value is not a string, its truth value is got directly in Python.
+        if it is a non-empty string that is not equal to ``false``, ``none`` or
+        ``no``. If the value is not a string, its truth value is got directly
+        in Python. Considering ``none`` false is new in RF 3.0.3.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -246,9 +246,10 @@ class String(object):
 
         By default lines match only if they match the pattern fully, but
         partial matching can be enabled by giving the ``partial_match``
-        argument a true value. The value is considered true if it is a
-        non-empty string that is not equal to ``false`` or ``no``. If the
-        value is not a string, its truth value is got directly in Python.
+        argument a true value. The value is considered true
+        if it is a non-empty string that is not equal to ``false``, ``none`` or
+        ``no``. If the value is not a string, its truth value is got directly
+        in Python. Considering ``none`` false is new in RF 3.0.3.
 
         If the pattern is empty, it matches only empty lines by default.
         When partial matching is enabled, empty pattern matches all lines.
@@ -385,8 +386,6 @@ class String(object):
         | Should Be Equal | ${str}        | Robot Frame     |
         | ${str} =        | Remove String | Robot Framework | o | bt |
         | Should Be Equal | ${str}        | R Framewrk      |
-
-        New in Robot Framework 2.8.2.
         """
         for removable in removables:
             string = self.replace_string(string, removable, '')
@@ -401,8 +400,6 @@ class String(object):
         about the regular expression syntax. That keyword can also be
         used if there is a need to remove only a certain number of
         occurrences.
-
-        New in Robot Framework 2.8.2.
         """
         for pattern in patterns:
             string = self.replace_string_using_regexp(string, pattern, '')

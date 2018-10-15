@@ -13,36 +13,36 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import Utf8Reader
+from itertools import dropwhile
+
+from robot.output import LOGGER
+
+from .robotreader import RobotReader
 
 
-NBSP = u'\xA0'
+class TsvReader(RobotReader):
 
-
-class TsvReader(object):
-
-    def read(self, tsvfile, populator):
-        process = False
-        for row in Utf8Reader(tsvfile).readlines():
-            row = self._process_row(row)
-            cells = [self._process_cell(cell) for cell in self.split_row(row)]
-            if cells and cells[0].strip().startswith('*') and \
-                    populator.start_table([c.replace('*', '') for c in cells]):
-                process = True
-            elif process:
-                populator.add(cells)
-        populator.eof()
-
-    def _process_row(self, row):
-        if NBSP in row:
-            row = row.replace(NBSP, ' ')
-        return row.rstrip()
+    def __init__(self):
+        self._warned_empty = set()
+        self._warned_escaping = set()
 
     @classmethod
     def split_row(cls, row):
         return row.split('\t')
 
-    def _process_cell(self, cell):
+    def _deprecate_empty_data_cells_in_tsv_format(self, cells, path):
+        data_cells = dropwhile(lambda c: not c, cells)
+        if not all(data_cells) and path not in self._warned_empty:
+            LOGGER.warn("Empty cells in TSV files are deprecated. "
+                        "Escape them with '${EMPTY}' in '%s'." % path)
+            self._warned_empty.add(path)
+
+    def _process_cell(self, cell, path):
         if len(cell) > 1 and cell[0] == cell[-1] == '"':
             cell = cell[1:-1].replace('""', '"')
+            if path not in self._warned_escaping:
+                LOGGER.warn("Un-escaping quotes in TSV files is deprecated. "
+                            "Change cells in '%s' to not contain surrounding "
+                            "quotes." % path)
+                self._warned_escaping.add(path)
         return cell

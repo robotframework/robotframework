@@ -25,18 +25,18 @@ Skip Imports On Exit
     Previous test should have passed    Multiple Suite Aware Exiting
     Should be empty    ${ERRORS.messages}
 
-Skipped tests get robot-exit tag
+Skipped tests get robot:exit tag
     Previous test should have passed    Skip Imports On Exit
     Check Test Tags    Exit From Python Keyword    some tag
-    Check Test Tags    Test That Should Not Be Run 1    robot-exit
-    Check Test Tags    Test That Should Not Be Run 2.1    robot-exit
-    Check Test Tags    Test That Should Not Be Run 2.2    robot-exit
-    Check Test Tags    Test That Should Not Be Run 3    robot-exit    foo
+    Check Test Tags    Test That Should Not Be Run 1    robot:exit
+    Check Test Tags    Test That Should Not Be Run 2.1    robot:exit
+    Check Test Tags    Test That Should Not Be Run 2.2    robot:exit
+    Check Test Tags    Test That Should Not Be Run 3    robot:exit    foo
 
-Skipping creates 'NOT robot-exit' combined tag statistics
-    Previous test should have passed    Skipped tests get robot-exit tag
+Skipping creates 'NOT robot:exit' combined tag statistics
+    Previous test should have passed    Skipped tests get robot:exit tag
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
-    Should be equal    ${stats[0].text}    NOT robot-exit
+    Should be equal    ${stats[0].text}    NOT robot:exit
     Should be equal    ${stats[0].attrib['pass']}    0
     Should be equal    ${stats[0].attrib['fail']}    1
 

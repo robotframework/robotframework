@@ -3,7 +3,7 @@ Resource        cli_resource.robot
 
 *** Variables ***
 ${NO TESTS DIR}     %{TEMPDIR}/robot_test_run_empty_suite
-${NO TESTS FILE}    ${NO TESTS DIR}.txt
+${NO TESTS FILE}    ${NO TESTS DIR}.robot
 
 *** Test Cases ***
 

@@ -82,15 +82,15 @@ class TestUserLibrary(unittest.TestCase):
         assert_equal(len(lib.handlers), 2)
         assert_true('kw' in lib.handlers)
         assert_true('kw 2' in lib.handlers)
-        assert_equal(lib.handlers['kw'].error,
-                      "Keyword with same name defined multiple times.")
+        assert_equal(lib.handlers['kw'].error.message,
+                     "Keyword with same name defined multiple times.")
 
     def test_creating_duplicate_keyword_in_test_case_file(self):
         lib = self._get_userlibrary('MYKW', 'my kw')
         assert_equal(len(lib.handlers), 1)
         assert_true('mykw' in lib.handlers)
-        assert_equal(lib.handlers['mykw'].error,
-                      "Keyword with same name defined multiple times.")
+        assert_equal(lib.handlers['mykw'].error.message,
+                     "Keyword with same name defined multiple times.")
 
     def test_handlers_contains(self):
         lib = self._get_userlibrary('kw')

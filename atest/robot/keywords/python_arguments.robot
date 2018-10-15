@@ -40,3 +40,11 @@ Too Few Arguments With Defaults And Varargs
 
 Calling Using List Variables
     Check Test Case    ${TESTNAME}
+
+Calling Using Annotations
+    [Tags]    require-py3
+    Check Test Case    ${TESTNAME}
+
+Calling Using Annotations With Defaults
+    [Tags]    require-py3
+    Check Test Case    ${TESTNAME}

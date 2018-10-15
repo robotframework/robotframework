@@ -82,9 +82,9 @@ Caller does not see modifications to varargs
 
 Invalid Arguments Spec
     [Template]    Verify Invalid Argument Spec
-    0    Invalid argument syntax    Invalid argument syntax 'no deco'.
+    0    Invalid argument syntax       Invalid argument syntax 'no deco'.
     1    Non-default after defaults    Non-default argument after default arguments.
-    2    Varargs not last    Positional argument after varargs.
+    2    Kwargs not last               Only last argument can be kwargs.
 
 *** Keywords ***
 Verify Invalid Argument Spec

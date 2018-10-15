@@ -1,5 +1,6 @@
 *** Settings ***
 Library           OperatingSystem
+Library           EmbeddedArgs.py
 Variables         vars.py
 Resource          ${RESOURCE PATH_FROM_VARS}
 
@@ -27,6 +28,10 @@ Passing keywords
 Keywords with embedded arguments
     Embedded arguments here
     Embedded args rock here
+    This is validated
+
+Library keyword with embedded arguments
+    Log 42 times
     This is validated
 
 Keywords that would fail

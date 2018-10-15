@@ -2,15 +2,13 @@ import unittest
 import os
 
 from robot.utils.asserts import assert_equal, assert_not_none, assert_none, assert_true
-from robot.utils import get_env_var, set_env_var, del_env_var, get_env_vars, PY3
+from robot.utils import get_env_var, set_env_var, del_env_var, get_env_vars, unicode
 
 
 TEST_VAR = 'TeST_EnV_vAR'
 TEST_VAL = 'original value'
 NON_ASCII_VAR = u'\xe4iti'
 NON_ASCII_VAL = u'is\xe4'
-if PY3:
-    unicode = str
 
 
 class TestRobotEnv(unittest.TestCase):

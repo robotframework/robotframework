@@ -28,9 +28,8 @@ Read Until Precompiled Regexp
 
 Read Until Non-ASCII Regexp
     [Setup]    Login and set prompt   terminal_emulation=True   terminal_type=vt100  encoding=UTF-8
-    ${regexps} =    Evaluate    (re.compile(b'foo'), re.compile(u'\\xe4iti'))     modules=re
     Write    echo -e "moikka ämpäri\\x1b[5Diti"
-    Read Until Regexp    isä   @{regexps}
+    Read Until Regexp    äiti
 
 Reads Only the Necessary Amount
     Write    echo -e "abba\\x1b[3Dcdc_foo_bar_dar"
@@ -78,14 +77,6 @@ Read Until Regexp Using Internal Update Frequency
     Run with timeout 0.5    Read Until Regexp    acdc
 
 Window Size
-    [Setup]    Login and set prompt    terminal_emulation=True   window_size=1024x1024
-    Set Timeout   5
-    Execute Command    echo $TERM
-    Execute Command    stty -a
-    Write    echo ${=*1000}
-    Read Should Match     ${=*1000}*
-
-Window Size 100x80
     [Setup]    Login and set prompt    terminal_emulation=True   window_size=100x80
     Set Timeout   5
     Execute Command    stty -a

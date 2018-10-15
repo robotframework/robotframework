@@ -20,9 +20,9 @@ for pausing the test execution and getting input from users. The
 dialogs are slightly different depending on whether tests are run on
 Python, IronPython or Jython but they provide the same functionality.
 
-Long lines in the provided messages are wrapped automatically since
-Robot Framework 2.8. If you want to wrap lines manually, you can add
-newlines using the ``\\n`` character sequence.
+Long lines in the provided messages are wrapped automatically. If you want
+to wrap lines manually, you can add newlines using the ``\\n`` character
+sequence.
 
 The library has a known limitation that it cannot be used with timeouts
 on Python. Support for IronPython was added in Robot Framework 2.9.2.
@@ -78,17 +78,16 @@ def get_value_from_user(message, default_value='', hidden=False):
 
     If ``hidden`` is given a true value, the value typed by the user is hidden.
     ``hidden`` is considered true if it is a non-empty string not equal to
-    ``false`` or ``no``, case-insensitively. If it is not a string, its truth
-    value is got directly using same
-    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
-    as in Python].
+    ``false``, ``none`` or ``no``, case-insensitively. If it is not a string,
+    its truth value is got directly using same
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     Example:
     | ${username} = | Get Value From User | Input user name | default    |
     | ${password} = | Get Value From User | Input password  | hidden=yes |
 
-    Possibility to hide the typed in value is new in Robot Framework 2.8.4.
-    Considering strings ``false`` and ``no`` to be false is new in 2.9.
+    Considering strings ``false`` and ``no`` to be false is new in RF 2.9
+    and considering string ``none`` false is new in RF 3.0.3.
     """
     return _validate_user_input(InputDialog(message, default_value,
                                             is_truthy(hidden)))

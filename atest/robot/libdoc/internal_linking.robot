@@ -69,7 +69,6 @@ Non-ASCII is encoded
     ...   Non-ASCII%3A%20%C3%A4%E2%98%83    Non-ASCII: ä\u2603
 
 *** Keywords ***
-
 Doc Should Contain Link
     [Arguments]    ${object}    ${target}    ${text}
     Doc Should Contain   ${object}    <a href="#${target}" class="name">${text}</a>
@@ -80,4 +79,4 @@ Doc Should Contain Name
 
 Doc Should Contain
     [Arguments]    ${object}    ${text}
-    Doc Should Contain In HTML    ${object}    ${text}
+    Should Contain    ${object['doc']}    ${text}

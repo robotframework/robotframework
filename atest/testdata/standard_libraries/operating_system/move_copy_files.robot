@@ -7,7 +7,7 @@ Resource          os_resource.robot
 ${SOURCE}         ${BASE}${/}move_from
 ${SOURCE2}        ${BASE}${/}move_from_dir1
 ${SOURCE3}        ${BASE}${/}move_from_dir2
-${SOURCE GLOB}    ${BASE}${/}[move]_from_dir_glob
+${SOURCE GLOB}    ${BASE}${/}\[move]_from_dir_glob
 ${GLOB FILE}      foo[bar].txt
 ${DEST}           ${BASE}${/}move_to
 

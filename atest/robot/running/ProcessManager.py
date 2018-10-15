@@ -13,7 +13,8 @@ class ProcessManager(object):
 
     def start_process(self, *args):
         self._process = subprocess.Popen(args, stderr=subprocess.PIPE,
-                                         stdout=subprocess.PIPE)
+                                         stdout=subprocess.PIPE,
+                                         universal_newlines=True)
         self._stdout = None
         self._stderr = None
 
@@ -39,10 +40,10 @@ class ProcessManager(object):
 
     def log_stdout_and_stderr(self):
         self.wait_until_finished()
-        print 'STDOUT:'
-        print self._stdout
-        print 'STDERR:'
-        print self._stderr
+        print('STDOUT:')
+        print(self._stdout)
+        print('STDERR:')
+        print(self._stderr)
 
     def wait_until_finished(self):
         if self._stdout is None:

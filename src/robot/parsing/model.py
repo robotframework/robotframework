@@ -15,6 +15,7 @@
 
 import os
 import copy
+import warnings
 
 from robot.errors import DataError
 from robot.variables import is_var
@@ -23,39 +24,40 @@ from robot.writer import DataFileWriter
 from robot.utils import abspath, is_string, normalize, py2to3, NormalizedDict
 
 from .comments import Comment
-from .populators import FromFilePopulator, FromDirectoryPopulator
+from .populators import FromFilePopulator, FromDirectoryPopulator, NoTestsFound
 from .settings import (Documentation, Fixture, Timeout, Tags, Metadata,
                        Library, Resource, Variables, Arguments, Return,
                        Template, MetadataList, ImportList)
 
 
 def TestData(parent=None, source=None, include_suites=None,
-             warn_on_skipped=False, extensions=None):
+             warn_on_skipped='DEPRECATED', extensions=None):
     """Parses a file or directory to a corresponding model object.
 
     :param parent: Optional parent to be used in creation of the model object.
     :param source: Path where test data is read from.
-    :param warn_on_skipped: Boolean to control warning about skipped files.
+    :param warn_on_skipped: Deprecated.
     :param extensions: List/set of extensions to parse. If None, all files
         supported by Robot Framework are parsed when searching test cases.
     :returns: :class:`~.model.TestDataDirectory`  if `source` is a directory,
         :class:`~.model.TestCaseFile` otherwise.
     """
+    # TODO: Remove in RF 3.2.
+    if warn_on_skipped != 'DEPRECATED':
+        warnings.warn("Option 'warn_on_skipped' is deprecated and has no "
+                      "effect.", DeprecationWarning)
     if os.path.isdir(source):
         return TestDataDirectory(parent, source).populate(include_suites,
-                                                          warn_on_skipped,
                                                           extensions)
     return TestCaseFile(parent, source).populate()
 
 
 class _TestData(object):
-    _setting_table_names = 'Setting', 'Settings', 'Metadata'
+    _setting_table_names = 'Setting', 'Settings'
     _variable_table_names = 'Variable', 'Variables'
-    _testcase_table_names = 'Test Case', 'Test Cases'
-    _keyword_table_names = 'Keyword', 'Keywords', 'User Keyword', 'User Keywords'
-    _deprecated = NormalizedDict({'Metadata': 'Settings',
-                                  'User Keyword': 'Keywords',
-                                  'User Keywords': 'Keywords'})
+    _testcase_table_names = 'Test Case', 'Test Cases', 'Task', 'Tasks'
+    _keyword_table_names = 'Keyword', 'Keywords'
+    _comment_table_names = 'Comment', 'Comments'
 
     def __init__(self, parent=None, source=None):
         self.parent = parent
@@ -67,28 +69,33 @@ class _TestData(object):
         for names, table in [(self._setting_table_names, self.setting_table),
                              (self._variable_table_names, self.variable_table),
                              (self._testcase_table_names, self.testcase_table),
-                             (self._keyword_table_names, self.keyword_table)]:
+                             (self._keyword_table_names, self.keyword_table),
+                             (self._comment_table_names, None)]:
             for name in names:
                 yield name, table
 
     def start_table(self, header_row):
-        try:
-            name = header_row[0]
-            table = self._tables[name]
-            if name in self._deprecated:
-                self._report_deprecated(name)
-        except (KeyError, IndexError):
-            return None
-        if not self._table_is_allowed(table):
+        table = self._find_table(header_row)
+        if table is None or not self._table_is_allowed(table):
             return None
         table.set_header(header_row)
         return table
 
-    # TODO: Remove support for deprecated tables altogether in RF 3.1.
-    def _report_deprecated(self, name):
-        self.report_invalid_syntax(
-            "Table name '%s' is deprecated. Please use '%s' instead."
-            % (name, self._deprecated[name]), level='WARN')
+    def _find_table(self, header_row):
+        name = header_row[0] if header_row else ''
+        try:
+            return self._tables[name]
+        except KeyError:
+            self.report_invalid_syntax(
+                "Unrecognized table header '%s'. Available headers for "
+                "data: 'Setting(s)', 'Variable(s)', 'Test Case(s)', "
+                "'Task(s)' and 'Keyword(s)'. Use 'Comment(s)' to embedded "
+                "additional data." % name
+            )
+            return None
+
+    def _table_is_allowed(self, table):
+        return True
 
     @property
     def name(self):
@@ -130,6 +137,7 @@ class _TestData(object):
         return DataFileWriter(**options).write(self)
 
 
+@py2to3
 class TestCaseFile(_TestData):
     """The parsed test case file object.
 
@@ -152,10 +160,7 @@ class TestCaseFile(_TestData):
 
     def _validate(self):
         if not self.testcase_table.is_started():
-            raise DataError('File has no test case table.')
-
-    def _table_is_allowed(self, table):
-        return True
+            raise NoTestsFound('File has no tests or tasks.')
 
     def has_tests(self):
         return True
@@ -164,6 +169,9 @@ class TestCaseFile(_TestData):
         for table in [self.setting_table, self.variable_table,
                       self.testcase_table, self.keyword_table]:
             yield table
+
+    def __nonzero__(self):
+        return any(table for table in self)
 
 
 class ResourceFile(_TestData):
@@ -181,7 +189,7 @@ class ResourceFile(_TestData):
         _TestData.__init__(self, source=source)
 
     def populate(self):
-        FromFilePopulator(self).populate(self.source)
+        FromFilePopulator(self).populate(self.source, resource=True)
         self._report_status()
         return self
 
@@ -194,8 +202,8 @@ class ResourceFile(_TestData):
 
     def _table_is_allowed(self, table):
         if table is self.testcase_table:
-            raise DataError("Resource file '%s' contains a test case table "
-                            "which is not allowed." % self.source)
+            raise DataError("Resource file '%s' cannot contain tests or "
+                            "tasks." % self.source)
         return True
 
     def __iter__(self):
@@ -221,10 +229,9 @@ class TestDataDirectory(_TestData):
         self.keyword_table = KeywordTable(self)
         _TestData.__init__(self, parent, source)
 
-    def populate(self, include_suites=None, warn_on_skipped=False,
-                 extensions=None, recurse=True):
+    def populate(self, include_suites=None, extensions=None, recurse=True):
         FromDirectoryPopulator().populate(self.source, self, include_suites,
-                                          warn_on_skipped, extensions, recurse)
+                                          extensions, recurse)
         self.children = [ch for ch in self.children if ch.has_tests()]
         return self
 
@@ -233,18 +240,16 @@ class TestDataDirectory(_TestData):
 
     def _table_is_allowed(self, table):
         if table is self.testcase_table:
-            LOGGER.error("Test suite init file in '%s' contains a test case "
-                         "table which is not allowed." % self.source)
+            LOGGER.error("Test suite initialization file in '%s' cannot "
+                         "contain tests or tasks." % self.source)
             return False
         return True
 
-    def add_child(self, path, include_suites, extensions=None,
-                  warn_on_skipped=False):
+    def add_child(self, path, include_suites, extensions=None):
         self.children.append(TestData(parent=self,
                                       source=path,
                                       include_suites=include_suites,
-                                      extensions=extensions,
-                                      warn_on_skipped=warn_on_skipped))
+                                      extensions=extensions))
 
     def has_tests(self):
         return any(ch.has_tests() for ch in self.children)
@@ -298,27 +303,16 @@ class _Table(object):
 
 
 class _WithSettings(object):
-    _deprecated = {'document': 'Documentation',
-                   'suiteprecondition': 'Suite Setup',
-                   'suitepostcondition': 'Suite Teardown',
-                   'testprecondition': 'Test Setup',
-                   'testpostcondition': 'Test Teardown',
-                   'precondition': 'Setup',
-                   'postcondition': 'Teardown'}
+    _setters = {}
+    _aliases = {}
 
     def get_setter(self, setting_name):
         normalized = self.normalize(setting_name)
-        if normalized in self._deprecated:
-            self._report_deprecated(setting_name, self._deprecated[normalized])
-            normalized = self.normalize(self._deprecated[normalized])
+        if normalized in self._aliases:
+            normalized = self._aliases[normalized]
         if normalized in self._setters:
             return self._setters[normalized](self)
         self.report_invalid_syntax("Non-existing setting '%s'." % setting_name)
-
-    def _report_deprecated(self, deprecated, use_instead):
-         self.report_invalid_syntax(
-             "Setting '%s' is deprecated. Use '%s' instead."
-             % (deprecated.rstrip(':'), use_instead), level='WARN')
 
     def is_setting(self, setting_name):
         return self.normalize(setting_name) in self._setters
@@ -370,7 +364,6 @@ class _SettingTable(_Table, _WithSettings):
 
 
 class TestCaseFileSettingTable(_SettingTable):
-
     _setters = {'documentation': lambda s: s.doc.populate,
                 'suitesetup': lambda s: s.suite_setup.populate,
                 'suiteteardown': lambda s: s.suite_teardown.populate,
@@ -384,6 +377,10 @@ class TestCaseFileSettingTable(_SettingTable):
                 'resource': lambda s: s.imports.populate_resource,
                 'variables': lambda s: s.imports.populate_variables,
                 'metadata': lambda s: s.metadata.populate}
+    _aliases = {'tasksetup': 'testsetup',
+                'taskteardown': 'testteardown',
+                'tasktemplate': 'testtemplate',
+                'tasktimeout': 'testtimeout'}
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
@@ -394,7 +391,6 @@ class TestCaseFileSettingTable(_SettingTable):
 
 
 class ResourceFileSettingTable(_SettingTable):
-
     _setters = {'documentation': lambda s: s.doc.populate,
                 'library': lambda s: s.imports.populate_library,
                 'resource': lambda s: s.imports.populate_resource,
@@ -406,7 +402,6 @@ class ResourceFileSettingTable(_SettingTable):
 
 
 class InitFileSettingTable(_SettingTable):
-
     _setters = {'documentation': lambda s: s.doc.populate,
                 'suitesetup': lambda s: s.suite_setup.populate,
                 'suiteteardown': lambda s: s.suite_teardown.populate,
@@ -444,13 +439,23 @@ class VariableTable(_Table):
         return iter(self.variables)
 
 
-@py2to3
 class TestCaseTable(_Table):
     type = 'test case'
 
     def __init__(self, parent):
         _Table.__init__(self, parent)
         self.tests = []
+
+    def set_header(self, header):
+        if self._header and header:
+            self._validate_mode(self._header[0], header[0])
+        _Table.set_header(self, header)
+
+    def _validate_mode(self, name1, name2):
+        tasks1 = normalize(name1) in ('task', 'tasks')
+        tasks2 = normalize(name2) in ('task', 'tasks')
+        if tasks1 is not tasks2:
+            raise DataError('One file cannot have both tests and tasks.')
 
     @property
     def _old_header_matcher(self):
@@ -465,9 +470,6 @@ class TestCaseTable(_Table):
 
     def is_started(self):
         return bool(self._header)
-
-    def __nonzero__(self):
-        return True
 
 
 class KeywordTable(_Table):

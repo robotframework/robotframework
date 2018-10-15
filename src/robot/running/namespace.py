@@ -13,22 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
 import copy
+import os
+from collections import OrderedDict
 from itertools import chain
 
-from robot.errors import DataError
+from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
-from robot.parsing.settings import Library, Variables, Resource
-from robot.utils import (eq, find_file, is_string, OrderedDict, printable_name,
-                         seq2str2, RecommendationFinder)
+from robot.parsing.settings import Library, Resource, Variables
+from robot.utils import (RecommendationFinder, eq, find_file, is_string,
+                         printable_name, seq2str2)
 
+from .importer import ImportCache, Importer
+from .runkwregister import RUN_KW_REGISTER
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
-from .importer import Importer, ImportCache
-from .runkwregister import RUN_KW_REGISTER
-
 
 IMPORTER = Importer()
 
@@ -155,14 +155,6 @@ class Namespace(object):
 
     def _get_name(self, name, import_setting):
         if import_setting.type == 'Library' and not self._is_library_by_path(name):
-            if ' ' in name:
-                # TODO: Remove support for extra spaces in name in RF 3.1.
-                # https://github.com/robotframework/robotframework/issues/2264
-                warning = ("Importing library with extra spaces in name like "
-                           "'%s' is deprecated. Remove spaces and use '%s' "
-                           "instead." % (name, name.replace(' ', '')))
-                import_setting.report_invalid_syntax(warning, 'WARN')
-                name = name.replace(' ', '')
             return name
         return find_file(name, import_setting.directory,
                          file_type=import_setting.type)
@@ -222,8 +214,8 @@ class Namespace(object):
     def get_runner(self, name):
         try:
             return self._kw_store.get_runner(name)
-        except DataError as err:
-            return UserErrorHandler(name, err.message)
+        except DataError as error:
+            return UserErrorHandler(error, name)
 
 
 class KeywordStore(object):
@@ -274,7 +266,7 @@ class KeywordStore(object):
                                              self.resources)
         recommendations = finder.recommend_similar_keywords(name)
         msg = finder.format_recommendations(msg, recommendations)
-        raise DataError(msg)
+        raise KeywordError(msg)
 
     def _get_runner(self, name):
         if not name:
@@ -343,7 +335,7 @@ class KeywordStore(object):
         return runners
 
     def _filter_stdlib_runner(self, runner1, runner2):
-        stdlibs_without_remote = STDLIBS - set(['Remote'])
+        stdlibs_without_remote = STDLIBS - {'Remote'}
         if runner1.library.orig_name in stdlibs_without_remote:
             standard, custom = runner1, runner2
         elif runner2.library.orig_name in stdlibs_without_remote:
@@ -396,7 +388,7 @@ class KeywordStore(object):
         if implicit:
             error += ". Give the full name of the keyword you want to use"
         names = sorted(runner.longname for runner in found)
-        raise DataError('\n    '.join([error+':'] + names))
+        raise KeywordError('\n    '.join([error+':'] + names))
 
 
 class KeywordRecommendationFinder(object):

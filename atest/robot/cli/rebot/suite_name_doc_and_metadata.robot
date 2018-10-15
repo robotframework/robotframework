@@ -15,19 +15,12 @@ Overriding Name, Doc & Metadata And Escaping
     [Documentation]    Overriding name, doc and metadata. Also tests escaping values.
     ${options} =    Catenate
     ...    -N this_is_overridden_next
-    ...    --name my_COOL_NameEXEX
-    ...    --doc Even_\\coooolerBS_docEXQU
+    ...    --name "my COOL Name!!"
+    ...    --doc "Even \\cooooler\\ doc!?"
     ...    --metadata something:New
-    ...    --metadata two_parts:three_parts_here
-    ...    -M path:c:\\tempBSnew.txt
-    ...    -M esc:STQUDOAMHAEXEX
-    ...    --escape star:ST
-    ...    -E quest:QU
-    ...    -E dollar:DO
-    ...    -E amp:AM
-    ...    -E hash:HA
-    ...    -E exclam:EX
-    ...    --escape bslash:BS
+    ...    --metadata "two parts:three parts here"
+    ...    -M path:c:\\temp\\new.txt
+    ...    -M esc:*?$&#!!
     Run Rebot    ${options}    ${INPUT FILE}
     Check Names    ${SUITE}    my COOL Name!!
     Check Names    ${SUITE.tests[0]}    First One    my COOL Name!!.

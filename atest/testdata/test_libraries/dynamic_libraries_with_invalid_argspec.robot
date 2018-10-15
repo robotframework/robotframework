@@ -2,7 +2,6 @@
 Library         dynamic_libraries/InvalidArgSpecs.py
 
 *** Test Cases ***
-
 Argspec consists of something else than strings
     [Documentation]    FAIL No keyword with name 'Argspec With Other Than Strings' found.
     Argspec With Other Than Strings
@@ -11,13 +10,9 @@ Argspec has named arguments before positional
     [Documentation]    FAIL No keyword with name 'Named Args Before Positional' found.
     Named Args Before Positional
 
-Argspec has varargs before positional arguments
-    [Documentation]    FAIL No keyword with name 'Varargs Before Positional Args' found.
-    Varargs Before Positional Args
-
-Argspec has varargs before named arguments
-    [Documentation]    FAIL No keyword with name 'Varargs Before Named Args' found.
-    Varargs Before Named Args
+Argspec has multiple varargs
+    [Documentation]    FAIL No keyword with name 'Multiple Varargs' found.
+    Multiple Varargs
 
 Argspec has kwargs before positional arguments
     [Documentation]    FAIL No keyword with name 'Kwargs Before Positional Args' found.

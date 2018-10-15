@@ -157,14 +157,28 @@ Simple patterns
 Many command line options take arguments as *simple patterns*. These
 `glob-like patterns`__ are matched according to the following rules:
 
-- `*` is a wildcard matching any string, even an empty string.
-- `?` is a wildcard matching any single character.
+- `*` matches any string, even an empty string.
+- `?` matches any single character.
+- `[abc]` matches one character in the bracket.
+- `[!abc]` matches one character not in the bracket.
+- `[a-z]` matches one character from the range in the bracket.
+- `[!a-z]` matches one character not from the range in the bracket.
+- Unlike with glob patterns normally, path separator characters `/` and
+  :codesc:`\\` and the newline character `\n` are matches by the above
+  wildcards.
 - Unless noted otherwise, pattern matching is case, space, and underscore insensitive.
 
 Examples::
 
-   --test Example*     # Matches tests with name starting 'Example', case insensitively.
-   --include f??       # Matches tests with a tag that starts with 'f' or 'F' and is three characters long.
+   --test Example*        # Matches tests with name starting 'Example'.
+   --test Example[1-2]    # Matches tests 'Example1' and 'Example2'.
+   --include f??          # Matches tests with a tag that starts with 'f' is three characters long.
+
+All matching in above examples is case, space and underscore insensitive.
+For example, the second example would also match test named `example 1`.
+
+.. note:: Support for brackets like `[abc]` and `[!a-z]` is new in
+          Robot Framework 3.1.
 
 __ http://en.wikipedia.org/wiki/Glob_(programming)
 
@@ -219,8 +233,6 @@ using lower case letters to avoid accidental operator usage::
     --include PORT          # Matches tests containing tag 'P' or 'T', case-insensitively
     --exclude handoverORportNOTnotification
 
-.. note:: `OR` operator is new in Robot Framework 2.8.4.
-
 ``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` environment variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -239,10 +251,7 @@ avoid the need to repeat them every time tests are run or Rebot used.
    export REBOT_OPTIONS="--reportbackground green:yellow:red"
    rebot --name example output.xml
 
-.. note:: Support for ``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` environment
-          variables was added in Robot Framework 2.8.2.
-
-          Possibility to have spaces in values by surrounding them in quotes
+.. note:: Possibility to have spaces in values by surrounding them in quotes
           is new in Robot Framework 2.9.2.
 
 __ `Post-processing outputs`_
@@ -274,7 +283,7 @@ output from executing a simple test suite with only two test cases::
    Report:  /path/to/report.html
    Log:     /path/to/log.html
 
-Starting from Robot Framework 2.7, there is also a notification on the console
+There is also a notification on the console
 whenever a top-level keyword in a test case ends. A green dot is used if
 a keyword passes and a red F if it fails. These markers are written to the end
 of line and they are overwritten by the test status when the test itself ends.
@@ -358,63 +367,6 @@ Example below illustrates how errors and warnings look like in the log file.
 
 __ `Deprecating keywords`_
 
-Escaping complicated characters
--------------------------------
-
-Because spaces are used for separating options from each other, it is
-problematic to use them in option values.  Some options, such as
-:option:`--name`, automatically convert underscores to spaces, but
-with others spaces must be escaped. Additionally, many special
-characters are complicated to use on the command line.
-Because escaping complicated characters with a backslash or quoting
-the values does not always work too well, Robot Framework has its own
-generic escaping mechanism. Another possibility is using `argument
-files`_ where options can be specified in the plain text format. Both of
-these mechanisms work when executing tests and when
-post-processing outputs, and also some of the external supporting
-tools have the same or similar capabilities.
-
-In Robot Framework's command line escaping mechanism,
-problematic characters are escaped with freely selected text. The
-command line option to use is :option:`--escape (-E)`,
-which takes an argument in the format `what:with`,
-where `what` is the name of the character to escape and
-`with` is the string to escape it with. Characters that can
-be escaped are listed in the table below:
-
-.. table:: Available escapes
-   :class: tabular
-
-   =========  =============  =========  =============
-   Character   Name to use   Character   Name to use
-   =========  =============  =========  =============
-   &          amp            (          paren1
-   '          apos           )          paren2
-   @          at             %          percent
-   \\         bslash         \|         pipe
-   :          colon          ?          quest
-   ,          comma          "          quot
-   {          curly1         ;          semic
-   }          curly2         /          slash
-   $          dollar         \          space
-   !          exclam         [          square1
-   >          gt             ]          square2
-   #          hash           \*         star
-   <          lt             \          \
-   =========  =============  =========  =============
-
-The following examples make the syntax more clear. In the
-first example, the metadata `X` gets the value `Value with
-spaces`, and in the second example variable `${VAR}` is assigned to
-`"Hello, world!"`::
-
-    --escape space:_ --metadata X:Value_with_spaces
-    -E space:SP -E quot:QU -E comma:CO -E exclam:EX -v VAR:QUHelloCOSPworldEXQU
-
-Note that all the given command line arguments, including paths to test
-data, are escaped. Escape character sequences thus need to be
-selected carefully.
-
 Argument files
 --------------
 
@@ -452,7 +404,7 @@ lines starting with a hash mark (#) are ignored::
    path/to/my/tests
 
 In the above example the separator between options and their values is a single
-space. In Robot Framework 2.7.6 and newer it is possible to use either an equal
+space. It is possible to use either an equal
 sign (=) or any number of spaces. As an example, the following three lines are
 identical::
 
@@ -502,10 +454,10 @@ the option :option:`--version`. This information also contains Python
 or Jython version and the platform type::
 
    $ robot --version
-   Robot Framework 3.0 (Jython 2.7.0 on java1.7.0_45)
+   Robot Framework 3.1 (Jython 2.7.0 on java1.7.0_45)
 
    C:\>rebot --version
-   Rebot 3.0 (Python 2.7.10 on win32)
+   Rebot 3.1 (Python 3.7.0 on win32)
 
 .. _start-up script:
 .. _start-up scripts:
@@ -668,18 +620,26 @@ Using the Python debugger (pdb)
 
 It is also possible to use the pdb__ module from the Python standard
 library to set a break point and interactively debug a running test.
-The typical way of invoking pdb by inserting
+The typical way of invoking pdb by inserting:
 
 .. sourcecode:: python
 
    import pdb; pdb.set_trace()
 
 at the location you want to break into debugger will not work correctly
-with Robot Framework, though, as the standard output stream is
+with Robot Framework, as the standard output stream is
 redirected during keyword execution. Instead, you can use the following:
 
 .. sourcecode:: python
 
    import sys, pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
 
-__ http://docs.python.org/2/library/pdb.html
+from within a python library or alternativley:
+
+.. sourcecode:: robotframework
+
+  Evaluate    pdb.Pdb(stdout=sys.__stdout__).set_trace()    modules=sys, pdb
+
+can be used directly in a test case.
+
+__ http://docs.python.org/library/pdb.html

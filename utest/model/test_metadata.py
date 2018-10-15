@@ -1,12 +1,8 @@
 import unittest
 
 from robot.model.metadata import Metadata
-from robot.utils import PY2, PY3
-from robot.utils.asserts import assert_equal, assert_true
-
-
-if PY3:
-    unicode = str
+from robot.utils import PY2, unicode
+from robot.utils.asserts import assert_equal
 
 
 class TestMetadata(unittest.TestCase):

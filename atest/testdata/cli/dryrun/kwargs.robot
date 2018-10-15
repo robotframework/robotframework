@@ -3,7 +3,7 @@ Library    Library.py
 
 *** Test Cases ***
 Normal and kwargs
-    [Documentation]    FAIL Keyword 'Library.Normal And Kwargs' expected 1 non-keyword argument, got 0.
+    [Documentation]    FAIL Keyword 'Library.Normal And Kwargs' expected 1 non-named argument, got 0.
     Normal and kwargs    arg
     Normal and kwargs    arg    a=1    b=2
     Normal and kwargs    a=1

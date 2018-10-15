@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.6
 
 """ug2html.py -- Creates HTML version of Robot Framework User Guide
 
@@ -9,15 +9,15 @@ create .. Creates the user guide so that it has relative links to images,
 
 dist .... Creates the user guide under 'robotframework-userguide-<version>'
           directory and also copies all needed images and other link targets
-          there. Also compiles library docs to ensure latest versions are
-          included. The created output directory can thus be distributed
+          there. The created output directory can thus be distributed
           independently.
+          Note: Before running this command, you must generate documents at
+          project root, for example, with: invoke library-docs all
 
 zip ..... Uses 'dist' to create a stand-alone distribution and then packages
           it into 'robotframework-userguide-<version>.zip'
 
-Version number to use is got automatically from 'src/robot/version.py' file
-created by 'package.py'.
+Version number to use is got automatically from 'src/robot/version.py' file.
 """
 
 import os
@@ -104,8 +104,7 @@ def pygments_directive(name, arguments, options, content, lineno,
     try:
         lexer = get_lexer_by_name(arguments[0])
     except ValueError as err:
-        raise ValueError('Invalid syntax highlighting language "%s".'
-                         % arguments[0])
+        raise ValueError(f'Invalid syntax highlighting language "{arguments[0]}".')
     # take an arbitrary option if more than one is given
     formatter = options and VARIANTS[options.keys()[0]] or DEFAULT
     # possibility to read the content from an external file
@@ -113,7 +112,7 @@ def pygments_directive(name, arguments, options, content, lineno,
     if len(filtered) == 1:
         path = filtered[0].replace('/', os.sep)
         if os.path.isfile(path):
-            content = open(path).read().splitlines()
+            content = open(path, encoding="utf-8").read().splitlines()
     parsed = highlight(u'\n'.join(content), lexer, formatter)
     return [nodes.raw('', parsed, format='html')]
 
@@ -135,14 +134,14 @@ CURDIR = os.path.dirname(os.path.abspath(__file__))
 try:
     import locale
     locale.setlocale(locale.LC_ALL, '')
-except:
+except ImportError:
     pass
 
 
 def create_userguide():
     from docutils.core import publish_cmdline
 
-    print 'Creating user guide ...'
+    print('Creating user guide ...')
     version, version_file = _update_version()
     install_file = _copy_installation_instructions()
 
@@ -156,29 +155,32 @@ def create_userguide():
     os.unlink(version_file)
     os.unlink(install_file)
     ugpath = os.path.abspath(arguments[-1])
-    print ugpath
+    print(ugpath)
     return ugpath, version
 
 
 def _update_version():
     version = _get_version()
-    print 'Version:', version
-    with open(os.path.join(CURDIR, 'src', 'version.rst'), 'w') as vfile:
-        vfile.write('.. |version| replace:: %s\n' % version)
+    print(f'Version: {version}')
+    with open(os.path.join(CURDIR, 'src', 'version.rst'), 'w',
+              encoding="utf-8") as vfile:
+        vfile.write(f'.. |version| replace:: {version}\n')
     return version, vfile.name
 
 def _get_version():
     namespace = {}
-    execfile(os.path.join(CURDIR, '..', '..', 'src', 'robot', 'version.py'),
-             namespace)
+    versionfile = os.path.join(CURDIR, '..', '..', 'src', 'robot', 'version.py')
+    with open(versionfile, encoding="utf-8") as f:
+        code = compile(f.read(), versionfile, 'exec')
+        exec(code, namespace)
     return namespace['get_version']()
 
 def _copy_installation_instructions():
     source = os.path.join(CURDIR, '..', '..', 'INSTALL.rst')
     target = os.path.join(CURDIR, 'src', 'GettingStarted', 'INSTALL.rst')
     include = True
-    with open(source) as source_file:
-        with open(target, 'w') as target_file:
+    with open(source, encoding="utf-8") as source_file:
+        with open(target, 'w', encoding="utf-8") as target_file:
             for line in source_file:
                 if 'START USER GUIDE IGNORE' in line:
                     include = False
@@ -194,29 +196,24 @@ def _copy_installation_instructions():
 #
 def create_distribution():
     import re
-    from urlparse import urlparse
+    from urllib.parse import urlparse
 
     dist = os.path.normpath(os.path.join(CURDIR, '..', '..', 'dist'))
     ugpath, version = create_userguide()  # we are in doc/userguide after this
-    outdir = os.path.join(dist, 'robotframework-userguide-%s' % version)
+    outdir = os.path.join(dist, f'robotframework-userguide-{version}')
     templates = os.path.join(outdir, 'templates')
     libraries = os.path.join(outdir, 'libraries')
     images = os.path.join(outdir, 'images')
-    print 'Creating distribution directory ...'
+    print('Creating distribution directory ...')
 
     if os.path.exists(outdir):
-        print 'Removing previous user guide distribution'
+        print('Removing previous user guide distribution')
         shutil.rmtree(outdir)
     elif not os.path.exists(dist):
         os.mkdir(dist)
 
-    print 'Recompiling library docs'
-    sys.path.insert(0, os.path.join(CURDIR, '..', 'libraries'))
-    import lib2html
-    lib2html.create_all()
-
     for dirname in [outdir, templates, libraries, images]:
-        print "Creating output directory '%s'" % dirname
+        print(f'Creating output directory {dirname!r}')
         os.mkdir(dirname)
 
     def replace_links(res):
@@ -225,8 +222,7 @@ def create_distribution():
         scheme, _, path, _, _, fragment = urlparse(res.group(5))
         if scheme or (fragment and not path):
             return res.group(0)
-        replaced_link = '%s %s="%%s/%s"' % (res.group(1), res.group(4),
-                                            os.path.basename(path))
+        replaced_link = f'{res.group(1)} {res.group(4)}="%s/{os.path.basename(path)}"'
         if path.startswith('../../templates'):
             copy(path, templates)
             replaced_link = replaced_link % 'templates'
@@ -237,13 +233,13 @@ def create_distribution():
             copy(path, images)
             replaced_link = replaced_link % 'images'
         else:
-            raise ValueError('Invalid link target: %s (context: %s)'
-                             % (path, res.group(0)))
-        print "Modified link '%s' -> '%s'" % (res.group(0), replaced_link)
+            raise ValueError(f'Invalid link target: {path} ('
+                             f'context: {res.group(0)})')
+        print(f'Modified link {res.group(0)!r} -> {replaced_link!r}')
         return replaced_link
 
     def copy(source, dest):
-        print "Copying '%s' -> '%s'" % (source, dest)
+        print(f'Copying {source!r} -> {dest!r}')
         shutil.copy(source, dest)
 
     link_regexp = re.compile('''
@@ -251,11 +247,12 @@ def create_distribution():
 (\s+(href|src)="(.*?)"|>)
 ''', re.VERBOSE | re.DOTALL | re.IGNORECASE)
 
-    with open(ugpath) as infile:
+    with open(ugpath, encoding="utf-8") as infile:
         content = link_regexp.sub(replace_links, infile.read())
-    with open(os.path.join(outdir, os.path.basename(ugpath)), 'wb') as outfile:
+    with open(os.path.join(outdir, os.path.basename(ugpath)), 'w',
+              encoding="utf-8") as outfile:
         outfile.write(content)
-    print os.path.abspath(outfile.name)
+    print(os.path.abspath(outfile.name))
     return outdir
 
 #
@@ -263,11 +260,11 @@ def create_distribution():
 #
 def create_zip():
     ugdir = create_distribution()
-    print 'Creating zip package ...'
+    print('Creating zip package ...')
     zip_path = zip_distribution(ugdir)
-    print 'Removing distribution directory', ugdir
+    print(f'Removing distribution directory {ugdir!r}')
     shutil.rmtree(ugdir)
-    print zip_path
+    print(zip_path)
 
 
 def zip_distribution(dirpath):
@@ -281,7 +278,7 @@ def zip_distribution(dirpath):
             for name in files:
                 path = os.path.join(root, name)
                 arcpath = os.path.relpath(path, arcroot)
-                print "Adding '%s'" % arcpath
+                print(f'Adding {arcpath!r}')
                 zipfile.write(path, arcpath)
 
     return os.path.abspath(zippath)
@@ -293,4 +290,4 @@ if __name__ == '__main__':
     try:
         actions[sys.argv[1]](*sys.argv[2:])
     except (KeyError, IndexError, TypeError):
-        print __doc__
+        print(__doc__)

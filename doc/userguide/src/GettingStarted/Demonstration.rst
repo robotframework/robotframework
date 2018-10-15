@@ -13,7 +13,7 @@ started with it.
 
 `Web testing demo <https://bitbucket.org/robotframework/webdemo/wiki/Home>`__
     Demonstrates how to create tests and higher level keywords. The system
-    under test is a simple web page that is tested using Selenium2Library_.
+    under test is a simple web page that is tested using SeleniumLibrary_.
 
 `SwingLibrary demo <https://github.com/robotframework/SwingLibrary/wiki/SwingLibrary-Demo>`_
     Demonstrates using SwingLibrary_ for testing Java GUI applications.

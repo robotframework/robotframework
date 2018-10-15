@@ -17,7 +17,7 @@ We have a devious plan to rule the world with robots.
 
    Suite Setup    Log   Setup
    Test Teardown  Log   Test Teardown
-   Resource       ../resources/rest_resource.rst
+   Resource       ../resources/rest_directive_resource.rst
    | Variables  | ../resources/variables.py
    | Library    | OperatingSystem | | | | | | | | | | | | | | | |
 
@@ -86,16 +86,19 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
    |              |              |
    | Default Tags | No Operation |
 
-   Variable Table   Should Be Equal   ${table_var}   foo
+   Variable Table
+      Should Be Equal   ${table_var}   foo
       Should Be Equal   @{table_listvar}[0]   bar
       Should Be Equal   @{table_listvar}[1]   foo
 
-   Resource File   Keyword from ReST resource
+   Resource File
+      Keyword from ReST resource
       Keyword from ReST resource 2
       Should Be Equal   ${rest_resource_var}   ReST Resource Variable
       Should Be Equal   ${rest_resource_var2}   ReST Resource Variable From Recursive Resource
 
-   Variable File   Should Be Equal   @{file_listvar}[0]   ${True}
+   Variable File
+      Should Be Equal   @{file_listvar}[0]   ${True}
       Should Be Equal   @{file_listvar}[1]   ${3.14}
       Should Be Equal   @{file_listvar}[2]   Hello, world!!
       Should Be Equal   ${file_var1}   ${-314}

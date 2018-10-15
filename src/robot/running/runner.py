@@ -49,11 +49,12 @@ class Runner(SuiteVisitor):
                            name=suite.name,
                            doc=suite.doc,
                            metadata=suite.metadata,
-                           starttime=get_timestamp())
+                           starttime=get_timestamp(),
+                           rpa=self._settings.rpa)
         if not self.result:
             result.set_criticality(self._settings.critical_tags,
                                    self._settings.non_critical_tags)
-            self.result = Result(root_suite=result)
+            self.result = Result(root_suite=result, rpa=self._settings.rpa)
             self.result.configure(status_rc=self._settings.status_rc,
                                   stat_config=self._settings.statistics_config)
         else:
@@ -121,13 +122,13 @@ class Runner(SuiteVisitor):
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(test, result))
         status = TestStatus(self._suite_status, result.critical)
+        if status.exit:
+            self._add_exit_combine()
+            result.tags.add('robot:exit')
         if not status.failures and not test.name:
             status.test_failed('Test case name cannot be empty.')
         if not status.failures and not test.keywords.normal:
             status.test_failed('Test case contains no keywords.')
-        if status.exit:
-            self._add_exit_combine()
-            result.tags.add('robot-exit')
         self._run_setup(test.keywords.setup, status, result)
         try:
             if not status.failures:
@@ -160,7 +161,7 @@ class Runner(SuiteVisitor):
         self._context.end_test(result)
 
     def _add_exit_combine(self):
-        exit_combine = ('NOT robot-exit', '')
+        exit_combine = ('NOT robot:exit', '')
         if exit_combine not in self._settings['TagStatCombine']:
             self._settings['TagStatCombine'].append(exit_combine)
 
@@ -168,7 +169,7 @@ class Runner(SuiteVisitor):
         if not test.timeout:
             return None
         return TestTimeout(test.timeout.value, test.timeout.message,
-                           self._variables)
+                           self._variables, rpa=test.parent.rpa)
 
     def _run_setup(self, setup, status, result=None):
         if not status.failures:

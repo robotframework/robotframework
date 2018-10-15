@@ -20,11 +20,13 @@ from .visitor import SuiteVisitor
 class TotalStatistics(object):
     """Container for total statistics."""
 
-    def __init__(self):
+    def __init__(self, rpa=False):
         #: Instance of :class:`~robot.model.stats.TotalStat` for critical tests.
-        self.critical = TotalStat('Critical Tests')
+        test_or_task = 'Tests' if not rpa else 'Tasks'
+        self.critical = TotalStat('Critical ' + test_or_task)
         #: Instance of :class:`~robot.model.stats.TotalStat` for all the tests.
-        self.all = TotalStat('All Tests')
+        self.all = TotalStat('All ' + test_or_task)
+        self._rpa = rpa
 
     def visit(self, visitor):
         visitor.visit_total_statistics(self)
@@ -41,11 +43,13 @@ class TotalStatistics(object):
             2 critical tests, 1 passed, 1 failed
             2 tests total, 1 passed, 1 failed
         """
+        test_or_task = 'test' if not self._rpa else 'task'
         ctotal, cend, cpass, cfail = self._get_counts(self.critical)
         atotal, aend, apass, afail = self._get_counts(self.all)
-        return ('%d critical test%s, %d passed, %d failed\n'
-                '%d test%s total, %d passed, %d failed'
-                % (ctotal, cend, cpass, cfail, atotal, aend, apass, afail))
+        return ('%d critical %s%s, %d passed, %d failed\n'
+                '%d %s%s total, %d passed, %d failed'
+                % (ctotal, test_or_task, cend, cpass, cfail,
+                   atotal, test_or_task, aend, apass, afail))
 
     def _get_counts(self, stat):
         ending = 's' if stat.total != 1 else ''
@@ -54,8 +58,8 @@ class TotalStatistics(object):
 
 class TotalStatisticsBuilder(SuiteVisitor):
 
-    def __init__(self, suite=None):
-        self.stats = TotalStatistics()
+    def __init__(self, suite=None, rpa=False):
+        self.stats = TotalStatistics(rpa)
         if suite:
             suite.visit(self)
 

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    --name Hyvää_Üötä_€åppa    parsing/utf8_data.robot
+Suite Setup       Run Tests    --name "Hyvää Üötä €åppa"    parsing/utf8_data.robot
 Test Template     Check stdout contains regexp
 Resource          console_resource.robot
 

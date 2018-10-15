@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from contextlib import contextmanager
 import os
 
 from robot.errors import DataError
@@ -41,11 +42,13 @@ class Logger(AbstractLogger):
         self._library_listeners = None
         self._other_loggers = []
         self._message_cache = []
+        self._log_message_cache = None
         self._started_keywords = 0
         self._error_occurred = False
         self._error_listener = None
         self._prev_log_message_handlers = []
         self._enabled = 0
+        self._cache_only = False
         if register_console_logger:
             self.register_console_logger()
 
@@ -137,8 +140,9 @@ class Logger(AbstractLogger):
 
     def message(self, msg):
         """Messages about what the framework is doing, warnings, errors, ..."""
-        for logger in self:
-            logger.message(msg)
+        if not self._cache_only:
+            for logger in self:
+                logger.message(msg)
         if self._message_cache is not None:
             self._message_cache.append(msg)
         if msg.level == 'ERROR':
@@ -146,8 +150,32 @@ class Logger(AbstractLogger):
             if self._error_listener:
                 self._error_listener()
 
+    @property
+    @contextmanager
+    def cache_only(self):
+        self._cache_only = True
+        try:
+            yield
+        finally:
+            self._cache_only = False
+
+    @property
+    @contextmanager
+    def delayed_logging(self):
+        self._log_message_cache = []
+        try:
+            yield
+        finally:
+            messages = self._log_message_cache
+            self._log_message_cache = None
+            for msg in messages:
+                self.log_message(msg)
+
     def _log_message(self, msg):
         """Log messages written (mainly) by libraries."""
+        if self._log_message_cache is not None:
+            self._log_message_cache.append(msg)
+            return
         for logger in self:
             logger.log_message(msg)
         if msg.level in ('WARN', 'ERROR'):

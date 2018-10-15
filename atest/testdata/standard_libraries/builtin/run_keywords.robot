@@ -76,11 +76,13 @@ In test teardown
     ...
     ...    3) AssertionError
     ...
-    ...    4) No keyword with name 'Non-Existing Keyword' found.${ATD ERR}
+    ...    4) No keyword with name 'Non-Existing Keyword' found.
+    ...
+    ...    5) Keyword name cannot be empty.${ATD ERR}
     No Operation
     [Teardown]    Run keywords    Passing    ${NOOP}    Failing    ${NOOP}
     ...    Non-existing Variable    Fail    Non-Existing Keyword
-    ...    Not Executed After Previous Missing Keyword
+    ...    Syntax Error    Not Executed After Previous Syntax Error
 
 In test teardown with ExecutionPassed exception
     [Documentation]    FAIL Stop here${ATD ERR}
@@ -121,3 +123,6 @@ Returning keyword
 
 Non-existing Variable
     Log    ${this variable does not exist}
+
+Syntax Error
+    ${invalid}

@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
 import sys
 
 from .encodingsniffer import get_console_encoding, get_system_encoding
@@ -24,6 +25,10 @@ from .unic import unic
 
 CONSOLE_ENCODING = get_console_encoding()
 SYSTEM_ENCODING = get_system_encoding()
+# IronPython and Jython streams have wrong encoding if outputs are redirected.
+# Jython gets it right if PYTHONIOENCODING is set, though.
+NON_TTY_ENCODING_CAN_BE_TRUSTED = \
+    not (IRONPYTHON or JYTHON and not os.getenv('PYTHONIOENCODING'))
 
 
 def console_decode(string, encoding=CONSOLE_ENCODING, force=False):
@@ -64,15 +69,9 @@ def console_encode(string, errors='replace', stream=sys.__stdout__):
 
 
 def _get_console_encoding(stream):
-    # On Python 2 stdout and stderr don't have encoding set reliably if outputs
-    # are redirected outside Python itself. With Python encoding is None in
-    # this case, and with Jython and IronPython encoding seems to be set to
-    # the same value as when streams are not redirected (which is wrong and
-    # can cause problems on Windows).
-    if PY3 or isatty(stream):
-        encoding = getattr(stream, 'encoding', None)
-        if encoding:
-            return encoding
+    encoding = getattr(stream, 'encoding', None)
+    if encoding and (NON_TTY_ENCODING_CAN_BE_TRUSTED or isatty(stream)):
+        return encoding
     return CONSOLE_ENCODING if isatty(stream) else SYSTEM_ENCODING
 
 

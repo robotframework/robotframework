@@ -1,6 +1,6 @@
 *** Settings ***
-Library   listenerlibrary3.py
-Suite setup     Foo
+Library         listenerlibrary3.py
+Suite Setup     Foo
 
 *** Test Cases ***
 Pass

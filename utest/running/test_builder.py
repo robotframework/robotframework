@@ -1,7 +1,8 @@
 import unittest
 from os.path import abspath, dirname, normpath, join
 
-from robot.utils.asserts import assert_equal, assert_true
+from robot.errors import DataError
+from robot.utils.asserts import assert_equal, assert_raises, assert_true
 from robot.running import TestSuite, TestSuiteBuilder
 
 
@@ -9,9 +10,9 @@ CURDIR = dirname(abspath(__file__))
 DATADIR = join(CURDIR, '..', '..', 'atest', 'testdata', 'misc')
 
 
-def build(*paths):
+def build(*paths, **config):
     paths = [normpath(join(DATADIR, p)) for p in paths]
-    suite = TestSuiteBuilder().build(*paths)
+    suite = TestSuiteBuilder(**config).build(*paths)
     assert_true(isinstance(suite, TestSuite))
     assert_equal(suite.source, paths[0] if len(paths) == 1 else None)
     return suite
@@ -63,7 +64,7 @@ class TestBuilding(unittest.TestCase):
         assert_keyword(kw, (), 'My Keyword', ('Pass',))
 
     def test_assign(self):
-        kw = build('unicode.robot').tests[1].keywords[0]
+        kw = build('non_ascii.robot').tests[1].keywords[0]
         assert_keyword(kw, ('${msg} =',), 'Evaluate', (r"u'Fran\\xe7ais'",))
 
     def test_directory_suite(self):
@@ -109,6 +110,20 @@ class TestBuilding(unittest.TestCase):
         assert_equal(kw.timeout.value, '42')
         assert_equal(kw.timeout.message, 'My message')
 
+    def test_rpa(self):
+        for paths in [('.',), ('pass_and_fail.robot',),
+                      ('pass_and_fail.robot', 'normal.robot')]:
+            self._validate_rpa(build(*paths), False)
+            self._validate_rpa(build(*paths, rpa=True), True)
+        self._validate_rpa(build('../rpa/tasks1.robot'), True)
+        self._validate_rpa(build('../rpa/', rpa=False), False)
+        assert_raises(DataError, build, '../rpa')
+
+    def _validate_rpa(self, suite, expected):
+        assert_equal(suite.rpa, expected, suite.name)
+        for child in suite.suites:
+            self._validate_rpa(child, expected)
+
 
 class TestTemplates(unittest.TestCase):
 
@@ -130,3 +145,7 @@ class TestTemplates(unittest.TestCase):
         assert_keyword(test.keywords[0], (), 'Expect Exactly Three Args',
                        ('${SAME VARIABLE}', 'Variable content', '${VARIABLE}'))
         assert_equal(test.template, 'Expect Exactly Three Args')
+
+
+if __name__ == '__main__':
+    unittest.main()

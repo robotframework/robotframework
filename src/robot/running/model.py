@@ -33,8 +33,6 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#listener-interface
 """
 
-import warnings
-
 from robot import model
 from robot.conf import RobotSettings
 from robot.output import LOGGER, Output, pyloggingconf
@@ -117,43 +115,18 @@ class TestSuite(model.TestSuite):
     test_class = TestCase    #: Internal usage only.
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self,  name='', doc='', metadata=None, source=None):
-        model.TestSuite.__init__(self, name, doc, metadata, source)
+    def __init__(self,  name='', doc='', metadata=None, source=None, rpa=False):
+        model.TestSuite.__init__(self, name, doc, metadata, source, rpa)
         #: :class:`ResourceFile` instance containing imports, variables and
         #: keywords the suite owns. When data is parsed from the file system,
         #: this data comes from the same test case file that creates the suite.
         self.resource = ResourceFile(source=source)
 
-    # TODO: Remote deprecated propertys below in RF 3.1.
-    # `TestSuite`.resource was introduced already in RF 2.9.
-
-    @property
-    def imports(self):
-        """Deprecated. Use ``TestSuite.resource.imports`` instead."""
-        warnings.warn("'TestSuite.imports' is deprecated since RF 2.9. "
-                      "Use 'TestSuite.resource.imports' instead.",
-                      UserWarning)
-        return self.resource.imports
-
-    @property
-    def variables(self):
-        """Deprecated. Use ``TestSuite.resource.variables`` instead."""
-        warnings.warn("'TestSuite.variables' is deprecated since RF 2.9. "
-                      "Use 'TestSuite.resource.variables' instead.",
-                      UserWarning)
-        return self.resource.variables
-
-    @property
-    def user_keywords(self):
-        """Deprecated. Use ``TestSuite.resource.keywords`` instead."""
-        warnings.warn("'TestSuite.user_keywords' is deprecated since RF 2.9. "
-                      "Use 'TestSuite.resource.keywords' instead.",
-                      UserWarning)
-        return self.resource.keywords
-
     def configure(self, randomize_suites=False, randomize_tests=False,
                   randomize_seed=None, **options):
         """A shortcut to configure a suite using one method call.
+
+        Can only be used with the root test suite.
 
         :param randomize_xxx: Passed to :meth:`randomize`.
         :param options: Passed to
@@ -201,7 +174,6 @@ class TestSuite(model.TestSuite):
 
         To capture stdout and/or stderr streams, pass open file objects in as
         special keyword arguments ``stdout`` and ``stderr``, respectively.
-        Note that this works only in version 2.8.4 and newer.
 
         Only options related to the actual test execution have an effect.
         For example, options related to selecting test cases or creating

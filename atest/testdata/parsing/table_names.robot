@@ -1,12 +1,12 @@
-***Setting***
-Documentation  Testing that different synonyms for table names work.
-...            NO RIDE!! It would combine separate tables.
+*** Setting ***
+Documentation    Testing different ways to write "Setting(s)".
 
-***Settings***
-Default Tags  Settings
+*** Comment ***
+This table is accepted and data here ignored.
 
-***Metadata***
-Force Tags  Metadata
+***SET TINGS***
+Default Tags    Settings
+Library         OperatingSystem
 
 ***Variable***
 ${VARIABLE}  Variable
@@ -19,9 +19,18 @@ Test Case
     Log  ${VARIABLE}
     Keyword
 
+***COMMENTS***
+Comment tables are case (and space) insensitive like any other table and
+both singular and plural formats are fine.
+***COMMENTS***
+
 ***TestCases***
 Test Cases
     Log  ${VARIABLES}
+
+Comment tables exist
+    ${content} =    Get File    ${CURDIR}/table_names.robot
+    Should Contain    ${content}    \n*** Comment ***\n
 
 * * * K e y w o r d * * *
 Keyword
@@ -29,13 +38,4 @@ Keyword
 
 *keywords
 Keywords
-    User Keyword
-
-***User*Keyword***
-User Keyword
-    User Keywords
-
-*US* er key wor*ds
-User Keywords
-    Log  'User Keywords' was executed
-
+    Log    "Keywords" was executed

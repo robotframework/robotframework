@@ -79,7 +79,7 @@ Should Contain Keyword
     ${expected} =    Catenate    SEPARATOR=\n
     ...    ${name}
     ...    ${underline}
-    ...    Arguments:${SPACE * 2}[${args}]
+    ...    Arguments:${SPACE * 2}\[${args}]
     ...    ${EMPTY}
     ...    @{doc}
     Should Contain    ${OUTPUT}    ${expected}

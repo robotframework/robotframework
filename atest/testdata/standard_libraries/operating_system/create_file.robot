@@ -3,6 +3,10 @@ Suite Teardown    Remove Base Test Directory
 Test Setup        Create Base Test Directory
 Resource          os_resource.robot
 
+*** Variables ***
+${SYSTEM_ENCODING}          ASCII    # Should be overridden from CLI
+${CONSOLE_ENCODING}         ASCII    # Should be overridden from CLI
+
 *** Test Cases ***
 Create File With Default Content
     Create File    ${TESTFILE}
@@ -26,10 +30,14 @@ Create File With Encoding
     Hyvää yötä!    ISO-8859-1
     Спасибо        UTF-8
     Спасибо        ISO-8859-5
-    Hyvää yötä!    SYSTEM
-    Hyvää yötä!    sysTEM
-    Hyvää yötä!    console
-    Hyvää yötä!    CONsole
+
+Create File With System Encoding
+    Create File    ${TESTFILE}    Nön-ÄSCÏÏ Cöntënt    encoding=SYSTEM
+    Verify File    ${TESTFILE}    Nön-ÄSCÏÏ Cöntënt    encoding=${SYSTEM_ENCODING}
+
+Create File With Console Encoding
+    Create File    ${TESTFILE}    Nön-ÄSCÏÏ Cöntënt    encoding=CONSole
+    Verify File    ${TESTFILE}    Nön-ÄSCÏÏ Cöntënt    encoding=${CONSOLE_ENCODING}
 
 Create File With Non-ASCII Name
     [Template]    Create and Verify File

@@ -22,9 +22,17 @@ function parseTemplates() {
     });
 }
 
+function testOrTask(text) {
+    return text.replace(/{(.*)}/, function (match, group, offset, string) {
+        if (!window.settings.rpa)
+            return group;
+        return {'TEST': 'TASK', 'Test': 'Task', 'test': 'task'}[group];
+    });
+}
+
 function setTitle(suiteName, type) {
     var givenTitle = window.settings.title;
-    var title = givenTitle ? givenTitle : suiteName + " Test " + type;
+    var title = givenTitle ? givenTitle : suiteName + " " + type;
     document.title = util.unescape(title);
 }
 
@@ -71,7 +79,7 @@ function addStatistics() {
         '<th class="stats-col-elapsed">Elapsed</th>' +
         '<th class="stats-col-graph">Pass / Fail</th>';
     var statTable =
-        '<h2>Test Statistics</h2>' +
+        '<h2>{Test} Statistics</h2>' +
         '<table class="statistics" id="total-stats"><thead><tr>' +
         '<th class="stats-col-name">Total Statistics</th>' + statHeaders +
         '</tr></thead></table>' +
@@ -81,7 +89,7 @@ function addStatistics() {
         '<table class="statistics" id="suite-stats"><thead><tr>' +
         '<th class="stats-col-name">Statistics by Suite</th>' + statHeaders +
         '</tr></thead></table>';
-    $(statTable).appendTo('#statistics-container');
+    $(testOrTask(statTable)).appendTo('#statistics-container');
     util.map(['total', 'tag', 'suite'], addStatTable);
     addTooltipsToElapsedTimes();
     enableStatisticsSorter();
@@ -89,10 +97,10 @@ function addStatistics() {
 
 function addTooltipsToElapsedTimes() {
     $('.stats-col-elapsed').attr('title',
-        'Total execution time of these test cases. ' +
+        testOrTask('Total execution time of these {test}s. ') +
         'Excludes suite setups and teardowns.');
     $('#suite-stats').find('.stats-col-elapsed').attr('title',
-        'Total execution time of this test suite.');
+        'Total execution time of this suite.');
 }
 
 function enableStatisticsSorter() {
@@ -164,10 +172,10 @@ $.template('statColumnsTemplate',
 );
 
 $.template('suiteStatusMessageTemplate',
-    '${critical} critical test, ' +
+    '${critical} critical {{= testOrTask("{test}")}}, ' +
     '${criticalPassed} passed, ' +
     '<span class="{{if criticalFailed}}fail{{else}}pass{{/if}}">${criticalFailed} failed</span><br>' +
-    '${total} test total, ' +
+    '${total} {{= testOrTask("{test}")}} total, ' +
     '${totalPassed} passed, ' +
     '<span class="{{if totalFailed}}fail{{else}}pass{{/if}}">${totalFailed} failed</span>'
 );

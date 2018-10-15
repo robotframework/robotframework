@@ -222,7 +222,10 @@ window.testdata = function () {
             var type = id[0];
             var index = parseInt(id.substring(1)) - 1;
             var item = selectFrom(current, type, index);
-            result.push(item.id);
+            if (item)
+                result.push(item.id);
+            else    // Invalid id. Should this be reported somewhere?
+                ids = [];
             loadItems(ids, item, result, callback);
         });
     }

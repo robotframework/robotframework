@@ -99,7 +99,7 @@ Kwargs with escaped equal sign 1
     Should Be Equal    ${result}    1\\:x=y, 2=x\\:y, 3\\\\=x\\\\:y
 
 Kwargs with escaped equal sign 2
-    [Documentation]    FAIL Keyword 'python_library.Lib Kwargs' expected 0 non-keyword arguments, got 1.
+    [Documentation]    FAIL Keyword 'python_library.Lib Kwargs' expected 0 non-named arguments, got 1.
     Lib Kwargs    a\=b\\\=c\\\\\=d\\\\\\\=e
 
 Kwargs with positional and named
@@ -114,7 +114,7 @@ Kwargs with positional and named
     ${result} =    Lib Mandatory Named And Kwargs    mandatory    optional    c=3
     Should Be Equal    ${result}    mandatory, optional, c:3
     ${result} =    Lib Mandatory Named And Kwargs    b=2    c=3    a=1    d=4
-    Should Be Equal    ${result}    1, 2, c:3, d:4
+    Should Be Equal    ${result}    1, 2 (int), c:3, d:4
 
 Non working named combinations with varargs
     [Template]    Execute illegal named vararg combination
@@ -129,13 +129,13 @@ Non working named combinations with varargs
 
 Non working combinations with kwargs
     [Template]    Execute illegal combinations with kwargs
-    expected 1 to 2 non-keyword arguments, got 0.
+    expected 1 to 2 non-named arguments, got 0.
     missing value for argument 'a'.                   b=2
     missing value for argument 'a'.                   b=2    c=3    d=4
     got multiple values for argument 'a'.             a      a=a
     got multiple values for argument 'a'.             a      b      a=a
     got multiple values for argument 'a'.             a      b=b    a=a
-    expected 1 to 2 non-keyword arguments, got 3.     1      2      3
+    expected 1 to 2 non-named arguments, got 3.       1      2      3
 
 Named combinations without varargs
     [Template]    Execute working named combination with result
@@ -178,7 +178,7 @@ Test escaping with all argument types
 
 Illegal combinations with all argument types
     [Template]    Execute illegal combinations with everything
-    expected at least 1 non-keyword argument, got 0.    d1=d
+    expected at least 1 non-named argument, got 0.      d1=d
     got multiple values for argument 'a'.               a      a=a
     got multiple values for argument 'a'.               a      b       a=a
     got multiple values for argument 'a'.               a      b=b     a=a
@@ -209,7 +209,7 @@ Empty string is allowed in kwargs names
     Should be equal    a, b, :whut    ${res}
 
 Dict is not converted to kwargs
-    [Documentation]    FAIL Keyword 'python_library.Lib Kwargs' expected 0 non-keyword arguments, got 1.
+    [Documentation]    FAIL Keyword 'python_library.Lib Kwargs' expected 0 non-named arguments, got 1.
     ${dict} =    Create Dictionary   a=1    b=2
     lib_kwargs    ${dict}
 
