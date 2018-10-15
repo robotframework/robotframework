@@ -37,7 +37,7 @@ XUnit skip non-criticals
     ${root} =    Parse XML    ${OUTDIR}/xunit.xml
     Element Attribute Should Be    ${root}    tests    19
     Element Attribute Should Be    ${root}    failures    4
-    Element Attribute Should Be    ${root}    skip    10
+    Element Attribute Should Be    ${root}    skipped    10
     ${skipped} =    Get Elements    ${root}    xpath=testcase/skipped
     Should Be Equal    ${skipped[0].text}    FAIL: Expected
     Should Be Equal    ${skipped[1].text}    PASS
