@@ -1,8 +1,8 @@
 *** Settings ***
-Library           Reloadable.py   WITH NAME   foo
-Library           Reloadable.py   WITH NAME   bar
+Library           Reloadable.py    WITH NAME    foo
+Library           Reloadable.py    WITH NAME    bar
 
-*** Testcases ***
+*** Test Cases ***
 Reload with name
     [Documentation]    FAIL No keyword with name 'bar.added here' found.
     foo.Add keyword    added here
@@ -20,5 +20,3 @@ Reload with instance
 Original name is not usable when import with WITH NAME
     [Documentation]    FAIL No library 'Reloadable' found.
     Reload library     Reloadable
-
-
