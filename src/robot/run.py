@@ -444,7 +444,7 @@ class RobotFramework(Application):
             suite.visit(ModelModifier(settings.pre_run_modifiers,
                                       settings.run_empty_suite, LOGGER))
         with pyloggingconf.robot_handler_enabled(settings.log_level):
-            text.set_max_error_lines(settings.max_error_lines)
+            text.MAX_ERROR_LINES = settings.max_error_lines if settings.max_error_lines else sys.maxsize
             result = suite.run(settings)
             LOGGER.info("Tests execution ended. Statistics:\n%s"
                         % result.suite.stat_message)

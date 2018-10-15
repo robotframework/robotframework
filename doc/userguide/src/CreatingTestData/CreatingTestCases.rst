@@ -446,9 +446,11 @@ some keywords allow configuring them.
 In some circumstances, for example when continuable failures are used,
 a test case can fail multiple times. In that case the final error message
 is got by combining the individual errors. Very long error messages are
-automatically cut from the middle to keep reports_ easier to read. The
-default limit for the number of error lines is 40. The limit can be changed
-with `--maxerrorlines` command line option. Full error messages are always
+automatically cut from the middle to keep reports_ easier to read. Starting
+from Robot Framework 3.1 the default limit for the number of error lines is
+40. The limit can be changed with `--maxerrorlines` command line option
+starting from the minimum of 10. It is also possible to use value `NONE`
+to remove this upper limit altogether. Full error messages are always
 visible in log_ file as a message of the failed keyword.
 
 By default error messages are normal text, but

@@ -160,9 +160,11 @@ class _BaseSettings(object):
                             "log level '%s'" % (default, log_level))
 
     def _process_max_error_lines(self, name, value):
+        if not value or value.upper() == 'NONE':
+            return None
         value = self._convert_to_integer(name, value)
-        if value < 0:
-            raise DataError("Option '--%s' expected positive integer value but got '%s'."
+        if value < 10:
+            raise DataError("Option '--%s' expected an integer value greater that 10 but got '%s'."
                             % (name.lower(), value))
         return value
 
