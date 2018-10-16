@@ -1,9 +1,14 @@
+import os
 import unittest
 
-from robot.utils.asserts import *
-from robot.parsing.model import *
-from robot.parsing.settings import *
-from robot.parsing.settings import _Import
+from robot.utils.asserts import (assert_equal, assert_false, assert_none,
+                                 assert_not_equal, assert_true)
+from robot.parsing.model import (ForLoop, KeywordTable, Step, TestCase,
+                                 TestCaseFile, TestCaseTable,
+                                 TestCaseFileSettingTable, UserKeyword,
+                                 VariableTable)
+from robot.parsing.settings import (Arguments, Documentation, Fixture, _Import,
+                                    Return, Tags, Template, Timeout)
 
 
 class TestTestCaseFile(unittest.TestCase):
