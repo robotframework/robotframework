@@ -32,6 +32,8 @@ _TAGS_RE = re.compile(r'\s*tags:(.*)', re.IGNORECASE)
 
 
 def cut_long_message(msg):
+    if MAX_ERROR_LINES is None:
+        return msg
     lines = msg.splitlines()
     lengths = _count_line_lengths(lines)
     if sum(lengths) <= MAX_ERROR_LINES:

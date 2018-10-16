@@ -194,7 +194,9 @@ Options
                           Examples: --reportbackground green:yellow:red
                                     --reportbackground #00E:#E00
     --maxerrorlines lines  Limit for the number of error lines displayed. The
-                          default limit is 40 lines.
+                          default limit is 40 lines. The minimum limit is 10.
+                          If set to a special value `NONE`, the limit is
+                          removed.
  -L --loglevel level      Threshold level for logging. Available levels: TRACE,
                           DEBUG, INFO (default), WARN, NONE (no logging). Use
                           syntax `LOGLEVEL:DEFAULT` to define the default
@@ -432,8 +434,12 @@ class RobotFramework(Application):
             suite.visit(ModelModifier(settings.pre_run_modifiers,
                                       settings.run_empty_suite, LOGGER))
         with pyloggingconf.robot_handler_enabled(settings.log_level):
-            text.MAX_ERROR_LINES = settings.max_error_lines if settings.max_error_lines else sys.maxsize
-            result = suite.run(settings)
+            _default_max_error_lines = text.MAX_ERROR_LINES
+            text.MAX_ERROR_LINES = settings.max_error_lines
+            try:
+                result = suite.run(settings)
+            finally:
+                text.MAX_ERROR_LINES = _default_max_error_lines
             LOGGER.info("Tests execution ended. Statistics:\n%s"
                         % result.suite.stat_message)
             if settings.log or settings.report or settings.xunit:
