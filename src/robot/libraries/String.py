@@ -127,7 +127,7 @@ class String(object):
         """Formats a ``string`` using the given ``posicional_search_replace``
         and ``named_search_replace``.
 
-        If the given ``string`` is a valid file path, opens the file in read
+        If the given ``string`` is a valid file path (absolute or relative), opens the file in read
         mode and then format its content using the given
         ``posicional_search_replace`` and ``named_search_replace``.
 
@@ -155,7 +155,7 @@ class String(object):
         if isfile(template_or_str):
             logger.info('Opening file %s to be formated' % (template_or_str,))
             with open(template_or_str, 'r') as format_file:
-                format_string = format_file.read()
+                format_string = format_file.read().rstrip()
         else:
             format_string = template_or_str
         logger.info('Formating string')
