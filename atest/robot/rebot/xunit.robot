@@ -31,6 +31,12 @@ XUnit Option Given
     Length Should Be    ${failures}    5
     Should Be Equal    ${failures[0].attrib['message']}    ${MESSAGES}
 
+Times in xUnit output
+    Previous Test Should Have Passed    XUnit Option Given
+    ${suite} =    Parse XML    ${OUTDIR}/xunit.xml
+    Element Attribute Should Match    ${suite}    time    ?.???
+    Element Attribute Should Match    ${suite}    time    ?.???    xpath=.//testcase[1]
+
 XUnit skip non-criticals
     Run Rebot    --xUnit xunit.xml --xUnitSkipNonCritical --NonCritical f1    ${INPUT FILE}
     Stderr Should Be Empty

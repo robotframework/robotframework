@@ -19,7 +19,7 @@ XUnit File Is Created
 File Structure Is Correct
     ${root} =    Get XUnit Node
     Should Be Equal    ${root.tag}    testsuite
-    Stats Should Be    ${root}    8    4    0
+    Suite Stats Should Be    ${root}    8    4    0
     ${tests} =    Get XUnit Nodes    testcase
     Length Should Be    ${tests}    8
     ${failures} =    Get XUnit Nodes    testcase/failure
@@ -35,10 +35,12 @@ Multiline failure
     ${failures} =    Get XUnit Nodes    testcase/failure
     Should Be Equal    ${failures[-1].attrib['message']}    Just ASCII here\n\nAlso teardown failed:\n${MESSAGES}
 
-Execution times are floats
+Suite has execution time
     ${suite} =    Get XUnit Node
     Should match    ${suite.attrib['time']}    ?.???
     Should be true    ${suite.attrib['time']} > 0
+
+Test has execution time
     ${test} =    Get XUnit Node    testcase[1]
     Should match    ${test.attrib['time']}    ?.???
     Should be true    ${test.attrib['time']} > 0
@@ -60,14 +62,14 @@ Invalid XUnit File
 Skipping non-critical tests
     Run tests    --xUnit xunit.xml --xUnitSkipNonCritical --NonCritical fail    ${PASS AND FAIL}
     ${root} =    Get XUnit Node  .
-    Stats Should Be    ${root}    2    0    1
+    Suite Stats Should Be    ${root}    2    0    1
     ${skipped} =  Get XUnit Node  testcase/skipped
     Should be equal    ${skipped.text}    FAIL: Expected failure
 
 Skipping all tests
     Run tests    --xunit xunit.xml --noncritical force --xunitskip    ${PASS AND FAIL}
     ${root} =    Get XUnit Node    .
-    Stats Should Be    ${root}    2    0    2
+    Suite Stats Should Be    ${root}    2    0    2
     ${skipped} =    Get XUnit Nodes    testcase/skipped
     Should be equal    ${skipped[0].text}    PASS
     Should be equal    ${skipped[1].text}    FAIL: Expected failure
@@ -84,9 +86,10 @@ Get XUnit Nodes
     ${nodes} =    Get Elements    ${OUTDIR}/xunit.xml    ${xpath}
     [Return]    ${nodes}
 
-Stats Should Be
+Suite Stats Should Be
     [Arguments]    ${elem}    ${tests}    ${failures}    ${skipped}
-    Element Attribute Should Be    ${elem}    tests       ${tests}
-    Element Attribute Should Be    ${elem}    failures    ${failures}
-    Element Attribute Should Be    ${elem}    skipped     ${skipped}
-    Element Attribute Should Be    ${elem}    errors      0
+    Element Attribute Should Be       ${elem}    tests       ${tests}
+    Element Attribute Should Be       ${elem}    failures    ${failures}
+    Element Attribute Should Be       ${elem}    skipped     ${skipped}
+    Element Attribute Should Match    ${elem}    time        ?.???
+    Element Attribute Should Be       ${elem}    errors      0
