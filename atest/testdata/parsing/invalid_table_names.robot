@@ -9,7 +9,7 @@ Resource         invalid_tables_resource.robot
 This kind of tables caused bug
 https://github.com/robotframework/robotframework/issues/793
 
-***TestCases***
+*** Test Cases ***
 Test in valid table
     Keyword in valid table
     Keyword in valid table in resource

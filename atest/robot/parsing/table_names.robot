@@ -19,9 +19,16 @@ Keyword Table
     ${tc} =    Check Test Case    Test Case
     Check Log Message    ${tc.kws[1].kws[0].kws[0].msgs[0]}    "Keywords" was executed
 
+Deprecated Section Name Format
+    ${path} =    Normalize Path    ${DATADIR}/parsing/table_names.robot
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Section name 'K e y w o r d' is deprecated. Use 'Keyword' instead.
+    Check Log Message    ${ERRORS}[0]    ${message}    WARN
+
 Comment Table
     Check Test Case    Comment tables exist
-    Stderr should be empty
+    Length Should Be    ${ERRORS}    1
 
 Invalid Tables
     [Documentation]    Unrecognized tables should cause error

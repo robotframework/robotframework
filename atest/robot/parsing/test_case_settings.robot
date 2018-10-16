@@ -127,11 +127,23 @@ Multiple settings
     Verify Teardown         Test case teardown
     Verify Timeout          12 seconds 345 milliseconds
 
+Deprecated setting format
+    Check Test Case    Invalid setting
+    ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in test case 'Invalid setting':
+    ...    Setting 'Doc U Ment ation' is deprecated. Use 'Documentation' instead.
+    Check Log Message    ${ERRORS}[1]    ${message}    WARN
+
 Invalid setting
     Check Test Case    ${TEST NAME}
     ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
-    Check Log Message    @{ERRORS}[2]
-    ...    Error in file '${path}': Invalid syntax in test case '${TEST NAME}': Non-existing setting 'Invalid'.    ERROR
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in test case '${TEST NAME}':
+    ...    Non-existing setting 'Invalid'.
+    Check Log Message    ${ERRORS}[2]    ${message}    ERROR
 
 *** Keywords ***
 Verify Documentation

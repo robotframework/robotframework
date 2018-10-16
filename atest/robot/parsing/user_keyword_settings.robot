@@ -89,13 +89,28 @@ Multiple settings
     Verify Teardown   Teardown World
     Verify Timeout  6 minutes
 
+Deprecatted setting format
+    Check Test Case    Invalid setting
+    ${path} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in keyword 'Invalid passing':
+    ...    Setting 'Doc U Ment ation' is deprecated. Use 'Documentation' instead.
+    Check Log Message    ${ERRORS}[1]    ${message}    WARN
+
 Invalid setting
     Check Test Case    ${TEST NAME}
-    ${PATH} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
-    Check Log Message    ${ERRORS[1]}
-    ...    Error in file '${path}': Invalid syntax in keyword 'Invalid passing': Non-existing setting 'Invalid Setting'.    ERROR
-    Check Log Message    ${ERRORS[2]}
-    ...    Error in file '${path}': Invalid syntax in keyword 'Invalid failing': Non-existing setting 'invalid'.    ERROR
+    ${path} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in keyword 'Invalid passing':
+    ...    Non-existing setting 'Invalid Setting'.
+    Check Log Message    ${ERRORS}[2]    ${message}    ERROR
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in keyword 'Invalid failing':
+    ...    Non-existing setting 'invalid'.
+    Check Log Message    ${ERRORS}[3]    ${message}    ERROR
 
 *** Keywords ***
 Verify Documentation

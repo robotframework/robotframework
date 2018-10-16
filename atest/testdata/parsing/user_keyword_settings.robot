@@ -157,9 +157,9 @@ Return using variables
     [Return]    ${ret}
 
 Return multiple
-    [A R G U M E N T S]    ${arg1}    ${arg2}
+    [ARGUMENTS]    ${arg1}    ${arg2}
     ${result} =    Evaluate    ${arg1} + ${arg2}
-    [R E T U R N]    ${arg1}    +    ${arg2}    =    ${result}
+    [RETURN]    ${arg1}    +    ${arg2}    =    ${result}
 
 Return with escaping
     [Return]    \${XXX}    c:\\temp    \    \\
@@ -173,7 +173,7 @@ Timeout with message
     No Operation
 
 Timeout with variables
-    [TIME OUT]    ${VERSION} DAYS
+    [TIMEout]    ${VERSION} DAYS
     No Operation
 
 Invalid timeout
@@ -189,6 +189,7 @@ Multiple settings
     [Return]    Hello ${name}!!
 
 Invalid passing
+    [Doc U Ment ation]    This is deprecated
     [Invalid Setting]    This is invalid
     No Operation
 

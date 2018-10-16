@@ -8,12 +8,12 @@ Documentation    ${1}st line is shortdoc.
 ...  Escaping    (e.g. '\${non-existing}', 'c:\\temp', '\\n')    works too.
 
 Default Tags    \    default  # Empty tags should be ignored
-Forcetags    f1
+For CET ag S    f1    # This format deprecated since RF 3.1
 ...    F2
-Test Setup  Log  Default test setup
+Test Setup     Log  Default test setup
 Test Teardown  Log  Default test teardown  INFO
-Suitesetup  ${SUITE_FIXTURE_FROM_CLI}  ${default} suite setup  # Global variables work here
-Su ite Tear down    ${SUITE_FIXTURE_FROM_CLI}    Default suite teardown
+Suite Setup       ${SUITE_FIXTURE_FROM_CLI}  ${default} suite setup  # Global variables work here
+Suite Teardown    ${SUITE_FIXTURE_FROM_CLI}    Default suite teardown
 
 Invalid Setting    Yes, this is invalid.
 

@@ -34,6 +34,13 @@ test suite:
       example :setting:`Documentation:`. This can make reading the settings easier
       especially when using the plain text format.
 
+.. note:: Setting names are case-insensitive, but the format used above is
+      recommended. Prior to Robot Framework 3.1, settings were also
+      space-insensitive meaning that spaces could be removed (e.g.
+      `SuiteSetup`) or extra spaces added (e.g. `M e t a d a t a`). This is
+      now deprecated and only the format above, case-insensitively, is
+      supported.
+
 __ `Test case syntax`_
 
 Test suite directories
