@@ -108,6 +108,16 @@ def get_selection_from_user(message, *values):
 
 
 def get_selections_from_user(message, *values):
+    """Pauses test execution and asks user to select multiple values.
+
+    The selected values are returned. Pressing ``Cancel`` fails the keyword.
+
+    ``message`` is the instruction shown in the dialog and ``values`` are
+    the options given to the user.
+
+    Example:
+    | ${username} = | Get Selections From User | Select user name | user1 | user2 | admin |
+    """
     return _validate_user_input(MultipleSelectionDialog(message, values))
 
 
