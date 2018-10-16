@@ -1869,7 +1869,6 @@ class _RunKeyword(_BuiltInBase):
 
     expect_error_from_keyword = run_keyword_and_expect_error
 
-
     @run_keyword_variant(resolve=2)
     def repeat_keyword(self, repeat, name, *args):
         """Executes the specified keyword multiple times.
