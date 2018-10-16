@@ -36,10 +36,13 @@ Multiline failure
     Should Be Equal    ${failures[-1].attrib['message']}    Just ASCII here\n\nAlso teardown failed:\n${MESSAGES}
 
 Execution times are floats
+	${suite} =    Get XUnit Node
+    Should match    ${suite.attrib['time']}    ?.???
+    Should be true    ${suite.attrib['time']} > 0
     ${test} =    Get XUnit Node    testcase[1]
     Should match    ${test.attrib['time']}    ?.???
     Should be true    ${test.attrib['time']} > 0
-
+	
 No XUnit Option Given
     Run Tests    ${EMPTY}    ${TESTDATA}
     Check Stdout Does Not Contain    XUnit
