@@ -42,6 +42,7 @@ class Logger(AbstractLogger):
         self._library_listeners = None
         self._other_loggers = []
         self._message_cache = []
+        self._log_message_cache = None
         self._started_keywords = 0
         self._error_occurred = False
         self._error_listener = None
@@ -158,8 +159,23 @@ class Logger(AbstractLogger):
         finally:
             self._cache_only = False
 
+    @property
+    @contextmanager
+    def delayed_logging(self):
+        self._log_message_cache = []
+        try:
+            yield
+        finally:
+            messages = self._log_message_cache
+            self._log_message_cache = None
+            for msg in messages:
+                self.log_message(msg)
+
     def _log_message(self, msg):
         """Log messages written (mainly) by libraries."""
+        if self._log_message_cache is not None:
+            self._log_message_cache.append(msg)
+            return
         for logger in self:
             logger.log_message(msg)
         if msg.level in ('WARN', 'ERROR'):

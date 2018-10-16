@@ -105,7 +105,7 @@ class NumberFinder(object):
 
 class EmptyFinder(object):
     identifiers = '$@&'
-    find = NormalizedDict({'${EMPTY}': '', '@{EMPTY}': (), '&{EMPTY}': {}},
+    find = NormalizedDict({'${EMPTY}': u'', '@{EMPTY}': (), '&{EMPTY}': {}},
                           ignore='_').__getitem__
 
 

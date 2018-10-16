@@ -34,8 +34,8 @@ except ImportError:   # No expat in IronPython 2.7
 
 from robot.errors import RemoteError
 from robot.utils import (is_bytes, is_dict_like, is_list_like, is_number,
-                         is_string, timestr_to_secs, unic, DotDict, IRONPYTHON,
-                         JYTHON)
+                         is_string, timestr_to_secs, unic, DotDict,
+                         IRONPYTHON, JYTHON, PY2)
 
 
 class Remote(object):
@@ -151,20 +151,25 @@ class ArgumentCoercer(object):
 
     def _to_key(self, item):
         item = self._to_string(item)
-        if IRONPYTHON:
-            self._validate_key_on_ironpython(item)
+        self._validate_key(item)
         return item
 
     def _to_string(self, item):
         item = unic(item) if item is not None else ''
         return self._handle_string(item)
 
-    def _validate_key_on_ironpython(self, item):
-        try:
-            return str(item)
-        except UnicodeError:
-            raise ValueError('Dictionary keys cannot contain non-ASCII '
-                             'characters on IronPython. Got %r.' % item)
+    def _validate_key(self, key):
+        byte_prefix = 'b' if PY2 else ''
+        if isinstance(key, xmlrpclib.Binary):
+            raise ValueError('Dictionary keys cannot be binary. Got %s%s.'
+                             % (byte_prefix, repr(key.data)))
+        if IRONPYTHON:
+            try:
+                key.encode('ASCII')
+            except UnicodeError:
+                raise ValueError('Dictionary keys cannot contain non-ASCII '
+                                 'characters on IronPython. Got %s%s.'
+                                 % (byte_prefix, repr(key.data)))
 
 
 class RemoteResult(object):
@@ -197,7 +202,10 @@ class RemoteResult(object):
 class XmlRpcRemoteClient(object):
 
     def __init__(self, uri, timeout=None):
-        transport = TimeoutTransport(timeout=timeout)
+        if uri.startswith('https://'):
+            transport = TimeoutHTTPSTransport(timeout=timeout)
+        else:
+            transport = TimeoutHTTPTransport(timeout=timeout)
         self._server = xmlrpclib.ServerProxy(uri, encoding='UTF-8',
                                              transport=transport)
 
@@ -244,8 +252,8 @@ class XmlRpcRemoteClient(object):
 # Custom XML-RPC timeouts based on
 # http://stackoverflow.com/questions/2425799/timeout-for-xmlrpclib-client-requests
 
-
-class TimeoutTransport(xmlrpclib.Transport):
+class TimeoutHTTPTransport(xmlrpclib.Transport):
+    _connection_class = httplib.HTTPConnection
 
     def __init__(self, use_datetime=0, timeout=None):
         xmlrpclib.Transport.__init__(self, use_datetime)
@@ -257,15 +265,19 @@ class TimeoutTransport(xmlrpclib.Transport):
         if self._connection and host == self._connection[0]:
             return self._connection[1]
         chost, self._extra_headers, x509 = self.get_host_info(host)
-        self._connection = host, httplib.HTTPConnection(chost, timeout=self.timeout)
+        self._connection = host, self._connection_class(chost, timeout=self.timeout)
         return self._connection[1]
 
 
 if IRONPYTHON:
 
-    class TimeoutTransport(xmlrpclib.Transport):
+    class TimeoutHTTPTransport(xmlrpclib.Transport):
 
         def __init__(self, use_datetime=0, timeout=None):
             xmlrpclib.Transport.__init__(self, use_datetime)
             if timeout:
                 raise RuntimeError('Timeouts are not supported on IronPython.')
+
+
+class TimeoutHTTPSTransport(TimeoutHTTPTransport):
+    _connection_class = httplib.HTTPSConnection

@@ -63,7 +63,7 @@ class _TestData(object):
         self.parent = parent
         self.source = abspath(source) if source else None
         self.children = []
-        self._tables = NormalizedDict(self._get_tables())
+        self._tables = dict(self._get_tables())
 
     def _get_tables(self):
         for names, table in [(self._setting_table_names, self.setting_table),
@@ -83,16 +83,37 @@ class _TestData(object):
 
     def _find_table(self, header_row):
         name = header_row[0] if header_row else ''
-        try:
-            return self._tables[name]
-        except KeyError:
-            self.report_invalid_syntax(
-                "Unrecognized table header '%s'. Available headers for "
-                "data: 'Setting(s)', 'Variable(s)', 'Test Case(s)', "
-                "'Task(s)' and 'Keyword(s)'. Use 'Comment(s)' to embedded "
-                "additional data." % name
-            )
-            return None
+        title = name.title()
+        if title not in self._tables:
+            title = self._resolve_deprecated_table(name)
+            if title is None:
+                self._report_unrecognized_table(name)
+                return None
+        return self._tables[title]
+
+    def _resolve_deprecated_table(self, used_name):
+        normalized = normalize(used_name)
+        for name in (self._setting_table_names + self._variable_table_names +
+                     self._testcase_table_names + self._keyword_table_names +
+                     self._comment_table_names):
+            if normalize(name) == normalized:
+                self._report_deprecated_table(used_name, name)
+                return name
+        return None
+
+    def _report_deprecated_table(self, deprecated, name):
+        self.report_invalid_syntax(
+            "Section name '%s' is deprecated. Use '%s' instead."
+            % (deprecated, name), level='WARN'
+        )
+
+    def _report_unrecognized_table(self, name):
+        self.report_invalid_syntax(
+            "Unrecognized table header '%s'. Available headers for data: "
+            "'Setting(s)', 'Variable(s)', 'Test Case(s)', 'Task(s)' and "
+            "'Keyword(s)'. Use 'Comment(s)' to embedded additional data."
+            % name
+        )
 
     def _table_is_allowed(self, table):
         return True
@@ -306,20 +327,42 @@ class _WithSettings(object):
     _setters = {}
     _aliases = {}
 
-    def get_setter(self, setting_name):
-        normalized = self.normalize(setting_name)
-        if normalized in self._aliases:
-            normalized = self._aliases[normalized]
-        if normalized in self._setters:
-            return self._setters[normalized](self)
-        self.report_invalid_syntax("Non-existing setting '%s'." % setting_name)
+    def get_setter(self, name):
+        if name[-1:] == ':':
+            name = name[:-1]
+        setter = self._get_setter(name)
+        if setter is not None:
+            return setter
+        setter = self._get_deprecated_setter(name)
+        if setter is not None:
+            return setter
+        self.report_invalid_syntax("Non-existing setting '%s'." % name)
+        return None
 
-    def is_setting(self, setting_name):
-        return self.normalize(setting_name) in self._setters
+    def _get_setter(self, name):
+        title = name.title()
+        if title in self._aliases:
+            title = self._aliases[name]
+        if title in self._setters:
+            return self._setters[title](self)
+        return None
 
-    def normalize(self, setting):
-        result = normalize(setting)
-        return result[:-1] if result[-1:] == ':' else result
+    def _get_deprecated_setter(self, name):
+        normalized = normalize(name)
+        for setting in list(self._setters) + list(self._aliases):
+            if normalize(setting) == normalized:
+                self._report_deprecated_setting(name, setting)
+                return self._get_setter(setting)
+        return None
+
+    def _report_deprecated_setting(self, deprecated, correct):
+        self.report_invalid_syntax(
+            "Setting '%s' is deprecated. Use '%s' instead."
+            % (deprecated, correct), level='WARN'
+        )
+
+    def report_invalid_syntax(self, message, level='ERROR'):
+        raise NotImplementedError
 
 
 class _SettingTable(_Table, _WithSettings):
@@ -364,23 +407,23 @@ class _SettingTable(_Table, _WithSettings):
 
 
 class TestCaseFileSettingTable(_SettingTable):
-    _setters = {'documentation': lambda s: s.doc.populate,
-                'suitesetup': lambda s: s.suite_setup.populate,
-                'suiteteardown': lambda s: s.suite_teardown.populate,
-                'testsetup': lambda s: s.test_setup.populate,
-                'testteardown': lambda s: s.test_teardown.populate,
-                'forcetags': lambda s: s.force_tags.populate,
-                'defaulttags': lambda s: s.default_tags.populate,
-                'testtemplate': lambda s: s.test_template.populate,
-                'testtimeout': lambda s: s.test_timeout.populate,
-                'library': lambda s: s.imports.populate_library,
-                'resource': lambda s: s.imports.populate_resource,
-                'variables': lambda s: s.imports.populate_variables,
-                'metadata': lambda s: s.metadata.populate}
-    _aliases = {'tasksetup': 'testsetup',
-                'taskteardown': 'testteardown',
-                'tasktemplate': 'testtemplate',
-                'tasktimeout': 'testtimeout'}
+    _setters = {'Documentation': lambda s: s.doc.populate,
+                'Suite Setup': lambda s: s.suite_setup.populate,
+                'Suite Teardown': lambda s: s.suite_teardown.populate,
+                'Test Setup': lambda s: s.test_setup.populate,
+                'Test Teardown': lambda s: s.test_teardown.populate,
+                'Force Tags': lambda s: s.force_tags.populate,
+                'Default Tags': lambda s: s.default_tags.populate,
+                'Test Template': lambda s: s.test_template.populate,
+                'Test Timeout': lambda s: s.test_timeout.populate,
+                'Library': lambda s: s.imports.populate_library,
+                'Resource': lambda s: s.imports.populate_resource,
+                'Variables': lambda s: s.imports.populate_variables,
+                'Metadata': lambda s: s.metadata.populate}
+    _aliases = {'Task Setup': 'Test Setup',
+                'Task Teardown': 'Test Teardown',
+                'Task Template': 'Test Template',
+                'Task Timeout': 'Test Timeout'}
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
@@ -391,10 +434,10 @@ class TestCaseFileSettingTable(_SettingTable):
 
 
 class ResourceFileSettingTable(_SettingTable):
-    _setters = {'documentation': lambda s: s.doc.populate,
-                'library': lambda s: s.imports.populate_library,
-                'resource': lambda s: s.imports.populate_resource,
-                'variables': lambda s: s.imports.populate_variables}
+    _setters = {'Documentation': lambda s: s.doc.populate,
+                'Library': lambda s: s.imports.populate_library,
+                'Resource': lambda s: s.imports.populate_resource,
+                'Variables': lambda s: s.imports.populate_variables}
 
     def __iter__(self):
         for setting in [self.doc] + self.imports.data:
@@ -402,17 +445,17 @@ class ResourceFileSettingTable(_SettingTable):
 
 
 class InitFileSettingTable(_SettingTable):
-    _setters = {'documentation': lambda s: s.doc.populate,
-                'suitesetup': lambda s: s.suite_setup.populate,
-                'suiteteardown': lambda s: s.suite_teardown.populate,
-                'testsetup': lambda s: s.test_setup.populate,
-                'testteardown': lambda s: s.test_teardown.populate,
-                'testtimeout': lambda s: s.test_timeout.populate,
-                'forcetags': lambda s: s.force_tags.populate,
-                'library': lambda s: s.imports.populate_library,
-                'resource': lambda s: s.imports.populate_resource,
-                'variables': lambda s: s.imports.populate_variables,
-                'metadata': lambda s: s.metadata.populate}
+    _setters = {'Documentation': lambda s: s.doc.populate,
+                'Suite Setup': lambda s: s.suite_setup.populate,
+                'Suite Teardown': lambda s: s.suite_teardown.populate,
+                'Test Setup': lambda s: s.test_setup.populate,
+                'Test Teardown': lambda s: s.test_teardown.populate,
+                'Test Timeout': lambda s: s.test_timeout.populate,
+                'Force Tags': lambda s: s.force_tags.populate,
+                'Library': lambda s: s.imports.populate_library,
+                'Resource': lambda s: s.imports.populate_resource,
+                'Variables': lambda s: s.imports.populate_variables,
+                'Metadata': lambda s: s.metadata.populate}
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
@@ -552,12 +595,12 @@ class TestCase(_WithSteps, _WithSettings):
         self.timeout = Timeout('[Timeout]', self)
         self.steps = []
 
-    _setters = {'documentation': lambda s: s.doc.populate,
-                'template': lambda s: s.template.populate,
-                'setup': lambda s: s.setup.populate,
-                'teardown': lambda s: s.teardown.populate,
-                'tags': lambda s: s.tags.populate,
-                'timeout': lambda s: s.timeout.populate}
+    _setters = {'Documentation': lambda s: s.doc.populate,
+                'Template': lambda s: s.template.populate,
+                'Setup': lambda s: s.setup.populate,
+                'Teardown': lambda s: s.teardown.populate,
+                'Tags': lambda s: s.tags.populate,
+                'Timeout': lambda s: s.timeout.populate}
 
     @property
     def source(self):
@@ -604,12 +647,12 @@ class UserKeyword(TestCase):
         self.tags = Tags('[Tags]', self)
         self.steps = []
 
-    _setters = {'documentation': lambda s: s.doc.populate,
-                'arguments': lambda s: s.args.populate,
-                'return': lambda s: s.return_.populate,
-                'timeout': lambda s: s.timeout.populate,
-                'teardown': lambda s: s.teardown.populate,
-                'tags': lambda s: s.tags.populate}
+    _setters = {'Documentation': lambda s: s.doc.populate,
+                'Arguments': lambda s: s.args.populate,
+                'Return': lambda s: s.return_.populate,
+                'Timeout': lambda s: s.timeout.populate,
+                'Teardown': lambda s: s.teardown.populate,
+                'Tags': lambda s: s.tags.populate}
 
     def _add_to_parent(self, test):
         self.parent.keywords.append(test)

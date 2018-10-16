@@ -52,7 +52,7 @@ except ImportError:
 
 ARGUMENTS = '''
 --doc Robot Framework acceptance tests
---metadata interpreter:{interpreter.name} {interpreter.version} on {interpreter.os}
+--metadata interpreter:{interpreter}
 --variablefile {variable_file};{interpreter.path};{interpreter.name};{interpreter.version}
 --pythonpath {pythonpath}
 --outputdir {outputdir}
@@ -73,7 +73,7 @@ def atests(interpreter, *arguments):
         sys.exit(err)
     outputdir, tempdir = _get_directories(interpreter)
     arguments = list(_get_arguments(interpreter, outputdir)) + list(arguments)
-    return _run(arguments, tempdir, interpreter.classpath)
+    return _run(arguments, tempdir, interpreter)
 
 
 def _get_directories(interpreter):
@@ -101,11 +101,14 @@ def _get_arguments(interpreter, outputdir):
         yield exclude
 
 
-def _run(args, tempdir, classpath):
+def _run(args, tempdir, interpreter):
     runner = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
     command = [sys.executable, runner] + args
-    environ = dict(os.environ, TEMPDIR=tempdir, CLASSPATH=classpath or '',
+    environ = dict(os.environ,
+                   TEMPDIR=tempdir,
+                   CLASSPATH=interpreter.classpath or '',
                    PYTHONCASEOK='True')
+    print('%s\n%s\n' % (interpreter, '-' * len(str(interpreter))))
     print('Running command:\n%s\n' % ' '.join(command))
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)

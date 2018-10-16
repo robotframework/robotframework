@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    core/timeouts_with_custom_messages.robot
+Suite Setup       Run Tests    ${EMPTY}    running/timeouts_with_custom_messages.robot
 Resource          atest_resource.robot
 
 *** Variables ***
@@ -44,7 +44,7 @@ Keyword Timeout Message With Variables
 *** Keywords ***
 Custom message should be deprecated with Test Timeout
     [Arguments]    ${index}    ${message}
-    ${path} =    Normalize Path    ${DATADIR}/core/timeouts_with_custom_messages.robot
+    ${path} =    Normalize Path    ${DATADIR}/running/timeouts_with_custom_messages.robot
     ${warning} =    Catenate    Error in file '${path}':
     ...    ${DEPRECATED}
     ...    Message that was used is '${message}'.
@@ -52,7 +52,7 @@ Custom message should be deprecated with Test Timeout
 
 Custom message should be deprecated with [Timeout] in tests
     [Arguments]    ${index}    ${message}
-    ${path} =    Normalize Path    ${DATADIR}/core/timeouts_with_custom_messages.robot
+    ${path} =    Normalize Path    ${DATADIR}/running/timeouts_with_custom_messages.robot
     ${warning} =    Catenate    Error in file '${path}':
     ...    Invalid syntax in test case '${TEST NAME}':
     ...    ${DEPRECATED}
@@ -61,7 +61,7 @@ Custom message should be deprecated with [Timeout] in tests
 
 Custom message should be deprecated with [Timeout] in keywords
     [Arguments]    ${index}    ${message}
-    ${path} =    Normalize Path    ${DATADIR}/core/timeouts_with_custom_messages.robot
+    ${path} =    Normalize Path    ${DATADIR}/running/timeouts_with_custom_messages.robot
     ${warning} =    Catenate    Error in file '${path}':
     ...    Invalid syntax in keyword '${TEST NAME}':
     ...    ${DEPRECATED}

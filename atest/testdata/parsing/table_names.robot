@@ -4,14 +4,14 @@ Documentation    Testing different ways to write "Setting(s)".
 *** Comment ***
 This table is accepted and data here ignored.
 
-***SET TINGS***
+***SETTINGS***
 Default Tags    Settings
 Library         OperatingSystem
 
 ***Variable***
 ${VARIABLE}  Variable
 
-***VAR I A BLES***
+*** VARIABLES ***
 ${VARIABLES}  Variables
 
 ***Test Case***
@@ -24,7 +24,7 @@ Comment tables are case (and space) insensitive like any other table and
 both singular and plural formats are fine.
 ***COMMENTS***
 
-***TestCases***
+*** Test Cases ***
 Test Cases
     Log  ${VARIABLES}
 

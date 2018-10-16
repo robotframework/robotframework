@@ -4,7 +4,7 @@ Suite Setup     Run Tests  ${EMPTY}  running/long_error_messages.robot
 Resource        atest_resource.robot
 
 *** Variables ***
-${EXPLANATION}  \n${SPACE*4}[ Message content over the limit has been removed. ]\n
+${EXPLANATION}  \n${SPACE*4}\[ Message content over the limit has been removed. ]\n
 ${3DOTS}  \\.\\.\\.
 
 *** Test Cases ***

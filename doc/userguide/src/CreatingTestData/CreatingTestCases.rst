@@ -85,6 +85,13 @@ below and explained later in this section.
    Used for setting a `test case timeout`_. Timeouts_ are discussed in
    their own section.
 
+.. note:: Setting names are case-insensitive, but the format used above is
+      recommended. Prior to Robot Framework 3.1, settings were also
+      space-insensitive meaning that extra spaces could be added (e.g.
+      `[T a g s]`). This is now deprecated and only the format above,
+      case-insensitively, is supported. Possible space between brackets
+      and the name (e.g. `[ Tags ]`) is still allowed.
+
 Example test case with settings:
 
 .. sourcecode:: robotframework

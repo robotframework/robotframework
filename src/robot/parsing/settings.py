@@ -13,13 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_string, py2to3, PY3
+from robot.utils import is_string, py2to3, unicode
 
 from .comments import Comment
-
-
-if PY3:
-    unicode = str
 
 
 @py2to3

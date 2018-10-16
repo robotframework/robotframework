@@ -552,7 +552,7 @@ class Date(object):
 
     def _normalize_timestamp(self, date):
         ts = ''.join(d for d in date if d.isdigit())
-        if len(ts) < 8:
+        if not (8 <= len(ts) <= 20):
             raise ValueError("Invalid timestamp '%s'." % date)
         ts = ts.ljust(20, '0')
         return '%s-%s-%s %s:%s:%s.%s' % (ts[:4], ts[4:6], ts[6:8], ts[8:10],

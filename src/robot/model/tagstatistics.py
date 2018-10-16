@@ -16,15 +16,10 @@
 from itertools import chain
 import re
 
-from robot.utils import NormalizedDict, PY3
+from robot.utils import NormalizedDict, unicode
 
-from .criticality import Criticality
 from .stats import CombinedTagStat, CriticalTagStat, TagStat
 from .tags import SingleTagPattern, TagPatterns
-
-
-if PY3:
-    unicode = str
 
 
 class TagStatistics(object):

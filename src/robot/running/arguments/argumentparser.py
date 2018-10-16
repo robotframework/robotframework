@@ -13,17 +13,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-import inspect
-if sys.platform.startswith('java'):
-    from java.lang import Class
-    from java.util import List, Map
-
 from robot.errors import DataError
-from robot.utils import PY2
+from robot.utils import JYTHON, PY_VERSION, PY2
 from robot.variables import is_dict_var, is_list_var, is_scalar_var
 
 from .argumentspec import ArgumentSpec
+
+
+if PY2:
+    from inspect import getargspec, ismethod
+
+    def getfullargspec(func):
+        return getargspec(func) + (None, None, None)
+else:
+    from inspect import getfullargspec, ismethod
+
+if PY_VERSION >= (3, 5):
+    import typing
+else:
+    typing = None
+
+if JYTHON:
+    from java.lang import Class
+    from java.util import List, Map
 
 
 class _ArgumentParser(object):
@@ -38,22 +50,64 @@ class _ArgumentParser(object):
 class PythonArgumentParser(_ArgumentParser):
 
     def parse(self, handler, name=None):
-        if PY2:
-            args, varargs, varkw, defaults = inspect.getargspec(handler)
-            kwonlyargs = kwonlydefaults = None
-        else:
-            args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, _ \
-                    = inspect.getfullargspec(handler)
-        if inspect.ismethod(handler) or handler.__name__ == '__init__':
+        args, varargs, kwargs, defaults, kwonly, kwonlydefaults, annotations \
+                = getfullargspec(handler)
+        if ismethod(handler) or handler.__name__ == '__init__':
             args = args[1:]  # drop 'self'
-        defaults = list(defaults) if defaults else []
-        return ArgumentSpec(name, self._type,
-                            positional=args,
-                            defaults=defaults,
-                            varargs=varargs,
-                            kwargs=varkw,
-                            kwonlyargs=kwonlyargs,
-                            kwonlydefaults=kwonlydefaults)
+        defaults = self._get_defaults(args, defaults, kwonlydefaults)
+        return ArgumentSpec(
+            name, self._type,
+            positional=args,
+            varargs=varargs,
+            kwargs=kwargs,
+            kwonlyargs=kwonly,
+            defaults=defaults,
+            types=self._get_types(handler, annotations, defaults)
+        )
+
+    def _get_defaults(self, args, default_values, kwonlydefaults):
+        if default_values:
+            defaults = dict(zip(args[-len(default_values):], default_values))
+        else:
+            defaults = {}
+        if kwonlydefaults:
+            defaults.update(kwonlydefaults)
+        return defaults
+
+    def _get_types(self, handler, annotations, defaults):
+        types = getattr(handler, 'robot_types', None)
+        if types is not None:
+            return types
+        types = self._get_type_hints(handler, defaults)
+        if types is not None:
+            return types
+        return annotations
+
+    def _get_type_hints(self, handler, defaults):
+        if not typing:
+            return None
+        try:
+            type_hints = typing.get_type_hints(handler)
+        except Exception:  # Can raise pretty much anything
+            return None
+        return self._remove_optional_none(type_hints, defaults)
+
+    def _remove_optional_none(self, type_hints, defaults):
+        # If argument has None as a default, `typing.get_type_hints` adds
+        # optional None to the information it returns. We don't want that.
+        for arg in defaults:
+            if defaults[arg] is None and arg in type_hints:
+                type_ = type_hints[arg]
+                if self._is_union(type_):
+                    types = type_.__args__
+                    if len(types) == 2 and types[1] is type(None):
+                        type_hints[arg] = types[0]
+        return type_hints
+
+    def _is_union(self, type_):
+        if PY_VERSION >= (3, 7) and hasattr(type_, '__origin__'):
+            type_ = type_.__origin__
+        return isinstance(type_, type(typing.Union))
 
 
 class JavaArgumentParser(_ArgumentParser):
@@ -104,12 +158,15 @@ class JavaArgumentParser(_ArgumentParser):
     def _format_arg_spec(self, name, positional=0, defaults=0, varargs=False,
                          kwargs=False):
         positional = ['arg%d' % (i+1) for i in range(positional)]
-        defaults = [''] * defaults
+        if defaults:
+            defaults = {name: '' for name in positional[-defaults:]}
+        else:
+            defaults = {}
         return ArgumentSpec(name, self._type,
                             positional=positional,
-                            defaults=defaults,
                             varargs='*varargs' if varargs else None,
                             kwargs='**kwargs' if kwargs else None,
+                            defaults=defaults,
                             supports_named=False)
 
 
@@ -167,19 +224,17 @@ class _ArgumentSpecParser(_ArgumentParser):
 
     def _add_arg_with_default(self, arg, result, kw_only_arg=False):
         arg, default = arg.split('=', 1)
-        self._add_arg(arg, result, kw_only_arg)
-        if not kw_only_arg:
-            result.defaults.append(default)
-        else:
-            arg = self._format_arg(arg)
-            result.kwonlydefaults[arg] = default
+        arg = self._add_arg(arg, result, kw_only_arg)
+        result.defaults[arg] = default
 
     def _format_arg(self, arg):
         return arg
 
     def _add_arg(self, arg, result, kw_only_arg=False):
+        arg = self._format_arg(arg)
         target = result.positional if not kw_only_arg else result.kwonlyargs
-        target.append(self._format_arg(arg))
+        target.append(arg)
+        return arg
 
 
 class DynamicArgumentParser(_ArgumentSpecParser):

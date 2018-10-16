@@ -26,27 +26,21 @@ Path matching multiple elements
     Check Test Case    ${TESTNAME}
 
 '..'
-    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 '[@attrib]'
-    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 '[@attrib="value"]'
-    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 '[tag]'
-    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 '[position]'
-    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 Stacked predicates
-    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 Non-ASCII tag names

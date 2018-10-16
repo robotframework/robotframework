@@ -1,7 +1,7 @@
 import unittest
 
 from robot.utils.asserts import assert_equal
-from robot.utils.misc import printable_name, seq2str, roundup
+from robot.utils import printable_name, seq2str, roundup, IRONPYTHON
 
 
 class TestRoundup(unittest.TestCase):
@@ -58,8 +58,11 @@ class TestRoundup(unittest.TestCase):
                 assert_equal(type(roundup(n, d, return_type=float)), float)
 
     def test_problems(self):
-        assert_equal(roundup(59.85, 1), 59.9)  # This causes #2872
-        assert_equal(roundup(1.15, 1), 1.1)    # 1.15 is actually 1.49999..
+        assert_equal(roundup(59.85, 1), 59.9)    # This caused #2872
+        if not IRONPYTHON:
+            assert_equal(roundup(1.15, 1), 1.1)  # 1.15 is actually 1.49999..
+        else:
+            assert_equal(roundup(1.15, 1), 1.2)  # but ipy still rounds it up
 
 
 class TestSeg2Str(unittest.TestCase):

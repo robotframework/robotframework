@@ -42,9 +42,9 @@ Calling Using List Variables
     Check Test Case    ${TESTNAME}
 
 Calling Using Annotations
-    [Tags]    no-py2
+    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Calling Using Annotations With Defaults
-    [Tags]    no-py2
+    [Tags]    require-py3
     Check Test Case    ${TESTNAME}

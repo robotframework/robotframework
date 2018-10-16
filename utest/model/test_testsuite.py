@@ -5,11 +5,7 @@ from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
 from robot.model import TestSuite
 from robot.running import TestSuite as RunningTestSuite
 from robot.result import TestSuite as ResultTestSuite
-from robot.utils import PY2, PY3
-
-
-if PY3:
-    unicode = str
+from robot.utils import PY2, unicode
 
 
 class TestTestSuite(unittest.TestCase):
