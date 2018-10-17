@@ -158,7 +158,8 @@ class String(object):
                 format_string = format_file.read().rstrip()
         else:
             format_string = template_or_str
-        logger.info('Formating string')
+        logger.info('Formatting the source string "{}"{}'.format(format_string[:80], 
+                                                          ' (log trimmed)' if len(format_string)>80 else ''))
         return format_string.format(
             *posicional_search_replace, **named_search_replace
         )
