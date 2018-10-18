@@ -122,14 +122,14 @@ class String(object):
             raise TypeError('Can not decode strings on Python 3.')
         return bytes.decode(encoding, errors)
 
-    def format_string(self, template_or_str, *posicional_replace,
+    def format_string(self, template_or_str, *positional_search_replace,
                       **named_search_replace):
-        """Formats a ``string`` using the given ``posicional_replace``
+        """Formats a ``string`` using the given ``positional_search_replace``
         and ``named_search_replace``.
 
         If the given ``string`` is a valid file path (absolute or relative), opens the file in read
         mode and then format its content using the given
-        ``posicional_replace`` and ``named_search_replace``.
+        ``positional_search_replace`` and ``named_search_replace``.
 
         This keyword uses python's string format. For more information see:
         [https://docs.python.org/2.7/library/string.html#formatstrings]|Python2 format syntax]
@@ -161,7 +161,7 @@ class String(object):
         logger.info('Formatting the source string "{}"{}'.format(format_string[:80], 
                                                           ' (log trimmed)' if len(format_string)>80 else ''))
         return format_string.format(
-            *posicional_replace, **named_search_replace
+            *positional_search_replace, **named_search_replace
         )
 
     def get_line_count(self, string):
