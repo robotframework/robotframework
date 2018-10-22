@@ -188,10 +188,12 @@ class Namespace(object):
     def start_suite(self):
         self.variables.start_suite()
 
-    def end_suite(self):
-        self.variables.end_suite()
+    def end_suite(self, suite):
         for lib in self.libraries:
             lib.end_suite()
+        if not suite.parent:
+            IMPORTER.close_global_library_listeners()
+        self.variables.end_suite()
 
     def start_user_keyword(self):
         self.variables.start_keyword()
