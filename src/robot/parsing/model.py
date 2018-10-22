@@ -611,7 +611,7 @@ class TestCase(_WithSteps, _WithSettings):
         return self.parent.directory
 
     def add_for_loop(self, declaration, comment=None):
-        self.steps.append(ForLoop(declaration, comment))
+        self.steps.append(ForLoop(self, declaration, comment))
         return self.steps[-1]
 
     def report_invalid_syntax(self, message, level='ERROR'):
@@ -680,20 +680,34 @@ class ForLoop(_WithSteps):
     :ivar str comment: A comment, or None.
     :ivar list steps: A list of steps in the loop.
     """
+    flavors = {'IN', 'IN RANGE', 'IN ZIP', 'IN ENUMERATE'}
+    normalized_flavors = NormalizedDict((f, f) for f in flavors)
 
-    def __init__(self, declaration, comment=None):
-        self.flavor, index = self._get_flavors_and_index(declaration)
+    def __init__(self, parent, declaration, comment=None):
+        self.parent = parent
+        self.flavor, index = self._get_flavor_and_index(declaration)
         self.vars = declaration[:index]
         self.items = declaration[index+1:]
         self.comment = Comment(comment)
         self.steps = []
 
-    def _get_flavors_and_index(self, declaration):
+    def _get_flavor_and_index(self, declaration):
         for index, item in enumerate(declaration):
-            item = item.upper()
-            if item.replace(' ', '').startswith('IN'):
+            if item in self.flavors:
                 return item, index
+            if item in self.normalized_flavors:
+                correct = self.normalized_flavors[item]
+                self._report_deprecated_flavor_syntax(item, correct)
+                return correct, index
+            if normalize(item).startswith('in'):
+                return item.upper(), index
         return 'IN', len(declaration)
+
+    def _report_deprecated_flavor_syntax(self, deprecated, correct):
+        self.parent.report_invalid_syntax(
+            "Using '%s' as a FOR loop separator is deprecated. "
+            "Use '%s' instead." % (deprecated, correct), level='WARN'
+        )
 
     def is_comment(self):
         return False
@@ -703,7 +717,8 @@ class ForLoop(_WithSteps):
 
     def as_list(self, indent=False, include_comment=True):
         comments = self.comment.as_list() if include_comment else []
-        return  [': FOR'] + self.vars + [self.flavor] + self.items + comments
+        # TODO: Return 'FOR' in RF 3.2.
+        return [': FOR'] + self.vars + [self.flavor] + self.items + comments
 
     def __iter__(self):
         return iter(self.steps)
@@ -747,8 +762,7 @@ class Step(object):
 class OldStyleSettingAndVariableTableHeaderMatcher(object):
 
     def match(self, header):
-        return all((True if e.lower() == 'value' else False)
-                    for e in header[1:])
+        return all(value.lower() == 'value' for value in header[1:])
 
 
 class OldStyleTestAndKeywordTableHeaderMatcher(object):
@@ -756,7 +770,7 @@ class OldStyleTestAndKeywordTableHeaderMatcher(object):
     def match(self, header):
         if header[1].lower() != 'action':
             return False
-        for h in header[2:]:
-            if not h.lower().startswith('arg'):
+        for arg in header[2:]:
+            if not arg.lower().startswith('arg'):
                 return False
         return True
