@@ -43,6 +43,7 @@ Command line options for test execution
   --logtitle <title>      `Sets a title`_ for the generated test log.
   --reporttitle <title>   `Sets a title`_ for the generated test report.
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
+  --maxerrorlines <lines>  Sets the limit for the number of `error lines`_ created by a test case.
   -L, --loglevel <level>  `Sets the threshold level`_ for logging. Optionally
                           the default `visible log level`_ can be given
                           separated with a colon (:).
@@ -166,6 +167,7 @@ Command line options for post-processing outputs
 .. _Split log file: `Splitting logs`_
 .. _Sets a title: `Setting titles`_
 .. _Sets background colors: `Setting background colors`_
+.. _error lines: `Error messages`_
 
 .. _Sets the threshold level: `Setting log level`_
 .. _levels to show: `Configuring displayed suite statistics`_
