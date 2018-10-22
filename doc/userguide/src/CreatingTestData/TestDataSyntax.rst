@@ -613,7 +613,7 @@ examples:
    Non-trailing empty
        Do Something    ${EMPTY}     second arg    # Escaping needed in space separated format
    For loop
-       :FOR    ${var}    IN    @{VALUES}
+       FOR    ${var}    IN    @{VALUES}
        \    Log    ${var}                         # Escaping needed here too
 
 __ `Ignored data`_

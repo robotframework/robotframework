@@ -308,7 +308,7 @@ other arguments. The list variable can thus have any number of items, even zero.
        Log    Required: ${req}
        Log    Optional: ${opt}
        Log    Others:
-       : FOR    ${item}    IN    @{others}
+       FOR    ${item}    IN    @{others}
        \    Log    ${item}
 
 Notice that if the last keyword above is used with more than one
@@ -788,7 +788,7 @@ demonstrates returning conditionally inside a `for loop`_.
    Find Index
        [Arguments]    ${element}    @{items}
        ${index} =    Set Variable    ${0}
-       :FOR    ${item}    IN    @{items}
+       FOR    ${item}    IN    @{items}
        \    Return From Keyword If    '${item}' == '${element}'    ${index}
        \    ${index} =    Set Variable    ${index + 1}
        Return From Keyword    ${-1}    # Could also use [Return]

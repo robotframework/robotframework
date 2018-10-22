@@ -876,9 +876,9 @@ all the looped elements even if there are failures.
    *** Test Cases ***
    Template and for
        [Template]    Example keyword
-       :FOR    ${item}    IN    @{ITEMS}
+       FOR    ${item}    IN    @{ITEMS}
        \    ${item}    2nd arg
-       :FOR    ${index}    IN RANGE    42
+       FOR    ${index}    IN RANGE    42
        \    1st arg    ${index}
 
 Different test case styles
