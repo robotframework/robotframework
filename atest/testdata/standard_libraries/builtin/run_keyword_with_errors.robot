@@ -1,5 +1,5 @@
 *** Settings ***
-Library           OperatingSystem
+Library              OperatingSystem
 
 *** Variables ***
 @{NEEDS ESCAPING}    c:\\temp\\foo\\not_new_line    \${notvar}
@@ -199,6 +199,41 @@ Expect Error When Access To Dictionary Nonexisting Key Syntax 2
     Run Keyword And Expect Error
     ...    Dictionary '\&{dict}' has no key 'c'.
     ...    Access To Dictionary Variable Nonexisting Key Syntax 2
+
+Expect Error With Explicit GLOB
+    [Documentation]    FAIL Expected error 'GLOB:Your *' but got 'My message'.
+    [Template]    Run Keyword And Expect Error
+    GLOB:My message    Fail    My message
+    GLOB: My mes*g?    Fail    My message
+    GLOB:Your *        Fail    My message
+
+Expect Error With EQUALS
+    [Documentation]    FAIL Expected error 'EQUALS:*' but got 'My message'.
+    [Template]    Run Keyword And Expect Error
+    EQUALS:My message        Fail    My message
+    EQUALS: My [message]?    Fail    My [message]?
+    EQUALS:*                 Fail    My message
+
+Expect Error With STARTS
+    [Documentation]    FAIL Expected error 'STARTS: my' but got 'My message'.
+    [Template]    Run Keyword And Expect Error
+    STARTS:My me    Fail    My message
+    STARTS: My      Fail    My message
+    STARTS: my      Fail    My message
+
+Expect Error With REGEXP
+    [Documentation]    FAIL Expected error 'REGEXP:oopps' but got 'My message'.
+    [Template]    Run Keyword And Expect Error
+    REGEXP:My.*                       Fail    My message
+    REGEXP: (My|Your) [Mm]\\w+ge!?    Fail    My message
+    REGEXP:oopps                      Fail    My message
+
+Expect Error With Unrecognized Prefix
+    [Documentation]    FAIL Expected error '1:2:3:4:5' but got 'Ooops'.
+    [Template]    Run Keyword And Expect Error
+    XXX:My message    Fail    XXX:My message
+    :Message:         Fail    :Message:
+    1:2:3:4:5         Fail    Ooops
 
 *** Keywords ***
 Passing UK

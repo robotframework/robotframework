@@ -1833,21 +1833,39 @@ class _RunKeyword(_BuiltInBase):
     def run_keyword_and_expect_error(self, expected_error, name, *args):
         """Runs the keyword and checks that the expected error occurred.
 
-        The expected error must be given in the same format as in
-        Robot Framework reports. It is interpreted as a glob pattern
-        with ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
-        `Glob patterns` section for more information.
+        The keyword to execute and its arguments are specified using ``name``
+        and ``*args`` exactly like with `Run Keyword`.
 
-        ``name`` and ``*args`` have same semantics as with `Run Keyword`.
+        The expected error must be given in the same format as in Robot
+        Framework reports. By default it is interpreted as a glob pattern
+        with ``*``, ``?`` and ``[chars]`` as wildcards, but starting from
+        Robot Framework 3.1 that can be changed by using various prefixes
+        explained in the table below. Prefixes are case-sensitive and they
+        must be separated from the actual message with a colon and an
+        optional space like ``PREFIX: Message`` or ``PREFIX:Message``.
+
+        | = Prefix = | = Explanation = |
+        | ``EQUALS`` | Exact match. Especially useful if the error contains glob wildcards. |
+        | ``STARTS`` | Error must start with the specified error. |
+        | ``REGEXP`` | Regular expression match. |
+        | ``GLOB``   | Same as the default behavior. |
+
+        See the `Pattern matching` section for more information about glob
+        patterns and regular expressions.
 
         If the expected error occurs, the error message is returned and it can
         be further processed or tested if needed. If there is no error, or the
         error does not match the expected error, this keyword fails.
 
         Examples:
-        | Run Keyword And Expect Error | My error | Some Keyword | arg1 | arg2 |
-        | ${msg} = | Run Keyword And Expect Error | * | My KW |
-        | Should Start With | ${msg} | Once upon a time in |
+        | Run Keyword And Expect Error | My error            | Keyword | arg |
+        | Run Keyword And Expect Error | ValueError: *       | Some Keyword  |
+        | Run Keyword And Expect Error | STARTS: ValueError: | Some Keyword  |
+        | Run Keyword And Expect Error | EQUALS:No match for '//input[@type="text"]' |
+        | ...                          | Find Element | //input[@type="text"] |
+        | ${msg} =                     | Run Keyword And Expect Error | * |
+        | ...                          | Keyword | arg1 | arg2 |
+        | Log To Console | ${msg} |
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword.
@@ -1858,14 +1876,26 @@ class _RunKeyword(_BuiltInBase):
         except ExecutionFailed as err:
             if err.dont_continue:
                 raise
-            error = err
+            error = err.message
         else:
             raise AssertionError("Expected error '%s' did not occur."
                                  % expected_error)
-        if not self._matches(unic(error), expected_error):
+        if not self._error_is_expected(error, expected_error):
             raise AssertionError("Expected error '%s' but got '%s'."
                                  % (expected_error, error))
-        return unic(error)
+        return error
+
+    def _error_is_expected(self, error, expected_error):
+        glob = self._matches
+        matchers = {'GLOB': glob,
+                    'EQUALS': lambda s, p: s == p,
+                    'STARTS': lambda s, p: s.startswith(p),
+                    'REGEXP': lambda s, p: re.match(p, s) is not None}
+        prefixes = tuple(prefix + ':' for prefix in matchers)
+        if not expected_error.startswith(prefixes):
+            return glob(error, expected_error)
+        prefix, expected_error = expected_error.split(':', 1)
+        return matchers[prefix](error, expected_error.lstrip())
 
     @run_keyword_variant(resolve=2)
     def repeat_keyword(self, repeat, name, *args):

@@ -143,6 +143,21 @@ Expect Error When Access To Dictionary Nonexisting Key Syntax
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2
 
+Expect Error With Explicit GLOB
+    Check Test Case    ${TEST NAME}
+
+Expect Error With EQUALS
+    Check Test Case    ${TEST NAME}
+
+Expect Error With STARTS
+    Check Test Case    ${TEST NAME}
+
+Expect Error With REGEXP
+    Check Test Case    ${TEST NAME}
+
+Expect Error With Unrecognized Prefix
+    Check Test Case    ${TEST NAME}
+
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Ignore Error With Arguments That Needs To be Escaped
     Check Keyword Data    ${tc.kws[3].kws[0]}    BuiltIn.Create List    args=\@{NEEDS ESCAPING}
