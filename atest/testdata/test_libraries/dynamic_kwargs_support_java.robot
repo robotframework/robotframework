@@ -33,8 +33,8 @@ Default values
 
 Named arguments
     ${ret} =    All arg types    arg=value
-    Should Be Equal    ${ret}    All arg types: value
+    Should Be Equal    ${ret}    All arg types: arg:value
     ${ret} =    Defaults    c=Z    a=X    b=Y
-    Should Be Equal    ${ret}    Defaults: X Y Z
+    Should Be Equal    ${ret}    Defaults: a:X b:Y c:Z
     ${ret} =    Defaults    b=only
-    Should Be Equal    ${ret}    Defaults: 1 only
+    Should Be Equal    ${ret}    Defaults: b:only

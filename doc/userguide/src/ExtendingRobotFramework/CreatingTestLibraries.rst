@@ -2170,10 +2170,16 @@ library is used in the test data, Robot Framework uses the `run_keyword`
 method to get it executed. This method takes two or three arguments.
 The first argument is a string containing the name of the keyword to be
 executed in the same format as returned by `get_keyword_names`. The second
-argument is a list of arguments given to the keyword in the test data.
-The optional third argument is a dictionary (map in Java) that gets
-possible `free named arguments`__ and `named-only arguments`__ passed to
-the keyword.
+argument is a list of `positional arguments`_ given to the keyword in
+the test data, and the optional third argument is a dictionary (map in Java)
+containing `named arguments`_. If the third argument is missing, `free named
+arguments`__ and `named-only arguments`__ are not supported, and other
+named arguments are mapped to positional arguments.
+
+.. note:: Prior to Robot Framework 3.1, normal named arguments were
+          mapped to positional arguments regardless did `run_keyword`
+          accept two or three arguments. The third argument only got
+          possible free named arguments.
 
 After getting keyword name and arguments, the library can execute
 the keyword freely, but it must use the same mechanism to
@@ -2195,7 +2201,8 @@ trivial, dynamic library implemented in Python.
            return ['first keyword', 'second keyword']
 
        def run_keyword(self, name, args, kwargs):
-           print("Running keyword '%s' with arguments %s and %s." % (name, args, kwargs))
+           print("Running keyword '%s' with positional arguments %s and named arguments %s."
+                 % (name, args, kwargs))
 
 __ `Free named arguments with dynamic libraries`_
 __ `Named-only arguments with dynamic libraries`_
@@ -2346,35 +2353,48 @@ the `named argument syntax`_. Using the syntax works based on the
 argument names and default values `got from the library`__ using the
 `get_keyword_arguments` method.
 
-For the most parts, the named arguments syntax works with dynamic keywords
-exactly like it works with any other keyword supporting it. The only special
-case is the situation where a keyword has multiple arguments with default
-values, and only some of the latter ones are given. In that case the framework
-fills the skipped optional arguments based on the default values returned
-by the `get_keyword_arguments` method.
+
+If the `run_keyword` method accepts three arguments, the second argument
+gets all positional arguments as a list and the last arguments gets all
+named arguments as a mapping. If it accepts only two arguments, named
+arguments are mapped to positional arguments. In the latter case, if
+a keyword has multiple arguments with default values and only some of
+the latter ones are given, the framework fills the skipped optional
+arguments based on the default values returned by the `get_keyword_arguments`
+method.
 
 Using the named argument syntax with dynamic libraries is illustrated
 by the following examples. All the examples use a keyword :name:`Dynamic`
-that has been specified to have argument specification
-`[arg1, arg2=xxx, arg3=yyy]`. The comment shows the arguments that
-the `run_keyword` method is actually called with.
+that has an argument specification `[a, b=d1, c=d2]`. The comment on each row
+shows how `run_keyword` would be called in these cases if it has two arguments
+(i.e. signature is `name, args`) and if it has three arguments (i.e.
+`name, args, kwargs`).
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***
+   *** Test Cases ***                  # args          # args, kwargs
    Positional only
-       Dynamic    a                             # [a]
-       Dynamic    a         b                   # [a, b]
-       Dynamic    a         b         c         # [a, b, c]
+       Dynamic    x                    # [x]           # [x], {}
+       Dynamic    x      y             # [x, y]        # [x, y], {}
+       Dynamic    x      y      z      # [x, y, z]     # [x, y, z], {}
 
-   Named
-       Dynamic    a         arg2=b              # [a, b]
-       Dynamic    a         b         arg3=c    # [a, b, c]
-       Dynamic    a         arg2=b    arg3=c    # [a, b, c]
-       Dynamic    arg3=c    arg1=a    arg2=b    # [a, b, c]
+   Named only
+       Dynamic    a=x                  # [x]           # [], {a: x}
+       Dynamic    c=z    a=x    b=y    # [x, y, z]     # [], {a: x, b: y, c: z}
 
-   Fill skipped
-       Dynamic    a         arg3=c              # [a, xxx, c]
+   Positional and named
+       Dynamic    x      b=y           # [x, y]        # [x], {b: y}
+       Dynamic    x      y      c=z    # [x, y, z]     # [x, y], {c: z}
+       Dynamic    x      b=y    c=z    # [x, y, z]     # [x], {y: b, c: z}
+
+   Intermediate missing
+       Dynamic    x      c=z           # [x, d1, z]    # [x], {c: z}
+
+.. note:: Prior to Robot Framework 3.1, all normal named arguments were
+          mapped to positional arguments and the optional `kwargs` was
+          only used with free named arguments. With the above examples
+          `run_keyword` was always called like it is nowadays called if
+          it does not support `kwargs`.
 
 __ `Getting keyword arguments`_
 
@@ -2384,40 +2404,43 @@ Free named arguments with dynamic libraries
 Dynamic libraries can also support
 `free named arguments`_ (`**named`). A mandatory precondition for
 this support is that the `run_keyword` method `takes three arguments`__:
-the third one will get the free named arguments when they are used. These
-arguments are passed to the keyword as a dictionary (Python) or Map (Java).
+the third one will get the free named arguments along with possible other
+named arguments. These arguments are passed to the keyword as a mapping.
 
 What arguments a keyword accepts depends on what `get_keyword_arguments`
 `returns for it`__. If the last argument starts with `**`, that keyword is
-recognized to accept kwargs.
+recognized to accept free named arguments.
 
 Using the free named argument syntax with dynamic libraries is illustrated
 by the following examples. All the examples use a keyword :name:`Dynamic`
-that has been specified to have argument specification
-`[arg1=xxx, arg2=yyy, **named]`. The comment shows the arguments that
-the `run_keyword` method is actually called with.
+that has an argument specification `[a=d1, b=d2, **named]`. The comment shows
+the arguments that the `run_keyword` method is actually called with.
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***
+   *** Test Cases ***                  # args, kwargs
    No arguments
-       Dynamic                            # [], {}
+       Dynamic                         # [], {}
 
    Positional only
-       Dynamic    a                       # [a], {}
-       Dynamic    a         b             # [a, b], {}
+       Dynamic    x                    # [x], {}
+       Dynamic    x      y             # [x, y], {}
 
    Free named only
-       Dynamic    a=1                     # [], {a: 1}
-       Dynamic    a=1       b=2    c=3    # [], {a: 1, b: 2, c: 3}
+       Dynamic    x=1                  # [], {x: 1}
+       Dynamic    x=1    y=2    z=3    # [], {x: 1, y: 2, z: 3}
 
-   Positional and free named
-       Dynamic    a         b=2           # [a], {b: 2}
-       Dynamic    a         b=2    c=3    # [a], {b: 2, c: 3}
+   Free named with positional
+       Dynamic    x      y=2           # [x], {y: 2}
+       Dynamic    x      y=2    z=3    # [x], {y: 2, z: 3}
 
-   Named and free named
-       Dynamic    arg1=a    b=2           # [a], {b: 2}
-       Dynamic    arg2=a    b=2    c=3    # [xxx, a], {b: 2, c: 3}
+   Free named with normal named
+       Dynamic    a=1    x=1           # [], {a: 1, x: 1}
+       Dynamic    b=2    x=1    a=1    # [], {a: 1, b: 2, x: 1}
+
+.. note:: Prior to Robot Framework 3.1, normal named arguments were mapped
+          to positional arguments but nowadays they are part of the
+          `kwargs` along with the free named arguments.
 
 __ `Running dynamic keywords`_
 __ `Getting keyword arguments`_
@@ -2427,8 +2450,8 @@ Named-only arguments with dynamic libraries
 
 Starting from Robot Framework 3.1, dynamic libraries can have `named-only
 arguments`_. This requires that the `run_keyword` method `takes three
-arguments`__: the third getting the named-only arguments along with possible
-`free named arguments`__.
+arguments`__: the third getting the named-only arguments along with the other
+named arguments.
 
 In the `argument specification`__ returned by the `get_keyword_arguments`
 method named-only arguments are specified after possible variable number
@@ -2444,21 +2467,23 @@ shows the arguments that the `run_keyword` method is actually called with.
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***
+   *** Test Cases ***                                  # args, kwargs
    Named-only only
-       Dynamic    named=value                            # [], {named: value}
-       Dynamic    named=value    named2=2                # [], {named: value, named2: 2}
+       Dynamic    named=value                          # [], {named: value}
+       Dynamic    named=value    named2=2              # [], {named: value, named2: 2}
 
-   With positional and varargs
-       Dynamic    argument       named=xxx               # [argument], {named: xxx}
-       Dynamic    a1             a2           named=3    # [a1, a2], {named: 3}
+   Named-only with positional and varargs
+       Dynamic    argument       named=xxx             # [argument], {named: xxx}
+       Dynamic    a1             a2         named=3    # [a1, a2], {named: 3}
 
-   With free named
-       Dynamic    a=1            named=xxx    b=2        # [], {named: xxx, a: 1, b: 2}
-       Dynamic    named2=2       named=1      third=3    # [], {named: 1, named2: 2, third: 3}
+   Named-only with normal named
+       Dynamic    named=foo      positional=bar        # [], {positional: bar, named: foo}
+
+   Named-only with free named
+       Dynamic    named=value    foo=bar               # [], {named: value, foo=bar}
+       Dynamic    named2=2       third=3    named=1    # [], {named: 1, named2: 2, third: 3}
 
 __ `Running dynamic keywords`_
-__ `Free named arguments with dynamic libraries`_
 __ `Getting keyword arguments`_
 
 Summary
