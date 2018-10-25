@@ -292,8 +292,10 @@ class ExitForLoop(ExecutionPassed):
 class ReturnFromKeyword(ExecutionPassed):
     """Used by 'Return From Keyword' keyword."""
 
-    def __init__(self, return_value):
+    def __init__(self, return_value=None, failures=None):
         ExecutionPassed.__init__(self, return_value=return_value)
+        if failures:
+            self.set_earlier_failures(failures)
 
 
 class RemoteError(RobotError):

@@ -2330,8 +2330,11 @@ class _Control(_BuiltInBase):
         accomplished directly with `Return From Keyword If`. See also
         `Run Keyword And Return` and `Run Keyword And Return If`.
         """
+        self._return_from_keyword(return_values)
+
+    def _return_from_keyword(self, return_values=None, failures=None):
         self.log('Returning from the enclosing user keyword.')
-        raise ReturnFromKeyword(return_values)
+        raise ReturnFromKeyword(return_values, failures)
 
     @run_keyword_variant(resolve=1)
     def return_from_keyword_if(self, condition, *return_values):
@@ -2356,7 +2359,7 @@ class _Control(_BuiltInBase):
         See also `Run Keyword And Return` and `Run Keyword And Return If`.
         """
         if self._is_true(condition):
-            self.return_from_keyword(*return_values)
+            self._return_from_keyword(return_values)
 
     @run_keyword_variant(resolve=1)
     def run_keyword_and_return(self, name, *args):
@@ -2377,8 +2380,14 @@ class _Control(_BuiltInBase):
         Use `Run Keyword And Return If` if you want to run keyword and return
         based on a condition.
         """
-        ret = self.run_keyword(name, *args)
-        self.return_from_keyword(escape(ret))
+        try:
+            ret = self.run_keyword(name, *args)
+        except ExecutionPassed:
+            raise
+        except ExecutionFailed as err:
+            self._return_from_keyword(failures=[err])
+        else:
+            self._return_from_keyword(return_values=[escape(ret)])
 
     @run_keyword_variant(resolve=2)
     def run_keyword_and_return_if(self, condition, name, *args):
