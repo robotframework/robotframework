@@ -19,7 +19,7 @@ from functools import partial
 
 from .compat import py2to3
 from .normalizing import normalize
-from .platform import PY3
+from .platform import IRONPYTHON, PY3
 from .robottypes import is_string
 
 
@@ -44,6 +44,9 @@ class Matcher(object):
     def _compile(self, pattern, regexp=False):
         if not regexp:
             pattern = fnmatch.translate(pattern)
+            # https://github.com/IronLanguages/ironpython2/issues/515
+            if IRONPYTHON and "\\'" in pattern:
+                pattern = pattern.replace("\\'", "'")
         return re.compile(pattern, re.DOTALL)
 
     def match(self, string):
