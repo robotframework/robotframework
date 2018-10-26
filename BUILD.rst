@@ -299,7 +299,7 @@ Announcements
 3. ``#devel`` and ``#general`` channels on Slack.
 
 4. `Robot Framework LinkedIn
-   <https://www.linkedin.com/groups/Robot-Framework-3710899>`_ group.
+   <https://www.linkedin.com/groups/3710899/>`_ group.
 
 5. Consider sending announcements, at least with major releases, also to other
    forums where we want to make the framework more well known. For example:
