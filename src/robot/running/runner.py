@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionFailed, DataError, PassExecution
+from robot.errors import ExecutionFailed, ExecutionStatus, DataError, PassExecution
 from robot.model import SuiteVisitor
 from robot.result import TestSuite, Result
 from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic
@@ -140,7 +140,7 @@ class Runner(SuiteVisitor):
                 status.test_failed(err)
             else:
                 result.message = exception.message
-        except ExecutionFailed as err:
+        except ExecutionStatus as err:
             status.test_failed(err)
         result.status = status.status
         result.message = status.message or result.message
@@ -198,7 +198,7 @@ class Runner(SuiteVisitor):
             return None
         try:
             StepRunner(self._context).run_step(data, name=name)
-        except ExecutionFailed as err:
+        except ExecutionStatus as err:
             return err
 
 

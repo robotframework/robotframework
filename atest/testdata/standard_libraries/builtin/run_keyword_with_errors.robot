@@ -89,6 +89,12 @@ Ignore Error When Access To Dictionary Nonexisting Key Syntax 1
 Ignore Error When Access To Dictionary Nonexisting Key Syntax 2
     Run Keyword And Ignore Error   Access To Dictionary Variable Nonexisting Key Syntax 2
 
+Ignore Error With "Passing" Exceptions
+    [Documentation]    PASS    The message
+    Keyword With Ignore Error With "Passing" Exceptions
+    Run Keyword And Ignore Error    Pass Execution    The message
+    Fail    Test should have passsed already!
+
 Expect Error When Error Occurs
     Run Keyword And Expect Error    ${ERROR MESSAGE}    ${FAIL KW}    ${ERROR MESSAGE}
 
@@ -235,6 +241,12 @@ Expect Error With Unrecognized Prefix
     :Message:         Fail    :Message:
     1:2:3:4:5         Fail    Ooops
 
+Expect Error With "Passing" Exceptions
+    [Documentation]    PASS    The message
+    Keyword With Expect Error With "Passing" Exceptions
+    Run Keyword And Expect Error    Whatever    Pass Execution    The message
+    Fail    Test should have passsed already!
+
 *** Keywords ***
 Passing UK
     Log    Hello world
@@ -286,3 +298,11 @@ Access To Dictionary Variable Nonexisting Key Syntax 1
 Access To Dictionary Variable Nonexisting Key Syntax 2
     ${dict} =    Create dictionary    a=1    b=2
     Log    &{dict}[c]
+
+Keyword With Ignore Error With "Passing" Exceptions
+    Run Keyword And Ignore Error    Return From Keyword
+    Fail    Should have returned from keyword already!
+
+Keyword With Expect Error With "Passing" Exceptions
+    Run Keyword And Expect Error    Whatever    Return From Keyword
+    Fail    Should have returned from keyword already!

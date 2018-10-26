@@ -103,8 +103,8 @@ class Information(RobotError):
     """Used by argument parser with --help or --version."""
 
 
-class ExecutionFailed(RobotError):
-    """Used for communicating failures in test execution."""
+class ExecutionStatus(RobotError):
+    """Base class for exceptions communicating status in test execution."""
 
     def __init__(self, message, test_timeout=False, keyword_timeout=False,
                  syntax=False, exit=False, continue_on_failure=False,
@@ -157,6 +157,10 @@ class ExecutionFailed(RobotError):
     @property
     def status(self):
         return 'FAIL'
+
+
+class ExecutionFailed(ExecutionStatus):
+    """Used for communicating failures in test execution."""
 
 
 class HandlerExecutionFailed(ExecutionFailed):
@@ -244,14 +248,14 @@ class UserKeywordExecutionFailed(ExecutionFailures):
         return '%s\n\nAlso keyword teardown failed:\n%s' % (run_msg, td_msg)
 
 
-class ExecutionPassed(ExecutionFailed):
+class ExecutionPassed(ExecutionStatus):
     """Base class for all exceptions communicating that execution passed.
 
     Should not be raised directly, but more detailed exceptions used instead.
     """
 
     def __init__(self, message=None, **kwargs):
-        ExecutionFailed.__init__(self, message or self._get_message(), **kwargs)
+        ExecutionStatus.__init__(self, message or self._get_message(), **kwargs)
         self._earlier_failures = []
 
     def _get_message(self):

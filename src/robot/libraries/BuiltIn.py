@@ -2382,8 +2382,6 @@ class _Control(_BuiltInBase):
         """
         try:
             ret = self.run_keyword(name, *args)
-        except ExecutionPassed:
-            raise
         except ExecutionFailed as err:
             self._return_from_keyword(failures=[err])
         else:
