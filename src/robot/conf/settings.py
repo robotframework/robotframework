@@ -420,6 +420,7 @@ class RobotSettings(_BaseSettings):
 
     def get_rebot_settings(self):
         settings = RebotSettings()
+        settings.start_timestamp = self.start_timestamp
         settings._opts.update(self._opts)
         for name in ['Variables', 'VariableFiles', 'Listeners']:
             del(settings._opts[name])
