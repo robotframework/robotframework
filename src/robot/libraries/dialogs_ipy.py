@@ -205,11 +205,8 @@ class MultipleSelectionDialog(_WpfDialog):
             self._listbox.Items.Add(item)
         return self._listbox
 
-    def _validate_value(self):
-        return bool(len(self._listbox.SelectedItem) > 1)
-
     def _get_value(self):
-        return self._listbox.SelectedItems
+        return sorted(self._listbox.SelectedItems, key=list(self._listbox.Items).index)
 
 
 class PassFailDialog(_WpfDialog):

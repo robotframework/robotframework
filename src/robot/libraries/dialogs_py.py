@@ -181,7 +181,7 @@ class MultipleSelectionDialog(_TkDialog):
         return self._listbox
 
     def _validate_value(self):
-        return bool(len(self._listbox.curselection()) > 1)
+        return bool(len(self._listbox.curselection()) >= 0)
 
     def _get_value(self):
         selected_values = [self._listbox.get(i) for i in self._listbox.curselection()]

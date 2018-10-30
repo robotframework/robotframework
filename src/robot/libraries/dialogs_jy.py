@@ -98,7 +98,7 @@ class MultipleSelectionDialog(_SwingDialog):
         if pane.getValue() != OK_OPTION:
             return None
         return self._selection_list.getSelectedValuesList() if \
-            bool(len(self._selection_list.getSelectedValuesList()) > 1) else None
+            bool(len(self._selection_list.getSelectedValuesList()) >= 0) else None
 
 
 class PassFailDialog(_SwingDialog):

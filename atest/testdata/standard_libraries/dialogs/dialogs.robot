@@ -1,5 +1,6 @@
 *** Settings ***
 Library         Dialogs
+Library         Collections
 
 *** Variable ***
 ${FILLER} =     wrapped${SPACE}
@@ -64,10 +65,26 @@ Get Selection From User Exited
     Get Selection From User    Press <Esc>.    zip    zap    foo
 
 Get Selections From Users
+    ${values}=  Get Selections From User
+    ...    Select 'value2' and 'value3' and press OK.
+    ...    value    value2    value3    value4
+    ${expected values}=    Create List    value2    value3
+    Lists Should Be Equal    ${values}    ${expected values}
+
+Get Selections From User When No Input Provided
+    ${values}=  Get Selections From User
+    ...     Select no value and press OK.
+    ...     value    value2    value3    value4
+    ${expected values}=    Create List
+    Lists Should Be Equal    ${values}    ${expected values}
+
+Get Selections From User Cancelled
     [Documentation]  FAIL No value provided by user.
-    Get Selections From User
-    ...    Select multiple values and press OK.
-    ...    value    value2    value3     value 4
+    Get Selections From User    Press Cancel.    value    value2    value3    value4
+
+Get Selections From User Exited
+    [Documentation]  FAIL No value provided by user.
+    Get Selections From User    Press <Esc>.    value    value2    value3    value4
 
 Multiple dialogs in a row
     [Documentation]  FAIL No value provided by user.
@@ -76,7 +93,7 @@ Multiple dialogs in a row
     Get Value From User    Verify that dialog is closed immediately.\n\nAfter pressing Cancel.
     [Teardown]    Sleep    1s
 
-Dialog and timeout
-    [Timeout]  1s
-    [Tags]     jybot_only
-    Execute Manual Step    Wait for timeout
+#Dialog and timeout
+#    [Timeout]  1s
+#    [Tags]     jybot_only
+#    Execute Manual Step    Wait for timeout

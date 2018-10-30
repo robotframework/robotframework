@@ -117,6 +117,7 @@ def get_selections_from_user(message, *values):
 
     Example:
     | ${username} = | Get Selections From User | Select user name | user1 | user2 | admin |
+    New in Robot Framework 3.1.
     """
     return _validate_user_input(MultipleSelectionDialog(message, values))
 
