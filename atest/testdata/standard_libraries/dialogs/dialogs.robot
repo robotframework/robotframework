@@ -65,14 +65,14 @@ Get Selection From User Exited
     Get Selection From User    Press <Esc>.    zip    zap    foo
 
 Get Selections From Users
-    ${values}=  Get Selections From User
+    ${values}=    Get Selections From User
     ...    Select 'value2' and 'value3' and press OK.
     ...    value    value2    value3    value4
     ${expected values}=    Create List    value2    value3
     Lists Should Be Equal    ${values}    ${expected values}
 
 Get Selections From User When No Input Provided
-    ${values}=  Get Selections From User
+    ${values}=    Get Selections From User
     ...     Select no value and press OK.
     ...     value    value2    value3    value4
     ${expected values}=    Create List
