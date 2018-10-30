@@ -93,7 +93,7 @@ Multiple dialogs in a row
     Get Value From User    Verify that dialog is closed immediately.\n\nAfter pressing Cancel.
     [Teardown]    Sleep    1s
 
-#Dialog and timeout
-#    [Timeout]  1s
-#    [Tags]     jybot_only
-#    Execute Manual Step    Wait for timeout
+Dialog and timeout
+    [Timeout]  1s
+    [Tags]     jybot_only
+    Execute Manual Step    Wait for timeout
