@@ -165,9 +165,10 @@ class RunKeywordRunner(LibraryKeywordRunner):
         return keywords
 
     def _get_dry_run_keywords(self, args):
-        if self.name == 'Run Keyword If':
+        name = self._handler.name
+        if name == 'Run Keyword If':
             return list(self._get_run_kw_if_keywords(args))
-        if self.name == 'Run Keywords':
+        if name == 'Run Keywords':
             return list(self._get_run_kws_keywords(args))
         if self._default_dry_run_keywords:
             return self._get_default_run_kw_keywords(args)

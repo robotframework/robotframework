@@ -285,8 +285,9 @@ class KeywordStore(object):
         return runner
 
     def _get_bdd_style_runner(self, name):
+        lower = name.lower()
         for prefix in ['given ', 'when ', 'then ', 'and ', 'but ']:
-            if name.lower().startswith(prefix):
+            if lower.startswith(prefix):
                 runner = self._get_runner(name[len(prefix):])
                 if runner:
                     runner = copy.copy(runner)

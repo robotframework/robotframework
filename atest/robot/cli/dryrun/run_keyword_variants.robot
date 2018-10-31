@@ -99,3 +99,11 @@ Run Keyword If with list variable in ELSE IF and ELSE
 
 Test Teardown Related Run Keyword Variants
     Check Test Case  ${TESTNAME}
+
+Given/When/Then
+    ${tc} =    Check Test Case  ${TESTNAME}
+    Length Should Be    ${tc.kws[0].kws}    1
+    Length Should Be    ${tc.kws[1].kws}    3
+    Length Should Be    ${tc.kws[2].kws}    2
+    Length Should Be    ${tc.kws[3].kws}    3
+    Length Should Be    ${tc.kws[4].kws}    3
