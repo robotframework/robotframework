@@ -73,8 +73,8 @@ Get Selections From User
 
 Get Selections From User When No Input Provided
     ${values}=    Get Selections From User
-    ...     Select no value and press OK.
-    ...     value    value2    value3    value4
+    ...    Select no value and press OK.
+    ...    value    value2    value3    value4
     ${expected values}=    Create List
     Lists Should Be Equal    ${values}    ${expected values}
 
