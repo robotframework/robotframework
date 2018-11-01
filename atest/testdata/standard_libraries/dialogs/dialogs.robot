@@ -64,7 +64,7 @@ Get Selection From User Exited
     [Documentation]  FAIL No value provided by user.
     Get Selection From User    Press <Esc>.    zip    zap    foo
 
-Get Selections From Users
+Get Selections From User
     ${values}=    Get Selections From User
     ...    Select 'value2' and 'value3' and press OK.
     ...    value    value2    value3    value4
