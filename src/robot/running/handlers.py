@@ -176,8 +176,9 @@ class _DynamicHandler(_RunnableHandler):
 
     def resolve_arguments(self, arguments, variables=None):
         positional, named = self.arguments.resolve(arguments, variables)
-        arguments, kwargs = self.arguments.map(positional, named)
-        return arguments, kwargs
+        if not self._supports_kwargs:
+            positional, named = self.arguments.map(positional, named)
+        return positional, named
 
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)

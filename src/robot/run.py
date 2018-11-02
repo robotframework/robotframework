@@ -42,7 +42,7 @@ from robot.model import ModelModifier
 from robot.output import LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
 from robot.running import TestSuiteBuilder
-from robot.utils import Application, unic
+from robot.utils import Application, unic, text
 
 
 USAGE = """Robot Framework -- A generic test automation framework
@@ -193,6 +193,9 @@ Options
                           `passed:failed`. Both color names and codes work.
                           Examples: --reportbackground green:yellow:red
                                     --reportbackground #00E:#E00
+    --maxerrorlines lines  Maximum number of error message lines to show in
+                          report when tests fail. Default is 40, minimum is 10
+                          and `NONE` can be used to show the full message.
  -L --loglevel level      Threshold level for logging. Available levels: TRACE,
                           DEBUG, INFO (default), WARN, NONE (no logging). Use
                           syntax `LOGLEVEL:DEFAULT` to define the default
@@ -430,7 +433,12 @@ class RobotFramework(Application):
             suite.visit(ModelModifier(settings.pre_run_modifiers,
                                       settings.run_empty_suite, LOGGER))
         with pyloggingconf.robot_handler_enabled(settings.log_level):
-            result = suite.run(settings)
+            old_max_error_lines = text.MAX_ERROR_LINES
+            text.MAX_ERROR_LINES = settings.max_error_lines
+            try:
+                result = suite.run(settings)
+            finally:
+                text.MAX_ERROR_LINES = old_max_error_lines
             LOGGER.info("Tests execution ended. Statistics:\n%s"
                         % result.suite.stat_message)
             if settings.log or settings.report or settings.xunit:

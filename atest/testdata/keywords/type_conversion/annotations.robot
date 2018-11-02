@@ -18,6 +18,16 @@ Invalid integer
     Integer              foobar
     Integer              1.0
 
+Integral (abc)
+    Integral             42                        ${42}
+    Integral             -1                        ${-1}
+    Integral             9999999999999999999999    ${9999999999999999999999}
+
+Invalid integral (abc)
+    [Template]           Conversion Should Fail
+    Integral             foobar                    type=integer
+    Integral             1.0                       type=integer
+
 Float
     Float                1.5                       ${1.5}
     Float                -1                        ${-1.0}
@@ -27,6 +37,16 @@ Float
 Invalid float
     [Template]           Conversion Should Fail
     Float                foobar
+
+Real (abc)
+    Real                 1.5                       ${1.5}
+    Real                 -1                        ${-1.0}
+    Real                 1e6                       ${1000000.0}
+    Real                 -1.2e-3                   ${-0.0012}
+
+Invalid real (abc)
+    [Template]           Conversion Should Fail
+    Real                 foobar                    type=float
 
 Decimal
     Decimal              3.14                      Decimal('3.14')
@@ -72,6 +92,19 @@ Invalid bytes
     Bytes                \u0100                                          error=Character '\u0100' cannot be mapped to a byte.
     Bytes                \u00ff\u0100\u0101                              error=Character '\u0100' cannot be mapped to a byte.
     Bytes                Hyvä esimerkki! \u2603                          error=Character '\u2603' cannot be mapped to a byte.
+
+Bytestring
+    Bytestring           foo                       b'foo'
+    Bytestring           \x00\x01\xFF\u00FF        b'\\x00\\x01\\xFF\\xFF'
+    Bytestring           Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
+    Bytestring           None                      b'None'
+    Bytestring           NONE                      b'NONE'
+
+Invalid bytesstring
+    [Template]           Conversion Should Fail
+    Bytestring           \u0100                    type=bytes            error=Character '\u0100' cannot be mapped to a byte.
+    Bytestring           \u00ff\u0100\u0101        type=bytes            error=Character '\u0100' cannot be mapped to a byte.
+    Bytestring           Hyvä esimerkki! \u2603    type=bytes            error=Character '\u2603' cannot be mapped to a byte.
 
 Bytearray
     Bytearray            foo                       bytearray(b'foo')
@@ -158,8 +191,24 @@ Invalid list
     List                 {}                                              error=Value is dictionary, not list.
     List                 ooops                                           error=Invalid expression.
     List                 ${EMPTY}                                        error=Invalid expression.
-    List                 !"#¤%&/(invalid expression)\=?                  error=Invalid expression.
+    List                 !"#¤%&/(inv expr)\=?                            error=Invalid expression.
     List                 1 / 0                                           error=Invalid expression.
+
+Sequence (abc)
+    Sequence             []                        []
+    Sequence             ['foo', 'bar']            ${LIST}
+    Mutable sequence     [1, 2, 3.14, -42]         [1, 2, 3.14, -42]
+    Mutable sequence     ['\\x00', '\\x52']        ['\\x00', 'R']
+
+Invalid sequence (abc)
+    [Template]           Conversion Should Fail
+    Sequence             [1, ooops]                type=list             error=Invalid expression.
+    Mutable sequence     ()                        type=list             error=Value is tuple, not list.
+    Sequence             {}                        type=list             error=Value is dictionary, not list.
+    Mutable sequence     ooops                     type=list             error=Invalid expression.
+    Sequence             ${EMPTY}                  type=list             error=Invalid expression.
+    Mutable sequence     !"#¤%&/(inv expr)\=?      type=list             error=Invalid expression.
+    Sequence             1 / 0                     type=list             error=Invalid expression.
 
 Tuple
     Tuple                ()                        ()
@@ -186,6 +235,16 @@ Invalid dictionary
     Dictionary           ooops                                           error=Invalid expression.
     Dictionary           {{'not': 'hashable'}: 'xxx'}                    error=Evaluating expression failed: *
 
+Mapping (abc)
+    Mapping              {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
+    Mutable mapping      {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
+
+Invalid mapping (abc)
+    [Template]           Conversion Should Fail
+    Mapping              foobar                    type=dictionary       error=Invalid expression.
+    Mapping              []                        type=dictionary       error=Value is list, not dict.
+    Mutable mapping      barfoo                    type=dictionary       error=Invalid expression.
+
 Set
     Set                  set()                     set()
     Set                  {'foo', 'bar'}            {'foo', 'bar'}
@@ -201,6 +260,23 @@ Invalid set
     Set                  {{'not', 'hashable'}}                           error=Evaluating expression failed: *
     Set                  frozenset()                                     error=Invalid expression.
 
+Set (abc)
+    Set abc              set()                     set()
+    Set abc              {'foo', 'bar'}            {'foo', 'bar'}
+    Set abc              {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
+    Mutable set          set()                     set()
+    Mutable set          {'foo', 'bar'}            {'foo', 'bar'}
+    Mutable set          {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
+
+Invalid set (abc)
+    [Template]           Conversion Should Fail
+    Set abc              {1, ooops}                type=set              error=Invalid expression.
+    Set abc              {}                        type=set              error=Value is dictionary, not set.
+    Set abc              ooops                     type=set              error=Invalid expression.
+    Mutable set          {1, ooops}                type=set              error=Invalid expression.
+    Mutable set          {}                        type=set              error=Value is dictionary, not set.
+    Mutable set          ooops                     type=set              error=Invalid expression.
+
 Frozenset
     Frozenset            frozenset()               frozenset()
     Frozenset            set()                     frozenset()
@@ -213,53 +289,6 @@ Invalid frozenset
     Frozenset            {}                        type=set              error=Value is dictionary, not set.
     Frozenset            ooops                     type=set              error=Invalid expression.
     Frozenset            {{'not', 'hashable'}}     type=set              error=Evaluating expression failed: *
-
-Iterable abc
-    Iterable             ['list', 'is', 'ok']      ['list', 'is', 'ok']
-    Iterable             ('tuple',)                ('tuple',)
-    Iterable             set()                     set()
-    Iterable             {'dict': 'accepted'}      {'dict': 'accepted'}
-
-Invalid iterable abc
-    [Template]           Conversion Should Fail
-    Iterable             foobar                                          error=Failed to convert to list, tuple, set or dictionary.
-
-Sequence abc
-    Sequence             ['list', 'is', 'ok']      ['list', 'is', 'ok']
-    Sequence             ('tuple',)                ('tuple',)
-
-Invalid sequence abc
-    [Template]           Conversion Should Fail
-    Sequence             foobar                                          error=Failed to convert to list or tuple.
-    Sequence             {'a': 1, 'b': 2}                                error=Failed to convert to list or tuple.
-    Sequence             {1, 2, 3}                                       error=Failed to convert to list or tuple.
-
-Mapping abc
-    Mapping              {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
-    Mutable mapping      {'foo': 1, 2: 'bar'}      {'foo': 1, 2: 'bar'}
-
-Invalid mapping abc
-    [Template]           Conversion Should Fail
-    Mapping              foobar                    type=dictionary       error=Invalid expression.
-    Mapping              []                        type=dictionary       error=Value is list, not dict.
-    Mutable mapping      barfoo                    type=dictionary       error=Invalid expression.
-
-Set abc
-    Set abc              set()                     set()
-    Set abc              {'foo', 'bar'}            {'foo', 'bar'}
-    Set abc              {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
-    Mutable set          set()                     set()
-    Mutable set          {'foo', 'bar'}            {'foo', 'bar'}
-    Mutable set          {1, 2, 3.14, -42}         {1, 2, 3.14, -42}
-
-Invalid set abc
-    [Template]           Conversion Should Fail
-    Set abc              {1, ooops}                type=set              error=Invalid expression.
-    Set abc              {}                        type=set              error=Value is dictionary, not set.
-    Set abc              ooops                     type=set              error=Invalid expression.
-    Mutable set          {1, ooops}                type=set              error=Invalid expression.
-    Mutable set          {}                        type=set              error=Value is dictionary, not set.
-    Mutable set          ooops                     type=set              error=Invalid expression.
 
 Unknown types are not converted
     Unknown              foo                       'foo'
@@ -276,6 +305,12 @@ Non-type values don't cause errors
     Non type             None                      'None'
     Non type             none                      'none'
     Non type             []                        '[]'
+    Invalid              foo                       'foo'
+    Invalid              1                         '1'
+    Invalid              true                      'true'
+    Invalid              None                      'None'
+    Invalid              none                      'none'
+    Invalid              []                        '[]'
 
 Positional as named
     Integer              argument=-1               expected=-1
@@ -348,6 +383,15 @@ String None is converted to None object
 
 Return value annotation causes no error
     Return value annotation                    42    42
+
+None as default
+    None as default
+    None as default                            []    []
+
+Forward references
+    [Tags]    require-py3.5
+    Forward referenced concrete type           42    42
+    Forward referenced ABC                     []    []
 
 @keyword decorator overrides annotations
     Types via keyword deco override            42    timedelta(seconds=42)

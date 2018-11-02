@@ -137,6 +137,12 @@ class TestMatcher(unittest.TestCase):
             assert Matcher('f*bar').match(text)
             assert not Matcher('f*bar', spaceless=False).match(text)
 
+    def test_ipy_bug_workaround(self):
+        # https://github.com/IronLanguages/ironpython2/issues/515
+        matcher = Matcher("'12345678901234567890'")
+        assert matcher.match("'12345678901234567890'")
+        assert not matcher.match("'xxx'")
+
     def _matches(self, string, pattern, **config):
         assert Matcher(pattern, **config).match(string), pattern
 

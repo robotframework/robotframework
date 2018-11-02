@@ -78,6 +78,13 @@ this section.
    Sets the possible `user keyword timeout`_. Timeouts_ are discussed
    in a section of their own.
 
+.. note:: Setting names are case-insensitive, but the format used above is
+      recommended. Prior to Robot Framework 3.1, settings were also
+      space-insensitive meaning that extra spaces could be added (e.g.
+      `[T a g s]`). This is now deprecated and only the format above,
+      case-insensitively, is supported. Possible space between brackets
+      and the name (e.g. `[ Tags ]`) is still allowed.
+
 __ `Settings in the test case table`_
 __ `User keyword tags`_
 
@@ -301,7 +308,7 @@ other arguments. The list variable can thus have any number of items, even zero.
        Log    Required: ${req}
        Log    Optional: ${opt}
        Log    Others:
-       : FOR    ${item}    IN    @{others}
+       FOR    ${item}    IN    @{others}
        \    Log    ${item}
 
 Notice that if the last keyword above is used with more than one
@@ -781,7 +788,7 @@ demonstrates returning conditionally inside a `for loop`_.
    Find Index
        [Arguments]    ${element}    @{items}
        ${index} =    Set Variable    ${0}
-       :FOR    ${item}    IN    @{items}
+       FOR    ${item}    IN    @{items}
        \    Return From Keyword If    '${item}' == '${element}'    ${index}
        \    ${index} =    Set Variable    ${index + 1}
        Return From Keyword    ${-1}    # Could also use [Return]

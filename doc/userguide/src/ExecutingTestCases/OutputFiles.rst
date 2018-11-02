@@ -578,6 +578,21 @@ Examples::
    rebot --starttime 20080611-175920 --endtime 20080611-180242 *.xml
    rebot --starttime 20110302-1317 --endtime 20110302-11418 myoutput.xml
 
+Limiting error message length in reports
+----------------------------------------
+
+If a test case fails and has a long error message, the message shown in
+reports_ is automatically cut from the middle to keep reports easier to
+read. By default messages longer than 40 lines are cut, but that can be
+configured by using the :option:`--maxerrorlines` command line option.
+The minimum value for this option is 10, and it is also possible to use
+a special value `NONE` to show the full message.
+
+Full error messages are always visible in `log files`_ as messages of
+the failed keywords.
+
+.. note:: The :option:`--maxerrorlines` option is new in Robot Framework 3.1.
+
 .. _pre-Rebot modifier:
 
 Programmatic modification of results

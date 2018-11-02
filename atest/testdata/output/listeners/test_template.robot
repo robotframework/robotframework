@@ -1,15 +1,15 @@
-***Settings***
-Test Template  Log
+*** Settings ***
+Test Template       Log
 
-***TestCases***
+*** Test Cases ***
 
 Default template
-    [Documentation]  Log
+    [Documentation]    Log
     Use template from settings table
 
 Overridden template
-    [Documentation]  Comment
-    [Template]  Comment
+    [Documentation]    Comment
+    [Template]    Comment
     Use my own template
 
 Overridden with empty
@@ -17,6 +17,5 @@ Overridden with empty
     Log  No template
 
 Overridden with NONE
-    [Template]  NONE
+    [Template]    NONE
     Log  No template
-

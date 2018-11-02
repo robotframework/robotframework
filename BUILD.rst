@@ -175,11 +175,12 @@ Creating distributions
 
       invoke clean
 
-3. Create source distribution in zip format as well as universal (i.e.
+3. Create and validate source distribution in zip format and universal (i.e.
    Python 2 and 3 compatible) `wheel <http://pythonwheels.com>`_::
 
       python setup.py sdist --formats zip bdist_wheel --universal
       ls -l dist
+      twine check dist/*
 
    Distributions can be tested locally if needed.
 
@@ -187,8 +188,8 @@ Creating distributions
 
       twine upload dist/*
 
-5. Verify that project the page at `PyPI
-   <https://pypi.python.org/pypi/robotframework>`_ looks good.
+5. Verify that project pages at `PyPI
+   <https://pypi.python.org/pypi/robotframework>`_ look good.
 
 6. Test installation (add ``--pre`` with pre-releases)::
 
@@ -298,7 +299,7 @@ Announcements
 3. ``#devel`` and ``#general`` channels on Slack.
 
 4. `Robot Framework LinkedIn
-   <https://www.linkedin.com/groups/Robot-Framework-3710899>`_ group.
+   <https://www.linkedin.com/groups/3710899/>`_ group.
 
 5. Consider sending announcements, at least with major releases, also to other
    forums where we want to make the framework more well known. For example:

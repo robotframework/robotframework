@@ -17,7 +17,7 @@ ${NON STRING 2}    SEPARATOR=-    ${0}    1    ${2.0}    ${True}
 ${LIST VALUES}     @{VALUES}
 ${LIST EMPTY}      @{EMPTY}
 ${LIST EXTENDED}   @{VALUES[1:-1]}
-${LIST INTERNAL}   @{${DEFAULT SEP.split()[${0}]}[${1}:${-1}]}
+${LIST INTERNAL}   @{${DEFAULT SEP.split()[${0}]}\[${1}:${-1}]}
 ${LIST W/ SEP 1}   SEPARATOR=${EMPTY}    0    @{VALUES}    6    ${7}    8    9
 ...                ${SPACE}    ${0}    @{VALUES}    6789
 ${LIST W/ SEP 2}   SEPARATOR=@{SEPARATOR.split()}[0]    @{NON STRING 1.split()}
@@ -39,7 +39,6 @@ ${NON STRING RESULT 3}    @{VALUES}[2]
 ${STRING RESULT 1}        SEPARATOR=    ${42}
 ${STRING RESULT 2}        SEPARATOR=whatever    ${VALUES[2:4]}
 ${STRING RESULT 3}        ${42}    @{VALUES}[2]
-
 
 *** Test Cases ***
 Default separator is space

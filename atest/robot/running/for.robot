@@ -342,11 +342,33 @@ For In Range With Wrong Number Of Variables
 For In Range With Non-Existing Variables In Arguments
     Check Test Case    ${TEST NAME}
 
-For loops are case and space insensitive
+For loop marker with colon still works
     Check Test Case    ${TEST NAME}
 
-For word can have many colons
+For loop marker with colon is case and space insensitive
     Check Test Case    ${TEST NAME}
+
+For loop marker can have many colons
+    Check Test Case    ${TEST NAME}
+
+Case and space insensitive for loop separator is deprecated
+    Check Test Case    ${TEST NAME}
+    ${path} =    Normalize Path    ${DATADIR}/running/for.robot
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in test case '${TEST NAME}':
+    ...    Using 'in' as a FOR loop separator is deprecated. Use 'IN' instead.
+    Check log message    ${ERRORS}[0]    ${message}    WARN
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in test case '${TEST NAME}':
+    ...    Using 'INRANGE' as a FOR loop separator is deprecated. Use 'IN RANGE' instead.
+    Check log message    ${ERRORS}[1]    ${message}    WARN
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in test case '${TEST NAME}':
+    ...    Using 'I ne numer ate' as a FOR loop separator is deprecated. Use 'IN ENUMERATE' instead.
+    Check log message    ${ERRORS}[2]    ${message}    WARN
 
 *** Keywords ***
 Should Be For Keyword

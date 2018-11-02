@@ -15,10 +15,6 @@
 
 import sys
 
-from robot.errors import DataError
-from robot.utils import (is_dict_like, is_list_like, plural_or_not as s,
-                         seq2str, type_name)
-
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
 from .argumentresolver import ArgumentResolver

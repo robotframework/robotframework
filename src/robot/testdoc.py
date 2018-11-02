@@ -42,14 +42,14 @@ from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
 from robot.parsing import disable_curdir_processing
 from robot.running import TestSuiteBuilder
-from robot.utils import (abspath, Application, file_writer, format_time,
-                         get_link_path, html_escape, html_format, is_string,
-                         secs_to_timestr, seq2str2, timestr_to_secs, unescape,
-                         IRONPYTHON)
+from robot.utils import (abspath, Application, file_writer, get_link_path,
+                         html_escape, html_format, IRONPYTHON, is_string,
+                         PY_VERSION, secs_to_timestr, seq2str2,
+                         timestr_to_secs, unescape)
 
 
 # http://ironpython.codeplex.com/workitem/31549
-if IRONPYTHON and sys.version_info < (2, 7, 2):
+if IRONPYTHON and PY_VERSION < (2, 7, 2):
     int = long
 
 

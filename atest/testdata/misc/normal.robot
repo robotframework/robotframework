@@ -4,6 +4,9 @@ Force Tags        f1
 Default Tags      d1    d_2
 Metadata          Something    My Value
 
+*** Variables ***
+${DELAY}          0.01    # Make sure elapsed time > 0
+
 *** Test Case ***
 First One
     [Tags]    t1    t2
@@ -15,7 +18,7 @@ Second One
     [Documentation]    Nothing interesting here
     [Timeout]    1 day
     Log    Test 2
-    Sleep    0.01    # Make sure elapsed time > 0
+    Sleep    ${DELAY}
 
 *** Keyword ***
 logs on trace

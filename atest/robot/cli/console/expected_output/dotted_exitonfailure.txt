@@ -1,0 +1,14 @@
+Running suite 'Suites' with 11 tests.
+==============================================================================
+Fxxxxxxxxxx
+------------------------------------------------------------------------------
+FAIL: Suites.Fourth.Suite4 First
+Expected
+==============================================================================
+Run suite 'Suites' with 11 tests in *.
+
+FAILED
+11 critical tests, 0 passed, 11 failed
+11 tests total, 0 passed, 11 failed
+
+Output: *.xml

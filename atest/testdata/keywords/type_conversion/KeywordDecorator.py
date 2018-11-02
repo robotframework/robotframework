@@ -9,6 +9,7 @@ try:
 except ImportError:
     class Enum(object):
         pass
+from numbers import Integral, Real
 
 from robot.api.deco import keyword
 from robot.utils import PY2, unicode
@@ -28,8 +29,18 @@ def integer(argument, expected=None):
     _validate_type(argument, expected)
 
 
+@keyword(types={'argument': Integral})
+def integral(argument, expected=None):
+    _validate_type(argument, expected)
+
+
 @keyword(types={'argument': float})
 def float_(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types={'argument': Real})
+def real(argument, expected=None):
     _validate_type(argument, expected)
 
 
@@ -50,6 +61,11 @@ def string(argument, expected=None):
 
 @keyword(types={'argument': bytes})
 def bytes_(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types={'argument': getattr(abc, 'ByteString', None)})
+def bytestring(argument, expected=None):
     _validate_type(argument, expected)
 
 
@@ -88,6 +104,16 @@ def list_(argument, expected=None):
     _validate_type(argument, expected)
 
 
+@keyword(types={'argument': abc.Sequence})
+def sequence(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types={'argument': abc.MutableSequence})
+def mutable_sequence(argument, expected=None):
+    _validate_type(argument, expected)
+
+
 @keyword(types={'argument': tuple})
 def tuple_(argument, expected=None):
     _validate_type(argument, expected)
@@ -95,26 +121,6 @@ def tuple_(argument, expected=None):
 
 @keyword(types={'argument': dict})
 def dictionary(argument, expected=None):
-    _validate_type(argument, expected)
-
-
-@keyword(types={'argument': set})
-def set_(argument, expected=None):
-    _validate_type(argument, expected)
-
-
-@keyword(types={'argument': frozenset})
-def frozenset_(argument, expected=None):
-    _validate_type(argument, expected)
-
-
-@keyword(types={'argument': abc.Iterable})
-def iterable(argument, expected=None):
-    _validate_type(argument, expected)
-
-
-@keyword(types={'argument': abc.Sequence})
-def sequence(argument, expected=None):
     _validate_type(argument, expected)
 
 
@@ -128,6 +134,11 @@ def mutable_mapping(argument, expected=None):
     _validate_type(argument, expected)
 
 
+@keyword(types={'argument': set})
+def set_(argument, expected=None):
+    _validate_type(argument, expected)
+
+
 @keyword(types={'argument': abc.Set})
 def set_abc(argument, expected=None):
     _validate_type(argument, expected)
@@ -135,6 +146,11 @@ def set_abc(argument, expected=None):
 
 @keyword(types={'argument': abc.MutableSet})
 def mutable_set(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types={'argument': frozenset})
+def frozenset_(argument, expected=None):
     _validate_type(argument, expected)
 
 

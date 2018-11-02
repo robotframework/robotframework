@@ -15,10 +15,10 @@
 
 from itertools import chain
 
-from robot.errors import (ExecutionFailed, ExecutionPassed, ExitForLoop,
-                          ContinueForLoop, DataError, PassExecution,
-                          ReturnFromKeyword, UserKeywordExecutionFailed,
-                          VariableError)
+from robot.errors import (ExecutionFailed, ExecutionPassed, ExecutionStatus,
+                          ExitForLoop, ContinueForLoop, DataError,
+                          PassExecution, ReturnFromKeyword,
+                          UserKeywordExecutionFailed, VariableError)
 from robot.result import Keyword as KeywordResult
 from robot.utils import getshortdoc, DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_var, VariableAssignment
@@ -200,7 +200,7 @@ class UserKeywordRunner(object):
             StepRunner(context).run_step(self._handler.teardown, name)
         except PassExecution:
             return None
-        except ExecutionFailed as err:
+        except ExecutionStatus as err:
             return err
         return None
 

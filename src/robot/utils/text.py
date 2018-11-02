@@ -24,17 +24,19 @@ from .robottypes import is_string, is_unicode
 from .unic import unic
 
 
+MAX_ERROR_LINES = 40
 _MAX_ASSIGN_LENGTH = 200
-_MAX_ERROR_LINES = 40
 _MAX_ERROR_LINE_LENGTH = 78
 _ERROR_CUT_EXPLN = '    [ Message content over the limit has been removed. ]'
 _TAGS_RE = re.compile(r'\s*tags:(.*)', re.IGNORECASE)
 
 
 def cut_long_message(msg):
+    if MAX_ERROR_LINES is None:
+        return msg
     lines = msg.splitlines()
     lengths = _count_line_lengths(lines)
-    if sum(lengths) <= _MAX_ERROR_LINES:
+    if sum(lengths) <= MAX_ERROR_LINES:
         return msg
     start = _prune_excess_lines(lines, lengths)
     end = _prune_excess_lines(lines, lengths, from_end=True)
@@ -46,7 +48,7 @@ def _prune_excess_lines(lines, lengths, from_end=False):
         lengths.reverse()
     ret = []
     total = 0
-    limit = _MAX_ERROR_LINES // 2
+    limit = MAX_ERROR_LINES // 2
     for line, length in zip(lines[:limit], lengths[:limit]):
         if total + length >= limit:
             ret.append(_cut_long_line(line, total, from_end))
@@ -58,7 +60,7 @@ def _prune_excess_lines(lines, lengths, from_end=False):
     return ret
 
 def _cut_long_line(line, used, from_end):
-    available_lines = _MAX_ERROR_LINES // 2 - used
+    available_lines = MAX_ERROR_LINES // 2 - used
     available_chars = available_lines * _MAX_ERROR_LINE_LENGTH - 3
     if len(line) > available_chars:
         if not from_end:

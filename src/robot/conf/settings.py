@@ -126,6 +126,8 @@ class _BaseSettings(object):
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'Randomize':
             return self._process_randomize_value(value)
+        if name == 'MaxErrorLines':
+            return self._process_max_error_lines(value)
         if name == 'RemoveKeywords':
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
@@ -161,6 +163,15 @@ class _BaseSettings(object):
         if not loggerhelper.IsLogged(log_level)(default):
             raise DataError("Default visible log level '%s' is lower than "
                             "log level '%s'" % (default, log_level))
+
+    def _process_max_error_lines(self, value):
+        if not value or value.upper() == 'NONE':
+            return None
+        value = self._convert_to_integer('maxerrorlines', value)
+        if value < 10:
+            raise DataError("Option '--maxerrorlines' expected an integer "
+                            "value greater that 10 but got '%s'." % value)
+        return value
 
     def _process_randomize_value(self, original):
         value = original.lower()
@@ -388,6 +399,7 @@ class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Extension'          : ('extension', None),
                        'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
+                       'MaxErrorLines'      : ('maxerrorlines', 40),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'ExitOnError'        : ('exitonerror', False),
@@ -408,6 +420,7 @@ class RobotSettings(_BaseSettings):
 
     def get_rebot_settings(self):
         settings = RebotSettings()
+        settings.start_timestamp = self.start_timestamp
         settings._opts.update(self._opts)
         for name in ['Variables', 'VariableFiles', 'Listeners']:
             del(settings._opts[name])
@@ -504,6 +517,10 @@ class RobotSettings(_BaseSettings):
     @property
     def console_markers(self):
         return self['ConsoleMarkers']
+
+    @property
+    def max_error_lines(self):
+        return self['MaxErrorLines']
 
     @property
     def pre_run_modifiers(self):

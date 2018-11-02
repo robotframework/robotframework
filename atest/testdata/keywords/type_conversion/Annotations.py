@@ -2,6 +2,7 @@ from collections import abc
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 from enum import Enum
+from numbers import Integral, Real
 
 from robot.api.deco import keyword
 
@@ -19,7 +20,15 @@ def integer(argument: int, expected=None):
     _validate_type(argument, expected)
 
 
+def integral(argument: Integral, expected=None):
+    _validate_type(argument, expected)
+
+
 def float_(argument: float, expected=None):
+    _validate_type(argument, expected)
+
+
+def real(argument: Real, expected=None):
     _validate_type(argument, expected)
 
 
@@ -36,6 +45,10 @@ def string(argument: str, expected=None):
 
 
 def bytes_(argument: bytes, expected=None):
+    _validate_type(argument, expected)
+
+
+def bytestring(argument: abc.ByteString, expected=None):
     _validate_type(argument, expected)
 
 
@@ -67,27 +80,19 @@ def list_(argument: list, expected=None):
     _validate_type(argument, expected)
 
 
+def sequence(argument: abc.Sequence, expected=None):
+    _validate_type(argument, expected)
+
+
+def mutable_sequence(argument: abc.MutableSequence, expected=None):
+    _validate_type(argument, expected)
+
+
 def tuple_(argument: tuple, expected=None):
     _validate_type(argument, expected)
 
 
 def dictionary(argument: dict, expected=None):
-    _validate_type(argument, expected)
-
-
-def set_(argument: set, expected=None):
-    _validate_type(argument, expected)
-
-
-def frozenset_(argument: frozenset, expected=None):
-    _validate_type(argument, expected)
-
-
-def iterable(argument: abc.Iterable, expected=None):
-    _validate_type(argument, expected)
-
-
-def sequence(argument: abc.Sequence, expected=None):
     _validate_type(argument, expected)
 
 
@@ -99,6 +104,10 @@ def mutable_mapping(argument: abc.MutableMapping, expected=None):
     _validate_type(argument, expected)
 
 
+def set_(argument: set, expected=None):
+    _validate_type(argument, expected)
+
+
 def set_abc(argument: abc.Set, expected=None):
     _validate_type(argument, expected)
 
@@ -107,11 +116,20 @@ def mutable_set(argument: abc.MutableSet, expected=None):
     _validate_type(argument, expected)
 
 
+def frozenset_(argument: frozenset, expected=None):
+    _validate_type(argument, expected)
+
+
 def unknown(argument: Unknown, expected=None):
     _validate_type(argument, expected)
 
 
 def non_type(argument: 'this is string, not type', expected=None):
+    _validate_type(argument, expected)
+
+
+# Causes SyntaxError with `typing.get_type_hints`
+def invalid(argument: 'import sys', expected=None):
     _validate_type(argument, expected)
 
 
@@ -124,6 +142,18 @@ def kwargs(expected=None, **argument: int):
 
 
 def kwonly(*, argument: float, expected=None):
+    _validate_type(argument, expected)
+
+
+def none_as_default(argument: list = None, expected=None):
+    _validate_type(argument, expected)
+
+
+def forward_referenced_concrete_type(argument: 'int', expected=None):
+    _validate_type(argument, expected)
+
+
+def forward_referenced_abc(argument: 'abc.Sequence', expected=None):
     _validate_type(argument, expected)
 
 

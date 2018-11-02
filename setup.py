@@ -28,6 +28,7 @@ Programming Language :: Python :: 3
 Programming Language :: Python :: 3.4
 Programming Language :: Python :: 3.5
 Programming Language :: Python :: 3.6
+Programming Language :: Python :: 3.7
 Programming Language :: Python :: Implementation :: CPython
 Programming Language :: Python :: Implementation :: Jython
 Programming Language :: Python :: Implementation :: IronPython
@@ -44,8 +45,8 @@ PACKAGE_DATA = [join('htmldata', directory, pattern)
 setup(
     name         = 'robotframework',
     version      = VERSION,
-    author       = 'Robot Framework Developers',
-    author_email = 'robotframework@gmail.com',
+    author       = u'Pekka Kl\xe4rck',
+    author_email = 'peke@eliga.fi',
     url          = 'http://robotframework.org',
     download_url = 'https://pypi.python.org/pypi/robotframework',
     license      = 'Apache License 2.0',
