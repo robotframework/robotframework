@@ -102,7 +102,8 @@ class ConnectionCache(object):
         except ValueError:
             raise RuntimeError("Non-existing index or alias '%s'."
                                % alias_or_index)
-        return self._connections[index-1]
+        return next((x for x in self._connections
+                             if x.config._config['index'].value == index), None)
 
     __getitem__ = get_connection
 
@@ -154,8 +155,6 @@ class ConnectionCache(object):
         try:
             index = int(index)
         except TypeError:
-            raise ValueError
-        if not 0 < index <= len(self._connections):
             raise ValueError
         return index
 
