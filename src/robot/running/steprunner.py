@@ -29,11 +29,11 @@ class StepRunner(object):
         self._context = context
         self._templated = bool(templated)
 
-    def run_steps(self, steps, stop_on_failure=False):
+    def run_steps(self, steps, exit_on_failure=False):
         errors = []
         for step in steps:
             try:
-                self.run_step(step)
+                self.run_step(step, exit_on_failure=exit_on_failure)
             except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
@@ -42,15 +42,15 @@ class StepRunner(object):
                 if not exception.can_continue(self._context.in_teardown,
                                               self._templated,
                                               self._context.dry_run,
-                                              stop_on_failure):
+                                              exit_on_failure):
                     break
         if errors:
             raise ExecutionFailures(errors)
 
-    def run_step(self, step, name=None):
+    def run_step(self, step, name=None, exit_on_failure=False):
         context = self._context
         if step.type == step.FOR_LOOP_TYPE:
-            runner = ForRunner(context, self._templated, step.flavor)
+            runner = ForRunner(context, self._templated, step.flavor, exit_on_failure)
             return runner.run(step)
         runner = context.get_runner(name or step.name)
         if context.dry_run:
@@ -58,7 +58,7 @@ class StepRunner(object):
         return runner.run(step, context)
 
 
-def ForRunner(context, templated=False, flavor='IN'):
+def ForRunner(context, templated=False, flavor='IN', exit_on_failure=False):
     runners = {'IN': ForInRunner,
                'IN RANGE': ForInRangeRunner,
                'IN ZIP': ForInZipRunner,
@@ -67,14 +67,15 @@ def ForRunner(context, templated=False, flavor='IN'):
         runner = runners[flavor]
     except KeyError:
         return InvalidForRunner(context, flavor)
-    return runner(context, templated)
+    return runner(context, templated, exit_on_failure)
 
 
 class ForInRunner(object):
 
-    def __init__(self, context, templated=False):
+    def __init__(self, context, templated=False, exit_on_failure=False):
         self._context = context
         self._templated = templated
+        self._exit_on_failure = exit_on_failure
 
     def run(self, data, name=None):
         result = KeywordResult(kwname=self._get_name(data),
@@ -122,7 +123,8 @@ class ForInRunner(object):
                 errors.extend(exception.get_errors())
                 if not exception.can_continue(self._context.in_teardown,
                                               self._templated,
-                                              self._context.dry_run):
+                                              self._context.dry_run,
+                                              self._exit_on_failure):
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -158,7 +160,7 @@ class ForInRunner(object):
             self._context.variables[var] = value
         runner = StepRunner(self._context, self._templated)
         with StatusReporter(self._context, result):
-            runner.run_steps(data.keywords)
+            runner.run_steps(data.keywords, self._exit_on_failure)
 
     def _transform_items(self, items):
         return items
@@ -176,8 +178,8 @@ class ForInRunner(object):
 
 class ForInRangeRunner(ForInRunner):
 
-    def __init__(self, context, templated=False):
-        super(ForInRangeRunner, self).__init__(context, templated)
+    def __init__(self, context, templated=False, exit_on_failure=False):
+        super(ForInRangeRunner, self).__init__(context, templated, exit_on_failure)
 
     def _flavor_name(self):
         return 'IN RANGE'
@@ -204,8 +206,8 @@ class ForInRangeRunner(ForInRunner):
 
 class ForInZipRunner(ForInRunner):
 
-    def __init__(self, context, templated=False):
-        super(ForInZipRunner, self).__init__(context, templated)
+    def __init__(self, context, templated=False, exit_on_failure=False):
+        super(ForInZipRunner, self).__init__(context, templated, exit_on_failure)
 
     def _flavor_name(self):
         return 'IN ZIP'
@@ -232,8 +234,8 @@ class ForInZipRunner(ForInRunner):
 
 class ForInEnumerateRunner(ForInRunner):
 
-    def __init__(self, context, templated=False):
-        super(ForInEnumerateRunner, self).__init__(context, templated)
+    def __init__(self, context, templated=False, exit_on_failure=False):
+        super(ForInEnumerateRunner, self).__init__(context, templated, exit_on_failure)
 
     def _flavor_name(self):
         return 'IN ENUMERATE'
