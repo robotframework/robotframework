@@ -29,7 +29,7 @@ class StepRunner(object):
         self._context = context
         self._templated = bool(templated)
 
-    def run_steps(self, steps):
+    def run_steps(self, steps, stop_on_failure=False):
         errors = []
         for step in steps:
             try:
@@ -41,7 +41,8 @@ class StepRunner(object):
                 errors.extend(exception.get_errors())
                 if not exception.can_continue(self._context.in_teardown,
                                               self._templated,
-                                              self._context.dry_run):
+                                              self._context.dry_run,
+                                              stop_on_failure):
                     break
         if errors:
             raise ExecutionFailures(errors)

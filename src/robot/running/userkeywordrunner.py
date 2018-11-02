@@ -153,7 +153,8 @@ class UserKeywordRunner(object):
             return None, None
         error = return_ = pass_ = None
         try:
-            StepRunner(context).run_steps(handler.keywords)
+            StepRunner(context).run_steps(handler.keywords,
+                                          'robot:exit-on-failure' in handler.tags)
         except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures

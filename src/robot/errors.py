@@ -138,7 +138,7 @@ class ExecutionFailed(RobotError):
         for child in getattr(self, '_errors', []):
             child.continue_on_failure = continue_on_failure
 
-    def can_continue(self, teardown=False, templated=False, dry_run=False):
+    def can_continue(self, teardown=False, templated=False, dry_run=False, ignore_teardown=False):
         if dry_run:
             return True
         if self.syntax or self.exit or self.test_timeout:
@@ -147,8 +147,8 @@ class ExecutionFailed(RobotError):
             return True
         if self.keyword_timeout:
             return False
-        if teardown:
-            return True
+        if not ignore_teardown:
+            return teardown
         return self.continue_on_failure
 
     def get_errors(self):
