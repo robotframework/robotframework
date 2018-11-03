@@ -860,7 +860,8 @@ class TelnetConnection(telnetlib.Telnet):
 
     def _get_control_character(self, int_or_name):
         try:
-            return chr(int(int_or_name))
+            ordinal = int(int_or_name)
+            return bytes(bytearray([ordinal]))
         except ValueError:
             return self._convert_control_code_name_to_character(int_or_name)
 
