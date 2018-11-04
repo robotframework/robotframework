@@ -24,7 +24,7 @@ if PY2:
     from inspect import getargspec, ismethod
 
     def getfullargspec(func):
-        return getargspec(func) + (None, None, None)
+        return getargspec(func) + ([], None, {})
 else:
     from inspect import getfullargspec, ismethod
 
@@ -75,21 +75,20 @@ class PythonArgumentParser(_ArgumentParser):
         return defaults
 
     def _get_types(self, handler, annotations, defaults):
-        types = getattr(handler, 'robot_types', None)
-        if types is not None:
-            return types
-        types = self._get_type_hints(handler, defaults)
-        if types is not None:
-            return types
-        return annotations
-
-    def _get_type_hints(self, handler, defaults):
-        if not typing:
+        types = getattr(handler, 'robot_types', ())
+        if types is None:
             return None
+        if types:
+            return types
+        return self._get_type_hints(handler, annotations, defaults)
+
+    def _get_type_hints(self, handler, annotations, defaults):
+        if not typing:
+            return annotations
         try:
             type_hints = typing.get_type_hints(handler)
         except Exception:  # Can raise pretty much anything
-            return None
+            return annotations
         return self._remove_optional_none(type_hints, defaults)
 
     def _remove_optional_none(self, type_hints, defaults):

@@ -129,7 +129,7 @@ class KeywordDocBuilder(object):
 
     def _format_arg(self, arg, argspec):
         result = arg
-        if arg in argspec.types:
+        if argspec.types is not None and arg in argspec.types:
             result = '%s: %s' % (result, self._format_type(argspec.types[arg]))
         if arg in argspec.defaults:
             result = '%s=%s' % (result, argspec.defaults[arg])

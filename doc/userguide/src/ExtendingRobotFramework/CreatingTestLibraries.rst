@@ -1049,9 +1049,9 @@ below implementing the same keyword as in earlier examples:
 
 Regardless of the approach that is used, it is not necessarily to specify
 types for all arguments. When specifying types as a list, it is possible
-to use `None` to mark that an argument does not have a type, and arguments
-at the end can be omitted altogether. For example, both of these keywords
-specify the type only for the second argument:
+to use `None` to mark that a certain argument does not have a type, and
+arguments at the end can be omitted altogether. For example, both of these
+keywords specify the type only for the second argument:
 
 .. sourcecode:: python
 
@@ -1063,10 +1063,13 @@ specify the type only for the second argument:
   def example2(first, second, third):
       # ...
 
-If type information is specified using both function annotations and the
-`@keyword` decorator, types given using the latter have a precedence. Using
-an empty list or dictionary like `@keyword(types={})` means that none of
-the arguments has explicit type information.
+If any types are specified using the `@keyword` decorator, type information
+got from annotations__ is ignored with that keyword. Setting `types` to `None`
+like `@keyword(types=None)` disables type conversion altogether so that also
+type information got from `default values`__ is ignored.
+
+__ `Specifying argument types using function annotations`_
+__ `Implicit argument types based on default values`_
 
 Implicit argument types based on default values
 '''''''''''''''''''''''''''''''''''''''''''''''
@@ -1091,6 +1094,13 @@ got explicitly:
 
 - Conversion failures are not errors, keywords get the original value in
   these cases instead.
+
+If argument conversion based on default values is not desired with a certain
+argument, it can be disabled by specifying a type for that argument explicitly.
+Alternatively argument conversion can be disabled altogether with the
+`@keyword decorator`__ like `@keyword(types=None)`.
+
+__ `Specifying argument types using `@keyword` decorator`_
 
 Supported conversions
 '''''''''''''''''''''

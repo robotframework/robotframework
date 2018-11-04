@@ -5,6 +5,7 @@ except ImportError:    # Python < 3.4, unless installed separately
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 
+from robot.api.deco import keyword
 from robot.utils import unicode
 
 
@@ -100,6 +101,26 @@ def kwonly(*, argument=0.0, expected=None):
 ''')
 except SyntaxError:
     pass
+
+
+@keyword(types={'argument': timedelta})
+def types_via_keyword_deco_override(argument=0, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(name='None as types via @keyword disables', types=None)
+def none_as_types(argument=0, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(name="Empty types via @keyword doesn't override", types=[])
+def empty_list_as_types(argument=0, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(name="@keyword without types doesn't override")
+def keyword_deco_alone_does_not_override(argument=0, expected=None):
+    _validate_type(argument, expected)
 
 
 def _validate_type(argument, expected):

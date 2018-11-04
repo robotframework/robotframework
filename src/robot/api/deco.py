@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 
-def keyword(name=None, tags=(), types=None):
+def keyword(name=None, tags=(), types=()):
     """Decorator to set custom name, tags and argument types to keywords.
 
     This decorator creates ``robot_name``, ``robot_tags`` and ``robot_types``
@@ -24,11 +24,11 @@ def keyword(name=None, tags=(), types=None):
 
     Name must be given as a string, tags as a list of strings, and types
     either as a dictionary mapping argument names to types or as a list
-    of types mapped to arguments based on position. It is OK to specify
-    only some of these, and when specifying types all arguments do not need
-    to be typed.
+    (or tuple) of types mapped to arguments based on position. It is OK to
+    specify types only to some arguments, and setting ``types`` to ``None``
+    disables type conversion altogether.
 
-    library.py::
+    Examples::
 
         @keyword(name='Login Via User Panel')
         def login(username, password):
@@ -46,9 +46,9 @@ def keyword(name=None, tags=(), types=None):
         def types_as_list(length, case_insensitive=False):
             # ...
 
-    tests.robot::
-
-        Login Via User Panel    myusername    mypassword
+        @keyword(types=None])
+        def no_conversion(length, case_insensitive=False):
+            # ...
 
     If ``name`` is not given, the actual name of the keyword will not be
     affected, but the ``robot_name`` attribute will still be created.

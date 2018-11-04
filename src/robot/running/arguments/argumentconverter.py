@@ -52,7 +52,7 @@ class ArgumentConverter(object):
         return converter.convert(name, value, explicit_type)
 
     def _get_type(self, name, value):
-        if not is_unicode(value):
+        if self._argspec.types is None or not is_unicode(value):
             return None, None
         if name in self._argspec.types:
             return self._argspec.types[name], True

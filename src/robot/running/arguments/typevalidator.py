@@ -25,6 +25,8 @@ class TypeValidator(object):
         self._argspec = argspec
 
     def validate(self, types):
+        if types is None:
+            return None
         if not types:
             return {}
         if is_dict_like(types):
