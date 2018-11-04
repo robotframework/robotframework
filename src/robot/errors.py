@@ -147,7 +147,7 @@ class ExecutionStatus(RobotError):
             return True
         if self.keyword_timeout:
             return False
-        if not ignore_teardown:
+        if not ignore_teardown and teardown:
             return teardown
         return self.continue_on_failure
 
