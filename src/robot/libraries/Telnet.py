@@ -27,6 +27,7 @@ except ImportError:
     pyte = None
 
 from robot.api import logger
+from robot.api.deco import keyword
 from robot.utils import (ConnectionCache, is_bytes, is_string, is_truthy,
                          is_unicode, secs_to_timestr, seq2str, timestr_to_secs)
 from robot.version import get_version
@@ -368,6 +369,7 @@ class Telnet(object):
         # handlers when it imports the library.
         return getattr(self._conn or self._get_connection(), name)
 
+    @keyword(types=None)
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False,
                         encoding=None, encoding_errors=None,
@@ -607,6 +609,7 @@ class TelnetConnection(telnetlib.Telnet):
     def _prompt_is_set(self):
         return self._prompt[0] is not None
 
+    @keyword(types=None)
     def set_encoding(self, encoding=None, errors=None):
         """Sets the encoding to use for `writing and reading` in the current connection.
 
