@@ -102,7 +102,7 @@ def get_selection_from_user(message, *values):
     the options given to the user.
 
     Example:
-    | ${username} = | Get Selection From User | Select user name | user1 | user2 | admin |
+    | ${user} = | Get Selection From User | Select user | user1 | user2 | admin |
     """
     return _validate_user_input(SelectionDialog(message, values))
 
@@ -110,13 +110,16 @@ def get_selection_from_user(message, *values):
 def get_selections_from_user(message, *values):
     """Pauses test execution and asks user to select multiple values.
 
-    The selected values are returned. Pressing ``Cancel`` fails the keyword.
+    The selected values are returned as a list. Selecting no values is OK
+    and in that case the returned list is empty. Pressing ``Cancel`` fails
+    the keyword.
 
     ``message`` is the instruction shown in the dialog and ``values`` are
     the options given to the user.
 
     Example:
-    | ${username} = | Get Selections From User | Select user name | user1 | user2 | admin |
+    | ${users} = | Get Selections From User | Select users | user1 | user2 | admin |
+
     New in Robot Framework 3.1.
     """
     return _validate_user_input(MultipleSelectionDialog(message, values))

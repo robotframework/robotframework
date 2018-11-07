@@ -206,7 +206,8 @@ class MultipleSelectionDialog(_WpfDialog):
         return self._listbox
 
     def _get_value(self):
-        return sorted(self._listbox.SelectedItems, key=list(self._listbox.Items).index)
+        return sorted(self._listbox.SelectedItems,
+                      key=list(self._listbox.Items).index)
 
 
 class PassFailDialog(_WpfDialog):

@@ -52,7 +52,7 @@ Get Value From User Exited
 Get Selection From User
     ${value} =    Get Selection From User
     ...    Select 'value' and press OK.\n\nAlso verify that selector is resized properly.
-    ...    zip    zap    - - - - -    value    - - - - -
+    ...    zip    zap    v v v    value    ^ ^ ^
     ...    This is a really long string and the window should change the size properly to content.
     Should Be Equal    ${value}    value
 
@@ -66,15 +66,18 @@ Get Selection From User Exited
 
 Get Selections From User
     ${values}=    Get Selections From User
-    ...    Select 'value2' and 'value3' and press OK.
-    ...    value    value2    value3    value4
-    ${expected values}=    Create List    value2    value3
+    ...    Select 'FOO', 'BAR', and 'ZAP' and press OK.\n\nAlso verify that selector is resized properly.
+    ...    1    FOO    3    4    BAR    6    ZAP    7
+    ...    This is a really long string and the window should change the size properly to content.
+    Should Be True    type($values) is list
+    ${expected values}=    Create List    FOO    BAR    ZAP
     Lists Should Be Equal    ${values}    ${expected values}
 
 Get Selections From User When No Input Provided
     ${values}=    Get Selections From User
     ...    Select no value and press OK.
     ...    value    value2    value3    value4
+    Should Be True    type($values) is list
     ${expected values}=    Create List
     Lists Should Be Equal    ${values}    ${expected values}
 
@@ -89,9 +92,8 @@ Get Selections From User Exited
 Multiple dialogs in a row
     [Documentation]  FAIL No value provided by user.
     Pause Execution    Verify that dialog is closed immediately.\n\nAfter pressing Ok.
-    Sleep    1s
+    Sleep    0.5s
     Get Value From User    Verify that dialog is closed immediately.\n\nAfter pressing Cancel.
-    [Teardown]    Sleep    1s
 
 Dialog and timeout
     [Timeout]  1s
