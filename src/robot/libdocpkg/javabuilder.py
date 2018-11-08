@@ -16,7 +16,8 @@
 import sys
 
 from robot.errors import DataError
-from robot.utils import normalize, split_tags_from_doc, printable_name
+from robot.utils import (JAVA_VERSION, normalize, split_tags_from_doc,
+                         printable_name)
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -118,7 +119,7 @@ def ClassDoc(path):
     jdoctool = JavadocTool.make0(context)
     filter = ModifierFilter(PUBLIC)
     java_names = List.of(path)
-    if sys.platform[4:7] < '1.8':  # API changed in Java 8
+    if JAVA_VERSION < (1, 8):  # API changed in Java 8
         root = jdoctool.getRootDocImpl('en', 'utf-8', filter, java_names,
                                        List.nil(), False, List.nil(),
                                        List.nil(), False, False, True)
