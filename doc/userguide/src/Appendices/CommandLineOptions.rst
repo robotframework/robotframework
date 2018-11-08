@@ -43,6 +43,7 @@ Command line options for test execution
   --logtitle <title>      `Sets a title`_ for the generated test log.
   --reporttitle <title>   `Sets a title`_ for the generated test report.
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
+  --maxerrorlines <lines>  Sets the number of `error lines`_ shown in reports when tests fail.
   -L, --loglevel <level>  `Sets the threshold level`_ for logging. Optionally
                           the default `visible log level`_ can be given
                           separated with a colon (:).
@@ -58,7 +59,7 @@ Command line options for test execution
   --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_
                           in the generated log file.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
-  --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
+  --warnonskippedfiles    Deprecated. Nowadays all skipped files are reported.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
                           in test cases. Error codes are returned normally.
   --runemptysuite         Executes tests also if the selected `test suites are empty`_.
@@ -81,7 +82,7 @@ Command line options for test execution
   -K, --consolemarkers <auto|on|off>  Show `markers on the console`_ when top level
                                       keywords in a test case end.
   -P, --pythonpath <path>  Additional locations to add to the `module search path`_.
-  -E, --escape <what:with>   `Escapes characters`_ that are problematic in the console.
+  -E, --escape <what:with>   Deprecated. Use console escape mechanism instead.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
   --version               Prints the `version information`_.
@@ -136,7 +137,7 @@ Command line options for post-processing outputs
   --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   -C, --consolecolors <auto|on|ansi|off>  `Specifies are colors`_ used on the console.
   -P, --pythonpath <path>   Additional locations to add to the `module search path`_.
-  -E, --escape <what:with>  `Escapes characters`_ that are problematic in the console.
+  -E, --escape <what:with>   Deprecated. Use console escape mechanism instead.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
   --version               Prints the `version information`_.
@@ -166,6 +167,7 @@ Command line options for post-processing outputs
 .. _Split log file: `Splitting logs`_
 .. _Sets a title: `Setting titles`_
 .. _Sets background colors: `Setting background colors`_
+.. _error lines: `Limiting error message length in reports`_
 
 .. _Sets the threshold level: `Setting log level`_
 .. _levels to show: `Configuring displayed suite statistics`_
@@ -176,13 +178,11 @@ Command line options for post-processing outputs
 .. _external links: `Creating links from tag names`_
 
 .. _Sets a listener: `Setting listeners`_
-.. _an invalid file is skipped: `Warning on invalid files`_
 .. _test suites are empty: `When no tests match selection`_
 .. _empty test suites: `test suites are empty`_
 .. _Sets the width: `Console width`_
 .. _Specifies are colors: `Console colors`_
 .. _markers on the console: `Console markers`_
-.. _Escapes characters: `Escaping complicated characters`_
 .. _read more arguments: `Argument files`_
 .. _usage instructions: `Getting help and version information`_
 .. _version information: `usage instructions`_

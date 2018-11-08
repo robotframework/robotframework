@@ -27,6 +27,7 @@ except ImportError:
     pyte = None
 
 from robot.api import logger
+from robot.api.deco import keyword
 from robot.utils import (ConnectionCache, is_bytes, is_string, is_truthy,
                          is_unicode, secs_to_timestr, seq2str, timestr_to_secs)
 from robot.version import get_version
@@ -172,23 +173,12 @@ class Telnet(object):
     | `Set Encoding` | ISO-8859-15 |
     | `Set Encoding` | errors=ignore |
 
-    Using UTF-8 encoding by default and being able to configure the encoding
-    are new features in Robot Framework 2.7.6. In earlier versions only ASCII
-    was supported and encoding errors were silently ignored. Robot Framework
-    2.7.7 added a possibility to specify the error handler, changed the
-    default behavior back to ignoring encoding errors, and added the
-    possibility to disable encoding.
-
     == Default log level ==
 
     Default log level specifies the log level keywords use for `logging` unless
     they are given an explicit log level. The default value is ``INFO``, and
     changing it, for example, to ``DEBUG`` can be a good idea if there is lot
     of unnecessary output that makes log files big.
-
-    Configuring default log level in `importing` and with `Open Connection`
-    are new features in Robot Framework 2.7.6. In earlier versions only
-    `Set Default Log Level` could be used.
 
     == Terminal type ==
 
@@ -197,14 +187,10 @@ class Telnet(object):
     desired, the terminal type can be configured in `importing` and with
     `Open Connection`.
 
-    New in Robot Framework 2.8.2.
-
     == Window size ==
 
     Window size for negotiation with the server can be configured when
     `importing` the library and with `Open Connection`.
-
-    New in Robot Framework 2.8.2.
 
     == USER environment variable ==
 
@@ -214,12 +200,10 @@ class Telnet(object):
     to define the desired username. The option ``environ_user`` can be used in
     `importing` and with `Open Connection`.
 
-    New in Robot Framework 2.8.2.
-
     = Terminal emulation =
 
-    Starting from Robot Framework 2.8.2, Telnet library supports terminal
-    emulation with [https://pyte.readthedocs.io|Pyte]. Terminal emulation
+    Telnet library supports terminal
+    emulation with [http://pyte.readthedocs.io|Pyte]. Terminal emulation
     will process the output in a virtual screen. This means that ANSI escape
     codes, like cursor movements, and also control characters, like
     carriage returns and backspaces, have the same effect on the result as they
@@ -261,14 +245,14 @@ class Telnet(object):
     and ``WARN``. Levels below ``INFO`` are not shown in log files by default
     whereas warnings are shown more prominently.
 
-    The [http://docs.python.org/2/library/telnetlib.html|telnetlib module]
+    The [http://docs.python.org/library/telnetlib.html|telnetlib module]
     used by this library has a custom logging system for logging content it
     sends and receives. By default these messages are written using ``TRACE``
-    level. Starting with Robot Framework 2.8.7 the level is configurable
-    with the ``telnetlib_log_level`` option either in the library initialization,
-    to the `Open Connection` or by using the `Set Telnetlib Log Level`
-    keyword to the active connection. Special level ``NONE`` con be used to
-    disable the logging altogether.
+    level, but the level is configurable with the ``telnetlib_log_level``
+    option either in the library initialization, to the `Open Connection`
+    or by using the `Set Telnetlib Log Level` keyword to the active
+    connection. Special level ``NONE`` con be used to disable the logging
+    altogether.
 
     = Time string format =
 
@@ -282,11 +266,10 @@ class Telnet(object):
 
     Some keywords accept arguments that are handled as Boolean values true or
     false. If such an argument is given as a string, it is considered false if
-    it is either an empty string or case-insensitively equal to ``false``,
-    ``none`` or ``no``. Other strings are considered true regardless
+    it is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or
+    ``0``, case-insensitively. Other strings are considered true regardless
     their value, and other argument types are tested using the same
-    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
-    as in Python].
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
     | `Open Connection` | lolcathost | terminal_emulation=True    | # Strings are generally true.    |
@@ -300,9 +283,8 @@ class Telnet(object):
     | `Open Connection` | lolcathost | terminal_emulation=${EMPTY} | # Empty string is false.       |
     | `Open Connection` | lolcathost | terminal_emulation=${FALSE} | # Python ``False`` is false.   |
 
-    Prior to Robot Framework 2.9, all non-empty strings, including ``false``
-    and ``no``, were considered to be true. Considering ``none`` false is
-    new in Robot Framework 3.0.3.
+    Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
+    considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
     """
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
@@ -387,6 +369,7 @@ class Telnet(object):
         # handlers when it imports the library.
         return getattr(self._conn or self._get_connection(), name)
 
+    @keyword(types=None)
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False,
                         encoding=None, encoding_errors=None,
@@ -602,7 +585,7 @@ class TelnetConnection(telnetlib.Telnet):
         | `Set Prompt` | ${prompt} | ${regexp} |
 
         See the documentation of
-        [http://docs.python.org/2/library/re.html|Python re module]
+        [http://docs.python.org/library/re.html|Python re module]
         for more information about the supported regular expression syntax.
         Notice that possible backslashes need to be escaped in Robot Framework
         test data.
@@ -626,6 +609,7 @@ class TelnetConnection(telnetlib.Telnet):
     def _prompt_is_set(self):
         return self._prompt[0] is not None
 
+    @keyword(types=None)
     def set_encoding(self, encoding=None, errors=None):
         """Sets the encoding to use for `writing and reading` in the current connection.
 
@@ -644,9 +628,6 @@ class TelnetConnection(telnetlib.Telnet):
 
         If terminal emulation is used, the encoding can not be changed on an open
         connection.
-
-        Setting encoding in general is a new feature in Robot Framework 2.7.6.
-        Specifying the error handler and disabling encoding were added in 2.7.7.
         """
         self._verify_connection()
         if self._terminal_emulator:
@@ -675,8 +656,6 @@ class TelnetConnection(telnetlib.Telnet):
 
         Note that ``telnetlib`` can be very noisy thus using the level ``NONE``
         can shutdown the messages generated by this library.
-
-        New in Robot Framework 2.8.7.
         """
         self._verify_connection()
         old = self._telnetlib_log_level
@@ -756,9 +735,7 @@ class TelnetConnection(telnetlib.Telnet):
         2) If the prompt is not set, this keywords sleeps until ``login_timeout``
         and then reads all the output available on the connection. If the
         output contains ``login_incorrect`` text, login is considered failed
-        and also this keyword fails. Both of these configuration parameters
-        were added in Robot Framework 2.7.6. In earlier versions they were
-        hard coded.
+        and also this keyword fails.
 
         See `Configuration` section for more information about setting
         newline, timeout, and prompt.
@@ -886,7 +863,8 @@ class TelnetConnection(telnetlib.Telnet):
 
     def _get_control_character(self, int_or_name):
         try:
-            return chr(int(int_or_name))
+            ordinal = int(int_or_name)
+            return bytes(bytearray([ordinal]))
         except ValueError:
             return self._convert_control_code_name_to_character(int_or_name)
 
@@ -1016,7 +994,7 @@ class TelnetConnection(telnetlib.Telnet):
         as ``loglevel`` similarly as with `Read Until` keyword.
 
         See the documentation of
-        [http://docs.python.org/2/library/re.html|Python re module]
+        [http://docs.python.org/library/re.html|Python re module]
         for more information about the supported regular expression syntax.
         Notice that possible backslashes need to be escaped in Robot Framework
         test data.
@@ -1058,8 +1036,6 @@ class TelnetConnection(telnetlib.Telnet):
         regular expression is stripped away.
 
         See `Logging` section for more information about log levels.
-
-        Optionally stripping prompt is a new feature in Robot Framework 2.8.7.
         """
         if not self._prompt_is_set():
             raise RuntimeError('Prompt is not set.')
@@ -1185,7 +1161,7 @@ class TelnetConnection(telnetlib.Telnet):
             return False
         if not pyte:
             raise RuntimeError("Terminal emulation requires pyte module!\n"
-                               "https://pypi.python.org/pypi/pyte/")
+                               "http://pypi.python.org/pypi/pyte/")
         return TerminalEmulator(window_size=self._window_size,
                                 newline=self._newline)
 

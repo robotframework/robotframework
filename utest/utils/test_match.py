@@ -1,7 +1,7 @@
 import unittest
 
-from robot.utils import eq, Matcher, MultiMatcher, IRONPYTHON
-from robot.utils.asserts import assert_equal
+from robot.utils import eq, Matcher, MultiMatcher, IRONPYTHON, PY2
+from robot.utils.asserts import assert_equal, assert_raises
 
 
 class TestEq(unittest.TestCase):
@@ -91,9 +91,57 @@ class TestMatcher(unittest.TestCase):
     def test_bytes(self):
         if IRONPYTHON:
             return
-        assert Matcher(b'foo').match(b'foo')
-        assert Matcher(b'f*').match(b'foo')
-        assert Matcher(b'f.*', regexp=True).match(b'foo')
+        elif PY2:
+            assert Matcher(b'foo').match(b'foo')
+            assert Matcher(b'f*').match(b'foo')
+            assert Matcher('f*').match(b'foo')
+            assert Matcher(b'f*').match('foo')
+            assert Matcher(b'f.*', regexp=True).match(b'foo')
+        else:
+            assert_raises(TypeError, Matcher, b'foo')
+            assert_raises(TypeError, Matcher('foo').match, b'foo')
+
+    def test_glob_sequence(self):
+        pattern = '[Tre]est [CR]at'
+        self._matches('Test Cat', pattern)
+        self._matches('Rest Rat', pattern)
+        self._matches('rest Rat', pattern, caseless=False)
+        self._matches_not('rest rat', pattern, caseless=False)
+        self._matches_not('Test Bat', pattern)
+        self._matches_not('Best Bat', pattern)
+
+    def test_glob_sequence_negative(self):
+        pattern = '[!Tre]est [!CR]at'
+        self._matches_not('Test Bat', pattern)
+        self._matches_not('Best Rat', pattern)
+        self._matches('Best Bat', pattern)
+
+    def test_glob_range(self):
+        pattern = 'GlobTest[1-2]'
+        self._matches('GlobTest1', pattern)
+        self._matches('GlobTest2', pattern)
+        self._matches_not('GlobTest3', pattern)
+
+    def test_glob_range_negative(self):
+        pattern = 'GlobTest[!1-2]'
+        self._matches_not('GlobTest1', pattern)
+        self._matches_not('GlobTest2', pattern)
+        self._matches('GlobTest3', pattern)
+
+    def test_spaceless(self):
+        for text in ['fbar', 'foobar']:
+            assert Matcher('f*bar').match(text)
+            assert Matcher('f * b a r').match(text)
+            assert Matcher('f*bar', spaceless=False).match(text)
+        for text in ['f b a r', 'f o o b a r', '   foo bar   ', 'fbar\n']:
+            assert Matcher('f*bar').match(text)
+            assert not Matcher('f*bar', spaceless=False).match(text)
+
+    def test_ipy_bug_workaround(self):
+        # https://github.com/IronLanguages/ironpython2/issues/515
+        matcher = Matcher("'12345678901234567890'")
+        assert matcher.match("'12345678901234567890'")
+        assert not matcher.match("'xxx'")
 
     def _matches(self, string, pattern, **config):
         assert Matcher(pattern, **config).match(string), pattern
@@ -165,6 +213,7 @@ class TestMultiMatcher(unittest.TestCase):
         assert matcher.match_any(['jam', 'is', 'hillo'])
         assert not matcher.match_any(('no', 'match', 'here'))
         assert not matcher.match_any(())
+
 
 if __name__ == '__main__':
     unittest.main()

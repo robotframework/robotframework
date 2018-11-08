@@ -1,5 +1,5 @@
 *Setting
-Document	Test suite in TSV file
+Documentation	Test suite in TSV file
 Resource	../resources/html_resource.html			
 Resource	../resources/rest_resource.rst			
 Resource	../resources/txt_resource.txt			
@@ -9,7 +9,7 @@ ${msg}	*ERROR*
 
 *Test Case	
 TSV Passing	No operation
-TSV Failing	[Document]	FAIL	**ERROR**
+TSV Failing	[Documentation]	FAIL	**ERROR**
 	Failing	*${msg}*
 HTML Resource	Keyword from HTML resource		
 	Keyword from HTML resource 2		

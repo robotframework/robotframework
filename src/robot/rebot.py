@@ -80,6 +80,10 @@ about Robot Framework in general, go to http://robotframework.org.
 Options
 =======
 
+    --rpa                 Turn on generic automation mode. Mainly affects
+                          terminology so that "test" is replaced with "task"
+                          in logs and reports. By default the mode is got
+                          from output files. New in RF 3.1.
  -R --merge               When combining results, merge outputs together
                           instead of putting them under a new top level suite.
                           Example: rebot --merge orig.xml rerun.xml
@@ -97,8 +101,8 @@ Options
  -t --test name *         Select test cases by name or long name. Name is case
                           and space insensitive and it can also be a simple
                           pattern where `*` matches anything and `?` matches
-                          any char. If using `*` and `?` in the console is
-                          problematic, see --escape and --argumentfile.
+                          any char.
+    --task name *         Alias to --test. Especially applicable with --rpa.
  -s --suite name *        Select test suites by name. When this option is used
                           with --test, --include or --exclude, only test cases
                           in matching suites and also matching other filtering
@@ -261,15 +265,7 @@ Options
                           Note that colors do not work with Jython on Windows.
  -P --pythonpath path *   Additional locations to add to the module search path
                           that is used when importing Python based extensions.
- -E --escape what:with *  Escape characters which are problematic in console.
-                          `what` is the name of the character to escape and
-                          `with` is the string to escape it with. Note that
-                          all given arguments, incl. data sources, are escaped
-                          so escape characters ought to be selected carefully.
-                          <---------------------ESCAPES----------------------->
-                          Examples:
-                          --escape space:_ --metadata X:Value_with_spaces
-                          -E space:SP -E quot:Q -v var:QhelloSPworldQ
+ -E --escape what:with *  Deprecated. Use console escape mechanism instead.
  -A --argumentfile path *  Text file to read more arguments from. File can have
                           both options and data sources one per line. Contents
                           do not need to be escaped but spaces in the beginning
@@ -279,8 +275,7 @@ Options
                           |  --include regression
                           |  --name Regression Tests
                           |  # This is a comment line
-                          |  my_tests.html
-                          |  path/to/test/directory/
+                          |  output.xml
  -h -? --help             Print usage instructions.
  --version                Print version information.
 

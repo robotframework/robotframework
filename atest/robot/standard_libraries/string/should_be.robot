@@ -10,11 +10,11 @@ Should Be String Negative
     Check Test Case    ${TESTNAME}
 
 Bytes are strings in Python 2
-    [Tags]    no-py3    no-ipy
+    [Tags]    require-py2    no-ipy
     Check Test Case    ${TESTNAME}
 
 Bytes are not strings in Python 3
-    [Tags]    no-py2
+    [Tags]    require-py3
     Check Test Case    Bytes are not strings in Python 3 and IronPython
 
 Bytes are not strings in IronPython

@@ -13,11 +13,11 @@ Debugfile
     Debug file should contain    ${content}           + START SUITE: Normal
     Debug file should contain    ${content}           +- START TEST: First One
     Debug file should contain    ${content}
-    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Test 1 ]
+    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Test 1 ?
     ...      ${TIMESTAMP} - INFO - Test 1
     ...      ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
     Debug file should contain    ${content}
-    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]
+    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Logging with debug level | DEBUG ?
     ...      ${TIMESTAMP} - DEBUG - Logging with debug level
     ...      ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
     Debug file should contain    ${content}    + END SUITE: Normal
@@ -31,11 +31,11 @@ Debugfile Log Level Should Always Be Debug
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -b debug.txt -o o.xml --loglevel WARN  ${TESTFILE}
     ${content}=     Get File     ${CLI OUTDIR}/debug.txt
     Debug file should contain    ${content}
-    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Test 1 ]
+    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Test 1 ?
     ...    ${TIMESTAMP} - INFO - Test 1
     ...    ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
     Debug file should contain    ${content}
-    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]
+    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Logging with debug level | DEBUG ?
     ...    ${TIMESTAMP} - DEBUG - Logging with debug level
     ...    ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
 
@@ -55,7 +55,7 @@ Writing Non-ASCII To Debugfile
     Stderr Should Be Empty
     ${content} =    Get File    ${CLI OUTDIR}/debug.txt
     Debugfile should contain    ${content}    ${TIMESTAMP} - FAIL - Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ
-    Debugfile should contain    ${content}    ${TIMESTAMP} - INFO - +- START TEST: Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо [ ]
+    Debugfile should contain    ${content}    ${TIMESTAMP} - INFO - +- START TEST: Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо ? ?
 
 No Debugfile
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile NoNe -o o.xml  ${TESTFILE}

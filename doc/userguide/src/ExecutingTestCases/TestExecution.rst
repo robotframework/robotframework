@@ -120,8 +120,8 @@ directory, it is possible to add prefixes like :file:`01` and
 included in the generated test suite name if they are separated from
 the base name of the suite with two underscores::
 
-   01__my_suite.html -> My Suite
-   02__another_suite.html -> Another Suite
+   01__my_suite.robot -> My Suite
+   02__another_suite.robot -> Another Suite
 
 If the alphabetical ordering of test suites inside suites is
 problematic, a good workaround is giving them separately in the
@@ -137,8 +137,8 @@ Passing execution
 ~~~~~~~~~~~~~~~~~
 
 Typically test cases, setups and teardowns are considered passed if
-all keywords they contain are executed and none of them fail. From
-Robot Framework 2.8 onwards, it is also possible to use BuiltIn_ keywords
+all keywords they contain are executed and none of them fail. It is
+also possible to use BuiltIn_ keywords
 :name:`Pass Execution` and :name:`Pass Execution If` to stop execution with
 PASS status and skip the remaining keywords.
 
@@ -252,17 +252,14 @@ have finished, but so that logs and reports are created. Different ways how
 to accomplish this are explained below. In all these cases the remaining
 test cases are marked failed.
 
-Starting from Robot Framework 2.9 the tests that are automatically failed get
-`robot-exit` tag and the generated report will include `NOT robot-exit`
-`combined tag pattern`__ to easily see those tests that were not skipped. Note
-that the test in which the exit happened does not get the `robot-exit` tag.
+The tests that are automatically failed get `robot:exit` tag and
+the generated report will include `NOT robot:exit` `combined tag pattern`__
+to easily see those tests that were not skipped. Note that the test in which
+the exit happened does not get the `robot:exit` tag.
 
-.. note:: The prefix used with the `reserved tags`_ is likely to be changed
-          to `robot:` in the future, which means the `robot-exit` tag will be
-          renamed. See issue `#2539`__ for more details.
+.. note:: Prior to Robot Framework 3.1, the special tag was named `robot-exit`.
 
 __ `Generating combined tag statistics`_
-__ https://github.com/robotframework/robotframework/issues/2539
 
 Pressing `Ctrl-C`
 ~~~~~~~~~~~~~~~~~
@@ -315,8 +312,6 @@ themselves do not fail tests or affect execution otherwise. If
 fatal and execution stopped so that remaining tests are marked failed. With
 parsing errors encountered before execution even starts, this means that no
 tests are actually run.
-
-.. note:: :option:`--exitonerror` is new in Robot Framework 2.8.6.
 
 __ `Errors and warnings during execution`_
 

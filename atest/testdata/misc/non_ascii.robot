@@ -5,6 +5,7 @@ Library         NonAsciiLibrary
 Non-ASCII Log Messages
     Print NonASCII Strings
     Log    Français
+    Sleep    0.001
 
 Non-ASCII Return Value
     ${msg} =    Evaluate    u'Fran\\xe7ais'

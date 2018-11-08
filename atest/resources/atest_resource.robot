@@ -8,7 +8,6 @@ Library           String
 Library           TestCheckerLibrary
 Library           TestHelper           # Combine with TestCheckerLibrary?
 Library           XML
-Library           read_interpreter.py
 Variables         atest_variables.py
 
 *** Variables ***
@@ -174,9 +173,19 @@ File Should Contain Match
     ${exp} =    Catenate    @{expected}
     Should Match    ${content}    *${exp}*
 
+File Should Start With
+    [Arguments]    ${path}    @{expected}
+    ${content} =    Get Output File    ${path}
+    ${exp} =    Catenate    @{expected}
+    Should Start With    ${content}    ${exp}
+
 Stderr Should Be Equal To
     [Arguments]    @{expected}
     File Should Be Equal To    ${STDERR FILE}    @{expected}
+
+Stderr Should Start With
+    [Arguments]    @{expected}
+    File Should Start With    ${STDERR FILE}    @{expected}
 
 Stderr Should Match
     [Arguments]    @{expected}

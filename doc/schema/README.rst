@@ -26,14 +26,9 @@ General structure
 These are the main elements of the XML output with descriptions of their
 sub-elements. Unless stated otherwise, all attributes are optional. Additionally
 ``rebot`` does not care of the order of the XML elements, except for the order
-of suite, test, and kw elements.
-
-Before Robot Framework 2.9 all elements and attributes were always written to
-output, regardless whether they had a value. For example, a keyword that did
-not have a documentation would still have an empty ``<doc>`` element and every
-keyword without a timeout had an empty ``timeout`` attribute. Starting from
-version 2.9 Robot Framework no longer writes empty elements or attributes to
-the output XML.
+of suite, test, and kw elements. Starting from Robot Framework 2.9, empty
+elements and attributes are not written to the output XML. This means that,
+for example, test case having no documentation has no ``<doc>`` element either.
 
 robot - root element
     * ``suite`` - root element always has one suite which contains the subsuites and tests

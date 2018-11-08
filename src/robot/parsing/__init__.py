@@ -51,7 +51,8 @@ Example
 from .model import TestData, TestCaseFile, TestDataDirectory, ResourceFile
 from . import populators
 
-VALID_EXTENSIONS = tuple(populators.READERS)
+
+TEST_EXTENSIONS = set(populators.READERS)
 
 
 def disable_curdir_processing(method):

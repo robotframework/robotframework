@@ -5,7 +5,7 @@ Resource          remove_keywords_resource.robot
 
 *** Test Cases ***          rem1      rem2      etc.
 
-Rational                    FOR       WUKS
+Rational                    \FOR      WUKS
                             PASSED    FOR
                             PASSED    WUKS
                             PASSED    WUKS      FOR

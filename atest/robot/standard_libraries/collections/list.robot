@@ -316,3 +316,6 @@ List Should Not Contain Value, Value Found and Own Error Message Regexp
 
 List Should Not Contain Value, Value Found and Own Error Message Glob
     Check Test Case    ${TEST NAME}
+
+Check List Error
+    Check Test Case    ${TEST NAME}

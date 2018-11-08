@@ -7,7 +7,6 @@ Test Template   Run And Check Include And Exclude
 *** Variables ***
 ${DATA SOURCE}  tags/include_and_exclude.robot
 ${INPUT FILE}   %{TEMPDIR}${/}robot-test-tagstat.xml
-${ESCAPES}      -E star:STAR -E quest:QUEST -E space:SP
 ${F}            force
 ${I1}           incl1
 ${I2}           incl 2
@@ -30,11 +29,11 @@ Matching And Non Matching Includes
     --TagStatInclude INCL3 --TagStatInclude nonexisting    ${I3}
 
 More Includes
-    --TagStatI incl2 --TagStatI inclSP3 --TagStatI _ --TagStatI incl2    ${I2}    ${I3}
+    --TagStatI incl2 --TagStatI "incl 3" --TagStatI _ --TagStatI incl2    ${I2}    ${I3}
 
 Include With Patterns
     --TagStatInc incl_?    @{INCL}
-    --TagStatInc STARcl3 --TagStatInc iSTAR2    ${E3}    ${I2}    ${I3}
+    --TagStatInc *cl3 --TagStatInc i*2    ${E3}    ${I2}    ${I3}
 
 One Exclude
     --tagstatexclude excl1    ${E2}    ${E3}    ${F}    @{INCL}
@@ -47,10 +46,10 @@ More Excludes
 
 Exclude With Patterns
     --TagStatExc exc??    ${F}   @{INCL}
-    --TagStatExc STAR3 --TagStatE eSTAR2 --TagStatE eSTAR1    ${F}    ${I1}    ${I2}
+    --TagStatExc *3 --TagStatE e*2 --TagStatE e*1    ${F}    ${I1}    ${I2}
 
 Include And Exclude
-    --TagStatInc STAR_2 --TagStatExc EXCL_STAR    ${I2}
+    --TagStatInc *_2 --TagStatExc EXCL_*    ${I2}
 
 Non Matching Include
     --TagStatInclude nonex
@@ -65,7 +64,7 @@ Non Matching Include And Exclude
 
 Run And Check Include And Exclude
     [Arguments]    ${params}    @{tags}
-    Run Rebot    ${params} ${ESCAPES}    ${INPUT FILE}
+    Run Rebot    ${params}    ${INPUT FILE}
     Stderr Should Be Empty
     Tag Statistics Should Be    @{tags}
 

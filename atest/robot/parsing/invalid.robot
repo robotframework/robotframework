@@ -5,7 +5,7 @@ Resource          data_formats/formats_resource.robot
 ${PARSING}            parsing
 ${NO TESTS}           ${PARSING}${/}notests
 ${EMPTY TC TABLE}     ${PARSING}${/}empty_testcase_table.robot
-${NO TC TABLE MSG}    File has no test case table.
+${NO TC TABLE MSG}    File has no tests or tasks.
 
 *** Test Cases ***
 Invalid Input
@@ -19,17 +19,16 @@ HTML File Not Containing Tests
 
 Directory Containing No Test Cases
     Run Tests Without Processing Output    ${EMPTY}    ${NO TESTS}
-    Check Stderr Contains    [ ERROR ] Suite 'Notests' contains no tests.${USAGE_TIP}
+    Stderr Should Be Equal To    [ ERROR ] Suite 'Notests' contains no tests.${USAGE_TIP}\n
 
 File Containing No Test Cases
     Run Tests Without Processing Output    ${EMPTY}    ${EMPTY TC TABLE}
-    Check Stderr Contains    [ ERROR ] Suite 'Empty Testcase Table' contains no tests.${USAGE_TIP}
+    Stderr Should Be Equal To    [ ERROR ] Suite 'Empty Testcase Table' contains no tests.${USAGE_TIP}\n
 
 Multisource Containing No Test Cases
-    Run Tests Without Processing Output    ${EMPTY}    ${HTMLDIR}/empty.html ${TSVDIR}/empty.tsv
-    ${html} =    Normalize Path    ${DATADIR}/${HTMLDIR}/empty.html
-    ${tsv} =    Normalize Path    ${DATADIR}/${TSVDIR}/empty.tsv
-    Check Stderr Contains    [ ERROR ] Parsing '${html}' failed: ${NO TC TABLE MSG}
+    Run Tests Without Processing Output    ${EMPTY}    ${ROBOTDIR}/empty.robot ${ROBOTDIR}/sample.robot
+    ${path} =    Normalize Path    ${ROBOTDIR}/empty.robot
+    Stderr Should Be Equal To    [ ERROR ] Parsing '${path}' failed: ${NO TC TABLE MSG}${USAGE TIP}\n
 
 Empty HTML File
     Check Parsing Error    empty.html    ${NO TC TABLE MSG}    ${HTMLDIR}/empty.html
@@ -39,16 +38,6 @@ Empty TSV File
 
 Empty TXT File
     Check Parsing Error    empty.txt    ${NO TC TABLE MSG}    ${TXTDIR}/empty.txt
-
-Run Suite Dir And Warn On Skipped
-    Run Tests    --warnonskippedfiles    ${HTMLDIR}
-    ${empty} =    Join Path    ${DATADIR}    ${HTMLDIR}    empty.html
-    Check Syslog Contains    Parsing data source '${empty}' failed:    File has no test case table.
-    Check Log Message    ${ERRORS.msgs[0]}    Parsing data source '${empty}' failed: File has no test case table.    level=WARN
-    ${invalid} =    Join Path    ${DATADIR}    ${HTMLDIR}    invalid.html
-    Check Syslog Contains    Parsing data source '${invalid}' failed:    File has no test case table.
-    Check Log Message    ${ERRORS.msgs[1]}    Parsing data source '${invalid}' failed: File has no test case table.    level=WARN
-    Check Syslog Contains    Ignoring file or directory 'not_a_picture.jpg'.
 
 *** Keywords ***
 Check Parsing Error

@@ -25,7 +25,8 @@ class Output(AbstractLogger):
 
     def __init__(self, settings):
         AbstractLogger.__init__(self)
-        self._xmllogger = XmlLogger(settings.output, settings.log_level)
+        self._xmllogger = XmlLogger(settings.output, settings.log_level,
+                                    settings.rpa)
         self.listeners = Listeners(settings.listeners, settings.log_level)
         self.library_listeners = LibraryListeners(settings.log_level)
         self._register_loggers(DebugFile(settings.debug_file))

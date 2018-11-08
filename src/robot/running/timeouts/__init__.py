@@ -80,7 +80,7 @@ class _Timeout(Sortable):
             raise FrameworkError('Timeout is not active')
         timeout = self.time_left()
         error = TimeoutError(self._timeout_error,
-                             test_timeout=self.type == 'Test')
+                             test_timeout=isinstance(self, TestTimeout))
         if timeout <= 0:
             raise error
         executable = lambda: runnable(*(args or ()), **(kwargs or {}))
@@ -120,6 +120,11 @@ class _Timeout(Sortable):
 class TestTimeout(_Timeout):
     type = 'Test'
     _keyword_timeout_occurred = False
+
+    def __init__(self, timeout=None, message='', variables=None, rpa=False):
+        if rpa:
+            self.type = 'Task'
+        _Timeout.__init__(self, timeout, message, variables)
 
     def set_keyword_timeout(self, timeout_occurred):
         if timeout_occurred:

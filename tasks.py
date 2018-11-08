@@ -110,9 +110,9 @@ def library_docs(ctx, name):
 
     Args:
         name:  Name of the library or ``all`` to generate docs for all libs.
-               Name can be shortened as long as it is a unique prefix.
-               For example, ``b`` is equivalent to ``BuiltIn`` and ``di``
-               equivalent to ``Dialogs``.
+               Name is case-insensitive and can be shortened as long as it
+               is a unique prefix. For example, ``b`` is equivalent to
+               ``BuiltIn`` and ``di`` equivalent to ``Dialogs``.
     """
     libraries = ['BuiltIn', 'Collections', 'DateTime', 'Dialogs',
                  'OperatingSystem', 'Process', 'Screenshot', 'String',

@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation     NO RIDE because it could change WITH NAME format.
 Library           OperatingSystem
 Library           ParameterLibrary    before1    before2
 Library           ParameterLibrary    before1with    before2with    WITH NAME    Params

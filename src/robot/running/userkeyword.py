@@ -17,7 +17,7 @@ import os
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.utils import is_string, unic
+from robot.utils import getshortdoc, is_string, unic
 
 from .builder import ResourceFileBuilder
 from .arguments import EmbeddedArguments, UserKeywordArgumentParser
@@ -93,7 +93,7 @@ class UserKeywordHandler(object):
 
     @property
     def shortdoc(self):
-        return self.doc.splitlines()[0] if self.doc else ''
+        return getshortdoc(self.doc)
 
     def create_runner(self, name):
         return UserKeywordRunner(self)

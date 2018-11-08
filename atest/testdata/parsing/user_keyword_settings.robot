@@ -24,6 +24,9 @@ Documentation in multiple columns
 Documentation in multiple rows
     Documentation in multiple rows
 
+Short doc consists of first logical, not physical, line
+    Short doc consists of first logical, not physical, line
+
 Documentation with variables
     Documentation with variables
 
@@ -102,8 +105,20 @@ Documentation in multiple columns
 
 Documentation in multiple rows
     [DOCUMENTATION]    ${1}st line is shortdoc.
+    ...
     ...                Documentation for this user keyword
     ...                in\nmultiple\nlines
+    No Operation
+
+Short doc consists of first logical, not physical, line
+    [Documentation]    ${1}st logical line is shortdoc.
+    ...                It can be split to
+    ...                multiple
+    ...                physical
+    ...                lines.
+    ...
+    ...                Documentation after first empty row is considered
+    ...                documentation body and it is not included in short doc.
     No Operation
 
 Documentation with variables
@@ -111,8 +126,7 @@ Documentation with variables
     No Operation
 
 Documentation with non-existing variables
-    [Documentation]    Starting from RF ${2}.1 ${NONEX} variables are just
-    ...                left unchanged in all documentations.
+    [Documentation]    Starting from RF ${2}.1 ${NONEX} variables are left unchanged.
     No Operation
 
 Documentation with escaping
@@ -121,7 +135,7 @@ Documentation with escaping
 
 Arguments
     [Arguments]    ${arg1}    ${arg2}=default    @{varargs}    &{kwargs}
-    Log    ${arg1}-${arg2}-@{varargs}-&{kwargs}
+    Log Many    ${arg1}    ${arg2}    @{varargs}    &{kwargs}
 
 Teardown
     No Operation
@@ -143,9 +157,9 @@ Return using variables
     [Return]    ${ret}
 
 Return multiple
-    [A R G U M E N T S]    ${arg1}    ${arg2}
+    [ARGUMENTS]    ${arg1}    ${arg2}
     ${result} =    Evaluate    ${arg1} + ${arg2}
-    [R E T U R N]    ${arg1}    +    ${arg2}    =    ${result}
+    [RETURN]    ${arg1}    +    ${arg2}    =    ${result}
 
 Return with escaping
     [Return]    \${XXX}    c:\\temp    \    \\
@@ -159,7 +173,7 @@ Timeout with message
     No Operation
 
 Timeout with variables
-    [TIME OUT]    ${VERSION} DAYS
+    [TIMEout]    ${VERSION} DAYS
     No Operation
 
 Invalid timeout
@@ -175,6 +189,7 @@ Multiple settings
     [Return]    Hello ${name}!!
 
 Invalid passing
+    [Doc U Ment ation]    This is deprecated
     [Invalid Setting]    This is invalid
     No Operation
 

@@ -3,7 +3,7 @@ Library    Reloadable.py
 Library    StaticLibrary.py
 Library    module_library.py
 
-*** Testcases ***
+*** Test Cases ***
 Reload and add keyword
     Keyword should not exist    Added later
     Add keyword    Added later

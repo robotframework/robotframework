@@ -1,21 +1,21 @@
-***Ignore***
-This stuff should be ignored
+*** Error ***
+This table causes error and stuff inside it is ignored.
 
-***Settings***
-Documentation  NO RIDE: Here's invalid data on purpose
-Resource  invalid_tables_resource.robot
+*** Settings ***
+Documentation    Executing tests ought to work anyway.
+Resource         invalid_tables_resource.robot
 
 *** ***
 This kind of tables caused bug
 https://github.com/robotframework/robotframework/issues/793
 
-***TestCases***
-Test in valid plain text table
-    Keyword in valid plain text table
-    Keyword in valid plain text table in resource
+*** Test Cases ***
+Test in valid table
+    Keyword in valid table
+    Keyword in valid table in resource
 
-*one more table to ignore
+*one more table cause an error
 
 ***Keywords***
-Keyword in valid plain text table
-    Log    Keyword in valid plain text table
+Keyword in valid table
+    Log    Keyword in valid table

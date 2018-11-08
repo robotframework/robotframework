@@ -69,9 +69,10 @@ class DataRow(object):
         return datarow
 
     def starts_for_loop(self):
-        if self.head and self.head.startswith(':'):
-            return self.head.replace(':', '').replace(' ', '').upper() == 'FOR'
-        return False
+        head = self.head
+        if head.startswith(':'):
+            return head.replace(':', '').replace(' ', '').upper() == 'FOR'
+        return head == 'FOR'
 
     def starts_test_or_user_keyword_setting(self):
         head = self.head

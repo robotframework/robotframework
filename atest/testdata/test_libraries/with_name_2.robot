@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation     NO RIDE because it could change WITH NAME format.
 Library           OperatingSystem    WITH NAME    OS
 Library           ParameterLibrary    1    2    WITH NAME    Param1
 Library           ParameterLibrary    ${VAR}    ${42}    WITH NAME    Param2
@@ -8,7 +7,7 @@ Library           ParameterLibrary    whatever    WITH NAME
 Library           BuiltIn    WITH NAME    B2
 Library           module_library    WITH NAME    MOD1
 Library           pythonmodule.library    WITH NAME    mod 2
-Library           Example Java Library    WITH NAME    Java Lib
+Library           ExampleJavaLibrary    WITH NAME    Java Lib
 Library           javapkg.JavaPackageExample    WITH NAME    Java Pkg
 Library           MyLibFile.py    WITH NAME    Params
 Library           RunKeywordLibrary    WITH NAME    dynamic
@@ -54,14 +53,14 @@ Module Library
     Failing
 
 Java Library
-    [Documentation]    FAIL No keyword with name 'Example Java Library.Get Java Object' found.
+    [Documentation]    FAIL No keyword with name 'ExampleJavaLibrary.Get Java Object' found.
     ${s} =    returnStringFromLibrary    whatever
     BuiltIn.Should Be Equal    ${s}    whatever
     ${obj} =    Java Lib . Get Java Object    My Name
     BuiltIn.Should Be Equal    ${obj.name}    My Name
-    ${arr} =    Java Lib. Get String Array    foo    bar
+    ${arr} =    JavaLib.GetStringArray    foo    bar
     BuiltIn.Should Be Equal    ${arr[0]}    foo
-    Example Java Library.Get Java Object    This fails
+    ExampleJavaLibrary.Get Java Object    This fails
 
 Java Library In Package
     [Documentation]    FAIL No keyword with name 'javapkg.JavaPackageExample.whatever' found.

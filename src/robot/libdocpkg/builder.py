@@ -17,7 +17,7 @@ import os
 import sys
 
 from robot.errors import DataError
-from robot.parsing import VALID_EXTENSIONS as RESOURCE_EXTENSIONS
+from robot.parsing import TEST_EXTENSIONS
 from robot.utils import JYTHON
 
 from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder
@@ -30,6 +30,9 @@ if JYTHON:
 else:
     def JavaDocBuilder():
         raise DataError('Documenting Java test libraries requires Jython.')
+
+
+RESOURCE_EXTENSIONS = (TEST_EXTENSIONS | {'resource'})
 
 
 def DocumentationBuilder(library_or_resource):

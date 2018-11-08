@@ -22,5 +22,5 @@ Version
     Should Be Equal    ${result.rc}    ${251}
     Should Be Empty    ${result.stderr}
     Should Match Regexp    ${result.stdout}
-    ...    ^Rebot 3\\.\\d+(\\.\\d+)?((a|b|rc|.dev)\\d+)? \\((Python|Jython|IronPython|PyPy) [23]\\.[\\d.]+.* on .+\\)$
+    ...    ^Rebot 3\\.\\d(\\.\\d)?((a|b|rc)\\d)?(\\.dev\\d)? \\((Python|Jython|IronPython|PyPy) [23]\\.[\\d.]+.* on .+\\)$
     Should Be True    len($result.stdout) < 80    Too long version line

@@ -16,7 +16,7 @@
 from io import BytesIO
 
 from .htmlreader import HtmlReader
-from .txtreader import TxtReader
+from .robotreader import RobotReader
 
 
 def RestReader():
@@ -34,19 +34,19 @@ def RestReader():
                 })
             store = RobotDataStorage(doctree)
             if store.has_data():
-                return self._read_text(store.get_data(), rawdata)
-            return self._read_html(doctree, rawdata)
+                return self._read_text(store.get_data(), rawdata, rstfile.name)
+            return self._read_html(doctree, rawdata, rstfile.name)
 
-        def _read_text(self, data, rawdata):
-            txtfile = BytesIO(data.encode('UTF-8'))
-            return TxtReader().read(txtfile, rawdata)
+        def _read_text(self, data, rawdata, path):
+            robotfile = BytesIO(data.encode('UTF-8'))
+            return RobotReader().read(robotfile, rawdata, path)
 
-        def _read_html(self, doctree, rawdata):
+        def _read_html(self, doctree, rawdata, path):
             htmlfile = BytesIO()
             htmlfile.write(publish_from_doctree(
                 doctree, writer_name='html',
                 settings_overrides={'output_encoding': 'UTF-8'}))
             htmlfile.seek(0)
-            return HtmlReader().read(htmlfile, rawdata)
+            return HtmlReader().read(htmlfile, rawdata, path)
 
     return RestReader()

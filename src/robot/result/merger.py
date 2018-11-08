@@ -25,6 +25,7 @@ class Merger(SuiteVisitor):
         self.current = None
 
     def merge(self, merged):
+        self.result.set_execution_mode(merged)
         merged.suite.visit(self)
         self.result.errors.add(merged.errors)
 

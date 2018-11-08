@@ -15,7 +15,7 @@
 
 import re
 
-from robot.errors import (DataError, ExecutionFailed, HandlerExecutionFailed,
+from robot.errors import (DataError, ExecutionStatus, HandlerExecutionFailed,
                           VariableError)
 from robot.utils import (ErrorDetails, format_assign_message, get_error_message,
                          is_number, is_string, prepr, type_name)
@@ -97,7 +97,7 @@ class VariableAssigner(object):
             self.assign(failure.return_value)
 
     def _get_failure(self, exc_type, exc_val, exc_tb):
-        if isinstance(exc_val, ExecutionFailed):
+        if isinstance(exc_val, ExecutionStatus):
             return exc_val
         exc_info = (exc_type, exc_val, exc_tb)
         return HandlerExecutionFailed(ErrorDetails(exc_info))

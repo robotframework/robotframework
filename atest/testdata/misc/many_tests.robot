@@ -22,3 +22,21 @@ Fourth One With More Complex Name
 
 Fifth
     Log    Test 5
+
+GlobTestCase1
+    Log    GlobTestCase1
+
+GlobTestCase2
+    Log    GlobTestCase2
+
+GlobTestCase3
+    Log    GlobTestCase3
+
+GlobTestCase[5]
+    Log    GlobTestCase[5]
+
+GlobTest Cat
+    Log    Cat
+
+GlobTest Rat
+    Log    Cat

@@ -31,16 +31,17 @@ class TestSuite(ModelObject):
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
-    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors']
+    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
     test_class = TestCase    #: Internal usage only.
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, name='', doc='', metadata=None, source=None):
+    def __init__(self, name='', doc='', metadata=None, source=None, rpa=False):
         self.parent = None  #: Parent suite. ``None`` with the root suite.
         self._name = name
         self.doc = doc  #: Test suite documentation.
         self.metadata = metadata
         self.source = source  #: Path to the source file or directory.
+        self.rpa = rpa
         self.suites = None
         self.tests = None
         self.keywords = None
@@ -146,11 +147,17 @@ class TestSuite(ModelObject):
     def configure(self, **options):
         """A shortcut to configure a suite using one method call.
 
+        Can only be used with the root test suite.
+
         :param options: Passed to
             :class:`~robot.model.configurer.SuiteConfigurer` that will then
             set suite attributes, call :meth:`filter`, etc. as needed.
         """
-        self.visit(SuiteConfigurer(**options))
+        if self.parent is not None:
+            raise ValueError("'TestSuite.configure()' can only be used with "
+                             "the root test suite.")
+        if options:
+            self.visit(SuiteConfigurer(**options))
 
     def remove_empty_suites(self):
         """Removes all child suites not containing any tests, recursively."""

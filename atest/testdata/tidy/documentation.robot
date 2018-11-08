@@ -13,7 +13,7 @@ Multiple paragraphs
     ...
     ...                Huhuu
 Multiline with manual line separators
-    [Document]    Hillo\non\n hyvää!
+    [Documentation]    Hillo\non\n hyvää!
 One line
     [Documentation]    One line
 Empty

@@ -1,0 +1,14 @@
+Running suite 'Empty Testcase And Uk' with 10 tests.
+==============================================================================
+Fxxxxxxxxx
+------------------------------------------------------------------------------
+FAIL: Empty Testcase And Uk.
+Test case name cannot be empty.
+==============================================================================
+Run suite 'Empty Testcase And Uk' with 10 tests in *.
+
+FAILED
+10 critical tests, 0 passed, 10 failed
+10 tests total, 0 passed, 10 failed
+
+Output:  *.xml

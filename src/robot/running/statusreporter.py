@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import (ExecutionFailed, DataError, HandlerExecutionFailed,
-                          KeywordError, VariableError)
+from robot.errors import (ExecutionFailed, ExecutionStatus, DataError,
+                          HandlerExecutionFailed, KeywordError, VariableError)
 from robot.utils import ErrorDetails, get_timestamp
 
 
@@ -58,7 +58,7 @@ class StatusReporter(object):
     def _get_failure(self, exc_type, exc_value, exc_tb, context):
         if exc_value is None:
             return None
-        if isinstance(exc_value, ExecutionFailed):
+        if isinstance(exc_value, ExecutionStatus):
             return exc_value
         if isinstance(exc_value, DataError):
             msg = exc_value.message

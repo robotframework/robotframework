@@ -108,7 +108,8 @@ If the library is a file, the path to it must contain extension. For
 Python libraries the extension is naturally :file:`.py` and for Java
 libraries it can either be :file:`.class` or :file:`.java`, but the
 class file must always be available. If Python library is implemented
-as a directory, the path to it must have a trailing forward slash (`/`).
+as a directory, the path to it must have a trailing forward slash (`/`)
+if the path is relative. With absolute paths the trailing slash is optional.
 Following examples demonstrate these different usages.
 
 .. sourcecode:: robotframework

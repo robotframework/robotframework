@@ -16,36 +16,29 @@
 from io import BytesIO
 
 from .compat import py2to3
-from .platform import IRONPYTHON
+from .platform import IRONPYTHON, PY_VERSION
 from .robottypes import is_string
 
 
-_ERROR = 'No valid ElementTree XML parser module found'
+IRONPYTHON_WITH_BROKEN_ETREE = IRONPYTHON and PY_VERSION < (2, 7, 9)
+NO_ETREE_ERROR = 'No valid ElementTree XML parser module found'
 
 
-if not IRONPYTHON:
+if not IRONPYTHON_WITH_BROKEN_ETREE:
     try:
         from xml.etree import cElementTree as ET
     except ImportError:
         try:
-            import cElementTree as ET
+            from xml.etree import ElementTree as ET
         except ImportError:
-            try:
-                from xml.etree import ElementTree as ET
-            except ImportError:
-                try:
-                    from elementtree import ElementTree as ET
-                except ImportError:
-                    raise ImportError(_ERROR)
+            raise ImportError(NO_ETREE_ERROR)
 else:
-    # Cannot use standard ET available on IronPython because it is broken
-    # both in 2.7.0 and 2.7.1:
-    # http://ironpython.codeplex.com/workitem/31923
-    # http://ironpython.codeplex.com/workitem/21407
+    # Standard ElementTree works only with IronPython 2.7.9+
+    # https://github.com/IronLanguages/ironpython2/issues/370
     try:
         from elementtree import ElementTree as ET
     except ImportError:
-        raise ImportError(_ERROR)
+        raise ImportError(NO_ETREE_ERROR)
     from StringIO import StringIO
 
 
@@ -83,6 +76,6 @@ class ETSource(object):
     def _open_source_if_necessary(self):
         if self._source_is_file_name() or not is_string(self._source):
             return None
-        if IRONPYTHON:
+        if IRONPYTHON_WITH_BROKEN_ETREE:
             return StringIO(self._source)
         return BytesIO(self._source.encode('UTF-8'))

@@ -58,12 +58,12 @@ class StepRunner(object):
 
 
 def ForRunner(context, templated=False, flavor='IN'):
-    runners = dict(IN=ForInRunner,
-                   INRANGE=ForInRangeRunner,
-                   INZIP=ForInZipRunner,
-                   INENUMERATE=ForInEnumerateRunner)
+    runners = {'IN': ForInRunner,
+               'IN RANGE': ForInRangeRunner,
+               'IN ZIP': ForInZipRunner,
+               'IN ENUMERATE': ForInEnumerateRunner}
     try:
-        runner = runners[flavor.upper().replace(' ', '')]
+        runner = runners[flavor]
     except KeyError:
         return InvalidForRunner(context, flavor)
     return runner(context, templated)

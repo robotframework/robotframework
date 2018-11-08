@@ -56,23 +56,25 @@ __ `Dictionary variables`_
 __ `Setting variables in command line`_
 __ Escaping_
 
-Variable types
---------------
+Using variables
+---------------
 
-Different variable types are explained in this section. How variables
-can be created is discussed in subsequent sections.
+This section explains how to use variables, including the normal scalar
+variable syntax `${var}`, how to use variables in list and dictionary
+contexts like `@{var}` and `&{var}`, respectively, and how to use environment
+variables like `%{var}`. Different ways how to create variables are discussed
+in the subsequent sections.
 
 Robot Framework variables, similarly as keywords, are
 case-insensitive, and also spaces and underscores are
 ignored. However, it is recommended to use capital letters with
 global variables (for example, `${PATH}` or `${TWO WORDS}`)
-and small letters with variables that are only available in certain
-test cases or user keywords (for example, `${my var}` or
-`${myVar}`). Much more importantly, though, cases should be used
-consistently.
+and small letters with local variables that are only available in certain
+test cases or user keywords (for example, `${my var}`). Much more
+importantly, though, case should be used consistently.
 
 Variable name consists of the variable type identifier (`$`, `@`, `&`, `%`),
-curly braces (`{`, `}`) and actual variable name between the braces.
+curly braces (`{`, `}`) and the actual variable name between the braces.
 Unlike in some programming languages where similar variable syntax is
 used, curly braces are always mandatory. Variable names can basically have
 any characters between the curly braces. However, using only alphabetic
@@ -80,16 +82,16 @@ characters from a to z, numbers, underscore and space is recommended, and
 it is even a requirement for using the `extended variable syntax`_.
 
 .. _scalar variable:
+.. _scalar variables:
 
-Scalar variables
-~~~~~~~~~~~~~~~~
+Scalar variable syntax
+~~~~~~~~~~~~~~~~~~~~~~
 
-When scalar variables are used in the test data, they are replaced
-with the value they are assigned to. While scalar variables are most
-commonly used for simple strings, you can assign any objects,
-including lists, to them. The scalar variable syntax, for example
-`${NAME}`, should be familiar to most users, as it is also used,
-for example, in shell scripts and Perl programming language.
+The most common way to use variables in Robot Framework test data is using
+the scalar variable syntax like `${var}`. When this syntax is used, the
+variable name is replaced with its value as-is. Most of the time variable
+values are strings, but variables can contain any object, including numbers,
+lists, dictionaries, or even custom objects.
 
 The example below illustrates the usage of scalar variables. Assuming
 that the variables `${GREET}` and `${NAME}` are available
@@ -107,21 +109,18 @@ both the example test cases are equivalent.
        Log    ${GREET}
        Log    ${GREET}, ${NAME}!!
 
-When a scalar variable is used as the only value in a test data cell,
-the scalar variable is replaced with the value it has. The value may
-be any object. When a scalar variable is used in a test data cell with
-anything else (constant strings or other variables), its value is
-first converted into a Unicode string and then catenated to whatever is in
-that cell. Converting the value into a string means that the object's
-method `__unicode__` (in Python, with `__str__` as a fallback)
-or `toString` (in Java) is called.
+When a scalar variable is used alone without any text or other variables
+around it, like in `${GREET}` above, the variable is replaced with
+its value as-is and the value can be any object. If the variable is not used
+alone, like `${GREER}, ${NAME}!!` above, its value is first converted into
+a string and then concatenated with the other data.
 
 .. note:: Variable values are used as-is without conversions also when
           passing arguments to keywords using the `named arguments`_
           syntax like `argname=${var}`.
 
 The example below demonstrates the difference between having a
-variable in a cell alone or with other content. First, let us assume
+variable in alone or with other content. First, let us assume
 that we have a variable `${STR}` set to a string `Hello,
 world!` and `${OBJ}` set to an instance of the following Java
 object:
@@ -131,7 +130,7 @@ object:
  public class MyObj {
 
      public String toString() {
-         return "Hi, tellus!";
+         return "Hi, terra!";
      }
  }
 
@@ -152,7 +151,7 @@ the arguments as explained below:
 - :name:`KW 1` gets a string `Hello, world!`
 - :name:`KW 2` gets an object stored to variable `${OBJ}`
 - :name:`KW 3` gets a string `I said "Hello, world!"`
-- :name:`KW 4` gets a string `You said "Hi, tellus!"`
+- :name:`KW 4` gets a string `You said "Hi, terra!"`
 
 .. Note:: Converting variables to Unicode obviously fails if the variable
           cannot be represented as Unicode. This can happen, for example,
@@ -163,13 +162,14 @@ the arguments as explained below:
           the value is used as-is.
 
 .. _list variable:
+.. _list variables:
 
-List variables
-~~~~~~~~~~~~~~
+List variable syntax
+~~~~~~~~~~~~~~~~~~~~
 
-When a variable is used as a scalar like `${EXAMPLE}`, its value will be
+When a variable is used as a scalar like `${EXAMPLE}`, its value is be
 used as-is. If a variable value is a list or list-like, it is also possible
-to use as a list variable like `@{EXAMPLE}`. In this case individual list
+to use it as a list variable like `@{EXAMPLE}`. In this case individual list
 items are passed in as arguments separately. This is easiest to explain with
 an example. Assuming that a variable `@{USER}` has value `['robot', 'secret']`,
 the following two test cases are equivalent:
@@ -208,35 +208,6 @@ other list variables.
        Keyword    ${SCALAR}    @{LIST}    constant
        Keyword    @{LIST}    @{ANOTHER}    @{ONE MORE}
 
-If a list variable is used in a cell with other data (constant strings or other
-variables), the final value will contain a string representation of the
-variable value. The end result is thus exactly the same as when using the
-variable as a scalar with other data in the same cell.
-
-Accessing individual list items
-'''''''''''''''''''''''''''''''
-
-It is possible to access a certain value of a list variable with the syntax
-`@{NAME}[index]`, where `index` is the index of the selected value. Indices
-start from zero, negative indices can be used to access items from the end,
-and trying to access a value with too large an index causes an error.
-Indices are automatically converted to integers, and it is also possible to
-use variables as indices. List items accessed in this manner can be used
-similarly as scalar variables.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   List Variable Item
-       Login    @{USER}[0]    @{USER}[1]
-       Title Should Be    Welcome @{USER}[0]!
-
-   Negative Index
-       Log    @{LIST}[-1]
-
-   Index As Variable
-       Log    @{LIST}[${INDEX}]
-
 Using list variables with settings
 ''''''''''''''''''''''''''''''''''
 
@@ -253,18 +224,19 @@ those places where list variables are not supported.
    *** Settings ***
    Library         ExampleLibrary      @{LIB ARGS}    # This works
    Library         ${LIBRARY}          @{LIB ARGS}    # This works
-   Library         @{NAME AND ARGS}                   # This does not work
+   Library         @{LIBRARY AND ARGS}                # This does not work
    Suite Setup     Some Keyword        @{KW ARGS}     # This works
    Suite Setup     ${KEYWORD}          @{KW ARGS}     # This works
-   Suite Setup     @{KEYWORD}                         # This does not work
+   Suite Setup     @{KEYWORD AND ARGS}                # This does not work
    Default Tags    @{TAGS}                            # This works
 
 __ `All available settings in test data`_
 
 .. _dictionary variable:
+.. _dictionary variables:
 
-Dictionary variables
-~~~~~~~~~~~~~~~~~~~~
+Dictionary variable syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As discussed above, a variable containing a list can be used as a `list
 variable`_ to pass list items to a keyword as individual arguments.
@@ -302,38 +274,6 @@ named arguments or other dictionaries.
        Keyword    positional    @{LIST}    &{DICT}
        Keyword    &{DICT}    &{ANOTHER}    &{ONE MORE}
 
-If a dictionary variable is used in a cell with other data (constant strings or
-other variables), the final value will contain a string representation of the
-variable value. The end result is thus exactly the same as when using the
-variable as a scalar with other data in the same cell.
-
-Accessing individual dictionary items
-'''''''''''''''''''''''''''''''''''''
-
-It is possible to access a certain value of a dictionary variable
-with the syntax `&{NAME}[key]`, where `key` is the name of the
-selected value. Keys are considered to be strings, but non-strings
-keys can be used as variables. Dictionary values accessed in this
-manner can be used similarly as scalar variables.
-
-If a key is a string, it is possible to access its value also using
-attribute access syntax `${NAME.key}`. See `Creating dictionary variables`_
-for more details about this syntax.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Dict Variable Item
-       Login    &{USER}[name]    &{USER}[password]
-       Title Should Be    Welcome &{USER}[name]!
-
-   Key As Variable
-       Log Many    &{DICT}[${KEY}]    &{DICT}[${42}]
-
-   Attribute Access
-       Login    ${USER.name}    ${USER.password}
-       Title Should Be    Welcome ${USER.name}!
-
 Using dictionary variables with settings
 ''''''''''''''''''''''''''''''''''''''''
 
@@ -347,6 +287,111 @@ are imports, setups and teardowns where dictionaries can be used as arguments.
    Suite Setup    Some Keyword      &{KW ARGS}     named=arg
 
 .. _environment variable:
+
+Accessing list and dictionary items
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to access items of lists and dictionaries using special
+syntax `${var}[item]`. Accessing items is an old feature, but prior to
+Robot Framework 3.1 the syntax was `@{var}[item]` with lists and
+`&{var}[item]` with dictionaries. The old syntax still works in Robot
+Framework 3.1, but it `will be deprecated in Robot Framework 3.2`__ and
+its meaning will change in Robot Framework 3.3.
+
+__ https://github.com/robotframework/robotframework/issues/2973
+
+Accessing list items
+''''''''''''''''''''
+
+It is possible to access a certain item of a list variable with the syntax
+`${var}[index]`, where `index` is the index of the selected value. Indices
+start from zero, negative indices can be used to access items from the end,
+and trying to access an item with too large an index causes an error.
+Indices are automatically converted to integers, and it is also possible to
+use variables as indices. List items accessed in this manner can be used
+similarly as scalar variables.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   List variable item
+       Login    ${USER}[0]    ${USER}[1]
+       Title Should Be    Welcome ${USER}[0]!
+
+   Negative index
+       Log    ${LIST}[-1]
+
+   Index defined as variable
+       Log    ${LIST}[${INDEX}]
+
+List item access supports also the `same "slice" functionality as Python`__
+with syntax like `${var}[1:]`. With this syntax you do not get a single
+item but a slice of the original list. Same way as with Python you can
+specify the start index, the end index, and the step:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Start index
+       Keyword    ${LIST}[1:]
+
+   End index
+       Keyword    ${LIST}[:4]
+
+   Start and end
+       Keyword    ${LIST}[2:-1]
+
+   Step
+       Keyword    ${LIST}[::2]
+       Keyword    ${LIST}[2:-1:2]
+
+.. note:: The slice syntax is new in Robot Framework 3.1 and does not work
+          with the old `@{var}[index]` syntax.
+
+__ https://docs.python.org/glossary.html#term-slice
+
+Accessing individual dictionary items
+'''''''''''''''''''''''''''''''''''''
+
+It is possible to access a certain value of a dictionary variable
+with the syntax `${NAME}[key]`, where `key` is the name of the
+selected value. Keys are considered to be strings, but non-strings
+keys can be used as variables. Dictionary values accessed in this
+manner can be used similarly as scalar variables.
+
+If a key is a string, it is possible to access its value also using
+attribute access syntax `${NAME.key}`. See `Creating dictionary variables`_
+for more details about this syntax.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Dictionary variable item
+       Login    ${USER}[name]    ${USER}[password]
+       Title Should Be    Welcome ${USER}[name]!
+
+   Key defined as variable
+       Log Many    ${DICT}[${KEY}]    ${DICT}[${42}]
+
+   Attribute access
+       Login    ${USER.name}    ${USER.password}
+       Title Should Be    Welcome ${USER.name}!
+
+Nested item access
+''''''''''''''''''
+
+Also nested list and dictionary structures can be accessed using the same
+item access syntax like `${var}[item1][item2]`. This is especially useful
+when working with JSON data often returned by REST services. For example,
+if a variable `${DATA}` contains `[{'id': 1, 'name': 'Robot'},
+{'id': 2, 'name': 'Mr. X'}]`, this tests would pass:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Nested item access
+       Should Be Equal    ${DATA}[0][name]    Robot
+       Should Be Equal    ${DATA}[1][id]      ${2}
 
 Environment variables
 ~~~~~~~~~~~~~~~~~~~~~
@@ -367,7 +412,7 @@ not effective after the test execution.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Env Variables
+   Environment variables
        Log    Current user: %{USER}
        Run    %{JAVA_HOME}${/}javac
 
@@ -381,7 +426,7 @@ system property with same name exist, the environment variable will be used.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   System Properties
+   System properties
        Log    %{user.name} running tests on %{os.name}
 
 __ http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
@@ -439,9 +484,6 @@ can be changed by having `SEPARATOR=<sep>` in the first cell.
    ...             Second line     Third line
 
 Joining long values like above is a new feature in Robot Framework 2.9.
-Creating a scalar variable with multiple values was a syntax error in
-Robot Framework 2.8 and with earlier versions it created a variable with
-a list value.
 
 __ `Dividing test data to several rows`_
 
@@ -529,18 +571,12 @@ The syntax for setting individual variables is :option:`--variable
 name:value`, where `name` is the name of the variable without
 `${}` and `value` is its value. Several variables can be
 set by using this option several times. Only scalar variables can be
-set using this syntax and they can only get string values. Many
-special characters are difficult to represent in the
-command line, but they can be escaped__ with the :option:`--escape`
-option.
-
-__ `Escaping complicated characters`_
+set using this syntax and they can only get string values.
 
 .. sourcecode:: bash
 
    --variable EXAMPLE:value
    --variable HOST:localhost:7272 --variable USER:robot
-   --variable ESCAPED:Qquotes_and_spacesQ --escape quot:Q --escape space:_
 
 In the examples above, variables are set so that
 
@@ -668,7 +704,7 @@ a list variable.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Assign Multiple
+   Assign multiple
        ${a}    ${b}    ${c} =    Get Three
        ${first}    @{rest} =    Get Three
        @{before}    ${last} =    Get Three
@@ -770,8 +806,8 @@ operating-system-agnostic.
    | ${:}       | The system path element separator. `:` in UNIX-like              |
    |            | systems and `;` in Windows.                                      |
    +------------+------------------------------------------------------------------+
-   | ${\\n}     | The system line separator. :codesc:`\\n` in UNIX-like systems and|
-   |            | :codesc:`\\r\\n` in Windows. New in version 2.7.5.               |
+   | ${\\n}     | The system line separator. :codesc:`\\n` in UNIX-like systems    |
+   |            | and :codesc:`\\r\\n` in Windows.                                 |
    +------------+------------------------------------------------------------------+
 
 .. sourcecode:: robotframework
@@ -855,19 +891,19 @@ easier to understand than those using backslashes.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   One Space
+   One space
        Should Be Equal    ${SPACE}          \ \
 
-   Four Spaces
+   Four spaces
        Should Be Equal    ${SPACE * 4}      \ \ \ \ \
 
-   Ten Spaces
+   Ten spaces
        Should Be Equal    ${SPACE * 10}     \ \ \ \ \ \ \ \ \ \ \
 
-   Quoted Space
+   Quoted space
        Should Be Equal    "${SPACE}"        " "
 
-   Quoted Spaces
+   Quoted spaces
        Should Be Equal    "${SPACE * 2}"    " \ "
 
    Empty
@@ -891,11 +927,16 @@ scopes. Modifying the value of `@{EMPTY}` or `&{EMPTY}` is not possible.
        Set Global Variable    @{LIST}    @{EMPTY}
        Set Suite Variable     &{DICT}    &{EMPTY}
 
-.. note:: `@{EMPTY}` is new in Robot Framework 2.7.4 and `&{EMPTY}` in
-          Robot Framework 2.9.
+.. note:: `${SPACE}` represents the ASCII space (`\x20`) and `other spaces`__
+          should be specified using the `escape sequences`__ like `\xA0`
+          (NO-BREAK SPACE) and `\u3000` (IDEOGRAPHIC SPACE).
+
+.. note:: `&{EMPTY}` is new in Robot Framework 2.9.
 
 __ Escaping_
 __ https://groups.google.com/group/robotframework-users/browse_thread/thread/ccc9e1cd77870437/4577836fe946e7d5?lnk=gst&q=templates#4577836fe946e7d5
+__ http://jkorpela.fi/chars/spaces.html
+__ Escaping_
 
 Automatic variables
 ~~~~~~~~~~~~~~~~~~~
@@ -920,7 +961,7 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +------------------------+-------------------------------------------------------+------------+
    | ${TEST DOCUMENTATION}  | The documentation of the current test case. Can be set| Test case  |
    |                        | dynamically using using :name:`Set Test Documentation`|            |
-   |                        | keyword. New in Robot Framework 2.7.                  |            |
+   |                        | keyword.                                              |            |
    +------------------------+-------------------------------------------------------+------------+
    | ${TEST STATUS}         | The status of the current test case, either PASS or   | `Test      |
    |                        | FAIL.                                                 | teardown`_ |
@@ -943,11 +984,10 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +------------------------+-------------------------------------------------------+------------+
    | ${SUITE DOCUMENTATION} | The documentation of the current test suite. Can be   | Everywhere |
    |                        | set dynamically using using :name:`Set Suite          |            |
-   |                        | Documentation` keyword. New in Robot Framework 2.7.   |            |
+   |                        | Documentation` keyword.                               |            |
    +------------------------+-------------------------------------------------------+------------+
    | &{SUITE METADATA}      | The free metadata of the current test suite. Can be   | Everywhere |
    |                        | set using :name:`Set Suite Metadata` keyword.         |            |
-   |                        | New in Robot Framework 2.7.4.                         |            |
    +------------------------+-------------------------------------------------------+------------+
    | ${SUITE STATUS}        | The status of the current test suite, either PASS or  | `Suite     |
    |                        | FAIL.                                                 | teardown`_ |
@@ -956,14 +996,14 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    |                        | statistics.                                           | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
    | ${KEYWORD STATUS}      | The status of the current keyword, either PASS or     | `User      |
-   |                        | FAIL. New in Robot Framework 2.7                      | keyword    |
+   |                        | FAIL.                                                 | keyword    |
    |                        |                                                       | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
    | ${KEYWORD MESSAGE}     | The possible error message of the current keyword.    | `User      |
-   |                        | New in Robot Framework 2.7.                           | keyword    |
+   |                        |                                                       | keyword    |
    |                        |                                                       | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
-   | ${LOG LEVEL}           | Current `log level`_. New in Robot Framework 2.8.     | Everywhere |
+   | ${LOG LEVEL}           | Current `log level`_.                                 | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
    | ${OUTPUT FILE}         | An absolute path to the `output file`_.               | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
@@ -981,8 +1021,7 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
 
 Suite related variables `${SUITE SOURCE}`, `${SUITE NAME}`,
 `${SUITE DOCUMENTATION}` and `&{SUITE METADATA}` are
-available already when test libraries and variable files are imported,
-except to Robot Framework 2.8 and 2.8.1 where this support was broken.
+available already when test libraries and variable files are imported.
 Possible variables in these automatic variables are not yet resolved
 at the import time, though.
 
@@ -1273,7 +1312,7 @@ used as a list variable `@{EXTENDED.attribute}`.
 Extended variable assignment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7, it is possible to set attributes of
+It is possible to set attributes of
 objects stored to scalar variables using `keyword return values`__ and
 a variation of the `extended variable syntax`_. Assuming we have
 variable `${OBJECT}` from the previous examples, attributes could

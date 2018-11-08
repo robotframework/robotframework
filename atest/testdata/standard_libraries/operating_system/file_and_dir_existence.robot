@@ -27,7 +27,7 @@ Should Exist With Pattern
     Should Exist    ${BASE}/*.txt
     Should Exist    ${BASE}${/}f*
     Should Exist    ${BASE}${/}d??
-    Should Exist    ${BASE}${/}[abcd]i[rst]
+    Should Exist    ${BASE}${/}\[abcd]i[rst]
     Should Exist    ${EXECDIR}/*non*existing*
 
 Glob In Name
@@ -39,17 +39,17 @@ Glob In Name
     Directory Should Exist    ${BASE}/[go]mo
 
 Glob In Name Should Not Exist
-    [Documentation]    FAIL Path '${BASE}${/}[not]not.txt' matches '${BASE}${/}[not]not.txt'.
+    [Documentation]    FAIL Path '${BASE}${/}\[not]not.txt' matches '${BASE}${/}\[not]not.txt'.
     Create File    ${BASE}/[not]not.txt
     Should Not Exist    ${BASE}/[not]not.txt
 
 Glob In Name File Should Not Exist
-    [Documentation]    FAIL File '${BASE}${/}[not]not2.txt' matches '${BASE}${/}[not]not2.txt'.
+    [Documentation]    FAIL File '${BASE}${/}\[not]not2.txt' matches '${BASE}${/}\[not]not2.txt'.
     Create File    ${BASE}/[not]not2.txt
     File Should Not Exist    ${BASE}/[not]not2.txt
 
 Glob In Name Directory Should Not Exist
-    [Documentation]    FAIL Directory '${BASE}${/}[not]not3' matches '${BASE}${/}[not]not3'.
+    [Documentation]    FAIL Directory '${BASE}${/}\[not]not3' matches '${BASE}${/}\[not]not3'.
     Create Directory    ${BASE}/[not]not3
     Directory Should Not Exist    ${BASE}/[not]not3
 

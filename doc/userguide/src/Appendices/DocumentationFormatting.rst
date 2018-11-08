@@ -26,10 +26,7 @@ Newlines in test data
 ~~~~~~~~~~~~~~~~~~~~~
 
 When documenting test suites, test cases and keywords or adding metadata
-to test suites, newlines can be added manually using the `literal newline
-character sequence`__ (`\n`).
-
-__ `Handling whitespace`_
+to test suites, newlines can be added manually using `\n` `escape sequence`_.
 
 .. sourcecode:: robotframework
 
@@ -38,8 +35,8 @@ __ `Handling whitespace`_
   Metadata         Example    Value\nin two lines
 
 Adding newlines manually to a long documentation takes some effort and extra
-characters also make the documentation harder to read. Starting from Robot
-Framework 2.7, this is not required as newlines are inserted automatically
+characters also make the documentation harder to read. This can be avoided,
+though, as newlines are inserted automatically
 between `continued documentation and metadata lines`__. In practice this
 means that the above example could be written also as follows.
 
@@ -106,7 +103,7 @@ as the test suite documentation in the previous section.
 Paragraphs
 ----------
 
-Starting from Robot Framework 2.7.2, all regular text in the formatted HTML
+All regular text in the formatted HTML
 documentation is represented as paragraphs. In practice, lines separated
 by a single newline will be combined in a paragraph regardless whether the
 newline is added manually or automatically. Multiple paragraphs can be separated
@@ -133,10 +130,6 @@ will be formatted in HTML as:
   <p>Second paragraph, this time created with multiple lines.</p>
   </div>
 
-.. note:: Prior to 2.7.2 handling paragraphs was inconsistent. In documentation
-          generated with Libdoc_ lines were combined to paragraphs but in
-          documentations shown in log and report they were not.
-
 Inline styles
 -------------
 
@@ -148,8 +141,7 @@ underscore, for example, `_italic_`. It is also possible to have
 bold italic with the syntax `_*bold italic*_`.
 
 The code style is created using double backticks like :codesc:`\`\`code\`\``.
-The result is monospaced text with light gray background. Support for code
-style is new in Robot Framework 2.8.6.
+The result is monospaced text with light gray background.
 
 Asterisks, underscores or double backticks alone, or in the middle of a word,
 do not start formatting, but punctuation characters before or after them
@@ -210,7 +202,7 @@ test case and keyword documentation, and for test suite metadata.
 Custom links and images
 -----------------------
 
-Starting from Robot Framework 2.7, it is possible to create custom links
+It is possible to create custom links
 and embed images using special syntax `[link|content]`. This creates
 a link or image depending are `link` and `content` images.
 They are considered images if they have the same image extensions that are
@@ -249,7 +241,7 @@ Section titles
 --------------
 
 If documentation gets longer, it is often a good idea to split it into
-sections. Starting from Robot Framework 2.7.5, it is possible to separate
+sections. It is possible to separate
 sections with titles using syntax `= My Title =`, where the number of
 equal signs denotes the level of the title::
 
@@ -298,8 +290,6 @@ formatted like this in HTML:
     </table>
   </div>
 
-.. note:: Support for table headers is a new feature in Robot Framework 2.8.2.
-
 Lists
 -----
 
@@ -327,15 +317,10 @@ The above documentation is formatted like this in HTML:
   <p>This is outside the list.</p>
   </div>
 
-.. note:: Support for formatting lists was added in 2.7.2. Prior to that,
-          the same syntax prevented Libdoc_ from combining lines to
-          paragraphs, so the end result was similar. Support for splitting
-          list items into multiple lines was added in 2.7.4.
-
 Preformatted text
 -----------------
 
-Starting from Robot Framework 2.7, it is possible to embed blocks of
+It is possible to embed blocks of
 preformatted text in the documentation. Preformatted block is created by
 starting lines with '| ', one space being mandatory after the pipe character
 except on otherwise empty lines. The starting '| ' sequence will be removed
@@ -361,8 +346,8 @@ The above documentation is formatted like this:
   </div>
 
 When documenting suites, tests or keywords in Robot Framework test data,
-having multiple spaces requires escaping with a backslash to `prevent
-ignoring spaces`_. The example above would thus be written like this::
+having multiple spaces requires escaping_ with a backslash to prevent
+ignoring spaces. The example above would thus be written like this::
 
   Doc before block:
   | inside block

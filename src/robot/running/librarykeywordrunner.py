@@ -15,6 +15,7 @@
 
 from robot.errors import DataError
 from robot.model import Keywords
+from robot.output import LOGGER
 from robot.result import Keyword as KeywordResult
 from robot.utils import prepr, unic
 from robot.variables import VariableAssignment, contains_var, is_list_var
@@ -85,7 +86,10 @@ class LibraryKeywordRunner(object):
         timeout = self._get_timeout(context)
         if timeout and timeout.active:
             context.output.debug(timeout.get_message)
-            return lambda: timeout.run(handler, args=positional, kwargs=named)
+            def runner():
+                with LOGGER.delayed_logging:
+                    return timeout.run(handler, args=positional, kwargs=named)
+            return runner
         return lambda: handler(*positional, **named)
 
     def _get_timeout(self, context):
@@ -161,9 +165,10 @@ class RunKeywordRunner(LibraryKeywordRunner):
         return keywords
 
     def _get_dry_run_keywords(self, args):
-        if self.name == 'Run Keyword If':
+        name = self._handler.name
+        if name == 'Run Keyword If':
             return list(self._get_run_kw_if_keywords(args))
-        if self.name == 'Run Keywords':
+        if name == 'Run Keywords':
             return list(self._get_run_kws_keywords(args))
         if self._default_dry_run_keywords:
             return self._get_default_run_kw_keywords(args)

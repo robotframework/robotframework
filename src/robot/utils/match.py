@@ -14,11 +14,12 @@
 #  limitations under the License.
 
 import re
+import fnmatch
 from functools import partial
 
 from .compat import py2to3
 from .normalizing import normalize
-from .platform import PY3
+from .platform import IRONPYTHON, PY3
 from .robottypes import is_string
 
 
@@ -30,37 +31,23 @@ def eq(str1, str2, ignore=(), caseless=True, spaceless=True):
 
 @py2to3
 class Matcher(object):
-    _wildcards = {'*': '.*', '?': '.', b'*': b'.*', b'?': b'.'}
 
     def __init__(self, pattern, ignore=(), caseless=True, spaceless=True,
                  regexp=False):
+        if PY3 and isinstance(pattern, bytes):
+            raise TypeError('Matching bytes is not supported on Python 3.')
         self.pattern = pattern
         self._normalize = partial(normalize, ignore=ignore, caseless=caseless,
                                   spaceless=spaceless)
-        self._regexp = self._get_and_compile_regexp(self._normalize(pattern),
-                                                    regexp=regexp)
+        self._regexp = self._compile(self._normalize(pattern), regexp=regexp)
 
-    def _get_and_compile_regexp(self, pattern, regexp=False):
+    def _compile(self, pattern, regexp=False):
         if not regexp:
-            pattern = self._glob_pattern_to_regexp(pattern)
+            pattern = fnmatch.translate(pattern)
+            # https://github.com/IronLanguages/ironpython2/issues/515
+            if IRONPYTHON and "\\'" in pattern:
+                pattern = pattern.replace("\\'", "'")
         return re.compile(pattern, re.DOTALL)
-
-    def _glob_pattern_to_regexp(self, pattern):
-        if PY3 and isinstance(pattern, bytes):
-            tokenizer = re.compile(b'(\*|\?)')
-            start, end, empty = b'^', b'$', b''
-        else:
-            tokenizer = re.compile('(\*|\?)')
-            start, end, empty = '^', '$', ''
-        tokens = self._tokenize_glob_pattern(tokenizer, pattern)
-        return start + empty.join(tokens) + end
-
-    def _tokenize_glob_pattern(self, tokenizer, pattern):
-        for token in tokenizer.split(pattern):
-            if token in self._wildcards:
-                yield self._wildcards[token]
-            else:
-                yield re.escape(token)
 
     def match(self, string):
         return self._regexp.match(self._normalize(string)) is not None

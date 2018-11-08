@@ -42,14 +42,14 @@ Import Library With Named Arguments
     Named.Parameters Should Be    first    ${2}
 
 Import Library Failure Is Catchable
-    Run Keyword And Expect Error    Importing test library 'NonExistingLib' failed: *Error: *    Import Library    NonExistingLib
+    [Documentation]    FAIL GLOB: Importing test library 'NonExistingLib' failed: *Error: *
+    Import Library    NonExistingLib
 
 Import Library From Path
     Run Keyword And Expect Error    *    Keyword should exist    Print
     Import Library    ExampleLibrary.py
     Print    hello
 
-Extra Spaces In Name Are Deprecated
+Extra Spaces In Name Are Not Supported
+    [Documentation]    FAIL GLOB: Importing test library 'Date Time' failed: *Error: *
     Import Library    Date Time
-    Get Current Date
-    DateTime.Get Current Date

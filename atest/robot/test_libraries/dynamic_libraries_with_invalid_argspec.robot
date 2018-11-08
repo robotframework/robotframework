@@ -11,24 +11,20 @@ Argspec has named arguments before positional
     Invalid argument spec    1    named args before positional
     ...     Non-default argument after default arguments.
 
-Argspec has varargs before positional arguments
-    Invalid argument spec    2    varargs before positional args
-    ...    Positional argument after varargs.
-
-Argspec has varargs before named arguments
-    Invalid argument spec    3    varargs before named args
-    ...    Positional argument after varargs.
+Argspec has multiple varargs
+    Invalid argument spec    2    multiple varargs
+    ...    Cannot have multiple varargs.
 
 Argspec has kwargs before positional arguments
-    Invalid argument spec    4    kwargs before positional args
+    Invalid argument spec    3    kwargs before positional args
     ...    Only last argument can be kwargs.
 
 Argspec has kwargs before named arguments
-    Invalid argument spec    5    kwargs before named args
+    Invalid argument spec    4    kwargs before named args
     ...    Only last argument can be kwargs.
 
 Argspec has kwargs before varargs
-    Invalid argument spec    6    kwargs before varargs
+    Invalid argument spec    5    kwargs before varargs
     ...    Only last argument can be kwargs.
 
 Keywords with valid arg spec can be used

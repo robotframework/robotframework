@@ -8,29 +8,23 @@ Normal Library Import
     Check Test Case    ${TESTNAME}
     Check Syslog Contains    | INFO \ |    Imported library 'OperatingSystem' with arguments [ ] (version
 
-Library Import With Spaces In Name Is Deprecated
-    ${test} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${test.kws[0].messages[0]}    It works!
-    Check Log Message    ${test.kws[1].messages[0]}    But it is DEPRECATED!!!
-    ${path} =    Normalize Path    ${DATADIR}/test_libraries/library_import_normal.robot
-    ${message} =    Catenate
-    ...    Error in file '${path}':
-    ...    Importing library with extra spaces in name like 'E x a m p l e L i b r a r y' is deprecated.
-    ...    Remove spaces and use 'ExampleLibrary' instead.
-    Check Log Message    @{ERRORS}[0]    ${message}    WARN
+Library Import With Spaces In Name Does Not Work
+    Check Test Case    ${TESTNAME}
+    Check Log Message    ${ERRORS[0]}
+    ...    Error in file '*': Importing test library 'Date Time' failed: *Error: *
+    ...    ERROR    pattern=true
 
 Importing Library Class Should Have Been Syslogged
     [Tags]    no-standalone
     ${source} =    Normalize Path And Ignore Drive    ${CURDIR}/../../../src/robot/libraries/OperatingSystem
     Syslog Should Contain Match    | INFO \ |    Imported test library class 'robot.libraries.OperatingSystem' from '${source}*'
     ${base} =    Normalize Path And Ignore Drive    ${CURDIR}/../../testresources/testlibs
-    Syslog Should Contain Match    | INFO \ |    Imported test library class 'ExampleLibrary' from '${base}${/}ExampleLibrary*'
     Syslog Should Contain Match    | INFO \ |    Imported test library module 'libmodule' from '${base}${/}libmodule*'
     Syslog Should Contain Match    | INFO \ |    Imported test library class 'libmodule.LibClass2' from '${base}${/}libmodule*'
 
 Number Of Keywords In Imported Library Is Reported In Syslog
-    Check Syslog Contains    | INFO \ |    Imported library 'ExampleLibrary' with arguments [ ] (version <unknown>, class type, test case scope, 30 keywords)
     Check Syslog Contains    | INFO \ |    Imported library 'libmodule.LibClass1' with arguments [ ] (version <unknown>, class type, test case scope, 1 keywords)
+    Check Syslog Contains    | INFO \ |    Imported library 'NamespaceUsingLibrary' with arguments [ ] (version <unknown>, class type, test case scope, 2 keywords)
 
 Warning Should Be Written To Syslog If Library Contains No Keywords
     Check Syslog Contains    | INFO \ |    Imported library 'libmodule' with arguments [ ] (version <unknown>, module type, global scope, 0 keywords)

@@ -130,7 +130,7 @@ class _ExecutionContext(object):
                      '${PREV_TEST_MESSAGE}']:
             self.variables.set_global(name, self.variables[name])
         self.output.end_suite(suite)
-        self.namespace.end_suite()
+        self.namespace.end_suite(suite)
         EXECUTION_CONTEXTS.end_suite()
 
     def set_suite_variables(self, suite):

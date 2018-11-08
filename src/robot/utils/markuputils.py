@@ -25,8 +25,11 @@ _attribute_escapes = _generic_escapes \
 _illegal_chars_in_xml = re.compile(u'[\x00-\x08\x0B\x0C\x0E-\x1F\uFFFE\uFFFF]')
 
 
-def html_escape(text):
-    return _format_url(_escape(text))
+def html_escape(text, linkify=True):
+    text = _escape(text)
+    if linkify and '://' in text:
+        text = _format_url(text)
+    return text
 
 
 def xml_escape(text):

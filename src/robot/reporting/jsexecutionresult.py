@@ -13,16 +13,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 import time
+from collections import OrderedDict
 
-from robot.utils import OrderedDict, IRONPYTHON
+from robot.utils import IRONPYTHON, PY_VERSION
 
 from .stringcache import StringIndex
 
-
 # http://ironpython.codeplex.com/workitem/31549
-if IRONPYTHON and sys.version_info < (2, 7, 2):
+if IRONPYTHON and PY_VERSION < (2, 7, 2):
     int = long
 
 

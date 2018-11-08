@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import sys
 from os.path import abspath, dirname, join, normpath
 import shutil
@@ -21,5 +23,5 @@ with open(OUTPUT, 'w') as output:
 
 shutil.move(OUTPUT, REAL_OUTPUT)
 
-print REAL_OUTPUT
+print(REAL_OUTPUT)
 

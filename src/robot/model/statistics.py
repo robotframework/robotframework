@@ -27,8 +27,8 @@ class Statistics(object):
     """
     def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None,
                  tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
-                 tag_stat_link=None):
-        total_builder = TotalStatisticsBuilder()
+                 tag_stat_link=None, rpa=False):
+        total_builder = TotalStatisticsBuilder(rpa=rpa)
         suite_builder = SuiteStatisticsBuilder(suite_stat_level)
         tag_builder = TagStatisticsBuilder(suite.criticality, tag_stat_include,
                                            tag_stat_exclude, tag_stat_combine,

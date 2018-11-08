@@ -22,7 +22,7 @@ from .misc import plural_or_not, roundup
 from .robottypes import is_number, is_string
 
 
-_timer_re = re.compile('([+-])?(\d+:)?(\d+):(\d+)(.\d+)?')
+_timer_re = re.compile(r'^([+-])?(\d+:)?(\d+):(\d+)(\.\d+)?$')
 
 
 def _get_timetuple(epoch_secs=None):
