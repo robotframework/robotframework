@@ -25,6 +25,9 @@ Execute Manual Step Exit
 Get Value From User
     Check Test Case    ${TESTNAME}
 
+Get Non-ASCII Value From User
+    Check Test Case    ${TESTNAME}
+
 Get Empty Value From User
     Check Test Case    ${TESTNAME}
 
