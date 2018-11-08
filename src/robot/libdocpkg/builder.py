@@ -14,16 +14,15 @@
 #  limitations under the License.
 
 import os
-import sys
 
 from robot.errors import DataError
 from robot.parsing import TEST_EXTENSIONS
-from robot.utils import JYTHON
+from robot.utils import JYTHON, JAVA_VERSION
 
 from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder
 from .specbuilder import SpecDocBuilder
 if JYTHON:
-    if sys.platform[4:7] < '1.9':
+    if JAVA_VERSION < (1, 9):
         from .javabuilder import JavaDocBuilder
     else:
         from .java9builder import JavaDocBuilder
