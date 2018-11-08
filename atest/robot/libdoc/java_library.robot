@@ -78,3 +78,9 @@ Last argument overrides
 
 Keyword tags
     Keyword Tags Should Be    4    bar    foo
+
+Private constructors are ignored
+    Keyword Count Should Be    3    type=init
+
+Private keywords are ignored
+    Keyword Count Should Be    10
