@@ -29,10 +29,12 @@ try:
 except ImportError:
     raise DataError("Can not find JavaDoc related classes.")
 
+
 class JavaDocBuilder(object):
 
     def build(self, path):
-        qualified_name, type_element, fields, constructors, methods, elements = JavaDocumentation(path)
+        qualified_name, type_element, fields, constructors, methods, elements \
+            = JavaDocumentation(path)
         libdoc = LibraryDoc(name=qualified_name,
                             doc=self._get_doc(elements, type_element),
                             version=self._get_version(fields),
@@ -44,11 +46,11 @@ class JavaDocBuilder(object):
         return libdoc
 
     def _get_doc(self, elements, element):
-        docComment = elements.getDocComment(element)
-        if docComment is None:
+        doc_comment = elements.getDocComment(element)
+        if doc_comment is None:
             return ''
         else:
-            return '\n'.join(line.strip() for line in docComment.splitlines())
+            return '\n'.join(line.strip() for line in doc_comment.splitlines())
 
     def _get_version(self, fields):
         return self._get_attr(fields, 'VERSION')
@@ -72,7 +74,8 @@ class JavaDocBuilder(object):
         return ''
 
     def _initializers(self, elements, constructors):
-        inits = [self._keyword_doc(elements, constructor) for constructor in constructors]
+        inits = [self._keyword_doc(elements, constructor)
+                 for constructor in constructors]
         if len(inits) == 1 and not inits[0].args:
             return []
         return inits
@@ -83,7 +86,8 @@ class JavaDocBuilder(object):
     def _keyword_doc(self, elements, method):
         doc, tags = utils.split_tags_from_doc(self._get_doc(elements, method))
         return KeywordDoc(
-            name=utils.printable_name(method.getSimpleName().toString(), code_style=True),
+            name=utils.printable_name(method.getSimpleName().toString(),
+                                      code_style=True),
             args=self._get_keyword_arguments(method),
             doc=doc,
             tags=tags
@@ -103,18 +107,22 @@ class JavaDocBuilder(object):
         return names
 
     def _is_varargs(self, param):
-        return (param.asType().toString().startswith('java.util.List')
-            or (param.asType().getKind() == TypeKind.ARRAY and param.asType().getComponentType().getKind() != TypeKind.ARRAY))
+        return (param.asType().toString().startswith('java.util.List') or
+                (param.asType().getKind() == TypeKind.ARRAY and
+                 param.asType().getComponentType().getKind() !=
+                    TypeKind.ARRAY))
 
     def _is_kwargs(self, param):
         return param.asType().toString().startswith('java.util.Map')
+
 
 def JavaDocumentation(path):
     # Need to get the instance with reflection, or we ending up trying to
     # access an internal class not exported.
     doctool = ToolProvider.getSystemDocumentationTool()
     file_manager = Class.forName("javax.tools.DocumentationTool") \
-        .getMethod("getStandardFileManager", DiagnosticListener, Locale, Charset) \
+        .getMethod("getStandardFileManager", DiagnosticListener, Locale,
+                   Charset) \
         .invoke(doctool, None, Locale.US, StandardCharsets.UTF_8)
 
     compiler = ToolProvider.getSystemJavaCompiler()
@@ -124,11 +132,19 @@ def JavaDocumentation(path):
     type_element = task.analyze().iterator().next()
     elements = task.getElements()
     members = elements.getAllMembers(type_element)
-    qualified_name = type_element.getQualifiedName().toString()
+    qf_name = type_element.getQualifiedName().toString()
 
-    fields = filter(lambda field: Modifier.PUBLIC in field.getModifiers(), ElementFilter.fieldsIn(members))
-    constructors = filter(lambda constructor: Modifier.PUBLIC in constructor.getModifiers(), ElementFilter.constructorsIn(members))
-    methods = filter(lambda member: member.getEnclosingElement() is type_element and Modifier.PUBLIC in member.getModifiers(), ElementFilter.methodsIn(members))
+    fields = filter(lambda field:
+                    Modifier.PUBLIC in field.getModifiers(),
+                    ElementFilter.fieldsIn(members))
 
-    return qualified_name, type_element, fields, constructors, methods, elements
+    constructors = filter(lambda constructor:
+                          Modifier.PUBLIC in constructor.getModifiers(),
+                          ElementFilter.constructorsIn(members))
 
+    methods = filter(lambda member:
+                     member.getEnclosingElement() is type_element and
+                     Modifier.PUBLIC in member.getModifiers(),
+                     ElementFilter.methodsIn(members))
+
+    return qf_name, type_element, fields, constructors, methods, elements
