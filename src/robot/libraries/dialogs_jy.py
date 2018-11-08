@@ -13,20 +13,50 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import textwrap
 import time
 
-from java.awt import GridLayout
+from java.awt import Component
 from java.awt.event import WindowAdapter
-from javax.swing import JLabel, JOptionPane, JPanel, JPasswordField, JTextField, JList, JScrollPane
+from javax.swing import (BoxLayout,  JLabel, JOptionPane, JPanel,
+                         JPasswordField, JTextField, JList, JScrollPane)
 from javax.swing.JOptionPane import (DEFAULT_OPTION, OK_CANCEL_OPTION,
                                      OK_OPTION, PLAIN_MESSAGE,
                                      UNINITIALIZED_VALUE, YES_NO_OPTION)
+
+from robot.utils import html_escape
+
+
+MAX_CHARS_PER_LINE = 120
 
 
 class _SwingDialog(object):
 
     def __init__(self, pane):
         self._pane = pane
+
+    def _create_panel(self, message, widget):
+        panel = JPanel()
+        panel.setLayout(BoxLayout(panel, BoxLayout.Y_AXIS))
+        label = self._create_label(message)
+        label.setAlignmentX(Component.LEFT_ALIGNMENT)
+        panel.add(label)
+        widget.setAlignmentX(Component.LEFT_ALIGNMENT)
+        panel.add(widget)
+        return panel
+
+    def _create_label(self, message):
+        # JLabel doesn't support multiline text, setting size, or wrapping.
+        # Need to handle all that ourselves. Feels like 2005...
+        wrapper = textwrap.TextWrapper(MAX_CHARS_PER_LINE,
+                                       drop_whitespace=False)
+        lines = []
+        for line in html_escape(message, linkify=False).splitlines():
+            if line:
+                lines.extend(wrapper.wrap(line))
+            else:
+                lines.append('')
+        return JLabel('<html>%s</html>' % '<br>'.join(lines))
 
     def show(self):
         self._show_dialog(self._pane)
@@ -60,9 +90,7 @@ class InputDialog(_SwingDialog):
         self._input_field = JPasswordField() if hidden else JTextField()
         self._input_field.setText(default)
         self._input_field.selectAll()
-        panel = JPanel(layout=GridLayout(2, 1))
-        panel.add(JLabel(message))
-        panel.add(self._input_field)
+        panel = self._create_panel(message, self._input_field)
         pane = WrappedOptionPane(panel, PLAIN_MESSAGE, OK_CANCEL_OPTION)
         pane.set_focus_listener(self._input_field)
         _SwingDialog.__init__(self, pane)
@@ -86,11 +114,8 @@ class MultipleSelectionDialog(_SwingDialog):
 
     def __init__(self, message, options):
         self._selection_list = JList(options)
-        self._selection_list.setVisibleRowCount(4)
-        selected_message = JLabel(message)
-        panel = JPanel(layout=GridLayout(2, 1))
-        panel.add(selected_message)
-        panel.add(JScrollPane(self._selection_list))
+        self._selection_list.setVisibleRowCount(8)
+        panel = self._create_panel(message, JScrollPane(self._selection_list))
         pane = WrappedOptionPane(panel, PLAIN_MESSAGE, OK_CANCEL_OPTION)
         _SwingDialog.__init__(self, pane)
 
@@ -116,7 +141,7 @@ class WrappedOptionPane(JOptionPane):
     focus_listener = None
 
     def getMaxCharactersPerLineCount(self):
-        return 120
+        return MAX_CHARS_PER_LINE
 
     def set_focus_listener(self, component):
         self.focus_listener = WindowFocusListener(component)
