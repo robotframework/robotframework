@@ -7,6 +7,7 @@ List all keywords
     Run Libdoc And Verify Output    Dialogs list
     ...   Execute Manual Step
     ...   Get Selection From User
+    ...   Get Selections From User
     ...   Get Value From User
     ...   Pause Execution
 
