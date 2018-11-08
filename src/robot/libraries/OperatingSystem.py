@@ -1428,7 +1428,7 @@ class _Process:
         #   In Jython return code can be between '-255' - '255'
         #   In Python return code must be converted with 'rc >> 8' and it is
         #   between 0-255 after conversion
-        if os.sep == '\\' or sys.platform.startswith('java'):
+        if WINDOWS or JYTHON:
             return rc % 256
         return rc >> 8
 

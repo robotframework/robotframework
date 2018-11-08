@@ -2,7 +2,7 @@ import io
 import sys
 import unittest
 
-from robot.utils import isatty, PYTHON
+from robot.utils import isatty
 from robot.utils.asserts import assert_equal, assert_false, assert_raises
 
 
@@ -23,8 +23,7 @@ class TestIsATty(unittest.TestCase):
         with io.StringIO() as stream:
             wrapper = io.TextIOWrapper(stream, 'UTF-8')
             wrapper.detach()
-            exc_type = ValueError if PYTHON else AttributeError
-            assert_raises(exc_type, wrapper.isatty)
+            assert_raises((ValueError, AttributeError), wrapper.isatty)
             assert_false(isatty(wrapper))
 
 

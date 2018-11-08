@@ -16,13 +16,15 @@
 import sys
 from threading import currentThread
 import signal
-if sys.platform.startswith('java'):
-    from java.lang import IllegalArgumentException
-else:
-    IllegalArgumentException = ValueError
 
 from robot.errors import ExecutionFailed
 from robot.output import LOGGER
+from robot.utils import JYTHON
+
+if JYTHON:
+    from java.lang import IllegalArgumentException
+else:
+    IllegalArgumentException = ValueError
 
 
 class _StopSignalMonitor(object):
@@ -40,7 +42,7 @@ class _StopSignalMonitor(object):
             sys.__stderr__.write('Execution forcefully stopped.\n')
             raise SystemExit()
         sys.__stderr__.write('Second signal will force exit.\n')
-        if self._running_keyword and not sys.platform.startswith('java'):
+        if self._running_keyword and not JYTHON:
             self._stop_execution_gracefully()
 
     def _stop_execution_gracefully(self):

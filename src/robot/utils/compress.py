@@ -14,9 +14,8 @@
 #  limitations under the License.
 
 import base64
-import sys
 
-from .platform import PY2
+from .platform import JYTHON, PY2
 
 
 def compress_text(text):
@@ -24,7 +23,7 @@ def compress_text(text):
     return result if PY2 else result.decode('ASCII')
 
 
-if not sys.platform.startswith('java'):
+if not JYTHON:
 
     import zlib
 
