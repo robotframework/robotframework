@@ -64,7 +64,7 @@ class JavaDocBuilder(object):
     def _get_attr(self, fields, name, upper=False):
         name = 'ROBOT_LIBRARY_' + name
         for field in fields:
-            if field.getSimpleName().toString() == name and Modifier.PUBLIC in field.getModifiers():
+            if field.getSimpleName().toString() == name:
                 value = field.getConstantValue()
                 if upper:
                     value = utils.normalize(value, ignore='_').upper()
@@ -126,9 +126,9 @@ def JavaDocumentation(path):
     members = elements.getAllMembers(type_element)
     qualified_name = type_element.getQualifiedName().toString()
 
-    fields = ElementFilter.fieldsIn(members)
-    constructors = ElementFilter.constructorsIn(members)
-    methods = filter(lambda member: member.getEnclosingElement() is type_element, ElementFilter.methodsIn(members))
+    fields = filter(lambda field: Modifier.PUBLIC in field.getModifiers(), ElementFilter.fieldsIn(members))
+    constructors = filter(lambda constructor: Modifier.PUBLIC in constructor.getModifiers(), ElementFilter.constructorsIn(members))
+    methods = filter(lambda member: member.getEnclosingElement() is type_element and Modifier.PUBLIC in member.getModifiers(), ElementFilter.methodsIn(members))
 
     return qualified_name, type_element, fields, constructors, methods, elements
 
