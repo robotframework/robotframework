@@ -315,6 +315,14 @@ matched strings if they are missing.
 
 __ https://en.wikipedia.org/wiki/Glob_(programming)
 
+
+Square brackets after variable like `${var}[xxx]` is considered item access
+---------------------------------------------------------------------------
+
+Syntax like `${var}[xxx]` is now considered variable item access (`#2601`_),
+not variable `${var}` followed by a literal string `[xxx]`. If the latter
+is desired, escaping like `${var}\[xxx]` is needed.
+
 Underscores are not converted to spaces in values given from the command line
 -----------------------------------------------------------------------------
 
@@ -380,10 +388,6 @@ Other issues possibly causing backwards incompatibility problems
 
 - First logical, not physical, line of the keyword documentation is included
   in log files. (`#2491`_)
-
-- Syntax like `${var}[xxx]` is considered variable item access (`#2601`_),
-  not variable `${var}` followed by literal string `[xxx]`. If the latter
-  is desired, escaping like `${var}\[xxx]` is needed.
 
 - Test libraries using the dynamic library API get all named arguments as
   part of `kwargs` (when their `run_keyword` accepts it), not mapped to
