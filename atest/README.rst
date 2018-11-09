@@ -208,11 +208,11 @@ __ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
 ``tools.jar``
 ~~~~~~~~~~~~~
 
-Libdoc requires ``tools.jar``, which is part of the standard JDK installation,
-to be in ``CLASSPATH`` when reading library documentation from Java source
-files. In addition to setting ``CLASSPATH`` explicitly, it is possible to
-put ``tools.jar`` into the ``ext-lib`` directory in the project root and
-``CLASSPATH`` is set automatically.
+When using Java 8 or earlier, Libdoc requires ``tools.jar``, which is part
+of the standard JDK installation, to be in ``CLASSPATH`` when reading library
+documentation from Java source files. In addition to setting ``CLASSPATH``
+explicitly, it is possible to put ``tools.jar`` into the ``ext-lib``
+directory in the project root and ``CLASSPATH`` is set automatically.
 
 Telnet tests
 ------------
