@@ -1100,7 +1100,7 @@ argument, it can be disabled by specifying a type for that argument explicitly.
 Alternatively argument conversion can be disabled altogether with the
 `@keyword decorator`__ like `@keyword(types=None)`.
 
-__ `Specifying argument types using `@keyword` decorator`_
+__ `Specifying argument types using @keyword decorator`_
 
 Supported conversions
 '''''''''''''''''''''
