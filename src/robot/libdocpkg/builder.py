@@ -17,12 +17,15 @@ import os
 
 from robot.errors import DataError
 from robot.parsing import TEST_EXTENSIONS
-from robot.utils import JYTHON
+from robot.utils import JYTHON, JAVA_VERSION
 
 from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder
 from .specbuilder import SpecDocBuilder
 if JYTHON:
-    from .javabuilder import JavaDocBuilder
+    if JAVA_VERSION < (1, 9):
+        from .javabuilder import JavaDocBuilder
+    else:
+        from .java9builder import JavaDocBuilder
 else:
     def JavaDocBuilder():
         raise DataError('Documenting Java test libraries requires Jython.')
