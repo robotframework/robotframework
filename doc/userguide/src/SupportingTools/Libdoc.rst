@@ -102,10 +102,14 @@ Java libraries with path
 
 A Java test library implemented using the `static library API`_ can be
 specified by giving the path to the source code file containing the
-library implementation. Additionally, :file:`tools.jar`, which is part
-of the Java JDK distribution, must be found from ``CLASSPATH`` when
-Libdoc is executed. Notice that generating documentation for Java
-libraries works only with Jython.
+library implementation. When using Java 9 or newer, documentation can be
+generated without external dependencies, but with older Java versions the
+:file:`tools.jar`, which is part of the Java JDK distribution, must be found
+from the ``CLASSPATH`` when Libdoc is executed. Notice that generating
+documentation for Java libraries works only with Jython.
+
+.. note:: Generating documentation without :file:`tools.jar` when using
+          Java 9 or newer is a new feature in Robot Framework 3.1.
 
 Resource files with path
 ''''''''''''''''''''''''
