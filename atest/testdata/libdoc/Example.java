@@ -36,7 +36,10 @@ public class Example {
 
     /**
      * Does nothing & <doc> has "stuff" to 'escape'!!
-     *     and ignored indentation
+     *     We also got some
+     *         indentation
+     *         here.
+     * Back in the normal indentation level.
      *
      * Tags: foo, bar
      */

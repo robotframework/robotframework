@@ -13,9 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import printable_name, split_tags_from_doc, normalize
-
-from .model import LibraryDoc, KeywordDoc
+from inspect import cleandoc
 
 from java.nio.charset import StandardCharsets
 from java.util import Locale
@@ -24,12 +22,16 @@ from javax.lang.model.util import ElementFilter
 from javax.lang.model.type import TypeKind
 from javax.tools import DocumentationTool, ToolProvider
 
+from robot.utils import normalize, printable_name, split_tags_from_doc
+
+from .model import LibraryDoc, KeywordDoc
+
 
 class JavaDocBuilder(object):
 
     def build(self, path):
         qualified_name, type_element, fields, constructors, methods, elements \
-            = self._get_documentation_data(path)
+                = self._get_documentation_data(path)
         libdoc = LibraryDoc(name=qualified_name,
                             doc=self._get_doc(elements, type_element),
                             version=self._get_version(fields),
@@ -41,8 +43,8 @@ class JavaDocBuilder(object):
         return libdoc
 
     def _get_doc(self, elements, element):
-        doc = elements.getDocComment(element) or ''
-        return '\n'.join(line.strip() for line in doc.splitlines())
+        doc = elements.getDocComment(element)
+        return cleandoc(doc or '').rstrip()
 
     def _get_version(self, fields):
         return self._get_attr(fields, 'VERSION')

@@ -55,8 +55,11 @@ Keyword Documentation
     ...    | Your Keyword | yyy |\n\n
     ...    See `My Keyword` for no more information.
     Keyword Doc Should Start With    4
-    ...    Does nothing & <doc> has "stuff" to 'escape'!!
-    ...    \nand ignored indentation
+    ...    Does nothing & <doc> has "stuff" to 'escape'!!\n
+    ...    ${SPACE * 4}We also got some\n
+    ...    ${SPACE * 8}indentation\n
+    ...    ${SPACE * 8}here.\n
+    ...    Back in the normal indentation level.
 
 Non ASCII
     Keyword Doc Should Be    5    Hyvää yötä.\n\nСпасибо!

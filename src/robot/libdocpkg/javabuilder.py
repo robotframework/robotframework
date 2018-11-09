@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
+from inspect import cleandoc
 
 from robot.errors import DataError
 from robot.utils import (JAVA_VERSION, normalize, split_tags_from_doc,
@@ -38,7 +38,7 @@ class JavaDocBuilder(object):
 
     def _get_doc(self, doc):
         text = doc.getRawCommentText()
-        return '\n'.join(line.strip() for line in text.splitlines())
+        return cleandoc(text).rstrip()
 
     def _get_version(self, doc):
         return self._get_attr(doc, 'VERSION')
