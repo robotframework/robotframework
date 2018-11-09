@@ -13,28 +13,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
-from robot import utils
+from robot.utils import printable_name, split_tags_from_doc, normalize
 
 from .model import LibraryDoc, KeywordDoc
 
-try:
-    from java.lang import Class
-    from java.nio.charset import Charset, StandardCharsets
-    from java.util import Locale
-    from javax.lang.model.element import Modifier
-    from javax.lang.model.util import ElementFilter
-    from javax.lang.model.type import TypeKind
-    from javax.tools import ToolProvider, DiagnosticListener
-except ImportError:
-    raise DataError("Can not find JavaDoc related classes.")
+from java.nio.charset import StandardCharsets
+from java.util import Locale
+from javax.lang.model.element.Modifier import PUBLIC
+from javax.lang.model.util import ElementFilter
+from javax.lang.model.type import TypeKind
+from javax.tools import DocumentationTool, ToolProvider
 
 
 class JavaDocBuilder(object):
 
     def build(self, path):
         qualified_name, type_element, fields, constructors, methods, elements \
-            = JavaDocumentation(path)
+            = self._get_documentation_data(path)
         libdoc = LibraryDoc(name=qualified_name,
                             doc=self._get_doc(elements, type_element),
                             version=self._get_version(fields),
@@ -46,11 +41,8 @@ class JavaDocBuilder(object):
         return libdoc
 
     def _get_doc(self, elements, element):
-        doc_comment = elements.getDocComment(element)
-        if doc_comment is None:
-            return ''
-        else:
-            return '\n'.join(line.strip() for line in doc_comment.splitlines())
+        doc = elements.getDocComment(element) or ''
+        return '\n'.join(line.strip() for line in doc.splitlines())
 
     def _get_version(self, fields):
         return self._get_attr(fields, 'VERSION')
@@ -69,7 +61,7 @@ class JavaDocBuilder(object):
             if field.getSimpleName().toString() == name:
                 value = field.getConstantValue()
                 if upper:
-                    value = utils.normalize(value, ignore='_').upper()
+                    value = normalize(value, ignore='_').upper()
                 return value
         return ''
 
@@ -84,10 +76,10 @@ class JavaDocBuilder(object):
         return [self._keyword_doc(elements, method) for method in methods]
 
     def _keyword_doc(self, elements, method):
-        doc, tags = utils.split_tags_from_doc(self._get_doc(elements, method))
+        doc, tags = split_tags_from_doc(self._get_doc(elements, method))
         return KeywordDoc(
-            name=utils.printable_name(method.getSimpleName().toString(),
-                                      code_style=True),
+            name=printable_name(method.getSimpleName().toString(),
+                                code_style=True),
             args=self._get_keyword_arguments(method),
             doc=doc,
             tags=tags
@@ -107,44 +99,30 @@ class JavaDocBuilder(object):
         return names
 
     def _is_varargs(self, param):
-        return (param.asType().toString().startswith('java.util.List') or
-                (param.asType().getKind() == TypeKind.ARRAY and
-                 param.asType().getComponentType().getKind() !=
-                    TypeKind.ARRAY))
+        param_type = param.asType()
+        return (param_type.toString().startswith('java.util.List') or
+                (param_type.getKind() == TypeKind.ARRAY and
+                 param_type.getComponentType().getKind() != TypeKind.ARRAY))
 
     def _is_kwargs(self, param):
         return param.asType().toString().startswith('java.util.Map')
 
-
-def JavaDocumentation(path):
-    # Need to get the instance with reflection, or we ending up trying to
-    # access an internal class not exported.
-    doctool = ToolProvider.getSystemDocumentationTool()
-    file_manager = Class.forName("javax.tools.DocumentationTool") \
-        .getMethod("getStandardFileManager", DiagnosticListener, Locale,
-                   Charset) \
-        .invoke(doctool, None, Locale.US, StandardCharsets.UTF_8)
-
-    compiler = ToolProvider.getSystemJavaCompiler()
-    task = compiler.getTask(None, None, None, None, None,
-                            file_manager.getJavaFileObjectsFromStrings([path]))
-
-    type_element = task.analyze().iterator().next()
-    elements = task.getElements()
-    members = elements.getAllMembers(type_element)
-    qf_name = type_element.getQualifiedName().toString()
-
-    fields = filter(lambda field:
-                    Modifier.PUBLIC in field.getModifiers(),
-                    ElementFilter.fieldsIn(members))
-
-    constructors = filter(lambda constructor:
-                          Modifier.PUBLIC in constructor.getModifiers(),
-                          ElementFilter.constructorsIn(members))
-
-    methods = filter(lambda member:
-                     member.getEnclosingElement() is type_element and
-                     Modifier.PUBLIC in member.getModifiers(),
-                     ElementFilter.methodsIn(members))
-
-    return qf_name, type_element, fields, constructors, methods, elements
+    def _get_documentation_data(self, path):
+        doc_tool = ToolProvider.getSystemDocumentationTool()
+        file_manager = DocumentationTool.getStandardFileManager(
+            doc_tool, None, Locale.US, StandardCharsets.UTF_8)
+        compiler = ToolProvider.getSystemJavaCompiler()
+        source = file_manager.getJavaFileObjectsFromStrings([path])
+        task = compiler.getTask(None, None, None, None, None, source)
+        type_element = task.analyze().iterator().next()
+        elements = task.getElements()
+        members = elements.getAllMembers(type_element)
+        qf_name = type_element.getQualifiedName().toString()
+        fields = [f for f in ElementFilter.fieldsIn(members)
+                  if PUBLIC in f.getModifiers()]
+        constructors = [c for c in ElementFilter.constructorsIn(members)
+                        if PUBLIC in c.getModifiers()]
+        methods = [m for m in ElementFilter.methodsIn(members)
+                   if m.getEnclosingElement() is type_element and
+                   PUBLIC in m.getModifiers()]
+        return qf_name, type_element, fields, constructors, methods, elements
