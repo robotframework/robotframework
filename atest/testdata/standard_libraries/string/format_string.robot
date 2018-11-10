@@ -6,6 +6,7 @@ ${NSN}            nokia_siemens_networks
 ${TEXT IN COLUMNS}    robot\tframework\nis\tgood\tfor\ttesting
 ${FIRST LINE}     robot\tframework
 ${SECOND LINE}    is\tgood\tfor\ttesting
+&{USER}                 name=John Doe    email=john@example.com
 
 *** Test Cases ***
 Format String With Positional Argument
@@ -29,5 +30,13 @@ Format String With Named And Search Replace Arguments
     Should be equal    ${result}    Document tests.robot is missing on folder /home
 
 Format String From Template File
-    ${result} =    Format String    atest/testdata/standard_libraries/string/format_string_template.txt    condition=supports
+    ${result} =    Format String    ${CURDIR}/format_string_template.txt    condition=supports
     Should be equal    ${result}    Format String also supports files templates!
+
+Attribute access
+    ${result} =    Format String    {user.name} <{user.email}>    user=${USER}
+    Should Be Equal    ${result}    John Doe <john@example.com>
+
+Item access
+    ${result} =    Format String    {user[name]} <{user[email]}>    user=${USER}
+    Should Be Equal    ${result}    John Doe <john@example.com>

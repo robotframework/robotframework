@@ -19,7 +19,8 @@ import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
-from os.path import isfile
+from os.path import isfile, isabs, sep
+
 
 from robot.api import logger
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
@@ -127,39 +128,38 @@ class String(object):
         """Formats a ``string`` using the given ``positional_search_replace``
         and ``named_search_replace``.
 
-        If the given ``string`` is a valid file path (absolute or relative), opens the file in read
+        If the given ``string`` is a valid absolute file path, opens the file in read
         mode and then format its content using the given
         ``positional_search_replace`` and ``named_search_replace``.
 
         This keyword uses python's string format. For more information see:
-        [https://docs.python.org/2.7/library/string.html#formatstrings]|Python2 format syntax]
-        or
-        [https://docs.python.org/3.6/library/string.html#formatstrings]|Python3 format syntax]
+        [https://docs.python.org/library/string.html#formatstrings]|Format syntax]
 
         Examples:
 
         `Considering the file C:\\template.txt contents as "My {test} String"`
-        | ${formatted_string} = | Format String | C:\\template.txt | | test=awesome |
-        | Should Be Equal | ${formatted_string} | My awesome String |
-        | ${formatted_string} = | Format String | User {} is not a admin user. | non-admin | |
-        | Should Be Equal | ${formatted_string} | User non-admin is not a admin user. |
-        | ${formatted_string} = | Format String | Username: {username} - Password: {password} | | username=Robot | password=Framework |
-        | Should Be Equal | ${formatted_string} | Username: Robot - Password: Framework |
-        | ${formatted_string} = | Format String | Document {} is missing on folder {folder} | tests.robot | folder=/home |
-        | Should Be Equal | ${formatted_string} | Document tests.robot is missing on folder /home |
-        | ${formatted_string} = | Format String | Uploaded file: {} should not be bigger than {}. | photo.jpg | 5MB |
-        | Should Be Equal | ${formatted_string} | Uploaded file: photo.jpg should not be bigger than 5MB. |
+        | ${result} = | Format String | C:\\template.txt | | test=awesome |
+        | Should Be Equal | ${result} | My awesome String |
+        | ${result} = | Format String | User {} is not a admin user. | non-admin | |
+        | Should Be Equal | ${result} | User non-admin is not a admin user. |
+        | ${result} = | Format String | Username: {username} - Password: {password} | | username=Robot | password=Framework |
+        | Should Be Equal | ${result} | Username: Robot - Password: Framework |
+        | ${result} = | Format String | Document {} is missing on folder {folder} | tests.robot | folder=/home |
+        | Should Be Equal | ${result} | Document tests.robot is missing on folder /home |
+        | ${result} = | Format String | Uploaded file: {} should not be bigger than {}. | photo.jpg | 5MB |
+        | Should Be Equal | ${result} | Uploaded file: photo.jpg should not be bigger than 5MB. |
 
-        New in Robot Framework 3.1
+        New in Robot Framework 3.1.
         """
-        if isfile(template_or_str):
-            logger.info('Opening file %s to be formated' % (template_or_str,))
+        if isabs(template_or_str) and isfile(template_or_str):
+            logger.info(
+                'Reading template from file <a href="%s">%s</a>' % (template_or_str, template_or_str),
+                html=True)
+            template_or_str.replace("/", sep)
             with open(template_or_str, 'r') as format_file:
                 format_string = format_file.read().rstrip()
         else:
             format_string = template_or_str
-        logger.info('Formatting the source string "{}"{}'.format(format_string[:80], 
-                                                          ' (log trimmed)' if len(format_string)>80 else ''))
         return format_string.format(
             *positional_search_replace, **named_search_replace
         )

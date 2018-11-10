@@ -20,3 +20,9 @@ Format String With Named And Search Replace Arguments
 
 Format String From Template File
     Check Test Case    ${TESTNAME}
+
+Attribute access
+    Check Test Case    ${TESTNAME}
+
+Item access
+    Check Test Case    ${TESTNAME}
