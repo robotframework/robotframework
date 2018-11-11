@@ -1320,7 +1320,7 @@ __ `Using a custom keyword name`_
 
     from robot.api.deco import keyword
 
-    @keyword('Add ${quantity:\d+} Copies Of ${item} To Cart')
+    @keyword('Add ${quantity:\d+} copies of ${item} to cart')
     def add_copies_to_cart(quantity, item):
         # ...
 
@@ -1328,7 +1328,25 @@ __ `Using a custom keyword name`_
 
    *** Test Cases ***
    My Test
-       Add 7 Copies Of Coffee To Cart
+       Add 7 copies of coffee to cart
+
+By default arguments are passed to implementing keywords as strings, but
+automatic `argument type conversion`__ works if type information is specified
+somehow. With Python 3 it is convenient to use `function annotations`__,
+and alternatively it is possible to pass types to the `@keyword decorator`__:
+
+.. sourcecode:: python
+
+    @keyword('Add ${quantity:\d+} copies of ${item} to cart',
+             types={'quantity': int})
+    def add_copies_to_cart(quantity: int, item):
+        # ...
+
+__ `Argument types`_
+__ `Specifying argument types using function annotations`_
+__ `Specifying argument types using @keyword decorator`_
+
+.. note:: Automatic type conversion is new in Robot Framework 3.1.
 
 Communicating with Robot Framework
 ----------------------------------
