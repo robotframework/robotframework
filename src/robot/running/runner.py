@@ -155,7 +155,18 @@ class Runner(SuiteVisitor):
             result.message = status.message
         result.status = status.status
         result.endtime = get_timestamp()
-        self._output.end_test(ModelCombiner(test, result))
+        if hasattr(result, 'message'):
+            message = result.message
+        elif hasattr(test, 'message'):
+            message = test.message
+        else:
+            message = ''
+        if result.appendix:
+            if message:
+                message += '\n\n'
+            message += 'Appendix Info:\n{0}'.format(result.appendix)
+        self._output.end_test(ModelCombiner(test, result,
+                                            message=message))
         self._context.end_test(result)
 
     def _add_exit_combine(self):

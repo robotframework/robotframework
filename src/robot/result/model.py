@@ -118,7 +118,7 @@ class TestCase(model.TestCase):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['status', 'message', 'starttime', 'endtime']
+    __slots__ = ['status', 'message', 'starttime', 'endtime', 'appendix']
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=None, status='FAIL',
@@ -133,6 +133,7 @@ class TestCase(model.TestCase):
         self.starttime = starttime
         #: Test case execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
+        self.appendix = ''
 
     @property
     def elapsedtime(self):

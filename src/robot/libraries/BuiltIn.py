@@ -3048,6 +3048,37 @@ class _Misc(_BuiltInBase):
             return re.escape(patterns[0])
         return [re.escape(p) for p in patterns]
 
+    def set_test_appendix(self, message, append=False):
+        """Sets appendix info for the current test case.
+
+        Same as `Set Test Message`, but the appendix will append on test status.
+        If teardown fail, the content of `Set Test Message` do not show in status.
+        But `Set Test Appendix works` without this restriction.
+
+        If the optional ``append`` argument is given a true value (see `Boolean
+        arguments`), the given ``message`` is added after the possible earlier
+        message by joining the messages with a space.
+
+        It is possible to use HTML format in the message by starting the message
+        with ``*HTML*``.
+
+        Examples:
+        | Set Test Appendix | My message               |                      |
+        | Set Test Message  | is continued.            | append=yes           |
+        | Set Test Message  | `*`HTML`*` <b>Hello!</b> |                      |
+
+        This keyword can not be used in suite setup or suite teardown.
+        """
+        test = self._context.test
+        if not test:
+            raise RuntimeError("'Set Test Appendix' keyword cannot be used in "
+                               "suite setup or teardown.")
+        test.appendix = self._get_new_text(test.appendix, message,
+                                           append, handle_html=True)
+        appendix, level = self._get_logged_test_message_and_level(test.appendix)
+        self.log('Set test appendix to:\n%s' % appendix, level)
+
+
     def set_test_message(self, message, append=False):
         """Sets message for the current test case.
 
