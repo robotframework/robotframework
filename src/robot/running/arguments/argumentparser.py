@@ -163,8 +163,8 @@ class JavaArgumentParser(_ArgumentParser):
             defaults = {}
         return ArgumentSpec(name, self._type,
                             positional=positional,
-                            varargs='*varargs' if varargs else None,
-                            kwargs='**kwargs' if kwargs else None,
+                            varargs='varargs' if varargs else None,
+                            kwargs='kwargs' if kwargs else None,
                             defaults=defaults,
                             supports_named=False)
 
