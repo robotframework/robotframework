@@ -19,12 +19,12 @@ import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
-from os.path import isfile, isabs, sep
+import os
 
 
 from robot.api import logger
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
-                         unic, PY3)
+                         unic, PY3, Utf8Reader)
 from robot.version import get_version
 
 
@@ -123,14 +123,14 @@ class String(object):
             raise TypeError('Can not decode strings on Python 3.')
         return bytes.decode(encoding, errors)
 
-    def format_string(self, template_or_str, *positional_search_replace,
-                      **named_search_replace):
-        """Formats a ``string`` using the given ``positional_search_replace``
-        and ``named_search_replace``.
+    def format_string(self, template, *positional, **named):
+        """Formats a ``string`` using the given ``positional`` and ``named``
+        arguments.
 
         If the given ``string`` is a valid absolute file path, opens the file in read
         mode and then format its content using the given
-        ``positional_search_replace`` and ``named_search_replace``.
+        ``positional`` and ``named`` arguments. Trailing new lines are removed
+        before formating the string. The spaces are kept.
 
         This keyword uses python's string format. For more information see:
         [https://docs.python.org/library/string.html#formatstrings]|Format syntax]
@@ -151,18 +151,16 @@ class String(object):
 
         New in Robot Framework 3.1.
         """
-        if isabs(template_or_str) and isfile(template_or_str):
+        if os.path.isabs(template) and os.path.isfile(template):
+            template = template.replace("/", os.sep)
             logger.info(
-                'Reading template from file <a href="%s">%s</a>' % (template_or_str, template_or_str),
+                'Reading template from file <a href="%s">%s</a>' % (template, template),
                 html=True)
-            template_or_str.replace("/", sep)
-            with open(template_or_str, 'r') as format_file:
-                format_string = format_file.read().rstrip()
+            with Utf8Reader(template) as reader:
+                format_string = reader.read().rstrip('\r\n')
         else:
-            format_string = template_or_str
-        return format_string.format(
-            *positional_search_replace, **named_search_replace
-        )
+            format_string = template
+        return format_string.format(*positional, **named)
 
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given string."""

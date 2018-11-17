@@ -18,7 +18,16 @@ Format String With Named Search Replace Arguments
 Format String With Named And Search Replace Arguments
     Check Test Case    ${TESTNAME}
 
+Format String From Non-ASCII Template
+    Check Test Case    ${TESTNAME}
+
 Format String From Template File
+    Check Test Case    ${TESTNAME}
+
+Format String From Template Non-ASCII File
+    Check Test Case    ${TESTNAME}
+
+Format String From Trailling Whitespace Template File
     Check Test Case    ${TESTNAME}
 
 Attribute access

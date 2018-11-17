@@ -29,9 +29,21 @@ Format String With Named And Search Replace Arguments
     ${result} =    Format String    Document {} is missing on folder {folder}    tests.robot    folder=/home
     Should be equal    ${result}    Document tests.robot is missing on folder /home
 
+Format String From Non-ASCII Template
+    ${result} =    Format String    {} and {} are fruits from Brazil    Açaí    Cupuaçu
+    Should be equal    ${result}    Açaí and Cupuaçu are fruits from Brazil
+
 Format String From Template File
     ${result} =    Format String    ${CURDIR}/format_string_template.txt    condition=supports
     Should be equal    ${result}    Format String also supports files templates!
+
+Format String From Template Non-ASCII File
+    ${result} =    Format String    ${CURDIR}/format_string_nonasccii_template.txt    city=São Paulo
+    Should be equal    ${result}    São Paulo is the eleventh biggest city in the world!
+
+Format String From Trailling Whitespace Template File
+    ${result} =    Format String    ${CURDIR}/format_string_trailling_white_space_template.txt    name=Stan Lee
+    Should be equal    ${result}    ${SPACE}${SPACE}Stan Lee is the best!!${SPACE}${SPACE}
 
 Attribute access
     ${result} =    Format String    {user.name} <{user.email}>    user=${USER}
