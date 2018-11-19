@@ -36,7 +36,7 @@ class ArgumentResolver(object):
                                                             variables)
         positional, named = self._dict_to_kwargs.handle(positional, named)
         self._argument_validator.validate(positional, named,
-                                          dryrun=not variables)
+                                          dryrun=variables is None)
         return positional, named
 
 
