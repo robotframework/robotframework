@@ -157,10 +157,10 @@ class String(object):
                 'Reading template from file <a href="%s">%s</a>' % (template, template),
                 html=True)
             with Utf8Reader(template) as reader:
-                format_string = reader.read().rstrip('\r\n')
+                template = reader.read().rstrip('\r\n')
         else:
-            format_string = template
-        return format_string.format(*positional, **named)
+            template = template
+        return template.format(*positional, **named)
 
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given string."""
