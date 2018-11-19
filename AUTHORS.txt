@@ -76,3 +76,4 @@ Chris Callan                   Case-insensitivity support to various comparison 
 Benjamin Einaudi               Add --rerunfailedsuites option (3.0.1, #2117)
 Traitanit Huangsri             Support more glob-like patterns for test filtering (3.1, #2471)
 Brian-Williams                 Named-only arguments support with Python 3 libraries (3.1, #2555)
+Élysson Mendes Rezende         Add format_string keyword (3.1)

@@ -129,8 +129,8 @@ class String(object):
 
         If the given ``string`` is a valid absolute file path, opens the file in read
         mode and then format its content using the given
-        ``positional`` and ``named`` arguments. Trailing new lines are removed
-        before formating the string. The spaces are kept.
+        ``positional`` and ``named`` arguments. The file is read as it is, that means, any trailing
+        newlines, spaces and etc would not be ignored.
 
         This keyword uses python's string format. For more information see:
         [https://docs.python.org/library/string.html#formatstrings]|Format syntax]
@@ -157,7 +157,7 @@ class String(object):
                 'Reading template from file <a href="%s">%s</a>' % (template, template),
                 html=True)
             with Utf8Reader(template) as reader:
-                template = reader.read().rstrip('\r\n')
+                template = reader.read()
         else:
             template = template
         return template.format(*positional, **named)
