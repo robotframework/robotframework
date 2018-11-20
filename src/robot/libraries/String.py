@@ -124,10 +124,10 @@ class String(object):
         return bytes.decode(encoding, errors)
 
     def format_string(self, template, *positional, **named):
-        """Formats a ``string`` using the given ``positional`` and ``named``
+        """Formats a ``template`` using the given ``positional`` and ``named``
         arguments.
 
-        If the given ``string`` is a valid absolute file path, opens the file in read
+        If the given ``template`` is a valid absolute file path, opens the file in read
         mode and then format its content using the given
         ``positional`` and ``named`` arguments. The file is read as it is, that means, any trailing
         newlines, spaces and etc would not be ignored.
