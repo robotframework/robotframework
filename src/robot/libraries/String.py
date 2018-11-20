@@ -19,10 +19,12 @@ import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
+import os
+
 
 from robot.api import logger
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
-                         unic, PY3)
+                         unic, PY3, Utf8Reader)
 from robot.version import get_version
 
 
@@ -120,6 +122,45 @@ class String(object):
         if PY3 and is_unicode(bytes):
             raise TypeError('Can not decode strings on Python 3.')
         return bytes.decode(encoding, errors)
+
+    def format_string(self, template, *positional, **named):
+        """Formats a ``template`` using the given ``positional`` and ``named``
+        arguments.
+
+        If the given ``template`` is a valid absolute file path, opens the file in read
+        mode and then format its content using the given
+        ``positional`` and ``named`` arguments. The file is read as it is, that means, any trailing
+        newlines, spaces and etc would not be ignored.
+
+        This keyword uses python's string format. For more information see:
+        [https://docs.python.org/library/string.html#formatstrings]|Format syntax]
+
+        Examples:
+
+        `Considering the file C:\\template.txt contents as "My {test} String"`
+        | ${result} = | Format String | C:\\template.txt | | test=awesome |
+        | Should Be Equal | ${result} | My awesome String |
+        | ${result} = | Format String | User {} is not a admin user. | non-admin | |
+        | Should Be Equal | ${result} | User non-admin is not a admin user. |
+        | ${result} = | Format String | Username: {username} - Password: {password} | | username=Robot | password=Framework |
+        | Should Be Equal | ${result} | Username: Robot - Password: Framework |
+        | ${result} = | Format String | Document {} is missing on folder {folder} | tests.robot | folder=/home |
+        | Should Be Equal | ${result} | Document tests.robot is missing on folder /home |
+        | ${result} = | Format String | Uploaded file: {} should not be bigger than {}. | photo.jpg | 5MB |
+        | Should Be Equal | ${result} | Uploaded file: photo.jpg should not be bigger than 5MB. |
+
+        New in Robot Framework 3.1.
+        """
+        if os.path.isabs(template) and os.path.isfile(template):
+            template = template.replace("/", os.sep)
+            logger.info(
+                'Reading template from file <a href="%s">%s</a>' % (template, template),
+                html=True)
+            with Utf8Reader(template) as reader:
+                template = reader.read()
+        else:
+            template = template
+        return template.format(*positional, **named)
 
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given string."""
