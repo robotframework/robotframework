@@ -11,6 +11,10 @@ def int_(argument: 'INT', expected=None):
     _validate_type(argument, expected)
 
 
+def long_(argument: 'lOnG', expected=None):
+    _validate_type(argument, expected)
+
+
 def float_(argument: 'Float', expected=None):
     _validate_type(argument, expected)
 

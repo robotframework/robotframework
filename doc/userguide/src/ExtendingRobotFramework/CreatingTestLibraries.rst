@@ -1153,8 +1153,8 @@ case-insensitive.
    |             |               |            | to handle them specially if needed. All comparisons are        |                                      |
    |             |               |            | case-insensitive.                                              |                                      |
    +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | int_        | Integral_     | integer    | Conversion is done using the int_ built-in function.           | | `42`                               |
-   |             |               |            | If that fails and type is got implicitly from default values,  | | `3.14` (only with implicit type)   |
+   | int_        | Integral_     | integer,   | Conversion is done using the int_ built-in function.           | | `42`                               |
+   |             |               | long       | If that fails and type is got implicitly from default values,  | | `3.14` (only with implicit type)   |
    |             |               |            | also float_ conversion is attempted.                           |                                      |
    +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
    | float_      | Real_         | double     | Conversion is done using the float_ built-in.                  | | `3.14`                             |

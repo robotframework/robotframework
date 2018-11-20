@@ -142,7 +142,7 @@ class IntegerConverter(TypeConverter):
     type = int
     abc = Integral
     type_name = 'integer'
-    aliases = ('int',)
+    aliases = ('int', 'long')
 
     def _convert(self, value, explicit_type=True):
         try:

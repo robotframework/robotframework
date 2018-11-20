@@ -10,7 +10,7 @@ Resource                 conversion.resource
 Integer
     Integer              42                        ${42}
     Int                  -1                        ${-1}
-    Integer              9999999999999999999999    ${9999999999999999999999}
+    Long                 9999999999999999999999    ${9999999999999999999999}
 
 Invalid integer
     [Template]           Conversion Should Fail

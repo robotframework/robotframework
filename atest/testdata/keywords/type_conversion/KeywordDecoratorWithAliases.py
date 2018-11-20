@@ -6,17 +6,22 @@ from robot.api.deco import keyword
 from robot.utils import unicode
 
 
-@keyword(types=['Integer'])    # type is given as str
+@keyword(types=['Integer'])                # type always is given as str
 def integer(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types=[u'INT'])       # type is unicode on Python 2
+@keyword(types=[u'INT'])                   # type given as unicode on Python 2
 def int_(argument, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(types=['Float'])
+@keyword(types={'argument': 'lOnG'})       # type always given as str
+def long_(argument, expected=None):
+    _validate_type(argument, expected)
+
+
+@keyword(types={u'argument': u'Float'})    # type given as unicode on Python 2
 def float_(argument, expected=None):
     _validate_type(argument, expected)
 
