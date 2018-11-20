@@ -15,16 +15,16 @@
 
 from __future__ import absolute_import
 
+import os
 import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
-import os
 
 
 from robot.api import logger
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
-                         unic, PY3, Utf8Reader)
+                         unic, Utf8Reader, PY3)
 from robot.version import get_version
 
 
@@ -124,42 +124,35 @@ class String(object):
         return bytes.decode(encoding, errors)
 
     def format_string(self, template, *positional, **named):
-        """Formats a ``template`` using the given ``positional`` and ``named``
-        arguments.
+        """Formats a ``template`` using the given ``positional`` and ``named`` arguments.
 
-        If the given ``template`` is a valid absolute file path, opens the file in read
-        mode and then format its content using the given
-        ``positional`` and ``named`` arguments. The file is read as it is, that means, any trailing
-        newlines, spaces and etc would not be ignored.
+        The template can be either be a string or an absolute path to
+        an existing file. In the latter case the file is read and its contents
+        are used as the template. If the template file contains non-ASCII
+        characters, it must be encoded using UTF-8.
 
-        This keyword uses python's string format. For more information see:
-        [https://docs.python.org/library/string.html#formatstrings]|Format syntax]
+        The template is formatted using Python's
+        [https://docs.python.org/library/string.html#format-string-syntax|format
+        string syntax]. Placeholders are marked using ``{}`` with possible
+        field name and format specification inside. Literal curly braces
+        can be inserted by doubling them like `{{` and `}}`.
 
         Examples:
-
-        `Considering the file C:\\template.txt contents as "My {test} String"`
-        | ${result} = | Format String | C:\\template.txt | | test=awesome |
-        | Should Be Equal | ${result} | My awesome String |
-        | ${result} = | Format String | User {} is not a admin user. | non-admin | |
-        | Should Be Equal | ${result} | User non-admin is not a admin user. |
-        | ${result} = | Format String | Username: {username} - Password: {password} | | username=Robot | password=Framework |
-        | Should Be Equal | ${result} | Username: Robot - Password: Framework |
-        | ${result} = | Format String | Document {} is missing on folder {folder} | tests.robot | folder=/home |
-        | Should Be Equal | ${result} | Document tests.robot is missing on folder /home |
-        | ${result} = | Format String | Uploaded file: {} should not be bigger than {}. | photo.jpg | 5MB |
-        | Should Be Equal | ${result} | Uploaded file: photo.jpg should not be bigger than 5MB. |
+        | ${to} = | Format String | To: {} <{}>                    | ${user}      | ${email} |
+        | ${to} = | Format String | To: {name} <{email}>           | name=${name} | email=${email} |
+        | ${to} = | Format String | To: {user.name} <{user.email}> | user=${user} |
+        | ${xx} = | Format String | {:*^30}                        | centered     |
+        | ${yy} = | Format String | {0:{width}{base}}              | ${42}        | base=X | width=10 |
+        | ${zz} = | Format String | ${CURDIR}/template.txt         | positional   | named=value |
 
         New in Robot Framework 3.1.
         """
         if os.path.isabs(template) and os.path.isfile(template):
-            template = template.replace("/", os.sep)
-            logger.info(
-                'Reading template from file <a href="%s">%s</a>' % (template, template),
-                html=True)
+            template = template.replace('/', os.sep)
+            logger.info('Reading template from file <a href="%s">%s</a>.'
+                        % (template, template), html=True)
             with Utf8Reader(template) as reader:
                 template = reader.read()
-        else:
-            template = template
         return template.format(*positional, **named)
 
     def get_line_count(self, string):

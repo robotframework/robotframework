@@ -1,12 +1,12 @@
 *** Settings ***
-Library           String
+Library               String
 
 *** Variables ***
-${NSN}            nokia_siemens_networks
+${NSN}                nokia_siemens_networks
 ${TEXT IN COLUMNS}    robot\tframework\nis\tgood\tfor\ttesting
-${FIRST LINE}     robot\tframework
-${SECOND LINE}    is\tgood\tfor\ttesting
-&{USER}                 name=John Doe    email=john@example.com
+${FIRST LINE}         robot\tframework
+${SECOND LINE}        is\tgood\tfor\ttesting
+&{USER}               name=John Doe    email=john@example.com
 
 *** Test Cases ***
 Format String With Positional Argument
@@ -52,3 +52,9 @@ Attribute access
 Item access
     ${result} =    Format String    {user[name]} <{user[email]}>    user=${USER}
     Should Be Equal    ${result}    John Doe <john@example.com>
+
+Format Spec
+    ${result} =    Format String    {:*^30}    centered
+    Should Be Equal    ${result}    ***********centered***********
+    ${result} =    Format String    {0:{width}{base}}    ${42}    base=X    width=10
+    Should Be Equal    ${result}    ${SPACE*8}2A
