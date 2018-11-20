@@ -79,6 +79,12 @@ class Remote(object):
         except TypeError:
             return ['*args']
 
+    def get_keyword_types(self, name):
+        try:
+            return self._client.get_keyword_types(name)
+        except TypeError:
+            return None
+
     def get_keyword_tags(self, name):
         try:
             return self._client.get_keyword_tags(name)
@@ -218,6 +224,12 @@ class XmlRpcRemoteClient(object):
     def get_keyword_arguments(self, name):
         try:
             return self._server.get_keyword_arguments(name)
+        except xmlrpclib.Error:
+            raise TypeError
+
+    def get_keyword_types(self, name):
+        try:
+            return self._server.get_keyword_types(name)
         except xmlrpclib.Error:
             raise TypeError
 

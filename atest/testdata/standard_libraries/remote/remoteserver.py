@@ -9,13 +9,16 @@ class RemoteServer(SimpleXMLRPCServer):
         SimpleXMLRPCServer.__init__(self, ('127.0.0.1', int(port)))
         self.library = library
         self._shutdown = False
+        self._register_functions()
+        announce_port(self.socket, port_file)
+        self.serve_forever()
+
+    def _register_functions(self):
         self.register_function(self.get_keyword_names)
         self.register_function(self.get_keyword_arguments)
         self.register_function(self.get_keyword_tags)
         self.register_function(self.get_keyword_documentation)
         self.register_function(self.run_keyword)
-        announce_port(self.socket, port_file)
-        self.serve_forever()
 
     def serve_forever(self):
         while not self._shutdown:

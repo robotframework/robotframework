@@ -1049,9 +1049,10 @@ below implementing the same keyword as in earlier examples:
 
 Regardless of the approach that is used, it is not necessarily to specify
 types for all arguments. When specifying types as a list, it is possible
-to use `None` to mark that a certain argument does not have a type, and
-arguments at the end can be omitted altogether. For example, both of these
-keywords specify the type only for the second argument:
+to use `None` or any other non-true value to mark that a certain argument
+does not have a type, and arguments at the end can be omitted altogether.
+For example, both of these keywords specify the type only for the second
+argument:
 
 .. sourcecode:: python
 

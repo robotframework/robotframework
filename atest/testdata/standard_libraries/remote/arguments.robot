@@ -121,6 +121,14 @@ Named arguments before positional
     [Template]    NONE
     Args and kwargs    this=wont    work
 
+Argument types as list
+    [Template]    NONE
+    Argument types as list    42    42    {'a': 1, u'ä': 2}    {}
+
+Argument types as dict
+    [Template]    NONE
+    Argument types as dict    42    42    {'a': 1, u'ä': 2}    {}
+
 *** Keywords ***
 Arguments Should Be Accepted
     [Arguments]    ${expected}    ${keyword}    @{args}    &{kwargs}

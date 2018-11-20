@@ -2,7 +2,20 @@ import sys
 
 from xmlrpc.client import Binary
 
+from robot.api.deco import keyword
+
 from remoteserver import RemoteServer
+
+
+class TypedRemoteServer(RemoteServer):
+
+    def _register_functions(self):
+        RemoteServer._register_functions(self)
+        self.register_function(self.get_keyword_types)
+
+    def get_keyword_types(self, name):
+        kw = getattr(self.library, name)
+        return getattr(kw, 'robot_types', None)
 
 
 class Arguments(object):
@@ -11,7 +24,10 @@ class Arguments(object):
         if binary:
             argument = self._handle_binary(argument)
         expected = eval(expected)
-        assert argument == expected, '%r != %r' % (argument, expected)
+        self._assert_equal(argument, expected)
+
+    def _assert_equal(self, argument, expected, msg=None):
+        assert argument == expected, msg or '%r != %r' % (argument, expected)
 
     def _handle_binary(self, arg, required=True):
         if isinstance(arg, list):
@@ -76,6 +92,20 @@ class Arguments(object):
         return self._format_args(arg1, arg2, *varargs,
                                  kwo1=kwo1, kwo2=kwo2, **kwargs)
 
+    @keyword(types=['int', '', 'dict'])
+    def argument_types_as_list(self, integer, no_type_1, dictionary, no_type_2):
+        self._assert_equal(integer, 42)
+        self._assert_equal(no_type_1, '42')
+        self._assert_equal(dictionary, {'a': 1, 'ä': 2})
+        self._assert_equal(no_type_2, '{}')
+
+    @keyword(types={'integer': 'Integer', 'dictionary': 'Dictionary'})
+    def argument_types_as_dict(self, integer, no_type_1, dictionary, no_type_2):
+        self._assert_equal(integer, 42)
+        self._assert_equal(no_type_1, '42')
+        self._assert_equal(dictionary, {'a': 1, 'ä': 2})
+        self._assert_equal(no_type_2, '{}')
+
     def _format_args(self, *args, **kwargs):
         args = [self._format(a) for a in args]
         kwargs = [f'{k}:{self._format(kwargs[k])}' for k in sorted(kwargs)]
@@ -87,4 +117,4 @@ class Arguments(object):
 
 
 if __name__ == '__main__':
-    RemoteServer(Arguments(), *sys.argv[1:])
+    TypedRemoteServer(Arguments(), *sys.argv[1:])

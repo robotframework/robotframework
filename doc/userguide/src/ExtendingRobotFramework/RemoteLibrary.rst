@@ -188,9 +188,9 @@ Required methods
 A remote server is an XML-RPC server that must have the same methods in its
 public interface as the `dynamic library API`_ has. Only `get_keyword_names`
 and `run_keyword` are actually required, but `get_keyword_arguments`,
-`get_keyword_tags` and `get_keyword_documentation` are also recommended.
-Notice that using the camelCase format like `getKeywordNames` in method names
-is not possible similarly as in the normal dynamic API. How
+`get_keyword_types`, `get_keyword_tags` and `get_keyword_documentation` are
+also recommended. Notice that using the camelCase format like `getKeywordNames`
+in method names is not possible similarly as in the normal dynamic API. How
 the actual keywords are implemented is not relevant for the Remote
 library. Remote servers can either act as wrappers for the real test
 libraries, like the available `generic remote servers`_ do, or they can
@@ -218,11 +218,22 @@ by using the `get_keyword_names` method. Remote servers must implement this
 method and the method must return keyword names as a list of strings.
 
 Remote servers can, and should, also implement `get_keyword_arguments`,
-`get_keyword_tags` and `get_keyword_documentation` methods to provide more
-information about the keywords. All these methods take the name of the keyword
-as an argument. Arguments must be returned as a list of strings in the `same
-format as with dynamic libraries`__, tags `as a list of strings`__, and
-documentation `as a string`__.
+`get_keyword_types`, `get_keyword_tags` and `get_keyword_documentation`
+methods to provide more information about the keywords. All these methods
+take the name of the keyword as an argument. Arguments must be returned as
+a list of strings in the `same format as with dynamic libraries`__, tags
+`as a list of strings`__, and documentation `as a string`__.
+
+Type information can be returned either as a list mapping type names to
+arguments based on position or as a dictionary mapping argument names to
+type names directly. In practice this works the same way as when
+`specifying types using the @keyword decorator`__ with normal libraries.
+The difference is that because the XML-RPC protocol does not support
+arbitrary values, type information needs to be specified using type names
+or aliases like `'int'` or `'integer'`, not using actual types like `int`.
+Additionally `None` or `null` values may not be allowed, and the empty
+string should be used instead if a marker telling certain argument does
+not have type information is needed.
 
 Remote servers can also provide `general library documentation`__ to
 be used when generating documentation with the Libdoc_ tool.
@@ -231,9 +242,12 @@ be used when generating documentation with the Libdoc_ tool.
           With earlier versions keyword tags can be `embedded into the
           keyword documentation`__.
 
+.. note:: `get_keyword_types` is new in Robot Framework 3.1.
+
 __ `Getting keyword arguments`_
 __ `Getting keyword tags`_
 __ `Getting keyword documentation`_
+__ `Specifying argument types using @keyword decorator`_
 __ `Getting general library documentation`_
 __ `Getting keyword tags`_
 
