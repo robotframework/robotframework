@@ -2555,22 +2555,24 @@ camelCase aliases work exactly the same way.
    ===========================  =========================  =======================================================
    `get_keyword_names`                                     `Return names`__ of the implemented keywords.
    `run_keyword`                `name, arguments, kwargs`  `Execute the specified keyword`__ with given arguments. `kwargs` is optional.
-   `get_keyword_arguments`      `name`                     Return keywords' `argument specifications`__. Optional method.
+   `get_keyword_arguments`      `name`                     Return keywords' `argument specification`__. Optional method.
+   `get_keyword_types`          `name`                     Return keywords' `argument type information`__. Optional method. New in RF 3.1.
+   `get_keyword_tags`           `name`                     Return keywords' `tags`__. Optional method. New in RF 3.0.2.
    `get_keyword_documentation`  `name`                     Return keywords' and library's `documentation`__. Optional method.
    ===========================  =========================  =======================================================
 
 __ `Getting dynamic keyword names`_
 __ `Running dynamic keywords`_
 __ `Getting keyword arguments`_
+__ `Getting keyword argument types`_
+__ `Getting keyword tags`_
 __ `Getting keyword documentation`_
 
 It is possible to write a formal interface specification in Java as
 below. However, remember that libraries *do not need* to implement
 any explicit interface, because Robot Framework directly checks with
 reflection if the library has the required `get_keyword_names` and
-`run_keyword` methods or their camelCase aliases. Additionally,
-`get_keyword_arguments` and `get_keyword_documentation`
-are completely optional.
+`run_keyword` methods or their camelCase aliases.
 
 .. sourcecode:: java
 
@@ -2583,6 +2585,10 @@ are completely optional.
        Object runKeyword(String name, List arguments, Map kwargs);
 
        List<String> getKeywordArguments(String name);
+
+       List<String> getKeywordTypes(String name);
+
+       List<String> getKeywordTags(String name);
 
        String getKeywordDocumentation(String name);
 
