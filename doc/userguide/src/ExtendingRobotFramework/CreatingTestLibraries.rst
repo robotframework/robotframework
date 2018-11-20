@@ -1131,80 +1131,86 @@ argument is converted to the concrete type.
 
 Also types in in the typing_ module that map to the supported concrete
 types or ABCs (e.g. `List`) are supported. With generics also the subscription
-syntax `List[int]` works, but no validation is done for container contents.
+syntax (e.g. `List[int]`) works, but no validation is done for container
+contents.
+
+In addition to using the actual types (e.g. `int`), it is possible to specify
+the type using type names as a string (e.g. `'int'`) and some types also have
+aliases (e.g. `'integer'`). Matching types to names and aliases is
+case-insensitive.
 
 .. table:: Supported argument conversions
    :class: tabular
 
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   |    Type     |      ABC      |                       Explanation                              |             Examples                 |
-   +=============+===============+================================================================+======================================+
-   | bool_       |               | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
-   |             |               | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
-   |             |               | are converted to `False`, and the string `NONE` is converted   | | `foobar` (returned as-is)          |
-   |             |               | to `None`. Other strings are passed as-is, allowing keywords   |                                      |
-   |             |               | to handle them specially if needed. All comparisons are        |                                      |
-   |             |               | case-insensitive.                                              |                                      |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | int_        | Integral_     | Conversion is done using the int_ built-in function.           | | `42`                               |
-   |             |               | If that fails and type is got implicitly from default values,  | | `3.14` (only with implicit type)   |
-   |             |               | also float_ conversion is attempted.                           |                                      |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | float_      | Real_         | Conversion is done using the float_ built-in.                  | | `3.14`                             |
-   |             |               |                                                                | | `2.9979e8`                         |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | Decimal_    |               | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | bytes_      | ByteString_   | Argument is converted to bytes so that each Unicode code point | | `foobar`                           |
-   |             |               | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
-   |             |               | points are not allowed. String `NONE` (case-insensitively) is  | | `\x00` (the null byte)             |
-   |             |               | converted to matching bytes, not to Python `None`. When using  |                                      |
-   |             |               | Python 2, byte conversion is only done if type is specified    |                                      |
-   |             |               | explicitly.                                                    |                                      |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | bytearray_  |               | Same conversion as with bytes_ but the result is a bytearray_. |                                      |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | `datetime   |               | Argument is expected to be a timestamp in `ISO 8601`_ like     | | `2018-09-12T15:47:05.123456`       |
-   | <dt-mod_>`_ |               | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2018-09-12 15:47`                 |
-   |             |               | character can be used as a separator or separators can be      | | `2018-09-12`                       |
-   |             |               | omitted altogether. Additionally, only the date part is        |                                      |
-   |             |               | mandatory, all possibly missing time components are considered |                                      |
-   |             |               | to be zeros.                                                   |                                      |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | date_       |               | Same conversion as with `datetime <dt-mod_>`_ but all time     | | `2018-09-12`                       |
-   |             |               | components are expected to be omitted or to be zeros.          |                                      |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | timedelta_  |               | String is expected to represent a time interval in one of the  | | `42` (42 seconds)                  |
-   |             |               | time formats Robot Framework supports: `time as number`_,      | | `1 minute 2 seconds`               |
-   |             |               | `time as time string`_ or `time as "timer" string`_.           | | `01:02` (same as above)            |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | Enum_       |               | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
-   |             |               | Enum_) and arguments themselves must match its members.        |                                      |
-   |             |               |                                                                |    class Color(Enum):                |
-   |             |               |                                                                |        RED = 1                       |
-   |             |               |                                                                |        GREEN = 2                     |
-   |             |               |                                                                |                                      |
-   |             |               |                                                                | | `GREEN`                            |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | NoneType_   |               | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
-   |             |               | object, other values are passed as-is. Mainly relevant when    |                                      |
-   |             |               | type is got implicitly from `None` being a default value.      |                                      |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | list_       | Sequence_     | Argument must be be a Python list literal. It is converted     | | `['foo', 'bar']`                   |
-   |             |               | to an actual list using the `ast.literal_eval`_ function.      | | `[('one', 1), ('two', 2)]`         |
-   |             |               | The list can contain any values `ast.literal_eval`_ supports   |                                      |
-   |             |               | inside it, including other lists or other containers.          |                                      |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | tuple_      |               | Same as list_ but the argument must be a tuple literal.        | | `('foo', 'bar')`                   |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | dict_       | Mapping_      | Same as list_ but the argument must be a dictionary literal.   | | `{'a': 1, 'b': 2}`                 |
-   |             |               |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | set_        | `Set          | Same as list_ but the argument must be a set literal or        | | `{1, 2, 3, 42}`                    |
-   |             | <abc.Set_>`__ | `set()` to create an empty set. Not supported on Python 2.     | | `set()`                            |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
-   | frozenset_  |               | Same conversion as with set_ but the result is a frozenset_.   |                                      |
-   +-------------+---------------+----------------------------------------------------------------+--------------------------------------+
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   |    Type     |      ABC      |  Aliases   |                       Explanation                              |             Examples                 |
+   +=============+===============+============+================================================================+======================================+
+   | bool_       |               | boolean    | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
+   |             |               |            | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
+   |             |               |            | are converted to `False`, and the string `NONE` is converted   | | `foobar` (returned as-is)          |
+   |             |               |            | to `None`. Other strings are passed as-is, allowing keywords   |                                      |
+   |             |               |            | to handle them specially if needed. All comparisons are        |                                      |
+   |             |               |            | case-insensitive.                                              |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | int_        | Integral_     | integer    | Conversion is done using the int_ built-in function.           | | `42`                               |
+   |             |               |            | If that fails and type is got implicitly from default values,  | | `3.14` (only with implicit type)   |
+   |             |               |            | also float_ conversion is attempted.                           |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | float_      | Real_         | double     | Conversion is done using the float_ built-in.                  | | `3.14`                             |
+   |             |               |            |                                                                | | `2.9979e8`                         |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | Decimal_    |               |            | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | bytes_      | ByteString_   |            | Argument is converted to bytes so that each Unicode code point | | `foobar`                           |
+   |             |               |            | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
+   |             |               |            | points are not allowed. String `NONE` (case-insensitively) is  | | `\x00` (the null byte)             |
+   |             |               |            | converted to matching bytes, not to Python `None`. When using  |                                      |
+   |             |               |            | Python 2, byte conversion is only done if type is specified    |                                      |
+   |             |               |            | explicitly.                                                    |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | bytearray_  |               |            | Same conversion as with bytes_ but the result is a bytearray_. |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | `datetime   |               |            | Argument is expected to be a timestamp in `ISO 8601`_ like     | | `2018-09-12T15:47:05.123456`       |
+   | <dt-mod_>`_ |               |            | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2018-09-12 15:47`                 |
+   |             |               |            | character can be used as a separator or separators can be      | | `2018-09-12`                       |
+   |             |               |            | omitted altogether. Additionally, only the date part is        |                                      |
+   |             |               |            | mandatory, all possibly missing time components are considered |                                      |
+   |             |               |            | to be zeros.                                                   |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | date_       |               |            | Same conversion as with `datetime <dt-mod_>`_ but all time     | | `2018-09-12`                       |
+   |             |               |            | components are expected to be omitted or to be zeros.          |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | timedelta_  |               |            | String is expected to represent a time interval in one of the  | | `42` (42 seconds)                  |
+   |             |               |            | time formats Robot Framework supports: `time as number`_,      | | `1 minute 2 seconds`               |
+   |             |               |            | `time as time string`_ or `time as "timer" string`_.           | | `01:02` (same as above)            |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | Enum_       |               |            | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
+   |             |               |            | Enum_) and arguments themselves must match its members.        |                                      |
+   |             |               |            |                                                                |    class Color(Enum):                |
+   |             |               |            |                                                                |        RED = 1                       |
+   |             |               |            |                                                                |        GREEN = 2                     |
+   |             |               |            |                                                                |                                      |
+   |             |               |            |                                                                | | `GREEN`                            |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | NoneType_   |               |            | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
+   |             |               |            | object, other values are passed as-is. Mainly relevant when    |                                      |
+   |             |               |            | type is got implicitly from `None` being a default value.      |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | list_       | Sequence_     |            | Argument must be be a Python list literal. It is converted     | | `['foo', 'bar']`                   |
+   |             |               |            | to an actual list using the `ast.literal_eval`_ function.      | | `[('one', 1), ('two', 2)]`         |
+   |             |               |            | The list can contain any values `ast.literal_eval`_ supports   |                                      |
+   |             |               |            | inside it, including other lists or other containers.          |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | tuple_      |               |            | Same as list_ but the argument must be a tuple literal.        | | `('foo', 'bar')`                   |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | dict_       | Mapping_      | dictionary,| Same as list_ but the argument must be a dictionary literal.   | | `{'a': 1, 'b': 2}`                 |
+   |             |               | map        |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | set_        | `Set          |            | Same as list_ but the argument must be a set literal or        | | `{1, 2, 3, 42}`                    |
+   |             | <abc.Set_>`__ |            | `set()` to create an empty set. Not supported on Python 2.     | | `set()`                            |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | frozenset_  |               |            | Same conversion as with set_ but the result is a frozenset_.   |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
 
 .. _bool: https://docs.python.org/library/functions.html#bool
 .. _int: https://docs.python.org/library/functions.html#int
