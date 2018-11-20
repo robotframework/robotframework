@@ -33,7 +33,8 @@ class LibraryMock(object):
         self.name = self.orig_name = name
         self.scope = LibraryScope(scope, self)
 
-    register_listeners = unregister_listeners = reset_instance = lambda *args: None
+    register_listeners = unregister_listeners = reset_instance \
+        = get_instance = lambda *args: None
 
 
 def assert_argspec(argspec, minargs=0, maxargs=0, positional=[], defaults={},

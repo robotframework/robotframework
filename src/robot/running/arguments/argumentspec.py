@@ -15,6 +15,8 @@
 
 import sys
 
+from robot.utils import setter
+
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
 from .argumentresolver import ArgumentResolver
@@ -33,8 +35,12 @@ class ArgumentSpec(object):
         self.kwonlyargs = kwonlyargs or []
         self.kwargs = kwargs
         self.defaults = defaults or {}
-        self.types = TypeValidator(self).validate(types)
+        self.types = types
         self.supports_named = supports_named
+
+    @setter
+    def types(self, types):
+        return TypeValidator(self).validate(types)
 
     @property
     def minargs(self):

@@ -2324,6 +2324,26 @@ __ `Named-only arguments with dynamic libraries`_
 __ `Named argument syntax with dynamic libraries`_
 __ `Free named arguments with dynamic libraries`_
 
+Getting keyword argument types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework 3.1 introduced support for automatic argument conversion
+and the dynamic library API supports that as well. The conversion logic
+works exactly like with `static libraries`__, but how the type information
+is specified is naturally different.
+
+With dynamic libraries types can be returned using the optional
+`get_keyword_types` method (alias `getKeywordTypes`). It can return types
+using a list or a dictionary exactly like types can be specified when using
+the `@keyword decorator`__. Type information can be specified using actual
+types like `int`, but especially if a dynamic library gets this information
+from external systems, using strings like `'int'` or `'integer'` may be
+easier. See the `Supported conversions`_ section for more information about
+supported types and how to specify them.
+
+__ `Argument types`_
+__ `Specifying argument types using @keyword decorator`_
+
 Getting keyword tags
 ~~~~~~~~~~~~~~~~~~~~
 

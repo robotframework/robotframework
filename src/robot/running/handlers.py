@@ -22,6 +22,7 @@ from robot.model import Tags
 from .arguments import (ArgumentSpec, DynamicArgumentParser,
                         JavaArgumentCoercer, JavaArgumentParser,
                         PythonArgumentParser)
+from .dynamicmethods import GetKeywordTypes
 from .librarykeywordrunner import (EmbeddedArgumentsRunner,
                                    LibraryKeywordRunner, RunKeywordRunner)
 from .runkwregister import RUN_KW_REGISTER
@@ -51,9 +52,9 @@ class _RunnableHandler(object):
 
     def __init__(self, library, handler_name, handler_method, doc='', tags=None):
         self.library = library
+        self._handler_name = handler_name
         self.name = self._get_name(handler_name, handler_method)
         self.arguments = self._parse_arguments(handler_method)
-        self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
         doc, tags_from_doc = split_tags_from_doc(doc or '')
@@ -172,6 +173,7 @@ class _DynamicHandler(_RunnableHandler):
                 raise DataError("Too few '%s' method parameters for "
                                 "keyword-only arguments support."
                                 % self._run_keyword_method_name)
+        spec.types = GetKeywordTypes(self.library.get_instance())(self._handler_name)
         return spec
 
     def resolve_arguments(self, arguments, variables=None):
