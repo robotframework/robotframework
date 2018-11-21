@@ -260,18 +260,18 @@ the loop is used ends.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Example 1
+   Example
        FOR    ${animal}    IN    cat    dog
        \    Log    ${animal}
        \    Log    2nd keyword
        Log    Outside loop
 
-   Example 2
+   Second Example
        FOR    ${var}    IN    one    two    ${3}    four    ${five}
        ...     kuusi    7    eight    nine    ${last}
        \    Log    ${var}
 
-The for loop in :name:`Example 1` above is executed twice, so that first
+The for loop in :name:`Example` above is executed twice, so that first
 the loop variable `${animal}` has the value `cat` and then
 `dog`. The loop consists of two :name:`Log` keywords. In the
 second example, loop values are `split into two rows`__ and the
@@ -296,6 +296,25 @@ used with all of them one by one.
 .. note:: Prior to Robot Framework 3.1, the `IN` separator was case-insensitive.
           Using it case-sensitively is now deprecated and that support will
           be removed in the future.
+
+Optionally closing for loops with `END`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework 3.1 allows optionally ending for loops with `END` marker:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       FOR    ${animal}    IN    cat    dog
+       \    Log    ${animal}
+       \    Log    2nd keyword
+       END
+
+The plan is to deprecate not using `END` in Robot Framework 3.2, and at
+the same time remove the need to use :codesc:`\\` for indenting keywords
+inside the loop. It is recommended to add `END` already now to make
+test data forward-compatible.
 
 Nested for loops
 ~~~~~~~~~~~~~~~~

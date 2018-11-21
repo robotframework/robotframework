@@ -21,6 +21,18 @@ Simple For
     Test "Simple For 2" Helper    ${tc2.kws[0].kws[4]}    5
     Test "Simple For 2" Helper    ${tc2.kws[0].kws[5]}    6
 
+For with END
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check log message    ${tc.kws[0].kws[0].kws[0].msgs[0]}   var: one
+    Check log message    ${tc.kws[1].msgs[0]}    Between for loops
+    Check log message    ${tc.kws[2].kws[1].kws[0].msgs[0]}   var: two
+    Check log message    ${tc.kws[3].msgs[0]}    Done!
+
+Invalid END usage
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
+
 Empty For Body Fails
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be For Keyword    ${tc.kws[0]}    0

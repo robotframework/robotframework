@@ -23,6 +23,33 @@ Simple For 2
     \    No Operation
     \    Run Keyword If    ${num} in [2,6]    Log    Presidential Candidate!    WARN
 
+For with END
+    FOR    ${var}    IN    one    two
+    \    Log    var: ${var}
+    END
+    Log    Between for loops
+    FOR    ${var}    IN    one    two
+    \    Log    var: ${var}
+    END    # I can haz comments??!?
+    Log    Done!
+
+Invalid END usage 1
+    [Documentation]    FAIL    'End' is a reserved keyword.
+    Log    No for loop here...
+    END
+
+Invalid END usage 2
+    [Documentation]    FAIL    'End' is a reserved keyword.
+    FOR    ${var}    IN    one    two
+    \    Log    var: ${var}
+    \    END
+
+Invalid END usage 3
+    [Documentation]    FAIL    'End' is a reserved keyword.
+    FOR    ${var}    IN    one    two
+    \    Log    var: ${var}
+    End
+
 Empty For Body Fails
     [Documentation]    FAIL    ${NO KEYWORDS}
     FOR    ${var}    IN    one    two
