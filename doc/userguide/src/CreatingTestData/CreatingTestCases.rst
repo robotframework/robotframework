@@ -879,9 +879,11 @@ all the looped elements even if there are failures.
    Template and for
        [Template]    Example keyword
        FOR    ${item}    IN    @{ITEMS}
-       \    ${item}    2nd arg
+           ${item}    2nd arg
+       END
        FOR    ${index}    IN RANGE    42
-       \    1st arg    ${index}
+           1st arg    ${index}
+       END
 
 Different test case styles
 --------------------------

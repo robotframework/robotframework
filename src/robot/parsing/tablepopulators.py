@@ -195,15 +195,22 @@ class _TestCaseUserKeywordPopulator(Populator):
             self._handle_data_row(dedented_row)
 
     def _handle_data_row(self, row):
-        ending_for_loop = self._populating_for_loop() and row.all == ['END']
+        ending_for_loop = False
         if not self._continues(row):
             self._populator.populate()
+            if row.all == ['END']:
+                ending_for_loop = self._end_for_loop()
             self._populator = self._get_populator(row)
             self._comment_cache.consume_with(self._populate_comment_row)
         else:
             self._comment_cache.consume_with(self._populator.add)
         if not ending_for_loop:
             self._populator.add(row)
+
+    def _end_for_loop(self):
+        if self._populating_for_loop():
+            return True
+        return self._test_or_uk.end_for_loop()
 
     def _populating_for_loop(self):
         return isinstance(self._populator, ForLoopPopulator)

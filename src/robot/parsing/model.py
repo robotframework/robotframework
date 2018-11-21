@@ -614,6 +614,25 @@ class TestCase(_WithSteps, _WithSettings):
         self.steps.append(ForLoop(self, declaration, comment))
         return self.steps[-1]
 
+    def end_for_loop(self):
+        loop, steps = self._find_last_empty_for_and_steps_after()
+        if not loop:
+            return False
+        loop.steps.extend(steps)
+        self.steps[-len(steps):] = []
+        return True
+
+    def _find_last_empty_for_and_steps_after(self):
+        steps = []
+        for step in reversed(self.steps):
+            if isinstance(step, ForLoop):
+                if not step.steps:
+                    steps.reverse()
+                    return step, steps
+                break
+            steps.append(step)
+        return None, []
+
     def report_invalid_syntax(self, message, level='ERROR'):
         type_ = 'test case' if type(self) is TestCase else 'keyword'
         message = "Invalid syntax in %s '%s': %s" % (type_, self.name, message)

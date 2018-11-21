@@ -21,12 +21,8 @@ Simple For
     Test "Simple For 2" Helper    ${tc2.kws[0].kws[4]}    5
     Test "Simple For 2" Helper    ${tc2.kws[0].kws[5]}    6
 
-For with END
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check log message    ${tc.kws[0].kws[0].kws[0].msgs[0]}   var: one
-    Check log message    ${tc.kws[1].msgs[0]}    Between for loops
-    Check log message    ${tc.kws[2].kws[1].kws[0].msgs[0]}   var: two
-    Check log message    ${tc.kws[3].msgs[0]}    Done!
+Indentation is not required
+    Check Test Case    ${TEST NAME}
 
 Invalid END usage
     Check Test Case    ${TEST NAME} 1
@@ -34,7 +30,9 @@ Invalid END usage
     Check Test Case    ${TEST NAME} 3
 
 Empty For Body Fails
-    ${tc} =    Check Test Case    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TEST NAME} 1
+    Should Be For Keyword    ${tc.kws[0]}    0
+    ${tc} =    Check Test Case    ${TEST NAME} 2
     Should Be For Keyword    ${tc.kws[0]}    0
 
 For Without Value Fails
@@ -382,6 +380,42 @@ Case and space insensitive for loop separator is deprecated
     ...    Using 'I ne numer ate' as a FOR loop separator is deprecated. Use 'IN ENUMERATE' instead.
     Check log message    ${ERRORS}[2]    ${message}    WARN
 
+Escaping with backslash still works
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be For Keyword    ${tc.kws[0]}    2
+    Should Be For Item       ${tc.kws[0].kws[0]}    \${var} = one
+    Check log message        ${tc.kws[0].kws[0].kws[0].msgs[0]}   var: one
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
+    Should Be For Item       ${tc.kws[0].kws[1]}    \${var} = two
+    Check log message        ${tc.kws[0].kws[1].kws[0].msgs[0]}   var: two
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
+    Check log message        ${tc.kws[1].msgs[0]}    Between for loops
+    Should Be For Keyword    ${tc.kws[2]}    2
+    Should Be For Item       ${tc.kws[2].kws[0]}    \${var} = one
+    Check log message        ${tc.kws[2].kws[0].kws[0].msgs[0]}   var: one
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
+    Should Be For Item       ${tc.kws[2].kws[1]}    \${var} = two
+    Check log message        ${tc.kws[2].kws[1].kws[0].msgs[0]}   var: two
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
+
+END is not required when escaping with backslash
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be For Keyword    ${tc.kws[0]}    2
+    Should Be For Item       ${tc.kws[0].kws[0]}    \${var} = one
+    Check log message        ${tc.kws[0].kws[0].kws[0].msgs[0]}   var: one
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
+    Should Be For Item       ${tc.kws[0].kws[1]}    \${var} = two
+    Check log message        ${tc.kws[0].kws[1].kws[0].msgs[0]}   var: two
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
+    Check log message        ${tc.kws[1].msgs[0]}    Between for loops
+    Should Be For Keyword    ${tc.kws[2]}    2
+    Should Be For Item       ${tc.kws[2].kws[0]}    \${var} = one
+    Check log message        ${tc.kws[2].kws[0].kws[0].msgs[0]}   var: one
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
+    Should Be For Item       ${tc.kws[2].kws[1]}    \${var} = two
+    Check log message        ${tc.kws[2].kws[1].kws[0].msgs[0]}   var: two
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
+
 *** Keywords ***
 Should Be For Keyword
     [Arguments]    ${kw}    ${subcount}
@@ -469,3 +503,11 @@ Check KW "Nested For In UK"
     Check KW "For In UK"    ${nested2.kws[0].kws[0].kws[0]}
     Check Log Message    ${nested2.kws[0].kws[0].kws[1].msgs[0]}    Got arg: ${first_arg}
     Check Log Message    ${nested2.kws[1].msgs[0]}    This ought to be enough    FAIL
+
+Check KW "For in UK with backslashes"
+    [Arguments]    ${kw}    ${arg}
+    Should Be For Keyword    ${kw.kws[0]}    2
+    Should Be For Item       ${kw.kws[0].kws[0]}    \${x} = 1
+    Check log message        ${kw.kws[0].kws[0].kws[1].msgs[0]}   ${arg}-1
+    Should Be For Item       ${kw.kws[0].kws[1]}    \${x} = 2
+    Check log message        ${kw.kws[0].kws[1].kws[1].msgs[0]}   ${arg}-2

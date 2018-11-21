@@ -309,7 +309,8 @@ other arguments. The list variable can thus have any number of items, even zero.
        Log    Optional: ${opt}
        Log    Others:
        FOR    ${item}    IN    @{others}
-       \    Log    ${item}
+           Log    ${item}
+       END
 
 Notice that if the last keyword above is used with more than one
 argument, the second argument `${opt}` always gets the given
@@ -789,8 +790,9 @@ demonstrates returning conditionally inside a `for loop`_.
        [Arguments]    ${element}    @{items}
        ${index} =    Set Variable    ${0}
        FOR    ${item}    IN    @{items}
-       \    Return From Keyword If    '${item}' == '${element}'    ${index}
-       \    ${index} =    Set Variable    ${index + 1}
+           Return From Keyword If    '${item}' == '${element}'    ${index}
+           ${index} =    Set Variable    ${index + 1}
+       END
        Return From Keyword    ${-1}    # Could also use [Return]
 
 User keyword teardown

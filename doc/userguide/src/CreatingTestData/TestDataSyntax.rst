@@ -148,6 +148,8 @@ UTF-8 encoding.
 __ `Dividing test data to several rows`_
 __ Escaping_
 
+.. _space separated plain text format:
+
 Space separated format
 ''''''''''''''''''''''
 
@@ -598,9 +600,7 @@ must be escaped regardless of the test data format, and when using the
 
 Empty cells can be escaped either with the backslash character or with
 `built-in variable`_ `${EMPTY}`. The latter is typically recommended
-as it is easier to understand. An exception to this recommendation is escaping
-the indented cells in `for loops`_ with a backslash when using the
-`space separated format`_. All these cases are illustrated by the following
+as it is easier to understand. All these cases are illustrated by the following
 examples:
 
 .. sourcecode:: robotframework
@@ -612,9 +612,6 @@ examples:
        Do Something    first arg    ${EMPTY}
    Non-trailing empty
        Do Something    ${EMPTY}     second arg    # Escaping needed in space separated format
-   For loop
-       FOR    ${var}    IN    @{VALUES}
-       \    Log    ${var}                         # Escaping needed here too
 
 __ `Ignored data`_
 
