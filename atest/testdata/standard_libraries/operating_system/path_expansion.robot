@@ -28,7 +28,8 @@ Get Home
     [Return]    ${home}
 
 Get Windows Home
-    [Return]    %{HOMEDRIVE}%{HOMEPATH}
+    ${home} =    Get Environment Variable    USERPROFILE    %{HOMEDRIVE}%{HOMEPATH}
+    [Return]    ${home}
 
 Get Posix Home
     [Return]    %{HOME}
