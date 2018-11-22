@@ -165,17 +165,15 @@ class ArgumentCoercer(object):
         return self._handle_string(item)
 
     def _validate_key(self, key):
-        byte_prefix = 'b' if PY2 else ''
         if isinstance(key, xmlrpclib.Binary):
-            raise ValueError('Dictionary keys cannot be binary. Got %s%s.'
-                             % (byte_prefix, repr(key.data)))
+            raise ValueError('Dictionary keys cannot be binary. Got %s%r.'
+                             % ('b' if PY2 else '', key.data))
         if IRONPYTHON:
             try:
                 key.encode('ASCII')
             except UnicodeError:
                 raise ValueError('Dictionary keys cannot contain non-ASCII '
-                                 'characters on IronPython. Got %s%s.'
-                                 % (byte_prefix, repr(key.data)))
+                                 'characters on IronPython. Got %r.' % key)
 
 
 class RemoteResult(object):

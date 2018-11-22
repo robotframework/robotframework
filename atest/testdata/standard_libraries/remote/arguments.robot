@@ -123,11 +123,11 @@ Named arguments before positional
 
 Argument types as list
     [Template]    NONE
-    Argument types as list    42    42    {'a': 1, u'ä': 2}    {}
+    Argument types as list    42    42    {'a': 1, 'b': u'ä'}    {}
 
 Argument types as dict
     [Template]    NONE
-    Argument types as dict    42    42    {'a': 1, u'ä': 2}    {}
+    Argument types as dict    42    42    {'a': 1, 'b': u'ä'}    {}
 
 *** Keywords ***
 Arguments Should Be Accepted

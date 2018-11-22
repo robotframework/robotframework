@@ -105,15 +105,12 @@ class Arguments(object):
     def argument_types_as_list(self, integer, no_type_1, dictionary, no_type_2):
         self._assert_equal(integer, 42)
         self._assert_equal(no_type_1, '42')
-        self._assert_equal(dictionary, {'a': 1, 'ä': 2})
+        self._assert_equal(dictionary, {'a': 1, 'b': 'ä'})
         self._assert_equal(no_type_2, '{}')
 
     @keyword(types={'integer': 'Integer', 'dictionary': 'Dictionary'})
     def argument_types_as_dict(self, integer, no_type_1, dictionary, no_type_2):
-        self._assert_equal(integer, 42)
-        self._assert_equal(no_type_1, '42')
-        self._assert_equal(dictionary, {'a': 1, 'ä': 2})
-        self._assert_equal(no_type_2, '{}')
+        self.argument_types_as_list(integer, no_type_1, dictionary, no_type_2)
 
     def _format_args(self, *args, **kwargs):
         args = [self._format(a) for a in args]
