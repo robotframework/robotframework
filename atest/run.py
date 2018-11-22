@@ -48,6 +48,9 @@ try:
 except ImportError:
     def jar(*args, **kwargs):
         raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
+except AssertionError:
+    def jar(*args, **kwargs):
+        raise RuntimeError("Must be in project roo. See BUILD.rst for details.")
 
 
 ARGUMENTS = '''
