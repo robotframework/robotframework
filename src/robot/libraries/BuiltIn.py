@@ -2872,13 +2872,11 @@ class _Misc(_BuiltInBase):
            ``YYYYMMDD hhmmss``.
 
         3) If ``time`` is equal to ``NOW`` (default), the current local
-           time is used. This time is got using Python's ``time.time()``
-           function.
+           time is used.
 
         4) If ``time`` is equal to ``UTC``, the current time in
            [http://en.wikipedia.org/wiki/Coordinated_Universal_Time|UTC]
-           is used. This time is got using ``time.time() + time.altzone``
-           in Python.
+           is used.
 
         5) If ``time`` is in the format like ``NOW - 1 day`` or ``UTC + 1 hour
            30 min``, the current local/UTC time plus/minus the time
