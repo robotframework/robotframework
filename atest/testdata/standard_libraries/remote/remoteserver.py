@@ -3,6 +3,19 @@ import sys
 from xmlrpc.server import SimpleXMLRPCServer
 
 
+# Re-implementation of `robot.api.deco.keyword`. Cannot use the real thing
+# because `robot` may not installed on this interpreter.
+def keyword(name=None, tags=(), types=()):
+    if callable(name):
+        return keyword()(name)
+    def deco(func):
+        func.robot_name = name
+        func.robot_tags = tags
+        func.robot_types = types
+        return func
+    return deco
+
+
 class RemoteServer(SimpleXMLRPCServer):
 
     def __init__(self, library, port=8270, port_file=None):
