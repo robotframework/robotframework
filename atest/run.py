@@ -50,7 +50,8 @@ except ImportError:
         raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
 except AssertionError:
     def jar(*args, **kwargs):
-        raise RuntimeError("Must be in project roo. See BUILD.rst for details.")
+        raise RuntimeError("JAR can be created only when in the project root. "
+                           "See BUILD.rst for details.")
 
 
 ARGUMENTS = '''
