@@ -125,8 +125,8 @@ def dos_to_long(path):
         return path
     from ctypes import create_unicode_buffer, windll
     buf = create_unicode_buffer(500)
-    windll.kernel32.GetLongPathNameW(path.decode('mbcs'), buf, 500)
-    return buf.value.encode('mbcs')
+    windll.kernel32.GetLongPathNameW(path, buf, 500)
+    return buf.value
 
 
 if __name__ == '__main__':
