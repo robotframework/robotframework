@@ -2,9 +2,18 @@ import sys
 
 from xmlrpc.client import Binary
 
-from robot.api.deco import keyword
-
 from remoteserver import RemoteServer
+
+
+# Re-implementation of `robot.api.deco.keyword`. Cannot use the real thing
+# because `robot` may not installed on this interpreter.
+def keyword(name=None, tags=(), types=()):
+    def deco(func):
+        func.robot_name = name
+        func.robot_tags = tags
+        func.robot_types = types
+        return func
+    return deco
 
 
 class TypedRemoteServer(RemoteServer):
