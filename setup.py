@@ -36,7 +36,10 @@ Programming Language :: Python :: Implementation :: PyPy
 Topic :: Software Development :: Testing
 Framework :: Robot Framework
 """.strip().splitlines()
-KEYWORDS = 'robotframework testing testautomation acceptancetesting atdd bdd'
+DESCRIPTION = ('Generic automation framework for acceptance testing '
+               'and robotic process automation RPA')
+KEYWORDS = ('robotframework automation testautomation rpa '
+            'testing acceptancetesting atdd bdd')
 PACKAGE_DATA = [join('htmldata', directory, pattern)
                 for directory in ('rebot', 'libdoc', 'testdoc', 'lib', 'common')
                 for pattern in ('*.html', '*.css', '*.js')]
@@ -50,7 +53,7 @@ setup(
     url          = 'http://robotframework.org',
     download_url = 'https://pypi.python.org/pypi/robotframework',
     license      = 'Apache License 2.0',
-    description  = 'A generic test automation framework',
+    description  = DESCRIPTION,
     long_description = LONG_DESCRIPTION,
     keywords     = KEYWORDS,
     platforms    = 'any',
