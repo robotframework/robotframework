@@ -46,7 +46,7 @@ Suite With Matching and nonMatching args
     Run And Check Suites    --suite tsuite1 --suite notexists   Tsuite1
 
 Suite With Pattern in arg
-    Run And Check Suites    --suite t*    Tsuite1   Tsuite2   Tsuite3
+    Run And Check Suites    --suite t*te?    Tsuite1   Tsuite2   Tsuite3
 
 Suite Under Subdirectory
     Run And Check Suites Within Subdirs    --suite sub1   Sub1

@@ -41,7 +41,7 @@ Includes With OR
 Include With Patterns
     --include incl?    @{INCL_ALL}
     -i *cl3 -i i*2    Incl-12    Incl-123    Excl-123
-    -i i?*3ANDFORCE --include i*    @{INCL_ALL}
+    -i i?*3ANDFORCE --include inc*    @{INCL_ALL}
     -i incl?*ORnonex    @{INCL_ALL}
 
 One Exclude
@@ -85,11 +85,13 @@ Include and Exclude with NOT
 
 Select tests without any tags
     [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE 2}
-    --exclude *    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
+    # Using just '*' won't work with Jython on Windows due to its auto-globbing
+    --exclude *ORwhatever    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
 
 Select tests with any tag
     [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE 2}
-    --include *    Own Tags No Force Nor Default
+    # Using just '*' won't work with Jython on Windows due to its auto-globbing
+    --include *AND*    Own Tags No Force Nor Default
 
 Non Matching Include
     [Template]    Run And Check Error

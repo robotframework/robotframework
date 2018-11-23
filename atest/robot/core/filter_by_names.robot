@@ -107,7 +107,7 @@ Suite With Matching And NonMatching Args
     Should Contain Tests   ${SUITE}    Suite1 First    Suite1 Second    Third In Suite1
 
 Suite With Pattern In Arg
-    Run Suites    --suite t*
+    Run Suites    --suite t*te?
     Should Contain Suites    ${SUITE}    Tsuite1    Tsuite2    Tsuite3
     Should Contain Tests   ${SUITE}    Suite1 First    Suite1 Second    Third In Suite1    Suite2 First    Suite3 First
 
@@ -141,7 +141,7 @@ Suite And Test Together
     Should Contain Tests   ${SUITE}    SubSuite1 First
 
 Suite With Include And Exclude
-    Run Suites    --suite tsuite? --include t* --exclude t2
+    Run Suites    --suite tsuite? --include t? --exclude t2
     Should Contain Suites    ${SUITE}    Tsuite1    Tsuite2    Tsuite3
     Should Contain Tests    ${SUITE}    Suite1 First    Suite2 First    Suite3 First
 
