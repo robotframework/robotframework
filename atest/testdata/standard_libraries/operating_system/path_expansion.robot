@@ -13,18 +13,19 @@ Tilde in path
 
 Tilde and username in path
     ${user} =    Get User
-    ${path} =    Normalize Path    ~${user}/foo
-    ${home} =    Get Home
+    ${path} =    Normalize Path    ~${user}/foo    case_normalize=True
+    ${home} =    Get Home    case_normalize=True
     Should Be Equal    ${path}    ${home}${/}foo
     Directory Should Exist    ~${user}
 
 *** Keywords ***
 Get Home
+    [Arguments]    ${case_normalize}=False
     ${home} =    Run Keyword If    ${WINDOWS}
     ...    Get Windows Home
     ...    ELSE
     ...    Get Posix Home
-    ${home} =    Normalize Path    ${home}
+    ${home} =    Normalize Path    ${home}    ${case_normalize}
     [Return]    ${home}
 
 Get Windows Home
