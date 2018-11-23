@@ -37,7 +37,7 @@ Topic :: Software Development :: Testing
 Framework :: Robot Framework
 """.strip().splitlines()
 DESCRIPTION = ('Generic automation framework for acceptance testing '
-               'and robotic process automation RPA')
+               'and robotic process automation (RPA)')
 KEYWORDS = ('robotframework automation testautomation rpa '
             'testing acceptancetesting atdd bdd')
 PACKAGE_DATA = [join('htmldata', directory, pattern)
