@@ -778,7 +778,7 @@ class OperatingSystem(object):
         return False
 
     def _force_normalize(self, path):
-        # TODO: Should normalize_path also support case and link normalization?
+        # TODO: Should normalize_path also support link normalization?
         # TODO: Should we handle dos paths like 'exampl~1.txt'?
         return os.path.realpath(normpath(path, case_normalize=True))
 
@@ -1080,23 +1080,38 @@ class OperatingSystem(object):
         """
         return [self.join_path(base, path) for path in paths]
 
-    def normalize_path(self, path):
+    def normalize_path(self, path, case_normalize=False):
         """Normalizes the given path.
 
+        - Collapses redundant separators and up-level references.
+        - Converts ``/`` to ``\\`` on Windows.
+        - Replaces initial ``~`` or ``~user`` by that user's home directory.
+          The latter is not supported on Jython.
+        - If ``case_normalize`` is given a true value (see `Boolean arguments`)
+          on Windows, converts the path to all lowercase. New in Robot
+          Framework 3.1.
+
         Examples:
-        | ${path} = | Normalize Path | abc        |
-        | ${p2} =   | Normalize Path | abc/       |
-        | ${p3} =   | Normalize Path | abc/../def |
-        | ${p4} =   | Normalize Path | abc/./def  |
-        | ${p5} =   | Normalize Path | abc//def   |
+        | ${path1} = | Normalize Path | abc/           |
+        | ${path2} = | Normalize Path | abc/../def     |
+        | ${path3} = | Normalize Path | abc/./def//ghi |
+        | ${path4} = | Normalize Path | ~robot/stuff   |
         =>
-        - ${path} = 'abc'
-        - ${p2} = 'abc'
-        - ${p3} = 'def'
-        - ${p4} = 'abc/def'
-        - ${p5} = 'abc/def'
+        - ${path1} = 'abc'
+        - ${path2} = 'def'
+        - ${path3} = 'abc/def/ghi'
+        - ${path4} = '/home/robot/stuff'
+
+        On Windows result would use ``\\`` instead of ``/`` and home directory
+        would be different.
         """
         path = os.path.normpath(os.path.expanduser(path.replace('/', os.sep)))
+        # os.path.normcase doesn't normalize on OSX which also, by default,
+        # has case-insensitive file system. Our robot.utils.normpath would
+        # do that, but it's not certain would that, or other things that the
+        # utility do, desirable.
+        if case_normalize:
+            path = os.path.normcase(path)
         return path or '.'
 
     def split_path(self, path):
