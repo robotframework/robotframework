@@ -58,14 +58,12 @@ Run Suite Dir And Check Results
     Should Contain Suites    ${SUITE}    Sample    With Init
     Should Contain Suites    ${SUITE.suites[1]}    Sub Suite1    Sub Suite2
     Should Contain Tests    ${SUITE}    @{SAMPLE_TESTS}    @{SUBSUITE_TESTS}
-    ${invalid} =    Normalize Path    ${path}/invalid.${type}
-    Check Syslog Contains    | INFO \ | Data source '${invalid}' has no tests or tasks.
-    ${empty} =    Normalize Path    ${path}/empty.${type}
-    Check Syslog Contains    | INFO \ | Data source '${empty}' has no tests or tasks.
-    Check Syslog Contains    | INFO \ | Ignoring file or directory 'not_a_picture.jpg'.
-    ${invenc} =    Normalize Path    ${path}/invalid_encoding.${type}
+    ${path} =    Normalize Path    ${path}
+    Check Syslog Contains    | INFO \ | Data source '${path}${/}invalid.${type}' has no tests or tasks.
+    Check Syslog Contains    | INFO \ | Data source '${path}${/}empty.${type}' has no tests or tasks.
+    Check Syslog Contains    | INFO \ | Ignoring file or directory '${path}${/}not_a_picture.jpg'.
     Run Keyword If    "${type}" not in ("html", "rest")
-    ...    Check Syslog Contains    | ERROR | Parsing '${invenc}' failed: UnicodeDecodeError
+    ...    Check Syslog Contains    | ERROR | Parsing '${path}${/}invalid_encoding.${type}' failed: UnicodeDecodeError
 
 Check Suite With Init
     [Arguments]    ${suite}

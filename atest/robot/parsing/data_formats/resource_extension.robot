@@ -14,4 +14,5 @@ Resource with '*.resource' extension
 '*.resource' files are not parsed for tests
     Should Contain Suites    ${SUITE}    Tests
     Should Contain Tests     ${SUITE}    Resource with '*.resource' extension
-    Check Syslog Contains    | INFO \ | Ignoring file or directory 'tests.resource'.
+    ${path} =    Normalize Path    ${DATADIR}/parsing/data_formats/resource_extension/tests.resource
+    Check Syslog Contains    | INFO \ | Ignoring file or directory '${path}'.

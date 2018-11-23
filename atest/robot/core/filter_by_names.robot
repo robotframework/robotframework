@@ -78,15 +78,15 @@ Correct Files Processed With --suite Matches Files
     [Documentation]    Test that only files matching --suite are processed.
     ...                Additionally __init__ files should never be ignored.
     ${root} =    Normalize Path    ${DATA DIR}/${SUITE DIR}
-    Check Syslog Contains    Parsing test data directory '${root}'
-    Check Syslog Contains    Ignoring file or directory 'fourth.robot'
-    Check Syslog Contains    Ignoring file or directory 'tsuite3.robot'
-    Check Syslog Contains    Parsing test data directory '${root}${/}subsuites'
-    Check Syslog Contains    Ignoring file or directory 'sub1.robot'
-    Check Syslog Contains    Ignoring file or directory 'sub2.robot'
-    Check Syslog Contains    Parsing file '${root}${/}tsuite1.robot
-    Check Syslog Contains    Parsing file '${root}${/}tsuite2.robot
-    Check Syslog Does Not Contain    Ignoring file or directory '__init__.robot'
+    Check Syslog Contains    Parsing directory '${root}'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}fourth.robot'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite3.robot'.
+    Check Syslog Contains    Parsing directory '${root}${/}subsuites'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites${/}sub1.robot'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites${/}sub2.robot'.
+    Check Syslog Contains    Parsing file '${root}${/}tsuite1.robot'.
+    Check Syslog Contains    Parsing file '${root}${/}tsuite2.robot'.
+    Syslog Should Not Contain Regexp    Ignoring file or directory '.*__init__.robot'.
 
 Non-Existing Suite
     Run Failing Test
@@ -119,16 +119,15 @@ Correct Files Processed When --suite Matches Directory
     [Documentation]    Testing that only files matching to --suite are processed.
     ...                This time --suite matches directory so all suites under it
     ...                should be processed. Using data from previous test case.
-    ${suitedir} =    Join Path    ${DATA DIR}    ${SUITE DIR}
-    ${subsuitedir} =    Join Path    ${suitedir}    subsuites
-    Check Syslog Contains    Parsing test data directory '${suitedir}'
-    Check Syslog Contains    Ignoring file or directory 'fourth.robot'
-    Check Syslog Contains    Ignoring file or directory 'tsuite1.robot'
-    Check Syslog Contains    Ignoring file or directory 'tsuite2.robot'
-    Check Syslog Contains    Ignoring file or directory 'tsuite3.robot'
-    Check Syslog Contains    Parsing test data directory '${subsuitedir}'
-    Check Syslog Contains    Parsing file '${subsuitedir}${/}sub1.robot'
-    Check Syslog Contains    Parsing file '${subsuitedir}${/}sub2.robot'
+    ${root} =    Normalize Path    ${DATA DIR}/${SUITE DIR}
+    Check Syslog Contains    Parsing directory '${root}'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}fourth.robot'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite1.robot'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite2.robot'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite3.robot'.
+    Check Syslog Contains    Parsing directory '${root}${/}subsuites'.
+    Check Syslog Contains    Parsing file '${root}${/}subsuites${/}sub1.robot'.
+    Check Syslog Contains    Parsing file '${root}${/}subsuites${/}sub2.robot'.
 
 Suite Under Subdirectory Using Pattern
     Run And Check Suites Within Subdirs    --suite sub?    Sub1    Sub2
@@ -150,17 +149,32 @@ Suite, Test Include And Exclude Together
     Should Contain Suites   ${SUITE}    Subsuites
     Should Contain Tests    ${SUITE}    SubSuite1 First
 
-Filter Using Suite Long Name
+Suite Long Name Matching File
     Run Suites    --suite suites.fourth
     Should Contain Suites    ${SUITE}    Fourth
     Should Contain Tests   ${SUITE}    Suite4 First
+
+Suite Long Name Matching Directory
+    Run Suites    --suite suites.subsuites
+    Should Contain Suites    ${SUITE}    Subsuites
+    Should Contain Suites    ${SUITE.suites[0]}    Sub1    Sub2
+    Should Contain Tests   ${SUITE}    SubSuite1 First    SubSuite2 First
+
+Suite Long Name Without Beginning
     Run Suites    --suite Subsuites.Sub1
     Should Contain Suites    ${SUITE}    Subsuites
     Should Contain Tests   ${SUITE}   SubSuite1 First
+
+Correct Files Processed When --suite Matches Directory Using Long Name
     Run Suites    --suite suite_should.be.parsed    ${DATA DIR}/misc
     Should Contain Suites    ${SUITE.suites[0]}    Be
     Should Contain Tests    ${SUITE}    Executed
     Should Not Contain Tests    ${SUITE}    Not Executed
+    ${should} =    Normalize Path    ${DATA DIR}/misc/suite_should
+    Check Syslog Contains    Parsing directory '${should}${/}be'.
+    Check Syslog Contains    Parsing file '${should}${/}be${/}parsed.robot'.
+    Check Syslog Contains    Parsing directory '${should}${/}not be'.
+    Check Syslog Contains    Ignoring file or directory '${should}${/}not be${/}parsed.robot'.
 
 Filter Using Long Suite Name WIth Pattern
     Run Suites    --suite suites.*.SUB?

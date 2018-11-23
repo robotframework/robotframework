@@ -32,7 +32,7 @@ Process Resource Files Only Once
     Should Contain X Times    ${SYSLOG}    Parsing file '${dir}${/}02_resource.robot'    2
     Should Contain X Times    ${SYSLOG}    Parsing file '${dir}${/}03_resource.robot'    2
     # Check that resources were parsed only once
-    Syslog File Should Contain In Order    Parsing test data directory    '${dir}'
+    Syslog File Should Contain In Order    Parsing directory '${dir}'.
     Syslog File Should Contain In Order    Parsing file '${dir}${/}01_tests.robot'.
     Syslog File Should Contain In Order    Data source '${dir}${/}02_resource.robot' has no tests or tasks.
     Syslog File Should Contain In Order    Data source '${dir}${/}03_resource.robot' has no tests or tasks.
@@ -46,8 +46,7 @@ Process Resource Files Only Once
 
 *** Keywords ***
 Syslog File Should Contain In Order
-    [Arguments]    @{parts}
-    ${text} =    Catenate    @{parts}
+    [Arguments]    ${text}
     Should Contain X Times    ${SYSLOG}    ${text}    1
     ${pre}    ${post} =    Set Variable    ${SYSLOG.split("${text.replace('\\','\\\\')}")}
     Set Suite Variable    ${SYSLOG}    ${post}

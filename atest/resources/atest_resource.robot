@@ -155,6 +155,12 @@ File Should Contain Regexp
     ${file} =    Get Output File    ${path}
     Should Match Regexp    ${file.strip()}    ${exp}
 
+File Should Not Contain Regexp
+    [Arguments]    ${path}    @{expected}
+    ${exp} =    Catenate    @{expected}
+    ${file} =    Get Output File    ${path}
+    Should Not Match Regexp    ${file.strip()}    ${exp}
+
 File Should Be Equal To
     [Arguments]    ${path}    @{expected}
     ${content} =    Get Output File    ${path}
@@ -258,6 +264,10 @@ Syslog Should Match Regexp
 Syslog Should Contain Regexp
     [Arguments]    @{expected}
     File Should Contain Regexp    ${SYSLOG_FILE}    @{expected}
+
+Syslog Should Not Contain Regexp
+    [Arguments]    @{expected}
+    File Should Not Contain Regexp    ${SYSLOG FILE}    @{expected}
 
 Check Names
     [Arguments]    ${item}    ${name}    ${longprefix}=

@@ -116,8 +116,8 @@ class FromDirectoryPopulator(object):
 
     def populate(self, path, datadir, include_suites=None,
                  include_extensions=None, recurse=True):
-        LOGGER.info("Parsing test data directory '%s'" % path)
-        include_suites = self._get_include_suites(path, include_suites or [])
+        LOGGER.info("Parsing directory '%s'." % path)
+        include_suites = self._get_include_suites(path, datadir, include_suites )
         init_file, children = self._get_children(path, datadir, include_extensions,
                                                  include_suites)
         if init_file:
@@ -143,19 +143,14 @@ class FromDirectoryPopulator(object):
             except DataError as err:
                 LOGGER.error("Parsing '%s' failed: %s" % (child, err.message))
 
-    def _get_include_suites(self, path, incl_suites):
+    def _get_include_suites(self, path, datadir, incl_suites):
         if not isinstance(incl_suites, SuiteNamePatterns):
             incl_suites = SuiteNamePatterns(incl_suites)
-        if not incl_suites:
-            return incl_suites
         # If a directory is included, also all its children should be included.
-        if self._directory_is_included(path, incl_suites):
+        if self._is_in_included_suites(os.path.basename(path), datadir.parent,
+                                       incl_suites):
             return SuiteNamePatterns()
         return incl_suites
-
-    def _directory_is_included(self, path, incl_suites):
-        name = os.path.basename(os.path.normpath(path))
-        return self._is_in_included_suites(name, incl_suites)
 
     def _get_children(self, dirpath, datadir, incl_extensions, incl_suites):
         init_file = None
@@ -173,7 +168,8 @@ class FromDirectoryPopulator(object):
 
     def _list_dir(self, dir_path, datadir, incl_extensions, incl_suites):
         # os.listdir returns Unicode entries when path is Unicode
-        names = os.listdir(unic(dir_path))
+        dir_path = unic(dir_path)
+        names = os.listdir(dir_path)
         for name in sorted(names, key=lambda item: item.lower()):
             name = unic(name)  # needed to handle nfc/nfd normalization on OSX
             path = os.path.join(dir_path, name)
@@ -184,7 +180,7 @@ class FromDirectoryPopulator(object):
             elif self._is_included(path, datadir, base, ext, incl_extensions, incl_suites):
                 yield path, False
             else:
-                LOGGER.info("Ignoring file or directory '%s'." % name)
+                LOGGER.info("Ignoring file or directory '%s'." % path)
 
     def _is_init_file(self, path, base, ext, incl_extensions):
         return (base.lower() == '__init__' and
@@ -203,19 +199,20 @@ class FromDirectoryPopulator(object):
             return base not in self.ignored_dirs or ext
         if not self._extension_is_accepted(ext, incl_extensions):
             return False
-        longname = self._get_longname(base, datadir, incl_suites)
-        return self._is_in_included_suites(base, incl_suites, longname)
+        return self._is_in_included_suites(base, datadir, incl_suites)
 
-    def _is_in_included_suites(self, name, incl_suites, longname=None):
-        return not incl_suites or incl_suites.match(self._split_prefix(name), longname)
+    def _is_in_included_suites(self, name, datadir, incl_suites):
+        if not incl_suites:
+            return True
+        name = self._split_prefix(name)
+        return incl_suites.match(name, self._get_longname(name, datadir))
 
     def _split_prefix(self, name):
         return name.split('__', 1)[-1]
 
-    def _get_longname(self, base, datadir, include_suites):
-        if include_suites:
-            longname = self._split_prefix(base)
-            while datadir:
-                longname = '%s.%s' % (datadir.name, longname)
-                datadir = datadir.parent
-            return longname
+    def _get_longname(self, name, datadir):
+        longname = name
+        while datadir:
+            longname = '%s.%s' % (datadir.name, longname)
+            datadir = datadir.parent
+        return longname
