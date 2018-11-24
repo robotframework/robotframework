@@ -253,7 +253,7 @@ variables_, including `list variables`_.
 
 The keywords used in the for loop are on the following rows and the loop
 ends with `END` (case-sensitive) on its own row. Keywords inside the loop
-do not need to be indented, but it is highly recommended to make the syntax
+do not need to be indented, but that is highly recommended to make the syntax
 easier to read.
 
 .. sourcecode:: robotframework
@@ -319,7 +319,7 @@ nowadays both `FOR` and `IN` are case-sensitive.
 Old for loop syntax still works in Robot Framework 3.1 and only using
 `IN` case-insensitively causes a deprecation warning. Not closing loops
 with `END`, escaping keywords inside loops with :codesc:`\\`, and using
-`:FOR`, not `FOR`, are all going to be deprecated in Robot Framework 3.2.
+`:FOR` instead of `FOR` are all going to be deprecated in Robot Framework 3.2.
 Users are advised to switch to the new syntax as soon as possible.
 
 __ Escaping_
