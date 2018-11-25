@@ -1,0 +1,27 @@
+language: python
+sudo: required
+dist: trusty
+env:
+  global:
+    - JYTHON=false
+matrix:
+  include:
+    - python: "3.6"
+      env:
+        - INTERPRETER=python3
+    - python: "pypy3.5"
+      env:
+        - INTERPRETER=pypy3
+    - python: "3.6"
+      env:
+        - INTERPRETER=python3
+        - JYTHON=true
+    - python: "3.4"
+      env:
+        - INTERPRETER=python3
+before_script:
+    $INTERPRETER -m pip install -r atest/requirements.txt
+script:
+  - $INTERPRETER --version
+  - $INTERPRETER utest/run.py
+  - $INTERPRETER atest/run.py $INTERPRETER --exclude no-ci atest/robot
