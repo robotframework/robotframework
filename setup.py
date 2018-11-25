@@ -34,6 +34,8 @@ Programming Language :: Python :: Implementation :: Jython
 Programming Language :: Python :: Implementation :: IronPython
 Programming Language :: Python :: Implementation :: PyPy
 Topic :: Software Development :: Testing
+Topic :: Software Development :: Testing :: Acceptance
+Topic :: Software Development :: Testing :: BDD
 Framework :: Robot Framework
 """.strip().splitlines()
 DESCRIPTION = ('Generic automation framework for acceptance testing '
