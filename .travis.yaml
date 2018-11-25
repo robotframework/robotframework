@@ -15,7 +15,7 @@ matrix:
 before_script:
     $INTERPRETER -m pip install -r atest/requirements.txt
 script:
-  - $INTERPRETER
+  - echo $INTERPRETER
   - $INTERPRETER --version
   - $INTERPRETER utest/run.py
   - $INTERPRETER atest/run.py $INTERPRETER --exclude no-ci atest/robot
