@@ -48,6 +48,14 @@ Nested Run Keyword And Continue On Failure
     Run Keyword And Continue On Failure    RKACOF in UK
     Fail    The End
 
+Run Keyword And Continue On Failure with failure in keyoword teardown
+    [Documentation]    FAIL    Several failures occurred:\n\n
+    ...    1) Keyword teardown failed:\n
+    ...    Expected error\n\n
+    ...    2) The End
+    Run Keyword And Continue On Failure    Keyword With Failing Teardown
+    Fail    The End
+
 Run Keyword And Continue On Failure With Syntax Error
     [Documentation]    FAIL    Keyword 'BuiltIn.No Operation' expected 0 arguments, got 1.
     Run keyword And Continue On Failure    No Operation    illegal argument
@@ -96,3 +104,6 @@ RKACOF in UK
 RKACOF in UK 2
     Run Keyword And Continue On Failure    Fail    Second continuable in UK
 
+Keyword With Failing Teardown
+    No Operation
+    [Teardown]    Fail    Expected error

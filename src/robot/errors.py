@@ -136,7 +136,8 @@ class ExecutionStatus(RobotError):
     def continue_on_failure(self, continue_on_failure):
         self._continue_on_failure = continue_on_failure
         for child in getattr(self, '_errors', []):
-            child.continue_on_failure = continue_on_failure
+            if child is not self:
+                child.continue_on_failure = continue_on_failure
 
     def can_continue(self, teardown=False, templated=False, dry_run=False):
         if dry_run:

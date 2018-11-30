@@ -22,6 +22,9 @@ Run Keyword And Continue On Failure With For Loops
 Nested Run Keyword And Continue On Failure
     Check Test Case    ${TESTNAME}
 
+Run Keyword And Continue On Failure with failure in keyoword teardown
+    Check Test Case    ${TESTNAME}
+
 Run Keyword And Continue On Failure With Syntax Error
     Check Test Case    ${TESTNAME}
 
