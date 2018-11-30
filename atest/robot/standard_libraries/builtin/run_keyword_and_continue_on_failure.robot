@@ -3,7 +3,6 @@ Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keywor
 Resource          atest_resource.robot
 
 *** Test Cases ***
-
 Run Keyword And Continue On Failure
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Expected Failure    FAIL
