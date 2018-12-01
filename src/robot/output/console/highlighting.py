@@ -89,6 +89,7 @@ class HighlightingStream(object):
         start = {'PASS': highlighter.green,
                  'FAIL': highlighter.red,
                  'ERROR': highlighter.red,
+                 'SKIP': highlighter.cyan,
                  'WARN': highlighter.yellow}[status]
         start()
         try:
@@ -104,6 +105,7 @@ def Highlighter(stream):
 
 
 class AnsiHighlighter(object):
+    _ANSI_CYAN = '\033[36m'
     _ANSI_GREEN = '\033[32m'
     _ANSI_RED = '\033[31m'
     _ANSI_YELLOW = '\033[33m'
@@ -111,6 +113,9 @@ class AnsiHighlighter(object):
 
     def __init__(self, stream):
         self._stream = stream
+
+    def cyan(self):
+        self._set_color(self._ANSI_CYAN)
 
     def green(self):
         self._set_color(self._ANSI_GREEN)
@@ -135,6 +140,7 @@ class NoHighlighting(AnsiHighlighter):
 
 
 class DosHighlighter(object):
+    _FOREGROUND_CYAN = 0x1
     _FOREGROUND_GREEN = 0x2
     _FOREGROUND_RED = 0x4
     _FOREGROUND_YELLOW = 0x6
@@ -148,6 +154,9 @@ class DosHighlighter(object):
         self._handle = self._get_std_handle(stream)
         self._orig_colors = self._get_colors()
         self._background = self._orig_colors & self._BACKGROUND_MASK
+
+    def cyan(self):
+        self._set_foreground_colors(self._FOREGROUND_CYAN)
 
     def green(self):
         self._set_foreground_colors(self._FOREGROUND_GREEN)
