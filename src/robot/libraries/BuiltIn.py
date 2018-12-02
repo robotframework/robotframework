@@ -1506,11 +1506,17 @@ class _Variables(_BuiltInBase):
     def set_global_variable(self, name, *values):
         """Makes a variable available globally in all tests and suites.
 
-        Variables set with this keyword are globally available in all test
-        cases and suites executed after setting them. Setting variables with
-        this keyword thus has the same effect as creating from the command line
-        using the options ``--variable`` or ``--variablefile``. Because this
-        keyword can change variables everywhere, it should be used with care.
+        Variables set with this keyword are globally available in all
+        subsequent test suites, test cases and user keywords. Also variables
+        in variable tables are overridden. Variables assigned locally based
+        on keyword return values or by using `Set Test Variable` and
+        `Set Suite Variable` override these variables in that scope, but
+        the global value is not changed in those cases.
+
+        In practice setting variables with this keyword has the same effect
+        as using command line options ``--variable`` and ``--variablefile``.
+        Because this keyword can change variables everywhere, it should be
+        used with care.
 
         See `Set Suite Variable` for more information and examples.
         """

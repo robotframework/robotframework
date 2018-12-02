@@ -63,7 +63,10 @@ Set Global Variables
     Check Test Case    Set Global Variable 2
     Check Suite Teardown Passed
 
-Global Variables Set In One Suite Are Not Available In Another
+Global Variables Set In One Suite Are Available In Another
+    Check Test Case    ${TESTNAME}
+
+Global Variable Set In One Suite Overrides Variable In Variable Table
     Check Test Case    ${TESTNAME}
 
 Scopes And Overriding

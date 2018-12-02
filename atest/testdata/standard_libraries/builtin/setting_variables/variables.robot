@@ -212,6 +212,7 @@ Set Global Variable 1
     Should Be Equal    ${sub_uk_level_global_var}    Global var set in sub user keyword
     Should Be True    @{sub_uk_level_global_var_list} == [ 'Global var set in', 'sub user keyword' ]
     Check Global Variables Available In UK
+    Set Global Variable    ${VARIABLE TABLE IN VARIABLES 2 (3)}    Set by test in "variables.robot"
     Set Global Variable    @non_existing
 
 Set Global Variable 2
@@ -492,6 +493,7 @@ My Suite Setup
     Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 2} == ['Set in', '__init__']
     Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 3} == {'Set': 'in __init__'}
     Set Suite Variable    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen in this suite    children=true
+    Set Global Variable    ${VARIABLE TABLE IN VARIABLES 2 (2)}    Set by suite setup in "variables.robot"
 
 My Suite Teardown
     Set Suite Variable    $suite_teardown_suite_var    Suite var set in suite teardown
