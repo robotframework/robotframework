@@ -32,10 +32,11 @@ to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 3.1 rc 2 was released on Monday December 3, 2018. It is
-the last planned preview release and, if no regressions are found, the final
-release will contain the exact same code. The target date for
-the final release is December 6, 2018.
+Robot Framework 3.1 rc 2 was released on Monday December 3, 2018, with only
+documentation enhancements and a simple `bug fix`__ compared to the first
+release candidate. It is the last planned preview release and, if no
+regressions are found, the final release will contain the exact same code.
+The target date for the final release is December 6, 2018.
 
 .. _Robot Framework: http://robotframework.org
 .. _pip: http://pip-installer.org
@@ -45,6 +46,7 @@ the final release is December 6, 2018.
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
 .. _installation instructions: ../../INSTALL.rst
+__ https://github.com/robotframework/robotframework/issues/3015
 
 .. contents::
    :depth: 2
