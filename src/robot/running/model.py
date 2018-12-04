@@ -163,7 +163,8 @@ class TestSuite(model.TestSuite):
             information about executed suites and tests.
 
         If ``options`` are used, their names are the same as long command line
-        options except without hyphens, and they also have the same semantics.
+        options except without hyphens. Some options are ignored (see below),
+        but otherwise they have the same semantics as on the command line.
         Options that can be given on the command line multiple times can be
         passed as lists like ``variable=['VAR1:value1', 'VAR2:value2']``.
         If such an option is used only once, it can be given also as a single
@@ -176,10 +177,11 @@ class TestSuite(model.TestSuite):
         special keyword arguments ``stdout`` and ``stderr``, respectively.
 
         Only options related to the actual test execution have an effect.
-        For example, options related to selecting test cases or creating
-        logs and reports are silently ignored. The output XML generated
-        as part of the execution can be configured, though. This includes
-        disabling it with ``output=None``.
+        For example, options related to selecting or modifying test cases or
+        suites (e.g. ``--include``, ``--name``, ``--prerunmodifier``) or
+        creating logs and reports are silently ignored. The output XML
+        generated as part of the execution can be configured, though. This
+        includes disabling it with ``output=None``.
 
         Example::
 
