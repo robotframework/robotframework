@@ -32,7 +32,7 @@ to test suites, newlines can be added manually using `\n` `escape sequence`_.
 
   *** Settings ***
   Documentation    First line.\n\nSecond paragraph. This time\nwith multiple lines.
-  Metadata         Example list    - first item\n- second item\n-third
+  Metadata         Example list    - first item\n- second item\n- third
 
 .. note:: As explained in the Paragraphs_ section below, the single newline in
           `Second paragraph, this time\nwith multiple lines.` does not actually
