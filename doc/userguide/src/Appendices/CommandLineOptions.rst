@@ -13,12 +13,14 @@ are listed.
 Command line options for test execution
 ---------------------------------------
 
+  --rpa                   Turn on `generic automation`_ mode.
   -F, --extension <value>  `Parse only these files`_ when executing a directory.
   -N, --name <name>       `Sets the name`_ of the top-level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top level test suite.
   -G, --settag <tag>      `Sets the tag(s)`_ to all executed test cases.
   -t, --test <name>       `Selects the test cases by name`_.
+  --task <name>           Alias for :option:`--test` that can be used when `executing tasks`_.
   -s, --suite <name>      `Selects the test suites`_ by name.
   -R, --rerunfailed <file>  `Selects failed tests`_ from an earlier `output file`_
                           to be re-executed.
@@ -90,12 +92,14 @@ Command line options for test execution
 Command line options for post-processing outputs
 ------------------------------------------------
 
+  --rpa                   Turn on `generic automation`_ mode.
   -R, --merge             Changes result combining behavior to `merging <merging outputs_>`__.
   -N, --name <name>       `Sets the name`_ of the top level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top-level test suite.
   -G, --settag <tag>      `Sets the tag(s)`_ to all processed test cases.
   -t, --test <name>       `Selects the test cases by name`_.
+  --task <name>           Alias for :option:`--test`.
   -s, --suite <name>      `Selects the test suites`_ by name.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
@@ -143,6 +147,7 @@ Command line options for post-processing outputs
   --version               Prints the `version information`_.
 
 
+.. _generic automation: `Task execution`_
 .. _Parse only these files: `Selecting files to parse`_
 .. _Sets the name: `Setting the name`_
 .. _Sets the documentation: `Setting the documentation`_

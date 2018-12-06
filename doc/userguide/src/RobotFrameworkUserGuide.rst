@@ -44,6 +44,7 @@
 
 .. include:: CreatingTestData/TestDataSyntax.rst
 .. include:: CreatingTestData/CreatingTestCases.rst
+.. include:: CreatingTestData/CreatingTasks.rst
 .. include:: CreatingTestData/CreatingTestSuites.rst
 .. include:: CreatingTestData/UsingTestLibraries.rst
 .. include:: CreatingTestData/Variables.rst
@@ -61,6 +62,7 @@
 
 .. include:: ExecutingTestCases/BasicUsage.rst
 .. include:: ExecutingTestCases/TestExecution.rst
+.. include:: ExecutingTestCases/TaskExecution.rst
 .. include:: ExecutingTestCases/PostProcessing.rst
 .. include:: ExecutingTestCases/ConfiguringExecution.rst
 .. include:: ExecutingTestCases/OutputFiles.rst

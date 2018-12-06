@@ -1,9 +1,16 @@
+.. _Creating tests:
+
 Creating test cases
 ===================
 
 This section describes the overall test case syntax. Organizing test
 cases into `test suites`_ using `test case files`_ and `test suite
 directories`_ is discussed in the next section.
+
+When using Robot Framework for other automation purposes than test
+automation, it is recommended to create *tasks* instead of tests.
+The task syntax is for most parts identical to the test syntax,
+and the differences are explained in the `Creating tasks`_ section.
 
 .. contents::
    :depth: 2

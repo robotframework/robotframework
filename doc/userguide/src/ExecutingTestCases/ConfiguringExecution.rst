@@ -45,8 +45,8 @@ Selecting test cases
 --------------------
 
 Robot Framework offers several command line options for selecting
-which test cases to execute. The same options also work when
-post-processing outputs with Rebot_.
+which test cases to execute. The same options work also when `executing
+tasks`_ and when post-processing outputs with Rebot_.
 
 By test suite and test case names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,6 +87,9 @@ practical when creating test cases, but quite limited when running tests
 automatically. The :option:`--suite` option can be useful in that
 case, but in general, selecting test cases by tag names is more
 flexible.
+
+When `executing tasks`_, it is possible to use the :option:`--task` option
+as an alias for :option:`--test`.
 
 By tag names
 ~~~~~~~~~~~~

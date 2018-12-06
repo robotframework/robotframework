@@ -56,6 +56,22 @@ Return codes from Rebot are exactly same as when `running tests`__.
 
 __ `Return codes`_
 
+Controlling execution mode
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Rebot notices have tests__ or tasks__ been run, and by default preserves the
+execution mode. The mode affects logs and reports so that in the former case
+they will use term *test* like `Test Log` and `Test Statistics`, and in
+the latter case term *task* like `Task Log` and `Task Statistics`.
+
+Rebot also supports using :option:`--rpa` or :option:`--norpa` options to set
+the execution mode explicitly. This is necessary if multiple output files
+are processed and they have conflicting modes.
+
+__ `Test execution`_
+__ `Task execution`_
+
+
 Creating different reports and logs
 -----------------------------------
 

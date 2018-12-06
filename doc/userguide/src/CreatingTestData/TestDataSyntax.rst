@@ -1,9 +1,10 @@
 Test data syntax
 ================
 
-This section covers Robot Framework's overall test data
-syntax. The following sections will explain how to actually create test
-cases, test suites and so on.
+This section covers Robot Framework's overall test data syntax. The following
+sections will explain how to actually create test cases, test suites and so on.
+Although this section mostly uses term *test*, the same rules apply also
+when `creating tasks`_.
 
 .. contents::
    :depth: 2
@@ -42,10 +43,10 @@ often Python.
 Test data sections
 ------------------
 
-Robot Framework test data is defined in different sections, often also
+Robot Framework data is defined in different sections, often also
 called tables, listed below:
 
-.. table:: Different test data sections
+.. table:: Different sections in data
    :class: tabular
 
    +------------+--------------------------------------------+
@@ -61,6 +62,10 @@ called tables, listed below:
    +------------+--------------------------------------------+
    | Test Cases | `Creating test cases`_ from available      |
    |            | keywords.                                  |
+   +------------+--------------------------------------------+
+   | Tasks      | `Creating tasks`_ using available          |
+   |            | keywords. Single file can only contain     |
+   |            | either test cases or tasks.                |
    +------------+--------------------------------------------+
    | Keywords   | `Creating user keywords`_ from existing    |
    |            | lower-level keywords                       |

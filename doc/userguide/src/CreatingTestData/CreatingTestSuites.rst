@@ -1,9 +1,12 @@
 Creating test suites
 ====================
 
-Robot Framework test cases are created in test case files, which can
+Robot Framework `test cases`__ are created in test case files, which can
 be organized into directories. These files and directories create a
-hierarchical test suite structure.
+hierarchical test suite structure. Same concepts apply also when
+`creating tasks`_, but the terminology differs.
+
+__ `Creating test cases`_
 
 .. contents::
    :depth: 2
@@ -41,7 +44,7 @@ test suite:
       now deprecated and only the format above, case-insensitively, is
       supported.
 
-__ `Test case syntax`_
+__ `Creating test cases`_
 
 Test suite directories
 ----------------------
@@ -102,6 +105,10 @@ initialization files is explained below.
    Notice that keywords used as setups and teardowns must be available in
    test case files where tests using them are. Defining keywords in the
    initialization file itself is not enough.
+`Task Setup`:setting:, `Task Teardown`:setting:, `Task Timeout`:setting:
+   Aliases for `Test Setup`:setting:, `Test Teardown`:setting:,
+   and `Test Timeout`:setting:, respectively, that can be used when
+   `creating tasks`_, not tests.
 `Default Tags`:setting:, `Test Template`:setting:
    Not supported in initialization files.
 
