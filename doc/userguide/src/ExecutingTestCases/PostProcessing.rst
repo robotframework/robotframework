@@ -23,8 +23,8 @@ Synopsis
 ::
 
     rebot [options] robot_outputs
-    python|jython|ipy -m robot.rebot [options] robot_outputs
-    python|jython|ipy path/to/robot/rebot.py [options] robot_outputs
+    python|jython|ipy|pypy -m robot.rebot [options] robot_outputs
+    python|jython|ipy|pypy path/to/robot/rebot.py [options] robot_outputs
     java -jar robotframework.jar rebot [options] robot_outputs
 
 The most common way to use Rebot is using the ``rebot`` `runner script`_.
@@ -34,9 +34,9 @@ alternative is using the `standalone JAR distribution`_.
 
 .. note::
     Versions prior to Robot Framework 3.0 installed the ``rebot`` script only
-    with Python and used ``jyrebot`` and ``ipyrebot`` scripts with Jython and
-    IronPython, respectively. These scripts are still installed, but the plan
-    is to deprecate and remove them in the future.
+    with Python, and used ``jyrebot`` and ``ipyrebot`` scripts with Jython and
+    IronPython, respectively. The old interpreter specific scripts were
+    removed in Robot Framework 3.1 and nowadays ``rebot`` must always be used.
 
 __ `Executing installed robot module`_
 __ `Executing installed robot directory`_

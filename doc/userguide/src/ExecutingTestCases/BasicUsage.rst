@@ -23,8 +23,8 @@ Synopsis
 ::
 
     robot [options] data_sources
-    python|jython|ipy -m robot [options] data_sources
-    python|jython|ipy path/to/robot/ [options] data_sources
+    python|jython|ipy|pypy -m robot [options] data_sources
+    python|jython|ipy|pypy path/to/robot/ [options] data_sources
     java -jar robotframework.jar [options] data_sources
 
 Test execution is normally started using the ``robot`` `runner script`_.
@@ -33,10 +33,11 @@ Alternatively it is possible to execute the installed `robot module`__ or
 alternative is using the `standalone JAR distribution`_.
 
 .. note::
-    Versions prior to Robot Framework 3.0 did not have the ``robot`` script.
-    Instead they had ``pybot``, ``jybot`` and ``ipybot`` scripts that executed
-    tests using Python, Jython and IronPython, respectively. These scripts are
-    still installed, but the plan is to deprecate and remove them in the future.
+    The ``robot`` script is new in Robot Framework 3.0. Prior to that,
+    there were ``pybot``, ``jybot`` and ``ipybot`` scripts that
+    executed tests using Python, Jython and IronPython, respectively.
+    These scripts were removed in Robot Framework 3.1 and nowadays
+    ``robot`` must be used regardless the interpreter.
 
 Regardless of execution approach, the path (or paths) to the test data to be
 executed is given as an argument after the command. Additionally, different
