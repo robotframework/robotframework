@@ -46,4 +46,4 @@ is a need to `select only certain tasks for execution`__, :option:`--task`
 can be used instead of :option:`--test`. Additionally the aforementioned
 :option:`--rpa` can be used to control the execution mode.
 
-__ `Selecting test cases`__
+__ `Selecting test cases`_
