@@ -201,7 +201,6 @@ def create_distribution():
     dist = os.path.normpath(os.path.join(CURDIR, '..', '..', 'dist'))
     ugpath, version = create_userguide()  # we are in doc/userguide after this
     outdir = os.path.join(dist, f'robotframework-userguide-{version}')
-    templates = os.path.join(outdir, 'templates')
     libraries = os.path.join(outdir, 'libraries')
     images = os.path.join(outdir, 'images')
     print('Creating distribution directory ...')
@@ -212,7 +211,7 @@ def create_distribution():
     elif not os.path.exists(dist):
         os.mkdir(dist)
 
-    for dirname in [outdir, templates, libraries, images]:
+    for dirname in [outdir, libraries, images]:
         print(f'Creating output directory {dirname!r}')
         os.mkdir(dirname)
 
@@ -223,10 +222,7 @@ def create_distribution():
         if scheme or (fragment and not path):
             return res.group(0)
         replaced_link = f'{res.group(1)} {res.group(4)}="%s/{os.path.basename(path)}"'
-        if path.startswith('../../templates'):
-            copy(path, templates)
-            replaced_link = replaced_link % 'templates'
-        elif path.startswith('../libraries'):
+        if path.startswith('../libraries'):
             copy(path, libraries)
             replaced_link = replaced_link % 'libraries'
         elif path.startswith('src/'):
