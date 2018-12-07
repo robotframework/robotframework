@@ -7,20 +7,18 @@ Robot Framework
 Introduction
 ------------
 
-`Robot Framework <http://robotframework.org>`_ is a generic open source test
-automation framework for acceptance testing and acceptance test-driven
-development (ATDD). It has easy-to-use tabular test data syntax and it utilizes
-the keyword-driven testing approach. Its testing capabilities can be extended
-by test libraries implemented either with Python or Java, and users can create
-new higher-level keywords from existing ones using the same syntax that is used
-for creating test cases.
+`Robot Framework <http://robotframework.org>`_ is a generic open source
+automation framework for acceptance testing, acceptance test driven
+development (ATDD), and robotic process automation (RPA). It has simple plain
+text syntax and it can be extended easily with libraries implemented using
+Python or Java.
 
 Robot Framework is operating system and application independent. The core
 framework is implemented using `Python <http://python.org>`_, supports both
 Python 2 and Python 3, and runs also on `Jython <http://jython.org>`_ (JVM),
 `IronPython <http://ironpython.net>`_ (.NET) and `PyPy <http://pypy.org>`_.
 The framework has a rich ecosystem around it consisting of various generic
-test libraries and tools that are developed as separate projects. For more
+libraries and tools that are developed as separate projects. For more
 information about Robot Framework and the ecosystem, see
 http://robotframework.org.
 
@@ -59,7 +57,7 @@ from GitHub_. After that you can install the framework with::
     python setup.py install
 
 For more detailed installation instructions, including installing Python,
-Jython, IronPython and PyPy, see `<INSTALL.rst>`__.
+Jython, IronPython and PyPy or installing from git, see `<INSTALL.rst>`__.
 
 Example
 -------
@@ -91,11 +89,9 @@ Usage
 
 Starting from Robot Framework 3.0, tests are executed from the command line
 using the ``robot`` script or by executing the ``robot`` module directly
-like ``python -m robot`` or ``jython -m robot``. Older Robot Framework
-versions have Python interpreter specific ``pybot``, ``jybot`` and ``ipybot``
-scripts that still work but will be deprecated and removed in the future.
+like ``python -m robot`` or ``jython -m robot``.
 
-The basic usage is giving a path to a test case file or directory as an
+The basic usage is giving a path to a test (or task) file or directory as an
 argument with possible command line options before the path::
 
     robot tests.robot

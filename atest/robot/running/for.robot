@@ -21,8 +21,18 @@ Simple For
     Test "Simple For 2" Helper    ${tc2.kws[0].kws[4]}    5
     Test "Simple For 2" Helper    ${tc2.kws[0].kws[5]}    6
 
+Indentation is not required
+    Check Test Case    ${TEST NAME}
+
+Invalid END usage
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
+
 Empty For Body Fails
-    ${tc} =    Check Test Case    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TEST NAME} 1
+    Should Be For Keyword    ${tc.kws[0]}    0
+    ${tc} =    Check Test Case    ${TEST NAME} 2
     Should Be For Keyword    ${tc.kws[0]}    0
 
 For Without Value Fails
@@ -342,11 +352,69 @@ For In Range With Wrong Number Of Variables
 For In Range With Non-Existing Variables In Arguments
     Check Test Case    ${TEST NAME}
 
-For loops are case and space insensitive
+For loop marker with colon still works
     Check Test Case    ${TEST NAME}
 
-For word can have many colons
+For loop marker with colon is case and space insensitive
     Check Test Case    ${TEST NAME}
+
+For loop marker can have many colons
+    Check Test Case    ${TEST NAME}
+
+Case and space insensitive for loop separator is deprecated
+    Check Test Case    ${TEST NAME}
+    ${path} =    Normalize Path    ${DATADIR}/running/for.robot
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in test case '${TEST NAME}':
+    ...    Using 'in' as a FOR loop separator is deprecated. Use 'IN' instead.
+    Check log message    ${ERRORS}[0]    ${message}    WARN
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in test case '${TEST NAME}':
+    ...    Using 'INRANGE' as a FOR loop separator is deprecated. Use 'IN RANGE' instead.
+    Check log message    ${ERRORS}[1]    ${message}    WARN
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in test case '${TEST NAME}':
+    ...    Using 'I ne numer ate' as a FOR loop separator is deprecated. Use 'IN ENUMERATE' instead.
+    Check log message    ${ERRORS}[2]    ${message}    WARN
+
+Escaping with backslash still works
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be For Keyword    ${tc.kws[0]}    2
+    Should Be For Item       ${tc.kws[0].kws[0]}    \${var} = one
+    Check log message        ${tc.kws[0].kws[0].kws[0].msgs[0]}   var: one
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
+    Should Be For Item       ${tc.kws[0].kws[1]}    \${var} = two
+    Check log message        ${tc.kws[0].kws[1].kws[0].msgs[0]}   var: two
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
+    Check log message        ${tc.kws[1].msgs[0]}    Between for loops
+    Should Be For Keyword    ${tc.kws[2]}    2
+    Should Be For Item       ${tc.kws[2].kws[0]}    \${var} = one
+    Check log message        ${tc.kws[2].kws[0].kws[0].msgs[0]}   var: one
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
+    Should Be For Item       ${tc.kws[2].kws[1]}    \${var} = two
+    Check log message        ${tc.kws[2].kws[1].kws[0].msgs[0]}   var: two
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
+
+END is not required when escaping with backslash
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be For Keyword    ${tc.kws[0]}    2
+    Should Be For Item       ${tc.kws[0].kws[0]}    \${var} = one
+    Check log message        ${tc.kws[0].kws[0].kws[0].msgs[0]}   var: one
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
+    Should Be For Item       ${tc.kws[0].kws[1]}    \${var} = two
+    Check log message        ${tc.kws[0].kws[1].kws[0].msgs[0]}   var: two
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
+    Check log message        ${tc.kws[1].msgs[0]}    Between for loops
+    Should Be For Keyword    ${tc.kws[2]}    2
+    Should Be For Item       ${tc.kws[2].kws[0]}    \${var} = one
+    Check log message        ${tc.kws[2].kws[0].kws[0].msgs[0]}   var: one
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
+    Should Be For Item       ${tc.kws[2].kws[1]}    \${var} = two
+    Check log message        ${tc.kws[2].kws[1].kws[0].msgs[0]}   var: two
+    Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
 
 *** Keywords ***
 Should Be For Keyword
@@ -435,3 +503,11 @@ Check KW "Nested For In UK"
     Check KW "For In UK"    ${nested2.kws[0].kws[0].kws[0]}
     Check Log Message    ${nested2.kws[0].kws[0].kws[1].msgs[0]}    Got arg: ${first_arg}
     Check Log Message    ${nested2.kws[1].msgs[0]}    This ought to be enough    FAIL
+
+Check KW "For in UK with backslashes"
+    [Arguments]    ${kw}    ${arg}
+    Should Be For Keyword    ${kw.kws[0]}    2
+    Should Be For Item       ${kw.kws[0].kws[0]}    \${x} = 1
+    Check log message        ${kw.kws[0].kws[0].kws[1].msgs[0]}   ${arg}-1
+    Should Be For Item       ${kw.kws[0].kws[1]}    \${x} = 2
+    Check log message        ${kw.kws[0].kws[1].kws[1].msgs[0]}   ${arg}-2

@@ -3,7 +3,6 @@ Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keywor
 Resource          atest_resource.robot
 
 *** Test Cases ***
-
 Run Keyword And Continue On Failure
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Expected Failure    FAIL
@@ -21,6 +20,9 @@ Run Keyword And Continue On Failure With For Loops
     Check Test Case    ${TESTNAME}
 
 Nested Run Keyword And Continue On Failure
+    Check Test Case    ${TESTNAME}
+
+Run Keyword And Continue On Failure with failure in keyoword teardown
     Check Test Case    ${TESTNAME}
 
 Run Keyword And Continue On Failure With Syntax Error

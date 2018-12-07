@@ -551,6 +551,7 @@ List Should Not Contain Value, Value Found And Own Error Message Glob
     [Documentation]    FAIL My error message!
     Should Not Contain Match    ${STRING}    glob=*    My error message!
 
+
 Lists Should Be Equal With Different Lengths Ignore_order
     [Documentation]    FAIL Lengths are different: 1 != 4
     Lists Should Be Equal    ${L1}    ${L3C}    ignore_order=True
@@ -627,7 +628,45 @@ Lists Should Be Equal With Duplicate And Different Value Ignore_order
     ${names2} =    Create List    A	B	E	A
     
     Lists Should Be Equal    ${names1}    ${names2}
+
+Check List Error
+    [Template]    Validate invalid argument error
+    Append to list                        xyz
+    Combine Lists                         I am a string. Not a list.
+    Combine Lists                         ${L0}    I am a string. Not a list.    position=2
+    Combine Lists                         I am a string. Not a list.    ${L0}
+    Copy list
+    Count values in list                  I am a string. Not a list.    xyz
+    Get from list                         I am a string. Not a list.    0
+    Get Index From List                   I am a string. Not a list.    a
+    Get Match Count                       I am a string. Not a list.    abc
+    Get Matches                           I am a string. Not a list.    abc
+    Get slice from list
+    Insert into list                      I am a string. Not a list.    0    a
+    List Should Contain Sub List          I am a string. Not a list.    ${L0}
+    List Should Contain Sub List          ${L0}    I am a string. Not a list.    position=2
+    List should contain value             I am a string. Not a list.    a
+    List Should Not Contain Duplicates    xyz
+    List Should Not Contain Value         I am a string. Not a list.    x
+    Lists Should Be Equal                 I am a string. Not a list.    ${L0}
+    Lists Should Be Equal                 ${L0}    I am a string. Not a list.    position=2
+    Log List
+    Remove Duplicates
+    Remove From List                      I am a string. Not a list.    0
+    Remove Values From List               I am a string. Not a list.    a
+    Reverse List
+    Set List Value                        I am a string. Not a list.    0    a
+    Should Contain Match                  I am a string. Not a list.    a
+    Should Not Contain Match              I am a string. Not a list.    xyz
+    Sort List
+
 *** Keywords ***
+Validate invalid argument error
+    [Arguments]    ${keyword}    ${argument}=I'm not a list, I'm a string.    @{args}    ${type}=string    ${position}=1
+    Run keyword and expect error
+    ...    TypeError: Expected argument ${position} to be a list or list-like, got ${type} instead.
+    ...    ${keyword}    ${argument}    @{args}
+
 Create Lists For The Tests
     ${L0} =    Create List
     Set Test Variable    \${L0}

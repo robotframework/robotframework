@@ -36,7 +36,7 @@ List And Count Directory With Patterns
 List And Count Files In Directory With Patterns
     List And Count Files In Directory With Pattern    *    ${F1}    ${F2}
     List And Count Files In Directory With Pattern    foo*    ${F1}
-    List And Count Files In Directory With Pattern    none
+    List And Count Files In Directory With Pattern    nomatch
 
 List And Count Directories In Directory With Patterns
     List And Count Directories In Directory With Pattern    f*    ${DIR}

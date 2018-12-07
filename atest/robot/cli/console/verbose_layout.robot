@@ -32,7 +32,7 @@ Outputs
 
 Long Documentation Should Be Cut
     ${doc} =  Evaluate  '0123456789' * 10
-    Run Tests  --name My_Name --doc start${doc}end  misc/normal.robot
+    Run Tests  --name "My Name" --doc start${doc}end  misc/normal.robot
     ${expbase} =  Evaluate  'My Name :: start' + '0123456789'*5
     Check Stdout Contains  ${SEP_LINE1}\n ${expbase}012345678...\n ${SEP_LINE1}\n
     Check Stdout Contains  ${SEP_LINE2}\n ${expbase}... | PASS |\n

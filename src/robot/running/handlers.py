@@ -13,13 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
+from robot.utils import (getdoc, getshortdoc, is_java_init, is_java_method,
+                         is_list_like, printable_name, split_tags_from_doc,
+                         type_name)
 from robot.errors import DataError
 from robot.model import Tags
 
 from .arguments import (ArgumentSpec, DynamicArgumentParser,
                         JavaArgumentCoercer, JavaArgumentParser,
                         PythonArgumentParser)
+from .dynamicmethods import GetKeywordTypes
 from .librarykeywordrunner import (EmbeddedArgumentsRunner,
                                    LibraryKeywordRunner, RunKeywordRunner)
 from .runkwregister import RUN_KW_REGISTER
@@ -28,7 +31,7 @@ from .runkwregister import RUN_KW_REGISTER
 def Handler(library, name, method):
     if RUN_KW_REGISTER.is_run_keyword(library.orig_name, name):
         return _RunKeywordHandler(library, name, method)
-    if utils.is_java_method(method):
+    if is_java_method(method):
         return _JavaHandler(library, name, method)
     else:
         return _PythonHandler(library, name, method)
@@ -41,7 +44,7 @@ def DynamicHandler(library, name, method, doc, argspec, tags=None):
 
 
 def InitHandler(library, method, docgetter=None):
-    Init = _PythonInitHandler if not utils.is_java_init(method) else _JavaInitHandler
+    Init = _PythonInitHandler if not is_java_init(method) else _JavaInitHandler
     return Init(library, '__init__', method, docgetter)
 
 
@@ -49,12 +52,12 @@ class _RunnableHandler(object):
 
     def __init__(self, library, handler_name, handler_method, doc='', tags=None):
         self.library = library
+        self._handler_name = handler_name
         self.name = self._get_name(handler_name, handler_method)
         self.arguments = self._parse_arguments(handler_method)
-        self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
-        doc, tags_from_doc = utils.split_tags_from_doc(doc or '')
+        doc, tags_from_doc = split_tags_from_doc(doc or '')
         tags_from_attr = self._get_tags_from_attribute(handler_method)
         self._doc = doc
         self.tags = Tags(tuple(tags_from_doc) +
@@ -63,7 +66,7 @@ class _RunnableHandler(object):
 
     def _get_name(self, handler_name, handler_method):
         robot_name = getattr(handler_method, 'robot_name', None)
-        name = robot_name or utils.printable_name(handler_name, code_style=True)
+        name = robot_name or printable_name(handler_name, code_style=True)
         if not name:
             raise DataError('Keyword name cannot be empty.')
         return name
@@ -73,9 +76,9 @@ class _RunnableHandler(object):
 
     def _get_tags_from_attribute(self, handler_method):
         tags = getattr(handler_method, 'robot_tags', ())
-        if not utils.is_list_like(tags):
-            raise DataError("Expected tags to list like, got %s."
-                            % utils.type_name(tags))
+        if not is_list_like(tags):
+            raise DataError("Expected tags to be list-like, got %s."
+                            % type_name(tags))
         return tags
 
     def _get_initial_handler(self, library, name, method):
@@ -96,7 +99,7 @@ class _RunnableHandler(object):
 
     @property
     def shortdoc(self):
-        return self.doc.splitlines()[0] if self.doc else ''
+        return getshortdoc(self.doc)
 
     @property
     def libname(self):
@@ -121,7 +124,7 @@ class _PythonHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method,
-                                  utils.getdoc(handler_method))
+                                  getdoc(handler_method))
 
     def _parse_arguments(self, handler_method):
         return PythonArgumentParser().parse(handler_method, self.longname)
@@ -155,22 +158,29 @@ class _DynamicHandler(_RunnableHandler):
     def __init__(self, library, handler_name, dynamic_method, doc='',
                  argspec=None, tags=None):
         self._argspec = argspec
-        _RunnableHandler.__init__(self, library, handler_name,
-                                  dynamic_method.method, doc, tags)
         self._run_keyword_method_name = dynamic_method.name
         self._supports_kwargs = dynamic_method.supports_kwargs
-        if argspec and argspec[-1].startswith('**'):
-            if not self._supports_kwargs:
-                raise DataError("Too few '%s' method parameters for **kwargs "
-                                "support." % self._run_keyword_method_name)
+        _RunnableHandler.__init__(self, library, handler_name,
+                                  dynamic_method.method, doc, tags)
 
     def _parse_arguments(self, handler_method):
-        return DynamicArgumentParser().parse(self._argspec, self.longname)
+        spec = DynamicArgumentParser().parse(self._argspec, self.longname)
+        if not self._supports_kwargs:
+            if spec.kwargs:
+                raise DataError("Too few '%s' method parameters for **kwargs "
+                                "support." % self._run_keyword_method_name)
+            if spec.kwonlyargs:
+                raise DataError("Too few '%s' method parameters for "
+                                "keyword-only arguments support."
+                                % self._run_keyword_method_name)
+        spec.types = GetKeywordTypes(self.library.get_instance())(self._handler_name)
+        return spec
 
     def resolve_arguments(self, arguments, variables=None):
         positional, named = self.arguments.resolve(arguments, variables)
-        arguments, kwargs = self.arguments.map(positional, named)
-        return arguments, kwargs
+        if not self._supports_kwargs:
+            positional, named = self.arguments.map(positional, named)
+        return positional, named
 
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)

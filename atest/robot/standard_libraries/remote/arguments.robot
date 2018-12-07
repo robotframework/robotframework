@@ -30,13 +30,19 @@ One kwarg
 Multiple kwargs
     Check Test Case    ${TESTNAME}
 
+Keyword-only args
+    Check Test Case    ${TESTNAME}
+
+Keyword-only args with default
+    Check Test Case    ${TESTNAME}
+
 Args and kwargs
     Check Test Case    ${TESTNAME}
 
 Varargs and kwargs
     Check Test Case    ${TESTNAME}
 
-Args, varargs and kwargs
+All arg types
     Check Test Case    ${TESTNAME}
 
 Using Arguments When No Accepted
@@ -61,4 +67,10 @@ Too Few Arguments When Using Varargs
     Check Test Case    ${TESTNAME}
 
 Named arguments before positional
+    Check Test Case    ${TESTNAME}
+
+Argument types as list
+    Check Test Case    ${TESTNAME}
+
+Argument types as dict
     Check Test Case    ${TESTNAME}

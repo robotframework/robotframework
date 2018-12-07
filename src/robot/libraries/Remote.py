@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import absolute_import
+
 try:
     import httplib
     import xmlrpclib
@@ -32,8 +34,8 @@ except ImportError:   # No expat in IronPython 2.7
 
 from robot.errors import RemoteError
 from robot.utils import (is_bytes, is_dict_like, is_list_like, is_number,
-                         is_string, timestr_to_secs, unic, DotDict, IRONPYTHON,
-                         JYTHON)
+                         is_string, timestr_to_secs, unic, DotDict,
+                         IRONPYTHON, JYTHON, PY2)
 
 
 class Remote(object):
@@ -52,7 +54,6 @@ class Remote(object):
         a timeout that is shorter than keyword execution time will interrupt
         the keyword.
 
-        Support for timeouts is a new feature in Robot Framework 2.8.6.
         Timeouts do not work with IronPython.
         """
         if '://' not in uri:
@@ -77,6 +78,12 @@ class Remote(object):
             return self._client.get_keyword_arguments(name)
         except TypeError:
             return ['*args']
+
+    def get_keyword_types(self, name):
+        try:
+            return self._client.get_keyword_types(name)
+        except TypeError:
+            return None
 
     def get_keyword_tags(self, name):
         try:
@@ -150,20 +157,23 @@ class ArgumentCoercer(object):
 
     def _to_key(self, item):
         item = self._to_string(item)
-        if IRONPYTHON:
-            self._validate_key_on_ironpython(item)
+        self._validate_key(item)
         return item
 
     def _to_string(self, item):
         item = unic(item) if item is not None else ''
         return self._handle_string(item)
 
-    def _validate_key_on_ironpython(self, item):
-        try:
-            return str(item)
-        except UnicodeError:
-            raise ValueError('Dictionary keys cannot contain non-ASCII '
-                             'characters on IronPython. Got %r.' % item)
+    def _validate_key(self, key):
+        if isinstance(key, xmlrpclib.Binary):
+            raise ValueError('Dictionary keys cannot be binary. Got %s%r.'
+                             % ('b' if PY2 else '', key.data))
+        if IRONPYTHON:
+            try:
+                key.encode('ASCII')
+            except UnicodeError:
+                raise ValueError('Dictionary keys cannot contain non-ASCII '
+                                 'characters on IronPython. Got %r.' % key)
 
 
 class RemoteResult(object):
@@ -196,7 +206,10 @@ class RemoteResult(object):
 class XmlRpcRemoteClient(object):
 
     def __init__(self, uri, timeout=None):
-        transport = TimeoutTransport(timeout=timeout)
+        if uri.startswith('https://'):
+            transport = TimeoutHTTPSTransport(timeout=timeout)
+        else:
+            transport = TimeoutHTTPTransport(timeout=timeout)
         self._server = xmlrpclib.ServerProxy(uri, encoding='UTF-8',
                                              transport=transport)
 
@@ -209,6 +222,12 @@ class XmlRpcRemoteClient(object):
     def get_keyword_arguments(self, name):
         try:
             return self._server.get_keyword_arguments(name)
+        except xmlrpclib.Error:
+            raise TypeError
+
+    def get_keyword_types(self, name):
+        try:
+            return self._server.get_keyword_types(name)
         except xmlrpclib.Error:
             raise TypeError
 
@@ -243,8 +262,8 @@ class XmlRpcRemoteClient(object):
 # Custom XML-RPC timeouts based on
 # http://stackoverflow.com/questions/2425799/timeout-for-xmlrpclib-client-requests
 
-
-class TimeoutTransport(xmlrpclib.Transport):
+class TimeoutHTTPTransport(xmlrpclib.Transport):
+    _connection_class = httplib.HTTPConnection
 
     def __init__(self, use_datetime=0, timeout=None):
         xmlrpclib.Transport.__init__(self, use_datetime)
@@ -256,31 +275,19 @@ class TimeoutTransport(xmlrpclib.Transport):
         if self._connection and host == self._connection[0]:
             return self._connection[1]
         chost, self._extra_headers, x509 = self.get_host_info(host)
-        self._connection = host, httplib.HTTPConnection(chost, timeout=self.timeout)
+        self._connection = host, self._connection_class(chost, timeout=self.timeout)
         return self._connection[1]
-
-
-if sys.version_info[:2] == (2, 6):
-
-    class TimeoutTransport(TimeoutTransport):
-
-        def make_connection(self, host):
-            host, extra_headers, x509 = self.get_host_info(host)
-            return TimeoutHTTP(host, timeout=self.timeout)
-
-    class TimeoutHTTP(httplib.HTTP):
-
-        def __init__(self, host='', port=None, strict=None, timeout=None):
-            if port == 0:
-                port = None
-            self._setup(self._connection_class(host, port, strict, timeout=timeout))
 
 
 if IRONPYTHON:
 
-    class TimeoutTransport(xmlrpclib.Transport):
+    class TimeoutHTTPTransport(xmlrpclib.Transport):
 
         def __init__(self, use_datetime=0, timeout=None):
             xmlrpclib.Transport.__init__(self, use_datetime)
             if timeout:
                 raise RuntimeError('Timeouts are not supported on IronPython.')
+
+
+class TimeoutHTTPSTransport(TimeoutHTTPTransport):
+    _connection_class = httplib.HTTPSConnection

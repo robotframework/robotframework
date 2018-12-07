@@ -56,6 +56,14 @@ class TestNormalize(unittest.TestCase):
         self._verify(b'FOO & Bar', b'bar', ignore=b'F&o')
         self._verify(b'FOO & Bar', b'OOBar', ignore=b'F&o', caseless=False)
 
+    def test_string_subclass_without_compatible_init(self):
+        class BrokenLikeSudsText(str):
+            def __new__(cls, value):
+                return str.__new__(cls, value)
+        self._verify(BrokenLikeSudsText('suds.sax.text.Text is BROKEN'),
+                     'suds.sax.text.textisbroken')
+        self._verify(BrokenLikeSudsText(''), '')
+
 
 class TestNormalizedDict(unittest.TestCase):
 

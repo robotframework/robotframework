@@ -44,6 +44,18 @@ Normalize Path
     Normalize Path And Check    abc${/ * 10}def    abc${/}def
     Normalize Path And Check    ${CURDIR}${/}${/}abc${/}.${/}..${/}.${/}${/}    ${CURDIR}
 
+Case Normalize Path On Windows
+    Normalize Path And Check    ABC        abc         case_normalize=True
+    Normalize Path And Check    ABC/DeF    abc\\def    case_normalize=YES
+    Normalize Path And Check    ABC        ABC         case_normalize=False
+    Normalize Path And Check    ABC/DeF    ABC\\DeF    case_normalize=OFF
+
+Case Normalize Path Outside Windows
+    Normalize Path And Check    ABC        ABC        case_normalize=True
+    Normalize Path And Check    ABC/DeF    ABC/DeF    case_normalize=YES
+    Normalize Path And Check    ABC        ABC        case_normalize=False
+    Normalize Path And Check    ABC/DeF    ABC/DeF    case_normalize=OFF
+
 Split Path
     Split Path And Check    abc${/}def    abc    def
     Split Path And Check    abc${/}def${/}ghi${/}    abc${/}def    ghi
@@ -104,8 +116,8 @@ Join Path And Check
     Should Be Equal    ${path}    ${expected}    Joining ${inputs} failed
 
 Normalize Path And Check
-    [Arguments]    ${input}    ${expected}
-    ${path} =    Normalize Path    ${input}
+    [Arguments]    ${input}    ${expected}    &{config}
+    ${path} =    Normalize Path    ${input}    &{config}
     Should Be Equal    ${path}    ${expected}    Normalizing ${input} failed
 
 Split Path And Check

@@ -69,6 +69,9 @@ Ignore Error When Access To Dictionary Nonexisting Key Syntax
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2
 
+Ignore Error With "Passing" Exceptions
+    Check Test Case    ${TEST NAME}
+
 Expect Error When Error Occurs
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    My error message    FAIL
@@ -142,6 +145,24 @@ Expect Error When Access To List Variable Nonexisting Index Syntax
 Expect Error When Access To Dictionary Nonexisting Key Syntax
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2
+
+Expect Error With Explicit GLOB
+    Check Test Case    ${TEST NAME}
+
+Expect Error With EQUALS
+    Check Test Case    ${TEST NAME}
+
+Expect Error With STARTS
+    Check Test Case    ${TEST NAME}
+
+Expect Error With REGEXP
+    Check Test Case    ${TEST NAME}
+
+Expect Error With Unrecognized Prefix
+    Check Test Case    ${TEST NAME}
+
+Expect Error With "Passing" Exceptions
+    Check Test Case    ${TEST NAME}
 
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Ignore Error With Arguments That Needs To be Escaped

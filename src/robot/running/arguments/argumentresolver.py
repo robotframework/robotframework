@@ -36,7 +36,7 @@ class ArgumentResolver(object):
                                                             variables)
         positional, named = self._dict_to_kwargs.handle(positional, named)
         self._argument_validator.validate(positional, named,
-                                          dryrun=not variables)
+                                          dryrun=variables is None)
         return positional, named
 
 
@@ -69,7 +69,7 @@ class NamedArgumentResolver(object):
         name, value = split_from_equals(arg)
         if value is None:
             return False
-        if self._argspec.kwargs:
+        if self._argspec.kwargs or self._argspec.kwonlyargs:
             return True
         if not self._argspec.supports_named:
             return False

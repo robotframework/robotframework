@@ -31,10 +31,12 @@ from .gatherfailed import gather_failed_tests, gather_failed_suites
 
 @py2to3
 class _BaseSettings(object):
-    _cli_opts = {'Name'             : ('name', None),
+    _cli_opts = {'RPA'              : ('rpa', None),
+                 'Name'             : ('name', None),
                  'Doc'              : ('doc', None),
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
+                 'TaskNames'        : ('task', []),
                  'ReRunFailed'      : ('rerunfailed', 'NONE'),
                  'ReRunFailedSuites': ('rerunfailedsuites', 'NONE'),
                  'SuiteNames'       : ('suite', []),
@@ -83,7 +85,7 @@ class _BaseSettings(object):
                 # Copy mutable values and support list values as scalars.
                 value = list(value) if is_list_like(value) else [value]
             self[name] = self._process_value(name, value)
-        self['TestNames'] += self['ReRunFailed']
+        self['TestNames'] += self['ReRunFailed'] + self['TaskNames']
         self['SuiteNames'] += self['ReRunFailedSuites']
 
     def __setitem__(self, name, value):
@@ -100,10 +102,8 @@ class _BaseSettings(object):
             return self._process_log_level(value)
         if value == self._get_default_value(name):
             return value
-        if name in ['Name', 'Doc', 'LogTitle', 'ReportTitle']:
-            if name == 'Doc':
-                value = self._escape_as_data(value)
-            return value.replace('_', ' ')
+        if name == 'Doc':
+            return self._escape_as_data(value)
         if name in ['Metadata', 'TagDoc']:
             if name == 'Metadata':
                 value = [self._escape_as_data(v) for v in value]
@@ -126,10 +126,17 @@ class _BaseSettings(object):
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'Randomize':
             return self._process_randomize_value(value)
+        if name == 'MaxErrorLines':
+            return self._process_max_error_lines(value)
         if name == 'RemoveKeywords':
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
+        if name == 'WarnOnSkipped':
+            with LOGGER.cache_only:
+                LOGGER.warn("Option '--warnonskippedfiles' is deprecated and "
+                            "has no effect. Nowadays all skipped files are "
+                            "reported.")
         return value
 
     def _escape_as_data(self, value):
@@ -156,6 +163,15 @@ class _BaseSettings(object):
         if not loggerhelper.IsLogged(log_level)(default):
             raise DataError("Default visible log level '%s' is lower than "
                             "log level '%s'" % (default, log_level))
+
+    def _process_max_error_lines(self, value):
+        if not value or value.upper() == 'NONE':
+            return None
+        value = self._convert_to_integer('maxerrorlines', value)
+        if value < 10:
+            raise DataError("Option '--maxerrorlines' expected an integer "
+                            "value greater that 10 but got '%s'." % value)
+        return value
 
     def _process_randomize_value(self, original):
         value = original.lower()
@@ -228,7 +244,6 @@ class _BaseSettings(object):
                             % (type_.lower(), path, err.strerror))
 
     def _process_metadata_or_tagdoc(self, value):
-        value = value.replace('_', ' ')
         if ':' in value:
             return value.split(':', 1)
         return value, ''
@@ -246,7 +261,7 @@ class _BaseSettings(object):
             pattern, title = pattern.rsplit(':', 1)
         else:
             title = ''
-        return self._format_tag_patterns(pattern), title.replace('_', ' ')
+        return self._format_tag_patterns(pattern), title
 
     def _format_tag_patterns(self, pattern):
         for search, replace in [('&', 'AND'), ('AND', ' AND '), ('OR', ' OR '),
@@ -371,18 +386,27 @@ class _BaseSettings(object):
     def console_colors(self):
         return self['ConsoleColors']
 
+    @property
+    def rpa(self):
+        return self['RPA']
+
+    @rpa.setter
+    def rpa(self, value):
+        self['RPA'] = value
+
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Extension'          : ('extension', None),
                        'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
+                       'MaxErrorLines'      : ('maxerrorlines', 40),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'ExitOnError'        : ('exitonerror', False),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunEmptySuite'      : ('runemptysuite', False),
-                       'WarnOnSkipped'      : ('warnonskippedfiles', False),
+                       'WarnOnSkipped'      : ('warnonskippedfiles', None),
                        'Variables'          : ('variable', []),
                        'VariableFiles'      : ('variablefile', []),
                        'PreRunModifiers'    : ('prerunmodifier', []),
@@ -396,6 +420,7 @@ class RobotSettings(_BaseSettings):
 
     def get_rebot_settings(self):
         settings = RebotSettings()
+        settings.start_timestamp = self.start_timestamp
         settings._opts.update(self._opts)
         for name in ['Variables', 'VariableFiles', 'Listeners']:
             del(settings._opts[name])
@@ -494,6 +519,10 @@ class RobotSettings(_BaseSettings):
         return self['ConsoleMarkers']
 
     @property
+    def max_error_lines(self):
+        return self['MaxErrorLines']
+
+    @property
     def pre_run_modifiers(self):
         return self['PreRunModifiers']
 
@@ -508,6 +537,10 @@ class RobotSettings(_BaseSettings):
     @property
     def variable_files(self):
         return self['VariableFiles']
+
+    @property
+    def extension(self):
+        return self['Extension']
 
 
 class RebotSettings(_BaseSettings):
@@ -546,6 +579,7 @@ class RebotSettings(_BaseSettings):
         if not self.log:
             return {}
         return {
+            'rpa': self.rpa,
             'title': html_escape(self['LogTitle'] or ''),
             'reportURL': self._url_from_path(self.log, self.report),
             'splitLogBase': os.path.basename(os.path.splitext(self.log)[0]),
@@ -557,6 +591,7 @@ class RebotSettings(_BaseSettings):
         if not self.report:
             return {}
         return {
+            'rpa': self.rpa,
             'title': html_escape(self['ReportTitle'] or ''),
             'logURL': self._url_from_path(self.report, self.log),
             'background' : self._resolve_background_colors(),

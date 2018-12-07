@@ -50,7 +50,7 @@ My Setup
     Copy Previous Outfile
     ${options} =    Catenate
     ...    --critical t1
-    ...    --tagstatcombine d1_AND_d2:Custom_title_AND-OR-NOT
+    ...    --tagstatcombine "d1 AND d2:Custom title AND-OR-NOT"
     ...    --suitestatlevel 2
     ...    --tagstatexclude t2
     ...    --TagStatComb F1NOTT_1

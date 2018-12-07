@@ -2,7 +2,7 @@ import io
 import sys
 import unittest
 
-from robot.utils import isatty, PYTHON
+from robot.utils import isatty
 from robot.utils.asserts import assert_equal, assert_false, assert_raises
 
 
@@ -22,13 +22,8 @@ class TestIsATty(unittest.TestCase):
     def test_with_detached_io_buffer(self):
         with io.StringIO() as stream:
             wrapper = io.TextIOWrapper(stream, 'UTF-8')
-            if sys.version_info >= (2, 7):
-                wrapper.detach()
-                exc_type = ValueError if PYTHON else AttributeError
-            else:
-                wrapper.buffer = None
-                exc_type = AttributeError
-            assert_raises(exc_type, wrapper.isatty)
+            wrapper.detach()
+            assert_raises((ValueError, AttributeError), wrapper.isatty)
             assert_false(isatty(wrapper))
 
 

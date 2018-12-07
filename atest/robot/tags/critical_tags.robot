@@ -20,10 +20,10 @@ Critical Not Matching
     -c nomatch    PASS    ${MSG 000 211}
 
 Critical As Simple Pattern
-    --critical faSTAR -c QUESTaSS    FAIL    ${MSG 211 211}
+    --critical fa* -c ?aSS    FAIL    ${MSG 211 211}
 
 Critical As Combined Pattern
-    --critical nonexORfaSTAR -c QUESTassANDforce    FAIL    ${MSG 211 211}
+    --critical nonexORfa* -c ?assANDforce    FAIL    ${MSG 211 211}
 
 Non-Critical
     --noncritical pass    FAIL    ${MSG 101 211}
@@ -32,24 +32,24 @@ Non-Critical Not Matching
     -n these -n dont -n match    FAIL    ${MSG 211 211}
 
 Non-Critical As Simple Pattern
-    --NonCritical fa__STAR -n QUESTass    PASS    ${MSG 000 211}
+    --NonCritical fa__* -n ?ass    PASS    ${MSG 000 211}
 
 Non-Critical As Combined Pattern
-    --NonCritical nonexORfa__STAR -n QUESTassANDforce    PASS    ${MSG 000 211}
+    --NonCritical nonexORfa__* -n ?assANDforce    PASS    ${MSG 000 211}
 
 Critical And Non-Critical Matching Different Test
-    --critical paSTARss --noncritical faiQUEST -c nomatch    PASS    ${MSG 110 211}
+    --critical pa*ss --noncritical fai? -c nomatch    PASS    ${MSG 110 211}
 
 Critical And Non-Critical Matching Same Test
     --critical force --noncritical fail -c a -c b -c c -n x -n y -n z    PASS    ${MSG 110 211}
 
 Critical And Non-Critical Matching Same Tag
-    --critical force --noncritical fSTAR    PASS    ${MSG 000 211}
+    --critical force --noncritical f*    PASS    ${MSG 000 211}
 
 *** Keywords ***
 Test Criticality
     [Arguments]    ${options}    ${exp status}    ${exp msg}
-    Run Tests    ${options} --escape star:STAR --escape quest:QUEST    misc/pass_and_fail.robot
+    Run Tests    ${options}    misc/pass_and_fail.robot
     Suite Status And Message Should Be    ${exp status}    ${exp msg}
 
 Suite Status And Message Should Be

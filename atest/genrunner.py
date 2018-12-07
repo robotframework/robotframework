@@ -1,17 +1,17 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.6
 
 """Script to generate atest runners based on plain text data files.
 
-Usage:  %s testdata/path/data.robot [robot/path/runner.robot]
+Usage:  {tool} testdata/path/data.robot [robot/path/runner.robot]
 """
 
-from os.path import abspath, basename, dirname, exists, join, splitext
+from __future__ import print_function
+from os.path import abspath, basename, dirname, exists, join
 import os
 import sys
 
 if len(sys.argv) not in [2, 3] or not all(a.endswith('.robot') for a in sys.argv[1:]):
-    print __doc__ % basename(sys.argv[0])
-    sys.exit(1)
+    sys.exit(__doc__.format(tool=basename(sys.argv[0])))
 
 INPATH = abspath(sys.argv[1])
 if join('atest', 'testdata') not in INPATH:
@@ -24,29 +24,56 @@ else:
 if not exists(dirname(OUTPATH)):
     os.mkdir(dirname(OUTPATH))
 
+
+class TestCase(object):
+
+    def __init__(self, name, tags=None):
+        self.name = name
+        self.tags = tags
+
+
 with open(INPATH) as input:
     TESTS = []
-    process = False
+    SETTINGS = []
+    parsing_tests = False
+    parsing_settings = False
     for line in input.readlines():
         line = line.rstrip()
-        if line.startswith('*'):
+        if not line:
+            continue
+        elif line.startswith('*'):
             name = line.split('  ')[0].replace('*', '').replace(' ', '').upper()
-            process = name in ('TESTCASE', 'TESTCASES')
-        elif process and line and line[0] != ' ':
-            TESTS.append(line.split('  ')[0])
+            parsing_tests = name in ('TESTCASE', 'TESTCASES', 'TASK', 'TASKS')
+            parsing_settings = name in ('SETTING', 'SETTINGS')
+        elif parsing_tests and line[0] != ' ':
+            TESTS.append(TestCase(line.split('  ')[0]))
+        elif parsing_tests and line.strip().startswith('[Tags]'):
+            TESTS[-1].tags = line.split('[Tags]', 1)[1].split()
+        elif parsing_settings and line.startswith(('Force Tags', 'Default Tags')):
+            name, value = line.split('  ', 1)
+            SETTINGS.append((name, value.strip()))
 
-with open(OUTPATH, 'wb') as output:
+
+with open(OUTPATH, 'w') as output:
     path = INPATH.split(join('atest', 'testdata'))[1][1:].replace(os.sep, '/')
-    output.write("""\
+    output.write('''\
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    %(path)s
+Suite Setup      Run Tests    ${EMPTY}    %s
+''' % path)
+    for name, value in SETTINGS:
+        output.write('%s%s\n' % (name.ljust(17), value))
+    output.write('''\
 Resource         atest_resource.robot
 
 *** Test Cases ***
-""" % locals())
+''')
     for test in TESTS:
-        output.write(test + '\n    Check Test Case    ${TESTNAME}\n')
+        output.write(test.name + '\n')
+        if test.tags:
+            output.write('    [Tags]    %s\n' % '    '.join(test.tags))
+        output.write('    Check Test Case    ${TESTNAME}\n')
         if test is not TESTS[-1]:
             output.write('\n')
 
-print OUTPATH
+
+print(OUTPATH)

@@ -15,6 +15,7 @@
 
 from robot.errors import DataError
 from robot.model import SuiteVisitor
+from robot.utils import html_escape
 
 
 class Merger(SuiteVisitor):
@@ -24,6 +25,7 @@ class Merger(SuiteVisitor):
         self.current = None
 
     def merge(self, merged):
+        self.result.set_execution_mode(merged)
         merged.suite.visit(self)
         self.result.errors.add(merged.errors)
 
@@ -47,8 +49,8 @@ class Merger(SuiteVisitor):
         root = self.result.suite
         if root.name != name:
             raise DataError("Cannot merge outputs containing different root "
-                            "suites. Original suite is '%s' and merged is '%s'."
-                            % (root.name, name))
+                            "suites. Original suite is '%s' and merged is "
+                            "'%s'." % (root.name, name))
         return root
 
     def _find(self, items, name):
@@ -72,16 +74,26 @@ class Merger(SuiteVisitor):
             self.current.tests[index] = test
 
     def _create_add_message(self, item, test=True):
-        prefix = '%s added from merged output.' % ('Test' if test else 'Suite')
+        prefix = ('*HTML* %s added from merged output.'
+                  % ('Test' if test else 'Suite'))
         if not item.message:
             return prefix
-        return '\n'.join([prefix, '-  -  -', item.message])
+        return ''.join([prefix, '<hr>', self._html_escape(item.message)])
+
+    def _html_escape(self, message):
+        if message.startswith('*HTML*'):
+            return message[6:].lstrip()
+        else:
+            return html_escape(message)
 
     def _create_merge_message(self, new, old):
-        return '\n'.join(['Re-executed test has been merged.',
-                          '-  -  -',
-                          'New status:  %s' % new.status,
-                          'New message:  %s' % new.message,
-                          '-  -  -',
-                          'Old status:  %s' % old.status,
-                          'Old message:  %s' % old.message])
+        return ''.join([
+            '*HTML* Re-executed test has been merged.<hr>',
+            'New status: %s<br>' % self._format_status(new.status),
+            'New message: %s<hr>' % self._html_escape(new.message),
+            'Old status: %s<br>' % self._format_status(old.status),
+            'Old message: %s' % self._html_escape(old.message)
+        ])
+
+    def _format_status(self, status):
+        return '<span class="%s">%s</span>' % (status.lower(), status)

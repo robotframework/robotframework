@@ -18,7 +18,7 @@ Encode Non-ASCII String To Bytes
     Byte Strings Should Be Equal    ${bytes}    Hyv\\xc3\\xa4
 
 Encode Non-ASCII String To Bytes Using Incompatible Encoding
-    [Documentation]    FAIL STARTS: UnicodeEncodeError:
+    [Documentation]    FAIL STARTS: UnicodeEncodeError
     Encode String To Bytes    Hyvä    ASCII
 
 Encode Non-ASCII String To Bytes Using Incompatible Encoding And Error Handler
@@ -38,7 +38,7 @@ Decode Non-ASCII Bytes To String
     Should Be Equal    ${string}    Hyvä
 
 Decode Non-ASCII Bytes To String Using Incompatible Encoding
-    [Documentation]    FAIL STARTS: UnicodeDecodeError:
+    [Documentation]    FAIL STARTS: UnicodeDecodeError
     Decode Bytes To String    ${UTF-8}    ASCII
 
 Decode Non-ASCII Bytes To String Using Incompatible Encoding And Error Handler

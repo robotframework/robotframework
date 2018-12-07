@@ -80,26 +80,29 @@ about Robot Framework in general, go to http://robotframework.org.
 Options
 =======
 
+    --rpa                 Turn on generic automation mode. Mainly affects
+                          terminology so that "test" is replaced with "task"
+                          in logs and reports. By default the mode is got
+                          from output files. New in RF 3.1.
  -R --merge               When combining results, merge outputs together
                           instead of putting them under a new top level suite.
                           Example: rebot --merge orig.xml rerun.xml
- -N --name name           Set the name of the top level test suite. Underscores
-                          in the name are converted to spaces. Default name is
-                          created from the name of the executed data source.
+ -N --name name           Set the name of the top level test suite. Default
+                          name is created from the name of the executed data
+                          source.
  -D --doc documentation   Set the documentation of the top level test suite.
-                          Underscores in the documentation are converted to
-                          spaces and it may also contain simple HTML formatting
-                          (e.g. *bold* and http://url/).
- -M --metadata name:value *  Set metadata of the top level suite. Underscores
-                          in the name and value are converted to spaces. Value
-                          can contain same HTML formatting as --doc.
+                          Simple formatting is supported (e.g. *bold*). If
+                          the documentation contains spaces, it must be quoted.
+                          Example: --doc "Very *good* example"
+ -M --metadata name:value *  Set metadata of the top level suite. Value can
+                          contain formatting similarly as --doc.
                           Example: --metadata version:1.2
  -G --settag tag *        Sets given tag(s) to all executed test cases.
  -t --test name *         Select test cases by name or long name. Name is case
                           and space insensitive and it can also be a simple
                           pattern where `*` matches anything and `?` matches
-                          any char. If using `*` and `?` in the console is
-                          problematic, see --escape and --argumentfile.
+                          any char.
+    --task name *         Alias to --test. Especially applicable with --rpa.
  -s --suite name *        Select test suites by name. When this option is used
                           with --test, --include or --exclude, only test cases
                           in matching suites and also matching other filtering
@@ -148,8 +151,7 @@ Options
     --splitlog            Split log file into smaller pieces that open in
                           browser transparently.
     --logtitle title      Title for the generated test log. The default title
-                          is `<Name Of The Suite> Test Log`. Underscores in
-                          the title are converted into spaces in all titles.
+                          is `<Name Of The Suite> Test Log`.
     --reporttitle title   Title for the generated test report. The default
                           title is `<Name Of The Suite> Test Report`.
     --reportbackground colors  Background colors to use in the report file.
@@ -188,18 +190,16 @@ Options
                           characters `*` (matches anything) and `?` (matches
                           any char). Documentation can contain formatting
                           similarly as with --doc option.
-                          Examples: --tagdoc mytag:My_documentation
-                                    --tagdoc regression:*See*_http://info.html
-                                    --tagdoc owner-*:Original_author
+                          Examples: --tagdoc mytag:Example
+                                    --tagdoc "owner-*:Original author"
     --tagstatlink pattern:link:title *  Add external links into `Statistics by
                           Tag`. Pattern can contain characters `*` (matches
                           anything) and `?` (matches any char). Characters
                           matching to wildcard expressions can be used in link
                           and title with syntax %N, where N is index of the
-                          match (starting from 1). In title underscores are
-                          automatically converted to spaces.
-                          Examples: --tagstatlink mytag:http://my.domain:Link
-                          --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
+                          match (starting from 1).
+                          Examples: --tagstatlink mytag:http://my.domain:Title
+                          --tagstatlink "bug-*:http://url/id=%1:Issue Tracker"
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
                           Remove keyword data from all generated outputs.
                           Keywords containing warnings are not removed except
@@ -265,15 +265,7 @@ Options
                           Note that colors do not work with Jython on Windows.
  -P --pythonpath path *   Additional locations to add to the module search path
                           that is used when importing Python based extensions.
- -E --escape what:with *  Escape characters which are problematic in console.
-                          `what` is the name of the character to escape and
-                          `with` is the string to escape it with. Note that
-                          all given arguments, incl. data sources, are escaped
-                          so escape characters ought to be selected carefully.
-                          <---------------------ESCAPES----------------------->
-                          Examples:
-                          --escape space:_ --metadata X:Value_with_spaces
-                          -E space:SP -E quot:Q -v var:QhelloSPworldQ
+ -E --escape what:with *  Deprecated. Use console escape mechanism instead.
  -A --argumentfile path *  Text file to read more arguments from. File can have
                           both options and data sources one per line. Contents
                           do not need to be escaped but spaces in the beginning
@@ -283,8 +275,7 @@ Options
                           |  --include regression
                           |  --name Regression Tests
                           |  # This is a comment line
-                          |  my_tests.html
-                          |  path/to/test/directory/
+                          |  output.xml
  -h -? --help             Print usage instructions.
  --version                Print version information.
 
@@ -352,10 +343,11 @@ class Rebot(RobotFramework):
         return rc
 
 
-def rebot_cli(arguments, exit=True):
+def rebot_cli(arguments=None, exit=True):
     """Command line execution entry point for post-processing outputs.
 
     :param arguments: Command line options and arguments as a list of strings.
+        Starting from RF 3.1, defaults to ``sys.argv[1:]`` if not given.
     :param exit: If ``True``, call ``sys.exit`` with the return code denoting
         execution status, otherwise just return the rc. New in RF 3.0.1.
 
@@ -375,6 +367,8 @@ def rebot_cli(arguments, exit=True):
     arguments like ``name="Example"`` and generally has a richer API for
     programmatic Rebot execution.
     """
+    if arguments is None:
+        arguments = sys.argv[1:]
     return Rebot().execute_cli(arguments, exit=exit)
 
 

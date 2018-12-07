@@ -108,6 +108,13 @@ Set Test Variable Needing Escaping
     Set Test Variable    &{var5}    this\=is\=key=value    path=c:\\temp    not var=\${nv}
     Should Be True    &{var5} == {'this=is=key': 'value', 'path': 'c:\\\\temp', 'not var': '\${nv}'}
 
+Set Test Variable Affect Subsequent Keywords
+    Set Test Variable    ${TEST VAR}    Set in test level
+    Test Variable Should Be Set To      Set in test level
+    Test Variable Should Be Set To      Set in test level
+    Set Test Variable    ${TEST VAR}    Set again in test level
+    Test Variable Should Be Set To      Set again in test level
+
 Set Test Variable In User Keyword
     ${local} =    Set Variable    Does no leak to keywords
     Variable Should Not Exist    $uk_var_1
@@ -130,6 +137,13 @@ Set Test Variable Not Affecting Other Tests
     Variable Should Not Exist    @uk_var_3
     Variable Should Not Exist    $uk_var_4
     Check Test Variables Not Available In UK
+
+Set Task Variable as alias for Set Test Variable
+    Set Task Variable    ${TEST VAR}    Set in test level
+    Test Variable Should Be Set To      Set in test level
+    Test Variable Should Be Set To      Set in test level
+    Set Task Variable    ${TEST VAR}    Set again in test level
+    Test Variable Should Be Set To      Set again in test level
 
 Set Suite Variable 1
     [Documentation]    FAIL Variable '\${non_existing}' not found.
@@ -198,6 +212,7 @@ Set Global Variable 1
     Should Be Equal    ${sub_uk_level_global_var}    Global var set in sub user keyword
     Should Be True    @{sub_uk_level_global_var_list} == [ 'Global var set in', 'sub user keyword' ]
     Check Global Variables Available In UK
+    Set Global Variable    ${VARIABLE TABLE IN VARIABLES 2 (3)}    Set by test in "variables.robot"
     Set Global Variable    @non_existing
 
 Set Global Variable 2
@@ -478,6 +493,7 @@ My Suite Setup
     Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 2} == ['Set in', '__init__']
     Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 3} == {'Set': 'in __init__'}
     Set Suite Variable    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen in this suite    children=true
+    Set Global Variable    ${VARIABLE TABLE IN VARIABLES 2 (2)}    Set by suite setup in "variables.robot"
 
 My Suite Teardown
     Set Suite Variable    $suite_teardown_suite_var    Suite var set in suite teardown
@@ -497,6 +513,15 @@ My Suite Teardown
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
     Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen, and overridden, in this suite
+
+Test Variable Should Be Set To
+    [Arguments]    ${expected}
+    Should Be Equal    ${TEST VAR}    ${expected}
+    Test Variable Should Be Set To 2    ${expected}
+
+Test Variable Should Be Set To 2
+    [Arguments]    ${expected}
+    Should Be Equal    ${TEST VAR}    ${expected}
 
 Set Test Variables In UK
     Variable Should Not Exist    ${local}

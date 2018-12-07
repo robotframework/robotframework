@@ -64,11 +64,14 @@ class VariableFinder(object):
             if not is_list_like(value):
                 raise VariableError("Value of variable '%s' is not list or "
                                     "list-like." % name)
+            # TODO: Is converting to list needed or would checking be enough?
+            # TODO: Check this and DotDict usage below in RF 3.1.
             return list(value)
         if identifier == '&':
             if not is_dict_like(value):
                 raise VariableError("Value of variable '%s' is not dictionary "
                                     "or dictionary-like." % name)
+            # TODO: Is converting to DotDict needed? Check in RF 3.1.
             return DotDict(value)
         return value
 
@@ -102,7 +105,7 @@ class NumberFinder(object):
 
 class EmptyFinder(object):
     identifiers = '$@&'
-    find = NormalizedDict({'${EMPTY}': '', '@{EMPTY}': (), '&{EMPTY}': {}},
+    find = NormalizedDict({'${EMPTY}': u'', '@{EMPTY}': (), '&{EMPTY}': {}},
                           ignore='_').__getitem__
 
 

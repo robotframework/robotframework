@@ -75,7 +75,7 @@ class JsonConverter(object):
             'name': kw.name,
             'args': kw.args,
             'doc': self._doc_formatter.html(kw.doc),
-            'shortdoc': kw.shortdoc,
+            'shortdoc': ' '.join(kw.shortdoc.splitlines()),
             'tags': tuple(kw.tags),
             'matched': True
         }

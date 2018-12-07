@@ -1,5 +1,5 @@
 *** Settings ***
-Library           OperatingSystem
+Library              OperatingSystem
 
 *** Variables ***
 @{NEEDS ESCAPING}    c:\\temp\\foo\\not_new_line    \${notvar}
@@ -89,6 +89,12 @@ Ignore Error When Access To Dictionary Nonexisting Key Syntax 1
 Ignore Error When Access To Dictionary Nonexisting Key Syntax 2
     Run Keyword And Ignore Error   Access To Dictionary Variable Nonexisting Key Syntax 2
 
+Ignore Error With "Passing" Exceptions
+    [Documentation]    PASS    The message
+    Keyword With Ignore Error With "Passing" Exceptions
+    Run Keyword And Ignore Error    Pass Execution    The message
+    Fail    Test should have passsed already!
+
 Expect Error When Error Occurs
     Run Keyword And Expect Error    ${ERROR MESSAGE}    ${FAIL KW}    ${ERROR MESSAGE}
 
@@ -112,8 +118,12 @@ Expected Error Is Pattern
     Run Keyword And Expect Error    C*a? e*rro?    Fail    Critical error
 
 Expected Error Is Multiline
-    Run Keyword And Expect Error    My error message\nIn multiple\nLines    Fail    My error message\nIn multiple\nLines
-    Run Keyword And Expect Error    My error message*Lines    Fail    My error message\nIn multiple\nLines
+    Run Keyword And Expect Error
+    ...    My error message\nIn multiple\nLines
+    ...    Fail    My error message\nIn multiple\nLines
+    Run Keyword And Expect Error
+    ...    My error message*Lines
+    ...    Fail    My error message\nIn multiple\nLines
 
 Expected Error Should Be Returned
     ${error} =    Run Keyword And Expect Error    *    Fail    Critical error
@@ -128,8 +138,12 @@ Expect Error With User Keyword When Keyword Fails
 
 Expect Error With Arguments That Needs To Be Escaped
     [Documentation]    FAIL Expected error 'There are no errors' did not occur.
-    Run Keyword And Expect Error    Directory '%{TEMPDIR}' exists.    Directory Should Not Exist    %{TEMPDIR}
-    Run Keyword And Expect Error    There are no errors    Log Many    @{NEEDS ESCAPING}
+    Run Keyword And Expect Error
+    ...    Directory '%{TEMPDIR}' exists.
+    ...    Directory Should Not Exist    %{TEMPDIR}
+    Run Keyword And Expect Error
+    ...    There are no errors
+    ...    Log Many    @{NEEDS ESCAPING}
 
 Expect Error When Timeout Occurs
     [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
@@ -145,8 +159,9 @@ Expect Error When Syntax Error At Parsing Time
     Run Keyword And Expect Error    *    Broken User Keyword
 
 Expect Error When Syntax Error At Run Time
-    [Documentation]    FAIL No keyword with name 'Non existing keyword' found.
-    Run Keyword And Expect Error    *    Non existing keyword
+    Run Keyword And Expect Error
+    ...    No keyword with name 'Non existing keyword' found.
+    ...    Non existing keyword
 
 Expect Error When Syntax Error In Setting Variables
     [Documentation]    FAIL Assignment can contain only one list variable.
@@ -162,26 +177,75 @@ Expect Error When Syntax Error In For Loop
     Run Keyword And Expect Error    *    For Loop With Syntax Error
 
 Expect Error When Non Existing Variable In For Loop
-    Run Keyword And Expect Error    Variable '\${non existing}' not found.   For Loop With Non Existing Variable
+    Run Keyword And Expect Error
+    ...    Variable '\${non existing}' not found.
+    ...    For Loop With Non Existing Variable
 
 Expect Error When Access To Nonexisting Variable
-    Run Keyword And Expect Error    Variable '\${nonexisting}' not found.    Access To Nonexisting Variable
+    Run Keyword And Expect Error
+    ...    Variable '\${nonexisting}' not found.
+    ...    Access To Nonexisting Variable
 
 Expect Error When Access To List Variable Nonexisting Index Syntax 1
-    ${expected_err_msg} =  Set Variable    Resolving variable '\${list[2]}' failed: IndexError:*
-    Run Keyword And Expect Error    ${expected_err_msg}    Access To List Variable Nonexisting Index Syntax 1
+    Run Keyword And Expect Error
+    ...    Resolving variable '\${list?2?}' failed: IndexError:*
+    ...    Access To List Variable Nonexisting Index Syntax 1
 
 Expect Error When Access To List Variable Nonexisting Index Syntax 2
-    ${expected_err_msg} =  Set Variable    List variable '\@{list}' has no item in index 2.
-    Run Keyword And Expect Error    ${expected_err_msg}    Access To List Variable Nonexisting Index Syntax 2
+    Run Keyword And Expect Error
+    ...    List '\@{list}' has no item in index 2.
+    ...    Access To List Variable Nonexisting Index Syntax 2
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 1
-    ${expected_err_msg} =  Set Variable   Resolving variable '\${dict[c]}' failed: NameError: *
-    Run Keyword And Expect Error    ${expected_err_msg}    Access To Dictionary Variable Nonexisting Key Syntax 1
+    Run Keyword And Expect Error
+    ...    Resolving variable '\${dict?c?}' failed: NameError: *
+    ...    Access To Dictionary Variable Nonexisting Key Syntax 1
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 2
-    ${expected_err_msg} =  Set Variable    Dictionary variable '\&{dict}' has no key 'c'.
-    Run Keyword And Expect Error    ${expected_err_msg}    Access To Dictionary Variable Nonexisting Key Syntax 2
+    Run Keyword And Expect Error
+    ...    Dictionary '\&{dict}' has no key 'c'.
+    ...    Access To Dictionary Variable Nonexisting Key Syntax 2
+
+Expect Error With Explicit GLOB
+    [Documentation]    FAIL Expected error 'GLOB:Your *' but got 'My message'.
+    [Template]    Run Keyword And Expect Error
+    GLOB:My message    Fail    My message
+    GLOB: My mes*g?    Fail    My message
+    GLOB:Your *        Fail    My message
+
+Expect Error With EQUALS
+    [Documentation]    FAIL Expected error 'EQUALS:*' but got 'My message'.
+    [Template]    Run Keyword And Expect Error
+    EQUALS:My message        Fail    My message
+    EQUALS: My [message]?    Fail    My [message]?
+    EQUALS:*                 Fail    My message
+
+Expect Error With STARTS
+    [Documentation]    FAIL Expected error 'STARTS: my' but got 'My message'.
+    [Template]    Run Keyword And Expect Error
+    STARTS:My me    Fail    My message
+    STARTS: My      Fail    My message
+    STARTS: my      Fail    My message
+
+Expect Error With REGEXP
+    [Documentation]    FAIL Expected error 'REGEXP:oopps' but got 'My message'.
+    [Template]    Run Keyword And Expect Error
+    REGEXP:My.*                       Fail    My message
+    REGEXP: (My|Your) [Mm]\\w+ge!?    Fail    My message
+    REGEXP:oopps                      Fail    My message
+
+Expect Error With Unrecognized Prefix
+    [Documentation]    FAIL Expected error '1:2:3:4:5' but got 'Ooops'.
+    [Template]    Run Keyword And Expect Error
+    XXX:My message    Fail    XXX:My message
+    :Message:         Fail    :Message:
+    1:2:3:4:5         Fail    Ooops
+
+Expect Error With "Passing" Exceptions
+    [Documentation]    PASS    The message
+    Keyword With Expect Error With "Passing" Exceptions
+    Run Keyword And Expect Error    Whatever    Pass Execution    The message
+    Fail    Test should have passsed already!
 
 *** Keywords ***
 Passing UK
@@ -234,3 +298,11 @@ Access To Dictionary Variable Nonexisting Key Syntax 1
 Access To Dictionary Variable Nonexisting Key Syntax 2
     ${dict} =    Create dictionary    a=1    b=2
     Log    &{dict}[c]
+
+Keyword With Ignore Error With "Passing" Exceptions
+    Run Keyword And Ignore Error    Return From Keyword
+    Fail    Should have returned from keyword already!
+
+Keyword With Expect Error With "Passing" Exceptions
+    Run Keyword And Expect Error    Whatever    Return From Keyword
+    Fail    Should have returned from keyword already!

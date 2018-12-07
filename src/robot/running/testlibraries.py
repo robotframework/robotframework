@@ -169,7 +169,7 @@ class _BaseTestLibrary(object):
                 self._raise_creating_instance_failed()
 
     def get_listeners(self, libinst=None):
-        if not libinst:
+        if libinst is None:
             libinst = self.get_instance()
         listeners = getattr(libinst, 'ROBOT_LIBRARY_LISTENER', None)
         if listeners is None:

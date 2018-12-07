@@ -240,43 +240,43 @@ For loops can be used with both test cases and user keywords. Except for
 really simple cases, user keywords are better, because they hide the
 complexity introduced by for loops. The basic for loop syntax,
 `FOR item IN sequence`, is derived from Python, but similar
-syntax is possible also in shell scripts or Perl.
+syntax is supported also by various other programming languages.
 
-Normal for loop
+Simple for loop
 ~~~~~~~~~~~~~~~
 
-In a normal for loop, one variable is assigned from a list of values,
-one value per iteration. The syntax starts with `:FOR`, where
-colon is required to separate the syntax from normal keywords. The
-next cell contains the loop variable, the subsequent cell must have
-`IN`, and the final cells contain values over which to iterate.
-These values can contain variables_, including `list variables`_.
+In a normal for loop, one variable is assigned based on a list of values,
+one value per iteration. The syntax starts with `FOR` (case-sensitive) as
+a marker, then the loop variable, then a mandatory `IN` (case-sensitive) as
+a separator, and finally the values to iterate. These values can contain
+variables_, including `list variables`_.
 
-The keywords used in the for loop are on the following rows and they must
-be indented one cell to the right. When using the `plain text format`_,
-the indented cells must be `escaped with a backslash`__, but with other
-data formats the cells can be just left empty. The for loop ends
-when the indentation returns back to normal or the table ends.
+The keywords used in the for loop are on the following rows and the loop
+ends with `END` (case-sensitive) on its own row. Keywords inside the loop
+do not need to be indented, but that is highly recommended to make the syntax
+easier to read.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Example 1
-       :FOR    ${animal}    IN    cat    dog
-       \    Log    ${animal}
-       \    Log    2nd keyword
+   Example
+       FOR    ${animal}    IN    cat    dog
+           Log    ${animal}
+           Log    2nd keyword
+       END
        Log    Outside loop
 
-   Example 2
-       :FOR    ${var}    IN    one    two
-       ...     ${3}    four    ${last}
-       \    Log    ${var}
+   Second Example
+       FOR    ${var}    IN    one    two    ${3}    four    ${five}
+       ...    kuusi    7    eight    nine    ${last}
+           Log    ${var}
+       END
 
-The for loop in :name:`Example 1` above is executed twice, so that first
+The for loop in :name:`Example` above is executed twice, so that first
 the loop variable `${animal}` has the value `cat` and then
 `dog`. The loop consists of two :name:`Log` keywords. In the
 second example, loop values are `split into two rows`__ and the
-loop is run altogether five times.
+loop is run altogether ten times.
 
 It is often convenient to use for loops with `list variables`_. This is
 illustrated by the example below, where `@{ELEMENTS}` contains
@@ -287,8 +287,42 @@ used with all of them one by one.
 
    *** Test Cases ***
    Example
-       :FOR    ${element}    IN    @{ELEMENTS}
-       \    Start Element  ${element}
+       FOR    ${element}    IN    @{ELEMENTS}
+           Start Element    ${element}
+       END
+
+__ `Dividing test data to several rows`_
+
+Old for loop syntax
+~~~~~~~~~~~~~~~~~~~
+
+For loop syntax was enhanced in various ways in Robot Framework 3.1.
+The most noticeable change was that loops nowadays end with the explicit
+`END` marker and keywords inside the loop do not need to be indented.
+In the `space separated plain text format`_ indentation required
+`escaping with a backslash`__ which resulted in quite ugly syntax:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       :FOR    ${animal}    IN    cat    dog
+       \    Log    ${animal}
+       \    Log    2nd keyword
+       Log    Outside loop
+
+Another change, also visible in the example above, was that the for loop
+marker used to be `:FOR` when nowadays just `FOR` is enough. Related to that,
+the `:FOR` marker and also the `IN` separator were case-insensitive but
+nowadays both `FOR` and `IN` are case-sensitive.
+
+Old for loop syntax still works in Robot Framework 3.1 and only using
+`IN` case-insensitively causes a deprecation warning. Not closing loops
+with `END`, escaping keywords inside loops with :codesc:`\\`, and using
+`:FOR` instead of `FOR` are all going to be deprecated in Robot Framework 3.2.
+Users are advised to switch to the new syntax as soon as possible.
+
+__ Escaping_
 
 Nested for loops
 ~~~~~~~~~~~~~~~~
@@ -301,23 +335,22 @@ a user keyword inside a for loop and have another for loop there.
    *** Keywords ***
    Handle Table
        [Arguments]    @{table}
-       :FOR    ${row}    IN    @{table}
-       \    Handle Row    @{row}
+       FOR    ${row}    IN    @{table}
+           Handle Row    @{row}
+       END
 
    Handle Row
        [Arguments]    @{row}
-       :FOR    ${cell}    IN    @{row}
-       \    Handle Cell    ${cell}
-
-__ `Dividing test data to several rows`_
-__ Escaping_
+       FOR    ${cell}    IN    @{row}
+           Handle Cell    ${cell}
+       END
 
 Using several loop variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is also possible to use several loop variables. The syntax is the
 same as with the normal for loop, but all loop variables are listed in
-the cells between `:FOR` and `IN`. There can be any number of loop
+the cells between `FOR` and `IN`. There can be any number of loop
 variables, but the number of values must be evenly dividable by the number of
 variables.
 
@@ -328,13 +361,15 @@ them below the loop variables, as in the first loop of the example below:
 
    *** Test Cases ***
    Three loop variables
-       :FOR    ${index}    ${english}    ${finnish}    IN
+       FOR    ${index}    ${english}    ${finnish}    IN
        ...     1           cat           kissa
        ...     2           dog           koira
        ...     3           horse         hevonen
-       \    Add to dictionary    ${english}    ${finnish}    ${index}
-       :FOR    ${name}    ${id}    IN    @{EMPLOYERS}
-       \    Create    ${name}    ${id}
+           Add to dictionary    ${english}    ${finnish}    ${index}
+       END
+       FOR    ${name}    ${id}    IN    @{EMPLOYERS}
+           Create    ${name}    ${id}
+       END
 
 For-in-range loop
 ~~~~~~~~~~~~~~~~~
@@ -343,13 +378,16 @@ Earlier for loops always iterated over a sequence, and this is also the most
 common use case. Sometimes it is still convenient to have a for loop
 that is executed a certain number of times, and Robot Framework has a
 special `FOR index IN RANGE limit` syntax for this purpose. This
-syntax is derived from the similar Python idiom.
+syntax is derived from the similar Python idiom using the `built-in
+range() function`__.
+
+__ http://docs.python.org/library/functions.html#func-range
 
 Similarly as other for loops, the for-in-range loop starts with
-`:FOR` and the loop variable is in the next cell. In this format
+`FOR` and the loop variable is in the next cell. In this format
 there can be only one loop variable and it contains the current loop
-index. The next cell must contain `IN RANGE` and the subsequent
-cells loop limits.
+index. The next cell must contain `IN RANGE` (case-sensitive) and
+the subsequent cells loop limits.
 
 In the simplest case, only the upper limit of the loop is
 specified. In this case, loop indexes start from zero and increase by one
@@ -359,57 +397,66 @@ increase similarly as in the simple case. Finally, it is possible to give
 also the step value that specifies the increment to use. If the step
 is negative, it is used as decrement.
 
-It is possible to use simple arithmetics such as addition and subtraction
+It is possible to use simple arithmetic such as addition and subtraction
 with the range limits. This is especially useful when the limits are
-specified with variables.
-
-Starting from Robot Framework 2.8.7, it is possible to use float values for
-lower limit, upper limit and step.
+specified with variables. Start, end and step are typically given as
+integers, but using float values is possible as well.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Only upper limit
        [Documentation]    Loops over values from 0 to 9
-       :FOR    ${index}    IN RANGE    10
-       \    Log    ${index}
+       FOR    ${index}    IN RANGE    10
+           Log    ${index}
+       END
 
    Start and end
-       [Documentation]  Loops over values from 1 to 10
-       :FOR    ${index}    IN RANGE    1    11
-       \    Log    ${index}
+       [Documentation]    Loops over values from 1 to 10
+       FOR    ${index}    IN RANGE    1    11
+           Log    ${index}
+       END
 
    Also step given
-       [Documentation]  Loops over values 5, 15, and 25
-       :FOR    ${index}    IN RANGE    5    26    10
-       \    Log    ${index}
+       [Documentation]    Loops over values 5, 15, and 25
+       FOR    ${index}    IN RANGE    5    26    10
+           Log    ${index}
+       END
 
    Negative step
-       [Documentation]  Loops over values 13, 3, and -7
-       :FOR    ${index}    IN RANGE    13    -13    -10
-       \    Log    ${index}
+       [Documentation]    Loops over values 13, 3, and -7
+       FOR    ${index}    IN RANGE    13    -13    -10
+           Log    ${index}
+       END
 
-   Arithmetics
-       [Documentation]  Arithmetics with variable
-       :FOR    ${index}    IN RANGE    ${var}+1
-       \    Log    ${index}
+   Arithmetic
+       [Documentation]    Arithmetic with variable
+       FOR    ${index}    IN RANGE    ${var} + 1
+           Log    ${index}
+       END
 
    Float parameters
-       [Documentation]  Loops over values 3.14, 4.34, and 5.54
-       :FOR    ${index}    IN RANGE    3.14    6.09    1.2
-       \    Log    ${index}
+       [Documentation]    Loops over values 3.14, 4.34, and 5.54
+       FOR    ${index}    IN RANGE    3.14    6.09    1.2
+           Log    ${index}
+       END
+
+.. note:: Prior to Robot Framework 3.1, the `IN RANGE` separator was both
+          case- and space-insensitive. Such usage is nowadays deprecated
+          and exactly `IN RANGE` is required.
 
 For-in-enumerate loop
 ~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes it is useful to loop over a list and also keep track of your location
-inside the list.  Robot Framework has a special
+inside the list. Robot Framework has a special
 `FOR index ... IN ENUMERATE ...` syntax for this situation.
-This syntax is derived from the
-`Python built-in function <https://docs.python.org/2/library/functions.html#enumerate>`_.
+This syntax is derived from the `Python built-in enumerate() function`__.
 
-For-in-enumerate loops work just like regular for loops,
-except the cell after its loop variables must say `IN ENUMERATE`,
+__ http://docs.python.org/library/functions.html#enumerate
+
+For-in-enumerate loops work just like regular for loops, except the cell
+after its loop variables must say `IN ENUMERATE` (case-sensitive),
 and they must have an additional index variable before any other loop-variables.
 That index variable has a value of `0` for the first iteration, `1` for the
 second, etc.
@@ -424,13 +471,15 @@ For example, the following two test cases do the same thing:
    *** Test Cases ***
    Manage index manually
        ${index} =    Set Variable    -1
-       : FOR    ${item}    IN    @{LIST}
-       \    ${index} =    Evaluate    ${index} + 1
-       \    My Keyword    ${index}    ${item}
+       FOR    ${item}    IN    @{LIST}
+           ${index} =    Evaluate    ${index} + 1
+           My Keyword    ${index}    ${item}
+       END
 
    For-in-enumerate
-       : FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}
-       \    My Keyword    ${index}    ${item}
+       FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}
+           My Keyword    ${index}    ${item}
+       END
 
 Just like with regular for loops, you can loop over multiple values per loop
 iteration as long as the number of values in your list is evenly divisible by
@@ -440,21 +489,25 @@ the number of loop-variables (excluding the first, index variable).
 
    *** Test Case ***
    For-in-enumerate with two values per iteration
-       :FOR    ${index}    ${english}    ${finnish}    IN ENUMERATE
+       FOR    ${index}    ${en}    ${fi}    IN ENUMERATE
        ...    cat      kissa
        ...    dog      koira
        ...    horse    hevonen
-       \    Add to dictionary    ${english}    ${finnish}    ${index}
+           Log    "${en}" in English is "${fi}" in Finnish (index: ${index})
+       END
 
-For-in-enumerate loops are new in Robot Framework 2.9.
+.. note:: Prior to Robot Framework 3.1, the `IN ENUMERATE` separator was both
+          case- and space-insensitive. Such usage is nowadays deprecated
+          and exactly `IN ENUMERATE` is required.
 
 For-in-zip loop
 ~~~~~~~~~~~~~~~
 
 Some tests build up several related lists, then loop over them together.
 Robot Framework has a shortcut for this case: `FOR ... IN ZIP ...`, which
-is derived from the
-`Python built-in zip function <https://docs.python.org/2/library/functions.html#zip>`_.
+is derived from the `Python built-in zip() function`__.
+
+__ http://docs.python.org/library/functions.html#zip
 
 This may be easiest to show with an example:
 
@@ -467,15 +520,17 @@ This may be easiest to show with an example:
    *** Test Cases ***
    Iterate over two lists manually
        ${length}=    Get Length    ${NUMBERS}
-       : FOR    ${idx}    IN RANGE    ${length}
-       \    Number Should Be Named    ${NUMBERS}[${idx}]    ${NAMES}[${idx}]
+       FOR    ${idx}    IN RANGE    ${length}
+           Number Should Be Named    ${NUMBERS}[${idx}]    ${NAMES}[${idx}]
+       END
 
    For-in-zip
-       : FOR    ${number}    ${name}    IN ZIP    ${NUMBERS}    ${NAMES}
-       \    Number Should Be Named    ${number}    ${name}
+       FOR    ${number}    ${name}    IN ZIP    ${NUMBERS}    ${NAMES}
+           Number Should Be Named    ${number}    ${name}
+       END
 
 Similarly as for-in-range and for-in-enumerate loops, for-in-zip loops require
-the cell after the loop variables to read `IN ZIP`.
+the cell after the loop variables to read `IN ZIP` (case-sensitive).
 
 Values used with for-in-zip loops must be lists or list-like objects, and
 there must be same number of loop variables as lists to loop over. Looping
@@ -485,14 +540,16 @@ Note that any lists used with for-in-zip should usually be given as `scalar
 variables`_ like `${list}`. A `list variable`_ only works if its items
 themselves are lists.
 
-For-in-zip loops are new in Robot Framework 2.9.
+.. note:: Prior to Robot Framework 3.1, the `IN ZIP` separator was both
+          case- and space-insensitive. Such usage is nowadays deprecated
+          and exactly `IN ZIP` is required.
 
 Exiting for loop
 ~~~~~~~~~~~~~~~~
 
 Normally for loops are executed until all the loop values have been iterated
 or a keyword used inside the loop fails. If there is a need to exit the loop
-earlier,  BuiltIn_ keywords :name:`Exit For Loop` and :name:`Exit For Loop If`
+earlier, BuiltIn_ keywords :name:`Exit For Loop` and :name:`Exit For Loop If`
 can be used to accomplish that. They works similarly as `break`
 statement in Python, Java, and many other programming languages.
 
@@ -506,17 +563,16 @@ outside a for loop.
    *** Test Cases ***
    Exit Example
        ${text} =    Set Variable    ${EMPTY}
-       :FOR    ${var}    IN    one    two
-       \    Run Keyword If    '${var}' == 'two'    Exit For Loop
-       \    ${text} =    Set Variable    ${text}${var}
+       FOR    ${var}    IN    one    two
+           Run Keyword If    '${var}' == 'two'    Exit For Loop
+           ${text} =    Set Variable    ${text}${var}
+       END
        Should Be Equal    ${text}    one
 
 In the above example it would be possible to use :name:`Exit For Loop If`
 instead of using :name:`Exit For Loop` with :name:`Run Keyword If`.
 For more information about these keywords, including more usage examples,
 see their documentation in the BuiltIn_ library.
-
-.. note:: :name:`Exit For Loop If` keyword was added in Robot Framework 2.8.
 
 Continuing for loop
 ~~~~~~~~~~~~~~~~~~~
@@ -539,25 +595,22 @@ outside a for loop.
    *** Test Cases ***
    Continue Example
        ${text} =    Set Variable    ${EMPTY}
-       :FOR    ${var}    IN    one    two    three
-       \    Continue For Loop If    '${var}' == 'two'
-       \    ${text} =    Set Variable    ${text}${var}
+       FOR    ${var}    IN    one    two    three
+           Continue For Loop If    '${var}' == 'two'
+           ${text} =    Set Variable    ${text}${var}
+       END
        Should Be Equal    ${text}    onethree
 
 For more information about these keywords, including usage examples, see their
 documentation in the BuiltIn_ library.
-
-.. note::  Both :name:`Continue For Loop` and :name:`Continue For Loop If`
-           were added in Robot Framework 2.8.
 
 Removing unnecessary keywords from outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For loops with multiple iterations often create lots of output and
 considerably increase the size of the generated output_ and log_ files.
-Starting from Robot Framework 2.7, it is possible to `remove unnecessary
-keywords`__ from the outputs using :option:`--RemoveKeywords FOR` command line
-option.
+It is possible to `remove unnecessary keywords`__ from the outputs using
+:option:`--RemoveKeywords FOR` command line option.
 
 __ `Removing and flattening keywords`_
 
@@ -566,7 +619,7 @@ Repeating single keyword
 
 For loops can be excessive in situations where there is only a need to
 repeat a single keyword. In these cases it is often easier to use
-BuiltIn_ keyword :name:`Repeat Keyword`.  This keyword takes a
+BuiltIn_ keyword :name:`Repeat Keyword`. This keyword takes a
 keyword and how many times to repeat it as arguments. The times to
 repeat the keyword can have an optional postfix `times` or `x`
 to make the syntax easier to read.

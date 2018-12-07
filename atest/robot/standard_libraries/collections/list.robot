@@ -358,3 +358,4 @@ Lists Should Be Equal With Two Duplicate Value Ignore_order
 
 Lists Should Be Equal With Duplicate And Different Value Ignore_order
 	Check Test Case    ${TEST NAME}
+

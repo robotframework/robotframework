@@ -1,12 +1,11 @@
 import unittest
-from robot.utils.asserts import assert_equal, assert_true, assert_raises
+from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
+                                 assert_raises_with_msg)
 
 from robot.model import TestSuite
-from robot.utils import PY2, PY3
-
-
-if PY3:
-    unicode = str
+from robot.running import TestSuite as RunningTestSuite
+from robot.result import TestSuite as ResultTestSuite
+from robot.utils import PY2, unicode
 
 
 class TestTestSuite(unittest.TestCase):
@@ -80,6 +79,18 @@ class TestTestSuite(unittest.TestCase):
         assert_equal(list(suite.tests[1].tags), ['a', 't1'])
         assert_equal(list(suite.tests[2].tags), ['a'])
         assert_equal(list(suite.suites[0].tests[0].tags), ['a'])
+
+    def test_configure_only_works_with_root_suite(self):
+        for Suite in TestSuite, RunningTestSuite, ResultTestSuite:
+            root = Suite()
+            child = root.suites.create()
+            child.tests.create()
+            root.configure(name='Configured')
+            assert_equal(root.name, 'Configured')
+            assert_raises_with_msg(
+                ValueError, "'TestSuite.configure()' can only be used with "
+                "the root test suite.", child.configure, name='Bang'
+            )
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, self.suite, 'attr', 'value')

@@ -101,7 +101,7 @@ Start Run
 
 Check Test Cases Have Failed Correctly
     Check Test Tags    Test
-    Check Test Tags    Test2    robot-exit
+    Check Test Tags    Test2    robot:exit
 
 Check Tests Have Been Forced To Shutdown
     ${stderr} =    ProcessManager.Get Stderr

@@ -11,7 +11,6 @@ ${TEST FILE2}     tags/no_force_no_default_tags.robot
 ${INPUT FILE}     %{TEMPDIR}/robot-tags-input.xml
 ${INPUT FILE 2}    %{TEMPDIR}/robot-tags-input-2.xml
 ${INPUT FILES}    ${INPUT FILE}
-${ESCAPES}        --escape star:STAR --escape quest:QUEST --escape amp:AMP
 @{INCL_ALL}       Incl-1    Incl-12    Incl-123
 @{EXCL_ALL}       excl-1    Excl-12    Excl-123
 @{ALL}            @{INCL_ALL}    @{EXCL_ALL}
@@ -32,7 +31,7 @@ More Includes
 Includes With AND
     [Documentation]    Testing including like "--include tag1&tag2" both with "&" and "AND"
     --include incl1ANDincl2    Incl-12    Incl-123
-    -i incl1AMPincl2AMPincl3    Incl-123
+    -i incl1&incl2&incl3    Incl-123
 
 Includes With OR
     --include incl3ORnonex    Incl-123
@@ -41,8 +40,8 @@ Includes With OR
 
 Include With Patterns
     --include incl?    @{INCL_ALL}
-    -i STARcl3 -i iSTAR2    Incl-12    Incl-123    Excl-123
-    -i i?*3ANDFORCE --include iSTAR    @{INCL_ALL}
+    -i *cl3 -i i*2    Incl-12    Incl-123    Excl-123
+    -i i?*3ANDFORCE --include inc*    @{INCL_ALL}
     -i incl?*ORnonex    @{INCL_ALL}
 
 One Exclude
@@ -55,8 +54,8 @@ More Excludes
     --exclude excl3 -e excl2    @{INCL_ALL}    excl-1
 
 Exclude With AND
-    --exclude excl1AMPexcl2    @{INCL_ALL}    excl-1
-    -e excl1AMPexcl2ANDexcl3    @{INCL_ALL}    excl-1    Excl-12
+    --exclude excl1&excl2    @{INCL_ALL}    excl-1
+    -e excl1&excl2ANDexcl3    @{INCL_ALL}    excl-1    Excl-12
 
 Exclude With OR
     --exclude nonexORexcl2    @{INCL_ALL}    excl-1
@@ -64,13 +63,13 @@ Exclude With OR
 
 Exclude With Patterns
     --exclude exc??    @{INCL_ALL}
-    -e STAR3 -e eSTAR2 -e eSTAR1    Incl-1    Incl-12
+    -e *3 -e e*2 -e e*1    Incl-1    Incl-12
     --excl excl?ORnonex    @{INCL_ALL}
 
 Include And Exclude
     [Documentation]    Include and exclude together with and without patterns and ANDing
     -i force --exclude excl2    @{INCL_ALL}    excl-1
-    --include STARcl2 -i nonex -e e???2 -i forceANDi*1    @{INCL_ALL}
+    --include *cl2 -i nonex -e e???2 -i forceANDi*1    @{INCL_ALL}
 
 Include with NOT
     --include incl1_NOT_incl3              Incl-1    Incl-12
@@ -86,17 +85,19 @@ Include and Exclude with NOT
 
 Select tests without any tags
     [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE 2}
-    --exclude STAR    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
+    # Using just '*' won't work with Jython on Windows due to its auto-globbing
+    --exclude *ORwhatever    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
 
 Select tests with any tag
     [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE 2}
-    --include STAR    Own Tags No Force Nor Default
+    # Using just '*' won't work with Jython on Windows due to its auto-globbing
+    --include *AND*    Own Tags No Force Nor Default
 
 Non Matching Include
     [Template]    Run And Check Error
     --include nonex    tag 'nonex'
     --include nonex -i nonex2    tags 'nonex' or 'nonex2'
-    --include incl1AMPnonex    tag 'incl1 AND nonex'
+    --include incl1&nonex    tag 'incl1 AND nonex'
     --include nonex_OR_nonex_2    tag 'nonex OR nonex 2'
 
 Non Matching Exclude
@@ -105,7 +106,7 @@ Non Matching Exclude
 Non Matching Include And Exclude
     [Template]    Run And Check Error
     -i nonex -e nonex2    tag 'nonex' and without tag 'nonex2'
-    --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3    tags 'nonex' or 'incl?' and without tags '*1', '*2' or '*3'
+    --include nonex -i incl? -e *1 -e *2 -e *3    tags 'nonex' or 'incl?' and without tags '*1', '*2' or '*3'
 
 Non Matching When Reboting Multiple Outputs
     [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE} ${INPUT FILE 2}
@@ -115,7 +116,7 @@ Non Matching When Reboting Multiple Outputs
 
 Including With Robot And Including And Excluding With Rebot
     [Setup]    Create Output With Robot    ${INPUT FILE}    --include incl1 --exclude nonexisting    ${TESTFILE}
-    -i iSTAR2STAR -e nonexisting -e incl3    Incl-12
+    -i i*2* -e nonexisting -e incl3    Incl-12
 
 Excluding With Robot And Including And Excluding Without Matching Rebot
     [Setup]    Create Output With Robot    ${INPUT FILE}    -i incl1 --exclude excl*    ${TESTFILE}
@@ -124,7 +125,7 @@ Excluding With Robot And Including And Excluding Without Matching Rebot
 Elapsed Time
     [Documentation]    Test setting start, end and elapsed times correctly when filtering by tags
     [Template]    NONE
-    Comment    1) Rebot hand-edited output with predefined times and    check that times are read correctly.
+    # Rebot hand-edited output with predefined times and check that times are read correctly.
     Run Rebot    ${EMPTY}    rebot/times.xml
     Check Times    ${SUITE.tests[0]}    20061227 12:00:00.000    20061227 12:00:01.000    1000
     Check Times    ${SUITE.tests[1]}    20061227 12:00:01.000    20061227 12:00:03.000    2000
@@ -134,9 +135,9 @@ Elapsed Time
     Check Times    ${SUITE.tests[5]}    20061227 12:00:07.003    20061227 12:00:07.007    0004
     Check Times    ${SUITE}    20061227 11:59:59.000    20061227 12:00:08.999    9999
     Length Should Be    ${SUITE.tests}    6
-    Comment    2) Filter ouput created in earlier step and check    that times are set accordingly.
+    # Filter ouput created in earlier step and check that times are set accordingly.
     Copy Previous Outfile
-    Run Rebot    --include incl2 --include excl3 ${ESCAPES}    ${OUTFILE COPY}
+    Run Rebot    --include incl2 --include excl3    ${OUTFILE COPY}
     Check Times    ${SUITE}    ${NONE}    ${NONE}    6004
     Check Times    ${SUITE.tests[0]}    20061227 12:00:01.000    20061227 12:00:03.000    2000
     Check Times    ${SUITE.tests[1]}    20061227 12:00:03.000    20061227 12:00:07.000    4000
@@ -150,7 +151,7 @@ Create Input Files
 
 Run And Check Include And Exclude
     [Arguments]    ${params}    @{tests}
-    Run Rebot    ${params} ${ESCAPES}    ${INPUT FILES}
+    Run Rebot    ${params}    ${INPUT FILES}
     Stderr Should Be Empty
     Should Contain Tests    ${SUITE}    @{tests}
     Should Be True    ${SUITE.statistics.all.passed} == len(@{tests})
@@ -164,7 +165,7 @@ Run And Check Include And Exclude
 
 Run And Check Error
     [Arguments]    ${params}    ${filter msg}    ${suite name}=Include And Exclude
-    Run Rebot Without Processing Output    ${params} ${ESCAPES}    ${INPUT FILES}
+    Run Rebot Without Processing Output    ${params}    ${INPUT FILES}
     Stderr Should Be Equal To    SEPARATOR=
     ...    [ ERROR ] Suite '${suite name}' contains no tests with ${filter msg}.
     ...    ${USAGE TIP}\n

@@ -15,10 +15,10 @@
 
 from __future__ import division
 
-import inspect
+from operator import add, sub
 
-from .platform import IRONPYTHON
-from .robottypes import is_integer, is_unicode
+from .platform import PY2
+from .robottypes import is_integer
 from .unic import unic
 
 
@@ -32,16 +32,24 @@ def roundup(number, ndigits=0, return_type=None):
     With the built-in ``round()`` rounding equally close numbers as well as
     the return type depends on the Python version.
     """
-    sign = 1 if number >= 0 else -1
-    precision = 10 ** (-1 * ndigits)
+    result = _roundup(number, ndigits)
     if not return_type:
         return_type = float if ndigits > 0 else int
-    quotient, remainder = divmod(abs(number), precision)
-    # https://github.com/IronLanguages/main/issues/1236
-    if (not (IRONPYTHON and (quotient * precision + remainder > abs(number)))
-        and remainder >= precision / 2):
-        quotient += 1
-    return sign * return_type(quotient * precision)
+    return return_type(result)
+
+
+# Python 2 rounds half away from zero (as taught in school) but Python 3
+# uses "bankers' rounding" that rounds half towards the even number. We want
+# consistent rounding and expect Python 2 style to be more familiar for users.
+if PY2:
+    _roundup = round
+else:
+    def _roundup(number, ndigits):
+        precision = 10 ** (-1 * ndigits)
+        if number % (0.5 * precision) == 0 and number % precision != 0:
+            operator = add if number > 0 else sub
+            number = operator(number, 0.1 * precision)
+        return round(number, ndigits)
 
 
 def printable_name(string, code_style=False):
@@ -116,13 +124,3 @@ def seq2str2(sequence):
     if not sequence:
         return '[ ]'
     return '[ %s ]' % ' | '.join(unic(item) for item in sequence)
-
-
-def getdoc(item):
-    doc = inspect.getdoc(item) or u''
-    if is_unicode(doc):
-        return doc
-    try:
-        return doc.decode('UTF-8')
-    except UnicodeDecodeError:
-        return unic(doc)

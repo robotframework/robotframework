@@ -1,7 +1,7 @@
 # coding=UTF-8
 
 import sys
-from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpc.server import SimpleXMLRPCServer
 
 from remoteserver import announce_port
 
@@ -24,7 +24,7 @@ class Documentation(SimpleXMLRPCServer):
         return {'__intro__': 'Remote library for documentation testing purposes',
                 'Empty': '',
                 'Single': 'Single line documentation',
-                'Multi': 'Multi\nline\ndocumentation',
+                'Multi': 'Short doc\nin two lines.\n\nDoc body\nin\nthree.',
                 u'Nön-ÄSCII': u'Nön-ÄSCII documentation'}.get(name)
 
     def get_keyword_arguments(self, name):

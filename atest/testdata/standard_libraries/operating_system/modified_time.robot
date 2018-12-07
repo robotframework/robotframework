@@ -39,17 +39,17 @@ Get Modified Time Fails When Path Does Not Exist
 Set Modified Time Using Epoch
     [Documentation]    FAIL ValueError: Epoch time must be positive (got -1).
     Create File    ${TESTFILE}
-    ${epoch} =    Evaluate    1177586540 + time.altzone    modules=time
+    ${epoch} =    Evaluate    1542892422.0 + time.timezone    modules=time
     Set Modified Time    ${TESTFILE}    ${epoch}
     ${mtime} =    Get Modified Time    ${TESTFILE}
-    Should Be Equal    ${mtime}    2007-04-26 11:22:20
+    Should Be Equal    ${mtime}    2018-11-22 13:13:42
     Set Modified time    ${TESTFILE}    -1
 
 Set Modified Time Using Timestamp
     Create File    ${TESTFILE}
-    ${expected} =    Evaluate    1177586550 + time.altzone    modules=time
-    : FOR    ${timestamp}    IN    2007-04-26 11:22:30    20070426 11:22:30
-    ...    20070426 112230    20070426-112230    20070426 11:22:30.456
+    ${expected} =    Evaluate    1542892422.0 + time.timezone    modules=time
+    : FOR    ${timestamp}    IN    2018-11-22 13:13:42    20181122 13:13:42
+    ...    20181122 131342    20181122-131342    2018-11-22 13:13:42.456
     \    Set Modified Time    ${TESTFILE}    ${timestamp}
     \    ${mtime} =    Get Modified Time    ${TESTFILE}    epoch
     \    Should Be Equal    ${mtime}    ${expected}

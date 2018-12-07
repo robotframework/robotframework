@@ -1,9 +1,23 @@
+import os
 import unittest
 
-from robot.utils.asserts import *
-from robot.parsing.model import *
-from robot.parsing.settings import *
-from robot.parsing.settings import _Import
+from robot.utils.asserts import (assert_equal, assert_false, assert_none,
+                                 assert_not_equal, assert_true)
+from robot.parsing.model import (ForLoop, KeywordTable, Step, TestCase,
+                                 TestCaseFile, TestCaseTable,
+                                 TestCaseFileSettingTable, UserKeyword,
+                                 VariableTable)
+from robot.parsing.settings import (Arguments, Documentation, Fixture, _Import,
+                                    Return, Tags, Template, Timeout)
+
+
+class ForLoopWithFakeParent(ForLoop):
+
+    def __init__(self, *args, **kws):
+        ForLoop.__init__(self, self, *args, **kws)
+
+    def report_invalid_syntax(self, message, level='ERROR'):
+        pass
 
 
 class TestTestCaseFile(unittest.TestCase):
@@ -199,11 +213,6 @@ class TestTestCaseTable(unittest.TestCase):
     def test_init(self):
         assert_equal(self.table.tests, [])
 
-    def test_testcase_table_is_always_true(self):
-        assert_true(self.table)
-        self.table.add('Name')
-        assert_true(self.table)
-
     def test_add_test(self):
         test = self.table.add('My name')
         assert_true(len(self.table.tests), 1)
@@ -361,6 +370,7 @@ class TestForLoop(unittest.TestCase):
                    flavor='IN RANGE')
 
     def test_representation(self):
+        ForLoop = ForLoopWithFakeParent
         assert_equal(ForLoop(['${var}', 'IN', 'value1', 'value2']).as_list(),
                       [': FOR', '${var}', 'IN', 'value1', 'value2'])
         assert_equal(ForLoop(['${v2}', '${v2}', 'IN RANGE', '100']).as_list(),
@@ -372,7 +382,7 @@ class TestForLoop(unittest.TestCase):
                    flavor='IN ZIP')
 
     def _test(self, content, vars, items, flavor='IN'):
-        loop = ForLoop(content)
+        loop = ForLoopWithFakeParent(content)
         assert_equal(loop.vars, vars)
         assert_equal(loop.items, items)
         assert_equal(loop.flavor, flavor)

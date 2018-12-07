@@ -13,11 +13,11 @@ Debugfile
     Debug file should contain    ${content}           + START SUITE: Normal
     Debug file should contain    ${content}           +- START TEST: First One
     Debug file should contain    ${content}
-    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Test 1 ]
+    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Test 1 ?
     ...      ${TIMESTAMP} - INFO - Test 1
     ...      ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
     Debug file should contain    ${content}
-    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]
+    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Logging with debug level | DEBUG ?
     ...      ${TIMESTAMP} - DEBUG - Logging with debug level
     ...      ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
     Debug file should contain    ${content}    + END SUITE: Normal
@@ -31,11 +31,11 @@ Debugfile Log Level Should Always Be Debug
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -b debug.txt -o o.xml --loglevel WARN  ${TESTFILE}
     ${content}=     Get File     ${CLI OUTDIR}/debug.txt
     Debug file should contain    ${content}
-    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Test 1 ]
+    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Test 1 ?
     ...    ${TIMESTAMP} - INFO - Test 1
     ...    ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
     Debug file should contain    ${content}
-    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]
+    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log ? Logging with debug level | DEBUG ?
     ...    ${TIMESTAMP} - DEBUG - Logging with debug level
     ...    ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
 
@@ -49,13 +49,13 @@ Debugfile timestamps are accurate
     ...    ${tc.kws[0].msgs[1].timestamp} - INFO - <b>Current</b>
 
 Writing Non-ASCII To Debugfile
-    [Documentation]  Tests also that '.txt' is appended if no extension given
-    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile debug -o o.xml  ${UNICODE TEST}
-    Directory Should Contain  ${CLI OUTDIR}  debug.txt  o.xml
+    [Documentation]    Tests also that '.txt' is appended if no extension given
+    Run Tests Without Processing Output    --outputdir ${CLI OUTDIR} --debugfile debug -o o.xml    misc/non_ascii.robot
+    Directory Should Contain    ${CLI OUTDIR}    debug.txt    o.xml
     Stderr Should Be Empty
     ${content} =    Get File    ${CLI OUTDIR}/debug.txt
-    Debugfile should contain    ${TIMESTAMP} - FAIL - Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ
-    Debugfile should contain    ${TIMESTAMP} - INFO - +- START TEST: Ünïcödë Tëst änd Këywörd Nämës [ ]
+    Debugfile should contain    ${content}    ${TIMESTAMP} - FAIL - Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ
+    Debugfile should contain    ${content}    ${TIMESTAMP} - INFO - +- START TEST: Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо ? ?
 
 No Debugfile
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile NoNe -o o.xml  ${TESTFILE}
@@ -70,6 +70,7 @@ Invalid Debugfile
 
 *** Keywords ***
 Debugfile should contain
-    [arguments]     ${content}    @{lines}
+    [Arguments]     ${content}    @{lines}
+    Should Not Be Empty    ${lines}    Invalid usage!!
     ${expected}=     Catenate   SEPARATOR=\n    @{lines}
     Should Match    ${content}    *${expected}*

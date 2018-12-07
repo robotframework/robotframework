@@ -15,6 +15,7 @@
 
 import os
 import copy
+import warnings
 
 from robot.errors import DataError
 from robot.variables import is_var
@@ -23,72 +24,99 @@ from robot.writer import DataFileWriter
 from robot.utils import abspath, is_string, normalize, py2to3, NormalizedDict
 
 from .comments import Comment
-from .populators import FromFilePopulator, FromDirectoryPopulator
+from .populators import FromFilePopulator, FromDirectoryPopulator, NoTestsFound
 from .settings import (Documentation, Fixture, Timeout, Tags, Metadata,
                        Library, Resource, Variables, Arguments, Return,
                        Template, MetadataList, ImportList)
 
 
 def TestData(parent=None, source=None, include_suites=None,
-             warn_on_skipped=False, extensions=None):
+             warn_on_skipped='DEPRECATED', extensions=None):
     """Parses a file or directory to a corresponding model object.
 
     :param parent: Optional parent to be used in creation of the model object.
     :param source: Path where test data is read from.
-    :param warn_on_skipped: Boolean to control warning about skipped files.
+    :param warn_on_skipped: Deprecated.
     :param extensions: List/set of extensions to parse. If None, all files
         supported by Robot Framework are parsed when searching test cases.
     :returns: :class:`~.model.TestDataDirectory`  if `source` is a directory,
         :class:`~.model.TestCaseFile` otherwise.
     """
+    # TODO: Remove in RF 3.2.
+    if warn_on_skipped != 'DEPRECATED':
+        warnings.warn("Option 'warn_on_skipped' is deprecated and has no "
+                      "effect.", DeprecationWarning)
     if os.path.isdir(source):
         return TestDataDirectory(parent, source).populate(include_suites,
-                                                          warn_on_skipped,
                                                           extensions)
     return TestCaseFile(parent, source).populate()
 
 
 class _TestData(object):
-    _setting_table_names = 'Setting', 'Settings', 'Metadata'
+    _setting_table_names = 'Setting', 'Settings'
     _variable_table_names = 'Variable', 'Variables'
-    _testcase_table_names = 'Test Case', 'Test Cases'
-    _keyword_table_names = 'Keyword', 'Keywords', 'User Keyword', 'User Keywords'
-    _deprecated = NormalizedDict({'Metadata': 'Settings',
-                                  'User Keyword': 'Keywords',
-                                  'User Keywords': 'Keywords'})
+    _testcase_table_names = 'Test Case', 'Test Cases', 'Task', 'Tasks'
+    _keyword_table_names = 'Keyword', 'Keywords'
+    _comment_table_names = 'Comment', 'Comments'
 
     def __init__(self, parent=None, source=None):
         self.parent = parent
         self.source = abspath(source) if source else None
         self.children = []
-        self._tables = NormalizedDict(self._get_tables())
+        self._tables = dict(self._get_tables())
 
     def _get_tables(self):
         for names, table in [(self._setting_table_names, self.setting_table),
                              (self._variable_table_names, self.variable_table),
                              (self._testcase_table_names, self.testcase_table),
-                             (self._keyword_table_names, self.keyword_table)]:
+                             (self._keyword_table_names, self.keyword_table),
+                             (self._comment_table_names, None)]:
             for name in names:
                 yield name, table
 
     def start_table(self, header_row):
-        try:
-            name = header_row[0]
-            table = self._tables[name]
-            if name in self._deprecated:
-                self._report_deprecated(name)
-        except (KeyError, IndexError):
-            return None
-        if not self._table_is_allowed(table):
+        table = self._find_table(header_row)
+        if table is None or not self._table_is_allowed(table):
             return None
         table.set_header(header_row)
         return table
 
-    # TODO: Remove support for deprecated tables altogether in RF 3.1.
-    def _report_deprecated(self, name):
+    def _find_table(self, header_row):
+        name = header_row[0] if header_row else ''
+        title = name.title()
+        if title not in self._tables:
+            title = self._resolve_deprecated_table(name)
+            if title is None:
+                self._report_unrecognized_table(name)
+                return None
+        return self._tables[title]
+
+    def _resolve_deprecated_table(self, used_name):
+        normalized = normalize(used_name)
+        for name in (self._setting_table_names + self._variable_table_names +
+                     self._testcase_table_names + self._keyword_table_names +
+                     self._comment_table_names):
+            if normalize(name) == normalized:
+                self._report_deprecated_table(used_name, name)
+                return name
+        return None
+
+    def _report_deprecated_table(self, deprecated, name):
         self.report_invalid_syntax(
-            "Table name '%s' is deprecated. Please use '%s' instead."
-            % (name, self._deprecated[name]), level='WARN')
+            "Section name '%s' is deprecated. Use '%s' instead."
+            % (deprecated, name), level='WARN'
+        )
+
+    def _report_unrecognized_table(self, name):
+        self.report_invalid_syntax(
+            "Unrecognized table header '%s'. Available headers for data: "
+            "'Setting(s)', 'Variable(s)', 'Test Case(s)', 'Task(s)' and "
+            "'Keyword(s)'. Use 'Comment(s)' to embedded additional data."
+            % name
+        )
+
+    def _table_is_allowed(self, table):
+        return True
 
     @property
     def name(self):
@@ -130,6 +158,7 @@ class _TestData(object):
         return DataFileWriter(**options).write(self)
 
 
+@py2to3
 class TestCaseFile(_TestData):
     """The parsed test case file object.
 
@@ -152,10 +181,7 @@ class TestCaseFile(_TestData):
 
     def _validate(self):
         if not self.testcase_table.is_started():
-            raise DataError('File has no test case table.')
-
-    def _table_is_allowed(self, table):
-        return True
+            raise NoTestsFound('File has no tests or tasks.')
 
     def has_tests(self):
         return True
@@ -164,6 +190,9 @@ class TestCaseFile(_TestData):
         for table in [self.setting_table, self.variable_table,
                       self.testcase_table, self.keyword_table]:
             yield table
+
+    def __nonzero__(self):
+        return any(table for table in self)
 
 
 class ResourceFile(_TestData):
@@ -181,7 +210,7 @@ class ResourceFile(_TestData):
         _TestData.__init__(self, source=source)
 
     def populate(self):
-        FromFilePopulator(self).populate(self.source)
+        FromFilePopulator(self).populate(self.source, resource=True)
         self._report_status()
         return self
 
@@ -194,8 +223,8 @@ class ResourceFile(_TestData):
 
     def _table_is_allowed(self, table):
         if table is self.testcase_table:
-            raise DataError("Resource file '%s' contains a test case table "
-                            "which is not allowed." % self.source)
+            raise DataError("Resource file '%s' cannot contain tests or "
+                            "tasks." % self.source)
         return True
 
     def __iter__(self):
@@ -221,10 +250,9 @@ class TestDataDirectory(_TestData):
         self.keyword_table = KeywordTable(self)
         _TestData.__init__(self, parent, source)
 
-    def populate(self, include_suites=None, warn_on_skipped=False,
-                 extensions=None, recurse=True):
+    def populate(self, include_suites=None, extensions=None, recurse=True):
         FromDirectoryPopulator().populate(self.source, self, include_suites,
-                                          warn_on_skipped, extensions, recurse)
+                                          extensions, recurse)
         self.children = [ch for ch in self.children if ch.has_tests()]
         return self
 
@@ -233,18 +261,16 @@ class TestDataDirectory(_TestData):
 
     def _table_is_allowed(self, table):
         if table is self.testcase_table:
-            LOGGER.error("Test suite init file in '%s' contains a test case "
-                         "table which is not allowed." % self.source)
+            LOGGER.error("Test suite initialization file in '%s' cannot "
+                         "contain tests or tasks." % self.source)
             return False
         return True
 
-    def add_child(self, path, include_suites, extensions=None,
-                  warn_on_skipped=False):
+    def add_child(self, path, include_suites, extensions=None):
         self.children.append(TestData(parent=self,
                                       source=path,
                                       include_suites=include_suites,
-                                      extensions=extensions,
-                                      warn_on_skipped=warn_on_skipped))
+                                      extensions=extensions))
 
     def has_tests(self):
         return any(ch.has_tests() for ch in self.children)
@@ -298,34 +324,45 @@ class _Table(object):
 
 
 class _WithSettings(object):
-    _deprecated = {'document': 'Documentation',
-                   'suiteprecondition': 'Suite Setup',
-                   'suitepostcondition': 'Suite Teardown',
-                   'testprecondition': 'Test Setup',
-                   'testpostcondition': 'Test Teardown',
-                   'precondition': 'Setup',
-                   'postcondition': 'Teardown'}
+    _setters = {}
+    _aliases = {}
 
-    def get_setter(self, setting_name):
-        normalized = self.normalize(setting_name)
-        if normalized in self._deprecated:
-            self._report_deprecated(setting_name, self._deprecated[normalized])
-            normalized = self.normalize(self._deprecated[normalized])
-        if normalized in self._setters:
-            return self._setters[normalized](self)
-        self.report_invalid_syntax("Non-existing setting '%s'." % setting_name)
+    def get_setter(self, name):
+        if name[-1:] == ':':
+            name = name[:-1]
+        setter = self._get_setter(name)
+        if setter is not None:
+            return setter
+        setter = self._get_deprecated_setter(name)
+        if setter is not None:
+            return setter
+        self.report_invalid_syntax("Non-existing setting '%s'." % name)
+        return None
 
-    def _report_deprecated(self, deprecated, use_instead):
-         self.report_invalid_syntax(
-             "Setting '%s' is deprecated. Use '%s' instead."
-             % (deprecated.rstrip(':'), use_instead), level='WARN')
+    def _get_setter(self, name):
+        title = name.title()
+        if title in self._aliases:
+            title = self._aliases[name]
+        if title in self._setters:
+            return self._setters[title](self)
+        return None
 
-    def is_setting(self, setting_name):
-        return self.normalize(setting_name) in self._setters
+    def _get_deprecated_setter(self, name):
+        normalized = normalize(name)
+        for setting in list(self._setters) + list(self._aliases):
+            if normalize(setting) == normalized:
+                self._report_deprecated_setting(name, setting)
+                return self._get_setter(setting)
+        return None
 
-    def normalize(self, setting):
-        result = normalize(setting)
-        return result[:-1] if result[-1:] == ':' else result
+    def _report_deprecated_setting(self, deprecated, correct):
+        self.report_invalid_syntax(
+            "Setting '%s' is deprecated. Use '%s' instead."
+            % (deprecated, correct), level='WARN'
+        )
+
+    def report_invalid_syntax(self, message, level='ERROR'):
+        raise NotImplementedError
 
 
 class _SettingTable(_Table, _WithSettings):
@@ -370,20 +407,23 @@ class _SettingTable(_Table, _WithSettings):
 
 
 class TestCaseFileSettingTable(_SettingTable):
-
-    _setters = {'documentation': lambda s: s.doc.populate,
-                'suitesetup': lambda s: s.suite_setup.populate,
-                'suiteteardown': lambda s: s.suite_teardown.populate,
-                'testsetup': lambda s: s.test_setup.populate,
-                'testteardown': lambda s: s.test_teardown.populate,
-                'forcetags': lambda s: s.force_tags.populate,
-                'defaulttags': lambda s: s.default_tags.populate,
-                'testtemplate': lambda s: s.test_template.populate,
-                'testtimeout': lambda s: s.test_timeout.populate,
-                'library': lambda s: s.imports.populate_library,
-                'resource': lambda s: s.imports.populate_resource,
-                'variables': lambda s: s.imports.populate_variables,
-                'metadata': lambda s: s.metadata.populate}
+    _setters = {'Documentation': lambda s: s.doc.populate,
+                'Suite Setup': lambda s: s.suite_setup.populate,
+                'Suite Teardown': lambda s: s.suite_teardown.populate,
+                'Test Setup': lambda s: s.test_setup.populate,
+                'Test Teardown': lambda s: s.test_teardown.populate,
+                'Force Tags': lambda s: s.force_tags.populate,
+                'Default Tags': lambda s: s.default_tags.populate,
+                'Test Template': lambda s: s.test_template.populate,
+                'Test Timeout': lambda s: s.test_timeout.populate,
+                'Library': lambda s: s.imports.populate_library,
+                'Resource': lambda s: s.imports.populate_resource,
+                'Variables': lambda s: s.imports.populate_variables,
+                'Metadata': lambda s: s.metadata.populate}
+    _aliases = {'Task Setup': 'Test Setup',
+                'Task Teardown': 'Test Teardown',
+                'Task Template': 'Test Template',
+                'Task Timeout': 'Test Timeout'}
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
@@ -394,11 +434,10 @@ class TestCaseFileSettingTable(_SettingTable):
 
 
 class ResourceFileSettingTable(_SettingTable):
-
-    _setters = {'documentation': lambda s: s.doc.populate,
-                'library': lambda s: s.imports.populate_library,
-                'resource': lambda s: s.imports.populate_resource,
-                'variables': lambda s: s.imports.populate_variables}
+    _setters = {'Documentation': lambda s: s.doc.populate,
+                'Library': lambda s: s.imports.populate_library,
+                'Resource': lambda s: s.imports.populate_resource,
+                'Variables': lambda s: s.imports.populate_variables}
 
     def __iter__(self):
         for setting in [self.doc] + self.imports.data:
@@ -406,18 +445,17 @@ class ResourceFileSettingTable(_SettingTable):
 
 
 class InitFileSettingTable(_SettingTable):
-
-    _setters = {'documentation': lambda s: s.doc.populate,
-                'suitesetup': lambda s: s.suite_setup.populate,
-                'suiteteardown': lambda s: s.suite_teardown.populate,
-                'testsetup': lambda s: s.test_setup.populate,
-                'testteardown': lambda s: s.test_teardown.populate,
-                'testtimeout': lambda s: s.test_timeout.populate,
-                'forcetags': lambda s: s.force_tags.populate,
-                'library': lambda s: s.imports.populate_library,
-                'resource': lambda s: s.imports.populate_resource,
-                'variables': lambda s: s.imports.populate_variables,
-                'metadata': lambda s: s.metadata.populate}
+    _setters = {'Documentation': lambda s: s.doc.populate,
+                'Suite Setup': lambda s: s.suite_setup.populate,
+                'Suite Teardown': lambda s: s.suite_teardown.populate,
+                'Test Setup': lambda s: s.test_setup.populate,
+                'Test Teardown': lambda s: s.test_teardown.populate,
+                'Test Timeout': lambda s: s.test_timeout.populate,
+                'Force Tags': lambda s: s.force_tags.populate,
+                'Library': lambda s: s.imports.populate_library,
+                'Resource': lambda s: s.imports.populate_resource,
+                'Variables': lambda s: s.imports.populate_variables,
+                'Metadata': lambda s: s.metadata.populate}
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
@@ -444,13 +482,23 @@ class VariableTable(_Table):
         return iter(self.variables)
 
 
-@py2to3
 class TestCaseTable(_Table):
     type = 'test case'
 
     def __init__(self, parent):
         _Table.__init__(self, parent)
         self.tests = []
+
+    def set_header(self, header):
+        if self._header and header:
+            self._validate_mode(self._header[0], header[0])
+        _Table.set_header(self, header)
+
+    def _validate_mode(self, name1, name2):
+        tasks1 = normalize(name1) in ('task', 'tasks')
+        tasks2 = normalize(name2) in ('task', 'tasks')
+        if tasks1 is not tasks2:
+            raise DataError('One file cannot have both tests and tasks.')
 
     @property
     def _old_header_matcher(self):
@@ -465,9 +513,6 @@ class TestCaseTable(_Table):
 
     def is_started(self):
         return bool(self._header)
-
-    def __nonzero__(self):
-        return True
 
 
 class KeywordTable(_Table):
@@ -550,12 +595,12 @@ class TestCase(_WithSteps, _WithSettings):
         self.timeout = Timeout('[Timeout]', self)
         self.steps = []
 
-    _setters = {'documentation': lambda s: s.doc.populate,
-                'template': lambda s: s.template.populate,
-                'setup': lambda s: s.setup.populate,
-                'teardown': lambda s: s.teardown.populate,
-                'tags': lambda s: s.tags.populate,
-                'timeout': lambda s: s.timeout.populate}
+    _setters = {'Documentation': lambda s: s.doc.populate,
+                'Template': lambda s: s.template.populate,
+                'Setup': lambda s: s.setup.populate,
+                'Teardown': lambda s: s.teardown.populate,
+                'Tags': lambda s: s.tags.populate,
+                'Timeout': lambda s: s.timeout.populate}
 
     @property
     def source(self):
@@ -566,8 +611,27 @@ class TestCase(_WithSteps, _WithSettings):
         return self.parent.directory
 
     def add_for_loop(self, declaration, comment=None):
-        self.steps.append(ForLoop(declaration, comment))
+        self.steps.append(ForLoop(self, declaration, comment))
         return self.steps[-1]
+
+    def end_for_loop(self):
+        loop, steps = self._find_last_empty_for_and_steps_after()
+        if not loop:
+            return False
+        loop.steps.extend(steps)
+        self.steps[-len(steps):] = []
+        return True
+
+    def _find_last_empty_for_and_steps_after(self):
+        steps = []
+        for step in reversed(self.steps):
+            if isinstance(step, ForLoop):
+                if not step.steps:
+                    steps.reverse()
+                    return step, steps
+                break
+            steps.append(step)
+        return None, []
 
     def report_invalid_syntax(self, message, level='ERROR'):
         type_ = 'test case' if type(self) is TestCase else 'keyword'
@@ -602,12 +666,12 @@ class UserKeyword(TestCase):
         self.tags = Tags('[Tags]', self)
         self.steps = []
 
-    _setters = {'documentation': lambda s: s.doc.populate,
-                'arguments': lambda s: s.args.populate,
-                'return': lambda s: s.return_.populate,
-                'timeout': lambda s: s.timeout.populate,
-                'teardown': lambda s: s.teardown.populate,
-                'tags': lambda s: s.tags.populate}
+    _setters = {'Documentation': lambda s: s.doc.populate,
+                'Arguments': lambda s: s.args.populate,
+                'Return': lambda s: s.return_.populate,
+                'Timeout': lambda s: s.timeout.populate,
+                'Teardown': lambda s: s.teardown.populate,
+                'Tags': lambda s: s.tags.populate}
 
     def _add_to_parent(self, test):
         self.parent.keywords.append(test)
@@ -635,20 +699,34 @@ class ForLoop(_WithSteps):
     :ivar str comment: A comment, or None.
     :ivar list steps: A list of steps in the loop.
     """
+    flavors = {'IN', 'IN RANGE', 'IN ZIP', 'IN ENUMERATE'}
+    normalized_flavors = NormalizedDict((f, f) for f in flavors)
 
-    def __init__(self, declaration, comment=None):
-        self.flavor, index = self._get_flavors_and_index(declaration)
+    def __init__(self, parent, declaration, comment=None):
+        self.parent = parent
+        self.flavor, index = self._get_flavor_and_index(declaration)
         self.vars = declaration[:index]
         self.items = declaration[index+1:]
         self.comment = Comment(comment)
         self.steps = []
 
-    def _get_flavors_and_index(self, declaration):
+    def _get_flavor_and_index(self, declaration):
         for index, item in enumerate(declaration):
-            item = item.upper()
-            if item.replace(' ', '').startswith('IN'):
+            if item in self.flavors:
                 return item, index
+            if item in self.normalized_flavors:
+                correct = self.normalized_flavors[item]
+                self._report_deprecated_flavor_syntax(item, correct)
+                return correct, index
+            if normalize(item).startswith('in'):
+                return item.upper(), index
         return 'IN', len(declaration)
+
+    def _report_deprecated_flavor_syntax(self, deprecated, correct):
+        self.parent.report_invalid_syntax(
+            "Using '%s' as a FOR loop separator is deprecated. "
+            "Use '%s' instead." % (deprecated, correct), level='WARN'
+        )
 
     def is_comment(self):
         return False
@@ -658,7 +736,8 @@ class ForLoop(_WithSteps):
 
     def as_list(self, indent=False, include_comment=True):
         comments = self.comment.as_list() if include_comment else []
-        return  [': FOR'] + self.vars + [self.flavor] + self.items + comments
+        # TODO: Return 'FOR' in RF 3.2.
+        return [': FOR'] + self.vars + [self.flavor] + self.items + comments
 
     def __iter__(self):
         return iter(self.steps)
@@ -702,8 +781,7 @@ class Step(object):
 class OldStyleSettingAndVariableTableHeaderMatcher(object):
 
     def match(self, header):
-        return all((True if e.lower() == 'value' else False)
-                    for e in header[1:])
+        return all(value.lower() == 'value' for value in header[1:])
 
 
 class OldStyleTestAndKeywordTableHeaderMatcher(object):
@@ -711,7 +789,7 @@ class OldStyleTestAndKeywordTableHeaderMatcher(object):
     def match(self, header):
         if header[1].lower() != 'action':
             return False
-        for h in header[2:]:
-            if not h.lower().startswith('arg'):
+        for arg in header[2:]:
+            if not arg.lower().startswith('arg'):
                 return False
         return True

@@ -91,37 +91,48 @@ class TestVariableSplitter(unittest.TestCase):
                 ('\\${\\${hi\\\\${hi}}}', '${hi}', len('\\${\\${hi\\\\'))]:
             self._test(inp, var, start, internal=var.count('{') > 1)
 
-    def test_list_index(self):
-        self._test('@{x}[0]', '@{x}', index='0')
-        self._test('.@{x}[42]..', '@{x}', start=1, index='42')
-        self._test('@{x}[]', '@{x}', index='')
-        self._test('@{x}[inv]', '@{x}', index='inv')
-        self._test('@{x}[0', '@{x}')
-        self._test('@{x}}[0]', '@{x}')
+    def test_list_item(self):
+        self._test('${x}[0]', '${x}', items='0')
+        self._test('.${x}[42]..', '${x}', start=1, items='42')
+        self._test('${x}[]', '${x}', items='')
+        self._test('${x}[inv]', '${x}', items='inv')
+        self._test('${x}[0', '${x}')
+        self._test('${x}}[0]', '${x}')
 
-    def test_list_index_with_internal_vars(self):
-        self._test('@{x}[${i}]', '@{x}', index='${i}')
-        self._test('xx @{x}[${i}] ${xyz}', '@{x}', start=3, index='${i}')
-        self._test('@@@@@{X{X}[${${i}-${${${i}}}}]', '@{X{X}', start=4,
-                   index='${${i}-${${${i}}}}')
-        self._test('@{${i}}[${j{}]', '@{${i}}', index='${j{}', internal=True)
+    def test_list_item_with_internal_vars(self):
+        self._test('${x}[${i}]', '${x}', items='${i}')
+        self._test('xx ${x}[${i}] ${xyz}', '${x}', start=3, items='${i}')
+        self._test('$$$$${X{X}[${${i}-${${${i}}}}]', '${X{X}', start=4,
+                   items='${${i}-${${${i}}}}')
+        self._test('${${i}}[${j{}]', '${${i}}', items='${j{}', internal=True)
 
-    def test_dict_index(self):
-        self._test('&{x}[key]', '&{x}', index='key')
-        self._test('.&{x}[42]..', '&{x}', start=1, index='42')
-        self._test('&{x}[]', '&{x}', index='')
-        self._test('&{x}[k', '&{x}')
-        self._test('&{x}}[0]', '&{x}')
+    def test_dict_item(self):
+        self._test('${x}[key]', '${x}', items='key')
+        self._test('.${x}[42]..', '${x}', start=1, items='42')
+        self._test('${x}[]', '${x}', items='')
+        self._test('${x}[k', '${x}')
+        self._test('${x}}[0]', '${x}')
 
-    def test_dict_index_with_internal_vars(self):
-        self._test('&{x}[${i}]', '&{x}', index='${i}')
-        self._test('xx &{x}[${i}] ${xyz}', '&{x}', start=3, index='${i}')
-        self._test('&&&&&{X{X}[${${i}-${${${i}}}}]', '&{X{X}', start=4,
-                   index='${${i}-${${${i}}}}')
-        self._test('&{${i}}[${j{}]', '&{${i}}', index='${j{}', internal=True)
+    def test_dict_item_with_internal_vars(self):
+        self._test('${x}[${i}]', '${x}', items='${i}')
+        self._test('xx ${x}[${i}] ${xyz}', '${x}', start=3, items='${i}')
+        self._test('$$$$${X{X}[${${i}-${${${i}}}}]', '${X{X}', start=4,
+                   items='${${i}-${${${i}}}}')
+        self._test('${${i}}[${j{}]', '${${i}}', items='${j{}', internal=True)
 
-    def test_no_index_with_others_vars(self):
-        self._test('${x}[0]', '${x}')
+    def test_nested_items(self):
+        self._test('${x}[0][1]', '${x}', items=['0', '1'])
+
+    def test_old_list_and_dict_item_syntax(self):
+        self._test('@{x}[0]', '@{x}', items='0')
+        self._test('&{x}[key]', '&{x}', items='key')
+
+    def test_escape_item(self):
+        self._test('${x}\\[0]', '${x}', items=None)
+        self._test('@{x}\\[0]', '@{x}', items=None)
+        self._test('&{x}\\[key]', '&{x}', items=None)
+
+    def test_no_item_with_others_vars(self):
         self._test('%{x}[0]', '%{x}')
         self._test('*{x}[0]', '*{x}')
 
@@ -156,8 +167,12 @@ class TestVariableSplitter(unittest.TestCase):
         self._test('{}'*10000)
         self._test('{{}}'*1000 + '${var}', '${var}', start=4000)
 
-    def _test(self, inp, variable=None, start=0, index=None,
+    def _test(self, inp, variable=None, start=0, items=None,
               identifiers=_identifiers, internal=False):
+        if isinstance(items, str):
+            items = [items]
+        elif items is None:
+            items = []
         if variable is None:
             identifier = base = None
             start = end = -1
@@ -169,17 +184,18 @@ class TestVariableSplitter(unittest.TestCase):
             is_var = inp == variable
             is_list_var = is_var and inp[0] == '@'
             is_dict_var = is_var and inp[0] == '&'
-            if index is not None:
-                end += len(index) + 2
-                is_var = inp == '%s[%s]' % (variable, index)
+            if items is not None:
+                items_str = ''.join('[%s]' % i for i in items)
+                end += len(items_str)
+                is_var = inp == '%s%s' % (variable, items_str)
         res = VariableSplitter(inp, identifiers)
         assert_equal(res.base, base, "'%s' base" % inp)
         assert_equal(res.start, start, "'%s' start" % inp)
         assert_equal(res.end, end, "'%s' end" % inp)
         assert_equal(res.identifier, identifier, "'%s' identifier" % inp)
-        assert_equal(res.index, index, "'%s' index" % inp)
+        assert_equal(res.items, items, "'%s' item" % inp)
         assert_equal(res._may_have_internal_variables, internal,
-                      "'%s' internal" % inp)
+                     "'%s' internal" % inp)
         assert_equal(res.is_variable(), is_var)
         assert_equal(res.is_list_variable(), is_list_var)
         assert_equal(res.is_dict_variable(), is_dict_var)
@@ -187,10 +203,10 @@ class TestVariableSplitter(unittest.TestCase):
     def test_is_variable(self):
         for no in ['', 'xxx', '${var} not alone', '\\${notvat}', '\\\\${var}',
                    '${var}xx}', '${x}${y}']:
-            assert_false(VariableSplitter(no).is_variable())
+            assert_false(VariableSplitter(no).is_variable(), no)
         for yes in ['${var}', '${var${}', '${var${internal}}', '@{var}',
                     '@{var}[0]']:
-            assert_true(VariableSplitter(yes).is_variable())
+            assert_true(VariableSplitter(yes).is_variable(), yes)
 
     def test_is_list_variable(self):
         for no in ['', 'xxx', '${var} not alone', '\\${notvat}', '\\\\${var}',

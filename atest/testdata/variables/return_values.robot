@@ -92,7 +92,7 @@ List Variable From Dictionary
     Should Be Equal    @{list}    name
     Should Be True    ${list} == ['name']
     @{list} =    Create Dictionary    a=1    b=2    c=3
-    Should Be True    set(${list}) == set(['a', 'b', 'c'])
+    Should Be True    set(${list}) == {'a', 'b', 'c'}
 
 Unrepresentable objects to list variables
     @{unrepr} =    Return Unrepresentable Objects    identifier=list
@@ -183,10 +183,11 @@ None To Dict
     Should Be True    &{ret} == {}
 
 Dictionary is dot-accessible
-    &{dotted} =    Evaluate    {'key': 'value', 'nested': {'key': 'value'}}
-    Should Be Equal    ${dotted['key']}    value
-    Should Be Equal    ${dotted.key}    value
-    Should Be Equal    ${dotted.nested.key}    value
+    &{dict} =    Evaluate    {'key': 'value'}
+    Should Be Equal    ${dict.key}    value
+    &{nested} =    Evaluate    collections.OrderedDict([('key', 'value'), ('nested', {'key': 'nested value'})])    modules=collections
+    Should Be Equal    ${nested.key}    value
+    Should Be Equal    ${nested.nested.key}    nested value
 
 Scalar dictionary is not dot-accessible
     [Documentation]     FAIL STARTS: Resolving variable '${normal.key}' failed: AttributeError:

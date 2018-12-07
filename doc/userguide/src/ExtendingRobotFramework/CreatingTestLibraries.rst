@@ -34,15 +34,8 @@ programming languages. A good example of this approach is the `Remote
 library`_, and another widely used approaches is running external
 scripts or tools as separate processes.
 
-.. tip:: `Python Tutorial for Robot Framework Test Library Developers`__
-         covers enough of Python language to get started writing test
-         libraries using it. It also contains a simple example library
-         and test cases that you can execute and otherwise investigate
-         on your machine.
-
 __ http://docs.python.org/c-api/index.html
 __ http://docs.python.org/library/ctypes.html
-__ http://code.google.com/p/robotframework/wiki/PythonTutorial
 
 Different test library APIs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -120,10 +113,6 @@ taken into use using both module and class names, such as
 Java classes in a non-default package must be taken into use with the
 full name. For example, class `MyLib` in `com.mycompany.myproject`
 package must be imported with name :name:`com.mycompany.myproject.MyLib`.
-
-.. note:: Dropping class names with submodules works only in Robot Framework
-          2.8.4 and newer. With earlier versions you need to include also
-          the class name like :name:`parent.MyLib.MyLib`.
 
 .. tip:: If the library name is really long, for example when the Java
          package name is long, it is recommended to give the library a
@@ -248,7 +237,7 @@ Example Python library using the `TEST SUITE` scope:
 
         def count(self):
             self._counter += 1
-            print self._counter
+            print(self._counter)
 
         def clear_counter(self):
             self._counter = 0
@@ -317,7 +306,7 @@ A Java class using `ROBOT_LIBRARY_VERSION`:
 Specifying documentation format
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7.5, library documentation tool Libdoc_
+Library documentation tool Libdoc_
 supports documentation in multiple formats. If you want to use something
 else than Robot Framework's own `documentation formatting`_, you can specify
 the format in the source code using  `ROBOT_LIBRARY_DOC_FORMAT` attribute
@@ -444,7 +433,7 @@ also :name:`Current Thread`.
 
 
    def example_keyword():
-       print 'Running in thread "%s".' % current_thread().name
+       print('Running in thread "%s".' % current_thread().name)
 
    def second_example():
        pass
@@ -470,7 +459,7 @@ For example, the library below implements only keywords
 
 
    def example_keyword():
-       print 'Running in thread "%s".' % current_thread().name
+       print('Running in thread "%s".' % current_thread().name)
 
    def second_example():
        pass
@@ -478,7 +467,7 @@ For example, the library below implements only keywords
    def not_exposed_as_keyword():
        pass
 
-__ https://docs.python.org/2/tutorial/modules.html#importing-from-a-package
+__ https://docs.python.org/tutorial/modules.html#importing-from-a-package
 
 Keyword names
 ~~~~~~~~~~~~~
@@ -496,7 +485,7 @@ Example Python library implemented as a module in the :file:`MyLibrary.py` file:
 .. sourcecode:: python
 
   def hello(name):
-      print "Hello, %s!" % name
+      print("Hello, %s!" % name)
 
   def do_nothing():
       pass
@@ -622,13 +611,13 @@ Example Python keywords taking different numbers of arguments:
 .. sourcecode:: python
 
   def no_arguments():
-      print "Keyword got no arguments."
+      print("Keyword got no arguments.")
 
   def one_argument(arg):
-      print "Keyword got one argument '%s'." % arg
+      print("Keyword got one argument '%s'." % arg)
 
   def three_arguments(a1, a2, a3):
-      print "Keyword got three arguments '%s', '%s' and '%s'." % (a1, a2, a3)
+      print("Keyword got three arguments '%s', '%s' and '%s'." % (a1, a2, a3))
 
 .. note:: A major limitation with Java libraries using the static library API
           is that they do not support the `named argument syntax`_. If this
@@ -653,10 +642,10 @@ which is familiar to all Python programmers, is illustrated below:
 .. sourcecode:: python
 
    def one_default(arg='default'):
-       print "Argument has value %s" % arg
+       print("Argument has value %s" % arg)
 
    def multiple_defaults(arg1, arg2='default 1', arg3='default 2'):
-       print "Got arguments %s, %s and %s" % (arg1, arg2, arg3)
+       print("Got arguments %s, %s and %s" % (arg1, arg2, arg3))
 
 The first example keyword above can be used either with zero or one
 arguments. If no arguments are given, `arg` gets the value
@@ -725,17 +714,17 @@ be combined with other ways of specifying arguments:
 .. sourcecode:: python
 
   def any_arguments(*args):
-      print "Got arguments:"
+      print("Got arguments:")
       for arg in args:
-          print arg
+          print(arg)
 
   def one_required(required, *others):
-      print "Required: %s\nOthers:" % required
+      print("Required: %s\nOthers:" % required)
       for arg in others:
-          print arg
+          print(arg)
 
   def also_defaults(req, def1="default 1", def2="default 2", *rest):
-      print req, def1, def2, rest
+      print(req, def1, def2, rest)
 
 .. sourcecode:: robotframework
 
@@ -774,8 +763,7 @@ to the above Python examples with same names:
   }
 
 It is also possible to use variable number of arguments also by
-having an array or, starting from Robot Framework 2.8.3,
-`java.util.List` as the last argument, or second to last
+having an array or `java.util.List` as the last argument, or second to last
 if `free keyword arguments (**kwargs)`_ are used. This is illustrated
 by the following examples that are functionally identical to
 the previous ones:
@@ -802,19 +790,20 @@ the previous ones:
 The support for variable number of arguments with Java keywords has one
 limitation: it works only when methods have one signature. Thus it is not
 possible to have Java keywords with both default values and varargs.
-In addition to that, only Robot Framework 2.8 and newer support using
-varargs with `library constructors`__.
 
 __ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
-__ `Providing arguments to test libraries`_
 
 Free keyword arguments (`**kwargs`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework 2.8 added the support for free keyword arguments using Python's
-`**kwargs` syntax. How to use the syntax in the test data is discussed
-in `Free keyword arguments`_ section under `Creating test cases`_. In this
-section we take a look at how to actually use it in custom test libraries.
+Robot Framework supports `Python's **kwargs syntax`__ and extends that support
+also to Java. How to use use keywords that accept *free keyword arguments*,
+also known as *free named arguments*, is `discussed under the Creating test
+cases section`__. In this section we take a look at how to create such keywords
+using Python and Java.
+
+__ https://docs.python.org/tutorial/controlflow.html#keyword-arguments
+__ `Free named arguments`_
 
 Free keyword arguments with Python
 ''''''''''''''''''''''''''''''''''
@@ -827,7 +816,7 @@ below shows the basic functionality:
 
     def example_keyword(**stuff):
         for name, value in stuff.items():
-            print name, value
+            print(name, value)
 
 .. sourcecode:: robotframework
 
@@ -848,11 +837,11 @@ work together:
 .. sourcecode:: python
 
   def various_args(arg, *varargs, **kwargs):
-      print 'arg:', arg
+      print('arg:', arg)
       for value in varargs:
-          print 'vararg:', value
+          print('vararg:', value)
       for name, value in sorted(kwargs.items()):
-          print 'kwarg:', name, value
+          print('kwarg:', name, value)
 
 .. sourcecode:: robotframework
 
@@ -883,7 +872,7 @@ __ Escaping_
 Free keyword arguments with Java
 ''''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 2.8.3, also Java libraries support the free
+Also Java libraries support the free
 keyword arguments syntax. Java itself has no kwargs syntax, but keywords
 can have `java.util.Map` as the last argument to specify that they
 accept kwargs.
@@ -914,31 +903,342 @@ example keywords can be used exactly like the previous Python examples:
 
 __ `Variable number of arguments with Java`_
 
-Argument types
-~~~~~~~~~~~~~~
+Keyword-only arguments
+~~~~~~~~~~~~~~~~~~~~~~
 
-Normally keyword arguments come to Robot Framework as strings. If
-keywords require some other types, it is possible to either use
-variables_ or convert strings to required types inside keywords. With
-`Java keywords`__ base types are also coerced automatically.
-
-__ `Argument types with Java`_
-
-Argument types with Python
-''''''''''''''''''''''''''
-
-Because arguments in Python do not have any type information, there is
-no possibility to automatically convert strings to other types when
-using Python libraries. Calling a Python method implementing a keyword
-with a correct number of arguments always succeeds, but the execution
-fails later if the arguments are incompatible. Luckily with Python it
-is simple to convert arguments to suitable types inside keywords:
+Starting from Robot Framework 3.1, it is possible to use `named-only
+arguments`_ with different keywords. When implementing libraries using Python,
+this support is provided by Python's `keyword-only arguments`__:
 
 .. sourcecode:: python
 
-  def connect_to_host(address, port=25):
-      port = int(port)
+    def sort_words(*words, case_sensitive=False):
+        key = str.lower if case_sensitive else None
+        return sorted(words, key=key)
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       Sort Words    Foo    bar    baZ
+       Sort Words    Foo    bar    baZ    case_sensitive=True
+
+Due to keyword-only arguments being a Python 3 feature, libraries using
+Python 2 cannot use it. Time to upgrade!
+
+__ https://www.python.org/dev/peps/pep-3102
+
+Argument types
+~~~~~~~~~~~~~~
+
+Arguments defined in Robot Framework test data are, by default,
+passed to keywords as Unicode strings. There are, however, several ways
+to use non-string values as well:
+
+- Variables_ can contain any kind of objects as values, and variables used
+  as arguments are passed to keywords as-is.
+- Keywords can themselves `convert arguments they accept`__ to other types.
+- It is possible to specify argument types explicitly using Python 3
+  `function annotations`__ or the `@keyword decorator`__. In these cases
+  Robot Framework converts arguments automatically.
+- Automatic conversion is also done based on `keyword default values`__.
+- Arguments to `Java keywords`__ are converted based on argument type
+  information.
+
+Automatic argument conversion based on function annotations, types specified
+using the `@keyword` decorator, and argument default values are all new
+features in Robot Framework 3.1. The `Supported conversions`_ section
+specifies which argument conversion are supported in these cases.
+
+__ `Manual argument conversion`_
+__ `Specifying argument types using function annotations`_
+__ `Specifying argument types using @keyword decorator`_
+__ `Implicit argument types based on default values`_
+__ `Argument types with Java`_
+
+Manual argument conversion
+''''''''''''''''''''''''''
+
+If no type information is specified to Robot Framework, all arguments not
+passed as variables_ are given to keywords as Unicode strings. This includes
+cases like this:
+
+.. sourcecode:: robotframework
+
+  *** Test Cases ***
+  Example
+      Example Keyword    42    False
+
+It is always possible to convert arguments passed as strings insider keywords.
+In simple cases this means using `int()` or `float()` to convert arguments
+to numbers, but other kind of conversion is possible as well. When working
+with Boolean values, care must be taken because all non-empty strings,
+including string `False`, are considered true by Python. Robot Framework's own
+`robot.utils.is_truthy()` utility handles this nicely as it considers strings
+like `FALSE`, `NO` and `NONE` (case-insensitively) to be false:
+
+.. sourcecode:: python
+
+  def example_keyword(count, case_insensitive=True):
+      count = int(count)
+      if is_truthy(case_insensitive):
+          # ...
+
+Notice that with Robot Framework 3.1 and newer `is_truthy` is not needed
+in the above example because argument type would be got based on the
+`default value`__.
+
+__ `Implicit argument types based on default values`_
+
+Specifying argument types using function annotations
+''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 3.1, arguments passed to keywords as strings
+are automatically converted if argument type information is available. The
+most natural way to specify types is using Python 3 `function annotations`_.
+For example, the keyword in the previous example could be implemented as
+follows and arguments would be converted automatically:
+
+.. sourcecode:: python
+
+  def example_keyword(count: int, case_insensitive: bool = True):
+      if case_insensitive:
+          # ...
+
+See the `Supported conversions`_ section below for a list of types that
+are automatically converted and what values these types accept. It is
+an error if an argument having one of the supported types is given
+a value that cannot be converted. Annotating only some of the arguments
+is fine.
+
+Annotating arguments with other than the supported types is not an error,
+and it is also possible to use annotations for other than typing
+purposes. In those cases no conversion is done, but annotations are
+nevertheless shown in the documentation generated by Libdoc_.
+
+.. note:: Because function annotations are a Python 3 feature, using them in
+          a library that should also work with Python 2 is not possible.
+
+.. note:: Using function annotations with Robot Framework 3.0.2 or earlier
+          `is not possible at all`__.
+
+.. _function annotations: https://www.python.org/dev/peps/pep-3107/
+__ https://github.com/robotframework/robotframework/issues/2627
+
+Specifying argument types using `@keyword` decorator
+''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+An alternative way to specify explicit argument types is using the
+`robot.api.deco.keyword` decorator. Starting from Robot Framework 3.1,
+it accepts an optional `types` argument that can be used to specify argument
+types either as a dictionary mapping argument names to types or as a list
+mapping arguments to types based on position. These approaches are shown
+below implementing the same keyword as in earlier examples:
+
+.. sourcecode:: python
+
+  @keyword(types={'count': int, 'case_insensitive': bool})
+  def example_keyword(count, case_insensitive=True):
+      if case_insensitive:
+          # ...
+
+  @keyword(types=[int, bool])
+  def example_keyword(count, case_insensitive=True):
+      if case_insensitive:
+          # ...
+
+Regardless of the approach that is used, it is not necessarily to specify
+types for all arguments. When specifying types as a list, it is possible
+to use `None` or any other non-true value to mark that a certain argument
+does not have a type, and arguments at the end can be omitted altogether.
+For example, both of these keywords specify the type only for the second
+argument:
+
+.. sourcecode:: python
+
+  @keyword(types={'second': float})
+  def example1(first, second, third):
       # ...
+
+  @keyword(types=[None, float])
+  def example2(first, second, third):
+      # ...
+
+If any types are specified using the `@keyword` decorator, type information
+got from annotations__ is ignored with that keyword. Setting `types` to `None`
+like `@keyword(types=None)` disables type conversion altogether so that also
+type information got from `default values`__ is ignored.
+
+__ `Specifying argument types using function annotations`_
+__ `Implicit argument types based on default values`_
+
+Implicit argument types based on default values
+'''''''''''''''''''''''''''''''''''''''''''''''
+
+If type information is not got explicitly using annotations or the `@keyword`
+decorator, Robot Framework 3.1 and newer tries to get it based on possible
+argument default value. In this example `count` and `case_insensitive` get
+types `int` and `bool`, respectively:
+
+.. sourcecode:: python
+
+  def example_keyword(count=-1, case_insensitive=True):
+      if case_insensitive:
+          # ...
+
+When type information is got implicitly based on the default values,
+argument conversion itself is not as strict as when the information is
+got explicitly:
+
+- Conversion may be attempted also to other "similar" types. For example,
+  if converting to an integer fails, float conversion is attempted.
+
+- Conversion failures are not errors, keywords get the original value in
+  these cases instead.
+
+If argument conversion based on default values is not desired with a certain
+argument, it can be disabled by specifying a type for that argument explicitly.
+Alternatively argument conversion can be disabled altogether with the
+`@keyword decorator`__ like `@keyword(types=None)`.
+
+__ `Specifying argument types using @keyword decorator`_
+
+Supported conversions
+'''''''''''''''''''''
+
+The table below lists the types that Robot Framework 3.1 and newer convert
+arguments to. These characteristics apply to all conversions:
+
+- Type can be explicitly specified using `function annotations`__ or
+  the `@keyword decorator`__.
+- If not explicitly specified, type can be got implicitly from `argument
+  default values`__.
+- Conversion is done only if the argument that is used is itself a Unicode
+  string.
+- With most of the types failed conversion causes an error if the type has
+  been specified explicitly. Exceptions to this rule are mentioned in the
+  table below.
+- With most of the types string `NONE`, case-insensitively, is converted to
+  Python `None`. Exceptions are mentioned in the table below.
+
+__ `Specifying argument types using function annotations`_
+__ `Specifying argument types using @keyword decorator`_
+__ `Implicit argument types based on default values`_
+
+The type to use can be specified either using concrete types (e.g. list_),
+by using Abstract Base Classes (ABC) (e.g. Sequence_), or by using sub
+classes of these types (e.g. MutableSequence_). In all these cases the
+argument is converted to the concrete type.
+
+Also types in in the typing_ module that map to the supported concrete
+types or ABCs (e.g. `List`) are supported. With generics also the subscription
+syntax (e.g. `List[int]`) works, but no validation is done for container
+contents.
+
+In addition to using the actual types (e.g. `int`), it is possible to specify
+the type using type names as a string (e.g. `'int'`) and some types also have
+aliases (e.g. `'integer'`). Matching types to names and aliases is
+case-insensitive.
+
+.. table:: Supported argument conversions
+   :class: tabular
+
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   |    Type     |      ABC      |  Aliases   |                       Explanation                              |             Examples                 |
+   +=============+===============+============+================================================================+======================================+
+   | bool_       |               | boolean    | Strings `TRUE`, `YES`, `ON` and `1` are converted to `True`,   | | `TRUE` (converted to `True`)       |
+   |             |               |            | the empty string as well as `FALSE`, `NO`, `OFF` and `0`       | | `off` (converted to `False`)       |
+   |             |               |            | are converted to `False`, and the string `NONE` is converted   | | `foobar` (returned as-is)          |
+   |             |               |            | to `None`. Other strings are passed as-is, allowing keywords   |                                      |
+   |             |               |            | to handle them specially if needed. All comparisons are        |                                      |
+   |             |               |            | case-insensitive.                                              |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | int_        | Integral_     | integer,   | Conversion is done using the int_ built-in function.           | | `42`                               |
+   |             |               | long       | If that fails and type is got implicitly from default values,  | | `3.14` (only with implicit type)   |
+   |             |               |            | also float_ conversion is attempted.                           |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | float_      | Real_         | double     | Conversion is done using the float_ built-in.                  | | `3.14`                             |
+   |             |               |            |                                                                | | `2.9979e8`                         |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | Decimal_    |               |            | Conversion is done using the Decimal_ class.                   | | `3.14`                             |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | bytes_      | ByteString_   |            | Argument is converted to bytes so that each Unicode code point | | `foobar`                           |
+   |             |               |            | below 256 is directly mapped to a matching byte. Higher code   | | `hyvä` (converted to `hyv\xe4`)    |
+   |             |               |            | points are not allowed. String `NONE` (case-insensitively) is  | | `\x00` (the null byte)             |
+   |             |               |            | converted to matching bytes, not to Python `None`. When using  |                                      |
+   |             |               |            | Python 2, byte conversion is only done if type is specified    |                                      |
+   |             |               |            | explicitly.                                                    |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | bytearray_  |               |            | Same conversion as with bytes_ but the result is a bytearray_. |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | `datetime   |               |            | Argument is expected to be a timestamp in `ISO 8601`_ like     | | `2018-09-12T15:47:05.123456`       |
+   | <dt-mod_>`_ |               |            | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2018-09-12 15:47`                 |
+   |             |               |            | character can be used as a separator or separators can be      | | `2018-09-12`                       |
+   |             |               |            | omitted altogether. Additionally, only the date part is        |                                      |
+   |             |               |            | mandatory, all possibly missing time components are considered |                                      |
+   |             |               |            | to be zeros.                                                   |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | date_       |               |            | Same conversion as with `datetime <dt-mod_>`_ but all time     | | `2018-09-12`                       |
+   |             |               |            | components are expected to be omitted or to be zeros.          |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | timedelta_  |               |            | String is expected to represent a time interval in one of the  | | `42` (42 seconds)                  |
+   |             |               |            | time formats Robot Framework supports: `time as number`_,      | | `1 minute 2 seconds`               |
+   |             |               |            | `time as time string`_ or `time as "timer" string`_.           | | `01:02` (same as above)            |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | Enum_       |               |            | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
+   |             |               |            | Enum_) and arguments themselves must match its members.        |                                      |
+   |             |               |            |                                                                |    class Color(Enum):                |
+   |             |               |            |                                                                |        RED = 1                       |
+   |             |               |            |                                                                |        GREEN = 2                     |
+   |             |               |            |                                                                |                                      |
+   |             |               |            |                                                                | | `GREEN`                            |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | NoneType_   |               |            | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
+   |             |               |            | object, other values are passed as-is. Mainly relevant when    |                                      |
+   |             |               |            | type is got implicitly from `None` being a default value.      |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | list_       | Sequence_     |            | Argument must be be a Python list literal. It is converted     | | `['foo', 'bar']`                   |
+   |             |               |            | to an actual list using the `ast.literal_eval`_ function.      | | `[('one', 1), ('two', 2)]`         |
+   |             |               |            | The list can contain any values `ast.literal_eval`_ supports   |                                      |
+   |             |               |            | inside it, including other lists or other containers.          |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | tuple_      |               |            | Same as list_ but the argument must be a tuple literal.        | | `('foo', 'bar')`                   |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | dict_       | Mapping_      | dictionary,| Same as list_ but the argument must be a dictionary literal.   | | `{'a': 1, 'b': 2}`                 |
+   |             |               | map        |                                                                | | `{'key': 1, 'nested': {'key': 2}}` |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | set_        | `Set          |            | Same as list_ but the argument must be a set literal or        | | `{1, 2, 3, 42}`                    |
+   |             | <abc.Set_>`__ |            | `set()` to create an empty set. Not supported on Python 2.     | | `set()`                            |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+   | frozenset_  |               |            | Same conversion as with set_ but the result is a frozenset_.   |                                      |
+   +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
+
+.. _bool: https://docs.python.org/library/functions.html#bool
+.. _int: https://docs.python.org/library/functions.html#int
+.. _Integral: https://docs.python.org/library/numbers.html#numbers.Integral
+.. _float: https://docs.python.org/library/functions.html#float
+.. _Real: https://docs.python.org/library/numbers.html#numbers.Real
+.. _Decimal: https://docs.python.org/library/decimal.html#decimal.Decimal
+.. _bytes: https://docs.python.org/library/functions.html#func-bytes
+.. _ByteString: https://docs.python.org/library/collections.abc.html#collections.abc.ByteString
+.. _bytearray: https://docs.python.org/library/functions.html#func-bytearray
+.. _dt-mod: https://docs.python.org/library/datetime.html#datetime.datetime
+.. _date: https://docs.python.org/library/datetime.html#datetime.date
+.. _timedelta: https://docs.python.org/library/datetime.html#datetime.timedelta
+.. _Enum: https://docs.python.org/library/enum.html#enum.Enum
+.. _NoneType: https://docs.python.org/library/constants.html#None
+.. _list: https://docs.python.org/library/stdtypes.html#list
+.. _Sequence: https://docs.python.org/library/collections.abc.html#collections.abc.Sequence
+.. _MutableSequence: https://docs.python.org/library/collections.abc.html#collections.abc.MutableSequence
+.. _tuple: https://docs.python.org/library/stdtypes.html#tuple
+.. _dict: https://docs.python.org/library/stdtypes.html#dict
+.. _Mapping: https://docs.python.org/library/collections.abc.html#collections.abc.Mapping
+.. _set: https://docs.python.org/library/stdtypes.html#set
+.. _abc.Set: https://docs.python.org/library/collections.abc.html#collections.abc.Set
+.. _frozenset: https://docs.python.org/library/stdtypes.html#frozenset
+.. _typing: https://docs.python.org/library/typing.html
+.. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
+.. _ast.literal_eval: https://docs.python.org/library/ast.html#ast.literal_eval
 
 Argument types with Java
 ''''''''''''''''''''''''
@@ -990,10 +1290,14 @@ conflicting signatures.
        Conflicting Types    1       ${2}    # must use variables
        Conflicting Types    ${1}    2
 
-Starting from Robot Framework 2.8, argument type coercion works also with
-`Java library constructors`__.
+Argument type coercion works also with `Java library constructors`__.
 
 __ `Providing arguments to test libraries`_
+
+.. note:: Converting arguments passed to Java based keywords is an old feature
+          and independent on the support to convert arguments of Python
+          keywords in Robot Framework 3.1 and newer. Conversion functionality
+          may be unified in the future.
 
 Using decorators
 ~~~~~~~~~~~~~~~~
@@ -1002,11 +1306,11 @@ When writing static keywords, it is sometimes useful to modify them with
 Python's decorators. However, decorators modify function signatures,
 and can confuse Robot Framework's introspection when determining which
 arguments keywords accept. This is especially problematic when creating
-library documentation with Libdoc_ and when using  RIDE_. To avoid this
+library documentation with Libdoc_ and when using RIDE_. To avoid this
 issue, either do not use decorators, or use the handy `decorator module`__
 to create signature-preserving decorators.
 
-__ http://micheles.googlecode.com/hg/decorator/documentation.html
+__ https://decorator.readthedocs.io
 
 Embedding arguments into keyword names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1023,7 +1327,7 @@ __ `Using a custom keyword name`_
 
     from robot.api.deco import keyword
 
-    @keyword('Add ${quantity:\d+} Copies Of ${item} To Cart')
+    @keyword('Add ${quantity:\d+} copies of ${item} to cart')
     def add_copies_to_cart(quantity, item):
         # ...
 
@@ -1031,7 +1335,25 @@ __ `Using a custom keyword name`_
 
    *** Test Cases ***
    My Test
-       Add 7 Copies Of Coffee To Cart
+       Add 7 copies of coffee to cart
+
+By default arguments are passed to implementing keywords as strings, but
+automatic `argument type conversion`__ works if type information is specified
+somehow. With Python 3 it is convenient to use `function annotations`__,
+and alternatively it is possible to pass types to the `@keyword decorator`__:
+
+.. sourcecode:: python
+
+    @keyword('Add ${quantity:\d+} copies of ${item} to cart',
+             types={'quantity': int})
+    def add_copies_to_cart(quantity: int, item):
+        # ...
+
+__ `Argument types`_
+__ `Specifying argument types using function annotations`_
+__ `Specifying argument types using @keyword decorator`_
+
+.. note:: Automatic type conversion is new in Robot Framework 3.1.
 
 Communicating with Robot Framework
 ----------------------------------
@@ -1056,7 +1378,7 @@ example, `AssertionError`, `Exception`, and
 others, the message is created in the format `ExceptionType:
 Actual message`.
 
-Starting from Robot Framework 2.8.2, it is possible to avoid adding the
+It is possible to avoid adding the
 exception type as a prefix to failure message also with non generic exceptions.
 This is done by adding a special `ROBOT_SUPPRESS_NAME` attribute with
 value `True` to your exception.
@@ -1082,7 +1404,7 @@ informative as possible.
 HTML in error messages
 ''''''''''''''''''''''
 
-Starting from Robot Framework 2.8, it is also possible have HTML formatted
+It is also possible to have HTML formatted
 error messages by starting the message with text `*HTML*`:
 
 .. sourcecode:: python
@@ -1248,7 +1570,7 @@ Python:
     import time
 
     def example_keyword():
-        print '*INFO:%d* Message with timestamp' % (time.time()*1000)
+        print('*INFO:%d* Message with timestamp' % (time.time()*1000))
 
 Java:
 
@@ -1307,20 +1629,20 @@ be used to make messages more visible and `HTML` is useful if any
 kind of formatting is needed.
 
 The following examples clarify how logging with different levels
-works. Java programmers should regard the code `print 'message'`
+works. Java programmers should regard the code `print('message')`
 as pseudocode meaning `System.out.println("message");`.
 
 .. sourcecode:: python
 
-   print 'Hello from a library.'
-   print '*WARN* Warning from a library.'
-   print '*ERROR* Something unexpected happen that may indicate a problem in the test.'
-   print '*INFO* Hello again!'
-   print 'This will be part of the previous message.'
-   print '*INFO* This is a new message.'
-   print '*INFO* This is <b>normal text</b>.'
-   print '*HTML* This is <b>bold</b>.'
-   print '*HTML* <a href="http://robotframework.org">Robot Framework</a>'
+   print('Hello from a library.')
+   print('*WARN* Warning from a library.')
+   print('*ERROR* Something unexpected happen that may indicate a problem in the test.')
+   print('*INFO* Hello again!')
+   print('This will be part of the previous message.')
+   print('*INFO* This is a new message.')
+   print('*INFO* This is <b>normal text</b>.')
+   print('*HTML* This is <b>bold</b>.')
+   print('*HTML* <a href="http://robotframework.org">Robot Framework</a>')
 
 .. raw:: html
 
@@ -1380,7 +1702,7 @@ Public logging API
 Robot Framework has a Python based logging API for writing
 messages to the log file and to the console. Test libraries can use
 this API like `logger.info('My message')` instead of logging
-through the standard output like `print '*INFO* My message'`. In
+through the standard output like `print('*INFO* My message')`. In
 addition to a programmatic interface being a lot cleaner to use, this
 API has a benefit that the log messages have accurate timestamps_.
 
@@ -1399,10 +1721,9 @@ a simple usage example:
        logger.console('Hello, console!')
 
 An obvious limitation is that test libraries using this logging API have
-a dependency to Robot Framework. Before version 2.8.7 Robot also had
-to be running for the logging to work. Starting from Robot Framework 2.8.7
-if Robot is not running the messages are redirected automatically to Python's
-standard logging__ module.
+a dependency to Robot Framework. If Robot Framework is not running,
+the messages are redirected automatically to Python's standard logging__
+module.
 
 __ https://robot-framework.readthedocs.org/en/latest/autodoc/robot.api.html#module-robot.api.logger
 __ http://docs.python.org/library/logging.html
@@ -1642,25 +1963,28 @@ create a library documentation from both Python and Java libraries
 using the static library API, such as the ones above, but it also handles
 libraries using the `dynamic library API`_ and `hybrid library API`_.
 
-The first line of a keyword documentation is used for a special
-purpose and should contain a short overall description of the
-keyword. It is used as a *short documentation*, for example as a tool
-tip, by Libdoc_ and also shown in the test logs. However, the latter
-does not work with Java libraries using the static API,
-because their documentations are lost in compilation and not available
-at runtime.
+The first logical line of a keyword documentation, until the first empty line,
+is used for a special purpose and should contain a short overall description
+of the keyword. It is used as a *short documentation* by Libdoc_ (for example,
+as a tool tip) and also shown in the `test logs`_. The latter does not work
+with Java libraries using the static API, though, because their documentation
+is not available at runtime.
 
 By default documentation is considered to follow Robot Framework's
 `documentation formatting`_ rules. This simple format allows often used
 styles like `*bold*` and `_italic_`, tables, lists, links, etc.
-Starting from Robot Framework 2.7.5, it is possible to use also HTML, plain
+It is possible to use also HTML, plain
 text and reStructuredText_ formats. See `Specifying documentation format`_
 section for information how to set the format in the library source code and
 Libdoc_ chapter for more information about the formats in general.
 
+.. note:: Prior to Robot Framework 3.1, the short documentation contained
+          only the first physical line of the keyword documentation.
+
 .. note:: If you want to use non-ASCII characters in the documentation of
           Python libraries, you must either use UTF-8 as your `source code
-          encoding`__ or create docstrings as Unicode.
+          encoding`__ or create docstrings as Unicode. When using Python 3,
+          UTF-8 is the default source encoding.
 
 .. _docstrings: http://www.python.org/dev/peps/pep-0257
 .. _javadoc: http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
@@ -1705,11 +2029,10 @@ complicated libraries should be packaged to make the installation
 easier.
 
 Since libraries are normal programming code, they can be packaged
-using normal packaging tools. With Python, good options include
-distutils_, contained by Python's standard library, and the newer
-setuptools_. A benefit of these tools is that library modules are
-installed into a location that is automatically in the `module
-search path`_.
+using normal packaging tools. For information about packaging and
+distributing Python code see https://packaging.python.org/. When such
+a package is installed using pip_ or other tools, it is automatically
+in the `module search path`_.
 
 When using Java, it is natural to package libraries into a JAR
 archive. The JAR package must be put into the `module search path`_
@@ -1876,25 +2199,28 @@ attribute on every method in the library during `get_keyword_names`.  See
 Running keywords
 ~~~~~~~~~~~~~~~~
 
-Dynamic libraries have a special `run_keyword` (alias
-`runKeyword`) method for executing their keywords. When a
-keyword from a dynamic library is used in the test data, Robot
-Framework uses the library's `run_keyword` method to get it
-executed. This method takes two or three arguments. The first argument is a
-string containing the name of the keyword to be executed in the same
-format as returned by `get_keyword_names`. The second argument is
-a list or array of arguments given to the keyword in the test data.
+Dynamic libraries have a special `run_keyword` (alias `runKeyword`)
+method for executing their keywords. When a keyword from a dynamic
+library is used in the test data, Robot Framework uses the `run_keyword`
+method to get it executed. This method takes two or three arguments.
+The first argument is a string containing the name of the keyword to be
+executed in the same format as returned by `get_keyword_names`. The second
+argument is a list of `positional arguments`_ given to the keyword in
+the test data, and the optional third argument is a dictionary (map in Java)
+containing `named arguments`_. If the third argument is missing, `free named
+arguments`__ and `named-only arguments`__ are not supported, and other
+named arguments are mapped to positional arguments.
 
-The optional third argument is a dictionary (map in Java) that gets
-possible `free keyword arguments`_ (`**kwargs`) passed to the
-keyword. See `free keyword arguments with dynamic libraries`_ section
-for more details about using kwargs with dynamic test libraries.
+.. note:: Prior to Robot Framework 3.1, normal named arguments were
+          mapped to positional arguments regardless did `run_keyword`
+          accept two or three arguments. The third argument only got
+          possible free named arguments.
 
 After getting keyword name and arguments, the library can execute
 the keyword freely, but it must use the same mechanism to
 communicate with the framework as static libraries. This means using
 exceptions for reporting keyword status, logging by writing to
-the standard output or by using provided logging APIs, and using
+the standard output or by using the provided logging APIs, and using
 the return statement in `run_keyword` for returning something.
 
 Every dynamic library must have both the `get_keyword_names` and
@@ -1909,77 +2235,115 @@ trivial, dynamic library implemented in Python.
        def get_keyword_names(self):
            return ['first keyword', 'second keyword']
 
-       def run_keyword(self, name, args):
-           print "Running keyword '%s' with arguments %s." % (name, args)
+       def run_keyword(self, name, args, kwargs):
+           print("Running keyword '%s' with positional arguments %s and named arguments %s."
+                 % (name, args, kwargs))
+
+__ `Free named arguments with dynamic libraries`_
+__ `Named-only arguments with dynamic libraries`_
 
 Getting keyword arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If a dynamic library only implements the `get_keyword_names` and
 `run_keyword` methods, Robot Framework does not have any information
-about the arguments that the implemented keywords need. For example,
+about the arguments that the implemented keywords accept. For example,
 both :name:`First Keyword` and :name:`Second Keyword` in the example above
-could be used with any number of arguments. This is problematic,
+could be used with any arguments. This is problematic,
 because most real keywords expect a certain number of keywords, and
 under these circumstances they would need to check the argument counts
 themselves.
 
-Dynamic libraries can tell Robot Framework what arguments the keywords
-it implements expect by using the `get_keyword_arguments`
-(alias `getKeywordArguments`) method. This method takes the name
-of a keyword as an argument, and returns a list or array of strings
-containing the arguments accepted by that keyword.
+Dynamic libraries can communicate what arguments their keywords expect
+by using the `get_keyword_arguments` (alias `getKeywordArguments`) method.
+This method gets the name of a keyword as an argument, and it must return
+a list of strings containing the arguments accepted by that keyword.
 
-Similarly as static keywords, dynamic keywords can require any number
-of arguments, have default values, and accept variable number of
-arguments and free keyword arguments. The syntax for how to represent
-all these different variables is explained in the following table.
-Note that the examples use Python syntax for lists, but Java developers
-should use Java lists or String arrays instead.
+Similarly as other keywords, dynamic keywords can require any number
+of `positional arguments`_, have `default values`_, accept `variable number of
+arguments`_, accept `free named arguments`_ and have `named-only arguments`_.
+The syntax how to represent all these different variables is derived from how
+they are specified in Python and explained in the following table. Note that
+the examples use Python syntax for lists, but Java developers should use
+Java lists or String arrays instead.
 
 .. table:: Representing different arguments with `get_keyword_arguments`
    :class: tabular
 
-   +--------------------+----------------------------+------------------------------+----------+
-   |    Expected        |      How to represent      |            Examples          | Limits   |
-   |    arguments       |                            |                              | (min/max)|
-   +====================+============================+==============================+==========+
-   | No arguments       | Empty list.                | | `[]`                       | | 0/0    |
-   +--------------------+----------------------------+------------------------------+----------+
-   | One or more        | List of strings containing | | `['one_argument']`         | | 1/1    |
-   | argument           | argument names.            | | `['a1', 'a2', 'a3']`       | | 3/3    |
-   +--------------------+----------------------------+------------------------------+----------+
-   | Default values     | Default values separated   | | `['arg=default value']`    | | 0/1    |
-   | for arguments      | from names with `=`.       | | `['a', 'b=1', 'c=2']`      | | 1/3    |
-   |                    | Default values are always  |                              |          |
-   |                    | considered to be strings.  |                              |          |
-   +--------------------+----------------------------+------------------------------+----------+
-   | Variable number    | Last (or second last with  | | `['*varargs']`             | | 0/any  |
-   | of arguments       | kwargs) argument has `*`   | | `['a', 'b=42', '*rest']`   | | 1/any  |
-   | (varargs)          | before its name.           |                              |          |
-   +--------------------+----------------------------+------------------------------+----------+
-   | Free keyword       | Last arguments has         | | `['**kwargs']`             | | 0/0    |
-   | arguments (kwargs) | `**` before its name.      | | `['a', 'b=42', '**kws']`   | | 1/2    |
-   |                    |                            | | `['*varargs', '**kwargs']` | | 0/any  |
-   +--------------------+----------------------------+------------------------------+----------+
+   +--------------------+----------------------------+----------------------------+
+   |    Expected        |      How to represent      |          Examples          |
+   |    arguments       |                            |                            |
+   +====================+============================+============================+
+   | No arguments       | Empty list.                | `[]`                       |
+   +--------------------+----------------------------+----------------------------+
+   | One or more        | List of strings containing | `['argument']`,            |
+   | `positional        | argument names.            | `['arg1', 'arg2', 'arg3']` |
+   | argument`_         |                            |                            |
+   +--------------------+----------------------------+----------------------------+
+   | `Default values`_  | Default values separated   | `['arg=default value']`,   |
+   | for arguments      | from argument names with   | `['a', 'b=1', 'c=2']`      |
+   |                    | `=`. Default values are    |                            |
+   |                    | always considered to be    |                            |
+   |                    | strings.                   |                            |
+   +--------------------+----------------------------+----------------------------+
+   | `Variable number   | Argument after possible    | `['*varargs']`,            |
+   | of arguments`_     | positional arguments and   | `['argument', '*rest']`,   |
+   | (varargs)          | their defaults has `*`     | `['a', 'b=42', '*c']`      |
+   | (varargs)          | prefix.                    |                            |
+   +--------------------+----------------------------+----------------------------+
+   | `Free named        | Last arguments has `**`    | `['**named']`,             |
+   | arguments`_        | prefix. Requires           | `['a', 'b=42', '**c']`,    |
+   | (kwargs)           | `run_keyword` to `support  | `['*varargs', '**kwargs']` |
+   |                    | free named arguments`__.   |                            |
+   +--------------------+----------------------------+----------------------------+
+   | `Named-only        | Arguments after varargs or | `['*varargs', 'named']`,   |
+   | arguments`_        | a lone `*` if there are no | `['*', 'named'],           |
+   |                    | varargs. With or without   | `['*', 'x', 'y=default']`, |
+   |                    | defaults. Requires         | `['a', '*b', 'c', '**d']`  |
+   |                    | `run_keyword` to `support  |                            |
+   |                    | named-only arguments`__.   |                            |
+   |                    | New in Robot Framework 3.1.|                            |
+   +--------------------+----------------------------+----------------------------+
 
 When the `get_keyword_arguments` is used, Robot Framework automatically
 calculates how many positional arguments the keyword requires and does it
-support free keyword arguments or not. If a keyword is used with invalid
+support free named arguments or not. If a keyword is used with invalid
 arguments, an error occurs and `run_keyword` is not even called.
 
 The actual argument names and default values that are returned are also
 important. They are needed for `named argument support`__ and the Libdoc_
 tool needs them to be able to create a meaningful library documentation.
 
-If `get_keyword_arguments` is missing or returns `None` or
+If `get_keyword_arguments` is missing or returns Python `None` or Java
 `null` for a certain keyword, that keyword gets an argument specification
 accepting all arguments. This automatic argument spec is either
 `[*varargs, **kwargs]` or `[*varargs]`, depending does
-`run_keyword` `support kwargs`__ by having three arguments or not.
+`run_keyword` `support free named arguments`__ or not.
 
+__ `Free named arguments with dynamic libraries`_
+__ `Named-only arguments with dynamic libraries`_
 __ `Named argument syntax with dynamic libraries`_
-__ `Free keyword arguments with dynamic libraries`_
+__ `Free named arguments with dynamic libraries`_
+
+Getting keyword argument types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework 3.1 introduced support for automatic argument conversion
+and the dynamic library API supports that as well. The conversion logic
+works exactly like with `static libraries`__, but how the type information
+is specified is naturally different.
+
+With dynamic libraries types can be returned using the optional
+`get_keyword_types` method (alias `getKeywordTypes`). It can return types
+using a list or a dictionary exactly like types can be specified when using
+the `@keyword decorator`__. Type information can be specified using actual
+types like `int`, but especially if a dynamic library gets this information
+from external systems, using strings like `'int'` or `'integer'` may be
+easier. See the `Supported conversions`_ section for more information about
+supported types and how to specify them.
+
+__ `Argument types`_
+__ `Specifying argument types using @keyword decorator`_
 
 Getting keyword tags
 ~~~~~~~~~~~~~~~~~~~~
@@ -2039,83 +2403,140 @@ got both directly from the code and from the
 Named argument syntax with dynamic libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.8, also the dynamic library API supports
+Also the dynamic library API supports
 the `named argument syntax`_. Using the syntax works based on the
 argument names and default values `got from the library`__ using the
 `get_keyword_arguments` method.
 
-For the most parts, the named arguments syntax works with dynamic keywords
-exactly like it works with any other keyword supporting it. The only special
-case is the situation where a keyword has multiple arguments with default
-values, and only some of the latter ones are given. In that case the framework
-fills the skipped optional arguments based on the default values returned
-by the `get_keyword_arguments` method.
+
+If the `run_keyword` method accepts three arguments, the second argument
+gets all positional arguments as a list and the last arguments gets all
+named arguments as a mapping. If it accepts only two arguments, named
+arguments are mapped to positional arguments. In the latter case, if
+a keyword has multiple arguments with default values and only some of
+the latter ones are given, the framework fills the skipped optional
+arguments based on the default values returned by the `get_keyword_arguments`
+method.
 
 Using the named argument syntax with dynamic libraries is illustrated
 by the following examples. All the examples use a keyword :name:`Dynamic`
-that has been specified to have argument specification
-`[arg1, arg2=xxx, arg3=yyy]`.
-The comment shows the arguments that the keyword is actually called with.
+that has an argument specification `[a, b=d1, c=d2]`. The comment on each row
+shows how `run_keyword` would be called in these cases if it has two arguments
+(i.e. signature is `name, args`) and if it has three arguments (i.e.
+`name, args, kwargs`).
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***
-   Only positional
-       Dynamic    a                             # [a]
-       Dynamic    a         b                   # [a, b]
-       Dynamic    a         b         c         # [a, b, c]
+   *** Test Cases ***                  # args          # args, kwargs
+   Positional only
+       Dynamic    x                    # [x]           # [x], {}
+       Dynamic    x      y             # [x, y]        # [x, y], {}
+       Dynamic    x      y      z      # [x, y, z]     # [x, y, z], {}
 
-   Named
-       Dynamic    a         arg2=b              # [a, b]
-       Dynamic    a         b         arg3=c    # [a, b, c]
-       Dynamic    a         arg2=b    arg3=c    # [a, b, c]
-       Dynamic    arg1=a    arg2=b    arg3=c    # [a, b, c]
+   Named only
+       Dynamic    a=x                  # [x]           # [], {a: x}
+       Dynamic    c=z    a=x    b=y    # [x, y, z]     # [], {a: x, b: y, c: z}
 
-   Fill skipped
-       Dynamic    a         arg3=c              # [a, xxx, c]
+   Positional and named
+       Dynamic    x      b=y           # [x, y]        # [x], {b: y}
+       Dynamic    x      y      c=z    # [x, y, z]     # [x, y], {c: z}
+       Dynamic    x      b=y    c=z    # [x, y, z]     # [x], {y: b, c: z}
+
+   Intermediate missing
+       Dynamic    x      c=z           # [x, d1, z]    # [x], {c: z}
+
+.. note:: Prior to Robot Framework 3.1, all normal named arguments were
+          mapped to positional arguments and the optional `kwargs` was
+          only used with free named arguments. With the above examples
+          `run_keyword` was always called like it is nowadays called if
+          it does not support `kwargs`.
 
 __ `Getting keyword arguments`_
 
-Free keyword arguments with dynamic libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Free named arguments with dynamic libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.8.2, dynamic libraries can also support
-`free keyword arguments`_ (`**kwargs`). A mandatory precondition for
+Dynamic libraries can also support
+`free named arguments`_ (`**named`). A mandatory precondition for
 this support is that the `run_keyword` method `takes three arguments`__:
-the third one will get kwargs when they are used. Kwargs are passed to the
-keyword as a dictionary (Python) or Map (Java).
+the third one will get the free named arguments along with possible other
+named arguments. These arguments are passed to the keyword as a mapping.
 
 What arguments a keyword accepts depends on what `get_keyword_arguments`
 `returns for it`__. If the last argument starts with `**`, that keyword is
-recognized to accept kwargs.
+recognized to accept free named arguments.
 
-Using the free keyword argument syntax with dynamic libraries is illustrated
+Using the free named argument syntax with dynamic libraries is illustrated
 by the following examples. All the examples use a keyword :name:`Dynamic`
-that has been specified to have argument specification
-`[arg1=xxx, arg2=yyy, **kwargs]`.
-The comment shows the arguments that the keyword is actually called with.
+that has an argument specification `[a=d1, b=d2, **named]`. The comment shows
+the arguments that the `run_keyword` method is actually called with.
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***
+   *** Test Cases ***                  # args, kwargs
    No arguments
-       Dynamic                            # [], {}
+       Dynamic                         # [], {}
 
-   Only positional
-       Dynamic    a                       # [a], {}
-       Dynamic    a         b             # [a, b], {}
+   Positional only
+       Dynamic    x                    # [x], {}
+       Dynamic    x      y             # [x, y], {}
 
-   Only kwargs
-       Dynamic    a=1                     # [], {a: 1}
-       Dynamic    a=1       b=2    c=3    # [], {a: 1, b: 2, c: 3}
+   Free named only
+       Dynamic    x=1                  # [], {x: 1}
+       Dynamic    x=1    y=2    z=3    # [], {x: 1, y: 2, z: 3}
 
-   Positional and kwargs
-       Dynamic    a         b=2           # [a], {b: 2}
-       Dynamic    a         b=2    c=3    # [a], {b: 2, c: 3}
+   Free named with positional
+       Dynamic    x      y=2           # [x], {y: 2}
+       Dynamic    x      y=2    z=3    # [x], {y: 2, z: 3}
 
-   Named and kwargs
-       Dynamic    arg1=a    b=2           # [a], {b: 2}
-       Dynamic    arg2=a    b=2    c=3    # [xxx, a], {b: 2, c: 3}
+   Free named with normal named
+       Dynamic    a=1    x=1           # [], {a: 1, x: 1}
+       Dynamic    b=2    x=1    a=1    # [], {a: 1, b: 2, x: 1}
+
+.. note:: Prior to Robot Framework 3.1, normal named arguments were mapped
+          to positional arguments but nowadays they are part of the
+          `kwargs` along with the free named arguments.
+
+__ `Running dynamic keywords`_
+__ `Getting keyword arguments`_
+
+Named-only arguments with dynamic libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 3.1, dynamic libraries can have `named-only
+arguments`_. This requires that the `run_keyword` method `takes three
+arguments`__: the third getting the named-only arguments along with the other
+named arguments.
+
+In the `argument specification`__ returned by the `get_keyword_arguments`
+method named-only arguments are specified after possible variable number
+of arguments (`*varargs`) or a lone asterisk (`*`) if the keyword does not
+accept varargs. Named-only arguments can have default values, and the order
+of arguments with and without default values does not matter.
+
+Using the named-only argument syntax with dynamic libraries is illustrated
+by the following examples. All the examples use a keyword :name:`Dynamic`
+that has been specified to have argument specification
+`[positional=default, *varargs, named, named2=default, **free]`. The comment
+shows the arguments that the `run_keyword` method is actually called with.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***                                  # args, kwargs
+   Named-only only
+       Dynamic    named=value                          # [], {named: value}
+       Dynamic    named=value    named2=2              # [], {named: value, named2: 2}
+
+   Named-only with positional and varargs
+       Dynamic    argument       named=xxx             # [argument], {named: xxx}
+       Dynamic    a1             a2         named=3    # [a1, a2], {named: 3}
+
+   Named-only with normal named
+       Dynamic    named=foo      positional=bar        # [], {positional: bar, named: foo}
+
+   Named-only with free named
+       Dynamic    named=value    foo=bar               # [], {named: value, foo=bar}
+       Dynamic    named2=2       third=3    named=1    # [], {named: 1, named2: 2, third: 3}
 
 __ `Running dynamic keywords`_
 __ `Getting keyword arguments`_
@@ -2135,22 +2556,24 @@ camelCase aliases work exactly the same way.
    ===========================  =========================  =======================================================
    `get_keyword_names`                                     `Return names`__ of the implemented keywords.
    `run_keyword`                `name, arguments, kwargs`  `Execute the specified keyword`__ with given arguments. `kwargs` is optional.
-   `get_keyword_arguments`      `name`                     Return keywords' `argument specifications`__. Optional method.
+   `get_keyword_arguments`      `name`                     Return keywords' `argument specification`__. Optional method.
+   `get_keyword_types`          `name`                     Return keywords' `argument type information`__. Optional method. New in RF 3.1.
+   `get_keyword_tags`           `name`                     Return keywords' `tags`__. Optional method. New in RF 3.0.2.
    `get_keyword_documentation`  `name`                     Return keywords' and library's `documentation`__. Optional method.
    ===========================  =========================  =======================================================
 
 __ `Getting dynamic keyword names`_
 __ `Running dynamic keywords`_
 __ `Getting keyword arguments`_
+__ `Getting keyword argument types`_
+__ `Getting keyword tags`_
 __ `Getting keyword documentation`_
 
 It is possible to write a formal interface specification in Java as
 below. However, remember that libraries *do not need* to implement
 any explicit interface, because Robot Framework directly checks with
 reflection if the library has the required `get_keyword_names` and
-`run_keyword` methods or their camelCase aliases. Additionally,
-`get_keyword_arguments` and `get_keyword_documentation`
-are completely optional.
+`run_keyword` methods or their camelCase aliases.
 
 .. sourcecode:: java
 
@@ -2163,6 +2586,10 @@ are completely optional.
        Object runKeyword(String name, List arguments, Map kwargs);
 
        List<String> getKeywordArguments(String name);
+
+       List<String> getKeywordTypes(String name);
+
+       List<String> getKeywordTags(String name);
 
        String getKeywordDocumentation(String name);
 
@@ -2216,7 +2643,7 @@ __ http://docs.python.org/reference/datamodel.html#attribute-access
            return ['my_keyword', 'external_keyword']
 
        def my_keyword(self, arg):
-           print "My Keyword called with '%s'" % arg
+           print("My Keyword called with '%s'" % arg)
 
        def __getattr__(self, name):
            if name == 'external_keyword':
@@ -2284,7 +2711,7 @@ versions.
 Available APIs
 ~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7, `API documentation`_ is hosted separately
+`API documentation`_ is hosted separately
 at the excellent `Read the Docs`_ service. If you are unsure how to use
 certain API or is using them forward compatible, please send a question
 to `mailing list`_.
@@ -2314,7 +2741,7 @@ using `set_test_variable`, `set_suite_variable` and
        f = open(path, 'w')
        f.write(output)
        f.close()
-       print '*HTML* Output written to <a href="results.txt">results.txt</a>'
+       print('*HTML* Output written to <a href="results.txt">results.txt</a>')
 
 The only catch with using methods from `BuiltIn` is that all
 `run_keyword` method variants must be handled specially.

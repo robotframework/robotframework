@@ -1,9 +1,12 @@
 Creating test suites
 ====================
 
-Robot Framework test cases are created in test case files, which can
+Robot Framework `test cases`__ are created in test case files, which can
 be organized into directories. These files and directories create a
-hierarchical test suite structure.
+hierarchical test suite structure. Same concepts apply also when
+`creating tasks`_, but the terminology differs.
+
+__ `Creating test cases`_
 
 .. contents::
    :depth: 2
@@ -34,7 +37,14 @@ test suite:
       example :setting:`Documentation:`. This can make reading the settings easier
       especially when using the plain text format.
 
-__ `Test case syntax`_
+.. note:: Setting names are case-insensitive, but the format used above is
+      recommended. Prior to Robot Framework 3.1, settings were also
+      space-insensitive meaning that spaces could be removed (e.g.
+      `SuiteSetup`) or extra spaces added (e.g. `M e t a d a t a`). This is
+      now deprecated and only the format above, case-insensitively, is
+      supported.
+
+__ `Creating test cases`_
 
 Test suite directories
 ----------------------
@@ -53,26 +63,12 @@ contains are processed recursively as follows:
 - Files and directories with names starting with a dot (:file:`.`) or an
   underscore (:file:`_`) are ignored.
 - Directories with the name :file:`CVS` are ignored (case-sensitive).
-- Files not having one of the `recognized extensions`__ (:file:`.html`,
-  :file:`.xhtml`, :file:`.htm`, :file:`.tsv`, :file:`.txt`, :file:`.rst`,
-  or :file:`.rest`) are ignored (case-insensitive).
-- Other files and directories are processed.
+- Files in `supported file formats`_ are processed.
+- Other files are ignored.
 
 If a file or directory that is processed does not contain any test
 cases, it is silently ignored (a message is written to the syslog_)
 and the processing continues.
-
-__ `Supported file formats`_
-
-Warning on invalid files
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Normally files that do not have a valid test case table are silently ignored
-with a message written to the syslog_. It is possible to use a command line
-option :option:`--warnonskippedfiles`, which turns the message into a warning
-shown in `test execution errors`__.
-
-__ `Errors and warnings during execution`_
 
 Initialization files
 ~~~~~~~~~~~~~~~~~~~~
@@ -82,7 +78,7 @@ created from a test case file. Because a directory alone cannot have that
 kind of information, it must be placed into a special test suite initialization
 file. An initialization file name must always be of the format
 :file:`__init__.ext`, where the extension must be one of the `supported
-file formats`_ (for example, :file:`__init__.robot` or :file:`__init__.html`).
+file formats`_ (typically :file:`__init__.robot`).
 The name format is borrowed from Python, where files named in this manner
 denote that a directory is a module.
 
@@ -106,8 +102,13 @@ initialization files is explained below.
 `Test Setup`:setting:, `Test Teardown`:setting:, `Test Timeout`:setting:
    Set the default value for test setup/teardown or test timeout to all test
    cases this directory contains. Can be overridden on lower level.
-   Support for defining test timeout in initialization files was added in
-   Robot Framework 2.7.
+   Notice that keywords used as setups and teardowns must be available in
+   test case files where tests using them are. Defining keywords in the
+   initialization file itself is not enough.
+`Task Setup`:setting:, `Task Teardown`:setting:, `Task Timeout`:setting:
+   Aliases for `Test Setup`:setting:, `Test Teardown`:setting:,
+   and `Test Timeout`:setting:, respectively, that can be used when
+   `creating tasks`_, not tests.
 `Default Tags`:setting:, `Test Template`:setting:
    Not supported in initialization files.
 
@@ -136,14 +137,14 @@ Test suite name and documentation
 The test suite name is constructed from the file or directory name. The name
 is created so that the extension is ignored, possible underscores are
 replaced with spaces, and names fully in lower case are title cased. For
-example, :file:`some_tests.html` becomes :name:`Some Tests` and
+example, :file:`some_tests.robot` becomes :name:`Some Tests` and
 :file:`My_test_directory` becomes :name:`My test directory`.
 
 The file or directory name can contain a prefix to control the `execution
 order`_ of the suites. The prefix is separated from the base name by two
 underscores and, when constructing the actual test suite name, both
 the prefix and underscores are removed. For example files
-:file:`01__some_tests.txt` and :file:`02__more_tests.txt` create test
+:file:`01__some_tests.robot` and :file:`02__more_tests.robot` create test
 suites :name:`Some Tests` and :name:`More Tests`, respectively, and
 the former is executed before the latter.
 

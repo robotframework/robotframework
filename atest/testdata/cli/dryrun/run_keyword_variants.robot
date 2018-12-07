@@ -213,6 +213,23 @@ Test Teardown Related Run Keyword Variants
     Run Keyword If Test Passed  Log
     Run Keyword If Timeout Occurred  Log
 
+Given/When/Then
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...    1) No keyword with name 'Nonex' found.\n\n
+    ...    2) Keyword 'BuiltIn.Convert To Integer' expected 1 to 2 arguments, got 0.
+    Given run keyword if    True    Log     This is really strange usage.....
+    When run keyword if    expr
+    ...    No Operation
+    ...    ELSE IF    expr
+    ...    No Operation
+    ...    ELSE
+    ...    No Operation
+    and run keyword if      True    Nonex    ELSE    Convert To Integer
+    Then run keywords
+    ...    Log    xxx    INFO     AND
+    ...    Log    yyy    DEBUG    AND
+    ...    Log    zzz    TRACE
+    and run keywords    No Operation    Log Many    No Operation
 
 *** Keywords ***
 UK

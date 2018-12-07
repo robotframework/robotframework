@@ -195,13 +195,29 @@ class _TestCaseUserKeywordPopulator(Populator):
             self._handle_data_row(dedented_row)
 
     def _handle_data_row(self, row):
+        ending_for_loop = False
         if not self._continues(row):
             self._populator.populate()
+            if row.all == ['END']:
+                ending_for_loop = self._end_for_loop()
             self._populator = self._get_populator(row)
             self._comment_cache.consume_with(self._populate_comment_row)
         else:
             self._comment_cache.consume_with(self._populator.add)
-        self._populator.add(row)
+        if not ending_for_loop:
+            self._populator.add(row)
+
+    def _end_for_loop(self):
+        if self._populating_for_loop():
+            return True
+        return self._test_or_uk.end_for_loop()
+
+    def _populating_for_loop(self):
+        return isinstance(self._populator, ForLoopPopulator)
+
+    def _continues(self, row):
+        return (row.is_continuing() and self._populator or
+                self._populating_for_loop() and row.is_indented())
 
     def _populate_comment_row(self, crow):
         populator = StepPopulator(self._test_or_uk.add_step)
@@ -223,10 +239,6 @@ class _TestCaseUserKeywordPopulator(Populator):
         if row.starts_for_loop():
             return ForLoopPopulator(self._test_or_uk.add_for_loop)
         return StepPopulator(self._test_or_uk.add_step)
-
-    def _continues(self, row):
-        return row.is_continuing() and self._populator or \
-            (isinstance(self._populator, ForLoopPopulator) and row.is_indented())
 
     def _setting_setter(self, row):
         setting_name = row.test_or_user_keyword_setting_name()

@@ -12,16 +12,19 @@ class DynamicLibrary(object):
     def get_keyword_names(self):
         return ['0', 'Keyword 1', 'KW2', 'nön-äscii ÜTF-8',
                 u'nön-äscii Ünicöde', 'no arg spec', 'Embedded ${args} 1',
-                'Em${bed}ed ${args} 2']
+                'Em${bed}ed ${args} 2', 'Keyword-only args', 'KWO w/ varargs']
 
     def run_keyword(self, name, args, kwargs):
         print(name, args)
 
     def get_keyword_arguments(self, name):
-        if name == 'no arg spec':
+        if name == 'Keyword-only args':
+            return ['*', 'kwo', 'another=default']
+        if name == 'KWO w/ varargs':
+            return ['*varargs', 'a', 'b=2', 'c', '**kws']
+        if not name[-1].isdigit():
             return None
-        count = int(name[-1]) if name[-1].isdigit() else 0
-        return ['arg%d' % (i+1) for i in range(count)]
+        return ['arg%d' % (i+1) for i in range(int(name[-1]))]
 
     def get_keyword_documentation(self, name):
         if name == u'nön-äscii ÜTF-8':

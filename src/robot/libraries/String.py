@@ -13,14 +13,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import absolute_import
+
+import os
 import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
+
 from robot.api import logger
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
-                         unic, PY3)
+                         unic, Utf8Reader, PY3)
 from robot.version import get_version
 
 
@@ -56,8 +60,6 @@ class String(object):
         | ${str2} = | Convert To Lowercase | 1A2c3D |
         | Should Be Equal | ${str1} | abc |
         | Should Be Equal | ${str2} | 1a2c3d |
-
-        New in Robot Framework 2.8.6.
         """
         # Custom `lower` needed due to IronPython bug. See its code and
         # comments for more details.
@@ -71,8 +73,6 @@ class String(object):
         | ${str2} = | Convert To Uppercase | 1a2C3d |
         | Should Be Equal | ${str1} | ABC |
         | Should Be Equal | ${str2} | 1A2C3D |
-
-        New in Robot Framework 2.8.6.
         """
         return string.upper()
 
@@ -122,6 +122,38 @@ class String(object):
         if PY3 and is_unicode(bytes):
             raise TypeError('Can not decode strings on Python 3.')
         return bytes.decode(encoding, errors)
+
+    def format_string(self, template, *positional, **named):
+        """Formats a ``template`` using the given ``positional`` and ``named`` arguments.
+
+        The template can be either be a string or an absolute path to
+        an existing file. In the latter case the file is read and its contents
+        are used as the template. If the template file contains non-ASCII
+        characters, it must be encoded using UTF-8.
+
+        The template is formatted using Python's
+        [https://docs.python.org/library/string.html#format-string-syntax|format
+        string syntax]. Placeholders are marked using ``{}`` with possible
+        field name and format specification inside. Literal curly braces
+        can be inserted by doubling them like `{{` and `}}`.
+
+        Examples:
+        | ${to} = | Format String | To: {} <{}>                    | ${user}      | ${email} |
+        | ${to} = | Format String | To: {name} <{email}>           | name=${name} | email=${email} |
+        | ${to} = | Format String | To: {user.name} <{user.email}> | user=${user} |
+        | ${xx} = | Format String | {:*^30}                        | centered     |
+        | ${yy} = | Format String | {0:{width}{base}}              | ${42}        | base=X | width=10 |
+        | ${zz} = | Format String | ${CURDIR}/template.txt         | positional   | named=value |
+
+        New in Robot Framework 3.1.
+        """
+        if os.path.isabs(template) and os.path.isfile(template):
+            template = template.replace('/', os.sep)
+            logger.info('Reading template from file <a href="%s">%s</a>.'
+                        % (template, template), html=True)
+            with Utf8Reader(template) as reader:
+                template = reader.read()
+        return template.format(*positional, **named)
 
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given string."""
@@ -388,8 +420,6 @@ class String(object):
         | Should Be Equal | ${str}        | Robot Frame     |
         | ${str} =        | Remove String | Robot Framework | o | bt |
         | Should Be Equal | ${str}        | R Framewrk      |
-
-        New in Robot Framework 2.8.2.
         """
         for removable in removables:
             string = self.replace_string(string, removable, '')
@@ -404,8 +434,6 @@ class String(object):
         about the regular expression syntax. That keyword can also be
         used if there is a need to remove only a certain number of
         occurrences.
-
-        New in Robot Framework 2.8.2.
         """
         for pattern in patterns:
             string = self.replace_string_using_regexp(string, pattern, '')

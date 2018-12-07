@@ -243,7 +243,7 @@ class ByPathImporter(_Importer):
         try:
             return self._import(module_name)
         finally:
-            sys.path.pop(0)
+            sys.path.remove(module_dir)
 
 
 class NonDottedImporter(_Importer):

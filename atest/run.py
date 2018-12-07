@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.6
 
 """A script for running Robot Framework's acceptance tests.
 
@@ -12,7 +12,7 @@ See its help (e.g. `robot --help`) for more information.
 The specified interpreter is used by acceptance tests under `atest/robot` to
 run test cases under `atest/testdata`. It can be the name of the interpreter
 like (e.g. `python` or `jython`, a path to the selected interpreter like
-`/usr/bin/python26`, or a path to the standalone jar distribution (e.g.
+`/usr/bin/python36`, or a path to the standalone jar distribution (e.g.
 `dist/robotframework-2.9dev234.jar`). If the interpreter itself needs
 arguments, the interpreter and arguments need to be quoted like `"py -3"`.
 
@@ -20,7 +20,7 @@ As a special case the interpreter value `standalone` will compile a new
 standalone jar from the current sources and execute the acceptance tests with
 it.
 
-Note that this script itself must always be executed with Python 2.7.
+Note that this script itself must always be executed with Python 3.6 or newer.
 
 Examples:
 $ atest/run.py python --test example atest/robot
@@ -28,7 +28,6 @@ $ atest/run.py /opt/jython27/bin/jython atest/robot/tags/tag_doc.robot
 > atest\\run.py "py -3" -e no-ci atest\\robot
 """
 
-from __future__ import print_function
 import os
 import shutil
 import signal
@@ -48,12 +47,16 @@ try:
     from tasks import jar
 except ImportError:
     def jar(*args, **kwargs):
-        raise RuntimeError("Creating jar distribution requires 'invoke'.")
+        raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
+except AssertionError:
+    def jar(*args, **kwargs):
+        raise RuntimeError("JAR can be created only when in the project root. "
+                           "See BUILD.rst for details.")
 
 
 ARGUMENTS = '''
 --doc Robot Framework acceptance tests
---metadata interpreter:{interpreter.name} {interpreter.version} on {interpreter.os}
+--metadata interpreter:{interpreter}
 --variablefile {variable_file};{interpreter.path};{interpreter.name};{interpreter.version}
 --pythonpath {pythonpath}
 --outputdir {outputdir}
@@ -74,7 +77,7 @@ def atests(interpreter, *arguments):
         sys.exit(err)
     outputdir, tempdir = _get_directories(interpreter)
     arguments = list(_get_arguments(interpreter, outputdir)) + list(arguments)
-    return _run(arguments, tempdir, interpreter.classpath)
+    return _run(arguments, tempdir, interpreter)
 
 
 def _get_directories(interpreter):
@@ -102,10 +105,14 @@ def _get_arguments(interpreter, outputdir):
         yield exclude
 
 
-def _run(args, tempdir, classpath):
+def _run(args, tempdir, interpreter):
     runner = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
     command = [sys.executable, runner] + args
-    environ = dict(os.environ, TEMPDIR=tempdir, CLASSPATH=classpath or '')
+    environ = dict(os.environ,
+                   TEMPDIR=tempdir,
+                   CLASSPATH=interpreter.classpath or '',
+                   PYTHONCASEOK='True')
+    print('%s\n%s\n' % (interpreter, '-' * len(str(interpreter))))
     print('Running command:\n%s\n' % ' '.join(command))
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)
@@ -122,8 +129,8 @@ def dos_to_long(path):
         return path
     from ctypes import create_unicode_buffer, windll
     buf = create_unicode_buffer(500)
-    windll.kernel32.GetLongPathNameW(path.decode('mbcs'), buf, 500)
-    return buf.value.encode('mbcs')
+    windll.kernel32.GetLongPathNameW(path, buf, 500)
+    return buf.value
 
 
 if __name__ == '__main__':

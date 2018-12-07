@@ -28,9 +28,9 @@ Decode Non-ASCII Bytes To String Using Incompatible Encoding And Error Handler
     Check Test Case    ${TESTNAME}
 
 Decode String on Python 2 Works
-    [Tags]   no-py3
+    [Tags]   require-py2
     Check Test Case    ${TESTNAME}
 
 Decode String on Python 3 Fails
-    [Tags]   no-py2
+    [Tags]   require-py3
     Check Test Case    ${TESTNAME}

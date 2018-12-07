@@ -13,25 +13,30 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-try:
-    from collections import OrderedDict
-except ImportError:  # New in Python 2.7
-    from .ordereddict import OrderedDict
+from collections import OrderedDict
 
-from .robottypes import is_dict_like, is_list_like
+from .robottypes import is_dict_like
 
 
 class DotDict(OrderedDict):
 
-    def __setitem__(self, key, value):
-        value = self._convert_nested_dicts(value)
-        OrderedDict.__setitem__(self, key, value)
+    def __init__(self, *args, **kwds):
+        args = [self._convert_nested_initial_dicts(a) for a in args]
+        kwds = self._convert_nested_initial_dicts(kwds)
+        OrderedDict.__init__(self, *args, **kwds)
+
+    def _convert_nested_initial_dicts(self, value):
+        items = value.items() if is_dict_like(value) else value
+        return OrderedDict((key, self._convert_nested_dicts(value))
+                           for key, value in items)
 
     def _convert_nested_dicts(self, value):
+        if isinstance(value, DotDict):
+            return value
         if is_dict_like(value):
             return DotDict(value)
-        if is_list_like(value):
-            return [self._convert_nested_dicts(item) for item in value]
+        if isinstance(value, list):
+            value[:] = [self._convert_nested_dicts(item) for item in value]
         return value
 
     def __getattr__(self, key):

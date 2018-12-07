@@ -3,12 +3,11 @@ Resource        cli_resource.robot
 
 *** Variables ***
 ${NO TESTS DIR}     %{TEMPDIR}/robot_test_run_empty_suite
-${NO TESTS FILE}    ${NO TESTS DIR}.txt
+${NO TESTS FILE}    ${NO TESTS DIR}.robot
 
 *** Test Cases ***
-
 No tests in file
-     [Setup]    Create file    ${NO TESTS FILE}    ***TestCases***
+     [Setup]    Create file    ${NO TESTS FILE}    *** Test Cases ***
      Run empty suite    --runemptysuite    ${NO TESTS FILE}
      [Teardown]    Remove file    ${NO TESTS FILE}
 
@@ -25,7 +24,6 @@ Empty suite after filtering by names
 
 Empty multi source suite after filtering
      Run empty suite   --RunEmptySuite --test nonex   ${TEST FILE} ${TEST FILE}
-
 
 *** Keywords ***
 Run empty suite

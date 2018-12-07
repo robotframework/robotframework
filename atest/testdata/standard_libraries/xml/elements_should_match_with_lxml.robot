@@ -63,7 +63,7 @@ Differences in children with non-ASCII path
 Normalize whitespace
     [Template]    NONE
     Elements should match    <p>\n\tThis \ \ \ text\n<i>spaces \ has</i> also \ in\ttail!\n</p>
-    ...   <p>*This*<i>spaces*</i>*!</p>    normalize_whitespace=false
+    ...   <p>*This*<i>spaces*</i>*!\n</p>    normalize_whitespace=false
     Elements should match    <p>\n\tThis \ \ \ text\n<i>spaces \ has</i> also \ in\ttail!\n</p>
     ...   <p>This *<i>spaces ???</i>*!</p>    normalize_whitespace=yes
     Elements should not match    <tag>\ntext\n</tag>    <tag>\t*wrong*\t</tag>
@@ -83,6 +83,7 @@ Match Elements
 
 Elements should not match
     [Arguments]    ${source}    ${expected}    ${error}    ${normalize}=${FALSE}    ${exclude}=false
-    Run Keyword and Expect Error    ${error}
+    ${actual} =    Run Keyword and Expect Error    *
     ...    Elements Should Match    ${source}    ${expected}
     ...    normalize_whitespace=${normalize}    exclude_children=${exclude}
+    Should Be Equal    ${actual}    ${error}

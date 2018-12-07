@@ -15,11 +15,6 @@ run.py
     A script for running acceptance tests. See `Running acceptance tests`_
     for further instructions.
 
-genrunner.py
-    Script to generate acceptance test runners based on test data files.
-
-    Usage:  ``atest/genrunner.py atest/testdata/path/data.robot [atest/robot/path/runner.robot]``
-
 robot/
     Contains actual acceptance test cases. See `Test data`_ section for details.
 
@@ -39,6 +34,14 @@ results/
     acceptance tests are executed. It is in ``.gitignore`` and can be safely
     deleted any time.
 
+genrunner.py
+    Script to generate acceptance test runners (i.e. files under the ``robot``
+    directory) based on the test data files (i.e. files under the ``testdata``
+    directory). Mainly useful if there is one-to-one mapping between tests in
+    the ``testdata`` and ``robot`` directories.
+
+    Usage:  ``atest/genrunner.py atest/testdata/path/data.robot [atest/robot/path/runner.robot]``
+
 Running acceptance tests
 ------------------------
 
@@ -46,8 +49,8 @@ Robot Framework's acceptance tests are executed using the `<run.py>`__
 script. It has two mandatory arguments, the Python interpreter to use
 when running tests and path to tests to be executed, and it accepts also
 all same options as Robot Framework. The script itself should always be
-executed with Python. Run it with ``--help`` or see documentation in its
-`source code <run.py>`__ for more information.
+executed with Python 3.6 or newer. Run it with ``--help`` or see
+documentation in its `source code <run.py>`__ for more information.
 
 To run all the acceptance tests, execute the ``atest/robot`` folder
 entirely using the selected interpreter::
@@ -103,7 +106,7 @@ The tests on the running side (``atest/robot``) contains tags that are used
 to include or exclude them based on the platform and required dependencies.
 Selecting tests based on the platform is done automatically by the `<run.py>`__
 script, but additional selection can be done by the user to avoid running
-tests with `precondtions`_ that are not met.
+tests with `preconditions`_ that are not met.
 
 manual
   Require manual interaction from user. Used with Dialogs library tests.
@@ -116,16 +119,16 @@ no-ci
   Tests which are not executed at continuous integration. Contains all tests
   tagged with ``manual`` or ``telnet``.
 
-require-yaml, require-docutils, require-pygments, require-lxml, require-screenshot, require-tools.jar
+require-yaml, require-enum, require-docutils, require-pygments, require-lxml, require-screenshot, require-tools.jar
   Require specified Python module or some other external tool to be installed.
   See `Preconditions`_ for details and exclude like ``--exclude require-lxml``
   if needed.
 
-require-windows, require-jython, ...
+require-windows, require-jython, require-py2, require-py3, ...
   Tests that require certain operating system or Python interpreter.
   Excluded automatically outside these platforms.
 
-no-windows, no-osx, no-jython, no-ipy,  ...
+no-windows, no-osx, no-jython, no-ipy, ...
   Tests to be excluded on certain operating systems or Python interpreters.
   Excluded automatically on these platforms.
 
@@ -159,11 +162,15 @@ These Python modules need to be installed:
 
 - `docutils <http://docutils.sourceforge.net/>`_ is needed with tests related
   to parsing test data in reStructuredText format and with Libdoc tests
-  for documentation in reST format.
+  for documentation in reST format. `Not compatible with IronPython
+  <https://github.com/IronLanguages/ironpython2/issues/113>`__.
 - `Pygments <http://pygments.org/>`_ is needed by Libdoc tests for syntax
   highlighting.
 - `PyYAML <http://pyyaml.org/>`__ is required with tests related to YAML
   variable files.
+- `enum34 <https://pypi.org/project/enum34/>`__ (or older
+  `enum <https://pypi.org/project/enum/>`__) by enum conversion tests.
+  This module is included by default in Python 3.4 and newer.
 - `lxml <http://lxml.de/>`__ is needed with XML library tests. Not compatible
   with Jython or IronPython.
 
@@ -176,6 +183,7 @@ individually or by using the provided `<requirements.txt>`__ file:
     pip install 'docutils>=0.9'
     pip install pygments
     pip install pyyaml
+    pip install enum34    # Needed only with Python 2.
     pip install lxml
 
     # Install using requirements.txt
@@ -183,7 +191,7 @@ individually or by using the provided `<requirements.txt>`__ file:
 
 Notice that the lxml module may require compilation on Linux, which in turn
 may require installing development headers of lxml dependencies. Alternatively
-lxml can be installed using a system package manager like
+lxml can be installed using a system package manager with a command like
 ``sudo apt-get install python-lxml``.
 
 Because lxml is not compatible with Jython or IronPython, tests requiring it
@@ -200,11 +208,11 @@ __ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
 ``tools.jar``
 ~~~~~~~~~~~~~
 
-Libdoc requires ``tools.jar``, which is part of the standard JDK installation,
-to be in ``CLASSPATH`` when reading library documentation from Java source
-files. In addition to setting ``CLASSPATH`` explicitly, it is possible to
-put ``tools.jar`` into the ``ext-lib`` directory in the project root and
-``CLASSPATH`` is set automatically.
+When using Java 8 or earlier, Libdoc requires ``tools.jar``, which is part
+of the standard JDK installation, to be in ``CLASSPATH`` when reading library
+documentation from Java source files. In addition to setting ``CLASSPATH``
+explicitly, it is possible to put ``tools.jar`` into the ``ext-lib``
+directory in the project root and ``CLASSPATH`` is set automatically.
 
 Telnet tests
 ------------

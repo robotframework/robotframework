@@ -8,7 +8,6 @@ Library           String
 Library           TestCheckerLibrary
 Library           TestHelper           # Combine with TestCheckerLibrary?
 Library           XML
-Library           read_interpreter.py
 Variables         atest_variables.py
 
 *** Variables ***
@@ -156,6 +155,12 @@ File Should Contain Regexp
     ${file} =    Get Output File    ${path}
     Should Match Regexp    ${file.strip()}    ${exp}
 
+File Should Not Contain Regexp
+    [Arguments]    ${path}    @{expected}
+    ${exp} =    Catenate    @{expected}
+    ${file} =    Get Output File    ${path}
+    Should Not Match Regexp    ${file.strip()}    ${exp}
+
 File Should Be Equal To
     [Arguments]    ${path}    @{expected}
     ${content} =    Get Output File    ${path}
@@ -174,9 +179,19 @@ File Should Contain Match
     ${exp} =    Catenate    @{expected}
     Should Match    ${content}    *${exp}*
 
+File Should Start With
+    [Arguments]    ${path}    @{expected}
+    ${content} =    Get Output File    ${path}
+    ${exp} =    Catenate    @{expected}
+    Should Start With    ${content}    ${exp}
+
 Stderr Should Be Equal To
     [Arguments]    @{expected}
     File Should Be Equal To    ${STDERR FILE}    @{expected}
+
+Stderr Should Start With
+    [Arguments]    @{expected}
+    File Should Start With    ${STDERR FILE}    @{expected}
 
 Stderr Should Match
     [Arguments]    @{expected}
@@ -249,6 +264,10 @@ Syslog Should Match Regexp
 Syslog Should Contain Regexp
     [Arguments]    @{expected}
     File Should Contain Regexp    ${SYSLOG_FILE}    @{expected}
+
+Syslog Should Not Contain Regexp
+    [Arguments]    @{expected}
+    File Should Not Contain Regexp    ${SYSLOG FILE}    @{expected}
 
 Check Names
     [Arguments]    ${item}    ${name}    ${longprefix}=

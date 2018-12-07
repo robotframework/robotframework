@@ -1,12 +1,8 @@
 import unittest
 
 from robot.utils.asserts import assert_equal, assert_true, assert_false
-from robot.utils import seq2str, IRONPYTHON, PY2, PY3
-from robot.model.tags import *
-
-
-if PY3:
-    unicode = str
+from robot.utils import seq2str, IRONPYTHON, PY2, unicode
+from robot.model.tags import Tags, TagPattern, TagPatterns
 
 
 class TestTags(unittest.TestCase):

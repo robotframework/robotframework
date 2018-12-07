@@ -17,7 +17,7 @@ Default Name
     Check Names    ${SUITE.suites[1].tests[1]}    Second One    Pass And Fail & Normal.Normal.
 
 Overridden Name
-    Run Tests    --name My_Name    misc/pass_and_fail.robot misc/normal.robot
+    Run Tests    --name "My Name"    misc/pass_and_fail.robot misc/normal.robot
     Check Names    ${SUITE}    My Name
     Should Contain Suites    ${SUITE}    Pass And Fail    Normal
     Check Names    ${SUITE.suites[0]}    Pass And Fail    My Name.

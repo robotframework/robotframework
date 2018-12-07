@@ -38,10 +38,9 @@ from .application import Application
 from .compat import isatty, py2to3, StringIO, with_metaclass
 from .compress import compress_text
 from .connectioncache import ConnectionCache
-from .dotdict import DotDict, OrderedDict
-from .encoding import (console_decode, console_encode,
-                       system_decode, system_encode, CONSOLE_ENCODING,
-                       SYSTEM_ENCODING)
+from .dotdict import DotDict
+from .encoding import (CONSOLE_ENCODING, SYSTEM_ENCODING, console_decode,
+                       console_encode, system_decode, system_encode)
 from .error import (get_error_message, get_error_details, ErrorDetails)
 from .escaping import escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource
@@ -50,11 +49,11 @@ from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
-from .misc import (getdoc, plural_or_not, printable_name, roundup, seq2str,
+from .misc import (plural_or_not, printable_name, roundup, seq2str,
                    seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
-from .platform import (IRONPYTHON, JYTHON, PY2, PY3, PYPY, PYTHON, UNIXY,
-                       WINDOWS, RERAISED_EXCEPTIONS)
+from .platform import (IRONPYTHON, JAVA_VERSION, JYTHON, PY_VERSION,
+                       PY2, PY3, PYPY, UNIXY, WINDOWS, RERAISED_EXCEPTIONS)
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method
@@ -64,13 +63,13 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
                         parse_time)
-from .robottypes import (is_bytes, is_dict_like, is_falsy, is_integer,
-                         is_list_like, is_number, is_string, is_truthy,
-                         is_unicode, type_name)
+from .robottypes import (FALSE_STRINGS, TRUE_STRINGS, is_bytes, is_dict_like,
+                         is_falsy, is_integer, is_list_like, is_number,
+                         is_string, is_truthy, is_unicode, type_name, unicode)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,
-                   pad_console_length, get_console_length, split_tags_from_doc,
-                   split_args_from_name_or_path)
+                   get_console_length, getdoc, getshortdoc, pad_console_length,
+                   split_tags_from_doc, split_args_from_name_or_path)
 from .unic import prepr, unic
 from .utf8reader import Utf8Reader

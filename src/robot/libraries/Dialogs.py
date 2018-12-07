@@ -20,9 +20,9 @@ for pausing the test execution and getting input from users. The
 dialogs are slightly different depending on whether tests are run on
 Python, IronPython or Jython but they provide the same functionality.
 
-Long lines in the provided messages are wrapped automatically since
-Robot Framework 2.8. If you want to wrap lines manually, you can add
-newlines using the ``\\n`` character sequence.
+Long lines in the provided messages are wrapped automatically. If you want
+to wrap lines manually, you can add newlines using the ``\\n`` character
+sequence.
 
 The library has a known limitation that it cannot be used with timeouts
 on Python. Support for IronPython was added in Robot Framework 2.9.2.
@@ -32,16 +32,16 @@ from robot.version import get_version
 from robot.utils import IRONPYTHON, JYTHON, is_truthy
 
 if JYTHON:
-    from .dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    from .dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog, MultipleSelectionDialog
 elif IRONPYTHON:
-    from .dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    from .dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog, MultipleSelectionDialog
 else:
-    from .dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    from .dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog, MultipleSelectionDialog
 
 
 __version__ = get_version()
 __all__ = ['execute_manual_step', 'get_value_from_user',
-           'get_selection_from_user', 'pause_execution']
+           'get_selection_from_user', 'pause_execution', 'get_selections_from_user']
 
 
 def pause_execution(message='Test execution paused. Press OK to continue.'):
@@ -80,14 +80,12 @@ def get_value_from_user(message, default_value='', hidden=False):
     ``hidden`` is considered true if it is a non-empty string not equal to
     ``false``, ``none`` or ``no``, case-insensitively. If it is not a string,
     its truth value is got directly using same
-    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
-    as in Python].
+    [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     Example:
     | ${username} = | Get Value From User | Input user name | default    |
     | ${password} = | Get Value From User | Input password  | hidden=yes |
 
-    Possibility to hide the typed in value is new in Robot Framework 2.8.4.
     Considering strings ``false`` and ``no`` to be false is new in RF 2.9
     and considering string ``none`` false is new in RF 3.0.3.
     """
@@ -104,9 +102,27 @@ def get_selection_from_user(message, *values):
     the options given to the user.
 
     Example:
-    | ${username} = | Get Selection From User | Select user name | user1 | user2 | admin |
+    | ${user} = | Get Selection From User | Select user | user1 | user2 | admin |
     """
     return _validate_user_input(SelectionDialog(message, values))
+
+
+def get_selections_from_user(message, *values):
+    """Pauses test execution and asks user to select multiple values.
+
+    The selected values are returned as a list. Selecting no values is OK
+    and in that case the returned list is empty. Pressing ``Cancel`` fails
+    the keyword.
+
+    ``message`` is the instruction shown in the dialog and ``values`` are
+    the options given to the user.
+
+    Example:
+    | ${users} = | Get Selections From User | Select users | user1 | user2 | admin |
+
+    New in Robot Framework 3.1.
+    """
+    return _validate_user_input(MultipleSelectionDialog(message, values))
 
 
 def _validate_user_input(dialog):

@@ -25,11 +25,11 @@ class TestCheckerLibrary:
         set_suite_variable = BuiltIn().set_suite_variable
         if not path or path.upper() == 'NONE':
             set_suite_variable('$SUITE', None)
-            print "Not processing output."
+            print("Not processing output.")
             return
         path = path.replace('/', os.sep)
         try:
-            print "Processing output '%s'." % path
+            print("Processing output '%s'." % path)
             result = Result(root_suite=NoSlotsTestSuite())
             ExecutionResultBuilder(path).build(result)
         except:
@@ -143,7 +143,7 @@ class TestCheckerLibrary:
         if len(tests) != len(expected):
             raise AssertionError("Wrong number of tests." + tests_msg)
         for test in tests:
-            print "Verifying test '%s'" % test.name
+            print("Verifying test '%s'" % test.name)
             try:
                 status = self._find_expected_status(test.name, expected)
             except IndexError:
@@ -170,7 +170,7 @@ class TestCheckerLibrary:
                 raise AssertionError('Suite should not have contained test "%s"' % name)
 
     def should_contain_suites(self, suite, *expected):
-        print 'Suite has suites', suite.suites
+        print('Suite has suites', suite.suites)
         expected = sorted(expected)
         actual = sorted(s.name for s in suite.suites)
         if len(actual) != len(expected):
@@ -184,7 +184,7 @@ class TestCheckerLibrary:
                 raise AssertionError('Suite %s not found' % name)
 
     def should_contain_tags(self, test, *tags):
-        print 'Test has tags', test.tags
+        print('Test has tags', test.tags)
         assert_equal(len(test.tags), len(tags), 'Wrong number of tags')
         tags = sorted(tags, key=lambda s: s.lower().replace('_', '').replace(' ', ''))
         for act, exp in zip(test.tags, tags):

@@ -5,6 +5,9 @@ Library           ExampleLibrary
 Library           PrintLib.py
 Library           String
 
+*** Variables ***
+${CONSOLE_ENCODING}         ASCII    # Should be overridden from CLI
+
 *** Test Cases ***
 Logging Using Stdout And Stderr
     Print    Hello from Python Library!
@@ -29,14 +32,12 @@ Logging Non-ASCII As Unicode
     Print    Hyvää päivää stderr!    stderr
 
 Logging Non-ASCII As Bytes
-    ${encoding} =    Evaluate    robot.utils.encoding.CONSOLE_ENCODING    robot
-    ${bytes} =    Encode String To Bytes    Hyvää päivää!    ${encoding}
+    ${bytes} =    Encode String To Bytes    Hyvää päivää!    ${CONSOLE ENCODING}
     Print    ${bytes}
     Print    ${bytes}    stderr
 
 Logging Mixed Non-ASCII Unicode And Bytes
-    ${encoding} =    Evaluate    robot.utils.encoding.CONSOLE_ENCODING    robot
-    ${bytes} =    Encode String To Bytes    Hyvä byte!    ${encoding}
+    ${bytes} =    Encode String To Bytes    Hyvä byte!    ${CONSOLE ENCODING}
     Print Many    ${bytes}    Hyvä Unicode!
 
 Logging HTML

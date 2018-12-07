@@ -13,10 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionFailed
 from robot.model import Tags
 from robot.result import Keyword as KeywordResult
-from robot.utils import unic
 
 from .arguments import ArgumentSpec
 from .statusreporter import StatusReporter
@@ -30,10 +28,15 @@ class UserErrorHandler(object):
     is created and if it is ever run DataError is raised then.
     """
 
-    def __init__(self, name, error, libname=None):
+    def __init__(self, error, name, libname=None):
+        """
+        :param robot.errors.DataError error: Occurred error.
+        :param str name: Name of the affected keyword.
+        :param str libname: Name of the affected library or resource.
+        """
         self.name = name
         self.libname = libname
-        self.error = unic(error)
+        self.error = error
         self.arguments = ArgumentSpec()
         self.timeout = ''
         self.tags = Tags()
@@ -60,7 +63,6 @@ class UserErrorHandler(object):
                                assign=kw.assign,
                                type=kw.type)
         with StatusReporter(context, result):
-            context.fail(self.error)
-            raise ExecutionFailed(self.error, syntax=True)
+            raise self.error
 
     dry_run = run

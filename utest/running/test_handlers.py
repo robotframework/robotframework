@@ -21,9 +21,10 @@ def _get_handler_methods(lib):
     return [a for a in attrs if inspect.ismethod(a)]
 
 def _get_java_handler_methods(lib):
-    # This hack assumes that all java handlers used start with 'a_' -- easier
-    # than excluding 'equals' etc. otherwise
-    return [a for a in _get_handler_methods(lib) if a.__name__.startswith('a_') ]
+    # This hack assumes that all java handlers used start with 'a_' or 'java'
+    # -- easier than excluding 'equals' etc. otherwise
+    return [a for a in _get_handler_methods(lib)
+            if a.__name__.startswith(('a_', 'java'))]
 
 
 class LibraryMock(object):
@@ -32,7 +33,19 @@ class LibraryMock(object):
         self.name = self.orig_name = name
         self.scope = LibraryScope(scope, self)
 
-    register_listeners = unregister_listeners = reset_instance = lambda *args: None
+    register_listeners = unregister_listeners = reset_instance \
+        = get_instance = lambda *args: None
+
+
+def assert_argspec(argspec, minargs=0, maxargs=0, positional=[], defaults={},
+                   varargs=None, kwonlyargs=[], kwargs=None):
+    assert_equal(argspec.minargs, minargs)
+    assert_equal(argspec.maxargs, maxargs)
+    assert_equal(argspec.positional, positional)
+    assert_equal(argspec.defaults, defaults)
+    assert_equal(argspec.varargs, varargs)
+    assert_equal(argspec.kwonlyargs, kwonlyargs)
+    assert_equal(argspec.kwargs, kwargs)
 
 
 class TestPythonHandler(unittest.TestCase):
@@ -97,10 +110,10 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_fails('Return value must be string.', doc=True)
 
     def test_none_argspec(self):
-        self._assert_spec(None, maxargs=sys.maxsize, vararg='varargs', kwarg=False)
+        self._assert_spec(None, maxargs=sys.maxsize, varargs='varargs', kwargs=False)
 
     def test_none_argspec_when_kwargs_supported(self):
-        self._assert_spec(None, maxargs=sys.maxsize, vararg='varargs', kwarg='kwargs')
+        self._assert_spec(None, maxargs=sys.maxsize, varargs='varargs', kwargs='kwargs')
 
     def test_empty_argspec(self):
         self._assert_spec([])
@@ -110,31 +123,67 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             self._assert_spec(argspec, len(argspec), len(argspec), argspec)
 
     def test_only_default_args(self):
-        self._assert_spec(['defarg1=value', 'defarg2=defvalue'], 0, 2,
-                          ['defarg1', 'defarg2'], ['value', 'defvalue'])
+        self._assert_spec(['d1=default', 'd2=xxx'], 0, 2,
+                          ['d1', 'd2'], {'d1': 'default', 'd2': 'xxx'})
 
     def test_default_value_may_contain_equal_sign(self):
-        self._assert_spec(['d=foo=bar'], 0, 1, ['d'], ['foo=bar'])
+        self._assert_spec(['d=foo=bar'], 0, 1, ['d'], {'d': 'foo=bar'})
 
     def test_varargs(self):
-        self._assert_spec(['*vararg'], 0, sys.maxsize, vararg='vararg')
+        self._assert_spec(['*vararg'], 0, sys.maxsize, varargs='vararg')
 
     def test_kwargs(self):
-        self._assert_spec(['**kwarg'], 0, 0, kwarg='kwarg')
+        self._assert_spec(['**kwarg'], 0, 0, kwargs='kwarg')
 
     def test_varargs_and_kwargs(self):
         self._assert_spec(['*vararg', '**kwarg'],
-                          0, sys.maxsize, vararg='vararg', kwarg='kwarg')
+                          0, sys.maxsize, varargs='vararg', kwargs='kwarg')
+
+    def test_kwonlyargs(self):
+        self._assert_spec(['*', 'kwo'], kwonlyargs=['kwo'])
+        self._assert_spec(['*vars', 'kwo'], varargs='vars', kwonlyargs=['kwo'])
+        self._assert_spec(['*', 'x', 'y', 'z'], kwonlyargs=['x', 'y', 'z'])
+
+    def test_kwonlydefaults(self):
+        self._assert_spec(['*', 'kwo=default'],
+                          kwonlyargs=['kwo'],
+                          defaults={'kwo': 'default'})
+        self._assert_spec(['*vars', 'kwo=default'],
+                          varargs='vars',
+                          kwonlyargs=['kwo'],
+                          defaults={'kwo': 'default'})
+        self._assert_spec(['*', 'x=1', 'y', 'z=3'],
+                          kwonlyargs=['x', 'y', 'z'],
+                          defaults={'x': '1', 'z': '3'})
 
     def test_integration(self):
-        self._assert_spec(['arg', 'default=value'], 1, 2,
-                          ['arg', 'default'], ['value'])
-        self._assert_spec(['arg', 'default=value', '*var'], 1, sys.maxsize,
-                          ['arg', 'default'], ['value'], 'var')
-        self._assert_spec(['arg', 'default=value', '**kw'], 1, 2,
-                          ['arg', 'default'], ['value'], None, 'kw')
-        self._assert_spec(['arg', 'default=value', '*var', '**kw'], 1, sys.maxsize,
-                          ['arg', 'default'], ['value'], 'var', 'kw')
+        self._assert_spec(['arg', 'default=value'],
+                          1, 2,
+                          positional=['arg', 'default'],
+                          defaults={'default': 'value'})
+        self._assert_spec(['arg', 'default=value', '*var'],
+                          1, sys.maxsize,
+                          positional=['arg', 'default'],
+                          defaults={'default': 'value'},
+                          varargs='var')
+        self._assert_spec(['arg', 'default=value', '**kw'],
+                          1, 2,
+                          positional=['arg', 'default'],
+                          defaults={'default': 'value'},
+                          kwargs='kw')
+        self._assert_spec(['arg', 'default=value', '*var', '**kw'],
+                          1, sys.maxsize,
+                          positional=['arg', 'default'],
+                          defaults={'default': 'value'},
+                          varargs='var',
+                          kwargs='kw')
+        self._assert_spec(['a', 'b=1', 'c=2', '*d', 'e', 'f=3', 'g', '**h'],
+                          1, sys.maxsize,
+                          positional=['a', 'b', 'c'],
+                          defaults={'b': '1', 'c': '2', 'f': '3'},
+                          varargs='d',
+                          kwonlyargs=['e', 'f', 'g'],
+                          kwargs='h')
 
     def test_invalid_argspec_type(self):
         for argspec in [True, [1, 2]]:
@@ -146,11 +195,21 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                                'Non-default argument after default arguments.',
                                argspec)
 
-    def test_positional_after_vararg(self):
-        for argspec in [['*foo', 'arg'], ['arg', '*var', 'arg'],
-                        ['a', 'b=d', '*var', 'c'], ['*var', '*vararg']]:
-            self._assert_fails('Invalid argument specification: '
-                               'Positional argument after varargs.', argspec)
+    def test_multiple_vararg(self):
+        self._assert_fails('Invalid argument specification: '
+                           'Cannot have multiple varargs.',
+                           ['*first', '*second'])
+
+    def test_vararg_with_kwonly_separator(self):
+        self._assert_fails('Invalid argument specification: '
+                           'Cannot have multiple varargs.',
+                           ['*', '*varargs'])
+        self._assert_fails('Invalid argument specification: '
+                           'Cannot have multiple varargs.',
+                           ['*varargs', '*'])
+        self._assert_fails('Invalid argument specification: '
+                           'Cannot have multiple varargs.',
+                           ['*', '*'])
 
     def test_kwarg_not_last(self):
         for argspec in [['**foo', 'arg'], ['arg', '**kw', 'arg'],
@@ -160,37 +219,39 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                                'Only last argument can be kwargs.', argspec)
 
     def test_missing_kwargs_support(self):
-        self._assert_fails("Too few 'run_keyword' method parameters"
-                           " for **kwargs support.",
-                           ['**kwargs'])
+        for spec in (['**kwargs'], ['arg', '**kws'], ['a', '*v', '**k']):
+            self._assert_fails("Too few 'run_keyword' method parameters "
+                               "for **kwargs support.", spec)
+
+    def test_missing_kwonlyargs_support(self):
+        for spec in (['*', 'kwo'], ['*vars', 'kwo1', 'kwo2=default']):
+            self._assert_fails("Too few 'run_keyword' method parameters "
+                               "for keyword-only arguments support.", spec)
 
     def _assert_doc(self, doc, expected=None):
         expected = doc if expected is None else expected
         assert_equal(self._create_handler(doc=doc).doc, expected)
 
-    def _assert_spec(self, argspec, minargs=0, maxargs=0, positional=[],
-                     defaults=[], vararg=None, kwarg=None):
-        if kwarg is None:
+    def _assert_spec(self, argspec, minargs=0, maxargs=0,
+                     positional=[], defaults={}, varargs=None,
+                     kwonlyargs=[], kwargs=None):
+        if varargs and not maxargs:
+            maxargs = sys.maxsize
+        if kwargs is None and not kwonlyargs:
             kwargs_support_modes = [True, False]
-        elif kwarg is False:
+        elif kwargs is False:
             kwargs_support_modes = [False]
-            kwarg = None
+            kwargs = None
         else:
             kwargs_support_modes = [True]
         for kwargs_support in kwargs_support_modes:
-            arguments = self._create_handler(argspec,
-                                             kwargs_support=kwargs_support
-                                             ).arguments
-            assert_equal(arguments.minargs, minargs)
-            assert_equal(arguments.maxargs, maxargs)
-            assert_equal(arguments.positional, positional)
-            assert_equal(arguments.defaults, defaults)
-            assert_equal(arguments.varargs, vararg)
-            assert_equal(arguments.kwargs, kwarg)
+            handler = self._create_handler(argspec, kwargs_support=kwargs_support)
+            assert_argspec(handler.arguments, minargs, maxargs, positional,
+                           defaults, varargs, kwonlyargs, kwargs)
 
-    def _assert_fails(self, error, argspec=None, doc=None):
+    def _assert_fails(self, error, *args, **kwargs):
         assert_raises_with_msg(DataError, error,
-                               self._create_handler, argspec, doc)
+                               self._create_handler, *args, **kwargs)
 
     def _create_handler(self, argspec=None, doc=None, kwargs_support=False):
         lib = LibraryMock('TEST CASE')
@@ -209,29 +270,55 @@ if utils.JYTHON:
     handlers = dict((method.__name__, method) for method in
                     _get_java_handler_methods(ArgumentsJava('Arg', ['varargs'])))
 
-    class TestJavaHandler(unittest.TestCase):
+    class TestJavaHandlerArgLimits(unittest.TestCase):
 
-        def test_arg_limits_no_defaults_or_varargs(self):
+        def test_no_defaults_or_varargs(self):
             for count in [0, 1, 3]:
                 method = handlers['a_%d' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equal(handler.arguments.minargs, count)
-                assert_equal(handler.arguments.maxargs, count)
+                assert_argspec(handler.arguments,
+                               minargs=count,
+                               maxargs=count,
+                               positional=self._format_positional(count))
 
-        def test_arg_limits_with_varargs(self):
-            for count in [0, 1]:
-                method = handlers['a_%d_n' % count]
-                handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equal(handler.arguments.minargs, count)
-                assert_equal(handler.arguments.maxargs, sys.maxsize)
-
-        def test_arg_limits_with_defaults(self):
+        def test_defaults(self):
             # defaults i.e. multiple signatures
             for mina, maxa in [(0, 1), (1, 3)]:
                 method = handlers['a_%d_%d' % (mina, maxa)]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equal(handler.arguments.minargs, mina)
-                assert_equal(handler.arguments.maxargs, maxa)
+                assert_argspec(handler.arguments,
+                               minargs=mina,
+                               maxargs=maxa,
+                               positional=self._format_positional(maxa),
+                               defaults={'arg%s' % (i+1): ''
+                                         for i in range(mina, maxa)})
+
+        def test_varargs(self):
+            for count in [0, 1]:
+                method = handlers['a_%d_n' % count]
+                handler = _JavaHandler(LibraryMock(), method.__name__, method)
+                assert_argspec(handler.arguments,
+                               minargs=count,
+                               maxargs=sys.maxsize,
+                               positional=self._format_positional(count),
+                               varargs='varargs')
+
+        def test_kwargs(self):
+            for name, positional, varargs in [('javaKWArgs', 0, False),
+                                              ('javaNormalAndKWArgs', 1, False),
+                                              ('javaVarArgsAndKWArgs', 0, True),
+                                              ('javaAllArgs', 1, True)]:
+                method = handlers[name]
+                handler = _JavaHandler(LibraryMock(), method.__name__, method)
+                assert_argspec(handler.arguments,
+                               minargs=positional,
+                               maxargs=sys.maxsize if varargs else positional,
+                               positional=self._format_positional(positional),
+                               varargs='varargs' if varargs else None,
+                               kwargs='kwargs')
+
+        def _format_positional(self, count):
+            return ['arg%s' % (i+1) for i in range(count)]
 
 
     class TestArgumentCoercer(unittest.TestCase):

@@ -21,18 +21,6 @@ class _MockLogger(object):
         return self._output.getvalue()
 
 
-class FromDirectoryPopulatorTest(unittest.TestCase):
-
-    def test_included_suites_with_dot(self):
-        create_included_suites = FromDirectoryPopulator()._create_included_suites
-        for inp, exp in [([], []),
-                         (['foo'], ['foo']),
-                         (['bar.zoo'], ['bar.zoo', 'zoo']),
-                         (['1.2.3', 'x.y', 'z'],
-                          ['1.2.3', '2.3', '3', 'x.y', 'y', 'z'])]:
-            assert_equal(list(create_included_suites(inp)), exp)
-
-
 class _PopulatorTest(unittest.TestCase):
 
     def setUp(self):

@@ -67,9 +67,9 @@ class Screenshot(object):
       Framework users already have this module installed.
     - PyGTK :: http://pygtk.org :: This module is available by default on most
       Linux distributions.
-    - Pillow :: https://python-pillow.github.io ::
+    - Pillow :: http://python-pillow.github.io ::
       Only works on Windows. Also the original PIL package is supported.
-    - Scrot :: https://en.wikipedia.org/wiki/Scrot :: Not used on Windows.
+    - Scrot :: http://en.wikipedia.org/wiki/Scrot :: Not used on Windows.
       Install with ``apt-get install scrot`` or similar.
 
     Using ``screencapture`` on OSX and specifying explicit screenshot module
@@ -346,7 +346,10 @@ class ScreenshotTaker(object):
             self._wx_app_reference = wx.App(False)
         context = wx.ScreenDC()
         width, height = context.GetSize()
-        bitmap = wx.EmptyBitmap(width, height, -1)
+        if wx.__version__ >= '4':
+            bitmap = wx.Bitmap(width, height, -1)
+        else:
+            bitmap = wx.EmptyBitmap(width, height, -1)
         memory = wx.MemoryDC()
         memory.SelectObject(bitmap)
         memory.Blit(0, 0, width, height, context, -1, -1)

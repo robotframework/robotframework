@@ -4,7 +4,6 @@ Resource          atest_resource.robot
 
 *** Variables ***
 ${DATA SOURCES}   tags/include_and_exclude.robot
-${ESCAPES}        --escape star:STAR --escape quest:QUEST --escape amp:AMP
 @{INCL_ALL}       Incl-1    Incl-12    Incl-123
 @{EXCL_ALL}       excl-1    Excl-12    Excl-123
 @{ALL}            @{INCL_ALL}    @{EXCL_ALL}
@@ -25,7 +24,7 @@ More Includes
 Includes With AND
     [Documentation]    Testing including like "--include tag1&tag2" both with "&" and "AND"
     --include incl1ANDincl2    Incl-12    Incl-123
-    -i incl1AMPincl2AMPincl3    Incl-123
+    -i incl1&incl2&incl3    Incl-123
 
 Includes With OR
     --include incl3ORnonex    Incl-123
@@ -34,8 +33,8 @@ Includes With OR
 
 Include With Patterns
     --include incl?    @{INCL_ALL}
-    -i STARcl3 -i iSTAR2    Incl-12    Incl-123    Excl-123
-    -i i?*3ANDFORCE --include iSTAR    @{INCL_ALL}
+    -i *cl3 -i i*2    Incl-12    Incl-123    Excl-123
+    -i i?*3ANDFORCE --include inc*    @{INCL_ALL}
     -i incl?*ORnonex    @{INCL_ALL}
 
 One Exclude
@@ -48,8 +47,8 @@ More Excludes
     --exclude excl3 -e excl2    @{INCL_ALL}    excl-1
 
 Exclude With AND
-    --exclude excl1AMPexcl2    @{INCL_ALL}    excl-1
-    -e excl1AMPexcl2ANDexcl3    @{INCL_ALL}    excl-1    Excl-12
+    --exclude excl1&excl2    @{INCL_ALL}    excl-1
+    -e excl1&excl2ANDexcl3    @{INCL_ALL}    excl-1    Excl-12
 
 Exclude With OR
     --exclude nonexORexcl2    @{INCL_ALL}    excl-1
@@ -57,13 +56,13 @@ Exclude With OR
 
 Exclude With Patterns
     --exclude exc??    @{INCL_ALL}
-    -e STAR3 -e eSTAR2 -e eSTAR1    Incl-1    Incl-12
+    -e *3 -e e*2 -e e*1    Incl-1    Incl-12
     --excl excl?ORnonex    @{INCL_ALL}
 
 Include And Exclude
     [Documentation]    Include and exclude together with and without patterns and ANDing
     -i force --exclude excl2    @{INCL_ALL}    excl-1
-    --include STARcl2 -i nonex -e e???2 -i forceANDi*1    @{INCL_ALL}
+    --include *cl2 -i nonex -e e???2 -i forceANDi*1    @{INCL_ALL}
 
 Include with NOT
     --include incl1_NOT_incl3              Incl-1    Incl-12
@@ -79,17 +78,19 @@ Include and Exclude with NOT
 
 Select tests without any tags
     [Setup]    Set Test Variable    ${DATA SOURCES}    tags/no_force_no_default_tags.robot
-    --exclude STAR    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
+    # Using just '*' won't work with Jython on Windows due to its auto-globbing
+    --exclude *ORwhatever    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
 
 Select tests with any tag
     [Setup]    Set Test Variable    ${DATA SOURCES}    tags/no_force_no_default_tags.robot
-    --include STAR    Own Tags No Force Nor Default
+    # Using just '*' won't work with Jython on Windows due to its auto-globbing
+    --include *AND*    Own Tags No Force Nor Default
 
 Non Matching Include
     [Template]    Run And Check Error
     --include nonex    tag 'nonex'
     --include nonex -i nonex2    tags 'nonex' or 'nonex2'
-    --include incl1AMPnonex    tag 'incl1 AND nonex'
+    --include incl1&nonex    tag 'incl1 AND nonex'
     --include nonex_OR_nonex_2    tag 'nonex OR nonex 2'
 
 Non Matching Exclude
@@ -98,7 +99,7 @@ Non Matching Exclude
 Non Matching Include And Exclude
     [Template]    Run And Check Error
     -i nonex -e nonex2    tag 'nonex' and without tag 'nonex2'
-    --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3    tags 'nonex' or 'incl?' and without tags '*1', '*2' or '*3'
+    --include nonex -i incl? -e *1 -e *2 -e *3    tags 'nonex' or 'incl?' and without tags '*1', '*2' or '*3'
 
 Non Matching When Running Multiple Suites
     [Setup]    Set Test Variable    ${DATA SOURCES}    misc/pass_and_fail.robot misc/normal.robot
@@ -109,13 +110,13 @@ Non Matching When Running Multiple Suites
 *** Keywords ***
 Run And Check Include And Exclude
     [Arguments]    ${params}    @{tests}
-    Run Tests    ${params} ${ESCAPES}    ${DATA SOURCES}
+    Run Tests    ${params}    ${DATA SOURCES}
     Stderr Should Be Empty
     Should Contain Tests    ${SUITE}    @{tests}
 
 Run And Check Error
     [Arguments]    ${params}    ${filter_msg}    ${suite name}=Include And Exclude
-    Run Tests Without Processing Output    ${params} ${ESCAPES}    ${DATA SOURCES}
+    Run Tests Without Processing Output    ${params}    ${DATA SOURCES}
     Stderr Should Be Equal To    SEPARATOR=
     ...    [ ERROR ] Suite '${suite name}' contains no tests with ${filter_msg}.
     ...    ${USAGE TIP}\n

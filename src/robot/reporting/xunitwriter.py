@@ -13,8 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
+
 from robot.result import ResultVisitor
-from robot.utils import roundup, XmlWriter
+from robot.utils import XmlWriter
 
 
 class XUnitWriter(object):
@@ -44,22 +46,23 @@ class XUnitFileWriter(ResultVisitor):
         if self._root_suite:
             return
         self._root_suite = suite
-        tests, failures, skip = self._get_stats(suite.statistics)
+        tests, failures, skipped = self._get_stats(suite.statistics)
         attrs = {'name': suite.name,
                  'tests': tests,
                  'errors': '0',
                  'failures': failures,
-                 'skip': skip}
+                 'skipped': skipped,
+                 'time': self._time_as_seconds(suite.elapsedtime)}
         self._writer.start('testsuite', attrs)
 
     def _get_stats(self, statistics):
         if self._skip_noncritical:
             failures = statistics.critical.failed
-            skip = statistics.all.total - statistics.critical.total
+            skipped = statistics.all.total - statistics.critical.total
         else:
             failures = statistics.all.failed
-            skip = 0
-        return str(statistics.all.total), str(failures), str(skip)
+            skipped = 0
+        return str(statistics.all.total), str(failures), str(skipped)
 
     def end_suite(self, suite):
         if suite is self._root_suite:
@@ -85,7 +88,7 @@ class XUnitFileWriter(ResultVisitor):
                                                'type': 'AssertionError'})
 
     def _time_as_seconds(self, millis):
-        return str(roundup(millis, -3) // 1000)
+        return '{:.3f}'.format(millis / 1000)
 
     def visit_keyword(self, kw):
         pass

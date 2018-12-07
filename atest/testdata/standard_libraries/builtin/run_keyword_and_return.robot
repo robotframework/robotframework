@@ -24,7 +24,11 @@ Keyword fails
     Keyword fails
 
 Inside Run Keyword variants
-    [Documentation]    FAIL    Continuable\n\nAlso teardown failed:\nContinuable
+    [Documentation]    FAIL
+    ...    Continuable
+    ...
+    ...    Also teardown failed:
+    ...    Continuable
     ${ret} =    Inside Run Keyword If
     Should Be Equal    ${ret}    Run Kw If
     ${ret} =    Inside Run Keywords
@@ -84,6 +88,25 @@ Run Keyword And Return If return strings that needs to be escaped
     Should Be Equal    ${ret}    ${ESCAPING}
     ${ret} =    Run Keyword And Return Given Args If    False    @{ESCAPING}
     Should Be Equal    ${ret}    ${NONE}
+
+Run Keyword And Return In Teardown
+    No Operation
+    [Teardown]    Run Keyword And Return In Teardown
+
+Run Keyword And Return In Teardown When Keyword Fails
+    [Documentation]    FAIL    Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) Expected error
+    ...
+    ...    2) No keyword with name 'Non-Existing Keyword When Condition Is True' found.
+    ...
+    ...    3) Another expected error
+    ...
+    ...    Also keyword teardown failed:
+    ...    Expected error
+    No Operation
+    [Teardown]    Run Keyword And Return In Teardown When Keyword Fails
 
 *** Keywords ***
 Return one value
@@ -170,7 +193,27 @@ Run Keyword And Return If With Non-Existing Keyword And Variables
     Run Keyword And Return If    False    Non-Existing Keyword
     Run Keyword And Return If    False    Set Variable    ${non-existing variable}
     Run Keyword And Return If    True    Non-Existing Keyword When Condition Is True
+    Fail    Not executed
+    [Return]    Not returned
 
 Run Keyword And Return If With Variables
     [Arguments]    @{args}
     Run Keyword And Return If    @{args}
+
+Run Keyword And Return In Teardown
+    ${ret} =    Return One Value    42
+    Should Be Equal    ${ret}    ${42}
+    ${ret} =    Run Keyword And Return Given Args If    True    return value
+    Should Be Equal    ${ret}    return value
+    Run Keyword And Return    No Operation
+    Fail    Not executed
+    [Return]    Not returned
+    [Teardown]    Return One Value    42
+
+Run Keyword And Return In Teardown When Keyword Fails
+    Keyword Fails
+    Run Keyword And Return If With Non-Existing Keyword And Variables
+    Run Keyword And Return    Fail    Another expected error
+    Fail    Not executed
+    [Return]    Not returned
+    [Teardown]    Keyword Fails

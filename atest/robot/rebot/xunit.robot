@@ -26,10 +26,16 @@ XUnit Option Given
     Should Be Equal    ${root.tag}    testsuite
     ${tests} =    Get Elements    ${root}    testcase
     Length Should Be    ${tests}    19
-    Should Be Equal    ${tests[7].attrib['name']}    Ünïcödë Tëst änd Këywörd Nämës
+    Should Be Equal    ${tests[7].attrib['name']}    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
     ${failures} =    Get Elements    ${root}    testcase/failure
     Length Should Be    ${failures}    5
     Should Be Equal    ${failures[0].attrib['message']}    ${MESSAGES}
+
+Times in xUnit output
+    Previous Test Should Have Passed    XUnit Option Given
+    ${suite} =    Parse XML    ${OUTDIR}/xunit.xml
+    Element Attribute Should Match    ${suite}    time    ?.???
+    Element Attribute Should Match    ${suite}    time    ?.???    xpath=.//testcase[1]
 
 XUnit skip non-criticals
     Run Rebot    --xUnit xunit.xml --xUnitSkipNonCritical --NonCritical f1    ${INPUT FILE}
@@ -37,7 +43,7 @@ XUnit skip non-criticals
     ${root} =    Parse XML    ${OUTDIR}/xunit.xml
     Element Attribute Should Be    ${root}    tests    19
     Element Attribute Should Be    ${root}    failures    4
-    Element Attribute Should Be    ${root}    skip    10
+    Element Attribute Should Be    ${root}    skipped    10
     ${skipped} =    Get Elements    ${root}    xpath=testcase/skipped
     Should Be Equal    ${skipped[0].text}    FAIL: Expected
     Should Be Equal    ${skipped[1].text}    PASS
@@ -53,7 +59,7 @@ Invalid XUnit File
 
 *** Keywords ***
 Create Input File
-    Create Output With Robot    ${INPUT FILE}    ${EMPTY}    misc/unicode.robot misc/suites
+    Create Output With Robot    ${INPUT FILE}    ${EMPTY}    misc/non_ascii.robot misc/suites
     Create Directory    ${MYOUTDIR}
 
 Remove Temps

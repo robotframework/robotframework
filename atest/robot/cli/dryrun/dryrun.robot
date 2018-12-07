@@ -64,7 +64,7 @@ Setup/teardown with existing variable is resolved and executed
     Should Be Equal    ${tc.teardown.name}    Teardown
     ${args} =    Create List    \${nonex arg}
     Lists Should Be Equal    ${tc.teardown.args}    ${args}
-    Lists Should Be Equal    ${tc.teardown.keywords[0].name}    BuiltIn.Log
+    Should Be Equal    ${tc.teardown.keywords[0].name}    BuiltIn.Log
 
 User keyword return value
     Check Test Case    ${TESTNAME}

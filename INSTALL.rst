@@ -118,13 +118,9 @@ installer and get more information about the installation process and Python
 in general.
 
 Robot Framework 3.0 supports Python 2.6, 2.7, 3.3 and newer, but the plan is
-to `drop Python 2.6 support in RF 3.1`__. If you need to use older versions,
-Robot Framework 2.5-2.8 support Python 2.5 and Robot Framework 2.0-2.1
-support Python 2.3 and 2.4.
-
-On Windows it is recommended to install Python to all users and to run the
-installer as an administrator. Additionally, environment variable
-``PYTHONCASEOK`` must not be set.
+to `drop Python 2.6 and 3.3 support in RF 3.1`__. If you need to use older
+versions, Robot Framework 2.5-2.8 support Python 2.5 and Robot Framework
+2.0-2.1 support Python 2.3 and 2.4.
 
 After installing Python, you probably still want to configure PATH_ to make
 Python itself as well as the ``robot`` and ``rebot`` `runner scripts`_
@@ -165,19 +161,29 @@ IronPython installation
 
 IronPython_ allows running Robot Framework on the `.NET platform
 <http://www.microsoft.com/net>`__ and interacting with C# and other .NET
-languages and APIs. Only IronPython 2.7 is supported.
+languages and APIs. Only IronPython 2.7 is supported in general and
+IronPython 2.7.9 or newer is highly recommended.
 
-When using IronPython, an additional dependency is installing
-`elementtree <http://effbot.org/downloads/#elementtree>`__
-module 1.2.7 preview release. This is required because the ``elementtree``
-module distributed with IronPython is
-`broken <https://github.com/IronLanguages/main/issues/968>`__. You can install
-the package by downloading the source distribution, unzipping it, and running
-``ipy setup.py install`` on the command prompt in the created directory.
+If not using IronPython 2.7.9 or newer and Robot Framework 3.1 or newer,
+an additional requirement is installing
+`ElementTree <http://effbot.org/downloads/#elementtree>`__
+module 1.2.7 preview release. This is required because the ElementTree
+module distributed with older IronPython versions was broken. Once you
+have `pip activated for IronPython`__, you can easily install ElementTree
+using this command:
+
+.. sourcecode:: bash
+
+    ipy -m pip install http://effbot.org/media/downloads/elementtree-1.2.7-20070827-preview.zip
+
+Alternatively you can download the zip package, extract it, and install it by
+running ``ipy setup.py install`` on the command prompt in the created directory.
 
 After installing IronPython, you probably still want to configure PATH_ to make
 IronPython itself as well as the ``robot`` and ``rebot`` `runner scripts`_
 executable on the command line.
+
+__ `Installing pip for IronPython`_
 
 PyPy installation
 ~~~~~~~~~~~~~~~~~
@@ -297,6 +303,11 @@ Which versions contain it and how to possibly activate it is discussed in
 sections below. See pip_ project pages if for the latest installation
 instructions if you need to install it.
 
+.. note:: Robot Framework 3.1 and newer are distributed as `wheels
+          <http://pythonwheels.com>`_, but earlier versions are available only
+          as source distributions in tar.gz format. It is possible to install
+          both using pip, but installing wheels is a lot faster.
+
 .. note:: Only Robot Framework 2.7 and newer can be installed using pip. If you
           need an older version, you must use other installation approaches.
 
@@ -346,15 +357,15 @@ is executing the ``pip`` module using Jython directly:
 Installing pip for IronPython
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-IronPython contains bundled pip starting from `version 2.7.5`__. Similarly as
-with Jython, it needs to be activated first:
+IronPython 2.7.5 and newer contain pip bundled in. With IronPython 2.7.9 and
+newer pip also works out-of-the-box, but with earlier versions it needs to be
+activated with `ipy -m ensurepip` similarly as with Jython.
 
-.. sourcecode:: bash
-
-    ipy -X:Frames -m ensurepip
-
-Notice that with IronPython `-X:Frames` command line option is needed both
-when activating and when using pip.
+With IronPython 2.7.7 and earlier you need to use `-X:Frames` command line
+option when activating pip like `ipy -X:Frames -m ensurepip` and also
+when using it. Prior to IronPython 2.7.9 there were problems creating
+possible start-up scripts when installing modules. Using IronPython 2.7.9
+is highly recommended.
 
 IronPython installs pip into :file:`<IronPythonInstallation>/Scripts` directory.
 Does running `pip install robotframework` actually use it or possibly some
@@ -363,11 +374,7 @@ is executing the ``pip`` module using IronPython directly:
 
 .. sourcecode:: bash
 
-    ipy -X:Frames -m pip install robotframework
-
-IronPython versions prior to 2.7.5 do not officially support pip.
-
-__ http://blog.ironpython.net/2014/12/pip-in-ironpython-275.html
+    ipy -m pip install robotframework
 
 Installing pip for PyPy
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -403,7 +410,7 @@ __ PyPI_
 
 .. sourcecode:: bash
 
-    # Install the latest version
+    # Install the latest version (does not upgrade)
     pip install robotframework
 
     # Upgrade to the latest version
@@ -414,6 +421,9 @@ __ PyPI_
 
     # Install separately downloaded package (no network connection needed)
     pip install robotframework-3.0.tar.gz
+
+    # Install latest (possibly unreleased) code directly from GitHub
+    pip install https://github.com/robotframework/robotframework/archive/master.zip
 
     # Uninstall
     pip uninstall robotframework
@@ -451,11 +461,12 @@ the procedure is actually pretty straightforward.
 Getting source code
 ~~~~~~~~~~~~~~~~~~~
 
-You typically get the source by downloading a *source distribution* from PyPI_
-as a `.tar.gz` package. Once you have downloaded the package, you need to
-extract it somewhere and, as a result, you get a directory named
-`robotframework-<version>`. The directory contains the source code and a
-``setup.py`` script needed for installing it.
+You typically get the source code by downloading a *source distribution* from
+PyPI_. Starting from Robot Framework 3.1 the source distribution is a zip
+package and with earlier versions it is in tar.gz format. Once you have
+downloaded the package, you need to extract it somewhere and, as a result,
+you get a directory named `robotframework-<version>`. The directory contains
+the source code and a ``setup.py`` script needed for installing it.
 
 An alternative approach for getting the source code is cloning project's
 `GitHub repository`_ directly. By default you will get the latest code, but

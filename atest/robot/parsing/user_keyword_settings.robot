@@ -10,6 +10,9 @@ Name
     : FOR    ${kw}    IN    @{tc.kws}
     \    Should Be Equal    ${kw.name}  user_keyword nameS _are_not_ FORmatted
 
+No documentation
+    Verify Documentation    ${EMPTY}    test=Normal name
+
 Documentation
     Verify Documentation    Documentation for this user keyword
 
@@ -17,14 +20,16 @@ Documentation in multiple columns
     Verify Documentation    Documentation for this user keyword in multiple columns
 
 Documentation in multiple rows
-    [Documentation]    Only first line is used when running tests
     Verify Documentation    1st line is shortdoc.
+
+Short doc consists of first logical, not physical, line
+    Verify Documentation    1st logical line is shortdoc.\nIt can be split to\nmultiple\nphysical\nlines.
 
 Documentation with variables
     Verify Documentation    Variables work in documentation since Robot 1.2.
 
 Documentation with non-existing variables
-    Verify Documentation    Starting from RF 2.1 \${NONEX} variables are just
+    Verify Documentation    Starting from RF 2.1 \${NONEX} variables are left unchanged.
 
 Documentation with escaping
     Verify Documentation    \${XXX} c:\\temp${SPACE*2}\\
@@ -32,12 +37,19 @@ Documentation with escaping
 Arguments
     [Documentation]    Tested more thoroughly elsewhere.
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    mandatory-default-[]-{}
-    Should Be True    ${tc.kws[0].args} == ('mandatory',)
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    1-2-[]-{}
-    Should Be True    ${tc.kws[1].args} == ('1', '2')
-    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    1-2-[3, 4, 5]-{*'key': 6}    pattern=yes
-    Should Be True    ${tc.kws[2].args} == ('\${1}', '\${2}', '\${3}', '\${4}', '\${5}', 'key=\${6}')
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    mandatory
+    Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    default
+    Should Be True       ${tc.kws[0].args} == ('mandatory',)
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    1
+    Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    2
+    Should Be True       ${tc.kws[1].args} == ('1', '2')
+    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    1
+    Check Log Message    ${tc.kws[2].kws[0].msgs[1]}    2
+    Check Log Message    ${tc.kws[2].kws[0].msgs[2]}    3
+    Check Log Message    ${tc.kws[2].kws[0].msgs[3]}    4
+    Check Log Message    ${tc.kws[2].kws[0].msgs[4]}    5
+    Check Log Message    ${tc.kws[2].kws[0].msgs[5]}    key=6
+    Should Be True       ${tc.kws[2].args} == ('\${1}', '\${2}', '\${3}', '\${4}', '\${5}', 'key=\${6}')
 
 Teardown
     Verify Teardown    Keyword teardown
@@ -77,18 +89,33 @@ Multiple settings
     Verify Teardown   Teardown World
     Verify Timeout  6 minutes
 
+Deprecatted setting format
+    Check Test Case    Invalid setting
+    ${path} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in keyword 'Invalid passing':
+    ...    Setting 'Doc U Ment ation' is deprecated. Use 'Documentation' instead.
+    Check Log Message    ${ERRORS}[1]    ${message}    WARN
+
 Invalid setting
     Check Test Case    ${TEST NAME}
-    ${PATH} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
-    Check Log Message    ${ERRORS[1]}
-    ...    Error in file '${path}': Invalid syntax in keyword 'Invalid passing': Non-existing setting 'Invalid Setting'.    ERROR
-    Check Log Message    ${ERRORS[2]}
-    ...    Error in file '${path}': Invalid syntax in keyword 'Invalid failing': Non-existing setting 'invalid'.    ERROR
+    ${path} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in keyword 'Invalid passing':
+    ...    Non-existing setting 'Invalid Setting'.
+    Check Log Message    ${ERRORS}[2]    ${message}    ERROR
+    ${message} =    Catenate
+    ...    Error in file '${path}':
+    ...    Invalid syntax in keyword 'Invalid failing':
+    ...    Non-existing setting 'invalid'.
+    Check Log Message    ${ERRORS}[3]    ${message}    ERROR
 
 *** Keywords ***
 Verify Documentation
-    [Arguments]    ${doc}
-    ${tc} =    Check Test Case    ${TEST NAME}
+    [Arguments]    ${doc}    ${test}=${TEST NAME}
+    ${tc} =    Check Test Case    ${test}
     Should Be Equal    ${tc.kws[0].doc}    ${doc}
 
 Verify Teardown

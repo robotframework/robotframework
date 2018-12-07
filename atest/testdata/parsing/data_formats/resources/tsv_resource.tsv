@@ -7,5 +7,5 @@ Resource 	tsv_resource2.tsv
 ${tsv_resource_var}	TSV Resource Variable			
 
 
-*User Keywords	Action	Argument	Argument	Argument
+*Keywords	Action	Argument	Argument	Argument
 Keyword from TSV resource	No operation			
