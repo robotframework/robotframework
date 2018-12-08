@@ -45,14 +45,14 @@
 </suite>
 <statistics>
 <total>
-<stat fail="0" pass="1">Critical Tests</stat>
-<stat fail="0" pass="1">All Tests</stat>
+<stat fail="0" pass="1" skip="0">Critical Tests</stat>
+<stat fail="0" pass="1" skip="0">All Tests</stat>
 </total>
 <tag>
-<stat pass="1" fail="0">t1</stat>
+<stat pass="1" fail="0" skip="0">t1</stat>
 </tag>
 <suite>
-<stat fail="0" name="Normal" id="s1" pass="1">Normal</stat>
+<stat fail="0" name="Normal" id="s1" pass="1" skip="0">Normal</stat>
 </suite>
 </statistics>
 <errors>

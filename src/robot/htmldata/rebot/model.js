@@ -269,16 +269,17 @@ window.stats = (function () {
             });
     }
 
-    function calculatePercents(total, passed, failed) {
+    function calculatePercents(total, passed, failed, skipped) {
         if (total == 0)
-            return [0.0, 0.0];
+            return [0.0, 0.0, 0.0];
         var pass = 100.0 * passed / total;
         var fail = 100.0 * failed / total;
+        var skip = 100.0 * skipped / total;
         if (pass > 0 && pass < 0.1)
             return [0.1, 99.9];
         if (fail > 0 && fail < 0.1)
             return [99.9, 0.1];
-        return [Math.round(pass*10)/10, Math.round(fail*10)/10];
+        return [Math.round(pass*10)/10, Math.round(fail*10)/10, Math.round(skip*10)/10];
     }
 
     function calculateWidths(num1, num2) {

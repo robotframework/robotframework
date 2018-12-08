@@ -22,11 +22,11 @@ Test status and message can be changed
 
 Changing test status in end suite changes console output, but not output.xml
    Check stdout contains     SEPARATOR=\n
-   ...    3 critical tests, 3 passed, 0 failed
-   ...    3 tests total, 3 passed, 0 failed
+   ...    3 critical tests, 3 passed, 0 failed, 0 skipped
+   ...    3 tests total, 3 passed, 0 failed, 0 skipped
    ${from output.xml} =    Catenate    SEPARATOR=\n
-   ...    3 critical tests, 1 passed, 2 failed
-   ...    3 tests total, 1 passed, 2 failed
+   ...    3 critical tests, 1 passed, 2 failed, 0 skipped
+   ...    3 tests total, 1 passed, 2 failed, 0 skipped
    Should be equal    ${SUITE.stat_message}     ${from output.xml}
 
 Test tags can be modified

@@ -7,8 +7,8 @@ ${SEP_CHAR1}      =
 ${SEP_CHAR2}      -
 ${SEP_LINE1}      ${SEP_CHAR1 * 78}
 ${SEP_LINE2}      ${SEP_CHAR2 * 78}
-${MSG_211}        2 critical tests, 1 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
-${MSG_110}        1 critical test, 1 passed, 0 failed\n 1 test total, 1 passed, 0 failed
+${MSG_211}        2 critical tests, 1 passed, 1 failed, 0 skipped\n 2 tests total, 1 passed, 1 failed, 0 skipped
+${MSG_110}        1 critical test, 1 passed, 0 failed, 0 skipped\n 1 test total, 1 passed, 0 failed, 0 skipped
 
 *** Keywords ***
 Create Status Line

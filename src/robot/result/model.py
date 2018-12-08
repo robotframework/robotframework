@@ -149,6 +149,11 @@ class TestCase(model.TestCase):
         self.status = 'PASS' if passed else 'FAIL'
 
     @property
+    def skipped(self):
+        """``True/False`` depending on the :attr:`status`."""
+        return self.status == 'SKIP'
+
+    @property
     def critical(self):
         """``True/False`` depending on is the test considered critical.
 

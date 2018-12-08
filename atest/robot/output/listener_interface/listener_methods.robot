@@ -170,8 +170,8 @@ Check Listen All File
     ...    LOG MESSAGE: [FAIL] Expected failure
     ...    KW END: FAIL
     ...    TEST END: FAIL Expected failure crit: no
-    ...    SUITE END: PASS 1 critical test, 1 passed, 0 failed
-    ...    2 tests total, 1 passed, 1 failed
+    ...    SUITE END: PASS 1 critical test, 1 passed, 0 failed, 0 skipped
+    ...    2 tests total, 1 passed, 1 failed, 0 skipped
     ...    Output: output.xml    Closing...
     Check Listener File    ${filename}    @{expected}
 

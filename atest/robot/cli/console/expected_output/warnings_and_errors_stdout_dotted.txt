@@ -5,7 +5,7 @@ Running suite 'Warnings And Errors' with 3 tests.
 Run suite 'Warnings And Errors' with 3 tests in *.
 
 PASSED
-3 critical tests, 3 passed, 0 failed
-3 tests total, 3 passed, 0 failed
+3 critical tests, 3 passed, 0 failed, 0 skipped
+3 tests total, 3 passed, 0 failed, 0 skipped
 
 Output:  *
