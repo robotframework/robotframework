@@ -908,11 +908,6 @@ class _Verify(_BuiltInBase):
         | Should Not Contain | ${some list} | value  |
         | Should Not Contain | ${output}    | FAILED | ignore_case=True |
         """
-        # TODO: It is inconsistent that errors show original case in 'container'
-        # 'item' is in lower case. Should rather show original case everywhere
-        # and add separate '(case-insensitive)' not to the error message.
-        # This same logic should be used with all keywords supporting
-        # case-insensitive comparisons.
         orig_container = container
         orig_item = item
         if is_truthy(ignore_case) and is_string(item):
@@ -1075,10 +1070,6 @@ class _Verify(_BuiltInBase):
         | Should Contain X Times | ${output}    | hello | 2 |
         | Should Contain X Times | ${some list} | value | 3 | ignore_case=True |
         """
-        # TODO: Rename 'item1' and 'item2' to 'container' and 'item' in RF 3.1.
-        # Other 'contain' keywords use these names. And 'Get Count' should too.
-        # Cannot be done in minor release due to backwards compatibility.
-        # Remember to update it also in the docstring!!
         count = self._convert_to_integer(count)
         orig_item = item
         orig_container = container
