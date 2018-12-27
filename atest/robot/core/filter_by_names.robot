@@ -47,26 +47,31 @@ ${SUITE DIR}       misc/suites
     Should Contain Tests    ${SUITE}   Suite1 First    Suite1 Second    Third In Suite1    Suite2 First
 
 --suite with patterns
-    Run Suites    --suite t*te? -s [foo][foo]urth
-    Should Contain Suites    ${SUITE}    Tsuite1    Tsuite2    Tsuite3    Fourth
-    Should Contain Tests   ${SUITE}    Suite1 First    Suite1 Second    Third In Suite1    Suite2 First    Suite3 First    Suite4 First
+    Run Suites    --suite t*te[13] -s [foo][foo]urth
+    Should Contain Suites    ${SUITE}    Tsuite1    Tsuite3    Fourth
+    Should Contain Tests   ${SUITE}    Suite1 First    Suite1 Second    Third In Suite1    Suite3 First    Suite4 First
 
 Parent suite init files are processed
+    Previous Test Should Have Passed    --suite with patterns
     Should Be True    ${SUITE.teardown}
     Check log message    ${SUITE.teardown.msgs[0]}    Default suite teardown
 
 Unnecessary files are not parsed when --suite matches files
     [Documentation]    Test that only files matching --suite are processed.
     ...                Additionally __init__ files should never be ignored.
+    Previous Test Should Have Passed    Parent suite init files are processed
     ${root} =    Normalize Path    ${DATA DIR}/${SUITE DIR}
     Check Syslog Contains    Parsing directory '${root}'.
+    Check Syslog Contains    Parsing file '${root}${/}tsuite1.robot'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite2.robot'.
+    Check Syslog Contains    Parsing file '${root}${/}tsuite3.robot'.
     Check Syslog Contains    Parsing file '${root}${/}fourth.robot'.
     Check Syslog Contains    Parsing directory '${root}${/}subsuites'.
     Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites${/}sub1.robot'.
     Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites${/}sub2.robot'.
-    Check Syslog Contains    Parsing file '${root}${/}tsuite1.robot'.
-    Check Syslog Contains    Parsing file '${root}${/}tsuite2.robot'.
-    Check Syslog Contains    Parsing file '${root}${/}tsuite3.robot'.
+    Check Syslog Contains    Parsing directory '${root}${/}subsuites2'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites2${/}subsuite3.robot'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites2${/}sub.suite.4.robot'.
     Syslog Should Not Contain Regexp    Ignoring file or directory '.*__init__.robot'.
 
 --suite matching directory
@@ -74,19 +79,23 @@ Unnecessary files are not parsed when --suite matches files
     Should Contain Suites    ${SUITE.suites[0]}    Sub1    Sub2
     Should Contain Tests   ${SUITE}    SubSuite1 First    SubSuite2 First
 
-Unnecessary files are not parsed when --suite matches direcotry
+Unnecessary files are not parsed when --suite matches directory
     [Documentation]    Testing that only files matching to --suite are processed.
     ...                This time --suite matches directory so all suites under it
-    ...                should be processed.
+    ...                should be parsed regardless their names.
+    Previous Test Should Have Passed    --suite matching directory
     ${root} =    Normalize Path    ${DATA DIR}/${SUITE DIR}
     Check Syslog Contains    Parsing directory '${root}'.
-    Check Syslog Contains    Ignoring file or directory '${root}${/}fourth.robot'.
     Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite1.robot'.
     Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite2.robot'.
     Check Syslog Contains    Ignoring file or directory '${root}${/}tsuite3.robot'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}fourth.robot'.
     Check Syslog Contains    Parsing directory '${root}${/}subsuites'.
     Check Syslog Contains    Parsing file '${root}${/}subsuites${/}sub1.robot'.
     Check Syslog Contains    Parsing file '${root}${/}subsuites${/}sub2.robot'.
+    Check Syslog Contains    Parsing directory '${root}${/}subsuites2'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites2${/}subsuite3.robot'.
+    Check Syslog Contains    Ignoring file or directory '${root}${/}subsuites2${/}sub.suite.4.robot'.
     Syslog Should Not Contain Regexp    Ignoring file or directory '.*__init__.robot'.
 
 --suite with long name matching file
@@ -111,16 +120,16 @@ Unnecessary files are not parsed when --suite matches direcotry
     Should Contain Suites    ${SUITE}    Subsuites
     Should Contain Tests   ${SUITE}   SubSuite1 First    SubSuite2 First
 
-Unnecessary files are not parsed when --suite matches direcotry using long name
-    Run Suites    --suite suite_should.be.parsed    ${DATA DIR}/misc
-    Should Contain Suites    ${SUITE.suites[0]}    Be
-    Should Contain Tests    ${SUITE}    Executed
-    Should Not Contain Tests    ${SUITE}    Not Executed
-    ${should} =    Normalize Path    ${DATA DIR}/misc/suite_should
-    Check Syslog Contains    Parsing directory '${should}${/}be'.
-    Check Syslog Contains    Parsing file '${should}${/}be${/}parsed.robot'.
-    Check Syslog Contains    Parsing directory '${should}${/}not be'.
-    Check Syslog Contains    Ignoring file or directory '${should}${/}not be${/}parsed.robot'.
+--suite with long name when executing multiple suites
+    Run Suites    -s "Subsuites & Subsuites2.Subsuites.Sub1"    misc/suites/subsuites misc/suites/subsuites2
+    Should Contain Suites    ${SUITE}              Subsuites
+    Should Contain Suites    ${SUITE.suites[0]}    Sub1
+    Should Contain Tests     ${SUITE}              SubSuite1 First
+
+--suite with long name and --name
+    Run Suites    --name Custom --suite custom.fourth
+    Should Contain Suites    ${SUITE}    fourth
+    Should Contain Tests     ${SUITE}    Suite4 First
 
 --suite not matching
     Run Failing Test

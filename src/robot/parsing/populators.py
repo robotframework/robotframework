@@ -117,8 +117,8 @@ class FromDirectoryPopulator(object):
     def populate(self, path, datadir, include_suites=None,
                  include_extensions=None, recurse=True):
         LOGGER.info("Parsing directory '%s'." % path)
-        include_suites = self._get_include_suites(path, datadir, include_suites )
-        init_file, children = self._get_children(path, datadir, include_extensions,
+        include_suites = self._get_include_suites(path, include_suites)
+        init_file, children = self._get_children(path, include_extensions,
                                                  include_suites)
         if init_file:
             self._populate_init_file(datadir, init_file)
@@ -143,19 +143,28 @@ class FromDirectoryPopulator(object):
             except DataError as err:
                 LOGGER.error("Parsing '%s' failed: %s" % (child, err.message))
 
-    def _get_include_suites(self, path, datadir, incl_suites):
+    def _get_include_suites(self, path, incl_suites):
+        if not incl_suites:
+            return None
         if not isinstance(incl_suites, SuiteNamePatterns):
-            incl_suites = SuiteNamePatterns(incl_suites)
+            incl_suites = SuiteNamePatterns(
+                    self._create_included_suites(incl_suites))
         # If a directory is included, also all its children should be included.
-        if self._is_in_included_suites(os.path.basename(path), datadir.parent,
-                                       incl_suites):
-            return SuiteNamePatterns()
+        if self._is_in_included_suites(os.path.basename(path), incl_suites):
+            return None
         return incl_suites
 
-    def _get_children(self, dirpath, datadir, incl_extensions, incl_suites):
+    def _create_included_suites(self, incl_suites):
+        for suite in incl_suites:
+            yield suite
+            while '.' in suite:
+                suite = suite.split('.', 1)[1]
+                yield suite
+
+    def _get_children(self, dirpath, incl_extensions, incl_suites):
         init_file = None
         children = []
-        for path, is_init_file in self._list_dir(dirpath, datadir, incl_extensions,
+        for path, is_init_file in self._list_dir(dirpath, incl_extensions,
                                                  incl_suites):
             if is_init_file:
                 if not init_file:
@@ -166,7 +175,7 @@ class FromDirectoryPopulator(object):
                 children.append(path)
         return init_file, children
 
-    def _list_dir(self, dir_path, datadir, incl_extensions, incl_suites):
+    def _list_dir(self, dir_path, incl_extensions, incl_suites):
         # os.listdir returns Unicode entries when path is Unicode
         dir_path = unic(dir_path)
         names = os.listdir(dir_path)
@@ -177,7 +186,7 @@ class FromDirectoryPopulator(object):
             ext = ext[1:].lower()
             if self._is_init_file(path, base, ext, incl_extensions):
                 yield path, True
-            elif self._is_included(path, datadir, base, ext, incl_extensions, incl_suites):
+            elif self._is_included(path, base, ext, incl_extensions, incl_suites):
                 yield path, False
             else:
                 LOGGER.info("Ignoring file or directory '%s'." % path)
@@ -192,27 +201,19 @@ class FromDirectoryPopulator(object):
             return ext in incl_extensions
         return ext in READERS
 
-    def _is_included(self, path, datadir, base, ext, incl_extensions, incl_suites):
+    def _is_included(self, path, base, ext, incl_extensions, incl_suites):
         if base.startswith(self.ignored_prefixes):
             return False
         if os.path.isdir(path):
             return base not in self.ignored_dirs or ext
         if not self._extension_is_accepted(ext, incl_extensions):
             return False
-        return self._is_in_included_suites(base, datadir, incl_suites)
+        return self._is_in_included_suites(base, incl_suites)
 
-    def _is_in_included_suites(self, name, datadir, incl_suites):
+    def _is_in_included_suites(self, name, incl_suites):
         if not incl_suites:
             return True
-        name = self._split_prefix(name)
-        return incl_suites.match(name, self._get_longname(name, datadir))
+        return incl_suites.match(self._split_prefix(name))
 
     def _split_prefix(self, name):
         return name.split('__', 1)[-1]
-
-    def _get_longname(self, name, datadir):
-        longname = name
-        while datadir:
-            longname = '%s.%s' % (datadir.name, longname)
-            datadir = datadir.parent
-        return longname
