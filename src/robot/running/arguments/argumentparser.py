@@ -54,16 +54,17 @@ class PythonArgumentParser(_ArgumentParser):
                 = getfullargspec(handler)
         if ismethod(handler) or handler.__name__ == '__init__':
             args = args[1:]  # drop 'self'
-        defaults = self._get_defaults(args, defaults, kwonlydefaults)
-        return ArgumentSpec(
-            name, self._type,
+        spec = ArgumentSpec(
+            name,
+            self._type,
             positional=args,
             varargs=varargs,
             kwargs=kwargs,
             kwonlyargs=kwonly,
-            defaults=defaults,
-            types=self._get_types(handler, annotations, defaults)
+            defaults=self._get_defaults(args, defaults, kwonlydefaults)
         )
+        spec.types = self._get_types(handler, annotations, spec)
+        return spec
 
     def _get_defaults(self, args, default_values, kwonlydefaults):
         if default_values:
@@ -74,25 +75,35 @@ class PythonArgumentParser(_ArgumentParser):
             defaults.update(kwonlydefaults)
         return defaults
 
-    def _get_types(self, handler, annotations, defaults):
+    def _get_types(self, handler, annotations, spec):
         types = getattr(handler, 'robot_types', ())
         if types is None:
             return None
         if types:
             return types
-        return self._get_type_hints(handler, annotations, defaults)
+        return self._get_type_hints(handler, annotations, spec)
 
-    def _get_type_hints(self, handler, annotations, defaults):
+    def _get_type_hints(self, handler, annotations, spec):
         if not typing:
             return annotations
         try:
             type_hints = typing.get_type_hints(handler)
         except Exception:  # Can raise pretty much anything
             return annotations
-        return self._remove_optional_none(type_hints, defaults)
+        self._remove_mismatching_type_hints(type_hints, spec.argument_names)
+        self._remove_optional_none_type_hints(type_hints, spec.defaults)
+        return type_hints
 
-    def _remove_optional_none(self, type_hints, defaults):
-        # If argument has None as a default, `typing.get_type_hints` adds
+    def _remove_mismatching_type_hints(self, type_hints, argument_names):
+        # typing.get_type_hints returns info from the original function even
+        # if it is decorated. Argument names are got from the wrapping
+        # decorator and thus there is a mismatch that needs to be resolved.
+        mismatch = set(type_hints) - set(argument_names)
+        for name in mismatch:
+            type_hints.pop(name)
+
+    def _remove_optional_none_type_hints(self, type_hints, defaults):
+        # If argument has None as a default, typing.get_type_hints adds
         # optional None to the information it returns. We don't want that.
         for arg in defaults:
             if defaults[arg] is None and arg in type_hints:
@@ -101,7 +112,6 @@ class PythonArgumentParser(_ArgumentParser):
                     types = type_.__args__
                     if len(types) == 2 and types[1] is type(None):
                         type_hints[arg] = types[0]
-        return type_hints
 
     def _is_union(self, type_):
         if PY_VERSION >= (3, 7) and hasattr(type_, '__origin__'):
