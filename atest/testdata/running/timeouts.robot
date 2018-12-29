@@ -21,19 +21,16 @@ Sleeping But Passing
 
 Failing Before Timeout
     [Documentation]    FAIL Failure before timeout
+    [Timeout]    2000ms
     Fail    Failure before timeout
 
 Show Correct Trace Back When Failing Before Timeout
     [Documentation]    FAIL Failure before timeout
-    [Setup]    Set Log Level    DEBUG
     Exception    RuntimeError    Failure before timeout
-    [Teardown]    Set Log Level    INFO
 
 Show Correct Trace Back When Failing In Java Before Timeout
     [Documentation]    FAIL ArrayStoreException: This is exception message
-    [Setup]    Set Log Level    DEBUG
     java exception    This is exception message
-    [Teardown]    Set Log Level    INFO
 
 Sleeping And Timeouting
     [Documentation]    FAIL Test timeout 1 second exceeded.
@@ -94,13 +91,13 @@ Timout Defined For One Test
     Sleep    3
 
 Timeouted Keyword Passes
-    [Documentation]    PASS
-    Log    Testing outputcapture in timeouted test
+    [Timeout]    1 day
+    Log    Testing logging in timeouted test
     Timeouted Keyword Passes
 
 Timeouted Keyword Fails Before Timeout
     [Documentation]    FAIL Failure before keyword timeout
-    [Timeout]    2 seconds
+    [Timeout]    2 days
     Timeouted Keyword Fails Before Timeout
 
 Timeouted Keyword Timeouts
@@ -255,12 +252,12 @@ Clean Up Timeout Temp
 Timeouted Keyword Passes
     [Arguments]    ${secs}=0.1
     [Timeout]    5 seconds
-    Log    Testing outputcapture in timeouted keyword
+    Log    Testing logging in timeouted keyword
     Sleep Without Logging    ${secs}
     [Return]    Slept ${secs}s
 
 Timeouted Keyword Fails Before Timeout
-    [Timeout]    5 seconds
+    [Timeout]    9000
     Fail    Failure before keyword timeout
 
 Timeouted Keyword Timeouts
