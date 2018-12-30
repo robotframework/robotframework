@@ -144,7 +144,8 @@ Logging With Timeouts
 It Should Be Possible To Print From Java Libraries When Test Timeout Has Been Set
     [Tags]    require-jython
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log message    ${tc.kws[0].msgs[0]}    My message from java lib
+    Timeout should have been active    ${tc.kws[0]}    1 second    2
+    Check Log message    ${tc.kws[0].msgs[1]}    My message from java lib
 
 Timeouted Keyword Called With Wrong Number of Arguments
     Check Test Case    ${TEST NAME}
