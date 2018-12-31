@@ -191,9 +191,9 @@ Creating distributions
 5. Verify that project pages at `PyPI
    <https://pypi.python.org/pypi/robotframework>`_ look good.
 
-6. Test installation (add ``--pre`` with pre-releases)::
+6. Test installation::
 
-      pip install --upgrade robotframework
+      pip install --pre --upgrade robotframework
 
 7. JAR distribution
 
