@@ -1,6 +1,7 @@
 *** Settings ***
 Resource        atest_resource.robot
 Library         ProcessManager.py
+Force Tags      no-windows
 
 *** Variables ***
 ${TEST FILE}    %{TEMPDIR}${/}signal-tests.txt

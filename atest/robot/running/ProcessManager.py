@@ -22,6 +22,8 @@ class ProcessManager(object):
         if os.name != 'nt':
             os.kill(self._process.pid, getattr(signal, signal_name))
         else:
+            # TODO: This approach does not work in CI and/or current
+            # windows environments as it tries to kill the parent process
             self._set_handler_to_ignore_one_sigint()
             ctypes.windll.kernel32.GenerateConsoleCtrlEvent(0, 0)
 

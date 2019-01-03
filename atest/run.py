@@ -113,6 +113,9 @@ def _run(args, tempdir, interpreter):
                    CLASSPATH=interpreter.classpath or '',
                    PYTHONCASEOK='True')
     print('%s\n%s\n' % (interpreter, '-' * len(str(interpreter))))
+    if interpreter.classpath:
+        print(f'CLASSPATH={interpreter.classpath}')
+    print(f'TEMPDIR={tempdir}')
     print('Running command:\n%s\n' % ' '.join(command))
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)
