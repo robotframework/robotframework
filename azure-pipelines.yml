@@ -1,0 +1,174 @@
+variables:
+  osx_runner: '/Users/vsts/hostedtoolcache/Python/3.6.5/x64/python'
+  win_runner: '/c/hostedtoolcache/windows/Python/3.6.4/x64/python'
+  lin_runner: '/opt/hostedtoolcache/Python/3.6.5/x64/python'
+
+jobs:
+- template: azure/job_template.yml
+  parameters:
+    name: 'osx_python27'
+    vmImage: 'macOS-10.13'
+    timeout: 40
+    extra_atest_params: ''
+    os_name: 'OSX'
+    python_type: 'Python'
+    python_version: 2.7
+    python_binary: '/Users/vsts/hostedtoolcache/Python/2.7.15/x64/python'
+    runner_binary: $(osx_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'osx_python37'
+    vmImage: 'macOS-10.13'
+    extra_atest_params: ''
+    timeout: 40
+    os_name: 'OSX'
+    python_type: 'Python'
+    python_version: 3.7
+    python_binary: '/Users/vsts/hostedtoolcache/Python/3.7.0/x64/python'
+    runner_binary: $(osx_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'win_python27'
+    vmImage: 'VS2017-Win2016'
+    extra_atest_params: ''
+    timeout: 45
+    os_name: 'Windows'
+    python_type: 'Python'
+    python_version: 2.7
+    python_binary: '/c/hostedtoolcache/windows/Python/2.7.14/x64/python'
+    runner_binary: $(win_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'win_python34'
+    vmImage: 'VS2017-Win2016'
+    extra_atest_params: ''
+    timeout: 45
+    os_name: 'Windows'
+    python_type: 'Python'
+    python_version: 3.4
+    python_binary: '/c/hostedtoolcache/windows/Python/3.4.4/x64/python'
+    runner_binary: $(win_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'win_python35'
+    vmImage: 'VS2017-Win2016'
+    extra_atest_params: ''
+    timeout: 45
+    os_name: 'Windows'
+    python_type: 'Python'
+    python_version: 3.5
+    python_binary: '/c/hostedtoolcache/windows/Python/3.5.4/x64/python'
+    runner_binary: $(win_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'win_python37'
+    vmImage: 'VS2017-Win2016'
+    extra_atest_params: ''
+    timeout: 45
+    os_name: 'Windows'
+    python_type: 'Python'
+    python_version: 3.7
+    python_binary: '/c/hostedtoolcache/windows/Python/3.7.0/x64/python'
+    runner_binary: $(win_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'lin_python27'
+    vmImage: 'Ubuntu-16.04'
+    extra_atest_params: '--exclude require-screenshot'
+    timeout: 40
+    os_name: 'Linux'
+    python_type: 'Python'
+    python_version: 2.7
+    python_binary: '/opt/hostedtoolcache/Python/2.7.15/x64/python'
+    runner_binary: $(lin_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'lin_python34'
+    vmImage: 'Ubuntu-16.04'
+    extra_atest_params: '--exclude require-screenshot'
+    timeout: 40
+    os_name: 'Linux'
+    python_type: 'Python'
+    python_version: 3.4
+    python_binary: '/opt/hostedtoolcache/Python/3.4.8/x64/python'
+    runner_binary: $(lin_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'lin_python36'
+    vmImage: 'Ubuntu-16.04'
+    extra_atest_params: '--exclude require-screenshot'
+    timeout: 40
+    os_name: 'Linux'
+    python_type: 'Python'
+    python_version: 3.6
+    python_binary: '/opt/hostedtoolcache/Python/3.6.5/x64/python'
+    runner_binary: $(lin_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'lin_python37'
+    vmImage: 'Ubuntu-16.04'
+    extra_atest_params: '--exclude require-screenshot'
+    timeout: 40
+    os_name: 'Linux'
+    python_type: 'Python'
+    python_version: 3.7
+    python_binary: '/opt/hostedtoolcache/Python/3.7.0/x64/python'
+    runner_binary: $(lin_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'lin_pypy2'
+    vmImage: 'Ubuntu-16.04'
+    extra_atest_params: '--exclude require-screenshot'
+    timeout: 30
+    os_name: 'Linux'
+    python_type: 'PyPy'
+    python_version: 2.7
+    python_binary: '/usr/local/bin/pypy'
+    runner_binary: $(lin_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'lin_pypy3'
+    vmImage: 'Ubuntu-16.04'
+    extra_atest_params: '--exclude require-screenshot'
+    timeout: 40
+    os_name: 'Linux'
+    python_type: 'PyPy'
+    python_version: 3.5
+    python_binary: '/usr/local/bin/pypy3'
+    runner_binary: $(lin_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'win_jython2'
+    vmImage: 'VS2017-Win2016'
+    extra_atest_params: ''
+    timeout: 250
+    os_name: 'Windows'
+    python_type: 'Jython'
+    python_version: 2.7
+    python_binary: '~/jython/bin/jython'
+    runner_binary: $(win_runner)
+
+- template: azure/job_template.yml
+  parameters:
+    name: 'win_ironpython2'
+    vmImage: 'VS2017-Win2016'
+    extra_atest_params: ''
+    timeout: 250
+    os_name: 'Windows'
+    python_type: 'IronPython'
+    python_version: 2.7
+    python_binary: 'ipy'
+    runner_binary: $(win_runner)
+

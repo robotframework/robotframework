@@ -1,0 +1,4 @@
+docutils
+unittest-xml-reporting
+enum34
+-r requirements-ci.txt

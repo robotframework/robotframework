@@ -1,0 +1,84 @@
+jobs:
+- job: ${{ parameters.name }}
+  variables:
+    extra_atest_params: ${{ parameters.extra_atest_params }}
+    os_name: ${{ parameters.os_name }}
+    python_type: ${{ parameters.python_type }}
+    python_version: ${{ parameters.python_version }}
+    python_binary: ${{ parameters.python_binary }}
+    runner_binary: ${{ parameters.runner_binary }}
+  timeoutInMinutes: ${{ parameters.timeout }}
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+  steps:
+
+## Installing dependencies
+  ## Interpreters and hardcoded tooling ...
+  - bash: |
+      choco install wget
+      wget "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/2.7.1/jython-installer-2.7.1.jar" -O ~/jytinst.jar
+      java -jar ~/jytinst.jar  -s -d ~/jython/
+    displayName: "Jython for test execution"
+    condition: and(eq(variables['python_type'],'Jython'), eq(variables['os_name'], 'Windows'))
+
+  - bash: |
+      choco install ironpython
+    displayName: "Ironpython for test execution"
+    condition: and(eq(variables['python_type'],'IronPython'), eq(variables['os_name'], 'Windows'))
+
+  - bash: |
+      sudo apt-get -y -q install libtcl8.6 libtk8.6 scrot
+    displayName: "Install Linux dependencies"
+    condition: eq(variables['os_name'], 'Linux')
+
+  - bash: |
+      $(python_binary) -m ensurepip --user
+      sudo apt-get -y -q install libxslt-dev libxml2-dev
+    displayName: "Install PyPy dependencies"
+    condition: and(eq(variables['python_type'],'PyPy'), eq(variables['os_name'], 'Linux'))
+
+  - bash: |
+      $(python_binary) -m ensurepip --user
+      $(python_binary) -m pip install --user http://effbot.org/media/downloads/elementtree-1.2.7-20070827-preview.zip
+    displayName: "Install IronPython dependencies"
+    condition: and(eq(variables['python_type'],'IronPython'), eq(variables['os_name'], 'Windows'))
+
+  ## And actual robotframework dependencies ...
+  - bash: |
+      $(python_binary) -m pip install --user -r requirements-ci-$(python_type).txt
+    displayName: 'Install requirements'
+
+## Unit Test Execution
+
+  - bash: $(python_binary) utest/cirun.py
+    displayName: 'Running Unit Tests'
+    continueOnError: true
+
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: JUnit
+      testResultsFiles: utest_junit.xml
+      testResultsTitle: Unit Test for $(os_name) with Python $(python_version)
+      testRunTitle: $(python_type)-$(python_version)-$(os_name)-unit
+
+## Acceptance Test Execution
+
+  - bash: $(runner_binary) atest/run.py $(python_binary) --xunit atest_junit.xml --exclude no-ci $(extra_atest_params)  atest/robot
+    continueOnError: true
+    displayName: 'Running Acceptance Tests'
+
+  - task: PublishBuildArtifacts@1
+    condition: always()
+    displayName: Publish Robot Framework logs and results
+    inputs:
+      PathtoPublish: atest/results/$(python_type)-$(python_version)-$(os_name)
+      ArtifactType: container
+      TargetPath: ""
+      ArtifactName: $(python_type)-$(python_version)-$(os_name)-testlogs
+
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: JUnit
+      testResultsFiles: atest/results/$(python_type)-$(python_version)-$(os_name)/atest_junit.xml
+      testResultsTitle: Acceptance Test for $(os_name) with Python $(python_version)
+      testRunTitle: $(python_type)-$(python_version)-$(os_name)-acceptance

@@ -1,0 +1,5 @@
+lxml
+docutils
+enum34; python_version < '3.0'
+unittest-xml-reporting
+-r requirements-ci.txt
