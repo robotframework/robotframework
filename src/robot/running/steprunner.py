@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
-                          ExitForLoop, ContinueForLoop, DataError)
+                          ExecutionSkipped, ExitForLoop, ContinueForLoop, DataError)
 from robot.result import Keyword as KeywordResult
 from robot.utils import (format_assign_message, frange, get_error_message,
                          is_list_like, is_number, plural_or_not as s, type_name)
@@ -35,6 +35,9 @@ class StepRunner(object):
             try:
                 self.run_step(step)
             except ExecutionPassed as exception:
+                exception.set_earlier_failures(errors)
+                raise exception
+            except ExecutionSkipped as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
             except ExecutionFailed as exception:
@@ -117,6 +120,9 @@ class ForInRunner(object):
             except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
+            except ExecutionSkipped as exception:
+            	exception.set_earlier_failures(errors)
+            	raise exception
             except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
                 if not exception.can_continue(self._context.in_teardown,

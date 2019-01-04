@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionFailed, PassExecution
+from robot.errors import ExecutionFailed, PassExecution, SkipExecution
 from robot.utils import html_escape, py2to3, unic
 
 
@@ -23,6 +23,7 @@ class Failure(object):
     def __init__(self):
         self.setup = None
         self.test = None
+        self.skip = None
         self.teardown = None
 
     def __nonzero__(self):
@@ -71,13 +72,15 @@ class _ExecutionStatus(object):
             parent.children.append(self)
 
     def setup_executed(self, failure=None):
-        if failure and not isinstance(failure, PassExecution):
+        if failure and (not isinstance(failure, PassExecution) and
+                        not isinstance(failure, SkipExecution)):
             self.failure.setup = unic(failure)
             self.exit.failure_occurred(failure)
         self._teardown_allowed = True
 
     def teardown_executed(self, failure=None):
-        if failure and not isinstance(failure, PassExecution):
+        if failure and (not isinstance(failure, PassExecution) and
+                        not isinstance(failure, SkipExecution)):
             self.failure.teardown = unic(failure)
             self.exit.failure_occurred(failure)
 
@@ -101,7 +104,11 @@ class _ExecutionStatus(object):
 
     @property
     def status(self):
-        return 'FAIL' if self.failures else 'PASS'
+        if self.failures and self.failure.skip != 'SKIP':
+            return 'FAIL'
+        if not self.failures and self.failure.skip == 'SKIP':
+            return 'SKIP'
+        return 'PASS'
 
     @property
     def message(self):
@@ -110,6 +117,9 @@ class _ExecutionStatus(object):
         if self.parent and self.parent.failures:
             return self._parent_message()
         return ''
+
+    def test_skipped(self, skip, critical):
+        self.failure.skip = unicode(skip)
 
     def _my_message(self):
         raise NotImplementedError

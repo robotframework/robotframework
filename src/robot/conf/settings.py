@@ -41,6 +41,7 @@ class _BaseSettings(object):
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
                  'Exclude'          : ('exclude', []),
+                 'Skip'             : ('skip', []),
                  'Critical'         : ('critical', None),
                  'NonCritical'      : ('noncritical', None),
                  'OutputDir'        : ('outputdir', abspath('.')),
