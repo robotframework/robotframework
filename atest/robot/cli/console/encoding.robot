@@ -33,6 +33,7 @@ Invalid encoding configuration
     ...    LC_TYPE=invalid
     ...    LANGUAGE=invalid
     ...    LC_ALL=invalid
+    ...    PYTHONUTF8=0
     ...    @{COMMAND}
     ${result} =    Run Process
     ...    echo "redirect stdin" | ${cmd}
