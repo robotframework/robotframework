@@ -1172,13 +1172,13 @@ case-insensitive.
    | bytearray_  |               |            | Same conversion as with bytes_ but the result is a bytearray_. |                                      |
    +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
    | `datetime   |               |            | Argument is expected to be a timestamp in `ISO 8601`_ like     | | `2018-09-12T15:47:05.123456`       |
-   | <dt-mod_>`_ |               |            | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2018-09-12 15:47`                 |
+   | <dt-mod_>`__|               |            | format `YYYY-MM-DD hh:mm:ss.mmmmmm`, where any non-digit       | | `2018-09-12 15:47`                 |
    |             |               |            | character can be used as a separator or separators can be      | | `2018-09-12`                       |
    |             |               |            | omitted altogether. Additionally, only the date part is        |                                      |
    |             |               |            | mandatory, all possibly missing time components are considered |                                      |
    |             |               |            | to be zeros.                                                   |                                      |
    +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
-   | date_       |               |            | Same conversion as with `datetime <dt-mod_>`_ but all time     | | `2018-09-12`                       |
+   | date_       |               |            | Same conversion as with `datetime <dt-mod_>`__ but all time    | | `2018-09-12`                       |
    |             |               |            | components are expected to be omitted or to be zeros.          |                                      |
    +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
    | timedelta_  |               |            | String is expected to represent a time interval in one of the  | | `42` (42 seconds)                  |
