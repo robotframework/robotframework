@@ -182,9 +182,21 @@ def assert_equal(first, second, msg=None, values=True):
         _report_inequality_failure(first, second, msg, values, '!=')
 
 
+def assert_equal_case_insensitive(first, second, msg=None, values=True):
+    """Fail if given objects are unequal(case insensitive) as determined by the '==' operator."""
+    if not first.lower() == second.lower():
+        _report_inequality_failure(first, second, msg, values, '!=')
+
+
 def assert_not_equal(first, second, msg=None, values=True):
     """Fail if given objects are equal as determined by the '==' operator."""
     if first == second:
+        _report_inequality_failure(first, second, msg, values, '==')
+
+
+def assert_not_equal_case_insensitive(first, second, msg=None, values=True):
+    """Fail if given objects are equal(case insensitive) as determined by the '==' operator."""
+    if first.lower() == second.lower():
         _report_inequality_failure(first, second, msg, values, '==')
 
 

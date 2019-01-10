@@ -33,7 +33,8 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
                          secs_to_timestr, seq2str, split_from_equals, StringIO,
                          timestr_to_secs, type_name, unic, is_list_like)
-from robot.utils.asserts import assert_equal, assert_not_equal, _report_inequality_failure
+from robot.utils.asserts import assert_equal, assert_not_equal, assert_equal_case_insensitive, \
+                                assert_not_equal_case_insensitive
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
                              variable_not_found)
@@ -635,12 +636,7 @@ class _Verify(_BuiltInBase):
             self._raise_multi_diff(first, second)
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
             logger.info('(case insensitive)')
-            orig_first = first
-            orig_second = second
-            first = first.lower()
-            second = second.lower()
-            if not first == second:
-                _report_inequality_failure(orig_first, orig_second, msg, values, '!=')
+            assert_equal_case_insensitive(first, second, msg, include_values)
         else:
             assert_equal(first, second, msg, include_values)
 
@@ -674,18 +670,15 @@ class _Verify(_BuiltInBase):
         both arguments are strings, it indicates that comparison should be
         case-insensitive. New option in Robot Framework 3.0.1.
         """
-        orig_first = first
-        orig_second = second
         self._log_types_at_info_if_different(first, second)
-        if is_truthy(ignore_case) and is_string(first) and is_string(second):
-            logger.info('(case insensitive)')
-            first = first.lower()
-            second = second.lower()
-        if first == second:
-            _report_inequality_failure(orig_first, orig_second, msg, values, '==')
+        self._should_not_be_equal(first, second, msg, values, ignore_case)
 
-    def _should_not_be_equal(self, first, second, msg, values):
-        assert_not_equal(first, second, msg, self._include_values(values))
+    def _should_not_be_equal(self, first, second, msg, values, ignore_case=False):
+        if is_truthy(ignore_case):
+            logger.info('(case insensitive)')
+            assert_not_equal_case_insensitive(first, second, msg, self._include_values(values))
+        else:
+            assert_not_equal(first, second, msg, self._include_values(values))
 
     def should_not_be_equal_as_integers(self, first, second, msg=None,
                                         values=True, base=None):
@@ -793,14 +786,7 @@ class _Verify(_BuiltInBase):
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
         second = self._convert_to_string(second)
-        orig_first = first
-        orig_second = second
-        if is_truthy(ignore_case):
-            logger.info('(case sensitive)')
-            first = first.lower()
-            second = second.lower()
-        if first == second:
-            _report_inequality_failure(orig_first, orig_second, msg, values, '==')
+        self._should_not_be_equal(first, second, msg, values, ignore_case)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True,
                                    ignore_case=False):
