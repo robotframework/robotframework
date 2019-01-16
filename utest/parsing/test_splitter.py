@@ -83,7 +83,7 @@ class TestSplitFromSpaces(unittest.TestCase):
                       (SEPA, '   \n', 1, 13)])
 
     def test_empty(self):
-        verify_split('')
+        verify_split('', [])
         verify_split('\n', [(SEPA, '\n', 1, 1)])
         verify_split('  ', [(SEPA, '  ', 1, 1)])
         verify_split('  \n', [(SEPA, '  \n', 1, 1)])

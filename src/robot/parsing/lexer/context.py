@@ -13,19 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .settings import KeywordSettings, TestCaseFileSettings, TestCaseSettings
+from .settings import (KeywordSettings, TestCaseFileSettings,
+                       TestCaseSettings, ResourceFileSettings)
 
 
 class LexingContext(object):
 
-    def __init__(self, settings=None):
+    def __init__(self, settings):
         self.settings = settings
 
-    def tokenize_setting(self, statement):
-        return self.settings.tokenize(statement)
-
-    def test_case_context(self):
-        return TestCaseContext(TestCaseSettings(self.settings))
+    def lex_setting(self, statement):
+        self.settings.lex(statement)
 
     def keyword_context(self):
         return KeywordContext(KeywordSettings())
@@ -33,8 +31,22 @@ class LexingContext(object):
 
 class TestCaseFileContext(LexingContext):
 
-    def __init__(self, settings=None):
-        LexingContext.__init__(self, settings or TestCaseFileSettings())
+    def __init__(self):
+        LexingContext.__init__(self, TestCaseFileSettings())
+
+    def test_case_context(self):
+        return TestCaseContext(TestCaseSettings(self.settings))
+
+
+class ResourceFileContext(LexingContext):
+
+    def __init__(self):
+        LexingContext.__init__(self, ResourceFileSettings())
+
+    def test_case_context(self):
+        # Lex test cases for resource/init files.
+        # The error will be reported when the model is built
+        return KeywordContext(TestCaseSettings(self.settings))
 
 
 class TestCaseContext(LexingContext):
@@ -45,7 +57,6 @@ class TestCaseContext(LexingContext):
 
 
 class KeywordContext(LexingContext):
-    settings_class = KeywordSettings
 
     @property
     def template_set(self):

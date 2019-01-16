@@ -228,7 +228,7 @@ For Without Parameters
     Fail    Not Executed
 
 For Without Variable
-    [Documentation]    FAIL    ${NO VARIABLES}
+    [Documentation]    FAIL    Invalid FOR loop variable 'IN'.
     Log    This is executed
     FOR    IN    one    two
         Fail    Not Executed

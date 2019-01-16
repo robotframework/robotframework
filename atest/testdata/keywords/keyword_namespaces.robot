@@ -29,8 +29,8 @@ Full Name Works With Non-Unique Keyword Names
     mywithname.keywordeverywhere
 
 Non-Unique Keywords Without Full Name Fails 1
-    [Documentation]    FAIL Multiple keywords with name 'Keyword In Both Resources' found.\
-    ...    Give the full name of the keyword you want to use:
+    [Documentation]    FAIL
+    ...    Multiple keywords with name 'Keyword In Both Resources' found. Give the full name of the keyword you want to use:
     ...    ${SPACE*4}my_resource_1.Keyword In Both Resources
     ...    ${SPACE*4}my_resource_2.Keyword In Both Resources
     Keyword In Both Resources
@@ -72,8 +72,8 @@ No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And I
     Run Keyword If    ${TRUE}    Log    Hello
 
 Keyword In More Than One Custom Library And Standard Library
-    [Documentation]    FAIL Multiple keywords with name 'No Operation' found.\
-    ...    Give the full name of the keyword you want to use:
+    [Documentation]    FAIL
+    ...    Multiple keywords with name 'No Operation' found. Give the full name of the keyword you want to use:
     ...    ${SPACE*4}BuiltIn.No Operation
     ...    ${SPACE*4}My With Name.No Operation
     ...    ${SPACE*4}MyLibrary1.No Operation

@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# FIXME misleading maybe??
 """Implements test data parsing.
 
 Classes :class:`~.model.TestCaseFile`, :class:`~.model.TestDataDirectory`
@@ -48,20 +49,37 @@ Example
     print_suite(suite)
 """
 
-from .model import TestData, TestCaseFile, TestDataDirectory, ResourceFile
-from . import populators
+from robot.errors import DataError
+
+from .lexer import TestCaseFileLexer, ResourceFileLexer
+from .nodes import TestCaseSection
+from .parser import RobotFrameworkParser
 
 
-TEST_EXTENSIONS = set(populators.READERS)
+# TODO: remove/inline
+TEST_EXTENSIONS = {"robot", "txt", "tsv", "rest", "rst"}
+
+
+def get_test_case_file_ast(source):
+    return RobotFrameworkParser(TestCaseFileLexer()).parse(source)
+
+
+def get_resource_file_ast(source):
+    ast = RobotFrameworkParser(ResourceFileLexer()).parse(source)
+    if any(isinstance(s, TestCaseSection) for s in ast.sections):
+        raise DataError("Resource file '%s' cannot contain tests or tasks." % source)
+    return ast
 
 
 def disable_curdir_processing(method):
     """Decorator to disable processing `${CURDIR}` variable."""
     def decorated(*args, **kwargs):
-        original = populators.PROCESS_CURDIR
-        populators.PROCESS_CURDIR = False
-        try:
-            return method(*args, **kwargs)
-        finally:
-            populators.PROCESS_CURDIR = original
-    return decorated
+        pass
+        # FIXME
+        # original = populators.PROCESS_CURDIR
+        # populators.PROCESS_CURDIR = False
+        # try:
+        #     return method(*args, **kwargs)
+        # finally:
+        #     populators.PROCESS_CURDIR = original
+    return method

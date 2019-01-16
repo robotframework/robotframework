@@ -32,9 +32,9 @@ else:
 @py2to3
 class _Timeout(Sortable):
 
-    def __init__(self, timeout=None, message='', variables=None):
+    def __init__(self, timeout=None, message=None, variables=None):
         self.string = timeout or ''
-        self.message = message
+        self.message = message or ''
         self.secs = -1
         self.starttime = -1
         self.error = None
