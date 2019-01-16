@@ -10,7 +10,8 @@ Should Contain with non-strings
     Check test case    ${TESTNAME}
 
 Should Contain case-insensitive
-    Check Test Case    ${TESTNAME}
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    (case insensitive)
 
 Should Not Contain
     Check test case    ${TESTNAME}
@@ -19,4 +20,5 @@ Should Not Contain with non-strings
     Check test case    ${TESTNAME}
 
 Should Not Contain case-insensitive
-    Check Test Case    ${TESTNAME}
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    (case insensitive)

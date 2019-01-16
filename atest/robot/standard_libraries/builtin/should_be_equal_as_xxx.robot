@@ -36,7 +36,8 @@ Should Be Equal As Strings
     Verify argument type message    ${tc.kws[0].msgs[0]}    int    unicode
 
 Should Be Equal As Strings case-insensitive
-    Check test case    ${TESTNAME}
+    ${tc}=    Check test case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    (case insensitive)
 
 Should Be Equal As Strings multiline
     Check test case    ${TESTNAME}
@@ -46,4 +47,5 @@ Should Not Be Equal As Strings
     Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    float
 
 Should Not Be Equal As Strings case-insensitive
-    Check test case    ${TESTNAME}
+    ${tc}=    Check test case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    (case insensitive)

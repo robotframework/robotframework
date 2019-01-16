@@ -74,7 +74,7 @@ Should Be Equal As Strings
     foo        bar
 
 Should Be Equal As Strings case-insensitive
-    [Documentation]    FAIL yötä != päivää
+    [Documentation]    FAIL YÖTÄ != PÄIVÄÄ
     [Template]    Should Be Equal As Strings
     test value    TEST VALUE    ignore_case=True
     HYVÄÄ YÖTÄ    hyvää yötä    ignore_case=yes
@@ -100,8 +100,11 @@ Should Not Be Equal As Strings
     bar      bar    These strings most certainly should not be equal    False
 
 Should Not Be Equal As Strings case-insensitive
-    [Documentation]    FAIL true == true
+    [Documentation]    FAIL true == True
     [Template]    Should Not Be Equal As Strings
     1        ${1.1}     ignore_case=True
     Hyvää    päivää     ignore_case=yes
     true     ${True}    ignore_case=yeah
+
+Case Insensitive
+    Should Be Equal As Strings    true    ${True}    ignore_case=True

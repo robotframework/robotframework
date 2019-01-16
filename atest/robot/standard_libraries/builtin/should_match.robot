@@ -24,7 +24,8 @@ Should Not Match
     Check test case    ${TESTNAME}
 
 Should Not Match case-insensitive
-    Check test case    ${TESTNAME}
+    ${tc}=    Check test case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    (case insensitive)
 
 Should Not Match with bytes containing non-ascii characters
     [Tags]    require-py2    no-ipy
