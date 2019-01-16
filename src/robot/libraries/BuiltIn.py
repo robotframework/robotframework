@@ -836,7 +836,7 @@ class _Verify(_BuiltInBase):
         orig_str1 = str1
         orig_str2 = str2
         if is_truthy(ignore_case):
-            logger.info("(case insensitive)")
+            logger.info()
             str1 = str1.lower()
             str2 = str2.lower()
         if not str1.startswith(str2):
@@ -854,7 +854,7 @@ class _Verify(_BuiltInBase):
         orig_str1 = str1
         orig_str2 = str2
         if is_truthy(ignore_case):
-            logger.info("(case insensitive)")
+            logger.info('(case insensitive)')
             str1 = str1.lower()
             str2 = str2.lower()
         if str1.endswith(str2):
@@ -872,7 +872,7 @@ class _Verify(_BuiltInBase):
         orig_str1 = str1
         orig_str2 = str2
         if is_truthy(ignore_case):
-            logger.info("(case insensitive)")
+            logger.info('(case insensitive)')
             str1 = str1.lower()
             str2 = str2.lower()
         if not str1.endswith(str2):
@@ -897,7 +897,7 @@ class _Verify(_BuiltInBase):
         orig_container = container
         orig_item = item
         if is_truthy(ignore_case) and is_string(item):
-            logger.info("(case insensitive)")
+            logger.info('(case insensitive)')
             item = item.lower()
             if is_string(container):
                 container = container.lower()
@@ -931,7 +931,7 @@ class _Verify(_BuiltInBase):
         orig_container = container
         orig_item = item
         if is_truthy(ignore_case) and is_string(item):
-            logger.info("(case insensitive)")
+            logger.info('(case insensitive)')
             item = item.lower()
             if is_string(container):
                 container = container.lower()
