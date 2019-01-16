@@ -31,6 +31,7 @@ that can be used programmatically. Other code is for internal usage.
 """
 
 import sys
+import os
 
 # Allows running as a script. __name__ check needed with multiprocessing:
 # https://github.com/robotframework/robotframework/issues/1137
@@ -41,7 +42,7 @@ from robot.conf import RobotSettings
 from robot.model import ModelModifier
 from robot.output import LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
-from robot.running import TestSuiteBuilder
+from robot.running.builder import TestSuiteBuilder
 from robot.utils import Application, unic, text
 
 

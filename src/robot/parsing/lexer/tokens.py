@@ -70,6 +70,7 @@ class Token(object):
         self.value = value
         self.lineno = lineno
         self.columnno = columnno
+        self.error = None
 
     def __str__(self):
         # TODO: __unicode__

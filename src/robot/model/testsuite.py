@@ -159,9 +159,9 @@ class TestSuite(ModelObject):
         if options:
             self.visit(SuiteConfigurer(**options))
 
-    def remove_empty_suites(self):
+    def remove_empty_suites(self, preserve_direct_children=False):
         """Removes all child suites not containing any tests, recursively."""
-        self.visit(EmptySuiteRemover())
+        self.visit(EmptySuiteRemover(preserve_direct_children))
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""

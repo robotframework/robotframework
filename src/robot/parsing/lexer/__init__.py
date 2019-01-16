@@ -13,18 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import print_function   # TODO: Remove once "main" is removed
-
-from .context import TestCaseFileContext
-from .lexers import TestCaseFileLexer
+from .context import TestCaseFileContext, ResourceFileContext
+from .lexers import FileLexer
 from .splitter import Splitter
 from .tokens import EOS, Token
 
 
-class RobotFrameworkLexer(object):
+class BaseLexer(object):
+    context_class = None
 
-    def __init__(self, data_only=False, lexer=None):
-        self.lexer = lexer or TestCaseFileLexer()
+    def __init__(self, data_only=True):
+        self.lexer = FileLexer()
         self.statements = []
         self._data_only = data_only
 
@@ -40,11 +39,10 @@ class RobotFrameworkLexer(object):
             self.lexer.input(data)
 
     def get_tokens(self):
-        self.lexer.lex(TestCaseFileContext())
+        self.lexer.lex(self.context_class())
         if self._data_only:
-            # TODO: Should whole statement be ignored if there's ERROR?
             ignore = {Token.IGNORE, Token.COMMENT_HEADER, Token.COMMENT,
-                      Token.ERROR, Token.OLD_FOR_INDENT}
+                      Token.OLD_FOR_INDENT}
         else:
             ignore = {Token.IGNORE}
         for statement in self._handle_old_for(self.statements):
@@ -85,22 +83,9 @@ class RobotFrameworkLexer(object):
         return None
 
 
-# TODO: Remove when integrated...
-if __name__ == '__main__':
-    import sys
-    if len(sys.argv) == 2:
-        data_only = False
-        formatter = str
-        end = ''
-        ignore = ()
-    else:
-        data_only = True
-        formatter = repr
-        end = '\n'
-        ignore = (Token.EOS,)
-    lxr = RobotFrameworkLexer(data_only=data_only)
-    with open(sys.argv[1]) as f:
-        lxr.input(f.read())
-    for token in lxr.get_tokens():
-        if token.type not in ignore:
-            print(formatter(token), end=end)
+class TestCaseFileLexer(BaseLexer):
+    context_class = TestCaseFileContext
+
+
+class ResourceFileLexer(BaseLexer):
+    context_class = ResourceFileContext

@@ -89,7 +89,7 @@ class BlockLexer(Lexer):
                 lexer.lex(ctx)
 
 
-class TestCaseFileLexer(BlockLexer):
+class FileLexer(BlockLexer):
 
     def lex(self, ctx):
         self._lex_with_priority(ctx, priority=SettingSectionLexer)
@@ -198,9 +198,7 @@ class SettingSectionLexer(SectionLexer):
 class SettingLexer(StatementLexer):
 
     def lex(self, ctx):
-        self.statement[0].type = ctx.tokenize_setting(self.statement)
-        for token in self.statement[1:]:
-            token.type = Token.ARGUMENT
+        ctx.lex_setting(self.statement)
 
 
 class VariableSectionLexer(SectionLexer):
@@ -220,6 +218,7 @@ class VariableLexer(StatementLexer):
 
 
 class TestCaseSectionLexer(SectionLexer):
+    # FIXME: Non-ASCII spaces
     markers = ('Test Case', 'Test Cases', 'Task', 'Tasks')
 
     def lexer_classes(self):
@@ -307,19 +306,25 @@ class ForLoopLexer(StatementLexer):
     def handles(cls, statement):
         marker = statement[0].value
         return (marker == 'FOR' or
-                marker[0] == ':' and marker.lstrip(': ').upper() == 'FOR')
+                marker[0] == ':' and
+                marker.replace(':', '').replace(' ', '').upper() == 'FOR')
 
     def lex(self, ctc):
         separator_seen = False
+        arguments_seen = False
         self.statement[0].type = Token.FOR
         for token in self.statement[1:]:
-            if self._is_separator(token.value) and not separator_seen:
+            if self._is_separator(token.value, arguments_seen, separator_seen):
                 token.type = Token.FOR_SEPARATOR
                 separator_seen = True
             else:
                 token.type = Token.ARGUMENT
+                arguments_seen = True
 
-    def _is_separator(self, value):
+    def _is_separator(self, value, arguments_seen, separator_seen):
+        if separator_seen or not arguments_seen:
+            return False
+        # FIXME: Non-ASCII spaces
         return value in ('IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP')
 
 
