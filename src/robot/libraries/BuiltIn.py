@@ -836,7 +836,7 @@ class _Verify(_BuiltInBase):
         orig_str1 = str1
         orig_str2 = str2
         if is_truthy(ignore_case):
-            logger.info()
+            logger.info('(case insensitive)')
             str1 = str1.lower()
             str2 = str2.lower()
         if not str1.startswith(str2):

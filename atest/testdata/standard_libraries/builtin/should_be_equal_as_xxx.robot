@@ -105,6 +105,3 @@ Should Not Be Equal As Strings case-insensitive
     1        ${1.1}     ignore_case=True
     Hyvää    päivää     ignore_case=yes
     true     ${True}    ignore_case=yeah
-
-Case Insensitive
-    Should Be Equal As Strings    true    ${True}    ignore_case=True
