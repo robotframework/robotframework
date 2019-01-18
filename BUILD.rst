@@ -232,13 +232,13 @@ Creating distributions
 
    - Run command::
 
-        mvn gpg:sign-and-deploy-file -Dfile=dist/robotframework-$VERSION.jar -DpomFile=pom.xml -Durl=http://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
+        mvn gpg:sign-and-deploy-file -Dfile=dist/robotframework-$VERSION.jar -DpomFile=pom.xml -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
 
    - Go to https://oss.sonatype.org/index.html#welcome, log in with Sonatype credentials, find the staging repository and do close & release
    - After that, the released JAR is synced to Maven central within an hour.
 
 __ https://issues.sonatype.org/secure/Dashboard.jspa
-__ http://central.sonatype.org/pages/working-with-pgp-signatures.html
+__ https://central.sonatype.org/pages/working-with-pgp-signatures.html
 __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
 9. Documentation
