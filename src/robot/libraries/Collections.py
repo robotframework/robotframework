@@ -267,7 +267,7 @@ class _List(object):
         """Returns a copy of the given list.
 
         If the optional ``deepcopy`` is given a true value, the returned
-        list is a deep copy.
+        list is a deep copy. New option in Robot Framework 3.1.2.
 
         The given list is never altered by this keyword.
         """
@@ -567,7 +567,7 @@ class _Dictionary(object):
         """Returns a copy of the given dictionary.
 
         If the optional ``deepcopy`` is given a true value, the returned
-        dictionary is a deep copy.
+        dictionary is a deep copy. New option in Robot Framework 3.1.2.
 
         The given dictionary is never altered by this keyword.
         """

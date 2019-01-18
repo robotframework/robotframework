@@ -87,6 +87,9 @@ Get Index From List With Invalid Stop Index
 Copy List
     Check Test Case    ${TEST NAME}
 
+Shallow Copy List
+    Check Test Case    ${TEST NAME}
+
 Deep Copy List
     Check Test Case    ${TEST NAME}
 

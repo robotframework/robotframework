@@ -28,8 +28,11 @@ Keep In Dictionary
 Copy Dictionary
     Check Test Case    ${TEST NAME}
 
+Shallow Copy Dictionary
+    Check Test Case    ${TEST NAME}
+
 Deep Copy Dictionary
-        Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME}
 
 Get Dictionary Keys
     Check Test Case    ${TEST NAME}
