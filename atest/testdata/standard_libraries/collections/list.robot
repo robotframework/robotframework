@@ -138,6 +138,23 @@ Copy List
     Append To List    ${L2}    1    2    3
     Compare To Expected String    ${copy}    ['1', 2]
 
+Shallow Copy List
+    ${dict} =    Create Dictionary    a    1
+    ${a} =    Create List    ${dict}
+    ${b} =    Copy List    ${a}
+    Set To Dictionary    ${a}[0]    a    2
+    Should Be Equal    ${a}[0][a]    2
+    Should Be Equal    ${b}[0][a]    2
+
+Deep Copy List
+    ${dict} =    Create Dictionary    a    1
+    ${a} =    Create List    ${dict}
+    ${b} =    Copy List    ${a}   deepcopy=True
+    Set To Dictionary    ${a}[0]    a    2
+    Set To Dictionary    ${b}[0]    a    3
+    Should Be Equal    ${a}[0][a]    2
+    Should Be Equal    ${b}[0][a]    3
+
 Reserve List
     Reverse List    ${LONG}
     Compare To Expected String    ${LONG}    [2, '1', '44', '43', 42, '41', 2, '1', '1']

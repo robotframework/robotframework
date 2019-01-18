@@ -39,6 +39,23 @@ Copy Dictionary
     Compare To Expected String    ${copy}    {'b':2}
     Compare To Expected String    ${D3}    {'a': 1, 'b': 2, 3: None}
 
+Shallow Copy Dictionary
+    ${x2} =    Create Dictionary    x2    1
+    ${a} =    Create Dictionary    x1    ${x2}
+    ${b} =    Copy Dictionary    ${a}
+    Set To Dictionary    ${a['x1']}    x2    2
+    Should Be Equal    ${a['x1']['x2']}    2
+    Should Be Equal    ${b['x1']['x2']}    2
+
+Deep Copy Dictionary
+    ${x2} =    Create Dictionary    x2    1
+    ${a} =    Create Dictionary    x1    ${x2}
+    ${b} =    Copy Dictionary    ${a}    deepcopy=True
+    Set To Dictionary    ${a['x1']}    x2    2
+    Set To Dictionary    ${b['x1']}    x2    3
+    Should Be Equal    ${a['x1']['x2']}    2
+    Should Be Equal    ${b['x1']['x2']}    3
+
 Get Dictionary Keys
     ${keys} =    Get Dictionary Keys    ${D3B}
     Compare To Expected String    ${keys}    ['a', 'b', 'c']
