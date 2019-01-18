@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import copy
+
 from robot.api import logger
 from robot.utils import (is_dict_like, is_list_like, is_number, is_string, is_truthy, plural_or_not,
                          seq2str, seq2str2, type_name, unic, Matcher)
@@ -261,12 +263,17 @@ class _List(object):
         except ValueError:
             return -1
 
-    def copy_list(self, list_):
+    def copy_list(self, list_, deepcopy=False):
         """Returns a copy of the given list.
+
+        If the optional ``deepcopy`` is given a true value, the returned
+        list is a deep copy.
 
         The given list is never altered by this keyword.
         """
         self._validate_list(list_)
+        if deepcopy:
+            return copy.deepcopy(list_)
         return list_[:]
 
     def reverse_list(self, list_):
@@ -556,12 +563,17 @@ class _Dictionary(object):
         remove_keys = [k for k in dictionary if k not in keys]
         self.remove_from_dictionary(dictionary, *remove_keys)
 
-    def copy_dictionary(self, dictionary):
+    def copy_dictionary(self, dictionary, deepcopy=False):
         """Returns a copy of the given dictionary.
+
+        If the optional ``deepcopy`` is given a true value, the returned
+        dictionary is a deep copy.
 
         The given dictionary is never altered by this keyword.
         """
         self._validate_dictionary(dictionary)
+        if deepcopy:
+            return copy.deepcopy(dictionary)
         return dictionary.copy()
 
     def get_dictionary_keys(self, dictionary):

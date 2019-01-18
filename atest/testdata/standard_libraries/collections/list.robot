@@ -138,6 +138,16 @@ Copy List
     Append To List    ${L2}    1    2    3
     Compare To Expected String    ${copy}    ['1', 2]
 
+Deep Copy List
+    ${dict} =    Create Dictionary    a    1
+    ${a} =    Create List    ${dict}
+    ${b} =    Evaluate    copy.deepcopy(${a})    copy
+    ${c} =    Copy List    ${a}   deepcopy=True
+    Set To Dictionary    ${b[0]}    a    2
+    Set To Dictionary    ${c[0]}    a    3
+    Should Not Be Equal    ${a[0]['a']}    ${b[0]['a']}
+    Should Not Be Equal    ${a[0]['a']}    ${c[0]['a']}
+
 Reserve List
     Reverse List    ${LONG}
     Compare To Expected String    ${LONG}    [2, '1', '44', '43', 42, '41', 2, '1', '1']
@@ -581,6 +591,8 @@ Check List Error
     Should Contain Match                  I am a string. Not a list.    a
     Should Not Contain Match              I am a string. Not a list.    xyz
     Sort List
+
+
 
 *** Keywords ***
 Validate invalid argument error
