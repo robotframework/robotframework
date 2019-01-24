@@ -72,6 +72,8 @@ jobs:
     displayName: Publish Robot Framework logs and results
     inputs:
       PathtoPublish: atest/results/$(python_type)-$(python_version)-$(os_name)
+      Parallelcopy: true
+      Parallelcount: 8
       ArtifactType: container
       TargetPath: ""
       ArtifactName: $(python_type)-$(python_version)-$(os_name)-testlogs
