@@ -1,4 +1,3 @@
-pygments
 pytest
 unittest2
 pyyaml
