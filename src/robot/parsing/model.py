@@ -85,31 +85,13 @@ class _TestData(object):
         name = header_row[0] if header_row else ''
         title = name.title()
         if title not in self._tables:
-            title = self._resolve_deprecated_table(name)
-            if title is None:
-                self._report_unrecognized_table(name)
-                return None
+            self._report_unrecognized_table(name)
+            return None
         return self._tables[title]
-
-    def _resolve_deprecated_table(self, used_name):
-        normalized = normalize(used_name)
-        for name in (self._setting_table_names + self._variable_table_names +
-                     self._testcase_table_names + self._keyword_table_names +
-                     self._comment_table_names):
-            if normalize(name) == normalized:
-                self._report_deprecated_table(used_name, name)
-                return name
-        return None
-
-    def _report_deprecated_table(self, deprecated, name):
-        self.report_invalid_syntax(
-            "Section name '%s' is deprecated. Use '%s' instead."
-            % (deprecated, name), level='WARN'
-        )
 
     def _report_unrecognized_table(self, name):
         self.report_invalid_syntax(
-            "Unrecognized table header '%s'. Available headers for data: "
+            "Unrecognized section header '%s'. Available headers: "
             "'Setting(s)', 'Variable(s)', 'Test Case(s)', 'Task(s)' and "
             "'Keyword(s)'. Use 'Comment(s)' to embedded additional data."
             % name
@@ -329,37 +311,14 @@ class _WithSettings(object):
 
     def get_setter(self, name):
         if name[-1:] == ':':
-            name = name[:-1]
-        setter = self._get_setter(name)
-        if setter is not None:
-            return setter
-        setter = self._get_deprecated_setter(name)
-        if setter is not None:
-            return setter
-        self.report_invalid_syntax("Non-existing setting '%s'." % name)
-        return None
-
-    def _get_setter(self, name):
+            name = name[:-1].rstrip()
         title = name.title()
         if title in self._aliases:
             title = self._aliases[name]
         if title in self._setters:
             return self._setters[title](self)
+        self.report_invalid_syntax("Non-existing setting '%s'." % name)
         return None
-
-    def _get_deprecated_setter(self, name):
-        normalized = normalize(name)
-        for setting in list(self._setters) + list(self._aliases):
-            if normalize(setting) == normalized:
-                self._report_deprecated_setting(name, setting)
-                return self._get_setter(setting)
-        return None
-
-    def _report_deprecated_setting(self, deprecated, correct):
-        self.report_invalid_syntax(
-            "Setting '%s' is deprecated. Use '%s' instead."
-            % (deprecated, correct), level='WARN'
-        )
 
     def report_invalid_syntax(self, message, level='ERROR'):
         raise NotImplementedError
