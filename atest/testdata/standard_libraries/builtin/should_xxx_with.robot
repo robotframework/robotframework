@@ -29,7 +29,7 @@ Should Not Start With
     Hello, world!    Hello
 
 Should Not Start With case-insensitive
-    [Documentation]     FAIL  'Hello, world?' starts with 'hello, WORLD'.
+    [Documentation]     FAIL (case insensitive): 'Hello, world?' starts with 'hello, WORLD'.
     [Template]    Should Not Start With
     !Hello!          hELLo           ignore_case=True
     HYVÄÄ YÖTÄ       pahaa           ignore_case=yeah
@@ -59,7 +59,7 @@ Should Not End With
     Hillo!    !    Message only    No Values
 
 Should Not End With case-insensitive
-    [Documentation]     FAIL  'Hello, world!' ends with 'hello, WORLD!'.
+    [Documentation]     FAIL (case insensitive): 'Hello, world!' ends with 'hello, WORLD!'.
     [Template]    Should Not End With
     Hello!           hELLo            ignore_case=True
     HYVÄÄ YÖTÄ       hyvää            ignore_case=yeah

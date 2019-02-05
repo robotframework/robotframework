@@ -45,7 +45,7 @@ Should Not Match
     Hello world             ?ello*
 
 Should Not Match case-insensitive
-    [Documentation]    FAIL    Fails: 'Hillo?' matches 'h?ll*'.
+    [Documentation]    FAIL    Fails(case insensitive): 'Hillo?' matches 'h?ll*'.
     [Template]    Should Not Match
     Hello!    heLLo    ignore_case=True
     Hillo?    h?ll*    ignore_case=yes    msg=Fails

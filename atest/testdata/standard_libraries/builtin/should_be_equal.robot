@@ -11,7 +11,7 @@ Should Be Equal
     A                             B    Error message    values=yes
 
 Should Be Equal case-insensitive
-    [Documentation]    FAIL Yötä != Päivää
+    [Documentation]    FAIL (case insensitive): Yötä != Päivää
     [Template]    Should Be Equal
     test value      TEST VALUE      ignore_case=True
     HYVÄÄ YÖTÄ      hyvää yötä      ignore_case=yes
@@ -88,7 +88,7 @@ Should Not Be Equal
     foo    foo
 
 Should Not Be Equal case-insensitive
-    [Documentation]     FAIL foo == FOO
+    [Documentation]     FAIL (case insensitive): foo == FOO
     [Template]  Should Not Be Equal
     test value      TEST VALUE1     ignore_case=True
     HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True

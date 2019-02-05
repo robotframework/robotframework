@@ -7,8 +7,7 @@ Should Start With
     Check test case    ${TESTNAME}
 
 Should Start With case-insensitive
-    ${tc}=    Check test case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    (case insensitive)
+    Check test case    ${TESTNAME}
 
 Should Start With without values
     Check test case    ${TESTNAME}
@@ -17,15 +16,13 @@ Should Not Start With
     Check test case    ${TESTNAME}
 
 Should Not Start With case-insensitive
-    ${tc}=    Check test case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    (case insensitive)
+    Check test case    ${TESTNAME}
 
 Should End With
     Check test case    ${TESTNAME}
 
 Should End With case-insensitive
-    ${tc}=    Check test case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    (case insensitive)
+    Check test case    ${TESTNAME}
 
 Should End With without values
     Check test case    ${TESTNAME}
@@ -34,5 +31,4 @@ Should Not End With
     Check test case    ${TESTNAME}
 
 Should Not End With case-insensitive
-    ${tc}=    Check test case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    (case insensitive)
+    Check test case    ${TESTNAME}

@@ -11,8 +11,7 @@ Should Be Equal
     Verify argument type message    ${tc.kws[3].msgs[0]}    unicode    unicode
 
 Should Be Equal case-insensitive
-    ${tc}=    Check Test Case     ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[1]}    (case insensitive)
+    Check Test Case     ${TESTNAME}
 
 Should Be Equal fails with values
     Check test case    ${TESTNAME}
@@ -55,8 +54,7 @@ Should Not Be Equal
     Verify argument type message    ${tc.kws[2].msgs[0]}    unicode    unicode
 
 Should Not Be Equal case-insensitive
-    ${tc}=    Check Test Case     ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[1]}    (case insensitive)
+    Check Test Case     ${TESTNAME}
 
 Should Not Be Equal with bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}

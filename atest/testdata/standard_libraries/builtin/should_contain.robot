@@ -24,7 +24,7 @@ Should Contain with non-strings
     ${LIST2}     ${3}
 
 Should Contain case-insensitive
-    [Documentation]    FAIL '{'a': 1}' does not contain 'XXX'.
+    [Documentation]    FAIL (case insensitive): '{'a': 1}' does not contain 'XXX'.
     [Template]    Should Contain
     abcdefg     CD     ignore_case=True
     HYVÄ        vä     ignore_case=yes
@@ -48,11 +48,11 @@ Should Not Contain with non-strings
 Should Not Contain case-insensitive
     [Documentation]    FAIL Several failures occurred:
     ...
-    ...    1) 'abcdefg' contains 'CD'.
+    ...    1) (case insensitive): 'abcdefg' contains 'CD'.
     ...
-    ...    2) 'HYVÄ' contains 'vä'.
+    ...    2) (case insensitive): 'HYVÄ' contains 'vä'.
     ...
-    ...    3) '{'a': 1}' contains 'A'.
+    ...    3) (case insensitive): '{'a': 1}' contains 'A'.
     [Template]    Should Not Contain
     abcdefg     CD    ignore_case=True
     HYVÄ        vä    ignore_case=yes

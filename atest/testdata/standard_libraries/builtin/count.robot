@@ -51,7 +51,7 @@ Should Contain X Times failing
     hello    xxx    3    My message
 
 Should Contain X Times case-insensitive
-    [Documentation]    FAIL    '{'a': 1}' contains 'a' 1 time, not 100 times.
+    [Documentation]    FAIL '{'a': 1}' contains 'a' 1 time, not 100 times.(case insensitive)
     XxX          X     3      ignore_case=True
     XxX          xx    1      ignore_case=True
     ${DICT}      a     2      ignore_case=yes

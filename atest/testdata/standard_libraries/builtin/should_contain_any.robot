@@ -31,7 +31,7 @@ Should Contain Any failing
     abcdefg    x    y    Ф    msg=Message
 
 Should Contain Any case-insensitive
-    [Documentation]    FAIL    Fails: '{'a': 1}' does not contain any of 'x'.
+    [Documentation]    FAIL    Fails(case insensitive): '{'a': 1}' does not contain any of 'x'.
     [Template]    Should Contain Any
     Hyvä         vÄ             ignore_case=True
     ${LIST}      ${-1}    B     ignore_case=yes
@@ -77,13 +77,13 @@ Should Not Contain Any case-insensitive
     [Documentation]    FAIL
     ...    Several failures occurred:
     ...
-    ...    1) 'abcdefg' contains one or more of 'A'.
+    ...    1) (case insensitive): 'abcdefg' contains one or more of 'A'.
     ...
-    ...    2) 'ABCDEFG' contains one or more of 'abc'.
+    ...    2) (case insensitive): 'ABCDEFG' contains one or more of 'abc'.
     ...
-    ...    3) '['a', 'b', 'cee', 'b', 42]' contains one or more of '1' or 'B'.
+    ...    3) (case insensitive): '['a', 'b', 'cee', 'b', 42]' contains one or more of '1' or 'B'.
     ...
-    ...    4) '{'a': 1}' contains one or more of 'A'.
+    ...    4) (case insensitive): '{'a': 1}' contains one or more of 'A'.
     [Template]    Should Not Contain Any
     abcdefg      x            ignore_case=True    msg=This succeeds
     abcdefg      A            ignore_case=True

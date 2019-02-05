@@ -33,8 +33,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
                          secs_to_timestr, seq2str, split_from_equals, StringIO,
                          timestr_to_secs, type_name, unic, is_list_like)
-from robot.utils.asserts import assert_equal, assert_not_equal, assert_equal_case_insensitive, \
-                                assert_not_equal_case_insensitive
+from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
                              variable_not_found)
@@ -635,10 +634,11 @@ class _Verify(_BuiltInBase):
         if include_values and is_string(first) and is_string(second):
             self._raise_multi_diff(first, second)
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
-            logger.info('(case insensitive)')
-            assert_equal_case_insensitive(first, second, msg, include_values)
-        else:
-            assert_equal(first, second, msg, include_values)
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
+        assert_equal(first, second, msg, include_values, ignore_case)
 
     def _log_types_at_info_if_different(self, first, second):
         level = 'DEBUG' if type(first) == type(second) else 'INFO'
@@ -675,10 +675,11 @@ class _Verify(_BuiltInBase):
 
     def _should_not_be_equal(self, first, second, msg, values, ignore_case=False):
         if is_truthy(ignore_case):
-            logger.info('(case insensitive)')
-            assert_not_equal_case_insensitive(first, second, msg, self._include_values(values))
-        else:
-            assert_not_equal(first, second, msg, self._include_values(values))
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
+        assert_not_equal(first, second, msg, self._include_values(values), ignore_case)
 
     def should_not_be_equal_as_integers(self, first, second, msg=None,
                                         values=True, base=None):
@@ -818,7 +819,10 @@ class _Verify(_BuiltInBase):
         orig_str1 = str1
         orig_str2 = str2
         if is_truthy(ignore_case):
-            logger.info('(case insensitive)')
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             str1 = str1.lower()
             str2 = str2.lower()
         if str1.startswith(str2):
@@ -836,7 +840,10 @@ class _Verify(_BuiltInBase):
         orig_str1 = str1
         orig_str2 = str2
         if is_truthy(ignore_case):
-            logger.info('(case insensitive)')
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             str1 = str1.lower()
             str2 = str2.lower()
         if not str1.startswith(str2):
@@ -854,7 +861,10 @@ class _Verify(_BuiltInBase):
         orig_str1 = str1
         orig_str2 = str2
         if is_truthy(ignore_case):
-            logger.info('(case insensitive)')
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             str1 = str1.lower()
             str2 = str2.lower()
         if str1.endswith(str2):
@@ -872,7 +882,10 @@ class _Verify(_BuiltInBase):
         orig_str1 = str1
         orig_str2 = str2
         if is_truthy(ignore_case):
-            logger.info('(case insensitive)')
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             str1 = str1.lower()
             str2 = str2.lower()
         if not str1.endswith(str2):
@@ -897,7 +910,10 @@ class _Verify(_BuiltInBase):
         orig_container = container
         orig_item = item
         if is_truthy(ignore_case) and is_string(item):
-            logger.info('(case insensitive)')
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             item = item.lower()
             if is_string(container):
                 container = container.lower()
@@ -931,7 +947,10 @@ class _Verify(_BuiltInBase):
         orig_container = container
         orig_item = item
         if is_truthy(ignore_case) and is_string(item):
-            logger.info('(case insensitive)')
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             item = item.lower()
             if is_string(container):
                 container = container.lower()
@@ -975,7 +994,10 @@ class _Verify(_BuiltInBase):
             raise RuntimeError('One or more items required.')
         orig_container = container
         if is_truthy(ignore_case):
-            logger.info('(case insensitive)')
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             items = [x.lower() if is_string(x) else x for x in items]
             if is_string(container):
                 container = container.lower()
@@ -1024,7 +1046,10 @@ class _Verify(_BuiltInBase):
         orig_container = container
         orig_items = items
         if is_truthy(ignore_case):
-            logger.info('(case insensitive)')
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             items = [x.lower() if is_string(x) else x for x in items]
             if is_string(container):
                 container = container.lower()
@@ -1060,7 +1085,6 @@ class _Verify(_BuiltInBase):
         orig_item = item
         orig_container = container
         if is_truthy(ignore_case) and is_string(item):
-            logger.info('(case insensitive)')
             item = item.lower()
             if is_string(container):
                 container = container.lower()
@@ -1070,6 +1094,8 @@ class _Verify(_BuiltInBase):
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
                     % (unic(orig_container), unic(orig_item), x, s(x), count, s(count))
+        if is_truthy(ignore_case):
+            msg = msg + '(case insensitive)'
         self.should_be_equal_as_integers(x, count, msg, values=False)
 
     def get_count(self, container, item):
@@ -1105,7 +1131,10 @@ class _Verify(_BuiltInBase):
         of the ``ignore_case`` option.
         """
         if is_truthy(ignore_case):
-            logger.info('(case insensitive)')
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
         if self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
@@ -1123,7 +1152,10 @@ class _Verify(_BuiltInBase):
         of the ``ignore_case`` option.
         """
         if is_truthy(ignore_case):
-            logger.info('(case insensitive)')
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
         if not self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))

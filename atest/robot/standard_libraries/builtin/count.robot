@@ -33,8 +33,7 @@ Should Contain X Times failing
     Check test case    ${TESTNAME}
 
 Should Contain X Times case-insensitive
-    ${tc}=    Check test case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    (case insensitive)
+    Check test case    ${TESTNAME}
 
 Should Contain X Times with invalid item
     Check test case    ${TESTNAME}
