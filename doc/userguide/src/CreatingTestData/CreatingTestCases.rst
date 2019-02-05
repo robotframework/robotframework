@@ -93,11 +93,10 @@ below and explained later in this section.
    their own section.
 
 .. note:: Setting names are case-insensitive, but the format used above is
-      recommended. Prior to Robot Framework 3.1, settings were also
-      space-insensitive meaning that extra spaces could be added (e.g.
-      `[T a g s]`). This is now deprecated and only the format above,
-      case-insensitively, is supported. Possible space between brackets
-      and the name (e.g. `[ Tags ]`) is still allowed.
+      recommended. Settings used to be also space-insensitive, but that was
+      deprecated in Robot Framework 3.1 and trying to use something like
+      `[T a g s]` causes an error in Robot Framework 3.2. Possible spaces
+      between brackets and the name (e.g. `[ Tags ]`) are still allowed.
 
 Example test case with settings:
 
