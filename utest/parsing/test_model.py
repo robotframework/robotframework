@@ -345,7 +345,7 @@ class TestForLoop(unittest.TestCase):
     def test_normal_for(self):
         self._test(['${var}', 'IN', 'value1', 'value2'],
                    ['${var}'], ['value1', 'value2'])
-        self._test(['${v1}', '${v2}', 'in', '@{values}'],
+        self._test(['${v1}', '${v2}', 'IN', '@{values}'],
                    ['${v1}', '${v2}'], ['@{values}'])
         self._test(['${v1}', '${v2}', '${v3}', 'IN'],
                    ['${v1}', '${v2}', '${v3}'], [])
@@ -353,7 +353,7 @@ class TestForLoop(unittest.TestCase):
                    ['${x}'], ['IN RANGE', 'IN', 'IN RANGE', 'X'])
 
     def test_variable_format_is_not_verified(self):
-        self._test(['whatever', 'here', 'in', 'value1', 'value2'],
+        self._test(['whatever', 'here', 'IN', 'value1', 'value2'],
                    ['whatever', 'here'], ['value1', 'value2'])
 
     def test_without_vars(self):
@@ -364,8 +364,8 @@ class TestForLoop(unittest.TestCase):
 
     def test_in_range(self):
         self._test(['${i}', 'IN RANGE', '100'], ['${i}'], ['100'],
-                flavor='IN RANGE')
-        self._test(['what', 'ever', 'in range', 'IN', 'whatever'],
+                   flavor='IN RANGE')
+        self._test(['what', 'ever', 'IN RANGE', 'IN', 'whatever'],
                    ['what', 'ever'], ['IN', 'whatever'],
                    flavor='IN RANGE')
 
@@ -377,7 +377,7 @@ class TestForLoop(unittest.TestCase):
                       ['FOR', '${v2}', '${v2}', 'IN RANGE', '100'])
 
     def test_in_zip(self):
-        self._test(['${i}', '${item}', 'in zip', '${list1}', '${list2}'],
+        self._test(['${i}', '${item}', 'IN ZIP', '${list1}', '${list2}'],
                    ['${i}', '${item}'], ['${list1}', '${list2}'],
                    flavor='IN ZIP')
 

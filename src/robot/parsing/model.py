@@ -663,7 +663,7 @@ class ForLoop(_WithSteps):
     :param list declaration: The literal cell values that declare the loop
                              (excluding ":FOR").
     :param str comment: A comment, default None.
-    :ivar str flavor: The value of the 'IN' item, uppercased.
+    :ivar str flavor: The value of the 'IN' item.
                       Typically 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
     :ivar list vars: Variables set per-iteration by this loop.
     :ivar list items: Loop values that come after the 'IN' item.
@@ -671,7 +671,6 @@ class ForLoop(_WithSteps):
     :ivar list steps: A list of steps in the loop.
     """
     flavors = {'IN', 'IN RANGE', 'IN ZIP', 'IN ENUMERATE'}
-    normalized_flavors = NormalizedDict((f, f) for f in flavors)
 
     def __init__(self, parent, declaration, comment=None):
         self.parent = parent
@@ -685,19 +684,7 @@ class ForLoop(_WithSteps):
         for index, item in enumerate(declaration):
             if item in self.flavors:
                 return item, index
-            if item in self.normalized_flavors:
-                correct = self.normalized_flavors[item]
-                self._report_deprecated_flavor_syntax(item, correct)
-                return correct, index
-            if normalize(item).startswith('in'):
-                return item.upper(), index
         return 'IN', len(declaration)
-
-    def _report_deprecated_flavor_syntax(self, deprecated, correct):
-        self.parent.report_invalid_syntax(
-            "Using '%s' as a FOR loop separator is deprecated. "
-            "Use '%s' instead." % (deprecated, correct), level='WARN'
-        )
 
     def is_comment(self):
         return False

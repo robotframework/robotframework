@@ -537,7 +537,7 @@ For In Enumerate With Other Iterables
     Should Be Equal    ${answer}    0123456789
 
 For Loop Of Unexpected Name
-    [Documentation]    FAIL    Invalid FOR loop type 'IN FANCY PANTS'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
+    [Documentation]    FAIL    Invalid FOR loop variable 'In Fancy Pants'.
     FOR    ${i}    In Fancy Pants    Mr. Fancypants
         Fail    This shouldn't ever execute.
     END
@@ -620,18 +620,33 @@ For loop marker can have many colons
     END
     Should Be True    @{result} == ['0', '1', '2', 3, 4, 5]
 
-Case and space insensitive for loop separator is deprecated
-    FOR    ${x}    in    a  b  c
-        @{result} =    Create List    @{result}    ${x}
+For loop separator is case- and space-sensitive 1
+    [Documentation]    FAIL Invalid FOR loop variable 'in'.
+    FOR    ${x}    in    a    b    c
+        Fail    Should not be executed
     END
-    Should Be True    @{result} == ['a', 'b', 'c']
-    FOR    ${X X}    INRANGE    1    2
-        @{result} =    Create List    @{result}    ${X X}
+    Fail    Should not be executed
+
+For loop separator is case- and space-sensitive 2
+    [Documentation]    FAIL Invalid FOR loop variable 'IN RANG E'.
+    FOR    ${x}    IN RANG E    a    b    c
+        Fail    Should not be executed
     END
-    Should Be True    @{result} == ['a', 'b', 'c', 1]
-    FOR    ${index}    ${item}    I ne numer ate    foo
-        Should Be Equal    ${index}: ${item}    0: foo
+    Fail    Should not be executed
+
+For loop separator is case- and space-sensitive 3
+    [Documentation]    FAIL Invalid FOR loop variable 'IN Enumerate'.
+    FOR    ${x}    IN Enumerate    a    b    c
+        Fail    Should not be executed
     END
+    Fail    Should not be executed
+
+For loop separator is case- and space-sensitive 4
+    [Documentation]    FAIL Invalid FOR loop variable 'INZIP'.
+    FOR    ${x}    INZIP    a    b    c
+        Fail    Should not be executed
+    END
+    Fail    Should not be executed
 
 Escaping with backslash still works
     FOR    ${var}    IN    one    two
