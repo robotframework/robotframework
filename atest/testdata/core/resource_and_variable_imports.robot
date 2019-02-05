@@ -1,6 +1,4 @@
 *** Settings ***
-Documentation   NO RIDE: Imports contain invalid syntax on purpose
-
 Resource     resources_and_variables/resources.robot
 Resource     RESOURCES_AND_VARIABLES/resources.robot  # Normalize on Windows
 RESOURCE     ${resource_dir}/resources2.robot
@@ -8,7 +6,7 @@ VARIABLES    resources_and_variables/variables.py
 Variables    ${variables2_file}
 
 # Arguments to variable files
-Var I able s    resources_and_variables/dynamic_variables.py    # No args works
+VarIables    resources_and_variables/dynamic_variables.py    # No args works
 variables    resources_and_variables/dynamic_variables.py    One arg works
 Variables    resources_and_variables/dynamic_variables.py
 ...          Two args   returns invalid
@@ -18,7 +16,7 @@ Variables    resources_and_variables/dynamicVariables.py
 ...          This    ${1}    ${works}    back \\ slash    \${escaped}    ${CURDIR}
 
 # Resources and variables in PYTHONPATH
-Res our ce     resource_in_pythonpath.robot
+Resource     resource_in_pythonpath.robot
 resource     resvar_subdir/resource_in_pythonpath_2.robot
 Variables    variables_in_pythonpath.py
 Variables    resvar_subdir/variables_in_pythonpath_2.py

@@ -107,7 +107,7 @@ class _PopulatorTest(unittest.TestCase):
 class TablePopulatorTest(_PopulatorTest):
 
     def test_starting_valid_table(self):
-        for name in ['Test Cases', '  variables   ', 'K E Y WO R D S']:
+        for name in ['Test Cases', '  variables   ', 'KEYWORDS']:
             assert_true(self._start_table(name))
 
     def test_table_headers(self):
@@ -194,12 +194,12 @@ class SettingTablePopulatingTest(_PopulatorTest):
         name, args = 'Keyword Name', ('a1', 'a2')
         table = [('Documentation', doc),
                  ('...', more_doc),
-                 ('S  uite Tear Down', name),
+                 ('Suite TearDown', name),
                  ('...',) + args,
-                 ('S  uite SeTUp', name) + args,
+                 ('Suite SeTUp', name) + args,
                  ('force tags', force_tags),
                  ('...', more_tags),
-                 ('De Fault TAGS', default_tags),
+                 ('DeFault TAGS', default_tags),
                  ('...', more_tags, even_more_tags),
                  ('test timeout', '1s'),
                  ('...', 'timeout message'),
@@ -234,7 +234,7 @@ class SettingTablePopulatingTest(_PopulatorTest):
         self._assert_import(3, 'varzors.py', [])
 
     def test_free_suite_metadata(self):
-        self._create_table('settings', [['Meta Data', 'Foon:ess', 'Barness'],
+        self._create_table('settings', [['MetaData', 'Foon:ess', 'Barness'],
                                         ['Metadata', 'Quux', 'Value']])
         self._assert_meta(0, 'Foon:ess', 'Barness')
         self._assert_meta(1, 'Quux', 'Value')
