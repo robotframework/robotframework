@@ -576,53 +576,80 @@ class _Dictionary(object):
             return copy.deepcopy(dictionary)
         return dictionary.copy()
 
-    def get_dictionary_keys(self, dictionary):
+    def get_dictionary_keys(self, dictionary, sort_keys=True):
         """Returns keys of the given ``dictionary``.
 
-        If keys are sortable, they are returned in sorted order. The given
-        ``dictionary`` is never altered by this keyword.
+        If the optional value sort_keys is set to False, the returned
+        keys are in order they appear in dictionary. Otherwise returned keys are ordered.
+        New option in Robot Framework 3.1.2.
+        
+        The given ``dictionary`` is never altered by this keyword.
 
         Example:
         | ${keys} = | Get Dictionary Keys | ${D3} |
         =>
         | ${keys} = ['a', 'b', 'c']
+
+        | ${keys} = | Get Dictionary Keys | ${D3} | sort_keys=${False} |
+        =>
+        | ${keys} = ['b', 'a', 'c']
         """
         self._validate_dictionary(dictionary)
-        # TODO: Possibility to disable sorting. Can be handy with OrderedDicts.
         keys = dictionary.keys()
         try:
-            return sorted(keys)
+            if sort_keys:
+                return sorted(keys)
+            else:
+                return list(keys)
         except TypeError:
             return list(keys)
 
-    def get_dictionary_values(self, dictionary):
+    def get_dictionary_values(self, dictionary, sort_keys=True):
         """Returns values of the given dictionary.
 
-        Values are returned sorted according to keys. The given dictionary is
-        never altered by this keyword.
+        If the optional value sort_keys is set to False, the returned
+        values are in order they appear in dictionary. Otherwise returned values are
+        ordered by corresponding keys.
+        New option in Robot Framework 3.1.2.
+
+        The given ``dictionary`` is never altered by this keyword.
 
         Example:
-        | ${values} = | Get Dictionary Values | ${D3} |
+        | ${values} = | Get Dictionary Values | ${D3B} |
         =>
         | ${values} = [1, 2, 3]
+
+        Example:
+        | ${values} = | Get Dictionary Values | ${D3B} | sort_keys = ${False} |
+        =>
+        | ${values} = [2, 1, 3]
         """
         self._validate_dictionary(dictionary)
-        return [dictionary[k] for k in self.get_dictionary_keys(dictionary)]
+        return [dictionary[k] for k in self.get_dictionary_keys(dictionary, sort_keys=sort_keys)]
 
-    def get_dictionary_items(self, dictionary):
+    def get_dictionary_items(self, dictionary, sort_keys=True):
         """Returns items of the given ``dictionary``.
 
-        Items are returned sorted by keys. The given ``dictionary`` is not
-        altered by this keyword.
+        If the optional value sort_keys is set to False, the returned
+        items are in order they appear in dictionary. Otherwise returned items are
+        ordered by keys.
+        New option in Robot Framework 3.1.2.
+
+        The given ``dictionary`` is never altered by this keyword.
 
         Example:
         | ${items} = | Get Dictionary Items | ${D3} |
         =>
         | ${items} = ['a', 1, 'b', 2, 'c', 3]
+
+        Example:
+        | ${items} = | Get Dictionary Items | ${D3} | sort_keys = ${False} |
+        =>
+        | ${items} = ['b', 2, 'a', 1, 'c', 3]
         """
         self._validate_dictionary(dictionary)
         ret = []
-        for key in self.get_dictionary_keys(dictionary):
+        for key in self.get_dictionary_keys(dictionary, sort_keys=sort_keys):
             ret.extend((key, dictionary[key]))
         return ret
 
