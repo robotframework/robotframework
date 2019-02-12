@@ -56,9 +56,13 @@ Deep Copy Dictionary
     Should Be Equal    ${a['x1']['x2']}    2
     Should Be Equal    ${b['x1']['x2']}    3
 
-Get Dictionary Keys
+Get Dictionary Keys Sorted
     ${keys} =    Get Dictionary Keys    ${D3B}
     Compare To Expected String    ${keys}    ['a', 'b', 'c']
+
+Get Dictionary Keys Unsorted
+    ${keys} =    Get Dictionary Keys    ${D3B}    sort_keys=${False}
+    Compare To Expected String    ${keys}    ['b', 'a', 'c']
 
 Get Dictionary Values
     ${values} =    Get Dictionary Values    ${D3B}
@@ -289,7 +293,7 @@ Create Dictionaries For Testing
     Set Test Variable    \${D2B}
     ${D3}    Create Dictionary    a=${1}    b=${2}    ${3}=${None}
     Set Test Variable    \${D3}
-    ${D3B}    Create Dictionary    a=${1}    b=${2}    c=
+    ${D3B}    Create Dictionary    b=${2}    a=${1}    c=
     Set Test Variable    \${D3B}
     ${BIG} =    Evaluate    {'a': 1, 'B': 2, 3: [42], 'd': '', '': 'e', (): {}}
     Set Test Variable    \${BIG}

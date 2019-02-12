@@ -34,7 +34,10 @@ Shallow Copy Dictionary
 Deep Copy Dictionary
     Check Test Case    ${TEST NAME}
 
-Get Dictionary Keys
+Get Dictionary Keys Sorted
+    Check Test Case    ${TEST NAME}
+
+Get Dictionary Keys Unsorted
     Check Test Case    ${TEST NAME}
 
 Get Dictionary Values
