@@ -549,10 +549,16 @@ class RebotSettings(_BaseSettings):
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
                        'EndTime'           : ('endtime', None),
-                       'Merge'             : ('merge', False)}
+                       'Merge'             : ('merge', False),
+                       'AutoExpandKeywords' : ('autoexpandkeywords', [])}  # => adding it here: we lose multiple args support (requre multi_opts at more central place before parsing)
 
     def _output_disabled(self):
         return False
+
+    def _process_value(self, name, value):
+        if name=='AutoExpandKeywords' and len(value)>0:
+            value=[s.strip() for s in value[0].split(',')]
+        return super(RebotSettings, self)._process_value(name, value)  # use old style inheritance to be python 2 compatible
 
     @property
     def suite_config(self):
