@@ -28,19 +28,20 @@ if IRONPYTHON and PY_VERSION < (2, 7, 2):
 class JsExecutionResult(object):
 
     def __init__(self, suite, statistics, errors, strings, basemillis=None,
-                 split_results=None, min_level=None):
+                 split_results=None, min_level=None, auto_expand_ids=[]):
         self.suite = suite
         self.strings = strings
         self.min_level = min_level
-        self.data = self._get_data(statistics, errors, basemillis or 0)
+        self.data = self._get_data(statistics, errors, basemillis or 0, auto_expand_ids)
         self.split_results = split_results or []
 
-    def _get_data(self, statistics, errors, basemillis):
+    def _get_data(self, statistics, errors, basemillis, auto_expand_ids):
         return OrderedDict([
             ('stats', statistics),
             ('errors', errors),
             ('baseMillis', basemillis),
-            ('generated', int(time.time() * 1000) - basemillis)
+            ('generated', int(time.time() * 1000) - basemillis),
+            ('auto_expand_ids', auto_expand_ids)
         ])
 
     def remove_data_not_needed_in_report(self):

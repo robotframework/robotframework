@@ -19,14 +19,15 @@ from os.path import exists, dirname
 from robot.output.loggerhelper import LEVELS
 from robot.utils import (attribute_escape, get_link_path, html_escape,
                          html_format, is_string, is_unicode, timestamp_to_secs,
-                         unic)
+                         unic, MultiMatcher)
 
 from .stringcache import StringCache
 
 
+
 class JsBuildingContext(object):
 
-    def __init__(self, log_path=None, split_log=False, prune_input=False):
+    def __init__(self, log_path=None, split_log=False, prune_input=False, auto_expand_keywords=[]):
         # log_path can be a custom object in unit tests
         self._log_dir = dirname(log_path) if is_string(log_path) else None
         self._split_log = split_log
@@ -36,6 +37,8 @@ class JsBuildingContext(object):
         self.split_results = []
         self.min_level = 'NONE'
         self._msg_links = {}
+        self._auto_expand_keyword_matcher = MultiMatcher(auto_expand_keywords)
+        self.auto_expand_keyword_ids = []
 
     def string(self, string, escape=True, attr=False):
         if escape and string:
@@ -67,6 +70,10 @@ class JsBuildingContext(object):
     def create_link_target(self, msg):
         id = self._top_level_strings.add(msg.parent.id)
         self._msg_links[self._link_key(msg)] = id
+
+    def check_auto_expansion(self, kw):
+        if self._auto_expand_keyword_matcher.match(kw.kwname):
+            self.auto_expand_keyword_ids.append(kw.id)
 
     def link(self, msg):
         return self._msg_links.get(self._link_key(msg))

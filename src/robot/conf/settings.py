@@ -600,7 +600,7 @@ class RebotSettings(_BaseSettings):
             'rpa': self.rpa,
             'title': html_escape(self['ReportTitle'] or ''),
             'logURL': self._url_from_path(self.report, self.log),
-            'background' : self._resolve_background_colors(),
+            'background' : self._resolve_background_colors()
         }
 
     def _url_from_path(self, source, destination):
@@ -627,3 +627,7 @@ class RebotSettings(_BaseSettings):
     @property
     def process_empty_suite(self):
         return self['ProcessEmptySuite']
+
+    @property
+    def auto_expand_keywords(self):
+        return self['AutoExpandKeywords']
