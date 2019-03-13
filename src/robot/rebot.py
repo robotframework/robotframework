@@ -200,10 +200,10 @@ Options
                           match (starting from 1).
                           Examples: --tagstatlink mytag:http://my.domain:Title
                           --tagstatlink "bug-*:http://url/id=%1:Issue Tracker"
-    --autoexpandkeywords kw1,kw2,..
-                          After opening log.html these types of keywords 
-                          separated by comma will be expanded per default.
-                          Example: --autoexpandkeywords "Take Screenshot,NextKw"
+    --autoexpandkeywords name:<pattern>|tag:<pattern> *
+                          Matching keywords will be initially expanded in log.html.
+                          For pattern matching rules see --removekeywords option.
+                          Example: --autoexpandkeywords name:CapturePageScreenshot
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
                           Remove keyword data from all generated outputs.
                           Keywords containing warnings are not removed except
@@ -339,7 +339,6 @@ class Rebot(RobotFramework):
 
     def main(self, datasources, **options):
         settings = RebotSettings(options)
-        #print(settings)
         LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.disable_message_cache()
         rc = ResultWriter(*datasources).write_results(settings)
@@ -408,4 +407,3 @@ def rebot(*outputs, **options):
 
 if __name__ == '__main__':
     rebot_cli(sys.argv[1:])
-

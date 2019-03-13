@@ -41,6 +41,14 @@ robot.result.flattenkeywordmatcher module
     :undoc-members:
     :show-inheritance:
 
+robot.result.autoexpandkeywordmatcher module
+-----------------------------------------
+
+.. automodule:: robot.result.autoexpandkeywordmatcher
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.result.keywordremover module
 ----------------------------------
 

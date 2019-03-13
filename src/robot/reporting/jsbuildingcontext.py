@@ -19,7 +19,8 @@ from os.path import exists, dirname
 from robot.output.loggerhelper import LEVELS
 from robot.utils import (attribute_escape, get_link_path, html_escape,
                          html_format, is_string, is_unicode, timestamp_to_secs,
-                         unic, MultiMatcher)
+                         unic)
+from robot.result.autoexpandkeywordmatcher import AutoExpandKeywordMatcher
 
 from .stringcache import StringCache
 
@@ -27,7 +28,8 @@ from .stringcache import StringCache
 
 class JsBuildingContext(object):
 
-    def __init__(self, log_path=None, split_log=False, prune_input=False, auto_expand_keywords=[]):
+    def __init__(self, log_path=None, split_log=False, prune_input=False,
+                 auto_expand_args=[]):
         # log_path can be a custom object in unit tests
         self._log_dir = dirname(log_path) if is_string(log_path) else None
         self._split_log = split_log
@@ -37,8 +39,7 @@ class JsBuildingContext(object):
         self.split_results = []
         self.min_level = 'NONE'
         self._msg_links = {}
-        self._auto_expand_keyword_matcher = MultiMatcher(auto_expand_keywords)
-        self.auto_expand_keyword_ids = []
+        self._auto_expand_matcher = AutoExpandKeywordMatcher(auto_expand_args)
 
     def string(self, string, escape=True, attr=False):
         if escape and string:
@@ -72,8 +73,11 @@ class JsBuildingContext(object):
         self._msg_links[self._link_key(msg)] = id
 
     def check_auto_expansion(self, kw):
-        if self._auto_expand_keyword_matcher.match(kw.kwname):
-            self.auto_expand_keyword_ids.append(kw.id)
+        self._auto_expand_matcher.check(kw)
+
+    @property
+    def auto_expand_ids(self):
+        return self._auto_expand_matcher.all_matched_ids
 
     def link(self, msg):
         return self._msg_links.get(self._link_key(msg))

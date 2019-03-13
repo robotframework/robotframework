@@ -22,6 +22,7 @@ from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
+from robot.result.autoexpandkeywordmatcher import validate_autoexpandkeywords
 from robot.utils import (abspath, escape, format_time, get_link_path,
                          html_escape, is_list_like, py2to3,
                          split_args_from_name_or_path)
@@ -62,6 +63,7 @@ class _BaseSettings(object):
                  'TagDoc'           : ('tagdoc', []),
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
+                 'AutoExpandKeywords':('autoexpandkeywords', []),
                  'FlattenKeywords'  : ('flattenkeywords', []),
                  'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
@@ -132,6 +134,8 @@ class _BaseSettings(object):
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
+        if name == 'AutoExpandKeywords':
+            self._validate_autoexpandkeywords(value)
         if name == 'WarnOnSkipped':
             with LOGGER.cache_only:
                 LOGGER.warn("Option '--warnonskippedfiles' is deprecated and "
@@ -307,6 +311,12 @@ class _BaseSettings(object):
             validate_flatten_keyword(values)
         except DataError as err:
             raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
+
+    def _validate_autoexpandkeywords(self, values):
+        try:
+            validate_autoexpandkeywords(values)
+        except DataError as err:
+            raise DataError("Invalid value for option '--autoexpandkeywords'. %s" % err)
 
     def __contains__(self, setting):
         return setting in self._cli_opts
@@ -549,16 +559,10 @@ class RebotSettings(_BaseSettings):
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
                        'EndTime'           : ('endtime', None),
-                       'Merge'             : ('merge', False),
-                       'AutoExpandKeywords' : ('autoexpandkeywords', [])}  # => adding it here: we lose multiple args support (requre multi_opts at more central place before parsing)
+                       'Merge'             : ('merge', False)}
 
     def _output_disabled(self):
         return False
-
-    def _process_value(self, name, value):
-        if name=='AutoExpandKeywords' and len(value)>0:
-            value=[s.strip() for s in value[0].split(',')]
-        return super(RebotSettings, self)._process_value(name, value)  # use old style inheritance to be python 2 compatible
 
     @property
     def suite_config(self):

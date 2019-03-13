@@ -139,7 +139,8 @@ class Results(object):
             builder = JsModelBuilder(log_path=self._settings.log,
                                      split_log=self._settings.split_log,
                                      prune_input_to_save_memory=self._prune,
-                                     auto_expand_keywords=self._settings.auto_expand_keywords)
+                                     auto_expand_keywords
+                                     =self._settings.auto_expand_keywords)
             self._js_result = builder.build_from(self.result)
             if self._prune:
                 self._result = None

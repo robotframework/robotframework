@@ -56,6 +56,8 @@ Command line options for test execution
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
+  --autoexpandkeywords <name:pattern|tag:pattern>  initially `expand keywords`_
+                          in the generated log file.
   --removekeywords <all|passed|name:pattern|tag:pattern|for|wuks>  `Removes keyword data`_
                           from the generated log file.
   --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_

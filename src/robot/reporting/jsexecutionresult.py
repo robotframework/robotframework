@@ -32,7 +32,8 @@ class JsExecutionResult(object):
         self.suite = suite
         self.strings = strings
         self.min_level = min_level
-        self.data = self._get_data(statistics, errors, basemillis or 0, auto_expand_ids)
+        self.data = self._get_data(statistics, errors, basemillis or 0,
+                                   auto_expand_ids)
         self.split_results = split_results or []
 
     def _get_data(self, statistics, errors, basemillis, auto_expand_ids):
