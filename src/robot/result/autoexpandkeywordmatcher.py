@@ -28,7 +28,7 @@ def validate_autoexpandkeywords(options):
 
 
 @py2to3
-class AutoExpandKeywordMatcher(MultiMatcher):
+class AutoExpandKeywordMatcher(object):
 
     def __init__(self, auto_expand_list):
         self._matched_ids = []
