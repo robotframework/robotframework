@@ -13,16 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
 from robot.utils import is_unicode
 
 from .typeconverters import TypeConverter
 
 
+VARIABLE_PATTERN = re.compile(r'[$@&%]\{.+\}')
+
+
 class ArgumentConverter(object):
 
-    def __init__(self, argspec):
+    def __init__(self, argspec, dry_run=False):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
+        self._dry_run = dry_run
 
     def convert(self, positional, named):
         return self._convert_positional(positional), self._convert_named(named)
@@ -44,7 +50,7 @@ class ArgumentConverter(object):
 
     def _convert(self, name, value):
         type_, explicit_type = self._get_type(name, value)
-        if type_ is None:
+        if type_ is None or not self._need_conversion(value):
             return value
         converter = TypeConverter.converter_for(type_)
         if converter is None:
@@ -59,3 +65,8 @@ class ArgumentConverter(object):
         if name in self._argspec.defaults:
             return type(self._argspec.defaults[name]), False
         return None, None
+
+    def _need_conversion(self, value):
+        if self._dry_run and VARIABLE_PATTERN.search(value):
+            return False
+        return True
