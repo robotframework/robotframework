@@ -74,7 +74,7 @@ class YamlImporter(object):
 
     def _import(self, path):
         with io.open(path, encoding='UTF-8') as stream:
-            variables = yaml.load(stream)
+            variables = yaml.full_load(stream)
         if not is_dict_like(variables):
             raise DataError('YAML variable file must be a mapping, got %s.'
                             % type_name(variables))
