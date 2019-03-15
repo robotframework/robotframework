@@ -566,8 +566,8 @@ The following example demonstrates a simple YAML file:
       with spaces: kolme
 
 .. note:: Using YAML files with Robot Framework requires `PyYAML
-          <http://pyyaml.org>`_ module to be installed. If you have
-          pip_ installed, you can install it simply by running
+          <http://pyyaml.org>`_ module to be installed in version 5.1. 
+          If you have pip_ installed, you can install it simply by running
           `pip install pyyaml`.
 
           YAML support is new in Robot Framework 2.9. Starting from

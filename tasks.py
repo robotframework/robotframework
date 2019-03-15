@@ -169,7 +169,7 @@ def init_labels(ctx, username=None, password=None):
 
 
 @task
-def jar(ctx, jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
+def jar(ctx, jython_version='2.7.0', pyyaml_version='5.1', remove_dist=False):
     """Create JAR distribution.
 
     Downloads Jython JAR and PyYAML if needed.
