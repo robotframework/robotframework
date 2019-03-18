@@ -74,7 +74,7 @@ class YamlImporter(object):
 
     def _import(self, path):
         with io.open(path, encoding='UTF-8') as stream:
-            variables = yaml.full_load(stream)
+            variables = yaml.load(stream) if yaml.__version__[0]=='3' else yaml.full_load(stream)  #pyyaml 3.x is from 2006
         if not is_dict_like(variables):
             raise DataError('YAML variable file must be a mapping, got %s.'
                             % type_name(variables))
