@@ -441,6 +441,7 @@ class RobotSettings(_BaseSettings):
         settings._opts['Output'] = None
         settings._opts['LogLevel'] = 'TRACE'
         settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
+        settings._opts['AutoExpandKeywords'] = self['AutoExpandKeywords']
         return settings
 
     def _output_disabled(self):
