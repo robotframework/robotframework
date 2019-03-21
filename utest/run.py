@@ -17,10 +17,10 @@ import unittest
 import os
 import sys
 import re
-import getopt
+import argparse
 
 
-base = os.path.abspath(os.path.normpath(os.path.split(sys.argv[0])[0]))
+base = os.path.abspath(os.path.normpath(os.path.split(__file__)[0]))
 for path in ['../src', '../atest/testresources/testlibs']:
     path = os.path.join(base, path.replace('/', os.sep))
     if path not in sys.path:
@@ -56,43 +56,25 @@ def get_tests(directory=None):
 
 
 def parse_args(argv):
-    docs = 0
-    verbosity = 1
-    try:
-        options, args = getopt.getopt(argv, 'hH?vqd',
-                                      ['help', 'verbose', 'quiet', 'doc'])
-        if args:
-            raise getopt.error('no arguments accepted, got %s' % list(args))
-    except getopt.error as err:
-        usage_exit(err)
-    for opt, value in options:
-        if opt in ('-h','-H','-?','--help'):
-            usage_exit()
-        if opt in ('-q','--quit'):
-            verbosity = 0
-        if opt in ('-v', '--verbose'):
-            verbosity = 2
-        if opt in ('-d', '--doc'):
-            docs = 1
-            verbosity = 2
-    return docs, verbosity
-
-
-def usage_exit(msg=None):
-    print(__doc__)
-    if msg is None:
-        rc = 251
-    else:
-        print('\nError:', msg)
-        rc = 252
-    sys.exit(rc)
-
+    parser = argparse.ArgumentParser(
+        description="Helper script to run all Robot Framework's unit tests."
+    )
+    verbosity = parser.add_mutually_exclusive_group()
+    verbosity.add_argument("--verbose","-v", dest="verbosity", action="store_const", const=2, help="Minimal output")
+    verbosity.add_argument("--quiet","-q", dest="verbosity", action="store_const", const=0, help="Verbose output")
+    parser.set_defaults(verbosity=1)
+    parser.add_argument("--doc", "-d", dest="doc", action="store_const", const=1, help="Show tets' doc string instaed of name and class. Implies verbosity")
+    parser.set_defaults(doc=0)
+    args = parser.parse_args()
+    if args.doc == 1:
+        args.verbosity = 2
+    return args
 
 if __name__ == '__main__':
-    docs, vrbst = parse_args(sys.argv[1:])
+    args = parse_args(sys.argv[1:])
     tests = get_tests()
     suite = unittest.TestSuite(tests)
-    runner = unittest.TextTestRunner(descriptions=docs, verbosity=vrbst)
+    runner = unittest.TextTestRunner(descriptions=args.doc, verbosity=args.verbosity)
     result = runner.run(suite)
     rc = len(result.failures) + len(result.errors)
     if rc > 250:
