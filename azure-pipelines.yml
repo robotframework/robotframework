@@ -1,6 +1,6 @@
 variables:
   osx_runner: '/Users/vsts/hostedtoolcache/Python/3.6.5/x64/python'
-  win_runner: '/c/hostedtoolcache/windows/Python/3.6.4/x64/python'
+  win_runner: '/c/hostedtoolcache/windows/Python/3.6.8/x64/python'
   lin_runner: '/opt/hostedtoolcache/Python/3.6.5/x64/python'
 
 jobs:
