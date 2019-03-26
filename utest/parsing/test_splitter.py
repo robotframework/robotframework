@@ -35,12 +35,12 @@ def verify_split(string, *expected_statements, **config):
 class TestSplitFromSpaces(unittest.TestCase):
 
     def test_basics(self):
-        verify_split('Hello    my world  !',
+        verify_split('Hello    world  !',
                      [(DATA, 'Hello', 1, 1),
                       (SEPA, '    ', 1, 6),
-                      (DATA, 'my world', 1, 10),
-                      (SEPA, '  ', 1, 18),
-                      (DATA, '!', 1, 20)])
+                      (DATA, 'world', 1, 10),
+                      (SEPA, '  ', 1, 15),
+                      (DATA, '!', 1, 17)])
 
     def test_newline(self):
         verify_split('Hello    my world  !\n',
@@ -50,6 +50,23 @@ class TestSplitFromSpaces(unittest.TestCase):
                       (SEPA, '  ', 1, 18),
                       (DATA, '!', 1, 20),
                       (SEPA, '\n', 1, 21)])
+
+    def test_internal_spaces(self):
+        verify_split('I n t e r n a l  S p a c e s',
+                     [(DATA, 'I n t e r n a l', 1, 1),
+                      (SEPA, '  ', 1, 16),
+                      (DATA, 'S p a c e s', 1, 18)])
+
+    def test_single_tab_is_enough_as_sepator(self):
+        verify_split('\tT\ta\t\t\tb\t\t',
+                     [(DATA, '', 1, 1),
+                      (SEPA, '\t', 1, 1),
+                      (DATA, 'T', 1, 2),
+                      (SEPA, '\t', 1, 3),
+                      (DATA, 'a', 1, 4),
+                      (SEPA, '\t\t\t', 1, 5),
+                      (DATA, 'b', 1, 8),
+                      (SEPA, '\t\t', 1, 9)])
 
     def test_trailing_spaces(self):
         verify_split('Hello  world   ',
@@ -92,31 +109,6 @@ class TestSplitFromSpaces(unittest.TestCase):
                       (SEPA, '    \n', 4, 1)],
                      [(DATA, '!!!', 5, 1)])
 
-    def test_non_ascii_spaces(self):
-        spaces = (u'\N{NO-BREAK SPACE}\N{OGHAM SPACE MARK}\N{EN QUAD}'
-                  u'\N{EM SPACE}\N{HAIR SPACE}\N{IDEOGRAPHIC SPACE}')
-        verify_split(u'Hello{s}world\n{s}!!!{s}\n'.format(s=spaces),
-                     [(DATA, 'Hello', 1, 1),
-                      (SEPA, spaces, 1, 6),
-                      (DATA, 'world', 1, 12),
-                      (SEPA, '\n', 1, 17)],
-                     [(DATA, '', 2, 1),
-                      (SEPA, spaces, 2, 1),
-                      (DATA, '!!!', 2, 7),
-                      (SEPA, spaces+'\n', 2, 10)])
-        verify_split(u'|{s}Hello{s}|{s}world\n|{s}|{s}!!!{s}|{s}\n'.format(s=spaces),
-                     [(SEPA, '|'+spaces, 1, 1),
-                      (DATA, 'Hello', 1, 8),
-                      (SEPA, spaces+'|'+spaces, 1, 13),
-                      (DATA, 'world', 1, 26),
-                      (SEPA, '\n', 1, 31)],
-                     [(SEPA, '|'+spaces, 2, 1),
-                      (DATA, '', 2, 8),
-                      (SEPA, '|'+spaces, 2, 8),
-                      (DATA, '!!!', 2, 15),
-                      (SEPA, spaces+'|', 2, 18),
-                      (SEPA, spaces+'\n', 2, 25)])
-
 
 class TestSplitFromPipes(unittest.TestCase):
 
@@ -140,6 +132,29 @@ class TestSplitFromPipes(unittest.TestCase):
                       (DATA, '!', 1, 25),
                       (SEPA, ' |', 1, 26),
                       (SEPA, '\n', 1, 28)])
+
+    def test_internal_spaces(self):
+        verify_split('| I n t e r n a l | S p a c e s',
+                     [(SEPA, '| ', 1, 1),
+                      (DATA, 'I n t e r n a l', 1, 3),
+                      (SEPA, ' | ', 1, 18),
+                      (DATA, 'S p a c e s', 1, 21)])
+
+    def test_internal_consecutive_spaces(self):
+        verify_split('| Consecutive    Spaces |    New  in  RF 3.2',
+                     [(SEPA, '| ', 1, 1),
+                      (DATA, 'Consecutive    Spaces', 1, 3),
+                      (SEPA, ' |    ', 1, 24),
+                      (DATA, 'New  in  RF 3.2', 1, 30)])
+
+    def test_tabs(self):
+        verify_split('|\tT\ta\tb\ts\t\t\t|\t!\t|\t',
+                     [(SEPA, '|\t', 1, 1),
+                      (DATA, 'T\ta\tb\ts', 1, 3),
+                      (SEPA, '\t\t\t|\t', 1, 10),
+                      (DATA, '!', 1, 15),
+                      (SEPA, '\t|', 1, 16),
+                      (SEPA, '\t', 1, 18)])
 
     def test_trailing_spaces(self):
         verify_split('| Hello | my world  |   ! |      ',
@@ -272,6 +287,64 @@ class TestSplitFromPipes(unittest.TestCase):
                       (SEPA, '\n', 4, 7)],
                      [(SEPA, '| ', 5, 1),
                       (DATA, '!!!', 5, 3)])
+
+
+class TestNonAsciiSpaces(unittest.TestCase):
+    spaces = (u'\N{NO-BREAK SPACE}\N{OGHAM SPACE MARK}\N{EN QUAD}'
+              u'\N{EM SPACE}\N{HAIR SPACE}\N{IDEOGRAPHIC SPACE}')
+    data = '-' + '-'.join(spaces) + '-'
+
+    def test_as_separator(self):
+        spaces = self.spaces
+        ls = len(spaces)
+        verify_split(u'Hello{s}world\n{s}!!!{s}\n'.format(s=spaces),
+                     [(DATA, 'Hello', 1, 1),
+                      (SEPA, spaces, 1, 1+5),
+                      (DATA, 'world', 1, 1+5+ls),
+                      (SEPA, '\n', 1, 1+5+ls+5)],
+                     [(DATA, '', 2, 1),
+                      (SEPA, spaces, 2, 1),
+                      (DATA, '!!!', 2, 1+ls),
+                      (SEPA, spaces+'\n', 2, 1+ls+3)])
+
+    def test_as_separator_with_pipes(self):
+        spaces = self.spaces
+        ls = len(spaces)
+        verify_split(u'|{s}Hello{s}world{s}|{s}!\n|{s}|{s}!!!{s}|{s}\n'.format(s=spaces),
+                     [(SEPA, '|'+spaces, 1, 1),
+                      (DATA, 'Hello'+spaces+'world', 1, 2+ls),
+                      (SEPA, spaces+'|'+spaces, 1, 2+ls+5+ls+5),
+                      (DATA, '!', 1, 2+ls+5+ls+5+ls+1+ls),
+                      (SEPA, '\n', 1, 2+ls+5+ls+5+ls+1+ls+1)],
+                     [(SEPA, '|'+spaces, 2, 1),
+                      (DATA, '', 2, 2+ls),
+                      (SEPA, '|'+spaces, 2, 2+ls),
+                      (DATA, '!!!', 2, 2+ls+1+ls),
+                      (SEPA, spaces+'|', 2, 2+ls+1+ls+3),
+                      (SEPA, spaces+'\n', 2, 2+ls+1+ls+3+ls+1)])
+
+    def test_in_data(self):
+        data = self.data
+        spaces = self.spaces
+        ld = len(data)
+        ls = len(spaces)
+        verify_split(u'{d}{s}{d}{s}{d}'.format(d=data, s=spaces),
+                     [(DATA, data, 1, 1),
+                      (SEPA, spaces, 1, 1+ld),
+                      (DATA, data, 1, 1+ld+ls),
+                      (SEPA, spaces, 1, 1+ld+ls+ld),
+                      (DATA, data, 1, 1+ld+ls+ld+ls)])
+
+    def test_in_data_with_pipes(self):
+        data = self.data
+        spaces = self.spaces
+        ld = len(data)
+        ls = len(spaces)
+        verify_split(u'|{s}{d}{s}|{s}{d}'.format(d=data, s=spaces),
+                     [(SEPA, '|'+spaces, 1, 1),
+                      (DATA, data, 1, 2+ls),
+                      (SEPA, spaces+'|'+spaces, 1, 2+ls+ld),
+                      (DATA, data, 1, 2+ls+ld+ls+1+ls)])
 
 
 class TestContinuation(unittest.TestCase):

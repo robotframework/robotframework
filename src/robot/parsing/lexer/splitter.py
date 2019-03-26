@@ -19,7 +19,6 @@ from .tokens import Token
 
 
 class Splitter(object):
-    # TODO: Split using spaces but normalize non-break space.
     _space_splitter = re.compile(r'(\s{2,}|\t)', re.UNICODE)
     _pipe_splitter = re.compile(r'((?:\A|\s+)\|(?:\s+|\Z))', re.UNICODE)
     _trailing_whitespace = re.compile(r'\s+$', re.UNICODE)
