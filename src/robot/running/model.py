@@ -111,7 +111,7 @@ class TestSuite(model.TestSuite):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['resource']
+    __slots__ = ['resource', 'settings']
     test_class = TestCase    #: Internal usage only.
     keyword_class = Keyword  #: Internal usage only.
 
@@ -121,6 +121,10 @@ class TestSuite(model.TestSuite):
         #: keywords the suite owns. When data is parsed from the file system,
         #: this data comes from the same test case file that creates the suite.
         self.resource = ResourceFile(source=source)
+
+        #: The last :class:`~robot.conf.settings.RobotSettings` object
+        #: run on this suite. Contains data configuring test execution.
+        self.settings = None
 
     def configure(self, randomize_suites=False, randomize_tests=False,
                   randomize_seed=None, **options):
@@ -219,6 +223,7 @@ class TestSuite(model.TestSuite):
                     IMPORTER.reset()
                     output = Output(settings)
                     runner = Runner(output, settings)
+                    self.settings = settings
                     self.visit(runner)
                 output.close(runner.result)
         return runner.result
