@@ -87,7 +87,7 @@ class LibraryKeywordRunner(object):
         if timeout and timeout.active:
             def runner():
                 with LOGGER.delayed_logging:
-                    context.output.debug(timeout.get_message())
+                    context.output.debug(timeout.get_message)
                     return timeout.run(handler, args=positional, kwargs=named)
             return runner
         return lambda: handler(*positional, **named)
