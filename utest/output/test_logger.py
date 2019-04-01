@@ -46,7 +46,7 @@ class TestLogger(unittest.TestCase):
         logger = LoggerMock(('Hello, world!', 'INFO'))
         self.logger.register_logger(logger)
         self.logger.write('Hello, world!', 'INFO')
-        assert_true(logger.msg.timestamp.startswith('20'))
+        assert_true(hasattr(logger.msg, 'timestamp'))
 
     def test_write_to_one_logger_with_trace_level(self):
         logger = LoggerMock(('expected message', 'TRACE'))

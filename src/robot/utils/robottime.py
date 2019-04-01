@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import datetime
+import os
 import time
 import re
 
@@ -395,6 +396,8 @@ class TimestampCache(object):
 
     # Seam for mocking
     def _get_epoch(self):
+        if os.getenv('SOURCE_DATE_EPOCH'):
+            return float(os.getenv('SOURCE_DATE_EPOCH'))
         return time.time()
 
     def _use_cache(self, secs, *separators):
