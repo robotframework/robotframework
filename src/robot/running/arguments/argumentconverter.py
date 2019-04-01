@@ -46,7 +46,7 @@ class ArgumentConverter(object):
 
     def _convert(self, name, value):
         type_, explicit_type = self._get_type(name, value)
-        if type_ is None or contains_var(value, identifiers='$@&%'):
+        if type_ is None or (self._dry_run and contains_var(value, identifiers='$@&%')):
             return value
         converter = TypeConverter.converter_for(type_)
         if converter is None:
