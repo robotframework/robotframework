@@ -13,14 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
-
 from robot.utils import is_unicode
+from robot.variables import contains_var
 
 from .typeconverters import TypeConverter
-
-
-VARIABLE_PATTERN = re.compile(r'[$@&%]\{.+\}')
 
 
 class ArgumentConverter(object):
@@ -50,7 +46,7 @@ class ArgumentConverter(object):
 
     def _convert(self, name, value):
         type_, explicit_type = self._get_type(name, value)
-        if type_ is None or not self._need_conversion(value):
+        if type_ is None or contains_var(value, identifiers='$@&%'):
             return value
         converter = TypeConverter.converter_for(type_)
         if converter is None:
@@ -65,8 +61,3 @@ class ArgumentConverter(object):
         if name in self._argspec.defaults:
             return type(self._argspec.defaults[name]), False
         return None, None
-
-    def _need_conversion(self, value):
-        if self._dry_run and VARIABLE_PATTERN.search(value):
-            return False
-        return True
