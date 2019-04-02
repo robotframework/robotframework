@@ -6,24 +6,24 @@ Resource          builtin_resource.robot
 Get Count
     [Documentation]    Tested also by Should Contain X Times keyword that uses this intenally.
     ${tc} =    Check test case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Item found from the first item 2 times
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Item found from the first item 2 times
-    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    Item found from the first item 1 time
-    Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    Item found from the first item 1 time
-    Check Log Message    ${tc.kws[4].kws[0].msgs[0]}    Item found from the first item 50 times
-    Check Log Message    ${tc.kws[5].kws[0].msgs[0]}    Item found from the first item 0 times
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Item found from container 2 times
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Item found from container 2 times
+    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    Item found from container 1 time
+    Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    Item found from container 1 time
+    Check Log Message    ${tc.kws[4].kws[0].msgs[0]}    Item found from container 50 times
+    Check Log Message    ${tc.kws[5].kws[0].msgs[0]}    Item found from container 0 times
 
 Should Contain X Times with strings
     ${tc} =    Check test case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Item found from the first item 2 times
-    Check Log Message    ${tc.kws[1].msgs[0]}    Item found from the first item 1 time
-    Check Log Message    ${tc.kws[3].msgs[0]}    Item found from the first item 0 times
+    Check Log Message    ${tc.kws[0].msgs[0]}    Item found from container 2 times
+    Check Log Message    ${tc.kws[1].msgs[0]}    Item found from container 1 time
+    Check Log Message    ${tc.kws[3].msgs[0]}    Item found from container 0 times
 
 Should Contain X Times with containers
     ${tc} =    Check test case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Item found from the first item 1 time
-    Check Log Message    ${tc.kws[1].msgs[0]}    Item found from the first item 2 times
-    Check Log Message    ${tc.kws[3].msgs[0]}    Item found from the first item 0 times
+    Check Log Message    ${tc.kws[0].msgs[0]}    Item found from container 1 time
+    Check Log Message    ${tc.kws[1].msgs[0]}    Item found from container 2 times
+    Check Log Message    ${tc.kws[3].msgs[0]}    Item found from container 0 times
 
 Should Contain X Times with Java types
     [Tags]    require-jython

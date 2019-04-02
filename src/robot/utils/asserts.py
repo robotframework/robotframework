@@ -176,16 +176,24 @@ def assert_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
         _report_failure('%s not raised' % exc_name)
 
 
-def assert_equal(first, second, msg=None, values=True):
+def assert_equal(first, second, msg=None, values=True, ignore_case=False):
     """Fail if given objects are unequal as determined by the '==' operator."""
-    if not first == second:
-        _report_inequality_failure(first, second, msg, values, '!=')
+    if ignore_case:
+        if not first.lower() == second.lower():
+            _report_inequality_failure(first, second, msg, values, '!=')
+    else:
+        if not first == second:
+            _report_inequality_failure(first, second, msg, values, '!=')
 
 
-def assert_not_equal(first, second, msg=None, values=True):
+def assert_not_equal(first, second, msg=None, values=True, ignore_case=False):
     """Fail if given objects are equal as determined by the '==' operator."""
-    if first == second:
-        _report_inequality_failure(first, second, msg, values, '==')
+    if ignore_case:
+        if first.lower() == second.lower():
+            _report_inequality_failure(first, second, msg, values, '==')
+    else:
+        if first == second:
+            _report_inequality_failure(first, second, msg, values, '==')
 
 
 def assert_almost_equal(first, second, places=7, msg=None, values=True):

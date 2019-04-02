@@ -5,7 +5,7 @@ Variables         variables_to_verify.py
 Should Contain
     [Documentation]    FAIL Several failures occurred:
     ...
-    ...    1) The Message: 'abcdefg' does not contain 'ABCDEFG'
+    ...    1) The Message: 'abcdefg' does not contain 'ABCDEFG'.
     ...
     ...    2) Message
     [Template]    Should Contain
@@ -15,7 +15,7 @@ Should Contain
     abcdefg    x          Message    values=false
 
 Should Contain with non-strings
-    [Documentation]    FAIL '['a', 2]' does not contain '3'
+    [Documentation]    FAIL '['a', 2]' does not contain '3'.
     [Template]    Should Contain
     ${LIST1}     a
     ${TUPLE2}    ${2}
@@ -24,7 +24,7 @@ Should Contain with non-strings
     ${LIST2}     ${3}
 
 Should Contain case-insensitive
-    [Documentation]    FAIL '{'a': 1}' does not contain 'xxx'
+    [Documentation]    FAIL (case insensitive): '{'a': 1}' does not contain 'XXX'.
     [Template]    Should Contain
     abcdefg     CD     ignore_case=True
     HYVÄ        vä     ignore_case=yes
@@ -33,13 +33,13 @@ Should Contain case-insensitive
     ${DICT1}    XXX    ignore_case=yes
 
 Should Not Contain
-    [Documentation]    FAIL 'Hello yet again' contains 'yet'
+    [Documentation]    FAIL 'Hello yet again' contains 'yet'.
     [Template]    Should Not Contain
     Hello again    yet
     Hello yet again    yet
 
 Should Not Contain with non-strings
-    [Documentation]    FAIL '['a', 2]' contains '2'
+    [Documentation]    FAIL '['a', 2]' contains '2'.
     [Template]    Should Not Contain
     ${LIST}     xxx
     ${DICT}     ${42}
@@ -48,11 +48,11 @@ Should Not Contain with non-strings
 Should Not Contain case-insensitive
     [Documentation]    FAIL Several failures occurred:
     ...
-    ...    1) 'abcdefg' contains 'cd'
+    ...    1) (case insensitive): 'abcdefg' contains 'CD'.
     ...
-    ...    2) 'HYVÄ' contains 'vä'
+    ...    2) (case insensitive): 'HYVÄ' contains 'vä'.
     ...
-    ...    3) '{'a': 1}' contains 'a'
+    ...    3) (case insensitive): '{'a': 1}' contains 'A'.
     [Template]    Should Not Contain
     abcdefg     CD    ignore_case=True
     HYVÄ        vä    ignore_case=yes

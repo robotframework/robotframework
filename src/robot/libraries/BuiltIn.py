@@ -625,18 +625,20 @@ class _Verify(_BuiltInBase):
         | Should Be Equal | ${x} | expected | ignore_case=True |
         """
         self._log_types_at_info_if_different(first, second)
-        if is_truthy(ignore_case) and is_string(first) and is_string(second):
-            first = first.lower()
-            second = second.lower()
-        self._should_be_equal(first, second, msg, values)
+        self._should_be_equal(first, second, msg, values, ignore_case)
 
-    def _should_be_equal(self, first, second, msg, values):
+    def _should_be_equal(self, first, second, msg, values, ignore_case=False):
         if first == second:
             return
         include_values = self._include_values(values)
         if include_values and is_string(first) and is_string(second):
             self._raise_multi_diff(first, second)
-        assert_equal(first, second, msg, include_values)
+        if is_truthy(ignore_case) and is_string(first) and is_string(second):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
+        assert_equal(first, second, msg, include_values, ignore_case)
 
     def _log_types_at_info_if_different(self, first, second):
         level = 'DEBUG' if type(first) == type(second) else 'INFO'
@@ -669,13 +671,15 @@ class _Verify(_BuiltInBase):
         case-insensitive. New option in Robot Framework 3.0.1.
         """
         self._log_types_at_info_if_different(first, second)
-        if is_truthy(ignore_case) and is_string(first) and is_string(second):
-            first = first.lower()
-            second = second.lower()
-        self._should_not_be_equal(first, second, msg, values)
+        self._should_not_be_equal(first, second, msg, values, ignore_case)
 
-    def _should_not_be_equal(self, first, second, msg, values):
-        assert_not_equal(first, second, msg, self._include_values(values))
+    def _should_not_be_equal(self, first, second, msg, values, ignore_case=False):
+        if is_truthy(ignore_case):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
+        assert_not_equal(first, second, msg, self._include_values(values), ignore_case)
 
     def should_not_be_equal_as_integers(self, first, second, msg=None,
                                         values=True, base=None):
@@ -783,10 +787,7 @@ class _Verify(_BuiltInBase):
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
         second = self._convert_to_string(second)
-        if is_truthy(ignore_case):
-            first = first.lower()
-            second = second.lower()
-        self._should_not_be_equal(first, second, msg, values)
+        self._should_not_be_equal(first, second, msg, values, ignore_case)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True,
                                    ignore_case=False):
@@ -805,10 +806,7 @@ class _Verify(_BuiltInBase):
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
         second = self._convert_to_string(second)
-        if is_truthy(ignore_case):
-            first = first.lower()
-            second = second.lower()
-        self._should_be_equal(first, second, msg, values)
+        self._should_be_equal(first, second, msg, values, ignore_case)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True,
                               ignore_case=False):
@@ -818,11 +816,17 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
+        orig_str1 = str1
+        orig_str2 = str2
         if is_truthy(ignore_case):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             str1 = str1.lower()
             str2 = str2.lower()
         if str1.startswith(str2):
-            raise AssertionError(self._get_string_msg(str1, str2, msg, values,
+            raise AssertionError(self._get_string_msg(orig_str1, orig_str2, msg, values,
                                                       'starts with'))
 
     def should_start_with(self, str1, str2, msg=None, values=True,
@@ -833,11 +837,17 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
+        orig_str1 = str1
+        orig_str2 = str2
         if is_truthy(ignore_case):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             str1 = str1.lower()
             str2 = str2.lower()
         if not str1.startswith(str2):
-            raise AssertionError(self._get_string_msg(str1, str2, msg, values,
+            raise AssertionError(self._get_string_msg(orig_str1, orig_str2, msg, values,
                                                       'does not start with'))
 
     def should_not_end_with(self, str1, str2, msg=None, values=True,
@@ -848,11 +858,17 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
+        orig_str1 = str1
+        orig_str2 = str2
         if is_truthy(ignore_case):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             str1 = str1.lower()
             str2 = str2.lower()
         if str1.endswith(str2):
-            raise AssertionError(self._get_string_msg(str1, str2, msg, values,
+            raise AssertionError(self._get_string_msg(orig_str1, orig_str2, msg, values,
                                                       'ends with'))
 
     def should_end_with(self, str1, str2, msg=None, values=True,
@@ -863,11 +879,17 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
+        orig_str1 = str1
+        orig_str2 = str2
         if is_truthy(ignore_case):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             str1 = str1.lower()
             str2 = str2.lower()
         if not str1.endswith(str2):
-            raise AssertionError(self._get_string_msg(str1, str2, msg, values,
+            raise AssertionError(self._get_string_msg(orig_str1, orig_str2, msg, values,
                                                       'does not end with'))
 
     def should_not_contain(self, container, item, msg=None, values=True,
@@ -885,20 +907,20 @@ class _Verify(_BuiltInBase):
         | Should Not Contain | ${some list} | value  |
         | Should Not Contain | ${output}    | FAILED | ignore_case=True |
         """
-        # TODO: It is inconsistent that errors show original case in 'container'
-        # 'item' is in lower case. Should rather show original case everywhere
-        # and add separate '(case-insensitive)' not to the error message.
-        # This same logic should be used with all keywords supporting
-        # case-insensitive comparisons.
         orig_container = container
+        orig_item = item
         if is_truthy(ignore_case) and is_string(item):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             item = item.lower()
             if is_string(container):
                 container = container.lower()
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
         if item in container:
-            raise AssertionError(self._get_string_msg(orig_container, item, msg,
+            raise AssertionError(self._get_string_msg(orig_container, orig_item, msg,
                                                       values, 'contains'))
 
     def should_contain(self, container, item, msg=None, values=True,
@@ -923,14 +945,19 @@ class _Verify(_BuiltInBase):
         | Should Contain | ${some list} | value | ignore_case=True |
         """
         orig_container = container
+        orig_item = item
         if is_truthy(ignore_case) and is_string(item):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             item = item.lower()
             if is_string(container):
                 container = container.lower()
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
         if item not in container:
-            raise AssertionError(self._get_string_msg(orig_container, item, msg,
+            raise AssertionError(self._get_string_msg(orig_container, orig_item, msg,
                                                       values, 'does not contain'))
 
     def should_contain_any(self, container, *items, **configuration):
@@ -967,6 +994,10 @@ class _Verify(_BuiltInBase):
             raise RuntimeError('One or more items required.')
         orig_container = container
         if is_truthy(ignore_case):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             items = [x.lower() if is_string(x) else x for x in items]
             if is_string(container):
                 container = container.lower()
@@ -1013,7 +1044,12 @@ class _Verify(_BuiltInBase):
         if not items:
             raise RuntimeError('One or more items required.')
         orig_container = container
+        orig_items = items
         if is_truthy(ignore_case):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
             items = [x.lower() if is_string(x) else x for x in items]
             if is_string(container):
                 container = container.lower()
@@ -1021,15 +1057,15 @@ class _Verify(_BuiltInBase):
                 container = set(x.lower() if is_string(x) else x for x in container)
         if any(item in container for item in items):
             msg = self._get_string_msg(orig_container,
-                                       seq2str(items, lastsep=' or '),
+                                       seq2str(orig_items, lastsep=' or '),
                                        msg, values,
                                        'contains one or more of',
                                        quote_item2=False)
             raise AssertionError(msg)
 
-    def should_contain_x_times(self, item1, item2, count, msg=None,
+    def should_contain_x_times(self, container, item, count, msg=None,
                                ignore_case=False):
-        """Fails if ``item1`` does not contain ``item2`` ``count`` times.
+        """Fails if ``container`` does not contain ``item`` ``count`` times.
 
         Works with strings, lists and all objects that `Get Count` works
         with. The default error message can be overridden with ``msg`` and
@@ -1037,7 +1073,7 @@ class _Verify(_BuiltInBase):
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         compared items are strings, it indicates that comparison should be
-        case-insensitive. If the ``item1`` is a list-like object, string
+        case-insensitive. If the ``container`` is a list-like object, string
         items in it are compared case-insensitively. New option in Robot
         Framework 3.0.1.
 
@@ -1045,26 +1081,25 @@ class _Verify(_BuiltInBase):
         | Should Contain X Times | ${output}    | hello | 2 |
         | Should Contain X Times | ${some list} | value | 3 | ignore_case=True |
         """
-        # TODO: Rename 'item1' and 'item2' to 'container' and 'item' in RF 3.1.
-        # Other 'contain' keywords use these names. And 'Get Count' should too.
-        # Cannot be done in minor release due to backwards compatibility.
-        # Remember to update it also in the docstring!!
         count = self._convert_to_integer(count)
-        orig_item1 = item1
-        if is_truthy(ignore_case) and is_string(item2):
-            item2 = item2.lower()
-            if is_string(item1):
-                item1 = item1.lower()
-            elif is_list_like(item1):
-                item1 = [x.lower() if is_string(x) else x for x in item1]
-        x = self.get_count(item1, item2)
+        orig_item = item
+        orig_container = container
+        if is_truthy(ignore_case) and is_string(item):
+            item = item.lower()
+            if is_string(container):
+                container = container.lower()
+            elif is_list_like(container):
+                container = [x.lower() if is_string(x) else x for x in container]
+        x = self.get_count(container, item)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
-                    % (unic(orig_item1), unic(item2), x, s(x), count, s(count))
+                    % (unic(orig_container), unic(orig_item), x, s(x), count, s(count))
+        if is_truthy(ignore_case):
+            msg = msg + '(case insensitive)'
         self.should_be_equal_as_integers(x, count, msg, values=False)
 
-    def get_count(self, item1, item2):
-        """Returns and logs how many times ``item2`` is found from ``item1``.
+    def get_count(self, container, item):
+        """Returns and logs how many times ``item`` is found from ``container``.
 
         This keyword works with Python strings and lists and all objects
         that either have ``count`` method or can be converted to Python lists.
@@ -1073,14 +1108,14 @@ class _Verify(_BuiltInBase):
         | ${count} = | Get Count | ${some item} | interesting value |
         | Should Be True | 5 < ${count} < 10 |
         """
-        if not hasattr(item1, 'count'):
+        if not hasattr(container, 'count'):
             try:
-                item1 = list(item1)
+                container = list(container)
             except:
                 raise RuntimeError("Converting '%s' to list failed: %s"
-                                   % (item1, get_error_message()))
-        count = item1.count(item2)
-        self.log('Item found from the first item %d time%s' % (count, s(count)))
+                                   % (container, get_error_message()))
+        count = container.count(item)
+        self.log('Item found from container %d time%s' % (count, s(count)))
         return count
 
     def should_not_match(self, string, pattern, msg=None, values=True,
@@ -1095,6 +1130,11 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
         if self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
@@ -1111,6 +1151,11 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
+        if is_truthy(ignore_case):
+            if msg:
+                msg = msg + '(case insensitive)'
+            else:
+                msg = '(case insensitive)'
         if not self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
@@ -1255,7 +1300,7 @@ class _Verify(_BuiltInBase):
             return custom_message
         item1 = "'%s'" % unic(item1) if quote_item1 else unic(item1)
         item2 = "'%s'" % unic(item2) if quote_item2 else unic(item2)
-        default_message = '%s %s %s' % (item1, delimiter, item2)
+        default_message = '%s %s %s.' % (item1, delimiter, item2)
         if not custom_message:
             return default_message
         return '%s: %s' % (custom_message, default_message)

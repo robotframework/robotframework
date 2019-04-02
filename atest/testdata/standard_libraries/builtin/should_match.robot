@@ -3,7 +3,7 @@ Variables         variables_to_verify.py
 
 *** Test Cases ***
 Should Match
-    [Documentation]    FAIL    Failure: 'NOK' does not match 'H*K'
+    [Documentation]    FAIL    Failure: 'NOK' does not match 'H*K'.
     [Template]    Should Match
     abcdefghijklmnopqrstuvwxyz    *
     abcdefghijklmnopqrstuvwxyz    ?*?efg*p*t?vw*z
@@ -13,8 +13,8 @@ Should Match
 
 Should Match with extra trailing newline
     [Template]    Run Keyword And Expect Error
-    'foo\n' does not match 'foo'    Should Match    foo\n    foo
-    'foo' does not match 'foo\n'    Should Match    foo      foo\n
+    'foo\n' does not match 'foo'.    Should Match    foo\n    foo
+    'foo' does not match 'foo\n'.    Should Match    foo      foo\n
 
 Should Match case-insensitive
     [Template]    Should Match
@@ -36,7 +36,7 @@ Should Match does not work with bytes on Python 3
     text                          ${BYTES WITHOUT NON ASCII}
 
 Should Not Match
-    [Documentation]    FAIL    'Hello world' matches '?ello*'
+    [Documentation]    FAIL    'Hello world' matches '?ello*'.
     [Template]    Should Not Match
     this string does not    match this pattern
     Case matters            case matters
@@ -45,7 +45,7 @@ Should Not Match
     Hello world             ?ello*
 
 Should Not Match case-insensitive
-    [Documentation]    FAIL    Fails: 'Hillo?' matches 'h?ll*'
+    [Documentation]    FAIL    Fails(case insensitive): 'Hillo?' matches 'h?ll*'.
     [Template]    Should Not Match
     Hello!    heLLo    ignore_case=True
     Hillo?    h?ll*    ignore_case=yes    msg=Fails
@@ -77,12 +77,12 @@ Should Match Regexp returns match and groups
     Should Be Equal    ${group2}    !!!!!
 
 Should Match Regexp with bytes containing non-ascii characters
-    [Documentation]    FAIL    '${BYTES WITH NON ASCII}' does not match 'hyva'
+    [Documentation]    FAIL    '${BYTES WITH NON ASCII}' does not match 'hyva'.
     [Template]    Should Match Regexp
     ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
 
 Should Not Match Regexp
-    [Documentation]    FAIL    'James Bond 007' matches '^J\\w{4}\\sB[donkey]+ \\d*$'
+    [Documentation]    FAIL    'James Bond 007' matches '^J\\w{4}\\sB[donkey]+ \\d*$'.
     [Template]    Should Not Match Regexp
     this string does not    match this pattern
     James Bond 007          ^J\\w{4}\\sB[donkey]+ \\d*$

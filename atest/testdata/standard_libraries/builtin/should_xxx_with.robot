@@ -5,7 +5,7 @@ ${LONG}           This is a bit longer sentence and it even has a friend here.
 
 *** Test Cases ***
 Should Start With
-    [Documentation]    FAIL My message: '${LONG}' does not start with 'Does not start'
+    [Documentation]    FAIL My message: '${LONG}' does not start with 'Does not start'.
     [Template]    Should Start With
     Hello, world!    Hello
     Hello, world!    Hello, world!
@@ -22,14 +22,14 @@ Should Start With without values
     Should Start With    ${LONG}    Nope    My message    values=No values
 
 Should Not Start With
-    [Documentation]    FAIL 'Hello, world!' starts with 'Hello'
+    [Documentation]    FAIL 'Hello, world!' starts with 'Hello'.
     [Template]    Should Not Start With
     Hello, world!    Hi
     Hello, world!    HELLO
     Hello, world!    Hello
 
 Should Not Start With case-insensitive
-    [Documentation]     FAIL  'hello, world?' starts with 'hello, world'
+    [Documentation]     FAIL (case insensitive): 'Hello, world?' starts with 'hello, WORLD'.
     [Template]    Should Not Start With
     !Hello!          hELLo           ignore_case=True
     HYVÄÄ YÖTÄ       pahaa           ignore_case=yeah
@@ -40,7 +40,7 @@ Should End With without values
     Should End With    ${LONG}    Nope    My message    values=No values
 
 Should End With
-    [Documentation]    FAIL 'Hello, world!' does not end with '?'
+    [Documentation]    FAIL 'Hello, world!' does not end with '?'.
     [Template]    Should End With
     Hello, world!    !
     Hello, world!    Hello, world!
@@ -59,7 +59,7 @@ Should Not End With
     Hillo!    !    Message only    No Values
 
 Should Not End With case-insensitive
-    [Documentation]     FAIL  'hello, world!' ends with 'hello, world!'
+    [Documentation]     FAIL (case insensitive): 'Hello, world!' ends with 'hello, WORLD!'.
     [Template]    Should Not End With
     Hello!           hELLo            ignore_case=True
     HYVÄÄ YÖTÄ       hyvää            ignore_case=yeah
