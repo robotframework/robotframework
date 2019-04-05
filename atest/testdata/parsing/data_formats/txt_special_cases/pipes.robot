@@ -59,6 +59,14 @@
 | |  |   |    |     |      |       |        |       |      |     |    |  | |
 | | Cells Should Be Empty  |  |     | | | |  |   | ${EMPTY}  | | | |
 
+| Consequtive spaces
+| | Should Be Equal | foo            bar | foo bar
+| | Should Be Equal | non-ascii  　spaces | non-ascii spaces
+
+| Tabs
+| | Should Be Equal | foo	bar | foo bar |
+| | Should Be Equal | foo			bar | foo bar |
+
 | Using FOR Loop With Pipes  |
 |         |  [Documentation]  |  FAIL    |  for loop executed  |
 |         |  :FOR  |  ${value}  |  IN   |  a    |   a   |   for loop executed   |  for loop not executed  |

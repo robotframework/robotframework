@@ -65,8 +65,10 @@ class AssignmentValidator(object):
         if self._seen_assign_mark:
             raise DataError("Assign mark '=' can be used only with the last "
                             "variable.")
-        self._seen_assign_mark = variable.endswith('=')
-        return variable.rstrip('= ')
+        if variable.endswith('='):
+            self._seen_assign_mark = True
+            return variable[:-1].rstrip()
+        return variable
 
     def _validate_state(self, is_list, is_dict):
         if is_list and self._seen_list:
