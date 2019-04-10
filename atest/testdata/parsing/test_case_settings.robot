@@ -25,7 +25,7 @@ test_case names are NOT _forMatted_
     No Operation
 
 Documentation
-    [Documentation]    Documentation for this test case
+    [Documentation]    Documentation in single line and column.
     No Operation
 
 Documentation in multiple columns
@@ -33,7 +33,9 @@ Documentation in multiple columns
     No Operation
 
 Documentation in multiple rows
-    [DOCUMENTATION]    ${1}st line is shortdoc.
+    [DOCUMENTATION]    ${1}st logical line
+    ...                is shortdoc.
+    ...
     ...                Documentation for this test case
     ...                in    multiple    rows.
     No Operation

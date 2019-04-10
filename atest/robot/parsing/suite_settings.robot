@@ -11,7 +11,10 @@ Suite Name
 
 Suite Documentation
     ${doc} =    Catenate    SEPARATOR=\n
-    ...    1st line is shortdoc.
+    ...    1st logical line
+    ...    (i.e. paragraph)
+    ...    is shortdoc on console.
+    ...    ${EMPTY}
     ...    Text from multiple columns is catenated with spaces,
     ...    and line continuation creates a new line.
     ...    Newlines can also be added literally "\n\n".
@@ -21,8 +24,8 @@ Suite Documentation
     Should Be Equal    ${SUITE.doc}    ${doc}
 
 Suite Name And Documentation On Console
-    Check Stdout Contains    Suite Settings :: 1st line is shortdoc.${SPACE * 39}\n
-    Check Stdout Contains    Suite Settings :: 1st line is shortdoc.${SPACE * 31}| PASS |\n
+    Check Stdout Contains    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on console.${SPACE * 3}\n
+    Check Stdout Contains    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on... | PASS |\n
 
 Test Setup
     ${test} =    Check Test Case    Test Case

@@ -1,5 +1,8 @@
 *** Settings ***
-Documentation    ${1}st line is shortdoc.
+Documentation    ${1}st logical line
+...              (i.e. paragraph)
+...              is shortdoc on console.
+...
 ...              Text from     multiple    columns    is catenated with spaces,
 ...              and line continuation creates a new line.
 ...              Newlines can also be added literally "\n\n".

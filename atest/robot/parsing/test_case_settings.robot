@@ -23,13 +23,15 @@ Names are not formatted
     Check Log Message    ${ERRORS}[0]    ${message}    WARN
 
 Documentation
-    Verify Documentation    Documentation for this test case
+    Verify Documentation    Documentation in single line and column.
 
 Documentation in multiple columns
     Verify Documentation    Documentation for this test case in multiple columns
 
 Documentation in multiple rows
-    Verify Documentation    1st line is shortdoc.
+    Verify Documentation    1st logical line
+    ...    is shortdoc.
+    ...    ${EMPTY}
     ...    Documentation for this test case
     ...    in multiple rows.
 
@@ -46,7 +48,11 @@ Documentation with escaping
     Verify Documentation    \${XXX} c:\\temp${SPACE*2}\\
 
 Name and documentation on console
-    Check Stdout Contains    Documentation in multiple rows :: 1st line is shortdoc.${SPACE * 15}| PASS |
+    Check Stdout Contains    Normal name${SPACE * 59}| PASS |
+    Check Stdout Contains    test_case names are NOT _forMatted_${SPACE * 35}| PASS |
+    Check Stdout Contains    Documentation :: Documentation in single line and column.${SPACE * 13}| PASS |
+    Check Stdout Contains    Documentation in multiple rows :: 1st logical line is shortdoc.${SPACE * 7}| PASS |
+    Check Stdout Contains    Documentation with non-existing variables :: Starting from RF ${2}.1 ... | PASS |
 
 Tags
     Verify Tags    force-1    test-1    test-2

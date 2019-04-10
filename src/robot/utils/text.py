@@ -166,9 +166,9 @@ def getdoc(item):
         return unic(doc)
 
 
-def getshortdoc(doc_or_item):
+def getshortdoc(doc_or_item, linesep='\n'):
     if not doc_or_item:
         return u''
     doc = doc_or_item if is_string(doc_or_item) else getdoc(doc_or_item)
     lines = takewhile(lambda line: line.strip(), doc.splitlines())
-    return '\n'.join(lines)
+    return linesep.join(lines)
