@@ -3,28 +3,42 @@
 *** Settings ***
 ...    Invalid usage
 Documentation
-...    This    doc    is    one    long    string
-...    !
+...    First row.
+...    Second row.
+...
+...    Second paragraph
 ...    !
 \    ...    !    # Leading '\' deprecated in RF 3.1.2.
 ...    !
+Metadata         Name
+...              1.1
+...              1.2
+...
+...              2.1
+...              2.2
+...              2.3
+...
+...              3.1
 # Some comments here to complicate parsing even more ...
 Default Tags    ...    t1    t2    t3    t4
 ...             t4     t5    \     t6
-...
 ...             # more comments
 ...             \      t7    t8
 ...             t9
 Library
 ...    OperatingSystem
-
+Test Teardown    Log Many
+...    1st
+...
+...    2nd last
+...
 
 *** Variables ***
 ...    # Invalid usage
 ${STRING}    first
 ...
 ...          third
-...
+...          # Ignoring empty
 # Comments, comments, comments, ...
 @{list}    ...    hello
 ...    world
@@ -78,16 +92,20 @@ Multiline test settings
     ...    my4
     ...
     ...    my5
+    [Setup]    Log Many
+    ...    first
+    ...
+    ...    last
     No Operation
 
 Multiline user keyword settings
     ${x} =    Multiline User Keyword Settings    1    2
-    Should Be True    ${x} == [str(i) for i in range(1,10)]
+    Should Be True    ${x} == [str(i) for i in range(1,10) if i != 8]
     ${x} =    Multiline User Keyword Settings
     ...    1    2    3    4    5    r1    r2    r3
     Should Be True    ${x[:5]} == [str(i) for i in range(1,6)]
     Should Be True    ${x[5:8]} == ['r1','r2','r3']
-    Should Be True    ${x[9:]} == [str(i) for i in range(7,10)]
+    Should Be True    ${x[9:]} == ['7', '9']
 
 Multiline for Loop declaration
     ${result} =    Set Variable    ${EMPTY}
@@ -186,7 +204,7 @@ Multiline user keyword settings
        ...    @{rest}
           ...    6
              ...    7
-                ...    8
+                ...
                    ...    9
 
 Invalid usage in UK
