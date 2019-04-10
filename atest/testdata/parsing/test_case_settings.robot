@@ -36,8 +36,8 @@ Documentation in multiple rows
     [DOCUMENTATION]    ${1}st logical line
     ...                is shortdoc.
     ...
-    ...                Documentation for this test case
-    ...                in    multiple    rows.
+    ...                This documentation has multiple rows
+    ...                and    also    multiple    columns.
     No Operation
 
 Documentation with variables

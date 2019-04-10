@@ -32,8 +32,8 @@ Documentation in multiple rows
     Verify Documentation    1st logical line
     ...    is shortdoc.
     ...    ${EMPTY}
-    ...    Documentation for this test case
-    ...    in multiple rows.
+    ...    This documentation has multiple rows
+    ...    and also multiple columns.
 
 Documentation with variables
     Verify Documentation    Variables work in documentation since Robot 1.2.
