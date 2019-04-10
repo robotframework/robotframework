@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import re
+import json
 
 from .platform import PY3
 from .robottypes import is_string
@@ -46,7 +47,13 @@ def unescape(item):
 class Unescaper(object):
 
     def unescape(self, string):
-        return ''.join(self._yield_unescaped(string))
+        # If string is json, skip the _yield_unescaped processing
+        try:
+            json.loads(string)
+            unescape_string = string
+        except Exception as json_load_err:
+            unescape_string = ''.join(self._yield_unescaped(string))
+        return unescape_string
 
     def _yield_unescaped(self, string):
         while '\\' in string:
