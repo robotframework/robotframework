@@ -6,9 +6,21 @@ Resource          atest_resource.robot
 Name
     ${tc} =    Check Test Case    Normal name
     Should Be Equal  ${tc.kws[0].name}    Normal name
+
+Names are not formatted
     ${tc} =    Check Test Case    Names are not formatted
-    : FOR    ${kw}    IN    @{tc.kws}
-    \    Should Be Equal    ${kw.name}  user_keyword nameS _are_not_ FORmatted
+    FOR    ${kw}    IN    @{tc.kws}
+        Should Be Equal    ${kw.name}  user_keyword nameS _are_not_ FORmatted
+    END
+
+'...' as name is deprecated
+    Check Test Case    ${TEST NAME}
+    ${path} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
+    ${message} =    Catenate
+    ...    Error in file '${path}': Invalid syntax in keyword '...':
+    ...    Using '...' as keyword name is deprecated.
+    ...    It will be considered line continuation in Robot Framework 3.2.
+    Check Log Message    ${ERRORS}[0]    ${message}    WARN
 
 No documentation
     Verify Documentation    ${EMPTY}    test=Normal name
@@ -96,7 +108,7 @@ Deprecatted setting format
     ...    Error in file '${path}':
     ...    Invalid syntax in keyword 'Invalid passing':
     ...    Setting 'Doc U Ment ation' is deprecated. Use 'Documentation' instead.
-    Check Log Message    ${ERRORS}[1]    ${message}    WARN
+    Check Log Message    ${ERRORS}[2]    ${message}    WARN
 
 Invalid setting
     Check Test Case    ${TEST NAME}
@@ -105,12 +117,12 @@ Invalid setting
     ...    Error in file '${path}':
     ...    Invalid syntax in keyword 'Invalid passing':
     ...    Non-existing setting 'Invalid Setting'.
-    Check Log Message    ${ERRORS}[2]    ${message}    ERROR
+    Check Log Message    ${ERRORS}[3]    ${message}    ERROR
     ${message} =    Catenate
     ...    Error in file '${path}':
     ...    Invalid syntax in keyword 'Invalid failing':
     ...    Non-existing setting 'invalid'.
-    Check Log Message    ${ERRORS}[3]    ${message}    ERROR
+    Check Log Message    ${ERRORS}[4]    ${message}    ERROR
 
 *** Keywords ***
 Verify Documentation

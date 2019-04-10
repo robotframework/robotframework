@@ -20,6 +20,10 @@ Normal name
 test_case names are NOT _forMatted_
     No Operation
 
+...
+    [Documentation]    ... as name is deprecated since 3.1.2
+    No Operation
+
 Documentation
     [Documentation]    Documentation for this test case
     No Operation

@@ -8,8 +8,19 @@ Resource          atest_resource.robot
 Name
     ${tc} =    Check Test Case    Normal name
     Should Be Equal    ${tc.name}    Normal name
+
+Names are not formatted
     ${tc} =    Check Test Case    test_case names are NOT _forMatted_
     Should Be Equal    ${tc.name}    test_case names are NOT _forMatted_
+
+'...' as name is deprecated
+    Check Test Case    ...
+    ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
+    ${message} =    Catenate
+    ...    Error in file '${path}': Invalid syntax in test case '...':
+    ...    Using '...' as test case name is deprecated.
+    ...    It will be considered line continuation in Robot Framework 3.2.
+    Check Log Message    ${ERRORS}[0]    ${message}    WARN
 
 Documentation
     Verify Documentation    Documentation for this test case
@@ -134,7 +145,7 @@ Deprecated setting format
     ...    Error in file '${path}':
     ...    Invalid syntax in test case 'Invalid setting':
     ...    Setting 'Doc U Ment ation' is deprecated. Use 'Documentation' instead.
-    Check Log Message    ${ERRORS}[1]    ${message}    WARN
+    Check Log Message    ${ERRORS}[2]    ${message}    WARN
 
 Invalid setting
     Check Test Case    ${TEST NAME}
@@ -143,7 +154,7 @@ Invalid setting
     ...    Error in file '${path}':
     ...    Invalid syntax in test case '${TEST NAME}':
     ...    Non-existing setting 'Invalid'.
-    Check Log Message    ${ERRORS}[2]    ${message}    ERROR
+    Check Log Message    ${ERRORS}[3]    ${message}    ERROR
 
 *** Keywords ***
 Verify Documentation

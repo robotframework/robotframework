@@ -594,6 +594,12 @@ class TestCase(_WithSteps, _WithSettings):
         self.teardown = Fixture('[Teardown]', self)
         self.timeout = Timeout('[Timeout]', self)
         self.steps = []
+        if name == '...':
+            self.report_invalid_syntax(
+                "Using '...' as test case name is deprecated. It will be "
+                "considered line continuation in Robot Framework 3.2.",
+                level='WARN'
+            )
 
     _setters = {'Documentation': lambda s: s.doc.populate,
                 'Template': lambda s: s.template.populate,
@@ -665,6 +671,12 @@ class UserKeyword(TestCase):
         self.teardown = Fixture('[Teardown]', self)
         self.tags = Tags('[Tags]', self)
         self.steps = []
+        if name == '...':
+            self.report_invalid_syntax(
+                "Using '...' as keyword name is deprecated. It will be "
+                "considered line continuation in Robot Framework 3.2.",
+                level='WARN'
+            )
 
     _setters = {'Documentation': lambda s: s.doc.populate,
                 'Arguments': lambda s: s.args.populate,
