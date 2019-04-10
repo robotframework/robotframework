@@ -21,75 +21,58 @@ Library
 
 *** Variables ***
 ...    # Invalid usage
-@{scalarlist}    1    2    3    4
-...    5    6    7
-...    8
+${STRING}    first
 ...
-...    9    10
+...          third
+...
 # Comments, comments, comments, ...
-${string}
-...    some text
-...
 @{list}    ...    hello
 ...    world
 ...
-...    ...
+   ...    ...
+      ...    !!!
 
 *** Test Cases ***
-Invalid Usage In Test And User Keyword
-    ...
-    [Documentation]    FAIL This is executed after all!
-    Invalid Usage In UK
-
-Multirow Variables
-    Should Be True    ${scalarlist} == [str(i) for i in range(1,11)]
-    Should Be Equal    ${string}    some text
-    Should Be Equal    @{list}[0]    ...
-    Should Be Equal    @{list}[1]    hello
-    Should Be Equal    @{list}[2]    world
-    Should Be Equal    @{list}[3]    ...
-
-Multirow Import
+Multiline import
     Directory Should Exist    .
 
-Multirow Args For Library Keyword
+Multiline variables
+    Should Be Equal    ${STRING}    first third
+    Should Be True    $LIST    ['...', 'hello', 'world', '...', '!!!']
+
+Multiline arguments with library keyword
     Log Many    one    two
     ...    three
     ...
     \    ...    four    five    # Leading '\' deprecated in RF 3.1.2.
 
-Multirow Args For User Keyword
+Multiline arguments with user keyword
     UK Log Many
     ...    ${1}
-    ...
-    ...    ${2}    ${3}
-    ...    ${4}
-    ...    ${5}
+       ...
+          ...    ${2}    ${3}
+             ...    ${4}
+                ...    ${5}
 
-Multirow Return Values
-    ${x} =    Create List    0    1
-    ...    2    3    4    5
-    ...    6    7    8
-    ...
-    ...    9
-    Should Be True    ${x} == [str(i) for i in range(10)]
-    ${a}    ${b}    ${c}    ${d} =    Create List    1
-    ...    2     3
-    ...    4
-    Should Be Equal    ${a}    1
-    Should Be Equal    ${b}    2
-    Should Be Equal    ${c}    3
-    Should Be Equal    ${d}    4
+Multiline assignment
+    ${a}    ${b}    ${c}    ${d} =
+    ...    Create List    1    2     3    4
+    Should Be Equal    ${a}-${b}-${c}-${d}    1-2-3-4
+    ${a}
+    ...    ${b}
+    ...    ${c}    ${d} =    Create List
+    ...    1    2     3    4
+    Should Be Equal    ${a}-${b}-${c}-${d}    1-2-3-4
 
-Multirow In User Keyword
-    Multirow In User Keyword
+Multiline in user keyword
+    Multiline in user keyword
 
-Multirow Test Settings
-    [Documentation]    This    test    doc\
-    ...    is\
-    \   ...    one\         # Leading '\' deprecated in RF 3.1.2.
+Multiline test settings
+    [Documentation]    One.
+    ...    Two.
+    \   ...    Three.         # Leading '\' deprecated in RF 3.1.2.
     ...
-    ...    long    string
+    ...    Second paragraph.
     [Tags]
     ...    my1    my2    my3
     ...    my4
@@ -97,16 +80,16 @@ Multirow Test Settings
     ...    my5
     No Operation
 
-Multirow User Keyword Settings
-    ${x} =    Multirow User Keyword Settings    1    2
+Multiline user keyword settings
+    ${x} =    Multiline User Keyword Settings    1    2
     Should Be True    ${x} == [str(i) for i in range(1,10)]
-    ${x} =    Multirow User Keyword Settings
+    ${x} =    Multiline User Keyword Settings
     ...    1    2    3    4    5    r1    r2    r3
     Should Be True    ${x[:5]} == [str(i) for i in range(1,6)]
     Should Be True    ${x[5:8]} == ['r1','r2','r3']
     Should Be True    ${x[9:]} == [str(i) for i in range(7,10)]
 
-Multirow With For Loop Declaration
+Multiline for Loop declaration
     ${result} =    Set Variable    ${EMPTY}
     FOR    ${item}    IN    a    b
     ...                     c
@@ -146,7 +129,7 @@ Multirow With For Loop Declaration
     END
     Should Be Equal    ${result}    ${EMPTY}
 
-Multirow With For Loop Keywords
+Multiline in for loop body
     ${result} =    Set Variable    ${EMPTY}
     FOR    ${item}    IN    a    b    c
         ${item} =    Set Variable
@@ -163,19 +146,17 @@ Multirow With For Loop Keywords
     Should Be Equal    ${result}    ABC
     Should Be Equal    ${x}    1 2 3 a b c
 
-
-
+Invalid usage in test and user keyword
+    ...
+    [Documentation]    FAIL This is executed after all!
+    Invalid Usage In UK
 
 *** Keywords ***
-Invalid Usage In UK
-    ...
-    Fail    This is executed after all!
-
-UK Log Many
+UK log many
     [Arguments]    @{msgs}
     Log Many    @{msgs}
 
-Multirow In User Keyword
+Multiline in user keyword
     Log Many
     ...    1
     ...    2
@@ -184,11 +165,14 @@ Multirow In User Keyword
     ${y} =    Create List    1    2
     ...    3    4    5
     Should Be True    ${y} == [str(i) for i in range(1,6)]
-    @{z} =    Create List
-    ...    aaa    bbb
-    Should Be True    ${z} == ['aaa', 'bbb']
+    ${a}
+    ...    ${b} =
+    ...    Create List
+    ...    aaa
+    ...    bbb
+    Should Be Equal    ${a}-${b}    aaa-bbb
 
-Multirow User Keyword Settings
+Multiline user keyword settings
     [Arguments]    ${a1}    ${a2}    ${a3}=3
     ...    ${a4}=4
     ...    ${a5}=5    @{rest}
@@ -204,3 +188,7 @@ Multirow User Keyword Settings
              ...    7
                 ...    8
                    ...    9
+
+Invalid usage in UK
+    ...
+    Fail    This is executed after all!
