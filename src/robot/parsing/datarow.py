@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.output import LOGGER
 from robot.utils import py2to3
 
 
@@ -20,7 +21,8 @@ from robot.utils import py2to3
 class DataRow(object):
     _row_continuation_marker = '...'
 
-    def __init__(self, cells):
+    def __init__(self, cells, source=None):
+        self.source = source
         self.cells, self.comments = self._parse(cells)
 
     def _parse(self, row):
@@ -32,10 +34,20 @@ class DataRow(object):
                 comments.append(cell)
             else:
                 data.append(cell)
+        if self._row_continuation_marker in data and self.source:
+            self._deprecate_escaped_cells_before_continuation(data)
         return self._purge_empty_cells(data), self._purge_empty_cells(comments)
 
     def _collapse_whitespace(self, cell):
         return ' '.join(cell.split())
+
+    def _deprecate_escaped_cells_before_continuation(self, data):
+        index = data.index(self._row_continuation_marker)
+        if any(cell == '\\' for cell in data[:index]):
+            LOGGER.warn("Error in file '%s': Escaping empty cells with "
+                        "'\\' before line continuation marker '...' is "
+                        "deprecated. Remove escaping before Robot "
+                        "Framework 3.2." % self.source)
 
     def _purge_empty_cells(self, row):
         while row and not row[-1]:

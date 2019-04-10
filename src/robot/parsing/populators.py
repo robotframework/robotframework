@@ -100,7 +100,7 @@ class FromFilePopulator(object):
     def add(self, row):
         if PROCESS_CURDIR and self._curdir:
             row = self._replace_curdirs_in(row)
-        data = DataRow(row)
+        data = DataRow(row, self._datafile.source)
         if data:
             self._populator.add(data)
 

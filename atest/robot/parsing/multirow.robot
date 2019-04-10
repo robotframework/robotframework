@@ -51,13 +51,23 @@ Multirow With For Loop Declaration
 Multirow With For Loop Keywords
     Check Test Case    ${TEST NAME}
 
+Escaped empty cells before line continuation are deprecated
+    ${message} =    Catenate
+    ...    Escaping empty cells with '\\' before line continuation marker '...'
+    ...    is deprecated. Remove escaping before Robot Framework 3.2.
+    Check Multirow Error    1    ${message}    WARN
+    Check Multirow Error    2    ${message}    WARN
+    Check Multirow Error    3    ${message}    WARN
+    Length Should Be    ${ERRORS}    5
+
 Invalid Multirow Usage
     Check Multirow Error    0    Non-existing setting '...'.
-    Check Multirow Error    1    Setting variable '...' failed: Invalid variable name '...'.
+    Check Multirow Error    4    Setting variable '...' failed: Invalid variable name '...'.
     Check Test Case    Invalid Usage In Test And User Keyword
 
 *** Keywords ***
 Check Multirow Error
-    [Arguments]    ${index}    ${err}
+    [Arguments]    ${index}    ${msg}    ${level}=ERROR
     ${path} =    Normalize Path    ${DATADIR}/parsing/multirow.robot
-    Check Log Message    ${ERRORS}[${index}]    Error in file '${path}': ${err}    ERROR
+    Check Log Message    ${ERRORS}[${index}]
+    ...    Error in file '${path}': ${msg}    ${level}
