@@ -46,14 +46,12 @@ Suite Teardown
     Verify Teardown    ${SUITE}    BuiltIn.Log    Default suite teardown
 
 Deprecated Setting Format
-    ${path} =    Normalize Path    ${DATADIR}/parsing/suite_settings.robot
-    Check Log Message    ${ERRORS}[0]
-    ...    Error in file '${path}': Setting 'For CET ag S' is deprecated. Use 'Force Tags' instead.    WARN
+    Verify Error    0
+    ...    Setting 'For CET ag S' is deprecated. Use 'Force Tags' instead.
+    ...    level=WARN
 
 Invalid Setting
-    ${path} =    Normalize Path    ${DATADIR}/parsing/suite_settings.robot
-    Check Log Message    ${ERRORS}[1]
-    ...    Error in file '${path}': Non-existing setting 'Invalid Setting'.    ERROR
+    Verify Error    1    Non-existing setting 'Invalid Setting'.
 
 *** Keywords ***
 Verify Setup
@@ -68,3 +66,9 @@ Verify Fixture
     [Arguments]    ${fixture}    ${expected_name}    ${expected_message}
     Should be Equal    ${fixture.name}    ${expected_name}
     Check Log Message    ${fixture.messages[0]}    ${expected_message}
+
+Verify Error
+    [Arguments]    ${index}    @{message parts}    ${level}=ERROR
+    ${path} =    Normalize Path    ${DATADIR}/parsing/suite_settings.robot
+    ${message} =    Catenate    Error in file '${path}':    @{message parts}
+    Check Log Message    ${ERRORS}[${index}]    ${message}    ${level}

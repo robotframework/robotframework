@@ -15,12 +15,11 @@ Names are not formatted
 
 '...' as name is deprecated
     Check Test Case    ...
-    ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
-    ${message} =    Catenate
-    ...    Error in file '${path}': Invalid syntax in test case '...':
+    Verify Error    0
+    ...    Invalid syntax in test case '...':
     ...    Using '...' as test case name is deprecated.
     ...    It will be considered line continuation in Robot Framework 3.2.
-    Check Log Message    ${ERRORS}[0]    ${message}    WARN
+    ...    level=WARN
 
 Documentation
     Verify Documentation    Documentation in single line and column.
@@ -45,7 +44,7 @@ Documentation with non-existing variables
     ...    are replaced: "99999"
 
 Documentation with escaping
-    Verify Documentation    \${XXX} c:\\temp${SPACE*2}\\
+    Verify Documentation    \${VERSION}\nc:\\temp\n\n\\
 
 Name and documentation on console
     Check Stdout Contains    Normal name${SPACE * 59}| PASS |
@@ -121,6 +120,12 @@ Timeout
 
 Timeout with message
     Verify Timeout    2 minutes 3 seconds 456 milliseconds
+    Verify Error    1
+    ...    Invalid syntax in test case 'Timeout with message':
+    ...    Using custom timeout messages is deprecated since
+    ...    Robot Framework 3.0.1 and will be removed in future versions.
+    ...    Message that was used is 'Message'.
+    ...    level=WARN
 
 Default timeout
     Verify Timeout    1 minute 39 seconds 999 milliseconds
@@ -146,21 +151,16 @@ Multiple settings
 
 Deprecated setting format
     Check Test Case    Invalid setting
-    ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
-    ${message} =    Catenate
-    ...    Error in file '${path}':
+    Verify Error    2
     ...    Invalid syntax in test case 'Invalid setting':
     ...    Setting 'Doc U Ment ation' is deprecated. Use 'Documentation' instead.
-    Check Log Message    ${ERRORS}[2]    ${message}    WARN
+    ...    level=WARN
 
 Invalid setting
     Check Test Case    ${TEST NAME}
-    ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
-    ${message} =    Catenate
-    ...    Error in file '${path}':
+    Verify Error    3
     ...    Invalid syntax in test case '${TEST NAME}':
     ...    Non-existing setting 'Invalid'.
-    Check Log Message    ${ERRORS}[3]    ${message}    ERROR
 
 *** Keywords ***
 Verify Documentation
@@ -189,3 +189,9 @@ Verify Timeout
     [Arguments]    ${timeout}
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.timeout}    ${timeout}
+
+Verify Error
+    [Arguments]    ${index}    @{message parts}    ${level}=ERROR
+    ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
+    ${message} =    Catenate    Error in file '${path}':    @{message parts}
+    Check Log Message    ${ERRORS}[${index}]    ${message}    ${level}
