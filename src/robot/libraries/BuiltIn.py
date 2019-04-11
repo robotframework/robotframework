@@ -3345,8 +3345,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     it is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or
     ``0``, case-insensitively. Keywords verifying something that allow dropping
     actual and expected values from the possible error message also consider
-    string ``no values`` to be false. Other strings are considered true
-    regardless their value, and other argument types are tested using the same
+    string ``no values`` to be false. Other strings are considered true unless
+    the keyword documentation explicitly states otherwise, and other argument
+    types are tested using the same
     [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
