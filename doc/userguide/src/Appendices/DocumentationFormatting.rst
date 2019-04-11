@@ -37,7 +37,7 @@ to test suites, newlines can be added manually using `\n` `escape sequence`_.
 .. note:: As explained in the Paragraphs_ section below, the single newline in
           `Second paragraph, this time\nwith multiple lines.` does not actually
           affect how that paragraph is rendered. Newlines are needed when
-          constructing lists_, though.
+          creating lists_ or other such constructs, though.
 
 Adding newlines manually to a long documentation takes some effort and extra
 characters also make the documentation harder to read. This can be avoided,
@@ -65,6 +65,12 @@ with spaces. This kind of splitting can be a good idea especially when
 using the `HTML format`_ and columns are narrow. Different ways to split
 documentation are illustrated in the examples below where all test cases
 end up having the same two line documentation.
+
+.. note:: Handling documentation split to multiple columns will change in
+          Robot Framework 3.2 when also they will be concatenated together
+          with newlines. This change should not cause problems because,
+          as explained in the Paragraphs_ section below, single newlines do
+          not affect how paragraphs actually are rendered in logs and reports.
 
 __ `Dividing test data to several rows`_
 __ Escaping_
