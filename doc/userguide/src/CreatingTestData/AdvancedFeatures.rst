@@ -322,6 +322,39 @@ with `END`, escaping keywords inside loops with :codesc:`\\`, and using
 `:FOR` instead of `FOR` are all going to be deprecated in Robot Framework 3.2.
 Users are advised to switch to the new syntax as soon as possible.
 
+When using the `pipe separated format`_, escaping with :codesc:`\\` has not
+been needed:
+
+.. sourcecode:: robotframework
+
+   | *** Test Cases ***
+   | Example
+   | | :FOR | ${animal}    | IN          | cat | dog |
+   | |      | Log          | ${animal}   |
+   | |      | Log          | 2nd keyword |
+   | | Log  | Outside loop |
+
+The above syntax still works with Robot Framework 3.1, but it will not work
+anymore in Robot Framework 3.2. The recommended solution is closing the loop
+with an explicit `END`, but if old Robot Framework versions need to be
+supported then escaping with :codesc:`\\` is needed.
+
+.. sourcecode:: robotframework
+
+   | *** Test Cases ***
+   | Recommended solution
+   | | FOR  | ${animal}    | IN          | cat | dog |
+   | |      | Log          | ${animal}   |
+   | |      | Log          | 2nd keyword |
+   | | END  |              |
+   | | Log  | Outside loop |
+   |
+   | Compatible with RF 3.0.x
+   | | :FOR | ${animal}    | IN          | cat | dog |
+   | | \    | Log          | ${animal}   |
+   | | \    | Log          | 2nd keyword |
+   | | Log  | Outside loop |
+
 __ Escaping_
 
 Nested for loops
