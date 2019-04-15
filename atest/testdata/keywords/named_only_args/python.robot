@@ -52,6 +52,14 @@ Multiple unexpected keyword argumemt
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got unexpected named arguments 'invalid' and 'ooops'.
     Kw Only Arg    kwo=value    invalid=ooops    ooops=invalid
 
+Multiple unexpected keyword argument with inequality
+    [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got unexpected named arguments '<' and 'ooops'.
+    Kw Only Arg    kwo=value    <=ooops    ooops=invalid
+
+Multiple unexpected keyword argument with escaped inequality
+    [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got positional argument after named arguments.
+    Kw Only Arg    kwo=value    <\=ooops    ooops=invalid
+
 Unexpected positional argument 1
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' expected 0 non-named arguments, got 1.
     Kw Only Arg    ooops
@@ -75,3 +83,19 @@ With other arguments
     Should Be Equal    ${result}    p1-p2-p3-p4-k1-k2-k3=3-k4=4
     ${result} =    All Arg Types    k4=!!!    kwo_def=k2    k3=!    pos_req=p1    pos_def=p2    kwo_req=k1
     Should Be Equal    ${result}    p1-p2-k1-k2-k3=!-k4=!!!
+
+With only one named argument
+    Kw Two Args With Varargs    First arg    Second arg    Maybe a third    kwo=Actually, correct!
+
+With only one named argument but we have a escaped egal
+    Kw Two Args With Varargs    Let's try this again    1    <\=    2    kwo=Correct again!
+
+With only one named argument but we have a no escaped egal
+    Kw Two Args With Varargs    One more time    1    <=    2    kwo=This part fails
+
+With only one named argument but we have two no escaped egals
+    Kw Two Args With Varargs    One more time    a=1    <=    2    kwo=This part fails
+
+With two named arguments but with a error
+    [Documentation]  FAIL    Keyword 'KwOnlyArgs.Kw Two Args With Varargs' got positional argument after named arguments.
+    Kw Two Args With Varargs    One more time    another=1    2      <=     kwo=This part fails

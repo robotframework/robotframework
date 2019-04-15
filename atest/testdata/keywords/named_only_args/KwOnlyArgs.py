@@ -31,3 +31,7 @@ def all_arg_types(pos_req, pos_def='pd', *varargs,
     varargs = list(varargs)
     kwargs = ['%s=%s' % item for item in sorted(kwargs.items())]
     return '-'.join([pos_req, pos_def] + varargs + [kwo_req, kwo_def] + kwargs)
+
+
+def kw_two_args_with_varargs(*varargs, kwo='default', another='another'):
+    return '-'.join(varargs + (kwo, another,))
