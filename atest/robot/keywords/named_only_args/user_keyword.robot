@@ -25,10 +25,10 @@ Missing value
 Missing multiple values
     Check Test Case    ${TESTNAME}
 
-Unexpected keyword argumemt
+Unexpected keyword argument
     Check Test Case    ${TESTNAME}
 
-Multiple unexpected keyword argumemt
+Multiple unexpected keyword argument
     Check Test Case    ${TESTNAME}
 
 Multiple unexpected keyword argument with inequality

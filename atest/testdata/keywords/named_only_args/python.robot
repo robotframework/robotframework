@@ -44,11 +44,11 @@ Missing multiple values
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Many Kw Only Args' missing named-only arguments 'first' and 'third'.
     Many Kw Only Args    second=xxx
 
-Unexpected keyword argumemt
+Unexpected keyword argument
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got unexpected named argument 'invalid'.
     Kw Only Arg    kwo=value    invalid=ooops
 
-Multiple unexpected keyword argumemt
+Multiple unexpected keyword argument
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got unexpected named arguments 'invalid' and 'ooops'.
     Kw Only Arg    kwo=value    invalid=ooops    ooops=invalid
 
