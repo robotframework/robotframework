@@ -571,7 +571,7 @@ class OperatingSystem(object):
         Framework 3.0. Automatically converting ``\\n`` to ``\\r\\n`` on
         Windows is new in Robot Framework 3.1.
         """
-        path = self._write_to_file(path, content, self._map_encoding(encoding))
+        path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'.", path)
 
     def _write_to_file(self, path, content, encoding=None, mode='w'):
@@ -583,6 +583,8 @@ class OperatingSystem(object):
         # We expect possible byte-strings to be all ASCII.
         if PY2 and isinstance(content, str) and 'b' not in mode:
             content = unicode(content)
+        if encoding:
+            encoding = self._map_encoding(encoding)
         with io.open(path, mode, encoding=encoding) as f:
             f.write(content)
         return path

@@ -80,8 +80,8 @@ Creating Binary File Using Unicode With Ordinal > 255 Fails
 Append To File
     Append To File    ${TESTFILE}    First line\n
     Append To File    ${TESTFILE}    Second            ASCII
-    Append To File    ${TESTFILE}    ${SPACE}line\n
-    Append To File    ${TESTFILE}    ${EMPTY}
+    Append To File    ${TESTFILE}    ${SPACE}line\n    SYSTEM
+    Append To File    ${TESTFILE}    ${EMPTY}          CONSOLE
     Append To File    ${TESTFILE}    3\n\n
     Append To File    ${TESTFILE}    \n
     Append To File    ${TESTFILE}    Lääst läin\n\n    UTF-8
