@@ -409,6 +409,20 @@ JavaScript dependencies used internally by logs and reports have been
 updated. This may cause problems with ancient browsers, and most notably
 IE 8 is not supported anymore. (`#2419`_)
 
+Newline handling changed with `Create File` and `Append To File` on Windows
+---------------------------------------------------------------------------
+
+Earlier `Create File` and `Append To File` did not convert the newline
+character (`\n`) to the native Windows newline character combination (`\r\n`).
+Most Windows tools handle both kind of newlines, but if it was necessary to
+use actual Windows newlines, then literal `\r\n` or operating system dependent
+automatic variable `${\n}` needed to be used.
+
+This was accidentally changed in RF 3.1 (`#3097`_) so that nowadays `\n` will
+automatically be converted to `\r\n` on Windows. Although this was accidental,
+the behavior is more convenient and it was decided not to be changed back.
+This is also how Python (and most other programing languages) handle newlines.
+
 Some deprecated syntax removed
 ------------------------------
 
@@ -1062,3 +1076,4 @@ Altogether 87 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#2999: https://github.com/robotframework/robotframework/issues/2999
 .. _#3011: https://github.com/robotframework/robotframework/issues/3011
 .. _#3021: https://github.com/robotframework/robotframework/issues/3021
+.. _#3097: https://github.com/robotframework/robotframework/issues/3097
