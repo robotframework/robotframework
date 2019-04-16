@@ -65,6 +65,8 @@ Create Binary File Using Bytes
     Hello, world!
     Hyvää yötä!
     \x00\x01\xe4\xff
+    two\nlines
+    \r\nfoo\n
 
 Create Binary File Using Unicode
     [Template]    Create And Verify Binary File Using Unicode
@@ -72,6 +74,8 @@ Create Binary File Using Unicode
     Hello, world!
     Hyvää yötä!
     \x00\x01\xe4\xff
+    two\nlines
+    \r\nfoo\n
 
 Creating Binary File Using Unicode With Ordinal > 255 Fails
     [Documentation]    FAIL STARTS: ValueError:
