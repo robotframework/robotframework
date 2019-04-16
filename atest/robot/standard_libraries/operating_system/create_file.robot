@@ -11,6 +11,9 @@ Create File With Default Content
 Create File With Content
     Check Test Case    ${TESTNAME}
 
+Create Multiline File
+    Check Test Case    ${TESTNAME}
+
 Create Non-ASCII File With Default Encoding
     Check Test Case    ${TESTNAME}
 
