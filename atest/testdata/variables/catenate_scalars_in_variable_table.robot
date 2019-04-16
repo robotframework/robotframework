@@ -33,7 +33,7 @@ ${NO SEPARATOR 1}  @{NOT SEPARATOR}
 ${NO SEPARATOR 2}  @{NOT SEPARATOR}[0]    not    separator    either
 ${NO SEPARATOR 3}  ${NOT SEPARATOR[0]}    neither
 ${NO VALUES}
-# Testint that one scalar variable alone is not converted to string.
+# Testing that one scalar variable alone is not converted to string.
 ${NON STRING RESULT 1}    ${42}
 ${NON STRING RESULT 2}    ${VALUES}
 ${NON STRING RESULT 3}    @{VALUES}[2]
