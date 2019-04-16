@@ -1,5 +1,6 @@
 *** Settings ***
 Test Template      Should Be Equal
+Resource           catenate_scalars_in_variable_table.resource
 
 *** Variables ***
 ${DEFAULT SEP}     Values    catenated    with    space    by    default
@@ -104,3 +105,7 @@ With separator even one scalar variable is converted to string
     ${STRING RESULT 1}        42
     ${STRING RESULT 2}        [3, 4]
     ${STRING RESULT 3}        42 3
+
+Catenated in resource 1
+    ${CATENATED IN RESOURCE 1}    aaabbbcccddd
+    ${CATENATED IN RESOURCE 2}    1sep2

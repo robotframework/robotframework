@@ -96,7 +96,8 @@ class ScalarVariableTableValue(VariableTableValueBase):
         if is_string(values):
             values = [values]
         elif values and values[0].startswith('SEPARATOR='):
-            separator = values.pop(0)[10:]
+            separator = values[0][10:]
+            values = values[1:]
         return separator, values
 
     def _replace_variables(self, values, variables):

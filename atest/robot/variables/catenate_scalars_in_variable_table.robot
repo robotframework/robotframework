@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    variables/catenate_scalars_in_variable_table.robot
+Suite Setup      Run Tests    ${EMPTY}    variables/catenate_scalars_in_variable_table*.robot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -51,6 +51,10 @@ One scalar variable is not converted to string
 
 With separator even one scalar variable is converted to string
     Check Test Case    ${TESTNAME}
+
+Catenated in resource
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
 *** Keywords ***
 Verify error
