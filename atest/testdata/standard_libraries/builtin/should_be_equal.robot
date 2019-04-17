@@ -2,15 +2,16 @@
 Variables         variables_to_verify.py
 
 *** Test Cases ***
-Should Be Equal
+Basics
     [Documentation]    FAIL Error message: A != B
     [Template]    Should Be Equal
     Hello!                        Hello!
+    Multi\nline\ntext\n\n!!!\n    Multi\nline\ntext\n\n!!!\n
     ${1.0}                        ${1}
     ${BYTES WITHOUT NON ASCII}    ${BYTES WITHOUT NON ASCII}
     A                             B    Error message    values=yes
 
-Should Be Equal case-insensitive
+Case-insensitive
     [Documentation]    FAIL yötä != päivää
     [Template]    Should Be Equal
     test value      TEST VALUE      ignore_case=True
@@ -18,7 +19,7 @@ Should Be Equal case-insensitive
     ${42}           ${42}           ignore_case=True
     Yötä            Päivää          ignore_case=yep!
 
-Should Be Equal fails with values
+Fails with values
     [Documentation]    FAIL Several failures occurred:
     ...
     ...    1) 3: 1 != 2
@@ -31,7 +32,7 @@ Should Be Equal fails with values
     a    b    c    values=true
     x    y    z    values=${42}
 
-Should Be Equal fails without values
+Fails without values
     [Documentation]    FAIL Several failures occurred:\n\n 1) 3\n\n 2) c\n\n 3) z\n\n 4) -
     [Template]    Should Be Equal
     1    2    3    values=FALSE
@@ -39,7 +40,7 @@ Should Be Equal fails without values
     x    y    z    values=no
     .    ,    -    ${NONE}
 
-Should Be Equal with multiline text uses diff
+Multiline comparison uses diff
     [Documentation]    FAIL
     ...    Multiline strings are different:
     ...    --- first
@@ -51,32 +52,32 @@ Should Be Equal with multiline text uses diff
     ...    \ dar\n
     Should Be Equal    foo\nbar\ndar    foo\nbar\ngar\ndar
 
-Should Be Equal with multiline diff text requires both multiline
+Multiline comparison requires both multiline
     [Documentation]    FAIL foo\nbar\ndar != foobar
     Should Be Equal    foo\nbar\ndar    foobar
 
-Should Be Equal with multiline text will not use diff if values are not included
+Multiline comparison without including values
     [Documentation]    FAIL Custom message
     Should Be Equal    foo\nbar\ndar    foo\nbar\ngar\ndar   Custom message    values=FALSE
 
-Should Be Equal tuple and list with same items fails
+Tuple and list with same items fail
     [Documentation]    FAIL not same
     Should Be Equal    ${TUPLE 1}    ${LIST 1}    not same    values=false
 
-Should Be Equal dictionaries of different type with same items passes
+Dictionaries of different type with same items pass
     Should Be Equal    ${DICT}    ${ORDERED DICT}
     Should Be True    $DICT == dict($ORDERED_DICT)    Sanity check
 
-Should Be Equal with bytes containing non-ascii characters
+Bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} != ${BYTES WITHOUT NON ASCII}
     Should Be Equal    ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
     Should Be Equal    ${BYTES WITH NON ASCII}    ${BYTES WITHOUT NON ASCII}
 
-Should Be Equal with unicode and bytes with non-ascii characters
+Unicode and bytes with non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} != this fails
     Should Be Equal    ${BYTES WITH NON ASCII}    this fails
 
-Should Be Equal when types differ but string representations are same
+Types info is added if string representations are same
     [Documentation]    FAIL 1 (string) != 1 (integer)
     Should Be Equal    1    ${1}
 

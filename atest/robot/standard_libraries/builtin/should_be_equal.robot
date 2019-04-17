@@ -3,47 +3,48 @@ Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/builtin/sh
 Resource          builtin_resource.robot
 
 *** Test Cases ***
-Should Be Equal
+Basics
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    unicode
-    Verify argument type message    ${tc.kws[1].msgs[0]}    float      int
-    Verify argument type message    ${tc.kws[2].msgs[0]}    bytes      bytes
-    Verify argument type message    ${tc.kws[3].msgs[0]}    unicode    unicode
+    Verify argument type message    ${tc.kws[1].msgs[0]}    unicode    unicode
+    Verify argument type message    ${tc.kws[2].msgs[0]}    float      int
+    Verify argument type message    ${tc.kws[3].msgs[0]}    bytes      bytes
+    Verify argument type message    ${tc.kws[4].msgs[0]}    unicode    unicode
 
-Should Be Equal case-insensitive
+Case-insensitive
     Check Test Case     ${TESTNAME}
 
-Should Be Equal fails with values
+Fails with values
     Check test case    ${TESTNAME}
 
-Should Be Equal fails without values
+Fails without values
     Check test case    ${TESTNAME}
 
-Should Be Equal with multiline text uses diff
+Multiline comparison uses diff
     Check test case    ${TESTNAME}
 
-Should Be Equal with multiline diff text requires both multiline
+Multiline comparison requires both multiline
     Check test case    ${TESTNAME}
 
-Should Be Equal with multiline text will not use diff if values are not included
+Multiline comparison without including values
     Check test case    ${TESTNAME}
 
-Should Be Equal tuple and list with same items fails
+Tuple and list with same items fail
     Check test case    ${TESTNAME}
 
-Should Be Equal dictionaries of different type with same items passes
+Dictionaries of different type with same items pass
     Check test case    ${TESTNAME}
 
-Should Be Equal with bytes containing non-ascii characters
+Bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    bytes    bytes
     Verify argument type message    ${tc.kws[1].msgs[0]}    bytes    bytes
 
-Should Be Equal with unicode and bytes with non-ascii characters
+Unicode and bytes with non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    bytes    unicode
 
-Should Be Equal when types differ but string representations are same
+Types info is added if string representations are same
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    int
 
