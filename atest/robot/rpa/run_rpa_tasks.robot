@@ -60,9 +60,9 @@ Conflicting headers in same file cause error when executing directory
 
 Error message is correct if no task match --task or other options
     [Template]    Run and validate no task found
-    --task nonex                   named 'nonex'
-    --include xxx --exclude yyy    with tag 'xxx' and without tag 'yyy'
-    --suite nonex --task task      named 'task' in suite 'nonex'
+    --task nonex                   matching name 'nonex'
+    --include xxx --exclude yyy    matching tag 'xxx' and not matching tag 'yyy'
+    --suite nonex --task task      matching name 'task' in suite 'nonex'
 
 *** Keywords ***
 Run and validate RPA tasks
