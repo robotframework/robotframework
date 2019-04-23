@@ -91,12 +91,14 @@ Keyword Teardown
 
 For Loops
     [Documentation]    FAIL    Keyword 'resource.Anarchy in the UK' expected 3 arguments, got 2.
-    ::FOR    ${i}    IN RANGE    10
-    \    Log    ${i}
-    \    Simple UK
+    FOR    ${i}    IN RANGE    10
+        Log    ${i}
+        Simple UK
+    END
     For Loop in UK
-    ::FOR    ${a}    ${b}    IN RANGE    ${NONE}
-    \    Anarchy in the UK    1    2
+    FOR    ${a}    ${b}    IN RANGE    ${NONE}
+        Anarchy in the UK    1    2
+    END
     This is validated
 
 Non-existing keyword name
