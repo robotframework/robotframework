@@ -63,16 +63,15 @@ class NamedArgumentResolver(object):
         return (is_string(arg) and arg[:2] == '&{' and arg[-1] == '}' and
                 VariableSplitter(arg).is_dict_variable())
 
-    def _is_named(self, arg, have_even_named_argument, variables=None):
+    def _is_named(self, arg, previous_named, variables=None):
         if not (is_string(arg) and '=' in arg):
             return False
         name, value = split_from_equals(arg)
-
         if value is None:
             return False
         if self._argspec.kwargs or name in self._argspec.kwonlyargs:
             return True
-        if have_even_named_argument and value is not None:
+        if previous_named:
             return True
         if not self._argspec.supports_named:
             return False
