@@ -34,9 +34,6 @@ Multiple unexpected keyword argument
 Multiple unexpected keyword argument with inequality
     Check Test Case    ${TESTNAME}
 
-Multiple unexpected keyword argument with escaped inequality
-    Check Test Case    ${TESTNAME}
-
 Unexpected positional argument
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
@@ -47,14 +44,8 @@ With varargs
 With other arguments
     Check Test Case    ${TESTNAME}
 
-With only one named argument but we have a escaped egal
+With only one named argument
     check test case  ${TESTNAME}
 
-With only one named argument but we have a no escaped egal
-    check test case  ${TESTNAME}
-
-With only one named argument but we have two no escaped egals
-    check test case  ${TESTNAME}
-
-With two named arguments but with a error
+With positional argument containing equal sign
     check test case  ${TESTNAME}
