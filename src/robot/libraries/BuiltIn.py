@@ -30,7 +30,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          get_error_message, get_time, html_escape, is_falsy, is_integer,
                          is_string, is_truthy, is_unicode, IRONPYTHON, JYTHON,
                          Matcher, normalize, NormalizedDict, parse_time, prepr,
-                         RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
+                         plural_or_not as s, PY3, RERAISED_EXCEPTIONS, roundup,
                          secs_to_timestr, seq2str, split_from_equals, StringIO,
                          timestr_to_secs, type_name, unic, is_list_like)
 from robot.utils.asserts import assert_equal, assert_not_equal
@@ -302,8 +302,8 @@ class _Converter(_BuiltInBase):
     def convert_to_string(self, item):
         """Converts the given item to a Unicode string.
 
-        Uses ``__unicode__`` or ``__str__`` method with Python objects and
-        ``toString`` with Java objects.
+        Strings are also [http://www.macchiato.com/unicode/nfc-faq|
+        NFC normalized].
 
         Use `Encode String To Bytes` and `Decode Bytes To String` keywords
         in ``String`` library if you need to convert between Unicode and byte
@@ -598,61 +598,68 @@ class _Verify(_BuiltInBase):
             raise AssertionError(msg or "'%s' should be true." % condition)
 
     def should_be_equal(self, first, second, msg=None, values=True,
-                        ignore_case=False):
+                        ignore_case=False, formatter='str'):
         """Fails if the given objects are unequal.
 
-        Optional ``msg`` and ``values`` arguments specify how to construct
-        the error message if this keyword fails:
+        Optional ``msg``, ``values`` and ``formatter`` arguments specify how
+        to construct the error message if this keyword fails:
 
         - If ``msg`` is not given, the error message is ``<first> != <second>``.
         - If ``msg`` is given and ``values`` gets a true value (default),
           the error message is ``<msg>: <first> != <second>``.
-        - If ``msg`` is given and ``values`` gets a false value, the error
-          message is simply ``<msg>``. See `Boolean arguments` for more details
-          about using false values.
+        - If ``msg`` is given and ``values`` gets a false value (see
+          `Boolean arguments`), the error message is simply ``<msg>``.
+        - ``formatter`` controls how to format the values. Possible values are
+          ``str`` (default), ``repr`` and ``ascii`` and they work similarly
+          a Python built-in functions with same names. See the `Log` keyword
+          for more information.
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
-        arguments are strings, it indicates that comparison should be
-        case-insensitive. New option in Robot Framework 3.0.1.
-
-        If both arguments are multiline strings, the comparison is done using
-        `multiline string comparisons`.
+        both arguments are strings, comparison is done case-insensitively.
+        If both arguments are multiline strings, this keyword uses
+        `multiline string comparison`.
 
         Examples:
         | Should Be Equal | ${x} | expected |
         | Should Be Equal | ${x} | expected | Custom error message |
         | Should Be Equal | ${x} | expected | Custom message | values=False |
-        | Should Be Equal | ${x} | expected | ignore_case=True |
+        | Should Be Equal | ${x} | expected | ignore_case=True | formatter=repr |
+
+        ``ignore_case`` and ``formatter`` are new features in Robot Framework
+        3.0.1 and 3.1.2, respectively.
         """
         self._log_types_at_info_if_different(first, second)
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
             first = first.lower()
             second = second.lower()
-        self._should_be_equal(first, second, msg, values)
+        self._should_be_equal(first, second, msg, values, formatter)
 
-    def _should_be_equal(self, first, second, msg, values):
+    def _should_be_equal(self, first, second, msg, values, formatter='str'):
+        include_values = self._include_values(values)
+        formatter = self._get_formatter(formatter)
         if first == second:
             return
-        include_values = self._include_values(values)
         if include_values and is_string(first) and is_string(second):
-            self._raise_multi_diff(first, second)
-        assert_equal(first, second, msg, include_values)
+            self._raise_multi_diff(first, second, formatter)
+        assert_equal(first, second, msg, include_values, formatter)
 
     def _log_types_at_info_if_different(self, first, second):
         level = 'DEBUG' if type(first) == type(second) else 'INFO'
         self._log_types_at_level(level, first, second)
 
-    def _raise_multi_diff(self, first, second):
-        first_lines, second_lines = first.splitlines(), second.splitlines()
+    def _raise_multi_diff(self, first, second, formatter):
+        first_lines = first.splitlines(True)      # keepends
+        second_lines = second.splitlines(True)
         if len(first_lines) < 3 or len(second_lines) < 3:
             return
-        self.log("%s\n!=\n%s" % (first, second))
-        err = 'Multiline strings are different:\n'
-        for line in difflib.unified_diff(first_lines, second_lines,
-                                         fromfile='first', tofile='second',
-                                         lineterm=''):
-            err += line + '\n'
-        raise AssertionError(err)
+        self.log("%s\n\n!=\n\n%s" % (first.rstrip(), second.rstrip()))
+        diffs = list(difflib.unified_diff(first_lines, second_lines,
+                                          fromfile='first', tofile='second',
+                                          lineterm=''))
+        diffs[3:] = [item[0] + formatter(item[1:]).rstrip()
+                     for item in diffs[3:]]
+        raise AssertionError('Multiline strings are different:\n' +
+                             '\n'.join(diffs))
 
     def _include_values(self, values):
         return is_truthy(values) and str(values).upper() != 'NO VALUES'
@@ -665,8 +672,8 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``.
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
-        both arguments are strings, it indicates that comparison should be
-        case-insensitive. New option in Robot Framework 3.0.1.
+        both arguments are strings, comparison is done case-insensitively.
+        New option in Robot Framework 3.0.1.
         """
         self._log_types_at_info_if_different(first, second)
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
@@ -773,12 +780,16 @@ class _Verify(_BuiltInBase):
                                        values=True, ignore_case=False):
         """Fails if objects are equal after converting them to strings.
 
-        If ``ignore_case`` is given a true value (see `Boolean arguments`), it
-        indicates that comparison should be case-insensitive. New option in
-        Robot Framework 3.0.1.
-
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
+
+        If ``ignore_case`` is given a true value (see `Boolean arguments`),
+        comparison is done case-insensitively.
+
+        Strings are always [http://www.macchiato.com/unicode/nfc-faq|
+        NFC normalized].
+
+        ``ignore_case`` is a new feature in Robot Framework 3.0.1.
         """
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
@@ -789,18 +800,21 @@ class _Verify(_BuiltInBase):
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True,
-                                   ignore_case=False):
+                                   ignore_case=False, formatter='str'):
         """Fails if objects are unequal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg``, ``values`` and ``formatter``.
 
-        If ``ignore_case`` is given a true value (see `Boolean arguments`), it
-        indicates that comparison should be case-insensitive. New option in
-        Robot Framework 3.0.1.
+        If ``ignore_case`` is given a true value (see `Boolean arguments`),
+        comparison is done case-insensitively. If both arguments are
+        multiline strings, this keyword uses `multiline string comparison`.
 
-        If both arguments are multiline strings, the comparison is done using
-        `multiline string comparisons`.
+        Strings are always [http://www.macchiato.com/unicode/nfc-faq|
+        NFC normalized].
+
+        ``ignore_case`` and ``formatter`` are new features in Robot Framework
+        3.0.1 and 3.1.2, respectively.
         """
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
@@ -808,7 +822,7 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             first = first.lower()
             second = second.lower()
-        self._should_be_equal(first, second, msg, values)
+        self._should_be_equal(first, second, msg, values, formatter)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True,
                               ignore_case=False):
@@ -2605,6 +2619,15 @@ class _Misc(_BuiltInBase):
         if is_truthy(console):
             logger.console(message)
 
+    def _get_formatter(self, formatter):
+        try:
+            return {'str': unic,
+                    'repr': prepr,
+                    'ascii': ascii if PY3 else repr}[formatter.lower()]
+        except KeyError:
+            raise ValueError("Invalid formatter '%s'. Available "
+                             "'str', 'repr' and 'ascii'." % formatter)
+
     @run_keyword_variant(resolve=0)
     def log_many(self, *messages):
         """Logs the given messages as separate entries using the INFO level.
@@ -3274,7 +3297,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     - `Evaluating expressions`
     - `Boolean arguments`
     - `Pattern matching`
-    - `Multiline string comparisons`
+    - `Multiline string comparison`
     - `Shortcuts`
     - `Keywords`
 
@@ -3405,7 +3428,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Strings that may contain special characters but should be handled
     as literal strings, can be escaped with the `Regexp Escape` keyword.
 
-    = Multiline string comparisons =
+    = Multiline string comparison =
 
     `Should Be Equal` and `Should Be Equal As Strings` report the failures using
     [http://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff
@@ -3429,7 +3452,6 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | +Differs2
     |  Same
     | +Not in first
-
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()

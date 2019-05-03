@@ -1,6 +1,11 @@
 import os
 from collections import OrderedDict
 
+try:
+    ascii
+except NameError:
+    ascii = repr
+
 if os.name == 'java':
     from java.lang import String
     from java.util import Hashtable, Vector
@@ -12,21 +17,22 @@ def get_variables():
         BYTES_WITHOUT_NON_ASCII=b'hyva',
         BYTES_WITH_NON_ASCII=b'\xe4',
         TUPLE_0=(),
-        TUPLE_1=('a',),
-        TUPLE_2=('a', 2),
+        TUPLE_1=(u'a',),
+        TUPLE_2=(u'a', 2),
         TUPLE_3=('a', 'b', 'c'),
         LIST=['a', 'b', 'cee', 'b', 42],
         LIST_0=[],
         LIST_1=['a'],
         LIST_2=['a', 2],
         LIST_3=['a', 'b', 'c'],
-        DICT={'a': 1, 'A': 2, u'\xe4': 3, u'\xc4': 4},
+        DICT={u'a': 1, u'A': 2, u'\xe4': 3, u'\xc4': 4},
         ORDERED_DICT=OrderedDict([('a', 1), ('A', 2), (u'\xe4', 3), (u'\xc4', 4)]),
         DICT_0={},
         DICT_1={'a': 1},
         DICT_2={'a': 1, 2: 'b'},
-        DICT_3={'a': 1, 'b': 2, 'c':3},
+        DICT_3={'a': 1, 'b': 2, 'c': 3},
     )
+    variables['ASCII_DICT'] = ascii(variables['DICT'])
     if os.name == 'java':
         variables.update(get_java_variables(**variables))
     return variables

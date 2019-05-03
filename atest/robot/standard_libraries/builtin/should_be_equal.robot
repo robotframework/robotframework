@@ -21,12 +21,48 @@ Fails without values
     Check test case    ${TESTNAME}
 
 Multiline comparison uses diff
-    Check test case    ${TESTNAME}
+    ${tc} =    Check test case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    foo\nbar\ndar\n\n!=\n\nfoo\nbar\ngar\n\ndar
 
 Multiline comparison requires both multiline
     Check test case    ${TESTNAME}
 
 Multiline comparison without including values
+    Check test case    ${TESTNAME}
+
+formatter=repr
+    Check test case    ${TESTNAME}
+
+formatter=repr/ascii with non-ASCII characters on Python 2
+    [Tags]    require-py2
+    Check test case    ${TESTNAME}
+
+formatter=repr/ascii with non-ASCII characters on Python 3
+    [Tags]    require-py3
+    Check test case    ${TESTNAME}
+
+formatter=repr with multiline
+    ${tc} =    Check test case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    foo\nbar\ndar\n\n!=\n\nfoo\nbar\ngar\n\ndar
+
+formatter=repr with multiline and different line endings
+    ${tc} =    Check test case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    1\n2\n3\n\n!=\n\n1\n2\n3
+    Check Log Message    ${tc.kws[1].msgs[1]}    1\n2\n3\n\n!=\n\n1\n2\n3
+
+formatter=repr/ascii with multiline and non-ASCII characters on Python 2
+    [Tags]    require-py2
+    ${tc} =    Check test case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
+    Check Log Message    ${tc.kws[1].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
+
+formatter=repr/ascii with multiline and non-ASCII characters on Python 3
+    [Tags]    require-py3
+    ${tc} =    Check test case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
+    Check Log Message    ${tc.kws[1].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
+
+Invalid formatter
     Check test case    ${TESTNAME}
 
 Tuple and list with same items fail
