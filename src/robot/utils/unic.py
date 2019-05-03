@@ -13,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from pprint import PrettyPrinter
 
-from .platform import IRONPYTHON, JYTHON, PY2
-from .robottypes import is_bytes, is_unicode
+from .platform import IRONPYTHON, JYTHON, PY2, PY3
+from .robottypes import is_bytes, is_unicode, unicode
 
 
 if PY2:
@@ -81,6 +82,20 @@ class PrettyRepr(PrettyPrinter):
             return PrettyPrinter.format(self, object, context, maxlevels, level)
         except:
             return _unrepresentable_object(object), True, False
+
+    if PY3:
+
+        # Don't split strings: https://stackoverflow.com/questions/31485402
+        def _format(self, object, *args, **kwargs):
+            if isinstance(object, (str, bytes, bytearray)):
+                width = self._width
+                self._width = sys.maxsize
+                try:
+                    super()._format(object, *args, **kwargs)
+                finally:
+                    self._width = width
+            else:
+                super()._format(object, *args, **kwargs)
 
 
 def _unrepresentable_object(item):
