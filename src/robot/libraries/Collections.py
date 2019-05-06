@@ -474,8 +474,11 @@ class _Dictionary(object):
     def convert_to_dictionary(self, item):
         """Converts the given ``item`` to a Python ``dict`` type.
 
-        Mainly useful for converting other mappings to dictionaries. Use
-        `Create Dictionary` from the BuiltIn library for constructing new
+        Mainly useful for converting other mappings to normal dictionaries.
+        This includes converting Robot Framework's own ``DotDict`` instances
+        that it uses if variables are created using the ``&{var}`` syntax.
+
+        Use `Create Dictionary` from the BuiltIn library for constructing new
         dictionaries.
 
         New in Robot Framework 2.9.

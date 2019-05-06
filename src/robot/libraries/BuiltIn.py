@@ -452,12 +452,15 @@ class _Converter(_BuiltInBase):
 
         Alternatively items can be specified so that keys and values are given
         separately. This and the ``key=value`` syntax can even be combined,
-        but separately given items must be first.
+        but separately given items must be first. If same key is used multiple
+        times, the last value has precedence.
 
-        If same key is used multiple times, the last value has precedence.
         The returned dictionary is ordered, and values with strings as keys
         can also be accessed using a convenient dot-access syntax like
-        ``${dict.key}``.
+        ``${dict.key}``. Technically the returned dictionary is Robot
+        Framework's own ``DotDict`` instance. If there is a need, it can be
+        converted into a regular Python ``dict`` instance by using the
+        `Convert To Dictionary` keyword from the Collections library.
 
         Examples:
         | &{dict} = | Create Dictionary | key=value | foo=bar | | | # key=value syntax |
@@ -469,9 +472,9 @@ class _Converter(_BuiltInBase):
         | Should Be Equal | ${dict.key} | value | | | | # dot-access |
 
         This keyword was changed in Robot Framework 2.9 in many ways:
-        - Moved from ``Collections`` library to ``BuiltIn``.
+        - Moved from the Collections library to BuiltIn.
         - Support also non-string keys in ``key=value`` syntax.
-        - Returned dictionary is ordered and dot-accessible.
+        - Returned dictionary is ordered and dot-accessible (i.e. ``DotDict``).
         - Old syntax to give keys and values separately was deprecated, but
           deprecation was later removed in RF 3.0.1.
         """
