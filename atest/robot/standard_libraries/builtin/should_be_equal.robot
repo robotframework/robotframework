@@ -53,14 +53,14 @@ formatter=repr with multiline and different line endings
 formatter=repr/ascii with multiline and non-ASCII characters on Python 2
     [Tags]    require-py2
     ${tc} =    Check test case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
-    Check Log Message    ${tc.kws[1].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
+    Check Log Message    ${tc.kws[0].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nÄ\n\Ö
+    Check Log Message    ${tc.kws[1].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nÄ\n\Ö
 
 formatter=repr/ascii with multiline and non-ASCII characters on Python 3
     [Tags]    require-py3
     ${tc} =    Check test case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
-    Check Log Message    ${tc.kws[1].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nA\u0308\n\Ö
+    Check Log Message    ${tc.kws[0].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nÄ\n\Ö
+    Check Log Message    ${tc.kws[1].msgs[1]}    Å\nÄ\n\Ö\n\n!=\n\nÅ\nÄ\n\Ö
 
 Invalid formatter
     Check test case    ${TESTNAME}
