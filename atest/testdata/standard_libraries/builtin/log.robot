@@ -48,29 +48,63 @@ Log also to console
     Log    Hello, console!    console=yepyep    repr=no    html=false
     Log    ${HTML}    debug    enable both html    and console
 
-Log repr
+repr=True
     [Setup]    Set Log Level    DEBUG
     Log    Nothing special here    repr=yes
     Log    Hyvää yötä \u2603!    repr=True
     Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
-    ${bytes} =    Evaluate    b'\\x00\\xff'
-    Log    ${bytes}    repr=${42}
-    ${list} =    Create List    Hyvä    \u2603    ${42}    ${bytes}
-    Log    ${list}    repr=yes    console=please
+    ${bytes} =    Evaluate    b'\\x00abc\\xff (repr=True)'
+    Log    ${bytes}    repr=${42}    console=True
+    ${nfd} =    Evaluate    u'hyva\u0308'
+    Log    ${nfd}    repr=Y
 
-Log pprint
-    ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']}
-    Log    ${dict}    repr=true    console=please
-    ${list} =    Evaluate    [b'One', u'Two', 3]
-    Log    ${list}    repr=yes    console=please
-    ${list} =    Evaluate    [b'a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']
-    Log    ${list}    repr=${1}    console=please
-    ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']}
-    Log    ${dict}    repr=yes    console=no    html=NO
-    ${list} =    Evaluate    [u'One', b'Two', 3]
-    Log    ${list}    repr=yes
-    ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', ${42}, u'Hyvää yötä \u2603!', u'a much, much, much, much, much, much longer string', b'\\x00\\xff']}
-    Log    ${dict}    repr=yes    console=please
+formatter=repr
+    [Setup]    Set Log Level    DEBUG
+    Log    Nothing special here    formatter=repr
+    Log    Hyvää yötä \u2603!    formatter=repr
+    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
+    ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=repr)'
+    Log    ${bytes}    formatter=REPR    console=True
+    ${nfd} =    Evaluate    u'hyva\u0308'
+    Log    ${nfd}    formatter=Repr
+
+formatter=ascii
+    [Setup]    Set Log Level    DEBUG
+    Log    Nothing special here    formatter=ascii
+    Log    Hyvää yötä \u2603!    formatter=ascii
+    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
+    ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=ascii)'
+    Log    ${bytes}    formatter=ASCII    console=True
+    ${nfd} =    Evaluate    u'hyva\u0308'
+    Log    ${nfd}    formatter=Ascii
+
+formatter=str
+    [Setup]    Set Log Level    DEBUG
+    Log    Nothing special here    formatter=str
+    Log    Hyvää yötä \u2603!    formatter=STR
+    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
+    ${bytes} =    Evaluate    b'\\x00abc\\xff (formatter=str)'
+    Log    ${bytes}    formatter=str    console=True
+    ${nfd} =    Evaluate    u'hyva\u0308'
+    Log    ${nfd}    formatter=str
+
+formatter=repr pretty prints
+    ${long string} =    Evaluate    ' '.join([u'Robot Framework'] * 1000)
+    Log    ${long string}    repr=True
+    ${small dict} =    Evaluate    {u'small': u'dict', 3: b'items', u'a': u'sorted'}
+    Log    ${small dict}    formatter=repr    console=TRUE
+    ${big dict} =    Evaluate    {u'big': u'dict', u'long': u'${long string}', u'nested': ${small dict}, u'list': [1, 2, 3]}
+    Log    ${big dict}    html=NO    formatter=repr
+    ${small list} =    Evaluate    [u'small', b'list', u'not sorted', 4]
+    Log    ${small list}    console=gyl    formatter=repr
+    ${big list} =    Evaluate    [u'big', u'list', u'${long string}', b'${long string}', [u'nested', (u'tuple', 2)], ${small dict}]
+    Log    ${big list}    formatter=repr
+    ${non ascii} =    Evaluate    [u'hyv\\xe4', b'hyv\\xe4', {u'\\u2603': b'\\x00\\xff'}]
+    Log    ${non ascii}    formatter=repr
+
+formatter=invalid
+    [Documentation]    FAIL ValueError: Invalid formatter 'invalid'. Available 'str', 'repr' and 'ascii'.
+    Log    x    formatter=invalid
 
 Log callable
     Log    ${MyObject}

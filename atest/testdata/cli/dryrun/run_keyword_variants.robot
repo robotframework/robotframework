@@ -1,8 +1,8 @@
 *** Variables ***
-${LOG GOT WRONG ARGS} =  Keyword 'BuiltIn.Log' expected 1 to 5 arguments, got
-${UK GOT WRONG ARGS} =  Keyword 'UK' expected 0 arguments, got
-${LOG KW} =  Log
-@{LOG THAT} =  Log  that  DEBUG
+${LOG GOT WRONG ARGS}    Keyword 'BuiltIn.Log' expected 1 to 6 arguments, got
+${UK GOT WRONG ARGS}     Keyword 'UK' expected 0 arguments, got
+${LOG KW}                Log
+@{LOG THAT}              Log    that    DEBUG
 
 *** Test Cases ***
 Run Keyword With Keyword with Invalid Number of Arguments
@@ -77,15 +77,15 @@ Run Keywords With Arguments When All Keywords Pass
     Run Keywords  Log Many  this  is  valid  AND  No Operation
 
 Run Keywords With Arguments When One Keyword Fails
-    [Documentation]  FAIL  ${LOG GOT WRONG ARGS} 6.
-    Run Keywords  Log  valid  AND  Log  1  2  3  4  5  6
+    [Documentation]  FAIL  ${LOG GOT WRONG ARGS} 12.
+    Run Keywords  Log  valid  AND  Log  1  2  3  4  5  6  7  8  9  10  11  12
 
 Run Keywords With Arguments When Multiple Keyword Fails
     [Documentation]  FAIL  Several failures occurred:\n\n
-    ...  1) ${LOG GOT WRONG ARGS} 6.\n\n
+    ...  1) ${LOG GOT WRONG ARGS} 8.\n\n
     ...  2) No keyword with name 'Unknown Keyword' found.
     Run Keywords
-    ...    Log    msg    DEBUG    and    too    many    args
+    ...    Log    msg    DEBUG    and    too    many    args    we    have
     ...    AND
     ...    Unknown Keyword
 
@@ -93,13 +93,15 @@ Run Keywords With Arguments With Variables
     Run Keywords  ${LOG KW}  this  DEBUG  AND  @{LOG THAT}  AND  Log  only kw
 
 Run Keyword in For Loop Pass
-    :FOR  ${i}  IN RANGE  5
-    \  Run Keyword  No Operation
+    FOR    ${i}    IN RANGE    5
+        Run Keyword  No Operation
+    END
 
 Run Keyword in For Loop Fail
     [Documentation]  FAIL ${LOG GOT WRONG ARGS} 0.
-    :FOR  ${i}  IN RANGE  5
-    \  Run Keyword  Log
+    FOR    ${i}    IN RANGE    5
+        Run Keyword    Log
+    END
 
 Wait Until Keyword Succeeds Pass
     Wait Until Keyword Succeeds  30 seconds  1 second  No Operation
@@ -120,33 +122,33 @@ Run Keyword If with ELSE
     ...  1) ${LOG GOT WRONG ARGS} 0.\n\n
     ...  2) ${UK GOT WRONG ARGS} 1.\n\n
     ...  3) No keyword with name 'Non Existing' found.\n\n
-    ...  4) ${LOG GOT WRONG ARGS} 6.
+    ...  4) ${LOG GOT WRONG ARGS} 8.
     Run Keyword If    expression    No Operation    ELSE    UK
     RunKeywordIf      expression    Log             ELSE    No Operation
     runkeywordif      expression    No operation    ELSE    UK    not allowed
-    RUN_KEYWORD_IF    expression    Non Existing    ELSE    Log    1    2    3    4    5    6
+    RUN_KEYWORD_IF    expression    Non Existing    ELSE    Log    1    2    3    4    5    6    7    8
 
 Run Keyword If with ELSE IF
     [Documentation]  FAIL  Several failures occurred:\n\n
     ...  1) ${LOG GOT WRONG ARGS} 0.\n\n
     ...  2) ${UK GOT WRONG ARGS} 1.\n\n
     ...  3) No keyword with name 'Non Existing' found.\n\n
-    ...  4) ${LOG GOT WRONG ARGS} 6.
+    ...  4) ${LOG GOT WRONG ARGS} 8.
     Run Keyword If    expr    No Operation    ELSE IF    expr    UK
     Run Keyword If    expr    Log             ELSE IF    expr    No Operation
     Run Keyword If    expr    No operation    ELSE IF    expr    UK    not allowed
-    Run Keyword If    expr    Non Existing    ELSE IF    expr    Log    1    2    3    4    5    6
+    Run Keyword If    expr    Non Existing    ELSE IF    expr    Log    1    2    3    4    5    6    7    8
 
 Run Keyword If with ELSE IF and ELSE
     [Documentation]  FAIL  Several failures occurred:\n\n
     ...  1) ${LOG GOT WRONG ARGS} 0.\n\n
     ...  2) ${UK GOT WRONG ARGS} 2.\n\n
     ...  3) No keyword with name 'not found kw' found.\n\n
-    ...  4) ${LOG GOT WRONG ARGS} 6.
+    ...  4) ${LOG GOT WRONG ARGS} 10.
     Run Keyword If    expr    Log
     ...    ELSE IF    expr    UK    1    2
     ...    ELSE IF    expr    not found kw
-    ...    ELSE    Log    1    2    3    4    5    6
+    ...    ELSE    Log    1    2    3    4    5    6    7    8    9    10
 
 Run Keyword If with ELSE IF and ELSE without keywords
     [Documentation]  FAIL  Several failures occurred:\n\n
@@ -181,23 +183,23 @@ Run Keyword If with ELSE IF and ELSE without keywords
 
 Run Keyword If with escaped or non-caps ELSE IF and ELSE
     [Documentation]  FAIL  Several failures occurred:\n\n
-    ...  1) ${LOG GOT WRONG ARGS} 6.\n\n
+    ...  1) ${LOG GOT WRONG ARGS} 8.\n\n
     ...  2) ${LOG GOT WRONG ARGS} 7.
-     Run Keyword If    expr    Log    \ELSE IF    INFO    and    too    many    args
+     Run Keyword If    expr    Log    \ELSE IF    INFO    and    too    many    args    we    have
      Run Keyword If    expr    Log    \ELSE    DEBUG
      Run Keyword If    expr    Log    else if    WARN    html=yes
      Run Keyword If    expr    Log    else    too    many    args    again    here    is
 
 Run Keyword If with list variable in ELSE IF and ELSE
     [Documentation]  FAIL  Several failures occurred:\n\n
-    ...  1) ${LOG GOT WRONG ARGS} 6.\n\n
+    ...  1) ${LOG GOT WRONG ARGS} 9.\n\n
     ...  2) ${LOG GOT WRONG ARGS} 8.
     Run Keyword If    @{list}
     Run Keyword If    @{list}    ELSE      @{list}
     Run Keyword If    @{list}    ELSE IF   @{list}
     Run Keyword If    @{list}    ELSE IF   @{list}    ELSE    @{list}
     Run Keyword If    @{list}    Not Considered Keyword     ELSE    @{list}    XXX
-    Run Keyword If    @{list}    ELSE      Log   1    2    3    4    5    6
+    Run Keyword If    @{list}    ELSE      Log   1    2    3    4    5    6    7    8    9
     Run Keyword If    expr       No Operation    ELSE IF    @{list}    UK    1
     Run Keyword If    expr       No Operation    ELSE IF    @{list}    UK    1    2
     ...    ELSE IF    expr       Log    1    2    3    4    5    6    7    8

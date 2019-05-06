@@ -610,9 +610,9 @@ class _Verify(_BuiltInBase):
         - If ``msg`` is given and ``values`` gets a false value (see
           `Boolean arguments`), the error message is simply ``<msg>``.
         - ``formatter`` controls how to format the values. Possible values are
-          ``str`` (default), ``repr`` and ``ascii`` and they work similarly
-          a Python built-in functions with same names. See the `Log` keyword
-          for more information.
+          ``str`` (default), ``repr`` and ``ascii``, and they work similarly
+          as Python built-in functions with same names. See `String
+          representations` for more details.
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         both arguments are strings, comparison is done case-insensitively.
@@ -2563,7 +2563,8 @@ class _Misc(_BuiltInBase):
             sep = ' '
         return sep.join(items)
 
-    def log(self, message, level='INFO', html=False, console=False, repr=False):
+    def log(self, message, level='INFO', html=False, console=False,
+            repr=False, formatter='str'):
         u"""Logs the given message with the given level.
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.
@@ -2575,17 +2576,13 @@ class _Misc(_BuiltInBase):
         visible also in the console and in the Test Execution Errors section
         in the log file.
 
-        Logging can be configured using optional ``html``, ``console`` and
-        ``repr`` arguments. They are off by default, but can be enabled
-        by giving them a true value. See `Boolean arguments` section for more
-        information about true and false values.
-
-        If the ``html`` argument is given a true value, the message will be
-        considered HTML and special characters such as ``<`` in it are not
-        escaped. For example, logging ``<img src="image.png">`` creates an
-        image when ``html`` is true, but otherwise the message is that exact
-        string. An alternative to using the ``html`` argument is using the HTML
-        pseudo log level. It logs the message as HTML using the INFO level.
+        If the ``html`` argument is given a true value (see `Boolean
+        arguments`), the message will be considered HTML and special characters
+        such as ``<`` are not escaped. For example, logging
+        ``<img src="image.png">`` creates an image when ``html`` is true, but
+        otherwise the message is that exact string. An alternative to using
+        the ``html`` argument is using the HTML pseudo log level. It logs
+        the message as HTML using the INFO level.
 
         If the ``console`` argument is true, the message will be written to
         the console where test execution was started from in addition to
@@ -2593,13 +2590,18 @@ class _Misc(_BuiltInBase):
         and adds a newline after the written message. Use `Log To Console`
         instead if either of these is undesirable,
 
-        If the ``repr`` argument is true, the given item will be passed through
-        a custom version of Python's ``pprint.pformat()`` function before
-        logging it. This is useful, for example, when working with strings or
-        bytes containing invisible characters, or when working with nested data
-        structures. The custom version differs from the standard one so that it
-        omits the ``u`` prefix from Unicode strings and adds ``b`` prefix to
-        byte strings on Python 2.
+        The ``formatter`` argument controls how to format the string
+        representation of the message. Possible values are ``str`` (default),
+        ``repr`` and ``ascii``, and they work similarly to Python built-in
+        functions with same names. When using ``repr``, bigger lists,
+        dictionaries and other containers are also pretty-printed so that
+        there is one item per row. For more details see `String
+        representations`. This is a new feature in Robot Framework 3.1.2.
+
+        The old way to control string representation was using the ``repr``
+        argument, and ``repr=True`` is still equivalent to using
+        ``formatter=repr``. The ``repr`` argument will be deprecated in the
+        future, though, and using ``formatter`` is thus recommended.
 
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
@@ -2608,13 +2610,17 @@ class _Misc(_BuiltInBase):
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
         | Log | Hello, console!   | console=yes | | # Log also to the console. |
-        | Log | Hyv\xe4 \\x00     | repr=yes    | | # Log ``'Hyv\\xe4 \\x00'``. |
+        | Log | Null is \\x00  | formatter=repr | | # Log ``'Null is \\x00'``. |
 
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
         """
+        # TODO: Deprecate `repr` in RF 3.2 or latest in RF 3.3.
         if is_truthy(repr):
-            message = prepr(message, width=80)
+            formatter = prepr
+        else:
+            formatter = self._get_formatter(formatter)
+        message = formatter(message)
         logger.write(message, level, is_truthy(html))
         if is_truthy(console):
             logger.console(message)
@@ -3282,7 +3288,7 @@ class _Misc(_BuiltInBase):
 
 
 class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
-    """An always available standard library with often needed keywords.
+    u"""An always available standard library with often needed keywords.
 
     ``BuiltIn`` is Robot Framework's standard library that provides a set
     of generic keywords needed often. It is imported automatically and
@@ -3298,6 +3304,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     - `Boolean arguments`
     - `Pattern matching`
     - `Multiline string comparison`
+    - `String representations`
     - `Shortcuts`
     - `Keywords`
 
@@ -3452,6 +3459,86 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | +Differs2
     |  Same
     | +Not in first
+
+    = String representations =
+
+    Several keywords log values explicitly (e.g. `Log`) or implicitly (e.g.
+    `Should Be Equal` when there are failures). By default keywords log values
+    using "human readable" string representation, which means that strings
+    like ``Hello`` and numbers like ``42`` are logged as-is. Most of the time
+    this is the desired behavior, but there are some problems as well:
+
+    - It is not possible to see difference between different objects that
+      have same string representation like string ``42`` and integer ``42``.
+      `Should Be Equal` and some other keywords add the type information to
+      the error message in these cases, though.
+
+    - Non-printable characters such as the null byte are not visible.
+
+    - Trailing whitespace is not visible.
+
+    - Different newlines (``\\r\\n`` on Windows, ``\\n`` elsewhere) cannot
+      be separated from each others.
+
+    - There are several Unicode characters that are different but look the
+      same. One example is the Latin ``\u0061`` (``\\u0061``) and the Cyrillic
+      ``\u0430`` (``\\u0430``). Error messages like ``\u0061 != \u0430`` are
+      not very helpful.
+
+    - Some Unicode characters can be represented using
+      [https://en.wikipedia.org/wiki/Unicode_equivalence|different forms].
+      For example, ``\xe4`` can be represented either as a single code point
+      ``\\u00e4`` or using two code points ``\\u0061`` and ``\\u0308`` combined
+      together. Such forms are considered canonically equivalent, but strings
+      containing them are not considered equal when compared in Python. Error
+      messages like ``\xe4 != \u0061\u0308`` are not that helpful either.
+
+    - Containers such as lists and dictionaries are formatted into a single
+      line making it hard to see individual items they contain.
+
+    To overcome the above problems, some keywords such as `Log` and
+    `Should Be Equal` have an optional ``formatter`` argument that can be
+    used to configure the string representation. The supported values are
+    ``str`` (default), ``repr``, and ``ascii`` that work similarly as
+    [https://docs.python.org/library/functions.html|Python built-in functions]
+    with same names. More detailed semantics are explained below.
+
+    The ``formatter`` argument is new in Robot Framework 3.1.2.
+
+    == str ==
+
+    Use the "human readable" string representation. Equivalent to using
+    ``str()`` in Python 3 and ``unicode()`` in Python 2. This is the default.
+
+    == repr ==
+
+    Use the "machine readable" string representation. Similar to using
+    ``repr()`` in Python, which means that strings like ``Hello`` are logged
+    like ``'Hello'``, newlines and non-printable characters are escaped like
+    ``\\n`` and ``\\x00``, and so on. Non-ASCII characters are shown as-is
+    like ``\xe4`` in Python 3 and in escaped format like ``\\xe4`` in Python 2.
+    Use ``ascii`` to always get the escaped format.
+
+    There are also some enhancements compared to the standard ``repr()``:
+    - Bigger lists, dictionaries and other containers are pretty-printed so
+      that there is one item per row.
+    - On Python 2 the ``u`` prefix is omitted with Unicode strings and
+      the ``b`` prefix is added to byte strings.
+
+    == ascii ==
+
+    Same as using ``ascii()`` in Python 3 or ``repr()`` in Python 2 where
+    ``ascii()`` does not exist. Similar to using ``repr`` explained above
+    but with the following differences:
+
+    - On Python 3 non-ASCII characters are escaped like ``\\xe4`` instead of
+      showing them as-is like ``ä``. This makes it easier to see differences
+      between Unicode characters that look the same but are not equal. This
+      is how ``repr()`` works in Python 2.
+    - On Python 2 just uses the standard ``repr()`` meaning that Unicode
+      strings get the ``u`` prefix and no ``b`` prefix is added to byte
+      strings.
+    - Containers are not pretty-printed.
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
