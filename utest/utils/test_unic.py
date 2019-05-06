@@ -93,11 +93,11 @@ class TestUnic(unittest.TestCase):
 
 class TestPrettyRepr(unittest.TestCase):
 
-    def _verify(self, item, expected=None):
+    def _verify(self, item, expected=None, **config):
         if not expected:
             expected = repr(item).lstrip('u')
-        assert_equal(prepr(item), expected)
-        if isinstance(item, (unicode, bytes)):
+        assert_equal(prepr(item, **config), expected)
+        if isinstance(item, (unicode, bytes)) and not config:
             assert_equal(prepr([item]), '[%s]' % expected)
             assert_equal(prepr((item,)), '(%s,)' % expected)
             assert_equal(prepr({item: item}), '{%s: %s}' % (expected, expected))
@@ -166,13 +166,16 @@ class TestPrettyRepr(unittest.TestCase):
         assert_true(match is not None)
 
     def test_split_big_collections(self):
-        self._verify(list(range(100)))
-        self._verify([u'Hello, world!'] * 10,
-                     '[%s]' % ', '.join(["'Hello, world!'"] * 10))
-        self._verify(list(range(300)),
-                     '[%s]' % ',\n '.join(str(i) for i in range(300)))
-        self._verify([u'Hello, world!'] * 30,
-                     '[%s]' % ',\n '.join(["'Hello, world!'"] * 30))
+        self._verify(list(range(20)))
+        self._verify(list(range(100)), width=400)
+        self._verify(list(range(100)),
+                     '[%s]' % ',\n '.join(str(i) for i in range(100)))
+        self._verify([u'Hello, world!'] * 4,
+                     '[%s]' % ', '.join(["'Hello, world!'"] * 4))
+        self._verify([u'Hello, world!'] * 25,
+                     '[%s]' % ', '.join(["'Hello, world!'"] * 25), width=500)
+        self._verify([u'Hello, world!'] * 25,
+                     '[%s]' % ',\n '.join(["'Hello, world!'"] * 25))
 
     def test_dont_split_long_strings(self):
         self._verify(' '.join([u'Hello world!'] * 1000))

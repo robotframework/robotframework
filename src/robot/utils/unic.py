@@ -67,7 +67,7 @@ if not (JYTHON or IRONPYTHON):
         return normalize('NFC', _unic(item))
 
 
-def prepr(item, width=400):
+def prepr(item, width=80):
     return unic(PrettyRepr(width=width).pformat(item))
 
 
