@@ -44,13 +44,17 @@ Missing multiple values
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Many Kw Only Args' missing named-only arguments 'first' and 'third'.
     Many Kw Only Args    second=xxx
 
-Unexpected keyword argumemt
+Unexpected keyword argument
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got unexpected named argument 'invalid'.
     Kw Only Arg    kwo=value    invalid=ooops
 
-Multiple unexpected keyword argumemt
+Multiple unexpected keyword argument
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got unexpected named arguments 'invalid' and 'ooops'.
     Kw Only Arg    kwo=value    invalid=ooops    ooops=invalid
+
+Multiple unexpected keyword argument with inequality
+    [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' got unexpected named arguments '<' and 'ooops'.
+    Kw Only Arg    kwo=value    <=ooops    ooops=invalid
 
 Unexpected positional argument 1
     [Documentation]    FAIL Keyword 'KwOnlyArgs.Kw Only Arg' expected 0 non-named arguments, got 1.
@@ -75,3 +79,9 @@ With other arguments
     Should Be Equal    ${result}    p1-p2-p3-p4-k1-k2-k3=3-k4=4
     ${result} =    All Arg Types    k4=!!!    kwo_def=k2    k3=!    pos_req=p1    pos_def=p2    kwo_req=k1
     Should Be Equal    ${result}    p1-p2-k1-k2-k3=!-k4=!!!
+
+With only one named argument
+    Kw Only Arg With Varargs    First arg    Second arg    Maybe a third    kwo=Actually, correct!
+
+With positional argument containing equal sign
+    Kw Only Arg With Varargs    One more time    a=1    <=    2    kwo=Actually, correct!
