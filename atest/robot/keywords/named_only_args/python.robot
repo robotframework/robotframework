@@ -34,9 +34,6 @@ Unexpected keyword argument
 Multiple unexpected keyword argument
     Check Test Case    ${TESTNAME}
 
-Multiple unexpected keyword argument with inequality
-    Check Test Case    ${TESTNAME}
-
 Unexpected positional argument
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
@@ -47,9 +44,5 @@ With varargs
 With other arguments
     Check Test Case    ${TESTNAME}
 
-With only one named argument
-    check test case  ${TESTNAME}
-
 With positional argument containing equal sign
-    check test case  ${TESTNAME}
-
+    Check Test Case    ${TESTNAME}
