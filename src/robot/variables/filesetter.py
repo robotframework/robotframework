@@ -59,12 +59,6 @@ class VariableFileSetter(object):
 
 class YamlImporter(object):
 
-    def __init__(self):
-        if not yaml:
-            raise DataError('Using YAML variable files requires PyYAML module '
-                            'to be installed. Typically you can install it '
-                            'by running `pip install pyyaml`.')
-
     def import_variables(self, path, args=None):
         if args:
             raise DataError('YAML variable files do not accept arguments.')
@@ -74,11 +68,21 @@ class YamlImporter(object):
 
     def _import(self, path):
         with io.open(path, encoding='UTF-8') as stream:
-            variables = yaml.load(stream)
+            variables = self._load_yaml(stream)
         if not is_dict_like(variables):
             raise DataError('YAML variable file must be a mapping, got %s.'
                             % type_name(variables))
         return variables.items()
+
+    def _load_yaml(self, stream):
+        if not yaml:
+            raise DataError('Using YAML variable files requires PyYAML module '
+                            'to be installed. Typically you can install it '
+                            'by running `pip install pyyaml`.')
+        if yaml.__version__.split('.')[0] == '3':
+            return yaml.load(stream)
+        return yaml.full_load(stream)
+
 
     def _dot_dict(self, value):
         if is_dict_like(value):
