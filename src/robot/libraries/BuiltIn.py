@@ -3535,7 +3535,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     but with the following differences:
 
     - On Python 3 non-ASCII characters are escaped like ``\\xe4`` instead of
-      showing them as-is like ``ä``. This makes it easier to see differences
+      showing them as-is like ``\xe4``. This makes it easier to see differences
       between Unicode characters that look the same but are not equal. This
       is how ``repr()`` works in Python 2.
     - On Python 2 just uses the standard ``repr()`` meaning that Unicode
