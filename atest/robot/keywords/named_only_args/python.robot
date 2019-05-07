@@ -44,5 +44,11 @@ With varargs
 With other arguments
     Check Test Case    ${TESTNAME}
 
+Argument name as variable
+    Check Test Case    ${TESTNAME}
+
+Argument name as non-existing variable
+    Check Test Case    ${TESTNAME}
+
 With positional argument containing equal sign
     Check Test Case    ${TESTNAME}

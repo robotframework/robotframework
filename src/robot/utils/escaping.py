@@ -72,6 +72,7 @@ class Unescaper(object):
             return unescaper(text[1:])
 
     def _unescaper_for_n(self, text):
+        # TODO: Deprecate ignoring space after newline in RF 3.2.
         if text.startswith(' '):
             text = text[1:]
         return '\n' + text
@@ -126,6 +127,8 @@ class EscapeFinder(object):
 
 
 def split_from_equals(string):
+    if not is_string(string) or '=' not in string:
+        return string, None
     index = _get_split_index(string)
     if index == -1:
         return string, None

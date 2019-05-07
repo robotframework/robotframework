@@ -64,20 +64,15 @@ class NamedArgumentResolver(object):
                 VariableSplitter(arg).is_dict_variable())
 
     def _is_named(self, arg, previous_named, variables=None):
-        if not (is_string(arg) and '=' in arg):
-            return False
         name, value = split_from_equals(arg)
         if value is None:
             return False
-        if self._argspec.kwargs or name in self._argspec.kwonlyargs:
-            return True
-        if previous_named:
-            return True
-        if not self._argspec.supports_named:
-            return False
         if variables:
             name = variables.replace_scalar(name)
-        return name in self._argspec.positional
+        argspec = self._argspec
+        if previous_named or name in argspec.kwonlyargs or argspec.kwargs:
+            return True
+        return argspec.supports_named and name in argspec.positional
 
     def _raise_positional_after_named(self):
         raise DataError("%s '%s' got positional argument after named arguments."
