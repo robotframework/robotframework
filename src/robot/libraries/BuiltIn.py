@@ -2049,8 +2049,9 @@ class _RunKeyword(_BuiltInBase):
             if count <= 0:
                 raise ValueError('Retry count %d is not positive.' % count)
             message = '%d time%s' % (count, s(count))
-        retry_interval = timestr_to_secs(retry_interval)
+        retry_interval = float(timestr_to_secs(retry_interval))
         while True:
+            execution_time = time.time()
             try:
                 return self.run_keyword(name, *args)
             except ExecutionFailed as err:
@@ -2061,7 +2062,14 @@ class _RunKeyword(_BuiltInBase):
                     raise AssertionError("Keyword '%s' failed after retrying "
                                          "%s. The last error was: %s"
                                          % (name, message, err))
-                self._sleep_in_parts(retry_interval)
+                keyword_runtime = time.time() - execution_time
+                wait_time = retry_interval - keyword_runtime
+                if wait_time >= 0.0:
+                    self._sleep_in_parts(wait_time)
+                else:
+                    logger.warn("Interval violation: retry_interval is {:.3}s"
+                                ", but keyword runtime is {:.3}s."
+                                .format(retry_interval, keyword_runtime))
 
     @run_keyword_variant(resolve=1)
     def set_variable_if(self, condition, *values):
