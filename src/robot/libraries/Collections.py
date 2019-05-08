@@ -569,8 +569,12 @@ class _Dictionary(object):
     def copy_dictionary(self, dictionary, deepcopy=False):
         """Returns a copy of the given dictionary.
 
-        If the optional ``deepcopy`` is given a true value, the returned
-        dictionary is a deep copy. New option in Robot Framework 3.1.2.
+        The ``deepcopy`` argument controls should the returned dictionary be
+        a [https://docs.python.org/library/copy.html|shallow or deep copy].
+        By default returns a shallow copy, but that can be changed by giving
+        ``deepcopy`` a true value (see `Boolean arguments`). This is a new
+        option in Robot Framework 3.1.2. Earlier versions always returned
+        shallow copies.
 
         The given dictionary is never altered by this keyword.
         """
@@ -580,81 +584,88 @@ class _Dictionary(object):
         return dictionary.copy()
 
     def get_dictionary_keys(self, dictionary, sort_keys=True):
-        """Returns keys of the given ``dictionary``.
+        """Returns keys of the given ``dictionary`` as a list.
 
-        If the optional value sort_keys is set to False, the returned
-        keys are in order they appear in dictionary. Otherwise returned keys are ordered.
-        New option in Robot Framework 3.1.2.
-        
+        By default keys are returned in sorted order (assuming they are
+        sortable), but they can be returned in the original order by giving
+        ``sort_keys``  a false value (see `Boolean arguments`). Notice that
+        with Python 3.5 and earlier dictionary order is undefined unless using
+        ordered dictionaries.
+
         The given ``dictionary`` is never altered by this keyword.
 
         Example:
-        | ${keys} = | Get Dictionary Keys | ${D3} |
+        | ${sorted} =   | Get Dictionary Keys | ${D3} |
+        | ${unsorted} = | Get Dictionary Keys | ${D3} | sort_keys=False |
         =>
-        | ${keys} = ['a', 'b', 'c']
+        | ${sorted} = ['a', 'b', 'c']
+        | ${unsorted} = ['b', 'a', 'c']   # Order depends on Python version.
 
-        | ${keys} = | Get Dictionary Keys | ${D3} | sort_keys=${False} |
-        =>
-        | ${keys} = ['b', 'a', 'c']
+        ``sort_keys`` is a new option in Robot Framework 3.1.2. Earlier keys
+        were always sorted.
         """
         self._validate_dictionary(dictionary)
         keys = dictionary.keys()
-        try:
-            if sort_keys:
+        if sort_keys:
+            try:
                 return sorted(keys)
-            else:
-                return list(keys)
-        except TypeError:
-            return list(keys)
+            except TypeError:
+                pass
+        return list(keys)
 
     def get_dictionary_values(self, dictionary, sort_keys=True):
-        """Returns values of the given dictionary.
+        """Returns values of the given ``dictionary`` as a list.
 
-        If the optional value sort_keys is set to False, the returned
-        values are in order they appear in dictionary. Otherwise returned values are
-        ordered by corresponding keys.
-        New option in Robot Framework 3.1.2.
+        Uses `Get Dictionary Keys` to get keys and then returns corresponding
+        values. By default keys are sorted and values returned in that order,
+        but this can be changed by giving ``sort_keys`` a false value (see
+        `Boolean arguments`). Notice that with Python 3.5 and earlier
+        dictionary order is undefined unless using ordered dictionaries.
 
         The given ``dictionary`` is never altered by this keyword.
 
         Example:
-        | ${values} = | Get Dictionary Values | ${D3B} |
+        | ${sorted} =   | Get Dictionary Values | ${D3} |
+        | ${unsorted} = | Get Dictionary Values | ${D3} | sort_keys=False |
         =>
-        | ${values} = [1, 2, 3]
+        | ${sorted} = [1, 2, 3]
+        | ${unsorted} = [2, 1, 3]    # Order depends on Python version.
 
-        Example:
-        | ${values} = | Get Dictionary Values | ${D3B} | sort_keys = ${False} |
-        =>
-        | ${values} = [2, 1, 3]
+        ``sort_keys`` is a new option in Robot Framework 3.1.2. Earlier values
+        were always sorted based on keys.
         """
         self._validate_dictionary(dictionary)
-        return [dictionary[k] for k in self.get_dictionary_keys(dictionary, sort_keys=sort_keys)]
+        keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
+        return [dictionary[k] for k in keys]
 
     def get_dictionary_items(self, dictionary, sort_keys=True):
-        """Returns items of the given ``dictionary``.
+        """Returns items of the given ``dictionary`` as a list.
 
-        If the optional value sort_keys is set to False, the returned
-        items are in order they appear in dictionary. Otherwise returned items are
-        ordered by keys.
-        New option in Robot Framework 3.1.2.
+        Uses `Get Dictionary Keys` to get keys and then returns corresponding
+        items. By default keys are sorted and items returned in that order,
+        but this can be changed by giving ``sort_keys`` a false value (see
+        `Boolean arguments`). Notice that with Python 3.5 and earlier
+        dictionary order is undefined unless using ordered dictionaries.
+
+        Items are returned as a flat list so that first item is a key,
+        second item is a corresponding value, third item is the second key,
+        and so on.
 
         The given ``dictionary`` is never altered by this keyword.
 
         Example:
-        | ${items} = | Get Dictionary Items | ${D3} |
+        | ${sorted} =   | Get Dictionary Items | ${D3} |
+        | ${unsorted} = | Get Dictionary Items | ${D3} | sort_keys=False |
         =>
-        | ${items} = ['a', 1, 'b', 2, 'c', 3]
+        | ${sorted} = ['a', 1, 'b', 2, 'c', 3]
+        | ${unsorted} = ['b', 2, 'a', 1, 'c', 3]    # Order depends on Python version.
 
-        Example:
-        | ${items} = | Get Dictionary Items | ${D3} | sort_keys = ${False} |
-        =>
-        | ${items} = ['b', 2, 'a', 1, 'c', 3]
+        ``sort_keys`` is a new option in Robot Framework 3.1.2. Earlier items
+        were always sorted based on keys.
         """
         self._validate_dictionary(dictionary)
-        ret = []
-        for key in self.get_dictionary_keys(dictionary, sort_keys=sort_keys):
-            ret.extend((key, dictionary[key]))
-        return ret
+        keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
+        return [i for key in keys for i in (key, dictionary[key])]
 
     def get_from_dictionary(self, dictionary, key):
         """Returns a value from the given ``dictionary`` based on the given ``key``.

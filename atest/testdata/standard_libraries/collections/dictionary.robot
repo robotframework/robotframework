@@ -69,7 +69,7 @@ Get Dictionary Values Sorted
     Compare To Expected String    ${values}    [1, 2, '']
 
 Get Dictionary Values Unsorted
-    ${values} =    Get Dictionary Values    ${D3B}  sort_keys=${False}
+    ${values} =    Get Dictionary Values    ${D3B}  sort_keys=False
     Compare To Expected String    ${values}    [2, 1, '']
 
 Get Dictionary Items Sorted
@@ -77,7 +77,7 @@ Get Dictionary Items Sorted
     Compare To Expected String    ${items}    ['a', 1, 'b', 2, 'c', '']
 
 Get Dictionary Items Unsorted
-    ${items} =    Get Dictionary Items    ${D3B}    sort_keys=${False}
+    ${items} =    Get Dictionary Items    ${D3B}    sort_keys=NO
     Compare To Expected String    ${items}    ['b', 2, 'a', 1, 'c', '']
 
 Get Dictionary Keys/Values/Items When Keys Are Unorderable
