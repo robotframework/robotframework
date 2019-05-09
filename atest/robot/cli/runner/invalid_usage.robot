@@ -12,10 +12,10 @@ Argument File Option Without Value As Last Argument
     --argumentfile    option --argumentfile requires argument
 
 Non-Existing Input
-    nonexisting.html    Parsing 'nonexisting\\.html' failed: Data source does not exist\\.
+    nonexisting.html    Parsing 'nonexisting\\.html' failed: File or directory to execute does not exist\\.
 
 Non-Existing Input With Non-Ascii Characters
-    eitäällä.txt    Parsing 'eitäällä\\.txt' failed: Data source does not exist\\.
+    eitäällä.txt    Parsing 'eitäällä\\.txt' failed: File or directory to execute does not exist\\.
 
 Invalid Options
     --invalid option    option --invalid not recognized
