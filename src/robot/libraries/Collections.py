@@ -292,15 +292,12 @@ class _List(object):
     def sort_list(self, list_):
         """Sorts the given list in place.
 
-        The strings are sorted alphabetically and the numbers numerically.
+        Sorting fails if items in the list are not comparable with each others.
+        On Python 2 most objects are comparable, but on Python 3 comparing,
+        for example, strings with numbers is not possible.
 
         Note that the given list is changed and nothing is returned. Use
         `Copy List` first, if you need to keep also the original order.
-
-        ${L} = [2,1,'a','c','b']
-        | Sort List | ${L} |
-        =>
-        | ${L} = [1, 2, 'a', 'b', 'c']
         """
         self._validate_list(list_)
         list_.sort()
