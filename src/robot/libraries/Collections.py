@@ -305,9 +305,7 @@ class _List(object):
     def list_should_contain_value(self, list_, value, msg=None):
         """Fails if the ``value`` is not found from ``list``.
 
-        If the keyword fails, the default error messages is ``<list> does
-        not contain value '<value>'``. A custom message can be given using
-        the ``msg`` argument.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_list(list_)
         default = "%s does not contain value '%s'." % (seq2str2(list_), value)
@@ -316,7 +314,7 @@ class _List(object):
     def list_should_not_contain_value(self, list_, value, msg=None):
         """Fails if the ``value`` is found from ``list``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_list(list_)
         default = "%s contains value '%s'." % (seq2str2(list_), value)
@@ -356,7 +354,6 @@ class _List(object):
         values are listed in the default error message like ``Index 4: ABC !=
         Abc``. The types of the lists do not need to be the same. For example,
         Python tuple and list with same content are considered equal.
-
 
         The error message can be configured using ``msg`` and ``values``
         arguments:
@@ -686,9 +683,7 @@ class _Dictionary(object):
     def dictionary_should_contain_key(self, dictionary, key, msg=None):
         """Fails if ``key`` is not found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
-        The given dictionary is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
         default = "Dictionary does not contain key '%s'." % key
@@ -697,9 +692,7 @@ class _Dictionary(object):
     def dictionary_should_not_contain_key(self, dictionary, key, msg=None):
         """Fails if ``key`` is found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
-        The given dictionary is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
         default = "Dictionary contains key '%s'." % key
@@ -710,8 +703,7 @@ class _Dictionary(object):
 
         Value is converted to unicode for comparison.
 
-        See `Lists Should Be Equal` for an explanation of ``msg``.
-        The given dictionary is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
         self.dictionary_should_contain_key(dictionary, key, msg)
@@ -722,9 +714,7 @@ class _Dictionary(object):
     def dictionary_should_contain_value(self, dictionary, value, msg=None):
         """Fails if ``value`` is not found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
-        The given dictionary is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
         default = "Dictionary does not contain value '%s'." % value
@@ -733,9 +723,7 @@ class _Dictionary(object):
     def dictionary_should_not_contain_value(self, dictionary, value, msg=None):
         """Fails if ``value`` is found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
-        The given dictionary is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
         default = "Dictionary contains value '%s'." % value
@@ -751,8 +739,6 @@ class _Dictionary(object):
 
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
-
-        The given dictionaries are never altered by this keyword.
         """
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
@@ -765,8 +751,6 @@ class _Dictionary(object):
 
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
-
-        The given dictionaries are never altered by this keyword.
         """
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
@@ -915,8 +899,6 @@ class Collections(_List, _Dictionary):
                              whitespace_insensitive=False):
         """Fails if ``pattern`` is not found in ``list``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
         By default, pattern matching is similar to matching files in a shell
         and is case-sensitive and whitespace-sensitive. In the pattern syntax,
         ``*`` matches to anything and ``?`` matches to any single character. You
@@ -938,7 +920,7 @@ class Collections(_List, _Dictionary):
 
         Non-string values in lists are ignored when matching patterns.
 
-        The given list is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
 
         See also ``Should Not Contain Match``.
 
