@@ -61,6 +61,10 @@ Tidy tests and keywords containing ELSE and ELSE IF
     Run tidy    --inplace     ${TEMP}/else_untidy.robot
     Compare tidy results    ${TEMP}/else_untidy.robot    ${DATA}/else_tidy.robot
 
+For loops
+    Run tidy and check result    ${EMPTY}    for_loops_input.robot
+    ...    expected=for_loops_expected.robot
+
 *** Keywords ***
 Files Should Have $CURDIR
     [Arguments]    ${directory}

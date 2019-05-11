@@ -748,8 +748,7 @@ class ForLoop(_WithSteps):
 
     def as_list(self, indent=False, include_comment=True):
         comments = self.comment.as_list() if include_comment else []
-        # TODO: Return 'FOR' in RF 3.2.
-        return [': FOR'] + self.vars + [self.flavor] + self.items + comments
+        return ['FOR'] + self.vars + [self.flavor] + self.items + comments
 
     def __iter__(self):
         return iter(self.steps)

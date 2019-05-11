@@ -52,6 +52,7 @@ class DataExtractor(object):
             if child.is_for_loop():
                 for row in self._rows_from_item(child, indent+1):
                     yield row
+                yield ['', 'END']
 
     def _last(self, items, index):
         return index >= len(items) -1

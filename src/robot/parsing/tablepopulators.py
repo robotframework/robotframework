@@ -362,5 +362,5 @@ class StepPopulator(_PropertyPopulator):
         self._value.extend(row.data)
 
     def populate(self):
-        if self._value or self._comments:
+        if self._value or self._comments.value:
             self._setter(self._value, self._comments.value)
