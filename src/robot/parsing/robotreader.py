@@ -16,7 +16,7 @@
 import re
 
 from robot.output import LOGGER
-from robot.utils import Utf8Reader, prepr
+from robot.utils import JYTHON, Utf8Reader, prepr
 
 
 NBSP = u'\xa0'
@@ -46,12 +46,13 @@ class RobotReader(object):
     def split_row(cls, row):
         if row[:2] in cls._pipe_starts:
             row = row[1:-1] if row[-2:] in cls._pipe_ends else row[1:]
-            return [cell.strip() for cell in cls._pipe_splitter.split(row)]
+            return [cls._strip_whitespace(cell)
+                    for cell in cls._pipe_splitter.split(row)]
         return cls._space_splitter.split(row)
 
     def _check_deprecations(self, cells, path, line_number):
         for original in cells:
-            normalized = ' '.join(original.split())
+            normalized = self._normalize_whitespace(original)
             if normalized != original:
                 if len(normalized) != len(original):
                     msg = 'Collapsing consecutive whitespace'
@@ -61,3 +62,31 @@ class RobotReader(object):
                             "'%s' on line %d."
                             % (msg, prepr(original), path, line_number))
             yield normalized
+
+    # Jython has issues with non-ASCII spaces https://bugs.jython.org/issue2772
+    if JYTHON:
+
+        _whitespace = re.compile(u'\\s+', re.UNICODE)
+        _trailing_whitespace = re.compile(u'\\s+$', re.UNICODE)
+
+        @classmethod
+        def _strip_whitespace(cls, string):
+            match = cls._whitespace.match(string)
+            if match:
+                string = string[match.end():]
+            match = cls._trailing_whitespace.search(string)
+            if match:
+                string = string[:match.start()]
+            return string
+
+        def _normalize_whitespace(self, string):
+            return ' '.join(self._whitespace.split(string))
+
+    else:
+
+        @classmethod
+        def _strip_whitespace(cls, string):
+            return string.strip()
+
+        def _normalize_whitespace(self, string):
+            return ' '.join(string.split())

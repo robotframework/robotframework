@@ -24,9 +24,10 @@ class TsvReader(RobotReader):
 
     @classmethod
     def split_row(cls, row):
-        return [cell.strip() for cell in row.split('\t')]
+        return [cls._strip_whitespace(cell) for cell in row.split('\t')]
 
     def _check_deprecations(self, cells, path, line_number):
+        cells = RobotReader._check_deprecations(self, cells, path, line_number)
         cells = [self._deprecate_quoting(c, path, line_number) for c in cells]
         self._deprecate_empty_data_cells(cells, path, line_number)
         return cells
