@@ -1,5 +1,6 @@
-import os
 from collections import OrderedDict
+import os
+import sys
 
 try:
     ascii
@@ -10,6 +11,9 @@ if os.name == 'java':
     from java.lang import String
     from java.util import Hashtable, Vector
     import jarray
+
+
+PY3_OR_IPY = sys.version_info[0] > 2 or sys.platform == 'cli'
 
 
 def get_variables():
@@ -33,6 +37,8 @@ def get_variables():
         DICT_3={'a': 1, 'b': 2, 'c': 3},
     )
     variables['ASCII_DICT'] = ascii(variables['DICT'])
+    variables['PREPR_DICT1'] = "{'a': 1}" if PY3_OR_IPY else "{b'a': 1}"
+    variables['U'] = '' if PY3_OR_IPY else 'u'
     if os.name == 'java':
         variables.update(get_java_variables(**variables))
     return variables

@@ -143,7 +143,7 @@ class TestPrettyRepr(unittest.TestCase):
 
     def test_bytes_repr(self):
         obj = BytesRepr()
-        if PY3:
+        if PY3 or IRONPYTHON:
             expected = obj.unrepr
         else:
             expected = 'Hyv\\xe4'

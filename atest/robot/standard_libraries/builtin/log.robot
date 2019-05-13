@@ -87,9 +87,10 @@ formatter=repr
 
 formatter=ascii
     ${tc} =    Check Test Case    ${TEST NAME}
-    ${u} =    Set Variable If    ${INTERPRETER.is_py2}    u    ${EMPTY}
-    ${b} =    Set Variable If    ${INTERPRETER.is_py2}    ${EMPTY}    b
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${u}'Nothing special here'
+    ${u} =     Set Variable If    ${INTERPRETER.is_py2}    u    ${EMPTY}
+    ${u2} =    Set Variable If    ${INTERPRETER.is_py2} and not ${INTERPRETER.is_ironpython}    u    ${EMPTY}
+    ${b} =     Set Variable If    ${INTERPRETER.is_py2} and not ${INTERPRETER.is_ironpython}    ${EMPTY}    b
+    Check Log Message    ${tc.kws[0].msgs[0]}    ${u2}'Nothing special here'
     Check Log Message    ${tc.kws[1].msgs[0]}    ${u}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
     Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
     Check Log Message    ${tc.kws[4].msgs[0]}    ${b}'\\x00abc\\xff (formatter=ascii)'

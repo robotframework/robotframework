@@ -84,10 +84,10 @@ class TestAsserts(unittest.TestCase):
 
     def test_assert_equal_with_custom_formatter(self):
         assert_equal(u'hyv\xe4', u'hyv\xe4', formatter=repr)
-        expected = "u'hyv\\xe4' != u'paha'" if PY2 else "'hyv\xe4' != 'paha'"
-        assert_raises_with_msg(AE, expected,
-                               assert_equal, u'hyv\xe4', u'paha',
-                               formatter=repr)
+        assert_raises_with_msg(
+            AE, "u'hyv\\xe4' != 'paha'" if PY2 else "'hyv\xe4' != 'paha'",
+            assert_equal, u'hyv\xe4', 'paha', formatter=repr
+        )
         if PY3:
             assert_raises_with_msg(AE, "'hyv\\xe4' != 'paha'",
                                    assert_equal, 'hyv\xe4', 'paha',

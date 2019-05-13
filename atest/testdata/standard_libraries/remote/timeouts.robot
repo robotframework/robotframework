@@ -28,7 +28,7 @@ Test initial connection failure
     Run Keyword And Expect Error    ${error}
     ...    Import Library    Remote    1.2.3.4:666    timeout=0.2 seconds
     ${end} =    Get Current Date
-    ${elapsed} =    Subtract Date From Date    ${end}    ${start}
+    ${elapsed} =    Subtract Date From Date    ${end}    ${start}
     Should Be True    ${elapsed} < 10
 
 Test too long keyword execution time
