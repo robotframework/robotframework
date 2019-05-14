@@ -14,12 +14,14 @@
 #  limitations under the License.
 
 import io
+import os.path
 
 from .platform import PY3
 
 
 def file_writer(path=None, encoding='UTF-8', newline=None):
     if path:
+        _ensure_destination_directory_exists(path)
         f = io.open(path, 'w', encoding=encoding, newline=newline)
     else:
         f = io.StringIO(newline=newline)
@@ -41,3 +43,17 @@ def binary_file_writer(path=None):
     getvalue = f.getvalue
     f.getvalue = lambda encoding='UTF-8': getvalue().decode(encoding)
     return f
+
+
+def _ensure_destination_directory_exists(path):
+    if not os.path.exists(path):
+        base, ext = path.rsplit(os.sep, 1)
+        if PY3:
+            os.makedirs(base, exist_ok=True)
+        else:
+            try:
+                os.makedirs(base)
+            except OSError as e:
+                import errno
+                if e.errno != errno.EEXIST:
+                    raise
