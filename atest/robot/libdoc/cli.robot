@@ -15,6 +15,10 @@ Override name and version
     --name MyName --version 42 String ${OUTHTML}    HTML    MyName    42
     -n MyName -v 42 -f xml BuiltIn ${OUTHTML}       XML     MyName    42
 
+Missing destination subdirectory is created
+    String ${NEWDIR_HTML}                HTML    String    path=${NEWDIR_HTML}
+    String ${NEWDIR_XML}                 XML     String    path=${NEWDIR_XML}
+
 Relative path with Python libraries
     [Template]    NONE
     ${dir in libdoc exec dir}=    Set Variable     ${ROBOTPATH}/../TempDirInExecDir

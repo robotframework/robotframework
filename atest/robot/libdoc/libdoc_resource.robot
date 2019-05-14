@@ -5,9 +5,12 @@ Library           OperatingSystem
 
 *** Variables ***
 ${TESTDATADIR}    ${DATADIR}/libdoc
-${OUTPREFIX}      %{TEMPDIR}${/}robot-libdoc-test-file
+${LIBNAME}        robot-libdoc-test-file
+${OUTPREFIX}      %{TEMPDIR}${/}${LIBNAME}
 ${OUTXML}         ${OUTPREFIX}.xml
 ${OUTHTML}        ${OUTPREFIX}.html
+${NEWDIR_XML}     %{TEMPDIR}${/}tempdir${/}${LIBNAME}.xml
+${NEWDIR_HTML}    %{TEMPDIR}${/}tempdir${/}${LIBNAME}.html
 
 *** Keywords ***
 Run Libdoc And Set Output
