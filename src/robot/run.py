@@ -45,7 +45,7 @@ from robot.running import TestSuiteBuilder
 from robot.utils import Application, unic, text
 
 
-USAGE = """Robot Framework -- A generic test automation framework
+USAGE = """Robot Framework -- A generic automation framework
 
 Version:  <VERSION>
 
@@ -54,32 +54,32 @@ Usage:  robot [options] data_sources
    or:  python path/to/robot [options] data_sources
    or:  java -jar robotframework.jar [options] data_sources
 
-Robot Framework is a Python-based keyword-driven test automation framework for
-acceptance level testing and acceptance test-driven development (ATDD). It has
-an easy-to-use tabular syntax for creating test cases and its testing
-capabilities can be extended by test libraries implemented either with Python
-or Java. Users can also create new higher level keywords from existing ones
-using the same simple syntax that is used for creating test cases.
+Robot Framework is a generic open source automation framework for acceptance
+testing, acceptance test-driven development (ATDD) and robotic process
+automation (RPA). It has simple, easy-to-use syntax that utilizes the
+keyword-driven automation approach. Keywords adding new capabilities are
+implemented in libraries using either Python or Java. New higher level
+keywords can also be created using Robot Framework's own syntax.
 
-The easiest way to execute tests is using the `robot` script created as part
-of the normal installation. Alternatively it is possible to execute the `robot`
-module directly using `python -m robot`, where `python` can be replaced with
-any supported Python interpreter like `jython`, `ipy` or `python3`. Yet another
-alternative is running the `robot` directory like `python path/to/robot`.
-Finally, there is a standalone JAR distribution available.
+The easiest way to execute Robot Framework is using the `robot` command created
+as part of the normal installation. Alternatively it is possible to execute
+the `robot` module directly using `python -m robot`, where `python` can be
+replaced with any supported Python interpreter such as `jython`, `ipy` or
+`python3`. Yet another alternative is running the `robot` directory like
+`python path/to/robot`. Finally, there is a standalone JAR distribution
+available.
 
-Data sources given to Robot Framework are either test case files or directories
-containing them and/or other directories. Single test case file creates a test
-suite containing all the test cases in it and a directory containing test case
-files creates a higher level test suite with test case files or other
-directories as sub test suites. If multiple data sources are given, a virtual
-top level suite containing suites generated from given data sources is created.
+Tests (or tasks in RPA terminology) are created in files typically having the
+`*.robot` extension. Files automatically create test (or task) suites and
+directories with these files create higher level suites. When Robot Framework
+is executed, paths to these files or directories are given to it as arguments.
 
 By default Robot Framework creates an XML output file and a log and a report in
 HTML format, but this can be configured using various options listed below.
 Outputs in HTML format are for human consumption and XML output for integration
 with other systems. XML outputs can also be combined and otherwise further
-processed with Rebot tool. Run `rebot --help` for more information.
+post-processed with the Rebot tool that is an integral part of Robot Framework.
+Run `rebot --help` for more information.
 
 Robot Framework is open source software released under Apache License 2.0.
 For more information about the framework and the rich ecosystem around it
@@ -391,14 +391,14 @@ ROBOT_INTERNAL_TRACES     When set to any non-empty value, Robot Framework's
 Examples
 ========
 
-# Simple test run with `robot` without options.
+# Simple test run using `robot` command without options.
 $ robot tests.robot
 
 # Using options.
-$ robot --include smoke --name Smoke_Tests path/to/tests.robot
+$ robot --include smoke --name "Smoke Tests" path/to/tests.robot
 
 # Executing `robot` module using Python.
-$ python -m robot test_directory
+$ python -m robot path/to/tests
 
 # Running `robot` directory with Jython.
 $ jython /opt/robot tests.robot
