@@ -18,10 +18,10 @@ Boolean Variables
 ${None} And ${null}
     Check Test Case  ${TESTNAME}
 
-${SPACE}
+\${SPACE}
     Check Test Case  ${TESTNAME}
 
-${EMPTY}
+\${EMPTY}
     Check Test Case  ${TESTNAME}
 
 @{EMPTY}
@@ -39,7 +39,7 @@ ${/}
 ${:}
     Check Test Case  ${TESTNAME}
 
-${\n}
+\${\n}
     Check Test Case  ${TESTNAME}
 
 ${TEMPDIR}

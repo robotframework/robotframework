@@ -57,10 +57,10 @@ Separate keys and values with invalid key
 Separate keys and values and 'key=value' syntax
     Check Test Case    ${TESTNAME}
 
-`&{dict}` variable
+`\&{dict}` variable
     Check Test Case    ${TESTNAME}
 
-`&{dict}` variable with internal variables
+`\&{dict}` variable with internal variables
     Check Test Case    ${TESTNAME}
 
 Non-existing `&{dict}` variable
