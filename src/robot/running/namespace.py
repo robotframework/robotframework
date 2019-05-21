@@ -118,14 +118,14 @@ class Namespace(object):
             LOGGER.info("%s already imported by suite '%s'"
                         % (msg, self._suite_name))
 
-    def import_library(self, name, args=None, alias=None, notify=True):
-        self._import_library(Library(None, name, args=args, alias=alias),
+    def import_library(self, name, args=None, alias=None, notify=True, scope=None):
+        self._import_library(Library(None, name, args=args, alias=alias, scope=scope),
                              notify=notify)
 
     def _import_library(self, import_setting, notify=True):
         name = self._resolve_name(import_setting)
-        lib = IMPORTER.import_library(name, import_setting.args,
-                                      import_setting.alias, self.variables)
+        lib = IMPORTER.import_library(name, import_setting.args, import_setting.alias, 
+                                      self.variables, import_setting.scope)
         if lib.name in self._kw_store.libraries:
             LOGGER.info("Test library '%s' already imported by suite '%s'"
                         % (lib.name, self._suite_name))
@@ -433,3 +433,4 @@ class KeywordRecommendationFinder(object):
                      for handler in library.handlers))
         # sort handlers to ensure consistent ordering between Jython and Python
         return sorted(handlers)
+

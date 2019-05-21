@@ -18,7 +18,9 @@ import inspect
 from robot.utils import normalize, unic
 
 
-def LibraryScope(libcode, library):
+def LibraryScope(libcode, library, scope=None):
+    if scope:
+        _set_scope(libcode, scope)
     scope = _get_scope(libcode)
     if scope == 'global':
         return GlobalScope(library)
@@ -32,6 +34,10 @@ def _get_scope(libcode):
         return 'global'
     scope = getattr(libcode, 'ROBOT_LIBRARY_SCOPE', '')
     return normalize(unic(scope), ignore='_')
+
+
+def _set_scope(libcode, scope):
+    setattr(libcode, 'ROBOT_LIBRARY_SCOPE', scope)
 
 
 class GlobalScope(object):
@@ -99,3 +105,4 @@ class TestCaseScope(TestSuiteScope):
 
     def __str__(self):
         return 'test case'
+

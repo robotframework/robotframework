@@ -23,7 +23,7 @@ from .itemlist import ItemList
 class Import(object):
     ALLOWED_TYPES = ('Library', 'Resource', 'Variables')
 
-    def __init__(self, type, name, args=(), alias=None, source=None):
+    def __init__(self, type, name, args=(), alias=None, source=None, scope=None):
         if type not in self.ALLOWED_TYPES:
             raise ValueError("Invalid import type '%s'. Should be one of %s."
                              % (type, seq2str(self.ALLOWED_TYPES, lastsep=' or ')))
@@ -32,6 +32,7 @@ class Import(object):
         self.args = args
         self.alias = alias
         self.source = source
+        self.scope = scope
 
     @property
     def directory(self):
@@ -52,11 +53,12 @@ class Imports(ItemList):
     def __init__(self, source, imports=None):
         ItemList.__init__(self, Import, {'source': source}, items=imports)
 
-    def library(self, name, args=(), alias=None):
-        self.create('Library', name, args, alias)
+    def library(self, name, args=(), alias=None, source=None, scope=None):
+        self.create('Library', name, args, alias, source, scope)
 
     def resource(self, path):
         self.create('Resource', path)
 
     def variables(self, path, args=()):
         self.create('Variables', path, args)
+

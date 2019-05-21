@@ -264,12 +264,13 @@ class Metadata(Setting):
 
 class _Import(Setting):
 
-    def __init__(self, parent, name, args=None, alias=None, comment=None):
+    def __init__(self, parent, name, args=None, alias=None, comment=None, scope=None):
         self.parent = parent
         self.name = name
         self.args = args or []
         self.alias = alias
         self._set_comment(comment)
+        self.scope = scope
 
     def reset(self):
         pass
@@ -295,10 +296,10 @@ class _Import(Setting):
 
 class Library(_Import):
 
-    def __init__(self, parent, name, args=None, alias=None, comment=None):
+    def __init__(self, parent, name, args=None, alias=None, comment=None, scope=None):
         if args and not alias:
             args, alias = self._split_possible_alias(args)
-        _Import.__init__(self, parent, name, args, alias, comment)
+        _Import.__init__(self, parent, name, args, alias, comment, scope)
 
     def _split_possible_alias(self, args):
         if len(args) > 1 and args[-2] == 'WITH NAME':
@@ -375,3 +376,4 @@ class MetadataList(_DataList):
 
     def populate(self, name, value, comment):
         self._add(Metadata(self._parent, name, value, comment, joined=True))
+

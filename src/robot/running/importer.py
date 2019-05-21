@@ -23,7 +23,7 @@ from robot.utils import normpath, seq2str2, is_string
 from .builder import ResourceFileBuilder
 from .handlerstore import HandlerStore
 from .testlibraries import TestLibrary
-
+from .libraryscopes import LibraryScope
 
 class Importer(object):
 
@@ -38,7 +38,7 @@ class Importer(object):
         for lib in self._library_cache.values():
             lib.close_global_listeners()
 
-    def import_library(self, name, args, alias, variables):
+    def import_library(self, name, args, alias, variables, scope):
         lib = TestLibrary(name, args, variables, create_handlers=False)
         positional, named = lib.positional_args, lib.named_args
         lib = self._import_library(name, positional, named, lib)
@@ -46,6 +46,9 @@ class Importer(object):
             alias = variables.replace_scalar(alias)
             lib = self._copy_library(lib, alias)
             LOGGER.info("Imported library '%s' with name '%s'" % (name, alias))
+        if scope:
+            lib.scope = LibraryScope(lib._libcode, lib, scope)
+            LOGGER.info("Changed library '%s' scope to '%s'" % (name, scope))  
         return lib
 
     def import_resource(self, path):
@@ -147,3 +150,4 @@ class ImportCache(object):
 
     def _is_path(self, key):
         return is_string(key) and os.path.isabs(key) and os.path.exists(key)
+
