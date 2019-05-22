@@ -33,6 +33,66 @@ Set Variable With More Or Less Than One Value
     ${emp} =    Set Variable
     Should Be Equal    ${emp}    ${EMPTY}
 
+Set Local Variable - Scalars
+    [Documentation]    FAIL Variable '\${non_existing}' not found.
+    Should Be Equal    ${scalar}    Hi tellus
+    Set Local Variable    ${scalar}    Hello world
+    Should Be Equal    ${scalar}    Hello world
+    ${scalar} =    Set Variable    Moi maailma
+    Set Local Variable    \${scalar}
+    Should Be Equal    ${scalar}    Moi maailma
+    Set Local Variable    $new    Previously non-existing
+    Should Be Equal    ${new}    Previously non-existing
+    Set Local Variable    $non_existing
+
+Set Local Variable - Lists
+    Should Be True    @{list} == ['Hello', 'world']
+    Set Local Variable    \@{list}    One item
+    Should Be True    @{list} == ['One item']
+    Set Local Variable    @list    One    Two    Three
+    Should Be True    @{list} == ['One','Two','Three']
+    @{list} =    Set Variable    1    2    3
+    Set Local Variable    @{list}
+    Should Be True    @{list} == ['1','2','3']
+    Set Local Variable    @new    This    is    ok
+    Should Be True    @{new} == ['This','is','ok']
+
+Set Local Variable - Dicts
+    Should Be True    &{DICT} == {'key': 'value', 'foo': 'bar'}
+    Set Local Variable    \&{DICT}    hello=world
+    Should Be True    &{DICT} == {'hello': 'world'}
+    Should Be Equal    ${DICT.hello}    world
+    Set Local Variable    &dict    a=${1}    ${2}=b
+    Should Be True    &{DICT} == {'a': 1, 2: 'b'}
+    &{dict} =    Create Dictionary
+    Set Local Variable    &{DICT}
+    Should Be True    &{DICT} == {}
+    Set Local Variable    &new    new=dict
+    Should Be True    &{new} == {'new': 'dict'}
+    Should Be Equal    ${new.new}    dict
+
+Set Local Variables Overrides Test Variables
+    Should Be Equal    ${scalar}    Hi tellus
+    Set Test Variable    $scalar    Hello world
+    Should Be Equal    ${scalar}    Hello world
+    Set Local Variable    ${scalar}    Moi maailma
+    Should Be Equal    ${scalar}    Moi maailma
+
+Set Local Variable In Keyword Not Available In Test
+    Variable Should Not Exist    ${new}
+    Setting Local variable
+    Variable Should Not Exist    ${new}
+
+Set Local Variable In Keyword Not Available In Another Keyword
+    Setting Local variable
+    Ckeck For Local Variable
+
+Setting Local Variable In Test Not Available In Keyword
+     Variable Should Not Exist    ${new}
+     Set Local Variable    ${new}    Moi maailma
+     Should Be Equal    ${new}    Moi maailma
+     Setting Local variable
+
 Set Test Variable - Scalars
     [Documentation]    FAIL Variable '\${non_existing}' not found.
     Should Be Equal    ${scalar}    Hi tellus
@@ -634,3 +694,12 @@ Dict mutating user keyword 2
 
 Verify @{EMPTY} is still empty
     No Operation    @{EMPTY}
+
+
+Setting Local variable
+    Variable Should Not Exist    ${new}
+    Set Local Variable    $new    Previously non-existing
+    Should Be Equal    ${new}    Previously non-existing
+
+Ckeck For Local Variable
+    Variable Should Not Exist    ${new}

@@ -1429,6 +1429,21 @@ class _Variables(_BuiltInBase):
             return list(values)
 
     @run_keyword_variant(resolve=0)
+    def set_local_variable(self, name, *values):
+        """ Makes a variable available everywhere within the local scope.
+
+        Variables set with this keyword are available within the
+        local scope of the currently executed test case or in the local scope
+        of the keyword in which they are defined. For example, if you set a
+        variable in a user keyword, it is available only in that keyword. Other
+        test cases or keywords will not see variables set with this keyword.
+        """
+        name = self._get_var_name(name)
+        value = self._get_var_value(name, values)
+        self._variables.set_local_variable(name, value)
+        self._log_set_variable(name, value)
+
+    @run_keyword_variant(resolve=0)
     def set_test_variable(self, name, *values):
         """Makes a variable available everywhere within the scope of the current test.
 
