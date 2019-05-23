@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    running/support_variables_in_test_case_name.robot
+Suite Setup      Run Tests    ${EMPTY}    output/support_variables_in_test_case_name.robot
 Resource         atest_resource.robot
 
 *** Test Cases ***
