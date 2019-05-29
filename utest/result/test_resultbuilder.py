@@ -224,19 +224,37 @@ class TestSuiteTeardownFailed(unittest.TestCase):
 class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
 
     def setUp(self):
-        self.result = ExecutionResult("""
-<robot>
-    <suite name="foo">
-        <test name="some name">
+        self.result = """
+        <robot>
+            <suite name="foo">
+                <test name="some name">
+                    <status status="PASS"></status>
+                </test>
             <status status="PASS"></status>
-        </test>
-    <status status="PASS"></status>
-    </suite>
-</robot>
-""")
+            </suite>
+        </robot>
+        """
+        self.string_result = ExecutionResult(self.result)
+        self.byte_string_result = ExecutionResult(self.result.encode('UTF-8'))
 
-    def test_suite(self):
-        suite = self.result.suite
+    def test_suite_from_string(self):
+        suite = self.string_result.suite
+        self._test_suite(suite)
+
+    def test_test_from_string(self):
+        test = self.string_result.suite.tests[0]
+        self._test_test(test)
+
+    def test_suite_from_byte_string(self):
+        suite = self.byte_string_result.suite
+        self._test_suite(suite)
+
+    def test_test_from_byte_string(self):
+        test = self.byte_string_result.suite.tests[0]
+        self._test_test(test)
+
+    @staticmethod
+    def _test_suite(suite):
         assert_equal(suite.id, 's1')
         assert_equal(suite.name, 'foo')
         assert_equal(suite.doc, '')
@@ -247,8 +265,8 @@ class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
         assert_equal(suite.endtime, None)
         assert_equal(suite.elapsedtime, 0)
 
-    def test_test(self):
-        test = self.result.suite.tests[0]
+    @staticmethod
+    def _test_test(test):
         assert_equal(test.id, 's1-t1')
         assert_equal(test.name, 'some name')
         assert_equal(test.doc, '')
@@ -263,4 +281,3 @@ class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
