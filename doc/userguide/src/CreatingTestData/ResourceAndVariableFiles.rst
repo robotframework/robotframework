@@ -578,7 +578,8 @@ YAML variable files can be used exactly like normal variable files
 from the command line using :option:`--variablefile` option, in the settings
 table using :setting:`Variables` setting, and dynamically using the
 :name:`Import Variables` keyword. The only thing to remember is that paths to
-YAML files must always end with :file:`.yaml` extension.
+YAML files preffered extension is :file:`.yaml`, but extension :file:`.yml` is
+supported also.
 
 If the above YAML file is imported, it will create exactly the same
 variables as the following variable table:
