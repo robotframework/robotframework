@@ -185,6 +185,9 @@ Forward references
 @keyword decorator overrides annotations
     Check Test Case    ${TESTNAME}
 
+Type information with wrapped decorator
+    Check Test Case    ${TESTNAME}
+
 Type information mismatch caused by decorator
     Check Test Case    ${TESTNAME}
 

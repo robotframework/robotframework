@@ -202,7 +202,7 @@ def mismatch_caused_by_decorator(argument: int, expected=None):
 
 
 @decorator_with_wraps
-def mismatch_caused_by_decorator_with_wraps(argument: int, expected=None):
+def no_mismatch_caused_by_decorator(argument: int, expected=None):
     _validate_type(argument, expected)
 
 

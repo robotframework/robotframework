@@ -400,9 +400,11 @@ Forward references
     Empty types via @keyword doesn't override  42    42
     @keyword without types doesn't override    42    42
 
+Type information with wrapped decorator
+    No mismatch caused by decorator            42    42
+
 Type information mismatch caused by decorator
     Mismatch caused by decorator               foo   'foo'
-    Mismatch caused by decorator with wraps    foo   'foo'
 
 Value contains variable
     [Setup]       Set Environment Variable         PI_NUMBER    3.14
