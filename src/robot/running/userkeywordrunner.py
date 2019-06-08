@@ -90,10 +90,7 @@ class UserKeywordRunner(object):
 
     def _get_timeout(self, variables=None):
         timeout = self._handler.timeout
-        if not timeout:
-            return None
-        timeout = KeywordTimeout(timeout.value, timeout.message, variables)
-        return timeout
+        return KeywordTimeout(timeout, variables) if timeout else None
 
     def _resolve_arguments(self, arguments, variables=None):
         return self.arguments.resolve(arguments, variables)
