@@ -97,14 +97,6 @@ class TestCase(model.TestCase):
         #: when building the test. ``None`` if no is template used.
         self.template = template
 
-    @setter
-    def timeout(self, timeout):
-        """Test timeout as a :class:`Timeout` instance or ``None``.
-
-        This attribute is likely to change in the future.
-        """
-        return Timeout(*timeout) if timeout else None
-
 
 class TestSuite(model.TestSuite):
     """Represents a single executable test suite.
@@ -236,16 +228,6 @@ class Variable(object):
                      % (self.source or '<unknown>', self.name, message), level)
 
 
-class Timeout(object):
-
-    def __init__(self, value, *message):
-        self.value = value
-        self.message = ' '.join(message)
-
-    def __str__(self):
-        return self.value
-
-
 class ResourceFile(object):
 
     def __init__(self, doc='', source=None):
@@ -282,11 +264,6 @@ class UserKeyword(object):
     @setter
     def keywords(self, keywords):
         return model.Keywords(Keyword, self, keywords)
-
-    @setter
-    def timeout(self, timeout):
-        """Keyword timeout as a :class:`Timeout` instance or ``None``."""
-        return Timeout(*timeout) if timeout else None
 
     @setter
     def tags(self, tags):
