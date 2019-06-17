@@ -65,7 +65,7 @@ class RobotHandler(logging.Handler):
 
     def _get_message(self, record):
         try:
-            return record.getMessage(), None
+            return self.format(record), None
         except:
             message = 'Failed to log following message properly: %s' \
                         % unic(record.msg)
