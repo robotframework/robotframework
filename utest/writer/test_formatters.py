@@ -1,5 +1,5 @@
 import unittest
-from robot.parsing.model import TestCaseTable, TestCaseFileSettingTable
+# from robot.parsing.model import TestCaseTable, TestCaseFileSettingTable
 
 from robot.writer.formatters import TxtFormatter, TsvFormatter, PipeFormatter
 from robot.writer.htmlformatter import HtmlFormatter, HtmlCell

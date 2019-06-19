@@ -1,6 +1,6 @@
 import unittest
 
-from robot.parsing.model import TestCaseTable
+# from robot.parsing.model import TestCaseTable
 from robot.utils.asserts import assert_equal
 from robot.writer.aligners import ColumnAligner
 
