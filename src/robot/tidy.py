@@ -38,8 +38,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.errors import DataError
-from robot.parsing import (ResourceFile, TestDataDirectory, TestCaseFile,
-                           disable_curdir_processing)
+from robot.parsing import (disable_curdir_processing)
 from robot.utils import Application, binary_file_writer, file_writer, PY2
 
 

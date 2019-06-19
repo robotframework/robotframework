@@ -3,7 +3,7 @@ import os
 
 from robot.errors import DataError
 from robot.writer.datafilewriter import WritingContext
-from robot.parsing.model import TestCaseFile
+# from robot.parsing.model import TestCaseFile
 from robot.utils.asserts import assert_equal, assert_raises
 
 HTML_SOURCE = os.path.abspath('foo.html')

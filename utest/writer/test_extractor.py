@@ -1,38 +1,38 @@
 import unittest
 
-from robot.parsing.model import VariableTable, TestCaseTable
+# from robot.parsing.model import VariableTable, TestCaseTable
 from robot.utils.asserts import assert_equal
 from robot.writer.dataextractor import DataExtractor
 
-var_table = VariableTable(None)
-var_table.add('${A scalar}', 'value', 'var comment')
-var_table.add('', '', 'standalone comment')
-var_table.add('@{A list}', ['v', 'a', 'lue'])
-
-var_table_rows = [['${A scalar}', 'value', '# var comment'],
-                  ['# standalone comment'],
-                  ['@{A list}', 'v', 'a', 'lue']]
-
-test_table = TestCaseTable(None)
-test = test_table.add('A test case')
-test.add_step(['No Operation'])
-test.add_step(['Log Many', 'bar', 'quux', '#comment'])
-loop = test.add_for_loop(['${i}', 'IN RANGE', '10'])
-loop.add_step(['Log', '${i}'])
-test2 = test_table.add('Second test')
-test2.add_step(['FAIL'])
-
-test_table_rows = [['A test case'],
-                   ['', 'No Operation'],
-                   ['', 'Log Many', 'bar', 'quux', '#comment'],
-                   ['', 'FOR', '${i}', 'IN RANGE', '10'],
-                   ['', '', 'Log', '${i}'],
-                   ['', 'END'],
-                   [],
-                   ['Second test'],
-                   ['', 'FAIL'],
-                   []]
-
+# var_table = VariableTable(None)
+#var_table.add('${A scalar}', 'value', 'var comment')
+#var_table.add('', '', 'standalone comment')
+#var_table.add('@{A list}', ['v', 'a', 'lue'])
+#
+#var_table_rows = [['${A scalar}', 'value', '# var comment'],
+#                  ['# standalone comment'],
+#                  ['@{A list}', 'v', 'a', 'lue']]
+#
+#test_table = TestCaseTable(None)
+#test = test_table.add('A test case')
+#test.add_step(['No Operation'])
+#test.add_step(['Log Many', 'bar', 'quux', '#comment'])
+#loop = test.add_for_loop(['${i}', 'IN RANGE', '10'])
+#loop.add_step(['Log', '${i}'])
+#test2 = test_table.add('Second test')
+#test2.add_step(['FAIL'])
+#
+#test_table_rows = [['A test case'],
+#                   ['', 'No Operation'],
+#                   ['', 'Log Many', 'bar', 'quux', '#comment'],
+#                   ['', 'FOR', '${i}', 'IN RANGE', '10'],
+#                   ['', '', 'Log', '${i}'],
+#                   ['', 'END'],
+#                   [],
+#                   ['Second test'],
+#                   ['', 'FAIL'],
+#                   []]
+#
 class DataExtractorTest(unittest.TestCase):
 
     def test_extracting_from_simple_table(self):
