@@ -2010,11 +2010,14 @@ class _RunKeyword(_BuiltInBase):
         defined using ``retry`` argument either as timeout or count.
         ``retry_interval`` is the time to wait before trying to run the
         keyword again after the previous run has failed.
+        Alternatively, add prefix ``strict:`` to the parameter and
+        ``retry_interval`` will be the time between keyword executions.
+        Use the ``strict:`` switch if a precise repetition rate is desired.
 
         If ``retry`` is given as timeout, it must be in Robot Framework's
-        time format (e.g. ``1 minute``, ``2 min 3 s``, ``4.5``) that is
-        explained in an appendix of Robot Framework User Guide. If it is
-        given as count, it must have ``times`` or ``x`` postfix (e.g.
+        time format (e.g. ``1 minute``, ``2 min 3 s``, ``4.5``, ``strict:0.2s``)
+        that is explained in an appendix of Robot Framework User Guide. If it
+        is given as count, it must have ``times`` or ``x`` postfix (e.g.
         ``5 times``, ``10 x``). ``retry_interval`` must always be given in
         Robot Framework's time format.
 
@@ -2024,6 +2027,7 @@ class _RunKeyword(_BuiltInBase):
         Examples:
         | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | argument |
         | ${result} = | Wait Until Keyword Succeeds | 3x | 200ms | My keyword |
+        | ${result} = | Wait Until Keyword Succeeds | 3x | strict: 200ms | My keyword |
 
         All normal failures are caught by this keyword. Errors caused by
         invalid syntax, test or keyword timeouts, or fatal exceptions (caused
@@ -2049,7 +2053,15 @@ class _RunKeyword(_BuiltInBase):
             if count <= 0:
                 raise ValueError('Retry count %d is not positive.' % count)
             message = '%d time%s' % (count, s(count))
+        match = re.search(r'(strict *: *)', retry_interval)
+        if match:
+            strict_interval = True
+            retry_interval = retry_interval.lstrip(match.group())
+        else:
+            strict_interval = False
+
         retry_interval = float(timestr_to_secs(retry_interval))
+        wait_time = retry_interval
         while True:
             execution_time = time.time()
             try:
@@ -2063,7 +2075,8 @@ class _RunKeyword(_BuiltInBase):
                                          "%s. The last error was: %s"
                                          % (name, message, err))
                 keyword_runtime = time.time() - execution_time
-                wait_time = retry_interval - keyword_runtime
+                if strict_interval:
+                    wait_time = retry_interval - keyword_runtime
                 if wait_time >= 0.0:
                     self._sleep_in_parts(wait_time)
                 else:
