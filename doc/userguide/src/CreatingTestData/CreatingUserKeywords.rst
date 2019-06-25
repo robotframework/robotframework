@@ -492,6 +492,26 @@ names. They are, however, case-insensitive like other keywords. For
 example, the keyword in the example above could be used like
 :name:`select x from list`, but not like :name:`Select x fromlist`.
 
+Starting from Robot Framework 3.2, embedded arguments support literal
+list/dict Python syntax as long as you use `@{list}`, `&{dict}`
+respectively in keyword name.
+
+.. sourcecode:: robotframework
+
+*** Test Cases ***
+Example
+    Select cat from ['dog', 'cat', 'rabbit']
+    Get cat from {'dog': 2, 'cat': 3, 'rabbit': 0}
+
+*** Keywords ***
+Select ${animal} from @{animal_list}
+    Open Page    Pet Selection
+    Select Item From List    ${animal_list}    ${animal}
+
+Get ${animal} from &{animal_dict}
+    Open Page    Pet Selection
+    Get From Dictionary    ${animal_dict}    ${animal}
+
 Embedded arguments do not support default values or variable number of
 arguments like normal arguments do. Using variables when
 calling these keywords is possible but that can reduce readability.

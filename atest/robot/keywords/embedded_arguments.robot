@@ -30,6 +30,12 @@ Embedded Arguments as Variables
     Check Keyword Data    ${tc.kws[0]}    User \${42} Selects \${EMPTY} From Webshop    \${name}, \${item}
     Check Keyword Data    ${tc.kws[2]}    User \${name} Selects \${SPACE * 10} From Webshop    \${name}, \${item}
 
+Embedded Arguments as Lists
+    Check Test Case    ${TEST NAME}
+
+Embedded Arguments as Dicts
+    Check Test Case    ${TEST NAME}
+
 Non-Existing Variable in Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    User \${non existing} Selects \${variables} From Webshop    status=FAIL

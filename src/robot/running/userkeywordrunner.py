@@ -20,7 +20,7 @@ from robot.errors import (ExecutionFailed, ExecutionPassed, ExecutionStatus,
                           PassExecution, ReturnFromKeyword,
                           UserKeywordExecutionFailed, VariableError)
 from robot.result import Keyword as KeywordResult
-from robot.utils import getshortdoc, DotDict, prepr, split_tags_from_doc
+from robot.utils import getshortdoc, DotDict, prepr, split_tags_from_doc, is_list_like, is_dict_like
 from robot.variables import is_list_var, VariableAssignment
 
 from .arguments import DefaultValue
@@ -235,7 +235,19 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         self.arguments.resolve(args, variables)
         if not variables:
             return []
-        return [(n, variables.replace_scalar(v)) for n, v in self.embedded_args]
+        return list(self._replace(variables))
+
+    def _replace(self, variables):
+        for n, v in self.embedded_args:
+            try:
+                v = eval(v)
+                if is_dict_like(v):
+                    yield n, DotDict(v)
+                elif is_list_like(v):
+                    yield n, variables.replace_list(v)
+            except:
+                pass
+            yield n, variables.replace_scalar(v)
 
     def _set_arguments(self, embedded_args, context):
         variables = context.variables
