@@ -68,3 +68,40 @@ def keyword(name=None, tags=(), types=()):
         func.robot_types = types
         return func
     return decorator
+
+
+def library(scope=None, version=None, method_disabler=True):
+    """Decorator to set custom scope and version and enable/disable public
+    methods that will become keywords.
+     This decorator creates ``ROBOT_LIBRARY_SCOPE``, ``ROBOT_LIBRARY_VERSION``
+    and ``ROBOT_AUTO_KEYWORDS`` attributes on the decorated keyword method or
+    function based on the provided arguments. Robot Framework checks them to
+    determine the class' scope, version, and if methods are disabled from
+    becoming keywords.
+     Examples::
+        @library(scope='TEST SUITE')
+        class LibraryScope:
+            # ...
+
+        @library(scope='GLOBAL', version='1.3.0')
+        class LibraryScopeAndVersion:
+            # ...
+
+        @library(scope='GLOBAL', version='1.3.0', method_disabler=False)
+        class DecoratedClassDisablePublicMethods:
+            def public_method_is_not_keyword():
+                print('This method will not become keyword')
+
+        @library(method_disabler=False)
+        class DecoratedClassDoesNotPublicDecoratedMethods:
+            @keyword
+            def public_method_is_not_keyword():
+                print('This method will not become keyword')
+     """
+
+    def lib_decorator(func):
+        func.ROBOT_LIBRARY_SCOPE = scope
+        func.ROBOT_LIBRARY_VERSION = version
+        func.ROBOT_AUTO_KEYWORDS = method_disabler
+        return func
+    return lib_decorator
