@@ -490,11 +490,11 @@ For example, the library below implements only keywords
 __ https://docs.python.org/tutorial/modules.html#importing-from-a-package
 
 Another way to avoid methods becoming keywords is to use `@library` class
-decorator and set its parameter `method_disabler` to False.
+decorator which by default set its parameter `robot_auto_kws` to False.
 
  .. sourcecode:: python
 
-     @library(method_disabler=False)
+     @library(robot_auto_kws=False)
     class MyLibrary:
 
          def my_keyword(self):

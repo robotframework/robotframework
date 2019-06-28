@@ -70,7 +70,7 @@ def keyword(name=None, tags=(), types=()):
     return decorator
 
 
-def library(scope=None, version=None, method_disabler=True):
+def library(scope=None, version=None, robot_auto_kws=False):
     """Decorator to set custom scope and version and enable/disable public
     methods that will become keywords.
 
@@ -90,12 +90,12 @@ def library(scope=None, version=None, method_disabler=True):
         class LibraryScopeAndVersion:
             # ...
 
-        @library(scope='GLOBAL', version='1.3.0', method_disabler=False)
+        @library(scope='GLOBAL', version='1.3.0', robot_auto_kws=False)
         class DecoratedClassDisablePublicMethods:
             def public_method_is_not_keyword():
                 print('This method will not become keyword')
 
-        @library(method_disabler=False)
+        @library
         class DecoratedClassDoesNotPublicDecoratedMethods:
             @keyword
             def public_method_is_not_keyword():
@@ -105,6 +105,6 @@ def library(scope=None, version=None, method_disabler=True):
     def lib_decorator(func):
         func.ROBOT_LIBRARY_SCOPE = scope
         func.ROBOT_LIBRARY_VERSION = version
-        func.ROBOT_AUTO_KEYWORDS = method_disabler
+        func.ROBOT_AUTO_KEYWORDS = robot_auto_kws
         return func
     return lib_decorator

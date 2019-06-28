@@ -1,7 +1,7 @@
 from robot.api.deco import keyword, library
 
 
-@library(scope='TEST SUITE', version='1.2.3', method_disabler=False)
+@library(scope='TEST SUITE', version='1.2.3')
 class LibraryDecorator(object):
 
     def __init__(self):
