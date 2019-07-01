@@ -1210,7 +1210,6 @@ class _Verify(_BuiltInBase):
         Empty`.
         """
         length = self._get_length(item)
-        self.log('Length is %d' % length)
         return length
 
     def _get_length(self, item):
