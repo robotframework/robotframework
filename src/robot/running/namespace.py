@@ -215,7 +215,7 @@ class Namespace(object):
 
     def get_runner(self, name):
         try:
-            return self._kw_store.get_runner(name)
+            return self._kw_store.get_runner(name, self)
         except DataError as error:
             return UserErrorHandler(error, name)
 
@@ -255,8 +255,8 @@ class KeywordStore(object):
                 return lib
         self._no_library_found(instance)
 
-    def get_runner(self, name):
-        runner = self._get_runner(name)
+    def get_runner(self, name, ns):
+        runner = self._get_runner(name, ns)
         if runner is None:
             self._raise_no_keyword_found(name)
         return runner
@@ -270,11 +270,12 @@ class KeywordStore(object):
         msg = finder.format_recommendations(msg, recommendations)
         raise KeywordError(msg)
 
-    def _get_runner(self, name):
+    def _get_runner(self, name, ns):
         if not name:
             raise DataError('Keyword name cannot be empty.')
         if not is_string(name):
             raise DataError('Keyword name must be a string.')
+        name = ns.variables.replace_string(name)
         runner = self._get_runner_from_test_case_file(name)
         if not runner and '.' in name:
             runner = self._get_explicit_runner(name)
