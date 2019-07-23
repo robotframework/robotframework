@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils.asserts import assert_equal, assert_true, assert_false
+from robot.utils.asserts import assert_equal, assert_true, assert_false, assert_not_equal
 from robot.utils import seq2str, IRONPYTHON, PY2, unicode
 from robot.model.tags import Tags, TagPattern, TagPatterns
 
@@ -144,6 +144,41 @@ class TestTags(unittest.TestCase):
         assert_true(isinstance(sliced, Tags))
         assert_equal(list(sliced), expected)
 
+    def test__eq__(self):
+        tags_a = [
+            'component.selenium', 'LAME_CI', 'boing.bom.bin',
+            'boing.bam.boom.baaaaaaaaaa',
+            'boing.bam.boom.baaaaaaaaaa.bla',
+            'boing.bing.bla', 'boing.bing.bleu', 'X_FOR_Y']
+
+        tags_b = [
+            'component',
+            'boing.component',
+            'boing',
+            'boing.bam.boom.bba',
+            'boing.bam.boom',
+            'boing.bam',
+            'boing.bing'
+        ]
+
+        assert_equal(Tags(['x']), Tags(['x']))
+        assert_equal(Tags(['X']), Tags(['x']))
+
+        assert_equal(Tags(tags_a + tags_b), Tags(tags_a + tags_b))
+        assert_equal(Tags(tags_a + tags_b), Tags(tags_a) + Tags(tags_b))
+        assert_equal(Tags(tags_b + tags_a), Tags(tags_a) + Tags(tags_b))
+        assert_equal(Tags(tags_a + tags_b), Tags(tags_b) + Tags(tags_a))
+        assert_equal(Tags(tags_b + tags_a), Tags(tags_b) + Tags(tags_a))
+
+        assert_equal(Tags(tags_b + tags_a + tags_b),
+                     Tags(tags_b) + Tags(tags_a) + Tags(tags_b))
+
+        assert_equal(list(Tags(tags_a + tags_b)),
+                     sorted(tags_a + tags_b, key=lambda k: k.lower()))
+
+    def test__eq__normalized(self):
+        assert_equal(Tags(['Hello world', 'Foo', 'Not_world']),
+                     Tags(['nOT WORLD', 'FOO', 'hello world']))
 
 class TestNormalizing(unittest.TestCase):
 

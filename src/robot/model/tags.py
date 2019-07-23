@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.utils import (Matcher, NormalizedDict, is_string, py2to3, setter,
-                         unic)
+                         unic, normalize)
 
 
 @py2to3
@@ -62,6 +62,21 @@ class Tags(object):
 
     def __repr__(self):
         return repr(list(self))
+
+    def __eq__(self, other):
+        if not isinstance(other, Tags):
+            return False
+
+        self_normalized = [normalize(tag, ignore='_') for tag in self._tags]
+        other_normalized = [normalize(tag, ignore='_') for tag in other._tags]
+
+        return sorted(self_normalized) == sorted(other_normalized)
+
+    def __ne__(self, other):
+        """
+        Not necessary for Python3 (https://stackoverflow.com/a/30676267/2309247)
+        """
+        return not self == other
 
     def __getitem__(self, index):
         item = self._tags[index]
