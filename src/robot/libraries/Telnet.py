@@ -286,7 +286,7 @@ class Telnet(object):
     Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
     considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
     """
-    ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
+    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
 
     def __init__(self, timeout='3 seconds', newline='CRLF',
@@ -491,6 +491,83 @@ class Telnet(object):
         """
         self._conn = self._cache.close_all()
 
+    def set_timeout(self, timeout):
+        self._verify_connection()
+        return self._conn.set_timeout(timeout)
+
+    def set_newline(self, newline):
+        self._verify_connection()
+        return self._conn.set_newline(newline)
+
+    def set_prompt(self, prompt, prompt_is_regexp=False):
+        self._verify_connection()
+        return self._conn.set_prompt(prompt, prompt_is_regexp)
+
+    @keyword(types=None)
+    def set_encoding(self, encoding=None, errors=None):
+        self._verify_connection()
+        return self._conn.set_encoding(encoding, errors)
+
+    def set_telnetlib_log_level(self, level):
+        self._verify_connection()
+        return self._conn.set_telnetlib_log_level(level)
+
+    def set_default_log_level(self, level):
+        self._verify_connection()
+        return self._conn.set_default_log_level(level)
+
+    def close_connection(self, loglevel=None):
+        self._verify_connection()
+        return self._conn.close_connection(loglevel)
+
+    def login(self, username, password, login_prompt='login: ',
+              password_prompt='Password: ', login_timeout='1 second',
+              login_incorrect='Login incorrect'):
+        self._verify_connection()
+        return self._conn.login(username, password, login_prompt, password_prompt,
+                                login_timeout, login_incorrect)
+
+    def write(self, text, loglevel=None):
+        self._verify_connection()
+        return self._conn.write(text, loglevel)
+
+    def write_bare(self, text):
+        self._verify_connection()
+        self._conn.write_bare(text)
+
+    def write_until_expected_output(self, text, expected, timeout,
+                                    retry_interval, loglevel=None):
+        self._verify_connection()
+        self._conn.write_until_expected_output(text, expected, timeout,
+                                               retry_interval, loglevel)
+
+    def write_control_character(self, character):
+        self._verify_connection()
+        self._conn.write_control_character(character)
+
+    def read(self, loglevel=None):
+        self._verify_connection()
+        return self._conn.read(loglevel)
+
+    def read_until(self, expected, loglevel=None):
+        self._verify_connection()
+        return self._conn.read_until(expected, loglevel)
+
+    def read_until_regexp(self, *expected):
+        self._verify_connection()
+        return self._conn.read_until_regexp(*expected)
+
+    def read_until_prompt(self, loglevel=None, strip_prompt=False):
+        self._verify_connection()
+        return self._conn.read_until_prompt(loglevel, strip_prompt)
+
+    def execute_command(self, command, loglevel=None, strip_prompt=False):
+        self._verify_connection()
+        return self._conn.execute_command(command, loglevel, strip_prompt)
+
+    def _verify_connection(self):
+        if not self._conn:
+            raise RuntimeError('No connection open')
 
 class TelnetConnection(telnetlib.Telnet):
     NEW_ENVIRON_IS = b'\x00'
@@ -609,7 +686,6 @@ class TelnetConnection(telnetlib.Telnet):
     def _prompt_is_set(self):
         return self._prompt[0] is not None
 
-    @keyword(types=None)
     def set_encoding(self, encoding=None, errors=None):
         """Sets the encoding to use for `writing and reading` in the current connection.
 
