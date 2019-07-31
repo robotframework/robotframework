@@ -104,6 +104,7 @@ class EmbeddedArgumentsHandler(UserKeywordHandler):
     def __init__(self, keyword, libname, embedded):
         UserKeywordHandler.__init__(self, keyword, libname)
         self.keyword = keyword
+        self.embedded_type = embedded.var_type
         self.embedded_name = embedded.name
         self.embedded_args = embedded.args
 

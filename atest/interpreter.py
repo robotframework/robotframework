@@ -26,7 +26,7 @@ class Interpreter(object):
         self.path = path
         self.interpreter = self._get_interpreter(path)
         if not name:
-            name, version = self._get_name_and_version()
+            name, version = 'Python', '2.7'
         self.name = name
         self.version = version
         self.version_info = tuple(int(item) for item in version.split('.'))

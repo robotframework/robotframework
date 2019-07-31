@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from ast import literal_eval
 from itertools import chain
 
 from robot.errors import (ExecutionFailed, ExecutionPassed, ExecutionStatus,
@@ -228,7 +229,7 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         match = handler.embedded_name.match(name)
         if not match:
             raise ValueError('Does not match given name')
-        self.embedded_args = list(zip(handler.embedded_args, match.groups()))
+        self.embedded_args = list(zip(handler.embedded_type, handler.embedded_args, match.groups()))
 
     def _resolve_arguments(self, args, variables=None):
         # Validates that no arguments given.
@@ -238,15 +239,11 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         return list(self._replace(variables))
 
     def _replace(self, variables):
-        for n, v in self.embedded_args:
-            try:
-                v = eval(v)
-                if is_dict_like(v):
-                    yield n, DotDict(v)
-                elif is_list_like(v):
-                    yield n, variables.replace_list(v)
-            except:
-                pass
+        for t, n, v in self.embedded_args:
+            if t == '&' and is_dict_like(literal_eval(v)):
+                yield n, DotDict(literal_eval(v))
+            elif t == '@' and is_list_like(literal_eval(v)):
+                yield n, variables.replace_list(literal_eval(v))
             yield n, variables.replace_scalar(v)
 
     def _set_arguments(self, embedded_args, context):

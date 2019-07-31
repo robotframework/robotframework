@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python
 
 """A script for running Robot Framework's acceptance tests.
 
@@ -43,15 +43,15 @@ CURDIR = dirname(abspath(__file__))
 
 
 sys.path.append(join(CURDIR, '..'))
-try:
-    from tasks import jar
-except ImportError:
-    def jar(*args, **kwargs):
-        raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
-except AssertionError:
-    def jar(*args, **kwargs):
-        raise RuntimeError("JAR can be created only when in the project root. "
-                           "See BUILD.rst for details.")
+# try:
+#     from tasks import jar
+# except ImportError:
+#     def jar(*args, **kwargs):
+#         raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
+# except AssertionError:
+#     def jar(*args, **kwargs):
+#         raise RuntimeError("JAR can be created only when in the project root. "
+#                            "See BUILD.rst for details.")
 
 
 ARGUMENTS = '''
