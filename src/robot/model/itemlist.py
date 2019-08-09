@@ -68,11 +68,14 @@ class ItemList(object):
         self._items = ()
 
     def visit(self, visitor):
-        for item in self._items:
+        for item in self:
             item.visit(visitor)
 
     def __iter__(self):
-        return iter(self._items)
+        index = 0
+        while index < len(self._items):
+            yield self._items[index]
+            index += 1
 
     def __getitem__(self, index):
         if not isinstance(index, slice):

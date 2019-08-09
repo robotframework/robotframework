@@ -189,6 +189,26 @@ class TestItemLists(unittest.TestCase):
         assert_equal(unicode(ItemList(unicode, items=[u'hyv\xe4\xe4', u'y\xf6'])),
                      u'[hyv\xe4\xe4, y\xf6]')
 
+    def test_iter(self):
+        numbers = list(range(10))
+        items = ItemList(int, items=numbers)
+        assert_equal(list(items), numbers)
+        assert_equal(tuple(items), tuple(numbers))
+        for i, n in zip(items, numbers):
+            assert_equal(i, n)
+
+    def test_add_remove_during_iter(self):
+        chars = ItemList(str, items='abdx')
+        for c in chars:
+            if c == 'a':
+                chars.pop()
+            if c == 'b':
+                chars.insert(2, 'c')
+            if c == 'c':
+                chars.append('e')
+            assert_true(c in 'abcde', '%s was unexpected here!' % c)
+        assert_equal(list(chars), list('abcde'))
+
 
 if __name__ == '__main__':
     unittest.main()
