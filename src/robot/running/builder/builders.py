@@ -93,13 +93,17 @@ class SuiteStructureParser(SuiteStructureVisitor):
         datapath = source if not structure.is_directory else structure.init_file
         try:
             suite, defaults = build_suite(source, datapath, defaults)
-            self._validate_execution_mode(suite.rpa)
+            self._validate_execution_mode(suite)
         except DataError as err:
             raise DataError("Parsing '%s' failed: %s" % (source, err.message))
         return suite, defaults
 
-    def _validate_execution_mode(self, rpa):
-        if self._rpa_given or rpa is None:
+    def _validate_execution_mode(self, suite):
+        rpa = suite.rpa
+        if self._rpa_given:
+            suite.rpa = self.rpa
+            return
+        if rpa is None:
             return
         if self.rpa is None:
             self.rpa = rpa

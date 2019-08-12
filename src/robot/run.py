@@ -426,7 +426,7 @@ class RobotFramework(Application):
                                    extension=settings.extension,
                                    rpa=settings.rpa)
         suite = builder.build(*datasources)
-        settings.rpa = builder.rpa
+        settings.rpa = suite.rpa
         suite.configure(**settings.suite_config)
         if settings.pre_run_modifiers:
             suite.visit(ModelModifier(settings.pre_run_modifiers,
