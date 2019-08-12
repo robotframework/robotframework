@@ -28,10 +28,12 @@ from ..model import TestSuite, ResourceFile
 
 class TestSuiteBuilder(object):
 
-    def __init__(self, include_suites=None, extension=None, rpa=None):
+    def __init__(self, include_suites=None, extension=None, rpa=None,
+                 allow_empty_suite=False):
         self.rpa = rpa
         self.include_suites = include_suites
         self.extension = extension
+        self.allow_empty_suite = allow_empty_suite
 
     def build(self, *paths):
         """
@@ -42,7 +44,10 @@ class TestSuiteBuilder(object):
                                           self.extension).build(paths)
         parser = SuiteStructureParser(self.rpa)
         suite = parser.parse(structure)
-        self._validate_test_counts(suite, multisource=len(paths) > 1)
+        if not self.include_suites and not self.allow_empty_suite:
+            self._validate_test_counts(suite, multisource=len(paths) > 1)
+        # TODO: do we need `preserve_direct_children`?
+        suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
         return suite
 
     def _validate_test_counts(self, suite, multisource=False):
@@ -55,8 +60,6 @@ class TestSuiteBuilder(object):
         else:
             for s in suite.suites:
                 validate(s)
-        # TODO: do we need `preserve_direct_children`?
-        suite.remove_empty_suites(preserve_direct_children=multisource)
 
 
 class ResourceFileBuilder(object):
