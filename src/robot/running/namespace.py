@@ -22,7 +22,6 @@ from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.model import Import
 from robot.output import LOGGER, Message
-from robot.parsing.nodes import LibrarySetting
 from robot.utils import (RecommendationFinder, eq, find_file, is_string,
                          printable_name, seq2str2)
 

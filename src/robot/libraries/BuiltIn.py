@@ -2760,10 +2760,16 @@ class _Misc(_BuiltInBase):
         | Import Library | ${CURDIR}/../Library.py | arg1 | named=arg2 |
         | Import Library | ${LIBRARIES}/Lib.java | arg | WITH NAME | JavaLib |
         """
+        args, alias = self._split_alias(args)
         try:
-            self._namespace.import_library(name, list(args))
+            self._namespace.import_library(name, args, alias)
         except DataError as err:
             raise RuntimeError(unic(err))
+
+    def _split_alias(self, args):
+        if len(args) > 1 and args[-2] == 'WITH NAME':
+            return args[:-2], args[-1]
+        return args, None
 
     @run_keyword_variant(resolve=0)
     def import_variables(self, path, *args):
