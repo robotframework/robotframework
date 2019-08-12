@@ -9,15 +9,6 @@ TXT With TXT Resource
     Previous Run Should Have Been Successful
     Check Test Case    Resource File
 
-Parsing TXT files automatically is deprecated
-    Previous Run Should Have Been Successful
-    Check Automatic Parsing Deprecated Message    0    ${TXTDIR}/sample.txt
-    Length should be    ${ERRORS}    1
-
-Using --extension avoids deprecation warning
-    Run sample file and check tests    --extension txt    ${TXTDIR}/sample.txt
-    Should be empty    ${ERRORS}
-
 TXT Directory
     Run Suite Dir And Check Results    -FTXT    ${TXTDIR}
 
