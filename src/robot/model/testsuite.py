@@ -109,6 +109,12 @@ class TestSuite(ModelObject):
         """Number of the tests in this suite, recursively."""
         return len(self.tests) + sum(suite.test_count for suite in self.suites)
 
+    @property
+    def has_tests(self):
+        if self.tests:
+            return True
+        return any(s.has_tests for s in self.suites)
+
     def set_tags(self, add=None, remove=None, persist=False):
         """Add and/or remove specified tags to the tests in this suite.
 

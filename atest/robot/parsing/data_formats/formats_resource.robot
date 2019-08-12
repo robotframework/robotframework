@@ -54,8 +54,6 @@ Run Suite Dir And Check Results
     Check Syslog Contains    | INFO \ | Data source '${path}${/}invalid.${type}' has no tests or tasks.
     Check Syslog Contains    | INFO \ | Data source '${path}${/}empty.${type}' has no tests or tasks.
     Check Syslog Contains    | INFO \ | Ignoring file or directory '${path}${/}not_a_picture.jpg'.
-    Run Keyword If    "${type}" != "rest"
-    ...    Check Syslog Contains    | ERROR | Parsing '${path}${/}invalid_encoding.${type}' failed: UnicodeDecodeError
 
 Check Suite With Init
     [Arguments]    ${suite}

@@ -41,11 +41,22 @@ class TestSuiteBuilder(object):
         structure = SuiteStructureBuilder(self.include_suites,
                                           self.extension).build(paths)
         parser = SuiteStructureParser(self.rpa)
-        parser.parse(structure)
-        suite = parser.suite
-        suite.rpa = parser.rpa
-        suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
+        suite = parser.parse(structure)
+        self._validate_test_counts(suite, multisource=len(paths) > 1)
         return suite
+
+    def _validate_test_counts(self, suite, multisource=False):
+        def validate(suite):
+            if not suite.has_tests:
+                raise DataError("Suite '%s' contains no tests or tasks."
+                                % suite.name)
+        if not multisource:
+            validate(suite)
+        else:
+            for s in suite.suites:
+                validate(s)
+        # TODO: do we need `preserve_direct_children`?
+        suite.remove_empty_suites(preserve_direct_children=multisource)
 
 
 class ResourceFileBuilder(object):
@@ -66,6 +77,8 @@ class SuiteStructureParser(SuiteStructureVisitor):
 
     def parse(self, structure):
         structure.visit(self)
+        self.suite.rpa = self.rpa
+        return self.suite
 
     def visit_file(self, structure):
         LOGGER.info("Parsing file '%s'." % structure.source)
