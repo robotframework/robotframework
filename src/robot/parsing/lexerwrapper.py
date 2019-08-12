@@ -25,14 +25,14 @@ class LexerWrapper(object):
     def __init__(self, lexer, source):
         self.source = source
         self.curdir = os.path.dirname(source).replace('\\', '\\\\')
-        lexer.input(Utf8Reader(self._open(source)).read())
+        lexer.input(self._read(source))
         self.tokens = lexer.get_tokens()
 
-    def _open(self, path):
+    def _read(self, path):
         try:
             # IronPython handles BOM incorrectly if not using binary mode:
             # https://ironpython.codeplex.com/workitem/34655
-            return open(path, 'rb')
+            return Utf8Reader(open(path, 'rb')).read()
         except:
             raise DataError(get_error_message())
 
