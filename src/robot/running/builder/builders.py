@@ -51,6 +51,7 @@ class TestSuiteBuilder(object):
 class ResourceFileBuilder(object):
 
     def build(self, path):
+        LOGGER.info("Parsing resource file '%s'." % path)
         data = get_resource_file_ast(path)
         return build_resource(data, path)
 
@@ -123,6 +124,8 @@ def build_suite(source, datapath=None, parent_defaults=None):
         #print(ast.dump(ast))
         SettingsBuilder(suite, defaults).visit(ast)
         SuiteBuilder(suite, defaults).visit(ast)
+        if not suite.tests:
+            LOGGER.info("Data source '%s' has no tests or tasks." % datapath)
         suite.rpa = _get_rpa_mode(ast)
     return suite, defaults
 
@@ -141,6 +144,8 @@ def build_resource(data, source):
     resource = ResourceFile(source=source)
     if data.sections:
         ResourceBuilder(resource).visit(data)
+        LOGGER.info("Imported resource file '%s' (%d keywords)."
+                    % (source, len(resource.keywords)))
     else:
         LOGGER.warn("Imported resource file '%s' is empty." % source)
     return resource
