@@ -92,8 +92,11 @@ class TestSettings(object):
 
     @property
     def tags(self):
-        default_tags = (self._tags or self.defaults.default_tags) or []
-        return default_tags + self.defaults.get_force_tags()
+        if self._tags is not None:
+            tags = self._tags
+        else:
+            tags = self.defaults.default_tags or []
+        return tags + self.defaults.get_force_tags()
 
     @tags.setter
     def tags(self, tags):
