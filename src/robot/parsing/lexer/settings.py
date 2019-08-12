@@ -43,8 +43,9 @@ class Settings(object):
     def _validate(self, name, normalized, statement):
         if normalized not in self.settings:
             raise ValueError("Non-existing setting '%s'." % name)  # TODO: Hints?
-        if self.settings[normalized] and normalized not in self.multi_use:
-            raise ValueError("Setting '%s' allowed only once." % name)
+        if self.settings[normalized] is not None and normalized not in self.multi_use:
+            raise ValueError("Setting '%s' allowed only once. "
+                             "Only the first value is used." % name)
         if normalized in self.single_value and len(statement) > 2:
             raise ValueError("Setting '%s' accepts only one value, got %s."
                              % (name, len(statement) - 1))
