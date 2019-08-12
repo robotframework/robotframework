@@ -2,36 +2,65 @@
 Resource          data_formats/formats_resource.robot
 
 *** Variables ***
-${PARSING}            parsing
-${NO TESTS}           ${PARSING}${/}notests
-${EMPTY TC TABLE}     ${PARSING}${/}empty_testcase_table.robot
-${NO TC TABLE MSG}    File has no tests or tasks.
+${PARSING}            ${DATADIR}/parsing
 
 *** Test Cases ***
-Invalid Input
-    Check Parsing Error    unsupported.log    Unsupported file format 'log'.    ${PARSING}/unsupported.log
-
 Directory Containing No Test Cases
-    Run Tests Without Processing Output    ${EMPTY}    ${NO TESTS}
-    Stderr Should Be Equal To    [ ERROR ] Suite 'Notests' contains no tests.${USAGE_TIP}\n
+    Run tests and check error
+    ...    ${PARSING}/notests
+    ...    Suite 'Notests' contains no tests or tasks.
 
 File Containing No Test Cases
-    Run Tests Without Processing Output    ${EMPTY}    ${EMPTY TC TABLE}
-    Stderr Should Be Equal To    [ ERROR ] Suite 'Empty Testcase Table' contains no tests.${USAGE_TIP}\n
+    Run tests and check error
+    ...    ${PARSING}/empty_testcase_table.robot
+    ...    Suite 'Empty Testcase Table' contains no tests or tasks.
 
-Multisource Containing No Test Cases
-    Run Tests Without Processing Output    ${EMPTY}    ${ROBOTDIR}/empty.robot ${ROBOTDIR}/sample.robot
-    ${path} =    Normalize Path    ${ROBOTDIR}/empty.robot
-    Stderr Should Be Equal To    [ ERROR ] Parsing '${path}' failed: ${NO TC TABLE MSG}${USAGE TIP}\n
+Empty File
+    Run tests and check error
+    ...    ${ROBOTDIR}/empty.robot
+    ...    Suite 'Empty' contains no tests or tasks.
 
-Empty TSV File
-    Check Parsing Error    empty.tsv    ${NO TC TABLE MSG}    ${TSVDIR}/empty.tsv
+Multisource Containing Empty File
+    Run tests and check error
+    ...    ${ROBOTDIR}/empty.robot ${ROBOTDIR}/sample.robot
+    ...    Suite 'Empty' contains no tests or tasks.
 
-Empty TXT File
-    Check Parsing Error    empty.txt    ${NO TC TABLE MSG}    ${TXTDIR}/empty.txt
+Multisource With Empty Directory
+    Run tests and check error
+    ...    ${ROBOTDIR}/sample.robot ${PARSING}/notests
+    ...    Suite 'Notests' contains no tests or tasks.
+
+Multisource Containing Empty File With Non-standard Extension
+    Run tests and check error
+    ...    ${PARSING}/unsupported.log ${ROBOTDIR}/sample.robot
+    ...    Suite 'Unsupported' contains no tests or tasks.
+
+File With Invalid Encoding
+    Run tests and check parsing error
+    ...    ${PARSING}/invalid_encoding/invalid_encoding.robot
+    ...    UnicodeDecodeError: .*
+    ...    ${PARSING}/invalid_encoding/invalid_encoding.robot
+
+Directory Containing File With Invalid Encoding
+    Run tests and check parsing error
+    ...    ${PARSING}/invalid_encoding/
+    ...    UnicodeDecodeError: .*
+    ...    ${PARSING}/invalid_encoding/invalid_encoding.robot
+
+Multisource Containing File With Invalid Encoding
+    Run tests and check parsing error
+    ...    ${PARSING}/invalid_encoding/invalid_encoding.robot ${PARSING}/invalid_encoding/a_valid_file.robot
+    ...    UnicodeDecodeError: .*
+    ...    ${PARSING}/invalid_encoding/invalid_encoding.robot
 
 *** Keywords ***
-Check Parsing Error
-    [Arguments]    ${file}    ${error}    ${paths}
-    Run Tests Without Processing Output    ${EMPTY}    ${paths}
-    Check Stderr Matches Regexp    \\[ ERROR \\] Parsing '.*[/\\\\]${file}' failed: ${error}${USAGE_TIP}
+Run tests and check error
+    [Arguments]    ${paths}   ${error}
+    ${result}=    Run Tests Without Processing Output    ${EMPTY}    ${paths}
+    Should be equal    ${result.rc}    ${252}
+    Check Stderr Matches Regexp    \\[ ERROR \\] ${error}${USAGE_TIP}
+
+Run tests and check parsing error
+    [Arguments]    ${paths}    ${error}    ${file}
+    ${file}=   Normalize path    ${file}
+    Run tests and check error    ${paths}    Parsing '${file}' failed: ${error}
