@@ -16,7 +16,7 @@ Suite Documentation
     ...    is shortdoc on console.
     ...    ${EMPTY}
     ...    Documentation can have multiple rows
-    ...    and also multiple columns.
+    ...    and\nalso\nmultiple\ncolumns.
     ...    Newlines can also be added literally with "\n".
     ...    ${EMPTY}
     ...    Variables work since Robot 1.2 and doc_from_cli works too.
@@ -45,13 +45,8 @@ Suite Setup
 Suite Teardown
     Verify Teardown    ${SUITE}    BuiltIn.Log    Default suite teardown
 
-Deprecated Setting Format
-    Verify Error    0
-    ...    Setting 'For CET ag S' is deprecated. Use 'Force Tags' instead.
-    ...    level=WARN
-
 Invalid Setting
-    Verify Error    1    Non-existing setting 'Invalid Setting'.
+    Verify Error    0    Non-existing setting 'Invalid Setting'.
 
 *** Keywords ***
 Verify Setup
