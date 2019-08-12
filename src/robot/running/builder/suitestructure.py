@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.model import SuiteNamePatterns
 from robot.output import LOGGER
 from robot.parsing import TEST_EXTENSIONS
-from robot.utils import normalize, unic
+from robot.utils import abspath, unic
 
 
 class SuiteStructure(object):
@@ -57,13 +57,23 @@ class SuiteStructureBuilder(object):
         return extensions
 
     def build(self, paths):
+        paths = self._validate_paths(paths)
         if len(paths) == 1:
             return self._build(paths[0], self.include_suites)
         children = [self._build(p, self.include_suites) for p in paths]
         return SuiteStructure(children=children)
 
+    def _validate_paths(self, paths):
+        if not paths:
+            raise DataError('One or more source paths required.')
+        for path in paths:
+            if not os.path.exists(path):
+                raise DataError("Parsing '%s' failed: File or directory to "
+                                "execute does not exist." % path)
+        return [abspath(p) for p in paths]
+
     def _build(self, path, include_suites):
-        if os.path.isfile(path):
+        if not os.path.exists(path) or os.path.isfile(path):
             return SuiteStructure(path)
 
         include_suites = self._get_include_suites(path, include_suites)

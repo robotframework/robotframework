@@ -15,8 +15,9 @@
 
 import os.path
 
+from robot.errors import DataError
 from robot.output import LOGGER
-from robot.utils import Utf8Reader
+from robot.utils import Utf8Reader, get_error_message
 
 
 class LexerWrapper(object):
@@ -24,8 +25,16 @@ class LexerWrapper(object):
     def __init__(self, lexer, source):
         self.source = source
         self.curdir = os.path.dirname(source).replace('\\', '\\\\')
-        lexer.input(Utf8Reader(source).read())
+        lexer.input(Utf8Reader(self._open(source)).read())
         self.tokens = lexer.get_tokens()
+
+    def _open(self, path):
+        try:
+            # IronPython handles BOM incorrectly if not using binary mode:
+            # https://ironpython.codeplex.com/workitem/34655
+            return open(path, 'rb')
+        except:
+            raise DataError(get_error_message())
 
     def token(self):
         """Adapter for yacc.yacc"""

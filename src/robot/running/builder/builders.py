@@ -19,7 +19,6 @@ from robot.errors import DataError
 from robot.output import LOGGER
 from robot.parsing import (get_test_case_file_ast, get_resource_file_ast,
                            TestCaseSection)
-from robot.utils import abspath
 
 from .testsettings import TestDefaults
 from .transformers import SuiteBuilder, SettingsBuilder, ResourceBuilder
@@ -39,10 +38,8 @@ class TestSuiteBuilder(object):
         :param paths: Paths to test data files or directories.
         :return: :class:`~robot.running.model.TestSuite` instance.
         """
-        if not paths:
-            raise DataError('One or more source paths required.')
-        paths = [abspath(p) for p in paths]
-        structure = SuiteStructureBuilder(self.include_suites, self.extension).build(paths)
+        structure = SuiteStructureBuilder(self.include_suites,
+                                          self.extension).build(paths)
         parser = SuiteStructureParser(self.rpa)
         parser.parse(structure)
         suite = parser.suite
