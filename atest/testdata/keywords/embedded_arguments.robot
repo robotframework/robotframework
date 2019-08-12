@@ -159,7 +159,7 @@ Keyword Matching Multiple Keywords In One Resource File
     foo+r1+bar-r1-zap
 
 Keyword Matching Multiple Keywords In Different Resource Files
-    [Documentation]    FAIL Multiple keywords with name 'foo-r1-bar-r2-zap' found.\
+    [Documentation]    FAIL Multiple keywords with name 'foo-r1-bar-r2-zap' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${INDENT}embedded_args_in_uk_1.foo-r1-bar-r2-zap
     ...    ${INDENT}embedded_args_in_uk_2.foo-r1-bar-r2-zap

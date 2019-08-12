@@ -36,14 +36,14 @@ Non-Unique Keywords Without Full Name Fails 1
     Keyword In Both Resources
 
 Non-Unique Keywords Without Full Name Fails 2
-    [Documentation]    FAIL Multiple keywords with name 'Keyword In Both Libraries' found.\
+    [Documentation]    FAIL Multiple keywords with name 'Keyword In Both Libraries' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${SPACE*4}My With Name.Keyword In Both Libraries
     ...    ${SPACE*4}MyLibrary1.Keyword In Both Libraries
     Keyword In Both Libraries
 
 Non-Unique Keywords Without Full Name Fails 3
-    [Documentation]    FAIL Multiple keywords with name 'Keyword In All Resources And Libraries' found.\
+    [Documentation]    FAIL Multiple keywords with name 'Keyword In All Resources And Libraries' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${SPACE*4}my_resource_1.Keyword In All Resources And Libraries
     ...    ${SPACE*4}my_resource_2.Keyword In All Resources And Libraries
