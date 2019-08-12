@@ -12,6 +12,3 @@ Non-breaking spaces in plain text file with pipes
 
 Non-breaking spaces in TSV file
     Check test case  ${TESTNAME}
-
-Non-breaking spaces in HTML file
-    Check test case  ${TESTNAME}
