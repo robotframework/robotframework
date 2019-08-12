@@ -10,10 +10,6 @@ ${msg}    *ERROR*
 TXT Passing    No operation
 TXT Failing    [Documentation]    FAIL    **ERROR**
     Failing    *${msg}*
-ReST Resource    Keyword from ReST resource
-    Keyword from ReST resource 2
-    Should Be Equal    ${rest_resource_var}    ReST Resource Variable
-    Should Be Equal    ${rest_resource_var2}    ReST Resource Variable From Recursive Resource
 TSV Resource    Keyword from TSV resource
     Keyword from TSV resource 2
     Should Be Equal    ${tsv_resource_var}    TSV Resource Variable

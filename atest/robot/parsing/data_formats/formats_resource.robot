@@ -6,8 +6,7 @@ ${FORMATS DIR}     ${DATA DIR}/parsing/data_formats
 ${TSV DIR}         ${FORMATS DIR}/tsv
 ${TXT DIR}         ${FORMATS DIR}/txt
 ${ROBOT DIR}       ${FORMATS DIR}/robot
-${REST DIR}        ${FORMATS DIR}/rest
-${REST DIR 2}      ${FORMATS DIR}/rest_directives
+${REST DIR}        ${FORMATS DIR}/rest_directives
 ${MIXED DIR}       ${FORMATS DIR}/mixed_data
 ${RESOURCE DIR}    ${FORMATS DIR}/resources
 @{SAMPLE TESTS}    Passing    Failing    User Keyword    Nön-äscïï    Own Tags    Default Tags    Variable Table
@@ -19,15 +18,9 @@ ${RESOURCE DIR}    ${FORMATS DIR}/resources
 Previous Run Should Have Been Successful
     Should Not Be Equal    ${SUITE}    ${None}    Running tests failed.    No Values
 
-Run Tests And Verify Status
-    [Arguments]    ${options}    ${paths}
-    Set Suite Variable    $SUITE    ${None}
-    Run Tests    ${options}    ${paths}
-    Previous Run Should Have Been Successful
-
 Run Sample File And Check Tests
     [Arguments]    ${options}    ${path}
-    Run Tests And Verify Status    ${options}    ${path}
+    Run Tests    ${options}    ${path}
     ${ignore}    ${type} =    Split Extension    ${path}
     Should Be Equal    ${SUITE.name}    Sample
     Should Be Equal    ${SUITE.doc}    A complex testdata file in ${type} format.
@@ -50,7 +43,7 @@ Run Sample File And Check Tests
 
 Run Suite Dir And Check Results
     [Arguments]    ${options}    ${path}
-    Run Tests And Verify Status    ${options}    ${path}
+    Run Tests    ${options}    ${path}
     ${ignore}    ${type} =    Split Path    ${path}
     Should Be Equal    ${SUITE.name}    ${type.capitalize()}
     Should Be Equal    ${SUITE.doc}    ${EMPTY}
