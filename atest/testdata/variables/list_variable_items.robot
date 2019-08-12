@@ -77,7 +77,7 @@ Non-existing index variable
 
 Non-list variable
     [Documentation]    FAIL
-    ...    Variable '\${INVALID}' is string, not list or dictionary,\
+    ...    Variable '\${INVALID}' is string, not list or dictionary, \
     ...    and thus accessing item '0' from it is not possible.
     Log    ${INVALID}[0]
 
