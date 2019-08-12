@@ -48,7 +48,7 @@ Resource File	Keyword from TSV resource
 
 Variable File	Should Be Equal	@{file_listvar}[0]	${True}
 	Should Be Equal	@{file_listvar}[1]	${3.14}
-	Should Be Equal	@{file_listvar}[2]	"Hello, world!!"
+	Should Be Equal	@{file_listvar}[2]	Hello, world!!
 	Should Be Equal	${file_var1}	${-314}
 	Should Be Equal	${file_var2}	file variable 2
 
@@ -94,8 +94,8 @@ Quotes	Should Be Equal	${quoted}	"""this has """"many "" quotes """""
 	Should Be Equal	${single_quoted}	s'ingle'qu'ot'es''	
 
 Escaping	Should Be Equal	-c:\\temp-\t-\x00-\${x}-	${ESCAPING}
-	Should Be Equal		${EMPTY}
-	Should Be Equal			This is message
+	Should Be Equal	\	${EMPTY}
+	Should Be Equal	\	\	This is message
 
 *Keywords*	*Action*	*Argument*	*Argument*	*Argument*
 
