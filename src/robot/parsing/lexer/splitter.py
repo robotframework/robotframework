@@ -92,9 +92,6 @@ class Splitter(object):
             if token.value == '...' and token.type == token.DATA:
                 token.type = token.CONTINUATION
                 return True
-            # TODO: Remove when old for is removed
-            elif token.value == '\\':
-                continue
             elif token.value and token.type != token.SEPARATOR:
                 return False
         return False
@@ -110,9 +107,6 @@ class Splitter(object):
         # TODO: dropwhile - also above
         for token in list(tokens):
             if not token.value:
-                tokens.remove(token)
-            # TODO: Remove when old for is removed
-            elif token.value == '\\':
                 tokens.remove(token)
             elif token.type in (token.DATA, token.CONTINUATION):
                 return

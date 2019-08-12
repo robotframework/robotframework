@@ -1,14 +1,14 @@
 ...    Ignored usage
 
 *** Settings ***
-...    Invalid usage
+...    Part of header above
 Documentation
 ...    First row.
 ...    Second row.
 ...
 ...    Second paragraph
 ...    !
-\    ...    !    # Leading '\' deprecated in RF 3.1.2.
+\    ...    Does not work anymore in RF 3.2.
 ...    !
 Metadata         Name
 ...              1.1
@@ -34,12 +34,13 @@ Test Teardown    Log Many
 ...
 
 *** Variables ***
-...    # Invalid usage
+...    # Part of header above
 ${STRING}    first
 ...
 ...          third
-...          # Ignoring empty
+...          # Not ignoring empty
 # Comments, comments, comments, ...
+\    ...    Does not work anymore in RF 3.2.
 @{list}    ...    hello
 ...    world
 ...
@@ -51,20 +52,20 @@ Multiline import
     Directory Should Exist    .
 
 Multiline variables
-    Should Be Equal    ${STRING}    first third
+    Should Be Equal    ${STRING}    first${SPACE * 2}third${SPACE}
     Should Be True    $LIST    ['...', 'hello', 'world', '...', '!!!']
 
 Multiline arguments with library keyword
     Log Many    one    two
     ...    three
     ...
-    \    ...    four    five    # Leading '\' deprecated in RF 3.1.2.
+...    four    five
 
 Multiline arguments with user keyword
     UK Log Many
     ...    ${1}
        ...
-          ...    ${2}    ${3}
+...    ${2}    ${3}
              ...    ${4}
                 ...    ${5}
 
@@ -84,9 +85,9 @@ Multiline in user keyword
 Multiline test settings
     [Documentation]    One.
     ...    Two.
-    \   ...    Three.         # Leading '\' deprecated in RF 3.1.2.
+...    Three.
     ...
-    ...    Second paragraph.
+                                ...    Second paragraph.
     [Tags]
     ...    my1    my2    my3
     ...    my4
@@ -100,12 +101,12 @@ Multiline test settings
 
 Multiline user keyword settings
     ${x} =    Multiline User Keyword Settings    1    2
-    Should Be True    ${x} == [str(i) for i in range(1,10) if i != 8]
+    Should Be True    ${x} == [str(i) if i != 8 else '' for i in range(1,10)]
     ${x} =    Multiline User Keyword Settings
     ...    1    2    3    4    5    r1    r2    r3
     Should Be True    ${x[:5]} == [str(i) for i in range(1,6)]
     Should Be True    ${x[5:8]} == ['r1','r2','r3']
-    Should Be True    ${x[9:]} == ['7', '9']
+    Should Be True    ${x[9:]} == ['7', '', '9']
 
 Multiline for Loop declaration
     ${result} =    Set Variable    ${EMPTY}
@@ -164,10 +165,20 @@ Multiline in for loop body
     Should Be Equal    ${result}    ABC
     Should Be Equal    ${x}    1 2 3 a b c
 
-Invalid usage in test and user keyword
+Invalid usage in test
     ...
-    [Documentation]    FAIL This is executed after all!
+    [Documentation]    FAIL Keyword name cannot be empty.
+    No operation
+
+Invalid usage in user keyword
+    [Documentation]    FAIL Keyword name cannot be empty.
     Invalid Usage In UK
+
+Invalid usage in keyword call
+    [Documentation]    FAIL No keyword with name '\\' found.
+    Log Many   1
+    ...   2
+    \    ...   Does not work anymore in 3.2
 
 *** Keywords ***
 UK log many
@@ -209,4 +220,4 @@ Multiline user keyword settings
 
 Invalid usage in UK
     ...
-    Fail    This is executed after all!
+    No operation

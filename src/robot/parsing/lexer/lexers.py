@@ -253,8 +253,9 @@ class TestOrKeywordLexer(BlockLexer):
         if not self._name_set:
             statement.pop(0).type = Token.NAME
             self._name_set = True
-        while statement and not statement[0].value:
-            statement.pop(0).type = Token.IGNORE
+        else:
+            while statement and not statement[0].value:
+                statement.pop(0).type = Token.IGNORE
 
     def _handle_old_style_for_loop(self, statement, lexer):
         # TODO: Deprecation
@@ -297,7 +298,7 @@ class TestOrKeywordSettingLexer(SettingLexer):
     @classmethod
     def handles(cls, statement):
         marker = statement[0].value
-        return marker[0] == '[' and marker[-1] == ']'
+        return marker and marker[0] == '[' and marker[-1] == ']'
 
 
 class ForLoopLexer(StatementLexer):
@@ -306,7 +307,7 @@ class ForLoopLexer(StatementLexer):
     def handles(cls, statement):
         marker = statement[0].value
         return (marker == 'FOR' or
-                marker[0] == ':' and
+                marker.startswith(':') and
                 marker.replace(':', '').replace(' ', '').upper() == 'FOR')
 
     def lex(self, ctc):
