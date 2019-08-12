@@ -3,7 +3,6 @@ Resource          atest_resource.robot
 
 *** Variables ***
 ${FORMATS DIR}     ${DATA DIR}/parsing/data_formats
-${HTML DIR}        ${FORMATS DIR}/html
 ${TSV DIR}         ${FORMATS DIR}/tsv
 ${TXT DIR}         ${FORMATS DIR}/txt
 ${ROBOT DIR}       ${FORMATS DIR}/robot
@@ -62,7 +61,7 @@ Run Suite Dir And Check Results
     Check Syslog Contains    | INFO \ | Data source '${path}${/}invalid.${type}' has no tests or tasks.
     Check Syslog Contains    | INFO \ | Data source '${path}${/}empty.${type}' has no tests or tasks.
     Check Syslog Contains    | INFO \ | Ignoring file or directory '${path}${/}not_a_picture.jpg'.
-    Run Keyword If    "${type}" not in ("html", "rest")
+    Run Keyword If    "${type}" != "rest"
     ...    Check Syslog Contains    | ERROR | Parsing '${path}${/}invalid_encoding.${type}' failed: UnicodeDecodeError
 
 Check Suite With Init
@@ -75,14 +74,6 @@ Check Suite With Init
     Should Contain Tests    ${suite}    @{SUBSUITE_TESTS}
 
 *** Keywords ***
-Check HTML Deprecation Message
-    [Arguments]    ${index}    ${path}
-    ${path} =    Normalize Path    ${path}
-    ${msg} =    Catenate
-    ...    Using test data in HTML format is deprecated.
-    ...    Convert '${path}' to plain text format.
-    Check Log Message    @{ERRORS}[${index}]    ${msg}    WARN
-
 Check Automatic Parsing Deprecated Message
     [Arguments]    ${index}    ${path}
     ${path} =    Normalize Path    ${path}
