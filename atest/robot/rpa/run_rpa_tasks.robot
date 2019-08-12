@@ -40,7 +40,8 @@ Conflicting headers with --norpa are fine
 Conflicting headers in same file cause error
     [Documentation]    Using --rpa or --norpa doesn't affect the behavior.
     [Template]    NONE
-    Run tests without processing output    --rpa    %{TEMPDIR}/rpa/tasks_and_tests.robot
+    ${result}=    Run tests without processing output    --rpa    %{TEMPDIR}/rpa/tasks_and_tests.robot
+    Should be equal    ${result.rc}    ${252}
     ${path} =    Normalize path    %{TEMPDIR}/rpa/tasks_and_tests.robot
     ${message} =    Catenate
     ...    [ ERROR ] Parsing '${path}' failed:
@@ -49,10 +50,13 @@ Conflicting headers in same file cause error
 
 Conflicting headers in same file cause error when executing directory
     [Template]    NONE
-    Run tests    ${EMPTY}    %{TEMPDIR}/rpa/
-    Should contain tests    ${SUITE}    Task
+    ${result}=    Run tests without processing output   ${EMPTY}    %{TEMPDIR}/rpa/
+    Should be equal    ${result.rc}    ${252}
     ${path} =    Normalize path    %{TEMPDIR}/rpa/tasks_and_tests.robot
-    Check log message    ${ERRORS[0]}    Parsing '${path}' failed: One file cannot have both tests and tasks.    ERROR
+    ${message} =    Catenate
+        ...    [ ERROR ] Parsing '${path}' failed:
+        ...    One file cannot have both tests and tasks.
+    Stderr Should Be Equal To    ${message}${USAGE TIP}\n
 
 --task as alias for --test
     --task task                            rpa/tasks    Task
@@ -82,8 +86,8 @@ Run and validate conflict
     Run tests without processing output    ${EMPTY}    ${paths}
     ${conflicting} =    Normalize path    ${DATADIR}/${conflicting}
     ${message} =    Catenate
-    ...    [ ERROR ] Conflicting execution modes.
-    ...    File '${conflicting}' has ${this} but files parsed earlier have ${that}.
+    ...    [ ERROR ] Parsing '${conflicting}' failed: Conflicting execution modes.
+    ...    File has ${this} but files parsed earlier have ${that}.
     ...    Fix headers or use '--rpa' or '--norpa' options to set the execution mode explicitly.
     Stderr Should Be Equal To    ${message}${USAGE TIP}\n
 
