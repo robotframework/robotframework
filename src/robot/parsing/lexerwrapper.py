@@ -20,6 +20,9 @@ from robot.output import LOGGER
 from robot.utils import Utf8Reader, get_error_message
 
 
+PROCESS_CURDIR = True
+
+
 class LexerWrapper(object):
 
     def __init__(self, lexer, source):
@@ -42,7 +45,7 @@ class LexerWrapper(object):
         if token and token.type == token.ERROR:
             self._report_error(token)
             return self._next_token_after_eos()
-        if token and '${CURDIR}' in token.value:
+        if token and '${CURDIR}' in token.value and PROCESS_CURDIR:
             token.value = token.value.replace('${CURDIR}', self.curdir)
         return token
 
