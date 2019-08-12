@@ -54,6 +54,7 @@ from robot.errors import DataError
 from .lexer import TestCaseFileLexer, ResourceFileLexer
 from .nodes import TestCaseSection
 from .parser import RobotFrameworkParser
+from . import lexerwrapper
 
 
 # TODO: remove/inline
@@ -74,12 +75,10 @@ def get_resource_file_ast(source):
 def disable_curdir_processing(method):
     """Decorator to disable processing `${CURDIR}` variable."""
     def decorated(*args, **kwargs):
-        pass
-        # FIXME
-        # original = populators.PROCESS_CURDIR
-        # populators.PROCESS_CURDIR = False
-        # try:
-        #     return method(*args, **kwargs)
-        # finally:
-        #     populators.PROCESS_CURDIR = original
-    return method
+        original = lexerwrapper.PROCESS_CURDIR
+        lexerwrapper.PROCESS_CURDIR = False
+        try:
+            return method(*args, **kwargs)
+        finally:
+            lexerwrapper.PROCESS_CURDIR = original
+    return decorated
