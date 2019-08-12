@@ -12,10 +12,10 @@ Metadata
     NAME    Value
 
 Metadata In Multiple Columns
-    Multiple columns          Value in multiple columns
+    Multiple columns          Value in\nmultiple\ncolumns
 
 Metadata In Multiple Lines
-    Multiple lines            Metadata in multiple lines\nis parsed using\nsame semantics as documentation.
+    Multiple lines            Metadata in multiple lines\nis parsed using\nsame semantics\nas\ndocumentation.
 
 Metadata With Variables
     Variables                 Version: 1.2

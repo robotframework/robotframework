@@ -13,26 +13,18 @@ Names are not formatted
     ${tc} =    Check Test Case    test_case names are NOT _forMatted_
     Should Be Equal    ${tc.name}    test_case names are NOT _forMatted_
 
-'...' as name is deprecated
-    Check Test Case    ...
-    Verify Error    0
-    ...    Invalid syntax in test case '...':
-    ...    Using '...' as test case name is deprecated.
-    ...    It will be considered line continuation in Robot Framework 3.2.
-    ...    level=WARN
-
 Documentation
     Verify Documentation    Documentation in single line and column.
 
 Documentation in multiple columns
-    Verify Documentation    Documentation for this test case in multiple columns
+    Verify Documentation    Documentation\nfor this test case\nin multiple columns
 
 Documentation in multiple rows
     Verify Documentation    1st logical line
     ...    is shortdoc.
     ...    ${EMPTY}
     ...    This documentation has multiple rows
-    ...    and also multiple columns.
+    ...    and also\nmultiple columns.
 
 Documentation with variables
     Verify Documentation    Variables work in documentation since Robot 1.2.
@@ -119,13 +111,8 @@ Timeout
     Verify Timeout    1 day
 
 Timeout with message
-    Verify Timeout    2 minutes 3 seconds 456 milliseconds
-    Verify Error    1
-    ...    Invalid syntax in test case 'Timeout with message':
-    ...    Using custom timeout messages is deprecated since
-    ...    Robot Framework 3.0.1 and will be removed in future versions.
-    ...    Message that was used is 'Message'.
-    ...    level=WARN
+    Verify Timeout    1 minute 39 seconds 999 milliseconds
+    Verify Error    0    Setting 'Timeout' accepts only one value, got 2.
 
 Default timeout
     Verify Timeout    1 minute 39 seconds 999 milliseconds
@@ -149,18 +136,10 @@ Multiple settings
     Verify Teardown         Test case teardown
     Verify Timeout          12 seconds 345 milliseconds
 
-Deprecated setting format
-    Check Test Case    Invalid setting
-    Verify Error    2
-    ...    Invalid syntax in test case 'Invalid setting':
-    ...    Setting 'Doc U Ment ation' is deprecated. Use 'Documentation' instead.
-    ...    level=WARN
-
 Invalid setting
     Check Test Case    ${TEST NAME}
-    Verify Error    3
-    ...    Invalid syntax in test case '${TEST NAME}':
-    ...    Non-existing setting 'Invalid'.
+    Verify Error    1    Non-existing setting 'Doc U Ment ation'.
+    Verify Error    2    Non-existing setting 'Invalid'.
 
 *** Keywords ***
 Verify Documentation

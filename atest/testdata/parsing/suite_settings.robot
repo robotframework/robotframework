@@ -12,7 +12,7 @@ Documentation    ${1}st logical line
 ...  Escaping (e.g. '\${non-existing}', 'c:\\temp', '\\n') works too.
 
 Default Tags      \    default  # Empty tags should be ignored
-For CET ag S      f1    # This format deprecated since RF 3.1
+Force Tags        f1
 ...    F2
 Test Setup        Log    Default test setup
 Test Teardown     Log    Default test teardown  INFO
