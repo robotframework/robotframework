@@ -1,6 +1,6 @@
 *** Settings ***
 Resource          formats_resource.robot
-Suite Setup       Run tests    ${EMPTY}    ${MIXEDDIR}
+Suite Setup       Run tests    -F txt:tsv    ${MIXEDDIR}
 
 *** Variables ***
 @{TSV TESTS}      TSV Passing     TSV Failing    TXT Resource

@@ -11,7 +11,7 @@ ReST With reST Resource
     Check Test Case    Resource File
 
 ReST Directory
-    Run Suite Dir And Check Results    ${EMPTY}    ${RESTDIR}
+    Run Suite Dir And Check Results    -F rst:rest    ${RESTDIR}
 
 Directory With reST Init
     Previous Run Should Have Been Successful

@@ -13,10 +13,9 @@ One extension
 Multiple extensions
     -F robot:txt:.ROBOT    44
 
-Invalid extension
-    [Template]    NONE
-    Run Tests Without Processing Output    --extension invalid    ${DATA FORMATS}
-    Stderr Should Be Equal To    [ ERROR ] Invalid extension to limit parsing 'invalid'.${USAGE TIP}\n
+Any extension is accepted
+    --extension bar        1
+    --extension FoO:bar    2
 
 *** Keywords ***
 Expected number of tests should be run
