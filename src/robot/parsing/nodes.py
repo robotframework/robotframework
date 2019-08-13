@@ -109,7 +109,7 @@ class ForLoop(Node):
 
     def __init__(self, variables, flavor, values, body=None):
         self.variables = variables
-        self.flavor = flavor
+        self.flavor = normalize_whitespace(flavor)
         self.values = values
         self.body = body or []
 
