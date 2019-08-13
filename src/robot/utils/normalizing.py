@@ -17,6 +17,7 @@ try:
     from collections.abc import MutableMapping
 except ImportError:
     from collections import MutableMapping
+import re
 
 from .platform import IRONPYTHON, PY_VERSION, PY3
 from .robottypes import is_dict_like, is_unicode
@@ -43,6 +44,10 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
             if ign in string:
                 string = string.replace(ign, empty)
     return string
+
+
+def normalize_whitespace(string):
+    return re.sub(r'\s', ' ', string, flags=re.UNICODE)
 
 
 # http://ironpython.codeplex.com/workitem/33133

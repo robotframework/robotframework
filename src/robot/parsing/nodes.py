@@ -16,6 +16,8 @@
 from ast import AST
 import re
 
+from robot.utils import normalize_whitespace
+
 
 class Node(AST):
     _fields = ()
@@ -27,8 +29,8 @@ class Node(AST):
                 yield self._joiner_based_on_eol_escapes(item)
 
     def _joiner_based_on_eol_escapes(self, item):
-        _end_of_line_escapes = re.compile(r'(\\+)n?$')
-        match = _end_of_line_escapes.search(item)
+        eol_escapes = re.compile(r'(\\+)n?$')
+        match = eol_escapes.search(item)
         if match and len(match.group(1)) % 2 == 1:
             return ''
         return '\n'
@@ -74,7 +76,7 @@ class TestCaseSection(Node):
 
     def __init__(self, tests, header):
         self.tests = tests
-        self.header = header[0].strip("*").strip()
+        self.header = header[0].strip('*').strip()
 
 
 class KeywordSection(Node):
@@ -151,7 +153,7 @@ class LibrarySetting(ImportSetting):
         self.alias = alias
 
     def _split_alias(self, args):
-        if len(args) > 1 and args[-2] == 'WITH NAME':
+        if len(args) > 1 and normalize_whitespace(args[-2]) == 'WITH NAME':
             return args[:-2], args[-1]
         return args, None
 

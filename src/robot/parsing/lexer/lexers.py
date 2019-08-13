@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from robot.variables import is_var
+from robot.utils import normalize_whitespace
 
 from .tokens import Token
 
@@ -107,10 +108,13 @@ class SectionLexer(BlockLexer):
 
     @classmethod
     def handles(cls, statement):
-        # TODO: Non-ASCII spaces
         marker = statement[0].value
         return (marker.startswith('*') and
-                marker.strip('* ').title() in cls.markers)
+                cls._normalize(marker) in cls.markers)
+
+    @classmethod
+    def _normalize(cls, marker):
+        return normalize_whitespace(marker).strip('* ').title()
 
     def accepts_more(self, statement):
         return not statement[0].value.startswith('*')
@@ -218,7 +222,6 @@ class VariableLexer(StatementLexer):
 
 
 class TestCaseSectionLexer(SectionLexer):
-    # FIXME: Non-ASCII spaces
     markers = ('Test Case', 'Test Cases', 'Task', 'Tasks')
 
     def lexer_classes(self):
@@ -302,6 +305,7 @@ class TestOrKeywordSettingLexer(SettingLexer):
 
 
 class ForLoopLexer(StatementLexer):
+    _separators = ('IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP')
 
     @classmethod
     def handles(cls, statement):
@@ -310,7 +314,7 @@ class ForLoopLexer(StatementLexer):
                 marker.startswith(':') and
                 marker.replace(':', '').replace(' ', '').upper() == 'FOR')
 
-    def lex(self, ctc):
+    def lex(self, ctx):
         separator_seen = False
         arguments_seen = False
         self.statement[0].type = Token.FOR
@@ -325,8 +329,7 @@ class ForLoopLexer(StatementLexer):
     def _is_separator(self, value, arguments_seen, separator_seen):
         if separator_seen or not arguments_seen:
             return False
-        # FIXME: Non-ASCII spaces
-        return value in ('IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP')
+        return normalize_whitespace(value) in self._separators
 
 
 class EndLexer(StatementLexer):
