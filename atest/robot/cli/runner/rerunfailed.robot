@@ -35,10 +35,10 @@ Suite teardown failures are noticed
 *** Keywords ***
 Suite initialization
     Copy Directory    ${ORIG DIR}/suite    ${SUITE DIR}
-    Copy File    ${ORIG DIR}/runfailed1.robot    ${SUITE DIR}/runfailed.txt
+    Copy File    ${ORIG DIR}/runfailed1.robot    ${SUITE DIR}/runfailed.robot
     Run Tests    ${EMPTY}    ${SUITE DIR}
     Copy File    ${OUTFILE}    ${RUN FAILED FROM}
-    Copy File    ${ORIG DIR}/runfailed2.robot    ${SUITE DIR}/runfailed.txt
+    Copy File    ${ORIG DIR}/runfailed2.robot    ${SUITE DIR}/runfailed.robot
     Run Tests    --rerunfailed ${RUN FAILED FROM} --test Selected --exclude excluded_tag    ${SUITE DIR}
 
 Test Should Have Been Executed

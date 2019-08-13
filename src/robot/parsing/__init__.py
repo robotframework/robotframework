@@ -57,10 +57,6 @@ from .parser import RobotFrameworkParser
 from . import lexerwrapper
 
 
-# TODO: remove/inline
-TEST_EXTENSIONS = {"robot", "txt", "tsv", "rest", "rst"}
-
-
 def get_test_case_file_ast(source):
     return RobotFrameworkParser(TestCaseFileLexer()).parse(source)
 

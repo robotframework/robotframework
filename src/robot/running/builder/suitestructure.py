@@ -18,7 +18,6 @@ import os.path
 from robot.errors import DataError
 from robot.model import SuiteNamePatterns
 from robot.output import LOGGER
-from robot.parsing import TEST_EXTENSIONS
 from robot.utils import abspath, unic
 
 
@@ -46,15 +45,12 @@ class SuiteStructureBuilder(object):
 
     def __init__(self, include_suites, include_extensions):
         self.include_suites = include_suites
-        self.include_extensions = self._get_extensions(include_extensions)
+        self.accepted_extensions = self._get_extensions(include_extensions)
 
     def _get_extensions(self, extension):
         if not extension:
-            return None
-        extensions = set(ext.lower().lstrip('.') for ext in extension.split(':'))
-        if not all(ext in TEST_EXTENSIONS for ext in extensions):
-            raise DataError("Invalid extension to limit parsing '%s'." % extension)
-        return extensions
+            return {'robot'}
+        return {ext.lower().lstrip('.') for ext in extension.split(':')}
 
     def build(self, paths):
         paths = self._validate_paths(paths)
@@ -107,7 +103,8 @@ class SuiteStructureBuilder(object):
                 if not init_file:
                     init_file = path
                 else:
-                    LOGGER.error("Ignoring second test suite init file '%s'." % path)
+                    LOGGER.error("Ignoring second test suite init file '%s'."
+                                 % path)
             else:
                 paths.append(path)
         return init_file, paths
@@ -129,21 +126,16 @@ class SuiteStructureBuilder(object):
                 LOGGER.info("Ignoring file or directory '%s'." % path)
 
     def _is_init_file(self, path, base, ext):
-        return (base.lower() == '__init__' and
-                self._extension_is_accepted(ext) and
-                os.path.isfile(path))
-
-    def _extension_is_accepted(self, ext):
-        if self.include_extensions:
-            return ext in self.include_extensions
-        return ext in TEST_EXTENSIONS
+        return (base.lower() == '__init__'
+                and ext in self.accepted_extensions
+                and os.path.isfile(path))
 
     def _is_included(self, path, base, ext, incl_suites):
         if base.startswith(self.ignored_prefixes):
             return False
         if os.path.isdir(path):
             return base not in self.ignored_dirs or ext
-        if not self._extension_is_accepted(ext):
+        if ext not in self.accepted_extensions:
             return False
         return self._is_in_included_suites(base, incl_suites)
 
