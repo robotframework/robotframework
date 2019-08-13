@@ -3,6 +3,7 @@ Resource          data_formats/formats_resource.robot
 
 *** Variables ***
 ${PARSING}            ${DATADIR}/parsing
+${SUITE DIR}          %{TEMPDIR}/tmp
 
 *** Test Cases ***
 Directory Containing No Test Cases
@@ -53,6 +54,23 @@ Multisource Containing File With Invalid Encoding
     ...    UnicodeDecodeError: .*
     ...    ${PARSING}/invalid_encoding/invalid_encoding.robot
 
+File without read permission
+    [Setup]    Create test data without permissions    ${SUITE DIR}/sample.robot
+    Run tests and check parsing error
+    ...    ${SUITE DIR}/sample.robot
+    ...    (IOError|PermissionError): .*
+    ...    ${SUITE DIR}/sample.robot
+    [Teardown]    Remove test data without permissions    ${SUITE DIR}/sample.robot
+
+Directory without read permission
+    [Setup]    Create test data without permissions    ${SUITE DIR}
+    Run tests and check parsing error
+    ...    ${SUITE DIR}
+    ...    (OSError|PermissionError): .*
+    ...    ${SUITE DIR}
+    ...    Reading directory
+    [Teardown]    Remove test data without permissions    ${SUITE DIR}
+
 *** Keywords ***
 Run tests and check error
     [Arguments]    ${paths}   ${error}
@@ -61,6 +79,17 @@ Run tests and check error
     Check Stderr Matches Regexp    \\[ ERROR \\] ${error}${USAGE_TIP}
 
 Run tests and check parsing error
-    [Arguments]    ${paths}    ${error}    ${file}
-    ${file}=   Normalize path    ${file}
-    Run tests and check error    ${paths}    Parsing '${file}' failed: ${error}
+    [Arguments]    ${paths}    ${error}    ${path}    ${prefix}=Parsing
+    ${path}=   Normalize path    ${path}
+    Run tests and check error    ${paths}    ${prefix} '${path}' failed: ${error}
+
+Create test data without permissions
+    [Arguments]    ${remove permissions}
+    Create directory    ${SUITE DIR}
+    Copy file   ${ROBOTDIR}/sample.robot   ${SUITE DIR}
+    Remove permissions    ${remove permissions}
+
+Remove test data without permissions
+    [Arguments]    ${remove permissions}
+    Set read write execute      ${remove permissions}
+    Remove directory    ${SUITE DIR}    recursive=True
