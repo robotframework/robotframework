@@ -6,7 +6,7 @@ ${FORMATS DIR}     ${DATA DIR}/parsing/data_formats
 ${TSV DIR}         ${FORMATS DIR}/tsv
 ${TXT DIR}         ${FORMATS DIR}/txt
 ${ROBOT DIR}       ${FORMATS DIR}/robot
-${REST DIR}        ${FORMATS DIR}/rest_directives
+${REST DIR}        ${FORMATS DIR}/rest
 ${MIXED DIR}       ${FORMATS DIR}/mixed_data
 ${RESOURCE DIR}    ${FORMATS DIR}/resources
 @{SAMPLE TESTS}    Passing    Failing    User Keyword    Nön-äscïï    Own Tags    Default Tags    Variable Table
@@ -63,13 +63,3 @@ Check Suite With Init
     Should Be Equal    ${suite.teardown}    ${None}
     Should Contain Suites    ${suite}    Sub Suite1    Sub Suite2
     Should Contain Tests    ${suite}    @{SUBSUITE_TESTS}
-
-*** Keywords ***
-Check Automatic Parsing Deprecated Message
-    [Arguments]    ${index}    ${path}
-    ${path} =    Normalize Path    ${path}
-    ${msg} =    Catenate
-    ...    Automatically parsing other than '*.robot' files is deprecated.
-    ...    Convert '${path}' to '*.robot' format or use '--extension' to
-    ...    explicitly configure which files to parse.
-    Check Log Message    @{ERRORS}[${index}]    ${msg}    WARN

@@ -19,6 +19,8 @@ from robot.errors import DataError
 from robot.output import LOGGER
 from robot.utils import Utf8Reader, get_error_message
 
+from .restreader import read_rest
+
 
 PROCESS_CURDIR = True
 
@@ -35,7 +37,10 @@ class LexerWrapper(object):
         try:
             # IronPython handles BOM incorrectly if not using binary mode:
             # https://ironpython.codeplex.com/workitem/34655
-            return Utf8Reader(open(path, 'rb')).read()
+            with open(path, 'rb') as data:
+                if os.path.splitext(path)[1].lower() in ('.rest', '.rst'):
+                    return read_rest(data)
+                return Utf8Reader(data).read()
         except:
             raise DataError(get_error_message())
 
