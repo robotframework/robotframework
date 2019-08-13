@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import normalize_whitespace
+
 from .tokens import Token
 
 
@@ -51,7 +53,7 @@ class Settings(object):
                              % (name, len(statement) - 1))
 
     def _normalize_name(self, name):
-        upper = name.upper()  # TODO: Non-ASCII spaces
+        upper = normalize_whitespace(name).upper()
         if upper in self.aliases:
             return self.aliases[upper]
         return upper
@@ -61,7 +63,6 @@ class Settings(object):
 
 
 class TestCaseFileSettings(Settings):
-    # FIXME: Non-ASCII spaces
     names = (
         'DOCUMENTATION',
         'SUITE SETUP',
