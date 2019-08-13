@@ -16,7 +16,7 @@
 from robot.errors import DataError
 
 try:
-    from docutils.core import publish_doctree, publish_from_doctree
+    from docutils.core import publish_doctree
     from docutils.parsers.rst.directives import register_directive
     from docutils.parsers.rst.directives.body import CodeBlock
 except ImportError:

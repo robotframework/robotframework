@@ -1,4 +1,4 @@
-.. include:: ../rest/empty.rest
+.. include:: empty.rest
 .. include:: include.rst
 
 ReST Test Data Example
