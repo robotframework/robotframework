@@ -123,13 +123,16 @@ class TxtFormatter(_DataFileFormatter):
     def _escape(self, row):
         if not row:
             return row
-        return self._escape_cells(self._escape_consecutive_whitespace(row))
+        return list(self._escape_cells(self._escape_consecutive_whitespace(row)))
 
     def _escape_cells(self, row):
-        return [row[0]] + [self._escape_empty(cell) for cell in row[1:]]
-
-    def _escape_empty(self, cell):
-        return cell or '\\'
+        escape = False
+        for cell in row:
+            if cell:
+                escape = True
+            elif escape:
+                cell = '\\'
+            yield cell
 
 
 class PipeFormatter(TxtFormatter):

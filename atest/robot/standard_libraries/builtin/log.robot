@@ -51,35 +51,80 @@ Log also to console
     Check Stdout Contains    Hello, console!\n
     Check Stdout Contains    ${HTML}\n
 
-Log repr
+repr=True
+    [Documentation]    In RF 3.1.2 `formatter=repr` and `repr=True` yield same
+    ...                results and thus these tests are identical.
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    'Nothing special here'
-    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}    'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'    'Hyv\xe4\xe4 y\xf6t\xe4 \u2603!'
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
+    ...    'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
+    ...    'Hyvää yötä ☃!'
     Check Log Message    ${tc.kws[1].msgs[0]}    ${expected}
     Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
-    Check Log Message    ${tc.kws[4].msgs[0]}    b'\\x00\\xff'
-    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}    ['Hyv\\xe4', '\\u2603', 42, b'\\x00\\xff']    ['Hyv\xe4', '\u2603', 42, b'\\x00\\xff']
-    Check Log Message    ${tc.kws[6].msgs[0]}    ${expected}
-    ${expected} =    Set Variable If    ${INTERPRETER.is_py2} or not ${INTERPRETER.is_windows}    ${expected}    ['Hyv\xe4', '?', 42, b'\\x00\\xff']
-    Check Stdout Contains    ${expected}
-
-Log pprint
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}'a longer string!',\n${SPACE * 10}'a much, much, much, much, much, much longer string']}
-    Check Stdout Contains    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}'a longer string!',\n${SPACE * 10}'a much, much, much, much, much, much longer string']}
-    Check Log Message    ${tc.kws[3].msgs[0]}    [b'One', 'Two', 3]
-    Check Stdout Contains    [b'One', 'Two', 3]
-    Check Log Message    ${tc.kws[5].msgs[0]}    [b'a long string',\n${SPACE}'a longer string!',\n${SPACE}'a much, much, much, much, much, much longer string']
-    Check Stdout Contains    [b'a long string',\n${SPACE}'a longer string!',\n${SPACE}'a much, much, much, much, much, much longer string']
-    Check Log Message    ${tc.kws[7].msgs[0]}    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}'a longer string!',\n${SPACE * 10}'a much, much, much, much, much, much longer string']}
-    Check Log Message    ${tc.kws[9].msgs[0]}    ['One', b'Two', 3]
+    Check Log Message    ${tc.kws[4].msgs[0]}    b'\\x00abc\\xff (repr=True)'
     ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
-    ...    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
-    ...    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\xe4\xe4 y\xf6t\xe4 \u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
+    ...    'hyva\\u0308'
+    ...    'hyvä'
+    Check Log Message    ${tc.kws[6].msgs[0]}    ${expected}
+    Check Stdout Contains    b'\\x00abc\\xff (repr=True)'
+
+formatter=repr
+    [Documentation]    In RF 3.1.2 `formatter=repr` and `repr=True` yield same
+    ...                results and thus these tests are identical.
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    'Nothing special here'
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
+    ...    'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
+    ...    'Hyvää yötä ☃!'
+    Check Log Message    ${tc.kws[1].msgs[0]}    ${expected}
+    Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
+    Check Log Message    ${tc.kws[4].msgs[0]}    b'\\x00abc\\xff (formatter=repr)'
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
+    ...    'hyva\\u0308'
+    ...    'hyvä'
+    Check Log Message    ${tc.kws[6].msgs[0]}    ${expected}
+    Check Stdout Contains    b'\\x00abc\\xff (formatter=repr)'
+
+formatter=ascii
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${u} =     Set Variable If    ${INTERPRETER.is_py2}    u    ${EMPTY}
+    ${u2} =    Set Variable If    ${INTERPRETER.is_py2} and not ${INTERPRETER.is_ironpython}    u    ${EMPTY}
+    ${b} =     Set Variable If    ${INTERPRETER.is_py2} and not ${INTERPRETER.is_ironpython}    ${EMPTY}    b
+    Check Log Message    ${tc.kws[0].msgs[0]}    ${u2}'Nothing special here'
+    Check Log Message    ${tc.kws[1].msgs[0]}    ${u}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
+    Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
+    Check Log Message    ${tc.kws[4].msgs[0]}    ${b}'\\x00abc\\xff (formatter=ascii)'
+    Check Log Message    ${tc.kws[6].msgs[0]}    ${u}'hyva\\u0308'
+    Check Stdout Contains    ${b}'\\x00abc\\xff (formatter=ascii)'
+
+formatter=str
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Nothing special here
+    Check Log Message    ${tc.kws[1].msgs[0]}    Hyvää yötä ☃!
+    Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
+    Check Log Message    ${tc.kws[4].msgs[0]}    abc\\xff (formatter=str)
+    Check Log Message    ${tc.kws[6].msgs[0]}    hyvä
+    Check Stdout Contains    abc\\xff (formatter=str)
+
+formatter=repr pretty prints
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${long string} =    Evaluate    ' '.join(['Robot Framework'] * 1000)
+    ${small dict} =    Set Variable    {3: b'items', 'a': 'sorted', 'small': 'dict'}
+    ${small list} =    Set Variable    ['small', b'list', 'not sorted', 4]
+    Check Log Message    ${tc.kws[1].msgs[0]}    '${long string}'
+    Check Log Message    ${tc.kws[3].msgs[0]}    ${small dict}
+    Check Log Message    ${tc.kws[5].msgs[0]}    {'big': 'dict',\n\ 'list': [1, 2, 3],\n\ 'long': '${long string}',\n\ 'nested': ${small dict}}
+    Check Log Message    ${tc.kws[7].msgs[0]}    ${small list}
+    Check Log Message    ${tc.kws[9].msgs[0]}    ['big',\n\ 'list',\n\ '${long string}',\n\ b'${long string}',\n\ ['nested', ('tuple', 2)],\n\ ${small dict}]
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
+    ...    ['hyv\\xe4', b'hyv\\xe4', {'\\u2603': b'\\x00\\xff'}]
+    ...    ['hyvä', b'hyv\\xe4', {'☃': b'\\x00\\xff'}]
     Check Log Message    ${tc.kws[11].msgs[0]}    ${expected}
-    ${expected} =    Set Variable If    ${INTERPRETER.is_py2} or not ${INTERPRETER.is_windows}    ${expected}
-    ...    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\xe4\xe4 y\xf6t\xe4 ?!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
-    Check Stdout Contains    ${expected}
+    Check Stdout Contains    ${small dict}
+    Check Stdout Contains    ${small list}
+
+formatter=invalid
+    Check Test Case    ${TEST NAME}
 
 Log callable
     ${tc} =    Check Test Case    ${TEST NAME}

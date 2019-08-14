@@ -8,5 +8,6 @@ A very long named test case
                       My step 1          This is arg
                       My step 2          This also is arg
 
-Test with for         : FOR              ${i}                                                 IN RANGE            100
-                      \                  Log                                                  ${i}
+Test with for         FOR                ${i}                                                 IN RANGE            100
+                                         Log                                                  ${i}
+                      END

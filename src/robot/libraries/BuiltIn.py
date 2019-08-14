@@ -30,7 +30,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          get_error_message, get_time, html_escape, is_falsy, is_integer,
                          is_string, is_truthy, is_unicode, IRONPYTHON, JYTHON,
                          Matcher, normalize, NormalizedDict, parse_time, prepr,
-                         RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
+                         plural_or_not as s, PY3, RERAISED_EXCEPTIONS, roundup,
                          secs_to_timestr, seq2str, split_from_equals, StringIO,
                          timestr_to_secs, type_name, unic, is_list_like)
 from robot.utils.asserts import assert_equal, assert_not_equal
@@ -302,8 +302,8 @@ class _Converter(_BuiltInBase):
     def convert_to_string(self, item):
         """Converts the given item to a Unicode string.
 
-        Uses ``__unicode__`` or ``__str__`` method with Python objects and
-        ``toString`` with Java objects.
+        Strings are also [http://www.macchiato.com/unicode/nfc-faq|
+        NFC normalized].
 
         Use `Encode String To Bytes` and `Decode Bytes To String` keywords
         in ``String`` library if you need to convert between Unicode and byte
@@ -452,12 +452,15 @@ class _Converter(_BuiltInBase):
 
         Alternatively items can be specified so that keys and values are given
         separately. This and the ``key=value`` syntax can even be combined,
-        but separately given items must be first.
+        but separately given items must be first. If same key is used multiple
+        times, the last value has precedence.
 
-        If same key is used multiple times, the last value has precedence.
         The returned dictionary is ordered, and values with strings as keys
         can also be accessed using a convenient dot-access syntax like
-        ``${dict.key}``.
+        ``${dict.key}``. Technically the returned dictionary is Robot
+        Framework's own ``DotDict`` instance. If there is a need, it can be
+        converted into a regular Python ``dict`` instance by using the
+        `Convert To Dictionary` keyword from the Collections library.
 
         Examples:
         | &{dict} = | Create Dictionary | key=value | foo=bar | | | # key=value syntax |
@@ -469,9 +472,9 @@ class _Converter(_BuiltInBase):
         | Should Be Equal | ${dict.key} | value | | | | # dot-access |
 
         This keyword was changed in Robot Framework 2.9 in many ways:
-        - Moved from ``Collections`` library to ``BuiltIn``.
+        - Moved from the Collections library to BuiltIn.
         - Support also non-string keys in ``key=value`` syntax.
-        - Returned dictionary is ordered and dot-accessible.
+        - Returned dictionary is ordered and dot-accessible (i.e. ``DotDict``).
         - Old syntax to give keys and values separately was deprecated, but
           deprecation was later removed in RF 3.0.1.
         """
@@ -598,61 +601,68 @@ class _Verify(_BuiltInBase):
             raise AssertionError(msg or "'%s' should be true." % condition)
 
     def should_be_equal(self, first, second, msg=None, values=True,
-                        ignore_case=False):
+                        ignore_case=False, formatter='str'):
         """Fails if the given objects are unequal.
 
-        Optional ``msg`` and ``values`` arguments specify how to construct
-        the error message if this keyword fails:
+        Optional ``msg``, ``values`` and ``formatter`` arguments specify how
+        to construct the error message if this keyword fails:
 
         - If ``msg`` is not given, the error message is ``<first> != <second>``.
         - If ``msg`` is given and ``values`` gets a true value (default),
           the error message is ``<msg>: <first> != <second>``.
-        - If ``msg`` is given and ``values`` gets a false value, the error
-          message is simply ``<msg>``. See `Boolean arguments` for more details
-          about using false values.
+        - If ``msg`` is given and ``values`` gets a false value (see
+          `Boolean arguments`), the error message is simply ``<msg>``.
+        - ``formatter`` controls how to format the values. Possible values are
+          ``str`` (default), ``repr`` and ``ascii``, and they work similarly
+          as Python built-in functions with same names. See `String
+          representations` for more details.
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
-        arguments are strings, it indicates that comparison should be
-        case-insensitive. New option in Robot Framework 3.0.1.
-
-        If both arguments are multiline strings, the comparison is done using
-        `multiline string comparisons`.
+        both arguments are strings, comparison is done case-insensitively.
+        If both arguments are multiline strings, this keyword uses
+        `multiline string comparison`.
 
         Examples:
         | Should Be Equal | ${x} | expected |
         | Should Be Equal | ${x} | expected | Custom error message |
         | Should Be Equal | ${x} | expected | Custom message | values=False |
-        | Should Be Equal | ${x} | expected | ignore_case=True |
+        | Should Be Equal | ${x} | expected | ignore_case=True | formatter=repr |
+
+        ``ignore_case`` and ``formatter`` are new features in Robot Framework
+        3.0.1 and 3.1.2, respectively.
         """
         self._log_types_at_info_if_different(first, second)
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
             first = first.lower()
             second = second.lower()
-        self._should_be_equal(first, second, msg, values)
+        self._should_be_equal(first, second, msg, values, formatter)
 
-    def _should_be_equal(self, first, second, msg, values):
+    def _should_be_equal(self, first, second, msg, values, formatter='str'):
+        include_values = self._include_values(values)
+        formatter = self._get_formatter(formatter)
         if first == second:
             return
-        include_values = self._include_values(values)
         if include_values and is_string(first) and is_string(second):
-            self._raise_multi_diff(first, second)
-        assert_equal(first, second, msg, include_values)
+            self._raise_multi_diff(first, second, formatter)
+        assert_equal(first, second, msg, include_values, formatter)
 
     def _log_types_at_info_if_different(self, first, second):
         level = 'DEBUG' if type(first) == type(second) else 'INFO'
         self._log_types_at_level(level, first, second)
 
-    def _raise_multi_diff(self, first, second):
-        first_lines, second_lines = first.splitlines(), second.splitlines()
+    def _raise_multi_diff(self, first, second, formatter):
+        first_lines = first.splitlines(True)      # keepends
+        second_lines = second.splitlines(True)
         if len(first_lines) < 3 or len(second_lines) < 3:
             return
-        self.log("%s\n!=\n%s" % (first, second))
-        err = 'Multiline strings are different:\n'
-        for line in difflib.unified_diff(first_lines, second_lines,
-                                         fromfile='first', tofile='second',
-                                         lineterm=''):
-            err += line + '\n'
-        raise AssertionError(err)
+        self.log("%s\n\n!=\n\n%s" % (first.rstrip(), second.rstrip()))
+        diffs = list(difflib.unified_diff(first_lines, second_lines,
+                                          fromfile='first', tofile='second',
+                                          lineterm=''))
+        diffs[3:] = [item[0] + formatter(item[1:]).rstrip()
+                     for item in diffs[3:]]
+        raise AssertionError('Multiline strings are different:\n' +
+                             '\n'.join(diffs))
 
     def _include_values(self, values):
         return is_truthy(values) and str(values).upper() != 'NO VALUES'
@@ -665,8 +675,8 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``.
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
-        both arguments are strings, it indicates that comparison should be
-        case-insensitive. New option in Robot Framework 3.0.1.
+        both arguments are strings, comparison is done case-insensitively.
+        New option in Robot Framework 3.0.1.
         """
         self._log_types_at_info_if_different(first, second)
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
@@ -773,12 +783,16 @@ class _Verify(_BuiltInBase):
                                        values=True, ignore_case=False):
         """Fails if objects are equal after converting them to strings.
 
-        If ``ignore_case`` is given a true value (see `Boolean arguments`), it
-        indicates that comparison should be case-insensitive. New option in
-        Robot Framework 3.0.1.
-
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
+
+        If ``ignore_case`` is given a true value (see `Boolean arguments`),
+        comparison is done case-insensitively.
+
+        Strings are always [http://www.macchiato.com/unicode/nfc-faq|
+        NFC normalized].
+
+        ``ignore_case`` is a new feature in Robot Framework 3.0.1.
         """
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
@@ -789,18 +803,21 @@ class _Verify(_BuiltInBase):
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True,
-                                   ignore_case=False):
+                                   ignore_case=False, formatter='str'):
         """Fails if objects are unequal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg`` and ``values``.
+        error message with ``msg``, ``values`` and ``formatter``.
 
-        If ``ignore_case`` is given a true value (see `Boolean arguments`), it
-        indicates that comparison should be case-insensitive. New option in
-        Robot Framework 3.0.1.
+        If ``ignore_case`` is given a true value (see `Boolean arguments`),
+        comparison is done case-insensitively. If both arguments are
+        multiline strings, this keyword uses `multiline string comparison`.
 
-        If both arguments are multiline strings, the comparison is done using
-        `multiline string comparisons`.
+        Strings are always [http://www.macchiato.com/unicode/nfc-faq|
+        NFC normalized].
+
+        ``ignore_case`` and ``formatter`` are new features in Robot Framework
+        3.0.1 and 3.1.2, respectively.
         """
         self._log_types_at_info_if_different(first, second)
         first = self._convert_to_string(first)
@@ -808,7 +825,7 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             first = first.lower()
             second = second.lower()
-        self._should_be_equal(first, second, msg, values)
+        self._should_be_equal(first, second, msg, values, formatter)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True,
                               ignore_case=False):
@@ -2549,7 +2566,8 @@ class _Misc(_BuiltInBase):
             sep = ' '
         return sep.join(items)
 
-    def log(self, message, level='INFO', html=False, console=False, repr=False):
+    def log(self, message, level='INFO', html=False, console=False,
+            repr=False, formatter='str'):
         u"""Logs the given message with the given level.
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.
@@ -2561,17 +2579,13 @@ class _Misc(_BuiltInBase):
         visible also in the console and in the Test Execution Errors section
         in the log file.
 
-        Logging can be configured using optional ``html``, ``console`` and
-        ``repr`` arguments. They are off by default, but can be enabled
-        by giving them a true value. See `Boolean arguments` section for more
-        information about true and false values.
-
-        If the ``html`` argument is given a true value, the message will be
-        considered HTML and special characters such as ``<`` in it are not
-        escaped. For example, logging ``<img src="image.png">`` creates an
-        image when ``html`` is true, but otherwise the message is that exact
-        string. An alternative to using the ``html`` argument is using the HTML
-        pseudo log level. It logs the message as HTML using the INFO level.
+        If the ``html`` argument is given a true value (see `Boolean
+        arguments`), the message will be considered HTML and special characters
+        such as ``<`` are not escaped. For example, logging
+        ``<img src="image.png">`` creates an image when ``html`` is true, but
+        otherwise the message is that exact string. An alternative to using
+        the ``html`` argument is using the HTML pseudo log level. It logs
+        the message as HTML using the INFO level.
 
         If the ``console`` argument is true, the message will be written to
         the console where test execution was started from in addition to
@@ -2579,13 +2593,18 @@ class _Misc(_BuiltInBase):
         and adds a newline after the written message. Use `Log To Console`
         instead if either of these is undesirable,
 
-        If the ``repr`` argument is true, the given item will be passed through
-        a custom version of Python's ``pprint.pformat()`` function before
-        logging it. This is useful, for example, when working with strings or
-        bytes containing invisible characters, or when working with nested data
-        structures. The custom version differs from the standard one so that it
-        omits the ``u`` prefix from Unicode strings and adds ``b`` prefix to
-        byte strings on Python 2.
+        The ``formatter`` argument controls how to format the string
+        representation of the message. Possible values are ``str`` (default),
+        ``repr`` and ``ascii``, and they work similarly to Python built-in
+        functions with same names. When using ``repr``, bigger lists,
+        dictionaries and other containers are also pretty-printed so that
+        there is one item per row. For more details see `String
+        representations`. This is a new feature in Robot Framework 3.1.2.
+
+        The old way to control string representation was using the ``repr``
+        argument, and ``repr=True`` is still equivalent to using
+        ``formatter=repr``. The ``repr`` argument will be deprecated in the
+        future, though, and using ``formatter`` is thus recommended.
 
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
@@ -2594,16 +2613,29 @@ class _Misc(_BuiltInBase):
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
         | Log | Hello, console!   | console=yes | | # Log also to the console. |
-        | Log | Hyv\xe4 \\x00     | repr=yes    | | # Log ``'Hyv\\xe4 \\x00'``. |
+        | Log | Null is \\x00  | formatter=repr | | # Log ``'Null is \\x00'``. |
 
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
         """
+        # TODO: Deprecate `repr` in RF 3.2 or latest in RF 3.3.
         if is_truthy(repr):
-            message = prepr(message, width=80)
+            formatter = prepr
+        else:
+            formatter = self._get_formatter(formatter)
+        message = formatter(message)
         logger.write(message, level, is_truthy(html))
         if is_truthy(console):
             logger.console(message)
+
+    def _get_formatter(self, formatter):
+        try:
+            return {'str': unic,
+                    'repr': prepr,
+                    'ascii': ascii if PY3 else repr}[formatter.lower()]
+        except KeyError:
+            raise ValueError("Invalid formatter '%s'. Available "
+                             "'str', 'repr' and 'ascii'." % formatter)
 
     @run_keyword_variant(resolve=0)
     def log_many(self, *messages):
@@ -3259,7 +3291,7 @@ class _Misc(_BuiltInBase):
 
 
 class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
-    """An always available standard library with often needed keywords.
+    u"""An always available standard library with often needed keywords.
 
     ``BuiltIn`` is Robot Framework's standard library that provides a set
     of generic keywords needed often. It is imported automatically and
@@ -3274,7 +3306,8 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     - `Evaluating expressions`
     - `Boolean arguments`
     - `Pattern matching`
-    - `Multiline string comparisons`
+    - `Multiline string comparison`
+    - `String representations`
     - `Shortcuts`
     - `Keywords`
 
@@ -3345,8 +3378,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     it is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or
     ``0``, case-insensitively. Keywords verifying something that allow dropping
     actual and expected values from the possible error message also consider
-    string ``no values`` to be false. Other strings are considered true
-    regardless their value, and other argument types are tested using the same
+    string ``no values`` to be false. Other strings are considered true unless
+    the keyword documentation explicitly states otherwise, and other argument
+    types are tested using the same
     [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
     True examples:
@@ -3404,7 +3438,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Strings that may contain special characters but should be handled
     as literal strings, can be escaped with the `Regexp Escape` keyword.
 
-    = Multiline string comparisons =
+    = Multiline string comparison =
 
     `Should Be Equal` and `Should Be Equal As Strings` report the failures using
     [http://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff
@@ -3429,6 +3463,85 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     |  Same
     | +Not in first
 
+    = String representations =
+
+    Several keywords log values explicitly (e.g. `Log`) or implicitly (e.g.
+    `Should Be Equal` when there are failures). By default keywords log values
+    using "human readable" string representation, which means that strings
+    like ``Hello`` and numbers like ``42`` are logged as-is. Most of the time
+    this is the desired behavior, but there are some problems as well:
+
+    - It is not possible to see difference between different objects that
+      have same string representation like string ``42`` and integer ``42``.
+      `Should Be Equal` and some other keywords add the type information to
+      the error message in these cases, though.
+
+    - Non-printable characters such as the null byte are not visible.
+
+    - Trailing whitespace is not visible.
+
+    - Different newlines (``\\r\\n`` on Windows, ``\\n`` elsewhere) cannot
+      be separated from each others.
+
+    - There are several Unicode characters that are different but look the
+      same. One example is the Latin ``\u0061`` (``\\u0061``) and the Cyrillic
+      ``\u0430`` (``\\u0430``). Error messages like ``\u0061 != \u0430`` are
+      not very helpful.
+
+    - Some Unicode characters can be represented using
+      [https://en.wikipedia.org/wiki/Unicode_equivalence|different forms].
+      For example, ``\xe4`` can be represented either as a single code point
+      ``\\u00e4`` or using two code points ``\\u0061`` and ``\\u0308`` combined
+      together. Such forms are considered canonically equivalent, but strings
+      containing them are not considered equal when compared in Python. Error
+      messages like ``\xe4 != \u0061\u0308`` are not that helpful either.
+
+    - Containers such as lists and dictionaries are formatted into a single
+      line making it hard to see individual items they contain.
+
+    To overcome the above problems, some keywords such as `Log` and
+    `Should Be Equal` have an optional ``formatter`` argument that can be
+    used to configure the string representation. The supported values are
+    ``str`` (default), ``repr``, and ``ascii`` that work similarly as
+    [https://docs.python.org/library/functions.html|Python built-in functions]
+    with same names. More detailed semantics are explained below.
+
+    The ``formatter`` argument is new in Robot Framework 3.1.2.
+
+    == str ==
+
+    Use the "human readable" string representation. Equivalent to using
+    ``str()`` in Python 3 and ``unicode()`` in Python 2. This is the default.
+
+    == repr ==
+
+    Use the "machine readable" string representation. Similar to using
+    ``repr()`` in Python, which means that strings like ``Hello`` are logged
+    like ``'Hello'``, newlines and non-printable characters are escaped like
+    ``\\n`` and ``\\x00``, and so on. Non-ASCII characters are shown as-is
+    like ``\xe4`` in Python 3 and in escaped format like ``\\xe4`` in Python 2.
+    Use ``ascii`` to always get the escaped format.
+
+    There are also some enhancements compared to the standard ``repr()``:
+    - Bigger lists, dictionaries and other containers are pretty-printed so
+      that there is one item per row.
+    - On Python 2 the ``u`` prefix is omitted with Unicode strings and
+      the ``b`` prefix is added to byte strings.
+
+    == ascii ==
+
+    Same as using ``ascii()`` in Python 3 or ``repr()`` in Python 2 where
+    ``ascii()`` does not exist. Similar to using ``repr`` explained above
+    but with the following differences:
+
+    - On Python 3 non-ASCII characters are escaped like ``\\xe4`` instead of
+      showing them as-is like ``\xe4``. This makes it easier to see differences
+      between Unicode characters that look the same but are not equal. This
+      is how ``repr()`` works in Python 2.
+    - On Python 2 just uses the standard ``repr()`` meaning that Unicode
+      strings get the ``u`` prefix and no ``b`` prefix is added to byte
+      strings.
+    - Containers are not pretty-printed.
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()

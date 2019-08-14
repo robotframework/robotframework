@@ -7,11 +7,11 @@ ${DATA FORMATS}    ${DATADIR}/parsing/data_formats
 
 *** Test Cases ***
 One extension
-    --extension robot      35
+    --extension robot      21
     --EXTENSION .TXT       25
 
 Multiple extensions
-    -F robot:txt:.ROBOT    60
+    -F robot:txt:.ROBOT    46
 
 Invalid extension
     [Template]    NONE

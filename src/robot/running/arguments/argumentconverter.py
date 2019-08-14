@@ -14,15 +14,17 @@
 #  limitations under the License.
 
 from robot.utils import is_unicode
+from robot.variables import contains_var
 
 from .typeconverters import TypeConverter
 
 
 class ArgumentConverter(object):
 
-    def __init__(self, argspec):
+    def __init__(self, argspec, dry_run=False):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
+        self._dry_run = dry_run
 
     def convert(self, positional, named):
         return self._convert_positional(positional), self._convert_named(named)
@@ -44,7 +46,8 @@ class ArgumentConverter(object):
 
     def _convert(self, name, value):
         type_, explicit_type = self._get_type(name, value)
-        if type_ is None:
+        if type_ is None or (self._dry_run and
+                             contains_var(value, identifiers='$@&%')):
             return value
         converter = TypeConverter.converter_for(type_)
         if converter is None:

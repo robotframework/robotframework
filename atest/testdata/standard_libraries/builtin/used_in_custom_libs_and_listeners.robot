@@ -1,6 +1,7 @@
 *** Settings ***
-Library           UseBuiltIn.py
 Test Setup        Set Log Level    INFO
+Library           UseBuiltIn.py
+Resource          UseBuiltInResource.robot
 
 *** Test Cases ***
 Keywords Using BuiltIn
@@ -8,7 +9,7 @@ Keywords Using BuiltIn
     ${name} =    Get Test Name
     Should Be Equal    ${name}    ${TESTNAME}
     Set Secret Variable
-    Should Be Equal    ${secret}    *****
+    Should Be Equal    ${SECRET}    *****
     Variable Should Not Exist    ${SET BY LISTENER}
 
 Listener Using BuiltIn
@@ -23,3 +24,11 @@ Use BuiltIn keywords with timeouts
     Set Secret Variable
     Should Be Equal    ${secret}    *****
     Use Run Keyword with non Unicode values
+
+User keyword used via 'Run Keyword'
+    User Keyword via Run Keyword
+
+User keyword used via 'Run Keyword' with timeout and trace level
+    [Setup]    Set Log Level    TRACE
+    [Timeout]    1 day
+    User Keyword via Run Keyword

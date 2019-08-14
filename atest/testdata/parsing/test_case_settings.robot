@@ -20,8 +20,12 @@ Normal name
 test_case names are NOT _forMatted_
     No Operation
 
+...
+    [Documentation]    ... as name is deprecated since 3.1.2
+    No Operation
+
 Documentation
-    [Documentation]    Documentation for this test case
+    [Documentation]    Documentation in single line and column.
     No Operation
 
 Documentation in multiple columns
@@ -29,9 +33,11 @@ Documentation in multiple columns
     No Operation
 
 Documentation in multiple rows
-    [DOCUMENTATION]    ${1}st line is shortdoc.
-    ...                Documentation for this test case
-    ...                in    multiple    rows.
+    [DOCUMENTATION]    ${1}st logical line
+    ...                is shortdoc.
+    ...
+    ...                This documentation has multiple rows
+    ...                and    also    multiple    columns.
     No Operation
 
 Documentation with variables
@@ -45,7 +51,11 @@ Documentation with non-existing variables
     No Operation
 
 Documentation with escaping
-    [Documentation]    \${XXX}    c:\\temp    \    \\
+    [Documentation]
+    ...    \${VERSION}
+    ...    c:\\temp
+    ...    \
+    ...    \\
     No Operation
 
 Tags

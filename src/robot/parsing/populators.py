@@ -68,7 +68,7 @@ class FromFilePopulator(object):
 
     def _open(self, path):
         if not os.path.isfile(path):
-            raise DataError("Data source does not exist.")
+            raise DataError("File or directory to execute does not exist.")
         try:
             # IronPython handles BOM incorrectly if not using binary mode:
             # https://ironpython.codeplex.com/workitem/34655
@@ -100,7 +100,7 @@ class FromFilePopulator(object):
     def add(self, row):
         if PROCESS_CURDIR and self._curdir:
             row = self._replace_curdirs_in(row)
-        data = DataRow(row)
+        data = DataRow(row, self._datafile.source)
         if data:
             self._populator.add(data)
 

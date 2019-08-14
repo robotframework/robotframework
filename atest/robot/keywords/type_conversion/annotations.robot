@@ -187,3 +187,6 @@ Forward references
 
 Type information mismatch caused by decorator
     Check Test Case    ${TESTNAME}
+
+Value contains variable
+    Check Test Case    ${TESTNAME}

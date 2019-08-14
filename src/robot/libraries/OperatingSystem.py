@@ -547,16 +547,20 @@ class OperatingSystem(object):
     def create_file(self, path, content='', encoding='UTF-8'):
         """Creates a file with the given content and encoding.
 
-        If the directory for the file does not exist, it is created, along
-        with missing intermediate directories.
+        If the directory where the file is created does not exist, it is
+        automatically created along with possible missing intermediate
+        directories. Possible existing file is overwritten.
+
+        On Windows newline characters (``\\n``) in content are automatically
+        converted to Windows native newline sequence (``\\r\\n``).
 
         See `Get File` for more information about possible ``encoding`` values,
         including special values ``SYSTEM`` and ``CONSOLE``.
 
         Examples:
-        | Create File | ${dir}/example.txt | Hello, world!      |         |
-        | Create File | ${path}            | Hyv\\xe4 esimerkki | Latin-1 |
-        | Create File | /tmp/foo.txt       | ${content}         | SYSTEM  |
+        | Create File | ${dir}/example.txt | Hello, world!       |         |
+        | Create File | ${path}            | Hyv\\xe4 esimerkki  | Latin-1 |
+        | Create File | /tmp/foo.txt       | 3\\nlines\\nhere\\n | SYSTEM  |
 
         Use `Append To File` if you want to append to an existing file
         and `Create Binary File` if you need to write bytes without encoding.
@@ -564,9 +568,10 @@ class OperatingSystem(object):
         files.
 
         The support for ``SYSTEM`` and ``CONSOLE`` encodings is new in Robot
-        Framework 3.0.
+        Framework 3.0. Automatically converting ``\\n`` to ``\\r\\n`` on
+        Windows is new in Robot Framework 3.1.
         """
-        path = self._write_to_file(path, content, self._map_encoding(encoding))
+        path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'.", path)
 
     def _write_to_file(self, path, content, encoding=None, mode='w'):
@@ -578,6 +583,8 @@ class OperatingSystem(object):
         # We expect possible byte-strings to be all ASCII.
         if PY2 and isinstance(content, str) and 'b' not in mode:
             content = unicode(content)
+        if encoding:
+            encoding = self._map_encoding(encoding)
         with io.open(path, mode, encoding=encoding) as f:
             f.write(content)
         return path
@@ -611,8 +618,15 @@ class OperatingSystem(object):
     def append_to_file(self, path, content, encoding='UTF-8'):
         """Appends the given content to the specified file.
 
-        If the file does not exists, this keyword works exactly the same
-        way as `Create File`.
+        If the file exists, the given text is written to its end. If the file
+        does not exist, it is created.
+
+        Other than not overwriting possible existing files, this keyword works
+        exactly like `Create File`. See its documentation for more details
+        about the usage.
+
+        Note that special encodings ``SYSTEM`` and ``CONSOLE`` only work
+        with this keyword starting from Robot Framework 3.1.2.
         """
         path = self._write_to_file(path, content, encoding, mode='a')
         self._link("Appended to file '%s'.", path)

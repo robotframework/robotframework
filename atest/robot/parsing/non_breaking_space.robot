@@ -1,11 +1,9 @@
 *** Settings ***
-Documentation  Regard non-breaking spaces as normal spaces in parsing
-Suite Setup    Run Tests  ${EMPTY}  parsing/nbsp.*
+Documentation  Can be removed in RF 3.2 in favor of non_ascii_spaces.robot
+Suite Setup    Run Tests    ${EMPTY}    parsing/nbsp.*
 Resource       atest_resource.robot
 
-
 *** Test Cases ***
-
 Non-breaking spaces in plain text file
     Check test case  ${TESTNAME}
 

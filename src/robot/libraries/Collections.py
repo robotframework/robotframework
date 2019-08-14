@@ -292,15 +292,12 @@ class _List(object):
     def sort_list(self, list_):
         """Sorts the given list in place.
 
-        The strings are sorted alphabetically and the numbers numerically.
+        Sorting fails if items in the list are not comparable with each others.
+        On Python 2 most objects are comparable, but on Python 3 comparing,
+        for example, strings with numbers is not possible.
 
         Note that the given list is changed and nothing is returned. Use
         `Copy List` first, if you need to keep also the original order.
-
-        ${L} = [2,1,'a','c','b']
-        | Sort List | ${L} |
-        =>
-        | ${L} = [1, 2, 'a', 'b', 'c']
         """
         self._validate_list(list_)
         list_.sort()
@@ -308,9 +305,7 @@ class _List(object):
     def list_should_contain_value(self, list_, value, msg=None):
         """Fails if the ``value`` is not found from ``list``.
 
-        If the keyword fails, the default error messages is ``<list> does
-        not contain value '<value>'``. A custom message can be given using
-        the ``msg`` argument.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_list(list_)
         default = "%s does not contain value '%s'." % (seq2str2(list_), value)
@@ -319,7 +314,7 @@ class _List(object):
     def list_should_not_contain_value(self, list_, value, msg=None):
         """Fails if the ``value`` is found from ``list``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_list(list_)
         default = "%s contains value '%s'." % (seq2str2(list_), value)
@@ -359,7 +354,6 @@ class _List(object):
         values are listed in the default error message like ``Index 4: ABC !=
         Abc``. The types of the lists do not need to be the same. For example,
         Python tuple and list with same content are considered equal.
-
 
         The error message can be configured using ``msg`` and ``values``
         arguments:
@@ -474,8 +468,11 @@ class _Dictionary(object):
     def convert_to_dictionary(self, item):
         """Converts the given ``item`` to a Python ``dict`` type.
 
-        Mainly useful for converting other mappings to dictionaries. Use
-        `Create Dictionary` from the BuiltIn library for constructing new
+        Mainly useful for converting other mappings to normal dictionaries.
+        This includes converting Robot Framework's own ``DotDict`` instances
+        that it uses if variables are created using the ``&{var}`` syntax.
+
+        Use `Create Dictionary` from the BuiltIn library for constructing new
         dictionaries.
 
         New in Robot Framework 2.9.
@@ -566,8 +563,12 @@ class _Dictionary(object):
     def copy_dictionary(self, dictionary, deepcopy=False):
         """Returns a copy of the given dictionary.
 
-        If the optional ``deepcopy`` is given a true value, the returned
-        dictionary is a deep copy. New option in Robot Framework 3.1.2.
+        The ``deepcopy`` argument controls should the returned dictionary be
+        a [https://docs.python.org/library/copy.html|shallow or deep copy].
+        By default returns a shallow copy, but that can be changed by giving
+        ``deepcopy`` a true value (see `Boolean arguments`). This is a new
+        option in Robot Framework 3.1.2. Earlier versions always returned
+        shallow copies.
 
         The given dictionary is never altered by this keyword.
         """
@@ -576,55 +577,89 @@ class _Dictionary(object):
             return copy.deepcopy(dictionary)
         return dictionary.copy()
 
-    def get_dictionary_keys(self, dictionary):
-        """Returns keys of the given ``dictionary``.
+    def get_dictionary_keys(self, dictionary, sort_keys=True):
+        """Returns keys of the given ``dictionary`` as a list.
 
-        If keys are sortable, they are returned in sorted order. The given
-        ``dictionary`` is never altered by this keyword.
+        By default keys are returned in sorted order (assuming they are
+        sortable), but they can be returned in the original order by giving
+        ``sort_keys``  a false value (see `Boolean arguments`). Notice that
+        with Python 3.5 and earlier dictionary order is undefined unless using
+        ordered dictionaries.
+
+        The given ``dictionary`` is never altered by this keyword.
 
         Example:
-        | ${keys} = | Get Dictionary Keys | ${D3} |
+        | ${sorted} =   | Get Dictionary Keys | ${D3} |
+        | ${unsorted} = | Get Dictionary Keys | ${D3} | sort_keys=False |
         =>
-        | ${keys} = ['a', 'b', 'c']
+        | ${sorted} = ['a', 'b', 'c']
+        | ${unsorted} = ['b', 'a', 'c']   # Order depends on Python version.
+
+        ``sort_keys`` is a new option in Robot Framework 3.1.2. Earlier keys
+        were always sorted.
         """
         self._validate_dictionary(dictionary)
-        # TODO: Possibility to disable sorting. Can be handy with OrderedDicts.
         keys = dictionary.keys()
-        try:
-            return sorted(keys)
-        except TypeError:
-            return list(keys)
+        if sort_keys:
+            try:
+                return sorted(keys)
+            except TypeError:
+                pass
+        return list(keys)
 
-    def get_dictionary_values(self, dictionary):
-        """Returns values of the given dictionary.
+    def get_dictionary_values(self, dictionary, sort_keys=True):
+        """Returns values of the given ``dictionary`` as a list.
 
-        Values are returned sorted according to keys. The given dictionary is
-        never altered by this keyword.
+        Uses `Get Dictionary Keys` to get keys and then returns corresponding
+        values. By default keys are sorted and values returned in that order,
+        but this can be changed by giving ``sort_keys`` a false value (see
+        `Boolean arguments`). Notice that with Python 3.5 and earlier
+        dictionary order is undefined unless using ordered dictionaries.
 
-        Example:
-        | ${values} = | Get Dictionary Values | ${D3} |
-        =>
-        | ${values} = [1, 2, 3]
-        """
-        self._validate_dictionary(dictionary)
-        return [dictionary[k] for k in self.get_dictionary_keys(dictionary)]
-
-    def get_dictionary_items(self, dictionary):
-        """Returns items of the given ``dictionary``.
-
-        Items are returned sorted by keys. The given ``dictionary`` is not
-        altered by this keyword.
+        The given ``dictionary`` is never altered by this keyword.
 
         Example:
-        | ${items} = | Get Dictionary Items | ${D3} |
+        | ${sorted} =   | Get Dictionary Values | ${D3} |
+        | ${unsorted} = | Get Dictionary Values | ${D3} | sort_keys=False |
         =>
-        | ${items} = ['a', 1, 'b', 2, 'c', 3]
+        | ${sorted} = [1, 2, 3]
+        | ${unsorted} = [2, 1, 3]    # Order depends on Python version.
+
+        ``sort_keys`` is a new option in Robot Framework 3.1.2. Earlier values
+        were always sorted based on keys.
         """
         self._validate_dictionary(dictionary)
-        ret = []
-        for key in self.get_dictionary_keys(dictionary):
-            ret.extend((key, dictionary[key]))
-        return ret
+        keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
+        return [dictionary[k] for k in keys]
+
+    def get_dictionary_items(self, dictionary, sort_keys=True):
+        """Returns items of the given ``dictionary`` as a list.
+
+        Uses `Get Dictionary Keys` to get keys and then returns corresponding
+        items. By default keys are sorted and items returned in that order,
+        but this can be changed by giving ``sort_keys`` a false value (see
+        `Boolean arguments`). Notice that with Python 3.5 and earlier
+        dictionary order is undefined unless using ordered dictionaries.
+
+        Items are returned as a flat list so that first item is a key,
+        second item is a corresponding value, third item is the second key,
+        and so on.
+
+        The given ``dictionary`` is never altered by this keyword.
+
+        Example:
+        | ${sorted} =   | Get Dictionary Items | ${D3} |
+        | ${unsorted} = | Get Dictionary Items | ${D3} | sort_keys=False |
+        =>
+        | ${sorted} = ['a', 1, 'b', 2, 'c', 3]
+        | ${unsorted} = ['b', 2, 'a', 1, 'c', 3]    # Order depends on Python version.
+
+        ``sort_keys`` is a new option in Robot Framework 3.1.2. Earlier items
+        were always sorted based on keys.
+        """
+        self._validate_dictionary(dictionary)
+        keys = self.get_dictionary_keys(dictionary, sort_keys=sort_keys)
+        return [i for key in keys for i in (key, dictionary[key])]
 
     def get_from_dictionary(self, dictionary, key):
         """Returns a value from the given ``dictionary`` based on the given ``key``.
@@ -648,9 +683,7 @@ class _Dictionary(object):
     def dictionary_should_contain_key(self, dictionary, key, msg=None):
         """Fails if ``key`` is not found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
-        The given dictionary is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
         default = "Dictionary does not contain key '%s'." % key
@@ -659,9 +692,7 @@ class _Dictionary(object):
     def dictionary_should_not_contain_key(self, dictionary, key, msg=None):
         """Fails if ``key`` is found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
-        The given dictionary is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
         default = "Dictionary contains key '%s'." % key
@@ -672,8 +703,7 @@ class _Dictionary(object):
 
         Value is converted to unicode for comparison.
 
-        See `Lists Should Be Equal` for an explanation of ``msg``.
-        The given dictionary is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
         self.dictionary_should_contain_key(dictionary, key, msg)
@@ -684,9 +714,7 @@ class _Dictionary(object):
     def dictionary_should_contain_value(self, dictionary, value, msg=None):
         """Fails if ``value`` is not found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
-        The given dictionary is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
         default = "Dictionary does not contain value '%s'." % value
@@ -695,9 +723,7 @@ class _Dictionary(object):
     def dictionary_should_not_contain_value(self, dictionary, value, msg=None):
         """Fails if ``value`` is found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
-        The given dictionary is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
         default = "Dictionary contains value '%s'." % value
@@ -713,8 +739,6 @@ class _Dictionary(object):
 
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
-
-        The given dictionaries are never altered by this keyword.
         """
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
@@ -727,8 +751,6 @@ class _Dictionary(object):
 
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.
-
-        The given dictionaries are never altered by this keyword.
         """
         self._validate_dictionary(dict1)
         self._validate_dictionary(dict2, 2)
@@ -877,8 +899,6 @@ class Collections(_List, _Dictionary):
                              whitespace_insensitive=False):
         """Fails if ``pattern`` is not found in ``list``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
         By default, pattern matching is similar to matching files in a shell
         and is case-sensitive and whitespace-sensitive. In the pattern syntax,
         ``*`` matches to anything and ``?`` matches to any single character. You
@@ -900,7 +920,7 @@ class Collections(_List, _Dictionary):
 
         Non-string values in lists are ignored when matching patterns.
 
-        The given list is never altered by this keyword.
+        Use the ``msg`` argument to override the default error message.
 
         See also ``Should Not Contain Match``.
 

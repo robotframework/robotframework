@@ -6,7 +6,7 @@
   <artifactId>robotframework</artifactId>
   <packaging>jar</packaging>
   <name>Robot Framework</name>
-  <version>3.1.2.dev1</version>
+  <version>3.1.3.dev1</version>
   <description>High level test automation framework</description>
   <url>http://robotframework.org</url>
   <licenses>

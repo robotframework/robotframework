@@ -10,7 +10,7 @@ Valid positional args
     Normal and varargs and kwargs   1    2    3    4
 
 Too few arguments
-    [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 5 arguments, got 1.
+    [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 6 arguments, got 1.
     Should Be Equal    1
 
 Too few arguments for UK
@@ -38,10 +38,10 @@ Valid named args
 
 Invalid named args
     [Documentation]  FAIL Several failures occurred:\n\n
-    ...  1) Keyword 'Library.Normal Args' got positional argument after named arguments.\n\n
+    ...  1) Keyword 'Library.Normal Args' got unexpected named argument 'c'.\n\n
     ...  2) Keyword 'Library.Normal Args' got positional argument after named arguments.\n\n
-    ...  3) Keyword 'Library.Normal Args' got positional argument after named arguments.\n\n
-    ...  4) Keyword 'Library.Normal And Varargs' got positional argument after named arguments.\n\n
+    ...  3) Keyword 'Library.Normal Args' got unexpected named argument 'c'.\n\n
+    ...  4) Keyword 'Library.Normal And Varargs' got unexpected named argument 'c'.\n\n
     ...  5) Keyword 'Library.Normal And Varargs And Kwargs' got positional argument after named arguments.
     Normal args    a=1    c=3
     Normal args    a=1    2

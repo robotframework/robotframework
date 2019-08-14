@@ -9,10 +9,12 @@ from __future__ import print_function
 from os.path import abspath, basename, dirname, exists, join
 import os
 import sys
+import re
 
 if len(sys.argv) not in [2, 3] or not all(a.endswith('.robot') for a in sys.argv[1:]):
     sys.exit(__doc__.format(tool=basename(sys.argv[0])))
 
+SEPARATOR = re.compile(r'\s{2,}|\t')
 INPATH = abspath(sys.argv[1])
 if join('atest', 'testdata') not in INPATH:
     sys.exit("Input not under 'atest/testdata'.")
@@ -42,10 +44,10 @@ with open(INPATH) as input:
         if not line:
             continue
         elif line.startswith('*'):
-            name = line.split('  ')[0].replace('*', '').replace(' ', '').upper()
+            name = SEPARATOR.split(line)[0].replace('*', '').replace(' ', '').upper()
             parsing_tests = name in ('TESTCASE', 'TESTCASES', 'TASK', 'TASKS')
             parsing_settings = name in ('SETTING', 'SETTINGS')
-        elif parsing_tests and line[0] != ' ':
+        elif parsing_tests and not SEPARATOR.match(line):
             TESTS.append(TestCase(line.split('  ')[0]))
         elif parsing_tests and line.strip().startswith('[Tags]'):
             TESTS[-1].tags = line.split('[Tags]', 1)[1].split()

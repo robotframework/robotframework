@@ -372,9 +372,9 @@ class TestForLoop(unittest.TestCase):
     def test_representation(self):
         ForLoop = ForLoopWithFakeParent
         assert_equal(ForLoop(['${var}', 'IN', 'value1', 'value2']).as_list(),
-                      [': FOR', '${var}', 'IN', 'value1', 'value2'])
+                      ['FOR', '${var}', 'IN', 'value1', 'value2'])
         assert_equal(ForLoop(['${v2}', '${v2}', 'IN RANGE', '100']).as_list(),
-                      [': FOR', '${v2}', '${v2}', 'IN RANGE', '100'])
+                      ['FOR', '${v2}', '${v2}', 'IN RANGE', '100'])
 
     def test_in_zip(self):
         self._test(['${i}', '${item}', 'in zip', '${list1}', '${list2}'],

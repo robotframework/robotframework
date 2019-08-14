@@ -19,9 +19,12 @@ from robot.api import logger
 def none_shall_pass(who):
     if who is not None:
         raise AssertionError('None shall pass!')
-    logger.info('<object width="480" height="385">'
-                '<param name="movie" value="http://www.youtube.com/v/dhRUe-gz690&hl=en_US&fs=1&rel=0&color1=0x234900&color2=0x4e9e00"></param>'
-                '<param name="allowFullScreen" value="true"></param>'
-                '<param name="allowscriptaccess" value="always"></param>'
-                '<embed src="http://www.youtube.com/v/dhRUe-gz690&hl=en_US&fs=1&rel=0&color1=0x234900&color2=0x4e9e00" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="385"></embed>'
-                '</object>', html=True)
+    logger.info(
+        '<iframe width="560" height="315" '
+        'src="https://www.youtube-nocookie.com/embed/zKhEw7nD9C4?autoplay=1" '
+        'frameborder="0" '
+        'allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" '
+        'allowfullscreen>'
+        '</iframe>',
+        html=True
+    )

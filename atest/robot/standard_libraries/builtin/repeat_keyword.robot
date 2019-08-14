@@ -74,23 +74,26 @@ Repeat Keyword With Pass Execution After Continuable Failure
 Check Repeated Messages
     [Arguments]    ${kw}    ${count}    ${msg}=${None}
     Should Be Equal As Integers    ${kw.kw_count}    ${count}
-    : FOR    ${i}    IN RANGE    ${count}
-    \    Check Log Message    ${kw.msgs[${i}]}    Repeating keyword, round ${i+1}/${count}.
-    \    Check Log Message    ${kw.kws[${i}].msgs[0]}    ${msg}
+    FOR    ${i}    IN RANGE    ${count}
+        Check Log Message    ${kw.msgs[${i}]}    Repeating keyword, round ${i+1}/${count}.
+        Check Log Message    ${kw.kws[${i}].msgs[0]}    ${msg}
+    END
     Run Keyword If    ${count} == 0    Check Log Message    ${kw.msgs[0]}    Keyword 'This is not executed' repeated zero times.
     Run Keyword If    ${count} != 0    Should Be Equal As Integers    ${kw.msg_count}    ${count}
 
 Check Repeated Messages With Time
     [Arguments]    ${kw}    ${msg}=${None}
     Should Be True    ${kw.kw_count} > 0
-    : FOR    ${i}    IN RANGE    ${kw.kw_count}
-    \    Check Log Message    ${kw.msgs[${i}]}
-    \    ...    Repeating keyword, round ${i+1}, *remaining.    pattern=yes
-    \    Check Log Message    ${kw.kws[${i}].msgs[0]}    ${msg}
+    FOR    ${i}    IN RANGE    ${kw.kw_count}
+        Check Log Message    ${kw.msgs[${i}]}
+        ...    Repeating keyword, round ${i+1}, *remaining.    pattern=yes
+        Check Log Message    ${kw.kws[${i}].msgs[0]}    ${msg}
+    END
     Should Be Equal As Integers    ${kw.msg_count}    ${kw.kw_count}
 
 Check Repeated Keyword Name
     [Arguments]    ${kw}    ${count}    ${name}=${None}
     Should Be Equal As Integers    ${kw.kw_count}    ${count}
-    : FOR    ${i}    IN RANGE    ${count}
-    \    Should Be Equal    ${kw.kws[${i}].name}    ${name}
+    FOR    ${i}    IN RANGE    ${count}
+        Should Be Equal    ${kw.kws[${i}].name}    ${name}
+    END

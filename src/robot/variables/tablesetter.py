@@ -96,19 +96,24 @@ class ScalarVariableTableValue(VariableTableValueBase):
         if is_string(values):
             values = [values]
         elif values and values[0].startswith('SEPARATOR='):
-            separator = values.pop(0)[10:]
+            separator = values[0][10:]
+            values = values[1:]
         return separator, values
 
     def _replace_variables(self, values, variables):
         separator, values = values
-        if (separator is None and len(values) == 1 and
-                not VariableSplitter(values[0]).is_list_variable()):
+        # Avoid converting single value to string.
+        if self._is_single_value(separator, values):
             return variables.replace_scalar(values[0])
         if separator is None:
             separator = ' '
         separator = variables.replace_string(separator)
         values = variables.replace_list(values)
         return separator.join(unic(item) for item in values)
+
+    def _is_single_value(self, separator, values):
+        return (separator is None and len(values) == 1 and
+                not VariableSplitter(values[0]).is_list_variable())
 
 
 class ListVariableTableValue(VariableTableValueBase):

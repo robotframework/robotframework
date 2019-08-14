@@ -176,16 +176,16 @@ def assert_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
         _report_failure('%s not raised' % exc_name)
 
 
-def assert_equal(first, second, msg=None, values=True):
+def assert_equal(first, second, msg=None, values=True, formatter=None):
     """Fail if given objects are unequal as determined by the '==' operator."""
     if not first == second:
-        _report_inequality_failure(first, second, msg, values, '!=')
+        _report_inequality(first, second, '!=', msg, values, formatter)
 
 
-def assert_not_equal(first, second, msg=None, values=True):
+def assert_not_equal(first, second, msg=None, values=True, formatter=None):
     """Fail if given objects are equal as determined by the '==' operator."""
     if first == second:
-        _report_inequality_failure(first, second, msg, values, '==')
+        _report_inequality(first, second, '==', msg, values, formatter)
 
 
 def assert_almost_equal(first, second, places=7, msg=None, values=True):
@@ -194,11 +194,11 @@ def assert_almost_equal(first, second, places=7, msg=None, values=True):
     inequality is determined by object's difference rounded to the
     given number of decimal places (default 7) and comparing to zero.
     Note that decimal places (from zero) are usually not the same as
-    significant digits (measured from the most signficant digit).
+    significant digits (measured from the most significant digit).
     """
     if round(second - first, places) != 0:
         extra = 'within %r places' % places
-        _report_inequality_failure(first, second, msg, values, '!=', extra)
+        _report_inequality(first, second, '!=', msg, values, extra=extra)
 
 
 def assert_not_almost_equal(first, second, places=7, msg=None, values=True):
@@ -211,7 +211,7 @@ def assert_not_almost_equal(first, second, places=7, msg=None, values=True):
     """
     if round(second-first, places) == 0:
         extra = 'within %r places' % places
-        _report_inequality_failure(first, second, msg, values, '==', extra)
+        _report_inequality(first, second, '==', msg, values, extra=extra)
 
 
 def _report_failure(msg):
@@ -220,19 +220,21 @@ def _report_failure(msg):
     raise AssertionError(msg)
 
 
-def _report_inequality_failure(obj1, obj2, msg, values, delim, extra=None):
+def _report_inequality(obj1, obj2, delim, msg=None, values=False,
+                       formatter=None, extra=None):
     if not msg:
-        msg = _get_default_message(obj1, obj2, delim)
+        msg = _format_message(obj1, obj2, delim, formatter)
     elif values:
-        msg = '%s: %s' % (msg, _get_default_message(obj1, obj2, delim))
+        msg = '%s: %s' % (msg, _format_message(obj1, obj2, delim, formatter))
     if values and extra:
         msg += ' ' + extra
     raise AssertionError(msg)
 
 
-def _get_default_message(obj1, obj2, delim):
-    str1 = unic(obj1)
-    str2 = unic(obj2)
+def _format_message(obj1, obj2, delim, formatter=None):
+    formatter = formatter or unic
+    str1 = formatter(obj1)
+    str2 = formatter(obj2)
     if delim == '!=' and str1 == str2:
         return '%s (%s) != %s (%s)' % (str1, type_name(obj1),
                                        str2, type_name(obj2))

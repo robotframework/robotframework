@@ -27,8 +27,8 @@ Tidying single init file
     File Should Exist    ${TEMP FILE}
 
 Tidying single file without output file prints output to console
-    [Documentation]    Depending on console encoding, non-ASCII characters may not be shown correctly
-    ${stdout} =    Run tidy    ${EMPTY}    golden.robot    output=${NONE}
+    [Documentation]    Depending on console encoding, non-ASCII characters may not be shown correctly.
+    ${stdout} =    Run tidy    ${EMPTY}    golden.robot    output=None    stderr=False
     Compare tidy results    ${stdout}    golden.robot    \\s+Log Many\\s+Non-ASCII:.*\\s+\\$\\{CURDIR\\}
     File Should Not Exist    ${TEMP FILE}
 
@@ -61,11 +61,15 @@ Tidy tests and keywords containing ELSE and ELSE IF
     Run tidy    --inplace     ${TEMP}/else_untidy.robot
     Compare tidy results    ${TEMP}/else_untidy.robot    ${DATA}/else_tidy.robot
 
+For loops
+    Run tidy and check result    ${EMPTY}    for_loops_input.robot
+    ...    expected=for_loops_expected.robot
 
 *** Keywords ***
 Files Should Have $CURDIR
     [Arguments]    ${directory}
     @{paths} =    List Files In Directory    ${directory}    absolute=True
-    :FOR    ${path}    IN    @{paths}
-    \    ${content} =    Get File    ${path}
-    \    Should Contain    ${content}    $\{CURDIR}
+    FOR    ${path}    IN    @{paths}
+        ${content} =    Get File    ${path}
+        Should Contain    ${content}    $\{CURDIR}
+    END

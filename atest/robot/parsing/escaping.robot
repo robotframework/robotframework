@@ -85,3 +85,5 @@ No Errors Should Have Occurred
     Should Be Empty    ${ERRORS}
     File Should Be Empty    ${STDERR_FILE}
 
+Pipe
+    Check Test Case    ${TEST NAME}

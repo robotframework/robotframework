@@ -171,7 +171,7 @@ __ `Merging outputs`_
 Re-executing failed test suites
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Command line option :option:`rerunfailedsuites (-S)` can be used to select all
+Command line option :option:`--rerunfailedsuites (-S)` can be used to select all
 failed suites from an earlier `output file`_ for re-execution. Like
 :option:`--rerunfailed (-R)`, this option is useful when full test execution
 takes a lot of time. Note that all tests from a failed test suite will be

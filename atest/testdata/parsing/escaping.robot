@@ -172,6 +172,10 @@ Escaping Variables With User Keywords
     Should Be Equal    ${ret}    \${foo}\${foo}
     User keyword 2    \${foo}    {foo}
 
+Pipe
+| | Should Be Equal | \| | ${PIPE} |
+| | Should Be Equal | \||| | ${PIPE * 3} |
+
 *** Keyword ***
 User keyword
     [Arguments]    ${a1}    ${a2}

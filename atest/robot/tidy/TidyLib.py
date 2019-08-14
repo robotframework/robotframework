@@ -19,7 +19,7 @@ class TidyLib(object):
         self._tidy = interpreter.tidy
         self._interpreter = interpreter.interpreter
 
-    def run_tidy(self, options, input, output=None, tidy=None):
+    def run_tidy(self, options, input, output=None, tidy=None, stderr=True):
         """Runs tidy in the operating system and returns output."""
         command = (tidy or self._tidy)[:]
         if options:
@@ -28,8 +28,14 @@ class TidyLib(object):
         if output:
             command.append(output)
         print(' '.join(command))
-        result = run(command, cwd=ROBOT_SRC, stdout=PIPE, stderr=STDOUT,
-                     universal_newlines=True, shell=os.sep == '\\')
+        # FIXME: Possibility to exclude stderr is a hack and shuold be removed
+        # as part of implementing #3064.
+        result = run(command,
+                     cwd=ROBOT_SRC,
+                     stdout=PIPE,
+                     stderr=STDOUT if stderr else PIPE,
+                     universal_newlines=True,
+                     shell=os.sep == '\\')
         if result.returncode != 0:
             raise RuntimeError(result.stdout)
         return result.stdout.rstrip()
