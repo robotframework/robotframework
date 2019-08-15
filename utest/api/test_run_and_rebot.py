@@ -6,8 +6,8 @@ import threading
 import tempfile
 import signal
 import logging
-from os.path import abspath, dirname, join, exists, curdir
-from os import chdir
+from os.path import abspath, curdir, dirname, exists, join
+from os import chdir, getenv
 
 from robot import run, run_cli, rebot, rebot_cli
 from robot.model import SuiteVisitor
@@ -20,7 +20,7 @@ from resources.Listener import Listener
 
 
 ROOT = dirname(dirname(dirname(abspath(__file__))))
-TEMP = tempfile.gettempdir()
+TEMP = getenv('TEMPDIR', tempfile.gettempdir())
 OUTPUT_PATH = join(TEMP, 'output.xml')
 REPORT_PATH = join(TEMP, 'report.html')
 LOG_PATH = join(TEMP, 'log.html')
