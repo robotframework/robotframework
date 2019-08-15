@@ -74,8 +74,11 @@ class ETSource(object):
                 and not self._source.lstrip().startswith('<')
 
     def _open_source_if_necessary(self):
-        if self._source_is_file_name() or not is_string(self._source):
+        if self._source_is_file_name():
             return None
+        if is_string(self._source):
+            return BytesIO(self._source.encode('UTF-8'))
+        if isinstance(self._source, bytes):
+            return BytesIO(self._source)
         if IRONPYTHON_WITH_BROKEN_ETREE:
             return StringIO(self._source)
-        return BytesIO(self._source.encode('UTF-8'))

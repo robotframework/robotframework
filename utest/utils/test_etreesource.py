@@ -26,8 +26,11 @@ class TestETSource(unittest.TestCase):
         self._verify_string_representation(source, PATH)
         assert_true(source._opened is None)
 
-    def test_byte_string(self):
+    def test_string(self):
         self._test_string('\n<tag>content</tag>\n')
+
+    def test_byte_string(self):
+        self._test_string(b'\n<tag>content</tag>\n')
 
     def test_unicode_string(self):
         self._test_string(u'\n<tag>hyv\xe4</tag>\n')
@@ -36,6 +39,8 @@ class TestETSource(unittest.TestCase):
         source = ETSource(xml)
         with source as src:
             content = src.read()
+            if isinstance(xml, bytes):
+                xml = xml.decode('UTF-8')
             if not IRONPYTHON_WITH_BROKEN_ETREE:
                 content = content.decode('UTF-8')
             assert_equal(content, xml)
