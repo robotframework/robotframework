@@ -13,7 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import MutableMapping
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
 
 from .platform import IRONPYTHON, PY_VERSION, PY3
 from .robottypes import is_dict_like, is_unicode
