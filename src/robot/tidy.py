@@ -68,7 +68,7 @@ Options
                    python -m robot.tidy --inplace --format robot *.html
  -r --recursive  Process given directory recursively. Files in the directory
                  are processed in-place similarly as when --inplace option
-                 is used.
+                 is used. Does not process referenced resource files.
  -f --format txt|html|tsv|robot
                  Output file format. If omitted, the format of the input
                  file is used.
