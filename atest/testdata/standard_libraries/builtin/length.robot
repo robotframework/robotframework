@@ -39,7 +39,7 @@ Length Should Be with invalid length
     [Documentation]    FAIL STARTS: 'This is not an integer' cannot be converted to an integer: ValueError:
     Length Should Be    ${LIST 2}    This is not an integer
 
-Should Be Empty
+Should Be Empty 1
     [Documentation]    FAIL '['a']' should be empty.
     [Template]    Should Be Empty
     ${TUPLE 0}
@@ -49,13 +49,21 @@ Should Be Empty
     ${EMPTY}
     ${LIST 1}
 
+Should Be Empty 2
+    [Documentation]    FAIL '('a', 'b', 'c')' should be empty.
+    Should Be Empty    ${TUPLE 3}
+
+Should Be Empty 3
+    [Documentation]    FAIL 'åäö' should be empty.
+    Should Be Empty    åäö
+
 Should Be Empty with custom message
     [Documentation]    FAIL My non-default error message
     [Template]    Should Be Empty
     ${TUPLE 0}            This succeeds
     Now this will fail    My non-default error message
 
-Should Not Be Empty
+Should Not Be Empty 1
     [Documentation]    FAIL '{}' should not be empty.
     [Template]    Should Not Be Empty
     ${TUPLE 1}
@@ -64,6 +72,10 @@ Should Not Be Empty
     ${CUSTOM LEN 2}
     Non empty string
     ${DICT 0}
+
+Should Not Be Empty 2
+    [Documentation]    FAIL '()' should not be empty.
+    Should Not Be Empty    ${TUPLE 0}
 
 Should Not Be Empty with custom message
     [Documentation]    FAIL My fine error says () is empty

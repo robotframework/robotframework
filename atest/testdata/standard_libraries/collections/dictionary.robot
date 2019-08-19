@@ -28,6 +28,8 @@ Set To Dictionary With **kwargs
 Remove From Dictionary
     Remove From Dictionary    ${D3}    b    x    ${2}
     Compare To Expected String    ${D3}    {'a': 1, 3: None}
+    Remove From Dictionary    ${D3}    ${TUPLE}
+    Compare To Expected String    ${D3}    {'a': 1, 3: None}
 
 Keep In Dictionary
     Keep In Dictionary    ${D3}    a    x    ${2}    ${3}
@@ -93,16 +95,24 @@ Get From Dictionary
     ${value} =    Get From Dictionary    ${D3}    b
     Should Be Equal As Integers    ${value}    2
 
-Get From Dictionary With Invalid Key
+Get From Dictionary With Invalid Key 1
     [Documentation]    FAIL Dictionary does not contain key 'x'.
     Get From Dictionary    ${D3}    x
+
+Get From Dictionary With Invalid Key 2
+    [Documentation]    FAIL Dictionary does not contain key '(1, 2)'.
+    Get From Dictionary    ${D3}    ${TUPLE}
 
 Dictionary Should Contain Key
     Dictionary Should Contain Key    ${D3}    a
 
-Dictionary Should Contain Key With Missing Key
+Dictionary Should Contain Key With Missing Key 1
     [Documentation]    FAIL Dictionary does not contain key 'x'.
     Dictionary Should Contain Key    ${D3}    x
+
+Dictionary Should Contain Key With Missing Key 2
+    [Documentation]    FAIL Dictionary does not contain key '(1, 2)'.
+    Dictionary Should Contain Key    ${D3}    ${TUPLE}
 
 Dictionary Should Contain Item
     Dictionary Should Contain Item    ${D3}    a    1
@@ -117,6 +127,7 @@ Dictionary Should Contain Item With Wrong Value
 
 Dictionary Should Not Contain Key
     Dictionary Should Not Contain Key    ${D3}    x
+    Dictionary Should Not Contain Key    ${D3}    ${TUPLE}
 
 Dictionary Should Not Contain Key With Existing Key
     [Documentation]    FAIL Dictionary contains key 'b'.
@@ -130,12 +141,17 @@ Dictionary Should (Not) Contain Key Does Not Require `has_key`
 Dictionary Should Contain Value
     Dictionary Should Contain Value    ${D3}    ${2}
 
-Dictionary Should Contain Value With Missing Value
+Dictionary Should Contain Value With Missing Value 1
     [Documentation]    FAIL Dictionary does not contain value 'x'.
     Dictionary Should Contain Value    ${D3}    x
 
+Dictionary Should Contain Value With Missing Value 2
+    [Documentation]    FAIL Dictionary does not contain value '(1, 2)'.
+    Dictionary Should Contain Value    ${D3}    ${TUPLE}
+
 Dictionary Should Not Contain Value
     Dictionary Should Not Contain Value    ${D3}    x
+    Dictionary Should Not Contain Value    ${D3}    ${TUPLE}
 
 Dictionary Should Not Contain Value With Existing Value
     [Documentation]    FAIL Dictionary contains value '2'.
@@ -305,3 +321,5 @@ Create Dictionaries For Testing
     Set Test Variable    \${D3B}
     ${BIG} =    Evaluate    {'a': 1, 'B': 2, 3: [42], 'd': '', '': 'e', (): {}}
     Set Test Variable    \${BIG}
+    ${TUPLE} =    Evaluate    (1, 2)
+    Set Test Variable    \${TUPLE}
