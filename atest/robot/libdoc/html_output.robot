@@ -28,20 +28,23 @@ Inits
     ${MODEL['inits']}
 
 Keyword Names
-    ${MODEL['keywords'][0]['name']}    Get Hello
-    ${MODEL['keywords'][1]['name']}    Keyword
-    ${MODEL['keywords'][9]['name']}    Set Name Using Robot Name Attribute
+    ${MODEL['keywords'][0]['name']}     Get Hello
+    ${MODEL['keywords'][1]['name']}     Keyword
+    ${MODEL['keywords'][13]['name']}    Set Name Using Robot Name Attribute
 
 Keyword Arguments
     [Template]    Should Be Equal As Strings
-    ${MODEL['keywords'][0]['args']}    []
-    ${MODEL['keywords'][1]['args']}    ['a1=d', '*a2']
-    ${MODEL['keywords'][9]['args']}    ['a', 'b', '*args', '**kwargs']
+    ${MODEL['keywords'][0]['args']}     []
+    ${MODEL['keywords'][1]['args']}     ['a1=d', '*a2']
+    ${MODEL['keywords'][6]['args']}     ['arg=hyv\\\\xe4']
+    ${MODEL['keywords'][10]['args']}    ['arg=hyvä']
+    ${MODEL['keywords'][12]['args']}    ['a=1', 'b=True', 'c=(1, 2, None)']
+    ${MODEL['keywords'][13]['args']}    ['a', 'b', '*args', '**kwargs']
 
 Embedded Arguments
     [Template]    NONE
-    Should Be Equal    ${MODEL['keywords'][10]['name']}    Takes \${embedded} \${args}
-    Should Be Empty    ${MODEL['keywords'][10]['args']}
+    Should Be Equal    ${MODEL['keywords'][14]['name']}    Takes \${embedded} \${args}
+    Should Be Empty    ${MODEL['keywords'][14]['args']}
 
 Keyword Documentation
     ${MODEL['keywords'][1]['doc']}    <p>A keyword.</p>\n<p>See <a href="#Get%20Hello" class="name">get hello</a> for details.</p>
@@ -49,14 +52,14 @@ Keyword Documentation
     ${MODEL['keywords'][5]['doc']}    <p>This is short doc. It can span multiple physical lines.</p>\n<p>This is body. It can naturally also contain multiple lines.</p>\n<p>And paragraphs.</p>
 
 Non-ASCII Keyword Documentation
-    ${MODEL['keywords'][6]['doc']}    <p>Hyvää yötä.</p>\n<p>Спасибо!</p>
-    ${MODEL['keywords'][8]['doc']}    <p>Hyvää yötä.</p>
+    ${MODEL['keywords'][8]['doc']}     <p>Hyvää yötä.</p>
+    ${MODEL['keywords'][11]['doc']}    <p>Hyvää yötä.</p>\n<p>Спасибо!</p>
 
 Keyword Short Doc
-    ${MODEL['keywords'][1]['shortdoc']}    A keyword.
-    ${MODEL['keywords'][0]['shortdoc']}    Get hello.
-    ${MODEL['keywords'][6]['shortdoc']}    Hyvää yötä.
-    ${MODEL['keywords'][8]['shortdoc']}    Hyvää yötä.
+    ${MODEL['keywords'][1]['shortdoc']}     A keyword.
+    ${MODEL['keywords'][0]['shortdoc']}     Get hello.
+    ${MODEL['keywords'][8]['shortdoc']}     Hyvää yötä.
+    ${MODEL['keywords'][11]['shortdoc']}    Hyvää yötä.
 
 Keyword Short Doc Spanning Multiple Physical Lines
     ${MODEL['keywords'][5]['shortdoc']}    This is short doc. It can span multiple physical lines.
