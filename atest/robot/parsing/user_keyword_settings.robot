@@ -20,7 +20,7 @@ Documentation
     Verify Documentation    Documentation for this user keyword
 
 Documentation in multiple columns
-    Verify Documentation    Documentation\nfor this user keyword\nin multiple columns
+    Verify Documentation    Documentation for this user keyword in multiple columns
 
 Documentation in multiple rows
     Verify Documentation    1st line is shortdoc.
@@ -35,7 +35,7 @@ Documentation with non-existing variables
     Verify Documentation    Starting from RF 2.1 \${NONEX} variables are left unchanged.
 
 Documentation with escaping
-    Verify Documentation    \${XXX}\nc:\\temp\n\\
+    Verify Documentation    \${XXX} - c:\\temp -${SPACE*2}- \\
 
 Arguments
     [Documentation]    Tested more thoroughly elsewhere.

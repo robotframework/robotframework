@@ -39,7 +39,7 @@ class BaseLexer(object):
             self.lexer.input(data)
 
     def get_tokens(self):
-        self.lexer.lex(self.context_class())
+        self.lexer.lex(self.context_class(self._data_only))
         if self._data_only:
             ignore = {Token.IGNORE, Token.COMMENT_HEADER, Token.COMMENT,
                       Token.OLD_FOR_INDENT}

@@ -19,6 +19,7 @@ Documentation
     ...
     ...    | *TABLE* |
     ...    | \${NONEX} | $\{CURDIR} | \${TEMPDIR} |
+    ...    | foo | bar |
     ...    tabs \t\t\t here
 
 Version
@@ -63,17 +64,19 @@ Keyword Documentation
     Keyword Doc Should Be           7
     ...    foo bar `kw`.
     ...
-    ...    baa `\${a1}` alskdj alskdjlajd
-    ...    askf laskdjf asldkfj alsdkfj alsdkfjasldkfj
-    ...    askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj
-    ...    askf *laskdjf* asldkfj `introduction` alsdkfj
-    ...    http://foo.bar
+    ...    FIRST `\${a1}` alskdj alskdjlajd
+    ...    askf laskdjf asldkfj alsdkfj alsdkfjasldkfj END
+    ...
+    ...    SECOND askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj
+    ...    askf *laskdjf* END
+    ...
+    ...    THIRD asldkfj `introduction` alsdkfj http://foo.bar END
     ...    - aaa
     ...    - bbb
     ...
     ...    -------------
     ...
-    ...    | *1* | *2* |
+    ...    | = first = | = second = |
     ...    | foo | bar |
     Keyword Doc Should Be           8
     ...    Summary line

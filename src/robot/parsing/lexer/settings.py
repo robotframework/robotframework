@@ -24,8 +24,9 @@ class Settings(object):
     multi_use = ()
     single_value = ()
 
-    def __init__(self):
+    def __init__(self, ctx):
         self.settings = {n: None for n in self.names}
+        self._data_only = ctx.data_only
 
     def lex(self, statement):
         name_token = statement[0]
@@ -41,6 +42,10 @@ class Settings(object):
             self.settings[normalized] = statement[1:]
         for token in statement[1:]:
             token.type = Token.ARGUMENT
+        if name_token.type in (Token.DOCUMENTATION, Token.METADATA) \
+                and self._data_only:
+            doc_index = 1 if name_token.type == Token.DOCUMENTATION else 2
+            self._merge_doc_tokens_on_same_line(statement[doc_index:])
 
     def _validate(self, name, normalized, statement):
         if normalized not in self.settings:
@@ -60,6 +65,25 @@ class Settings(object):
 
     def _format_name(self, name):
         return name
+
+    def _merge_doc_tokens_on_same_line(self, tokens):
+        for line in self._doc_tokens_to_lines(tokens):
+            if len(line) > 1:
+                line[0].value = ' '.join(t.value for t in line)
+                for token in line[1:]:
+                    token.type = Token.IGNORE
+
+    def _doc_tokens_to_lines(self, tokens):
+        line = []
+        current_line = -1
+        for token in tokens:
+            if token.lineno == current_line or current_line == -1:
+                line.append(token)
+            else:
+                yield line
+                line = [token]
+            current_line = token.lineno
+        yield line
 
 
 class TestCaseFileSettings(Settings):
@@ -133,8 +157,8 @@ class TestCaseSettings(Settings):
         'TEMPLATE'
     )
 
-    def __init__(self, parent):
-        Settings.__init__(self)
+    def __init__(self, ctx, parent):
+        Settings.__init__(self, ctx)
         self.parent = parent
 
     def _format_name(self, name):

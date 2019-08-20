@@ -17,14 +17,18 @@ Documentation
     Verify Documentation    Documentation in single line and column.
 
 Documentation in multiple columns
-    Verify Documentation    Documentation\nfor this test case\nin multiple columns
+    Verify Documentation    Documentation for this test case in multiple columns
 
 Documentation in multiple rows
     Verify Documentation    1st logical line
     ...    is shortdoc.
-    ...    ${EMPTY}
+    ...
     ...    This documentation has multiple rows
-    ...    and also\nmultiple columns.
+    ...    and also multiple columns.
+    ...
+    ...    | table | =header= |
+    ...    | foo | bar |
+    ...    | ragged |
 
 Documentation with variables
     Verify Documentation    Variables work in documentation since Robot 1.2.
