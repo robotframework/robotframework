@@ -11,7 +11,7 @@ We have a devious plan to rule the world with robots.
 
    *Setting*      *Value*
 
-   Documentation  A complex testdata file   in rst format.
+   Documentation  A complex testdata file in rst format.
    # Default Tags are in include.rst
    Force Tags     force1   force2
 
