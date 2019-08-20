@@ -43,13 +43,14 @@ class Splitter(object):
             splitter = self._split_from_pipes
         columnno = 1
         data, sepa = Token.DATA, Token.SEPARATOR
-        trailing_whitespace = self._trailing_whitespace.search(line)
         for value, is_data in splitter(line.rstrip()):
             if is_data or not data_only:
                 yield Token(data if is_data else sepa, value, lineno, columnno)
             columnno += len(value)
-        if trailing_whitespace and not data_only:
-            yield Token(sepa, trailing_whitespace.group(), lineno, columnno)
+        if not data_only:
+            trailing_whitespace = re.search(r'\s+$', line, flags=re.UNICODE)
+            if trailing_whitespace:
+                yield Token(sepa, trailing_whitespace.group(), lineno, columnno)
 
     def _split_from_spaces(self, line):
         for index, value in enumerate(self._space_splitter.split(line)):
@@ -101,15 +102,14 @@ class Splitter(object):
             if not token.value:
                 tokens.remove(token)
             elif token.type == token.DATA:
-                return
+                break
 
     def _remove_leading_empty(self, tokens):
-        # TODO: dropwhile - also above
         for token in list(tokens):
             if not token.value:
                 tokens.remove(token)
             elif token.type in (token.DATA, token.CONTINUATION):
-                return
+                break
 
     def _ensure_data_after_continuation(self, tokens):
         if not any(t.type == t.DATA for t in tokens):
