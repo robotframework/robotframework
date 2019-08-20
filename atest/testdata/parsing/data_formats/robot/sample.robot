@@ -3,7 +3,7 @@ We have a devious plan to rule the world with robots.
 
 *Setting*      *Value*
 
-Documentation  A complex testdata file   in robot format.
+Documentation  A complex testdata file in robot format.
 Default Tags   default1
 Force Tags     force1   force2
 

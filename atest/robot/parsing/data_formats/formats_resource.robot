@@ -23,7 +23,7 @@ Run Sample File And Check Tests
     Run Tests    ${options}    ${path}
     ${ignore}    ${type} =    Split Extension    ${path}
     Should Be Equal    ${SUITE.name}    Sample
-    Should Be Equal    ${SUITE.doc}    A complex testdata file\nin ${type} format.
+    Should Be Equal    ${SUITE.doc}    A complex testdata file in ${type} format.
     Check Log Message    ${SUITE.setup.messages[0]}    Setup
     Should Be Equal    ${SUITE.teardown}    ${None}
     Should Contain Tests    ${SUITE}    @{sample_tests}
