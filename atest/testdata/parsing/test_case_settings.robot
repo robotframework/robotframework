@@ -34,6 +34,10 @@ Documentation in multiple rows
     ...
     ...                This documentation has multiple rows
     ...                and also    multiple columns.
+    ...
+    ...                | table | =header= |
+    ...                | foo   |    bar   |
+    ...                | ragged |
     No Operation
 
 Documentation with variables

@@ -14,11 +14,15 @@ Suite Documentation
     ...    1st logical line
     ...    (i.e. paragraph)
     ...    is shortdoc on console.
-    ...    ${EMPTY}
+    ...
     ...    Documentation can have multiple rows
-    ...    and\nalso\nmultiple\ncolumns.
+    ...    and also multiple columns.
     ...    Newlines can also be added literally with "\n".
-    ...    ${EMPTY}
+    ...
+    ...    | table | =header= |
+    ...    | foo | bar |
+    ...    | ragged |
+    ...
     ...    Variables work since Robot 1.2 and doc_from_cli works too.
     ...    Starting from RF 2.1 \${nonexisting} variables are left unchanged.
     ...    Escaping (e.g. '\${non-existing}', 'c:\\temp', '\\n') works too.

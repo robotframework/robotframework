@@ -127,7 +127,7 @@ Documentation with non-existing variables
     No Operation
 
 Documentation with escaping
-    [Documentation]    \${XXX}    c:\\temp    \    \\
+    [Documentation]    \${XXX} - c:\\temp - \ - \\
     No Operation
 
 Arguments
