@@ -43,8 +43,10 @@ class TestModelObjects(unittest.TestCase):
 
 
 class TestTestSuiteBuilder(unittest.TestCase):
-    sources = [join(abspath(__file__), '..', '..', '..', 'atest', 'testdata', 'misc', n)
-               for n in ('pass_and_fail.robot', 'normal.robot')]
+    # This list has paths like `/path/file.py/../file.robot` on purpose.
+    # They don't work unless normalized.
+    sources = [join(__file__, '../../../atest/testdata/misc', name)
+               for name in ('pass_and_fail.robot', 'normal.robot')]
 
     def test_create_with_datasources_as_list(self):
         suite = api.TestSuiteBuilder().build(*self.sources)
