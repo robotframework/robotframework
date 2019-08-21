@@ -336,7 +336,6 @@ Options
                           Examples:
                           --pythonpath libs/ --pythonpath resources/*.jar
                           --pythonpath /opt/testlibs:mylibs.zip:yourlibs
- -E --escape what:with *  Deprecated. Use console escape mechanism instead.
  -A --argumentfile path *  Text file to read more arguments from. Use special
                           path `STDIN` to read contents from the standard input
                           stream. File can have both options and data sources

@@ -83,7 +83,6 @@ Command line options for test execution
   -K, --consolemarkers <auto|on|off>  Show `markers on the console`_ when top level
                                       keywords in a test case end.
   -P, --pythonpath <path>  Additional locations to add to the `module search path`_.
-  -E, --escape <what:with>   Deprecated. Use console escape mechanism instead.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
   --version               Prints the `version information`_.
@@ -140,7 +139,6 @@ Command line options for post-processing outputs
   --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   -C, --consolecolors <auto|on|ansi|off>  `Specifies are colors`_ used on the console.
   -P, --pythonpath <path>   Additional locations to add to the `module search path`_.
-  -E, --escape <what:with>   Deprecated. Use console escape mechanism instead.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
   --version               Prints the `version information`_.
