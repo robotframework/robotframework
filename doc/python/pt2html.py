@@ -4,6 +4,7 @@
 
 Usage:  pt2html.py
 """
+from __future__ import print_function
 
 import sys
 import os
@@ -17,7 +18,7 @@ import ug2html  # This also initializes docutils and pygments
 def create_tutorial():
     from docutils.core import publish_cmdline
 
-    print 'Creating Python Tutorial ...'
+    print('Creating Python Tutorial ...')
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     description = 'Python Tutorial for Robot Framework Library Developers'
     arguments = '''
@@ -28,7 +29,7 @@ PythonTutorial.html
 '''.split('\n')[1:-1] 
     publish_cmdline(writer_name='html', description=description, argv=arguments)
     path = arguments[-1]
-    print os.path.abspath(path)
+    print(os.path.abspath(path))
     return path
 
 

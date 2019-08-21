@@ -8,6 +8,7 @@ took longer than given amount of seconds to execute.
 Optional `outpath` specifies where to write processed results. If not given,
 results are written over the original file.
 """
+from __future__ import print_function
 
 import sys
 from robot.api import ExecutionResult, ResultVisitor
@@ -34,4 +35,4 @@ if __name__ == '__main__':
     try:
         check_tests(*sys.argv[1:])
     except TypeError:
-        print __doc__
+        print(__doc__)
