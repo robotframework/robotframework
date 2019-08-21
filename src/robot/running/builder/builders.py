@@ -102,7 +102,9 @@ class SuiteStructureParser(SuiteStructureVisitor):
         self._stack.append((suite, defaults))
 
     def end_directory(self, structure):
-        self._stack.pop()
+        suite, _ = self._stack.pop()
+        if suite.rpa is None and suite.suites:
+            suite.rpa = suite.suites[0].rpa
 
     def _build_suite(self, structure):
         defaults = self._stack[-1][-1] if self._stack else None
@@ -120,16 +122,14 @@ class SuiteStructureParser(SuiteStructureVisitor):
         return suite, defaults
 
     def _validate_execution_mode(self, suite):
-        rpa = suite.rpa
         if self._rpa_given:
             suite.rpa = self.rpa
-            return
-        if rpa is None:
-            return
-        if self.rpa is None:
-            self.rpa = rpa
-        elif self.rpa is not rpa:
-            this, that = ('tasks', 'tests') if rpa else ('tests', 'tasks')
+        elif suite.rpa is None:
+            pass
+        elif self.rpa is None:
+            self.rpa = suite.rpa
+        elif self.rpa is not suite.rpa:
+            this, that = ('tasks', 'tests') if suite.rpa else ('tests', 'tasks')
             raise DataError("Conflicting execution modes. File has %s "
                             "but files parsed earlier have %s. Fix headers "
                             "or use '--rpa' or '--norpa' options to set the "
