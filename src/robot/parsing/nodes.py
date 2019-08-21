@@ -47,7 +47,10 @@ class SingleValue(Node):
     _fields = ('value',)
 
     def __init__(self, values):
-        self.value = values[0] if values and values[0].upper() != 'NONE' else None
+        if values and values[0].upper() != 'NONE':
+            self.value = values[0]
+        else:
+            self.value = None
 
 
 class DataFile(Node):
@@ -97,7 +100,7 @@ class Variable(Node):
         if name.endswith('='):
             name = name[:-1].rstrip()
         self.name = name
-        self.values = value
+        self.value = value
 
 
 class KeywordCall(Node):

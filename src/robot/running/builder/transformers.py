@@ -48,17 +48,16 @@ class SettingsBuilder(ast.NodeVisitor):
         self.test_defaults.teardown = node
 
     def visit_TestTimeoutSetting(self, node):
-        self.test_defaults.timeout = node
+        self.test_defaults.timeout = node.value
 
     def visit_DefaultTagsSetting(self, node):
-        # TODO: should node be always given to test_defaults?
         self.test_defaults.default_tags = node.values
 
     def visit_ForceTagsSetting(self, node):
         self.test_defaults.force_tags = node.values
 
     def visit_TestTemplateSetting(self, node):
-        self.test_defaults.test_template = node
+        self.test_defaults.template = node.value
 
     def visit_ResourceSetting(self, node):
         self.suite.resource.imports.create(type='Resource', name=node.name,
@@ -95,7 +94,7 @@ class SuiteBuilder(ast.NodeVisitor):
         KeywordBuilder(self.suite.resource).visit(node)
 
     def visit_Variable(self, node):
-        self.suite.resource.variables.create(name=node.name, value=node.values)
+        self.suite.resource.variables.create(name=node.name, value=node.value)
 
 
 class ResourceBuilder(ast.NodeVisitor):
@@ -120,7 +119,7 @@ class ResourceBuilder(ast.NodeVisitor):
         KeywordBuilder(self.resource).visit(node)
 
     def visit_Variable(self, node):
-        self.resource.variables.create(name=node.name, value=node.values)
+        self.resource.variables.create(name=node.name, value=node.value)
 
     def visit_DocumentationSetting(self, node):
         self.resource.doc = node.value
@@ -172,9 +171,9 @@ class TestCaseBuilder(ast.NodeVisitor):
         return ''.join(temp), ()
 
     def visit_ForLoop(self, node):
-        for_loop = ForLoop(node.variables, node.values, node.flavor)
-        ForLoopBuilder(for_loop).visit(node)
-        self.test.keywords.append(for_loop)
+        loop = ForLoop(node.variables, node.values, node.flavor)
+        ForLoopBuilder(loop).visit(node)
+        self.test.keywords.append(loop)
 
     def visit_TemplateArguments(self, node):
         self.test.keywords.create(args=node.args)
@@ -189,13 +188,13 @@ class TestCaseBuilder(ast.NodeVisitor):
         self.settings.teardown = node
 
     def visit_TimeoutSetting(self, node):
-        self.settings.timeout = node
+        self.settings.timeout = node.value
 
     def visit_TagsSetting(self, node):
         self.settings.tags = node.values
 
     def visit_TemplateSetting(self, node):
-        self.settings.template = node
+        self.settings.template = node.value
 
     def visit_KeywordCall(self, node):
         self.test.keywords.create(name=node.keyword, args=node.args,

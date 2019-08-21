@@ -13,35 +13,64 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+NOTSET = object()
+
 
 class TestDefaults(object):
 
-    def __init__(self, parent_defaults):
-        self.setup = None
-        self.teardown = None
-        self.timeout = None
-        self.force_tags = None
-        self.default_tags = None
-        self.test_template = None
-        self.parent_defaults = parent_defaults
+    def __init__(self, parent):
+        self.parent = parent
+        self._setup = None
+        self._teardown = None
+        self._force_tags = ()
+        self.default_tags = ()
+        self.template = None
+        self._timeout = None
 
-    # TODO change to property
-    def get_force_tags(self):
-        force_tags = self.force_tags or ()
-        return force_tags + ((self.parent_defaults and self.parent_defaults.get_force_tags()) or ())
-
-    def get_setup(self):
-        return self.setup or (self.parent_defaults and self.parent_defaults.get_setup())
-
-    def get_teardown(self):
-        return self.teardown or (self.parent_defaults and self.parent_defaults.get_teardown())
-
-    def get_timeout(self):
-        if self.timeout:
-            return self.timeout.value
-        if self.parent_defaults:
-            return self.parent_defaults.get_timeout()
+    @property
+    def setup(self):
+        if self._setup:
+            return self._setup
+        if self.parent:
+            return self.parent.setup
         return None
+
+    @setup.setter
+    def setup(self, setup):
+        self._setup = setup
+
+    @property
+    def teardown(self):
+        if self._teardown:
+            return self._teardown
+        if self.parent:
+            return self.parent.teardown
+        return None
+
+    @teardown.setter
+    def teardown(self, teardown):
+        self._teardown = teardown
+
+    @property
+    def force_tags(self):
+        parent_force_tags = self.parent.force_tags if self.parent else ()
+        return self._force_tags + parent_force_tags
+
+    @force_tags.setter
+    def force_tags(self, force_tags):
+        self._force_tags = force_tags
+
+    @property
+    def timeout(self):
+        if self._timeout:
+            return self._timeout
+        if self.parent:
+            return self.parent.timeout
+        return None
+
+    @timeout.setter
+    def timeout(self, timeout):
+        self._timeout = timeout
 
 
 class TestSettings(object):
@@ -50,13 +79,13 @@ class TestSettings(object):
         self.defaults = defaults
         self._setup = None
         self._teardown = None
-        self._timeout = None
-        self._template = None
-        self._tags = None
+        self._timeout = NOTSET
+        self._template = NOTSET
+        self._tags = NOTSET
 
     @property
     def setup(self):
-        return self._setup or self.defaults.get_setup()
+        return self._setup or self.defaults.setup
 
     @setup.setter
     def setup(self, setup):
@@ -64,7 +93,7 @@ class TestSettings(object):
 
     @property
     def teardown(self):
-        return self._teardown or self.defaults.get_teardown()
+        return self._teardown or self.defaults.teardown
 
     @teardown.setter
     def teardown(self, teardown):
@@ -72,7 +101,9 @@ class TestSettings(object):
 
     @property
     def timeout(self):
-        return self._timeout.value if self._timeout else self.defaults.get_timeout()
+        if self._timeout is NOTSET:
+            return self.defaults.timeout
+        return self._timeout
 
     @timeout.setter
     def timeout(self, timeout):
@@ -80,11 +111,9 @@ class TestSettings(object):
 
     @property
     def template(self):
-        if self._template:
-            return self._template.value
-        if self.defaults.test_template:
-            return self.defaults.test_template.value
-        return None
+        if self._template is NOTSET:
+            return self.defaults.template
+        return self._template
 
     @template.setter
     def template(self, template):
@@ -92,11 +121,11 @@ class TestSettings(object):
 
     @property
     def tags(self):
-        if self._tags is not None:
-            tags = self._tags
+        if self._tags is NOTSET:
+            tags = self.defaults.default_tags
         else:
-            tags = self.defaults.default_tags or ()
-        return tags + self.defaults.get_force_tags()
+            tags = self._tags
+        return tags + self.defaults.force_tags
 
     @tags.setter
     def tags(self, tags):
