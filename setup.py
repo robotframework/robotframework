@@ -8,7 +8,7 @@ CURDIR = dirname(abspath(__file__))
 
 with open(join(CURDIR, 'src', 'robot', 'version.py')) as f:
     exec(f.read())
-    VERSION = get_version()
+    VERSION = get_version()  # noqa: F821
 with open(join(CURDIR, 'README.rst')) as f:
     LONG_DESCRIPTION = f.read()
     base_url = 'https://github.com/robotframework/robotframework/blob/master'

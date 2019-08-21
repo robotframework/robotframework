@@ -582,7 +582,7 @@ class OperatingSystem(object):
         # io.open() only accepts Unicode, not byte-strings, in text mode.
         # We expect possible byte-strings to be all ASCII.
         if PY2 and isinstance(content, str) and 'b' not in mode:
-            content = unicode(content)
+            content = unicode(content)  # noqa; F821
         if encoding:
             encoding = self._map_encoding(encoding)
         with io.open(path, mode, encoding=encoding) as f:

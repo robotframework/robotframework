@@ -21,7 +21,7 @@ class TestDecodeOutput(unittest.TestCase):
 
     else:
 
-        assert isinstance(ENCODED, unicode)
+        assert isinstance(ENCODED, unicode)  # noqa: F821
 
         def test_force_decoding(self):
             assert_equal(console_decode(ENCODED, force=True), UNICODE)

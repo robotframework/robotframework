@@ -30,7 +30,7 @@ def file_writer(path=None, encoding='UTF-8', newline=None):
     # `unicode_literals` either because many other Python 2 APIs accept only
     # byte strings.
     write = f.write
-    f.write = lambda text: write(unicode(text))
+    f.write = lambda text: write(unicode(text))  # noqa: F821
     return f
 
 

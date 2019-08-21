@@ -50,7 +50,7 @@ from robot.utils import (abspath, Application, file_writer, get_link_path,
 
 # http://ironpython.codeplex.com/workitem/31549
 if IRONPYTHON and PY_VERSION < (2, 7, 2):
-    int = long
+    int = long  # noqa: F821
 
 
 USAGE = """robot.testdoc -- Robot Framework test data documentation tool

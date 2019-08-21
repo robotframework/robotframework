@@ -13,18 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .platform import PY2
-
-
-if PY2:
+try:
+    unicode = unicode
     from .robottypes2 import (is_bytes, is_dict_like, is_integer, is_list_like,
                               is_number, is_string, is_unicode, type_name)
-    unicode = unicode
-
-else:
+except NameError:
+    unicode = str
     from .robottypes3 import (is_bytes, is_dict_like, is_integer, is_list_like,
                               is_number, is_string, is_unicode, type_name)
-    unicode = str
 
 
 TRUE_STRINGS = {'TRUE', 'YES', 'ON', '1'}

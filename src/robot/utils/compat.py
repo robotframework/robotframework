@@ -15,20 +15,20 @@
 
 import sys
 
-from .platform import IRONPYTHON, PY2
+from .platform import IRONPYTHON
 
 
-if PY2:
+try:
     # io.StringIO only accepts u'foo' with Python 2.
     from StringIO import StringIO
 
 
     def py2to3(cls):
         if hasattr(cls, '__unicode__'):
-            cls.__str__ = lambda self: unicode(self).encode('UTF-8')
+            cls.__str__ = lambda self: unicode(self).encode('UTF-8')  # noqa: F821
         return cls
 
-else:
+except ImportError:
     from io import StringIO
 
 

@@ -27,11 +27,18 @@ from .platform import RERAISED_EXCEPTIONS
 
 
 def is_integer(item):
-    return isinstance(item, (int, long))
+    try:
+        return isinstance(item, (int, long))
+    except NameError:
+        return isinstance(item, int)
 
 
 def is_number(item):
-    return isinstance(item, (int, long, float))
+    try:
+        return isinstance(item, (int, long, float))
+    except NameError:
+        return isinstance(item, (int, float))
+
 
 
 def is_bytes(item):
@@ -41,17 +48,27 @@ def is_bytes(item):
 def is_string(item):
     # Returns False with `b'bytes'` on IronPython on purpose. Results of
     # `isinstance(item, basestring)` would depend on IronPython 2.7.x version.
-    return isinstance(item, (str, unicode))
+    try:
+        return isinstance(item, (str, unicode))
+    except NameError:
+        return isinstance(item, str)
 
 
 def is_unicode(item):
-    return isinstance(item, unicode)
+    try:
+        return isinstance(item, unicode)
+    except NameError:
+        return isinstance(item, str)
 
 
 def is_list_like(item):
-    if isinstance(item, (str, unicode, bytes, bytearray, UserString, String,
-                         file)):
-        return False
+    try:
+        if isinstance(item, (str, unicode, bytes, bytearray, UserString, String,
+                             file)):
+            return False
+    except NameError:
+        if isinstance(item, (str, bytes, bytearray, UserString, String)):
+            return False
     try:
         iter(item)
     except RERAISED_EXCEPTIONS:
@@ -68,7 +85,12 @@ def is_dict_like(item):
 
 def type_name(item):
     cls = item.__class__ if hasattr(item, '__class__') else type(item)
-    named_types = {str: 'string', unicode: 'string', bool: 'boolean',
-                   int: 'integer', long: 'integer', NoneType: 'None',
-                   dict: 'dictionary', type: 'class', ClassType: 'class'}
+    try:
+        named_types = {str: 'string', unicode: 'string', bool: 'boolean',
+                       int: 'integer', long: 'integer', NoneType: 'None',
+                       dict: 'dictionary', type: 'class', ClassType: 'class'}
+    except NameError:
+        named_types = {str: 'string', bool: 'boolean',
+                       int: 'integer', NoneType: 'None',
+                       dict: 'dictionary', type: 'class', ClassType: 'class'}
     return named_types.get(cls, cls.__name__)

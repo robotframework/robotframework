@@ -22,7 +22,7 @@ from .stringcache import StringIndex
 
 # http://ironpython.codeplex.com/workitem/31549
 if IRONPYTHON and PY_VERSION < (2, 7, 2):
-    int = long
+    int = long  # noqa: F821
 
 
 class JsExecutionResult(object):
