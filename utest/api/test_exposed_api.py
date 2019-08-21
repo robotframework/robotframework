@@ -2,24 +2,12 @@ import unittest
 
 from os.path import abspath, join
 
-from robot import api, model, parsing, reporting, result, running
+from robot import api, model, reporting, result, running
 
 from robot.utils.asserts import assert_equal, assert_true
 
 
 class TestExposedApi(unittest.TestCase):
-
-    def test_test_case_file(self):
-        assert_equal(api.TestCaseFile, parsing.TestCaseFile)
-
-    def test_test_data_directory(self):
-        assert_equal(api.TestDataDirectory, parsing.TestDataDirectory)
-
-    def test_resource_file(self):
-        assert_equal(api.ResourceFile, parsing.ResourceFile)
-
-    def test_test_data(self):
-        assert_equal(api.TestData, parsing.TestData)
 
     def test_execution_result(self):
         assert_equal(api.ExecutionResult, result.ExecutionResult)
