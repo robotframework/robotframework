@@ -13,7 +13,6 @@ Suite Setup       ${SUITE SETUP}
 # Library keywords get NOT_RUN status. That should be OK teardown status.
 Suite Teardown    No Operation
 
-
 *** Variables ***
 ${SETUP}          No Operation
 ${TEARDOWN}       Teardown
@@ -89,6 +88,14 @@ Keyword Teardown
     Keyword with Teardown
     This is validated
 
+Keyword teardown with non-existing variable is ignored
+    Keyword with teardown with non-existing variable
+    This is validated
+
+Keyword teardown with existing variable is resolved and executed
+    Keyword with teardown with existing variable
+    This is validated
+
 For Loops
     [Documentation]    FAIL    Keyword 'resource.Anarchy in the UK' expected 3 arguments, got 2.
     FOR    ${i}    IN RANGE    10
@@ -136,6 +143,14 @@ Embedded ${args} here
 Keyword with Teardown
     No Operation
     [Teardown]    Does not exist
+
+Keyword with teardown with non-existing variable
+    No Operation
+    [Teardown]    ${I DO NOT EXIST}
+
+Keyword with teardown with existing variable
+    No Operation
+    [Teardown]    ${TEARDOWN}    ${I DO NOT EXIST}
 
 Invalid Syntax UK
     [Arguments]    ${arg

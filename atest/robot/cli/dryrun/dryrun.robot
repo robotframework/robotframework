@@ -60,11 +60,9 @@ Setup/teardown with non-existing variable is ignored
 
 Setup/teardown with existing variable is resolved and executed
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.setup.name}    BuiltIn.No Operation
-    Should Be Equal    ${tc.teardown.name}    Teardown
-    ${args} =    Create List    \${nonex arg}
-    Lists Should Be Equal    ${tc.teardown.args}    ${args}
-    Should Be Equal    ${tc.teardown.keywords[0].name}    BuiltIn.Log
+    Check Keyword Data    ${tc.setup}    BuiltIn.No Operation    status=NOT_RUN
+    Check Keyword Data    ${tc.teardown}    Teardown    args=\${nonex arg}
+    Check Keyword Data    ${tc.teardown.keywords[0]}    BuiltIn.Log    args=\${arg}    status=NOT_RUN
 
 User keyword return value
     Check Test Case    ${TESTNAME}
@@ -79,6 +77,14 @@ Keyword Teardown
     ${tc}=    Check Test Case    ${TESTNAME}
     Should have correct number of keywords    ${tc}    2
     Should Be Equal    ${tc.kws[0].kws[1].name}    Does not exist
+
+Keyword teardown with non-existing variable is ignored
+    Check Test Case    ${TESTNAME}
+
+Keyword teardown with existing variable is resolved and executed
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Keyword Data    ${tc.kws[0].kws[-1]}    Teardown    args=\${I DO NOT EXIST}
+    Check Keyword Data    ${tc.kws[0].kws[-1].kws[0]}    BuiltIn.Log    args=\${arg}    status=NOT_RUN
 
 For Loops
     ${tc}=    Check Test Case    ${TESTNAME}

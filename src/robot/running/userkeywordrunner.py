@@ -192,6 +192,8 @@ class UserKeywordRunner(object):
         try:
             name = context.variables.replace_string(self._handler.teardown.name)
         except DataError as err:
+            if context.dry_run:
+                return None
             return ExecutionFailed(err.message, syntax=True)
         if name.upper() in ('', 'NONE'):
             return None
