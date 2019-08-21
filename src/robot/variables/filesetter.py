@@ -41,7 +41,7 @@ class VariableFileSetter(object):
             return path_or_variables
         LOGGER.info("Importing variable file '%s' with args %s"
                     % (path_or_variables, args))
-        if path_or_variables.lower().endswith('.yaml'):
+        if path_or_variables.lower().endswith(('.yaml', '.yml')):
             importer = YamlImporter()
         else:
             importer = PythonImporter()

@@ -1,5 +1,6 @@
 *** Settings ***
 Variables        valid.yaml
+Variables        valid.yml
 Variables        pythonpath.yaml
 Variables        ./invalid.YAML
 Variables        ..${/}variables${/}non_dict.yaml
@@ -19,6 +20,13 @@ Valid YAML file
     ${FLOAT}      ${3.14}
     ${LIST}       ${EXPECTED LIST}
     ${DICT}       ${EXPECTED DICT}
+
+Valid YML file
+    ${STRING IN YML}     Hello, YML!
+    ${INTEGER IN YML}    ${42}
+    ${FLOAT IN YML}      ${3.14}
+    ${LIST IN YML}       ${EXPECTED LIST}
+    ${DICT IN YML}       ${EXPECTED DICT}
 
 Non-ASCII strings
     ${NON}    äscii
@@ -40,3 +48,4 @@ Import Variables keyword
 
 YAML file from CLI
     ${YAML FILE FROM CLI}    woot!
+    ${YML FILE FROM CLI}     kewl!

@@ -576,15 +576,14 @@ The following example demonstrates a simple YAML file:
           pip_ installed, you can install it simply by running
           `pip install pyyaml`.
 
-          YAML support is new in Robot Framework 2.9. Starting from
-          version 2.9.2, the `standalone JAR distribution`_ has
-          PyYAML included by default.
+          YAML variable files must have either :file:`.yaml` or :file:`.yml`
+          extension. Support for the :file:`.yml` extension is new in
+          Robot Framework 3.2.
 
 YAML variable files can be used exactly like normal variable files
 from the command line using :option:`--variablefile` option, in the settings
 table using :setting:`Variables` setting, and dynamically using the
-:name:`Import Variables` keyword. The only thing to remember is that paths to
-YAML files must always end with :file:`.yaml` extension.
+:name:`Import Variables` keyword.
 
 If the above YAML file is imported, it will create exactly the same
 variables as the following variable table:
@@ -609,5 +608,5 @@ Most importantly, values of these dictionaries are accessible as attributes
 like `${DICT.one}`, assuming their names are valid as Python attribute names.
 If the name contains spaces or is otherwise not a valid attribute name, it is
 always possible to access dictionary values using syntax like
-`&{DICT}[with spaces]` syntax. The created dictionaries are also ordered, but
+`${DICT}[with spaces]` syntax. The created dictionaries are also ordered, but
 unfortunately the original source order of in the YAML file is not preserved.
