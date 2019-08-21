@@ -71,7 +71,7 @@ Command line options for test execution
                           if any critical test fails.
   --exitonerror           `Stops test execution <Stopping on parsing or execution error_>`__
                           if any error occurs when parsing test data, importing libraries, and so on.
-  --skipteardownonexit    `Skips teardowns`_ is test execution is prematurely stopped.
+  --skipteardownonexit    `Skips teardowns`_ if test execution is prematurely stopped.
   --prerunmodifier <name:args>    Activate `programmatic modification of test data`_.
   --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
