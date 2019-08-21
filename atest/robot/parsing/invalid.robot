@@ -55,6 +55,7 @@ Multisource Containing File With Invalid Encoding
     ...    ${PARSING}/invalid_encoding/invalid_encoding.robot
 
 File without read permission
+    [Tags]    no-windows
     [Setup]    Create test data without permissions    ${SUITE DIR}/sample.robot
     Run tests and check parsing error
     ...    ${SUITE DIR}/sample.robot
@@ -63,6 +64,7 @@ File without read permission
     [Teardown]    Remove test data without permissions    ${SUITE DIR}/sample.robot
 
 Directory without read permission
+    [Tags]    no-windows
     [Setup]    Create test data without permissions    ${SUITE DIR}
     Run tests and check parsing error
     ...    ${SUITE DIR}
@@ -80,7 +82,8 @@ Run tests and check error
 
 Run tests and check parsing error
     [Arguments]    ${paths}    ${error}    ${path}    ${prefix}=Parsing
-    ${path}=   Normalize path    ${path}
+    ${path}=    Normalize path    ${path}
+    ${path}=    Regexp escape    ${path}
     Run tests and check error    ${paths}    ${prefix} '${path}' failed: ${error}
 
 Create test data without permissions
