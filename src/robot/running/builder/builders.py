@@ -141,7 +141,6 @@ def build_suite(source, datapath=None, parent_defaults=None):
     defaults = TestDefaults(parent_defaults)
     if datapath:
         ast = get_test_case_file_ast(datapath)
-        #print(ast.dump(ast))
         SettingsBuilder(suite, defaults).visit(ast)
         SuiteBuilder(suite, defaults).visit(ast)
         if not suite.tests:
@@ -153,10 +152,9 @@ def build_suite(source, datapath=None, parent_defaults=None):
 def _get_rpa_mode(data):
     if not data:
         return None
-    modes = [s.header.lower() in ('task', 'tasks')
-             for s in data.sections if isinstance(s, TestCaseSection)]
-    if all(modes) or not any(modes):
-        return modes[0] if modes else None
+    tasks = [s.tasks for s in data.sections if isinstance(s, TestCaseSection)]
+    if all(tasks) or not any(tasks):
+        return tasks[0] if tasks else None
     raise DataError('One file cannot have both tests and tasks.')
 
 

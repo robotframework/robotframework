@@ -19,35 +19,35 @@ import re
 from robot.utils import normalize_whitespace
 
 
+def join_doc_or_meta(lines):
+    def lines_with_newlines():
+        last_index = len(lines) - 1
+        for index, line in enumerate(lines):
+            yield line
+            if index < last_index:
+                match = re.search(r'(\\+)n?$', line)
+                escaped_or_has_newline = match and len(match.group(1)) % 2 == 1
+                if not escaped_or_has_newline:
+                    yield '\n'
+    return ''.join(lines_with_newlines())
+
+
 class Node(AST):
     _fields = ()
 
-    def _add_joiners(self, values):
-        for index, item in enumerate(values):
-            yield item
-            if index < len(values) - 1:
-                yield self._joiner_based_on_eol_escapes(item)
 
-    def _joiner_based_on_eol_escapes(self, item):
-        eol_escapes = re.compile(r'(\\+)n?$')
-        match = eol_escapes.search(item)
-        if match and len(match.group(1)) % 2 == 1:
-            return ''
-        return '\n'
+class MultiValue(Node):
+    _fields = ('values',)
 
-
-class Value(Node):
-    _fields = ('value',)
-
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, values):
+        self.values = tuple(values)
 
 
 class SingleValue(Node):
     _fields = ('value',)
 
-    def __init__(self, value):
-        self.value = value[0] if value and value[0].upper() != 'NONE' else None
+    def __init__(self, values):
+        self.value = values[0] if values and values[0].upper() != 'NONE' else None
 
 
 class DataFile(Node):
@@ -76,7 +76,8 @@ class TestCaseSection(Node):
 
     def __init__(self, tests, header):
         self.tests = tests
-        self.header = header[0].strip('*').strip()
+        section_name = normalize_whitespace(header[0]).strip('* ')
+        self.tasks = section_name.upper() in ('TASKS', 'TASK')
 
 
 class KeywordSection(Node):
@@ -90,8 +91,13 @@ class Variable(Node):
     _fields = ('name', 'value')
 
     def __init__(self, name, value):
+        # TODO: Should this be done already by the parser?
+        # Applies also to 'WITH NAME', 'NONE' and 'TASK(S)' handling
+        # as well as joining doc/meta lines and tuple() conversion.
+        if name.endswith('='):
+            name = name[:-1].rstrip()
         self.name = name
-        self.value = value
+        self.values = value
 
 
 class KeywordCall(Node):
@@ -99,9 +105,9 @@ class KeywordCall(Node):
     _fields = ('assign', 'keyword', 'args')
 
     def __init__(self, assign, keyword, args=None):
-        self.assign = assign or ()
+        self.assign = tuple(assign or ())
         self.keyword = keyword
-        self.args = args or ()
+        self.args = tuple(args or ())
 
 
 class ForLoop(Node):
@@ -142,7 +148,7 @@ class ImportSetting(Node):
 
     def __init__(self, name, args):
         self.name = name
-        self.args = args
+        self.args = tuple(args)
 
 
 class LibrarySetting(ImportSetting):
@@ -158,32 +164,35 @@ class LibrarySetting(ImportSetting):
         return args, None
 
 
-class ResourceSetting(ImportSetting): pass
-class VariablesSetting(ImportSetting): pass
+class ResourceSetting(ImportSetting):
+    pass
+
+
+class VariablesSetting(ImportSetting):
+    pass
 
 
 class MetadataSetting(Node):
     _fields = ('name', 'value')
 
-    def __init__(self, name, value):
+    def __init__(self, name, values):
         self.name = name
-        self.value = ''.join(self._add_joiners(value))
+        self.value = join_doc_or_meta(values)
 
 
-class DocumentationSetting(Value):
+class DocumentationSetting(SingleValue):
 
-    def __init__(self, value):
-        doc = ''.join(self._add_joiners(value))
-        Value.__init__(self, doc)
+    def __init__(self, values):
+        SingleValue.__init__(self, [join_doc_or_meta(values)])
 
 
 class Fixture(Node):
     _fields = ('name', 'args')
 
-    def __init__(self, value):
-        if value and value[0].upper() != 'NONE':
-            self.name = value[0]
-            self.args = tuple(value[1:])
+    def __init__(self, values):
+        if values and values[0].upper() != 'NONE':
+            self.name = values[0]
+            self.args = tuple(values[1:])
         else:
             self.name = None
             self.args = ()
@@ -203,8 +212,8 @@ class TestTimeoutSetting(SingleValue): pass
 class TimeoutSetting(SingleValue): pass
 
 
-class ForceTagsSetting(Value): pass
-class DefaultTagsSetting(Value): pass
-class TagsSetting(Value): pass
-class ArgumentsSetting(Value): pass
-class ReturnSetting(Value): pass
+class ForceTagsSetting(MultiValue): pass
+class DefaultTagsSetting(MultiValue): pass
+class TagsSetting(MultiValue): pass
+class ArgumentsSetting(MultiValue): pass
+class ReturnSetting(MultiValue): pass
