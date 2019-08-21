@@ -67,6 +67,9 @@ Setup/teardown with existing variable is resolved and executed
 User keyword return value
     Check Test Case    ${TESTNAME}
 
+Non-existing variable in user keyword return value
+    Check Test Case    ${TESTNAME}
+
 Test Setup and Teardown
     ${tc}=    Check Test Case    ${TESTNAME}
     Should have correct number of keywords    ${tc}    2

@@ -73,6 +73,10 @@ User keyword return value
     ${quux}=    Some Return Value    ${foo}    ${bar}
     This is validated
 
+Non-existing variable in user keyword return value
+    Ooops Return Value
+    This is validated
+
 Test Setup And Teardown
     [Documentation]    FAIL    No keyword with name 'Does not exist' found.\n\n
     ...    Also teardown failed:\n
@@ -159,6 +163,9 @@ Invalid Syntax UK
 Some Return Value
     [Arguments]    ${a1}    ${a2}
     [Return]    ${a1}-${a2}
+
+Ooops return value
+    [Return]    ${ooops}
 
 UK with multiple failures
     Invalid Syntax UK
