@@ -67,7 +67,8 @@ class HighlightingStream(object):
         try:
             self.stream.flush()
         except IOError as err:
-            if err.errno != errno.EPIPE:
+            # Continue even if pipe is broken. EINVAL can occur on Windows.
+            if err.errno not in (errno.EPIPE, errno.EINVAL):
                 raise
 
     def highlight(self, text, status=None, flush=True):
