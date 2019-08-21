@@ -52,17 +52,17 @@ class SettingsBuilder(ast.NodeVisitor):
 
     def visit_DefaultTagsSetting(self, node):
         # TODO: should node be always given to test_defaults?
-        self.test_defaults.default_tags = node.value
+        self.test_defaults.default_tags = node.values
 
     def visit_ForceTagsSetting(self, node):
-        self.test_defaults.force_tags = node.value
+        self.test_defaults.force_tags = node.values
 
     def visit_TestTemplateSetting(self, node):
         self.test_defaults.test_template = node
 
     def visit_ResourceSetting(self, node):
         self.suite.resource.imports.create(type='Resource', name=node.name,
-                                           args=tuple(node.args))
+                                           args=node.args)
 
     def visit_LibrarySetting(self, node):
         self.suite.resource.imports.create(type='Library', name=node.name,
@@ -70,7 +70,7 @@ class SettingsBuilder(ast.NodeVisitor):
 
     def visit_VariablesSetting(self, node):
         self.suite.resource.imports.create(type='Variables', name=node.name,
-                                           args=tuple(node.args))
+                                           args=node.args)
 
     def visit_VariableSection(self, node):
         pass
@@ -83,6 +83,7 @@ class SettingsBuilder(ast.NodeVisitor):
 
 
 class SuiteBuilder(ast.NodeVisitor):
+
     def __init__(self, suite, test_defaults):
         self.suite = suite
         self.test_defaults = test_defaults
@@ -94,37 +95,32 @@ class SuiteBuilder(ast.NodeVisitor):
         KeywordBuilder(self.suite.resource).visit(node)
 
     def visit_Variable(self, node):
-        name = node.name
-        if node.name.endswith('='):
-            name = name[:-1].rstrip()
-        self.suite.resource.variables.create(name=name, value=node.value)
+        self.suite.resource.variables.create(name=node.name, value=node.values)
 
 
 class ResourceBuilder(ast.NodeVisitor):
+
     def __init__(self, resource):
         self.resource = resource
 
     def visit_ResourceSetting(self, node):
         self.resource.imports.create(type='Resource', name=node.name,
-                                     args=tuple(node.args))
+                                     args=node.args)
 
     def visit_LibrarySetting(self, node):
         self.resource.imports.create(type='Library', name=node.name,
-                                           args=node.args, alias=node.alias)
+                                     args=node.args, alias=node.alias)
 
 
     def visit_VariablesSetting(self, node):
         self.resource.imports.create(type='Variables', name=node.name,
-                                     args=tuple(node.args))
+                                     args=node.args)
 
     def visit_Keyword(self, node):
         KeywordBuilder(self.resource).visit(node)
 
     def visit_Variable(self, node):
-        name = node.name
-        if node.name.endswith('='):
-            name = name[:-1].rstrip()
-        self.resource.variables.create(name=name, value=node.value)
+        self.resource.variables.create(name=node.name, value=node.values)
 
     def visit_DocumentationSetting(self, node):
         self.resource.doc = node.value
@@ -196,7 +192,7 @@ class TestCaseBuilder(ast.NodeVisitor):
         self.settings.timeout = node
 
     def visit_TagsSetting(self, node):
-        self.settings.tags = node.value
+        self.settings.tags = node.values
 
     def visit_TemplateSetting(self, node):
         self.settings.template = node
@@ -207,6 +203,7 @@ class TestCaseBuilder(ast.NodeVisitor):
 
 
 class KeywordBuilder(ast.NodeVisitor):
+
     def __init__(self, resource):
         self.resource = resource
         self.kw = None
@@ -223,13 +220,13 @@ class KeywordBuilder(ast.NodeVisitor):
         self.kw.doc = node.value
 
     def visit_ArgumentsSetting(self, node):
-        self.kw.args = node.value
+        self.kw.args = node.values
 
     def visit_TagsSetting(self, node):
-        self.kw.tags = node.value
+        self.kw.tags = node.values
 
     def visit_ReturnSetting(self, node):
-        self.kw.return_ = node.value
+        self.kw.return_ = node.values
 
     def visit_TimeoutSetting(self, node):
         self.kw.timeout = node.value
@@ -248,6 +245,7 @@ class KeywordBuilder(ast.NodeVisitor):
 
 
 class ForLoopBuilder(ast.NodeVisitor):
+
     def __init__(self, for_loop):
         self.for_loop = for_loop
 

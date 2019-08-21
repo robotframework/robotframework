@@ -27,8 +27,8 @@ class TestDefaults(object):
 
     # TODO change to property
     def get_force_tags(self):
-        force_tags = self.force_tags or []
-        return force_tags + ((self.parent_defaults and self.parent_defaults.get_force_tags()) or [])
+        force_tags = self.force_tags or ()
+        return force_tags + ((self.parent_defaults and self.parent_defaults.get_force_tags()) or ())
 
     def get_setup(self):
         return self.setup or (self.parent_defaults and self.parent_defaults.get_setup())
@@ -95,7 +95,7 @@ class TestSettings(object):
         if self._tags is not None:
             tags = self._tags
         else:
-            tags = self.defaults.default_tags or []
+            tags = self.defaults.default_tags or ()
         return tags + self.defaults.get_force_tags()
 
     @tags.setter
