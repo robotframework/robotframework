@@ -282,7 +282,6 @@ Options
                           the name using colon or semicolon as a separator.
                           Examples: --listener MyListenerClass
                                     --listener path/to/Listener.py:arg1:arg2
-    --warnonskippedfiles  Deprecated. Nowadays all skipped files are reported.
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
     --runemptysuite       Executes tests also if the top level test suite is

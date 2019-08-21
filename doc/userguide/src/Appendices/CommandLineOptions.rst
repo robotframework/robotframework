@@ -61,7 +61,6 @@ Command line options for test execution
   --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_
                           in the generated log file.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
-  --warnonskippedfiles    Deprecated. Nowadays all skipped files are reported.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
                           in test cases. Error codes are returned normally.
   --runemptysuite         Executes tests also if the selected `test suites are empty`_.
