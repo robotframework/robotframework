@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.6
 
 import os
 import shutil
@@ -8,7 +8,7 @@ from subprocess import call
 from sys import exit
 
 
-class GenerateApiDocs(object):
+class GenerateApiDocs:
     BUILD_DIR = abspath(dirname(__file__))
     AUTODOC_DIR = join(BUILD_DIR, 'autodoc')
     ROOT = normpath(join(BUILD_DIR, '..', '..'))
@@ -65,7 +65,7 @@ class GenerateApiDocs(object):
             shutil.rmtree(dirname)
 
 
-class GeneratorOptions():
+class GeneratorOptions:
     usage = '''
     generate.py [options]
 
@@ -82,25 +82,25 @@ class GeneratorOptions():
         self._parser = OptionParser(self.usage)
         self._add_options()
         self._options, _ = self._parser.parse_args()
-        if not self._options._javadoc:
-           self._prompt_for_generation('javadoc')
+        if not self._options.javadoc:
+            self._prompt_for_generation('javadoc')
 
     @property
     def javadoc(self):
-        return self._options._javadoc
+        return self._options.javadoc
 
     def _add_options(self):
         self._parser.add_option('-j', '--javadoc',
             action='store_true',
-            dest='_javadoc',
+            dest='javadoc',
             help='Generates Javadoc'
         )
 
     def _prompt_for_generation(self, attr_name):
-        selection = raw_input('Generate also %s? '
-        '[Y/N] (N by default) > ' % attr_name.title())
-        if len(selection) > 0 and selection[0].lower() == 'y':
-            setattr(self._options, '_%s' % attr_name, True)
+        selection = input('Generate also %s? '
+                          '[Y/N] (N by default) > ' % attr_name.title())
+        if selection and selection[0].lower() == 'y':
+            setattr(self._options, attr_name, True)
 
 
 if __name__ == '__main__':
