@@ -77,15 +77,17 @@ class TestSettings(object):
 
     def __init__(self, defaults):
         self.defaults = defaults
-        self._setup = None
-        self._teardown = None
+        self._setup = NOTSET
+        self._teardown = NOTSET
         self._timeout = NOTSET
         self._template = NOTSET
         self._tags = NOTSET
 
     @property
     def setup(self):
-        return self._setup or self.defaults.setup
+        if self._setup is NOTSET:
+            return self.defaults.setup
+        return self._setup
 
     @setup.setter
     def setup(self, setup):
@@ -93,7 +95,9 @@ class TestSettings(object):
 
     @property
     def teardown(self):
-        return self._teardown or self.defaults.teardown
+        if self._teardown is NOTSET:
+            return self.defaults.teardown
+        return self._teardown
 
     @teardown.setter
     def teardown(self, teardown):
