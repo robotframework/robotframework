@@ -31,11 +31,11 @@ class GenerateApiDocs(object):
         os.chdir(self.BUILD_DIR)
         rc = call(['make', 'html'], shell=os.name == 'nt')
         os.chdir(orig_dir)
-        print abspath(join(self.BUILD_DIR, '_build', 'html', 'index.html'))
+        print(abspath(join(self.BUILD_DIR, '_build', 'html', 'index.html')))
         exit(rc)
 
     def create_autodoc(self):
-        print 'Generating autodoc'
+        print('Generating autodoc')
         self._clean_directory(self.AUTODOC_DIR)
         command = ['sphinx-apidoc',
                    '--output-dir', self.AUTODOC_DIR,
@@ -44,11 +44,11 @@ class GenerateApiDocs(object):
                    '--maxdepth', '2',
                    '--module-first',
                    self.ROBOT_DIR]
-        print ' '.join(command)
+        print(' '.join(command))
         call(command)
 
     def create_javadoc(self):
-        print 'Generating javadoc'
+        print('Generating javadoc')
         self._clean_directory(self.JAVA_TARGET)
         command = ['javadoc',
                    '-locale', 'en_US',
@@ -56,12 +56,12 @@ class GenerateApiDocs(object):
                    '-d', self.JAVA_TARGET,
                    '-notimestamp',
                    'org.robotframework']
-        print ' '.join(command)
+        print(' '.join(command))
         call(command)
 
     def _clean_directory(self, dirname):
         if os.path.exists(dirname):
-            print 'Cleaning', dirname
+            print('Cleaning', dirname)
             shutil.rmtree(dirname)
 
 
