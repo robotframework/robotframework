@@ -4,7 +4,6 @@
 
 Usage:  pt2html.py
 """
-from __future__ import print_function
 
 import sys
 import os
@@ -26,7 +25,7 @@ def create_tutorial():
 --stylesheet-path=../userguide/src/userguide.css
 PythonTutorial.rst
 PythonTutorial.html
-'''.split('\n')[1:-1] 
+'''.split('\n')[1:-1]
     publish_cmdline(writer_name='html', description=description, argv=arguments)
     path = arguments[-1]
     print(os.path.abspath(path))

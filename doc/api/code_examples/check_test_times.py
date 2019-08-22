@@ -8,7 +8,6 @@ took longer than given amount of seconds to execute.
 Optional `outpath` specifies where to write processed results. If not given,
 results are written over the original file.
 """
-from __future__ import print_function
 
 import sys
 from robot.api import ExecutionResult, ResultVisitor

@@ -1,4 +1,3 @@
-from __future__ import print_function
 def simple_keyword():
     """Log a message"""
     print('You have used the simplest keyword.')
@@ -9,7 +8,7 @@ def greet(name):
 
 def multiply_by_two(number):
     """Returns the given number multiplied by two
-    
+
     The result is always a floating point number.
     This keyword fails if the given `number` cannot be converted to number.
     """

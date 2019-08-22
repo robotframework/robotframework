@@ -1,4 +1,3 @@
-from __future__ import print_function
 class LoggingLibrary:
     """Library for logging messages.
 
