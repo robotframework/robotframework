@@ -17,8 +17,14 @@ import ast
 
 from robot.variables import VariableIterator
 
-from ..model import ForLoop
+from ..model import ForLoop, Keyword
 from .testsettings import TestSettings
+
+
+def fixture(node, fixture_type):
+    if node.name is None:
+        return None
+    return Keyword(node.name, args=node.args, type=fixture_type)
 
 
 class SettingsBuilder(ast.NodeVisitor):
@@ -34,18 +40,16 @@ class SettingsBuilder(ast.NodeVisitor):
         self.suite.metadata[node.name] = node.value
 
     def visit_SuiteSetupSetting(self, node):
-        if node.name:
-            self.suite.keywords.create_setup(name=node.name, args=node.args)
+        self.suite.keywords.setup = fixture(node, Keyword.SETUP_TYPE)
 
     def visit_SuiteTeardownSetting(self, node):
-        if node.name:
-            self.suite.keywords.create_teardown(name=node.name, args=node.args)
+        self.suite.keywords.teardown = fixture(node, Keyword.TEARDOWN_TYPE)
 
     def visit_TestSetupSetting(self, node):
-        self.test_defaults.setup = node
+        self.test_defaults.setup = fixture(node, Keyword.SETUP_TYPE)
 
     def visit_TestTeardownSetting(self, node):
-        self.test_defaults.teardown = node
+        self.test_defaults.teardown = fixture(node, Keyword.TEARDOWN_TYPE)
 
     def visit_TestTimeoutSetting(self, node):
         self.test_defaults.timeout = node.value
@@ -135,20 +139,16 @@ class TestCaseBuilder(ast.NodeVisitor):
     def visit_TestCase(self, node):
         self.test = self.suite.tests.create(name=node.name)
         self.generic_visit(node)
-        self._set_settings(self.settings)
+        self._set_settings(self.test, self.settings)
 
-    def _set_settings(self, settings):
-        if settings.setup and settings.setup.name:
-            self.test.keywords.create_setup(name=settings.setup.name,
-                                            args=settings.setup.args)
-        if settings.teardown and settings.teardown.name:
-            self.test.keywords.create_teardown(name=settings.teardown.name,
-                                               args=settings.teardown.args)
-        self.test.timeout = settings.timeout
-        self.test.tags = settings.tags
+    def _set_settings(self, test, settings):
+        test.keywords.setup = settings.setup
+        test.keywords.teardown = settings.teardown
+        test.timeout = settings.timeout
+        test.tags = settings.tags
         if settings.template:
-            self.test.template = settings.template
-            self._set_template(self.test, settings.template)
+            test.template = settings.template
+            self._set_template(test, settings.template)
 
     def _set_template(self, parent, template):
         for kw in parent.keywords:
@@ -182,10 +182,10 @@ class TestCaseBuilder(ast.NodeVisitor):
         self.test.doc = node.value
 
     def visit_SetupSetting(self, node):
-        self.settings.setup = node
+        self.settings.setup = fixture(node, Keyword.SETUP_TYPE)
 
     def visit_TeardownSetting(self, node):
-        self.settings.teardown = node
+        self.settings.teardown = fixture(node, Keyword.TEARDOWN_TYPE)
 
     def visit_TimeoutSetting(self, node):
         self.settings.timeout = node.value
@@ -211,9 +211,7 @@ class KeywordBuilder(ast.NodeVisitor):
     def visit_Keyword(self, node):
         self.kw = self.resource.keywords.create(name=node.name)
         self.generic_visit(node)
-        if self.teardown and self.teardown.name:
-            self.kw.keywords.create_teardown(name=self.teardown.name,
-                                             args=self.teardown.args)
+        self.kw.keywords.teardown = self.teardown
 
     def visit_DocumentationSetting(self, node):
         self.kw.doc = node.value
@@ -231,16 +229,16 @@ class KeywordBuilder(ast.NodeVisitor):
         self.kw.timeout = node.value
 
     def visit_TeardownSetting(self, node):
-        self.teardown = node
+        self.teardown = fixture(node, Keyword.TEARDOWN_TYPE)
 
     def visit_KeywordCall(self, node):
         self.kw.keywords.create(name=node.keyword, args=node.args,
                                 assign=node.assign)
 
     def visit_ForLoop(self, node):
-        for_loop = ForLoop(node.variables, node.values, node.flavor)
-        ForLoopBuilder(for_loop).visit(node)
-        self.kw.keywords.append(for_loop)
+        loop = ForLoop(node.variables, node.values, node.flavor)
+        ForLoopBuilder(loop).visit(node)
+        self.kw.keywords.append(loop)
 
 
 class ForLoopBuilder(ast.NodeVisitor):
