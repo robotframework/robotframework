@@ -68,22 +68,19 @@ class VariableSplitter(object):
             return False
         self.start = start_index
         self._open_curly = 1
-        self._state = self._variable_state
         self._variable_chars = [string[start_index], '{']
         self._item_chars = []
         self._string = string
         start_index += 2
+        state = self._variable_state
         for index, char in enumerate(string[start_index:], start=start_index):
-            try:
-                self._state(char, index)
-            except StopIteration:
-                break
-            if index == max_index and not self._scanning_item():
+            state = state(char, index)
+            if state is None or (index == max_index and not self._scanning_item(state)):
                 break
         return True
 
-    def _scanning_item(self):
-        return self._state in (self._waiting_item_state, self._item_state)
+    def _scanning_item(self, state):
+        return state in (self._waiting_item_state, self._item_state)
 
     def _find_variable(self, string):
         max_end_index = string.rfind('}')
@@ -122,40 +119,38 @@ class VariableSplitter(object):
             self._open_curly -= 1
             if self._open_curly == 0:
                 if not self._can_have_item():
-                    raise StopIteration
-                self._state = self._waiting_item_state
+                    return None
+                return self._waiting_item_state
         elif char in self._identifiers:
-            self._state = self._internal_variable_start_state
+            return self._internal_variable_start_state
+        return self._variable_state
 
     def _can_have_item(self):
         return self._variable_chars[0] in '$@&'
 
     def _internal_variable_start_state(self, char, index):
-        self._state = self._variable_state
         if char == '{':
             self._variable_chars.append(char)
             self._open_curly += 1
             self._may_have_internal_variables = True
-        else:
-            self._variable_state(char, index)
+            return self._variable_state
+        return self._variable_state(char, index)
 
     def _waiting_item_state(self, char, index):
-        if char != '[':
-            raise StopIteration
-        self._state = self._item_state
+        return self._item_state if char == '[' else None
 
     def _item_state(self, char, index):
         if char != ']':
             self._item_chars.append(char)
-            return
+            return self._item_state
         self.items.append(''.join(self._item_chars))
         self._item_chars = []
         # Don't support nested item access with olf @ and & syntax.
         # In RF 3.2 old syntax is to be deprecated and in RF 3.3 it
         # will be reassigned to mean using variable in list/dict context.
         if self._variable_chars[0] in '@&':
-            raise StopIteration
-        self._state = self._waiting_item_state
+            return None
+        return self._waiting_item_state
 
 
 @py2to3
