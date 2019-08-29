@@ -61,4 +61,4 @@ Verify Error
     ${error} =    Catenate    Error in file '${p1}':
     ...    Processing variable file '${p2}' with arguments ${args} failed:
     ...    Invalid variable '${var}': ${error}
-    Check Log Message    @{ERRORS}[${index}]    ${error}    ERROR
+    Check Log Message    ${ERRORS}[${index}]    ${error}    ERROR

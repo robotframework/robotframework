@@ -61,6 +61,6 @@ Processing should have failed
 Importing should have failed
     [Arguments]    ${index}    ${error}
     ${path} =    Normalize Path    ${DATADIR}/variables/yaml_variable_file.robot
-    Check Log Message    @{ERRORS}[${index}]
+    Check Log Message    ${ERRORS}[${index}]
     ...    Error in file '${path}': ${error}    ERROR    pattern=yes
 

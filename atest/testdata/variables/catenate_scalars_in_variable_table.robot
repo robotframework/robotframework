@@ -21,7 +21,7 @@ ${LIST EXTENDED}   @{VALUES[1:-1]}
 ${LIST INTERNAL}   @{${DEFAULT SEP.split()[${0}]}\[${1}:${-1}]}
 ${LIST W/ SEP 1}   SEPARATOR=${EMPTY}    0    @{VALUES}    6    ${7}    8    9
 ...                ${SPACE}    ${0}    @{VALUES}    6789
-${LIST W/ SEP 2}   SEPARATOR=@{SEPARATOR.split()}[0]    @{NON STRING 1.split()}
+${LIST W/ SEP 2}   SEPARATOR=${SEPARATOR.split()}[0]    @{NON STRING 1.split()}
 ${NONEX IN VALUE}  Having    ${NON EXISTING}    variable    causes    failure
 ${ESCAPED}         \SEPARATOR=Default    separator    used
 ${NON UPPER 1}     separator=not    upper

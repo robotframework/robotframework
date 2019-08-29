@@ -114,7 +114,7 @@ Setting multiple times
     ...    Error in file '${path}':
     ...    @{extra}
     ...    Setting '${setting}' used multiple times.
-    Check Log Message      @{ERRORS}[${index}]    ${message}    ERROR
+    Check Log Message    ${ERRORS}[${index}]    ${message}    ERROR
 
 Setting multiple times in test case table
     [Arguments]    ${index}    ${setting}

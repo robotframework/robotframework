@@ -118,7 +118,7 @@ Log Many
     Log Many
     Log Many    @{EMPTY}
     Log Many    -${EMPTY}-    -@{EMPTY}-    -&{EMPTY}-
-    Log Many    @{LIST}[0]    &{DICT}[b]
+    Log Many    ${LIST}[0]    ${DICT}[b]
 
 Log Many with named and dict arguments
     Log Many    a=1    b=2    ${3}=c    obj=${OBJ}
