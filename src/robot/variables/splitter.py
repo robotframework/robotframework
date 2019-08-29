@@ -62,11 +62,11 @@ class VariableSplitter(object):
         if self.items:
             self.end += len(''.join(self.items)) + 2 * len(self.items)
 
-    def _split(self, string):
+    def _split(self, string, start=0):
         start_index, max_index = self._find_variable(string)
         if start_index == -1:
             return False
-        self.start = start_index
+        self.start = start_index + start
         self._open_curly = 1
         self._variable_chars = [string[start_index], '{']
         self._item_chars = []
@@ -77,6 +77,14 @@ class VariableSplitter(object):
             state = state(char, index)
             if state is None or (index == max_index and not self._scanning_item(state)):
                 break
+        if self._open_curly != 0:
+            self.identifier = None
+            self.base = None
+            self.items = []
+            self.start = -1
+            self.end = -1
+            self._may_have_internal_variables = False
+            return self._split(string[start_index:], start_index)
         return True
 
     def _scanning_item(self, state):
@@ -121,6 +129,8 @@ class VariableSplitter(object):
                 if not self._can_have_item():
                     return None
                 return self._waiting_item_state
+        elif char == '{' and not self._is_escaped(self._string, index):
+            self._open_curly += 1
         elif char in self._identifiers:
             return self._internal_variable_start_state
         return self._variable_state

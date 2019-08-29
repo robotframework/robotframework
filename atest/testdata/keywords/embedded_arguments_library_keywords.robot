@@ -59,6 +59,8 @@ Custom Regexp With Curly Braces
 Custom Regexp With Escape Chars
     Custom Regexp With Escape Chars e.g. \\, \\\\ and c:\\temp\\test.txt
     Custom Regexp With \\}
+    Custom Regexp With \\{
+    Custom Regexp With \\{}
 
 Grouping Custom Regexp
     ${matches} =    Grouping Custom Regexp(erts)

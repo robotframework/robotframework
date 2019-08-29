@@ -65,24 +65,24 @@ def i_want_as_variables(integer, string):
     should_be_equal(string, "42")
 
 
-@keyword(name=r"Today is ${date:\d{4\}-\d{2\}-\d{2\}}")
+@keyword(name=r"Today is ${date:\d{4}-\d{2}-\d{2}}")
 def today_is(date):
     should_be_equal(date, "2011-06-21")
 
 
-@keyword(name=r"Today is ${day1:\w{6,9\}} and tomorrow is ${day2:\w{6,9\}}")
+@keyword(name=r"Today is ${day1:\w\{6,9\}} and tomorrow is ${day2:\w{6,9}}")
 def today_is_and_tomorrow_is(day1, day2):
     should_be_equal(day1, "Tuesday")
     should_be_equal(day2, "Wednesday")
 
 
-@keyword(name="Literal ${Curly:{} Brace")
-def literal_brace(curly):
+@keyword(name=r"Literal ${Curly:\{} Brace")
+def literal_opening_curly_brace(curly):
     should_be_equal(curly, "{")
 
 
 @keyword(name="Literal ${Curly:\}} Brace")
-def literal_escaped_brace(curly):
+def literal_closing_curly_brace(curly):
     should_be_equal(curly, "}")
 
 
@@ -94,9 +94,19 @@ def custom_regexp_with_escape_chars(e1, e2, path):
     should_be_equal(path, "c:\\temp\\test.txt")
 
 
-@keyword(name=r"Custom Regexp With ${pattern:\\\\\}}")
-def custom_regexp_with(pattern):
-    should_be_equal(pattern, "\\}")
+@keyword(name=r"Custom Regexp With ${escapes:\\\\\}}")
+def custom_regexp_with_escapes_1(escapes):
+    should_be_equal(escapes, r'\}')
+
+
+@keyword(name=r"Custom Regexp With ${escapes:\\\\\{}")
+def custom_regexp_with_escapes_2(escapes):
+    should_be_equal(escapes, r'\{')
+
+
+@keyword(name=r"Custom Regexp With ${escapes:\\\\{}}")
+def custom_regexp_with_escapes_3(escapes):
+    should_be_equal(escapes, r'\{}')
 
 
 @keyword(name=r"Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}")

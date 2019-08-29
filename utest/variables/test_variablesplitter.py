@@ -25,33 +25,45 @@ class TestVariableSplitter(unittest.TestCase):
             self._test(inp)
 
     def test_one_var(self):
-        self._test('${hello}', '${hello}', 0)
-        self._test('1 @{hello} more', '@{hello}', 2)
-        self._test('*{hi}}', '*{hi}', 0)
-        self._test('{%{{hi}}', '%{{hi}', 1)
-        self._test('-= ${} =-', '${}', 3)
-        # In this case splitter thinks there are internal but there aren't.
-        # Better check would probably spent more time than that is saved when
-        # variable base is processed again in this special case.
-        self._test('%{hi%{u}', '%{hi%{u}', 0, internal=True)
+        self._test('${hello}', '${hello}')
+        self._test('1 @{hello} more', '@{hello}', start=2)
+        self._test('*{hi}}', '*{hi}')
+        self._test('{%{{hi}}', '%{{hi}}', start=1)
+        self._test('-= ${} =-', '${}', start=3)
+        self._test('%{hi%{u}', '%{u}', start=4)
 
-    def test_escape_internal_closing_curly(self):
-        self._test(r'${embed:\d{2\}}', '${embed:\d{2\}}')
-        self._test(r'{}{${e:\d\{4\}-\d{2\}-\d{2\}}}}',
-                   '${e:\d\{4\}-\d{2\}-\d{2\}}', start=3)
-        self._test(r'$&{\{\}{\}\\}{}', r'&{\{\}{\}\\}', start=1)
-        self._test(r'${&{\}{\\\\}\\}}{}', r'${&{\}{\\\\}\\}', internal=True)
+    def test_escape_internal_curlys(self):
+        self._test(r'${embed:\d\{2\}}', '${embed:\d\{2\}}')
+        self._test(r'{}{${e:\d\{4\}-\d\{2\}-\d\{2\}}}}',
+                   '${e:\d\{4\}-\d\{2\}-\d\{2\}}', start=3)
+        self._test(r'$&{\{\}\{\}\\}{}', r'&{\{\}\{\}\\}', start=1)
+        self._test(r'${&{\}\{\\\\}\\}}{}', r'${&{\}\{\\\\}\\}', internal=True)
 
-    def test_no_unescaped_internal_closing_curly(self):
+    def test_matching_internal_curlys_dont_need_to_be_escaped(self):
+        self._test(r'${embed:\d{2}}', r'${embed:\d{2}}')
+        self._test(r'{}{${e:\d{4}-\d{2}-\d{2}}}}',
+                   r'${e:\d{4}-\d{2}-\d{2}}', start=3)
+        self._test(r'$&{{}{}\\}{}', r'&{{}{}\\}', start=1)
+        self._test(r'${&{{\\\\}\\}}{}}', r'${&{{\\\\}\\}}', internal=True)
+
+    def test_no_unescaped_closing_curly(self):
         self._test(r'${x\}')
         self._test(r'${x\\\}')
         self._test(r'${x\\\\\\\}')
 
     def test_uneven_curlys(self):
-        self._test('${x:{}', '${x:{}')
-        self._test('${x:{{}}', '${x:{{}')
-        self._test('xx${x:{}xx', '${x:{}', start=2)
-        self._test('{%{{}{{}}{{', '%{{}', start=1)
+        self._test('${x:{}')
+        self._test('${y:{{}}')
+        self._test('xx${z:{}xx')
+        self._test('{%{{}{{}}{{')
+        self._test('${xx:{}}}}}', '${xx:{}}')
+
+    def test_escaped_uneven_curlys(self):
+        self._test(r'${x:\{}', r'${x:\{}')
+        self._test(r'${y:{\{}}', r'${y:{\{}}')
+        self._test(r'xx${z:\{}xx', r'${z:\{}', start=2)
+        self._test(r'{%{{}\{{}}{{', r'%{{}\{{}}', start=1)
+        self._test(r'${xx:{}\}\}\}}', r'${xx:{}\}\}\}}')
 
     def test_multiple_vars(self):
         self._test('${hello} ${world}', '${hello}', 0)
@@ -102,7 +114,7 @@ class TestVariableSplitter(unittest.TestCase):
     def test_list_item_with_internal_vars(self):
         self._test('${x}[${i}]', '${x}', items='${i}')
         self._test('xx ${x}[${i}] ${xyz}', '${x}', start=3, items='${i}')
-        self._test('$$$$${X{X}[${${i}-${${${i}}}}]', '${X{X}', start=4,
+        self._test('$$$$${XX}[${${i}-${${${i}}}}]', '${XX}', start=4,
                    items='${${i}-${${${i}}}}')
         self._test('${${i}}[${j{}]', '${${i}}', items='${j{}', internal=True)
 
@@ -116,7 +128,7 @@ class TestVariableSplitter(unittest.TestCase):
     def test_dict_item_with_internal_vars(self):
         self._test('${x}[${i}]', '${x}', items='${i}')
         self._test('xx ${x}[${i}] ${xyz}', '${x}', start=3, items='${i}')
-        self._test('$$$$${X{X}[${${i}-${${${i}}}}]', '${X{X}', start=4,
+        self._test('$$$$${XX}[${${i}-${${${i}}}}]', '${XX}', start=4,
                    items='${${i}-${${${i}}}}')
         self._test('${${i}}[${j{}]', '${${i}}', items='${j{}', internal=True)
 
@@ -204,7 +216,7 @@ class TestVariableSplitter(unittest.TestCase):
         for no in ['', 'xxx', '${var} not alone', '\\${notvat}', '\\\\${var}',
                    '${var}xx}', '${x}${y}']:
             assert_false(VariableSplitter(no).is_variable(), no)
-        for yes in ['${var}', '${var${}', '${var${internal}}', '@{var}',
+        for yes in ['${var}', r'${var$\{}', '${var${internal}}', '@{var}',
                     '@{var}[0]']:
             assert_true(VariableSplitter(yes).is_variable(), yes)
 
