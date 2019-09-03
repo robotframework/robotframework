@@ -752,6 +752,11 @@ specifying those values in different cells after the :setting:`[Return]` setting
    Return Three Values
        [Return]    foo    bar    zap
 
+.. note:: Unlike return statements in most programming languages, the
+          :setting:`[Return]` setting is not intended to stop processing of
+          the current keyword. Therefore subsequent keywords and statements
+          will be executed.
+
 Using special keywords to return
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
