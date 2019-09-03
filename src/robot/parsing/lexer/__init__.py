@@ -58,7 +58,7 @@ class BaseLexer(object):
             for token in statement:
                 if token.type in ignore:
                     continue
-                if name_token:
+                if name_token and token.type not in (token.SEPARATOR, token.EOL):
                     yield EOS.from_token(name_token)
                     name_token = None
                 if token.type == Token.NAME:

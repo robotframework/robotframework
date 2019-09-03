@@ -13,137 +13,219 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-try:
-    import csv
-except ImportError:
-    # csv module is missing from IronPython < 2.7.1
-    csv = None
+import ast
 
-from robot.utils import HtmlWriter, PY2
-
-from .formatters import TsvFormatter, TxtFormatter, PipeFormatter
-from .htmlformatter import HtmlFormatter
-from .htmltemplate import TEMPLATE_START, TEMPLATE_END
+from robot.parsing.lexer import Token
 
 
-def FileWriter(context):
-    """Creates and returns a ``FileWriter`` object.
+class SeparatorRemover(ast.NodeVisitor):
+    separator_tokens = (Token.EOL, Token.SEPARATOR, Token.OLD_FOR_INDENT)
 
-    :param context: The type of the returned ``FileWriter`` is determined based
-        on ``context.format``. ``context`` is also passed to created writer.
-    :type context: :class:`~robot.writer.datafilewriter.WritingContext`
-    """
-    if context.format == context.html_format:
-        return HtmlFileWriter(context)
-    if context.format == context.tsv_format:
-        return TsvFileWriter(context)
-    if context.pipe_separated:
-        return PipeSeparatedTxtWriter(context)
-    return SpaceSeparatedTxtWriter(context)
+    def visit_Statement(self, statement):
+        statement.tokens = [t for t in statement.tokens if
+                            t.type not in self.separator_tokens]
 
 
-class _DataFileWriter(object):
+class ColumnAligner(ast.NodeVisitor):
 
-    def __init__(self, formatter, configuration):
-        self._formatter = formatter
-        self._output = configuration.output
+    def __init__(self, ctx, widths):
+        self.ctx = ctx
+        self.widths = widths
+        self.test_name_len = 0
+        self.indent = 0
+        self.first_statement_after_name_seen = False
 
-    def write(self, datafile):
-        tables = [table for table in datafile if table]
-        for table in tables:
-            self._write_table(table, is_last=table is tables[-1])
+    def visit_TestOrKeyword(self, node):
+        self.first_statement_after_name_seen = False
+        self.generic_visit(node)
 
-    def _write_table(self, table, is_last):
-        self._write_header(table)
-        self._write_rows(self._formatter.format_table(table))
-        if not is_last:
-            self._write_empty_row(table)
+    def visit_ForLoop(self, statement):
+        self.indent += 1
+        self.generic_visit(statement)
+        self.indent -= 1
 
-    def _write_header(self, table):
-        self._write_row(self._formatter.format_header(table))
+    def visit_Statement(self, statement):
+        if statement.type == Token.NAME:
+            self.test_name_len = len(statement.tokens[0].value)
+        elif statement.type == Token.TESTCASE_HEADER:
+            self.align_header(statement)
+        else:
+            self.align_statement(statement)
 
-    def _write_rows(self, rows):
-        for row in rows:
-            self._write_row(row)
+    def align_header(self, statement):
+        for token, width in zip(statement.tokens, self.widths):
+            token.value = token.value.ljust(width)
 
-    def _write_empty_row(self, table):
-        self._write_row(self._formatter.empty_row_after(table))
+    def align_statement(self, statement):
+        for line in statement.lines:
+            line_pos = 0
+            exp_pos = 0
+            widths = self.widths_for_line(line)
+            for token, width in zip(line, widths):
+                exp_pos += width
+                if self.should_write_content_after_name(line_pos):
+                    exp_pos -= self.test_name_len
+                    self.first_statement_after_name_seen = True
+                token.value = (exp_pos - line_pos) * ' ' + token.value
+                line_pos += len(token.value)
 
-    def _write_row(self, row):
-        raise NotImplementedError
+    def widths_for_line(self, line):
+        if self.indent > 0 and line[0].type == Token.KEYWORD:
+            widths = self.widths[1:]
+            widths[0] = widths[0] + self.widths[0]
+            return widths
+        return self.widths
+
+    def should_write_content_after_name(self, line_pos):
+        return line_pos == 0 and not self.first_statement_after_name_seen \
+               and self.test_name_len < self.ctx.short_test_name_length
 
 
-class SpaceSeparatedTxtWriter(_DataFileWriter):
+class ColumnWidthCounter(ast.NodeVisitor):
 
-    def __init__(self, configuration):
-        formatter = TxtFormatter(configuration.txt_column_count)
-        self._separator = ' ' * configuration.txt_separating_spaces
-        _DataFileWriter.__init__(self, formatter, configuration)
+    def __init__(self, widths):
+        self.widths = widths
+        self.first_statement_after_name_seen = False
 
-    def _write_row(self, row):
-        line = self._separator.join(row).rstrip() + '\n'
-        self._output.write(line)
+    def visit_Statement(self, statement):
+        if statement.type == Token.NAME:
+            self.first_statement_after_name_seen = False
+        elif statement.type != Token.TESTCASE_HEADER:
+            for line in statement.lines:
+                for index, token in enumerate(line):
+                    col = index + 1
+                    if col >= len(self.widths):
+                        self.widths.append(len(token.value))
+                    elif len(token.value) > self.widths[col]:
+                        self.widths[col] = len(token.value)
+                self.first_statement_after_name_seen = True
 
 
-class PipeSeparatedTxtWriter(_DataFileWriter):
-    _separator = ' | '
+class Aligner(ast.NodeVisitor):
 
-    def __init__(self, configuration):
-        formatter = PipeFormatter(configuration.txt_column_count)
-        _DataFileWriter.__init__(self, formatter, configuration)
+    def __init__(self, ctx):
+        self.ctx = ctx
 
-    def _write_row(self, row):
-        row = self._separator.join(row)
-        if row:
+    def visit_Section(self, section):
+        if section.type in (Token.SETTING_HEADER, Token.VARIABLE_HEADER):
+            self.generic_visit(section)
+        elif section.type == Token.TESTCASE_HEADER:
+            if len(section.header) > 1:
+                widths = [len(t.value) for t in section.header]
+                counter = ColumnWidthCounter(widths[:])
+                counter.visit(section)
+                ColumnAligner(self.ctx, counter.widths).visit(section)
+
+    def visit_Statement(self, statement):
+        for line in statement.lines:
+            line[0].value = line[0].value.ljust(
+                self.ctx.setting_and_variable_name_length)
+
+
+class SettingCleaner(ast.NodeVisitor):
+
+    def visit_Statement(self, statement):
+        if statement.type in Token.SETTING_TOKENS:
+            name = statement.tokens[0].value
+            if name.strip().startswith('['):
+                cleaned = '[%s]' % name[1:-1].strip().lower().title()
+            else:
+                cleaned = name.lower().title()
+            statement.tokens[0].value = cleaned
+
+
+class ForLoopCleaner(ast.NodeVisitor):
+
+    def visit_ForLoop(self, forloop):
+        forloop.header[0].value = 'FOR'
+        forloop.end[0].value = 'END'
+
+
+class Writer(ast.NodeVisitor):
+
+    def __init__(self, ctx, row_writer):
+        self.ctx = ctx
+        self.writer = row_writer
+        self.indent = 0
+        self.section_seen = False
+        self.test_or_kw_seen = False
+        self.has_custom_headers = False
+
+    def visit_Section(self, section):
+        if self.section_seen:
+            self._write_newline()
+        if section.type == Token.TESTCASE_HEADER:
+            if len(section.header) > 1:
+                self.has_custom_headers = True
+        self.generic_visit(section)
+        self.section_seen = True
+        self.test_or_kw_seen = False
+        self.has_custom_headers = False
+
+    def visit_TestOrKeyword(self, node):
+        if self.test_or_kw_seen:
+            self._write_newline()
+        self._write_name(node.name)
+        self.indent += 1
+        self.generic_visit(node.body)
+        self.indent -= 1
+        self.test_or_kw_seen = True
+
+    def _write_name(self, name):
+        want_content_on_name_row = self.has_custom_headers and \
+            len(name.tokens[0].value) < self.ctx.short_test_name_length
+        self._write_statement(name, write_newline=not want_content_on_name_row)
+
+    def visit_ForLoop(self, node):
+        self._write_statement(node.header)
+        self.indent += 1
+        self.generic_visit(node.body)
+        self.indent -= 1
+        self._write_statement(node.end)
+
+    def visit_Statement(self, statement):
+        self._write_statement(statement)
+
+    def _write_statement(self, statement, write_newline=True):
+        for line in statement.lines:
+            self.writer.write(line, self.indent)
+            if write_newline:
+                self._write_newline()
+
+    def _write_newline(self):
+        self.writer.write_newline()
+
+
+class RowWriter(object):
+
+    def __init__(self, ctx):
+        self.output = ctx.output
+        self.pipes = ctx.pipe_separated
+        self.separator, self.indent_string = self.get_separator_and_indent(ctx)
+
+    def get_separator_and_indent(self, ctx):
+        if ctx.pipe_separated:
+            return ' | ', '   | '
+        separator = ' ' * ctx.txt_separating_spaces
+        return separator, separator
+
+    def write(self, tokens, indent):
+        indent = indent * self.indent_string
+        values = [t.value for t in tokens]
+        row = indent + self.separator.join(values)
+        if self.pipes:
             row = '| ' + row + ' |'
-        self._output.write(row + '\n')
+        else:
+            row = row.rstrip()
+        self.output.write(row)
+
+    def write_newline(self):
+        self.output.write('\n')
 
 
-class TsvFileWriter(_DataFileWriter):
-
-    def __init__(self, configuration):
-        if not csv:
-            raise RuntimeError('No csv module found. '
-                               'Writing tab separated format is not possible.')
-        formatter = TsvFormatter(configuration.tsv_column_count)
-        _DataFileWriter.__init__(self, formatter, configuration)
-        self._writer = self._get_writer(configuration)
-
-    def _get_writer(self, configuration):
-        # Custom dialect needed as a workaround for
-        # http://ironpython.codeplex.com/workitem/33627
-        dialect = csv.excel_tab()
-        dialect.lineterminator = configuration.line_separator if PY2 else '\n'
-        return csv.writer(configuration.output, dialect=dialect)
-
-    def _write_row(self, row):
-        if PY2:
-            row = [c.encode('UTF-8') for c in row]
-        self._writer.writerow(row)
-
-
-class HtmlFileWriter(_DataFileWriter):
-
-    def __init__(self, configuration):
-        formatter = HtmlFormatter(configuration.html_column_count)
-        _DataFileWriter.__init__(self, formatter, configuration)
-        self._name = configuration.datafile.name
-        self._writer = HtmlWriter(configuration.output)
-
-    def write(self, datafile):
-        self._writer.content(TEMPLATE_START % {'NAME': self._name}, escape=False)
-        _DataFileWriter.write(self, datafile)
-        self._writer.content(TEMPLATE_END, escape=False)
-
-    def _write_table(self, table, is_last):
-        self._writer.start('table', {'id': table.type.replace(' ', ''),
-                                     'border': '1'})
-        _DataFileWriter._write_table(self, table, is_last)
-        self._writer.end('table')
-
-    def _write_row(self, row):
-        self._writer.start('tr')
-        for cell in row:
-            self._writer.element(cell.tag, cell.content, cell.attributes,
-                                 escape=False)
-        self._writer.end('tr')
+def write_to_file(context, model):
+    SeparatorRemover().visit(model)
+    SettingCleaner().visit(model)
+    ForLoopCleaner().visit(model)
+    Aligner(context).visit(model)
+    Writer(context, RowWriter(context)).visit(model)

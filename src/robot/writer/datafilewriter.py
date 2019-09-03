@@ -13,12 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-
 from robot.errors import DataError
-from robot.utils import binary_file_writer, file_writer, PY2
+from robot.utils import file_writer
 
-from .filewriters import FileWriter
+from .filewriters import write_to_file
 
 
 class DataFileWriter(object):
@@ -30,31 +28,28 @@ class DataFileWriter(object):
         """
         self._options = options
 
-    def write(self, datafile):
-        """Writes given `datafile` using `**options`.
+    def write(self, model):
+        # TODO: Fix the documentation and types
+        """Writes given `model` to output using `**options`.
 
-        :param datafile: The parsed test data object to be written
-        :type datafile: :py:class:`~robot.parsing.model.TestCaseFile`,
+        :param model: The parsed test data object to be written
+        :type model: :py:class:`~robot.parsing.model.TestCaseFile`,
             :py:class:`~robot.parsing.model.ResourceFile`,
             :py:class:`~robot.parsing.model.TestDataDirectory`
         """
-        with WritingContext(datafile, **self._options) as ctx:
-            FileWriter(ctx).write(datafile)
+
+        with WritingContext(model, **self._options) as ctx:
+            write_to_file(ctx, model)
 
 
 class WritingContext(object):
     """Contains configuration used in writing a test data file to disk."""
     txt_format = 'txt'
-    html_format = 'html'
-    tsv_format = 'tsv'
     robot_format = 'robot'
-    txt_column_count = 8
-    html_column_count = 5
-    tsv_column_count = 8
-    _formats = [txt_format, html_format, tsv_format, robot_format]
+    _formats = [txt_format, robot_format]
 
     def __init__(self, datafile, format='', output=None, pipe_separated=False,
-                 txt_separating_spaces=4, line_separator='\n'):
+                 path=None, txt_separating_spaces=4, line_separator='\n'):
         """
         :param datafile: The datafile to be written.
         :type datafile: :py:class:`~robot.parsing.model.TestCaseFile`,
@@ -87,17 +82,16 @@ class WritingContext(object):
         self.pipe_separated = pipe_separated
         self.line_separator = line_separator
         self._given_output = output
-        self.format = self._validate_format(format) or self._format_from_file()
+        self.format = self._validate_format(format)
         self.txt_separating_spaces = txt_separating_spaces
+        self.setting_and_variable_name_length = 14
+        self.short_test_name_length = 18
         self.output = output
+        self._path = path
 
     def __enter__(self):
         if not self.output:
-            path = self._output_path()
-            if PY2 and self.format == self.tsv_format:
-                self.output = binary_file_writer(path)
-            else:
-                self.output = file_writer(path, newline=self.line_separator)
+            self.output = file_writer(self._path, newline=self.line_separator)
         return self
 
     def __exit__(self, *exc_info):
@@ -109,18 +103,3 @@ class WritingContext(object):
         if format and format not in self._formats:
             raise DataError('Invalid format: %s' % format)
         return format
-
-    def _format_from_file(self):
-        return self._format_from_extension(self._source_from_file())
-
-    def _format_from_extension(self, path):
-        return os.path.splitext(path)[1][1:].lower()
-
-    def _output_path(self):
-        return '%s.%s' % (self._base_name(), self.format)
-
-    def _base_name(self):
-        return os.path.splitext(self._source_from_file())[0]
-
-    def _source_from_file(self):
-        return getattr(self.datafile, 'initfile', self.datafile.source)

@@ -9,8 +9,6 @@ Tidying single test case file
     [Template]    Run tidy with golden file and check result
     ${EMPTY}            golden.robot
     --usepipes -f txt   golden_pipes.robot
-    --format tsv        golden.tsv
-    --format html       golden.html
     --for robot         golden.robot
     --spacecount 2      golden_two_spaces.robot
 
@@ -18,8 +16,6 @@ Tidying single resource file
     [Template]    Run tidy with golden resource file and check result
     ${EMPTY}    golden_resource.robot
     -p    golden_pipes_resource.robot
-    -f tsv    golden_resource.tsv
-    --FORMAT html    golden_resource.html
     --FOR ROBOT    golden_resource.robot
 
 Tidying single init file
@@ -33,15 +29,15 @@ Tidying single file without output file prints output to console
     File Should Not Exist    ${TEMP FILE}
 
 Default format is got from output file
-    Run tidy    ${EMPTY}    ${DATA}/golden.robot    ${TEMP}/golden.html
-    Compare tidy results    ${TEMP}/golden.html    ${DATA}/golden.html
+    Run tidy    ${EMPTY}    ${DATA}/golden.robot    ${TEMP}/golden.txt
+    Compare tidy results    ${TEMP}/golden.txt    ${DATA}/golden.txt
 
 Tidying directory
     [Setup]    Copy Directory    ${DATA}/tests    ${TEMP}/tests
     ${result_before}=    Run Tests    sources=${DATA}/tests
-    Run Tidy    --recursive --format TSV    ${TEMP}/tests
-    Check file count    ${TEMP}/tests    *.tsv    2
-    Check file count    ${TEMP}/tests/sub    *.tsv    1
+    Run Tidy    --recursive --format robot    ${TEMP}/tests
+    Check file count    ${TEMP}/tests    *.robot    2
+    Check file count    ${TEMP}/tests/sub    *.robot    1
     Check file count    ${TEMP}/tests    *.txt    0
     Check file count    ${TEMP}/tests/sub    *.txt    0
     Files Should Have $CURDIR    ${TEMP}/tests
@@ -55,11 +51,6 @@ Custom headers are preserved and tables aligned accordingly
 Running Tidy as script
     [Tags]   no-standalone
     Run tidy as script and check result    ${EMPTY}    golden.robot
-
-Tidy tests and keywords containing ELSE and ELSE IF
-    [Setup]    Copy File    ${DATA}/else_untidy.robot    ${TEMP}/else_untidy.robot
-    Run tidy    --inplace     ${TEMP}/else_untidy.robot
-    Compare tidy results    ${TEMP}/else_untidy.robot    ${DATA}/else_tidy.robot
 
 For loops
     Run tidy and check result    ${EMPTY}    for_loops_input.robot
