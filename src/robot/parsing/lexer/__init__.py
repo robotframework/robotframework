@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from itertools import chain
+
 from .context import TestCaseFileContext, ResourceFileContext
 from .lexers import FileLexer
 from .splitter import Splitter
@@ -45,7 +47,13 @@ class BaseLexer(object):
                       Token.OLD_FOR_INDENT}
         else:
             ignore = {Token.IGNORE}
-        for statement in self._handle_old_for(self.statements):
+        statements = self._handle_old_for(self.statements)
+        if not self._data_only:
+            statements = chain.from_iterable(
+                self._split_trailing_comment_and_empty_lines(s)
+                for s in statements
+            )
+        for statement in statements:
             name_token = last_token = None
             for token in statement:
                 if token.type in ignore:
@@ -81,6 +89,33 @@ class BaseLexer(object):
             if token.type not in Token.NON_DATA_TOKENS:
                 return token
         return None
+
+    def _split_trailing_comment_and_empty_lines(self, statement):
+        lines = list(self._split_to_lines(statement))
+        split_statements = []
+        for line in reversed(lines):
+            is_split = False
+            for token in line:
+                if token.type not in (token.IGNORE, token.SEPARATOR):
+                    is_split = token.type in (token.EOL, token.COMMENT)
+                    break
+            if not is_split:
+                break
+            split_statements.append(line)
+            lines.pop()
+        yield list(chain.from_iterable(lines))
+        for split in reversed(split_statements):
+            yield split
+
+    def _split_to_lines(self, statement):
+        current = []
+        for tok in statement:
+            current.append(tok)
+            if tok.type == tok.EOL:
+                yield current
+                current = []
+        if current:
+            yield current
 
 
 class TestCaseFileLexer(BaseLexer):

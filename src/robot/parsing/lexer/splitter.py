@@ -50,7 +50,7 @@ class Splitter(object):
         if not data_only:
             trailing_whitespace = re.search(r'\s+$', line, flags=re.UNICODE)
             if trailing_whitespace:
-                yield Token(sepa, trailing_whitespace.group(), lineno, columnno)
+                yield Token(Token.EOL, trailing_whitespace.group(), lineno, columnno)
 
     def _split_from_spaces(self, line):
         for index, value in enumerate(self._space_splitter.split(line)):
