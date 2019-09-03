@@ -706,6 +706,31 @@ way too:
 Executing Robot Framework this way is especially handy if you have done
 a `manual installation`_.
 
+Executing ``.robot`` files directly
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note:: The following approach only works on Unix-like systems (like Linux).
+
+With the following changes a .robot file can be executed directly:
+
+Make the file executable with the following command (assuming your file is called `tests.robot`):
+
+.. sourcecode:: bash
+
+    chmod +x tests.robot
+
+Add the following line at the beginning of the file (it must be the very first line):
+
+.. sourcecode:: robotframework
+
+   #!/usr/bin/env robot
+
+Run the file:
+
+.. sourcecode:: bash
+
+   ./tests.robot
+
 Using virtual environments
 --------------------------
 
