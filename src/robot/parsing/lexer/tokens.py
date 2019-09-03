@@ -53,6 +53,7 @@ class Token(object):
     END = 'END'
 
     SEPARATOR = 'SEPARATOR'
+    EOL = 'EOL'
     COMMENT = 'COMMENT'
     CONTINUATION = 'CONTINUATION'
     IGNORE = 'IGNORE'
