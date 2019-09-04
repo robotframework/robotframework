@@ -27,12 +27,13 @@ from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (DotDict, escape, format_assign_message,
-                         get_error_message, get_time, html_escape, is_falsy, is_integer,
-                         is_string, is_truthy, is_unicode, IRONPYTHON, JYTHON,
-                         Matcher, normalize, NormalizedDict, parse_time, prepr,
-                         plural_or_not as s, PY3, RERAISED_EXCEPTIONS, roundup,
-                         secs_to_timestr, seq2str, split_from_equals, StringIO,
-                         timestr_to_secs, type_name, unic, is_list_like)
+                         get_error_message, get_time, html_escape, is_falsy,
+                         is_integer, is_list_like, is_string, is_truthy,
+                         is_unicode, IRONPYTHON, JYTHON, Matcher, normalize,
+                         normalize_whitespace, NormalizedDict, parse_time,
+                         prepr, plural_or_not as s, PY3, RERAISED_EXCEPTIONS,
+                         roundup, secs_to_timestr, seq2str, split_from_equals,
+                         StringIO, timestr_to_secs, type_name, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
@@ -2760,10 +2761,16 @@ class _Misc(_BuiltInBase):
         | Import Library | ${CURDIR}/../Library.py | arg1 | named=arg2 |
         | Import Library | ${LIBRARIES}/Lib.java | arg | WITH NAME | JavaLib |
         """
+        args, alias = self._split_alias(args)
         try:
-            self._namespace.import_library(name, list(args))
+            self._namespace.import_library(name, args, alias)
         except DataError as err:
             raise RuntimeError(unic(err))
+
+    def _split_alias(self, args):
+        if len(args) > 1 and normalize_whitespace(args[-2]) == 'WITH NAME':
+            return args[:-2], args[-1]
+        return args, None
 
     @run_keyword_variant(resolve=0)
     def import_variables(self, path, *args):

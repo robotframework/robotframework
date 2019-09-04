@@ -1,51 +1,73 @@
 *** Settings ***
 Test Setup        No-break space       : :
 Test Teardown     Ogham space mark     : :
+Library  　  　  　OperatingSystem  　  　WITH NAME  　OS
 
 *** Variables ***
 ${NO-BREAK SPACE} =         : :
-${OGHAM SPACE MARK} =       : :
-${IDEOGRAPHIC　SPACE}　=    :　:
+${OGHAM SPACE MARK} =       : :  　  　# Trailing  　  　  　
+${IDEOGRAPHIC　SPACE}　=    :　:  　  　  　  　  　  　
 
 *** Test Cases ***
 In test and keywords
     [Documentation]    Used in keyword name, arguments and assign.
-    ...                In RF 3.2 arguments shouldn't be normalized.
     [ Tags ]    NBSP and Ogham
     ${x} =    No-break space        : :
-    ${x} =    Ogham space mark       : :
-    ${x}　=    Ideographic　space    :　:
+    ${x} =    Ogham space mark       : :  　  　# Trailing  　  　  　
+    ${x}　=    Ideographic　space    :　:  　  　  　  　  　  　
 
 As separator
-    [Documentation]    In RF 3.1 only NBSP works
     No-break space    : :
+     Ogham space mark    : :
+　　　　Ideographic　space　　　　:　:
 
 With pipes
-    [Documentation]    In RF 3.1 only NBSP works
 | | No-break space  | : : |
+| | Ogham space mark | : : |
+|　|　Ideographic　space　|　:　:　|
 
 *** Keywords ***
 No-break space
     [ Arguments ]    ${arg}
-    Log    ${arg}    repr=True
-    Should be equal    ${arg}    : :
+    Log    ${arg}    formatter=repr
+    Log    ${arg}
+    Should be equal    ${arg}    : :
     Should be equal    ${arg}    ${NO-BREAK SPACE}
     Should be equal    ${arg}    ${NO-BREAK SPACE}
 
 Ogham space mark
     [ Arguments ]    ${arg}
-    Log    ${arg}    repr=True
-    Should be equal    ${arg}    : :
+    Log    ${arg}    formatter=repr
+    Log    ${arg}
+    Should be equal    ${arg}    : :
     Should be equal    ${arg}    ${OGHAM SPACE MARK}
     Should be equal    ${arg}    ${OGHAM SPACE MARK}
 
 Ideographic　space
     [　Arguments　]    ${arg}
-    Log    ${arg}    repr=True
-    Should　be　equal    ${arg}    : :
+    Log    ${arg}    formatter=repr
+    Log    ${arg}
+    Should　be　equal    ${arg}    :　:
     Should　be　equal    ${arg}    ${IDEOGRAPHIC SPACE}
     Should　be　equal    ${arg}    ${IDEOGRAPHIC　SPACE}
 
 *** Test Cases　***
 In header
     No operation
+
+In test case　name
+    No operation
+
+In WITH NAME
+    OS.Directory Should Exist    ${CURDIR}
+
+In FOR separator
+    FOR    ${index}    IN RANGE    1
+        Should Be Equal    ${index}    ${0}
+    END
+    FOR    ${index}    ${item}    IN ENUMERATE    value
+        Should Be Equal    ${index}: ${item}    0: value
+    END
+    FOR    ${tag}    IN　ZIP    ${TEST TAGS}
+        Fail    Should not be executed
+    END

@@ -361,24 +361,11 @@ For loop marker with colon is case and space insensitive
 For loop marker can have many colons
     Check Test Case    ${TEST NAME}
 
-Case and space insensitive for loop separator is deprecated
-    Check Test Case    ${TEST NAME}
-    ${path} =    Normalize Path    ${DATADIR}/running/for.robot
-    ${message} =    Catenate
-    ...    Error in file '${path}':
-    ...    Invalid syntax in test case '${TEST NAME}':
-    ...    Using 'in' as a FOR loop separator is deprecated. Use 'IN' instead.
-    Check log message    ${ERRORS}[0]    ${message}    WARN
-    ${message} =    Catenate
-    ...    Error in file '${path}':
-    ...    Invalid syntax in test case '${TEST NAME}':
-    ...    Using 'INRANGE' as a FOR loop separator is deprecated. Use 'IN RANGE' instead.
-    Check log message    ${ERRORS}[1]    ${message}    WARN
-    ${message} =    Catenate
-    ...    Error in file '${path}':
-    ...    Invalid syntax in test case '${TEST NAME}':
-    ...    Using 'I ne numer ate' as a FOR loop separator is deprecated. Use 'IN ENUMERATE' instead.
-    Check log message    ${ERRORS}[2]    ${message}    WARN
+For loop separator is case- and space-sensitive
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
+    Check Test Case    ${TEST NAME} 4
 
 Escaping with backslash still works
     ${tc} =    Check Test Case    ${TEST NAME}

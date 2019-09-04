@@ -98,17 +98,13 @@ class TestBuilding(unittest.TestCase):
 
     def test_test_timeout(self):
         tests = build('timeouts.robot').tests
-        assert_equal(tests[0].timeout.value, '1min 42s')
-        assert_equal(tests[0].timeout.message, '')
-        assert_equal(tests[1].timeout.value, '1d2h')
-        assert_equal(tests[1].timeout.message, 'The message')
-        assert_equal(tests[2].timeout.value, '${100}')
-        assert_equal(tests[2].timeout.message, '')
+        assert_equal(tests[0].timeout, '1min 42s')
+        assert_equal(tests[1].timeout, '1d2h')
+        assert_equal(tests[2].timeout, '${100}')
 
     def test_keyword_timeout(self):
         kw = build('timeouts.robot').resource.keywords[0]
-        assert_equal(kw.timeout.value, '42')
-        assert_equal(kw.timeout.message, 'My message')
+        assert_equal(kw.timeout, '42')
 
     def test_rpa(self):
         for paths in [('.',), ('pass_and_fail.robot',),

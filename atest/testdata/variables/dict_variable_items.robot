@@ -70,7 +70,7 @@ Non-existing index variable
 
 Non-dict variable
     [Documentation]    FAIL
-    ...    Variable '\${INVALID}' is string, not list or dictionary,\
+    ...    Variable '\${INVALID}' is string, not list or dictionary, \
     ...    and thus accessing item '${nonex}' from it is not possible.
     Log    ${INVALID}[${nonex}]
 

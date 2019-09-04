@@ -61,7 +61,7 @@ Dotted does not show details for skipped
     Stdout Should Be    dotted_exitonfailure_empty_test.txt
     Stderr Should Be    empty.txt
     Check test tags    ${EMPTY}
-    ${tc} =    Check test case    User Keyword Without Name    FAIL
+    ${tc} =    Check test case    Empty Test Case    FAIL
     ...    Critical failure occurred and exit-on-failure mode is in use.
     Should contain    ${tc.tags}    robot:exit
 

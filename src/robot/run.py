@@ -31,6 +31,7 @@ that can be used programmatically. Other code is for internal usage.
 """
 
 import sys
+import os
 
 # Allows running as a script. __name__ check needed with multiprocessing:
 # https://github.com/robotframework/robotframework/issues/1137
@@ -41,7 +42,7 @@ from robot.conf import RobotSettings
 from robot.model import ModelModifier
 from robot.output import LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
-from robot.running import TestSuiteBuilder
+from robot.running.builder import TestSuiteBuilder
 from robot.utils import Application, unic, text
 
 
@@ -423,9 +424,10 @@ class RobotFramework(Application):
         LOGGER.info('Settings:\n%s' % unic(settings))
         builder = TestSuiteBuilder(settings['SuiteNames'],
                                    extension=settings.extension,
-                                   rpa=settings.rpa)
+                                   rpa=settings.rpa,
+                                   allow_empty_suite=settings.run_empty_suite)
         suite = builder.build(*datasources)
-        settings.rpa = builder.rpa
+        settings.rpa = suite.rpa
         suite.configure(**settings.suite_config)
         if settings.pre_run_modifiers:
             suite.visit(ModelModifier(settings.pre_run_modifiers,

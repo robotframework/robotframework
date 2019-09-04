@@ -91,10 +91,9 @@ purposes. This is especially useful when creating test cases using the
 
 Possible data before the first section is ignored.
 
-.. note:: Prior to Robot Framework 3.1, section names were space-insensitive,
-          meaning that spaces could be removed (e.g. `TestCases`) or extra
-          spaces added (e.g. `S e t t i n g s`). This is now deprecated and
-          only the format in the table above, case-insensitively, is supported.
+.. note:: Section names used to be space-insensitive, but that was deprecated
+          in Robot Framework 3.1 and trying to use something like `TestCases`
+          or `S e t t i n g s` causes an error in Robot Framework 3.2.
 
 .. note:: Prior to Robot Framework 3.1, all unrecognized sections were silently
           ignored but nowadays they cause an error. `Comments` sections can

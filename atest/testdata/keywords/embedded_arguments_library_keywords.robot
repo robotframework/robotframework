@@ -107,7 +107,7 @@ Keyword Matching Multiple Keywords In Library File
     foo+lib+bar-lib-zap
 
 Keyword Matching Multiple Keywords In Different Library Files
-    [Documentation]    FAIL Multiple keywords with name 'foo*lib*bar' found.\
+    [Documentation]    FAIL Multiple keywords with name 'foo*lib*bar' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${INDENT}embedded_args_in_lk_1.foo*lib*bar
     ...    ${INDENT}embedded_args_in_lk_2.foo*lib*bar

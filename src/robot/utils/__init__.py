@@ -51,7 +51,7 @@ from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
 from .misc import (plural_or_not, printable_name, roundup, seq2str,
                    seq2str2)
-from .normalizing import lower, normalize, NormalizedDict
+from .normalizing import lower, normalize, normalize_whitespace, NormalizedDict
 from .platform import (IRONPYTHON, JAVA_VERSION, JYTHON, PY_VERSION,
                        PY2, PY3, PYPY, UNIXY, WINDOWS, RERAISED_EXCEPTIONS)
 from .recommendations import RecommendationFinder
