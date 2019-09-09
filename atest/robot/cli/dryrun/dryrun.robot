@@ -60,25 +60,34 @@ Setup/teardown with non-existing variable is ignored
 
 Setup/teardown with existing variable is resolved and executed
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.setup.name}    BuiltIn.No Operation
-    Should Be Equal    ${tc.teardown.name}    Teardown
-    ${args} =    Create List    \${nonex arg}
-    Lists Should Be Equal    ${tc.teardown.args}    ${args}
-    Should Be Equal    ${tc.teardown.keywords[0].name}    BuiltIn.Log
+    Check Keyword Data    ${tc.setup}    BuiltIn.No Operation    status=NOT_RUN    type=setup
+    Check Keyword Data    ${tc.teardown}    Teardown    args=\${nonex arg}    type=teardown
+    Check Keyword Data    ${tc.teardown.keywords[0]}    BuiltIn.Log    args=\${arg}    status=NOT_RUN
 
 User keyword return value
+    Check Test Case    ${TESTNAME}
+
+Non-existing variable in user keyword return value
     Check Test Case    ${TESTNAME}
 
 Test Setup and Teardown
     ${tc}=    Check Test Case    ${TESTNAME}
     Should have correct number of keywords    ${tc}    2
-    Should Be Equal    ${tc.setup.name}    BuiltIn.Log
-    Should Be Equal    ${tc.teardown.name}    Does not exist
+    Check Keyword Data    ${tc.setup}    BuiltIn.Log    args=Hello Setup    status=NOT_RUN    type=setup
+    Check Keyword Data    ${tc.teardown}    Does not exist    status=FAIL    type=teardown
 
 Keyword Teardown
     ${tc}=    Check Test Case    ${TESTNAME}
     Should have correct number of keywords    ${tc}    2
-    Should Be Equal    ${tc.kws[0].kws[1].name}    Does not exist
+    Check Keyword Data    ${tc.kws[0].kws[-1]}   Does not exist    status=FAIL    type=teardown
+
+Keyword teardown with non-existing variable is ignored
+    Check Test Case    ${TESTNAME}
+
+Keyword teardown with existing variable is resolved and executed
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Keyword Data    ${tc.kws[0].kws[-1]}    Teardown    args=\${I DO NOT EXIST}    type=teardown
+    Check Keyword Data    ${tc.kws[0].kws[-1].kws[0]}    BuiltIn.Log    args=\${arg}    status=NOT_RUN
 
 For Loops
     ${tc}=    Check Test Case    ${TESTNAME}

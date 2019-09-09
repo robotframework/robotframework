@@ -46,7 +46,8 @@ Keyword does not exist with custom message
     Non Existing  Custom message
 
 Duplicate keywords
-    [Documentation]  FAIL Multiple keywords with name 'Duplicated keyword' found.\
+    [Documentation]  FAIL
+    ...  Multiple keywords with name 'Duplicated keyword' found. \
     ...  Give the full name of the keyword you want to use:\n
     ...  ${SPACE*4}keyword_should_exist_resource_1.Duplicated Keyword
     ...  ${SPACE*4}keyword_should_exist_resource_2.Duplicated Keyword

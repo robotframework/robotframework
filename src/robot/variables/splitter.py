@@ -62,28 +62,33 @@ class VariableSplitter(object):
         if self.items:
             self.end += len(''.join(self.items)) + 2 * len(self.items)
 
-    def _split(self, string):
+    def _split(self, string, start=0):
         start_index, max_index = self._find_variable(string)
         if start_index == -1:
             return False
-        self.start = start_index
+        self.start = start_index + start
         self._open_curly = 1
-        self._state = self._variable_state
         self._variable_chars = [string[start_index], '{']
         self._item_chars = []
         self._string = string
         start_index += 2
+        state = self._variable_state
         for index, char in enumerate(string[start_index:], start=start_index):
-            try:
-                self._state(char, index)
-            except StopIteration:
+            state = state(char, index)
+            if state is None or (index == max_index and not self._scanning_item(state)):
                 break
-            if index == max_index and not self._scanning_item():
-                break
+        if self._open_curly != 0:
+            self.identifier = None
+            self.base = None
+            self.items = []
+            self.start = -1
+            self.end = -1
+            self._may_have_internal_variables = False
+            return self._split(string[start_index:], start_index)
         return True
 
-    def _scanning_item(self):
-        return self._state in (self._waiting_item_state, self._item_state)
+    def _scanning_item(self, state):
+        return state in (self._waiting_item_state, self._item_state)
 
     def _find_variable(self, string):
         max_end_index = string.rfind('}')
@@ -122,40 +127,40 @@ class VariableSplitter(object):
             self._open_curly -= 1
             if self._open_curly == 0:
                 if not self._can_have_item():
-                    raise StopIteration
-                self._state = self._waiting_item_state
+                    return None
+                return self._waiting_item_state
+        elif char == '{' and not self._is_escaped(self._string, index):
+            self._open_curly += 1
         elif char in self._identifiers:
-            self._state = self._internal_variable_start_state
+            return self._internal_variable_start_state
+        return self._variable_state
 
     def _can_have_item(self):
         return self._variable_chars[0] in '$@&'
 
     def _internal_variable_start_state(self, char, index):
-        self._state = self._variable_state
         if char == '{':
             self._variable_chars.append(char)
             self._open_curly += 1
             self._may_have_internal_variables = True
-        else:
-            self._variable_state(char, index)
+            return self._variable_state
+        return self._variable_state(char, index)
 
     def _waiting_item_state(self, char, index):
-        if char != '[':
-            raise StopIteration
-        self._state = self._item_state
+        return self._item_state if char == '[' else None
 
     def _item_state(self, char, index):
         if char != ']':
             self._item_chars.append(char)
-            return
+            return self._item_state
         self.items.append(''.join(self._item_chars))
         self._item_chars = []
         # Don't support nested item access with olf @ and & syntax.
         # In RF 3.2 old syntax is to be deprecated and in RF 3.3 it
         # will be reassigned to mean using variable in list/dict context.
         if self._variable_chars[0] in '@&':
-            raise StopIteration
-        self._state = self._waiting_item_state
+            return None
+        return self._waiting_item_state
 
 
 @py2to3

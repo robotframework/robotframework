@@ -9,7 +9,8 @@ Name
 
 Documentation
     Doc Should Start With
-    ...    Library for `libdoc.py` testing purposes.\n\n
+    ...    Library for `libdoc.py` testing purposes.
+    ...
     ...    This library is only used in an example and it doesn't do anything useful.
 
 Version
@@ -49,16 +50,18 @@ Keyword Arguments
 
 Keyword Documentation
     Keyword Doc Should Start With    0
-    ...    Takes one `arg` and *does nothing* with it.\n\n
-    ...    Example:\n
-    ...    | Your Keyword | xxx |\n
-    ...    | Your Keyword | yyy |\n\n
+    ...    Takes one `arg` and *does nothing* with it.
+    ...
+    ...    Example:
+    ...    | Your Keyword | xxx |
+    ...    | Your Keyword | yyy |
+    ...
     ...    See `My Keyword` for no more information.
     Keyword Doc Should Start With    4
-    ...    Does nothing & <doc> has "stuff" to 'escape'!!\n
-    ...    ${SPACE * 4}We also got some\n
-    ...    ${SPACE * 8}indentation\n
-    ...    ${SPACE * 8}here.\n
+    ...    Does nothing & <doc> has "stuff" to 'escape'!!
+    ...    ${SPACE * 4}We also got some
+    ...    ${SPACE * 8}indentation
+    ...    ${SPACE * 8}here.
     ...    Back in the normal indentation level.
 
 Non ASCII

@@ -68,7 +68,6 @@ See documentations of the individual APIs for more details.
 """
 
 from robot.model import SuiteVisitor
-from robot.parsing import TestCaseFile, TestDataDirectory, ResourceFile, TestData
 from robot.reporting import ResultWriter
 from robot.result import ExecutionResult, ResultVisitor
 from robot.running import TestSuite, TestSuiteBuilder

@@ -132,11 +132,6 @@ class _BaseSettings(object):
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
-        if name == 'WarnOnSkipped':
-            with LOGGER.cache_only:
-                LOGGER.warn("Option '--warnonskippedfiles' is deprecated and "
-                            "has no effect. Nowadays all skipped files are "
-                            "reported.")
         return value
 
     def _escape_as_data(self, value):
@@ -406,7 +401,6 @@ class RobotSettings(_BaseSettings):
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunEmptySuite'      : ('runemptysuite', False),
-                       'WarnOnSkipped'      : ('warnonskippedfiles', None),
                        'Variables'          : ('variable', []),
                        'VariableFiles'      : ('variablefile', []),
                        'PreRunModifiers'    : ('prerunmodifier', []),

@@ -129,16 +129,17 @@ Variable files
 Variable files contain variables_ that can be used in the test
 data. Variables can also be created using variable tables or set from
 the command line, but variable files allow creating them dynamically
-and their variables can contain any objects.
+and also make it easy to create other variable values than strings.
 
 Variable files are typically implemented as Python modules and there are
 two different approaches for creating variables:
 
-`Creating variables directly`_
+`Getting variables directly from a module`_
    Variables are specified as module attributes. In simple cases, the
    syntax is so simple that no real programming is needed. For example,
-   `MY_VAR = 'my value'` creates a variable
-   `${MY_VAR}` with the specified text as the value.
+   `MY_VAR = 'my value'` creates a variable `${MY_VAR}` with the specified
+   text as its value. One limitation of this approach is that it does
+   not allow using arguments.
 
 `Getting variables from a special function`_
    Variable files can have a special `get_variables`
@@ -147,9 +148,11 @@ two different approaches for creating variables:
 
 Alternatively variable files can be implemented as `Python or Java classes`__
 that the framework will instantiate. Also in this case it is possible to create
-variables as attributes or get them from a special method.
+variables as attributes or get them dynamically from the `get_variables`
+method. Variable files can also be created as `YAML files`__.
 
 __ `Implementing variable file as Python or Java class`_
+__ `Variable file as YAML`_
 
 Taking variable files into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -223,16 +226,16 @@ names, those that are set individually with
 
 __ `Setting variables in command line`_
 
-Creating variables directly
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Getting variables directly from a module
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Basic syntax
 ''''''''''''
 
 When variable files are taken into use, they are imported as Python
-modules and all their global attributes that do not start with an
-underscore (`_`) are considered to be variables. Because variable
-names are case-insensitive, both lower- and upper-case names are
+modules and all their module level attributes that do not start with
+an underscore (`_`) are, by default, considered to be variables. Because
+variable names are case-insensitive, both lower- and upper-case names are
 possible, but in general, capital letters are recommended for global
 variables and attributes.
 
@@ -415,19 +418,22 @@ as variables.
           by Python to decide which attributes to import
           when using the syntax `from modulename import *`.
 
+The third option to select what variables are actually created is using
+a special `get_variables` function discussed below.
+
 Getting variables from a special function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An alternative approach for getting variables is having a special
-`get_variables` function (also camelCase syntax
-`getVariables` is possible) in a variable file. If such a function
-exists, Robot Framework calls it and expects to receive variables as
-a Python dictionary or a Java `Map` with variable names as keys
-and variable values as values. Created variables can be used as scalars,
-lists, and dictionaries exactly like when `creating variables directly`_,
-and it is possible to use `LIST__` and `DICT__` prefixes to make creating
-list and dictionary variables more explicit. The example below is functionally
-identical to the first `creating variables directly`_ example.
+`get_variables` function (also camelCase syntax `getVariables` is possible)
+in a variable file. If such a function exists, Robot Framework calls it and
+expects to receive variables as a Python dictionary or a Java `Map` with
+variable names as keys and variable values as values. Created variables can
+be used as scalars, lists, and dictionaries exactly like when `getting
+variables directly from a module`_, and it is possible to use `LIST__` and
+`DICT__` prefixes to make creating list and dictionary variables more explicit.
+The example below is functionally identical to the first example related to
+`getting variables directly from a module`_.
 
 .. sourcecode:: python
 
@@ -570,15 +576,14 @@ The following example demonstrates a simple YAML file:
           pip_ installed, you can install it simply by running
           `pip install pyyaml`.
 
-          YAML support is new in Robot Framework 2.9. Starting from
-          version 2.9.2, the `standalone JAR distribution`_ has
-          PyYAML included by default.
+          YAML variable files must have either :file:`.yaml` or :file:`.yml`
+          extension. Support for the :file:`.yml` extension is new in
+          Robot Framework 3.2.
 
 YAML variable files can be used exactly like normal variable files
 from the command line using :option:`--variablefile` option, in the settings
 table using :setting:`Variables` setting, and dynamically using the
-:name:`Import Variables` keyword. The only thing to remember is that paths to
-YAML files must always end with :file:`.yaml` extension.
+:name:`Import Variables` keyword.
 
 If the above YAML file is imported, it will create exactly the same
 variables as the following variable table:
@@ -603,5 +608,5 @@ Most importantly, values of these dictionaries are accessible as attributes
 like `${DICT.one}`, assuming their names are valid as Python attribute names.
 If the name contains spaces or is otherwise not a valid attribute name, it is
 always possible to access dictionary values using syntax like
-`&{DICT}[with spaces]` syntax. The created dictionaries are also ordered, but
+`${DICT}[with spaces]` syntax. The created dictionaries are also ordered, but
 unfortunately the original source order of in the YAML file is not preserved.

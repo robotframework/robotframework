@@ -56,7 +56,6 @@ Options
                            `got from the source code`__.
   -P, --pythonpath <path>  Additional locations where to search for libraries
                            and resources similarly as when `running tests`__.
-  -E, --escape <what:with>  Deprecated. Use console escape mechanism instead.
   -h, --help               Prints this help.
 
 __ `Specifying library version`_

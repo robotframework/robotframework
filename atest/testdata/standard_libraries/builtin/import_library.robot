@@ -21,6 +21,11 @@ Import Library With Variables And WITH NAME
     Import Library    ${name}    ${42}    ${name}    WITH NAME    Variables-${42}
     Variables-42.Parameters Should Be    ${42}    ParameterLibrary
 
+Import Library With WITH NAME containing non-ASCII spaces
+    ${name} =    Set Variable    ParameterLibrary
+    Import Library    ${name}    Ogham space mark    : :    WITH NAME    Ogham space mark
+    Ogham space mark.Parameters Should Be    Ogham space mark    : :
+
 Import Library Using Physical Path
     Import Library    ${CURDIR}${/}RegisteredClass.py
     RegisteredClass. Run Keyword If Method    False    Fail    This is not executed

@@ -38,8 +38,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.errors import DataError
-from robot.parsing import (ResourceFile, TestDataDirectory, TestCaseFile,
-                           disable_curdir_processing)
+from robot.parsing import (disable_curdir_processing)
 from robot.utils import Application, binary_file_writer, file_writer, PY2
 
 
@@ -68,7 +67,7 @@ Options
                    python -m robot.tidy --inplace --format robot *.html
  -r --recursive  Process given directory recursively. Files in the directory
                  are processed in-place similarly as when --inplace option
-                 is used.
+                 is used. Does not process referenced resource files.
  -f --format txt|html|tsv|robot
                  Output file format. If omitted, the format of the input
                  file is used.

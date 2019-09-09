@@ -32,10 +32,14 @@ Comment tables exist
     ${content} =    Get File    ${CURDIR}/table_names.robot
     Should Contain    ${content}    \n*** Comment ***\n
 
-* * * K e y w o r d * * *
+*** Keyword ***
 Keyword
     Keywords
 
 *keywords
 Keywords
     Log    "Keywords" was executed
+
+* * * K e y w o r d * * *
+Keyword
+    Fail    Should not be executed (or even parsed)
