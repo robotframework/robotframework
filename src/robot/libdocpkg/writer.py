@@ -21,10 +21,13 @@ from .xmlwriter import LibdocXmlWriter
 
 def LibdocWriter(format=None):
     format = (format or 'HTML').upper()
+    doc_format = None
+    if ':' in format:
+        format, doc_format = format.split(':', 1)
+
     if format == 'HTML':
         return LibdocHtmlWriter()
     if format == 'XML':
-        return LibdocXmlWriter()
-    if format == 'HTMLINXML':
-        return LibdocXmlWriter(embed_html_doc=True)
-    raise DataError("Format must be either 'HTML', 'XML' or 'HTMLINXML', got '%s'." % format)
+        return LibdocXmlWriter(output_doc_format=doc_format)
+
+    raise DataError("Format must be either 'HTML', 'XML', got '%s'." % format)
