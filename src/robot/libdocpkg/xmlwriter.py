@@ -14,19 +14,26 @@
 #  limitations under the License.
 
 from robot.utils import XmlWriter, get_timestamp
+from .htmlwriter import DocToHtml
 
 
 class LibdocXmlWriter(object):
 
+    def __init__(self, embed_html_doc=False):
+        self.embed_html_doc = embed_html_doc
+        self.formatter = None
+
     def write(self, libdoc, outfile):
         writer = XmlWriter(outfile)
         writer.start('keywordspec', {'name': libdoc.name, 'type': libdoc.type,
-                                     'format': libdoc.doc_format,
+                                     'format': 'HTML' if self.embed_html_doc else libdoc.doc_format,
                                      'generated': get_timestamp(millissep=None)})
         writer.element('version', libdoc.version)
         writer.element('scope', libdoc.scope)
         writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
-        writer.element('doc', libdoc.doc)
+        if self.embed_html_doc:
+            self.formatter = DocToHtml(libdoc.doc_format)
+        writer.element('doc', self.formatter(libdoc.doc) if self.embed_html_doc else libdoc.doc)
         self._write_keywords('init', libdoc.inits, writer)
         self._write_keywords('kw', libdoc.keywords, writer)
         writer.end('keywordspec')
@@ -39,7 +46,7 @@ class LibdocXmlWriter(object):
             for arg in kw.args:
                 writer.element('arg', arg)
             writer.end('arguments')
-            writer.element('doc', kw.doc)
+            writer.element('doc', self.formatter(kw.doc) if self.embed_html_doc else kw.doc)
             writer.start('tags')
             for tag in kw.tags:
                 writer.element('tag', tag)
