@@ -34,7 +34,7 @@ class LibdocXmlWriter(object):
                 doc_format = self.output_doc_format
                 doc = self.formatter(libdoc.doc)
             else:
-                raise DataError("Output doc format must be either 'HTML' or not set, got '%s'." % output_doc_format)
+                raise DataError("Output doc format must be either 'HTML' or not set, got '%s'." % self.output_doc_format)
 
         writer = XmlWriter(outfile)
         writer.start('keywordspec', {'name': libdoc.name, 'type': libdoc.type,
