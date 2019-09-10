@@ -64,7 +64,7 @@ class Variables(object):
 
     def set_from_variable_table(self, variables, overwrite=False):
         setter = VariableTableSetter(self.store)
-        setter.set(variables, overwrite)
+        return setter.set(variables, overwrite)
 
     def clear(self):
         self.store.clear()

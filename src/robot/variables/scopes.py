@@ -26,7 +26,11 @@ from .variables import Variables
 class VariableScopes(object):
 
     def __init__(self, settings):
+        self.scope_of_variable = {'GLOBAL':[],'TEST_SUITE':['${SUITE_DOCUMENTATION}','${SUITE_NAME}','${SUITE_SOURCE}','&{SUITE_METADATA}'],\
+        'LOCAL':[],'TEST_CASE':['@{TEST_TAGS}']}
         self._global = GlobalVariables(settings)
+        for x in self._global.as_dict().__iter__():
+            self.scope_of_variable['GLOBAL'].append(x)
         self._suite = None
         self._test = None
         self._scopes = [self._global]
@@ -107,13 +111,14 @@ class VariableScopes(object):
         variables = None
         for scope in self._scopes_until_suite:
             if variables is None:
-                variables = scope.set_from_file(path, args, overwrite)
+                variables=scope.set_from_file(path, args, overwrite)
+                self.scope_of_variable['TEST_SUITE']+=variables
             else:
-                scope.set_from_file(variables, overwrite=overwrite)
+                self.scope_of_variable['TEST_SUITE']+=scope.set_from_file(variables, overwrite)
 
     def set_from_variable_table(self, variables, overwrite=False):
         for scope in self._scopes_until_suite:
-            scope.set_from_variable_table(variables, overwrite)
+            self.scope_of_variable['TEST_SUITE']+=scope.set_from_variable_table(variables, overwrite)
 
     def resolve_delayed(self):
         for scope in self._scopes_until_suite:
@@ -122,11 +127,12 @@ class VariableScopes(object):
     def set_global(self, name, value):
         for scope in self._all_scopes:
             name, value = self._set_global_suite_or_test(scope, name, value)
-        self._variables_set.set_global(name, value)
+        for key in self._variables_set.set_global(name, value).__iter__():
+            self.scope_of_variable['GLOBAL'].append(key)
+        self.scope_of_variable['GLOBAL'].append(name)
 
     def _set_global_suite_or_test(self, scope, name, value):
         scope[name] = value
-        # Avoid creating new list/dict objects in different scopes.
         if name[0] != '$':
             name = '$' + name[1:]
             value = scope[name]
@@ -135,22 +141,31 @@ class VariableScopes(object):
     def set_suite(self, name, value, top=False, children=False):
         if top:
             self._scopes[1][name] = value
+            self.scope_of_variable['TEST_SUITE'].append(name)
             return
         for scope in self._scopes_until_suite:
             name, value = self._set_global_suite_or_test(scope, name, value)
+            self.scope_of_variable['TEST_SUITE'].append(name)
         if children:
-            self._variables_set.set_suite(name, value)
+            for key in self._variables_set.set_suite(name, value).__iter__():
+                if key not in self.scope_of_variable['TEST_SUITE']:
+                    self.scope_of_variable['TEST_SUITE'].append(key)
 
     def set_test(self, name, value):
         if self._test is None:
             raise DataError('Cannot set test variable when no test is started.')
         for scope in self._scopes_until_test:
-            name, value = self._set_global_suite_or_test(scope, name, value)
-        self._variables_set.set_test(name, value)
+            name, value = self._set_global_suite_or_test(self._test, name, value)
+            self.scope_of_variable['TEST_CASE'].append(name)
+        for key in self._variables_set.set_test(name, value).__iter__():
+            if key not in self.scope_of_variable['TEST_CASE']:
+                self.scope_of_variable['TEST_CASE'].append(key)
 
     def set_keyword(self, name, value):
         self.current[name] = value
-        self._variables_set.set_keyword(name, value)
+        self.scope_of_variable['LOCAL'].append(name)
+        for key in self._variables_set.set_keyword(name, value).__iter__():
+            self.scope_of_variable['LOCAL'].append(key)
 
     def as_dict(self, decoration=True):
         return self.current.as_dict(decoration=decoration)
@@ -199,8 +214,7 @@ class GlobalVariables(Variables):
                             ('${PREV_TEST_NAME}', ''),
                             ('${PREV_TEST_STATUS}', ''),
                             ('${PREV_TEST_MESSAGE}', '')]:
-            self[name] = value
-
+            self[name]=value
 
 class SetVariables(object):
 
@@ -214,11 +228,12 @@ class SetVariables(object):
             self._suite = NormalizedDict(ignore='_')
         else:
             self._suite = self._scopes[-1].copy()
+
         self._scopes.append(self._suite)
 
     def end_suite(self):
-        self._scopes.pop()
         self._suite = self._scopes[-1] if self._scopes else None
+        self._scopes.pop()
 
     def start_test(self):
         self._test = self._scopes[-1].copy()
@@ -238,18 +253,22 @@ class SetVariables(object):
         for scope in self._scopes:
             if name in scope:
                 scope.pop(name)
+        return scope
 
     def set_suite(self, name, value):
         self._suite[name] = value
+        return self._suite
 
     def set_test(self, name, value):
         for scope in reversed(self._scopes):
             scope[name] = value
             if scope is self._test:
                 break
+        return scope
 
     def set_keyword(self, name, value):
         self._scopes[-1][name] = value
+        return self._scopes[-1]
 
     def update(self, variables):
         for name, value in self._scopes[-1].items():

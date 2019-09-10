@@ -30,11 +30,12 @@ class VariableFileSetter(object):
 
     def __init__(self, store):
         self._store = store
+        self.vars = []
 
     def set(self, path_or_variables, args=None, overwrite=False):
         variables = self._import_if_needed(path_or_variables, args)
         self._set(variables, overwrite)
-        return variables
+        return self.vars
 
     def _import_if_needed(self, path_or_variables, args=None):
         if not is_string(path_or_variables):
@@ -55,6 +56,8 @@ class VariableFileSetter(object):
     def _set(self, variables, overwrite=False):
         for name, value in variables:
             self._store.add(name, value, overwrite)
+            self.vars.append(name)
+
 
 
 class YamlImporter(object):
