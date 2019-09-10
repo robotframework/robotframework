@@ -213,7 +213,7 @@ class XmlRpcRemoteClient(object):
         if self.uri.startswith('https://'):
             transport = TimeoutHTTPSTransport(timeout=self.timeout)
         else:
-            transport = TimeoutHTTPTransport(timeout=self.timeout)        
+            transport = TimeoutHTTPTransport(timeout=self.timeout)
         return xmlrpclib.ServerProxy(self.uri, encoding='UTF-8',
                                              transport=transport)
 
@@ -253,20 +253,20 @@ class XmlRpcRemoteClient(object):
                 raise TypeError
 
     def run_keyword(self, name, args, kwargs):
-        server = self.get_server_proxy()
-        run_keyword_args = [name, args, kwargs] if kwargs else [name, args]
-        try:
-            return server.run_keyword(*run_keyword_args)
-        except xmlrpclib.Fault as err:
-            message = err.faultString
-        except socket.error as err:
-            message = 'Connection to remote server broken: %s' % err
-        except ExpatError as err:
-            message = ('Processing XML-RPC return value failed. '
-                       'Most often this happens when the return value '
-                       'contains characters that are not valid in XML. '
-                       'Original error was: ExpatError: %s' % err)
-        raise RuntimeError(message)
+        with self.get_server_proxy() as server:
+            run_keyword_args = [name, args, kwargs] if kwargs else [name, args]
+            try:
+                return server.run_keyword(*run_keyword_args)
+            except xmlrpclib.Fault as err:
+                message = err.faultString
+            except socket.error as err:
+                message = 'Connection to remote server broken: %s' % err
+            except ExpatError as err:
+                message = ('Processing XML-RPC return value failed. '
+                        'Most often this happens when the return value '
+                        'contains characters that are not valid in XML. '
+                        'Original error was: ExpatError: %s' % err)
+            raise RuntimeError(message)
 
 
 # Custom XML-RPC timeouts based on
