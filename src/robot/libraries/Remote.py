@@ -15,6 +15,8 @@
 
 from __future__ import absolute_import
 
+from contextlib import contextmanager
+
 try:
     import httplib
     import xmlrpclib
@@ -209,51 +211,42 @@ class XmlRpcRemoteClient(object):
         self.uri = uri
         self.timeout = timeout
 
-    def get_server_proxy(self):
+    @property
+    @contextmanager
+    def _server(self):
         if self.uri.startswith('https://'):
             transport = TimeoutHTTPSTransport(timeout=self.timeout)
         else:
             transport = TimeoutHTTPTransport(timeout=self.timeout)
-        return xmlrpclib.ServerProxy(self.uri, encoding='UTF-8',
-                                             transport=transport)
-
-    def get_keyword_names(self):
-        with self.get_server_proxy() as server:
+        with xmlrpclib.ServerProxy(self.uri, encoding='UTF-8',
+                                transport=transport) as server:
             try:
-                return server.get_keyword_names()
+                yield server
             except (socket.error, xmlrpclib.Error) as err:
                 raise TypeError(err)
 
+    def get_keyword_names(self):
+        with self._server as server:
+            return server.get_keyword_names()
+            
     def get_keyword_arguments(self, name):
-        with self.get_server_proxy() as server:
-            try:
-                return server.get_keyword_arguments(name)
-            except xmlrpclib.Error:
-                raise TypeError
+        with self._server as server:
+            return server.get_keyword_arguments(name)
 
     def get_keyword_types(self, name):
-        with self.get_server_proxy() as server:
-            try:
-                return server.get_keyword_types(name)
-            except xmlrpclib.Error:
-                raise TypeError
+        with self._server as server:
+            return server.get_keyword_types(name)
 
     def get_keyword_tags(self, name):
-        with self.get_server_proxy() as server:
-            try:
-                return server.get_keyword_tags(name)
-            except xmlrpclib.Error:
-                raise TypeError
+        with self._server as server:
+            return server.get_keyword_tags(name)
 
     def get_keyword_documentation(self, name):
-        with self.get_server_proxy() as server:
-            try:
-                return server.get_keyword_documentation(name)
-            except xmlrpclib.Error:
-                raise TypeError
+        with self._server as server:
+            return server.get_keyword_documentation(name)
 
     def run_keyword(self, name, args, kwargs):
-        with self.get_server_proxy() as server:
+        with self._server as server:
             run_keyword_args = [name, args, kwargs] if kwargs else [name, args]
             try:
                 return server.run_keyword(*run_keyword_args)
