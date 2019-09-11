@@ -40,6 +40,10 @@ Name Should Be
     [Arguments]    ${name}
     Element Attribute Should Be    ${LIBDOC}    name    ${name}
 
+Format Should Be
+    [Arguments]    ${format}
+    Element Attribute Should Be    ${LIBDOC}    format    ${format}
+
 Doc Should Start With
     [Arguments]    @{doc}
     ${doc}=    Catenate     SEPARATOR=\n    @{doc}

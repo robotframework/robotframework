@@ -43,13 +43,36 @@ Format in XML
     TEXT     -F TEXT          DocFormat.py
     ROBOT    --docfor RoBoT   DocFormatHtml.py
     HTML     ${EMPTY}         DocFormatHtml.py
-
+    
+Format in XML:HTML
+    [Template]    Test Format in XML:HTML
+    HTML    --format xMl:hTML            DocFormat.py
+    HTML    --docfor RoBoT -f XML:HTML   DocFormatHtml.py
+    HTML    -F ROBOT --format xml:html   DocFormat.py
+    
 Format from XML spec
     [Template]    NONE
     Run Libdoc    -F HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
     Copy File    ${OUTXML}    ${OUTPREFIX}-2.xml
     Test Format In XML    HTML    lib=${OUTPREFIX}-2.xml
 
+Format from XML:HTML spec
+    [Template]    NONE
+    Run Libdoc    -F ROBOT --format XML:HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
+    Copy File    ${OUTXML}    ${OUTPREFIX}-2.xml
+    Test Format In XML:HTML    HTML    lib=${OUTPREFIX}-2.xml
+
+Compare HTML from XML:HTML
+    [Template]    NONE
+    Set Log Level  TRACE
+    Run Libdoc    -F ROBOT --format XML:HTML ${TESTDATADIR}/DocFormat.py ${OUTPREFIX}_xml_with_html.xml
+    Test Format In HTML    <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    
+    ...                    -F ROBOT --format HTML    
+    ...                    ${TESTDATADIR}/DocFormat.py 
+    Test Format In HTML    <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    
+    ...                    ${EMPTY}    
+    ...                    ${OUTPREFIX}_xml_with_html.xml
+   
 *** Keywords ***
 Test Format In HTML
     [Arguments]    ${expected}    ${cli}=    ${lib}=DocFormat.py
@@ -67,6 +90,9 @@ Test Format In XML
     Format should be    ${expected}
     Keyword Doc Should Be    0    *bold* or <b>bold</b> http://example.com
 
-Format should be
-    [Arguments]    ${expected}
-    Element Attribute Should Be    ${LIBDOC}    format    ${expected}
+Test Format In XML:HTML
+    [Arguments]    ${expected}    ${cli}=    ${lib}=DocFormat.py
+    ${lib} =    Join Path    ${TESTDATADIR}    ${lib}
+    Run Libdoc And Parse Output     ${cli} ${lib}
+    Format should be    ${expected}
+    Keyword Doc Should Be    0    <p><b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}</p>
