@@ -13,52 +13,53 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
 from robot.utils import XmlWriter, get_timestamp
+
 from .htmlwriter import DocToHtml
 
 
 class LibdocXmlWriter(object):
 
-    def __init__(self, output_doc_format=None):
-        self.output_doc_format = output_doc_format
-        self.formatter = None
+    def __init__(self, html_doc_format=False):
+        self._html_doc_format = html_doc_format
+        self._formatter = None
+        self._writer = None
 
     def write(self, libdoc, outfile):
-        if not self.output_doc_format:
-            doc_format = libdoc.doc_format
-            doc = libdoc.doc
-        else:
-            if self.output_doc_format == 'HTML':
-                self.formatter = DocToHtml(libdoc.doc_format)
-                doc_format = self.output_doc_format
-                doc = self.formatter(libdoc.doc)
-            else:
-                raise DataError("Output doc format must be either 'HTML' or not set, got '%s'." % self.output_doc_format)
+        self._formatter = DocToHtml(libdoc.doc_format) if self._html_doc_format else self.raw_format
+        self._writer = XmlWriter(outfile)
+        self._write_start(libdoc)
+        self._write_keywords('init', libdoc.inits)
+        self._write_keywords('kw', libdoc.keywords)
+        self._write_end()
 
-        writer = XmlWriter(outfile)
-        writer.start('keywordspec', {'name': libdoc.name, 'type': libdoc.type,
-                                     'format': doc_format,
-                                     'generated': get_timestamp(millissep=None)})
-        writer.element('version', libdoc.version)
-        writer.element('scope', libdoc.scope)
-        writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
-        writer.element('doc', doc)
-        self._write_keywords('init', libdoc.inits, writer)
-        self._write_keywords('kw', libdoc.keywords, writer)
-        writer.end('keywordspec')
-        writer.close()
+    def _write_start(self, libdoc):
+        self._writer.start('keywordspec', {'name': libdoc.name,
+                                           'type': libdoc.type,
+                                           'format': 'HTML' if self._html_doc_format else libdoc.doc_format,
+                                           'generated': get_timestamp(millissep=None)})
+        self._writer.element('version', libdoc.version)
+        self._writer.element('scope', libdoc.scope)
+        self._writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
+        self._writer.element('doc', self._formatter(libdoc.doc))
 
-    def _write_keywords(self, type, keywords, writer):
+    def _write_keywords(self, type, keywords):
         for kw in keywords:
-            writer.start(type, {'name': kw.name} if type == 'kw' else {})
-            writer.start('arguments')
+            self._writer.start(type, {'name': kw.name} if type == 'kw' else {})
+            self._writer.start('arguments')
             for arg in kw.args:
-                writer.element('arg', arg)
-            writer.end('arguments')
-            writer.element('doc', self.formatter(kw.doc) if self.output_doc_format else kw.doc)
-            writer.start('tags')
+                self._writer.element('arg', arg)
+            self._writer.end('arguments')
+            self._writer.element('doc', self._formatter(kw.doc))
+            self._writer.start('tags')
             for tag in kw.tags:
-                writer.element('tag', tag)
-            writer.end('tags')
-            writer.end(type)
+                self._writer.element('tag', tag)
+            self._writer.end('tags')
+            self._writer.end(type)
+
+    def _write_end(self):
+        self._writer.end('keywordspec')
+        self._writer.close()
+
+    def raw_format(self, doc):
+        return doc

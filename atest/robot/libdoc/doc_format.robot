@@ -43,7 +43,7 @@ Format in XML
     TEXT     -F TEXT          DocFormat.py
     ROBOT    --docfor RoBoT   DocFormatHtml.py
     HTML     ${EMPTY}         DocFormatHtml.py
-    
+
 Format in XML:HTML
     [Template]    Test Format in XML:HTML
     HTML    --format xMl:hTML            DocFormat.py
@@ -64,11 +64,7 @@ Format from XML:HTML spec
 
 Compare HTML from XML:HTML
     [Template]    NONE
-    Set Log Level  TRACE
     Run Libdoc    -F ROBOT --format XML:HTML ${TESTDATADIR}/DocFormat.py ${OUTPREFIX}_xml_with_html.xml
-    Test Format In HTML    <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    
-    ...                    -F ROBOT --format HTML    
-    ...                    ${TESTDATADIR}/DocFormat.py 
     Test Format In HTML    <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    
     ...                    ${EMPTY}    
     ...                    ${OUTPREFIX}_xml_with_html.xml

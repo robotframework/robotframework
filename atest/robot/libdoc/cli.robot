@@ -4,14 +4,13 @@ Test Template    Run Libdoc And Verify Created Output File
 
 *** Test Cases ***
 Default format is got from output file extension
-    String ${OUTHTML}                HTML         String
-    String ${OUTXML}                 XML          String    path=${OUTXML}
-    
-Using --format overrides output file extension
-    -f XmL ${TESTDATADIR}/resource.robot ${OUTHTML}   XML         resource
-    --format hTmL BuiltIn ${OUTPREFIX}.xxx            HTML        BuiltIn   path=${OUTPREFIX}.xxx
-    --format XML:HTML String ${OUTXML}                XML:HTML    String    path=${OUTXML}
+    String ${OUTHTML}    HTML    String
+    String ${OUTXML}     XML     String    path=${OUTXML}
 
+Using --format overrides output file extension
+    -f XmL ${TESTDATADIR}/resource.robot ${OUTHTML}    XML         resource
+    --format hTmL BuiltIn ${OUTPREFIX}.xxx             HTML        BuiltIn     path=${OUTPREFIX}.xxx
+    --format XML:HTML String ${OUTXML}                 XML:HTML    String      path=${OUTXML}
 
 Override name and version
     --name MyName --version 42 String ${OUTHTML}    HTML    MyName    42
@@ -47,17 +46,17 @@ HTML Doc Should Have Been Created
 XML Doc Should Have Been Created
     [Arguments]    ${path}    ${name}    ${version}
     ${libdoc}=    Parse Xml    ${path}
-    Set Test Variable   ${libdoc}
+    Set Test Variable  ${libdoc}
     Name Should Be    ${name}
     Run Keyword If    "${version}"    Version Should Match    ${version}
 
 XML:HTML Doc Should Have Been Created
     [Arguments]    ${path}    ${name}    ${version}
-    ${libdoc}=    Parse Xml    ${path}
-    Set Test Variable   ${libdoc}
-    Name Should Be    ${name}
+    ${libdoc}=          Parse Xml    ${path}
+    Set Test Variable  ${libdoc}
+    Name Should Be      ${name}
     Format Should Be    HTML
-    Run Keyword If    "${version}"    Version Should Match    ${version}
+    Run Keyword If      "${version}"    Version Should Match    ${version}
 
 Path to output should be in stdout
     [Documentation]    Printed path may be in different format than original.
