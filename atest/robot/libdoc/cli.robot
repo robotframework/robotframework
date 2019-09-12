@@ -45,18 +45,18 @@ HTML Doc Should Have Been Created
 
 XML Doc Should Have Been Created
     [Arguments]    ${path}    ${name}    ${version}
-    ${libdoc}=    Parse Xml    ${path}
-    Set Test Variable  ${libdoc}
-    Name Should Be    ${name}
-    Run Keyword If    "${version}"    Version Should Match    ${version}
+    ${libdoc}=           Parse Xml    ${path}
+    Set Test Variable    ${libdoc}
+    Name Should Be       ${name}
+    Run Keyword If       "${version}"    Version Should Match    ${version}
 
 XML:HTML Doc Should Have Been Created
     [Arguments]    ${path}    ${name}    ${version}
-    ${libdoc}=          Parse Xml    ${path}
-    Set Test Variable  ${libdoc}
-    Name Should Be      ${name}
-    Format Should Be    HTML
-    Run Keyword If      "${version}"    Version Should Match    ${version}
+    ${libdoc}=           Parse Xml    ${path}
+    Set Test Variable    ${libdoc}
+    Name Should Be       ${name}
+    Format Should Be     HTML
+    Run Keyword If       "${version}"    Version Should Match    ${version}
 
 Path to output should be in stdout
     [Documentation]    Printed path may be in different format than original.
