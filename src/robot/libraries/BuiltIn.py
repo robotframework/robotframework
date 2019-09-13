@@ -605,7 +605,7 @@ class _Verify(_BuiltInBase):
                         ignore_case=False, formatter='str'):
         """Fails if the given objects are unequal.
 
-        Optional ``msg``, ``values`` and ``_formatter`` arguments specify how
+        Optional ``msg``, ``values`` and ``formatter`` arguments specify how
         to construct the error message if this keyword fails:
 
         - If ``msg`` is not given, the error message is ``<first> != <second>``.
@@ -613,7 +613,7 @@ class _Verify(_BuiltInBase):
           the error message is ``<msg>: <first> != <second>``.
         - If ``msg`` is given and ``values`` gets a false value (see
           `Boolean arguments`), the error message is simply ``<msg>``.
-        - ``_formatter`` controls how to format the values. Possible values are
+        - ``formatter`` controls how to format the values. Possible values are
           ``str`` (default), ``repr`` and ``ascii``, and they work similarly
           as Python built-in functions with same names. See `String
           representations` for more details.
@@ -627,9 +627,9 @@ class _Verify(_BuiltInBase):
         | Should Be Equal | ${x} | expected |
         | Should Be Equal | ${x} | expected | Custom error message |
         | Should Be Equal | ${x} | expected | Custom message | values=False |
-        | Should Be Equal | ${x} | expected | ignore_case=True | _formatter=repr |
+        | Should Be Equal | ${x} | expected | ignore_case=True | formatter=repr |
 
-        ``ignore_case`` and ``_formatter`` are new features in Robot Framework
+        ``ignore_case`` and ``formatter`` are new features in Robot Framework
         3.0.1 and 3.1.2, respectively.
         """
         self._log_types_at_info_if_different(first, second)
@@ -808,7 +808,7 @@ class _Verify(_BuiltInBase):
         """Fails if objects are unequal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
-        error message with ``msg``, ``values`` and ``_formatter``.
+        error message with ``msg``, ``values`` and ``formatter``.
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`),
         comparison is done case-insensitively. If both arguments are
@@ -817,7 +817,7 @@ class _Verify(_BuiltInBase):
         Strings are always [http://www.macchiato.com/unicode/nfc-faq|
         NFC normalized].
 
-        ``ignore_case`` and ``_formatter`` are new features in Robot Framework
+        ``ignore_case`` and ``formatter`` are new features in Robot Framework
         3.0.1 and 3.1.2, respectively.
         """
         self._log_types_at_info_if_different(first, second)
@@ -2594,7 +2594,7 @@ class _Misc(_BuiltInBase):
         and adds a newline after the written message. Use `Log To Console`
         instead if either of these is undesirable,
 
-        The ``_formatter`` argument controls how to format the string
+        The ``formatter`` argument controls how to format the string
         representation of the message. Possible values are ``str`` (default),
         ``repr`` and ``ascii``, and they work similarly to Python built-in
         functions with same names. When using ``repr``, bigger lists,
@@ -2604,8 +2604,8 @@ class _Misc(_BuiltInBase):
 
         The old way to control string representation was using the ``repr``
         argument, and ``repr=True`` is still equivalent to using
-        ``_formatter=repr``. The ``repr`` argument will be deprecated in the
-        future, though, and using ``_formatter`` is thus recommended.
+        ``formatter=repr``. The ``repr`` argument will be deprecated in the
+        future, though, and using ``formatter`` is thus recommended.
 
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
@@ -2614,7 +2614,7 @@ class _Misc(_BuiltInBase):
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
         | Log | Hello, console!   | console=yes | | # Log also to the console. |
-        | Log | Null is \\x00  | _formatter=repr | | # Log ``'Null is \\x00'``. |
+        | Log | Null is \\x00  | formatter=repr | | # Log ``'Null is \\x00'``. |
 
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
@@ -2635,7 +2635,7 @@ class _Misc(_BuiltInBase):
                     'repr': prepr,
                     'ascii': ascii if PY3 else repr}[formatter.lower()]
         except KeyError:
-            raise ValueError("Invalid _formatter '%s'. Available "
+            raise ValueError("Invalid formatter '%s'. Available "
                              "'str', 'repr' and 'ascii'." % formatter)
 
     @run_keyword_variant(resolve=0)
@@ -3507,13 +3507,13 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
       line making it hard to see individual items they contain.
 
     To overcome the above problems, some keywords such as `Log` and
-    `Should Be Equal` have an optional ``_formatter`` argument that can be
+    `Should Be Equal` have an optional ``formatter`` argument that can be
     used to configure the string representation. The supported values are
     ``str`` (default), ``repr``, and ``ascii`` that work similarly as
     [https://docs.python.org/library/functions.html|Python built-in functions]
     with same names. More detailed semantics are explained below.
 
-    The ``_formatter`` argument is new in Robot Framework 3.1.2.
+    The ``formatter`` argument is new in Robot Framework 3.1.2.
 
     == str ==
 
