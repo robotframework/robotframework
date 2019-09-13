@@ -79,10 +79,10 @@ INLINESTYLES = False
 
 from pygments.formatters import HtmlFormatter
 
-# The default _formatter
+# The default formatter
 DEFAULT = HtmlFormatter(noclasses=INLINESTYLES)
 
-# Add name -> _formatter pairs for every variant you want to use
+# Add name -> formatter pairs for every variant you want to use
 VARIANTS = {
     # 'linenos': HtmlFormatter(noclasses=INLINESTYLES, linenos=True),
 }
