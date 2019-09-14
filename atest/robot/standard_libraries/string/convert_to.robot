@@ -8,3 +8,6 @@ Convert To Lowercases
 
 Convert To Uppercases
     Check Test Case    ${TESTNAME}
+
+Convert To Titlecases
+    Check Test Case    ${TESTNAME}
