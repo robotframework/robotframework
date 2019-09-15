@@ -54,4 +54,9 @@ Do lowercase
     Should be Equal    ${result}    ${arg2}
 
 Do titlecases
-    
+    [Arguments]    ${arg1}    ${arg2}
+    ${result} =    Convert To Titlecase    ${arg1}
+    Should be Equal    ${result}    ${arg2}
+
+
+	
