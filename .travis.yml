@@ -1,0 +1,3 @@
+language: python
+install: pip install flake8
+script: flake8 . --count --select=E9,F63 --show-source --statistics
