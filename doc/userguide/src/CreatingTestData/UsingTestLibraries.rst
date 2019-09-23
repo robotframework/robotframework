@@ -75,7 +75,7 @@ Specifying library to import
 
 Libraries to import can be specified either by using the library name
 or the path to the library. These approaches work the same way regardless
-is the library imported using the :setting:`Library` setting or the
+if the library is imported using the :setting:`Library` setting or the
 :name:`Import Library` keyword.
 
 Using library name
