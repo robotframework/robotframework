@@ -1009,6 +1009,6 @@ should be open`.
 Embedding data to keywords
 ''''''''''''''''''''''''''
 
-When writing concrete examples it is useful to be able pass actual data to
+When writing concrete examples it is useful to be able to pass actual data to
 keyword implementations. User keywords support this by allowing `embedding
 arguments into keyword name`_.
