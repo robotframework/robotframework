@@ -87,7 +87,7 @@ http://robotframework.org.
 Usage
 -----
 
-Tests (or tassk) are executed from the command line using the ``robot``
+Tests (or tasks) are executed from the command line using the ``robot``
 command or by executing the ``robot`` module directly like ``python -m robot``
 or ``jython -m robot``.
 
