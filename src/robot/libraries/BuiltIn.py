@@ -3343,7 +3343,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | ${random int} =  | `Evaluate`    | random.randint(0, 5) | modules=random |
 
     When a variable is used in the expressing using the normal ``${variable}``
-    syntax, its value is replaces before the expression is evaluated. This
+    syntax, its value is replaced before the expression is evaluated. This
     means that the value used in the expression will be the string
     representation of the variable value, not the variable value itself.
     This is not a problem with numbers and other objects that have a string
@@ -3365,6 +3365,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     Examples:
     | `Should Be True` | $rc < 10          | Return code greater than 10  |
+    | `Should Be True` | $object is None                                  |
     | `Run Keyword If` | $status == 'PASS' | `Log` | Passed               |
     | `Run Keyword If` | 'FAIL' in $output | `Log` | Output contains FAIL |
     | `Should Be True` | len($result) > 1 and $result[1] == 'OK' |
