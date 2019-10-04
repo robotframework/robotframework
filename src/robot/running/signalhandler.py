@@ -46,7 +46,7 @@ class _StopSignalMonitor(object):
             self._stop_execution_gracefully()
 
     def _stop_execution_gracefully(self):
-        raise ExecutionFailed('Execution terminated by signal', exit=True)
+        raise ExecutionFailed('Execution terminated by signal', stopped_by_user=True, exit=True)
 
     def __enter__(self):
         if self._can_register_signal:

@@ -40,10 +40,12 @@ class Exit(object):
         self.failure = False
         self.error = False
         self.fatal = False
+        self.stopped_by_user = False
 
     def failure_occurred(self, failure=None, critical=False):
-        if isinstance(failure, ExecutionFailed) and failure.exit:
-            self.fatal = True
+        if isinstance(failure, ExecutionFailed):
+            self.stopped_by_user = failure.stopped_by_user
+            self.fatal = failure.exit
         if critical and self.failure_mode:
             self.failure = True
 
@@ -56,7 +58,7 @@ class Exit(object):
         return not (self.skip_teardown_mode and self)
 
     def __nonzero__(self):
-        return self.failure or self.error or self.fatal
+        return self.failure or self.error or self.fatal or self.stopped_by_user
 
 
 class _ExecutionStatus(object):
@@ -102,6 +104,10 @@ class _ExecutionStatus(object):
     @property
     def status(self):
         return 'FAIL' if self.failures else 'PASS'
+
+    @property
+    def stopped_by_user(self):
+        return self.exit.stopped_by_user
 
     @property
     def message(self):

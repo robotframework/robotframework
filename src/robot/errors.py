@@ -108,7 +108,7 @@ class ExecutionStatus(RobotError):
 
     def __init__(self, message, test_timeout=False, keyword_timeout=False,
                  syntax=False, exit=False, continue_on_failure=False,
-                 return_value=None):
+                 stopped_by_user=False, return_value=None):
         if '\r\n' in message:
             message = message.replace('\r\n', '\n')
         from robot.utils import cut_long_message
@@ -117,6 +117,7 @@ class ExecutionStatus(RobotError):
         self.keyword_timeout = keyword_timeout
         self.syntax = syntax
         self.exit = exit
+        self.stopped_by_user = stopped_by_user
         self._continue_on_failure = continue_on_failure
         self.return_value = return_value
 
@@ -218,7 +219,8 @@ class ExecutionFailures(ExecutionFailed):
             'keyword_timeout': any(e.keyword_timeout for e in errors),
             'syntax': any(e.syntax for e in errors),
             'exit': any(e.exit for e in errors),
-            'continue_on_failure': all(e.continue_on_failure for e in errors)
+            'continue_on_failure': all(e.continue_on_failure for e in errors),
+            'stopped_by_user': any(e.stopped_by_user for e in errors),
         }
 
     def get_errors(self):

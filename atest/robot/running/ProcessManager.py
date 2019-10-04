@@ -38,6 +38,10 @@ class ProcessManager(object):
         self.wait_until_finished()
         return self._stderr
 
+    def get_rc(self):
+        self.wait_until_finished()
+        return self._process.returncode
+
     def log_stdout_and_stderr(self):
         self.wait_until_finished()
         print('STDOUT:')

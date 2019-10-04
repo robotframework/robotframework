@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
+from robot.errors import DataError, STOPPED_BY_USER
 from robot.model import Statistics
 
 from .executionerrors import ExecutionErrors
@@ -39,6 +39,7 @@ class Result(object):
         #: Execution errors as an
         #: :class:`~.executionerrors.ExecutionErrors` object.
         self.errors = errors or ExecutionErrors()
+        self.stopped_by_user = False
         self.generated_by_robot = True
         self._status_rc = True
         self._stat_config = {}
@@ -76,6 +77,8 @@ class Result(object):
         By default returns the number of failed critical tests (max 250),
         but can be :func:`configured <configure>` to always return 0.
         """
+        if self.stopped_by_user:
+            return STOPPED_BY_USER
         if self._status_rc:
             return min(self.suite.statistics.critical.failed, 250)
         return 0
