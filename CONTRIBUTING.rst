@@ -64,7 +64,7 @@ Enhancement requests
 
 Describe the new feature and use cases for it in as much detail as possible.
 Especially with larger enhancements, be prepared to contribute the code
-in form of a pull request as explained below or to pay someone for the work.
+in the form of a pull request as explained below or to pay someone for the work.
 Consider also would it be better to implement this functionality as a separate
 tool outside the core framework.
 
@@ -83,7 +83,7 @@ Often you already have a bug or an enhancement you want to work on in your
 mind, but you can also look at the `issue tracker`_ to find bugs and
 enhancements submitted by others. The issues vary significantly in complexity
 and difficulty, so you can try to find something that matches your skill level
-and knowledge. There are two specific labels to look when looking for
+and knowledge. There are two specific labels to look for when looking for
 something to contribute:
 
 `good first issue`__
@@ -101,9 +101,9 @@ Pull requests
 ~~~~~~~~~~~~~
 
 On GitHub pull requests are the main mechanism to contribute code. They
-are easy to use both for the contributor and for person accepting
+are easy to use both for the contributor and for the person accepting
 the contribution, and with more complex contributions it is easy also
-for others to join the discussion. Preconditions for creating a pull
+for others to join the discussion. Preconditions for creating pull
 requests are having a `GitHub account <https://github.com/>`_,
 installing `Git <https://git-scm.com>`_ and forking the
 `Robot Framework project`_.
@@ -207,13 +207,13 @@ by running command
 
     invoke library-docs <name>
 
-where ``<name>`` if a name of the library or its unique prefix. Run
+where ``<name>`` is the name of the library or its unique prefix. Run
 
 ::
 
     invoke --help library-docs
 
-for more information and see `<BUILD.rst>`_ for details about installing and
+for more information see `<BUILD.rst>`_ for details about installing and
 using Invoke.
 
 API documentation
@@ -242,7 +242,7 @@ Tests
 When submitting a pull request with a new feature or a fix, you should
 always include tests for your changes. These tests prove that your changes
 work, help prevent bugs in the future, and help document what your changes
-do. Depending an the change, you may need acceptance tests, unit tests
+do. Depending on the change, you may need acceptance tests, unit tests
 or both.
 
 Make sure to run all of the tests before submitting a pull request to be sure
