@@ -260,7 +260,7 @@ Other deprecated features
   is deprecated (`#2264`_).
 - Semi public API to register "run keyword variants" has been deprecated
   in order to be able to redesign it fully in the future (`#2265`_).
-- Using `robot.running.TestSuite.(imports|variables|user_keywords)` propertys
+- Using `robot.running.TestSuite.(imports|variables|user_keywords)` properties
   programmatically is deprecated more loudly (`#2219`_).
 
 Acknowledgements
@@ -504,7 +504,7 @@ Full list of fixes and enhancements
     * - `#2219`_
       - enhancement
       - low
-      - Loudly deprecate `robot.running.TestSuite.(imports|variables|user_keywords)` propertys
+      - Loudly deprecate `robot.running.TestSuite.(imports|variables|user_keywords)` properties
       - alpha 1
     * - `#2259`_
       - enhancement
