@@ -211,7 +211,7 @@ chapter containing also an example of the generated documentation.
             """
             pass
 
-.. tip:: If you want to use non-ASCII charactes in the documentation of
+.. tip:: If you want to use non-ASCII characters in the documentation of
          Python libraries, you must either use UTF-8 as your `source code
          encoding`__ or create docstrings as Unicode.
 

@@ -61,7 +61,7 @@ creating RF 2.9 compatible `Maven plugin
 --------------------------------------------------------
 
 There was a bug which caused ignored errors to be considered test failures
-with `Run Keyword If Test Failed/Passed` keywods (`#2108`_). For example,
+with `Run Keyword If Test Failed/Passed` keywords (`#2108`_). For example,
 the test below would fail with a message `Test should have passed`:
 
 .. code:: robotframework
