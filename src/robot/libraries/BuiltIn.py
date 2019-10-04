@@ -471,13 +471,6 @@ class _Converter(_BuiltInBase):
         | &{dict} = | Create Dictionary | ${1}=${2} | &{dict} | foo=new | | # using variables |
         | Should Be True | ${dict} == {1: 2, 'key': 'value', 'foo': 'new'} |
         | Should Be Equal | ${dict.key} | value | | | | # dot-access |
-
-        This keyword was changed in Robot Framework 2.9 in many ways:
-        - Moved from the Collections library to BuiltIn.
-        - Support also non-string keys in ``key=value`` syntax.
-        - Returned dictionary is ordered and dot-accessible (i.e. ``DotDict``).
-        - Old syntax to give keys and values separately was deprecated, but
-          deprecation was later removed in RF 3.0.1.
         """
         separate, combined = self._split_dict_items(items)
         result = DotDict(self._format_separate_dict_items(separate))
@@ -580,9 +573,9 @@ class _Verify(_BuiltInBase):
 
         Variables used like ``${variable}``, as in the examples above, are
         replaced in the expression before evaluation. Variables are also
-        available in the evaluation namespace and can be accessed using special
-        syntax ``$variable``. This is a new feature in Robot Framework 2.9
-        and it is explained more thoroughly in `Evaluating expressions`.
+        available in the evaluation namespace, and can be accessed using
+        special ``$variable`` syntax as explained in the `Evaluating
+        expressions` section.
 
         Examples:
         | Should Be True | $rc < 10          |
@@ -1295,8 +1288,7 @@ class _Variables(_BuiltInBase):
         By default variables are returned with ``${}``, ``@{}`` or ``&{}``
         decoration based on variable types. Giving a true value (see `Boolean
         arguments`) to the optional argument ``no_decoration`` will return
-        the variables without the decoration. This option is new in Robot
-        Framework 2.9.
+        the variables without the decoration.
 
         Example:
         | ${example_variable} =         | Set Variable | example value         |
@@ -1465,11 +1457,11 @@ class _Variables(_BuiltInBase):
         table in the test data file or importing them from variable files.
 
         Possible child test suites do not see variables set with this keyword
-        by default. Starting from Robot Framework 2.9, that can be controlled
-        by using ``children=<option>`` as the last argument. If the specified
-        ``<option>`` is a non-empty string or any other value considered true
-        in Python, the variable is set also to the child suites. Parent and
-        sibling suites will never see variables set with this keyword.
+        by default, but that can be controlled by using ``children=<option>``
+        as the last argument. If the specified ``<option>`` given a true value
+        (see `Boolean arguments`), the variable is set also to the child
+        suites. Parent and sibling suites will never see variables set with
+        this keyword.
 
         The name of the variable can be given either as a normal variable name
         (e.g. ``${NAME}``) or in escaped format as ``\\${NAME}`` or ``$NAME``.
@@ -1704,8 +1696,8 @@ class _RunKeyword(_BuiltInBase):
         Variables used like ``${variable}``, as in the examples above, are
         replaced in the expression before evaluation. Variables are also
         available in the evaluation namespace and can be accessed using special
-        syntax ``$variable``. This is a new feature in Robot Framework 2.9
-        and it is explained more thoroughly in `Evaluating expressions`.
+        syntax ``$variable`` as explained in the `Evaluating expressions`
+        section.
 
         Example:
         | `Run Keyword If` | $result is None or $result == 'FAIL' | `Keyword` |
@@ -1802,7 +1794,6 @@ class _RunKeyword(_BuiltInBase):
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword. Otherwise this keyword itself never fails.
-        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         try:
             return 'PASS', self.run_keyword(name, *args)
@@ -1844,7 +1835,6 @@ class _RunKeyword(_BuiltInBase):
 
         The execution is not continued if the failure is caused by invalid syntax,
         timeout, or fatal exception.
-        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         try:
             return self.run_keyword(name, *args)
@@ -1893,7 +1883,6 @@ class _RunKeyword(_BuiltInBase):
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword.
-        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         try:
             self.run_keyword(name, *args)
@@ -2034,10 +2023,6 @@ class _RunKeyword(_BuiltInBase):
         lots of output and considerably increase the size of the generated
         output files. It is possible to remove unnecessary keywords from
         the outputs using ``--RemoveKeywords WUKS`` command line option.
-
-        Support for specifying ``retry`` as a number of times to retry is
-        a new feature in Robot Framework 2.9.
-        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         maxtime = count = -1
         try:
@@ -2131,9 +2116,6 @@ class _RunKeyword(_BuiltInBase):
 
         Otherwise, this keyword works exactly like `Run Keyword`, see its
         documentation for more details.
-
-        Prior to Robot Framework 2.9 failures in test teardown itself were
-        not detected by this keyword.
         """
         test = self._get_test_in_teardown('Run Keyword If Test Failed')
         if not test.passed:
@@ -2148,9 +2130,6 @@ class _RunKeyword(_BuiltInBase):
 
         Otherwise, this keyword works exactly like `Run Keyword`, see its
         documentation for more details.
-
-        Prior to Robot Framework 2.9 failures in test teardown itself were
-        not detected by this keyword.
         """
         test = self._get_test_in_teardown('Run Keyword If Test Passed')
         if test.passed:
@@ -2728,8 +2707,6 @@ class _Misc(_BuiltInBase):
         The library can be specified by its name or as the active instance of
         the library. The latter is especially useful if the library itself
         calls this keyword as a method.
-
-        New in Robot Framework 2.9.
         """
         library = self._namespace.reload_library(name_or_instance)
         self.log('Reloaded library %s with %s keywords.' % (library.name,
@@ -2978,9 +2955,8 @@ class _Misc(_BuiltInBase):
 
         Variables used like ``${variable}`` are replaced in the expression
         before evaluation. Variables are also available in the evaluation
-        namespace and can be accessed using special syntax ``$variable``.
-        This is a new feature in Robot Framework 2.9 and it is explained more
-        thoroughly in `Evaluating expressions`.
+        namespace, and can be accessed using special ``$variable`` syntax
+        as explained in the `Evaluating expressions` section.
 
         Examples (expecting ``${result}`` is 3.14):
         | ${status} = | Evaluate | 0 < ${result} < 10 | # Would also work with string '3.14' |
@@ -3049,9 +3025,8 @@ class _Misc(_BuiltInBase):
         a method with the given name or if executing the method raises an
         exception.
 
-        Support for ``**kwargs`` is new in Robot Framework 2.9. Since that
-        possible equal signs in other arguments must be escaped with a
-        backslash like ``\\=``.
+        Possible equal signs in arguments must be escaped with a backslash
+        like ``\\=``.
 
         Examples:
         | Call Method      | ${hashtable} | put          | myname  | myvalue |
@@ -3284,7 +3259,6 @@ class _Misc(_BuiltInBase):
 
         If the optional argument ``all`` is given a true value, then a
         dictionary mapping all library names to instances will be returned.
-        This feature is new in Robot Framework 2.9.2.
 
         Example:
         | &{all libs} = | Get library instance | all=True |
@@ -3357,18 +3331,17 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | `Run Keyword If` | '${status}' == 'PASS'     | Log | Passed                |
     | `Run Keyword If` | 'FAIL' in '''${output}''' | Log | Output contains FAIL  |
 
-    Starting from Robot Framework 2.9, variables themselves are automatically
-    available in the evaluation namespace. They can be accessed using special
-    variable syntax without the curly braces like ``$variable``. These
-    variables should never be quoted, and in fact they are not even replaced
-    inside strings.
+    Variables themselves are automatically available in the evaluation
+    namespace. They can be accessed using special variable syntax without the
+    curly braces like ``$variable``. These variables should never be quoted,
+    and in fact they are not even replaced inside strings.
 
     Examples:
     | `Should Be True` | $rc < 10          | Return code greater than 10  |
-    | `Should Be True` | $object is None                                  |
     | `Run Keyword If` | $status == 'PASS' | `Log` | Passed               |
     | `Run Keyword If` | 'FAIL' in $output | `Log` | Output contains FAIL |
     | `Should Be True` | len($result) > 1 and $result[1] == 'OK' |
+    | `Should Be True` | $result is not None                     |
 
     Using the ``$variable`` syntax slows down expression evaluation a little.
     This should not typically matter, but should be taken into account if
@@ -3429,7 +3402,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     wildcards.
 
     Support for brackets like ``[abc]`` and ``[!a-z]`` is new in
-    Robot Framework 3.1
+    Robot Framework 3.1.
 
     == Regular expressions ==
 
@@ -3450,8 +3423,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     `Should Be Equal` and `Should Be Equal As Strings` report the failures using
     [http://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff
-    format] if both strings have more than two lines. New in Robot Framework
-    2.9.1.
+    format] if both strings have more than two lines.
 
     Example:
     | ${first} =  | `Catenate` | SEPARATOR=\\n | Not in second | Same | Differs | Same |
