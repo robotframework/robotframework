@@ -201,7 +201,7 @@ Creating distributions
 
        invoke jar
 
-   - Test that JAR is not totally borken::
+   - Test that JAR is not totally broken::
 
        java -jar dist/robotframework-$VERSION.jar --version
        java -jar dist/robotframework-$VERSION.jar atest/testdata/misc/pass_and_fail.robot
