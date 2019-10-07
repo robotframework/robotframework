@@ -113,4 +113,4 @@ Setting multiple times
     ${message} =    Catenate
     ...    Error in file '${path}':
     ...    Setting '${setting}' allowed only once. Only the first value is used.
-    Check Log Message      @{ERRORS}[${index}]    ${message}    ERROR
+    Check Log Message      ${ERRORS}[${index}]    ${message}    ERROR
