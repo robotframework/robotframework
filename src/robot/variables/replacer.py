@@ -129,6 +129,10 @@ class VariableReplacer(object):
         return value
 
     def _get_variable_item(self, name, value, match):
+        if match.identifier in '@&':
+            var = '%s[%s]' % (name, match.items[0])
+            logger.warn("Accessing variable items using '%s' syntax "
+                        "is deprecated. Use '$%s' instead." % (var, var[1:]))
         for item in match.items:
             if is_dict_like(value):
                 value = self._get_dict_variable_item(name, value, item)

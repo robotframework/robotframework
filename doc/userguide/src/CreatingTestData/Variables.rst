@@ -294,11 +294,8 @@ Accessing list and dictionary items
 It is possible to access items of lists and dictionaries using special
 syntax `${var}[item]`. Accessing items is an old feature, but prior to
 Robot Framework 3.1 the syntax was `@{var}[item]` with lists and
-`&{var}[item]` with dictionaries. The old syntax still works in Robot
-Framework 3.1, but it `will be deprecated in Robot Framework 3.2`__ and
-its meaning will change in Robot Framework 3.3.
-
-__ https://github.com/robotframework/robotframework/issues/2973
+`&{var}[item]` with dictionaries. The old syntax was deprecated in
+Robot Framework 3.2 and will not be supported in the future.
 
 Accessing list items
 ''''''''''''''''''''
@@ -343,7 +340,7 @@ specify the start index, the end index, and the step:
 
    Step
        Keyword    ${LIST}[::2]
-       Keyword    ${LIST}[2:-1:2]
+       Keyword    ${LIST}[1:-1:10]
 
 .. note:: The slice syntax is new in Robot Framework 3.1 and does not work
           with the old `@{var}[index]` syntax.

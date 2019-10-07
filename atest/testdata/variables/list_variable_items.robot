@@ -97,8 +97,8 @@ Non-list variable
     ...    and thus accessing item '0' from it is not possible.
     Log    ${INVALID}[0]
 
-Old syntax with `@` still works like earlier
-    [Documentation]    `${list}[1]` and `@{list}[1]` work same way still.
+Old syntax with `@` still works but is deprecated
+    [Documentation]    `\${list}[1]` and `\@{list}[1]` work same way still.
     ...                In the future latter is deprecated and changed.
     ...                FAIL List '\@{LIST}' has no item in index 99.
     Should Be Equal    @{LIST}[0]         A
