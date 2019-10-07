@@ -39,6 +39,11 @@ Documentation with non-existing variables
     ...    left unchanged in all documentations. Existing ones
     ...    are replaced: "99999"
 
+Documentation with unclosed variables
+    Verify Documentation    No closing curly at \${all     test=${TEST NAME} 1
+    Verify Documentation    Not \${properly {closed}       test=${TEST NAME} 2
+    Verify Documentation    2nd not \${properly}[closed    test=${TEST NAME} 3
+
 Documentation with escaping
     Verify Documentation    \${VERSION}\nc:\\temp\n\n\\
 
@@ -147,8 +152,8 @@ Invalid setting
 
 *** Keywords ***
 Verify Documentation
-    [Arguments]    @{doc}
-    ${tc} =    Check Test Case    ${TEST NAME}
+    [Arguments]    @{doc}    ${test}=${TEST NAME}
+    ${tc} =    Check Test Case    ${test}
     ${doc} =    Catenate    SEPARATOR=\n    @{doc}
     Should Be Equal    ${tc.doc}    ${doc}
 

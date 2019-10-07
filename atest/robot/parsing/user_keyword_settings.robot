@@ -34,6 +34,9 @@ Documentation with variables
 Documentation with non-existing variables
     Verify Documentation    Starting from RF 2.1 \${NONEX} variables are left unchanged.
 
+Documentation with unclosed variables
+    Verify Documentation    Not \${closed
+
 Documentation with escaping
     Verify Documentation    \${XXX} - c:\\temp -${SPACE*2}- \\
 

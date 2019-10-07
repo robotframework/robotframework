@@ -1,18 +1,28 @@
 *** Variables ***
-@{LIST}       A    B    C    D    E    F    G
+@{LIST}       A    B    C    D    E    F    G    H    I    J    K
+@{NUMBERS}    1    2    3
+&{MAP}        first=0    last=-1
 ${ONE}        1
 ${INVALID}    xxx
+${COLON}      :
 
 *** Test Cases ***
 Valid index
     Should Be Equal    ${LIST}[0]     A
     Should Be Equal    ${LIST}[1]     B
-    Should Be Equal    ${LIST}[-1]    G
+    Should Be Equal    ${LIST}[-1]    K
 
-Valid index using variable
-    Should Be Equal    ${LIST}[${0}]      A
-    Should Be Equal    ${LIST}[${ONE}]    B
-    Should Be Equal    ${LIST}[${-1}]     G
+Index with variable
+    Should Be Equal    ${LIST}[${0}]        A
+    Should Be Equal    ${LIST}[${ONE}]      B
+    Should Be Equal    ${LIST}[${-1}]       K
+    Should Be Equal    ${LIST}[${1}${0}]    K
+
+Index with variable using item access
+    Should Be Equal    ${LIST}[${NUMBERS}[2]]    D
+    Should Be Equal    ${LIST}[${MAP}[first]]    A
+    Should Be Equal    ${LIST}[${MAP}[last]]     K
+    Should Be Equal    ${LIST}[${ONE[0]}]        B
 
 Slicing
     Should Be Equal    ${LIST}[1:]        ${LIST[1:]}
@@ -27,13 +37,19 @@ Slicing
     Should Be Equal    ${LIST}[::]        ${LIST}
     Should Be Empty    ${LIST}[100:]
 
+Slicing with variable
+    Should Be Equal    ${LIST}[${1}:]        ${LIST[1:]}
+    Should Be Equal    ${LIST}[1${COLON}]    ${LIST[1:]}
+    Should Be Equal    ${LIST}[${1}${COLON}${EMPTY}${2}${0}${EMPTY}${0}]
+    ...                                      ${LIST[1:]}
+
 Invalid index
-    [Documentation]    FAIL List '\${LIST}' has no item in index 7.
-    Log    ${LIST}[7]
+    [Documentation]    FAIL List '\${LIST}' has no item in index 12.
+    Log    ${LIST}[12]
 
 Invalid index using variable
-    [Documentation]    FAIL List '\${LIST}' has no item in index 12.
-    Log    ${LIST}[${ONE}${2}]
+    [Documentation]    FAIL List '\${LIST}' has no item in index 13.
+    Log    ${LIST}[${ONE}${3}]
 
 Non-int index
     [Documentation]    FAIL List '\${LIST}' used with invalid index 'invalid'.
@@ -84,10 +100,10 @@ Non-list variable
 Old syntax with `@` still works like earlier
     [Documentation]    `${list}[1]` and `@{list}[1]` work same way still.
     ...                In the future latter is deprecated and changed.
-    ...                FAIL List '\@{LIST}' has no item in index 10.
+    ...                FAIL List '\@{LIST}' has no item in index 99.
     Should Be Equal    @{LIST}[0]         A
-    Should Be Equal    @{LIST}[${-1}]     G
-    Log    @{LIST}[10]
+    Should Be Equal    @{LIST}[${-1}]     K
+    Log    @{LIST}[99]
 
 Old syntax with `@` doesn't support new slicing syntax
     [Documentation]    Slicing support should be added in RF 3.3 when `@{list}[index]` changes.

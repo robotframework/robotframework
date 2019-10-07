@@ -67,7 +67,7 @@ Should Not Be Empty 1
     [Documentation]    FAIL '{}' should not be empty.
     [Template]    Should Not Be Empty
     ${TUPLE 1}
-    ${LIST 2
+    \${LIST 2
     ${DICT 3}
     ${CUSTOM LEN 2}
     Non empty string

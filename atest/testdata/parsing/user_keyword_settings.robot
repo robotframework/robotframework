@@ -33,6 +33,9 @@ Documentation with variables
 Documentation with non-existing variables
     Documentation with non-existing variables
 
+Documentation with unclosed variables
+    Documentation with unclosed variables
+
 Documentation with escaping
     Documentation with escaping
 
@@ -124,6 +127,10 @@ Documentation with variables
 
 Documentation with non-existing variables
     [Documentation]    Starting from RF ${2}.1 ${NONEX} variables are left unchanged.
+    No Operation
+
+Documentation with unclosed variables
+    [Documentation]    Not ${closed
     No Operation
 
 Documentation with escaping

@@ -6,7 +6,18 @@ Resource         atest_resource.robot
 Valid key
     Check Test Case    ${TESTNAME}
 
-Valid index using variable
+Valid key with square brackets
+    Check Test Case    ${TESTNAME}
+
+Unmatched square brackets
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+    Check Test Case    ${TESTNAME} 3
+
+Index with variable
+    Check Test Case    ${TESTNAME}
+
+Index with variable using item access
     Check Test Case    ${TESTNAME}
 
 Values can be mutated

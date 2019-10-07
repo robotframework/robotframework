@@ -14,6 +14,7 @@ Documentation    ${1}st logical line
 ...  Variables work since Robot ${version} and ${SUITE_DOC_FROM_CLI} works too.
 ...  Starting from RF 2.1 ${nonexisting} variables are left unchanged.
 ...  Escaping (e.g. '\${non-existing}', 'c:\\temp', '\\n') works too.
+...  Not ${closed
 
 Default Tags      \    default  # Empty tags should be ignored
 Force Tags        f1

@@ -6,10 +6,16 @@ Resource         atest_resource.robot
 Valid index
     Check Test Case    ${TESTNAME}
 
-Valid index using variable
+Index with variable
+    Check Test Case    ${TESTNAME}
+
+Index with variable using item access
     Check Test Case    ${TESTNAME}
 
 Slicing
+    Check Test Case    ${TESTNAME}
+
+Slicing with variable
     Check Test Case    ${TESTNAME}
 
 Invalid index

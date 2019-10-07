@@ -51,7 +51,7 @@ Escaping Variables In Variable Table
     Should Be Equal    ${NOT VAR 2}    \${whatever}
     Should Be Equal    \\${NOT VAR}    \\\${whatever}
     Should Be Equal    \\${NOT VAR 2}    \\\${whatever}
-    Should Start With    \${NOT VAR}    ${NOT VAR
+    Should Start With    \${NOT VAR}    \${NOT VAR
 
 Escaping From List Variable In variable Table
     Should Be Equal    @{LIST}[0]    ${SP}

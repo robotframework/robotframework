@@ -36,7 +36,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          StringIO, timestr_to_secs, type_name, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
-                             VariableTableValue, VariableSplitter,
+                             search_variable, VariableTableValue,
                              variable_not_found)
 from robot.version import get_version
 
@@ -482,7 +482,7 @@ class _Converter(_BuiltInBase):
         separate = []
         for item in items:
             name, value = split_from_equals(item)
-            if value is not None or VariableSplitter(item).is_dict_variable():
+            if value is not None or search_variable(item).is_dict_variable:
                 break
             separate.append(item)
         return separate, items[len(separate):]
@@ -1574,7 +1574,7 @@ class _Variables(_BuiltInBase):
             # scalar variables in the variable table, but that would require
             # handling non-string values somehow. For details see
             # https://github.com/robotframework/robotframework/issues/1919
-            if len(values) != 1 or VariableSplitter(values[0]).is_list_variable():
+            if len(values) != 1 or search_variable(values[0]).is_list_variable:
                 raise DataError("Setting list value to scalar variable '%s' "
                                 "is not supported anymore. Create list "
                                 "variable '@%s' instead." % (name, name[1:]))
@@ -2635,12 +2635,12 @@ class _Misc(_BuiltInBase):
 
     def _yield_logged_messages(self, messages):
         for msg in messages:
-            var = VariableSplitter(msg)
+            match = search_variable(msg)
             value = self._variables.replace_scalar(msg)
-            if var.is_list_variable():
+            if match.is_list_variable:
                 for item in value:
                     yield item
-            elif var.is_dict_variable():
+            elif match.is_dict_variable:
                 for name, value in value.items():
                     yield '%s=%s' % (name, value)
             else:

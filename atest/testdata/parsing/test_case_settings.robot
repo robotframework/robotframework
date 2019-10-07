@@ -50,6 +50,18 @@ Documentation with non-existing variables
     ...                are replaced: "${TIMEOUT}"
     No Operation
 
+Documentation with unclosed variables 1
+    [Documentation]    No closing curly at ${all
+    No Operation
+
+Documentation with unclosed variables 2
+    [Documentation]    Not ${properly {closed}
+    No Operation
+
+Documentation with unclosed variables 3
+    [Documentation]    ${2}nd not ${properly}[closed
+    No Operation
+
 Documentation with escaping
     [Documentation]
     ...    \${VERSION}

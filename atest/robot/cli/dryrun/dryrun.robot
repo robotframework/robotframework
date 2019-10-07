@@ -107,7 +107,7 @@ Invalid syntax in UK
     ...    Error in test case file '${source}':
     ...    Creating keyword 'Invalid Syntax UK' failed:
     ...    Invalid argument specification:
-    ...    Invalid argument syntax '${arg'.
+    ...    Invalid argument syntax '\${arg'.
     Check Log Message    ${ERRORS[0]}    ${message}    ERROR
 
 Multiple Failures

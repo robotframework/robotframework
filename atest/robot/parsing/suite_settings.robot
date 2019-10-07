@@ -26,6 +26,7 @@ Suite Documentation
     ...    Variables work since Robot 1.2 and doc_from_cli works too.
     ...    Starting from RF 2.1 \${nonexisting} variables are left unchanged.
     ...    Escaping (e.g. '\${non-existing}', 'c:\\temp', '\\n') works too.
+    ...    Not \${closed
     Should Be Equal    ${SUITE.doc}    ${doc}
 
 Suite Name And Documentation On Console
