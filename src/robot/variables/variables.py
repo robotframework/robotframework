@@ -38,8 +38,8 @@ class Variables(object):
     def __setitem__(self, name, value):
         self.store.add(name, value)
 
-    def __getitem__(self, name):
-        return self._finder.find(name)
+    def __getitem__(self, item):
+        return self._finder.find(item)
 
     def __contains__(self, name):
         return name in self.store

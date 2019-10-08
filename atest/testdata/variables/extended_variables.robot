@@ -3,6 +3,8 @@ Variables         extended_variables.py
 Library           ExampleJavaLibrary
 
 *** Variables ***
+${X}              X
+${Y}              Y
 @{LIST}           ${42}    foo    ${None}
 
 *** Test Cases ***
@@ -90,6 +92,29 @@ Base name contains non-ASCII characters
     Should Be Equal    ${äiti.upper()}    HYVÄ
     ${isä}=    Set Variable    hyvä
     Should Be Equal    ${isä.upper()}    HYVÄ
+
+Escape characters and curly braces
+    [Documentation]    Escape characters in the variable body are left alone
+    ...                and thus can be used in evaluated expression without
+    ...                additional escaping. Exceptions to this rule are escapes
+    ...                before curly braces as well as before literal strings
+    ...                looking like variables. These escapes are needed to
+    ...                make the whole variable valid and are removed. Matching
+    ...                curly braces don't need to be escaped.
+    [Template]    Should Be Equal
+    ${X + '\n'}               X\n
+    ${X + u'\xe4'}            Xä
+    ${X + '\${Y}'}            X\${Y}
+    ${X + '\\${Y}'}           X\\Y
+    ${X + '$\{Y\}'}           X\${Y}
+    ${X + '\$\{Y\}'}          X\\\${Y}
+    ${X + '\\'}               X\\
+    ${X + '\}'}               X}
+    ${X + '\{'}               X{
+    ${X + '{}'}               X{}
+    ${X + {'k': 'v'}['k']}    Xv
+    ${X + __import__('re').match('(\d{2})${Y}\\s{2}', '1${2}Y\t\r').group(${1})}
+    ...                       X12
 
 Failing When Attribute Does Not exists 1
     [Documentation]    FAIL STARTS: Resolving variable '\${OBJ.nonex}' failed: AttributeError:

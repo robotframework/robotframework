@@ -47,6 +47,10 @@ Testing Extended Var Regexp
 Base name contains non-ASCII characters
     Check Test Case    ${TESTNAME}
 
+Escape characters and curly braces
+    [Documentation]    This is somewhat complicated. See docs on test data side for details.
+    Check Test Case    ${TESTNAME}
+
 Failing When Attribute Does Not exists
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2

@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
 from robot.errors import DataError
 from robot.utils import is_string, py2to3
 
@@ -27,26 +29,25 @@ def search_variable(string, identifiers='$@&%*', ignore_errors=False):
 class VariableMatch(object):
 
     def __init__(self, string, identifier=None, base=None, items=(),
-                 start=-1, end=-1, internal_variables=False):
+                 start=-1, end=-1):
         self.string = string
         self.identifier = identifier
         self.base = base
         self.items = items
         self.start = start
         self.end = end
-        self.internal_variables = internal_variables
 
-    # TODO: Better name! Or move elsewhere?
-    def get_variable(self, variables=None):
-        # Notice that possible items aren't returned.
-        if self.identifier is None:
-            return None
-        # FIXME: Inconsistent handling escapes here!
-        if variables and self.internal_variables:
-            base = variables.replace_string(self.base)
-        else:
-            base = self.base
-        return '%s{%s}' % (self.identifier, base)
+    def resolve_base(self, variables, ignore_errors=False):
+        if self.identifier:
+            internal = search_variable(self.base)
+            self.base = variables.replace_string(
+                internal, ignore_errors,
+                unescaper=unescape_variable_syntax
+            )
+
+    @property
+    def name(self):
+        return '%s{%s}' % (self.identifier, self.base) if self else None
 
     @property
     def before(self):
@@ -78,6 +79,12 @@ class VariableMatch(object):
     def __nonzero__(self):
         return self.identifier is not None
 
+    def __unicode__(self):
+        if not self:
+            return '<no match>'
+        items = ''.join('[%s]' % i for i in self.item) if self.items else ''
+        return '%s{%s}%s' % (self.identifier, self.base, items)
+
 
 class VariableSearcher(object):
 
@@ -86,7 +93,6 @@ class VariableSearcher(object):
         self._ignore_errors = ignore_errors
         self.start = -1
         self.variable_chars = []
-        self.internal_variables = False
         self.item_chars = []
         self.items = []
         self._open_brackets = 0    # Used both with curly and square brackets
@@ -99,8 +105,7 @@ class VariableSearcher(object):
                               identifier=self.variable_chars[0],
                               base=''.join(self.variable_chars[2:-1]),
                               start=self.start,
-                              end=self.start + len(self.variable_chars),
-                              internal_variables=self.internal_variables)
+                              end=self.start + len(self.variable_chars))
         if self.items:
             match.items = tuple(self.items)
             match.end += sum(len(i) for i in self.items) + 2 * len(self.items)
@@ -152,8 +157,6 @@ class VariableSearcher(object):
 
     def variable_state(self, char):
         self.variable_chars.append(char)
-        if char in self.identifiers and not self._escaped:
-            return self.internal_variable_start_state
         if char == '}' and not self._escaped:
             self._open_brackets -= 1
             if self._open_brackets == 0:
@@ -163,11 +166,6 @@ class VariableSearcher(object):
         elif char == '{' and not self._escaped:
             self._open_brackets += 1
         return self.variable_state
-
-    def internal_variable_start_state(self, char):
-        if char == '{':
-            self.internal_variables = True
-        return self.variable_state(char)
 
     def _can_have_items(self):
         return self.variable_chars[0] in '$@&'
@@ -185,8 +183,8 @@ class VariableSearcher(object):
                 self.items.append(''.join(self.item_chars))
                 self.item_chars = []
                 # Don't support chained item access with old @ and & syntax.
-                # In RF 3.2 old syntax is to be deprecated and in RF 3.3 it'll
-                # be reassigned to mean using variable in list/dict context.
+                # The old syntax was deprecated in RF 3.2 and in RF 3.3 it'll
+                # be reassigned to mean using item in list/dict context.
                 if self.variable_chars[0] in '@&':
                     return None
                 return self.waiting_item_state
@@ -196,7 +194,7 @@ class VariableSearcher(object):
         return self.item_state
 
     def _validate_end_state(self, state):
-        if state in [self.variable_state, self.internal_variable_start_state]:
+        if state == self.variable_state:
             incomplete = ''.join(self.variable_chars)
             raise DataError("Variable '%s' was not closed properly."
                             % incomplete)
@@ -208,6 +206,25 @@ class VariableSearcher(object):
                             % (variable, items, incomplete))
 
 
+def unescape_variable_syntax(item):
+
+    def handle_escapes(match):
+        escapes, text = match.groups()
+        if len(escapes) % 2 == 1 and starts_with_variable_or_curly(text):
+            return escapes[1:]
+        return escapes
+
+    def starts_with_variable_or_curly(text):
+        if text[0] in '{}':
+            return True
+        match = search_variable(text, ignore_errors=True)
+        return match and match.start == 0
+
+    return re.sub(r'(\\+)(?=(.+))', handle_escapes, item)
+
+
+# TODO: This is pretty odd/ugly and used only in two places. Implement
+# something better or just remove altogether.
 @py2to3
 class VariableIterator(object):
 
@@ -215,7 +232,6 @@ class VariableIterator(object):
         self._string = string
         self._identifiers = identifiers
 
-    # TODO: This API is bit odd. Could we do something better?
     def __iter__(self):
         remaining = self._string
         while True:

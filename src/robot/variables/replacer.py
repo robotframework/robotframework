@@ -91,44 +91,46 @@ class VariableReplacer(object):
             return self.replace_string(match, ignore_errors)
         return self._get_variable_value(match, ignore_errors)
 
-    def replace_string(self, item, ignore_errors=False):
+    def replace_string(self, item, ignore_errors=False, unescaper=unescape):
         """Replaces variables from a string. Result is always a string.
 
         Input can also be an already found VariableMatch.
         """
         match = self._search_variable(item, ignore_errors=ignore_errors)
         if not match:
-            return unic(unescape(match.string))
-        return ''.join(self._yield_replaced(match, ignore_errors))
+            return unic(unescaper(match.string))
+        return self._replace_string(match, ignore_errors, unescaper)
 
-    def _yield_replaced(self, match, ignore_errors=False):
+    def _replace_string(self, match, ignore_errors, unescaper):
+        parts = []
         while match:
-            yield unescape(match.before)
-            yield unic(self._get_variable_value(match, ignore_errors))
+            parts.extend([
+                unescaper(match.before),
+                unic(self._get_variable_value(match, ignore_errors))
+            ])
             match = search_variable(match.after, ignore_errors=ignore_errors)
-        yield unescape(match.string)
+        parts.append(unescaper(match.string))
+        return ''.join(parts)
 
     def _get_variable_value(self, match, ignore_errors):
-        if match.identifier not in '$@&%':
-            return self._get_reserved_variable(match)
+        match.resolve_base(self, ignore_errors)
+        # TODO: Do we anymore need to reserve `*{var}` syntax for anything?
+        if match.identifier == '*':
+            logger.warn(r"Syntax '%s' is reserved for future use. Please "
+                        r"escape it like '\%s'." % (match, match))
+            return unic(match)
         try:
-            name = match.get_variable(self)
-            value = self._variables[name]
+            value = self._variables[match]
             if match.items:
-                value = self._get_variable_item(name, value, match)
+                value = self._get_variable_item(match, value)
         except DataError:
             if not ignore_errors:
                 raise
             value = unescape(match.match)
         return value
 
-    def _get_reserved_variable(self, match):
-        value = match.get_variable(self)
-        logger.warn("Syntax '%s' is reserved for future use. Please "
-                    "escape it like '\\%s'." % (value, value))
-        return value
-
-    def _get_variable_item(self, name, value, match):
+    def _get_variable_item(self, match, value):
+        name = match.name
         if match.identifier in '@&':
             var = '%s[%s]' % (name, match.items[0])
             logger.warn("Accessing variable items using '%s' syntax "
