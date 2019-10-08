@@ -15,6 +15,7 @@
 
 import copy
 import os.path
+import os
 
 from robot.output import LOGGER
 from robot.errors import FrameworkError

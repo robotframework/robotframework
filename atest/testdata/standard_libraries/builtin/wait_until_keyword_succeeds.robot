@@ -100,13 +100,13 @@ Invalid Keyword Inside Wait Until Keyword Succeeds
 
 Keyword Not Found Inside Wait Until Keyword Succeeds
     [Documentation]    FAIL
-    ...    Keyword 'Non Existing KW' failed after retrying for 300 milliseconds.\
+    ...    Keyword 'Non Existing KW' failed after retrying for 300 milliseconds. \
     ...    The last error was: No keyword with name 'Non Existing KW' found.
     Wait Until Keyword Succeeds    0.3s    0.1s    Non Existing KW
 
 Fail With Nonexisting Variable Inside Wait Until Keyword Succeeds
     [Documentation]    FAIL
-    ...    Keyword 'Access Nonexisting Variable' failed after retrying 3 times.\
+    ...    Keyword 'Access Nonexisting Variable' failed after retrying 3 times. \
     ...    The last error was: Variable '\${nonexisting}' not found.
     Wait Until Keyword Succeeds    3 times    0s    Access Nonexisting Variable
 

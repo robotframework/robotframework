@@ -13,15 +13,6 @@ Names are not formatted
         Should Be Equal    ${kw.name}  user_keyword nameS _are_not_ FORmatted
     END
 
-'...' as name is deprecated
-    Check Test Case    ${TEST NAME}
-    ${path} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
-    ${message} =    Catenate
-    ...    Error in file '${path}': Invalid syntax in keyword '...':
-    ...    Using '...' as keyword name is deprecated.
-    ...    It will be considered line continuation in Robot Framework 3.2.
-    Check Log Message    ${ERRORS}[0]    ${message}    WARN
-
 No documentation
     Verify Documentation    ${EMPTY}    test=Normal name
 
@@ -43,8 +34,11 @@ Documentation with variables
 Documentation with non-existing variables
     Verify Documentation    Starting from RF 2.1 \${NONEX} variables are left unchanged.
 
+Documentation with unclosed variables
+    Verify Documentation    Not \${closed
+
 Documentation with escaping
-    Verify Documentation    \${XXX} c:\\temp${SPACE*2}\\
+    Verify Documentation    \${XXX} - c:\\temp -${SPACE*2}- \\
 
 Arguments
     [Documentation]    Tested more thoroughly elsewhere.
@@ -87,9 +81,6 @@ Return with escaping
 Timeout
     Verify Timeout    2 minutes 3 seconds
 
-Timeout with message
-    Verify Timeout    2 minutes 3 seconds 456 milliseconds
-
 Timeout with variables
     Verify Timeout    1 day 4 hours 48 minutes
 
@@ -101,28 +92,17 @@ Multiple settings
     Verify Teardown   Teardown World
     Verify Timeout  6 minutes
 
-Deprecatted setting format
-    Check Test Case    Invalid setting
-    ${path} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
-    ${message} =    Catenate
-    ...    Error in file '${path}':
-    ...    Invalid syntax in keyword 'Invalid passing':
-    ...    Setting 'Doc U Ment ation' is deprecated. Use 'Documentation' instead.
-    Check Log Message    ${ERRORS}[2]    ${message}    WARN
-
 Invalid setting
     Check Test Case    ${TEST NAME}
     ${path} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
     ${message} =    Catenate
     ...    Error in file '${path}':
-    ...    Invalid syntax in keyword 'Invalid passing':
     ...    Non-existing setting 'Invalid Setting'.
-    Check Log Message    ${ERRORS}[3]    ${message}    ERROR
+    Check Log Message    ${ERRORS}[0]    ${message}    ERROR
     ${message} =    Catenate
     ...    Error in file '${path}':
-    ...    Invalid syntax in keyword 'Invalid failing':
     ...    Non-existing setting 'invalid'.
-    Check Log Message    ${ERRORS}[4]    ${message}    ERROR
+    Check Log Message    ${ERRORS}[1]    ${message}    ERROR
 
 *** Keywords ***
 Verify Documentation

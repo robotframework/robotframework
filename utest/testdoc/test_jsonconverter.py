@@ -120,7 +120,7 @@ class TestJsonConverter(unittest.TestCase):
                      timeout='1 minute 42 seconds')
         test_convert(self.suite['suites'][-2]['tests'][1],
                      name='Test Timeout With Message',
-                     timeout='1 day 2 hours :: The message')
+                     timeout='1 day 2 hours')
         test_convert(self.suite['suites'][-2]['tests'][2],
                      name='Test Timeout With Variable',
                      timeout='${100}')

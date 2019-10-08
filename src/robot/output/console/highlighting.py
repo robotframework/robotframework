@@ -18,6 +18,7 @@
 # http://www.burgaud.com/bring-colors-to-the-windows-console-with-python/
 
 from contextlib import contextmanager
+import errno
 import os
 import sys
 try:
@@ -63,7 +64,12 @@ class HighlightingStream(object):
             self._write(text, retry-1)
 
     def flush(self):
-        self.stream.flush()
+        try:
+            self.stream.flush()
+        except IOError as err:
+            # Continue even if pipe is broken. EINVAL can occur on Windows.
+            if err.errno not in (errno.EPIPE, errno.EINVAL):
+                raise
 
     def highlight(self, text, status=None, flush=True):
         if self._must_flush_before_and_after_highlighting():

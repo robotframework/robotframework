@@ -25,6 +25,22 @@ def get_hello():
     return 'foo'
 
 
+def non_string_defaults(a=1, b=True, c=(1, 2, None)):
+    pass
+
+
+def non_ascii_unicode_defaults(arg=u'hyvä'):
+    pass
+
+
+def non_ascii_string_defaults(arg='hyvä'):
+    pass
+
+
+def non_ascii_bytes_defaults(arg=b'hyv\xe4'):
+    pass
+
+
 def multiline_doc_with_split_short_doc():
     """This is short doc.
     It can span multiple
@@ -38,19 +54,19 @@ def multiline_doc_with_split_short_doc():
     """
 
 
-def non_ascii_doc():
+def non_ascii_unicode_doc():
     u"""Hyv\u00E4\u00E4 y\u00F6t\u00E4.
 
     \u0421\u043F\u0430\u0441\u0438\u0431\u043E!
     """
 
 
-def non_ascii_doc_with_bytes():
-    """Hyv\xE4\xE4 y\xF6t\xE4."""
-
-
-def non_ascii_doc_with_declared_utf_8():
+def non_ascii_string_doc():
     """Hyvää yötä."""
+
+
+def non_ascii_string_doc_with_escapes():
+    """Hyv\xE4\xE4 y\xF6t\xE4."""
 
 
 @deco.keyword('Set Name Using Robot Name Attribute')

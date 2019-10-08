@@ -13,7 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import Mapping, UserString
+from collections.abc import Mapping
+from collections import UserString
 from io import IOBase
 
 from .platform import RERAISED_EXCEPTIONS

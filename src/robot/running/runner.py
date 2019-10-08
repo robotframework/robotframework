@@ -166,8 +166,7 @@ class Runner(SuiteVisitor):
     def _get_timeout(self, test):
         if not test.timeout:
             return None
-        return TestTimeout(test.timeout.value, test.timeout.message,
-                           self._variables, rpa=test.parent.rpa)
+        return TestTimeout(test.timeout, self._variables, rpa=test.parent.rpa)
 
     def _run_setup(self, setup, status, result=None):
         if not status.failures:

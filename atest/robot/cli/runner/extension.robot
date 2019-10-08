@@ -8,15 +8,14 @@ ${DATA FORMATS}    ${DATADIR}/parsing/data_formats
 *** Test Cases ***
 One extension
     --extension robot      21
-    --EXTENSION .TXT       25
+    --EXTENSION .TXT       23
 
 Multiple extensions
-    -F robot:txt:.ROBOT    46
+    -F robot:txt:.ROBOT    44
 
-Invalid extension
-    [Template]    NONE
-    Run Tests Without Processing Output    --extension invalid    ${DATA FORMATS}
-    Stderr Should Be Equal To    [ ERROR ] Invalid extension to limit parsing 'invalid'.${USAGE TIP}\n
+Any extension is accepted
+    --extension bar        1
+    --extension FoO:bar    2
 
 *** Keywords ***
 Expected number of tests should be run

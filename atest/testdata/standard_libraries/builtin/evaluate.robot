@@ -131,7 +131,7 @@ Invalid $ usage 7
     Evaluate    raise $HELLO
 
 Invalid $ usage 8
-    [Documentation]    FAIL REGEXP: Evaluating expression 'RF_VAR_HELLO  +\\$' failed: SyntaxError: .*
+    [Documentation]    FAIL REGEXP: Evaluating expression 'RF_VAR_HELLO +\\$' failed: SyntaxError: .*
     Evaluate    $HELLO $
 
 Evaluate Empty

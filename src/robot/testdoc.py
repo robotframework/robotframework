@@ -110,7 +110,7 @@ Jython and IronPython). It can be executed as an installed module like
 
 Examples:
 
-  python -m robot.testdoc my_test.html testdoc.html
+  python -m robot.testdoc my_test.robot testdoc.html
   jython -m robot.testdoc -N smoke_tests -i smoke path/to/my_tests smoke.html
   ipy path/to/robot/testdoc.py first_suite.txt second_suite.txt output.html
 
@@ -258,11 +258,9 @@ class JsonConverter(object):
         if timeout is None:
             return ''
         try:
-            tout = secs_to_timestr(timestr_to_secs(timeout.value))
+            tout = secs_to_timestr(timestr_to_secs(timeout))
         except ValueError:
-            tout = timeout.value
-        if timeout.message:
-            tout += ' :: ' + timeout.message
+            tout = timeout
         return tout
 
 

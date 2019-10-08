@@ -64,7 +64,7 @@ class TestVariables(unittest.TestCase):
         self.varz['${a}'] = 'ari'
         for inp, exp in [('${foo}', 'bar'),
                          ('${a}', 'ari'),
-                         ('${a', '${a'),
+                         (r'$\{a}', '${a}'),
                          ('', ''),
                          ('hii', 'hii'),
                          ("Let's go to ${foo}!", "Let's go to bar!"),
@@ -132,6 +132,12 @@ class TestVariables(unittest.TestCase):
 
     def test_replace_non_existing_string(self):
         assert_raises(VariableError, self.varz.replace_string, '${nonexisting}')
+
+    def test_non_string_input(self):
+        for item in [1, False, None, [], (), {}, object]:
+            assert_equal(self.varz.replace_list([item]), [item])
+            assert_equal(self.varz.replace_scalar(item), item)
+            assert_equal(self.varz.replace_string(item), str(item))
 
     def test_replace_escaped(self):
         self.varz['${foo}'] = 'bar'
@@ -245,16 +251,21 @@ class TestVariables(unittest.TestCase):
         v = Variables()
         v['${X}'] = 'x'
         v['@{Y}'] = [1, 2, 3]
-        for item in ['${foo}', 'foo${bar}', '${foo}', '@{zap}', '@{Y}[7]']:
+        for item in ['${foo}', 'foo${bar}', '${foo}', '@{zap}', '${Y}[7]',
+                     '${inv', '${{inv}', '${var}[inv', '${var}[key][inv']:
+            x_at_end = 'x' if (item.count('{') == item.count('}') and
+                               item.count('[') == item.count(']')) else '${x}'
             assert_equal(v.replace_string(item, ignore_errors=True), item)
             assert_equal(v.replace_string('${x}'+item+'${x}', ignore_errors=True),
-                         'x'+item+'x')
+                         'x' + item + x_at_end)
             assert_equal(v.replace_scalar(item, ignore_errors=True), item)
             assert_equal(v.replace_scalar('${x}'+item+'${x}', ignore_errors=True),
-                         'x'+item+'x')
+                         'x' + item + x_at_end)
             assert_equal(v.replace_list([item], ignore_errors=True), [item])
             assert_equal(v.replace_list(['${X}', item, '@{Y}'], ignore_errors=True),
                          ['x', item, 1, 2, 3])
+            assert_equal(v.replace_list(['${x}'+item+'${x}', '@{NON}'], ignore_errors=True),
+                         ['x' + item + x_at_end, '@{NON}'])
 
 
 if __name__ == '__main__':

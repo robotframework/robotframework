@@ -45,7 +45,7 @@ Invalid nested dict access
 
 Nested access with non-list/dict
     [Documentation]    FAIL
-    ...    Variable '\${DICT}[key][key]' is string, not list or dictionary,\
+    ...    Variable '\${DICT}[key][key]' is string, not list or dictionary, \
     ...    and thus accessing item '0' from it is not possible.
     ${DICT}[key][key][0]                     whatever
 

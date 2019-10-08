@@ -16,17 +16,17 @@ def start_suite(data, result):
     result.metadata['number'] = 42
     assert len(data.tests) == 2
     assert len(result.tests) == 0
-    data.tests.create(name='New')
+    data.tests.create(name='Added by start_suite')
     data.visit(TestModifier())
 
 
 def end_suite(data, result):
-    assert len(data.tests) == 3
-    assert len(result.tests) == 3
+    assert len(data.tests) == 5, '%d tests, not 5' % len(data.tests)
+    assert len(result.tests) == 5, '%d tests, not 5' % len(result.tests)
     assert data.name == data.doc == result.name == 'Not visible in results'
     assert result.doc.endswith('[start suite]')
     assert result.metadata['suite'] == '[start]'
-    assert result.metadata['tests'] == 'xxx'
+    assert result.metadata['tests'] == 'xxxxx'
     assert result.metadata['number'] == '42'
     result.name += ' [end suite]'
     result.doc += ' [end suite]'
@@ -40,10 +40,13 @@ def startTest(data, result):
     data.name = data.doc = result.name = 'Not visible in results'
     result.doc = (result.doc + ' [start test]').strip()
     result.tags.add('[start]')
-    result.message = 'Message: [start]'
+    result.message = '[start]'
     result.parent.metadata['tests'] += 'x'
-    data.name = data.doc = 'Not visible in results'
     data.keywords.create('No Operation')
+    if data is data.parent.tests[-1] and 'dynamic' not in data.tags:
+        new = data.parent.tests.create(name='Added by startTest',
+                                       tags=['dynamic', 'start'])
+        new.keywords.create(name='Fail', args=['Dynamically added!'])
 
 
 def end_test(data, result):
@@ -52,6 +55,11 @@ def end_test(data, result):
     result.tags.add('[end]')
     result.passed = not result.passed
     result.message += ' [end]'
+    if 'dynamic' in data.tags and 'start' in data.tags:
+        new = data.parent.tests.create(name='Added by end_test',
+                                       doc='Dynamic',
+                                       tags=['dynamic', 'end'])
+        new.keywords.create(name='Log', args=['Dynamically added!', 'INFO'])
     data.name = data.doc = 'Not visible in results'
 
 

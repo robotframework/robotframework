@@ -51,16 +51,14 @@ Escaping Variables In Variable Table
     Should Be Equal    ${NOT VAR 2}    \${whatever}
     Should Be Equal    \\${NOT VAR}    \\\${whatever}
     Should Be Equal    \\${NOT VAR 2}    \\\${whatever}
-    Should Start With    \${NOT VAR}    ${NOT VAR
+    Should Start With    \${NOT VAR}    \${NOT VAR
 
 Escaping From List Variable In variable Table
-    Should Be Equal    @{LIST}[0]    ${SP}
-    Should Be Equal    @{LIST}[1]    c:${BS}temp${BS}
-    Should Be Equal    @{LIST}[2]    ${NL}
-    Should Be Equal    @{LIST}[3]    \${xxx}
-    Should Be Equal    @{LIST}[0]@{LIST}[0]@{LIST}[2]    ${SP}${SP}${NL}
-    Should Be Equal    @{LIST}[1]@{LIST}[0]@{LIST}[2]    c:${BS}temp${BS}${SP}${NL}
-    Should Be True    @{LIST} == [' ', 'c:\\\\temp\\\\', '\\n', '$'+'{xxx}']
+    Should Be Equal    ${LIST}[0]    ${SP}
+    Should Be Equal    ${LIST}[1]    c:${BS}temp${BS}
+    Should Be Equal    ${LIST}[2]    ${NL}
+    Should Be Equal    ${LIST}[3]    \${xxx}
+    Should Be True    ${LIST} == [' ', 'c:\\\\temp\\\\', '\\n', '$'+'{xxx}']
 
 Non Strings Are Ok In variable Table
     Should Be Equal    ${NON STRING}    ${None}

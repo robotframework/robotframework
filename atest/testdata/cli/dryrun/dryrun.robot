@@ -13,7 +13,6 @@ Suite Setup       ${SUITE SETUP}
 # Library keywords get NOT_RUN status. That should be OK teardown status.
 Suite Teardown    No Operation
 
-
 *** Variables ***
 ${SETUP}          No Operation
 ${TEARDOWN}       Teardown
@@ -74,6 +73,10 @@ User keyword return value
     ${quux}=    Some Return Value    ${foo}    ${bar}
     This is validated
 
+Non-existing variable in user keyword return value
+    Ooops Return Value
+    This is validated
+
 Test Setup And Teardown
     [Documentation]    FAIL    No keyword with name 'Does not exist' found.\n\n
     ...    Also teardown failed:\n
@@ -87,6 +90,14 @@ Keyword Teardown
     [Documentation]    FAIL    Keyword teardown failed:
     ...    No keyword with name 'Does not exist' found.
     Keyword with Teardown
+    This is validated
+
+Keyword teardown with non-existing variable is ignored
+    Keyword with teardown with non-existing variable
+    This is validated
+
+Keyword teardown with existing variable is resolved and executed
+    Keyword with teardown with existing variable
     This is validated
 
 For Loops
@@ -137,6 +148,14 @@ Keyword with Teardown
     No Operation
     [Teardown]    Does not exist
 
+Keyword with teardown with non-existing variable
+    No Operation
+    [Teardown]    ${I DO NOT EXIST}
+
+Keyword with teardown with existing variable
+    No Operation
+    [Teardown]    ${TEARDOWN}    ${I DO NOT EXIST}
+
 Invalid Syntax UK
     [Arguments]    ${arg
     No Operation
@@ -144,6 +163,9 @@ Invalid Syntax UK
 Some Return Value
     [Arguments]    ${a1}    ${a2}
     [Return]    ${a1}-${a2}
+
+Ooops return value
+    [Return]    ${ooops}
 
 UK with multiple failures
     Invalid Syntax UK

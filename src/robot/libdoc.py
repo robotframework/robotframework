@@ -78,7 +78,6 @@ Options
                           resource.
  -P --pythonpath path *   Additional locations where to search for libraries
                           and resources.
- -E --escape what:with *  Deprecated. Use console escape mechanism instead.
  -h -? --help             Print this help.
 
 Creating documentation

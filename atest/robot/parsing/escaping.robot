@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  parsing/escaping.robot
+Suite Setup     Run Tests    ${EMPTY}    parsing/escaping.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***

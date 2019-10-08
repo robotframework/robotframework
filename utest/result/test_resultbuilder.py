@@ -3,7 +3,7 @@ from os.path import join, dirname
 
 from robot.errors import DataError
 from robot.result import ExecutionResult, Result
-from robot.utils import StringIO
+from robot.utils import StringIO, PY3
 from robot.utils.asserts import assert_equal, assert_true, assert_raises
 
 
@@ -224,19 +224,37 @@ class TestSuiteTeardownFailed(unittest.TestCase):
 class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
 
     def setUp(self):
-        self.result = ExecutionResult("""
-<robot>
-    <suite name="foo">
-        <test name="some name">
+        self.result = """
+        <robot>
+            <suite name="foo">
+                <test name="some name">
+                    <status status="PASS"></status>
+                </test>
             <status status="PASS"></status>
-        </test>
-    <status status="PASS"></status>
-    </suite>
-</robot>
-""")
+            </suite>
+        </robot>
+        """
+        self.string_result = ExecutionResult(self.result)
+        self.byte_string_result = ExecutionResult(self.result.encode('UTF-8'))
 
-    def test_suite(self):
-        suite = self.result.suite
+    def test_suite_from_string(self):
+        suite = self.string_result.suite
+        self._test_suite(suite)
+
+    def test_test_from_string(self):
+        test = self.string_result.suite.tests[0]
+        self._test_test(test)
+
+    def test_suite_from_byte_string(self):
+        suite = self.byte_string_result.suite
+        self._test_suite(suite)
+
+    def test_test_from_byte_string(self):
+        test = self.byte_string_result.suite.tests[0]
+        self._test_test(test)
+
+    @staticmethod
+    def _test_suite(suite):
         assert_equal(suite.id, 's1')
         assert_equal(suite.name, 'foo')
         assert_equal(suite.doc, '')
@@ -247,8 +265,8 @@ class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
         assert_equal(suite.endtime, None)
         assert_equal(suite.elapsedtime, 0)
 
-    def test_test(self):
-        test = self.result.suite.tests[0]
+    @staticmethod
+    def _test_test(test):
         assert_equal(test.id, 's1-t1')
         assert_equal(test.name, 'some name')
         assert_equal(test.doc, '')
@@ -261,6 +279,40 @@ class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
         assert_equal(test.elapsedtime, 0)
 
 
+if PY3:
+    import pathlib
+
+    class TestBuildingFromPathlibPath(unittest.TestCase):
+
+        def setUp(self):
+            self.result = ExecutionResult(pathlib.Path(join(dirname(__file__), 'golden.xml')))
+
+        def test_suite(self):
+            suite = self.result.suite
+            assert_equal(suite.source, 'normal.html')
+            assert_equal(suite.name, 'Normal')
+            assert_equal(suite.doc, 'Normal test cases')
+            assert_equal(suite.metadata, {'Something': 'My Value'})
+            assert_equal(suite.status, 'PASS')
+            assert_equal(suite.starttime, '20111024 13:41:20.873')
+            assert_equal(suite.endtime, '20111024 13:41:20.952')
+            assert_equal(suite.statistics.critical.passed, 1)
+            assert_equal(suite.statistics.critical.failed, 0)
+            assert_equal(suite.statistics.all.passed, 1)
+            assert_equal(suite.statistics.all.failed, 0)
+
+        def test_test_is_built(self):
+            test = self.result.suite.tests[0]
+            assert_equal(test.name, 'First One')
+            assert_equal(test.doc, 'Test case documentation')
+            assert_equal(test.timeout, None)
+            assert_equal(list(test.tags), ['t1'])
+            assert_equal(len(test.keywords), 2)
+            assert_equal(test.status, 'PASS')
+            assert_equal(test.starttime, '20111024 13:41:20.925')
+            assert_equal(test.endtime, '20111024 13:41:20.934')
+            assert_true(test.critical)
+
+
 if __name__ == '__main__':
     unittest.main()
-

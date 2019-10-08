@@ -56,7 +56,6 @@ Options
                            `got from the source code`__.
   -P, --pythonpath <path>  Additional locations where to search for libraries
                            and resources similarly as when `running tests`__.
-  -E, --escape <what:with>  Deprecated. Use console escape mechanism instead.
   -h, --help               Prints this help.
 
 __ `Specifying library version`_
@@ -212,7 +211,7 @@ chapter containing also an example of the generated documentation.
             """
             pass
 
-.. tip:: If you want to use non-ASCII charactes in the documentation of
+.. tip:: If you want to use non-ASCII characters in the documentation of
          Python libraries, you must either use UTF-8 as your `source code
          encoding`__ or create docstrings as Unicode.
 

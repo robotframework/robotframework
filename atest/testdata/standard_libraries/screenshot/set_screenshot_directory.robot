@@ -1,8 +1,8 @@
 *** Settings ***
-Suite Setup:    Clean Temp Files And Create Directory
-Test Setup:     Save Start Time
-Test Teardown:  Clean Temp Files
-Resource:       screenshot_resource.robot
+Suite Setup    Clean Temp Files And Create Directory
+Test Setup     Save Start Time
+Test Teardown  Clean Temp Files
+Resource       screenshot_resource.robot
 
 *** Variables ***
 ${SCREENSHOT DIR} =     %{TEMPDIR}${/}robot_atest_screenshots

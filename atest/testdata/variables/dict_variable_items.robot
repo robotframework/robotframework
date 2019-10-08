@@ -3,7 +3,8 @@ Library       Collections
 Library       XML
 
 *** Variables ***
-&{DICT}       A=1    B=2    C=3    ${1}=${2}    3=4    ${NONE}=${NONE}  =
+&{DICT}       A=1    B=2    C=3    ${1}=${2}    3=4    ${NONE}=${NONE}    =    ${SPACE}=${SPACE}
+&{SQUARES}    [=open    ]=close    []=both    [x[y]=mixed
 ${A}          A
 ${INVALID}    xxx
 
@@ -13,12 +14,40 @@ Valid key
     Should Be Equal    ${DICT}[B]     2
     Should Be Equal    ${DICT}[3]     4
     Should Be Equal    ${DICT}[]      ${EMPTY}
+    Should Be Equal    ${DICT}[ ]     ${SPACE}
 
-Valid index using variable
-    Should Be Equal    ${DICT}[${A}]        1
-    Should Be Equal    ${DICT}[${1}]        ${2}
-    Should Be Equal    ${DICT}[${NONE}]     ${NONE}
-    Should Be Equal    ${DICT}[${EMPTY}]    ${EMPTY}
+Valid key with square brackets
+    Should Be Equal    ${SQUARES}[\[]          open
+    Should Be Equal    ${SQUARES}[\]]          close
+    Should Be Equal    ${SQUARES}[[]]          both
+    Should Be Equal    ${SQUARES}[\[\]]        both
+    Should Be Equal    ${SQUARES}[\[x[y]]      mixed
+    Should Be Equal    ${SQUARES}[[x\[y]]      mixed
+    Should Be Equal    ${SQUARES}[\[x\[y\]]    mixed
+
+Unmatched square brackets 1
+    [Documentation]    FAIL Variable item '\${SQUARES}[[]' was not closed properly.
+    Log    ${SQUARES}[[]
+
+Unmatched square brackets 2
+    [Documentation]    FAIL Variable item '\${SQUARES}[][' was not closed properly.
+    Log    ${SQUARES}[][
+
+Unmatched square brackets 3
+    [Documentation]    FAIL Variable item '\${SQUARES}[[x[y]]' was not closed properly.
+    Log    ${SQUARES}[[x[y]]
+
+Index with variable
+    Should Be Equal    ${DICT}[${A}]           1
+    Should Be Equal    ${DICT}[${1}]           ${2}
+    Should Be Equal    ${DICT}[${NONE}]        ${NONE}
+    Should Be Equal    ${DICT}[${EMPTY}]       ${EMPTY}
+    Should Be Equal    ${DICT}[A${EMPTY}]      1
+    Should Be Equal    ${DICT}[${A}${EMPTY}]   1
+
+Index with variable using item access
+    Should Be Equal    ${DICT}[${DICT}[C]]  4
+    Should Be Equal    ${DICT}[${A[0]}]     1
 
 Values can be mutated
     @{list} =    Create List    A
@@ -70,18 +99,19 @@ Non-existing index variable
 
 Non-dict variable
     [Documentation]    FAIL
-    ...    Variable '\${INVALID}' is string, not list or dictionary,\
+    ...    Variable '\${INVALID}' is string, not list or dictionary, \
     ...    and thus accessing item '${nonex}' from it is not possible.
     Log    ${INVALID}[${nonex}]
 
 Sanity check
     @{items} =    Create List
-    :FOR    ${key}    IN    @{DICT}
-    \    Append To List    ${items}    ${key}: ${DICT}[${key}]
+    FOR    ${key}    IN    @{DICT}
+        Append To List    ${items}    ${key}: ${DICT}[${key}]
+    END
     ${items} =    Catenate    SEPARATOR=,${SPACE}    @{items}
-    Should Be Equal    ${items}    A: 1, B: 2, C: 3, 1: 2, 3: 4, None: None, :${SPACE}
+    Should Be Equal    ${items}    A: 1, B: 2, C: 3, 1: 2, 3: 4, None: None, : , ${SPACE}: ${SPACE}
 
-Old syntax with `&` still works like earlier
+Old syntax with `&` still works but is deprecated
     [Documentation]    FAIL Dictionary '\&{DICT}' has no key 'nonex'.
     Should Be Equal    &{DICT}[A]     1
     Should Be Equal    &{DICT}[${1}]        ${2}

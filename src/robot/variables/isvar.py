@@ -16,11 +16,11 @@
 from robot.errors import DataError
 from robot.utils import is_string
 
-from .splitter import VariableIterator
+from .search import search_variable
 
 
 def is_var(string, identifiers='$@&'):
-    if not string or not is_string(string) or len(string) < 4:
+    if not is_string(string) or len(string) < 4:
         return False
     if string[0] not in identifiers or string[1] != '{' or string[-1] != '}':
         return False
@@ -41,10 +41,11 @@ def is_dict_var(string):
 
 
 def contains_var(string, identifiers='$@&'):
-    return (is_string(string) and
-            any(i in string for i in identifiers) and
-            '{' in string and '}' in string and
-            bool(VariableIterator(string, identifiers)))
+    try:
+        match = search_variable(string, identifiers)
+    except DataError:    # Occurs if variable isn't closed properly
+        return False
+    return bool(match)
 
 
 def validate_var(string, identifiers='$@&'):
