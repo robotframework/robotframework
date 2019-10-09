@@ -66,14 +66,9 @@ Options
 
  -f --format HTML|XML|XML:HTML
                           Specifies whether to generate HTML or XML output.
-                          If this options is not used, the format is got
-                          from the extension of the output file.
-                          Embedding HTML documentation in XML output:
-                          If XML should have embedded HTML in <doc> as
-                          documentation, it is possible to configure 
-                          this with 'XML:HTML'. This could be used if the XML
-                          files are used to be imported into other systems
-                          that require HTML text to present this to a human.
+                          `XML:HTML` means generating XML output where keyword
+                          documentation is forced to be HTML. The default
+                          output format is got from the output file extension.
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -93,13 +88,15 @@ Creating documentation
 When creating documentation in HTML or XML format, the output file must
 be specified as a second argument after the library/resource name or path.
 Output format is got automatically from the extension but can also be set
-with `--format` option.
+explicitly with the `--format` option. Special `XML:HTML` format forces
+keyword documentation in XML output files to be HTML.
 
 Examples:
 
   python -m robot.libdoc src/MyLib.py doc/MyLib.html
   jython -m robot.libdoc MyJavaLibrary.java MyJavaLibrary.html
   python -m robot.libdoc --name MyLib Remote::10.0.0.42:8270 MyLib.xml
+  python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
 
 Viewing information on console
 ==============================
