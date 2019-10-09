@@ -88,8 +88,9 @@ Creating documentation
 When creating documentation in HTML or XML format, the output file must
 be specified as a second argument after the library/resource name or path.
 Output format is got automatically from the extension but can also be set
-explicitly with the `--format` option. Special `XML:HTML` format forces
-keyword documentation in XML output files to be HTML.
+explicitly with the `--format` option. Special `XML:HTML` format (new in
+RF 3.2) forces keyword documentation in XML output files to use HTML instead
+of the original documentation format.
 
 Examples:
 
