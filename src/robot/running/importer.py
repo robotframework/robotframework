@@ -18,12 +18,15 @@ import os.path
 import os
 
 from robot.output import LOGGER
-from robot.errors import FrameworkError
-from robot.utils import normpath, seq2str2, is_string
+from robot.errors import FrameworkError, DataError
+from robot.utils import normpath, seq2str, seq2str2, is_string
 
 from .builder import ResourceFileBuilder
 from .handlerstore import HandlerStore
 from .testlibraries import TestLibrary
+
+
+RESOURCE_EXTENSIONS = ('.resource', '.robot', '.txt', '.tsv', '.rst', '.rest')
 
 
 class Importer(object):
@@ -50,12 +53,20 @@ class Importer(object):
         return lib
 
     def import_resource(self, path):
+        self._validate_resource_extension(path)
         if path in self._resource_cache:
             LOGGER.info("Found resource file '%s' from cache" % path)
         else:
             resource = ResourceFileBuilder().build(path)
             self._resource_cache[path] = resource
         return self._resource_cache[path]
+
+    def _validate_resource_extension(self, path):
+        extension = os.path.splitext(path)[1]
+        if extension.lower() not in RESOURCE_EXTENSIONS:
+            raise DataError("Invalid resource file extension '%s'. "
+                            "Supported extensions are %s."
+                            % (extension, seq2str(RESOURCE_EXTENSIONS)))
 
     def _import_library(self, name, positional, named, lib):
         args = positional + ['%s=%s' % arg for arg in named]

@@ -13,6 +13,37 @@ Resource with '*.resource' extension
 
 '*.resource' files are not parsed for tests
     Should Contain Suites    ${SUITE}    Tests
-    Should Contain Tests     ${SUITE}    Resource with '*.resource' extension
+    Should Contain Tests     ${SUITE}
+    ...    Resource with '*.resource' extension
+    ...    Resource with '*.robot' extension
+    ...    Resource with '*.txt' extension
+    ...    Resource with '*.tsv' extension
+    ...    Resource with '*.rst' extension
+    ...    Resource with '*.rest' extension
+    ...    Resource with invalid extension
     ${path} =    Normalize Path    ${DATADIR}/parsing/data_formats/resource_extensions/tests.resource
     Check Syslog Contains    | INFO \ | Ignoring file or directory '${path}'.
+
+Resource with '*.robot' extension
+    Check Test Case    ${TESTNAME}
+
+Resource with '*.txt' extension
+    Check Test Case    ${TESTNAME}
+
+Resource with '*.tsv' extension
+    Check Test Case    ${TESTNAME}
+
+Resource with '*.rst' extension
+    Check Test Case    ${TESTNAME}
+
+Resource with '*.rest' extension
+    Check Test Case    ${TESTNAME}
+
+Resource with invalid extension
+    Check Test Case    ${TESTNAME}
+    ${path} =    Normalize path    ${DATADIR}/parsing/data_formats/resource_extensions/tests.robot
+    ${message} =    Catenate
+    ...    Error in file '${PATH}': Invalid resource file extension '.invalid'.
+    ...    Supported extensions are '.resource', '.robot', '.txt', '.tsv', '.rst' and '.rest'.
+    Check log message    ${ERRORS}[0]    ${message}    ERROR
+    Length should be    ${ERRORS}    1
