@@ -88,20 +88,21 @@ class VariableReplacer(object):
 
     def _replace_scalar(self, match, ignore_errors=False):
         if not match.is_variable:
-            return self.replace_string(match, ignore_errors)
+            return self.replace_string(match, ignore_errors=ignore_errors)
         return self._get_variable_value(match, ignore_errors)
 
-    def replace_string(self, item, ignore_errors=False, unescaper=unescape):
+    def replace_string(self, item, custom_unescaper=None, ignore_errors=False):
         """Replaces variables from a string. Result is always a string.
 
         Input can also be an already found VariableMatch.
         """
+        unescaper = custom_unescaper or unescape
         match = self._search_variable(item, ignore_errors=ignore_errors)
         if not match:
             return unic(unescaper(match.string))
-        return self._replace_string(match, ignore_errors, unescaper)
+        return self._replace_string(match, unescaper, ignore_errors)
 
-    def _replace_string(self, match, ignore_errors, unescaper):
+    def _replace_string(self, match, unescaper, ignore_errors):
         parts = []
         while match:
             parts.extend([

@@ -1556,12 +1556,13 @@ class _Variables(_BuiltInBase):
             name = name[1:]
         if len(name) < 2:
             raise ValueError
-        if name[0] in '$@&' and name[1] != '{':
+        if name[1] != '{':
             name = '%s{%s}' % (name[0], name[1:])
-        if is_var(name):
-            return name
-        # Support for possible internal variables (issue 397)
-        name = '%s{%s}' % (name[0], self.replace_variables(name[2:-1]))
+        match = search_variable(name, identifiers='$@&', ignore_errors=True)
+        if not match.is_variable:
+            raise ValueError
+        match.resolve_base(self._variables)
+        name = unic(match)
         if is_var(name):
             return name
         raise ValueError

@@ -84,7 +84,7 @@ Newline
     Should Be Equal    \n    ${NL}
     Should Be Equal    \\n    ${BS}n
 
-Space After Newline Escape Is Ignored
+Ignoring Space After Newline Is Deprecated
     Should Be Equal    foo\n bar\n zap    foo${NL}bar${NL}zap
     Should Be Equal    foo\n\ bar    foo${NL}${SP}bar
     Should Be Equal    foo\\n bar    foo${BS}n${SP}bar

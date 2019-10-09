@@ -41,8 +41,9 @@ class VariableMatch(object):
         if self.identifier:
             internal = search_variable(self.base)
             self.base = variables.replace_string(
-                internal, ignore_errors,
-                unescaper=unescape_variable_syntax
+                internal,
+                custom_unescaper=unescape_variable_syntax,
+                ignore_errors=ignore_errors,
             )
 
     @property

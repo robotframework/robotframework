@@ -55,8 +55,8 @@ class Variables(object):
     def replace_scalar(self, item, ignore_errors=False):
         return self._replacer.replace_scalar(item, ignore_errors)
 
-    def replace_string(self, item, ignore_errors=False):
-        return self._replacer.replace_string(item, ignore_errors)
+    def replace_string(self, item, custom_unescaper=None, ignore_errors=False):
+        return self._replacer.replace_string(item, custom_unescaper, ignore_errors)
 
     def set_from_file(self, path_or_variables, args=None, overwrite=False):
         setter = VariableFileSetter(self.store)

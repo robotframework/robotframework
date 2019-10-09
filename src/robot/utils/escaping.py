@@ -51,13 +51,19 @@ class Unescaper(object):
     def __init__(self):
         self._escape_handlers = {
             '': lambda value: value,
-            'n': lambda value: '\n',
+            'n': self._handle_n,
             'r': lambda value: '\r',
             't': lambda value: '\t',
             'x': self._hex_to_unichr,
             'u': self._hex_to_unichr,
             'U': self._hex_to_unichr
         }
+
+    def _handle_n(self, value):
+        if value:
+            from robot.output import LOGGER
+            LOGGER.warn(r"Ignoring space after '\n' is deprecated.")
+        return '\n'
 
     def _hex_to_unichr(self, value):
         ordinal = int(value, 16)
