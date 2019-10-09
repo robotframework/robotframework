@@ -26,7 +26,7 @@ Spaces In Variable Table
     Should Be Equal    ${TWO SPACES}    ${SP}${SP}
     Should Be Equal    ${FOUR SPACES}    ${SP}${SP}${SP}${SP}
     Should Be True    len('${FOUR SPACES}') == 4
-    Should Be Equal    "\n ${FOUR SPACES}"    "${NL}${SP}${SP}${SP}${SP}"
+    Should Be Equal    "\n${FOUR SPACES}"    "${NL}${SP}${SP}${SP}${SP}"
 
 Leading And Trailing Spaces In Variable Table
     Should Be Equal    ${PRE SPACES}    ${SP}${SP}two leading spaces

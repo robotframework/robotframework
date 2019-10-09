@@ -19,7 +19,7 @@ kw  [Documentation]  foo bar `kw 2`.
     No Operation
 
 Keyword with some "stuff" to <escape>
-    [Documentation]   foo bar `kw` & some "stuff" to <escape> .\n\n baa `${a1}`
+    [Documentation]   foo bar `kw` & some "stuff" to <escape> .\n\nbaa `${a1}`
     [Arguments]  ${a1}   ${a2}
     No Operation
 

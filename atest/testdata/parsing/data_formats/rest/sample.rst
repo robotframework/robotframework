@@ -127,7 +127,7 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
 
    Overridden Fixture   [Teardown]   Fail   Failing Teardown
       [Setup]   Log   Own Setup
-      [Documentation]   FAIL   Teardown failed:\n Failing Teardown
+      [Documentation]   FAIL   Teardown failed:\nFailing Teardown
       No Operation
 
    Quotes   Should Be Equal   ${quoted}   """this has """"many "" quotes """""

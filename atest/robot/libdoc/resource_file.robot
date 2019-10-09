@@ -59,7 +59,7 @@ Embedded Arguments
 
 Keyword Documentation
     Keyword Doc Should Be           0    $\{CURDIR}
-    Keyword Doc Should Be           3    foo bar `kw` & some "stuff" to <escape> .\n\n baa `\${a1}`
+    Keyword Doc Should Be           3    foo bar `kw` & some "stuff" to <escape> .\n\nbaa `\${a1}`
     Keyword Doc Should Be           5    literal\nnewline
     Keyword Doc Should Be           7
     ...    foo bar `kw`.

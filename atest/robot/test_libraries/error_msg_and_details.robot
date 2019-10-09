@@ -115,16 +115,18 @@ Verify Python Traceback
     [Arguments]    ${msg}    @{funtions_and_texts}
     ${exp} =    Set Variable    Traceback \\(most recent call last\\):
     @{funtions_and_texts} =    Regexp Escape    @{funtions_and_texts}
-    : FOR    ${func}    ${text}    IN    @{funtions_and_texts}
-    \    ${exp} =    Set Variable    ${exp}\n \\s+File ".*", line \\d+, in ${func}\n \\s+${text}
+    FOR    ${func}    ${text}    IN    @{funtions_and_texts}
+        ${exp} =    Set Variable    ${exp}\n\\s+File ".*", line \\d+, in ${func}\n\\s+${text}
+    END
     Should Match Regexp    ${msg.message}    ${exp}
     Should Be Equal    ${msg.level}    DEBUG
 
 Verify Java Stack Trace
     [Arguments]    ${msg}    ${exception}    @{functions}
     ${exp} =    Regexp Escape    ${exception}
-    : FOR    ${func}    IN    @{functions}
-    \    ${func} =    Regexp Escape    ${func}
-    \    ${exp} =    Set Variable    ${exp}\n \\s+at ${func}.+
+    FOR    ${func}    IN    @{functions}
+        ${func} =    Regexp Escape    ${func}
+        ${exp} =    Set Variable    ${exp}\n\\s+at ${func}.+
+    END
     Should Match Regexp    ${msg.message}    ${exp}
     Should Be Equal    ${msg.level}    DEBUG
