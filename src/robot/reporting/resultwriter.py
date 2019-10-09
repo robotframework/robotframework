@@ -36,8 +36,8 @@ class ResultWriter(object):
     or enabled using ``settings`` or ``options`` passed to the
     :meth:`write_results` method. The latter is typically more convenient::
 
-        _writer = ResultWriter(result)
-        _writer.write_results(report='custom.html', log=None, xunit='xunit.xml')
+        writer = ResultWriter(result)
+        writer.write_results(report='custom.html', log=None, xunit='xunit.xml')
     """
 
     def __init__(self, *sources):

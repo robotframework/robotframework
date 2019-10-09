@@ -51,6 +51,7 @@ Options
                            this with ``XML:HTML``. This could be used if the XML
                            files are used to be imported into other systems
                            that require HTML text to present this to a human.
+                           ``XML:HTML`` is new in RF 3.2.
   -F, --docformat <robot|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,

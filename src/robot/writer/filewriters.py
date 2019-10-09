@@ -30,7 +30,7 @@ def FileWriter(context):
     """Creates and returns a ``FileWriter`` object.
 
     :param context: The type of the returned ``FileWriter`` is determined based
-        on ``context.format``. ``context`` is also passed to created _writer.
+        on ``context.format``. ``context`` is also passed to created writer.
     :type context: :class:`~robot.writer.datafilewriter.WritingContext`
     """
     if context.format == context.html_format:

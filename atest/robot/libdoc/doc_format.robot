@@ -66,8 +66,7 @@ Compare HTML from XML:HTML
     [Template]    NONE
     Run Libdoc    -F ROBOT --format XML:HTML ${TESTDATADIR}/DocFormat.py ${OUTPREFIX}_xml_with_html.xml
     Test Format In HTML    <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    
-    ...                    ${EMPTY}    
-    ...                    ${OUTPREFIX}_xml_with_html.xml
+    ...                    lib=${OUTPREFIX}_xml_with_html.xml
    
 *** Keywords ***
 Test Format In HTML

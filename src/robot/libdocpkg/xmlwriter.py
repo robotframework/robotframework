@@ -22,44 +22,43 @@ class LibdocXmlWriter(object):
 
     def __init__(self, html_doc_format=False):
         self._html_doc_format = html_doc_format
-        self._formatter = None
-        self._writer = None
 
     def write(self, libdoc, outfile):
-        self._formatter = DocToHtml(libdoc.doc_format) if self._html_doc_format else self.raw_format
-        self._writer = XmlWriter(outfile)
-        self._write_start(libdoc)
-        self._write_keywords('init', libdoc.inits)
-        self._write_keywords('kw', libdoc.keywords)
-        self._write_end()
+        formatter = DocToHtml(libdoc.doc_format) \
+            if self._html_doc_format \
+            else lambda doc: doc
+        writer = XmlWriter(outfile)
+        self._write_start(writer, libdoc, formatter)
+        self._write_keywords(writer, 'init', libdoc.inits, formatter)
+        self._write_keywords(writer, 'kw', libdoc.keywords, formatter)
+        self._write_end(writer)
 
-    def _write_start(self, libdoc):
-        self._writer.start('keywordspec', {'name': libdoc.name,
-                                           'type': libdoc.type,
-                                           'format': 'HTML' if self._html_doc_format else libdoc.doc_format,
-                                           'generated': get_timestamp(millissep=None)})
-        self._writer.element('version', libdoc.version)
-        self._writer.element('scope', libdoc.scope)
-        self._writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
-        self._writer.element('doc', self._formatter(libdoc.doc))
+    def _write_start(self, writer, libdoc, formatter):
+        doc_format = 'HTML' if self._html_doc_format else libdoc.doc_format
+        lib_attrs = {'name': libdoc.name,
+                     'type': libdoc.type,
+                     'format': doc_format,
+                     'generated': get_timestamp(millissep=None)}
+        writer.start('keywordspec', lib_attrs)
+        writer.element('version', libdoc.version)
+        writer.element('scope', libdoc.scope)
+        writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
+        writer.element('doc', formatter(libdoc.doc))
 
-    def _write_keywords(self, type, keywords):
+    def _write_keywords(self, writer, type, keywords, formatter):
         for kw in keywords:
-            self._writer.start(type, {'name': kw.name} if type == 'kw' else {})
-            self._writer.start('arguments')
+            writer.start(type, {'name': kw.name} if type == 'kw' else {})
+            writer.start('arguments')
             for arg in kw.args:
-                self._writer.element('arg', arg)
-            self._writer.end('arguments')
-            self._writer.element('doc', self._formatter(kw.doc))
-            self._writer.start('tags')
+                writer.element('arg', arg)
+            writer.end('arguments')
+            writer.element('doc', formatter(kw.doc))
+            writer.start('tags')
             for tag in kw.tags:
-                self._writer.element('tag', tag)
-            self._writer.end('tags')
-            self._writer.end(type)
+                writer.element('tag', tag)
+            writer.end('tags')
+            writer.end(type)
 
-    def _write_end(self):
-        self._writer.end('keywordspec')
-        self._writer.close()
-
-    def raw_format(self, doc):
-        return doc
+    def _write_end(self, writer):
+        writer.end('keywordspec')
+        writer.close()
