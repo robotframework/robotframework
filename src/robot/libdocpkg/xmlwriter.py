@@ -20,24 +20,21 @@ from .htmlwriter import DocToHtml
 
 class LibdocXmlWriter(object):
 
-    def __init__(self, html_doc_format=False):
-        self._html_doc_format = html_doc_format
+    def __init__(self, force_html_doc=False):
+        self._force_html_doc = force_html_doc
 
     def write(self, libdoc, outfile):
-        formatter = DocToHtml(libdoc.doc_format) \
-            if self._html_doc_format \
-            else lambda doc: doc
+        formatter = DocFormatter(libdoc.doc_format, self._force_html_doc)
         writer = XmlWriter(outfile)
-        self._write_start(writer, libdoc, formatter)
-        self._write_keywords(writer, 'init', libdoc.inits, formatter)
-        self._write_keywords(writer, 'kw', libdoc.keywords, formatter)
+        self._write_start(libdoc, writer, formatter)
+        self._write_keywords('init', libdoc.inits, writer, formatter)
+        self._write_keywords('kw', libdoc.keywords, writer, formatter)
         self._write_end(writer)
 
-    def _write_start(self, writer, libdoc, formatter):
-        doc_format = 'HTML' if self._html_doc_format else libdoc.doc_format
+    def _write_start(self, libdoc, writer, formatter):
         lib_attrs = {'name': libdoc.name,
                      'type': libdoc.type,
-                     'format': doc_format,
+                     'format': formatter.format,
                      'generated': get_timestamp(millissep=None)}
         writer.start('keywordspec', lib_attrs)
         writer.element('version', libdoc.version)
@@ -45,7 +42,7 @@ class LibdocXmlWriter(object):
         writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
         writer.element('doc', formatter(libdoc.doc))
 
-    def _write_keywords(self, writer, type, keywords, formatter):
+    def _write_keywords(self, type, keywords, writer, formatter):
         for kw in keywords:
             writer.start(type, {'name': kw.name} if type == 'kw' else {})
             writer.start('arguments')
@@ -62,3 +59,17 @@ class LibdocXmlWriter(object):
     def _write_end(self, writer):
         writer.end('keywordspec')
         writer.close()
+
+
+class DocFormatter(object):
+
+    def __init__(self, doc_format, force_html=False):
+        if force_html:
+            self._formatter = DocToHtml(doc_format)
+            self.format = 'HTML'
+        else:
+            self._formatter = lambda doc: doc
+            self.format = doc_format
+
+    def __call__(self, doc):
+        return self._formatter(doc)
