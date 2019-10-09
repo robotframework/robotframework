@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    parsing/data_formats/resource_extension
+Suite Setup      Run Tests    ${EMPTY}    parsing/data_formats/resource_extensions
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -14,5 +14,5 @@ Resource with '*.resource' extension
 '*.resource' files are not parsed for tests
     Should Contain Suites    ${SUITE}    Tests
     Should Contain Tests     ${SUITE}    Resource with '*.resource' extension
-    ${path} =    Normalize Path    ${DATADIR}/parsing/data_formats/resource_extension/tests.resource
+    ${path} =    Normalize Path    ${DATADIR}/parsing/data_formats/resource_extensions/tests.resource
     Check Syslog Contains    | INFO \ | Ignoring file or directory '${path}'.
