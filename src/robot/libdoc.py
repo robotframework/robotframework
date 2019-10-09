@@ -64,9 +64,16 @@ as part of the library name and separated by two colons, for example, like
 Options
 =======
 
- -f --format HTML|XML     Specifies whether to generate HTML or XML output.
+ -f --format HTML|XML|XML:HTML
+                          Specifies whether to generate HTML or XML output.
                           If this options is not used, the format is got
                           from the extension of the output file.
+                          Embedding HTML documentation in XML output:
+                          If XML should have embedded HTML in <doc> as
+                          documentation, it is possible to configure 
+                          this with 'XML:HTML'. This could be used if the XML
+                          files are used to be imported into other systems
+                          that require HTML text to present this to a human.
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -165,7 +172,7 @@ class LibDoc(Application):
 
     def _get_output_format(self, format, output):
         default = os.path.splitext(output)[1][1:]
-        return self._verify_format('Format', format or default, ['HTML', 'XML'])
+        return self._verify_format('Format', format or default, ['HTML', 'XML', 'XML:HTML'])
 
     def _verify_format(self, type, format, valid):
         format = format.upper()

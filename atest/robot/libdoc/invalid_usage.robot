@@ -18,8 +18,9 @@ Invalid option
     --invalid         option --invalid not recognized
 
 Invalid format
-    -f XXX BuiltIn ${OUT HTML}    Format must be 'HTML' or 'XML', got 'XXX'.
-    BuiltIn out.ext            Format must be 'HTML' or 'XML', got 'EXT'.
+    -f XXX BuiltIn ${OUT HTML}              Format must be 'HTML', 'XML' or 'XML:HTML', got 'XXX'.
+    --format XML:XXX BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML' or 'XML:HTML', got 'XML:XXX'.
+    BuiltIn out.ext                         Format must be 'HTML', 'XML' or 'XML:HTML', got 'EXT'.
 
 Invalid doc format
     --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.

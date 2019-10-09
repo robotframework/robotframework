@@ -41,9 +41,17 @@ Synopsis
 Options
 ~~~~~~~
 
-  -f, --format <html|xml>  Specifies whether to generate HTML or XML output.
+  -f, --format <html|xml|xml:html>
+                           Specifies whether to generate HTML or XML output.
                            If this options is not used, the format is got
                            from the extension of the output file.
+                           Embedding HTML documentation in XML output:
+                           If XML should have embedded HTML in <doc> as
+                           documentation, it is possible to configure
+                           this with ``XML:HTML``. This could be used if the XML
+                           files are used to be imported into other systems
+                           that require HTML text to present this to a human.
+                           ``XML:HTML`` is new in RF 3.2.
   -F, --docformat <robot|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,
