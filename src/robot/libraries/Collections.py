@@ -82,8 +82,8 @@ class _List(object):
         The given lists are not altered by this keyword.
 
         Example:
-        | ${x} = | Combine List | ${L1} | ${L2} |       |
-        | ${y} = | Combine List | ${L1} | ${L2} | ${L1} |
+        | ${x} = | Combine Lists | ${L1} | ${L2} |       |
+        | ${y} = | Combine Lists | ${L1} | ${L2} | ${L1} |
         =>
         | ${x} = ['a', 'a', 'b']
         | ${y} = ['a', 'a', 'b', 'a']
