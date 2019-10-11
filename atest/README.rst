@@ -69,9 +69,9 @@ containing it. On modern machines running all acceptance tests ought to
 take less than ten minutes with Python, but with Jython the execution time
 is considerably longer. This is due to Jython being somewhat slower than
 Python in general, but the main reason is that the JVM is started by
-acceptance dozens of times and that always takes few seconds.
+acceptance tests dozens of times and that always takes a few seconds.
 
-Before a release tests should be executed separately using  Python, Jython,
+Before a release tests should be executed separately using Python, Jython,
 IronPython and PyPy to verify interoperability with all supported interpreters.
 Tests should also be run using different interpreter versions (when applicable)
 and on different operating systems.
@@ -83,7 +83,7 @@ during the execution are created under the system temporary directory.
 Test data
 ---------
 
-The test data is divided to two, test data part (``atest/testdata`` folder) and
+The test data is divided into two, test data part (``atest/testdata`` folder) and
 running part (``atest/robot`` folder). Test data side contains test cases for
 different features. Running side contains the actual acceptance test cases
 that run the test cases on the test data side and verify their results.
@@ -102,7 +102,7 @@ other details can be tested also, but that logic is in the running side.
 Test tags
 ---------
 
-The tests on the running side (``atest/robot``) contains tags that are used
+The tests on the running side (``atest/robot``) contain tags that are used
 to include or exclude them based on the platform and required dependencies.
 Selecting tests based on the platform is done automatically by the `<run.py>`__
 script, but additional selection can be done by the user to avoid running

@@ -22,32 +22,11 @@ Extra Pipes At The End
 Empty Cells In Middle
     Check Test Case    ${TEST NAME}
 
-Consequtive spaces
+Consecutive spaces
     Check Test Case  ${TEST NAME}
-    Collapsing deprecated       0    foo${SPACE * 12}bar    63
-    Collapsing deprecated       1    non-ascii\\xa0\\u1680\\u3000spaces    64
 
 Tabs
     Check Test Case  ${TEST NAME}
-    Normalization deprecated    2    foo\\tbar    67
-    Collapsing deprecated       3    foo\\t\\t\\tbar    68
 
 Using FOR Loop With Pipes
     Check Test Case  ${TEST NAME}
-
-*** Keywords ***
-Collapsing deprecated
-    [Arguments]    ${index}    ${text}    ${line}
-    ${path} =    Normalize Path    ${DATADIR}/parsing/pipes.robot
-    ${msg} =    Catenate
-    ...    Collapsing consecutive whitespace during parsing is deprecated.
-    ...    Fix '${text}' in file '${path}' on line ${line}.
-    Check Log Message    ${ERRORS}[${index}]    ${msg}    WARN
-
-Normalization deprecated
-    [Arguments]    ${index}    ${text}    ${line}
-    ${path} =    Normalize Path    ${DATADIR}/parsing/pipes.robot
-    ${msg} =    Catenate
-    ...    Converting whitespace characters to ASCII spaces during parsing is deprecated.
-    ...    Fix '${text}' in file '${path}' on line ${line}.
-    Check Log Message    ${ERRORS}[${index}]    ${msg}    WARN

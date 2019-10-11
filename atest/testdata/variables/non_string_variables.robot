@@ -21,7 +21,7 @@ Collections
     -${DICT}-         -${DICT STR}-
 
 Misc
-    [Documentation]  ${BOOLEAN} ${NONE}  ${MODULE}
+    [Documentation]  ${BOOLEAN} ${NONE} ${MODULE}
     -${BOOLEAN}-      -True-
     -${NONE}-         -None-
     -${MODULE}-       -${MODULE STR}-

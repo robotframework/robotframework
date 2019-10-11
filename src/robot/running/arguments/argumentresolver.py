@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.utils import is_string, is_dict_like, split_from_equals
-from robot.variables import VariableSplitter
+from robot.variables import search_variable
 
 from .argumentvalidator import ArgumentValidator
 
@@ -61,14 +61,17 @@ class NamedArgumentResolver(object):
 
     def _is_dict_var(self, arg):
         return (is_string(arg) and arg[:2] == '&{' and arg[-1] == '}' and
-                VariableSplitter(arg).is_dict_variable())
+                search_variable(arg).is_dict_variable)
 
     def _is_named(self, arg, previous_named, variables=None):
         name, value = split_from_equals(arg)
         if value is None:
             return False
         if variables:
-            name = variables.replace_scalar(name)
+            try:
+                name = variables.replace_scalar(name)
+            except DataError:
+                return False
         argspec = self._argspec
         if previous_named or name in argspec.kwonlyargs or argspec.kwargs:
             return True

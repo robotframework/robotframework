@@ -83,7 +83,7 @@ Escaping Environment Variables
     Should Be Equal  \%{THIS_IS_NOT_ENV_VAR}  %\{THIS_IS_NOT_ENV_VAR}
 
 Empty Environment Variable
-    [Documentation]    FAIL    Invalid variable name '%{}'.
+    [Documentation]    FAIL    STARTS: Environment variable '\%{}' not found.
     Log  %{}
 
 *** Keywords ***

@@ -456,7 +456,7 @@ resolved.
 It is possible to disable dry run validation of specific `user keywords`_
 by adding a special `robot:no-dry-run` `keyword tag`__ to them. This is useful
 if a keyword fails in the dry run mode for some reason, but work fine when
-executed normally. Disabling the dry run more is a new feature in Robot
+executed normally. Disabling the dry run mode is a new feature in Robot
 Framework 3.0.2.
 
 .. note:: The dry run mode does not validate variables.

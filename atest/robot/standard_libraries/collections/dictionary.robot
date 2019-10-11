@@ -59,13 +59,15 @@ Get From Dictionary
     Check Test Case    ${TEST NAME}
 
 Get From Dictionary With Invalid Key
-    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
 
 Dictionary Should Contain Key
     Check Test Case    ${TEST NAME}
 
 Dictionary Should Contain Key With Missing Key
-    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
 
 Dictionary Should Contain Item
     Check Test Case    ${TEST NAME}
@@ -87,9 +89,11 @@ Dictionary Should (Not) Contain Key Does Not Require `has_key`
 
 Dictionary Should Contain Value
     Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME}
 
 Dictionary Should Contain Value With Missing Value
-    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
 
 Dictionary Should Not Contain Value
     Check Test Case    ${TEST NAME}

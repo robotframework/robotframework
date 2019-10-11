@@ -40,14 +40,18 @@ Name Should Be
     [Arguments]    ${name}
     Element Attribute Should Be    ${LIBDOC}    name    ${name}
 
+Format Should Be
+    [Arguments]    ${format}
+    Element Attribute Should Be    ${LIBDOC}    format    ${format}
+
 Doc Should Start With
     [Arguments]    @{doc}
-    ${doc}=    Catenate     SEPARATOR=    @{doc}
+    ${doc}=    Catenate     SEPARATOR=\n    @{doc}
     Element Text Should Match    ${LIBDOC}    ${doc}*    doc
 
 Doc Should Be
     [Arguments]    @{doc}
-    ${doc}=    Catenate     SEPARATOR=    @{doc}
+    ${doc}=    Catenate     SEPARATOR=\n    @{doc}
     Element Text Should Be    ${LIBDOC}    ${doc}    doc
 
 Version Should Match
@@ -108,14 +112,14 @@ Keyword Arguments Should Be
 Keyword Doc Should Start With
     [Arguments]    ${index}    @{doc}
     ${kws}=   Get Elements    ${LIBDOC}   xpath=kw
-    ${doc}=    Catenate     SEPARATOR=    @{doc}
+    ${doc}=    Catenate     SEPARATOR=\n    @{doc}
     ${text} =    Get Element Text    ${kws[${index}]}    xpath=doc
     Should Start With    ${text}    ${doc}
 
 Keyword Doc Should Be
     [Arguments]    ${index}    @{doc}
     ${kws}=   Get Elements    ${LIBDOC}    xpath=kw
-    ${doc}=    Catenate     SEPARATOR=    @{doc}
+    ${doc}=    Catenate     SEPARATOR=\n    @{doc}
     Element Text Should Be    ${kws[${index}]}    ${doc}    xpath=doc
 
 Keyword Tags Should Be

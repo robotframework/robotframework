@@ -1,7 +1,7 @@
 jquery.min
 ----------
 http://jquery.com/download
-Version: 3.3.1
+Version: 3.4.1
 
 jquery.tmpl.min
 ---------------

@@ -27,8 +27,8 @@ from robot.utils import (get_env_var, get_env_vars, get_error_message,
                          is_dict_like, is_list_like, normalize, DotDict,
                          NormalizedDict)
 
-from .isvar import validate_var
 from .notfound import variable_not_found
+from .search import search_variable, VariableMatch
 
 
 class VariableFinder(object):
@@ -41,9 +41,10 @@ class VariableFinder(object):
                          ExtendedFinder(self))
         self._store = variable_store
 
-    def find(self, name):
-        validate_var(name, '$@&%')
-        identifier = name[0]
+    def find(self, variable):
+        match = self._get_match(variable)
+        identifier = match.identifier
+        name = match.name
         for finder in self._finders:
             if identifier in finder.identifiers:
                 try:
@@ -59,19 +60,24 @@ class VariableFinder(object):
                                         % (name, get_error_message()))
         variable_not_found(name, self._store.data)
 
+    def _get_match(self, variable):
+        if isinstance(variable, VariableMatch):
+            return variable
+        match = search_variable(variable)
+        if match.start != 0 or match.end != len(variable) or match.items:
+            raise DataError("Invalid variable name '%s'." % variable)
+        return match
+
     def _validate_value(self, value, identifier, name):
         if identifier == '@':
             if not is_list_like(value):
                 raise VariableError("Value of variable '%s' is not list or "
                                     "list-like." % name)
-            # TODO: Is converting to list needed or would checking be enough?
-            # TODO: Check this and DotDict usage below in RF 3.1.
             return list(value)
         if identifier == '&':
             if not is_dict_like(value):
                 raise VariableError("Value of variable '%s' is not dictionary "
                                     "or dictionary-like." % name)
-            # TODO: Is converting to DotDict needed? Check in RF 3.1.
             return DotDict(value)
         return value
 

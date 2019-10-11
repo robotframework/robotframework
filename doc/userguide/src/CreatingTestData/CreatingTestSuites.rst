@@ -38,11 +38,9 @@ test suite:
       especially when using the plain text format.
 
 .. note:: Setting names are case-insensitive, but the format used above is
-      recommended. Prior to Robot Framework 3.1, settings were also
-      space-insensitive meaning that spaces could be removed (e.g.
-      `SuiteSetup`) or extra spaces added (e.g. `M e t a d a t a`). This is
-      now deprecated and only the format above, case-insensitively, is
-      supported.
+      recommended. Settings used to be also space-insensitive, but that was
+      deprecated in Robot Framework 3.1 and trying to use something like
+      `M e t a d a t a` causes an error in Robot Framework 3.2.
 
 __ `Creating test cases`_
 
