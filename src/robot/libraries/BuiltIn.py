@@ -16,8 +16,6 @@
 import difflib
 import re
 import time
-import token
-from tokenize import generate_tokens, untokenize
 
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
@@ -30,14 +28,14 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          get_error_message, get_time, html_escape, is_falsy,
                          is_integer, is_list_like, is_string, is_truthy,
                          is_unicode, IRONPYTHON, JYTHON, Matcher, normalize,
-                         normalize_whitespace, NormalizedDict, parse_time,
-                         prepr, plural_or_not as s, PY3, RERAISED_EXCEPTIONS,
+                         normalize_whitespace, parse_time, prepr,
+                         plural_or_not as s, PY3, RERAISED_EXCEPTIONS,
                          roundup, secs_to_timestr, seq2str, split_from_equals,
-                         StringIO, timestr_to_secs, type_name, unic)
+                         timestr_to_secs, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
-from robot.variables import (is_list_var, is_var, DictVariableTableValue,
-                             search_variable, VariableTableValue,
-                             variable_not_found)
+from robot.variables import (evaluate_expression, is_list_var, is_var,
+                             DictVariableTableValue, search_variable,
+                             VariableTableValue)
 from robot.version import get_version
 
 if JYTHON:
@@ -2970,53 +2968,11 @@ class _Misc(_BuiltInBase):
         | ${random} = <random integer>
         | ${result} = 42
         """
-        if is_string(expression) and '$' in expression:
-            expression, variables = self._handle_variables_in_expression(expression)
-        else:
-            variables = {}
-        namespace = self._create_evaluation_namespace(namespace, modules)
         try:
-            if not is_string(expression):
-                raise TypeError("Expression must be string, got %s."
-                                % type_name(expression))
-            if not expression:
-                raise ValueError("Expression cannot be empty.")
-            return eval(expression, namespace, variables)
-        except:
-            raise RuntimeError("Evaluating expression '%s' failed: %s"
-                               % (expression, get_error_message()))
-
-    def _handle_variables_in_expression(self, expression):
-        variables = None
-        variable_started = False
-        tokens = []
-        generated = generate_tokens(StringIO(expression).readline)
-        for toknum, tokval, _, _, _ in generated:
-            if variable_started:
-                if toknum == token.NAME:
-                    if variables is None:
-                        variables = self._variables.as_dict(decoration=False)
-                    if tokval not in variables:
-                        variable_not_found('$%s' % tokval, variables,
-                                           deco_braces=False)
-                    tokval = 'RF_VAR_' + tokval
-                else:
-                    tokens.append((token.ERRORTOKEN, '$'))
-                variable_started = False
-            if toknum == token.ERRORTOKEN and tokval == '$':
-                variable_started = True
-            else:
-                tokens.append((toknum, tokval))
-        if variables is None:
-            return expression, {}
-        decorated = [('RF_VAR_' + name, variables[name]) for name in variables]
-        return untokenize(tokens).strip(), NormalizedDict(decorated, ignore='_')
-
-    def _create_evaluation_namespace(self, namespace, modules):
-        namespace = dict(namespace or {})
-        modules = modules.replace(' ', '').split(',') if modules else []
-        namespace.update((m, __import__(m)) for m in modules if m)
-        return namespace
+            return evaluate_expression(expression, self._variables, modules,
+                                       namespace)
+        except DataError as err:
+            raise RuntimeError(err.message)
 
     def call_method(self, object, method_name, *args, **kwargs):
         """Calls the named method of the given object with the provided arguments.

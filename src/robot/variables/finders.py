@@ -27,6 +27,7 @@ from robot.utils import (get_env_var, get_env_vars, get_error_message,
                          is_dict_like, is_list_like, normalize, DotDict,
                          NormalizedDict)
 
+from .evaluation import evaluate_expression
 from .notfound import variable_not_found
 from .search import search_variable, VariableMatch
 
@@ -37,6 +38,7 @@ class VariableFinder(object):
         self._finders = (StoredFinder(variable_store),
                          NumberFinder(),
                          EmptyFinder(),
+                         InlinePythonFinder(variable_store),
                          EnvironmentFinder(),
                          ExtendedFinder(self))
         self._store = variable_store
@@ -113,6 +115,23 @@ class EmptyFinder(object):
     identifiers = '$@&'
     find = NormalizedDict({'${EMPTY}': u'', '@{EMPTY}': (), '&{EMPTY}': {}},
                           ignore='_').__getitem__
+
+
+class InlinePythonFinder(object):
+    identifiers = '$@&'
+
+    def __init__(self, variables):
+        self._variables = variables
+
+    def find(self, name):
+        base = name[2:-1]
+        if not base or base[0] != '{' or base[-1] != '}':
+            raise ValueError
+        try:
+            return evaluate_expression(base[1:-1].strip(), self._variables)
+        except DataError as err:
+            raise VariableError("Resolving variable '%s' failed: %s"
+                                % (name, err))
 
 
 class ExtendedFinder(object):
