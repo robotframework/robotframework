@@ -44,6 +44,7 @@ class Matcher(object):
     def _compile(self, pattern, regexp=False):
         if not regexp:
             pattern = fnmatch.translate(pattern)
+            pattern = pattern.replace("[", "\\[").replace("]", "\\]")
             # https://github.com/IronLanguages/ironpython2/issues/515
             if IRONPYTHON and "\\'" in pattern:
                 pattern = pattern.replace("\\'", "'")
