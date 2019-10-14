@@ -316,11 +316,11 @@ marker used to be `:FOR` when nowadays just `FOR` is enough. Related to that,
 the `:FOR` marker and also the `IN` separator were case-insensitive but
 nowadays both `FOR` and `IN` are case-sensitive.
 
-Old for loop syntax still works in Robot Framework 3.1 and only using
-`IN` case-insensitively causes a deprecation warning. Not closing loops
-with `END`, escaping keywords inside loops with :codesc:`\\`, and using
-`:FOR` instead of `FOR` are all going to be deprecated in Robot Framework 3.2.
-Users are advised to switch to the new syntax as soon as possible.
+Old for loop syntax still worked in Robot Framework 3.1 and only using `IN`
+case-insensitively caused a deprecation warning. In Robot Framework 3.2
+`IN` is case-sensitive and using `:FOR` instead of `FOR`, not closing loops
+with `END`, and escaping keywords inside loops with :codesc:`\\` were all
+deprecated. Users are advised to switch to the new syntax as soon as possible.
 
 When using the `pipe separated format`_, escaping with :codesc:`\\` has not
 been needed:
@@ -342,14 +342,14 @@ supported then escaping with :codesc:`\\` is needed.
 .. sourcecode:: robotframework
 
    | *** Test Cases ***
-   | Recommended solution
+   | Recommended solution, compatible with RF 3.1 and newer
    | | FOR  | ${animal}    | IN          | cat | dog |
    | |      | Log          | ${animal}   |
    | |      | Log          | 2nd keyword |
    | | END  |              |
    | | Log  | Outside loop |
    |
-   | Compatible with RF 3.0.x
+   | Compatible with RF 3.0.x, causes deprecation warning with RF 3.2.x
    | | :FOR | ${animal}    | IN          | cat | dog |
    | | \    | Log          | ${animal}   |
    | | \    | Log          | 2nd keyword |
@@ -474,10 +474,6 @@ integers, but using float values is possible as well.
            Log    ${index}
        END
 
-.. note:: Prior to Robot Framework 3.1, the `IN RANGE` separator was both
-          case- and space-insensitive. Such usage is nowadays deprecated
-          and exactly `IN RANGE` is required.
-
 For-in-enumerate loop
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -529,10 +525,6 @@ the number of loop-variables (excluding the first, index variable).
            Log    "${en}" in English is "${fi}" in Finnish (index: ${index})
        END
 
-.. note:: Prior to Robot Framework 3.1, the `IN ENUMERATE` separator was both
-          case- and space-insensitive. Such usage is nowadays deprecated
-          and exactly `IN ENUMERATE` is required.
-
 For-in-zip loop
 ~~~~~~~~~~~~~~~
 
@@ -572,10 +564,6 @@ will stop when the shortest list is exhausted.
 Note that any lists used with for-in-zip should usually be given as `scalar
 variables`_ like `${list}`. A `list variable`_ only works if its items
 themselves are lists.
-
-.. note:: Prior to Robot Framework 3.1, the `IN ZIP` separator was both
-          case- and space-insensitive. Such usage is nowadays deprecated
-          and exactly `IN ZIP` is required.
 
 Exiting for loop
 ~~~~~~~~~~~~~~~~
