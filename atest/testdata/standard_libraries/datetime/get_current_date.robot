@@ -56,6 +56,11 @@ Result format epoch
     ${expected} =    Evaluate    time.time()    modules=time
     Should Be True    0 <= ${expected} - ${result} < 1
 
+Local and UTC epoch times are same
+    ${local} =    Get Current Date    local    result_format=epoch
+    ${utc} =      Get Current Date    utc      result_format=epoch
+    Should Be True    0 <= ${utc} - ${local} < 1
+
 Result format datetime
     ${start} =    Evaluate    datetime.datetime.now()    modules=datetime
     ${dt} =    Get Current Date    result_format=datetime

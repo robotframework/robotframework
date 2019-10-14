@@ -30,5 +30,8 @@ Result format custom timestamp
 Result format epoch
     Check Test Case    ${TESTNAME}
 
+Local and UTC epoch times are same
+    Check Test Case    ${TESTNAME}
+
 Result format datetime
     Check Test Case    ${TESTNAME}
