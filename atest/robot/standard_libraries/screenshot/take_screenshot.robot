@@ -31,6 +31,10 @@ Without Embedding
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Linking In Log  ${tc.kws[0].msgs[1]}  no_embed.jpeg
 
+Png Screenshot Is Embedded in Log File
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  screenshot_1.png
+
 *** Keywords ***
 Check Embedding In Log
     [Arguments]  ${message}  ${path}  ${width}=800px

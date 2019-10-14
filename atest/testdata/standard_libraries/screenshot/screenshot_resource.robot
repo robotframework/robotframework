@@ -18,5 +18,7 @@ Save Start Time
 
 Screenshots Should Exist
     [Arguments]  ${directory}  @{files}
-    @{actual files}=  List Directory  ${directory}  *.jp*g  absolute
-    Lists Should Be Equal  ${actual files}  ${files}
+    @{actual_png_files}=  List Directory  ${directory}  *.png  absolute
+    @{actual_jpeg_files}=  List Directory  ${directory}  *.jp*g  absolute
+    @{all_files}=  Combine Lists  ${actual_png_files}  ${actual_jpeg_files}
+    List Should Contain Sub List  ${files}  ${all_files}
