@@ -71,8 +71,9 @@ Failing list
 
 Failing list in for loop
     [Documentation]    FAIL STARTS: Resolving variable '\@{FAILING GENERATOR()}' failed: ZeroDivisionError:
-    :FOR    ${i}    IN    @{FAILING GENERATOR()}
-    \    Fail    Not executed
+    FOR    ${i}    IN    @{FAILING GENERATOR()}
+        Fail    Not executed
+    END
 
 Failing dict
     [Documentation]    FAIL Resolving variable '\&{FAILING DICT}' failed: Bang

@@ -90,7 +90,7 @@ Check Suite Got From Misc/suites/ Directory
     ...    Tsuite3
     Should Be Empty    ${SUITE.tests}
     Should Contain Suites    ${SUITE.suites[1]}    Sub1    Sub2
-    :FOR    ${s}    IN
+    FOR    ${s}    IN
     ...    ${SUITE.suites[0]}
     ...    ${SUITE.suites[1].suites[0]}
     ...    ${SUITE.suites[1].suites[1]}
@@ -98,7 +98,8 @@ Check Suite Got From Misc/suites/ Directory
     ...    ${SUITE.suites[3]}
     ...    ${SUITE.suites[4]}
     ...    ${SUITE.suites[5]}
-    \    Should Be Empty    ${s.suites}
+        Should Be Empty    ${s.suites}
+    END
     Should Contain Tests    ${SUITE}
     ...    SubSuite1 First
     ...    SubSuite2 First

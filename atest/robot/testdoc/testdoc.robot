@@ -66,14 +66,16 @@ Run TestDoc
 Testdoc Should Contain
     [Arguments]    @{expected}
     ${testdoc}=    Get File    ${OUTFILE}
-    : FOR     ${exp}    IN    @{expected}
-    \    Should Contain    ${testdoc}   ${exp}
+    FOR     ${exp}    IN    @{expected}
+        Should Contain    ${testdoc}   ${exp}
+    END
 
 Testdoc Should Not Contain
     [Arguments]    @{expected}
     ${testdoc}=    Get File    ${OUTFILE}
-    : FOR     ${exp}    IN    @{expected}
-    \    Should Not Contain    ${testdoc}   ${exp}
+    FOR     ${exp}    IN    @{expected}
+        Should Not Contain    ${testdoc}   ${exp}
+    END
 
 Outfile Should Have Correct Line Separators
     File should have correct line separators    ${OUTFILE}

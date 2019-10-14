@@ -62,9 +62,10 @@ For With Values On Multiple Rows
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be For Keyword    ${tc.kws[0]}    10
     Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    1
-    : FOR    ${i}    IN RANGE    10
-    \    ${exp} =    Evaluate    str(${i} + 1)
-    \    Check Log Message    ${tc.kws[0].kws[${i}].kws[0].msgs[0]}    ${exp}
+    FOR    ${i}    IN RANGE    10
+        ${exp} =    Evaluate    str(${i} + 1)
+        Check Log Message    ${tc.kws[0].kws[${i}].kws[0].msgs[0]}    ${exp}
+    END
     # Sanity check
     Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    1
     Check Log Message    ${tc.kws[0].kws[4].kws[0].msgs[0]}    5
