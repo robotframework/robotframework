@@ -116,11 +116,14 @@ class KeywordCall(Node):
 class ForLoop(Node):
     _fields = ('variables', 'flavor', 'values', 'body')
 
-    def __init__(self, variables, flavor, values, body=None):
+    # TODO: _header and _end are used for deprecation. Remove in RF 3.3!
+    def __init__(self, variables, flavor, values, body=None, _header='FOR'):
         self.variables = variables
         self.flavor = normalize_whitespace(flavor)
         self.values = values
         self.body = body or []
+        self._header = _header
+        self._end = 'END'
 
 
 class TestCase(Node):
