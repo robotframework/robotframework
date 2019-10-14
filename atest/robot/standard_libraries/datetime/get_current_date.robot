@@ -3,7 +3,7 @@ Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/get_curren
 Resource         atest_resource.robot
 
 *** Test Cases ***
-Local time increases
+Local time
     Check Test Case    ${TESTNAME}
 
 UTC Time
@@ -18,7 +18,13 @@ Increment
 Negative Increment
     Check Test Case    ${TESTNAME}
 
+Default result format
+    Check Test Case    ${TESTNAME}
+
 Result format timestamp
+    Check Test Case    ${TESTNAME}
+
+Result format custom timestamp
     Check Test Case    ${TESTNAME}
 
 Result format epoch
