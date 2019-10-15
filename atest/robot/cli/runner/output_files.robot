@@ -53,14 +53,17 @@ Split Log
 Non-writable Output File
     Create Directory    ${CLI OUTDIR}/diréctöry.xml
     Run Tests Without Processing Output    --output ${CLI OUTDIR}/diréctöry.xml    ${TESTFILE}
-    Check Stderr Matches Regexp    \\[ ERROR \\] Opening output file '.*diréctöry.xml' failed: .*${USAGE_TIP}
+    Check Stderr Matches Regexp
+    ...    \\[ ERROR \\] Opening output file '.*diréctöry.xml' failed: [^ ]+Error: .*${USAGE_TIP}
 
 Non-writable Log and Report
     ${directory} =    Normalize Path    ${CLI OUTDIR}/diréctöry.html
     Create Directory    ${directory}
     Run Tests    --log ${directory} --report ${directory}    ${TESTFILE}
     Should Be Equal    ${SUITE.status}    PASS
-    Check Stderr Matches Regexp    SEPARATOR=\n    \\[ ERROR \\] Writing log file '.*diréctöry.html' failed: .*    \\[ ERROR \\] Writing report file '.*diréctöry.html' failed: .*
+    Check Stderr Matches Regexp    SEPARATOR=\n
+    ...    \\[ ERROR \\] Opening log file '.*diréctöry.html' failed: [^ ]+Error: .*
+    ...    \\[ ERROR \\] Opening report file '.*diréctöry.html' failed: [^ ]+Error: .*
     Check Stdout Contains    Output:
     Check Stdout Does Not Contain    Log:
     Check Stdout Does Not Contain    Report:
@@ -69,7 +72,7 @@ Non-writable Split Log
     Create Directory    ${CLI OUTDIR}/dir-1.js
     Run Tests    --splitlog --log ${CLI OUTDIR}/dir.html --report r.html    ${TESTFILE}
     Should Be Equal    ${SUITE.status}    PASS
-    Check Stderr Matches Regexp    \\[ ERROR \\] Writing log file '.*dir.html' failed: .*
+    Check Stderr Matches Regexp    \\[ ERROR \\] Opening log file '.*dir-1.js' failed: [^ ]+Error: .*
     Check Stdout Contains    Output:
     Check Stdout Does Not Contain    Log:
     Check Stdout Contains    Report:

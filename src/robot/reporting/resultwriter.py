@@ -86,12 +86,6 @@ class ResultWriter(object):
             writer(path, *args)
         except DataError as err:
             LOGGER.error(err.message)
-        except EnvironmentError as err:
-            # `err.filename` can be different than `path` at least if reading
-            # log/report templates or writing split log fails.
-            # `unic` is needed due to http://bugs.jython.org/issue1825.
-            LOGGER.error("Writing %s file '%s' failed: %s: %s" %
-                         (name.lower(), path, err.strerror, unic(err.filename)))
         else:
             LOGGER.output_file(name, path)
 

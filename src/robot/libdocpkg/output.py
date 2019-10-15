@@ -27,7 +27,8 @@ class LibdocOutput(object):
 
     def __enter__(self):
         if self._format == 'HTML':
-            self._output_file = file_writer(self._output_path)
+            self._output_file = file_writer(self._output_path,
+                                            usage='Libdoc output')
             return self._output_file
         return self._output_path
 

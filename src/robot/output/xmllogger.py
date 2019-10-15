@@ -32,11 +32,7 @@ class XmlLogger(ResultVisitor):
     def _get_writer(self, path, rpa, generator):
         if not path:
             return NullMarkupWriter()
-        try:
-            writer = XmlWriter(path, write_empty=False)
-        except EnvironmentError as err:
-            raise DataError("Opening output file '%s' failed: %s" %
-                            (path, err.strerror))
+        writer = XmlWriter(path, write_empty=False, usage='output')
         writer.start('robot', {'generator': get_full_version(generator),
                                'generated': get_timestamp(),
                                'rpa': 'true' if rpa else 'false'})

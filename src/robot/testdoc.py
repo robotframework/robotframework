@@ -131,7 +131,7 @@ class TestDoc(Application):
         self.console(outfile)
 
     def _write_test_doc(self, suite, outfile, title):
-        with file_writer(outfile) as output:
+        with file_writer(outfile, usage='Testdoc output') as output:
             model_writer = TestdocModelWriter(output, suite, title)
             HtmlFileWriter(output, model_writer).write(TESTDOC)
 
