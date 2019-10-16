@@ -84,6 +84,27 @@ http://robotframework.org.
         Welcome Page Should Be Open
         [Teardown]    Close Browser
 
+
+Example Library DatabaseLibrary (MySQL)
+-------
+
+.. code:: robotframework
+    *** Settings ***
+    Library           DatabaseLibrary
+
+    *** Variables ***
+    ${DB_HOST}        127.0.0.1
+    ${DB_PORT}        3306
+    ${DB_NAME}        DBTEST
+    ${DB_USER}        robot
+    ${DB_PWD}         robotframework
+
+    *** Keywords ***
+    Verify transaction admin session timeout 30 min
+        Connect to Database     pymssql    ${DB_NAME}    ${DB_USER}    ${DB_PWD}    ${DB_HOST}    ${DB_PORT}
+        Execute Sql String      insert into ADMIN_TOKEN_SECRET (Login_Name, Secret, Create_Dtm) values ('robot', 'ROBOT_UUID', DATEADD(mi,-125,GETDATE()))
+        Disconnect from Database
+
 Usage
 -----
 
