@@ -87,6 +87,8 @@ http://robotframework.org.
 
 Example Library DatabaseLibrary (MySQL)
 -------
+.. code:: Library DatabaseLibrary
+
     *** Settings ***
     Library           DatabaseLibrary
 
