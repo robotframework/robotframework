@@ -87,8 +87,6 @@ http://robotframework.org.
 
 Example Library DatabaseLibrary (MySQL)
 -------
-
-.. code:: robotframework
     *** Settings ***
     Library           DatabaseLibrary
 
@@ -104,6 +102,7 @@ Example Library DatabaseLibrary (MySQL)
         Connect to Database     pymssql    ${DB_NAME}    ${DB_USER}    ${DB_PWD}    ${DB_HOST}    ${DB_PORT}
         Execute Sql String      insert into ADMIN_TOKEN_SECRET (Login_Name, Secret, Create_Dtm) values ('robot', 'ROBOT_UUID', DATEADD(mi,-125,GETDATE()))
         Disconnect from Database
+
 
 Usage
 -----
