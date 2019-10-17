@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.variables import is_var
-from robot.utils import normalize_whitespace
+from robot.utils import normalize_whitespace, rstrip
 
 from .tokens import Token
 
@@ -367,4 +367,4 @@ class KeywordCallLexer(StatementLexer):
 
     def _is_assign(self, value):
         return (is_var(value) or
-                value.endswith('=') and is_var(value[:-1].rstrip()))
+                value.endswith('=') and is_var(rstrip(value[:-1])))

@@ -156,13 +156,17 @@ class PythonErrorDetails(_ErrorDetails):
     def _decode_entry(self, traceback_entry):
         path, lineno, func, text = traceback_entry
         # Traceback entries in Python 2 use bytes using different encodings.
-        # path: system encoding
+        # path: system encoding (except on Jython where it's oddly latin1)
         # line: integer
         # func: always ASCII on Python 2
         # text: depends on source encoding; UTF-8 is an ASCII compatible guess
+        if not JYTHON:
+            path = system_decode(path)
+        else:
+            path = path.decode('latin1', 'replace')
         if text is not None:
             text = text.decode('UTF-8', 'replace')
-        return system_decode(path), lineno, func, text
+        return path, lineno, func, text
 
 
 class JavaErrorDetails(_ErrorDetails):

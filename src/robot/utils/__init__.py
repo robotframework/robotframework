@@ -71,6 +71,6 @@ from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,
                    get_console_length, getdoc, getshortdoc, pad_console_length,
-                   split_tags_from_doc, split_args_from_name_or_path)
+                   rstrip, split_tags_from_doc, split_args_from_name_or_path)
 from .unic import prepr, unic
 from .utf8reader import Utf8Reader

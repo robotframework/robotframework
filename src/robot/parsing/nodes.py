@@ -16,7 +16,7 @@
 from ast import AST
 import re
 
-from robot.utils import normalize_whitespace
+from robot.utils import normalize_whitespace, rstrip
 
 
 def join_doc_or_meta(lines):
@@ -98,7 +98,7 @@ class Variable(Node):
         # Applies also to 'WITH NAME', 'NONE' and 'TASK(S)' handling
         # as well as joining doc/meta lines and tuple() conversion.
         if name.endswith('='):
-            name = name[:-1].rstrip()
+            name = rstrip(name[:-1])
         self.name = name
         self.value = value
 

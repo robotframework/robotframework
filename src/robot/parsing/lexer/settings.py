@@ -30,7 +30,7 @@ class Settings(object):
 
     def lex(self, statement):
         name_token = statement[0]
-        name = self._format_name(name_token.value)
+        name = self._format_name(normalize_whitespace(name_token.value))
         normalized = self._normalize_name(name)
         try:
             self._validate(name, normalized, statement)
@@ -58,10 +58,10 @@ class Settings(object):
                              % (name, len(statement) - 1))
 
     def _normalize_name(self, name):
-        upper = normalize_whitespace(name).upper()
-        if upper in self.aliases:
-            return self.aliases[upper]
-        return upper
+        name = name.upper()
+        if name in self.aliases:
+            return self.aliases[name]
+        return name
 
     def _format_name(self, name):
         return name

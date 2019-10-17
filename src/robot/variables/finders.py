@@ -16,8 +16,9 @@
 import re
 
 try:
-    from java.lang.System import (getProperty as get_java_property,
-                                  getProperties as get_java_properties)
+    from java.lang.System import (getProperties as get_java_properties,
+                                  getProperty)
+    get_java_property = lambda name: getProperty(name) if name else None
 except ImportError:
     get_java_property = lambda name: None
     get_java_properties = lambda: {}
