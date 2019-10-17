@@ -26,7 +26,7 @@ Invalid output file
     Create Directory    ${invalid}
     ${stdout} =    Run Libdoc    String ${invalid}
     Should Match    ${stdout}
-    ...    Opening Libdoc output file '${invalid}' failed: IOError: *${USAGE TIP}\n
+    ...    Opening Libdoc output file '${invalid}' failed: *Error: *${USAGE TIP}\n
     [Teardown]    Remove Directory    ${invalid}
 
 Relative path with Python libraries

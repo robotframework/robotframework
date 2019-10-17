@@ -32,7 +32,7 @@ Python only
 
 Variable replacement
     ${{"${TEST NAME}"}}                         Variable replacement
-    ${{ '${/}' }}                               ${/}
+    ${{ '${:}' }}                               ${:}
     ${{${4}${2}}}                               ${42}
     ${{${LIST}}}                                ${LIST}
     ${{ ${DICT} }}                              ${DICT}
