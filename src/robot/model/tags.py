@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import (Matcher, NormalizedDict, is_string, py2to3, setter,
-                         unic, normalize)
+from robot.utils import (Matcher, normalize, NormalizedDict, is_string, py2to3,
+                         setter, unic)
 
 
 @py2to3
@@ -29,9 +29,9 @@ class Tags(object):
             return ()
         if is_string(tags):
             tags = (tags,)
-        return self._normalize(tags)
+        return self._deduplicate_normalized(tags)
 
-    def _normalize(self, tags):
+    def _deduplicate_normalized(self, tags):
         normalized = NormalizedDict(((unic(t), 1) for t in tags), ignore='_')
         for removed in '', 'NONE':
             if removed in normalized:
@@ -66,16 +66,12 @@ class Tags(object):
     def __eq__(self, other):
         if not isinstance(other, Tags):
             return False
-
-        self_normalized = [normalize(tag, ignore='_') for tag in self._tags]
-        other_normalized = [normalize(tag, ignore='_') for tag in other._tags]
-
+        self_normalized = [normalize(tag, ignore='_') for tag in self]
+        other_normalized = [normalize(tag, ignore='_') for tag in other]
         return sorted(self_normalized) == sorted(other_normalized)
 
     def __ne__(self, other):
-        """
-        Not necessary for Python3 (https://stackoverflow.com/a/30676267/2309247)
-        """
+        # Not necessary for Python3 (https://stackoverflow.com/a/30676267/2309247)
         return not self == other
 
     def __getitem__(self, index):
