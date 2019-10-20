@@ -1,5 +1,5 @@
 *** Settings ***
-Library                  Annotations.py
+Resource                 robot_keyword_annotations_definition.robot
 Library                  OperatingSystem
 Resource                 conversion.resource
 Force Tags               require-py3
@@ -162,6 +162,7 @@ Invalid timedelta
     Timedelta            foobar                                          error=Invalid time string 'foobar'.
     Timedelta            1 foo                                           error=Invalid time string '1 foo'.
     Timedelta            01:02:03:04                                     error=Invalid time string '01:02:03:04'.
+
 Enum
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
@@ -324,16 +325,16 @@ Invalid positional as named
     Dictionary           argument=[0]                                    error=Value is list, not dict.
 
 Varargs
-    Varargs              1    2    3               expected=(1, 2, 3)
-    Varargs              ${TRUE}    ${NONE}        expected=(True, None)
+    Varargs              1    2    3               expected=[1, 2, 3]
+    Varargs              ${TRUE}    ${NONE}        expected=[True, None]
 
 Invalid varargs
     [Template]           Conversion Should Fail
     Varargs              foobar                    type=integer
 
 Kwargs
-    Kwargs               a=1    b=2    c=3         expected={'a': 1, 'b': 2, 'c': 3}
-    Kwargs               x=${TRUE}    y=${NONE}    expected={'x': True, 'y': None}
+    Kwargs               a=1    b=2    c=3         expected=DotDict({'a': 1, 'b': 2, 'c': 3})
+    Kwargs               x=${TRUE}    y=${NONE}    expected=DotDict({'x': True, 'y': None})
 
 Invalid Kwargs
     [Template]           Conversion Should Fail
@@ -382,7 +383,8 @@ String None is converted to None object
     Timedelta
 
 Return value annotation causes no error
-    Return value annotation                    42    42
+    No Operation
+    #Return value annotation                    42    42
 
 None as default
     None as default
@@ -391,17 +393,6 @@ None as default
 Forward references
     [Tags]    require-py3.5
     Forward referenced concrete type           42    42
-    Forward referenced ABC                     []    []
-
-@keyword decorator overrides annotations
-    Types via keyword deco override            42    timedelta(seconds=42)
-    None as types via @keyword disables        42    '42'
-    Empty types via @keyword doesn't override  42    42
-    @keyword without types doesn't override    42    42
-
-Type information mismatch caused by decorator
-    Mismatch caused by decorator               foo   'foo'
-    Mismatch caused by decorator with wraps    foo   'foo'
 
 Value contains variable
     [Setup]       Set Environment Variable         PI_NUMBER    3.14
@@ -410,6 +401,6 @@ Value contains variable
     ${value} =           Set variable              42
     Integer              ${value}                  ${42}
     @{value} =           Create List               1    2    3
-    Varargs              @{value}                  expected=(1, 2, 3)
+    Varargs              @{value}                  expected=[1, 2, 3]
     &{value} =           Create Dictionary         a=1    b=2    c=3
-    Kwargs               &{value}                  expected={'a': 1, 'b': 2, 'c': 3}
+    Kwargs               &{value}                  expected=DotDict({'a': 1, 'b': 2, 'c': 3})

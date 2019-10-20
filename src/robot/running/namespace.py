@@ -82,9 +82,9 @@ class Namespace(object):
         if overwrite or path not in self._kw_store.resources:
             resource = IMPORTER.import_resource(path)
             self.variables.set_from_variable_table(resource.variables, overwrite)
+            self._handle_imports(resource.imports)
             user_library = UserLibrary(resource)
             self._kw_store.resources[path] = user_library
-            self._handle_imports(resource.imports)
             LOGGER.imported("Resource", user_library.name,
                             importer=import_setting.source,
                             source=path)

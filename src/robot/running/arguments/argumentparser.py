@@ -16,9 +16,11 @@
 from robot.errors import DataError
 from robot.utils import JYTHON, PY_VERSION, PY2
 from robot.variables import is_dict_var, is_list_var, is_scalar_var
+from pydoc import locate
+import re
 
 from .argumentspec import ArgumentSpec
-
+from .typingresolver import TypingResolver
 
 if PY2:
     from inspect import getargspec, ismethod
@@ -185,6 +187,7 @@ class _ArgumentSpecParser(_ArgumentParser):
         spec = ArgumentSpec(name, self._type)
         kw_only_args = False
         for arg in argspec:
+            arg, type_ = TypingResolver().split_args_and_types(arg)
             if spec.kwargs:
                 self._raise_invalid_spec('Only last argument can be kwargs.')
             elif self._is_kwargs(arg):
@@ -205,6 +208,8 @@ class _ArgumentSpecParser(_ArgumentParser):
                                          'arguments.')
             else:
                 self._add_arg(spec, arg, kw_only_args)
+            if type_:
+                self._add_type_to_arg(spec, arg, type_)
         return spec
 
     def _raise_invalid_spec(self, error):
@@ -245,6 +250,13 @@ class _ArgumentSpecParser(_ArgumentParser):
         target.append(arg)
         return arg
 
+    def _add_type_to_arg(self, argspec, arg, type_):
+        if argspec.types is None:
+            argspec.types = {}
+        pattern = re.compile('^[$@&]{([a-zA-Z0-9 ]+)}')
+        match = pattern.match(arg)
+        argname = match.group(1)
+        argspec.types[argname] = type_
 
 class DynamicArgumentParser(_ArgumentSpecParser):
 
