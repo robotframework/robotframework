@@ -52,6 +52,10 @@ def is_list_like(item):
     if isinstance(item, (str, unicode, bytes, bytearray, UserString, String,
                          file)):
         return False
+    return is_iterable(item)
+
+
+def is_iterable(item):
     try:
         iter(item)
     except RERAISED_EXCEPTIONS:

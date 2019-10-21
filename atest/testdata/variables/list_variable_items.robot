@@ -1,4 +1,5 @@
 *** Variables ***
+${INT}        ${15}
 @{LIST}       A    B    C    D    E    F    G    H    I    J    K
 @{NUMBERS}    1    2    3
 &{MAP}        first=0    last=-1
@@ -44,43 +45,43 @@ Slicing with variable
     ...                                      ${LIST[1:]}
 
 Invalid index
-    [Documentation]    FAIL List '\${LIST}' has no item in index 12.
+    [Documentation]    FAIL Iterable '\${LIST}' has no item in index 12.
     Log    ${LIST}[12]
 
 Invalid index using variable
-    [Documentation]    FAIL List '\${LIST}' has no item in index 13.
+    [Documentation]    FAIL Iterable '\${LIST}' has no item in index 13.
     Log    ${LIST}[${ONE}${3}]
 
 Non-int index
-    [Documentation]    FAIL List '\${LIST}' used with invalid index 'invalid'.
+    [Documentation]    FAIL Iterable '\${LIST}' used with invalid index 'invalid'.
     Log    ${LIST}[invalid]
 
 Non-int index using variable 1
-    [Documentation]    FAIL List '\${LIST}' used with invalid index 'xxx'.
+    [Documentation]    FAIL Iterable '\${LIST}' used with invalid index 'xxx'.
     Log    ${LIST}[${INVALID}]
 
 Non-int index using variable 2
-    [Documentation]    FAIL List '\${LIST}' used with invalid index '1.1'.
+    [Documentation]    FAIL Iterable '\${LIST}' used with invalid index '1.1'.
     Log    ${LIST}[${1.1}]
 
 Empty index
-    [Documentation]    FAIL List '\${LIST}' used with invalid index ''.
+    [Documentation]    FAIL Iterable '\${LIST}' used with invalid index ''.
     Log    ${LIST}[]
 
 Invalid slice
-    [Documentation]    FAIL List '\${LIST}' used with invalid index '1:2:3:4'.
+    [Documentation]    FAIL Iterable '\${LIST}' used with invalid index '1:2:3:4'.
     Log    ${LIST}[1:2:3:4]
 
 Non-int slice index 1
-    [Documentation]    FAIL List '\${LIST}' used with invalid index 'ooops:'.
+    [Documentation]    FAIL Iterable '\${LIST}' used with invalid index 'ooops:'.
     Log    ${LIST}[ooops:]
 
 Non-int slice index 2
-    [Documentation]    FAIL List '\${LIST}' used with invalid index '1:ooops'.
+    [Documentation]    FAIL Iterable '\${LIST}' used with invalid index '1:ooops'.
     Log    ${LIST}[1:ooops]
 
 Non-int slice index 3
-    [Documentation]    FAIL List '\${LIST}' used with invalid index '1:2:ooops'.
+    [Documentation]    FAIL Iterable '\${LIST}' used with invalid index '1:2:ooops'.
     Log    ${LIST}[1:2:ooops]
 
 Non-existing variable
@@ -93,19 +94,19 @@ Non-existing index variable
 
 Non-list variable
     [Documentation]    FAIL
-    ...    Variable '\${INVALID}' is string, not list or dictionary, \
+    ...    Variable '\${INT}' is integer, which is not iterable, \
     ...    and thus accessing item '0' from it is not possible.
-    Log    ${INVALID}[0]
+    Log    ${INT}[0]
 
 Old syntax with `@` still works but is deprecated
     [Documentation]    `\${list}[1]` and `\@{list}[1]` work same way still.
     ...                In the future latter is deprecated and changed.
-    ...                FAIL List '\@{LIST}' has no item in index 99.
+    ...                FAIL Iterable '\@{LIST}' has no item in index 99.
     Should Be Equal    @{LIST}[0]         A
     Should Be Equal    @{LIST}[${-1}]     K
     Log    @{LIST}[99]
 
 Old syntax with `@` doesn't support new slicing syntax
     [Documentation]    Slicing support should be added in RF 3.3 when `@{list}[index]` changes.
-    ...                FAIL List '\@{LIST}' used with invalid index '1:'.
+    ...                FAIL Iterable '\@{LIST}' used with invalid index '1:'.
     Log    @{LIST}[1:]

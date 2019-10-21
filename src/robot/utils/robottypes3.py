@@ -43,6 +43,10 @@ def is_unicode(item):
 def is_list_like(item):
     if isinstance(item, (str, bytes, bytearray, UserString, IOBase)):
         return False
+    return is_iterable(item)
+
+
+def is_iterable(item):
     try:
         iter(item)
     except RERAISED_EXCEPTIONS:

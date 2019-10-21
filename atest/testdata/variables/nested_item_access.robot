@@ -28,7 +28,7 @@ Nested access with slicing
     ${LIST}[1:-1][-1][-2:1:-2][0][0]    ${3}
 
 Non-existing nested list item
-    [Documentation]    FAIL List '\${LIST}[1][2]' has no item in index 666.
+    [Documentation]    FAIL Iterable '\${LIST}[1][2]' has no item in index 666.
     ${LIST}[1][2][666]                  whatever
 
 Non-existing nested dict item
@@ -36,7 +36,7 @@ Non-existing nested dict item
     ${DICT}[x][y][nonex]                whatever
 
 Invalid nested list access
-    [Documentation]    FAIL List '\${LIST}[1][2]' used with invalid index 'inv'.
+    [Documentation]    FAIL Iterable '\${LIST}[1][2]' used with invalid index 'inv'.
     ${LIST}[1][2][inv]                  whatever
 
 Invalid nested dict access
@@ -45,9 +45,9 @@ Invalid nested dict access
 
 Nested access with non-list/dict
     [Documentation]    FAIL
-    ...    Variable '\${DICT}[key][key]' is string, not list or dictionary, \
+    ...    Variable '\${DICT}[\${1}][\${2}]' is integer, which is not iterable, \
     ...    and thus accessing item '0' from it is not possible.
-    ${DICT}[key][key][0]                     whatever
+    ${DICT}[${1}][${2}][0]                     whatever
 
 Escape nested
     ${LIST}[-1]\[0]                     third[0]

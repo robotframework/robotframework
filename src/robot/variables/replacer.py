@@ -15,8 +15,8 @@
 
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
-from robot.utils import (escape, is_dict_like, is_list_like, type_name,
-                         unescape, unic)
+from robot.utils import (escape, is_dict_like, is_list_like, is_iterable,
+                         type_name, unescape, unic)
 
 from .search import search_variable, VariableMatch
 
@@ -139,31 +139,31 @@ class VariableReplacer(object):
         for item in match.items:
             if is_dict_like(value):
                 value = self._get_dict_variable_item(name, value, item)
-            elif is_list_like(value):
-                value = self._get_list_variable_item(name, value, item)
+            elif is_iterable(value):
+                value = self._get_iterable_variable_item(name, value, item)
             else:
                 raise VariableError(
-                    "Variable '%s' is %s, not list or dictionary, and thus "
+                    "Variable '%s' is %s, which is not iterable, and thus "
                     "accessing item '%s' from it is not possible."
                     % (name, type_name(value), item)
                 )
             name = '%s[%s]' % (name, item)
         return value
 
-    def _get_list_variable_item(self, name, variable, index):
+    def _get_iterable_variable_item(self, name, variable, index):
         index = self.replace_string(index)
         try:
-            index = self._parse_list_variable_index(index, name[0] == '$')
+            index = self._parse_iterable_variable_index(index, name[0] == '$')
         except ValueError:
-            raise VariableError("List '%s' used with invalid index '%s'."
+            raise VariableError("Iterable '%s' used with invalid index '%s'."
                                 % (name, index))
         try:
             return variable[index]
         except IndexError:
-            raise VariableError("List '%s' has no item in index %d."
+            raise VariableError("Iterable '%s' has no item in index %d."
                                 % (name, index))
 
-    def _parse_list_variable_index(self, index, support_slice=True):
+    def _parse_iterable_variable_index(self, index, support_slice=True):
         if ':' not in index:
             return int(index)
         if index.count(':') > 2 or not support_slice:
