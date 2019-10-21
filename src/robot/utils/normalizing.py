@@ -13,9 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import MutableMapping
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
+import re
 
-from .platform import IRONPYTHON, PY_VERSION, PY3
+from .platform import IRONPYTHON, JYTHON, PY_VERSION, PY3
 from .robottypes import is_dict_like, is_unicode
 
 
@@ -30,6 +34,9 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
         # Iterating bytes in Python3 yields integers.
         ignore = [bytes([i]) for i in ignore]
     if spaceless:
+        # https://bugs.jython.org/issue2772
+        if JYTHON and PY_VERSION < (2, 7, 2):
+            string = normalize_whitespace(string)
         string = empty.join(string.split())
     if caseless:
         string = lower(string)
@@ -40,6 +47,10 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
             if ign in string:
                 string = string.replace(ign, empty)
     return string
+
+
+def normalize_whitespace(string):
+    return re.sub(r'\s', ' ', string, flags=re.UNICODE)
 
 
 # http://ironpython.codeplex.com/workitem/33133

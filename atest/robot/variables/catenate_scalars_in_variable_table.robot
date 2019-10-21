@@ -17,7 +17,7 @@ Non-string separator
 
 Non-existing variable in separator
     Check Test Case    ${TESTNAME}
-    Verify error    @{ERRORS}[0]
+    Verify error    ${ERRORS}[0]
     ...    Setting variable '\${NONEX IN SEP}' failed: Variable '\${NON EXISTING}' not found.
 
 Value containing variables
@@ -28,7 +28,7 @@ Value containing list variables
 
 Non-existing variable in value
     Check Test Case    ${TESTNAME}
-    Verify error    @{ERRORS}[1]
+    Verify error    ${ERRORS}[1]
     ...    Setting variable '\${NONEX IN VALUE}' failed: Variable '\${NON EXISTING}' not found.
 
 'SEPARATOR=' can be escaped

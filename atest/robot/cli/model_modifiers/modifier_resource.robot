@@ -28,11 +28,13 @@ Log should not be modified
 Log should contain strings
     [Arguments]    @{strings}
     ${content} =    Get File    ${LOG}
-    :FOR    ${string}    IN    @{strings}
-    \    Should Contain    ${content}    "*${string}"
+    FOR    ${string}    IN    @{strings}
+        Should Contain    ${content}    "*${string}"
+    END
 
 Log should not contain strings
     [Arguments]    @{strings}
     ${content} =    Get File    ${LOG}
-    :FOR    ${string}    IN    @{strings}
-    \    Should Not Contain    ${content}    "*${string}"
+    FOR    ${string}    IN    @{strings}
+        Should Not Contain    ${content}    "*${string}"
+    END

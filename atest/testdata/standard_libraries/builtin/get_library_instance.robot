@@ -107,5 +107,6 @@ Get all libraries gets a copy
 *** Keywords ***
 Should contain keys
     [Arguments]    ${dict}    @{keys}
-    : FOR    ${key}    IN    @{keys}
-    \    Dictionary should contain key    ${dict}    ${key}
+    FOR    ${key}    IN    @{keys}
+        Dictionary should contain key    ${dict}    ${key}
+    END

@@ -53,4 +53,4 @@ Replace Variables With List Variable
 Replace Variables And Verify Content
     [Arguments]    ${template}    ${name}    @{occasion}
     ${replaced} =    Replace Variables    ${template}
-    Should Be Equal    ${replaced}    Hello ${name}!\n How are you on this @{occasion}?\n
+    Should Be Equal    ${replaced}    Hello ${name}!\nHow are you on this @{occasion}?\n

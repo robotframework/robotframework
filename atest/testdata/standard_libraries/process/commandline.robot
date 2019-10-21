@@ -27,8 +27,9 @@ ${BASICS}        10
 *** Test Cases ***
 Split command line basics
     [Template]    Split command line should succeed
-    :FOR    ${i}    IN RANGE    ${BASICS}
-    \    ${C${i}}    @{L${i}}
+    FOR    ${i}    IN RANGE    ${BASICS}
+        ${C${i}}    @{L${i}}
+    END
     "justone"    justone
 
 Split command line with internal quotes
@@ -65,8 +66,9 @@ Split command line with escaping
 
 Join command line basics
     [Template]    Join command line should succeed
-    :FOR    ${i}    IN RANGE    ${BASICS}
-    \    ${C${i}.replace("'", '"')}    @{L${i}}
+    FOR    ${i}    IN RANGE    ${BASICS}
+        ${C${i}.replace("'", '"')}    @{L${i}}
+    END
 
 Join command line with internal quotes
     [Template]    Join command line should succeed

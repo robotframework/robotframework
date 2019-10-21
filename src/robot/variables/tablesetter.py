@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.utils import DotDict, is_string, split_from_equals, unic
 
 from .isvar import validate_var
-from .splitter import VariableSplitter
+from .search import search_variable
 
 
 class VariableTableSetter(object):
@@ -113,7 +113,7 @@ class ScalarVariableTableValue(VariableTableValueBase):
 
     def _is_single_value(self, separator, values):
         return (separator is None and len(values) == 1 and
-                not VariableSplitter(values[0]).is_list_variable())
+                not search_variable(values[0]).is_list_variable)
 
 
 class ListVariableTableValue(VariableTableValueBase):
@@ -129,7 +129,7 @@ class DictVariableTableValue(VariableTableValueBase):
 
     def _yield_formatted(self, values):
         for item in values:
-            if VariableSplitter(item).is_dict_variable():
+            if search_variable(item).is_dict_variable:
                 yield item
             else:
                 name, value = split_from_equals(item)

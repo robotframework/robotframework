@@ -31,8 +31,6 @@ Dict is dotted
     Should Be Equal    ${ORDERED.a}    ${97}
 
 Dict is ordered
-    Should Be Equal    @{ORDERED}[0]    a
-    Should Be Equal    @{ORDERED}[-1]    j
     ${keys} =    Create List    @{ORDERED}
     Should Be Equal    ${keys}    ${EXP KEYS}
 
@@ -48,8 +46,8 @@ Scalar list likes can be used as list
     Should Be Equal    ${list}    ${EXP LIST}
     ${list} =    Create List    @{SCALAR TUPLE}
     Should Be Equal    ${list}    ${EXP LIST}
-    Should Be Equal    @{SCALAR LIST}[0]    1
-    Should Be Equal    @{SCALAR TUPLE}[-1]    ${3}
+    Should Be Equal    ${SCALAR LIST}[0]    1
+    Should Be Equal    ${SCALAR TUPLE}[-1]    ${3}
 
 Scalar list likes are not converted to lists
     Should Not Be Equal    ${SCALAR TUPLE}    ${EXP LIST}
@@ -73,8 +71,9 @@ Failing list
 
 Failing list in for loop
     [Documentation]    FAIL STARTS: Resolving variable '\@{FAILING GENERATOR()}' failed: ZeroDivisionError:
-    :FOR    ${i}    IN    @{FAILING GENERATOR()}
-    \    Fail    Not executed
+    FOR    ${i}    IN    @{FAILING GENERATOR()}
+        Fail    Not executed
+    END
 
 Failing dict
     [Documentation]    FAIL Resolving variable '\&{FAILING DICT}' failed: Bang

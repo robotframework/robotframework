@@ -16,8 +16,6 @@
 import difflib
 import re
 import time
-import token
-from tokenize import generate_tokens, untokenize
 
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
@@ -27,16 +25,17 @@ from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (DotDict, escape, format_assign_message,
-                         get_error_message, get_time, html_escape, is_falsy, is_integer,
-                         is_string, is_truthy, is_unicode, IRONPYTHON, JYTHON,
-                         Matcher, normalize, NormalizedDict, parse_time, prepr,
-                         plural_or_not as s, PY3, RERAISED_EXCEPTIONS, roundup,
-                         secs_to_timestr, seq2str, split_from_equals, StringIO,
-                         timestr_to_secs, type_name, unic, is_list_like)
+                         get_error_message, get_time, html_escape, is_falsy,
+                         is_integer, is_list_like, is_string, is_truthy,
+                         is_unicode, IRONPYTHON, JYTHON, Matcher, normalize,
+                         normalize_whitespace, parse_time, prepr,
+                         plural_or_not as s, PY3, RERAISED_EXCEPTIONS,
+                         roundup, secs_to_timestr, seq2str, split_from_equals,
+                         timestr_to_secs, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
-from robot.variables import (is_list_var, is_var, DictVariableTableValue,
-                             VariableTableValue, VariableSplitter,
-                             variable_not_found)
+from robot.variables import (evaluate_expression, is_list_var, is_var,
+                             DictVariableTableValue, search_variable,
+                             VariableTableValue)
 from robot.version import get_version
 
 if JYTHON:
@@ -470,13 +469,6 @@ class _Converter(_BuiltInBase):
         | &{dict} = | Create Dictionary | ${1}=${2} | &{dict} | foo=new | | # using variables |
         | Should Be True | ${dict} == {1: 2, 'key': 'value', 'foo': 'new'} |
         | Should Be Equal | ${dict.key} | value | | | | # dot-access |
-
-        This keyword was changed in Robot Framework 2.9 in many ways:
-        - Moved from the Collections library to BuiltIn.
-        - Support also non-string keys in ``key=value`` syntax.
-        - Returned dictionary is ordered and dot-accessible (i.e. ``DotDict``).
-        - Old syntax to give keys and values separately was deprecated, but
-          deprecation was later removed in RF 3.0.1.
         """
         separate, combined = self._split_dict_items(items)
         result = DotDict(self._format_separate_dict_items(separate))
@@ -488,7 +480,7 @@ class _Converter(_BuiltInBase):
         separate = []
         for item in items:
             name, value = split_from_equals(item)
-            if value is not None or VariableSplitter(item).is_dict_variable():
+            if value is not None or search_variable(item).is_dict_variable:
                 break
             separate.append(item)
         return separate, items[len(separate):]
@@ -579,9 +571,9 @@ class _Verify(_BuiltInBase):
 
         Variables used like ``${variable}``, as in the examples above, are
         replaced in the expression before evaluation. Variables are also
-        available in the evaluation namespace and can be accessed using special
-        syntax ``$variable``. This is a new feature in Robot Framework 2.9
-        and it is explained more thoroughly in `Evaluating expressions`.
+        available in the evaluation namespace, and can be accessed using
+        special ``$variable`` syntax as explained in the `Evaluating
+        expressions` section.
 
         Examples:
         | Should Be True | $rc < 10          |
@@ -1255,7 +1247,7 @@ class _Verify(_BuiltInBase):
         default error message can be overridden with the ``msg`` argument.
         """
         if self.get_length(item) > 0:
-            raise AssertionError(msg or "'%s' should be empty." % item)
+            raise AssertionError(msg or "'%s' should be empty." % (item,))
 
     def should_not_be_empty(self, item, msg=None):
         """Verifies that the given item is not empty.
@@ -1264,7 +1256,7 @@ class _Verify(_BuiltInBase):
         default error message can be overridden with the ``msg`` argument.
         """
         if self.get_length(item) == 0:
-            raise AssertionError(msg or "'%s' should not be empty." % item)
+            raise AssertionError(msg or "'%s' should not be empty." % (item,))
 
     def _get_string_msg(self, item1, item2, custom_message, include_values,
                         delimiter, quote_item1=True, quote_item2=True):
@@ -1294,8 +1286,7 @@ class _Variables(_BuiltInBase):
         By default variables are returned with ``${}``, ``@{}`` or ``&{}``
         decoration based on variable types. Giving a true value (see `Boolean
         arguments`) to the optional argument ``no_decoration`` will return
-        the variables without the decoration. This option is new in Robot
-        Framework 2.9.
+        the variables without the decoration.
 
         Example:
         | ${example_variable} =         | Set Variable | example value         |
@@ -1479,11 +1470,11 @@ class _Variables(_BuiltInBase):
         table in the test data file or importing them from variable files.
 
         Possible child test suites do not see variables set with this keyword
-        by default. Starting from Robot Framework 2.9, that can be controlled
-        by using ``children=<option>`` as the last argument. If the specified
-        ``<option>`` is a non-empty string or any other value considered true
-        in Python, the variable is set also to the child suites. Parent and
-        sibling suites will never see variables set with this keyword.
+        by default, but that can be controlled by using ``children=<option>``
+        as the last argument. If the specified ``<option>`` given a true value
+        (see `Boolean arguments`), the variable is set also to the child
+        suites. Parent and sibling suites will never see variables set with
+        this keyword.
 
         The name of the variable can be given either as a normal variable name
         (e.g. ``${NAME}``) or in escaped format as ``\\${NAME}`` or ``$NAME``.
@@ -1578,12 +1569,13 @@ class _Variables(_BuiltInBase):
             name = name[1:]
         if len(name) < 2:
             raise ValueError
-        if name[0] in '$@&' and name[1] != '{':
+        if name[1] != '{':
             name = '%s{%s}' % (name[0], name[1:])
-        if is_var(name):
-            return name
-        # Support for possible internal variables (issue 397)
-        name = '%s{%s}' % (name[0], self.replace_variables(name[2:-1]))
+        match = search_variable(name, identifiers='$@&', ignore_errors=True)
+        if not match.is_variable:
+            raise ValueError
+        match.resolve_base(self._variables)
+        name = unic(match)
         if is_var(name):
             return name
         raise ValueError
@@ -1596,7 +1588,7 @@ class _Variables(_BuiltInBase):
             # scalar variables in the variable table, but that would require
             # handling non-string values somehow. For details see
             # https://github.com/robotframework/robotframework/issues/1919
-            if len(values) != 1 or VariableSplitter(values[0]).is_list_variable():
+            if len(values) != 1 or search_variable(values[0]).is_list_variable:
                 raise DataError("Setting list value to scalar variable '%s' "
                                 "is not supported anymore. Create list "
                                 "variable '@%s' instead." % (name, name[1:]))
@@ -1718,8 +1710,8 @@ class _RunKeyword(_BuiltInBase):
         Variables used like ``${variable}``, as in the examples above, are
         replaced in the expression before evaluation. Variables are also
         available in the evaluation namespace and can be accessed using special
-        syntax ``$variable``. This is a new feature in Robot Framework 2.9
-        and it is explained more thoroughly in `Evaluating expressions`.
+        syntax ``$variable`` as explained in the `Evaluating expressions`
+        section.
 
         Example:
         | `Run Keyword If` | $result is None or $result == 'FAIL' | `Keyword` |
@@ -1816,7 +1808,6 @@ class _RunKeyword(_BuiltInBase):
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword. Otherwise this keyword itself never fails.
-        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         try:
             return 'PASS', self.run_keyword(name, *args)
@@ -1858,7 +1849,6 @@ class _RunKeyword(_BuiltInBase):
 
         The execution is not continued if the failure is caused by invalid syntax,
         timeout, or fatal exception.
-        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         try:
             return self.run_keyword(name, *args)
@@ -1907,7 +1897,6 @@ class _RunKeyword(_BuiltInBase):
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword.
-        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         try:
             self.run_keyword(name, *args)
@@ -2048,10 +2037,6 @@ class _RunKeyword(_BuiltInBase):
         lots of output and considerably increase the size of the generated
         output files. It is possible to remove unnecessary keywords from
         the outputs using ``--RemoveKeywords WUKS`` command line option.
-
-        Support for specifying ``retry`` as a number of times to retry is
-        a new feature in Robot Framework 2.9.
-        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         maxtime = count = -1
         try:
@@ -2145,9 +2130,6 @@ class _RunKeyword(_BuiltInBase):
 
         Otherwise, this keyword works exactly like `Run Keyword`, see its
         documentation for more details.
-
-        Prior to Robot Framework 2.9 failures in test teardown itself were
-        not detected by this keyword.
         """
         test = self._get_test_in_teardown('Run Keyword If Test Failed')
         if not test.passed:
@@ -2162,9 +2144,6 @@ class _RunKeyword(_BuiltInBase):
 
         Otherwise, this keyword works exactly like `Run Keyword`, see its
         documentation for more details.
-
-        Prior to Robot Framework 2.9 failures in test teardown itself were
-        not detected by this keyword.
         """
         test = self._get_test_in_teardown('Run Keyword If Test Passed')
         if test.passed:
@@ -2670,12 +2649,12 @@ class _Misc(_BuiltInBase):
 
     def _yield_logged_messages(self, messages):
         for msg in messages:
-            var = VariableSplitter(msg)
+            match = search_variable(msg)
             value = self._variables.replace_scalar(msg)
-            if var.is_list_variable():
+            if match.is_list_variable:
                 for item in value:
                     yield item
-            elif var.is_dict_variable():
+            elif match.is_dict_variable:
                 for name, value in value.items():
                     yield '%s=%s' % (name, value)
             else:
@@ -2742,8 +2721,6 @@ class _Misc(_BuiltInBase):
         The library can be specified by its name or as the active instance of
         the library. The latter is especially useful if the library itself
         calls this keyword as a method.
-
-        New in Robot Framework 2.9.
         """
         library = self._namespace.reload_library(name_or_instance)
         self.log('Reloaded library %s with %s keywords.' % (library.name,
@@ -2775,10 +2752,16 @@ class _Misc(_BuiltInBase):
         | Import Library | ${CURDIR}/../Library.py | arg1 | named=arg2 |
         | Import Library | ${LIBRARIES}/Lib.java | arg | WITH NAME | JavaLib |
         """
+        args, alias = self._split_alias(args)
         try:
-            self._namespace.import_library(name, list(args))
+            self._namespace.import_library(name, args, alias)
         except DataError as err:
             raise RuntimeError(unic(err))
+
+    def _split_alias(self, args):
+        if len(args) > 1 and normalize_whitespace(args[-2]) == 'WITH NAME':
+            return args[:-2], args[-1]
+        return args, None
 
     @run_keyword_variant(resolve=0)
     def import_variables(self, path, *args):
@@ -2986,9 +2969,8 @@ class _Misc(_BuiltInBase):
 
         Variables used like ``${variable}`` are replaced in the expression
         before evaluation. Variables are also available in the evaluation
-        namespace and can be accessed using special syntax ``$variable``.
-        This is a new feature in Robot Framework 2.9 and it is explained more
-        thoroughly in `Evaluating expressions`.
+        namespace, and can be accessed using special ``$variable`` syntax
+        as explained in the `Evaluating expressions` section.
 
         Examples (expecting ``${result}`` is 3.14):
         | ${status} = | Evaluate | 0 < ${result} < 10 | # Would also work with string '3.14' |
@@ -3001,53 +2983,11 @@ class _Misc(_BuiltInBase):
         | ${random} = <random integer>
         | ${result} = 42
         """
-        if is_string(expression) and '$' in expression:
-            expression, variables = self._handle_variables_in_expression(expression)
-        else:
-            variables = {}
-        namespace = self._create_evaluation_namespace(namespace, modules)
         try:
-            if not is_string(expression):
-                raise TypeError("Expression must be string, got %s."
-                                % type_name(expression))
-            if not expression:
-                raise ValueError("Expression cannot be empty.")
-            return eval(expression, namespace, variables)
-        except:
-            raise RuntimeError("Evaluating expression '%s' failed: %s"
-                               % (expression, get_error_message()))
-
-    def _handle_variables_in_expression(self, expression):
-        variables = None
-        variable_started = False
-        tokens = []
-        generated = generate_tokens(StringIO(expression).readline)
-        for toknum, tokval, _, _, _ in generated:
-            if variable_started:
-                if toknum == token.NAME:
-                    if variables is None:
-                        variables = self._variables.as_dict(decoration=False)
-                    if tokval not in variables:
-                        variable_not_found('$%s' % tokval, variables,
-                                           deco_braces=False)
-                    tokval = 'RF_VAR_' + tokval
-                else:
-                    tokens.append((token.ERRORTOKEN, '$'))
-                variable_started = False
-            if toknum == token.ERRORTOKEN and tokval == '$':
-                variable_started = True
-            else:
-                tokens.append((toknum, tokval))
-        if variables is None:
-            return expression, {}
-        decorated = [('RF_VAR_' + name, variables[name]) for name in variables]
-        return untokenize(tokens).strip(), NormalizedDict(decorated, ignore='_')
-
-    def _create_evaluation_namespace(self, namespace, modules):
-        namespace = dict(namespace or {})
-        modules = modules.replace(' ', '').split(',') if modules else []
-        namespace.update((m, __import__(m)) for m in modules if m)
-        return namespace
+            return evaluate_expression(expression, self._variables, modules,
+                                       namespace)
+        except DataError as err:
+            raise RuntimeError(err.message)
 
     def call_method(self, object, method_name, *args, **kwargs):
         """Calls the named method of the given object with the provided arguments.
@@ -3057,9 +2997,8 @@ class _Misc(_BuiltInBase):
         a method with the given name or if executing the method raises an
         exception.
 
-        Support for ``**kwargs`` is new in Robot Framework 2.9. Since that
-        possible equal signs in other arguments must be escaped with a
-        backslash like ``\\=``.
+        Possible equal signs in arguments must be escaped with a backslash
+        like ``\\=``.
 
         Examples:
         | Call Method      | ${hashtable} | put          | myname  | myvalue |
@@ -3292,7 +3231,6 @@ class _Misc(_BuiltInBase):
 
         If the optional argument ``all`` is given a true value, then a
         dictionary mapping all library names to instances will be returned.
-        This feature is new in Robot Framework 2.9.2.
 
         Example:
         | &{all libs} = | Get library instance | all=True |
@@ -3351,7 +3289,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | ${random int} =  | `Evaluate`    | random.randint(0, 5) | modules=random |
 
     When a variable is used in the expressing using the normal ``${variable}``
-    syntax, its value is replaces before the expression is evaluated. This
+    syntax, its value is replaced before the expression is evaluated. This
     means that the value used in the expression will be the string
     representation of the variable value, not the variable value itself.
     This is not a problem with numbers and other objects that have a string
@@ -3365,17 +3303,17 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | `Run Keyword If` | '${status}' == 'PASS'     | Log | Passed                |
     | `Run Keyword If` | 'FAIL' in '''${output}''' | Log | Output contains FAIL  |
 
-    Starting from Robot Framework 2.9, variables themselves are automatically
-    available in the evaluation namespace. They can be accessed using special
-    variable syntax without the curly braces like ``$variable``. These
-    variables should never be quoted, and in fact they are not even replaced
-    inside strings.
+    Variables themselves are automatically available in the evaluation
+    namespace. They can be accessed using special variable syntax without the
+    curly braces like ``$variable``. These variables should never be quoted,
+    and in fact they are not even replaced inside strings.
 
     Examples:
     | `Should Be True` | $rc < 10          | Return code greater than 10  |
     | `Run Keyword If` | $status == 'PASS' | `Log` | Passed               |
     | `Run Keyword If` | 'FAIL' in $output | `Log` | Output contains FAIL |
     | `Should Be True` | len($result) > 1 and $result[1] == 'OK' |
+    | `Should Be True` | $result is not None                     |
 
     Using the ``$variable`` syntax slows down expression evaluation a little.
     This should not typically matter, but should be taken into account if
@@ -3436,7 +3374,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     wildcards.
 
     Support for brackets like ``[abc]`` and ``[!a-z]`` is new in
-    Robot Framework 3.1
+    Robot Framework 3.1.
 
     == Regular expressions ==
 
@@ -3457,8 +3395,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     `Should Be Equal` and `Should Be Equal As Strings` report the failures using
     [http://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff
-    format] if both strings have more than two lines. New in Robot Framework
-    2.9.1.
+    format] if both strings have more than two lines.
 
     Example:
     | ${first} =  | `Catenate` | SEPARATOR=\\n | Not in second | Same | Differs | Same |

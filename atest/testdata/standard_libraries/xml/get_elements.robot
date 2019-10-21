@@ -20,6 +20,11 @@ Get element from xml string
     ${child}=    Get Element    <root><tag>text</tag></root>    tag
     Should Be Equal    ${child.text}    text
 
+Get element from xml bytes
+    ${child}=    Run With Bytes
+    ...    Get Element    <root><tag>text</tag></root>    tag
+    Should Be Equal    ${child.text}    text
+
 Get element with named xpath
     ${child}=    Get Element    <root><tag>text</tag></root>    xpath=tag
     Should Be Equal    ${child.text}    text
@@ -40,6 +45,17 @@ Get elements
     ${elements}=    Get Elements    ${TEST}    child
     Length Should Be    ${elements}    3
     Should Be Equal    ${elements[0].text}    child 1 text
+
+Get elements from xml string
+    ${elements}=    Get Elements    <root><c/><c>xxx</c></root>    c
+    Length Should Be    ${elements}    2
+    Should Be Equal    ${elements[1].text}    xxx
+
+Get elements from xml bytes
+    ${elements}=    Run With Bytes
+    ...    Get Elements    <root><c/><c>xxx</c></root>    c
+    Length Should Be    ${elements}    2
+    Should Be Equal    ${elements[1].text}    xxx
 
 Get elements returns empty list when no elements match
     ${elements}=    Get Elements    ${TEST}    non-existing

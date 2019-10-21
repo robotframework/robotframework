@@ -10,9 +10,13 @@ List all keywords
     ...   Keyword with tags 2
     ...   Keyword With Tags 3
     ...   Multiline Doc With Split Short Doc
-    ...   Non Ascii Doc
-    ...   Non Ascii Doc With Bytes
-    ...   Non Ascii Doc With Declared Utf 8
+    ...   Non Ascii Bytes Defaults
+    ...   Non Ascii String Defaults
+    ...   Non Ascii String Doc
+    ...   Non Ascii String Doc With Escapes
+    ...   Non Ascii Unicode Defaults
+    ...   Non Ascii Unicode Doc
+    ...   Non String Defaults
     ...   Set Name Using Robot Name Attribute
     ...   Takes \${embedded} \${args}
 

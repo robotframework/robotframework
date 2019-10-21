@@ -35,14 +35,15 @@ Assignment is not included in keyword name
 
 Not Deprecated Keywords
     Check Test Case    Not Deprecated Keywords
-    :FOR    ${name}    IN
+    FOR    ${name}    IN
     ...    Not Deprecated With Doc
     ...    Not Deprecated Without Doc
     ...    Not Deprecated With Deprecated Prefix
     ...    Not Deprecated User Keyword
     ...    Not Deprecated User Keyword Without Documentation
     ...    Not Deprecated User Keyword With `*Deprecated` Prefix
-    \    Check Syslog Does Not Contain    ${name}' is deprecated
+        Check Syslog Does Not Contain    ${name}' is deprecated
+    END
 
 *** Keyword ***
 Verify Deprecation Warning

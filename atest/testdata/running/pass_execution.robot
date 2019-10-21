@@ -57,9 +57,10 @@ Used in template keyword
 
 Used in for loop
     [Documentation]    PASS    Message with 'foo'
-    :FOR    ${var}    IN    foo    bar
-    \    Pass Execution    Message with '${var}'
-    \    Should Not Be Executed
+    FOR    ${var}    IN    foo    bar
+        Pass Execution    Message with '${var}'
+        Should Not Be Executed
+    END
     Should Not Be Executed
 
 Used in setup
@@ -104,11 +105,12 @@ After continuable failure in FOR loop
     ...    2) Failure 2
     ...
     ...    3) Failure 3
-    :FOR    ${i}    IN RANGE   1    10
-    \    Run Keyword And Continue On Failure    Fail    Failure ${i}
-    \    Run Keyword If    $i > 2    Run Keywords
-    \    ...    Pass Execution    This message is NOT used    AND
-    \    ...    Should Not Be Executed
+    FOR    ${i}    IN RANGE   1    10
+        Run Keyword And Continue On Failure    Fail    Failure ${i}
+        Run Keyword If    $i > 2    Run Keywords
+        ...    Pass Execution    This message is NOT used    AND
+        ...    Should Not Be Executed
+    END
     Should Not Be Executed
 
 After continuable failure and before failing teardown

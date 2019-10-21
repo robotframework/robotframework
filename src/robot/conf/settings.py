@@ -22,9 +22,9 @@ from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
-from robot.utils import (abspath, escape, format_time, get_link_path,
-                         html_escape, is_list_like, py2to3,
-                         split_args_from_name_or_path)
+from robot.utils import (abspath, create_destination_directory, escape,
+                         format_time, get_link_path, html_escape, is_list_like,
+                         py2to3, split_args_from_name_or_path)
 
 from .gatherfailed import gather_failed_tests, gather_failed_suites
 
@@ -132,11 +132,6 @@ class _BaseSettings(object):
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
-        if name == 'WarnOnSkipped':
-            with LOGGER.cache_only:
-                LOGGER.warn("Option '--warnonskippedfiles' is deprecated and "
-                            "has no effect. Nowadays all skipped files are "
-                            "reported.")
         return value
 
     def _escape_as_data(self, value):
@@ -214,7 +209,7 @@ class _BaseSettings(object):
             return None
         name = self._process_output_name(option, name)
         path = abspath(os.path.join(self['OutputDir'], name))
-        self._create_output_dir(os.path.dirname(path), option)
+        create_destination_directory(path, '%s file' % option.lower())
         return path
 
     def _process_output_name(self, option, name):
@@ -234,14 +229,6 @@ class _BaseSettings(object):
         if type_ == 'DebugFile':
             return '.txt'
         raise FrameworkError("Invalid output file type: %s" % type_)
-
-    def _create_output_dir(self, path, type_):
-        try:
-            if not os.path.exists(path):
-                os.makedirs(path)
-        except EnvironmentError as err:
-            raise DataError("Creating %s file directory '%s' failed: %s"
-                            % (type_.lower(), path, err.strerror))
 
     def _process_metadata_or_tagdoc(self, value):
         if ':' in value:
@@ -406,7 +393,6 @@ class RobotSettings(_BaseSettings):
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunEmptySuite'      : ('runemptysuite', False),
-                       'WarnOnSkipped'      : ('warnonskippedfiles', None),
                        'Variables'          : ('variable', []),
                        'VariableFiles'      : ('variablefile', []),
                        'PreRunModifiers'    : ('prerunmodifier', []),

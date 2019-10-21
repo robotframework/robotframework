@@ -82,7 +82,7 @@ Re-run tests
     Create Output With Robot    ${MERGE 1}    --rerunfailed ${ORIGINAL} ${options}    ${SUITES}
     Should Be Equal    ${SUITE.name}    Suites
     Should Contain Suites    ${SUITE}    @{RERUN SUITES}
-    Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}[0]
+    Should Contain Suites    ${SUITE.suites[1]}    ${SUB SUITES 1}[0]
     Should Contain Tests    ${SUITE}    @{RERUN TESTS}
 
 Re-re-run tests
@@ -200,15 +200,17 @@ Merge should have failed
 
 Timestamps should be cleared
     [Arguments]    @{suites}
-    :FOR    ${suite}    IN    @{suites}
-    \    Should Be Equal    ${suite.starttime}    ${None}
-    \    Should Be Equal    ${suite.endtime}    ${None}
+    FOR    ${suite}    IN    @{suites}
+        Should Be Equal    ${suite.starttime}    ${None}
+        Should Be Equal    ${suite.endtime}    ${None}
+    END
 
 Timestamps should be set
     [Arguments]    @{suites}
-    :FOR    ${suite}    IN    @{suites}
-    \    Timestamp Should Be Valid    ${suite.starttime}
-    \    Timestamp Should Be Valid    ${suite.endtime}
+    FOR    ${suite}    IN    @{suites}
+        Timestamp Should Be Valid    ${suite.starttime}
+        Timestamp Should Be Valid    ${suite.endtime}
+    END
 
 Create expected merge message
     [Arguments]    ${message}    ${new status}    ${new message}    ${old status}    ${old message}   ${html marker}=*HTML*${SPACE}

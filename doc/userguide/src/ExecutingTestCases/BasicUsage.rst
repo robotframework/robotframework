@@ -635,7 +635,7 @@ redirected during keyword execution. Instead, you can use the following:
 
    import sys, pdb; pdb.Pdb(stdout=sys.__stdout__).set_trace()
 
-from within a python library or alternativley:
+from within a python library or alternatively:
 
 .. sourcecode:: robotframework
 

@@ -39,7 +39,7 @@ Length Should Be with invalid length
     [Documentation]    FAIL STARTS: 'This is not an integer' cannot be converted to an integer: ValueError:
     Length Should Be    ${LIST 2}    This is not an integer
 
-Should Be Empty
+Should Be Empty 1
     [Documentation]    FAIL '['a']' should be empty.
     [Template]    Should Be Empty
     ${TUPLE 0}
@@ -49,21 +49,33 @@ Should Be Empty
     ${EMPTY}
     ${LIST 1}
 
+Should Be Empty 2
+    [Documentation]    FAIL '('a', 'b', 'c')' should be empty.
+    Should Be Empty    ${TUPLE 3}
+
+Should Be Empty 3
+    [Documentation]    FAIL 'åäö' should be empty.
+    Should Be Empty    åäö
+
 Should Be Empty with custom message
     [Documentation]    FAIL My non-default error message
     [Template]    Should Be Empty
     ${TUPLE 0}            This succeeds
     Now this will fail    My non-default error message
 
-Should Not Be Empty
+Should Not Be Empty 1
     [Documentation]    FAIL '{}' should not be empty.
     [Template]    Should Not Be Empty
     ${TUPLE 1}
-    ${LIST 2
+    \${LIST 2
     ${DICT 3}
     ${CUSTOM LEN 2}
     Non empty string
     ${DICT 0}
+
+Should Not Be Empty 2
+    [Documentation]    FAIL '()' should not be empty.
+    Should Not Be Empty    ${TUPLE 0}
 
 Should Not Be Empty with custom message
     [Documentation]    FAIL My fine error says () is empty
@@ -94,8 +106,9 @@ Getting length with `length` attribute
 
 Getting length from Java types
     [Documentation]    FAIL Length of '{a: 1}' should be 3 but is 1.
-    : FOR    ${type}    IN    STRING    HASHTABLE    VECTOR    ARRAY
-    \    Verify Length Of Java Type    ${type}
+    FOR    ${type}    IN    STRING    HASHTABLE    VECTOR    ARRAY
+        Verify Length Of Java Type    ${type}
+    END
     Length Should Be    ${HASHTABLE 1}    3
 
 *** Keywords ***
@@ -107,8 +120,9 @@ Verify Get Length
 
 Verify Length Of Java Type
     [Arguments]    ${type}
-    : FOR    ${i}    IN RANGE    4
-    \    Verify Get Length    ${${type} ${i}}    ${i}
-    \    Length Should Be    ${${type} ${i}}    ${i}
+    FOR    ${i}    IN RANGE    4
+        Verify Get Length    ${${type} ${i}}    ${i}
+        Length Should Be    ${${type} ${i}}    ${i}
+    END
     Should Not Be Empty    ${${type} 1}
     Should Be Empty    ${${type} 0}

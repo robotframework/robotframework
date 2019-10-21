@@ -20,6 +20,7 @@ import re
 
 from .charwidth import get_char_width
 from .misc import seq2str2
+from .platform import JYTHON, PY_VERSION
 from .robottypes import is_string, is_unicode
 from .unic import unic
 
@@ -172,3 +173,16 @@ def getshortdoc(doc_or_item, linesep='\n'):
     doc = doc_or_item if is_string(doc_or_item) else getdoc(doc_or_item)
     lines = takewhile(lambda line: line.strip(), doc.splitlines())
     return linesep.join(lines)
+
+
+# https://bugs.jython.org/issue2772
+if JYTHON and PY_VERSION < (2, 7, 2):
+    trailing_spaces = re.compile('\s+$', re.UNICODE)
+
+    def rstrip(string):
+        return trailing_spaces.sub('', string)
+
+else:
+
+    def rstrip(string):
+        return string.rstrip()

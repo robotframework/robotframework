@@ -64,9 +64,11 @@ as part of the library name and separated by two colons, for example, like
 Options
 =======
 
- -f --format HTML|XML     Specifies whether to generate HTML or XML output.
-                          If this options is not used, the format is got
-                          from the extension of the output file.
+ -f --format HTML|XML|XML:HTML
+                          Specifies whether to generate HTML or XML output.
+                          `XML:HTML` means generating XML output where keyword
+                          documentation is forced to be HTML. The default
+                          output format is got from the output file extension.
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -78,7 +80,6 @@ Options
                           resource.
  -P --pythonpath path *   Additional locations where to search for libraries
                           and resources.
- -E --escape what:with *  Deprecated. Use console escape mechanism instead.
  -h -? --help             Print this help.
 
 Creating documentation
@@ -87,13 +88,16 @@ Creating documentation
 When creating documentation in HTML or XML format, the output file must
 be specified as a second argument after the library/resource name or path.
 Output format is got automatically from the extension but can also be set
-with `--format` option.
+explicitly with the `--format` option. Special `XML:HTML` format (new in
+RF 3.2) forces keyword documentation in XML output files to use HTML instead
+of the original documentation format.
 
 Examples:
 
   python -m robot.libdoc src/MyLib.py doc/MyLib.html
   jython -m robot.libdoc MyJavaLibrary.java MyJavaLibrary.html
   python -m robot.libdoc --name MyLib Remote::10.0.0.42:8270 MyLib.xml
+  python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
 
 Viewing information on console
 ==============================
@@ -166,7 +170,7 @@ class LibDoc(Application):
 
     def _get_output_format(self, format, output):
         default = os.path.splitext(output)[1][1:]
-        return self._verify_format('Format', format or default, ['HTML', 'XML'])
+        return self._verify_format('Format', format or default, ['HTML', 'XML', 'XML:HTML'])
 
     def _verify_format(self, type, format, valid):
         format = format.upper()

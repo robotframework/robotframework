@@ -31,6 +31,7 @@ that can be used programmatically. Other code is for internal usage.
 """
 
 import sys
+import os
 
 # Allows running as a script. __name__ check needed with multiprocessing:
 # https://github.com/robotframework/robotframework/issues/1137
@@ -41,7 +42,7 @@ from robot.conf import RobotSettings
 from robot.model import ModelModifier
 from robot.output import LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
-from robot.running import TestSuiteBuilder
+from robot.running.builder import TestSuiteBuilder
 from robot.utils import Application, unic, text
 
 
@@ -282,7 +283,6 @@ Options
                           the name using colon or semicolon as a separator.
                           Examples: --listener MyListenerClass
                                     --listener path/to/Listener.py:arg1:arg2
-    --warnonskippedfiles  Deprecated. Nowadays all skipped files are reported.
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
     --runemptysuite       Executes tests also if the top level test suite is
@@ -337,7 +337,6 @@ Options
                           Examples:
                           --pythonpath libs/ --pythonpath resources/*.jar
                           --pythonpath /opt/testlibs:mylibs.zip:yourlibs
- -E --escape what:with *  Deprecated. Use console escape mechanism instead.
  -A --argumentfile path *  Text file to read more arguments from. Use special
                           path `STDIN` to read contents from the standard input
                           stream. File can have both options and data sources
@@ -425,13 +424,14 @@ class RobotFramework(Application):
         LOGGER.info('Settings:\n%s' % unic(settings))
         builder = TestSuiteBuilder(settings['SuiteNames'],
                                    extension=settings.extension,
-                                   rpa=settings.rpa)
+                                   rpa=settings.rpa,
+                                   allow_empty_suite=settings.run_empty_suite)
         suite = builder.build(*datasources)
-        settings.rpa = builder.rpa
-        suite.configure(**settings.suite_config)
+        settings.rpa = suite.rpa
         if settings.pre_run_modifiers:
             suite.visit(ModelModifier(settings.pre_run_modifiers,
                                       settings.run_empty_suite, LOGGER))
+        suite.configure(**settings.suite_config)
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             old_max_error_lines = text.MAX_ERROR_LINES
             text.MAX_ERROR_LINES = settings.max_error_lines

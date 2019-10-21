@@ -32,15 +32,6 @@ from .utf8reader import Utf8Reader
 from .robottypes import is_falsy, is_integer, is_list_like, is_string, is_unicode
 
 
-ESCAPES = dict(
-    space   = ' ', apos    = "'", quot   = '"', lt     = '<', gt     = '>',
-    pipe    = '|', star    = '*', comma  = ',', slash  = '/', semic  = ';',
-    colon   = ':', quest   = '?', hash   = '#', amp    = '&', dollar = '$',
-    percent = '%', at      = '@', exclam = '!', paren1 = '(', paren2 = ')',
-    square1 = '[', square2 = ']', curly1 = '{', curly2 = '}', bslash = '\\'
-)
-
-
 def cmdline2list(args, escaping=False):
     if PY2 and is_unicode(args):
         args = args.encode('UTF-8')
@@ -70,7 +61,7 @@ class ArgumentParser(object):
 
     def __init__(self, usage, name=None, version=None, arg_limits=None,
                  validator=None, env_options=None, auto_help=True,
-                 auto_version=True, auto_escape=True, auto_pythonpath=True,
+                 auto_version=True, auto_pythonpath=True,
                  auto_argumentfile=True):
         """Available options and tool name are read from the usage.
 
@@ -86,7 +77,6 @@ class ArgumentParser(object):
         self._validator = validator
         self._auto_help = auto_help
         self._auto_version = auto_version
-        self._auto_escape = auto_escape
         self._auto_pythonpath = auto_pythonpath
         self._auto_argumentfile = auto_argumentfile
         self._env_options = env_options
@@ -123,9 +113,6 @@ class ArgumentParser(object):
         Some options have a special meaning and are handled automatically
         if defined in the usage and given from the command line:
 
-        --escape option can be used to automatically unescape problematic
-        characters given in an escaped format.
-
         --argumentfile can be used to automatically read arguments from
         a specified file. When --argumentfile is used, the parser always
         allows using it multiple times. Adding '*' to denote that is thus
@@ -138,10 +125,8 @@ class ArgumentParser(object):
         Version is generated based on the tool name and version -- see __init__
         for information how to set them. Help contains the whole usage given to
         __init__. Possible <VERSION> text in the usage is replaced with the
-        given version. Possible <--ESCAPES--> is replaced with available
-        escapes so that they are wrapped to multiple lines but take the same
-        amount of horizontal space as <---ESCAPES--->. Both help and version
-        are wrapped to Information exception.
+        given version. Both help and version are wrapped to Information
+        exception.
         """
         args = self._get_env_options() + list(args)
         args = [system_decode(a) for a in args]
@@ -165,8 +150,6 @@ class ArgumentParser(object):
         return []
 
     def _handle_special_options(self, opts, args):
-        if self._auto_escape and opts.get('escape'):
-            opts, args = self._unescape_opts_and_args(opts, args)
         if self._auto_help and opts.get('help'):
             self._raise_help()
         if self._auto_version and opts.get('version'):
@@ -175,7 +158,6 @@ class ArgumentParser(object):
             sys.path = self._get_pythonpath(opts['pythonpath']) + sys.path
         for auto, opt in [(self._auto_help, 'help'),
                           (self._auto_version, 'version'),
-                          (self._auto_escape, 'escape'),
                           (self._auto_pythonpath, 'pythonpath'),
                           (self._auto_argumentfile, 'argumentfile')]:
             if auto and opt in opts:
@@ -198,52 +180,12 @@ class ArgumentParser(object):
         opt, value = opt.split('=', 1)
         return '%s=%s' % (opt.lower(), value)
 
-    def _unescape_opts_and_args(self, opts, args):
-        from robot.output import LOGGER
-        with LOGGER.cache_only:
-            LOGGER.warn("Option '--escape' is deprecated. Use console escape "
-                        "mechanism instead.")
-        try:
-            escape_strings = opts['escape']
-        except KeyError:
-            raise FrameworkError("No 'escape' in options")
-        escapes = self._get_escapes(escape_strings)
-        for name, value in opts.items():
-            if name != 'escape':
-                opts[name] = self._unescape(value, escapes)
-        return opts, [self._unescape(arg, escapes) for arg in args]
-
     def _process_possible_argfile(self, args):
         options = ['--argumentfile']
         for short_opt, long_opt in self._short_to_long.items():
             if long_opt == 'argumentfile':
                 options.append('-'+short_opt)
         return ArgFileParser(options).process(args)
-
-    def _get_escapes(self, escape_strings):
-        escapes = {}
-        for estr in escape_strings:
-            try:
-                name, value = estr.split(':', 1)
-            except ValueError:
-                raise DataError("Invalid escape string syntax '%s'. "
-                                "Expected: what:with" % estr)
-            try:
-                escapes[value] = ESCAPES[name.lower()]
-            except KeyError:
-                raise DataError("Invalid escape '%s'. Available: %s"
-                                % (name, self._get_available_escapes()))
-        return escapes
-
-    def _unescape(self, value, escapes):
-        if value in [None, True, False]:
-            return value
-        if is_list_like(value):
-            return [self._unescape(item, escapes) for item in value]
-        for esc_name, esc_value in escapes.items():
-            if esc_name in value:
-                value = value.replace(esc_name, esc_value)
-        return value
 
     def _process_opts(self, opt_tuple):
         opts = self._get_default_opts()
@@ -355,21 +297,11 @@ class ArgumentParser(object):
             ret.append(drive)
         return ret
 
-    def _get_available_escapes(self):
-        names = sorted(ESCAPES.keys(), key=str.lower)
-        return ', '.join('%s (%s)' % (n, ESCAPES[n]) for n in names)
-
     def _raise_help(self):
-        msg = self._usage
+        usage = self._usage
         if self.version:
-            msg = msg.replace('<VERSION>', self.version)
-        def replace_escapes(res):
-            escapes = 'Available escapes: ' + self._get_available_escapes()
-            lines = textwrap.wrap(escapes, width=len(res.group(2)))
-            indent = ' ' * len(res.group(1))
-            return '\n'.join(indent + line for line in lines)
-        msg = re.sub('( *)(<-+ESCAPES-+>)', replace_escapes, msg)
-        raise Information(msg)
+            usage = usage.replace('<VERSION>', self.version)
+        raise Information(usage)
 
     def _raise_version(self):
         raise Information('%s %s' % (self.name, self.version))

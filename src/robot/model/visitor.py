@@ -58,7 +58,7 @@ The following example visitor modifies the test suite structure it visits.
 It could be used, for example, with Robot Framework's ``--prerunmodifier``
 option to modify test data before execution.
 
-.. literalinclude:: /../../doc/api/code_examples/select_every_xth_test.py
+.. literalinclude:: /../../doc/api/code_examples/SelectEveryXthTest.py
 
 For more examples it is possible to look at the source code of visitors used
 internally by Robot Framework itself. Some good examples are

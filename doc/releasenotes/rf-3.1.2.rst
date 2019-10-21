@@ -1,6 +1,6 @@
-=========================================
-Robot Framework 3.1.2 release candidate 1
-=========================================
+=====================
+Robot Framework 3.1.2
+=====================
 
 .. default-role:: code
 
@@ -18,20 +18,19 @@ If you have pip_ installed, just run
 
 ::
 
-   pip install --pre --upgrade robotframework
+   pip install --upgrade robotframework
 
 to install the latest available release or use
 
 ::
 
-   pip install robotframework==3.1.2rc1
+   pip install robotframework==3.1.2
 
 to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 3.1.2 rc 1 was released on Thursday May 16, 2019. The final
-release is targeted for Thursday May 23, 2019.
+Robot Framework 3.1.2 was released on Friday May 24, 2019.
 
 .. _Robot Framework: http://robotframework.org
 .. _pip: http://pip-installer.org
@@ -42,7 +41,6 @@ release is targeted for Thursday May 23, 2019.
 .. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
 .. _installation instructions: ../../INSTALL.rst
 .. _#3076: https://github.com/robotframework/robotframework/issues/3076
-.. _#3121: https://github.com/robotframework/robotframework/issues/3121
 
 .. contents::
    :depth: 2
@@ -55,46 +53,54 @@ Most important bug fixes
   (`SEPARATOR=<sep>`) has been fixed. (`#3102`_)
 
 - Using keywords accepting embedded arguments when library is imported multiple
-  times with different names using the `WITH NAME` syntax has been fixed. (`#3181`_)
+  times using the `WITH NAME` syntax has been fixed. (`#3181`_)
 
 - The Tidy tool both handles new style for loops (`FOR ... END`) correctly and
-  converts old style loops (`:FOR ... \ ...`) to new style loops
-  automatically. (`#3064`_)
+  converts old style loops (`:FOR ... \ ...`) to new style loops automatically.
+  (`#3064`_)
 
 Deprecated features
 ===================
 
 Robot Framework 3.1.2 deprecates some strange features in the test data syntax
 that were found while developing the new test data parser for Robot Framework
-3.2 (`#3076`_). A decision was made that features that make no sense in general
-or would unnecessarily complicate implementation of the new parser are
+3.2 (`#3076`_). A decision was made that features that make no sense in general,
+or would unnecessarily complicate implementation of the new parser, are
 deprecated and will not be supported anymore in the future. That includes
 these features:
 
+- Omitting lines with only `...` or `... ​ # comment`. (`#3107`_)
 - Converting non-ASCII spaces to normal spaces during parsing. Accidentally
   typed no-break spaces are most likely to cause warnings, but also they ought
   to be rare. (`#3131`_)
 - Collapsing spaces during parsing. Only affects the pipe separated format.
   (`#3132`_)
 - Creating tests and keywords with name `...`. (`#3105`_)
-- Omitting lines with only `...` except in documentation. (`#3107`_)
 - Escaping leading empty cells with `\​` except with for loops. (`#3148`_)
-
-Because the above changes are small, they should not affect many users. The
-reasoning behind changes related to handling spaces is explained in issue `#3121`_.
 
 There are also some features that will be changed in RF 3.2 but they are not
 deprecated:
 
-- In the pipe separated format for loops will require either the new style
-  `END` or indentation needs to be escaped with `\​`. (`#3108`_)
 - Documentation split into multiple columns will be concatenated with newlines,
   not spaces. (`#3106`_)
+- In the pipe separated format for loops will require either the new style
+  `END` or indentation needs to be escaped with `\​`. (`#3108`_)
+
+Because the above changes are small, they should not affect many users. If
+they anyway cause problems, let us know about them by commenting the linked
+issues, sending an email to `robotframework-users`_ or joining the discussion
+on the `#devel` channel on `Robot Framework Slack`_. Deprecation and removal
+decisions can still be considered if they cause bigger problems.
 
 Acknowledgements
 ================
 
-There have again been several great contributions by the community:
+Robot Framework 3.1.2 has been sponsored by `Robot Framework Foundation
+<http://robotframework.org/foundation/>`_. Big thanks to all 27 member
+organizations for your continued support, and hopefully there are even more
+members in the future to help making development more active.
+
+We have also got several great contributions by the community:
 
 - Richard Turc (`@yamatoRT <https://github.com/yamatoRT>`__) fixed using
   literal `=` when keyword accepts named-only arguments. (`#3047`_)
@@ -112,6 +118,16 @@ There have again been several great contributions by the community:
   keywords. (`#3077`_)
 
 - `@MisterChild <https://github.com/MisterChild>`__ fixed the egg. (`#3159`_)
+
+Huge thanks to all contributors and to everyone else who has reported
+problems, tested preview releases, participated discussion on various
+forums, or otherwise helped to make Robot Framework as well as the ecosystem
+and community around it better.
+
+Thanks everyone and good luck with Robot Framework 3.1.2!
+
+  | Pekka Klärck (`@pekkaklarck <https://github.com/pekkaklarck>`__)
+  | Robot Framework Lead Developer
 
 Full list of fixes and enhancements
 ===================================

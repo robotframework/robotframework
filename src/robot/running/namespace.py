@@ -20,8 +20,8 @@ from itertools import chain
 
 from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
+from robot.model import Import
 from robot.output import LOGGER, Message
-from robot.parsing.settings import Library, Resource, Variables
 from robot.utils import (RecommendationFinder, eq, find_file, is_string,
                          printable_name, seq2str2)
 
@@ -74,7 +74,7 @@ class Namespace(object):
         action(import_setting)
 
     def import_resource(self, name, overwrite=True):
-        self._import_resource(Resource(None, name), overwrite=overwrite)
+        self._import_resource(Import('Resource', name), overwrite=overwrite)
 
     def _import_resource(self, import_setting, overwrite=False):
         path = self._resolve_name(import_setting)
@@ -99,7 +99,7 @@ class Namespace(object):
                             "a resource file." % path)
 
     def import_variables(self, name, args, overwrite=False):
-        self._import_variables(Variables(None, name, args), overwrite)
+        self._import_variables(Import('Variables', name, args), overwrite)
 
     def _import_variables(self, import_setting, overwrite=False):
         path = self._resolve_name(import_setting)
@@ -118,8 +118,8 @@ class Namespace(object):
             LOGGER.info("%s already imported by suite '%s'"
                         % (msg, self._suite_name))
 
-    def import_library(self, name, args=None, alias=None, notify=True):
-        self._import_library(Library(None, name, args=args, alias=alias),
+    def import_library(self, name, args=(), alias=None, notify=True):
+        self._import_library(Import('Library', name, args, alias),
                              notify=notify)
 
     def _import_library(self, import_setting, notify=True):

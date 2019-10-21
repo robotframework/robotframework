@@ -90,10 +90,7 @@ class UserKeywordRunner(object):
 
     def _get_timeout(self, variables=None):
         timeout = self._handler.timeout
-        if not timeout:
-            return None
-        timeout = KeywordTimeout(timeout.value, timeout.message, variables)
-        return timeout
+        return KeywordTimeout(timeout, variables) if timeout else None
 
     def _resolve_arguments(self, arguments, variables=None):
         return self.arguments.resolve(arguments, variables)
@@ -192,6 +189,8 @@ class UserKeywordRunner(object):
         try:
             name = context.variables.replace_string(self._handler.teardown.name)
         except DataError as err:
+            if context.dry_run:
+                return None
             return ExecutionFailed(err.message, syntax=True)
         if name.upper() in ('', 'NONE'):
             return None

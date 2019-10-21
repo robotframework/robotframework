@@ -266,7 +266,6 @@ Options
                           Note that colors do not work with Jython on Windows.
  -P --pythonpath path *   Additional locations to add to the module search path
                           that is used when importing Python based extensions.
- -E --escape what:with *  Deprecated. Use console escape mechanism instead.
  -A --argumentfile path *  Text file to read more arguments from. File can have
                           both options and data sources one per line. Contents
                           do not need to be escaped but spaces in the beginning

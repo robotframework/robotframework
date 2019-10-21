@@ -46,6 +46,14 @@ Non-existing automatic variable with recommendation
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
 
+Invalid expression
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+    Check Test Case    ${TESTNAME} 3
+    Check Test Case    ${TESTNAME} 4
+    Check Test Case    ${TESTNAME} 5
+    Check Test Case    ${TESTNAME} 6
+
 Invalid $ usage
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
@@ -63,4 +71,7 @@ Evaluate Nonstring
     Check Test Case    ${TESTNAME}
 
 Evaluate doesn't see module globals
+    Check Test Case    ${TESTNAME}
+
+Evaluation errors can be caught
     Check Test Case    ${TESTNAME}

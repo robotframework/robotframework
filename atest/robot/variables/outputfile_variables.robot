@@ -20,7 +20,8 @@ Default value of outputfile Variables Other than ${OUTPUTDIR} and ${OUTPUTFILE} 
 
 *** Keywords ***
 Outputfile Variables Should Contain Correct Paths
-    [Arguments]  ${test}  @{files}
-    : FOR  ${i}  IN RANGE  len(@{files})
-    \  Check Log Message  ${test.kws[0].msgs[${i}]}  @{files}[${i}]
+    [Arguments]    ${test}    @{files}
+    FOR    ${index}    ${file}    IN ENUMERATE    @{files}
+        Check Log Message    ${test.kws[0].msgs[${index}]}    ${file}
+    END
 
