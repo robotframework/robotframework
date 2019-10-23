@@ -56,6 +56,10 @@ class Interpreter(object):
         return sys.platform
 
     @property
+    def output_name(self):
+        return '{i.name}-{i.version}-{i.os}'.format(i=self).replace(' ', '')
+
+    @property
     def excludes(self):
         if self.is_jython:
             yield 'no-jython'

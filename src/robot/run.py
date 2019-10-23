@@ -428,10 +428,10 @@ class RobotFramework(Application):
                                    allow_empty_suite=settings.run_empty_suite)
         suite = builder.build(*datasources)
         settings.rpa = suite.rpa
-        suite.configure(**settings.suite_config)
         if settings.pre_run_modifiers:
             suite.visit(ModelModifier(settings.pre_run_modifiers,
                                       settings.run_empty_suite, LOGGER))
+        suite.configure(**settings.suite_config)
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             old_max_error_lines = text.MAX_ERROR_LINES
             text.MAX_ERROR_LINES = settings.max_error_lines

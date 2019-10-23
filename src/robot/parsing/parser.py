@@ -270,17 +270,22 @@ class RobotFrameworkParser(object):
                    | END EOS'''
         if len(p) == 3: # FIXME: Better way to handle dangling END
             p[0] = KeywordCall(None, p[1])
+        elif len(p) == 4:
+            p[1]._end = p[2]    # TODO: Used for deprecation. Remove in RF 3.3!
+            p[0] = p[1]
         else:
-            p[1].body = p[2] if len(p) == 5 else []
+            p[1].body = p[2]
+            p[1]._end = p[3]    # TODO: Used for deprecation. Remove in RF 3.3!
             p[0] = p[1]
 
     def p_for_header(self, p):
         '''for_header : FOR arguments FOR_SEPARATOR arguments EOS
                       | FOR arguments EOS'''
+        # TODO: _header is used for deprecating ':FOR' style. Remove in RF 3.3!
         if len(p) == 6:
-            p[0] = ForLoop(p[2], p[3], p[4])
+            p[0] = ForLoop(p[2], p[3], p[4], _header=p[1])
         else:
-            p[0] = ForLoop(p[2], 'IN', [])
+            p[0] = ForLoop(p[2], 'IN', [], _header=p[1])
 
     def p_for_body(self, p):
         '''for_body : step

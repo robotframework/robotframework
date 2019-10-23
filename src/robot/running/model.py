@@ -66,13 +66,15 @@ class ForLoop(Keyword):
 
     Contains keywords in the loop body as child :attr:`keywords`.
     """
-    __slots__ = ['flavor']
+    __slots__ = ['flavor', '_header', '_end']
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, variables, values, flavor):
+    def __init__(self, variables, values, flavor, _header='FOR', _end='END'):
         Keyword.__init__(self, assign=variables, args=values,
                          type=Keyword.FOR_LOOP_TYPE)
         self.flavor = flavor
+        self._header = _header
+        self._end = _end
 
     @property
     def variables(self):

@@ -171,7 +171,9 @@ class TestCaseBuilder(ast.NodeVisitor):
         return ''.join(temp), ()
 
     def visit_ForLoop(self, node):
-        loop = ForLoop(node.variables, node.values, node.flavor)
+        # Header and end used only for deprecation purposes. Remove in RF 3.3!
+        loop = ForLoop(node.variables, node.values, node.flavor,
+                       node._header, node._end)
         ForLoopBuilder(loop).visit(node)
         self.test.keywords.append(loop)
 
@@ -236,7 +238,9 @@ class KeywordBuilder(ast.NodeVisitor):
                                 assign=node.assign)
 
     def visit_ForLoop(self, node):
-        loop = ForLoop(node.variables, node.values, node.flavor)
+        # Header and end used only for deprecation purposes. Remove in RF 3.3!
+        loop = ForLoop(node.variables, node.values, node.flavor,
+                       node._header, node._end)
         ForLoopBuilder(loop).visit(node)
         self.kw.keywords.append(loop)
 

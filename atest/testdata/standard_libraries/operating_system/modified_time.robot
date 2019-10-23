@@ -48,11 +48,12 @@ Set Modified Time Using Epoch
 Set Modified Time Using Timestamp
     Create File    ${TESTFILE}
     ${expected} =    Evaluate    1542892422.0 + time.timezone    modules=time
-    : FOR    ${timestamp}    IN    2018-11-22 13:13:42    20181122 13:13:42
+    FOR    ${timestamp}    IN    2018-11-22 13:13:42    20181122 13:13:42
     ...    20181122 131342    20181122-131342    2018-11-22 13:13:42.456
-    \    Set Modified Time    ${TESTFILE}    ${timestamp}
-    \    ${mtime} =    Get Modified Time    ${TESTFILE}    epoch
-    \    Should Be Equal    ${mtime}    ${expected}
+        Set Modified Time    ${TESTFILE}    ${timestamp}
+        ${mtime} =    Get Modified Time    ${TESTFILE}    epoch
+        Should Be Equal    ${mtime}    ${expected}
+    END
 
 Set Modified Time Using Invalid Timestamp
     [Documentation]    FAIL ValueError: Invalid time format 'invalid time'.

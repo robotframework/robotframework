@@ -26,7 +26,8 @@ class XUnitWriter(object):
         self._skip_noncritical = skip_noncritical
 
     def write(self, output):
-        writer = XUnitFileWriter(XmlWriter(output), self._skip_noncritical)
+        xml_writer = XmlWriter(output, usage='xunit')
+        writer = XUnitFileWriter(xml_writer, self._skip_noncritical)
         self._execution_result.visit(writer)
 
 

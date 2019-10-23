@@ -17,6 +17,13 @@ Non-Existing Input
 Non-Existing Input With Non-Ascii Characters
     eitäällä.robot    Parsing 'eitäällä\\.robot' failed: File or directory to execute does not exist\\.
 
+Invalid Output Directory
+    [Setup]    Create File    %{TEMPDIR}/not-dir
+    -d %{TEMPDIR}/not-dir/dir ${DATADIR}/${TEST FILE}
+    ...    Creating output file directory '.*not-dir.dir' failed: .*
+    -d %{TEMPDIR}/not-dir/dir -o %{TEMPDIR}/out.xml ${DATADIR}/${TEST FILE}
+    ...    Creating report file directory '.*not-dir.dir' failed: .*
+
 Invalid Options
     --invalid option    option --invalid not recognized
     --name valid -Q tests.robot    option -Q not recognized

@@ -51,7 +51,7 @@ class TestETSource(unittest.TestCase):
     def test_byte_string(self):
         self._test_string(b'\n<tag>content</tag>')
         self._test_string(u'<tag>hyv\xe4</tag>'.encode('utf8'))
-        self._test_string(u'<?xml version="1.0" encoding="latin-1"?>\n'
+        self._test_string(u'<?xml version="1.0" encoding="Latin1"?>\n'
                           u'<tag>hyv\xe4</tag>'.encode('latin-1'), 'latin-1')
 
     def test_unicode_string(self):

@@ -15,7 +15,7 @@
 
 import re
 
-from robot.errors import DataError
+from robot.errors import VariableError
 from robot.utils import is_string, py2to3
 
 
@@ -129,7 +129,7 @@ class VariableSearcher(object):
         if state:
             try:
                 self._validate_end_state(state)
-            except DataError:
+            except VariableError:
                 if self._ignore_errors:
                     return False
                 raise
@@ -197,14 +197,14 @@ class VariableSearcher(object):
     def _validate_end_state(self, state):
         if state == self.variable_state:
             incomplete = ''.join(self.variable_chars)
-            raise DataError("Variable '%s' was not closed properly."
-                            % incomplete)
+            raise VariableError("Variable '%s' was not closed properly."
+                                % incomplete)
         if state == self.item_state:
             variable = ''.join(self.variable_chars)
             items = ''.join('[%s]' % i for i in self.items)
             incomplete = ''.join(self.item_chars)
-            raise DataError("Variable item '%s%s[%s' was not closed properly."
-                            % (variable, items, incomplete))
+            raise VariableError("Variable item '%s%s[%s' was not closed "
+                                "properly." % (variable, items, incomplete))
 
 
 def unescape_variable_syntax(item):

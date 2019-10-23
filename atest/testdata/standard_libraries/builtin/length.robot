@@ -106,8 +106,9 @@ Getting length with `length` attribute
 
 Getting length from Java types
     [Documentation]    FAIL Length of '{a: 1}' should be 3 but is 1.
-    : FOR    ${type}    IN    STRING    HASHTABLE    VECTOR    ARRAY
-    \    Verify Length Of Java Type    ${type}
+    FOR    ${type}    IN    STRING    HASHTABLE    VECTOR    ARRAY
+        Verify Length Of Java Type    ${type}
+    END
     Length Should Be    ${HASHTABLE 1}    3
 
 *** Keywords ***
@@ -119,8 +120,9 @@ Verify Get Length
 
 Verify Length Of Java Type
     [Arguments]    ${type}
-    : FOR    ${i}    IN RANGE    4
-    \    Verify Get Length    ${${type} ${i}}    ${i}
-    \    Length Should Be    ${${type} ${i}}    ${i}
+    FOR    ${i}    IN RANGE    4
+        Verify Get Length    ${${type} ${i}}    ${i}
+        Length Should Be    ${${type} ${i}}    ${i}
+    END
     Should Not Be Empty    ${${type} 1}
     Should Be Empty    ${${type} 0}
