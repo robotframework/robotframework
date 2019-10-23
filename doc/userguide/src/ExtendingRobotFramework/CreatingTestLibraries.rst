@@ -1310,6 +1310,8 @@ library documentation with Libdoc_ and when using RIDE_. To avoid this
 issue, you could use `functools.wraps`__ on Python 3, or use the handy
 `decorator module`__ to create signature-preserving decorators.
 
+.. note:: `functools.wraps` works like this only with Robot Framework 3.2.
+
 __ https://docs.python.org/3/library/functools.html#functools.wraps
 __ https://decorator.readthedocs.io
 

@@ -25,7 +25,13 @@ if PY2:
 
 
     def getfullargspec(func):
-        return getargspec(func) + ([], None, {})
+        return getargspec(unwrap(func)) + ([], None, {})
+
+
+    def unwrap(func):
+        while hasattr(func, '__wrapped__'):
+            func = func.__wrapped__
+        return func
 else:
     from inspect import getfullargspec, ismethod, unwrap
 

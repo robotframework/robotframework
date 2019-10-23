@@ -1,4 +1,5 @@
 *** Settings ***
+Force Tags       require-py3
 Suite Setup      Run Tests    ${EMPTY}    keywords/type_conversion/keyword_decorator_with_wraps.robot
 Resource         atest_resource.robot
 
