@@ -4,7 +4,6 @@ LIST = ['spam', 'eggs', 21]
 class _Extended:
     list = LIST
     string = 'not a list'
-    int = 15
     def __getitem__(self, item):
         return LIST
 
