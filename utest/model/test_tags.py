@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils.asserts import assert_equal, assert_true, assert_false
+from robot.utils.asserts import assert_equal, assert_false, assert_not_equal, assert_true
 from robot.utils import seq2str, IRONPYTHON, PY2, unicode
 from robot.model.tags import Tags, TagPattern, TagPatterns
 
@@ -16,6 +16,7 @@ class TestTags(unittest.TestCase):
     def test_init_with_iterable_and_normalization_and_sorting(self):
         for inp in [['T 1', 't2', 't_3'],
                     ('t2', 'T 1', 't_3'),
+                    ('t2', 'T 1', 't_3') + ('t2', 'T 1', 't_3'),
                     ('t2', 'T 2', '__T__2__', 'T 1', 't1', 't_1', 't_3', 't3'),
                     ('', 'T 1', '', 't2', 't_3', 'NONE', 'None')]:
             assert_equal(list(Tags(inp)), ['T 1', 't2', 't_3'])
@@ -144,6 +145,16 @@ class TestTags(unittest.TestCase):
         assert_true(isinstance(sliced, Tags))
         assert_equal(list(sliced), expected)
 
+    def test__eq__(self):
+        assert_equal(Tags(['x']), Tags(['x']))
+        assert_equal(Tags(['X']), Tags(['x']))
+        assert_equal(Tags(['X']), Tags(('x',)))
+        assert_not_equal(Tags(['X']), ['x'])
+        assert_not_equal(Tags(['X']), ('x',))
+
+    def test__eq__normalized(self):
+        assert_equal(Tags(['Hello world', 'Foo', 'Not_world']),
+                     Tags(['nOT WORLD', 'FOO', 'hello world']))
 
 class TestNormalizing(unittest.TestCase):
 

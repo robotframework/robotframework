@@ -77,7 +77,12 @@ class BaseLexer(object):
                 if marker.type == Token.OLD_FOR_INDENT:
                     old_for = True
                 elif old_for:
-                    if marker.type != Token.END:
+                    if marker.type == Token.END:
+                        # We get here if block has been indented with '\' but
+                        # there is also 'END'. The former is deprecated and
+                        # removing the value causes a deprecation warning.
+                        marker.value = ''
+                    else:
                         yield end_statement
                     old_for = False
             yield statement

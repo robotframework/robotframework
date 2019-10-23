@@ -590,35 +590,23 @@ For In Range With Non-Existing Variables In Arguments
     END
     Fail    Not executed
 
-For loop marker with colon still works
-    : FOR    ${x}    IN    a    b    c
+For loop header with colon is deprecated
+    :FOR    ${x}    IN    a    b    c
         @{result} =    Create List    @{result}    ${x}
     END
     Should Be True    ${result} == ['a', 'b', 'c']
-    :FOR    ${X X}    IN RANGE    1    2
-        @{result} =    Create List    @{result}    ${X X}
-    END
-    Should Be True    ${result} == ['a', 'b', 'c', 1]
 
-For loop marker with colon is case and space insensitive
-    : f o r    ${x}    IN    a    b    c
+For loop header with colon is case and space insensitive
+    : f O r    ${x}    IN    a    b    c
         @{result} =    Create List    @{result}    ${x}
     END
     Should Be True    ${result} == ['a', 'b', 'c']
-    : F o R    ${X X}    IN RANGE    1    2
-        @{result} =    Create List    @{result}    ${X X}
-    END
-    Should Be True    ${result} == ['a', 'b', 'c', 1]
 
-For loop marker can have many colons
-    ::::::::FOR    ${i}    IN    0    1    2
+For loop header can have many colons
+    :::f:o:r:::    ${i}    IN RANGE    1    6
         @{result} =    Create List    @{result}    ${i}
     END
-    Should Be True    @{result} == ['0', '1', '2']
-    :::f:o:r:::    ${i}    IN RANGE    3    6
-        @{result} =    Create List    @{result}    ${i}
-    END
-    Should Be True    @{result} == ['0', '1', '2', 3, 4, 5]
+    Should Be True    ${result} == [1, 2, 3, 4, 5]
 
 For loop separator is case- and space-sensitive 1
     [Documentation]    FAIL Invalid FOR loop variable 'in'.
@@ -648,7 +636,7 @@ For loop separator is case- and space-sensitive 4
     END
     Fail    Should not be executed
 
-Escaping with backslash still works
+Escaping with backslash is deprecated
     FOR    ${var}    IN    one    two
     \    Log    var: ${var}
     \    For in UK with backslashes    ${var}

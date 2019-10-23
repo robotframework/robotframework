@@ -16,6 +16,8 @@ Evaluate
     Should Be Equal    ${ten}    ${10}
     ${dict} =    Evaluate    {'a': 1, 'b': 2, 'c': 3}
     Should Be True    ${dict['a']} + ${dict['b']} == ${dict['c']}
+    ${world} =    Evaluate    [item for item in $HELLO]
+    Should Be Equal    ${hello}    ${world}
     ${len} =    Evaluate    len(@{HELLO})
     Should Be Equal    ${len}    ${2}
     ${hello2} =    Evaluate    'hello'.capitalize() + ' ' + 'world'
@@ -25,11 +27,13 @@ Evaluate
     Evaluate    INVALID
 
 Evaluate With Modules
-    [Documentation]    FAIL REGEXP: (ModuleNotFound|Import)Error: [Nn]o module named .*
+    [Documentation]    FAIL REGEXP:
+    ...    Evaluating expression '1' failed: \
+    ...    (ModuleNotFound|Import)Error: [Nn]o module named .*
     ${ceil} =    Evaluate    math.ceil(1.001)    math
     Should Be Equal    ${ceil}    ${2}
-    ${random} =    Evaluate    random.randint(0, sys.maxsize)    modules=random,sys
-    ${maxint}    ${sep}    ${x}    ${y} =    Evaluate    sys.maxsize, os.sep, re.escape('+'), '\\+'    sys, re,,,,, glob, os,robot,,,
+    ${random} =    Evaluate    random.randint(0, sys.maxsize)    modules=random, sys
+    ${maxint}    ${sep}    ${x}    ${y} =    Evaluate    sys.maxsize, os.sep, re.escape('+'), r'\\+'    sys, re,,,,,glob, os,robot,,,
     Should Be True    0 <= ${random} <= ${maxint}
     Should Be Equal    ${x}    ${y}
     Evaluate    1    nonex_module
@@ -90,17 +94,50 @@ Automatic variable from variable
     Should be Equal    ${result}    Hello world
 
 Non-existing automatic variable
-    [Documentation]    FAIL Variable '$i_do_not_exit' not found.
-    Evaluate    $i_do_not_exit
+    [Documentation]    FAIL
+    ...    Evaluating expression '$i_do_not_exit and $nor_do_i' failed: \
+    ...    Variable '$i_do_not_exit' not found.
+    Evaluate    $i_do_not_exit and $nor_do_i
 
 Non-existing automatic variable with recommendation 1
-    [Documentation]    FAIL Variable '$HILLO' not found. Did you mean:\n${SPACE * 4}$HELLO
+    [Documentation]    FAIL
+    ...    Evaluating expression '$HILLO' failed: \
+    ...    Variable '$HILLO' not found. Did you mean:
+    ...    ${SPACE * 4}$HELLO
     Evaluate    $HILLO
 
 Non-existing automatic variable with recommendation 2
-    [Documentation]    FAIL Variable '\$hell' not found. Did you mean:\n${SPACE * 4}$HELLO\n${SPACE * 4}$hella
-    ${hella} =    Set Variable    xxx
-    Evaluate    $hell
+    [Documentation]    FAIL
+    ...    Evaluating expression '$hels in $ki' failed: \
+    ...    Variable '\$hels' not found. Did you mean:
+    ...    ${SPACE * 4}$hell
+    ...    ${SPACE * 4}$HELLO
+    ${hell} =    Set Variable    xxx
+    Evaluate    $hels in $ki
+
+Invalid expression 1
+    [Documentation]    FAIL STARTS: Evaluating expression 'oooops' failed: NameError:
+    Evaluate   oooops
+
+Invalid expression 2
+    [Documentation]    FAIL STARTS: Evaluating expression '1/0' failed: ZeroDivisionError:
+    Evaluate   1/0
+
+Invalid expression 3
+    [Documentation]    FAIL STARTS: Evaluating expression '(1, 2' failed: SyntaxError:
+    Evaluate   (1, 2
+
+Invalid expression 4
+    [Documentation]    FAIL STARTS: Evaluating expression 'len(None)' failed: TypeError:
+    Evaluate   len(None)
+
+Invalid expression 5
+    [Documentation]    FAIL STARTS: Evaluating expression '[][0]' failed: IndexError:
+    Evaluate   [][0]
+
+Invalid expression 6
+    [Documentation]    FAIL STARTS: Evaluating expression '{}[0]' failed: KeyError:
+    Evaluate   {}[0]
 
 Invalid $ usage 1
     [Documentation]    FAIL STARTS: Evaluating expression '$' failed: SyntaxError:
@@ -111,7 +148,7 @@ Invalid $ usage 2
     Evaluate   $$
 
 Invalid $ usage 3
-    [Documentation]    FAIL STARTS: Evaluating expression '$RF_VAR_hello' failed: SyntaxError:
+    [Documentation]    FAIL STARTS: Evaluating expression '$$hello' failed: SyntaxError:
     Evaluate   $$hello
 
 Invalid $ usage 4
@@ -127,11 +164,11 @@ Invalid $ usage 6
     Evaluate    "" $
 
 Invalid $ usage 7
-    [Documentation]    FAIL REGEXP: Evaluating expression 'raise +RF_VAR_HELLO' failed: SyntaxError: .*
+    [Documentation]    FAIL STARTS: Evaluating expression 'raise $HELLO' failed: SyntaxError:
     Evaluate    raise $HELLO
 
 Invalid $ usage 8
-    [Documentation]    FAIL REGEXP: Evaluating expression 'RF_VAR_HELLO +\\$' failed: SyntaxError: .*
+    [Documentation]    FAIL STARTS: Evaluating expression '$HELLO $' failed: SyntaxError:
     Evaluate    $HELLO $
 
 Evaluate Empty
@@ -143,5 +180,13 @@ Evaluate Nonstring
     Evaluate    ${5}
 
 Evaluate doesn't see module globals
-    [Documentation]    FAIL REGEXP: Evaluating expression 'BuiltIn' failed: NameError: (global )?name 'BuiltIn' is not defined
-    Evaluate    BuiltIn
+    [Documentation]    FAIL STARTS: Evaluating expression 'DataError' failed: NameError:
+    Evaluate    DataError
+
+Evaluation errors can be caught
+    FOR    ${invalid}    IN    ooops    $    $nonex    ${EMPTY}    ${5}
+        ${err1} =                 Run Keyword And Expect Error    *    Evaluate    ${invalid}
+        ${status}    ${err2} =    Run Keyword And Ignore Error         Evaluate    ${invalid}
+        Should Be Equal    ${status}    FAIL
+        Should Be Equal    ${err1}    ${err2}
+    END

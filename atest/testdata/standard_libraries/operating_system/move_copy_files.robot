@@ -211,10 +211,13 @@ Create Test Files For Multi-file Operations
     ...    movecopy_multi_dir-3.txt
     ...    movecopy_multi_dir-4.txt
     # All the files possibly used in the test are created
-    : FOR    ${file}    IN    @{SOURCE FILES}
-    \    Create File    ${SOURCE}/${file}
-    : FOR    ${file}    IN    @{SOURCE FILES 2}
-    \    Create File    ${SOURCE2}/${file}
-    : FOR    ${file}    IN    @{SOURCE FILES 3}
-    \    Create File    ${SOURCE3}/${file}
+    FOR    ${file}    IN    @{SOURCE FILES}
+        Create File    ${SOURCE}/${file}
+    END
+    FOR    ${file}    IN    @{SOURCE FILES 2}
+        Create File    ${SOURCE2}/${file}
+    END
+    FOR    ${file}    IN    @{SOURCE FILES 3}
+        Create File    ${SOURCE3}/${file}
+    END
     Create File    ${SOURCE GLOB}/${GLOB FILE}

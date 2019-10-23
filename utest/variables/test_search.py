@@ -3,7 +3,8 @@ import unittest
 from robot.errors import DataError
 from robot.utils.asserts import (assert_equal, assert_false,
                                  assert_raises_with_msg, assert_true)
-from robot.variables import search_variable, VariableIterator
+from robot.variables.search import (search_variable, unescape_variable_syntax,
+                                    VariableIterator)
 
 
 class TestVariableSplitter(unittest.TestCase):
@@ -38,14 +39,14 @@ class TestVariableSplitter(unittest.TestCase):
         self._test(r'{}{${e:\d\{4\}-\d\{2\}-\d\{2\}}}}',
                    '${e:\d\{4\}-\d\{2\}-\d\{2\}}', start=3)
         self._test(r'$&{\{\}\{\}\\}{}', r'&{\{\}\{\}\\}', start=1)
-        self._test(r'${&{\}\{\\\\}\\}}{}', r'${&{\}\{\\\\}\\}', internal=True)
+        self._test(r'${&{\}\{\\\\}\\}}{}', r'${&{\}\{\\\\}\\}')
 
     def test_matching_internal_curlys_dont_need_to_be_escaped(self):
         self._test(r'${embed:\d{2}}', r'${embed:\d{2}}')
         self._test(r'{}{${e:\d{4}-\d{2}-\d{2}}}}',
                    r'${e:\d{4}-\d{2}-\d{2}}', start=3)
         self._test(r'$&{{}{}\\}{}', r'&{{}{}\\}', start=1)
-        self._test(r'${&{{\\\\}\\}}{}}', r'${&{{\\\\}\\}}', internal=True)
+        self._test(r'${&{{\\\\}\\}}{}}', r'${&{{\\\\}\\}}')
 
     def test_uneven_curlys(self):
         for inp in ['${x', '${x:{}', '${y:{{}}', 'xx${z:{}xx', '{${{}{{}}{{',
@@ -102,7 +103,7 @@ class TestVariableSplitter(unittest.TestCase):
                 (r'${\${hi${hi}}}', r'${\${hi${hi}}}', 0),
                 (r'\${${hi${hi}}}', '${hi${hi}}', len(r'\${')),
                 (r'\${\${hi\\${h${i}}}}', '${h${i}}', len(r'\${\${hi\\'))]:
-            self._test(inp, var, start, internal=True)
+            self._test(inp, var, start)
 
     def test_incomplete_internal_vars(self):
         for inp in ['${var$', '${var${', '${var${int}']:
@@ -132,7 +133,7 @@ class TestVariableSplitter(unittest.TestCase):
         self._test('xx ${x}[${i}] ${xyz}', '${x}', start=3, items='${i}')
         self._test('$$$$${XX}[${${i}-${${${i}}}}]', '${XX}', start=4,
                    items='${${i}-${${${i}}}}')
-        self._test('${${i}}[${j{}}]', '${${i}}', items='${j{}}', internal=True)
+        self._test('${${i}}[${j{}}]', '${${i}}', items='${j{}}')
         self._test('${x}[${i}][${k}]', '${x}', items=['${i}', '${k}'])
 
     def test_item_access_with_escaped_squares(self):
@@ -189,11 +190,11 @@ class TestVariableSplitter(unittest.TestCase):
         for i in self._identifiers:
             for count in 1, 2, 3, 42:
                 var = '%s{%s{%s}}' % (i, i*count, i)
-                self._test(var, var, internal=True)
-                self._test('eggs'+var+'spam', var, start=4, internal=True)
+                self._test(var, var)
+                self._test('eggs'+var+'spam', var, start=4)
                 var = '%s{%s{%s}}' % (i, i*count, i*count)
-                self._test(var, var, internal=True)
-                self._test('eggs'+var+'spam', var, start=4, internal=True)
+                self._test(var, var)
+                self._test('eggs'+var+'spam', var, start=4)
 
     def test_many_possible_starts_and_ends(self):
         self._test('{}'*10000)
@@ -201,12 +202,11 @@ class TestVariableSplitter(unittest.TestCase):
         self._test('${var}' + '[i]'*1000, '${var}', items=['i']*1000)
 
     def test_complex(self):
-        self._test('${${PER}SON${2}[${i}]}', '${${PER}SON${2}[${i}]}',
-                   internal=True)
+        self._test('${${PER}SON${2}[${i}]}', '${${PER}SON${2}[${i}]}')
         self._test('${x}[${${PER}SON${2}[${i}]}]', '${x}',
                    items='${${PER}SON${2}[${i}]}')
 
-    def _test(self, inp, variable=None, start=0, items=None, internal=False,
+    def _test(self, inp, variable=None, start=0, items=None,
               identifiers=_identifiers, ignore_errors=False):
         if isinstance(items, str):
             items = (items,)
@@ -238,7 +238,6 @@ class TestVariableSplitter(unittest.TestCase):
         assert_equal(match.after, inp[end:] if end != -1 else None)
         assert_equal(match.identifier, identifier, '%r identifier' % inp)
         assert_equal(match.items, items, '%r item' % inp)
-        assert_equal(match.internal_variables, internal, '%r internal' % inp)
         assert_equal(match.is_variable, is_var)
         assert_equal(match.is_list_variable, is_list_var)
         assert_equal(match.is_dict_variable, is_dict_var)
@@ -281,8 +280,8 @@ class TestVariableIterator(unittest.TestCase):
     def test_multiple_variables(self):
         iterator = VariableIterator('${1} @{2} and %{3}', identifiers='$@%')
         assert_equal(list(iterator), [('', '${1}', ' @{2} and %{3}'),
-                                       (' ', '@{2}', ' and %{3}'),
-                                       (' and ', '%{3}', '')])
+                                      (' ', '@{2}', ' and %{3}'),
+                                      (' and ', '%{3}', '')])
         assert_equal(bool(iterator), True)
         assert_equal(len(iterator), 3)
 
@@ -294,6 +293,47 @@ class TestVariableIterator(unittest.TestCase):
         assert_equal(bool(iterator), True)
         assert_equal(len(iterator), 1)
         assert_equal(len(iterator), 1)
+
+
+class TestUnescapeVariableSyntax(unittest.TestCase):
+
+    def test_no_backslash(self):
+        for inp in ['no escapes', '']:
+            self._test(inp)
+
+    def test_no_variable(self):
+        for inp in ['\\', r'\n', r'\d+', r'\u2603', r'\$', r'\@', r'\&']:
+            self._test(inp)
+            self._test('Hello, %s!' % inp)
+
+    def test_unescape_variable(self):
+        for i in '$@&%':
+            self._test(r'\%s{var}' % i, '%s{var}' % i)
+            self._test(r'=\%s{var}=' % i, '=%s{var}=' % i)
+            self._test(r'\\%s{var}' % i)
+            self._test(r'\\\%s{var}' % i, r'\\%s{var}' % i)
+            self._test(r'\\\\%s{var}' % i)
+        self._test(r'\${1} \@{2} \&{3} \%{4}', '${1} @{2} &{3} %{4}')
+
+    def test_unescape_curlies(self):
+        self._test(r'\{', '{')
+        self._test(r'\}', '}')
+        self._test(r'=\}=\{=', '=}={=')
+        self._test(r'=\\}=\\{=')
+        self._test(r'=\\\}=\\\{=', r'=\\}=\\{=')
+        self._test(r'=\\\\}=\\\\{=')
+
+    def test_misc(self):
+        self._test(r'$\{foo\}', '${foo}')
+        self._test(r'\$\{foo\}', r'\${foo}')
+        self._test(r'\${\n}', r'${\n}')
+        self._test(r'\${\${x}}', r'${${x}}')
+        self._test(r'\${foo', r'\${foo')
+
+    def _test(self, inp, exp=None):
+        if exp is None:
+            exp = inp
+        assert_equal(unescape_variable_syntax(inp), exp)
 
 
 if __name__ == '__main__':

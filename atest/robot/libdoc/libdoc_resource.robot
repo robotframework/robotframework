@@ -5,9 +5,12 @@ Library           OperatingSystem
 
 *** Variables ***
 ${TESTDATADIR}    ${DATADIR}/libdoc
-${OUTPREFIX}      %{TEMPDIR}${/}robot-libdoc-test-file
+${LIBNAME}        robot-libdoc-test-file
+${OUTPREFIX}      %{TEMPDIR}${/}${LIBNAME}
 ${OUTXML}         ${OUTPREFIX}.xml
 ${OUTHTML}        ${OUTPREFIX}.html
+${NEWDIR_XML}     %{TEMPDIR}${/}tempdir${/}${LIBNAME}.xml
+${NEWDIR_HTML}    %{TEMPDIR}${/}tempdir${/}${LIBNAME}.html
 
 *** Keywords ***
 Run Libdoc And Set Output
@@ -39,6 +42,10 @@ Run Libdoc And Parse Model From HTML
 Name Should Be
     [Arguments]    ${name}
     Element Attribute Should Be    ${LIBDOC}    name    ${name}
+
+Format Should Be
+    [Arguments]    ${format}
+    Element Attribute Should Be    ${LIBDOC}    format    ${format}
 
 Doc Should Start With
     [Arguments]    @{doc}

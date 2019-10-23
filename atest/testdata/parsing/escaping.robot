@@ -26,7 +26,7 @@ Spaces In Variable Table
     Should Be Equal    ${TWO SPACES}    ${SP}${SP}
     Should Be Equal    ${FOUR SPACES}    ${SP}${SP}${SP}${SP}
     Should Be True    len('${FOUR SPACES}') == 4
-    Should Be Equal    "\n ${FOUR SPACES}"    "${NL}${SP}${SP}${SP}${SP}"
+    Should Be Equal    "\n${FOUR SPACES}"    "${NL}${SP}${SP}${SP}${SP}"
 
 Leading And Trailing Spaces In Variable Table
     Should Be Equal    ${PRE SPACES}    ${SP}${SP}two leading spaces
@@ -84,7 +84,7 @@ Newline
     Should Be Equal    \n    ${NL}
     Should Be Equal    \\n    ${BS}n
 
-Space After Newline Escape Is Ignored
+Ignoring Space After Newline Is Deprecated
     Should Be Equal    foo\n bar\n zap    foo${NL}bar${NL}zap
     Should Be Equal    foo\n\ bar    foo${NL}${SP}bar
     Should Be Equal    foo\\n bar    foo${BS}n${SP}bar

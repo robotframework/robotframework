@@ -4,16 +4,30 @@ Test Template    Run Libdoc And Verify Created Output File
 
 *** Test Cases ***
 Default format is got from output file extension
-    String ${OUTHTML}                     HTML    String
-    String ${OUTXML}                      XML     String    path=${OUTXML}
+    String ${OUTHTML}    HTML    String
+    String ${OUTXML}     XML     String    path=${OUTXML}
 
 Using --format overrides output file extension
-    -f XmL ${TESTDATADIR}/resource.robot ${OUTHTML}   XML     resource
-    --format hTmL BuiltIn ${OUTPREFIX}.xxx          HTML    BuiltIn   path=${OUTPREFIX}.xxx
+    -f XmL ${TESTDATADIR}/resource.robot ${OUTHTML}    XML         resource
+    --format hTmL BuiltIn ${OUTPREFIX}.xxx             HTML        BuiltIn     path=${OUTPREFIX}.xxx
+    --format XML:HTML String ${OUTXML}                 XML:HTML    String      path=${OUTXML}
 
 Override name and version
     --name MyName --version 42 String ${OUTHTML}    HTML    MyName    42
     -n MyName -v 42 -f xml BuiltIn ${OUTHTML}       XML     MyName    42
+
+Missing destination subdirectory is created
+    String ${NEWDIR_HTML}                HTML    String    path=${NEWDIR_HTML}
+    String ${NEWDIR_XML}                 XML     String    path=${NEWDIR_XML}
+
+Invalid output file
+    [Template]    NONE
+    ${invalid} =    Normalize Path    %{TEMPDIR}/invalid.html
+    Create Directory    ${invalid}
+    ${stdout} =    Run Libdoc    String ${invalid}
+    Should Match    ${stdout}
+    ...    Opening Libdoc output file '${invalid}' failed: *Error: *${USAGE TIP}\n
+    [Teardown]    Remove Directory    ${invalid}
 
 Relative path with Python libraries
     [Template]    NONE
@@ -44,10 +58,18 @@ HTML Doc Should Have Been Created
 
 XML Doc Should Have Been Created
     [Arguments]    ${path}    ${name}    ${version}
-    ${libdoc}=    Parse Xml    ${path}
-    Set Test Variable   ${libdoc}
-    Name Should Be    ${name}
-    Run Keyword If    "${version}"    Version Should Match    ${version}
+    ${libdoc}=           Parse Xml    ${path}
+    Set Test Variable    ${libdoc}
+    Name Should Be       ${name}
+    Run Keyword If       "${version}"    Version Should Match    ${version}
+
+XML:HTML Doc Should Have Been Created
+    [Arguments]    ${path}    ${name}    ${version}
+    ${libdoc}=           Parse Xml    ${path}
+    Set Test Variable    ${libdoc}
+    Name Should Be       ${name}
+    Format Should Be     HTML
+    Run Keyword If       "${version}"    Version Should Match    ${version}
 
 Path to output should be in stdout
     [Documentation]    Printed path may be in different format than original.

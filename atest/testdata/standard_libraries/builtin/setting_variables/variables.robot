@@ -296,9 +296,10 @@ Overiding Variable When It Has Non-string Value
     Should Be Equal    ${v1} - ${v2}    a string - 42
 
 Set Test/Suite/Global Variable In User Keyword When Variable Name Is Used As Argument
-    : FOR    ${type}    IN    Test    Suite    Global
-    \    Test Setting Variable In User Keyword    \${variable}    ${type}
-    \    Test Setting Variable In User Keyword    $variable    ${type}
+    FOR    ${type}    IN    Test    Suite    Global
+        Test Setting Variable In User Keyword    \${variable}    ${type}
+        Test Setting Variable In User Keyword    $variable    ${type}
+    END
 
 Setting Test/Suite/Global Variable Which Value Is In Variable Like Syntax
     Set Test Variable    ${variable}    \\\${foo}

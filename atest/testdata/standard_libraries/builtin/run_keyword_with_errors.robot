@@ -99,13 +99,14 @@ Expect Error When Error Occurs
     Run Keyword And Expect Error    ${ERROR MESSAGE}    ${FAIL KW}    ${ERROR MESSAGE}
 
 Expect Error When Different Error Occurs
-    [Documentation]    FAIL Expected error 'My error' but got 'My error message'.
-    Run Keyword And Expect Error    My error    Fail    ${ERROR MESSAGE}
+    [Documentation]    FAIL Expected error 'Wrong!' but got 'My error message'.
+    Run Keyword And Expect Error    Wrong!    Fail    ${ERROR MESSAGE}
     Fail    This should not be executed
 
 Expect Error When Different Error Occurs 2
-    [Documentation]    FAIL STARTS: Expected error 'My error' but got 'Evaluating expression 'foo == bar' failed: NameError:
-    Run Keyword And Expect Error    My error    Evaluate    foo == bar
+    [Documentation]    FAIL STARTS:
+    ...    Expected error 'Wrong again!' but got 'Evaluating expression 'foo == bar' failed: NameError:
+    Run Keyword And Expect Error    Wrong again!    Evaluate    foo == bar
     Fail    This should not be executed
 
 Expect Error When No Errors Occur

@@ -15,6 +15,8 @@
 
 import re
 
+from robot.utils import rstrip
+
 from .tokens import Token
 
 
@@ -43,7 +45,7 @@ class Splitter(object):
             splitter = self._split_from_pipes
         columnno = 1
         data, sepa = Token.DATA, Token.SEPARATOR
-        for value, is_data in splitter(line.rstrip()):
+        for value, is_data in splitter(rstrip(line)):
             if is_data or not data_only:
                 yield Token(data if is_data else sepa, value, lineno, columnno)
             columnno += len(value)

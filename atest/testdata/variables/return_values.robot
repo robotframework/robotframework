@@ -97,10 +97,11 @@ List Variable From Dictionary
 Unrepresentable objects to list variables
     @{unrepr} =    Return Unrepresentable Objects    identifier=list
     Length Should Be    ${unrepr}    2
-    :FOR    ${obj}    IN    @{unrepr}
-    \    Should Be Equal    ${obj.identifier}    list
-    \    ${var} =    Set Variable    ${obj}
-    \    Should Be Equal    ${var}    ${obj}
+    FOR    ${obj}    IN    @{unrepr}
+        Should Be Equal    ${obj.identifier}    list
+        ${var} =    Set Variable    ${obj}
+        Should Be Equal    ${var}    ${obj}
+    END
 
 None To List Variable
     @{list} =    Log    This returns None

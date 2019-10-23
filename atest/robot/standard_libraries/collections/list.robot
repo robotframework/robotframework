@@ -229,7 +229,7 @@ Log List With Different Lists
     Check Log Message    ${tc.kws[0].msgs[0]}    List is empty.    INFO
     Check Log Message    ${tc.kws[1].msgs[0]}    List has one item:\n1
     Check Log Message    ${tc.kws[4].msgs[0]}    List has one item:\n(1, 2, 3)
-    Check Log Message    ${tc.kws[6].msgs[0]}    List length is 2 and it contains following items:\n 0: (1, 2, 3)\n 1: 3.12
+    Check Log Message    ${tc.kws[6].msgs[0]}    List length is 2 and it contains following items:\n0: (1, 2, 3)\n1: 3.12
 
 Count Matches In List Case Insensitive
     Check Test Case    ${TEST NAME}
