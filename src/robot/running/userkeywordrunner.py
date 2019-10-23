@@ -228,7 +228,9 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         match = handler.embedded_name.match(name)
         if not match:
             raise ValueError('Does not match given name')
-        self.embedded_args = list(zip(handler.embedded_type, handler.embedded_args, match.groups()))
+        self.embedded_args = []
+        for n, v in zip(handler.embedded_args, match.groups()):
+            self.embedded_args.append(n + (v,))
 
     def _resolve_arguments(self, args, variables=None):
         # Validates that no arguments given.
@@ -238,12 +240,13 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
         return list(self._replace(variables))
 
     def _replace(self, variables):
-        for t, n, v in self.embedded_args:
-            if t == '&' and is_dict_like(literal_eval(v)):
-                yield n, DotDict(literal_eval(v))
-            elif t == '@' and is_list_like(literal_eval(v)):
-                yield n, variables.replace_list(literal_eval(v))
-            yield n, variables.replace_scalar(v)
+        for var_type, name, value in self.embedded_args:
+            if var_type == '$':
+                yield name, variables.replace_scalar(value)
+            elif var_type == '@' and is_list_like(literal_eval(value)):
+                yield name, variables.replace_list(literal_eval(value))
+            elif var_type == '&' and is_dict_like(literal_eval(value)):
+                yield name, DotDict(literal_eval(value))
 
     def _set_arguments(self, embedded_args, context):
         variables = context.variables

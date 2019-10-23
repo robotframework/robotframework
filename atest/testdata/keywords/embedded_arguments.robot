@@ -45,7 +45,6 @@ Embedded Arguments as Lists
 Embedded Arguments as Dicts
     Key x is in {"a": "b", "x": "y"}
 
-
 Non-Existing Variable in Embedded Arguments
     [Documentation]    FAIL Variable '${non existing}' not found.
     User ${non existing} Selects ${variables} From Webshop

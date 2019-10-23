@@ -25,9 +25,9 @@ class EmbeddedArguments(object):
 
     def __init__(self, name):
         if '${' in name or '@{' in name or '&{' in name:
-            self.var_type, self.name, self.args = EmbeddedArgumentParser().parse(name)
+            self.name, self.args = EmbeddedArgumentParser().parse(name)
         else:
-            self.var_type, self.name, self.args = None, None, []
+            self.name, self.args = None, []
 
     def __nonzero__(self):
         return self.name is not None
@@ -42,17 +42,15 @@ class EmbeddedArgumentParser(object):
     _variable_pattern = r'\$\{[^\}]+\}'
 
     def parse(self, string):
-        var_type = None
         args = []
         name_regexp = ['^']
         for before, variable, string in VariableIterator(string, identifiers='$@&'):
             name, pattern = self._get_name_and_pattern(variable[2:-1])
-            args.append(name)
+            args.append((variable[0], name))
             name_regexp.extend([re.escape(before), '(%s)' % pattern])
-            var_type = variable[0]
         name_regexp.extend([re.escape(string), '$'])
         name = self._compile_regexp(name_regexp) if args else None
-        return var_type, name, args
+        return name, args
 
     def _get_name_and_pattern(self, name):
         if ':' not in name:

@@ -26,7 +26,7 @@ class Interpreter(object):
         self.path = path
         self.interpreter = self._get_interpreter(path)
         if not name:
-            name, version = 'Python', '2.7'
+            name, version = self._get_name_and_version()
         self.name = name
         self.version = version
         self.version_info = tuple(int(item) for item in version.split('.'))
@@ -54,10 +54,6 @@ class Interpreter(object):
             if condition:
                 return name
         return sys.platform
-
-    @property
-    def output_name(self):
-        return '{i.name}-{i.version}-{i.os}'.format(i=self).replace(' ', '')
 
     @property
     def excludes(self):

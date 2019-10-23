@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.6
 
 """A script for running Robot Framework's acceptance tests.
 
@@ -43,15 +43,15 @@ CURDIR = dirname(abspath(__file__))
 
 
 sys.path.append(join(CURDIR, '..'))
-# try:
-#     from tasks import jar
-# except ImportError:
-#     def jar(*args, **kwargs):
-#         raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
-# except AssertionError:
-#     def jar(*args, **kwargs):
-#         raise RuntimeError("JAR can be created only when in the project root. "
-#                            "See BUILD.rst for details.")
+try:
+    from tasks import jar
+except ImportError:
+    def jar(*args, **kwargs):
+        raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
+except AssertionError:
+    def jar(*args, **kwargs):
+        raise RuntimeError("JAR can be created only when in the project root. "
+                           "See BUILD.rst for details.")
 
 
 ARGUMENTS = '''
@@ -81,7 +81,7 @@ def atests(interpreter, *arguments):
 
 
 def _get_directories(interpreter):
-    name = interpreter.output_name
+    name = '{i.name}-{i.version}-{i.os}'.format(i=interpreter).replace(' ', '')
     outputdir = dos_to_long(join(CURDIR, 'results', name))
     tempdir = dos_to_long(join(tempfile.gettempdir(), 'robottests', name))
     if exists(outputdir):
