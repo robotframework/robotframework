@@ -143,7 +143,7 @@ class VariableReplacer(object):
                 value = self._get_iterable_variable_item(name, value, item)
             else:
                 raise VariableError(
-                    "Variable '%s' is %s, which is not iterable, and thus "
+                    "Variable '%s' is %s, not a dictionary or iterable, and thus "
                     "accessing item '%s' from it is not possible."
                     % (name, type_name(value), item)
                 )

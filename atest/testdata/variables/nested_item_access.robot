@@ -45,7 +45,7 @@ Invalid nested dict access
 
 Nested access with non-list/dict
     [Documentation]    FAIL
-    ...    Variable '\${DICT}[\${1}][\${2}]' is integer, which is not iterable, \
+    ...    Variable '\${DICT}[\${1}][\${2}]' is integer, not a dictionary or iterable, \
     ...    and thus accessing item '0' from it is not possible.
     ${DICT}[${1}][${2}][0]                     whatever
 

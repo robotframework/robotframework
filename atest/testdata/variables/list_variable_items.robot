@@ -94,7 +94,7 @@ Non-existing index variable
 
 Non-list variable
     [Documentation]    FAIL
-    ...    Variable '\${INT}' is integer, which is not iterable, \
+    ...    Variable '\${INT}' is integer, not a dictionary or iterable, \
     ...    and thus accessing item '0' from it is not possible.
     Log    ${INT}[0]
 
