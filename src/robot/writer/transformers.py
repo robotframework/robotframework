@@ -141,7 +141,7 @@ class ForLoopCleaner(ast.NodeVisitor):
         forloop.end[0].value = 'END'
 
 
-class Writer(ast.NodeVisitor):
+class Formatter(ast.NodeVisitor):
 
     def __init__(self, ctx, row_writer):
         self.ctx = ctx
@@ -196,36 +196,3 @@ class Writer(ast.NodeVisitor):
         self.writer.write_newline()
 
 
-class RowWriter(object):
-
-    def __init__(self, ctx):
-        self.output = ctx.output
-        self.pipes = ctx.pipe_separated
-        self.separator, self.indent_string = self.get_separator_and_indent(ctx)
-
-    def get_separator_and_indent(self, ctx):
-        if ctx.pipe_separated:
-            return ' | ', '   | '
-        separator = ' ' * ctx.txt_separating_spaces
-        return separator, separator
-
-    def write(self, tokens, indent):
-        indent = indent * self.indent_string
-        values = [t.value for t in tokens]
-        row = indent + self.separator.join(values)
-        if self.pipes:
-            row = '| ' + row + ' |'
-        else:
-            row = row.rstrip()
-        self.output.write(row)
-
-    def write_newline(self):
-        self.output.write('\n')
-
-
-def write_to_file(context, model):
-    SeparatorRemover().visit(model)
-    SettingCleaner().visit(model)
-    ForLoopCleaner().visit(model)
-    Aligner(context).visit(model)
-    Writer(context, RowWriter(context)).visit(model)
