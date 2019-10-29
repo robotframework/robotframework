@@ -80,7 +80,7 @@ class _BuiltInBase(object):
 
     def _is_true(self, condition):
         if is_string(condition):
-            condition = self.evaluate(condition, modules='os,sys')
+            condition = self.evaluate(condition)
         return bool(condition)
 
     def _log_types(self, *args):
@@ -2969,8 +2969,8 @@ class _Misc(_BuiltInBase):
         | ${result} = 42
         """
         try:
-            return evaluate_expression(expression, self._variables, modules,
-                                       namespace)
+            return evaluate_expression(expression, self._variables.current.store,
+                                       modules, namespace)
         except DataError as err:
             raise RuntimeError(err.message)
 

@@ -13,14 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-try:
-    from collections.abc import MutableMapping
-except ImportError:
-    from collections import MutableMapping
 import re
 
 from .platform import IRONPYTHON, JYTHON, PY_VERSION, PY3
-from .robottypes import is_dict_like, is_unicode
+from .robottypes import is_dict_like, is_unicode, MutableMapping
 
 
 def normalize(string, ignore=(), caseless=True, spaceless=True):
