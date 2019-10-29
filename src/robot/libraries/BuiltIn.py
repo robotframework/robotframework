@@ -2973,10 +2973,10 @@ class _Misc(_BuiltInBase):
         return get_time(format, parse_time(time_))
 
     def evaluate(self, expression, modules=None, namespace=None):
-        """Evaluates the given expression in Python and returns the results.
+        """Evaluates the given expression in Python and returns the result.
 
-        ``expression`` is evaluated in Python as explained in `Evaluating
-        expressions`.
+        ``expression`` is evaluated in Python as explained in the
+        `Evaluating expressions` section.
 
         ``modules`` argument can be used to specify a comma separated
         list of Python modules to be imported and added to the evaluation
@@ -2986,21 +2986,34 @@ class _Misc(_BuiltInBase):
         namespace as a dictionary. Possible ``modules`` are added to this
         namespace.
 
+        Starting from Robot Framework 3.2, modules used in the expression are
+        imported automatically. ``modules`` argument is still needed with
+        nested modules like ``rootmod.submod`` that are implemented so that
+        the root module does not automatically import sub modules. This is
+        illustrated by the ``selenium.webdriver`` example below.
+
         Variables used like ``${variable}`` are replaced in the expression
         before evaluation. Variables are also available in the evaluation
-        namespace, and can be accessed using special ``$variable`` syntax
+        namespace and can be accessed using the special ``$variable`` syntax
         as explained in the `Evaluating expressions` section.
 
-        Examples (expecting ``${result}`` is 3.14):
-        | ${status} = | Evaluate | 0 < ${result} < 10 | # Would also work with string '3.14' |
-        | ${status} = | Evaluate | 0 < $result < 10   | # Using variable itself, not string representation |
-        | ${random} = | Evaluate | random.randint(0, sys.maxint) | modules=random, sys |
-        | ${ns} =     | Create Dictionary | x=${4}    | y=${2}              |
-        | ${result} = | Evaluate | x*10 + y           | namespace=${ns}     |
+        Examples (expecting ``${result}`` is number 3.14):
+        | ${status} =  | Evaluate | 0 < ${result} < 10 | # Would also work with string '3.14' |
+        | ${status} =  | Evaluate | 0 < $result < 10   | # Using variable itself, not string representation |
+        | ${random} =  | Evaluate | random.randint(0, sys.maxsize) |
+        | ${options} = | Evaluate | selenium.webdriver.ChromeOptions() | modules=selenium.webdriver |
+        | ${ns} =      | Create Dictionary | x=${4}    | y=${2}              |
+        | ${result} =  | Evaluate | x*10 + y           | namespace=${ns}     |
         =>
         | ${status} = True
         | ${random} = <random integer>
+        | ${options} = ChromeOptions instance
         | ${result} = 42
+
+        *NOTE*: Prior to Robot Framework 3.2 using ``modules=rootmod.submod``
+        was not enough to make the root module itself available in the
+        evaluation namespace. It needed to be taken into use explicitly like
+        ``modules=rootmod, rootmod.submod``.
         """
         try:
             return evaluate_expression(expression, self._variables.current.store,
@@ -3294,18 +3307,36 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     = Evaluating expressions =
 
     Many keywords, such as `Evaluate`, `Run Keyword If` and `Should Be True`,
-    accept an expression that is evaluated in Python. These expressions are
-    evaluated using Python's
+    accept an expression that is evaluated in Python.
+
+    == Evaluation namespace ==
+
+    Expressions are evaluated using Python's
     [http://docs.python.org/library/functions.html#eval|eval] function so
     that all Python built-ins like ``len()`` and ``int()`` are available.
-    `Evaluate` allows configuring the execution namespace with custom modules,
-    and other keywords have [http://docs.python.org/library/os.html|os]
-    and [http://docs.python.org/library/sys.html|sys] modules available
-    automatically.
+    In addition to that, all unrecognized variables are considered to be
+    modules that are automatically imported. It is possible to use all
+    available Python modules, including the standard modules and the installed
+    third party modules.
 
     Examples:
-    | `Run Keyword If` | os.sep == '/' | Log                  | Not on Windows |
-    | ${random int} =  | `Evaluate`    | random.randint(0, 5) | modules=random |
+    | `Should Be True`   | len('${result}') > 3 |
+    | `Run Keyword If`   | os.sep == '/'        | Non-Windows Keyword  |
+    | ${robot version} = | `Evaluate`           | robot.__version__    |
+
+    `Evaluate` also allows configuring the execution namespace with a custom
+    namespace and with custom modules to be imported. The latter functionality
+    is useful when using nested modules like ``rootmod.submod`` that are
+    implemented so that the root module does not automatically import sub
+    modules. Otherwise the automatic module import mechanism described earlier
+    is enough to get the needed modules imported.
+
+    *NOTE:* Automatic module import is a new feature in Robot Framework 3.2.
+    Earlier modules needed to be explicitly taken into use when using the
+    `Evaluate` keyword and other keywords only had access to ``sys`` and
+    ``os`` modules.
+
+    == Using variables ==
 
     When a variable is used in the expressing using the normal ``${variable}``
     syntax, its value is replaced before the expression is evaluated. This
@@ -3322,10 +3353,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | `Run Keyword If` | '${status}' == 'PASS'     | Log | Passed                |
     | `Run Keyword If` | 'FAIL' in '''${output}''' | Log | Output contains FAIL  |
 
-    Variables themselves are automatically available in the evaluation
-    namespace. They can be accessed using special variable syntax without the
-    curly braces like ``$variable``. These variables should never be quoted,
-    and in fact they are not even replaced inside strings.
+    Actual variables values are also available in the evaluation namespace.
+    They can be accessed using special variable syntax without the curly
+    braces like ``$variable``. These variables should never be quoted.
 
     Examples:
     | `Should Be True` | $rc < 10          | Return code greater than 10  |
