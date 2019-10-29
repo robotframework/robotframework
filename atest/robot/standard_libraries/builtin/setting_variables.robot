@@ -14,13 +14,17 @@ Set Variable With More Or Less Than One Value
     Check Test Case    ${TESTNAME}
 
 Set Local Variable - Scalars
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[1].msgs[0]}    \${scalar} = Hello world
 
 Set Local Variable - Lists
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[3].msgs[0]}    \@{list} = [ One | Two | Three ]
+    Check Log Message    ${tc.kws[6].msgs[0]}    \@{list} = [ 1 | 2 | 3 ]
 
 Set Local Variable - Dicts
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[4].msgs[0]}    \&{DICT} = { a=1 | 2=b }
 
 Set Local Variables Overrides Test Variables
     Check Test Case    ${TESTNAME}

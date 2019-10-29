@@ -62,7 +62,7 @@ Set Local Variable - Dicts
     Set Local Variable    \&{DICT}    hello=world
     Should Be True    &{DICT} == {'hello': 'world'}
     Should Be Equal    ${DICT.hello}    world
-    Set Local Variable    &{dict}    a=${1}    ${2}=b
+    Set Local Variable    &{DICT}    a=${1}    ${2}=b
     Should Be True    &{DICT} == {'a': 1, 2: 'b'}
     &{dict} =    Create Dictionary
     Set Local Variable    &{DICT}
