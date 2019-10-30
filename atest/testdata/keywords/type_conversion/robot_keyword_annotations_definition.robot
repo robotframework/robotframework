@@ -1,6 +1,5 @@
 *** Settings ***
 Library                       robot_keyword_Annotations.py
-Library                       collections.abc    WITH NAME    abc
 
 *** Keywords ***
 Integer
@@ -140,10 +139,10 @@ None As Default
 
 
 Forward Referenced Concrete Type
-    [Arguments]   ${argument:'int'}    ${expected}=${Empty}
+    [Arguments]   ${argument:int}    ${expected}=${Empty}
     Validate Type     ${argument}    ${expected}
 
 Return Value Annotation
-    [Arguments]   ${argument:'int'}=${Empty}    ${expected}=${Empty}
+    [Arguments]   ${argument:int}=${Empty}    ${expected}=${Empty}
     [Return]    ${argument:float}
     Validate Type     ${argument}    ${expected}

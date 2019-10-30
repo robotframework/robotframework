@@ -13,14 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
 from robot.errors import DataError
 from robot.utils import JYTHON, PY_VERSION, PY2
 from robot.variables import is_dict_var, is_list_var, is_scalar_var
-from pydoc import locate
-import re
 
 from .argumentspec import ArgumentSpec
-from .typingresolver import TypingResolver
 
 if PY2:
     from inspect import getargspec, ismethod
@@ -187,7 +186,7 @@ class _ArgumentSpecParser(_ArgumentParser):
         spec = ArgumentSpec(name, self._type)
         kw_only_args = False
         for arg in argspec:
-            arg, type_ = TypingResolver().split_args_and_types(arg)
+            arg, type_ = self._split_args_and_types(arg)
             if spec.kwargs:
                 self._raise_invalid_spec('Only last argument can be kwargs.')
             elif self._is_kwargs(arg):
@@ -201,7 +200,7 @@ class _ArgumentSpecParser(_ArgumentParser):
                     self._raise_invalid_spec('Cannot have multiple varargs.')
                 self._add_varargs(spec, arg)
                 kw_only_args = True
-            elif '=' in arg:
+            elif self._have_default_value(arg):
                 self._add_arg_with_default(spec, arg, kw_only_args)
             elif spec.defaults and not kw_only_args:
                 self._raise_invalid_spec('Non-default argument after default '
@@ -236,13 +235,28 @@ class _ArgumentSpecParser(_ArgumentParser):
     def _format_varargs(self, varargs):
         raise NotImplementedError
 
-    def _add_arg_with_default(self, spec, arg, kw_only_arg=False):
+    def _split_args_and_default(self, arg):
         arg, default = arg.split('=', 1)
+        return arg, default
+
+    def _have_default_value(self, arg):
+        return '=' in arg
+
+    def _add_arg_with_default(self, spec, arg, kw_only_arg=False):
+        arg, default = self._split_args_and_default(arg)
         arg = self._add_arg(spec, arg, kw_only_arg)
         spec.defaults[arg] = default
 
     def _format_arg(self, arg):
         return arg
+
+    def _get_body_arg(self, arg):
+        if self._is_kwargs(arg):
+            return self._format_kwargs(arg)
+        elif self._is_varargs(arg) or self._is_kw_only_separator(arg):
+            return self._format_varargs(arg)
+        else:
+            return self._format_arg(arg)
 
     def _add_arg(self, spec, arg, kw_only_arg=False):
         arg = self._format_arg(arg)
@@ -250,13 +264,15 @@ class _ArgumentSpecParser(_ArgumentParser):
         target.append(arg)
         return arg
 
+    def _split_args_and_types(self, arg):
+        raise NotImplementedError
+
     def _add_type_to_arg(self, argspec, arg, type_):
         if argspec.types is None:
             argspec.types = {}
-        pattern = re.compile('^[$@&]{([a-zA-Z0-9 ]+)}')
-        match = pattern.match(arg)
-        argname = match.group(1)
-        argspec.types[argname] = type_
+        if self._have_default_value(arg):
+            arg, _ = self._split_args_and_default(arg)
+        argspec.types[self._get_body_arg(arg)] = type_
 
 class DynamicArgumentParser(_ArgumentSpecParser):
 
@@ -275,6 +291,8 @@ class DynamicArgumentParser(_ArgumentSpecParser):
     def _format_varargs(self, varargs):
         return varargs[1:]
 
+    def _split_args_and_types(self, arg):
+        return arg, None
 
 class UserKeywordArgumentParser(_ArgumentSpecParser):
 
@@ -297,3 +315,24 @@ class UserKeywordArgumentParser(_ArgumentSpecParser):
         if not is_scalar_var(arg):
             self._raise_invalid_spec("Invalid argument syntax '%s'." % arg)
         return arg[2:-1]
+
+    def _get_class_by_type_name(self, type_):
+        if type_:
+            if type_ in ('None', 'NoneType'):
+                return type(None)
+            return type_.lower()
+        return None
+
+    def _get_type_in_string_format(self, type_):
+        return type_[1:].strip()
+
+    def _split_args_and_types(self, arg):
+        pattern = re.compile('^[$@&]{[a-zA-Z0-9 ]+(:[^}]*)?}')
+        match = pattern.match(arg)
+        type_ = None
+        if match:
+            type_ = match.group(1)
+        if type_:
+            arg = arg.replace(type_, '', 1)
+            type_ = self._get_type_in_string_format(type_)
+        return arg, self._get_class_by_type_name(type_)
