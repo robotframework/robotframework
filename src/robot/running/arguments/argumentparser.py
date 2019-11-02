@@ -13,8 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
-
 from robot.errors import DataError
 from robot.utils import JYTHON, PY_VERSION, PY2
 from robot.variables import is_dict_var, is_list_var, is_scalar_var
@@ -317,22 +315,16 @@ class UserKeywordArgumentParser(_ArgumentSpecParser):
         return arg[2:-1]
 
     def _get_class_by_type_name(self, type_):
-        if type_:
-            if type_ in ('None', 'NoneType'):
-                return type(None)
-            return type_.lower()
-        return None
+        if type_ in ('None', 'NoneType'):
+            return type(None)
+        return type_.lower()
 
     def _get_type_in_string_format(self, type_):
         return type_[1:].strip()
 
     def _split_args_and_types(self, arg):
-        pattern = re.compile('^[$@&]{[a-zA-Z0-9 ]+(:[^}]*)?}')
-        match = pattern.match(arg)
-        type_ = None
-        if match:
-            type_ = match.group(1)
-        if type_:
-            arg = arg.replace(type_, '', 1)
-            type_ = self._get_type_in_string_format(type_)
-        return arg, self._get_class_by_type_name(type_)
+        if not ':' in arg:
+            return arg, None
+        type_ = arg[arg.index(':'):arg.index('}')]
+        arg = arg.replace(type_, '', 1)
+        return arg, self._get_class_by_type_name(self._get_type_in_string_format(type_))
