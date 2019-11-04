@@ -178,9 +178,10 @@ class _Importer(object):
 
     def _get_source(self, imported):
         try:
-            return abspath(inspect.getfile(imported))
+            source = inspect.getfile(imported)
         except TypeError:
             return None
+        return abspath(source) if source else None
 
 
 class ByPathImporter(_Importer):

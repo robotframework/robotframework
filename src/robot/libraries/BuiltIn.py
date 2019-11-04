@@ -31,7 +31,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          normalize_whitespace, parse_time, prepr,
                          plural_or_not as s, PY3, RERAISED_EXCEPTIONS,
                          roundup, secs_to_timestr, seq2str, split_from_equals,
-                         timestr_to_secs, unic)
+                         timestr_to_secs, type_name, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (evaluate_expression, is_list_var, is_var,
                              DictVariableTableValue, search_variable,
@@ -3044,8 +3044,8 @@ class _Misc(_BuiltInBase):
         try:
             method = getattr(object, method_name)
         except AttributeError:
-            raise RuntimeError("Object '%s' does not have method '%s'."
-                               % (object, method_name))
+            raise RuntimeError("%s object does not have method '%s'."
+                               % (type_name(object), method_name))
         try:
             return method(*args, **kwargs)
         except:

@@ -6,6 +6,9 @@ Force Tags        require-jython
 Test Template     Library import should have been successful
 Resource          resource_for_importing_libs_with_args.robot
 
+*** Variables ***
+${KEY: VALUE}     ${{ "{key: value}" if $INTERPRETER.version_info < (2, 7, 1) else "{u'key': u'value'}" }}
+
 *** Test Cases ***
 Mandatory arguments
     MandatoryArgs    first arg    another arg
@@ -17,7 +20,7 @@ Default values
 
 Variables containing objects
     MandatoryArgs    42    The name of the JavaObject
-    MandatoryArgs    {key: value}    True
+    MandatoryArgs    ${KEY: VALUE}    True
 
 Too Few Arguments
     [Template]    Library import should have failed

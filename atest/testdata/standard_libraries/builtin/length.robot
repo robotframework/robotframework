@@ -105,11 +105,11 @@ Getting length with `length` attribute
     Should Be Empty        ${LENGTH ATTRIBUTE}
 
 Getting length from Java types
-    [Documentation]    FAIL Length of '{a: 1}' should be 3 but is 1.
+    [Documentation]    FAIL Length of '{}' should be 3 but is 0.
     FOR    ${type}    IN    STRING    HASHTABLE    VECTOR    ARRAY
         Verify Length Of Java Type    ${type}
     END
-    Length Should Be    ${HASHTABLE 1}    3
+    Length Should Be    ${HASHTABLE 0}    3
 
 *** Keywords ***
 Verify Get Length

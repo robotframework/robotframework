@@ -18,7 +18,7 @@ import sys
 
 from .encodingsniffer import get_console_encoding, get_system_encoding
 from .compat import isatty
-from .platform import JYTHON, IRONPYTHON, PY3
+from .platform import JYTHON, IRONPYTHON, PY3, PY_VERSION
 from .robottypes import is_unicode
 from .unic import unic
 
@@ -76,7 +76,7 @@ def _get_console_encoding(stream):
 
 
 # These interpreters handle communication with system APIs using Unicode.
-if PY3 or JYTHON or IRONPYTHON:
+if PY3 or IRONPYTHON or (JYTHON and PY_VERSION < (2, 7, 1)):
 
     def system_decode(string):
         return string if is_unicode(string) else unic(string)
