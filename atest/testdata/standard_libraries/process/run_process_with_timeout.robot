@@ -4,10 +4,30 @@ Suite Teardown    Remove Files    ${STDOUT}    ${STDERR}
 
 *** Variables ***
 @{COMMAND}        python    ${CURDIR}/files/timeout.py
+${ZERO_TIMEOUT}   0
+${NONE_TIMEOUT}   nONe
+${NEG_TIMEOUT}    -2 hours
 
 *** Test Cases ***
 Finish before timeout
     ${result} =    Run Process    @{COMMAND}
+    Should not be terminated    ${result}
+
+Finish before timeout with nONe timeout
+    ${result} =    Run Process    @{COMMAND}    timeout=${NONE_TIMEOUT}
+    Should not be terminated    ${result}
+
+Finish before timeout with zero timeout
+    ${result} =    Run Process    @{COMMAND}    timeout=${ZERO_TIMEOUT}
+    Should not be terminated    ${result}
+
+Finish before timeout with empty timeout
+    [Documentation]   Verifying that backwards compatibility is honored
+    ${result} =    Run Process    @{COMMAND}    timeout=${EMPTY}
+    Should not be terminated    ${result}
+
+Finish before timeout with negative timeout
+    ${result} =    Run Process    @{COMMAND}    timeout=${NEG_TIMEOUT}
     Should not be terminated    ${result}
 
 On timeout process is terminated by default (w/ default streams)

@@ -8,6 +8,21 @@ Finish before timeout
     Check Log Message    ${tc.kws[0].msgs[1]}    Waiting for process to complete.
     Check Log Message    ${tc.kws[0].msgs[2]}    Process completed.
 
+Finish before timeout with zero timeout
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    Waiting for process to complete.
+    Check Log Message    ${tc.kws[0].msgs[2]}    Process completed.
+
+Finish before timeout with nONe timeout
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    Waiting for process to complete.
+    Check Log Message    ${tc.kws[0].msgs[2]}    Process completed.
+
+Finish before timeout with negative timeout
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    Waiting for process to complete.
+    Check Log Message    ${tc.kws[0].msgs[2]}    Process completed.
+
 On timeout process is terminated by default (w/ default streams)
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[1]}    Waiting for process to complete.
