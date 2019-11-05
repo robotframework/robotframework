@@ -86,10 +86,15 @@ if PY3 or IRONPYTHON or (JYTHON and PY_VERSION < (2, 7, 1)):
 
 else:
 
+    # Jython 2.7.1+ uses UTF-8 with cli args etc. regardless the actual system
+    # encoding. Cannot set the "real" SYSTEM_ENCODING to that value because
+    # we use it also for other purposes.
+    _SYSTEM_ENCODING = SYSTEM_ENCODING if not JYTHON else 'UTF-8'
+
     def system_decode(string):
         """Decodes bytes from system (e.g. cli args or env vars) to Unicode."""
         try:
-            return string.decode(SYSTEM_ENCODING)
+            return string.decode(_SYSTEM_ENCODING)
         except UnicodeError:
             return unic(string)
 
@@ -100,4 +105,4 @@ else:
         """
         if not is_unicode(string):
             string = unic(string)
-        return string.encode(SYSTEM_ENCODING, errors)
+        return string.encode(_SYSTEM_ENCODING, errors)
