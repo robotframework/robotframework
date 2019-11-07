@@ -70,12 +70,15 @@ class ColumnAligner(ast.NodeVisitor):
                 line_pos += len(token.value)
 
     def widths_for_line(self, line):
-        # FIXME: breaks with Token.ASSIGNMENT, Token.CONTINUATION
-        if self.indent > 0 and line[0].type == Token.KEYWORD:
+        if self.indent > 0 and self._should_be_indented(line):
             widths = self.widths[1:]
             widths[0] = widths[0] + self.widths[0]
             return widths
         return self.widths
+
+    def _should_be_indented(self, line):
+        return line[0].type in (Token.KEYWORD, Token.ASSIGN,
+                                Token.CONTINUATION)
 
     def should_write_content_after_name(self, line_pos):
         return line_pos == 0 and not self.first_statement_after_name_seen \
@@ -88,16 +91,18 @@ class ColumnWidthCounter(ast.NodeVisitor):
         self.widths = []
 
     def visit_Statement(self, statement):
-        # FIXME: this cannot be right, make a failing test
-        if statement.type == Token.NAME:
-            return
+        if statement.type == Token.TESTCASE_HEADER:
+            self._count_widths_from_statement(statement)
+        elif statement.type != Token.NAME:
+            self._count_widths_from_statement(statement, indent=1)
+
+    def _count_widths_from_statement(self, statement, indent=0):
         for line in statement.lines:
-            for index, token in enumerate(line):
-                col = index + 1
-                if col >= len(self.widths):
+            for index, token in enumerate(line, start=indent):
+                if index >= len(self.widths):
                     self.widths.append(len(token.value))
-                elif len(token.value) > self.widths[col]:
-                    self.widths[col] = len(token.value)
+                elif len(token.value) > self.widths[index]:
+                    self.widths[index] = len(token.value)
 
 
 class Aligner(ast.NodeVisitor):
