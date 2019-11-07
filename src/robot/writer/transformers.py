@@ -70,12 +70,15 @@ class ColumnAligner(ast.NodeVisitor):
                 line_pos += len(token.value)
 
     def widths_for_line(self, line):
-        # FIXME: breaks with Token.ASSIGNMENT, Token.CONTINUATION
-        if self.indent > 0 and line[0].type == Token.KEYWORD:
+        if self.indent > 0 and self._should_be_indented(line):
             widths = self.widths[1:]
             widths[0] = widths[0] + self.widths[0]
             return widths
         return self.widths
+
+    def _should_be_indented(self, line):
+        return line[0].type in (Token.KEYWORD, Token.ASSIGN,
+                                Token.CONTINUATION)
 
     def should_write_content_after_name(self, line_pos):
         return line_pos == 0 and not self.first_statement_after_name_seen \

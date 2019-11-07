@@ -9,6 +9,10 @@ A very long named test case
                       My step 2          This also is arg
                       ...                Split line                                           Longest argument on split
 
-Test with for         FOR                ${i}                                                 IN RANGE            100
+Test with for         FOR                ${i}                                                 IN RANGE                     100
                                          Log                                                  ${i}
+                                         ${result} =                                          My kw
+                                         Log Many                                             1st
+                                         ...                                                  2nd
+                                         ...                                                  3rd
                       END
