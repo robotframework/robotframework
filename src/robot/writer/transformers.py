@@ -16,6 +16,7 @@
 import ast
 
 from robot.parsing.lexer import Token
+from robot.utils import normalize_whitespace
 
 
 class SeparatorRemover(ast.NodeVisitor):
@@ -124,23 +125,33 @@ class Aligner(ast.NodeVisitor):
                 self.ctx.setting_and_variable_name_length)
 
 
-class SettingCleaner(ast.NodeVisitor):
+class Cleaner(ast.NodeVisitor):
+
+    def visit_Section(self, section):
+        if section.header:
+            cleaned = self._normalize(section.header[0].value, remove='*')
+            section.header[0].value = '*** %s ***' % cleaned
+        self.generic_visit(section)
+
+    def _normalize(self, marker, remove=None):
+        if remove:
+            marker = marker.replace(remove, '')
+        return normalize_whitespace(marker).strip().title()
 
     def visit_Statement(self, statement):
         if statement.type in Token.SETTING_TOKENS:
             name = statement.tokens[0].value
             if name.startswith('['):
-                cleaned = '[%s]' % name[1:-1].strip().title()
+                cleaned = '[%s]' % self._normalize(name[1:-1])
             else:
-                cleaned = name.title()
+                cleaned = self._normalize(name)
             statement.tokens[0].value = cleaned
+        self.generic_visit(statement)
 
-
-class ForLoopCleaner(ast.NodeVisitor):
-
-    def visit_ForLoop(self, forloop):
-        forloop.header[0].value = 'FOR'
-        forloop.end[0].value = 'END'
+    def visit_ForLoop(self, loop):
+        loop.header[0].value = 'FOR'
+        loop.end[0].value = 'END'
+        self.generic_visit(loop)
 
 
 class Formatter(ast.NodeVisitor):
@@ -196,5 +207,3 @@ class Formatter(ast.NodeVisitor):
 
     def _write_newline(self):
         self.writer.write_newline()
-
-

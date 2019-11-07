@@ -16,8 +16,7 @@
 from robot.errors import DataError
 from robot.utils import file_writer
 
-from .transformers import (SeparatorRemover, SettingCleaner, ForLoopCleaner,
-                           Aligner, Formatter)
+from .transformers import Aligner, Cleaner, Formatter, SeparatorRemover
 
 
 class DataFileWriter(object):
@@ -41,8 +40,7 @@ class DataFileWriter(object):
 
         with WritingContext(model, **self._options) as ctx:
             SeparatorRemover().visit(model)
-            SettingCleaner().visit(model)
-            ForLoopCleaner().visit(model)
+            Cleaner().visit(model)
             Aligner(ctx).visit(model)
             Formatter(ctx, RowWriter(ctx)).visit(model)
 

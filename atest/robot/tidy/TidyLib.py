@@ -35,10 +35,12 @@ class TidyLib(object):
                      stderr=STDOUT,
                      universal_newlines=True,
                      shell=os.sep == '\\')
+        output = result.stdout.rstrip()
+        print('\n' + output)
         if result.returncode != rc:
             raise RuntimeError(f'Expected Tidy to return {rc} but it returned '
                                f'{result.returncode}.')
-        return result.stdout.rstrip()
+        return output
 
     def run_tidy_and_check_result(self, options=None, input=None,
                                   output=OUTFILE, expected=None):

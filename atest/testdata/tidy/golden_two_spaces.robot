@@ -4,10 +4,11 @@ This data is ignored at runtime but should be preserved by Tidy.
 Library         MyLibrary  argument  WITH NAME  My Alias  # My library comment
 Variables       MyVariables  args  args 2  args 3  args 4  args 5  args 6
 ...             args 7  args 8  args 9  args 10  args 11  args 12
-Resource        MyResource args that are part of the name
+Resource        resource.robot
 
 *** Variables ***
 # standalone    comment
+${VALID}        Value
 MyVar           val1  val2  val3  val4  val5  val6  val7
 ...             val8  val9  val10  # var comment
 # standalone
@@ -25,7 +26,7 @@ My Test Case
 Another Test
   Log Many  Non-ASCII: ääöö§§  ${CURDIR}
 
-*** Keywords ***
+*** Keyword ***
 My Keyword
   [Documentation]  Documentation  # Comment for doc
   [Tags]  keyword  tags
