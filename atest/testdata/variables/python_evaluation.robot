@@ -59,7 +59,7 @@ Automatic module import
     ${{json.dumps([1, None, 'kolme'])}}         [1, null, "kolme"]
 
 Module imports are case-sensitive
-    [Documentation]    FAIL GLOB:
+    [Documentation]    FAIL
     ...    Several failures occurred:
     ...
     ...    1) Resolving variable '\${{OS.sep}}' failed: \

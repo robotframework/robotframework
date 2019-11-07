@@ -27,7 +27,7 @@ if PY2:
     import __builtin__ as builtins
 else:
     import builtins
-BUILTIN_NAMES = set(builtins.__dict__)
+PYTHON_BUILTINS = set(builtins.__dict__)
 
 
 def evaluate_expression(expression, variable_store, modules=None,
@@ -102,7 +102,7 @@ class EvaluationNamespace(MutableMapping):
         return self._import_module(key)
 
     def _import_module(self, name):
-        if name in BUILTIN_NAMES:
+        if name in PYTHON_BUILTINS:
             raise KeyError
         try:
             return __import__(name)

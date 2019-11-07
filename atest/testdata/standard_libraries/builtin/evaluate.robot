@@ -52,7 +52,7 @@ Importing invalid module fails with original error
 
 
 Automatic module imports are case-sensitive
-    [Documentation]    FAIL GLOB:
+    [Documentation]    FAIL
     ...    Several failures occurred:
     ...
     ...    1) Evaluating expression 'OS.sep' failed: \
