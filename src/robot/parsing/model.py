@@ -74,7 +74,7 @@ class Statement(Node):
     @property
     def lines(self):
         if self.type in Token.SETTING_TOKENS and len(self.tokens) == 1:
-            return []
+            return
         line = []
         for token in self.tokens:
             if token.type != Token.CONTINUATION:
