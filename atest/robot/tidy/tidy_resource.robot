@@ -5,7 +5,7 @@ Resource          atest_resource.robot
 *** Variables ***
 ${DATA}           ${CURDIR}/../../testdata/tidy
 ${TEMP}           %{TEMPDIR}${/}tidy-test-dir
-${TEMPFILE}       ${TEMP}${/}tidy-test-file.txt
+${OUTFILE}        ${TEMP}${/}tidy-test-file.robot
 
 *** Keywords ***
 Run tidy with golden file and check result

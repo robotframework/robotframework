@@ -14,22 +14,22 @@ Tidying single test case file
 
 Tidying single resource file
     [Template]    Run tidy with golden resource file and check result
-    ${EMPTY}    golden_resource.robot
-    -p    golden_pipes_resource.robot
-    --FOR ROBOT    golden_resource.robot
+    ${EMPTY}            golden_resource.robot
+    -p                  golden_pipes_resource.robot
+    --FOR ROBOT         golden_resource.robot
 
 Tidying single init file
-    Run tidy and check result    ${EMPTY}    __init__.robot
-    File Should Exist    ${TEMP FILE}
+    Run tidy and check result    input=__init__.robot
+    File Should Exist    ${OUTFILE}
 
 Tidying single file without output file prints output to console
     [Documentation]    Depending on console encoding, non-ASCII characters may not be shown correctly.
-    ${stdout} =    Run tidy    ${EMPTY}    golden.robot    output=None    stderr=False
+    ${stdout} =    Run tidy    input=golden.robot    output=None
     Compare tidy results    ${stdout}    golden.robot    \\s+Log Many\\s+Non-ASCII:.*\\s+\\$\\{CURDIR\\}
-    File Should Not Exist    ${TEMP FILE}
+    File Should Not Exist    ${OUTFILE}
 
 Default format is got from output file
-    Run tidy    ${EMPTY}    ${DATA}/golden.robot    ${TEMP}/golden.txt
+    Run tidy    input=${DATA}/golden.robot    output=${TEMP}/golden.txt
     Compare tidy results    ${TEMP}/golden.txt    ${DATA}/golden.txt
 
 Tidying directory
@@ -46,14 +46,14 @@ Tidying directory
     Should Be Equal    ${result_before.stdout}    ${result_after.stdout}
 
 Custom headers are preserved and tables aligned accordingly
-    Run tidy and check result    ${EMPTY}     golden_with_headers.robot
+    Run tidy and check result    input=golden_with_headers.robot
 
 Running Tidy as script
     [Tags]   no-standalone
-    Run tidy as script and check result    ${EMPTY}    golden.robot
+    Run tidy as script and check result    input=golden.robot
 
 For loops
-    Run tidy and check result    ${EMPTY}    for_loops_input.robot
+    Run tidy and check result    input=for_loops_input.robot
     ...    expected=for_loops_expected.robot
 
 *** Keywords ***

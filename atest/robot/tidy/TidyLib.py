@@ -10,7 +10,7 @@ from robot.utils.asserts import assert_equal, assert_true
 
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 DATA_DIR = join(dirname(abspath(__file__)), '..', '..', 'testdata', 'tidy')
-TEMP_FILE = join(os.getenv('TEMPDIR'), 'tidy-test-dir', 'tidy-test-file.txt')
+OUTFILE = join(os.getenv('TEMPDIR'), 'tidy-test-dir', 'tidy-test-file.robot')
 
 
 class TidyLib(object):
@@ -19,35 +19,35 @@ class TidyLib(object):
         self._tidy = interpreter.tidy
         self._interpreter = interpreter.interpreter
 
-    def run_tidy(self, options, input, output=None, tidy=None, stderr=True):
+    def run_tidy(self, options=None, input=None, output=None, tidy=None, rc=0):
         """Runs tidy in the operating system and returns output."""
         command = (tidy or self._tidy)[:]
         if options:
             command.extend(shlex.split(options))
-        command.append(self._path(input))
+        if input:
+            command.append(self._path(input))
         if output:
             command.append(output)
         print(' '.join(command))
-        # FIXME: Possibility to exclude stderr is a hack and shuold be removed
-        # as part of implementing #3064.
         result = run(command,
                      cwd=ROBOT_SRC,
                      stdout=PIPE,
-                     stderr=STDOUT if stderr else PIPE,
+                     stderr=STDOUT,
                      universal_newlines=True,
                      shell=os.sep == '\\')
-        if result.returncode != 0:
-            raise RuntimeError(result.stdout)
+        if result.returncode != rc:
+            raise RuntimeError(f'Expected Tidy to return {rc} but it returned '
+                               f'{result.returncode}.')
         return result.stdout.rstrip()
 
-    def run_tidy_and_check_result(self, options, input, output=TEMP_FILE,
-                                  expected=None):
+    def run_tidy_and_check_result(self, options=None, input=None,
+                                  output=OUTFILE, expected=None):
         """Runs tidy and checks that output matches content of file `expected`."""
         result = self.run_tidy(options, input, output)
         return self.compare_tidy_results(output or result, expected or input)
 
-    def run_tidy_as_script_and_check_result(self, options, input,
-                                            output=TEMP_FILE, expected=None):
+    def run_tidy_as_script_and_check_result(self, options=None, input=None,
+                                            output=OUTFILE, expected=None):
         """Runs tidy and checks that output matches content of file `expected`."""
         tidy = self._interpreter + [join(ROBOT_SRC, 'robot', 'tidy.py')]
         result = self.run_tidy(options, input, output, tidy)
