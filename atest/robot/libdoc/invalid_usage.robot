@@ -49,7 +49,17 @@ Invalid resource
     ...   ? ERROR ? *: Non-existing setting 'Test Setup'.
     ...   ? ERROR ? *: Non-existing setting 'Test Template'.
     ...   ? ERROR ? *: Non-existing setting 'Test Teardown'.
-    ...   Resource file '*' cannot contain tests or tasks.
+    ...   Resource file '*[/\\]invalid_usage.robot' cannot contain tests or tasks.
+
+Invalid output file
+    [Setup]    Run Keywords
+    ...    Create Directory    ${OUT HTML}    AND
+    ...    Create Directory    ${OUT XML}
+    String ${OUT HTML}    Opening Libdoc output file '${OUT HTML}' failed: *
+    String ${OUT XML}     Opening Libdoc output file '${OUT XML}' failed: *
+    [Teardown]    Run Keywords
+    ...    Remove Directory    ${OUT HTML}    AND
+    ...    Remove Directory    ${OUT XML}
 
 *** Keywords ***
 Run libdoc and verify error

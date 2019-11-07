@@ -20,15 +20,6 @@ Missing destination subdirectory is created
     String ${NEWDIR_HTML}                HTML    String    path=${NEWDIR_HTML}
     String ${NEWDIR_XML}                 XML     String    path=${NEWDIR_XML}
 
-Invalid output file
-    [Template]    NONE
-    ${invalid} =    Normalize Path    %{TEMPDIR}/invalid.html
-    Create Directory    ${invalid}
-    ${stdout} =    Run Libdoc    String ${invalid}
-    Should Match    ${stdout}
-    ...    Opening Libdoc output file '${invalid}' failed: *Error: *${USAGE TIP}\n
-    [Teardown]    Remove Directory    ${invalid}
-
 Relative path with Python libraries
     [Template]    NONE
     ${dir in libdoc exec dir}=    Set Variable     ${ROBOTPATH}/../TempDirInExecDir
