@@ -40,10 +40,13 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 from robot.errors import DataError
 from robot.parsing import Model
 from robot.utils import Application, file_writer
+# TODO: expose from package root
 from robot.running.builder.suitestructure import (SuiteStructureBuilder,
                                                   SuiteStructureVisitor)
 from robot.writer import DataFileWriter
 
+# TODO: maybe rename --format to --extension
+# Proofread usage
 USAGE = """robot.tidy -- Robot Framework test data clean-up tool
 
 Version:  <VERSION>
@@ -57,7 +60,7 @@ Tidy tool can be used to clean up and change format of Robot Framework test
 data files. The output is written into the standard output stream by default,
 but an optional output file can be given as well. Files can also be modified
 in-place using --inplace or --recursive options.
-tidy
+
 Options
 =======
 
@@ -110,7 +113,7 @@ format using the --format option.
 
 Examples:
   python -m robot.tidy tests.txt tests.robot
-  python -m robot.tidy --format robot --inplace tests.txt
+  python -m robot.tidy --inplace tests.robot
   python -m robot.tidy --format robot --recursive path/to/tests
 
 Output encoding
@@ -138,7 +141,7 @@ class Tidy(SuiteStructureVisitor):
     Tidy command line options with same names.
     """
 
-    def __init__(self, format='txt', use_pipes=False, space_count=4,
+    def __init__(self, format='robot', use_pipes=False, space_count=4,
                  line_separator=os.linesep):
         self._options = dict(format=format, pipe_separated=use_pipes,
                              txt_separating_spaces=space_count,

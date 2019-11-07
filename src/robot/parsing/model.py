@@ -1,3 +1,20 @@
+#  Copyright 2008-2015 Nokia Networks
+#  Copyright 2016-     Robot Framework Foundation
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+"""Model used by tools such as tidy, not used for test execution"""
+
 import ast
 
 from .lexer import TestCaseFileLexer, Token
@@ -40,6 +57,7 @@ class Body(Node):
         self.items.append(item)
 
 
+# TODO: do settings need a separate statement
 class Statement(Node):
     _fields = ('type', 'tokens')
 
@@ -172,6 +190,7 @@ class ForLoopBuilder(Builder):
             self.model.body.add(statement)
 
 
+# TODO: is this public API, name?
 def Model(source):
     builder = FileBuilder(File())
     stack = [builder]
@@ -195,8 +214,3 @@ def get_statements(source):
             yield Statement(statement)
             statement = []
 
-
-if __name__ == '__main__':
-    import sys
-    a = Model(sys.argv[1])
-    print(ast.dump(a))

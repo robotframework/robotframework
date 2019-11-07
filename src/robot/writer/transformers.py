@@ -70,6 +70,7 @@ class ColumnAligner(ast.NodeVisitor):
                 line_pos += len(token.value)
 
     def widths_for_line(self, line):
+        # FIXME: breaks with Token.ASSIGNMENT, Token.CONTINUATION
         if self.indent > 0 and line[0].type == Token.KEYWORD:
             widths = self.widths[1:]
             widths[0] = widths[0] + self.widths[0]
@@ -83,22 +84,20 @@ class ColumnAligner(ast.NodeVisitor):
 
 class ColumnWidthCounter(ast.NodeVisitor):
 
-    def __init__(self, widths):
-        self.widths = widths
-        self.first_statement_after_name_seen = False
+    def __init__(self):
+        self.widths = []
 
     def visit_Statement(self, statement):
+        # FIXME: this cannot be right, make a failing test
         if statement.type == Token.NAME:
-            self.first_statement_after_name_seen = False
-        elif statement.type != Token.TESTCASE_HEADER:
-            for line in statement.lines:
-                for index, token in enumerate(line):
-                    col = index + 1
-                    if col >= len(self.widths):
-                        self.widths.append(len(token.value))
-                    elif len(token.value) > self.widths[col]:
-                        self.widths[col] = len(token.value)
-                self.first_statement_after_name_seen = True
+            return
+        for line in statement.lines:
+            for index, token in enumerate(line):
+                col = index + 1
+                if col >= len(self.widths):
+                    self.widths.append(len(token.value))
+                elif len(token.value) > self.widths[col]:
+                    self.widths[col] = len(token.value)
 
 
 class Aligner(ast.NodeVisitor):
@@ -109,12 +108,10 @@ class Aligner(ast.NodeVisitor):
     def visit_Section(self, section):
         if section.type in (Token.SETTING_HEADER, Token.VARIABLE_HEADER):
             self.generic_visit(section)
-        elif section.type == Token.TESTCASE_HEADER:
-            if len(section.header) > 1:
-                widths = [len(t.value) for t in section.header]
-                counter = ColumnWidthCounter(widths[:])
-                counter.visit(section)
-                ColumnAligner(self.ctx, counter.widths).visit(section)
+        elif section.type == Token.TESTCASE_HEADER and len(section.header) > 1:
+            counter = ColumnWidthCounter()
+            counter.visit(section)
+            ColumnAligner(self.ctx, counter.widths).visit(section)
 
     def visit_Statement(self, statement):
         for line in statement.lines:
@@ -127,10 +124,10 @@ class SettingCleaner(ast.NodeVisitor):
     def visit_Statement(self, statement):
         if statement.type in Token.SETTING_TOKENS:
             name = statement.tokens[0].value
-            if name.strip().startswith('['):
-                cleaned = '[%s]' % name[1:-1].strip().lower().title()
+            if name.startswith('['):
+                cleaned = '[%s]' % name[1:-1].strip().title()
             else:
-                cleaned = name.lower().title()
+                cleaned = name.title()
             statement.tokens[0].value = cleaned
 
 
