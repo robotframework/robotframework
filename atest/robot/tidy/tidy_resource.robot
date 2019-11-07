@@ -10,7 +10,7 @@ ${TEMPFILE}       ${TEMP}${/}tidy-test-file.txt
 *** Keywords ***
 Run tidy with golden file and check result
     [Arguments]    ${options}    ${expected}
-    ${output} =    Run tidy and check result    ${options}    golden.robot    expected=${expected}
+    ${output} =    Run tidy and check result    ${options}    golden-input.robot    expected=${expected}
     [Return]    ${output}
 
 Run tidy with golden resource file and check result

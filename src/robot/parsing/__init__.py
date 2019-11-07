@@ -54,6 +54,8 @@ from robot.errors import DataError
 from .lexer import TestCaseFileLexer, ResourceFileLexer
 from .nodes import TestCaseSection
 from .parser import RobotFrameworkParser
+from .lexerwrapper import LexerWrapper
+from .model import Model
 from . import lexerwrapper
 
 

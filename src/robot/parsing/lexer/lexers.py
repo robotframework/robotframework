@@ -108,6 +108,8 @@ class SectionLexer(BlockLexer):
 
     @classmethod
     def handles(cls, statement):
+        if not statement:
+            return False
         marker = statement[0].value
         return (marker.startswith('*') and
                 cls._normalize(marker) in cls.markers)
@@ -186,7 +188,7 @@ class ErrorSectionLexer(SectionLexer):
 
     @classmethod
     def handles(cls, statement):
-        return statement[0].value.startswith('*')
+        return statement and statement[0].value.startswith('*')
 
     def lexer_classes(self):
         return (ErrorSectionHeaderLexer, CommentLexer)

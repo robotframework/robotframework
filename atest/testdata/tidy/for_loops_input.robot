@@ -7,6 +7,9 @@ For loop in test
 Old for loop in test
     :FOR    ${x}    IN    foo    bar
     \    Log    ${x}
+    :FOR    ${x}    IN    quux    zap
+    \    Log    ${x}
+    END
 
 *** Keywords ***
 For loop in keyword
