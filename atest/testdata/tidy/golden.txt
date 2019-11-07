@@ -12,9 +12,12 @@ MyVar             val1    val2    val3    val4    val5    val6    val7
 
 *** Test Cases ***
 My Test Case
-    [Documentation]    This is a long comment that spans several columns
+    [Documentation]    This is a documentation
+    ...    in two lines
     My TC Step 1    my step arg    # step 1 comment
     My TC Step 2    my step 2 arg    second \ arg    # step 2 comment
+    ...    third arg split to own row
+    ...    fourth and    fifth as well    # comment
     [Teardown]    1 minute    args
 
 Another Test
