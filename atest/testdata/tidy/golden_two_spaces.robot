@@ -1,3 +1,5 @@
+This data is ignored at runtime but should be preserved by Tidy.
+
 *** Settings ***
 Library         MyLibrary  argument  WITH NAME  My Alias  # My library comment
 Variables       MyVariables  args  args 2  args 3  args 4  args 5  args 6
