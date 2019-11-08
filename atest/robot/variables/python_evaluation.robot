@@ -1,6 +1,9 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    variables/python_evaluation.robot
-Resource         atest_resource.robot
+Suite Setup       Run Keywords
+...               Remove Environment Variable    PYTHONCASEOK    AND
+...               Run Tests    ${EMPTY}    variables/python_evaluation.robot
+Suite Teardown    Set Environment Variable    PYTHONCASEOK    True
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Python only
