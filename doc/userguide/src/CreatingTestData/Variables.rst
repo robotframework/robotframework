@@ -1412,6 +1412,9 @@ respectively.
 
 Main usages for this pretty advanced functionality are:
 
+- Evaluating Python expressions involving Robot Framework's variables
+  (`${{len('${var}') > 3}}`, `${{$var[0] if $var is not None else None}}`).
+
 - Creating values that are not Python base types
   (`${{decimal.Decimal('0.11')}}`, `${{datatime.date(2019, 11, 5)}}`).
 
@@ -1421,9 +1424,6 @@ Main usages for this pretty advanced functionality are:
 - Constructing collections, especially nested collections (`${{[1, 2, 3, 4]}}`,
   `${{ {'id': 1, 'name': 'Example', children: [7, 9]} }}`).
 
-- Evaluating Python expressions involving Robot Framework's variables
-  (`${{len('${var}') > 3}}`, `${{$var[0] if $var is not None else None}}`).
-
 - Accessing constants and other useful attributes in Python modules
   (`${{math.pi}}`, `${{platform.system()}}`).
 
@@ -1432,7 +1432,7 @@ discussed earlier. As the examples above illustrate, this syntax is even more
 powerful as it provides access to Python built-ins like `len()` and modules
 like `math`. In addition to being able to use variables like `${var}` in
 the expressions (they are replaced before evaluation), variables are also
-available using the spacial `$var` syntax during evaluation. All these
+available using the special `$var` syntax during evaluation. All these
 features are discussed in more detail below.
 
 .. tip:: Instead of creating complicated expressions, it is often better
