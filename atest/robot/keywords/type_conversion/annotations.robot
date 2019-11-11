@@ -190,3 +190,12 @@ Type information mismatch caused by decorator
 
 Value contains variable
     Check Test Case    ${TESTNAME}
+
+Keyword decorator with wraps
+    Check Test Case    ${TESTNAME}
+
+Keyword decorator with wraps mismatched type
+    Check Test Case    ${TESTNAME}
+
+Keyword decorator with wraps mismatched value
+    Check Test Case    ${TESTNAME}

@@ -21,16 +21,7 @@ from .argumentspec import ArgumentSpec
 
 
 if PY2:
-    from inspect import getargspec, ismethod
-
-
-    def getfullargspec(func):
-        return getargspec(unwrap(func)) + ([], None, {})
-
-
     def unwrap(func):
-        while hasattr(func, '__wrapped__'):
-            func = func.__wrapped__
         return func
 else:
     from inspect import getfullargspec, ismethod, unwrap
