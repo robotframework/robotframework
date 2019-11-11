@@ -36,8 +36,8 @@ Resource Order Should Be Available In The Next Test Case
 Setting Resource Order Returns Previous Resource Order
     Set Library Search Order    resource2    resource1
     @{order} =    Set Library Search Order
-    Should Be Equal    @{order}[0]    resource2
-    Should Be Equal    @{order}[1]    resource1
+    Should Be Equal    ${order}[0]    resource2
+    Should Be Equal    ${order}[1]    resource1
 
 It Is Possible To Set Both Library And Resource Priorities At The Same Time
     Set Library Search Order    resource1    resource2    TestLibrary    AnotherLibrary

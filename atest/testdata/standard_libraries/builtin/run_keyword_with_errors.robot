@@ -40,7 +40,7 @@ Ignore Error With Arguments That Needs To Be Escaped
     Should Be Equal    ${ret val}    ${None}
     ${status}    ${ret val} =    Run Keyword And Ignore Error    Create List    @{NEEDS ESCAPING}
     Should Be Equal    ${status}    PASS
-    Should Be True    ${ret val} == @{NEEDS ESCAPING}
+    Should Be True    ${ret val} == ${NEEDS ESCAPING}
 
 Ignore Error When Timeout Occurs
     [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
@@ -194,7 +194,7 @@ Expect Error When Access To List Variable Nonexisting Index Syntax 1
 
 Expect Error When Access To List Variable Nonexisting Index Syntax 2
     Run Keyword And Expect Error
-    ...    List '\@{list}' has no item in index 2.
+    ...    List '\${list}' has no item in index 2.
     ...    Access To List Variable Nonexisting Index Syntax 2
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 1
@@ -204,7 +204,7 @@ Expect Error When Access To Dictionary Nonexisting Key Syntax 1
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 2
     Run Keyword And Expect Error
-    ...    Dictionary '\&{dict}' has no key 'c'.
+    ...    Dictionary '\${dict}' has no key 'c'.
     ...    Access To Dictionary Variable Nonexisting Key Syntax 2
 
 Expect Error With Explicit GLOB
@@ -292,7 +292,7 @@ Access To List Variable Nonexisting Index Syntax 1
 
 Access To List Variable Nonexisting Index Syntax 2
     ${list} =    Create list    1    2
-    Log    @{list}[2]
+    Log    ${list}[2]
 
 Access To Dictionary Variable Nonexisting Key Syntax 1
     ${dict} =    Create dictionary    a=1    b=2
@@ -300,7 +300,7 @@ Access To Dictionary Variable Nonexisting Key Syntax 1
 
 Access To Dictionary Variable Nonexisting Key Syntax 2
     ${dict} =    Create dictionary    a=1    b=2
-    Log    &{dict}[c]
+    Log    ${dict}[c]
 
 Keyword With Ignore Error With "Passing" Exceptions
     Run Keyword And Ignore Error    Return From Keyword

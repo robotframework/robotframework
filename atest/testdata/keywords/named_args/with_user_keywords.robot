@@ -50,15 +50,15 @@ Default value with escaped content
 
 Varargs without naming arguments works
     @{ret} =    Named arguments with varargs    foo    bar    dar
-    Should be equal    @{ret}[0]    foo
+    Should be equal    ${ret}[0]    foo
     @{ret} =    Named arguments with varargs    foo    bar=bar    dar
-    Should be equal    @{ret}[1]    bar=bar
+    Should be equal    ${ret}[1]    bar=bar
     @{ret} =    Named arguments with varargs    foo    b\=bar    dar
-    Should be equal    @{ret}[1]    b=bar
+    Should be equal    ${ret}[1]    b=bar
 
 Naming without the varargs works
     @{ret} =    Named arguments with varargs    foo    b=bar
-    Should be equal    @{ret}[1]    bar
+    Should be equal    ${ret}[1]    bar
 
 Varargs with naming does not work
     [Documentation]    FAIL Keyword 'Named arguments with varargs' got positional argument after named arguments.
@@ -169,4 +169,4 @@ Named arguments with varargs
 
 Named arguments with nönäscii
     [Arguments]    ${nönäscii}=
-    [return]       ${nönäscii}
+    [Return]       ${nönäscii}

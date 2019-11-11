@@ -27,10 +27,10 @@ Get Modified Time As Parts
     Should Be True    1 <= int('${mm}') <= 12
     Should Be True    1 <= int('${dd}') <= 31
     @{time} =    Get Modified Time    ${CURDIR}    year, sec, min, hour
-    Should Be Equal    @{time}[0]    ${year}
-    Should Be True    0 <= int('@{time}[1]') <= 23
-    Should Be True    0 <= int('@{time}[2]') <= 59
-    Should Be True    0 <= int('@{time}[3]') <= 59
+    Should Be Equal    ${time}[0]    ${year}
+    Should Be True    0 <= int('${time}[1]') <= 23
+    Should Be True    0 <= int('${time}[2]') <= 59
+    Should Be True    0 <= int('${time}[3]') <= 59
 
 Get Modified Time Fails When Path Does Not Exist
     [Documentation]    FAIL Path '${CURDIR}${/}does_not_exist' does not exist.

@@ -60,7 +60,7 @@ Scalar dicts can be used as dicts
     Should Be Equal    ${SCALAR DICT}    ${EXP DICT}
     ${dict} =    Create Dictionary    &{SCALAR DICT}
     Should Be Equal    ${dict}    ${EXP DICT}
-    Should Be Equal    &{SCALAR DICT}[a]    ${1}
+    Should Be Equal    ${SCALAR DICT}[a]    ${1}
 
 Scalar dicts are not converted to DotDicts
     Variable Should Not Exist    ${SCALAR DICT.a}
