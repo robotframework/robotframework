@@ -63,6 +63,7 @@ installation approaches, see the `installation instructions`_.
 Robot Framework {version} was released on {date}.
 
 .. _Robot Framework: http://robotframework.org
+.. _Robot Framework Foundation: http://robotframework.org/foundation
 .. _pip: http://pip-installer.org
 .. _PyPI: https://pypi.python.org/pypi/robotframework
 .. _issue tracker milestone: https://github.com/robotframework/robotframework/issues?q=milestone%3A{version.milestone}
