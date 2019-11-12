@@ -2,6 +2,7 @@ import os
 import unittest
 import tempfile
 
+from robot. errors import DataError
 from robot.utils import XmlWriter, ET, ETSource
 from robot.utils.asserts import *
 
@@ -101,8 +102,14 @@ class TestXmlWriter(unittest.TestCase):
         assert_equal(self.writer._escape(u'\x1b[31m'), '[31m')
         assert_equal(self.writer._escape(u'\x00'), '')
 
-    def test_ioerror_when_file_is_invalid(self):
-        assert_raises(IOError, XmlWriter, os.path.dirname(__file__))
+    def test_dataerror_when_file_is_invalid(self):
+        err = assert_raises(DataError, XmlWriter, os.path.dirname(__file__))
+        assert_true(err.message.startswith('Opening file'))
+
+    def test_dataerror_when_file_is_invalid_contains_optional_usage(self):
+        err = assert_raises(DataError, XmlWriter, os.path.dirname(__file__),
+                            usage='testing')
+        assert_true(err.message.startswith('Opening testing file'))
 
     def test_dont_write_empty(self):
         self.tearDown()

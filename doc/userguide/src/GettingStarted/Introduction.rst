@@ -1,20 +1,25 @@
 Introduction
 ============
 
-Robot Framework is a Python-based, extensible keyword-driven test
-automation framework for end-to-end acceptance testing and
-acceptance-test-driven development (ATDD). It can be used for testing
-distributed, heterogeneous applications, where verification requires
-touching several technologies and interfaces.
+Robot Framework is a Python-based, extensible keyword-driven automation
+framework for acceptance testing, acceptance test driven development (ATDD),
+behavior driven development (BDD) and robotic process automation (RPA). It
+can be used in distributed, heterogeneous environments, where automation
+requires using different technologies and interfaces.
 
 The framework has a rich ecosystem around it consisting of various generic
-test libraries and tools that are developed as separate projects. For more
+libraries and tools that are developed as separate projects. For more
 information about Robot Framework and the ecosystem, see
 http://robotframework.org.
 
 Robot Framework is open source software released under the `Apache License
 2.0`_. Its development is sponsored by the `Robot Framework Foundation
 <http://robotframework.org/foundation>`_.
+
+.. note:: The official RRA support was added in Robot Framework 3.1.
+          This User Guide still talks mainly about creating tests, test data,
+          and test libraries, but same concepts apply also when `creating
+          tasks`_.
 
 .. contents::
    :depth: 2
@@ -78,10 +83,10 @@ diagram below.
    Robot Framework architecture
 
 The `test data`_ is in simple, easy-to-edit tabular format. When
-Robot Framework is started, it processes the test data, `executes test
+Robot Framework is started, it processes the data, `executes test
 cases`__ and generates logs and reports. The core framework does not
 know anything about the target under test, and the interaction with it
-is handled by `test libraries`__. Libraries can either use application
+is handled by libraries__. Libraries can either use application
 interfaces directly or use lower level test tools as drivers.
 
 __ `Executing test cases`_

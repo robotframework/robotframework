@@ -14,6 +14,9 @@ Import Library With Arguments
 Import Library With Variables And WITH NAME
     Check Test Case    ${TEST NAME}
 
+Import Library With WITH NAME containing non-ASCII spaces
+    Check Test Case    ${TEST NAME}
+
 Import Library Using Physical Path
     Check Test Case    ${TEST NAME}
 
@@ -32,8 +35,6 @@ Import Library Failure Is Catchable
 Import Library From Path
     Check Test Case    ${TESTNAME}
 
-Extra Spaces In Name Are Deprecated
+Extra Spaces In Name Are Not Supported
     Check Test Case    ${TESTNAME}
-    Check Log Message    @{ERRORS}[0]
-    ...    Importing library with extra spaces in name like 'Date Time' is deprecated. Remove spaces and use 'DateTime' instead.
-    ...    WARN
+    Should Be Empty    ${ERRORS}

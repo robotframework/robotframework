@@ -73,6 +73,14 @@ class VariableError(DataError):
     """
 
 
+class KeywordError(DataError):
+    """Used when no keyword is found or there is more than one match.
+
+    KeywordErrors are caught by keywords that run other keywords
+    (e.g. `Run Keyword And Expect Error`).
+    """
+
+
 class TimeoutError(RobotError):
     """Used when a test or keyword timeout occurs.
 
@@ -95,8 +103,8 @@ class Information(RobotError):
     """Used by argument parser with --help or --version."""
 
 
-class ExecutionFailed(RobotError):
-    """Used for communicating failures in test execution."""
+class ExecutionStatus(RobotError):
+    """Base class for exceptions communicating status in test execution."""
 
     def __init__(self, message, test_timeout=False, keyword_timeout=False,
                  syntax=False, exit=False, continue_on_failure=False,
@@ -128,7 +136,8 @@ class ExecutionFailed(RobotError):
     def continue_on_failure(self, continue_on_failure):
         self._continue_on_failure = continue_on_failure
         for child in getattr(self, '_errors', []):
-            child.continue_on_failure = continue_on_failure
+            if child is not self:
+                child.continue_on_failure = continue_on_failure
 
     def can_continue(self, teardown=False, templated=False, dry_run=False):
         if dry_run:
@@ -151,16 +160,21 @@ class ExecutionFailed(RobotError):
         return 'FAIL'
 
 
+class ExecutionFailed(ExecutionStatus):
+    """Used for communicating failures in test execution."""
+
+
 class HandlerExecutionFailed(ExecutionFailed):
 
     def __init__(self, details):
-        timeout = isinstance(details.error, TimeoutError)
-        test_timeout = timeout and details.error.test_timeout
-        keyword_timeout = timeout and details.error.keyword_timeout
-        syntax = (isinstance(details.error, DataError) and
-                  not isinstance(details.error, VariableError))
-        exit_on_failure = self._get(details.error, 'EXIT_ON_FAILURE')
-        continue_on_failure = self._get(details.error, 'CONTINUE_ON_FAILURE')
+        error = details.error
+        timeout = isinstance(error, TimeoutError)
+        test_timeout = timeout and error.test_timeout
+        keyword_timeout = timeout and error.keyword_timeout
+        syntax = (isinstance(error, DataError)
+                  and not isinstance(error, (KeywordError, VariableError)))
+        exit_on_failure = self._get(error, 'EXIT_ON_FAILURE')
+        continue_on_failure = self._get(error, 'CONTINUE_ON_FAILURE')
         ExecutionFailed.__init__(self, details.message, test_timeout,
                                  keyword_timeout, syntax, exit_on_failure,
                                  continue_on_failure)
@@ -235,14 +249,14 @@ class UserKeywordExecutionFailed(ExecutionFailures):
         return '%s\n\nAlso keyword teardown failed:\n%s' % (run_msg, td_msg)
 
 
-class ExecutionPassed(ExecutionFailed):
+class ExecutionPassed(ExecutionStatus):
     """Base class for all exceptions communicating that execution passed.
 
     Should not be raised directly, but more detailed exceptions used instead.
     """
 
     def __init__(self, message=None, **kwargs):
-        ExecutionFailed.__init__(self, message or self._get_message(), **kwargs)
+        ExecutionStatus.__init__(self, message or self._get_message(), **kwargs)
         self._earlier_failures = []
 
     def _get_message(self):
@@ -283,8 +297,10 @@ class ExitForLoop(ExecutionPassed):
 class ReturnFromKeyword(ExecutionPassed):
     """Used by 'Return From Keyword' keyword."""
 
-    def __init__(self, return_value):
+    def __init__(self, return_value=None, failures=None):
         ExecutionPassed.__init__(self, return_value=return_value)
+        if failures:
+            self.set_earlier_failures(failures)
 
 
 class RemoteError(RobotError):

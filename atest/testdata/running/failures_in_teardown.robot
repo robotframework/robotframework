@@ -1,5 +1,7 @@
 ﻿*** Settings ***
 Suite Teardown    Suite Teardown With Failures
+Resource          ../keywords/resources/my_resource_1.robot
+Resource          ../keywords/resources/my_resource_2.robot
 
 *** Variables ***
 ${SUITE TEARDOWN FAILED}    SEPARATOR=\n
@@ -16,7 +18,7 @@ ${SUITE TEARDOWN FAILED}    SEPARATOR=\n
 One Failure
     [Documentation]    FAIL    Teardown failed:
     ...    Message
-    ...    
+    ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
     [Teardown]    One Failure
@@ -26,9 +28,9 @@ Multiple Failures
     ...    Several failures occurred:
     ...
     ...    1) Message 1
-    ...    
+    ...
     ...    2) Message 2
-    ...    
+    ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
     [Teardown]    Multiple Failures
@@ -46,13 +48,13 @@ Failure In For Loop
     ...    Several failures occurred:
     ...
     ...    1) cat
-    ...    
+    ...
     ...    2) again
-    ...    
+    ...
     ...    3) dog
-    ...    
+    ...
     ...    4) again
-    ...    
+    ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
     [Teardown]    Failures In For Loop
@@ -86,13 +88,27 @@ Execution Continues If Variable Does Not Exist
     No Operation
     [Teardown]    Missing Variables
 
-Execution Stops After Syntax Error
+Execution Continues After Keyword Errors
     [Documentation]    FAIL    Teardown failed:
-    ...    No keyword with name 'Keyword Missing' found.
+    ...    Several failures occurred:
+    ...
+    ...    1) No keyword with name 'Keyword Missing' found.
+    ...
+    ...    2) Multiple keywords with name 'Keyword In Both Resources' found. Give the full name of the keyword you want to use:
+    ...    ${SPACE*4}my_resource_1.Keyword In Both Resources
+    ...    ${SPACE*4}my_resource_2.Keyword In Both Resources
     ...
     ...    ${SUITE TEARDOWN FAILED}
     No Operation
-    [Teardown]    Missing Keywords
+    [Teardown]    Keyword Errors
+
+Execution Stops After Syntax Error
+    [Documentation]    FAIL    Teardown failed:
+    ...    Keyword name cannot be empty.
+    ...
+    ...    ${SUITE TEARDOWN FAILED}
+    No Operation
+    [Teardown]    Syntax Errors
 
 Fatal Error 1
     [Documentation]    FAIL    Teardown failed:
@@ -123,9 +139,10 @@ Failure when setting variables
     Should Be Equal    ${ret}    ${None}
 
 Failures In For Loop
-    :FOR    ${animal}    IN    cat    dog
-    \    Fail    ${animal}
-    \    Fail    again
+    FOR    ${animal}    IN    cat    dog
+        Fail    ${animal}
+        Fail    again
+    END
 
 Test Timeout Occurs
     Sleep    1 s
@@ -139,13 +156,18 @@ Keyword Timeout Occurs
 Missing Variables
     Log    ${this var does not exist}
     Log    This should be executed
-    :FOR    ${i}    IN RANGE    1
-    \    Fail    ${neither does this one}
+    FOR    ${i}    IN RANGE    1
+        Fail    ${neither does this one}
+    END
 
-Missing Keywords
+Keyword Errors
     Keyword Missing
     Log    This should be executed
-    Another Missing Keyword
+    Keyword In Both Resources
+
+Syntax Errors
+    ${invalid}
+    Not executed
 
 Keyword With Fatal Error
     Fatal Error    The End

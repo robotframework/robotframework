@@ -1,12 +1,13 @@
 # External Python modules required by acceptance tests.
 # See atest/README.rst for more information.
 
-docutils >= 0.9
+docutils >= 0.9; platform_python_implementation != 'IronPython'  # https://github.com/IronLanguages/ironpython2/issues/113
 pygments
 pyyaml
+enum34; python_version < '3.0'
+pillow; platform_system == 'Windows'
 
 # On Linux installing lxml with pip may require compilation and development
 # headers. Alternatively it can be installed using a package manager like
 # `sudo apt-get install python-lxml`.
-# Notice also that lxml is not compatible with Jython or IronPython.
-lxml
+lxml; platform_python_implementation == 'CPython' or platform_python_implementation == 'PyPy' and platform_system != 'Windows'

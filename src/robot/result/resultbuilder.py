@@ -27,12 +27,17 @@ from .xmlelementhandlers import XmlElementHandler
 def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
 
-    :param sources: Path(s) to the XML output file(s).
+    :param sources: XML source(s) containing execution results.
+        Can be specified as paths, opened file objects, or strings/bytes
+        containing XML directly. Support for bytes is new in RF 3.2.
     :param options: Configuration options.
         Using ``merge=True`` causes multiple results to be combined so that
-        tests in the latter results replace the ones in the original. Other
-        options are passed directly to the :class:`ExecutionResultBuilder`
-        object used internally.
+        tests in the latter results replace the ones in the original.
+        Setting ``rpa`` either to ``True`` (RPA mode) or ``False`` (test
+        automation) sets execution mode explicitly. By default it is got
+        from processed output files and conflicting modes cause an error.
+        Other options are passed directly to the
+        :class:`ExecutionResultBuilder` object used internally.
     :returns: :class:`~.executionresult.Result` instance.
 
     Should be imported by external code via the :mod:`robot.api` package.
@@ -62,8 +67,9 @@ def _combine_results(sources, options):
 
 def _single_result(source, options):
     ets = ETSource(source)
+    result = Result(source, rpa=options.pop('rpa', None))
     try:
-        return ExecutionResultBuilder(ets, **options).build(Result(source))
+        return ExecutionResultBuilder(ets, **options).build(result)
     except IOError as err:
         error = err.strerror
     except:

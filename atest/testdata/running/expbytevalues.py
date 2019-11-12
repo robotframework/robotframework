@@ -22,8 +22,8 @@ def get_variables(interpreter=None):
                          exp_log_msg="b'\\xe4iti'",
                          exp_log_multiline_msg="b'\\xe4iti\\nis\\xe4'")
     elif _high_bytes_ok():
-        variables.update(exp_log_msg=console_decode('\xe4iti'),
-                         exp_log_multiline_msg=console_decode('\xe4iti\nis\xe4'))
+        variables.update(exp_log_msg=console_decode(b'\xe4iti'),
+                         exp_log_multiline_msg=console_decode(b'\xe4iti\nis\xe4'))
     return variables
 
 

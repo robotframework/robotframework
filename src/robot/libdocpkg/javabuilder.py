@@ -13,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
+from inspect import cleandoc
 
 from robot.errors import DataError
-from robot import utils
+from robot.utils import (JAVA_VERSION, normalize, split_tags_from_doc,
+                         printable_name)
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -37,7 +38,7 @@ class JavaDocBuilder(object):
 
     def _get_doc(self, doc):
         text = doc.getRawCommentText()
-        return '\n'.join(line.strip() for line in text.splitlines())
+        return cleandoc(text).rstrip()
 
     def _get_version(self, doc):
         return self._get_attr(doc, 'VERSION')
@@ -56,7 +57,7 @@ class JavaDocBuilder(object):
             if field.name() == name and field.isPublic():
                 value = field.constantValue()
                 if upper:
-                    value = utils.normalize(value, ignore='_').upper()
+                    value = normalize(value, ignore='_').upper()
                 return value
         return ''
 
@@ -70,9 +71,9 @@ class JavaDocBuilder(object):
         return [self._keyword_doc(m) for m in doc.methods()]
 
     def _keyword_doc(self, method):
-        doc, tags = utils.split_tags_from_doc(self._get_doc(method))
+        doc, tags = split_tags_from_doc(self._get_doc(method))
         return KeywordDoc(
-            name=utils.printable_name(method.name(), code_style=True),
+            name=printable_name(method.name(), code_style=True),
             args=self._get_keyword_arguments(method),
             doc=doc,
             tags=tags
@@ -118,7 +119,7 @@ def ClassDoc(path):
     jdoctool = JavadocTool.make0(context)
     filter = ModifierFilter(PUBLIC)
     java_names = List.of(path)
-    if sys.platform[4:7] < '1.8':  # API changed in Java 8
+    if JAVA_VERSION < (1, 8):  # API changed in Java 8
         root = jdoctool.getRootDocImpl('en', 'utf-8', filter, java_names,
                                        List.nil(), False, List.nil(),
                                        List.nil(), False, False, True)

@@ -168,6 +168,23 @@ class SelectionDialog(_TkDialog):
         return self._listbox.get(self._listbox.curselection())
 
 
+class MultipleSelectionDialog(_TkDialog):
+
+    def __init__(self, message, values):
+        _TkDialog.__init__(self, message, values)
+
+    def _create_selector(self, parent, values):
+        self._listbox = Listbox(parent, selectmode='multiple')
+        for item in values:
+            self._listbox.insert(END, item)
+        self._listbox.config(width=0)
+        return self._listbox
+
+    def _get_value(self):
+        selected_values = [self._listbox.get(i) for i in self._listbox.curselection()]
+        return selected_values
+
+
 class PassFailDialog(_TkDialog):
     _left_button = 'PASS'
     _right_button = 'FAIL'

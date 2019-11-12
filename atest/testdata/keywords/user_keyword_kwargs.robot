@@ -83,11 +83,11 @@ Kwargs are dot-accessible
     Should Be Equal    ${kwargs.second}    ${2}
 
 Too few positional arguments
-    [Documentation]    FAIL Keyword 'Positional and kwargs' expected 2 non-keyword arguments, got 1.
+    [Documentation]    FAIL Keyword 'Positional and kwargs' expected 2 non-named arguments, got 1.
     Positional and kwargs    one positional is not enough
 
 Too many positional arguments
-    [Documentation]    FAIL Keyword 'Kwargs only' expected 0 non-keyword arguments, got 3.
+    [Documentation]    FAIL Keyword 'Kwargs only' expected 0 non-named arguments, got 3.
     Kwargs only    positional    not    accepted
 
 Positional after kwargs
@@ -142,9 +142,10 @@ Positional with defaults and kwargs
 Varags and kwargs
     [Arguments]    @{varargs}    &{kwargs}
     @{items} =    Create List    @{varargs}
-    :FOR    ${key}    IN    @{kwargs}
-    \    ${value} =    Get From Dictionary    ${kwargs}    ${key}
-    \    Append To List    ${items}    ${key}: ${value}
+    FOR    ${key}    IN    @{kwargs}
+        ${value} =    Get From Dictionary    ${kwargs}    ${key}
+        Append To List    ${items}    ${key}: ${value}
+    END
     ${result} =    Catenate    SEPARATOR=,${SPACE}    @{items}
     [Return]    ${result}
 

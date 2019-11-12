@@ -34,7 +34,10 @@ Importing Java Library File By Path With .class Extension
     Check Keyword Data    ${test.kws[0]}    MyJavaLib2.Keyword In My Java Lib 2    \${ret}    maailma
 
 Importing By Path Having Spaces
-    Check Test Case    Importing By Path Having Spaces
+    Check Test Case    ${TEST NAME}
+
+Importing By Path Containing Non-ASCII Characters
+    Check Test Case    ${TEST NAME}
 
 Importing Invalid Python File Fails
     ${path} =    Normalize Path    ${DATADIR}/test_libraries/MyInvalidLibFile.py
@@ -58,3 +61,9 @@ Importing Non Existing Py File
     Import should have failed    4    test_libraries/library_import_by_path.robot
     ...    Test library 'this_does_not_exist.py' does not exist.
     ...    traceback=
+
+Import failure when path contains non-ASCII characters is handled correctly
+    ${path} =    Normalize path    ${DATADIR}/test_libraries/nön_äscii_dïr/invalid.py
+    Import should have failed    -1    test_libraries/library_import_by_path.robot
+    ...    Importing test library '${path}' failed: Ööööps!
+    ...    File "${path}", line 2, in <module>\n*raise RuntimeError(u'Ööööps!')

@@ -56,7 +56,7 @@ Non-existing keyword
     Run keywords    Passing    Non-Existing    Non-Existing But Not Executed
 
 Wrong number of arguments to keyword
-    [Documentation]    FAIL Keyword 'BuiltIn.Log' expected 1 to 5 arguments, got 0.${ATD ERR}
+    [Documentation]    FAIL Keyword 'BuiltIn.Log' expected 1 to 6 arguments, got 0.${ATD ERR}
     Run keywords    Passing    Log    This isn't argument to Log keyword
 
 In test setup
@@ -76,11 +76,13 @@ In test teardown
     ...
     ...    3) AssertionError
     ...
-    ...    4) No keyword with name 'Non-Existing Keyword' found.${ATD ERR}
+    ...    4) No keyword with name 'Non-Existing Keyword' found.
+    ...
+    ...    5) Keyword name cannot be empty.${ATD ERR}
     No Operation
     [Teardown]    Run keywords    Passing    ${NOOP}    Failing    ${NOOP}
     ...    Non-existing Variable    Fail    Non-Existing Keyword
-    ...    Not Executed After Previous Missing Keyword
+    ...    Syntax Error    Not Executed After Previous Syntax Error
 
 In test teardown with ExecutionPassed exception
     [Documentation]    FAIL Stop here${ATD ERR}
@@ -121,3 +123,6 @@ Returning keyword
 
 Non-existing Variable
     Log    ${this variable does not exist}
+
+Syntax Error
+    ${invalid}

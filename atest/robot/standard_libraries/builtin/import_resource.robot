@@ -1,5 +1,7 @@
 *** Settings ***
-Suite Setup     Run Tests  --variable WINDOWS:${WINDOWS} --PYTHONPATH ${DATADIR}/../testresources/res_and_var_files/  standard_libraries/builtin/import_resource.robot
+Suite Setup     Run Tests
+...    --variable WINDOWS:${INTERPRETER.is_windows} --PYTHONPATH ${DATADIR}/../testresources/res_and_var_files/
+...    standard_libraries/builtin/import_resource.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***

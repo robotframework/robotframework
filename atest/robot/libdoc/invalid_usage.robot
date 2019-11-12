@@ -4,11 +4,7 @@ Test Setup       Remove File    ${OUT HTML}
 Test Template    Run libdoc and verify error
 Test Teardown    Should Not Exist    ${OUT HTML}
 
-*** Variable ***
-${USAGE TIP}    \nTry --help for usage information.\n
-
 *** Test Cases ***
-
 No arguments
     ${EMPTY}          Expected at least 2 arguments, got 0.
 
@@ -22,8 +18,9 @@ Invalid option
     --invalid         option --invalid not recognized
 
 Invalid format
-    -f XXX BuiltIn ${OUT HTML}    Format must be 'HTML' or 'XML', got 'XXX'.
-    BuiltIn out.ext            Format must be 'HTML' or 'XML', got 'EXT'.
+    -f XXX BuiltIn ${OUT HTML}              Format must be 'HTML', 'XML' or 'XML:HTML', got 'XXX'.
+    --format XML:XXX BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML' or 'XML:HTML', got 'XML:XXX'.
+    BuiltIn out.ext                         Format must be 'HTML', 'XML' or 'XML:HTML', got 'EXT'.
 
 Invalid doc format
     --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.
@@ -49,13 +46,22 @@ Non-XML spec
 
 Invalid resource
     ${CURDIR}/invalid_usage.robot ${OUT HTML}
-    ...   [ ERROR ] *: Non-existing setting 'Test Setup'.
-    ...   [ ERROR ] *: Non-existing setting 'Test Template'.
-    ...   [ ERROR ] *: Non-existing setting 'Test Teardown'.
-    ...   Resource file '*' contains a test case table which is not allowed.
+    ...   ? ERROR ? *: Non-existing setting 'Test Setup'.
+    ...   ? ERROR ? *: Non-existing setting 'Test Template'.
+    ...   ? ERROR ? *: Non-existing setting 'Test Teardown'.
+    ...   Resource file '*[/\\]invalid_usage.robot' cannot contain tests or tasks.
 
+Invalid output file
+    [Setup]    Run Keywords
+    ...    Create Directory    ${OUT HTML}    AND
+    ...    Create Directory    ${OUT XML}
+    String ${OUT HTML}    Opening Libdoc output file '${OUT HTML}' failed: *
+    String ${OUT XML}     Opening Libdoc output file '${OUT XML}' failed: *
+    [Teardown]    Run Keywords
+    ...    Remove Directory    ${OUT HTML}    AND
+    ...    Remove Directory    ${OUT XML}
 
 *** Keywords ***
 Run libdoc and verify error
     [Arguments]    ${args}    @{error}
-    Run libdoc and verify output    ${args}    @{error}    ${USAGE TIP}
+    Run libdoc and verify output    ${args}    @{error}    ${USAGE TIP[1:]}

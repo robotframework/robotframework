@@ -5,6 +5,6 @@ Library  String
 ${VAR FROM IMPORT RESOURCE RESOURCE 3}  value 3
 
 
-*** User Keywords ***
+*** Keywords ***
 KW From Import Resource Resource 3
     No Operation

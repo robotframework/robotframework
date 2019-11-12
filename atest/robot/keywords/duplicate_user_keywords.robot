@@ -30,7 +30,7 @@ Keyword with embedded arguments defined multiple times in resource fails at run-
 Creating keyword should have failed
     [Arguments]    ${index}    ${name}    ${source}=duplicate_user_keywords.robot    ${source type}=test case
     ${source} =    Normalize Path    ${DATADIR}/keywords/${source}
-    ${message} =    Catenate
+    ${message} =    Catenate
     ...    Error in ${source type} file '${source}':
     ...    Creating keyword '${name}' failed:
     ...    Keyword with same name defined multiple times.

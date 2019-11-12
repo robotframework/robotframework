@@ -6,6 +6,10 @@ Deprecated keywords
     Deprecated Library Keyword
     Deprecated User Keyword
 
+Multiline message
+    Deprecated Library Keyword With Multiline Message
+    Deprecated User Keyword With Multiline Message
+
 Deprecated keywords without extra doc
     Deprecated Library Keyword Without Extra Doc
     Deprecated User Keyword Without Extra Doc
@@ -29,7 +33,15 @@ Not deprecated keywords
 *** Keyword ***
 Deprecated User Keyword
     [Documentation]    *DEPRECATED* Use keyword `Not Deprecated User Keyword` instead.
-    ...    ignore this
+    No Operation
+
+Deprecated User Keyword With Multiline Message
+    [Documentation]    *DEPRECATED* Message in
+    ...                multiple
+    ...                lines.
+    ...
+    ...                Ignore this.
+    ...                And this.
     No Operation
 
 Deprecated User Keyword With Stuff To Ignore

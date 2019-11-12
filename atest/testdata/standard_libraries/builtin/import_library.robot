@@ -21,6 +21,11 @@ Import Library With Variables And WITH NAME
     Import Library    ${name}    ${42}    ${name}    WITH NAME    Variables-${42}
     Variables-42.Parameters Should Be    ${42}    ParameterLibrary
 
+Import Library With WITH NAME containing non-ASCII spaces
+    ${name} =    Set Variable    ParameterLibrary
+    Import Library    ${name}    Ogham space mark    : :    WITH NAME    Ogham space mark
+    Ogham space mark.Parameters Should Be    Ogham space mark    : :
+
 Import Library Using Physical Path
     Import Library    ${CURDIR}${/}RegisteredClass.py
     RegisteredClass. Run Keyword If Method    False    Fail    This is not executed
@@ -42,14 +47,14 @@ Import Library With Named Arguments
     Named.Parameters Should Be    first    ${2}
 
 Import Library Failure Is Catchable
-    Run Keyword And Expect Error    Importing test library 'NonExistingLib' failed: *Error: *    Import Library    NonExistingLib
+    [Documentation]    FAIL GLOB: Importing test library 'NonExistingLib' failed: *Error: *
+    Import Library    NonExistingLib
 
 Import Library From Path
     Run Keyword And Expect Error    *    Keyword should exist    Print
     Import Library    ExampleLibrary.py
     Print    hello
 
-Extra Spaces In Name Are Deprecated
+Extra Spaces In Name Are Not Supported
+    [Documentation]    FAIL GLOB: Importing test library 'Date Time' failed: *Error: *
     Import Library    Date Time
-    Get Current Date
-    DateTime.Get Current Date

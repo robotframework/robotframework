@@ -69,42 +69,43 @@ Multiple Scalars When No List Returned 2
 
 List Variable
     @{listvar} =    Create List    h    e    ll    o
-    Should Be Equal    @{listvar}[0]    h
-    Should Be Equal    @{listvar}[1]    e
-    Should Be Equal    @{listvar}[2]    ll
-    Should Be Equal    @{listvar}[3]    o
+    Should Be Equal    ${listvar}[0]    h
+    Should Be Equal    ${listvar}[1]    e
+    Should Be Equal    ${listvar}[2]    ll
+    Should Be Equal    ${listvar}[3]    o
     @{list} =    Create List
     Should Be Empty    ${list}
 
 List Variable From Consumable Iterable
     @{listvar} =    Return Consumable Iterable    Keijo    Mela
-    Should Be Equal    @{listvar}[0]    Keijo
-    Should Be Equal    @{listvar}[1]    Mela
+    Should Be Equal    ${listvar}[0]    Keijo
+    Should Be Equal    ${listvar}[1]    Mela
     Length Should Be    ${listvar}    2
 
 List Variable From List Subclass
     @{listvar} =    Return List Subclass    Keijo    Mela
-    Should Be Equal    @{listvar}[0]    Keijo
-    Should Be Equal    @{listvar}[1]    Mela
+    Should Be Equal    ${listvar}[0]    Keijo
+    Should Be Equal    ${listvar}[1]    Mela
 
 List Variable From Dictionary
     @{list} =    Create Dictionary    name=value
     Should Be Equal    @{list}    name
     Should Be True    ${list} == ['name']
     @{list} =    Create Dictionary    a=1    b=2    c=3
-    Should Be True    set(${list}) == set(['a', 'b', 'c'])
+    Should Be True    set(${list}) == {'a', 'b', 'c'}
 
 Unrepresentable objects to list variables
     @{unrepr} =    Return Unrepresentable Objects    identifier=list
     Length Should Be    ${unrepr}    2
-    :FOR    ${obj}    IN    @{unrepr}
-    \    Should Be Equal    ${obj.identifier}    list
-    \    ${var} =    Set Variable    ${obj}
-    \    Should Be Equal    ${var}    ${obj}
+    FOR    ${obj}    IN    @{unrepr}
+        Should Be Equal    ${obj.identifier}    list
+        ${var} =    Set Variable    ${obj}
+        Should Be Equal    ${var}    ${obj}
+    END
 
 None To List Variable
     @{list} =    Log    This returns None
-    Should Be True    @{list} == []
+    Should Be True    ${list} == []
 
 List When Non-List Returned 1
     [Documentation]    FAIL Cannot set variable '\@{list}': Expected list-like value, got string.
@@ -156,11 +157,11 @@ None To Scalar Variables And List Variable
     Should Be Equal    ${a}    ${None}
     Should Be Equal    ${b}    ${None}
     Should Be Equal    ${c}    ${None}
-    Should Be True    @{d} == []
+    Should Be True    ${d} == []
     @{list}    ${scalar} =    No Operation
-    Should Be Equal    @{list}-${scalar}    []-None
+    Should Be Equal    ${list}-${scalar}    []-None
     ${first}    @{rest}    ${last} =    No Operation
-    Should Be Equal    ${first}-@{rest}-${last}    None-[]-None
+    Should Be Equal    ${first}-${rest}-${last}    None-[]-None
 
 List and scalars with not enough values 1
     [Documentation]     FAIL Cannot set variables: Expected 2 or more return values, got 1.
@@ -183,10 +184,11 @@ None To Dict
     Should Be True    &{ret} == {}
 
 Dictionary is dot-accessible
-    &{dotted} =    Evaluate    {'key': 'value', 'nested': {'key': 'value'}}
-    Should Be Equal    ${dotted['key']}    value
-    Should Be Equal    ${dotted.key}    value
-    Should Be Equal    ${dotted.nested.key}    value
+    &{dict} =    Evaluate    {'key': 'value'}
+    Should Be Equal    ${dict.key}    value
+    &{nested} =    Evaluate    collections.OrderedDict([('key', 'value'), ('nested', {'key': 'nested value'})])    modules=collections
+    Should Be Equal    ${nested.key}    value
+    Should Be Equal    ${nested.nested.key}    nested value
 
 Scalar dictionary is not dot-accessible
     [Documentation]     FAIL STARTS: Resolving variable '${normal.key}' failed: AttributeError:
@@ -233,9 +235,9 @@ Long String To Scalar Variable
 Long Values To List Variable
     ${v99} =    Evaluate    ('123456789 ' * 10).strip()
     @{long} =    Create List    ${v99}    ${v99}    ${v99}
-    Should Be Equal    @{long}[0]    ${v99}
-    Should Be Equal    @{long}[1]    ${v99}
-    Should Be Equal    @{long}[2]    ${v99}
+    Should Be Equal    ${long}[0]    ${v99}
+    Should Be Equal    ${long}[1]    ${v99}
+    Should Be Equal    ${long}[2]    ${v99}
 
 Big Items In Dictionary
     ${v100} =    Evaluate    '1234567890' * 10
@@ -266,7 +268,7 @@ Assign Mark Without Space
     Should Be Equal    ${v1}    hi
     Should Be Equal    ${v2}    you
     @{list}=    Set Variable    a    b    c
-    Should Be Equal    @{list}[0] @{list}[1] @{list}[2]    a b c
+    Should Be Equal    ${list}[0] ${list}[1] ${list}[2]    a b c
 
 No Assign Mark
     ${var}    Set Variable    hello
@@ -275,7 +277,7 @@ No Assign Mark
     Should Be Equal    ${v1}    hi
     Should Be Equal    ${v2}    you
     @{list}    Set Variable    a    b    c
-    Should Be Equal    @{list}[0] @{list}[1] @{list}[2]    a b c
+    Should Be Equal    ${list}[0] ${list}[1] ${list}[2]    a b c
 
 Optional Assign Mark With Multiple Variables
     ${a}    ${b} =    Set Variable    a    b

@@ -1,18 +1,16 @@
 import os
 import re
+import shlex
 from os.path import abspath, dirname, join
-from subprocess import call, STDOUT
-from shlex import split
-import tempfile
+from subprocess import run, PIPE, STDOUT
 
 
 from robot.utils.asserts import assert_equal, assert_true
-from robot.utils import console_decode
 
 
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 DATA_DIR = join(dirname(abspath(__file__)), '..', '..', 'testdata', 'tidy')
-TEMP_FILE = join(os.getenv('TEMPDIR'), 'tidy-test-dir', 'tidy-test-file.txt')
+OUTFILE = join(os.getenv('TEMPDIR'), 'tidy-test-dir', 'tidy-test-file.robot')
 
 
 class TidyLib(object):
@@ -21,32 +19,37 @@ class TidyLib(object):
         self._tidy = interpreter.tidy
         self._interpreter = interpreter.interpreter
 
-    def run_tidy(self, options, input, output=None, tidy=None):
+    def run_tidy(self, options=None, input=None, output=None, tidy=None, rc=0):
         """Runs tidy in the operating system and returns output."""
         command = (tidy or self._tidy)[:]
         if options:
-            command.extend([e.decode('utf8') for e in split(options.encode('utf8'))])
-        command.append(self._path(input))
+            command.extend(shlex.split(options))
+        if input:
+            command.append(self._path(input))
         if output:
             command.append(output)
-        print ' '.join(command)
-        with tempfile.TemporaryFile() as stdout:
-            rc = call(command, stdout=stdout, stderr=STDOUT,
-                      cwd=ROBOT_SRC, shell=os.sep=='\\')
-            stdout.seek(0)
-            content = console_decode(stdout.read().strip())
-            if rc:
-                raise RuntimeError(content)
-            return content
+        print(' '.join(command))
+        result = run(command,
+                     cwd=ROBOT_SRC,
+                     stdout=PIPE,
+                     stderr=STDOUT,
+                     universal_newlines=True,
+                     shell=os.sep == '\\')
+        output = result.stdout.rstrip()
+        print('\n' + output)
+        if result.returncode != rc:
+            raise RuntimeError(f'Expected Tidy to return {rc} but it returned '
+                               f'{result.returncode}.')
+        return output
 
-    def run_tidy_and_check_result(self, options, input, output=TEMP_FILE,
-                                  expected=None):
+    def run_tidy_and_check_result(self, options=None, input=None,
+                                  output=OUTFILE, expected=None):
         """Runs tidy and checks that output matches content of file `expected`."""
         result = self.run_tidy(options, input, output)
         return self.compare_tidy_results(output or result, expected or input)
 
-    def run_tidy_as_script_and_check_result(self, options, input,
-                                            output=TEMP_FILE, expected=None):
+    def run_tidy_as_script_and_check_result(self, options=None, input=None,
+                                            output=OUTFILE, expected=None):
         """Runs tidy and checks that output matches content of file `expected`."""
         tidy = self._interpreter + [join(ROBOT_SRC, 'robot', 'tidy.py')]
         result = self.run_tidy(options, input, output, tidy)
@@ -66,7 +69,7 @@ class TidyLib(object):
         for res, exp in zip(result_lines, expected_lines):
             filter = self._filter_matches(filters, exp)
             if not filter:
-                assert_equal(repr(unicode(res)), repr(unicode(exp)), msg)
+                assert_equal(repr(res), repr(exp), msg)
             else:
                 assert_true(filter.match(res),
                             '%s: %r does not match %r' % (msg, res, filter.pattern))

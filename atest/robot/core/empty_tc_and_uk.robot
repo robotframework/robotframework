@@ -7,9 +7,6 @@ Resource        atest_resource.robot
 Test Case Without Name
     Check Test Case  ${EMPTY}
 
-User Keyword Without Name
-    Check Test Case  ${TESTNAME}
-
 Empty Test Case
     Check Test Case  ${TESTNAME}
 

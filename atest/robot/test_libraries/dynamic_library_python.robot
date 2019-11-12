@@ -23,7 +23,7 @@ Non-ASCII keyword name fails when other bytes
     Check Test Case  ${TESTNAME}
     Error should have occurred    0
     ...    Getting keyword names from library 'NonAsciiKeywordNames' failed:
-    ...    Calling dynamic method 'get_keyword_names' failed: UnicodeDecodeError: *
+    ...    Calling dynamic method 'get_keyword_names' failed: UnicodeDecodeError*
 
 Run Keyword in Static Library
     [Documentation]  Verify that library having run_keyword method but no get_keyword_names method is not considered dynamic
@@ -56,5 +56,5 @@ Error should have occurred
     [Arguments]    ${index}    @{error}
     ${path} =    Normalize Path    ${DATADIR}/test_libraries/dynamic_library_python.robot
     ${error} =    Catenate    @{error}
-    Check Log Message    @{ERRORS}[${index}]    Error in file '${path}': ${error}
+    Check Log Message    ${ERRORS}[${index}]    Error in file '${path}': ${error}
     ...    level=ERROR    pattern=yes

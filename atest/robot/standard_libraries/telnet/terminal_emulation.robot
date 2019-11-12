@@ -39,6 +39,9 @@ Read Until Reads Using Internal Update Frequency
 Read Until Regexp Using Internal Update Frequency
     Check Test Case    ${TEST NAME}
 
+Window Size
+    Check Test Case    ${TEST NAME}
+
 Override terminal emulation and type
     Check Test Case    ${TEST NAME}
 

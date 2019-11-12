@@ -50,5 +50,5 @@ Invalid variable syntax 1
     Get Variable Value    notvar
 
 Invalid variable syntax 2
-    [Documentation]    FAIL Invalid variable syntax ''.
+    [Documentation]    FAIL Invalid variable syntax '\\'.
     Get Variable Value    \

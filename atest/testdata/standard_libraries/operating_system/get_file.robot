@@ -5,6 +5,8 @@ Resource          os_resource.robot
 Library           String
 
 *** Variables ***
+${SYSTEM_ENCODING}          ASCII    # Should be overridden from CLI
+${CONSOLE_ENCODING}         ASCII    # Should be overridden from CLI
 ${UTF-8 FILE}               ${CURDIR}${/}files${/}utf-8.txt
 ${ASCII FILE}               ${CURDIR}${/}files${/}ascii.txt
 ${LATIN-1 FILE}             ${CURDIR}${/}files${/}latin-1.txt
@@ -44,18 +46,16 @@ Get Ascii File With Default Encoding
     Should Be Equal    ${file}    Hyvaa yota
 
 Get Latin-1 With Default Encoding
-    [Documentation]    FAIL REGEXP: (UnicodeDecodeError|UnicodeError): .*
+    [Documentation]    FAIL REGEXP: (UnicodeDecodeError|UnicodeError)(: .*)?
     Get File    ${LATIN-1 FILE}
 
 Get file with system encoding
-    ${encoding} =    Evaluate    robot.utils.SYSTEM_ENCODING    modules=robot
-    Create File    ${TEST FILE}    ${RESULT}    encoding=${encoding}
+    Create File    ${TEST FILE}    ${RESULT}    encoding=${SYSTEM_ENCODING}
     ${file} =    Get file    ${TEST FILE}    encoding=SYStem
     Should Be Equal    ${file}    ${RESULT}
 
 Get file with console encoding
-    ${encoding} =    Evaluate    robot.utils.CONSOLE_ENCODING    modules=robot
-    Create File    ${TEST FILE}    ${RESULT}     encoding=${encoding}
+    Create File    ${TEST FILE}    ${RESULT}     encoding=${CONSOLE_ENCODING}
     ${file} =    Get file    ${TEST FILE}    encoding=COnsoLE
     Should Be Equal    ${file}    ${RESULT}
 
@@ -64,7 +64,7 @@ Get Latin-1 With Latin-1 Encoding
     Should Be Equal    ${file}    ${result}
 
 Get Utf-16 File with Default Encoding
-    [Documentation]    FAIL REGEXP: (UnicodeDecodeError|UnicodeError): .*
+    [Documentation]    FAIL REGEXP: (UnicodeDecodeError|UnicodeError)(: .*)?
     ${file}=    Get File    ${UTF-16LEfile}
 
 Get File with 'ignore' Error Handler
@@ -100,14 +100,13 @@ Log File with 'replace' Error Handler
     replace    Hyv\ufffd\ufffd \ufffd\ufffdt\ufffd
 
 Get Binary File preserves CRLF line endings
-    Create File    ${TESTFILE}    hello world\r\nbinary
-    ${file}=    Get Binary File    ${TESTFILE}
-    ${expected}=    Convert to bytes    hello world\r\nbinary
+    ${file}=    Get Binary File    ${UTF-8 WINDOWS FILE}
+    ${expected}=    Encode String To Bytes    foo\r\nbar\r\n\foo bar\r\n\r\nÅÄÖ Föö\r\n    UTF-8
     Should Be Equal    ${file}    ${expected}
 
 Get Binary File returns bytes as-is
     ${file}=    Get Binary File    ${LATIN-1 FILE}
-    ${expected}=    Convert To Bytes    Hyv\xe4\xe4 \xfc\xf6t\xe4
+    ${expected}=    Encode String To Bytes    Hyvää üötä    Latin-1
     Should Be Byte String    ${file}
     Should Be Equal    ${file}    ${expected}
 

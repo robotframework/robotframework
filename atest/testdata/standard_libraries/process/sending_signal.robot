@@ -17,8 +17,9 @@ Sending INT signal as a number
     Killer signal    ${2}
 
 Send other well-known signals
-    :FOR    ${signal}    IN    TERM    SIGTERM    15    KILL    SIGKILL    ${9}
-    \    Killer signal    ${signal}
+    FOR    ${signal}    IN    TERM    SIGTERM    15    KILL    SIGKILL    ${9}
+        Killer signal    ${signal}
+    END
 
 By default signal is not sent to process running in shell
     Precondition not OSX

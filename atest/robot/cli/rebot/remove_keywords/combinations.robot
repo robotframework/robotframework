@@ -5,7 +5,7 @@ Resource          remove_keywords_resource.robot
 
 *** Test Cases ***          rem1      rem2      etc.
 
-Rational                    FOR       WUKS
+Rational                    \FOR      WUKS
                             PASSED    FOR
                             PASSED    WUKS
                             PASSED    WUKS      FOR
@@ -26,8 +26,9 @@ Run Rebot With RemoveKeywords
 Validate Log
     [Arguments]    @{options}
     ${LOG}=    Get File    ${OUTDIR}/log.html
-    : FOR    ${item}    IN    @{options}
-    \   Should Not Contain    ${LOG}    -${item}
+    FOR    ${item}    IN    @{options}
+        Should Not Contain    ${LOG}    -${item}
+    END
 
 Validate Tests
     Should Contain Tests    ${SUITE}    Passing    Failing

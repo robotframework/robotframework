@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  parsing/escaping.robot
+Suite Setup     Run Tests    ${EMPTY}    parsing/escaping.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -39,8 +39,10 @@ Backslash
 New Line
     Check Test Case    ${TEST NAME}
 
-Space After Newline Escape Is Ignored
+Ignoring Space After Newline Is Deprecated
     Check Test Case    ${TEST NAME}
+    Check log message    ${ERRORS}[0]    Ignoring space after '\\n' is deprecated.    WARN
+    Check log message    ${ERRORS}[1]    Ignoring space after '\\n' is deprecated.    WARN
 
 Carrriage Return
     Check Test Case    ${TEST NAME}
@@ -82,6 +84,7 @@ Escaping Variables With User Keywords
     Check Test Case    ${TEST NAME}
 
 No Errors Should Have Occurred
-    Should Be Empty    ${ERRORS}
-    File Should Be Empty    ${STDERR_FILE}
+    Length should be      ${ERRORS}    2    # Warnings due to '\n ' deprecation.
 
+Pipe
+    Check Test Case    ${TEST NAME}

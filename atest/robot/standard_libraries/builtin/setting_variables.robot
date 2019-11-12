@@ -1,7 +1,8 @@
 *** Setting ***
 Documentation     Tests for set variable and set test/suite/global variable keywords
-Suite Setup       Run Tests    --variable cli_var_1:CLI1 --variable cli_var_2:CLI2 --variable cli_var_3:CLI3
-...    standard_libraries/builtin/setting_variables
+Suite Setup       Run Tests
+...               --variable cli_var_1:CLI1 --variable cli_var_2:CLI2 --variable cli_var_3:CLI3
+...               standard_libraries/builtin/setting_variables
 Resource          atest_resource.robot
 
 *** Test Case ***
@@ -10,7 +11,32 @@ Set Variable
     Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = Hello
 
 Set Variable With More Or Less Than One Value
+    Check Test Case    ${TESTNAME}
+
+Set Local Variable - Scalars
     ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[1].msgs[0]}    \${scalar} = Hello world
+
+Set Local Variable - Lists
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[3].msgs[0]}    \@{list} = [ One | Two | Three ]
+    Check Log Message    ${tc.kws[6].msgs[0]}    \@{list} = [ 1 | 2 | 3 ]
+
+Set Local Variable - Dicts
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[4].msgs[0]}    \&{DICT} = { a=1 | 2=b }
+
+Set Local Variables Overrides Test Variables
+    Check Test Case    ${TESTNAME}
+
+Set Local Variable In Keyword Not Available In Test
+    Check Test Case    ${TESTNAME}
+
+Set Local Variable In Keyword Not Available In Another Keyword
+    Check Test Case    ${TESTNAME}
+
+Setting Local Variable In Test Not Available In Keyword
+    Check Test Case    ${TESTNAME}
 
 Set Test Variable - Scalars
     Check Test Case    ${TESTNAME}
@@ -28,6 +54,10 @@ Dict Set To Scalar Is Dot Accessible
 Set Test Variable Needing Escaping
     Check Test Case    ${TESTNAME}
 
+Set Test Variable Affect Subsequent Keywords
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.kws[0].doc}    Makes a variable available everywhere within the scope of the current test.
+
 Set Test Variable In User Keyword
     Check Test Case    ${TESTNAME}
 
@@ -36,6 +66,10 @@ Set Test Variable Not Affecting Other Tests
 
 Test Variables Set In One Suite Are Not Available In Another
     Check Test Case    ${TESTNAME}
+
+Set Task Variable as alias for Set Test Variable
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.kws[0].doc}    Makes a variable available everywhere within the scope of the current task.
 
 Set Suite Variable
     Check Test Case    ${TESTNAME} 1
@@ -55,7 +89,10 @@ Set Global Variables
     Check Test Case    Set Global Variable 2
     Check Suite Teardown Passed
 
-Global Variables Set In One Suite Are Not Available In Another
+Global Variables Set In One Suite Are Available In Another
+    Check Test Case    ${TESTNAME}
+
+Global Variable Set In One Suite Overrides Variable In Variable Table
     Check Test Case    ${TESTNAME}
 
 Scopes And Overriding

@@ -15,6 +15,9 @@ from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE
 
 class StreamXmlWriter(XmlWriter):
 
+    def _order_attrs(self, attrs):
+        return sorted(attrs)
+
     def _create_output(self, output):
         return output
 
@@ -24,7 +27,7 @@ class StreamXmlWriter(XmlWriter):
 
 class TestableOutputWriter(OutputWriter):
 
-    def _get_writer(self, output, generator):
+    def _get_writer(self, output, rpa, generator):
         writer = StreamXmlWriter(output, write_empty=False)
         writer.start('robot')
         return writer

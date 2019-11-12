@@ -8,8 +8,9 @@ Fail In UK
 
 For Loop in UK
     @{list} =    Create List    1    1    1
-    ::FOR    ${i}    ${j}    ${k}    IN    @{list}
-    \    Should be Equal    ${i}    0
+    FOR    ${i}    ${j}    ${k}    IN    @{list}
+        Should be Equal    ${i}    0
+    END
     Fail
 
 Anarchy in the UK

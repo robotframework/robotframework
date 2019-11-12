@@ -58,13 +58,13 @@ Suite statistics should be Correct
 My Setup
     ${options} =    Catenate
     ...    --critical t1
-    ...    --tagdoc f1:this_is_tagdoc
-    ...    --tagstatlink t*:http://url.to:my_title
+    ...    --tagdoc "f1:this is tagdoc"
+    ...    --tagstatlink "t*:http://url.to:my title"
     ...    --tagstatlink ?1:url:title
     ...    --tagstatcombine f1ANDt1
     ...    --tagstatcombine NOTt1
     ...    --tagstatcombine D1ORsub3ORt2_OR_or_and_not
-    ...    --tagstatcombine d1ANDd2:Combined_tag_with_new_name_AND-OR-NOT
+    ...    --tagstatcombine "d1ANDd2:Combined tag with new name AND-OR-NOT"
     ...    --suitestatlevel 2
     ...    --tagstatexclude t2
     ...    --TagStatComb F1NOT_T1

@@ -89,23 +89,25 @@ class TestFiltering(unittest.TestCase):
     def test_no_matching_tests_with_one_selector_each(self):
         configurer = SuiteConfigurer(include_tags='i', exclude_tags='e',
                                      include_suites='s', include_tests='t')
-        assert_raises_with_msg(DataError,
-                               "Suite 'root' contains no tests with tag 'i', "
-                               "without tag 'e' and named 't' in suite 's'.",
-                               self.suite.visit, configurer)
+        assert_raises_with_msg(
+            DataError,
+            "Suite 'root' contains no tests matching tag 'i', "
+            "not matching tag 'e' and matching name 't' in suite 's'.",
+            self.suite.visit, configurer
+        )
 
     def test_no_matching_tests_with_multiple_selectors(self):
         configurer = SuiteConfigurer(include_tags=['i1', 'i2'],
                                      exclude_tags=['e1', 'e2'],
                                      include_suites=['s1', 's2', 's3'],
                                      include_tests=['t1', 't2'])
-        assert_raises_with_msg(DataError,
-                               "Suite 'root' contains no tests "
-                               "with tags 'i1' or 'i2', "
-                               "without tags 'e1' or 'e2' and "
-                               "named 't1' or 't2' "
-                               "in suites 's1', 's2' or 's3'.",
-                               self.suite.visit, configurer)
+        assert_raises_with_msg(
+            DataError,
+            "Suite 'root' contains no tests matching tags 'i1' or 'i2', "
+            "not matching tags 'e1' or 'e2' and matching name 't1' or 't2' "
+            "in suites 's1', 's2' or 's3'.",
+            self.suite.visit, configurer
+        )
 
     def test_empty_suite(self):
         suite = TestSuite(name='x')

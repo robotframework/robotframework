@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation     NO RIDE because it could change WITH NAME format.
 Library           OperatingSystem    WITH NAME    OS
 Library           ParameterLibrary    1    2    WITH NAME    Param1
 Library           ParameterLibrary    ${VAR}    ${42}    WITH NAME    Param2
@@ -8,9 +7,11 @@ Library           ParameterLibrary    whatever    WITH NAME
 Library           BuiltIn    WITH NAME    B2
 Library           module_library    WITH NAME    MOD1
 Library           pythonmodule.library    WITH NAME    mod 2
-Library           Example Java Library    WITH NAME    Java Lib
+Library           ExampleJavaLibrary    WITH NAME    Java Lib
 Library           javapkg.JavaPackageExample    WITH NAME    Java Pkg
 Library           MyLibFile.py    WITH NAME    Params
+Library           Embedded.py    WITH NAME    Embedded1
+Library           Embedded.py    WITH NAME    Embedded2
 Library           RunKeywordLibrary    WITH NAME    dynamic
 Library           RunKeywordLibraryJava    WITH NAME    dynamicJava
 Library           libraryscope.Global    WITH NAME    G Scope
@@ -30,6 +31,13 @@ No Arguments
 Embedded Arguments
     Keyword with embedded arg in MyLibFile
     Params.Keyword With Embedded --args-- in MyLibFile
+
+Embedded Arguments With Library Having State
+    Embedded1.Called 1 time(s)
+    Embedded1.Called 2 time(s)
+    Embedded2.Called 1 time(s)
+    Embedded1.Called 3 time(s)
+    Embedded2.Called 2 time(s)
 
 Arguments Containing Variables And Import Same Library Twice
     Param1.Parameters should be    1    2
@@ -54,14 +62,14 @@ Module Library
     Failing
 
 Java Library
-    [Documentation]    FAIL No keyword with name 'Example Java Library.Get Java Object' found.
+    [Documentation]    FAIL No keyword with name 'ExampleJavaLibrary.Get Java Object' found.
     ${s} =    returnStringFromLibrary    whatever
     BuiltIn.Should Be Equal    ${s}    whatever
     ${obj} =    Java Lib . Get Java Object    My Name
     BuiltIn.Should Be Equal    ${obj.name}    My Name
-    ${arr} =    Java Lib. Get String Array    foo    bar
+    ${arr} =    JavaLib.GetStringArray    foo    bar
     BuiltIn.Should Be Equal    ${arr[0]}    foo
-    Example Java Library.Get Java Object    This fails
+    ExampleJavaLibrary.Get Java Object    This fails
 
 Java Library In Package
     [Documentation]    FAIL No keyword with name 'javapkg.JavaPackageExample.whatever' found.
@@ -80,7 +88,7 @@ Import Library Keyword
     My Param Lib.Parameters should be    my first argument    second arg
 
 Correct Error When Using Keyword From Same Library With Different Names Without Prefix 2
-    [Documentation]    FAIL Multiple keywords with name 'Parameters' found.\
+    [Documentation]    FAIL Multiple keywords with name 'Parameters' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${SPACE*4}MyParamLib.Parameters
     ...    ${SPACE*4}Param1.Parameters

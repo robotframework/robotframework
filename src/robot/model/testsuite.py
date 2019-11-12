@@ -31,16 +31,17 @@ class TestSuite(ModelObject):
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
-    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors']
+    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
     test_class = TestCase    #: Internal usage only.
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, name='', doc='', metadata=None, source=None):
+    def __init__(self, name='', doc='', metadata=None, source=None, rpa=False):
         self.parent = None  #: Parent suite. ``None`` with the root suite.
         self._name = name
         self.doc = doc  #: Test suite documentation.
         self.metadata = metadata
         self.source = source  #: Path to the source file or directory.
+        self.rpa = rpa
         self.suites = None
         self.tests = None
         self.keywords = None
@@ -108,6 +109,12 @@ class TestSuite(ModelObject):
         """Number of the tests in this suite, recursively."""
         return len(self.tests) + sum(suite.test_count for suite in self.suites)
 
+    @property
+    def has_tests(self):
+        if self.tests:
+            return True
+        return any(s.has_tests for s in self.suites)
+
     def set_tags(self, add=None, remove=None, persist=False):
         """Add and/or remove specified tags to the tests in this suite.
 
@@ -146,15 +153,21 @@ class TestSuite(ModelObject):
     def configure(self, **options):
         """A shortcut to configure a suite using one method call.
 
+        Can only be used with the root test suite.
+
         :param options: Passed to
             :class:`~robot.model.configurer.SuiteConfigurer` that will then
             set suite attributes, call :meth:`filter`, etc. as needed.
         """
-        self.visit(SuiteConfigurer(**options))
+        if self.parent is not None:
+            raise ValueError("'TestSuite.configure()' can only be used with "
+                             "the root test suite.")
+        if options:
+            self.visit(SuiteConfigurer(**options))
 
-    def remove_empty_suites(self):
+    def remove_empty_suites(self, preserve_direct_children=False):
         """Removes all child suites not containing any tests, recursively."""
-        self.visit(EmptySuiteRemover())
+        self.visit(EmptySuiteRemover(preserve_direct_children))
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""

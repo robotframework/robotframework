@@ -190,9 +190,9 @@ Invalid Arguments Spec - Non-default after defaults
     [Documentation]    FAIL Invalid argument specification: Non-default argument after default arguments.
     Non-default after defaults
 
-Invalid Arguments Spec - Varargs not last
-    [Documentation]    FAIL Invalid argument specification: Positional argument after varargs.
-    Varargs not last
+Invalid Arguments Spec - Kwargs not last
+    [Documentation]    FAIL Invalid argument specification: Only last argument can be kwargs.
+    Kwargs not last
 
 *** Keywords ***
 A 0
@@ -301,6 +301,6 @@ Non-default after defaults
     [Arguments]    ${named}=value    ${positional}
     No Operation
 
-Varargs not last
-    [Arguments]    @{varargs}    ${positional}
+Kwargs not last
+    [Arguments]    &{kwargs}    ${positional}
     No Operation

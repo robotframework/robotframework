@@ -28,13 +28,13 @@ Test initial connection failure
     Run Keyword And Expect Error    ${error}
     ...    Import Library    Remote    1.2.3.4:666    timeout=0.2 seconds
     ${end} =    Get Current Date
-    ${elapsed} =    Subtract Date From Date    ${end}    ${start}
+    ${elapsed} =    Subtract Date From Date    ${end}    ${start}
     Should Be True    ${elapsed} < 10
 
 Test too long keyword execution time
     Import Library           Remote    http://127.0.0.1:${PORT}     ${0.3}
     Run Keyword And Expect Error
-    ...    Connection to remote server broken: timed out
+    ...    GLOB: Connection to remote server broken:* timed out
     ...    Remote.Sleep    2
 
 Timeouts are not supported on IronPython

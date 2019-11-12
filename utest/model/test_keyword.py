@@ -4,11 +4,7 @@ from robot.utils.asserts import (assert_equal, assert_none, assert_not_equal,
 
 from robot.model import TestSuite, Message
 from robot.model.keyword import Keyword, Keywords
-from robot.utils import PY2, PY3
-
-
-if PY3:
-    unicode = str
+from robot.utils import PY2, unicode
 
 
 class TestKeyword(unittest.TestCase):

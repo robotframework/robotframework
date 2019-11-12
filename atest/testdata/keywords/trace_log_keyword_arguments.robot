@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Set Unicode Repr Object As Variable
-Library           UnicodeLibrary
+Library           NonAsciiLibrary
 Library           TraceLogArgsLibrary.py
 
 *** Variables ***
@@ -82,7 +82,7 @@ Embedded Arguments
 
 *** Keywords ***
 Set Unicode Repr Object As Variable
-    ${object} =    Print and Return Unicode Object
+    ${object} =    Print and Return NonASCII Object
     Set Global Variable    ${OBJECT}
 
 Only Mandatory UK

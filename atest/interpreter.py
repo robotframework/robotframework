@@ -1,5 +1,6 @@
 from os.path import abspath, dirname, exists, join
 import os
+import re
 import subprocess
 import sys
 
@@ -9,7 +10,9 @@ ROBOT_PATH = join(PROJECT_ROOT, 'src', 'robot')
 
 
 def get_variables(path, name=None, version=None):
-    return {'INTERPRETER': InterpreterFactory(path, name, version)}
+    interpreter = InterpreterFactory(path, name, version)
+    u = '' if interpreter.is_py3 or interpreter.is_ironpython else 'u'
+    return {'INTERPRETER': interpreter, 'UNICODE PREFIX': u}
 
 
 def InterpreterFactory(path, name=None, version=None):
@@ -27,6 +30,7 @@ class Interpreter(object):
             name, version = self._get_name_and_version()
         self.name = name
         self.version = version
+        self.version_info = tuple(int(item) for item in version.split('.'))
 
     def _get_interpreter(self, path):
         return [path] if os.path.exists(path) else path.split()
@@ -34,21 +38,30 @@ class Interpreter(object):
     def _get_name_and_version(self):
         try:
             output = subprocess.check_output(self.interpreter + ['-V'],
-                                             stderr=subprocess.STDOUT)
-        except (subprocess.CalledProcessError, OSError):
+                                             stderr=subprocess.STDOUT,
+                                             encoding='UTF-8')
+        except (subprocess.CalledProcessError, FileNotFoundError):
             raise ValueError('Invalid interpreter: %s' % self.path)
         name, version = output.split()[:2]
         name = name if 'PyPy' not in output else 'PyPy'
-        version = '.'.join(version.split('.')[:2])
+        version = re.match(r'\d+\.\d+\.\d+', version).group()
         return name, version
 
     @property
+    def os(self):
+        for condition, name in [(self.is_linux, 'Linux'),
+                                (self.is_osx, 'OS X'),
+                                (self.is_windows, 'Windows')]:
+            if condition:
+                return name
+        return sys.platform
+
+    @property
+    def output_name(self):
+        return '{i.name}-{i.version}-{i.os}'.format(i=self).replace(' ', '')
+
+    @property
     def excludes(self):
-        if self.is_python and self.version == '2.6':
-            yield 'no-python26'
-            yield 'require-et13'
-        else:
-            yield 'require-python26'
         if self.is_jython:
             yield 'no-jython'
             yield 'require-lxml'
@@ -56,7 +69,6 @@ class Interpreter(object):
             yield 'require-jython'
         if self.is_ironpython:
             yield 'no-ipy'
-            yield 'require-et13'
             yield 'require-lxml'
             yield 'require-docutils'  # https://github.com/IronLanguages/main/issues/1230
         else:
@@ -67,15 +79,17 @@ class Interpreter(object):
     @property
     def _platform_excludes(self):
         if self.is_py3:
-            yield 'no-py3'
+            yield 'require-py2'
         else:
-            yield 'no-py2'
+            yield 'require-py3'
+        if self.version_info < (3, 5):
+            yield 'require-py3.5'
+        if self.version_info < (3, 7):
+            yield 'require-py3.7'
         if self.is_windows:
             yield 'no-windows'
             if self.is_jython:
                 yield 'no-windows-jython'
-            if self.is_python and self.version == '2.6':
-                yield 'no-windows-python26'
         if not self.is_windows:
             yield 'require-windows'
         if self.is_osx:
@@ -134,15 +148,6 @@ class Interpreter(object):
         return os.name == 'nt'
 
     @property
-    def os(self):
-        for condition, name in [(self.is_linux, 'Linux'),
-                                (self.is_osx, 'OS X'),
-                                (self.is_windows, 'Windows')]:
-            if condition:
-                return name
-        return sys.platform
-
-    @property
     def runner(self):
         return self.interpreter + [join(ROBOT_PATH, 'run.py')]
 
@@ -161,6 +166,9 @@ class Interpreter(object):
     @property
     def tidy(self):
         return self.interpreter + [join(ROBOT_PATH, 'tidy.py')]
+
+    def __str__(self):
+        return '%s %s on %s' % (self.name, self.version, self.os)
 
 
 class StandaloneInterpreter(Interpreter):

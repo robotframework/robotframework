@@ -8,7 +8,8 @@ Name
 
 Documentation
     Doc Should Start With
-    ...    Library for `libdoc.py` testing purposes.\n\n
+    ...    Library for `libdoc.py` testing purposes.
+    ...
     ...    This library is only used in an example and it doesn't do anything useful.
 
 Version
@@ -46,13 +47,15 @@ Keyword Arguments
 
 Keyword Documentation
     Keyword Doc Should Be    0
-    ...    Takes one `arg` and *does nothing* with it.\n\n
-    ...    Example:\n
-    ...    | Your Keyword | xxx |\n
-    ...    | Your Keyword | yyy |\n\n
+    ...    Takes one `arg` and *does nothing* with it.
+    ...
+    ...    Example:
+    ...    | Your Keyword | xxx |
+    ...    | Your Keyword | yyy |
+    ...
     ...    See `My Keyword` for no more information.
     Keyword Doc Should Be    1
-    ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation\n
+    ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation
     ...    Tags: in spec these wont become tags
 
 Keyword Tags

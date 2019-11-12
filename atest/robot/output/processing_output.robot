@@ -11,18 +11,18 @@ Test Case File Suite
     Should Be Equal    ${SUITE.metadata['Something']}    My Value
     Should Be Equal as Strings    ${SUITE.metadata}    {Something: My Value}
     Check Normal Suite Defaults    ${SUITE}
-    Should Be Equal    ${SUITE.full_message}    2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
-    Should Be Equal    ${SUITE.statistics.message}    2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
+    Should Be Equal    ${SUITE.full_message}    2 critical tests, 2 passed, 0 failed\n2 tests total, 2 passed, 0 failed
+    Should Be Equal    ${SUITE.statistics.message}    2 critical tests, 2 passed, 0 failed\n2 tests total, 2 passed, 0 failed
     Should Contain Tests    ${SUITE}    First One    Second One
 
 Directory Suite
     [Documentation]    Testing suite created from a test suite directory. Also testing metadata from cli.
-    My Run Robot And Rebot    --metadata x:y -M a:b --name My_Name --doc Something    misc/suites
+    My Run Robot And Rebot    --metadata x:y -M a:b --name "My Name" --doc Something    misc/suites
     Should Be Equal    ${SUITE.name}    My Name
     Should Be Equal    ${SUITE.doc}    Something
     Should Be Equal    ${SUITE.metadata['x']}    y
     Should Be Equal    ${SUITE.metadata['a']}    b
-    Should Be True    ${SUITE.metadata.items()} == [('a', 'b'), ('x', 'y')]
+    Should Be True    list($SUITE.metadata.items()) == [('a', 'b'), ('x', 'y')]
     Check Suite Got From misc/suites/ Directory
 
 Minimal hand-created output
@@ -90,7 +90,7 @@ Check Suite Got From Misc/suites/ Directory
     ...    Tsuite3
     Should Be Empty    ${SUITE.tests}
     Should Contain Suites    ${SUITE.suites[1]}    Sub1    Sub2
-    :FOR    ${s}    IN
+    FOR    ${s}    IN
     ...    ${SUITE.suites[0]}
     ...    ${SUITE.suites[1].suites[0]}
     ...    ${SUITE.suites[1].suites[1]}
@@ -98,7 +98,8 @@ Check Suite Got From Misc/suites/ Directory
     ...    ${SUITE.suites[3]}
     ...    ${SUITE.suites[4]}
     ...    ${SUITE.suites[5]}
-    \    Should Be Empty    ${s.suites}
+        Should Be Empty    ${s.suites}
+    END
     Should Contain Tests    ${SUITE}
     ...    SubSuite1 First
     ...    SubSuite2 First

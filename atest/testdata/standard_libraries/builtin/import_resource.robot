@@ -50,7 +50,7 @@ Import Resource From Pythonpath
     Import Resource    resource_in_pythonpath.robot
     PPATH KW
 
-*** User Keywords ***
+*** Keywords ***
 Import Resource In User Keyword
     Import Resource  ${CURDIR}/import_resource_resource_3.robot
     Verify User Keyword Resource Import

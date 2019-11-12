@@ -22,7 +22,7 @@ from .misc import plural_or_not, roundup
 from .robottypes import is_number, is_string
 
 
-_timer_re = re.compile('([+-])?(\d+:)?(\d+):(\d+)(.\d+)?')
+_timer_re = re.compile(r'^([+-])?(\d+:)?(\d+):(\d+)(\.\d+)?$')
 
 
 def _get_timetuple(epoch_secs=None):
@@ -166,7 +166,7 @@ class _SecsToTimestrHelper:
 
 
 def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
-                millissep=None, gmtsep=None):
+                millissep=None):
     """Returns a timestamp formatted from given time using separators.
 
     Time can be given either as a timetuple or seconds after epoch.
@@ -186,22 +186,7 @@ def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
     day = daysep.join(daytimeparts[:3])
     time_ = timesep.join(daytimeparts[3:6])
     millis = millissep and '%s%03d' % (millissep, timetuple[6]) or ''
-    return day + daytimesep + time_ + millis + _diff_to_gmt(gmtsep)
-
-# TODO: Remove broken helper below and `gmtsep` above in 3.1. For details see
-# https://github.com/robotframework/robotframework/issues/2501
-def _diff_to_gmt(sep):
-    if not sep:
-        return ''
-    if time.altzone == 0:
-        sign = ''
-    elif time.altzone > 0:
-        sign = '-'
-    else:
-        sign = '+'
-    minutes = abs(time.altzone) / 60.0
-    hours, minutes = divmod(minutes, 60)
-    return '%sGMT%s%s%02d:%02d' % (sep, sep, sign, hours, minutes)
+    return day + daytimesep + time_ + millis
 
 
 def get_time(format='timestamp', time_=None):

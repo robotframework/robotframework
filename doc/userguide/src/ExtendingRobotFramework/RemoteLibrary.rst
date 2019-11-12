@@ -42,12 +42,12 @@ illustrated in the picture below:
 
    Robot Framework architecture with Remote library
 
-.. note:: The remote client uses Python's standard xmlrpclib_ module. It does
+.. note:: The remote client uses Python's standard `XML-RPC module`_. It does
           not support custom XML-RPC extensions implemented by some XML-RPC
           servers.
 
 .. _generic remote servers: https://github.com/robotframework/RemoteInterface#available-remote-servers
-.. _xmlrpclib: http://docs.python.org/2/library/xmlrpclib.html
+.. _XML-RPC module: https://docs.python.org/library/xmlrpc.client.html
 
 Putting Remote library to use
 -----------------------------
@@ -90,8 +90,8 @@ a custom timeout does not work with IronPython.
           avoids address resolution that can be extremely slow `at least on
           Windows`__.
 
-.. note:: If the URI contains no path after the server address, the xmlrpclib_
-          module used by the Remote library will use `/RPC2` path by
+.. note:: If the URI contains no path after the server address, the `XML-RPC
+          module`_ used by the Remote library will use `/RPC2` path by
           default. In practice using `http://127.0.0.1:8270` is thus identical
           to using `http://127.0.0.1:8270/RPC2`. Depending on the remote server
           this may or may not be a problem. No extra path is appended if the
@@ -158,7 +158,7 @@ according to the following rules. Other remote servers should behave similarly.
 * Returned dictionaries are converted to so called *dot-accessible dicts*
   that allow accessing keys as attributes using the `extended variable syntax`_
   like `${result.key}`. This works also with nested dictionaries like
-  `${root.child.leaf}`.
+  `${root.child.leaf}`. New functionality in Robot Framework 2.9.
 
 * Strings containing bytes in the ASCII range that cannot be represented in
   XML (e.g. the null byte) are sent as `Binary objects`__ that internally use
@@ -167,13 +167,7 @@ according to the following rules. Other remote servers should behave similarly.
 
 * Other types are converted to strings.
 
-.. note:: Prior to Robot Framework 2.8.3, only lists, tuples, and dictionaries
-          were handled according to the above rules. General iterables and
-          mappings were not supported. Additionally binary support is new in
-          Robot Framework 2.8.4 and returning dot-accessible dictionaries new
-          in Robot Framework 2.9.
-
-__ http://docs.python.org/2/library/xmlrpclib.html#binary-objects
+__ http://docs.python.org/library/xmlrpc.client.html#binary-objects
 
 Remote protocol
 ---------------
@@ -194,9 +188,9 @@ Required methods
 A remote server is an XML-RPC server that must have the same methods in its
 public interface as the `dynamic library API`_ has. Only `get_keyword_names`
 and `run_keyword` are actually required, but `get_keyword_arguments`,
-`get_keyword_tags` and `get_keyword_documentation` are also recommended.
-Notice that using the camelCase format like `getKeywordNames` in method names
-is not possible similarly as in the normal dynamic API. How
+`get_keyword_types`, `get_keyword_tags` and `get_keyword_documentation` are
+also recommended. Notice that using the camelCase format like `getKeywordNames`
+in method names is not possible similarly as in the normal dynamic API. How
 the actual keywords are implemented is not relevant for the Remote
 library. Remote servers can either act as wrappers for the real test
 libraries, like the available `generic remote servers`_ do, or they can
@@ -224,11 +218,22 @@ by using the `get_keyword_names` method. Remote servers must implement this
 method and the method must return keyword names as a list of strings.
 
 Remote servers can, and should, also implement `get_keyword_arguments`,
-`get_keyword_tags` and `get_keyword_documentation` methods to provide more
-information about the keywords. All these methods take the name of the keyword
-as an argument. Arguments must be returned as a list of strings in the `same
-format as with dynamic libraries`__, tags `as a list of strings`__, and
-documentation `as a string`__.
+`get_keyword_types`, `get_keyword_tags` and `get_keyword_documentation`
+methods to provide more information about the keywords. All these methods
+take the name of the keyword as an argument. Arguments must be returned as
+a list of strings in the `same format as with dynamic libraries`__, tags
+`as a list of strings`__, and documentation `as a string`__.
+
+Type information can be returned either as a list mapping type names to
+arguments based on position or as a dictionary mapping argument names to
+type names directly. In practice this works the same way as when
+`specifying types using the @keyword decorator`__ with normal libraries.
+The difference is that because the XML-RPC protocol does not support
+arbitrary values, type information needs to be specified using type names
+or aliases like `'int'` or `'integer'`, not using actual types like `int`.
+Additionally `None` or `null` values may not be allowed, and the empty
+string should be used instead if a marker telling certain argument does
+not have type information is needed.
 
 Remote servers can also provide `general library documentation`__ to
 be used when generating documentation with the Libdoc_ tool.
@@ -237,9 +242,12 @@ be used when generating documentation with the Libdoc_ tool.
           With earlier versions keyword tags can be `embedded into the
           keyword documentation`__.
 
+.. note:: `get_keyword_types` is new in Robot Framework 3.1.
+
 __ `Getting keyword arguments`_
 __ `Getting keyword tags`_
 __ `Getting keyword documentation`_
+__ `Specifying argument types using @keyword decorator`_
 __ `Getting general library documentation`_
 __ `Getting keyword tags`_
 
@@ -249,7 +257,7 @@ Executing remote keywords
 When the Remote library wants the server to execute some keyword, it
 calls the remote server's `run_keyword` method and passes it the
 keyword name, a list of arguments, and possibly a dictionary of
-`free keyword arguments`__. Base types can be used as
+`free named arguments`__. Base types can be used as
 arguments directly, but more complex types are `converted to supported
 types`__.
 
@@ -281,12 +289,11 @@ others can be omitted if they are not applicable.
    | traceback  | Possible stack trace to `write into the log file`__ using   |
    |            | DEBUG level when the execution fails.                       |
    +------------+-------------------------------------------------------------+
-   | continuable| When set to `True`, or any value considered                 |
-   |            | `True` in Python, the occurred failure is considered        |
-   |            | continuable__. New in Robot Framework 2.8.4.                |
+   | continuable| When set to `True`, or any value considered `True` in       |
+   |            | Python, the occurred failure is considered continuable__.   |
    +------------+-------------------------------------------------------------+
    | fatal      | Like `continuable`, but denotes that the occurred           |
-   |            | failure is fatal__. Also new in Robot Framework 2.8.4.      |
+   |            | failure is fatal__.                                         |
    +------------+-------------------------------------------------------------+
 
 __ `Different argument syntaxes`_
@@ -306,12 +313,12 @@ dynamic library.
 This includes mandatory arguments, default values, varargs, as well
 as `named argument syntax`__.
 
-Also free keyword arguments (`**kwargs`) works mostly the `same way
+Also free named arguments (`**kwargs`) works mostly the `same way
 as with other dynamic libraries`__. First of all, the
 `get_keyword_arguments` must return an argument specification that
 contains `**kwargs` exactly like with any other dynamic library.
 The main difference is that
-remote servers' `run_keyword` method must have optional third argument
+remote servers' `run_keyword` method must have an **optional** third argument
 that gets the kwargs specified by the user. The third argument must be optional
 because, for backwards-compatibility reasons, the Remote library passes kwargs
 to the `run_keyword` method only when they have been used in the test data.
@@ -336,9 +343,6 @@ arguments.
         // ...
     }
 
-.. note:: Remote library supports `**kwargs` starting from
-          Robot Framework 2.8.3.
-
 __ `Getting keyword arguments`_
 __ `Named argument syntax with dynamic libraries`_
-__ `Free keyword arguments with dynamic libraries`_
+__ `Free named arguments with dynamic libraries`_

@@ -37,5 +37,5 @@ from .namepatterns import SuiteNamePatterns, TestNamePatterns
 from .visitor import SuiteVisitor
 from .totalstatistics import TotalStatisticsBuilder
 from .statistics import Statistics
-from .imports import Imports
+from .imports import Imports, Import
 from .itemlist import ItemList

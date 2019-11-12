@@ -110,6 +110,19 @@ class TestRestoringOriginalHandlers(unittest.TestCase):
         assert_equal(self.get_int(), self.orig_int)
         assert_equal(self.get_term(), self.orig_term)
 
+    def test_registered_outside_python(self):
+        """
+        If a signal isn't registered within Python, signal.getsignal() returns None.
+        This tests to make sure _StopSignalMonitor.__exit__ can handle that.
+        """
+        with _StopSignalMonitor() as monitor:
+            assert_equal(self.get_int(), monitor)
+            assert_equal(self.get_term(), monitor)
+            monitor._orig_sigint = None
+            monitor._orig_sigterm = None
+        assert_equal(self.get_int(), signal.SIG_DFL)
+        assert_equal(self.get_term(), signal.SIG_DFL)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -13,12 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import (ExecutionFailed, ExecutionPassed, ExitForLoop,
-                          ContinueForLoop, DataError, PassExecution,
-                          ReturnFromKeyword, UserKeywordExecutionFailed,
-                          VariableError)
+from itertools import chain
+
+from robot.errors import (ExecutionFailed, ExecutionPassed, ExecutionStatus,
+                          ExitForLoop, ContinueForLoop, DataError,
+                          PassExecution, ReturnFromKeyword,
+                          UserKeywordExecutionFailed, VariableError)
 from robot.result import Keyword as KeywordResult
-from robot.utils import DotDict, prepr, split_tags_from_doc
+from robot.utils import getshortdoc, DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_var, VariableAssignment
 
 from .arguments import DefaultValue
@@ -62,7 +64,7 @@ class UserKeywordRunner(object):
         tags = variables.replace_list(handler.tags, ignore_errors=True) + tags
         return KeywordResult(kwname=self.name,
                              libname=handler.libname,
-                             doc=doc.splitlines()[0] if doc else '',
+                             doc=getshortdoc(doc),
                              args=kw.args,
                              assign=tuple(assignment),
                              tags=tags,
@@ -88,10 +90,7 @@ class UserKeywordRunner(object):
 
     def _get_timeout(self, variables=None):
         timeout = self._handler.timeout
-        if not timeout:
-            return None
-        timeout = KeywordTimeout(timeout.value, timeout.message, variables)
-        return timeout
+        return KeywordTimeout(timeout, variables) if timeout else None
 
     def _resolve_arguments(self, arguments, variables=None):
         return self.arguments.resolve(arguments, variables)
@@ -105,21 +104,31 @@ class UserKeywordRunner(object):
         context.output.trace(lambda: self._trace_log_args_message(variables))
 
     def _set_variables(self, positional, kwargs, variables):
-        before_varargs, varargs = self._split_args_and_varargs(positional)
-        for name, value in zip(self.arguments.positional, before_varargs):
+        spec = self.arguments
+        args, varargs = self._split_args_and_varargs(positional)
+        kwonly, kwargs = self._split_kwonly_and_kwargs(kwargs)
+        for name, value in chain(zip(spec.positional, args), kwonly):
             if isinstance(value, DefaultValue):
                 value = value.resolve(variables)
             variables['${%s}' % name] = value
-        if self.arguments.varargs:
-            variables['@{%s}' % self.arguments.varargs] = varargs
-        if self.arguments.kwargs:
-            variables['&{%s}' % self.arguments.kwargs] = DotDict(kwargs)
+        if spec.varargs:
+            variables['@{%s}' % spec.varargs] = varargs
+        if spec.kwargs:
+            variables['&{%s}' % spec.kwargs] = DotDict(kwargs)
 
     def _split_args_and_varargs(self, args):
         if not self.arguments.varargs:
             return args, []
         positional = len(self.arguments.positional)
         return args[:positional], args[positional:]
+
+    def _split_kwonly_and_kwargs(self, all_kwargs):
+        kwonly = []
+        kwargs = []
+        for name, value in all_kwargs:
+            target = kwonly if name in self.arguments.kwonlyargs else kwargs
+            target.append((name, value))
+        return kwonly, kwargs
 
     def _trace_log_args_message(self, variables):
         args = ['${%s}' % arg for arg in self.arguments.positional]
@@ -180,6 +189,8 @@ class UserKeywordRunner(object):
         try:
             name = context.variables.replace_string(self._handler.teardown.name)
         except DataError as err:
+            if context.dry_run:
+                return None
             return ExecutionFailed(err.message, syntax=True)
         if name.upper() in ('', 'NONE'):
             return None
@@ -187,7 +198,7 @@ class UserKeywordRunner(object):
             StepRunner(context).run_step(self._handler.teardown, name)
         except PassExecution:
             return None
-        except ExecutionFailed as err:
+        except ExecutionStatus as err:
             return err
         return None
 

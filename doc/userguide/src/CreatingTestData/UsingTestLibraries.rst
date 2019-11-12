@@ -75,7 +75,7 @@ Specifying library to import
 
 Libraries to import can be specified either by using the library name
 or the path to the library. These approaches work the same way regardless
-is the library imported using the :setting:`Library` setting or the
+if the library is imported using the :setting:`Library` setting or the
 :name:`Import Library` keyword.
 
 Using library name
@@ -108,7 +108,8 @@ If the library is a file, the path to it must contain extension. For
 Python libraries the extension is naturally :file:`.py` and for Java
 libraries it can either be :file:`.class` or :file:`.java`, but the
 class file must always be available. If Python library is implemented
-as a directory, the path to it must have a trailing forward slash (`/`).
+as a directory, the path to it must have a trailing forward slash (`/`)
+if the path is relative. With absolute paths the trailing slash is optional.
 Following examples demonstrate these different usages.
 
 .. sourcecode:: robotframework
@@ -238,7 +239,7 @@ External libraries
 
 Any test library that is not one of the standard libraries is, by
 definition, *an external library*. The Robot Framework open source community
-has implemented several generic libraries, such as Selenium2Library_ and
+has implemented several generic libraries, such as SeleniumLibrary_ and
 SwingLibrary_, which are not packaged with the core framework. A list of
 publicly available libraries can be found from http://robotframework.org.
 

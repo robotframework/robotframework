@@ -2,12 +2,12 @@
 Resource          atest_resource.robot
 
 *** Variables ***
-${1 PASS MSG}     1 critical test, 1 passed, 0 failed\n 1 test total, 1 passed, 0 failed
-${1 FAIL MSG}     1 critical test, 0 passed, 1 failed\n 1 test total, 0 passed, 1 failed
-${2 FAIL MSG}     2 critical tests, 0 passed, 2 failed\n 2 tests total, 0 passed, 2 failed
-${4 FAIL MSG}     4 critical tests, 0 passed, 4 failed\n 4 tests total, 0 passed, 4 failed
-${5 FAIL MSG}     5 critical tests, 0 passed, 5 failed\n 5 tests total, 0 passed, 5 failed
-${12 FAIL MSG}    12 critical tests, 0 passed, 12 failed\n 12 tests total, 0 passed, 12 failed
+${1 PASS MSG}     1 critical test, 1 passed, 0 failed\n1 test total, 1 passed, 0 failed
+${1 FAIL MSG}     1 critical test, 0 passed, 1 failed\n1 test total, 0 passed, 1 failed
+${2 FAIL MSG}     2 critical tests, 0 passed, 2 failed\n2 tests total, 0 passed, 2 failed
+${4 FAIL MSG}     4 critical tests, 0 passed, 4 failed\n4 tests total, 0 passed, 4 failed
+${5 FAIL MSG}     5 critical tests, 0 passed, 5 failed\n5 tests total, 0 passed, 5 failed
+${12 FAIL MSG}    12 critical tests, 0 passed, 12 failed\n12 tests total, 0 passed, 12 failed
 ${ALSO}           \n\nAlso teardown of the parent suite failed.
 ${EXECUTED FILE}    %{TEMPDIR}/robot-suite-teardown-executed.txt
 

@@ -22,12 +22,13 @@ from .jswriter import JsResultWriter, SplitLogWriter
 
 
 class _LogReportWriter(object):
+    usage = None
 
     def __init__(self, js_model):
         self._js_model = js_model
 
     def _write_file(self, path, config, template):
-        outfile = file_writer(path) \
+        outfile = file_writer(path, usage=self.usage) \
             if is_string(path) else path  # unit test hook
         with outfile:
             model_writer = RobotModelWriter(outfile, self._js_model, config)
@@ -36,6 +37,7 @@ class _LogReportWriter(object):
 
 
 class LogWriter(_LogReportWriter):
+    usage = 'log'
 
     def write(self, path, config):
         self._write_file(path, config, LOG)
@@ -43,17 +45,18 @@ class LogWriter(_LogReportWriter):
             self._write_split_logs(splitext(path)[0])
 
     def _write_split_logs(self, base):
-        for index, (keywords, strings) in enumerate(self._js_model.split_results):
-            index += 1  # enumerate accepts start index only in Py 2.6+
+        for index, (keywords, strings) in enumerate(self._js_model.split_results,
+                                                    start=1):
             self._write_split_log(index, keywords, strings, '%s-%d.js' % (base, index))
 
     def _write_split_log(self, index, keywords, strings, path):
-        with file_writer(path) as outfile:
+        with file_writer(path, usage=self.usage) as outfile:
             writer = SplitLogWriter(outfile)
             writer.write(keywords, strings, index, basename(path))
 
 
 class ReportWriter(_LogReportWriter):
+    usage = 'report'
 
     def write(self, path, config):
         self._write_file(path, config, REPORT)

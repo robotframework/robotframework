@@ -26,7 +26,7 @@ Spaces In Variable Table
     Should Be Equal    ${TWO SPACES}    ${SP}${SP}
     Should Be Equal    ${FOUR SPACES}    ${SP}${SP}${SP}${SP}
     Should Be True    len('${FOUR SPACES}') == 4
-    Should Be Equal    "\n ${FOUR SPACES}"    "${NL}${SP}${SP}${SP}${SP}"
+    Should Be Equal    "\n${FOUR SPACES}"    "${NL}${SP}${SP}${SP}${SP}"
 
 Leading And Trailing Spaces In Variable Table
     Should Be Equal    ${PRE SPACES}    ${SP}${SP}two leading spaces
@@ -51,16 +51,14 @@ Escaping Variables In Variable Table
     Should Be Equal    ${NOT VAR 2}    \${whatever}
     Should Be Equal    \\${NOT VAR}    \\\${whatever}
     Should Be Equal    \\${NOT VAR 2}    \\\${whatever}
-    Should Start With    \${NOT VAR}    ${NOT VAR
+    Should Start With    \${NOT VAR}    \${NOT VAR
 
 Escaping From List Variable In variable Table
-    Should Be Equal    @{LIST}[0]    ${SP}
-    Should Be Equal    @{LIST}[1]    c:${BS}temp${BS}
-    Should Be Equal    @{LIST}[2]    ${NL}
-    Should Be Equal    @{LIST}[3]    \${xxx}
-    Should Be Equal    @{LIST}[0]@{LIST}[0]@{LIST}[2]    ${SP}${SP}${NL}
-    Should Be Equal    @{LIST}[1]@{LIST}[0]@{LIST}[2]    c:${BS}temp${BS}${SP}${NL}
-    Should Be True    @{LIST} == [' ', 'c:\\\\temp\\\\', '\\n', '$'+'{xxx}']
+    Should Be Equal    ${LIST}[0]    ${SP}
+    Should Be Equal    ${LIST}[1]    c:${BS}temp${BS}
+    Should Be Equal    ${LIST}[2]    ${NL}
+    Should Be Equal    ${LIST}[3]    \${xxx}
+    Should Be True    ${LIST} == [' ', 'c:\\\\temp\\\\', '\\n', '$'+'{xxx}']
 
 Non Strings Are Ok In variable Table
     Should Be Equal    ${NON STRING}    ${None}
@@ -86,7 +84,7 @@ Newline
     Should Be Equal    \n    ${NL}
     Should Be Equal    \\n    ${BS}n
 
-Space After Newline Escape Is Ignored
+Ignoring Space After Newline Is Deprecated
     Should Be Equal    foo\n bar\n zap    foo${NL}bar${NL}zap
     Should Be Equal    foo\n\ bar    foo${NL}${SP}bar
     Should Be Equal    foo\\n bar    foo${BS}n${SP}bar
@@ -171,6 +169,10 @@ Escaping Variables With User Keywords
     ${ret} =    User Keyword    \${foo}    foo
     Should Be Equal    ${ret}    \${foo}\${foo}
     User keyword 2    \${foo}    {foo}
+
+Pipe
+| | Should Be Equal | \| | ${PIPE} |
+| | Should Be Equal | \||| | ${PIPE * 3} |
 
 *** Keyword ***
 User keyword

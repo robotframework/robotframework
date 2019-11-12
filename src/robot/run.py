@@ -41,11 +41,11 @@ from robot.conf import RobotSettings
 from robot.model import ModelModifier
 from robot.output import LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
-from robot.running import TestSuiteBuilder
-from robot.utils import Application, unic
+from robot.running.builder import TestSuiteBuilder
+from robot.utils import Application, unic, text
 
 
-USAGE = """Robot Framework -- A generic test automation framework
+USAGE = """Robot Framework -- A generic automation framework
 
 Version:  <VERSION>
 
@@ -54,32 +54,32 @@ Usage:  robot [options] data_sources
    or:  python path/to/robot [options] data_sources
    or:  java -jar robotframework.jar [options] data_sources
 
-Robot Framework is a Python-based keyword-driven test automation framework for
-acceptance level testing and acceptance test-driven development (ATDD). It has
-an easy-to-use tabular syntax for creating test cases and its testing
-capabilities can be extended by test libraries implemented either with Python
-or Java. Users can also create new higher level keywords from existing ones
-using the same simple syntax that is used for creating test cases.
+Robot Framework is a generic open source automation framework for acceptance
+testing, acceptance test-driven development (ATDD) and robotic process
+automation (RPA). It has simple, easy-to-use syntax that utilizes the
+keyword-driven automation approach. Keywords adding new capabilities are
+implemented in libraries using either Python or Java. New higher level
+keywords can also be created using Robot Framework's own syntax.
 
-The easiest way to execute tests is using the `robot` script created as part
-of the normal installation. Alternatively it is possible to execute the `robot`
-module directly using `python -m robot`, where `python` can be replaced with
-any supported Python interpreter like `jython`, `ipy` or `python3`. Yet another
-alternative is running the `robot` directory like `python path/to/robot`.
-Finally, there is a standalone JAR distribution available.
+The easiest way to execute Robot Framework is using the `robot` command created
+as part of the normal installation. Alternatively it is possible to execute
+the `robot` module directly using `python -m robot`, where `python` can be
+replaced with any supported Python interpreter such as `jython`, `ipy` or
+`python3`. Yet another alternative is running the `robot` directory like
+`python path/to/robot`. Finally, there is a standalone JAR distribution
+available.
 
-Data sources given to Robot Framework are either test case files or directories
-containing them and/or other directories. Single test case file creates a test
-suite containing all the test cases in it and a directory containing test case
-files creates a higher level test suite with test case files or other
-directories as sub test suites. If multiple data sources are given, a virtual
-top level suite containing suites generated from given data sources is created.
+Tests (or tasks in RPA terminology) are created in files typically having the
+`*.robot` extension. Files automatically create test (or task) suites and
+directories with these files create higher level suites. When Robot Framework
+is executed, paths to these files or directories are given to it as arguments.
 
 By default Robot Framework creates an XML output file and a log and a report in
 HTML format, but this can be configured using various options listed below.
 Outputs in HTML format are for human consumption and XML output for integration
 with other systems. XML outputs can also be combined and otherwise further
-processed with Rebot tool. Run `rebot --help` for more information.
+post-processed with the Rebot tool that is an integral part of Robot Framework.
+Run `rebot --help` for more information.
 
 Robot Framework is open source software released under Apache License 2.0.
 For more information about the framework and the rich ecosystem around it
@@ -88,29 +88,33 @@ see http://robotframework.org/.
 Options
 =======
 
+    --rpa                 Turn on generic automation mode. Mainly affects
+                          terminology so that "test" is replaced with "task"
+                          in logs and reports. By default the mode is got
+                          from test/task header in data files. New in RF 3.1.
  -F --extension value     Parse only files with this extension when executing
                           a directory. Has no effect when running individual
                           files or when using resource files. If more than one
                           extension is needed, separate them with a colon.
-                          Examples: `--extension robot`, `-F robot:txt`
-                          New in RF 3.0.1.
- -N --name name           Set the name of the top level test suite. Underscores
-                          in the name are converted to spaces. Default name is
-                          created from the name of the executed data source.
+                          Examples: `--extension txt`, `--extension robot:txt`
+                          New in RF 3.0.1. Starting from RF 3.2 only `*.robot`
+                          files are parsed by default.
+ -N --name name           Set the name of the top level test suite. Default
+                          name is created from the name of the executed data
+                          source.
  -D --doc documentation   Set the documentation of the top level test suite.
-                          Underscores in the documentation are converted to
-                          spaces and it may also contain simple HTML formatting
-                          (e.g. *bold* and http://url/).
- -M --metadata name:value *  Set metadata of the top level suite. Underscores
-                          in the name and value are converted to spaces. Value
-                          can contain same HTML formatting as --doc.
+                          Simple formatting is supported (e.g. *bold*). If
+                          the documentation contains spaces, it must be quoted.
+                          Example: --doc "Very *good* example"
+ -M --metadata name:value *  Set metadata of the top level suite. Value can
+                          contain formatting similarly as --doc.
                           Example: --metadata version:1.2
  -G --settag tag *        Sets given tag(s) to all executed test cases.
  -t --test name *         Select test cases to run by name or long name. Name
                           is case and space insensitive and it can also be a
                           simple pattern where `*` matches anything and `?`
-                          matches any char. If using `*` and `?` in the console
-                          is problematic see --escape and --argumentfile.
+                          matches any char.
+    --task name *         Alias to --test. Especially applicable with --rpa.
  -s --suite name *        Select test suites to run by name. When this option
                           is used with --test, --include or --exclude, only
                           test cases in matching suites and also matching other
@@ -140,8 +144,7 @@ Options
                           have a tag set with --critical. Tag can be a pattern.
  -v --variable name:value *  Set variables in the test data. Only scalar
                           variables with string value are supported and name is
-                          given without `${}`. See --escape for how to use
-                          special characters and --variablefile for a more
+                          given without `${}`. See --variablefile for a more
                           powerful variable setting mechanism.
                           Examples:
                           --variable str:Hello       =>  ${str} = `Hello`
@@ -183,8 +186,7 @@ Options
     --splitlog            Split log file into smaller pieces that open in
                           browser transparently.
     --logtitle title      Title for the generated test log. The default title
-                          is `<Name Of The Suite> Test Log`. Underscores in
-                          the title are converted into spaces in all titles.
+                          is `<Name Of The Suite> Test Log`.
     --reporttitle title   Title for the generated test report. The default
                           title is `<Name Of The Suite> Test Report`.
     --reportbackground colors  Background colors to use in the report file.
@@ -192,6 +194,9 @@ Options
                           `passed:failed`. Both color names and codes work.
                           Examples: --reportbackground green:yellow:red
                                     --reportbackground #00E:#E00
+    --maxerrorlines lines  Maximum number of error message lines to show in
+                          report when tests fail. Default is 40, minimum is 10
+                          and `NONE` can be used to show the full message.
  -L --loglevel level      Threshold level for logging. Available levels: TRACE,
                           DEBUG, INFO (default), WARN, NONE (no logging). Use
                           syntax `LOGLEVEL:DEFAULT` to define the default
@@ -223,18 +228,16 @@ Options
                           characters `*` (matches anything) and `?` (matches
                           any char). Documentation can contain formatting
                           similarly as with --doc option.
-                          Examples: --tagdoc mytag:My_documentation
-                                    --tagdoc regression:*See*_http://info.html
-                                    --tagdoc owner-*:Original_author
+                          Examples: --tagdoc mytag:Example
+                                    --tagdoc "owner-*:Original author"
     --tagstatlink pattern:link:title *  Add external links into `Statistics by
                           Tag`. Pattern can contain characters `*` (matches
                           anything) and `?` (matches any char). Characters
                           matching to wildcard expressions can be used in link
                           and title with syntax %N, where N is index of the
-                          match (starting from 1). In title underscores are
-                          automatically converted to spaces.
-                          Examples: --tagstatlink mytag:http://my.domain:Link
-                          --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
+                          match (starting from 1).
+                          Examples: --tagstatlink mytag:http://my.domain:Title
+                          --tagstatlink "bug-*:http://url/id=%1:Issue Tracker"
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
                           Remove keyword data from the generated log file.
                           Keywords containing warnings are not removed except
@@ -280,10 +283,6 @@ Options
                           the name using colon or semicolon as a separator.
                           Examples: --listener MyListenerClass
                                     --listener path/to/Listener.py:arg1:arg2
-    --warnonskippedfiles  If this option is used, skipped test data files will
-                          cause a warning that is visible in the console output
-                          and the log file. By default skipped files only cause
-                          an info level syslog message.
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
     --runemptysuite       Executes tests also if the top level test suite is
@@ -334,21 +333,10 @@ Options
                           they are imported. Multiple paths can be given by
                           separating them with a colon (`:`) or by using this
                           option several times. Given path can also be a glob
-                          pattern matching multiple paths but then it normally
-                          must be escaped or quoted.
+                          pattern matching multiple paths.
                           Examples:
-                          --pythonpath libs/
+                          --pythonpath libs/ --pythonpath resources/*.jar
                           --pythonpath /opt/testlibs:mylibs.zip:yourlibs
-                          -E star:STAR -P lib/STAR.jar -P mylib.jar
- -E --escape what:with *  Escape characters which are problematic in console.
-                          `what` is the name of the character to escape and
-                          `with` is the string to escape it with. Note that
-                          all given arguments, incl. data sources, are escaped
-                          so escape characters ought to be selected carefully.
-                          <--------------------ESCAPES------------------------>
-                          Examples:
-                          --escape space:_ --metadata X:Value_with_spaces
-                          -E space:SP -E quot:Q -v var:QhelloSPworldQ
  -A --argumentfile path *  Text file to read more arguments from. Use special
                           path `STDIN` to read contents from the standard input
                           stream. File can have both options and data sources
@@ -402,14 +390,14 @@ ROBOT_INTERNAL_TRACES     When set to any non-empty value, Robot Framework's
 Examples
 ========
 
-# Simple test run with `robot` without options.
+# Simple test run using `robot` command without options.
 $ robot tests.robot
 
 # Using options.
-$ robot --include smoke --name Smoke_Tests path/to/tests.robot
+$ robot --include smoke --name "Smoke Tests" path/to/tests.robot
 
 # Executing `robot` module using Python.
-$ python -m robot test_directory
+$ python -m robot path/to/tests
 
 # Running `robot` directory with Jython.
 $ jython /opt/robot tests.robot
@@ -434,15 +422,23 @@ class RobotFramework(Application):
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.info('Settings:\n%s' % unic(settings))
-        suite = TestSuiteBuilder(settings['SuiteNames'],
-                                 settings['WarnOnSkipped'],
-                                 settings['Extension']).build(*datasources)
-        suite.configure(**settings.suite_config)
+        builder = TestSuiteBuilder(settings['SuiteNames'],
+                                   extension=settings.extension,
+                                   rpa=settings.rpa,
+                                   allow_empty_suite=settings.run_empty_suite)
+        suite = builder.build(*datasources)
+        settings.rpa = suite.rpa
         if settings.pre_run_modifiers:
             suite.visit(ModelModifier(settings.pre_run_modifiers,
                                       settings.run_empty_suite, LOGGER))
+        suite.configure(**settings.suite_config)
         with pyloggingconf.robot_handler_enabled(settings.log_level):
-            result = suite.run(settings)
+            old_max_error_lines = text.MAX_ERROR_LINES
+            text.MAX_ERROR_LINES = settings.max_error_lines
+            try:
+                result = suite.run(settings)
+            finally:
+                text.MAX_ERROR_LINES = old_max_error_lines
             LOGGER.info("Tests execution ended. Statistics:\n%s"
                         % result.suite.stat_message)
             if settings.log or settings.report or settings.xunit:
@@ -459,10 +455,11 @@ class RobotFramework(Application):
                     if value not in (None, []))
 
 
-def run_cli(arguments, exit=True):
+def run_cli(arguments=None, exit=True):
     """Command line execution entry point for running tests.
 
     :param arguments: Command line options and arguments as a list of strings.
+        Starting from RF 3.1, defaults to ``sys.argv[1:]`` if not given.
     :param exit: If ``True``, call ``sys.exit`` with the return code denoting
         execution status, otherwise just return the rc. New in RF 3.0.1.
 
@@ -486,6 +483,8 @@ def run_cli(arguments, exit=True):
     arguments like ``name="Example"`` and generally has a richer API for
     programmatic test execution.
     """
+    if arguments is None:
+        arguments = sys.argv[1:]
     return RobotFramework().execute_cli(arguments, exit=exit)
 
 
@@ -500,8 +499,8 @@ def run(*tests, **options):
         hyphens so that, for example, ``--name`` becomes ``name``.
 
     Most options that can be given from the command line work. An exception
-    is that options ``--pythonpath``, ``--argumentfile``, ``--escape`` ,
-    ``--help`` and ``--version`` are not supported.
+    is that options ``--pythonpath``, ``--argumentfile``, ``--help`` and
+    ``--version`` are not supported.
 
     Options that can be given on the command line multiple times can be
     passed as lists. For example, ``include=['tag1', 'tag2']`` is equivalent

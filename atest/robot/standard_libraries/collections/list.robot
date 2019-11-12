@@ -87,6 +87,12 @@ Get Index From List With Invalid Stop Index
 Copy List
     Check Test Case    ${TEST NAME}
 
+Shallow Copy List
+    Check Test Case    ${TEST NAME}
+
+Deep Copy List
+    Check Test Case    ${TEST NAME}
+
 Reserve List
     Check Test Case    ${TEST NAME}
 
@@ -222,7 +228,8 @@ Log List With Different Lists
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    List is empty.    INFO
     Check Log Message    ${tc.kws[1].msgs[0]}    List has one item:\n1
-    Check Log Message    ${tc.kws[4].msgs[0]}    List length is 2 and it contains following items:\n 0: (1, 2, 3)\n 1: 3.12
+    Check Log Message    ${tc.kws[4].msgs[0]}    List has one item:\n(1, 2, 3)
+    Check Log Message    ${tc.kws[6].msgs[0]}    List length is 2 and it contains following items:\n0: (1, 2, 3)\n1: 3.12
 
 Count Matches In List Case Insensitive
     Check Test Case    ${TEST NAME}
@@ -315,4 +322,7 @@ List Should Not Contain Value, Value Found and Own Error Message Regexp
     Check Test Case    ${TEST NAME}
 
 List Should Not Contain Value, Value Found and Own Error Message Glob
+    Check Test Case    ${TEST NAME}
+
+Check List Error
     Check Test Case    ${TEST NAME}

@@ -14,13 +14,9 @@
 #  limitations under the License.
 
 from robot.utils import (Sortable, elapsed_time_to_string, html_escape,
-                         is_string, normalize, py2to3, PY3)
+                         is_string, normalize, py2to3, unicode)
 
 from .tags import TagPattern
-
-
-if PY3:
-    unicode = str
 
 
 @py2to3

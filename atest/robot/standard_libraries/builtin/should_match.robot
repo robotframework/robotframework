@@ -6,11 +6,18 @@ Resource          builtin_resource.robot
 Should Match
     Check test case    ${TESTNAME}
 
+Should Match with extra trailing newline
+    Check test case    ${TESTNAME}
+
 Should Match case-insensitive
     Check test case    ${TESTNAME}
 
 Should Match with bytes containing non-ascii characters
-    [Tags]    no-ipy
+    [Tags]    require-py2    no-ipy
+    Check test case    ${TESTNAME}
+
+Should Match does not work with bytes on Python 3
+    [Tags]    require-py3
     Check test case    ${TESTNAME}
 
 Should Not Match
@@ -20,7 +27,7 @@ Should Not Match case-insensitive
     Check test case    ${TESTNAME}
 
 Should Not Match with bytes containing non-ascii characters
-    [Tags]    no-ipy
+    [Tags]    require-py2    no-ipy
     Check test case    ${TESTNAME}
 
 Should Match Regexp

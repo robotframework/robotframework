@@ -42,14 +42,14 @@ from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
 from robot.parsing import disable_curdir_processing
 from robot.running import TestSuiteBuilder
-from robot.utils import (abspath, Application, file_writer, format_time,
-                         get_link_path, html_escape, html_format, is_string,
-                         secs_to_timestr, seq2str2, timestr_to_secs, unescape,
-                         IRONPYTHON)
+from robot.utils import (abspath, Application, file_writer, get_link_path,
+                         html_escape, html_format, IRONPYTHON, is_string,
+                         PY_VERSION, secs_to_timestr, seq2str2,
+                         timestr_to_secs, unescape)
 
 
 # http://ironpython.codeplex.com/workitem/31549
-if IRONPYTHON and sys.version_info < (2, 7, 2):
+if IRONPYTHON and PY_VERSION < (2, 7, 2):
     int = long
 
 
@@ -110,7 +110,7 @@ Jython and IronPython). It can be executed as an installed module like
 
 Examples:
 
-  python -m robot.testdoc my_test.html testdoc.html
+  python -m robot.testdoc my_test.robot testdoc.html
   jython -m robot.testdoc -N smoke_tests -i smoke path/to/my_tests smoke.html
   ipy path/to/robot/testdoc.py first_suite.txt second_suite.txt output.html
 
@@ -131,7 +131,7 @@ class TestDoc(Application):
         self.console(outfile)
 
     def _write_test_doc(self, suite, outfile, title):
-        with file_writer(outfile) as output:
+        with file_writer(outfile, usage='Testdoc output') as output:
             model_writer = TestdocModelWriter(output, suite, title)
             HtmlFileWriter(output, model_writer).write(TESTDOC)
 
@@ -258,11 +258,9 @@ class JsonConverter(object):
         if timeout is None:
             return ''
         try:
-            tout = secs_to_timestr(timestr_to_secs(timeout.value))
+            tout = secs_to_timestr(timestr_to_secs(timeout))
         except ValueError:
-            tout = timeout.value
-        if timeout.message:
-            tout += ' :: ' + timeout.message
+            tout = timeout
         return tout
 
 

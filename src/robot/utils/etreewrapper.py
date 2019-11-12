@@ -14,39 +14,43 @@
 #  limitations under the License.
 
 from io import BytesIO
+import re
 
 from .compat import py2to3
-from .platform import IRONPYTHON
-from .robottypes import is_string
+from .platform import IRONPYTHON, PY_VERSION, PY2
+from .robottypes import is_bytes, is_string
+
+IRONPYTHON_WITH_BROKEN_ETREE = IRONPYTHON and PY_VERSION < (2, 7, 9)
+NO_ETREE_ERROR = 'No valid ElementTree XML parser module found'
 
 
-_ERROR = 'No valid ElementTree XML parser module found'
-
-
-if not IRONPYTHON:
+if not IRONPYTHON_WITH_BROKEN_ETREE:
     try:
         from xml.etree import cElementTree as ET
     except ImportError:
         try:
-            import cElementTree as ET
+            from xml.etree import ElementTree as ET
         except ImportError:
-            try:
-                from xml.etree import ElementTree as ET
-            except ImportError:
-                try:
-                    from elementtree import ElementTree as ET
-                except ImportError:
-                    raise ImportError(_ERROR)
+            raise ImportError(NO_ETREE_ERROR)
 else:
-    # Cannot use standard ET available on IronPython because it is broken
-    # both in 2.7.0 and 2.7.1:
-    # http://ironpython.codeplex.com/workitem/31923
-    # http://ironpython.codeplex.com/workitem/21407
+    # Standard ElementTree works only with IronPython 2.7.9+
+    # https://github.com/IronLanguages/ironpython2/issues/370
     try:
         from elementtree import ElementTree as ET
     except ImportError:
-        raise ImportError(_ERROR)
+        raise ImportError(NO_ETREE_ERROR)
     from StringIO import StringIO
+
+
+if PY2:
+    from .encoding import console_decode as fsdecode
+    PathLike = ()
+elif PY_VERSION < (3, 6):
+    from os import fsdecode
+    from pathlib import PosixPath, WindowsPath
+    PathLike = (PosixPath, WindowsPath)
+else:
+    from os import fsdecode, PathLike
 
 
 # cElementTree.VERSION seems to always be 1.0.6. We want real API version.
@@ -58,31 +62,59 @@ if ET.VERSION < '1.3' and hasattr(ET, 'tostringlist'):
 class ETSource(object):
 
     def __init__(self, source):
+        # ET on Python < 3.6 doesn't support pathlib.Path
+        if PY_VERSION < (3, 6) and isinstance(source, PathLike):
+            source = str(source)
         self._source = source
         self._opened = None
 
     def __enter__(self):
-        self._opened = self._open_source_if_necessary()
+        self._opened = self._open_if_necessary(self._source)
         return self._opened or self._source
+
+    def _open_if_necessary(self, source):
+        if self._is_path(source) or self._is_already_open(source):
+            return None
+        if IRONPYTHON_WITH_BROKEN_ETREE:
+            return StringIO(source)
+        if is_bytes(source):
+            return BytesIO(source)
+        encoding = self._find_encoding(source)
+        return BytesIO(source.encode(encoding))
+
+    def _is_path(self, source):
+        if isinstance(source, PathLike):
+            return True
+        elif is_string(source):
+            prefix = '<'
+        elif is_bytes(source):
+            prefix = b'<'
+        else:
+            return False
+        return not source.lstrip().startswith(prefix)
+
+    def _is_already_open(self, source):
+        return not (is_string(source) or is_bytes(source))
+
+    def _find_encoding(self, source):
+        match = re.match("\s*<\?xml .*encoding=(['\"])(.*?)\\1.*\?>", source)
+        return match.group(2) if match else 'UTF-8'
 
     def __exit__(self, exc_type, exc_value, exc_trace):
         if self._opened:
             self._opened.close()
 
     def __unicode__(self):
-        if self._source_is_file_name():
-            return self._source
-        if hasattr(self._source, 'name'):
-            return self._source.name
-        return '<in-memory file>'
+        source = self._source
+        if self._is_path(source):
+            return self._path_to_string(source)
+        if hasattr(source, 'name'):
+            return self._path_to_string(source.name)
+        return u'<in-memory file>'
 
-    def _source_is_file_name(self):
-        return is_string(self._source) \
-                and not self._source.lstrip().startswith('<')
-
-    def _open_source_if_necessary(self):
-        if self._source_is_file_name() or not is_string(self._source):
-            return None
-        if IRONPYTHON:
-            return StringIO(self._source)
-        return BytesIO(self._source.encode('UTF-8'))
+    def _path_to_string(self, path):
+        if isinstance(path, PathLike):
+            return str(path)
+        if is_bytes(path):
+            return fsdecode(path)
+        return path

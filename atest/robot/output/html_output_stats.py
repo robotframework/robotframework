@@ -24,7 +24,7 @@ def get_all_stats(path):
 
 def _get_stats_line(path):
     prefix = 'window.output["stats"] = '
-    with open(path) as file:
+    with open(path, encoding='UTF-8') as file:
         for line in file:
             if line.startswith(prefix):
                 return line[len(prefix):-2]

@@ -8,6 +8,6 @@ ${VAR FROM IMPORT RESOURCE RESOURCE}  value 1
 ${COMMON VAR}  resource 1
 
 
-*** User Keywords ***
+*** Keywords ***
 KW From Import Resource Resource
     No Operation

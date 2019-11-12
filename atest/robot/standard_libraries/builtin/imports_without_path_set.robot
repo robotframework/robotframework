@@ -1,5 +1,7 @@
 *** Settings ***
-Suite Setup       Run Tests    --variable WINDOWS:${WINDOWS} --ConsoleMarkers OFF    standard_libraries/builtin/import_resource.robot standard_libraries/builtin/import_variables.robot    default options=
+Suite Setup       Run Tests
+...      --variable WINDOWS:${INTERPRETER.is_windows} --ConsoleMarkers OFF
+...      standard_libraries/builtin/import_resource.robot standard_libraries/builtin/import_variables.robot    default options=
 Resource          atest_resource.robot
 
 *** Test Cases ***

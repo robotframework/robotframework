@@ -138,6 +138,13 @@ class GetKeywordArguments(_DynamicMethod):
         return self._to_list_of_strings(value)
 
 
+class GetKeywordTypes(_DynamicMethod):
+    _underscore_name = 'get_keyword_types'
+
+    def _handle_return_value(self, value):
+        return value
+
+
 class GetKeywordTags(_DynamicMethod):
     _underscore_name = 'get_keyword_tags'
 

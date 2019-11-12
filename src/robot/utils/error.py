@@ -20,7 +20,8 @@ import traceback
 
 from robot.errors import RobotError
 
-from .platform import JYTHON, RERAISED_EXCEPTIONS
+from .encoding import system_decode
+from .platform import JYTHON, PY3, PY_VERSION, RERAISED_EXCEPTIONS
 from .unic import unic
 
 
@@ -135,13 +136,38 @@ class PythonErrorDetails(_ErrorDetails):
         tb = self._exc_traceback
         while tb and self._is_excluded_traceback(tb):
             tb = tb.tb_next
-        return ''.join(traceback.format_tb(tb)).rstrip() or '  None'
+        if not tb:
+            return '  None'
+        if PY3:
+            # Everything is Unicode so we can simply use `format_tb`.
+            formatted = traceback.format_tb(tb)
+        else:
+            # Entries are bytes and may even have different encoding.
+            entries = [self._decode_entry(e) for e in traceback.extract_tb(tb)]
+            formatted = traceback.format_list(entries)
+        return ''.join(formatted).rstrip()
 
     def _is_excluded_traceback(self, traceback):
         if not self._exclude_robot_traces:
             return False
         module = traceback.tb_frame.f_globals.get('__name__')
         return module and module.startswith('robot.')
+
+    def _decode_entry(self, traceback_entry):
+        path, lineno, func, text = traceback_entry
+        # Traceback entries in Python 2 use bytes using different encodings.
+        # path: system encoding (except on Jython 2.7.0 where it's latin1)
+        # line: integer
+        # func: always ASCII on Python 2
+        # text: depends on source encoding; UTF-8 is an ASCII compatible guess
+        buggy_jython = JYTHON and PY_VERSION < (2, 7, 1)
+        if not buggy_jython:
+            path = system_decode(path)
+        else:
+            path = path.decode('latin1', 'replace')
+        if text is not None:
+            text = text.decode('UTF-8', 'replace')
+        return path, lineno, func, text
 
 
 class JavaErrorDetails(_ErrorDetails):

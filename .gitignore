@@ -7,6 +7,7 @@ atest/results
 utest/jasmine-results
 *~
 .idea
+.vscode
 .*project
 *.pyc
 *$py.class
@@ -17,3 +18,7 @@ doc/api/_build
 doc/libraries/*.html
 doc/userguide/RobotFrameworkUserGuide.html
 src/robotframework.egg-info
+log.html
+output.xml
+report.html
+src/robot/parsing/parser.out
