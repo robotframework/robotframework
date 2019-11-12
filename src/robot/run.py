@@ -31,7 +31,6 @@ that can be used programmatically. Other code is for internal usage.
 """
 
 import sys
-import os
 
 # Allows running as a script. __name__ check needed with multiprocessing:
 # https://github.com/robotframework/robotframework/issues/1137
@@ -97,8 +96,9 @@ Options
                           a directory. Has no effect when running individual
                           files or when using resource files. If more than one
                           extension is needed, separate them with a colon.
-                          Examples: `--extension robot`, `-F robot:txt`
-                          New in RF 3.0.1.
+                          Examples: `--extension txt`, `--extension robot:txt`
+                          New in RF 3.0.1. Starting from RF 3.2 only `*.robot`
+                          files are parsed by default.
  -N --name name           Set the name of the top level test suite. Default
                           name is created from the name of the executed data
                           source.
