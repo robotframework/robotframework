@@ -57,7 +57,7 @@ Invalid XUnit File
     ${dir}    ${base} =    Split Path  ${INVALID}
     ${path} =    Regexp Escape    ${INVALID}
     Check Stderr Matches Regexp
-    ...    \\[ ERROR \\] Writing xunit file '${path}' failed: .*
+    ...    \\[ ERROR \\] Opening xunit file '${path}' failed: .*
 
 Skipping non-critical tests
     Run tests    --xUnit xunit.xml --xUnitSkipNonCritical --NonCritical fail    ${PASS AND FAIL}

@@ -44,6 +44,9 @@ Embedded Arguments
     Check Log Message    ${tc.kws[0].msgs[0]}    arg
     Check Log Message    ${tc.kws[1].msgs[0]}    --args--
 
+Embedded Arguments With Library Having State
+    Check Test Case    ${TEST NAME}
+
 Arguments Containing Variables And Import Same Library Twice
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    Param1.Parameters Should Be    args=1, 2

@@ -169,6 +169,18 @@ Keyword Timeout Logging
     ${tc} =    Check Test Case    Timeouted Keyword Timeouts
     Keyword timeout should have been active    ${tc.kws[0].kws[0]}    99 milliseconds       2    exceeded=True
 
+Zero timeout is ignored
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.timeout}    0 seconds
+    Should Be Equal    ${tc.kws[0].timeout}    0 seconds
+    Should Be True     ${tc.kws[0].elapsedtime} > 99
+
+Negative timeout is ignored
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].timeout}    - 1 second
+    Should Be Equal    ${tc.kws[0].timeout}    - 1 second
+    Should Be True     ${tc.kws[0].elapsedtime} > 99
+
 *** Keywords ***
 Timeout should have been active
     [Arguments]    ${kw}    ${timeout}    ${msg count}    ${exceeded}=False    ${type}=Test

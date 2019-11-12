@@ -233,8 +233,9 @@ List Should Not Contain Value, Value Found And Own Error Message
 
 List Should Not Contain Duplicates With No Duplicates
     ${generator}    ${tuple} =    Evaluate    (c for c in 'abcABC'), (0, 1, 2, '0', '1', '2')
-    : FOR    ${list}    IN    ${L0}    ${L1}    ${L2}    ${L3}    ${L4}    ${generator}    ${tuple}
-    \    List Should Not Contain Duplicates    ${list}
+    FOR    ${list}    IN    ${L0}    ${L1}    ${L2}    ${L3}    ${L4}    ${generator}    ${tuple}
+        List Should Not Contain Duplicates    ${list}
+    END
 
 List Should Not Contain Duplicates Is Case And Space Sensitive
     ${list} =    Create List    item    ITEM    i tem    i t e m    ITE_m
@@ -357,6 +358,8 @@ Log List With Different Lists
     Log List    ${L0}
     Log List    ${L1}
     ${tuple} =    Evaluate    (1, 2, 3)
+    ${list} =    Create List    ${tuple}
+    Log List    ${list}
     ${list} =    Create List    ${tuple}    ${3.12}
     Log List    ${list}
 

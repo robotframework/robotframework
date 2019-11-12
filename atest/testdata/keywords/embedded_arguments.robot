@@ -67,6 +67,8 @@ Custom Regexp With Curly Braces
 Custom Regexp With Escape Chars
     Custom Regexp With Escape Chars e.g. \\, \\\\ and c:\\temp\\test.txt
     Custom Regexp With \\}
+    Custom Regexp With \\{
+    Custom Regexp With \\{}
 
 Grouping Custom Regexp
     ${matches} =    Grouping Custom Regexp(erts)
@@ -157,7 +159,7 @@ Keyword Matching Multiple Keywords In One Resource File
     foo+r1+bar-r1-zap
 
 Keyword Matching Multiple Keywords In Different Resource Files
-    [Documentation]    FAIL Multiple keywords with name 'foo-r1-bar-r2-zap' found.\
+    [Documentation]    FAIL Multiple keywords with name 'foo-r1-bar-r2-zap' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${INDENT}embedded_args_in_uk_1.foo-r1-bar-r2-zap
     ...    ${INDENT}embedded_args_in_uk_2.foo-r1-bar-r2-zap
@@ -228,14 +230,14 @@ I want ${integer:whatever} and ${string:everwhat} as variables
     Should Be Equal    ${integer}    ${42}
     Should Be Equal    ${string}    42
 
-Today is ${date:\d{4\}-\d{2\}-\d{2\}}
+Today is ${date:\d{4}-\d{2}-\d{2}}
     Should Be Equal    ${date}    2011-06-21
 
-Today is ${day1:\w{6,9\}} and tomorrow is ${day2:\w{6,9\}}
+Today is ${day1:\w{6,9}} and tomorrow is ${day2:\w{6,9}}
     Should Be Equal    ${day1}    Tuesday
     Should Be Equal    ${day2}    Wednesday
 
-Literal ${Curly:{} Brace
+Literal ${Curly:\{} Brace
     Should Be Equal    ${Curly}    {
 
 Literal ${Curly:\}} Brace
@@ -248,6 +250,12 @@ Custom Regexp With Escape Chars e.g. ${1E:\\\\}, ${2E:\\\\\\\\} and ${PATH:c:\\\
 
 Custom Regexp With ${pattern:\\\\\}}
     Should Be Equal    ${pattern}    \\}
+
+Custom Regexp With ${pattern:\\\\\{}
+    Should Be Equal    ${pattern}    \\{
+
+Custom Regexp With ${pattern:\\\\{}}
+    Should Be Equal    ${pattern}    \\{}
 
 Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}
     [Return]    ${x}-${y}

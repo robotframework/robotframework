@@ -3,12 +3,10 @@ Resource          atest_resource.robot
 
 *** Variables ***
 ${FORMATS DIR}     ${DATA DIR}/parsing/data_formats
-${HTML DIR}        ${FORMATS DIR}/html
 ${TSV DIR}         ${FORMATS DIR}/tsv
 ${TXT DIR}         ${FORMATS DIR}/txt
 ${ROBOT DIR}       ${FORMATS DIR}/robot
 ${REST DIR}        ${FORMATS DIR}/rest
-${REST DIR 2}      ${FORMATS DIR}/rest_directives
 ${MIXED DIR}       ${FORMATS DIR}/mixed_data
 ${RESOURCE DIR}    ${FORMATS DIR}/resources
 @{SAMPLE TESTS}    Passing    Failing    User Keyword    Nön-äscïï    Own Tags    Default Tags    Variable Table
@@ -20,15 +18,9 @@ ${RESOURCE DIR}    ${FORMATS DIR}/resources
 Previous Run Should Have Been Successful
     Should Not Be Equal    ${SUITE}    ${None}    Running tests failed.    No Values
 
-Run Tests And Verify Status
-    [Arguments]    ${options}    ${paths}
-    Set Suite Variable    $SUITE    ${None}
-    Run Tests    ${options}    ${paths}
-    Previous Run Should Have Been Successful
-
 Run Sample File And Check Tests
     [Arguments]    ${options}    ${path}
-    Run Tests And Verify Status    ${options}    ${path}
+    Run Tests    ${options}    ${path}
     ${ignore}    ${type} =    Split Extension    ${path}
     Should Be Equal    ${SUITE.name}    Sample
     Should Be Equal    ${SUITE.doc}    A complex testdata file in ${type} format.
@@ -51,7 +43,7 @@ Run Sample File And Check Tests
 
 Run Suite Dir And Check Results
     [Arguments]    ${options}    ${path}
-    Run Tests And Verify Status    ${options}    ${path}
+    Run Tests    ${options}    ${path}
     ${ignore}    ${type} =    Split Path    ${path}
     Should Be Equal    ${SUITE.name}    ${type.capitalize()}
     Should Be Equal    ${SUITE.doc}    ${EMPTY}
@@ -62,8 +54,6 @@ Run Suite Dir And Check Results
     Check Syslog Contains    | INFO \ | Data source '${path}${/}invalid.${type}' has no tests or tasks.
     Check Syslog Contains    | INFO \ | Data source '${path}${/}empty.${type}' has no tests or tasks.
     Check Syslog Contains    | INFO \ | Ignoring file or directory '${path}${/}not_a_picture.jpg'.
-    Run Keyword If    "${type}" not in ("html", "rest")
-    ...    Check Syslog Contains    | ERROR | Parsing '${path}${/}invalid_encoding.${type}' failed: UnicodeDecodeError
 
 Check Suite With Init
     [Arguments]    ${suite}
@@ -73,21 +63,3 @@ Check Suite With Init
     Should Be Equal    ${suite.teardown}    ${None}
     Should Contain Suites    ${suite}    Sub Suite1    Sub Suite2
     Should Contain Tests    ${suite}    @{SUBSUITE_TESTS}
-
-*** Keywords ***
-Check HTML Deprecation Message
-    [Arguments]    ${index}    ${path}
-    ${path} =    Normalize Path    ${path}
-    ${msg} =    Catenate
-    ...    Using test data in HTML format is deprecated.
-    ...    Convert '${path}' to plain text format.
-    Check Log Message    @{ERRORS}[${index}]    ${msg}    WARN
-
-Check Automatic Parsing Deprecated Message
-    [Arguments]    ${index}    ${path}
-    ${path} =    Normalize Path    ${path}
-    ${msg} =    Catenate
-    ...    Automatically parsing other than '*.robot' files is deprecated.
-    ...    Convert '${path}' to '*.robot' format or use '--extension' to
-    ...    explicitly configure which files to parse.
-    Check Log Message    @{ERRORS}[${index}]    ${msg}    WARN

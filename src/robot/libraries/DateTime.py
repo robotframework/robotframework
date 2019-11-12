@@ -346,9 +346,15 @@ def get_current_date(time_zone='local', increment=0,
     | Should Be Equal | ${date.year}     | ${2014}                 |
     | Should Be Equal | ${date.month}    | ${6}                    |
     """
-    if time_zone.upper() == 'LOCAL':
+    upper = time_zone.upper()
+    if upper == 'LOCAL':
         dt = datetime.now()
-    elif time_zone.upper() == 'UTC':
+    # Epoch time is same regardless the timezone. We convert `dt` to epoch time
+    # using `time.mktime()` afterwards, and it expects time in local time.
+    # For details: https://github.com/robotframework/robotframework/issues/3306
+    elif upper == 'UTC' and result_format.upper() == 'EPOCH':
+        dt = datetime.now()
+    elif upper == 'UTC':
         dt = datetime.utcnow()
     else:
         raise ValueError("Unsupported timezone '%s'." % time_zone)

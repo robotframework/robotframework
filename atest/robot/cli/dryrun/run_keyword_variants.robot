@@ -3,7 +3,6 @@ Suite Setup     Run Tests  --dryrun  cli/dryrun/run_keyword_variants.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
-
 Run Keyword With Keyword with Invalid Number of Arguments
     Check Test Case  ${TESTNAME}
 

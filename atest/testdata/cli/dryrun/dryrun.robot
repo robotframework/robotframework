@@ -13,7 +13,6 @@ Suite Setup       ${SUITE SETUP}
 # Library keywords get NOT_RUN status. That should be OK teardown status.
 Suite Teardown    No Operation
 
-
 *** Variables ***
 ${SETUP}          No Operation
 ${TEARDOWN}       Teardown
@@ -74,6 +73,10 @@ User keyword return value
     ${quux}=    Some Return Value    ${foo}    ${bar}
     This is validated
 
+Non-existing variable in user keyword return value
+    Ooops Return Value
+    This is validated
+
 Test Setup And Teardown
     [Documentation]    FAIL    No keyword with name 'Does not exist' found.\n\n
     ...    Also teardown failed:\n
@@ -89,14 +92,24 @@ Keyword Teardown
     Keyword with Teardown
     This is validated
 
+Keyword teardown with non-existing variable is ignored
+    Keyword with teardown with non-existing variable
+    This is validated
+
+Keyword teardown with existing variable is resolved and executed
+    Keyword with teardown with existing variable
+    This is validated
+
 For Loops
     [Documentation]    FAIL    Keyword 'resource.Anarchy in the UK' expected 3 arguments, got 2.
-    ::FOR    ${i}    IN RANGE    10
-    \    Log    ${i}
-    \    Simple UK
+    FOR    ${i}    IN RANGE    10
+        Log    ${i}
+        Simple UK
+    END
     For Loop in UK
-    ::FOR    ${a}    ${b}    IN RANGE    ${NONE}
-    \    Anarchy in the UK    1    2
+    FOR    ${a}    ${b}    IN RANGE    ${NONE}
+        Anarchy in the UK    1    2
+    END
     This is validated
 
 Non-existing keyword name
@@ -111,9 +124,9 @@ Invalid syntax in UK
 
 Multiple Failures
     [Documentation]    FAIL    Several failures occurred:\n\n
-    ...    1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 5 arguments, got 1.\n\n
+    ...    1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 6 arguments, got 1.\n\n
     ...    2) Invalid argument specification: Invalid argument syntax '${arg'.\n\n
-    ...    3) Keyword 'BuiltIn.Log' expected 1 to 5 arguments, got 6.\n\n
+    ...    3) Keyword 'Some Return Value' expected 2 arguments, got 3.\n\n
     ...    4) No keyword with name 'Yet another non-existing keyword' found.\n\n
     ...    5) No keyword with name 'Does not exist' found.
     Should Be Equal    1
@@ -135,6 +148,14 @@ Keyword with Teardown
     No Operation
     [Teardown]    Does not exist
 
+Keyword with teardown with non-existing variable
+    No Operation
+    [Teardown]    ${I DO NOT EXIST}
+
+Keyword with teardown with existing variable
+    No Operation
+    [Teardown]    ${TEARDOWN}    ${I DO NOT EXIST}
+
 Invalid Syntax UK
     [Arguments]    ${arg
     No Operation
@@ -143,9 +164,12 @@ Some Return Value
     [Arguments]    ${a1}    ${a2}
     [Return]    ${a1}-${a2}
 
+Ooops return value
+    [Return]    ${ooops}
+
 UK with multiple failures
     Invalid Syntax UK
-    Log    too    many    arguments    here    we    have
+    Some Return Value    too    many    arguments
     Yet another non-existing keyword
 
 Teardown

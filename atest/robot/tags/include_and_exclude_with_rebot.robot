@@ -105,8 +105,8 @@ Non Matching Exclude
 
 Non Matching Include And Exclude
     [Template]    Run And Check Error
-    -i nonex -e nonex2    tag 'nonex' and without tag 'nonex2'
-    --include nonex -i incl? -e *1 -e *2 -e *3    tags 'nonex' or 'incl?' and without tags '*1', '*2' or '*3'
+    -i nonex -e nonex2                            tag 'nonex' and not matching tag 'nonex2'
+    --include nonex -i incl? -e *1 -e *2 -e *3    tags 'nonex' or 'incl?' and not matching tags '*1', '*2' or '*3'
 
 Non Matching When Reboting Multiple Outputs
     [Setup]    Set Test Variable    ${INPUT FILES}    ${INPUT FILE} ${INPUT FILE 2}
@@ -167,6 +167,6 @@ Run And Check Error
     [Arguments]    ${params}    ${filter msg}    ${suite name}=Include And Exclude
     Run Rebot Without Processing Output    ${params}    ${INPUT FILES}
     Stderr Should Be Equal To    SEPARATOR=
-    ...    [ ERROR ] Suite '${suite name}' contains no tests with ${filter msg}.
+    ...    [ ERROR ] Suite '${suite name}' contains no tests matching ${filter msg}.
     ...    ${USAGE TIP}\n
     File Should Not Exist    ${OUTFILE}

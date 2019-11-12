@@ -33,27 +33,27 @@ Get Line Count
 Split To Lines
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}
     Length Should Be    ${result}    2
-    Should be equal    @{result}[0]    ${FIRST LINE}
-    Should be equal    @{result}[1]    ${SECOND LINE}
+    Should be equal    ${result}[0]    ${FIRST LINE}
+    Should be equal    ${result}[1]    ${SECOND LINE}
 
 Split To Lines With Start Only
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}    1
-    Should be equal    @{result}[0]    ${SECOND LINE}
+    Should be equal    ${result}[0]    ${SECOND LINE}
 
 Split To Lines With Start And End
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}    0    1
     Length Should Be    ${result}    1
-    Should be equal    @{result}[0]    ${FIRST LINE}
+    Should be equal    ${result}[0]    ${FIRST LINE}
 
 Split To Lines With End Only
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}    ${EMPTY}    1
     Length Should Be    ${result}    1
-    Should be equal    @{result}[0]    ${FIRST LINE}
+    Should be equal    ${result}[0]    ${FIRST LINE}
 
 Split To Lines With Negative Values
     @{result} =    Split To Lines    ${TEXT IN COLUMNS}    -1
     Length Should Be    ${result}    1
-    Should be equal    @{result}[0]    ${SECOND LINE}
+    Should be equal    ${result}[0]    ${SECOND LINE}
 
 Split To Lines With Invalid Start
     [Documentation]    FAIL ValueError: Cannot convert 'start' argument 'invalid' to an integer.

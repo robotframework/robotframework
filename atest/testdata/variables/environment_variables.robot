@@ -62,18 +62,18 @@ Environment Variables Are Underscore Sensitive
 
 Environment Variables In Variable Table
     Should Contain  ${SCALAR TEMPDIR}  ${/}
-    Should Contain  @{LIST TEMPDIR}[0]  ${/}
+    Should Contain  ${LIST TEMPDIR}[0]  ${/}
     Should Be Equal  ${SCALAR TEMPDIR}  %{TEMPDIR}
-    Should Be Equal  @{LIST TEMPDIR}[0]  %{TEMPDIR}
+    Should Be Equal  ${LIST TEMPDIR}[0]  %{TEMPDIR}
 
 Environment Variables In Settings Table
-    Should Contain  @{TEST_TAGS}[0]  ${/}
-    Should Be Equal  @{TEST_TAGS}[0]  %{TEMPDIR}
+    Should Contain  ${TEST_TAGS}[0]  ${/}
+    Should Be Equal  ${TEST_TAGS}[0]  %{TEMPDIR}
 
 Environment Variables In Test Metadata
     [Documentation]  %{THIS_ENV_VAR_IS_SET} in a test doc
     [Tags]  %{THIS_ENV_VAR_IS_SET}
-    Should Be Equal  @{TEST_TAGS}[0]  Env var value
+    Should Be Equal  ${TEST_TAGS}[0]  Env var value
 
 Environment Variables In User Keyword Metadata
     ${ret} =  UK With Environment Variables In Metadata
@@ -83,7 +83,7 @@ Escaping Environment Variables
     Should Be Equal  \%{THIS_IS_NOT_ENV_VAR}  %\{THIS_IS_NOT_ENV_VAR}
 
 Empty Environment Variable
-    [Documentation]    FAIL    Invalid variable name '%{}'.
+    [Documentation]    FAIL    STARTS: Environment variable '\%{}' not found.
     Log  %{}
 
 *** Keywords ***

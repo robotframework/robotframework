@@ -40,7 +40,7 @@ Ignore Error With Arguments That Needs To Be Escaped
     Should Be Equal    ${ret val}    ${None}
     ${status}    ${ret val} =    Run Keyword And Ignore Error    Create List    @{NEEDS ESCAPING}
     Should Be Equal    ${status}    PASS
-    Should Be True    ${ret val} == @{NEEDS ESCAPING}
+    Should Be True    ${ret val} == ${NEEDS ESCAPING}
 
 Ignore Error When Timeout Occurs
     [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
@@ -68,7 +68,7 @@ Ignore Error When Invalid Return Values When Setting Variables
     Should Be Equal    ${status}: ${error}    FAIL: Cannot set variables: Expected 2 return values, got 3.
 
 Ignore Error When Syntax Error In For Loop
-    [Documentation]    FAIL Invalid FOR loop type 'IN KEKKONEN'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
+    [Documentation]    FAIL Invalid FOR loop variable 'IN KEKKONEN'.
     Run Keyword And Ignore Error    For Loop With Syntax Error
 
 Ignore Error When Non Existing Variable In For Loop
@@ -99,13 +99,14 @@ Expect Error When Error Occurs
     Run Keyword And Expect Error    ${ERROR MESSAGE}    ${FAIL KW}    ${ERROR MESSAGE}
 
 Expect Error When Different Error Occurs
-    [Documentation]    FAIL Expected error 'My error' but got 'My error message'.
-    Run Keyword And Expect Error    My error    Fail    ${ERROR MESSAGE}
+    [Documentation]    FAIL Expected error 'Wrong!' but got 'My error message'.
+    Run Keyword And Expect Error    Wrong!    Fail    ${ERROR MESSAGE}
     Fail    This should not be executed
 
 Expect Error When Different Error Occurs 2
-    [Documentation]    FAIL STARTS: Expected error 'My error' but got 'Evaluating expression 'foo == bar' failed: NameError:
-    Run Keyword And Expect Error    My error    Evaluate    foo == bar
+    [Documentation]    FAIL STARTS:
+    ...    Expected error 'Wrong again!' but got 'Evaluating expression 'foo == bar' failed: NameError:
+    Run Keyword And Expect Error    Wrong again!    Evaluate    foo == bar
     Fail    This should not be executed
 
 Expect Error When No Errors Occur
@@ -173,7 +174,7 @@ Expect Error When Invalid Return Values When Setting Variables
     ...    Invalid Return Values When Setting Variables
 
 Expect Error When Syntax Error In For Loop
-    [Documentation]    FAIL Invalid FOR loop type 'IN KEKKONEN'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
+    [Documentation]    FAIL Invalid FOR loop variable 'IN KEKKONEN'.
     Run Keyword And Expect Error    *    For Loop With Syntax Error
 
 Expect Error When Non Existing Variable In For Loop
@@ -193,7 +194,7 @@ Expect Error When Access To List Variable Nonexisting Index Syntax 1
 
 Expect Error When Access To List Variable Nonexisting Index Syntax 2
     Run Keyword And Expect Error
-    ...    List '\@{list}' has no item in index 2.
+    ...    List '\${list}' has no item in index 2.
     ...    Access To List Variable Nonexisting Index Syntax 2
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 1
@@ -203,7 +204,7 @@ Expect Error When Access To Dictionary Nonexisting Key Syntax 1
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 2
     Run Keyword And Expect Error
-    ...    Dictionary '\&{dict}' has no key 'c'.
+    ...    Dictionary '\${dict}' has no key 'c'.
     ...    Access To Dictionary Variable Nonexisting Key Syntax 2
 
 Expect Error With Explicit GLOB
@@ -270,12 +271,14 @@ Invalid Syntax When Setting Variable
     @{this}    @{is}    @{invalid} =    Create List
 
 For Loop With Syntax Error
-    : FOR    ${a}    IN KEKKONEN   foo    bar
-    \    Whatever
+    FOR    ${a}    IN KEKKONEN   foo    bar
+        Whatever
+    END
 
 For Loop With Non Existing Variable
-    : FOR    ${a}    IN    ${non existing}
-    \    Whatever
+    FOR    ${a}    IN    ${non existing}
+        Whatever
+    END
 
 Broken User Keyword
     ${x}
@@ -289,7 +292,7 @@ Access To List Variable Nonexisting Index Syntax 1
 
 Access To List Variable Nonexisting Index Syntax 2
     ${list} =    Create list    1    2
-    Log    @{list}[2]
+    Log    ${list}[2]
 
 Access To Dictionary Variable Nonexisting Key Syntax 1
     ${dict} =    Create dictionary    a=1    b=2
@@ -297,7 +300,7 @@ Access To Dictionary Variable Nonexisting Key Syntax 1
 
 Access To Dictionary Variable Nonexisting Key Syntax 2
     ${dict} =    Create dictionary    a=1    b=2
-    Log    &{dict}[c]
+    Log    ${dict}[c]
 
 Keyword With Ignore Error With "Passing" Exceptions
     Run Keyword And Ignore Error    Return From Keyword

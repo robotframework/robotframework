@@ -175,6 +175,7 @@ class Logger(AbstractLogger):
     def _log_message(self, msg, no_cache=False):
         """Log messages written (mainly) by libraries."""
         if self._log_message_cache is not None and not no_cache:
+            msg.resolve_delayed_message()
             self._log_message_cache.append(msg)
             return
         for logger in self:

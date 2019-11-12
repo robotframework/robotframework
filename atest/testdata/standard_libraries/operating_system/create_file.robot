@@ -16,8 +16,13 @@ Create File With Content
     [Template]    Create and Verify File
     ${EMPTY}
     Content in one line
-    This is content in\n3\nlines
     Nön-ÄSCÏÏ Cöntënt
+
+Create Multiline File
+    [Template]    Create and Verify File
+    Content in\n3\nlines.    expected=Content in${\n}3${\n}lines.
+    1\n\n2\n\n\n3\n          expected=1${\n}${\n}2${\n}${\n}${\n}3${\n}
+    CR\r\nLF                 expected=CR\r${\n}LF
 
 Create Non-ASCII File With Default Encoding
     Create File    ${TESTFILE}    Nön-ÄSCÏÏ Cöntënt
@@ -60,6 +65,8 @@ Create Binary File Using Bytes
     Hello, world!
     Hyvää yötä!
     \x00\x01\xe4\xff
+    two\nlines
+    \r\nfoo\n
 
 Create Binary File Using Unicode
     [Template]    Create And Verify Binary File Using Unicode
@@ -67,6 +74,8 @@ Create Binary File Using Unicode
     Hello, world!
     Hyvää yötä!
     \x00\x01\xe4\xff
+    two\nlines
+    \r\nfoo\n
 
 Creating Binary File Using Unicode With Ordinal > 255 Fails
     [Documentation]    FAIL STARTS: ValueError:
@@ -74,16 +83,19 @@ Creating Binary File Using Unicode With Ordinal > 255 Fails
 
 Append To File
     Append To File    ${TESTFILE}    First line\n
-    Append To File    ${TESTFILE}    Second line\n    ASCII
-    Append To File    ${TESTFILE}    ${EMPTY}
-    Append To File    ${TESTFILE}    Lääst läin
-    Verify File    ${TESTFILE}    First line\nSecond line\nLääst läin
+    Append To File    ${TESTFILE}    Second            ASCII
+    Append To File    ${TESTFILE}    ${SPACE}line\n    SYSTEM
+    Append To File    ${TESTFILE}    ${EMPTY}          CONSOLE
+    Append To File    ${TESTFILE}    3\n\n
+    Append To File    ${TESTFILE}    \n
+    Append To File    ${TESTFILE}    Lääst läin\n\n    UTF-8
+    Verify File       ${TESTFILE}    First line${\n}Second line${\n}3${\n}${\n}${\n}Lääst läin${\n}${\n}
 
 *** Keywords ***
 Create And Verify File
-    [Arguments]    ${content}=content    ${encoding}=UTF-8    ${file}=${TESTFILE}
+    [Arguments]    ${content}=content    ${encoding}=UTF-8    ${file}=${TESTFILE}    ${expected}=${content}
     Create File    ${file}    ${content}    ${encoding}
-    Verify File    ${file}    ${content}    ${encoding}
+    Verify File    ${file}    ${expected}    ${encoding}
 
 Create And Verify Binary File Using Bytes
     [Arguments]    ${content}    ${file}=${TESTFILE}

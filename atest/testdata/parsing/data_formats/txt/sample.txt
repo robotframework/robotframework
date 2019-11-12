@@ -3,7 +3,7 @@ We have a devious plan to rule the world with robots.
 
 *Setting*      *Value*
 
-Documentation       A complex testdata file   in txt format.
+Documentation       A complex testdata file in txt format.
 Default Tags   default1
 Force Tags     force1   force2
 
@@ -90,7 +90,7 @@ Default Fixture   No operation
 
 Overridden Fixture   [Teardown]   Fail   Failing Teardown
    [Setup]   Log   Own Setup
-   [Documentation]   FAIL   Teardown failed:\n Failing Teardown
+   [Documentation]   FAIL   Teardown failed:\nFailing Teardown
    No Operation
 
 Quotes   Should Be Equal   ${quoted}   """this has """"many "" quotes """""

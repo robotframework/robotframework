@@ -8,19 +8,27 @@ Resource          atest_resource.robot
 Name
     ${tc} =    Check Test Case    Normal name
     Should Be Equal    ${tc.name}    Normal name
+
+Names are not formatted
     ${tc} =    Check Test Case    test_case names are NOT _forMatted_
     Should Be Equal    ${tc.name}    test_case names are NOT _forMatted_
 
 Documentation
-    Verify Documentation    Documentation for this test case
+    Verify Documentation    Documentation in single line and column.
 
 Documentation in multiple columns
     Verify Documentation    Documentation for this test case in multiple columns
 
 Documentation in multiple rows
-    Verify Documentation    1st line is shortdoc.
-    ...    Documentation for this test case
-    ...    in multiple rows.
+    Verify Documentation    1st logical line
+    ...    is shortdoc.
+    ...
+    ...    This documentation has multiple rows
+    ...    and also multiple columns.
+    ...
+    ...    | table | =header= |
+    ...    | foo | bar |
+    ...    | ragged |
 
 Documentation with variables
     Verify Documentation    Variables work in documentation since Robot 1.2.
@@ -31,11 +39,20 @@ Documentation with non-existing variables
     ...    left unchanged in all documentations. Existing ones
     ...    are replaced: "99999"
 
+Documentation with unclosed variables
+    Verify Documentation    No closing curly at \${all     test=${TEST NAME} 1
+    Verify Documentation    Not \${properly {closed}       test=${TEST NAME} 2
+    Verify Documentation    2nd not \${properly}[closed    test=${TEST NAME} 3
+
 Documentation with escaping
-    Verify Documentation    \${XXX} c:\\temp${SPACE*2}\\
+    Verify Documentation    \${VERSION}\nc:\\temp\n\n\\
 
 Name and documentation on console
-    Check Stdout Contains    Documentation in multiple rows :: 1st line is shortdoc.${SPACE * 15}| PASS |
+    Check Stdout Contains    Normal name${SPACE * 59}| PASS |
+    Check Stdout Contains    test_case names are NOT _forMatted_${SPACE * 35}| PASS |
+    Check Stdout Contains    Documentation :: Documentation in single line and column.${SPACE * 13}| PASS |
+    Check Stdout Contains    Documentation in multiple rows :: 1st logical line is shortdoc.${SPACE * 7}| PASS |
+    Check Stdout Contains    Documentation with non-existing variables :: Starting from RF ${2}.1 ... | PASS |
 
 Tags
     Verify Tags    force-1    test-1    test-2
@@ -103,7 +120,8 @@ Timeout
     Verify Timeout    1 day
 
 Timeout with message
-    Verify Timeout    2 minutes 3 seconds 456 milliseconds
+    Verify Timeout    1 minute 39 seconds 999 milliseconds
+    Verify Error    0    Setting 'Timeout' accepts only one value, got 2.
 
 Default timeout
     Verify Timeout    1 minute 39 seconds 999 milliseconds
@@ -127,28 +145,15 @@ Multiple settings
     Verify Teardown         Test case teardown
     Verify Timeout          12 seconds 345 milliseconds
 
-Deprecated setting format
-    Check Test Case    Invalid setting
-    ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
-    ${message} =    Catenate
-    ...    Error in file '${path}':
-    ...    Invalid syntax in test case 'Invalid setting':
-    ...    Setting 'Doc U Ment ation' is deprecated. Use 'Documentation' instead.
-    Check Log Message    ${ERRORS}[1]    ${message}    WARN
-
 Invalid setting
     Check Test Case    ${TEST NAME}
-    ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
-    ${message} =    Catenate
-    ...    Error in file '${path}':
-    ...    Invalid syntax in test case '${TEST NAME}':
-    ...    Non-existing setting 'Invalid'.
-    Check Log Message    ${ERRORS}[2]    ${message}    ERROR
+    Verify Error    1    Non-existing setting 'Doc U Ment ation'.
+    Verify Error    2    Non-existing setting 'Invalid'.
 
 *** Keywords ***
 Verify Documentation
-    [Arguments]    @{doc}
-    ${tc} =    Check Test Case    ${TEST NAME}
+    [Arguments]    @{doc}    ${test}=${TEST NAME}
+    ${tc} =    Check Test Case    ${test}
     ${doc} =    Catenate    SEPARATOR=\n    @{doc}
     Should Be Equal    ${tc.doc}    ${doc}
 
@@ -172,3 +177,9 @@ Verify Timeout
     [Arguments]    ${timeout}
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.timeout}    ${timeout}
+
+Verify Error
+    [Arguments]    ${index}    @{message parts}    ${level}=ERROR
+    ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
+    ${message} =    Catenate    Error in file '${path}':    @{message parts}
+    Check Log Message    ${ERRORS}[${index}]    ${message}    ${level}

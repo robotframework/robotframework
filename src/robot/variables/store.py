@@ -28,7 +28,9 @@ class VariableStore(object):
         self.data = NormalizedDict(ignore='_')
         self._variables = variables
 
-    def resolve_delayed(self):
+    def resolve_delayed(self, item=None):
+        if item:
+            return self._resolve_delayed(*item)
         for name, value in list(self.data.items()):
             try:
                 self._resolve_delayed(name, value)

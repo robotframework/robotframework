@@ -57,6 +57,11 @@ Variable with non-string value as kwargs name
     [Documentation]    FAIL Argument names must be strings.
     Lib Kwargs    ${1}=non-string
 
+Equal sign in variable name
+    ${timedelta} =    Evaluate    datetime.timedelta    modules=datetime
+    ${result} =    User Keyword    ${timedelta(seconds=1)}    ${timedelta(hours=1)}
+    Should Be Equal    ${result}    0:00:01, 1:00:00
+
 *** Keywords ***
 User Keyword
     [Arguments]    ${first arg}    ${a-b-c}=default

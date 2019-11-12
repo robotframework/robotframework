@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils import PY3
+from robot.utils import PY2, PY3
 from robot.utils.asserts import (assert_almost_equal, assert_equal,
                                  assert_false, assert_none,
                                  assert_not_almost_equal, assert_not_equal,
@@ -82,6 +82,17 @@ class TestAsserts(unittest.TestCase):
         assert_raises_with_msg(AE, 'True (string) != True (boolean)',
                                assert_equal, 'True', True)
 
+    def test_assert_equal_with_custom_formatter(self):
+        assert_equal(u'hyv\xe4', u'hyv\xe4', formatter=repr)
+        assert_raises_with_msg(
+            AE, "u'hyv\\xe4' != 'paha'" if PY2 else "'hyv\xe4' != 'paha'",
+            assert_equal, u'hyv\xe4', 'paha', formatter=repr
+        )
+        if PY3:
+            assert_raises_with_msg(AE, "'hyv\\xe4' != 'paha'",
+                                   assert_equal, 'hyv\xe4', 'paha',
+                                   formatter=ascii)
+
     def test_assert_not_equal(self):
         assert_not_equal('abc', 'ABC')
         assert_not_equal(42, -42, 'hello', True)
@@ -92,6 +103,13 @@ class TestAsserts(unittest.TestCase):
         raise_msg(AE, "hello: 42 == 42", assert_not_equal, 42, 42, 'hello')
         raise_msg(AE, "hello", assert_not_equal, MyEqual('cat'), MyEqual('cat'),
                   'hello', False)
+
+    def test_assert_not_equal_with_custom_formatter(self):
+        assert_not_equal(u'hyv\xe4', u'paha', formatter=repr)
+        expected = "u'\\xe4' == u'\\xe4'" if PY2 else "'\xe4' == '\xe4'"
+        assert_raises_with_msg(AE, expected,
+                               assert_not_equal, u'\xe4', u'\xe4',
+                               formatter=repr)
 
     def test_fail(self):
         assert_raises(AE, fail)

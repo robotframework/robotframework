@@ -33,6 +33,9 @@ Documentation with variables
 Documentation with non-existing variables
     Documentation with non-existing variables
 
+Documentation with unclosed variables
+    Documentation with unclosed variables
+
 Documentation with escaping
     Documentation with escaping
 
@@ -68,9 +71,6 @@ Return with escaping
 
 Timeout
     Timeout
-
-Timeout with message
-    Timeout with message
 
 Timeout with variables
     Timeout with variables
@@ -129,8 +129,12 @@ Documentation with non-existing variables
     [Documentation]    Starting from RF ${2}.1 ${NONEX} variables are left unchanged.
     No Operation
 
+Documentation with unclosed variables
+    [Documentation]    Not ${closed
+    No Operation
+
 Documentation with escaping
-    [Documentation]    \${XXX}    c:\\temp    \    \\
+    [Documentation]    \${XXX} - c:\\temp - \ - \\
     No Operation
 
 Arguments
@@ -168,10 +172,6 @@ Timeout
     [Timeout]    123 seconds
     No Operation
 
-Timeout with message
-    [Timeout]    123456 ms    message
-    No Operation
-
 Timeout with variables
     [TIMEout]    ${VERSION} DAYS
     No Operation
@@ -189,7 +189,6 @@ Multiple settings
     [Return]    Hello ${name}!!
 
 Invalid passing
-    [Doc U Ment ation]    This is deprecated
     [Invalid Setting]    This is invalid
     No Operation
 

@@ -94,13 +94,16 @@ class Message(BaseMessage):
 
     @property
     def message(self):
-        if callable(self._message):
-            self._message = self._message()
+        self.resolve_delayed_message()
         return self._message
 
     @message.setter
     def message(self, message):
         self._message = message
+
+    def resolve_delayed_message(self):
+        if callable(self._message):
+            self._message = self._message()
 
 
 class IsLogged(object):

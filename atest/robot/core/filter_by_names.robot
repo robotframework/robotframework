@@ -19,15 +19,15 @@ ${SUITE DIR}       misc/suites
 
 --test not matching
     Run Failing Test
-    ...    Suite 'Many Tests' contains no tests named 'notexists'.
+    ...    Suite 'Many Tests' contains no tests matching name 'notexists'.
     ...    --test notexists    ${SUITE FILE}
 
 --test not matching with multiple inputs
     Run Failing Test
-    ...    Suite 'Many Tests & Suites' contains no tests named 'notexists'.
+    ...    Suite 'Many Tests & Suites' contains no tests matching name 'notexists'.
     ...    --test notexists    ${SUITE FILE} ${SUITE DIR}
     Run Failing Test
-    ...    Suite 'My Name' contains no tests named 'notexists'.
+    ...    Suite 'My Name' contains no tests matching name 'notexists'.
     ...    --name "My Name" --test notexists    ${SUITE FILE} ${SUITE DIR}
 
 --suite once
@@ -152,7 +152,7 @@ Unnecessary files are not parsed when --suite matches directory
 
 --suite and --test together not matching
     Run Failing Test
-    ...    Suite 'Suites' contains no tests named 'Suite1*' or 'nomatch' in suites 'subsuites' or 'nomatch'.
+    ...    Suite 'Suites' contains no tests matching name 'Suite1*' or 'nomatch' in suites 'subsuites' or 'nomatch'.
     ...    --suite subsuites -s nomatch --test Suite1* -t nomatch    ${SUITE DIR}
 
 --suite with --include/--exclude

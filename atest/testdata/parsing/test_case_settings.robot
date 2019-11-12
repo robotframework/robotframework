@@ -21,7 +21,7 @@ test_case names are NOT _forMatted_
     No Operation
 
 Documentation
-    [Documentation]    Documentation for this test case
+    [Documentation]    Documentation in single line and column.
     No Operation
 
 Documentation in multiple columns
@@ -29,9 +29,15 @@ Documentation in multiple columns
     No Operation
 
 Documentation in multiple rows
-    [DOCUMENTATION]    ${1}st line is shortdoc.
-    ...                Documentation for this test case
-    ...                in    multiple    rows.
+    [DOCUMENTATION]    ${1}st logical line
+    ...                is shortdoc.
+    ...
+    ...                This documentation has multiple rows
+    ...                and also    multiple columns.
+    ...
+    ...                | table | =header= |
+    ...                | foo   |    bar   |
+    ...                | ragged |
     No Operation
 
 Documentation with variables
@@ -44,8 +50,24 @@ Documentation with non-existing variables
     ...                are replaced: "${TIMEOUT}"
     No Operation
 
+Documentation with unclosed variables 1
+    [Documentation]    No closing curly at ${all
+    No Operation
+
+Documentation with unclosed variables 2
+    [Documentation]    Not ${properly {closed}
+    No Operation
+
+Documentation with unclosed variables 3
+    [Documentation]    ${2}nd not ${properly}[closed
+    No Operation
+
 Documentation with escaping
-    [Documentation]    \${XXX}    c:\\temp    \    \\
+    [Documentation]
+    ...    \${VERSION}
+    ...    c:\\temp
+    ...
+    ...    \\
     No Operation
 
 Tags
@@ -129,7 +151,7 @@ Timeout
     No Operation
 
 Timeout with message
-    [Timeout]    123456ms    Message
+    [Timeout]    666    Message not supported since RF 3.2
     No Operation
 
 Default timeout
@@ -162,6 +184,6 @@ Multiple settings
     [Teardown]    Log    Test case teardown
 
 Invalid setting
-    [Doc U Ment ation]    There is an error but test is run anyway.
+    [Doc U Ment ation]    This no longer works in RF 3.2.
     [Invalid]    This is invalid
     No Operation

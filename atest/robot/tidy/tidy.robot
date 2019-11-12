@@ -9,39 +9,35 @@ Tidying single test case file
     [Template]    Run tidy with golden file and check result
     ${EMPTY}            golden.robot
     --usepipes -f txt   golden_pipes.robot
-    --format tsv        golden.tsv
-    --format html       golden.html
     --for robot         golden.robot
     --spacecount 2      golden_two_spaces.robot
 
 Tidying single resource file
     [Template]    Run tidy with golden resource file and check result
-    ${EMPTY}    golden_resource.robot
-    -p    golden_pipes_resource.robot
-    -f tsv    golden_resource.tsv
-    --FORMAT html    golden_resource.html
-    --FOR ROBOT    golden_resource.robot
+    ${EMPTY}            golden_resource.robot
+    -p                  golden_pipes_resource.robot
+    --FOR ROBOT         golden_resource.robot
 
 Tidying single init file
-    Run tidy and check result    ${EMPTY}    __init__.robot
-    File Should Exist    ${TEMP FILE}
+    Run tidy and check result    input=__init__.robot
+    File Should Exist    ${OUTFILE}
 
 Tidying single file without output file prints output to console
-    [Documentation]    Depending on console encoding, non-ASCII characters may not be shown correctly
-    ${stdout} =    Run tidy    ${EMPTY}    golden.robot    output=${NONE}
+    [Documentation]    Depending on console encoding, non-ASCII characters may not be shown correctly.
+    ${stdout} =    Run tidy    input=golden.robot    output=None
     Compare tidy results    ${stdout}    golden.robot    \\s+Log Many\\s+Non-ASCII:.*\\s+\\$\\{CURDIR\\}
-    File Should Not Exist    ${TEMP FILE}
+    File Should Not Exist    ${OUTFILE}
 
 Default format is got from output file
-    Run tidy    ${EMPTY}    ${DATA}/golden.robot    ${TEMP}/golden.html
-    Compare tidy results    ${TEMP}/golden.html    ${DATA}/golden.html
+    Run tidy    input=${DATA}/golden.robot    output=${TEMP}/golden.txt
+    Compare tidy results    ${TEMP}/golden.txt    ${DATA}/golden.txt
 
 Tidying directory
     [Setup]    Copy Directory    ${DATA}/tests    ${TEMP}/tests
     ${result_before}=    Run Tests    sources=${DATA}/tests
-    Run Tidy    --recursive --format TSV    ${TEMP}/tests
-    Check file count    ${TEMP}/tests    *.tsv    2
-    Check file count    ${TEMP}/tests/sub    *.tsv    1
+    Run Tidy    --recursive --format robot    ${TEMP}/tests
+    Check file count    ${TEMP}/tests    *.robot    2
+    Check file count    ${TEMP}/tests/sub    *.robot    1
     Check file count    ${TEMP}/tests    *.txt    0
     Check file count    ${TEMP}/tests/sub    *.txt    0
     Files Should Have $CURDIR    ${TEMP}/tests
@@ -50,22 +46,21 @@ Tidying directory
     Should Be Equal    ${result_before.stdout}    ${result_after.stdout}
 
 Custom headers are preserved and tables aligned accordingly
-    Run tidy and check result    ${EMPTY}     golden_with_headers.robot
+    Run tidy and check result    input=golden_with_headers.robot
 
 Running Tidy as script
     [Tags]   no-standalone
-    Run tidy as script and check result    ${EMPTY}    golden.robot
+    Run tidy as script and check result    input=golden.robot
 
-Tidy tests and keywords containing ELSE and ELSE IF
-    [Setup]    Copy File    ${DATA}/else_untidy.robot    ${TEMP}/else_untidy.robot
-    Run tidy    --inplace     ${TEMP}/else_untidy.robot
-    Compare tidy results    ${TEMP}/else_untidy.robot    ${DATA}/else_tidy.robot
-
+For loops
+    Run tidy and check result    input=for_loops_input.robot
+    ...    expected=for_loops_expected.robot
 
 *** Keywords ***
 Files Should Have $CURDIR
     [Arguments]    ${directory}
     @{paths} =    List Files In Directory    ${directory}    absolute=True
-    :FOR    ${path}    IN    @{paths}
-    \    ${content} =    Get File    ${path}
-    \    Should Contain    ${content}    $\{CURDIR}
+    FOR    ${path}    IN    @{paths}
+        ${content} =    Get File    ${path}
+        Should Contain    ${content}    $\{CURDIR}
+    END

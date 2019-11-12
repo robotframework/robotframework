@@ -60,7 +60,7 @@ Logging Mixed Non-ASCII Unicode And Bytes
 Logging HTML
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    <a href="http://www.google.com">Google</a>    HTML
-    Check Log Message    ${tc.kws[1].msgs[0]}    <table border=1>\n<tr><td>0,0</td><td>0,1</td></tr>\n <tr><td>1,0</td><td>1,1</td></tr>\n</table>    HTML
+    Check Log Message    ${tc.kws[1].msgs[0]}    <table border=1>\n<tr><td>0,0</td><td>0,1</td></tr>\n<tr><td>1,0</td><td>1,1</td></tr>\n</table>    HTML
     Check Log Message    ${tc.kws[1].msgs[1]}    This is html <hr>    HTML
     Check Log Message    ${tc.kws[1].msgs[2]}    This is not html <br>    INFO
     Check Log Message    ${tc.kws[2].msgs[0]}    <i>Hello, stderr!!</i>    HTML

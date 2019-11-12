@@ -24,15 +24,15 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
 
 --test not matching
     Failing Rebot
-    ...    Suite 'Root' contains no tests named 'nonex'.
+    ...    Suite 'Root' contains no tests matching name 'nonex'.
     ...    --test nonex    ${INPUT FILE}
 
 --test not matching with multiple inputs
     Failing Rebot
-    ...    Suite 'Root & Root' contains no tests named 'nonex'.
+    ...    Suite 'Root & Root' contains no tests matching name 'nonex'.
     ...    --test nonex    ${INPUT FILE} ${INPUT FILE}
     Failing Rebot
-    ...    Suite 'My Name' contains no tests named 'nonex'.
+    ...    Suite 'My Name' contains no tests matching name 'nonex'.
     ...    --test nonex -N "My Name"    ${INPUT FILE} ${INPUT FILE}
 
 --suite once
@@ -70,11 +70,11 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
     ...    --name CustomName --suite nonex    ${INPUT FILE} ${INPUT FILE}
 
 --suite and --test together
-    Run And Check Suites and Tests    --suite tsuite1 --suite tsuite3 --test *1first --test *2*    Tsuite1    Suite1 First
+    Run And Check Suites and Tests    --suite tsuite1 --suite tsuite3 --test *1first --test nomatch    Tsuite1    Suite1 First
 
 --suite and --test together not matching
     Failing Rebot
-    ...     Suite 'Root' contains no tests named 'first', 'nonex' or '*one' in suites 'nonex' or 'suites'.
+    ...     Suite 'Root' contains no tests matching name 'first', 'nonex' or '*one' in suites 'nonex' or 'suites'.
     ...    --suite nonex --suite suites --test first --test nonex --test *one    ${INPUT FILE}
 
 Elapsed Time

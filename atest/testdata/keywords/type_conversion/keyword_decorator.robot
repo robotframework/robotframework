@@ -1,5 +1,6 @@
 *** Settings ***
 Library                  KeywordDecorator.py
+Library                  OperatingSystem
 Resource                 conversion.resource
 
 *** Variables ***
@@ -398,11 +399,24 @@ String None is converted to None object
 
 Invalid type spec causes error
     [Documentation]    FAIL No keyword with name 'Invalid type spec' found.
+    [Tags]    negative
     Invalid type spec
 
 Non-matching argument name causes error
     [Documentation]    FAIL No keyword with name 'Non matching name' found.
+    [Tags]    negative
     Non matching name
 
 Type can be given to `return` without an error
     Return type          42                        42
+
+Value contains variable
+    [Setup]       Set Environment Variable         PI_NUMBER    3.14
+    [Teardown]    Remove Environment Variable      PI_NUMBER
+    Float                %{PI_NUMBER}              ${3.14}
+    ${value} =           Set variable              42
+    Integer              ${value}                  ${42}
+    @{value} =           Create List               1    2    3
+    Varargs              @{value}                  expected=(1, 2, 3)
+    &{value} =           Create Dictionary         a=1    b=2    c=3
+    Kwargs               &{value}                  expected={'a': 1, 'b': 2, 'c': 3}

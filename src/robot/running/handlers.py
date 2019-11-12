@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from copy import copy
+
 from robot.utils import (getdoc, getshortdoc, is_java_init, is_java_method,
                          is_list_like, printable_name, split_tags_from_doc,
                          type_name)
@@ -262,11 +264,19 @@ class EmbeddedArgumentsHandler(object):
 
     def __init__(self, name_regexp, orig_handler):
         self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
-        self._orig_handler = orig_handler
         self.name_regexp = name_regexp
+        self._orig_handler = orig_handler
 
     def __getattr__(self, item):
         return getattr(self._orig_handler, item)
+
+    @property
+    def library(self):
+        return self._orig_handler.library
+
+    @library.setter
+    def library(self, library):
+        self._orig_handler.library = library
 
     def matches(self, name):
         return self.name_regexp.match(name) is not None
@@ -275,5 +285,5 @@ class EmbeddedArgumentsHandler(object):
         return EmbeddedArgumentsRunner(self, name)
 
     def __copy__(self):
-        # Needed due to https://github.com/IronLanguages/main/issues/1192
-        return EmbeddedArgumentsHandler(self.name_regexp, self._orig_handler)
+        orig_handler = copy(self._orig_handler)
+        return EmbeddedArgumentsHandler(self.name_regexp, orig_handler)

@@ -48,9 +48,9 @@ Conflicting output files with --norpa are fine
 
 Error message is correct if no task match --task or other options
     [Template]    Rebot and validate no task found
-    --task nonex                   named 'nonex'
-    --include xxx --exclude yyy    with tag 'xxx' and without tag 'yyy'
-    --suite nonex --task task      named 'task' in suite 'nonex'
+    --task nonex                   matching name 'nonex'
+    --include xxx --exclude yyy    matching tag 'xxx' and not matching tag 'yyy'
+    --suite nonex --task task      matching name 'task' in suite 'nonex'
 
 *** Keywords ***
 Create inputs for Rebot

@@ -91,10 +91,9 @@ purposes. This is especially useful when creating test cases using the
 
 Possible data before the first section is ignored.
 
-.. note:: Prior to Robot Framework 3.1, section names were space-insensitive,
-          meaning that spaces could be removed (e.g. `TestCases`) or extra
-          spaces added (e.g. `S e t t i n g s`). This is now deprecated and
-          only the format in the table above, case-insensitively, is supported.
+.. note:: Section names used to be space-insensitive, but that was deprecated
+          in Robot Framework 3.1 and trying to use something like `TestCases`
+          or `S e t t i n g s` causes an error in Robot Framework 3.2.
 
 .. note:: Prior to Robot Framework 3.1, all unrecognized sections were silently
           ignored but nowadays they cause an error. `Comments` sections can
@@ -587,13 +586,14 @@ in the test data.
           dependent line terminator is needed (`\r\n` on Windows and
           `\n` elsewhere).
 
-.. note:: Possible un-escaped whitespace character after the `\n` is
-          ignored. This means that `two lines\nhere` and
-          `two lines\n here` are equivalent. The motivation for this
-          is to allow wrapping long lines containing newlines when using
-          the HTML format, but the same logic is used also with other formats.
-          An exception to this rule is that the whitespace character is not
-          ignored inside the `extended variable syntax`_.
+.. note:: Possible un-escaped space character after the `\n` is
+          ignored meaning that `two lines\nhere` and `two lines\n here` are
+          equivalent. This syntax has, however, been deprecated in Robot
+          Framework 3.2 and it will be removed later. See `issue #3333`__
+          for more information about why this syntax existed and why it
+          is going to be removed.
+
+__ https://github.com/robotframework/robotframework/issues/3333
 
 Handling empty cells
 ''''''''''''''''''''

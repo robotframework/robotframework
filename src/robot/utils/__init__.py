@@ -51,25 +51,27 @@ from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
 from .misc import (plural_or_not, printable_name, roundup, seq2str,
                    seq2str2)
-from .normalizing import lower, normalize, NormalizedDict
+from .normalizing import lower, normalize, normalize_whitespace, NormalizedDict
 from .platform import (IRONPYTHON, JAVA_VERSION, JYTHON, PY_VERSION,
                        PY2, PY3, PYPY, UNIXY, WINDOWS, RERAISED_EXCEPTIONS)
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method
-from .robotio import binary_file_writer, file_writer
+from .robotio import (binary_file_writer, create_destination_directory,
+                      file_writer)
 from .robotpath import abspath, find_file, get_link_path, normpath
 from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
                         parse_time)
-from .robottypes import (FALSE_STRINGS, TRUE_STRINGS, is_bytes, is_dict_like,
-                         is_falsy, is_integer, is_list_like, is_number,
-                         is_string, is_truthy, is_unicode, type_name, unicode)
+from .robottypes import (FALSE_STRINGS, Mapping, MutableMapping, TRUE_STRINGS,
+                         is_bytes, is_dict_like, is_falsy, is_integer,
+                         is_list_like, is_number, is_string, is_truthy,
+                         is_unicode, type_name, unicode)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,
                    get_console_length, getdoc, getshortdoc, pad_console_length,
-                   split_tags_from_doc, split_args_from_name_or_path)
+                   rstrip, split_tags_from_doc, split_args_from_name_or_path)
 from .unic import prepr, unic
 from .utf8reader import Utf8Reader

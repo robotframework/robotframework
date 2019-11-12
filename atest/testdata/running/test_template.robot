@@ -104,17 +104,19 @@ Template With FOR Loop
     ...
     ...    5) Samething != Different
     Same    Same
-    :FOR    ${item}    IN    Same    Different    Same
-    \    Same    Same
-    \    This    Fails
-    \    Same    ${item}
+    FOR    ${item}    IN    Same    Different    Same
+        Same    Same
+        This    Fails
+        Same    ${item}
+    END
     Samething    Different
 
 Template With FOR Loop Containing Variables
     [Documentation]    FAIL    Variable content != 42
     [Tags]    42
-    :FOR    ${item}    IN    ${VARIABLE}    ${SAME VARIABLE}    @{TEST TAGS}
-    \    ${VARIABLE}    ${item}
+    FOR    ${item}    IN    ${VARIABLE}    ${SAME VARIABLE}    @{TEST TAGS}
+        ${VARIABLE}    ${item}
+    END
 
 Template With FOR IN RANGE Loop
     [Documentation]    FAIL
@@ -127,8 +129,9 @@ Template With FOR IN RANGE Loop
     ...    3) 0 != 3
     ...
     ...    4) 0 != 4
-    :FOR    ${index}    IN RANGE    5
-    \    ${0}    ${index}
+    FOR    ${index}    IN RANGE    5
+        ${0}    ${index}
+    END
 
 User Keywords Should Not Be Continued On Failure
     [Documentation]    FAIL
@@ -206,8 +209,9 @@ Templated test with for loop ends after test timeout
     [Documentation]    FAIL    Test timeout 100 milliseconds exceeded.
     [Timeout]    0.1 seconds
     [Template]    Sleep
-    :FOR    ${i}    IN RANGE    10
-    \    0.05 seconds
+    FOR    ${i}    IN RANGE    10
+        0.05 seconds
+    END
 
 Templated test continues after keyword timeout
     [Documentation]    FAIL
@@ -234,12 +238,13 @@ Templated test with for loop continues after keyword timeout
     ...
     ...    2) Failing after 0s sleep and before 15s timeout.
     [Template]    Template with timeout
-    :FOR    ${sleep}    ${timeout}    IN    1    0.001    0    15
-    \    ${sleep}s    ${timeout}s
+    FOR    ${sleep}    ${timeout}    IN    1    0.001    0    15
+        ${sleep}s    ${timeout}s
+    END
 
 Templated test ends after syntax errors
-    [Documentation]    FAIL   Keyword 'BuiltIn.Should Be Equal' expected 2 to 5 arguments, got 6.
-    Syntax    error    makes    test    end     again
+    [Documentation]    FAIL   Keyword 'BuiltIn.Should Be Equal' expected 2 to 6 arguments, got 7.
+    Syntax    error    makes    test    end     again    here
     Not compared    anymore
 
 Templated test continues after variable error
@@ -295,8 +300,9 @@ Failing Uk With Multiple Fails
 
 Continuable failures
     [Arguments]    ${count}
-    :FOR    ${i}    IN RANGE    ${count}
-    \    Run keyword and continue on failure    Fail    Continuable ${i+1}
+    FOR    ${i}    IN RANGE    ${count}
+        Run keyword and continue on failure    Fail    Continuable ${i+1}
+    END
 
 Template with timeout
     [Arguments]    ${sleep}=0s    ${timeout}=10s

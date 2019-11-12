@@ -1,6 +1,4 @@
 *** Settings ***
-Documentation   NO RIDE: Imports contain invalid syntax on purpose
-
 Resource     resources_and_variables/resources.robot
 Resource     RESOURCES_AND_VARIABLES/resources.robot  # Normalize on Windows
 RESOURCE     ${resource_dir}/resources2.robot
@@ -8,7 +6,7 @@ VARIABLES    resources_and_variables/variables.py
 Variables    ${variables2_file}
 
 # Arguments to variable files
-Var I able s    resources_and_variables/dynamic_variables.py    # No args works
+VarIables    resources_and_variables/dynamic_variables.py    # No args works
 variables    resources_and_variables/dynamic_variables.py    One arg works
 Variables    resources_and_variables/dynamic_variables.py
 ...          Two args   returns invalid
@@ -18,7 +16,7 @@ Variables    resources_and_variables/dynamicVariables.py
 ...          This    ${1}    ${works}    back \\ slash    \${escaped}    ${CURDIR}
 
 # Resources and variables in PYTHONPATH
-Res our ce     resource_in_pythonpath.robot
+Resource     resource_in_pythonpath.robot
 resource     resvar_subdir/resource_in_pythonpath_2.robot
 Variables    variables_in_pythonpath.py
 Variables    resvar_subdir/variables_in_pythonpath_2.py
@@ -88,16 +86,16 @@ Dynamic Variable File With No Args
     Log Variables
     Should Be Equal  ${dyn_no_args_get_var}  Dyn var got with no args from get_variables
     Should Be Equal  ${dyn_no_args_get_var_2}  ${2}
-    Should Be Equal  @{dyn_no_args_get_var_list}[0]  one
-    Should Be Equal  @{dyn_no_args_get_var_list}[1]  ${2}
+    Should Be Equal  ${dyn_no_args_get_var_list}[0]  one
+    Should Be Equal  ${dyn_no_args_get_var_list}[1]  ${2}
 
 Dynamic Variable File With One Arg
     Should Be Equal  ${dyn_one_arg_get_var}  Dyn var got with one arg from get_variables
     Should Be Equal  ${dyn_one_arg_get_var_False}  ${False}
-    Should Be Equal  @{dyn_one_arg_get_var_list}[0]  one
-    Should Be Equal  @{dyn_one_arg_get_var_list}[1]  ${False}
-    ${dict} =  Set Variable  @{dyn_one_arg_get_var_list}[2]
-    Should Be Equal  ${dict['dyn_no_args_get_var_2']}  ${2}
+    Should Be Equal  ${dyn_one_arg_get_var_list}[0]  one
+    Should Be Equal  ${dyn_one_arg_get_var_list}[1]  ${False}
+    ${dict} =  Set Variable  ${dyn_one_arg_get_var_list}[2]
+    Should Be Equal  ${dict}[dyn_no_args_get_var_2]  ${2}
 
 Dynamic Variable File With Variables And Backslashes In Args
     Should Be Equal  ${dyn_multi_args_getVar}  Dyn var got with multiple args from getVariables
@@ -125,6 +123,6 @@ Resource File In PYTHONPATH
 Variable File In PYTHONPATH
     Should Be Equal  ${PPATH_VARFILE}  Variable from variable file in PYTHONPATH
     Should Be Equal  ${PPATH_VARFILE_2}  Variable from variable file in PYTHONPATH (version 2)
-    Should Be Equal  @{PPATH_VARFILE_2_LIST}[0]  Variable from variable file
-    Should Be Equal  @{PPATH_VARFILE_2_LIST}[1]  in PYTHONPATH
-    Should Be Equal  @{PPATH_VARFILE_2_LIST}[2]  (version 2)
+    Should Be Equal  ${PPATH_VARFILE_2_LIST}[0]  Variable from variable file
+    Should Be Equal  ${PPATH_VARFILE_2_LIST}[1]  in PYTHONPATH
+    Should Be Equal  ${PPATH_VARFILE_2_LIST}[2]  (version 2)

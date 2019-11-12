@@ -1,7 +1,6 @@
 import unittest
 
-
-from robot.utils.asserts import assert_equal, assert_raises
+from robot.utils.asserts import assert_equal
 from robot.utils.escaping import escape, unescape, split_from_equals
 
 
@@ -11,8 +10,8 @@ def assert_unescape(inp, exp):
 
 class TestUnEscape(unittest.TestCase):
 
-    def test_no_unescape(self):
-        for inp in ['no escapes', '']:
+    def test_no_backslash(self):
+        for inp in ['no escapes', '', 42]:
             assert_unescape(inp, inp)
 
     def test_single_backslash(self):

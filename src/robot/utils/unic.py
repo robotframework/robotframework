@@ -13,15 +13,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from pprint import PrettyPrinter
+from unicodedata import normalize
 
-from .platform import IRONPYTHON, JYTHON, PY2
-from .robottypes import is_bytes, is_unicode
+from .platform import PY2, PY3
+from .robottypes import is_bytes, is_unicode, unicode
+
+
+def unic(item):
+    item = _unic(item)
+    try:
+        return normalize('NFC', item)
+    except ValueError:
+        # https://github.com/IronLanguages/ironpython2/issues/628
+        return item
 
 
 if PY2:
 
-    def unic(item):
+    def _unic(item):
         if isinstance(item, unicode):
             return item
         if isinstance(item, (bytes, bytearray)):
@@ -40,7 +51,7 @@ if PY2:
 
 else:
 
-    def unic(item):
+    def _unic(item):
         if isinstance(item, str):
             return item
         if isinstance(item, (bytes, bytearray)):
@@ -55,18 +66,7 @@ else:
             return _unrepresentable_object(item)
 
 
-# JVM and .NET seem to handle Unicode normalization automatically. Importing
-# unicodedata on Jython also takes some time so it's better to avoid it.
-if not (JYTHON or IRONPYTHON):
-
-    from unicodedata import normalize
-    _unic = unic
-
-    def unic(item):
-        return normalize('NFC', _unic(item))
-
-
-def prepr(item, width=400):
+def prepr(item, width=80):
     return unic(PrettyRepr(width=width).pformat(item))
 
 
@@ -81,6 +81,20 @@ class PrettyRepr(PrettyPrinter):
             return PrettyPrinter.format(self, object, context, maxlevels, level)
         except:
             return _unrepresentable_object(object), True, False
+
+    if PY3:
+
+        # Don't split strings: https://stackoverflow.com/questions/31485402
+        def _format(self, object, *args, **kwargs):
+            if isinstance(object, (str, bytes, bytearray)):
+                width = self._width
+                self._width = sys.maxsize
+                try:
+                    super()._format(object, *args, **kwargs)
+                finally:
+                    self._width = width
+            else:
+                super()._format(object, *args, **kwargs)
 
 
 def _unrepresentable_object(item):

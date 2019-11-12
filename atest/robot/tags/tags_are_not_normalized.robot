@@ -26,7 +26,7 @@ Including And Excluding Works in Normalized Manner
     Should Not Contain Tests    ${SUITE}    Excluded
 
 Criticality Works In Normalized Manner
-    Check Stdout Contains    1 critical test, 1 passed, 0 failed\n 10 tests total, 5 passed, 5 failed
+    Check Stdout Contains    1 critical test, 1 passed, 0 failed\n10 tests total, 5 passed, 5 failed
 
 Rebot Keeps Tags In Original Format
     Copy Previous Outfile
