@@ -567,6 +567,38 @@ outputs are very big. There are two easy ways to configure JVM options:
 
       jython -J-Xmx1024m -m robot tests.robot
 
+Making :file:`*.robot` files executable
+---------------------------------------
+
+On other operating systems than Windows it is possible to make :file:`*.robot`
+files executable by giving them execution permission and adding a shebang__
+like in this example:
+
+.. sourcecode:: robotframework
+
+    #!/usr/bin/env robot
+
+   *** Test Cases ***
+   Example
+       Log to console    Executing!
+
+If the above content would be in a file :file:`example.robot` and that file
+would be executable, it could be executed from the command line like below.
+Starting from Robot Framework 3.2, individually executed files can have any
+extension, or no extension at all, so the same would work also if the file
+would be named just :file:`example`.
+
+.. sourcecode:: bash
+
+    ./example.robot
+
+This trick does not work when executing a directory but can be handy when
+executing a single file. It is probably more often useful when
+`automating tasks`__ than when automating tests.
+
+__ https://en.wikipedia.org/wiki/Shebang_(Unix)
+__ `Creating tasks`_
+
 Debugging problems
 ------------------
 
