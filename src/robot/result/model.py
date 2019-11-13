@@ -40,6 +40,7 @@ from robot import model, utils
 from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
 from .keywordremover import KeywordRemover
+from .testcaseremover import TestCaseRemover
 from .suiteteardownfailed import (SuiteTeardownFailureHandler,
                                   SuiteTeardownFailed)
 
@@ -266,6 +267,17 @@ class TestSuite(model.TestSuite):
         of the ``--removekeywords`` command line option.
         """
         self.visit(KeywordRemover(how))
+
+    def remove_test_cases(self, how):
+        """Remove test cases based on the given condition.
+
+        :param how: What approach to use when removing test cases.
+            ``ALL``, ``PASSED``, and ``TAGS``
+
+        For more information about the possible values see the documentation
+        of the ``--removetestcases`` command line option.
+        """
+        self.visit(TestCaseRemover(how))
 
     def filter_messages(self, log_level='TRACE'):
         """Remove log messages below the specified ``log_level``."""

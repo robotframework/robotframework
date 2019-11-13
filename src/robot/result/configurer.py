@@ -31,11 +31,12 @@ class SuiteConfigurer(model.SuiteConfigurer):
     that will do further configuration based on them.
     """
 
-    def __init__(self, remove_keywords=None, log_level=None, start_time=None,
+    def __init__(self, remove_keywords=None, remove_test_cases=None, log_level=None, start_time=None,
                  end_time=None, critical_tags=None, non_critical_tags=None,
                  **base_config):
         model.SuiteConfigurer.__init__(self, **base_config)
         self.remove_keywords = self._get_remove_keywords(remove_keywords)
+        self.remove_test_cases = self._get_remove_test_cases(remove_test_cases)
         self.log_level = log_level
         self.start_time = self._get_time(start_time)
         self.end_time = self._get_time(end_time)
@@ -47,6 +48,13 @@ class SuiteConfigurer(model.SuiteConfigurer):
             return []
         if is_string(value):
             return [value]
+        return value
+
+    def _get_remove_test_cases(self, value):
+        if value is None:
+            return[]
+        if is_string(value):
+            return[value]
         return value
 
     def _get_time(self, timestamp):
@@ -61,6 +69,7 @@ class SuiteConfigurer(model.SuiteConfigurer):
     def visit_suite(self, suite):
         model.SuiteConfigurer.visit_suite(self, suite)
         self._remove_keywords(suite)
+        self._remove_test_cases(suite)
         self._set_times(suite)
         suite.filter_messages(self.log_level)
         suite.set_criticality(self.critical_tags, self.non_critical_tags)
@@ -68,6 +77,10 @@ class SuiteConfigurer(model.SuiteConfigurer):
     def _remove_keywords(self, suite):
         for how in self.remove_keywords:
             suite.remove_keywords(how)
+
+    def _remove_test_cases(self, suite):
+        for how in self.remove_test_cases:
+            suite.remove_test_cases(how)
 
     def _set_times(self, suite):
         if self.start_time:
