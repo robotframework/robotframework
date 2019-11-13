@@ -204,7 +204,8 @@ Options
     --autoexpandkeywords name:<pattern>|tag:<pattern> *
                           Matching keywords will be initially expanded in log.html.
                           For pattern matching rules see --removekeywords option.
-                          Example: --autoexpandkeywords name:CapturePageScreenshot
+                          Example: --autoexpandkeywords name:CapturePageScreenshot.
+                          This is new in RF 3.2.
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
                           Remove keyword data from all generated outputs.
                           Keywords containing warnings are not removed except

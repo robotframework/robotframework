@@ -20,9 +20,7 @@ from robot.utils import MultiMatcher, is_list_like, py2to3
 
 def validate_autoexpandkeywords(options):
     for opt in options:
-        low = opt.lower()
-        if not (low.startswith('name:') or
-                low.startswith('tag:')):
+        if not (opt.lower().startswith(('name:', 'tag:')):
             raise DataError("Expected 'TAG:<pattern>', or "
                             "'NAME:<pattern>' but got '%s'." % opt)
 
@@ -32,7 +30,9 @@ class AutoExpandKeywordMatcher(object):
 
     def __init__(self, auto_expand_list):
         self._matched_ids = []
-        if not is_list_like(auto_expand_list):
+        if auto_expand_list==None: 
+            auto_expand_list=[]
+        elif not is_list_like(auto_expand_list):
             auto_expand_list = [auto_expand_list]
         names = [n[5:] for n in auto_expand_list if n[:5].lower() == 'name:']
         tags  = [p[4:] for p in auto_expand_list if p[:4].lower() == 'tag:']
@@ -40,9 +40,7 @@ class AutoExpandKeywordMatcher(object):
         self._tagmatcher = MultiMatcher(tags)
 
     def check(self, kw):
-        name = kw.kwname
-        tags = kw.tags
-        if self._namematcher.match(name) or self._tagmatcher.match_any(tags):
+        if self._namematcher.match(kw.kwname) or self._tagmatcher.match_any(kw.tags):
             self._matched_ids.append(kw.id)
 
     @property

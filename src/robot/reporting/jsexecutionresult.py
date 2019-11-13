@@ -28,7 +28,7 @@ if IRONPYTHON and PY_VERSION < (2, 7, 2):
 class JsExecutionResult(object):
 
     def __init__(self, suite, statistics, errors, strings, basemillis=None,
-                 split_results=None, min_level=None, auto_expand_ids=[]):
+                 split_results=None, min_level=None, auto_expand_ids=None):
         self.suite = suite
         self.strings = strings
         self.min_level = min_level

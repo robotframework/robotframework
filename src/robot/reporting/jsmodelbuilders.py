@@ -22,7 +22,7 @@ from .jsexecutionresult import JsExecutionResult
 class JsModelBuilder(object):
 
     def __init__(self, log_path=None, split_log=False,
-                 prune_input_to_save_memory=False, auto_expand_keywords=[]):
+                 prune_input_to_save_memory=False, auto_expand_keywords=None):
         self._context = JsBuildingContext(log_path, split_log,
                                           prune_input_to_save_memory,
                                           auto_expand_keywords)

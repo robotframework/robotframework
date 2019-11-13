@@ -63,12 +63,12 @@ function expandElementWithId(elementid) {
 }
 
 function expandElementsWithIds(ids) {
-    util.map(ids,expandElementWithId)
+    util.map(ids, expandElementWithId);
 }
 
 function loadAndExpandElementIds(ids) {
     for (var i in ids) {
-      window.testdata.ensureLoaded(ids[i], expandElementsWithIds)
+      window.testdata.ensureLoaded(ids[i], expandElementsWithIds);
     }
 }
 

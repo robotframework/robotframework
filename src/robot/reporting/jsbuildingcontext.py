@@ -29,7 +29,7 @@ from .stringcache import StringCache
 class JsBuildingContext(object):
 
     def __init__(self, log_path=None, split_log=False, prune_input=False,
-                 auto_expand_args=[]):
+                 auto_expand_args=None):
         # log_path can be a custom object in unit tests
         self._log_dir = dirname(log_path) if is_string(log_path) else None
         self._split_log = split_log

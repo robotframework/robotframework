@@ -556,6 +556,7 @@ Automatically expanded keywords in log.html
 -------------------------------------------
 
 The :option:`--autoexpandkeywords` option set keywords initially to visible in log.html.
+
 Autoexpandkeywords supports the following modes:
 
 `NAME:<pattern>`
@@ -571,6 +572,7 @@ Examples::
    rebot --autoexpandkeywords name:CapturePageScreenshot output.xml
    rebot --autoexpandkeywords tag:ShowInLog output.xml
 
+.. note:: The :option:`--autoexpandkeywords` option is new in Robot Framework 3.2.
 
 Setting start and end time of execution
 ---------------------------------------
