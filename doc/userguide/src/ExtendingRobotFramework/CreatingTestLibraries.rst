@@ -390,12 +390,12 @@ What methods are considered keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When the static library API is used, Robot Framework uses reflection
-to find out what public methods the library class or module contains.
-It will exclude all methods starting with an underscore (unless `using
-a custom keyword name`_), and with Java libraries also methods implemented
-only in the implicit base class `java.lang.Object` are excluded. All
-the methods that are not ignored are considered keywords. For example, the
-Python and Java libraries below implement a single keyword :name:`My Keyword`.
+to find out what keywords the library class or module implements.
+By default it excludes methods and functions starting with an underscore,
+and with Java based libraries it ignores also private methods as well as
+methods implemented only in `java.lang.Object`. All the methods and functions
+that are not ignored are considered keywords. For example, the Python and Java
+libraries below implement a single keyword :name:`My Keyword`.
 
 .. sourcecode:: python
 
@@ -420,26 +420,80 @@ Python and Java libraries below implement a single keyword :name:`My Keyword`.
         }
     }
 
-When implementing a library as a Python or Java class, also methods in
-possible base classes are considered keywords. When implementing a library
-as a Python module, also possible functions imported into the module namespace
-become keywords. For example, if the module below would be used as a library,
-it would contain keywords :name:`Example Keyword`, :name:`Second Example` and
-also :name:`Current Thread`.
+Limiting public methods becoming keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Automatically considering all public methods and functions keywords typically
+works well, but there are cases where it is not desired. There are also
+situations where keywords are created when not expected. For example, when
+implementing a library as class, it can be a surprise that also methods
+in possible base classes are considered keywords. When implementing a library
+as a module, functions imported into the module namespace becoming keywords
+is probably even a bigger surprise.
+
+This section explains how to prevent methods and functions becoming keywords.
+These features only work when creating libraries using Python.
+
+Class based libraries
+'''''''''''''''''''''
+
+When a library is implemented as a Python class, it is possible to tell
+Robot Framework not to automatically expose methods as keywords by setting
+`ROBOT_AUTO_KEYWORDS` attribute to the class with a false value.
+When this attribute is set, only methods explicitly marked with the
+`robot.api.deco.keyword` decorator will become keywords. This same decorator
+can also be used for setting a `custom name`__, tags__ and `argument types`__
+to the keyword.
+
+.. sourcecode:: python
+
+   from robot.api.deco import keyword
+
+   class Example:
+       ROBOT_AUTO_KEYWORDS = False
+
+       @keyword
+       def this_is_keyword(self):
+           pass
+
+       @keyword('This is keyword with custom name')
+       def xxx(self):
+           pass
+
+       def this_is_not_keyword(self):
+           pass
+
+.. note:: Limiting what methods become keywords using `ROBOT_AUTO_KEYWORDS`
+          is a new feature in Robot Framework 3.2.
+
+Another way to explicitly specify what keywords a library implements is using
+the dynamic__ or the hybrid__ library API.
+
+__ `Setting custom name`_
+__ `Keyword tags`_
+__ `Specifying argument types using @keyword decorator`_
+__ `Dynamic library API`_
+__ `Hybrid library API`_
+
+Module based libraries
+''''''''''''''''''''''
+
+When implementing a library as a module, all functions in the module namespace
+become keywords. This is true also with imported functions, and that can cause
+nasty surprises. For example, if the module below would be used as a library,
+it would contain a keyword :name:`Example Keyword`, as expected, but also
+a keyword :name:`Current Thread`.
 
 .. sourcecode:: python
 
    from threading import current_thread
 
-
    def example_keyword():
        print('Running in thread "%s".' % current_thread().name)
 
-   def second_example():
-       pass
 
 A simple way to avoid imported functions becoming keywords is to only
-import modules (e.g. `import threading`) and use functions via the module
+import modules (e.g. `import threading`) and to use functions via the module
 (e.g `threading.current_thread()`). Alternatively functions could be
 given an alias starting with an underscore at the import time (e.g.
 `from threading import current_thread as _current_thread`).
@@ -447,39 +501,45 @@ given an alias starting with an underscore at the import time (e.g.
 A more explicit way to limit what functions become keywords is using
 the module level `__all__` attribute that `Python itself uses for similar
 purposes`__. If it is used, only the listed functions can be keywords.
-For example, the library below implements only keywords
-:name:`Example Keyword` and :name:`Second Example`.
+For example, the library below implements only one keyword
+:name:`Example Keyword`:
 
 .. sourcecode:: python
 
    from threading import current_thread
 
-
-   __all__ = ['example_keyword', 'second_example']
-
+   __all__ = ['example_keyword']
 
    def example_keyword():
        print('Running in thread "%s".' % current_thread().name)
 
-   def second_example():
+   def this_is_not_keyword():
        pass
 
-   def not_exposed_as_keyword():
+If the library is big, maintaining the `__all__` attribute when keywords are
+added, removed or renamed can be a somewhat big task. Another way to explicitly
+mark what functions are keywords is using the `ROBOT_AUTO_KEYWORDS` attribute
+similarly as it can be used with `class based libraries`_. Also this library
+implements only one keyword :name:`Example Keyword`:
+
+.. sourcecode:: python
+
+   from threading import current_thread
+   from robot.api.deco import keyword
+
+   ROBOT_AUTO_KEYWORDS = False
+
+   @keyword
+   def example_keyword():
+       print('Running in thread "%s".' % current_thread().name)
+
+   def this_is_not_keyword():
        pass
+
+.. note:: Limiting what functions become keywords using `ROBOT_AUTO_KEYWORDS`
+          is a new feature in Robot Framework 3.2.
 
 __ https://docs.python.org/tutorial/modules.html#importing-from-a-package
-
-In order to avoid all public methods of a class that are not decorated with
-`@keyword` decorator becoming keywords, class attribute `ROBOT_AUTO_KEYWORDS`
-should be set to False.
-
- .. sourcecode:: python
-
-     class MyLibrary:
-        ROBOT_AUTO_KEYWORDS = False
-
-         def my_keyword(self, name):
-            return name
 
 Keyword names
 ~~~~~~~~~~~~~
@@ -531,8 +591,8 @@ in the `module search path`_.
        Do Nothing
        Hello    world
 
-Using a custom keyword name
-'''''''''''''''''''''''''''
+Setting custom name
+'''''''''''''''''''
 
 It is possible to expose a different name for a keyword instead of the
 default keyword name which maps to the method name.  This can be accomplished
@@ -1333,7 +1393,7 @@ can be used to create a `custom keyword name`__ for the keyword
 which includes the desired syntax.
 
 __ `Embedding arguments into keyword name`_
-__ `Using a custom keyword name`_
+__ `Setting custom name`_
 
 .. sourcecode:: python
 
@@ -2185,10 +2245,9 @@ If a dynamic library should contain both methods which are meant to be keywords
 and methods which are meant to be private helper methods, it may be wise to
 mark the keyword methods as such so it is easier to implement `get_keyword_names`.
 The `robot.api.deco.keyword` decorator allows an easy way to do this since it
-creates a custom `robot_name` attribute on the decorated method.
+creates a `custom 'robot_name' attribute`__ on the decorated method.
 This allows generating the list of keywords just by checking for the `robot_name`
-attribute on every method in the library during `get_keyword_names`.  See
-`Using a custom keyword name`_ for more about this decorator.
+attribute on every method in the library during `get_keyword_names`.
 
 .. sourcecode:: python
 
@@ -2205,6 +2264,8 @@ attribute on every method in the library during `get_keyword_names`.  See
        @keyword
        def keyword_method(self):
            # ...
+
+__ `Setting custom name`_
 
 .. _`Running dynamic keywords`:
 
