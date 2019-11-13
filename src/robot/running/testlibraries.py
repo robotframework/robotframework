@@ -235,6 +235,9 @@ class _BaseTestLibrary(object):
                         LOGGER.debug("Created keyword '%s'" % handler.name)
 
     def _get_handler_names(self, libcode):
+        auto_keywords = getattr(libcode, 'ROBOT_AUTO_KEYWORDS', True)
+        if not auto_keywords:
+            return [name for name in dir(libcode) if self._has_robot_name(name, libcode)]
         return [name for name in dir(libcode)
                 if name[:1] != '_' or self._has_robot_name(name, libcode)]
 

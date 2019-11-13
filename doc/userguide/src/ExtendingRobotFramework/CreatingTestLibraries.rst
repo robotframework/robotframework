@@ -469,6 +469,18 @@ For example, the library below implements only keywords
 
 __ https://docs.python.org/tutorial/modules.html#importing-from-a-package
 
+In order to avoid all public methods of a class that are not decorated with
+`@keyword` decorator becoming keywords, class attribute `ROBOT_AUTO_KEYWORDS`
+should be set to False.
+
+ .. sourcecode:: python
+
+     class MyLibrary:
+        ROBOT_AUTO_KEYWORDS = False
+
+         def my_keyword(self, name):
+            return name
+
 Keyword names
 ~~~~~~~~~~~~~
 
