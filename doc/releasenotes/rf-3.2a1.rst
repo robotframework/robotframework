@@ -65,7 +65,7 @@ code would have been hard to maintain going forward.
 
 The new parser also has much better APIs for external tools like editors, IDEs,
 and linters than the old one, and they could possibly be exposed even more
-widely using the `languade server protocol (LSP)`__. These APIs are still
+widely using the `language server protocol (LSP)`__. These APIs are still
 under development (`#3373`_), though, but they will be finalized before
 the final RF 3.2 version. Possible LSP implementation would also be a
 separate project, not part of Robot Framework itself.
