@@ -18,15 +18,15 @@ from robot.model import TagPatterns
 from robot.utils import MultiMatcher, is_list_like, py2to3
 
 
-def validate_autoexpandkeywords(options):
+def validate_expandkeywords(options):
     for opt in options:
-        if not (opt.lower().startswith(('name:', 'tag:')):
+        if not (opt.lower().startswith(('name:', 'tag:'))):
             raise DataError("Expected 'TAG:<pattern>', or "
                             "'NAME:<pattern>' but got '%s'." % opt)
 
 
 @py2to3
-class AutoExpandKeywordMatcher(object):
+class ExpandKeywordMatcher(object):
 
     def __init__(self, auto_expand_list):
         self._matched_ids = []

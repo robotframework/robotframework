@@ -22,7 +22,7 @@ from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
-from robot.result.autoexpandkeywordmatcher import validate_autoexpandkeywords
+from robot.result.expandkeywordmatcher import validate_expandkeywords
 from robot.utils import (abspath, create_destination_directory, escape,
                          format_time, get_link_path, html_escape, is_list_like,
                          py2to3, split_args_from_name_or_path)
@@ -63,7 +63,7 @@ class _BaseSettings(object):
                  'TagDoc'           : ('tagdoc', []),
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
-                 'AutoExpandKeywords':('autoexpandkeywords', []),
+                 'ExpandKeywords'   : ('expandkeywords', []),
                  'FlattenKeywords'  : ('flattenkeywords', []),
                  'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
@@ -134,8 +134,8 @@ class _BaseSettings(object):
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
-        if name == 'AutoExpandKeywords':
-            self._validate_autoexpandkeywords(value)
+        if name == 'ExpandKeywords':
+            self._validate_expandkeywords(value)
         return value
 
     def _escape_as_data(self, value):
@@ -299,11 +299,11 @@ class _BaseSettings(object):
         except DataError as err:
             raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
 
-    def _validate_autoexpandkeywords(self, values):
+    def _validate_expandkeywords(self, values):
         try:
-            validate_autoexpandkeywords(values)
+            validate_expandkeywords(values)
         except DataError as err:
-            raise DataError("Invalid value for option '--autoexpandkeywords'. %s" % err)
+            raise DataError("Invalid value for option '--expandkeywords'. %s" % err)
 
     def __contains__(self, setting):
         return setting in self._cli_opts
@@ -427,7 +427,7 @@ class RobotSettings(_BaseSettings):
         settings._opts['Output'] = None
         settings._opts['LogLevel'] = 'TRACE'
         settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
-        settings._opts['AutoExpandKeywords'] = self['AutoExpandKeywords']
+        settings._opts['ExpandKeywords'] = self['ExpandKeywords']
         return settings
 
     def _output_disabled(self):
@@ -621,4 +621,4 @@ class RebotSettings(_BaseSettings):
 
     @property
     def auto_expand_keywords(self):
-        return self['AutoExpandKeywords']
+        return self['ExpandKeywords']

@@ -20,7 +20,7 @@ from robot.output.loggerhelper import LEVELS
 from robot.utils import (attribute_escape, get_link_path, html_escape,
                          html_format, is_string, is_unicode, timestamp_to_secs,
                          unic)
-from robot.result.autoexpandkeywordmatcher import AutoExpandKeywordMatcher
+from robot.result.expandkeywordmatcher import ExpandKeywordMatcher
 
 from .stringcache import StringCache
 
@@ -39,7 +39,7 @@ class JsBuildingContext(object):
         self.split_results = []
         self.min_level = 'NONE'
         self._msg_links = {}
-        self._auto_expand_matcher = AutoExpandKeywordMatcher(auto_expand_args)
+        self._auto_expand_matcher = ExpandKeywordMatcher(auto_expand_args)
 
     def string(self, string, escape=True, attr=False):
         if escape and string:

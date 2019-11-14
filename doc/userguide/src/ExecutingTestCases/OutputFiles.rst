@@ -552,12 +552,12 @@ deeply nested keyword structures.
 
 .. note:: `TAG:<pattern>` mode was added in Robot Framework 2.9.
 
-Automatically expanded keywords in log.html
+Automatically expanded keywords in log
 -------------------------------------------
 
-The :option:`--autoexpandkeywords` option set keywords initially to visible in log.html.
+The :option:`--expandkeywords` option set keywords initially to visible in log.
 
-Autoexpandkeywords supports the following modes:
+Expandkeywords supports the following modes:
 
 `NAME:<pattern>`
    Expand keywords matching the given pattern. Pattern matching rules are
@@ -569,10 +569,10 @@ Autoexpandkeywords supports the following modes:
 
 Examples::
 
-   rebot --autoexpandkeywords name:CapturePageScreenshot output.xml
-   rebot --autoexpandkeywords tag:ShowInLog output.xml
+   rebot --expandkeywords name:CapturePageScreenshot output.xml
+   rebot --expandkeywords tag:ShowInLog output.xml
 
-.. note:: The :option:`--autoexpandkeywords` option is new in Robot Framework 3.2.
+.. note:: The :option:`--expandkeywords` option is new in Robot Framework 3.2.
 
 Setting start and end time of execution
 ---------------------------------------
