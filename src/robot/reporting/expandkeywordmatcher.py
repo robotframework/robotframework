@@ -24,7 +24,7 @@ class ExpandKeywordMatcher(object):
     def __init__(self, expand_args):
         self.matched_ids = []
         if not expand_args:
-            expand_args=[]
+            expand_args = []
         elif not is_list_like(expand_args):
             expand_args = [expand_args]
         names = [n[5:] for n in expand_args if n[:5].lower() == 'name:']
