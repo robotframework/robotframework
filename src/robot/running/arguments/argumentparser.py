@@ -19,8 +19,14 @@ from robot.variables import is_dict_var, is_list_var, is_scalar_var
 
 from .argumentspec import ArgumentSpec
 
-
 if PY2:
+    from inspect import getargspec, ismethod
+
+
+    def getfullargspec(func):
+        return getargspec(unwrap(func)) + ([], None, {})
+
+
     def unwrap(func):
         return func
 else:
