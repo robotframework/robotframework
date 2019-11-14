@@ -552,12 +552,16 @@ deeply nested keyword structures.
 
 .. note:: `TAG:<pattern>` mode was added in Robot Framework 2.9.
 
-Automatically expanded keywords in log
+Automatically expanded keywords in log file
 -------------------------------------------
 
-The :option:`--expandkeywords` option set keywords initially to visible in log.
+Keywords that have passed are closed in the log file by default. Thus information 
+they contain is not visible unless you expand them. If certain keywords have
+important information that should be visible when the log file is opened, you can 
+use the :option:`--expandkeywords` option to set keywords automatically expanded
+in log file similar to failed keywords.
 
-Expandkeywords supports the following modes:
+The :option:`--expandkeywords` option supports the following modes:
 
 `NAME:<pattern>`
    Expand keywords matching the given pattern. Pattern matching rules are

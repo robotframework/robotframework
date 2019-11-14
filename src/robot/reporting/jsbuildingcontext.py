@@ -25,7 +25,6 @@ from robot.result.expandkeywordmatcher import ExpandKeywordMatcher
 from .stringcache import StringCache
 
 
-
 class JsBuildingContext(object):
 
     def __init__(self, log_path=None, split_log=False, prune_input=False,

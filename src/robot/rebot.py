@@ -202,9 +202,10 @@ Options
                           Examples: --tagstatlink mytag:http://my.domain:Title
                           --tagstatlink "bug-*:http://url/id=%1:Issue Tracker"
     --expandkeywords name:<pattern>|tag:<pattern> *
-                          Matching keywords will be initially expanded in log.html.
+                          Matching keywords will be initially expanded in the 
+                          log file.
                           For pattern matching rules see --removekeywords option.
-                          Example: --expandkeywords name:CapturePageScreenshot.
+                          Example: --expandkeywords name:CapturePageScreenshot
                           This is new in RF 3.2.
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
                           Remove keyword data from all generated outputs.

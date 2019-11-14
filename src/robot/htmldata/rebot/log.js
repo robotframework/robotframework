@@ -68,7 +68,7 @@ function expandElementsWithIds(ids) {
 
 function loadAndExpandElementIds(ids) {
     for (var i in ids) {
-      window.testdata.ensureLoaded(ids[i], expandElementsWithIds);
+        window.testdata.ensureLoaded(ids[i], expandElementsWithIds);
     }
 }
 
