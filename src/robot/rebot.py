@@ -204,7 +204,8 @@ Options
     --expandkeywords name:<pattern>|tag:<pattern> *
                           Matching keywords will be initially expanded in the 
                           log file.
-                          For pattern matching rules see --removekeywords option.
+                          For pattern matching rules see --removekeywords
+                          option.
                           Example: --expandkeywords name:CapturePageScreenshot
                           This is new in RF 3.2.
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *

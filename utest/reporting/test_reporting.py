@@ -133,6 +133,7 @@ class StubSettings(object):
     suite_config = {}
     statistics_config = {}
     xunit_skip_noncritical = False
+    expand_keywords_args = []
 
     def __init__(self, **settings):
         self.__dict__.update(settings)
