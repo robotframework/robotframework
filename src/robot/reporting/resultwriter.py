@@ -132,8 +132,8 @@ class Results(object):
         if self._js_result is None:
             builder = JsModelBuilder(log_path=self._settings.log,
                                      split_log=self._settings.split_log,
-                                     prune_input_to_save_memory=self._prune,
-                                     expand_args=self._settings.expand_keywords_args)
+                                     expand_args=self._settings.expand_keywords_args,
+                                     prune_input_to_save_memory=self._prune)
             self._js_result = builder.build_from(self.result)
             if self._prune:
                 self._result = None

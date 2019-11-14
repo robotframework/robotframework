@@ -39,3 +39,6 @@ class ExpandKeywordMatcher(object):
     @property
     def all_matched_ids(self):
         return self._matched_ids
+
+    def __nonzero__(self):
+        return bool(self._namematcher) or bool(self._tagmatcher)

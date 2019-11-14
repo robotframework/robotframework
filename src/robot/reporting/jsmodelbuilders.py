@@ -21,11 +21,10 @@ from .jsexecutionresult import JsExecutionResult
 
 class JsModelBuilder(object):
 
-    def __init__(self, log_path=None, split_log=False,
-                 prune_input_to_save_memory=False, expand_args=None):
-        self._context = JsBuildingContext(log_path, split_log,
-                                          prune_input_to_save_memory,
-                                          expand_args)
+    def __init__(self, log_path=None, split_log=False, expand_args=None,
+                 prune_input_to_save_memory=False):
+        self._context = JsBuildingContext(log_path, split_log, expand_args,
+                                          prune_input_to_save_memory)
 
     def build_from(self, result_from_xml):
         # Statistics must be build first because building suite may prune input.
