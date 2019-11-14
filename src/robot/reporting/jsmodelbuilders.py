@@ -22,10 +22,10 @@ from .jsexecutionresult import JsExecutionResult
 class JsModelBuilder(object):
 
     def __init__(self, log_path=None, split_log=False,
-                 prune_input_to_save_memory=False, auto_expand_keywords=None):
+                 prune_input_to_save_memory=False, expand_args=None):
         self._context = JsBuildingContext(log_path, split_log,
                                           prune_input_to_save_memory,
-                                          auto_expand_keywords)
+                                          expand_args)
 
     def build_from(self, result_from_xml):
         # Statistics must be build first because building suite may prune input.
@@ -37,7 +37,7 @@ class JsModelBuilder(object):
             basemillis=self._context.basemillis,
             split_results=self._context.split_results,
             min_level=self._context.min_level,
-            auto_expand_ids=self._context.auto_expand_ids
+            expand_ids=self._context.expand_ids
         )
 
 
@@ -130,7 +130,7 @@ class KeywordBuilder(_Builder):
         self._build_message = MessageBuilder(context).build
 
     def build(self, kw, split=False):
-        self._context.check_auto_expansion(kw)
+        self._context.check_expansion(kw)
         with self._context.prune_input(kw.messages, kw.keywords):
             return (self._types[kw.type],
                     self._string(kw.kwname, attr=True),

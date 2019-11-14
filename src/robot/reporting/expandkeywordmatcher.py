@@ -18,24 +18,17 @@ from robot.model import TagPatterns
 from robot.utils import MultiMatcher, is_list_like, py2to3
 
 
-def validate_expandkeywords(options):
-    for opt in options:
-        if not (opt.lower().startswith(('name:', 'tag:'))):
-            raise DataError("Expected 'TAG:<pattern>', or "
-                            "'NAME:<pattern>' but got '%s'." % opt)
-
-
 @py2to3
 class ExpandKeywordMatcher(object):
 
-    def __init__(self, auto_expand_list):
+    def __init__(self, expand_args):
         self._matched_ids = []
-        if auto_expand_list==None: 
-            auto_expand_list=[]
-        elif not is_list_like(auto_expand_list):
-            auto_expand_list = [auto_expand_list]
-        names = [n[5:] for n in auto_expand_list if n[:5].lower() == 'name:']
-        tags  = [p[4:] for p in auto_expand_list if p[:4].lower() == 'tag:']
+        if not expand_args:
+            expand_args=[]
+        elif not is_list_like(expand_args):
+            expand_args = [expand_args]
+        names = [n[5:] for n in expand_args if n[:5].lower() == 'name:']
+        tags  = [p[4:] for p in expand_args if p[:4].lower() == 'tag:']
         self._namematcher = MultiMatcher(names)
         self._tagmatcher = MultiMatcher(tags)
 
@@ -46,6 +39,3 @@ class ExpandKeywordMatcher(object):
     @property
     def all_matched_ids(self):
         return self._matched_ids
-
-    def __nonzero__(self):
-        return bool(self._matcher)

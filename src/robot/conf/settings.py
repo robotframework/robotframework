@@ -22,7 +22,6 @@ from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
-from robot.result.expandkeywordmatcher import validate_expandkeywords
 from robot.utils import (abspath, create_destination_directory, escape,
                          format_time, get_link_path, html_escape, is_list_like,
                          py2to3, split_args_from_name_or_path)
@@ -300,10 +299,11 @@ class _BaseSettings(object):
             raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
 
     def _validate_expandkeywords(self, values):
-        try:
-            validate_expandkeywords(values)
-        except DataError as err:
-            raise DataError("Invalid value for option '--expandkeywords'. %s" % err)
+        for opt in values:
+            if not (opt.lower().startswith(('name:', 'tag:'))):
+                raise DataError("Invalid value for option '--expandkeywords'."
+                                " Expected 'TAG:<pattern>', or "
+                                "'NAME:<pattern>' but got '%s'." % opt)            
 
     def __contains__(self, setting):
         return setting in self._cli_opts
@@ -620,5 +620,5 @@ class RebotSettings(_BaseSettings):
         return self['ProcessEmptySuite']
 
     @property
-    def auto_expand_keywords(self):
+    def expand_keywords_args(self):
         return self['ExpandKeywords']
