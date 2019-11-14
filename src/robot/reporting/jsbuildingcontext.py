@@ -38,7 +38,8 @@ class JsBuildingContext(object):
         self.split_results = []
         self.min_level = 'NONE'
         self._msg_links = {}
-        self._expand_matcher = ExpandKeywordMatcher(expand_args)
+        expand_matcher = ExpandKeywordMatcher(expand_args)
+        self._expand_matcher = expand_matcher if expand_matcher.active() else None
 
     def string(self, string, escape=True, attr=False):
         if escape and string:
@@ -72,11 +73,12 @@ class JsBuildingContext(object):
         self._msg_links[self._link_key(msg)] = id
 
     def check_expansion(self, kw):
-        self._expand_matcher.check(kw)
+        if self._expand_matcher:
+            self._expand_matcher.check(kw)
 
     @property
     def expand_ids(self):
-        return self._expand_matcher.all_matched_ids
+        return self._expand_matcher.matched_ids if self._expand_matcher else None
 
     def link(self, msg):
         return self._msg_links.get(self._link_key(msg))
