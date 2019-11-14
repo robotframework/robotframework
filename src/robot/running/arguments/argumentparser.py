@@ -19,14 +19,18 @@ from robot.variables import is_dict_var, is_list_var, is_scalar_var
 
 from .argumentspec import ArgumentSpec
 
-
 if PY2:
     from inspect import getargspec, ismethod
 
+
     def getfullargspec(func):
-        return getargspec(func) + ([], None, {})
+        return getargspec(unwrap(func)) + ([], None, {})
+
+
+    def unwrap(func):
+        return func
 else:
-    from inspect import getfullargspec, ismethod
+    from inspect import getfullargspec, ismethod, unwrap
 
 if PY_VERSION >= (3, 5):
     import typing
@@ -51,7 +55,7 @@ class PythonArgumentParser(_ArgumentParser):
 
     def parse(self, handler, name=None):
         args, varargs, kwargs, defaults, kwonly, kwonlydefaults, annotations \
-                = getfullargspec(handler)
+                = getfullargspec(unwrap(handler))
         if ismethod(handler) or handler.__name__ == '__init__':
             args = args[1:]  # drop 'self'
         spec = ArgumentSpec(

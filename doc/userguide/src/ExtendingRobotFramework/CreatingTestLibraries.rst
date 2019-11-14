@@ -1379,9 +1379,12 @@ Python's decorators. However, decorators modify function signatures,
 and can confuse Robot Framework's introspection when determining which
 arguments keywords accept. This is especially problematic when creating
 library documentation with Libdoc_ and when using RIDE_. To avoid this
-issue, either do not use decorators, or use the handy `decorator module`__
-to create signature-preserving decorators.
+issue, you could use `functools.wraps`__ on Python 3, or use the handy
+`decorator module`__ to create signature-preserving decorators.
 
+.. note:: `functools.wraps` works like this only with Robot Framework 3.2.
+
+__ https://docs.python.org/3/library/functools.html#functools.wraps
 __ https://decorator.readthedocs.io
 
 Embedding arguments into keyword names
