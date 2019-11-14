@@ -1374,18 +1374,26 @@ __ `Providing arguments to test libraries`_
 Using decorators
 ~~~~~~~~~~~~~~~~
 
-When writing static keywords, it is sometimes useful to modify them with
-Python's decorators. However, decorators modify function signatures,
-and can confuse Robot Framework's introspection when determining which
+When implementing keywords, it is sometimes useful to modify them with
+`Python decorators`__. However, decorators often modify function signatures
+and can thus confuse Robot Framework's introspection when determining which
 arguments keywords accept. This is especially problematic when creating
-library documentation with Libdoc_ and when using RIDE_. To avoid this
-issue, you could use `functools.wraps`__ on Python 3, or use the handy
-`decorator module`__ to create signature-preserving decorators.
+library documentation with Libdoc_ and when using external tools like RIDE_.
+When using Python 3, the easiest way to avoid this problem is decorating the
+decorator itself using `functools.wraps`__. Other solutions include using
+external modules like decorator__ and wrapt__ that allow creating fully
+signature-preserving decorators.
 
-.. note:: `functools.wraps` works like this only with Robot Framework 3.2.
+.. note:: Support for "unwrapping" decorators decorated with `functools.wraps`
+          is a new feature in Robot Framework 3.2.
 
-__ https://docs.python.org/3/library/functools.html#functools.wraps
-__ https://decorator.readthedocs.io
+          `functools.wraps` exists also in Python 2, but it does not preserve
+          signature information and thus works for this purpose only in Python 3.
+
+__ https://realpython.com/primer-on-python-decorators/
+__ https://docs.python.org/library/functools.html#functools.wraps
+__ https://pypi.org/project/decorator/
+__ https://wrapt.readthedocs.io
 
 Embedding arguments into keyword names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -22,10 +22,8 @@ from .argumentspec import ArgumentSpec
 if PY2:
     from inspect import getargspec, ismethod
 
-
     def getfullargspec(func):
         return getargspec(unwrap(func)) + ([], None, {})
-
 
     def unwrap(func):
         return func

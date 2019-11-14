@@ -404,15 +404,11 @@ Type information mismatch caused by decorator
     Mismatch caused by decorator               foo   'foo'
 
 Keyword decorator with wraps
-    Keyword With Wraps    42    42
+    Keyword With Wraps                         42    42
 
 Keyword decorator with wraps mismatched type
-    [Documentation]    FAIL ValueError: Argument 'argument' got value 'string' that cannot be converted to integer.
-    Keyword With Wraps    string
-
-Keyword decorator with wraps mismatched value
-    [Documentation]    FAIL 42 (int) != 43 (int)
-    Keyword With Wraps    argument=42    expected=43
+    Conversion Should Fail
+    ...    Keyword With Wraps    argument=foobar    type=integer
 
 Value contains variable
     [Setup]       Set Environment Variable         PI_NUMBER    3.14

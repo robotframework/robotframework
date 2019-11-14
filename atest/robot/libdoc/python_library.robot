@@ -75,6 +75,16 @@ Keyword-only Arguments
     Keyword Arguments Should Be      0    *    kwo
     Keyword Arguments Should Be      1    *varargs    kwo    another=default
 
+Decorators
+    Run Libdoc And Parse Output      ${TESTDATADIR}/Decorators.py
+    Keyword Name Should Be           0    Keyword Using Decorator
+    Keyword Arguments Should Be      0    *args    **kwargs
+    Keyword Name Should Be           1    Keyword Using Decorator With Wraps
+    Run Keyword If    $INTERPRETER.is_py3
+    ...    Keyword Arguments Should Be      1    args    are    preserved=True
+    ...    ELSE
+    ...    Keyword Arguments Should Be      1    *args    **kwargs
+
 Documentation set in __init__
     Run Libdoc And Parse Output      ${TESTDATADIR}/DocSetInInit.py
     Doc Should Be                    Doc set in __init__!!
