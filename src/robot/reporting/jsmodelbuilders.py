@@ -21,9 +21,9 @@ from .jsexecutionresult import JsExecutionResult
 
 class JsModelBuilder(object):
 
-    def __init__(self, log_path=None, split_log=False, expand_args=None,
+    def __init__(self, log_path=None, split_log=False, expand_keywords=None,
                  prune_input_to_save_memory=False):
-        self._context = JsBuildingContext(log_path, split_log, expand_args,
+        self._context = JsBuildingContext(log_path, split_log, expand_keywords,
                                           prune_input_to_save_memory)
 
     def build_from(self, result_from_xml):

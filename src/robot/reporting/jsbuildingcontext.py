@@ -20,14 +20,14 @@ from robot.output.loggerhelper import LEVELS
 from robot.utils import (attribute_escape, get_link_path, html_escape,
                          html_format, is_string, is_unicode, timestamp_to_secs,
                          unic)
-from .expandkeywordmatcher import ExpandKeywordMatcher
 
+from .expandkeywordmatcher import ExpandKeywordMatcher
 from .stringcache import StringCache
 
 
 class JsBuildingContext(object):
 
-    def __init__(self, log_path=None, split_log=False, expand_args=None,
+    def __init__(self, log_path=None, split_log=False, expand_keywords=None,
                  prune_input=False):
         # log_path can be a custom object in unit tests
         self._log_dir = dirname(log_path) if is_string(log_path) else None
@@ -38,8 +38,8 @@ class JsBuildingContext(object):
         self.split_results = []
         self.min_level = 'NONE'
         self._msg_links = {}
-        expand_matcher = ExpandKeywordMatcher(expand_args)
-        self._expand_matcher = expand_matcher if expand_matcher.active() else None
+        self._expand_matcher = ExpandKeywordMatcher(expand_keywords) if \
+            expand_keywords else None
 
     def string(self, string, escape=True, attr=False):
         if escape and string:

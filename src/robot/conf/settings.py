@@ -300,9 +300,9 @@ class _BaseSettings(object):
 
     def _validate_expandkeywords(self, values):
         for opt in values:
-            if not (opt.lower().startswith(('name:', 'tag:'))):
-                raise DataError("Invalid value for option '--expandkeywords'."
-                                " Expected 'TAG:<pattern>', or "
+            if not opt.lower().startswith(('name:', 'tag:')):
+                raise DataError("Invalid value for option '--expandkeywords'. "
+                                "Expected 'TAG:<pattern>', or "
                                 "'NAME:<pattern>' but got '%s'." % opt)            
 
     def __contains__(self, setting):
@@ -620,5 +620,5 @@ class RebotSettings(_BaseSettings):
         return self['ProcessEmptySuite']
 
     @property
-    def expand_keywords_args(self):
+    def expand_keywords(self):
         return self['ExpandKeywords']

@@ -127,6 +127,8 @@ Command line options for post-processing outputs
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
+  --expandkeywords <name:pattern|tag:pattern>  automatically `expand keywords`_
+                          in the generated log file.
   --removekeywords <all|passed|name:pattern|tag:pattern|for|wuks>  `Removes keyword data`_
                           from the generated outputs.
   --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_

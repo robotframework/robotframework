@@ -8,29 +8,42 @@ ${TEMP OUT 1}     %{TEMPDIR}${/}rebot-test-1.xml
 ${OUT PATTERN}    %{TEMPDIR}${/}rebot-test-?.*
 
 *** Test Cases ***
-Expand by 1 Name
+Expand by 1 Name via rebot
     Run Rebot    --expandkeyword name:MyKeyword    ${TEMP OUT 1}
     fail  TODO: implement
 
-Expand by 2 Names
+Expand by 3 Names via rebot
     fail  TODO: implement
 
-Expand by 3 Names
+Expand by 1 Tag via rebot
     fail  TODO: implement
 
-Expand by 1 Tag
+Expand by 3 Tags via rebot
     fail  TODO: implement
 
-Expand by 2 Tags
+Expand by Name and Tag via rebot
     fail  TODO: implement
 
-Expand by 3 Tags
+No expand via rebot
     fail  TODO: implement
 
-Expand by Name and Tag
+Expand by 1 Name via robot
+    Run Robot    --expandkeyword name:MyKeyword    ${TEMP OUT 1}
     fail  TODO: implement
 
-No expand
+Expand by 3 Names via robot
+    fail  TODO: implement
+
+Expand by 1 Tag via robot
+    fail  TODO: implement
+
+Expand by 3 Tags via robot
+    fail  TODO: implement
+
+Expand by Name and Tag via robot
+    fail  TODO: implement
+
+No expand via robot
     fail  TODO: implement
 
 *** Keywords ***

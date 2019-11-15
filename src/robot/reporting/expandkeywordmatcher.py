@@ -21,21 +21,18 @@ from robot.utils import MultiMatcher, is_list_like, py2to3
 @py2to3
 class ExpandKeywordMatcher(object):
 
-    def __init__(self, expand_args):
+    def __init__(self, expand_keywords):
         self.matched_ids = []
-        if not expand_args:
-            expand_args = []
-        elif not is_list_like(expand_args):
-            expand_args = [expand_args]
-        names = [n[5:] for n in expand_args if n[:5].lower() == 'name:']
-        tags  = [p[4:] for p in expand_args if p[:4].lower() == 'tag:']
-        self._namematcher = MultiMatcher(names) if len(names) > 0 else None
-        self._tagmatcher = MultiMatcher(tags) if len(tags) > 0 else None
+        if not expand_keywords:
+            expand_keywords = []
+        elif not is_list_like(expand_keywords):
+            expand_keywords = [expand_keywords]
+        names = [n[5:] for n in expand_keywords if n[:5].lower() == 'name:']
+        tags  = [p[4:] for p in expand_keywords if p[:4].lower() == 'tag:']
+        self._namematcher = MultiMatcher(names) if names else None
+        self._tagmatcher = MultiMatcher(tags) if tags else None
 
     def check(self, kw):
         if (self._namematcher and self._namematcher.match(kw.kwname)) or \
                 (self._tagmatcher and self._tagmatcher.match_any(kw.tags)):
             self.matched_ids.append(kw.id)
-
-    def active(self):
-        return bool(self._namematcher) or bool(self._tagmatcher)

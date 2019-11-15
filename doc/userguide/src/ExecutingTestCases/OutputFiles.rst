@@ -573,7 +573,7 @@ The :option:`--expandkeywords` option supports the following modes:
 
 Examples::
 
-   rebot --expandkeywords name:CapturePageScreenshot output.xml
+   robot --expandkeywords name:CapturePageScreenshot MyTest.robot
    rebot --expandkeywords tag:ShowInLog output.xml
 
 .. note:: The :option:`--expandkeywords` option is new in Robot Framework 3.2.
