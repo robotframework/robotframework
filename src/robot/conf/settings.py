@@ -62,6 +62,7 @@ class _BaseSettings(object):
                  'TagDoc'           : ('tagdoc', []),
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
+                 'ExpandKeywords'   : ('expandkeywords', []),
                  'FlattenKeywords'  : ('flattenkeywords', []),
                  'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
@@ -132,6 +133,8 @@ class _BaseSettings(object):
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
+        if name == 'ExpandKeywords':
+            self._validate_expandkeywords(value)
         return value
 
     def _escape_as_data(self, value):
@@ -295,6 +298,13 @@ class _BaseSettings(object):
         except DataError as err:
             raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
 
+    def _validate_expandkeywords(self, values):
+        for opt in values:
+            if not opt.lower().startswith(('name:', 'tag:')):
+                raise DataError("Invalid value for option '--expandkeywords'. "
+                                "Expected 'TAG:<pattern>', or "
+                                "'NAME:<pattern>' but got '%s'." % opt)            
+
     def __contains__(self, setting):
         return setting in self._cli_opts
 
@@ -417,6 +427,7 @@ class RobotSettings(_BaseSettings):
         settings._opts['Output'] = None
         settings._opts['LogLevel'] = 'TRACE'
         settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
+        settings._opts['ExpandKeywords'] = self['ExpandKeywords']
         return settings
 
     def _output_disabled(self):
@@ -580,7 +591,7 @@ class RebotSettings(_BaseSettings):
             'rpa': self.rpa,
             'title': html_escape(self['ReportTitle'] or ''),
             'logURL': self._url_from_path(self.report, self.log),
-            'background' : self._resolve_background_colors(),
+            'background' : self._resolve_background_colors()
         }
 
     def _url_from_path(self, source, destination):
@@ -607,3 +618,7 @@ class RebotSettings(_BaseSettings):
     @property
     def process_empty_suite(self):
         return self['ProcessEmptySuite']
+
+    @property
+    def expand_keywords(self):
+        return self['ExpandKeywords']

@@ -52,6 +52,7 @@ $(document).ready(function() {
     addErrors();
     addExecutionLog(topsuite);
     addLogLevelSelector(window.settings['minLevel'], window.settings['defaultLevel']);
+    loadAndExpandElementIds(window.output['expand_ids']);
     if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
     } else {

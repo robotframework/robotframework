@@ -199,6 +199,13 @@ Options
                           %N, where N is index of the match (starting from 1).
                           Examples: --tagstatlink mytag:http://my.domain:Title
                           --tagstatlink "bug-*:http://url/id=%1:Issue Tracker"
+    --expandkeywords name:<pattern>|tag:<pattern> *
+                          Matching keywords will be initially expanded in the
+                          log file.
+                          For pattern matching rules see --removekeywords
+                          option.
+                          Example: --expandkeywords name:CapturePageScreenshot
+                          This is new in RF 3.2.
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
                           Remove keyword data from all generated outputs.
                           Keywords containing warnings are not removed except
@@ -399,4 +406,3 @@ def rebot(*outputs, **options):
 
 if __name__ == '__main__':
     rebot_cli(sys.argv[1:])
-

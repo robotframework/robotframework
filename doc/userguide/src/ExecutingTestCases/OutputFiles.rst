@@ -552,6 +552,32 @@ deeply nested keyword structures.
 
 .. note:: `TAG:<pattern>` mode was added in Robot Framework 2.9.
 
+Automatically expanded keywords in log file
+-------------------------------------------
+
+Keywords that have passed are closed in the log file by default. Thus information 
+they contain is not visible unless you expand them. If certain keywords have
+important information that should be visible when the log file is opened, you can 
+use the :option:`--expandkeywords` option to set keywords automatically expanded
+in log file similar to failed keywords.
+
+The :option:`--expandkeywords` option supports the following modes:
+
+`NAME:<pattern>`
+   Expand keywords matching the given pattern. Pattern matching rules are
+   same as when `removing keywords`_ using `NAME:<pattern>` mode.
+
+`TAG:<pattern>`
+   Expand keywords with tags matching the given pattern. Pattern matching
+   rules are same as when `removing keywords`_ using `TAG:<pattern>` mode.
+
+Examples::
+
+   robot --expandkeywords name:CapturePageScreenshot MyTest.robot
+   rebot --expandkeywords tag:ShowInLog output.xml
+
+.. note:: The :option:`--expandkeywords` option is new in Robot Framework 3.2.
+
 Setting start and end time of execution
 ---------------------------------------
 
