@@ -92,6 +92,13 @@ class Screenshot(object):
     ``screenshot_directory`` argument when `importing` the library and
     using `Set Screenshot Directory` keyword during execution. It is also
     possible to save screenshots using an absolute path.
+
+    = ScreenCapLibrary =
+
+    [https://github.com/mihaiparvu/ScreenCapLibrary|ScreenCapLibrary] is an
+    external Robot Framework library that can be used as an alternative,
+    which additionally provides support for multiple formats, adjusting the
+    quality, using GIFs and video capturing.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'

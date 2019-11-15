@@ -25,4 +25,7 @@ def LibdocWriter(format=None):
         return LibdocHtmlWriter()
     if format == 'XML':
         return LibdocXmlWriter()
-    raise DataError("Format must be either 'HTML' or 'XML', got '%s'." % format)
+    if format == 'XML:HTML':
+        return LibdocXmlWriter(force_html_doc=True)
+    raise DataError("Format must be either 'HTML', 'XML' or 'XML:HTML', "
+                    "got '%s'." % format)

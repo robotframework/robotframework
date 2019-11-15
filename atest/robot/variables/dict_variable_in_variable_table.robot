@@ -60,6 +60,6 @@ Non-dict cannot be used as dict variable
 Variable creation should have failed
     [Arguments]    ${index}    ${name}    ${message}
     ${path} =    Normalize Path    ${DATADIR}/variables/dict_variable_in_variable_table.robot
-    Check Log Message    @{ERRORS}[${index}]
+    Check Log Message    ${ERRORS}[${index}]
     ...    Error in file '${path}': Setting variable '${name}' failed: ${message}
     ...    pattern=yes    level=ERROR

@@ -1,5 +1,6 @@
 from os.path import abspath, dirname, exists, join
 import os
+import re
 import subprocess
 import sys
 
@@ -43,7 +44,7 @@ class Interpreter(object):
             raise ValueError('Invalid interpreter: %s' % self.path)
         name, version = output.split()[:2]
         name = name if 'PyPy' not in output else 'PyPy'
-        version = '.'.join(version.split('.')[:2])
+        version = re.match(r'\d+\.\d+\.\d+', version).group()
         return name, version
 
     @property
@@ -54,6 +55,10 @@ class Interpreter(object):
             if condition:
                 return name
         return sys.platform
+
+    @property
+    def output_name(self):
+        return '{i.name}-{i.version}-{i.os}'.format(i=self).replace(' ', '')
 
     @property
     def excludes(self):

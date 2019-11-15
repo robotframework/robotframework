@@ -56,5 +56,5 @@ Error should have occurred
     [Arguments]    ${index}    @{error}
     ${path} =    Normalize Path    ${DATADIR}/test_libraries/dynamic_library_python.robot
     ${error} =    Catenate    @{error}
-    Check Log Message    @{ERRORS}[${index}]    Error in file '${path}': ${error}
+    Check Log Message    ${ERRORS}[${index}]    Error in file '${path}': ${error}
     ...    level=ERROR    pattern=yes

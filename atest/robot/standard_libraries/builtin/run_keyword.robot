@@ -72,10 +72,9 @@ Check Run Keyword
     [Arguments]    ${kw}    ${subkw_name}    @{msgs}
     Should Be Equal    ${kw.name}    BuiltIn.Run Keyword
     Should Be Equal    ${kw.kws[0].name}    ${subkw_name}
-    ${index} =    Set Variable    ${0}
-    :FOR    ${msg}    IN    @{msgs}
-    \    Check Log Message    ${kw.kws[0].msgs[${index}]}    ${msg}
-    \    ${index} =    evaluate    ${index} +1
+    FOR    ${index}    ${msg}    IN ENUMERATE   @{msgs}
+        Check Log Message    ${kw.kws[0].msgs[${index}]}    ${msg}
+    END
 
 Check Run Keyword In Uk
     [Arguments]    ${kw}    ${subkw_name}    @{msgs}

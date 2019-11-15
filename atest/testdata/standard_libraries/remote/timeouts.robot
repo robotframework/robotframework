@@ -34,7 +34,7 @@ Test initial connection failure
 Test too long keyword execution time
     Import Library           Remote    http://127.0.0.1:${PORT}     ${0.3}
     Run Keyword And Expect Error
-    ...    Connection to remote server broken: timed out
+    ...    GLOB: Connection to remote server broken:* timed out
     ...    Remote.Sleep    2
 
 Timeouts are not supported on IronPython

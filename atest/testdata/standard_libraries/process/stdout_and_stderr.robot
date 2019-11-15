@@ -53,13 +53,15 @@ Lot of output to custom stream
 
 Run multiple times
     [Tags]    performance
-    :FOR    ${i}    IN RANGE    500
-    \   Run And Test Once    ${i}
+    FOR    ${i}    IN RANGE    500
+       Run And Test Once    ${i}
+    END
 
 Run multiple times using custom streams
     [Tags]    performance
-    :FOR    ${i}    IN RANGE    500
-    \   Run And Test Once    ${i}    ${STDOUT}    ${STDERR}
+    FOR    ${i}    IN RANGE    500
+       Run And Test Once    ${i}    ${STDOUT}    ${STDERR}
+    END
 
 Read standard streams when they are already closed externally
     Some Process    stderr=${NONE}

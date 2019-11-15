@@ -19,9 +19,9 @@ Empty keyword timeout should not be written to XML
 Element Should Have Timeout
     [Arguments]    ${value}    ${element}=.
     @{tests}=    Get Elements    ${OUTFILE}    */test
-    Element Attribute Should Be    @{tests}[0]    value    ${value}    ${element}/timeout
+    Element Attribute Should Be    ${tests}[0]    value    ${value}    ${element}/timeout
 
 Element Should Not Have Timeout
     [Arguments]    ${index}=0    ${element}=.
     @{tests}=    Get Elements    ${OUTFILE}    */test
-    Element Should Not Exist    @{tests}[${index}]    ${element}/timeout
+    Element Should Not Exist    ${tests}[${index}]    ${element}/timeout

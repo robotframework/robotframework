@@ -202,8 +202,9 @@ Log Many with dict variable containing non-dict
 
 Log To Console
     ${tc} =    Check Test Case    ${TEST NAME}
-    :FOR    ${i}    IN RANGE    4
-    \    Should Be Empty    ${tc.kws[${i}].msgs}
+    FOR    ${i}    IN RANGE    4
+        Should Be Empty    ${tc.kws[${i}].msgs}
+    END
     Check Stdout Contains    stdout äö w/ newline\n
     Check Stdout Contains    stdout äö w/o new......line äö
     Check Stderr Contains    stderr äö w/ newline\n

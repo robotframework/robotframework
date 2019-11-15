@@ -27,7 +27,9 @@ from .xmlelementhandlers import XmlElementHandler
 def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
 
-    :param sources: Path(s) to the XML output file(s).
+    :param sources: XML source(s) containing execution results.
+        Can be specified as paths, opened file objects, or strings/bytes
+        containing XML directly. Support for bytes is new in RF 3.2.
     :param options: Configuration options.
         Using ``merge=True`` causes multiple results to be combined so that
         tests in the latter results replace the ones in the original.

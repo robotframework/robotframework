@@ -66,13 +66,15 @@ class ForLoop(Keyword):
 
     Contains keywords in the loop body as child :attr:`keywords`.
     """
-    __slots__ = ['flavor']
+    __slots__ = ['flavor', '_header', '_end']
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, variables, values, flavor):
+    def __init__(self, variables, values, flavor, _header='FOR', _end='END'):
         Keyword.__init__(self, assign=variables, args=values,
                          type=Keyword.FOR_LOOP_TYPE)
         self.flavor = flavor
+        self._header = _header
+        self._end = _end
 
     @property
     def variables(self):
@@ -97,14 +99,6 @@ class TestCase(model.TestCase):
         #: when building the test. ``None`` if no is template used.
         self.template = template
 
-    @setter
-    def timeout(self, timeout):
-        """Test timeout as a :class:`Timeout` instance or ``None``.
-
-        This attribute is likely to change in the future.
-        """
-        return Timeout(*timeout) if timeout else None
-
 
 class TestSuite(model.TestSuite):
     """Represents a single executable test suite.
@@ -115,7 +109,7 @@ class TestSuite(model.TestSuite):
     test_class = TestCase    #: Internal usage only.
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self,  name='', doc='', metadata=None, source=None, rpa=False):
+    def __init__(self,  name='', doc='', metadata=None, source=None, rpa=None):
         model.TestSuite.__init__(self, name, doc, metadata, source, rpa)
         #: :class:`ResourceFile` instance containing imports, variables and
         #: keywords the suite owns. When data is parsed from the file system,
@@ -236,16 +230,6 @@ class Variable(object):
                      % (self.source or '<unknown>', self.name, message), level)
 
 
-class Timeout(object):
-
-    def __init__(self, value, message=None):
-        self.value = value
-        self.message = message
-
-    def __str__(self):
-        return self.value
-
-
 class ResourceFile(object):
 
     def __init__(self, doc='', source=None):
@@ -282,11 +266,6 @@ class UserKeyword(object):
     @setter
     def keywords(self, keywords):
         return model.Keywords(Keyword, self, keywords)
-
-    @setter
-    def timeout(self, timeout):
-        """Keyword timeout as a :class:`Timeout` instance or ``None``."""
-        return Timeout(*timeout) if timeout else None
 
     @setter
     def tags(self, tags):

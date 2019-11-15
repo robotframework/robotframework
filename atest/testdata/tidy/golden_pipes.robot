@@ -1,26 +1,32 @@
+| This data is ignored at runtime but should be preserved by Tidy. |
+
 | *** Settings *** |
 | Library        | MyLibrary | argument | WITH NAME | My Alias | # My library comment |
 | Variables      | MyVariables | args | args 2 | args 3 | args 4 | args 5 | args 6 |
 | ...            | args 7 | args 8 | args 9 | args 10 | args 11 | args 12 |
-| Resource       | MyResource args that are part of the name |
+| Resource       | resource.robot |
 
 | *** Variables *** |
 | # standalone   | comment |
+| ${VALID}       | Value |
 | MyVar          | val1 | val2 | val3 | val4 | val5 | val6 | val7 |
 | ...            | val8 | val9 | val10 | # var comment |
 | # standalone   |
 
 | *** Test Cases *** |
 | My Test Case |
-|    | [Documentation] | This is a long comment that spans several columns |
+|    | [Documentation] | This is a documentation |
+|    | ... | in two lines |
 |    | My TC Step 1 | my step arg | # step 1 comment |
 |    | My TC Step 2 | my step 2 arg | second \ arg | # step 2 comment |
+|    | ... | third arg split to own row |
+|    | ... | fourth and | fifth as well | # comment |
 |    | [Teardown] | 1 minute | args |
 
 | Another Test |
 |    | Log Many | Non-ASCII: ääöö§§ | ${CURDIR} |
 
-| *** Keywords *** |
+| *** Keyword *** |
 | My Keyword |
 |    | [Documentation] | Documentation | # Comment for doc |
 |    | [Tags] | keyword | tags |

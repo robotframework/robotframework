@@ -88,7 +88,7 @@ Import Library Keyword
     My Param Lib.Parameters should be    my first argument    second arg
 
 Correct Error When Using Keyword From Same Library With Different Names Without Prefix 2
-    [Documentation]    FAIL Multiple keywords with name 'Parameters' found.\
+    [Documentation]    FAIL Multiple keywords with name 'Parameters' found. \
     ...    Give the full name of the keyword you want to use:
     ...    ${SPACE*4}MyParamLib.Parameters
     ...    ${SPACE*4}Param1.Parameters

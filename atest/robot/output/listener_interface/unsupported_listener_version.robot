@@ -30,5 +30,5 @@ Run Tests With Listeners
 
 Taking listener into use should have failed
     [Arguments]    ${index}    ${name}    ${error}
-    Check Log Message    @{ERRORS}[${index}]
+    Check Log Message    ${ERRORS}[${index}]
     ...    Taking listener '${name}' into use failed: ${error}    ERROR

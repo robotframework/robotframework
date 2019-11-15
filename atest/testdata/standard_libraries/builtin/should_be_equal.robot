@@ -31,7 +31,15 @@ Fails with values
     x    y    z    values=${42}
 
 Fails without values
-    [Documentation]    FAIL Several failures occurred:\n\n 1) 3\n\n 2) c\n\n 3) z\n\n 4) -
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 3
+    ...
+    ...    2) c
+    ...
+    ...    3) z
+    ...
+    ...    4) -
     1    2    3    values=FALSE
     a    b    c    No Values
     x    y    z    values=no

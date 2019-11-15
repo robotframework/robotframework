@@ -27,7 +27,8 @@ class LibdocOutput(object):
 
     def __enter__(self):
         if self._format == 'HTML':
-            self._output_file = file_writer(self._output_path)
+            self._output_file = file_writer(self._output_path,
+                                            usage='Libdoc output')
             return self._output_file
         return self._output_path
 
@@ -35,4 +36,7 @@ class LibdocOutput(object):
         if self._output_file:
             self._output_file.close()
         if any(exc_info):
-            os.remove(self._output_path)
+            try:
+                os.remove(self._output_path)
+            except OSError:
+                pass

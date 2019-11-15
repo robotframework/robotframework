@@ -1,6 +1,7 @@
 *** Setting ***
 Library           ExampleLibrary
 Library           ExampleJavaLibrary
+Library           nön_äscii_dïr/valid.py
 
 *** Test Case ***
 Generic Failure
@@ -69,6 +70,11 @@ External Failure
 External failure in Java
     [Documentation]    FAIL IllegalArgumentException: Illegal initial capacity: -1
     External Java Exception
+
+Failure in library in non-ASCII directory
+    [Documentation]    FAIL Keyword in 'nön_äscii_dïr' fails!
+    Keyword in non ascii dir
+    Failing keyword in non ascii dir
 
 Timeout Expires
     [Documentation]    FAIL Test timeout 200 milliseconds exceeded.

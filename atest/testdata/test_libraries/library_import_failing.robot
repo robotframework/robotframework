@@ -17,7 +17,7 @@ ${CLASH WITH BUILTIN}    %{TEMPDIR}${/}sys.py
 *** Test Cases ***
 Name clash with Python builtin-module
     [Documentation]    FAIL
-    ...    Importing test library '${CLASH WITH BUILTIN}' failed:\
+    ...    Importing test library '${CLASH WITH BUILTIN}' failed: \
     ...    Cannot import custom module with same name as Python built-in module.
     Create File    ${CLASH WITH BUILTIN}    def kw(): pass
     Import library    ${CLASH WITH BUILTIN}

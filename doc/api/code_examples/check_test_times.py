@@ -34,4 +34,4 @@ if __name__ == '__main__':
     try:
         check_tests(*sys.argv[1:])
     except TypeError:
-        print __doc__
+        print(__doc__)
