@@ -36,7 +36,7 @@ class JsModelBuilder(object):
             basemillis=self._context.basemillis,
             split_results=self._context.split_results,
             min_level=self._context.min_level,
-            expand_ids=self._context.expand_ids
+            expand_keywords=self._context.expand_keywords
         )
 
 

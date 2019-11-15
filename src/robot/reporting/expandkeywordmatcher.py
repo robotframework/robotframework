@@ -13,12 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
-from robot.model import TagPatterns
-from robot.utils import MultiMatcher, is_list_like, py2to3
+from robot.utils import MultiMatcher, is_list_like
 
 
-@py2to3
 class ExpandKeywordMatcher(object):
 
     def __init__(self, expand_keywords):
@@ -29,10 +26,9 @@ class ExpandKeywordMatcher(object):
             expand_keywords = [expand_keywords]
         names = [n[5:] for n in expand_keywords if n[:5].lower() == 'name:']
         tags  = [p[4:] for p in expand_keywords if p[:4].lower() == 'tag:']
-        self._namematcher = MultiMatcher(names) if names else None
-        self._tagmatcher = MultiMatcher(tags) if tags else None
+        self._match_name = MultiMatcher(names).match
+        self._match_tags = MultiMatcher(tags).match_any
 
-    def check(self, kw):
-        if (self._namematcher and self._namematcher.match(kw.kwname)) or \
-                (self._tagmatcher and self._tagmatcher.match_any(kw.tags)):
+    def match(self, kw):
+        if self._match_name(kw.name) or self._match_tags(kw.tags):
             self.matched_ids.append(kw.id)

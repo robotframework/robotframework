@@ -490,16 +490,16 @@ or warnings`__ are not removed except when using the `ALL` mode.
 
 `NAME:<pattern>`
    Remove data from all keywords matching the given pattern regardless the
-   keyword status. The pattern is
-   matched against the full name of the keyword, prefixed with
-   the possible library or resource file name. The pattern is case, space, and
-   underscore insensitive, and it supports `simple patterns`_ with `*`
-   and `?` as wildcards.
+   keyword status. The pattern is matched against the full name of the keyword,
+   prefixed with the possible library or resource file name like
+   `MyLibrary.Keyword Name`. The pattern is case, space, and underscore
+   insensitive, and it supports `simple patterns`_ with `*`, `?` and `[]`
+   as wildcards.
 
 `TAG:<pattern>`
    Remove data from keywords with tags that match the given pattern. Tags are
    case and space insensitive and they can be specified using `tag patterns`_
-   where `*` and `?` are supported as wildcards and `AND`, `OR` and `NOT`
+   where `*`, `?` and `[]` are supported as wildcards and `AND`, `OR` and `NOT`
    operators can be used for combining individual tags or patterns together.
    Can be used both with `library keyword tags`__ and `user keyword tags`_.
 
@@ -535,11 +535,11 @@ supports the following modes:
 
 `NAME:<pattern>`
    Flatten keywords matching the given pattern. Pattern matching rules are
-   same as when `removing keywords`_ using `NAME:<pattern>` mode.
+   same as when `removing keywords`_ using the `NAME:<pattern>` mode.
 
 `TAG:<pattern>`
    Flatten keywords with tags matching the given pattern. Pattern matching
-   rules are same as when `removing keywords`_ using `TAG:<pattern>` mode.
+   rules are same as when `removing keywords`_ using the `TAG:<pattern>` mode.
 
 Examples::
 
@@ -552,29 +552,27 @@ deeply nested keyword structures.
 
 .. note:: `TAG:<pattern>` mode was added in Robot Framework 2.9.
 
-Automatically expanded keywords in log file
--------------------------------------------
+Automatically expanding keywords
+--------------------------------
 
-Keywords that have passed are closed in the log file by default. Thus information 
+Keywords that have passed are closed in the log file by default. Thus information
 they contain is not visible unless you expand them. If certain keywords have
-important information that should be visible when the log file is opened, you can 
+important information that should be visible when the log file is opened, you can
 use the :option:`--expandkeywords` option to set keywords automatically expanded
-in log file similar to failed keywords.
-
-The :option:`--expandkeywords` option supports the following modes:
+in log file similar to failed keywords. Expanding supports the following modes:
 
 `NAME:<pattern>`
    Expand keywords matching the given pattern. Pattern matching rules are
-   same as when `removing keywords`_ using `NAME:<pattern>` mode.
+   same as when `removing keywords`_ using the `NAME:<pattern>` mode.
 
 `TAG:<pattern>`
    Expand keywords with tags matching the given pattern. Pattern matching
-   rules are same as when `removing keywords`_ using `TAG:<pattern>` mode.
+   rules are same as when `removing keywords`_ using the `TAG:<pattern>` mode.
 
 Examples::
 
-   robot --expandkeywords name:CapturePageScreenshot MyTest.robot
-   rebot --expandkeywords tag:ShowInLog output.xml
+   robot --expandkeywords name:SeleniumLibrary.CapturePageScreenshot tests.robot
+   rebot --expandkeywords tag:expand output.xml
 
 .. note:: The :option:`--expandkeywords` option is new in Robot Framework 3.2.
 

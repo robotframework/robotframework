@@ -1,8 +1,8 @@
 *** Settings ***
-Documentation   Verify that stat information is written correctly to log/report
-Resource        atest_resource.robot
-Library         html_output_stats.py
-Suite Setup     Run tests with stat related options
+Documentation     Verify that stat information is written correctly to log/report.
+Suite Setup       Run tests with stat related options
+Library           LogDataFinder.py
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Log contains total stats
