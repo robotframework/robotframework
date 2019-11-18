@@ -70,7 +70,7 @@ ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
     ...    --name CustomName --suite nonex    ${INPUT FILE} ${INPUT FILE}
 
 --suite and --test together
-    Run And Check Suites and Tests    --suite tsuite1 --suite tsuite3 --test *1first --test *2*    Tsuite1    Suite1 First
+    Run And Check Suites and Tests    --suite tsuite1 --suite tsuite3 --test *1first --test nomatch    Tsuite1    Suite1 First
 
 --suite and --test together not matching
     Failing Rebot

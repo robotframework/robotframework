@@ -38,8 +38,8 @@ Library Order Should Be Available In The Next Test Case
 Setting Library Order Returns Previous Library Order
     Set Library Search Order    Library1    Library2
     @{library order} =    Set Library Search Order
-    Should Be Equal    @{library order}[0]    Library1
-    Should Be Equal    @{library order}[1]    Library2
+    Should Be Equal    ${library order}[0]    Library1
+    Should Be Equal    ${library order}[1]    Library2
 
 Setting Library Order Allows Setting BuiltIn Library As Default Library
     Set Library Search Order    BuiltIn

@@ -53,15 +53,19 @@ def _get_encoding(platform_getters, default):
 
 
 def _get_python_system_encoding():
-    # `locale.getpreferredencoding(False)` returns exactly what we want, but
-    # it doesn't seem to work outside Windows on Python 2. Luckily on these
+    # `locale.getpreferredencoding(False)` should return exactly what we want,
+    # but it doesn't seem to work outside Windows on Python 2. Luckily on these
     # platforms `sys.getfilesystemencoding()` seems to do the right thing.
+    # Jython 2.7.1+ actually uses UTF-8 regardless the system encoding, but
+    # that's handled by `system_decode/encode` utilities separately.
     if PY2 and not WINDOWS:
         return sys.getfilesystemencoding()
     return locale.getpreferredencoding(False)
 
 
 def _get_java_system_encoding():
+    # This is only used with Jython 2.7.0, others get encoding already
+    # from `_get_python_system_encoding`.
     from java.lang import System
     return System.getProperty('file.encoding')
 

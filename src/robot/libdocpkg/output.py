@@ -36,4 +36,7 @@ class LibdocOutput(object):
         if self._output_file:
             self._output_file.close()
         if any(exc_info):
-            os.remove(self._output_path)
+            try:
+                os.remove(self._output_path)
+            except OSError:
+                pass

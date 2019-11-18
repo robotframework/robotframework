@@ -21,7 +21,7 @@ import traceback
 from robot.errors import RobotError
 
 from .encoding import system_decode
-from .platform import JYTHON, PY3, RERAISED_EXCEPTIONS
+from .platform import JYTHON, PY3, PY_VERSION, RERAISED_EXCEPTIONS
 from .unic import unic
 
 
@@ -156,11 +156,12 @@ class PythonErrorDetails(_ErrorDetails):
     def _decode_entry(self, traceback_entry):
         path, lineno, func, text = traceback_entry
         # Traceback entries in Python 2 use bytes using different encodings.
-        # path: system encoding (except on Jython where it's oddly latin1)
+        # path: system encoding (except on Jython 2.7.0 where it's latin1)
         # line: integer
         # func: always ASCII on Python 2
         # text: depends on source encoding; UTF-8 is an ASCII compatible guess
-        if not JYTHON:
+        buggy_jython = JYTHON and PY_VERSION < (2, 7, 1)
+        if not buggy_jython:
             path = system_decode(path)
         else:
             path = path.decode('latin1', 'replace')

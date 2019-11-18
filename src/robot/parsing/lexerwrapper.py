@@ -25,6 +25,7 @@ from .restreader import read_rest
 PROCESS_CURDIR = True
 
 
+# TODO: Better name, maybe needs a public API?
 class LexerWrapper(object):
 
     def __init__(self, lexer, source):

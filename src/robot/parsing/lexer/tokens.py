@@ -85,6 +85,29 @@ class Token(object):
 Token.DATA_TOKENS = [t for t in Token.__dict__
                      if t[0] != '_' and t not in Token.NON_DATA_TOKENS]
 
+Token.SETTING_TOKENS = [
+    Token.DOCUMENTATION,
+    Token.SUITE_SETUP,
+    Token.SUITE_TEARDOWN,
+    Token.METADATA,
+    Token.TEST_SETUP,
+    Token.TEST_TEARDOWN,
+    Token.TEST_TEMPLATE,
+    Token.TEST_TIMEOUT,
+    Token.FORCE_TAGS,
+    Token.DEFAULT_TAGS,
+    Token.LIBRARY,
+    Token.RESOURCE,
+    Token.VARIABLES,
+    Token.SETUP,
+    Token.TEARDOWN,
+    Token.TEMPLATE,
+    Token.TIMEOUT,
+    Token.TAGS,
+    Token.ARGUMENTS,
+    Token.RETURN
+]
+
 
 class EOS(Token):
 

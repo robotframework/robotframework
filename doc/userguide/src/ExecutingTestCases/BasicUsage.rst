@@ -482,74 +482,73 @@ some other high-level programming language. Regardless of the
 language, it is recommended that long option names are used, because
 they are easier to understand than the short names.
 
-In the first examples, the same web tests are executed with different
-browsers and the results combined afterwards. This is easy with shell
-scripts, as practically you just list the needed commands one after
-another:
+Shell script example
+~~~~~~~~~~~~~~~~~~~~
+
+In this example, the same web tests in the ``login`` directory are executed
+with different browsers and the results combined afterwards using Rebot_.
+The script also accepts command line options itself and simply forwards them
+to the ``robot`` command using the handy ``$*`` variable:
 
 .. sourcecode:: bash
 
    #!/bin/bash
-   robot --variable BROWSER:Firefox --name Firefox --log none --report none --output out/fx.xml login
-   robot --variable BROWSER:IE --name IE --log none --report none --output out/ie.xml login
+   robot --name Firefox --variable BROWSER:Firefox --output out/fx.xml --log none --report none $* login
+   robot --name IE --variable BROWSER:IE --output out/ie.xml --log none --report none  $* login
    rebot --name Login --outputdir out --output login.xml out/fx.xml out/ie.xml
 
-Implementing the above example with Windows batch files is not very
-complicated, either. The most important thing to remember is that
-because ``robot`` and ``rebot`` scripts are implemented as batch files on
-Windows, ``call`` must be used when running them from another batch
-file. Otherwise execution would end when the first batch file is
-finished.
+Batch file example
+~~~~~~~~~~~~~~~~~~
+
+Implementing the above shell script example using batch files is not very
+complicated either. Notice that arguments to batch files can be forwarded
+to executed commands using ``%*``:
 
 .. sourcecode:: bat
 
    @echo off
-   call robot --variable BROWSER:Firefox --name Firefox --log none --report none --output out\fx.xml login
-   call robot --variable BROWSER:IE --name IE --log none --report none --output out\ie.xml login
-   call rebot --name Login --outputdir out --output login.xml out\fx.xml out\ie.xml
+   robot --name Firefox --variable BROWSER:Firefox --output out\fx.xml --log none --report none %* login
+   robot --name IE --variable BROWSER:IE --log none --output out\ie.xml --report none %* login
+   rebot --name Login --outputdir out --output login.xml out\fx.xml out\ie.xml
 
-In the next examples, jar files under the :file:`lib` directory are
-put into ``CLASSPATH`` before starting the test execution. In these
-examples, start-up scripts require that paths to the executed test
-data are given as arguments. It is also possible to use command line
-options freely, even though some options have already been set in the
-script. All this is relatively straight-forward using bash:
+.. note:: Prior to Robot Framework 3.1 ``robot`` and ``rebot`` commands were
+          implemented as batch files on Windows and using them in another
+          batch file required prefixing the whole command with ``call``.
 
-.. sourcecode:: bash
+Python example
+~~~~~~~~~~~~~~
 
-   #!/bin/bash
+When start-up scripts gets more complicated, implementing them using shell
+scripts or batch files is not that convenient. This is especially true if
+both variants are needed and same logic needs to be implemented twice. In
+such situations it is often better to switch to Python. It is possible to
+execute Robot Framework from Python using the `subprocess module`__, but
+often using Robot Framework's own `programmatic API`__ is more convenient.
+The easiest APIs to use are ``robot.run_cli`` and ``robot.rebot_cli`` that
+accept same command line arguments than the ``robot`` and ``rebot`` commands.
 
-   cp=.
-   for jar in lib/*.jar; do
-       cp=$cp:$jar
-   done
-   export CLASSPATH=$cp
+The following example implements the same logic as the earlier shell script
+and batch file examples. In Python arguments to the script itself are
+available in ``sys.argv``:
 
-   robot --ouputdir /tmp/logs --suitestatlevel 2 $*
+.. sourcecode:: python
 
-Implementing this using Windows batch files is slightly more complicated. The
-difficult part is setting the variable containing the needed JARs inside a For
-loop, because, for some reason, that is not possible without a helper
-function.
+   #!/usr/bin/env python
+   import sys
+   from robot import run_cli, rebot_cli
 
-.. sourcecode:: bat
+   common = ['--log', 'none', '--report', 'none'] + sys.argv[1:] + ['login']
+   run_cli(['--name', 'Firefox', '--variable', 'BROWSER:Firefox', '--output', 'out/fx.xml'] + common, exit=False)
+   run_cli(['--name', 'IE', '--variable', 'BROWSER:IE', '--output', 'out/ie.xml'] + common, exit=False)
+   rebot_cli(['--name', 'Login', '--outputdir', 'out', 'out/fx.xml', 'out/ie.xml'])
 
-   @echo off
 
-   set CP=.
-   for %%jar in (lib\*.jar) do (
-       call :set_cp %%jar
-   )
-   set CLASSPATH=%CP%
+.. note:: ``exit=False`` is needed because by default ``run_cli`` exits to
+          system with the correct `return code`_. ``rebot_cli`` does that too,
+          but in the above example that is fine.
 
-   robot --ouputdir c:\temp\logs --suitestatlevel 2 %*
-
-   goto :eof
-
-   :: Helper for setting variables inside a for loop
-   :set_cp
-       set CP=%CP%;%1
-   goto :eof
+__ https://docs.python.org/library/subprocess.html
+__ https://robot-framework.readthedocs.io
 
 Modifying Java startup parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -567,6 +566,38 @@ outputs are very big. There are two easy ways to configure JVM options:
    installed robot module`_ directly::
 
       jython -J-Xmx1024m -m robot tests.robot
+
+Making :file:`*.robot` files executable
+---------------------------------------
+
+On other operating systems than Windows it is possible to make :file:`*.robot`
+files executable by giving them execution permission and adding a shebang__
+like in this example:
+
+.. sourcecode:: robotframework
+
+    #!/usr/bin/env robot
+
+   *** Test Cases ***
+   Example
+       Log to console    Executing!
+
+If the above content would be in a file :file:`example.robot` and that file
+would be executable, it could be executed from the command line like below.
+Starting from Robot Framework 3.2, individually executed files can have any
+extension, or no extension at all, so the same would work also if the file
+would be named just :file:`example`.
+
+.. sourcecode:: bash
+
+    ./example.robot
+
+This trick does not work when executing a directory but can be handy when
+executing a single file. It is probably more often useful when
+`automating tasks`__ than when automating tests.
+
+__ https://en.wikipedia.org/wiki/Shebang_(Unix)
+__ `Creating tasks`_
 
 Debugging problems
 ------------------

@@ -1,24 +1,51 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/builtin/evaluate.robot
-Resource         atest_resource.robot
+Suite Setup       Run Keywords
+...               Remove Environment Variable    PYTHONCASEOK    AND
+...               Run Tests    ${EMPTY}    standard_libraries/builtin/evaluate.robot
+Suite Teardown    Set Environment Variable    PYTHONCASEOK    True
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Evaluate
     Check Test Case    ${TESTNAME}
 
-Evaluate With Modules
+Modules are imported automatically
     Check Test Case    ${TESTNAME}
 
-Evaluate With Namespace
+Importing non-existing module fails with NameError
     Check Test Case    ${TESTNAME}
 
-Evaluate with Get Variables Namespace
+Importing invalid module fails with original error
     Check Test Case    ${TESTNAME}
 
-Evaluate with Non-dict Namespace
+Automatic module imports are case-sensitive
     Check Test Case    ${TESTNAME}
 
-Evaluate gets variables automatically
+Automatic modules don't override builtins
+    Check Test Case    ${TESTNAME}
+
+Explicit modules
+    Check Test Case    ${TESTNAME}
+
+Explicit modules are needed with nested modules
+    Check Test Case    ${TESTNAME}
+
+Explicit modules can override builtins
+    Check Test Case    ${TESTNAME}
+
+Custom namespace
+    Check Test Case    ${TESTNAME}
+
+Custom namespace is case-sensitive
+    Check Test Case    ${TESTNAME}
+
+Namespace from Get Variables
+    Check Test Case    ${TESTNAME}
+
+Non-dict namespace
+    Check Test Case    ${TESTNAME}
+
+Variables are available automatically
     Check Test Case    ${TESTNAME}
 
 Automatic variables don't work in strings
@@ -53,6 +80,8 @@ Invalid expression
     Check Test Case    ${TESTNAME} 4
     Check Test Case    ${TESTNAME} 5
     Check Test Case    ${TESTNAME} 6
+    Check Test Case    ${TESTNAME} 7
+    Check Test Case    ${TESTNAME} 8
 
 Invalid $ usage
     Check Test Case    ${TESTNAME} 1

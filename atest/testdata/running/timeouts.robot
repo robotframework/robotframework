@@ -247,6 +247,14 @@ Timeouted Keyword Called With Wrong Number of Arguments with Run Keyword
     Run Keyword    Timeouted Keyword Passes    wrong    number    of    arguments
     [Teardown]    No Operation
 
+Zero timeout is ignored
+    [Timeout]    0
+    Zero timeout is ignored
+
+Negative timeout is ignored
+    [Timeout]    -1
+    Negative timeout is ignored
+
 *** Keywords ***
 Clean Up Timeout Temp
     Remove Directory    ${timeout_temp}    recursive
@@ -326,4 +334,12 @@ Embedded args timeout '${timeout}' from arguments
 
 Keyword that uses parent local variable for timeout
     [Timeout]    ${local}
+    Sleep    0.1
+
+Zero timeout is ignored
+    [Timeout]    0
+    Sleep    0.1
+
+Negative timeout is ignored
+    [Timeout]    -1
     Sleep    0.1

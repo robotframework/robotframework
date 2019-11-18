@@ -82,6 +82,6 @@ Test Directory Operations
     Directory Should Not Be Empty    ${path}
     @{items} =    List Directory    ${path}
     Length Should Be    ${items}    1
-    Should Be Equal    @{items}[0]    ${name}
+    Should Be Equal    ${items}[0]    ${name}
     Remove Directory    ${path}    recursive
     Directory Should Not Exist    ${path}

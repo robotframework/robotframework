@@ -31,7 +31,7 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          normalize_whitespace, parse_time, prepr,
                          plural_or_not as s, PY3, RERAISED_EXCEPTIONS,
                          roundup, secs_to_timestr, seq2str, split_from_equals,
-                         timestr_to_secs, unic)
+                         timestr_to_secs, type_name, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (evaluate_expression, is_list_var, is_var,
                              DictVariableTableValue, search_variable,
@@ -80,7 +80,7 @@ class _BuiltInBase(object):
 
     def _is_true(self, condition):
         if is_string(condition):
-            condition = self.evaluate(condition, modules='os,sys')
+            condition = self.evaluate(condition)
         return bool(condition)
 
     def _log_types(self, *args):
@@ -1418,6 +1418,40 @@ class _Variables(_BuiltInBase):
             return values[0]
         else:
             return list(values)
+
+    @run_keyword_variant(resolve=0)
+    def set_local_variable(self, name, *values):
+        """Makes a variable available everywhere within the local scope.
+
+        Variables set with this keyword are available within the
+        local scope of the currently executed test case or in the local scope
+        of the keyword in which they are defined. For example, if you set a
+        variable in a user keyword, it is available only in that keyword. Other
+        test cases or keywords will not see variables set with this keyword.
+
+        This keyword is equivalent to a normal variable assignment based on a
+        keyword return value.
+
+        Example:
+        | @{list} =          | Create List | item1     | item2     | item3     |
+
+        is equivalent with
+
+        | Set Local Variable | @{list} | item1    | item2    | item3    |
+
+        This keyword will provide the option of setting local variables inside keywords
+        like `Run Keyword If`, `Run Keyword And Return If`, `Run Keyword Unless`
+        which until now was not possible by using `Set Variable`.
+
+        It will also be possible to use this keyword from external libraries
+        that want to set local variables.
+
+        New in Robot Framework 3.2.
+        """
+        name = self._get_var_name(name)
+        value = self._get_var_value(name, values)
+        self._variables.set_local_variable(name, value)
+        self._log_set_variable(name, value)
 
     @run_keyword_variant(resolve=0)
     def set_test_variable(self, name, *values):
@@ -2939,10 +2973,10 @@ class _Misc(_BuiltInBase):
         return get_time(format, parse_time(time_))
 
     def evaluate(self, expression, modules=None, namespace=None):
-        """Evaluates the given expression in Python and returns the results.
+        """Evaluates the given expression in Python and returns the result.
 
-        ``expression`` is evaluated in Python as explained in `Evaluating
-        expressions`.
+        ``expression`` is evaluated in Python as explained in the
+        `Evaluating expressions` section.
 
         ``modules`` argument can be used to specify a comma separated
         list of Python modules to be imported and added to the evaluation
@@ -2952,25 +2986,38 @@ class _Misc(_BuiltInBase):
         namespace as a dictionary. Possible ``modules`` are added to this
         namespace.
 
+        Starting from Robot Framework 3.2, modules used in the expression are
+        imported automatically. ``modules`` argument is still needed with
+        nested modules like ``rootmod.submod`` that are implemented so that
+        the root module does not automatically import sub modules. This is
+        illustrated by the ``selenium.webdriver`` example below.
+
         Variables used like ``${variable}`` are replaced in the expression
         before evaluation. Variables are also available in the evaluation
-        namespace, and can be accessed using special ``$variable`` syntax
+        namespace and can be accessed using the special ``$variable`` syntax
         as explained in the `Evaluating expressions` section.
 
-        Examples (expecting ``${result}`` is 3.14):
-        | ${status} = | Evaluate | 0 < ${result} < 10 | # Would also work with string '3.14' |
-        | ${status} = | Evaluate | 0 < $result < 10   | # Using variable itself, not string representation |
-        | ${random} = | Evaluate | random.randint(0, sys.maxint) | modules=random, sys |
-        | ${ns} =     | Create Dictionary | x=${4}    | y=${2}              |
-        | ${result} = | Evaluate | x*10 + y           | namespace=${ns}     |
+        Examples (expecting ``${result}`` is number 3.14):
+        | ${status} =  | Evaluate | 0 < ${result} < 10 | # Would also work with string '3.14' |
+        | ${status} =  | Evaluate | 0 < $result < 10   | # Using variable itself, not string representation |
+        | ${random} =  | Evaluate | random.randint(0, sys.maxsize) |
+        | ${options} = | Evaluate | selenium.webdriver.ChromeOptions() | modules=selenium.webdriver |
+        | ${ns} =      | Create Dictionary | x=${4}    | y=${2}              |
+        | ${result} =  | Evaluate | x*10 + y           | namespace=${ns}     |
         =>
         | ${status} = True
         | ${random} = <random integer>
+        | ${options} = ChromeOptions instance
         | ${result} = 42
+
+        *NOTE*: Prior to Robot Framework 3.2 using ``modules=rootmod.submod``
+        was not enough to make the root module itself available in the
+        evaluation namespace. It needed to be taken into use explicitly like
+        ``modules=rootmod, rootmod.submod``.
         """
         try:
-            return evaluate_expression(expression, self._variables, modules,
-                                       namespace)
+            return evaluate_expression(expression, self._variables.current.store,
+                                       modules, namespace)
         except DataError as err:
             raise RuntimeError(err.message)
 
@@ -2997,8 +3044,8 @@ class _Misc(_BuiltInBase):
         try:
             method = getattr(object, method_name)
         except AttributeError:
-            raise RuntimeError("Object '%s' does not have method '%s'."
-                               % (object, method_name))
+            raise RuntimeError("%s object does not have method '%s'."
+                               % (type_name(object), method_name))
         try:
             return method(*args, **kwargs)
         except:
@@ -3260,18 +3307,36 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     = Evaluating expressions =
 
     Many keywords, such as `Evaluate`, `Run Keyword If` and `Should Be True`,
-    accept an expression that is evaluated in Python. These expressions are
-    evaluated using Python's
+    accept an expression that is evaluated in Python.
+
+    == Evaluation namespace ==
+
+    Expressions are evaluated using Python's
     [http://docs.python.org/library/functions.html#eval|eval] function so
     that all Python built-ins like ``len()`` and ``int()`` are available.
-    `Evaluate` allows configuring the execution namespace with custom modules,
-    and other keywords have [http://docs.python.org/library/os.html|os]
-    and [http://docs.python.org/library/sys.html|sys] modules available
-    automatically.
+    In addition to that, all unrecognized variables are considered to be
+    modules that are automatically imported. It is possible to use all
+    available Python modules, including the standard modules and the installed
+    third party modules.
 
     Examples:
-    | `Run Keyword If` | os.sep == '/' | Log                  | Not on Windows |
-    | ${random int} =  | `Evaluate`    | random.randint(0, 5) | modules=random |
+    | `Should Be True`   | len('${result}') > 3 |
+    | `Run Keyword If`   | os.sep == '/'        | Non-Windows Keyword  |
+    | ${robot version} = | `Evaluate`           | robot.__version__    |
+
+    `Evaluate` also allows configuring the execution namespace with a custom
+    namespace and with custom modules to be imported. The latter functionality
+    is useful when using nested modules like ``rootmod.submod`` that are
+    implemented so that the root module does not automatically import sub
+    modules. Otherwise the automatic module import mechanism described earlier
+    is enough to get the needed modules imported.
+
+    *NOTE:* Automatic module import is a new feature in Robot Framework 3.2.
+    Earlier modules needed to be explicitly taken into use when using the
+    `Evaluate` keyword and other keywords only had access to ``sys`` and
+    ``os`` modules.
+
+    == Using variables ==
 
     When a variable is used in the expressing using the normal ``${variable}``
     syntax, its value is replaced before the expression is evaluated. This
@@ -3288,10 +3353,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     | `Run Keyword If` | '${status}' == 'PASS'     | Log | Passed                |
     | `Run Keyword If` | 'FAIL' in '''${output}''' | Log | Output contains FAIL  |
 
-    Variables themselves are automatically available in the evaluation
-    namespace. They can be accessed using special variable syntax without the
-    curly braces like ``$variable``. These variables should never be quoted,
-    and in fact they are not even replaced inside strings.
+    Actual variables values are also available in the evaluation namespace.
+    They can be accessed using special variable syntax without the curly
+    braces like ``$variable``. These variables should never be quoted.
 
     Examples:
     | `Should Be True` | $rc < 10          | Return code greater than 10  |

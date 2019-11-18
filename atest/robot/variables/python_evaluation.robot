@@ -1,6 +1,9 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    variables/python_evaluation.robot
-Resource         atest_resource.robot
+Suite Setup       Run Keywords
+...               Remove Environment Variable    PYTHONCASEOK    AND
+...               Run Tests    ${EMPTY}    variables/python_evaluation.robot
+Suite Teardown    Set Environment Variable    PYTHONCASEOK    True
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Python only
@@ -10,6 +13,12 @@ Variable replacement
     Check Test Case    ${TESTNAME}
 
 Inline variables
+    Check Test Case    ${TESTNAME}
+
+Automatic module import
+    Check Test Case    ${TESTNAME}
+
+Module imports are case-sensitive
     Check Test Case    ${TESTNAME}
 
 Nested usage
@@ -26,7 +35,11 @@ Invalid
 
 Invalid in variable table
     [Template]    Validate invalid variable error
-    4      \${NON EXISTING}
+    4      \${NON EXISTING MODULE}
+    ...    Resolving variable '\${{i_do_not_exist}}' failed:
+    ...    Evaluating expression 'i_do_not_exist' failed:
+    ...    NameError: name 'i_do_not_exist' is not defined nor importable as module
+    5      \${NON EXISTING VARIABLE}
     ...    Resolving variable '\${{$i_do_not_exist}}' failed:
     ...    Evaluating expression '$i_do_not_exist' failed:
     ...    Variable '$i_do_not_exist' not found.
@@ -37,7 +50,7 @@ Invalid in variable table
     ...    pattern=True
     3      \${INVALID SYNTAX}
     ...    Variable '\${{ 1/1 }' was not closed properly.
-    5      \${RECURSION}
+    6      \${RECURSION}
     ...    Recursive variable definition.
     1      \${RECURSION INDIRECT}
     ...    Resolving variable '\${{ $INDIRECT_RECURSION }}' failed:

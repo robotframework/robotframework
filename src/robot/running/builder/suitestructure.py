@@ -43,7 +43,7 @@ class SuiteStructureBuilder(object):
     ignored_prefixes = ('_', '.')
     ignored_dirs = ('CVS',)
 
-    def __init__(self, include_suites, include_extensions):
+    def __init__(self, include_suites=None, include_extensions=None):
         self.include_suites = include_suites
         self.accepted_extensions = self._get_extensions(include_extensions)
 

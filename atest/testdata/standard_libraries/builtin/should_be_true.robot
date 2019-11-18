@@ -34,11 +34,12 @@ Should Not Be True with invalid expression
     [Documentation]    FAIL STARTS: Evaluating expression 'this is invalid' failed: NameError:
     Should Not Be True    this is invalid
 
-Should (Not) Be True is evaluated with os- and sys-modules
-    Should Be True    os.sep
-    Should Be True    sys.platform
-    Should Not Be True    'os.sep' == 'wrong'
-    Should Not Be True    'sys.platform' == 'hurd'    # let's see when this starts failing
+Should (Not) Be True automatically imports modules
+    Should Be True    os.pathsep == '${:}'
+    Should Be True    math.pi > 3.14
+    Should Be True    robot.__version__[0] == '3'
+    Should Not Be True    os.sep == 'os.sep'
+    Should Not Be True    sys.platform == 'hurd'    # let's see when this starts failing
 
 Should (Not) Be True is evaluated with robot's variables
     Should Be True    $list2

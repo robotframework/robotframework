@@ -152,6 +152,9 @@ class VariableScopes(object):
         self.current[name] = value
         self._variables_set.set_keyword(name, value)
 
+    def set_local_variable(self, name, value):
+        self.current[name] = value
+
     def as_dict(self, decoration=True):
         return self.current.as_dict(decoration=decoration)
 

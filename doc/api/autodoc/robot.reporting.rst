@@ -9,6 +9,14 @@ robot.reporting package
 Submodules
 ----------
 
+robot.reporting.expandkeywordmatcher module
+-----------------------------------------
+
+.. automodule:: robot.reporting.expandkeywordmatcher
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.reporting.jsbuildingcontext module
 ----------------------------------------
 
