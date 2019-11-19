@@ -21,12 +21,14 @@ from robot.utils import (attribute_escape, get_link_path, html_escape,
                          html_format, is_string, is_unicode, timestamp_to_secs,
                          unic)
 
+from .expandkeywordmatcher import ExpandKeywordMatcher
 from .stringcache import StringCache
 
 
 class JsBuildingContext(object):
 
-    def __init__(self, log_path=None, split_log=False, prune_input=False):
+    def __init__(self, log_path=None, split_log=False, expand_keywords=None,
+                 prune_input=False):
         # log_path can be a custom object in unit tests
         self._log_dir = dirname(log_path) if is_string(log_path) else None
         self._split_log = split_log
@@ -36,6 +38,8 @@ class JsBuildingContext(object):
         self.split_results = []
         self.min_level = 'NONE'
         self._msg_links = {}
+        self._expand_matcher = ExpandKeywordMatcher(expand_keywords) \
+            if expand_keywords else None
 
     def string(self, string, escape=True, attr=False):
         if escape and string:
@@ -67,6 +71,14 @@ class JsBuildingContext(object):
     def create_link_target(self, msg):
         id = self._top_level_strings.add(msg.parent.id)
         self._msg_links[self._link_key(msg)] = id
+
+    def check_expansion(self, kw):
+        if self._expand_matcher is not None:
+            self._expand_matcher.match(kw)
+
+    @property
+    def expand_keywords(self):
+        return self._expand_matcher.matched_ids if self._expand_matcher else None
 
     def link(self, msg):
         return self._msg_links.get(self._link_key(msg))

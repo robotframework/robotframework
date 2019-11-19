@@ -62,6 +62,16 @@ function expandElementWithId(elementid) {
     expandElement(window.testdata.findLoaded(elementid));
 }
 
+function expandElementsWithIds(ids) {
+    util.map(ids, expandElementWithId);
+}
+
+function loadAndExpandElementIds(ids) {
+    for (var i in ids) {
+        window.testdata.ensureLoaded(ids[i], expandElementsWithIds);
+    }
+}
+
 function expandCriticalFailed(element) {
     if (element.status == "FAIL") {
         window.elementsToExpand = [element];
