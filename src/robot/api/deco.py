@@ -12,7 +12,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-import inspect
 
 
 def keyword(name=None, tags=(), types=()):
@@ -71,7 +70,7 @@ def keyword(name=None, tags=(), types=()):
     return decorator
 
 
-def library(scope=None, version=None, doc_format='ROBOT', listener=None, auto_keywords=False):
+def library(scope=None, version=None, robot_auto_kws=False):
     """Decorator to set custom scope and version and enable/disable public
     methods that will become keywords.
 
@@ -101,16 +100,11 @@ def library(scope=None, version=None, doc_format='ROBOT', listener=None, auto_ke
             @keyword
             def public_method_is_not_keyword():
                 print('This method will not become keyword')
-
-    New in RF 3.2.
      """
-    if inspect.isclass(scope):
-        return library()(scope)
-    def decorator(cls):
-        cls.ROBOT_LIBRARY_SCOPE = scope
-        cls.ROBOT_LIBRARY_VERSION = version
-        cls.ROBOT_LIBRARY_DOC_FORMAT = doc_format
-        cls.ROBOT_LIBRARY_LISTENER = listener
-        cls.ROBOT_AUTO_KEYWORDS = auto_keywords
-        return cls
-    return decorator
+
+    def lib_decorator(func):
+        func.ROBOT_LIBRARY_SCOPE = scope
+        func.ROBOT_LIBRARY_VERSION = version
+        func.ROBOT_AUTO_KEYWORDS = robot_auto_kws
+        return func
+    return lib_decorator

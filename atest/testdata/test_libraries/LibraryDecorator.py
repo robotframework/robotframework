@@ -1,11 +1,15 @@
 from robot.api.deco import keyword, library
 
-@library
+
+@library(scope='TEST SUITE', version='1.2.3')
 class LibraryDecorator(object):
 
-    def library_decorator_disables_public_methods(self):
-        raise RuntimeError('Should not be executed!')
+    def __init__(self):
+        self.invalid = 'This method is not a keyword.'
 
-    @keyword(name="Method From Library Decorator")
+    def library_decorator_disables_public_methods(self):
+        print(self.invalid)
+
+    @keyword(name="Decorated Method Is Keyword")
     def decorated_method(self):
-        print('Decorated methods are keywords.')
+        print(self.invalid)
