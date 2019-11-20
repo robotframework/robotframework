@@ -18,4 +18,4 @@ Public Method From Library Decorator Is Not Recognized As Keyword
     Library Decorator Disables Public Methods
 
 Decorated Method From Libary Decorator Is Recognized As Keyword
-    Decorated Method Is Keyword
+    Method From Library Decorator
