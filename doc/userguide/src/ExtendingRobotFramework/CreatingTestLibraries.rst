@@ -391,6 +391,15 @@ about documenting test libraries in general.
 __ `Test library scope`_
 __ `Specifying library version`_
 
+Setting documentation format can be done by using `library` decorator with
+the parameter `doc_format`.
+
+.. sourcecode:: python
+
+    @library(doc_foramt='ROBOT')
+    class MyLibrary:
+        ...
+
 
 Library acting as listener
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -401,6 +410,10 @@ start and end. Sometimes getting such notifications is also useful for test
 libraries, and they can register a custom listener by using
 `ROBOT_LIBRARY_LISTENER` attribute. The value of this attribute
 should be an instance of the listener to use, possibly the library itself.
+
+`ROBOT_LIBRARY_LISTENER` can be set in `library` decorator via the parameter
+`listener`.
+
 For more information and examples see `Test libraries as listeners`_ section.
 
 Creating static keywords
@@ -562,11 +575,11 @@ implements only one keyword :name:`Example Keyword`:
 __ https://docs.python.org/tutorial/modules.html#importing-from-a-package
 
 Another way to avoid methods becoming keywords is to use `@library` class
-decorator which by default set its parameter `robot_auto_kws` to False.
+decorator which by default set its parameter `auto_keywords` to False.
 
  .. sourcecode:: python
 
-     @library(robot_auto_kws=False)
+     @library(auto_keywords=False)
     class MyLibrary:
 
          def my_keyword(self):
