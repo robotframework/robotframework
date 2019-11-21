@@ -86,6 +86,14 @@ Empty Environment Variable
     [Documentation]    FAIL    STARTS: Environment variable '\%{}' not found.
     Log  %{}
 
+Environment Variable with Default Value
+    ${value}        Set variable    %{NON_EXISTING_VAR=default value}
+                    Should be equal    ${value}    default value
+
+Environment Variable with Empty Default Value
+    ${value}        Set variable    %{NON_EXISTING_VAR=}
+                    Should be equal    ${value}    ${EMPTY}
+
 *** Keywords ***
 UK With Environment Variables In Metadata
     [Arguments]  ${mypath}=%{TEMPDIR}
