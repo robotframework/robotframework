@@ -65,6 +65,7 @@ jobs:
   
   test_using_jython:
     strategy:
+      fail-fast: false
       matrix:
         java: [ '1.7', '1.8' ]
         os: [ 'windows-latest', 'windows-2016' ]
@@ -113,6 +114,7 @@ jobs:
   test_using_ironpython:
 
     strategy:
+      fail-fast: false
       matrix:
         os: [ 'windows-latest', 'windows-2016' ]
 
