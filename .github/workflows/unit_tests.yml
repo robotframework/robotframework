@@ -38,6 +38,10 @@ jobs:
         java: [ '1.7', '1.8' ]
         os: [ 'windows-latest', 'windows-2016' ]
         jython-version: [ '2.7.2b2', '2.7.1', '2.7.0', '2.5.3' ]
+        exclude:
+          - java: '1.7'
+            jython-version: '2.7.2b2'
+
 
     runs-on: ${{ matrix.os }}
 
