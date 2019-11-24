@@ -3,7 +3,7 @@ name: Acceptance tests
 on:
   pull_request:
   schedule:
-    - cron:  '* */12 * * *'
+    - cron: '0 */12 * * *'
 
 jobs:
   test_using_builtin_python:
