@@ -68,10 +68,11 @@ jobs:
       matrix:
         java: [ '1.7', '1.8' ]
         os: [ 'windows-latest', 'windows-2016' ]
+        jython-version: [ '2.7.1', '2.7.0', '2.5.3' ]
 
     runs-on: ${{ matrix.os }}
 
-    name: Jython (Java ${{ matrix.java }}) 2.7.1 on ${{ matrix.os }}
+    name: Jython (Java ${{ matrix.java }}) ${{ matrix.jython-version }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
 
@@ -87,10 +88,10 @@ jobs:
           java-version: ${{ matrix.java }}
           architecture: 'x64'
 
-      - name: Setup Jython
+      - name: Setup Jython ${{ matrix.jython-version }}
         run: |
           choco install wget -y --no-progress
-          wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/2.7.1/jython-installer-2.7.1.jar" -O jytinst.jar
+          wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
           java -jar jytinst.jar -s -d jython/
       
       - name: Run acceptance tests
@@ -101,7 +102,7 @@ jobs:
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v1
         with:
-          name: acceptances-test-results-jython-${{ matrix.os }}-java${{ matrix.java }}
+          name: acceptances-test-results-jython-${{ matrix.jython-version }}-${{ matrix.os }}-java${{ matrix.java }}
           path: atest/results
         if: failure()
 
