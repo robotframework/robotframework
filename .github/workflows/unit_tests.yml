@@ -29,7 +29,7 @@ jobs:
           architecture: 'x64'
 
       - name: Run unit tests
-        run: python utest/run.py
+        run: python utest/run.py -v
 
   test_using_jython:
     strategy:
@@ -57,7 +57,7 @@ jobs:
           java -jar jytinst.jar -s -d jython/
       
       - name: Run unit tests
-        run: jython/bin/jython utest/run.py
+        run: jython/bin/jython utest/run.py -v
 
   test_using_ironpython:
 
@@ -79,4 +79,4 @@ jobs:
           ipy -m pip install --user --upgrade pip
       
       - name: Run unit tests
-        run: ipy utest/run.py
+        run: ipy utest/run.py -v
