@@ -393,10 +393,11 @@ if a variable `${DATA}` contains `[{'id': 1, 'name': 'Robot'},
 Environment variables
 ~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework allows using environment variables in the test
-data using the syntax `%{ENV_VAR_NAME}`. They are limited to string
-values. You can also set the default value using `=`, if the variable not found:
-`%{ENV_VAR_NAME=default}`.
+Robot Framework allows using environment variables in the test data using
+the syntax `%{ENV_VAR_NAME}`. They are limited to string values. It is
+possible to specify a default value, that is used if the environment
+variable does not exists, by separating the variable name and the default
+value with an equal sign like `%{ENV_VAR_NAME=default value}`.
 
 Environment variables set in the operating system before the test execution are
 available during it, and it is possible to create new ones with the keyword
@@ -413,8 +414,11 @@ not effective after the test execution.
    Environment variables
        Log    Current user: %{USER}
        Run    %{JAVA_HOME}${/}javac
+
    Environment variables with defaults
        Set port    %{APPLICATION_PORT=8080}
+
+.. note:: Support for specifying the default value is new in Robot Framework 3.2.
 
 Java system properties
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -428,6 +432,7 @@ system property with same name exist, the environment variable will be used.
    *** Test Cases ***
    System properties
        Log    %{user.name} running tests on %{os.name}
+       Log    %{custom.property=default value}
 
 __ http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
