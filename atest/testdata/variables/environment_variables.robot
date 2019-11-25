@@ -86,6 +86,22 @@ Empty Environment Variable
     [Documentation]    FAIL    STARTS: Environment variable '\%{}' not found.
     Log  %{}
 
+Environment Variable with Default Value
+    Should Be Equal  %{NON_EXISTING_VAR=default value}  default value
+
+Environment Variable with Variable as Default Value
+    ${default_var} =  Set variable  default value from var
+    Should Be Equal  %{NON_EXISTING_VAR=${default_var}}  default value from var
+
+Environment Variable with Empty Default Value
+    Should Be Equal  %{NON_EXISTING_VAR=}  ${EMPTY}
+
+Environment Variable with Equal Sign in Default Value
+    Should Be Equal  %{NON_EXISTING_VAR=var=value}  var=value
+
+Java System Properties with Default Value
+    Should Be Equal  %{java.non.existing.property=default value}  default value
+
 *** Keywords ***
 UK With Environment Variables In Metadata
     [Arguments]  ${mypath}=%{TEMPDIR}

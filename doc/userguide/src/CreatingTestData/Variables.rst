@@ -395,7 +395,8 @@ Environment variables
 
 Robot Framework allows using environment variables in the test
 data using the syntax `%{ENV_VAR_NAME}`. They are limited to string
-values.
+values. You can also set the default value using `=`, if the variable not found:
+`%{ENV_VAR_NAME=default}`.
 
 Environment variables set in the operating system before the test execution are
 available during it, and it is possible to create new ones with the keyword
@@ -412,6 +413,8 @@ not effective after the test execution.
    Environment variables
        Log    Current user: %{USER}
        Run    %{JAVA_HOME}${/}javac
+   Environment variables with defaults
+       Set port    %{APPLICATION_PORT=8080}
 
 Java system properties
 ~~~~~~~~~~~~~~~~~~~~~~
