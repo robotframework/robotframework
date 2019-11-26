@@ -218,12 +218,14 @@ class XmlRpcRemoteClient(object):
             transport = TimeoutHTTPSTransport(timeout=self.timeout)
         else:
             transport = TimeoutHTTPTransport(timeout=self.timeout)
-        with xmlrpclib.ServerProxy(self.uri, encoding='UTF-8',
-                                transport=transport) as server:
-            try:
-                yield server
-            except (socket.error, xmlrpclib.Error) as err:
-                raise TypeError(err)
+        server = xmlrpclib.ServerProxy(self.uri, encoding='UTF-8',
+                                       transport=transport)
+        try:
+            yield server
+        except (socket.error, xmlrpclib.Error) as err:
+            raise TypeError(err)
+        finally:
+            server('close')()
 
     def get_keyword_names(self):
         with self._server as server:
