@@ -20,11 +20,11 @@ from itertools import cycle
 
 class LinkFormatter(object):
     _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp')
-    _link = re.compile('\[(.+?\|.*?)\]')
-    _url = re.compile('''
-((^|\ ) ["'\(\[]*)           # begin of line or space and opt. any char "'([
+    _link = re.compile(r'\[(.+?\|.*?)\]')
+    _url = re.compile(r'''
+((^|\ ) ["'(\[{]*)           # begin of line or space and opt. any char "'([{
 ([a-z][\w+-.]*://[^\s|]+?)   # url
-(?=[\]\)|"'.,!?:;]* ($|\ ))   # opt. any char ])"'.,!?:; and end of line or space
+(?=[)\]}"'.,!?:;|]* ($|\ ))  # opt. any char )]}"'.,!?:;| and eol or space
 ''', re.VERBOSE|re.MULTILINE|re.IGNORECASE)
 
     def format_url(self, text):
