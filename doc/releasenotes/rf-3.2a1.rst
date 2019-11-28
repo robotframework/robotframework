@@ -261,6 +261,12 @@ Shell escaping or quoting mechanism needs to be used instead (`#3085`_).
 This option did not have any effect anymore and has now been removed
 altogether (`#3086`_).
 
+Support variable in test case names
+-----------------------------------
+
+The variables in `Test Cases` names are nowadays resolved and the resolved
+name are display in result logs (`#2962`_).
+
 Deprecated features
 ===================
 
