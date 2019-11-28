@@ -8,7 +8,7 @@ ${MESSAGE FILE}    %{TEMPDIR}${/}messages.txt
 
 *** Test Cases ***
 Test Case Name With Variable
-    Check Test Case    ${TESTNAME}    
+    Check Test Case    ${TESTNAME}
     Check Stdout Contains    SEPARATOR=\n
     ...    [Start] [name] ${TESTNAME}
     ...    [END] [name] ${TESTNAME}
@@ -16,7 +16,7 @@ Test Case Name With Variable
 Test Case Name With ['My', 'List']
     Check Test Case    ${TESTNAME}
     Check Stdout Contains    SEPARATOR=\n
-    ...    [Start] [name] ${TESTNAME} 
+    ...    [Start] [name] ${TESTNAME}
     ...    [END] [name] ${TESTNAME}
 
 Test Case Name With {'key': 'value'}
@@ -28,5 +28,5 @@ Test Case Name With {'key': 'value'}
 Test Case Name With \${UNKONW VARIABLE}
     Check Test Case    ${TESTNAME}
     Check Stdout Contains    SEPARATOR=\n
-    ...    [Start] [name] ${TESTNAME} 
+    ...    [Start] [name] ${TESTNAME}
     ...    [END] [name] ${TESTNAME}

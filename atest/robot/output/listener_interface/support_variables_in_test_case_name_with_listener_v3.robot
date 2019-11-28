@@ -4,7 +4,7 @@ Resource         atest_resource.robot
 
 *** Test Cases ***
 Test Case Name With Variable
-    Check Test Case    ${TESTNAME}    PASS    
+    Check Test Case    ${TESTNAME}    PASS
     ...    [Start] [data] Test Case \${NAME} With \${VARIABLE} [result] Test Case Name With Variable [END] [data] Test Case \${NAME} With \${VARIABLE} [result] Test Case Name With Variable
 
 Test Case Name With ['My', 'List']

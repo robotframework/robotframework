@@ -19,7 +19,7 @@ def startTest(data, result):
 #    data.keywords.create('No Operation')
 
 
-def end_test(data, result): 
+def end_test(data, result):
     result.message += ' [END] [data] ' + data.name + ' [result] ' + result.name
 #    result.name = 'Does not go to output.xml'
 #    result.doc += ' [end test]'
