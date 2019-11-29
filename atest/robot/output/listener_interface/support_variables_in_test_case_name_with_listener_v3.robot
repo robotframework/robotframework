@@ -5,16 +5,16 @@ Resource         atest_resource.robot
 *** Test Cases ***
 Test Case Name With Variable
     Check Test Case    ${TESTNAME}    PASS
-    ...    [Start] [data] Test Case \${NAME} With \${VARIABLE} [result] Test Case Name With Variable [END] [data] Test Case \${NAME} With \${VARIABLE} [result] Test Case Name With Variable
+    ...    [Start] [data] Test Case \${NAME} With \${VARIABLE} [result] ${TESTNAME} [END] [data] Test Case \${NAME} With \${VARIABLE} [result] ${TESTNAME}
 
 Test Case Name With ['My', 'List']
     Check Test Case    ${TESTNAME}    PASS
-    ...    [Start] [data] Test Case \${NAME} With \${MY LIST} [result] Test Case Name With ['My', 'List'] [END] [data] Test Case \${NAME} With \${MY LIST} [result] Test Case Name With ['My', 'List']
+    ...    [Start] [data] Test Case \${NAME} With \${MY LIST} [result] ${TESTNAME} [END] [data] Test Case \${NAME} With \${MY LIST} [result] ${TESTNAME}
 
 Test Case Name With {'key': 'value'}
     Check Test Case    ${TESTNAME}    PASS
-    ...    [Start] [data] Test Case \${NAME} With \${MY DICT} [result] Test Case Name With {'key': 'value'} [END] [data] Test Case \${NAME} With \${MY DICT} [result] Test Case Name With {'key': 'value'}
+    ...    [Start] [data] Test Case \${NAME} With \${MY DICT} [result] ${TESTNAME} [END] [data] Test Case \${NAME} With \${MY DICT} [result] ${TESTNAME}
 
 Test Case Name With \${UNKONW VARIABLE}
     Check Test Case    ${TESTNAME}    PASS
-    ...    [Start] [data] Test Case \${NAME} With \${UNKONW VARIABLE} [result] Test Case Name With \${UNKONW VARIABLE} [END] [data] Test Case \${NAME} With \${UNKONW VARIABLE} [result] Test Case Name With \${UNKONW VARIABLE}
+    ...    [Start] [data] Test Case \${NAME} With \${UNKONW VARIABLE} [result] ${TESTNAME} [END] [data] Test Case \${NAME} With \${UNKONW VARIABLE} [result] ${TESTNAME}

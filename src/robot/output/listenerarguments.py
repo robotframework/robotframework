@@ -72,7 +72,8 @@ class _ListenerArgumentsFromItem(ListenerArguments):
         attributes = dict((name, self._get_attribute_value(item, name))
                           for name in self._attribute_names)
         attributes.update(self._get_extra_attributes(item))
-        return item.name, attributes
+        name = getattr(item, 'unresolved_name', None) or item.name
+        return name, attributes
 
     def _get_attribute_value(self, item, name):
         value = getattr(item, name)
@@ -117,7 +118,8 @@ class StartTestArguments(_ListenerArgumentsFromItem):
 
     def _get_extra_attributes(self, test):
         return {'critical': 'yes' if test.critical else 'no',
-                'template': test.template or ''}
+                'template': test.template or '',
+                'resolved_name': test.name}
 
 
 class EndTestArguments(StartTestArguments):
