@@ -407,7 +407,9 @@ class Process(object):
         given in
         [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format|
         various time formats] supported by Robot Framework, for example, ``42``,
-        ``42 s``, or ``1 minute 30 seconds``.
+        ``42 s``, or ``1 minute 30 seconds``. Starting from  Robot Framework 3.2
+        ``None``, zero, and negative values is same as not specifying timeout at
+        all.
 
         ``on_timeout`` defines what to do if the timeout occurs. Possible values
         and corresponding actions are explained in the table below. Notice
@@ -439,11 +441,15 @@ class Process(object):
         | ${result} =                 | Wait For Process | timeout=1min 30s | on_timeout=kill |
         | Process Should Be Stopped   |                  |                  |
         | Should Be Equal As Integers | ${result.rc}     | -9               |
+
+        Ignoring Falsy, negative, and zero values is new in Robot Framework 3.2.
         """
         process = self._processes[handle]
         logger.info('Waiting for process to complete.')
-        if timeout:
-            timeout = timestr_to_secs(timeout)
+        if not (is_truthy(timeout) and timeout):
+            timeout = 0
+        timeout = timestr_to_secs(timeout)
+        if timeout > 0:
             if not self._process_is_stopped(process, timeout):
                 logger.info('Process did not complete in %s.'
                             % secs_to_timestr(timeout))
