@@ -20,8 +20,8 @@ import time
 import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, cmdline2list, console_decode,
-                         is_list_like, is_truthy, NormalizedDict, py2to3,
-                         secs_to_timestr, system_decode, system_encode,
+                         is_list_like, is_string, is_truthy, NormalizedDict,
+                         py2to3, secs_to_timestr, system_decode, system_encode,
                          timestr_to_secs, IRONPYTHON, JYTHON, WINDOWS)
 from robot.version import get_version
 from robot.api import logger
@@ -407,9 +407,9 @@ class Process(object):
         given in
         [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format|
         various time formats] supported by Robot Framework, for example, ``42``,
-        ``42 s``, or ``1 minute 30 seconds``. Starting from  Robot Framework 3.2
-        ``None``, zero, and negative values is same as not specifying timeout at
-        all.
+        ``42 s``, or ``1 minute 30 seconds``. The timeout is ignored if it is
+        Python ``None`` (default), string ``NONE`` (case-insensitively), zero,
+        or negative.
 
         ``on_timeout`` defines what to do if the timeout occurs. Possible values
         and corresponding actions are explained in the table below. Notice
@@ -442,19 +442,23 @@ class Process(object):
         | Process Should Be Stopped   |                  |                  |
         | Should Be Equal As Integers | ${result.rc}     | -9               |
 
-        Ignoring Falsy, negative, and zero values is new in Robot Framework 3.2.
+        Ignoring timeout if it is string ``NONE``, zero, or negative is new
+        in Robot Framework 3.2.
         """
         process = self._processes[handle]
         logger.info('Waiting for process to complete.')
-        if not (is_truthy(timeout) and timeout):
-            timeout = 0
-        timeout = timestr_to_secs(timeout)
+        timeout = self._get_timeout(timeout)
         if timeout > 0:
             if not self._process_is_stopped(process, timeout):
                 logger.info('Process did not complete in %s.'
                             % secs_to_timestr(timeout))
                 return self._manage_process_timeout(handle, on_timeout.lower())
         return self._wait(process)
+
+    def _get_timeout(self, timeout):
+        if (is_string(timeout) and timeout.upper() == 'NONE') or not timeout:
+            return -1
+        return timestr_to_secs(timeout)
 
     def _manage_process_timeout(self, handle, on_timeout):
         if on_timeout == 'terminate':
