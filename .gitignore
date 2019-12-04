@@ -1,11 +1,12 @@
 tmp
 build
 dist
+venv
+.venv
 *~
 MANIFEST
 atest/results
 utest/jasmine-results
-*~
 .idea
 .vscode
 .*project
