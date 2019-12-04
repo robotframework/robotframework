@@ -3,17 +3,25 @@ Suite Setup       Run Tests    ${EMPTY}    test_libraries/library_decorator.robo
 Resource          atest_resource.robot
 
 *** Test Cases ***
-Set Library Version And Scope Using Library Decorator
-    Check Syslog Contains    LibraryDecoratorWithArgs.py' with arguments [ ] (version 1.2.3, class type, test suite scope, 1 keywords)
+Library decorator disables automatic keyword discovery
+    Check Test Case    ${TESTNAME}
 
-Library Decorator With Args Disables Public Methods
-    Check Test Case  ${TESTNAME}
+Library decorator with arguments disables automatic keyword discovery by default
+    Check Test Case    ${TESTNAME}
 
-Library Decorator With Args Does Not Disable Decorated Public Methods
-    Check Test Case  ${TESTNAME}
+Library decorator can enable automatic keyword discovery
+    Check Test Case    ${TESTNAME}
 
-Public Method From Library Decorator Is Not Recognized As Keyword
-    Check Test Case  ${TESTNAME}
+Set library info
+    [Template]    Library should have been imported
+    LibraryDecorator.py                    scope=test case     keywords=1
+    LibraryDecoratorWithArgs.py            scope=test suite    keywords=1    version=1.2.3    listener=True
+    LibraryDecoratorWithAutoKeywords.py    scope=global        keywords=2
 
-Decorated Method From Libary Decorator Is Recognized As Keyword
-    Check Test Case  ${TESTNAME}
+*** Keywords ***
+Library should have been imported
+    [Arguments]    ${name}    @{}    ${version}=<unknown>    ${scope}    ${keywords}    ${listener}=False
+    ${path} =    Normalize path    ${DATADIR}/test_libraries/${name}
+    Check Syslog Contains
+    ...    Imported library '${path}' with arguments [ ]
+    ...    (version ${version}, class type, ${scope} scope, ${keywords} keywords${{', with listener' if ${listener} else ''}})

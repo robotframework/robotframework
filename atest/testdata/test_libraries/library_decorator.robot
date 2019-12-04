@@ -1,21 +1,19 @@
 *** Settings ***
-Library  LibraryDecorator.py
-Library  LibraryDecoratorWithArgs.py
+Library           LibraryDecorator.py
+Library           LibraryDecoratorWithArgs.py
+Library           LibraryDecoratorWithAutoKeywords.py
 
 *** Test Cases ***
-Set Library Version And Scope Using Library Decorator
-    Library Decorator With Args Disables Public Methods
+Library decorator disables automatic keyword discovery
+    [Documentation]    FAIL No keyword with name 'Not keyword' found.
+    Decorated method is keyword
+    Not keyword
 
-Library Decorator With Args Disables Public Methods
-    [Documentation]  FAIL  No keyword with name 'Library Decorator With Args Disables Public Methods' found.
-    Library Decorator With Args Disables Public Methods
+Library decorator with arguments disables automatic keyword discovery by default
+    [Documentation]    FAIL No keyword with name 'Not keyword v2' found.
+    Decorated method is keyword v.2
+    Not keyword v2
 
-Library Decorator With Args Does Not Disable Decorated Public Methods
-    Decorated Method Is Keyword
-
-Public Method From Library Decorator Is Not Recognized As Keyword
-    [Documentation]  FAIL  No keyword with name 'Library Decorator Disables Public Methods' found.
-    Library Decorator Disables Public Methods
-
-Decorated Method From Libary Decorator Is Recognized As Keyword
-    Method From Library Decorator
+Library decorator can enable automatic keyword discovery
+    Undecorated method is keyword
+    Decorated method is keyword as well
