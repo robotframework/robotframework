@@ -59,12 +59,12 @@ ${None} And ${null}
     Should Not Be Equal  ${no ne}  None
     Should Be Equal  ${None} catenated with ${null}  None catenated with None
 
-\${SPACE}
+${SPACE}
     Should Be Equal  ${SPACE}  \ \
     Should Be Equal  ${SPACE * 5}  \ \ \ \ \ \
     Should Be Equal  -${SPACE}-${SPACE*2}-${SPACE}-  - - \ - -
 
-\${EMPTY}
+${EMPTY}
     Should Be Equal  ${EMPTY}  \
     Should Be Equal  ${EMPTY * 5}  \
     Should Be Equal  -${empty}-${emp_ty*2}-${EMP ty}-  ----
@@ -100,7 +100,7 @@ ${:}
     ${exp} =  Evaluate  os.pathsep  modules=os
     Should Be Equal  ${:}  ${exp}
 
-\${\n}
+${\n}
     ${exp} =  Evaluate  os.linesep  modules=os
     Should Be Equal  ${\n}  ${exp}
 

@@ -16,7 +16,7 @@ Test Documentation
 Test Tags
     Check Test Tags    ${TEST NAME}    Force 1    Hello, world!    id-42    variable value
 
-Modifying ${TEST TAGS} does not affect actual tags test has
+Modifying \${TEST TAGS} does not affect actual tags test has
     Check Test Tags    ${TEST NAME}    Force 1    mytag
 
 Suite Name

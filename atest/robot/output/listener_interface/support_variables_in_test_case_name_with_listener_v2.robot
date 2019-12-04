@@ -8,25 +8,25 @@ ${MESSAGE FILE}    %{TEMPDIR}${/}messages.txt
 
 *** Test Cases ***
 Test Case Name With Variable
-    Check Test Case    ${TESTNAME}
+    Check Test Case    Test Case \${NAME} With \${VARIABLE}
     Check Stdout Contains    SEPARATOR=\n
-    ...    [Start] [name] Test Case \${NAME} With \${VARIABLE} [resolved name] ${TESTNAME}
-    ...    [END] [name] Test Case \${NAME} With \${VARIABLE} [resolved name] ${TESTNAME}
+    ...    [Start] [name] Test Case \${NAME} With \${VARIABLE}
+    ...    [END] [name] Test Case \${NAME} With \${VARIABLE}
 
 Test Case Name With ['My', 'List']
-    Check Test Case    ${TESTNAME}
+    Check Test Case    Test Case \${NAME} With \${MY LIST}
     Check Stdout Contains    SEPARATOR=\n
-    ...    [Start] [name] Test Case \${NAME} With \${MY LIST} [resolved name] ${TESTNAME}
-    ...    [END] [name] Test Case \${NAME} With \${MY LIST} [resolved name] ${TESTNAME}
+    ...    [Start] [name] Test Case \${NAME} With \${MY LIST}
+    ...    [END] [name] Test Case \${NAME} With \${MY LIST}
 
 Test Case Name With {'key': 'value'}
-    Check Test Case    ${TESTNAME}
+    Check Test Case    Test Case \${NAME} With \${MY DICT}
     Check Stdout Contains    SEPARATOR=\n
-     ...    [Start] [name] Test Case \${NAME} With \${MY DICT} [resolved name] ${TESTNAME}
-    ...    [END] [name] Test Case \${NAME} With \${MY DICT} [resolved name] ${TESTNAME}
+     ...    [Start] [name] Test Case \${NAME} With \${MY DICT}
+    ...    [END] [name] Test Case \${NAME} With \${MY DICT}
 
 Test Case Name With \${UNKONW VARIABLE}
-    Check Test Case    ${TESTNAME}
+    Check Test Case    Test Case \${NAME} With \${UNKONW VARIABLE}
     Check Stdout Contains    SEPARATOR=\n
-    ...    [Start] [name] Test Case \${NAME} With \${UNKONW VARIABLE} [resolved name] ${TESTNAME}
-    ...    [END] [name] Test Case \${NAME} With \${UNKONW VARIABLE} [resolved name] ${TESTNAME}
+    ...    [Start] [name] Test Case \${NAME} With \${UNKONW VARIABLE}
+    ...    [END] [name] Test Case \${NAME} With \${UNKONW VARIABLE}

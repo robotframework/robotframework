@@ -15,7 +15,7 @@ Float Variables
 Boolean Variables
     Check Test Case  ${TESTNAME}
 
-${None} And ${null}
+\${None} And \${null}
     Check Test Case  ${TESTNAME}
 
 \${SPACE}
@@ -24,34 +24,34 @@ ${None} And ${null}
 \${EMPTY}
     Check Test Case  ${TESTNAME}
 
-@{EMPTY}
+\@{EMPTY}
     Check Test Case  ${TESTNAME}
 
-&{EMPTY}
+\&{EMPTY}
     Check Test Case  ${TESTNAME}
 
-@{EMPTY} and &{EMPTY} cannot be modified
+\@{EMPTY} and \&{EMPTY} cannot be modified
     Check Test Case  ${TESTNAME}
 
-${/}
+\${/}
     Check Test Case  ${TESTNAME}
 
-${:}
+\${:}
     Check Test Case  ${TESTNAME}
 
-\${\n}
+\${\\n}
     Check Test Case  ${TESTNAME}
 
-${TEMPDIR}
+\${TEMPDIR}
     Check Test Case  ${TESTNAME}
 
-${EXECDIR}
+\${EXECDIR}
     Check Test Case  ${TESTNAME}
 
 $CURDIR
     Check Test Case  ${TESTNAME}
 
-${LOG LEVEL}
+\${LOG LEVEL}
     Check Test Case  ${TESTNAME}
 
 Built-In Variables Cannot Be Overridden In Variable Table Or From CLI

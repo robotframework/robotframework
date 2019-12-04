@@ -118,7 +118,7 @@ class Runner(SuiteVisitor):
                                           starttime=get_timestamp(),
                                           timeout=self._get_timeout(test))
         self._context.start_test(result)
-        self._output.start_test(ModelCombiner(test, result, unresolved_name=test.name))
+        self._output.start_test(ModelCombiner(test, result, name=test.name))
         status = TestStatus(self._suite_status, result.critical)
         if status.exit:
             self._add_exit_combine()
@@ -155,7 +155,7 @@ class Runner(SuiteVisitor):
             result.message = status.message
         result.status = status.status
         result.endtime = get_timestamp()
-        self._output.end_test(ModelCombiner(test, result, unresolved_name=test.name))
+        self._output.end_test(ModelCombiner(test, result, name=test.name))
         self._context.end_test(result)
 
     def _add_exit_combine(self):

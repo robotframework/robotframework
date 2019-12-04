@@ -60,7 +60,7 @@ Correct Attributes To Listener Methods
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain    attributeverifyinglistener
     Should Contain X Times    ${status}    FAILED    0
-    Should Contain X Times    ${status}    PASSED    388
+    Should Contain X Times    ${status}    PASSED    384
 
 Correct Attributes To Java Listener Methods
     [Tags]    require-jython
@@ -109,7 +109,7 @@ Keyword Arguments Are Always Strings
     Check Test Case    Run Keyword with non-string arguments in library
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Should Contain X Times    ${status}    FAILED    0
-    Should Contain X Times    ${status}    PASSED    215
+    Should Contain X Times    ${status}    PASSED    211
 
 TimeoutError occurring during listener method is propagaged
     [Documentation]    Timeouts can only occur inside `log_message`.
