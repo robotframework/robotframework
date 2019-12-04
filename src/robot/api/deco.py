@@ -70,7 +70,7 @@ def keyword(name=None, tags=(), types=()):
     return decorator
 
 
-def library(scope=None, version=None, doc_format='ROBOT', listener=None, auto_keywords=False):
+def library(scope=None, version=None, doc_format=None, listener=None, auto_keywords=False):
     """Decorator to set custom scope and version and enable/disable public
     methods that will become keywords.
 
@@ -105,10 +105,14 @@ def library(scope=None, version=None, doc_format='ROBOT', listener=None, auto_ke
     if inspect.isclass(scope):
         return library()(scope)
     def decorator(cls):
-        cls.ROBOT_LIBRARY_SCOPE = scope
-        cls.ROBOT_LIBRARY_VERSION = version
-        cls.ROBOT_LIBRARY_DOC_FORMAT = doc_format
-        cls.ROBOT_LIBRARY_LISTENER = listener
+        if scope:
+            cls.ROBOT_LIBRARY_SCOPE = scope
+        if version:
+            cls.ROBOT_LIBRARY_VERSION = version
+        if doc_format:
+            cls.ROBOT_LIBRARY_DOC_FORMAT = doc_format
+        if listener:
+            cls.ROBOT_LIBRARY_LISTENER = listener
         cls.ROBOT_AUTO_KEYWORDS = auto_keywords
         return cls
     return decorator
