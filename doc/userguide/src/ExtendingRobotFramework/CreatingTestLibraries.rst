@@ -264,6 +264,16 @@ Example Java library using the `GLOBAL` scope:
 
 __ `Providing arguments to test libraries`_
 
+Using `library` decorator, library scope can be set with parameter
+`scope`.
+
+.. sourcecode:: python
+
+    @library(scope='TEST SUITE')
+    class MyLibrary:
+        ...
+
+
 Specifying library version
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -302,6 +312,16 @@ A Java class using `ROBOT_LIBRARY_VERSION`:
         public void keyword() {
         }
     }
+
+Another way to specify library version is by using `library` decorator, with
+the parameter `version`.
+
+.. sourcecode:: python
+
+    @library(version='1.0.0')
+    class MyLibrary:
+        ...
+
 
 Specifying documentation format
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -371,6 +391,15 @@ about documenting test libraries in general.
 __ `Test library scope`_
 __ `Specifying library version`_
 
+Setting documentation format can be done by using `library` decorator with
+the parameter `doc_format`.
+
+.. sourcecode:: python
+
+    @library(doc_foramt='ROBOT')
+    class MyLibrary:
+        ...
+
 
 Library acting as listener
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -381,6 +410,10 @@ start and end. Sometimes getting such notifications is also useful for test
 libraries, and they can register a custom listener by using
 `ROBOT_LIBRARY_LISTENER` attribute. The value of this attribute
 should be an instance of the listener to use, possibly the library itself.
+
+`ROBOT_LIBRARY_LISTENER` can be set in `library` decorator via the parameter
+`listener`.
+
 For more information and examples see `Test libraries as listeners`_ section.
 
 Creating static keywords
@@ -540,6 +573,17 @@ implements only one keyword :name:`Example Keyword`:
           is a new feature in Robot Framework 3.2.
 
 __ https://docs.python.org/tutorial/modules.html#importing-from-a-package
+
+Another way to avoid methods becoming keywords is to use `@library` class
+decorator which by default set its parameter `auto_keywords` to False.
+
+ .. sourcecode:: python
+
+     @library(auto_keywords=False)
+    class MyLibrary:
+
+         def my_keyword(self):
+            print('This method will not become keyword)
 
 Keyword names
 ~~~~~~~~~~~~~

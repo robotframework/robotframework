@@ -12,7 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+import inspect
 
 def keyword(name=None, tags=(), types=()):
     """Decorator to set custom name, tags and argument types to keywords.
@@ -67,4 +67,52 @@ def keyword(name=None, tags=(), types=()):
         func.robot_tags = tags
         func.robot_types = types
         return func
+    return decorator
+
+
+def library(scope=None, version=None, doc_format=None, listener=None, auto_keywords=False):
+    """Decorator to set custom scope and version and enable/disable public
+    methods that will become keywords.
+
+    This decorator creates ``ROBOT_LIBRARY_SCOPE``, ``ROBOT_LIBRARY_VERSION``,
+    ``ROBOT_LIBRARY_DOC_FORMAT``, ``ROBOT_LIBRARY_LISTENER``and
+    ``ROBOT_AUTO_KEYWORDS`` attributes on the decorated class based on
+    the provided arguments. Robot Framework checks them to determine the
+    class' scope, version, documentation format, library_listener and if
+    methods are disabled from becoming keywords.
+
+    Examples::
+
+        @library(scope='TEST SUITE')
+        class LibraryScope:
+            # ...
+
+        @library(scope='GLOBAL', version='1.3.0')
+        class LibraryScopeAndVersion:
+            # ...
+
+        @library(scope='GLOBAL', version='1.3.0', robot_auto_kws=False)
+        class DecoratedClassDisablePublicMethods:
+            def public_method_is_not_keyword():
+                print('This method will not become keyword')
+
+        @library
+        class DecoratedClassDoesNotPublicDecoratedMethods:
+            @keyword
+            def public_method_is_not_keyword():
+                print('This method will not become keyword')
+     """
+    if inspect.isclass(scope):
+        return library()(scope)
+    def decorator(cls):
+        if scope:
+            cls.ROBOT_LIBRARY_SCOPE = scope
+        if version:
+            cls.ROBOT_LIBRARY_VERSION = version
+        if doc_format:
+            cls.ROBOT_LIBRARY_DOC_FORMAT = doc_format
+        if listener:
+            cls.ROBOT_LIBRARY_LISTENER = listener
+        cls.ROBOT_AUTO_KEYWORDS = auto_keywords
+        return cls
     return decorator
