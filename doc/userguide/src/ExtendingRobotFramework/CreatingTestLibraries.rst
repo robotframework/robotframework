@@ -2373,7 +2373,13 @@ attribute on every method in the library during `get_keyword_names`.
    class DynamicExample:
 
        def get_keyword_names(self):
-           return [name for name in dir(self) if hasattr(getattr(self, name), 'robot_name')]
+           # Get all attributes and their values from the library.
+           attributes = [(name, getattr(self, name)) for name in dir(self)]
+           # Filter out attributes that do not have 'robot_name' set.
+           keywords = [(name, value) for name, value in attributes
+                       if hasattr(value, 'robot_name')]
+           # Return value of 'robot_name', if given, or the original 'name'.
+           return [value.robot_name or name for name, value in keywords]
 
        def helper_method(self):
            # ...
