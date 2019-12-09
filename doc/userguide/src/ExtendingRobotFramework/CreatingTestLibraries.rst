@@ -512,7 +512,7 @@ the `ROBOT_AUTO_KEYWORDS` attribute to the class with a false value:
 When the `ROBOT_AUTO_KEYWORDS` attribute is set like this, only methods that
 have explicitly been decorated with the `@keyword decorator`_ or otherwise
 have the `robot_name` attribute become keywords. The `@keyword` decorator
-can also be usef for setting a `custom name`__, tags__ and `argument types`__
+can also be used for setting a `custom name`__, tags__ and `argument types`__
 to the keyword.
 
 Although the `ROBOT_AUTO_KEYWORDS` attribute can be set to the class
@@ -598,12 +598,15 @@ For example, the library below implements only one keyword
 If the library is big, maintaining the `__all__` attribute when keywords are
 added, removed or renamed can be a somewhat big task. Another way to explicitly
 mark what functions are keywords is using the `ROBOT_AUTO_KEYWORDS` attribute
-similarly as it can be used with `class based libraries`_. Also this library
+similarly as it can be used with `class based libraries`_. When this attribute
+is set to a false value, only functions explicitly decorated with the
+`@keyword decorator`_ become keywords. For example, also this library
 implements only one keyword :name:`Example Keyword`:
 
 .. sourcecode:: python
 
    from threading import current_thread
+
    from robot.api.deco import keyword
 
 
@@ -621,17 +624,6 @@ implements only one keyword :name:`Example Keyword`:
           is a new feature in Robot Framework 3.2.
 
 __ https://docs.python.org/tutorial/modules.html#importing-from-a-package
-
-Another way to avoid methods becoming keywords is to use `@library` class
-decorator which by default set its parameter `auto_keywords` to False.
-
- .. sourcecode:: python
-
-     @library(auto_keywords=False)
-    class MyLibrary:
-
-         def my_keyword(self):
-            print('This method will not become keyword)
 
 Keyword names
 ~~~~~~~~~~~~~
@@ -683,31 +675,37 @@ in the `module search path`_.
        Do Nothing
        Hello    world
 
-.. _`@keyword decorator`:
-
 Setting custom name
 '''''''''''''''''''
 
 It is possible to expose a different name for a keyword instead of the
 default keyword name which maps to the method name.  This can be accomplished
-by setting the `robot_name` attribute on the method to the desired custom name.
-This is typically easiest done by using the `robot.api.deco.keyword` decorator
-as follows:
+by setting the `robot_name` attribute on the method to the desired custom name:
 
 .. sourcecode:: python
 
-  from robot.api.deco import keyword
-
-
-  @keyword('Login Via User Panel')
-  def login(username, password):
+    def login(username, password):
       # ...
+
+    login.robot_name = 'Login via user panel'
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***
-   My Test
-       Login Via User Panel    ${username}    ${password}
+    *** Test Cases ***
+    My Test
+        Login Via User Panel    ${username}    ${password}
+
+Instead of explicitly setting the `robot_name` attribute like in the above
+example, it is typically easiest to use the `@keyword decorator`_:
+
+.. sourcecode:: python
+
+    from robot.api.deco import keyword
+
+
+    @keyword('Login via user panel')
+    def login(username, password):
+          # ...
 
 Using this decorator without an argument will have no effect on the exposed
 keyword name, but will still set the `robot_name` attribute.  This allows
@@ -717,31 +715,30 @@ attribute also create keywords even if the method name itself would start with
 an underscore.
 
 Setting a custom keyword name can also enable library keywords to accept
-arguments using `Embedded Arguments`__ syntax.
+arguments using the `embedded arguments`__ syntax.
 
 __ `Embedding arguments into keyword names`_
 
 Keyword tags
 ~~~~~~~~~~~~
 
-Starting from Robot Framework 2.9, library keywords and `user keywords`__ can
-have tags. Library keywords can define them by setting the `robot_tags`
-attribute on the method to a list of desired tags. The `robot.api.deco.keyword`
-decorator may be used as a shortcut for setting this attribute when used as
-follows:
+Library keywords and `user keywords`__ can have tags. Library keywords can
+define them by setting the `robot_tags` attribute on the method to a list
+of desired tags. Similarly as when `setting custom name`_, it is easiest to
+set this attribute by using the `@keyword decorator`_:
 
 .. sourcecode:: python
 
-  from robot.api.deco import keyword
+    from robot.api.deco import keyword
 
 
-  @keyword(tags=['tag1', 'tag2'])
-  def login(username, password):
-      # ...
+    @keyword(tags=['tag1', 'tag2'])
+    def login(username, password):
+        # ...
 
-  @keyword('Custom name', ['tags', 'here'])
-  def another_example():
-      # ...
+    @keyword('Custom name', ['tags', 'here'])
+    def another_example():
+        # ...
 
 Another option for setting tags is giving them on the last line of
 `keyword documentation`__ with `Tags:` prefix and separated by a comma. For
@@ -749,12 +746,12 @@ example:
 
 .. sourcecode:: python
 
-  def login(username, password):
-      """Log user in to SUT.
+    def login(username, password):
+        """Log user in to SUT.
 
-      Tags: tag1, tag2
-      """
-      # ...
+        Tags: tag1, tag2
+        """
+        # ...
 
 __ `User keyword tags`_
 __ `Documenting libraries`_
@@ -1197,13 +1194,16 @@ Specifying argument types using `@keyword` decorator
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 An alternative way to specify explicit argument types is using the
-`robot.api.deco.keyword` decorator. Starting from Robot Framework 3.1,
+`@keyword decorator`_. Starting from Robot Framework 3.1,
 it accepts an optional `types` argument that can be used to specify argument
 types either as a dictionary mapping argument names to types or as a list
 mapping arguments to types based on position. These approaches are shown
 below implementing the same keyword as in earlier examples:
 
 .. sourcecode:: python
+
+  from robot.api.deco import keyword
+
 
   @keyword(types={'count': int, 'case_insensitive': bool})
   def example_keyword(count, case_insensitive=True):
@@ -1217,10 +1217,9 @@ below implementing the same keyword as in earlier examples:
 
 Regardless of the approach that is used, it is not necessarily to specify
 types for all arguments. When specifying types as a list, it is possible
-to use `None` or any other non-true value to mark that a certain argument
-does not have a type, and arguments at the end can be omitted altogether.
-For example, both of these keywords specify the type only for the second
-argument:
+to use `None` to mark that a certain argument does not have a type, and
+arguments at the end can be omitted altogether. For example, both of these
+keywords specify the type only for the second argument:
 
 .. sourcecode:: python
 
@@ -1467,8 +1466,38 @@ __ `Providing arguments to libraries`_
           keywords in Robot Framework 3.1 and newer. Conversion functionality
           may be unified in the future.
 
-Using decorators
-~~~~~~~~~~~~~~~~
+`@keyword` decorator
+~~~~~~~~~~~~~~~~~~~~
+
+Although Robot Framework gets lot of information about keywords automatically,
+such as their names and arguments, there are sometimes needs to configure this
+information further. This is typically easiest done by using the
+`robot.api.deco.keyword` decorator. It has several useful usages that are
+explained thoroughly elsewhere and only listened here as a reference:
+
+- Exposing methods and functions as keywords when the `automatic keyword
+  discovery`__ has been disabled by using the `@library decorator`_ or
+  otherwise.
+
+- Setting a `custom name`__ to a keyword. This is especially useful when using
+  the `embedded argument syntax`__.
+
+- Setting `keyword tags`_.
+
+- Setting `type information`__ to enable automatic argument type conversion.
+  Supports also disabling the argument conversion altogether.
+
+- `Marking methods to expose as keywords`_ when using the
+  `dynamic library API`_ or the `hybrid library API`_.
+
+
+__ `Limiting public methods becoming keywords`_
+__ `Setting custom name`_
+__ `Embedding arguments into keyword names`_
+__ `Specifying argument types using @keyword decorator`_
+
+Using custom decorators
+~~~~~~~~~~~~~~~~~~~~~~~
 
 When implementing keywords, it is sometimes useful to modify them with
 `Python decorators`__. However, decorators often modify function signatures
@@ -1495,7 +1524,7 @@ Embedding arguments into keyword names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Library keywords can also accept arguments which are passed using
-`Embedded Argument syntax`__.  The `robot.api.deco.keyword` decorator
+the `embedded argument syntax`__.  The `@keyword decorator`_
 can be used to create a `custom keyword name`__ for the keyword
 which includes the desired syntax.
 
