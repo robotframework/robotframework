@@ -13,7 +13,7 @@ the whole test execution must be taken into use from the command line.
 In addition to that, `test libraries can register listeners`__ that receive
 notifications while that library is active.
 
-__ `Test libraries as listeners`_
+__ `Libraries as listeners`_
 
 .. contents::
    :depth: 2
@@ -25,10 +25,10 @@ Taking listeners into use
 Listeners are taken into use from the command line with the :option:`--listener`
 option so that the name of the listener is given to it as an argument. The
 listener name is got from the name of the class or module implementing the
-listener interface, similarly as `test library names`_ are got from classes
-implementing them. The specified listeners must be in the same `module search
-path`_ where test libraries are searched from when they are imported. Other
-option is to give an absolute or a relative path to the listener file
+listener, similarly as `library name`_ is got from the class or module
+implementing the library. The specified listeners must be in the same `module
+search path`_ where test libraries are searched from when they are imported.
+Other option is to give an absolute or a relative path to the listener file
 `similarly as with test libraries`__. It is possible to take multiple listeners
 into use by using this option several times::
 
@@ -705,8 +705,8 @@ that listeners modify also the created :file:`output.xml` file.
 
 .. _library listeners:
 
-Test libraries as listeners
----------------------------
+Libraries as listeners
+----------------------
 
 Sometimes it is useful also for `test libraries`_ to get notifications about
 test execution. This allows them, for example, to perform certain clean-up
@@ -771,7 +771,7 @@ called inside those suites.
 
 If the library creates a new listener instance every time when the library
 itself is instantiated, the actual listener instance to use will change
-according to the `test library scope`_.
+according to the `library scope`_.
 In addition to the previously listed listener methods, `close`
 method is called when the library goes out of the scope.
 
