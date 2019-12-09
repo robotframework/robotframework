@@ -181,6 +181,20 @@ class Process(object):
     Note that the created output files are not automatically removed after
     the test run. The user is responsible to remove them if needed.
 
+    == Redirecting stdout or stderr using DEVNULL ==
+
+    In certain situations it is desirable to redirect ``stdout`` or ``stderr`` using a special value ``DEVNULL``.
+    ``DEVNULL`` can be used as the ``stdout`` or ``stderr`` argument and indicates that the
+    special file ``os.devnull`` will be used.  This is the equivalent of using ``> /dev/null`` on Unix-like machines or
+    ``> NUL`` on Windows machines.
+
+    Examples:
+    | ${result} = | `Run Process` | program | stdout=DEVNULL | stderr=${TEMPDIR}/stderr.txt |
+    | ${result} = | `Run Process` | program | stdout=${TEMPDIR}/stdout.txt | stderr=DEVNULL |
+    | ${result} = | `Run Process` | program | stdout=DEVNULL | stderr=DEVNULL |
+
+    Support for the special value ``DEVNULL`` is new in Robot Framework 3.2.
+
     == Output encoding ==
 
     Executed commands are, by default, expected to write outputs to the
@@ -845,6 +859,8 @@ class ProcessConfiguration(object):
 
     def _new_stream(self, name):
         if name:
+            if name == 'DEVNULL':
+                return open(os.devnull, 'w')
             name = name.replace('/', os.sep)
             return open(os.path.join(self.cwd, name), 'w')
         return subprocess.PIPE

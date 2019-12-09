@@ -11,6 +11,12 @@ Custom stdout
     ${result} =    Run Stdout Stderr Process    stdout=${STDOUT}
     Result Should Equal    ${result}    stdout    stderr    stdout_path=${STDOUT}
 
+Redirecting stdout to DEVNULL
+    ${result} =    Run Stdout Stderr Process    stdout=DEVNULL
+    Should Be Empty       ${result.stdout}
+    Should Contain Any    ${result.stdout_path}    /dev/null    nul
+    Should Be Equal       ${result.stderr}    stderr
+
 Custom stderr
     ${result} =    Run Stdout Stderr Process    stderr=${STDERR}
     Result Should Equal    ${result}    stdout    stderr    stderr_path=${STDERR}
@@ -32,6 +38,19 @@ Redirecting stderr to custom stdout
     ${result} =    Run Stdout Stderr Process    stdout=${STDOUT}    stderr=STDOUT
     Result Should Match    ${result}    std???std???    std???std???
     ...    stdout_path=${STDOUT}    stderr_path=${STDOUT}
+
+Redirecting stderr to DEVNULL
+    ${result} =    Run Stdout Stderr Process    stderr=DEVNULL
+    Should Be Equal       ${result.stdout}    stdout
+    Should Be Empty       ${result.stderr}
+    Should Contain Any    ${result.stderr_path}    /dev/null    nul
+
+Redirecting stdout and stderr to DEVNULL
+    ${result} =    Run Stdout Stderr Process    stdout=DEVNULL    stderr=DEVNULL
+    Should Be Empty       ${result.stdout}
+    Should Contain Any    ${result.stdout_path}    /dev/null    nul
+    Should Be Empty       ${result.stderr}
+    Should Contain Any    ${result.stderr_path}    /dev/null    nul
 
 Custom streams are written under cwd when relative
     [Setup]    Create Directory    ${CWD}
