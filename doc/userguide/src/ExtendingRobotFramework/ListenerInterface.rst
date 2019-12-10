@@ -152,6 +152,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   the beginning is the parent suite id and the last part       |
    |                  |                  |   shows test index in that suite.                              |
    |                  |                  | * `longname`: Test name including parent suites.               |
+   |                  |                  | * `originalname`: Original test name with unresolved           |
+   |                  |                  |   variables.                                                   |
    |                  |                  | * `doc`: Test documentation.                                   |
    |                  |                  | * `tags`: Test tags as a list of strings.                      |
    |                  |                  | * `critical`: `yes` or `no` depending is test considered       |
@@ -166,6 +168,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | * `id`: Same as in `start_test`.                               |
    |                  |                  | * `longname`: Same as in `start_test`.                         |
+   |                  |                  | * `originalname`: Same as in `start_test`.                     |
    |                  |                  | * `doc`: Same as in `start_test`.                              |
    |                  |                  | * `tags`: Same as in `start_test`.                             |
    |                  |                  | * `critical`: Same as in `start_test`.                         |
