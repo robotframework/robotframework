@@ -28,11 +28,14 @@ Invalid END usage
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2
     Check Test Case    ${TEST NAME} 3
+    Check Test Case    ${TEST NAME} 4
 
 Empty For Body Fails
-    ${tc} =    Check Test Case    ${TEST NAME} 1
+    ${tc} =    Check Test Case    ${TEST NAME}
     Should Be For Keyword    ${tc.kws[0]}    0
-    ${tc} =    Check Test Case    ${TEST NAME} 2
+
+For Without End Fails
+    ${tc} =    Check Test Case    ${TEST NAME}
     Should Be For Keyword    ${tc.kws[0]}    0
 
 For Without Value Fails
