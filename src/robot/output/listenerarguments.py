@@ -117,7 +117,8 @@ class StartTestArguments(_ListenerArgumentsFromItem):
 
     def _get_extra_attributes(self, test):
         return {'critical': 'yes' if test.critical else 'no',
-                'template': test.template or ''}
+                'template': test.template or '',
+                'originalname': test.data.name}
 
 
 class EndTestArguments(StartTestArguments):

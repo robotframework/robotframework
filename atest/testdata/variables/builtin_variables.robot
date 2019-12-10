@@ -52,35 +52,35 @@ Boolean Variables
     Should Be Equal  ${False}  ${f}
     Should Be Equal  ${True} catenated with ${False}  ${True} catenated with ${False}
 
-${None} And ${null}
+\${None} And \${null}
     ${n} =  Evaluate  None
     Should Be Equal  ${None}  ${n}
     Should Be Equal  ${n u l l}  ${None}
     Should Not Be Equal  ${no ne}  None
     Should Be Equal  ${None} catenated with ${null}  None catenated with None
 
-${SPACE}
+\${SPACE}
     Should Be Equal  ${SPACE}  \ \
     Should Be Equal  ${SPACE * 5}  \ \ \ \ \ \
     Should Be Equal  -${SPACE}-${SPACE*2}-${SPACE}-  - - \ - -
 
-${EMPTY}
+\${EMPTY}
     Should Be Equal  ${EMPTY}  \
     Should Be Equal  ${EMPTY * 5}  \
     Should Be Equal  -${empty}-${emp_ty*2}-${EMP ty}-  ----
 
-@{EMPTY}
+\@{EMPTY}
     Should Be True   @{EMPTY} == []
     Should Be True   @{EMPTY}+@{EMPTY} == []
     Should Be Equal  @{empty}  value  @{emp_ty}  value  @{EMP ty}
     ${value} =  Catenate  @{EMPTY}  @{EMPTY}
     Should Be Equal  ${value}    ${EMPTY}
 
-&{EMPTY}
+\&{EMPTY}
     Should Be True   &{EMPTY} == {}
     Should Be Equal  value  value  &{empty}  &{emp_ty}  &{EMP ty}
 
-@{EMPTY} and &{EMPTY} cannot be modified
+\@{EMPTY} and \&{EMPTY} cannot be modified
     ${result} =    Create Dictionary    list=@{EMPTY}    dict=&{EMPTY}
     ${list} =    Get From Dictionary    ${result}    list
     ${dict} =    Get From Dictionary    ${result}    dict
@@ -91,20 +91,20 @@ ${EMPTY}
     Should Be True   @{EMPTY} == []
     Should Be True   &{EMPTY} == {}
 
-${/}
+\${/}
     ${exp} =  Evaluate  os.sep  modules=os
     Should Be Equal  ${/}  ${exp}
     Should Be Equal  ${/}foo${/}  ${exp}foo${exp}
 
-${:}
+\${:}
     ${exp} =  Evaluate  os.pathsep  modules=os
     Should Be Equal  ${:}  ${exp}
 
-${\n}
+\${\\n}
     ${exp} =  Evaluate  os.linesep  modules=os
     Should Be Equal  ${\n}  ${exp}
 
-${TEMPDIR}
+\${TEMPDIR}
     ${exp} =  Evaluate  tempfile.gettempdir().rstrip('/')  modules=tempfile
     Should Be Equal  ${TEMPDIR}  ${exp}
     Directory Should Exist  ${TEMPDIR}
@@ -112,7 +112,7 @@ ${TEMPDIR}
     Should Not End With  ${TEMPDIR}  \\
     Should Start With  \${TEMPDIR}  $
 
-${EXECDIR}
+\${EXECDIR}
     ${exp} =  Evaluate  os.path.abspath('.')  modules=os
     Should Be Equal  ${EXECDIR}  ${exp}
     Directory Should Exist  ${EXECDIR}
@@ -127,7 +127,7 @@ $CURDIR
     Comment  $\{CURDIR} is resolved differently than other variables and cannot be escaped with a backslash before it
     Should Start With  $\{CURDIR}  $
 
-${LOG LEVEL}
+\${LOG LEVEL}
     Should Be Equal  ${LOG_LEVEL}  INFO
     Set Log Level  trace
     Should Be Equal  ${LOG_LEVEL}  TRACE

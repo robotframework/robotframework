@@ -455,7 +455,7 @@ Mutating dict variable set using `Set Test/Suite/Global Variable` keywords 3
     Should Be True    ${MUTANT SUITE} == {'s': 1, 's2': 2}
     Should Be True    ${MUTANT GLOBAL} == {'g': 1, 'g2': 2}
 
-Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords
+Using \@{EMPTY} with `Set Test/Suite/Global Variable` keywords
     Set Test Variable    @{LIST}    @{EMPTY}
     Should Be Empty    ${LIST}
     Append To List    ${LIST}    test
@@ -471,7 +471,7 @@ Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords
     Append To List    ${NEW}    global
     Verify @{EMPTY} is still empty
 
-Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords 2
+Using \@{EMPTY} with `Set Test/Suite/Global Variable` keywords 2
     Should Be True    ${LIST} == ['suite']
     Should Be True    ${NEW} == ['global']
 
