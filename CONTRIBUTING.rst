@@ -279,39 +279,3 @@ Unit tests
 
 Unit tests are great for testing internal logic and should be added when
 appropriate. For more details see `<utest/README.rst>`_.
-
-Finalizing pull requests
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Once you have code, documentation and tests ready, it is time to finalize
-the pull request.
-
-AUTHORS.txt
-'''''''''''
-
-If you have done any non-trivial change and would like to be credited,
-add yourself to `<AUTHORS.txt>`_ file.
-
-Resolving conflicts
-'''''''''''''''''''
-
-Conflicts can occur if there are new changes to the master that touch the
-same code as your changes. In that case you should `sync your fork
-<https://help.github.com/articles/syncing-a-fork>`_ and `resolve conflicts
-<https://help.github.com/articles/resolving-a-merge-conflict-from-the-command-line>`_
-to allow for an easy merge.
-
-The most common conflicting file is the aforementioned `AUTHORS.txt`_, but
-luckily fixing those conflicts is typically easy.
-
-Squashing commits
-'''''''''''''''''
-
-If the pull request contains multiple commits, you may want to `squash them
-into a single commit`__ before the pull request is merged. This is a good idea
-especially if the pull request contains lots of temporary commits and changes
-that have been later reverted or redone. Nowadays GitHub makes it easy to
-squash commits when the pull request is merged, so squashing them beforehand
-is not that important.
-
-__ http://eli.thegreenplace.net/2014/02/19/squashing-github-pull-requests-into-a-single-commit
