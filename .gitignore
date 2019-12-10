@@ -22,4 +22,3 @@ src/robotframework.egg-info
 log.html
 output.xml
 report.html
-src/robot/parsing/parser.out
