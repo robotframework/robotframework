@@ -172,11 +172,21 @@ class Process(object):
     expected to write outputs using the console encoding, but `output encoding`
     can be configured using the ``output_encoding`` argument if needed.
 
+    If you are not interested in outputs at all, you can explicitly ignore them
+    by using a special value ``DEVNULL`` both with ``stdout`` and ``stderr``. For
+    example, ``stdout=DEVNULL`` is the same as redirecting output on console
+    with ``> /dev/null`` on UNIX-like operating systems or ``> NUL`` on Windows.
+    This way the process will not hang even if there would be a lot of output,
+    but naturally output is not available after execution either.
+
+    Support for the special value ``DEVNULL`` is new in Robot Framework 3.2.
+
     Examples:
     | ${result} = | `Run Process` | program | stdout=${TEMPDIR}/stdout.txt | stderr=${TEMPDIR}/stderr.txt |
     | `Log Many`  | stdout: ${result.stdout} | stderr: ${result.stderr} |
     | ${result} = | `Run Process` | program | stderr=STDOUT |
     | `Log`       | all output: ${result.stdout} |
+    | ${result} = | `Run Process` | program | stdout=DEVNULL | stderr=DEVNULL |
 
     Note that the created output files are not automatically removed after
     the test run. The user is responsible to remove them if needed.
@@ -854,6 +864,8 @@ class ProcessConfiguration(object):
         return abspath('.')
 
     def _new_stream(self, name):
+        if name == 'DEVNULL':
+            return open(os.devnull, 'w')
         if name:
             name = name.replace('/', os.sep)
             return open(os.path.join(self.cwd, name), 'w')
