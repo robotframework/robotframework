@@ -13,213 +13,123 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from ast import AST
-import re
+import ast
 
-from robot.utils import normalize_whitespace, rstrip
-
-
-def join_doc_or_meta(lines):
-    def lines_with_newlines():
-        last_index = len(lines) - 1
-        for index, line in enumerate(lines):
-            yield line
-            if index < last_index:
-                match = re.search(r'(\\+)n?$', line)
-                escaped_or_has_newline = match and len(match.group(1)) % 2 == 1
-                if not escaped_or_has_newline:
-                    yield '\n'
-    return ''.join(lines_with_newlines())
+from robot.utils import normalize_whitespace
+from .lexer import Token
 
 
-class Node(AST):
+class Node(ast.AST):
     _fields = ()
 
 
-class MultiValue(Node):
-    _fields = ('values',)
-
-    def __init__(self, values):
-        self.values = tuple(values)
-
-
-class SingleValue(Node):
-    _fields = ('value',)
-
-    def __init__(self, values):
-        if values and values[0].upper() != 'NONE':
-            self.value = values[0]
-        else:
-            self.value = None
-
-
-class DataFile(Node):
+class File(Node):
     _fields = ('sections',)
 
-    def __init__(self, sections):
-        self.sections = sections
+    def __init__(self):
+        self.sections = []
+
+    @property
+    def data_sections(self):
+        return [s for s in self.sections if not isinstance(s, CommentSection)]
+
+    @property
+    def has_tests(self):
+        return any(isinstance(s, TestCaseSection) for s in self.sections)
 
 
-class SettingSection(Node):
-    _fields = ('settings',)
+class Section(Node):
+    _fields = ('header', 'body')
 
-    def __init__(self, settings):
-        self.settings = settings
-
-
-class VariableSection(Node):
-    _fields = ('variables',)
-
-    def __init__(self, variables):
-        self.variables = variables
+    def __init__(self, header=None, body=None):
+        self.header = header
+        self.body = Body(body)
 
 
-class TestCaseSection(Node):
-    _fields = ('tests',)
-
-    def __init__(self, tests, header):
-        self.tests = tests
-        section_name = normalize_whitespace(header[0]).strip('* ')
-        self.tasks = section_name.upper() in ('TASKS', 'TASK')
+class SettingSection(Section):
+    type = Token.SETTING_HEADER
 
 
-class KeywordSection(Node):
-    _fields = ('keywords',)
-
-    def __init__(self, keywords):
-        self.keywords = keywords
+class VariableSection(Section):
+    type = Token.VARIABLE_HEADER
 
 
-class Variable(Node):
-    _fields = ('name', 'value')
+class TestCaseSection(Section):
+    type = Token.TESTCASE_HEADER
 
-    def __init__(self, name, value):
-        # TODO: Should this be done already by the parser?
-        # Applies also to 'WITH NAME', 'NONE' and 'TASK(S)' handling
-        # as well as joining doc/meta lines and tuple() conversion.
-        if name.endswith('='):
-            name = rstrip(name[:-1])
-        self.name = name
-        self.value = value
+    @property
+    def tasks(self):
+        header = normalize_whitespace(self.header.data_tokens[0].value)
+        return header.strip('* ').upper() in ('TASKS', 'TASK')
 
 
-class KeywordCall(Node):
-    # TODO: consider `keyword` -> `name`, as in Fixture
-    _fields = ('assign', 'keyword', 'args')
-
-    def __init__(self, assign, keyword, args=None):
-        self.assign = tuple(assign or ())
-        self.keyword = keyword
-        self.args = tuple(args or ())
+class KeywordSection(Section):
+    type = Token.KEYWORD_HEADER
 
 
-class ForLoop(Node):
-    _fields = ('variables', 'flavor', 'values', 'body')
+class CommentSection(Section):
+    type = Token.COMMENT_HEADER
 
-    # TODO: _header and _end are used for deprecation. Remove in RF 3.3!
-    def __init__(self, variables, flavor, values, body=None, _header='FOR'):
-        self.variables = variables
-        self.flavor = normalize_whitespace(flavor)
-        self.values = values
-        self.body = body or []
-        self._header = _header
-        self._end = 'END'
+
+class Body(Node):
+    _fields = ('items',)
+
+    def __init__(self, items=None):
+        self.items = items or []
+
+    def add(self, item):
+        self.items.append(item)
 
 
 class TestCase(Node):
-    _fields = ('name', 'body')
+    type = Token.NAME
+    _fields = ('name_tokens', 'body')
 
-    def __init__(self, name, body):
-        self.name = name
-        self.body = body
+    def __init__(self, name_tokens):
+        self.name_tokens = name_tokens
+        self.body = Body()
+
+    @property
+    def name(self):
+        return self.name_tokens.name
 
 
 class Keyword(Node):
-    _fields = ('name', 'body')
+    _fields = ('name_tokens', 'body')
 
-    def __init__(self, name, body):
-        self.name = name
-        self.body = body
+    def __init__(self, name_tokens):
+        self.name_tokens = name_tokens
+        self.body = Body()
 
-
-class TemplateArguments(Node):
-    _fields = ('args',)
-
-    def __init__(self, args):
-        self.args = args
+    @property
+    def name(self):
+        return self.name_tokens.name
 
 
-class ImportSetting(Node):
-    _fields = ('name', 'args')
+class ForLoop(Node):
+    _fields = ('type', 'header', 'body', 'end')
 
-    def __init__(self, name, args):
-        self.name = name
-        self.args = tuple(args)
+    def __init__(self, header):
+        self.header = header
+        self.body = Body()
+        self.end = None
 
+    @property
+    def variables(self):
+        return self.header.variables
 
-class LibrarySetting(ImportSetting):
+    @property
+    def values(self):
+        return self.header.values
 
-    def __init__(self, name, args):
-        args, alias = self._split_alias(args)
-        ImportSetting.__init__(self, name, args)
-        self.alias = alias
+    @property
+    def flavor(self):
+        return self.header.flavor
 
-    def _split_alias(self, args):
-        if len(args) > 1 and normalize_whitespace(args[-2]) == 'WITH NAME':
-            return args[:-2], args[-1]
-        return args, None
+    @property
+    def _header(self):
+        return self.header._header
 
-
-class ResourceSetting(ImportSetting):
-    pass
-
-
-class VariablesSetting(ImportSetting):
-    pass
-
-
-class MetadataSetting(Node):
-    _fields = ('name', 'value')
-
-    def __init__(self, name, values):
-        self.name = name
-        self.value = join_doc_or_meta(values)
-
-
-class DocumentationSetting(SingleValue):
-
-    def __init__(self, values):
-        SingleValue.__init__(self, [join_doc_or_meta(values)])
-
-
-class Fixture(Node):
-    _fields = ('name', 'args')
-
-    def __init__(self, values):
-        if values and values[0].upper() != 'NONE':
-            self.name = values[0]
-            self.args = tuple(values[1:])
-        else:
-            self.name = None
-            self.args = ()
-
-
-class SuiteSetupSetting(Fixture): pass
-class SuiteTeardownSetting(Fixture): pass
-class TestSetupSetting(Fixture): pass
-class TestTeardownSetting(Fixture): pass
-class SetupSetting(Fixture): pass
-class TeardownSetting(Fixture): pass
-
-
-class TestTemplateSetting(SingleValue): pass
-class TemplateSetting(SingleValue): pass
-class TestTimeoutSetting(SingleValue): pass
-class TimeoutSetting(SingleValue): pass
-
-
-class ForceTagsSetting(MultiValue): pass
-class DefaultTagsSetting(MultiValue): pass
-class TagsSetting(MultiValue): pass
-class ArgumentsSetting(MultiValue): pass
-class ReturnSetting(MultiValue): pass
+    @property
+    def _end(self):
+        return self.end.value if self.end else None

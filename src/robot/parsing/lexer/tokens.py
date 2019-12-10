@@ -61,7 +61,7 @@ class Token(object):
     ERROR = 'ERROR'
     DATA = 'DATA'
 
-    NON_DATA_TOKENS = {SEPARATOR, COMMENT, CONTINUATION, IGNORE}
+    NON_DATA_TOKENS = {SEPARATOR, COMMENT, CONTINUATION, IGNORE, EOL, EOS}
 
     # TODO: Enable slots when we know what attributes ply needs.
     #__slots__ = ['type', 'value', 'lineno', 'columnno']

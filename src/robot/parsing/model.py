@@ -15,11 +15,16 @@
 
 """Model used by tools such as tidy, not used for test execution"""
 
-import ast
+import os
 
-from .lexer import TestCaseFileLexer, Token
-from .lexerwrapper import LexerWrapper
+from robot.errors import DataError
+from robot.utils import Utf8Reader, get_error_message
 
+from .lexer import TestCaseFileLexer, ResourceFileLexer, Token
+from .nodes import (File, SettingSection, VariableSection, TestCaseSection,
+                    KeywordSection, CommentSection, TestCase, Keyword, ForLoop)
+from .restreader import read_rest
+from .statements import Statement
 
 header_types = (
     Token.SETTING_HEADER, Token.VARIABLE_HEADER,
@@ -27,88 +32,7 @@ header_types = (
 )
 
 
-class Node(ast.AST):
-    _fields = ()
-
-
-class File(Node):
-    _fields = ('sections',)
-
-    def __init__(self):
-        self.sections = []
-
-
-class Section(Node):
-    _fields = ('header', 'body')
-
-    def __init__(self, header=None, body=None):
-        self.header = header
-        self.body = Body(body)
-        self.type = header.type if header else Token.COMMENT_HEADER
-
-
-class Body(Node):
-    _fields = ('items',)
-
-    def __init__(self, items=None):
-        self.items = items or []
-
-    def add(self, item):
-        self.items.append(item)
-
-
-# TODO: do settings need a separate statement
-class Statement(Node):
-    _fields = ('type', 'tokens')
-
-    def __init__(self, tokens):
-        self.type = self._get_type(tokens)
-        self.tokens = tokens
-
-    def _get_type(self, tokens):
-        for t in tokens:
-            if t.type not in (Token.SEPARATOR, Token.EOL, Token.OLD_FOR_INDENT):
-                return t.type
-        return None
-
-    @property
-    def lines(self):
-        if self.type in Token.SETTING_TOKENS and len(self.tokens) == 1:
-            return
-        line = []
-        for token in self.tokens:
-            if token.type != Token.CONTINUATION:
-                line.append(token)
-            else:
-                yield line
-                line = [token]
-        if line:
-            yield line
-
-    def __len__(self):
-        return len(self.tokens)
-
-    def __getitem__(self, item):
-        return self.tokens[item]
-
-
-# TODO: maybe split into TestCase and Keyword for better AST
-class TestOrKeyword(Node):
-    _fields = ('name', 'body')
-
-    def __init__(self, name_tokens):
-        self.name = name_tokens
-        self.body = Body()
-
-
-class ForLoop(Node):
-    _fields = ('type', 'header', 'body', 'end')
-
-    def __init__(self, header_tokens):
-        self.type = header_tokens.type
-        self.header = header_tokens
-        self.body = Body()
-        self.end = None
+PROCESS_CURDIR = True
 
 
 class Builder(object):
@@ -127,16 +51,16 @@ class FileBuilder(Builder):
 
     def statement(self, statement):
         try:
-            section = Section(header=statement)
-            builder_class = {
-                Token.SETTING_HEADER: SectionBuilder,
-                Token.VARIABLE_HEADER: SectionBuilder,
-                Token.TESTCASE_HEADER: TestOrKeywordSectionBuilder,
-                Token.KEYWORD_HEADER: TestOrKeywordSectionBuilder,
-                Token.COMMENT_HEADER: SectionBuilder
+            section_class, builder_class = {
+                Token.SETTING_HEADER: (SettingSection, SectionBuilder),
+                Token.VARIABLE_HEADER: (VariableSection, SectionBuilder),
+                Token.TESTCASE_HEADER: (TestCaseSection, TestCaseSectionBuilder),
+                Token.KEYWORD_HEADER: (KeywordSection, KeywordSectionBuilder),
+                Token.COMMENT_HEADER: (CommentSection, SectionBuilder)
             }[statement.type]
+            section = section_class(statement)
         except KeyError:
-            section = Section(body=[statement])
+            section = CommentSection(body=[statement])
             builder_class = SectionBuilder
         self.model.sections.append(section)
         return builder_class(section)
@@ -151,10 +75,22 @@ class SectionBuilder(Builder):
         self.model.body.add(statement)
 
 
-class TestOrKeywordSectionBuilder(SectionBuilder):
+class TestCaseSectionBuilder(SectionBuilder):
 
     def statement(self, statement):
-        model = TestOrKeyword(statement)
+        if statement.type == Token.EOL:
+            return self
+        model = TestCase(statement)
+        self.model.body.add(model)
+        return TestOrKeywordBuilder(model)
+
+
+class KeywordSectionBuilder(SectionBuilder):
+
+    def statement(self, statement):
+        if statement.type == Token.EOL:
+            return self
+        model = Keyword(statement)
         self.model.body.add(model)
         return TestOrKeywordBuilder(model)
 
@@ -180,7 +116,7 @@ class ForLoopBuilder(Builder):
         self._end = False
 
     def handles(self, statement):
-        return not self._end
+        return not self._end and statement.type != Token.NAME
 
     def statement(self, statement):
         if statement.type == Token.END:
@@ -192,9 +128,17 @@ class ForLoopBuilder(Builder):
 
 # TODO: is this public API, name?
 def Model(source):
+    return build(source, TestCaseFileLexer)
+
+
+def ResourceModel(source):
+    return build(source, ResourceFileLexer)
+
+
+def build(source, lexer):
     builder = FileBuilder(File())
     stack = [builder]
-    for statement in get_statements(source):
+    for statement in get_statements(source, lexer):
         while not stack[-1].handles(statement):
             stack.pop()
         builder = stack[-1].statement(statement)
@@ -204,13 +148,29 @@ def Model(source):
     return stack[0].model
 
 
-def get_statements(source):
-    tokens = LexerWrapper(TestCaseFileLexer(data_only=False), source).tokens
+def get_statements(source, lexer_cls):
+    lexer = lexer_cls(data_only=False)
+    lexer.input(_read(source))
     statement = []
-    for t in tokens:
+    for t in lexer.get_tokens():
+        if PROCESS_CURDIR:
+            curdir = os.path.dirname(source).replace('\\', '\\\\')
+            if t and '${CURDIR}' in t.value:
+                t.value = t.value.replace('${CURDIR}', curdir)
         if t.type != t.EOS:
             statement.append(t)
         else:
-            yield Statement(statement)
+            yield Statement.from_tokens(statement)
             statement = []
 
+
+def _read(path):
+    try:
+        # IronPython handles BOM incorrectly if not using binary mode:
+        # https://ironpython.codeplex.com/workitem/34655
+        with open(path, 'rb') as data:
+            if os.path.splitext(path)[1].lower() in ('.rest', '.rst'):
+                return read_rest(data)
+            return Utf8Reader(data).read()
+    except:
+        raise DataError(get_error_message())

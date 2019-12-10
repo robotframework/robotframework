@@ -49,34 +49,24 @@ Example
     print_suite(suite)
 """
 
-from robot.errors import DataError
-
-from .lexer import TestCaseFileLexer, ResourceFileLexer
-from .nodes import TestCaseSection
-from .parser import RobotFrameworkParser
-from .lexerwrapper import LexerWrapper
-from .model import Model
-from . import lexerwrapper
+from .model import Model, ResourceModel
 
 
 def get_test_case_file_ast(source):
-    return RobotFrameworkParser(TestCaseFileLexer()).parse(source)
+    return Model(source)
 
 
 def get_resource_file_ast(source):
-    ast = RobotFrameworkParser(ResourceFileLexer()).parse(source)
-    if any(isinstance(s, TestCaseSection) for s in ast.sections):
-        raise DataError("Resource file '%s' cannot contain tests or tasks." % source)
-    return ast
+    return ResourceModel(source)
 
 
 def disable_curdir_processing(method):
     """Decorator to disable processing `${CURDIR}` variable."""
     def decorated(*args, **kwargs):
-        original = lexerwrapper.PROCESS_CURDIR
-        lexerwrapper.PROCESS_CURDIR = False
+        original = model.PROCESS_CURDIR
+        model.PROCESS_CURDIR = False
         try:
             return method(*args, **kwargs)
         finally:
-            lexerwrapper.PROCESS_CURDIR = original
+            model.PROCESS_CURDIR = original
     return decorated

@@ -14,11 +14,11 @@
 #  limitations under the License.
 
 import os
+from ast import NodeVisitor
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.parsing import (get_test_case_file_ast, get_resource_file_ast,
-                           TestCaseSection)
+from robot.parsing import get_test_case_file_ast, get_resource_file_ast
 
 from .testsettings import TestDefaults
 from .transformers import SuiteBuilder, SettingsBuilder, ResourceBuilder
@@ -141,6 +141,7 @@ def build_suite(source, datapath=None, parent_defaults=None):
     defaults = TestDefaults(parent_defaults)
     if datapath:
         ast = get_test_case_file_ast(datapath)
+        ErrorLogger(datapath).visit(ast)
         SettingsBuilder(suite, defaults).visit(ast)
         SuiteBuilder(suite, defaults).visit(ast)
         if not suite.tests:
@@ -152,7 +153,7 @@ def build_suite(source, datapath=None, parent_defaults=None):
 def _get_rpa_mode(data):
     if not data:
         return None
-    tasks = [s.tasks for s in data.sections if isinstance(s, TestCaseSection)]
+    tasks = [s.tasks for s in data.sections if hasattr(s, 'tasks')]
     if all(tasks) or not any(tasks):
         return tasks[0] if tasks else None
     raise DataError('One file cannot have both tests and tasks.')
@@ -160,7 +161,11 @@ def _get_rpa_mode(data):
 
 def build_resource(data, source):
     resource = ResourceFile(source=source)
-    if data.sections:
+    if data.data_sections:
+        ErrorLogger(source).visit(data)
+        if data.has_tests:
+            raise DataError("Resource file '%s' cannot contain tests or tasks." %
+                            source)
         ResourceBuilder(resource).visit(data)
         LOGGER.info("Imported resource file '%s' (%d keywords)."
                     % (source, len(resource.keywords)))
@@ -185,3 +190,12 @@ def format_name(source):
     else:
         basename = os.path.splitext(os.path.basename(source))[0]
     return format_name(basename)
+
+
+class ErrorLogger(NodeVisitor):
+
+    def __init__(self, source):
+        self.source = source
+
+    def visit_Error(self, node):
+        LOGGER.error("Error in file '%s': %s" % (self.source, node.error))
