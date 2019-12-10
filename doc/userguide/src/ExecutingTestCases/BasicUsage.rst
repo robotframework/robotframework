@@ -570,7 +570,7 @@ outputs are very big. There are two easy ways to configure JVM options:
 Making :file:`*.robot` files executable
 ---------------------------------------
 
-On other operating systems than Windows it is possible to make :file:`*.robot`
+On UNIX-like operating systems it is possible to make :file:`*.robot`
 files executable by giving them execution permission and adding a shebang__
 like in this example:
 
