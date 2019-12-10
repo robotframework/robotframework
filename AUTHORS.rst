@@ -1,25 +1,56 @@
-The core team members over the years:
-Pekka Klärck (né Laukkanen)    2005 -
-Juha Rantanen                  2005 - 2011
-Lasse Koskela                  2005 - 2006
-Janne Härkönen                 2006 - 2012
-Sami Honkonen                  2006 - 2007
-Antti Tuomaala                 2006
-Ran Nyman                      2007 - 2010
-Heikki Hulkko                  2007 - 2009
-Anna Tevaniemi                 2008
-Kari Husa                      2009 - 2011
-Jussi Malinen                  2010 - 2015
-Mikko Korpela                  2010 - 2014
-Ismo Aro                       2010 - 2012
-Ilmari Kontulainen             2010 - 2013
-Tommi Asiala                   2012
-Mika Hänninen                  2012 - 2013
-Tatu Kairi                     2012 - 2014
-Anssi Syrjäsalo                2013
-Janne Piironen                 2013 - 2014
+Robot Framework contributors
+============================
 
-Other contributors:
+This file lists contributors to Robot Framework during the time it was
+developed at Nokia Networks. There are both `core team members`_ as well
+as `other contributors`_.
+
+Nowadays contributors are acknowledged separately in the release notes
+and this file is not anymore updated. Contributors can also be found easily
+via GitHub__.
+
+__ https://github.com/robotframework/robotframework/graphs/contributors
+
+Core team members
+-----------------
+
+The members of the Robot Framework core team during the Nokia Networks years
+2005 - 2015.
+
+===========================    ===========
+         Name                     Years
+===========================    ===========
+Pekka Klärck (né Laukkanen)    2005 - 2015
+Petri Haapio                   2005 - 2008
+Juha Rantanen                  2005 - 2011
+Lasse Koskela                  2005 - 2006
+Janne Härkönen                 2006 - 2012
+Sami Honkonen                  2006 - 2007
+Antti Tuomaala                 2006
+Ran Nyman                      2007 - 2010
+Heikki Hulkko                  2007 - 2009
+Anna Tevaniemi                 2008
+Kari Husa                      2009 - 2011
+Jussi Malinen                  2010 - 2015
+Mikko Korpela                  2010 - 2014
+Ismo Aro                       2010 - 2012
+Ilmari Kontulainen             2010 - 2013
+Tommi Asiala                   2012
+Mika Hänninen                  2012 - 2013
+Tatu Kairi                     2012 - 2014
+Anssi Syrjäsalo                2013
+Janne Piironen                 2013 - 2014
+===========================    ===========
+
+Other contributors
+------------------
+
+External contributors after Robot Framework was open sourced in 2008.
+As already mentioned above, this list is not anymore updated.
+
+===========================    ===============================================
+         Name                                    Contribution
+===========================    ===============================================
 Elisabeth Hendrickson          Quick Start Guide (2.0)
 Marcin Michalak                String library (2.1)
 Chris Prinos                   reST (HTML) support (2.1)
@@ -43,9 +74,9 @@ Guy Kisel                      How-to use decorators when creating libraries (2.
 Mike Terzo                     Better connection errors to Remote library (2.7.7)
 Asko Soukka                    reST (plain text) support (2.8.2)
 Vivek Kumar Verma              reST (plain text) support (2.8.2)
-Stefan Zimmermann              **kwargs support for dynamic libraries (2.8.2)
-                               **kwargs support for Java libraries (2.8.3)
-                               *varargs support using java.util.List (2.8.3)
+Stefan Zimmermann              `**kwargs` support for dynamic libraries (2.8.2)
+                               `**kwargs` support for Java libraries (2.8.3)
+                               `*varargs` support using java.util.List (2.8.3)
 Mirel Pehadzic                 Terminal emulation for Telnet library (2.8.2)
 Diogo Sa-Chaves De Oliveira    Terminal emulation for Telnet library (2.8.2)
 Lionel Perrin                  Giving custom seed to --randomize (2.8.5)
@@ -74,6 +105,4 @@ Anton Nikitin                  Should (Not) Contain Any (3.0.1, #2120)
 Yang Qian                      Support to copy/deepcopy model objects (3.0.1, #2483)
 Chris Callan                   Case-insensitivity support to various comparison keywords (3.0.1, #2439)
 Benjamin Einaudi               Add --rerunfailedsuites option (3.0.1, #2117)
-Traitanit Huangsri             Support more glob-like patterns for test filtering (3.1, #2471)
-Brian-Williams                 Named-only arguments support with Python 3 libraries (3.1, #2555)
-Élysson Mendes Rezende         Add format_string keyword (3.1)
+===========================    ===============================================
