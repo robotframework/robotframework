@@ -578,9 +578,9 @@ like in this example:
 
     #!/usr/bin/env robot
 
-   *** Test Cases ***
-   Example
-       Log to console    Executing!
+    *** Test Cases ***
+    Example
+        Log to console    Executing!
 
 If the above content would be in a file :file:`example.robot` and that file
 would be executable, it could be executed from the command line like below.
