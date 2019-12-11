@@ -361,12 +361,6 @@ they affect only a certain user. Alternatively they can be set temporarily
 before running a command, something that works extremely well in custom
 `start-up scripts`_.
 
-.. note:: Prior to Robot Framework 2.9, contents of ``PYTHONPATH`` environment
-          variable were added to the module search path by the framework itself
-          when running on Jython and IronPython. Nowadays that is not done
-          anymore and ``JYTHONPATH`` and ``IRONPYTHONPATH`` must be used with
-          these interpreters.
-
 Using `--pythonpath` option
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -506,7 +500,7 @@ Programmatic modification of test data
 --------------------------------------
 
 If the provided built-in features to modify test data before execution
-are not enough, Robot Framework 2.9 and newer makes it possible to do
+are not enough, Robot Framework makes it possible to do
 custom modifications programmatically. This is accomplished by creating
 a so called *pre-run modifier* and activating it using the
 :option:`--prerunmodifier` option.
@@ -651,10 +645,6 @@ Examples::
     robot --console quiet tests.robot
     robot --dotted tests.robot
 
-.. note:: :option:`--console`, :option:`--dotted` and :option:`--quiet`
-          are new options in Robot Framework 2.9. Prior to that the output
-          was always the same as in the current `verbose` mode.
-
 Console width
 ~~~~~~~~~~~~~
 
@@ -663,11 +653,6 @@ the option :option:`--consolewidth (-W)`. The default width is 78 characters.
 
 .. tip:: On many UNIX-like machines you can use handy `$COLUMNS`
          environment variable like `--consolewidth $COLUMNS`.
-
-.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
-          :option:`--monitorwidth` option that was first deprecated and is
-          nowadays removed. The short option :option:`-W` works the same way
-          in all versions.
 
 Console colors
 ~~~~~~~~~~~~~~
@@ -694,11 +679,6 @@ This option supports the following case-insensitive values:
 `off`
     Colors are disabled.
 
-.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
-          :option:`--monitorcolors` option that was first deprecated and is
-          nowadays removed. The short option :option:`-C` works the same way
-          in all versions.
-
 __ http://en.wikipedia.org/wiki/ANSI_escape_code
 
 Console markers
@@ -722,11 +702,6 @@ case-insensitive values:
 
 `off`
     Markers are disabled.
-
-.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
-          :option:`--monitormarkers` option that was first deprecated and is
-          nowadays removed. The short option :option:`-K` works the same way
-          in all versions.
 
 __ `Console output type`_
 

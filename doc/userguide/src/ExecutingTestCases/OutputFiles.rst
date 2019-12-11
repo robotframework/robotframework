@@ -517,8 +517,6 @@ as `flattening keywords`_.
 __ `Errors and warnings`_
 __ `Keyword tags`_
 
-.. note:: `TAG:<pattern>` mode was added in Robot Framework 2.9.
-
 Flattening keywords
 ~~~~~~~~~~~~~~~~~~~
 
@@ -549,8 +547,6 @@ Examples::
 Flattening keywords is done already when the `output file`_ is parsed
 initially. This can save a significant amount of memory especially with
 deeply nested keyword structures.
-
-.. note:: `TAG:<pattern>` mode was added in Robot Framework 2.9.
 
 Automatically expanding keywords
 --------------------------------
@@ -623,7 +619,7 @@ Programmatic modification of results
 ------------------------------------
 
 If the provided built-in features to modify results are are not enough,
-Robot Framework 2.9 and newer makes it possible to do custom modifications
+Robot Framework makes it possible to do custom modifications
 programmatically. This is accomplished by creating a model modifier and
 activating it using the :option:`--prerebotmodifier` option.
 

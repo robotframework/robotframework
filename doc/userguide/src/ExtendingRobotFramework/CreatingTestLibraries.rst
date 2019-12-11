@@ -1727,9 +1727,6 @@ console and a separate `Test Execution Errors section`__ in the log
 files. This makes these messages more visible than others and allows
 using them for reporting important but non-critical problems to users.
 
-.. note:: In Robot Framework 2.9, new functionality was added to automatically
-          add ERRORs logged by keywords to the Test Execution Errors section.
-
 __ `Errors and warnings during execution`_
 
 Logging HTML
@@ -2302,10 +2299,6 @@ This deprecation system works with most test libraries and also with
 Java test library that uses the `static library interface`__ because
 their documentation is not available at runtime. With such keywords,
 it possible to use user keywords as wrappers and deprecate them.
-
-.. note:: Prior to Robot Framework 2.9 the documentation must start with
-          `*DEPRECATED*` exactly without any extra content before the
-          closing `*`.
 
 __ `Errors and warnings during execution`_
 __ `Documenting libraries`_

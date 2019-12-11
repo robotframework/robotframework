@@ -146,10 +146,6 @@ of how many times options are used. For example, `--dryrun --dryrun --nodryrun
 --nostatusrc --statusrc` would not activate the dry-run mode and would return
 normal status rc.
 
-.. note:: Support for adding or dropping `no` prefix is a new feature in
-          Robot Framework 2.9. In earlier versions options accepting no
-          values could be disabled by using the exact same option again.
-
 .. _wildcards:
 
 Simple patterns
@@ -212,7 +208,7 @@ used for combining two or more individual tags or patterns together.
       --include fooNOTbar     # Matches tests containing tag 'foo' but not tag 'bar'.
       --exclude xxNOTyyNOTzz  # Matches tests containing tag 'xx' but not tag 'yy' or tag 'zz'.
 
-   Starting from Robot Framework 2.9 the pattern can also start with `NOT`
+   The pattern can also start with `NOT`
    in which case the pattern matches if the pattern after `NOT` does not match::
 
       --include NOTfoo        # Matches tests not containing tag 'foo'
@@ -251,9 +247,6 @@ avoid the need to repeat them every time tests are run or Rebot used.
    robot tests.robot
    export REBOT_OPTIONS="--reportbackground green:yellow:red"
    rebot --name example output.xml
-
-.. note:: Possibility to have spaces in values by surrounding them in quotes
-          is new in Robot Framework 2.9.2.
 
 __ `Post-processing outputs`_
 
@@ -635,8 +628,7 @@ the problem is in an individual library keyword.
 Logged tracebacks do not contain information about methods inside Robot
 Framework itself. If you suspect an error is caused by a bug in the framework,
 you can enable showing internal traces by setting environment variable
-``ROBOT_INTERNAL_TRACES`` to any non-empty value. This functionality is
-new in Robot Framework 2.9.2.
+``ROBOT_INTERNAL_TRACES`` to any non-empty value.
 
 If the log file still does not have enough information, it is a good
 idea to enable the syslog_ and see what information it provides. It is

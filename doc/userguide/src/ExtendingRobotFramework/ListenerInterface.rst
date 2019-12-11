@@ -195,14 +195,14 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   iterations. **NOTE:** Keyword type reporting was changed in  |
    |                  |                  |   RF 3.0. See issue `#2248`__ for details.                     |
    |                  |                  | * `kwname`: Name of the keyword without library or             |
-   |                  |                  |   resource prefix. New in RF 2.9.                              |
+   |                  |                  |   resource prefix.                                             |
    |                  |                  | * `libname`: Name of the library or resource the               |
    |                  |                  |   keyword belongs to, or an empty string when                  |
-   |                  |                  |   the keyword is in a test case file. New in RF 2.9.           |
+   |                  |                  |   the keyword is in a test case file.                          |
    |                  |                  | * `doc`: Keyword documentation.                                |
    |                  |                  | * `args`: Keyword's arguments as a list of strings.            |
    |                  |                  | * `assign`: A list of variable names that keyword's            |
-   |                  |                  |   return value is assigned to. New in RF 2.9.                  |
+   |                  |                  |   return value is assigned to.                                 |
    |                  |                  | * `tags`: `Keyword tags`_ as a list of strings. New in RF 3.0. |
    |                  |                  | * `starttime`: Keyword execution start time.                   |
    +------------------+------------------+----------------------------------------------------------------+
@@ -263,8 +263,6 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `importer`: An absolute path to the file importing the       |
    |                  |                  |   library. `None` when BuiltIn_ is imported well as when       |
    |                  |                  |   using the :name:`Import Library` keyword.                    |
-   |                  |                  |                                                                |
-   |                  |                  | New in Robot Framework 2.9.                                    |
    +------------------+------------------+----------------------------------------------------------------+
    | resource_import  | name, attributes | Called when a resource file has been imported.                 |
    |                  |                  |                                                                |
@@ -277,8 +275,6 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `importer`: An absolute path to the file importing the       |
    |                  |                  |   resource file. `None` when using the :name:`Import Resource` |
    |                  |                  |   keyword.                                                     |
-   |                  |                  |                                                                |
-   |                  |                  | New in Robot Framework 2.9.                                    |
    +------------------+------------------+----------------------------------------------------------------+
    | variables_import | name, attributes | Called when a variable file has been imported.                 |
    |                  |                  |                                                                |
@@ -292,8 +288,6 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `importer`: An absolute path to the file importing the       |
    |                  |                  |   resource file. `None` when using the :name:`Import           |
    |                  |                  |   Variables` keyword.                                          |
-   |                  |                  |                                                                |
-   |                  |                  | New in Robot Framework 2.9.                                    |
    +------------------+------------------+----------------------------------------------------------------+
    | output_file      | path             | Called when writing to an `output file`_ is ready.             |
    |                  |                  |                                                                |
@@ -733,6 +727,7 @@ acting as a listener itself:
 
    import my.project.Listener;
 
+
    public class JavaLibraryWithExternalListener {
        public static final Listener ROBOT_LIBRARY_LISTENER = new Listener();
        public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
@@ -743,7 +738,7 @@ acting as a listener itself:
 
 .. sourcecode:: python
 
-   class PythonLibraryAsListenerItself(object):
+   class PythonLibraryAsListenerItself:
        ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
        ROBOT_LISTENER_API_VERSION = 2
 
@@ -759,9 +754,18 @@ As the seconds example above already demonstrated, library listeners have to
 specify `listener interface versions`_ using `ROBOT_LISTENER_API_VERSION`
 attribute exactly like any other listener.
 
-Starting from version 2.9, you can also provide any list like object of
-instances in the `ROBOT_LIBRARY_LISTENER` attribute. This will cause all
-instances of the list to be registered as listeners.
+It is also possible to specify multiple listeners for a single library by
+giving `ROBOT_LIBRARY_LISTENER` a value as a list:
+
+.. sourcecode:: python
+
+   from listeners import Listener1, Listener2, Listener3
+
+
+   class LibraryWithMultipleListeners:
+       ROBOT_LIBRARY_LISTENER = [Listener1(), Listener2(), Listener3()]
+
+       # actual library code here ...
 
 Called listener methods
 ~~~~~~~~~~~~~~~~~~~~~~~
