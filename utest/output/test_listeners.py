@@ -5,7 +5,7 @@ import unittest
 from robot.output.listeners import Listeners, LibraryListeners
 from robot.output import LOGGER
 from robot.utils.asserts import *
-from robot.utils import JYTHON
+from robot.utils import (DotDict, JYTHON)
 from robot.running.outputcapture import OutputCapturer
 
 
@@ -38,6 +38,7 @@ class TestMock(Mock):
         self.tags = ['foo', 'bar']
         self.message = 'Expected failure'
         self.status = 'FAIL'
+        self.data = DotDict({'name':self.name})
 
 
 class KwMock(Mock):

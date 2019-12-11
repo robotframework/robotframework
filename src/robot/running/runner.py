@@ -112,7 +112,7 @@ class Runner(SuiteVisitor):
             self._output.warn("Multiple test cases with name '%s' executed in "
                               "test suite '%s'." % (test.name, self._suite.longname))
         self._executed_tests[test.name] = True
-        result = self._suite.tests.create(name=test.name,
+        result = self._suite.tests.create(name=self._resolve_setting(test.name),
                                           doc=self._resolve_setting(test.doc),
                                           tags=self._resolve_setting(test.tags),
                                           starttime=get_timestamp(),

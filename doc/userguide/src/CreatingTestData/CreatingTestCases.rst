@@ -523,7 +523,18 @@ test suite should have unique names.  Pertaining to this, you can also
 use the `automatic variable`_ `${TEST_NAME}` within the test
 itself to refer to the test name. It is available whenever a test is
 being executed, including all user keywords, as well as the test setup
-and the test teardown.
+and the test teardown. The variables_ may be use in the test case name,
+the variables are resolved and the test case name can be must clear
+in result logs.
+
+.. sourcecode:: robotframework
+
+    *** Variables ***
+    ${amount}    ${5000000}
+
+    *** Test Cases ***
+    amount cannot larger than ${amount}
+        no operation
 
 The :setting:`[Documentation]` setting allows you to set a free
 documentation for a test case. That text is shown in the command line

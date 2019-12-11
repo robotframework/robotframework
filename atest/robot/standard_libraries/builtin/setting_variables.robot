@@ -144,7 +144,7 @@ Mutating dict variable set using `Set Test/Suite/Global Variable` keywords
     Check Test Case    ${TEST NAME} 2
     Check Test Case    ${TEST NAME} 3
 
-Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords
+Using \@{EMPTY} with `Set Test/Suite/Global Variable` keywords
     Check Test Case    ${TEST NAME}
     Check Test Case    ${TEST NAME} 2
 
