@@ -10,8 +10,9 @@ Reserved With Variable Indise
     Check Test Case    ${TEST NAME}
 
 There should Be A Warning About Using Reserved Syntax In Stderr
-    Validate Reserved Warning    \*{this_causes_warning}    0
-    Validate Reserved Warning    \*{Hello, world!}    1
+    Validate Reserved Warning    \*{var}                    0
+    Validate Reserved Warning    \*{this_causes_warning}    1
+    Validate Reserved Warning    \*{Hello, world!}          2
 
 *** Keywords ***
 Validate Reserved Warning
