@@ -13,6 +13,31 @@ Names are not formatted
     ${tc} =    Check Test Case    test_case names are NOT _forMatted_
     Should Be Equal    ${tc.name}    test_case names are NOT _forMatted_
 
+Name with variable
+    ${tc} =    Check Test Case    Name with variables works since RF 3.2
+    Should Be Equal    ${tc.name}    Name with variables works since RF 3.2
+
+Name with non-existing variable
+    ${tc} =    Check Test Case    Name with \${NON-EXISTING VARIABLE}
+    Should Be Equal    ${tc.name}    Name with \${NON-EXISTING VARIABLE}
+
+Name with escaped variable
+    ${tc} =    Check Test Case    Name with \${ESCAPED} \${VARIABLE}
+    Should Be Equal    ${tc.name}    Name with \${ESCAPED} \${VARIABLE}
+
+Name with escapes
+    [Documentation]    These names are not shown that nicely in log
+    ${tc} =    Check Test Case    Name with escapes like '', '\n' and 'c:\path\temp'
+    Should Be Equal    ${tc.name}    Name with escapes like '', '\n' and 'c:\path\temp'
+
+Name with invalid escapes
+    ${tc} =    Check Test Case    Name with invalid escapes like 'x' and 'uOOPS'
+    Should Be Equal    ${tc.name}    Name with invalid escapes like 'x' and 'uOOPS'
+
+Name with escaped escapes
+    ${tc} =    Check Test Case    Name with escaped escapes like '\\', '\\n' , '\\x' and 'c:\\path\\temp'
+    Should Be Equal    ${tc.name}    Name with escaped escapes like '\\', '\\n', '\\x' and 'c:\\path\\temp'
+
 Documentation
     Verify Documentation    Documentation in single line and column.
 
@@ -31,7 +56,7 @@ Documentation in multiple rows
     ...    | ragged |
 
 Documentation with variables
-    Verify Documentation    Variables work in documentation since Robot 1.2.
+    Verify Documentation    Variables work in documentation since RF 1.2.
 
 Documentation with non-existing variables
     Verify Documentation
