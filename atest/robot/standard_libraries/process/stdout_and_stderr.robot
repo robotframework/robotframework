@@ -33,7 +33,7 @@ Redirecting stderr to DEVNULL
 Redirecting stdout and stderr to DEVNULL
     Check Test Case    ${TESTNAME}
 
-Redirecting stdout to DEVNULL and stderr to stdout
+Redirecting stdout to DEVNULL and stderr to STDOUT
     Check Test Case    ${TESTNAME}
 
 Custom streams are written under cwd when relative
@@ -43,6 +43,9 @@ Cwd does not affect absolute custom streams
     Check Test Case    ${TESTNAME}
 
 Lot of output to custom stream
+    Check Test Case    ${TESTNAME}
+
+Lot of output to DEVNULL
     Check Test Case    ${TESTNAME}
 
 Run multiple times

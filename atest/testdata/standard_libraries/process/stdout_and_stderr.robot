@@ -55,7 +55,7 @@ Redirecting stdout and stderr to DEVNULL
     Should Be Empty       ${result.stderr}
     Should Contain Any    ${result.stderr_path}    /dev/null    nul
 
-Redirecting stdout to DEVNULL and stderr to stdout
+Redirecting stdout to DEVNULL and stderr to STDOUT
     ${result} =    Run Stdout Stderr Process    stdout=DEVNULL    stderr=STDOUT
     Should Not Exist      ${EXECDIR}/DEVNULL
     Should Be Empty       ${result.stdout}
@@ -78,18 +78,25 @@ Cwd does not affect absolute custom streams
 Lot of output to custom stream
     [Tags]    performance
     ${result}=    Run Process    python -c "for i in range(100000):\tprint('a'*99)"    shell=True    stdout=${STDOUT}
+    Should Be Equal    ${result.rc}    ${0}
     Length Should Be    ${result.stdout}    9999999
     File Should Not Be Empty    ${STDOUT}
 
+Lot of output to DEVNULL
+    [Tags]    performance
+    ${result}=    Run Process    python -c "for i in range(100000):\tprint('a'*99)"    shell=True    stdout=DEVNULL
+    Should Be Equal    ${result.rc}    ${0}
+    Should Be Empty    ${result.stdout}
+
 Run multiple times
     [Tags]    performance
-    FOR    ${i}    IN RANGE    500
+    FOR    ${i}    IN RANGE    100
        Run And Test Once    ${i}
     END
 
 Run multiple times using custom streams
     [Tags]    performance
-    FOR    ${i}    IN RANGE    500
+    FOR    ${i}    IN RANGE    100
        Run And Test Once    ${i}    ${STDOUT}    ${STDERR}
     END
 
