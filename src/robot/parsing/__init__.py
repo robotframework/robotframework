@@ -52,9 +52,9 @@ Example
 from .model import Model, ResourceModel
 
 
-def get_test_case_file_ast(source, process_curdir=True):
+def get_test_case_file_ast(source, process_curdir=False):
     return Model(source, process_curdir)
 
 
-def get_resource_file_ast(source, process_curdir=True):
+def get_resource_file_ast(source, process_curdir=False):
     return ResourceModel(source, process_curdir)

@@ -127,15 +127,15 @@ class ForLoopBuilder(Builder):
 
 
 # TODO: is this public API, name?
-def Model(source, process_curdir=True):
+def Model(source, process_curdir=False):
     return build(source, TestCaseFileLexer, process_curdir)
 
 
-def ResourceModel(source, process_curdir=True):
+def ResourceModel(source, process_curdir=False):
     return build(source, ResourceFileLexer, process_curdir)
 
 
-def build(source, lexer, process_curdir=True):
+def build(source, lexer, process_curdir):
     builder = FileBuilder(File())
     stack = [builder]
     for statement in get_statements(source, lexer, process_curdir):

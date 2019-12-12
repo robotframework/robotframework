@@ -156,7 +156,7 @@ class Tidy(SuiteStructureVisitor):
 
         Use :func:`inplace` to tidy files in-place.
         """
-        data = Model(path, process_curdir=False)
+        data = Model(path)
         with self._get_writer(outpath) as writer:
             self._save_file(data, writer)
             if not outpath:
@@ -172,7 +172,7 @@ class Tidy(SuiteStructureVisitor):
         :param paths: Paths of the files to to process.
         """
         for path in paths:
-            data = Model(path, process_curdir=False)
+            data = Model(path)
             os.remove(path)
             self._save_file(data, output=self._get_writer(path))
 
