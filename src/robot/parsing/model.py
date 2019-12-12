@@ -127,18 +127,18 @@ class ForLoopBuilder(Builder):
 
 
 # TODO: is this public API, name?
-def Model(source):
-    return build(source, TestCaseFileLexer)
+def Model(source, process_curdir=True):
+    return build(source, TestCaseFileLexer, process_curdir)
 
 
-def ResourceModel(source):
-    return build(source, ResourceFileLexer)
+def ResourceModel(source, process_curdir=True):
+    return build(source, ResourceFileLexer, process_curdir)
 
 
-def build(source, lexer):
+def build(source, lexer, process_curdir=True):
     builder = FileBuilder(File())
     stack = [builder]
-    for statement in get_statements(source, lexer):
+    for statement in get_statements(source, lexer, process_curdir):
         while not stack[-1].handles(statement):
             stack.pop()
         builder = stack[-1].statement(statement)
@@ -148,12 +148,12 @@ def build(source, lexer):
     return stack[0].model
 
 
-def get_statements(source, lexer_cls):
+def get_statements(source, lexer_cls, process_curdir):
     lexer = lexer_cls(data_only=False)
     lexer.input(_read(source))
     statement = []
     for t in lexer.get_tokens():
-        if PROCESS_CURDIR:
+        if process_curdir:
             curdir = os.path.dirname(source).replace('\\', '\\\\')
             if t and '${CURDIR}' in t.value:
                 t.value = t.value.replace('${CURDIR}', curdir)

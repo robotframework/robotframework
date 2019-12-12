@@ -29,11 +29,12 @@ from ..model import TestSuite, ResourceFile
 class TestSuiteBuilder(object):
 
     def __init__(self, include_suites=None, extension=None, rpa=None,
-                 allow_empty_suite=False):
+                 allow_empty_suite=False, process_curdir=True):
         self.rpa = rpa
         self.include_suites = include_suites
         self.extension = extension
         self.allow_empty_suite = allow_empty_suite
+        self.process_curdir = process_curdir
 
     def build(self, *paths):
         """
@@ -42,7 +43,7 @@ class TestSuiteBuilder(object):
         """
         structure = SuiteStructureBuilder(self.include_suites,
                                           self.extension).build(paths)
-        parser = SuiteStructureParser(self.rpa)
+        parser = SuiteStructureParser(self.rpa, self.process_curdir)
         suite = parser.parse(structure)
         if not self.include_suites and not self.allow_empty_suite:
             self._validate_test_counts(suite, multisource=len(paths) > 1)
@@ -64,17 +65,21 @@ class TestSuiteBuilder(object):
 
 class ResourceFileBuilder(object):
 
+    def __init__(self, process_curdir=True):
+        self.process_curdir = process_curdir
+
     def build(self, path):
         LOGGER.info("Parsing resource file '%s'." % path)
-        data = get_resource_file_ast(path)
+        data = get_resource_file_ast(path, self.process_curdir)
         return build_resource(data, path)
 
 
 class SuiteStructureParser(SuiteStructureVisitor):
 
-    def __init__(self, rpa=None):
+    def __init__(self, rpa=None, process_curdir=True):
         self.rpa = rpa
         self._rpa_given = rpa is not None
+        self.process_curdir = process_curdir
         self.suite = None
         self._stack = []
 
@@ -111,7 +116,8 @@ class SuiteStructureParser(SuiteStructureVisitor):
         source = structure.source
         datapath = source if not structure.is_directory else structure.init_file
         try:
-            suite, defaults = build_suite(source, datapath, defaults)
+            suite, defaults = build_suite(source, datapath, defaults,
+                                          self.process_curdir)
             self._validate_execution_mode(suite)
         except DataError as err:
             raise DataError("Parsing '%s' failed: %s" % (source, err.message))
@@ -136,11 +142,12 @@ class SuiteStructureParser(SuiteStructureVisitor):
                             "execution mode explicitly." % (this, that))
 
 
-def build_suite(source, datapath=None, parent_defaults=None):
+def build_suite(source, datapath=None, parent_defaults=None,
+                process_curdir=True):
     suite = TestSuite(name=format_name(source), source=source)
     defaults = TestDefaults(parent_defaults)
     if datapath:
-        ast = get_test_case_file_ast(datapath)
+        ast = get_test_case_file_ast(datapath, process_curdir)
         ErrorLogger(datapath).visit(ast)
         SettingsBuilder(suite, defaults).visit(ast)
         SuiteBuilder(suite, defaults).visit(ast)

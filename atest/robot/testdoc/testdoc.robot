@@ -10,7 +10,7 @@ One input
 
 Variables and imports are not processes
     Run TestDoc    ${INPUT 3}
-    Testdoc Should Contain    "name":"Testdoc"    "title":"Testdoc"    "numberOfTests":1
+    Testdoc Should Contain    "name":"Testdoc"    "title":"Testdoc"    "numberOfTests":1    "doc":"<p>Documentation with $\{CURDIR}\\x3c/p>"
     Outfile Should Have Correct Line Separators
     Output Should Contain Outfile
 

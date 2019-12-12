@@ -52,21 +52,9 @@ Example
 from .model import Model, ResourceModel
 
 
-def get_test_case_file_ast(source):
-    return Model(source)
+def get_test_case_file_ast(source, process_curdir=True):
+    return Model(source, process_curdir)
 
 
-def get_resource_file_ast(source):
-    return ResourceModel(source)
-
-
-def disable_curdir_processing(method):
-    """Decorator to disable processing `${CURDIR}` variable."""
-    def decorated(*args, **kwargs):
-        original = model.PROCESS_CURDIR
-        model.PROCESS_CURDIR = False
-        try:
-            return method(*args, **kwargs)
-        finally:
-            model.PROCESS_CURDIR = original
-    return decorated
+def get_resource_file_ast(source, process_curdir=True):
+    return ResourceModel(source, process_curdir)
