@@ -16,19 +16,19 @@
 import os
 
 from .lexer import Token, get_tokens, get_resource_tokens
-from .ast import (File, SettingSection, VariableSection, TestCaseSection,
-                  KeywordSection, CommentSection, TestCase, Keyword, ForLoop,
-                  get_statements)
+from .model import (File, SettingSection, VariableSection, TestCaseSection,
+                    KeywordSection, CommentSection, TestCase, Keyword, ForLoop,
+                    get_statements)
 
 
-def get_ast(source, process_curdir=False):
-    tokens = get_tokens(source)
-    return _build_ast(get_statements(tokens, _get_curdir(source, process_curdir)))
+def get_model(source, process_curdir=False):
+    tokens = get_thokens(source)
+    return _build_model(get_statements(tokens, _get_curdir(source, process_curdir)))
 
 
-def get_resource_ast(source, process_curdir=False):
+def get_resource_model(source, process_curdir=False):
     tokens = get_resource_tokens(source)
-    return _build_ast(get_statements(tokens, _get_curdir(source, process_curdir)))
+    return _build_model(get_statements(tokens, _get_curdir(source, process_curdir)))
 
 
 def _get_curdir(source, process_curdir):
@@ -37,7 +37,7 @@ def _get_curdir(source, process_curdir):
     return os.path.dirname(source).replace('\\', '\\\\')
 
 
-def _build_ast(statements):
+def _build_model(statements):
     builder = FileBuilder()
     stack = [builder]
     for statement in statements:

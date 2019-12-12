@@ -18,7 +18,7 @@ from ast import NodeVisitor
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.parsing import get_ast, get_resource_ast
+from robot.parsing import get_model, get_resource_model
 
 from .testsettings import TestDefaults
 from .transformers import SuiteBuilder, SettingsBuilder, ResourceBuilder
@@ -70,8 +70,8 @@ class ResourceFileBuilder(object):
 
     def build(self, path):
         LOGGER.info("Parsing resource file '%s'." % path)
-        data = get_resource_ast(path, self.process_curdir)
-        return build_resource(data, path)
+        model = get_resource_model(path, self.process_curdir)
+        return build_resource(model, path)
 
 
 class SuiteStructureParser(SuiteStructureVisitor):
@@ -147,13 +147,13 @@ def build_suite(source, datapath=None, parent_defaults=None,
     suite = TestSuite(name=format_name(source), source=source)
     defaults = TestDefaults(parent_defaults)
     if datapath:
-        ast = get_ast(datapath, process_curdir)
-        ErrorLogger(datapath).visit(ast)
-        SettingsBuilder(suite, defaults).visit(ast)
-        SuiteBuilder(suite, defaults).visit(ast)
+        model = get_model(datapath, process_curdir)
+        ErrorLogger(datapath).visit(model)
+        SettingsBuilder(suite, defaults).visit(model)
+        SuiteBuilder(suite, defaults).visit(model)
         if not suite.tests:
             LOGGER.info("Data source '%s' has no tests or tasks." % datapath)
-        suite.rpa = _get_rpa_mode(ast)
+        suite.rpa = _get_rpa_mode(model)
     return suite, defaults
 
 
@@ -166,14 +166,14 @@ def _get_rpa_mode(data):
     raise DataError('One file cannot have both tests and tasks.')
 
 
-def build_resource(data, source):
+def build_resource(model, source):
     resource = ResourceFile(source=source)
-    if data.data_sections:
-        ErrorLogger(source).visit(data)
-        if data.has_tests:
+    if model.data_sections:
+        ErrorLogger(source).visit(model)
+        if model.has_tests:
             raise DataError("Resource file '%s' cannot contain tests or tasks." %
                             source)
-        ResourceBuilder(resource).visit(data)
+        ResourceBuilder(resource).visit(model)
         LOGGER.info("Imported resource file '%s' (%d keywords)."
                     % (source, len(resource.keywords)))
     else:

@@ -38,7 +38,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.errors import DataError
-from robot.parsing import get_ast
+from robot.parsing import get_model
 from robot.utils import Application, file_writer
 # TODO: expose from package root
 from robot.running.builder.suitestructure import (SuiteStructureBuilder,
@@ -157,7 +157,7 @@ class Tidy(SuiteStructureVisitor):
         Use :func:`inplace` to tidy files in-place.
         """
         with self._get_writer(outpath) as writer:
-            self._tidy(get_ast(path), writer)
+            self._tidy(get_model(path), writer)
             if not outpath:
                 return writer.getvalue().replace('\r\n', '\n')
 
@@ -171,7 +171,7 @@ class Tidy(SuiteStructureVisitor):
         :param paths: Paths of the files to to process.
         """
         for path in paths:
-            self._tidy(get_ast(path), output=self._get_writer(path))
+            self._tidy(get_model(path), output=self._get_writer(path))
 
     def directory(self, path):
         """Tidy a directory.
