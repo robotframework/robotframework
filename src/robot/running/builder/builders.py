@@ -18,11 +18,11 @@ from ast import NodeVisitor
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.parsing import get_model, get_resource_model
+from robot.parsing import (get_model, get_resource_model, SuiteStructureBuilder,
+                           SuiteStructureVisitor)
 
 from .testsettings import TestDefaults
 from .transformers import SuiteBuilder, SettingsBuilder, ResourceBuilder
-from .suitestructure import SuiteStructureBuilder, SuiteStructureVisitor
 from ..model import TestSuite, ResourceFile
 
 

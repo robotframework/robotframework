@@ -38,15 +38,12 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.errors import DataError
-from robot.parsing import get_model
+from robot.parsing import get_model, SuiteStructureBuilder, SuiteStructureVisitor
+from robot.tidypkg import DataFileWriter
 from robot.utils import Application, file_writer
-# TODO: expose from package root
-from robot.running.builder.suitestructure import (SuiteStructureBuilder,
-                                                  SuiteStructureVisitor)
-from robot.writer import DataFileWriter
 
 # TODO: maybe rename --format to --extension
-# Proofread usage
+# FIXME: Proofread usage
 USAGE = """robot.tidy -- Robot Framework test data clean-up tool
 
 Version:  <VERSION>

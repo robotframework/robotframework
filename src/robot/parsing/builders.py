@@ -22,7 +22,7 @@ from .model import (File, SettingSection, VariableSection, TestCaseSection,
 
 
 def get_model(source, process_curdir=False):
-    tokens = get_thokens(source)
+    tokens = get_tokens(source)
     return _build_model(get_statements(tokens, _get_curdir(source, process_curdir)))
 
 
