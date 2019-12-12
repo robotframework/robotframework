@@ -16,10 +16,25 @@
 import ast
 
 from robot.parsing.lexer import Token
+from robot.parsing.nodes import Section
+from robot.parsing.statements import Statement
 from robot.utils import normalize_whitespace
 
 
-class SeparatorRemover(ast.NodeVisitor):
+class ModelVisitor(ast.NodeVisitor):
+
+    def visit(self, node):
+        method = 'visit_' + node.__class__.__name__
+        if not hasattr(self, method):
+            if isinstance(node, Statement):
+                method = 'visit_Statement'
+            elif isinstance(node, Section):
+                method = 'visit_Section'
+        visitor = getattr(self, method, self.generic_visit)
+        return visitor(node)
+
+
+class SeparatorRemover(ModelVisitor):
     separator_tokens = (Token.EOL, Token.SEPARATOR, Token.OLD_FOR_INDENT)
 
     def visit_Statement(self, statement):
@@ -27,7 +42,7 @@ class SeparatorRemover(ast.NodeVisitor):
                             t.type not in self.separator_tokens]
 
 
-class ColumnAligner(ast.NodeVisitor):
+class ColumnAligner(ModelVisitor):
 
     def __init__(self, ctx, widths):
         self.ctx = ctx
@@ -36,7 +51,7 @@ class ColumnAligner(ast.NodeVisitor):
         self.indent = 0
         self.first_statement_after_name_seen = False
 
-    def visit_TestOrKeyword(self, node):
+    def visit_TestCase(self, node):
         self.first_statement_after_name_seen = False
         self.generic_visit(node)
 
@@ -86,7 +101,7 @@ class ColumnAligner(ast.NodeVisitor):
                and self.test_name_len < self.ctx.short_test_name_length
 
 
-class ColumnWidthCounter(ast.NodeVisitor):
+class ColumnWidthCounter(ModelVisitor):
 
     def __init__(self):
         self.widths = []
@@ -106,18 +121,19 @@ class ColumnWidthCounter(ast.NodeVisitor):
                     self.widths[index] = len(token.value)
 
 
-class Aligner(ast.NodeVisitor):
+class Aligner(ModelVisitor):
 
     def __init__(self, ctx):
         self.ctx = ctx
 
-    def visit_Section(self, section):
-        if section.type in (Token.SETTING_HEADER, Token.VARIABLE_HEADER):
-            self.generic_visit(section)
-        elif section.type == Token.TESTCASE_HEADER and len(section.header) > 1:
+    def visit_TestCaseSection(self, section):
+        if len(section.header) > 1:
             counter = ColumnWidthCounter()
             counter.visit(section)
             ColumnAligner(self.ctx, counter.widths).visit(section)
+
+    def visit_KeywordSection(self, section):
+        pass
 
     def visit_Statement(self, statement):
         for line in statement.lines:
@@ -125,7 +141,7 @@ class Aligner(ast.NodeVisitor):
                 self.ctx.setting_and_variable_name_length)
 
 
-class Cleaner(ast.NodeVisitor):
+class Cleaner(ModelVisitor):
 
     def visit_Section(self, section):
         if section.header:
@@ -154,7 +170,7 @@ class Cleaner(ast.NodeVisitor):
         self.generic_visit(loop)
 
 
-class Formatter(ast.NodeVisitor):
+class Formatter(ModelVisitor):
 
     def __init__(self, ctx, row_writer):
         self.ctx = ctx
@@ -175,10 +191,19 @@ class Formatter(ast.NodeVisitor):
         self.test_or_kw_seen = False
         self.has_custom_headers = False
 
-    def visit_TestOrKeyword(self, node):
+    def visit_TestCase(self, node):
         if self.test_or_kw_seen:
             self._write_newline()
-        self._write_name(node.name)
+        self._write_name(node.name_tokens)
+        self.indent += 1
+        self.generic_visit(node.body)
+        self.indent -= 1
+        self.test_or_kw_seen = True
+
+    def visit_Keyword(self, node):
+        if self.test_or_kw_seen:
+            self._write_newline()
+        self._write_name(node.name_tokens)
         self.indent += 1
         self.generic_visit(node.body)
         self.indent -= 1
