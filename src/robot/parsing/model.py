@@ -23,7 +23,6 @@ from robot.utils import Utf8Reader, get_error_message
 from .lexer import TestCaseFileLexer, ResourceFileLexer, Token
 from .nodes import (File, SettingSection, VariableSection, TestCaseSection,
                     KeywordSection, CommentSection, TestCase, Keyword, ForLoop)
-from .restreader import read_rest
 from .statements import Statement
 
 header_types = (
@@ -170,7 +169,8 @@ def _read(path):
         # https://ironpython.codeplex.com/workitem/34655
         with open(path, 'rb') as data:
             if os.path.splitext(path)[1].lower() in ('.rest', '.rst'):
-                return read_rest(data)
+                from .restreader import read_data
+                return read_data(data)
             return Utf8Reader(data).read()
     except:
         raise DataError(get_error_message())
