@@ -16,14 +16,15 @@
 import ast
 
 from robot.utils import normalize_whitespace
-from .lexer import Token
+
+from ..lexer import Token
 
 
-class Node(ast.AST):
+class Block(ast.AST):
     _fields = ()
 
 
-class File(Node):
+class File(Block):
     _fields = ('sections',)
 
     def __init__(self):
@@ -38,7 +39,7 @@ class File(Node):
         return any(isinstance(s, TestCaseSection) for s in self.sections)
 
 
-class Section(Node):
+class Section(Block):
     _fields = ('header', 'body')
 
     def __init__(self, header=None, body=None):
@@ -71,7 +72,7 @@ class CommentSection(Section):
     type = Token.COMMENT_HEADER
 
 
-class Body(Node):
+class Body(Block):
     _fields = ('items',)
 
     def __init__(self, items=None):
@@ -81,7 +82,7 @@ class Body(Node):
         self.items.append(item)
 
 
-class TestCase(Node):
+class TestCase(Block):
     type = Token.NAME
     _fields = ('name_tokens', 'body')
 
@@ -94,7 +95,7 @@ class TestCase(Node):
         return self.name_tokens.name
 
 
-class Keyword(Node):
+class Keyword(Block):
     _fields = ('name_tokens', 'body')
 
     def __init__(self, name_tokens):
@@ -106,7 +107,7 @@ class Keyword(Node):
         return self.name_tokens.name
 
 
-class ForLoop(Node):
+class ForLoop(Block):
     _fields = ('type', 'header', 'body', 'end')
 
     def __init__(self, header):

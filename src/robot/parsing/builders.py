@@ -13,25 +13,40 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Model used by tools such as tidy, not used for test execution"""
-
 import os
 
-from robot.errors import DataError
-from robot.utils import Utf8Reader, get_error_message
-
-from .lexer import TestCaseFileLexer, ResourceFileLexer, Token
-from .nodes import (File, SettingSection, VariableSection, TestCaseSection,
-                    KeywordSection, CommentSection, TestCase, Keyword, ForLoop)
-from .statements import Statement
-
-header_types = (
-    Token.SETTING_HEADER, Token.VARIABLE_HEADER,
-    Token.TESTCASE_HEADER, Token.KEYWORD_HEADER
-)
+from .lexer import Token, get_tokens, get_resource_tokens
+from .ast import (File, SettingSection, VariableSection, TestCaseSection,
+                  KeywordSection, CommentSection, TestCase, Keyword, ForLoop,
+                  get_statements)
 
 
-PROCESS_CURDIR = True
+def get_ast(source, process_curdir=False):
+    tokens = get_tokens(source)
+    return _build_ast(get_statements(tokens, _get_curdir(source, process_curdir)))
+
+
+def get_resource_ast(source, process_curdir=False):
+    tokens = get_resource_tokens(source)
+    return _build_ast(get_statements(tokens, _get_curdir(source, process_curdir)))
+
+
+def _get_curdir(source, process_curdir):
+    if not process_curdir:
+        return None
+    return os.path.dirname(source).replace('\\', '\\\\')
+
+
+def _build_ast(statements):
+    builder = FileBuilder()
+    stack = [builder]
+    for statement in statements:
+        while not stack[-1].handles(statement):
+            stack.pop()
+        builder = stack[-1].statement(statement)
+        if builder:
+            stack.append(builder)
+    return stack[0].model
 
 
 class Builder(object):
@@ -47,6 +62,9 @@ class Builder(object):
 
 
 class FileBuilder(Builder):
+
+    def __init__(self, model=None):
+        Builder.__init__(self, model or File())
 
     def statement(self, statement):
         try:
@@ -68,7 +86,7 @@ class FileBuilder(Builder):
 class SectionBuilder(Builder):
 
     def handles(self, statement):
-        return statement.type not in header_types
+        return statement.type not in Token.HEADER_TOKENS
 
     def statement(self, statement):
         self.model.body.add(statement)
@@ -97,7 +115,7 @@ class KeywordSectionBuilder(SectionBuilder):
 class TestOrKeywordBuilder(Builder):
 
     def handles(self, statement):
-        return statement.type not in header_types + (Token.NAME,)
+        return statement.type not in Token.HEADER_TOKENS + (Token.NAME,)
 
     def statement(self, statement):
         if statement.type == Token.FOR:
@@ -123,54 +141,3 @@ class ForLoopBuilder(Builder):
             self._end = True
         else:
             self.model.body.add(statement)
-
-
-# TODO: is this public API, name?
-def Model(source, process_curdir=False):
-    return build(source, TestCaseFileLexer, process_curdir)
-
-
-def ResourceModel(source, process_curdir=False):
-    return build(source, ResourceFileLexer, process_curdir)
-
-
-def build(source, lexer, process_curdir):
-    builder = FileBuilder(File())
-    stack = [builder]
-    for statement in get_statements(source, lexer, process_curdir):
-        while not stack[-1].handles(statement):
-            stack.pop()
-        builder = stack[-1].statement(statement)
-        if builder:
-            stack.append(builder)
-
-    return stack[0].model
-
-
-def get_statements(source, lexer_cls, process_curdir):
-    lexer = lexer_cls(data_only=False)
-    lexer.input(_read(source))
-    statement = []
-    for t in lexer.get_tokens():
-        if process_curdir:
-            curdir = os.path.dirname(source).replace('\\', '\\\\')
-            if t and '${CURDIR}' in t.value:
-                t.value = t.value.replace('${CURDIR}', curdir)
-        if t.type != t.EOS:
-            statement.append(t)
-        else:
-            yield Statement.from_tokens(statement)
-            statement = []
-
-
-def _read(path):
-    try:
-        # IronPython handles BOM incorrectly if not using binary mode:
-        # https://ironpython.codeplex.com/workitem/34655
-        with open(path, 'rb') as data:
-            if os.path.splitext(path)[1].lower() in ('.rest', '.rst'):
-                from .restreader import read_data
-                return read_data(data)
-            return Utf8Reader(data).read()
-    except:
-        raise DataError(get_error_message())

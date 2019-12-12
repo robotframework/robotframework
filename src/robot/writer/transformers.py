@@ -16,8 +16,8 @@
 import ast
 
 from robot.parsing.lexer import Token
-from robot.parsing.nodes import Section
-from robot.parsing.statements import Statement
+from robot.parsing.ast.blocks import Section
+from robot.parsing.ast.statements import Statement
 from robot.utils import normalize_whitespace
 
 

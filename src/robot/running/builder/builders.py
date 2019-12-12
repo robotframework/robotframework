@@ -18,7 +18,7 @@ from ast import NodeVisitor
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.parsing import get_test_case_file_ast, get_resource_file_ast
+from robot.parsing import get_ast, get_resource_ast
 
 from .testsettings import TestDefaults
 from .transformers import SuiteBuilder, SettingsBuilder, ResourceBuilder
@@ -70,7 +70,7 @@ class ResourceFileBuilder(object):
 
     def build(self, path):
         LOGGER.info("Parsing resource file '%s'." % path)
-        data = get_resource_file_ast(path, self.process_curdir)
+        data = get_resource_ast(path, self.process_curdir)
         return build_resource(data, path)
 
 
@@ -147,7 +147,7 @@ def build_suite(source, datapath=None, parent_defaults=None,
     suite = TestSuite(name=format_name(source), source=source)
     defaults = TestDefaults(parent_defaults)
     if datapath:
-        ast = get_test_case_file_ast(datapath, process_curdir)
+        ast = get_ast(datapath, process_curdir)
         ErrorLogger(datapath).visit(ast)
         SettingsBuilder(suite, defaults).visit(ast)
         SuiteBuilder(suite, defaults).visit(ast)

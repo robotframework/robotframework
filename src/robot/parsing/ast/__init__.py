@@ -13,5 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .readers import get_tokens, get_resource_tokens
-from .tokens import Token
+from .blocks import (File, SettingSection, VariableSection, TestCaseSection,
+                     KeywordSection, CommentSection, TestCase, Keyword, ForLoop)
+from .statements import get_statements

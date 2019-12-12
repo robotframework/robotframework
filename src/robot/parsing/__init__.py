@@ -49,12 +49,5 @@ Example
     print_suite(suite)
 """
 
-from .model import Model, ResourceModel
-
-
-def get_test_case_file_ast(source, process_curdir=False):
-    return Model(source, process_curdir)
-
-
-def get_resource_file_ast(source, process_curdir=False):
-    return ResourceModel(source, process_curdir)
+from .builders import get_ast, get_resource_ast
+from .lexer import get_tokens, get_resource_tokens

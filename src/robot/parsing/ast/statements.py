@@ -19,35 +19,19 @@ from itertools import dropwhile, takewhile
 
 from robot.utils import normalize_whitespace
 
-from .lexer import Token
-
-# TODO: better name for the module? Combine with nodes.py?
+from ..lexer import Token
 
 
-def join_doc_or_meta(lines):
-    def lines_with_newlines():
-        last_index = len(lines) - 1
-        for index, line in enumerate(lines):
-            yield line
-            if index < last_index:
-                match = re.search(r'(\\+)n?$', line)
-                escaped_or_has_newline = match and len(match.group(1)) % 2 == 1
-                if not escaped_or_has_newline:
-                    yield '\n'
-    return ''.join(lines_with_newlines())
-
-
-def get_type(statement):
-    if len(statement) == 1 and statement[0].type == Token.EOL:
-        return Token.EOL
-    for token in statement:
-        # TODO: does not seem correct, should Statement have types instead
-        # of type ??
-        if token.type == Token.ASSIGN:
-            return Token.KEYWORD
-        if token.type not in (Token.SEPARATOR, Token.OLD_FOR_INDENT,
-                              Token.CONTINUATION, Token.EOL):
-            return token.type
+def get_statements(tokens, curdir=None):
+    statement = []
+    for t in tokens:
+        if curdir and '${CURDIR}' in t.value:
+            t.value = t.value.replace('${CURDIR}', curdir)
+        if t.type != t.EOS:
+            statement.append(t)
+        else:
+            yield Statement.from_tokens(statement)
+            statement = []
 
 
 class Statement(ast.AST):
@@ -59,8 +43,7 @@ class Statement(ast.AST):
 
     @classmethod
     def from_tokens(cls, tokens):
-        type = get_type(tokens)
-        # FIXME: is this slow
+        type = cls._get_type(tokens)
         for sub in cls.__subclasses__():
             if sub.type == type:
                 return sub(tokens)
@@ -68,11 +51,22 @@ class Statement(ast.AST):
                 return sub.from_tokens(tokens)
             except TypeError:
                 pass
-        raise TypeError(type)  # FIXME
+        raise TypeError("Invalid statement type '%s'." % type)
+
+    @staticmethod
+    def _get_type(statement):
+        if len(statement) == 1 and statement[0].type == Token.EOL:
+            return Token.EOL
+        for token in statement:
+            if token.type == Token.ASSIGN:
+                return Token.KEYWORD
+            if token.type not in (Token.SEPARATOR, Token.OLD_FOR_INDENT,
+                                  Token.CONTINUATION, Token.EOL):
+                return token.type
 
     @property
     def data_tokens(self):
-        return [t for t in self.tokens if t.type in Token.DATA_TOKENS]
+        return [t for t in self.tokens if t.type not in Token.NON_DATA_TOKENS]
 
     def _value(self, type):
         for t in self.tokens:
@@ -80,8 +74,11 @@ class Statement(ast.AST):
                 return t.value
         return None
 
-    def _values(self, type):
-        return [t.value for t in self.tokens if t.type == type]
+    def _values(self, *types):
+        return [t.value for t in self.tokens if t.type in types]
+
+    def _tokens(self, *types):
+        return [t for t in self.tokens if t.type in types]
 
     @property
     def lines(self):
@@ -102,6 +99,35 @@ class Statement(ast.AST):
 
     def __getitem__(self, item):
         return self.tokens[item]
+
+
+class DocumentationOrMetadata(Statement):
+
+    def _join_value(self, tokens):
+        def lines_with_newlines():
+            lines = self._get_lines(tokens)
+            last_index = len(lines) - 1
+            for index, line in enumerate(lines):
+                yield line
+                if index < last_index:
+                    match = re.search(r'(\\+)n?$', line)
+                    escaped_or_has_newline = match and len(match.group(1)) % 2 == 1
+                    if not escaped_or_has_newline:
+                        yield '\n'
+        return ''.join(lines_with_newlines())
+
+    def _get_lines(self, tokens):
+        lines = []
+        line = []
+        for t in tokens:
+            if t.type == Token.EOL:
+                lines.append(' '.join(line))
+                line = []
+            else:
+                line.append(t.value)
+        if line:
+            lines.append(' '.join(line))
+        return list(dropwhile(lambda l: not l, lines))
 
 
 class SingleValue(Statement):
@@ -194,29 +220,16 @@ class VariablesImport(Statement):
         return self._values(Token.ARGUMENT)[1:]
 
 
-class Documentation(Statement):
+class Documentation(DocumentationOrMetadata):
     type = Token.DOCUMENTATION
 
     @property
     def value(self):
-        return join_doc_or_meta(self._get_lines())
-
-    def _get_lines(self):
-        lines = []
-        line = ''
-        for t in self.tokens:
-            if t.type == Token.ARGUMENT:
-                if line:
-                    line += ' ' + t.value
-                else:
-                    line = t.value
-            if t.type == Token.EOL:
-                lines.append(line)
-                line = ''
-        return list(dropwhile(lambda l: not l, lines))
+        tokens = self._tokens(Token.ARGUMENT, Token.EOL)
+        return self._join_value(tokens)
 
 
-class Metadata(Statement):
+class Metadata(DocumentationOrMetadata):
     type = Token.METADATA
 
     @property
@@ -225,27 +238,8 @@ class Metadata(Statement):
 
     @property
     def value(self):
-        return join_doc_or_meta(self._get_lines())
-
-    def _get_lines(self):
-        # FIXME: there has to be a way to generalize this
-        # and Documentation._get_lines
-        lines = []
-        line = ''
-        name_seen = False
-        for t in self.tokens:
-            if t.type == Token.ARGUMENT:
-                if name_seen:
-                    if line:
-                        line += ' ' + t.value
-                    else:
-                        line = t.value
-                else:
-                    name_seen = True
-            if t.type == Token.EOL:
-                lines.append(line)
-                line = ''
-        return list(dropwhile(lambda l: not l, lines))
+        tokens = self._tokens(Token.ARGUMENT, Token.EOL)[1:]
+        return self._join_value(tokens)
 
 
 class ForceTags(MultiValue):
