@@ -13,25 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import ast
-
-from robot.parsing.lexer import Token
-from robot.parsing.ast.blocks import Section
-from robot.parsing.ast.statements import Statement
+from robot.parsing import Token, ModelVisitor
 from robot.utils import normalize_whitespace
-
-
-class ModelVisitor(ast.NodeVisitor):
-
-    def visit(self, node):
-        method = 'visit_' + node.__class__.__name__
-        if not hasattr(self, method):
-            if isinstance(node, Statement):
-                method = 'visit_Statement'
-            elif isinstance(node, Section):
-                method = 'visit_Section'
-        visitor = getattr(self, method, self.generic_visit)
-        return visitor(node)
 
 
 class SeparatorRemover(ModelVisitor):

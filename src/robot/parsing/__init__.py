@@ -49,5 +49,6 @@ Example
     print_suite(suite)
 """
 
+from .ast import ModelVisitor
 from .builders import get_ast, get_resource_ast
-from .lexer import get_tokens, get_resource_tokens
+from .lexer import get_tokens, get_resource_tokens, Token

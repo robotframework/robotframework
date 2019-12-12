@@ -13,7 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .blocks import (File, SettingSection, VariableSection, TestCaseSection,
-                     KeywordSection, CommentSection, TestCase, Keyword, ForLoop)
-from .statements import get_statements
-from .visitor import ModelVisitor
+import ast
+
+
+class ModelVisitor(ast.NodeVisitor):
+
+    def visit(self, node):
+        visitor = self._find_visitor(type(node)) or self.generic_visit
+        return visitor(node)
+
+    def _find_visitor(self, cls):
+        if cls is ast.AST:
+            return None
+        method = 'visit_' + cls.__name__
+        if hasattr(self, method):
+            return getattr(self, method)
+        for base in cls.__bases__:
+            visitor = self._find_visitor(base)
+            if visitor:
+                return visitor
