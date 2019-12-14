@@ -33,8 +33,9 @@ where the importing file is located. If the file is not found there,
 it is then searched from the directories in Python's `module search path`_.
 The path can contain variables, and it is recommended to use them to make paths
 system-independent (for example, :file:`${RESOURCES}/login_resources.robot` or
-:file:`${RESOURCE_PATH}`). Additionally, forward slashes (`/`) in the path
-are automatically changed to backslashes (:codesc:`\\`) on Windows.
+:file:`${RESOURCE_PATH}`). Additionally, forward slashes (`/` or `.`) in the path
+are automatically changed to backslashes (:codesc:`\\`) on Windows. In case of
+(`.`) last . is not going to replac.
 
 Resource files can use all the same extensions as test case files created
 using the `supported file formats`_. When using the `plain text format`_,
@@ -48,6 +49,7 @@ test case files and resource files from each others.
    Resource    example.resource
    Resource    ../data/resources.robot
    Resource    ${RESOURCES}/common.resource
+   Resource    dir.subfolder.common.resource
 
 The user keywords and variables defined in a resource file are
 available in the file that takes that resource file into

@@ -139,18 +139,29 @@ def _common_path(p1, p2):
 
 
 def find_file(path, basedir='.', file_type=None):
-    path = os.path.normpath(path.replace('/', os.sep))
-    if os.path.isabs(path):
-        ret = _find_absolute_path(path)
-    else:
-        ret = _find_relative_path(path, basedir)
-    if ret:
-        return ret
-    default = file_type or 'File'
-    file_type = {'Library': 'Test library',
-                 'Variables': 'Variable file',
-                 'Resource': 'Resource file'}.get(file_type, default)
-    raise DataError("%s '%s' does not exist." % (file_type, path))
+	path = os.path.normpath(path.replace('/', os.sep))
+	if os.path.isabs(path):
+		ret = _find_absolute_path(path)
+	else:
+		ret = _find_relative_path(path, basedir)
+	# if path is seprated by '.' for further information see
+	# https://github.com/robotframework/robotframework/issues/3317
+	if not ret:
+		non_doted_path = os.path.normpath(path.replace('.', os.sep))
+		index = non_doted_path.rfind(os.sep)
+		path2 = os.path.normpath(non_doted_path[:index] + '.' + non_doted_path[index + 1:])
+		if os.path.isabs(path2):
+			ret = _find_absolute_path(path2)
+		else:
+			ret = _find_relative_path(path2, basedir)
+	if ret:
+		return ret
+
+	default = file_type or 'File'
+	file_type = {'Library': 'Test library',
+	             'Variables': 'Variable file',
+	             'Resource': 'Resource file'}.get(file_type, default)
+	raise DataError("%s '%s' does not exist." % (file_type, path))
 
 
 def _find_absolute_path(path):
