@@ -174,6 +174,12 @@ Examples::
 All matching in above examples is case, space and underscore insensitive.
 For example, the second example would also match test named `example 1`.
 
+If the matched text happens to contain some of the wildcard characters and
+they need to be matched literally, it is possible to do that by using
+the `[...]` syntax. The pattern `[*]` matches the literal `*` character,
+`[?]` matches `?`, and `[[]` matches `[`. Lone `[` and `]` do not need to
+be escaped.
+
 .. note:: Support for brackets like `[abc]` and `[!a-z]` is new in
           Robot Framework 3.1.
 
