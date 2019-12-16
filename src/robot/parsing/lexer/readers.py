@@ -49,8 +49,7 @@ class FileReader(object):
     def input(self, source):
         content = self._read(source)
         for statement in Splitter().split(content, data_only=self._data_only):
-            if not statement:
-                continue
+            # Store all tokens but pass only DATA tokens to lexer.
             self.statements.append(statement)
             if self._data_only:
                 data = statement[:]
@@ -71,7 +70,7 @@ class FileReader(object):
             raise DataError(get_error_message())
 
     def get_tokens(self):
-        self.lexer.lex(self.context_class(self._data_only))
+        self.lexer.lex(self.context_class())
         if self._data_only:
             ignore = {Token.IGNORE, Token.COMMENT_HEADER, Token.COMMENT,
                       Token.OLD_FOR_INDENT}
