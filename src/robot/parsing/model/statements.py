@@ -104,17 +104,8 @@ class Statement(ast.AST):
 class DocumentationOrMetadata(Statement):
 
     def _join_value(self, tokens):
-        def lines_with_newlines():
-            lines = self._get_lines(tokens)
-            last_index = len(lines) - 1
-            for index, line in enumerate(lines):
-                yield line
-                if index < last_index:
-                    match = re.search(r'(\\+)n?$', line)
-                    escaped_or_has_newline = match and len(match.group(1)) % 2 == 1
-                    if not escaped_or_has_newline:
-                        yield '\n'
-        return ''.join(lines_with_newlines())
+        lines = self._get_lines(tokens)
+        return ''.join(self._yield_lines_with_newlines(lines))
 
     def _get_lines(self, tokens):
         lines = []
@@ -127,7 +118,18 @@ class DocumentationOrMetadata(Statement):
                 line.append(t.value)
         if line:
             lines.append(' '.join(line))
-        return list(dropwhile(lambda l: not l, lines))
+        return tuple(dropwhile(lambda l: not l, lines))
+
+    def _yield_lines_with_newlines(self, lines):
+        last_index = len(lines) - 1
+        for index, line in enumerate(lines):
+            yield line
+            if index < last_index and not self._escaped_or_has_newline(line):
+                yield '\n'
+
+    def _escaped_or_has_newline(self, line):
+        match = re.search(r'(\\+)n?$', line)
+        return match and len(match.group(1)) % 2 == 1
 
 
 class SingleValue(Statement):
