@@ -660,6 +660,10 @@ END is not required when escaping with backslash
     \    Log    var: ${var}
     \    For in UK with backslashes and without END    ${var}
 
+Header at the end of file
+    [Documentation]    FAIL For loop has no closing 'END'.
+    Header at the end of file
+
 *** Keywords ***
 My UK
     No Operation
@@ -725,3 +729,6 @@ For in UK with backslashes and without END
 
 Invalid END usage in UK
     END
+
+Header at the end of file
+    FOR    ${x}    IN    foo

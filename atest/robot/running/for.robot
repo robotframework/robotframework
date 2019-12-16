@@ -417,6 +417,9 @@ END is not required when escaping with backslash
     Check log message        ${tc.kws[2].kws[1].kws[0].msgs[0]}   var: two
     Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
 
+Header at the end of file
+    ${tc} =    Check Test Case    ${TEST NAME}
+
 *** Keywords ***
 Should Be For Keyword
     [Arguments]    ${kw}    ${subcount}
