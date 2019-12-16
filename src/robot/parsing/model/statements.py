@@ -374,7 +374,7 @@ class ForLoopHeader(Statement):
         return self.data_tokens[0].value
 
 
-class ForLoopEnd(Statement):
+class End(Statement):
     type = Token.END
 
     @property
