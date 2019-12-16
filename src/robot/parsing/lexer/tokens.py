@@ -101,7 +101,7 @@ class Token(object):
         KEYWORD_HEADER
     )
 
-    slots__ = ['type', 'value', 'lineno', 'columnno', 'error']
+    __slots__ = ['type', 'value', 'lineno', 'columnno', 'error']
 
     def __init__(self, type, value='', lineno=-1, columnno=-1):
         self.type = type
@@ -119,6 +119,7 @@ class Token(object):
 
 
 class EOS(Token):
+    __slots__ = []
 
     def __init__(self, lineno=-1, columnno=-1):
         Token.__init__(self, Token.EOS, '', lineno, columnno)
