@@ -21,13 +21,13 @@ from .model import (File, SettingSection, VariableSection, TestCaseSection,
                     get_statements)
 
 
-def get_model(source, process_curdir=False):
-    tokens = get_tokens(source)
+def get_model(source, data_only=False, process_curdir=False):
+    tokens = get_tokens(source, data_only)
     return _build_model(get_statements(tokens, _get_curdir(source, process_curdir)))
 
 
-def get_resource_model(source, process_curdir=False):
-    tokens = get_resource_tokens(source)
+def get_resource_model(source, data_only=False, process_curdir=False):
+    tokens = get_resource_tokens(source, data_only)
     return _build_model(get_statements(tokens, _get_curdir(source, process_curdir)))
 
 

@@ -24,45 +24,40 @@ from ..lexer import Token
 
 def get_statements(tokens, curdir=None):
     statement = []
+    EOS = Token.EOS
     for t in tokens:
         if curdir and '${CURDIR}' in t.value:
             t.value = t.value.replace('${CURDIR}', curdir)
-        if t.type != t.EOS:
+        if t.type != EOS:
             statement.append(t)
         else:
-            yield Statement.from_tokens(statement)
+            yield Statement.from_tokens(tuple(statement))
             statement = []
 
 
 class Statement(ast.AST):
     type = None
     _fields = ('type', 'tokens')
+    _statement_handlers = {}
 
     def __init__(self, tokens):
         self.tokens = tokens
 
     @classmethod
-    def from_tokens(cls, tokens):
-        type = cls._get_type(tokens)
-        for sub in cls.__subclasses__():
-            if sub.type == type:
-                return sub(tokens)
-            try:
-                return sub.from_tokens(tokens)
-            except TypeError:
-                pass
-        raise TypeError("Invalid statement type '%s'." % type)
+    def register(cls, subcls):
+        cls._statement_handlers[subcls.type] = subcls
+        if subcls.type == Token.KEYWORD:
+            cls._statement_handlers[Token.ASSIGN] = subcls
 
-    @staticmethod
-    def _get_type(statement):
-        if len(statement) == 1 and statement[0].type == Token.EOL:
-            return Token.EOL
-        for token in statement:
-            if token.type == Token.ASSIGN:
-                return Token.KEYWORD
-            if token.type not in (Token.SEPARATOR, Token.OLD_FOR_INDENT,
-                                  Token.CONTINUATION, Token.EOL):
-                return token.type
+    @classmethod
+    def from_tokens(cls, tokens):
+        if len(tokens) == 1 and tokens[0].type == Token.EOL:
+            return EmptyLine(tokens)
+        handlers = cls._statement_handlers
+        for token in tokens:
+            if token.type in handlers:
+                return handlers[token.type](tokens)
+        raise TypeError('Invalid statement: %r' % (tokens,))
 
     @property
     def data_tokens(self):
@@ -109,16 +104,15 @@ class DocumentationOrMetadata(Statement):
 
     def _get_lines(self, tokens):
         lines = []
-        line = []
+        line = None
+        lineno = -1
         for t in tokens:
-            if t.type == Token.EOL:
-                lines.append(' '.join(line))
+            if t.lineno != lineno:
                 line = []
-            else:
-                line.append(t.value)
-        if line:
-            lines.append(' '.join(line))
-        return tuple(dropwhile(lambda l: not l, lines))
+                lines.append(line)
+            line.append(t.value)
+            lineno = t.lineno
+        return [' '.join(line) for line in lines]
 
     def _yield_lines_with_newlines(self, lines):
         last_index = len(lines) - 1
@@ -160,26 +154,32 @@ class Fixture(Statement):
         return tuple(self._values(Token.ARGUMENT)[1:])
 
 
+@Statement.register
 class SettingSectionHeader(Statement):
     type = Token.SETTING_HEADER
 
 
+@Statement.register
 class VariableSectionHeader(Statement):
     type = Token.VARIABLE_HEADER
 
 
+@Statement.register
 class TestCaseSectionHeader(Statement):
     type = Token.TESTCASE_HEADER
 
 
+@Statement.register
 class KeywordSectionHeader(Statement):
     type = Token.KEYWORD_HEADER
 
 
+@Statement.register
 class CommentSectionHeader(Statement):
     type = Token.COMMENT_HEADER
 
 
+@Statement.register
 class LibraryImport(Statement):
     type = Token.LIBRARY
 
@@ -202,6 +202,7 @@ class LibraryImport(Statement):
         return args, None
 
 
+@Statement.register
 class ResourceImport(Statement):
     type = Token.RESOURCE
 
@@ -210,6 +211,7 @@ class ResourceImport(Statement):
         return self._value(Token.ARGUMENT)
 
 
+@Statement.register
 class VariablesImport(Statement):
     type = Token.VARIABLES
 
@@ -222,15 +224,17 @@ class VariablesImport(Statement):
         return self._values(Token.ARGUMENT)[1:]
 
 
+@Statement.register
 class Documentation(DocumentationOrMetadata):
     type = Token.DOCUMENTATION
 
     @property
     def value(self):
-        tokens = self._tokens(Token.ARGUMENT, Token.EOL)
+        tokens = self._tokens(Token.ARGUMENT)
         return self._join_value(tokens)
 
 
+@Statement.register
 class Metadata(DocumentationOrMetadata):
     type = Token.METADATA
 
@@ -240,42 +244,51 @@ class Metadata(DocumentationOrMetadata):
 
     @property
     def value(self):
-        tokens = self._tokens(Token.ARGUMENT, Token.EOL)[1:]
+        tokens = self._tokens(Token.ARGUMENT)[1:]
         return self._join_value(tokens)
 
 
+@Statement.register
 class ForceTags(MultiValue):
     type = Token.FORCE_TAGS
 
 
+@Statement.register
 class DefaultTags(MultiValue):
     type = Token.DEFAULT_TAGS
 
 
+@Statement.register
 class SuiteSetup(Fixture):
     type = Token.SUITE_SETUP
 
 
+@Statement.register
 class SuiteTeardown(Fixture):
     type = Token.SUITE_TEARDOWN
 
 
+@Statement.register
 class TestSetup(Fixture):
     type = Token.TEST_SETUP
 
 
+@Statement.register
 class TestTeardown(Fixture):
     type = Token.TEST_TEARDOWN
 
 
+@Statement.register
 class TestTemplate(SingleValue):
     type = Token.TEST_TEMPLATE
 
 
+@Statement.register
 class TestTimeout(SingleValue):
     type = Token.TEST_TIMEOUT
 
 
+@Statement.register
 class Variable(Statement):
     type = Token.VARIABLE
 
@@ -291,6 +304,7 @@ class Variable(Statement):
         return self._values(Token.ARGUMENT)
 
 
+@Statement.register
 class Name(Statement):
     type = Token.NAME
 
@@ -299,34 +313,42 @@ class Name(Statement):
         return self._value(Token.NAME)
 
 
+@Statement.register
 class Setup(Fixture):
     type = Token.SETUP
 
 
+@Statement.register
 class Teardown(Fixture):
     type = Token.TEARDOWN
 
 
+@Statement.register
 class Tags(MultiValue):
     type = Token.TAGS
 
 
+@Statement.register
 class Template(SingleValue):
     type = Token.TEMPLATE
 
 
+@Statement.register
 class Timeout(SingleValue):
     type = Token.TIMEOUT
 
 
+@Statement.register
 class Arguments(MultiValue):
     type = Token.ARGUMENTS
 
 
+@Statement.register
 class Return(MultiValue):
     type = Token.RETURN
 
 
+@Statement.register
 class KeywordCall(Statement):
     type = Token.KEYWORD
 
@@ -343,6 +365,7 @@ class KeywordCall(Statement):
         return tuple(self._values(Token.ASSIGN))
 
 
+@Statement.register
 class TemplateArguments(Statement):
     type = Token.ARGUMENT
 
@@ -351,6 +374,7 @@ class TemplateArguments(Statement):
         return self._values(self.type)
 
 
+@Statement.register
 class ForLoopHeader(Statement):
     type = Token.FOR
 
@@ -376,6 +400,7 @@ class ForLoopHeader(Statement):
         return self.data_tokens[0].value
 
 
+@Statement.register
 class End(Statement):
     type = Token.END
 
@@ -384,17 +409,19 @@ class End(Statement):
         return self.data_tokens[0].value
 
 
+@Statement.register
 class Comment(Statement):
     type = Token.COMMENT
 
 
-class EmptyLine(Statement):
-    type = Token.EOL
-
-
+@Statement.register
 class Error(Statement):
     type = Token.ERROR
 
     @property
     def error(self):
         return self.data_tokens[0].error
+
+
+class EmptyLine(Statement):
+    pass

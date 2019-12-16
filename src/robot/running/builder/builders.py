@@ -70,7 +70,8 @@ class ResourceFileBuilder(object):
 
     def build(self, path):
         LOGGER.info("Parsing resource file '%s'." % path)
-        model = get_resource_model(path, self.process_curdir)
+        model = get_resource_model(path, data_only=True,
+                                   process_curdir=self.process_curdir)
         return build_resource(model, path)
 
 
@@ -147,7 +148,8 @@ def build_suite(source, datapath=None, parent_defaults=None,
     suite = TestSuite(name=format_name(source), source=source)
     defaults = TestDefaults(parent_defaults)
     if datapath:
-        model = get_model(datapath, process_curdir)
+        model = get_model(datapath, data_only=True,
+                          process_curdir=process_curdir)
         ErrorLogger(datapath).visit(model)
         SettingsBuilder(suite, defaults).visit(model)
         SuiteBuilder(suite, defaults).visit(model)

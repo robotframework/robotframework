@@ -26,14 +26,14 @@ from .tokens import EOS, Token
 
 
 # FIXME: add support for open file objects, strings
-def get_tokens(source):
-    reader = TestCaseFileReader()
+def get_tokens(source, data_only=False):
+    reader = TestCaseFileReader(data_only)
     reader.input(source)
     return reader.get_tokens()
 
 
-def get_resource_tokens(source):
-    reader = ResourceFileReader()
+def get_resource_tokens(source, data_only=False):
+    reader = ResourceFileReader(data_only)
     reader.input(source)
     return reader.get_tokens()
 
