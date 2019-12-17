@@ -79,20 +79,26 @@ class BaseReader(object):
                 self._split_trailing_comment_and_empty_lines(s)
                 for s in statements
             )
+        # Setting local variables, including 'type' below, is performance
+        # optimization to avoid unnecessary lookups and attribute access.
+        name_type = Token.NAME
+        separator_or_eol_type = (Token.EOL, Token.SEPARATOR)
         for statement in statements:
-            name_token = last_token = None
+            name_seen = False
+            prev_token = None
             for token in statement:
-                if token.type in ignore:
+                type = token.type     # Performance optimization.
+                if type in ignore:
                     continue
-                if name_token and token.type not in (token.SEPARATOR, token.EOL):
-                    yield EOS.from_token(name_token)
-                    name_token = None
-                if token.type == Token.NAME:
-                    name_token = token
-                last_token = token
+                if name_seen and type not in separator_or_eol_type:
+                    yield EOS.from_token(prev_token)
+                    name_seen = False
+                if type == name_type:
+                    name_seen = True
+                prev_token = token
                 yield token
-            if last_token:
-                yield EOS.from_token(last_token)
+            if prev_token:
+                yield EOS.from_token(prev_token)
 
     def _handle_old_for(self, statements):
         end_statement = [Token(Token.END)]
