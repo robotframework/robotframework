@@ -17,7 +17,7 @@ from itertools import chain
 import os
 
 from robot.errors import DataError
-from robot.utils import Utf8Reader, get_error_message
+from robot.utils import get_error_message, FileReader
 
 from .context import TestCaseFileContext, ResourceFileContext
 from .lexers import FileLexer
@@ -38,7 +38,7 @@ def get_resource_tokens(source, data_only=False):
     return reader.get_tokens()
 
 
-class FileReader(object):
+class BaseReader(object):
     context_class = None
 
     def __init__(self, data_only=False):
@@ -59,13 +59,11 @@ class FileReader(object):
 
     def _read(self, source):
         try:
-            # IronPython handles BOM incorrectly if not using binary mode:
-            # https://ironpython.codeplex.com/workitem/34655
             with open(source, 'rb') as data:
                 if os.path.splitext(source)[1].lower() in ('.rest', '.rst'):
                     from ..restreader import read_data
                     return read_data(data)
-                return Utf8Reader(data).read()
+                return FileReader(data).read()
         except:
             raise DataError(get_error_message())
 
@@ -152,9 +150,9 @@ class FileReader(object):
             yield current
 
 
-class TestCaseFileReader(FileReader):
+class TestCaseFileReader(BaseReader):
     context_class = TestCaseFileContext
 
 
-class ResourceFileReader(FileReader):
+class ResourceFileReader(BaseReader):
     context_class = ResourceFileContext
