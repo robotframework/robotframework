@@ -21,6 +21,24 @@ from .robottypes import is_bytes, is_pathlike, is_string
 
 
 class FileReader(object):
+    """Utility to ease reading different kind of files.
+
+    Supports different sources where to read the data:
+
+    - The source can be a path to a file, either as a string or as a
+      ``pathlib.Path`` instance in Python 3. The file itself must be
+      UTF-8 encoded.
+
+    - Alternatively the source can be an already opened file object,
+      including a StringIO or BytesIO object. The file can contain either
+      Unicode text or UTF-8 encoded bytes.
+
+    - The third options is giving the source as Unicode text directly.
+      This requires setting ``accept_text=True`` when creating the reader.
+
+    In all cases bytes are automatically decoded to Unicode and possible
+    BOM removed.
+    """
 
     def __init__(self, source, accept_text=False):
         self.file, self.name, self._opened = self._get_file(source, accept_text)
