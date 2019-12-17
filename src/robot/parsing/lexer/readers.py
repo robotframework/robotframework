@@ -25,7 +25,6 @@ from .splitter import Splitter
 from .tokens import EOS, Token
 
 
-# FIXME: add support for open file objects, strings
 def get_tokens(source, data_only=False):
     reader = TestCaseFileReader(data_only)
     reader.input(source)
@@ -59,11 +58,11 @@ class BaseReader(object):
 
     def _read(self, source):
         try:
-            with open(source, 'rb') as data:
-                if os.path.splitext(source)[1].lower() in ('.rest', '.rst'):
-                    from ..restreader import read_data
-                    return read_data(data)
-                return FileReader(data).read()
+            with FileReader(source, accept_text=True) as reader:
+                if os.path.splitext(reader.name)[1].lower() in ('.rest', '.rst'):
+                    from ..restreader import read_robot_data
+                    return read_robot_data(reader)
+                return reader.read()
         except:
             raise DataError(get_error_message())
 

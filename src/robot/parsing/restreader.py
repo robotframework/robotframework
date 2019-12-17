@@ -55,7 +55,7 @@ class RobotDataStorage(object):
         return bool(self._robot_data)
 
 
-def read_data(rstfile):
+def read_robot_data(rstfile):
     doctree = publish_doctree(
         rstfile.read(), source_path=rstfile.name,
         settings_overrides={
