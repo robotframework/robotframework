@@ -428,7 +428,7 @@ class RobotFramework(Application):
         LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.info('Settings:\n%s' % unic(settings))
         builder = TestSuiteBuilder(settings['SuiteNames'],
-                                   extension=settings.extension,
+                                   included_extensions=settings.extension,
                                    rpa=settings.rpa,
                                    allow_empty_suite=settings.run_empty_suite)
         suite = builder.build(*datasources)

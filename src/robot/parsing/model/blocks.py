@@ -31,10 +31,6 @@ class File(Block):
         self.sections = []
 
     @property
-    def data_sections(self):
-        return [s for s in self.sections if not isinstance(s, CommentSection)]
-
-    @property
     def has_tests(self):
         return any(isinstance(s, TestCaseSection) for s in self.sections)
 

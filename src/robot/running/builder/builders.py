@@ -14,25 +14,22 @@
 #  limitations under the License.
 
 import os
-from ast import NodeVisitor
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.parsing import (get_model, get_resource_model, SuiteStructureBuilder,
-                           SuiteStructureVisitor)
+from robot.parsing import SuiteStructureBuilder, SuiteStructureVisitor
 
+from .parsers import RobotParser, NoInitFileDirectoryParser, RestParser
 from .testsettings import TestDefaults
-from .transformers import SuiteBuilder, SettingsBuilder, ResourceBuilder
-from ..model import TestSuite, ResourceFile
 
 
 class TestSuiteBuilder(object):
 
-    def __init__(self, include_suites=None, extension=None, rpa=None,
-                 allow_empty_suite=False, process_curdir=True):
+    def __init__(self, included_suites=None, included_extensions=('robot',),
+                 rpa=None, allow_empty_suite=False, process_curdir=True):
         self.rpa = rpa
-        self.include_suites = include_suites
-        self.extension = extension
+        self.included_suites = included_suites
+        self.included_extensions = included_extensions
         self.allow_empty_suite = allow_empty_suite
         self.process_curdir = process_curdir
 
@@ -41,11 +38,12 @@ class TestSuiteBuilder(object):
         :param paths: Paths to test data files or directories.
         :return: :class:`~robot.running.model.TestSuite` instance.
         """
-        structure = SuiteStructureBuilder(self.include_suites,
-                                          self.extension).build(paths)
-        parser = SuiteStructureParser(self.rpa, self.process_curdir)
+        structure = SuiteStructureBuilder(self.included_extensions,
+                                          self.included_suites).build(paths)
+        parser = SuiteStructureParser(self.included_extensions,
+                                      self.rpa, self.process_curdir)
         suite = parser.parse(structure)
-        if not self.include_suites and not self.allow_empty_suite:
+        if not self.included_suites and not self.allow_empty_suite:
             self._validate_test_counts(suite, multisource=len(paths) > 1)
         # TODO: do we need `preserve_direct_children`?
         suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
@@ -63,26 +61,34 @@ class TestSuiteBuilder(object):
                 validate(s)
 
 
-class ResourceFileBuilder(object):
-
-    def __init__(self, process_curdir=True):
-        self.process_curdir = process_curdir
-
-    def build(self, path):
-        LOGGER.info("Parsing resource file '%s'." % path)
-        model = get_resource_model(path, data_only=True,
-                                   process_curdir=self.process_curdir)
-        return build_resource(model, path)
-
-
 class SuiteStructureParser(SuiteStructureVisitor):
 
-    def __init__(self, rpa=None, process_curdir=True):
+    def __init__(self, included_extensions, rpa=None, process_curdir=True):
         self.rpa = rpa
         self._rpa_given = rpa is not None
-        self.process_curdir = process_curdir
         self.suite = None
         self._stack = []
+        self.parsers = self._get_parsers(included_extensions, process_curdir)
+
+    def _get_parsers(self, extensions, process_curdir):
+        robot_parser = RobotParser(process_curdir)
+        rest_parser = RestParser(process_curdir)
+        parsers = {
+            None: NoInitFileDirectoryParser(),
+            'robot': robot_parser,
+            'rst': rest_parser,
+            'rest': rest_parser
+        }
+        for ext in extensions:
+            if ext not in parsers:
+                parsers[ext] = robot_parser
+        return parsers
+
+    def _get_parser(self, extension):
+        try:
+            return self.parsers[extension]
+        except KeyError:
+            return self.parsers['robot']
 
     def parse(self, structure):
         structure.visit(self)
@@ -113,12 +119,17 @@ class SuiteStructureParser(SuiteStructureVisitor):
             suite.rpa = suite.suites[0].rpa
 
     def _build_suite(self, structure):
-        defaults = self._stack[-1][-1] if self._stack else None
+        parent_defaults = self._stack[-1][-1] if self._stack else None
         source = structure.source
-        datapath = source if not structure.is_directory else structure.init_file
+        defaults = TestDefaults(parent_defaults)
+        parser = self._get_parser(structure.extension)
         try:
-            suite, defaults = build_suite(source, datapath, defaults,
-                                          self.process_curdir)
+            if structure.is_directory:
+                suite = parser.parse_init_file(structure.init_file or source, defaults)
+            else:
+                suite = parser.parse_suite_file(source, defaults)
+                if not suite.tests:
+                    LOGGER.info("Data source '%s' has no tests or tasks." % source)
             self._validate_execution_mode(suite)
         except DataError as err:
             raise DataError("Parsing '%s' failed: %s" % (source, err.message))
@@ -143,68 +154,22 @@ class SuiteStructureParser(SuiteStructureVisitor):
                             "execution mode explicitly." % (this, that))
 
 
-def build_suite(source, datapath=None, parent_defaults=None,
-                process_curdir=True):
-    suite = TestSuite(name=format_name(source), source=source)
-    defaults = TestDefaults(parent_defaults)
-    if datapath:
-        model = get_model(datapath, data_only=True,
-                          process_curdir=process_curdir)
-        ErrorLogger(datapath).visit(model)
-        SettingsBuilder(suite, defaults).visit(model)
-        SuiteBuilder(suite, defaults).visit(model)
-        if not suite.tests:
-            LOGGER.info("Data source '%s' has no tests or tasks." % datapath)
-        suite.rpa = _get_rpa_mode(model)
-    return suite, defaults
+class ResourceFileBuilder(object):
 
+    def __init__(self, process_curdir=True):
+        self.process_curdir = process_curdir
 
-def _get_rpa_mode(data):
-    if not data:
-        return None
-    tasks = [s.tasks for s in data.sections if hasattr(s, 'tasks')]
-    if all(tasks) or not any(tasks):
-        return tasks[0] if tasks else None
-    raise DataError('One file cannot have both tests and tasks.')
+    def build(self, source):
+        LOGGER.info("Parsing resource file '%s'." % source)
+        resource = self._parse(source)
+        if resource.imports or resource.variables or resource.keywords:
+            LOGGER.info("Imported resource file '%s' (%d keywords)."
+                        % (source, len(resource.keywords)))
+        else:
+            LOGGER.warn("Imported resource file '%s' is empty." % source)
+        return resource
 
-
-def build_resource(model, source):
-    resource = ResourceFile(source=source)
-    if model.data_sections:
-        ErrorLogger(source).visit(model)
-        if model.has_tests:
-            raise DataError("Resource file '%s' cannot contain tests or tasks." %
-                            source)
-        ResourceBuilder(resource).visit(model)
-        LOGGER.info("Imported resource file '%s' (%d keywords)."
-                    % (source, len(resource.keywords)))
-    else:
-        LOGGER.warn("Imported resource file '%s' is empty." % source)
-    return resource
-
-
-def format_name(source):
-    def strip_possible_prefix_from_name(name):
-        return name.split('__', 1)[-1]
-
-    def format_name(name):
-        name = strip_possible_prefix_from_name(name)
-        name = name.replace('_', ' ').strip()
-        return name.title() if name.islower() else name
-
-    if source is None:
-        return None
-    if os.path.isdir(source):
-        basename = os.path.basename(source)
-    else:
-        basename = os.path.splitext(os.path.basename(source))[0]
-    return format_name(basename)
-
-
-class ErrorLogger(NodeVisitor):
-
-    def __init__(self, source):
-        self.source = source
-
-    def visit_Error(self, node):
-        LOGGER.error("Error in file '%s': %s" % (self.source, node.error))
+    def _parse(self, source):
+        if os.path.splitext(source)[1].lower() in ('.rst', '.rest'):
+            return RestParser(self.process_curdir).parse_resource_file(source)
+        return RobotParser(self.process_curdir).parse_resource_file(source)

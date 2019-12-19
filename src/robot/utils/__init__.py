@@ -75,3 +75,8 @@ from .text import (cut_long_message, format_assign_message,
                    get_console_length, getdoc, getshortdoc, pad_console_length,
                    rstrip, split_tags_from_doc, split_args_from_name_or_path)
 from .unic import prepr, unic
+
+
+def read_rest_data(rstfile):
+    from .restreader import read_rest_data
+    return read_rest_data(rstfile)

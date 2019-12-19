@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 from itertools import chain
-import os
 
 from robot.errors import DataError
 from robot.utils import get_error_message, FileReader
@@ -59,9 +58,6 @@ class BaseReader(object):
     def _read(self, source):
         try:
             with FileReader(source, accept_text=True) as reader:
-                if os.path.splitext(reader.name)[1].lower() in ('.rest', '.rst'):
-                    from ..restreader import read_robot_data
-                    return read_robot_data(reader)
                 return reader.read()
         except:
             raise DataError(get_error_message())

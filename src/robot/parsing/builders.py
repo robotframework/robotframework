@@ -21,20 +21,14 @@ from .model import (File, SettingSection, VariableSection, TestCaseSection,
                     get_statements)
 
 
-def get_model(source, data_only=False, process_curdir=False):
+def get_model(source, data_only=False, curdir=None):
     tokens = get_tokens(source, data_only)
-    return _build_model(get_statements(tokens, _get_curdir(source, process_curdir)))
+    return _build_model(get_statements(tokens, curdir))
 
 
-def get_resource_model(source, data_only=False, process_curdir=False):
+def get_resource_model(source, data_only=False, curdir=None):
     tokens = get_resource_tokens(source, data_only)
-    return _build_model(get_statements(tokens, _get_curdir(source, process_curdir)))
-
-
-def _get_curdir(source, process_curdir):
-    if not process_curdir:
-        return None
-    return os.path.dirname(source).replace('\\', '\\\\')
+    return _build_model(get_statements(tokens, curdir))
 
 
 def _build_model(statements):
