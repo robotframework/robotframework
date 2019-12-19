@@ -1,7 +1,7 @@
+import codecs
 import os
 import tempfile
 import unittest
-from codecs import BOM_UTF8
 from io import BytesIO, StringIO
 
 from robot.utils import FileReader, PY3
@@ -10,7 +10,7 @@ from robot.utils.asserts import assert_equal, assert_raises
 
 TEMPDIR = os.getenv('TEMPDIR') or tempfile.gettempdir()
 PATH = os.path.join(TEMPDIR, 'filereader.test')
-STRING = u'Hyv\xe4\xe4\nty\xf6t\xe4\nC\u043f\u0430\u0441\u0438\u0431\u043e'
+STRING = u'Hyv\xe4\xe4\nty\xf6t\xe4\nC\u043f\u0430\u0441\u0438\u0431\u043e\n'
 
 
 def assert_reader(reader, name=PATH):
@@ -29,7 +29,6 @@ def assert_closed(*files):
         assert_equal(f.closed, True)
 
 
-
 class TestReadFile(unittest.TestCase):
     BOM = b''
     created_files = set()
@@ -42,7 +41,7 @@ class TestReadFile(unittest.TestCase):
     def _create(cls, content=STRING, path=PATH, encoding='UTF-8'):
         with open(path, 'wb') as f:
             f.write(cls.BOM)
-            f.write(content.encode(encoding))
+            f.write(content.replace('\n', os.linesep).encode(encoding))
         cls.created_files.add(path)
 
     @classmethod
@@ -64,7 +63,7 @@ class TestReadFile(unittest.TestCase):
             assert_closed(reader.file)
 
     def test_open_text_file(self):
-        with open(PATH) as f:
+        with codecs.open(PATH, encoding='UTF-8') as f:
             with FileReader(f) as reader:
                 assert_reader(reader)
             assert_open(f, reader.file)
@@ -110,7 +109,7 @@ class TestReadFile(unittest.TestCase):
 
 
 class TestReadFileWithBom(TestReadFile):
-    BOM = BOM_UTF8
+    BOM = codecs.BOM_UTF8
 
 
 if __name__ == '__main__':

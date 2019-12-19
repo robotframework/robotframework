@@ -136,7 +136,7 @@ NOOP    No Operation
         (T.SEPARATOR, '    ', 5, 5),
         (T.EOS, '', 5, 9),
         (T.KEYWORD, 'No Operation', 5, 9),
-        (T.EOL, u'\n', 5, 21),
+        (T.EOL, '\n', 5, 21),
         (T.EOS, '', 5, 22)
     ]
     data_tokens = [

@@ -95,4 +95,6 @@ class FileReader(object):
             content = content.decode('UTF-8')
         if remove_bom and content.startswith(u'\ufeff'):
             content = content[1:]
+        if '\r\n' in content:
+            content = content.replace('\r\n', '\n')
         return content
