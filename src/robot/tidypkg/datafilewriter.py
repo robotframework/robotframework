@@ -16,7 +16,7 @@
 from robot.errors import DataError
 from robot.utils import file_writer
 
-from .transformers import Aligner, Cleaner, Formatter, SeparatorRemover
+from .transformers import Aligner, Cleaner, Formatter, SeparatorCleaner, PipeAdder, NewlineAdder
 
 
 class DataFileWriter(object):
@@ -39,8 +39,12 @@ class DataFileWriter(object):
         """
 
         with WritingContext(model, **self._options) as ctx:
-            SeparatorRemover().visit(model)
             Cleaner().visit(model)
+            NewlineAdder().visit(model)
+            if ctx.pipe_separated:
+                PipeAdder().visit(model)
+            else:
+                SeparatorCleaner(ctx).visit(model)
             Aligner(ctx).visit(model)
             Formatter(ctx, RowWriter(ctx)).visit(model)
 
@@ -112,24 +116,7 @@ class RowWriter(object):
 
     def __init__(self, ctx):
         self.output = ctx.output
-        self.pipes = ctx.pipe_separated
-        self.separator, self.indent_string = self.get_separator_and_indent(ctx)
 
-    def get_separator_and_indent(self, ctx):
-        if ctx.pipe_separated:
-            return ' | ', '   | '
-        separator = ' ' * ctx.txt_separating_spaces
-        return separator, separator
-
-    def write(self, tokens, indent):
-        indent = indent * self.indent_string
+    def write(self, tokens):
         values = [t.value for t in tokens]
-        row = indent + self.separator.join(values)
-        if self.pipes:
-            row = '| ' + row + ' |'
-        else:
-            row = row.rstrip()
-        self.output.write(row)
-
-    def write_newline(self):
-        self.output.write('\n')
+        self.output.write(''.join(values).rstrip(' '))

@@ -77,15 +77,12 @@ class Statement(ast.AST):
 
     @property
     def lines(self):
-        if self.type in Token.SETTING_TOKENS and len(self.tokens) == 1:
-            return
         line = []
         for token in self.tokens:
-            if token.type != Token.CONTINUATION:
-                line.append(token)
-            else:
+            line.append(token)
+            if token.type == Token.EOL:
                 yield line
-                line = [token]
+                line = []
         if line:
             yield line
 
@@ -424,4 +421,4 @@ class Error(Statement):
 
 
 class EmptyLine(Statement):
-    pass
+    type = Token.EOL

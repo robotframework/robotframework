@@ -90,6 +90,8 @@ class TestCaseSectionBuilder(SectionBuilder):
 
     def statement(self, statement):
         if statement.type == Token.EOL:
+            if self.model.body.items:
+                self.model.body.add(statement)
             return self
         model = TestCase(statement)
         self.model.body.add(model)
@@ -100,6 +102,8 @@ class KeywordSectionBuilder(SectionBuilder):
 
     def statement(self, statement):
         if statement.type == Token.EOL:
+            if self.model.body.items:
+                self.model.body.add(statement)
             return self
         model = Keyword(statement)
         self.model.body.add(model)
