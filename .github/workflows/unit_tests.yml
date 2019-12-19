@@ -27,7 +27,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
-
+      - name: Set encoding as default in Windows
+        run: chcp 850
+        if: runner.os == 'Windows'
       - name: Run unit tests
         run: python utest/run.py -v
 
@@ -60,7 +62,8 @@ jobs:
           choco install wget -y --no-progress
           wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
           java -jar jytinst.jar -s -d jython/
-      
+      - name: Set encoding as default in Windows
+        run: chcp 850
       - name: Run unit tests
         run: jython/bin/jython utest/run.py -v
 
@@ -82,6 +85,7 @@ jobs:
           choco install ironpython -y --no-progress
           ipy -m ensurepip --user
           ipy -m pip install --user --upgrade pip
-      
+      - name: Set encoding as default in Windows
+        run: chcp 850
       - name: Run unit tests
         run: ipy utest/run.py -v
