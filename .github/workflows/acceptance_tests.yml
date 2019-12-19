@@ -1,0 +1,147 @@
+name: Acceptance tests
+
+on:
+  pull_request:
+  schedule:
+    - cron: '0 */12 * * *'
+
+jobs:
+  test_using_builtin_python:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'ubuntu-16.04', 'ubuntu-18.04', 'macos-latest', 'windows-latest' ]
+        python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', 'pypy2', 'pypy3' ]
+        include:
+          - os: ubuntu-16.04
+            base_python: '`which python`'
+            atest_python: /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
+            atest_extra_params: '--exclude require-screenshot'
+          - os: ubuntu-18.04
+            base_python: '`which python`'
+            atest_python: /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
+            atest_extra_params: '--exclude require-screenshot'
+          - os: windows-latest
+            base_python: (get-command python.exe).Path
+            atest_python: C:\hostedtoolcache\windows\Python\3.6.8\x64\python
+          - os: macos-latest
+            base_python: '`which python`'
+            atest_python: /Users/runner/hostedtoolcache/Python/3.6.9/x64/python
+        exclude:
+          - os: windows-latest
+            python-version: 'pypy2'
+          - os: windows-latest
+            python-version: 'pypy3'
+
+    runs-on: ${{ matrix.os }}
+
+    name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: 'x64'
+
+      - name: Install Ubuntu PyPy dependencies
+        run: sudo apt-get -y -q install libxslt-dev libxml2-dev
+        if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
+
+      - name: Run acceptance tests
+        run: |
+          python -m pip install -r atest/requirements.txt
+          ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci ${{ matrix.atest_extra_params }} atest/robot
+
+      - name: Archive acceptances test results
+        uses: actions/upload-artifact@v1
+        with:
+          name: acceptances-test-results-${{ matrix.python-version }}-${{ matrix.os }}
+          path: atest/results
+        if: failure()
+  
+  test_using_jython:
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ '1.7', '1.8' ]
+        os: [ 'windows-latest', 'windows-2016' ]
+        jython-version: [ '2.7.2b2', '2.7.1', '2.7.0' ]
+        exclude:
+          - java: '1.7'
+            jython-version: '2.7.2b2'
+
+    runs-on: ${{ matrix.os }}
+
+    name: Jython (Java ${{ matrix.java }}) ${{ matrix.jython-version }} on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6.x'
+          architecture: 'x64'
+
+      - name: Setup Java ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+          architecture: 'x64'
+
+      - name: Setup Jython ${{ matrix.jython-version }}
+        run: |
+          choco install wget -y --no-progress
+          wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
+          java -jar jytinst.jar -s -d jython/
+      
+      - name: Run acceptance tests
+        run: |
+          jython/bin/jython -m pip install -r atest/requirements.txt
+          python atest/run.py jython/bin/jython --exclude no-ci atest/robot
+
+      - name: Archive acceptances test results
+        uses: actions/upload-artifact@v1
+        with:
+          name: acceptances-test-results-jython-${{ matrix.jython-version }}-${{ matrix.os }}-java${{ matrix.java }}
+          path: atest/results
+        if: failure()
+
+  test_using_ironpython:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'windows-latest', 'windows-2016' ]
+
+    runs-on: ${{ matrix.os }}
+
+    name: IronPython on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6.x'
+          architecture: 'x64'
+
+      - name: Setup IronPython
+        run: |
+          choco install ironpython -y --no-progress
+          ipy -m ensurepip --user
+          ipy -m pip install --user --upgrade pip
+      
+      - name: Run acceptance tests
+        run: |
+          ipy -m pip install --user -r atest/requirements.txt
+          python atest/run.py ipy --exclude no-ci atest/robot
+
+      - name: Archive acceptances test results
+        uses: actions/upload-artifact@v1
+        with:
+          name: acceptances-test-results-ironpython-${{ matrix.os }}
+          path: atest/results
+        if: failure()
