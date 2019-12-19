@@ -1,9 +1,6 @@
 name: Acceptance tests
 
-on:
-  pull_request:
-  schedule:
-    - cron: '0 */12 * * *'
+on: [push, pull_request]
 
 jobs:
   test_using_builtin_python:
@@ -54,6 +51,13 @@ jobs:
         run: |
           python -m pip install -r atest/requirements.txt
           ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci ${{ matrix.atest_extra_params }} atest/robot
+        if: runner.os != 'Windows'
+        
+      - name: Run acceptance tests with specific codepage
+        run: |
+          python -m pip install -r atest/requirements.txt
+          chcp 850; ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci ${{ matrix.atest_extra_params }} atest/robot
+        if: runner.os == 'Windows'
 
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v1
@@ -100,7 +104,7 @@ jobs:
       - name: Run acceptance tests
         run: |
           jython/bin/jython -m pip install -r atest/requirements.txt
-          python atest/run.py jython/bin/jython --exclude no-ci atest/robot
+          chcp 850; python atest/run.py jython/bin/jython --exclude no-ci atest/robot
 
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v1
@@ -137,7 +141,7 @@ jobs:
       - name: Run acceptance tests
         run: |
           ipy -m pip install --user -r atest/requirements.txt
-          python atest/run.py ipy --exclude no-ci atest/robot
+          chcp 850; python atest/run.py ipy --exclude no-ci atest/robot
 
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v1

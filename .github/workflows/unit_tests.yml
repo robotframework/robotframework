@@ -27,7 +27,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
-
       - name: Run unit tests
         run: python utest/run.py -v
 
@@ -60,9 +59,8 @@ jobs:
           choco install wget -y --no-progress
           wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
           java -jar jytinst.jar -s -d jython/
-      
       - name: Run unit tests
-        run: jython/bin/jython utest/run.py -v
+        run: chcp 850; jython/bin/jython utest/run.py -v
 
   test_using_ironpython:
 
@@ -82,6 +80,5 @@ jobs:
           choco install ironpython -y --no-progress
           ipy -m ensurepip --user
           ipy -m pip install --user --upgrade pip
-      
       - name: Run unit tests
-        run: ipy utest/run.py -v
+        run: chcp 850; ipy utest/run.py -v
