@@ -51,22 +51,24 @@ jobs:
         run: |
           python -m pip install -r atest/requirements.txt
           ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci ${{ matrix.atest_extra_params }} atest/robot
-          rm atest/results/output.xml
         if: runner.os != 'Windows'
         
       - name: Run acceptance tests with specific codepage
         run: |
           python -m pip install -r atest/requirements.txt
           chcp 850; ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci ${{ matrix.atest_extra_params }} atest/robot
-          rm atest/results/output.xml
         if: runner.os == 'Windows'
+
+      - name: Cleanup results
+        run: rm atest/results/output.xml
+        if: job.status == 'failure'
 
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v1
         with:
           name: acceptances-test-results-${{ matrix.python-version }}-${{ matrix.os }}
           path: atest/results
-        if: failure()
+        if: job.status == 'failure'
   
   test_using_jython:
     strategy:
@@ -109,12 +111,16 @@ jobs:
           chcp 850; python atest/run.py jython/bin/jython --exclude no-ci atest/robot
           rm atest/results/output.xml
 
+      - name: Cleanup results
+        run: rm atest/results/output.xml
+        if: job.status == 'failure'
+
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v1
         with:
           name: acceptances-test-results-jython-${{ matrix.jython-version }}-${{ matrix.os }}-java${{ matrix.java }}
           path: atest/results
-        if: failure()
+        if: job.status == 'failure'
 
   test_using_ironpython:
 
@@ -145,11 +151,14 @@ jobs:
         run: |
           ipy -m pip install --user -r atest/requirements.txt
           chcp 850; python atest/run.py ipy --exclude no-ci atest/robot
-          rm atest/results/output.xml
+
+      - name: Cleanup results
+        run: rm atest/results/output.xml
+        if: job.status == 'failure'
 
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v1
         with:
           name: acceptances-test-results-ironpython-${{ matrix.os }}
           path: atest/results
-        if: failure()
+        if: job.status == 'failure'
