@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ 'ubuntu-16.04', 'ubuntu-18.04', 'macos-latest', 'windows-latest' ]
+        os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
         python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', 'pypy2', 'pypy3' ]
         exclude:
           - os: windows-latest
@@ -27,20 +27,29 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
-      - name: Run unit tests
-        run: python utest/run.py -v
+
+      - name: Run unit tests with coverage
+        run: |
+          python -m pip install coverage
+          python -m coverage run --branch utest/run.py -v
+          python -m coverage html -i -d cov_html
+
+      - name: Archive coverage results
+        uses: actions/upload-artifact@v1
+        with:
+          name: cov-ut-${{ matrix.python-version }}-${{ matrix.os }}
+          path: cov_html
 
   test_using_jython:
     strategy:
       fail-fast: false
       matrix:
         java: [ '1.7', '1.8' ]
-        os: [ 'windows-latest', 'windows-2016' ]
-        jython-version: [ '2.7.2b2', '2.7.1', '2.7.0' ]
-        exclude:
-          - java: '1.7'
-            jython-version: '2.7.2b2'
-
+        os: [ 'ubuntu-latest', 'windows-latest' ]
+        jython-version: [ '2.7.1' ]
+        include:
+          - os: windows-latest
+            set_codepage: chcp 850
 
     runs-on: ${{ matrix.os }}
 
@@ -53,32 +62,41 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           architecture: 'x64'
+ 
+      - name: Install wget
+        run: |
+          choco install wget -y --no-progress
+        if: runner.os == 'Windows'
 
       - name: Setup Jython ${{ matrix.jython-version }}
         run: |
-          choco install wget -y --no-progress
           wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
           java -jar jytinst.jar -s -d jython/
+
       - name: Run unit tests
-        run: chcp 850; jython/bin/jython utest/run.py -v
-
-  test_using_ironpython:
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ 'windows-latest', 'windows-2016' ]
-
-    runs-on: ${{ matrix.os }}
-
-    name: IronPython on ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v1
-
-      - name: Setup IronPython
         run: |
-          choco install ironpython -y --no-progress
-          ipy -m ensurepip --user
-          ipy -m pip install --user --upgrade pip
-      - name: Run unit tests
-        run: chcp 850; ipy utest/run.py -v
+          ${{ matrix.set_codepage }}
+          jython/bin/jython utest/run.py -v
+
+#  test_using_ironpython:
+#
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        os: [ 'windows-latest' ]
+#        ironpython-version: [ '2.7.9', '2.7.10-alpha0' ]
+#
+#    runs-on: ${{ matrix.os }}
+#
+#    name: IronPython ${{ matrix.ironpython-version }} on ${{ matrix.os }}
+#    steps:
+#      - uses: actions/checkout@v1
+#
+#      - name: Setup IronPython ${{ matrix.ironpython-version }}
+#        run: |
+#          choco install ironpython -y --no-progress --version ${{ matrix.ironpython-version }}
+#          ipy -m ensurepip --user
+#          ipy -m pip install --user --upgrade pip
+#
+#      - name: Run unit tests
+#        run: chcp 850; ipy utest/run.py -v

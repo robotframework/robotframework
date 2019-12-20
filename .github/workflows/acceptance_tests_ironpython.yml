@@ -1,0 +1,50 @@
+name: Acceptance tests (IronPython)
+
+on: [push, pull_request]
+
+jobs:
+  test_using_ironpython:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'windows-latest' ]
+        ironpython-version: [ '2.7.9', '2.7.10-alpha0' ]
+
+    runs-on: ${{ matrix.os }}
+
+    name: IronPython ${{ matrix.ironpython-version }} on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6.x'
+          architecture: 'x64'
+
+      - name: Setup IronPython ${{ matrix.ironpython-version }}
+        run: |
+          choco install ironpython -y --no-progress --version ${{ matrix.ironpython-version }}
+          ipy -m ensurepip --user
+      
+      - name: Run acceptance tests
+        run: |
+          ipy -m pip install --user -r atest/requirements.txt
+          chcp 850; python atest/run.py ipy --exclude no-ci atest/robot
+
+      - name: Delete output.xml (on Win)
+        run: |
+          Get-ChildItem atest/results -Include output.xml -Recurse | Remove-Item
+        if: always() && job.status == 'failure' && runner.os == 'Windows'
+      - name: Delete output.xml (on Unix-like)
+        run: |
+          find atest/results -type f -name 'output.xml' -exec rm {} +
+        if: always() && job.status == 'failure' && runner.os != 'Windows'
+
+      - name: Archive acceptances test results
+        uses: actions/upload-artifact@v1
+        with:
+          name: at-results-ipy-${{ matrix.ironpython-version }}-${{ matrix.os }}
+          path: atest/results
+        if: always() && job.status == 'failure'
