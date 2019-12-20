@@ -1,0 +1,61 @@
+name: Acceptance tests
+
+on: [push, pull_request]
+
+jobs:
+  test_using_jython:
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ '1.7', '1.8' ]
+        os: [ 'windows-latest' ]
+        jython-version: [ '2.7.2b2', '2.7.1', '2.7.0' ]
+        exclude:
+          - java: '1.7'
+            jython-version: '2.7.2b2'
+
+    runs-on: ${{ matrix.os }}
+
+    name: Jython (Java ${{ matrix.java }}) ${{ matrix.jython-version }} on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6.x'
+          architecture: 'x64'
+
+      - name: Setup Java ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+          architecture: 'x64'
+
+      - name: Setup Jython ${{ matrix.jython-version }}
+        run: |
+          choco install wget -y --no-progress
+          wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
+          java -jar jytinst.jar -s -d jython/
+      
+      - name: Run acceptance tests
+        run: |
+          jython/bin/jython -m pip install -r atest/requirements.txt
+          chcp 850
+          python atest/run.py jython/bin/jython --exclude no-ci atest/robot
+
+      - name: Delete output.xml (on Win)
+        run: |
+          Get-ChildItem atest/results -Include output.xml -Recurse | Remove-Item
+        if: always() && job.status == 'failure' && runner.os == 'Windows'
+      - name: Delete output.xml (on Unix-like)
+        run: |
+          find atest/results -type f -name 'output.xml' -exec rm {} +
+        if: always() && job.status == 'failure' && runner.os != 'Windows'
+
+      - name: Archive acceptances test results
+        uses: actions/upload-artifact@v1
+        with:
+          name: acceptances-test-results-jython-${{ matrix.jython-version }}-${{ matrix.os }}-java${{ matrix.java }}
+          path: atest/results
+        if: always() && job.status == 'failure'
