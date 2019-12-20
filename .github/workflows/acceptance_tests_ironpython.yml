@@ -1,4 +1,4 @@
-name: Acceptance tests
+name: Acceptance tests (IronPython)
 
 on: [push, pull_request]
 

@@ -1,4 +1,4 @@
-name: Acceptance tests
+name: Acceptance tests (CPython + PyPy)
 
 on: [push, pull_request]
 

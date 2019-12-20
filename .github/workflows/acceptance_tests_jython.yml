@@ -1,4 +1,4 @@
-name: Acceptance tests
+name: Acceptance tests (Jython)
 
 on: [push, pull_request]
 
