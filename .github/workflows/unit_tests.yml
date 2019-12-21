@@ -77,25 +77,25 @@ jobs:
       - name: Run unit tests
         run: ${{ matrix.set_codepage }} jython/bin/jython utest/run.py -v
 
-  test_using_ironpython:
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ 'windows-latest' ]
-        ironpython-version: [ '2.7.9', '2.7.10-alpha0' ]
-
-    runs-on: ${{ matrix.os }}
-
-    name: IronPython ${{ matrix.ironpython-version }} on ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v1
-
-      - name: Setup IronPython ${{ matrix.ironpython-version }}
-        run: |
-          choco install ironpython -y --no-progress --version ${{ matrix.ironpython-version }}
-          ipy -m ensurepip --user
-          ipy -m pip install --user --upgrade pip
-
-      - name: Run unit tests
-        run: chcp 850; ipy utest/run.py -v
+#  test_using_ironpython:
+#
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        os: [ 'windows-latest' ]
+#        ironpython-version: [ '2.7.9', '2.7.10-alpha0' ]
+#
+#    runs-on: ${{ matrix.os }}
+#
+#    name: IronPython ${{ matrix.ironpython-version }} on ${{ matrix.os }}
+#    steps:
+#      - uses: actions/checkout@v1
+#
+#      - name: Setup IronPython ${{ matrix.ironpython-version }}
+#        run: |
+#          choco install ironpython -y --no-progress --version ${{ matrix.ironpython-version }}
+#          ipy -m ensurepip --user
+#          ipy -m pip install --user --upgrade pip
+#
+#      - name: Run unit tests
+#        run: chcp 850; ipy utest/run.py -v
