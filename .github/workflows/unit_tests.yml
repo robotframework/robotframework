@@ -79,7 +79,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ 'windows-latest' ]
-        ironpython-version: [ '2.7.8.1', '2.7.9', '2.7.10-alpha0' ]
+        ironpython-version: [ '2.7.9', '2.7.10-alpha0' ]
 
     runs-on: ${{ matrix.os }}
 
