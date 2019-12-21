@@ -41,12 +41,9 @@ Create File With System Encoding
     Verify File    ${TESTFILE}    Nön-ÄSCÏÏ Cöntënt    encoding=${SYSTEM_ENCODING}
 
 Create File With Console Encoding
-    # Avoid content that the console encoding cannot handle by encoding
-    # to bytes with an error handler and then decoding back to string.
-    ${content} =    Encode string to bytes    Nön-ÄSCÏÏ Cöntënt    ${CONSOLE_ENCODING}    errors=ignore
-    ${content} =    Decode bytes to string    ${content}    ${CONSOLE_ENCODING}
-    Create File    ${TESTFILE}    ${content}    encoding=CONSole
-    Verify File    ${TESTFILE}    ${content}    encoding=${CONSOLE_ENCODING}
+    # Cannot test with non-ASCII content as console encoding on Windows may not support it
+    Create File    ${TESTFILE}    Plain old ASCII    encoding=CONSole
+    Verify File    ${TESTFILE}    Plain old ASCII    encoding=${CONSOLE_ENCODING}
 
 Create File With Non-ASCII Name
     [Template]    Create and Verify File
