@@ -46,11 +46,7 @@ jobs:
       matrix:
         java: [ '1.7', '1.8' ]
         os: [ 'windows-latest' ]
-        jython-version: [ '2.7.2b2', '2.7.1', '2.7.0' ]
-        exclude:
-          - java: '1.7'
-            jython-version: '2.7.2b2'
-
+        jython-version: [ '2.7.1' ]
 
     runs-on: ${{ matrix.os }}
 
