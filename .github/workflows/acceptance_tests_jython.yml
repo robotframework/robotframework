@@ -8,8 +8,12 @@ jobs:
       fail-fast: false
       matrix:
         java: [ '1.7', '1.8' ]
-        os: [ 'windows-latest' ]
+        os: [ 'ubuntu-latest', 'windows-latest' ]
         jython-version: [ '2.7.1' ]
+
+        include:
+          - os: windows-latest
+            set_codepage: chcp 850;
 
     runs-on: ${{ matrix.os }}
 
@@ -29,16 +33,20 @@ jobs:
           java-version: ${{ matrix.java }}
           architecture: 'x64'
 
-      - name: Setup Jython ${{ matrix.jython-version }}
+      - name: Install wget
         run: |
           choco install wget -y --no-progress
+        if: runner.os == 'Windows'
+
+      - name: Setup Jython ${{ matrix.jython-version }}
+        run: |
           wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
           java -jar jytinst.jar -s -d jython/
       
       - name: Run acceptance tests
         run: |
           jython/bin/jython -m pip install -r atest/requirements.txt
-          chcp 850; python atest/run.py jython/bin/jython --exclude no-ci atest/robot
+          ${{ matrix.set_codepage }} python atest/run.py jython/bin/jython --exclude no-ci atest/robot
 
       - name: Delete output.xml (on Win)
         run: |
