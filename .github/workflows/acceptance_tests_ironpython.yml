@@ -13,7 +13,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    name: IronPython on ${{ matrix.os }}
+    name: IronPython ${{ matrix.ironpython-version }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
 
@@ -46,6 +46,6 @@ jobs:
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v1
         with:
-          name: acceptances-test-results-ironpython-${{ matrix.os }}
+          name: at-results-ipy-${{ matrix.ironpython-version }}-${{ matrix.os }}
           path: atest/results
         if: always() && job.status == 'failure'

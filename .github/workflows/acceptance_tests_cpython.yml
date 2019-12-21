@@ -65,6 +65,6 @@ jobs:
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v1
         with:
-          name: acceptances-test-results-${{ matrix.python-version }}-${{ matrix.os }}
+          name: at-results-${{ matrix.python-version }}-${{ matrix.os }}
           path: atest/results
         if: always() && job.status == 'failure'

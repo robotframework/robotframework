@@ -55,6 +55,6 @@ jobs:
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v1
         with:
-          name: acceptances-test-results-jython-${{ matrix.jython-version }}-${{ matrix.os }}-java${{ matrix.java }}
+          name: at-results-jython-${{ matrix.jython-version }}-${{ matrix.os }}-java${{ matrix.java }}
           path: atest/results
         if: always() && job.status == 'failure'
