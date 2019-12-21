@@ -31,8 +31,7 @@ jobs:
       - name: Run acceptance tests
         run: |
           ipy -m pip install --user -r atest/requirements.txt
-          chcp 850
-          python atest/run.py ipy --exclude no-ci atest/robot
+          chcp 850; python atest/run.py ipy --exclude no-ci atest/robot
 
       - name: Delete output.xml (on Win)
         run: |

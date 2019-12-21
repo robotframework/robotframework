@@ -51,8 +51,7 @@ jobs:
       - name: Run acceptance tests
         run: |
           python -m pip install -r atest/requirements.txt
-          ${{ matrix.set_codepage }}
-          ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci ${{ matrix.atest_extra_params }} atest/robot
+          ${{ matrix.set_codepage }}; ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci ${{ matrix.atest_extra_params }} atest/robot
 
       - name: Delete output.xml (on Win)
         run: |

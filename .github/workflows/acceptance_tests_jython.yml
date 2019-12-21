@@ -41,8 +41,7 @@ jobs:
       - name: Run acceptance tests
         run: |
           jython/bin/jython -m pip install -r atest/requirements.txt
-          chcp 850
-          python atest/run.py jython/bin/jython --exclude no-ci atest/robot
+          chcp 850; python atest/run.py jython/bin/jython --exclude no-ci atest/robot
 
       - name: Delete output.xml (on Win)
         run: |
