@@ -8,14 +8,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ 'ubuntu-16.04', 'ubuntu-18.04', 'macos-latest', 'windows-latest' ]
+        os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
         python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', 'pypy2', 'pypy3' ]
         include:
-          - os: ubuntu-16.04
-            base_python: '`which python`'
-            atest_python: /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
-            atest_extra_params: '--exclude require-screenshot'
-          - os: ubuntu-18.04
+          - os: ubuntu-latest
             base_python: '`which python`'
             atest_python: /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
             atest_extra_params: '--exclude require-screenshot'
