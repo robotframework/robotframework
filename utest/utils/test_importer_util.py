@@ -8,7 +8,7 @@ import re
 from os.path import basename, dirname, exists, join, normpath
 
 from robot.errors import DataError
-from robot.utils import abspath, JYTHON, WINDOWS, PY3, unicode
+from robot.utils import abspath, JYTHON, WINDOWS, PY3, PY_VERSION, unicode
 from robot.utils.importer import Importer, ByPathImporter
 from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
                                  assert_raises_with_msg)
@@ -372,14 +372,16 @@ class TestErrorDetails(unittest.TestCase):
         for line in lines[1:]:
             assert_true(line.startswith('  '))
 
-    def test_non_ascii_bytes_in_pythonpath(self):
-        sys.path.append('hyv\xe4')
-        try:
-            error = self._failing_import('NoneExisting')
-        finally:
-            sys.path.pop()
-        last_line = self._get_pythonpath(error).splitlines()[-1].strip()
-        assert_true(last_line.startswith('hyv'))
+    if not (JYTHON and PY_VERSION > (2, 7, 0)):
+
+        def test_non_ascii_bytes_in_pythonpath(self):
+            sys.path.append('hyv\xe4')
+            try:
+                error = self._failing_import('NoneExisting')
+            finally:
+                sys.path.pop()
+            last_line = self._get_pythonpath(error).splitlines()[-1].strip()
+            assert_true(last_line.startswith('hyv'))
 
     if JYTHON:
 
