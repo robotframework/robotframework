@@ -9,6 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ 'windows-latest' ]
+        ironpython-version: [ '2.7.9', '2.7.10-alpha0' ]
 
     runs-on: ${{ matrix.os }}
 
@@ -22,9 +23,9 @@ jobs:
           python-version: '3.6.x'
           architecture: 'x64'
 
-      - name: Setup IronPython
+      - name: Setup IronPython ${{ matrix.ironpython-version }}
         run: |
-          choco install ironpython -y --no-progress
+          choco install ironpython -y --no-progress --version ${{ matrix.ironpython-version }}
           ipy -m ensurepip --user
           ipy -m pip install --user --upgrade pip
       
