@@ -27,8 +27,18 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
-      - name: Run unit tests
-        run: python utest/run.py -v
+
+      - name: Run unit tests with coverage
+        run: |
+          python -m pip install coverage
+          python -m coverage run --branch utest/run.py -v
+          python -m coverage html -i -d cov_html
+
+      - name: Archive coverage results
+        uses: actions/upload-artifact@v1
+        with:
+          name: cov-ut-${{ matrix.python-version }}-${{ matrix.os }}
+          path: cov_html
 
   test_using_jython:
     strategy:
