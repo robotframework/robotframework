@@ -69,6 +69,7 @@ jobs:
           choco install wget -y --no-progress
           wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
           java -jar jytinst.jar -s -d jython/
+
       - name: Run unit tests
         run: chcp 850; jython/bin/jython utest/run.py -v
 
@@ -78,17 +79,19 @@ jobs:
       fail-fast: false
       matrix:
         os: [ 'windows-latest' ]
+        ironpython-version: [ '2.7.8', '2.7.9', '2.7.10-alpha0' ]
 
     runs-on: ${{ matrix.os }}
 
-    name: IronPython on ${{ matrix.os }}
+    name: IronPython ${{ matrix.ironpython-version }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
 
-      - name: Setup IronPython
+      - name: Setup IronPython ${{ matrix.ironpython-version }}
         run: |
-          choco install ironpython -y --no-progress
+          choco install ironpython -y --no-progress --version ${{ matrix.ironpython-version }}
           ipy -m ensurepip --user
           ipy -m pip install --user --upgrade pip
+
       - name: Run unit tests
         run: chcp 850; ipy utest/run.py -v
