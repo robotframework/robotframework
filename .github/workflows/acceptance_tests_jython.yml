@@ -16,9 +16,11 @@ jobs:
             jython_dir: ${Env:GITHUB_WORKSPACE}/jython
             jython_cmd: . "${Env:GITHUB_WORKSPACE}/jython/bin/jython"
             set_codepage: chcp 850
+            set_jython_env: ${Env:JYTHON_HOME}="${Env:GITHUB_WORKSPACE}/jython"; ${Env:CLASSPATH}="${Env:JAVA_HOME}/lib/tools.jar";
           - os: ubuntu-latest
             jython_dir: $GITHUB_WORKSPACE/jython
             jython_cmd: $GITHUB_WORKSPACE/jython/bin/jython
+            set_jython_env: export JYTHON_HOME=$GITHUB_WORKSPACE/jython; export CLASSPATH=$JAVA_HOME/lib/tools.jar;
 
     runs-on: ${{ matrix.os }}
 
@@ -50,6 +52,7 @@ jobs:
       
       - name: Run acceptance tests
         run: |
+          ${{ matrix.set_jython_env }}
           ${{ matrix.jython_cmd }} -m pip install -r atest/requirements.txt
           ${{ matrix.set_codepage }}
           python atest/run.py ${{ matrix.jython_dir }}/bin/jython --exclude no-ci atest/robot
