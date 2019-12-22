@@ -49,8 +49,7 @@ jobs:
         jython-version: [ '2.7.1' ]
         include:
           - os: windows-latest
-            set_codepage: chcp 850;
-
+            set_codepage: chcp 850
 
     runs-on: ${{ matrix.os }}
 
@@ -75,7 +74,9 @@ jobs:
           java -jar jytinst.jar -s -d jython/
 
       - name: Run unit tests
-        run: ${{ matrix.set_codepage }} jython/bin/jython utest/run.py -v
+        run: |
+          ${{ matrix.set_codepage }}
+          jython/bin/jython utest/run.py -v
 
 #  test_using_ironpython:
 #
