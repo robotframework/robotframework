@@ -13,7 +13,12 @@ jobs:
 
         include:
           - os: windows-latest
-            set_codepage: chcp 850;
+            jython_dir: ${Env:GITHUB_WORKSPACE}/jython
+            jython_cmd: . "${Env:GITHUB_WORKSPACE}/jython/bin/jython"
+            set_codepage: chcp 850
+          - os: ubuntu-latest
+            jython_dir: $GITHUB_WORKSPACE/jython
+            jython_cmd: $GITHUB_WORKSPACE/jython/bin/jython
 
     runs-on: ${{ matrix.os }}
 
@@ -41,12 +46,13 @@ jobs:
       - name: Setup Jython ${{ matrix.jython-version }}
         run: |
           wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
-          java -jar jytinst.jar -s -d jython/
+          java -jar jytinst.jar -s -d ${{ matrix.jython_dir }}
       
       - name: Run acceptance tests
         run: |
-          jython/bin/jython -m pip install -r atest/requirements.txt
-          ${{ matrix.set_codepage }} python atest/run.py jython/bin/jython --exclude no-ci atest/robot
+          ${{ matrix.jython_cmd }} -m pip install -r atest/requirements.txt
+          ${{ matrix.set_codepage }}
+          python atest/run.py ${{ matrix.jython_dir }}/bin/jython --exclude no-ci atest/robot
 
       - name: Delete output.xml (on Win)
         run: |
