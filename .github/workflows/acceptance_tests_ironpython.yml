@@ -27,7 +27,6 @@ jobs:
         run: |
           choco install ironpython -y --no-progress --version ${{ matrix.ironpython-version }}
           ipy -m ensurepip --user
-          ipy -m pip install --user --upgrade pip
       
       - name: Run acceptance tests
         run: |
