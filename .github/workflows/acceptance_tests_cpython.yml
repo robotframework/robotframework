@@ -14,7 +14,7 @@ jobs:
           - os: ubuntu-latest
             base_python: '`which python`'
             atest_python: /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
-            set_display: export DISPLAY=:99.0; Xvfb :99 -ac & sleep 3
+            set_display: export DISPLAY=:99.0; sudo killall -9 Xvfb; Xvfb :99.0 -ac & sleep 3
           - os: windows-latest
             base_python: (get-command python.exe).Path
             atest_python: C:\hostedtoolcache\windows\Python\3.6.8\x64\python
@@ -45,7 +45,7 @@ jobs:
         if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
 
       - name: Install XVFB
-        run: sudo apt-get install xvfb
+        run: sudo apt-get -y -q install xvfb
         if: contains(matrix.os, 'ubuntu')
 
       - name: Run acceptance tests
@@ -54,10 +54,6 @@ jobs:
           ${{ matrix.set_codepage }}
           ${{ matrix.set_display }}
           ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci atest/robot
-
-      - name: Kill XVFB
-        run: killall -9 Xvfb
-        if: always() && contains(matrix.os, 'ubuntu')
 
       - name: Delete output.xml (on Win)
         run: |
