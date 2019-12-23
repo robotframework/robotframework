@@ -32,7 +32,7 @@ jobs:
 
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: Setup python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
