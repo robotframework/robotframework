@@ -13,8 +13,7 @@ jobs:
         include:
           - os: ubuntu-latest
             base_python: '`which python`'
-            atest_python: /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
-            atest_extra_params: '--exclude require-screenshot'
+            atest_python: xvfb-run --auto-servernum /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
           - os: windows-latest
             base_python: (get-command python.exe).Path
             atest_python: C:\hostedtoolcache\windows\Python\3.6.8\x64\python
@@ -43,6 +42,10 @@ jobs:
       - name: Install Ubuntu PyPy dependencies
         run: sudo apt-get -y -q install libxslt-dev libxml2-dev
         if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
+
+      - name: Install XVFB
+        run: sudo apt-get install xvfb
+        if: contains(matrix.os, 'ubuntu')
 
       - name: Run acceptance tests
         run: |
