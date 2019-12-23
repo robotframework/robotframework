@@ -12,8 +12,8 @@ jobs:
         python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', 'pypy2', 'pypy3' ]
         include:
           - os: ubuntu-latest
-            base_python: '`which python`'
-            atest_python: xvfb-run --auto-servernum /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
+            base_python: '"xvfb-run --auto-servernum `which python`"'
+            atest_python: /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
           - os: windows-latest
             base_python: (get-command python.exe).Path
             atest_python: C:\hostedtoolcache\windows\Python\3.6.8\x64\python
