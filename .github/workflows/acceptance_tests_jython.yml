@@ -1,0 +1,74 @@
+name: Acceptance tests (Jython)
+
+on: [push, pull_request]
+
+jobs:
+  test_using_jython:
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ '1.7', '1.8' ]
+        os: [ 'ubuntu-latest', 'windows-latest' ]
+        jython-version: [ '2.7.1' ]
+
+        include:
+          - os: windows-latest
+            jython_dir: ${Env:GITHUB_WORKSPACE}/jython
+            jython_cmd: . "${Env:GITHUB_WORKSPACE}/jython/bin/jython"
+            set_codepage: chcp 850
+            set_jython_env: ${Env:JYTHON_HOME}="${Env:GITHUB_WORKSPACE}/jython"; ${Env:CLASSPATH}="${Env:JAVA_HOME}/lib/tools.jar";
+          - os: ubuntu-latest
+            jython_dir: $GITHUB_WORKSPACE/jython
+            jython_cmd: $GITHUB_WORKSPACE/jython/bin/jython
+            set_jython_env: export JYTHON_HOME=$GITHUB_WORKSPACE/jython; export CLASSPATH=$JAVA_HOME/lib/tools.jar;
+
+    runs-on: ${{ matrix.os }}
+
+    name: Jython (Java ${{ matrix.java }}) ${{ matrix.jython-version }} on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6.x'
+          architecture: 'x64'
+
+      - name: Setup Java ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+          architecture: 'x64'
+
+      - name: Install wget
+        run: |
+          choco install wget -y --no-progress
+        if: runner.os == 'Windows'
+
+      - name: Setup Jython ${{ matrix.jython-version }}
+        run: |
+          wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
+          java -jar jytinst.jar -s -d ${{ matrix.jython_dir }}
+      
+      - name: Run acceptance tests
+        run: |
+          ${{ matrix.set_jython_env }}
+          ${{ matrix.jython_cmd }} -m pip install -r atest/requirements.txt
+          ${{ matrix.set_codepage }}
+          python atest/run.py ${{ matrix.jython_dir }}/bin/jython --exclude no-ci atest/robot
+
+      - name: Delete output.xml (on Win)
+        run: |
+          Get-ChildItem atest/results -Include output.xml -Recurse | Remove-Item
+        if: always() && job.status == 'failure' && runner.os == 'Windows'
+      - name: Delete output.xml (on Unix-like)
+        run: |
+          find atest/results -type f -name 'output.xml' -exec rm {} +
+        if: always() && job.status == 'failure' && runner.os != 'Windows'
+
+      - name: Archive acceptances test results
+        uses: actions/upload-artifact@v1
+        with:
+          name: at-results-jython-${{ matrix.jython-version }}-${{ matrix.os }}-java${{ matrix.java }}
+          path: atest/results
+        if: always() && job.status == 'failure'
