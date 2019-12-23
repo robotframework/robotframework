@@ -14,7 +14,7 @@ jobs:
           - os: ubuntu-latest
             base_python: '`which python`'
             atest_python: /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
-            set_display: export DISPLAY=:99.0; setsid Xvfb :99 -ac; sleep 3
+            set_display: export DISPLAY=:99.0; Xvfb :99 -ac & sleep 3
           - os: windows-latest
             base_python: (get-command python.exe).Path
             atest_python: C:\hostedtoolcache\windows\Python\3.6.8\x64\python
@@ -44,7 +44,7 @@ jobs:
         run: sudo apt-get -y -q install libxslt-dev libxml2-dev
         if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
 
-      - name: Install and run XVFB
+      - name: Install XVFB
         run: sudo apt-get install xvfb
         if: contains(matrix.os, 'ubuntu')
 
@@ -53,7 +53,7 @@ jobs:
           python -m pip install -r atest/requirements.txt
           ${{ matrix.set_codepage }}
           ${{ matrix.set_display }}
-          ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci ${{ matrix.atest_extra_params }} atest/robot
+          ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci atest/robot
 
       - name: Kill XVFB
         run: killall -9 Xvfb
