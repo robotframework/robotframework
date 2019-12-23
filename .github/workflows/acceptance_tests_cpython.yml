@@ -14,7 +14,7 @@ jobs:
           - os: ubuntu-latest
             base_python: '`which python`'
             atest_python: /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
-            set_display: export DISPLAY=:99.0; sudo killall -9 Xvfb; Xvfb :99.0 -ac & sleep 3
+            set_display: export DISPLAY=:99.0; Xvfb :99.0 -ac & sleep 3
           - os: windows-latest
             base_python: (get-command python.exe).Path
             atest_python: C:\hostedtoolcache\windows\Python\3.6.8\x64\python
