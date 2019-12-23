@@ -155,6 +155,8 @@ class Runner(SuiteVisitor):
             result.message = status.message
         result.status = status.status
         result.endtime = get_timestamp()
+        if status.stopped_by_user:
+            self.result.stopped_by_user = True
         self._output.end_test(ModelCombiner(test, result))
         self._context.end_test(result)
 

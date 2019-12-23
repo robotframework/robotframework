@@ -9,34 +9,34 @@ ${TEST FILE}    %{TEMPDIR}${/}signal-tests.txt
 SIGINT Signal Should Stop Test Execution Gracefully
     Start And Send Signal  without_any_timeout.robot  One SIGINT
     Process Output For Graceful Shutdown
-    Check Test Cases Have Failed Correctly
+    Check Test Cases Have Been Forced To Shutdown Graceful
 
 SIGTERM Signal Should Stop Test Execution Gracefully
     [Tags]  no-windows
     Start And Send Signal  without_any_timeout.robot  One SIGTERM
     Process Output For Graceful Shutdown
-    Check Test Cases Have Failed Correctly
+    Check Test Cases Have Been Forced To Shutdown Graceful
 
 Execution Is Stopped Even If Keyword Swallows Exception
     [Tags]    no-ipy    no-jython
     Start And Send Signal  swallow_exception.robot  One SIGTERM
     Process Output For Graceful Shutdown
-    Check Test Cases Have Failed Correctly
+    Check Test Cases Have Been Forced To Shutdown Graceful
 
 One Signal Should Stop Test Execution Gracefully When Run Keyword Is Used
     Start And Send Signal  run_keyword.robot  One SIGTERM
     Process Output For Graceful Shutdown
-    Check Test Cases Have Failed Correctly
+    Check Test Cases Have Been Forced To Shutdown Graceful
 
 One Signal Should Stop Test Execution Gracefully When Test Timeout Is Used
     Start And Send Signal  test_timeout.robot  One SIGTERM
     Process Output For Graceful Shutdown
-    Check Test Cases Have Failed Correctly
+    Check Test Cases Have Been Forced To Shutdown Graceful
 
 One Signal Should Stop Test Execution Gracefully When Keyword Timeout Is Used
     Start And Send Signal  keyword_timeout.robot  One SIGTERM
     Process Output For Graceful Shutdown
-    Check Test Cases Have Failed Correctly
+    Check Test Cases Have Been Forced To Shutdown Graceful
 
 Two SIGINT Signals Should Stop Test Execution Forcefully
     Start And Send Signal  without_any_timeout.robot  Two SIGINTs  2s
@@ -62,7 +62,7 @@ Two Signals Should Stop Test Execution Forcefully When Keyword Timeout Is Used
 One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardowns Should Be Run
     Start And Send Signal  with_teardown.robot  One SIGINT
     Process Output For Graceful Shutdown
-    Check Test Cases Have Failed Correctly
+    Check Test Cases Have Been Forced To Shutdown Graceful
     ${tc} =  Get Test Case  Test
     Check Log Message  ${tc.teardown.msgs[0]}  Logging Test Case Teardown
     ${ts} =  Get Test Suite  With Teardown
@@ -71,7 +71,7 @@ One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardow
 Skip Teardowns After Stopping Gracefully
     Start And Send Signal  with_teardown.robot  One SIGINT  0s  --SkipTeardownOnExit
     Process Output For Graceful Shutdown
-    Check Test Cases Have Failed Correctly
+    Check Test Cases Have Been Forced To Shutdown Graceful
     ${tc} =  Get Test Case  Test
     Should Be Equal  ${tc.teardown}  ${None}
     ${ts} =  Get Test Suite  With Teardown
@@ -99,13 +99,17 @@ Start Run
     Log Many    @{command}
     ProcessManager.start process    @{command}
 
-Check Test Cases Have Failed Correctly
+Check Test Cases Have Been Forced To Shutdown Graceful
+    ${rc} =        ProcessManager.Get Rc
+    Should Be Equal As integers    ${rc}    253
     Check Test Tags    Test
     Check Test Tags    Test2    robot:exit
 
 Check Tests Have Been Forced To Shutdown
     ${stderr} =    ProcessManager.Get Stderr
+    ${rc} =        ProcessManager.Get Rc
     Should Contain    ${stderr}    Execution forcefully stopped
+    Should Be Equal As integers    ${rc}    253
 
 Process Output For Graceful Shutdown
     Wait Until Created    ${OUTFILE}    timeout=45s
