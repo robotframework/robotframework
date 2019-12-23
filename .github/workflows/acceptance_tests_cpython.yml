@@ -45,7 +45,7 @@ jobs:
         if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
 
       - name: Install XVFB
-        run: sudo apt-get -y -q install xvfb python-gtk2-dev
+        run: sudo apt-get -y -q install xvfb scrot
         if: contains(matrix.os, 'ubuntu')
 
       - name: Run acceptance tests
