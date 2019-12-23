@@ -12,7 +12,7 @@ jobs:
         python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', 'pypy2', 'pypy3' ]
         include:
           - os: ubuntu-latest
-            base_python: '"xvfb-run --auto-servernum `which python`"'
+            base_python: '`which python`'
             atest_python: /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
           - os: windows-latest
             base_python: (get-command python.exe).Path
@@ -43,8 +43,11 @@ jobs:
         run: sudo apt-get -y -q install libxslt-dev libxml2-dev
         if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
 
-      - name: Install XVFB
-        run: sudo apt-get install xvfb
+      - name: Install and run XVFB
+        run: |
+          sudo apt-get install xvfb
+          Xvfb :99 -ac &
+          sleep 3
         if: contains(matrix.os, 'ubuntu')
 
       - name: Run acceptance tests
@@ -52,6 +55,10 @@ jobs:
           python -m pip install -r atest/requirements.txt
           ${{ matrix.set_codepage }}
           ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci ${{ matrix.atest_extra_params }} atest/robot
+
+      - name: Kill XVFB
+        run: killall -9 Xvfb
+        if: always() && contains(matrix.os, 'ubuntu')
 
       - name: Delete output.xml (on Win)
         run: |
