@@ -14,7 +14,7 @@ jobs:
           - os: ubuntu-latest
             base_python: '`which python`'
             atest_python: /opt/hostedtoolcache/Python/3.6.9/x64/bin/python3.6
-            atest_extra_params: '--exclude require-screenshot'
+            set_display: export DISPLAY=:99; Xvfb :99 -screen 0 1024x768x24 -ac -noreset & sleep 3
           - os: windows-latest
             base_python: (get-command python.exe).Path
             atest_python: C:\hostedtoolcache\windows\Python\3.6.8\x64\python
@@ -44,11 +44,16 @@ jobs:
         run: sudo apt-get -y -q install libxslt-dev libxml2-dev
         if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
 
+      - name: Install XVFB and scrot for screenshot capturing
+        run: sudo apt-get -y -q install xvfb scrot
+        if: contains(matrix.os, 'ubuntu')
+
       - name: Run acceptance tests
         run: |
           python -m pip install -r atest/requirements.txt
           ${{ matrix.set_codepage }}
-          ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci ${{ matrix.atest_extra_params }} atest/robot
+          ${{ matrix.set_display }}
+          ${{ matrix.atest_python }} atest/run.py ${{ matrix.base_python }} --exclude no-ci atest/robot
 
       - name: Delete output.xml (on Win)
         run: |

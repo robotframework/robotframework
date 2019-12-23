@@ -21,6 +21,7 @@ jobs:
             jython_dir: $GITHUB_WORKSPACE/jython
             jython_cmd: $GITHUB_WORKSPACE/jython/bin/jython
             set_jython_env: export JYTHON_HOME=$GITHUB_WORKSPACE/jython; export CLASSPATH=$JAVA_HOME/lib/tools.jar;
+            set_display: export DISPLAY=:99; Xvfb :99 -screen 0 1024x768x24 -ac -noreset & sleep 3
 
     runs-on: ${{ matrix.os }}
 
@@ -49,12 +50,17 @@ jobs:
         run: |
           wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
           java -jar jytinst.jar -s -d ${{ matrix.jython_dir }}
+
+      - name: Install XVFB
+        run: sudo apt-get -y -q install xvfb
+        if: contains(matrix.os, 'ubuntu')
       
       - name: Run acceptance tests
         run: |
           ${{ matrix.set_jython_env }}
           ${{ matrix.jython_cmd }} -m pip install -r atest/requirements.txt
           ${{ matrix.set_codepage }}
+          ${{ matrix.set_display }}
           python atest/run.py ${{ matrix.jython_dir }}/bin/jython --exclude no-ci atest/robot
 
       - name: Delete output.xml (on Win)
