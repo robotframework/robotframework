@@ -45,7 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         java: [ '1.7', '1.8' ]
-        os: [ 'ubuntu-latest', 'windows-latest' ]
+        os: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
         jython-version: [ '2.7.1' ]
         include:
           - os: windows-latest
