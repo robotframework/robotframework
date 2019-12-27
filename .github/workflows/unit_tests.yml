@@ -1,6 +1,6 @@
 name: Unit tests
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   test_using_builtin_python:
@@ -44,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '1.7', '1.8' ]
+        java: [ '1.8' ]
         os: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
         jython-version: [ '2.7.1' ]
         include:
@@ -62,7 +62,7 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           architecture: 'x64'
- 
+
       - name: Install wget
         run: |
           choco install wget -y --no-progress
@@ -77,26 +77,3 @@ jobs:
         run: |
           ${{ matrix.set_codepage }}
           jython/bin/jython utest/run.py -v
-
-#  test_using_ironpython:
-#
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        os: [ 'windows-latest' ]
-#        ironpython-version: [ '2.7.9', '2.7.10-alpha0' ]
-#
-#    runs-on: ${{ matrix.os }}
-#
-#    name: IronPython ${{ matrix.ironpython-version }} on ${{ matrix.os }}
-#    steps:
-#      - uses: actions/checkout@v2
-#
-#      - name: Setup IronPython ${{ matrix.ironpython-version }}
-#        run: |
-#          choco install ironpython -y --no-progress --version ${{ matrix.ironpython-version }}
-#          ipy -m ensurepip --user
-#          ipy -m pip install --user --upgrade pip
-#
-#      - name: Run unit tests
-#        run: chcp 850; ipy utest/run.py -v

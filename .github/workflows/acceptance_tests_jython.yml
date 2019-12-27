@@ -1,13 +1,15 @@
 name: Acceptance tests (Jython)
 
-on: [push, pull_request]
+on:
+  schedule:
+    - cron: '0 */12 * * *'
 
 jobs:
   test_using_jython:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '1.7', '1.8' ]
+        java: [ '1.8' ]
         os: [ 'ubuntu-latest', 'windows-latest' ]
         jython-version: [ '2.7.1' ]
 
@@ -30,31 +32,31 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup Python 3.6
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v1.1.1
         with:
           python-version: '3.6.x'
           architecture: 'x64'
 
       - name: Setup Java ${{ matrix.java }}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v1.3.0
         with:
           java-version: ${{ matrix.java }}
           architecture: 'x64'
 
-      - name: Install wget
+      - name: Install wget and report handling tools
         run: |
-          choco install wget -y --no-progress
+          choco install wget curl zip -y --no-progress
         if: runner.os == 'Windows'
+
+      - name: Install XVFB and report handling tools
+        run: sudo apt-get -y -q install xvfb curl zip
+        if: contains(matrix.os, 'ubuntu')
 
       - name: Setup Jython ${{ matrix.jython-version }}
         run: |
           wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
           java -jar jytinst.jar -s -d ${{ matrix.jython_dir }}
 
-      - name: Install XVFB
-        run: sudo apt-get -y -q install xvfb
-        if: contains(matrix.os, 'ubuntu')
-      
       - name: Run acceptance tests
         run: |
           ${{ matrix.set_jython_env }}
@@ -66,15 +68,40 @@ jobs:
       - name: Delete output.xml (on Win)
         run: |
           Get-ChildItem atest/results -Include output.xml -Recurse | Remove-Item
-        if: always() && job.status == 'failure' && runner.os == 'Windows'
+        if: always() && runner.os == 'Windows'
+
       - name: Delete output.xml (on Unix-like)
         run: |
           find atest/results -type f -name 'output.xml' -exec rm {} +
-        if: always() && job.status == 'failure' && runner.os != 'Windows'
+        if: always() && runner.os != 'Windows'
 
       - name: Archive acceptances test results
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v1.0.0
         with:
           name: at-results-jython-${{ matrix.jython-version }}-${{ matrix.os }}-java${{ matrix.java }}
           path: atest/results
+        if: always() && job.status == 'failure'
+
+      - name: Upload results
+        run: |
+          echo '<html><head><meta http-equiv = "refresh" content =" 0 ; url = /report.html"></head></html>' > atest/results/index.html
+          zip -r -j site.zip atest/results > no_output 2>&1
+          curl -s -H "Content-Type: application/zip" -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" --data-binary "@site.zip" https://api.netlify.com/api/v1/sites > response.json
+          echo "::set-env name=REPORT_URL::$(cat response.json|python -c "import sys, json; print('https://' + json.load(sys.stdin)['subdomain'] + '.netlify.com')")"
+          echo "::set-env name=JOB_STATUS::$(python -c "print('${{ job.status }}'.lower())")"
+        if: always() && job.status == 'failure'
+
+      - uses: octokit/request-action@57ec46afcc4c58c813af3afe67e57ced1ea9f165
+        name: Update status with Github Status API
+        id: update_status
+        with:
+          route: POST /repos/:repository/statuses/:sha
+          repository: ${{ github.repository }}
+          sha: ${{ github.sha }}
+          state: "${{env.JOB_STATUS}}"
+          target_url: "${{env.REPORT_URL}}"
+          description: "Link to test report."
+          context: at-results-jython-${{ matrix.jython-version }}-${{ matrix.os }}-java${{ matrix.java }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.STATUS_UPLOAD_TOKEN }}
         if: always() && job.status == 'failure'
