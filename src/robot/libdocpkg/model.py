@@ -17,6 +17,7 @@ from itertools import chain
 
 from robot.model import Tags
 from robot.utils import getshortdoc, Sortable, setter
+from robot.utils.table_of_content import add_toc
 
 from .writer import LibdocWriter
 from .output import LibdocOutput
@@ -27,18 +28,24 @@ class LibraryDoc(object):
     def __init__(self, name='', doc='', version='', type='library',
                  scope='', named_args=True, doc_format=''):
         self.name = name
-        self.doc = doc
+        self.doc_format = doc_format
+        self._doc = doc
         self.version = version
         self.type = type
         self.scope = scope
         self.named_args = named_args
-        self.doc_format = doc_format
         self.inits = []
         self.keywords = []
 
     @setter
     def doc_format(self, format):
         return format or 'ROBOT'
+
+    @property
+    def doc(self):
+        if self.doc_format == 'ROBOT':
+            return add_toc(self._doc, self.inits)
+        return self._doc
 
     @setter
     def keywords(self, kws):
