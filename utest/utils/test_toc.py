@@ -37,23 +37,23 @@ class TestTableOfContentLibdoc(unittest.TestCase):
 
     def test_no_toc(self):
         test_doc = 'Library doc'
-        doc = add_toc(test_doc)
+        doc = add_toc(test_doc, True)
         self.assertEqual(doc, test_doc, 'Doc should not have been created.')
 
         test_doc = 'Foo %TABLE_OF_CONTENT% Bar'
-        doc = add_toc(test_doc)
+        doc = add_toc(test_doc, True)
         self.assertEqual(doc, test_doc, 'Doc should not have been created.')
 
         test_doc = 'Foo %TABLE_OF_CONTENT%'
-        doc = add_toc(test_doc)
+        doc = add_toc(test_doc, True)
         self.assertEqual(doc, test_doc, 'Doc should not have been created.')
 
         test_doc = '%TABLE_OF_CONTENT% Bar'
-        doc = add_toc(test_doc)
+        doc = add_toc(test_doc, True)
         self.assertEqual(doc, test_doc, 'Doc should not have been created.')
 
     def test_add_toc(self):
-        doc = add_toc(EXAMPLE_DOC_TOC)
+        doc = add_toc(EXAMPLE_DOC_TOC, True)
         doc = doc.splitlines()
         self.assertEqual('== Table of contents ==', doc[2], 'TOC should have been generated.')
         self.assertEqual('', doc[3], 'TOC should have been generated.')
@@ -83,13 +83,21 @@ class TestTableOfContentLibdoc(unittest.TestCase):
 
     def test_create_toc(self):
         headings = ['- `1 Heading`', '- `2 Heading`']
-        toc = _create_toc(headings)
+        toc = _create_toc(headings, importin=True)
         expected_toc = ['== Table of contents ==', '']
         expected_toc.extend(headings)
         expected_toc.extend(['- `Importing`', '- `Shortcuts`', '- `Keywords`'])
         self.assertEqual(toc, expected_toc)
 
-        toc = _create_toc([])
+        toc = _create_toc([], importin=True)
         expected_toc = ['== Table of contents ==', '']
         expected_toc.extend(['- `Importing`', '- `Shortcuts`', '- `Keywords`'])
+        self.assertEqual(toc, expected_toc)
+
+    def test_not_importing(self):
+        headings = ['- `1 Heading`', '- `2 Heading`']
+        toc = _create_toc(headings, importin=False)
+        expected_toc = ['== Table of contents ==', '']
+        expected_toc.extend(headings)
+        expected_toc.extend(['- `Shortcuts`', '- `Keywords`'])
         self.assertEqual(toc, expected_toc)
