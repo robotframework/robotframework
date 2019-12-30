@@ -143,8 +143,8 @@ class VariableReplacer(object):
                 value = self._get_subscriptable_variable_item(name, value, item)
             else:
                 raise VariableError(
-                    "Variable '%s' is %s, not subscriptable, and thus "
-                    "accessing item '%s' from it is not possible."
+                    "Variable '%s' is %s, which is not subscriptable, and "
+                    "thus accessing item '%s' from it is not possible."
                     % (name, type_name(value), item)
                 )
             name = '%s[%s]' % (name, item)
@@ -180,6 +180,12 @@ class VariableReplacer(object):
                                 % (name, key))
         except TypeError as err:
             if not isinstance(key, int):
-                return self._get_subscriptable_variable_item(name, variable, int(key))
+                try:
+                    key = int(key)
+                except:
+                    pass
+                else:
+                    return self._get_subscriptable_variable_item(
+                        name, variable, key)
             raise VariableError("Subscriptable '%s' used with invalid key: %s"
                                 % (name, err))
