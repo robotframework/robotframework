@@ -118,6 +118,17 @@ class Token(object):
                                           self.lineno, self.columnno)
 
 
+class EOL(Token):
+    __slots__ = []
+
+    def __init__(self, value='', lineno=-1, columnno=-1):
+        Token.__init__(self, Token.EOL, value, lineno, columnno)
+
+    @classmethod
+    def from_token(cls, token):
+        return EOL('', token.lineno, token.columnno + len(token.value))
+
+
 class EOS(Token):
     __slots__ = []
 

@@ -28,34 +28,34 @@ class TestName(unittest.TestCase):
 
     def test_name_on_own_row(self):
         self._verify('My Name',
-                     [(T.NAME, 'My Name', 2, 1), (T.EOS, '', 2, 8)])
+                     [(T.NAME, 'My Name', 2, 1), (T.EOL, '', 2, 8), (T.EOS, '', 2, 8)])
         self._verify('My Name    ',
                      [(T.NAME, 'My Name', 2, 1), (T.EOL, '    ', 2, 8), (T.EOS, '', 2, 12)])
         self._verify('My Name\n    Keyword',
                      [(T.NAME, 'My Name', 2, 1), (T.EOL, '\n', 2, 8), (T.EOS, '', 2, 9),
-                      (T.SEPARATOR, '    ', 3, 1), (T.KEYWORD, 'Keyword', 3, 5), (T.EOS, '', 3, 12)])
+                      (T.SEPARATOR, '    ', 3, 1), (T.KEYWORD, 'Keyword', 3, 5), (T.EOL, '', 3, 12), (T.EOS, '', 3, 12)])
         self._verify('My Name  \n    Keyword',
                      [(T.NAME, 'My Name', 2, 1), (T.EOL, '  \n', 2, 8), (T.EOS, '', 2, 11),
-                      (T.SEPARATOR, '    ', 3, 1), (T.KEYWORD, 'Keyword', 3, 5), (T.EOS, '', 3, 12)])
+                      (T.SEPARATOR, '    ', 3, 1), (T.KEYWORD, 'Keyword', 3, 5), (T.EOL, '', 3, 12), (T.EOS, '', 3, 12)])
 
     def test_name_and_keyword_on_same_row(self):
         self._verify('Name    Keyword',
                      [(T.NAME, 'Name', 2, 1), (T.SEPARATOR, '    ', 2, 5), (T.EOS, '', 2, 9),
-                      (T.KEYWORD, 'Keyword', 2, 9), (T.EOS, '', 2, 16)])
+                      (T.KEYWORD, 'Keyword', 2, 9), (T.EOL, '', 2, 16), (T.EOS, '', 2, 16)])
         self._verify('N  K  A',
                      [(T.NAME, 'N', 2, 1), (T.SEPARATOR, '  ', 2, 2), (T.EOS, '', 2, 4),
                       (T.KEYWORD, 'K', 2, 4), (T.SEPARATOR, '  ', 2, 5),
-                      (T.ARGUMENT, 'A', 2, 7), (T.EOS, '', 2, 8)])
+                      (T.ARGUMENT, 'A', 2, 7), (T.EOL, '', 2, 8), (T.EOS, '', 2, 8)])
         self._verify('N  ${v}=  K',
                      [(T.NAME, 'N', 2, 1), (T.SEPARATOR, '  ', 2, 2), (T.EOS, '', 2, 4),
                       (T.ASSIGN, '${v}=', 2, 4), (T.SEPARATOR, '  ', 2, 9),
-                      (T.KEYWORD, 'K', 2, 11), (T.EOS, '', 2, 12)])
+                      (T.KEYWORD, 'K', 2, 11), (T.EOL, '', 2, 12), (T.EOS, '', 2, 12)])
 
     def test_name_and_setting_on_same_row(self):
         self._verify('Name    [Documentation]    The doc.',
                      [(T.NAME, 'Name', 2, 1), (T.SEPARATOR, '    ', 2, 5), (T.EOS, '', 2, 9),
                       (T.DOCUMENTATION, '[Documentation]', 2, 9), (T.SEPARATOR, '    ', 2, 24),
-                      (T.ARGUMENT, 'The doc.', 2, 28), (T.EOS, '', 2, 36)])
+                      (T.ARGUMENT, 'The doc.', 2, 28), (T.EOL, '', 2, 36), (T.EOS, '', 2, 36)])
 
     def _verify(self, data, tokens):
         assert_tokens('*** Test Cases ***\n' + data,
@@ -73,20 +73,20 @@ class TestNameWithPipes(unittest.TestCase):
 
     def test_name_on_own_row(self):
         self._verify('| My Name',
-                     [(T.SEPARATOR, '| ', 2, 1), (T.NAME, 'My Name', 2, 3), (T.EOS, '', 2, 10)])
+                     [(T.SEPARATOR, '| ', 2, 1), (T.NAME, 'My Name', 2, 3), (T.EOL, '', 2, 10), (T.EOS, '', 2, 10)])
         self._verify('| My Name |',
-                     [(T.SEPARATOR, '| ', 2, 1), (T.NAME, 'My Name', 2, 3), (T.SEPARATOR, ' |', 2, 10), (T.EOS, '', 2, 12)])
+                     [(T.SEPARATOR, '| ', 2, 1), (T.NAME, 'My Name', 2, 3), (T.SEPARATOR, ' |', 2, 10), (T.EOL, '', 2, 12), (T.EOS, '', 2, 12)])
         self._verify('| My Name | ',
                      [(T.SEPARATOR, '| ', 2, 1), (T.NAME, 'My Name', 2, 3), (T.SEPARATOR, ' |', 2, 10), (T.EOL, ' ', 2, 12), (T.EOS, '', 2, 13)])
 
     def test_name_and_keyword_on_same_row(self):
         self._verify('| Name | Keyword',
                      [(T.SEPARATOR, '| ', 2, 1), (T.NAME, 'Name', 2, 3), (T.SEPARATOR, ' | ', 2, 7), (T.EOS, '', 2, 10),
-                      (T.KEYWORD, 'Keyword', 2, 10), (T.EOS, '', 2, 17)])
-        self._verify('| N | K | A |',
+                      (T.KEYWORD, 'Keyword', 2, 10), (T.EOL, '', 2, 17), (T.EOS, '', 2, 17)])
+        self._verify('| N | K | A |\n',
                      [(T.SEPARATOR, '| ', 2, 1), (T.NAME, 'N', 2, 3), (T.SEPARATOR, ' | ', 2, 4), (T.EOS, '', 2, 7),
                       (T.KEYWORD, 'K', 2, 7), (T.SEPARATOR, ' | ', 2, 8),
-                      (T.ARGUMENT, 'A', 2, 11), (T.SEPARATOR, ' |', 2, 12), (T.EOS, '', 2, 14)])
+                      (T.ARGUMENT, 'A', 2, 11), (T.SEPARATOR, ' |', 2, 12), (T.EOL, '\n', 2, 14), (T.EOS, '', 2, 15)])
         self._verify('|    N  |  ${v} =    |    K    ',
                      [(T.SEPARATOR, '|    ', 2, 1), (T.NAME, 'N', 2, 6), (T.SEPARATOR, '  |  ', 2, 7), (T.EOS, '', 2, 12),
                       (T.ASSIGN, '${v} =', 2, 12), (T.SEPARATOR, '    |    ', 2, 18),
@@ -96,7 +96,7 @@ class TestNameWithPipes(unittest.TestCase):
         self._verify('| Name | [Documentation] | The doc.',
                      [(T.SEPARATOR, '| ', 2, 1), (T.NAME, 'Name', 2, 3), (T.SEPARATOR, ' | ', 2, 7), (T.EOS, '', 2, 10),
                       (T.DOCUMENTATION, '[Documentation]', 2, 10), (T.SEPARATOR, ' | ', 2, 25),
-                      (T.ARGUMENT, 'The doc.', 2, 28), (T.EOS, '', 2, 36)])
+                      (T.ARGUMENT, 'The doc.', 2, 28), (T.EOL, '', 2, 36), (T.EOS, '', 2, 36)])
 
     def _verify(self, data, tokens):
         assert_tokens('*** Test Cases ***\n' + data,

@@ -21,7 +21,7 @@ from robot.utils import get_error_message, FileReader
 from .context import TestCaseFileContext, ResourceFileContext
 from .lexers import FileLexer
 from .splitter import Splitter
-from .tokens import EOS, Token
+from .tokens import EOL, EOS, Token
 
 
 def get_tokens(source, data_only=False):
@@ -142,12 +142,15 @@ class BaseReader(object):
 
     def _split_to_lines(self, statement):
         current = []
-        for tok in statement:
-            current.append(tok)
-            if tok.type == tok.EOL:
+        eol = Token.EOL
+        for token in statement:
+            current.append(token)
+            if token.type == eol:
                 yield current
                 current = []
         if current:
+            if current[-1].type != eol:
+                current.append(EOL.from_token(current[-1]))
             yield current
 
 
