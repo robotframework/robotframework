@@ -13,7 +13,7 @@ the whole test execution must be taken into use from the command line.
 In addition to that, `test libraries can register listeners`__ that receive
 notifications while that library is active.
 
-__ `Test libraries as listeners`_
+__ `Libraries as listeners`_
 
 .. contents::
    :depth: 2
@@ -25,10 +25,10 @@ Taking listeners into use
 Listeners are taken into use from the command line with the :option:`--listener`
 option so that the name of the listener is given to it as an argument. The
 listener name is got from the name of the class or module implementing the
-listener interface, similarly as `test library names`_ are got from classes
-implementing them. The specified listeners must be in the same `module search
-path`_ where test libraries are searched from when they are imported. Other
-option is to give an absolute or a relative path to the listener file
+listener, similarly as `library name`_ is got from the class or module
+implementing the library. The specified listeners must be in the same `module
+search path`_ where test libraries are searched from when they are imported.
+Other option is to give an absolute or a relative path to the listener file
 `similarly as with test libraries`__. It is possible to take multiple listeners
 into use by using this option several times::
 
@@ -152,6 +152,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   the beginning is the parent suite id and the last part       |
    |                  |                  |   shows test index in that suite.                              |
    |                  |                  | * `longname`: Test name including parent suites.               |
+   |                  |                  | * `originalname`: Test name with possible variables            |
+   |                  |                  |   unresolved. New in RF 3.2.                                   |
    |                  |                  | * `doc`: Test documentation.                                   |
    |                  |                  | * `tags`: Test tags as a list of strings.                      |
    |                  |                  | * `critical`: `yes` or `no` depending is test considered       |
@@ -166,6 +168,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |                                                                |
    |                  |                  | * `id`: Same as in `start_test`.                               |
    |                  |                  | * `longname`: Same as in `start_test`.                         |
+   |                  |                  | * `originalname`: Same as in `start_test`.                     |
    |                  |                  | * `doc`: Same as in `start_test`.                              |
    |                  |                  | * `tags`: Same as in `start_test`.                             |
    |                  |                  | * `critical`: Same as in `start_test`.                         |
@@ -192,14 +195,14 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   iterations. **NOTE:** Keyword type reporting was changed in  |
    |                  |                  |   RF 3.0. See issue `#2248`__ for details.                     |
    |                  |                  | * `kwname`: Name of the keyword without library or             |
-   |                  |                  |   resource prefix. New in RF 2.9.                              |
+   |                  |                  |   resource prefix.                                             |
    |                  |                  | * `libname`: Name of the library or resource the               |
    |                  |                  |   keyword belongs to, or an empty string when                  |
-   |                  |                  |   the keyword is in a test case file. New in RF 2.9.           |
+   |                  |                  |   the keyword is in a test case file.                          |
    |                  |                  | * `doc`: Keyword documentation.                                |
    |                  |                  | * `args`: Keyword's arguments as a list of strings.            |
    |                  |                  | * `assign`: A list of variable names that keyword's            |
-   |                  |                  |   return value is assigned to. New in RF 2.9.                  |
+   |                  |                  |   return value is assigned to.                                 |
    |                  |                  | * `tags`: `Keyword tags`_ as a list of strings. New in RF 3.0. |
    |                  |                  | * `starttime`: Keyword execution start time.                   |
    +------------------+------------------+----------------------------------------------------------------+
@@ -260,8 +263,6 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `importer`: An absolute path to the file importing the       |
    |                  |                  |   library. `None` when BuiltIn_ is imported well as when       |
    |                  |                  |   using the :name:`Import Library` keyword.                    |
-   |                  |                  |                                                                |
-   |                  |                  | New in Robot Framework 2.9.                                    |
    +------------------+------------------+----------------------------------------------------------------+
    | resource_import  | name, attributes | Called when a resource file has been imported.                 |
    |                  |                  |                                                                |
@@ -274,8 +275,6 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `importer`: An absolute path to the file importing the       |
    |                  |                  |   resource file. `None` when using the :name:`Import Resource` |
    |                  |                  |   keyword.                                                     |
-   |                  |                  |                                                                |
-   |                  |                  | New in Robot Framework 2.9.                                    |
    +------------------+------------------+----------------------------------------------------------------+
    | variables_import | name, attributes | Called when a variable file has been imported.                 |
    |                  |                  |                                                                |
@@ -289,8 +288,6 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `importer`: An absolute path to the file importing the       |
    |                  |                  |   resource file. `None` when using the :name:`Import           |
    |                  |                  |   Variables` keyword.                                          |
-   |                  |                  |                                                                |
-   |                  |                  | New in Robot Framework 2.9.                                    |
    +------------------+------------------+----------------------------------------------------------------+
    | output_file      | path             | Called when writing to an `output file`_ is ready.             |
    |                  |                  |                                                                |
@@ -705,8 +702,8 @@ that listeners modify also the created :file:`output.xml` file.
 
 .. _library listeners:
 
-Test libraries as listeners
----------------------------
+Libraries as listeners
+----------------------
 
 Sometimes it is useful also for `test libraries`_ to get notifications about
 test execution. This allows them, for example, to perform certain clean-up
@@ -730,6 +727,7 @@ acting as a listener itself:
 
    import my.project.Listener;
 
+
    public class JavaLibraryWithExternalListener {
        public static final Listener ROBOT_LIBRARY_LISTENER = new Listener();
        public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
@@ -740,7 +738,7 @@ acting as a listener itself:
 
 .. sourcecode:: python
 
-   class PythonLibraryAsListenerItself(object):
+   class PythonLibraryAsListenerItself:
        ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
        ROBOT_LISTENER_API_VERSION = 2
 
@@ -756,9 +754,18 @@ As the seconds example above already demonstrated, library listeners have to
 specify `listener interface versions`_ using `ROBOT_LISTENER_API_VERSION`
 attribute exactly like any other listener.
 
-Starting from version 2.9, you can also provide any list like object of
-instances in the `ROBOT_LIBRARY_LISTENER` attribute. This will cause all
-instances of the list to be registered as listeners.
+It is also possible to specify multiple listeners for a single library by
+giving `ROBOT_LIBRARY_LISTENER` a value as a list:
+
+.. sourcecode:: python
+
+   from listeners import Listener1, Listener2, Listener3
+
+
+   class LibraryWithMultipleListeners:
+       ROBOT_LIBRARY_LISTENER = [Listener1(), Listener2(), Listener3()]
+
+       # actual library code here ...
 
 Called listener methods
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -771,7 +778,7 @@ called inside those suites.
 
 If the library creates a new listener instance every time when the library
 itself is instantiated, the actual listener instance to use will change
-according to the `test library scope`_.
+according to the `library scope`_.
 In addition to the previously listed listener methods, `close`
 method is called when the library goes out of the scope.
 

@@ -6,7 +6,8 @@ Default Tags      @{DEFAULT TAGS}    \    default-3
 Test Timeout      ${TIMEOUT} milliseconds
 
 *** Variable ***
-${VERSION}            1.2
+${VARIABLE}           variable
+${DOC VERSION}        1.2
 @{DEFAULT TAGS}       default-1    default-2    # default-3 added separately
 ${TAG BASE}           test
 @{TEST TAGS}          ${TAG BASE}-1    ${TAG BASE}-2    ${TAG BASE}-3
@@ -18,6 +19,24 @@ Normal name
     No Operation
 
 test_case names are NOT _forMatted_
+    No Operation
+
+Name with ${VARIABLE}s works since RF ${{float($DOC_VERSION) + 2}}
+    No Operation
+
+Name with ${NON-EXISTING VARIABLE}
+    No Operation
+
+Name with \${ESCAPED} \${VARIABLE}
+    No Operation
+
+Name with escapes like '\', '\n' and 'c:\path\temp'
+    No Operation
+
+Name with invalid escapes like '\x' and '\uOOPS'
+    No Operation
+
+Name with escaped escapes like '\\', '\\n', '\\x' and 'c:\\path\\temp'
     No Operation
 
 Documentation
@@ -41,7 +60,7 @@ Documentation in multiple rows
     No Operation
 
 Documentation with variables
-    [Documentation]    Variables work in documentation since Robot ${VERSION}.
+    [Documentation]    ${VARIABLE.title()}s work in documentation since RF ${DOC VERSION}.
     No Operation
 
 Documentation with non-existing variables

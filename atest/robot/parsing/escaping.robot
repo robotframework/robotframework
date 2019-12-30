@@ -50,25 +50,25 @@ Carrriage Return
 Tabulator
     Check Test Case    ${TEST NAME}
 
-Valid \x Escape
+Valid \\x Escape
     Check Test Case    ${TEST NAME}
 
-Invalid \x Escape
+Invalid \\x Escape
     Check Test Case    ${TEST NAME}
 
-Valid \u Escape
+Valid \\u Escape
     Check Test Case    ${TEST NAME}
 
-Invalid \u Escape
+Invalid \\u Escape
     Check Test Case    ${TEST NAME}
 
-Valid \U (32bit) Escape
+Valid \\U (32bit) Escape
     Check Test Case    ${TEST NAME}
 
-Invalid \U (32bit) Escape
+Invalid \\U (32bit) Escape
     Check Test Case    ${TEST NAME}
 
-\U (32bit) Escape Above Valid Range
+\\U (32bit) Escape Above Valid Range
     Check Test Case    ${TEST NAME}
 
 Hash

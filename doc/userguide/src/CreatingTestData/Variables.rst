@@ -189,11 +189,6 @@ requires its value to be a Python list or list-like object. Robot Framework
 does not allow strings to be used as lists, but other iterable objects such
 as tuples or dictionaries are accepted.
 
-Prior to Robot Framework 2.9, scalar and list variables were stored separately,
-but it was possible to use list variables as scalars and scalar variables as
-lists. This caused lot of confusion when there accidentally was a scalar
-variable and a list variable with same name but different value.
-
 Using list variables with other data
 ''''''''''''''''''''''''''''''''''''
 
@@ -255,8 +250,6 @@ are equivalent.
 
    Dict Variable
        Login    &{USER}
-
-Dictionary variables are new in Robot Framework 2.9.
 
 Using dictionary variables with other data
 ''''''''''''''''''''''''''''''''''''''''''
@@ -393,9 +386,11 @@ if a variable `${DATA}` contains `[{'id': 1, 'name': 'Robot'},
 Environment variables
 ~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework allows using environment variables in the test
-data using the syntax `%{ENV_VAR_NAME}`. They are limited to string
-values.
+Robot Framework allows using environment variables in the test data using
+the syntax `%{ENV_VAR_NAME}`. They are limited to string values. It is
+possible to specify a default value, that is used if the environment
+variable does not exists, by separating the variable name and the default
+value with an equal sign like `%{ENV_VAR_NAME=default value}`.
 
 Environment variables set in the operating system before the test execution are
 available during it, and it is possible to create new ones with the keyword
@@ -413,6 +408,11 @@ not effective after the test execution.
        Log    Current user: %{USER}
        Run    %{JAVA_HOME}${/}javac
 
+   Environment variables with defaults
+       Set port    %{APPLICATION_PORT=8080}
+
+.. note:: Support for specifying the default value is new in Robot Framework 3.2.
+
 Java system properties
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -425,6 +425,7 @@ system property with same name exist, the environment variable will be used.
    *** Test Cases ***
    System properties
        Log    %{user.name} running tests on %{os.name}
+       Log    %{custom.property=default value}
 
 __ http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
@@ -479,8 +480,6 @@ can be changed by having `SEPARATOR=<sep>` in the first cell.
    ${EXAMPLE}      This value is joined    together with a space
    ${MULTILINE}    SEPARATOR=\n    First line
    ...             Second line     Third line
-
-Joining long values like above is a new feature in Robot Framework 2.9.
 
 __ `Dividing test data to several rows`_
 
@@ -720,13 +719,6 @@ It is an error if the returned list has more or less values than there are
 scalar variables to assign. Additionally, only one list variable is allowed
 and dictionary variables can only be assigned alone.
 
-The support for assigning multiple variables was slightly changed in
-Robot Framework 2.9. Prior to it a list variable was only allowed as
-the last assigned variable, but nowadays it can be used anywhere.
-Additionally, it was possible to return more values than scalar variables.
-In that case the last scalar variable was magically turned into a list
-containing the extra values.
-
 Using :name:`Set Test/Suite/Global Variable` keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -927,8 +919,6 @@ scopes. Modifying the value of `@{EMPTY}` or `&{EMPTY}` is not possible.
 .. note:: `${SPACE}` represents the ASCII space (`\x20`) and `other spaces`__
           should be specified using the `escape sequences`__ like `\xA0`
           (NO-BREAK SPACE) and `\u3000` (IDEOGRAPHIC SPACE).
-
-.. note:: `&{EMPTY}` is new in Robot Framework 2.9.
 
 __ Escaping_
 __ https://groups.google.com/group/robotframework-users/browse_thread/thread/ccc9e1cd77870437/4577836fe946e7d5?lnk=gst&q=templates#4577836fe946e7d5
@@ -1154,15 +1144,9 @@ them as arguments__.
 
 It is recommended to use lower-case letters with local variables.
 
-.. note:: Prior to Robot Framework 2.9 variables in the local scope
-          `leaked to lower level user keywords`__. This was never an
-          intended feature, and variables should be set or passed
-          explicitly also with earlier versions.
-
 __ `Setting variables in command line`_
 __ `Return values from keywords`_
 __ `User keyword arguments`_
-__ https://github.com/robotframework/robotframework/issues/532
 
 Advanced variable features
 --------------------------

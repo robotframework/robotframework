@@ -44,6 +44,7 @@ from .encoding import (CONSOLE_ENCODING, SYSTEM_ENCODING, console_decode,
 from .error import (get_error_message, get_error_details, ErrorDetails)
 from .escaping import escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource
+from .filereader import FileReader
 from .frange import frange
 from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
@@ -74,4 +75,8 @@ from .text import (cut_long_message, format_assign_message,
                    get_console_length, getdoc, getshortdoc, pad_console_length,
                    rstrip, split_tags_from_doc, split_args_from_name_or_path)
 from .unic import prepr, unic
-from .utf8reader import Utf8Reader
+
+
+def read_rest_data(rstfile):
+    from .restreader import read_rest_data
+    return read_rest_data(rstfile)

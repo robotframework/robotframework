@@ -17,7 +17,13 @@ from collections.abc import Mapping, MutableMapping
 from collections import UserString
 from io import IOBase
 
-from .platform import RERAISED_EXCEPTIONS
+from .platform import RERAISED_EXCEPTIONS, PY_VERSION
+
+if PY_VERSION < (3, 6):
+    from pathlib import PosixPath, WindowsPath
+    PathLike = (PosixPath, WindowsPath)
+else:
+    from os import PathLike
 
 
 def is_integer(item):
@@ -38,6 +44,10 @@ def is_string(item):
 
 def is_unicode(item):
     return isinstance(item, str)
+
+
+def is_pathlike(item):
+    return isinstance(item, PathLike)
 
 
 def is_list_like(item):

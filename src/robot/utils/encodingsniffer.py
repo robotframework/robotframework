@@ -39,7 +39,7 @@ def get_system_encoding():
 def get_console_encoding():
     platform_getters = [(True, _get_stream_output_encoding),
                         (UNIXY, _get_unixy_encoding),
-                        (WINDOWS, _get_windows_output_encoding)]
+                        (WINDOWS, _get_windows_console_encoding)]
     return _get_encoding(platform_getters, DEFAULT_CONSOLE_ENCODING)
 
 
@@ -102,8 +102,8 @@ def _get_windows_system_encoding():
     return _get_code_page('GetACP')
 
 
-def _get_windows_output_encoding():
-    return _get_code_page('GetOEMCP')
+def _get_windows_console_encoding():
+    return _get_code_page('GetConsoleOutputCP')
 
 
 def _get_code_page(method_name):

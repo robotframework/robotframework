@@ -40,7 +40,6 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 
 from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
-from robot.parsing import disable_curdir_processing
 from robot.running import TestSuiteBuilder
 from robot.utils import (abspath, Application, file_writer, get_link_path,
                          html_escape, html_format, IRONPYTHON, is_string,
@@ -136,12 +135,11 @@ class TestDoc(Application):
             HtmlFileWriter(output, model_writer).write(TESTDOC)
 
 
-@disable_curdir_processing
 def TestSuiteFactory(datasources, **options):
     settings = RobotSettings(options)
     if is_string(datasources):
         datasources = [datasources]
-    suite = TestSuiteBuilder().build(*datasources)
+    suite = TestSuiteBuilder(process_curdir=False).build(*datasources)
     suite.configure(**settings.suite_config)
     return suite
 

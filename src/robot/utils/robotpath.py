@@ -20,7 +20,7 @@ import sys
 from robot.errors import DataError
 
 from .encoding import system_decode
-from .platform import IRONPYTHON, PY_VERSION, PY2, WINDOWS
+from .platform import IRONPYTHON, JYTHON, PY_VERSION, PY2, WINDOWS
 from .robottypes import is_unicode
 from .unic import unic
 
@@ -34,6 +34,14 @@ if IRONPYTHON and PY_VERSION == (2, 7, 8):
                 return drive + path
             return path
         return os.path.abspath(path)
+elif WINDOWS and JYTHON and PY_VERSION > (2, 7, 0):
+    # https://bugs.jython.org/issue2824
+    def _abspath(path):
+        path = os.path.abspath(path)
+        if path[:1] == '\\' and path[:2] != '\\\\':
+            drive = os.getcwd()[:2]
+            path = drive + path
+        return path
 else:
     _abspath = os.path.abspath
 

@@ -29,7 +29,7 @@ class DataFileWriter(object):
         self._options = options
 
     def write(self, model):
-        # TODO: Fix the documentation and types
+        # FIXME: Fix the documentation and types
         """Writes given `model` to output using `**options`.
 
         :param model: The parsed test data object to be written

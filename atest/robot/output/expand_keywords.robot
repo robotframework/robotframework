@@ -37,7 +37,7 @@ Run tests with expanding
     ...    --log log.html
     ...    --expandkeywords name:MyKeyword
     ...    --ExpandKeywords NAME:BuiltIn.Sleep
-    ...    --expand "Name:Ñöñ-ÄŚÇÏÏ Këywörd Nämë"
+    ...    --expand "Name:???-Ä* K?ywörd Näm?"
     ...    --expandkeywords name:<blink>NO</blink>
     ...    --expandkeywords name:nonasciilib????.Print*
     ...    --expandkeywords name:NoMatch

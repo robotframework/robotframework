@@ -38,15 +38,12 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.errors import DataError
-from robot.parsing import Model
+from robot.parsing import get_model, SuiteStructureBuilder, SuiteStructureVisitor
+from robot.tidypkg import DataFileWriter
 from robot.utils import Application, file_writer
-# TODO: expose from package root
-from robot.running.builder.suitestructure import (SuiteStructureBuilder,
-                                                  SuiteStructureVisitor)
-from robot.writer import DataFileWriter
 
 # TODO: maybe rename --format to --extension
-# Proofread usage
+# FIXME: Proofread usage
 USAGE = """robot.tidy -- Robot Framework test data clean-up tool
 
 Version:  <VERSION>
@@ -156,9 +153,8 @@ class Tidy(SuiteStructureVisitor):
 
         Use :func:`inplace` to tidy files in-place.
         """
-        data = Model(path)
         with self._get_writer(outpath) as writer:
-            self._save_file(data, writer)
+            self._tidy(get_model(path), writer)
             if not outpath:
                 return writer.getvalue().replace('\r\n', '\n')
 
@@ -172,9 +168,7 @@ class Tidy(SuiteStructureVisitor):
         :param paths: Paths of the files to to process.
         """
         for path in paths:
-            data = Model(path)
-            os.remove(path)
-            self._save_file(data, output=self._get_writer(path))
+            self._tidy(get_model(path), output=self._get_writer(path))
 
     def directory(self, path):
         """Tidy a directory.
@@ -186,8 +180,8 @@ class Tidy(SuiteStructureVisitor):
         data = SuiteStructureBuilder().build([path])
         data.visit(self)
 
-    def _save_file(self, data, output=None):
-        DataFileWriter(output=output, **self._options).write(data)
+    def _tidy(self, ast, output=None):
+        DataFileWriter(output=output, **self._options).write(ast)
 
     def visit_file(self, file):
         self.inplace(file.source)

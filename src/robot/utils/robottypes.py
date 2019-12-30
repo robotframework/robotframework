@@ -17,15 +17,15 @@ from .platform import PY2
 
 
 if PY2:
-    from .robottypes2 import (is_bytes, is_dict_like, is_integer, is_list_like,
-                              is_number, is_string, is_unicode, type_name,
-                              Mapping, MutableMapping, is_iterable)
+    from .robottypes2 import (is_bytes, is_dict_like, is_integer, is_iterable,
+                              is_list_like, is_number, is_pathlike, is_string,
+                              is_unicode, type_name, Mapping, MutableMapping)
     unicode = unicode
 
 else:
-    from .robottypes3 import (is_bytes, is_dict_like, is_integer, is_list_like,
-                              is_number, is_string, is_unicode, type_name,
-                              Mapping, MutableMapping, is_iterable)
+    from .robottypes3 import (is_bytes, is_dict_like, is_integer, is_iterable,
+                              is_list_like, is_number, is_pathlike, is_string,
+                              is_unicode, type_name, Mapping, MutableMapping)
     unicode = str
 
 

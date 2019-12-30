@@ -48,6 +48,10 @@ def is_unicode(item):
     return isinstance(item, unicode)
 
 
+def is_pathlike(item):
+    return False
+
+
 def is_list_like(item):
     if isinstance(item, (str, unicode, bytes, bytearray, UserString, String,
                          file)):

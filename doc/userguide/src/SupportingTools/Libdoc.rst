@@ -60,7 +60,7 @@ Options
                            and resources similarly as when `running tests`__.
   -h, --help               Prints this help.
 
-__ `Specifying library version`_
+__ `Library version`_
 __ `Using --pythonpath option`_
 
 Alternative execution
@@ -357,7 +357,7 @@ Documentation syntax
 
 Libdoc supports documentation in Robot Framework's own `documentation
 syntax`_, HTML, plain text, and reStructuredText_. The format to use can be
-specified in `test library source code`__ using `ROBOT_LIBRARY_DOC_FORMAT`
+specified in `library source code`__ using `ROBOT_LIBRARY_DOC_FORMAT`
 attribute or given from the command line using :option:`--docformat (-F)` option.
 In both cases the possible case-insensitive values are `ROBOT` (default),
 `HTML`, `TEXT` and `reST`.
@@ -366,7 +366,7 @@ Robot Framework's own documentation format is the default and generally
 recommended format. Other formats are especially useful when using existing
 code with existing documentation in test libraries.
 
-__ `Specifying documentation format`_
+__ `Documentation format`_
 
 Robot Framework documentation syntax
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

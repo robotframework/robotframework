@@ -24,7 +24,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
-                         unic, Utf8Reader, PY3)
+                         unic, FileReader, PY3)
 from robot.version import get_version
 
 
@@ -151,7 +151,7 @@ class String(object):
             template = template.replace('/', os.sep)
             logger.info('Reading template from file <a href="%s">%s</a>.'
                         % (template, template), html=True)
-            with Utf8Reader(template) as reader:
+            with FileReader(template) as reader:
                 template = reader.read()
         return template.format(*positional, **named)
 

@@ -52,14 +52,18 @@ Invalid END usage 3
     \    Log    var: ${var}
     End
 
-Empty For Body Fails 1
+Invalid END usage 4
+    [Documentation]    FAIL    'End' is a reserved keyword.
+    Invalid END usage in UK
+
+Empty For Body Fails
     [Documentation]    FAIL    ${NO KEYWORDS}
     FOR    ${var}    IN    one    two
     END
     Fail    Not executed
 
-Empty For Body Fails 2
-    [Documentation]    FAIL    ${NO KEYWORDS}
+For Without End Fails
+    [Documentation]    FAIL    For loop has no closing 'END'.
     FOR    ${var}    IN    one    two
     Fail    Not executed
 
@@ -656,6 +660,10 @@ END is not required when escaping with backslash
     \    Log    var: ${var}
     \    For in UK with backslashes and without END    ${var}
 
+Header at the end of file
+    [Documentation]    FAIL For loop has no closing 'END'.
+    Header at the end of file
+
 *** Keywords ***
 My UK
     No Operation
@@ -718,3 +726,9 @@ For in UK with backslashes and without END
     FOR    ${x}    IN    1    2
     \    No operation
     \    Log    ${arg}-${x}
+
+Invalid END usage in UK
+    END
+
+Header at the end of file
+    FOR    ${x}    IN    foo

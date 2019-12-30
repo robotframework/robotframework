@@ -30,7 +30,7 @@ class ItemList(object):
     def __init__(self, item_class, common_attrs=None, items=None):
         self._item_class = item_class
         self._common_attrs = common_attrs
-        self._items = ()
+        self._items = []
         if items:
             self.extend(items)
 
@@ -39,7 +39,7 @@ class ItemList(object):
 
     def append(self, item):
         self._check_type_and_set_attrs(item)
-        self._items += (item,)
+        self._items.append(item)
         return item
 
     def _check_type_and_set_attrs(self, *items):
@@ -54,30 +54,23 @@ class ItemList(object):
         return items
 
     def extend(self, items):
-        self._items += self._check_type_and_set_attrs(*items)
+        self._items.extend(self._check_type_and_set_attrs(*items))
 
     def insert(self, index, item):
         self._check_type_and_set_attrs(item)
-        items = list(self._items)
-        items.insert(index, item)
-        self._items = tuple(items)
+        self._items.insert(index, item)
 
     def pop(self, *index):
-        items = list(self._items)
-        result = items.pop(*index)
-        self._items = tuple(items)
-        return result
+        return self._items.pop(*index)
 
     def remove(self, item):
-        items = list(self._items)
-        items.remove(item)
-        self._items = tuple(items)
+        self._items.remove(item)
 
     def index(self, item, *start_and_end):
         return self._items.index(item, *start_and_end)
 
     def clear(self):
-        self._items = ()
+        self._items = []
 
     def visit(self, visitor):
         for item in self:
@@ -107,14 +100,10 @@ class ItemList(object):
             self._check_type_and_set_attrs(*item)
         else:
             self._check_type_and_set_attrs(item)
-        items = list(self._items)
-        items[index] = item
-        self._items = tuple(items)
+        self._items[index] = item
 
     def __delitem__(self, index):
-        items = list(self._items)
-        del items[index]
-        self._items = tuple(items)
+        del self._items[index]
 
     def __contains__(self, item):
         return item in self._items
@@ -129,10 +118,10 @@ class ItemList(object):
         return self._items.count(item)
 
     def sort(self):
-        self._items = tuple(sorted(self._items))
+        self._items.sort()
 
     def reverse(self):
-        self._items = tuple(reversed(self._items))
+        self._items.reverse()
 
     def __reversed__(self):
         index = 0

@@ -89,8 +89,8 @@ Creating test library class or module
 Test libraries can be implemented as Python modules and Python or Java
 classes.
 
-Test library names
-~~~~~~~~~~~~~~~~~~
+Library name
+~~~~~~~~~~~~
 
 The name of a test library that is used when a library is imported is
 the same as the name of the module or class implementing it. For
@@ -118,8 +118,8 @@ package must be imported with name :name:`com.mycompany.myproject.MyLib`.
          package name is long, it is recommended to give the library a
          simpler alias by using the `WITH NAME syntax`_.
 
-Providing arguments to test libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Providing arguments to libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All test libraries implemented as classes can take arguments. These
 arguments are specified in the Setting table after the library name,
@@ -174,8 +174,8 @@ the libraries used in the above example:
        }
    }
 
-Test library scope
-~~~~~~~~~~~~~~~~~~
+Library scope
+~~~~~~~~~~~~~
 
 Libraries implemented as classes can have an internal state, which can
 be altered by keywords and with arguments to the constructor of the
@@ -262,10 +262,10 @@ Example Java library using the `GLOBAL` scope:
         }
     }
 
-__ `Providing arguments to test libraries`_
+__ `Providing arguments to libraries`_
 
-Specifying library version
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Library version
+~~~~~~~~~~~~~~~
 
 When a test library is taken into use, Robot Framework tries to
 determine its version. This information is then written into the syslog_
@@ -274,7 +274,7 @@ Libdoc_ also writes this information into the keyword
 documentations it generates.
 
 Version information is read from attribute
-`ROBOT_LIBRARY_VERSION`, similarly as `test library scope`_ is
+`ROBOT_LIBRARY_VERSION`, similarly as `library scope`_ is
 read from `ROBOT_LIBRARY_SCOPE`. If
 `ROBOT_LIBRARY_VERSION` does not exist, information is tried to
 be read from `__version__` attribute. These attributes must be
@@ -303,8 +303,8 @@ A Java class using `ROBOT_LIBRARY_VERSION`:
         }
     }
 
-Specifying documentation format
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Documentation format
+~~~~~~~~~~~~~~~~~~~~
 
 Library documentation tool Libdoc_
 supports documentation in multiple formats. If you want to use something
@@ -368,9 +368,8 @@ about documenting test libraries in general.
         }
     }
 
-__ `Test library scope`_
-__ `Specifying library version`_
-
+__ `Library scope`_
+__ `Library version`_
 
 Library acting as listener
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -381,15 +380,79 @@ start and end. Sometimes getting such notifications is also useful for test
 libraries, and they can register a custom listener by using
 `ROBOT_LIBRARY_LISTENER` attribute. The value of this attribute
 should be an instance of the listener to use, possibly the library itself.
-For more information and examples see `Test libraries as listeners`_ section.
 
-Creating static keywords
-------------------------
+For more information and examples see `Libraries as listeners`_ section.
+
+`@library` decorator
+~~~~~~~~~~~~~~~~~~~~
+
+An easy way to configure libraries implemented as Python classes is using
+the `robot.api.deco.library` class decorator. It allows configuring library's
+scope__, version__, `documentation format`_ and listener__ with optional
+arguments `scope`, `version`, `doc_format` and `listener`, respectively.
+When these arguments are used, they set the matching `ROBOT_LIBRARY_SCOPE`,
+`ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_DOC_FORMAT` and
+`ROBOT_LIBRARY_LISTENER` attributes automatically:
+
+.. sourcecode:: python
+
+    from robot.api.deco import library
+
+    from example import Listener
+
+
+    @library(scope='GLOBAL', version='3.2b1', doc_format='reST', listener=Listener())
+    class Example(object):
+        # ...
+
+The `@library` decorator also disables the `automatic keyword discovery`__
+by setting the `ROBOT_AUTO_KEYWORDS` argument to `False` by default. This
+means that it is mandatory to decorate methods with the `@keyword decorator`_
+to expose them as keywords. If only that behavior is desired and no further
+configuration is needed, the decorator can also be used without parenthesis
+like:
+
+.. sourcecode:: python
+
+    from robot.api.deco import library
+
+
+    @library
+    class Example:
+        # ...
+
+If needed, the automatic keyword discovery can be enabled by using the
+`auto_keywords` argument:
+
+.. sourcecode:: python
+
+    from robot.api.deco import library
+
+
+    @library(scope='TEST SUITE', auto_keywords=True)
+    class Example:
+        # ...
+
+The `@library` decorator only sets class attributes `ROBOT_LIBRARY_SCOPE`,
+`ROBOT_LIBRARY_VERSION`, `ROBOT_LIBRARY_DOC_FORMAT` and `ROBOT_LIBRARY_LISTENER`
+if the respective arguments `scope`, `version`, `doc_format` and `listener`
+are used. The `ROBOT_AUTO_KEYWORDS` attribute is set always. When attributes
+are set, they override possible existing class attributes.
+
+.. note:: The `@library` decorator is new in Robot Framework 3.2.
+
+__ `library scope`_
+__ `library version`_
+__ `Library acting as listener`_
+__ `What methods are considered keywords`_
+
+Creating keywords
+-----------------
 
 What methods are considered keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When the static library API is used, Robot Framework uses reflection
+When the static library API is used, Robot Framework uses introspection
 to find out what keywords the library class or module implements.
 By default it excludes methods and functions starting with an underscore,
 and with Java based libraries it ignores also private methods as well as
@@ -439,18 +502,30 @@ Class based libraries
 
 When a library is implemented as a Python class, it is possible to tell
 Robot Framework not to automatically expose methods as keywords by setting
-`ROBOT_AUTO_KEYWORDS` attribute to the class with a false value.
-When this attribute is set, only methods explicitly marked with the
-`robot.api.deco.keyword` decorator will become keywords. This same decorator
-can also be used for setting a `custom name`__, tags__ and `argument types`__
-to the keyword.
+the `ROBOT_AUTO_KEYWORDS` attribute to the class with a false value:
 
 .. sourcecode:: python
 
-   from robot.api.deco import keyword
-
    class Example:
        ROBOT_AUTO_KEYWORDS = False
+
+When the `ROBOT_AUTO_KEYWORDS` attribute is set like this, only methods that
+have explicitly been decorated with the `@keyword decorator`_ or otherwise
+have the `robot_name` attribute become keywords. The `@keyword` decorator
+can also be used for setting a `custom name`__, tags__ and `argument types`__
+to the keyword.
+
+Although the `ROBOT_AUTO_KEYWORDS` attribute can be set to the class
+explicitly, it is more convenient to use the `@library decorator`_
+that sets it to `False` by default:
+
+.. sourcecode:: python
+
+   from robot.api.deco import keyword, library
+
+
+   @library
+   class Example:
 
        @keyword
        def this_is_keyword(self):
@@ -463,8 +538,9 @@ to the keyword.
        def this_is_not_keyword(self):
            pass
 
-.. note:: Limiting what methods become keywords using `ROBOT_AUTO_KEYWORDS`
-          is a new feature in Robot Framework 3.2.
+.. note:: Both limiting what methods become keywords using the
+          `ROBOT_AUTO_KEYWORDS` attribute and the `@library` decorator are
+          new in Robot Framework 3.2.
 
 Another way to explicitly specify what keywords a library implements is using
 the dynamic__ or the hybrid__ library API.
@@ -488,6 +564,7 @@ a keyword :name:`Current Thread`.
 
    from threading import current_thread
 
+
    def example_keyword():
        print('Running in thread "%s".' % current_thread().name)
 
@@ -508,7 +585,9 @@ For example, the library below implements only one keyword
 
    from threading import current_thread
 
+
    __all__ = ['example_keyword']
+
 
    def example_keyword():
        print('Running in thread "%s".' % current_thread().name)
@@ -519,15 +598,20 @@ For example, the library below implements only one keyword
 If the library is big, maintaining the `__all__` attribute when keywords are
 added, removed or renamed can be a somewhat big task. Another way to explicitly
 mark what functions are keywords is using the `ROBOT_AUTO_KEYWORDS` attribute
-similarly as it can be used with `class based libraries`_. Also this library
+similarly as it can be used with `class based libraries`_. When this attribute
+is set to a false value, only functions explicitly decorated with the
+`@keyword decorator`_ become keywords. For example, also this library
 implements only one keyword :name:`Example Keyword`:
 
 .. sourcecode:: python
 
    from threading import current_thread
+
    from robot.api.deco import keyword
 
+
    ROBOT_AUTO_KEYWORDS = False
+
 
    @keyword
    def example_keyword():
@@ -596,23 +680,32 @@ Setting custom name
 
 It is possible to expose a different name for a keyword instead of the
 default keyword name which maps to the method name.  This can be accomplished
-by setting the `robot_name` attribute on the method to the desired custom name.
-This is typically easiest done by using the `robot.api.deco.keyword` decorator
-as follows:
+by setting the `robot_name` attribute on the method to the desired custom name:
 
 .. sourcecode:: python
 
-  from robot.api.deco import keyword
-
-  @keyword('Login Via User Panel')
-  def login(username, password):
+    def login(username, password):
       # ...
+
+    login.robot_name = 'Login via user panel'
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***
-   My Test
-       Login Via User Panel    ${username}    ${password}
+    *** Test Cases ***
+    My Test
+        Login Via User Panel    ${username}    ${password}
+
+Instead of explicitly setting the `robot_name` attribute like in the above
+example, it is typically easiest to use the `@keyword decorator`_:
+
+.. sourcecode:: python
+
+    from robot.api.deco import keyword
+
+
+    @keyword('Login via user panel')
+    def login(username, password):
+          # ...
 
 Using this decorator without an argument will have no effect on the exposed
 keyword name, but will still set the `robot_name` attribute.  This allows
@@ -622,30 +715,30 @@ attribute also create keywords even if the method name itself would start with
 an underscore.
 
 Setting a custom keyword name can also enable library keywords to accept
-arguments using `Embedded Arguments`__ syntax.
+arguments using the `embedded arguments`__ syntax.
 
 __ `Embedding arguments into keyword names`_
 
 Keyword tags
 ~~~~~~~~~~~~
 
-Starting from Robot Framework 2.9, library keywords and `user keywords`__ can
-have tags. Library keywords can define them by setting the `robot_tags`
-attribute on the method to a list of desired tags. The `robot.api.deco.keyword`
-decorator may be used as a shortcut for setting this attribute when used as
-follows:
+Library keywords and `user keywords`__ can have tags. Library keywords can
+define them by setting the `robot_tags` attribute on the method to a list
+of desired tags. Similarly as when `setting custom name`_, it is easiest to
+set this attribute by using the `@keyword decorator`_:
 
 .. sourcecode:: python
 
-  from robot.api.deco import keyword
+    from robot.api.deco import keyword
 
-  @keyword(tags=['tag1', 'tag2'])
-  def login(username, password):
-      # ...
 
-  @keyword('Custom name', ['tags', 'here'])
-  def another_example():
-      # ...
+    @keyword(tags=['tag1', 'tag2'])
+    def login(username, password):
+        # ...
+
+    @keyword('Custom name', ['tags', 'here'])
+    def another_example():
+        # ...
 
 Another option for setting tags is giving them on the last line of
 `keyword documentation`__ with `Tags:` prefix and separated by a comma. For
@@ -653,12 +746,12 @@ example:
 
 .. sourcecode:: python
 
-  def login(username, password):
-      """Log user in to SUT.
+    def login(username, password):
+        """Log user in to SUT.
 
-      Tags: tag1, tag2
-      """
-      # ...
+        Tags: tag1, tag2
+        """
+        # ...
 
 __ `User keyword tags`_
 __ `Documenting libraries`_
@@ -1101,13 +1194,16 @@ Specifying argument types using `@keyword` decorator
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 An alternative way to specify explicit argument types is using the
-`robot.api.deco.keyword` decorator. Starting from Robot Framework 3.1,
+`@keyword decorator`_. Starting from Robot Framework 3.1,
 it accepts an optional `types` argument that can be used to specify argument
 types either as a dictionary mapping argument names to types or as a list
 mapping arguments to types based on position. These approaches are shown
 below implementing the same keyword as in earlier examples:
 
 .. sourcecode:: python
+
+  from robot.api.deco import keyword
+
 
   @keyword(types={'count': int, 'case_insensitive': bool})
   def example_keyword(count, case_insensitive=True):
@@ -1121,10 +1217,9 @@ below implementing the same keyword as in earlier examples:
 
 Regardless of the approach that is used, it is not necessarily to specify
 types for all arguments. When specifying types as a list, it is possible
-to use `None` or any other non-true value to mark that a certain argument
-does not have a type, and arguments at the end can be omitted altogether.
-For example, both of these keywords specify the type only for the second
-argument:
+to use `None` to mark that a certain argument does not have a type, and
+arguments at the end can be omitted altogether. For example, both of these
+keywords specify the type only for the second argument:
 
 .. sourcecode:: python
 
@@ -1364,15 +1459,45 @@ conflicting signatures.
 
 Argument type coercion works also with `Java library constructors`__.
 
-__ `Providing arguments to test libraries`_
+__ `Providing arguments to libraries`_
 
 .. note:: Converting arguments passed to Java based keywords is an old feature
           and independent on the support to convert arguments of Python
           keywords in Robot Framework 3.1 and newer. Conversion functionality
           may be unified in the future.
 
-Using decorators
-~~~~~~~~~~~~~~~~
+`@keyword` decorator
+~~~~~~~~~~~~~~~~~~~~
+
+Although Robot Framework gets lot of information about keywords automatically,
+such as their names and arguments, there are sometimes needs to configure this
+information further. This is typically easiest done by using the
+`robot.api.deco.keyword` decorator. It has several useful usages that are
+explained thoroughly elsewhere and only listened here as a reference:
+
+- Exposing methods and functions as keywords when the `automatic keyword
+  discovery`__ has been disabled by using the `@library decorator`_ or
+  otherwise.
+
+- Setting a `custom name`__ to a keyword. This is especially useful when using
+  the `embedded argument syntax`__.
+
+- Setting `keyword tags`_.
+
+- Setting `type information`__ to enable automatic argument type conversion.
+  Supports also disabling the argument conversion altogether.
+
+- `Marking methods to expose as keywords`_ when using the
+  `dynamic library API`_ or the `hybrid library API`_.
+
+
+__ `Limiting public methods becoming keywords`_
+__ `Setting custom name`_
+__ `Embedding arguments into keyword names`_
+__ `Specifying argument types using @keyword decorator`_
+
+Using custom decorators
+~~~~~~~~~~~~~~~~~~~~~~~
 
 When implementing keywords, it is sometimes useful to modify them with
 `Python decorators`__. However, decorators often modify function signatures
@@ -1399,7 +1524,7 @@ Embedding arguments into keyword names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Library keywords can also accept arguments which are passed using
-`Embedded Argument syntax`__.  The `robot.api.deco.keyword` decorator
+the `embedded argument syntax`__.  The `@keyword decorator`_
 can be used to create a `custom keyword name`__ for the keyword
 which includes the desired syntax.
 
@@ -1409,6 +1534,7 @@ __ `Setting custom name`_
 .. sourcecode:: python
 
     from robot.api.deco import keyword
+
 
     @keyword('Add ${quantity:\d+} copies of ${item} to cart')
     def add_copies_to_cart(quantity, item):
@@ -1423,12 +1549,12 @@ __ `Setting custom name`_
 By default arguments are passed to implementing keywords as strings, but
 automatic `argument type conversion`__ works if type information is specified
 somehow. With Python 3 it is convenient to use `function annotations`__,
-and alternatively it is possible to pass types to the `@keyword decorator`__:
+and alternatively it is possible to pass types to the `@keyword decorator`__.
+This example uses annotations:
 
 .. sourcecode:: python
 
-    @keyword('Add ${quantity:\d+} copies of ${item} to cart',
-             types={'quantity': int})
+    @keyword('Add ${quantity:\d+} copies of ${item} to cart')
     def add_copies_to_cart(quantity: int, item):
         # ...
 
@@ -1601,9 +1727,6 @@ console and a separate `Test Execution Errors section`__ in the log
 files. This makes these messages more visible than others and allows
 using them for reporting important but non-critical problems to users.
 
-.. note:: In Robot Framework 2.9, new functionality was added to automatically
-          add ERRORs logged by keywords to the Test Execution Errors section.
-
 __ `Errors and warnings during execution`_
 
 Logging HTML
@@ -1652,6 +1775,7 @@ Python:
 
     import time
 
+
     def example_keyword():
         print('*INFO:%d* Message with timestamp' % (time.time()*1000))
 
@@ -1686,6 +1810,7 @@ and are not written to the log file at all:
 
    import sys
 
+
    def my_keyword(arg):
       sys.__stdout__.write('Got arg %s\n' % arg)
 
@@ -1694,6 +1819,7 @@ The final option is using the `public logging API`_:
 .. sourcecode:: python
 
    from robot.api import logger
+
 
    def log_to_console(arg):
       logger.console('Got arg %s' % arg)
@@ -1797,6 +1923,7 @@ a simple usage example:
 
    from robot.api import logger
 
+
    def my_keyword(arg):
        logger.debug('Got argument %s' % arg)
        do_something()
@@ -1827,6 +1954,7 @@ Framework.
 .. sourcecode:: python
 
    import logging
+
 
    def my_keyword(arg):
        logging.debug('Got argument %s' % arg)
@@ -1877,14 +2005,16 @@ Python library logging using the logging API during import:
 
    from robot.api import logger
 
+
    logger.debug("Importing library")
+
 
    def keyword():
        # ...
 
 .. note:: If you log something during initialization, i.e. in Python
           `__init__` or in Java constructor, the messages may be
-          logged multiple times depending on the `test library scope`_.
+          logged multiple times depending on the `library scope`_.
 
 __ `Logging information`_
 
@@ -1909,6 +2039,7 @@ __ `Scalar variables`_
 .. sourcecode:: python
 
   from mymodule import MyObject
+
 
   def return_string():
       return "Hello, world!"
@@ -2057,7 +2188,7 @@ By default documentation is considered to follow Robot Framework's
 `documentation formatting`_ rules. This simple format allows often used
 styles like `*bold*` and `_italic_`, tables, lists, links, etc.
 It is possible to use also HTML, plain
-text and reStructuredText_ formats. See `Specifying documentation format`_
+text and reStructuredText_ formats. See the `Documentation format`_
 section for information how to set the format in the library source code and
 Libdoc_ chapter for more information about the formats in general.
 
@@ -2169,14 +2300,10 @@ Java test library that uses the `static library interface`__ because
 their documentation is not available at runtime. With such keywords,
 it possible to use user keywords as wrappers and deprecate them.
 
-.. note:: Prior to Robot Framework 2.9 the documentation must start with
-          `*DEPRECATED*` exactly without any extra content before the
-          closing `*`.
-
 __ `Errors and warnings during execution`_
 __ `Documenting libraries`_
 __ `User keyword name and documentation`_
-__ `Creating static keywords`_
+__ `Creating keywords`_
 
 .. _Dynamic library:
 
@@ -2264,10 +2391,17 @@ attribute on every method in the library during `get_keyword_names`.
 
    from robot.api.deco import keyword
 
+
    class DynamicExample:
 
        def get_keyword_names(self):
-           return [name for name in dir(self) if hasattr(getattr(self, name), 'robot_name')]
+           # Get all attributes and their values from the library.
+           attributes = [(name, getattr(self, name)) for name in dir(self)]
+           # Filter out attributes that do not have 'robot_name' set.
+           keywords = [(name, value) for name, value in attributes
+                       if hasattr(value, 'robot_name')]
+           # Return value of 'robot_name', if given, or the original 'name'.
+           return [value.robot_name or name for name, value in keywords]
 
        def helper_method(self):
            # ...
@@ -2721,6 +2855,7 @@ __ http://docs.python.org/reference/datamodel.html#attribute-access
 
    from somewhere import external_keyword
 
+
    class HybridExample:
 
        def get_keyword_names(self):
@@ -2818,6 +2953,7 @@ using `set_test_variable`, `set_suite_variable` and
    import os.path
    from robot.libraries.BuiltIn import BuiltIn
 
+
    def do_something(argument):
        output = do_something_that_creates_a_lot_of_output(argument)
        outputdir = BuiltIn().replace_variables('${OUTPUTDIR}')
@@ -2872,6 +3008,7 @@ library in Java code the same way.
 .. sourcecode:: python
 
    from SeleniumLibrary import SeleniumLibrary
+
 
    class ExtendedSeleniumLibrary(SeleniumLibrary):
 
@@ -2931,6 +3068,7 @@ __ `Using Robot Framework's internal modules`_
 .. sourcecode:: python
 
    from robot.libraries.BuiltIn import BuiltIn
+
 
    def title_should_start_with(expected):
        seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')

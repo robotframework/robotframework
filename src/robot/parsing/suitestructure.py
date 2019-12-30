@@ -27,6 +27,13 @@ class SuiteStructure(object):
         self.source = source
         self.init_file = init_file
         self.children = children
+        self.extension = self._get_extension(source, init_file)
+
+    def _get_extension(self, source, init_file):
+        if self.is_directory and not init_file:
+            return None
+        source = init_file or source
+        return os.path.splitext(source)[1][1:].lower()
 
     @property
     def is_directory(self):
@@ -43,20 +50,15 @@ class SuiteStructureBuilder(object):
     ignored_prefixes = ('_', '.')
     ignored_dirs = ('CVS',)
 
-    def __init__(self, include_suites=None, include_extensions=None):
-        self.include_suites = include_suites
-        self.accepted_extensions = self._get_extensions(include_extensions)
-
-    def _get_extensions(self, extension):
-        if not extension:
-            return {'robot'}
-        return {ext.lower().lstrip('.') for ext in extension.split(':')}
+    def __init__(self, included_extensions=('robot',), included_suites=None):
+        self.included_extensions = included_extensions
+        self.included_suites = included_suites
 
     def build(self, paths):
         paths = list(self._normalize_paths(paths))
         if len(paths) == 1:
-            return self._build(paths[0], self.include_suites)
-        children = [self._build(p, self.include_suites) for p in paths]
+            return self._build(paths[0], self.included_suites)
+        children = [self._build(p, self.included_suites) for p in paths]
         return SuiteStructure(children=children)
 
     def _normalize_paths(self, paths):
@@ -131,7 +133,7 @@ class SuiteStructureBuilder(object):
 
     def _is_init_file(self, path, base, ext):
         return (base.lower() == '__init__'
-                and ext in self.accepted_extensions
+                and ext in self.included_extensions
                 and os.path.isfile(path))
 
     def _is_included(self, path, base, ext, incl_suites):
@@ -139,7 +141,7 @@ class SuiteStructureBuilder(object):
             return False
         if os.path.isdir(path):
             return base not in self.ignored_dirs or ext
-        if ext not in self.accepted_extensions:
+        if ext not in self.included_extensions:
             return False
         return self._is_in_included_suites(base, incl_suites)
 
