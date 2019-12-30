@@ -94,7 +94,7 @@ Non-existing index variable
 
 Non-list variable
     [Documentation]    FAIL
-    ...    Variable '\${INT}' is integer, not subscriptable, \
+    ...    Variable '\${INT}' is integer, which is not subscriptable, \
     ...    and thus accessing item '0' from it is not possible.
     Log    ${INT}[0]
 

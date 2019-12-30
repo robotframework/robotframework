@@ -28,24 +28,24 @@ Nested access with slicing
     ${LIST}[1:-1][-1][-2:1:-2][0][0]    ${3}
 
 Non-existing nested list item
-    [Documentation]    FAIL Iterable '\${LIST}[1][2]' has no item in index 666.
+    [Documentation]    FAIL Sequence '\${LIST}[1][2]' has no item in index 666.
     ${LIST}[1][2][666]                  whatever
 
 Non-existing nested dict item
-    [Documentation]    FAIL Dictionary '\${DICT}[x][y]' has no key 'nonex'.
+    [Documentation]    FAIL Subscriptable '\${DICT}[x][y]' has no key 'nonex'.
     ${DICT}[x][y][nonex]                whatever
 
 Invalid nested list access
-    [Documentation]    FAIL Iterable '\${LIST}[1][2]' used with invalid index 'inv'.
+    [Documentation]    FAIL Sequence '\${LIST}[1][2]' used with invalid index 'inv'.
     ${LIST}[1][2][inv]                  whatever
 
 Invalid nested dict access
-    [Documentation]    FAIL STARTS: Dictionary '\${DICT}[key]' used with invalid key:
+    [Documentation]    FAIL STARTS: Subscriptable '\${DICT}[key]' used with invalid key:
     ${DICT}[key][${DICT}]               whatever
 
 Nested access with non-list/dict
     [Documentation]    FAIL
-    ...    Variable '\${DICT}[\${1}][\${2}]' is integer, not a dictionary or iterable, \
+    ...    Variable '\${DICT}[\${1}][\${2}]' is integer, which is not subscriptable, \
     ...    and thus accessing item '0' from it is not possible.
     ${DICT}[${1}][${2}][0]                     whatever
 
