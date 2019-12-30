@@ -67,8 +67,9 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         parse_time)
 from .robottypes import (FALSE_STRINGS, Mapping, MutableMapping, TRUE_STRINGS,
                          is_bytes, is_dict_like, is_falsy, is_integer,
-                         is_list_like, is_number, is_string, is_truthy,
-                         is_unicode, type_name, unicode, is_iterable)
+                         is_list_like, is_number, is_sequence,
+                         is_subscriptable, is_string, is_truthy, is_unicode,
+                         type_name, unicode)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,

@@ -15,7 +15,7 @@
 
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
-from robot.utils import (escape, is_dict_like, is_list_like, is_iterable,
+from robot.utils import (escape, is_list_like, is_sequence, is_subscriptable,
                          type_name, unescape, unic)
 
 from .search import search_variable, VariableMatch
@@ -137,46 +137,49 @@ class VariableReplacer(object):
             logger.warn("Accessing variable items using '%s' syntax "
                         "is deprecated. Use '$%s' instead." % (var, var[1:]))
         for item in match.items:
-            if is_dict_like(value):
-                value = self._get_dict_variable_item(name, value, item)
-            elif is_iterable(value):
-                value = self._get_iterable_variable_item(name, value, item)
+            if is_sequence(value):
+                value = self._get_sequence_variable_item(name, value, item)
+            elif is_subscriptable(value):
+                value = self._get_subscriptable_variable_item(name, value, item)
             else:
                 raise VariableError(
-                    "Variable '%s' is %s, not a dictionary or iterable, and thus "
+                    "Variable '%s' is %s, not subscriptable, and thus "
                     "accessing item '%s' from it is not possible."
                     % (name, type_name(value), item)
                 )
             name = '%s[%s]' % (name, item)
         return value
 
-    def _get_iterable_variable_item(self, name, variable, index):
+    def _get_sequence_variable_item(self, name, variable, index):
         index = self.replace_string(index)
         try:
-            index = self._parse_iterable_variable_index(index, name[0] == '$')
+            index = self._parse_sequence_variable_index(index, name[0] == '$')
         except ValueError:
-            raise VariableError("Iterable '%s' used with invalid index '%s'."
+            raise VariableError("Sequence '%s' used with invalid index '%s'."
                                 % (name, index))
         try:
             return variable[index]
         except IndexError:
-            raise VariableError("Iterable '%s' has no item in index %d."
+            raise VariableError("Sequence '%s' has no item in index %d."
                                 % (name, index))
 
-    def _parse_iterable_variable_index(self, index, support_slice=True):
+    def _parse_sequence_variable_index(self, index, support_slice=True):
         if ':' not in index:
             return int(index)
         if index.count(':') > 2 or not support_slice:
             raise ValueError
         return slice(*[int(i) if i else None for i in index.split(':')])
 
-    def _get_dict_variable_item(self, name, variable, key):
-        key = self.replace_scalar(key)
+    def _get_subscriptable_variable_item(self, name, variable, key):
+        if not isinstance(key, int):
+            key = self.replace_scalar(key)
         try:
             return variable[key]
         except KeyError:
-            raise VariableError("Dictionary '%s' has no key '%s'."
+            raise VariableError("Subscriptable '%s' has no key '%s'."
                                 % (name, key))
         except TypeError as err:
-            raise VariableError("Dictionary '%s' used with invalid key: %s"
+            if not isinstance(key, int):
+                return self._get_subscriptable_variable_item(name, variable, int(key))
+            raise VariableError("Subscriptable '%s' used with invalid key: %s"
                                 % (name, err))
