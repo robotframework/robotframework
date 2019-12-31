@@ -301,6 +301,7 @@ class TestVariables(unittest.TestCase):
 
     def test_custom_class_subscript(self):
         # the two class attributes are accessible via indices 0 and 1
+        # slicing should be supported here as well
         bytes_key = b'my'
         var = PythonObject([1, 2, 3, 4, 5], {bytes_key: 'myname'})
         self.varz['${bytes_key}'] = bytes_key
@@ -309,7 +310,11 @@ class TestVariables(unittest.TestCase):
         assert_equal(self.varz.replace_scalar('${var}[0][2::2]'), [3, 5])
         assert_equal(self.varz.replace_scalar('${var}[1][${bytes_key}][2:]'), 'name')
         assert_equal(self.varz.replace_scalar('${var}\\[1]'), str(var) + '[1]')
-        assert_raises(IndexError, self.varz.replace_scalar, '${var}[2]')
+        assert_equal(self.varz.replace_scalar('${var}[:][0][4]'), var[:][0][4])
+        assert_equal(self.varz.replace_scalar('${var}[:-2]'), var[:-2])
+        assert_equal(self.varz.replace_scalar('${var}[:7:-2]'), var[:7:-2])
+        assert_equal(self.varz.replace_scalar('${var}[2::]'), ())
+        assert_raises(IndexError, self.varz.replace_scalar, '${var}[${2}]')
         assert_raises(VariableError, self.varz.replace_scalar, '${var}[${bytes_key}]')
 
     def test_non_subscriptable(self):

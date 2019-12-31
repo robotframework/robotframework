@@ -174,7 +174,7 @@ class VariableReplacer(object):
         return slice(*[int(i) if i else None for i in index.split(':')])
 
     def _get_subscriptable_variable_item(self, name, variable, key):
-        if not isinstance(key, int):
+        if not isinstance(key, (int, slice)):
             key = self.replace_scalar(key)
         try:
             return variable[key]
@@ -182,9 +182,10 @@ class VariableReplacer(object):
             raise VariableError("Subscriptable '%s' has no key '%s'."
                                 % (name, key))
         except TypeError as err:
-            if not isinstance(key, int):
+            if not isinstance(key, (int, slice)):
                 try:
-                    key = int(key)
+                    key = self._parse_sequence_variable_index(
+                        key, name[0] == '$')
                 except:
                     pass
                 else:
