@@ -6,6 +6,7 @@ Test Template     Should Be Equal
 ${LIST}           [['item'], [1, 2, (3, [4]), 5], 'third']
 ${DICT}           {'key': {'key': 'value'}, 1: {2: 3}, 'x': {'y': {'z': ''}}}
 ${MIXED}          {'x': [(1, {'y': {'z': ['foo', 'bar', {'': [42]}]}})]}
+${STRING}         Robot42
 
 *** Test Cases ***
 Nested list access
@@ -36,23 +37,31 @@ Non-existing nested dict item
     ${DICT}[x][y][nonex]                whatever
 
 Invalid nested list access
-    [Documentation]    FAIL Sequence '\${LIST}[1][2]' used with invalid index 'inv'.
+    [Documentation]    FAIL
+    ...    Sequence '\${LIST}[1][2]' used with invalid index 'inv'. To use \
+    ...    '[inv]' as a literal value, it needs to be escaped like '\\[inv]'.
     ${LIST}[1][2][inv]                  whatever
 
 Invalid nested dict access
     [Documentation]    FAIL STARTS: Subscriptable '\${DICT}[key]' used with invalid key:
     ${DICT}[key][${DICT}]               whatever
 
-Nested access with non-list/dict
+Invalid nested string access
+    [Documentation]    FAIL Sequence '\${STRING}[1]' used with invalid index 'inv'.
+    ${LIST}[1][inv]                  whatever
+
+Nested access with non-subscriptable
     [Documentation]    FAIL
-    ...    Variable '\${DICT}[\${1}][\${2}]' is integer, which is not subscriptable, \
-    ...    and thus accessing item '0' from it is not possible.
+    ...    Variable '\${DICT}[\${1}][\${2}]' is integer, which is not \
+    ...    subscriptable, and thus accessing item '0' from it is not possible. \
+    ...    To use '[0]' as a literal value, it needs to be escaped like '\\[0]'.
     ${DICT}[${1}][${2}][0]                     whatever
 
 Escape nested
     ${LIST}[-1]\[0]                     third[0]
     ${DICT}[key][key]\[key]             value[key]
     ${DICT}[key]\[key][key]             {'key': 'value'}[key][key]
+    ${STRING}[0]\[-1]                   R[-1]
 
 Nested access doesn't support old `@` and `&` syntax
     @{LIST}[0][0]                       ['item'][0]

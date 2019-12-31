@@ -144,8 +144,9 @@ class VariableReplacer(object):
             else:
                 raise VariableError(
                     "Variable '%s' is %s, which is not subscriptable, and "
-                    "thus accessing item '%s' from it is not possible."
-                    % (name, type_name(value), item)
+                    "thus accessing item '%s' from it is not possible. To use "
+                    "'[%s]' as a literal value, it needs to be escaped like "
+                    "'\\[%s]'." % (name, type_name(value), item, item, item)
                 )
             name = '%s[%s]' % (name, item)
         return value
@@ -155,8 +156,10 @@ class VariableReplacer(object):
         try:
             index = self._parse_sequence_variable_index(index, name[0] == '$')
         except ValueError:
-            raise VariableError("Sequence '%s' used with invalid index '%s'."
-                                % (name, index))
+            raise VariableError("Sequence '%s' used with invalid index '%s'. "
+                                "To use '[%s]' as a literal value, it needs "
+                                "to be escaped like '\\[%s]'."
+                                % (name, index, index, index))
         try:
             return variable[index]
         except IndexError:

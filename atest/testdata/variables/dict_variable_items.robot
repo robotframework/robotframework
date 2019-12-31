@@ -100,8 +100,9 @@ Non-existing index variable
 
 Non-dict variable
     [Documentation]    FAIL
-    ...    Variable '\${INT}' is integer, which is not subscriptable, \
-    ...    and thus accessing item '0' from it is not possible.
+    ...    Variable '\${INT}' is integer, which is not subscriptable, and thus \
+    ...    accessing item '0' from it is not possible. To use '[0]' as a \
+    ...    literal value, it needs to be escaped like '\\[0]'.
     Log    ${INT}[0]
 
 Sanity check

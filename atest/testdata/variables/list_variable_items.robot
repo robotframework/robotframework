@@ -53,35 +53,56 @@ Invalid index using variable
     Log    ${LIST}[${ONE}${3}]
 
 Non-int index
-    [Documentation]    FAIL Sequence '\${LIST}' used with invalid index 'invalid'.
+    [Documentation]    FAIL \
+    ...    Sequence '\${LIST}' used with invalid index 'invalid'. To use \
+    ...    '[invalid]' as a literal value, it needs to be escaped like \
+    ...    '\\[invalid]'.
     Log    ${LIST}[invalid]
 
 Non-int index using variable 1
-    [Documentation]    FAIL Sequence '\${LIST}' used with invalid index 'xxx'.
+    [Documentation]    FAIL \
+    ...    Sequence '\${LIST}' used with invalid index 'xxx'. To use \
+    ...    '[xxx]' as a literal value, it needs to be escaped like '\\[xxx]'.
     Log    ${LIST}[${INVALID}]
 
 Non-int index using variable 2
-    [Documentation]    FAIL Sequence '\${LIST}' used with invalid index '1.1'.
+    [Documentation]    FAIL \
+    ...    Sequence '\${LIST}' used with invalid index '1.1'. To use \
+    ...    '[1.1]' as a literal value, it needs to be escaped like '\\[1.1]'.
     Log    ${LIST}[${1.1}]
 
 Empty index
-    [Documentation]    FAIL Sequence '\${LIST}' used with invalid index ''.
+    [Documentation]    FAIL \
+    ...    Sequence '\${LIST}' used with invalid index ''. To use \
+    ...    '[]' as a literal value, it needs to be escaped like '\\[]'.
     Log    ${LIST}[]
 
 Invalid slice
-    [Documentation]    FAIL Sequence '\${LIST}' used with invalid index '1:2:3:4'.
+    [Documentation]    FAIL \
+    ...    Sequence '\${LIST}' used with invalid index '1:2:3:4'. To use \
+    ...    '[1:2:3:4]' as a literal value, it needs to be escaped like \
+    ...    '\\[1:2:3:4]'.
     Log    ${LIST}[1:2:3:4]
 
 Non-int slice index 1
-    [Documentation]    FAIL Sequence '\${LIST}' used with invalid index 'ooops:'.
+    [Documentation]    FAIL \
+    ...    Sequence '\${LIST}' used with invalid index 'ooops:'. To use \
+    ...    '[ooops:]' as a literal value, it needs to be escaped like \
+    ...    '\\[ooops:]'.
     Log    ${LIST}[ooops:]
 
 Non-int slice index 2
-    [Documentation]    FAIL Sequence '\${LIST}' used with invalid index '1:ooops'.
+    [Documentation]    FAIL \
+    ...    Sequence '\${LIST}' used with invalid index '1:ooops'. To use \
+    ...    '[1:ooops]' as a literal value, it needs to be escaped like \
+    ...    '\\[1:ooops]'.
     Log    ${LIST}[1:ooops]
 
 Non-int slice index 3
-    [Documentation]    FAIL Sequence '\${LIST}' used with invalid index '1:2:ooops'.
+    [Documentation]    FAIL \
+    ...    Sequence '\${LIST}' used with invalid index '1:2:ooops'. To use \
+    ...    '[1:2:ooops]' as a literal value, it needs to be escaped like \
+    ...    '\\[1:2:ooops]'.
     Log    ${LIST}[1:2:ooops]
 
 Non-existing variable
@@ -92,10 +113,11 @@ Non-existing index variable
     [Documentation]    FAIL Variable '\${nonex index}' not found.
     Log    ${LIST}[${nonex index}]
 
-Non-list variable
+Non-subscriptable variable
     [Documentation]    FAIL
-    ...    Variable '\${INT}' is integer, which is not subscriptable, \
-    ...    and thus accessing item '0' from it is not possible.
+    ...    Variable '\${INT}' is integer, which is not subscriptable, and thus \
+    ...    accessing item '0' from it is not possible. To use '[0]' as a \
+    ...    literal value, it needs to be escaped like '\\[0]'.
     Log    ${INT}[0]
 
 Old syntax with `@` still works but is deprecated
@@ -108,5 +130,7 @@ Old syntax with `@` still works but is deprecated
 
 Old syntax with `@` doesn't support new slicing syntax
     [Documentation]    Slicing support should be added in RF 3.3 when `@{list}[index]` changes.
-    ...                FAIL Sequence '\@{LIST}' used with invalid index '1:'.
+    ...                FAIL Sequence '\@{LIST}' used with invalid index '1:'. \
+    ...                To use '[1:]' as a literal value, it needs to be \
+    ...                escaped like '\\[1:]'.
     Log    @{LIST}[1:]
