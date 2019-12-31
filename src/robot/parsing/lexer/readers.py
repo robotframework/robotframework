@@ -21,7 +21,7 @@ from robot.utils import get_error_message, FileReader
 from .context import TestCaseFileContext, ResourceFileContext
 from .lexers import FileLexer
 from .splitter import Splitter
-from .tokens import EOS, Token
+from .tokens import EOL, EOS, Token
 
 
 def get_tokens(source, data_only=False):
@@ -75,19 +75,27 @@ class BaseReader(object):
                 self._split_trailing_comment_and_empty_lines(s)
                 for s in statements
             )
-        # Setting local variables, including 'type' below, is performance
-        # optimization to avoid unnecessary lookups and attribute access.
+        # Setting local variables is performance optimization to avoid
+        # unnecessary lookups and attribute access.
         name_type = Token.NAME
-        separator_or_eol_type = (Token.EOL, Token.SEPARATOR)
+        separator_type = Token.SEPARATOR
+        eol_type = Token.EOL
         for statement in statements:
             name_seen = False
+            separator_after_name = None
             prev_token = None
             for token in statement:
                 type = token.type     # Performance optimization.
                 if type in ignore:
                     continue
-                if name_seen and type not in separator_or_eol_type:
-                    yield EOS.from_token(prev_token)
+                if name_seen:
+                    if type == separator_type:
+                        separator_after_name = token
+                        continue
+                    if type != eol_type:
+                        yield EOS.from_token(prev_token)
+                    if separator_after_name:
+                        yield separator_after_name
                     name_seen = False
                 if type == name_type:
                     name_seen = True
@@ -142,12 +150,15 @@ class BaseReader(object):
 
     def _split_to_lines(self, statement):
         current = []
-        for tok in statement:
-            current.append(tok)
-            if tok.type == tok.EOL:
+        eol = Token.EOL
+        for token in statement:
+            current.append(token)
+            if token.type == eol:
                 yield current
                 current = []
         if current:
+            if current[-1].type != eol:
+                current.append(EOL.from_token(current[-1]))
             yield current
 
 
