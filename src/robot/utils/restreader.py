@@ -53,3 +53,14 @@ class RobotDataStorage(object):
 
     def has_data(self):
         return bool(self._robot_data)
+
+
+def read_rest_data(rstfile):
+    doctree = publish_doctree(
+        rstfile.read(), source_path=rstfile.name,
+        settings_overrides={
+            'input_encoding': 'UTF-8',
+            'report_level': 4
+        })
+    store = RobotDataStorage(doctree)
+    return store.get_data()

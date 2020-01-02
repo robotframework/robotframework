@@ -166,10 +166,13 @@ class EnvironmentFinder(object):
     identifiers = '%'
 
     def find(self, name):
+        var_name, has_default, default_value = name[2:-1].partition('=')
         for getter in get_env_var, get_java_property:
-            value = getter(name[2:-1])
+            value = getter(var_name)
             if value is not None:
                 return value
+        if has_default:     # in case if '' is desired default value
+            return default_value
         variable_not_found(name, self._get_candidates(),
                            "Environment variable '%s' not found." % name)
 

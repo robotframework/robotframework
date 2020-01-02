@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import Mapping, MutableMapping
+from collections import Mapping, MutableMapping, Sequence
 from UserDict import UserDict
 from UserString import UserString
 from types import ClassType, NoneType
@@ -48,14 +48,14 @@ def is_unicode(item):
     return isinstance(item, unicode)
 
 
+def is_pathlike(item):
+    return False
+
+
 def is_list_like(item):
     if isinstance(item, (str, unicode, bytes, bytearray, UserString, String,
                          file)):
         return False
-    return is_iterable(item)
-
-
-def is_iterable(item):
     try:
         iter(item)
     except RERAISED_EXCEPTIONS:
@@ -64,6 +64,10 @@ def is_iterable(item):
         return False
     else:
         return True
+
+
+def is_sequence(item):
+    return isinstance(item, Sequence)
 
 
 def is_dict_like(item):

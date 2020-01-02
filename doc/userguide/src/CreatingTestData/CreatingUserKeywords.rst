@@ -141,7 +141,7 @@ the `Deprecating keywords`_ section.
 User keyword tags
 -----------------
 
-Starting from Robot Framework 2.9, keywords can also have tags. User keywords
+Both user keywords and `library keywords`_ can have tags. User keyword
 tags can be set with :setting:`[Tags]` setting similarly as `test case tags`_,
 but possible :setting:`Force Tags` and :setting:`Default Tags` setting do not
 affect them. Additionally keyword tags can be specified on the last line of

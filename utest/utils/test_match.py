@@ -128,6 +128,18 @@ class TestMatcher(unittest.TestCase):
         self._matches_not('GlobTest2', pattern)
         self._matches('GlobTest3', pattern)
 
+    def test_escape_wildcards(self):
+        # No escaping needed
+        self._matches('[', '[')
+        self._matches('[]', '[]')
+        # Escaping needed
+        self._matches_not('[x]', '[x]')
+        self._matches('[x]', '[[]x]')
+        for wild in '*?[]':
+            self._matches(wild, '[%s]' % wild)
+            self._matches('foo%sbar' % wild, 'foo[%s]bar' % wild)
+            self._matches('foo%sbar' % wild, '*[%s]???' % wild)
+
     def test_spaceless(self):
         for text in ['fbar', 'foobar']:
             assert Matcher('f*bar').match(text)

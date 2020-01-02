@@ -135,6 +135,8 @@ class _BaseSettings(object):
             self._validate_flatten_keywords(value)
         if name == 'ExpandKeywords':
             self._validate_expandkeywords(value)
+        if name == 'Extension':
+            return tuple(ext.lower().lstrip('.') for ext in value.split(':'))
         return value
 
     def _escape_as_data(self, value):
@@ -393,7 +395,7 @@ class _BaseSettings(object):
 
 
 class RobotSettings(_BaseSettings):
-    _extra_cli_opts = {'Extension'          : ('extension', None),
+    _extra_cli_opts = {'Extension'          : ('extension', ('robot',)),
                        'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
                        'MaxErrorLines'      : ('maxerrorlines', 40),

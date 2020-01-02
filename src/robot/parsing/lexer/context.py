@@ -20,22 +20,21 @@ from .settings import (KeywordSettings, TestCaseFileSettings,
 class LexingContext(object):
     settings_class = None
 
-    def __init__(self, data_only=False, settings=None):
-        self.data_only = data_only
-        self.settings = settings or self.settings_class(self)
+    def __init__(self, settings=None):
+        self.settings = settings or self.settings_class()
 
     def lex_setting(self, statement):
         self.settings.lex(statement)
 
     def keyword_context(self):
-        return KeywordContext(settings=KeywordSettings(self))
+        return KeywordContext(settings=KeywordSettings())
 
 
 class TestCaseFileContext(LexingContext):
     settings_class = TestCaseFileSettings
 
     def test_case_context(self):
-        return TestCaseContext(settings=TestCaseSettings(self, self.settings))
+        return TestCaseContext(settings=TestCaseSettings(self.settings))
 
 
 class ResourceFileContext(LexingContext):
@@ -44,7 +43,7 @@ class ResourceFileContext(LexingContext):
     def test_case_context(self):
         # Lex test cases for resource/init files.
         # The error will be reported when the model is built
-        return KeywordContext(settings=TestCaseSettings(self, self.settings))
+        return KeywordContext(settings=TestCaseSettings(self.settings))
 
 
 class TestCaseContext(LexingContext):

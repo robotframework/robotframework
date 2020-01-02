@@ -48,7 +48,7 @@ Non-existing variable
 Non-existing index variable
     Check Test Case    ${TESTNAME}
 
-Non-list variable
+Non-subscriptable variable
     Check Test Case    ${TESTNAME}
 
 Old syntax with `@` still works but is deprecated

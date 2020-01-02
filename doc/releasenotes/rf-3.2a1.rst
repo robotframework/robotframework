@@ -367,7 +367,7 @@ great contributions by the wider open source community:
 
 - `Simandan Andrei-Cristian <https://github.com/cristii006>`__
   implemented `Set Local Variable` keyword (`#3091`_) and added note to
-  the Scheenshot library documentation about the more powerful
+  the Screenshot library documentation about the more powerful
   `ScreenCapLibrary <https://github.com/mihaiparvu/ScreenCapLibrary>`__
   (`#3330`_)
 

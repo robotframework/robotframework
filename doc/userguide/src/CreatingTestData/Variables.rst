@@ -189,11 +189,6 @@ requires its value to be a Python list or list-like object. Robot Framework
 does not allow strings to be used as lists, but other iterable objects such
 as tuples or dictionaries are accepted.
 
-Prior to Robot Framework 2.9, scalar and list variables were stored separately,
-but it was possible to use list variables as scalars and scalar variables as
-lists. This caused lot of confusion when there accidentally was a scalar
-variable and a list variable with same name but different value.
-
 Using list variables with other data
 ''''''''''''''''''''''''''''''''''''
 
@@ -256,8 +251,6 @@ are equivalent.
    Dict Variable
        Login    &{USER}
 
-Dictionary variables are new in Robot Framework 2.9.
-
 Using dictionary variables with other data
 ''''''''''''''''''''''''''''''''''''''''''
 
@@ -291,61 +284,66 @@ are imports, setups and teardowns where dictionaries can be used as arguments.
 Accessing list and dictionary items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is possible to access items of lists and dictionaries using special
-syntax `${var}[item]`. Accessing items is an old feature, but prior to
-Robot Framework 3.1 the syntax was `@{var}[item]` with lists and
-`&{var}[item]` with dictionaries. The old syntax was deprecated in
+It is possible to access items of subscriptable variables, e.g. lists and
+dictionaries, using special syntax `${var}[item]`. Accessing items is an old
+feature, but prior to Robot Framework 3.1 the syntax was `@{var}[item]` with
+lists and `&{var}[item]` with dictionaries. The old syntax was deprecated in
 Robot Framework 3.2 and will not be supported in the future.
 
-Accessing list items
-''''''''''''''''''''
+.. _sequence items:
 
-It is possible to access a certain item of a list variable with the syntax
-`${var}[index]`, where `index` is the index of the selected value. Indices
-start from zero, negative indices can be used to access items from the end,
-and trying to access an item with too large an index causes an error.
-Indices are automatically converted to integers, and it is also possible to
-use variables as indices. List items accessed in this manner can be used
-similarly as scalar variables.
+Accessing sequence items
+''''''''''''''''''''''''
+
+It is possible to access a certain item of a `sequence`__ variable (e.g. list,
+string and bytes) with the syntax `${var}[index]`, where `index` is the index of
+the selected value. Indices start from zero, negative indices can be used to
+access items from the end, and trying to access an item with too large an index
+causes an error. Indices are automatically converted to integers, and it is also
+possible to use variables as indices. Sequence items accessed in this manner can
+be used similarly as scalar variables.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   List variable item
+   Sequence variable item
        Login    ${USER}[0]    ${USER}[1]
        Title Should Be    Welcome ${USER}[0]!
 
    Negative index
-       Log    ${LIST}[-1]
+       Log    ${SEQUENCE}[-1]
 
    Index defined as variable
-       Log    ${LIST}[${INDEX}]
+       Log    ${SEQUENCE}[${INDEX}]
 
-List item access supports also the `same "slice" functionality as Python`__
+Sequence item access supports also the `same "slice" functionality as Python`__
 with syntax like `${var}[1:]`. With this syntax you do not get a single
-item but a slice of the original list. Same way as with Python you can
+item but a slice of the original sequence. Same way as with Python you can
 specify the start index, the end index, and the step:
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Start index
-       Keyword    ${LIST}[1:]
+       Keyword    ${SEQUENCE}[1:]
 
    End index
-       Keyword    ${LIST}[:4]
+       Keyword    ${SEQUENCE}[:4]
 
    Start and end
-       Keyword    ${LIST}[2:-1]
+       Keyword    ${SEQUENCE}[2:-1]
 
    Step
-       Keyword    ${LIST}[::2]
-       Keyword    ${LIST}[1:-1:10]
+       Keyword    ${SEQUENCE}[::2]
+       Keyword    ${SEQUENCE}[1:-1:10]
 
 .. note:: The slice syntax is new in Robot Framework 3.1 and does not work
           with the old `@{var}[index]` syntax.
 
+__ https://docs.python.org/3/glossary.html#term-sequence
 __ https://docs.python.org/glossary.html#term-slice
+
+.. _dictionary items:
 
 Accessing individual dictionary items
 '''''''''''''''''''''''''''''''''''''
@@ -374,10 +372,20 @@ for more details about this syntax.
        Login    ${USER.name}    ${USER.password}
        Title Should Be    Welcome ${USER.name}!
 
+Accessing items of a custom object
+''''''''''''''''''''''''''''''''''
+
+It is possible to access items of an object of a class that implements the
+`__getitem__()`__ method. Depending on the implementation by the class, it is
+handled the same as accessing either `sequence items`_ or `dictionary items`_
+as explained in the two subsections above.
+
+__ https://docs.python.org/3/reference/datamodel.html#object.__getitem__
+
 Nested item access
 ''''''''''''''''''
 
-Also nested list and dictionary structures can be accessed using the same
+Also nested subscriptable variables can be accessed using the same
 item access syntax like `${var}[item1][item2]`. This is especially useful
 when working with JSON data often returned by REST services. For example,
 if a variable `${DATA}` contains `[{'id': 1, 'name': 'Robot'},
@@ -393,9 +401,11 @@ if a variable `${DATA}` contains `[{'id': 1, 'name': 'Robot'},
 Environment variables
 ~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework allows using environment variables in the test
-data using the syntax `%{ENV_VAR_NAME}`. They are limited to string
-values.
+Robot Framework allows using environment variables in the test data using
+the syntax `%{ENV_VAR_NAME}`. They are limited to string values. It is
+possible to specify a default value, that is used if the environment
+variable does not exists, by separating the variable name and the default
+value with an equal sign like `%{ENV_VAR_NAME=default value}`.
 
 Environment variables set in the operating system before the test execution are
 available during it, and it is possible to create new ones with the keyword
@@ -413,6 +423,11 @@ not effective after the test execution.
        Log    Current user: %{USER}
        Run    %{JAVA_HOME}${/}javac
 
+   Environment variables with defaults
+       Set port    %{APPLICATION_PORT=8080}
+
+.. note:: Support for specifying the default value is new in Robot Framework 3.2.
+
 Java system properties
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -425,6 +440,7 @@ system property with same name exist, the environment variable will be used.
    *** Test Cases ***
    System properties
        Log    %{user.name} running tests on %{os.name}
+       Log    %{custom.property=default value}
 
 __ http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
@@ -479,8 +495,6 @@ can be changed by having `SEPARATOR=<sep>` in the first cell.
    ${EXAMPLE}      This value is joined    together with a space
    ${MULTILINE}    SEPARATOR=\n    First line
    ...             Second line     Third line
-
-Joining long values like above is a new feature in Robot Framework 2.9.
 
 __ `Dividing test data to several rows`_
 
@@ -720,13 +734,6 @@ It is an error if the returned list has more or less values than there are
 scalar variables to assign. Additionally, only one list variable is allowed
 and dictionary variables can only be assigned alone.
 
-The support for assigning multiple variables was slightly changed in
-Robot Framework 2.9. Prior to it a list variable was only allowed as
-the last assigned variable, but nowadays it can be used anywhere.
-Additionally, it was possible to return more values than scalar variables.
-In that case the last scalar variable was magically turned into a list
-containing the extra values.
-
 Using :name:`Set Test/Suite/Global Variable` keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -927,8 +934,6 @@ scopes. Modifying the value of `@{EMPTY}` or `&{EMPTY}` is not possible.
 .. note:: `${SPACE}` represents the ASCII space (`\x20`) and `other spaces`__
           should be specified using the `escape sequences`__ like `\xA0`
           (NO-BREAK SPACE) and `\u3000` (IDEOGRAPHIC SPACE).
-
-.. note:: `&{EMPTY}` is new in Robot Framework 2.9.
 
 __ Escaping_
 __ https://groups.google.com/group/robotframework-users/browse_thread/thread/ccc9e1cd77870437/4577836fe946e7d5?lnk=gst&q=templates#4577836fe946e7d5
@@ -1154,15 +1159,9 @@ them as arguments__.
 
 It is recommended to use lower-case letters with local variables.
 
-.. note:: Prior to Robot Framework 2.9 variables in the local scope
-          `leaked to lower level user keywords`__. This was never an
-          intended feature, and variables should be set or passed
-          explicitly also with earlier versions.
-
 __ `Setting variables in command line`_
 __ `Return values from keywords`_
 __ `User keyword arguments`_
-__ https://github.com/robotframework/robotframework/issues/532
 
 Advanced variable features
 --------------------------

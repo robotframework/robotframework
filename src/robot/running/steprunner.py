@@ -96,6 +96,8 @@ class ForInRunner(object):
         if data._header != 'FOR':
             logger.warn("For loop header '%s' is deprecated. "
                         "Use 'FOR' instead." % data._header)
+        if data._end is None:
+            raise DataError("For loop has no closing 'END'.")
         if data._end != 'END':
             logger.warn("Marking for loop body with '\\' is deprecated. "
                         "Remove markers and use 'END' instead.")

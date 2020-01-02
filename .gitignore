@@ -1,11 +1,12 @@
 tmp
 build
 dist
+venv
+.venv
 *~
 MANIFEST
 atest/results
 utest/jasmine-results
-*~
 .idea
 .vscode
 .*project
@@ -21,4 +22,3 @@ src/robotframework.egg-info
 log.html
 output.xml
 report.html
-src/robot/parsing/parser.out

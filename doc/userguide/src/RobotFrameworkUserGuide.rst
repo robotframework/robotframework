@@ -196,7 +196,7 @@
 .. 4. Extending
 
 .. _library API: `Creating test libraries`_
-.. _static library API: `Creating static keywords`_
+.. _static library API: `Creating keywords`_
 .. _listener: `listener interface`_
 .. _listeners: `listener interface`_
 

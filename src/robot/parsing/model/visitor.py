@@ -13,16 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import ast
 
-def read_rest(rstfile):
-    from .restsupport import publish_doctree, RobotDataStorage
 
-    doctree = publish_doctree(
-        rstfile.read(), source_path=rstfile.name,
-        settings_overrides={
-            'input_encoding': 'UTF-8',
-            'report_level': 4
-        })
-    store = RobotDataStorage(doctree)
-    return store.get_data()
+class ModelVisitor(ast.NodeVisitor):
 
+    def visit(self, node):
+        visitor = self._find_visitor(type(node)) or self.generic_visit
+        return visitor(node)
+
+    def _find_visitor(self, cls):
+        if cls is ast.AST:
+            return None
+        method = 'visit_' + cls.__name__
+        if hasattr(self, method):
+            return getattr(self, method)
+        for base in cls.__bases__:
+            visitor = self._find_visitor(base)
+            if visitor:
+                return visitor

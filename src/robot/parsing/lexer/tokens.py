@@ -13,7 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import py2to3
 
+
+@py2to3
 class Token(object):
     SETTING_HEADER = 'SETTING_HEADER'
     VARIABLE_HEADER = 'VARIABLE_HEADER'
@@ -61,10 +64,44 @@ class Token(object):
     ERROR = 'ERROR'
     DATA = 'DATA'
 
-    NON_DATA_TOKENS = {SEPARATOR, COMMENT, CONTINUATION, IGNORE}
+    NON_DATA_TOKENS = (
+        SEPARATOR,
+        COMMENT,
+        CONTINUATION,
+        IGNORE,
+        EOL,
+        EOS
+    )
+    SETTING_TOKENS = (
+        DOCUMENTATION,
+        SUITE_SETUP,
+        SUITE_TEARDOWN,
+        METADATA,
+        TEST_SETUP,
+        TEST_TEARDOWN,
+        TEST_TEMPLATE,
+        TEST_TIMEOUT,
+        FORCE_TAGS,
+        DEFAULT_TAGS,
+        LIBRARY,
+        RESOURCE,
+        VARIABLES,
+        SETUP,
+        TEARDOWN,
+        TEMPLATE,
+        TIMEOUT,
+        TAGS,
+        ARGUMENTS,
+        RETURN
+    )
+    HEADER_TOKENS = (
+        SETTING_HEADER,
+        VARIABLE_HEADER,
+        TESTCASE_HEADER,
+        KEYWORD_HEADER
+    )
 
-    # TODO: Enable slots when we know what attributes ply needs.
-    #__slots__ = ['type', 'value', 'lineno', 'columnno']
+    __slots__ = ['type', 'value', 'lineno', 'columnno', 'error']
 
     def __init__(self, type, value='', lineno=-1, columnno=-1):
         self.type = type
@@ -73,8 +110,7 @@ class Token(object):
         self.columnno = columnno
         self.error = None
 
-    def __str__(self):
-        # TODO: __unicode__
+    def __unicode__(self):
         return self.value
 
     def __repr__(self):
@@ -82,34 +118,19 @@ class Token(object):
                                           self.lineno, self.columnno)
 
 
-Token.DATA_TOKENS = [t for t in Token.__dict__
-                     if t[0] != '_' and t not in Token.NON_DATA_TOKENS]
+class EOL(Token):
+    __slots__ = []
 
-Token.SETTING_TOKENS = [
-    Token.DOCUMENTATION,
-    Token.SUITE_SETUP,
-    Token.SUITE_TEARDOWN,
-    Token.METADATA,
-    Token.TEST_SETUP,
-    Token.TEST_TEARDOWN,
-    Token.TEST_TEMPLATE,
-    Token.TEST_TIMEOUT,
-    Token.FORCE_TAGS,
-    Token.DEFAULT_TAGS,
-    Token.LIBRARY,
-    Token.RESOURCE,
-    Token.VARIABLES,
-    Token.SETUP,
-    Token.TEARDOWN,
-    Token.TEMPLATE,
-    Token.TIMEOUT,
-    Token.TAGS,
-    Token.ARGUMENTS,
-    Token.RETURN
-]
+    def __init__(self, value='', lineno=-1, columnno=-1):
+        Token.__init__(self, Token.EOL, value, lineno, columnno)
+
+    @classmethod
+    def from_token(cls, token):
+        return EOL('', token.lineno, token.columnno + len(token.value))
 
 
 class EOS(Token):
+    __slots__ = []
 
     def __init__(self, lineno=-1, columnno=-1):
         Token.__init__(self, Token.EOS, '', lineno, columnno)

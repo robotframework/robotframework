@@ -194,7 +194,7 @@ Expect Error When Access To List Variable Nonexisting Index Syntax 1
 
 Expect Error When Access To List Variable Nonexisting Index Syntax 2
     Run Keyword And Expect Error
-    ...    Iterable '\${list}' has no item in index 2.
+    ...    Sequence '\${list}' has no item in index 2.
     ...    Access To List Variable Nonexisting Index Syntax 2
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 1
@@ -204,7 +204,7 @@ Expect Error When Access To Dictionary Nonexisting Key Syntax 1
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 2
     Run Keyword And Expect Error
-    ...    Dictionary '\${dict}' has no key 'c'.
+    ...    Subscriptable '\${dict}' has no key 'c'.
     ...    Access To Dictionary Variable Nonexisting Key Syntax 2
 
 Expect Error With Explicit GLOB

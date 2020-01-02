@@ -72,7 +72,7 @@ class BlockLexer(Lexer):
         for cls in self.lexer_classes():
             if cls.handles(statement):
                 return cls()
-        raise RuntimeError('TODO: %s' % type(self).__name__)
+        raise TypeError("No lexer found for '%s'." % type(self).__name__)
 
     def lexer_classes(self):
         return ()
@@ -152,12 +152,13 @@ class CommentSectionHeaderLexer(SectionHeaderLexer):
 class ErrorSectionHeaderLexer(SectionHeaderLexer):
 
     def lex(self, ctx):
-        self.statement[0].type = Token.ERROR
-        self.statement[0].error = (
+        header = self.statement[0]
+        header.type = Token.ERROR
+        header.error = (
             "Unrecognized section header '%s'. Available headers for data: "
             "'Setting(s)', 'Variable(s)', 'Test Case(s)', 'Task(s)' and "
             "'Keyword(s)'. Use 'Comment(s)' to embedded additional data."
-            % self.statement[0].value.strip('* ').strip()
+            % header.value.strip('* ').strip()
         )
         for token in self.statement[1:]:
             token.type = Token.COMMENT
@@ -217,7 +218,6 @@ class VariableSectionLexer(SectionLexer):
 class VariableLexer(StatementLexer):
 
     def lex(self, ctx):
-        # TODO: Validation?
         self.statement[0].type = Token.VARIABLE
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
@@ -254,7 +254,6 @@ class TestOrKeywordLexer(BlockLexer):
             lexer.input(statement)
 
     def _handle_name_or_indentation(self, statement):
-        # TODO: Use dedicated lexers?
         if not self._name_set:
             statement.pop(0).type = Token.NAME
             self._name_set = True
@@ -263,7 +262,6 @@ class TestOrKeywordLexer(BlockLexer):
                 statement.pop(0).type = Token.IGNORE
 
     def _handle_old_style_for_loop(self, statement, lexer):
-        # TODO: Deprecation
         if isinstance(lexer, ForLoopLexer):
             self._in_for_loop = True
         elif isinstance(lexer, EndLexer):
