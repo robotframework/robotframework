@@ -25,31 +25,51 @@ from .tokens import EOL, EOS, Token
 
 
 def get_tokens(source, data_only=False):
+    """Parses the given source to tokens.
+
+    :param source: The source where to read the data. Can be a path to
+        a source file as a string or as ``pathlib.Path`` object, an already
+        opened file object, or Unicode text containing the date directly.
+        Source files must be UTF-8 encoded.
+    :param data_only: When ``False`` (default), returns all tokens. When set
+        to ``True``, omits separators, comments, continuations, and other
+        non-data tokens.
+
+    Returns a generator that yields :class:`~robot.parsing.lexer.tokens.Token`
+    instances.
+    """
     reader = TestCaseFileReader(data_only)
     reader.input(source)
     return reader.get_tokens()
 
 
 def get_resource_tokens(source, data_only=False):
+    """Parses the given source to resource file tokens.
+
+    Otherwise same as :func:`get_tokens` but the source is considered to be
+    a resource file. This affects, for example, what settings are valid.
+    """
     reader = ResourceFileReader(data_only)
     reader.input(source)
     return reader.get_tokens()
 
 
+# TODO: Rename classes and module from readers to tokenizers?
+
 class BaseReader(object):
     context_class = None
 
     def __init__(self, data_only=False):
+        self.data_only = data_only
         self.lexer = FileLexer()
         self.statements = []
-        self._data_only = data_only
 
     def input(self, source):
         content = self._read(source)
-        for statement in Splitter().split(content, data_only=self._data_only):
+        for statement in Splitter().split(content, data_only=self.data_only):
             # Store all tokens but pass only DATA tokens to lexer.
             self.statements.append(statement)
-            if self._data_only:
+            if self.data_only:
                 data = statement[:]
             else:
                 data = [t for t in statement if t.type == t.DATA]
@@ -64,13 +84,13 @@ class BaseReader(object):
 
     def get_tokens(self):
         self.lexer.lex(self.context_class())
-        if self._data_only:
+        if self.data_only:
             ignore = {Token.IGNORE, Token.COMMENT_HEADER, Token.COMMENT,
                       Token.OLD_FOR_INDENT}
         else:
             ignore = {Token.IGNORE}
         statements = self._handle_old_for(self.statements)
-        if not self._data_only:
+        if not self.data_only:
             statements = chain.from_iterable(
                 self._split_trailing_comment_and_empty_lines(s)
                 for s in statements
