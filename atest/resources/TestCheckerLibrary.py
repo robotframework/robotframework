@@ -97,32 +97,36 @@ class TestCheckerLibrary:
             test.exp_message = message
         if test.exp_status != test.status:
             if test.exp_status == 'PASS':
-                msg = "Test was expected to PASS but it FAILED. "
-                msg += "Error message:\n" + test.message
+                msg = ("Test '%s' was expected to PASS but it FAILED.\n\n"
+                       "Error message:\n%s" % (test.name, test.message))
             else:
-                msg = "Test was expected to FAIL but it PASSED. "
-                msg += "Expected message:\n" + test.exp_message
+                msg = ("Test '%s' was expected to FAIL but it PASSED.\n\n"
+                       "Expected message:\n%s" % (test.name, test.exp_message))
             raise AssertionError(msg)
         if test.exp_message == test.message:
             return
         if test.exp_message.startswith('REGEXP:'):
-            pattern = test.exp_message.replace('REGEXP:', '', 1).strip()
+            pattern = self._get_pattern(test, 'REGEXP:')
             if re.match('^%s$' % pattern, test.message, re.DOTALL):
                 return
         if test.exp_message.startswith('GLOB:'):
-            pattern = test.exp_message.replace('GLOB:', '', 1).strip()
+            pattern = self._get_pattern(test, 'GLOB:')
             matcher = utils.Matcher(pattern, caseless=False, spaceless=False)
             if matcher.match(test.message):
                 return
         if test.exp_message.startswith('STARTS:'):
-            start = test.exp_message.replace('STARTS:', '', 1).strip()
-            if not start:
-                raise RuntimeError("Empty 'STARTS:' is not allowed")
+            start = self._get_pattern(test, 'STARTS:')
             if test.message.startswith(start):
                 return
-        raise AssertionError("Wrong message\n\n"
+        raise AssertionError("Test '%s' had wrong message.\n\n"
                              "Expected:\n%s\n\nActual:\n%s\n"
-                             % (test.exp_message, test.message))
+                             % (test.name, test.exp_message, test.message))
+
+    def _get_pattern(self, test, prefix):
+        pattern = test.exp_message[len(prefix):].strip()
+        if not pattern:
+            raise RuntimeError("Empty '%s' is not allowed!")
+        return pattern
 
     def should_contain_tests(self, suite, *names, **names_and_statuses):
         """Verify that specified tests exists in suite.
