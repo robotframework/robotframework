@@ -3,12 +3,14 @@ import os
 import unittest
 import tempfile
 
+from robot.utils import PY3
 from robot.utils.asserts import assert_equal
 
 from robot.parsing import get_tokens, get_resource_tokens, Token
 
 
 T = Token
+
 
 def assert_tokens(source, expected, get_tokens=get_tokens, data_only=False):
     tokens = list(get_tokens(source, data_only))
@@ -110,24 +112,9 @@ class TestNameWithPipes(unittest.TestCase):
                       get_tokens=get_resource_tokens)
 
 
-
-class SourceFormatsTestBase(unittest.TestCase):
-    data = None
-    tokens = None
+class TestGetTokensSourceFormats(unittest.TestCase):
     path = os.path.join(os.getenv('TEMPDIR') or tempfile.gettempdir(),
                         'test_lexer.robot')
-
-    @classmethod
-    def setUpClass(cls):
-        with open(cls.path, 'w') as f:
-            f.write(cls.data)
-
-    @classmethod
-    def tearDownClass(cls):
-        os.remove(cls.path)
-
-
-class TestGetTokensSourceFormats(SourceFormatsTestBase):
     data = u'''\
 *** Settings ***
 Library         Easter
@@ -175,9 +162,25 @@ Example
         (T.EOS, '', 6, 31)
     ]
 
-    def test_file(self):
+    @classmethod
+    def setUpClass(cls):
+        with open(cls.path, 'w') as f:
+            f.write(cls.data)
+
+    @classmethod
+    def tearDownClass(cls):
+        os.remove(cls.path)
+
+    def test_string_path(self):
         self._verify(self.path)
         self._verify(self.path, data_only=True)
+
+    if PY3:
+
+        def test_pathlib_path(self):
+            from pathlib import Path
+            self._verify(Path(self.path))
+            self._verify(Path(self.path), data_only=True)
 
     def test_open_file(self):
         with open(self.path) as f:
@@ -198,8 +201,7 @@ Example
         assert_tokens(source, expected, data_only=data_only)
 
 
-class TestGetResourceTokensSourceFormats(SourceFormatsTestBase):
-    get_tokens = get_resource_tokens
+class TestGetResourceTokensSourceFormats(TestGetTokensSourceFormats):
     data = u'''\
 *** Variable ***
 ${VAR}    Value
@@ -241,24 +243,6 @@ NOOP    No Operation
         (T.KEYWORD, 'No Operation', 5, 9),
         (T.EOS, '', 5, 21)
     ]
-
-    def test_file(self):
-        self._verify(self.path)
-        self._verify(self.path, data_only=True)
-
-    def test_open_file(self):
-        with open(self.path) as f:
-            self._verify(f)
-        with open(self.path) as f:
-            self._verify(f, data_only=True)
-
-    def test_string_io(self):
-        self._verify(StringIO(self.data))
-        self._verify(StringIO(self.data), data_only=True)
-
-    def test_string(self):
-        self._verify(self.data)
-        self._verify(self.data, data_only=True)
 
     def _verify(self, source, data_only=False):
         expected = self.data_tokens if data_only else self.tokens
