@@ -59,6 +59,7 @@ It could be used, for example, with Robot Framework's ``--prerunmodifier``
 option to modify test data before execution.
 
 .. literalinclude:: ../../../doc/api/code_examples/SelectEveryXthTest.py
+   :language: python
 
 For more examples it is possible to look at the source code of visitors used
 internally by Robot Framework itself. Some good examples are
