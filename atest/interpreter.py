@@ -65,6 +65,10 @@ class Interpreter(object):
         if self.is_jython:
             yield 'no-jython'
             yield 'require-lxml'
+            if self.version_info[:3] == (2, 7, 0):
+                yield 'no-jython-2.7.0'
+            if self.version_info[:3] == (2, 7, 1):
+                yield 'no-jython-2.7.1'
         else:
             yield 'require-jython'
         if self.is_ironpython:
