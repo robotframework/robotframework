@@ -11,7 +11,7 @@ def rf_logger():
     _log_a_lot(logger.info)
 
 
-def python_logging():
+def python_logger():
     _log_a_lot(logging.info)
 
 

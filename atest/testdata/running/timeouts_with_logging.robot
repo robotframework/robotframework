@@ -1,47 +1,40 @@
 *** Settings ***
+Documentation     These tests validate the fix for
+...               https://github.com/robotframework/robotframework/issues/2839
+...
+...               There used to be more tests here on the test data side, but
+...               that started to cause weird problems on CI. Having these
+...               four tests ought to be enough to prevent the original issue
+...               from reappearing.
 Library           timeouts_with_logging.py
-Test Timeout      ${TIMEOUT}
 
 *** Variables ***
 ${TIMEOUT}        25 milliseconds
 
 *** Test Cases ***
-RF logger 1
+Test timeout when logging using RF logger
     [Documentation]    FAIL Test timeout ${TIMEOUT} exceeded.
+    [Timeout]    ${TIMEOUT}
     RF logger
 
-RF logger 2
+Keyword timeout when logging using RF logger
+    [Documentation]    FAIL Keyword timeout ${TIMEOUT} exceeded.
+    Keyword timeout when logging with RF logger
+
+Test timeout when logging using Python logger
     [Documentation]    FAIL Test timeout ${TIMEOUT} exceeded.
+    [Timeout]    ${TIMEOUT}
+    Python logger
+
+Keyword timeout when logging using Python logger
+    [Documentation]    FAIL Keyword timeout ${TIMEOUT} exceeded.
+    Keyword timeout when logging with Python logger
+
+*** Keywords ***
+Keyword timeout when logging with RF logger
+    [Timeout]    ${TIMEOUT}
     RF logger
 
-RF logger 3
-    [Documentation]    FAIL Test timeout ${TIMEOUT} exceeded.
-    RF logger
-
-RF logger 4
-    [Documentation]    FAIL Test timeout ${TIMEOUT} exceeded.
-    RF logger
-
-RF logger 5
-    [Documentation]    FAIL Test timeout ${TIMEOUT} exceeded.
-    RF logger
-
-Python logging 1
-    [Documentation]    FAIL Test timeout ${TIMEOUT} exceeded.
-    Python logging
-
-Python logging 2
-    [Documentation]    FAIL Test timeout ${TIMEOUT} exceeded.
-    Python logging
-
-Python logging 3
-    [Documentation]    FAIL Test timeout ${TIMEOUT} exceeded.
-    Python logging
-
-Python logging 4
-    [Documentation]    FAIL Test timeout ${TIMEOUT} exceeded.
-    Python logging
-
-Python logging 5
-    [Documentation]    FAIL Test timeout ${TIMEOUT} exceeded.
-    Python logging
+Keyword timeout when logging with Python logger
+    [Timeout]    ${TIMEOUT}
+    Python logger
