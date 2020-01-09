@@ -39,7 +39,8 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 
 from robot.errors import DataError
 from robot.parsing import get_model, SuiteStructureBuilder, SuiteStructureVisitor
-from robot.tidypkg import DataFileWriter
+from robot.tidypkg import (Aligner, Cleaner, SeparatorCleaner, PipeAdder,
+                           NewlineAdder)
 from robot.utils import Application, file_writer
 
 # TODO: maybe rename --format to --extension
@@ -180,8 +181,15 @@ class Tidy(SuiteStructureVisitor):
         data = SuiteStructureBuilder().build([path])
         data.visit(self)
 
-    def _tidy(self, ast, output=None):
-        DataFileWriter(output=output, **self._options).write(ast)
+    def _tidy(self, model, output=None):
+        Cleaner().visit(model)
+        NewlineAdder().visit(model)
+        if self._options['pipe_separated']:
+            PipeAdder().visit(model)
+        else:
+            SeparatorCleaner(self._options['txt_separating_spaces']).visit(model)
+        Aligner().visit(model)
+        model.save(output, self._options['line_separator'])
 
     def visit_file(self, file):
         self.inplace(file.source)

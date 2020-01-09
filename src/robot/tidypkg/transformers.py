@@ -111,9 +111,9 @@ class NewlineAdder(ModelTransformer):
 
 class SeparatorCleaner(ModelTransformer):
 
-    def __init__(self, ctx):
+    def __init__(self, separator_width):
         self.indent = 0
-        self.separator = ' ' * ctx.txt_separating_spaces
+        self.separator = ' ' * separator_width
 
     def visit_TestCase(self, node):
         self.indent += 1
@@ -155,8 +155,8 @@ class SeparatorCleaner(ModelTransformer):
 
 class ColumnAligner(ModelTransformer):
 
-    def __init__(self, ctx, widths):
-        self.ctx = ctx
+    def __init__(self, short_test_name_length, widths):
+        self.short_test_name_length = short_test_name_length
         self.widths = widths
         self.test_name_len = 0
         self.indent = 0
@@ -195,8 +195,7 @@ class ColumnAligner(ModelTransformer):
             for token, width in zip(line, widths):
                 exp_pos += width
                 if self.should_write_content_after_name(line_pos):
-                    # FIXME, this hack ony works with indent = 4
-                    exp_pos -= (self.test_name_len - 4)
+                    exp_pos -= self.test_name_len
                     self.first_statement_after_name_seen = True
                 token.value = (exp_pos - line_pos) * ' ' + token.value
                 line_pos += len(token.value)
@@ -213,7 +212,7 @@ class ColumnAligner(ModelTransformer):
 
     def should_write_content_after_name(self, line_pos):
         return line_pos == 0 and not self.first_statement_after_name_seen \
-               and self.test_name_len < self.ctx.short_test_name_length
+               and self.test_name_len < self.short_test_name_length
 
 
 class ColumnWidthCounter(ModelTransformer):
@@ -239,15 +238,15 @@ class ColumnWidthCounter(ModelTransformer):
 
 
 class Aligner(ModelTransformer):
-
-    def __init__(self, ctx):
-        self.ctx = ctx
+    setting_and_variable_name_length = 14
+    short_test_name_length = 18
 
     def visit_TestCaseSection(self, section):
         if len(section.header.data_tokens) > 1:
             counter = ColumnWidthCounter()
             counter.visit(section)
-            ColumnAligner(self.ctx, counter.widths).visit(section)
+            ColumnAligner(self.short_test_name_length,
+                          counter.widths).visit(section)
         return section
 
     def visit_KeywordSection(self, section):
@@ -262,7 +261,7 @@ class Aligner(ModelTransformer):
             first_value = [t for t in line if t.type != Token.SEPARATOR][0]
             value_index = line.index(first_value)
             line[value_index].value = line[value_index].value.ljust(
-                self.ctx.setting_and_variable_name_length)
+                self.setting_and_variable_name_length)
         return statement
 
 
@@ -339,39 +338,3 @@ class Cleaner(ModelTransformer):
                                    loop.end.tokens[0], Token(Token.EOL, '\n'))
         self.generic_visit(loop)
         return loop
-
-
-class Formatter(ModelTransformer):
-
-    def __init__(self, ctx, row_writer):
-        self.ctx = ctx
-        self.writer = row_writer
-        self.indent = 0
-
-    def visit_Section(self, section):
-        self.generic_visit(section)
-
-    def visit_TestCase(self, node):
-        self._write_name(node.name_tokens)
-        self.generic_visit(node.body)
-
-    def visit_Keyword(self, node):
-        self._write_name(node.name_tokens)
-        self.generic_visit(node.body)
-
-    def _write_name(self, name):
-        self._write_statement(name)
-
-    def visit_ForLoop(self, node):
-        self._write_statement(node.header)
-        self.generic_visit(node.body)
-        if node.end:
-            self._write_statement(node.end)
-
-    def visit_Statement(self, statement):
-        self._write_statement(statement)
-
-    def _write_statement(self, statement):
-        for line in statement.lines:
-            self.writer.write(line)
-

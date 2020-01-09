@@ -15,9 +15,21 @@
 
 import ast
 
-from robot.utils import normalize_whitespace
+from robot.utils import normalize_whitespace, file_writer
 
+from .visitor import ModelVisitor
 from ..lexer import Token
+
+
+class FileWriter(ModelVisitor):
+
+    def __init__(self, output):
+        self.output = output
+
+    def visit_Statement(self, statement):
+        for line in statement.lines:
+            for token in line:
+                self.output.write(token.value)
 
 
 class Block(ast.AST):
@@ -27,12 +39,20 @@ class Block(ast.AST):
 class File(Block):
     _fields = ('sections',)
 
-    def __init__(self):
+    def __init__(self, source=None):
+        self.source = source
         self.sections = []
 
     @property
     def has_tests(self):
         return any(isinstance(s, TestCaseSection) for s in self.sections)
+
+    def save(self, given_output, newline=None):
+        output = given_output if given_output else \
+            file_writer(self.source, newline=newline)
+        FileWriter(output).visit(self)
+        if given_output is None:
+            output.close()
 
 
 class Section(Block):
