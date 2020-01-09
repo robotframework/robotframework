@@ -56,10 +56,10 @@ class Token(object):
     END = 'END'
 
     SEPARATOR = 'SEPARATOR'
-    EOL = 'EOL'
     COMMENT = 'COMMENT'
     CONTINUATION = 'CONTINUATION'
     IGNORE = 'IGNORE'
+    EOL = 'EOL'
     EOS = 'EOS'
     ERROR = 'ERROR'
     DATA = 'DATA'
@@ -101,32 +101,27 @@ class Token(object):
         KEYWORD_HEADER
     )
 
-    __slots__ = ['type', 'value', 'lineno', 'columnno', 'error']
+    __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error']
 
-    def __init__(self, type, value='', lineno=-1, columnno=-1):
+    def __init__(self, type, value='', lineno=-1, col_offset=-1):
         self.type = type
         self.value = value
         self.lineno = lineno
-        self.columnno = columnno
+        self.col_offset = col_offset
         self.error = None
+
+    @property
+    def end_col_offset(self):
+        if self.col_offset == -1:
+            return -1
+        return self.col_offset + len(self.value)
 
     def __unicode__(self):
         return self.value
 
     def __repr__(self):
         return 'Token(%s, %r, %s, %s)' % (self.type, self.value,
-                                          self.lineno, self.columnno)
-
-
-class EOL(Token):
-    __slots__ = []
-
-    def __init__(self, value='', lineno=-1, columnno=-1):
-        Token.__init__(self, Token.EOL, value, lineno, columnno)
-
-    @classmethod
-    def from_token(cls, token):
-        return EOL('', token.lineno, token.columnno + len(token.value))
+                                          self.lineno, self.col_offset)
 
 
 class EOS(Token):
@@ -137,4 +132,4 @@ class EOS(Token):
 
     @classmethod
     def from_token(cls, token):
-        return EOS(token.lineno, token.columnno + len(token.value))
+        return EOS(token.lineno, token.end_col_offset)

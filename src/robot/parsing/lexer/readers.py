@@ -21,7 +21,7 @@ from robot.utils import get_error_message, FileReader
 from .context import TestCaseFileContext, ResourceFileContext
 from .lexers import FileLexer
 from .splitter import Splitter
-from .tokens import EOL, EOS, Token
+from .tokens import EOS, Token
 
 
 def get_tokens(source, data_only=False):
@@ -92,7 +92,7 @@ class BaseReader(object):
         statements = self._handle_old_for(self.statements)
         if not self.data_only:
             statements = chain.from_iterable(
-                self._split_trailing_comment_and_empty_lines(s)
+                self._split_trailing_commented_and_empty_lines(s)
                 for s in statements
             )
         # Setting local variables is performance optimization to avoid
@@ -151,35 +151,35 @@ class BaseReader(object):
                 return token
         return None
 
-    def _split_trailing_comment_and_empty_lines(self, statement):
+    def _split_trailing_commented_and_empty_lines(self, statement):
         lines = list(self._split_to_lines(statement))
-        split_statements = []
+        commented_or_empty = []
         for line in reversed(lines):
-            is_split = False
-            for token in line:
-                if token.type not in (token.IGNORE, token.SEPARATOR):
-                    is_split = token.type in (token.EOL, token.COMMENT)
-                    break
-            if not is_split:
+            if not self._is_commented_or_empty(line):
                 break
-            split_statements.append(line)
+            commented_or_empty.append(line)
             lines.pop()
         yield list(chain.from_iterable(lines))
-        for split in reversed(split_statements):
-            yield split
+        for line in reversed(commented_or_empty):
+            yield line
 
     def _split_to_lines(self, statement):
         current = []
-        eol = Token.EOL
         for token in statement:
             current.append(token)
-            if token.type == eol:
+            if token.type == Token.EOL:
                 yield current
                 current = []
         if current:
-            if current[-1].type != eol:
-                current.append(EOL.from_token(current[-1]))
             yield current
+
+    def _is_commented_or_empty(self, line):
+        separator_or_ignore = (Token.SEPARATOR, Token.IGNORE)
+        comment_or_eol = (Token.COMMENT, Token.EOL)
+        for token in line:
+            if token.type not in separator_or_ignore:
+                return token.type in comment_or_eol
+        return False
 
 
 class TestCaseFileReader(BaseReader):
