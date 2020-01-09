@@ -8,15 +8,14 @@ Tidying single test case file
     [Documentation]   Test tidying to different formats
     [Template]    Run tidy with golden file and check result
     ${EMPTY}            golden.robot
-    --usepipes -f txt   golden_pipes.robot
-    --for robot         golden.robot
+    --usepipes          golden_pipes.robot
+    --usepipes          golden_pipes.robot    input=pipes-input.robot
     --spacecount 2      golden_two_spaces.robot
 
 Tidying single resource file
     [Template]    Run tidy with golden resource file and check result
     ${EMPTY}            golden_resource.robot
     -p                  golden_pipes_resource.robot
-    --FOR ROBOT         golden_resource.robot
 
 Tidying single init file
     Run tidy and check result    input=__init__.robot
@@ -24,7 +23,7 @@ Tidying single init file
 
 Tidying single file without output file prints output to console
     [Documentation]    Depending on console encoding, non-ASCII characters may not be shown correctly.
-    ${stdout} =    Run tidy    input=golden.robot    output=None
+    ${stdout} =    Run tidy    input=golden-input.robot    output=None
     Compare tidy results    ${stdout}    golden.robot    \\s+Log Many\\s+Non-ASCII:.*\\s+\\$\\{CURDIR\\}
     File Should Not Exist    ${OUTFILE}
 
@@ -35,7 +34,7 @@ Default format is got from output file
 Tidying directory
     [Setup]    Copy Directory    ${DATA}/tests    ${TEMP}/tests
     ${result_before}=    Run Tests    sources=${DATA}/tests
-    Run Tidy    --recursive --format robot    ${TEMP}/tests
+    Run Tidy    --recursive    ${TEMP}/tests
     Check file count    ${TEMP}/tests    *.robot    2
     Check file count    ${TEMP}/tests/sub    *.robot    1
     Check file count    ${TEMP}/tests    *.txt    0

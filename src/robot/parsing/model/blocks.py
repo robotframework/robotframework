@@ -47,9 +47,9 @@ class File(Block):
     def has_tests(self):
         return any(isinstance(s, TestCaseSection) for s in self.sections)
 
-    def save(self, given_output, newline=None):
+    def save(self, given_output):
         output = given_output if given_output else \
-            file_writer(self.source, newline=newline)
+            file_writer(self.source)
         FileWriter(output).visit(self)
         if given_output is None:
             output.close()

@@ -48,16 +48,15 @@ class Statement(ast.AST):
         cls._statement_handlers[subcls.type] = subcls
         if subcls.type == Token.KEYWORD:
             cls._statement_handlers[Token.ASSIGN] = subcls
+        return cls
 
     @classmethod
     def from_tokens(cls, tokens):
-        if len(tokens) == 1 and tokens[0].type == Token.EOL:
-            return EmptyLine(tokens)
         handlers = cls._statement_handlers
         for token in tokens:
             if token.type in handlers:
                 return handlers[token.type](tokens)
-        raise TypeError('Invalid statement: %r' % (tokens,))
+        return EmptyLine(tokens)
 
     @property
     def data_tokens(self):

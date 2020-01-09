@@ -14,13 +14,15 @@
 #  limitations under the License.
 
 from robot.parsing import Token, ModelTransformer
-from robot.parsing.model.statements import EmptyLine
+from robot.parsing.model.statements import EmptyLine, End
 from robot.utils import normalize_whitespace
 
 
-class PipeAdder(ModelTransformer):
+class SeparatorCleaner(ModelTransformer):
 
-    def __init__(self):
+    def __init__(self, use_pipes, space_count):
+        self.use_pipes = use_pipes
+        self.space_count = space_count
         self.indent = 0
         self.tests = []
 
@@ -52,28 +54,64 @@ class PipeAdder(ModelTransformer):
         return node
 
     def visit_Statement(self, statement):
+        if self.use_pipes:
+            return self._handle_pipes(statement)
+        return self._handle_spaces(statement)
+
+    def _handle_spaces(self, statement):
         new_tokens = []
         for line in statement.lines:
+            new_tokens.extend([self._normalize_spaces(i, t)
+                               for i, t in enumerate(line)])
+        statement.tokens = new_tokens
+        self.generic_visit(statement)
+        return statement
+
+    def _normalize_spaces(self, index, token):
+        if token.type == Token.SEPARATOR:
+            spaces = self.space_count * self.indent \
+                if index == 0 else self.space_count
+            token.value = ' ' * spaces
+        return token
+
+    def _handle_pipes(self, statement):
+        new_tokens = []
+        for line in statement.lines:
+            has_pipes = line and line[0].type == Token.SEPARATOR and line[0].value.startswith('|')
             if len(line) == 1 and line[0].type == Token.EOL:
                 new_tokens.extend(line)
                 continue
             elif line[0].type != Token.SEPARATOR:
                 line = [Token(Token.SEPARATOR, '| ')] + line
             for index, token in enumerate(line):
-                if index == 0 and self.indent:
-                    token.value = '|    ' * self.indent + '| '
-                if index != 0 and token.type == Token.SEPARATOR:
-                    token.value = ' | '
-            if len(line) > 1 and line[-2].type != Token.SEPARATOR:
-                line = line[:-1] + [Token(Token.SEPARATOR, ' |'), line[-1]]
+                if not has_pipes:
+                    if index == 0 and self.indent:
+                        token.value = '|    ' * self.indent + '| '
+                    if index != 0 and token.type == Token.SEPARATOR:
+                        token.value = ' | '
+                else:
+                    if index == 0 and self.indent:
+                        token.value = '|   '
+                    elif index == 1 and self.indent == 2:
+                        token.value = ' |   '
+                    elif index != 0 and token.type == Token.SEPARATOR:
+                        token.value = ' | '
+            if len(line) > 1:
+                if line[-2].type != Token.SEPARATOR:
+                    line = line[:-1] + [Token(Token.SEPARATOR, ' |'), line[-1]]
+                else:
+                    line[-2].value = ' |'
             new_tokens.extend(line)
         statement.tokens = new_tokens
         return statement
 
 
-class NewlineAdder(ModelTransformer):
+class NewlineCleaner(ModelTransformer):
 
-    def __init__(self):
+    def __init__(self, newline, short_test_name_length):
+        self._newline = newline
+        self.short_test_name_length = short_test_name_length
+        self.custom_test_section_headers = False
         self.tests = []
         self.keywords = []
         self.sections = []
@@ -85,72 +123,46 @@ class NewlineAdder(ModelTransformer):
 
     def visit_Section(self, node):
         if node != self.sections[-1] and node.type != Token.COMMENT_HEADER:
-            node.body.add(EmptyLine([Token(Token.EOL, '\n')]))
+            node.body.add(EmptyLine([Token(Token.EOL, self._newline)]))
+        self.generic_visit(node)
         return node
 
     def visit_TestCaseSection(self, node):
-        self.tests = node.body.items
-        self.generic_visit(node)
-        return self.visit_Section(node)
+        self.custom_test_section_headers = len(node.header.data_tokens) > 1
+        self.tests = node.body.items[:]
+        section = self.visit_Section(node)
+        self.custom_test_section_headers = False
+        return section
 
     def visit_TestCase(self, node):
         if not node.body.items or node != self.tests[-1]:
-            node.body.items.append(EmptyLine([Token(Token.EOL, '\n')]))
+            node.body.items.append(EmptyLine([Token(Token.EOL, self._newline)]))
+        self.generic_visit(node)
         return node
 
     def visit_KeywordSection(self, node):
         self.keywords = node.body.items
-        self.generic_visit(node)
         return self.visit_Section(node)
 
     def visit_Keyword(self, node):
         if not node.body.items or node != self.keywords[-1]:
-            node.body.items.append(EmptyLine([Token(Token.EOL, '\n')]))
-        return node
-
-
-class SeparatorCleaner(ModelTransformer):
-
-    def __init__(self, separator_width):
-        self.indent = 0
-        self.separator = ' ' * separator_width
-
-    def visit_TestCase(self, node):
-        self.indent += 1
-        self.generic_visit(node.body)
-        self.indent -= 1
-        return node
-
-    def visit_Keyword(self, node):
-        self.indent += 1
-        self.generic_visit(node.body)
-        self.indent -= 1
-        return node
-
-    def visit_ForLoop(self, node):
-        self.visit_Statement(node.header)
-        self.indent += 1
-        self.generic_visit(node.body)
-        self.indent -= 1
-        self.visit_Statement(node.end)
+            node.body.items.append(EmptyLine([Token(Token.EOL, self._newline)]))
+        self.generic_visit(node)
         return node
 
     def visit_Statement(self, statement):
-        new_tokens = []
+        if statement[-1].type != Token.EOL:
+            if not self._should_write_content_after_name(statement):
+                statement.tokens.append(Token(Token.EOL, self._newline))
         for line in statement.lines:
-            new_tokens.extend([self.normalize_separator(i, t) for i, t in
-                               enumerate(line)])
-        statement.tokens = new_tokens
-        self.generic_visit(statement)
+            if line[-1].type == Token.EOL:
+                line[-1].value = self._newline
         return statement
 
-    def normalize_separator(self, index, token):
-        if token.type == Token.SEPARATOR:
-            if index == 0:
-                token.value = self.separator * self.indent
-            else:
-                token.value = self.separator
-        return token
+    def _should_write_content_after_name(self, statement):
+        return (statement.type == Token.NAME and
+                self.custom_test_section_headers and
+                len(statement.tokens[0].value) < self.short_test_name_length)
 
 
 class ColumnAligner(ModelTransformer):
@@ -238,8 +250,10 @@ class ColumnWidthCounter(ModelTransformer):
 
 
 class Aligner(ModelTransformer):
-    setting_and_variable_name_length = 14
-    short_test_name_length = 18
+    
+    def __init__(self, short_test_name_length, setting_and_variable_name_length):
+        self.short_test_name_length = short_test_name_length
+        self.setting_and_variable_name_length = setting_and_variable_name_length
 
     def visit_TestCaseSection(self, section):
         if len(section.header.data_tokens) > 1:
@@ -273,23 +287,17 @@ class Cleaner(ModelTransformer):
     def visit_Section(self, section):
         if section.type != Token.COMMENT_HEADER:
             self.in_data_section = True
-        self._normalize_section_header(section)
+            self._normalize_section_header(section)
         self.generic_visit(section)
         return section
 
     def _normalize_section_header(self, section):
-        if section.header:
-            cleaned = self._normalize(section.header[0].value, remove='*')
-            section.header[0].value = '*** %s ***' % cleaned
-
-    def _normalize(self, marker, remove=None):
-        if remove:
-            marker = marker.replace(remove, '')
-        return normalize_whitespace(marker).strip().title()
+        header_token = section.header.data_tokens[0]
+        normalized = self._normalize_name(header_token.value, remove='*')
+        header_token.value = '*** %s ***' % normalized
 
     def visit_Statement(self, statement):
-        statement.tokens = [t for t in statement.tokens if
-                            t.type != Token.OLD_FOR_INDENT]
+        statement.tokens = list(self._remove_old_for_loop_indent(statement))
         if statement.type in Token.SETTING_TOKENS:
             self._normalize_setting_name(statement)
         self.generic_visit(statement)
@@ -297,16 +305,33 @@ class Cleaner(ModelTransformer):
                 self._is_empty_line_in_data(statement):
             return None
         if self.in_data_section:
-            self._remove_consecutive_separators(statement)
+            self._remove_empty_lines_within_statement(statement)
         return statement
+
+    def _remove_old_for_loop_indent(self, statement):
+        prev_was_for_indent = False
+        for t in statement.tokens:
+            if t.type == Token.OLD_FOR_INDENT:
+                prev_was_for_indent = True
+                continue
+            elif prev_was_for_indent and t.type == Token.SEPARATOR:
+                prev_was_for_indent = False
+                continue
+            else:
+                yield t
 
     def _normalize_setting_name(self, statement):
         name = statement.data_tokens[0].value
         if name.startswith('['):
-            cleaned = '[%s]' % self._normalize(name[1:-1])
+            cleaned = '[%s]' % self._normalize_name(name[1:-1])
         else:
-            cleaned = self._normalize(name)
+            cleaned = self._normalize_name(name)
         statement.data_tokens[0].value = cleaned
+
+    def _normalize_name(self, marker, remove=None):
+        if remove:
+            marker = marker.replace(remove, '')
+        return normalize_whitespace(marker).strip().title()
 
     def _is_setting_without_value(self, statement):
         return statement.type in Token.SETTING_TOKENS and \
@@ -315,26 +340,19 @@ class Cleaner(ModelTransformer):
     def _is_empty_line_in_data(self, statement):
         return self.in_data_section and statement.type == Token.EOL
 
-    def _remove_consecutive_separators(self, statement):
+    def _remove_empty_lines_within_statement(self, statement):
         new_tokens = []
         for line in statement.lines:
             if len(line) == 1 and line[0].type == Token.EOL:
                 continue
-            for index, token in enumerate(line):
-                prev = line[index - 1] if index > 0 else None
-                if prev and token.type == prev.type == Token.SEPARATOR:
-                    continue
-                new_tokens.append(token)
+            new_tokens.extend(line)
         statement.tokens = new_tokens
 
     def visit_ForLoop(self, loop):
         loop.header.data_tokens[0].value = 'FOR'
         if loop.end:
             loop.end.data_tokens[0].value = 'END'
-            # TODO: This can be removed when support for old style for loops
-            # is removed.
-            if len(loop.end.tokens) == 1:
-                loop.end.tokens = (Token(Token.SEPARATOR, ''),
-                                   loop.end.tokens[0], Token(Token.EOL, '\n'))
+        else:
+            loop.end = End([Token(Token.SEPARATOR), Token(Token.END, 'END')])
         self.generic_visit(loop)
         return loop

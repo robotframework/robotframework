@@ -13,5 +13,4 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .transformers import (Aligner, Cleaner, SeparatorCleaner, PipeAdder,
-                           NewlineAdder)
+from .transformers import Aligner, Cleaner, NewlineCleaner, SeparatorCleaner
