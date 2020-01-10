@@ -125,7 +125,7 @@ class BaseReader(object):
                 yield EOS.from_token(prev_token)
 
     def _handle_old_for(self, statements):
-        end_statement = [Token(Token.END)]
+        end_statement = [Token(Token.SEPARATOR), Token(Token.END)]
         old_for = False
         for statement in statements:
             marker = self._get_first_data_token(statement)

@@ -23,16 +23,16 @@ from .model import (File, SettingSection, VariableSection, TestCaseSection,
 
 def get_model(source, data_only=False, curdir=None):
     tokens = get_tokens(source, data_only)
-    return _build_model(get_statements(tokens, curdir))
+    return _build_model(source, get_statements(tokens, curdir))
 
 
 def get_resource_model(source, data_only=False, curdir=None):
     tokens = get_resource_tokens(source, data_only)
-    return _build_model(get_statements(tokens, curdir))
+    return _build_model(source, get_statements(tokens, curdir))
 
 
-def _build_model(statements):
-    builder = FileBuilder()
+def _build_model(source, statements):
+    builder = FileBuilder(source)
     stack = [builder]
     for statement in statements:
         while not stack[-1].handles(statement):
@@ -57,8 +57,8 @@ class Builder(object):
 
 class FileBuilder(Builder):
 
-    def __init__(self, model=None):
-        Builder.__init__(self, model or File())
+    def __init__(self, source=None):
+        Builder.__init__(self, File(source))
 
     def statement(self, statement):
         try:
@@ -90,6 +90,8 @@ class TestCaseSectionBuilder(SectionBuilder):
 
     def statement(self, statement):
         if statement.type == Token.EOL:
+            if self.model.body.items:
+                self.model.body.add(statement)
             return self
         model = TestCase(statement)
         self.model.body.add(model)
@@ -100,6 +102,8 @@ class KeywordSectionBuilder(SectionBuilder):
 
     def statement(self, statement):
         if statement.type == Token.EOL:
+            if self.model.body.items:
+                self.model.body.add(statement)
             return self
         model = Keyword(statement)
         self.model.body.add(model)

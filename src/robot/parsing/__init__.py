@@ -51,5 +51,5 @@ Example
 
 from .builders import get_model, get_resource_model
 from .lexer import get_tokens, get_resource_tokens, Token
-from .model import ModelVisitor
+from .model import ModelTransformer
 from .suitestructure import SuiteStructureBuilder, SuiteStructureVisitor
