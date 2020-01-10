@@ -9,6 +9,8 @@ Tidying single test case file
     [Template]    Run tidy with golden file and check result
     ${EMPTY}            golden.robot
     --usepipes          golden_pipes.robot
+    # TODO: fix the commented test, split this test into smaller pieces
+    #  ${EMPTY}          golden.robot    input=pipes-input.robot
     --usepipes          golden_pipes.robot    input=pipes-input.robot
     --spacecount 2      golden_two_spaces.robot
 

@@ -61,20 +61,23 @@ class SeparatorCleaner(ModelTransformer):
     def _handle_spaces(self, statement):
         new_tokens = []
         for line in statement.lines:
-            new_tokens.extend([self._normalize_spaces(i, t)
+            new_tokens.extend([self._normalize_spaces(i, t, len(line))
                                for i, t in enumerate(line)])
         statement.tokens = new_tokens
         self.generic_visit(statement)
         return statement
 
-    def _normalize_spaces(self, index, token):
+    def _normalize_spaces(self, index, token, line_length):
         if token.type == Token.SEPARATOR:
             spaces = self.space_count * self.indent \
                 if index == 0 else self.space_count
             token.value = ' ' * spaces
+        if index == line_length - 2:
+            token.value = token.value.rstrip()
         return token
 
     def _handle_pipes(self, statement):
+        # TODO: this could probably be cleaner
         new_tokens = []
         for line in statement.lines:
             has_pipes = line and line[0].type == Token.SEPARATOR and line[0].value.startswith('|')
