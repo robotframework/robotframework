@@ -16,4 +16,4 @@
 from .blocks import (File, SettingSection, VariableSection, TestCaseSection,
                      KeywordSection, CommentSection, TestCase, Keyword, ForLoop)
 from .statements import get_statements
-from .visitor import ModelTransformer
+from .visitor import ModelTransformer, ModelVisitor
