@@ -156,7 +156,7 @@ class Tidy(SuiteStructureVisitor):
                 return writer.getvalue().replace('\r\n', '\n')
 
     def _get_writer(self, outpath):
-        return file_writer(outpath, usage='Tidy output')
+        return file_writer(outpath, newline='', usage='Tidy output')
 
     def inplace(self, *paths):
         """Tidy file(s) in-place.
