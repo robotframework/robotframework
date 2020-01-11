@@ -3,7 +3,7 @@ import os
 import unittest
 import tempfile
 
-from robot.parsing import get_model, Token
+from robot.parsing import get_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
     Block, File, CommentSection, TestCaseSection, KeywordSection,
     TestCase, Keyword
@@ -216,6 +216,175 @@ class TestSaveModel(unittest.TestCase):
         assert_raises_with_msg(TypeError, message, get_model(DATA).save)
         with open(PATH) as f:
             assert_raises_with_msg(TypeError, message, get_model(f).save)
+
+
+class TestModelVisitors(unittest.TestCase):
+
+    def test_ast_NodevVisitor(self):
+
+        class Visitor(ast.NodeVisitor):
+
+            def __init__(self):
+                self.test_names = []
+                self.kw_names = []
+                self.names = None
+
+            def visit_TestCaseSection(self, node):
+                self.names = self.test_names
+                self.generic_visit(node)
+
+            def visit_KeywordSection(self, node):
+                self.names = self.kw_names
+                self.generic_visit(node)
+
+            def visit_Name(self, node):
+                self.names.append(node.name)
+
+            def visit_Block(self, node):
+                raise RuntimeError('Should not be executed.')
+
+            def visit_Statement(self, node):
+                raise RuntimeError('Should not be executed.')
+
+        visitor = Visitor()
+        visitor.visit(get_model(DATA))
+        assert_equal(visitor.test_names, ['Example'])
+        assert_equal(visitor.kw_names, ['Keyword'])
+
+    def test_ModelVisitor(self):
+
+        class Visitor(ModelVisitor):
+
+            def __init__(self):
+                self.test_names = []
+                self.kw_names = []
+                self.names = None
+                self.blocks = []
+                self.statements = []
+
+            def visit_TestCaseSection(self, node):
+                self.names = self.test_names
+                self.visit_Block(node)
+
+            def visit_KeywordSection(self, node):
+                self.names = self.kw_names
+                self.visit_Block(node)
+
+            def visit_Name(self, node):
+                self.names.append(node.name)
+                self.visit_Statement(node)
+
+            def visit_Block(self, node):
+                self.blocks.append(type(node).__name__)
+                self.generic_visit(node)
+
+            def visit_Statement(self, node):
+                self.statements.append(node.type)
+
+        visitor = Visitor()
+        visitor.visit(get_model(DATA))
+        assert_equal(visitor.test_names, ['Example'])
+        assert_equal(visitor.kw_names, ['Keyword'])
+        assert_equal(visitor.blocks,
+                     ['File', 'CommentSection', 'Body',
+                      'TestCaseSection', 'Body', 'TestCase', 'Body',
+                      'KeywordSection', 'Body', 'Keyword', 'Body'])
+        assert_equal(visitor.statements,
+                     ['EOL', 'TESTCASE_HEADER', 'NAME', 'KEYWORD',
+                      'EOL', 'KEYWORD_HEADER', 'NAME', 'ARGUMENTS', 'KEYWORD'])
+
+    def test_ast_NodeTransformer(self):
+
+        class Transformer(ast.NodeTransformer):
+
+            def visit_Tags(self, node):
+                return None
+
+            def visit_TestCaseSection(self, node):
+                self.generic_visit(node)
+                node.body.items.append(
+                    TestCase(Name([Token('NAME', 'Added'),
+                                   Token('EOL', '\n')])))
+                return node
+
+            def visit_TestCase(self, node):
+                self.generic_visit(node)
+                return node if node.name != 'REMOVE' else None
+
+            def visit_Name(self, node):
+                name = node.get_token(Token.NAME)
+                name.value = name.value.upper()
+                return node
+
+            def visit_Block(self, node):
+                raise RuntimeError('Should not be executed.')
+
+            def visit_Statement(self, node):
+                raise RuntimeError('Should not be executed.')
+
+        model = get_model('''\
+*** Test Cases ***
+Example
+    [Tags]    to be removed
+Remove
+''')
+        Transformer().visit(model)
+        expected = File([
+            TestCaseSection(
+                header=TestCaseSectionHeader([
+                    Token('TESTCASE_HEADER', '*** Test Cases ***', 1, 0),
+                    Token('EOL', '\n', 1, 18)
+                ]),
+                body=[
+                    TestCase(Name([Token('NAME', 'EXAMPLE', 2, 0),
+                                   Token('EOL', '\n', 2, 7)])),
+                    TestCase(Name([Token('NAME', 'Added'),
+                                   Token('EOL', '\n')]))
+                ]
+            )
+        ])
+        assert_model(model, expected)
+
+    def test_ModelTransformer(self):
+
+        class Transformer(ModelTransformer):
+
+            def visit_TestCaseSectionHeader(self, node):
+                return node
+
+            def visit_Name(self, node):
+                return node
+
+            def visit_Statement(self, node):
+                return None
+
+            def visit_Block(self, node):
+                self.generic_visit(node)
+                if hasattr(node, 'header'):
+                    for token in node.header.data_tokens:
+                        token.value = token.value.upper()
+                return node
+
+        model = get_model('''\
+*** Test Cases ***
+Example
+    [Tags]    to be removed
+    To be removed
+''')
+        Transformer().visit(model)
+        expected = File([
+            TestCaseSection(
+                header=TestCaseSectionHeader([
+                    Token('TESTCASE_HEADER', '*** TEST CASES ***', 1, 0),
+                    Token('EOL', '\n', 1, 18)
+                ]),
+                body=[
+                    TestCase(Name([Token('NAME', 'Example', 2, 0),
+                                   Token('EOL', '\n', 2, 7)])),
+                ]
+            )
+        ])
+        assert_model(model, expected)
 
 
 if __name__ == '__main__':
