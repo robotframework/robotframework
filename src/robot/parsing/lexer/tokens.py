@@ -123,6 +123,18 @@ class Token(object):
         return 'Token(%s, %r, %s, %s)' % (self.type, self.value,
                                           self.lineno, self.col_offset)
 
+    def __eq__(self, other):
+        if not isinstance(other, Token):
+            return False
+        return (self.type == other.type and
+                self.value == other.value and
+                self.lineno == other.lineno and
+                self.col_offset == other.col_offset and
+                self.error == other.error)
+
+    def __ne__(self, other):
+        return not self == other
+
 
 class EOS(Token):
     __slots__ = []

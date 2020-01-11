@@ -26,12 +26,7 @@ def verify_split(string, *expected_statements, **config):
         for act, exp in zip(tokens, expected):
             if exp[0] == DATA:
                 expected_data[-1].append(exp)
-            exp = Token(*exp)
-            assert_equal(act.type, exp.type)
-            assert_equal(act.value, exp.value)
-            assert_equal(act.lineno, exp.lineno)
-            assert_equal(act.col_offset, exp.col_offset)
-            assert_equal(act.end_col_offset, exp.col_offset + len(exp.value))
+            assert_equal(act, Token(*exp), formatter=repr)
     if not config:
         verify_split(string, *expected_data, data_only=True)
 
