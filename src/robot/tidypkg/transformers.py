@@ -32,14 +32,14 @@ class SeparatorCleaner(ModelTransformer):
         return section
 
     def visit_TestCase(self, node):
-        self.visit_Statement(node.name_tokens)
+        self.visit_Statement(node.header)
         self.indent += 1
         self.generic_visit(node.body)
         self.indent -= 1
         return node
 
     def visit_Keyword(self, node):
-        self.visit_Statement(node.name_tokens)
+        self.visit_Statement(node.header)
         self.indent += 1
         self.generic_visit(node.body)
         self.indent -= 1
@@ -124,8 +124,12 @@ class NewlineCleaner(ModelTransformer):
         self.generic_visit(node)
         return node
 
+    def visit_CommentSection(self, node):
+        self.generic_visit(node)
+        return node
+
     def visit_Section(self, node):
-        if node != self.sections[-1] and node.type != Token.COMMENT_HEADER:
+        if node != self.sections[-1]:
             node.body.add(EmptyLine([Token(Token.EOL, self._newline)]))
         self.generic_visit(node)
         return node
@@ -253,7 +257,7 @@ class ColumnWidthCounter(ModelTransformer):
 
 
 class Aligner(ModelTransformer):
-    
+
     def __init__(self, short_test_name_length, setting_and_variable_name_length):
         self.short_test_name_length = short_test_name_length
         self.setting_and_variable_name_length = setting_and_variable_name_length
@@ -287,10 +291,13 @@ class Cleaner(ModelTransformer):
     def __init__(self):
         self.in_data_section = False
 
+    def visit_CommentSection(self, section):
+        self.generic_visit(section)
+        return section
+
     def visit_Section(self, section):
-        if section.type != Token.COMMENT_HEADER:
-            self.in_data_section = True
-            self._normalize_section_header(section)
+        self.in_data_section = True
+        self._normalize_section_header(section)
         self.generic_visit(section)
         return section
 

@@ -18,7 +18,6 @@ import ast
 from robot.utils import file_writer, is_pathlike, is_string, normalize_whitespace
 
 from .visitor import ModelVisitor
-from ..lexer import Token
 
 
 class ModelWriter(ModelVisitor):
@@ -73,15 +72,14 @@ class Section(Block):
 
 
 class SettingSection(Section):
-    type = Token.SETTING_HEADER
+    pass
 
 
 class VariableSection(Section):
-    type = Token.VARIABLE_HEADER
+    pass
 
 
 class TestCaseSection(Section):
-    type = Token.TESTCASE_HEADER
 
     @property
     def tasks(self):
@@ -90,11 +88,11 @@ class TestCaseSection(Section):
 
 
 class KeywordSection(Section):
-    type = Token.KEYWORD_HEADER
+    pass
 
 
 class CommentSection(Section):
-    type = Token.COMMENT_HEADER
+    pass
 
 
 class Body(Block):
@@ -108,32 +106,31 @@ class Body(Block):
 
 
 class TestCase(Block):
-    type = Token.NAME
-    _fields = ('name_tokens', 'body')
+    _fields = ('header', 'body')
 
-    def __init__(self, name_tokens, body=None):
-        self.name_tokens = name_tokens
+    def __init__(self, header, body=None):
+        self.header = header
         self.body = Body(body)
 
     @property
     def name(self):
-        return self.name_tokens.name
+        return self.header.name
 
 
 class Keyword(Block):
-    _fields = ('name_tokens', 'body')
+    _fields = ('header', 'body')
 
-    def __init__(self, name_tokens, body=None):
-        self.name_tokens = name_tokens
+    def __init__(self, header, body=None):
+        self.header = header
         self.body = Body(body)
 
     @property
     def name(self):
-        return self.name_tokens.name
+        return self.header.name
 
 
 class ForLoop(Block):
-    _fields = ('type', 'header', 'body', 'end')
+    _fields = ('header', 'body', 'end')
 
     def __init__(self, header):
         self.header = header

@@ -47,7 +47,7 @@ EXPECTED = File([
         ]),
         body=[
             TestCase(
-                name_tokens=Name([
+                header=Name([
                     Token('NAME', 'Example', 3, 0),
                     Token('EOL', '\n', 3, 7)
                 ]),
@@ -78,7 +78,7 @@ EXPECTED = File([
         ]),
         body=[
             Keyword(
-                name_tokens=Name([
+                header=Name([
                     Token('NAME', 'Keyword', 8, 0),
                     Token('EOL', '\n', 8, 7)
                 ]),
@@ -379,7 +379,7 @@ Example
                     Token('EOL', '\n', 1, 18)
                 ]),
                 body=[
-                    TestCase(Name([Token('NAME', 'Example', 2, 0),
+                    TestCase(Name([Token('NAME', 'EXAMPLE', 2, 0),
                                    Token('EOL', '\n', 2, 7)])),
                 ]
             )
