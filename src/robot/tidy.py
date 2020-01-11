@@ -150,13 +150,13 @@ class Tidy(SuiteStructureVisitor):
 
         Use :func:`inplace` to tidy files in-place.
         """
-        with self._get_writer(outpath) as writer:
+        with self._get_output(outpath) as writer:
             self._tidy(get_model(path), writer)
             if not outpath:
                 return writer.getvalue().replace('\r\n', '\n')
 
-    def _get_writer(self, outpath):
-        return file_writer(outpath, newline='', usage='Tidy output')
+    def _get_output(self, path):
+        return file_writer(path, newline='', usage='Tidy output')
 
     def inplace(self, *paths):
         """Tidy file(s) in-place.
@@ -164,7 +164,9 @@ class Tidy(SuiteStructureVisitor):
         :param paths: Paths of the files to to process.
         """
         for path in paths:
-            self._tidy(get_model(path), output=self._get_writer(path))
+            model = get_model(path)
+            with self._get_output(path) as output:
+                self._tidy(model, output)
 
     def directory(self, path):
         """Tidy a directory.
@@ -176,7 +178,7 @@ class Tidy(SuiteStructureVisitor):
         data = SuiteStructureBuilder().build([path])
         data.visit(self)
 
-    def _tidy(self, model, output=None):
+    def _tidy(self, model, output):
         Cleaner().visit(model)
         NewlineCleaner(self.line_separator,
                        self.short_test_name_length).visit(model)
