@@ -21,10 +21,13 @@ from robot.errors import DataError
 
 from .error import get_error_message
 from .platform import PY3
+from .robottypes import is_pathlike
 
 
 def file_writer(path=None, encoding='UTF-8', newline=None, usage=None):
     if path:
+        if is_pathlike(path):
+            path = str(path)
         create_destination_directory(path, usage)
         try:
             f = io.open(path, 'w', encoding=encoding, newline=newline)
@@ -47,6 +50,8 @@ def file_writer(path=None, encoding='UTF-8', newline=None, usage=None):
 
 def binary_file_writer(path=None):
     if path:
+        if is_pathlike(path):
+            path = str(path)
         return io.open(path, 'wb')
     f = io.BytesIO()
     getvalue = f.getvalue
@@ -55,6 +60,8 @@ def binary_file_writer(path=None):
 
 
 def create_destination_directory(path, usage=None):
+    if is_pathlike(path):
+        path = str(path)
     directory = os.path.dirname(path)
     if directory and not os.path.exists(directory):
         try:
