@@ -40,7 +40,34 @@ Example
 
 ::
 
-    TODO
+    import ast
+    import sys
+
+    from robot.api import get_model
+
+
+    class TestNamePrinter(ast.NodeVisitor):
+
+        def visit_File(self, node):
+            print(f"File '{node.source}' has following tests:")
+            # Must call `generic_visit` to visit also child nodes.
+            self.generic_visit(node)
+
+        def visit_KeywordSection(self, node):
+            # Overriding a visitor method without calling `generic_visit`
+            # prevents child nodes being visited. In this case it means
+            # `visit_Name` is not called with nodes in the keyword section.
+            pass
+
+        def visit_Name(self, node):
+            print(f"- {node.name}")
+
+
+    model = get_model(sys.argv[1])
+    TestNamePrinter().visit(model)
+
+
+TODO: Add example modifying model.
 """
 
 from .builders import get_model, get_resource_model
