@@ -13,7 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
+import os.path
+
+from robot.utils import is_pathlike, is_string
 
 from .lexer import Token, get_tokens, get_resource_tokens
 from .model import (File, SettingSection, VariableSection, TestCaseSection,
@@ -32,7 +34,7 @@ def get_resource_model(source, data_only=False, curdir=None):
 
 
 def _build_model(source, statements):
-    builder = FileBuilder(source)
+    builder = FileBuilder(source=source)
     stack = [builder]
     for statement in statements:
         while not stack[-1].handles(statement):
@@ -58,7 +60,16 @@ class Builder(object):
 class FileBuilder(Builder):
 
     def __init__(self, source=None):
-        Builder.__init__(self, File(source))
+        Builder.__init__(self, File(source=self._get_path(source)))
+
+    def _get_path(self, source):
+        if not source:
+            return None
+        if is_string(source) and '\n' not in source and os.path.isfile(source):
+            return source
+        if is_pathlike(source) and source.is_file():
+            return str(source)
+        return None
 
     def statement(self, statement):
         try:

@@ -48,7 +48,7 @@ class Statement(ast.AST):
         cls._statement_handlers[subcls.type] = subcls
         if subcls.type == Token.KEYWORD:
             cls._statement_handlers[Token.ASSIGN] = subcls
-        return cls
+        return subcls
 
     @classmethod
     def from_tokens(cls, tokens):

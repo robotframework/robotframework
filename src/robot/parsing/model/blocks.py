@@ -15,13 +15,13 @@
 
 import ast
 
-from robot.utils import normalize_whitespace, file_writer
+from robot.utils import file_writer, is_pathlike, is_string, normalize_whitespace
 
 from .visitor import ModelVisitor
 from ..lexer import Token
 
 
-class FileWriter(ModelVisitor):
+class ModelWriter(ModelVisitor):
 
     def __init__(self, output):
         self.output = output
@@ -39,20 +39,29 @@ class Block(ast.AST):
 class File(Block):
     _fields = ('sections',)
 
-    def __init__(self, source=None):
+    def __init__(self, sections=None, source=None):
+        self.sections = sections or []
         self.source = source
-        self.sections = []
 
     @property
     def has_tests(self):
         return any(isinstance(s, TestCaseSection) for s in self.sections)
 
-    def save(self, given_output):
-        output = given_output if given_output else \
-            file_writer(self.source)
-        FileWriter(output).visit(self)
-        if given_output is None:
-            output.close()
+    def save(self, output=None):
+        output = output or self.source
+        if output is None:
+            raise TypeError('Saving model requires explicit output '
+                            'when original source is not path.')
+        if is_string(output) or is_pathlike(output):
+            output = file_writer(output)
+            close = True
+        else:
+            close = False
+        try:
+            ModelWriter(output).visit(self)
+        finally:
+            if close:
+                output.close()
 
 
 class Section(Block):
@@ -102,9 +111,9 @@ class TestCase(Block):
     type = Token.NAME
     _fields = ('name_tokens', 'body')
 
-    def __init__(self, name_tokens):
+    def __init__(self, name_tokens, body=None):
         self.name_tokens = name_tokens
-        self.body = Body()
+        self.body = Body(body)
 
     @property
     def name(self):
@@ -114,9 +123,9 @@ class TestCase(Block):
 class Keyword(Block):
     _fields = ('name_tokens', 'body')
 
-    def __init__(self, name_tokens):
+    def __init__(self, name_tokens, body=None):
         self.name_tokens = name_tokens
-        self.body = Body()
+        self.body = Body(body)
 
     @property
     def name(self):
