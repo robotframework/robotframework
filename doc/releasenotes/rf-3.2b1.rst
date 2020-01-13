@@ -65,7 +65,7 @@ to the old parser would have been extremely complicated and the resulting
 code would have been hard to maintain going forward.
 
 The new parser also has much better APIs for external tools like editors, IDEs,
-and linters than the old one (`#3373`_). They could could possibly be exposed
+and linters than the old one (`#3373`_). They could possibly be exposed
 even more widely using the `language server protocol (LSP)`__, but such a
 language server should be a separate project, not part of Robot Framework
 itself. These APIs were introduced in RF 3.2 beta 1 and their documentation
