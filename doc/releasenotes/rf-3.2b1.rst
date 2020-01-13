@@ -282,12 +282,37 @@ affect anyone.
 - Non-ASCII spaces in test data itself (i.e. not in separators) are not
   converted to normal spaces anymore. You can, for example, have an argument
   with a no-break space.
-- When using the `pipe-separated format`__, consecutive spaces are not
+- When using the `pipe-separated format`_, consecutive spaces are not
   collapsed anymore. This affects also normal spaces, not only non-ASCII
   spaces.
 
 __ http://jkorpela.fi/chars/spaces.html
-__ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#pipe-separated-format
+.. _pipe-separated format: http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#pipe-separated-format
+
+Old for loop style not supported with pipe-separated format
+-----------------------------------------------------------
+
+RF 3.2 deprecates the `old-style for loops`__ in general, but when using
+the `pipe-separated format`_ there are even bigger changes. Earlier it was
+possible to use syntax like
+
+::
+
+    | :FOR | ${x} | IN | 1 | 2
+    |      | Log  | ${x}
+
+but this is not supported anymore at all. The recommended way to resolve this
+problem is switching to the new for loop style where `:FOR` is replaced with
+`FOR` and an explicit `END` marker is added::
+
+    | FOR | ${x} | IN | 1 | 2
+    |     | Log  | ${x}
+    | END |
+
+For altarnatives and more details in general see issue `#3108`_.
+
+__ `Old for loop syntax has been deprecated`_
+.. _#3108: https://github.com/robotframework/robotframework/issues/3108
 
 Stricter section and setting name syntax
 ----------------------------------------
@@ -364,9 +389,9 @@ backslash::
    \    Keyword    ${animal}
    \    Another keyword
 
-The old format still worked in Robot Framework 3.1, but now both using `:FOR`
+The old format still worked in Robot Framework 3.1, but now using `:FOR`
 instead of `FOR` (`#3080`_) and not closing the loop with an explicit `END`
-(`#3078`_) are both deprecated. The syntax old will be removed for good
+(`#3078`_) are both deprecated. The old syntax will be removed for good
 already in Robot Framework 3.3.
 
 This change is likely to cause lot of deprecation warnings and requires users
@@ -387,7 +412,7 @@ data:
   find `:FOR` and `: FOR` and update data by hand. If using the `pss` tool,
   this command works well::
 
-     pss -ai ': ?FOR' path/to/tests
+     pss -ai ": ?FOR" path/to/tests
 
 __ https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-3.1.rst#for-loop-enhancements
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#tidy
@@ -410,8 +435,8 @@ The Tidy tool cannot handle this deprecation, but otherwise same approach
 works to find these usages that was recommended with old for loops. If using
 the `pss` tool, these commands help::
 
-  pss -ai '@\{.+\}\[' path/to/tests
-  pss -ai '&\{.+\}\[' path/to/tests
+  pss -ai "@\{.+\}\[" path/to/tests
+  pss -ai "&\{.+\}\[" path/to/tests
 
 __ https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-3.1.rst#accessing-nested-list-and-dictionary-variable-items
 
