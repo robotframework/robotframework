@@ -81,53 +81,56 @@ about Robot Framework in general, go to http://robotframework.org.
 Options
 =======
 
-    --rpa                 Turn on generic automation mode. Mainly affects
+    --rpa                 Turn on the generic automation mode. Mainly affects
                           terminology so that "test" is replaced with "task"
                           in logs and reports. By default the mode is got
-                          from output files. New in RF 3.1.
+                          from the processed output files. New in RF 3.1.
  -R --merge               When combining results, merge outputs together
                           instead of putting them under a new top level suite.
                           Example: rebot --merge orig.xml rerun.xml
- -N --name name           Set the name of the top level test suite. Default
-                          name is created from the name of the executed data
-                          source.
- -D --doc documentation   Set the documentation of the top level test suite.
+ -N --name name           Set the name of the top level suite.
+ -D --doc documentation   Set the documentation of the top level suite.
                           Simple formatting is supported (e.g. *bold*). If
                           the documentation contains spaces, it must be quoted.
                           Example: --doc "Very *good* example"
  -M --metadata name:value *  Set metadata of the top level suite. Value can
                           contain formatting similarly as --doc.
-                          Example: --metadata version:1.2
- -G --settag tag *        Sets given tag(s) to all executed test cases.
- -t --test name *         Select test cases by name or long name. Name is case
+                          Example: --metadata Version:1.2
+ -G --settag tag *        Sets given tag(s) to all tests.
+ -t --test name *         Select tests by name or by long name containing also
+                          parent suite name like `Parent.Test`. Name is case
                           and space insensitive and it can also be a simple
-                          pattern where `*` matches anything and `?` matches
-                          any char.
+                          pattern where `*` matches anything, `?` matches any
+                          single character, and `[chars]` matches one character
+                          in brackets.
     --task name *         Alias to --test. Especially applicable with --rpa.
- -s --suite name *        Select test suites by name. When this option is used
-                          with --test, --include or --exclude, only test cases
-                          in matching suites and also matching other filtering
-                          criteria are selected. Given name can be a simple
-                          pattern similarly as with --test.
- -i --include tag *       Select test cases to by tag. Similarly as name with
-                          --test, tag is case and space insensitive and it is
-                          possible to use patterns with `*` and `?` as
-                          wildcards. Tags and patterns can also be combined
-                          together with `AND`, `OR`, and `NOT` operators.
+ -s --suite name *        Select suites by name. When this option is used with
+                          --test, --include or --exclude, only tests in
+                          matching suites and also matching other filtering
+                          criteria are selected. Name can be a simple pattern
+                          similarly as with --test and it can contain parent
+                          name separated with a dot. For example, `-s X.Y`
+                          selects suite `Y` only if its parent is `X`.
+ -i --include tag *       Select tests by tag. Similarly as name with --test,
+                          tag is case and space insensitive and it is possible
+                          to use patterns with `*`, `?` and `[]` as wildcards.
+                          Tags and patterns can also be combined together with
+                          `AND`, `OR`, and `NOT` operators.
                           Examples: --include foo --include bar*
                                     --include fooANDbar*
- -e --exclude tag *       Select test cases not to be included by tag. These
-                          tests are not selected even if included with
-                          --include. Tags are matched using the rules explained
-                          with --include.
-    --processemptysuite   Processes output also if the top level test suite is
+ -e --exclude tag *       Specify tests not to be included by tag. They are not
+                          selected even if included with --include. Tags are
+                          matched using same rules as with --include.
+    --processemptysuite   Processes output also if the top level suite is
                           empty. Useful e.g. with --include/--exclude when it
-                          is not an error that no test matches the condition.
- -c --critical tag *      Tests having given tag are considered critical. If no
-                          critical tags are set, all tags are critical. Tags
-                          can be given as a pattern like  with --include.
- -n --noncritical tag *   Tests with given tag are not critical even if they
-                          have a tag set with --critical. Tag can be a pattern.
+                          is not an error that there are no matches.
+ -c --critical tag *      Tests having the given tag are considered critical.
+                          If no critical tags are set, all tests are critical.
+                          Tags can be given as a pattern same way as with
+                          --include.
+ -n --noncritical tag *   Tests having the given tag are not critical even if
+                          they have a tag set with --critical. Tag can be
+                          a pattern.
  -d --outputdir dir       Where to create output files. The default is the
                           directory where Rebot is run from and the given path
                           is considered relative to that unless it is absolute.
@@ -142,19 +145,19 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
-    --xunitskipnoncritical  Mark non-critical tests on xUnit output as skipped.
+    --xunitskipnoncritical  Mark non-critical tests in xUnit output as skipped.
  -T --timestampoutputs    When this option is used, timestamp in a format
                           `YYYYMMDD-hhmmss` is added to all generated output
                           files between their basename and extension. For
                           example `-T -o output.xml -r report.html -l none`
                           creates files like `output-20070503-154410.xml` and
                           `report-20070503-154410.html`.
-    --splitlog            Split log file into smaller pieces that open in
-                          browser transparently.
-    --logtitle title      Title for the generated test log. The default title
-                          is `<Name Of The Suite> Test Log`.
-    --reporttitle title   Title for the generated test report. The default
-                          title is `<Name Of The Suite> Test Report`.
+    --splitlog            Split the log file into smaller pieces that open in
+                          browsers transparently.
+    --logtitle title      Title for the generated log file. The default title
+                          is `<SuiteName> Test Log`.
+    --reporttitle title   Title for the generated report file. The default
+                          title is `<SuiteName> Test Report`.
     --reportbackground colors  Background colors to use in the report file.
                           Either `all_passed:critical_passed:failed` or
                           `passed:failed`. Both color names and codes work.
@@ -170,41 +173,43 @@ Options
                           in log and report. By default all suite levels are
                           shown. Example:  --suitestatlevel 3
     --tagstatinclude tag *  Include only matching tags in `Statistics by Tag`
-                          and `Test Details` in log and report. By default all
-                          tags set in test cases are shown. Given `tag` can
-                          also be a simple pattern (see e.g. --test).
-    --tagstatexclude tag *  Exclude matching tags from `Statistics by Tag` and
-                          `Test Details`. This option can be used with
-                          --tagstatinclude similarly as --exclude is used with
-                          --include.
+                          in log and report. By default all tags are shown.
+                          Given tag can be a pattern like with --include.
+    --tagstatexclude tag *  Exclude matching tags from `Statistics by Tag`.
+                          This option can be used with --tagstatinclude
+                          similarly as --exclude is used with --include.
     --tagstatcombine tags:name *  Create combined statistics based on tags.
-                          These statistics are added into `Statistics by Tag`
-                          and matching tests into `Test Details`. If optional
-                          `name` is not given, name of the combined tag is got
-                          from the specified tags. Tags are combined using the
-                          rules explained in --include.
+                          These statistics are added into `Statistics by Tag`.
+                          If the optional `name` is not given, name of the
+                          combined tag is got from the specified tags. Tags are
+                          matched using the same rules as with --include.
                           Examples: --tagstatcombine requirement-*
                                     --tagstatcombine tag1ANDtag2:My_name
-    --tagdoc pattern:doc *  Add documentation to tags matching given pattern.
-                          Documentation is shown in `Test Details` and also as
-                          a tooltip in `Statistics by Tag`. Pattern can contain
-                          characters `*` (matches anything) and `?` (matches
-                          any char). Documentation can contain formatting
-                          similarly as with --doc option.
+    --tagdoc pattern:doc *  Add documentation to tags matching the given
+                          pattern. Documentation is shown in `Test Details` and
+                          also as a tooltip in `Statistics by Tag`. Pattern can
+                          use `*`, `?` and `[]` as wildcards like --test.
+                          Documentation can contain formatting like --doc.
                           Examples: --tagdoc mytag:Example
                                     --tagdoc "owner-*:Original author"
     --tagstatlink pattern:link:title *  Add external links into `Statistics by
-                          Tag`. Pattern can contain characters `*` (matches
-                          anything) and `?` (matches any char). Characters
-                          matching to wildcard expressions can be used in link
-                          and title with syntax %N, where N is index of the
-                          match (starting from 1).
+                          Tag`. Pattern can use `*`, `?` and `[]` as wildcards
+                          like --test. Characters matching to `*` and `?`
+                          wildcards can be used in link and title with syntax
+                          %N, where N is index of the match (starting from 1).
                           Examples: --tagstatlink mytag:http://my.domain:Title
                           --tagstatlink "bug-*:http://url/id=%1:Issue Tracker"
+    --expandkeywords name:<pattern>|tag:<pattern> *
+                          Matching keywords will be automatically expanded in
+                          the log file. Matching against keyword name or tags
+                          work using same rules as with --removekeywords.
+                          Examples: --expandkeywords name:BuiltIn.Log
+                                    --expandkeywords tag:expand
+                          New in RF 3.2.
     --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
                           Remove keyword data from all generated outputs.
                           Keywords containing warnings are not removed except
-                          in `all` mode.
+                          in the `all` mode.
                           all:     remove data from all keywords
                           passed:  remove data only from keywords in passed
                                    test cases and suites
@@ -216,16 +221,15 @@ Options
                                    against the full name of the keyword (e.g.
                                    'MyLib.Keyword', 'resource.Second Keyword'),
                                    is case, space, and underscore insensitive,
-                                   and may contain `*` and `?` as wildcards.
+                                   and may contain `*`, `?` and `[]` wildcards.
                                    Examples: --removekeywords name:Lib.HugeKw
                                              --removekeywords name:myresource.*
                           tag:<pattern>:  remove data from keywords that match
                                    the given pattern. Tags are case and space
-                                   insensitive and it is possible to use
-                                   patterns with `*` and `?` as wildcards.
-                                   Tags and patterns can also be combined
-                                   together with `AND`, `OR`, and `NOT`
-                                   operators.
+                                   insensitive and patterns can contain `*`,
+                                   `?` and `[]` wildcards. Tags and patterns
+                                   can also be combined together with `AND`,
+                                   `OR`, and `NOT` operators.
                                    Examples: --removekeywords foo
                                              --removekeywords fooANDbar*
     --flattenkeywords for|foritem|name:<pattern>|tag:<pattern> *
@@ -240,22 +244,21 @@ Options
                           tag:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords tag:<pattern>`
-    --starttime timestamp  Set starting time of test execution when creating
-                          reports. Timestamp must be given in format
-                          `2007-10-01 15:12:42.268` where all separators are
-                          optional (e.g. `20071001151242268` is ok too) and
+    --starttime timestamp  Set execution start time. Timestamp must be given in
+                          format `2007-10-01 15:12:42.268` where all separators
+                          are optional (e.g. `20071001151242268` is ok too) and
                           parts from milliseconds to hours can be omitted if
                           they are zero (e.g. `2007-10-01`). This can be used
-                          to override starttime of the suite when reports are
-                          created from a single suite or to set starttime for
-                          combined suite, which is otherwise set to `N/A`.
-    --endtime timestamp   Same as --starttime but for ending time. If both
-                          options are used, elapsed time of the suite is
-                          calculated based on them. For combined suites,
-                          it is otherwise calculated by adding elapsed times
-                          of combined test suites together.
-    --nostatusrc          Sets the return code to zero regardless of failures
-                          in test cases. Error codes are returned normally.
+                          to override start time of a single suite or to set
+                          start time for a combined suite, which would
+                          otherwise be `N/A`.
+    --endtime timestamp   Same as --starttime but for end time. If both options
+                          are used, elapsed time of the suite is calculated
+                          based on them. For combined suites, it is otherwise
+                          calculated by adding elapsed times of the combined
+                          suites together.
+    --nostatusrc          Sets the return code to zero regardless are there
+                          failures. Error codes are returned normally.
     --prerebotmodifier class *  Class to programmatically modify the result
                           model before creating outputs.
  -C --consolecolors auto|on|ansi|off  Use colors on console output or not.
@@ -266,9 +269,8 @@ Options
                           Note that colors do not work with Jython on Windows.
  -P --pythonpath path *   Additional locations to add to the module search path
                           that is used when importing Python based extensions.
- -E --escape what:with *  Deprecated. Use console escape mechanism instead.
  -A --argumentfile path *  Text file to read more arguments from. File can have
-                          both options and data sources one per line. Contents
+                          both options and output files, one per line. Contents
                           do not need to be escaped but spaces in the beginning
                           and end of lines are removed. Empty lines and lines
                           starting with a hash character (#) are ignored.
@@ -288,7 +290,7 @@ creates log file `B.html`. Options accepting no values can be disabled by
 using the same option again with `no` prefix added or dropped. The last option
 has precedence regardless of how many times options are used. For example,
 `--merge --merge --nomerge --nostatusrc --statusrc` would not activate the
-merge mode and would return normal status rc.
+merge mode and would return a normal return code.
 
 Long option format is case-insensitive. For example, --SuiteStatLevel is
 equivalent to but easier to read than --suitestatlevel. Long options can
@@ -317,7 +319,7 @@ $ rebot output.xml
 
 # Using options. Note that this is one long command split into multiple lines.
 $ rebot --log smoke_log.html --report smoke_report.html --include smoke
-        --ReportTitle Smoke_Tests --ReportBackground green:yellow:red
+        --ReportTitle "Smoke Tests" --ReportBackground green:yellow:red
         --TagStatCombine tag1ANDtag2 path/to/myoutput.xml
 
 # Executing `robot.rebot` module using Python and creating combined outputs.
@@ -404,4 +406,3 @@ def rebot(*outputs, **options):
 
 if __name__ == '__main__':
     rebot_cli(sys.argv[1:])
-

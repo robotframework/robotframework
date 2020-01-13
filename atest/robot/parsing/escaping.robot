@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  parsing/escaping.robot
+Suite Setup     Run Tests    ${EMPTY}    parsing/escaping.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -39,8 +39,10 @@ Backslash
 New Line
     Check Test Case    ${TEST NAME}
 
-Space After Newline Escape Is Ignored
+Ignoring Space After Newline Is Deprecated
     Check Test Case    ${TEST NAME}
+    Check log message    ${ERRORS}[0]    Ignoring space after '\\n' is deprecated.    WARN
+    Check log message    ${ERRORS}[1]    Ignoring space after '\\n' is deprecated.    WARN
 
 Carrriage Return
     Check Test Case    ${TEST NAME}
@@ -48,25 +50,25 @@ Carrriage Return
 Tabulator
     Check Test Case    ${TEST NAME}
 
-Valid \x Escape
+Valid \\x Escape
     Check Test Case    ${TEST NAME}
 
-Invalid \x Escape
+Invalid \\x Escape
     Check Test Case    ${TEST NAME}
 
-Valid \u Escape
+Valid \\u Escape
     Check Test Case    ${TEST NAME}
 
-Invalid \u Escape
+Invalid \\u Escape
     Check Test Case    ${TEST NAME}
 
-Valid \U (32bit) Escape
+Valid \\U (32bit) Escape
     Check Test Case    ${TEST NAME}
 
-Invalid \U (32bit) Escape
+Invalid \\U (32bit) Escape
     Check Test Case    ${TEST NAME}
 
-\U (32bit) Escape Above Valid Range
+\\U (32bit) Escape Above Valid Range
     Check Test Case    ${TEST NAME}
 
 Hash
@@ -82,8 +84,7 @@ Escaping Variables With User Keywords
     Check Test Case    ${TEST NAME}
 
 No Errors Should Have Occurred
-    Should Be Empty    ${ERRORS}
-    File Should Be Empty    ${STDERR_FILE}
+    Length should be      ${ERRORS}    2    # Warnings due to '\n ' deprecation.
 
 Pipe
     Check Test Case    ${TEST NAME}

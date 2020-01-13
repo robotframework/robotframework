@@ -6,7 +6,18 @@ Resource         atest_resource.robot
 Valid key
     Check Test Case    ${TESTNAME}
 
-Valid index using variable
+Valid key with square brackets
+    Check Test Case    ${TESTNAME}
+
+Unmatched square brackets
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+    Check Test Case    ${TESTNAME} 3
+
+Index with variable
+    Check Test Case    ${TESTNAME}
+
+Index with variable using item access
     Check Test Case    ${TESTNAME}
 
 Values can be mutated
@@ -42,7 +53,20 @@ Non-dict variable
 Sanity check
     Check Test Case    ${TESTNAME}
 
-Old syntax with `&` still works like earlier
+Old syntax with `&` still works but is deprecated
     [Documentation]    `${dict}[key]` and `&{dict}[key]` work same way still.
     ...                In the future latter is deprecated and then changed.
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Old item access syntax is deprecated    ${tc.kws[0].msgs[0]}    \&{DICT}[A]
+    Old item access syntax is deprecated    ${ERRORS[0]}            \&{DICT}[A]
+    Old item access syntax is deprecated    ${tc.kws[1].msgs[0]}    \&{DICT}[\${1}]
+    Old item access syntax is deprecated    ${ERRORS[1]}            \&{DICT}[\${1}]
+    Old item access syntax is deprecated    ${tc.kws[2].msgs[0]}    \&{DICT}[nonex]
+    Old item access syntax is deprecated    ${ERRORS[2]}            \&{DICT}[nonex]
+
+*** Keywords ***
+Old item access syntax is deprecated
+    [Arguments]    ${msg}    ${deprecated}
+    Check log message    ${msg}
+    ...    Accessing variable items using '${deprecated}' syntax is deprecated. Use '$${deprecated[1:]}' instead.
+    ...    WARN

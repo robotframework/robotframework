@@ -40,17 +40,17 @@ Replace Variables With Scalar Object
 
 Replace Variables With List Variable
     @{replaced} =    Replace Variables    \@{LIST}
-    Should Be Equal    @{replaced}[0]    Hello
-    Should Be Equal    @{replaced}[1]    world
+    Should Be Equal    ${replaced}[0]    Hello
+    Should Be Equal    ${replaced}[1]    world
     @{mixed} =    Create List    ${1}    ${True}    xxx    ${LIST}
     @{replaced} =    Replace Variables    \@{mixed}
-    Should Be Equal    @{replaced}[0]    ${1}
-    Should Be Equal    @{replaced}[1]    ${True}
-    Should Be Equal    @{replaced}[2]    xxx
-    Should Be Equal    @{replaced}[3]    ${LIST}
+    Should Be Equal    ${replaced}[0]    ${1}
+    Should Be Equal    ${replaced}[1]    ${True}
+    Should Be Equal    ${replaced}[2]    xxx
+    Should Be Equal    ${replaced}[3]    ${LIST}
 
 *** Keyword ***
 Replace Variables And Verify Content
     [Arguments]    ${template}    ${name}    @{occasion}
     ${replaced} =    Replace Variables    ${template}
-    Should Be Equal    ${replaced}    Hello ${name}!\n How are you on this @{occasion}?\n
+    Should Be Equal    ${replaced}    Hello ${name}!\nHow are you on this @{occasion}?\n

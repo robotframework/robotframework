@@ -3,7 +3,7 @@ Creating tasks
 
 In addition to test automation, Robot Framework can be used for other
 automation purposes, including `robotic process automation`__ (RPA).
-It has been always been possible, but Robot Framework 3.1 added official
+It has always been possible, but Robot Framework 3.1 added official
 support for automating *tasks*, not only tests. For most parts creating
 tasks works the same way as `creating tests`_ and the only real difference
 is in terminology. Tasks can also be organized into suites__ exactly like

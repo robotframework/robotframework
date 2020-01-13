@@ -14,14 +14,19 @@ Suite Documentation
     ...    1st logical line
     ...    (i.e. paragraph)
     ...    is shortdoc on console.
-    ...    ${EMPTY}
+    ...
     ...    Documentation can have multiple rows
     ...    and also multiple columns.
     ...    Newlines can also be added literally with "\n".
-    ...    ${EMPTY}
+    ...
+    ...    | table | =header= |
+    ...    | foo | bar |
+    ...    | ragged |
+    ...
     ...    Variables work since Robot 1.2 and doc_from_cli works too.
     ...    Starting from RF 2.1 \${nonexisting} variables are left unchanged.
     ...    Escaping (e.g. '\${non-existing}', 'c:\\temp', '\\n') works too.
+    ...    Not \${closed
     Should Be Equal    ${SUITE.doc}    ${doc}
 
 Suite Name And Documentation On Console
@@ -45,13 +50,8 @@ Suite Setup
 Suite Teardown
     Verify Teardown    ${SUITE}    BuiltIn.Log    Default suite teardown
 
-Deprecated Setting Format
-    Verify Error    0
-    ...    Setting 'For CET ag S' is deprecated. Use 'Force Tags' instead.
-    ...    level=WARN
-
 Invalid Setting
-    Verify Error    1    Non-existing setting 'Invalid Setting'.
+    Verify Error    0    Non-existing setting 'Invalid Setting'.
 
 *** Keywords ***
 Verify Setup

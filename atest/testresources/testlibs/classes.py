@@ -1,3 +1,6 @@
+from robot.api.deco import library
+
+
 __version__ = 'N/A'  # This should be ignored when version is parsed
 
 
@@ -171,6 +174,7 @@ class SynonymLibrary:
     another_synonym = handler
 
 
+@library(auto_keywords=True)
 class VersionLibrary:
     ROBOT_LIBRARY_VERSION = '0.1'
     ROBOT_LIBRARY_DOC_FORMAT = 'html'

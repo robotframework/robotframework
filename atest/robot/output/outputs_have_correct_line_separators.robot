@@ -27,6 +27,7 @@ Outputs generated with rebot should have correct line separators
 
 Outputs Should Have Correct Line Separators
     [Arguments]    @{outputs}
-    :FOR    ${name}    IN    @{outputs}  ${SYSLOG FILE}
-    \    ${path} =    Join Path    ${OUTDIR}    ${name}
-    \    File Should Have Correct Line Separators    ${path}
+    FOR    ${name}    IN    @{outputs}  ${SYSLOG FILE}
+        ${path} =    Join Path    ${OUTDIR}    ${name}
+        File Should Have Correct Line Separators    ${path}
+    END

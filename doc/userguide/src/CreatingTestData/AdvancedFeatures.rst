@@ -96,85 +96,71 @@ For more information and examples, see the documentation of the keyword.
 Timeouts
 --------
 
-Keywords may be problematic in situations where they take
-exceptionally long to execute or just hang endlessly. Robot Framework
-allows you to set timeouts both for `test cases`_ and `user
-keywords`_, and if a test or keyword is not finished within the
-specified time, the keyword that is currently being executed is
-forcefully stopped. Stopping keywords in this manner may leave the
-library or system under test to an unstable state, and timeouts are
-recommended only when there is no safer option available. In general,
-libraries should be implemented so that keywords cannot hang or that
-they have their own timeout mechanism, if necessary.
+Sometimes keywords may take exceptionally long time to execute or just hang
+endlessly. Robot Framework allows you to set timeouts both for `test cases`_
+and `user keywords`_, and if a test or keyword is not finished within the
+specified time, the keyword that is currently being executed is forcefully
+stopped.
+
+Stopping keywords in this manner may leave the library, the test environment
+or the system under test to an unstable state, and timeouts are recommended
+only when there is no safer option available. In general, libraries should be
+implemented so that keywords cannot hang or that they have their own timeout
+mechanism.
 
 Test case timeout
 ~~~~~~~~~~~~~~~~~
 
-The test case timeout can be set either by using the :setting:`Test
-Timeout` setting in the Setting table or the :setting:`[Timeout]`
-setting in the Test Case table. :setting:`Test Timeout` in the Setting
-table defines a default test timeout value for all the test cases in
-the test suite, whereas :setting:`[Timeout]` in the Test Case table
-applies a timeout to an individual test case and overrides the
-possible default value.
+The test case timeout can be set either by using the :setting:`Test Timeout`
+setting in the Setting section or the :setting:`[Timeout]` setting with
+individual test cases. :setting:`Test Timeout` defines a default timeout
+for all the test cases in that suite, whereas :setting:`[Timeout]` applies
+a timeout to a particular test case and overrides the possible default value.
 
-Using an empty :setting:`[Timeout]` means that the test has no
-timeout even when :setting:`Test Timeout` is used. It is also possible
-to use value `NONE` for this purpose.
+Using an empty :setting:`[Timeout]` means that the test has no timeout even
+when :setting:`Test Timeout` is used. It is also possible to use explicit
+`NONE` value for this purpose. The timeout is effectively ignored also if
+its value is zero or negative.
 
-Regardless of where the test timeout is defined, the first cell after
-the setting name contains the duration of the timeout. The duration
-must be given in Robot Framework's `time format`_, that is,
-either directly in seconds or in a format like `1 minute
-30 seconds`. It must be noted that there is always some overhead by the
-framework, and timeouts shorter than one second are thus not
-recommended.
+Regardless of where the test timeout is defined, the value given to it
+contains the duration of the timeout. The duration must be given in Robot
+Framework's `time format`_, that is, either directly in seconds like `10`
+or in a format like `1 minute 30 seconds`. Timeouts can also be specified
+as variables_ making it possible to give them, for example, from the command
+line.
 
-The default error message displayed when a test timeout occurs is
-`Test timeout <time> exceeded`. It is also possible to use custom
-error messages, and these messages are written into the cells
-after the timeout duration. The message can be split into multiple
-cells, similarly as documentations. Both the timeout value and the
-error message may contain variables.
-
-If there is a timeout, the keyword running is stopped at the
-expiration of the timeout and the test case fails. However, keywords
-executed as `test teardown`_ are not interrupted if a test timeout
-occurs, because they are normally engaged in important clean-up
-activities. If necessary, it is possible to interrupt also these
-keywords with `user keyword timeouts`_.
+If there is a timeout and it expires, the keyword that is currently running
+is stopped and the test case fails. Keywords executed as part of `test
+teardown`_ are not interrupted if a test timeout occurs, though, but the test
+is nevertheless marked failed. If a keyword in teardown may hang, it can be
+stopped by using `user keyword timeouts`_.
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Test Timeout    2 minutes
+   Test Timeout       2 minutes
 
    *** Test Cases ***
-   Default Timeout
-       [Documentation]    Timeout from the Setting table is used
+   Default timeout
+       [Documentation]    Default timeout from Settings is used.
        Some Keyword    argument
 
    Override
-       [Documentation]    Override default, use 10 seconds timeout
+       [Documentation]    Override default, use 10 seconds timeout.
        [Timeout]    10
        Some Keyword    argument
 
-   Custom Message
-       [Documentation]    Override default and use custom message
-       [Timeout]    1min 10s    This is my custom error
-       Some Keyword    argument
-
    Variables
-       [Documentation]    It is possible to use variables too
+       [Documentation]    It is possible to use variables too.
        [Timeout]    ${TIMEOUT}
        Some Keyword    argument
 
-   No Timeout
-       [Documentation]    Empty timeout means no timeout even when Test Timeout has been used
+   No timeout
+       [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
        [Timeout]
        Some Keyword    argument
 
-   No Timeout 2
+   No timeout 2
        [Documentation]    Disabling timeout with NONE works too and is more explicit.
        [Timeout]    NONE
        Some Keyword    argument
@@ -182,37 +168,29 @@ keywords with `user keyword timeouts`_.
 User keyword timeout
 ~~~~~~~~~~~~~~~~~~~~
 
-A timeout can be set for a user keyword using the :setting:`[Timeout]`
-setting in the Keyword table. The syntax for setting it, including how
-timeout values and possible custom messages are given, is
-identical to the syntax used with `test case timeouts`_. If no custom
-message is provided, the default error message `Keyword timeout
-<time> exceeded` is used if a timeout occurs.
-
-Starting from Robot Framework 3.0, timeout can be specified as a variable
-so that the variable value is given as an argument. Using global variables
-works already with previous versions.
+Timeouts can be set for user keywords using the :setting:`[Timeout]` setting.
+The syntax is exactly the same as with `test case timeout`_, but user keyword
+timeouts do not have any default value. If a user keyword timeout is specified
+using a variable, the value can be given also as a keyword argument.
 
 .. sourcecode:: robotframework
 
    *** Keywords ***
-   Timed Keyword
-       [Documentation]    Set only the timeout value and not the custom message.
+   Hardcoded
+       [Arguments]    ${arg}
        [Timeout]    1 minute 42 seconds
-       Do Something
-       Do Something Else
+       Some Keyword    ${arg}
 
-   Wrapper With Timeout
-       [Arguments]    @{args}
-       [Documentation]    This keyword is a wrapper that adds a timeout to another keyword.
-       [Timeout]    2 minutes    Original Keyword didn't finish in 2 minutes
-       Original Keyword    @{args}
-
-   Wrapper With Customizable Timeout
-       [Arguments]    ${timeout}    @{args}
-       [Documentation]    Same as the above but timeout given as an argument.
+   Configurable
+       [Arguments]    ${arg}    ${timeout}
        [Timeout]    ${timeout}
-       Original Keyword    @{args}
+       Some Keyword    ${arg}
+
+   Run Keyword with Timeout
+       [Arguments]    ${keyword}    @{args}    &{kwargs}    ${timeout}=1 minute
+       [Documentation]    Wrapper that runs another keyword with a configurable timeout.
+       [Timeout]    ${timeout}
+       Run Keyword    ${keyword}    @{args}    &{kwargs}
 
 A user keyword timeout is applicable during the execution of that user
 keyword. If the total time of the whole keyword is longer than the
@@ -223,6 +201,11 @@ timeouts are not.
 If both the test case and some of its keywords (or several nested
 keywords) have a timeout, the active timeout is the one with the least
 time left.
+
+.. note:: With earlier Robot Framework versions it was possible to specify
+          a custom error message to use if a timeout expires. This
+          functionality was deprecated in Robot Framework 3.0.1 and removed
+          in Robot Framework 3.2.
 
 .. _for loop:
 
@@ -316,11 +299,11 @@ marker used to be `:FOR` when nowadays just `FOR` is enough. Related to that,
 the `:FOR` marker and also the `IN` separator were case-insensitive but
 nowadays both `FOR` and `IN` are case-sensitive.
 
-Old for loop syntax still works in Robot Framework 3.1 and only using
-`IN` case-insensitively causes a deprecation warning. Not closing loops
-with `END`, escaping keywords inside loops with :codesc:`\\`, and using
-`:FOR` instead of `FOR` are all going to be deprecated in Robot Framework 3.2.
-Users are advised to switch to the new syntax as soon as possible.
+Old for loop syntax still worked in Robot Framework 3.1 and only using `IN`
+case-insensitively caused a deprecation warning. In Robot Framework 3.2
+`IN` is case-sensitive and using `:FOR` instead of `FOR`, not closing loops
+with `END`, and escaping keywords inside loops with :codesc:`\\` were all
+deprecated. Users are advised to switch to the new syntax as soon as possible.
 
 When using the `pipe separated format`_, escaping with :codesc:`\\` has not
 been needed:
@@ -342,14 +325,14 @@ supported then escaping with :codesc:`\\` is needed.
 .. sourcecode:: robotframework
 
    | *** Test Cases ***
-   | Recommended solution
+   | Recommended solution, compatible with RF 3.1 and newer
    | | FOR  | ${animal}    | IN          | cat | dog |
    | |      | Log          | ${animal}   |
    | |      | Log          | 2nd keyword |
    | | END  |              |
    | | Log  | Outside loop |
    |
-   | Compatible with RF 3.0.x
+   | Compatible with RF 3.0.x, causes deprecation warning with RF 3.2.x
    | | :FOR | ${animal}    | IN          | cat | dog |
    | | \    | Log          | ${animal}   |
    | | \    | Log          | 2nd keyword |
@@ -474,10 +457,6 @@ integers, but using float values is possible as well.
            Log    ${index}
        END
 
-.. note:: Prior to Robot Framework 3.1, the `IN RANGE` separator was both
-          case- and space-insensitive. Such usage is nowadays deprecated
-          and exactly `IN RANGE` is required.
-
 For-in-enumerate loop
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -529,10 +508,6 @@ the number of loop-variables (excluding the first, index variable).
            Log    "${en}" in English is "${fi}" in Finnish (index: ${index})
        END
 
-.. note:: Prior to Robot Framework 3.1, the `IN ENUMERATE` separator was both
-          case- and space-insensitive. Such usage is nowadays deprecated
-          and exactly `IN ENUMERATE` is required.
-
 For-in-zip loop
 ~~~~~~~~~~~~~~~
 
@@ -572,10 +547,6 @@ will stop when the shortest list is exhausted.
 Note that any lists used with for-in-zip should usually be given as `scalar
 variables`_ like `${list}`. A `list variable`_ only works if its items
 themselves are lists.
-
-.. note:: Prior to Robot Framework 3.1, the `IN ZIP` separator was both
-          case- and space-insensitive. Such usage is nowadays deprecated
-          and exactly `IN ZIP` is required.
 
 Exiting for loop
 ~~~~~~~~~~~~~~~~

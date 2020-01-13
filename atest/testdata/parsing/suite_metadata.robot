@@ -3,9 +3,11 @@ Resource         ../core/resources.robot
 
 Metadata        Name                       Value
 Metadata        Multiple columns           Value in    multiple    columns
-Meta data       multiple lines             Metadata in multiple lines
+Metadata        multiple lines             Metadata in multiple lines
 ...             is parsed using
 ...             same semantics    as    documentation.
+...             | table |
+...             |   !   |
 MetaData        variables                  Version: ${version}
 Metadata        Variable from resource     ${resource_file_var}
 Metadata        Value from CLI             ${META_VALUE_FROM_CLI}

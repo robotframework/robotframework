@@ -402,7 +402,13 @@ Forward references
 
 Type information mismatch caused by decorator
     Mismatch caused by decorator               foo   'foo'
-    Mismatch caused by decorator with wraps    foo   'foo'
+
+Keyword decorator with wraps
+    Keyword With Wraps                         42    42
+
+Keyword decorator with wraps mismatched type
+    Conversion Should Fail
+    ...    Keyword With Wraps    argument=foobar    type=integer
 
 Value contains variable
     [Setup]       Set Environment Variable         PI_NUMBER    3.14

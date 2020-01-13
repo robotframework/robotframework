@@ -19,9 +19,9 @@ import inspect
 
 from robot.errors import DataError
 
-from .encoding import system_decode
+from .encoding import system_decode, system_encode
 from .error import get_error_details
-from .platform import JYTHON, IRONPYTHON, PY3
+from .platform import JYTHON, IRONPYTHON, PY2, PY3, PYPY
 from .robotpath import abspath, normpath
 from .robottypes import type_name, is_unicode
 
@@ -178,9 +178,10 @@ class _Importer(object):
 
     def _get_source(self, imported):
         try:
-            return abspath(inspect.getfile(imported))
+            source = inspect.getfile(imported)
         except TypeError:
             return None
+        return abspath(source) if source else None
 
 
 class ByPathImporter(_Importer):
@@ -239,6 +240,10 @@ class ByPathImporter(_Importer):
 
     def _import_by_path(self, path):
         module_dir, module_name = self._split_path_to_module(path)
+        # Other interpreters work also with Unicode paths.
+        # https://bitbucket.org/pypy/pypy/issues/3112
+        if PYPY and PY2:
+            module_dir = system_encode(module_dir)
         sys.path.insert(0, module_dir)
         try:
             return self._import(module_name)

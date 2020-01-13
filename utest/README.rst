@@ -10,7 +10,7 @@ all are in subdirectories of this directory. These tests are executed
 automatically when all acceptance tests are executed, and how to run
 unit tests manually is explained below.
 
-Most of the Robot Framework's features are tested with acceptance test
+Most of the Robot Framework's features are tested with acceptance tests
 using the framework itself. Some of those tests would normally be
 better implemented as unit tests, but we want to push the framework to
 its limits (and eat our own dog food). A consequence to this is that

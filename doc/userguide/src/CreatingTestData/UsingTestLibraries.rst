@@ -39,11 +39,11 @@ __ `Using arguments`_
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Library    OperatingSystem 
+   Library    OperatingSystem
    Library    my.package.TestLibrary
    Library    MyLibrary    arg1    arg2
    Library    ${LIBRARY}
-   
+
 It is possible to import test libraries in `test case files`_,
 `resource files`_ and `test suite initialization files`_. In all these
 cases, all the keywords in the imported library are available in that
@@ -66,7 +66,7 @@ make it available.
 
    *** Test Cases ***
    Example
-       Do Something 
+       Do Something
        Import Library    MyLibrary    arg1    arg2
        KW From MyLibrary
 
@@ -75,7 +75,7 @@ Specifying library to import
 
 Libraries to import can be specified either by using the library name
 or the path to the library. These approaches work the same way regardless
-is the library imported using the :setting:`Library` setting or the
+if the library is imported using the :setting:`Library` setting or the
 :name:`Import Library` keyword.
 
 Using library name
@@ -125,7 +125,7 @@ A limitation of this approach is that libraries implemented as Python classes `m
 be in a module with the same name as the class`__. Additionally, importing
 libraries distributed in JAR or ZIP packages is not possible with this mechanism.
 
-__ `Test library names`_
+__ `Library name`_
 
 Setting custom name to test library
 -----------------------------------

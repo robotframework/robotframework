@@ -62,13 +62,14 @@ Flatten for loops
     Should Be Equal    ${tc.kws[0].doc}    ${FLAT TEXT}
     Length Should Be    ${tc.kws[0].kws}    0
     Length Should Be    ${tc.kws[0].msgs}    60
-    :FOR    ${index}    IN RANGE    10
-    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 0}]}    index: ${index}
-    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 1}]}    3
-    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 2}]}    2
-    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 3}]}    1
-    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 4}]}    2
-    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 5}]}    1
+    FOR    ${index}    IN RANGE    10
+        Check Log Message    ${tc.kws[0].msgs[${index * 6 + 0}]}    index: ${index}
+        Check Log Message    ${tc.kws[0].msgs[${index * 6 + 1}]}    3
+        Check Log Message    ${tc.kws[0].msgs[${index * 6 + 2}]}    2
+        Check Log Message    ${tc.kws[0].msgs[${index * 6 + 3}]}    1
+        Check Log Message    ${tc.kws[0].msgs[${index * 6 + 4}]}    2
+        Check Log Message    ${tc.kws[0].msgs[${index * 6 + 5}]}    1
+    END
 
 Flatten for loop items
     Run Rebot    --flatten ForItem    ${OUTFILE COPY}
@@ -77,17 +78,18 @@ Flatten for loop items
     Should Be Empty    ${tc.kws[0].doc}
     Length Should Be    ${tc.kws[0].kws}    10
     Should Be Empty    ${tc.kws[0].msgs}
-    :FOR    ${index}    IN RANGE    10
-    \    Should Be Equal      ${tc.kws[0].kws[${index}].type}    foritem
-    \    Should Be Equal      ${tc.kws[0].kws[${index}].doc}    ${FLAT TEXT}
-    \    Should Be Empty      ${tc.kws[0].kws[${index}].kws}
-    \    Length Should Be     ${tc.kws[0].kws[${index}].msgs}    6
-    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[0]}    index: ${index}
-    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[1]}    3
-    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[2]}    2
-    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[3]}    1
-    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[4]}    2
-    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[5]}    1
+    FOR    ${index}    IN RANGE    10
+        Should Be Equal      ${tc.kws[0].kws[${index}].type}    foritem
+        Should Be Equal      ${tc.kws[0].kws[${index}].doc}    ${FLAT TEXT}
+        Should Be Empty      ${tc.kws[0].kws[${index}].kws}
+        Length Should Be     ${tc.kws[0].kws[${index}].msgs}    6
+        Check Log Message    ${tc.kws[0].kws[${index}].msgs[0]}    index: ${index}
+        Check Log Message    ${tc.kws[0].kws[${index}].msgs[1]}    3
+        Check Log Message    ${tc.kws[0].kws[${index}].msgs[2]}    2
+        Check Log Message    ${tc.kws[0].kws[${index}].msgs[3]}    1
+        Check Log Message    ${tc.kws[0].kws[${index}].msgs[4]}    2
+        Check Log Message    ${tc.kws[0].kws[${index}].msgs[5]}    1
+    END
 
 Invalid usage
     Run Rebot Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   ${OUTFILE COPY}

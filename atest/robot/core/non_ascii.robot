@@ -25,15 +25,15 @@ Non-ASCII Failure
     Check Log Message    ${tc.kws[0].msgs[0]}    ${MESSAGES}    FAIL
 
 Non-ASCII Failure In Setup
-    ${tc} =    Check Test Case    ${TESTNAME}    FAIL    Setup failed:\n ${MESSAGES}
+    ${tc} =    Check Test Case    ${TESTNAME}    FAIL    Setup failed:\n${MESSAGES}
     Check Log Message    ${tc.setup.msgs[0]}    ${MESSAGES}    FAIL
 
 Non-ASCII Failure In Teardown
-    ${tc} =    Check Test Case    ${TESTNAME}    FAIL    Teardown failed:\n ${MESSAGES}
+    ${tc} =    Check Test Case    ${TESTNAME}    FAIL    Teardown failed:\n${MESSAGES}
     Check Log Message    ${tc.teardown.msgs[0]}    ${MESSAGES}    FAIL
 
 Non-ASCII Failure In Teardown After Normal Failure
-    Check Test Case    ${TESTNAME}    FAIL    Just ASCII here\n\n Also teardown failed:\n ${MESSAGES}
+    Check Test Case    ${TESTNAME}    FAIL    Just ASCII here\n\nAlso teardown failed:\n${MESSAGES}
 
 Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
     ${tc} =    Check Test Case    ${TESTNAME}

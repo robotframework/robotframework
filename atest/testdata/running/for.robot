@@ -52,14 +52,18 @@ Invalid END usage 3
     \    Log    var: ${var}
     End
 
-Empty For Body Fails 1
+Invalid END usage 4
+    [Documentation]    FAIL    'End' is a reserved keyword.
+    Invalid END usage in UK
+
+Empty For Body Fails
     [Documentation]    FAIL    ${NO KEYWORDS}
     FOR    ${var}    IN    one    two
     END
     Fail    Not executed
 
-Empty For Body Fails 2
-    [Documentation]    FAIL    ${NO KEYWORDS}
+For Without End Fails
+    [Documentation]    FAIL    For loop has no closing 'END'.
     FOR    ${var}    IN    one    two
     Fail    Not executed
 
@@ -228,7 +232,7 @@ For Without Parameters
     Fail    Not Executed
 
 For Without Variable
-    [Documentation]    FAIL    ${NO VARIABLES}
+    [Documentation]    FAIL    Invalid FOR loop variable 'IN'.
     Log    This is executed
     FOR    IN    one    two
         Fail    Not Executed
@@ -537,7 +541,7 @@ For In Enumerate With Other Iterables
     Should Be Equal    ${answer}    0123456789
 
 For Loop Of Unexpected Name
-    [Documentation]    FAIL    Invalid FOR loop type 'IN FANCY PANTS'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
+    [Documentation]    FAIL    Invalid FOR loop variable 'In Fancy Pants'.
     FOR    ${i}    In Fancy Pants    Mr. Fancypants
         Fail    This shouldn't ever execute.
     END
@@ -590,50 +594,53 @@ For In Range With Non-Existing Variables In Arguments
     END
     Fail    Not executed
 
-For loop marker with colon still works
-    : FOR    ${x}    IN    a    b    c
+For loop header with colon is deprecated
+    :FOR    ${x}    IN    a    b    c
         @{result} =    Create List    @{result}    ${x}
     END
     Should Be True    ${result} == ['a', 'b', 'c']
-    :FOR    ${X X}    IN RANGE    1    2
-        @{result} =    Create List    @{result}    ${X X}
-    END
-    Should Be True    ${result} == ['a', 'b', 'c', 1]
 
-For loop marker with colon is case and space insensitive
-    : f o r    ${x}    IN    a    b    c
+For loop header with colon is case and space insensitive
+    : f O r    ${x}    IN    a    b    c
         @{result} =    Create List    @{result}    ${x}
     END
     Should Be True    ${result} == ['a', 'b', 'c']
-    : F o R    ${X X}    IN RANGE    1    2
-        @{result} =    Create List    @{result}    ${X X}
-    END
-    Should Be True    ${result} == ['a', 'b', 'c', 1]
 
-For loop marker can have many colons
-    ::::::::FOR    ${i}    IN    0    1    2
+For loop header can have many colons
+    :::f:o:r:::    ${i}    IN RANGE    1    6
         @{result} =    Create List    @{result}    ${i}
     END
-    Should Be True    @{result} == ['0', '1', '2']
-    :::f:o:r:::    ${i}    IN RANGE    3    6
-        @{result} =    Create List    @{result}    ${i}
-    END
-    Should Be True    @{result} == ['0', '1', '2', 3, 4, 5]
+    Should Be True    ${result} == [1, 2, 3, 4, 5]
 
-Case and space insensitive for loop separator is deprecated
-    FOR    ${x}    in    a  b  c
-        @{result} =    Create List    @{result}    ${x}
+For loop separator is case- and space-sensitive 1
+    [Documentation]    FAIL Invalid FOR loop variable 'in'.
+    FOR    ${x}    in    a    b    c
+        Fail    Should not be executed
     END
-    Should Be True    @{result} == ['a', 'b', 'c']
-    FOR    ${X X}    INRANGE    1    2
-        @{result} =    Create List    @{result}    ${X X}
-    END
-    Should Be True    @{result} == ['a', 'b', 'c', 1]
-    FOR    ${index}    ${item}    I ne numer ate    foo
-        Should Be Equal    ${index}: ${item}    0: foo
-    END
+    Fail    Should not be executed
 
-Escaping with backslash still works
+For loop separator is case- and space-sensitive 2
+    [Documentation]    FAIL Invalid FOR loop variable 'IN RANG E'.
+    FOR    ${x}    IN RANG E    a    b    c
+        Fail    Should not be executed
+    END
+    Fail    Should not be executed
+
+For loop separator is case- and space-sensitive 3
+    [Documentation]    FAIL Invalid FOR loop variable 'IN Enumerate'.
+    FOR    ${x}    IN Enumerate    a    b    c
+        Fail    Should not be executed
+    END
+    Fail    Should not be executed
+
+For loop separator is case- and space-sensitive 4
+    [Documentation]    FAIL Invalid FOR loop variable 'INZIP'.
+    FOR    ${x}    INZIP    a    b    c
+        Fail    Should not be executed
+    END
+    Fail    Should not be executed
+
+Escaping with backslash is deprecated
     FOR    ${var}    IN    one    two
     \    Log    var: ${var}
     \    For in UK with backslashes    ${var}
@@ -652,6 +659,10 @@ END is not required when escaping with backslash
     FOR    ${var}    IN    one    two
     \    Log    var: ${var}
     \    For in UK with backslashes and without END    ${var}
+
+Header at the end of file
+    [Documentation]    FAIL For loop has no closing 'END'.
+    Header at the end of file
 
 *** Keywords ***
 My UK
@@ -715,3 +726,9 @@ For in UK with backslashes and without END
     FOR    ${x}    IN    1    2
     \    No operation
     \    Log    ${arg}-${x}
+
+Invalid END usage in UK
+    END
+
+Header at the end of file
+    FOR    ${x}    IN    foo

@@ -9,10 +9,11 @@ Flatten stuff
     Keyword with fags flatten
 
 For loop
-    :FOR    ${i}    IN RANGE    10
-    \    Log   index: ${i}
-    \    Keyword 3
-    \    Keyword 2
+    FOR    ${i}    IN RANGE    10
+        Log   index: ${i}
+        Keyword 3
+        Keyword 2
+    END
 
 *** Keywords ***
 Keyword 3

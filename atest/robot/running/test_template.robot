@@ -24,7 +24,7 @@ Overriding Default Template In Test With NONE Value
 Template With Variables
     Check Test Case    ${TESTNAME}
 
-Template With @{EMPTY} Variable
+Template With \@{EMPTY} Variable
     Check Test Case    ${TESTNAME}
 
 Template With Variables And Keyword Name

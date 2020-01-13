@@ -11,16 +11,16 @@ Tag <pre>
 And &
     And &
 
-Backslashes \ \\ \\\ \\\\
+Backslashes \\ \\\\ \\\\\\ \\\\\\\\
     Backslashes \ \\ \\\ \\\\
 
-Variable ${var}
+Variable \${var}
     Variable ${var}
 
-Escaped \${var}
+Escaped \\\${var}
     Escaped \${var}
 
-Newline \n and Tab \t
+Newline \\n and Tab \\t
     Newline \n and Tab \t
 
 *** Keyword ***

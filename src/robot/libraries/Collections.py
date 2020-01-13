@@ -82,8 +82,8 @@ class _List(object):
         The given lists are not altered by this keyword.
 
         Example:
-        | ${x} = | Combine List | ${L1} | ${L2} |       |
-        | ${y} = | Combine List | ${L1} | ${L2} | ${L1} |
+        | ${x} = | Combine Lists | ${L1} | ${L2} |       |
+        | ${y} = | Combine Lists | ${L1} | ${L2} | ${L1} |
         =>
         | ${x} = ['a', 'a', 'b']
         | ${y} = ['a', 'a', 'b', 'a']
@@ -435,7 +435,7 @@ class _List(object):
         if not list_:
             yield 'List is empty.'
         elif len(list_) == 1:
-            yield 'List has one item:\n%s' % list_[0]
+            yield 'List has one item:\n%s' % (list_[0],)
         else:
             yield 'List length is %d and it contains following items:' % len(list_)
             for index, item in enumerate(list_):
@@ -522,7 +522,7 @@ class _Dictionary(object):
                 value = dictionary.pop(key)
                 logger.info("Removed item with key '%s' and value '%s'." % (key, value))
             else:
-                logger.info("Key '%s' not found." % key)
+                logger.info("Key '%s' not found." % (key,))
 
     def pop_from_dictionary(self, dictionary, key, default=NOT_SET):
         """Pops the given ``key`` from the ``dictionary`` and returns its value.
@@ -678,7 +678,7 @@ class _Dictionary(object):
         try:
             return dictionary[key]
         except KeyError:
-            raise RuntimeError("Dictionary does not contain key '%s'." % key)
+            raise RuntimeError("Dictionary does not contain key '%s'." % (key,))
 
     def dictionary_should_contain_key(self, dictionary, key, msg=None):
         """Fails if ``key`` is not found from ``dictionary``.
@@ -686,7 +686,7 @@ class _Dictionary(object):
         Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
-        default = "Dictionary does not contain key '%s'." % key
+        default = "Dictionary does not contain key '%s'." % (key,)
         _verify_condition(key in dictionary, default, msg)
 
     def dictionary_should_not_contain_key(self, dictionary, key, msg=None):
@@ -695,7 +695,7 @@ class _Dictionary(object):
         Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
-        default = "Dictionary contains key '%s'." % key
+        default = "Dictionary contains key '%s'." % (key,)
         _verify_condition(key not in dictionary, default, msg)
 
     def dictionary_should_contain_item(self, dictionary, key, value, msg=None):
@@ -717,7 +717,7 @@ class _Dictionary(object):
         Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
-        default = "Dictionary does not contain value '%s'." % value
+        default = "Dictionary does not contain value '%s'." % (value,)
         _verify_condition(value in dictionary.values(), default, msg)
 
     def dictionary_should_not_contain_value(self, dictionary, value, msg=None):
@@ -726,7 +726,7 @@ class _Dictionary(object):
         Use the ``msg`` argument to override the default error message.
         """
         self._validate_dictionary(dictionary)
-        default = "Dictionary contains value '%s'." % value
+        default = "Dictionary contains value '%s'." % (value,)
         _verify_condition(not value in dictionary.values(), default, msg)
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):

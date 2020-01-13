@@ -56,12 +56,13 @@ Command line options for test execution
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
+  --expandkeywords <name:pattern|tag:pattern>  Automatically `expand keywords`_
+                          in the generated log file.
   --removekeywords <all|passed|name:pattern|tag:pattern|for|wuks>  `Removes keyword data`_
                           from the generated log file.
   --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_
                           in the generated log file.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
-  --warnonskippedfiles    Deprecated. Nowadays all skipped files are reported.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
                           in test cases. Error codes are returned normally.
   --runemptysuite         Executes tests also if the selected `test suites are empty`_.
@@ -72,7 +73,7 @@ Command line options for test execution
                           if any critical test fails.
   --exitonerror           `Stops test execution <Stopping on parsing or execution error_>`__
                           if any error occurs when parsing test data, importing libraries, and so on.
-  --skipteardownonexit    `Skips teardowns`_ is test execution is prematurely stopped.
+  --skipteardownonexit    `Skips teardowns`_ if test execution is prematurely stopped.
   --prerunmodifier <name:args>    Activate `programmatic modification of test data`_.
   --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
@@ -84,7 +85,6 @@ Command line options for test execution
   -K, --consolemarkers <auto|on|off>  Show `markers on the console`_ when top level
                                       keywords in a test case end.
   -P, --pythonpath <path>  Additional locations to add to the `module search path`_.
-  -E, --escape <what:with>   Deprecated. Use console escape mechanism instead.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
   --version               Prints the `version information`_.
@@ -127,6 +127,8 @@ Command line options for post-processing outputs
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
+  --expandkeywords <name:pattern|tag:pattern>  Automatically `expand keywords`_
+                          in the generated log file.
   --removekeywords <all|passed|name:pattern|tag:pattern|for|wuks>  `Removes keyword data`_
                           from the generated outputs.
   --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_
@@ -141,7 +143,6 @@ Command line options for post-processing outputs
   --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   -C, --consolecolors <auto|on|ansi|off>  `Specifies are colors`_ used on the console.
   -P, --pythonpath <path>   Additional locations to add to the `module search path`_.
-  -E, --escape <what:with>   Deprecated. Use console escape mechanism instead.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
   --version               Prints the `version information`_.
@@ -192,6 +193,7 @@ Command line options for post-processing outputs
 .. _usage instructions: `Getting help and version information`_
 .. _version information: `usage instructions`_
 
+.. _expand keywords: `Automatically expanding keywords`_
 .. _Removes keyword data: `Removing and flattening keywords`_
 .. _Flattens keywords: `Removes keyword data`_
 .. _starting time: `Setting start and end time of execution`_

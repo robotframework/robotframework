@@ -39,7 +39,7 @@ def get_system_encoding():
 def get_console_encoding():
     platform_getters = [(True, _get_stream_output_encoding),
                         (UNIXY, _get_unixy_encoding),
-                        (WINDOWS, _get_windows_output_encoding)]
+                        (WINDOWS, _get_windows_console_encoding)]
     return _get_encoding(platform_getters, DEFAULT_CONSOLE_ENCODING)
 
 
@@ -53,15 +53,19 @@ def _get_encoding(platform_getters, default):
 
 
 def _get_python_system_encoding():
-    # `locale.getpreferredencoding(False)` returns exactly what we want, but
-    # it doesn't seem to work outside Windows on Python 2. Luckily on these
+    # `locale.getpreferredencoding(False)` should return exactly what we want,
+    # but it doesn't seem to work outside Windows on Python 2. Luckily on these
     # platforms `sys.getfilesystemencoding()` seems to do the right thing.
+    # Jython 2.7.1+ actually uses UTF-8 regardless the system encoding, but
+    # that's handled by `system_decode/encode` utilities separately.
     if PY2 and not WINDOWS:
         return sys.getfilesystemencoding()
     return locale.getpreferredencoding(False)
 
 
 def _get_java_system_encoding():
+    # This is only used with Jython 2.7.0, others get encoding already
+    # from `_get_python_system_encoding`.
     from java.lang import System
     return System.getProperty('file.encoding')
 
@@ -98,8 +102,8 @@ def _get_windows_system_encoding():
     return _get_code_page('GetACP')
 
 
-def _get_windows_output_encoding():
-    return _get_code_page('GetOEMCP')
+def _get_windows_console_encoding():
+    return _get_code_page('GetConsoleOutputCP')
 
 
 def _get_code_page(method_name):

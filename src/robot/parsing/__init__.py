@@ -15,53 +15,62 @@
 
 """Implements test data parsing.
 
-Classes :class:`~.model.TestCaseFile`, :class:`~.model.TestDataDirectory`
-and :class:`~.model.ResourceFile` represented parsed test data. Objects
-of these classes can be modified and saved back to disk. In addition,
-a convenience factory function :func:`~.model.TestData` can be used to
-parse a test case file or directory to a corresponding object.
+Main entry points to parsing are the following:
 
-Aforementioned classes and functions are part of the public API. It is
-recommended that they are imported through the :mod:`robot.api` package
-like in the example below.
+* :func:`~.lexer.get_tokens` and :func:`~.lexer.get_resource_tokens`
+  for parsing test data to tokens.
 
-This package is likely to change radically in Robot Framework 2.9. The main
-motivation for the planned changes is making the data easier to use for
-external tools that use these modules.
+* :func:`~.builders.get_model` and :func:`~.builders.get_resource_model` for
+  parsing test data into a model represented as an abstract syntax tree (AST).
+
+*TODO:* Document how to modify the returned model using
+:class:`~.model.ModelVisitor` and :class:`~.model.ModelTransformer`.
+Also mention that the model as well as tokens are part of the public API.
+
+Like with rest of the public API, these functions and classes are exposed
+also via :module:`robot.api`.
+
+The :module:`robot.parsing` package has been totally rewritten in Robot
+Framework 3.2 and all code using it needs to be updated. Depending on the
+use case, it may be possible to use the :func:`robot.running.TestSuiteBuilder`
+that has not changed instead.
 
 Example
 -------
 
 ::
 
+    import ast
     import sys
-    from robot.api import TestData
 
-    def print_suite(suite):
-        print 'Suite:', suite.name
-        for test in suite.testcase_table:
-            print '-', test.name
-        for child in suite.children:
-            print_suite(child)
+    from robot.api import get_model
 
-    suite = TestData(source=sys.argv[1])
-    print_suite(suite)
+
+    class TestNamePrinter(ast.NodeVisitor):
+
+        def visit_File(self, node):
+            print(f"File '{node.source}' has following tests:")
+            # Must call `generic_visit` to visit also child nodes.
+            self.generic_visit(node)
+
+        def visit_KeywordSection(self, node):
+            # Overriding a visitor method without calling `generic_visit`
+            # prevents child nodes being visited. In this case it means
+            # `visit_Name` is not called with nodes in the keyword section.
+            pass
+
+        def visit_Name(self, node):
+            print(f"- {node.name}")
+
+
+    model = get_model(sys.argv[1])
+    TestNamePrinter().visit(model)
+
+
+TODO: Add example modifying model.
 """
 
-from .model import TestData, TestCaseFile, TestDataDirectory, ResourceFile
-from . import populators
-
-
-TEST_EXTENSIONS = set(populators.READERS)
-
-
-def disable_curdir_processing(method):
-    """Decorator to disable processing `${CURDIR}` variable."""
-    def decorated(*args, **kwargs):
-        original = populators.PROCESS_CURDIR
-        populators.PROCESS_CURDIR = False
-        try:
-            return method(*args, **kwargs)
-        finally:
-            populators.PROCESS_CURDIR = original
-    return decorated
+from .builders import get_model, get_resource_model
+from .lexer import get_tokens, get_resource_tokens, Token
+from .model import ModelTransformer, ModelVisitor
+from .suitestructure import SuiteStructureBuilder, SuiteStructureVisitor

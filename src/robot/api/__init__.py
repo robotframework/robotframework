@@ -45,7 +45,7 @@ Currently exposed APIs are:
 * :func:`~robot.result.resultbuilder.ExecutionResult` factory method
   for reading execution results from XML output files and
   :class:`~robot.result.visitor.ResultVisitor` abstract class to ease
-  further processing the results. 
+  further processing the results.
   :class:`~robot.result.visitor.ResultVisitor` can also be used as a base
   for pre-Rebot modifier that is taken into use with ``--prerebotmodifier``
   commandline option.
@@ -68,7 +68,10 @@ See documentations of the individual APIs for more details.
 """
 
 from robot.model import SuiteVisitor
-from robot.parsing import TestCaseFile, TestDataDirectory, ResourceFile, TestData
+# FIXME: Anything else to expose from parsing? Update parsing docs above.
+from robot.parsing import (get_model, get_resource_model,
+                           get_tokens, get_resource_tokens,
+                           ModelTransformer, ModelVisitor)
 from robot.reporting import ResultWriter
 from robot.result import ExecutionResult, ResultVisitor
 from robot.running import TestSuite, TestSuiteBuilder

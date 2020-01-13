@@ -113,9 +113,10 @@ Check Test Tags
     [Return]    ${tc}
 
 Check Keyword Data
-    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=
+    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${type}=kw
     Should be equal    ${kw.name}    ${name}
     Should be equal    ${kw.status}    ${status}
+    Should be equal    ${kw.type}    ${type}
     ${kwassign}=    Catenate    SEPARATOR=,${SPACE}    @{kw.assign}
     Should be equal    ${kwassign}    ${assign}
     ${kwargs}=    Catenate    SEPARATOR=,${SPACE}    @{kw.args}
@@ -324,9 +325,10 @@ Test And All Keywords Should Have Passed
 
 All Keywords Should Have Passed
     [Arguments]    ${tc or kw}
-    : FOR    ${kw}    IN    @{tc or kw.kws}
-    \    Should Be Equal    ${kw.status}    PASS
-    \    All Keywords Should Have Passed    ${kw}
+    FOR    ${kw}    IN    @{tc or kw.kws}
+        Should Be Equal    ${kw.status}    PASS
+        All Keywords Should Have Passed    ${kw}
+    END
 
 Set PYTHONPATH
     [Arguments]    @{values}
@@ -351,4 +353,4 @@ Import should have failed
     ${error} =    Set Variable If    $stacktrace
     ...    ${error}\n*${stacktrace}*
     ...    ${error}
-    Check Log Message    @{ERRORS}[${index}]    ${error}    level=ERROR    pattern=yes
+    Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=yes

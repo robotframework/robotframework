@@ -52,9 +52,11 @@ Message Is Got Correctly If Java Exception Has 'null' Message
 Message And Internal Trace Are Removed From Details When Exception In Library
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    Generic Failure    foo != bar
-    Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception(msg)
+    Verify Python Traceback    ${tc.kws[0].msgs[1]}
+    ...    ../testresources/testlibs/ExampleLibrary.py    exception    raise exception(msg)
     ${tc} =    Verify Test Case And Error In Log    Non Generic Failure    FloatingPointError: Too Large A Number !!
-    Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception(msg)
+    Verify Python Traceback    ${tc.kws[0].msgs[1]}
+    ...    ../testresources/testlibs/ExampleLibrary.py    exception    raise exception(msg)
 
 Message And Internal Trace Are Removed From Details When Exception In Java Library
     [Tags]    require-jython
@@ -67,13 +69,25 @@ Message And Internal Trace Are Removed From Details When Exception In Java Libra
 Message and Internal Trace Are Removed From Details When Exception In External Code
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    External Failure    UnboundLocalError: Raised from an external object!
-    Verify Python Traceback    ${tc.kws[0].msgs[1]}    external_exception    ObjectToReturn('failure').exception(name, msg)    exception    raise exception(msg)
+    Verify Python Traceback    ${tc.kws[0].msgs[1]}
+    ...    ../testresources/testlibs/ExampleLibrary.py    external_exception    ObjectToReturn('failure').exception(name, msg)
+    ...    ../testresources/testlibs/objecttoreturn.py    exception    raise exception(msg)
 
 Message and Internal Trace Are Removed From Details When Exception In External Java Code
     [Tags]    require-jython
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    External Failure In Java    IllegalArgumentException: Illegal initial capacity: -1
-    Verify Java Stack Trace    ${tc.kws[0].msgs[1]}    java.lang.IllegalArgumentException: \    java.util.HashMap.    java.util.HashMap.    JavaObject.exception    ExampleJavaLibrary
+    Verify Java Stack Trace    ${tc.kws[0].msgs[1]}
+    ...    java.lang.IllegalArgumentException: \    java.util.HashMap.
+    ...    java.util.HashMap.    JavaObject.exception    ExampleJavaLibrary
+
+Failure in library in non-ASCII directory
+    [Template]    NONE
+    ${tc} =    Verify Test Case And Error In Log    ${TEST NAME}    Keyword in 'nön_äscii_dïr' fails!    index=1
+    Verify Python Traceback    ${tc.kws[1].msgs[1]}
+    ...    test_libraries/nön_äscii_dïr/valid.py
+    ...    failing_keyword_in_non_ascii_dir
+    ...    raise AssertionError(u"Keyword in 'nön_äscii_dïr' fails!")
 
 No Details For Timeouts
     [Template]    Verify Test Case, Error In Log And No Details
@@ -112,19 +126,22 @@ Verify Test Case, Error In Log And No Details
     Length Should Be    ${tc.kws[0].msgs}    ${msg_index + 1}
 
 Verify Python Traceback
-    [Arguments]    ${msg}    @{funtions_and_texts}
+    [Arguments]    ${msg}    @{entries}
     ${exp} =    Set Variable    Traceback \\(most recent call last\\):
-    @{funtions_and_texts} =    Regexp Escape    @{funtions_and_texts}
-    : FOR    ${func}    ${text}    IN    @{funtions_and_texts}
-    \    ${exp} =    Set Variable    ${exp}\n \\s+File ".*", line \\d+, in ${func}\n \\s+${text}
+    FOR    ${path}    ${func}    ${text}    IN    @{entries}
+        ${path} =    Normalize Path    ${DATADIR}/${path}
+        ${path}    ${func}    ${text} =    Regexp Escape    ${path}    ${func}    ${text}
+        ${exp} =    Set Variable    ${exp}\n\\s+File ".*${path}.*", line \\d+, in ${func}\n\\s+${text}
+    END
     Should Match Regexp    ${msg.message}    ${exp}
     Should Be Equal    ${msg.level}    DEBUG
 
 Verify Java Stack Trace
     [Arguments]    ${msg}    ${exception}    @{functions}
     ${exp} =    Regexp Escape    ${exception}
-    : FOR    ${func}    IN    @{functions}
-    \    ${func} =    Regexp Escape    ${func}
-    \    ${exp} =    Set Variable    ${exp}\n \\s+at ${func}.+
+    FOR    ${func}    IN    @{functions}
+        ${func} =    Regexp Escape    ${func}
+        ${exp} =    Set Variable    ${exp}\n\\s+at ${func}.+
+    END
     Should Match Regexp    ${msg.message}    ${exp}
     Should Be Equal    ${msg.level}    DEBUG

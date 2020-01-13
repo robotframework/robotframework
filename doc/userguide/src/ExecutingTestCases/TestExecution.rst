@@ -275,7 +275,7 @@ reports and logs are not created.
 Using signals
 ~~~~~~~~~~~~~
 
-On Unix-like machines it is possible to terminate test execution
+On UNIX-like machines it is possible to terminate test execution
 using signals `INT` and `TERM`. These signals can be sent
 from the command line using ``kill`` command, and sending signals can
 also be easily automated.

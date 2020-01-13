@@ -10,7 +10,7 @@ Documentation   This resource file has documentation.
 ...
 ...  | *TABLE* |
 ...  | ${NONEX} | ${CURDIR} | ${TEMPDIR} |
-...
+...  | foo      |    bar    |
 ...  tabs \t\t\t here
 
 
@@ -19,7 +19,7 @@ kw  [Documentation]  foo bar `kw 2`.
     No Operation
 
 Keyword with some "stuff" to <escape>
-    [Documentation]   foo bar `kw` & some "stuff" to <escape> .\n\n baa `${a1}`
+    [Documentation]   foo bar `kw` & some "stuff" to <escape> .\n\nbaa `${a1}`
     [Arguments]  ${a1}   ${a2}
     No Operation
 
@@ -30,20 +30,22 @@ kw 3
 kw 4  [Arguments]  ${positional}=default  @{varargs}  &{kwargs}
       [Tags]    kw4    Has    tags    ?!?!??
 
-kw 5  [Documentation]   foo bar `kw`.
+kw 5  [DocumeNtation]   foo bar `kw`.
       ...
-      ...  baa `${a1}` alskdj alskdjlajd
-      ...  askf laskdjf asldkfj alsdkfj alsdkfjasldkfj
-      ...  askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj
-      ...  askf *laskdjf* asldkfj `introduction` alsdkfj
-      ...  http://foo.bar
+      ...  FIRST `${a1}` alskdj alskdjlajd
+      ...  askf laskdjf asldkfj alsdkfj alsdkfjasldkfj END
+      ...
+      ...  SECOND askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj
+      ...  askf *laskdjf* END
+      ...
+      ...  THIRD asldkfj `introduction` alsdkfj http://foo.bar END
       ...  - aaa
       ...  - bbb
       ...
       ...  -------------
       ...
-      ...  | *1* | *2* |
-      ...  | foo | bar |
+      ...  | = first = | = second = |
+      ...  | foo       |    bar     |
       ...
       ...  tags: a, b, ${3}
 
