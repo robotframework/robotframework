@@ -795,7 +795,7 @@ class _Verify(_BuiltInBase):
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True,
-                                   ignore_case=False, formatter='str'):
+                                   ignore_case=False, strip_spaces=False, formatter='str'):
         """Fails if objects are unequal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
@@ -804,6 +804,9 @@ class _Verify(_BuiltInBase):
         If ``ignore_case`` is given a true value (see `Boolean arguments`),
         comparison is done case-insensitively. If both arguments are
         multiline strings, this keyword uses `multiline string comparison`.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
 
         Strings are always [http://www.macchiato.com/unicode/nfc-faq|
         NFC normalized].
@@ -817,6 +820,12 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             first = first.lower()
             second = second.lower()
+        if strip_spaces == '':
+            pass
+        elif strip_spaces == '':
+            pass
+        elif is_truthy(strip_spaces):
+            pass
         self._should_be_equal(first, second, msg, values, formatter)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True,
