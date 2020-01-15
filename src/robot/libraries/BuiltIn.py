@@ -772,7 +772,7 @@ class _Verify(_BuiltInBase):
         self._should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_strings(self, first, second, msg=None,
-                                       values=True, ignore_case=False):
+                                       values=True, strip_spaces=False, ignore_case=False):
         """Fails if objects are equal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
@@ -792,6 +792,15 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             first = first.lower()
             second = second.lower()
+        if strip_spaces.upper() == 'LEADING':
+            first = first.lstrip()
+            second = second.lstrip()
+        elif strip_spaces.upper() == 'TRAILING':
+            first = first.rstrip()
+            second = second.rstrip()
+        elif is_truthy(strip_spaces):
+            first = first.strip()
+            second = second.strip()
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True,
@@ -820,12 +829,15 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             first = first.lower()
             second = second.lower()
-        if strip_spaces == '':
-            pass
-        elif strip_spaces == '':
-            pass
+        if strip_spaces.upper() == 'LEADING':
+            first = first.lstrip()
+            second = second.lstrip()
+        elif strip_spaces.upper() == 'TRAILING':
+            first = first.rstrip()
+            second = second.rstrip()
         elif is_truthy(strip_spaces):
-            pass
+            first = first.strip()
+            second = second.strip()
         self._should_be_equal(first, second, msg, values, formatter)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True,
