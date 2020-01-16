@@ -41,9 +41,11 @@ Synopsis
 Options
 ~~~~~~~
 
-  -f, --format <html|xml>  Specifies whether to generate HTML or XML output.
-                           If this options is not used, the format is got
-                           from the extension of the output file.
+  -f, --format <html|xml|xml:html>
+                           Specifies whether to generate HTML or XML output.
+                           `xml:html` means generating XML output where keyword
+                           documentation is forced to be HTML. The default
+                           output format is got from the output file extension.
   -F, --docformat <robot|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,
@@ -56,10 +58,9 @@ Options
                            `got from the source code`__.
   -P, --pythonpath <path>  Additional locations where to search for libraries
                            and resources similarly as when `running tests`__.
-  -E, --escape <what:with>  Deprecated. Use console escape mechanism instead.
   -h, --help               Prints this help.
 
-__ `Specifying library version`_
+__ `Library version`_
 __ `Using --pythonpath option`_
 
 Alternative execution
@@ -102,10 +103,14 @@ Java libraries with path
 
 A Java test library implemented using the `static library API`_ can be
 specified by giving the path to the source code file containing the
-library implementation. Additionally, :file:`tools.jar`, which is part
-of the Java JDK distribution, must be found from ``CLASSPATH`` when
-Libdoc is executed. Notice that generating documentation for Java
-libraries works only with Jython.
+library implementation. When using Java 9 or newer, documentation can be
+generated without external dependencies, but with older Java versions the
+:file:`tools.jar`, which is part of the Java JDK distribution, must be found
+from the ``CLASSPATH`` when Libdoc is executed. Notice that generating
+documentation for Java libraries works only with Jython.
+
+.. note:: Generating documentation without :file:`tools.jar` when using
+          Java 9 or newer is a new feature in Robot Framework 3.1.
 
 Resource files with path
 ''''''''''''''''''''''''
@@ -117,18 +122,31 @@ the `module search path`_ similarly as when executing test cases.
 Generating documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-When generating documentation in HTML or XML format, the output file must
-be specified as the second argument after the library/resource name or path.
-Output format is got automatically from the extension but can also be set
-using the :option:`--format` option.
-
-Examples::
+Libdoc can generate documentation in HTML (for humans) and XML (for tools)
+formats. The file where to write the documentation is specified as the second
+argument after the library/resource name or path, and by default the output
+format is got from the output file extension::
 
    python -m robot.libdoc OperatingSystem OperatingSystem.html
    python -m robot.libdoc --name MyLibrary Remote::http://10.0.0.42:8270 MyLibrary.xml
-   python -m robot.libdoc test/resource.html doc/resource_doc.html
+   python -m robot.libdoc test/resource.robot doc/resource.html
    jython -m robot.libdoc --version 1.0 MyJavaLibrary.java MyJavaLibrary.html
    jython -m robot.libdoc my.organization.DynamicJavaLibrary my.organization.DynamicJavaLibrary.xml
+
+If needed, the output format can also be set explicitly by using the
+:option:`--format` option::
+
+   python -m robot.libdoc --format html MyLibrary MyLibrary.htm
+   python -m robot.libdoc --format xml MyLibrary MyLibrary.spec
+
+By default keyword documentation in XML output files use the exact same
+`documentation syntax`_ (`ROBOT`, `HTML`, `TEXT` or `reST`) as the documented
+library or resource file uses. It is, however, possible to force the
+documentation to be HTML by using the special `xml:html` format::
+
+   python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
+
+.. note:: The `xml:html` format is new in Robot Framework 3.2.
 
 Viewing information on console
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -208,7 +226,7 @@ chapter containing also an example of the generated documentation.
             """
             pass
 
-.. tip:: If you want to use non-ASCII charactes in the documentation of
+.. tip:: If you want to use non-ASCII characters in the documentation of
          Python libraries, you must either use UTF-8 as your `source code
          encoding`__ or create docstrings as Unicode.
 
@@ -339,7 +357,7 @@ Documentation syntax
 
 Libdoc supports documentation in Robot Framework's own `documentation
 syntax`_, HTML, plain text, and reStructuredText_. The format to use can be
-specified in `test library source code`__ using `ROBOT_LIBRARY_DOC_FORMAT`
+specified in `library source code`__ using `ROBOT_LIBRARY_DOC_FORMAT`
 attribute or given from the command line using :option:`--docformat (-F)` option.
 In both cases the possible case-insensitive values are `ROBOT` (default),
 `HTML`, `TEXT` and `reST`.
@@ -348,7 +366,7 @@ Robot Framework's own documentation format is the default and generally
 recommended format. Other formats are especially useful when using existing
 code with existing documentation in test libraries.
 
-__ `Specifying documentation format`_
+__ `Documentation format`_
 
 Robot Framework documentation syntax
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

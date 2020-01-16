@@ -26,7 +26,7 @@ class TestIsVar(unittest.TestCase):
             assert not is_list_var(nok)
 
     def test_contains_var(self):
-        for ok in SCALARS + LISTS + ['hi ${var}', '@{x}y', '${no ${yes}!']:
+        for ok in SCALARS + LISTS + ['hi ${var}', '@{x}y', r'\${no ${yes}!']:
             assert contains_var(ok)
         for nok in [None, 42, unittest, '', 'nothing', '${no', '*{not}']:
             assert not contains_var(nok)

@@ -44,6 +44,7 @@
 
 .. include:: CreatingTestData/TestDataSyntax.rst
 .. include:: CreatingTestData/CreatingTestCases.rst
+.. include:: CreatingTestData/CreatingTasks.rst
 .. include:: CreatingTestData/CreatingTestSuites.rst
 .. include:: CreatingTestData/UsingTestLibraries.rst
 .. include:: CreatingTestData/Variables.rst
@@ -61,6 +62,7 @@
 
 .. include:: ExecutingTestCases/BasicUsage.rst
 .. include:: ExecutingTestCases/TestExecution.rst
+.. include:: ExecutingTestCases/TaskExecution.rst
 .. include:: ExecutingTestCases/PostProcessing.rst
 .. include:: ExecutingTestCases/ConfiguringExecution.rst
 .. include:: ExecutingTestCases/OutputFiles.rst
@@ -194,7 +196,7 @@
 .. 4. Extending
 
 .. _library API: `Creating test libraries`_
-.. _static library API: `Creating static keywords`_
+.. _static library API: `Creating keywords`_
 .. _listener: `listener interface`_
 .. _listeners: `listener interface`_
 

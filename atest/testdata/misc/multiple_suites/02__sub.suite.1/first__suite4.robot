@@ -33,4 +33,5 @@ test11
     No Operation
 
 test12
+    [Tags]    warning
     Log    warning    WARN

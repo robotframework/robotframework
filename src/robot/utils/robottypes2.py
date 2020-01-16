@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import Mapping
+from collections import Mapping, MutableMapping
 from UserDict import UserDict
 from UserString import UserString
 from types import ClassType, NoneType
@@ -46,6 +46,10 @@ def is_string(item):
 
 def is_unicode(item):
     return isinstance(item, unicode)
+
+
+def is_pathlike(item):
+    return False
 
 
 def is_list_like(item):

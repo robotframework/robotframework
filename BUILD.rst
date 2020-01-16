@@ -175,11 +175,12 @@ Creating distributions
 
       invoke clean
 
-3. Create source distribution in zip format as well as universal (i.e.
+3. Create and validate source distribution in zip format and universal (i.e.
    Python 2 and 3 compatible) `wheel <http://pythonwheels.com>`_::
 
       python setup.py sdist --formats zip bdist_wheel --universal
       ls -l dist
+      twine check dist/*
 
    Distributions can be tested locally if needed.
 
@@ -187,12 +188,12 @@ Creating distributions
 
       twine upload dist/*
 
-5. Verify that project the page at `PyPI
-   <https://pypi.python.org/pypi/robotframework>`_ looks good.
+5. Verify that project pages at `PyPI
+   <https://pypi.python.org/pypi/robotframework>`_ look good.
 
-6. Test installation (add ``--pre`` with pre-releases)::
+6. Test installation::
 
-      pip install --upgrade robotframework
+      pip install --pre --upgrade robotframework
 
 7. JAR distribution
 
@@ -200,7 +201,7 @@ Creating distributions
 
        invoke jar
 
-   - Test that JAR is not totally borken::
+   - Test that JAR is not totally broken::
 
        java -jar dist/robotframework-$VERSION.jar --version
        java -jar dist/robotframework-$VERSION.jar atest/testdata/misc/pass_and_fail.robot
@@ -231,13 +232,13 @@ Creating distributions
 
    - Run command::
 
-        mvn gpg:sign-and-deploy-file -Dfile=dist/robotframework-$VERSION.jar -DpomFile=pom.xml -Durl=http://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
+        mvn gpg:sign-and-deploy-file -Dfile=dist/robotframework-$VERSION.jar -DpomFile=pom.xml -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
 
    - Go to https://oss.sonatype.org/index.html#welcome, log in with Sonatype credentials, find the staging repository and do close & release
    - After that, the released JAR is synced to Maven central within an hour.
 
 __ https://issues.sonatype.org/secure/Dashboard.jspa
-__ http://central.sonatype.org/pages/working-with-pgp-signatures.html
+__ https://central.sonatype.org/pages/working-with-pgp-signatures.html
 __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
 9. Documentation
@@ -298,7 +299,7 @@ Announcements
 3. ``#devel`` and ``#general`` channels on Slack.
 
 4. `Robot Framework LinkedIn
-   <https://www.linkedin.com/groups/Robot-Framework-3710899>`_ group.
+   <https://www.linkedin.com/groups/3710899/>`_ group.
 
 5. Consider sending announcements, at least with major releases, also to other
    forums where we want to make the framework more well known. For example:

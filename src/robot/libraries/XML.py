@@ -24,8 +24,8 @@ except ImportError:
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import (asserts, ET, ETSource, is_falsy, is_string, is_truthy,
-                         plural_or_not as s)
+from robot.utils import (asserts, ET, ETSource, is_bytes, is_falsy, is_string,
+                         is_truthy, plural_or_not as s)
 from robot.version import get_version
 
 
@@ -68,16 +68,16 @@ class XML(object):
     = Parsing XML =
 
     XML can be parsed into an element structure using `Parse XML` keyword.
-    It accepts both paths to XML files and strings that contain XML. The
-    keyword returns the root element of the structure, which then contains
-    other elements as its children and their children. Possible comments and
-    processing instructions in the source XML are removed.
+    The XML to be parsed can be specified using a path to an XML file or as
+    a string or bytes that contain XML directly. The keyword returns the root
+    element of the structure, which then contains other elements as its
+    children and their children. Possible comments and processing instructions
+    in the source XML are removed.
 
     XML is not validated during parsing even if has a schema defined. How
     possible doctype elements are handled otherwise depends on the used XML
     module and on the platform. The standard ElementTree strips doctypes
     altogether but when `using lxml` they are preserved when XML is saved.
-    With IronPython parsing XML with a doctype is not supported at all.
 
     The element structure returned by `Parse XML`, as well as elements
     returned by keywords such as `Get Element`, can be used as the ``source``
@@ -93,6 +93,8 @@ class XML(object):
     On Windows also the backslash works, but it the test data it needs to be
     escaped by doubling it (``\\\\``). Using the built-in variable ``${/}``
     naturally works too.
+
+    Note: Support for XML as bytes is new in Robot Framework 3.2.
 
     = Using lxml =
 
@@ -158,13 +160,10 @@ class XML(object):
 
     ElementTree, and thus also this library, supports finding elements using
     xpath expressions. ElementTree does not, however, support the full xpath
-    syntax, and what is supported depends on its version. ElementTree 1.3 that
-    is distributed with Python 2.7 supports richer syntax than earlier versions.
-
-    The supported xpath syntax is explained below and
-    [http://effbot.org/zone/element-xpath.htm|ElementTree documentation]
-    provides more details. In the examples ``${XML}`` refers to the same XML
-    structure as in the earlier example.
+    standard. The supported xpath syntax is explained below and
+    [https://docs.python.org/library/xml.etree.elementtree.html#xpath-support|
+    ElementTree documentation] provides more details. In the examples
+    ``${XML}`` refers to the same XML structure as in the earlier example.
 
     If lxml support is enabled when `importing` the library, the whole
     [http://www.w3.org/TR/xpath/|xpath 1.0 standard] is supported.
@@ -211,8 +210,7 @@ class XML(object):
 
     The parent element of another element is denoted with two dots (``..``).
     Notice that it is not possible to refer to the parent of the current
-    element. This syntax is supported only in ElementTree 1.3 (i.e.
-    Python/Jython 2.7 and newer).
+    element.
 
     | ${elem} =         | `Get Element` | ${XML} | */second/.. |
     | `Should Be Equal` | ${elem.tag}   | third  |             |
@@ -233,11 +231,8 @@ class XML(object):
     Predicates allow selecting elements using also other criteria than tag
     names, for example, attributes or position. They are specified after the
     normal tag name or path using syntax ``path[predicate]``. The path can have
-    wildcards and other special syntax explained above.
-
-    What predicates ElementTree supports is explained in the table below.
-    Notice that predicates in general are supported only in ElementTree 1.3
-    (i.e. Python/Jython 2.7 and newer).
+    wildcards and other special syntax explained earlier. What predicates
+    the standard ElementTree supports is explained in the table below.
 
     |  = Predicate =  |             = Matches =           |    = Example =     |
     | @attrib         | Elements with attribute ``attrib``. | second[@id]        |
@@ -420,8 +415,8 @@ class XML(object):
 
     Some keywords accept arguments that are handled as Boolean values true or
     false. If such an argument is given as a string, it is considered false if
-    it is either an empty string or case-insensitively equal to ``false``,
-    ``none`` or ``no``. Other strings are considered true regardless
+    it is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or
+    ``0``, case-insensitively. Other strings are considered true regardless
     their value, and other argument types are tested using the same
     [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
@@ -437,9 +432,8 @@ class XML(object):
     | `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.       |
     | `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python ``False`` is false.   |
 
-    Prior to Robot Framework 2.9, all non-empty strings, including ``false``
-    and ``no``, were considered to be true. Considering ``none`` false is
-    new in Robot Framework 3.0.3.
+    Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
+    considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
 
     == Pattern matching ==
 
@@ -593,7 +587,7 @@ class XML(object):
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
         """
-        if is_string(source):
+        if is_string(source) or is_bytes(source):
             source = self.parse_xml(source)
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)

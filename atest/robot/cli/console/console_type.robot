@@ -51,6 +51,20 @@ Dotted does not show details for skipped
     Stdout Should Be    dotted_fatal_error.txt
     Stderr Should Be    empty.txt
 
+--Dotted --ExitOnFailure
+    Run tests    --ExitOnFailure --Dotted    misc/suites
+    Stdout Should Be    dotted_exitonfailure.txt
+    Stderr Should Be    empty.txt
+
+--Dotted --ExitOnFailure with empty test case
+    Run tests    -X.    core/empty_testcase_and_uk.robot
+    Stdout Should Be    dotted_exitonfailure_empty_test.txt
+    Stderr Should Be    empty.txt
+    Check test tags    ${EMPTY}
+    ${tc} =    Check test case    Empty Test Case    FAIL
+    ...    Critical failure occurred and exit-on-failure mode is in use.
+    Should contain    ${tc.tags}    robot:exit
+
 *** Keywords ***
 Run and verify tests
     [Arguments]    ${options}

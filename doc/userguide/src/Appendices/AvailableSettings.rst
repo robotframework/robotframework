@@ -50,6 +50,11 @@ importing libraries, resources, and variables.
    +-----------------+--------------------------------------------------------+
    | Test Timeout    | Used for specifying a default `test case timeout`_.    |
    +-----------------+--------------------------------------------------------+
+   | Task Setup,     | Aliases for Test Setup, Test Teardown, Test Template   |
+   | Task Teardown,  | and Test Timeout, respectively, that can be used when  |
+   | Task Template,  | `creating tasks`_.                                     |
+   | Task Timeout    |                                                        |
+   +-----------------+--------------------------------------------------------+
 
 .. note:: All setting names can optionally include a colon at the end, for
       example :setting:`Documentation:`. This can make reading the settings easier
@@ -64,6 +69,8 @@ Test Case table
 The settings in the Test Case table are always specific to the test
 case for which they are defined. Some of these settings override the
 default values defined in the Settings table.
+
+Exactly same settings are available when `creating tasks`_ in the Task table.
 
 .. table:: Settings available in the Test Case table
    :class: tabular

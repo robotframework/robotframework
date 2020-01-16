@@ -14,10 +14,11 @@
 #  limitations under the License.
 
 from robot.errors import DataError, VariableError
-from robot.output import LOGGER
-from robot.utils import escape, unescape, unic, is_string
+from robot.output import librarylogger as logger
+from robot.utils import (escape, is_dict_like, is_list_like, type_name,
+                         unescape, unic)
 
-from .splitter import VariableSplitter
+from .search import search_variable, VariableMatch
 
 
 class VariableReplacer(object):
@@ -56,122 +57,126 @@ class VariableReplacer(object):
 
     def _replace_list(self, items, ignore_errors):
         for item in items:
-            if self._cannot_have_variables(item):
-                yield unescape(item)
-            else:
-                for value in self._replace_list_item(item, ignore_errors):
-                    yield value
+            for value in self._replace_list_item(item, ignore_errors):
+                yield value
 
     def _replace_list_item(self, item, ignore_errors):
-        splitter = VariableSplitter(item)
-        try:
-            value = self._replace_scalar(item, splitter)
-        except DataError:
-            if ignore_errors:
-                return [item]
-            raise
-        if splitter.is_list_variable():
+        match = search_variable(item, ignore_errors=ignore_errors)
+        if not match:
+            return [unescape(match.string)]
+        value = self.replace_scalar(match, ignore_errors)
+        if match.is_list_variable and is_list_like(value):
             return value
         return [value]
 
     def replace_scalar(self, item, ignore_errors=False):
         """Replaces variables from a scalar item.
 
-        If the item is not a string it is returned as is. If it is a ${scalar}
-        variable its value is returned. Otherwise variables are replaced with
+        If the item is not a string it is returned as is. If it is a variable,
+        its value is returned. Otherwise possible variables are replaced with
         'replace_string'. Result may be any object.
         """
-        if self._cannot_have_variables(item):
-            return unescape(item)
-        return self._replace_scalar(item, ignore_errors=ignore_errors)
+        match = self._search_variable(item, ignore_errors=ignore_errors)
+        if not match:
+            return unescape(match.string)
+        return self._replace_scalar(match, ignore_errors)
 
-    def _replace_scalar(self, item, splitter=None, ignore_errors=False):
-        if not splitter:
-            splitter = VariableSplitter(item)
-        if not splitter.identifier:
-            return unescape(item)
-        if not splitter.is_variable():
-            return self._replace_string(item, splitter, ignore_errors)
+    def _search_variable(self, item, ignore_errors):
+        if isinstance(item, VariableMatch):
+            return item
+        return search_variable(item, ignore_errors=ignore_errors)
+
+    def _replace_scalar(self, match, ignore_errors=False):
+        if not match.is_variable:
+            return self.replace_string(match, ignore_errors=ignore_errors)
+        return self._get_variable_value(match, ignore_errors)
+
+    def replace_string(self, item, custom_unescaper=None, ignore_errors=False):
+        """Replaces variables from a string. Result is always a string.
+
+        Input can also be an already found VariableMatch.
+        """
+        unescaper = custom_unescaper or unescape
+        match = self._search_variable(item, ignore_errors=ignore_errors)
+        if not match:
+            return unic(unescaper(match.string))
+        return self._replace_string(match, unescaper, ignore_errors)
+
+    def _replace_string(self, match, unescaper, ignore_errors):
+        parts = []
+        while match:
+            parts.extend([
+                unescaper(match.before),
+                unic(self._get_variable_value(match, ignore_errors))
+            ])
+            match = search_variable(match.after, ignore_errors=ignore_errors)
+        parts.append(unescaper(match.string))
+        return ''.join(parts)
+
+    def _get_variable_value(self, match, ignore_errors):
+        match.resolve_base(self, ignore_errors)
+        # TODO: Do we anymore need to reserve `*{var}` syntax for anything?
+        if match.identifier == '*':
+            logger.warn(r"Syntax '%s' is reserved for future use. Please "
+                        r"escape it like '\%s'." % (match, match))
+            return unic(match)
         try:
-            return self._get_variable(splitter)
+            value = self._variables[match]
+            if match.items:
+                value = self._get_variable_item(match, value)
         except DataError:
-            if ignore_errors:
-                return item
-            raise
-
-    def _cannot_have_variables(self, item):
-        return not (is_string(item) and '{' in item)
-
-    def replace_string(self, string, ignore_errors=False):
-        """Replaces variables from a string. Result is always a string."""
-        if not is_string(string):
-            return unic(string)
-        if self._cannot_have_variables(string):
-            return unescape(string)
-        return self._replace_string(string, ignore_errors=ignore_errors)
-
-    def _replace_string(self, string, splitter=None, ignore_errors=False):
-        if not splitter:
-            splitter = VariableSplitter(string)
-        return ''.join(self._yield_replaced(string, splitter, ignore_errors))
-
-    def _yield_replaced(self, string, splitter, ignore_errors=False):
-        while splitter.identifier:
-            yield unescape(string[:splitter.start])
-            try:
-                value = self._get_variable(splitter)
-            except DataError:
-                if not ignore_errors:
-                    raise
-                value = string[splitter.start:splitter.end]
-            yield unic(value)
-            string = string[splitter.end:]
-            splitter = VariableSplitter(string)
-        yield unescape(string)
-
-    def _get_variable(self, splitter):
-        if splitter.identifier not in '$@&%':
-            return self._get_reserved_variable(splitter)
-        if splitter.index is None:
-            return self._get_normal_variable(splitter)
-        if splitter.identifier == '@':
-            return self._get_list_variable_item(splitter)
-        return self._get_dict_variable_item(splitter)
-
-    def _get_reserved_variable(self, splitter):
-        value = splitter.get_replaced_variable(self)
-        LOGGER.warn("Syntax '%s' is reserved for future use. Please "
-                    "escape it like '\\%s'." % (value, value))
+            if not ignore_errors:
+                raise
+            value = unescape(match.match)
         return value
 
-    def _get_normal_variable(self, splitter):
-        name = splitter.get_replaced_variable(self)
-        return self._variables[name]
+    def _get_variable_item(self, match, value):
+        name = match.name
+        if match.identifier in '@&':
+            var = '%s[%s]' % (name, match.items[0])
+            logger.warn("Accessing variable items using '%s' syntax "
+                        "is deprecated. Use '$%s' instead." % (var, var[1:]))
+        for item in match.items:
+            if is_dict_like(value):
+                value = self._get_dict_variable_item(name, value, item)
+            elif is_list_like(value):
+                value = self._get_list_variable_item(name, value, item)
+            else:
+                raise VariableError(
+                    "Variable '%s' is %s, not list or dictionary, and thus "
+                    "accessing item '%s' from it is not possible."
+                    % (name, type_name(value), item)
+                )
+            name = '%s[%s]' % (name, item)
+        return value
 
-    def _get_list_variable_item(self, splitter):
-        name = splitter.get_replaced_variable(self)
-        variable = self._variables[name]
-        index = self.replace_string(splitter.index)
+    def _get_list_variable_item(self, name, variable, index):
+        index = self.replace_string(index)
         try:
-            index = int(index)
+            index = self._parse_list_variable_index(index, name[0] == '$')
         except ValueError:
-            raise VariableError("List variable '%s' used with invalid index '%s'."
+            raise VariableError("List '%s' used with invalid index '%s'."
                                 % (name, index))
         try:
             return variable[index]
         except IndexError:
-            raise VariableError("List variable '%s' has no item in index %d."
+            raise VariableError("List '%s' has no item in index %d."
                                 % (name, index))
 
-    def _get_dict_variable_item(self, splitter):
-        name = splitter.get_replaced_variable(self)
-        variable = self._variables[name]
-        key = self.replace_scalar(splitter.index)
+    def _parse_list_variable_index(self, index, support_slice=True):
+        if ':' not in index:
+            return int(index)
+        if index.count(':') > 2 or not support_slice:
+            raise ValueError
+        return slice(*[int(i) if i else None for i in index.split(':')])
+
+    def _get_dict_variable_item(self, name, variable, key):
+        key = self.replace_scalar(key)
         try:
             return variable[key]
         except KeyError:
-            raise VariableError("Dictionary variable '%s' has no key '%s'."
+            raise VariableError("Dictionary '%s' has no key '%s'."
                                 % (name, key))
         except TypeError as err:
-            raise VariableError("Dictionary variable '%s' used with invalid key: %s"
+            raise VariableError("Dictionary '%s' used with invalid key: %s"
                                 % (name, err))

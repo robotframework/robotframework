@@ -13,42 +13,110 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import inspect
 
-def keyword(name=None, tags=()):
-    """Decorator to set custom keyword names and tags to functions and methods.
 
-    This decorator creates the ``robot_name`` and ``robot_tags`` attributes on
-    the decorated keyword method or function.  Robot Framework checks them to
-    determine the keyword's name and tags, respectively.
+def keyword(name=None, tags=(), types=()):
+    """Decorator to set custom name, tags and argument types to keywords.
 
-    library.py::
+    This decorator creates ``robot_name``, ``robot_tags`` and ``robot_types``
+    attributes on the decorated keyword method or function based on the
+    provided arguments. Robot Framework checks them to determine the keyword's
+    name, tags, and argument types, respectively.
 
-        @keyword(name='Login Via User Panel')
-        def login(username, password):
-            # ...
+    Name must be given as a string, tags as a list of strings, and types
+    either as a dictionary mapping argument names to types or as a list
+    of types mapped to arguments based on position. It is OK to specify types
+    only to some arguments, and setting ``types`` to ``None`` disables type
+    conversion altogether.
 
-        @keyword(name='Logout Via User Panel', tags=['example', 'tags'])
-        def logout():
-            # ...
+    If a library class is decorated with the :func:`library` decorator, this
+    decorator is needed to mark methods keywords.
 
-    tests.robot::
-
-        Login Via User Panel    myusername    mypassword
-
-    If ``name`` is not given, the actual name of the keyword will not be
-    affected, but the ``robot_name`` attribute will still be created.
-    This can be useful for marking methods as keywords in a dynamic library.
-    In this usage it is possible to also omit parenthesis when using the
-    decorator::
+    Examples::
 
         @keyword
-        def func():
+        def example():
+            # ...
+
+        @keyword('Login as user "${user}" with password "${password}"',
+                 tags=['custom name', 'embedded arguments', 'tags'])
+        def login(user, password):
+            # ...
+
+        @keyword(types={'length': int, 'case_insensitive': bool})
+        def types_as_dict(length, case_insensitive):
+            # ...
+
+        @keyword(types=[int, bool])
+        def types_as_list(length, case_insensitive):
+            # ...
+
+        @keyword(types=None])
+        def no_conversion(length, case_insensitive=False):
             # ...
     """
-    if callable(name):
+    if inspect.isroutine(name):
         return keyword()(name)
+
     def decorator(func):
         func.robot_name = name
         func.robot_tags = tags
+        func.robot_types = types
         return func
+
+    return decorator
+
+
+def library(scope=None, version=None, doc_format=None, listener=None,
+            auto_keywords=False):
+    """Class decorator to control keyword discovery and other library settings.
+
+    By default disables automatic keyword detection by setting class attribute
+    ``ROBOT_AUTO_KEYWORDS = False`` to the decorated library. In that mode
+    only methods decorated explicitly with the :func:`keyword` decorator become
+    keywords. If that is not desired, automatic keyword discovery can be
+    enabled by using ``auto_keywords=True``.
+
+    Arguments ``scope``, ``version``, ``doc_format`` and ``listener`` set the
+    library scope, version, documentation format and listener by using class
+    attributes ``ROBOT_LIBRARY_SCOPE``, ``ROBOT_LIBRARY_VERSION``,
+    ``ROBOT_LIBRARY_DOC_FORMAT`` and ``ROBOT_LIBRARY_LISTENER``, respectively.
+    These attributes are only set if the related arguments are given and they
+    override possible existing attributes in the decorated class.
+
+    Examples::
+
+        @library
+        class KeywordDiscovery:
+
+            @keyword
+            def do_something(self):
+                # ...
+
+            def not_keyword(self):
+                # ...
+
+
+        @library(scope='GLOBAL', version='3.2')
+        class LibraryConfiguration:
+            # ...
+
+    The ``@library`` decorator is new in Robot Framework 3.2.
+    """
+    if inspect.isclass(scope):
+        return library()(scope)
+
+    def decorator(cls):
+        if scope is not None:
+            cls.ROBOT_LIBRARY_SCOPE = scope
+        if version is not None:
+            cls.ROBOT_LIBRARY_VERSION = version
+        if doc_format is not None:
+            cls.ROBOT_LIBRARY_DOC_FORMAT = doc_format
+        if listener is not None:
+            cls.ROBOT_LIBRARY_LISTENER = listener
+        cls.ROBOT_AUTO_KEYWORDS = auto_keywords
+        return cls
+
     return decorator

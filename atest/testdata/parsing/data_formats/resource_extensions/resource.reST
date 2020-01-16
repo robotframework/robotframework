@@ -1,0 +1,13 @@
+.. sourcecode:: robotframework
+
+    *** Settings ***
+    Resource    nested.resource
+
+    *** Variables ***
+    ${REST}      resource.reST
+
+    *** Keywords ***
+    Keyword in resource.reST
+        Keyword in nested.resource
+        Should Be Equal    ${NESTED}      nested.resource
+        Should Be Equal    ${REST}    resource.reST

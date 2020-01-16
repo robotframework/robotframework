@@ -7,9 +7,13 @@ class ModelModifier(SuiteVisitor):
         self.config = tags or ('visited',)
 
     def start_suite(self, suite):
-        if self.config[0] == 'FAIL':
+        config = self.config
+        if config[0] == 'FAIL':
             raise RuntimeError(' '.join(self.config[1:]))
-        if self.config == ('REMOVE', 'ALL', 'TESTS'):
+        elif config[0] == 'CREATE':
+            suite.tests.create(**dict(conf.split('=', 1) for conf in config[1:]))
+            self.config = []
+        elif config == ('REMOVE', 'ALL', 'TESTS'):
             suite.tests = []
         else:
             suite.tests = [t for t in suite.tests if not t.tags.match('fail')]

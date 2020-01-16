@@ -4,7 +4,7 @@ U T F 8   D A T A
 Documentation   Testing that reading and writing of Unicode (äöå §½€ etc.) works properly.
 Default Tags    tag-äöå
 Force Tags      tag-§
-Meta Data       Ä         §
+MetaData        Ä         §
 
 |      *Variable*     | *Value* |
 | ${UNICODE}          | äöå §½€ |

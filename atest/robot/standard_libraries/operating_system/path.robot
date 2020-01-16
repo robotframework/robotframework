@@ -12,6 +12,14 @@ Join Paths
 Normalize Path
     Check testcase    ${TESTNAME}
 
+Case Normalize Path On Windows
+    [Tags]    require-windows
+    Check testcase    ${TESTNAME}
+
+Case Normalize Path Outside Windows
+    [Tags]    no-windows
+    Check testcase    ${TESTNAME}
+
 Split Path
     Check testcase    ${TESTNAME}
 

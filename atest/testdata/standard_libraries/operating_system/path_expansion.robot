@@ -1,28 +1,49 @@
 *** Settings ***
 Library           OperatingSystem
 
+*** Variables ***
+${WINDOWS}        ${/ != '/'}
+
 *** Test Cases ***
 Tilde in path
-    ${home}=    Get OS Independent Home Path
-    ${normalized}=    Normalize Path    ~/foo
-    Should Be Equal    ${normalized}    ${home}${/}foo
+    ${path} =    Normalize Path    ~/foo
+    ${home} =    Get Home
+    Should Be Equal    ${path}    ${home}${/}foo
     Directory Should Exist    ~
 
 Tilde and username in path
-    ${user}=    Get OS Independent Username
-    ${home}=    Get OS Independent Home Path
-    ${normalized}=    Normalize Path    ~${user}/foo
-    Should Be Equal    ${normalized}    ${home}${/}foo
+    ${user} =    Get User
+    ${path} =    Normalize Path    ~${user}/foo    case_normalize=True
+    ${home} =    Get Home    case_normalize=True
+    Should Be Equal    ${path}    ${home}${/}foo
     Directory Should Exist    ~${user}
 
 *** Keywords ***
-Get OS Independent Username
-    ${username}=    Get Environment Variable    USERNAME    NotSet
-    ${user}=    Get Environment Variable    USER    ${username}
+Get Home
+    [Arguments]    ${case_normalize}=False
+    ${home} =    Run Keyword If    ${WINDOWS}
+    ...    Get Windows Home
+    ...    ELSE
+    ...    Get Posix Home
+    ${home} =    Normalize Path    ${home}    ${case_normalize}
+    [Return]    ${home}
+
+Get Windows Home
+    ${home} =    Get Environment Variable    USERPROFILE    %{HOMEDRIVE}%{HOMEPATH}
+    [Return]    ${home}
+
+Get Posix Home
+    [Return]    %{HOME}
+
+Get User
+    ${user} =    Run Keyword If    ${WINDOWS}
+    ...    Get Windows User
+    ...    ELSE
+    ...    Get Posix User
     [Return]    ${user}
 
-Get OS Independent Home Path
-    ${homepath}=    Get Environment Variable    HOMEPATH    NotSet
-    ${homedrive}=    Get Environment Variable    HOMEDRIVE    NotSet
-    ${home}=    Get Environment Variable    HOME    ${homedrive}${homepath}
-    [Return]    ${home}
+Get Windows User
+    [Return]    %{USERNAME}
+
+Get Posix User
+    [Return]    %{USER}

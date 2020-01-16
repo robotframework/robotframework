@@ -60,7 +60,7 @@ Correct Attributes To Listener Methods
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain    attributeverifyinglistener
     Should Contain X Times    ${status}    FAILED    0
-    Should Contain X Times    ${status}    PASSED    384
+    Should Contain X Times    ${status}    PASSED    388
 
 Correct Attributes To Java Listener Methods
     [Tags]    require-jython
@@ -103,13 +103,13 @@ Test Template
     Stderr Should Be Empty
 
 Keyword Arguments Are Always Strings
-    ${result} =    Run Tests    --listener attributeverifyinglistener    output/listeners/keyword_argument_types.robot
+    ${result} =    Run Tests    --listener attributeverifyinglistener    output/listeners/keyword_argument_types.robot
     Should Be Empty    ${result.stderr}
     Check Test Tags    Run Keyword with already resolved non-string arguments in test data    1    2
     Check Test Case    Run Keyword with non-string arguments in library
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Should Contain X Times    ${status}    FAILED    0
-    Should Contain X Times    ${status}    PASSED    211
+    Should Contain X Times    ${status}    PASSED    215
 
 TimeoutError occurring during listener method is propagaged
     [Documentation]    Timeouts can only occur inside `log_message`.

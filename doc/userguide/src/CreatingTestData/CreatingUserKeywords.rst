@@ -78,6 +78,12 @@ this section.
    Sets the possible `user keyword timeout`_. Timeouts_ are discussed
    in a section of their own.
 
+.. note:: Setting names are case-insensitive, but the format used above is
+      recommended. Settings used to be also space-insensitive, but that was
+      deprecated in Robot Framework 3.1 and trying to use something like
+      `[T a g s]` causes an error in Robot Framework 3.2. Possible spaces
+      between brackets and the name (e.g. `[ Tags ]`) are still allowed.
+
 __ `Settings in the test case table`_
 __ `User keyword tags`_
 
@@ -135,7 +141,7 @@ the `Deprecating keywords`_ section.
 User keyword tags
 -----------------
 
-Starting from Robot Framework 2.9, keywords can also have tags. User keywords
+Both user keywords and `library keywords`_ can have tags. User keyword
 tags can be set with :setting:`[Tags]` setting similarly as `test case tags`_,
 but possible :setting:`Force Tags` and :setting:`Default Tags` setting do not
 affect them. Additionally keyword tags can be specified on the last line of
@@ -179,8 +185,8 @@ particularly in most common cases. Arguments are normally specified with
 the :setting:`[Arguments]` setting, and argument names use the same
 syntax as variables_, for example `${arg}`.
 
-Positional arguments
-~~~~~~~~~~~~~~~~~~~~
+Positional arguments with user keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The simplest way to specify arguments (apart from not having them at all)
 is using only positional arguments. In most cases, this is all
@@ -274,8 +280,8 @@ function default values.
 
 __ `Variable priorities and scopes`_
 
-Varargs with user keywords
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Variable number of arguments with user keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes even default values are not enough and there is a need
 for a keyword accepting `variable number of arguments`_. User keywords
@@ -301,8 +307,9 @@ other arguments. The list variable can thus have any number of items, even zero.
        Log    Required: ${req}
        Log    Optional: ${opt}
        Log    Others:
-       : FOR    ${item}    IN    @{others}
-       \    Log    ${item}
+       FOR    ${item}    IN    @{others}
+           Log    ${item}
+       END
 
 Notice that if the last keyword above is used with more than one
 argument, the second argument `${opt}` always gets the given
@@ -332,38 +339,114 @@ arguments syntax is very close to the one in Python.
 
 __ `for loops`_
 
-Kwargs with user keywords
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Free named arguments with user keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-User keywords can also accept `free keyword arguments`_ by having a `dictionary
-variable`_ like `&{kwargs}` as the last argument after possible positional
-arguments and varargs. When the keyword is called, this variable will get all
-`named arguments`_ that do not match any positional argument in the keyword
+User keywords can also accept `free named arguments`_ by having a `dictionary
+variable`_ like `&{named}` as the absolutely last argument. When the keyword
+is called, this variable will get all `named arguments`_ that do not match
+any `positional argument`__ or `named-only argument`__ in the keyword
 signature.
 
 .. sourcecode:: robotframework
 
    *** Keywords ***
-   Kwargs Only
-       [Arguments]    &{kwargs}
-       Log    ${kwargs}
-       Log Many    @{kwargs}
+   Free Named Only
+       [Arguments]    &{named}
+       Log Many    &{named}
 
-   Positional And Kwargs
+   Positional And Free Named
        [Arguments]    ${required}    &{extra}
-       Log Many    ${required}    @{extra}
+       Log Many    ${required}    &{extra}
 
    Run Program
-       [Arguments]    @{varargs}    &{kwargs}
-       Run Process    program.py    @{varargs}    &{kwargs}
+       [Arguments]    @{args}    &{config}
+       Run Process    program.py    @{args}    &{config}
 
 The last example above shows how to create a wrapper keyword that
 accepts any positional or named argument and passes them forward.
-See `kwargs examples`_ for a full example with same keyword.
+See `free named argument examples`_ for a full example with same keyword.
 
-Also kwargs support with user keywords works very similarly as kwargs work
-in Python. In the signature and also when passing arguments forward,
+Free named arguments support with user keywords works similarly as kwargs
+work in Python. In the signature and also when passing arguments forward,
 `&{kwargs}` is pretty much the same as Python's `**kwargs`.
+
+__ `Positional arguments with user keywords`_
+__ `Named-only arguments with user keywords`_
+
+Named-only arguments with user keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 3.1, user keywords support `named-only
+arguments`_ that are inspired by `Python 3 keyword-only arguments`__.
+This syntax is typically used by having normal arguments *after*
+`variable number of arguments`__ (`@{varargs}`). If the keywords does not
+use varargs, it is possible to use just `@{}` to denote that the subsequent
+arguments are named-only:
+
+.. sourcecode:: robotframework
+
+   *** Keywords ***
+   With Varargs
+       [Arguments]    @{varargs}    ${named}
+       Log Many    @{varargs}    ${named}
+
+   Without Varargs
+       [Arguments]    @{}    ${first}    ${second}
+       Log Many    ${first}    ${second}
+
+Named-only arguments can be used together with `positional arguments`__ as
+well as with `free named arguments`__. When using free named arguments, they
+must be last:
+
+.. sourcecode:: robotframework
+
+   *** Keywords ***
+   With Positional
+       [Arguments]    ${positional}    @{}    ${named}
+       Log Many    ${positional}    ${named}
+
+   With Free Named
+       [Arguments]    @{varargs}    ${named only}    &{free named}
+       Log Many    @{varargs}    ${named only}    &{free named}
+
+When passing named-only arguments to keywords, their order does not matter
+other than they must follow possible positional arguments. The keywords above
+could be used, for example, like this:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       With Varargs    named=value
+       With Varargs    positional    second positional    named=foobar
+       Without Varargs    first=1    second=2
+       Without Varargs    second=toka    first=eka
+       With Positional    foo    named=bar
+       With Positional    named=2    positional=1
+       With Free Named    positional    named only=value    x=1    y=2
+       With Free Named    foo=a    bar=b    named only=c    quux=d
+
+Named-only arguments can have default values similarly as `normal user
+keyword arguments`__. A minor difference is that the order of arguments
+with and without default values is not important.
+
+.. sourcecode:: robotframework
+
+   *** Keywords ***
+   With Default
+       [Arguments]    @{}    ${named}=default
+       Log Many    ${named}
+
+   With And Without Defaults
+       [Arguments]    @{}    ${optional}=default    ${mandatory}    ${mandatory 2}    ${optional 2}=default 2    ${mandatory 3}
+       Log Many    ${optional}    ${mandatory}    ${mandatory 2}    ${optional 2}    ${mandatory 3}
+
+__ https://www.python.org/dev/peps/pep-3102
+__ `Variable number of arguments with user keywords`_
+__ `Positional arguments with user keywords`_
+__ `Free named arguments with user keywords`_
+__ `Default values with user keywords`_
 
 .. _Embedded argument syntax:
 
@@ -444,6 +527,7 @@ __ `Ignoring Given/When/Then/And/But prefixes`_
 
 Using custom regular expressions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 When keywords with embedded arguments are called, the values are
 matched internally using `regular expressions`__
 (regexps for short). The default logic goes so that every argument in
@@ -498,10 +582,10 @@ regular expressions is illustrated by the examples below.
    I execute "${cmd}" with "${opts}"
        Run Process    ${cmd} ${opts}    shell=True
 
-   I type ${a:\d+} ${operator:[+-]} ${b:\d+}
-       Calculate    ${a}    ${operator}    ${b}
+   I type ${num1:\d+} ${operator:[+-]} ${num2:\d+}
+       Calculate    ${num1}    ${operator}    ${num2}
 
-   Today is ${date:\d{4\}-\d{2\}-\d{2\}}
+   Today is ${date:\d{4}-\d{2}-\d{2}}
        Log    ${date}
 
 In the above example keyword :name:`I execute "ls" with "-lh"` matches
@@ -530,23 +614,22 @@ errors`__.
 Escaping special characters
 '''''''''''''''''''''''''''
 
-There are some special characters that need to be escaped when used in
-the custom embedded arguments regexp. First of all, possible closing
-curly braces (`}`) in the pattern need to be escaped with a single backslash
-(`\}`) because otherwise the argument would end already there. This is
-illustrated in the previous example with keyword
-:name:`Today is ${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}`.
+Regular expressions use the backslash character (:codesc:`\\`) heavily both
+to escape characters that have a special meaning in regexps (e.g. `\$`) and
+to form special sequences (e.g. `\d`). Typically in Robot Framework data
+backslash characters `need to be escaped`__ with another backslash, but
+that is not required in this context. If there is a need to have a literal
+backslash in the pattern, then the backslash must be escaped.
 
-Backslash (:codesc:`\\`) is a special character in Python regular
-expression syntax and thus needs to be escaped if you want to have a
-literal backslash character. The safest escape sequence in this case
-is four backslashes (`\\\\`) but, depending on the next
-character, also two backslashes may be enough.
+Possible lone opening and closing curly braces in the pattern must be escaped
+like `${open:\}}` and `${close:\{}`. If there are matching braces like
+`${two digits:\d{2}}`, escaping is not needed. Escaping only opening or
+closing brace is not allowed.
 
-Notice also that keyword names and possible embedded arguments in them
-should *not* be escaped using the normal `test data escaping
-rules`__. This means that, for example, backslashes in expressions
-like `${name:\w+}` should not be escaped.
+.. warning:: Prior to Robot Framework 3.2 it was mandatory to escape all
+             closing curly braces in the pattern like `${two digits:\d{2\}}`.
+             This syntax is unfortunately not supported by Robot Framework 3.2
+             or newer and keywords using it must be updated when upgrading.
 
 Using variables with custom embedded argument regular expressions
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -705,9 +788,10 @@ demonstrates returning conditionally inside a `for loop`_.
    Find Index
        [Arguments]    ${element}    @{items}
        ${index} =    Set Variable    ${0}
-       :FOR    ${item}    IN    @{items}
-       \    Return From Keyword If    '${item}' == '${element}'    ${index}
-       \    ${index} =    Set Variable    ${index + 1}
+       FOR    ${item}    IN    @{items}
+           Return From Keyword If    '${item}' == '${element}'    ${index}
+           ${index} =    Set Variable    ${index + 1}
+       END
        Return From Keyword    ${-1}    # Could also use [Return]
 
 User keyword teardown

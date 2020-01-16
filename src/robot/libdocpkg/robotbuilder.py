@@ -17,9 +17,9 @@ import os
 import sys
 
 from robot.errors import DataError
-from robot.parsing import disable_curdir_processing
-from robot.running import TestLibrary, UserLibrary, UserErrorHandler
-from robot.utils import split_tags_from_doc, unescape
+from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
+                           ResourceFileBuilder)
+from robot.utils import split_tags_from_doc, unescape, unic
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -51,7 +51,7 @@ class LibraryDocBuilder(object):
         return library
 
     def _get_doc(self, lib):
-        return lib.doc or "Documentation for test library ``%s``." % lib.name
+        return lib.doc or "Documentation for library ``%s``." % lib.name
 
     def _get_initializers(self, lib):
         if lib.init.arguments.maxargs:
@@ -63,14 +63,16 @@ class ResourceDocBuilder(object):
 
     def build(self, path):
         res = self._import_resource(path)
-        libdoc = LibraryDoc(name=res.name, doc=self._get_doc(res),
+        libdoc = LibraryDoc(name=res.name,
+                            doc=self._get_doc(res),
                             type='resource')
         libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(res)
         return libdoc
 
-    @disable_curdir_processing
     def _import_resource(self, path):
-        return UserLibrary(self._find_resource_file(path))
+        ast = ResourceFileBuilder(process_curdir=False).build(
+            self._find_resource_file(path))
+        return UserLibrary(ast)
 
     def _find_resource_file(self, path):
         if os.path.isfile(path):
@@ -97,8 +99,10 @@ class KeywordDocBuilder(object):
 
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)
-        return KeywordDoc(name=kw.name, args=self._get_args(kw.arguments),
-                          doc=doc, tags=tags)
+        return KeywordDoc(name=kw.name,
+                          args=self._get_args(kw.arguments),
+                          doc=doc,
+                          tags=tags)
 
     def _get_doc_and_tags(self, kw):
         doc = self._get_doc(kw)
@@ -111,21 +115,26 @@ class KeywordDocBuilder(object):
         return kw.doc
 
     def _get_args(self, argspec):
-        required = argspec.positional[:argspec.minargs]
-        defaults = zip(argspec.positional[argspec.minargs:], argspec.defaults)
-        args = required + ['%s=%s' % item for item in defaults]
+        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
+        args = [self._format_arg(arg, argspec) for arg in argspec.positional]
         if argspec.varargs:
-            args.append('*%s' % argspec.varargs)
+            args.append('*%s' % self._format_arg(argspec.varargs, argspec))
         if argspec.kwonlyargs:
             if not argspec.varargs:
                 args.append('*')
-            args.extend(self._format_kwo(name, argspec.kwonlydefaults)
-                        for name in argspec.kwonlyargs)
+            args.extend(self._format_arg(arg, argspec)
+                        for arg in argspec.kwonlyargs)
         if argspec.kwargs:
-            args.append('**%s' % argspec.kwargs)
+            args.append('**%s' % self._format_arg(argspec.kwargs, argspec))
         return args
 
-    def _format_kwo(self, name, defaults):
-        if name not in defaults:
-            return name
-        return '%s=%s' % (name, defaults[name])
+    def _format_arg(self, arg, argspec):
+        result = arg
+        if argspec.types is not None and arg in argspec.types:
+            result = '%s: %s' % (result, self._format_type(argspec.types[arg]))
+        if arg in argspec.defaults:
+            result = '%s=%s' % (result, unic(argspec.defaults[arg]))
+        return result
+
+    def _format_type(self, type_):
+        return type_.__name__ if isinstance(type_, type) else type_

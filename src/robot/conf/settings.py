@@ -22,9 +22,9 @@ from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
-from robot.utils import (abspath, escape, format_time, get_link_path,
-                         html_escape, is_list_like, py2to3,
-                         split_args_from_name_or_path)
+from robot.utils import (abspath, create_destination_directory, escape,
+                         format_time, get_link_path, html_escape, is_list_like,
+                         py2to3, split_args_from_name_or_path)
 
 from .gatherfailed import gather_failed_tests, gather_failed_suites
 
@@ -62,6 +62,7 @@ class _BaseSettings(object):
                  'TagDoc'           : ('tagdoc', []),
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
+                 'ExpandKeywords'   : ('expandkeywords', []),
                  'FlattenKeywords'  : ('flattenkeywords', []),
                  'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
@@ -126,15 +127,16 @@ class _BaseSettings(object):
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'Randomize':
             return self._process_randomize_value(value)
+        if name == 'MaxErrorLines':
+            return self._process_max_error_lines(value)
         if name == 'RemoveKeywords':
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
             self._validate_flatten_keywords(value)
-        if name == 'WarnOnSkipped':
-            with LOGGER.cache_only:
-                LOGGER.warn("Option '--warnonskippedfiles' is deprecated and "
-                            "has no effect. Nowadays all skipped files are "
-                            "reported.")
+        if name == 'ExpandKeywords':
+            self._validate_expandkeywords(value)
+        if name == 'Extension':
+            return tuple(ext.lower().lstrip('.') for ext in value.split(':'))
         return value
 
     def _escape_as_data(self, value):
@@ -161,6 +163,15 @@ class _BaseSettings(object):
         if not loggerhelper.IsLogged(log_level)(default):
             raise DataError("Default visible log level '%s' is lower than "
                             "log level '%s'" % (default, log_level))
+
+    def _process_max_error_lines(self, value):
+        if not value or value.upper() == 'NONE':
+            return None
+        value = self._convert_to_integer('maxerrorlines', value)
+        if value < 10:
+            raise DataError("Option '--maxerrorlines' expected an integer "
+                            "value greater that 10 but got '%s'." % value)
+        return value
 
     def _process_randomize_value(self, original):
         value = original.lower()
@@ -203,7 +214,7 @@ class _BaseSettings(object):
             return None
         name = self._process_output_name(option, name)
         path = abspath(os.path.join(self['OutputDir'], name))
-        self._create_output_dir(os.path.dirname(path), option)
+        create_destination_directory(path, '%s file' % option.lower())
         return path
 
     def _process_output_name(self, option, name):
@@ -223,14 +234,6 @@ class _BaseSettings(object):
         if type_ == 'DebugFile':
             return '.txt'
         raise FrameworkError("Invalid output file type: %s" % type_)
-
-    def _create_output_dir(self, path, type_):
-        try:
-            if not os.path.exists(path):
-                os.makedirs(path)
-        except EnvironmentError as err:
-            raise DataError("Creating %s file directory '%s' failed: %s"
-                            % (type_.lower(), path, err.strerror))
 
     def _process_metadata_or_tagdoc(self, value):
         if ':' in value:
@@ -296,6 +299,13 @@ class _BaseSettings(object):
             validate_flatten_keyword(values)
         except DataError as err:
             raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
+
+    def _validate_expandkeywords(self, values):
+        for opt in values:
+            if not opt.lower().startswith(('name:', 'tag:')):
+                raise DataError("Invalid value for option '--expandkeywords'. "
+                                "Expected 'TAG:<pattern>', or "
+                                "'NAME:<pattern>' but got '%s'." % opt)            
 
     def __contains__(self, setting):
         return setting in self._cli_opts
@@ -385,16 +395,16 @@ class _BaseSettings(object):
 
 
 class RobotSettings(_BaseSettings):
-    _extra_cli_opts = {'Extension'          : ('extension', None),
+    _extra_cli_opts = {'Extension'          : ('extension', ('robot',)),
                        'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
+                       'MaxErrorLines'      : ('maxerrorlines', 40),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'ExitOnError'        : ('exitonerror', False),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunEmptySuite'      : ('runemptysuite', False),
-                       'WarnOnSkipped'      : ('warnonskippedfiles', None),
                        'Variables'          : ('variable', []),
                        'VariableFiles'      : ('variablefile', []),
                        'PreRunModifiers'    : ('prerunmodifier', []),
@@ -408,6 +418,7 @@ class RobotSettings(_BaseSettings):
 
     def get_rebot_settings(self):
         settings = RebotSettings()
+        settings.start_timestamp = self.start_timestamp
         settings._opts.update(self._opts)
         for name in ['Variables', 'VariableFiles', 'Listeners']:
             del(settings._opts[name])
@@ -418,6 +429,7 @@ class RobotSettings(_BaseSettings):
         settings._opts['Output'] = None
         settings._opts['LogLevel'] = 'TRACE'
         settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
+        settings._opts['ExpandKeywords'] = self['ExpandKeywords']
         return settings
 
     def _output_disabled(self):
@@ -506,6 +518,10 @@ class RobotSettings(_BaseSettings):
         return self['ConsoleMarkers']
 
     @property
+    def max_error_lines(self):
+        return self['MaxErrorLines']
+
+    @property
     def pre_run_modifiers(self):
         return self['PreRunModifiers']
 
@@ -577,7 +593,7 @@ class RebotSettings(_BaseSettings):
             'rpa': self.rpa,
             'title': html_escape(self['ReportTitle'] or ''),
             'logURL': self._url_from_path(self.report, self.log),
-            'background' : self._resolve_background_colors(),
+            'background' : self._resolve_background_colors()
         }
 
     def _url_from_path(self, source, destination):
@@ -604,3 +620,7 @@ class RebotSettings(_BaseSettings):
     @property
     def process_empty_suite(self):
         return self['ProcessEmptySuite']
+
+    @property
+    def expand_keywords(self):
+        return self['ExpandKeywords']

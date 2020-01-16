@@ -161,13 +161,16 @@ IronPython installation
 
 IronPython_ allows running Robot Framework on the `.NET platform
 <http://www.microsoft.com/net>`__ and interacting with C# and other .NET
-languages and APIs. Only IronPython 2.7 is supported.
+languages and APIs. Only IronPython 2.7 is supported in general and
+IronPython 2.7.9 or newer is highly recommended.
 
-When using IronPython, an additional dependency is installing
-`elementtree <http://effbot.org/downloads/#elementtree>`__
-module 1.2.7 preview release. This is required because the ``elementtree``
-module distributed with IronPython is broken__. Once you have `pip activated
-for IronPython`__, you can easily install this module using it:
+If not using IronPython 2.7.9 or newer and Robot Framework 3.1 or newer,
+an additional requirement is installing
+`ElementTree <http://effbot.org/downloads/#elementtree>`__
+module 1.2.7 preview release. This is required because the ElementTree
+module distributed with older IronPython versions was broken. Once you
+have `pip activated for IronPython`__, you can easily install ElementTree
+using this command:
 
 .. sourcecode:: bash
 
@@ -180,7 +183,6 @@ After installing IronPython, you probably still want to configure PATH_ to make
 IronPython itself as well as the ``robot`` and ``rebot`` `runner scripts`_
 executable on the command line.
 
-__ https://github.com/IronLanguages/ironpython2/issues/370
 __ `Installing pip for IronPython`_
 
 PyPy installation
@@ -355,16 +357,15 @@ is executing the ``pip`` module using Jython directly:
 Installing pip for IronPython
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-IronPython contains bundled pip starting from `version 2.7.5`__. Similarly as
-with Jython, it needs to be activated first:
+IronPython 2.7.5 and newer contain pip bundled in. With IronPython 2.7.9 and
+newer pip also works out-of-the-box, but with earlier versions it needs to be
+activated with `ipy -m ensurepip` similarly as with Jython.
 
-.. sourcecode:: bash
-
-    ipy -m ensurepip
-
-.. note:: With IronPython 2.7.7 and earlier you need to use `-X:Frames`
-          command line option both when activating and when using pip like
-          `ipy -X:Frames -m ensurepip`.
+With IronPython 2.7.7 and earlier you need to use `-X:Frames` command line
+option when activating pip like `ipy -X:Frames -m ensurepip` and also
+when using it. Prior to IronPython 2.7.9 there were problems creating
+possible start-up scripts when installing modules. Using IronPython 2.7.9
+is highly recommended.
 
 IronPython installs pip into :file:`<IronPythonInstallation>/Scripts` directory.
 Does running `pip install robotframework` actually use it or possibly some
@@ -374,8 +375,6 @@ is executing the ``pip`` module using IronPython directly:
 .. sourcecode:: bash
 
     ipy -m pip install robotframework
-
-__ http://blog.ironpython.net/2014/12/pip-in-ironpython-275.html
 
 Installing pip for PyPy
 ~~~~~~~~~~~~~~~~~~~~~~~

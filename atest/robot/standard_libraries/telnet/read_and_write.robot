@@ -30,7 +30,10 @@ Write Bare
 Write Bare With Newlines
     Check Test Case    ${TEST NAME}
 
-Write control character
+Write control character using name
+    Check Test Case    ${TEST NAME}
+
+Write control character using number
     Check Test Case    ${TEST NAME}
 
 Read Until

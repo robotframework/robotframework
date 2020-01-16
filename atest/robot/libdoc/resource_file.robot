@@ -7,15 +7,19 @@ Name
     Name Should Be                  resource
 
 Documentation
-    Doc Should Start With
-    ...    This resource file has documentation.\n\n
-    ...    And it is even set in multiple cells with _formatting_.\n
-    ...    This should be in the same paragraph as the sentence above.\n\n
-    ...    Here is a literal\nnewline\n\n
-    ...    -------------\n\n
-    ...    | *TABLE* |\n
-    ...    | \${NONEX} | $\{CURDIR} | \${TEMPDIR} |\n
-    ...    \n
+    Doc Should Be
+    ...    This resource file has documentation.
+    ...
+    ...    And it is even set in multiple cells with _formatting_.
+    ...    This should be in the same paragraph as the sentence above.
+    ...
+    ...    Here is a literal\nnewline
+    ...
+    ...    -------------
+    ...
+    ...    | *TABLE* |
+    ...    | \${NONEX} | $\{CURDIR} | \${TEMPDIR} |
+    ...    | foo | bar |
     ...    tabs \t\t\t here
 
 Version
@@ -55,25 +59,28 @@ Embedded Arguments
 
 Keyword Documentation
     Keyword Doc Should Be           0    $\{CURDIR}
-    Keyword Doc Should Be           3    foo bar `kw` & some "stuff" to <escape> .\n\n baa `\${a1}`
+    Keyword Doc Should Be           3    foo bar `kw` & some "stuff" to <escape> .\n\nbaa `\${a1}`
     Keyword Doc Should Be           5    literal\nnewline
     Keyword Doc Should Be           7
-    ...    foo bar `kw`.\n\n
-    ...    baa `\${a1}` alskdj alskdjlajd\n
-    ...    askf laskdjf asldkfj alsdkfj alsdkfjasldkfj\n
-    ...    askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj\n
-    ...    askf *laskdjf* asldkfj `introduction` alsdkfj\n
-    ...    http://foo.bar\n
-    ...    - aaa\n
-    ...    - bbb\n
-    ...    \n
-    ...    -------------\n
-    ...    \n
-    ...    | *1* | *2* |\n
+    ...    foo bar `kw`.
+    ...
+    ...    FIRST `\${a1}` alskdj alskdjlajd
+    ...    askf laskdjf asldkfj alsdkfj alsdkfjasldkfj END
+    ...
+    ...    SECOND askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj
+    ...    askf *laskdjf* END
+    ...
+    ...    THIRD asldkfj `introduction` alsdkfj http://foo.bar END
+    ...    - aaa
+    ...    - bbb
+    ...
+    ...    -------------
+    ...
+    ...    | = first = | = second = |
     ...    | foo | bar |
     Keyword Doc Should Be           8
-    ...    Summary line\n
-    ...    \n
+    ...    Summary line
+    ...
     ...    Another line.
 
 Keyword tags

@@ -14,15 +14,22 @@
 #  limitations under the License.
 
 import os
+import re
 import sys
 
 
-JYTHON = sys.platform.startswith('java')
+java_match = re.match(r'java(\d+)\.(\d+)\.(\d+)', sys.platform)
+if java_match:
+    JYTHON = True
+    JAVA_VERSION = tuple(int(i) for i in java_match.groups())
+else:
+    JYTHON = False
+    JAVA_VERSION = (0, 0, 0)
+PY_VERSION = sys.version_info[:3]
+PY2 = PY_VERSION[0] == 2
+PY3 = not PY2
 IRONPYTHON = sys.platform == 'cli'
 PYPY = 'PyPy' in sys.version
-PYTHON = not (JYTHON or IRONPYTHON)  # PyPY and CPython work mostly same way
-PY2 = sys.version_info[0] == 2
-PY3 = not PY2
 UNIXY = os.sep == '/'
 WINDOWS = not UNIXY
 

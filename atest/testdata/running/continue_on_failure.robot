@@ -2,14 +2,12 @@
 Suite Teardown       Continuable Failure In User Keyword In Suite Teardown
 Library              Exceptions
 
-
 *** Variables ***
 ${HEADER}                 Several failures occurred:
 ${EXC}                    ContinuableApocalypseException
 ${ERROR}                  ${EXC}: Can be continued
 ${TEARDOWN ERROR}         Also parent suite teardown failed:\nContinuableApocalypseException: Can be continued
 ${ERROR WITH TEARDOWN}    ${ERROR}\n\n${TEARDOWN ERROR}
-
 
 *** Test Cases ***
 Continue in test
@@ -157,9 +155,10 @@ Continue in for loop
     ...    4) ContinuableApocalypseException: 3\n\n
     ...    5) ContinuableApocalypseException: 4\n\n
     ...    ${TEARDOWN ERROR}
-    :FOR    ${i}    IN RANGE    0    5
-    \    Raise Continuable Failure    ${i}
-    \    Log    This should be executed inside for loop
+    FOR    ${i}    IN RANGE    0    5
+        Raise Continuable Failure    ${i}
+        Log    This should be executed inside for loop
+    END
     Log    This should be executed after for loop
 
 Continuable and regular failure in for loop
@@ -169,14 +168,14 @@ Continuable and regular failure in for loop
     ...    3) ContinuableApocalypseException: keijo\n\n
     ...    4) keijo == keijo\n\n
     ...    ${TEARDOWN ERROR}
-    :FOR    ${name}    IN    janne    jussi    keijo    juha    jooseppi
-    \    Raise Continuable Failure    ${name}
-    \    Should Not Be Equal    ${name}    keijo
+    FOR    ${name}    IN    janne    jussi    keijo    juha    jooseppi
+        Raise Continuable Failure    ${name}
+        Should Not Be Equal    ${name}    keijo
+    END
     Fail    Should not be executed
 
 
 *** Keywords ***
-
 Continuable Failure In User Keyword In ${where}
     Raise Continuable Failure
     Log    This should be executed in ${where}

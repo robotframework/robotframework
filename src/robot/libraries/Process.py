@@ -20,8 +20,8 @@ import time
 import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, cmdline2list, console_decode,
-                         is_list_like, is_truthy, NormalizedDict, py2to3,
-                         secs_to_timestr, system_decode, system_encode,
+                         is_list_like, is_string, is_truthy, NormalizedDict,
+                         py2to3, secs_to_timestr, system_decode, system_encode,
                          timestr_to_secs, IRONPYTHON, JYTHON, WINDOWS)
 from robot.version import get_version
 from robot.api import logger
@@ -172,11 +172,21 @@ class Process(object):
     expected to write outputs using the console encoding, but `output encoding`
     can be configured using the ``output_encoding`` argument if needed.
 
+    If you are not interested in outputs at all, you can explicitly ignore them
+    by using a special value ``DEVNULL`` both with ``stdout`` and ``stderr``. For
+    example, ``stdout=DEVNULL`` is the same as redirecting output on console
+    with ``> /dev/null`` on UNIX-like operating systems or ``> NUL`` on Windows.
+    This way the process will not hang even if there would be a lot of output,
+    but naturally output is not available after execution either.
+
+    Support for the special value ``DEVNULL`` is new in Robot Framework 3.2.
+
     Examples:
     | ${result} = | `Run Process` | program | stdout=${TEMPDIR}/stdout.txt | stderr=${TEMPDIR}/stderr.txt |
     | `Log Many`  | stdout: ${result.stdout} | stderr: ${result.stderr} |
     | ${result} = | `Run Process` | program | stderr=STDOUT |
     | `Log`       | all output: ${result.stdout} |
+    | ${result} = | `Run Process` | program | stdout=DEVNULL | stderr=DEVNULL |
 
     Note that the created output files are not automatically removed after
     the test run. The user is responsible to remove them if needed.
@@ -254,8 +264,8 @@ class Process(object):
 
     Some keywords accept arguments that are handled as Boolean values true or
     false. If such an argument is given as a string, it is considered false if
-    it is either an empty string or case-insensitively equal to ``false``,
-    ``none`` or ``no``. Other strings are considered true regardless
+    it is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or
+    ``0``, case-insensitively. Other strings are considered true regardless
     their value, and other argument types are tested using the same
     [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
@@ -271,9 +281,8 @@ class Process(object):
     | `Terminate Process` | kill=${EMPTY} | # Empty string is false.       |
     | `Terminate Process` | kill=${FALSE} | # Python ``False`` is false.   |
 
-    Prior to Robot Framework 2.9, all non-empty strings, including ``false``
-    and ``no``, were considered to be true. Considering ``none`` false is
-    new in Robot Framework 3.0.3.
+    Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
+    considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
 
     = Example =
 
@@ -408,7 +417,9 @@ class Process(object):
         given in
         [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#time-format|
         various time formats] supported by Robot Framework, for example, ``42``,
-        ``42 s``, or ``1 minute 30 seconds``.
+        ``42 s``, or ``1 minute 30 seconds``. The timeout is ignored if it is
+        Python ``None`` (default), string ``NONE`` (case-insensitively), zero,
+        or negative.
 
         ``on_timeout`` defines what to do if the timeout occurs. Possible values
         and corresponding actions are explained in the table below. Notice
@@ -440,16 +451,24 @@ class Process(object):
         | ${result} =                 | Wait For Process | timeout=1min 30s | on_timeout=kill |
         | Process Should Be Stopped   |                  |                  |
         | Should Be Equal As Integers | ${result.rc}     | -9               |
+
+        Ignoring timeout if it is string ``NONE``, zero, or negative is new
+        in Robot Framework 3.2.
         """
         process = self._processes[handle]
         logger.info('Waiting for process to complete.')
-        if timeout:
-            timeout = timestr_to_secs(timeout)
+        timeout = self._get_timeout(timeout)
+        if timeout > 0:
             if not self._process_is_stopped(process, timeout):
                 logger.info('Process did not complete in %s.'
                             % secs_to_timestr(timeout))
                 return self._manage_process_timeout(handle, on_timeout.lower())
         return self._wait(process)
+
+    def _get_timeout(self, timeout):
+        if (is_string(timeout) and timeout.upper() == 'NONE') or not timeout:
+            return -1
+        return timestr_to_secs(timeout)
 
     def _manage_process_timeout(self, handle, on_timeout):
         if on_timeout == 'terminate':
@@ -845,6 +864,8 @@ class ProcessConfiguration(object):
         return abspath('.')
 
     def _new_stream(self, name):
+        if name == 'DEVNULL':
+            return open(os.devnull, 'w')
         if name:
             name = name.replace('/', os.sep)
             return open(os.path.join(self.cwd, name), 'w')

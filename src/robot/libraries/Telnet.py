@@ -27,6 +27,7 @@ except ImportError:
     pyte = None
 
 from robot.api import logger
+from robot.api.deco import keyword
 from robot.utils import (ConnectionCache, is_bytes, is_string, is_truthy,
                          is_unicode, secs_to_timestr, seq2str, timestr_to_secs)
 from robot.version import get_version
@@ -265,8 +266,8 @@ class Telnet(object):
 
     Some keywords accept arguments that are handled as Boolean values true or
     false. If such an argument is given as a string, it is considered false if
-    it is either an empty string or case-insensitively equal to ``false``,
-    ``none`` or ``no``. Other strings are considered true regardless
+    it is an empty string or equal to ``FALSE``, ``NONE``, ``NO``, ``OFF`` or
+    ``0``, case-insensitively. Other strings are considered true regardless
     their value, and other argument types are tested using the same
     [http://docs.python.org/library/stdtypes.html#truth|rules as in Python].
 
@@ -282,9 +283,8 @@ class Telnet(object):
     | `Open Connection` | lolcathost | terminal_emulation=${EMPTY} | # Empty string is false.       |
     | `Open Connection` | lolcathost | terminal_emulation=${FALSE} | # Python ``False`` is false.   |
 
-    Prior to Robot Framework 2.9, all non-empty strings, including ``false``
-    and ``no``, were considered to be true. Considering ``none`` false is
-    new in Robot Framework 3.0.3.
+    Considering string ``NONE`` false is new in Robot Framework 3.0.3 and
+    considering also ``OFF`` and ``0`` false is new in Robot Framework 3.1.
     """
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
@@ -369,6 +369,7 @@ class Telnet(object):
         # handlers when it imports the library.
         return getattr(self._conn or self._get_connection(), name)
 
+    @keyword(types=None)
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False,
                         encoding=None, encoding_errors=None,
@@ -608,6 +609,7 @@ class TelnetConnection(telnetlib.Telnet):
     def _prompt_is_set(self):
         return self._prompt[0] is not None
 
+    @keyword(types=None)
     def set_encoding(self, encoding=None, errors=None):
         """Sets the encoding to use for `writing and reading` in the current connection.
 
@@ -861,7 +863,8 @@ class TelnetConnection(telnetlib.Telnet):
 
     def _get_control_character(self, int_or_name):
         try:
-            return chr(int(int_or_name))
+            ordinal = int(int_or_name)
+            return bytes(bytearray([ordinal]))
         except ValueError:
             return self._convert_control_code_name_to_character(int_or_name)
 

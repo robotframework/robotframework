@@ -27,7 +27,7 @@ Stops on error when output contains only non-existing failing test cases
     Generate output  cli/runfailed/runfailed1.robot
     Run Tests Without Processing Output  --RERUNFAILED ${RUN FAILED FROM}  cli/runfailed/onlypassing
     Stderr Should Be Equal To
-    ...  [ ERROR ] Suite 'Onlypassing' contains no tests named 'Runfailed1.Failing' or 'Runfailed1.Only in one suite'.${USAGE TIP}\n
+    ...  [ ERROR ] Suite 'Onlypassing' contains no tests matching name 'Runfailed1.Failing' or 'Runfailed1.Only in one suite'.${USAGE TIP}\n
 
 Stops on error when output does not exist
     Run Tests Without Processing Output  --rerunfailed nonex.xml  cli/runfailed/onlypassing

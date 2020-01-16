@@ -15,10 +15,10 @@
 
 from itertools import chain
 
-from robot.errors import (ExecutionFailed, ExecutionPassed, ExitForLoop,
-                          ContinueForLoop, DataError, PassExecution,
-                          ReturnFromKeyword, UserKeywordExecutionFailed,
-                          VariableError)
+from robot.errors import (ExecutionFailed, ExecutionPassed, ExecutionStatus,
+                          ExitForLoop, ContinueForLoop, DataError,
+                          PassExecution, ReturnFromKeyword,
+                          UserKeywordExecutionFailed, VariableError)
 from robot.result import Keyword as KeywordResult
 from robot.utils import getshortdoc, DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_var, VariableAssignment
@@ -90,10 +90,7 @@ class UserKeywordRunner(object):
 
     def _get_timeout(self, variables=None):
         timeout = self._handler.timeout
-        if not timeout:
-            return None
-        timeout = KeywordTimeout(timeout.value, timeout.message, variables)
-        return timeout
+        return KeywordTimeout(timeout, variables) if timeout else None
 
     def _resolve_arguments(self, arguments, variables=None):
         return self.arguments.resolve(arguments, variables)
@@ -192,6 +189,8 @@ class UserKeywordRunner(object):
         try:
             name = context.variables.replace_string(self._handler.teardown.name)
         except DataError as err:
+            if context.dry_run:
+                return None
             return ExecutionFailed(err.message, syntax=True)
         if name.upper() in ('', 'NONE'):
             return None
@@ -199,7 +198,7 @@ class UserKeywordRunner(object):
             StepRunner(context).run_step(self._handler.teardown, name)
         except PassExecution:
             return None
-        except ExecutionFailed as err:
+        except ExecutionStatus as err:
             return err
         return None
 

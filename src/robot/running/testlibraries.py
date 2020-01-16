@@ -235,15 +235,19 @@ class _BaseTestLibrary(object):
                         LOGGER.debug("Created keyword '%s'" % handler.name)
 
     def _get_handler_names(self, libcode):
-        return [name for name in dir(libcode)
-                if name[:1] != '_' or self._has_robot_name(name, libcode)]
+        def has_robot_name(name):
+            try:
+                handler = self._get_handler_method(libcode, name)
+            except DataError:
+                return False
+            return hasattr(handler, 'robot_name')
 
-    def _has_robot_name(self, name, libcode):
-        try:
-            handler = self._get_handler_method(libcode, name)
-        except DataError:
-            return False
-        return hasattr(handler, 'robot_name')
+        auto_keywords = getattr(libcode, 'ROBOT_AUTO_KEYWORDS', True)
+        if auto_keywords:
+            predicate = lambda name: name[:1] != '_' or has_robot_name(name)
+        else:
+            predicate = has_robot_name
+        return [name for name in dir(libcode) if predicate(name)]
 
     def _try_to_get_handler_method(self, libcode, name):
         try:

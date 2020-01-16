@@ -21,7 +21,11 @@ Keyword Table
 
 Comment Table
     Check Test Case    Comment tables exist
-    Stderr should be empty
+    Length Should Be    ${ERRORS}    1
+
+Section Names Are Space Sensitive
+    ${path} =    Normalize Path    ${DATADIR}/parsing/table_names.robot
+    Validate Invalid Table Error    ${ERRORS[0]}    table_names.robot    K e y w o r d
 
 Invalid Tables
     [Documentation]    Unrecognized tables should cause error
@@ -46,7 +50,7 @@ Validate Invalid Table Error
     [Arguments]    ${error}    ${file}    ${header}
     ${path} =    Normalize Path    ${DATADIR}/parsing/${file}
     ${message} =    Catenate
-    ...    Error in file '${path}': Unrecognized table header '${header}'.
+    ...    Error in file '${path}': Unrecognized section header '${header}'.
     ...    Available headers for data: 'Setting(s)', 'Variable(s)', 'Test Case(s)',
     ...    'Task(s)' and 'Keyword(s)'. Use 'Comment(s)' to embedded additional data.
     Check Log Message    ${error}    ${message}    ERROR

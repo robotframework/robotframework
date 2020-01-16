@@ -30,8 +30,8 @@ def KeywordRemover(how):
                 'FOR': ForLoopItemsRemover,
                 'WUKS': WaitUntilKeywordSucceedsRemover}[upper]()
     except KeyError:
-        raise DataError("Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'TAG:<pattern>', "
-                        "'FOR', or 'WUKS' but got '%s'." % how)
+        raise DataError("Expected 'ALL', 'PASSED', 'NAME:<pattern>', "
+                        "'TAG:<pattern>', 'FOR', or 'WUKS' but got '%s'." % how)
 
 
 class _KeywordRemover(SuiteVisitor):

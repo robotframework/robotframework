@@ -18,8 +18,9 @@ Invalid option
     --invalid         option --invalid not recognized
 
 Invalid format
-    -f XXX BuiltIn ${OUT HTML}    Format must be 'HTML' or 'XML', got 'XXX'.
-    BuiltIn out.ext            Format must be 'HTML' or 'XML', got 'EXT'.
+    -f XXX BuiltIn ${OUT HTML}              Format must be 'HTML', 'XML' or 'XML:HTML', got 'XXX'.
+    --format XML:XXX BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML' or 'XML:HTML', got 'XML:XXX'.
+    BuiltIn out.ext                         Format must be 'HTML', 'XML' or 'XML:HTML', got 'EXT'.
 
 Invalid doc format
     --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.
@@ -48,7 +49,17 @@ Invalid resource
     ...   ? ERROR ? *: Non-existing setting 'Test Setup'.
     ...   ? ERROR ? *: Non-existing setting 'Test Template'.
     ...   ? ERROR ? *: Non-existing setting 'Test Teardown'.
-    ...   Resource file '*' cannot contain tests or tasks.
+    ...   Resource file '*[/\\]invalid_usage.robot' cannot contain tests or tasks.
+
+Invalid output file
+    [Setup]    Run Keywords
+    ...    Create Directory    ${OUT HTML}    AND
+    ...    Create Directory    ${OUT XML}
+    String ${OUT HTML}    Opening Libdoc output file '${OUT HTML}' failed: *
+    String ${OUT XML}     Opening Libdoc output file '${OUT XML}' failed: *
+    [Teardown]    Run Keywords
+    ...    Remove Directory    ${OUT HTML}    AND
+    ...    Remove Directory    ${OUT XML}
 
 *** Keywords ***
 Run libdoc and verify error

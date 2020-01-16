@@ -44,11 +44,29 @@ Format in XML
     ROBOT    --docfor RoBoT   DocFormatHtml.py
     HTML     ${EMPTY}         DocFormatHtml.py
 
+Format in XML:HTML
+    [Template]    Test Format in XML:HTML
+    --format xMl:hTML            DocFormat.py
+    --docfor RoBoT -f XML:HTML   DocFormatHtml.py
+    -F ROBOT --format xml:html   DocFormat.py
+
 Format from XML spec
     [Template]    NONE
     Run Libdoc    -F HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
     Copy File    ${OUTXML}    ${OUTPREFIX}-2.xml
     Test Format In XML    HTML    lib=${OUTPREFIX}-2.xml
+
+Format from XML:HTML spec
+    [Template]    NONE
+    Run Libdoc    -F ROBOT --format XML:HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
+    Copy File    ${OUTXML}    ${OUTPREFIX}-2.xml
+    Test Format In XML:HTML    lib=${OUTPREFIX}-2.xml
+
+Compare HTML from XML:HTML
+    [Template]    NONE
+    Run Libdoc    -F ROBOT --format XML:HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
+    Test Format In HTML    <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}
+    ...                    lib=${OUTXML}
 
 *** Keywords ***
 Test Format In HTML
@@ -61,12 +79,15 @@ Test Format In HTML
     Should Contain    ${MODEL['keywords'][1]['doc']}    ${expected2}
 
 Test Format In XML
-    [Arguments]    ${expected}    ${cli}=    ${lib}=DocFormat.py
+    [Arguments]    ${format}    ${cli}=    ${lib}=DocFormat.py
     ${lib} =    Join Path    ${TESTDATADIR}    ${lib}
     Run Libdoc And Parse Output     ${cli} ${lib}
-    Format should be    ${expected}
+    Format should be    ${format}
     Keyword Doc Should Be    0    *bold* or <b>bold</b> http://example.com
 
-Format should be
-    [Arguments]    ${expected}
-    Element Attribute Should Be    ${LIBDOC}    format    ${expected}
+Test Format In XML:HTML
+    [Arguments]    ${cli}=    ${lib}=DocFormat.py
+    ${lib} =    Join Path    ${TESTDATADIR}    ${lib}
+    Run Libdoc And Parse Output     ${cli} ${lib}
+    Format should be    HTML
+    Keyword Doc Should Be    0    <p><b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}</p>

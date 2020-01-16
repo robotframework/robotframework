@@ -9,7 +9,7 @@ Default Test Timeout
     Timeouted
 
 Test Timeout With Message
-    [Timeout]    1d2h    The message
+    [Timeout]    1d2h
     Timeouted
 
 Test Timeout With Variable
@@ -22,5 +22,5 @@ No Timeout
 
 *** Keywords ***
 Timeouted
-    [Timeout]    42    My message
+    [Timeout]    42
     No Operation

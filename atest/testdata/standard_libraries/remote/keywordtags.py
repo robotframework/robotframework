@@ -1,8 +1,6 @@
 import sys
 
-from robot.api.deco import keyword
-
-from remoteserver import RemoteServer
+from remoteserver import RemoteServer, keyword
 
 
 class KeywordTags(object):

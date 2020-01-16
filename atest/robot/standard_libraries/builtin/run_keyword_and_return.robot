@@ -54,3 +54,9 @@ Run Keyword And Return If with list variable containing escaped items
 
 Run Keyword And Return If return strings that needs to be escaped
     Check Test Case    ${TESTNAME}
+
+Run Keyword And Return In Teardown
+    Check Test Case    ${TESTNAME}
+
+Run Keyword And Return In Teardown When Keyword Fails
+    Check Test Case    ${TESTNAME}

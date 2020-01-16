@@ -69,9 +69,9 @@ containing it. On modern machines running all acceptance tests ought to
 take less than ten minutes with Python, but with Jython the execution time
 is considerably longer. This is due to Jython being somewhat slower than
 Python in general, but the main reason is that the JVM is started by
-acceptance dozens of times and that always takes few seconds.
+acceptance tests dozens of times and that always takes a few seconds.
 
-Before a release tests should be executed separately using  Python, Jython,
+Before a release tests should be executed separately using Python, Jython,
 IronPython and PyPy to verify interoperability with all supported interpreters.
 Tests should also be run using different interpreter versions (when applicable)
 and on different operating systems.
@@ -83,7 +83,7 @@ during the execution are created under the system temporary directory.
 Test data
 ---------
 
-The test data is divided to two, test data part (``atest/testdata`` folder) and
+The test data is divided into two, test data part (``atest/testdata`` folder) and
 running part (``atest/robot`` folder). Test data side contains test cases for
 different features. Running side contains the actual acceptance test cases
 that run the test cases on the test data side and verify their results.
@@ -102,11 +102,11 @@ other details can be tested also, but that logic is in the running side.
 Test tags
 ---------
 
-The tests on the running side (``atest/robot``) contains tags that are used
+The tests on the running side (``atest/robot``) contain tags that are used
 to include or exclude them based on the platform and required dependencies.
 Selecting tests based on the platform is done automatically by the `<run.py>`__
 script, but additional selection can be done by the user to avoid running
-tests with `precondtions`_ that are not met.
+tests with `preconditions`_ that are not met.
 
 manual
   Require manual interaction from user. Used with Dialogs library tests.
@@ -119,16 +119,16 @@ no-ci
   Tests which are not executed at continuous integration. Contains all tests
   tagged with ``manual`` or ``telnet``.
 
-require-yaml, require-docutils, require-pygments, require-lxml, require-screenshot, require-tools.jar
+require-yaml, require-enum, require-docutils, require-pygments, require-lxml, require-screenshot, require-tools.jar
   Require specified Python module or some other external tool to be installed.
   See `Preconditions`_ for details and exclude like ``--exclude require-lxml``
   if needed.
 
-require-windows, require-jython, ...
+require-windows, require-jython, require-py2, require-py3, ...
   Tests that require certain operating system or Python interpreter.
   Excluded automatically outside these platforms.
 
-no-windows, no-osx, no-jython, no-ipy,  ...
+no-windows, no-osx, no-jython, no-ipy, ...
   Tests to be excluded on certain operating systems or Python interpreters.
   Excluded automatically on these platforms.
 
@@ -162,11 +162,15 @@ These Python modules need to be installed:
 
 - `docutils <http://docutils.sourceforge.net/>`_ is needed with tests related
   to parsing test data in reStructuredText format and with Libdoc tests
-  for documentation in reST format.
+  for documentation in reST format. `Not compatible with IronPython
+  <https://github.com/IronLanguages/ironpython2/issues/113>`__.
 - `Pygments <http://pygments.org/>`_ is needed by Libdoc tests for syntax
   highlighting.
 - `PyYAML <http://pyyaml.org/>`__ is required with tests related to YAML
   variable files.
+- `enum34 <https://pypi.org/project/enum34/>`__ (or older
+  `enum <https://pypi.org/project/enum/>`__) by enum conversion tests.
+  This module is included by default in Python 3.4 and newer.
 - `lxml <http://lxml.de/>`__ is needed with XML library tests. Not compatible
   with Jython or IronPython.
 
@@ -179,6 +183,7 @@ individually or by using the provided `<requirements.txt>`__ file:
     pip install 'docutils>=0.9'
     pip install pygments
     pip install pyyaml
+    pip install enum34    # Needed only with Python 2.
     pip install lxml
 
     # Install using requirements.txt
@@ -186,7 +191,7 @@ individually or by using the provided `<requirements.txt>`__ file:
 
 Notice that the lxml module may require compilation on Linux, which in turn
 may require installing development headers of lxml dependencies. Alternatively
-lxml can be installed using a system package manager like
+lxml can be installed using a system package manager with a command like
 ``sudo apt-get install python-lxml``.
 
 Because lxml is not compatible with Jython or IronPython, tests requiring it
@@ -203,11 +208,11 @@ __ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
 ``tools.jar``
 ~~~~~~~~~~~~~
 
-Libdoc requires ``tools.jar``, which is part of the standard JDK installation,
-to be in ``CLASSPATH`` when reading library documentation from Java source
-files. In addition to setting ``CLASSPATH`` explicitly, it is possible to
-put ``tools.jar`` into the ``ext-lib`` directory in the project root and
-``CLASSPATH`` is set automatically.
+When using Java 8 or earlier, Libdoc requires ``tools.jar``, which is part
+of the standard JDK installation, to be in ``CLASSPATH`` when reading library
+documentation from Java source files. In addition to setting ``CLASSPATH``
+explicitly, it is possible to put ``tools.jar`` into the ``ext-lib``
+directory in the project root and ``CLASSPATH`` is set automatically.
 
 Telnet tests
 ------------

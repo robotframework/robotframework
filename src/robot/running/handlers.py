@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from copy import copy
+
 from robot.utils import (getdoc, getshortdoc, is_java_init, is_java_method,
                          is_list_like, printable_name, split_tags_from_doc,
                          type_name)
@@ -22,6 +24,7 @@ from robot.model import Tags
 from .arguments import (ArgumentSpec, DynamicArgumentParser,
                         JavaArgumentCoercer, JavaArgumentParser,
                         PythonArgumentParser)
+from .dynamicmethods import GetKeywordTypes
 from .librarykeywordrunner import (EmbeddedArgumentsRunner,
                                    LibraryKeywordRunner, RunKeywordRunner)
 from .runkwregister import RUN_KW_REGISTER
@@ -51,9 +54,9 @@ class _RunnableHandler(object):
 
     def __init__(self, library, handler_name, handler_method, doc='', tags=None):
         self.library = library
+        self._handler_name = handler_name
         self.name = self._get_name(handler_name, handler_method)
         self.arguments = self._parse_arguments(handler_method)
-        self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
         doc, tags_from_doc = split_tags_from_doc(doc or '')
@@ -157,22 +160,29 @@ class _DynamicHandler(_RunnableHandler):
     def __init__(self, library, handler_name, dynamic_method, doc='',
                  argspec=None, tags=None):
         self._argspec = argspec
-        _RunnableHandler.__init__(self, library, handler_name,
-                                  dynamic_method.method, doc, tags)
         self._run_keyword_method_name = dynamic_method.name
         self._supports_kwargs = dynamic_method.supports_kwargs
-        if argspec and argspec[-1].startswith('**'):
-            if not self._supports_kwargs:
-                raise DataError("Too few '%s' method parameters for **kwargs "
-                                "support." % self._run_keyword_method_name)
+        _RunnableHandler.__init__(self, library, handler_name,
+                                  dynamic_method.method, doc, tags)
 
     def _parse_arguments(self, handler_method):
-        return DynamicArgumentParser().parse(self._argspec, self.longname)
+        spec = DynamicArgumentParser().parse(self._argspec, self.longname)
+        if not self._supports_kwargs:
+            if spec.kwargs:
+                raise DataError("Too few '%s' method parameters for **kwargs "
+                                "support." % self._run_keyword_method_name)
+            if spec.kwonlyargs:
+                raise DataError("Too few '%s' method parameters for "
+                                "keyword-only arguments support."
+                                % self._run_keyword_method_name)
+        spec.types = GetKeywordTypes(self.library.get_instance())(self._handler_name)
+        return spec
 
     def resolve_arguments(self, arguments, variables=None):
         positional, named = self.arguments.resolve(arguments, variables)
-        arguments, kwargs = self.arguments.map(positional, named)
-        return arguments, kwargs
+        if not self._supports_kwargs:
+            positional, named = self.arguments.map(positional, named)
+        return positional, named
 
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
@@ -254,11 +264,19 @@ class EmbeddedArgumentsHandler(object):
 
     def __init__(self, name_regexp, orig_handler):
         self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
-        self._orig_handler = orig_handler
         self.name_regexp = name_regexp
+        self._orig_handler = orig_handler
 
     def __getattr__(self, item):
         return getattr(self._orig_handler, item)
+
+    @property
+    def library(self):
+        return self._orig_handler.library
+
+    @library.setter
+    def library(self, library):
+        self._orig_handler.library = library
 
     def matches(self, name):
         return self.name_regexp.match(name) is not None
@@ -267,5 +285,5 @@ class EmbeddedArgumentsHandler(object):
         return EmbeddedArgumentsRunner(self, name)
 
     def __copy__(self):
-        # Needed due to https://github.com/IronLanguages/main/issues/1192
-        return EmbeddedArgumentsHandler(self.name_regexp, self._orig_handler)
+        orig_handler = copy(self._orig_handler)
+        return EmbeddedArgumentsHandler(self.name_regexp, orig_handler)

@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.errors import DataError
 from robot.utils import get_timestamp, file_writer, seq2str2
 
 from .logger import LOGGER
@@ -24,9 +25,9 @@ def DebugFile(path):
         LOGGER.info('No debug file')
         return None
     try:
-        outfile = file_writer(path)
-    except EnvironmentError as err:
-        LOGGER.error("Opening debug file '%s' failed: %s" % (path, err.strerror))
+        outfile = file_writer(path, usage='debug')
+    except DataError as err:
+        LOGGER.error(err.message)
         return None
     else:
         LOGGER.info('Debug file: %s' % path)

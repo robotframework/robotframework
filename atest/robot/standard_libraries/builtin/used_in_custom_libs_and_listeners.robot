@@ -18,3 +18,21 @@ Use 'Run Keyword' with non-Unicode values
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    42
     Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    \\xff
+
+Use BuiltIn keywords with timeouts
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Test timeout 1 day active. * seconds left.    level=DEBUG    pattern=True
+    Check Log Message    ${tc.kws[0].msgs[1]}    Log level changed from INFO to DEBUG.
+    Check Log Message    ${tc.kws[0].msgs[2]}    Hello, debug world!    DEBUG
+    Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    Test timeout 1 day active. * seconds left.    level=DEBUG    pattern=True
+    Check Log Message    ${tc.kws[3].kws[0].msgs[1]}    42
+    Check Log Message    ${tc.kws[3].kws[1].msgs[0]}    Test timeout 1 day active. * seconds left.    level=DEBUG    pattern=True
+    Check Log Message    ${tc.kws[3].kws[1].msgs[1]}    \\xff
+
+User keyword used via 'Run Keyword'
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    This is x-911-zzz
+
+User keyword used via 'Run Keyword' with timeout and trace level
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[1]}    This is x-911-zzz

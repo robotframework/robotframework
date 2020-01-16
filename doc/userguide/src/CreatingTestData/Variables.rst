@@ -56,23 +56,25 @@ __ `Dictionary variables`_
 __ `Setting variables in command line`_
 __ Escaping_
 
-Variable types
---------------
+Using variables
+---------------
 
-Different variable types are explained in this section. How variables
-can be created is discussed in subsequent sections.
+This section explains how to use variables, including the normal scalar
+variable syntax `${var}`, how to use variables in list and dictionary
+contexts like `@{var}` and `&{var}`, respectively, and how to use environment
+variables like `%{var}`. Different ways how to create variables are discussed
+in the subsequent sections.
 
 Robot Framework variables, similarly as keywords, are
 case-insensitive, and also spaces and underscores are
 ignored. However, it is recommended to use capital letters with
 global variables (for example, `${PATH}` or `${TWO WORDS}`)
-and small letters with variables that are only available in certain
-test cases or user keywords (for example, `${my var}` or
-`${myVar}`). Much more importantly, though, cases should be used
-consistently.
+and small letters with local variables that are only available in certain
+test cases or user keywords (for example, `${my var}`). Much more
+importantly, though, case should be used consistently.
 
 Variable name consists of the variable type identifier (`$`, `@`, `&`, `%`),
-curly braces (`{`, `}`) and actual variable name between the braces.
+curly braces (`{`, `}`) and the actual variable name between the braces.
 Unlike in some programming languages where similar variable syntax is
 used, curly braces are always mandatory. Variable names can basically have
 any characters between the curly braces. However, using only alphabetic
@@ -80,16 +82,16 @@ characters from a to z, numbers, underscore and space is recommended, and
 it is even a requirement for using the `extended variable syntax`_.
 
 .. _scalar variable:
+.. _scalar variables:
 
-Scalar variables
-~~~~~~~~~~~~~~~~
+Scalar variable syntax
+~~~~~~~~~~~~~~~~~~~~~~
 
-When scalar variables are used in the test data, they are replaced
-with the value they are assigned to. While scalar variables are most
-commonly used for simple strings, you can assign any objects,
-including lists, to them. The scalar variable syntax, for example
-`${NAME}`, should be familiar to most users, as it is also used,
-for example, in shell scripts and Perl programming language.
+The most common way to use variables in Robot Framework test data is using
+the scalar variable syntax like `${var}`. When this syntax is used, the
+variable name is replaced with its value as-is. Most of the time variable
+values are strings, but variables can contain any object, including numbers,
+lists, dictionaries, or even custom objects.
 
 The example below illustrates the usage of scalar variables. Assuming
 that the variables `${GREET}` and `${NAME}` are available
@@ -107,21 +109,18 @@ both the example test cases are equivalent.
        Log    ${GREET}
        Log    ${GREET}, ${NAME}!!
 
-When a scalar variable is used as the only value in a test data cell,
-the scalar variable is replaced with the value it has. The value may
-be any object. When a scalar variable is used in a test data cell with
-anything else (constant strings or other variables), its value is
-first converted into a Unicode string and then catenated to whatever is in
-that cell. Converting the value into a string means that the object's
-method `__unicode__` (in Python, with `__str__` as a fallback)
-or `toString` (in Java) is called.
+When a scalar variable is used alone without any text or other variables
+around it, like in `${GREET}` above, the variable is replaced with
+its value as-is and the value can be any object. If the variable is not used
+alone, like `${GREER}, ${NAME}!!` above, its value is first converted into
+a string and then concatenated with the other data.
 
 .. note:: Variable values are used as-is without conversions also when
           passing arguments to keywords using the `named arguments`_
           syntax like `argname=${var}`.
 
 The example below demonstrates the difference between having a
-variable in a cell alone or with other content. First, let us assume
+variable in alone or with other content. First, let us assume
 that we have a variable `${STR}` set to a string `Hello,
 world!` and `${OBJ}` set to an instance of the following Java
 object:
@@ -131,7 +130,7 @@ object:
  public class MyObj {
 
      public String toString() {
-         return "Hi, tellus!";
+         return "Hi, terra!";
      }
  }
 
@@ -152,7 +151,7 @@ the arguments as explained below:
 - :name:`KW 1` gets a string `Hello, world!`
 - :name:`KW 2` gets an object stored to variable `${OBJ}`
 - :name:`KW 3` gets a string `I said "Hello, world!"`
-- :name:`KW 4` gets a string `You said "Hi, tellus!"`
+- :name:`KW 4` gets a string `You said "Hi, terra!"`
 
 .. Note:: Converting variables to Unicode obviously fails if the variable
           cannot be represented as Unicode. This can happen, for example,
@@ -163,13 +162,14 @@ the arguments as explained below:
           the value is used as-is.
 
 .. _list variable:
+.. _list variables:
 
-List variables
-~~~~~~~~~~~~~~
+List variable syntax
+~~~~~~~~~~~~~~~~~~~~
 
-When a variable is used as a scalar like `${EXAMPLE}`, its value will be
+When a variable is used as a scalar like `${EXAMPLE}`, its value is be
 used as-is. If a variable value is a list or list-like, it is also possible
-to use as a list variable like `@{EXAMPLE}`. In this case individual list
+to use it as a list variable like `@{EXAMPLE}`. In this case individual list
 items are passed in as arguments separately. This is easiest to explain with
 an example. Assuming that a variable `@{USER}` has value `['robot', 'secret']`,
 the following two test cases are equivalent:
@@ -189,11 +189,6 @@ requires its value to be a Python list or list-like object. Robot Framework
 does not allow strings to be used as lists, but other iterable objects such
 as tuples or dictionaries are accepted.
 
-Prior to Robot Framework 2.9, scalar and list variables were stored separately,
-but it was possible to use list variables as scalars and scalar variables as
-lists. This caused lot of confusion when there accidentally was a scalar
-variable and a list variable with same name but different value.
-
 Using list variables with other data
 ''''''''''''''''''''''''''''''''''''
 
@@ -207,35 +202,6 @@ other list variables.
        Keyword    @{LIST}    more    args
        Keyword    ${SCALAR}    @{LIST}    constant
        Keyword    @{LIST}    @{ANOTHER}    @{ONE MORE}
-
-If a list variable is used in a cell with other data (constant strings or other
-variables), the final value will contain a string representation of the
-variable value. The end result is thus exactly the same as when using the
-variable as a scalar with other data in the same cell.
-
-Accessing individual list items
-'''''''''''''''''''''''''''''''
-
-It is possible to access a certain value of a list variable with the syntax
-`@{NAME}[index]`, where `index` is the index of the selected value. Indices
-start from zero, negative indices can be used to access items from the end,
-and trying to access a value with too large an index causes an error.
-Indices are automatically converted to integers, and it is also possible to
-use variables as indices. List items accessed in this manner can be used
-similarly as scalar variables.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   List Variable Item
-       Login    @{USER}[0]    @{USER}[1]
-       Title Should Be    Welcome @{USER}[0]!
-
-   Negative Index
-       Log    @{LIST}[-1]
-
-   Index As Variable
-       Log    @{LIST}[${INDEX}]
 
 Using list variables with settings
 ''''''''''''''''''''''''''''''''''
@@ -253,18 +219,19 @@ those places where list variables are not supported.
    *** Settings ***
    Library         ExampleLibrary      @{LIB ARGS}    # This works
    Library         ${LIBRARY}          @{LIB ARGS}    # This works
-   Library         @{NAME AND ARGS}                   # This does not work
+   Library         @{LIBRARY AND ARGS}                # This does not work
    Suite Setup     Some Keyword        @{KW ARGS}     # This works
    Suite Setup     ${KEYWORD}          @{KW ARGS}     # This works
-   Suite Setup     @{KEYWORD}                         # This does not work
+   Suite Setup     @{KEYWORD AND ARGS}                # This does not work
    Default Tags    @{TAGS}                            # This works
 
 __ `All available settings in test data`_
 
 .. _dictionary variable:
+.. _dictionary variables:
 
-Dictionary variables
-~~~~~~~~~~~~~~~~~~~~
+Dictionary variable syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As discussed above, a variable containing a list can be used as a `list
 variable`_ to pass list items to a keyword as individual arguments.
@@ -284,8 +251,6 @@ are equivalent.
    Dict Variable
        Login    &{USER}
 
-Dictionary variables are new in Robot Framework 2.9.
-
 Using dictionary variables with other data
 ''''''''''''''''''''''''''''''''''''''''''
 
@@ -302,38 +267,6 @@ named arguments or other dictionaries.
        Keyword    positional    @{LIST}    &{DICT}
        Keyword    &{DICT}    &{ANOTHER}    &{ONE MORE}
 
-If a dictionary variable is used in a cell with other data (constant strings or
-other variables), the final value will contain a string representation of the
-variable value. The end result is thus exactly the same as when using the
-variable as a scalar with other data in the same cell.
-
-Accessing individual dictionary items
-'''''''''''''''''''''''''''''''''''''
-
-It is possible to access a certain value of a dictionary variable
-with the syntax `&{NAME}[key]`, where `key` is the name of the
-selected value. Keys are considered to be strings, but non-strings
-keys can be used as variables. Dictionary values accessed in this
-manner can be used similarly as scalar variables.
-
-If a key is a string, it is possible to access its value also using
-attribute access syntax `${NAME.key}`. See `Creating dictionary variables`_
-for more details about this syntax.
-
-.. sourcecode:: robotframework
-
-   *** Test Cases ***
-   Dict Variable Item
-       Login    &{USER}[name]    &{USER}[password]
-       Title Should Be    Welcome &{USER}[name]!
-
-   Key As Variable
-       Log Many    &{DICT}[${KEY}]    &{DICT}[${42}]
-
-   Attribute Access
-       Login    ${USER.name}    ${USER.password}
-       Title Should Be    Welcome ${USER.name}!
-
 Using dictionary variables with settings
 ''''''''''''''''''''''''''''''''''''''''
 
@@ -348,12 +281,116 @@ are imports, setups and teardowns where dictionaries can be used as arguments.
 
 .. _environment variable:
 
+Accessing list and dictionary items
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to access items of lists and dictionaries using special
+syntax `${var}[item]`. Accessing items is an old feature, but prior to
+Robot Framework 3.1 the syntax was `@{var}[item]` with lists and
+`&{var}[item]` with dictionaries. The old syntax was deprecated in
+Robot Framework 3.2 and will not be supported in the future.
+
+Accessing list items
+''''''''''''''''''''
+
+It is possible to access a certain item of a list variable with the syntax
+`${var}[index]`, where `index` is the index of the selected value. Indices
+start from zero, negative indices can be used to access items from the end,
+and trying to access an item with too large an index causes an error.
+Indices are automatically converted to integers, and it is also possible to
+use variables as indices. List items accessed in this manner can be used
+similarly as scalar variables.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   List variable item
+       Login    ${USER}[0]    ${USER}[1]
+       Title Should Be    Welcome ${USER}[0]!
+
+   Negative index
+       Log    ${LIST}[-1]
+
+   Index defined as variable
+       Log    ${LIST}[${INDEX}]
+
+List item access supports also the `same "slice" functionality as Python`__
+with syntax like `${var}[1:]`. With this syntax you do not get a single
+item but a slice of the original list. Same way as with Python you can
+specify the start index, the end index, and the step:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Start index
+       Keyword    ${LIST}[1:]
+
+   End index
+       Keyword    ${LIST}[:4]
+
+   Start and end
+       Keyword    ${LIST}[2:-1]
+
+   Step
+       Keyword    ${LIST}[::2]
+       Keyword    ${LIST}[1:-1:10]
+
+.. note:: The slice syntax is new in Robot Framework 3.1 and does not work
+          with the old `@{var}[index]` syntax.
+
+__ https://docs.python.org/glossary.html#term-slice
+
+Accessing individual dictionary items
+'''''''''''''''''''''''''''''''''''''
+
+It is possible to access a certain value of a dictionary variable
+with the syntax `${NAME}[key]`, where `key` is the name of the
+selected value. Keys are considered to be strings, but non-strings
+keys can be used as variables. Dictionary values accessed in this
+manner can be used similarly as scalar variables.
+
+If a key is a string, it is possible to access its value also using
+attribute access syntax `${NAME.key}`. See `Creating dictionary variables`_
+for more details about this syntax.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Dictionary variable item
+       Login    ${USER}[name]    ${USER}[password]
+       Title Should Be    Welcome ${USER}[name]!
+
+   Key defined as variable
+       Log Many    ${DICT}[${KEY}]    ${DICT}[${42}]
+
+   Attribute access
+       Login    ${USER.name}    ${USER.password}
+       Title Should Be    Welcome ${USER.name}!
+
+Nested item access
+''''''''''''''''''
+
+Also nested list and dictionary structures can be accessed using the same
+item access syntax like `${var}[item1][item2]`. This is especially useful
+when working with JSON data often returned by REST services. For example,
+if a variable `${DATA}` contains `[{'id': 1, 'name': 'Robot'},
+{'id': 2, 'name': 'Mr. X'}]`, this tests would pass:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Nested item access
+       Should Be Equal    ${DATA}[0][name]    Robot
+       Should Be Equal    ${DATA}[1][id]      ${2}
+
 Environment variables
 ~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework allows using environment variables in the test
-data using the syntax `%{ENV_VAR_NAME}`. They are limited to string
-values.
+Robot Framework allows using environment variables in the test data using
+the syntax `%{ENV_VAR_NAME}`. They are limited to string values. It is
+possible to specify a default value, that is used if the environment
+variable does not exists, by separating the variable name and the default
+value with an equal sign like `%{ENV_VAR_NAME=default value}`.
 
 Environment variables set in the operating system before the test execution are
 available during it, and it is possible to create new ones with the keyword
@@ -367,9 +404,14 @@ not effective after the test execution.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Env Variables
+   Environment variables
        Log    Current user: %{USER}
        Run    %{JAVA_HOME}${/}javac
+
+   Environment variables with defaults
+       Set port    %{APPLICATION_PORT=8080}
+
+.. note:: Support for specifying the default value is new in Robot Framework 3.2.
 
 Java system properties
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -381,8 +423,9 @@ system property with same name exist, the environment variable will be used.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   System Properties
+   System properties
        Log    %{user.name} running tests on %{os.name}
+       Log    %{custom.property=default value}
 
 __ http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
@@ -437,8 +480,6 @@ can be changed by having `SEPARATOR=<sep>` in the first cell.
    ${EXAMPLE}      This value is joined    together with a space
    ${MULTILINE}    SEPARATOR=\n    First line
    ...             Second line     Third line
-
-Joining long values like above is a new feature in Robot Framework 2.9.
 
 __ `Dividing test data to several rows`_
 
@@ -659,7 +700,7 @@ a list variable.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Assign Multiple
+   Assign multiple
        ${a}    ${b}    ${c} =    Get Three
        ${first}    @{rest} =    Get Three
        @{before}    ${last} =    Get Three
@@ -677,13 +718,6 @@ the following variables are created:
 It is an error if the returned list has more or less values than there are
 scalar variables to assign. Additionally, only one list variable is allowed
 and dictionary variables can only be assigned alone.
-
-The support for assigning multiple variables was slightly changed in
-Robot Framework 2.9. Prior to it a list variable was only allowed as
-the last assigned variable, but nowadays it can be used anywhere.
-Additionally, it was possible to return more values than scalar variables.
-In that case the last scalar variable was magically turned into a list
-containing the extra values.
 
 Using :name:`Set Test/Suite/Global Variable` keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -846,19 +880,19 @@ easier to understand than those using backslashes.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   One Space
+   One space
        Should Be Equal    ${SPACE}          \ \
 
-   Four Spaces
+   Four spaces
        Should Be Equal    ${SPACE * 4}      \ \ \ \ \
 
-   Ten Spaces
+   Ten spaces
        Should Be Equal    ${SPACE * 10}     \ \ \ \ \ \ \ \ \ \ \
 
-   Quoted Space
+   Quoted space
        Should Be Equal    "${SPACE}"        " "
 
-   Quoted Spaces
+   Quoted spaces
        Should Be Equal    "${SPACE * 2}"    " \ "
 
    Empty
@@ -882,10 +916,14 @@ scopes. Modifying the value of `@{EMPTY}` or `&{EMPTY}` is not possible.
        Set Global Variable    @{LIST}    @{EMPTY}
        Set Suite Variable     &{DICT}    &{EMPTY}
 
-.. note:: `&{EMPTY}` is new in Robot Framework 2.9.
+.. note:: `${SPACE}` represents the ASCII space (`\x20`) and `other spaces`__
+          should be specified using the `escape sequences`__ like `\xA0`
+          (NO-BREAK SPACE) and `\u3000` (IDEOGRAPHIC SPACE).
 
 __ Escaping_
 __ https://groups.google.com/group/robotframework-users/browse_thread/thread/ccc9e1cd77870437/4577836fe946e7d5?lnk=gst&q=templates#4577836fe946e7d5
+__ http://jkorpela.fi/chars/spaces.html
+__ Escaping_
 
 Automatic variables
 ~~~~~~~~~~~~~~~~~~~
@@ -1106,15 +1144,9 @@ them as arguments__.
 
 It is recommended to use lower-case letters with local variables.
 
-.. note:: Prior to Robot Framework 2.9 variables in the local scope
-          `leaked to lower level user keywords`__. This was never an
-          intended feature, and variables should be set or passed
-          explicitly also with earlier versions.
-
 __ `Setting variables in command line`_
 __ `Return values from keywords`_
 __ `User keyword arguments`_
-__ https://github.com/robotframework/robotframework/issues/532
 
 Advanced variable features
 --------------------------
@@ -1349,3 +1381,136 @@ or `${JANE HOME}`, depending on if :name:`Get Name` returns
    Example
        ${name} =    Get Name
        Do X    ${${name} HOME}
+
+Inline Python evaluation
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Variable syntax can also be used for evaluating Python expressions. The
+basic syntax is `${{expression}}` i.e. there are double curly braces around
+the expression. The `expression` can be any valid Python expression such as
+`${{1 + 2}}` or `${{['a', 'list']}}`. Spaces around the expression are allowed,
+so also `${{ 1 + 2 }}` and `${{ ['a', 'list'] }}` are valid. In addition to
+using normal `scalar variables`_, also `list variables`_ and
+`dictionary variables`_ support `@{{expression}}` and `&{{expression}}` syntax,
+respectively.
+
+Main usages for this pretty advanced functionality are:
+
+- Evaluating Python expressions involving Robot Framework's variables
+  (`${{len('${var}') > 3}}`, `${{$var[0] if $var is not None else None}}`).
+
+- Creating values that are not Python base types
+  (`${{decimal.Decimal('0.11')}}`, `${{datatime.date(2019, 11, 5)}}`).
+
+- Creating values dynamically (`${{random.randint(0, 100)}}`,
+  `${{datetime.date.today()}}`).
+
+- Constructing collections, especially nested collections (`${{[1, 2, 3, 4]}}`,
+  `${{ {'id': 1, 'name': 'Example', children: [7, 9]} }}`).
+
+- Accessing constants and other useful attributes in Python modules
+  (`${{math.pi}}`, `${{platform.system()}}`).
+
+This is somewhat similar functionality than the `extended variable syntax`_
+discussed earlier. As the examples above illustrate, this syntax is even more
+powerful as it provides access to Python built-ins like `len()` and modules
+like `math`. In addition to being able to use variables like `${var}` in
+the expressions (they are replaced before evaluation), variables are also
+available using the special `$var` syntax during evaluation. All these
+features are discussed in more detail below.
+
+.. tip:: Instead of creating complicated expressions, it is often better
+         to move the logic into a `custom test library`__. That eases
+         maintenance, makes test data easier to understand and can also
+         enhance execution speed.
+
+.. note:: The inline Python evaluation syntax is new in Robot Framework 3.2.
+
+__ `Creating test libraries`_
+
+Evaluation namespace
+''''''''''''''''''''
+
+Expressions are evaluated using Python's eval__ function so that all Python
+built-in functions like `len()` and `int()` are available. In addition to that,
+all unrecognized Python variables are considered to be modules that are
+automatically imported. It is possible to use all available Python modules,
+including the standard modules and the installed third party modules.
+
+Examples:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   ${VAR}    123
+
+   *** Test Cases ***
+   Use builtins
+       Should Be Equal      ${{len('${VAR}')}}        ${3}
+       Should Be Equal      ${{int('${VAR}')}}        ${123}
+
+   Access modules
+       Should Be Equal      ${{os.sep}}               ${/}
+       Should Be Equal      ${{round(math.pi, 2)}}    ${3.14}
+       Should Start With    ${{robot.__version__}}    3.
+
+This syntax is basically the same syntax that the :name:`Evaluate` keyword and
+some other keywords in the BuiltIn_ library support. The main difference is
+that these keywords always evaluate expressions and thus the `${{ }}`
+decoration is not needed with them.
+
+A limitation of the `${{expression}}` syntax is that nested modules like
+`rootmod.submod` can only be used if the root module automatically imports
+the sub module. That is not always the case and using such modules is not
+possible. An example that is relevant in the automation context is the
+`selenium` module that is implemented, at least at the time of this writing,
+so that just importing `selenium` does not import the `selenium.webdriver` sub
+module. A workaround is using the aforementioned :name:`Evaluate` keyword
+that accepts modules to be imported and added to the evaluation namespace
+as an argument:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Does not work due to nested module structure
+       Log    ${{selenium.webdriver.ChromeOptions()}}
+
+   Evaluate keyword to the rescue
+       ${options} =    Evaluate    selenium.webdriver.ChromeOptions()
+       ...    modules=selenium.webdriver
+       Log    ${options}
+
+__ http://docs.python.org/library/functions.html#eval
+
+Using variables
+'''''''''''''''
+
+When a variable is used in the expression using the normal `${variable}`
+syntax, its value is replaced before the expression is evaluated. This
+means that the value used in the expression will be the string
+representation of the variable value, not the variable value itself.
+This is not a problem with numbers and other objects that have a string
+representation that can be evaluated directly. For example, if we have
+a return code as an integer in variable `${rc}`, using something like
+`${{ ${rc} < 10 }}` is fine.
+
+With other objects the behavior depends on the string representation.
+Most importantly, strings must always be quoted, and if they can contain
+newlines, they must be triple quoted. Examples in the previous section already
+showed using `${{len('${VAR}')}}`, and it needed to be converted to
+`${{len('''${VAR}''')}}` if the `${VAR}` variable could contain newlines.
+This is not that convenient, but luckily there is another alternative
+discussed below.
+
+Actual variables values are also available in the evaluation namespace.
+They can be accessed using special variable syntax without the curly
+braces like `$variable` and they must never be quoted. Using this syntax,
+the previous examples in this section could be written like `${{ $rc < 10 }}`
+and `${{len($VAR)}}`, and the latter would work also if the `${VAR}` variable
+contains newlines.
+
+Using the `$variable` syntax slows down expression evaluation a little.
+This should not typically matter, but should be taken into account if
+complex expressions are evaluated often and there are strict time
+constrains. Moving such logic to test libraries is typically a good idea
+anyway.

@@ -142,9 +142,10 @@ Positional with defaults and kwargs
 Varags and kwargs
     [Arguments]    @{varargs}    &{kwargs}
     @{items} =    Create List    @{varargs}
-    :FOR    ${key}    IN    @{kwargs}
-    \    ${value} =    Get From Dictionary    ${kwargs}    ${key}
-    \    Append To List    ${items}    ${key}: ${value}
+    FOR    ${key}    IN    @{kwargs}
+        ${value} =    Get From Dictionary    ${kwargs}    ${key}
+        Append To List    ${items}    ${key}: ${value}
+    END
     ${result} =    Catenate    SEPARATOR=,${SPACE}    @{items}
     [Return]    ${result}
 

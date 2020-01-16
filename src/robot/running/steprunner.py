@@ -16,6 +16,7 @@
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExitForLoop, ContinueForLoop, DataError)
 from robot.result import Keyword as KeywordResult
+from robot.output import librarylogger as logger
 from robot.utils import (format_assign_message, frange, get_error_message,
                          is_list_like, is_number, plural_or_not as s, type_name)
 from robot.variables import is_scalar_var
@@ -58,12 +59,12 @@ class StepRunner(object):
 
 
 def ForRunner(context, templated=False, flavor='IN'):
-    runners = dict(IN=ForInRunner,
-                   INRANGE=ForInRangeRunner,
-                   INZIP=ForInZipRunner,
-                   INENUMERATE=ForInEnumerateRunner)
+    runners = {'IN': ForInRunner,
+               'IN RANGE': ForInRangeRunner,
+               'IN ZIP': ForInZipRunner,
+               'IN ENUMERATE': ForInEnumerateRunner}
     try:
-        runner = runners[flavor.upper().replace(' ', '')]
+        runner = runners[flavor]
     except KeyError:
         return InvalidForRunner(context, flavor)
     return runner(context, templated)
@@ -91,6 +92,15 @@ class ForInRunner(object):
         return 'IN'
 
     def _validate(self, data):
+        # TODO: Remove header and end deprecations in RF 3.3!
+        if data._header != 'FOR':
+            logger.warn("For loop header '%s' is deprecated. "
+                        "Use 'FOR' instead." % data._header)
+        if data._end is None:
+            raise DataError("For loop has no closing 'END'.")
+        if data._end != 'END':
+            logger.warn("Marking for loop body with '\\' is deprecated. "
+                        "Remove markers and use 'END' instead.")
         if not data.variables:
             raise DataError('FOR loop has no loop variables.')
         for var in data.variables:

@@ -76,6 +76,6 @@ Run Keyword If test Passed Can't Be Used In Suite Setup or Teardown
 
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Run Keyword If Test Failed Uses User Keyword
-    Check Keyword Data    ${tc.teardown}    BuiltIn.Run Keyword If Test Failed    args=Teardown UK, \${TEARDOWN MESSAGE}
+    Check Keyword Data    ${tc.teardown}    BuiltIn.Run Keyword If Test Failed    args=Teardown UK, \${TEARDOWN MESSAGE}    type=teardown
     Check Keyword Data    ${tc.teardown.kws[0]}    Teardown UK    args=\${TEARDOWN MESSAGE}
     Check Keyword Data    ${tc.teardown.kws[0].kws[0]}    BuiltIn.Log    args=\${message}

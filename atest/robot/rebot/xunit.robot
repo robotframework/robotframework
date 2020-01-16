@@ -31,13 +31,19 @@ XUnit Option Given
     Length Should Be    ${failures}    5
     Should Be Equal    ${failures[0].attrib['message']}    ${MESSAGES}
 
+Times in xUnit output
+    Previous Test Should Have Passed    XUnit Option Given
+    ${suite} =    Parse XML    ${OUTDIR}/xunit.xml
+    Element Attribute Should Match    ${suite}    time    ?.???
+    Element Attribute Should Match    ${suite}    time    ?.???    xpath=.//testcase[1]
+
 XUnit skip non-criticals
     Run Rebot    --xUnit xunit.xml --xUnitSkipNonCritical --NonCritical f1    ${INPUT FILE}
     Stderr Should Be Empty
     ${root} =    Parse XML    ${OUTDIR}/xunit.xml
     Element Attribute Should Be    ${root}    tests    19
     Element Attribute Should Be    ${root}    failures    4
-    Element Attribute Should Be    ${root}    skip    10
+    Element Attribute Should Be    ${root}    skipped    10
     ${skipped} =    Get Elements    ${root}    xpath=testcase/skipped
     Should Be Equal    ${skipped[0].text}    FAIL: Expected
     Should Be Equal    ${skipped[1].text}    PASS
@@ -49,7 +55,8 @@ Invalid XUnit File
     File Should Not Exist    ${INVALID}
     File Should Exist    ${OUTDIR}/log.html
     ${path} =    Regexp Escape    ${INVALID}
-    Check Stderr Matches Regexp    \\[ ERROR \\] Writing xunit file '${path}' failed: .*
+    Check Stderr Matches Regexp
+    ...    \\[ ERROR \\] Opening xunit file '${path}' failed: .*
 
 *** Keywords ***
 Create Input File

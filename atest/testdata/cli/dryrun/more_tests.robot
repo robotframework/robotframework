@@ -4,6 +4,6 @@ Resource          resource.robot
 
 *** Test Cases ***
 Some other test
-    [Documentation]  FAIL Keyword 'BuiltIn.Log' expected 1 to 5 arguments, got 0.
-    Fail  Not actually executed so won't fail.
-    Log
+    [Documentation]    FAIL Keyword 'resource.Anarchy in the UK' expected 3 arguments, got 4.
+    Fail    Not actually executed so won't fail.
+    Anarchy in the UK    Too    many    arguments    here

@@ -11,4 +11,4 @@ FAILED
 6 critical tests, 0 passed, 6 failed
 6 tests total, 0 passed, 6 failed
 
-Output:*
+Output:  *.xml

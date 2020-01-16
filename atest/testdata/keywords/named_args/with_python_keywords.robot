@@ -114,7 +114,7 @@ Kwargs with positional and named
     ${result} =    Lib Mandatory Named And Kwargs    mandatory    optional    c=3
     Should Be Equal    ${result}    mandatory, optional, c:3
     ${result} =    Lib Mandatory Named And Kwargs    b=2    c=3    a=1    d=4
-    Should Be Equal    ${result}    1, 2, c:3, d:4
+    Should Be Equal    ${result}    1, 2 (int), c:3, d:4
 
 Non working named combinations with varargs
     [Template]    Execute illegal named vararg combination
@@ -122,6 +122,7 @@ Non working named combinations with varargs
     missing value for argument 'a'.                   b=b
     got positional argument after named arguments.    b=b    b
     got positional argument after named arguments.    a      b=b    c
+    got unexpected named argument 'c'.                a      b=b    c=c
     got multiple values for argument 'a'.             a      b      a=a
     got multiple values for argument 'b'.             a      b      b=b
     got multiple values for argument 'a'.             a      a=a

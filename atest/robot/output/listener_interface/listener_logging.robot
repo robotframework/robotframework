@@ -39,21 +39,31 @@ Execution errors should have messages from message and log_message methods
 
 Correct start/end warnings should be shown in execution errors
     ${msgs} =    Get start/end messages    ${ERRORS.msgs}
-    ${index} =    Set Variable    ${0}
     @{kw} =    Create List    start_keyword    end_keyword
     @{uk} =    Create List    start_keyword    @{kw}    @{kw}    @{kw}    end_keyword
-    : FOR    ${method}    IN    start_suite    @{uk}    start_test    @{uk}
-    ...    end_test    start_test    @{uk}    @{kw}    end_test    end_suite
-    \    Check Log Message    ${msgs[${index}]}    ${method}    WARN
-    \    ${index} =    Set Variable    ${index + 1}
-    Length Should Be    ${msgs}    ${index}
+    FOR    ${index}    ${method}    IN ENUMERATE
+    ...    start_suite
+    ...    @{uk}
+    ...    start_test
+    ...    @{uk}
+    ...    end_test
+    ...    start_test
+    ...    @{uk}
+    ...    @{kw}
+    ...    end_test
+    ...    end_suite
+         Check Log Message    ${msgs[${index}]}    ${method}    WARN
+    END
+    Length Should Be    ${msgs}    ${index + 1}
 
 Get start/end messages
     [Arguments]    ${all msgs}
     @{all msgs} =    Set Variable    ${all msgs}
     ${return} =    Create List
-    : FOR    ${msg}    IN    @{all msgs}
-    \    Run Keyword Unless    "message: " in r"""${msg.message}"""    Append To List    ${return}    ${msg}
+    FOR    ${msg}    IN    @{all msgs}
+        Run Keyword Unless    "message: " in $msg.message
+        ...    Append To List    ${return}    ${msg}
+    END
     [Return]    ${return}
 
 Correct messages should be logged to normal log
@@ -93,7 +103,15 @@ Correct messages should be logged to normal log
     Check Log Message    ${kw.msgs[6]}    end_keyword    WARN
 
 Correct messages should be logged to syslog
-    : FOR    ${msg}    IN    message: INFO Robot Framework    start_suite    end_suite
-    ...    start_test    end_test    output_file    log_file    report_file
-    \    Check syslog contains    | INFO \ | ${msg}
-    \    Check syslog contains    | WARN \ | ${msg}
+    FOR    ${msg}    IN
+    ...    message: INFO Robot Framework
+    ...    start_suite
+    ...    end_suite
+    ...    start_test
+    ...    end_test
+    ...    output_file
+    ...    log_file
+    ...    report_file
+        Check syslog contains    | INFO \ | ${msg}
+        Check syslog contains    | WARN \ | ${msg}
+    END

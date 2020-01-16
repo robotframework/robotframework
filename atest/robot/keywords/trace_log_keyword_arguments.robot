@@ -23,7 +23,7 @@ Mandatory And Default Arguments
 Multiple Default Values
     Check Argument Value Trace
     ...    \${a1}='10' | \${a2}='2' | \${a3}='30' | \${a4}=4
-    ...    '10' | a3='30'
+    ...    10 | a3=30
 
 Named Arguments
     Check Argument Value Trace
@@ -91,9 +91,10 @@ Check Argument Value Trace
     [Arguments]    @{expected}
     ${tc} =    Check Test Case    ${TEST NAME}
     ${length} =    Get Length    ${expected}
-    : FOR    ${index}    IN RANGE    0    ${length}
-    \    Check Log Message    ${tc.kws[${index}].msgs[0]}
-    ...    Arguments: [ @{expected}[${index}] ]    TRACE
+    FOR    ${index}    IN RANGE    0    ${length}
+        Check Log Message    ${tc.kws[${index}].msgs[0]}
+        ...    Arguments: [ ${expected}[${index}] ]    TRACE
+    END
 
 Check UKW Default, LKW Default, UKW Varargs, and LKW Varargs
     [Arguments]    ${value}

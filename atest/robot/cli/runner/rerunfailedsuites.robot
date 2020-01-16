@@ -29,10 +29,10 @@ Non-existing failing from output file is not executed
 *** Keywords ***
 Suite initialization
     Copy Directory    ${ORIG DIR}/suite    ${SUITE DIR}
-    Copy File    ${ORIG DIR}/runfailed1.robot     ${SUITE DIR}/runfailed.txt
+    Copy File    ${ORIG DIR}/runfailed1.robot     ${SUITE DIR}/runfailed.robot
     Run Tests    ${SUITE DIR}
     Copy File    ${OUTFILE}    ${RUN FAILED FROM}
-    Copy File    ${ORIG DIR}/runfailed2.robot     ${SUITE DIR}/runfailed.txt
+    Copy File    ${ORIG DIR}/runfailed2.robot     ${SUITE DIR}/runfailed.robot
     Run Tests    --rerunfailedsuites ${RUN FAILED FROM} --noncritical non_critical --exclude excluded_tag ${SUITE DIR}
 
 Test Should Have Been Executed

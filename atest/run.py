@@ -48,11 +48,15 @@ try:
 except ImportError:
     def jar(*args, **kwargs):
         raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
+except AssertionError:
+    def jar(*args, **kwargs):
+        raise RuntimeError("JAR can be created only when in the project root. "
+                           "See BUILD.rst for details.")
 
 
 ARGUMENTS = '''
 --doc Robot Framework acceptance tests
---metadata interpreter:{interpreter.name} {interpreter.version} on {interpreter.os}
+--metadata interpreter:{interpreter}
 --variablefile {variable_file};{interpreter.path};{interpreter.name};{interpreter.version}
 --pythonpath {pythonpath}
 --outputdir {outputdir}
@@ -73,11 +77,11 @@ def atests(interpreter, *arguments):
         sys.exit(err)
     outputdir, tempdir = _get_directories(interpreter)
     arguments = list(_get_arguments(interpreter, outputdir)) + list(arguments)
-    return _run(arguments, tempdir, interpreter.classpath)
+    return _run(arguments, tempdir, interpreter)
 
 
 def _get_directories(interpreter):
-    name = '{i.name}-{i.version}-{i.os}'.format(i=interpreter).replace(' ', '')
+    name = interpreter.output_name
     outputdir = dos_to_long(join(CURDIR, 'results', name))
     tempdir = dos_to_long(join(tempfile.gettempdir(), 'robottests', name))
     if exists(outputdir):
@@ -101,11 +105,14 @@ def _get_arguments(interpreter, outputdir):
         yield exclude
 
 
-def _run(args, tempdir, classpath):
+def _run(args, tempdir, interpreter):
     runner = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
     command = [sys.executable, runner] + args
-    environ = dict(os.environ, TEMPDIR=tempdir, CLASSPATH=classpath or '',
+    environ = dict(os.environ,
+                   TEMPDIR=tempdir,
+                   CLASSPATH=interpreter.classpath or '',
                    PYTHONCASEOK='True')
+    print('%s\n%s\n' % (interpreter, '-' * len(str(interpreter))))
     print('Running command:\n%s\n' % ' '.join(command))
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)
@@ -122,8 +129,8 @@ def dos_to_long(path):
         return path
     from ctypes import create_unicode_buffer, windll
     buf = create_unicode_buffer(500)
-    windll.kernel32.GetLongPathNameW(path.decode('mbcs'), buf, 500)
-    return buf.value.encode('mbcs')
+    windll.kernel32.GetLongPathNameW(path, buf, 500)
+    return buf.value
 
 
 if __name__ == '__main__':
