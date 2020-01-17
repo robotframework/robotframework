@@ -883,6 +883,9 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` and ``strip_spaces`` options.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -901,6 +904,8 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` and ``strip_spaces`` options.
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -919,6 +924,8 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` and ``strip_spaces`` options.
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -1002,6 +1009,9 @@ class _Verify(_BuiltInBase):
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with arguments ``msg`` and ``values``.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         compared items are strings, it indicates that comparison should be
@@ -1218,7 +1228,7 @@ class _Verify(_BuiltInBase):
         return count
 
     def should_not_match(self, string, pattern, msg=None, values=True,
-                         ignore_case=False):
+                         ignore_case=False, strip_spaces=False):
         """Fails if the given ``string`` matches the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell with
@@ -1238,7 +1248,7 @@ class _Verify(_BuiltInBase):
                                                       values, 'matches'))
 
     def should_match(self, string, pattern, msg=None, values=True,
-                     ignore_case=False):
+                     ignore_case=False, strip_spaces=False):
         """Fails if the given ``string`` does not match the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell with
