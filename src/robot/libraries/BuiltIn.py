@@ -809,7 +809,7 @@ class _Verify(_BuiltInBase):
         self._should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_strings(self, first, second, msg=None,
-                                       values=True, strip_spaces=False, ignore_case=False, strip_spaces=False):
+                                       values=True, ignore_case=False, strip_spaces=False):
         """Fails if objects are equal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
