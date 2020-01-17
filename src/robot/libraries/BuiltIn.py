@@ -593,7 +593,7 @@ class _Verify(_BuiltInBase):
             raise AssertionError(msg or "'%s' should be true." % condition)
 
     def should_be_equal(self, first, second, msg=None, values=True,
-                        ignore_case=False, formatter='str'):
+                        ignore_case=False, formatter='str', strip_spaces=False):
         """Fails if the given objects are unequal.
 
         Optional ``msg``, ``values`` and ``formatter`` arguments specify how
@@ -613,6 +613,9 @@ class _Verify(_BuiltInBase):
         both arguments are strings, comparison is done case-insensitively.
         If both arguments are multiline strings, this keyword uses
         `multiline string comparison`.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
 
         Examples:
         | Should Be Equal | ${x} | expected |
@@ -659,8 +662,18 @@ class _Verify(_BuiltInBase):
     def _include_values(self, values):
         return is_truthy(values) and str(values).upper() != 'NO VALUES'
 
+    def _strip_spaces(selfself, string_value, strip_spaces):
+        if strip_spaces:
+            if strip_spaces.upper() == 'LEADING':
+                string_value = string_value.lstrip()
+            elif strip_spaces.upper() == 'TRAILING':
+                string_value = string_value.rstrip()
+            elif is_truthy(strip_spaces):
+                string_value = string_value.strip()
+        return string_value
+
     def should_not_be_equal(self, first, second, msg=None, values=True,
-                            ignore_case=False):
+                            ignore_case=False, strip_spaces=False):
         """Fails if the given objects are equal.
 
         See `Should Be Equal` for an explanation on how to override the default
@@ -668,6 +681,10 @@ class _Verify(_BuiltInBase):
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         both arguments are strings, comparison is done case-insensitively.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
+
         New option in Robot Framework 3.0.1.
         """
         self._log_types_at_info_if_different(first, second)
@@ -772,7 +789,7 @@ class _Verify(_BuiltInBase):
         self._should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_strings(self, first, second, msg=None,
-                                       values=True, strip_spaces=False, ignore_case=False):
+                                       values=True, ignore_case=False, strip_spaces=False):
         """Fails if objects are equal after converting them to strings.
 
         See `Should Be Equal` for an explanation on how to override the default
@@ -780,6 +797,9 @@ class _Verify(_BuiltInBase):
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`),
         comparison is done case-insensitively.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
 
         Strings are always [http://www.macchiato.com/unicode/nfc-faq|
         NFC normalized].
@@ -792,15 +812,8 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             first = first.lower()
             second = second.lower()
-        if strip_spaces.upper() == 'LEADING':
-            first = first.lstrip()
-            second = second.lstrip()
-        elif strip_spaces.upper() == 'TRAILING':
-            first = first.rstrip()
-            second = second.rstrip()
-        elif is_truthy(strip_spaces):
-            first = first.strip()
-            second = second.strip()
+        first = self._strip_spaces(first, strip_spaces)
+        second = self._strip_spaces(second, strip_spaces)
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True,
@@ -829,39 +842,39 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             first = first.lower()
             second = second.lower()
-        if strip_spaces.upper() == 'LEADING':
-            first = first.lstrip()
-            second = second.lstrip()
-        elif strip_spaces.upper() == 'TRAILING':
-            first = first.rstrip()
-            second = second.rstrip()
-        elif is_truthy(strip_spaces):
-            first = first.strip()
-            second = second.strip()
+        first = self._strip_spaces(first, strip_spaces)
+        second = self._strip_spaces(second, strip_spaces)
         self._should_be_equal(first, second, msg, values, formatter)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True,
-                              ignore_case=False):
+                              ignore_case=False, strip_spaces=False):
         """Fails if the string ``str1`` starts with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
             str2 = str2.lower()
+        str1 = self._strip_spaces(str1, strip_spaces)
+        str2 = self._strip_spaces(str2, strip_spaces)
         if str1.startswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'starts with'))
 
     def should_start_with(self, str1, str2, msg=None, values=True,
-                          ignore_case=False):
+                          ignore_case=False, strip_spaces=False):
         """Fails if the string ``str1`` does not start with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -871,12 +884,14 @@ class _Verify(_BuiltInBase):
                                                       'does not start with'))
 
     def should_not_end_with(self, str1, str2, msg=None, values=True,
-                            ignore_case=False):
+                            ignore_case=False, strip_spaces=False):
         """Fails if the string ``str1`` ends with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -886,12 +901,15 @@ class _Verify(_BuiltInBase):
                                                       'ends with'))
 
     def should_end_with(self, str1, str2, msg=None, values=True,
-                        ignore_case=False):
+                        ignore_case=False, strip_spaces=False):
         """Fails if the string ``str1`` does not end with the string ``str2``.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -901,7 +919,7 @@ class _Verify(_BuiltInBase):
                                                       'does not end with'))
 
     def should_not_contain(self, container, item, msg=None, values=True,
-                           ignore_case=False):
+                           ignore_case=False, strip_spaces=False):
         """Fails if ``container`` contains ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
@@ -910,6 +928,9 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with arguments ``msg`` and ``values``. ``ignore_case``
         has exactly the same semantics as with `Should Contain`.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
 
         Examples:
         | Should Not Contain | ${some list} | value  |
@@ -932,7 +953,7 @@ class _Verify(_BuiltInBase):
                                                       values, 'contains'))
 
     def should_contain(self, container, item, msg=None, values=True,
-                       ignore_case=False):
+                       ignore_case=False, strip_spaces=False):
         """Fails if ``container`` does not contain ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
@@ -940,6 +961,9 @@ class _Verify(_BuiltInBase):
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with arguments ``msg`` and ``values``.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         compared items are strings, it indicates that comparison should be
@@ -1058,7 +1082,7 @@ class _Verify(_BuiltInBase):
             raise AssertionError(msg)
 
     def should_contain_x_times(self, item1, item2, count, msg=None,
-                               ignore_case=False):
+                               ignore_case=False, strip_spaces=False):
         """Fails if ``item1`` does not contain ``item2`` ``count`` times.
 
         Works with strings, lists and all objects that `Get Count` works
@@ -1067,7 +1091,12 @@ class _Verify(_BuiltInBase):
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         compared items are strings, it indicates that comparison should be
-        case-insensitive. If the ``item1`` is a list-like object, string
+        case-insensitive.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
+
+        If the ``item1`` is a list-like object, string
         items in it are compared case-insensitively. New option in Robot
         Framework 3.0.1.
 
@@ -1114,12 +1143,19 @@ class _Verify(_BuiltInBase):
         return count
 
     def should_not_match(self, string, pattern, msg=None, values=True,
-                         ignore_case=False):
+                         ignore_case=False, strip_spaces=False):
         """Fails if the given ``string`` matches the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell with
         ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
         `Glob patterns` section for more information.
+
+        If ``ignore_case`` is given a true value (see `Boolean arguments`) and
+        compared items are strings, it indicates that comparison should be
+        case-insensitive.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
@@ -1130,12 +1166,19 @@ class _Verify(_BuiltInBase):
                                                       values, 'matches'))
 
     def should_match(self, string, pattern, msg=None, values=True,
-                     ignore_case=False):
+                     ignore_case=False, strip_spaces=False):
         """Fails if the given ``string`` does not match the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell with
         ``*``, ``?`` and ``[chars]`` acting as wildcards. See the
         `Glob patterns` section for more information.
+
+        If ``ignore_case`` is given a true value (see `Boolean arguments`) and
+        compared items are strings, it indicates that comparison should be
+        case-insensitive.
+
+        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
+        comparison is done without leading and trailing spaces.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
