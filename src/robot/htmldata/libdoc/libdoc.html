@@ -49,6 +49,12 @@
         }
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
+        params = util.parseQueryString(window.location.search.slice(1));
+        if ("tag" in params) {
+            $(document).ready(function() {
+              tagSearch(params["tag"]);
+            })
+        }
         scrollToHash();
         $(document).bind('keydown', handleKeydown);
     });
@@ -92,6 +98,7 @@
         markMatches(tag, include);
         highlightMatches(tag, include);
         $('#keywords-container').find('.kw-row').addClass('hide-unmatched');
+        history.replaceState && history.replaceState(null, '', location.pathname + "?tag=" + tag + location.hash);
     }
 
     function doSearch() {
@@ -217,6 +224,7 @@
         }
         $('#match-count').hide();
         $('#altogether-count').show();
+        history.replaceState && history.replaceState( null, '', location.pathname + location.hash);
     }
 
     function setMatchVisibility() {
