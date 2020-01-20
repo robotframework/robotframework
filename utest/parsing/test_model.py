@@ -32,7 +32,7 @@ Keyword
 '''
 PATH = os.path.join(os.getenv('TEMPDIR') or tempfile.gettempdir(),
                     'test_model.robot')
-EXPECTED = File([
+EXPECTED = File(sections=[
     CommentSection(
         body=[
             EmptyLine([
@@ -106,7 +106,7 @@ EXPECTED = File([
 ])
 
 
-def assert_model(model, expected=EXPECTED):
+def assert_model(model, expected=EXPECTED, source=None):
     if type(model) is not type(expected):
         raise AssertionError('Incompatible types:\n%s\n%s'
                              % (ast.dump(model), ast.dump(expected)))
@@ -124,6 +124,8 @@ def assert_model(model, expected=EXPECTED):
     else:
         raise AssertionError('Incompatible children:\n%r\n%r'
                              % (model, expected))
+    if isinstance(model, File):
+        assert_equal(model.source, source)
 
 
 def assert_block(model, expected):
@@ -159,13 +161,13 @@ class TestGetModel(unittest.TestCase):
 
     def test_from_path_as_string(self):
         model = get_model(PATH)
-        assert_model(model)
+        assert_model(model, source=PATH)
 
     if PY3:
 
         def test_from_path_as_path(self):
             model = get_model(Path(PATH))
-            assert_model(model)
+            assert_model(model, source=PATH)
 
     def test_from_open_file(self):
         with open(PATH) as f:
@@ -188,13 +190,13 @@ class TestSaveModel(unittest.TestCase):
         model = get_model(PATH)
         os.remove(PATH)
         model.save()
-        assert_model(get_model(PATH))
+        assert_model(get_model(PATH), source=PATH)
 
     def test_save_to_different_path(self):
         model = get_model(PATH)
         different = PATH + '.robot'
         model.save(different)
-        assert_model(get_model(different))
+        assert_model(get_model(different), source=different)
 
     if PY3:
 
@@ -202,13 +204,13 @@ class TestSaveModel(unittest.TestCase):
             model = get_model(Path(PATH))
             os.remove(PATH)
             model.save()
-            assert_model(get_model(PATH))
+            assert_model(get_model(PATH), source=PATH)
 
         def test_save_to_different_path_as_path(self):
             model = get_model(PATH)
             different = PATH + '.robot'
             model.save(Path(different))
-            assert_model(get_model(different))
+            assert_model(get_model(different), source=different)
 
     def test_save_to_original_fails_if_source_is_not_path(self):
         message = 'Saving model requires explicit output ' \
@@ -329,7 +331,7 @@ Example
 Remove
 ''')
         Transformer().visit(model)
-        expected = File([
+        expected = File(sections=[
             TestCaseSection(
                 header=TestCaseSectionHeader([
                     Token('TESTCASE_HEADER', '*** Test Cases ***', 1, 0),
@@ -372,7 +374,7 @@ Example
     To be removed
 ''')
         Transformer().visit(model)
-        expected = File([
+        expected = File(sections=[
             TestCaseSection(
                 header=TestCaseSectionHeader([
                     Token('TESTCASE_HEADER', '*** TEST CASES ***', 1, 0),

@@ -36,11 +36,12 @@ class Block(ast.AST):
 
 
 class File(Block):
+    _attributes = ('source',)
     _fields = ('sections',)
 
-    def __init__(self, sections=None, source=None):
-        self.sections = sections or []
+    def __init__(self, source=None, sections=None):
         self.source = source
+        self.sections = sections or []
 
     @property
     def has_tests(self):
