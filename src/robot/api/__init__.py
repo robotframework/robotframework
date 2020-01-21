@@ -71,7 +71,7 @@ from robot.model import SuiteVisitor
 # FIXME: Anything else to expose from parsing? Update parsing docs above.
 from robot.parsing import (get_model, get_resource_model,
                            get_tokens, get_resource_tokens,
-                           ModelTransformer, ModelVisitor)
+                           ModelTransformer, ModelVisitor, Token)
 from robot.reporting import ResultWriter
 from robot.result import ExecutionResult, ResultVisitor
 from robot.running import TestSuite, TestSuiteBuilder
