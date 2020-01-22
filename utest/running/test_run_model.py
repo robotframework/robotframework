@@ -1,8 +1,9 @@
 import copy
 import os.path
+import tempfile
 import unittest
 
-from robot import model
+from robot import api, model
 from robot.model.modelobject import ModelObject
 from robot.running.model import TestSuite, TestCase, Keyword
 from robot.running import TestSuiteBuilder
@@ -25,6 +26,68 @@ class TestModelTypes(unittest.TestCase):
         kw = TestCase().keywords.create()
         assert_equal(type(kw), Keyword)
         assert_not_equal(type(kw), model.Keyword)
+
+
+class TestSuiteFromSources(unittest.TestCase):
+    path = os.path.join(os.getenv('TEMPDIR') or tempfile.gettempdir(),
+                        'test_run_model.robot')
+    data = '''
+*** Settings ***
+Documentation    Some text.
+Test Setup       No Operation
+Library          ExampleLibrary
+
+*** Variables ***
+${VAR}           Value
+
+*** Test Cases ***
+Example
+    Keyword
+
+*** Keywords ***
+Keyword
+    Log    Hello!
+'''
+
+    @classmethod
+    def setUpClass(cls):
+        with open(cls.path, 'w') as f:
+            f.write(cls.data)
+
+    @classmethod
+    def tearDownClass(cls):
+        os.remove(cls.path)
+
+    def test_from_model(self):
+        model = api.get_model(self.data)
+        suite = TestSuite.from_model(model)
+        self._verify_suite(suite)
+
+    def test_from_model_containing_source(self):
+        model = api.get_model(self.path)
+        suite = TestSuite.from_model(model)
+        self._verify_suite(suite, 'Test Run Model')
+
+    def test_from_model_with_custom_name(self):
+        for source in [self.data, self.path]:
+            model = api.get_model(source)
+            suite = TestSuite.from_model(model, name='Custom name')
+            self._verify_suite(suite, 'Custom name')
+
+    def _verify_suite(self, suite, name=''):
+        assert_equal(suite.name, name)
+        assert_equal(suite.doc, 'Some text.')
+        assert_equal(suite.resource.imports[0].type, 'Library')
+        assert_equal(suite.resource.imports[0].name, 'ExampleLibrary')
+        assert_equal(suite.resource.variables[0].name, '${VAR}')
+        assert_equal(suite.resource.variables[0].value, ['Value'])
+        assert_equal(suite.resource.keywords[0].name, 'Keyword')
+        assert_equal(suite.resource.keywords[0].keywords[0].name, 'Log')
+        assert_equal(suite.resource.keywords[0].keywords[0].args, ('Hello!',))
+        assert_equal(suite.tests[0].name, 'Example')
+        assert_equal(suite.tests[0].keywords.setup.name, 'No Operation')
+        assert_equal(suite.tests[0].keywords[0].name, 'No Operation')
+        assert_equal(suite.tests[0].keywords[1].name, 'Keyword')
 
 
 class TestCopy(unittest.TestCase):

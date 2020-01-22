@@ -38,8 +38,8 @@ from robot.conf import RobotSettings
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import setter
 
-from .steprunner import StepRunner
 from .randomizer import Randomizer
+from .steprunner import StepRunner
 
 
 class Keyword(model.Keyword):
@@ -115,6 +115,19 @@ class TestSuite(model.TestSuite):
         #: keywords the suite owns. When data is parsed from the file system,
         #: this data comes from the same test case file that creates the suite.
         self.resource = ResourceFile(source=source)
+
+    @classmethod
+    def from_model(cls, model, name=None):
+        """Create a :class:`TestSuite` object based on the given ``model``.
+
+        The model can be created by using the
+        :func:`~robot.parsing.builders.get_model` function and possibly
+        modified by other tooling in the :mod:`~robot.parsing` module.
+
+        New in Robot Framework 3.2.
+        """
+        from .builder import RobotParser
+        return RobotParser().build_suite(model, name)
 
     def configure(self, randomize_suites=False, randomize_tests=False,
                   randomize_seed=None, **options):
