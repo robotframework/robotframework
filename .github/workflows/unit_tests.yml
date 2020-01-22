@@ -36,12 +36,14 @@ jobs:
       - name: Prepare HTML coverage report
         run: |
           python -m coverage html -i -d cov_html
+        if: always()
 
       - name: Archive coverage results
         uses: actions/upload-artifact@v1
         with:
           name: cov-ut-${{ matrix.python-version }}-${{ matrix.os }}
           path: cov_html
+        if: always()
 
   test_using_jython:
     strategy:
