@@ -32,6 +32,9 @@ jobs:
         run: |
           python -m pip install coverage
           python -m coverage run --branch utest/run.py -v
+
+      - name: Prepare HTML coverage report
+        run: |
           python -m coverage html -i -d cov_html
 
       - name: Archive coverage results
