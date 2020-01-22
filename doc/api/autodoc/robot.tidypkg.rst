@@ -9,14 +9,6 @@ robot.tidypkg package
 Submodules
 ----------
 
-robot.tidypkg.datafilewriter module
------------------------------------
-
-.. automodule:: robot.tidypkg.datafilewriter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.tidypkg.transformers module
 ---------------------------------
 
