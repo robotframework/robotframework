@@ -24,11 +24,20 @@ from .model import (File, SettingSection, VariableSection, TestCaseSection,
 
 
 def get_model(source, data_only=False, curdir=None):
+    """FIXME: Documentation missing.
+
+    Mention TestSuite.from_model when docs are written.
+    """
     tokens = get_tokens(source, data_only)
     return _build_model(source, get_statements(tokens, curdir))
 
 
 def get_resource_model(source, data_only=False, curdir=None):
+    """Parses the given source to a resource file model.
+
+    Otherwise same as :func:`get_model` but the source is considered to be
+    a resource file. This affects, for example, what settings are valid.
+    """
     tokens = get_resource_tokens(source, data_only)
     return _build_model(source, get_statements(tokens, curdir))
 
