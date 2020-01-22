@@ -117,6 +117,20 @@ class TestSuite(model.TestSuite):
         self.resource = ResourceFile(source=source)
 
     @classmethod
+    def from_file_system(cls, *paths, **config):
+        """Create a :class:`TestSuite` object based on the given ``paths``.
+
+        ``paths`` are file or directory paths where to read the data from.
+
+        Internally utilizes the :class:`~.builder.TestSuiteBuilder` class
+        and ``config`` can be used to configure how it is initialized.
+
+        New in Robot Framework 3.2.
+        """
+        from .builder import TestSuiteBuilder
+        return TestSuiteBuilder(**config).build(*paths)
+
+    @classmethod
     def from_model(cls, model, name=None):
         """Create a :class:`TestSuite` object based on the given ``model``.
 

@@ -58,15 +58,28 @@ Keyword
     def tearDownClass(cls):
         os.remove(cls.path)
 
+    def test_from_file_system(self):
+        suite = TestSuite.from_file_system(self.path)
+        self._verify_suite(suite)
+
+    def test_from_file_system_with_multiple_paths(self):
+        suite = TestSuite.from_file_system(self.path, self.path)
+        self._verify_suite(suite.suites[0])
+        self._verify_suite(suite.suites[1])
+
+    def test_from_file_system_with_config(self):
+        suite = TestSuite.from_file_system(self.path, rpa=True)
+        self._verify_suite(suite, rpa=True)
+
     def test_from_model(self):
         model = api.get_model(self.data)
         suite = TestSuite.from_model(model)
-        self._verify_suite(suite)
+        self._verify_suite(suite, name='')
 
     def test_from_model_containing_source(self):
         model = api.get_model(self.path)
         suite = TestSuite.from_model(model)
-        self._verify_suite(suite, 'Test Run Model')
+        self._verify_suite(suite)
 
     def test_from_model_with_custom_name(self):
         for source in [self.data, self.path]:
@@ -74,9 +87,10 @@ Keyword
             suite = TestSuite.from_model(model, name='Custom name')
             self._verify_suite(suite, 'Custom name')
 
-    def _verify_suite(self, suite, name=''):
+    def _verify_suite(self, suite, name='Test Run Model', rpa=False):
         assert_equal(suite.name, name)
         assert_equal(suite.doc, 'Some text.')
+        assert_equal(suite.rpa, rpa)
         assert_equal(suite.resource.imports[0].type, 'Library')
         assert_equal(suite.resource.imports[0].name, 'ExampleLibrary')
         assert_equal(suite.resource.variables[0].name, '${VAR}')
