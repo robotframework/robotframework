@@ -634,6 +634,8 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
             first = first.lower()
             second = second.lower()
+        first = self._strip_spaces(first, strip_spaces)
+        second = self._strip_spaces(second, strip_spaces)
         self._should_be_equal(first, second, msg, values, formatter)
 
     def _should_be_equal(self, first, second, msg, values, formatter='str'):
@@ -695,6 +697,8 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
             first = first.lower()
             second = second.lower()
+        first = self._strip_spaces(first, strip_spaces)
+        second = self._strip_spaces(second, strip_spaces)
         self._should_not_be_equal(first, second, msg, values)
 
     def _should_not_be_equal(self, first, second, msg, values):
@@ -883,6 +887,8 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             str1 = str1.lower()
             str2 = str2.lower()
+        str1 = self._strip_spaces(str1, strip_spaces)
+        str2 = self._strip_spaces(str2, strip_spaces)
         if not str1.startswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not start with'))
@@ -900,6 +906,8 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             str1 = str1.lower()
             str2 = str2.lower()
+        str1 = self._strip_spaces(str1, strip_spaces)
+        str2 = self._strip_spaces(str2, strip_spaces)
         if str1.endswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'ends with'))
@@ -918,6 +926,8 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             str1 = str1.lower()
             str2 = str2.lower()
+        str1 = self._strip_spaces(str1, strip_spaces)
+        str2 = self._strip_spaces(str2, strip_spaces)
         if not str1.endswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not end with'))
@@ -952,6 +962,7 @@ class _Verify(_BuiltInBase):
                 container = container.lower()
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
+        #TODO strip_spaces
         if item in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'contains'))
@@ -987,6 +998,7 @@ class _Verify(_BuiltInBase):
                 container = container.lower()
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
+        #TODO strip_spaces
         if item not in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'does not contain'))
@@ -1116,6 +1128,7 @@ class _Verify(_BuiltInBase):
                 container = container.lower()
             elif is_list_like(container):
                 container = [i.lower() if is_string(i) else i for i in container]
+        #TODO strip_spaces
         x = self.get_count(container, item)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
@@ -1161,6 +1174,7 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
+        #TODO strip_spaces
         if self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
@@ -1184,6 +1198,7 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
+        #TODO strip_spaces
         if not self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
