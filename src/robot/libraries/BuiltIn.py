@@ -1129,6 +1129,7 @@ class _Verify(_BuiltInBase):
             elif is_list_like(container):
                 container = [i.lower() if is_string(i) else i for i in container]
         #TODO strip_spaces
+        #TODO strip_spaces
         x = self.get_count(container, item)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
