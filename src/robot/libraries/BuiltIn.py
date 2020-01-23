@@ -1244,6 +1244,7 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
+        #TODO strip_spaces
         if self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
@@ -1264,6 +1265,7 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
+        #TODO strip_spaces
         if not self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
