@@ -52,8 +52,13 @@ class Keyword(model.Keyword):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = []
+    __slots__ = ['lineno']
     message_class = None  #: Internal usage only.
+
+    def __init__(self, name='', doc='', args=(), assign=(), tags=(),
+                 timeout=None, type=model.Keyword.KEYWORD_TYPE, lineno=None):
+        model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type)
+        self.lineno = lineno
 
     def run(self, context):
         """Execute the keyword.
@@ -68,13 +73,15 @@ class ForLoop(Keyword):
 
     Contains keywords in the loop body as child :attr:`keywords`.
     """
-    __slots__ = ['flavor', '_header', '_end']
+    __slots__ = ['flavor', 'lineno', '_header', '_end']
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, variables, values, flavor, _header='FOR', _end='END'):
+    def __init__(self, variables, values, flavor, lineno=None,
+                 _header='FOR', _end='END'):
         Keyword.__init__(self, assign=variables, args=values,
                          type=Keyword.FOR_LOOP_TYPE)
         self.flavor = flavor
+        self.lineno = lineno
         self._header = _header
         self._end = _end
 
@@ -92,14 +99,16 @@ class TestCase(model.TestCase):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['template']
+    __slots__ = ['template', 'lineno']
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, name='', doc='', tags=None, timeout=None, template=None):
+    def __init__(self, name='', doc='', tags=None, timeout=None, template=None,
+                 lineno=None):
         model.TestCase.__init__(self, name, doc, tags, timeout)
         #: Name of the keyword that has been used as template
         #: when building the test. ``None`` if no is template used.
         self.template = template
+        self.lineno = lineno
 
 
 class TestSuite(model.TestSuite):
@@ -249,10 +258,11 @@ class TestSuite(model.TestSuite):
 
 class Variable(object):
 
-    def __init__(self, name, value, source=None):
+    def __init__(self, name, value, source=None, lineno=None):
         self.name = name
         self.value = value
         self.source = source
+        self.lineno = lineno
 
     def report_invalid_syntax(self, message, level='ERROR'):
         LOGGER.write("Error in file '%s': Setting variable '%s' failed: %s"
@@ -274,7 +284,7 @@ class ResourceFile(object):
 
     @setter
     def keywords(self, keywords):
-        return model.ItemList(UserKeyword, items=keywords)
+        return model.ItemList(UserKeyword, {'parent': self}, items=keywords)
 
     @setter
     def variables(self, variables):
@@ -283,7 +293,8 @@ class ResourceFile(object):
 
 class UserKeyword(object):
 
-    def __init__(self, name, args=(), doc='', tags=(), return_=None, timeout=None):
+    def __init__(self, name, args=(), doc='', tags=(), return_=None,
+                 timeout=None, lineno=None, parent=None):
         self.name = name
         self.args = args
         self.doc = doc
@@ -291,6 +302,8 @@ class UserKeyword(object):
         self.return_ = return_ or ()
         self.timeout = timeout
         self.keywords = []
+        self.lineno = lineno
+        self.parent = parent
 
     @setter
     def keywords(self, keywords):
@@ -300,11 +313,16 @@ class UserKeyword(object):
     def tags(self, tags):
         return model.Tags(tags)
 
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
 
 class Import(object):
     ALLOWED_TYPES = ('Library', 'Resource', 'Variables')
 
-    def __init__(self, type, name, args=(), alias=None, source=None):
+    def __init__(self, type, name, args=(), alias=None, source=None,
+                 lineno=None):
         if type not in self.ALLOWED_TYPES:
             raise ValueError("Invalid import type '%s'. Should be one of %s."
                              % (type, seq2str(self.ALLOWED_TYPES, lastsep=' or ')))
@@ -313,6 +331,7 @@ class Import(object):
         self.args = args
         self.alias = alias
         self.source = source
+        self.lineno = lineno
 
     @property
     def directory(self):
@@ -333,11 +352,11 @@ class Imports(model.ItemList):
     def __init__(self, source, imports=None):
         model.ItemList.__init__(self, Import, {'source': source}, items=imports)
 
-    def library(self, name, args=(), alias=None):
-        self.create('Library', name, args, alias)
+    def library(self, name, args=(), alias=None, lineno=None):
+        self.create('Library', name, args, alias, lineno)
 
-    def resource(self, path):
-        self.create('Resource', path)
+    def resource(self, path, lineno=None):
+        self.create('Resource', path, lineno)
 
-    def variables(self, path, args=()):
-        self.create('Variables', path, args)
+    def variables(self, path, args=(), lineno=None):
+        self.create('Variables', path, args, lineno)

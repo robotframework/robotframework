@@ -69,6 +69,10 @@ class TestCase(ModelObject):
             return self.name
         return '%s.%s' % (self.parent.longname, self.name)
 
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_test(self)
