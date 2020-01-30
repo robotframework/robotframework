@@ -139,9 +139,9 @@ class Token(object):
 class EOS(Token):
     __slots__ = []
 
-    def __init__(self, lineno=-1, columnno=-1):
-        Token.__init__(self, Token.EOS, '', lineno, columnno)
+    def __init__(self, lineno=-1, col_offset=-1):
+        Token.__init__(self, Token.EOS, '', lineno, col_offset)
 
     @classmethod
     def from_token(cls, token):
-        return EOS(token.lineno, token.end_col_offset)
+        return EOS(lineno=token.lineno, col_offset=token.end_col_offset)
