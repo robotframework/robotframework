@@ -38,10 +38,27 @@ def get_statements(tokens, curdir=None):
 class Statement(ast.AST):
     type = None
     _fields = ('type', 'tokens')
+    _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset')
     _statement_handlers = {}
 
     def __init__(self, tokens):
         self.tokens = tokens
+
+    @property
+    def lineno(self):
+        return self.tokens[0].lineno if self.tokens else -1
+
+    @property
+    def col_offset(self):
+        return self.tokens[0].col_offset if self.tokens else -1
+
+    @property
+    def end_lineno(self):
+        return self.tokens[-1].lineno if self.tokens else -1
+
+    @property
+    def end_col_offset(self):
+        return self.tokens[-1].end_col_offset if self.tokens else -1
 
     @classmethod
     def register(cls, subcls):

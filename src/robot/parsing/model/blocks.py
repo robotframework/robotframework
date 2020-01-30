@@ -20,28 +20,84 @@ from robot.utils import file_writer, is_pathlike, is_string, normalize_whitespac
 from .visitor import ModelVisitor
 
 
+# TODO: Where does this class and the classes below belong to?
 class ModelWriter(ModelVisitor):
 
     def __init__(self, output):
         self.output = output
 
     def visit_Statement(self, statement):
-        for line in statement.lines:
-            for token in line:
-                self.output.write(token.value)
+        for token in statement.tokens:
+            self.output.write(token.value)
+
+
+class FirstStatementFinder(ModelVisitor):
+
+    def __init__(self):
+        self.statement = None
+
+    @classmethod
+    def find_from(cls, model):
+        finder = cls()
+        finder.visit(model)
+        return finder.statement
+
+    def visit_Statement(self, statement):
+        if self.statement is None:
+            self.statement = statement
+
+    def generic_visit(self, node):
+        if self.statement is None:
+            ModelVisitor.generic_visit(self, node)
+
+
+class LastStatementFinder(ModelVisitor):
+
+    def __init__(self):
+        self.statement = None
+
+    @classmethod
+    def find_from(cls, model):
+        finder = cls()
+        finder.visit(model)
+        return finder.statement
+
+    def visit_Statement(self, statement):
+        self.statement = statement
 
 
 class Block(ast.AST):
     _fields = ()
+    _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset')
+
+    @property
+    def lineno(self):
+        statement = FirstStatementFinder.find_from(self)
+        return statement.lineno if statement else -1
+
+    @property
+    def col_offset(self):
+        statement = FirstStatementFinder.find_from(self)
+        return statement.col_offset if statement else -1
+
+    @property
+    def end_lineno(self):
+        statement = LastStatementFinder.find_from(self)
+        return statement.end_lineno if statement else -1
+
+    @property
+    def end_col_offset(self):
+        statement = LastStatementFinder.find_from(self)
+        return statement.end_col_offset if statement else -1
 
 
 class File(Block):
-    _attributes = ('source',)
     _fields = ('sections',)
+    _attributes = ('source',) + Block._attributes
 
-    def __init__(self, source=None, sections=None):
-        self.source = source
+    def __init__(self, sections=None, source=None):
         self.sections = sections or []
+        self.source = source
 
     @property
     def has_tests(self):

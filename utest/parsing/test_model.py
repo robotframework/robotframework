@@ -131,9 +131,11 @@ def assert_model(model, expected=EXPECTED, source=None):
 def assert_block(model, expected):
     assert_equal(model._fields, expected._fields)
     for field in expected._fields:
-        model_child = getattr(model, field)
-        expected_child = getattr(expected, field)
-        assert_model(model_child, expected_child)
+        assert_model(getattr(model, field), getattr(expected, field))
+    assert_equal(model.lineno, expected.lineno)
+    assert_equal(model.col_offset, expected.col_offset)
+    assert_equal(model.end_lineno, expected.end_lineno)
+    assert_equal(model.end_col_offset, expected.end_col_offset)
 
 
 def assert_statement(model, expected):
@@ -142,6 +144,12 @@ def assert_statement(model, expected):
     assert_equal(len(model.tokens), len(expected.tokens))
     for m, e in zip(model.tokens, expected.tokens):
         assert_equal(m, e, formatter=repr)
+    assert_equal(model._attributes, ('lineno', 'col_offset',
+                                     'end_lineno', 'end_col_offset'))
+    assert_equal(model.lineno, model.tokens[0].lineno)
+    assert_equal(model.col_offset, model.tokens[0].col_offset)
+    assert_equal(model.end_lineno, model.tokens[-1].lineno)
+    assert_equal(model.end_col_offset, model.tokens[-1].end_col_offset)
 
 
 class TestGetModel(unittest.TestCase):
