@@ -20,12 +20,16 @@ Dict is ordered
 
 Invalid list
     Check Test Case    ${TESTNAME}
-    Verify Error    0    [ LIST__inv_list | not a list ]    \@{inv_list}
+    Verify Error    0    3
+    ...    [ LIST__inv_list | not a list ]
+    ...    \@{inv_list}
     ...    Expected list-like value, got string.
 
 Invalid dict
     Check Test Case    ${TESTNAME}
-    Verify Error    1    [ DICT__inv_dict | [${UNICODE PREFIX}'1', ${UNICODE PREFIX}'2', 3] ]    \&{inv_dict}
+    Verify Error    1    4
+    ...    [ DICT__inv_dict | [${UNICODE PREFIX}'1', ${UNICODE PREFIX}'2', 3] ]
+    ...    \&{inv_dict}
     ...    Expected dict-like value, got list.
 
 Scalar list likes can be used as list
@@ -55,10 +59,9 @@ Closed files are not lists
 
 *** Keywords ***
 Verify Error
-    [Arguments]    ${index}    ${args}    ${var}    ${error}
-    ${p1} =    Normalize Path    ${DATADIR}/variables/list_and_dict_from_variable_file.robot
-    ${p2} =    Normalize Path    ${DATADIR}/variables/list_and_dict_variable_file.py
-    ${error} =    Catenate    Error in file '${p1}':
-    ...    Processing variable file '${p2}' with arguments ${args} failed:
+    [Arguments]    ${index}    ${lineno}    ${args}    ${var}    ${error}
+    ${path} =    Normalize Path    ${DATADIR}/variables/list_and_dict_variable_file.py
+    Error In File    ${index}    variables/list_and_dict_from_variable_file.robot    ${lineno}
+    ...    Processing variable file '${path}' with arguments ${args} failed:
     ...    Invalid variable '${var}': ${error}
-    Check Log Message    ${ERRORS}[${index}]    ${error}    ERROR
+    ...    pattern=False

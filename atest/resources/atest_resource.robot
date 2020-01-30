@@ -342,15 +342,16 @@ Reset PYTHONPATH
     Remove Environment Variable    JYTHONPATH
     Remove Environment Variable    IRONPYTHONPATH
 
-Import should have failed
-    [Arguments]    ${index}    ${path}    ${message}    ${traceback}=*
-    ...    ${stacktrace}=
-    ${path} =    Normalize Path    ${DATADIR}/${path}
-    ${error} =    Set Variable    Error in file '${path}': ${message}
+Error in file
+    [Arguments]    ${index}    ${path}    ${lineno}    @{message}    ${traceback}=
+    ...    ${stacktrace}=    ${pattern}=True
+    ${path} =    Join Path    ${DATADIR}    ${path}
+    ${message} =    Catenate    @{message}
+    ${error} =    Set Variable    Error in file '${path}' on line ${lineno}: ${message}
     ${error} =    Set Variable If    $traceback and not $stacktrace
     ...    ${error}\nTraceback (most recent call last):\n*${traceback}*
     ...    ${error}
     ${error} =    Set Variable If    $stacktrace
     ...    ${error}\n*${stacktrace}*
     ...    ${error}
-    Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=yes
+    Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=${pattern}

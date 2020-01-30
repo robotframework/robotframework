@@ -11,7 +11,8 @@ First non-escaped equal sign is separator
 
 Dict items must contain equal sign
     Check Test Case    ${TESTNAME}
-    Variable creation should have failed    0    \&{NO EQUAL}
+    Error In File    0    variables/dict_variable_in_variable_table.robot    15
+    ...    Setting variable '\&{NO EQUAL}' failed:
     ...    Dictionary item 'but not here' does not contain '=' separator.
 
 Variables in key and value
@@ -42,24 +43,20 @@ Dict from variable table should be dot-assignable
 
 Invalid key
     Check Test Case    ${TESTNAME}
-    Variable creation should have failed    4    \&{NON HASHABLE KEY}
+    Error In File    4    variables/dict_variable_in_variable_table.robot    31
+    ...    Setting variable '\&{NON HASHABLE KEY}' failed:
     ...    Creating dictionary failed: *
 
 Non-dict cannot be used as dict variable
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
     Check Test Case    ${TESTNAME} 3
-    Variable creation should have failed    1    \&{NON DICT DICT 1}
+    Error In File    1    variables/dict_variable_in_variable_table.robot    32
+    ...    Setting variable '\&{NON DICT DICT 1}' failed:
     ...    Value of variable '\&{LIST}' is not dictionary or dictionary-like.
-    Variable creation should have failed    2    \&{NON DICT DICT 2}
+    Error In File    2    variables/dict_variable_in_variable_table.robot    33
+    ...    Setting variable '\&{NON DICT DICT 2}' failed:
     ...    Value of variable '\&{SPACE}' is not dictionary or dictionary-like.
-    Variable creation should have failed    3    \&{NON DICT DICT 3}
+    Error In File    3    variables/dict_variable_in_variable_table.robot    34
+    ...    Setting variable '\&{NON DICT DICT 3}' failed:
     ...    Value of variable '\&{EMPTY DICT.keys()}' is not dictionary or dictionary-like.
-
-*** Keywords ***
-Variable creation should have failed
-    [Arguments]    ${index}    ${name}    ${message}
-    ${path} =    Normalize Path    ${DATADIR}/variables/dict_variable_in_variable_table.robot
-    Check Log Message    ${ERRORS}[${index}]
-    ...    Error in file '${path}': Setting variable '${name}' failed: ${message}
-    ...    pattern=yes    level=ERROR

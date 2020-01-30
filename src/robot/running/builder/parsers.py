@@ -134,4 +134,5 @@ class ErrorLogger(NodeVisitor):
         self.source = source
 
     def visit_Error(self, node):
-        LOGGER.error("Error in file '%s': %s" % (self.source, node.error))
+        LOGGER.error("Error in file '%s' on line %s: %s"
+                     % (self.source, node.lineno, node.error))

@@ -146,7 +146,8 @@ Timeout
 
 Timeout with message
     Verify Timeout    1 minute 39 seconds 999 milliseconds
-    Verify Error    0    Setting 'Timeout' accepts only one value, got 2.
+    Error In File    0    parsing/test_case_settings.robot    173
+    ...    Setting 'Timeout' accepts only one value, got 2.
 
 Default timeout
     Verify Timeout    1 minute 39 seconds 999 milliseconds
@@ -172,8 +173,10 @@ Multiple settings
 
 Invalid setting
     Check Test Case    ${TEST NAME}
-    Verify Error    1    Non-existing setting 'Doc U Ment ation'.
-    Verify Error    2    Non-existing setting 'Invalid'.
+    Error In File    1    parsing/test_case_settings.robot    206
+    ...    Non-existing setting 'Doc U Ment ation'.
+    Error In File    2    parsing/test_case_settings.robot    207
+    ...    Non-existing setting 'Invalid'.
 
 *** Keywords ***
 Verify Documentation
@@ -202,9 +205,3 @@ Verify Timeout
     [Arguments]    ${timeout}
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.timeout}    ${timeout}
-
-Verify Error
-    [Arguments]    ${index}    @{message parts}    ${level}=ERROR
-    ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
-    ${message} =    Catenate    Error in file '${path}':    @{message parts}
-    Check Log Message    ${ERRORS}[${index}]    ${message}    ${level}

@@ -265,8 +265,10 @@ class Variable(object):
         self.lineno = lineno
 
     def report_invalid_syntax(self, message, level='ERROR'):
-        LOGGER.write("Error in file '%s': Setting variable '%s' failed: %s"
-                     % (self.source or '<unknown>', self.name, message), level)
+        source = self.source or '<unknown>'
+        line = ' on line %s' % self.lineno if self.lineno is not None else ''
+        LOGGER.write("Error in file '%s'%s: Setting variable '%s' failed: %s"
+                     % (source, line, self.name, message), level)
 
 
 class ResourceFile(object):
@@ -342,9 +344,10 @@ class Import(object):
         return os.path.dirname(self.source)
 
     def report_invalid_syntax(self, message, level='ERROR'):
-        from robot.output import LOGGER
-        LOGGER.write("Error in file '%s': %s"
-                     % (self.source or '<unknown>', message), level)
+        source = self.source or '<unknown>'
+        line = ' on line %s' % self.lineno if self.lineno is not None else ''
+        LOGGER.write("Error in file '%s'%s: %s" % (source, line, message),
+                     level)
 
 
 class Imports(model.ItemList):

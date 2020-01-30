@@ -10,9 +10,9 @@ Normal Library Import
 
 Library Import With Spaces In Name Does Not Work
     Check Test Case    ${TESTNAME}
-    Check Log Message    ${ERRORS[0]}
-    ...    Error in file '*': Importing test library 'Date Time' failed: *Error: *
-    ...    ERROR    pattern=true
+    Error In File    0    test_libraries/library_import_normal.robot    3
+    ...    Importing test library 'Date Time' failed: *Error: *
+    ...    traceback=None
 
 Importing Library Class Should Have Been Syslogged
     [Tags]    no-standalone

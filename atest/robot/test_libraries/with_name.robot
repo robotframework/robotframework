@@ -130,11 +130,8 @@ With Name When Library Arguments Are Not Strings
     Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ 1 | 2 ]
 
 'WITH NAME' is case-sensitive
-    ${path} =    Normalize Path    ${DATADIR}/test_libraries/with_name_3.robot
-    ${message} =    Catenate
-    ...    Error in file '${path}':
+    Error In File    -1    test_libraries/with_name_3.robot    5
     ...    Test Library 'ParameterLibrary' expected 0 to 2 arguments, got 4.
-    Check Log Message    ${ERRORS[-1]}    ${message}    ERROR
 
 'WITH NAME' cannot come from variable
     Check Test Case    ${TEST NAME}

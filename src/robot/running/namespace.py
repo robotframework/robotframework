@@ -62,7 +62,7 @@ class Namespace(object):
         for item in import_settings:
             try:
                 if not item.name:
-                    raise DataError('%s setting requires a name' % item.type)
+                    raise DataError('%s setting requires value.' % item.type)
                 self._import(item)
             except DataError as err:
                 item.report_invalid_syntax(err.message)

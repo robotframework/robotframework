@@ -1,5 +1,6 @@
 *** Settings ***
 Variables         binary_list.py
+Resource          old_for_in_resource.robot
 
 *** Variables ***
 @{NUMS}           1    2    3    4    5
@@ -663,6 +664,9 @@ END is not required when escaping with backslash
 Header at the end of file
     [Documentation]    FAIL For loop has no closing 'END'.
     Header at the end of file
+
+Old for loop in resource
+    Old for loop in resource
 
 *** Keywords ***
 My UK

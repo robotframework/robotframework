@@ -41,9 +41,7 @@ Resource with '*.rest' extension
 
 Resource with invalid extension
     Check Test Case    ${TESTNAME}
-    ${path} =    Normalize path    ${DATADIR}/parsing/data_formats/resource_extensions/tests.robot
-    ${message} =    Catenate
-    ...    Error in file '${PATH}': Invalid resource file extension '.invalid'.
+    Error in file    0    parsing/data_formats/resource_extensions/tests.robot    8
+    ...    Invalid resource file extension '.invalid'.
     ...    Supported extensions are '.resource', '.robot', '.txt', '.tsv', '.rst' and '.rest'.
-    Check log message    ${ERRORS}[0]    ${message}    ERROR
     Length should be    ${ERRORS}    1
