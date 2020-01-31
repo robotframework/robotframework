@@ -123,14 +123,12 @@ Avoid keyword in dry-run
     Keyword should have been validated    ${tc.kws[3]}
 
 Invalid imports
-    Import should have failed    1    cli/dryrun/dryrun.robot
+    Error in file    1    cli/dryrun/dryrun.robot    7
     ...    Importing test library 'DoesNotExist' failed: *Error: *
-    Import should have failed    2    cli/dryrun/dryrun.robot
+    Error in file    2    cli/dryrun/dryrun.robot    8
     ...    Variable file 'wrong_path.py' does not exist.
-    ...    traceback=
-    Import should have failed    3    cli/dryrun/dryrun.robot
+    Error in file    3    cli/dryrun/dryrun.robot    9
     ...    Resource file 'NonExisting.robot' does not exist.
-    ...    traceback=
     [Teardown]    NONE
 
 Test from other suite

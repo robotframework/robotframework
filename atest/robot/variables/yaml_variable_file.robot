@@ -31,36 +31,39 @@ Import Variables keyword
     Check Test Case    ${TESTNAME}
 
 Invalid YAML file
-    Processing should have failed    0    invalid.YAML
-    ...    ${EMPTY}    ComposerError*
+    Processing should have failed    0    5    invalid.YAML
+    ...    ${EMPTY}
+    ...    ComposerError*
 
 Non-mapping YAML file
-    Processing should have failed    1    non_dict.yaml
-    ...    ${EMPTY}    YAML variable file must be a mapping, got list.
+    Processing should have failed    1    6    non_dict.yaml
+    ...    ${EMPTY}
+    ...    YAML variable file must be a mapping, got list.
 
 YAML files do not accept arguments
-    Processing should have failed    2    valid.yaml
+    Processing should have failed    2    7    valid.yaml
     ...    with arguments ? arguments | not | accepted ?${SPACE}
     ...    YAML variable files do not accept arguments.
 
 Non-existing YAML file
-    Importing should have failed    3
+    Importing should have failed    3    8
     ...    Variable file 'non_existing.Yaml' does not exist.
 
 YAML with invalid encoding
-    Processing should have failed    4    invalid_encoding.yaml
-    ...    ${EMPTY}    UnicodeDecodeError*
+    Processing should have failed    4    9    invalid_encoding.yaml
+    ...    ${EMPTY}
+    ...    UnicodeDecodeError*
 
 *** Keywords ***
 Processing should have failed
-    [Arguments]    ${index}    ${file}    ${arguments}    ${error}
+    [Arguments]    ${index}    ${lineno}    ${file}    ${arguments}    ${error}
     ${path} =    Normalize Path    ${DATADIR}/variables/${file}
-    Importing should have failed    ${index}
-    ...    Processing variable file '${path}' ${arguments}failed: ${error}
+    Importing should have failed    ${index}    ${lineno}
+    ...    Processing variable file '${path}' ${arguments}failed:
+    ...    ${error}
 
 Importing should have failed
-    [Arguments]    ${index}    ${error}
-    ${path} =    Normalize Path    ${DATADIR}/variables/yaml_variable_file.robot
-    Check Log Message    ${ERRORS}[${index}]
-    ...    Error in file '${path}': ${error}    ERROR    pattern=yes
+    [Arguments]    ${index}    ${lineno}    @{error}
+    Error In File    ${index}    variables/yaml_variable_file.robot    ${lineno}
+    ...    @{error}
 

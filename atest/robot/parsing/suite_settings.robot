@@ -51,7 +51,8 @@ Suite Teardown
     Verify Teardown    ${SUITE}    BuiltIn.Log    Default suite teardown
 
 Invalid Setting
-    Verify Error    0    Non-existing setting 'Invalid Setting'.
+    Error In File    0    parsing/suite_settings.robot    27
+    ...    Non-existing setting 'Invalid Setting'.
 
 *** Keywords ***
 Verify Setup
@@ -66,9 +67,3 @@ Verify Fixture
     [Arguments]    ${fixture}    ${expected_name}    ${expected_message}
     Should be Equal    ${fixture.name}    ${expected_name}
     Check Log Message    ${fixture.messages[0]}    ${expected_message}
-
-Verify Error
-    [Arguments]    ${index}    @{message parts}    ${level}=ERROR
-    ${path} =    Normalize Path    ${DATADIR}/parsing/suite_settings.robot
-    ${message} =    Catenate    Error in file '${path}':    @{message parts}
-    Check Log Message    ${ERRORS}[${index}]    ${message}    ${level}

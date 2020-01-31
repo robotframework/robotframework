@@ -21,6 +21,7 @@ from robot.output import LOGGER
 from robot.parsing import get_model, get_resource_model
 from robot.utils import FileReader, read_rest_data
 
+from .testsettings import TestDefaults
 from .transformers import SuiteBuilder, SettingsBuilder, ResourceBuilder
 from ..model import TestSuite, ResourceFile
 
@@ -51,9 +52,17 @@ class RobotParser(BaseParser):
         suite = TestSuite(name=format_name(source), source=source)
         return self._build(suite, source, defaults)
 
-    def _build(self, suite, source, defaults):
-        model = get_model(self._get_source(source), data_only=True,
-                          curdir=self._get_curdir(source))
+    def build_suite(self, model, name=None, defaults=None):
+        source = model.source
+        suite = TestSuite(name=name or format_name(source), source=source)
+        return self._build(suite, source, defaults, model)
+
+    def _build(self, suite, source, defaults, model=None):
+        if defaults is None:
+            defaults = TestDefaults()
+        if model is None:
+            model = get_model(self._get_source(source), data_only=True,
+                              curdir=self._get_curdir(source))
         ErrorLogger(source).visit(model)
         SettingsBuilder(suite, defaults).visit(model)
         SuiteBuilder(suite, defaults).visit(model)
@@ -125,4 +134,5 @@ class ErrorLogger(NodeVisitor):
         self.source = source
 
     def visit_Error(self, node):
-        LOGGER.error("Error in file '%s': %s" % (self.source, node.error))
+        LOGGER.error("Error in file '%s' on line %s: %s"
+                     % (self.source, node.lineno, node.error))

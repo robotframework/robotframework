@@ -33,6 +33,7 @@ class Interpreter(object):
         self.version_info = tuple(int(item) for item in version.split('.'))
 
     def _get_interpreter(self, path):
+        path = path.replace('/', os.sep)
         return [path] if os.path.exists(path) else path.split()
 
     def _get_name_and_version(self):
@@ -65,6 +66,10 @@ class Interpreter(object):
         if self.is_jython:
             yield 'no-jython'
             yield 'require-lxml'
+            if self.version_info[:3] == (2, 7, 0):
+                yield 'no-jython-2.7.0'
+            if self.version_info[:3] == (2, 7, 1):
+                yield 'no-jython-2.7.1'
         else:
             yield 'require-jython'
         if self.is_ironpython:

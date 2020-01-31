@@ -7,7 +7,7 @@ Test Template     Library import should have been successful
 Resource          resource_for_importing_libs_with_args.robot
 
 *** Variables ***
-${KEY: VALUE}     ${{ "{key: value}" if $INTERPRETER.version_info < (2, 7, 1) else "{u'key': u'value'}" }}
+${KEY: VALUE}     ${{ "{key: value}" if $INTERPRETER.version_info < (2, 7, 2) else "{u'key': u'value'}" }}
 
 *** Test Cases ***
 Mandatory arguments

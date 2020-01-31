@@ -20,12 +20,12 @@ from itertools import chain
 
 from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
-from robot.model import Import
 from robot.output import LOGGER, Message
 from robot.utils import (RecommendationFinder, eq, find_file, is_string,
                          printable_name, seq2str2)
 
 from .importer import ImportCache, Importer
+from .model import Import
 from .runkwregister import RUN_KW_REGISTER
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
@@ -62,7 +62,7 @@ class Namespace(object):
         for item in import_settings:
             try:
                 if not item.name:
-                    raise DataError('%s setting requires a name' % item.type)
+                    raise DataError('%s setting requires value.' % item.type)
                 self._import(item)
             except DataError as err:
                 item.report_invalid_syntax(err.message)

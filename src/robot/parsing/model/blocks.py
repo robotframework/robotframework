@@ -15,24 +15,109 @@
 
 import ast
 
-from robot.utils import normalize_whitespace
+from robot.utils import file_writer, is_pathlike, is_string, normalize_whitespace
 
-from ..lexer import Token
+from .visitor import ModelVisitor
+
+
+# TODO: Where does this class and the classes below belong to?
+class ModelWriter(ModelVisitor):
+
+    def __init__(self, output):
+        self.output = output
+
+    def visit_Statement(self, statement):
+        for token in statement.tokens:
+            self.output.write(token.value)
+
+
+class FirstStatementFinder(ModelVisitor):
+
+    def __init__(self):
+        self.statement = None
+
+    @classmethod
+    def find_from(cls, model):
+        finder = cls()
+        finder.visit(model)
+        return finder.statement
+
+    def visit_Statement(self, statement):
+        if self.statement is None:
+            self.statement = statement
+
+    def generic_visit(self, node):
+        if self.statement is None:
+            ModelVisitor.generic_visit(self, node)
+
+
+class LastStatementFinder(ModelVisitor):
+
+    def __init__(self):
+        self.statement = None
+
+    @classmethod
+    def find_from(cls, model):
+        finder = cls()
+        finder.visit(model)
+        return finder.statement
+
+    def visit_Statement(self, statement):
+        self.statement = statement
 
 
 class Block(ast.AST):
     _fields = ()
+    _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset')
+
+    @property
+    def lineno(self):
+        statement = FirstStatementFinder.find_from(self)
+        return statement.lineno if statement else -1
+
+    @property
+    def col_offset(self):
+        statement = FirstStatementFinder.find_from(self)
+        return statement.col_offset if statement else -1
+
+    @property
+    def end_lineno(self):
+        statement = LastStatementFinder.find_from(self)
+        return statement.end_lineno if statement else -1
+
+    @property
+    def end_col_offset(self):
+        statement = LastStatementFinder.find_from(self)
+        return statement.end_col_offset if statement else -1
 
 
 class File(Block):
     _fields = ('sections',)
+    _attributes = ('source',) + Block._attributes
 
-    def __init__(self):
-        self.sections = []
+    def __init__(self, sections=None, source=None):
+        self.sections = sections or []
+        self.source = source
 
     @property
     def has_tests(self):
         return any(isinstance(s, TestCaseSection) for s in self.sections)
+
+    def save(self, output=None):
+        output = output or self.source
+        if output is None:
+            raise TypeError('Saving model requires explicit output '
+                            'when original source is not path.')
+        if is_string(output) or is_pathlike(output):
+            output = file_writer(output)
+            close = True
+        else:
+            close = False
+        try:
+            ModelWriter(output).visit(self)
+        finally:
+            if close:
+                output.close()
 
 
 class Section(Block):
@@ -44,15 +129,14 @@ class Section(Block):
 
 
 class SettingSection(Section):
-    type = Token.SETTING_HEADER
+    pass
 
 
 class VariableSection(Section):
-    type = Token.VARIABLE_HEADER
+    pass
 
 
 class TestCaseSection(Section):
-    type = Token.TESTCASE_HEADER
 
     @property
     def tasks(self):
@@ -61,11 +145,11 @@ class TestCaseSection(Section):
 
 
 class KeywordSection(Section):
-    type = Token.KEYWORD_HEADER
+    pass
 
 
 class CommentSection(Section):
-    type = Token.COMMENT_HEADER
+    pass
 
 
 class Body(Block):
@@ -79,32 +163,31 @@ class Body(Block):
 
 
 class TestCase(Block):
-    type = Token.NAME
-    _fields = ('name_tokens', 'body')
+    _fields = ('header', 'body')
 
-    def __init__(self, name_tokens):
-        self.name_tokens = name_tokens
-        self.body = Body()
+    def __init__(self, header, body=None):
+        self.header = header
+        self.body = Body(body)
 
     @property
     def name(self):
-        return self.name_tokens.name
+        return self.header.name
 
 
 class Keyword(Block):
-    _fields = ('name_tokens', 'body')
+    _fields = ('header', 'body')
 
-    def __init__(self, name_tokens):
-        self.name_tokens = name_tokens
-        self.body = Body()
+    def __init__(self, header, body=None):
+        self.header = header
+        self.body = Body(body)
 
     @property
     def name(self):
-        return self.name_tokens.name
+        return self.header.name
 
 
 class ForLoop(Block):
-    _fields = ('type', 'header', 'body', 'end')
+    _fields = ('header', 'body', 'end')
 
     def __init__(self, header):
         self.header = header

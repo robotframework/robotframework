@@ -21,35 +21,55 @@ from robot.utils import get_error_message, FileReader
 from .context import TestCaseFileContext, ResourceFileContext
 from .lexers import FileLexer
 from .splitter import Splitter
-from .tokens import EOL, EOS, Token
+from .tokens import EOS, Token
 
 
 def get_tokens(source, data_only=False):
+    """Parses the given source to tokens.
+
+    :param source: The source where to read the data. Can be a path to
+        a source file as a string or as ``pathlib.Path`` object, an already
+        opened file object, or Unicode text containing the date directly.
+        Source files must be UTF-8 encoded.
+    :param data_only: When ``False`` (default), returns all tokens. When set
+        to ``True``, omits separators, comments, continuations, and other
+        non-data tokens.
+
+    Returns a generator that yields :class:`~robot.parsing.lexer.tokens.Token`
+    instances.
+    """
     reader = TestCaseFileReader(data_only)
     reader.input(source)
     return reader.get_tokens()
 
 
 def get_resource_tokens(source, data_only=False):
+    """Parses the given source to resource file tokens.
+
+    Otherwise same as :func:`get_tokens` but the source is considered to be
+    a resource file. This affects, for example, what settings are valid.
+    """
     reader = ResourceFileReader(data_only)
     reader.input(source)
     return reader.get_tokens()
 
 
+# TODO: Rename classes and module from readers to tokenizers?
+
 class BaseReader(object):
     context_class = None
 
     def __init__(self, data_only=False):
+        self.data_only = data_only
         self.lexer = FileLexer()
         self.statements = []
-        self._data_only = data_only
 
     def input(self, source):
         content = self._read(source)
-        for statement in Splitter().split(content, data_only=self._data_only):
+        for statement in Splitter().split(content, data_only=self.data_only):
             # Store all tokens but pass only DATA tokens to lexer.
             self.statements.append(statement)
-            if self._data_only:
+            if self.data_only:
                 data = statement[:]
             else:
                 data = [t for t in statement if t.type == t.DATA]
@@ -64,15 +84,15 @@ class BaseReader(object):
 
     def get_tokens(self):
         self.lexer.lex(self.context_class())
-        if self._data_only:
+        if self.data_only:
             ignore = {Token.IGNORE, Token.COMMENT_HEADER, Token.COMMENT,
                       Token.OLD_FOR_INDENT}
         else:
             ignore = {Token.IGNORE}
         statements = self._handle_old_for(self.statements)
-        if not self._data_only:
+        if not self.data_only:
             statements = chain.from_iterable(
-                self._split_trailing_comment_and_empty_lines(s)
+                self._split_trailing_commented_and_empty_lines(s)
                 for s in statements
             )
         # Setting local variables is performance optimization to avoid
@@ -105,7 +125,7 @@ class BaseReader(object):
                 yield EOS.from_token(prev_token)
 
     def _handle_old_for(self, statements):
-        end_statement = [Token(Token.END)]
+        end_statement = [Token(Token.SEPARATOR), Token(Token.END)]
         old_for = False
         for statement in statements:
             marker = self._get_first_data_token(statement)
@@ -131,35 +151,35 @@ class BaseReader(object):
                 return token
         return None
 
-    def _split_trailing_comment_and_empty_lines(self, statement):
+    def _split_trailing_commented_and_empty_lines(self, statement):
         lines = list(self._split_to_lines(statement))
-        split_statements = []
+        commented_or_empty = []
         for line in reversed(lines):
-            is_split = False
-            for token in line:
-                if token.type not in (token.IGNORE, token.SEPARATOR):
-                    is_split = token.type in (token.EOL, token.COMMENT)
-                    break
-            if not is_split:
+            if not self._is_commented_or_empty(line):
                 break
-            split_statements.append(line)
+            commented_or_empty.append(line)
             lines.pop()
         yield list(chain.from_iterable(lines))
-        for split in reversed(split_statements):
-            yield split
+        for line in reversed(commented_or_empty):
+            yield line
 
     def _split_to_lines(self, statement):
         current = []
-        eol = Token.EOL
         for token in statement:
             current.append(token)
-            if token.type == eol:
+            if token.type == Token.EOL:
                 yield current
                 current = []
         if current:
-            if current[-1].type != eol:
-                current.append(EOL.from_token(current[-1]))
             yield current
+
+    def _is_commented_or_empty(self, line):
+        separator_or_ignore = (Token.SEPARATOR, Token.IGNORE)
+        comment_or_eol = (Token.COMMENT, Token.EOL)
+        for token in line:
+            if token.type not in separator_or_ignore:
+                return token.type in comment_or_eol
+        return False
 
 
 class TestCaseFileReader(BaseReader):

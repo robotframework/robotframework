@@ -29,11 +29,12 @@ Listen Imports
 
 Failed Impors Are Listed In Errors
     ${path} =    Normalize Path    ${DATADIR}/output/listeners/imports/imports.robot
-    Check Syslog Contains    | ERROR | Error in file '${path}':
+    Error in file    0    ${path}    9
     ...    Resource file 'resource that does not exist and fails' does not exist.
-    Check Syslog Contains    | ERROR | Error in file '${path}':
-    ...    Importing test library 'LibraryThatDoesNotExist' failed:
-    Check Syslog Contains    | ERROR | Error in file '${path}':
+    Error in file    1    ${path}    10
+    ...    Importing test library 'LibraryThatDoesNotExist' failed: *
+    ...    traceback=None
+    Error in file    2    ${path}    11
     ...    Variable file 'variables which dont exist' does not exist.
 
 *** Keywords ***

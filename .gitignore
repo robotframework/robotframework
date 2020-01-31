@@ -1,6 +1,7 @@
 tmp
 build
 dist
+target
 venv
 .venv
 *~
@@ -22,3 +23,6 @@ src/robotframework.egg-info
 log.html
 output.xml
 report.html
+__pycache__
+.classpath
+.settings

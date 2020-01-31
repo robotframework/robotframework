@@ -13,7 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
+import os.path
+
+from robot.utils import is_pathlike, is_string
 
 from .lexer import Token, get_tokens, get_resource_tokens
 from .model import (File, SettingSection, VariableSection, TestCaseSection,
@@ -22,17 +24,26 @@ from .model import (File, SettingSection, VariableSection, TestCaseSection,
 
 
 def get_model(source, data_only=False, curdir=None):
+    """FIXME: Documentation missing.
+
+    Mention TestSuite.from_model when docs are written.
+    """
     tokens = get_tokens(source, data_only)
-    return _build_model(get_statements(tokens, curdir))
+    return _build_model(source, get_statements(tokens, curdir))
 
 
 def get_resource_model(source, data_only=False, curdir=None):
+    """Parses the given source to a resource file model.
+
+    Otherwise same as :func:`get_model` but the source is considered to be
+    a resource file. This affects, for example, what settings are valid.
+    """
     tokens = get_resource_tokens(source, data_only)
-    return _build_model(get_statements(tokens, curdir))
+    return _build_model(source, get_statements(tokens, curdir))
 
 
-def _build_model(statements):
-    builder = FileBuilder()
+def _build_model(source, statements):
+    builder = FileBuilder(source=source)
     stack = [builder]
     for statement in statements:
         while not stack[-1].handles(statement):
@@ -57,8 +68,17 @@ class Builder(object):
 
 class FileBuilder(Builder):
 
-    def __init__(self, model=None):
-        Builder.__init__(self, model or File())
+    def __init__(self, source=None):
+        Builder.__init__(self, File(source=self._get_path(source)))
+
+    def _get_path(self, source):
+        if not source:
+            return None
+        if is_string(source) and '\n' not in source and os.path.isfile(source):
+            return source
+        if is_pathlike(source) and source.is_file():
+            return str(source)
+        return None
 
     def statement(self, statement):
         try:
@@ -90,6 +110,8 @@ class TestCaseSectionBuilder(SectionBuilder):
 
     def statement(self, statement):
         if statement.type == Token.EOL:
+            if self.model.body.items:
+                self.model.body.add(statement)
             return self
         model = TestCase(statement)
         self.model.body.add(model)
@@ -100,6 +122,8 @@ class KeywordSectionBuilder(SectionBuilder):
 
     def statement(self, statement):
         if statement.type == Token.EOL:
+            if self.model.body.items:
+                self.model.body.add(statement)
             return self
         model = Keyword(statement)
         self.model.body.add(model)

@@ -14,3 +14,4 @@
 #  limitations under the License.
 
 from .builders import TestSuiteBuilder, ResourceFileBuilder
+from .parsers import RobotParser

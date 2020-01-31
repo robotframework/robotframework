@@ -16,11 +16,7 @@
 import ast
 
 
-class ModelVisitor(ast.NodeVisitor):
-
-    def visit(self, node):
-        visitor = self._find_visitor(type(node)) or self.generic_visit
-        return visitor(node)
+class VisitorFinder(object):
 
     def _find_visitor(self, cls):
         if cls is ast.AST:
@@ -32,3 +28,17 @@ class ModelVisitor(ast.NodeVisitor):
             visitor = self._find_visitor(base)
             if visitor:
                 return visitor
+
+
+class ModelVisitor(ast.NodeVisitor, VisitorFinder):
+
+    def visit(self, node):
+        visitor = self._find_visitor(type(node)) or self.generic_visit
+        visitor(node)
+
+
+class ModelTransformer(ast.NodeTransformer, VisitorFinder):
+
+    def visit(self, node):
+        visitor = self._find_visitor(type(node)) or self.generic_visit
+        return visitor(node)

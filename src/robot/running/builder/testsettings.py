@@ -18,7 +18,7 @@ NOTSET = object()
 
 class TestDefaults(object):
 
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         self.parent = parent
         self._setup = None
         self._teardown = None

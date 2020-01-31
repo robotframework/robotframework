@@ -94,15 +94,10 @@ Multiple settings
 
 Invalid setting
     Check Test Case    ${TEST NAME}
-    ${path} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
-    ${message} =    Catenate
-    ...    Error in file '${path}':
+    Error In File    0    parsing/user_keyword_settings.robot    192
     ...    Non-existing setting 'Invalid Setting'.
-    Check Log Message    ${ERRORS}[0]    ${message}    ERROR
-    ${message} =    Catenate
-    ...    Error in file '${path}':
+    Error In File    1    parsing/user_keyword_settings.robot    196
     ...    Non-existing setting 'invalid'.
-    Check Log Message    ${ERRORS}[1]    ${message}    ERROR
 
 *** Keywords ***
 Verify Documentation

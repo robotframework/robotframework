@@ -29,18 +29,18 @@ Invalid task timeout
 
 Task settings are not allowed in resource file
     [Template]    Validate invalid setting error
-    ${ERRORS[0]}    Task Setup
-    ${ERRORS[1]}    Task Teardown
-    ${ERRORS[2]}    Task Template
-    ${ERRORS[3]}    Task Timeout
+    0    2    Task Setup
+    1    3    Task Teardown
+    2    4    Task Template
+    3    5    Task Timeout
 
 *** Keywords ***
 Check timeout message
     [Arguments]    ${msg}    ${timeout}
     Check log message    ${msg}    Task timeout ${timeout} active. * seconds left.    DEBUG    pattern=True
 
-
 Validate invalid setting error
-    [Arguments]    ${error}    ${setting}
-    ${path} =    Normalize Path    ${DATADIR}/rpa/resource_with_invalid_task_settings.robot
-    Check log message    ${error}    Error in file '${path}': Non-existing setting '${setting}'.    ERROR
+    [Arguments]    ${index}    ${lineno}    ${setting}
+    Error In File
+    ...    ${index}    rpa/resource_with_invalid_task_settings.robot    ${lineno}
+    ...    Non-existing setting '${setting}'.

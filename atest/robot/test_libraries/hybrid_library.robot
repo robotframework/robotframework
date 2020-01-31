@@ -35,15 +35,12 @@ Embedded Keyword Arguments
     Check Test Case  ${TESTNAME}
 
 Name starting with an underscore is OK
-    ${tc} =    Check Test Case  ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
     Should be equal    ${tc.kws[0].name}    GetKeywordNamesLibrary.Starting With Underscore Is Ok
     Check log message    ${tc.kws[0].msgs[0]}    This is explicitly returned from 'get_keyword_names' anyway.
 
 Invalid get_keyword_names
-    ${path} =    Normalize Path    ${DATADIR}/test_libraries/hybrid_library.robot
-    ${error} =    Catenate
-    ...    Error in file '${path}':
+    Error in file    2    test_libraries/hybrid_library.robot    3
     ...    Getting keyword names from library 'InvalidKeywordNames' failed:
     ...    Calling dynamic method 'get_keyword_names' failed:
     ...    Return value must be list of strings.
-    Check Log Message    ${ERRORS}[2]    ${error}    level=ERROR    pattern=yes

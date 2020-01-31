@@ -8,25 +8,6 @@ from robot.utils.asserts import assert_raises_with_msg, assert_equal, assert_tru
 
 class TestArgumentValidation(unittest.TestCase):
 
-    def test_valid_explicit_format(self):
-        opts, _ = self._validate(format='txt')
-        assert_equal(opts['format'], 'TXT')
-
-    def test_valid_implicit_format(self):
-        opts, _ = self._validate(args=[__file__, 'out.robot'])
-        assert_equal(opts['format'], 'ROBOT')
-
-    def test_no_format(self):
-        opts, _ = self._validate()
-        assert_equal(opts['format'], None)
-
-    def test_invalid_explicit_format(self):
-        self._validate(format='invalid', error="Invalid format 'INVALID'.")
-
-    def test_invalid_implicit_format(self):
-        self._validate(args=[__file__, 'y.inv'], error="Invalid format 'INV'.")
-        self._validate(args=[__file__, 'inv'], error="Invalid format ''.")
-
     def test_no_space_count(self):
         opts, _ = self._validate()
         assert_true('spacecount' not in opts)
