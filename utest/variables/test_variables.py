@@ -23,6 +23,8 @@ class PythonObject:
         return (self.a, self.b)[index]
     def __str__(self):
         return '(%s, %s)' % (self.a, self.b)
+    def __len__(self):
+        return (self.a, self.b).__len__()
     __repr__ = __str__
 
 if JYTHON:
