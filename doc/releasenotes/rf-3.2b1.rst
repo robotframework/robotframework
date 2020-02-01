@@ -309,7 +309,7 @@ problem is switching to the new for loop style where `:FOR` is replaced with
     |     | Log  | ${x}
     | END |
 
-For altarnatives and more details in general see issue `#3108`_.
+For alternatives and more details in general see issue `#3108`_.
 
 __ `Old for loop syntax has been deprecated`_
 .. _#3108: https://github.com/robotframework/robotframework/issues/3108
