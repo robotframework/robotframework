@@ -31,23 +31,23 @@ Java Listener
     ...    START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
     ...    LOG MESSAGE: [INFO] Hello says "Suite Setup"!
     ...    START KW: BuiltIn.Log [Debug message\${LEVEL2}]
-    ...    START KW: BuiltIn.Set Variable [Just testing...]
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    START KW: String.Convert To Uppercase [Just testing...]
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    START TEST: Pass '' [forcepass]
     ...    START KW: My Keyword [Pass]
     ...    START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
     ...    LOG MESSAGE: [INFO] Hello says "Pass"!
     ...    START KW: BuiltIn.Log [Debug message\${LEVEL2}]
-    ...    START KW: BuiltIn.Set Variable [Just testing...]
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    START KW: String.Convert To Uppercase [Just testing...]
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    END TEST: PASS
     ...    START TEST: Fail 'FAIL Expected failure' [failforce]
     ...    START KW: My Keyword [Fail]
     ...    START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
     ...    LOG MESSAGE: [INFO] Hello says "Fail"!
     ...    START KW: BuiltIn.Log [Debug message\${LEVEL2}]
-    ...    START KW: BuiltIn.Set Variable [Just testing...]
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    START KW: String.Convert To Uppercase [Just testing...]
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    START KW: BuiltIn.Fail [Expected failure]
     ...    LOG MESSAGE: [FAIL] Expected failure
     ...    END TEST: FAIL: Expected failure
@@ -139,8 +139,8 @@ Check Listen All File
     ...    KW END: PASS
     ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
     ...    KW END: PASS
-    ...    KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    KW START: \${assign} = String.Convert To Uppercase ['Just testing...']
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    KW END: PASS
     ...    TEST START: Pass (s1-t1) '' ['force', 'pass'] crit: yes
@@ -150,8 +150,8 @@ Check Listen All File
     ...    KW END: PASS
     ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
     ...    KW END: PASS
-    ...    KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    KW START: \${assign} = String.Convert To Uppercase ['Just testing...']
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    KW END: PASS
     ...    TEST END: PASS crit: yes
@@ -162,8 +162,8 @@ Check Listen All File
     ...    KW END: PASS
     ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
     ...    KW END: PASS
-    ...    KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    KW START: \${assign} = String.Convert To Uppercase ['Just testing...']
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    KW END: PASS
     ...    KW START: BuiltIn.Fail ['Expected failure']

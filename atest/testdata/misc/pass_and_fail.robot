@@ -2,6 +2,7 @@
 Documentation     Some tests here
 Suite Setup       My Keyword    Suite Setup
 Force Tags        force
+Library           String
 
 *** Variable ***
 ${LEVEL1}         INFO
@@ -25,4 +26,4 @@ My Keyword
     [Tags]    keyword    tags    force
     Log    Hello says "${who}"!    ${LEVEL1}
     Log    Debug message    ${LEVEL2}
-    ${assign} =    Set Variable    Just testing...
+    ${assign} =    Convert to Uppercase    Just testing...
