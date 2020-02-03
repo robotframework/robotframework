@@ -1,0 +1,192 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"definitions": {
+		"suite": {
+			"type": "object",
+			"properties": {
+				"keywords": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/keyword"},
+					"additionalItems": false,
+					"minItems": 0,
+					"maxItems": 2
+				},
+				"suites": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/suite"},
+					"minItems": 0
+				},
+				"tests": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/test"},
+					"minItems": 0
+				},
+				"documentation": {"type": "string"},
+				"metadata": {
+					"type": "object",
+					"additionalProperties": true
+				},
+				"status": {"$ref": "#/definitions/status"},
+				"name" : {
+					"type": "string"
+				},
+				"id" : {
+					"type": "string"
+				}
+			},
+			"required": ["name", "status"],
+			"additionalProperties": true
+		},
+		"test": {
+			"type": "object",
+			"properties": {
+				"keywords": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/keyword"},
+					"minItems": 0
+				},
+				"message": {"type": "string"},
+				"documentation": {"type": "string"},
+				"tags": {
+					"type": "array",
+					"items": {"type": "string"},
+					"minItems": 0
+				},
+				"timeout": {"type": "string"},
+				"status": {"$ref": "#/definitions/status"},
+				"name" : {
+					"type": "string"
+				},
+				"id" : {
+					"type": "string"
+				}
+			},
+			"required": ["name", "status"],
+			"additionalProperties": true	
+		},
+		"type": {
+			"type": "string",
+			"enum": ["kw", "setup", "teardown", "foritem", "for"]
+		},
+		"keyword": {
+			"type": "object",
+			"properties": {
+				"keywords": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/keyword"},
+					"minItems": 0
+				},
+				"messages": {
+					"type": "array",
+					"items": {"$ref": "#/definitions/message"},
+					"minItems": 0
+				},
+				"documentation": {"type": "string"},
+				"tags": {
+					"type": "array",
+					"items": {"type": "string"},
+					"minItems": 0
+				},
+				"timeout": {"type": "string"},
+				"arguments": {
+					"type": "array",
+					"items":  {"type": "string"},
+					"minItems": 0
+				},
+				"library": {"type":  "string"},
+				"assign": {
+					"type": "array",
+					"items": {"type": "string"},
+					"minItems": 0
+				},
+				"status": {"$ref": "#/definitions/status"},
+				"name" : {
+					"type": "string"
+				},
+				"type" : {"$ref": "#/definitions/type"}
+			},
+			"required": ["name", "status", "type"],
+			"additionalProperties": true
+		},
+		"status": {
+			"type": "object",
+			"properties": {
+				"status": {"$ref": "#/definitions/status_enum"},
+				"endtime": {"type": "string"},
+				"starttime": {"type": "string"},
+				"elapsedtime": {"type": "string"},
+				"critical": {"type": "boolean"}
+			},
+			"required": ["status"]
+		},		
+		"message": {
+			"type": "object",
+			"properties": {
+				"message": {"type": "string"},
+				"timestamp": {"type": "string"},
+				"level": {"$ref": "#/definitions/level_enum"},
+				"html": {"type": "boolean"}
+			},
+			"required": ["message", "timestamp", "level"],
+			"additionalProperties": true
+		},
+		"metadata": {
+			"type": "object",
+			"properties": {
+				"name": {"type": "string"},
+				"value": {"type": "string"}
+			}
+		},
+		"statistics": {
+			"type": "object",
+			"properties": {	
+				"total": {"$ref": "#/definitions/stats"},
+				"tag": {"$ref": "#/definitions/stats"},
+				"suite": {"$ref": "#/definitions/stats"}
+			},
+			"required": ["total", "tag", "suite"]
+		},
+		"stats": {
+			"type": "array",
+			"items": {"$ref": "#/definitions/stat"},
+			"minItems": 0
+		},
+		"stat": {
+			"type": "object",
+			"properties": {
+				"tag": {"type": "string"},
+				"failed": {"type": "number"},
+				"critical": {"type": "boolean"},
+				"pass": {"type": "number"},
+				"info": {"type": "string"},
+				"documentation": {"type": "string"},
+				"id": {"type": "string"},
+				"name": {"type": "string"}
+			},
+			"additionalProperties": true
+		},
+		"errors": {
+			"type": "array",
+			"items": {"$ref": "#/definitions/message"}
+		},
+		"status_enum": {
+			"type": "string",
+			"enum": ["PASS", "FAIL"]
+		},
+		"level_enum": {
+			"type": "string",
+			"enum": ["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FAIL"]
+		}
+	},
+	"type": "object",
+	"properties": {
+		"generator": {"type": "string"},
+		"generated": {"type": "string"},
+		"rpa": {"type": "boolean"},
+		"suite": {"$ref": "#/definitions/suite"},
+		"statistics": {"$ref": "#/definitions/statistics"},
+		"errors": {"$ref": "#/definitions/errors"}
+	},
+	"required": ["suite"],
+	"additionalProperties": true
+}

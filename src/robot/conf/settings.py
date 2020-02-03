@@ -49,6 +49,7 @@ class _BaseSettings(object):
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
                  'XUnit'            : ('xunit', None),
+                 'Json'             : ('json', None),
                  'SplitLog'         : ('splitlog', False),
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),
@@ -70,7 +71,7 @@ class _BaseSettings(object):
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
                  'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
-    _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
+    _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile', 'Json']
 
     def __init__(self, options=None, **extra_options):
         self.start_timestamp = format_time(time.time(), '', '-', '')
@@ -203,7 +204,7 @@ class _BaseSettings(object):
     def _get_output_file(self, option):
         """Returns path of the requested output file and creates needed dirs.
 
-        `option` can be 'Output', 'Log', 'Report', 'XUnit' or 'DebugFile'.
+        `option` can be 'Output', 'Log', 'Report', 'XUnit', 'Junit', or 'DebugFile'.
         """
         name = self._opts[option]
         if not name:
@@ -231,6 +232,8 @@ class _BaseSettings(object):
             return '.xml'
         if type_ in ['Log', 'Report']:
             return '.html'
+        if type_ in ['Json']:
+            return '.json'
         if type_ == 'DebugFile':
             return '.txt'
         raise FrameworkError("Invalid output file type: %s" % type_)
@@ -333,6 +336,10 @@ class _BaseSettings(object):
     @property
     def xunit(self):
         return self['XUnit']
+
+    @property
+    def json(self):
+        return self['Json']
 
     @property
     def log_level(self):
