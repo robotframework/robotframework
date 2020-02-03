@@ -160,6 +160,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   critical or not.                                             |
    |                  |                  | * `template`: The name of the template used for the test.      |
    |                  |                  |   An empty string if the test not templated.                   |
+   |                  |                  | * `lineno`: Line number where the test starts in the source    |
+   |                  |                  |   file. New in RF 3.2.                                         |
    |                  |                  | * `starttime`: Test execution execution start time.            |
    +------------------+------------------+----------------------------------------------------------------+
    | end_test         | name, attributes | Called when a test case ends.                                  |
@@ -173,6 +175,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `tags`: Same as in `start_test`.                             |
    |                  |                  | * `critical`: Same as in `start_test`.                         |
    |                  |                  | * `template`: Same as in `start_test`.                         |
+   |                  |                  | * `lineno`: Same as in `start_test`.                           |
    |                  |                  | * `starttime`: Same as in `start_test`.                        |
    |                  |                  | * `endtime`: Test execution execution end time.                |
    |                  |                  | * `elapsedtime`: Total execution time in milliseconds as       |

@@ -59,15 +59,13 @@ Java Listener
 Correct Attributes To Listener Methods
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain    attributeverifyinglistener
-    Should Contain X Times    ${status}    FAILED    0
-    Should Contain X Times    ${status}    PASSED    388
+    Should Not Contain    ${status}    FAILED
 
 Correct Attributes To Java Listener Methods
     [Tags]    require-jython
     ${status} =    Log File    %{TEMPDIR}/${JAVA_ATTR_TYPE_FILE}
     Check Stderr Does Not Contain    JavaAttributeVerifyingListener
-    Should Contain X Times    ${status}    FAILED    0
-    Should Contain X Times    ${status}    PASSED    306
+    Should Not Contain    ${status}    FAILED
 
 Keyword Tags
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
@@ -108,8 +106,7 @@ Keyword Arguments Are Always Strings
     Check Test Tags    Run Keyword with already resolved non-string arguments in test data    1    2
     Check Test Case    Run Keyword with non-string arguments in library
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
-    Should Contain X Times    ${status}    FAILED    0
-    Should Contain X Times    ${status}    PASSED    215
+    Should Not Contain    ${status}    FAILED
 
 TimeoutError occurring during listener method is propagaged
     [Documentation]    Timeouts can only occur inside `log_message`.
@@ -122,11 +119,16 @@ TimeoutError occurring during listener method is propagaged
 
 *** Keywords ***
 Run Tests With Listeners
-    ${args}=    Catenate
-    ...    --listener ListenAll --listener ListenAll:%{TEMPDIR}${/}${ALL_FILE2}
-    ...    --listener module_listener --listener listeners.ListenSome --listener JavaListener
-    ...    --listener attributeverifyinglistener --listener JavaAttributeVerifyingListener
-    ...    --metadata ListenerMeta:Hello --critical pass
+    ${args} =    Join Command Line
+    ...    --listener    ListenAll
+    ...    --listener    ListenAll:%{TEMPDIR}${/}${ALL_FILE2}
+    ...    --listener    module_listener
+    ...    --listener    listeners.ListenSome
+    ...    --listener    JavaListener
+    ...    --listener    attributeverifyinglistener
+    ...    --listener    JavaAttributeVerifyingListener
+    ...    --metadata    ListenerMeta:Hello
+    ...    --critical    pass
     Run Tests    ${args}    misc/pass_and_fail.robot
 
 Check Listen All File
@@ -143,7 +145,7 @@ Check Listen All File
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    KW END: PASS
-    ...    TEST START: Pass (s1-t1) '' ['force', 'pass'] crit: yes
+    ...    TEST START: Pass (s1-t1, line 12) '' ['force', 'pass'] crit: yes
     ...    KW START: My Keyword ['Pass']
     ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
     ...    LOG MESSAGE: [INFO] Hello says "Pass"!
@@ -155,7 +157,7 @@ Check Listen All File
     ...    KW END: PASS
     ...    KW END: PASS
     ...    TEST END: PASS crit: yes
-    ...    TEST START: Fail (s1-t2) 'FAIL Expected failure' ['fail', 'force'] crit: no
+    ...    TEST START: Fail (s1-t2, line 17) 'FAIL Expected failure' ['fail', 'force'] crit: no
     ...    KW START: My Keyword ['Fail']
     ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
     ...    LOG MESSAGE: [INFO] Hello says "Fail"!

@@ -12,8 +12,9 @@ def start_suite(name, attrs):
 
 def start_test(name, attrs):
     tags = [str(tag) for tag in attrs['tags']]
-    OUTFILE.write("TEST START: %s (%s) '%s' %s crit: %s\n"
-                  % (name, attrs['id'], attrs['doc'], tags,  attrs['critical']))
+    OUTFILE.write("TEST START: %s (%s, line %s) '%s' %s crit: %s\n"
+                  % (name, attrs['id'], attrs['lineno'], attrs['doc'],
+                     tags,  attrs['critical']))
 
 def start_keyword(name, attrs):
     args = [str(arg) for arg in attrs['args']]
