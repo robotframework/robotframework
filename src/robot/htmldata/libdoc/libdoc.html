@@ -209,10 +209,7 @@
 
     function resetSearch() {
         $('#search-string').val('');
-        $('#include-name').prop('checked', true);
-        $('#include-args').prop('checked', true);
-        $('#include-doc').prop('checked', true);
-        $('#hide-unmatched').prop('checked', false);
+        $('#search input:checkbox').prop({'checked': true, 'disabled': false});
         resetKeywords();
     }
 
