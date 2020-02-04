@@ -222,6 +222,7 @@
         $('#match-count').hide();
         $('#altogether-count').show();
         history.replaceState && history.replaceState(null, '', location.pathname + location.hash);
+        scrollToHash();
     }
 
     function setMatchVisibility() {
