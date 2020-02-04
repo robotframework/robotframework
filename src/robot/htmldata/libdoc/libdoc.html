@@ -56,7 +56,7 @@
             })
         }
         scrollToHash();
-        $(document).bind('keydown', handleKeydown);
+        $(document).bind('keydown', handleKeyDown);
     });
 
     function parseTemplates() {
@@ -76,7 +76,7 @@
         $.tmpl(name + '-template', arguments).appendTo(container);
     }
 
-    function handleKeydown(event) {
+    function handleKeyDown(event) {
         event = event || window.event;
         var keyCode = event.keyCode || event.which;
         if (keyCode === 27)  // esc
@@ -224,7 +224,7 @@
         }
         $('#match-count').hide();
         $('#altogether-count').show();
-        history.replaceState && history.replaceState( null, '', location.pathname + location.hash);
+        history.replaceState && history.replaceState(null, '', location.pathname + location.hash);
     }
 
     function setMatchVisibility() {
@@ -327,10 +327,10 @@
     <div class='shortcuts'>
         {{each all_tags}}
         <a href="javascript:tagSearch('${$value}')"
-           title="Show tests with this tag">${$value}</a> &middot;
+           title="Show keywords with this tag">${$value}</a> &middot;
         {{/each}}
         <a href="javascript:resetKeywords()" class="normal-first-letter"
-           title="Show all tags">[Reset]</a>
+           title="Show all keywords">[Reset]</a>
     </div>
 </script>
 
@@ -366,7 +366,7 @@
         <td class="tags">
             {{each tags}}
             <a href="javascript:tagSearch('${$value}')"
-               title="Show tests with this tag">${$value}</a>{{if $index < tags.length-1}}, {{/if}}
+               title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}}, {{/if}}
             {{/each}}
         </td>
         {{/if}}
