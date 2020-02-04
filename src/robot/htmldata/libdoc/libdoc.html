@@ -98,7 +98,7 @@
         markMatches(tag, include);
         highlightMatches(tag, include);
         $('#keywords-container').find('.kw-row').addClass('hide-unmatched');
-        history.replaceState && history.replaceState(null, '', location.pathname + "?tag=" + tag + location.hash);
+        history.replaceState && history.replaceState(null, '', location.pathname + "?tag=" + tag);
     }
 
     function doSearch() {
