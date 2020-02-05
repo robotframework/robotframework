@@ -409,7 +409,7 @@ class RobotSettings(_BaseSettings):
                        'VariableFiles'      : ('variablefile', []),
                        'PreRunModifiers'    : ('prerunmodifier', []),
                        'Listeners'          : ('listener', []),
-                       'ConsoleType'        : ('console', 'verbose'),
+                       'ConsoleType'        : ('console', 'normal'),
                        'ConsoleTypeDotted'  : ('dotted', False),
                        'ConsoleTypeQuiet'   : ('quiet', False),
                        'ConsoleWidth'       : ('consolewidth', 78),

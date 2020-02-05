@@ -20,11 +20,15 @@ from .quiet import NoOutput, QuietOutput
 from .verbose import VerboseOutput
 
 
-def ConsoleOutput(type='verbose', width=78, colors='AUTO', markers='AUTO',
+def ConsoleOutput(type='normal', width=78, colors='AUTO', markers='AUTO',
                   stdout=None, stderr=None):
     upper = type.upper()
-    if upper == 'VERBOSE':
+    if upper in 'NORMAL':
         return VerboseOutput(width, colors, markers, stdout, stderr)
+    if upper == 'VERBOSE':
+        output = VerboseOutput(width, colors, markers, stdout, stderr)
+        output.verbose_keywords()
+        return output
     if upper == 'DOTTED':
         return DottedOutput(width, colors, stdout, stderr)
     if upper == 'QUIET':
@@ -32,4 +36,4 @@ def ConsoleOutput(type='verbose', width=78, colors='AUTO', markers='AUTO',
     if upper == 'NONE':
         return NoOutput()
     raise DataError("Invalid console output type '%s'. Available "
-                    "'VERBOSE', 'DOTTED', 'QUIET' and 'NONE'." % type)
+                    "'NORMAL', 'VERBOSE', 'DOTTED', 'QUIET' and 'NONE'." % type)
