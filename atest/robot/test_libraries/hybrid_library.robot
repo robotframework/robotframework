@@ -14,13 +14,22 @@ Keyword Implemented In Library Class Itself
     ${tc} =  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.kws[0].msgs[0]}  No need for __getattr__ here!!
 
-Non Existing Keyword
-    Check Test Case  ${TESTNAME}
-    Check Log Message  ${ERRORS}[0]  Adding keyword 'non_existing_kw' to library 'GetKeywordNamesLibrary' failed: AttributeError: *  ERROR  pattern=yes
+Non Existing Attribute
+    Check Test Case    ${TESTNAME}
+    Adding keyword failed    0    Non-existing attribute
+    ...    Getting handler method failed:
+    ...    AttributeError: Non-existing attribute 'Non-existing attribute'
 
 Named Keyword Is Not Method
-    Check Test Case  ${TESTNAME}
-    Check Log Message  ${ERRORS}[1]  Adding keyword 'this_is_not_keyword' to library 'GetKeywordNamesLibrary' failed: Not a method or function  ERROR
+    Check Test Case    ${TESTNAME}
+    Adding keyword failed    1    not_method_or_function
+    ...    Not a method or function
+
+Unexpected error getting attribute
+    Check Test Case    ${TESTNAME}
+    Adding keyword failed    2    Unexpected error getting attribute
+    ...    Getting handler method failed:
+    ...    TypeError: Oooops!
 
 Name Set Using 'robot_name' Attribute
     Check Test Case  ${TESTNAME}
@@ -40,7 +49,15 @@ Name starting with an underscore is OK
     Check log message    ${tc.kws[0].msgs[0]}    This is explicitly returned from 'get_keyword_names' anyway.
 
 Invalid get_keyword_names
-    Error in file    2    test_libraries/hybrid_library.robot    3
+    Error in file    3    test_libraries/hybrid_library.robot    3
     ...    Getting keyword names from library 'InvalidKeywordNames' failed:
     ...    Calling dynamic method 'get_keyword_names' failed:
     ...    Return value must be list of strings.
+
+*** Keywords ***
+Adding keyword failed
+    [Arguments]    ${index}    ${name}    @{error}
+    ${message} =    Catenate
+    ...    Adding keyword '${name}' to library 'GetKeywordNamesLibrary' failed:
+    ...    @{error}
+    Check Log Message    ${ERRORS}[${index}]   ${message}    ERROR

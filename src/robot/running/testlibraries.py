@@ -67,7 +67,7 @@ def _get_lib_class(libcode):
 
 
 class _BaseTestLibrary(object):
-    _failure_level = 'INFO'
+    get_handler_error_level = 'INFO'
 
     def __init__(self, libcode, name, args, source, variables):
         if os.path.exists(name):
@@ -228,9 +228,7 @@ class _BaseTestLibrary(object):
                     try:
                         self.handlers.add(handler, embedded)
                     except DataError as err:
-                        LOGGER.error("Error in test library '%s': "
-                                     "Creating keyword '%s' failed: %s"
-                                     % (self.name, handler.name, err.message))
+                        self._adding_keyword_failed(handler.name, err)
                     else:
                         LOGGER.debug("Created keyword '%s'" % handler.name)
 
@@ -252,23 +250,23 @@ class _BaseTestLibrary(object):
     def _try_to_get_handler_method(self, libcode, name):
         try:
             return self._get_handler_method(libcode, name)
-        # TODO: RF 3.1: Catch only DataError or at least consider others errors.
-        # Don't want to do that in a minor release.
-        except:
-            self._report_adding_keyword_failed(name)
+        except DataError as err:
+            self._adding_keyword_failed(name, err, self.get_handler_error_level)
             return None
 
-    def _report_adding_keyword_failed(self, name, message=None, details=None,
-                                      level=None):
-        if not message:
-            message, details = get_error_details()
+    def _adding_keyword_failed(self, name, error, level='ERROR'):
         LOGGER.write("Adding keyword '%s' to library '%s' failed: %s"
-                     % (name, self.name, message), level or self._failure_level)
-        if details:
-            LOGGER.debug('Details:\n%s' % details)
+                     % (name, self.name, error.message), level)
+        if error.details:
+            LOGGER.debug('Details:\n%s' % error.details)
 
     def _get_handler_method(self, libcode, name):
-        method = getattr(libcode, name)
+        try:
+            method = getattr(libcode, name)
+        except:
+            message, details = get_error_details()
+            raise DataError('Getting handler method failed: %s' % message,
+                            details)
         if not inspect.isroutine(method):
             raise DataError('Not a method or function')
         return method
@@ -277,18 +275,12 @@ class _BaseTestLibrary(object):
         try:
             handler = self._create_handler(name, method)
         except DataError as err:
-            self._report_adding_keyword_failed(name, err.message, level='ERROR')
-            return None, False
-        # TODO: RF 3.1: Catch only DataError or at least consider others errors.
-        # Don't want to do that in a minor release.
-        except:
-            self._report_adding_keyword_failed(name)
+            self._adding_keyword_failed(name, err)
             return None, False
         try:
             return self._get_possible_embedded_args_handler(handler)
         except DataError as err:
-            self._report_adding_keyword_failed(handler.name, err.message,
-                                               level='ERROR')
+            self._adding_keyword_failed(handler.name, err)
             return None, False
 
     def _create_handler(self, handler_name, handler_method):
@@ -367,14 +359,14 @@ class _ModuleLibrary(_BaseTestLibrary):
 
 
 class _HybridLibrary(_BaseTestLibrary):
-    _failure_level = 'ERROR'
+    get_handler_error_level = 'ERROR'
 
     def _get_handler_names(self, instance):
         return GetKeywordNames(instance)()
 
 
 class _DynamicLibrary(_BaseTestLibrary):
-    _failure_level = 'ERROR'
+    get_handler_error_level = 'ERROR'
 
     def __init__(self, libcode, name, args, source, variables=None):
         _BaseTestLibrary.__init__(self, libcode, name, args, source, variables)

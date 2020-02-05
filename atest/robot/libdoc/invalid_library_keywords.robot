@@ -6,7 +6,9 @@ Resource          libdoc_resource.robot
 Dublicate name
     Keyword Name Should Be    0    Duplicate Name
     Keyword Doc Should Be     0    *Creating keyword failed:* Keyword with same name defined multiple times.
-    Stdout should contain error    Duplicate Name    Keyword with same name defined multiple times
+    Stdout should contain adding keyword error
+    ...    Duplicate Name
+    ...    Keyword with same name defined multiple times.
 
 Dublicate name with embedded arguments
     Keyword Name Should Be    1    Same \${embedded}
@@ -16,15 +18,12 @@ Dublicate name with embedded arguments
 
 Invalid embedded arguments
     Keyword Count Should Be    3
-    ${error} =    Catenate
-    ...    [ ERROR ] Adding keyword 'Invalid embedded \${args}' to library 'InvalidKeywords' failed:
+    Stdout should contain adding keyword error
+    ...    Invalid embedded \${args}
     ...    Embedded argument count does not match number of accepted arguments.
-    Should Contain    ${OUTPUT}    ${error}
 
 *** Keywords ***
-Stdout should contain error
+Stdout should contain adding keyword error
     [Arguments]    ${name}    ${error}
-    ${message} =    Catenate
-    ...    [ ERROR ] Error in test library 'InvalidKeywords':
-    ...    Creating keyword '${name}' failed: ${error}
-    Should Contain    ${OUTPUT}    ${message}
+    Should Contain    ${OUTPUT}
+    ...    [ ERROR ] Adding keyword '${name}' to library 'InvalidKeywords' failed: ${error}
