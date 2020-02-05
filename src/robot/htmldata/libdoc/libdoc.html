@@ -57,6 +57,8 @@
         }
         scrollToHash();
         $(document).bind('keydown', handleKeyDown);
+        // https://github.com/robotframework/robotframework/issues/3456
+        $('.shortcuts a').width('max-content');
     });
 
     function parseTemplates() {
@@ -315,7 +317,7 @@
         <a href="#${encodeURIComponent($value.name)}"
            class="{{if $value.matched === false}}no-{{/if}}match"
            title="${$value.shortdoc}">${$value.name}</a>
-        {{if $index < keywords.length-1}} &middot; {{/if}}
+        {{if $index < keywords.length-1}}&middot;{{/if}}
         {{/each}}
     </div>
 </script>
@@ -325,7 +327,8 @@
     <div class='shortcuts'>
         {{each all_tags}}
         <a href="javascript:tagSearch('${$value}')"
-           title="Show keywords with this tag">${$value}</a> &middot;
+           title="Show keywords with this tag">${$value}</a>
+        &middot;
         {{/each}}
         <a href="javascript:resetKeywords()" class="normal-first-letter"
            title="Show all keywords">[Reset]</a>
