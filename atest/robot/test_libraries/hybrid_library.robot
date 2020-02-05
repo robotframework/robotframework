@@ -23,7 +23,7 @@ Non Existing Attribute
 Named Keyword Is Not Method
     Check Test Case    ${TESTNAME}
     Adding keyword failed    1    not_method_or_function
-    ...    Not a method or function
+    ...    Not a method or function.
 
 Unexpected error getting attribute
     Check Test Case    ${TESTNAME}

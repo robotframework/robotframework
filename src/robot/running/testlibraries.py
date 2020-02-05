@@ -267,8 +267,14 @@ class _BaseTestLibrary(object):
             message, details = get_error_details()
             raise DataError('Getting handler method failed: %s' % message,
                             details)
+        self._validate_handler_method(method)
+        return method
+
+    def _validate_handler_method(self, method):
         if not inspect.isroutine(method):
-            raise DataError('Not a method or function')
+            raise DataError('Not a method or function.')
+        if getattr(method, 'robot_not_keyword', False) is True:
+            raise DataError('Not exposed as a keyword.')
         return method
 
     def _try_to_create_handler(self, name, method):
@@ -319,15 +325,14 @@ class _ClassLibrary(_BaseTestLibrary):
             if item in (object, Object):
                 continue
             if hasattr(item, '__dict__') and name in item.__dict__:
-                self._validate_handler(item.__dict__[name])
+                self._validate_handler_method(item.__dict__[name])
                 return getattr(libinst, name)
-        raise DataError('No non-implicit implementation found')
+        raise DataError('No non-implicit implementation found.')
 
-    def _validate_handler(self, handler):
-        if not inspect.isroutine(handler):
-            raise DataError('Not a method or function')
-        if self._is_implicit_java_or_jython_method(handler):
-            raise DataError('Implicit methods are ignored')
+    def _validate_handler_method(self, method):
+        _BaseTestLibrary._validate_handler_method(self, method)
+        if self._is_implicit_java_or_jython_method(method):
+            raise DataError('Implicit methods are ignored.')
 
     def _is_implicit_java_or_jython_method(self, handler):
         if not is_java_method(handler):
@@ -344,7 +349,7 @@ class _ModuleLibrary(_BaseTestLibrary):
     def _get_handler_method(self, libcode, name):
         method = _BaseTestLibrary._get_handler_method(self, libcode, name)
         if hasattr(libcode, '__all__') and name not in libcode.__all__:
-            raise DataError('Not exposed as a keyword')
+            raise DataError('Not exposed as a keyword.')
         return method
 
     def get_instance(self, create=True):
