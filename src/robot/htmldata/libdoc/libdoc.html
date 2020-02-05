@@ -51,9 +51,7 @@
         renderTemplate('footer', libdoc);
         params = util.parseQueryString(window.location.search.slice(1));
         if ("tag" in params) {
-            $(document).ready(function() {
-              tagSearch(params["tag"]);
-            })
+            tagSearch(params["tag"], window.location.hash);
         }
         scrollToHash();
         $(document).bind('keydown', handleKeyDown);
@@ -95,12 +93,14 @@
         }
     }
 
-    function tagSearch(tag) {
+    function tagSearch(tag, hash) {
         var include = {tags: true, tagsExact: true};
+        var url = window.location.pathname + "?tag=" + tag + (hash || "");
         markMatches(tag, include);
         highlightMatches(tag, include);
         $('#keywords-container').find('.kw-row').addClass('hide-unmatched');
-        history.replaceState && history.replaceState(null, '', location.pathname + "?tag=" + tag);
+        history.replaceState && history.replaceState(null, '', url);
+        document.getElementById('Shortcuts').scrollIntoView();
     }
 
     function doSearch() {
