@@ -9,7 +9,7 @@ Use with correct arguments
 
 Use with incorrect arguments
     [Documentation]    PyPy sees correct arguments, others don't.
-    ${error} =    Set Variable If    ${INTERPRETER.is_pypy}
+    ${error} =    Set Variable If    ${INTERPRETER.is_pypy} or ${INTERPRETER.version_info} >= (3, 7)
     ...    Keyword 'KeywordsImplementedInC.Eq' expected 2 arguments, got 3.
     ...    STARTS: TypeError:
     Check Test Case    ${TEST NAME}    FAIL    ${error}

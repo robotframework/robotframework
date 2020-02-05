@@ -7,7 +7,7 @@ Use with correct arguments
     Should Be True    ${result} is True
     ${result} =    Eq    foo    bar
     Should Be True    ${result} is False
-    ${result} =    Length    Hello, world!
+    ${result} =    Length    Hello, world!
     Should Be True    ${result} == 13
     Print    This is    a bit weird    ...
 
