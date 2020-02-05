@@ -30,8 +30,8 @@ Suite Documentation
     Should Be Equal    ${SUITE.doc}    ${doc}
 
 Suite Name And Documentation On Console
-    Check Stdout Contains    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on console.${SPACE * 3}\n
-    Check Stdout Contains    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on... | PASS |\n
+    Stdout Should Contain    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on console.${SPACE * 3}\n
+    Stdout Should Contain    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on... | PASS |\n
 
 Test Setup
     ${test} =    Check Test Case    Test Case

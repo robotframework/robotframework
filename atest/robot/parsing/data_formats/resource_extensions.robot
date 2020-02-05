@@ -22,7 +22,7 @@ Resource with '*.resource' extension
     ...    Resource with '*.rest' extension
     ...    Resource with invalid extension
     ${path} =    Normalize Path    ${DATADIR}/parsing/data_formats/resource_extensions/tests.resource
-    Check Syslog Contains    | INFO \ | Ignoring file or directory '${path}'.
+    Syslog Should Contain    | INFO \ | Ignoring file or directory '${path}'.
 
 Resource with '*.robot' extension
     Check Test Case    ${TESTNAME}

@@ -161,9 +161,9 @@ Stderr Should Contain Error
     [Arguments]    ${path}    @{error parts}
     ${path} =  Join Path    ${DATADIR}    ${path}
     ${error} =  Catenate  @{error parts}
-    Check Stderr Contains    [ ERROR ] Error in file '${path}': ${error}
+    Stderr Should Contain    [ ERROR ] Error in file '${path}': ${error}
 
 File Should Have Already Been Imported
     [Arguments]    ${type}    ${path}   ${arguments}=    ${suite}=Resource And Variable Imports
     ${path} =    Join Path    ${RESDIR}    ${path}
-    Check Syslog Contains    | INFO \ | ${type} file '${path}'${arguments} already imported by suite '${suite}'
+    Syslog Should Contain    | INFO \ | ${type} file '${path}'${arguments} already imported by suite '${suite}'

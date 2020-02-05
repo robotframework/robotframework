@@ -64,8 +64,8 @@ Stdout and stderr are not captured when running Run Keyword
     ...    end keyword BuiltIn.Run Keyword
     ...    end keyword My UK
     ...    end keyword BuiltIn.Run Keyword
-    Check Stdout Contains    ${expected}
-    Check Stderr Contains    ${expected}
+    Stdout Should Contain    ${expected}
+    Stderr Should Contain    ${expected}
 
 *** Keywords ***
 Check Run Keyword

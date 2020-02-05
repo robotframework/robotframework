@@ -14,12 +14,12 @@ ${INVALID}        %{TEMPDIR}${/}ïnvälïd-xünït.xml
 No XUnit Option Given
     Run Rebot    ${EMPTY}    ${INPUT FILE}
     Stderr Should Be Empty
-    Check Stdout Does Not Contain    XUnit
+    Stdout Should Not Contain    XUnit
 
 XUnit Option Given
     Run Rebot    --xunit xunit.xml --log log.html    ${INPUT FILE}
     Stderr Should Be Empty
-    Check Stdout Contains    XUnit:
+    Stdout Should Contain    XUnit:
     File Should Exist    ${OUTDIR}/xunit.xml
     File Should Exist    ${OUTDIR}/log.html
     ${root} =    Parse XML    ${OUTDIR}/xunit.xml
@@ -55,7 +55,7 @@ Invalid XUnit File
     File Should Not Exist    ${INVALID}
     File Should Exist    ${OUTDIR}/log.html
     ${path} =    Regexp Escape    ${INVALID}
-    Check Stderr Matches Regexp
+    Stderr Should Match Regexp
     ...    \\[ ERROR \\] Opening xunit file '${path}' failed: .*
 
 *** Keywords ***

@@ -58,13 +58,13 @@ Java Listener
 
 Correct Attributes To Listener Methods
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
-    Check Stderr Does Not Contain    attributeverifyinglistener
+    Stderr Should Not Contain    attributeverifyinglistener
     Should Not Contain    ${status}    FAILED
 
 Correct Attributes To Java Listener Methods
     [Tags]    require-jython
     ${status} =    Log File    %{TEMPDIR}/${JAVA_ATTR_TYPE_FILE}
-    Check Stderr Does Not Contain    JavaAttributeVerifyingListener
+    Stderr Should Not Contain    JavaAttributeVerifyingListener
     Should Not Contain    ${status}    FAILED
 
 Keyword Tags
@@ -179,5 +179,5 @@ Check Listen All File
 
 Calling listener failed
     [Arguments]    ${method}    ${error}
-    Check Stderr Contains    [ ERROR ] Calling listener method '${method}' of
+    Stderr Should Contain    [ ERROR ] Calling listener method '${method}' of
     ...    listener 'listeners.InvalidMethods' failed: ${error}

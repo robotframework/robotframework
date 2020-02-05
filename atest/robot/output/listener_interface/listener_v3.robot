@@ -13,7 +13,7 @@ New tests and keywords can be added
     Check keyword data    ${tc.kws[0]}    BuiltIn.Fail    args=Dynamically added!    status=FAIL
     ${tc} =    Check test case    Added by end_Test    FAIL    [start] [end]
     Check keyword data    ${tc.kws[0]}    BuiltIn.Log    args=Dynamically added!, INFO
-    Check Stdout Contains    SEPARATOR=\n
+    Stdout Should Contain    SEPARATOR=\n
     ...    Added by start_suite [start suite] :: [start suite] ${SPACE*17} | FAIL |
     ...    [start] [end]
     ...    ${SEPARATOR}
@@ -27,15 +27,15 @@ New tests and keywords can be added
 Test status and message can be changed
     Check Test case    Pass [start suite]    FAIL    [start] [end]
     Check Test case    Fail [start suite]    PASS    Expected failure [end]
-    Check Stdout Contains    SEPARATOR=\n
+    Stdout Should Contain    SEPARATOR=\n
     ...    Pass [start suite] :: [start suite] ${SPACE*33} | FAIL |
     ...    [start] [end]
-    Check Stdout Contains    SEPARATOR=\n
+    Stdout Should Contain    SEPARATOR=\n
     ...    Fail [start suite] :: FAIL Expected failure [start suite] ${SPACE*11} | PASS |
     ...    Expected failure [end]
 
 Changing test status in end suite changes console output, but not output.xml
-    Check stdout contains     SEPARATOR=\n
+    Stdout Should Contain     SEPARATOR=\n
     ...    5 critical tests, 5 passed, 0 failed
     ...    5 tests total, 5 passed, 0 failed
     ${from output.xml} =    Catenate    SEPARATOR=\n
@@ -53,15 +53,15 @@ Metadata can be modified
 Changing current element name is not possible
     [Documentation]    But start_suite can change test names
     Should be equal    ${SUITE.name}    Pass And Fail
-    Check stdout contains    Pass And Fail :: Some tests here
-    Check stdout contains    Pass [start suite] ::
+    Stdout Should Contain    Pass And Fail :: Some tests here
+    Stdout Should Contain    Pass [start suite] ::
     Should be equal   ${SUITE.tests[0].name}    Pass [start suite]
 
 Changing current element docs does not change console output, but does change output.xml
     [Documentation]    But start_suite can change test docs
-    Check stdout contains    Pass And Fail :: Some tests here
+    Stdout Should Contain    Pass And Fail :: Some tests here
     Should be equal    ${SUITE.doc}    Some tests here [start suite] [end suite]
-    Check stdout contains    Pass [start suite] :: [start suite] ${SPACE*33} | FAIL |
+    Stdout Should Contain    Pass [start suite] :: [start suite] ${SPACE*33} | FAIL |
     Check Test Doc    Pass [start suite]    [start suite] [start test] [end test]
 
 Log messages and timestamps can be changed

@@ -142,7 +142,7 @@ Pass Execution If with multiple variables
     Check Test Tags    ${TESTNAME}    force1    force2    my    tags
 
 Statuses should be correct when running tests
-    Check Stdout Contains    SEPARATOR=\n
+    Stdout Should Contain    SEPARATOR=\n
     ...    34 critical tests, 20 passed, 14 failed
     ...    34 tests total, 20 passed, 14 failed
 

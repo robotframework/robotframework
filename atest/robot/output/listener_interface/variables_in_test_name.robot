@@ -29,4 +29,4 @@ Original and resolved name should be available
     # v3 listener sets test's message
     Check Test Case    ${resolved}    PASS    ${message}
     # v2 listener prints to stdout
-    Check Stdout Contains    ${message}
+    Stdout Should Contain    ${message}

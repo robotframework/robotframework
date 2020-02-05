@@ -73,11 +73,11 @@ Documentation with escaping
     Verify Documentation    \${VERSION}\nc:\\temp\n\n\\
 
 Name and documentation on console
-    Check Stdout Contains    Normal name${SPACE * 59}| PASS |
-    Check Stdout Contains    test_case names are NOT _forMatted_${SPACE * 35}| PASS |
-    Check Stdout Contains    Documentation :: Documentation in single line and column.${SPACE * 13}| PASS |
-    Check Stdout Contains    Documentation in multiple rows :: 1st logical line is shortdoc.${SPACE * 7}| PASS |
-    Check Stdout Contains    Documentation with non-existing variables :: Starting from RF ${2}.1 ... | PASS |
+    Stdout Should Contain    Normal name${SPACE * 59}| PASS |
+    Stdout Should Contain    test_case names are NOT _forMatted_${SPACE * 35}| PASS |
+    Stdout Should Contain    Documentation :: Documentation in single line and column.${SPACE * 13}| PASS |
+    Stdout Should Contain    Documentation in multiple rows :: 1st logical line is shortdoc.${SPACE * 7}| PASS |
+    Stdout Should Contain    Documentation with non-existing variables :: Starting from RF ${2}.1 ... | PASS |
 
 Tags
     Verify Tags    force-1    test-1    test-2
