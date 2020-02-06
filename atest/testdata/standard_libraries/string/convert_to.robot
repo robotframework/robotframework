@@ -21,26 +21,26 @@ Convert To Lowercases
 
 Convert To Titlecases
     [Template]    Do titlecases
-    abcd    Abcd
-    jUnit    jUnit
-    aBBbcd    aBBbcd
-    1234    1234
-    a1b2 C3d4e    A1b2 C3d4e
-    foo\tbar    Foo\tB ar
-    foo 1bar    Foo 1Bar
-    foo's1bar    Foo'S1Bar
-    hello\nXML\niPhone    Hello\nXML\niPhone
+    abcd                      Abcd
+    jUnit                     jUnit
+    aBBbcd                    aBBbcd
+    1234                      1234
+    a1b2 C3d4e                A1b2 C3d4e
+    foo\tbar                  Foo\tB ar
+    foo 1bar                  Foo 1Bar
+    foo's1bar                 Foo'S1Bar
+    hello\nXML\niPhone        Hello\nXML\niPhone
     i love robot Framework    I Love Robot Framework
     i love ROBOT Framework    I Love ROBOT Framework
     I Love Robot Framework    I Love Robot Framework 
-    foO baR    foO baR
-    1234    1234
-    mother_in_law    Mother_In_Law
-    father-in-law    Father-In-Law
-    jUnit    jUnit
-    iPhone    iPhone
-    foo\xa0bar    Foo\xa0Bar
-    ${EMPTY}    ${EMPTY}    
+    foO baR                   foO baR
+    1234                      1234
+    mother_in_law             Mother_In_Law
+    father-in-law             Father-In-Law
+    jUnit                     jUnit
+    iPhone                    iPhone
+    foo\xa0bar                Foo\xa0Bar
+    ${EMPTY}                  ${EMPTY}    
 
 *** Keywords ***
 Do uppercase
@@ -57,6 +57,3 @@ Do titlecases
     [Arguments]    ${arg1}    ${arg2}
     ${result} =    Convert To Titlecase    ${arg1}
     Should be Equal    ${result}    ${arg2}
-
-
-	

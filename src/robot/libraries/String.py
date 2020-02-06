@@ -75,8 +75,10 @@ class String(object):
         | Should Be Equal | ${str2} | 1A2C3D |
         """
         return string.upper()
+    
     def convert_to_titlecase(self, string):
         """Converts string to titlecase. It's preserve space also.
+        
         Examples:
         | ${str1} = | Convert To Titlecase | abc |
         | Should Be Equal | ${str1} | Abc |
@@ -101,11 +103,14 @@ class String(object):
         | ${str9} = | Convert To Titlecase | foo 1bar |
         | Should Be Equal | ${str9} | Foo 1Bar |
         | ${str10} = | Convert To Titlecase | hello\nXML\niPhone |
-         Should Be Equal | ${str10} | Hello\nXML\niPhone |
+        | Should Be Equal | ${str10} | Hello\nXML\niPhone |
         
-        New in Robot Framework 3.1.
+        New in RF 3.2 now.
         """
-        return re.sub("(^|[\s0-9_\-']+)([a-z])(?![A-Z])", lambda m: m.group(1) + m.group(2).upper(), string)
+        def title(match):
+            return match.group(1) + match.group(2).upper()
+        
+        return re.sub("(^|[\s0-9_\-']+)([a-z])(?![A-Z])", title, string)
 
     def encode_string_to_bytes(self, string, encoding, errors='strict'):
         """Encodes the given Unicode ``string`` to bytes using the given ``encoding``.
