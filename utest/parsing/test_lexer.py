@@ -127,6 +127,41 @@ Documentation     Valid both in suite and resource files.
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
 
+    def test_with_name(self):
+        data = '''\
+*** Settings ***
+Library         Easter                       WITH NAME    Christmas
+Library         Arguments    arg             WITH NAME    One argument
+Library         Arguments    arg1    arg2
+...                          arg3    arg4    WITH NAME    Four arguments
+'''
+        expected = [
+            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
+            (T.EOS, '', 1, 16),
+            (T.LIBRARY, 'Library', 2, 0),
+            (T.NAME, 'Easter', 2, 16),
+            (T.WITH_NAME, 'WITH NAME', 2, 45),
+            (T.NAME, 'Christmas', 2, 58),
+            (T.EOS, '', 2, 67),
+            (T.LIBRARY, 'Library', 3, 0),
+            (T.NAME, 'Arguments', 3, 16),
+            (T.ARGUMENT, 'arg', 3, 29),
+            (T.WITH_NAME, 'WITH NAME', 3, 45),
+            (T.NAME, 'One argument', 3, 58),
+            (T.EOS, '', 3, 70),
+            (T.LIBRARY, 'Library', 4, 0),
+            (T.NAME, 'Arguments', 4, 16),
+            (T.ARGUMENT, 'arg1', 4, 29),
+            (T.ARGUMENT, 'arg2', 4, 37),
+            (T.ARGUMENT, 'arg3', 5, 29),
+            (T.ARGUMENT, 'arg4', 5, 37),
+            (T.WITH_NAME, 'WITH NAME', 5, 45),
+            (T.NAME, 'Four arguments', 5, 58),
+            (T.EOS, '', 5, 72)
+        ]
+        assert_tokens(data, expected, get_tokens, data_only=True)
+        assert_tokens(data, expected, get_resource_tokens, data_only=True)
+
     def test_test_settings(self):
         data = '''\
 *** Test Cases ***

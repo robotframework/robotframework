@@ -206,17 +206,12 @@ class LibraryImport(Statement):
 
     @property
     def args(self):
-        return self._get_args_and_alias()[0]
+        return self.get_values(Token.ARGUMENT)
 
     @property
     def alias(self):
-        return self._get_args_and_alias()[1]
-
-    def _get_args_and_alias(self):
-        args = self.get_values(Token.ARGUMENT)
-        if len(args) > 1 and normalize_whitespace(args[-2]) == 'WITH NAME':
-            return args[:-2], args[-1]
-        return args, None
+        with_name = self.get_token(Token.WITH_NAME)
+        return self.get_tokens(Token.NAME)[-1].value if with_name else None
 
 
 @Statement.register
@@ -418,8 +413,8 @@ class ForLoopHeader(Statement):
 
     @property
     def flavor(self):
-        value = self.get_value(Token.FOR_SEPARATOR)
-        return normalize_whitespace(value) if value is not None else None
+        separator = self.get_token(Token.FOR_SEPARATOR)
+        return normalize_whitespace(separator.value) if separator else None
 
     @property
     def _header(self):

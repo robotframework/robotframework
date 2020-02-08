@@ -33,9 +33,11 @@ class Settings(object):
         'SETUP',
         'TEARDOWN',
         'TEMPLATE',
-        'LIBRARY',
         'RESOURCE',
         'VARIABLES'
+    )
+    name_arguments_and_with_name = (
+        'LIBRARY'
     )
 
     def __init__(self):
@@ -48,16 +50,9 @@ class Settings(object):
         try:
             self._validate(name, normalized, statement)
         except ValueError as err:
-            setting.type = Token.ERROR
-            setting.error = err.args[0]
-            self._lex_comment(statement[1:])
-            return
-        setting.type = normalized.replace(' ', '_')
-        self.settings[normalized] = statement[1:]
-        if normalized in self.name_and_arguments:
-            self._lex_name_and_arguments(statement[1:])
+            self._lex_error(setting, statement[1:], err.args[0])
         else:
-            self._lex_arguments(statement[1:])
+            self._lex_setting(setting, statement[1:], normalized)
 
     def _format_name(self, name):
         return name
@@ -78,14 +73,33 @@ class Settings(object):
             raise ValueError("Setting '%s' accepts only one value, got %s."
                              % (name, len(statement) - 1))
 
-    def _lex_comment(self, tokens):
-        for token in tokens:
+    def _lex_error(self, setting, values, error):
+        setting.type = Token.ERROR
+        setting.error = error
+        for token in values:
             token.type = Token.COMMENT
+
+    def _lex_setting(self, setting, values, normalized_name):
+        self.settings[normalized_name] = values
+        setting.type = normalized_name.replace(' ', '_')
+        if normalized_name in self.name_and_arguments:
+            self._lex_name_and_arguments(values)
+        elif normalized_name in self.name_arguments_and_with_name:
+            self._lex_name_arguments_and_with_name(values)
+        else:
+            self._lex_arguments(values)
 
     def _lex_name_and_arguments(self, tokens):
         if tokens:
             tokens[0].type = Token.NAME
         self._lex_arguments(tokens[1:])
+
+    def _lex_name_arguments_and_with_name(self, tokens):
+        self._lex_name_and_arguments(tokens)
+        if len(tokens) > 1 and \
+                normalize_whitespace(tokens[-2].value) == 'WITH NAME':
+            tokens[-2].type = Token.WITH_NAME
+            tokens[-1].type = Token.NAME
 
     def _lex_arguments(self, tokens):
         for token in tokens:
