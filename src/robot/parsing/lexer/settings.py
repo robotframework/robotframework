@@ -61,18 +61,6 @@ class Settings(object):
     def _format_name(self, name):
         return name
 
-    def _doc_tokens_to_lines(self, tokens):
-        line = []
-        current_line = -1
-        for token in tokens:
-            if token.lineno == current_line or current_line == -1:
-                line.append(token)
-            else:
-                yield line
-                line = [token]
-            current_line = token.lineno
-        yield line
-
 
 class TestCaseFileSettings(Settings):
     names = (

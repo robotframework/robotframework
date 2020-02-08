@@ -8,7 +8,6 @@ Use with correct arguments
     Check Log Message    ${tc.kws[-1].msgs[0]}    This is a bit weird ...
 
 Use with incorrect arguments
-    [Documentation]    PyPy sees correct arguments, others don't.
     ${error} =    Set Variable If    ${INTERPRETER.is_pypy} or ${INTERPRETER.version_info} >= (3, 7)
     ...    Keyword 'KeywordsImplementedInC.Eq' expected 2 arguments, got 3.
     ...    STARTS: TypeError:
