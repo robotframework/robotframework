@@ -401,15 +401,11 @@ class ForLoopHeader(Statement):
 
     @property
     def variables(self):
-        data = self.data_tokens[1:]
-        return tuple(t.value for t in
-                     takewhile(lambda t: t.type != Token.FOR_SEPARATOR, data))
+        return self.get_values(Token.VARIABLE)
 
     @property
     def values(self):
-        data = self.data_tokens[1:]
-        return tuple(t.value for t in
-                     dropwhile(lambda t: t.type != Token.FOR_SEPARATOR, data))[1:]
+        return self.get_values(Token.ARGUMENT)
 
     @property
     def flavor(self):

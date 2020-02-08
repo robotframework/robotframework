@@ -263,7 +263,7 @@ class TestOrKeywordLexer(BlockLexer):
                 statement.pop(0).type = Token.IGNORE
 
     def _handle_old_style_for_loop(self, statement, lexer):
-        if isinstance(lexer, ForLoopLexer):
+        if isinstance(lexer, ForLoopHeaderLexer):
             self._in_for_loop = True
         elif isinstance(lexer, EndLexer):
             self._in_for_loop = False
@@ -279,7 +279,7 @@ class TestOrKeywordLexer(BlockLexer):
                 self._old_style_for = None
 
     def lexer_classes(self):
-        return (TestOrKeywordSettingLexer, ForLoopLexer, EndLexer,
+        return (TestOrKeywordSettingLexer, ForLoopHeaderLexer, EndLexer,
                 KeywordCallLexer)
 
 
@@ -307,8 +307,8 @@ class TestOrKeywordSettingLexer(SettingLexer):
         return marker and marker[0] == '[' and marker[-1] == ']'
 
 
-class ForLoopLexer(StatementLexer):
-    _separators = ('IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP')
+class ForLoopHeaderLexer(StatementLexer):
+    separators = ('IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP')
 
     @classmethod
     def handles(cls, statement):
@@ -319,20 +319,20 @@ class ForLoopLexer(StatementLexer):
 
     def lex(self, ctx):
         separator_seen = False
-        arguments_seen = False
+        variable_seen = False
         self.statement[0].type = Token.FOR
         for token in self.statement[1:]:
-            if self._is_separator(token.value, arguments_seen, separator_seen):
+            if separator_seen:
+                token.type = Token.ARGUMENT
+            elif variable_seen and self._is_separator(token.value):
                 token.type = Token.FOR_SEPARATOR
                 separator_seen = True
             else:
-                token.type = Token.ARGUMENT
-                arguments_seen = True
+                token.type = Token.VARIABLE
+                variable_seen = True
 
-    def _is_separator(self, value, arguments_seen, separator_seen):
-        if separator_seen or not arguments_seen:
-            return False
-        return normalize_whitespace(value) in self._separators
+    def _is_separator(self, value):
+        return normalize_whitespace(value) in self.separators
 
 
 class EndLexer(StatementLexer):

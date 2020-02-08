@@ -642,6 +642,53 @@ class TestNameWithPipes(unittest.TestCase):
                       get_tokens=get_resource_tokens)
 
 
+class TestLexForLoop(unittest.TestCase):
+
+    def test_for_loop_header(self):
+        header = 'FOR    ${i}    IN    foo    bar'
+        expected = [
+            (T.FOR, 'FOR', 3, 4),
+            (T.VARIABLE, '${i}', 3, 11),
+            (T.FOR_SEPARATOR, 'IN', 3, 19),
+            (T.ARGUMENT, 'foo', 3, 25),
+            (T.ARGUMENT, 'bar', 3, 32),
+            (T.EOS, '', 3, 35)
+        ]
+        self._verify(header, expected)
+
+    def _verify(self, header, expected_header):
+        data = '''\
+*** %s ***
+Name
+    %s
+        Keyword
+    END
+'''
+        body_and_end = [
+            (T.KEYWORD, 'Keyword', 4, 8),
+            (T.EOS, '', 4, 15),
+            (T.END, 'END', 5, 4),
+            (T.EOS, '', 5, 7)
+        ]
+        expected = [
+            (T.TESTCASE_HEADER, '*** Test Cases ***', 1, 0),
+            (T.EOS, '', 1, 18),
+            (T.TESTCASE_NAME, 'Name', 2, 0),
+            (T.EOS, '', 2, 4)
+        ] + expected_header + body_and_end
+        assert_tokens(data % ('Test Cases', header), expected, data_only=True)
+
+        expected = [
+            (T.KEYWORD_HEADER, '*** Keywords ***', 1, 0),
+            (T.EOS, '', 1, 16),
+            (T.KEYWORD_NAME, 'Name', 2, 0),
+            (T.EOS, '', 2, 4)
+        ] + expected_header + body_and_end
+        assert_tokens(data % ('Keywords', header), expected, data_only=True)
+        assert_tokens(data % ('Keywords', header), expected,
+                      get_resource_tokens, data_only=True)
+
+
 class TestCommentRowsAndEmptyRows(unittest.TestCase):
 
     def test_between_names(self):
