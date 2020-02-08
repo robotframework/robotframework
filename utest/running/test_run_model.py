@@ -100,7 +100,7 @@ Keyword
         assert_equal(suite.resource.imports[0].type, 'Library')
         assert_equal(suite.resource.imports[0].name, 'ExampleLibrary')
         assert_equal(suite.resource.variables[0].name, '${VAR}')
-        assert_equal(suite.resource.variables[0].value, ['Value'])
+        assert_equal(suite.resource.variables[0].value, ('Value',))
         assert_equal(suite.resource.keywords[0].name, 'Keyword')
         assert_equal(suite.resource.keywords[0].keywords[0].name, 'Log')
         assert_equal(suite.resource.keywords[0].keywords[0].args, ('Hello!',))

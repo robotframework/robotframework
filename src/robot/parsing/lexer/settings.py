@@ -23,24 +23,50 @@ class Settings(object):
     aliases = {}
     multi_use = ()
     single_value = ()
+    name_and_arguments = (
+        'METADATA',
+        'SUITE SETUP',
+        'SUITE TEARDOWN',
+        'TEST SETUP',
+        'TEST TEARDOWN',
+        'TEST TEMPLATE',
+        'SETUP',
+        'TEARDOWN',
+        'TEMPLATE',
+        'LIBRARY',
+        'RESOURCE',
+        'VARIABLES'
+    )
 
     def __init__(self):
         self.settings = {n: None for n in self.names}
 
     def lex(self, statement):
-        name_token = statement[0]
-        name = self._format_name(normalize_whitespace(name_token.value))
+        setting = statement[0]
+        name = self._format_name(setting.value)
         normalized = self._normalize_name(name)
         try:
             self._validate(name, normalized, statement)
         except ValueError as err:
-            name_token.type = Token.ERROR
-            name_token.error = err.args[0]
+            setting.type = Token.ERROR
+            setting.error = err.args[0]
+            self._lex_comment(statement[1:])
+            return
+        setting.type = normalized.replace(' ', '_')
+        self.settings[normalized] = statement[1:]
+        if normalized in self.name_and_arguments:
+            self._lex_name_and_arguments(statement[1:])
         else:
-            name_token.type = getattr(Token, normalized.replace(' ', '_'))
-            self.settings[normalized] = statement[1:]
-        for token in statement[1:]:
-            token.type = Token.ARGUMENT
+            self._lex_arguments(statement[1:])
+
+    def _format_name(self, name):
+        return name
+
+    def _normalize_name(self, name):
+        name = normalize_whitespace(name).upper()
+        if name in self.aliases:
+            return self.aliases[name]
+        return name
 
     def _validate(self, name, normalized, statement):
         if normalized not in self.settings:
@@ -52,22 +78,26 @@ class Settings(object):
             raise ValueError("Setting '%s' accepts only one value, got %s."
                              % (name, len(statement) - 1))
 
-    def _normalize_name(self, name):
-        name = name.upper()
-        if name in self.aliases:
-            return self.aliases[name]
-        return name
+    def _lex_comment(self, tokens):
+        for token in tokens:
+            token.type = Token.COMMENT
 
-    def _format_name(self, name):
-        return name
+    def _lex_name_and_arguments(self, tokens):
+        if tokens:
+            tokens[0].type = Token.NAME
+        self._lex_arguments(tokens[1:])
+
+    def _lex_arguments(self, tokens):
+        for token in tokens:
+            token.type = Token.ARGUMENT
 
 
 class TestCaseFileSettings(Settings):
     names = (
         'DOCUMENTATION',
+        'METADATA',
         'SUITE SETUP',
         'SUITE TEARDOWN',
-        'METADATA',
         'TEST SETUP',
         'TEST TEARDOWN',
         'TEST TEMPLATE',
@@ -122,11 +152,11 @@ class ResourceFileSettings(Settings):
 class TestCaseSettings(Settings):
     names = (
         'DOCUMENTATION',
+        'TAGS',
         'SETUP',
         'TEARDOWN',
         'TEMPLATE',
-        'TIMEOUT',
-        'TAGS'
+        'TIMEOUT'
     )
     single_value = (
         'TIMEOUT',

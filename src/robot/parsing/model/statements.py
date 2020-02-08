@@ -90,7 +90,7 @@ class Statement(ast.AST):
         return None
 
     def get_values(self, *types):
-        return [t.value for t in self.tokens if t.type in types]
+        return tuple(t.value for t in self.tokens if t.type in types)
 
     def get_tokens(self, *types):
         return [t for t in self.tokens if t.type in types]
@@ -147,7 +147,7 @@ class SingleValue(Statement):
 
     @property
     def value(self):
-        values = self.get_values(Token.ARGUMENT)
+        values = self.get_values(Token.NAME, Token.ARGUMENT)
         if values and values[0].upper() != 'NONE':
             return values[0]
         return None
@@ -157,18 +157,18 @@ class MultiValue(Statement):
 
     @property
     def values(self):
-        return tuple(self.get_values(Token.ARGUMENT))
+        return self.get_values(Token.ARGUMENT)
 
 
 class Fixture(Statement):
 
     @property
     def name(self):
-        return self.get_value(Token.ARGUMENT)
+        return self.get_value(Token.NAME)
 
     @property
     def args(self):
-        return tuple(self.get_values(Token.ARGUMENT)[1:])
+        return self.get_values(Token.ARGUMENT)
 
 
 @Statement.register
@@ -202,7 +202,7 @@ class LibraryImport(Statement):
 
     @property
     def name(self):
-        return self.get_value(Token.ARGUMENT)
+        return self.get_value(Token.NAME)
 
     @property
     def args(self):
@@ -213,7 +213,7 @@ class LibraryImport(Statement):
         return self._get_args_and_alias()[1]
 
     def _get_args_and_alias(self):
-        args = tuple(self.get_values(Token.ARGUMENT)[1:])
+        args = self.get_values(Token.ARGUMENT)
         if len(args) > 1 and normalize_whitespace(args[-2]) == 'WITH NAME':
             return args[:-2], args[-1]
         return args, None
@@ -225,7 +225,7 @@ class ResourceImport(Statement):
 
     @property
     def name(self):
-        return self.get_value(Token.ARGUMENT)
+        return self.get_value(Token.NAME)
 
 
 @Statement.register
@@ -234,11 +234,11 @@ class VariablesImport(Statement):
 
     @property
     def name(self):
-        return self.get_value(Token.ARGUMENT)
+        return self.get_value(Token.NAME)
 
     @property
     def args(self):
-        return self.get_values(Token.ARGUMENT)[1:]
+        return self.get_values(Token.ARGUMENT)
 
 
 @Statement.register
@@ -257,11 +257,11 @@ class Metadata(DocumentationOrMetadata):
 
     @property
     def name(self):
-        return self.get_value(Token.ARGUMENT)
+        return self.get_value(Token.NAME)
 
     @property
     def value(self):
-        tokens = self.get_tokens(Token.ARGUMENT)[1:]
+        tokens = self.get_tokens(Token.ARGUMENT)
         return self._join_value(tokens)
 
 
@@ -322,12 +322,21 @@ class Variable(Statement):
 
 
 @Statement.register
-class Name(Statement):
-    type = Token.NAME
+class TestCaseName(Statement):
+    type = Token.TESTCASE_NAME
 
     @property
     def name(self):
-        return self.get_value(Token.NAME)
+        return self.get_value(Token.TESTCASE_NAME)
+
+
+@Statement.register
+class KeywordName(Statement):
+    type = Token.KEYWORD_NAME
+
+    @property
+    def name(self):
+        return self.get_value(Token.KEYWORD_NAME)
 
 
 @Statement.register
@@ -375,11 +384,11 @@ class KeywordCall(Statement):
 
     @property
     def args(self):
-        return tuple(self.get_values(Token.ARGUMENT))
+        return self.get_values(Token.ARGUMENT)
 
     @property
     def assign(self):
-        return tuple(self.get_values(Token.ASSIGN))
+        return self.get_values(Token.ASSIGN)
 
 
 @Statement.register

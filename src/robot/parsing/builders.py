@@ -133,7 +133,8 @@ class KeywordSectionBuilder(SectionBuilder):
 class TestOrKeywordBuilder(Builder):
 
     def handles(self, statement):
-        return statement.type not in Token.HEADER_TOKENS + (Token.NAME,)
+        name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
+        return statement.type not in Token.HEADER_TOKENS + name_types
 
     def statement(self, statement):
         if statement.type == Token.FOR:
@@ -151,7 +152,8 @@ class ForLoopBuilder(Builder):
         self._end = False
 
     def handles(self, statement):
-        return not self._end and statement.type != Token.NAME
+        name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
+        return not self._end and statement.type not in name_types
 
     def statement(self, statement):
         if statement.type == Token.END:

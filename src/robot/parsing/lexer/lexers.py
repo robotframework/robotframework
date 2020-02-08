@@ -238,6 +238,7 @@ class KeywordSectionLexer(SettingSectionLexer):
 
 
 class TestOrKeywordLexer(BlockLexer):
+    name_type = NotImplemented
     _in_for_loop = False
     _old_style_for = None
     _name_set = False
@@ -255,7 +256,7 @@ class TestOrKeywordLexer(BlockLexer):
 
     def _handle_name_or_indentation(self, statement):
         if not self._name_set:
-            statement.pop(0).type = Token.NAME
+            statement.pop(0).type = self.name_type
             self._name_set = True
         else:
             while statement and not statement[0].value:
@@ -283,6 +284,7 @@ class TestOrKeywordLexer(BlockLexer):
 
 
 class TestCaseLexer(TestOrKeywordLexer):
+    name_type = Token.TESTCASE_NAME
 
     def lex(self, ctx):
         ctx = ctx.test_case_context()
@@ -290,6 +292,7 @@ class TestCaseLexer(TestOrKeywordLexer):
 
 
 class KeywordLexer(TestOrKeywordLexer):
+    name_type = Token.KEYWORD_NAME
 
     def lex(self, ctx):
         ctx = ctx.keyword_context()

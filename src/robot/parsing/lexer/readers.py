@@ -97,7 +97,7 @@ class BaseReader(object):
             )
         # Setting local variables is performance optimization to avoid
         # unnecessary lookups and attribute access.
-        name_type = Token.NAME
+        name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
         separator_type = Token.SEPARATOR
         eol_type = Token.EOL
         for statement in statements:
@@ -117,7 +117,7 @@ class BaseReader(object):
                     if separator_after_name:
                         yield separator_after_name
                     name_seen = False
-                if type == name_type:
+                if type in name_types:
                     name_seen = True
                 prev_token = token
                 yield token

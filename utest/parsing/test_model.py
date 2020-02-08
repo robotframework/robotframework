@@ -10,7 +10,7 @@ from robot.parsing.model.blocks import (
 )
 from robot.parsing.model.statements import (
     Statement, TestCaseSectionHeader, KeywordSectionHeader,
-    Name, KeywordCall, Arguments, EmptyLine
+    TestCaseName, KeywordName, KeywordCall, Arguments, EmptyLine
 )
 from robot.utils import PY3
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
@@ -47,8 +47,8 @@ EXPECTED = File(sections=[
         ]),
         body=[
             TestCase(
-                header=Name([
-                    Token('NAME', 'Example', 3, 0),
+                header=TestCaseName([
+                    Token('TESTCASE_NAME', 'Example', 3, 0),
                     Token('EOL', '\n', 3, 7)
                 ]),
                 body=[
@@ -78,8 +78,8 @@ EXPECTED = File(sections=[
         ]),
         body=[
             Keyword(
-                header=Name([
-                    Token('NAME', 'Keyword', 8, 0),
+                header=KeywordName([
+                    Token('KEYWORD_NAME', 'Keyword', 8, 0),
                     Token('EOL', '\n', 8, 7)
                 ]),
                 body=[
@@ -237,18 +237,12 @@ class TestModelVisitors(unittest.TestCase):
             def __init__(self):
                 self.test_names = []
                 self.kw_names = []
-                self.names = None
 
-            def visit_TestCaseSection(self, node):
-                self.names = self.test_names
-                self.generic_visit(node)
+            def visit_TestCaseName(self, node):
+                self.test_names.append(node.name)
 
-            def visit_KeywordSection(self, node):
-                self.names = self.kw_names
-                self.generic_visit(node)
-
-            def visit_Name(self, node):
-                self.names.append(node.name)
+            def visit_KeywordName(self, node):
+                self.kw_names.append(node.name)
 
             def visit_Block(self, node):
                 raise RuntimeError('Should not be executed.')
@@ -268,20 +262,15 @@ class TestModelVisitors(unittest.TestCase):
             def __init__(self):
                 self.test_names = []
                 self.kw_names = []
-                self.names = None
                 self.blocks = []
                 self.statements = []
 
-            def visit_TestCaseSection(self, node):
-                self.names = self.test_names
-                self.visit_Block(node)
+            def visit_TestCaseName(self, node):
+                self.test_names.append(node.name)
+                self.visit_Statement(node)
 
-            def visit_KeywordSection(self, node):
-                self.names = self.kw_names
-                self.visit_Block(node)
-
-            def visit_Name(self, node):
-                self.names.append(node.name)
+            def visit_KeywordName(self, node):
+                self.kw_names.append(node.name)
                 self.visit_Statement(node)
 
             def visit_Block(self, node):
@@ -300,8 +289,8 @@ class TestModelVisitors(unittest.TestCase):
                       'TestCaseSection', 'Body', 'TestCase', 'Body',
                       'KeywordSection', 'Body', 'Keyword', 'Body'])
         assert_equal(visitor.statements,
-                     ['EOL', 'TESTCASE_HEADER', 'NAME', 'KEYWORD',
-                      'EOL', 'KEYWORD_HEADER', 'NAME', 'ARGUMENTS', 'KEYWORD'])
+                     ['EOL', 'TESTCASE_HEADER', 'TESTCASE_NAME', 'KEYWORD',
+                      'EOL', 'KEYWORD_HEADER', 'KEYWORD_NAME', 'ARGUMENTS', 'KEYWORD'])
 
     def test_ast_NodeTransformer(self):
 
@@ -313,17 +302,17 @@ class TestModelVisitors(unittest.TestCase):
             def visit_TestCaseSection(self, node):
                 self.generic_visit(node)
                 node.body.items.append(
-                    TestCase(Name([Token('NAME', 'Added'),
-                                   Token('EOL', '\n')])))
+                    TestCase(TestCaseName([Token('TESTCASE_NAME', 'Added'),
+                                           Token('EOL', '\n')])))
                 return node
 
             def visit_TestCase(self, node):
                 self.generic_visit(node)
                 return node if node.name != 'REMOVE' else None
 
-            def visit_Name(self, node):
-                name = node.get_token(Token.NAME)
-                name.value = name.value.upper()
+            def visit_TestCaseName(self, node):
+                name_token = node.get_token(Token.TESTCASE_NAME)
+                name_token.value = name_token.value.upper()
                 return node
 
             def visit_Block(self, node):
@@ -346,10 +335,14 @@ Remove
                     Token('EOL', '\n', 1, 18)
                 ]),
                 body=[
-                    TestCase(Name([Token('NAME', 'EXAMPLE', 2, 0),
-                                   Token('EOL', '\n', 2, 7)])),
-                    TestCase(Name([Token('NAME', 'Added'),
-                                   Token('EOL', '\n')]))
+                    TestCase(TestCaseName([
+                        Token('TESTCASE_NAME', 'EXAMPLE', 2, 0),
+                        Token('EOL', '\n', 2, 7)
+                    ])),
+                    TestCase(TestCaseName([
+                        Token('TESTCASE_NAME', 'Added'),
+                        Token('EOL', '\n')
+                    ]))
                 ]
             )
         ])
@@ -362,7 +355,7 @@ Remove
             def visit_TestCaseSectionHeader(self, node):
                 return node
 
-            def visit_Name(self, node):
+            def visit_TestCaseName(self, node):
                 return node
 
             def visit_Statement(self, node):
@@ -389,8 +382,10 @@ Example
                     Token('EOL', '\n', 1, 18)
                 ]),
                 body=[
-                    TestCase(Name([Token('NAME', 'EXAMPLE', 2, 0),
-                                   Token('EOL', '\n', 2, 7)])),
+                    TestCase(TestCaseName([
+                        Token('TESTCASE_NAME', 'EXAMPLE', 2, 0),
+                        Token('EOL', '\n', 2, 7)
+                    ])),
                 ]
             )
         ])

@@ -164,14 +164,14 @@ class TestCaseBuilder(ast.NodeVisitor):
                 kw.name = name
                 kw.args = args
 
-    def _format_template(self, template, args):
-        iterator = VariableIterator(template, identifiers='$')
-        variables = len(iterator)
-        if not variables or variables != len(args):
-            return template, tuple(args)
+    def _format_template(self, template, arguments):
+        variables = VariableIterator(template, identifiers='$')
+        variable_count = len(variables)
+        if variable_count == 0 or variable_count != len(arguments):
+            return template, arguments
         temp = []
-        for before, variable, after in iterator:
-            temp.extend([before, args.pop(0)])
+        for (before, variable, after), arg in zip(variables, arguments):
+            temp.extend([before, arg])
         temp.append(after)
         return ''.join(temp), ()
 

@@ -167,7 +167,7 @@ class NewlineCleaner(ModelTransformer):
         return statement
 
     def _should_write_content_after_name(self, statement):
-        return (statement.type == Token.NAME and
+        return (statement.type in (Token.TESTCASE_NAME, Token.KEYWORD_NAME) and
                 self.custom_test_section_headers and
                 len(statement.tokens[0].value) < self.short_test_name_length)
 
@@ -193,7 +193,7 @@ class ColumnAligner(ModelTransformer):
         return statement
 
     def visit_Statement(self, statement):
-        if statement.type == Token.NAME:
+        if statement.type == Token.TESTCASE_NAME:
             self.test_name_len = len(statement.tokens[0].value)
         elif statement.type == Token.TESTCASE_HEADER:
             self.align_header(statement)
@@ -242,7 +242,7 @@ class ColumnWidthCounter(ModelTransformer):
     def visit_Statement(self, statement):
         if statement.type == Token.TESTCASE_HEADER:
             self._count_widths_from_statement(statement)
-        elif statement.type != Token.NAME:
+        elif statement.type != Token.TESTCASE_NAME:
             self._count_widths_from_statement(statement, indent=1)
         return statement
 
