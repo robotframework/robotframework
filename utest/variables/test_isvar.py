@@ -13,6 +13,12 @@ class TestIsVar(unittest.TestCase):
         for nok in NOKS:
             assert not is_var(nok)
 
+    def test_is_var_with_assign_mark(self):
+        assert not is_var('${foo} =')
+        assert not is_var('${foo}=')
+        assert is_var('${foo} =', allow_assign_mark=True)
+        assert is_var('${foo}=', allow_assign_mark=True)
+
     def test_is_scalar_var(self):
         for ok in SCALARS:
             assert is_scalar_var(ok)

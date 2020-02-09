@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.variables import is_var
-from robot.utils import normalize_whitespace, rstrip
+from robot.utils import normalize_whitespace
 
 from .tokens import Token
 
@@ -218,9 +218,16 @@ class VariableSectionLexer(SectionLexer):
 class VariableLexer(StatementLexer):
 
     def lex(self, ctx):
-        self.statement[0].type = Token.VARIABLE
-        for token in self.statement[1:]:
-            token.type = Token.ARGUMENT
+        name_token = self.statement[0]
+        if is_var(name_token.value, allow_assign_mark=True):
+            name_token.type = Token.VARIABLE
+            for token in self.statement[1:]:
+                token.type = Token.ARGUMENT
+        else:
+            name_token.type = Token.ERROR
+            name_token.error = "Invalid variable name '%s'." % name_token.value
+            for token in self.statement[1:]:
+                token.type = Token.COMMENT
 
 
 class TestCaseSectionLexer(SectionLexer):
@@ -362,12 +369,8 @@ class KeywordCallLexer(StatementLexer):
         for token in self.statement:
             if keyword_seen:
                 token.type = Token.ARGUMENT
-            elif self._is_assign(token.value):
+            elif is_var(token.value, allow_assign_mark=True):
                 token.type = Token.ASSIGN
             else:
                 token.type = Token.KEYWORD
                 keyword_seen = True
-
-    def _is_assign(self, value):
-        return (is_var(value) or
-                value.endswith('=') and is_var(rstrip(value[:-1])))

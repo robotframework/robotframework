@@ -642,7 +642,98 @@ class TestNameWithPipes(unittest.TestCase):
                       get_tokens=get_resource_tokens)
 
 
-class TestLexForLoop(unittest.TestCase):
+class TestVariables(unittest.TestCase):
+
+    def test_valid(self):
+        data = '''\
+*** Variables ***
+${SCALAR}    value
+${LONG}      First part    ${2} part
+...          third part
+@{LIST}      first    ${SCALAR}    third
+&{DICT}      key=value    &{X}
+'''
+        expected = [
+            (T.VARIABLE_HEADER, '*** Variables ***', 1, 0),
+            (T.EOS, '', 1, 17),
+            (T.VARIABLE, '${SCALAR}', 2, 0),
+            (T.ARGUMENT, 'value', 2, 13),
+            (T.EOS, '', 2, 18),
+            (T.VARIABLE, '${LONG}', 3, 0),
+            (T.ARGUMENT, 'First part', 3, 13),
+            (T.ARGUMENT, '${2} part', 3, 27),
+            (T.ARGUMENT, 'third part', 4, 13),
+            (T.EOS, '', 4, 23),
+            (T.VARIABLE, '@{LIST}', 5, 0),
+            (T.ARGUMENT, 'first', 5, 13),
+            (T.ARGUMENT, '${SCALAR}', 5, 22),
+            (T.ARGUMENT, 'third', 5, 35),
+            (T.EOS, '', 5, 40),
+            (T.VARIABLE, '&{DICT}', 6, 0),
+            (T.ARGUMENT, 'key=value', 6, 13),
+            (T.ARGUMENT, '&{X}', 6, 26),
+            (T.EOS, '', 6, 30)
+        ]
+        self._verify(data, expected)
+
+    def test_valid_with_assign(self):
+        data = '''\
+*** Variables ***
+${SCALAR} =      value
+${LONG}=         First part    ${2} part
+...              third part
+@{LIST} =        first    ${SCALAR}    third
+&{DICT} =        key=value    &{X}
+'''
+        expected = [
+            (T.VARIABLE_HEADER, '*** Variables ***', 1, 0),
+            (T.EOS, '', 1, 17),
+            (T.VARIABLE, '${SCALAR} =', 2, 0),
+            (T.ARGUMENT, 'value', 2, 17),
+            (T.EOS, '', 2, 22),
+            (T.VARIABLE, '${LONG}=', 3, 0),
+            (T.ARGUMENT, 'First part', 3, 17),
+            (T.ARGUMENT, '${2} part', 3, 31),
+            (T.ARGUMENT, 'third part', 4, 17),
+            (T.EOS, '', 4, 27),
+            (T.VARIABLE, '@{LIST} =', 5, 0),
+            (T.ARGUMENT, 'first', 5, 17),
+            (T.ARGUMENT, '${SCALAR}', 5, 26),
+            (T.ARGUMENT, 'third', 5, 39),
+            (T.EOS, '', 5, 44),
+            (T.VARIABLE, '&{DICT} =', 6, 0),
+            (T.ARGUMENT, 'key=value', 6, 17),
+            (T.ARGUMENT, '&{X}', 6, 30),
+            (T.EOS, '', 6, 34)
+        ]
+        self._verify(data, expected)
+
+    def test_invalid(self):
+        data = '''\
+*** Variables ***
+Ooops     I did it again
+${}       invalid
+${x}==    invalid
+'''
+        # Values are marked as COMMENTs and ignored with `data_only=True`.
+        expected = [
+            (T.VARIABLE_HEADER, '*** Variables ***', 1, 0),
+            (T.EOS, '', 1, 17),
+            (T.ERROR, 'Ooops', 2, 0, "Invalid variable name 'Ooops'."),
+            (T.EOS, '', 2, 5),
+            (T.ERROR, '${}', 3, 0, "Invalid variable name '${}'."),
+            (T.EOS, '', 3, 3),
+            (T.ERROR, '${x}==', 4, 0, "Invalid variable name '${x}=='."),
+            (T.EOS, '', 4, 6)
+        ]
+        self._verify(data, expected)
+
+    def _verify(self, data, expected):
+        assert_tokens(data, expected, get_tokens, data_only=True)
+        assert_tokens(data, expected, get_resource_tokens, data_only=True)
+
+
+class TestForLoop(unittest.TestCase):
 
     def test_for_loop_header(self):
         header = 'FOR    ${i}    IN    foo    bar'

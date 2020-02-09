@@ -49,9 +49,9 @@ Three dots on the same line should be interpreted as string
     Check Test Case     ${TEST NAME}
 
 Invalid variable name
-    Creating Variable Should Have Failed    0    Invalid Name    16
+    Parsing Variable Should Have Failed    0    Invalid Name    16
     ...    Invalid variable name 'Invalid Name'.
-    Creating Variable Should Have Failed    1    \${}            17
+    Parsing Variable Should Have Failed    1    \${}            17
     ...    Invalid variable name '\${}'.
 
 Scalar catenated from multile values
@@ -75,6 +75,11 @@ Using variable created from non-existing variable in imports fails
     ...    Variable '\${NONEX 3}' not found.*
 
 *** Keywords ***
+Parsing Variable Should Have Failed
+    [Arguments]    ${index}    ${name}    ${lineno}    @{message}
+    Error In File    ${index}    variables/variable_table.robot    ${lineno}
+    ...    @{message}
+
 Creating Variable Should Have Failed
     [Arguments]    ${index}    ${name}    ${lineno}    @{message}
     Error In File    ${index}    variables/variable_table.robot    ${lineno}
