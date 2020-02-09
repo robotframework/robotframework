@@ -436,8 +436,8 @@ class Error(Statement):
     type = Token.ERROR
 
     @property
-    def error(self):
-        return self.data_tokens[0].error
+    def errors(self):
+        return self.get_tokens(Token.ERROR)
 
 
 class EmptyLine(Statement):

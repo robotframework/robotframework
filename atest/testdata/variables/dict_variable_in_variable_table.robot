@@ -12,7 +12,8 @@ Test Template         Dict Variable Should Be Equal
 ...                   i=15    j=16    k=17    l=18    m=19    n=20    .=21
 &{EQUALS}             key=value with=sign        empty value=    =    ===
 &{ESCAPING EQUALS}    esc\=key=esc\=value    bs\\=\\    bs\\\=\\=    \===
-&{NO EQUAL}           haz equal=here    but not here
+&{NO EQUAL}           this=good    this bad    &{good}   @{bad}
+...                   bad\=again
 &{VARIABLES}          a=${1}    ${2}=b    ${True}=${False}
 @{LIST}               ${1}    ${2}    ${3}
 &{LIST VALUES}        scalar=${LIST}    list=@{LIST}

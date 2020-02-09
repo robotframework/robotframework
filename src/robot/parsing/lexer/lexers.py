@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.variables import is_var
-from robot.utils import normalize_whitespace
+from robot.variables import is_dict_var, is_var, search_variable
+from robot.utils import normalize_whitespace, split_from_equals
 
 from .tokens import Token
 
@@ -217,16 +217,35 @@ class VariableSectionLexer(SectionLexer):
 class VariableLexer(StatementLexer):
 
     def lex(self, ctx):
-        name_token = self.statement[0]
-        if is_var(name_token.value, allow_assign_mark=True):
-            name_token.type = Token.VARIABLE
-            for token in self.statement[1:]:
-                token.type = Token.ARGUMENT
+        name = self.statement[0]
+        values = self.statement[1:]
+        if is_var(name.value, allow_assign_mark=True):
+            self._valid_variable(name, values)
         else:
-            name_token.type = Token.ERROR
-            name_token.error = "Invalid variable name '%s'." % name_token.value
-            for token in self.statement[1:]:
-                token.type = Token.COMMENT
+            self._invalid_variable(name, values)
+        if is_dict_var(name.value, allow_assign_mark=True):
+            self._validate_dict_items(values)
+
+    def _valid_variable(self, name, values):
+        name.type = Token.VARIABLE
+        for token in values:
+            token.type = Token.ARGUMENT
+
+    def _invalid_variable(self, name, values):
+        name.set_error("Invalid variable name '%s'." % name.value)
+        for token in values:
+            token.type = Token.COMMENT
+
+    def _validate_dict_items(self, values):
+        for token in values:
+            if not self._is_valid_dict_item(token.value):
+                token.set_error("Invalid dictionary variable item '%s'. "
+                                "Items must use 'name=value' syntax or be "
+                                "dictionary variables themselves." % token.value)
+
+    def _is_valid_dict_item(self, item):
+        name, value = split_from_equals(item)
+        return value is not None or search_variable(item).is_dict_variable
 
 
 class TestCaseSectionLexer(SectionLexer):

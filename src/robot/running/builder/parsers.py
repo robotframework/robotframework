@@ -14,11 +14,11 @@
 #  limitations under the License.
 
 import os
-from ast import NodeVisitor
+from ast import NodeTransformer
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.parsing import get_model, get_resource_model
+from robot.parsing import get_model, get_resource_model, Token
 from robot.utils import FileReader, read_rest_data
 
 from .testsettings import TestDefaults
@@ -63,7 +63,7 @@ class RobotParser(BaseParser):
         if model is None:
             model = get_model(self._get_source(source), data_only=True,
                               curdir=self._get_curdir(source))
-        ErrorLogger(source).visit(model)
+        ErrorReporter(source).visit(model)
         SettingsBuilder(suite, defaults).visit(model)
         SuiteBuilder(suite, defaults).visit(model)
         suite.rpa = self._get_rpa_mode(model)
@@ -81,7 +81,7 @@ class RobotParser(BaseParser):
         model = get_resource_model(self._get_source(source), data_only=True,
                                    curdir=self._get_curdir(source))
         resource = ResourceFile(source=source)
-        ErrorLogger(source).visit(model)
+        ErrorReporter(source).visit(model)
         if model.has_tests:
             raise DataError("Resource file '%s' cannot contain tests or tasks." %
                             source)
@@ -128,11 +128,23 @@ def format_name(source):
     return format_name(basename)
 
 
-class ErrorLogger(NodeVisitor):
+class ErrorReporter(NodeTransformer):
 
     def __init__(self, source):
         self.source = source
 
     def visit_Error(self, node):
-        LOGGER.error("Error in file '%s' on line %s: %s"
-                     % (self.source, node.lineno, node.error))
+        self._report_errors(node.errors)
+        return None
+
+    def visit_Variable(self, node):
+        errors = node.get_tokens(Token.ERROR)
+        if errors:
+            self._report_errors(errors)
+            return None
+        return node
+
+    def _report_errors(self, tokens):
+        for token in tokens:
+            LOGGER.error("Error in file '%s' on line %s: %s"
+                         % (self.source, token.lineno, token.error))
