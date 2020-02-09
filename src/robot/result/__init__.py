@@ -43,5 +43,5 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 
 from .executionresult import Result
 from .model import Message, Keyword, TestCase, TestSuite
-from .resultbuilder import ExecutionResult, ExecutionResultBuilder
+from .resultbuilder import ExecutionResult, XmlExecutionResultBuilder
 from .visitor import ResultVisitor

@@ -4,7 +4,7 @@
 		"suite": {
 			"type": "object",
 			"properties": {
-				"keywords": {
+				"kw": {
 					"type": "array",
 					"items": {"$ref": "#/definitions/keyword"},
 					"additionalItems": false,
@@ -21,7 +21,7 @@
 					"items": {"$ref": "#/definitions/test"},
 					"minItems": 0
 				},
-				"documentation": {"type": "string"},
+				"doc": {"type": "string"},
 				"metadata": {
 					"type": "object",
 					"additionalProperties": true
@@ -30,7 +30,10 @@
 				"name" : {
 					"type": "string"
 				},
-				"id" : {
+				"id": {
+					"type": "string"
+				},
+				"source":{
 					"type": "string"
 				}
 			},
@@ -40,13 +43,13 @@
 		"test": {
 			"type": "object",
 			"properties": {
-				"keywords": {
+				"kw": {
 					"type": "array",
 					"items": {"$ref": "#/definitions/keyword"},
 					"minItems": 0
 				},
-				"message": {"type": "string"},
-				"documentation": {"type": "string"},
+				"msg": {"type": "string"},
+				"doc": {"type": "string"},
 				"tags": {
 					"type": "array",
 					"items": {"type": "string"},
@@ -71,29 +74,29 @@
 		"keyword": {
 			"type": "object",
 			"properties": {
-				"keywords": {
+				"kw": {
 					"type": "array",
 					"items": {"$ref": "#/definitions/keyword"},
 					"minItems": 0
 				},
-				"messages": {
+				"msgs": {
 					"type": "array",
 					"items": {"$ref": "#/definitions/message"},
 					"minItems": 0
 				},
-				"documentation": {"type": "string"},
+				"doc": {"type": "string"},
 				"tags": {
 					"type": "array",
 					"items": {"type": "string"},
 					"minItems": 0
 				},
 				"timeout": {"type": "string"},
-				"arguments": {
+				"args": {
 					"type": "array",
 					"items":  {"type": "string"},
 					"minItems": 0
 				},
-				"library": {"type":  "string"},
+				"lib": {"type":  "string"},
 				"assign": {
 					"type": "array",
 					"items": {"type": "string"},
@@ -122,7 +125,7 @@
 		"message": {
 			"type": "object",
 			"properties": {
-				"message": {"type": "string"},
+				"msg": {"type": "string"},
 				"timestamp": {"type": "string"},
 				"level": {"$ref": "#/definitions/level_enum"},
 				"html": {"type": "boolean"}
@@ -159,7 +162,7 @@
 				"critical": {"type": "boolean"},
 				"pass": {"type": "number"},
 				"info": {"type": "string"},
-				"documentation": {"type": "string"},
+				"doc": {"type": "string"},
 				"id": {"type": "string"},
 				"name": {"type": "string"}
 			},

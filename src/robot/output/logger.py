@@ -108,7 +108,7 @@ class Logger(AbstractLogger):
         else:
             self._syslog = self._wrap_and_relay(syslog)
 
-    def register_xml_logger(self, logger):
+    def register_output_logger(self, logger):
         self._xml_logger = self._wrap_and_relay(logger)
 
     def unregister_xml_logger(self):

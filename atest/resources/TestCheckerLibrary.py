@@ -4,7 +4,7 @@ import re
 from robot import utils
 from robot.api import logger
 from robot.utils.asserts import assert_equal
-from robot.result import (ExecutionResultBuilder, Keyword, TestCase, TestSuite,
+from robot.result import (XmlExecutionResultBuilder, Keyword, TestCase, TestSuite,
                           Result)
 from robot.libraries.BuiltIn import BuiltIn
 
@@ -32,7 +32,7 @@ class TestCheckerLibrary:
         try:
             logger.info("Processing output '%s'." % path)
             result = Result(root_suite=NoSlotsTestSuite())
-            ExecutionResultBuilder(path).build(result)
+            XmlExecutionResultBuilder(path).build(result)
         except:
             set_suite_variable('$SUITE', None)
             raise RuntimeError('Processing output failed: %s'

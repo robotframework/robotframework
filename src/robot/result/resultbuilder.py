@@ -23,6 +23,8 @@ from .flattenkeywordmatcher import (FlattenByNameMatcher, FlattenByTypeMatcher,
 from .merger import Merger
 from .xmlelementhandlers import XmlElementHandler
 
+import json
+
 
 def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
@@ -66,18 +68,55 @@ def _combine_results(sources, options):
 
 
 def _single_result(source, options):
-    ets = ETSource(source)
     result = Result(source, rpa=options.pop('rpa', None))
-    try:
-        return ExecutionResultBuilder(ets, **options).build(result)
-    except IOError as err:
-        error = err.strerror
-    except:
-        error = get_error_message()
-    raise DataError("Reading XML source '%s' failed: %s" % (unic(ets), error))
+    if source.lower().endswith("json"):
+        try:
+            with open(source, 'r') as source_file:
+                json_data = json.load(source_file)
+            return JsonExecutionResultBuilder(json_data, **options).build(result)
+        except IOError as err:
+            error = err.strerror
+        except:
+            error = get_error_message()
+        raise DataError("Reading JSON source '%s' failed: %s" % (unic(json_data), error))
+    else:
+        ets = ETSource(source)
+        try:
+            return XmlExecutionResultBuilder(ets, **options).build(result)
+        except IOError as err:
+            error = err.strerror
+        except:
+            error = get_error_message()
+        raise DataError("Reading XML source '%s' failed: %s" % (unic(ets), error))
 
 
-class ExecutionResultBuilder(object):
+class JsonExecutionResultBuilder(object):
+    """Builds :class:`~.executionresult.Result` objects based on output files.
+
+        Instead of using this builder directly, it is recommended to use the
+        :func:`ExecutionResult` factory method.
+        """
+
+    def __init__(self, source, include_keywords=True, flattened_keywords=None):
+        """
+        :param source: Path to the JSON output file to build
+            :class:`~.executionresult.Result` objects from.
+        :param include_keywords: Boolean controlling whether to include
+            keyword information in the result or not. Keywords are
+            not needed when generating only report.
+        :param flatten_keywords: List of patterns controlling what keywords to
+            flatten. See the documentation of ``--flattenkeywords`` option for
+            more details.
+        """
+        self._source = source if isinstance(source, ETSource) else ETSource(source)
+        self._include_keywords = include_keywords
+        self._flattened_keywords = flattened_keywords
+
+    def build(self, result):
+        pass
+
+
+class XmlExecutionResultBuilder(object):
     """Builds :class:`~.executionresult.Result` objects based on output files.
 
     Instead of using this builder directly, it is recommended to use the

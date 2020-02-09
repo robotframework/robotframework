@@ -103,7 +103,13 @@ class Result(object):
             original file.
         """
         from robot.reporting.outputwriter import OutputWriter
-        self.visit(OutputWriter(path or self.source, rpa=self.rpa))
+        from robot.reporting.jsonwriter import JsonOutputWriter
+        output_path = path or self.source
+        if output_path.lower().endswith(".json"):
+            writer = JsonOutputWriter(output_path, rpa=self.rpa)
+        else:
+            writer = OutputWriter(output_path, rpa=self.rpa)
+        self.visit(writer)
 
     def visit(self, visitor):
         """An entry point to visit the whole result object.

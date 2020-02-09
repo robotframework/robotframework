@@ -19,21 +19,24 @@ from .listeners import LibraryListeners, Listeners
 from .logger import LOGGER
 from .loggerhelper import AbstractLogger
 from .xmllogger import XmlLogger
+from .jsonlogger import JsonLogger
 
 
 class Output(AbstractLogger):
 
     def __init__(self, settings):
         AbstractLogger.__init__(self)
-        self._xmllogger = XmlLogger(settings.output, settings.log_level,
-                                    settings.rpa)
+        if settings.output.lower().endswith(".json"):
+            self._outputlogger = JsonLogger(settings.output, settings.log_level, settings.rpa)
+        else:
+            self._outputlogger = XmlLogger(settings.output, settings.log_level, settings.rpa)
         self.listeners = Listeners(settings.listeners, settings.log_level)
         self.library_listeners = LibraryListeners(settings.log_level)
         self._register_loggers(DebugFile(settings.debug_file))
         self._settings = settings
 
     def _register_loggers(self, debug_file):
-        LOGGER.register_xml_logger(self._xmllogger)
+        LOGGER.register_output_logger(self._outputlogger)
         LOGGER.register_listeners(self.listeners or None, self.library_listeners)
         if debug_file:
             LOGGER.register_logger(debug_file)
@@ -42,8 +45,8 @@ class Output(AbstractLogger):
         LOGGER.register_error_listener(listener)
 
     def close(self, result):
-        self._xmllogger.visit_statistics(result.statistics)
-        self._xmllogger.close()
+        self._outputlogger.visit_statistics(result.statistics)
+        self._outputlogger.close()
         LOGGER.unregister_xml_logger()
         LOGGER.output_file('Output', self._settings['Output'])
 
@@ -72,4 +75,4 @@ class Output(AbstractLogger):
         pyloggingconf.set_level(level)
         self.listeners.set_log_level(level)
         self.library_listeners.set_log_level(level)
-        return self._xmllogger.set_log_level(level)
+        return self._outputlogger.set_log_level(level)

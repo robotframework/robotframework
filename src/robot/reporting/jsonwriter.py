@@ -1,5 +1,19 @@
-from robot.result import ResultVisitor
+from robot.result.visitor import ResultVisitor
 import json
+
+from robot.output.jsonlogger import JsonLogger
+
+
+class JsonOutputWriter(JsonLogger):
+
+    def __init__(self, output, rpa=False):
+        JsonLogger.__init__(self, output, rpa=rpa, generator='Rebot')
+
+    def start_message(self, msg):
+        self._write_message(msg)
+
+    def end_result(self, result):
+        self.close()
 
 
 class JsonWriter(object):
@@ -8,9 +22,8 @@ class JsonWriter(object):
         self._execution_result = execution_result
 
     def write(self, output):
-        writer = JsonFileWriter()
+        writer = JsonOutputWriter(output)
         self._execution_result.visit(writer)
-        writer.write(output)
 
 
 class JsonFileWriter(ResultVisitor):
@@ -61,7 +74,7 @@ class JsonFileWriter(ResultVisitor):
         if tag_stat.info:
             stat_object["info"] = tag_stat.info
         if tag_stat.doc:
-            stat_object["documentation"] = tag_stat.doc
+            stat_object["doc"] = tag_stat.doc
         return stat_object
 
     def _json_total_stats_convert(self, total_stats):
@@ -81,17 +94,17 @@ class JsonFileWriter(ResultVisitor):
             'type': keyword.type
         }
         if keyword.keywords:
-            base_object['keywords'] = [self._json_keyword_convert(kw) for kw in keyword.keywords]
+            base_object['kw'] = [self._json_keyword_convert(kw) for kw in keyword.keywords]
         if keyword.messages:
             base_object['messages'] = [self._json_message_convert(msg) for msg in keyword.messages]
         if keyword.doc:
-            base_object['documentation'] = keyword.doc
+            base_object['doc'] = keyword.doc
         if keyword.tags:
             base_object['tags'] = list(keyword.tags)
         if keyword.timeout:
             base_object['timeout'] = keyword.timeout
         if keyword.args:
-            base_object['arguments'] = list(keyword.args)
+            base_object['args'] = list(keyword.args)
         if keyword.assign:
             base_object['assign'] = list(keyword.assign)
         if keyword.libname:
@@ -105,11 +118,11 @@ class JsonFileWriter(ResultVisitor):
             'status': self._json_status_convert(test)
         }
         if test.keywords:
-            base_object['keywords'] = [self._json_keyword_convert(keyword) for keyword in test.keywords]
+            base_object['kw'] = [self._json_keyword_convert(keyword) for keyword in test.keywords]
         if test.message:
             base_object['message'] = test.message
         if test.doc:
-            base_object['documentation'] = test.doc
+            base_object['doc'] = test.doc
         if test.tags:
             base_object['tags'] = list(test.tags)
         if test.timeout:
@@ -147,13 +160,13 @@ class JsonFileWriter(ResultVisitor):
             'status': self._json_status_convert(test_suite)
         }
         if test_suite.keywords:
-            base_object['keywords'] = [self._json_keyword_convert(keyword) for keyword in test_suite.keywords]
+            base_object['kw'] = [self._json_keyword_convert(keyword) for keyword in test_suite.keywords]
         if test_suite.suites:
             base_object['suites'] = [self._json_suite_convert(suite) for suite in test_suite.suites]
         if test_suite.tests:
             base_object['tests'] = [self._json_test_convert(test) for test in test_suite.tests]
         if test_suite.doc:
-            base_object['documentation'] = test_suite.doc
+            base_object['doc'] = test_suite.doc
         if test_suite.metadata:
             base_object['metadata'] = self._json_metadata_convert(test_suite.metadata)
         return base_object

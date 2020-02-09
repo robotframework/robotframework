@@ -181,6 +181,11 @@ Options
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
     --xunitskipnoncritical  Mark non-critical tests in xUnit output as skipped.
+    
+ -j --json file           JSON result file. Not created unless this option is
+                          specified. Alternatively the output filename can
+                          end with ".json".
+    
  -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.
  -T --timestampoutputs    When this option is used, timestamp in a format
