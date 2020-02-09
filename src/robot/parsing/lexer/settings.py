@@ -74,8 +74,7 @@ class Settings(object):
                              % (name, len(statement) - 1))
 
     def _lex_error(self, setting, values, error):
-        setting.type = Token.ERROR
-        setting.error = error
+        setting.set_error(error)
         for token in values:
             token.type = Token.COMMENT
 

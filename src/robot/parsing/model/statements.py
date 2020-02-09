@@ -414,7 +414,7 @@ class ForLoopHeader(Statement):
 
     @property
     def _header(self):
-        return self.data_tokens[0].value
+        return self.get_value(Token.FOR)
 
 
 @Statement.register
@@ -423,7 +423,7 @@ class End(Statement):
 
     @property
     def value(self):
-        return self.data_tokens[0].value
+        return self.get_value(Token.END)
 
 
 @Statement.register

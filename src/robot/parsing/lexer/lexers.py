@@ -153,8 +153,7 @@ class ErrorSectionHeaderLexer(SectionHeaderLexer):
 
     def lex(self, ctx):
         header = self.statement[0]
-        header.type = Token.ERROR
-        header.error = (
+        header.set_error(
             "Unrecognized section header '%s'. Available headers for data: "
             "'Setting(s)', 'Variable(s)', 'Test Case(s)', 'Task(s)' and "
             "'Keyword(s)'. Use 'Comment(s)' to embedded additional data."

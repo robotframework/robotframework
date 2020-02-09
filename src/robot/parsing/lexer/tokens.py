@@ -119,6 +119,10 @@ class Token(object):
             return -1
         return self.col_offset + len(self.value)
 
+    def set_error(self, error):
+        self.type = Token.ERROR
+        self.error = error
+
     def __unicode__(self):
         return self.value
 
