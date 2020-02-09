@@ -498,16 +498,22 @@ If setting test/suite/global variable fails, old value is preserved 4
     Should Be Equal    ${VALID GLOBAL}[valid]    global
 
 Setting non-dict value to test/suite/global level dict variable - test
-    [Documentation]    FAIL Dictionary item 'invalid' does not contain '=' separator.
+    [Documentation]    FAIL
+    ...    Invalid dictionary variable item 'invalid'. \
+    ...    Items must use 'name=value' syntax or be dictionary variables themselves.
     Set Test Variable    &{DICT}    invalid    values
 
 Setting non-dict value to test/suite/global level dict variable - suite
-    [Documentation]    FAIL Dictionary item 'invalid' does not contain '=' separator.
-    Set Suite Variable    &{DICT}    invalid    values
+    [Documentation]    FAIL
+    ...    Invalid dictionary variable item '\@{bad}'. \
+    ...    Items must use 'name=value' syntax or be dictionary variables themselves.
+    Set Suite Variable    &{DICT}    this=good    @{bad}
 
 Setting non-dict value to test/suite/global level dict variable - global
-    [Documentation]    FAIL Dictionary item 'invalid' does not contain '=' separator.
-    Set Global Variable    &{DICT}    invalid    values
+    [Documentation]    FAIL
+    ...    Invalid dictionary variable item 'oops\\=i did it again'. \
+    ...    Items must use 'name=value' syntax or be dictionary variables themselves.
+    Set Global Variable    &{DICT}    oops\=i did it again
 
 Setting scalar test variable with list value is not possible 1
     [Documentation]    FAIL ${SCALAR LIST ERROR}

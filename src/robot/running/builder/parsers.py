@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import os
-from ast import NodeTransformer
+from ast import NodeVisitor
 
 from robot.errors import DataError
 from robot.output import LOGGER
@@ -128,23 +128,12 @@ def format_name(source):
     return format_name(basename)
 
 
-class ErrorReporter(NodeTransformer):
+class ErrorReporter(NodeVisitor):
 
     def __init__(self, source):
         self.source = source
 
     def visit_Error(self, node):
-        self._report_errors(node.errors)
-        return None
-
-    def visit_Variable(self, node):
-        errors = node.get_tokens(Token.ERROR)
-        if errors:
-            self._report_errors(errors)
-            return None
-        return node
-
-    def _report_errors(self, tokens):
-        for token in tokens:
+        for token in node.get_tokens(Token.ERROR):
             LOGGER.error("Error in file '%s' on line %s: %s"
                          % (self.source, token.lineno, token.error))

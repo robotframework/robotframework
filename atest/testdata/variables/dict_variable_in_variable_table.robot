@@ -12,8 +12,9 @@ Test Template         Dict Variable Should Be Equal
 ...                   i=15    j=16    k=17    l=18    m=19    n=20    .=21
 &{EQUALS}             key=value with=sign        empty value=    =    ===
 &{ESCAPING EQUALS}    esc\=key=esc\=value    bs\\=\\    bs\\\=\\=    \===
-&{NO EQUAL}           this=good    this bad    &{good}   @{bad}
-...                   bad\=again
+&{BAD SYNTAX 1}       this=good    this bad
+...                   &{good}   @{bad}
+&{BAD SYNTAX 2}       bad\=again
 &{VARIABLES}          a=${1}    ${2}=b    ${True}=${False}
 @{LIST}               ${1}    ${2}    ${3}
 &{LIST VALUES}        scalar=${LIST}    list=@{LIST}
@@ -46,9 +47,10 @@ First non-escaped equal sign is separator
     ${EQUALS}             {'key': 'value with=sign', 'empty value': '', '': '=='}
     ${ESCAPING EQUALS}    {'esc=key': 'esc=value', 'bs\\\\': '\\\\', 'bs\\\\=\\\\': '', '=': '='}
 
-Dict items must contain equal sign
-    [Template]    NONE
-    Variable Should Not Exist    ${NO EQUAL}
+Invalid syntax
+    [Template]    Variable Should Not Exist
+    ${BAD SYNTAX 1}
+    ${BAD SYNTAX 2}
 
 Variables in key and value
     ${VARIABLES}          {'a': 1, 2: 'b', True: False}
@@ -71,7 +73,7 @@ Create from dict variable
     ${USE DICT EXTENDED}  {'key': 'value', 'foo': None, 'new': None}
     ${USE DICT INTERNAL}  {'key': 'value', 'foo': 42, 'new': 42}
 
-Dict from variable table should be ordered 1
+Dict from variable table should be ordered
     [Template]    NONE
     @{expected keys} =    Evaluate    list('abcd123efgXYZhijklmn.')
     @{expected values} =    Evaluate    [str(i+1) for i in range(21)]
@@ -88,12 +90,6 @@ Dict from variable table should be ordered 1
     ${values} =    Create List    @{MANY ITEMS.values()}
     Should Be Equal    ${keys}    ${expected keys}
     Should Be Equal    ${values}    ${expected values}
-
-Dict from variable table should be ordered 2
-    [Template]    NONE
-    Should Be Equal    @{MANY ITEMS}[0]     a
-    Should Be Equal    @{MANY ITEMS}[1]     b
-    Should Be Equal    @{MANY ITEMS}[-1]    z
 
 Dict from variable table should be dot-accessible
     [Template]    NONE

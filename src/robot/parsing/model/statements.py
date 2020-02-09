@@ -15,7 +15,6 @@
 
 import ast
 import re
-from itertools import dropwhile, takewhile
 
 from robot.utils import normalize_whitespace
 
@@ -105,6 +104,16 @@ class Statement(ast.AST):
                 line = []
         if line:
             yield line
+
+    @property
+    def error(self):
+        tokens = self.get_tokens(Token.ERROR)
+        if not tokens:
+            return None
+        if len(tokens) == 1:
+            return tokens[0].error
+        errors = ['%d) %s' % (i+1, t.error) for i, t in enumerate(tokens)]
+        return '\n\n'.join(['Multiple errors:'] + errors)
 
     def __len__(self):
         return len(self.tokens)
@@ -434,10 +443,6 @@ class Comment(Statement):
 @Statement.register
 class Error(Statement):
     type = Token.ERROR
-
-    @property
-    def errors(self):
-        return self.get_tokens(Token.ERROR)
 
 
 class EmptyLine(Statement):

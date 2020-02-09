@@ -101,7 +101,7 @@ class SuiteBuilder(ast.NodeVisitor):
 
     def visit_Variable(self, node):
         self.suite.resource.variables.create(name=node.name, value=node.value,
-                                             lineno=node.lineno)
+                                             lineno=node.lineno, error=node.error)
 
 
 class ResourceBuilder(ast.NodeVisitor):
@@ -128,7 +128,7 @@ class ResourceBuilder(ast.NodeVisitor):
 
     def visit_Variable(self, node):
         self.resource.variables.create(name=node.name, value=node.value,
-                                       lineno=node.lineno)
+                                       lineno=node.lineno, error=node.error)
 
     def visit_Documentation(self, node):
         self.resource.doc = node.value

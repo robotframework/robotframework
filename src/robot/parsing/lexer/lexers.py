@@ -239,9 +239,11 @@ class VariableLexer(StatementLexer):
     def _validate_dict_items(self, values):
         for token in values:
             if not self._is_valid_dict_item(token.value):
-                token.set_error("Invalid dictionary variable item '%s'. "
-                                "Items must use 'name=value' syntax or be "
-                                "dictionary variables themselves." % token.value)
+                token.set_error(
+                    "Invalid dictionary variable item '%s'. "
+                    "Items must use 'name=value' syntax or be dictionary "
+                    "variables themselves." % token.value
+                )
 
     def _is_valid_dict_item(self, item):
         name, value = split_from_equals(item)
