@@ -20,52 +20,6 @@ from robot.utils import file_writer, is_pathlike, is_string, normalize_whitespac
 from .visitor import ModelVisitor
 
 
-# TODO: Where does this class and the classes below belong to?
-class ModelWriter(ModelVisitor):
-
-    def __init__(self, output):
-        self.output = output
-
-    def visit_Statement(self, statement):
-        for token in statement.tokens:
-            self.output.write(token.value)
-
-
-class FirstStatementFinder(ModelVisitor):
-
-    def __init__(self):
-        self.statement = None
-
-    @classmethod
-    def find_from(cls, model):
-        finder = cls()
-        finder.visit(model)
-        return finder.statement
-
-    def visit_Statement(self, statement):
-        if self.statement is None:
-            self.statement = statement
-
-    def generic_visit(self, node):
-        if self.statement is None:
-            ModelVisitor.generic_visit(self, node)
-
-
-class LastStatementFinder(ModelVisitor):
-
-    def __init__(self):
-        self.statement = None
-
-    @classmethod
-    def find_from(cls, model):
-        finder = cls()
-        finder.visit(model)
-        return finder.statement
-
-    def visit_Statement(self, statement):
-        self.statement = statement
-
-
 class Block(ast.AST):
     _fields = ()
     _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset')
@@ -108,16 +62,7 @@ class File(Block):
         if output is None:
             raise TypeError('Saving model requires explicit output '
                             'when original source is not path.')
-        if is_string(output) or is_pathlike(output):
-            output = file_writer(output)
-            close = True
-        else:
-            close = False
-        try:
-            ModelWriter(output).visit(self)
-        finally:
-            if close:
-                output.close()
+        ModelWriter(output).write(self)
 
 
 class Section(Block):
@@ -213,3 +158,60 @@ class ForLoop(Block):
     @property
     def _end(self):
         return self.end.value if self.end else None
+
+
+class ModelWriter(ModelVisitor):
+
+    def __init__(self, output):
+        if is_string(output) or is_pathlike(output):
+            self.writer = file_writer(output)
+            self.close_writer = True
+        else:
+            self.writer = output
+            self.close_writer = False
+
+    def write(self, model):
+        try:
+            self.visit(model)
+        finally:
+            if self.close_writer:
+                self.writer.close()
+
+    def visit_Statement(self, statement):
+        for token in statement.tokens:
+            self.writer.write(token.value)
+
+
+class FirstStatementFinder(ModelVisitor):
+
+    def __init__(self):
+        self.statement = None
+
+    @classmethod
+    def find_from(cls, model):
+        finder = cls()
+        finder.visit(model)
+        return finder.statement
+
+    def visit_Statement(self, statement):
+        if self.statement is None:
+            self.statement = statement
+
+    def generic_visit(self, node):
+        if self.statement is None:
+            ModelVisitor.generic_visit(self, node)
+
+
+class LastStatementFinder(ModelVisitor):
+
+    def __init__(self):
+        self.statement = None
+
+    @classmethod
+    def find_from(cls, model):
+        finder = cls()
+        finder.visit(model)
+        return finder.statement
+
+    def visit_Statement(self, statement):
+        self.statement = statement
