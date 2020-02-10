@@ -103,7 +103,7 @@ class TestUrlsToLinks(unittest.TestCase):
     def test_image_urls(self):
         link = '(<a href="%s">%s</a>)'
         img = '(<img src="%s" title="%s">)'
-        for ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
+        for ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg']:
             url = 'foo://bar/zap.%s' % ext
             uprl = url.upper()
             inp = '(%s)' % url
