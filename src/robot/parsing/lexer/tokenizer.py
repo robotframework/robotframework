@@ -20,15 +20,15 @@ from robot.utils import rstrip
 from .tokens import Token
 
 
-class Splitter(object):
+class Tokenizer(object):
     _space_splitter = re.compile(r'(\s{2,}|\t)', re.UNICODE)
     _pipe_splitter = re.compile(r'((?:\A|\s+)\|(?:\s+|\Z))', re.UNICODE)
     _trailing_whitespace = re.compile(r'\s+$', re.UNICODE)
 
-    def split(self, data, data_only=False):
+    def tokenize(self, data, data_only=False):
         current = []
         for lineno, line in enumerate(data.splitlines(not data_only), start=1):
-            tokens = list(self._split_line(line, lineno, data_only))
+            tokens = list(self._tokenize_line(line, lineno, data_only))
             tokens, starts_new = self._cleanup_tokens(tokens, data_only)
             if starts_new:
                 if current:
@@ -38,7 +38,7 @@ class Splitter(object):
                 current.extend(tokens)
         yield current
 
-    def _split_line(self, line, lineno, data_only=False):
+    def _tokenize_line(self, line, lineno, data_only=False):
         if line[:1] != '|':
             splitter = self._split_from_spaces
         else:

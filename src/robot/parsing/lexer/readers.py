@@ -20,7 +20,7 @@ from robot.utils import get_error_message, FileReader
 
 from .context import TestCaseFileContext, ResourceFileContext
 from .lexers import FileLexer
-from .splitter import Splitter
+from .tokenizer import Tokenizer
 from .tokens import EOS, Token
 
 
@@ -66,7 +66,7 @@ class BaseReader(object):
 
     def input(self, source):
         content = self._read(source)
-        for statement in Splitter().split(content, data_only=self.data_only):
+        for statement in Tokenizer().tokenize(content, data_only=self.data_only):
             # Store all tokens but pass only DATA tokens to lexer.
             self.statements.append(statement)
             if self.data_only:

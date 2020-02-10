@@ -2,7 +2,7 @@ import unittest
 
 from robot.utils.asserts import assert_equal
 
-from robot.parsing.lexer.splitter import Splitter
+from robot.parsing.lexer.tokenizer import Tokenizer
 from robot.parsing.lexer.tokens import Token
 
 
@@ -15,7 +15,7 @@ COMM = Token.COMMENT
 
 def verify_split(string, *expected_statements, **config):
     expected_data = []
-    actual_statements = list(Splitter().split(string, **config))
+    actual_statements = list(Tokenizer().tokenize(string, **config))
     assert_equal(len(actual_statements), len(expected_statements))
     for tokens, expected in zip(actual_statements, expected_statements):
         expected_data.append([])
