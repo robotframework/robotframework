@@ -22,7 +22,7 @@ from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
 from robot.utils import (RecommendationFinder, eq, find_file, is_string,
-                         printable_name, seq2str2)
+                         normalize, printable_name, seq2str2)
 
 from .importer import ImportCache, Importer
 from .model import Import
@@ -404,15 +404,14 @@ class KeywordRecommendationFinder(object):
     def recommend_similar_keywords(self, name):
         """Return keyword names similar to `name`."""
         candidates = self._get_candidates('.' in name)
-        normalizer = lambda name: candidates.get(name, name).lower().replace(
-            '_', ' ')
-        finder = RecommendationFinder(normalizer)
-        return finder.find_recommendations(name, candidates)
+        finder = RecommendationFinder(
+            lambda name: normalize(candidates.get(name, name), ignore='_')
+        )
+        return finder.find(name, candidates)
 
     @staticmethod
-    def format_recommendations(msg, recommendations):
-        return RecommendationFinder.format_recommendations(
-            msg, recommendations)
+    def format_recommendations(message, recommendations):
+        return RecommendationFinder().format(message, recommendations)
 
     def _get_candidates(self, use_full_name):
         names = {}

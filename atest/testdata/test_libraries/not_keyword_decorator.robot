@@ -22,7 +22,7 @@ Even '@keyword' cannot disable '@not_keyword'
     Keyword and not keyword
 
 '@not_keyword' is not exposed
-    [Documentation]    FAIL    No keyword with name 'Not keyword' found.
+    [Documentation]    FAIL    STARTS: No keyword with name 'Not keyword' found. Did you mean:
     Not keyword
 
 '@keyword' is not exposed
