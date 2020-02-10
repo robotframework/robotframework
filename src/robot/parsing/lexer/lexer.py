@@ -38,9 +38,9 @@ def get_tokens(source, data_only=False):
     Returns a generator that yields :class:`~robot.parsing.lexer.tokens.Token`
     instances.
     """
-    reader = TestCaseFileReader(data_only)
-    reader.input(source)
-    return reader.get_tokens()
+    lexer = Lexer(TestCaseFileContext(), data_only)
+    lexer.input(source)
+    return lexer.get_tokens()
 
 
 def get_resource_tokens(source, data_only=False):
@@ -49,17 +49,15 @@ def get_resource_tokens(source, data_only=False):
     Otherwise same as :func:`get_tokens` but the source is considered to be
     a resource file. This affects, for example, what settings are valid.
     """
-    reader = ResourceFileReader(data_only)
-    reader.input(source)
-    return reader.get_tokens()
+    lexer = Lexer(ResourceFileContext(), data_only)
+    lexer.input(source)
+    return lexer.get_tokens()
 
 
-# TODO: Rename classes and module from readers to tokenizers?
+class Lexer(object):
 
-class BaseReader(object):
-    context_class = None
-
-    def __init__(self, data_only=False):
+    def __init__(self, ctx, data_only=False):
+        self.ctx = ctx
         self.data_only = data_only
         self.lexer = FileLexer()
         self.statements = []
@@ -83,7 +81,7 @@ class BaseReader(object):
             raise DataError(get_error_message())
 
     def get_tokens(self):
-        self.lexer.lex(self.context_class())
+        self.lexer.lex(self.ctx)
         if self.data_only:
             ignore = {Token.IGNORE, Token.COMMENT_HEADER, Token.COMMENT,
                       Token.OLD_FOR_INDENT}
@@ -180,11 +178,3 @@ class BaseReader(object):
             if token.type not in separator_or_ignore:
                 return token.type in comment_or_eol
         return False
-
-
-class TestCaseFileReader(BaseReader):
-    context_class = TestCaseFileContext
-
-
-class ResourceFileReader(BaseReader):
-    context_class = ResourceFileContext
