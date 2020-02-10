@@ -48,7 +48,6 @@
 					"items": {"$ref": "#/definitions/keyword"},
 					"minItems": 0
 				},
-				"msg": {"type": "string"},
 				"doc": {"type": "string"},
 				"tags": {
 					"type": "array",

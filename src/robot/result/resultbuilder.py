@@ -22,6 +22,7 @@ from .flattenkeywordmatcher import (FlattenByNameMatcher, FlattenByTypeMatcher,
                                     FlattenByTagMatcher)
 from .merger import Merger
 from .xmlelementhandlers import XmlElementHandler
+from .jsonelementhandlers import JsonElementHandler
 
 import json
 
@@ -97,9 +98,9 @@ class JsonExecutionResultBuilder(object):
         :func:`ExecutionResult` factory method.
         """
 
-    def __init__(self, source, include_keywords=True, flattened_keywords=None):
+    def __init__(self, data, include_keywords=True, flattened_keywords=None):
         """
-        :param source: Path to the JSON output file to build
+        :param data: JSON to build
             :class:`~.executionresult.Result` objects from.
         :param include_keywords: Boolean controlling whether to include
             keyword information in the result or not. Keywords are
@@ -108,12 +109,16 @@ class JsonExecutionResultBuilder(object):
             flatten. See the documentation of ``--flattenkeywords`` option for
             more details.
         """
-        self._source = source if isinstance(source, ETSource) else ETSource(source)
+        self._data = data
         self._include_keywords = include_keywords
         self._flattened_keywords = flattened_keywords
 
     def build(self, result):
-        pass
+        json_handler = JsonElementHandler(result)
+        json_handler.parse(self._data)
+        if not self._include_keywords:
+            result.suite.visit(RemoveKeywords())
+        return result
 
 
 class XmlExecutionResultBuilder(object):
