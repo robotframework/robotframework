@@ -13,14 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
-
-from robot.utils import is_pathlike, is_string
-
 from ..lexer import Token, get_tokens, get_resource_tokens
-from ..model import (File, SettingSection, VariableSection, TestCaseSection,
-                    KeywordSection, CommentSection, TestCase, Keyword, ForLoop,
-                    Statement)
+from ..model import Statement
+
+from .fileparser import FileParser
 
 
 def get_model(source, data_only=False, curdir=None):
@@ -67,112 +63,3 @@ def _statements_to_model(statements, source=None):
         if parser:
             stack.append(parser)
     return stack[0].model
-
-
-class Parser(object):
-
-    def __init__(self, model):
-        self.model = model
-
-    def handles(self, statement):
-        return True
-
-    def parse(self, statement):
-        raise NotImplementedError
-
-
-class FileParser(Parser):
-
-    def __init__(self, source=None):
-        Parser.__init__(self, File(source=self._get_path(source)))
-
-    def _get_path(self, source):
-        if not source:
-            return None
-        if is_string(source) and '\n' not in source and os.path.isfile(source):
-            return source
-        if is_pathlike(source) and source.is_file():
-            return str(source)
-        return None
-
-    def parse(self, statement):
-        try:
-            section_class, parser_class = {
-                Token.SETTING_HEADER: (SettingSection, SectionParser),
-                Token.VARIABLE_HEADER: (VariableSection, SectionParser),
-                Token.TESTCASE_HEADER: (TestCaseSection, TestCaseSectionParser),
-                Token.KEYWORD_HEADER: (KeywordSection, KeywordSectionParser),
-                Token.COMMENT_HEADER: (CommentSection, SectionParser)
-            }[statement.type]
-            section = section_class(statement)
-        except KeyError:
-            section = CommentSection(body=[statement])
-            parser_class = SectionParser
-        self.model.sections.append(section)
-        return parser_class(section)
-
-
-class SectionParser(Parser):
-
-    def handles(self, statement):
-        return statement.type not in Token.HEADER_TOKENS
-
-    def parse(self, statement):
-        self.model.body.add(statement)
-
-
-class TestCaseSectionParser(SectionParser):
-
-    def parse(self, statement):
-        if statement.type == Token.EOL:
-            if self.model.body.items:
-                self.model.body.add(statement)
-            return self
-        model = TestCase(statement)
-        self.model.body.add(model)
-        return TestOrKeywordParser(model)
-
-
-class KeywordSectionParser(SectionParser):
-
-    def parse(self, statement):
-        if statement.type == Token.EOL:
-            if self.model.body.items:
-                self.model.body.add(statement)
-            return self
-        model = Keyword(statement)
-        self.model.body.add(model)
-        return TestOrKeywordParser(model)
-
-
-class TestOrKeywordParser(Parser):
-
-    def handles(self, statement):
-        name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
-        return statement.type not in Token.HEADER_TOKENS + name_types
-
-    def parse(self, statement):
-        if statement.type == Token.FOR:
-            model = ForLoop(statement)
-            self.model.body.add(model)
-            return ForLoopParser(model)
-        else:
-            self.model.body.add(statement)
-
-
-class ForLoopParser(Parser):
-
-    def __init__(self, model):
-        Parser.__init__(self, model)
-        self._end = False
-
-    def handles(self, statement):
-        name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
-        return not self._end and statement.type not in name_types
-
-    def parse(self, statement):
-        if statement.type == Token.END:
-            self.model.end = statement
-            self._end = True
-        else:
-            self.model.body.add(statement)

@@ -134,10 +134,10 @@ class Keyword(Block):
 class ForLoop(Block):
     _fields = ('header', 'body', 'end')
 
-    def __init__(self, header):
+    def __init__(self, header, body=None, end=None):
         self.header = header
-        self.body = Body()
-        self.end = None
+        self.body = Body(body)
+        self.end = end
 
     @property
     def variables(self):

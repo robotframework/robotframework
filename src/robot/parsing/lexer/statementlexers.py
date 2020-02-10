@@ -20,6 +20,7 @@ from .tokens import Token
 
 
 class Lexer(object):
+    """Base class for lexers."""
 
     @classmethod
     def handles(cls, statement):
