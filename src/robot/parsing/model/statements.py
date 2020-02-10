@@ -21,19 +21,6 @@ from robot.utils import normalize_whitespace
 from ..lexer import Token
 
 
-def get_statements(tokens, curdir=None):
-    statement = []
-    EOS = Token.EOS
-    for t in tokens:
-        if curdir and '${CURDIR}' in t.value:
-            t.value = t.value.replace('${CURDIR}', curdir)
-        if t.type != EOS:
-            statement.append(t)
-        else:
-            yield Statement.from_tokens(tuple(statement))
-            statement = []
-
-
 class Statement(ast.AST):
     type = None
     _fields = ('type', 'tokens')
@@ -41,7 +28,7 @@ class Statement(ast.AST):
     _statement_handlers = {}
 
     def __init__(self, tokens):
-        self.tokens = tokens
+        self.tokens = tuple(tokens)
 
     @property
     def lineno(self):

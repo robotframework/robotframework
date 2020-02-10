@@ -20,7 +20,7 @@ from robot.utils import is_pathlike, is_string
 from .lexer import Token, get_tokens, get_resource_tokens
 from .model import (File, SettingSection, VariableSection, TestCaseSection,
                     KeywordSection, CommentSection, TestCase, Keyword, ForLoop,
-                    get_statements)
+                    Statement)
 
 
 def get_model(source, data_only=False, curdir=None):
@@ -29,7 +29,8 @@ def get_model(source, data_only=False, curdir=None):
     Mention TestSuite.from_model when docs are written.
     """
     tokens = get_tokens(source, data_only)
-    return _build_model(source, get_statements(tokens, curdir))
+    statements = _tokens_to_statements(tokens, curdir)
+    return _statements_to_model(statements, source)
 
 
 def get_resource_model(source, data_only=False, curdir=None):
@@ -39,22 +40,36 @@ def get_resource_model(source, data_only=False, curdir=None):
     a resource file. This affects, for example, what settings are valid.
     """
     tokens = get_resource_tokens(source, data_only)
-    return _build_model(source, get_statements(tokens, curdir))
+    statements = _tokens_to_statements(tokens, curdir)
+    return _statements_to_model(statements, source)
 
 
-def _build_model(source, statements):
-    builder = FileBuilder(source=source)
-    stack = [builder]
+def _tokens_to_statements(tokens, curdir=None):
+    statement = []
+    EOS = Token.EOS
+    for t in tokens:
+        if curdir and '${CURDIR}' in t.value:
+            t.value = t.value.replace('${CURDIR}', curdir)
+        if t.type != EOS:
+            statement.append(t)
+        else:
+            yield Statement.from_tokens(statement)
+            statement = []
+
+
+def _statements_to_model(statements, source=None):
+    parser = FileParser(source=source)
+    stack = [parser]
     for statement in statements:
         while not stack[-1].handles(statement):
             stack.pop()
-        builder = stack[-1].statement(statement)
-        if builder:
-            stack.append(builder)
+        parser = stack[-1].parse(statement)
+        if parser:
+            stack.append(parser)
     return stack[0].model
 
 
-class Builder(object):
+class Parser(object):
 
     def __init__(self, model):
         self.model = model
@@ -62,14 +77,14 @@ class Builder(object):
     def handles(self, statement):
         return True
 
-    def statement(self, statement):
+    def parse(self, statement):
         raise NotImplementedError
 
 
-class FileBuilder(Builder):
+class FileParser(Parser):
 
     def __init__(self, source=None):
-        Builder.__init__(self, File(source=self._get_path(source)))
+        Parser.__init__(self, File(source=self._get_path(source)))
 
     def _get_path(self, source):
         if not source:
@@ -80,82 +95,82 @@ class FileBuilder(Builder):
             return str(source)
         return None
 
-    def statement(self, statement):
+    def parse(self, statement):
         try:
-            section_class, builder_class = {
-                Token.SETTING_HEADER: (SettingSection, SectionBuilder),
-                Token.VARIABLE_HEADER: (VariableSection, SectionBuilder),
-                Token.TESTCASE_HEADER: (TestCaseSection, TestCaseSectionBuilder),
-                Token.KEYWORD_HEADER: (KeywordSection, KeywordSectionBuilder),
-                Token.COMMENT_HEADER: (CommentSection, SectionBuilder)
+            section_class, parser_class = {
+                Token.SETTING_HEADER: (SettingSection, SectionParser),
+                Token.VARIABLE_HEADER: (VariableSection, SectionParser),
+                Token.TESTCASE_HEADER: (TestCaseSection, TestCaseSectionParser),
+                Token.KEYWORD_HEADER: (KeywordSection, KeywordSectionParser),
+                Token.COMMENT_HEADER: (CommentSection, SectionParser)
             }[statement.type]
             section = section_class(statement)
         except KeyError:
             section = CommentSection(body=[statement])
-            builder_class = SectionBuilder
+            parser_class = SectionParser
         self.model.sections.append(section)
-        return builder_class(section)
+        return parser_class(section)
 
 
-class SectionBuilder(Builder):
+class SectionParser(Parser):
 
     def handles(self, statement):
         return statement.type not in Token.HEADER_TOKENS
 
-    def statement(self, statement):
+    def parse(self, statement):
         self.model.body.add(statement)
 
 
-class TestCaseSectionBuilder(SectionBuilder):
+class TestCaseSectionParser(SectionParser):
 
-    def statement(self, statement):
+    def parse(self, statement):
         if statement.type == Token.EOL:
             if self.model.body.items:
                 self.model.body.add(statement)
             return self
         model = TestCase(statement)
         self.model.body.add(model)
-        return TestOrKeywordBuilder(model)
+        return TestOrKeywordParser(model)
 
 
-class KeywordSectionBuilder(SectionBuilder):
+class KeywordSectionParser(SectionParser):
 
-    def statement(self, statement):
+    def parse(self, statement):
         if statement.type == Token.EOL:
             if self.model.body.items:
                 self.model.body.add(statement)
             return self
         model = Keyword(statement)
         self.model.body.add(model)
-        return TestOrKeywordBuilder(model)
+        return TestOrKeywordParser(model)
 
 
-class TestOrKeywordBuilder(Builder):
+class TestOrKeywordParser(Parser):
 
     def handles(self, statement):
         name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
         return statement.type not in Token.HEADER_TOKENS + name_types
 
-    def statement(self, statement):
+    def parse(self, statement):
         if statement.type == Token.FOR:
             model = ForLoop(statement)
             self.model.body.add(model)
-            return ForLoopBuilder(model)
+            return ForLoopParser(model)
         else:
             self.model.body.add(statement)
 
 
-class ForLoopBuilder(Builder):
+class ForLoopParser(Parser):
 
     def __init__(self, model):
-        Builder.__init__(self, model)
+        Parser.__init__(self, model)
         self._end = False
 
     def handles(self, statement):
         name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
         return not self._end and statement.type not in name_types
 
-    def statement(self, statement):
+    def parse(self, statement):
         if statement.type == Token.END:
             self.model.end = statement
             self._end = True
