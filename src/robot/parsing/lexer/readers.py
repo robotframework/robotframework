@@ -18,8 +18,8 @@ from itertools import chain
 from robot.errors import DataError
 from robot.utils import get_error_message, FileReader
 
+from .blocklexers import FileLexer
 from .context import TestCaseFileContext, ResourceFileContext
-from .lexers import FileLexer
 from .tokenizer import Tokenizer
 from .tokens import EOS, Token
 
