@@ -17,8 +17,8 @@ import os.path
 
 from robot.utils import is_pathlike, is_string
 
-from .lexer import Token, get_tokens, get_resource_tokens
-from .model import (File, SettingSection, VariableSection, TestCaseSection,
+from ..lexer import Token, get_tokens, get_resource_tokens
+from ..model import (File, SettingSection, VariableSection, TestCaseSection,
                     KeywordSection, CommentSection, TestCase, Keyword, ForLoop,
                     Statement)
 
