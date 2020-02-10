@@ -18,6 +18,8 @@ from robot.utils import py2to3
 
 @py2to3
 class Token(object):
+    """FIXME: Add documentation to Token class and types."""
+
     SETTING_HEADER = 'SETTING_HEADER'
     VARIABLE_HEADER = 'VARIABLE_HEADER'
     TESTCASE_HEADER = 'TESTCASE_HEADER'
