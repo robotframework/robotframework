@@ -444,3 +444,7 @@ class Error(Statement):
 
 class EmptyLine(Statement):
     type = Token.EOL
+
+    @classmethod
+    def from_value(cls, value):
+        return EmptyLine([Token(Token.EOL, value)])

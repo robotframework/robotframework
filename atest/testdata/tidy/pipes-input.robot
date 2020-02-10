@@ -27,7 +27,7 @@
 |    | Log Many | Non-ASCII: ääöö§§ | ${CURDIR} |
 
 | *** Keyword *** |
-| My Keyword |
+|    My Keyword |
 |    | [Documentation] | Documentation | # Comment for doc |
 |    | [Tags] | keyword | tags |
 |    | # Comment row |
