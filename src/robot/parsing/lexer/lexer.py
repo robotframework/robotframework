@@ -150,7 +150,7 @@ class Lexer(object):
         return None
 
     def _split_trailing_commented_and_empty_lines(self, statement):
-        lines = list(self._split_to_lines(statement))
+        lines = self._split_to_lines(statement)
         commented_or_empty = []
         for line in reversed(lines):
             if not self._is_commented_or_empty(line):
@@ -162,14 +162,16 @@ class Lexer(object):
             yield line
 
     def _split_to_lines(self, statement):
+        lines = []
         current = []
         for token in statement:
             current.append(token)
             if token.type == Token.EOL:
-                yield current
+                lines.append(current)
                 current = []
         if current:
-            yield current
+            lines.append(current)
+        return lines
 
     def _is_commented_or_empty(self, line):
         separator_or_ignore = (Token.SEPARATOR, Token.IGNORE)
