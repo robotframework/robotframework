@@ -1,6 +1,6 @@
 name: Unit tests
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   test_using_builtin_python:
