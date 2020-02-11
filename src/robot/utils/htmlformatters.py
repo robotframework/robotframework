@@ -19,7 +19,7 @@ from itertools import cycle
 
 
 class LinkFormatter(object):
-    _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp')
+    _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg')
     _link = re.compile(r'\[(.+?\|.*?)\]')
     _url = re.compile(r'''
 ((^|\ ) ["'(\[{]*)           # begin of line or space and opt. any char "'([{
