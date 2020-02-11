@@ -15,7 +15,7 @@
 
 import ast
 
-from robot.utils import file_writer, is_pathlike, is_string, normalize_whitespace
+from robot.utils import file_writer, is_pathlike, is_string
 
 from .visitor import ModelVisitor
 
@@ -85,8 +85,7 @@ class TestCaseSection(Section):
 
     @property
     def tasks(self):
-        header = normalize_whitespace(self.header.data_tokens[0].value)
-        return header.strip('* ').upper() in ('TASKS', 'TASK')
+        return self.header.value.upper() in ('TASKS', 'TASK')
 
 
 class KeywordSection(Section):

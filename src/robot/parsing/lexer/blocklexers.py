@@ -31,46 +31,50 @@ from .statementlexers import (Lexer,
 
 class BlockLexer(Lexer):
 
-    def __init__(self):
+    def __init__(self, ctx):
+        Lexer.__init__(self, ctx)
         self.lexers = []
 
     def accepts_more(self, statement):
         return True
 
     def input(self, statement):
-        lexer = self.lexer_for(statement)
-        lexer.input(statement)
-        if not self.lexers or self.lexers[-1] is not lexer:
+        if self.lexers and self.lexers[-1].accepts_more(statement):
+            lexer = self.lexers[-1]
+        else:
+            lexer = self.lexer_for(statement)
             self.lexers.append(lexer)
+        lexer.input(statement)
+        return lexer
 
     def lexer_for(self, statement):
-        if self.lexers and self.lexers[-1].accepts_more(statement):
-            return self.lexers[-1]
         for cls in self.lexer_classes():
-            if cls.handles(statement):
-                return cls()
-        raise TypeError("No lexer found for '%s'." % type(self).__name__)
+            lexer = cls(self.ctx)
+            if lexer.handles(statement):
+                return lexer
+        raise TypeError("%s did not find lexer for statement %s."
+                        % (type(self).__name__, statement))
 
     def lexer_classes(self):
         return ()
 
-    def lex(self, ctx):
+    def lex(self):
         for lexer in self.lexers:
-            lexer.lex(ctx)
+            lexer.lex()
 
-    def _lex_with_priority(self, ctx, priority):
+    def _lex_with_priority(self, priority):
         for lexer in self.lexers:
             if isinstance(lexer, priority):
-                lexer.lex(ctx)
+                lexer.lex()
         for lexer in self.lexers:
             if not isinstance(lexer, priority):
-                lexer.lex(ctx)
+                lexer.lex()
 
 
 class FileLexer(BlockLexer):
 
-    def lex(self, ctx):
-        self._lex_with_priority(ctx, priority=SettingSectionLexer)
+    def lex(self):
+        self._lex_with_priority(priority=SettingSectionLexer)
 
     def lexer_classes(self):
         return (SettingSectionLexer, VariableSectionLexer,
@@ -83,16 +87,14 @@ class SectionLexer(BlockLexer):
     markers = ()
     has_header = True
 
-    @classmethod
-    def handles(cls, statement):
+    def handles(self, statement):
         if not statement:
             return False
         marker = statement[0].value
         return (marker.startswith('*') and
-                cls._normalize(marker) in cls.markers)
+                self._normalize(marker) in self.markers)
 
-    @classmethod
-    def _normalize(cls, marker):
+    def _normalize(self, marker):
         return normalize_whitespace(marker).strip('* ').title()
 
     def accepts_more(self, statement):
@@ -136,8 +138,7 @@ class CommentSectionLexer(SectionLexer):
 
 class ImplicitCommentSectionLexer(SectionLexer):
 
-    @classmethod
-    def handles(cls, statement):
+    def handles(self, statement):
         return True
 
     def lexer_classes(self):
@@ -146,8 +147,7 @@ class ImplicitCommentSectionLexer(SectionLexer):
 
 class ErrorSectionLexer(SectionLexer):
 
-    @classmethod
-    def handles(cls, statement):
+    def handles(self, statement):
         return statement and statement[0].value.startswith('*')
 
     def lexer_classes(self):
@@ -156,9 +156,7 @@ class ErrorSectionLexer(SectionLexer):
 
 class TestOrKeywordLexer(BlockLexer):
     name_type = NotImplemented
-    _in_for_loop = False
-    _old_style_for = None
-    _name_set = False
+    _name_seen = False
 
     def accepts_more(self, statement):
         return not statement[0].value
@@ -166,51 +164,62 @@ class TestOrKeywordLexer(BlockLexer):
     def input(self, statement):
         self._handle_name_or_indentation(statement)
         if statement:
-            lexer = self.lexer_for(statement)
-            self._handle_old_style_for_loop(statement, lexer)
-            self.lexers.append(lexer)
-            lexer.input(statement)
+            BlockLexer.input(self, statement)
 
     def _handle_name_or_indentation(self, statement):
-        if not self._name_set:
+        if not self._name_seen:
             statement.pop(0).type = self.name_type
-            self._name_set = True
+            self._name_seen = True
         else:
             while statement and not statement[0].value:
                 statement.pop(0).type = Token.IGNORE
 
-    def _handle_old_style_for_loop(self, statement, lexer):
-        if isinstance(lexer, ForLoopHeaderLexer):
-            self._in_for_loop = True
-        elif isinstance(lexer, EndLexer):
-            self._in_for_loop = False
-            self._old_style_for = None
-        elif self._in_for_loop and self._old_style_for is not False:
-            if statement[0].value == '\\':
-                statement.pop(0).type = Token.OLD_FOR_INDENT
-                self._old_style_for = True
-            elif self._old_style_for is None:
-                self._old_style_for = False
-            elif self._old_style_for is True:
-                self._in_for_loop = False
-                self._old_style_for = None
-
     def lexer_classes(self):
-        return (TestOrKeywordSettingLexer, ForLoopHeaderLexer, EndLexer,
-                KeywordCallLexer)
+        return (TestOrKeywordSettingLexer, ForLoopLexer, KeywordCallLexer)
 
 
 class TestCaseLexer(TestOrKeywordLexer):
     name_type = Token.TESTCASE_NAME
 
-    def lex(self, ctx):
-        ctx = ctx.test_case_context()
-        self._lex_with_priority(ctx, priority=TestOrKeywordSettingLexer)
+    def __init__(self, ctx):
+        TestOrKeywordLexer.__init__(self, ctx.test_case_context())
+
+    def lex(self,):
+        self._lex_with_priority(priority=TestOrKeywordSettingLexer)
 
 
 class KeywordLexer(TestOrKeywordLexer):
     name_type = Token.KEYWORD_NAME
 
-    def lex(self, ctx):
-        ctx = ctx.keyword_context()
-        TestOrKeywordLexer.lex(self, ctx)
+    def __init__(self, ctx):
+        TestOrKeywordLexer.__init__(self, ctx.keyword_context())
+
+
+class ForLoopLexer(BlockLexer):
+
+    def __init__(self, ctx):
+        BlockLexer.__init__(self, ctx)
+        self._old_style_for = False
+        self._end_seen = False
+
+    def handles(self, statement):
+        return ForLoopHeaderLexer(self.ctx).handles(statement)
+
+    def accepts_more(self, statement):
+        if statement[0].value == '\\':
+            statement[0].type = Token.OLD_FOR_INDENT
+            self._old_style_for = True
+            return True
+        elif self._old_style_for:
+            return EndLexer(self.ctx).handles(statement)
+        return not self._end_seen
+
+    def input(self, statement):
+        lexer = BlockLexer.input(self, statement)
+        if isinstance(lexer, EndLexer):
+            self._end_seen = True
+        elif statement[0].type == Token.OLD_FOR_INDENT:
+            statement.pop(0)
+
+    def lexer_classes(self):
+        return (ForLoopHeaderLexer, EndLexer, KeywordCallLexer)

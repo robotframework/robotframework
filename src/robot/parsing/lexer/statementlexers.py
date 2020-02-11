@@ -22,8 +22,10 @@ from .tokens import Token
 class Lexer(object):
     """Base class for lexers."""
 
-    @classmethod
-    def handles(cls, statement):
+    def __init__(self, ctx):
+        self.ctx = ctx
+
+    def handles(self, statement):
         return True
 
     def accepts_more(self, statement):
@@ -32,15 +34,16 @@ class Lexer(object):
     def input(self, statement):
         raise NotImplementedError
 
-    def lex(self, ctx):
+    def lex(self):
         raise NotImplementedError
 
 
 class StatementLexer(Lexer):
     token_type = None
 
-    def __init__(self, statement=None):
-        self.statement = statement
+    def __init__(self, ctx):
+        Lexer.__init__(self, ctx)
+        self.statement = None
 
     def accepts_more(self, statement):
         return False
@@ -48,15 +51,14 @@ class StatementLexer(Lexer):
     def input(self, statement):
         self.statement = statement
 
-    def lex(self, ctx):
+    def lex(self):
         for token in self.statement:
             token.type = self.token_type
 
 
 class SectionHeaderLexer(StatementLexer):
 
-    @classmethod
-    def handles(cls, statement):
+    def handles(self, statement):
         return statement[0].value.startswith('*')
 
 
@@ -82,7 +84,7 @@ class CommentSectionHeaderLexer(SectionHeaderLexer):
 
 class ErrorSectionHeaderLexer(SectionHeaderLexer):
 
-    def lex(self, ctx):
+    def lex(self):
         header = self.statement[0]
         header.set_error(
             "Unrecognized section header '%s'. Available headers for data: "
@@ -100,21 +102,20 @@ class CommentLexer(StatementLexer):
 
 class SettingLexer(StatementLexer):
 
-    def lex(self, ctx):
-        ctx.lex_setting(self.statement)
+    def lex(self):
+        self.ctx.lex_setting(self.statement)
 
 
 class TestOrKeywordSettingLexer(SettingLexer):
 
-    @classmethod
-    def handles(cls, statement):
+    def handles(self, statement):
         marker = statement[0].value
         return marker and marker[0] == '[' and marker[-1] == ']'
 
 
 class VariableLexer(StatementLexer):
 
-    def lex(self, ctx):
+    def lex(self):
         name = self.statement[0]
         values = self.statement[1:]
         if is_var(name.value, allow_assign_mark=True):
@@ -150,8 +151,8 @@ class VariableLexer(StatementLexer):
 
 class KeywordCallLexer(StatementLexer):
 
-    def lex(self, ctx):
-        if ctx.template_set:
+    def lex(self):
+        if self.ctx.template_set:
             self._lex_as_template()
         else:
             self._lex_as_keyword_call()
@@ -175,14 +176,13 @@ class KeywordCallLexer(StatementLexer):
 class ForLoopHeaderLexer(StatementLexer):
     separators = ('IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP')
 
-    @classmethod
-    def handles(cls, statement):
+    def handles(self, statement):
         marker = statement[0].value
         return (marker == 'FOR' or
                 marker.startswith(':') and
                 marker.replace(':', '').replace(' ', '').upper() == 'FOR')
 
-    def lex(self, ctx):
+    def lex(self):
         separator_seen = False
         variable_seen = False
         self.statement[0].type = Token.FOR
@@ -202,9 +202,8 @@ class ForLoopHeaderLexer(StatementLexer):
 
 class EndLexer(StatementLexer):
 
-    @classmethod
-    def handles(cls, statement):
+    def handles(self, statement):
         return len(statement) == 1 and statement[0].value == 'END'
 
-    def lex(self, ctx):
+    def lex(self):
         self.statement[0].type = Token.END

@@ -167,28 +167,36 @@ class Fixture(Statement):
         return self.get_values(Token.ARGUMENT)
 
 
+class SectionHeader(Statement):
+
+    @property
+    def value(self):
+        header = self.get_token(self.type)
+        return normalize_whitespace(header.value).strip('* ')
+
+
 @Statement.register
-class SettingSectionHeader(Statement):
+class SettingSectionHeader(SectionHeader):
     type = Token.SETTING_HEADER
 
 
 @Statement.register
-class VariableSectionHeader(Statement):
+class VariableSectionHeader(SectionHeader):
     type = Token.VARIABLE_HEADER
 
 
 @Statement.register
-class TestCaseSectionHeader(Statement):
+class TestCaseSectionHeader(SectionHeader):
     type = Token.TESTCASE_HEADER
 
 
 @Statement.register
-class KeywordSectionHeader(Statement):
+class KeywordSectionHeader(SectionHeader):
     type = Token.KEYWORD_HEADER
 
 
 @Statement.register
-class CommentSectionHeader(Statement):
+class CommentSectionHeader(SectionHeader):
     type = Token.COMMENT_HEADER
 
 

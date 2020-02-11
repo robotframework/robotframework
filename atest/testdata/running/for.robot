@@ -36,6 +36,12 @@ Indentation is not required
     END
     Should Be Equal    ${string}    START RoBoT Robot ROBOT robot FRaMeWoRK Framework FRAMEWORK framework
 
+Settings after FOR
+    FOR    ${x}    IN    x
+        ${x} =    Convert to Uppercase    ${x}
+    END
+    [Teardown]    Log    Teardown was found and e${x}ecuted.
+
 Invalid END usage 1
     [Documentation]    FAIL    'End' is a reserved keyword.
     Log    No for loop here...

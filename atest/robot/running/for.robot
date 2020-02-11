@@ -24,6 +24,10 @@ Simple For
 Indentation is not required
     Check Test Case    ${TEST NAME}
 
+Settings after FOR
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.teardown.msgs[0]}    Teardown was found and eXecuted.
+
 Invalid END usage
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2

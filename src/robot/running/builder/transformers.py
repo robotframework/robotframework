@@ -182,10 +182,6 @@ class TestCaseBuilder(ast.NodeVisitor):
         ForLoopBuilder(loop).visit(node)
         self.test.keywords.append(loop)
 
-    def visit_End(self, node):
-        # Lone 'END' is mapped to a keyword.
-        self.test.keywords.create(name=node.value, lineno=node.lineno)
-
     def visit_TemplateArguments(self, node):
         self.test.keywords.create(args=node.args, lineno=node.lineno)
 
@@ -253,10 +249,6 @@ class KeywordBuilder(ast.NodeVisitor):
                        node._header, node._end)
         ForLoopBuilder(loop).visit(node)
         self.kw.keywords.append(loop)
-
-    def visit_End(self, node):
-        # Lone 'END' is mapped to a keyword.
-        self.kw.keywords.create(name=node.value, lineno=node.lineno)
 
 
 class ForLoopBuilder(ast.NodeVisitor):

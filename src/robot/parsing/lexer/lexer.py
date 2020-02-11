@@ -69,9 +69,8 @@ def get_init_tokens(source, data_only=False):
 class Lexer(object):
 
     def __init__(self, ctx, data_only=False):
-        self.ctx = ctx
+        self.lexer = FileLexer(ctx)
         self.data_only = data_only
-        self.lexer = FileLexer()
         self.statements = []
 
     def input(self, source):
@@ -93,7 +92,7 @@ class Lexer(object):
             raise DataError(get_error_message())
 
     def get_tokens(self):
-        self.lexer.lex(self.ctx)
+        self.lexer.lex()
         if self.data_only:
             ignore = {Token.IGNORE, Token.COMMENT_HEADER, Token.COMMENT,
                       Token.OLD_FOR_INDENT}
