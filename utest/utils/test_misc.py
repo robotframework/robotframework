@@ -1,7 +1,7 @@
 import unittest
 
 from robot.utils.asserts import assert_equal
-from robot.utils import printable_name, seq2str, roundup, IRONPYTHON
+from robot.utils import printable_name, seq2str, roundup, IRONPYTHON, plural_or_not
 
 
 class TestRoundup(unittest.TestCase):
@@ -141,6 +141,20 @@ class TestPrintableName(unittest.TestCase):
                          ('Foo-B:A;R!', 'Foo-B:A;R!'),
                          ('', '')]:
             assert_equal(printable_name(inp, code_style=True), exp)
+
+
+class TestPluralOrNot(unittest.TestCase):
+
+    def test_plural_or_not(self):
+        for inp, exp in [('1', ''),
+                         ('-1', ''),
+                         ('0', 's'),
+                         ('2', 's'),
+                         (["a"], ''),
+                         (["a", "b"], 's'),
+                         ([1], ''),
+                         ([1, 2], 's'), ]:
+            assert_equal(plural_or_not(inp), exp)
 
 
 if __name__ == "__main__":

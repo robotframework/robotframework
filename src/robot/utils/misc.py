@@ -105,7 +105,7 @@ def _is_camel_case_boundary(prev, char, next):
 
 def plural_or_not(item):
     count = item if is_integer(item) else len(item)
-    return '' if count == 1 else 's'
+    return '' if count in (1, -1) else 's'
 
 
 def seq2str(sequence, quote="'", sep=', ', lastsep=' and '):
