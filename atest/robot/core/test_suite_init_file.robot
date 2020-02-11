@@ -76,17 +76,17 @@ Test Fixture
 Test Timeout
     [Documentation]   Setting timeout for tests using Test Timeout in different suite levels and also [Timeout] in tests
     Check Test Timeout   TC1 No Metadata   1 hour 2 minutes 3 seconds
-    Check Test Timeout   TC1 Timeout   1 second
+    Check Test Timeout   TC1 Timeout   100 milliseconds
     Check Test Timeout   TC2 No Metadata   13 days 6 hours 50 minutes
     Check Test Timeout   TC2 Timeout   1 hour
     Check Test Timeout   S1TC1 No Metadata   4 hours 5 minutes 6 seconds
-    Check Test Timeout   S1TC1 Timeout   1 second
+    Check Test Timeout   S1TC1 Timeout   101 milliseconds
     Check Test Timeout   S1TC2 No Metadata   1 minute 52 seconds
     # Following step is for issue 152
     Check Test Timeout   S1TC2 Tags   1 minute 52 seconds
     Check Test Timeout   S1TC2 Timeout   1 day
     Check Test Timeout   S2TC1 No Metadata   7 hours 8 minutes 9 seconds
-    Check Test Timeout   S2TC1 Timeout   1 second
+    Check Test Timeout   S2TC1 Timeout   99 milliseconds
     Check Test Timeout   S2TC2 No Metadata   13 days 6 hours 50 minutes
     Check Test Timeout   S2TC2 Timeout   1 day
 
