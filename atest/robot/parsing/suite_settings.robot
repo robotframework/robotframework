@@ -54,6 +54,12 @@ Invalid Setting
     Error In File    0    parsing/suite_settings.robot    27
     ...    Non-existing setting 'Invalid Setting'.
 
+Small typo should provide recommendation.
+    Error In File    1    parsing/suite_settings.robot    28
+    ...    SEPARATOR=\n
+    ...    Non-existing setting 'Megadata'. Did you mean:
+    ...    ${SPACE*4}Metadata
+
 *** Keywords ***
 Verify Setup
     [Arguments]    ${item}    ${expected_name}    ${expected_message}

@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import normalize_whitespace
+from robot.utils import normalize, normalize_whitespace, RecommendationFinder
 
 from .tokens import Token
 
@@ -65,7 +65,13 @@ class Settings(object):
 
     def _validate(self, name, normalized, statement):
         if normalized not in self.settings:
-            raise ValueError("Non-existing setting '%s'." % name)  # TODO: Hints?
+            candidates = tuple(self.settings) + tuple(self.aliases)
+            message = RecommendationFinder(normalize).find_and_format(
+                name=normalized.title(),
+                candidates=[candidate.title() for candidate in candidates],
+                message="Non-existing setting '%s'." % name
+            )
+            raise ValueError(message)
         if self.settings[normalized] is not None and normalized not in self.multi_use:
             raise ValueError("Setting '%s' allowed only once. "
                              "Only the first value is used." % name)

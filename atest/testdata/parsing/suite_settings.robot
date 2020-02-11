@@ -25,6 +25,7 @@ Suite Setup       ${SUITE_FIXTURE_FROM_CLI}    ${default} suite setup  # Global 
 Suite Teardown    ${SUITE_FIXTURE_FROM_CLI}    Default suite teardown
 
 Invalid Setting    Yes, this is invalid.
+Megadata           Small typo should provide recommendation
 
 *** Variables ***
 ${version}         1.2

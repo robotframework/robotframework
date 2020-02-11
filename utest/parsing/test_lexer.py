@@ -254,7 +254,9 @@ Name
         data = '''\
 *** Settings ***
 Invalid       Value
+Library       Valid
 Oops, I       dit    it    again
+Libra ry      Smallish typo gives us recommendations!
 '''
         # Values of invalid settings are ignored with `data_only=True`.
         expected = [
@@ -262,8 +264,14 @@ Oops, I       dit    it    again
             (T.EOS, '', 1, 16),
             (T.ERROR, 'Invalid', 2, 0, "Non-existing setting 'Invalid'."),
             (T.EOS, '', 2, 7),
-            (T.ERROR, 'Oops, I', 3, 0, "Non-existing setting 'Oops, I'."),
-            (T.EOS, '', 3, 7)
+            (T.LIBRARY, 'Library', 3, 0),
+            (T.NAME, 'Valid', 3, 14),
+            (T.EOS, '', 3, 19),
+            (T.ERROR, 'Oops, I', 4, 0, "Non-existing setting 'Oops, I'."),
+            (T.EOS, '', 4, 7),
+            (T.ERROR, 'Libra ry', 5, 0, "Non-existing setting 'Libra ry'. "
+                                        "Did you mean:\n    Library"),
+            (T.EOS, '', 5, 8)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_resource_tokens, data_only=True)

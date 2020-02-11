@@ -174,9 +174,14 @@ Multiple settings
 Invalid setting
     Check Test Case    ${TEST NAME}
     Error In File    1    parsing/test_case_settings.robot    206
-    ...    Non-existing setting 'Doc U Ment ation'.
-    Error In File    2    parsing/test_case_settings.robot    207
     ...    Non-existing setting 'Invalid'.
+
+Small typo should provide recommendation
+    Check Test Doc    ${TEST NAME}
+    Error In File    2    parsing/test_case_settings.robot    210
+    ...    SEPARATOR=\n
+    ...    Non-existing setting 'Doc U ment a tion'. Did you mean:
+    ...    ${SPACE*4}Documentation
 
 *** Keywords ***
 Verify Documentation

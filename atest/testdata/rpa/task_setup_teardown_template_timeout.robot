@@ -3,6 +3,7 @@ Task Setup              Log    Setup has an alias!
 Task Teardown           Log    Also teardown has an alias!!
 Task Template           Log
 Task Timeout            70 seconds
+Tesk Setup              Task aliases are included in setting recommendations
 Resource                resource_with_invalid_task_settings.robot
 
 *** Variables ***
