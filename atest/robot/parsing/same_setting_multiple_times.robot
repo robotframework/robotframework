@@ -112,4 +112,4 @@ Setting multiple times
     [Arguments]    ${index}    ${lineno}    ${setting}
     Error In File
     ...    ${index}    parsing/same_setting_multiple_times.robot    ${lineno}
-    ...    Setting '${setting}' allowed only once. Only the first value is used.
+    ...    Setting '${setting}' is allowed only once. Only the first value is used.

@@ -18,7 +18,7 @@ from ast import NodeVisitor
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.parsing import get_model, get_resource_model, Token
+from robot.parsing import get_model, get_resource_model, get_init_model, Token
 from robot.utils import FileReader, read_rest_data
 
 from .testsettings import TestDefaults
@@ -46,7 +46,7 @@ class RobotParser(BaseParser):
     def parse_init_file(self, source, defaults=None):
         directory = os.path.dirname(source)
         suite = TestSuite(name=format_name(directory), source=directory)
-        return self._build(suite, source, defaults)
+        return self._build(suite, source, defaults, get_model=get_init_model)
 
     def parse_suite_file(self, source, defaults=None):
         suite = TestSuite(name=format_name(source), source=source)
@@ -57,7 +57,7 @@ class RobotParser(BaseParser):
         suite = TestSuite(name=name or format_name(source), source=source)
         return self._build(suite, source, defaults, model)
 
-    def _build(self, suite, source, defaults, model=None):
+    def _build(self, suite, source, defaults, model=None, get_model=get_model):
         if defaults is None:
             defaults = TestDefaults()
         if model is None:

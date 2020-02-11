@@ -32,11 +32,16 @@ Suite Teardown
     Should Be Equal   ${subsuite_without_init.teardown}   ${None}
 
 Invalid Suite Setting
-    ${base} =  Normalize Path  ${CURDIR}/../../testdata/core/test_suite_dir_with_init_file
     Error In File    0    core/test_suite_dir_with_init_file/__init__.robot    10
     ...    Non-existing setting 'Invalid'.
-    Error In File    1    core/test_suite_dir_with_init_file/sub_suite_with_init_file/__INIT__.robot    7
-    ...    Non-existing setting 'Invalid In Sub'.
+    Error In File    3    core/test_suite_dir_with_init_file/sub_suite_with_init_file/__INIT__.robot    7
+    ...    Non-existing setting 'Megadata'. Did you mean:\n${SPACE*4}Metadata
+
+Default Tags and Test Template are not allowed in init files
+    Error In File    1    core/test_suite_dir_with_init_file/__init__.robot    11
+    ...    Setting 'Default Tags' is not allowed in suite initialization file.
+    Error In File    2    core/test_suite_dir_with_init_file/__init__.robot    12
+    ...    Setting 'Test Template' is not allowed in suite initialization file.
 
 Test Tags
     [Documentation]   Settings tags for tests using Force and Default Tags in different suite levels and also [Tags] in tests

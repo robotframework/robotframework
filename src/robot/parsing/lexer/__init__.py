@@ -13,5 +13,5 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .lexer import get_tokens, get_resource_tokens
+from .lexer import get_tokens, get_resource_tokens, get_init_tokens
 from .tokens import Token

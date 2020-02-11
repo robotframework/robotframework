@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .settings import (KeywordSettings, TestCaseFileSettings,
+from .settings import (InitFileSettings, KeywordSettings, TestCaseFileSettings,
                        TestCaseSettings, ResourceFileSettings)
 
 
@@ -41,8 +41,17 @@ class ResourceFileContext(LexingContext):
     settings_class = ResourceFileSettings
 
     def test_case_context(self):
-        # Lex test cases for resource/init files.
-        # The error will be reported when the model is built
+        # Lex test cases for resource files. Error is reported later.
+        # TODO: Should this be a lex error?
+        return KeywordContext(settings=TestCaseSettings(self.settings))
+
+
+class InitFileContext(LexingContext):
+    settings_class = InitFileSettings
+
+    def test_case_context(self):
+        # Lex test cases for init files. Error is reported later.
+        # TODO: Should this be a lex error?
         return KeywordContext(settings=TestCaseSettings(self.settings))
 
 

@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from ..lexer import Token, get_tokens, get_resource_tokens
+from ..lexer import Token, get_tokens, get_resource_tokens, get_init_tokens
 from ..model import Statement
 
 from .fileparser import FileParser
@@ -36,6 +36,18 @@ def get_resource_model(source, data_only=False, curdir=None):
     a resource file. This affects, for example, what settings are valid.
     """
     tokens = get_resource_tokens(source, data_only)
+    statements = _tokens_to_statements(tokens, curdir)
+    return _statements_to_model(statements, source)
+
+
+def get_init_model(source, data_only=False, curdir=None):
+    """Parses the given source to a init file model.
+
+    Otherwise same as :func:`get_model` but the source is considered to be
+    a suite initialization file. This affects, for example, what settings are
+    valid.
+    """
+    tokens = get_init_tokens(source, data_only)
     statements = _tokens_to_statements(tokens, curdir)
     return _statements_to_model(statements, source)
 

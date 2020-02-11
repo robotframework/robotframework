@@ -21,8 +21,19 @@ from .tokens import Token
 class Settings(object):
     names = ()
     aliases = {}
-    multi_use = ()
-    single_value = ()
+    multi_use = (
+        'METADATA',
+        'LIBRARY',
+        'RESOURCE',
+        'VARIABLES'
+    )
+    single_value = (
+        'RESOURCE',
+        'TEST TIMEOUT',
+        'TEST TEMPLATE',
+        'TIMEOUT',
+        'TEMPLATE'
+    )
     name_and_arguments = (
         'METADATA',
         'SUITE SETUP',
@@ -37,7 +48,7 @@ class Settings(object):
         'VARIABLES'
     )
     name_arguments_and_with_name = (
-        'LIBRARY'
+        'LIBRARY',
     )
 
     def __init__(self):
@@ -65,19 +76,27 @@ class Settings(object):
 
     def _validate(self, name, normalized, statement):
         if normalized not in self.settings:
-            candidates = tuple(self.settings) + tuple(self.aliases)
-            message = RecommendationFinder(normalize).find_and_format(
-                name=normalized.title(),
-                candidates=[candidate.title() for candidate in candidates],
-                message="Non-existing setting '%s'." % name
-            )
+            message = self._get_non_existing_setting_message(name, normalized)
             raise ValueError(message)
         if self.settings[normalized] is not None and normalized not in self.multi_use:
-            raise ValueError("Setting '%s' allowed only once. "
+            raise ValueError("Setting '%s' is allowed only once. "
                              "Only the first value is used." % name)
         if normalized in self.single_value and len(statement) > 2:
             raise ValueError("Setting '%s' accepts only one value, got %s."
                              % (name, len(statement) - 1))
+
+    def _get_non_existing_setting_message(self, name, normalized):
+        if normalized in TestCaseFileSettings.names:
+            is_resource = isinstance(self, ResourceFileSettings)
+            return "Setting '%s' is not allowed in %s file." % (
+                name, 'resource' if is_resource else 'suite initialization'
+            )
+        candidates = tuple(self.settings) + tuple(self.aliases)
+        return RecommendationFinder(normalize).find_and_format(
+            name=normalized.title(),
+            candidates=[candidate.title() for candidate in candidates],
+            message="Non-existing setting '%s'." % name
+        )
 
     def _lex_error(self, setting, values, error):
         setting.set_error(error)
@@ -133,22 +152,22 @@ class TestCaseFileSettings(Settings):
         'TASK TEMPLATE': 'TEST TEMPLATE',
         'TASK TIMEOUT': 'TEST TIMEOUT',
     }
-    multi_use = (
+
+
+class InitFileSettings(Settings):
+    names = (
+        'DOCUMENTATION',
         'METADATA',
+        'SUITE SETUP',
+        'SUITE TEARDOWN',
+        'TEST SETUP',
+        'TEST TEARDOWN',
+        'TEST TIMEOUT',
+        'FORCE TAGS',
         'LIBRARY',
         'RESOURCE',
         'VARIABLES'
     )
-    single_value = (
-        'RESOURCE',
-        'TEST TIMEOUT',
-        'TEST TEMPLATE'
-    )
-
-
-# FIXME: Implementation missing. Need to check what settings are supported.
-class InitFileSettings(Settings):
-    pass
 
 
 class ResourceFileSettings(Settings):
@@ -157,14 +176,6 @@ class ResourceFileSettings(Settings):
         'LIBRARY',
         'RESOURCE',
         'VARIABLES'
-    )
-    multi_use = (
-        'LIBRARY',
-        'RESOURCE',
-        'VARIABLES'
-    )
-    single_value = (
-        'RESOURCE'
     )
 
 
@@ -176,10 +187,6 @@ class TestCaseSettings(Settings):
         'TEARDOWN',
         'TEMPLATE',
         'TIMEOUT'
-    )
-    single_value = (
-        'TIMEOUT',
-        'TEMPLATE'
     )
 
     def __init__(self, parent):
@@ -214,9 +221,6 @@ class KeywordSettings(Settings):
         'TIMEOUT',
         'TAGS',
         'RETURN'
-    )
-    single_value = (
-        'TIMEOUT'
     )
 
     def _format_name(self, name):

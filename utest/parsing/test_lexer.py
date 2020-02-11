@@ -6,7 +6,7 @@ import tempfile
 from robot.utils import PY3
 from robot.utils.asserts import assert_equal
 
-from robot.parsing import get_tokens, get_resource_tokens, Token
+from robot.parsing import get_tokens, get_init_tokens, get_resource_tokens, Token
 
 
 T = Token
@@ -22,9 +22,9 @@ def assert_tokens(source, expected, get_tokens=get_tokens, data_only=False):
         assert_equal(act, Token(*exp), formatter=repr)
 
 
-class TestLexSettings(unittest.TestCase):
+class TestLexSettingsSection(unittest.TestCase):
 
-    def test_suite_settings(self):
+    def test_common_suite_settings(self):
         data = '''\
 *** Settings ***
 Documentation     Doc    in multiple
@@ -35,10 +35,8 @@ Suite Setup       Log    Hello, world!
 suite teardown    Log    <b>The End.</b>    WARN    html=True
 Test Setup        None Shall Pass    ${NONE}
 TEST TEARDOWN     No Operation
-Test Template     NONE
 Test Timeout      1 day
 Force Tags        foo    bar
-Default Tags      zap
 '''
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
@@ -74,21 +72,104 @@ Default Tags      zap
             (T.TEST_TEARDOWN, 'TEST TEARDOWN', 9, 0),
             (T.NAME, 'No Operation', 9, 18),
             (T.EOS, '', 9, 30),
-            (T.TEST_TEMPLATE, 'Test Template', 10, 0),
-            (T.NAME, 'NONE', 10, 18),
-            (T.EOS, '', 10, 22),
-            (T.TEST_TIMEOUT, 'Test Timeout', 11, 0),
-            (T.ARGUMENT, '1 day', 11, 18),
-            (T.EOS, '', 11, 23),
-            (T.FORCE_TAGS, 'Force Tags', 12, 0),
-            (T.ARGUMENT, 'foo', 12, 18),
-            (T.ARGUMENT, 'bar', 12, 25),
-            (T.EOS, '', 12, 28),
-            (T.DEFAULT_TAGS, 'Default Tags', 13, 0),
-            (T.ARGUMENT, 'zap', 13, 18),
-            (T.EOS, '', 13, 21),
+            (T.TEST_TIMEOUT, 'Test Timeout', 10, 0),
+            (T.ARGUMENT, '1 day', 10, 18),
+            (T.EOS, '', 10, 23),
+            (T.FORCE_TAGS, 'Force Tags', 11, 0),
+            (T.ARGUMENT, 'foo', 11, 18),
+            (T.ARGUMENT, 'bar', 11, 25),
+            (T.EOS, '', 11, 28),
         ]
-        assert_tokens(data, expected, data_only=True)
+        assert_tokens(data, expected, get_tokens, data_only=True)
+        assert_tokens(data, expected, get_init_tokens, data_only=True)
+
+    def test_suite_settings_not_allowed_in_init_file(self):
+        data = '''\
+*** Settings ***
+Test Template     Not allowed in init file
+Force Tags        Allowed in both
+Default Tags      Not allowed in init file
+'''
+        expected = [
+            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
+            (T.EOS, '', 1, 16),
+            (T.TEST_TEMPLATE, 'Test Template', 2, 0),
+            (T.NAME, 'Not allowed in init file', 2, 18),
+            (T.EOS, '', 2, 42),
+            (T.FORCE_TAGS, 'Force Tags', 3, 0),
+            (T.ARGUMENT, 'Allowed in both', 3, 18),
+            (T.EOS, '', 3, 33),
+            (T.DEFAULT_TAGS, 'Default Tags', 4, 0),
+            (T.ARGUMENT, 'Not allowed in init file', 4, 18),
+            (T.EOS, '', 4, 42)
+        ]
+        assert_tokens(data, expected, get_tokens, data_only=True)
+        # Values of invalid settings are ignored with `data_only=True`.
+        expected = [
+            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
+            (T.EOS, '', 1, 16),
+            (T.ERROR, 'Test Template', 2, 0,
+             "Setting 'Test Template' is not allowed in suite initialization file."),
+            (T.EOS, '', 2, 13),
+            (T.FORCE_TAGS, 'Force Tags', 3, 0),
+            (T.ARGUMENT, 'Allowed in both', 3, 18),
+            (T.EOS, '', 3, 33),
+            (T.ERROR, 'Default Tags', 4, 0,
+             "Setting 'Default Tags' is not allowed in suite initialization file."),
+            (T.EOS, '', 4, 12)
+        ]
+        assert_tokens(data, expected, get_init_tokens, data_only=True)
+
+    def test_suite_settings_not_allowed_in_resource_file(self):
+        data = '''\
+*** Settings ***
+Metadata          Name           Value
+Suite Setup       Log    Hello, world!
+suite teardown    Log    <b>The End.</b>    WARN    html=True
+Test Setup        None Shall Pass    ${NONE}
+TEST TEARDOWN     No Operation
+Test Template     NONE
+Test Timeout      1 day
+Force Tags        foo    bar
+Default Tags      zap
+Documentation     Valid in all data files.
+'''
+        # Values of invalid settings are ignored with `data_only=True`.
+        expected = [
+            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
+            (T.EOS, '', 1, 16),
+            (T.ERROR, 'Metadata', 2, 0,
+             "Setting 'Metadata' is not allowed in resource file."),
+            (T.EOS, '', 2, 8),
+            (T.ERROR, 'Suite Setup', 3, 0,
+             "Setting 'Suite Setup' is not allowed in resource file."),
+            (T.EOS, '', 3, 11),
+            (T.ERROR, 'suite teardown', 4, 0,
+             "Setting 'suite teardown' is not allowed in resource file."),
+            (T.EOS, '', 4, 14),
+            (T.ERROR, 'Test Setup', 5, 0,
+             "Setting 'Test Setup' is not allowed in resource file."),
+            (T.EOS, '', 5, 10),
+            (T.ERROR, 'TEST TEARDOWN', 6, 0,
+             "Setting 'TEST TEARDOWN' is not allowed in resource file."),
+            (T.EOS, '', 6, 13),
+            (T.ERROR, 'Test Template', 7, 0,
+             "Setting 'Test Template' is not allowed in resource file."),
+            (T.EOS, '', 7, 13),
+            (T.ERROR, 'Test Timeout', 8, 0,
+             "Setting 'Test Timeout' is not allowed in resource file."),
+            (T.EOS, '', 8, 12),
+            (T.ERROR, 'Force Tags', 9, 0,
+             "Setting 'Force Tags' is not allowed in resource file."),
+            (T.EOS, '', 9, 10),
+            (T.ERROR, 'Default Tags', 10, 0,
+             "Setting 'Default Tags' is not allowed in resource file."),
+            (T.EOS, '', 10, 12),
+            (T.DOCUMENTATION, 'Documentation', 11, 0),
+            (T.ARGUMENT, 'Valid in all data files.', 11, 18),
+            (T.EOS, '', 11, 42)
+        ]
+        assert_tokens(data, expected, get_resource_tokens, data_only=True)
 
     def test_imports(self):
         data = '''\
@@ -96,9 +177,9 @@ Default Tags      zap
 Library           String
 LIBRARY           XML    lxml=True
 Resource          example.resource
+resource
 Variables         variables.py
 VariAbles         variables.py    arg
-Documentation     Valid both in suite and resource files.
 '''
         expected = [
             (T.SETTING_HEADER, '*** Settings ***', 1, 0),
@@ -113,18 +194,18 @@ Documentation     Valid both in suite and resource files.
             (T.RESOURCE, 'Resource', 4, 0),
             (T.NAME, 'example.resource', 4, 18),
             (T.EOS, '', 4, 34),
-            (T.VARIABLES, 'Variables', 5, 0),
-            (T.NAME, 'variables.py', 5, 18),
-            (T.EOS, '', 5, 30),
-            (T.VARIABLES, 'VariAbles', 6, 0),
+            (T.RESOURCE, 'resource', 5, 0),
+            (T.EOS, '', 5, 8),
+            (T.VARIABLES, 'Variables', 6, 0),
             (T.NAME, 'variables.py', 6, 18),
-            (T.ARGUMENT, 'arg', 6, 34),
-            (T.EOS, '', 6, 37),
-            (T.DOCUMENTATION, 'Documentation', 7, 0),
-            (T.ARGUMENT, 'Valid both in suite and resource files.', 7, 18),
-            (T.EOS, '', 7, 57),
+            (T.EOS, '', 6, 30),
+            (T.VARIABLES, 'VariAbles', 7, 0),
+            (T.NAME, 'variables.py', 7, 18),
+            (T.ARGUMENT, 'arg', 7, 34),
+            (T.EOS, '', 7, 37),
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
+        assert_tokens(data, expected, get_init_tokens, data_only=True)
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
 
     def test_with_name(self):
@@ -160,7 +241,144 @@ Library         Arguments    arg1    arg2
             (T.EOS, '', 5, 72)
         ]
         assert_tokens(data, expected, get_tokens, data_only=True)
+        assert_tokens(data, expected, get_init_tokens, data_only=True)
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
+
+    def test_invalid_settings(self):
+        data = '''\
+*** Settings ***
+Invalid       Value
+Library       Valid
+Oops, I       dit    it    again
+Libra ry      Smallish typo gives us recommendations!
+'''
+        # Values of invalid settings are ignored with `data_only=True`.
+        expected = [
+            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
+            (T.EOS, '', 1, 16),
+            (T.ERROR, 'Invalid', 2, 0, "Non-existing setting 'Invalid'."),
+            (T.EOS, '', 2, 7),
+            (T.LIBRARY, 'Library', 3, 0),
+            (T.NAME, 'Valid', 3, 14),
+            (T.EOS, '', 3, 19),
+            (T.ERROR, 'Oops, I', 4, 0, "Non-existing setting 'Oops, I'."),
+            (T.EOS, '', 4, 7),
+            (T.ERROR, 'Libra ry', 5, 0, "Non-existing setting 'Libra ry'. "
+                                        "Did you mean:\n    Library"),
+            (T.EOS, '', 5, 8)
+        ]
+        assert_tokens(data, expected, get_tokens, data_only=True)
+        assert_tokens(data, expected, get_init_tokens, data_only=True)
+        assert_tokens(data, expected, get_resource_tokens, data_only=True)
+
+    def test_too_many_values_for_single_value_settings(self):
+        data = '''\
+*** Settings ***
+Resource         Too    many   values
+Test Timeout     Too    much
+Test Template    1    2    3    4    5
+'''
+        # Values of invalid settings are ignored with `data_only=True`.
+        expected = [
+            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
+            (T.EOS, '', 1, 16),
+            (T.ERROR, 'Resource', 2, 0,
+             "Setting 'Resource' accepts only one value, got 3."),
+            (T.EOS, '', 2, 8),
+            (T.ERROR, 'Test Timeout', 3, 0,
+             "Setting 'Test Timeout' accepts only one value, got 2."),
+            (T.EOS, '', 3, 12),
+            (T.ERROR, 'Test Template', 4, 0,
+             "Setting 'Test Template' accepts only one value, got 5."),
+            (T.EOS, '', 4, 13),
+        ]
+        assert_tokens(data, expected, data_only=True)
+
+    def test_setting_too_many_times(self):
+        data = '''\
+*** Settings ***
+Documentation     Used
+Documentation     Ignored
+Suite Setup       Used
+Suite Setup       Ignored
+Suite Teardown    Used
+Suite Teardown    Ignored
+Test Setup        Used
+Test Setup        Ignored
+Test Teardown     Used
+Test Teardown     Ignored
+Test Template     Used
+Test Template     Ignored
+Test Timeout      Used
+Test Timeout      Ignored
+Force Tags        Used
+Force Tags        Ignored
+Default Tags      Used
+Default Tags      Ignored
+'''
+        # Values of invalid settings are ignored with `data_only=True`.
+        expected = [
+            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
+            (T.EOS, '', 1, 16),
+            (T.DOCUMENTATION, 'Documentation', 2, 0),
+            (T.ARGUMENT, 'Used', 2, 18),
+            (T.EOS, '', 2, 22),
+            (T.ERROR, 'Documentation', 3, 0,
+             "Setting 'Documentation' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 3, 13),
+            (T.SUITE_SETUP, 'Suite Setup', 4, 0),
+            (T.NAME, 'Used', 4, 18),
+            (T.EOS, '', 4, 22),
+            (T.ERROR, 'Suite Setup', 5, 0,
+             "Setting 'Suite Setup' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 5, 11),
+            (T.SUITE_TEARDOWN, 'Suite Teardown', 6, 0),
+            (T.NAME, 'Used', 6, 18),
+            (T.EOS, '', 6, 22),
+            (T.ERROR, 'Suite Teardown', 7, 0,
+             "Setting 'Suite Teardown' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 7, 14),
+            (T.TEST_SETUP, 'Test Setup', 8, 0),
+            (T.NAME, 'Used', 8, 18),
+            (T.EOS, '', 8, 22),
+            (T.ERROR, 'Test Setup', 9, 0,
+             "Setting 'Test Setup' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 9, 10),
+            (T.TEST_TEARDOWN, 'Test Teardown', 10, 0),
+            (T.NAME, 'Used', 10, 18),
+            (T.EOS, '', 10, 22),
+            (T.ERROR, 'Test Teardown', 11, 0,
+             "Setting 'Test Teardown' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 11, 13),
+            (T.TEST_TEMPLATE, 'Test Template', 12, 0),
+            (T.NAME, 'Used', 12, 18),
+            (T.EOS, '', 12, 22),
+            (T.ERROR, 'Test Template', 13, 0,
+             "Setting 'Test Template' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 13, 13),
+            (T.TEST_TIMEOUT, 'Test Timeout', 14, 0),
+            (T.ARGUMENT, 'Used', 14, 18),
+            (T.EOS, '', 14, 22),
+            (T.ERROR, 'Test Timeout', 15, 0,
+             "Setting 'Test Timeout' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 15, 12),
+            (T.FORCE_TAGS, 'Force Tags', 16, 0),
+            (T.ARGUMENT, 'Used', 16, 18),
+            (T.EOS, '', 16, 22),
+            (T.ERROR, 'Force Tags', 17, 0,
+             "Setting 'Force Tags' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 17, 10),
+            (T.DEFAULT_TAGS, 'Default Tags', 18, 0),
+            (T.ARGUMENT, 'Used', 18, 18),
+            (T.EOS, '', 18, 22),
+            (T.ERROR, 'Default Tags', 19, 0,
+             "Setting 'Default Tags' is allowed only once. Only the first value is used."),
+            (T.EOS, '', 19, 12)
+        ]
+        assert_tokens(data, expected, data_only=True)
+
+
+class TestLexTestAndKeywordSettings(unittest.TestCase):
 
     def test_test_settings(self):
         data = '''\
@@ -250,94 +468,6 @@ Name
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_resource_tokens, data_only=True)
 
-    def test_invalid_suite_or_resource_settings(self):
-        data = '''\
-*** Settings ***
-Invalid       Value
-Library       Valid
-Oops, I       dit    it    again
-Libra ry      Smallish typo gives us recommendations!
-'''
-        # Values of invalid settings are ignored with `data_only=True`.
-        expected = [
-            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
-            (T.EOS, '', 1, 16),
-            (T.ERROR, 'Invalid', 2, 0, "Non-existing setting 'Invalid'."),
-            (T.EOS, '', 2, 7),
-            (T.LIBRARY, 'Library', 3, 0),
-            (T.NAME, 'Valid', 3, 14),
-            (T.EOS, '', 3, 19),
-            (T.ERROR, 'Oops, I', 4, 0, "Non-existing setting 'Oops, I'."),
-            (T.EOS, '', 4, 7),
-            (T.ERROR, 'Libra ry', 5, 0, "Non-existing setting 'Libra ry'. "
-                                        "Did you mean:\n    Library"),
-            (T.EOS, '', 5, 8)
-        ]
-        assert_tokens(data, expected, get_tokens, data_only=True)
-        assert_tokens(data, expected, get_resource_tokens, data_only=True)
-
-    def test_suite_settings_not_allowed_in_resource_file(self):
-        data = '''\
-*** Settings ***
-Metadata          Name           Value
-Suite Setup       Log    Hello, world!
-suite teardown    Log    <b>The End.</b>    WARN    html=True
-Test Setup        None Shall Pass    ${NONE}
-TEST TEARDOWN     No Operation
-Test Template     NONE
-Test Timeout      1 day
-Force Tags        foo    bar
-Default Tags      zap
-Documentation     Valid both in suite and resource files.
-'''
-        # Values of invalid settings are ignored with `data_only=True`.
-        expected = [
-            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
-            (T.EOS, '', 1, 16),
-            (T.ERROR, 'Metadata', 2, 0, "Non-existing setting 'Metadata'."),
-            (T.EOS, '', 2, 8),
-            (T.ERROR, 'Suite Setup', 3, 0, "Non-existing setting 'Suite Setup'."),
-            (T.EOS, '', 3, 11),
-            (T.ERROR, 'suite teardown', 4, 0, "Non-existing setting 'suite teardown'."),
-            (T.EOS, '', 4, 14),
-            (T.ERROR, 'Test Setup', 5, 0, "Non-existing setting 'Test Setup'."),
-            (T.EOS, '', 5, 10),
-            (T.ERROR, 'TEST TEARDOWN', 6, 0, "Non-existing setting 'TEST TEARDOWN'."),
-            (T.EOS, '', 6, 13),
-            (T.ERROR, 'Test Template', 7, 0, "Non-existing setting 'Test Template'."),
-            (T.EOS, '', 7, 13),
-            (T.ERROR, 'Test Timeout', 8, 0, "Non-existing setting 'Test Timeout'."),
-            (T.EOS, '', 8, 12),
-            (T.ERROR, 'Force Tags', 9, 0, "Non-existing setting 'Force Tags'."),
-            (T.EOS, '', 9, 10),
-            (T.ERROR, 'Default Tags', 10, 0, "Non-existing setting 'Default Tags'."),
-            (T.EOS, '', 10, 12),
-            (T.DOCUMENTATION, 'Documentation', 11, 0),
-            (T.ARGUMENT, 'Valid both in suite and resource files.', 11, 18),
-            (T.EOS, '', 11, 57)
-        ]
-        assert_tokens(data, expected, get_resource_tokens, data_only=True)
-
-    def test_too_many_values_for_single_value_suite_settings(self):
-        data = '''\
-*** Settings ***
-Resource         Too    many   values
-Test Timeout     Too    much
-Test Template    1    2    3    4    5
-'''
-        # Values of invalid settings are ignored with `data_only=True`.
-        expected = [
-            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
-            (T.EOS, '', 1, 16),
-            (T.ERROR, 'Resource', 2, 0, "Setting 'Resource' accepts only one value, got 3."),
-            (T.EOS, '', 2, 8),
-            (T.ERROR, 'Test Timeout', 3, 0, "Setting 'Test Timeout' accepts only one value, got 2."),
-            (T.EOS, '', 3, 12),
-            (T.ERROR, 'Test Template', 4, 0, "Setting 'Test Template' accepts only one value, got 5."),
-            (T.EOS, '', 4, 13),
-        ]
-        assert_tokens(data, expected, data_only=True)
-
     def test_too_many_values_for_single_value_test_settings(self):
         data = '''\
 *** Test Cases ***
@@ -351,9 +481,11 @@ Name
             (T.EOS, '', 1, 18),
             (T.TESTCASE_NAME, 'Name', 2, 0),
             (T.EOS, '', 2, 4),
-            (T.ERROR, '[Timeout]', 3, 4, "Setting 'Timeout' accepts only one value, got 4."),
+            (T.ERROR, '[Timeout]', 3, 4,
+             "Setting 'Timeout' accepts only one value, got 4."),
             (T.EOS, '', 3, 13),
-            (T.ERROR, '[Template]', 4, 4, "Setting 'Template' accepts only one value, got 3."),
+            (T.ERROR, '[Template]', 4, 4,
+             "Setting 'Template' accepts only one value, got 3."),
             (T.EOS, '', 4, 14)
         ]
         assert_tokens(data, expected, data_only=True)
@@ -370,82 +502,9 @@ Name
             (T.EOS, '', 1, 16),
             (T.KEYWORD_NAME, 'Name', 2, 0),
             (T.EOS, '', 2, 4),
-            (T.ERROR, '[Timeout]', 3, 4, "Setting 'Timeout' accepts only one value, got 4."),
+            (T.ERROR, '[Timeout]', 3, 4,
+             "Setting 'Timeout' accepts only one value, got 4."),
             (T.EOS, '', 3, 13),
-        ]
-        assert_tokens(data, expected, data_only=True)
-
-    def test_suite_settings_too_many_times(self):
-        data = '''\
-*** Settings ***
-Documentation     Used
-Documentation     Ignored
-Suite Setup       Used
-Suite Setup       Ignored
-Suite Teardown    Used
-Suite Teardown    Ignored
-Test Setup        Used
-Test Setup        Ignored
-Test Teardown     Used
-Test Teardown     Ignored
-Test Template     Used
-Test Template     Ignored
-Test Timeout      Used
-Test Timeout      Ignored
-Force Tags        Used
-Force Tags        Ignored
-Default Tags      Used
-Default Tags      Ignored
-'''
-        # Values of invalid settings are ignored with `data_only=True`.
-        expected = [
-            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
-            (T.EOS, '', 1, 16),
-            (T.DOCUMENTATION, 'Documentation', 2, 0),
-            (T.ARGUMENT, 'Used', 2, 18),
-            (T.EOS, '', 2, 22),
-            (T.ERROR, 'Documentation', 3, 0, "Setting 'Documentation' allowed only once. Only the first value is used."),
-            (T.EOS, '', 3, 13),
-            (T.SUITE_SETUP, 'Suite Setup', 4, 0),
-            (T.NAME, 'Used', 4, 18),
-            (T.EOS, '', 4, 22),
-            (T.ERROR, 'Suite Setup', 5, 0, "Setting 'Suite Setup' allowed only once. Only the first value is used."),
-            (T.EOS, '', 5, 11),
-            (T.SUITE_TEARDOWN, 'Suite Teardown', 6, 0),
-            (T.NAME, 'Used', 6, 18),
-            (T.EOS, '', 6, 22),
-            (T.ERROR, 'Suite Teardown', 7, 0, "Setting 'Suite Teardown' allowed only once. Only the first value is used."),
-            (T.EOS, '', 7, 14),
-            (T.TEST_SETUP, 'Test Setup', 8, 0),
-            (T.NAME, 'Used', 8, 18),
-            (T.EOS, '', 8, 22),
-            (T.ERROR, 'Test Setup', 9, 0, "Setting 'Test Setup' allowed only once. Only the first value is used."),
-            (T.EOS, '', 9, 10),
-            (T.TEST_TEARDOWN, 'Test Teardown', 10, 0),
-            (T.NAME, 'Used', 10, 18),
-            (T.EOS, '', 10, 22),
-            (T.ERROR, 'Test Teardown', 11, 0, "Setting 'Test Teardown' allowed only once. Only the first value is used."),
-            (T.EOS, '', 11, 13),
-            (T.TEST_TEMPLATE, 'Test Template', 12, 0),
-            (T.NAME, 'Used', 12, 18),
-            (T.EOS, '', 12, 22),
-            (T.ERROR, 'Test Template', 13, 0, "Setting 'Test Template' allowed only once. Only the first value is used."),
-            (T.EOS, '', 13, 13),
-            (T.TEST_TIMEOUT, 'Test Timeout', 14, 0),
-            (T.ARGUMENT, 'Used', 14, 18),
-            (T.EOS, '', 14, 22),
-            (T.ERROR, 'Test Timeout', 15, 0, "Setting 'Test Timeout' allowed only once. Only the first value is used."),
-            (T.EOS, '', 15, 12),
-            (T.FORCE_TAGS, 'Force Tags', 16, 0),
-            (T.ARGUMENT, 'Used', 16, 18),
-            (T.EOS, '', 16, 22),
-            (T.ERROR, 'Force Tags', 17, 0, "Setting 'Force Tags' allowed only once. Only the first value is used."),
-            (T.EOS, '', 17, 10),
-            (T.DEFAULT_TAGS, 'Default Tags', 18, 0),
-            (T.ARGUMENT, 'Used', 18, 18),
-            (T.EOS, '', 18, 22),
-            (T.ERROR, 'Default Tags', 19, 0, "Setting 'Default Tags' allowed only once. Only the first value is used."),
-            (T.EOS, '', 19, 12)
         ]
         assert_tokens(data, expected, data_only=True)
 
@@ -475,32 +534,38 @@ Name
             (T.DOCUMENTATION, '[Documentation]', 3, 4),
             (T.ARGUMENT, 'Used', 3, 23),
             (T.EOS, '', 3, 27),
-            (T.ERROR, '[Documentation]', 4, 4, "Setting 'Documentation' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Documentation]', 4, 4,
+             "Setting 'Documentation' is allowed only once. Only the first value is used."),
             (T.EOS, '', 4, 19),
             (T.TAGS, '[Tags]', 5, 4),
             (T.ARGUMENT, 'Used', 5, 23),
             (T.EOS, '', 5, 27),
-            (T.ERROR, '[Tags]', 6, 4, "Setting 'Tags' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Tags]', 6, 4,
+             "Setting 'Tags' is allowed only once. Only the first value is used."),
             (T.EOS, '', 6, 10),
             (T.SETUP, '[Setup]', 7, 4),
             (T.NAME, 'Used', 7, 23),
             (T.EOS, '', 7, 27),
-            (T.ERROR, '[Setup]', 8, 4, "Setting 'Setup' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Setup]', 8, 4,
+             "Setting 'Setup' is allowed only once. Only the first value is used."),
             (T.EOS, '', 8, 11),
             (T.TEARDOWN, '[Teardown]', 9, 4),
             (T.NAME, 'Used', 9, 23),
             (T.EOS, '', 9, 27),
-            (T.ERROR, '[Teardown]', 10, 4, "Setting 'Teardown' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Teardown]', 10, 4,
+             "Setting 'Teardown' is allowed only once. Only the first value is used."),
             (T.EOS, '', 10, 14),
             (T.TEMPLATE, '[Template]', 11, 4),
             (T.NAME, 'Used', 11, 23),
             (T.EOS, '', 11, 27),
-            (T.ERROR, '[Template]', 12, 4, "Setting 'Template' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Template]', 12, 4,
+             "Setting 'Template' is allowed only once. Only the first value is used."),
             (T.EOS, '', 12, 14),
             (T.TIMEOUT, '[Timeout]', 13, 4),
             (T.ARGUMENT, 'Used', 13, 23),
             (T.EOS, '', 13, 27),
-            (T.ERROR, '[Timeout]', 14, 4, "Setting 'Timeout' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Timeout]', 14, 4,
+             "Setting 'Timeout' is allowed only once. Only the first value is used."),
             (T.EOS, '', 14, 13)
         ]
         assert_tokens(data, expected, data_only=True)
@@ -531,32 +596,38 @@ Name
             (T.DOCUMENTATION, '[Documentation]', 3, 4),
             (T.ARGUMENT, 'Used', 3, 23),
             (T.EOS, '', 3, 27),
-            (T.ERROR, '[Documentation]', 4, 4, "Setting 'Documentation' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Documentation]', 4, 4,
+             "Setting 'Documentation' is allowed only once. Only the first value is used."),
             (T.EOS, '', 4, 19),
             (T.TAGS, '[Tags]', 5, 4),
             (T.ARGUMENT, 'Used', 5, 23),
             (T.EOS, '', 5, 27),
-            (T.ERROR, '[Tags]', 6, 4, "Setting 'Tags' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Tags]', 6, 4,
+             "Setting 'Tags' is allowed only once. Only the first value is used."),
             (T.EOS, '', 6, 10),
             (T.ARGUMENTS, '[Arguments]', 7, 4),
             (T.ARGUMENT, 'Used', 7, 23),
             (T.EOS, '', 7, 27),
-            (T.ERROR, '[Arguments]', 8, 4, "Setting 'Arguments' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Arguments]', 8, 4,
+             "Setting 'Arguments' is allowed only once. Only the first value is used."),
             (T.EOS, '', 8, 15),
             (T.TEARDOWN, '[Teardown]', 9, 4),
             (T.NAME, 'Used', 9, 23),
             (T.EOS, '', 9, 27),
-            (T.ERROR, '[Teardown]', 10, 4, "Setting 'Teardown' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Teardown]', 10, 4,
+             "Setting 'Teardown' is allowed only once. Only the first value is used."),
             (T.EOS, '', 10, 14),
             (T.TIMEOUT, '[Timeout]', 11, 4),
             (T.ARGUMENT, 'Used', 11, 23),
             (T.EOS, '', 11, 27),
-            (T.ERROR, '[Timeout]', 12, 4, "Setting 'Timeout' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Timeout]', 12, 4,
+             "Setting 'Timeout' is allowed only once. Only the first value is used."),
             (T.EOS, '', 12, 13),
             (T.RETURN, '[Return]', 13, 4),
             (T.ARGUMENT, 'Used', 13, 23),
             (T.EOS, '', 13, 27),
-            (T.ERROR, '[Return]', 14, 4, "Setting 'Return' allowed only once. Only the first value is used."),
+            (T.ERROR, '[Return]', 14, 4,
+             "Setting 'Return' is allowed only once. Only the first value is used."),
             (T.EOS, '', 14, 12)
         ]
         assert_tokens(data, expected, data_only=True)

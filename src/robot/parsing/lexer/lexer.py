@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.utils import get_error_message, FileReader
 
 from .blocklexers import FileLexer
-from .context import TestCaseFileContext, ResourceFileContext
+from .context import InitFileContext, TestCaseFileContext, ResourceFileContext
 from .tokenizer import Tokenizer
 from .tokens import EOS, Token
 
@@ -50,6 +50,18 @@ def get_resource_tokens(source, data_only=False):
     a resource file. This affects, for example, what settings are valid.
     """
     lexer = Lexer(ResourceFileContext(), data_only)
+    lexer.input(source)
+    return lexer.get_tokens()
+
+
+def get_init_tokens(source, data_only=False):
+    """Parses the given source to init file tokens.
+
+    Otherwise same as :func:`get_tokens` but the source is considered to be
+    a suite initialization file. This affects, for example, what settings are
+    valid.
+    """
+    lexer = Lexer(InitFileContext(), data_only)
     lexer.input(source)
     return lexer.get_tokens()
 

@@ -117,14 +117,14 @@ Initialization file cannot be used as a resource file
 
 Invalid Setting In Resource File
     Error in file    1    ${RESDIR}/resources.robot    8
-    ...  Non-existing setting 'Test Setup'.
+    ...    Setting 'Test Setup' is not allowed in resource file.
     Error in file    2    ${RESDIR}/resources.robot    9
-    ...  Non-existing setting 'Non Existing'.
+    ...    Non-existing setting 'Non Existing'.
 
 Resource cannot contain tests
     ${path} =    Normalize Path    ${RESDIR}/resource_with_testcase_table.robot
     Error in file    3    ${RESDIR}/resources.robot    6
-    ...  Resource file '${path}' cannot contain tests or tasks.
+    ...    Resource file '${path}' cannot contain tests or tasks.
 
 Invalid Variable File
     ${path} =    Normalize Path    ${RESDIR}/invalid_variable_file.py
