@@ -390,7 +390,12 @@ class _List(object):
         default = 'Lengths are different: %d != %d' % (len1, len2)
         _verify_condition(len1 == len2, default, msg, values)
         names = self._get_list_index_name_mapping(names, len1)
-        diffs = list(self._yield_list_diffs(list1, list2, names,ignore_order))
+        if not ignore_order:
+            diffs = list(self._yield_list_diffs(list1, list2, names))
+        else:
+            sorted_list1 = sorted(list1)
+            sorted_list2 = sorted(list2)
+            diffs = list(_yield_list_diffs(sorted_list1, sorted_list2, names))        
         default = 'Lists are different:\n' + '\n'.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
 
@@ -401,7 +406,7 @@ class _List(object):
             return dict((int(index), names[index]) for index in names)
         return dict(zip(range(list_length), names))
 
-    def _yield_list_diffs(self, list1, list2, names, ignore_order=False):
+    def _yield_list_diffs(self, list1, list2, names):
         for index, (item1, item2) in enumerate(zip(list1, list2)):         
             name = ' (%s)' % names[index] if index in names else ''
             try:

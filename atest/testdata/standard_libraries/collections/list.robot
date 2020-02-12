@@ -262,6 +262,12 @@ Lists Should Be Equal
     Lists Should Be Equal    ${L2}    ${L2}
     Lists Should Be Equal    ${L0}    ${L0}
 
+Lists Should Be Equal With Value Ignore_order
+    [Documentation]    PASS list are equal
+    ${names1} =    Create List    A    B	C	D
+    ${names2} =    Create List    D    B	C	A
+    Lists Should Be Equal    ${names1}    ${names2}    ignore_order=True
+    
 List and Tuple should be equal
     ${t0}=    Evaluate    tuple($L0)
     Lists Should Be Equal    ${t0}    ${L0}

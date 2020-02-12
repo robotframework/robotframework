@@ -327,6 +327,9 @@ List Should Not Contain Value, Value Found and Own Error Message Glob
 Lists Should Be Equal
     Check Test Case    ${TEST NAME}
 
+Lists Should Be Equal With Value Ignore_order
+    Check Test Case    ${TEST NAME}
+
 List and Tuple should be equal
     Check Test Case    ${TEST NAME}
 
