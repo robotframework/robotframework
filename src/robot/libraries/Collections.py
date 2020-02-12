@@ -346,7 +346,7 @@ class _List(object):
                                  '%s found multiple times.' % seq2str(dupes))
 
     def lists_should_be_equal(self, list1, list2, msg=None, values=True,
-                              names=None):
+                              names=None,ignore_order=False):
         """Fails if given lists are unequal.
 
         The keyword first verifies that the lists have equal lengths, and then
@@ -387,7 +387,12 @@ class _List(object):
         default = 'Lengths are different: %d != %d' % (len1, len2)
         _verify_condition(len1 == len2, default, msg, values)
         names = self._get_list_index_name_mapping(names, len1)
-        diffs = list(self._yield_list_diffs(list1, list2, names))
+        if not ignore_order:
+            diffs = list(_yield_list_diffs(list1, list2, names))
+        else:
+            sorted_list1 = sorted(list1)
+            sorted_list2 = sorted(list2)
+            diffs = list(_yield_list_diffs(sorted_list1, sorted_list2, names))
         default = 'Lists are different:\n' + '\n'.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
 
