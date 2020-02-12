@@ -15,9 +15,7 @@ Multiple paragraphs
     ...    Huhuu
 
 Multiline with manual line separators
-    [Documentation]    Hillo
-    ...    on
-    ...    hyvää!
+    [Documentation]    Hillo\non\n hyvää!
 
 One line
     [Documentation]    One line
@@ -28,12 +26,11 @@ None
     No Operation
 
 Comments
-    [Documentation]    First line    # First comment    #Middle comment    ###Last comment###
-    ...    Middle line
-    ...    Last line
+    [Documentation]    First line    # First comment
+    ...    Middle line    #Middle comment
+    ...    Last line    ###Last comment###
 
 *** Keywords ***
 Keyword doc
     [Documentation]    Multi
-    ...    line
-    ...    stuff
+    ...    line\nstuff

@@ -63,6 +63,7 @@ installation approaches, see the `installation instructions`_.
 Robot Framework {version} was released on {date}.
 
 .. _Robot Framework: http://robotframework.org
+.. _Robot Framework Foundation: http://robotframework.org/foundation
 .. _pip: http://pip-installer.org
 .. _PyPI: https://pypi.python.org/pypi/robotframework
 .. _issue tracker milestone: https://github.com/robotframework/robotframework/issues?q=milestone%3A{version.milestone}
@@ -169,7 +170,7 @@ def init_labels(ctx, username=None, password=None):
 
 
 @task
-def jar(ctx, jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
+def jar(ctx, jython_version='2.7.0', pyyaml_version='5.1', remove_dist=False):
     """Create JAR distribution.
 
     Downloads Jython JAR and PyYAML if needed.

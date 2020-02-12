@@ -18,7 +18,7 @@ import wpf    # Loads required .NET Assemblies behind the scenes
 from System.Windows import (GridLength, SizeToContent, TextWrapping, Thickness,
                             Window, WindowStartupLocation)
 from System.Windows.Controls import (Button, ColumnDefinition, Grid, Label, ListBox,
-                                     PasswordBox, RowDefinition, TextBlock, TextBox)
+                                     PasswordBox, RowDefinition, TextBlock, TextBox, SelectionMode)
 
 
 class _WpfDialog(Window):
@@ -188,6 +188,26 @@ class SelectionDialog(_WpfDialog):
 
     def _get_value(self):
         return self._listbox.SelectedItem
+
+
+class MultipleSelectionDialog(_WpfDialog):
+
+    def __init__(self, message, values):
+        _WpfDialog.__init__(self, message, values)
+
+    def _create_selector(self, values):
+        self._listbox = ListBox()
+        self._listbox.SelectionMode = SelectionMode.Multiple
+        self._listbox.SetValue(Grid.RowProperty, 1)
+        self._listbox.SetValue(Grid.ColumnSpanProperty, 2)
+        self._listbox.Margin = Thickness(10)
+        for item in values:
+            self._listbox.Items.Add(item)
+        return self._listbox
+
+    def _get_value(self):
+        return sorted(self._listbox.SelectedItems,
+                      key=list(self._listbox.Items).index)
 
 
 class PassFailDialog(_WpfDialog):

@@ -7,20 +7,18 @@ Robot Framework
 Introduction
 ------------
 
-`Robot Framework <http://robotframework.org>`_ is a generic open source test
-automation framework for acceptance testing and acceptance test-driven
-development (ATDD). It has easy-to-use tabular test data syntax and it utilizes
-the keyword-driven testing approach. Its testing capabilities can be extended
-by test libraries implemented either with Python or Java, and users can create
-new higher-level keywords from existing ones using the same syntax that is used
-for creating test cases.
+`Robot Framework <http://robotframework.org>`_ is a generic open source
+automation framework for acceptance testing, acceptance test driven
+development (ATDD), and robotic process automation (RPA). It has simple plain
+text syntax and it can be extended easily with libraries implemented using
+Python or Java.
 
 Robot Framework is operating system and application independent. The core
 framework is implemented using `Python <http://python.org>`_, supports both
 Python 2 and Python 3, and runs also on `Jython <http://jython.org>`_ (JVM),
 `IronPython <http://ironpython.net>`_ (.NET) and `PyPy <http://pypy.org>`_.
 The framework has a rich ecosystem around it consisting of various generic
-test libraries and tools that are developed as separate projects. For more
+libraries and tools that are developed as separate projects. For more
 information about Robot Framework and the ecosystem, see
 http://robotframework.org.
 
@@ -89,17 +87,17 @@ http://robotframework.org.
 Usage
 -----
 
-Starting from Robot Framework 3.0, tests are executed from the command line
-using the ``robot`` script or by executing the ``robot`` module directly
-like ``python -m robot`` or ``jython -m robot``.
+Tests (or tasks) are executed from the command line using the ``robot``
+command or by executing the ``robot`` module directly like ``python -m robot``
+or ``jython -m robot``.
 
-The basic usage is giving a path to a test case file or directory as an
+The basic usage is giving a path to a test (or task) file or directory as an
 argument with possible command line options before the path::
 
     robot tests.robot
-    robot --variable HOST:example.com --outputdir results path/to/tests/
+    robot --variable BROWSER:Firefox --outputdir results path/to/tests/
 
-Additionally there is ``rebot`` tool for combining results and otherwise
+Additionally there is the ``rebot`` tool for combining results and otherwise
 post-processing outputs::
 
     rebot --name Example output1.xml output2.xml
@@ -131,6 +129,21 @@ Support and contact
   IRC channel on freenode
 - `@robotframework <https://twitter.com/robotframework>`_ on Twitter
 - `Other forums <http://robotframework.org/#support>`_
+
+Contributing
+------------
+
+Interested to contribute to Robot Framework? Great! In that case it is a good
+start by looking at the `Contribution guidelines <CONTRIBUTING.rst>`_. If you
+do not already have an issue you would like to work on, you can check
+issues with `good new issue`__ and `help wanted`__ labels.
+
+Remember also that there are many other tools and libraries in the wider
+`Robot Framework ecosystem <http://robotframework.org>`_ that you can
+contribute to!
+
+__ https://github.com/robotframework/robotframework/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
+__ https://github.com/robotframework/robotframework/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
 
 License
 -------

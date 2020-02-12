@@ -2,6 +2,7 @@ from collections import abc
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 from enum import Enum
+from functools import wraps
 from numbers import Integral, Real
 
 from robot.api.deco import keyword
@@ -167,18 +168,41 @@ def types_via_keyword_deco_override(argument: int, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(name='Empty type dict via @keyword overrides', types={})
-def empty_type_dict_via_keyword_deco_overrides(argument: int, expected=None):
+@keyword(name='None as types via @keyword disables', types=None)
+def none_as_types(argument: int, expected=None):
     _validate_type(argument, expected)
 
 
-@keyword(name='Empty type list via @keyword overrides', types=[])
-def empty_type_list_via_keyword_deco_overrides(argument: int, expected=None):
+@keyword(name="Empty types via @keyword doesn't override", types=[])
+def empty_list_as_types(argument: int, expected=None):
     _validate_type(argument, expected)
 
 
 @keyword(name="@keyword without types doesn't override")
 def keyword_deco_alone_does_not_override(argument: int, expected=None):
+    _validate_type(argument, expected)
+
+
+def decorator(func):
+    def wrapper(*args, **kws):
+        return func(*args, **kws)
+    return wrapper
+
+
+def decorator_with_wraps(func):
+    @wraps(func)
+    def wrapper(*args, **kws):
+        return func(*args, **kws)
+    return wrapper
+
+
+@decorator
+def mismatch_caused_by_decorator(argument: int, expected=None):
+    _validate_type(argument, expected)
+
+
+@decorator_with_wraps
+def keyword_with_wraps(argument: int, expected=None):
     _validate_type(argument, expected)
 
 

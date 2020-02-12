@@ -17,8 +17,13 @@ Documentation and Argument Boundaries Work With Varargs and Kwargs In Java
 Only one runkeyword implementation
     Check Test Case  ${TESTNAME}
 
-*** Keywords ***
+Default values
+    Check Test Case  ${TESTNAME}
 
+Named arguments
+    Check Test Case  ${TESTNAME}
+
+*** Keywords ***
 Check test case and its keyword
     [Arguments]  ${keyword}  ${args}
     ${tc} =  Check Test case  ${TESTNAME}

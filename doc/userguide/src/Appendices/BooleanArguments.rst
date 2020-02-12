@@ -3,17 +3,13 @@ Boolean arguments
 
 Many keywords in Robot Framework `standard libraries`_ accept arguments that
 are handled as Boolean values true or false. If such an argument is given as
-a string, it is considered false if it is either empty or case-insensitively
-equal to `false` or `no`. Other strings are considered true regardless
-their value, and other argument types are tested using same `rules as in
-Python`__.
+a string, it is considered false if it is an empty string or equal to
+`FALSE`, `NONE`, `NO`, `OFF` or `0`, case-insensitively. Other
+strings are considered true unless the keyword documentation explicitly
+states otherwise, and other argument types are tested using the same
+`rules as in Python`__.
 
 __ http://docs.python.org/library/stdtypes.html#truth-value-testing
-
-Keyword can also accept other special strings than `false` and `no` that are
-to be considered false. For example, BuiltIn_ keyword `Should Be True` used
-in the examples below considers string `no values` given to its `values`
-argument as false.
 
 .. sourcecode:: robotframework
 
@@ -29,8 +25,7 @@ argument as false.
        Should Be Equal    ${x}    ${y}    Custom error    values=no           # Also string `no` is false.
        Should Be Equal    ${x}    ${y}    Custom error    values=${EMPTY}     # Empty string is false.
        Should Be Equal    ${x}    ${y}    Custom error    values=${FALSE}     # Python `False` is false.
-       Should Be Equal    ${x}    ${y}    Custom error    values=no values    # Special false string in this context.
+       Should Be Equal    ${x}    ${y}    Custom error    values=no values    # Special false string with this keyword.
 
-Note that prior to Robot Framework 2.9 handling Boolean arguments was
-inconsistent. Some keywords followed the above rules, but others simply
-considered all non-empty strings, including `false` and `no`, to be true.
+.. note:: Considering string `NONE` false is new in Robot Framework 3.0.3 and
+          considering also `OFF` and `0` false is new in Robot Framework 3.1.

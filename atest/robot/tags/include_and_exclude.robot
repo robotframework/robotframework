@@ -34,7 +34,7 @@ Includes With OR
 Include With Patterns
     --include incl?    @{INCL_ALL}
     -i *cl3 -i i*2    Incl-12    Incl-123    Excl-123
-    -i i?*3ANDFORCE --include i*    @{INCL_ALL}
+    -i i?*3ANDFORCE --include inc*    @{INCL_ALL}
     -i incl?*ORnonex    @{INCL_ALL}
 
 One Exclude
@@ -78,11 +78,13 @@ Include and Exclude with NOT
 
 Select tests without any tags
     [Setup]    Set Test Variable    ${DATA SOURCES}    tags/no_force_no_default_tags.robot
-    --exclude *    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
+    # Using just '*' won't work with Jython on Windows due to its auto-globbing
+    --exclude *ORwhatever    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
 
 Select tests with any tag
     [Setup]    Set Test Variable    ${DATA SOURCES}    tags/no_force_no_default_tags.robot
-    --include *    Own Tags No Force Nor Default
+    # Using just '*' won't work with Jython on Windows due to its auto-globbing
+    --include *AND*    Own Tags No Force Nor Default
 
 Non Matching Include
     [Template]    Run And Check Error
@@ -96,8 +98,8 @@ Non Matching Exclude
 
 Non Matching Include And Exclude
     [Template]    Run And Check Error
-    -i nonex -e nonex2    tag 'nonex' and without tag 'nonex2'
-    --include nonex -i incl? -e *1 -e *2 -e *3    tags 'nonex' or 'incl?' and without tags '*1', '*2' or '*3'
+    -i nonex -e nonex2                            tag 'nonex' and not matching tag 'nonex2'
+    --include nonex -i incl? -e *1 -e *2 -e *3    tags 'nonex' or 'incl?' and not matching tags '*1', '*2' or '*3'
 
 Non Matching When Running Multiple Suites
     [Setup]    Set Test Variable    ${DATA SOURCES}    misc/pass_and_fail.robot misc/normal.robot
@@ -116,6 +118,6 @@ Run And Check Error
     [Arguments]    ${params}    ${filter_msg}    ${suite name}=Include And Exclude
     Run Tests Without Processing Output    ${params}    ${DATA SOURCES}
     Stderr Should Be Equal To    SEPARATOR=
-    ...    [ ERROR ] Suite '${suite name}' contains no tests with ${filter_msg}.
+    ...    [ ERROR ] Suite '${suite name}' contains no tests matching ${filter_msg}.
     ...    ${USAGE TIP}\n
     File Should Not Exist    ${OUTFILE}

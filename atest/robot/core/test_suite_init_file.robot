@@ -32,9 +32,16 @@ Suite Teardown
     Should Be Equal   ${subsuite_without_init.teardown}   ${None}
 
 Invalid Suite Setting
-    ${base} =  Normalize Path  ${CURDIR}/../../testdata/core/test_suite_dir_with_init_file
-    Check Log Message  ${ERRORS[0]}  Error in file '${base}${/}__init__.robot': Non-existing setting 'Invalid'.  ERROR
-    Check Log Message  ${ERRORS[1]}  Error in file '${base}${/}sub_suite_with_init_file${/}__INIT__.robot': Non-existing setting 'Invalid In Sub'.  ERROR
+    Error In File    0    core/test_suite_dir_with_init_file/__init__.robot    10
+    ...    Non-existing setting 'Invalid'.
+    Error In File    3    core/test_suite_dir_with_init_file/sub_suite_with_init_file/__INIT__.robot    7
+    ...    Non-existing setting 'Megadata'. Did you mean:\n${SPACE*4}Metadata
+
+Default Tags and Test Template are not allowed in init files
+    Error In File    1    core/test_suite_dir_with_init_file/__init__.robot    11
+    ...    Setting 'Default Tags' is not allowed in suite initialization file.
+    Error In File    2    core/test_suite_dir_with_init_file/__init__.robot    12
+    ...    Setting 'Test Template' is not allowed in suite initialization file.
 
 Test Tags
     [Documentation]   Settings tags for tests using Force and Default Tags in different suite levels and also [Tags] in tests
@@ -43,13 +50,12 @@ Test Tags
     Check Test Tags   TC2 No Metadata   suite force
     Check Test Tags   TC2 Tags   suite force
     Check Test Tags   S1TC1 No Metadata   sub suite force   suite force   test default   test force
-    Comment   Following two steps are for issue 152
+    # Following two steps are for issue 152
     Check Test Tags   S1TC1 Fixture   sub suite force   suite force   test default   test force
     Check Test Tags   S1TC1 Timeout   sub suite force   suite force   test default   test force
     Check Test Tags   S1TC1 Tags   sub suite force   suite force   test force   test tag 1   test tag 2
     Check Test Tags   S1TC2 No Metadata   sub suite force   suite force
-    Check Test Tags   S1TC2 Tags   sub suite force   suite force   t1   t2   t3   t4
-    ...   t5
+    Check Test Tags   S1TC2 Tags   sub suite force   suite force   t1   t2   t3   t4   t5
     Check Test Tags   S2TC1 No Metadata   suite force   test default   test force
     Check Test Tags   S2TC1 Tags   suite force   test force   test tag 1   test tag 2   test tag 3
     Check Test Tags   S2TC2 No Metadata   suite force
@@ -64,7 +70,7 @@ Test Fixture
     Check Test Fixture   S1TC1 No Metadata   Default setup from test file   Default teardown from test file
     Check Test Fixture   S1TC1 Fixture   Setup defined in test   Teardown defined in test
     Check Test Fixture   S1TC2 No Metadata   Default setup from sub suite file   Default teardown from suite file
-    Comment   Following step is for issue 152
+    # Following step is for issue 152
     Check Test Fixture   S1TC2 Tags   Default setup from sub suite file   Default teardown from suite file
     Check Test Fixture   S1TC2 Fixture   Setup defined in test   Teardown defined in test
     Check Test Fixture   S2TC1 No Metadata   Default setup from test file   Default teardown from test file
@@ -75,17 +81,17 @@ Test Fixture
 Test Timeout
     [Documentation]   Setting timeout for tests using Test Timeout in different suite levels and also [Timeout] in tests
     Check Test Timeout   TC1 No Metadata   1 hour 2 minutes 3 seconds
-    Check Test Timeout   TC1 Timeout   1 second
+    Check Test Timeout   TC1 Timeout   100 milliseconds
     Check Test Timeout   TC2 No Metadata   13 days 6 hours 50 minutes
     Check Test Timeout   TC2 Timeout   1 hour
     Check Test Timeout   S1TC1 No Metadata   4 hours 5 minutes 6 seconds
-    Check Test Timeout   S1TC1 Timeout   1 second
+    Check Test Timeout   S1TC1 Timeout   101 milliseconds
     Check Test Timeout   S1TC2 No Metadata   1 minute 52 seconds
-    Comment   Following step is for issue 152
+    # Following step is for issue 152
     Check Test Timeout   S1TC2 Tags   1 minute 52 seconds
     Check Test Timeout   S1TC2 Timeout   1 day
     Check Test Timeout   S2TC1 No Metadata   7 hours 8 minutes 9 seconds
-    Check Test Timeout   S2TC1 Timeout   1 second
+    Check Test Timeout   S2TC1 Timeout   99 milliseconds
     Check Test Timeout   S2TC2 No Metadata   13 days 6 hours 50 minutes
     Check Test Timeout   S2TC2 Timeout   1 day
 

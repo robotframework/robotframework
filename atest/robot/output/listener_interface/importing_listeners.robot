@@ -26,7 +26,7 @@ Listener With Path
     [Teardown]    File Should Exist  %{TEMPDIR}${/}${ALL_FILE2}
 
 Listener With Wrong Number Of Arguments
-    [Template]    Check Syslog Contains
+    [Template]    Syslog Should Contain
     Taking listener 'listeners.WithArgs' into use failed:
     ...    Importing listener 'listeners.WithArgs' failed:
     ...    Creating instance failed: TypeError:
@@ -35,7 +35,7 @@ Listener With Wrong Number Of Arguments
     ...    Creating instance failed: TypeError:
 
 Non Existing Listener
-    [Template]    Check Syslog Contains
+    [Template]    Syslog Should Contain
     Taking listener 'NonExistingListener' into use failed:
     ...    Importing listener 'NonExistingListener' failed:
 
@@ -51,7 +51,7 @@ Java Listener With Arguments
 
 Java Listener With Wrong Number Of Arguments
     [Tags]  require-jython
-    [Template]    Check Syslog Contains
+    [Template]    Syslog Should Contain
     Taking listener 'JavaListenerWithArgs' into use failed:
     ...    Importing listener 'JavaListenerWithArgs' failed:
     ...    Creating instance failed:

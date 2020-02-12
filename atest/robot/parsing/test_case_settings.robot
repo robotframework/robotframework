@@ -8,22 +8,55 @@ Resource          atest_resource.robot
 Name
     ${tc} =    Check Test Case    Normal name
     Should Be Equal    ${tc.name}    Normal name
+
+Names are not formatted
     ${tc} =    Check Test Case    test_case names are NOT _forMatted_
     Should Be Equal    ${tc.name}    test_case names are NOT _forMatted_
 
+Name with variable
+    ${tc} =    Check Test Case    Name with variables works since RF 3.2
+    Should Be Equal    ${tc.name}    Name with variables works since RF 3.2
+
+Name with non-existing variable
+    ${tc} =    Check Test Case    Name with \${NON-EXISTING VARIABLE}
+    Should Be Equal    ${tc.name}    Name with \${NON-EXISTING VARIABLE}
+
+Name with escaped variable
+    ${tc} =    Check Test Case    Name with \${ESCAPED} \${VARIABLE}
+    Should Be Equal    ${tc.name}    Name with \${ESCAPED} \${VARIABLE}
+
+Name with escapes
+    [Documentation]    These names are not shown that nicely in log
+    ${tc} =    Check Test Case    Name with escapes like '', '\n' and 'c:\path\temp'
+    Should Be Equal    ${tc.name}    Name with escapes like '', '\n' and 'c:\path\temp'
+
+Name with invalid escapes
+    ${tc} =    Check Test Case    Name with invalid escapes like 'x' and 'uOOPS'
+    Should Be Equal    ${tc.name}    Name with invalid escapes like 'x' and 'uOOPS'
+
+Name with escaped escapes
+    ${tc} =    Check Test Case    Name with escaped escapes like '\\', '\\n' , '\\x' and 'c:\\path\\temp'
+    Should Be Equal    ${tc.name}    Name with escaped escapes like '\\', '\\n', '\\x' and 'c:\\path\\temp'
+
 Documentation
-    Verify Documentation    Documentation for this test case
+    Verify Documentation    Documentation in single line and column.
 
 Documentation in multiple columns
     Verify Documentation    Documentation for this test case in multiple columns
 
 Documentation in multiple rows
-    Verify Documentation    1st line is shortdoc.
-    ...    Documentation for this test case
-    ...    in multiple rows.
+    Verify Documentation    1st logical line
+    ...    is shortdoc.
+    ...
+    ...    This documentation has multiple rows
+    ...    and also multiple columns.
+    ...
+    ...    | table | =header= |
+    ...    | foo | bar |
+    ...    | ragged |
 
 Documentation with variables
-    Verify Documentation    Variables work in documentation since Robot 1.2.
+    Verify Documentation    Variables work in documentation since RF 1.2.
 
 Documentation with non-existing variables
     Verify Documentation
@@ -31,11 +64,20 @@ Documentation with non-existing variables
     ...    left unchanged in all documentations. Existing ones
     ...    are replaced: "99999"
 
+Documentation with unclosed variables
+    Verify Documentation    No closing curly at \${all     test=${TEST NAME} 1
+    Verify Documentation    Not \${properly {closed}       test=${TEST NAME} 2
+    Verify Documentation    2nd not \${properly}[closed    test=${TEST NAME} 3
+
 Documentation with escaping
-    Verify Documentation    \${XXX} c:\\temp${SPACE*2}\\
+    Verify Documentation    \${VERSION}\nc:\\temp\n\n\\
 
 Name and documentation on console
-    Check Stdout Contains    Documentation in multiple rows :: 1st line is shortdoc.${SPACE * 15}| PASS |
+    Stdout Should Contain    Normal name${SPACE * 59}| PASS |
+    Stdout Should Contain    test_case names are NOT _forMatted_${SPACE * 35}| PASS |
+    Stdout Should Contain    Documentation :: Documentation in single line and column.${SPACE * 13}| PASS |
+    Stdout Should Contain    Documentation in multiple rows :: 1st logical line is shortdoc.${SPACE * 7}| PASS |
+    Stdout Should Contain    Documentation with non-existing variables :: Starting from RF ${2}.1 ... | PASS |
 
 Tags
     Verify Tags    force-1    test-1    test-2
@@ -103,7 +145,9 @@ Timeout
     Verify Timeout    1 day
 
 Timeout with message
-    Verify Timeout    2 minutes 3 seconds 456 milliseconds
+    Verify Timeout    1 minute 39 seconds 999 milliseconds
+    Error In File    0    parsing/test_case_settings.robot    173
+    ...    Setting 'Timeout' accepts only one value, got 2.
 
 Default timeout
     Verify Timeout    1 minute 39 seconds 999 milliseconds
@@ -129,14 +173,20 @@ Multiple settings
 
 Invalid setting
     Check Test Case    ${TEST NAME}
-    ${path} =    Normalize Path    ${DATADIR}/parsing/test_case_settings.robot
-    Check Log Message    @{ERRORS}[2]
-    ...    Error in file '${path}': Invalid syntax in test case '${TEST NAME}': Non-existing setting 'Invalid'.    ERROR
+    Error In File    1    parsing/test_case_settings.robot    206
+    ...    Non-existing setting 'Invalid'.
+
+Small typo should provide recommendation
+    Check Test Doc    ${TEST NAME}
+    Error In File    2    parsing/test_case_settings.robot    210
+    ...    SEPARATOR=\n
+    ...    Non-existing setting 'Doc U ment a tion'. Did you mean:
+    ...    ${SPACE*4}Documentation
 
 *** Keywords ***
 Verify Documentation
-    [Arguments]    @{doc}
-    ${tc} =    Check Test Case    ${TEST NAME}
+    [Arguments]    @{doc}    ${test}=${TEST NAME}
+    ${tc} =    Check Test Case    ${test}
     ${doc} =    Catenate    SEPARATOR=\n    @{doc}
     Should Be Equal    ${tc.doc}    ${doc}
 

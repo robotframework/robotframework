@@ -4,30 +4,32 @@ Resource          cli_resource.robot
 *** Test Cases ***
 Help
     [Tags]    no-standalone
-    ${result} =    Run Tests    --help    output=NONE
-    Should Be Equal    ${result.rc}    ${251}
-    Should Be Empty    ${result.stderr}
-    Log    ${result.stdout.replace(' ','_')}
-    Should Not Contain    ${result.stdout}    \t
-    Should Start With    ${result.stdout}    Robot Framework -- A generic test automation framework\n\nVersion: \
-    ${end} =    Catenate    SEPARATOR=\n
+    ${result} =            Run Tests       --help    output=NONE
+    Should Be Equal        ${result.rc}    ${251}
+    Should Be Empty        ${result.stderr}
+    ${help} =              Set Variable    ${result.stdout}
+    Log                    ${help}
+    Should Start With      ${help}         Robot Framework -- A generic automation framework\n\nVersion: \
+    ${end} =               Catenate        SEPARATOR=\n
     ...    \# Setting default options and syslog file before running tests.
     ...    $ export ROBOT_OPTIONS="--critical regression --suitestatlevel 2"
     ...    $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
     ...    $ robot tests.robot
-    Should End With    ${result.stdout}    \n\n${end}\n
-    Should Not Contain    ${result.stdout}    [ ERROR ]
-    Should Not Contain    ${result.stdout}    [ WARN \ ]
-    @{lines} =    Evaluate    [ '%d\\t%s' % (len(line), line) for line in $result.stdout.splitlines() ]
-    Log Many    @{lines}
-    @{long} =    Evaluate    [ line for line in $result.stdout.splitlines() if len(line) - line.count('\\\\') >= 80 ]
-    Log Many    @{long}
-    Should Be True    len(@{long}) == 0    Too long (>= 80) help line(s)
+    Should End With        ${help}         \n\n${end}\n
+    Should Not Contain     ${help}         \t
+    Should Not Contain     ${help}         [ ERROR ]
+    Should Not Contain     ${help}         [ WARN \ ]
+    @{long} =              Evaluate        [line for line in $help.splitlines() if len(line) >= 80]
+    Log Many               @{long}
+    Should Be Empty        ${long}         Too long (>= 80) help line(s)
+    @{tail} =              Evaluate        [repr(line) for line in $help.splitlines() if line != line.rstrip()]
+    Log Many               @{tail}
+    Should Be Empty        ${tail}         Help lines with trailing spaces
 
 Version
     ${result} =    Run Tests    --version    output=NONE
-    Should Be Equal    ${result.rc}    ${251}
-    Should Be Empty    ${result.stderr}
+    Should Be Equal        ${result.rc}    ${251}
+    Should Be Empty        ${result.stderr}
     Should Match Regexp    ${result.stdout}
     ...    ^Robot Framework 3\\.\\d(\\.\\d)?((a|b|rc)\\d)?(\\.dev\\d)? \\((Python|Jython|IronPython|PyPy) [23]\\.[\\d.]+.* on .+\\)$
-    Should Be True    len($result.stdout) < 80    Too long version line
+    Should Be True         len($result.stdout) < 80    Too long version line

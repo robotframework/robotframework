@@ -20,20 +20,18 @@ from robot.utils import (is_dict_like, is_list_like, normalize,
                          RecommendationFinder)
 
 
-def variable_not_found(name, candidates, msg=None, deco_braces=True):
+def variable_not_found(name, candidates, message=None, deco_braces=True):
     """Raise DataError for missing variable name.
 
     Return recommendations for similar variable names if any are found.
     """
-    if msg is None:
-        msg = "Variable '%s' not found." % name
     candidates = _decorate_candidates(name[0], candidates, deco_braces)
-    normalizer = partial(normalize, ignore='$@%&*{}_', caseless=True,
-                         spaceless=True)
-    finder = RecommendationFinder(normalizer)
-    recommendations = finder.find_recommendations(name, candidates)
-    msg = finder.format_recommendations(msg, recommendations)
-    raise VariableError(msg)
+    normalizer = partial(normalize, ignore='$@&%{}_')
+    message = RecommendationFinder(normalizer).find_and_format(
+        name, candidates,
+        message=message or "Variable '%s' not found." % name
+    )
+    raise VariableError(message)
 
 
 def _decorate_candidates(identifier, candidates, deco_braces=True):

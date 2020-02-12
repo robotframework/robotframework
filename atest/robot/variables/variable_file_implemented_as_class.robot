@@ -34,4 +34,4 @@ Dynamic Java Class
 
 Instantiating Fails
     ${path} =    Normalize Path    ${DATADIR}/variables/InvalidClass.py
-    Check Syslog Contains    Importing variable file '${path}' failed: Creating instance failed: TypeError:
+    Syslog Should Contain    Importing variable file '${path}' failed: Creating instance failed: TypeError:

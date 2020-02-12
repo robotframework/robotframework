@@ -1,6 +1,7 @@
 *** Settings ***
-Library           OperatingSystem
 Library           Collections
+Library           OperatingSystem
+Library           String
 
 *** Variables ***
 ${BASE}           %{TEMPDIR}${/}robot-os-tests
@@ -15,7 +16,8 @@ ${WITH SPACE}     ${BASE}${/}with space
 *** Keywords ***
 Verify File
     [Arguments]    ${path}    ${expected}    ${encoding}=UTF-8
-    ${content} =    Log File    ${path}    ${encoding}
+    ${content} =    Get Binary File    ${path}
+    ${expected} =    Encode String To Bytes    ${expected}    ${encoding}
     Should Be Equal    ${content}    ${expected}
 
 Create Base Test Directory

@@ -33,6 +33,9 @@ Documentation with variables
 Documentation with non-existing variables
     Documentation with non-existing variables
 
+Documentation with unclosed variables
+    Documentation with unclosed variables
+
 Documentation with escaping
     Documentation with escaping
 
@@ -69,9 +72,6 @@ Return with escaping
 Timeout
     Timeout
 
-Timeout with message
-    Timeout with message
-
 Timeout with variables
     Timeout with variables
 
@@ -87,6 +87,9 @@ Invalid setting
     [Documentation]    FAIL Keywords are executed regardless invalid settings
     Invalid passing
     Invalid failing
+
+Small typo should provide recommendation
+    Small typo should provide recommendation
 
 *** Keyword ***
 Normal name
@@ -129,8 +132,12 @@ Documentation with non-existing variables
     [Documentation]    Starting from RF ${2}.1 ${NONEX} variables are left unchanged.
     No Operation
 
+Documentation with unclosed variables
+    [Documentation]    Not ${closed
+    No Operation
+
 Documentation with escaping
-    [Documentation]    \${XXX}    c:\\temp    \    \\
+    [Documentation]    \${XXX} - c:\\temp - \ - \\
     No Operation
 
 Arguments
@@ -157,9 +164,9 @@ Return using variables
     [Return]    ${ret}
 
 Return multiple
-    [A R G U M E N T S]    ${arg1}    ${arg2}
+    [ARGUMENTS]    ${arg1}    ${arg2}
     ${result} =    Evaluate    ${arg1} + ${arg2}
-    [R E T U R N]    ${arg1}    +    ${arg2}    =    ${result}
+    [RETURN]    ${arg1}    +    ${arg2}    =    ${result}
 
 Return with escaping
     [Return]    \${XXX}    c:\\temp    \    \\
@@ -168,12 +175,8 @@ Timeout
     [Timeout]    123 seconds
     No Operation
 
-Timeout with message
-    [Timeout]    123456 ms    message
-    No Operation
-
 Timeout with variables
-    [TIME OUT]    ${VERSION} DAYS
+    [TIMEout]    ${VERSION} DAYS
     No Operation
 
 Invalid timeout
@@ -195,3 +198,7 @@ Invalid passing
 Invalid failing
     [invalid]    Yes, this is also invalid
     Fail    Keywords are executed regardless invalid settings
+
+Small typo should provide recommendation
+    [Doc Umentation]
+    No Operation

@@ -15,14 +15,16 @@
 
 from __future__ import absolute_import
 
+import os
 import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
+
 from robot.api import logger
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
-                         unic, PY3)
+                         unic, FileReader, PY3)
 from robot.version import get_version
 
 
@@ -135,6 +137,38 @@ class String(object):
         if PY3 and is_unicode(bytes):
             raise TypeError('Can not decode strings on Python 3.')
         return bytes.decode(encoding, errors)
+
+    def format_string(self, template, *positional, **named):
+        """Formats a ``template`` using the given ``positional`` and ``named`` arguments.
+
+        The template can be either be a string or an absolute path to
+        an existing file. In the latter case the file is read and its contents
+        are used as the template. If the template file contains non-ASCII
+        characters, it must be encoded using UTF-8.
+
+        The template is formatted using Python's
+        [https://docs.python.org/library/string.html#format-string-syntax|format
+        string syntax]. Placeholders are marked using ``{}`` with possible
+        field name and format specification inside. Literal curly braces
+        can be inserted by doubling them like `{{` and `}}`.
+
+        Examples:
+        | ${to} = | Format String | To: {} <{}>                    | ${user}      | ${email} |
+        | ${to} = | Format String | To: {name} <{email}>           | name=${name} | email=${email} |
+        | ${to} = | Format String | To: {user.name} <{user.email}> | user=${user} |
+        | ${xx} = | Format String | {:*^30}                        | centered     |
+        | ${yy} = | Format String | {0:{width}{base}}              | ${42}        | base=X | width=10 |
+        | ${zz} = | Format String | ${CURDIR}/template.txt         | positional   | named=value |
+
+        New in Robot Framework 3.1.
+        """
+        if os.path.isabs(template) and os.path.isfile(template):
+            template = template.replace('/', os.sep)
+            logger.info('Reading template from file <a href="%s">%s</a>.'
+                        % (template, template), html=True)
+            with FileReader(template) as reader:
+                template = reader.read()
+        return template.format(*positional, **named)
 
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given string."""

@@ -204,3 +204,6 @@ Non-matching argument name causes error
 Type can be given to `return` without an error
     [Documentation]    `return` isn't used for anything yet, though.
     Check Test Case    ${TESTNAME}
+
+Value contains variable
+    Check Test Case    ${TESTNAME}

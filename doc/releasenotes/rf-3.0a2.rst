@@ -393,7 +393,7 @@ Full list of fixes and enhancements
     * - `#2219`_
       - enhancement
       - low
-      - Loudly deprecate `robot.running.TestSuite.(imports|variables|user_keywords)` propertys
+      - Loudly deprecate `robot.running.TestSuite.(imports|variables|user_keywords)` properties
       - alpha 1
 
 Altogether 38 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0>`__.

@@ -1,7 +1,7 @@
 import unittest
 import re
 
-from robot.utils import unic, prepr, DotDict, JYTHON, IRONPYTHON, PY2, PY3
+from robot.utils import unic, unicode, prepr, DotDict, JYTHON, IRONPYTHON, PY3
 from robot.utils.asserts import assert_equal, assert_true
 
 
@@ -93,17 +93,25 @@ class TestUnic(unittest.TestCase):
 
 class TestPrettyRepr(unittest.TestCase):
 
-    def _verify(self, item, expected=None):
+    def _verify(self, item, expected=None, **config):
         if not expected:
-            expected = repr(item)
-        assert_equal(prepr(item), expected)
+            expected = repr(item).lstrip('u')
+        assert_equal(prepr(item, **config), expected)
+        if isinstance(item, (unicode, bytes)) and not config:
+            assert_equal(prepr([item]), '[%s]' % expected)
+            assert_equal(prepr((item,)), '(%s,)' % expected)
+            assert_equal(prepr({item: item}), '{%s: %s}' % (expected, expected))
+            assert_equal(prepr({item}), ('{%s}' if PY3 else 'set([%s])') % expected)
 
     def test_ascii_unicode(self):
         self._verify(u'foo', "'foo'")
         self._verify(u"f'o'o", "\"f'o'o\"")
 
     def test_non_ascii_unicode(self):
-        self._verify(u'hyv\xe4', "'hyv\\xe4'" if PY2 else "'hyv\xe4'")
+        self._verify(u'hyv\xe4', "'hyv\xe4'" if PY3 else "'hyv\\xe4'")
+
+    def test_unicode_in_nfd(self):
+        self._verify(u'hyva\u0308', "'hyv\xe4'" if PY3 else "'hyva\\u0308'")
 
     def test_ascii_bytes(self):
         self._verify(b'ascii', "b'ascii'")
@@ -124,27 +132,29 @@ class TestPrettyRepr(unittest.TestCase):
         self._verify(failing, failing.unrepr)
 
     def test_unicode_repr(self):
-        invalid = UnicodeRepr()
+        obj = UnicodeRepr()
         if JYTHON:
             expected = 'Hyv\\xe4'
         elif IRONPYTHON or PY3:
             expected = u'Hyv\xe4'
         else:
-            expected = invalid.unrepr  # This is correct.
-        self._verify(invalid, expected)
+            expected = obj.unrepr
+        self._verify(obj, expected)
 
-    def test_non_ascii_repr(self):
-        non_ascii = NonAsciiRepr()
-        if IRONPYTHON or PY3:
-            expected = u'Hyv\xe4'
+    def test_bytes_repr(self):
+        obj = BytesRepr()
+        if PY3 or IRONPYTHON:
+            expected = obj.unrepr
         else:
-            expected = 'Hyv\\xe4'  # This is correct.
-        self._verify(non_ascii, expected)
+            expected = 'Hyv\\xe4'
+        self._verify(obj, expected)
 
     def test_collections(self):
         self._verify([u'foo', b'bar', 3], "['foo', b'bar', 3]")
         self._verify([u'foo', b'b\xe4r', (u'x', b'y')], "['foo', b'b\\xe4r', ('x', b'y')]")
         self._verify({u'x': b'\xe4'}, "{'x': b'\\xe4'}")
+        self._verify([u'\xe4'], "['\xe4']" if PY3 else "['\\xe4']")
+        self._verify({u'\xe4'}, "{'\xe4'}" if PY3 else "set(['\\xe4'])")
 
     def test_dotdict(self):
         self._verify(DotDict({u'x': b'\xe4'}), "{'x': b'\\xe4'}")
@@ -156,13 +166,22 @@ class TestPrettyRepr(unittest.TestCase):
         assert_true(match is not None)
 
     def test_split_big_collections(self):
-        self._verify(list(range(100)))
-        self._verify([u'Hello, world!'] * 10,
-                     '[%s]' % ', '.join(["'Hello, world!'"] * 10))
-        self._verify(list(range(300)),
-                     '[%s]' % ',\n '.join(str(i) for i in range(300)))
-        self._verify([u'Hello, world!'] * 30,
-                     '[%s]' % ',\n '.join(["'Hello, world!'"] * 30))
+        self._verify(list(range(20)))
+        self._verify(list(range(100)), width=400)
+        self._verify(list(range(100)),
+                     '[%s]' % ',\n '.join(str(i) for i in range(100)))
+        self._verify([u'Hello, world!'] * 4,
+                     '[%s]' % ', '.join(["'Hello, world!'"] * 4))
+        self._verify([u'Hello, world!'] * 25,
+                     '[%s]' % ', '.join(["'Hello, world!'"] * 25), width=500)
+        self._verify([u'Hello, world!'] * 25,
+                     '[%s]' % ',\n '.join(["'Hello, world!'"] * 25))
+
+    def test_dont_split_long_strings(self):
+        self._verify(' '.join([u'Hello world!'] * 1000))
+        self._verify(b' '.join([b'Hello world!'] * 1000),
+                     "b'%s'" % ' '.join(['Hello world!'] * 1000))
+        self._verify(bytearray(b' '.join([b'Hello world!'] * 1000)))
 
 
 class UnRepr(object):
@@ -208,16 +227,16 @@ class UnicodeRepr(UnRepr):
         return u'Hyv\xe4'
 
 
-class NonAsciiRepr(UnRepr):
+class BytesRepr(UnRepr):
 
     def __init__(self):
         try:
             repr(self)
-        except UnicodeEncodeError as err:
-            self.error = 'UnicodeEncodeError: %s' % err
+        except TypeError as err:
+            self.error = 'TypeError: %s' % err
 
     def __repr__(self):
-        return 'Hyv\xe4'
+        return b'Hyv\xe4'
 
 
 if __name__ == '__main__':

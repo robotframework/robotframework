@@ -4,10 +4,10 @@ Test Template     Test Criticality
 Resource          atest_resource.robot
 
 *** Variables ***
-${MSG 000 211}    0 critical tests, 0 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
-${MSG 211 211}    2 critical tests, 1 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
-${MSG 110 211}    1 critical test, 1 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
-${MSG 101 211}    1 critical test, 0 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
+${MSG 000 211}    0 critical tests, 0 passed, 0 failed\n2 tests total, 1 passed, 1 failed
+${MSG 211 211}    2 critical tests, 1 passed, 1 failed\n2 tests total, 1 passed, 1 failed
+${MSG 110 211}    1 critical test, 1 passed, 0 failed\n2 tests total, 1 passed, 1 failed
+${MSG 101 211}    1 critical test, 0 passed, 1 failed\n2 tests total, 1 passed, 1 failed
 
 *** Test Cases ***
 Neither Critical Nor Non-Critical
@@ -55,4 +55,4 @@ Test Criticality
 Suite Status And Message Should Be
     [Arguments]    ${status}    ${message}
     [Documentation]    Must check status and message from stdout because re-processed suite would not have same criticality as during executiong
-    Check Stdout Contains    Pass And Fail :: Some tests here ${SPACE * 36} | ${status} |\n${message}
+    Stdout Should Contain    Pass And Fail :: Some tests here ${SPACE * 36} | ${status} |\n${message}

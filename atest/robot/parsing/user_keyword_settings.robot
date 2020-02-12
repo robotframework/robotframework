@@ -6,9 +6,12 @@ Resource          atest_resource.robot
 Name
     ${tc} =    Check Test Case    Normal name
     Should Be Equal  ${tc.kws[0].name}    Normal name
+
+Names are not formatted
     ${tc} =    Check Test Case    Names are not formatted
-    : FOR    ${kw}    IN    @{tc.kws}
-    \    Should Be Equal    ${kw.name}  user_keyword nameS _are_not_ FORmatted
+    FOR    ${kw}    IN    @{tc.kws}
+        Should Be Equal    ${kw.name}  user_keyword nameS _are_not_ FORmatted
+    END
 
 No documentation
     Verify Documentation    ${EMPTY}    test=Normal name
@@ -31,8 +34,11 @@ Documentation with variables
 Documentation with non-existing variables
     Verify Documentation    Starting from RF 2.1 \${NONEX} variables are left unchanged.
 
+Documentation with unclosed variables
+    Verify Documentation    Not \${closed
+
 Documentation with escaping
-    Verify Documentation    \${XXX} c:\\temp${SPACE*2}\\
+    Verify Documentation    \${XXX} - c:\\temp -${SPACE*2}- \\
 
 Arguments
     [Documentation]    Tested more thoroughly elsewhere.
@@ -75,9 +81,6 @@ Return with escaping
 Timeout
     Verify Timeout    2 minutes 3 seconds
 
-Timeout with message
-    Verify Timeout    2 minutes 3 seconds 456 milliseconds
-
 Timeout with variables
     Verify Timeout    1 day 4 hours 48 minutes
 
@@ -91,11 +94,17 @@ Multiple settings
 
 Invalid setting
     Check Test Case    ${TEST NAME}
-    ${PATH} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
-    Check Log Message    ${ERRORS[1]}
-    ...    Error in file '${path}': Invalid syntax in keyword 'Invalid passing': Non-existing setting 'Invalid Setting'.    ERROR
-    Check Log Message    ${ERRORS[2]}
-    ...    Error in file '${path}': Invalid syntax in keyword 'Invalid failing': Non-existing setting 'invalid'.    ERROR
+    Error In File    0    parsing/user_keyword_settings.robot    195
+    ...    Non-existing setting 'Invalid Setting'.
+    Error In File    1    parsing/user_keyword_settings.robot    199
+    ...    Non-existing setting 'invalid'.
+
+Small typo should provide recommendation
+    Check Test Case    ${TEST NAME}
+    Error In File    2    parsing/user_keyword_settings.robot    203
+    ...    SEPARATOR=\n
+    ...    Non-existing setting 'Doc Umentation'. Did you mean:
+    ...    ${SPACE*4}Documentation
 
 *** Keywords ***
 Verify Documentation

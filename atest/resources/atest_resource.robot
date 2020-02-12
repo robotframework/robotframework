@@ -113,15 +113,28 @@ Check Test Tags
     [Return]    ${tc}
 
 Check Keyword Data
-    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=
+    [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${type}=kw
     Should be equal    ${kw.name}    ${name}
     Should be equal    ${kw.status}    ${status}
+    Should be equal    ${kw.type}    ${type}
     ${kwassign}=    Catenate    SEPARATOR=,${SPACE}    @{kw.assign}
     Should be equal    ${kwassign}    ${assign}
     ${kwargs}=    Catenate    SEPARATOR=,${SPACE}    @{kw.args}
     Should match    ${kwargs}    ${args}
     ${kwtags}=    Catenate    SEPARATOR=,${SPACE}    @{kw.tags}
     Should be equal    ${kwtags}    ${tags}
+
+Test And All Keywords Should Have Passed
+    [Arguments]    ${name}=${TESTNAME}
+    ${tc} =    Check Test Case    ${name}
+    All Keywords Should Have Passed    ${tc}
+
+All Keywords Should Have Passed
+    [Arguments]    ${tc or kw}
+    FOR    ${kw}    IN    @{tc or kw.kws}
+        Should Be Equal    ${kw.status}    PASS
+        All Keywords Should Have Passed    ${kw}
+    END
 
 Get Output File
     [Arguments]    ${path}
@@ -143,7 +156,7 @@ File Should Not Contain
     ${file} =    Get Output File    ${path}
     Should Not Contain    ${file}    ${exp}
 
-Check File Matches Regexp
+File Should Match Regexp
     [Arguments]    ${path}    @{expected}
     ${exp} =    Catenate    @{expected}
     ${file} =    Get Output File    ${path}
@@ -154,6 +167,12 @@ File Should Contain Regexp
     ${exp} =    Catenate    @{expected}
     ${file} =    Get Output File    ${path}
     Should Match Regexp    ${file.strip()}    ${exp}
+
+File Should Not Contain Regexp
+    [Arguments]    ${path}    @{expected}
+    ${exp} =    Catenate    @{expected}
+    ${file} =    Get Output File    ${path}
+    Should Not Match Regexp    ${file.strip()}    ${exp}
 
 File Should Be Equal To
     [Arguments]    ${path}    @{expected}
@@ -195,35 +214,35 @@ Stderr Should Be Empty
     ${stderr} =    Get Stderr
     Should Be Empty    ${stderr}    Errors in test execution:\n${stderr}
 
-Check Stderr Contains
+Stderr Should Contain
     [Arguments]    @{expected}
     File Should Contain    ${STDERR_FILE}    @{expected}
 
-Check Stderr Does Not Contain
+Stderr Should Not Contain
     [Arguments]    @{expected}
     File Should Not Contain    ${STDERR_FILE}    @{expected}
 
-Check Stderr Matches Regexp
+Stderr Should Match Regexp
     [Arguments]    @{expected}
-    Check File Matches Regexp    ${STDERR_FILE}    @{expected}
+    File Should Match Regexp    ${STDERR_FILE}    @{expected}
 
-Check Stderr Contains Regexp
+Stderr Should Contain Regexp
     [Arguments]    @{expected}
     File Should Contain Regexp    ${STDERR_FILE}    @{expected}
 
-Check Stdout Contains
+Stdout Should Contain
     [Arguments]    @{expected}
     File Should Contain    ${STDOUT_FILE}    @{expected}
 
-Check Stdout Does Not Contain
+Stdout Should Not Contain
     [Arguments]    @{expected}
     File Should Not Contain    ${STDOUT_FILE}    @{expected}
 
-Check Stdout Matches Regexp
+Stdout Should Match Regexp
     [Arguments]    @{expected}
-    Check File Matches Regexp    ${STDOUT_FILE}    @{expected}
+    File Should Match Regexp    ${STDOUT_FILE}    @{expected}
 
-Check Stdout Contains Regexp
+Stdout Should Contain Regexp
     [Arguments]    @{expected}
     File Should Contain Regexp    ${STDOUT_FILE}    @{expected}
 
@@ -243,21 +262,25 @@ Syslog Should Contain Match
     [Arguments]    @{expected}
     File Should Contain Match    ${SYSLOG FILE}    @{expected}
 
-Check Syslog Contains
+Syslog Should Contain
     [Arguments]    @{expected}
     File Should Contain    ${SYSLOG_FILE}    @{expected}
 
-Check Syslog Does Not Contain
+Syslog Should Not Contain
     [Arguments]    @{expected}
     File Should Not Contain    ${SYSLOG_FILE}    @{expected}
 
 Syslog Should Match Regexp
     [Arguments]    @{expected}
-    Check File Matches Regexp    ${SYSLOG_FILE}    @{expected}
+    File Should Match Regexp    ${SYSLOG_FILE}    @{expected}
 
 Syslog Should Contain Regexp
     [Arguments]    @{expected}
     File Should Contain Regexp    ${SYSLOG_FILE}    @{expected}
+
+Syslog Should Not Contain Regexp
+    [Arguments]    @{expected}
+    File Should Not Contain Regexp    ${SYSLOG FILE}    @{expected}
 
 Check Names
     [Arguments]    ${item}    ${name}    ${longprefix}=
@@ -268,12 +291,12 @@ Timestamp Should Be Valid
     [Arguments]    ${time}
     Log    ${time}
     Should Not Be Equal    ${time}    ${None}
-    Should Match Regexp    ${time}    20\\d{6} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}    Not valid timestamp
+    Should Match Regexp    ${time}    ^20\\d{6} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}$    Not valid timestamp
 
 Elapsed Time Should Be Valid
     [Arguments]    ${time}
     Log    ${time}
-    Should Be True    isinstance(${time}, int) and ${time} >= 0    Not valid elapsed time
+    Should Be True    isinstance($time, int) and $time >= 0    Not valid elapsed time
 
 Previous test should have passed
     [Arguments]    ${name}
@@ -306,18 +329,6 @@ Tag Statistics Should Be
     Should Be Equal As Integers    ${tag.attrib['pass']}    ${pass}
     Should Be Equal As Integers    ${tag.attrib['fail']}    ${fail}
 
-# TODO: Move next two closer to other test/kw status related kws
-Test And All Keywords Should Have Passed
-    [Arguments]    ${name}=${TESTNAME}
-    ${tc} =    Check Test Case    ${name}
-    All Keywords Should Have Passed    ${tc}
-
-All Keywords Should Have Passed
-    [Arguments]    ${tc or kw}
-    : FOR    ${kw}    IN    @{tc or kw.kws}
-    \    Should Be Equal    ${kw.status}    PASS
-    \    All Keywords Should Have Passed    ${kw}
-
 Set PYTHONPATH
     [Arguments]    @{values}
     ${value} =    Catenate    SEPARATOR=${:}    @{values}
@@ -330,15 +341,16 @@ Reset PYTHONPATH
     Remove Environment Variable    JYTHONPATH
     Remove Environment Variable    IRONPYTHONPATH
 
-Import should have failed
-    [Arguments]    ${index}    ${path}    ${message}    ${traceback}=*
-    ...    ${stacktrace}=
-    ${path} =    Normalize Path    ${DATADIR}/${path}
-    ${error} =    Set Variable    Error in file '${path}': ${message}
+Error in file
+    [Arguments]    ${index}    ${path}    ${lineno}    @{message}    ${traceback}=
+    ...    ${stacktrace}=    ${pattern}=True
+    ${path} =    Join Path    ${DATADIR}    ${path}
+    ${message} =    Catenate    @{message}
+    ${error} =    Set Variable    Error in file '${path}' on line ${lineno}: ${message}
     ${error} =    Set Variable If    $traceback and not $stacktrace
     ...    ${error}\nTraceback (most recent call last):\n*${traceback}*
     ...    ${error}
     ${error} =    Set Variable If    $stacktrace
     ...    ${error}\n*${stacktrace}*
     ...    ${error}
-    Check Log Message    @{ERRORS}[${index}]    ${error}    level=ERROR    pattern=yes
+    Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=${pattern}

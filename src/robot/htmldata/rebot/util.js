@@ -140,9 +140,9 @@ window.util = function () {
         var dt = dateTimeFromDate(date).slice(0, 17);  // drop millis
         var offset = date.getTimezoneOffset();
         var sign = offset > 0 ? '-' : '+';
-        var hours = Math.floor(Math.abs(offset) / 60);
-        var mins = Math.abs(offset) % 60;
-        return dt + ' GMT' + sign + padTo(hours, 2) + ':' + padTo(mins, 2);
+        var hh = Math.floor(Math.abs(offset) / 60);
+        var mm = Math.abs(offset) % 60;
+        return dt + ' UTC' + sign + padTo(hh, 2) + ':' + padTo(mm, 2);
     }
 
     function createGeneratedAgoString(timestamp) {

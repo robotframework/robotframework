@@ -57,10 +57,16 @@ Write Bare With Newlines
     ${out} =    Read Until    1 2 3
     Should Be Equal    ${out}    a=1\r\n${FULL PROMPT}b=2\r\n${FULL PROMPT}echo $a $b 3\r\n1 2 3
 
-Write control character
+Write control character using name
     [Documentation]   FAIL STARTS: No match found for 'moi' in 300 milliseconds.
     Write     sleep 0.2;echo moi
     Write Control Character    IP
+    Read until   moi
+
+Write control character using number
+    [Documentation]   FAIL STARTS: No match found for 'moi' in 300 milliseconds.
+    Write     sleep 0.2;echo moi
+    Write Control Character    244    # Same as IP
     Read until   moi
 
 Read Until

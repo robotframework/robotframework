@@ -3,10 +3,20 @@
 
 docutils >= 0.9; platform_python_implementation != 'IronPython'  # https://github.com/IronLanguages/ironpython2/issues/113
 pygments
-pyyaml
+pyyaml; platform_python_implementation != 'Jython'
+pyyaml==5.2; platform_python_implementation == 'Jython'
 enum34; python_version < '3.0'
+pillow; platform_system == 'Windows'
+
+# https://github.com/IronLanguages/ironpython2/issues/113
+docutils >= 0.9; platform_python_implementation != 'IronPython'
+pygments; platform_python_implementation != 'IronPython'
+
+# https://github.com/yaml/pyyaml/issues/369
+pyyaml; platform_python_implementation != 'Jython'
+pyyaml==5.2; platform_python_implementation == 'Jython'
 
 # On Linux installing lxml with pip may require compilation and development
 # headers. Alternatively it can be installed using a package manager like
 # `sudo apt-get install python-lxml`.
-lxml; platform_python_implementation == 'CPython' or platform_python_implementation == 'PyPy'
+lxml; platform_python_implementation == 'CPython' or platform_python_implementation == 'PyPy' and platform_system != 'Windows'

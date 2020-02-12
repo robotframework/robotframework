@@ -1,5 +1,6 @@
 *** Settings ***
 Library                  Annotations.py
+Library                  OperatingSystem
 Resource                 conversion.resource
 Force Tags               require-py3
 
@@ -285,10 +286,10 @@ Frozenset
 
 Invalid frozenset
     [Template]           Conversion Should Fail
-    Frozenset            {1, ooops}                type=set              error=Invalid expression.
-    Frozenset            {}                        type=set              error=Value is dictionary, not set.
-    Frozenset            ooops                     type=set              error=Invalid expression.
-    Frozenset            {{'not', 'hashable'}}     type=set              error=Evaluating expression failed: *
+    Frozenset            {1, ooops}                                      error=Invalid expression.
+    Frozenset            {}                                              error=Value is dictionary, not set.
+    Frozenset            ooops                                           error=Invalid expression.
+    Frozenset            {{'not', 'hashable'}}                           error=Evaluating expression failed: *
 
 Unknown types are not converted
     Unknown              foo                       'foo'
@@ -395,6 +396,27 @@ Forward references
 
 @keyword decorator overrides annotations
     Types via keyword deco override            42    timedelta(seconds=42)
-    Empty type dict via @keyword overrides     42    u'42'
-    Empty type list via @keyword overrides     42    u'42'
+    None as types via @keyword disables        42    '42'
+    Empty types via @keyword doesn't override  42    42
     @keyword without types doesn't override    42    42
+
+Type information mismatch caused by decorator
+    Mismatch caused by decorator               foo   'foo'
+
+Keyword decorator with wraps
+    Keyword With Wraps                         42    42
+
+Keyword decorator with wraps mismatched type
+    Conversion Should Fail
+    ...    Keyword With Wraps    argument=foobar    type=integer
+
+Value contains variable
+    [Setup]       Set Environment Variable         PI_NUMBER    3.14
+    [Teardown]    Remove Environment Variable      PI_NUMBER
+    Float                %{PI_NUMBER}              ${3.14}
+    ${value} =           Set variable              42
+    Integer              ${value}                  ${42}
+    @{value} =           Create List               1    2    3
+    Varargs              @{value}                  expected=(1, 2, 3)
+    &{value} =           Create Dictionary         a=1    b=2    c=3
+    Kwargs               &{value}                  expected={'a': 1, 'b': 2, 'c': 3}

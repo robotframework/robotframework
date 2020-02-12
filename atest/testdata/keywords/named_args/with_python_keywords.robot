@@ -122,6 +122,7 @@ Non working named combinations with varargs
     missing value for argument 'a'.                   b=b
     got positional argument after named arguments.    b=b    b
     got positional argument after named arguments.    a      b=b    c
+    got unexpected named argument 'c'.                a      b=b    c=c
     got multiple values for argument 'a'.             a      b      a=a
     got multiple values for argument 'b'.             a      b      b=b
     got multiple values for argument 'a'.             a      a=a

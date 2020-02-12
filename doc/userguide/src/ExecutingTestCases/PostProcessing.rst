@@ -23,8 +23,8 @@ Synopsis
 ::
 
     rebot [options] robot_outputs
-    python|jython|ipy -m robot.rebot [options] robot_outputs
-    python|jython|ipy path/to/robot/rebot.py [options] robot_outputs
+    python|jython|ipy|pypy -m robot.rebot [options] robot_outputs
+    python|jython|ipy|pypy path/to/robot/rebot.py [options] robot_outputs
     java -jar robotframework.jar rebot [options] robot_outputs
 
 The most common way to use Rebot is using the ``rebot`` `runner script`_.
@@ -34,9 +34,9 @@ alternative is using the `standalone JAR distribution`_.
 
 .. note::
     Versions prior to Robot Framework 3.0 installed the ``rebot`` script only
-    with Python and used ``jyrebot`` and ``ipyrebot`` scripts with Jython and
-    IronPython, respectively. These scripts are still installed, but the plan
-    is to deprecate and remove them in the future.
+    with Python, and used ``jyrebot`` and ``ipyrebot`` scripts with Jython and
+    IronPython, respectively. The old interpreter specific scripts were
+    removed in Robot Framework 3.1 and nowadays ``rebot`` must always be used.
 
 __ `Executing installed robot module`_
 __ `Executing installed robot directory`_
@@ -55,6 +55,22 @@ Return codes with Rebot
 Return codes from Rebot are exactly same as when `running tests`__.
 
 __ `Return codes`_
+
+Controlling execution mode
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Rebot notices have tests__ or tasks__ been run, and by default preserves the
+execution mode. The mode affects logs and reports so that in the former case
+they will use term *test* like `Test Log` and `Test Statistics`, and in
+the latter case term *task* like `Task Log` and `Task Statistics`.
+
+Rebot also supports using :option:`--rpa` or :option:`--norpa` options to set
+the execution mode explicitly. This is necessary if multiple output files
+are processed and they have conflicting modes.
+
+__ `Test execution`_
+__ `Task execution`_
+
 
 Creating different reports and logs
 -----------------------------------

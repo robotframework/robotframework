@@ -3,12 +3,22 @@ Resource          libdoc_resource.robot
 
 *** Test Cases ***
 List all keywords
-    [Tags]    require-tkinter
-    Run Libdoc And Verify Output    Dialogs list
-    ...   Execute Manual Step
-    ...   Get Selection From User
-    ...   Get Value From User
-    ...   Pause Execution
+    Run Libdoc And Verify Output    ${TESTDATADIR}/module.py list
+    ...   Get Hello
+    ...   Keyword
+    ...   Keyword With Tags 1
+    ...   Keyword with tags 2
+    ...   Keyword With Tags 3
+    ...   Multiline Doc With Split Short Doc
+    ...   Non Ascii Bytes Defaults
+    ...   Non Ascii String Defaults
+    ...   Non Ascii String Doc
+    ...   Non Ascii String Doc With Escapes
+    ...   Non Ascii Unicode Defaults
+    ...   Non Ascii Unicode Doc
+    ...   Non String Defaults
+    ...   Set Name Using Robot Name Attribute
+    ...   Takes \${embedded} \${args}
 
 List some keywords
     Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot list o
@@ -22,23 +32,24 @@ List some keywords
     ...   kw 6
 
 Show whole library
-    [Tags]    require-tkinter
-    Run Libdoc And Set Output    Dialogs show
-    Should Contain Intro    Dialogs    Version:
-    Should Contain Keyword    Execute Manual Step    message, default_error=
-    ...    Pauses test execution until user sets the keyword status.
-    Should Contain Keyword    Get Selection From User    message, *values
-    ...    Pauses test execution and asks user to select a value.
-    Should Contain Keyword    Get Value From User    message, default_value=, hidden=False
-    ...    Pauses test execution and asks user to input a value.
-    Should Contain Keyword    Pause Execution    message=Test execution paused. Press OK to continue.
-    ...   Pauses test execution until user clicks ``Ok`` button.
-    ...   ${EMPTY}
-    ...   ``message`` is the message shown in the dialog.
+    Run Libdoc And Set Output    ${TESTDATADIR}/module.py show
+    Should Contain Intro    module
+    ...    Version=0.1-alpha
+    ...    Scope=global
+    ...    Named arguments=supported
+    Should Contain Keyword    Get Hello    ${EMPTY}
+    ...    Get hello.
+    ...    ${EMPTY}
+    ...    See `importing` for explanation of nothing
+    ...    and `introduction` for no more information
+    Should Contain Keyword    Keyword    a1=d, *a2
+    ...    A keyword.
+    ...    ${EMPTY}
+    ...    See `get hello` for details.
 
 Show intro only
     Run Libdoc and set output    Telnet SHOW intro
-    Should Contain Intro    Telnet    Version:
+    Should Contain Intro    Telnet    Version=
     ${args} =    Catenate    SEPARATOR=\n${SPACE*12}
     ...    timeout=3 seconds, newline=CRLF, prompt=None,
     ...    prompt_is_regexp=False, encoding=UTF-8, encoding_errors=ignore,
@@ -52,7 +63,7 @@ Show intro only
 
 Show intro and keywords
     Run Libdoc and set output    ${TESTDATADIR}/resource.robot SHOW NONASC* INTRO
-    Should Contain Intro    resource    Named arguments:${SPACE*2}supported
+    Should Contain Intro    resource    Named arguments=supported
     Should Contain Keyword    non ascii doc    ${EMPTY}
     ...    Hyvää yötä.
     ...    ${EMPTY}
@@ -65,8 +76,9 @@ Show version
 
 *** Keywords ***
 Should Contain Intro
-    [Arguments]    ${name}    @{meta}
-    ${underline} =    Evaluate    '='*len('${name}')
+    [Arguments]    ${name}    &{meta}
+    ${underline} =    Evaluate    '=' * len($name)
+    @{meta} =    Evaluate    [(n+':').ljust(18) + v for n, v in $meta.items()]
     ${expected} =    Catenate    SEPARATOR=\n
     ...    ${name}
     ...    ${underline}
@@ -79,7 +91,7 @@ Should Contain Keyword
     ${expected} =    Catenate    SEPARATOR=\n
     ...    ${name}
     ...    ${underline}
-    ...    Arguments:${SPACE * 2}[${args}]
+    ...    Arguments:${SPACE * 2}\[${args}]
     ...    ${EMPTY}
     ...    @{doc}
     Should Contain    ${OUTPUT}    ${expected}

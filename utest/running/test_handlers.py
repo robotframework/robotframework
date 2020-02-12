@@ -21,9 +21,10 @@ def _get_handler_methods(lib):
     return [a for a in attrs if inspect.ismethod(a)]
 
 def _get_java_handler_methods(lib):
-    # This hack assumes that all java handlers used start with 'a_' -- easier
-    # than excluding 'equals' etc. otherwise
-    return [a for a in _get_handler_methods(lib) if a.__name__.startswith('a_') ]
+    # This hack assumes that all java handlers used start with 'a_' or 'java'
+    # -- easier than excluding 'equals' etc. otherwise
+    return [a for a in _get_handler_methods(lib)
+            if a.__name__.startswith(('a_', 'java'))]
 
 
 class LibraryMock(object):
@@ -32,7 +33,19 @@ class LibraryMock(object):
         self.name = self.orig_name = name
         self.scope = LibraryScope(scope, self)
 
-    register_listeners = unregister_listeners = reset_instance = lambda *args: None
+    register_listeners = unregister_listeners = reset_instance \
+        = get_instance = lambda *args: None
+
+
+def assert_argspec(argspec, minargs=0, maxargs=0, positional=[], defaults={},
+                   varargs=None, kwonlyargs=[], kwargs=None):
+    assert_equal(argspec.minargs, minargs)
+    assert_equal(argspec.maxargs, maxargs)
+    assert_equal(argspec.positional, positional)
+    assert_equal(argspec.defaults, defaults)
+    assert_equal(argspec.varargs, varargs)
+    assert_equal(argspec.kwonlyargs, kwonlyargs)
+    assert_equal(argspec.kwargs, kwargs)
 
 
 class TestPythonHandler(unittest.TestCase):
@@ -232,16 +245,9 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         else:
             kwargs_support_modes = [True]
         for kwargs_support in kwargs_support_modes:
-            arguments = self._create_handler(argspec,
-                                             kwargs_support=kwargs_support
-                                             ).arguments
-            assert_equal(arguments.minargs, minargs)
-            assert_equal(arguments.maxargs, maxargs)
-            assert_equal(arguments.positional, positional)
-            assert_equal(arguments.defaults, defaults)
-            assert_equal(arguments.varargs, varargs)
-            assert_equal(arguments.kwonlyargs, kwonlyargs)
-            assert_equal(arguments.kwargs, kwargs)
+            handler = self._create_handler(argspec, kwargs_support=kwargs_support)
+            assert_argspec(handler.arguments, minargs, maxargs, positional,
+                           defaults, varargs, kwonlyargs, kwargs)
 
     def _assert_fails(self, error, *args, **kwargs):
         assert_raises_with_msg(DataError, error,
@@ -264,29 +270,55 @@ if utils.JYTHON:
     handlers = dict((method.__name__, method) for method in
                     _get_java_handler_methods(ArgumentsJava('Arg', ['varargs'])))
 
-    class TestJavaHandler(unittest.TestCase):
+    class TestJavaHandlerArgLimits(unittest.TestCase):
 
-        def test_arg_limits_no_defaults_or_varargs(self):
+        def test_no_defaults_or_varargs(self):
             for count in [0, 1, 3]:
                 method = handlers['a_%d' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equal(handler.arguments.minargs, count)
-                assert_equal(handler.arguments.maxargs, count)
+                assert_argspec(handler.arguments,
+                               minargs=count,
+                               maxargs=count,
+                               positional=self._format_positional(count))
 
-        def test_arg_limits_with_varargs(self):
-            for count in [0, 1]:
-                method = handlers['a_%d_n' % count]
-                handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equal(handler.arguments.minargs, count)
-                assert_equal(handler.arguments.maxargs, sys.maxsize)
-
-        def test_arg_limits_with_defaults(self):
+        def test_defaults(self):
             # defaults i.e. multiple signatures
             for mina, maxa in [(0, 1), (1, 3)]:
                 method = handlers['a_%d_%d' % (mina, maxa)]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equal(handler.arguments.minargs, mina)
-                assert_equal(handler.arguments.maxargs, maxa)
+                assert_argspec(handler.arguments,
+                               minargs=mina,
+                               maxargs=maxa,
+                               positional=self._format_positional(maxa),
+                               defaults={'arg%s' % (i+1): ''
+                                         for i in range(mina, maxa)})
+
+        def test_varargs(self):
+            for count in [0, 1]:
+                method = handlers['a_%d_n' % count]
+                handler = _JavaHandler(LibraryMock(), method.__name__, method)
+                assert_argspec(handler.arguments,
+                               minargs=count,
+                               maxargs=sys.maxsize,
+                               positional=self._format_positional(count),
+                               varargs='varargs')
+
+        def test_kwargs(self):
+            for name, positional, varargs in [('javaKWArgs', 0, False),
+                                              ('javaNormalAndKWArgs', 1, False),
+                                              ('javaVarArgsAndKWArgs', 0, True),
+                                              ('javaAllArgs', 1, True)]:
+                method = handlers[name]
+                handler = _JavaHandler(LibraryMock(), method.__name__, method)
+                assert_argspec(handler.arguments,
+                               minargs=positional,
+                               maxargs=sys.maxsize if varargs else positional,
+                               positional=self._format_positional(positional),
+                               varargs='varargs' if varargs else None,
+                               kwargs='kwargs')
+
+        def _format_positional(self, count):
+            return ['arg%s' % (i+1) for i in range(count)]
 
 
     class TestArgumentCoercer(unittest.TestCase):

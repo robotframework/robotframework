@@ -65,7 +65,7 @@ With other arguments
     All Arg Types            p1        p2             p3            p4    k3=3    kwo_def=k2    kwo_req=k1    k4=4
     Args Should Have Been    p1        p2             p3            p4    k3=3    kwo_def=k2    kwo_req=k1    k4=4
     All Arg Types            k4=!!!    kwo_def=k2     k3=!          pos_req=p1    pos_def=p2    kwo_req=k1
-    Args Should Have Been    p1        p2             k4=!!!        kwo_def=k2    k3=!          kwo_req=k1
+    Args Should Have Been    k4=!!!    kwo_def=k2     k3=!          pos_req=p1    pos_def=p2    kwo_req=k1
 
 Using kw-only arguments is not possible if 'run_keyword' accepts no kwargs
     [Documentation]    FAIL No keyword with name 'No kwargs' found.

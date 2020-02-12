@@ -138,6 +138,23 @@ Copy List
     Append To List    ${L2}    1    2    3
     Compare To Expected String    ${copy}    ['1', 2]
 
+Shallow Copy List
+    ${dict} =    Create Dictionary    a    1
+    ${a} =    Create List    ${dict}
+    ${b} =    Copy List    ${a}
+    Set To Dictionary    ${a}[0]    a    2
+    Should Be Equal    ${a}[0][a]    2
+    Should Be Equal    ${b}[0][a]    2
+
+Deep Copy List
+    ${dict} =    Create Dictionary    a    1
+    ${a} =    Create List    ${dict}
+    ${b} =    Copy List    ${a}   deepcopy=True
+    Set To Dictionary    ${a}[0]    a    2
+    Set To Dictionary    ${b}[0]    a    3
+    Should Be Equal    ${a}[0][a]    2
+    Should Be Equal    ${b}[0][a]    3
+
 Reserve List
     Reverse List    ${LONG}
     Compare To Expected String    ${LONG}    [2, '1', '44', '43', 42, '41', 2, '1', '1']
@@ -216,8 +233,9 @@ List Should Not Contain Value, Value Found And Own Error Message
 
 List Should Not Contain Duplicates With No Duplicates
     ${generator}    ${tuple} =    Evaluate    (c for c in 'abcABC'), (0, 1, 2, '0', '1', '2')
-    : FOR    ${list}    IN    ${L0}    ${L1}    ${L2}    ${L3}    ${L4}    ${generator}    ${tuple}
-    \    List Should Not Contain Duplicates    ${list}
+    FOR    ${list}    IN    ${L0}    ${L1}    ${L2}    ${L3}    ${L4}    ${generator}    ${tuple}
+        List Should Not Contain Duplicates    ${list}
+    END
 
 List Should Not Contain Duplicates Is Case And Space Sensitive
     ${list} =    Create List    item    ITEM    i tem    i t e m    ITE_m
@@ -340,6 +358,8 @@ Log List With Different Lists
     Log List    ${L0}
     Log List    ${L1}
     ${tuple} =    Evaluate    (1, 2, 3)
+    ${list} =    Create List    ${tuple}
+    Log List    ${list}
     ${list} =    Create List    ${tuple}    ${3.12}
     Log List    ${list}
 

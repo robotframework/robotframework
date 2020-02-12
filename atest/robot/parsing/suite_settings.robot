@@ -11,18 +11,27 @@ Suite Name
 
 Suite Documentation
     ${doc} =    Catenate    SEPARATOR=\n
-    ...    1st line is shortdoc.
-    ...    Text from multiple columns is catenated with spaces,
-    ...    and line continuation creates a new line.
-    ...    Newlines can also be added literally "\n\n".
+    ...    1st logical line
+    ...    (i.e. paragraph)
+    ...    is shortdoc on console.
+    ...
+    ...    Documentation can have multiple rows
+    ...    and also multiple columns.
+    ...    Newlines can also be added literally with "\n".
+    ...
+    ...    | table | =header= |
+    ...    | foo | bar |
+    ...    | ragged |
+    ...
     ...    Variables work since Robot 1.2 and doc_from_cli works too.
     ...    Starting from RF 2.1 \${nonexisting} variables are left unchanged.
     ...    Escaping (e.g. '\${non-existing}', 'c:\\temp', '\\n') works too.
+    ...    Not \${closed
     Should Be Equal    ${SUITE.doc}    ${doc}
 
 Suite Name And Documentation On Console
-    Check Stdout Contains    Suite Settings :: 1st line is shortdoc.${SPACE * 39}\n
-    Check Stdout Contains    Suite Settings :: 1st line is shortdoc.${SPACE * 31}| PASS |\n
+    Stdout Should Contain    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on console.${SPACE * 3}\n
+    Stdout Should Contain    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on... | PASS |\n
 
 Test Setup
     ${test} =    Check Test Case    Test Case
@@ -42,9 +51,14 @@ Suite Teardown
     Verify Teardown    ${SUITE}    BuiltIn.Log    Default suite teardown
 
 Invalid Setting
-    ${path} =    Normalize Path    ${DATADIR}/parsing/suite_settings.robot
-    Check Log Message    ${ERRORS[0]}
-    ...    Error in file '${path}': Non-existing setting 'Invalid Setting'.    ERROR
+    Error In File    0    parsing/suite_settings.robot    27
+    ...    Non-existing setting 'Invalid Setting'.
+
+Small typo should provide recommendation.
+    Error In File    1    parsing/suite_settings.robot    28
+    ...    SEPARATOR=\n
+    ...    Non-existing setting 'Megadata'. Did you mean:
+    ...    ${SPACE*4}Metadata
 
 *** Keywords ***
 Verify Setup

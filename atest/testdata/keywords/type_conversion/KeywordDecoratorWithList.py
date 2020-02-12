@@ -20,6 +20,13 @@ def none_means_no_type(foo, bar, zap):
     _validate_type(zap, 3.0)
 
 
+@keyword(types=['', int, False])
+def falsy_types_mean_no_type(foo, bar, zap):
+    _validate_type(foo, u'1')
+    _validate_type(bar, 2)
+    _validate_type(zap, u'3')
+
+
 @keyword(types=[int, float])
 def less_types_than_arguments_is_ok(foo, bar, zap):
     _validate_type(foo, 1)

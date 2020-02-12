@@ -11,8 +11,8 @@ Test Case File Suite
     Should Be Equal    ${SUITE.metadata['Something']}    My Value
     Should Be Equal as Strings    ${SUITE.metadata}    {Something: My Value}
     Check Normal Suite Defaults    ${SUITE}
-    Should Be Equal    ${SUITE.full_message}    2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
-    Should Be Equal    ${SUITE.statistics.message}    2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
+    Should Be Equal    ${SUITE.full_message}    2 critical tests, 2 passed, 0 failed\n2 tests total, 2 passed, 0 failed
+    Should Be Equal    ${SUITE.statistics.message}    2 critical tests, 2 passed, 0 failed\n2 tests total, 2 passed, 0 failed
     Should Contain Tests    ${SUITE}    First One    Second One
 
 Directory Suite
@@ -90,7 +90,7 @@ Check Suite Got From Misc/suites/ Directory
     ...    Tsuite3
     Should Be Empty    ${SUITE.tests}
     Should Contain Suites    ${SUITE.suites[1]}    Sub1    Sub2
-    :FOR    ${s}    IN
+    FOR    ${s}    IN
     ...    ${SUITE.suites[0]}
     ...    ${SUITE.suites[1].suites[0]}
     ...    ${SUITE.suites[1].suites[1]}
@@ -98,7 +98,8 @@ Check Suite Got From Misc/suites/ Directory
     ...    ${SUITE.suites[3]}
     ...    ${SUITE.suites[4]}
     ...    ${SUITE.suites[5]}
-    \    Should Be Empty    ${s.suites}
+        Should Be Empty    ${s.suites}
+    END
     Should Contain Tests    ${SUITE}
     ...    SubSuite1 First
     ...    SubSuite2 First

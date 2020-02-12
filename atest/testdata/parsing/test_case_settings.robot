@@ -1,12 +1,13 @@
 *** Setting ***
-T e s t S e t u p        Log    Default setup
-testteardown     Log    Default teardown    INFO
-Force T a g s        \    force-1       # Empty tags should be ignored
-DefaultTags      @{DEFAULT TAGS}    \    default-3
+Test Setup        Log    Default setup
+Test Teardown     Log    Default teardown    INFO
+Force Tags        \    force-1       # Empty tags should be ignored
+Default Tags      @{DEFAULT TAGS}    \    default-3
 Test Timeout      ${TIMEOUT} milliseconds
 
 *** Variable ***
-${VERSION}            1.2
+${VARIABLE}           variable
+${DOC VERSION}        1.2
 @{DEFAULT TAGS}       default-1    default-2    # default-3 added separately
 ${TAG BASE}           test
 @{TEST TAGS}          ${TAG BASE}-1    ${TAG BASE}-2    ${TAG BASE}-3
@@ -20,8 +21,26 @@ Normal name
 test_case names are NOT _forMatted_
     No Operation
 
+Name with ${VARIABLE}s works since RF ${{float($DOC_VERSION) + 2}}
+    No Operation
+
+Name with ${NON-EXISTING VARIABLE}
+    No Operation
+
+Name with \${ESCAPED} \${VARIABLE}
+    No Operation
+
+Name with escapes like '\', '\n' and 'c:\path\temp'
+    No Operation
+
+Name with invalid escapes like '\x' and '\uOOPS'
+    No Operation
+
+Name with escaped escapes like '\\', '\\n', '\\x' and 'c:\\path\\temp'
+    No Operation
+
 Documentation
-    [Documentation]    Documentation for this test case
+    [Documentation]    Documentation in single line and column.
     No Operation
 
 Documentation in multiple columns
@@ -29,13 +48,19 @@ Documentation in multiple columns
     No Operation
 
 Documentation in multiple rows
-    [DOCUMENTATION]    ${1}st line is shortdoc.
-    ...                Documentation for this test case
-    ...                in    multiple    rows.
+    [DOCUMENTATION]    ${1}st logical line
+    ...                is shortdoc.
+    ...
+    ...                This documentation has multiple rows
+    ...                and also    multiple columns.
+    ...
+    ...                | table | =header= |
+    ...                | foo   |    bar   |
+    ...                | ragged |
     No Operation
 
 Documentation with variables
-    [Documentation]    Variables work in documentation since Robot ${VERSION}.
+    [Documentation]    ${VARIABLE.title()}s work in documentation since RF ${DOC VERSION}.
     No Operation
 
 Documentation with non-existing variables
@@ -44,8 +69,24 @@ Documentation with non-existing variables
     ...                are replaced: "${TIMEOUT}"
     No Operation
 
+Documentation with unclosed variables 1
+    [Documentation]    No closing curly at ${all
+    No Operation
+
+Documentation with unclosed variables 2
+    [Documentation]    Not ${properly {closed}
+    No Operation
+
+Documentation with unclosed variables 3
+    [Documentation]    ${2}nd not ${properly}[closed
+    No Operation
+
 Documentation with escaping
-    [Documentation]    \${XXX}    c:\\temp    \    \\
+    [Documentation]
+    ...    \${VERSION}
+    ...    c:\\temp
+    ...
+    ...    \\
     No Operation
 
 Tags
@@ -84,7 +125,7 @@ Tags with variables
     No Operation
 
 Tags with non-existing variables
-    [t a g s]    @{non_existing}    ${TAG BASE}    ${non_existing}    ${4}${2}
+    [tags]    @{non_existing}    ${TAG BASE}    ${non_existing}    ${4}${2}
     Log    It's a bit questionable that non-existing variables are OK.
     Log    But they are OK also in docs, with keyword tags, etc.
 
@@ -115,9 +156,9 @@ Override setup and teardown using NONE
     [Teardown]    NONE
 
 Setup and teardown with escaping
-    [ s e t u p ]    Log    One backslash \\
+    [ setup ]    Log    One backslash \\
     No Operation
-    [ T E A R D O W N ]    Log    \${notvar} is not a variable
+    [ TEARDOWN ]    Log    \${notvar} is not a variable
 
 Template
     [Template]    Log
@@ -129,14 +170,14 @@ Timeout
     No Operation
 
 Timeout with message
-    [Timeout]    123456ms    Message
+    [Timeout]    666    Message not supported since RF 3.2
     No Operation
 
 Default timeout
     No Operation
 
 Timeout with variables
-    [TIME out]    ${TIMEOUT}
+    [TIMEout]    ${TIMEOUT}
     No Operation
 
 Override timeout using empty setting
@@ -150,7 +191,7 @@ Override timeout using NONE
 Invalid timeout
     [Documentation]    FAIL Setup failed:
     ...    Setting test timeout failed: Invalid time string 'invalid'.
-    [Timeout]    invalid    timeout value
+    [Timeout]    invalid
     No Operation
 
 Multiple settings
@@ -162,6 +203,9 @@ Multiple settings
     [Teardown]    Log    Test case teardown
 
 Invalid setting
-    [Documentation]    There is an error but test is run anyway.
     [Invalid]    This is invalid
+    No Operation
+
+Small typo should provide recommendation
+    [Doc U ment a tion]    This actually worked before RF 3.2.
     No Operation

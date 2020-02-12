@@ -130,3 +130,6 @@ Kwonly
 Invalid kwonly
     [Tags]    require-py3
     Check Test Case    ${TESTNAME}
+
+@keyword decorator overrides default values
+    Check Test Case    ${TESTNAME}

@@ -30,11 +30,7 @@ class UserLibrary(object):
     TEST_CASE_FILE_TYPE = HandlerStore.TEST_CASE_FILE_TYPE
     RESOURCE_FILE_TYPE = HandlerStore.RESOURCE_FILE_TYPE
 
-    def __init__(self, source, source_type=RESOURCE_FILE_TYPE):
-        if is_string(source):
-            resource = ResourceFileBuilder().build(source)
-        else:
-            resource = source
+    def __init__(self, resource, source_type=RESOURCE_FILE_TYPE):
         source = resource.source
         basename = os.path.basename(source) if source else None
         self.name = os.path.splitext(basename)[0] \

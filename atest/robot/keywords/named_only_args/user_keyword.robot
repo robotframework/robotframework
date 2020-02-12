@@ -25,10 +25,10 @@ Missing value
 Missing multiple values
     Check Test Case    ${TESTNAME}
 
-Unexpected keyword argumemt
+Unexpected keyword argument
     Check Test Case    ${TESTNAME}
 
-Multiple unexpected keyword argumemt
+Multiple unexpected keyword argument
     Check Test Case    ${TESTNAME}
 
 Unexpected positional argument
@@ -39,4 +39,13 @@ With varargs
     Check Test Case    ${TESTNAME}
 
 With other arguments
+    Check Test Case    ${TESTNAME}
+
+Argument name as variable
+    Check Test Case    ${TESTNAME}
+
+Argument name as non-existing variable
+    Check Test Case    ${TESTNAME}
+
+With positional argument containing equal sign
     Check Test Case    ${TESTNAME}

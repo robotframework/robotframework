@@ -128,6 +128,18 @@ class TestMatcher(unittest.TestCase):
         self._matches_not('GlobTest2', pattern)
         self._matches('GlobTest3', pattern)
 
+    def test_escape_wildcards(self):
+        # No escaping needed
+        self._matches('[', '[')
+        self._matches('[]', '[]')
+        # Escaping needed
+        self._matches_not('[x]', '[x]')
+        self._matches('[x]', '[[]x]')
+        for wild in '*?[]':
+            self._matches(wild, '[%s]' % wild)
+            self._matches('foo%sbar' % wild, 'foo[%s]bar' % wild)
+            self._matches('foo%sbar' % wild, '*[%s]???' % wild)
+
     def test_spaceless(self):
         for text in ['fbar', 'foobar']:
             assert Matcher('f*bar').match(text)
@@ -136,6 +148,12 @@ class TestMatcher(unittest.TestCase):
         for text in ['f b a r', 'f o o b a r', '   foo bar   ', 'fbar\n']:
             assert Matcher('f*bar').match(text)
             assert not Matcher('f*bar', spaceless=False).match(text)
+
+    def test_ipy_bug_workaround(self):
+        # https://github.com/IronLanguages/ironpython2/issues/515
+        matcher = Matcher("'12345678901234567890'")
+        assert matcher.match("'12345678901234567890'")
+        assert not matcher.match("'xxx'")
 
     def _matches(self, string, pattern, **config):
         assert Matcher(pattern, **config).match(string), pattern

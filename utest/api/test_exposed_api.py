@@ -1,6 +1,6 @@
 import unittest
 
-from os.path import abspath, join
+from os.path import join
 
 from robot import api, model, parsing, reporting, result, running
 
@@ -8,18 +8,6 @@ from robot.utils.asserts import assert_equal, assert_true
 
 
 class TestExposedApi(unittest.TestCase):
-
-    def test_test_case_file(self):
-        assert_equal(api.TestCaseFile, parsing.TestCaseFile)
-
-    def test_test_data_directory(self):
-        assert_equal(api.TestDataDirectory, parsing.TestDataDirectory)
-
-    def test_resource_file(self):
-        assert_equal(api.ResourceFile, parsing.ResourceFile)
-
-    def test_test_data(self):
-        assert_equal(api.TestData, parsing.TestData)
 
     def test_execution_result(self):
         assert_equal(api.ExecutionResult, result.ExecutionResult)
@@ -33,6 +21,15 @@ class TestExposedApi(unittest.TestCase):
     def test_visitors(self):
         assert_equal(api.SuiteVisitor, model.SuiteVisitor)
         assert_equal(api.ResultVisitor, result.ResultVisitor)
+
+    def test_parsing(self):
+        assert_equal(api.get_model, parsing.get_model)
+        assert_equal(api.get_resource_model, parsing.get_resource_model)
+        assert_equal(api.get_tokens, parsing.get_tokens)
+        assert_equal(api.get_resource_tokens, parsing.get_resource_tokens)
+        assert_equal(api.ModelTransformer, parsing.ModelTransformer)
+        assert_equal(api.ModelVisitor, parsing.ModelVisitor)
+        assert_equal(api.Token, parsing.Token)
 
 
 class TestModelObjects(unittest.TestCase):
@@ -55,8 +52,10 @@ class TestModelObjects(unittest.TestCase):
 
 
 class TestTestSuiteBuilder(unittest.TestCase):
-    sources = [join(abspath(__file__), '..', '..', '..', 'atest', 'testdata', 'misc', n)
-               for n in ('pass_and_fail.robot', 'normal.robot')]
+    # This list has paths like `/path/file.py/../file.robot` on purpose.
+    # They don't work unless normalized.
+    sources = [join(__file__, '../../../atest/testdata/misc', name)
+               for name in ('pass_and_fail.robot', 'normal.robot')]
 
     def test_create_with_datasources_as_list(self):
         suite = api.TestSuiteBuilder().build(*self.sources)

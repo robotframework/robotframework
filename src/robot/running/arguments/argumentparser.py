@@ -19,14 +19,16 @@ from robot.variables import is_dict_var, is_list_var, is_scalar_var
 
 from .argumentspec import ArgumentSpec
 
-
 if PY2:
     from inspect import getargspec, ismethod
 
     def getfullargspec(func):
-        return getargspec(func) + (None, None, None)
+        return getargspec(func) + ([], None, {})
+
+    def unwrap(func):
+        return func
 else:
-    from inspect import getfullargspec, ismethod
+    from inspect import getfullargspec, ismethod, unwrap
 
 if PY_VERSION >= (3, 5):
     import typing
@@ -50,50 +52,69 @@ class _ArgumentParser(object):
 class PythonArgumentParser(_ArgumentParser):
 
     def parse(self, handler, name=None):
-        args, varargs, kwargs, defaults, kwonly, kwonlydefaults, annotations \
-                = getfullargspec(handler)
-        if ismethod(handler) or handler.__name__ == '__init__':
-            args = args[1:]  # drop 'self'
-        defaults = self._get_defaults(args, defaults, kwonlydefaults)
-        return ArgumentSpec(
-            name, self._type,
+        args, varargs, kws, defaults, kwo, kwo_defaults, annotations \
+                = self._get_arg_spec(handler)
+        spec = ArgumentSpec(
+            name,
+            self._type,
             positional=args,
             varargs=varargs,
-            kwargs=kwargs,
-            kwonlyargs=kwonly,
-            defaults=defaults,
-            types=self._get_types(handler, annotations, defaults)
+            kwargs=kws,
+            kwonlyargs=kwo,
+            defaults=self._get_defaults(args, defaults, kwo_defaults)
         )
+        spec.types = self._get_types(handler, annotations, spec)
+        return spec
 
-    def _get_defaults(self, args, default_values, kwonlydefaults):
+    def _get_arg_spec(self, handler):
+        handler = unwrap(handler)
+        try:
+            args, varargs, kws, defaults, kwo, kwo_defaults, annotations \
+                    = getfullargspec(handler)
+        except TypeError:    # Can occur w/ C functions (incl. many builtins).
+            return [], 'args', None, None, [], None, {}
+        if ismethod(handler) or handler.__name__ == '__init__':
+            args = args[1:]  # Drop 'self'.
+        return args, varargs, kws, defaults, kwo, kwo_defaults, annotations
+
+    def _get_defaults(self, args, default_values, kwo_defaults):
         if default_values:
             defaults = dict(zip(args[-len(default_values):], default_values))
         else:
             defaults = {}
-        if kwonlydefaults:
-            defaults.update(kwonlydefaults)
+        if kwo_defaults:
+            defaults.update(kwo_defaults)
         return defaults
 
-    def _get_types(self, handler, annotations, defaults):
-        types = getattr(handler, 'robot_types', None)
-        if types is not None:
-            return types
-        types = self._get_type_hints(handler, defaults)
-        if types is not None:
-            return types
-        return annotations
-
-    def _get_type_hints(self, handler, defaults):
-        if not typing:
+    def _get_types(self, handler, annotations, spec):
+        types = getattr(handler, 'robot_types', ())
+        if types is None:
             return None
+        if types:
+            return types
+        return self._get_type_hints(handler, annotations, spec)
+
+    def _get_type_hints(self, handler, annotations, spec):
+        if not typing:
+            return annotations
         try:
             type_hints = typing.get_type_hints(handler)
         except Exception:  # Can raise pretty much anything
-            return None
-        return self._remove_optional_none(type_hints, defaults)
+            return annotations
+        self._remove_mismatching_type_hints(type_hints, spec.argument_names)
+        self._remove_optional_none_type_hints(type_hints, spec.defaults)
+        return type_hints
 
-    def _remove_optional_none(self, type_hints, defaults):
-        # If argument has None as a default, `typing.get_type_hints` adds
+    def _remove_mismatching_type_hints(self, type_hints, argument_names):
+        # typing.get_type_hints returns info from the original function even
+        # if it is decorated. Argument names are got from the wrapping
+        # decorator and thus there is a mismatch that needs to be resolved.
+        mismatch = set(type_hints) - set(argument_names)
+        for name in mismatch:
+            type_hints.pop(name)
+
+    def _remove_optional_none_type_hints(self, type_hints, defaults):
+        # If argument has None as a default, typing.get_type_hints adds
         # optional None to the information it returns. We don't want that.
         for arg in defaults:
             if defaults[arg] is None and arg in type_hints:
@@ -102,7 +123,6 @@ class PythonArgumentParser(_ArgumentParser):
                     types = type_.__args__
                     if len(types) == 2 and types[1] is type(None):
                         type_hints[arg] = types[0]
-        return type_hints
 
     def _is_union(self, type_):
         if PY_VERSION >= (3, 7) and hasattr(type_, '__origin__'):
@@ -164,8 +184,8 @@ class JavaArgumentParser(_ArgumentParser):
             defaults = {}
         return ArgumentSpec(name, self._type,
                             positional=positional,
-                            varargs='*varargs' if varargs else None,
-                            kwargs='**kwargs' if kwargs else None,
+                            varargs='varargs' if varargs else None,
+                            kwargs='kwargs' if kwargs else None,
                             defaults=defaults,
                             supports_named=False)
 
@@ -173,30 +193,30 @@ class JavaArgumentParser(_ArgumentParser):
 class _ArgumentSpecParser(_ArgumentParser):
 
     def parse(self, argspec, name=None):
-        result = ArgumentSpec(name, self._type)
+        spec = ArgumentSpec(name, self._type)
         kw_only_args = False
         for arg in argspec:
-            if result.kwargs:
+            if spec.kwargs:
                 self._raise_invalid_spec('Only last argument can be kwargs.')
             elif self._is_kwargs(arg):
-                self._add_kwargs(arg, result)
+                self._add_kwargs(spec, arg)
             elif self._is_kw_only_separator(arg):
-                if result.varargs or kw_only_args:
+                if spec.varargs or kw_only_args:
                     self._raise_invalid_spec('Cannot have multiple varargs.')
                 kw_only_args = True
             elif self._is_varargs(arg):
-                if result.varargs or kw_only_args:
+                if spec.varargs or kw_only_args:
                     self._raise_invalid_spec('Cannot have multiple varargs.')
-                self._add_varargs(arg, result)
+                self._add_varargs(spec, arg)
                 kw_only_args = True
             elif '=' in arg:
-                self._add_arg_with_default(arg, result, kw_only_args)
-            elif result.defaults and not kw_only_args:
+                self._add_arg_with_default(spec, arg, kw_only_args)
+            elif spec.defaults and not kw_only_args:
                 self._raise_invalid_spec('Non-default argument after default '
                                          'arguments.')
             else:
-                self._add_arg(arg, result, kw_only_args)
-        return result
+                self._add_arg(spec, arg, kw_only_args)
+        return spec
 
     def _raise_invalid_spec(self, error):
         raise DataError('Invalid argument specification: %s' % error)
@@ -204,8 +224,8 @@ class _ArgumentSpecParser(_ArgumentParser):
     def _is_kwargs(self, arg):
         raise NotImplementedError
 
-    def _add_kwargs(self, kwargs, result):
-        result.kwargs = self._format_kwargs(kwargs)
+    def _add_kwargs(self, spec, kwargs):
+        spec.kwargs = self._format_kwargs(kwargs)
 
     def _format_kwargs(self, kwargs):
         raise NotImplementedError
@@ -216,23 +236,23 @@ class _ArgumentSpecParser(_ArgumentParser):
     def _is_varargs(self, arg):
         raise NotImplementedError
 
-    def _add_varargs(self, varargs, result):
-        result.varargs = self._format_varargs(varargs)
+    def _add_varargs(self, spec, varargs):
+        spec.varargs = self._format_varargs(varargs)
 
     def _format_varargs(self, varargs):
         raise NotImplementedError
 
-    def _add_arg_with_default(self, arg, result, kw_only_arg=False):
+    def _add_arg_with_default(self, spec, arg, kw_only_arg=False):
         arg, default = arg.split('=', 1)
-        arg = self._add_arg(arg, result, kw_only_arg)
-        result.defaults[arg] = default
+        arg = self._add_arg(spec, arg, kw_only_arg)
+        spec.defaults[arg] = default
 
     def _format_arg(self, arg):
         return arg
 
-    def _add_arg(self, arg, result, kw_only_arg=False):
+    def _add_arg(self, spec, arg, kw_only_arg=False):
         arg = self._format_arg(arg)
-        target = result.positional if not kw_only_arg else result.kwonlyargs
+        target = spec.positional if not kw_only_arg else spec.kwonlyargs
         target.append(arg)
         return arg
 

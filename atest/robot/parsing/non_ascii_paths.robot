@@ -24,7 +24,7 @@ Creating logs and reports should succeed
 
 Failures processing files are handled gracefully
     ${path} =    Normalize Path    ${BASEDIR}/Työ/tyhjä.robot
-    Check syslog contains    Data source '${path}' has no tests or tasks.
+    Syslog Should Contain    Data source '${path}' has no tests or tasks.
 
 *** Keywords ***
 Create input data and run tests

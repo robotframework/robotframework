@@ -21,6 +21,6 @@ S2TC1 Fixture
     [Teardown]    Log    Teardown defined in test
 
 S2TC1 Timeout
-    [Documentation]    FAIL Test timeout 1 second exceeded.
-    [Timeout]    1 s
-    Sleep    1.1
+    [Documentation]    FAIL Test timeout 99 milliseconds exceeded.
+    [Timeout]    0.099
+    Sleep    1s

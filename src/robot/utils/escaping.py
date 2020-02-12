@@ -37,99 +37,73 @@ def escape(item):
     return item
 
 
-def unescape(item):
-    if not (is_string(item) and '\\' in item):
-        return item
-    return Unescaper().unescape(item)
-
-
+# TODO: Deprecate/remove support for ignoring space after literal newline!
 class Unescaper(object):
+    _escape_sequences = re.compile(r'''
+        (\\+)                # escapes
+        (n\ ?|r|t            # n, r, or t
+         |x[0-9a-fA-F]{2}    # x+HH
+         |u[0-9a-fA-F]{4}    # u+HHHH
+         |U[0-9a-fA-F]{8}    # U+HHHHHHHH
+        )?                   # optionally
+    ''', re.VERBOSE)
 
-    def unescape(self, string):
-        return ''.join(self._yield_unescaped(string))
+    def __init__(self):
+        self._escape_handlers = {
+            '': lambda value: value,
+            'n': self._handle_n,
+            'r': lambda value: '\r',
+            't': lambda value: '\t',
+            'x': self._hex_to_unichr,
+            'u': self._hex_to_unichr,
+            'U': self._hex_to_unichr
+        }
 
-    def _yield_unescaped(self, string):
-        while '\\' in string:
-            finder = EscapeFinder(string)
-            yield finder.before + finder.backslashes
-            if finder.escaped and finder.text:
-                yield self._unescape(finder.text)
-            else:
-                yield finder.text
-            string = finder.after
-        yield string
+    def _handle_n(self, value):
+        if value:
+            from robot.output import LOGGER
+            LOGGER.warn(r"Ignoring space after '\n' is deprecated.")
+        return '\n'
 
-    def _unescape(self, text):
-        try:
-            escape = str(text[0])
-        except UnicodeError:
-            return text
-        try:
-            unescaper = getattr(self, '_unescaper_for_' + escape)
-        except AttributeError:
-            return text
-        else:
-            return unescaper(text[1:])
-
-    def _unescaper_for_n(self, text):
-        if text.startswith(' '):
-            text = text[1:]
-        return '\n' + text
-
-    def _unescaper_for_r(self, text):
-        return '\r' + text
-
-    def _unescaper_for_t(self, text):
-        return '\t' + text
-
-    def _unescaper_for_x(self, text):
-        return self._unescape_character(text, 2, 'x')
-
-    def _unescaper_for_u(self, text):
-        return self._unescape_character(text, 4, 'u')
-
-    def _unescaper_for_U(self, text):
-        return self._unescape_character(text, 8, 'U')
-
-    def _unescape_character(self, text, length, escape):
-        try:
-            char = self._get_character(text[:length], length)
-        except ValueError:
-            return escape + text
-        else:
-            return char + text[length:]
-
-    def _get_character(self, text, length):
-        if len(text) < length or not text.isalnum():
-            raise ValueError
-        ordinal = int(text, 16)
+    def _hex_to_unichr(self, value):
+        ordinal = int(value, 16)
         # No Unicode code points above 0x10FFFF
         if ordinal > 0x10FFFF:
-            raise ValueError
+            return 'U' + value
         # unichr only supports ordinals up to 0xFFFF with narrow Python builds
         if ordinal > 0xFFFF:
-            return eval("u'\\U%08x'" % ordinal)
+            return eval(r"u'\U%08x'" % ordinal)
         return unichr(ordinal)
 
+    def unescape(self, item):
+        if not (is_string(item) and '\\' in item):
+            return item
+        return self._escape_sequences.sub(self._handle_escapes, item)
 
-class EscapeFinder(object):
-    _escaped = re.compile(r'(\\+)([^\\]*)')
+    def _handle_escapes(self, match):
+        escapes, text = match.groups()
+        half, is_escaped = divmod(len(escapes), 2)
+        escapes = escapes[:half]
+        text = text or ''
+        if is_escaped:
+            marker, value = text[:1], text[1:]
+            text = self._escape_handlers[marker](value)
+        return escapes + text
 
-    def __init__(self, string):
-        res = self._escaped.search(string)
-        self.before = string[:res.start()]
-        escape_chars = len(res.group(1))
-        self.backslashes = '\\' * (escape_chars // 2)
-        self.escaped = bool(escape_chars % 2)
-        self.text = res.group(2)
-        self.after = string[res.end():]
+
+unescape = Unescaper().unescape
 
 
 def split_from_equals(string):
+    if not is_string(string) or '=' not in string:
+        return string, None
+    if '\\' not in string:
+        return tuple(string.split('=', 1))
     index = _get_split_index(string)
     if index == -1:
         return string, None
     return string[:index], string[index+1:]
+
 
 def _get_split_index(string):
     index = 0
@@ -139,6 +113,7 @@ def _get_split_index(string):
             return index
         index += 1
     return -1
+
 
 def _not_escaping(name):
     backslashes = len(name) - len(name.rstrip('\\'))

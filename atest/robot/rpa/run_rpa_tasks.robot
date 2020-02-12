@@ -29,6 +29,10 @@ Conflicting headers cause error
     [Template]    Run and validate conflict
     rpa/tests.robot rpa/tasks     rpa/tasks/stuff.robot    tasks    tests
     rpa/                          rpa/tests.robot          tests    tasks
+    ...    [[] ERROR ] Error in file '*[/\\]task_setup_teardown_template_timeout.robot' on line 6:
+    ...    Non-existing setting 'Tesk Setup'. Did you mean:\n
+    ...    ${SPACE*3}Test Setup\n
+    ...    ${SPACE*3}Task Setup\n
 
 Conflicting headers with --rpa are fine
     --RPA       rpa/tasks rpa/tests.robot    Task    Another task    Test
@@ -40,7 +44,8 @@ Conflicting headers with --norpa are fine
 Conflicting headers in same file cause error
     [Documentation]    Using --rpa or --norpa doesn't affect the behavior.
     [Template]    NONE
-    Run tests without processing output    --rpa    %{TEMPDIR}/rpa/tasks_and_tests.robot
+    ${result}=    Run tests without processing output    --rpa    %{TEMPDIR}/rpa/tasks_and_tests.robot
+    Should be equal    ${result.rc}    ${252}
     ${path} =    Normalize path    %{TEMPDIR}/rpa/tasks_and_tests.robot
     ${message} =    Catenate
     ...    [ ERROR ] Parsing '${path}' failed:
@@ -49,10 +54,13 @@ Conflicting headers in same file cause error
 
 Conflicting headers in same file cause error when executing directory
     [Template]    NONE
-    Run tests    ${EMPTY}    %{TEMPDIR}/rpa/
-    Should contain tests    ${SUITE}    Task
+    ${result}=    Run tests without processing output   ${EMPTY}    %{TEMPDIR}/rpa/
+    Should be equal    ${result.rc}    ${252}
     ${path} =    Normalize path    %{TEMPDIR}/rpa/tasks_and_tests.robot
-    Check log message    ${ERRORS[0]}    Parsing '${path}' failed: One file cannot have both tests and tasks.    ERROR
+    ${message} =    Catenate
+        ...    [ ERROR ] Parsing '${path}' failed:
+        ...    One file cannot have both tests and tasks.
+    Stderr Should Be Equal To    ${message}${USAGE TIP}\n
 
 --task as alias for --test
     --task task                            rpa/tasks    Task
@@ -60,9 +68,9 @@ Conflicting headers in same file cause error when executing directory
 
 Error message is correct if no task match --task or other options
     [Template]    Run and validate no task found
-    --task nonex                   named 'nonex'
-    --include xxx --exclude yyy    with tag 'xxx' and without tag 'yyy'
-    --suite nonex --task task      named 'task' in suite 'nonex'
+    --task nonex                   matching name 'nonex'
+    --include xxx --exclude yyy    matching tag 'xxx' and not matching tag 'yyy'
+    --suite nonex --task task      matching name 'task' in suite 'nonex'
 
 *** Keywords ***
 Run and validate RPA tasks
@@ -78,14 +86,15 @@ Run and validate test cases
     Should contain tests    ${SUITE}    @{tasks}
 
 Run and validate conflict
-    [Arguments]    ${paths}    ${conflicting}    ${this}    ${that}
+    [Arguments]    ${paths}    ${conflicting}    ${this}    ${that}    @{extra errors}
     Run tests without processing output    ${EMPTY}    ${paths}
     ${conflicting} =    Normalize path    ${DATADIR}/${conflicting}
-    ${message} =    Catenate
-    ...    [ ERROR ] Conflicting execution modes.
-    ...    File '${conflicting}' has ${this} but files parsed earlier have ${that}.
+    ${extra} =    Catenate    @{extra errors}
+    ${error} =    Catenate
+    ...    [[] ERROR ] Parsing '${conflicting}' failed: Conflicting execution modes.
+    ...    File has ${this} but files parsed earlier have ${that}.
     ...    Fix headers or use '--rpa' or '--norpa' options to set the execution mode explicitly.
-    Stderr Should Be Equal To    ${message}${USAGE TIP}\n
+    Stderr Should Match    ${extra}${error}${USAGE TIP}\n
 
 Run and validate no task found
     [Arguments]    ${options}    ${message}
@@ -105,7 +114,7 @@ Outputs should contain correct mode information
     File should contain regexp     ${OUTDIR}/report.html    window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"Critical ${title}s",.*\\}\\]\\];
     File should contain regexp     ${OUTDIR}/log.html       window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"All ${title}s",.*\\}\\]\\];
     File should contain regexp     ${OUTDIR}/report.html    window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"All ${title}s",.*\\}\\]\\];
-    Check Stdout Contains Regexp    \\d+ critical ${lower}s?, \\d+ passed, \\d+ failed\n\\d+ ${lower}s? total, \\d+ passed, \\d+ failed\n
+    Stdout Should Contain Regexp    \\d+ critical ${lower}s?, \\d+ passed, \\d+ failed\n\\d+ ${lower}s? total, \\d+ passed, \\d+ failed\n
 
 Initialize tests and tasks data
     Create directory    ${TEMPDIR}/rpa

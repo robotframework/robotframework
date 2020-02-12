@@ -9,6 +9,9 @@ Basics
 None means no type
     Check Test Case    ${TESTNAME}
 
+Falsy types mean no type
+    Check Test Case    ${TESTNAME}
+
 Less types than arguments is ok
     Check Test Case    ${TESTNAME}
 

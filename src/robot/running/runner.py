@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionFailed, DataError, PassExecution
+from robot.errors import ExecutionStatus, DataError, PassExecution
 from robot.model import SuiteVisitor
 from robot.result import TestSuite, Result
 from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic
@@ -21,7 +21,7 @@ from robot.variables import VariableScopes
 
 from .context import EXECUTION_CONTEXTS
 from .steprunner import StepRunner
-from .namespace import IMPORTER, Namespace
+from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
 
@@ -106,15 +106,13 @@ class Runner(SuiteVisitor):
         self._suite = self._suite.parent
         self._suite_status = self._suite_status.parent
         self._output.library_listeners.discard_suite_scope()
-        if not suite.parent:
-            IMPORTER.close_global_library_listeners()
 
     def visit_test(self, test):
         if test.name in self._executed_tests:
             self._output.warn("Multiple test cases with name '%s' executed in "
                               "test suite '%s'." % (test.name, self._suite.longname))
         self._executed_tests[test.name] = True
-        result = self._suite.tests.create(name=test.name,
+        result = self._suite.tests.create(name=self._resolve_setting(test.name),
                                           doc=self._resolve_setting(test.doc),
                                           tags=self._resolve_setting(test.tags),
                                           starttime=get_timestamp(),
@@ -142,7 +140,7 @@ class Runner(SuiteVisitor):
                 status.test_failed(err)
             else:
                 result.message = exception.message
-        except ExecutionFailed as err:
+        except ExecutionStatus as err:
             status.test_failed(err)
         result.status = status.status
         result.message = status.message or result.message
@@ -168,8 +166,7 @@ class Runner(SuiteVisitor):
     def _get_timeout(self, test):
         if not test.timeout:
             return None
-        return TestTimeout(test.timeout.value, test.timeout.message,
-                           self._variables, rpa=test.parent.rpa)
+        return TestTimeout(test.timeout, self._variables, rpa=test.parent.rpa)
 
     def _run_setup(self, setup, status, result=None):
         if not status.failures:
@@ -200,7 +197,7 @@ class Runner(SuiteVisitor):
             return None
         try:
             StepRunner(self._context).run_step(data, name=name)
-        except ExecutionFailed as err:
+        except ExecutionStatus as err:
             return err
 
 

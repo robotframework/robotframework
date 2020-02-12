@@ -17,9 +17,9 @@ import os
 import sys
 
 from robot.errors import DataError
-from robot.parsing import disable_curdir_processing
-from robot.running import TestLibrary, UserLibrary, UserErrorHandler
-from robot.utils import split_tags_from_doc, unescape
+from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
+                           ResourceFileBuilder)
+from robot.utils import split_tags_from_doc, unescape, unic
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -51,7 +51,7 @@ class LibraryDocBuilder(object):
         return library
 
     def _get_doc(self, lib):
-        return lib.doc or "Documentation for test library ``%s``." % lib.name
+        return lib.doc or "Documentation for library ``%s``." % lib.name
 
     def _get_initializers(self, lib):
         if lib.init.arguments.maxargs:
@@ -69,9 +69,10 @@ class ResourceDocBuilder(object):
         libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(res)
         return libdoc
 
-    @disable_curdir_processing
     def _import_resource(self, path):
-        return UserLibrary(self._find_resource_file(path))
+        ast = ResourceFileBuilder(process_curdir=False).build(
+            self._find_resource_file(path))
+        return UserLibrary(ast)
 
     def _find_resource_file(self, path):
         if os.path.isfile(path):
@@ -129,10 +130,10 @@ class KeywordDocBuilder(object):
 
     def _format_arg(self, arg, argspec):
         result = arg
-        if arg in argspec.types:
+        if argspec.types is not None and arg in argspec.types:
             result = '%s: %s' % (result, self._format_type(argspec.types[arg]))
         if arg in argspec.defaults:
-            result = '%s=%s' % (result, argspec.defaults[arg])
+            result = '%s=%s' % (result, unic(argspec.defaults[arg]))
         return result
 
     def _format_type(self, type_):

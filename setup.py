@@ -34,9 +34,14 @@ Programming Language :: Python :: Implementation :: Jython
 Programming Language :: Python :: Implementation :: IronPython
 Programming Language :: Python :: Implementation :: PyPy
 Topic :: Software Development :: Testing
+Topic :: Software Development :: Testing :: Acceptance
+Topic :: Software Development :: Testing :: BDD
 Framework :: Robot Framework
 """.strip().splitlines()
-KEYWORDS = 'robotframework testing testautomation acceptancetesting atdd bdd'
+DESCRIPTION = ('Generic automation framework for acceptance testing '
+               'and robotic process automation (RPA)')
+KEYWORDS = ('robotframework automation testautomation rpa '
+            'testing acceptancetesting atdd bdd')
 PACKAGE_DATA = [join('htmldata', directory, pattern)
                 for directory in ('rebot', 'libdoc', 'testdoc', 'lib', 'common')
                 for pattern in ('*.html', '*.css', '*.js')]
@@ -45,12 +50,12 @@ PACKAGE_DATA = [join('htmldata', directory, pattern)
 setup(
     name         = 'robotframework',
     version      = VERSION,
-    author       = u'Pekka Klärck',
+    author       = u'Pekka Kl\xe4rck',
     author_email = 'peke@eliga.fi',
     url          = 'http://robotframework.org',
     download_url = 'https://pypi.python.org/pypi/robotframework',
     license      = 'Apache License 2.0',
-    description  = 'A generic test automation framework',
+    description  = DESCRIPTION,
     long_description = LONG_DESCRIPTION,
     keywords     = KEYWORDS,
     platforms    = 'any',

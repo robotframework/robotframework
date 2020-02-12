@@ -1,8 +1,8 @@
-"This text should be ignored, even though it's no a comment."				
+"This text should be ignored, even though it's not a comment."				
 We have a devious plan to rule the world with robots.				
 *Setting*	*Value*	*Value*	*Value*	*Value*
 
-Documentation	A complex testdata file	in tsv format.
+Documentation	A complex testdata file in tsv format.
 Default Tags	default1			
 Force Tags	force1	force2		
 
@@ -48,7 +48,7 @@ Resource File	Keyword from TSV resource
 
 Variable File	Should Be Equal	@{file_listvar}[0]	${True}
 	Should Be Equal	@{file_listvar}[1]	${3.14}
-	Should Be Equal	@{file_listvar}[2]	"Hello, world!!"
+	Should Be Equal	@{file_listvar}[2]	Hello, world!!
 	Should Be Equal	${file_var1}	${-314}
 	Should Be Equal	${file_var2}	file variable 2
 
@@ -87,15 +87,15 @@ Default Fixture	No operation
 
 Overridden Fixture	[Teardown]	Fail	Failing Teardown
 	[Setup]	Log	Own Setup
-	[Documentation]	FAIL	Teardown failed:\n Failing Teardown
+	[Documentation]	FAIL	Teardown failed:\nFailing Teardown
 	No Operation		
 
 Quotes	Should Be Equal	${quoted}	"""this has """"many "" quotes """""	
 	Should Be Equal	${single_quoted}	s'ingle'qu'ot'es''	
 
 Escaping	Should Be Equal	-c:\\temp-\t-\x00-\${x}-	${ESCAPING}
-	Should Be Equal		${EMPTY}
-	Should Be Equal			This is message
+	Should Be Equal	\	${EMPTY}
+	Should Be Equal	\	\	This is message
 
 *Keywords*	*Action*	*Argument*	*Argument*	*Argument*
 

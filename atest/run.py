@@ -48,6 +48,10 @@ try:
 except ImportError:
     def jar(*args, **kwargs):
         raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
+except AssertionError:
+    def jar(*args, **kwargs):
+        raise RuntimeError("JAR can be created only when in the project root. "
+                           "See BUILD.rst for details.")
 
 
 ARGUMENTS = '''
@@ -77,7 +81,7 @@ def atests(interpreter, *arguments):
 
 
 def _get_directories(interpreter):
-    name = '{i.name}-{i.version}-{i.os}'.format(i=interpreter).replace(' ', '')
+    name = interpreter.output_name
     outputdir = dos_to_long(join(CURDIR, 'results', name))
     tempdir = dos_to_long(join(tempfile.gettempdir(), 'robottests', name))
     if exists(outputdir):
@@ -125,8 +129,8 @@ def dos_to_long(path):
         return path
     from ctypes import create_unicode_buffer, windll
     buf = create_unicode_buffer(500)
-    windll.kernel32.GetLongPathNameW(path.decode('mbcs'), buf, 500)
-    return buf.value.encode('mbcs')
+    windll.kernel32.GetLongPathNameW(path, buf, 500)
+    return buf.value
 
 
 if __name__ == '__main__':

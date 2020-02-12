@@ -266,6 +266,12 @@ Invalid kwonly
     [Tags]               require-py3
     Kwonly               argument=foobar           expected='foobar'
 
+@keyword decorator overrides default values
+    Types via keyword deco override            42    timedelta(seconds=42)
+    None as types via @keyword disables        42    u'42'
+    Empty types via @keyword doesn't override  42    42
+    @keyword without types doesn't override    42    42
+
 *** Keywords ***
 Invalid value is passed as-is
     [Arguments]    ${kw}    ${arg}

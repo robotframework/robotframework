@@ -24,7 +24,7 @@ Named Arguments
     first, second, 3         Arguments With Default Values    first    arg2=second
     first, second, 3         Arguments With Default Values    arg1=first    arg2=second
     first, second, 3         Arguments With Default Values    arg2=second    arg1=first
-    first, 2, third          Arguments With Default Values    first    arg3=third
+    first, 2 (int), third    Arguments With Default Values    first    arg3=third
     A, B, C                  Arguments With Default Values    arg3=C    arg1=A    arg2=B
 
 Variable Number Of Arguments
@@ -120,6 +120,14 @@ Named arguments before positional
     [Documentation]    FAIL Keyword 'Remote.Args And Kwargs' got positional argument after named arguments.
     [Template]    NONE
     Args and kwargs    this=wont    work
+
+Argument types as list
+    [Template]    NONE
+    Argument types as list    42    42    {'a': 1, 'b': u'ä'}    {}
+
+Argument types as dict
+    [Template]    NONE
+    Argument types as dict    42    42    {'a': 1, 'b': u'ä'}    {}
 
 *** Keywords ***
 Arguments Should Be Accepted

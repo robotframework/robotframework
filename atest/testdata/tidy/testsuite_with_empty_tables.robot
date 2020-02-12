@@ -2,6 +2,6 @@
 
 *** Variables ***
 
-*** Test cases ***
+*** Test Cases ***
 
 *** Keywords ***

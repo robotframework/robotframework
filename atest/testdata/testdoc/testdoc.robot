@@ -1,7 +1,8 @@
 *** Settings ***
-Library    nonex
-Resource   exnon
-Variables  xxxxx
+Documentation   Documentation with ${CURDIR}
+Library         nonex
+Resource        exnon
+Variables       xxxxx
 
 *** Variables ***
 ${FOO}     ${CURDIR}

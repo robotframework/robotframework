@@ -51,9 +51,9 @@ Warnings Should Be Written To Syslog
     Check Log Message  ${ERRORS.msgs[1]}  Hello says "Pass"!  WARN
     Check Log Message  ${ERRORS.msgs[2]}  Hello says "Fail"!  WARN
     Should Be True  ${ERRORS.msg_count} == 3
-    Check Syslog Contains  | WARN \ |  Hello says "Suite Setup"!
-    Check Syslog Contains  | WARN \ |  Hello says "Pass"!
-    Check Syslog Contains  | WARN \ |  Hello says "Fail"!
+    Syslog Should Contain  | WARN \ |  Hello says "Suite Setup"!
+    Syslog Should Contain  | WARN \ |  Hello says "Pass"!
+    Syslog Should Contain  | WARN \ |  Hello says "Fail"!
 
 Error Level
     Run Tests  --loglevel ERROR --variable LEVEL1:ERROR --variable LEVEL2:WARN  ${TESTDATA}

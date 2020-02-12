@@ -19,8 +19,9 @@ class ListenAll:
 
     def start_test(self, name, attrs):
         tags = [str(tag) for tag in attrs['tags']]
-        self.outfile.write("TEST START: %s (%s) '%s' %s crit: %s\n"
-                           % (name, attrs['id'], attrs['doc'], tags,  attrs['critical']))
+        self.outfile.write("TEST START: %s (%s, line %s) '%s' %s crit: %s\n"
+                           % (name, attrs['id'], attrs['lineno'], attrs['doc'],
+                              tags,  attrs['critical']))
 
     def start_keyword(self, name, attrs):
         args = [str(arg) for arg in attrs['args']]
