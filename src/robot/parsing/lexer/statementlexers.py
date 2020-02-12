@@ -85,15 +85,7 @@ class CommentSectionHeaderLexer(SectionHeaderLexer):
 class ErrorSectionHeaderLexer(SectionHeaderLexer):
 
     def lex(self):
-        header = self.statement[0]
-        header.set_error(
-            "Unrecognized section header '%s'. Available headers for data: "
-            "'Setting(s)', 'Variable(s)', 'Test Case(s)', 'Task(s)' and "
-            "'Keyword(s)'. Use 'Comment(s)' to embedded additional data."
-            % header.value.strip('* ').strip()
-        )
-        for token in self.statement[1:]:
-            token.type = Token.COMMENT
+        self.ctx.lex_invalid_section(self.statement)
 
 
 class CommentLexer(StatementLexer):

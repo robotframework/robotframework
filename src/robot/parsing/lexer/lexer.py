@@ -82,7 +82,8 @@ class Lexer(object):
                 data = statement[:]
             else:
                 data = [t for t in statement if t.type == t.DATA]
-            self.lexer.input(data)
+            if data:
+                self.lexer.input(data)
 
     def _read(self, source):
         try:

@@ -67,6 +67,7 @@ class Token(object):
     EOL = 'EOL'
     EOS = 'EOS'
     ERROR = 'ERROR'
+    FATAL_ERROR = 'FATAL_ERROR'
     DATA = 'DATA'
 
     NON_DATA_TOKENS = (
@@ -121,8 +122,8 @@ class Token(object):
             return -1
         return self.col_offset + len(self.value)
 
-    def set_error(self, error):
-        self.type = Token.ERROR
+    def set_error(self, error, fatal=False):
+        self.type = Token.ERROR if not fatal else Token.FATAL_ERROR
         self.error = error
 
     def __unicode__(self):

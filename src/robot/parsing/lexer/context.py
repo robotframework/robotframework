@@ -13,8 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .settings import (InitFileSettings, KeywordSettings, TestCaseFileSettings,
-                       TestCaseSettings, ResourceFileSettings)
+from .sections import (InitFileSections, TestCaseFileSections,
+                       ResourceFileSections)
+from .settings import (InitFileSettings, TestCaseFileSettings,
+                       ResourceFileSettings, TestCaseSettings, KeywordSettings)
 
 
 class LexingContext(object):
@@ -26,33 +28,52 @@ class LexingContext(object):
     def lex_setting(self, statement):
         self.settings.lex(statement)
 
+
+class FileContext(LexingContext):
+    sections_class = None
+
+    def __init__(self, settings=None):
+        LexingContext.__init__(self, settings)
+        self.sections = self.sections_class()
+
+    def setting_section(self, statement):
+        return self.sections.setting(statement)
+
+    def variable_section(self, statement):
+        return self.sections.variable(statement)
+
+    def test_case_section(self, statement):
+        return self.sections.test_case(statement)
+
+    def keyword_section(self, statement):
+        return self.sections.keyword(statement)
+
+    def comment_section(self, statement):
+        return self.sections.comment(statement)
+
     def keyword_context(self):
         return KeywordContext(settings=KeywordSettings())
 
+    def lex_invalid_section(self, statement):
+        self.sections.lex_invalid(statement)
 
-class TestCaseFileContext(LexingContext):
+
+class TestCaseFileContext(FileContext):
+    sections_class = TestCaseFileSections
     settings_class = TestCaseFileSettings
 
     def test_case_context(self):
         return TestCaseContext(settings=TestCaseSettings(self.settings))
 
 
-class ResourceFileContext(LexingContext):
+class ResourceFileContext(FileContext):
+    sections_class = ResourceFileSections
     settings_class = ResourceFileSettings
 
-    def test_case_context(self):
-        # Lex test cases for resource files. Error is reported later.
-        # TODO: Should this be a lex error?
-        return KeywordContext(settings=TestCaseSettings(self.settings))
 
-
-class InitFileContext(LexingContext):
+class InitFileContext(FileContext):
+    sections_class = InitFileSections
     settings_class = InitFileSettings
-
-    def test_case_context(self):
-        # Lex test cases for init files. Error is reported later.
-        # TODO: Should this be a lex error?
-        return KeywordContext(settings=TestCaseSettings(self.settings))
 
 
 class TestCaseContext(LexingContext):

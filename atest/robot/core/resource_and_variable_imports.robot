@@ -124,7 +124,8 @@ Invalid Setting In Resource File
 Resource cannot contain tests
     ${path} =    Normalize Path    ${RESDIR}/resource_with_testcase_table.robot
     Error in file    3    ${RESDIR}/resources.robot    6
-    ...    Resource file '${path}' cannot contain tests or tasks.
+    ...    Error in file '${path}' on line 4:
+    ...    Resource file with 'Test Cases' section is invalid.
 
 Invalid Variable File
     ${path} =    Normalize Path    ${RESDIR}/invalid_variable_file.py

@@ -13,8 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import normalize_whitespace
-
 from .tokens import Token
 from .statementlexers import (Lexer,
                               SettingSectionHeaderLexer, SettingLexer,
@@ -32,6 +30,7 @@ from .statementlexers import (Lexer,
 class BlockLexer(Lexer):
 
     def __init__(self, ctx):
+        """:type ctx: :class:`robot.parsing.lexer.context.FileContext`"""
         Lexer.__init__(self, ctx)
         self.lexers = []
 
@@ -84,53 +83,51 @@ class FileLexer(BlockLexer):
 
 
 class SectionLexer(BlockLexer):
-    markers = ()
-    has_header = True
-
-    def handles(self, statement):
-        if not statement:
-            return False
-        marker = statement[0].value
-        return (marker.startswith('*') and
-                self._normalize(marker) in self.markers)
-
-    def _normalize(self, marker):
-        return normalize_whitespace(marker).strip('* ').title()
 
     def accepts_more(self, statement):
         return not statement[0].value.startswith('*')
 
 
 class SettingSectionLexer(SectionLexer):
-    markers = ('Setting', 'Settings')
+
+    def handles(self, statement):
+        return self.ctx.setting_section(statement)
 
     def lexer_classes(self):
         return (SettingSectionHeaderLexer, SettingLexer)
 
 
 class VariableSectionLexer(SectionLexer):
-    markers = ('Variable', 'Variables')
+
+    def handles(self, statement):
+        return self.ctx.variable_section(statement)
 
     def lexer_classes(self):
         return (VariableSectionHeaderLexer, VariableLexer)
 
 
 class TestCaseSectionLexer(SectionLexer):
-    markers = ('Test Case', 'Test Cases', 'Task', 'Tasks')
+
+    def handles(self, statement):
+        return self.ctx.test_case_section(statement)
 
     def lexer_classes(self):
         return (TestCaseSectionHeaderLexer, TestCaseLexer)
 
 
 class KeywordSectionLexer(SettingSectionLexer):
-    markers = ('Keyword', 'Keywords')
+
+    def handles(self, statement):
+        return self.ctx.keyword_section(statement)
 
     def lexer_classes(self):
         return (KeywordSectionHeaderLexer, KeywordLexer)
 
 
 class CommentSectionLexer(SectionLexer):
-    markers = ('Comment', 'Comments')
+
+    def handles(self, statement):
+        return self.ctx.comment_section(statement)
 
     def lexer_classes(self):
         return (CommentSectionHeaderLexer, CommentLexer)

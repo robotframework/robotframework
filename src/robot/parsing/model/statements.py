@@ -51,6 +51,8 @@ class Statement(ast.AST):
         cls._statement_handlers[subcls.type] = subcls
         if subcls.type == Token.KEYWORD:
             cls._statement_handlers[Token.ASSIGN] = subcls
+        if subcls.type == Token.ERROR:
+            cls._statement_handlers[Token.FATAL_ERROR] = subcls
         return subcls
 
     @classmethod
@@ -94,7 +96,7 @@ class Statement(ast.AST):
 
     @property
     def error(self):
-        tokens = self.get_tokens(Token.ERROR)
+        tokens = self.get_tokens(Token.ERROR, Token.FATAL_ERROR)
         if not tokens:
             return None
         if len(tokens) == 1:

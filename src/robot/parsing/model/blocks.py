@@ -53,10 +53,6 @@ class File(Block):
         self.sections = sections or []
         self.source = source
 
-    @property
-    def has_tests(self):
-        return any(isinstance(s, TestCaseSection) for s in self.sections)
-
     def save(self, output=None):
         output = output or self.source
         if output is None:

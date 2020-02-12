@@ -82,9 +82,6 @@ class RobotParser(BaseParser):
                                    curdir=self._get_curdir(source))
         resource = ResourceFile(source=source)
         ErrorReporter(source).visit(model)
-        if model.has_tests:
-            raise DataError("Resource file '%s' cannot contain tests or tasks." %
-                            source)
         ResourceBuilder(resource).visit(model)
         return resource
 
@@ -134,6 +131,12 @@ class ErrorReporter(NodeVisitor):
         self.source = source
 
     def visit_Error(self, node):
-        for token in node.get_tokens(Token.ERROR):
-            LOGGER.error("Error in file '%s' on line %s: %s"
-                         % (self.source, token.lineno, token.error))
+        fatal = node.get_token(Token.FATAL_ERROR)
+        if fatal:
+            raise DataError(self._format_message(fatal))
+        for error in node.get_tokens(Token.ERROR):
+            LOGGER.error(self._format_message(error))
+
+    def _format_message(self, token):
+        return ("Error in file '%s' on line %s: %s"
+                % (self.source, token.lineno, token.error))
