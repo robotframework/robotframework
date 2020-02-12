@@ -401,15 +401,12 @@ class _List(object):
         return dict(zip(range(list_length), names))
 
     def _yield_list_diffs(self, list1, list2, names, ignore_order=False):
-        if is_truthy(ignore_order):
-            assert_true(Counter(list1) == Counter(list2), msg='Lists  are  different')
-        else:
-            for index, (item1, item2) in enumerate(zip(list1, list2)):         
-                name = ' (%s)' % names[index] if index in names else ''
-                try:
-                    assert_equal(item1, item2, msg='Index %d%s' % (index, name))
-                except AssertionError as err:
-                    yield unic(err)
+        for index, (item1, item2) in enumerate(zip(list1, list2)):         
+            name = ' (%s)' % names[index] if index in names else ''
+            try:
+                assert_equal(item1, item2, msg='Index %d%s' % (index, name))
+            except AssertionError as err:
+                yield unic(err)
 
     def list_should_contain_sub_list(self, list1, list2, msg=None, values=True):
         """Fails if not all of the elements in ``list2`` are found in ``list1``.
