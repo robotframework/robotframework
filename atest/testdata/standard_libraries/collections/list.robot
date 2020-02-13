@@ -332,7 +332,7 @@ Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
     Lists Should Be Equal    ${L3}    ${L3B}    names=${names}
 
 Lists Should Be Equal Ignore Order
-    [Documentation]    PASS list are equal
+    [Documentation]    FAIL Lists are different:
     ${names1} =    Create List    A    B	C	D
     ${names2} =    Create List    D    B	C	A
     Lists Should Be Equal    ${names1}    ${names2}    ignore_order=True
