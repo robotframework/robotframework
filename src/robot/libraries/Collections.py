@@ -346,7 +346,7 @@ class _List(object):
                                  '%s found multiple times.' % seq2str(dupes))
 
     def lists_should_be_equal(self, list1, list2, msg=None, values=True,
-                              names=None,ignore_order=False):
+                              names=None, ignore_order=False):
         """Fails if given lists are unequal.
 
         The keyword first verifies that the lists have equal lengths, and then
