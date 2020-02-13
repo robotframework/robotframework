@@ -74,14 +74,14 @@ class Lexer(object):
         self.statements = []
 
     def input(self, source):
-        content = self._read(source)
-        for statement in Tokenizer().tokenize(content, data_only=self.data_only):
+        for statement in Tokenizer().tokenize(self._read(source),
+                                              self.data_only):
             # Store all tokens but pass only DATA tokens to lexer.
             self.statements.append(statement)
             if self.data_only:
                 data = statement[:]
             else:
-                data = [t for t in statement if t.type == t.DATA]
+                data = [t for t in statement if t.type == Token.DATA]
             if data:
                 self.lexer.input(data)
 
