@@ -633,6 +633,90 @@ Name
         assert_tokens(data, expected, data_only=True)
 
 
+class TestSectionHeaders(unittest.TestCase):
+
+    def test_headers_allowed_everywhere(self):
+        data = '''\
+*** Settings ***
+*** Setting ***
+***variables***
+*VARIABLE*    ARGS    ARGH
+*Keywords     ***    ...
+...           ***
+*** Keyword ***      # Comment
+*** Comments ***
+*** Comment ***    1    2
+...    3    4
+...    5
+'''
+        expected = [
+            (T.SETTING_HEADER, '*** Settings ***', 1, 0),
+            (T.EOS, '', 1, 16),
+            (T.SETTING_HEADER, '*** Setting ***', 2, 0),
+            (T.EOS, '', 2, 15),
+            (T.VARIABLE_HEADER, '***variables***', 3, 0),
+            (T.EOS, '', 3, 15),
+            (T.VARIABLE_HEADER, '*VARIABLE*', 4, 0),
+            (T.VARIABLE_HEADER, 'ARGS', 4, 14),
+            (T.VARIABLE_HEADER, 'ARGH', 4, 22),
+            (T.EOS, '', 4, 26),
+            (T.KEYWORD_HEADER, '*Keywords', 5, 0),
+            (T.KEYWORD_HEADER, '***', 5, 14),
+            (T.KEYWORD_HEADER, '...', 5, 21),
+            (T.KEYWORD_HEADER, '***', 6, 14),
+            (T.EOS, '', 6, 17),
+            (T.KEYWORD_HEADER, '*** Keyword ***', 7, 0),
+            (T.EOS, '', 7, 15)
+        ]
+        assert_tokens(data, expected, get_tokens, data_only=True)
+        assert_tokens(data, expected, get_init_tokens, data_only=True)
+        assert_tokens(data, expected, get_resource_tokens, data_only=True)
+
+    def test_test_case_section(self):
+        assert_tokens('*** Test Cases ***', [
+            (T.TESTCASE_HEADER, '*** Test Cases ***', 1, 0),
+            (T.EOS, '', 1, 18),
+        ], data_only=True)
+
+    def test_case_section_causes_error_in_init_file(self):
+        assert_tokens('*** Test Cases ***', [
+            (T.ERROR, '*** Test Cases ***', 1, 0,
+             "'Test Cases' section is not allowed in suite initialization file."),
+            (T.EOS, '', 1, 18),
+        ], get_init_tokens, data_only=True)
+
+    def test_case_section_causes_fatal_error_in_resource_file(self):
+        assert_tokens('*** Test Cases ***', [
+            (T.FATAL_ERROR, '*** Test Cases ***', 1, 0,
+             "Resource file with 'Test Cases' section is invalid."),
+            (T.EOS, '', 1, 18),
+        ], get_resource_tokens, data_only=True)
+
+    def test_invalid_section_in_test_case_file(self):
+        assert_tokens('*** Invalid ***', [
+            (T.ERROR, '*** Invalid ***', 1, 0,
+             "Unrecognized section header '*** Invalid ***'. Valid sections: "
+             "'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' and 'Comments'."),
+            (T.EOS, '', 1, 15),
+        ], data_only=True)
+
+    def test_invalid_section_in_init_file(self):
+        assert_tokens('*** S e t t i n g s ***', [
+            (T.ERROR, '*** S e t t i n g s ***', 1, 0,
+             "Unrecognized section header '*** S e t t i n g s ***'. Valid sections: "
+             "'Settings', 'Variables', 'Keywords' and 'Comments'."),
+            (T.EOS, '', 1, 23),
+        ], get_init_tokens, data_only=True)
+
+    def test_invalid_section_in_resource_file(self):
+        assert_tokens('*', [
+            (T.ERROR, '*', 1, 0,
+             "Unrecognized section header '*'. Valid sections: "
+             "'Settings', 'Variables', 'Keywords' and 'Comments'."),
+            (T.EOS, '', 1, 1),
+        ], get_resource_tokens, data_only=True)
+
+
 class TestName(unittest.TestCase):
 
     def test_name_on_own_row(self):
