@@ -388,11 +388,11 @@ class _List(object):
         _verify_condition(len1 == len2, default, msg, values)
         names = self._get_list_index_name_mapping(names, len1)
         if not ignore_order:
-            diffs = list(_yield_list_diffs(list1, list2, names))
+            diffs = list(self._yield_list_diffs(list1, list2, names))
         else:
             sorted_list1 = sorted(list1)
             sorted_list2 = sorted(list2)
-            diffs = list(_yield_list_diffs(sorted_list1, sorted_list2, names))
+            diffs = list(self._yield_list_diffs(sorted_list1, sorted_list2, names))
         default = 'Lists are different:\n' + '\n'.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
 
