@@ -22,33 +22,33 @@ class Settings(object):
     names = ()
     aliases = {}
     multi_use = (
-        'METADATA',
-        'LIBRARY',
-        'RESOURCE',
-        'VARIABLES'
+        'Metadata',
+        'Library',
+        'Resource',
+        'Variables'
     )
     single_value = (
-        'RESOURCE',
-        'TEST TIMEOUT',
-        'TEST TEMPLATE',
-        'TIMEOUT',
-        'TEMPLATE'
+        'Resource',
+        'Test Timeout',
+        'Test Template',
+        'Timeout',
+        'Template'
     )
     name_and_arguments = (
-        'METADATA',
-        'SUITE SETUP',
-        'SUITE TEARDOWN',
-        'TEST SETUP',
-        'TEST TEARDOWN',
-        'TEST TEMPLATE',
-        'SETUP',
-        'TEARDOWN',
-        'TEMPLATE',
-        'RESOURCE',
-        'VARIABLES'
+        'Metadata',
+        'Suite Setup',
+        'Suite Teardown',
+        'Test Setup',
+        'Test Teardown',
+        'Test Template',
+        'Setup',
+        'Teardown',
+        'Template',
+        'Resource',
+        'Variables'
     )
     name_arguments_and_with_name = (
-        'LIBRARY',
+        'Library',
     )
 
     def __init__(self):
@@ -69,7 +69,7 @@ class Settings(object):
         return name
 
     def _normalize_name(self, name):
-        name = normalize_whitespace(name).upper()
+        name = normalize_whitespace(name).title()
         if name in self.aliases:
             return self.aliases[name]
         return name
@@ -91,10 +91,9 @@ class Settings(object):
             return "Setting '%s' is not allowed in %s file." % (
                 name, 'resource' if is_resource else 'suite initialization'
             )
-        candidates = tuple(self.settings) + tuple(self.aliases)
         return RecommendationFinder(normalize).find_and_format(
-            name=normalized.title(),
-            candidates=[candidate.title() for candidate in candidates],
+            name=normalized,
+            candidates=tuple(self.settings) + tuple(self.aliases),
             message="Non-existing setting '%s'." % name
         )
 
@@ -103,12 +102,12 @@ class Settings(object):
         for token in values:
             token.type = Token.COMMENT
 
-    def _lex_setting(self, setting, values, normalized_name):
-        self.settings[normalized_name] = values
-        setting.type = normalized_name.replace(' ', '_')
-        if normalized_name in self.name_and_arguments:
+    def _lex_setting(self, setting, values, name):
+        self.settings[name] = values
+        setting.type = name.upper().replace(' ', '_')
+        if name in self.name_and_arguments:
             self._lex_name_and_arguments(values)
-        elif normalized_name in self.name_arguments_and_with_name:
+        elif name in self.name_arguments_and_with_name:
             self._lex_name_arguments_and_with_name(values)
         else:
             self._lex_arguments(values)
@@ -132,61 +131,61 @@ class Settings(object):
 
 class TestCaseFileSettings(Settings):
     names = (
-        'DOCUMENTATION',
-        'METADATA',
-        'SUITE SETUP',
-        'SUITE TEARDOWN',
-        'TEST SETUP',
-        'TEST TEARDOWN',
-        'TEST TEMPLATE',
-        'TEST TIMEOUT',
-        'FORCE TAGS',
-        'DEFAULT TAGS',
-        'LIBRARY',
-        'RESOURCE',
-        'VARIABLES'
+        'Documentation',
+        'Metadata',
+        'Suite Setup',
+        'Suite Teardown',
+        'Test Setup',
+        'Test Teardown',
+        'Test Template',
+        'Test Timeout',
+        'Force Tags',
+        'Default Tags',
+        'Library',
+        'Resource',
+        'Variables'
     )
     aliases = {
-        'TASK SETUP': 'TEST SETUP',
-        'TASK TEARDOWN': 'TEST TEARDOWN',
-        'TASK TEMPLATE': 'TEST TEMPLATE',
-        'TASK TIMEOUT': 'TEST TIMEOUT',
+        'Task Setup': 'Test Setup',
+        'Task Teardown': 'Test Teardown',
+        'Task Template': 'Test Template',
+        'Task Timeout': 'Test Timeout',
     }
 
 
 class InitFileSettings(Settings):
     names = (
-        'DOCUMENTATION',
-        'METADATA',
-        'SUITE SETUP',
-        'SUITE TEARDOWN',
-        'TEST SETUP',
-        'TEST TEARDOWN',
-        'TEST TIMEOUT',
-        'FORCE TAGS',
-        'LIBRARY',
-        'RESOURCE',
-        'VARIABLES'
+        'Documentation',
+        'Metadata',
+        'Suite Setup',
+        'Suite Teardown',
+        'Test Setup',
+        'Test Teardown',
+        'Test Timeout',
+        'Force Tags',
+        'Library',
+        'Resource',
+        'Variables'
     )
 
 
 class ResourceFileSettings(Settings):
     names = (
-        'DOCUMENTATION',
-        'LIBRARY',
-        'RESOURCE',
-        'VARIABLES'
+        'Documentation',
+        'Library',
+        'Resource',
+        'Variables'
     )
 
 
 class TestCaseSettings(Settings):
     names = (
-        'DOCUMENTATION',
-        'TAGS',
-        'SETUP',
-        'TEARDOWN',
-        'TEMPLATE',
-        'TIMEOUT'
+        'Documentation',
+        'Tags',
+        'Setup',
+        'Teardown',
+        'Template',
+        'Timeout'
     )
 
     def __init__(self, parent):
@@ -198,29 +197,29 @@ class TestCaseSettings(Settings):
 
     @property
     def template_set(self):
-        test_template = self.settings['TEMPLATE']
-        if self._has_override_value(test_template):
+        template = self.settings['Template']
+        if self._has_disabling_value(template):
             return False
-        parent_template = self.parent.settings['TEST TEMPLATE']
-        return self._has_value(test_template) or self._has_value(parent_template)
+        parent_template = self.parent.settings['Test Template']
+        return self._has_value(template) or self._has_value(parent_template)
 
-    def _has_override_value(self, template):
-        if template is None:
+    def _has_disabling_value(self, setting):
+        if setting is None:
             return False
-        return template == [] or template[0].value.upper() == 'NONE'
+        return setting == [] or setting[0].value.upper() == 'NONE'
 
-    def _has_value(self, template):
-        return template and template[0].value
+    def _has_value(self, setting):
+        return setting and setting[0].value
 
 
 class KeywordSettings(Settings):
     names = (
-        'DOCUMENTATION',
-        'ARGUMENTS',
-        'TEARDOWN',
-        'TIMEOUT',
-        'TAGS',
-        'RETURN'
+        'Documentation',
+        'Arguments',
+        'Teardown',
+        'Timeout',
+        'Tags',
+        'Return'
     )
 
     def _format_name(self, name):
