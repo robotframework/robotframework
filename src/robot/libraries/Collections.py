@@ -209,9 +209,9 @@ class _List(object):
         the largest (or smallest) available index.
 
         Examples (incl. Python equivalents in comments):
-        | ${x} = | Get Slice From List | ${L5} | 2 | 4  | # L5[2:4]    |
-        | ${y} = | Get Slice From List | ${L5} | 1 |    | # L5[1:None] |
-        | ${z} = | Get Slice From List | ${L5} |   | -2 | # L5[0:-2]   |
+        | ${x} = | Get Slice From List | ${L5} | 2      | 4 | # L5[2:4]    |
+        | ${y} = | Get Slice From List | ${L5} | 1      |   | # L5[1:None] |
+        | ${z} = | Get Slice From List | ${L5} | end=-2 |   | # L5[0:-2]   |
         =>
         | ${x} = ['c', 'd']
         | ${y} = ['b', 'c', 'd', 'e']

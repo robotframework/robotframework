@@ -97,10 +97,13 @@ unescape = Unescaper().unescape
 def split_from_equals(string):
     if not is_string(string) or '=' not in string:
         return string, None
+    if '\\' not in string:
+        return tuple(string.split('=', 1))
     index = _get_split_index(string)
     if index == -1:
         return string, None
     return string[:index], string[index+1:]
+
 
 def _get_split_index(string):
     index = 0
@@ -110,6 +113,7 @@ def _get_split_index(string):
             return index
         index += 1
     return -1
+
 
 def _not_escaping(name):
     backslashes = len(name) - len(name.rstrip('\\'))

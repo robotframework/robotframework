@@ -1,5 +1,6 @@
 *** Settings ***
 Variables         binary_list.py
+Resource          old_for_in_resource.robot
 
 *** Variables ***
 @{NUMS}           1    2    3    4    5
@@ -34,6 +35,12 @@ Indentation is not required
     ${string} =    Catenate    ${string}    ${var.lower()}
     END
     Should Be Equal    ${string}    START RoBoT Robot ROBOT robot FRaMeWoRK Framework FRAMEWORK framework
+
+Settings after FOR
+    FOR    ${x}    IN    x
+        ${x} =    Convert to Uppercase    ${x}
+    END
+    [Teardown]    Log    Teardown was found and e${x}ecuted.
 
 Invalid END usage 1
     [Documentation]    FAIL    'End' is a reserved keyword.
@@ -663,6 +670,9 @@ END is not required when escaping with backslash
 Header at the end of file
     [Documentation]    FAIL For loop has no closing 'END'.
     Header at the end of file
+
+Old for loop in resource
+    Old for loop in resource
 
 *** Keywords ***
 My UK

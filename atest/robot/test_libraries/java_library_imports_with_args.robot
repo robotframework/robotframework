@@ -34,16 +34,16 @@ Too Many Arguments
 
 Non-existing variables
     [Template]
-    Check syslog contains    Variable '\${NON EXISTING}' not found.
+    Syslog Should Contain    Variable '\${NON EXISTING}' not found.
 
 *** Keywords ***
 Library import should have been successful
     [Arguments]    ${lib}    @{params}
     Check Test Case    ${TEST NAME}
     ${par} =    Catenate    SEPARATOR=${SPACE}|${SPACE}    @{params}
-    Check Syslog Contains    Imported test library class    '${lib}' from unknown location.
-    Check Syslog Contains    Imported library '${lib}' with arguments [ ${par} ]
+    Syslog Should Contain    Imported test library class    '${lib}' from unknown location.
+    Syslog Should Contain    Imported library '${lib}' with arguments [ ${par} ]
 
 Library import should have failed
     [Arguments]    ${lib}    ${err}
-    Check Syslog Contains    Test Library '${lib}' expected ${err}
+    Syslog Should Contain    Test Library '${lib}' expected ${err}

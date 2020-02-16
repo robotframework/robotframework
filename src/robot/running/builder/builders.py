@@ -133,10 +133,6 @@ class SuiteStructureParser(SuiteStructureVisitor):
             self._validate_execution_mode(suite)
         except DataError as err:
             raise DataError("Parsing '%s' failed: %s" % (source, err.message))
-        if structure.is_directory and suite.tests:
-            LOGGER.error("Test suite initialization file in '%s' cannot "
-                         "contain tests or tasks." % source)
-            suite.tests.clear()
         return suite, defaults
 
     def _validate_execution_mode(self, suite):

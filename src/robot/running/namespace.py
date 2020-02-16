@@ -20,12 +20,12 @@ from itertools import chain
 
 from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
-from robot.model import Import
 from robot.output import LOGGER, Message
 from robot.utils import (RecommendationFinder, eq, find_file, is_string,
-                         printable_name, seq2str2)
+                         normalize, printable_name, seq2str2)
 
 from .importer import ImportCache, Importer
+from .model import Import
 from .runkwregister import RUN_KW_REGISTER
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
@@ -62,7 +62,7 @@ class Namespace(object):
         for item in import_settings:
             try:
                 if not item.name:
-                    raise DataError('%s setting requires a name' % item.type)
+                    raise DataError('%s setting requires value.' % item.type)
                 self._import(item)
             except DataError as err:
                 item.report_invalid_syntax(err.message)
@@ -404,15 +404,14 @@ class KeywordRecommendationFinder(object):
     def recommend_similar_keywords(self, name):
         """Return keyword names similar to `name`."""
         candidates = self._get_candidates('.' in name)
-        normalizer = lambda name: candidates.get(name, name).lower().replace(
-            '_', ' ')
-        finder = RecommendationFinder(normalizer)
-        return finder.find_recommendations(name, candidates)
+        finder = RecommendationFinder(
+            lambda name: normalize(candidates.get(name, name), ignore='_')
+        )
+        return finder.find(name, candidates)
 
     @staticmethod
-    def format_recommendations(msg, recommendations):
-        return RecommendationFinder.format_recommendations(
-            msg, recommendations)
+    def format_recommendations(message, recommendations):
+        return RecommendationFinder().format(message, recommendations)
 
     def _get_candidates(self, use_full_name):
         names = {}

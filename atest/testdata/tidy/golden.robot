@@ -14,6 +14,7 @@ MyVar             val1    val2    val3    val4    val5    val6    val7
 # standalone
 
 *** Test Cases ***
+# A comment before first test
 My Test Case
     [Documentation]    This is a documentation
     ...    in two lines

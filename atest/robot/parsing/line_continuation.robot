@@ -65,17 +65,12 @@ Multiline in for loop body
     Check Test Case    ${TEST NAME}
 
 Escaped empty cells before line continuation do not work
-    Check Error   0    Non-existing setting '\\'.
-    Check Error   1    Setting variable '\\' failed: Invalid variable name '\\'.
+    Error in file    0    parsing/line_continuation.robot    11
+    ...    Non-existing setting '\\'.
+    Error in file    1    parsing/line_continuation.robot    43
+    ...    Invalid variable name '\\'.
     Check Test Case    Invalid usage in keyword call
 
 Invalid multiline usage
     Check Test Case    Invalid Usage In Test
     Check Test Case    Invalid Usage In User Keyword
-
-*** Keywords ***
-Check Error
-    [Arguments]    ${index}    ${message}    ${level}=ERROR
-    ${path} =    Normalize Path    ${DATADIR}/parsing/line_continuation.robot
-    Check Log Message    ${ERRORS}[${index}]
-    ...    Error in file '${path}': ${message}    ${level}

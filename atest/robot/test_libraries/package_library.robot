@@ -54,5 +54,5 @@ Set PYTHONPATH and run tests
 Import message should be syslogged
     [Arguments]    ${name}    ${file}=__init__    ${type}=class
     ${base} =    Normalize Path    ${DATADIR}/test_libraries/MyLibDir
-    Check Syslog Contains    | INFO \ |
+    Syslog Should Contain    | INFO \ |
     ...    Imported test library ${type} '${name}' from '${base}${/}${file}

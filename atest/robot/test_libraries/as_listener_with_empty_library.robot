@@ -10,4 +10,4 @@ Empty library should not cause warning when it is listener
     ...     END TEST
     ...     CLOSE
     ...     CLOSE\n
-    Check Stderr Does Not Contain     WARN
+    Stderr Should Not Contain     WARN

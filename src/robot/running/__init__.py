@@ -17,8 +17,8 @@
 
 The main public entry points of this package are of the following two classes:
 
-* :class:`~robot.running.builder.TestSuiteBuilder` for creating executable
-  test suites based on existing test case files and directories.
+* :class:`~robot.running.builder.builders.TestSuiteBuilder` for creating
+  executable test suites based on existing test case files and directories.
 
 * :class:`~robot.running.model.TestSuite` for creating an executable
   test suite structure programmatically.
@@ -95,7 +95,7 @@ the results is possible using the
     ResultWriter('skynet.xml').write_results()
 """
 
-from .builder import (TestSuiteBuilder, ResourceFileBuilder)
+from .builder import TestSuiteBuilder, ResourceFileBuilder
 from .context import EXECUTION_CONTEXTS
 from .model import Keyword, TestCase, TestSuite
 from .testlibraries import TestLibrary

@@ -203,6 +203,9 @@ Multiple settings
     [Teardown]    Log    Test case teardown
 
 Invalid setting
-    [Doc U Ment ation]    This no longer works in RF 3.2.
     [Invalid]    This is invalid
+    No Operation
+
+Small typo should provide recommendation
+    [Doc U ment a tion]    This actually worked before RF 3.2.
     No Operation

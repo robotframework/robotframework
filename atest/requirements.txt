@@ -1,6 +1,10 @@
 # External Python modules required by acceptance tests.
 # See atest/README.rst for more information.
 
+docutils >= 0.9; platform_python_implementation != 'IronPython'  # https://github.com/IronLanguages/ironpython2/issues/113
+pygments
+pyyaml; platform_python_implementation != 'Jython'
+pyyaml==5.2; platform_python_implementation == 'Jython'
 enum34; python_version < '3.0'
 pillow; platform_system == 'Windows'
 

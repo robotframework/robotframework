@@ -20,35 +20,43 @@ class RecommendationFinder(object):
 
     def __init__(self, normalizer=None):
         self.normalizer = normalizer or (lambda x: x)
+        self.recommendations = None
 
-    def find_recommendations(self, name, candidates, max_matches=10):
+    def find_and_format(self, name, candidates, message, max_matches=10):
+        self.find(name, candidates, max_matches)
+        return self.format(message)
+
+    def find(self, name, candidates, max_matches=10):
         """Return a list of close matches to `name` from `candidates`."""
         if not name or not candidates:
             return []
         norm_name = self.normalizer(name)
         norm_candidates = self._get_normalized_candidates(candidates)
         cutoff = self._calculate_cutoff(norm_name)
-        norm_matches = difflib.get_close_matches(norm_name,
-                                                 norm_candidates,
-                                                 n=max_matches,
-                                                 cutoff=cutoff)
-        return self._get_original_candidates(norm_candidates, norm_matches)
+        norm_matches = difflib.get_close_matches(
+            norm_name, norm_candidates, n=max_matches, cutoff=cutoff
+        )
+        self.recommendations = self._get_original_candidates(
+            norm_candidates, norm_matches
+        )
+        return self.recommendations
 
-    @staticmethod
-    def format_recommendations(msg, recommendations):
+    def format(self, message, recommendations=None):
         """Add recommendations to the given message.
 
-        The recommendation string looks like:
-            <msg> Did you mean:
-            <recommendations[0]>
-            <recommendations[1]>
-            <recommendations[2]>
+        The recommendation string looks like::
+
+            <message> Did you mean:
+                <recommendations[0]>
+                <recommendations[1]>
+                <recommendations[2]>
         """
+        recommendations = recommendations or self.recommendations
         if recommendations:
-            msg += " Did you mean:"
+            message += " Did you mean:"
             for rec in recommendations:
-                msg += "\n    %s" % rec
-        return msg
+                message += "\n    %s" % rec
+        return message
 
     def _get_normalized_candidates(self, candidates):
         norm_candidates = {}

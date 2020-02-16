@@ -46,13 +46,14 @@ Non-XML spec
 
 Invalid resource
     ${CURDIR}/invalid_usage.robot ${OUT HTML}
-    ...   ? ERROR ? *: Non-existing setting 'Test Setup'.
-    ...   ? ERROR ? *: Non-existing setting 'Test Template'.
-    ...   ? ERROR ? *: Non-existing setting 'Test Teardown'.
-    ...   Resource file '*[/\\]invalid_usage.robot' cannot contain tests or tasks.
+    ...   ? ERROR ? Error in file '*' on line 3: Setting 'Test Setup' is not allowed in resource file.
+    ...   ? ERROR ? Error in file '*' on line 4: Setting 'Test Template' is not allowed in resource file.
+    ...   ? ERROR ? Error in file '*' on line 5: Setting 'Test Teardown' is not allowed in resource file.
+    ...   Error in file '*[/\\]invalid_usage.robot' on line 7: Resource file with 'Test Cases' section is invalid.
 
 Invalid output file
     [Setup]    Run Keywords
+    ...    Remove File         ${OUT HTML}    AND
     ...    Create Directory    ${OUT HTML}    AND
     ...    Create Directory    ${OUT XML}
     String ${OUT HTML}    Opening Libdoc output file '${OUT HTML}' failed: *

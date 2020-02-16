@@ -17,23 +17,24 @@
 
 Main entry points to parsing are the following:
 
-* :func:`~.lexer.get_tokens` and :func:`~.lexer.get_resource_tokens`
-  for parsing test data to tokens.
+* :func:`~.lexer.readers.get_tokens` and
+  :func:`~.lexer.readers.get_resource_tokens` for parsing test data to tokens.
 
 * :func:`~.builders.get_model` and :func:`~.builders.get_resource_model` for
   parsing test data into a model represented as an abstract syntax tree (AST).
 
 *TODO:* Document how to modify the returned model using
-:class:`~.model.ModelVisitor` and :class:`~.model.ModelTransformer`.
+:class:`~.model.visitor.ModelVisitor` and :class:`~.model.visitor.ModelTransformer`.
 Also mention that the model as well as tokens are part of the public API.
 
 Like with rest of the public API, these functions and classes are exposed
-also via :module:`robot.api`.
+also via the :mod:`robot.api` package.
 
-The :module:`robot.parsing` package has been totally rewritten in Robot
-Framework 3.2 and all code using it needs to be updated. Depending on the
-use case, it may be possible to use the :func:`robot.running.TestSuiteBuilder`
-that has not changed instead.
+The :mod:`robot.parsing` package has been totally rewritten in Robot Framework
+3.2 and all code using it needs to be updated. Depending on the use case, it
+may be possible to use the higher level
+:func:`~robot.running.builder.builders.TestSuiteBuilder` that has not changed
+instead.
 
 Example
 -------
@@ -70,7 +71,7 @@ Example
 TODO: Add example modifying model.
 """
 
-from .builders import get_model, get_resource_model
-from .lexer import get_tokens, get_resource_tokens, Token
+from .lexer import get_tokens, get_resource_tokens, get_init_tokens, Token
 from .model import ModelTransformer, ModelVisitor
+from .parser import get_model, get_resource_model, get_init_model
 from .suitestructure import SuiteStructureBuilder, SuiteStructureVisitor

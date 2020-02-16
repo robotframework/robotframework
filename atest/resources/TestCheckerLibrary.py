@@ -211,7 +211,7 @@ class TestCheckerLibrary:
         self.should_contain_keywords(test.keywords[kw_index], *kw_names)
         return test
 
-    def check_log_message(self, item, msg, level='INFO', html=False, pattern=''):
+    def check_log_message(self, item, msg, level='INFO', html=False, pattern=False):
         b = BuiltIn()
         matcher = b.should_match if pattern else b.should_be_equal
         matcher(item.message.rstrip(), msg.rstrip(), 'Wrong log message')

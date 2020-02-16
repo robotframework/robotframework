@@ -24,6 +24,10 @@ Simple For
 Indentation is not required
     Check Test Case    ${TEST NAME}
 
+Settings after FOR
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.teardown.msgs[0]}    Teardown was found and eXecuted.
+
 Invalid END usage
     Check Test Case    ${TEST NAME} 1
     Check Test Case    ${TEST NAME} 2
@@ -380,7 +384,7 @@ For loop separator is case- and space-sensitive
 Escaping with backslash is deprecated
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be For Keyword    ${tc.kws[0]}    2
-    Old style for loop block is deprecated    ${tc.kws[0].msgs[0]}    @{ERRORS[7:10]}
+    Old style for loop block is deprecated    @{tc.kws[0].msgs[0:3]}    @{ERRORS[7:10]}
     Should Be For Item       ${tc.kws[0].kws[0]}    \${var} = one
     Check log message        ${tc.kws[0].kws[0].kws[0].msgs[0]}   var: one
     Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
@@ -389,7 +393,7 @@ Escaping with backslash is deprecated
     Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
     Check log message        ${tc.kws[1].msgs[0]}    Between for loops
     Should Be For Keyword    ${tc.kws[2]}    2
-    Old style for loop block is deprecated    ${tc.kws[2].msgs[0]}    @{ERRORS[10:13]}
+    Old style for loop block is deprecated    @{tc.kws[2].msgs[0:3]}    @{ERRORS[10:13]}
     Should Be For Item       ${tc.kws[2].kws[0]}    \${var} = one
     Check log message        ${tc.kws[2].kws[0].kws[0].msgs[0]}   var: one
     Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
@@ -400,7 +404,7 @@ Escaping with backslash is deprecated
 END is not required when escaping with backslash
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be For Keyword    ${tc.kws[0]}    2
-    Old style for loop block is deprecated    ${tc.kws[0].msgs[0]}    @{ERRORS[13:16]}
+    Old style for loop block is deprecated    @{tc.kws[0].msgs[0:3]}    @{ERRORS[13:16]}
     Should Be For Item       ${tc.kws[0].kws[0]}    \${var} = one
     Check log message        ${tc.kws[0].kws[0].kws[0].msgs[0]}   var: one
     Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
@@ -409,7 +413,7 @@ END is not required when escaping with backslash
     Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
     Check log message        ${tc.kws[1].msgs[0]}    Between for loops
     Should Be For Keyword    ${tc.kws[2]}    2
-    Old style for loop block is deprecated    ${tc.kws[2].msgs[0]}    @{ERRORS[16:]}
+    Old style for loop block is deprecated    @{tc.kws[2].msgs[0:3]}    @{ERRORS[16:19]}
     Should Be For Item       ${tc.kws[2].kws[0]}    \${var} = one
     Check log message        ${tc.kws[2].kws[0].kws[0].msgs[0]}   var: one
     Check KW "For in UK with backslashes"    ${tc.kws[0].kws[0].kws[1]}    one
@@ -418,7 +422,16 @@ END is not required when escaping with backslash
     Check KW "For in UK with backslashes"    ${tc.kws[0].kws[1].kws[1]}    two
 
 Header at the end of file
+    Check Test Case    ${TEST NAME}
+
+Old for loop in resource
     ${tc} =    Check Test Case    ${TEST NAME}
+    Old style for loop header is deprecated    :FOR
+    ...    ${tc.kws[0].kws[0].msgs[0]}    ${ERRORS[19]}
+    ...    file=old_for_in_resource.robot
+    Old style for loop block is deprecated
+    ...    ${tc.kws[0].kws[0].msgs[1]}    ${ERRORS[20]}
+    ...    file=old_for_in_resource.robot
 
 *** Keywords ***
 Should Be For Keyword
@@ -518,13 +531,22 @@ Check KW "For in UK with backslashes"
     Check log message        ${kw.kws[0].kws[1].kws[1].msgs[0]}   ${arg}-2
 
 Old style for loop header is deprecated
-    [Arguments]    ${value}    @{messages}
+    [Arguments]    ${value}    @{messages}    ${file}=for.robot
+    ${path} =    Normalize Path    ${DATADIR}/running/${file}
     FOR    ${msg}    IN    @{messages}
-        Check Log Message    ${msg}    For loop header '${value}' is deprecated. Use 'FOR' instead.    WARN
+        ${error} =    Catenate
+        ...    Error in file '${path}' in FOR loop starting on line *:
+        ...    For loop header '${value}' is deprecated. Use 'FOR' instead.
+        Check Log Message    ${msg}    ${error}    WARN    pattern=True
     END
 
 Old style for loop block is deprecated
-    [Arguments]    @{messages}
+    [Arguments]    @{messages}    ${file}=for.robot
+    ${path} =    Normalize Path    ${DATADIR}/running/${file}
     FOR    ${msg}    IN    @{messages}
-        Check Log Message    ${msg}    Marking for loop body with '\\' is deprecated. Remove markers and use 'END' instead.    WARN
+        ${error} =    Catenate
+        ...    Error in file '${path}' in FOR loop starting on line *:
+        ...    Marking for loop body with '\\' is deprecated.
+        ...    Remove markers and use 'END' instead.
+        Check Log Message    ${msg}    ${error}    WARN    pattern=True
     END

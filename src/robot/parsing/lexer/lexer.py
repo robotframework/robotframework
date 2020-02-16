@@ -18,9 +18,9 @@ from itertools import chain
 from robot.errors import DataError
 from robot.utils import get_error_message, FileReader
 
-from .context import TestCaseFileContext, ResourceFileContext
-from .lexers import FileLexer
-from .splitter import Splitter
+from .blocklexers import FileLexer
+from .context import InitFileContext, TestCaseFileContext, ResourceFileContext
+from .tokenizer import Tokenizer
 from .tokens import EOS, Token
 
 
@@ -38,9 +38,9 @@ def get_tokens(source, data_only=False):
     Returns a generator that yields :class:`~robot.parsing.lexer.tokens.Token`
     instances.
     """
-    reader = TestCaseFileReader(data_only)
-    reader.input(source)
-    return reader.get_tokens()
+    lexer = Lexer(TestCaseFileContext(), data_only)
+    lexer.input(source)
+    return lexer.get_tokens()
 
 
 def get_resource_tokens(source, data_only=False):
@@ -49,31 +49,41 @@ def get_resource_tokens(source, data_only=False):
     Otherwise same as :func:`get_tokens` but the source is considered to be
     a resource file. This affects, for example, what settings are valid.
     """
-    reader = ResourceFileReader(data_only)
-    reader.input(source)
-    return reader.get_tokens()
+    lexer = Lexer(ResourceFileContext(), data_only)
+    lexer.input(source)
+    return lexer.get_tokens()
 
 
-# TODO: Rename classes and module from readers to tokenizers?
+def get_init_tokens(source, data_only=False):
+    """Parses the given source to init file tokens.
 
-class BaseReader(object):
-    context_class = None
+    Otherwise same as :func:`get_tokens` but the source is considered to be
+    a suite initialization file. This affects, for example, what settings are
+    valid.
+    """
+    lexer = Lexer(InitFileContext(), data_only)
+    lexer.input(source)
+    return lexer.get_tokens()
 
-    def __init__(self, data_only=False):
+
+class Lexer(object):
+
+    def __init__(self, ctx, data_only=False):
+        self.lexer = FileLexer(ctx)
         self.data_only = data_only
-        self.lexer = FileLexer()
         self.statements = []
 
     def input(self, source):
-        content = self._read(source)
-        for statement in Splitter().split(content, data_only=self.data_only):
+        for statement in Tokenizer().tokenize(self._read(source),
+                                              self.data_only):
             # Store all tokens but pass only DATA tokens to lexer.
             self.statements.append(statement)
             if self.data_only:
                 data = statement[:]
             else:
-                data = [t for t in statement if t.type == t.DATA]
-            self.lexer.input(data)
+                data = [t for t in statement if t.type == Token.DATA]
+            if data:
+                self.lexer.input(data)
 
     def _read(self, source):
         try:
@@ -83,7 +93,7 @@ class BaseReader(object):
             raise DataError(get_error_message())
 
     def get_tokens(self):
-        self.lexer.lex(self.context_class())
+        self.lexer.lex()
         if self.data_only:
             ignore = {Token.IGNORE, Token.COMMENT_HEADER, Token.COMMENT,
                       Token.OLD_FOR_INDENT}
@@ -97,7 +107,7 @@ class BaseReader(object):
             )
         # Setting local variables is performance optimization to avoid
         # unnecessary lookups and attribute access.
-        name_type = Token.NAME
+        name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
         separator_type = Token.SEPARATOR
         eol_type = Token.EOL
         for statement in statements:
@@ -117,7 +127,7 @@ class BaseReader(object):
                     if separator_after_name:
                         yield separator_after_name
                     name_seen = False
-                if type == name_type:
+                if type in name_types:
                     name_seen = True
                 prev_token = token
                 yield token
@@ -152,7 +162,7 @@ class BaseReader(object):
         return None
 
     def _split_trailing_commented_and_empty_lines(self, statement):
-        lines = list(self._split_to_lines(statement))
+        lines = self._split_to_lines(statement)
         commented_or_empty = []
         for line in reversed(lines):
             if not self._is_commented_or_empty(line):
@@ -164,14 +174,16 @@ class BaseReader(object):
             yield line
 
     def _split_to_lines(self, statement):
+        lines = []
         current = []
         for token in statement:
             current.append(token)
             if token.type == Token.EOL:
-                yield current
+                lines.append(current)
                 current = []
         if current:
-            yield current
+            lines.append(current)
+        return lines
 
     def _is_commented_or_empty(self, line):
         separator_or_ignore = (Token.SEPARATOR, Token.IGNORE)
@@ -180,11 +192,3 @@ class BaseReader(object):
             if token.type not in separator_or_ignore:
                 return token.type in comment_or_eol
         return False
-
-
-class TestCaseFileReader(BaseReader):
-    context_class = TestCaseFileContext
-
-
-class ResourceFileReader(BaseReader):
-    context_class = ResourceFileContext

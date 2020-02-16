@@ -16,7 +16,7 @@ Robot Framework is open source software released under the `Apache License
 2.0`_. Its development is sponsored by the `Robot Framework Foundation
 <http://robotframework.org/foundation>`_.
 
-.. note:: The official RRA support was added in Robot Framework 3.1.
+.. note:: The official RPA support was added in Robot Framework 3.1.
           This User Guide still talks mainly about creating tests, test data,
           and test libraries, but same concepts apply also when `creating
           tasks`_.

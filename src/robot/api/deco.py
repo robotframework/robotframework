@@ -16,11 +16,37 @@
 import inspect
 
 
+def not_keyword(func):
+    """Decorator to disable exposing functions or methods as keywords.
+
+    Examples::
+
+        @not_keyword
+        def not_exposed_as_keyword():
+            # ...
+
+        def exposed_as_keyword():
+            # ...
+
+    Alternatively the automatic keyword discovery can be disabled with
+    the :func:`library` decorator or by setting the ``ROBOT_AUTO_KEYWORDS``
+    attribute to a false value.
+
+    New in Robot Framework 3.2.
+    """
+    func.robot_not_keyword = True
+    return func
+
+
+not_keyword.robot_not_keyword = True
+
+
+@not_keyword
 def keyword(name=None, tags=(), types=()):
     """Decorator to set custom name, tags and argument types to keywords.
 
     This decorator creates ``robot_name``, ``robot_tags`` and ``robot_types``
-    attributes on the decorated keyword method or function based on the
+    attributes on the decorated keyword function or method based on the
     provided arguments. Robot Framework checks them to determine the keyword's
     name, tags, and argument types, respectively.
 
@@ -30,8 +56,10 @@ def keyword(name=None, tags=(), types=()):
     only to some arguments, and setting ``types`` to ``None`` disables type
     conversion altogether.
 
-    If a library class is decorated with the :func:`library` decorator, this
-    decorator is needed to mark methods keywords.
+    If the automatic keyword discovery has been disabled with the
+    :func:`library` decorator or by setting the ``ROBOT_AUTO_KEYWORDS``
+    attribute to a false value, this decorator is needed to mark functions
+    or methods keywords.
 
     Examples::
 
@@ -68,6 +96,7 @@ def keyword(name=None, tags=(), types=()):
     return decorator
 
 
+@not_keyword
 def library(scope=None, version=None, doc_format=None, listener=None,
             auto_keywords=False):
     """Class decorator to control keyword discovery and other library settings.

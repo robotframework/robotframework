@@ -193,8 +193,8 @@ URLs
 
 All strings that look like URLs are automatically converted into
 clickable links. Additionally, URLs that end with extension
-:file:`.jpg`, :file:`.jpeg`, :file:`.png`, :file:`.gif` or
-:file:`.bmp` (case-insensitive) will automatically create images. For
+:file:`.jpg`, :file:`.jpeg`, :file:`.png`, :file:`.gif`, :file:`.bmp` or
+:file:`.svg` (case-insensitive) will automatically create images. For
 example, URLs like `http://example.com` are turned into links, and
 `http:///host/image.jpg` and `file:///path/chart.png`
 into images.
@@ -202,6 +202,8 @@ into images.
 The automatic conversion of URLs to links is applied to all the data
 in logs and reports, but creating images is done only for test suite,
 test case and keyword documentation, and for test suite metadata.
+
+.. note:: `.svg` image support is new in Robot Framework 3.2.
 
 Custom links and images
 -----------------------

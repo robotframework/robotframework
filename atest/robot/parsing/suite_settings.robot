@@ -30,8 +30,8 @@ Suite Documentation
     Should Be Equal    ${SUITE.doc}    ${doc}
 
 Suite Name And Documentation On Console
-    Check Stdout Contains    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on console.${SPACE * 3}\n
-    Check Stdout Contains    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on... | PASS |\n
+    Stdout Should Contain    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on console.${SPACE * 3}\n
+    Stdout Should Contain    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on... | PASS |\n
 
 Test Setup
     ${test} =    Check Test Case    Test Case
@@ -51,7 +51,14 @@ Suite Teardown
     Verify Teardown    ${SUITE}    BuiltIn.Log    Default suite teardown
 
 Invalid Setting
-    Verify Error    0    Non-existing setting 'Invalid Setting'.
+    Error In File    0    parsing/suite_settings.robot    27
+    ...    Non-existing setting 'Invalid Setting'.
+
+Small typo should provide recommendation.
+    Error In File    1    parsing/suite_settings.robot    28
+    ...    SEPARATOR=\n
+    ...    Non-existing setting 'Megadata'. Did you mean:
+    ...    ${SPACE*4}Metadata
 
 *** Keywords ***
 Verify Setup
@@ -66,9 +73,3 @@ Verify Fixture
     [Arguments]    ${fixture}    ${expected_name}    ${expected_message}
     Should be Equal    ${fixture.name}    ${expected_name}
     Check Log Message    ${fixture.messages[0]}    ${expected_message}
-
-Verify Error
-    [Arguments]    ${index}    @{message parts}    ${level}=ERROR
-    ${path} =    Normalize Path    ${DATADIR}/parsing/suite_settings.robot
-    ${message} =    Catenate    Error in file '${path}':    @{message parts}
-    Check Log Message    ${ERRORS}[${index}]    ${message}    ${level}

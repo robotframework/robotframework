@@ -11,8 +11,8 @@ Import Libraries Only Once
     Should Contain X Times    ${SYSLOG}    Found test library 'BuiltIn' with arguments [ ] from cache    2
     Should Contain X Times    ${SYSLOG}    Imported library 'OperatingSystem' with arguments [ ]    1
     Should Contain X Times    ${SYSLOG}    Found test library 'OperatingSystem' with arguments [ ] from cache    3
-    Check Syslog Contains    | INFO \ |    Test library 'OperatingSystem' already imported by suite 'Library Caching.File1'
-    Check Syslog Contains    | INFO \ |    Test library 'OperatingSystem' already imported by suite 'Library Caching.File2'
+    Syslog Should Contain    | INFO \ |    Test library 'OperatingSystem' already imported by suite 'Library Caching.File1'
+    Syslog Should Contain    | INFO \ |    Test library 'OperatingSystem' already imported by suite 'Library Caching.File2'
 
 Process Resource Files Only Once
     [Setup]    Run Tests And Set $SYSLOG    parsing/resource_parsing

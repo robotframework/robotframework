@@ -113,6 +113,10 @@ class Keyword(ModelObject):
             return 'k1'
         return '%s-k%d' % (self.parent.id, self.parent.keywords.index(self)+1)
 
+    @property
+    def source(self):
+        return self.parent.source if self.parent is not None else None
+
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_keyword(self)
