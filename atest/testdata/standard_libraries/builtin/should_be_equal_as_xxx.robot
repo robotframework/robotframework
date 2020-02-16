@@ -85,6 +85,13 @@ Should Be Equal As Strings case-insensitive
     HYVÄÄ YÖTÄ    hyvää yötä    repr=yes    ignore_case=yes
     YÖTÄ          PÄIVÄÄ        ignore_case=True
 
+Should Be Equal As Strings 
+    [Documentation]    FAIL yötä != päivää
+    [Template]    Should Be Equal As Strings
+    test value    TEST VALUE    ignore_case=True
+    HYVÄÄ YÖTÄ    hyvää yötä    repr=yes    ignore_case=yes
+    YÖTÄ          PÄIVÄÄ        ignore_case=True
+
 Should Be Equal As Strings repr
     [Documentation]    FAIL Several failures occurred:
     ...
