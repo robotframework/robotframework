@@ -85,12 +85,37 @@ Should Be Equal As Strings case-insensitive
     HYVÄÄ YÖTÄ    hyvää yötä    repr=yes    ignore_case=yes
     YÖTÄ          PÄIVÄÄ        ignore_case=True
 
-Should Be Equal As Strings 
-    [Documentation]    FAIL yötä != päivää
+Should Be Equal As Strings strip leading spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) YÖTÄ != PÄIVÄÄ
+    ...
+    ...    2) test\t != test
     [Template]    Should Be Equal As Strings
-    test value    TEST VALUE    ignore_case=True
-    HYVÄÄ YÖTÄ    hyvää yötä    repr=yes    ignore_case=yes
-    YÖTÄ          PÄIVÄÄ        ignore_case=True
+    San Diego                 San Diego             strip_spaces=leading
+    ${SPACE * 5}test value    ${SPACE}test value    strip_spaces=leading
+    ${SPACE}test\tvalue       \ttest\tvalue         strip_spaces=LEADING
+    test\ \ value             test\ \ value         strip_spaces=leading
+    ${SPACE} \tHYVÄÄ YÖTÄ     \t HYVÄÄ YÖTÄ         repr=yes    strip_spaces=leading
+    ${SPACE}                  ${EMPTY}              strip_spaces=leading
+    ${SPACE}\tYÖTÄ            \t${SPACE}\tPÄIVÄÄ    strip_spaces=leading
+    ${SPACE}test\t            test                  strip_spaces=leading
+
+Should Be Equal As Strings strip trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) YÖTÄ != PÄIVÄÄ
+    ...
+    ...    2) ${SPACE}test != test
+    [Template]    Should Be Equal As Strings
+    San Diego                 San Diego             strip_spaces=trailing
+    test value${SPACE * 5}    test value${SPACE}    strip_spaces=trailing
+    test\tvalue${SPACE}       test\tvalue\t         strip_spaces=TRAILING
+    test\ \ value             test\ \ value         strip_spaces=trailing
+    HYVÄÄ YÖTÄ\t ${SPACE}     HYVÄÄ YÖTÄ \t         repr=yes    strip_spaces=trailing
+    ${SPACE}                  ${EMPTY}              strip_spaces=trailing
+    YÖTÄ${SPACE}\t            PÄIVÄÄ\t${SPACE}\t    strip_spaces=trailing
+    ${SPACE}test\t            test                  strip_spaces=trailing
 
 Should Be Equal As Strings repr
     [Documentation]    FAIL Several failures occurred:

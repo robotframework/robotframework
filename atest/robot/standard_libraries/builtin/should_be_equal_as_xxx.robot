@@ -41,6 +41,12 @@ Should Be Equal As Strings does NFC normalization
 Should Be Equal As Strings case-insensitive
     Check test case    ${TESTNAME}
 
+Should Be Equal As Strings strip leading spaces
+    Check test case    ${TESTNAME}
+
+Should Be Equal As Strings strip trailing spaces
+    Check test case    ${TESTNAME}
+
 Should Be Equal As Strings repr
     Check test case    ${TESTNAME}
 
