@@ -119,6 +119,31 @@ class TestCombiningSuites(unittest.TestCase):
         assert_equal(self.result.suite.name, 'Normal & Normal')
 
 
+class TestMergingSuites(unittest.TestCase):
+
+    def setUp(self):
+        self.result = ExecutionResult(StringIO(GOLDEN_XML), StringIO(GOLDEN_XML), StringIO(GOLDEN_XML), merge=True)
+        self.suite = self.result.suite
+        self.test = self.suite.tests[0]
+        self.message = self.test.message
+
+    def test_name(self):
+        assert_equal(self.suite.name, 'Normal')
+        assert_equal(self.test.name, 'First One')
+
+    def test_message(self):
+        assert_true(self.test.message.startswith('*HTML* <span class="merge">Re-executed tests have been merged.</span><hr>'))
+
+        assert_true('<span class="new-status">New status:</span> <span class="pass">PASS</span>' in self.test.message)
+        assert_equal(self.test.message.count('<span class="new-status">'), 1)
+        assert_true('<span class="new-message">New message:</span>' not in self.test.message)
+
+        assert_true('<span class="old-status">Old status:</span> <span class="pass">PASS</span>' in self.test.message)
+        assert_equal(self.test.message.count('<span class="old-status">'), 2)
+        assert_true('<span class="old-message">Old message:</span>' not in self.test.message)
+
+        print('\n' + self.test.message + '\n')
+
 class TestElements(unittest.TestCase):
 
     def test_nested_suites(self):
