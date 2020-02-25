@@ -48,7 +48,7 @@ class SpecDocBuilder(object):
     def _get_named_args(self, spec):
         elem = spec.find('namedargs')
         if elem is None:
-            return False    # Backwards compatiblity with RF < 2.6.2
+            return False    # Backwards compatibility with RF < 2.6.2
         return elem.text == 'yes'
 
     def _create_keywords(self, spec, path):
