@@ -294,7 +294,7 @@ def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
     return TIMESTAMP_CACHE.get_timestamp(daysep, daytimesep, timesep, millissep)
 
 
-def timestamp_to_secs(timestamp, seps=None):
+def timestamp_to_secs(timestamp, seps=(' ', ':', '-', '.')):
     try:
         secs = _timestamp_to_millis(timestamp, seps) / 1000.0
     except (ValueError, OverflowError):
