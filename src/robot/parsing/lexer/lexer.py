@@ -76,12 +76,13 @@ class Lexer(object):
     def input(self, source):
         for statement in Tokenizer().tokenize(self._read(source),
                                               self.data_only):
-            # Store all tokens but pass only DATA tokens to lexer.
+            # Store all tokens but pass only data tokens to lexer.
             self.statements.append(statement)
             if self.data_only:
                 data = statement[:]
             else:
-                data = [t for t in statement if t.type == Token.DATA]
+                # Separators, comments, etc. already have type, data doesn't.
+                data = [t for t in statement if t.type is None]
             if data:
                 self.lexer.input(data)
 
@@ -95,10 +96,10 @@ class Lexer(object):
     def get_tokens(self):
         self.lexer.lex()
         if self.data_only:
-            ignore = {Token.IGNORE, Token.COMMENT_HEADER, Token.COMMENT,
-                      Token.OLD_FOR_INDENT}
+            ignored_types = {None, Token.COMMENT_HEADER, Token.COMMENT,
+                             Token.OLD_FOR_INDENT}
         else:
-            ignore = {Token.IGNORE}
+            ignored_types = {None}
         statements = self._handle_old_for(self.statements)
         if not self.data_only:
             statements = chain.from_iterable(
@@ -116,7 +117,7 @@ class Lexer(object):
             prev_token = None
             for token in statement:
                 type = token.type     # Performance optimization.
-                if type in ignore:
+                if type in ignored_types:
                     continue
                 if name_seen:
                     if type == separator_type:
@@ -156,8 +157,9 @@ class Lexer(object):
             yield end_statement
 
     def _get_first_data_token(self, statement):
+        non_data_tokens = Token.NON_DATA_TOKENS + (None,)
         for token in statement:
-            if token.type not in Token.NON_DATA_TOKENS:
+            if token.type not in non_data_tokens:
                 return token
         return None
 
@@ -186,7 +188,7 @@ class Lexer(object):
         return lines
 
     def _is_commented_or_empty(self, line):
-        separator_or_ignore = (Token.SEPARATOR, Token.IGNORE)
+        separator_or_ignore = (Token.SEPARATOR, None)
         comment_or_eol = (Token.COMMENT, Token.EOL)
         for token in line:
             if token.type not in separator_or_ignore:

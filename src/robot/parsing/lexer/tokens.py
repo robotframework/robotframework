@@ -25,6 +25,7 @@ class Token(object):
     TESTCASE_HEADER = 'TESTCASE_HEADER'
     KEYWORD_HEADER = 'KEYWORD_HEADER'
     COMMENT_HEADER = 'COMMENT_HEADER'
+
     TESTCASE_NAME = 'TESTCASE_NAME'
     KEYWORD_NAME = 'KEYWORD_NAME'
 
@@ -63,18 +64,15 @@ class Token(object):
     SEPARATOR = 'SEPARATOR'
     COMMENT = 'COMMENT'
     CONTINUATION = 'CONTINUATION'
-    IGNORE = 'IGNORE'
     EOL = 'EOL'
     EOS = 'EOS'
     ERROR = 'ERROR'
     FATAL_ERROR = 'FATAL_ERROR'
-    DATA = 'DATA'
 
     NON_DATA_TOKENS = (
         SEPARATOR,
         COMMENT,
         CONTINUATION,
-        IGNORE,
         EOL,
         EOS
     )
@@ -104,12 +102,13 @@ class Token(object):
         SETTING_HEADER,
         VARIABLE_HEADER,
         TESTCASE_HEADER,
-        KEYWORD_HEADER
+        KEYWORD_HEADER,
+        COMMENT_HEADER
     )
 
     __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error']
 
-    def __init__(self, type, value='', lineno=-1, col_offset=-1, error=None):
+    def __init__(self, type=None, value='', lineno=-1, col_offset=-1, error=None):
         self.type = type
         self.value = value
         self.lineno = lineno

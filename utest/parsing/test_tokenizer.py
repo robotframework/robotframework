@@ -6,7 +6,7 @@ from robot.parsing.lexer.tokenizer import Tokenizer
 from robot.parsing.lexer.tokens import Token
 
 
-DATA = Token.DATA
+DATA = None
 SEPA = Token.SEPARATOR
 EOL = Token.EOL
 CONT = Token.CONTINUATION
