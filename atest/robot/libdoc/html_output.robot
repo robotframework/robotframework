@@ -106,9 +106,3 @@ User keyword documentation formatting
     ...    <td>bar</td>
     ...    </tr>
     ...    </table>
-
-*** Keywords ***
-Should Be Equal Multiline
-    [Arguments]    ${actual}    @{expected}
-    ${expected} =    Catenate    SEPARATOR=\n    @{expected}
-    Should Be Equal As Strings    ${actual}    ${expected}
