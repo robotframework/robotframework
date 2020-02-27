@@ -49,13 +49,7 @@ class OperatingSystem(object):
 
     == Table of contents ==
 
-    - `Path separators`
-    - `Pattern matching`
-    - `Tilde expansion`
-    - `Boolean arguments`
-    - `Example`
-    - `Shortcuts`
-    - `Keywords`
+    %TOC%
 
     = Path separators =
 

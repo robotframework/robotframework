@@ -825,6 +825,10 @@ class Collections(_List, _Dictionary):
     From Dictionary`) and for verifying their contents (e.g. `Lists
     Should Be Equal`, `Dictionary Should Contain Value`).
 
+    == Table of contents ==
+
+    %TOC%
+
     = Related keywords in BuiltIn =
 
     Following keywords in the BuiltIn library can also be used with

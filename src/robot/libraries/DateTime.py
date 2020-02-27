@@ -21,15 +21,9 @@ as well as doing simple calculations with them (e.g. `Subtract Time From Date`,
 `Add Time To Time`). It supports dates and times in various formats, and can
 also be used by other libraries programmatically.
 
-= Table of Contents =
+== Table of contents ==
 
-- `Terminology`
-- `Date formats`
-- `Time formats`
-- `Millisecond handling`
-- `Programmatic usage`
-- `Shortcuts`
-- `Keywords`
+%TOC%
 
 = Terminology =
 
