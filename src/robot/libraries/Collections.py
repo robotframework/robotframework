@@ -364,16 +364,12 @@ class _List(object):
         - If ``msg`` is given and ``values``  is not given a true value,
           the error message is just the given ``msg``.
 
-        Optional ``names`` argument can be used for naming the indices shown in
-        the default error message. It can either be a list of names matching
-        the indices in the lists or a dictionary where keys are indices that
-        need to be named. It is not necessary to name all of the indices.  When
-        using a dictionary, keys can be either integers or strings that can be
-        converted to integers.
-        
-        Optional ``ignore_order`` argument can be used to ignore the order of the
-        elements (element index) in the list while comparing two lists. If set to 
-        true, element order will be ignored.  This option is new in RF 3.2 now.
+        The optional ``names`` argument can be used for naming the indices
+        shown in the default error message. It can either be a list of names
+        matching the indices in the lists or a dictionary where keys are
+        indices that need to be named. It is not necessary to name all of
+        the indices.  When using a dictionary, keys can be either integers
+        or strings that can be converted to integers.
 
         Examples:
         | ${names} = | Create List | First Name | Family Name | Email |
@@ -384,13 +380,15 @@ class _List(object):
         If the items in index 2 would differ in the above examples, the error
         message would contain a row like ``Index 2 (email): name@foo.com !=
         name@bar.com``.
-        
+
+        The optional ``ignore_order`` argument can be used to ignore the order
+        of the elements in the lists. Using it requires items to be sortable.
+        This is new in Robot Framework 3.2.
+
+        Example:
         | ${list1} = | Create List | apple | cherry | banana |
         | ${list2} = | Create List | cherry | banana | apple |
         | Lists Should Be Equal | ${list1} | ${list2} | ignore_order=True |
-        
-        list index would be ignored while comparing two lists. Above two list 
-        will be matched. 
         """
         self._validate_lists(list1, list2)
         len1 = len(list1)
