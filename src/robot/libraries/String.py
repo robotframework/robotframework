@@ -75,6 +75,42 @@ class String(object):
         | Should Be Equal | ${str2} | 1A2C3D |
         """
         return string.upper()
+    
+    def convert_to_titlecase(self, string):
+        """Converts string to titlecase. It's preserve space also.
+        
+        Examples:
+        | ${str1} = | Convert To Titlecase | abc |
+        | Should Be Equal | ${str1} | Abc |
+        | ${str1} = | Convert To Titlecase | foo\tbar |
+        | Should Be Equal | ${str1} | Foo    Bar |
+        | ${str2} = | Convert To Titlecase | i love robot Framework |
+        | Should Be Equal | ${str2} | I Love Robot Framework |
+        | ${str3} = | Convert To Titlecase | i love ROBOT Framework |
+        | Should Be Equal | ${str3} | I Love ROBOT Framework |
+        | ${str4} = | Convert To Titlecase | iPhone |
+        | Should Be Equal | ${str4} | iPhone |
+        | ${str4} = | Convert To Titlecase | 1234 |
+        | Should Be Equal | ${str4} | 1234 |
+        | ${str5} = | Convert To Titlecase | jUnit |
+        | Should Be Equal | ${str4} | jUnit |
+        | ${str6} = | Convert To Titlecase | mother_in_low |
+        | Should Be Equal | ${str6} | Mother_In_Law |
+        | ${str7} = | Convert To Titlecase | mother-in-low |
+        | Should Be Equal | ${str7} | Mother-In-Law |
+        | ${str8} = | Convert To Titlecase | foo's1bar |
+        | Should Be Equal | ${str8} | Foo'S1Bar |
+        | ${str9} = | Convert To Titlecase | foo 1bar |
+        | Should Be Equal | ${str9} | Foo 1Bar |
+        | ${str10} = | Convert To Titlecase | hello\nXML\niPhone |
+        | Should Be Equal | ${str10} | Hello\nXML\niPhone |
+        
+        New in RF 3.2 now.
+        """
+        def title(match):
+            return match.group(1) + match.group(2).upper()
+        
+        return re.sub("(^|[\s0-9_\-']+)([a-z])(?![A-Z])", title, string)
 
     def encode_string_to_bytes(self, string, encoding, errors='strict'):
         """Encodes the given Unicode ``string`` to bytes using the given ``encoding``.
