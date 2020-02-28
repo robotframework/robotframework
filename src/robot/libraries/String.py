@@ -84,24 +84,29 @@ class String(object):
         """
         return string.upper()
 
-    def convert_to_title_case(self, string):
+    def convert_to_title_case(self, string, exclude=''):
         """Converts string to title case.
 
         Uses the following algorithm:
 
         - Split the string to words from whitespace characters (spaces,
           newlines, etc.).
-        - Leave words that are not all lower case as they are. This preserves,
+        - Exclude words that are not all lower case. This preserves,
           for example, "OK" and "iPhone".
-        - Title case the first alphabetical character of the word.
-        - Join words together so that original whitespace is preserved.
+        - Exclude also words listed in the optional ``exclude`` argument.
+        - Title case the first alphabetical character of each word that has
+          not been excluded.
+        - Join all words together so that original whitespace is preserved.
+
+        Explicitly excluded words can be given as a list or as a string with
+        words separated by a comma and an optional space.
 
         Examples:
 
         | ${str1} = | Convert To Title Case | hello, world!     |
-        | ${str2} = | Convert To Title Case | it's an OK iPhone |
+        | ${str2} = | Convert To Title Case | it's an OK iPhone | exclude=a, an, the |
         | Should Be Equal | ${str1} | Hello, World! |
-        | Should Be Equal | ${str2} | It's An OK iPhone |
+        | Should Be Equal | ${str2} | It's an OK iPhone |
 
         The reason this keyword does not use Python's standard
         [https://docs.python.org/library/stdtypes.html#str.title|title()]
@@ -112,13 +117,19 @@ class String(object):
 
         New in Robot Framework 3.2.
         """
+        if is_string(exclude):
+            exclude = {e.strip() for e in exclude.split(',')}
+        else:
+            exclude = set(exclude)
+
         def title(word):
-            if not word.islower():
+            if word in exclude or not word.islower():
                 return word
             for index, char in enumerate(word):
                 if char.isalpha():
                     return word[:index] + word[index].title() + word[index+1:]
             return word
+
         tokens = re.split(r'(\s+)', string, flags=re.UNICODE)
         return ''.join(title(token) for token in tokens)
 

@@ -14,3 +14,6 @@ Convert To Title Case
 
 Convert To Title Case preserves whitespace
     Check Test Case    ${TESTNAME}
+
+Convert To Title Case with excludes
+    Check Test Case    ${TESTNAME}

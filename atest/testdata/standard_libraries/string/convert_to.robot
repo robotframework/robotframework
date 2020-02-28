@@ -2,6 +2,9 @@
 Test Template     Do uppercase
 Library           String
 
+*** Variables ***
+@{EXCLUDES}       a    an    the    to    is
+
 *** Test Cases ***
 Convert To Upper Case
     [Template]    Test upper case
@@ -51,6 +54,16 @@ Convert To Titlecase preserves whitespace
     foo\u3000bar          Foo\u3000Bar
     \nfoo\tbar\r          \nFoo\tBar\r
 
+Convert To Title Case with excludes
+    [Template]    Test title case
+    this is an example    This is an Example    is, an
+    this is an example    This is an Example    ${EXCLUDES}
+    äiti ei ole iso       äiti Ei Ole Iso       exclude=äiti
+    Isä on iso            Isä on Iso            exclude=äiti,isä,on
+    they're bill's friends from the UK
+    ...                   They're Bill's Friends From the UK
+    ...                                         exclude=${EXCLUDES}
+
 *** Keywords ***
 Test upper case
     [Arguments]    ${string}    ${expected}
@@ -63,6 +76,6 @@ Test lower case
     Should be Equal    ${result}    ${expected}
 
 Test title case
-    [Arguments]    ${string}    ${expected}
-    ${result} =    Convert To Title Case    ${string}
+    [Arguments]    ${string}    ${expected}    @{args}    &{kwargs}
+    ${result} =    Convert To Title Case    ${string}    @{args}    &{kwargs}
     Should be Equal    ${result}    ${expected}
