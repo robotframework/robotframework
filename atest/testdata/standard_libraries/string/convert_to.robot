@@ -3,57 +3,66 @@ Test Template     Do uppercase
 Library           String
 
 *** Test Cases ***
-Convert To Uppercases
-    [Template]    Do uppercase
-    abcd    ABCD
-    1234    1234
-    a1b2C3d4e    A1B2C3D4E
-    ${EMPTY}    ${EMPTY}
-    ööääåå    ÖÖÄÄÅÅ
+Convert To Upper Case
+    [Template]    Test upper case
+    ${EMPTY}       ${EMPTY}
+    abcd           ABCD
+    1234           1234
+    a1b2C3d4e      A1B2C3D4E
+    Hello world    HELLO WORLD
+    ööääåå         ÖÖÄÄÅÅ
 
-Convert To Lowercases
-    [Template]    Do lowercase
-    ABCD    abcd
-    1234    1234
-    A1B2c3D4E    a1b2c3d4e
-    ${EMPTY}    ${EMPTY}
-    ÖÖÄÄÅÅ    ööääåå
+Convert To Lower Case
+    [Template]    Test lower case
+    ${EMPTY}       ${EMPTY}
+    ABCD           abcd
+    1234           1234
+    A1B2c3D4E      a1b2c3d4e
+    Hello world    hello world
+    ÖÖÄÄÅÅ         ööääåå
 
-Convert To Titlecases
-    [Template]    Do titlecases
-    abcd                      Abcd
-    jUnit                     jUnit
-    aBBbcd                    aBBbcd
-    1234                      1234
-    a1b2 C3d4e                A1b2 C3d4e
-    foo\tbar                  Foo\tB ar
-    foo 1bar                  Foo 1Bar
-    foo's1bar                 Foo'S1Bar
-    hello\nXML\niPhone        Hello\nXML\niPhone
-    i love robot Framework    I Love Robot Framework
-    i love ROBOT Framework    I Love ROBOT Framework
-    I Love Robot Framework    I Love Robot Framework 
-    foO baR                   foO baR
-    1234                      1234
-    mother_in_law             Mother_In_Law
-    father-in-law             Father-In-Law
-    jUnit                     jUnit
-    iPhone                    iPhone
-    foo\xa0bar                Foo\xa0Bar
-    ${EMPTY}                  ${EMPTY}    
+Convert To Title Case
+    [Template]    Test title case
+    ${EMPTY}                              ${EMPTY}
+    abcd                                  Abcd
+    äiti                                  Äiti
+    XML                                   XML
+    jUnit                                 jUnit
+    3.14                                  3.14
+    ----                                  ----
+    3tm                                   3Tm
+    \u2603                                \u2603
+    \u2603snowman                         \u2603Snowman
+    hello world                           Hello World
+    don't title t                         Don't Title T
+    'do' title "these"                    'Do' Title "These"
+    i don't have iPhone x11 & it's OK     I Don't Have iPhone X11 & It's OK
+    they're bill's friends from the UK    They're Bill's Friends From The UK
+    ääliö älä lyö, ööliä läikkyy!         Ääliö Älä Lyö, Ööliä Läikkyy!
+
+Convert To Titlecase preserves whitespace
+    [Template]    Test title case
+    foo${SPACE*100}bar    Foo${SPACE*100}Bar
+    foo\tbar              Foo\tBar
+    foo\nbar              Foo\nBar
+    foo\rbar              Foo\rBar
+    foo\r\nbar            Foo\r\nBar
+    foo\xa0bar            Foo\xa0Bar
+    foo\u3000bar          Foo\u3000Bar
+    \nfoo\tbar\r          \nFoo\tBar\r
 
 *** Keywords ***
-Do uppercase
-    [Arguments]    ${arg1}    ${arg2}
-    ${result} =    Convert To Uppercase    ${arg1}
-    Should be Equal    ${result}    ${arg2}
+Test upper case
+    [Arguments]    ${string}    ${expected}
+    ${result} =    Convert To Upper Case    ${string}
+    Should be Equal    ${result}    ${expected}
 
-Do lowercase
-    [Arguments]    ${arg1}    ${arg2}
-    ${result} =    Convert To Lowercase    ${arg1}
-    Should be Equal    ${result}    ${arg2}
+Test lower case
+    [Arguments]    ${string}    ${expected}
+    ${result} =    Convert To Lower Case    ${string}
+    Should be Equal    ${result}    ${expected}
 
-Do titlecases
-    [Arguments]    ${arg1}    ${arg2}
-    ${result} =    Convert To Titlecase    ${arg1}
-    Should be Equal    ${result}    ${arg2}
+Test title case
+    [Arguments]    ${string}    ${expected}
+    ${result} =    Convert To Title Case    ${string}
+    Should be Equal    ${result}    ${expected}

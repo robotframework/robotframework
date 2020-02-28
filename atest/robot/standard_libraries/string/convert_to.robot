@@ -3,11 +3,14 @@ Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/convert_to.
 Resource          atest_resource.robot
 
 *** Test Cases ***
-Convert To Lowercases
+Convert To Lower Case
     Check Test Case    ${TESTNAME}
 
-Convert To Uppercases
+Convert To Upper Case
     Check Test Case    ${TESTNAME}
 
-Convert To Titlecases
+Convert To Title Case
+    Check Test Case    ${TESTNAME}
+
+Convert To Title Case preserves whitespace
     Check Test Case    ${TESTNAME}
