@@ -331,6 +331,11 @@ Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
     ${names} =    Create Dictionary    0=a    2=c
     Lists Should Be Equal    ${L3}    ${L3B}    names=${names}
 
+Lists Should Be Equal Ignore Order    
+    ${list1} =    Create List    A    B    C    D
+    ${list2} =    Create List    D    B    C	A
+    Lists Should Be Equal    ${list1}    ${list2}    ignore_order=True
+    
 List Should Contain Sub List
     List Should Contain Sub List    ${LONG}    ${L4}
 

@@ -199,6 +199,9 @@ Lists Should Be Equal With Named Indices As Dictionary
 Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
     Check Test Case    ${TEST NAME}
 
+Lists Should Be Equal Ignore Order
+    Check Test Case    ${TEST NAME}
+
 List Should Contain Sub List
     Check Test Case    ${TEST NAME}
 
