@@ -67,10 +67,12 @@ def is_dict_like(item):
     return isinstance(item, Mapping)
 
 
-def type_name(item):
+def type_name(item, capitalize=False):
     if isinstance(item, IOBase):
-        return 'file'
-    cls = item.__class__ if hasattr(item, '__class__') else type(item)
-    named_types = {str: 'string', bool: 'boolean', int: 'integer',
-                   type(None): 'None', dict: 'dictionary', type: 'class'}
-    return named_types.get(cls, cls.__name__)
+        name = 'file'
+    else:
+        cls = item.__class__ if hasattr(item, '__class__') else type(item)
+        named_types = {str: 'string', bool: 'boolean', int: 'integer',
+                       type(None): 'None', dict: 'dictionary', type: 'class'}
+        name = named_types.get(cls, cls.__name__)
+    return name.capitalize() if capitalize and name.islower() else name
