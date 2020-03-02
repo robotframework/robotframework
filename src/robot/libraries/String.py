@@ -84,7 +84,7 @@ class String(object):
         """
         return string.upper()
 
-    def convert_to_title_case(self, string, exclude=''):
+    def convert_to_title_case(self, string, exclude=None):
         """Converts string to title case.
 
         Uses the following algorithm:
@@ -99,14 +99,21 @@ class String(object):
         - Join all words together so that original whitespace is preserved.
 
         Explicitly excluded words can be given as a list or as a string with
-        words separated by a comma and an optional space.
+        words separated by a comma and an optional space. Excluded words are
+        actually considered to be regular expression patterns, so it is
+        possible to use something like "example[.!?]?" to match the word
+        "example" on it own and also if followed by ".", "!" or "?".
+        See `BuiltIn.Should Match Regexp` for more information about Python
+        regular expression syntax in general and how to use it in Robot
+        Framework test data in particular.
 
         Examples:
-
         | ${str1} = | Convert To Title Case | hello, world!     |
         | ${str2} = | Convert To Title Case | it's an OK iPhone | exclude=a, an, the |
+        | ${str3} = | Convert To Title Case | distance is 1 km. | exclude=is, km.? |
         | Should Be Equal | ${str1} | Hello, World! |
         | Should Be Equal | ${str2} | It's an OK iPhone |
+        | Should Be Equal | ${str3} | Distance is 1 km. |
 
         The reason this keyword does not use Python's standard
         [https://docs.python.org/library/stdtypes.html#str.title|title()]
@@ -118,12 +125,13 @@ class String(object):
         New in Robot Framework 3.2.
         """
         if is_string(exclude):
-            exclude = {e.strip() for e in exclude.split(',')}
-        else:
-            exclude = set(exclude)
+            exclude = [e.strip() for e in exclude.split(',')]
+        elif not exclude:
+            exclude = []
+        exclude = [re.compile('^%s$' % e) for e in exclude]
 
         def title(word):
-            if word in exclude or not word.islower():
+            if any(e.match(word) for e in exclude) or not word.islower():
                 return word
             for index, char in enumerate(word):
                 if char.isalpha():

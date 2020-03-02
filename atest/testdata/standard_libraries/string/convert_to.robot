@@ -4,6 +4,7 @@ Library           String
 
 *** Variables ***
 @{EXCLUDES}       a    an    the    to    is
+@{EXCLUDES 2}     (a|b|c)[.,]?
 
 *** Test Cases ***
 Convert To Upper Case
@@ -63,6 +64,14 @@ Convert To Title Case with excludes
     they're bill's friends from the UK
     ...                   They're Bill's Friends From the UK
     ...                                         exclude=${EXCLUDES}
+
+Convert To Title Case with regexp excludes
+    [Template]    Test title case
+    a, b, and c.          A, B, And C.          exclude=a, b, c    # doesn't work!
+    a, b, and c.          a, b, And c.          exclude=(a|b|c).
+    a, b, and c.          a, b, And c.          exclude=${EXCLUDES2}
+    full match only!      Full Match Only!      exclude=.
+    full match only!      full Match Only!      exclude=....
 
 *** Keywords ***
 Test upper case
