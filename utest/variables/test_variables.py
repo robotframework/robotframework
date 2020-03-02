@@ -226,7 +226,7 @@ class TestVariables(unittest.TestCase):
         assert_raises(VariableError, self.varz.replace_scalar, '${${1.1} * ${2}}')
         assert_raises(VariableError, self.varz.replace_scalar, '${${1.1}/${2}}')
 
-    def var_variable_as_scalar(self):
+    def test_list_variable_as_scalar(self):
         self.varz['@{name}'] = exp = ['spam', 'eggs']
         assert_equal(self.varz.replace_scalar('${name}'), exp)
         assert_equal(self.varz.replace_list(['${name}', 42]), [exp, 42])
