@@ -181,15 +181,17 @@ class VariableReplacer(object):
         except KeyError:
             raise VariableError("Subscriptable '%s' has no key '%s'."
                                 % (name, key))
-        except TypeError as err:
+        except Exception as err:
             if not isinstance(key, (int, slice)):
+                # Try to treat custom class as a Sequence
                 try:
-                    key = self._parse_sequence_variable_index(
+                    index = self._parse_sequence_variable_index(
                         key, name[0] == '$')
-                except:
+                except (TypeError, ValueError):
+                    # Raise general exception when this failed too
                     pass
                 else:
                     return self._get_subscriptable_variable_item(
-                        name, variable, key)
-            raise VariableError("Subscriptable '%s' used with invalid key: %s"
-                                % (name, err))
+                        name, variable, index)
+            raise VariableError("Accessing item '%s' from %s '%s' failed: %s"
+                                % (key, type_name(variable), name, err))
