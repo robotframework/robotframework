@@ -29,25 +29,27 @@ Nested access with slicing
     ${LIST}[1:-1][-1][-2:1:-2][0][0]    ${3}
 
 Non-existing nested list item
-    [Documentation]    FAIL Sequence '\${LIST}[1][2]' has no item in index 666.
+    [Documentation]    FAIL Tuple '\${LIST}[1][2]' has no item in index 666.
     ${LIST}[1][2][666]                  whatever
 
 Non-existing nested dict item
-    [Documentation]    FAIL Subscriptable '\${DICT}[x][y]' has no key 'nonex'.
+    [Documentation]    FAIL Dictionary '\${DICT}[x][y]' has no item 'nonex'.
     ${DICT}[x][y][nonex]                whatever
 
 Invalid nested list access
     [Documentation]    FAIL
-    ...    Sequence '\${LIST}[1][2]' used with invalid index 'inv'. To use \
+    ...    Tuple '\${LIST}[1][2]' used with invalid index 'inv'. To use \
     ...    '[inv]' as a literal value, it needs to be escaped like '\\[inv]'.
     ${LIST}[1][2][inv]                  whatever
 
 Invalid nested dict access
-    [Documentation]    FAIL STARTS: Subscriptable '\${DICT}[key]' used with invalid key:
+    [Documentation]    FAIL Accessing item \
+    ...    '{'key': {'key': 'value'}, 1: {2: 3}, 'x': {'y': {'z': ''}}}' from \
+    ...    dictionary '\${DICT}[key]' failed: unhashable type: 'dict'
     ${DICT}[key][${DICT}]               whatever
 
 Invalid nested string access
-    [Documentation]    FAIL Sequence '\${STRING}[1]' used with invalid index 'inv'.
+    [Documentation]    FAIL Tuple '\${STRING}[1]' used with invalid index 'inv'.
     ${LIST}[1][inv]                  whatever
 
 Nested access with non-subscriptable

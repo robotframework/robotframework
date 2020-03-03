@@ -71,23 +71,24 @@ List-like values are not manipulated
     Should Be Equal    ${dict}[tuple]    ${tuple}
 
 Integer key cannot be accessed as string
-    [Documentation]    FAIL Subscriptable '\${DICT}' has no key '1'.
+    [Documentation]    FAIL DotDict '\${DICT}' has no item '1'.
     Log    ${DICT}[1]
 
 String key cannot be accessed as integer
-    [Documentation]    FAIL Subscriptable '\${DICT}' has no key '3'.
+    [Documentation]    FAIL DotDict '\${DICT}' has no item '3'.
     Log    ${DICT}[${3}]
 
 Invalid key
-    [Documentation]    FAIL Subscriptable '\${DICT}' has no key 'nonex'.
+    [Documentation]    FAIL DotDict '\${DICT}' has no item 'nonex'.
     Log    ${DICT}[nonex]
 
 Invalid key using variable
-    [Documentation]    FAIL Subscriptable '\${DICT}' has no key 'xxx'.
+    [Documentation]    FAIL DotDict '\${DICT}' has no item 'xxx'.
     Log    ${DICT}[${INVALID}]
 
 Non-hashable key
-    [Documentation]    FAIL STARTS: Subscriptable '\${DICT}' used with invalid key:
+    [Documentation]    FAIL Accessing item '['A', 'B', 'C', 1, '3', None, '', ' ']' \
+    ...    from DotDict '\${DICT}' failed: unhashable type: 'list'
     Log    ${DICT}[@{DICT}]
 
 Non-existing variable
@@ -114,7 +115,7 @@ Sanity check
     Should Be Equal    ${items}    A: 1, B: 2, C: 3, 1: 2, 3: 4, None: None, : , ${SPACE}: ${SPACE}
 
 Old syntax with `&` still works but is deprecated
-    [Documentation]    FAIL Subscriptable '\&{DICT}' has no key 'nonex'.
+    [Documentation]    FAIL DotDict '\&{DICT}' has no item 'nonex'.
     Should Be Equal    &{DICT}[A]     1
     Should Be Equal    &{DICT}[${1}]        ${2}
     Log    &{DICT}[nonex]
