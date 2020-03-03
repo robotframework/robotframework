@@ -87,7 +87,7 @@ Invalid key using variable
     Log    ${DICT}[${INVALID}]
 
 Non-hashable key
-    [Documentation]    FAIL Accessing item '['A', 'B', 'C', 1, '3', None, '', ' ']' \
+    [Documentation]    FAIL Accessing item '[*]' \
     ...    from DotDict '\${DICT}' failed: unhashable type: 'list'
     Log    ${DICT}[@{DICT}]
 
