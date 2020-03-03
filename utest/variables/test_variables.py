@@ -301,7 +301,7 @@ class TestVariables(unittest.TestCase):
         assert_raises(VariableError, self.varz.replace_scalar, '${var}[42:]')
         assert_raises(VariableError, self.varz.replace_scalar, '${var}[nonex]')
 
-    def test_custom_class_subscript(self):
+    def test_custom_class_subscriptable_like_sequence(self):
         # the two class attributes are accessible via indices 0 and 1
         # slicing should be supported here as well
         bytes_key = b'my'
@@ -316,8 +316,30 @@ class TestVariables(unittest.TestCase):
         assert_equal(self.varz.replace_scalar('${var}[:-2]'), var[:-2])
         assert_equal(self.varz.replace_scalar('${var}[:7:-2]'), var[:7:-2])
         assert_equal(self.varz.replace_scalar('${var}[2::]'), ())
-        assert_raises(IndexError, self.varz.replace_scalar, '${var}[${2}]')
+        assert_raises(VariableError, self.varz.replace_scalar, '${var}[${2}]')
         assert_raises(VariableError, self.varz.replace_scalar, '${var}[${bytes_key}]')
+
+    def test_custom_class_subscriptable_like_mapping(self):
+        class PythonObjectMapping(PythonObject):
+            def __init__(self, a, b):
+                super(PythonObjectMapping, self).__init__(a, b)
+                self.mapping = {
+                    'A': a,
+                    'B': b,
+                }
+
+            def __getitem__(self, item):
+                return self.mapping[item]
+
+        item_a = [1, 2, 3, 4, 5]
+        item_b = {b'my': 'myname'}
+        var = PythonObjectMapping(item_a, item_b)
+        self.varz['${var}'] = var
+        self.varz['${key_a}'] = 'A'
+        self.varz['${key_b}'] = 'B'
+        assert_equal(self.varz.replace_scalar('${var}[${key_a}]'), item_a)
+        assert_equal(self.varz.replace_scalar('${var}[${key_b}]'), item_b)
+        assert_raises(VariableError, self.varz.replace_scalar, '${var}[0]')
 
     def test_non_subscriptable(self):
         assert_raises(VariableError, self.varz.replace_scalar, '${1}[1]')
