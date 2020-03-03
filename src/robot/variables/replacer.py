@@ -166,7 +166,8 @@ class VariableReplacer(object):
             raise VariableError("Sequence '%s' has no item in index %d."
                                 % (name, index))
 
-    def _parse_sequence_variable_index(self, index, support_slice=True):
+    @staticmethod
+    def _parse_sequence_variable_index(index, support_slice=True):
         if ':' not in index:
             return int(index)
         if index.count(':') > 2 or not support_slice:
