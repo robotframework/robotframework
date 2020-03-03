@@ -38,12 +38,12 @@ Child Suites Not Containing Tests Not Executed
 
 File Without Extension
     ${path} =    Normalize Path    ${DATADIR}/core/test_suite_dir/no_extension
-    Check Syslog Contains  Ignoring file or directory '${path}'.
+    Syslog Should Contain  Ignoring file or directory '${path}'.
 
 File and Directory Starting with _
     ${path} =    Normalize Path    ${DATADIR}/core/test_suite_dir
-    Check Syslog Contains  Ignoring file or directory '${path}${/}_ignore_this_file.robot'.
-    Check Syslog Contains  Ignoring file or directory '${path}${/}_ignore_this_dir'.
+    Syslog Should Contain  Ignoring file or directory '${path}${/}_ignore_this_file.robot'.
+    Syslog Should Contain  Ignoring file or directory '${path}${/}_ignore_this_dir'.
 
 *** Keywords ***
 Suite Passed

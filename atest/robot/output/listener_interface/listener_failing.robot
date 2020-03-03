@@ -61,4 +61,4 @@ Error should be reported in stderr
     ${error} =    Catenate
     ...    Calling method '${method}' of listener '${listener}' failed:
     ...    Expected failure in ${method}!
-    Check stderr contains    [ ERROR ] ${error}
+    Stderr Should Contain    [ ERROR ] ${error}

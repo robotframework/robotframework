@@ -1,6 +1,6 @@
 name: Unit tests
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   test_using_builtin_python:
@@ -33,10 +33,16 @@ jobs:
           python -m pip install coverage
           python -m coverage run --branch utest/run.py -v
 
-      - name: Prepare HTML coverage report
+      - name: Prepare HTML/XML coverage report
         run: |
           python -m coverage html -i -d cov_html
+          python -m coverage xml -i
         if: always()
+
+      - uses: codecov/codecov-action@797e92895ec0eac368405352c0add9af878fe257
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          name: ${{ matrix.python-version }}-${{ matrix.os }}
 
       - name: Archive coverage results
         uses: actions/upload-artifact@v1

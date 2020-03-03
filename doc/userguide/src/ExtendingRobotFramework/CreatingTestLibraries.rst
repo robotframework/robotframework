@@ -625,6 +625,38 @@ implements only one keyword :name:`Example Keyword`:
 
 __ https://docs.python.org/tutorial/modules.html#importing-from-a-package
 
+Using `@not_keyword` decorator
+''''''''''''''''''''''''''''''
+
+Functions in modules and methods in classes can be explicitly marked as
+"not keywords" by using the `@not_keyword` decorator. When a library is
+implemented as a module, this decorator can also be used to avoid imported
+functions becoming keywords.
+
+.. sourcecode:: python
+
+   from threading import current_thread
+
+   from robot.api.deco import not_keyword
+
+
+   not_keyword(current_thread)    # Don't expose `current_thread` as a keyword.
+
+
+   def example_keyword():
+       print('Running in thread "%s".' % current_thread().name)
+
+   @not_keyword
+   def this_is_not_keyword():
+       pass
+
+Using the `@not_keyword` decorator is pretty much the opposite way to avoid
+functions or methods becoming keywords compared to disabling the automatic
+keyword discovery with the `@library` decorator or by setting the
+`ROBOT_AUTO_KEYWORDS` to a false value. Which one to use depends on the context.
+
+.. note:: The `@not_keyword` decorator is new in Robot Framework 3.2.
+
 Keyword names
 ~~~~~~~~~~~~~
 
@@ -1490,11 +1522,18 @@ explained thoroughly elsewhere and only listened here as a reference:
 - `Marking methods to expose as keywords`_ when using the
   `dynamic library API`_ or the `hybrid library API`_.
 
-
 __ `Limiting public methods becoming keywords`_
 __ `Setting custom name`_
 __ `Embedding arguments into keyword names`_
 __ `Specifying argument types using @keyword decorator`_
+
+`@not_keyword` decorator
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `robot.api.deco.not_keyword` decorator can be used for
+`disabling functions or methods becoming keywords`__.
+
+__ `Using @not_keyword decorator`_
 
 Using custom decorators
 ~~~~~~~~~~~~~~~~~~~~~~~

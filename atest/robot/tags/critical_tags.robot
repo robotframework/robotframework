@@ -55,4 +55,4 @@ Test Criticality
 Suite Status And Message Should Be
     [Arguments]    ${status}    ${message}
     [Documentation]    Must check status and message from stdout because re-processed suite would not have same criticality as during executiong
-    Check Stdout Contains    Pass And Fail :: Some tests here ${SPACE * 36} | ${status} |\n${message}
+    Stdout Should Contain    Pass And Fail :: Some tests here ${SPACE * 36} | ${status} |\n${message}

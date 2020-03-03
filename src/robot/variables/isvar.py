@@ -14,30 +14,33 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import is_string
+from robot.utils import is_string, rstrip
 
 from .search import search_variable
 
 
-def is_var(string, identifiers='$@&'):
+# FIXME: Clean up the mess with `is_var` & co. and `search_variable`.
+def is_var(string, identifiers='$@&', allow_assign_mark=False):
     if not is_string(string) or len(string) < 4:
         return False
+    if allow_assign_mark and string[-1] == '=':
+        string = rstrip(string[:-1])
     if string[0] not in identifiers or string[1] != '{' or string[-1] != '}':
         return False
     body = string[2:-1]
     return '{' not in body and '}' not in body
 
 
-def is_scalar_var(string):
-    return is_var(string, identifiers='$')
+def is_scalar_var(string, allow_assign_mark=False):
+    return is_var(string, '$', allow_assign_mark)
 
 
-def is_list_var(string):
-    return is_var(string, identifiers='@')
+def is_list_var(string, allow_assign_mark=False):
+    return is_var(string, '@', allow_assign_mark)
 
 
-def is_dict_var(string):
-    return is_var(string, identifiers='&')
+def is_dict_var(string, allow_assign_mark=False):
+    return is_var(string, '&', allow_assign_mark)
 
 
 def contains_var(string, identifiers='$@&'):

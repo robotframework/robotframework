@@ -14,6 +14,7 @@
 | # standalone   |
 
 | *** Test Cases *** |
+|    # A comment before first test |
 | My Test Case |
 |    | [Documentation] | This is a documentation |
 |    | ... | in two lines |
@@ -27,7 +28,7 @@
 |    | Log Many | Non-ASCII: ääöö§§ | ${CURDIR} |
 
 | *** Keyword *** |
-| My Keyword |
+|    My Keyword |
 |    | [Documentation] | Documentation | # Comment for doc |
 |    | [Tags] | keyword | tags |
 |    | # Comment row |

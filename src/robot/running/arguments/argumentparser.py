@@ -23,7 +23,7 @@ if PY2:
     from inspect import getargspec, ismethod
 
     def getfullargspec(func):
-        return getargspec(unwrap(func)) + ([], None, {})
+        return getargspec(func) + ([], None, {})
 
     def unwrap(func):
         return func
@@ -52,29 +52,38 @@ class _ArgumentParser(object):
 class PythonArgumentParser(_ArgumentParser):
 
     def parse(self, handler, name=None):
-        args, varargs, kwargs, defaults, kwonly, kwonlydefaults, annotations \
-                = getfullargspec(unwrap(handler))
-        if ismethod(handler) or handler.__name__ == '__init__':
-            args = args[1:]  # drop 'self'
+        args, varargs, kws, defaults, kwo, kwo_defaults, annotations \
+                = self._get_arg_spec(handler)
         spec = ArgumentSpec(
             name,
             self._type,
             positional=args,
             varargs=varargs,
-            kwargs=kwargs,
-            kwonlyargs=kwonly,
-            defaults=self._get_defaults(args, defaults, kwonlydefaults)
+            kwargs=kws,
+            kwonlyargs=kwo,
+            defaults=self._get_defaults(args, defaults, kwo_defaults)
         )
         spec.types = self._get_types(handler, annotations, spec)
         return spec
 
-    def _get_defaults(self, args, default_values, kwonlydefaults):
+    def _get_arg_spec(self, handler):
+        handler = unwrap(handler)
+        try:
+            args, varargs, kws, defaults, kwo, kwo_defaults, annotations \
+                    = getfullargspec(handler)
+        except TypeError:    # Can occur w/ C functions (incl. many builtins).
+            return [], 'args', None, None, [], None, {}
+        if ismethod(handler) or handler.__name__ == '__init__':
+            args = args[1:]  # Drop 'self'.
+        return args, varargs, kws, defaults, kwo, kwo_defaults, annotations
+
+    def _get_defaults(self, args, default_values, kwo_defaults):
         if default_values:
             defaults = dict(zip(args[-len(default_values):], default_values))
         else:
             defaults = {}
-        if kwonlydefaults:
-            defaults.update(kwonlydefaults)
+        if kwo_defaults:
+            defaults.update(kwo_defaults)
         return defaults
 
     def _get_types(self, handler, annotations, spec):

@@ -20,7 +20,6 @@ Exact duplicate is accepted
 Creating keyword should have failed
     [Arguments]    ${index}    ${name}
     ${message} =    Catenate
-    ...    Error in test library 'DupeDynamicKeywords':
-    ...    Creating keyword '${name}' failed:
+    ...    Adding keyword '${name}' to library 'DupeDynamicKeywords' failed:
     ...    Keyword with same name defined multiple times.
-    Check Log Message    ${ERRORS[${index}]}    ${message}    ERROR
+    Check Log Message    ${ERRORS}[${index}]    ${message}    ERROR

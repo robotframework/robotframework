@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from itertools import chain
+import re
 
 from robot.model import Tags
 from robot.utils import getshortdoc, Sortable, setter
@@ -27,7 +28,7 @@ class LibraryDoc(object):
     def __init__(self, name='', doc='', version='', type='library',
                  scope='', named_args=True, doc_format=''):
         self.name = name
-        self.doc = doc
+        self._doc = doc
         self.version = version
         self.type = type
         self.scope = scope
@@ -35,6 +36,27 @@ class LibraryDoc(object):
         self.doc_format = doc_format
         self.inits = []
         self.keywords = []
+
+    @property
+    def doc(self):
+        if self.doc_format == 'ROBOT' and '%TOC%' in self._doc:
+            return self._add_toc(self._doc)
+        return self._doc
+
+    def _add_toc(self, doc):
+        toc = self._create_toc(doc)
+        return '\n'.join(line if line.strip() != '%TOC%' else toc
+                         for line in doc.splitlines())
+
+    def _create_toc(self, doc):
+        entries = re.findall(r'^\s*=\s+(.+?)\s+=\s*$', doc, flags=re.MULTILINE)
+        if self.inits:
+            entries.append('Importing')
+        entries.append('Shortcuts')
+        if any(kw.tags for kw in self.keywords):
+            entries.append('Tags')
+        entries.append('Keywords')
+        return '\n'.join('- `%s`' % entry for entry in entries)
 
     @setter
     def doc_format(self, format):

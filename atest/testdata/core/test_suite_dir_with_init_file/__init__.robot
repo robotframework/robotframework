@@ -8,6 +8,8 @@ Force Tags        suite force
 Test Timeout      13 days 6 hours 50 minutes
 Library           OperatingSystem
 Invalid
+Default Tags      Not allowed
+Test Template     Not allowed
 
 *** Variable ***
 ${default}        default

@@ -54,6 +54,10 @@ class Screenshot(object):
     Notice that successfully taking screenshots requires tests to be run with
     a physical or virtual display.
 
+    == Table of contents ==
+
+    %TOC%
+
     = Using with Python =
 
     How screenshots are taken when using Python depends on the operating

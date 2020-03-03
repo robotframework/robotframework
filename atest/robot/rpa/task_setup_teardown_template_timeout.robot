@@ -27,12 +27,20 @@ Task timeout exceeded
 Invalid task timeout
     Check Test Case    ${TESTNAME}
 
+Task aliases are included in setting recommendations
+    Error In File
+    ...    0    rpa/task_setup_teardown_template_timeout.robot    6
+    ...    SEPARATOR=\n
+    ...    Non-existing setting 'Tesk Setup'. Did you mean:
+    ...    ${SPACE*4}Test Setup
+    ...    ${SPACE*4}Task Setup
+
 Task settings are not allowed in resource file
     [Template]    Validate invalid setting error
-    0    2    Task Setup
-    1    3    Task Teardown
-    2    4    Task Template
-    3    5    Task Timeout
+    1    2    Task Setup
+    2    3    Task Teardown
+    3    4    Task Template
+    4    5    Task Timeout
 
 *** Keywords ***
 Check timeout message

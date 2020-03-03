@@ -124,6 +124,18 @@ Check Keyword Data
     ${kwtags}=    Catenate    SEPARATOR=,${SPACE}    @{kw.tags}
     Should be equal    ${kwtags}    ${tags}
 
+Test And All Keywords Should Have Passed
+    [Arguments]    ${name}=${TESTNAME}
+    ${tc} =    Check Test Case    ${name}
+    All Keywords Should Have Passed    ${tc}
+
+All Keywords Should Have Passed
+    [Arguments]    ${tc or kw}
+    FOR    ${kw}    IN    @{tc or kw.kws}
+        Should Be Equal    ${kw.status}    PASS
+        All Keywords Should Have Passed    ${kw}
+    END
+
 Get Output File
     [Arguments]    ${path}
     [Documentation]    Output encoding avare helper
@@ -144,7 +156,7 @@ File Should Not Contain
     ${file} =    Get Output File    ${path}
     Should Not Contain    ${file}    ${exp}
 
-Check File Matches Regexp
+File Should Match Regexp
     [Arguments]    ${path}    @{expected}
     ${exp} =    Catenate    @{expected}
     ${file} =    Get Output File    ${path}
@@ -202,35 +214,35 @@ Stderr Should Be Empty
     ${stderr} =    Get Stderr
     Should Be Empty    ${stderr}    Errors in test execution:\n${stderr}
 
-Check Stderr Contains
+Stderr Should Contain
     [Arguments]    @{expected}
     File Should Contain    ${STDERR_FILE}    @{expected}
 
-Check Stderr Does Not Contain
+Stderr Should Not Contain
     [Arguments]    @{expected}
     File Should Not Contain    ${STDERR_FILE}    @{expected}
 
-Check Stderr Matches Regexp
+Stderr Should Match Regexp
     [Arguments]    @{expected}
-    Check File Matches Regexp    ${STDERR_FILE}    @{expected}
+    File Should Match Regexp    ${STDERR_FILE}    @{expected}
 
-Check Stderr Contains Regexp
+Stderr Should Contain Regexp
     [Arguments]    @{expected}
     File Should Contain Regexp    ${STDERR_FILE}    @{expected}
 
-Check Stdout Contains
+Stdout Should Contain
     [Arguments]    @{expected}
     File Should Contain    ${STDOUT_FILE}    @{expected}
 
-Check Stdout Does Not Contain
+Stdout Should Not Contain
     [Arguments]    @{expected}
     File Should Not Contain    ${STDOUT_FILE}    @{expected}
 
-Check Stdout Matches Regexp
+Stdout Should Match Regexp
     [Arguments]    @{expected}
-    Check File Matches Regexp    ${STDOUT_FILE}    @{expected}
+    File Should Match Regexp    ${STDOUT_FILE}    @{expected}
 
-Check Stdout Contains Regexp
+Stdout Should Contain Regexp
     [Arguments]    @{expected}
     File Should Contain Regexp    ${STDOUT_FILE}    @{expected}
 
@@ -250,17 +262,17 @@ Syslog Should Contain Match
     [Arguments]    @{expected}
     File Should Contain Match    ${SYSLOG FILE}    @{expected}
 
-Check Syslog Contains
+Syslog Should Contain
     [Arguments]    @{expected}
     File Should Contain    ${SYSLOG_FILE}    @{expected}
 
-Check Syslog Does Not Contain
+Syslog Should Not Contain
     [Arguments]    @{expected}
     File Should Not Contain    ${SYSLOG_FILE}    @{expected}
 
 Syslog Should Match Regexp
     [Arguments]    @{expected}
-    Check File Matches Regexp    ${SYSLOG_FILE}    @{expected}
+    File Should Match Regexp    ${SYSLOG_FILE}    @{expected}
 
 Syslog Should Contain Regexp
     [Arguments]    @{expected}
@@ -279,12 +291,12 @@ Timestamp Should Be Valid
     [Arguments]    ${time}
     Log    ${time}
     Should Not Be Equal    ${time}    ${None}
-    Should Match Regexp    ${time}    20\\d{6} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}    Not valid timestamp
+    Should Match Regexp    ${time}    ^20\\d{6} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}$    Not valid timestamp
 
 Elapsed Time Should Be Valid
     [Arguments]    ${time}
     Log    ${time}
-    Should Be True    isinstance(${time}, int) and ${time} >= 0    Not valid elapsed time
+    Should Be True    isinstance($time, int) and $time >= 0    Not valid elapsed time
 
 Previous test should have passed
     [Arguments]    ${name}
@@ -316,19 +328,6 @@ Tag Statistics Should Be
     Log    ${tag.text}
     Should Be Equal As Integers    ${tag.attrib['pass']}    ${pass}
     Should Be Equal As Integers    ${tag.attrib['fail']}    ${fail}
-
-# TODO: Move next two closer to other test/kw status related kws
-Test And All Keywords Should Have Passed
-    [Arguments]    ${name}=${TESTNAME}
-    ${tc} =    Check Test Case    ${name}
-    All Keywords Should Have Passed    ${tc}
-
-All Keywords Should Have Passed
-    [Arguments]    ${tc or kw}
-    FOR    ${kw}    IN    @{tc or kw.kws}
-        Should Be Equal    ${kw.status}    PASS
-        All Keywords Should Have Passed    ${kw}
-    END
 
 Set PYTHONPATH
     [Arguments]    @{values}

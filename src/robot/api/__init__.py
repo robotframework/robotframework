@@ -69,8 +69,8 @@ See documentations of the individual APIs for more details.
 
 from robot.model import SuiteVisitor
 # FIXME: Anything else to expose from parsing? Update parsing docs above.
-from robot.parsing import (get_model, get_resource_model,
-                           get_tokens, get_resource_tokens,
+from robot.parsing import (get_tokens, get_resource_tokens, get_init_tokens,
+                           get_model, get_resource_model, get_init_model,
                            ModelTransformer, ModelVisitor, Token)
 from robot.reporting import ResultWriter
 from robot.result import ExecutionResult, ResultVisitor

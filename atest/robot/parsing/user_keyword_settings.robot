@@ -94,10 +94,17 @@ Multiple settings
 
 Invalid setting
     Check Test Case    ${TEST NAME}
-    Error In File    0    parsing/user_keyword_settings.robot    192
+    Error In File    0    parsing/user_keyword_settings.robot    195
     ...    Non-existing setting 'Invalid Setting'.
-    Error In File    1    parsing/user_keyword_settings.robot    196
+    Error In File    1    parsing/user_keyword_settings.robot    199
     ...    Non-existing setting 'invalid'.
+
+Small typo should provide recommendation
+    Check Test Case    ${TEST NAME}
+    Error In File    2    parsing/user_keyword_settings.robot    203
+    ...    SEPARATOR=\n
+    ...    Non-existing setting 'Doc Umentation'. Did you mean:
+    ...    ${SPACE*4}Documentation
 
 *** Keywords ***
 Verify Documentation

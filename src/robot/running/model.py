@@ -258,11 +258,12 @@ class TestSuite(model.TestSuite):
 
 class Variable(object):
 
-    def __init__(self, name, value, source=None, lineno=None):
+    def __init__(self, name, value, source=None, lineno=None, error=None):
         self.name = name
         self.value = value
         self.source = source
         self.lineno = lineno
+        self.error = error
 
     def report_invalid_syntax(self, message, level='ERROR'):
         source = self.source or '<unknown>'

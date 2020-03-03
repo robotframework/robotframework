@@ -3287,14 +3287,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     == Table of contents ==
 
-    - `HTML error messages`
-    - `Evaluating expressions`
-    - `Boolean arguments`
-    - `Pattern matching`
-    - `Multiline string comparison`
-    - `String representations`
-    - `Shortcuts`
-    - `Keywords`
+    %TOC%
 
     = HTML error messages =
 

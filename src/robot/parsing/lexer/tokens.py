@@ -18,11 +18,16 @@ from robot.utils import py2to3
 
 @py2to3
 class Token(object):
+    """FIXME: Add documentation to Token class and types."""
+
     SETTING_HEADER = 'SETTING_HEADER'
     VARIABLE_HEADER = 'VARIABLE_HEADER'
     TESTCASE_HEADER = 'TESTCASE_HEADER'
     KEYWORD_HEADER = 'KEYWORD_HEADER'
     COMMENT_HEADER = 'COMMENT_HEADER'
+
+    TESTCASE_NAME = 'TESTCASE_NAME'
+    KEYWORD_NAME = 'KEYWORD_NAME'
 
     DOCUMENTATION = 'DOCUMENTATION'
     SUITE_SETUP = 'SUITE_SETUP'
@@ -45,11 +50,12 @@ class Token(object):
     ARGUMENTS = 'ARGUMENTS'
     RETURN = 'RETURN'
 
+    NAME = 'NAME'
     VARIABLE = 'VARIABLE'
     ARGUMENT = 'ARGUMENT'
-    NAME = 'NAME'
     ASSIGN = 'ASSIGN'
     KEYWORD = 'KEYWORD'
+    WITH_NAME = 'WITH_NAME'
     FOR = 'FOR'
     FOR_SEPARATOR = 'FOR_SEPARATOR'
     OLD_FOR_INDENT = 'OLD_FOR_INDENT'
@@ -58,17 +64,15 @@ class Token(object):
     SEPARATOR = 'SEPARATOR'
     COMMENT = 'COMMENT'
     CONTINUATION = 'CONTINUATION'
-    IGNORE = 'IGNORE'
     EOL = 'EOL'
     EOS = 'EOS'
     ERROR = 'ERROR'
-    DATA = 'DATA'
+    FATAL_ERROR = 'FATAL_ERROR'
 
     NON_DATA_TOKENS = (
         SEPARATOR,
         COMMENT,
         CONTINUATION,
-        IGNORE,
         EOL,
         EOS
     )
@@ -98,17 +102,18 @@ class Token(object):
         SETTING_HEADER,
         VARIABLE_HEADER,
         TESTCASE_HEADER,
-        KEYWORD_HEADER
+        KEYWORD_HEADER,
+        COMMENT_HEADER
     )
 
     __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error']
 
-    def __init__(self, type, value='', lineno=-1, col_offset=-1):
+    def __init__(self, type=None, value='', lineno=-1, col_offset=-1, error=None):
         self.type = type
         self.value = value
         self.lineno = lineno
         self.col_offset = col_offset
-        self.error = None
+        self.error = error
 
     @property
     def end_col_offset(self):
@@ -116,12 +121,18 @@ class Token(object):
             return -1
         return self.col_offset + len(self.value)
 
+    def set_error(self, error, fatal=False):
+        self.type = Token.ERROR if not fatal else Token.FATAL_ERROR
+        self.error = error
+
     def __unicode__(self):
         return self.value
 
     def __repr__(self):
-        return 'Token(%s, %r, %s, %s)' % (self.type, self.value,
-                                          self.lineno, self.col_offset)
+        error = '' if not self.error else ', %r' % self.error
+        return 'Token(%s, %r, %s, %s%s)' % (self.type, self.value,
+                                            self.lineno, self.col_offset,
+                                            error)
 
     def __eq__(self, other):
         if not isinstance(other, Token):

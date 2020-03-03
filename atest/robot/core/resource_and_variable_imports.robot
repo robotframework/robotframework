@@ -117,14 +117,15 @@ Initialization file cannot be used as a resource file
 
 Invalid Setting In Resource File
     Error in file    1    ${RESDIR}/resources.robot    8
-    ...  Non-existing setting 'Test Setup'.
+    ...    Setting 'Test Setup' is not allowed in resource file.
     Error in file    2    ${RESDIR}/resources.robot    9
-    ...  Non-existing setting 'Non Existing'.
+    ...    Non-existing setting 'Non Existing'.
 
 Resource cannot contain tests
     ${path} =    Normalize Path    ${RESDIR}/resource_with_testcase_table.robot
     Error in file    3    ${RESDIR}/resources.robot    6
-    ...  Resource file '${path}' cannot contain tests or tasks.
+    ...    Error in file '${path}' on line 4:
+    ...    Resource file with 'Test Cases' section is invalid.
 
 Invalid Variable File
     ${path} =    Normalize Path    ${RESDIR}/invalid_variable_file.py
@@ -161,9 +162,9 @@ Stderr Should Contain Error
     [Arguments]    ${path}    @{error parts}
     ${path} =  Join Path    ${DATADIR}    ${path}
     ${error} =  Catenate  @{error parts}
-    Check Stderr Contains    [ ERROR ] Error in file '${path}': ${error}
+    Stderr Should Contain    [ ERROR ] Error in file '${path}': ${error}
 
 File Should Have Already Been Imported
     [Arguments]    ${type}    ${path}   ${arguments}=    ${suite}=Resource And Variable Imports
     ${path} =    Join Path    ${RESDIR}    ${path}
-    Check Syslog Contains    | INFO \ | ${type} file '${path}'${arguments} already imported by suite '${suite}'
+    Syslog Should Contain    | INFO \ | ${type} file '${path}'${arguments} already imported by suite '${suite}'

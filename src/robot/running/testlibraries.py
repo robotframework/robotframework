@@ -67,7 +67,7 @@ def _get_lib_class(libcode):
 
 
 class _BaseTestLibrary(object):
-    _failure_level = 'INFO'
+    get_handler_error_level = 'INFO'
 
     def __init__(self, libcode, name, args, source, variables):
         if os.path.exists(name):
@@ -228,9 +228,7 @@ class _BaseTestLibrary(object):
                     try:
                         self.handlers.add(handler, embedded)
                     except DataError as err:
-                        LOGGER.error("Error in test library '%s': "
-                                     "Creating keyword '%s' failed: %s"
-                                     % (self.name, handler.name, err.message))
+                        self._adding_keyword_failed(handler.name, err)
                     else:
                         LOGGER.debug("Created keyword '%s'" % handler.name)
 
@@ -252,43 +250,43 @@ class _BaseTestLibrary(object):
     def _try_to_get_handler_method(self, libcode, name):
         try:
             return self._get_handler_method(libcode, name)
-        # TODO: RF 3.1: Catch only DataError or at least consider others errors.
-        # Don't want to do that in a minor release.
-        except:
-            self._report_adding_keyword_failed(name)
+        except DataError as err:
+            self._adding_keyword_failed(name, err, self.get_handler_error_level)
             return None
 
-    def _report_adding_keyword_failed(self, name, message=None, details=None,
-                                      level=None):
-        if not message:
-            message, details = get_error_details()
+    def _adding_keyword_failed(self, name, error, level='ERROR'):
         LOGGER.write("Adding keyword '%s' to library '%s' failed: %s"
-                     % (name, self.name, message), level or self._failure_level)
-        if details:
-            LOGGER.debug('Details:\n%s' % details)
+                     % (name, self.name, error.message), level)
+        if error.details:
+            LOGGER.debug('Details:\n%s' % error.details)
 
     def _get_handler_method(self, libcode, name):
-        method = getattr(libcode, name)
+        try:
+            method = getattr(libcode, name)
+        except:
+            message, details = get_error_details()
+            raise DataError('Getting handler method failed: %s' % message,
+                            details)
+        self._validate_handler_method(method)
+        return method
+
+    def _validate_handler_method(self, method):
         if not inspect.isroutine(method):
-            raise DataError('Not a method or function')
+            raise DataError('Not a method or function.')
+        if getattr(method, 'robot_not_keyword', False) is True:
+            raise DataError('Not exposed as a keyword.')
         return method
 
     def _try_to_create_handler(self, name, method):
         try:
             handler = self._create_handler(name, method)
         except DataError as err:
-            self._report_adding_keyword_failed(name, err.message, level='ERROR')
-            return None, False
-        # TODO: RF 3.1: Catch only DataError or at least consider others errors.
-        # Don't want to do that in a minor release.
-        except:
-            self._report_adding_keyword_failed(name)
+            self._adding_keyword_failed(name, err)
             return None, False
         try:
             return self._get_possible_embedded_args_handler(handler)
         except DataError as err:
-            self._report_adding_keyword_failed(handler.name, err.message,
-                                               level='ERROR')
+            self._adding_keyword_failed(handler.name, err)
             return None, False
 
     def _create_handler(self, handler_name, handler_method):
@@ -327,15 +325,14 @@ class _ClassLibrary(_BaseTestLibrary):
             if item in (object, Object):
                 continue
             if hasattr(item, '__dict__') and name in item.__dict__:
-                self._validate_handler(item.__dict__[name])
+                self._validate_handler_method(item.__dict__[name])
                 return getattr(libinst, name)
-        raise DataError('No non-implicit implementation found')
+        raise DataError('No non-implicit implementation found.')
 
-    def _validate_handler(self, handler):
-        if not inspect.isroutine(handler):
-            raise DataError('Not a method or function')
-        if self._is_implicit_java_or_jython_method(handler):
-            raise DataError('Implicit methods are ignored')
+    def _validate_handler_method(self, method):
+        _BaseTestLibrary._validate_handler_method(self, method)
+        if self._is_implicit_java_or_jython_method(method):
+            raise DataError('Implicit methods are ignored.')
 
     def _is_implicit_java_or_jython_method(self, handler):
         if not is_java_method(handler):
@@ -352,7 +349,7 @@ class _ModuleLibrary(_BaseTestLibrary):
     def _get_handler_method(self, libcode, name):
         method = _BaseTestLibrary._get_handler_method(self, libcode, name)
         if hasattr(libcode, '__all__') and name not in libcode.__all__:
-            raise DataError('Not exposed as a keyword')
+            raise DataError('Not exposed as a keyword.')
         return method
 
     def get_instance(self, create=True):
@@ -367,14 +364,14 @@ class _ModuleLibrary(_BaseTestLibrary):
 
 
 class _HybridLibrary(_BaseTestLibrary):
-    _failure_level = 'ERROR'
+    get_handler_error_level = 'ERROR'
 
     def _get_handler_names(self, instance):
         return GetKeywordNames(instance)()
 
 
 class _DynamicLibrary(_BaseTestLibrary):
-    _failure_level = 'ERROR'
+    get_handler_error_level = 'ERROR'
 
     def __init__(self, libcode, name, args, source, variables=None):
         _BaseTestLibrary.__init__(self, libcode, name, args, source, variables)

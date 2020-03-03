@@ -1,6 +1,6 @@
 name: Acceptance tests (CPython + PyPy)
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   test_using_builtin_python:
@@ -68,11 +68,15 @@ jobs:
         if: runner.os == 'macOS'
 
       - name: Install Ubuntu PyPy dependencies
-        run: sudo apt-get -y -q install libxslt-dev libxml2-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get -y -q install libxslt-dev libxml2-dev
         if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
 
       - name: Install screen and report handling tools to Linux
-        run: sudo apt-get -y -q install xvfb scrot zip curl
+        run: |
+          sudo apt-get update
+          sudo apt-get -y -q install xvfb scrot zip curl
         if: contains(matrix.os, 'ubuntu')
 
       - name: Run acceptance tests

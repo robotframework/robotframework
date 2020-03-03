@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import ast
+from ast import NodeVisitor
 
 from robot.variables import VariableIterator
 
@@ -28,7 +28,7 @@ def fixture(node, fixture_type):
                    lineno=node.lineno)
 
 
-class SettingsBuilder(ast.NodeVisitor):
+class SettingsBuilder(NodeVisitor):
 
     def __init__(self, suite, test_defaults):
         self.suite = suite
@@ -87,11 +87,18 @@ class SettingsBuilder(ast.NodeVisitor):
         pass
 
 
-class SuiteBuilder(ast.NodeVisitor):
+class SuiteBuilder(NodeVisitor):
 
     def __init__(self, suite, test_defaults):
         self.suite = suite
         self.test_defaults = test_defaults
+
+    def visit_SettingSection(self, node):
+        pass
+
+    def visit_Variable(self, node):
+        self.suite.resource.variables.create(name=node.name, value=node.value,
+                                             lineno=node.lineno, error=node.error)
 
     def visit_TestCase(self, node):
         TestCaseBuilder(self.suite, self.test_defaults).visit(node)
@@ -99,42 +106,36 @@ class SuiteBuilder(ast.NodeVisitor):
     def visit_Keyword(self, node):
         KeywordBuilder(self.suite.resource).visit(node)
 
-    def visit_Variable(self, node):
-        self.suite.resource.variables.create(name=node.name, value=node.value,
-                                             lineno=node.lineno)
 
-
-class ResourceBuilder(ast.NodeVisitor):
+class ResourceBuilder(NodeVisitor):
 
     def __init__(self, resource):
         self.resource = resource
 
-    def visit_ResourceImport(self, node):
-        self.resource.imports.create(type='Resource', name=node.name,
-                                     lineno=node.lineno)
+    def visit_Documentation(self, node):
+        self.resource.doc = node.value
 
     def visit_LibraryImport(self, node):
         self.resource.imports.create(type='Library', name=node.name,
                                      args=node.args, alias=node.alias,
                                      lineno=node.lineno)
 
+    def visit_ResourceImport(self, node):
+        self.resource.imports.create(type='Resource', name=node.name,
+                                     lineno=node.lineno)
 
     def visit_VariablesImport(self, node):
         self.resource.imports.create(type='Variables', name=node.name,
                                      args=node.args, lineno=node.lineno)
 
+    def visit_Variable(self, node):
+        self.resource.variables.create(name=node.name, value=node.value,
+                                       lineno=node.lineno, error=node.error)
     def visit_Keyword(self, node):
         KeywordBuilder(self.resource).visit(node)
 
-    def visit_Variable(self, node):
-        self.resource.variables.create(name=node.name, value=node.value,
-                                       lineno=node.lineno)
 
-    def visit_Documentation(self, node):
-        self.resource.doc = node.value
-
-
-class TestCaseBuilder(ast.NodeVisitor):
+class TestCaseBuilder(NodeVisitor):
 
     def __init__(self, suite, defaults):
         self.suite = suite
@@ -164,14 +165,14 @@ class TestCaseBuilder(ast.NodeVisitor):
                 kw.name = name
                 kw.args = args
 
-    def _format_template(self, template, args):
-        iterator = VariableIterator(template, identifiers='$')
-        variables = len(iterator)
-        if not variables or variables != len(args):
-            return template, tuple(args)
+    def _format_template(self, template, arguments):
+        variables = VariableIterator(template, identifiers='$')
+        variable_count = len(variables)
+        if variable_count == 0 or variable_count != len(arguments):
+            return template, arguments
         temp = []
-        for before, variable, after in iterator:
-            temp.extend([before, args.pop(0)])
+        for (before, variable, after), arg in zip(variables, arguments):
+            temp.extend([before, arg])
         temp.append(after)
         return ''.join(temp), ()
 
@@ -181,10 +182,6 @@ class TestCaseBuilder(ast.NodeVisitor):
                        node._header, node._end)
         ForLoopBuilder(loop).visit(node)
         self.test.keywords.append(loop)
-
-    def visit_End(self, node):
-        # Lone 'END' is mapped to a keyword.
-        self.test.keywords.create(name=node.value, lineno=node.lineno)
 
     def visit_TemplateArguments(self, node):
         self.test.keywords.create(args=node.args, lineno=node.lineno)
@@ -212,7 +209,7 @@ class TestCaseBuilder(ast.NodeVisitor):
                                   assign=node.assign, lineno=node.lineno)
 
 
-class KeywordBuilder(ast.NodeVisitor):
+class KeywordBuilder(NodeVisitor):
 
     def __init__(self, resource):
         self.resource = resource
@@ -254,19 +251,15 @@ class KeywordBuilder(ast.NodeVisitor):
         ForLoopBuilder(loop).visit(node)
         self.kw.keywords.append(loop)
 
-    def visit_End(self, node):
-        # Lone 'END' is mapped to a keyword.
-        self.kw.keywords.create(name=node.value, lineno=node.lineno)
 
+class ForLoopBuilder(NodeVisitor):
 
-class ForLoopBuilder(ast.NodeVisitor):
-
-    def __init__(self, for_loop):
-        self.for_loop = for_loop
+    def __init__(self, loop):
+        self.loop = loop
 
     def visit_KeywordCall(self, node):
-        self.for_loop.keywords.create(name=node.keyword, args=node.args,
-                                      assign=node.assign, lineno=node.lineno)
+        self.loop.keywords.create(name=node.keyword, args=node.args,
+                                  assign=node.assign, lineno=node.lineno)
 
     def visit_TemplateArguments(self, node):
-        self.for_loop.keywords.create(args=node.args, lineno=node.lineno)
+        self.loop.keywords.create(args=node.args, lineno=node.lineno)

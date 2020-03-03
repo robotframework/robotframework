@@ -144,3 +144,8 @@ Keyword Count Should Be
 
 Remove Output Files
     Remove Files    ${OUTPREFIX}*
+
+Should Be Equal Multiline
+    [Arguments]    ${actual}    @{expected}
+    ${expected} =    Catenate    SEPARATOR=\n    @{expected}
+    Should Be Equal As Strings    ${actual}    ${expected}

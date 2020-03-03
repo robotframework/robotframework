@@ -30,6 +30,7 @@ public class JavaAttributeVerifyingListener {
                 put("tests", PyList.class);
                 put("suites", PyList.class);
                 put("totaltests", Integer.class);
+                put("lineno", Integer.class);
             }};
     }
 
@@ -45,12 +46,12 @@ public class JavaAttributeVerifyingListener {
 
     public void startTest(String name, Map attrs) {
         verifyAttributes("START TEST", attrs,
-                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "critical", "template"});
+                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "critical", "template", "lineno"});
     }
 
     public void endTest(String name, Map attrs) {
         verifyAttributes("END TEST", attrs,
-                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "critical", "template", "endtime", "elapsedtime", "status", "message"});
+                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "critical", "template", "lineno", "endtime", "elapsedtime", "status", "message"});
     }
 
     public void startKeyword(String name, Map attrs) {

@@ -88,6 +88,9 @@ Invalid setting
     Invalid passing
     Invalid failing
 
+Small typo should provide recommendation
+    Small typo should provide recommendation
+
 *** Keyword ***
 Normal name
     No Operation
@@ -195,3 +198,7 @@ Invalid passing
 Invalid failing
     [invalid]    Yes, this is also invalid
     Fail    Keywords are executed regardless invalid settings
+
+Small typo should provide recommendation
+    [Doc Umentation]
+    No Operation

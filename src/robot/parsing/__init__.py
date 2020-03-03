@@ -71,7 +71,7 @@ Example
 TODO: Add example modifying model.
 """
 
-from .builders import get_model, get_resource_model
-from .lexer import get_tokens, get_resource_tokens, Token
+from .lexer import get_tokens, get_resource_tokens, get_init_tokens, Token
 from .model import ModelTransformer, ModelVisitor
+from .parser import get_model, get_resource_model, get_init_model
 from .suitestructure import SuiteStructureBuilder, SuiteStructureVisitor

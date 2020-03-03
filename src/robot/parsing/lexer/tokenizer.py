@@ -20,15 +20,14 @@ from robot.utils import rstrip
 from .tokens import Token
 
 
-class Splitter(object):
+class Tokenizer(object):
     _space_splitter = re.compile(r'(\s{2,}|\t)', re.UNICODE)
     _pipe_splitter = re.compile(r'((?:\A|\s+)\|(?:\s+|\Z))', re.UNICODE)
-    _trailing_whitespace = re.compile(r'\s+$', re.UNICODE)
 
-    def split(self, data, data_only=False):
+    def tokenize(self, data, data_only=False):
         current = []
         for lineno, line in enumerate(data.splitlines(not data_only), start=1):
-            tokens = list(self._split_line(line, lineno, data_only))
+            tokens = self._tokenize_line(line, lineno, not data_only)
             tokens, starts_new = self._cleanup_tokens(tokens, data_only)
             if starts_new:
                 if current:
@@ -38,30 +37,38 @@ class Splitter(object):
                 current.extend(tokens)
         yield current
 
-    def _split_line(self, line, lineno, data_only=False):
+    def _tokenize_line(self, line, lineno, include_separators=True):
+        # Performance optimized code.
+        tokens = []
+        append = tokens.append
+        offset = 0
         if line[:1] != '|':
             splitter = self._split_from_spaces
         else:
             splitter = self._split_from_pipes
-        offset = 0
-        data, sepa = Token.DATA, Token.SEPARATOR
         for value, is_data in splitter(rstrip(line)):
-            if is_data or not data_only:
-                yield Token(data if is_data else sepa, value, lineno, offset)
+            if is_data:
+                append(Token(None, value, lineno, offset))
+            elif include_separators:
+                append(Token(Token.SEPARATOR, value, lineno, offset))
             offset += len(value)
-        if not data_only:
-            trailing_whitespace = re.search(r'\s*$', line, flags=re.UNICODE)
-            yield Token(Token.EOL, trailing_whitespace.group(), lineno, offset)
+        if include_separators:
+            trailing_whitespace = line[len(rstrip(line)):]
+            append(Token(Token.EOL, trailing_whitespace, lineno, offset))
+        return tokens
 
     def _split_from_spaces(self, line):
-        for index, value in enumerate(self._space_splitter.split(line)):
-            yield value, index % 2 == 0
+        is_data = True
+        for value in self._space_splitter.split(line):
+            yield value, is_data
+            is_data = not is_data
 
     def _split_from_pipes(self, line):
-        _, separator, rest = self._pipe_splitter.split(line, 1)
+        splitter = self._pipe_splitter
+        _, separator, rest = splitter.split(line, 1)
         yield separator, False
-        while self._pipe_splitter.search(rest):
-            token, separator, rest = self._pipe_splitter.split(rest, 1)
+        while splitter.search(rest):
+            token, separator, rest = splitter.split(rest, 1)
             yield token, True
             yield separator, False
         yield rest, True
@@ -81,7 +88,7 @@ class Splitter(object):
         has_data = False
         commented = False
         for token in tokens:
-            if token.type == Token.DATA:
+            if token.type is None:
                 if token.value.startswith('#') or commented:
                     token.type = Token.COMMENT
                     commented = True
@@ -91,7 +98,7 @@ class Splitter(object):
 
     def _handle_continuation(self, tokens):
         for token in tokens:
-            if token.value == '...' and token.type == Token.DATA:
+            if token.value == '...' and token.type is None:
                 token.type = Token.CONTINUATION
                 return True
             elif token.value and token.type != Token.SEPARATOR:
@@ -102,11 +109,11 @@ class Splitter(object):
         for token in reversed(tokens):
             if not token.value and token.type != Token.EOL:
                 tokens.remove(token)
-            elif token.type == Token.DATA:
+            elif token.type is None:
                 break
 
     def _remove_leading_empty(self, tokens):
-        data_or_continuation = (Token.DATA, Token.CONTINUATION)
+        data_or_continuation = (None, Token.CONTINUATION)
         for token in list(tokens):
             if not token.value:
                 tokens.remove(token)
@@ -114,10 +121,9 @@ class Splitter(object):
                 break
 
     def _ensure_data_after_continuation(self, tokens):
-        data = Token.DATA
-        if not any(t.type == data for t in tokens):
+        if not any(t.type is None for t in tokens):
             cont = self._find_continuation(tokens)
-            token = Token(data, '', cont.lineno, cont.end_col_offset)
+            token = Token(lineno=cont.lineno, col_offset=cont.end_col_offset)
             tokens.insert(tokens.index(cont) + 1, token)
 
     def _find_continuation(self, tokens):
@@ -126,5 +132,4 @@ class Splitter(object):
                 return token
 
     def _remove_non_data(self, tokens):
-        data = Token.DATA
-        return [t for t in tokens if t.type == data]
+        return [t for t in tokens if t.type is None]

@@ -12,7 +12,7 @@ ${INVALID}          %{TEMPDIR}${/}ïnvälïd-xünït.xml
 *** Test Cases ***
 XUnit File Is Created
     Stderr should be empty
-    Check Stdout Contains    XUnit:
+    Stdout Should Contain    XUnit:
     File Should Exist    ${OUTDIR}/xunit.xml
     File Should Exist    ${OUTDIR}/log.html
 
@@ -47,7 +47,7 @@ Test has execution time
 
 No XUnit Option Given
     Run Tests    ${EMPTY}    ${TESTDATA}
-    Check Stdout Does Not Contain    XUnit
+    Stdout Should Not Contain    XUnit
 
 Invalid XUnit File
     Create Directory    ${INVALID}
@@ -56,7 +56,7 @@ Invalid XUnit File
     File Should Exist    ${OUTDIR}/log.html
     ${dir}    ${base} =    Split Path  ${INVALID}
     ${path} =    Regexp Escape    ${INVALID}
-    Check Stderr Matches Regexp
+    Stderr Should Match Regexp
     ...    \\[ ERROR \\] Opening xunit file '${path}' failed: .*
 
 Skipping non-critical tests

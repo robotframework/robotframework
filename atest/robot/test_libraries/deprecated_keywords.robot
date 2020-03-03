@@ -16,8 +16,8 @@ Multiline message
     ...    Multiline\nmessage.
     Verify Deprecation Warning    ${tc.kws[1]}    Deprecated User Keyword With Multiline Message
     ...    Message in\nmultiple\nlines.
-    Check Syslog Does Not Contain    Ignore this
-    Check Syslog Does Not Contain    ignore this
+    Syslog Should Not Contain    Ignore this
+    Syslog Should Not Contain    ignore this
 
 Deprecated keywords without extra doc
     ${tc} =    Check Test Case    ${TESTNAME}
@@ -42,7 +42,7 @@ Not Deprecated Keywords
     ...    Not Deprecated User Keyword
     ...    Not Deprecated User Keyword Without Documentation
     ...    Not Deprecated User Keyword With `*Deprecated` Prefix
-        Check Syslog Does Not Contain    ${name}' is deprecated
+        Syslog Should Not Contain    ${name}' is deprecated
     END
 
 *** Keyword ***
@@ -50,4 +50,4 @@ Verify Deprecation Warning
     [Arguments]    ${kw}    ${name}    @{extra}
     ${message} =    Catenate    Keyword '${name}' is deprecated.    @{extra}
     Check Log Message    ${kw.msgs[0]}    ${message}    WARN
-    Check Syslog Contains    | WARN \ |    ${message}
+    Syslog Should Contain    | WARN \ |    ${message}

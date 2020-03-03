@@ -10,7 +10,7 @@ from robot.parsing.model.blocks import (
 )
 from robot.parsing.model.statements import (
     Statement, TestCaseSectionHeader, KeywordSectionHeader,
-    Name, KeywordCall, Arguments, EmptyLine
+    TestCaseName, KeywordName, KeywordCall, Arguments, EmptyLine, Comment
 )
 from robot.utils import PY3
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
@@ -19,13 +19,18 @@ if PY3:
     from pathlib import Path
 
 
-DATA = '''
-*** Test Cases ***
-Example
-    Keyword    arg
-    ...    argh
+DATA = '''\
 
+*** Test Cases ***
+
+Example
+  # Comment
+    Keyword    arg
+    ...\targh
+
+\t\t
 *** Keywords ***
+# Comment    continues
 Keyword
     [Arguments]    ${arg1}    ${arg2}
     Log    Got ${arg1} and ${arg}!
@@ -46,58 +51,69 @@ EXPECTED = File(sections=[
             Token('EOL', '\n', 2, 18)
         ]),
         body=[
+            EmptyLine([Token('EOL', '\n', 3, 0)]),
             TestCase(
-                header=Name([
-                    Token('NAME', 'Example', 3, 0),
-                    Token('EOL', '\n', 3, 7)
+                header=TestCaseName([
+                    Token('TESTCASE_NAME', 'Example', 4, 0),
+                    Token('EOL', '\n', 4, 7)
                 ]),
                 body=[
-                    KeywordCall([
-                        Token('SEPARATOR', '    ', 4, 0),
-                        Token('KEYWORD', 'Keyword', 4, 4),
-                        Token('SEPARATOR', '    ', 4, 11),
-                        Token('ARGUMENT', 'arg', 4, 15),
-                        Token('EOL', '\n', 4, 18),
-                        Token('SEPARATOR', '    ', 5, 0),
-                        Token('CONTINUATION', '...', 5, 4),
-                        Token('SEPARATOR', '    ', 5, 7),
-                        Token('ARGUMENT', 'argh', 5, 11),
-                        Token('EOL', '\n', 5, 15)
+                    Comment([
+                        Token('SEPARATOR', '  ', 5, 0),
+                        Token('COMMENT', '# Comment', 5, 2),
+                        Token('EOL', '\n', 5, 11),
                     ]),
-                    EmptyLine([
-                        Token('EOL', '\n', 6, 0)
-                    ])
+                    KeywordCall([
+                        Token('SEPARATOR', '    ', 6, 0),
+                        Token('KEYWORD', 'Keyword', 6, 4),
+                        Token('SEPARATOR', '    ', 6, 11),
+                        Token('ARGUMENT', 'arg', 6, 15),
+                        Token('EOL', '\n', 6, 18),
+                        Token('SEPARATOR', '    ', 7, 0),
+                        Token('CONTINUATION', '...', 7, 4),
+                        Token('SEPARATOR', '\t', 7, 7),
+                        Token('ARGUMENT', 'argh', 7, 8),
+                        Token('EOL', '\n', 7, 12)
+                    ]),
+                    EmptyLine([Token('EOL', '\n', 8, 0)]),
+                    EmptyLine([Token('EOL', '\t\t\n', 9, 0)])
                 ]
             )
         ]
     ),
     KeywordSection(
         header=KeywordSectionHeader([
-            Token('KEYWORD_HEADER', '*** Keywords ***', 7, 0),
-            Token('EOL', '\n', 7, 16)
+            Token('KEYWORD_HEADER', '*** Keywords ***', 10, 0),
+            Token('EOL', '\n', 10, 16)
         ]),
         body=[
+            Comment([
+                Token('COMMENT', '# Comment', 11, 0),
+                Token('SEPARATOR', '    ', 11, 9),
+                Token('COMMENT', 'continues', 11, 13),
+                Token('EOL', '\n', 11, 22),
+            ]),
             Keyword(
-                header=Name([
-                    Token('NAME', 'Keyword', 8, 0),
-                    Token('EOL', '\n', 8, 7)
+                header=KeywordName([
+                    Token('KEYWORD_NAME', 'Keyword', 12, 0),
+                    Token('EOL', '\n', 12, 7)
                 ]),
                 body=[
                     Arguments([
-                        Token('SEPARATOR', '    ', 9, 0),
-                        Token('ARGUMENTS', '[Arguments]', 9, 4),
-                        Token('SEPARATOR', '    ', 9, 15),
-                        Token('ARGUMENT', '${arg1}', 9, 19),
-                        Token('SEPARATOR', '    ', 9, 26),
-                        Token('ARGUMENT', '${arg2}', 9, 30),
-                        Token('EOL', '\n', 9, 37)
+                        Token('SEPARATOR', '    ', 13, 0),
+                        Token('ARGUMENTS', '[Arguments]', 13, 4),
+                        Token('SEPARATOR', '    ', 13, 15),
+                        Token('ARGUMENT', '${arg1}', 13, 19),
+                        Token('SEPARATOR', '    ', 13, 26),
+                        Token('ARGUMENT', '${arg2}', 13, 30),
+                        Token('EOL', '\n', 13, 37)
                     ]),
                     KeywordCall([
-                        Token('SEPARATOR', '    ', 10, 0),
-                        Token('KEYWORD', 'Log', 10, 4),
-                        Token('SEPARATOR', '    ', 10, 7),
-                        Token('ARGUMENT', 'Got ${arg1} and ${arg}!', 10, 11),
-                        Token('EOL', '\n', 10, 34)
+                        Token('SEPARATOR', '    ', 14, 0),
+                        Token('KEYWORD', 'Log', 14, 4),
+                        Token('SEPARATOR', '    ', 14, 7),
+                        Token('ARGUMENT', 'Got ${arg1} and ${arg}!', 14, 11),
+                        Token('EOL', '\n', 14, 34)
                     ])
                 ]
             )
@@ -237,18 +253,12 @@ class TestModelVisitors(unittest.TestCase):
             def __init__(self):
                 self.test_names = []
                 self.kw_names = []
-                self.names = None
 
-            def visit_TestCaseSection(self, node):
-                self.names = self.test_names
-                self.generic_visit(node)
+            def visit_TestCaseName(self, node):
+                self.test_names.append(node.name)
 
-            def visit_KeywordSection(self, node):
-                self.names = self.kw_names
-                self.generic_visit(node)
-
-            def visit_Name(self, node):
-                self.names.append(node.name)
+            def visit_KeywordName(self, node):
+                self.kw_names.append(node.name)
 
             def visit_Block(self, node):
                 raise RuntimeError('Should not be executed.')
@@ -268,20 +278,15 @@ class TestModelVisitors(unittest.TestCase):
             def __init__(self):
                 self.test_names = []
                 self.kw_names = []
-                self.names = None
                 self.blocks = []
                 self.statements = []
 
-            def visit_TestCaseSection(self, node):
-                self.names = self.test_names
-                self.visit_Block(node)
+            def visit_TestCaseName(self, node):
+                self.test_names.append(node.name)
+                self.visit_Statement(node)
 
-            def visit_KeywordSection(self, node):
-                self.names = self.kw_names
-                self.visit_Block(node)
-
-            def visit_Name(self, node):
-                self.names.append(node.name)
+            def visit_KeywordName(self, node):
+                self.kw_names.append(node.name)
                 self.visit_Statement(node)
 
             def visit_Block(self, node):
@@ -300,8 +305,9 @@ class TestModelVisitors(unittest.TestCase):
                       'TestCaseSection', 'Body', 'TestCase', 'Body',
                       'KeywordSection', 'Body', 'Keyword', 'Body'])
         assert_equal(visitor.statements,
-                     ['EOL', 'TESTCASE_HEADER', 'NAME', 'KEYWORD',
-                      'EOL', 'KEYWORD_HEADER', 'NAME', 'ARGUMENTS', 'KEYWORD'])
+                     ['EOL', 'TESTCASE_HEADER', 'EOL', 'TESTCASE_NAME',
+                      'COMMENT', 'KEYWORD', 'EOL', 'EOL', 'KEYWORD_HEADER',
+                      'COMMENT', 'KEYWORD_NAME', 'ARGUMENTS', 'KEYWORD'])
 
     def test_ast_NodeTransformer(self):
 
@@ -313,17 +319,17 @@ class TestModelVisitors(unittest.TestCase):
             def visit_TestCaseSection(self, node):
                 self.generic_visit(node)
                 node.body.items.append(
-                    TestCase(Name([Token('NAME', 'Added'),
-                                   Token('EOL', '\n')])))
+                    TestCase(TestCaseName([Token('TESTCASE_NAME', 'Added'),
+                                           Token('EOL', '\n')])))
                 return node
 
             def visit_TestCase(self, node):
                 self.generic_visit(node)
                 return node if node.name != 'REMOVE' else None
 
-            def visit_Name(self, node):
-                name = node.get_token(Token.NAME)
-                name.value = name.value.upper()
+            def visit_TestCaseName(self, node):
+                name_token = node.get_token(Token.TESTCASE_NAME)
+                name_token.value = name_token.value.upper()
                 return node
 
             def visit_Block(self, node):
@@ -346,10 +352,14 @@ Remove
                     Token('EOL', '\n', 1, 18)
                 ]),
                 body=[
-                    TestCase(Name([Token('NAME', 'EXAMPLE', 2, 0),
-                                   Token('EOL', '\n', 2, 7)])),
-                    TestCase(Name([Token('NAME', 'Added'),
-                                   Token('EOL', '\n')]))
+                    TestCase(TestCaseName([
+                        Token('TESTCASE_NAME', 'EXAMPLE', 2, 0),
+                        Token('EOL', '\n', 2, 7)
+                    ])),
+                    TestCase(TestCaseName([
+                        Token('TESTCASE_NAME', 'Added'),
+                        Token('EOL', '\n')
+                    ]))
                 ]
             )
         ])
@@ -362,7 +372,7 @@ Remove
             def visit_TestCaseSectionHeader(self, node):
                 return node
 
-            def visit_Name(self, node):
+            def visit_TestCaseName(self, node):
                 return node
 
             def visit_Statement(self, node):
@@ -389,8 +399,10 @@ Example
                     Token('EOL', '\n', 1, 18)
                 ]),
                 body=[
-                    TestCase(Name([Token('NAME', 'EXAMPLE', 2, 0),
-                                   Token('EOL', '\n', 2, 7)])),
+                    TestCase(TestCaseName([
+                        Token('TESTCASE_NAME', 'EXAMPLE', 2, 0),
+                        Token('EOL', '\n', 2, 7)
+                    ])),
                 ]
             )
         ])

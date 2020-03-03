@@ -62,15 +62,15 @@ Importing Submodule As Library
     Check Test Case  ${TESTNAME}
 
 Module Library Scope Should Be Global
-    Check Syslog Contains  Imported library 'module_library' with arguments [ ] (version test, module type, global scope, 12 keywords)
+    Syslog Should Contain  Imported library 'module_library' with arguments [ ] (version test, module type, global scope, 12 keywords)
 
 Importing Module Should Have Been Syslogged
     ${path} =  Normalize Path  ${CURDIR}/../../testresources/testlibs/module_library
-    Check Syslog Contains  Imported test library module 'module_library' from '${path}
+    Syslog Should Contain  Imported test library module 'module_library' from '${path}
 
 
 ***Keywords***
 
 Keyword should not have been added
     [Arguments]  ${kw}  ${lib}=module_lib_with_all
-    Check Syslog Contains  Adding keyword '${kw}' to library '${lib}' failed: Not exposed as a keyword
+    Syslog Should Contain  Adding keyword '${kw}' to library '${lib}' failed: Not exposed as a keyword

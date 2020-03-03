@@ -41,16 +41,7 @@ class Telnet(object):
 
     == Table of contents ==
 
-    - `Connections`
-    - `Writing and reading`
-    - `Configuration`
-    - `Terminal emulation`
-    - `Logging`
-    - `Time string format`
-    - `Boolean arguments`
-    - `Importing`
-    - `Shortcuts`
-    - `Keywords`
+    %TOC%
 
     = Connections =
 

@@ -51,9 +51,9 @@ Run Suite Dir And Check Results
     Should Contain Suites    ${SUITE.suites[1]}    Sub Suite1    Sub Suite2
     Should Contain Tests    ${SUITE}    @{SAMPLE_TESTS}    @{SUBSUITE_TESTS}
     ${path} =    Normalize Path    ${path}
-    Check Syslog Contains    | INFO \ | Data source '${path}${/}invalid.${type}' has no tests or tasks.
-    Check Syslog Contains    | INFO \ | Data source '${path}${/}empty.${type}' has no tests or tasks.
-    Check Syslog Contains    | INFO \ | Ignoring file or directory '${path}${/}not_a_picture.jpg'.
+    Syslog Should Contain    | INFO \ | Data source '${path}${/}invalid.${type}' has no tests or tasks.
+    Syslog Should Contain    | INFO \ | Data source '${path}${/}empty.${type}' has no tests or tasks.
+    Syslog Should Contain    | INFO \ | Ignoring file or directory '${path}${/}not_a_picture.jpg'.
 
 Check Suite With Init
     [Arguments]    ${suite}

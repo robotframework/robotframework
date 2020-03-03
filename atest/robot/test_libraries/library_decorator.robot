@@ -22,6 +22,6 @@ Set library info
 Library should have been imported
     [Arguments]    ${name}    @{}    ${version}=<unknown>    ${scope}    ${keywords}    ${listener}=False
     ${path} =    Normalize path    ${DATADIR}/test_libraries/${name}
-    Check Syslog Contains
+    Syslog Should Contain
     ...    Imported library '${path}' with arguments [ ]
     ...    (version ${version}, class type, ${scope} scope, ${keywords} keywords${{', with listener' if ${listener} else ''}})

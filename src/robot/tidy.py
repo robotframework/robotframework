@@ -38,8 +38,9 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.errors import DataError
-from robot.parsing import get_model, SuiteStructureBuilder, SuiteStructureVisitor
-from robot.tidypkg import Aligner, Cleaner, NewlineCleaner, SeparatorCleaner
+from robot.parsing import (get_model, SuiteStructureBuilder,
+                           SuiteStructureVisitor)
+from robot.tidypkg import Aligner, Cleaner, NewlineNormalizer, SeparatorNormalizer
 from robot.utils import Application, file_writer
 
 # FIXME: Proofread usage
@@ -180,11 +181,12 @@ class Tidy(SuiteStructureVisitor):
 
     def _tidy(self, model, output):
         Cleaner().visit(model)
-        NewlineCleaner(self.line_separator,
-                       self.short_test_name_length).visit(model)
-        SeparatorCleaner(self.use_pipes, self.space_count).visit(model)
+        NewlineNormalizer(self.line_separator,
+                          self.short_test_name_length).visit(model)
+        SeparatorNormalizer(self.use_pipes, self.space_count).visit(model)
         Aligner(self.short_test_name_length,
-                self.setting_and_variable_name_length).visit(model)
+                self.setting_and_variable_name_length,
+                self.use_pipes).visit(model)
         model.save(output)
 
     def visit_file(self, file):
