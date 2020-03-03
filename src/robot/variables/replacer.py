@@ -156,15 +156,17 @@ class VariableReplacer(object):
         try:
             index = self._parse_sequence_variable_index(index, name[0] == '$')
         except ValueError:
-            raise VariableError("Sequence '%s' used with invalid index '%s'. "
+            raise VariableError("%s '%s' used with invalid index '%s'. "
                                 "To use '[%s]' as a literal value, it needs "
                                 "to be escaped like '\\[%s]'."
-                                % (name, index, index, index))
+                                % (type_name(variable, capitalize=True), name,
+                                   index, index, index))
         try:
             return variable[index]
         except IndexError:
-            raise VariableError("Sequence '%s' has no item in index %d."
-                                % (name, index))
+            raise VariableError("%s '%s' has no item in index %d."
+                                % (type_name(variable, capitalize=True), name,
+                                   index))
 
     def _parse_sequence_variable_index(self, index, support_slice=True):
         if ':' not in index:
@@ -174,24 +176,19 @@ class VariableReplacer(object):
         return slice(*[int(i) if i else None for i in index.split(':')])
 
     def _get_subscriptable_variable_item(self, name, variable, key):
-        if not isinstance(key, (int, slice)):
-            key = self.replace_scalar(key)
+        key = self.replace_scalar(key)
         try:
             return variable[key]
         except KeyError:
-            raise VariableError("Subscriptable '%s' has no key '%s'."
-                                % (name, key))
+            raise VariableError("%s '%s' has no item '%s'."
+                                % (type_name(variable, capitalize=True),
+                                   name, key))
         except Exception as err:
-            if not isinstance(key, (int, slice)):
-                # Try to treat custom class as a Sequence
-                try:
-                    index = self._parse_sequence_variable_index(
-                        key, name[0] == '$')
-                except (TypeError, ValueError):
-                    # Raise general exception when this failed too
-                    pass
-                else:
-                    return self._get_subscriptable_variable_item(
-                        name, variable, index)
+            # Try to treat custom class as a Sequence but don't raise error
+            # on failure
+            try:
+                return self._get_sequence_variable_item(name, variable, key)
+            except:
+                pass
             raise VariableError("Accessing item '%s' from %s '%s' failed: %s"
                                 % (key, type_name(variable), name, err))
