@@ -19,12 +19,8 @@ class PythonObject:
     def __init__(self, a, b):
         self.a = a
         self.b = b
-        self.mapping = {
-            'A': a,
-            'B': b,
-        }
-    def __getitem__(self, item):
-        return self.mapping[item]
+    def __getitem__(self, index):
+        return (self.a, self.b)[index]
     def __str__(self):
         return '(%s, %s)' % (self.a, self.b)
     def __len__(self):
@@ -305,16 +301,23 @@ class TestVariables(unittest.TestCase):
         assert_raises(VariableError, self.varz.replace_scalar, '${var}[42:]')
         assert_raises(VariableError, self.varz.replace_scalar, '${var}[nonex]')
 
-    def test_custom_class_subscript_by_item(self):
-        item_a = [1, 2, 3, 4, 5]
-        item_b = {b'my': 'myname'}
-        var = PythonObject(item_a, item_b)
+    def test_custom_class_subscript(self):
+        # the two class attributes are accessible via indices 0 and 1
+        # slicing should be supported here as well
+        bytes_key = b'my'
+        var = PythonObject([1, 2, 3, 4, 5], {bytes_key: 'myname'})
+        self.varz['${bytes_key}'] = bytes_key
         self.varz['${var}'] = var
-        self.varz['${key_a}'] = 'A'
-        self.varz['${key_b}'] = 'B'
-        assert_equal(self.varz.replace_scalar('${var}[${key_a}]'), item_a)
-        assert_equal(self.varz.replace_scalar('${var}[${key_b}]'), item_b)
-        assert_raises(VariableError, self.varz.replace_scalar, '${var}[0]')
+        assert_equal(self.varz.replace_scalar('${var}[${0}][2::2]'), [3, 5])
+        assert_equal(self.varz.replace_scalar('${var}[0][2::2]'), [3, 5])
+        assert_equal(self.varz.replace_scalar('${var}[1][${bytes_key}][2:]'), 'name')
+        assert_equal(self.varz.replace_scalar('${var}\\[1]'), str(var) + '[1]')
+        assert_equal(self.varz.replace_scalar('${var}[:][0][4]'), var[:][0][4])
+        assert_equal(self.varz.replace_scalar('${var}[:-2]'), var[:-2])
+        assert_equal(self.varz.replace_scalar('${var}[:7:-2]'), var[:7:-2])
+        assert_equal(self.varz.replace_scalar('${var}[2::]'), ())
+        assert_raises(IndexError, self.varz.replace_scalar, '${var}[${2}]')
+        assert_raises(VariableError, self.varz.replace_scalar, '${var}[${bytes_key}]')
 
     def test_non_subscriptable(self):
         assert_raises(VariableError, self.varz.replace_scalar, '${1}[1]')

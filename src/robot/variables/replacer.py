@@ -15,8 +15,8 @@
 
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
-from robot.utils import (escape, get_error_message, is_list_like, is_sequence,
-                         is_subscriptable, type_name, unescape, unic)
+from robot.utils import (escape, is_list_like, is_sequence, is_subscriptable,
+                         type_name, unescape, unic)
 
 from .search import search_variable, VariableMatch
 
@@ -166,20 +166,30 @@ class VariableReplacer(object):
             raise VariableError("Sequence '%s' has no item in index %d."
                                 % (name, index))
 
-    @staticmethod
-    def _parse_sequence_variable_index(index, support_slice=True):
+    def _parse_sequence_variable_index(self, index, support_slice=True):
         if ':' not in index:
             return int(index)
         if index.count(':') > 2 or not support_slice:
             raise ValueError
         return slice(*[int(i) if i else None for i in index.split(':')])
 
-
-    def _get_subscriptable_variable_item(self, name, variable, item):
-        item = self.replace_scalar(item)
+    def _get_subscriptable_variable_item(self, name, variable, key):
+        if not isinstance(key, (int, slice)):
+            key = self.replace_scalar(key)
         try:
-            return variable[item]
-        except:
-            raise VariableError("Accessing item '%s' from %s '%s' failed: %s"
-                                % (item, type_name(variable), name,
-                                   get_error_message()))
+            return variable[key]
+        except KeyError:
+            raise VariableError("Subscriptable '%s' has no key '%s'."
+                                % (name, key))
+        except TypeError as err:
+            if not isinstance(key, (int, slice)):
+                try:
+                    key = self._parse_sequence_variable_index(
+                        key, name[0] == '$')
+                except:
+                    pass
+                else:
+                    return self._get_subscriptable_variable_item(
+                        name, variable, key)
+            raise VariableError("Subscriptable '%s' used with invalid key: %s"
+                                % (name, err))
