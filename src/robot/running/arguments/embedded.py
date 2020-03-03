@@ -24,7 +24,7 @@ from robot.variables import VariableIterator
 class EmbeddedArguments(object):
 
     def __init__(self, name):
-        if '${' in name:
+        if '${' in name or '@{' in name or '&{' in name:
             self.name, self.args = EmbeddedArgumentParser().parse(name)
         else:
             self.name, self.args = None, []
@@ -44,9 +44,9 @@ class EmbeddedArgumentParser(object):
     def parse(self, string):
         args = []
         name_regexp = ['^']
-        for before, variable, string in VariableIterator(string, identifiers='$'):
+        for before, variable, string in VariableIterator(string, identifiers='$@&'):
             name, pattern = self._get_name_and_pattern(variable[2:-1])
-            args.append(name)
+            args.append((variable[0], name))
             name_regexp.extend([re.escape(before), '(%s)' % pattern])
         name_regexp.extend([re.escape(string), '$'])
         name = self._compile_regexp(name_regexp) if args else None

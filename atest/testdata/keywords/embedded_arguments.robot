@@ -1,4 +1,5 @@
 *** Settings ***
+Library           Collections
 Resource          resources/embedded_args_in_uk_1.robot
 Resource          resources/embedded_args_in_uk_2.robot
 
@@ -37,6 +38,12 @@ Embedded Arguments as Variables
     ${name}    ${item} =    User ${name} Selects ${TEST TAGS} From Webshop
     Should Be Equal    ${name}    ${42}
     Should Be True    ${item} == []
+
+Embedded Arguments as Lists
+    Sublist ["foo", 53] is in [1, 53, "foo", 25, 36, 42, 24, "bar"]
+
+Embedded Arguments as Dicts
+    Key x is in {"a": "b", "x": "y"}
 
 Non-Existing Variable in Embedded Arguments
     [Documentation]    FAIL Variable '${non existing}' not found.
@@ -280,3 +287,9 @@ It is totally ${same}
 
 It is totally ${same}
     Fail    Not executed
+
+Sublist @{sublist} is in @{list}
+     List Should Contain Sub List    ${list}    ${sublist}
+
+Key ${key} is in &{dictionary}
+     Dictionary Should Contain Key    ${dictionary}    ${key}
