@@ -15,7 +15,7 @@ NOKS = ['var', '$var', '${var', '${va}r', '@{va}r', '@var', '%{var}', ' ${var}',
 # Simple objects needed when testing assigning objects to variables.
 # JavaObject lives in '../../acceptance/testdata/libraries'
 
-class PythonObject:
+class PythonObject(object):
     def __init__(self, a, b):
         self.a = a
         self.b = b
