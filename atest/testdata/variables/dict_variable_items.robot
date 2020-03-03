@@ -87,8 +87,7 @@ Invalid key using variable
     Log    ${DICT}[${INVALID}]
 
 Non-hashable key
-    [Documentation]    FAIL Accessing item '[*]' \
-    ...    from DotDict '\${DICT}' failed: unhashable type: 'list'
+    [Documentation]    FAIL STARTS: Accessing item '[
     Log    ${DICT}[@{DICT}]
 
 Non-existing variable
