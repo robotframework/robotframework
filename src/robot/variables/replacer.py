@@ -175,20 +175,27 @@ class VariableReplacer(object):
             raise ValueError
         return slice(*[int(i) if i else None for i in index.split(':')])
 
-    def _get_subscriptable_variable_item(self, name, variable, key):
-        key = self.replace_scalar(key)
+    def _get_subscriptable_variable_item(self, name, variable, item):
+        """Gets item from a subscriptable variable.
+
+        This variable can be a dictionary for example, but also a custom class
+        that implements __getitem__(). If the item is not a variable, the
+        subscriptable variable gets treated as a sequence, which means
+        that the item is allowed to be an index/slice given as a string.
+        """
+        item = self.replace_scalar(item)
         try:
-            return variable[key]
+            return variable[item]
         except KeyError:
             raise VariableError("%s '%s' has no item '%s'."
                                 % (type_name(variable, capitalize=True),
-                                   name, key))
+                                   name, item))
         except Exception as err:
             # Try to treat custom class as a Sequence but don't raise error
             # on failure
             try:
-                return self._get_sequence_variable_item(name, variable, key)
+                return self._get_sequence_variable_item(name, variable, item)
             except:
                 pass
             raise VariableError("Accessing item '%s' from %s '%s' failed: %s"
-                                % (key, type_name(variable), name, err))
+                                % (item, type_name(variable), name, err))
