@@ -161,6 +161,7 @@ Variable Format
     Check Test Case    ${TEST NAME} 2
     Check Test Case    ${TEST NAME} 3
     Check Test Case    ${TEST NAME} 4
+    Check Test Case    ${TEST NAME} 5
 
 For With Non Existing Keyword
     Check Test Case    ${TEST NAME}

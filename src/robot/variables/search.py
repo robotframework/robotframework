@@ -16,13 +16,58 @@
 import re
 
 from robot.errors import VariableError
-from robot.utils import is_string, py2to3
+from robot.utils import is_string, py2to3, rstrip
 
 
 def search_variable(string, identifiers='$@&%*', ignore_errors=False):
     if not (is_string(string) and '{' in string):
         return VariableMatch(string)
     return VariableSearcher(identifiers, ignore_errors).search(string)
+
+
+def contains_variable(string, identifiers='$@&'):
+    match = search_variable(string, identifiers, ignore_errors=True)
+    return bool(match)
+
+
+def is_variable(string, identifiers='$@&'):
+    match = search_variable(string, identifiers, ignore_errors=True)
+    return match.is_variable()
+
+
+def is_scalar_variable(string):
+    return is_variable(string, '$')
+
+
+# See comment to `VariableMatch.is_list/dict_variable` for explanation why
+# `is_list/dict_variable` need different implementation than
+# `is_scalar_variable` above. This ought to be changed in RF 4.0.
+
+def is_list_variable(string):
+    match = search_variable(string, '@', ignore_errors=True)
+    return match.is_list_variable()
+
+
+def is_dict_variable(string):
+    match = search_variable(string, '&', ignore_errors=True)
+    return match.is_dict_variable()
+
+
+def is_assign(string, identifiers='$@&', allow_assign_mark=False):
+    match = search_variable(string, identifiers, ignore_errors=True)
+    return match.is_assign(allow_assign_mark)
+
+
+def is_scalar_assign(string, allow_assign_mark=False):
+    return is_assign(string, '$', allow_assign_mark)
+
+
+def is_list_assign(string, allow_assign_mark=False):
+    return is_assign(string, '@', allow_assign_mark)
+
+
+def is_dict_assign(string, allow_assign_mark=False):
+    return is_assign(string, '&', allow_assign_mark)
 
 
 @py2to3
@@ -62,20 +107,43 @@ class VariableMatch(object):
     def after(self):
         return self.string[self.end:] if self.identifier else None
 
-    @property
     def is_variable(self):
-        return bool(self.identifier and self.base and self.start == 0
+        return bool(self.identifier
+                    and self.base
+                    and self.start == 0
                     and self.end == len(self.string))
 
-    @property
-    def is_list_variable(self):
-        return bool(self.is_variable and self.identifier == '@'
-                    and not self.items)
+    def is_scalar_variable(self):
+        return self.identifier == '$' and self.is_variable()
 
-    @property
+    # The reason `is_list/dict_variable` check they don't have items is that
+    # at the moment e.g. `@{var}[item]` still returns a scalar value.
+    # This will change in RF 4.0 and then obviously this code must be changed:
+    # https://github.com/robotframework/robotframework/issues/3487
+
+    def is_list_variable(self):
+        return (self.identifier == '@' and self.is_variable()
+                and not self.items)
+
     def is_dict_variable(self):
-        return bool(self.is_variable and self.identifier == '&'
-                    and not self.items)
+        return (self.identifier == '&' and self.is_variable()
+                and not self.items)
+
+    def is_assign(self, allow_assign_mark=False):
+        if allow_assign_mark and self.string.endswith('='):
+            return search_variable(rstrip(self.string[:-1])).is_assign()
+        return (self.is_variable()
+                and not self.items
+                and not search_variable(self.base))
+
+    def is_scalar_assign(self, allow_assign_mark=False):
+        return self.identifier == '$' and self.is_assign(allow_assign_mark)
+
+    def is_list_assign(self, allow_assign_mark=False):
+        return self.identifier == '@' and self.is_assign(allow_assign_mark)
+
+    def is_dict_assign(self, allow_assign_mark=False):
+        return self.identifier == '&' and self.is_assign(allow_assign_mark)
 
     def __nonzero__(self):
         return self.identifier is not None
@@ -224,8 +292,6 @@ def unescape_variable_syntax(item):
     return re.sub(r'(\\+)(?=(.+))', handle_escapes, item)
 
 
-# TODO: This is pretty odd/ugly and used only in two places. Implement
-# something better or just remove altogether.
 @py2to3
 class VariableIterator(object):
 

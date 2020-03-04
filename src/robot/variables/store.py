@@ -17,8 +17,8 @@ from robot.errors import DataError, VariableError
 from robot.utils import (DotDict, is_dict_like, is_list_like, NormalizedDict,
                          type_name)
 
-from .isvar import validate_var
 from .notfound import variable_not_found
+from .search import is_assign
 from .tablesetter import VariableTableValueBase
 
 
@@ -73,7 +73,8 @@ class VariableStore(object):
             self.data[name] = value
 
     def _undecorate(self, name, value):
-        validate_var(name)
+        if not is_assign(name):
+            raise DataError("Invalid variable name '%s'." % name)
         if name[0] == '@':
             if not is_list_like(value):
                 self._raise_cannot_set_type(name, value, 'list')

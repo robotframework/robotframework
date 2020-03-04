@@ -877,6 +877,7 @@ ${LONG}=         First part    ${2} part
 Ooops     I did it again
 ${}       invalid
 ${x}==    invalid
+${not     closed
 '''
         # Values are marked as COMMENTs and ignored with `data_only=True`.
         expected = [
@@ -887,7 +888,9 @@ ${x}==    invalid
             (T.ERROR, '${}', 3, 0, "Invalid variable name '${}'."),
             (T.EOS, '', 3, 3),
             (T.ERROR, '${x}==', 4, 0, "Invalid variable name '${x}=='."),
-            (T.EOS, '', 4, 6)
+            (T.EOS, '', 4, 6),
+            (T.ERROR, '${not', 5, 0, "Invalid variable name '${not'."),
+            (T.EOS, '', 5, 5)
         ]
         self._verify(data, expected)
 

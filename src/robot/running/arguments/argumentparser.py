@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.utils import JYTHON, PY_VERSION, PY2
-from robot.variables import is_dict_var, is_list_var, is_scalar_var
+from robot.variables import is_scalar_assign, is_list_assign, is_dict_assign
 
 from .argumentspec import ArgumentSpec
 
@@ -278,13 +278,13 @@ class DynamicArgumentParser(_ArgumentSpecParser):
 class UserKeywordArgumentParser(_ArgumentSpecParser):
 
     def _is_kwargs(self, arg):
-        return is_dict_var(arg)
+        return is_dict_assign(arg)
 
     def _format_kwargs(self, kwargs):
         return kwargs[2:-1]
 
     def _is_varargs(self, arg):
-        return is_list_var(arg)
+        return is_list_assign(arg)
 
     def _format_varargs(self, varargs):
         return varargs[2:-1]
@@ -293,6 +293,6 @@ class UserKeywordArgumentParser(_ArgumentSpecParser):
         return arg == '@{}'
 
     def _format_arg(self, arg):
-        if not is_scalar_var(arg):
+        if not is_scalar_assign(arg):
             self._raise_invalid_spec("Invalid argument syntax '%s'." % arg)
         return arg[2:-1]

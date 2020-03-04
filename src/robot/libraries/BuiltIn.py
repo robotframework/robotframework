@@ -20,7 +20,7 @@ import time
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
-                          PassExecution, ReturnFromKeyword)
+                          PassExecution, ReturnFromKeyword, VariableError)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
@@ -33,9 +33,9 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          roundup, secs_to_timestr, seq2str, split_from_equals,
                          timestr_to_secs, type_name, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
-from robot.variables import (evaluate_expression, is_list_var, is_var,
-                             DictVariableTableValue, search_variable,
-                             VariableTableValue)
+from robot.variables import (evaluate_expression, is_dict_variable,
+                             is_list_variable, search_variable,
+                             DictVariableTableValue, VariableTableValue)
 from robot.version import get_version
 
 if JYTHON:
@@ -480,7 +480,7 @@ class _Converter(_BuiltInBase):
         separate = []
         for item in items:
             name, value = split_from_equals(item)
-            if value is not None or search_variable(item).is_dict_variable:
+            if value is not None or is_dict_variable(item):
                 break
             separate.append(item)
         return separate, items[len(separate):]
@@ -1317,7 +1317,7 @@ class _Variables(_BuiltInBase):
         """
         try:
             return self._variables[self._get_var_name(name)]
-        except DataError:
+        except VariableError:
             return self._variables.replace_scalar(default)
 
     def log_variables(self, level='INFO'):
@@ -1341,7 +1341,7 @@ class _Variables(_BuiltInBase):
         """
         name = self._get_var_name(name)
         msg = self._variables.replace_string(msg) if msg \
-            else "Variable %s does not exist." % name
+            else "Variable '%s' does not exist." % name
         try:
             self._variables[name]
         except DataError:
@@ -1361,7 +1361,7 @@ class _Variables(_BuiltInBase):
         """
         name = self._get_var_name(name)
         msg = self._variables.replace_string(msg) if msg \
-            else "Variable %s exists." % name
+            else "Variable '%s' exists." % name
         try:
             self._variables[name]
         except DataError:
@@ -1565,35 +1565,31 @@ class _Variables(_BuiltInBase):
 
     # Helpers
 
-    def _get_var_name(self, orig):
-        name = self._resolve_possible_variable(orig)
+    def _get_var_name(self, original):
         try:
-            return self._unescape_variable_if_needed(name)
+            replaced = self._variables.replace_string(original)
+        except VariableError:
+            replaced = original
+        try:
+            name = self._resolve_var_name(replaced)
         except ValueError:
-            raise RuntimeError("Invalid variable syntax '%s'." % orig)
+            name = original
+        if not search_variable(name).is_assign():
+            raise DataError("Invalid variable name '%s'." % name)
+        return name
 
-    def _resolve_possible_variable(self, name):
-        try:
-            resolved = self._variables.replace_string(name)
-            return self._unescape_variable_if_needed(resolved)
-        except (KeyError, ValueError, DataError):
-            return name
-
-    def _unescape_variable_if_needed(self, name):
+    def _resolve_var_name(self, name):
         if name.startswith('\\'):
             name = name[1:]
-        if len(name) < 2:
+        if len(name) < 2 or name[0] not in '$@&':
             raise ValueError
         if name[1] != '{':
             name = '%s{%s}' % (name[0], name[1:])
         match = search_variable(name, identifiers='$@&', ignore_errors=True)
-        if not match.is_variable:
-            raise ValueError
         match.resolve_base(self._variables)
-        name = unic(match)
-        if is_var(name):
-            return name
-        raise ValueError
+        if not match.is_assign():
+            raise ValueError
+        return unic(match)
 
     def _get_var_value(self, name, values):
         if not values:
@@ -1603,7 +1599,7 @@ class _Variables(_BuiltInBase):
             # scalar variables in the variable table, but that would require
             # handling non-string values somehow. For details see
             # https://github.com/robotframework/robotframework/issues/1919
-            if len(values) != 1 or search_variable(values[0]).is_list_variable:
+            if len(values) != 1 or is_list_variable(values[0]):
                 raise DataError("Setting list value to scalar variable '%s' "
                                 "is not supported anymore. Create list "
                                 "variable '@%s' instead." % (name, name[1:]))
@@ -2131,7 +2127,7 @@ class _RunKeyword(_BuiltInBase):
             if default:
                 return [None]
             raise RuntimeError('At least one value is required')
-        if is_list_var(values[0]):
+        if is_list_variable(values[0]):
             values[:1] = [escape(item) for item in self._variables[values[0]]]
             return self._verify_values_for_set_variable_if(values)
         return values
@@ -2666,10 +2662,10 @@ class _Misc(_BuiltInBase):
         for msg in messages:
             match = search_variable(msg)
             value = self._variables.replace_scalar(msg)
-            if match.is_list_variable:
+            if match.is_list_variable():
                 for item in value:
                     yield item
-            elif match.is_dict_variable:
+            elif match.is_dict_variable():
                 for name, value in value.items():
                     yield '%s=%s' % (name, value)
             else:

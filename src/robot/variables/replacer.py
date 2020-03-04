@@ -65,7 +65,7 @@ class VariableReplacer(object):
         if not match:
             return [unescape(match.string)]
         value = self.replace_scalar(match, ignore_errors)
-        if match.is_list_variable and is_list_like(value):
+        if match.is_list_variable() and is_list_like(value):
             return value
         return [value]
 
@@ -87,7 +87,7 @@ class VariableReplacer(object):
         return search_variable(item, ignore_errors=ignore_errors)
 
     def _replace_scalar(self, match, ignore_errors=False):
-        if not match.is_variable:
+        if not match.is_variable():
             return self.replace_string(match, ignore_errors=ignore_errors)
         return self._get_variable_value(match, ignore_errors)
 

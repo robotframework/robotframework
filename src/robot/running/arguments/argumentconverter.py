@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.utils import is_unicode
-from robot.variables import contains_var
+from robot.variables import contains_variable
 
 from .typeconverters import TypeConverter
 
@@ -47,7 +47,7 @@ class ArgumentConverter(object):
     def _convert(self, name, value):
         type_, explicit_type = self._get_type(name, value)
         if type_ is None or (self._dry_run and
-                             contains_var(value, identifiers='$@&%')):
+                             contains_variable(value, identifiers='$@&%')):
             return value
         converter = TypeConverter.converter_for(type_)
         if converter is None:

@@ -19,7 +19,7 @@ from robot.result import Keyword as KeywordResult
 from robot.output import librarylogger as logger
 from robot.utils import (format_assign_message, frange, get_error_message,
                          is_list_like, is_number, plural_or_not as s, type_name)
-from robot.variables import is_scalar_var
+from robot.variables import is_scalar_assign
 
 from .statusreporter import StatusReporter
 
@@ -104,7 +104,7 @@ class ForInRunner(object):
         if not data.variables:
             raise DataError('FOR loop has no loop variables.')
         for var in data.variables:
-            if not is_scalar_var(var):
+            if not is_scalar_assign(var):
                 raise DataError("Invalid FOR loop variable '%s'." % var)
         if not data.values:
             raise DataError('FOR loop has no loop values.')
