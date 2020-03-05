@@ -93,6 +93,11 @@ class ForLoop(Keyword):
     def values(self):
         return self.args
 
+    def __unicode__(self):
+        variables = '    '.join(self.assign)
+        values = '    '.join(self.values)
+        return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
+
 
 class TestCase(model.TestCase):
     """Represents a single executable test case.
