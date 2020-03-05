@@ -98,24 +98,37 @@ unescape = Unescaper().unescape
 
 
 def split_from_equals(string):
+    from robot.variables import VariableIterator
     if not is_string(string) or '=' not in string:
         return string, None
-    if '\\' not in string:
+    variables = VariableIterator(string, ignore_errors=True)
+    if not variables and '\\' not in string:
         return tuple(string.split('=', 1))
-    index = _get_split_index(string)
-    if index == -1:
+    try:
+        index = _find_split_index(string, variables)
+    except ValueError:
         return string, None
     return string[:index], string[index+1:]
 
 
-def _get_split_index(string):
+def _find_split_index(string, variables):
+    relative_index = 0
+    for before, match, string in variables:
+        try:
+            return _find_split_index_from_part(before) + relative_index
+        except ValueError:
+            relative_index += len(before) + len(match)
+    return _find_split_index_from_part(string) + relative_index
+
+
+def _find_split_index_from_part(string):
     index = 0
     while '=' in string[index:]:
         index += string[index:].index('=')
         if _not_escaping(string[:index]):
             return index
         index += 1
-    return -1
+    raise ValueError
 
 
 def _not_escaping(name):
