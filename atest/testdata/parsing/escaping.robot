@@ -81,13 +81,13 @@ Backslash
     Should Be Equal    \foo    foo
 
 Newline
-    Should Be Equal    \n    ${NL}
-    Should Be Equal    \\n    ${BS}n
+    Should Be Equal    \n            ${NL}
+    Should Be Equal    \\n           ${BS}n
+    Should Be Equal    foo\n\ bar    foo${NL}${SP}bar
+    Should Be Equal    foo\\n bar    foo${BS}n${SP}bar
 
 Ignoring Space After Newline Is Deprecated
     Should Be Equal    foo\n bar\n zap    foo${NL}bar${NL}zap
-    Should Be Equal    foo\n\ bar    foo${NL}${SP}bar
-    Should Be Equal    foo\\n bar    foo${BS}n${SP}bar
 
 Carrriage Return
     Should Be Equal    \r    ${CR}

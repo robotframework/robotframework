@@ -24,7 +24,7 @@ from .tokenizer import Tokenizer
 from .tokens import EOS, Token
 
 
-def get_tokens(source, data_only=False):
+def get_tokens(source, data_only=False, tokenize_variables=False):
     """Parses the given source to tokens.
 
     :param source: The source where to read the data. Can be a path to
@@ -38,39 +38,40 @@ def get_tokens(source, data_only=False):
     Returns a generator that yields :class:`~robot.parsing.lexer.tokens.Token`
     instances.
     """
-    lexer = Lexer(TestCaseFileContext(), data_only)
+    lexer = Lexer(TestCaseFileContext(), data_only, tokenize_variables)
     lexer.input(source)
     return lexer.get_tokens()
 
 
-def get_resource_tokens(source, data_only=False):
+def get_resource_tokens(source, data_only=False, tokenize_variables=False):
     """Parses the given source to resource file tokens.
 
     Otherwise same as :func:`get_tokens` but the source is considered to be
     a resource file. This affects, for example, what settings are valid.
     """
-    lexer = Lexer(ResourceFileContext(), data_only)
+    lexer = Lexer(ResourceFileContext(), data_only, tokenize_variables)
     lexer.input(source)
     return lexer.get_tokens()
 
 
-def get_init_tokens(source, data_only=False):
+def get_init_tokens(source, data_only=False, tokenize_variables=False):
     """Parses the given source to init file tokens.
 
     Otherwise same as :func:`get_tokens` but the source is considered to be
     a suite initialization file. This affects, for example, what settings are
     valid.
     """
-    lexer = Lexer(InitFileContext(), data_only)
+    lexer = Lexer(InitFileContext(), data_only, tokenize_variables)
     lexer.input(source)
     return lexer.get_tokens()
 
 
 class Lexer(object):
 
-    def __init__(self, ctx, data_only=False):
+    def __init__(self, ctx, data_only=False, tokenize_variables=False):
         self.lexer = FileLexer(ctx)
         self.data_only = data_only
+        self.tokenize_variables = tokenize_variables
         self.statements = []
 
     def input(self, source):
@@ -95,19 +96,25 @@ class Lexer(object):
 
     def get_tokens(self):
         self.lexer.lex()
-        if self.data_only:
-            ignored_types = {None, Token.COMMENT_HEADER, Token.COMMENT,
-                             Token.OLD_FOR_INDENT}
-        else:
-            ignored_types = {None}
         statements = self._handle_old_for(self.statements)
         if not self.data_only:
             statements = chain.from_iterable(
                 self._split_trailing_commented_and_empty_lines(s)
                 for s in statements
             )
+        tokens = self._get_tokens(statements)
+        if self.tokenize_variables:
+            tokens = self._tokenize_variables(tokens)
+        return tokens
+
+    def _get_tokens(self, statements):
         # Setting local variables is performance optimization to avoid
         # unnecessary lookups and attribute access.
+        if self.data_only:
+            ignored_types = {None, Token.COMMENT_HEADER, Token.COMMENT,
+                             Token.OLD_FOR_INDENT}
+        else:
+            ignored_types = {None}
         name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
         separator_type = Token.SEPARATOR
         eol_type = Token.EOL
@@ -116,19 +123,19 @@ class Lexer(object):
             separator_after_name = None
             prev_token = None
             for token in statement:
-                type = token.type     # Performance optimization.
-                if type in ignored_types:
+                token_type = token.type
+                if token_type in ignored_types:
                     continue
                 if name_seen:
-                    if type == separator_type:
+                    if token_type == separator_type:
                         separator_after_name = token
                         continue
-                    if type != eol_type:
+                    if token_type != eol_type:
                         yield EOS.from_token(prev_token)
                     if separator_after_name:
                         yield separator_after_name
                     name_seen = False
-                if type in name_types:
+                if token_type in name_types:
                     name_seen = True
                 prev_token = token
                 yield token
@@ -194,3 +201,8 @@ class Lexer(object):
             if token.type not in separator_or_ignore:
                 return token.type in comment_or_eol
         return False
+
+    def _tokenize_variables(self, tokens):
+        for token in tokens:
+            for t in token.tokenize_variables():
+                yield t

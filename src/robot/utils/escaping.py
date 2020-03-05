@@ -37,7 +37,6 @@ def escape(item):
     return item
 
 
-# TODO: Deprecate/remove support for ignoring space after literal newline!
 class Unescaper(object):
     _escape_sequences = re.compile(r'''
         (\\+)                # escapes
@@ -61,8 +60,12 @@ class Unescaper(object):
 
     def _handle_n(self, value):
         if value:
-            from robot.output import LOGGER
-            LOGGER.warn(r"Ignoring space after '\n' is deprecated.")
+            # TODO: Remove this feature for good in RF 3.3!
+            from robot.output import librarylogger
+            librarylogger.warn(
+                "Ignoring space after '\\n' is deprecated. For more info see: "
+                "https://github.com/robotframework/robotframework/issues/3333"
+            )
         return '\n'
 
     def _hex_to_unichr(self, value):

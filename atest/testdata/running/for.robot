@@ -263,7 +263,7 @@ Variable Format 2
     Fail    Not Executed
 
 Variable Format 3
-    [Documentation]    FAIL    Invalid FOR loop variable '@{var}'.
+    [Documentation]    FAIL    Invalid FOR loop variable '\@{var}'.
     Log    This is executed
     FOR    @{var}    IN    one    two
         Fail    Not Executed
@@ -274,6 +274,14 @@ Variable Format 4
     [Documentation]    FAIL    Invalid FOR loop variable 'notvar'.
     Log    This is executed
     FOR    ${var}    ${var2}    notvar    IN    one    two    three
+        Fail    Not Executed
+    END
+    Fail    Not Executed
+
+Variable Format 5
+    [Documentation]    FAIL    Invalid FOR loop variable '\${not closed'.
+    Log    This is executed
+    FOR    ${not closed    IN    one    two    three
         Fail    Not Executed
     END
     Fail    Not Executed

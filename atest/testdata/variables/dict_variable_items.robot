@@ -115,6 +115,6 @@ Sanity check
 
 Old syntax with `&` still works but is deprecated
     [Documentation]    FAIL DotDict '\&{DICT}' has no item 'nonex'.
-    Should Be Equal    &{DICT}[A]     1
-    Should Be Equal    &{DICT}[${1}]        ${2}
+    Should Be Equal    &{DICT}[A]       1
+    Should Be Equal    &{DICT}[${1}]    ${2}
     Log    &{DICT}[nonex]
