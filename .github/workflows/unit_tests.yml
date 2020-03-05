@@ -39,9 +39,8 @@ jobs:
           python -m coverage xml -i
         if: always()
 
-      - uses: codecov/codecov-action@797e92895ec0eac368405352c0add9af878fe257
+      - uses: codecov/codecov-action@e34ee485244a5b5e6e4e1b96daa4a15c9073e4fc
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
           name: ${{ matrix.python-version }}-${{ matrix.os }}
 
       - name: Archive coverage results
