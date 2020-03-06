@@ -63,14 +63,12 @@ def ForRunner(context, templated=False, flavor='IN'):
                'IN RANGE': ForInRangeRunner,
                'IN ZIP': ForInZipRunner,
                'IN ENUMERATE': ForInEnumerateRunner}
-    try:
-        runner = runners[flavor]
-    except KeyError:
-        return InvalidForRunner(context, flavor)
+    runner = runners[flavor or 'IN']
     return runner(context, templated)
 
 
 class ForInRunner(object):
+    flavor = 'IN'
 
     def __init__(self, context, templated=False):
         self._context = context
@@ -85,11 +83,8 @@ class ForInRunner(object):
 
     def _get_name(self, data):
         return '%s %s [ %s ]' % (' | '.join(data.variables),
-                                 self._flavor_name(),
+                                 self.flavor,
                                  ' | '.join(data.values))
-
-    def _flavor_name(self):
-        return 'IN'
 
     def _validate(self, data):
         # TODO: Remove header and end deprecations in RF 3.3!
@@ -117,7 +112,7 @@ class ForInRunner(object):
 
     def _run(self, data):
         errors = []
-        for values in self._get_values_for_one_round(data):
+        for values in self._get_values_for_rounds(data):
             try:
                 self._run_one_round(data, values)
             except ExitForLoop as exception:
@@ -140,73 +135,64 @@ class ForInRunner(object):
         if errors:
             raise ExecutionFailures(errors)
 
-    def _get_values_for_one_round(self, data):
-        if not self._context.dry_run:
-            values = self._replace_variables(data)
-            var_count = self._values_per_iteration(data.variables)
-            for i in range(0, len(values), var_count):
-                yield values[i:i+var_count]
-        else:
-            yield data.variables
-
-    def _replace_variables(self, data):
+    def _get_values_for_rounds(self, data):
+        values_per_round = len(data.variables)
+        if self._context.dry_run:
+            return ForInRunner._map_values_to_rounds(
+                self, data.variables, values_per_round
+            )
         values = self._context.variables.replace_list(data.values)
-        values = self._transform_items(values)
-        values_per_iteration = self._values_per_iteration(data.variables)
-        if len(values) % values_per_iteration == 0:
-            return values
-        self._raise_wrong_variable_count(values_per_iteration, len(values))
+        return self._map_values_to_rounds(values, values_per_round)
+
+    def _map_values_to_rounds(self, values, per_round):
+        count = len(values)
+        if count % per_round != 0:
+            self._raise_wrong_variable_count(per_round, count)
+        # Map list of values to list of lists containing values per round.
+        return (values[i:i+per_round] for i in range(0, count, per_round))
 
     def _raise_wrong_variable_count(self, variables, values):
-        raise DataError('Number of FOR loop values should be multiple of '
-                        'its variables. Got %d variables but %d value%s.'
-                        % (variables, values, s(values)))
+        raise DataError(
+            'Number of FOR loop values should be multiple of its variables. '
+            'Got %d variables but %d value%s.' % (variables, values, s(values))
+        )
 
     def _run_one_round(self, data, values):
-        name = ', '.join(format_assign_message(var, item)
-                         for var, item in zip(data.variables, values))
+        variables = self._map_variables_and_values(data.variables, values)
+        for name, value in variables:
+            self._context.variables[name] = value
+        name = ', '.join(format_assign_message(n, v) for n, v in variables)
         result = KeywordResult(kwname=name,
                                type=data.FOR_ITEM_TYPE)
-        for var, value in zip(data.variables, values):
-            self._context.variables[var] = value
         runner = StepRunner(self._context, self._templated)
         with StatusReporter(self._context, result):
             runner.run_steps(data.keywords)
 
-    def _transform_items(self, items):
-        return items
-
-    def _values_per_iteration(self, variables):
-        """
-        The number of values per iteration;
-        used to check if we have (a multiple of this) values.
-
-        This is its own method to support loops like ForInEnumerate
-        which add/remove items to the pool.
-        """
-        return len(variables)
+    def _map_variables_and_values(self, variables, values):
+        if len(variables) == 1 and len(values) != 1:
+            return [(variables[0], tuple(values))]
+        return list(zip(variables, values))
 
 
 class ForInRangeRunner(ForInRunner):
+    flavor = 'IN RANGE'
 
-    def __init__(self, context, templated=False):
-        super(ForInRangeRunner, self).__init__(context, templated)
-
-    def _flavor_name(self):
-        return 'IN RANGE'
-
-    def _transform_items(self, items):
+    def _map_values_to_rounds(self, values, per_round):
+        if not 1 <= len(values) <= 3:
+            raise DataError(
+                'FOR IN RANGE expected 1-3 values, got %d.' % len(values)
+            )
         try:
-            items = [self._to_number_with_arithmetics(item) for item in items]
+            values = [self._to_number_with_arithmetic(v) for v in values]
         except:
-            raise DataError('Converting argument of FOR IN RANGE failed: %s.'
-                            % get_error_message())
-        if not 1 <= len(items) <= 3:
-            raise DataError('FOR IN RANGE expected 1-3 arguments, got %d.'
-                            % len(items))
-        return frange(*items)
+            raise DataError(
+                'Converting FOR IN RANGE values failed: %s.'
+                % get_error_message()
+            )
+        values = frange(*values)
+        return ForInRunner._map_values_to_rounds(self, values, per_round)
 
-    def _to_number_with_arithmetics(self, item):
+    def _to_number_with_arithmetic(self, item):
         if is_number(item):
             return item
         number = eval(str(item), {})
@@ -216,71 +202,31 @@ class ForInRangeRunner(ForInRunner):
 
 
 class ForInZipRunner(ForInRunner):
+    flavor = 'IN ZIP'
 
-    def __init__(self, context, templated=False):
-        super(ForInZipRunner, self).__init__(context, templated)
-
-    def _flavor_name(self):
-        return 'IN ZIP'
-
-    def _replace_variables(self, data):
-        values = super(ForInZipRunner, self)._replace_variables(data)
-        if len(data.variables) == len(data.values):
-            return values
-        raise DataError('FOR IN ZIP expects an equal number of variables and '
-                        'iterables. Got %d variable%s and %d iterable%s.'
-                        % (len(data.variables), s(data.variables),
-                           len(data.values), s(data.values)))
-
-    def _transform_items(self, items):
-        answer = list()
-        for item in items:
+    def _map_values_to_rounds(self, values, per_round):
+        for item in values:
             if not is_list_like(item):
-                raise DataError('FOR IN ZIP items must all be list-like, '
-                                'got %s.' % type_name(item))
-        for zipped_item in zip(*[list(item) for item in items]):
-            answer.extend(zipped_item)
-        return answer
+                raise DataError(
+                    "FOR IN ZIP items must all be list-like, got %s '%s'."
+                    % (type_name(item), item)
+                )
+        if len(values) % per_round != 0:
+            self._raise_wrong_variable_count(per_round, len(values))
+        return zip(*(list(item) for item in values))
 
 
 class ForInEnumerateRunner(ForInRunner):
+    flavor = 'IN ENUMERATE'
 
-    def __init__(self, context, templated=False):
-        super(ForInEnumerateRunner, self).__init__(context, templated)
-
-    def _flavor_name(self):
-        return 'IN ENUMERATE'
-
-    def _values_per_iteration(self, variables):
-        if len(variables) < 2:
-            raise DataError('FOR IN ENUMERATE expected 2 or more loop '
-                            'variables, got %d.' % len(variables))
-        return len(variables) - 1
-
-    def _get_values_for_one_round(self, data):
-        parent = super(ForInEnumerateRunner, self)
-        for index, values in enumerate(parent._get_values_for_one_round(data)):
-            yield [index] + values
+    def _map_values_to_rounds(self, values, per_round):
+        per_round = max(per_round-1, 1)
+        values = ForInRunner._map_values_to_rounds(self, values, per_round)
+        return ([i] + v for i, v in enumerate(values))
 
     def _raise_wrong_variable_count(self, variables, values):
-        raise DataError('Number of FOR IN ENUMERATE loop values should be '
-                        'multiple of its variables (excluding the index). '
-                        'Got %d variable%s but %d value%s.'
-                        % (variables, s(variables), values, s(values)))
-
-
-class InvalidForRunner(ForInRunner):
-    """Used to send an error from ForRunner() if it sees an unexpected error.
-
-    We can't simply throw a DataError from ForRunner() because that happens
-    outside the "with StatusReporter(...)" blocks.
-    """
-
-    def __init__(self, context, flavor):
-        super(InvalidForRunner, self).__init__(context, False)
-        self.flavor = flavor
-
-    def _run(self, data, *args, **kwargs):
-        raise DataError("Invalid FOR loop type '%s'. Expected 'IN', "
-                        "'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'."
-                        % self.flavor)
+        raise DataError(
+            'Number of FOR IN ENUMERATE loop values should be multiple of '
+            'its variables (excluding the index). Got %d variables but %d '
+            'value%s.' % (variables, values, s(values))
+        )

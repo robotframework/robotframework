@@ -508,6 +508,21 @@ the number of loop-variables (excluding the first, index variable).
            Log    "${en}" in English is "${fi}" in Finnish (index: ${index})
        END
 
+If you only use one loop variable with for-in-enumerate loops, that variable
+will become a Python tuple containing the index and the iterated value:
+
+.. sourcecode:: robotframework
+
+   *** Test Case ***
+   For-in-enumerate with one loop variable
+       FOR    ${x}    IN ENUMERATE    @{LIST}
+           Length Should Be    ${x}    2
+           Log    Index is ${x}[0] and item is ${x}[1].
+       END
+
+.. note:: Using for-in-enumerate loops with only one loop variable is a new
+          feature in Robot Framework 3.2.
+
 For-in-zip loop
 ~~~~~~~~~~~~~~~
 
@@ -522,31 +537,69 @@ This may be easiest to show with an example:
 .. sourcecode:: robotframework
 
    *** Variables ***
-   @{NUMBERS}      ${1}    ${2}    ${5}
-   @{NAMES}        one     two     five
+   @{NUMBERS}       ${1}    ${2}    ${5}
+   @{NAMES}         one     two     five
 
    *** Test Cases ***
    Iterate over two lists manually
        ${length}=    Get Length    ${NUMBERS}
-       FOR    ${idx}    IN RANGE    ${length}
-           Number Should Be Named    ${NUMBERS}[${idx}]    ${NAMES}[${idx}]
+       FOR    ${index}    IN RANGE    ${length}
+           Log Many    ${NUMBERS}[${index}]    ${NAMES}[${index}]
        END
 
    For-in-zip
        FOR    ${number}    ${name}    IN ZIP    ${NUMBERS}    ${NAMES}
-           Number Should Be Named    ${number}    ${name}
+           Log Many    ${number}    ${name}
        END
 
 Similarly as for-in-range and for-in-enumerate loops, for-in-zip loops require
 the cell after the loop variables to read `IN ZIP` (case-sensitive).
-
-Values used with for-in-zip loops must be lists or list-like objects, and
-there must be same number of loop variables as lists to loop over. Looping
+Values used with for-in-zip loops must be lists or list-like objects. Looping
 will stop when the shortest list is exhausted.
 
-Note that any lists used with for-in-zip should usually be given as `scalar
-variables`_ like `${list}`. A `list variable`_ only works if its items
-themselves are lists.
+Lists to iterate over must always be given either as `scalar variables`_ like
+`${items}` or as `list variables`_ like `@{lists}` that yield the actual
+iterated lists. The former approach is more common and it was already
+demonstrated above. The latter approach works like this:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{NUMBERS}       ${1}    ${2}    ${5}
+   @{NAMES}         one     two     five
+   @{LISTS}         ${NUMBERS}    ${NAMES}
+
+   *** Test Cases ***
+   For-in-zip
+       FOR    ${number}    ${name}    IN ZIP    @{LISTS}
+           Log Many    ${number}    ${name}
+       END
+
+The number of lists to iterate over is not limited, but it must match
+the number of loop variables. Alternatively there can be just one loop
+variable that then becomes a Python tuple getting items from all lists.
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{ABC}           a    b    c
+   @{XYZ}           x    y    z
+   @{NUM}           1    2    3    4    5
+
+   *** Test Cases ***
+   For-in-zip with multiple lists
+       FOR    ${a}    ${x}    ${n}    IN ZIP    ${ABC}    ${XYZ}    ${NUM}
+           Log Many    ${a}    ${x}    ${n}
+       END
+
+   For-in-zip with one variable
+       FOR    ${items}    IN ZIP    ${ABC}    ${XYZ}    ${NUM}
+           Length Should Be    ${items}    3
+           Log Many    ${items}[0]    ${items}[1]    ${items}[2]
+       END
+
+.. note:: Getting lists to iterate over from list variables and using
+          just one loop variable are new features in Robot Framework 3.2.
 
 Exiting for loop
 ~~~~~~~~~~~~~~~~
