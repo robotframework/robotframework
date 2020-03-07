@@ -13,13 +13,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections import OrderedDict
+
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExitForLoop, ContinueForLoop, DataError)
 from robot.result import Keyword as KeywordResult
 from robot.output import librarylogger as logger
 from robot.utils import (format_assign_message, frange, get_error_message,
-                         is_list_like, is_number, plural_or_not as s, type_name)
-from robot.variables import is_scalar_assign
+                         is_list_like, is_number, plural_or_not as s,
+                         split_from_equals, type_name)
+from robot.variables import is_dict_variable, is_scalar_assign
 
 from .statusreporter import StatusReporter
 
@@ -141,8 +144,52 @@ class ForInRunner(object):
             return ForInRunner._map_values_to_rounds(
                 self, data.variables, values_per_round
             )
-        values = self._context.variables.replace_list(data.values)
-        return self._map_values_to_rounds(values, values_per_round)
+        if self._is_dict_iteration(data.values):
+            values = self._resolve_dict_values(data.values)
+            values = self._map_dict_values_to_rounds(values, values_per_round)
+        else:
+            values = self._context.variables.replace_list(data.values)
+            values = self._map_values_to_rounds(values, values_per_round)
+        return values
+
+    def _is_dict_iteration(self, values):
+        for item in values:
+            if is_dict_variable(item):
+                return True
+            if split_from_equals(item)[1] is None:
+                return False
+        return True
+
+    def _resolve_dict_values(self, values):
+        result = OrderedDict()
+        replace_scalar = self._context.variables.replace_scalar
+        for item in values:
+            if is_dict_variable(item):
+                result.update(replace_scalar(item))
+            else:
+                key, value = split_from_equals(item)
+                if value is None:
+                    raise DataError(
+                        "Invalid FOR loop value '%s'. When iterating over "
+                        "dictionaries, values must be '&{dict}' variables "
+                        "or use 'key=value' syntax." % item
+                    )
+                try:
+                    result[replace_scalar(key)] = replace_scalar(value)
+                except TypeError:
+                    raise DataError(
+                        "Invalid dictionary item '%s': %s"
+                        % (item, get_error_message())
+                    )
+        return result.items()
+
+    def _map_dict_values_to_rounds(self, values, per_round):
+        if per_round > 2:
+            raise DataError(
+                'Number of FOR loop variables must be 1 or 2 when iterating '
+                'over dictionaries, got %d.' % per_round
+            )
+        return values
 
     def _map_values_to_rounds(self, values, per_round):
         count = len(values)
@@ -177,6 +224,11 @@ class ForInRunner(object):
 class ForInRangeRunner(ForInRunner):
     flavor = 'IN RANGE'
 
+    def _resolve_dict_values(self, values):
+        raise DataError(
+            'FOR IN RANGE loops do not support iterating over dictionaries.'
+        )
+
     def _map_values_to_rounds(self, values, per_round):
         if not 1 <= len(values) <= 3:
             raise DataError(
@@ -204,6 +256,11 @@ class ForInRangeRunner(ForInRunner):
 class ForInZipRunner(ForInRunner):
     flavor = 'IN ZIP'
 
+    def _resolve_dict_values(self, values):
+        raise DataError(
+            'FOR IN ZIP loops do not support iterating over dictionaries.'
+        )
+
     def _map_values_to_rounds(self, values, per_round):
         for item in values:
             if not is_list_like(item):
@@ -218,6 +275,16 @@ class ForInZipRunner(ForInRunner):
 
 class ForInEnumerateRunner(ForInRunner):
     flavor = 'IN ENUMERATE'
+
+    def _map_dict_values_to_rounds(self, values, per_round):
+        if per_round > 3:
+            raise DataError(
+                'Number of FOR IN ENUMERATE loop variables must be 1-3 when '
+                'iterating over dictionaries, got %d.' % per_round
+            )
+        if per_round == 2:
+            return ((index, item) for index, item in enumerate(values))
+        return ((index,) + item for index, item in enumerate(values))
 
     def _map_values_to_rounds(self, values, per_round):
         per_round = max(per_round-1, 1)
