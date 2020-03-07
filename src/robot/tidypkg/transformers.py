@@ -335,7 +335,8 @@ class ColumnAligner(ModelTransformer):
 
     def align_statement(self, statement):
         for line in statement.lines:
-            line = list(filter(lambda t: t.type not in (Token.SEPARATOR, Token.EOL), line))
+            line = [t for t in line if t.type
+                    not in (Token.SEPARATOR, Token.EOL)]
             line_pos = 0
             exp_pos = 0
             widths = self.widths_for_line(line)
@@ -377,7 +378,7 @@ class ColumnWidthCounter(ModelTransformer):
 
     def _count_widths_from_statement(self, statement, indent=0):
         for line in statement.lines:
-            line = filter(lambda t: t.type not in (Token.SEPARATOR, Token.EOL), line)
+            line = [t for t in line if t.type not in (Token.SEPARATOR, Token.EOL)]
             for index, token in enumerate(line, start=indent):
                 if index >= len(self.widths):
                     self.widths.append(len(token.value))
@@ -407,10 +408,10 @@ class Aligner(ModelTransformer):
 
     def visit_Statement(self, statement):
         for line in statement.lines:
-            # TODO: cleaner condition. Line has 2 tokens e.g. when it has
-            # only name and newline
-            value_tokens = [t for t in line if t.type not in (Token.SEPARATOR, Token.EOL)]
-            if len(value_tokens) == 0 or (len(value_tokens) < 2 and not self.pipes_mode):
+            value_tokens = [t for t in line if t.type
+                            not in (Token.SEPARATOR, Token.EOL)]
+            if len(value_tokens) == 0 or (
+                    len(value_tokens) < 2 and not self.pipes_mode):
                 continue
             first_value = [t for t in line if t.type != Token.SEPARATOR][0]
             value_index = line.index(first_value)
