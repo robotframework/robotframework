@@ -52,7 +52,7 @@ Usage:  python -m robot.libdoc [options] library output_file
    or:  python -m robot.libdoc [options] library list|show|version [names]
 
 Libdoc tool can generate keyword documentation in HTML and XML formats both
-for test libraries and resource files. HTML format is suitable for humans and
+for libraries and resource files. HTML format is suitable for humans and
 XML specs for RIDE and other tools. Libdoc also has few special commands to
 show library or resource information on the console.
 
@@ -73,10 +73,10 @@ Options
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
                           HTML, plain text, and reStructuredText. The default
-                          value can be specified in test library source code
-                          and the initial default value is `ROBOT`.
- -n --name newname        Sets the name of the documented library or resource.
- -v --version newversion  Sets the version of the documented library or
+                          value can be specified in library source code and
+                          the initial default value is `ROBOT`.
+ -n --name name           Sets the name of the documented library or resource.
+ -v --version version     Sets the version of the documented library or
                           resource.
  -P --pythonpath path *   Additional locations where to search for libraries
                           and resources.
@@ -202,7 +202,7 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
            docformat=None):
     """Executes Libdoc.
 
-    :param library_or_resource: Name or path of the test library or resource
+    :param library_or_resource: Name or path of the library or resource
         file to be documented.
     :param outfile: Path path to the file where to write outputs.
     :param name: Custom name to give to the documented library or resource.
@@ -212,7 +212,7 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
         the output file. Possible values are ``'HTML'`` and ``'XML'``.
     :param docformat: Documentation source format. Possible values are
         ``'ROBOT'``, ``'reST'``, ``'HTML'`` and ``'TEXT'``. The default value
-        can be specified in test library source code and the initial default
+        can be specified in library source code and the initial default
         is ``'ROBOT'``. New in Robot Framework 3.0.3.
 
     Arguments have same semantics as Libdoc command line options with
