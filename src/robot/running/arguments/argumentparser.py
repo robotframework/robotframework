@@ -120,7 +120,13 @@ class PythonArgumentParser(_ArgumentParser):
             if defaults[arg] is None and arg in type_hints:
                 type_ = type_hints[arg]
                 if self._is_union(type_):
-                    types = type_.__args__
+                    try:
+                        types = type_.__args__
+                    except AttributeError:
+                        # Python 3.5.2's typing uses __union_params__ instead 
+                        # of __args__. This block can likely be safely removed
+                        # when Python 3.5 support is dropped
+                        types = type_.__union_params__
                     if len(types) == 2 and types[1] is type(None):
                         type_hints[arg] = types[0]
 
