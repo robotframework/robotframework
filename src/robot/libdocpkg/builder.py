@@ -16,7 +16,7 @@
 import os
 
 from robot.errors import DataError
-from robot.utils import JYTHON, JAVA_VERSION
+from robot.utils import JYTHON, JAVA_VERSION, get_error_message
 
 from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder
 from .specbuilder import SpecDocBuilder
@@ -31,6 +31,25 @@ else:
 
 
 RESOURCE_EXTENSIONS = {'resource', 'robot', 'txt', 'tsv', 'rst', 'rest'}
+
+
+def LibraryDocumentation(library_or_resource, name=None, version=None,
+                         doc_format=None):
+    builder = DocumentationBuilder(library_or_resource)
+    try:
+        libdoc = builder.build(library_or_resource)
+    except DataError:
+        raise
+    except:
+        raise DataError("Building library '%s' failed: %s"
+                        % (library_or_resource, get_error_message()))
+    if name:
+        libdoc.name = name
+    if version:
+        libdoc.version = version
+    if doc_format:
+        libdoc.doc_format = doc_format
+    return libdoc
 
 
 def DocumentationBuilder(library_or_resource):
