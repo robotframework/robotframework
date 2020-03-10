@@ -69,6 +69,8 @@ Options
                           `XML:HTML` means generating XML output where keyword
                           documentation is forced to be HTML. The default
                           output format is got from the output file extension.
+                          If the output file uses `*.libspec` extension, XML
+                          format is used.
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -169,8 +171,10 @@ class LibDoc(Application):
                                    ['ROBOT', 'TEXT', 'HTML', 'REST'])
 
     def _get_output_format(self, format, output):
-        default = os.path.splitext(output)[1][1:]
-        return self._verify_format('Format', format or default, ['HTML', 'XML', 'XML:HTML'])
+        extension = os.path.splitext(output)[1][1:].upper()
+        default = 'XML' if extension == 'LIBSPEC' else extension
+        return self._verify_format('Format', format or default,
+                                   ['HTML', 'XML', 'XML:HTML'])
 
     def _verify_format(self, type, format, valid):
         format = format.upper()

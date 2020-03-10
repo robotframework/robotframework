@@ -30,7 +30,8 @@ else:
         raise DataError('Documenting Java test libraries requires Jython.')
 
 
-RESOURCE_EXTENSIONS = {'resource', 'robot', 'txt', 'tsv', 'rst', 'rest'}
+RESOURCE_EXTENSIONS = ('resource', 'robot', 'txt', 'tsv', 'rst', 'rest')
+SPEC_EXTENSIONS = ('xml', 'libspec')
 
 
 def LibraryDocumentation(library_or_resource, name=None, version=None,
@@ -56,7 +57,7 @@ def DocumentationBuilder(library_or_resource):
     extension = os.path.splitext(library_or_resource)[1][1:].lower()
     if extension in RESOURCE_EXTENSIONS:
         return ResourceDocBuilder()
-    if extension == 'xml':
+    if extension in SPEC_EXTENSIONS:
         return SpecDocBuilder()
     if extension == 'java':
         return JavaDocBuilder()

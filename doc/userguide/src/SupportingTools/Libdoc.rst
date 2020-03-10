@@ -119,19 +119,32 @@ Resource files must always be specified using a path. If the path does
 not exist, resource files are also searched from all directories in
 the `module search path`_ similarly as when executing test cases.
 
+Libdoc spec files
+'''''''''''''''''
+
+Earlier generated Libdoc XML spec files can also be used as inputs. This
+works if spec files use either `*.xml` or `*.libspec` extension::
+
+   python -m robot.libdoc Example.xml Example.html
+   python -m robot.libdoc Example.libspec Example.html
+
+.. note:: Support for the `*.libspec` extensin is new in Robot Framework 3.2.
+
 Generating documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Libdoc can generate documentation in HTML (for humans) and XML (for tools)
 formats. The file where to write the documentation is specified as the second
 argument after the library/resource name or path, and by default the output
-format is got from the output file extension::
+format is got from the output file extension. When generating documentation
+in XML, it is possible to use the custom `*.libspec` extension in addition to
+the generic `*.xml` extension::
 
    python -m robot.libdoc OperatingSystem OperatingSystem.html
    python -m robot.libdoc --name MyLibrary Remote::http://10.0.0.42:8270 MyLibrary.xml
    python -m robot.libdoc test/resource.robot doc/resource.html
    jython -m robot.libdoc --version 1.0 MyJavaLibrary.java MyJavaLibrary.html
-   jython -m robot.libdoc my.organization.DynamicJavaLibrary my.organization.DynamicJavaLibrary.xml
+   python -m robot.libdoc Example.py Example.libspec
 
 If needed, the output format can also be set explicitly by using the
 :option:`--format` option::
@@ -142,11 +155,13 @@ If needed, the output format can also be set explicitly by using the
 By default keyword documentation in XML output files use the exact same
 `documentation syntax`_ (`ROBOT`, `HTML`, `TEXT` or `reST`) as the documented
 library or resource file uses. It is, however, possible to force the
-documentation to be HTML by using the special `xml:html` format::
+documentation to be HTML by using the special `XML:HTML` format::
 
    python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
 
-.. note:: The `xml:html` format is new in Robot Framework 3.2.
+.. note:: The `XML:HTML` format and automatically creating an XML file if
+          output file extension is `*.libspec` are new features in
+          Robot Framework 3.2.
 
 Viewing information on console
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -4,8 +4,11 @@ Test Template    Run Libdoc And Verify Created Output File
 
 *** Test Cases ***
 Default format is got from output file extension
-    String ${OUTHTML}    HTML    String
-    String ${OUTXML}     XML     String    path=${OUTXML}
+    String ${OUTHTML}            HTML    String
+    String ${OUTXML}             XML     String    path=${OUTXML}
+
+'*.libspec' extension creates XML file
+    String ${OUTBASE}.libspec    XML     String    path=${OUTBASE}.libspec
 
 Using --format overrides output file extension
     -f XmL ${TESTDATADIR}/resource.robot ${OUTHTML}    XML         resource
