@@ -6,9 +6,9 @@ Library           OperatingSystem
 *** Variables ***
 ${TESTDATADIR}    ${DATADIR}/libdoc
 ${LIBNAME}        robot-libdoc-test-file
-${OUTPREFIX}      %{TEMPDIR}${/}${LIBNAME}
-${OUTXML}         ${OUTPREFIX}.xml
-${OUTHTML}        ${OUTPREFIX}.html
+${OUTBASE}        %{TEMPDIR}${/}${LIBNAME}
+${OUTXML}         ${OUTBASE}.xml
+${OUTHTML}        ${OUTBASE}.html
 ${NEWDIR_XML}     %{TEMPDIR}${/}tempdir${/}${LIBNAME}.xml
 ${NEWDIR_HTML}    %{TEMPDIR}${/}tempdir${/}${LIBNAME}.html
 
@@ -143,7 +143,7 @@ Keyword Count Should Be
     Length Should Be    ${kws}    ${expected}
 
 Remove Output Files
-    Remove Files    ${OUTPREFIX}*
+    Remove Files    ${OUTBASE}*
 
 Should Be Equal Multiline
     [Arguments]    ${actual}    @{expected}

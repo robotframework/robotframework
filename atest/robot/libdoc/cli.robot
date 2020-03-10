@@ -9,7 +9,7 @@ Default format is got from output file extension
 
 Using --format overrides output file extension
     -f XmL ${TESTDATADIR}/resource.robot ${OUTHTML}    XML         resource
-    --format hTmL BuiltIn ${OUTPREFIX}.xxx             HTML        BuiltIn     path=${OUTPREFIX}.xxx
+    --format hTmL BuiltIn ${OUTBASE}.xxx               HTML        BuiltIn     path=${OUTBASE}.xxx
     --format XML:HTML String ${OUTXML}                 XML:HTML    String      path=${OUTXML}
 
 Override name and version
@@ -17,8 +17,8 @@ Override name and version
     -n MyName -v 42 -f xml BuiltIn ${OUTHTML}       XML     MyName    42
 
 Missing destination subdirectory is created
-    String ${NEWDIR_HTML}                HTML    String    path=${NEWDIR_HTML}
-    String ${NEWDIR_XML}                 XML     String    path=${NEWDIR_XML}
+    String ${NEWDIR_HTML}        HTML    String    path=${NEWDIR_HTML}
+    String ${NEWDIR_XML}         XML     String    path=${NEWDIR_XML}
 
 Relative path with Python libraries
     [Template]    NONE

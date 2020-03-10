@@ -53,14 +53,14 @@ Format in XML:HTML
 Format from XML spec
     [Template]    NONE
     Run Libdoc    -F HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
-    Copy File    ${OUTXML}    ${OUTPREFIX}-2.xml
-    Test Format In XML    HTML    lib=${OUTPREFIX}-2.xml
+    Copy File    ${OUTXML}    ${OUTBASE}-2.xml
+    Test Format In XML    HTML    lib=${OUTBASE}-2.xml
 
 Format from XML:HTML spec
     [Template]    NONE
     Run Libdoc    -F ROBOT --format XML:HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
-    Copy File    ${OUTXML}    ${OUTPREFIX}-2.xml
-    Test Format In XML:HTML    lib=${OUTPREFIX}-2.xml
+    Copy File    ${OUTXML}    ${OUTBASE}-2.xml
+    Test Format In XML:HTML    lib=${OUTBASE}-2.xml
 
 Compare HTML from XML:HTML
     [Template]    NONE
