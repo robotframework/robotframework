@@ -17,7 +17,7 @@ import os
 import sys
 import locale
 
-from .platform import JYTHON, PY2, PY3, UNIXY, WINDOWS
+from .platform import JYTHON, PY2, PY3, PY_VERSION, UNIXY, WINDOWS
 
 
 if UNIXY:
@@ -84,10 +84,15 @@ def _get_unixy_encoding():
 
 
 def _get_stream_output_encoding():
-    # Python < 3.6 on Windows returns different encoding depending on are
-    # outputs redirected or not, and Python >= 3.6 always use UTF-8. We
-    # want the real console encoding regardless the platform.
-    if WINDOWS and PY3:
+    # On Windows there are several problems:
+    # - Python 3 returns different encoding depending on are outputs
+    #   redirected or not.
+    # - Python >= 3.6 returns UTF-8 if output isn't redirected. We want
+    #   the real console encoding regardless the platform.
+    # - Jython >= 2.7.2 returns wrong encoding if output is redirected and
+    #   the active code page is different to the system level code page.
+    #   https://bugs.jython.org/issue2868
+    if WINDOWS and (PY3 or JYTHON and PY_VERSION >= (2, 7, 2)):
         return None
     # Stream may not have encoding attribute if intercepted outside RF in
     # Python. Encoding is None if process output is redirected and Python < 3.
