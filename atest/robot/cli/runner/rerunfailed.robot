@@ -15,13 +15,20 @@ Passing is not re-executed
     Test Should Not Have Been Executed    Not Failing
 
 Failing is re-executed
-    Test Should Have Been Executed    Failing
+    Test Should Have Been Executed        Failing
 
 Failing from subsuite is executed
-    Test Should Have Been Executed    Really Failing
+    Test Should Have Been Executed        Really Failing
+
+Glob meta characters are ignored in names
+    Test Should Have Been Executed        Glob [seq]
+    Test Should Have Been Executed        Glob question?
+    Test Should Have Been Executed        Glob asterisk*
+    Test Should Not Have Been Executed    Glob question!
+    Test Should Not Have Been Executed    Glob asteriskXXX
 
 Explicitly selected is executed
-    Test Should Have Been Executed    Selected
+    Test Should Have Been Executed        Selected
 
 Excluded failing is not executed
     Test Should Not Have Been Executed    Failing with tag
@@ -30,7 +37,7 @@ Non-existing failing from output file is not executed
     Test Should Not Have Been Executed    Only in one suite
 
 Suite teardown failures are noticed
-    Test Should Have Been Executed    Test passed but suite teardown fails
+    Test Should Have Been Executed        Test passed but suite teardown fails
 
 *** Keywords ***
 Suite initialization

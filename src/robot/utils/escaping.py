@@ -37,6 +37,15 @@ def escape(item):
     return item
 
 
+def glob_escape(item):
+    # Python 3.4+ has `glob.escape()` but it has special handling for drives
+    # that we don't want.
+    for char in '[*?':
+        if char in item:
+            item = item.replace(char, '[%s]' % char)
+    return item
+
+
 class Unescaper(object):
     _escape_sequences = re.compile(r'''
         (\\+)                # escapes
