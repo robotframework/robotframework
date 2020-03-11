@@ -1,11 +1,18 @@
 *** Test Cases ***
-Failing
+Glob [seq]
     [Documentation]    FAIL Message
     Fail    Message
 
-Selected
+Glob question?
+    [Documentation]    FAIL Message
+    Fail    Message
+
+Glob question!
     No Operation
 
-Only in one suite
+Glob asterisk*
     [Documentation]    FAIL Message
     Fail    Message
+
+Glob asteriskXXX
+    No Operation
