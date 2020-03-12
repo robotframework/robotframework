@@ -88,14 +88,14 @@ Init Doc Should Start With
     [Arguments]    ${index}    @{doc}
     ${inits}=   Get Elements    ${LIBDOC}   xpath=init
     ${doc}=    Catenate     SEPARATOR=    @{doc}
-    ${text} =    Get Element Text    ${inits[${index}]}    xpath=doc
+    ${text} =    Get Element Text    ${inits}[${index}]    xpath=doc
     Should Start With    ${text}    ${doc}
 
 Init Doc Should Be
     [Arguments]    ${index}    @{doc}
     ${kws}=   Get Elements    ${LIBDOC}    xpath=init
     ${doc}=    Catenate     SEPARATOR=    @{doc}
-    Element Text Should Be    ${kws[${index}]}    ${doc}    xpath=doc
+    Element Text Should Be    ${kws}[${index}]    ${doc}    xpath=doc
 
 Init Arguments Should Be
     [Arguments]    ${index}   @{expected}
@@ -105,7 +105,7 @@ Init Arguments Should Be
 Keyword Name Should Be
     [Arguments]    ${index}   ${name}
     ${elements}=   Get Elements    ${LIBDOC}    xpath=kw
-    Element Attribute Should Be    ${elements[${index}]}    name    ${name}
+    Element Attribute Should Be    ${elements}[${index}]    name    ${name}
 
 Keyword Arguments Should Be
     [Arguments]    ${index}    @{expected}
@@ -116,25 +116,35 @@ Keyword Doc Should Start With
     [Arguments]    ${index}    @{doc}
     ${kws}=   Get Elements    ${LIBDOC}   xpath=kw
     ${doc}=    Catenate     SEPARATOR=\n    @{doc}
-    ${text} =    Get Element Text    ${kws[${index}]}    xpath=doc
+    ${text} =    Get Element Text    ${kws}[${index}]    xpath=doc
     Should Start With    ${text}    ${doc}
 
 Keyword Doc Should Be
     [Arguments]    ${index}    @{doc}
     ${kws}=   Get Elements    ${LIBDOC}    xpath=kw
     ${doc}=    Catenate     SEPARATOR=\n    @{doc}
-    Element Text Should Be    ${kws[${index}]}    ${doc}    xpath=doc
+    Element Text Should Be    ${kws}[${index}]    ${doc}    xpath=doc
 
 Keyword Tags Should Be
     [Arguments]    ${index}    @{expected}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
-    ${tags}=   Get Elements Texts    ${kws[${index}]}    xpath=tags/tag
+    ${tags}=   Get Elements Texts    ${kws}[${index}]    xpath=tags/tag
     Should Be Equal    ${tags}    ${expected}
+
+Keyword Should Be Deprecated
+    [Arguments]    ${index}
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
+    Element Attribute Should be    ${kws}[${index}]    deprecated    true
+
+Keyword Should Not Be Deprecated
+    [Arguments]    ${index}
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
+    Element Attribute Should be    ${kws}[${index}]    deprecated    false
 
 Get Keyword Arguments
     [Arguments]    ${index}   ${type}=kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
-    ${args}=    Get Elements Texts   ${kws[${index}]}    xpath=arguments/arg
+    ${args}=    Get Elements Texts   ${kws}[${index}]    xpath=arguments/arg
     [Return]    ${args}
 
 Keyword Count Should Be

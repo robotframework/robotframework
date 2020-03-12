@@ -82,6 +82,7 @@ class KeywordDoc(Sortable):
         self.args = args
         self.doc = doc
         self.tags = Tags(tags)
+        self.deprecated = doc.startswith('*DEPRECATED') and '*' in doc[1:]
 
     @property
     def shortdoc(self):

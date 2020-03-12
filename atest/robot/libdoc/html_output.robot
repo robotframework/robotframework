@@ -81,12 +81,13 @@ Keyword tags
 
 User keyword documentation formatting
     [Setup]    Run Libdoc And Parse Model From HTML    ${TESTDATADIR}/resource.robot
-    ${MODEL}[keywords][1][doc]
     ${MODEL}[keywords][0][doc]    <p>$\{CURDIR}</p>
-    ${MODEL}[keywords][9][doc]
+    ${MODEL}[keywords][1][doc]    <p><b>DEPRECATED</b> for some reason.</p>
+    ${MODEL}[keywords][2][doc]
+    ${MODEL}[keywords][10][doc]
     ...    <p>Hyvää yötä.</p>
     ...    <p>Спасибо!</p>
-    ${MODEL}[keywords][7][doc]
+    ${MODEL}[keywords][8][doc]
     ...    <p>foo bar <a href="#kw" class="name">kw</a>.</p>
     ...    <p>FIRST <span class="name">\${a1}</span> alskdj alskdjlajd askf laskdjf asldkfj alsdkfj alsdkfjasldkfj END</p>
     ...    <p>SECOND askf laskdjf <i>asldkfj</i> alsdkfj alsdkfjasldkfj askf <b>laskdjf</b> END</p>
