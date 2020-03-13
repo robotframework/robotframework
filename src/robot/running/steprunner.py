@@ -153,12 +153,24 @@ class ForInRunner(object):
         return values
 
     def _is_dict_iteration(self, values):
+        all_name_value = True
         for item in values:
             if is_dict_variable(item):
                 return True
             if split_from_equals(item)[1] is None:
-                return False
-        return True
+                all_name_value = False
+        if all_name_value:
+            name, value = split_from_equals(values[0])
+            logger.warn(
+                "FOR loop iteration over values that are all in 'name=value' "
+                "format like '%s' is deprecated. In the future this syntax "
+                "will mean iterating over names and values separately like "
+                "when iterating over '&{dict} variables. Escape at least one "
+                "of the values like '%s\\=%s' to use normal FOR loop "
+                "iteration and to disable this warning."
+                % (values[0], name, value)
+            )
+        return False
 
     def _resolve_dict_values(self, values):
         result = OrderedDict()

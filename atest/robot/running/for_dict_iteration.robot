@@ -56,17 +56,26 @@ Multiple dict variables
 Dict variable with 'key=value' syntax
     Check Test Case    ${TESTNAME}
 
-Only 'key=value' syntax
-    Check Test Case    ${TESTNAME}
-
 Last value wins
-    Check Test Case    ${TESTNAME}
-
-'key=value' syntax with variables
     Check Test Case    ${TESTNAME}
 
 Equal sign in variable
     Check Test Case    ${TESTNAME}
+
+'key=value' alone is still considered "normal" iteration
+    ${tc} =    Check Test Case    ${TESTNAME}
+    ${message} =    Catenate
+    ...    FOR loop iteration over values that are all in 'name=value' format like 'a=1' is deprecated.
+    ...    In the future this syntax will mean iterating over names and values separately like when iterating over '\&{dict} variables.
+    ...    Escape at least one of the values like 'a\\=1' to use normal FOR loop iteration and to disable this warning.
+    Check Log Message    ${tc.kws[0].msgs[0]}    ${message}    WARN
+    Check Log Message    ${ERRORS}[0]            ${message}    WARN
+    ${message} =    Catenate
+    ...    FOR loop iteration over values that are all in 'name=value' format like 'x==1' is deprecated.
+    ...    In the future this syntax will mean iterating over names and values separately like when iterating over '\&{dict} variables.
+    ...    Escape at least one of the values like 'x\\==1' to use normal FOR loop iteration and to disable this warning.
+    Check Log Message    ${tc.kws[2].msgs[0]}    ${message}    WARN
+    Check Log Message    ${ERRORS}[1]            ${message}    WARN
 
 Non-string keys
     Check Test Case    ${TESTNAME}
@@ -85,6 +94,7 @@ Non-existing variable
 Dict variables and invalid values
     Check test and failed loop    ${TESTNAME} 1
     Check test and failed loop    ${TESTNAME} 2
+    Check test and failed loop    ${TESTNAME} 3
 
 Equal sign in variable doesn't initiate dict iteration
     ${loop} =    Check test and get loop    ${TESTNAME}

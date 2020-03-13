@@ -75,42 +75,41 @@ FOR IN ZIP loop doesn't support dict iteration
 
 Multiple dict variables
     &{d} =    Create dictionary    d=4
-    FOR    ${key}    ${value}    IN    &{DICT}    &{d}    &{{{'e': 5}}}
+    FOR    ${key}    ${value}    IN    &{DICT}    &{d}    &{{{'e': 5}}}    &{EMPTY}
         @{result} =    Create list    @{result}    ${key}:${value}
     END
     Should be true    ${result} == ['a:1', 'b:2', 'c:3', 'd:4', 'e:5']
 
 Dict variable with 'key=value' syntax
-    FOR    ${key}    ${value}    IN    =0    &{DICT}    d=4    e=
+    FOR    ${key}    ${value}    IN    =0    &{DICT}    d=${4}    ${{'e'}}=
+    ...    f\==3    \=\====
         @{result} =    Create list    @{result}    ${key}:${value}
     END
-    Should be true    ${result} == [':0', 'a:1', 'b:2', 'c:3', 'd:4', 'e:']
-
-Only 'key=value' syntax
-    FOR    ${key}    ${value}    IN    a=1    b\=b=2    c\=\==3    =    \===
-        @{result} =    Create list    @{result}    ${key}:${value}
-    END
-    Should be true    ${result} == ['a:1', 'b=b:2', 'c==:3', ':', '=:=']
+    Should be true    ${result} == [':0', 'a:1', 'b:2', 'c:3', 'd:4', 'e:', 'f=:3', '==:==']
 
 Last value wins
-    FOR    ${key}    ${value}    IN    a=overridden    &{DICT}    c=replace
-    ...    &{{{'d': 'new', 'b': 'override'}}}
+    FOR    ${key}    ${value}    IN    =over    a=ridded    &{DICT}    c=replace
+    ...    &{EMPTY}    ====    &{{{'d': 'new', 'b': 'override'}}}    =
         @{result} =    Create list    @{result}    ${key}:${value}
     END
-    Should be true    ${result} == ['a:1', 'b:override', 'c:replace', 'd:new']
-
-'key=value' syntax with variables
-    ${a}    ${b}    ${c} =    Set variable    a    b    c
-    FOR    ${key}    ${value}    IN    ${a}=${1}    ${b}=${2}    ${c}=${3}
-        @{result} =    Create list    @{result}    ${key}:${value}
-    END
-    Should be true    ${result} == ['a:1', 'b:2', 'c:3']
+    Should be true    ${result} == [':', 'a:1', 'b:override', 'c:replace', 'd:new']
 
 Equal sign in variable
     FOR    ${key}    ${value}    IN    a=${{'='}}    ${{'='}}=b    ${{'=='}}=
+    ...    &{{{'===': ''}}}
         @{result} =    Create list    @{result}    ${key}:${value}
     END
-    Should be true    ${result} == ['a:=', '=:b', '==:']
+    Should be true    ${result} == ['a:=', '=:b', '==:', '===:']
+
+'key=value' alone is still considered "normal" iteration
+    FOR    ${item}    IN    a=1    b=2
+        @{result} =    Create list    @{result}    ${item.upper()}
+    END
+    Should be true    ${result} == ['A=1', 'B=2']
+    FOR    ${x}    ${y}    IN    x==1    y==2
+        Should be equal    ${x}    x==1
+        Should be equal    ${y}    y==2
+    END
 
 Non-string keys
     FOR    ${key}    ${value}    IN    ${1}=one    &{{{2: 'two'}}}
@@ -122,7 +121,7 @@ Non-string keys
 Invalid key
     [Documentation]    FAIL
     ...    STARTS: Invalid dictionary item '\${{[]}}=ooops': TypeError:
-    FOR    ${x}    IN    ${{[]}}=ooops
+    FOR    ${x}    IN    ${{[]}}=ooops    &{EMPTY}
         Fail    Not executed
     END
     Fail    Not executed
@@ -153,7 +152,7 @@ Non-existing variable 1
 
 Non-existing variable 2
     [Documentation]    FAIL Variable '\${non existing}' not found.
-    FOR    ${x}    IN    key=${non existing}
+    FOR    ${x}    IN    &{EMPTY}    key=${non existing}
         Fail    Not executed
     END
     Fail    Not executed
@@ -172,6 +171,15 @@ Dict variables and invalid values 2
     ...    Invalid FOR loop value '\${{'='}}'. When iterating over dictionaries, \
     ...    values must be '\&{dict}' variables or use 'key=value' syntax.
     FOR    ${i}    IN    &{DICT}    ${{'='}}
+        Fail    Not executed
+    END
+    Fail    Not executed
+
+Dict variables and invalid values 3
+    [Documentation]    FAIL
+    ...    Invalid FOR loop value 'invalid'. When iterating over dictionaries, \
+    ...    values must be '\&{dict}' variables or use 'key=value' syntax.
+    FOR    ${i}    IN    invalid    &{DICT}
         Fail    Not executed
     END
     Fail    Not executed
