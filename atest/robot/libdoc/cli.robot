@@ -4,16 +4,17 @@ Test Template    Run Libdoc And Verify Created Output File
 
 *** Test Cases ***
 Default format is got from output file extension
-    String ${OUTHTML}            HTML    String
-    String ${OUTXML}             XML     String    path=${OUTXML}
+    String ${OUTHTML}            HTML         String
+    String ${OUTXML}             XML          String    path=${OUTXML}
 
-'*.libspec' extension creates XML file
-    String ${OUTBASE}.libspec    XML     String    path=${OUTBASE}.libspec
+'*.libspec' extension creates XML file with HTML docs
+    String ${OUTBASE}.libspec    XML:HTML     String    path=${OUTBASE}.libspec
 
 Using --format overrides output file extension
     -f XmL ${TESTDATADIR}/resource.robot ${OUTHTML}    XML         resource
     --format hTmL BuiltIn ${OUTBASE}.xxx               HTML        BuiltIn     path=${OUTBASE}.xxx
     --format XML:HTML String ${OUTXML}                 XML:HTML    String      path=${OUTXML}
+    --format XML String ${OUTBASE}.libspec             XML         String      path=${OUTBASE}.libspec
 
 Override name and version
     --name MyName --version 42 String ${OUTHTML}    HTML    MyName    42
@@ -51,18 +52,19 @@ HTML Doc Should Have Been Created
     Should Contain    ${libdoc}    ${version}
 
 XML Doc Should Have Been Created
-    [Arguments]    ${path}    ${name}    ${version}
+    [Arguments]    ${path}    ${name}    ${version}    ${docformat}=ROBOT
     ${libdoc}=           Parse Xml    ${path}
     Set Test Variable    ${libdoc}
     Name Should Be       ${name}
+    Format Should Be     ${docformat}
     Run Keyword If       "${version}"    Version Should Match    ${version}
 
 XML:HTML Doc Should Have Been Created
-    [Arguments]    ${path}    ${name}    ${version}
+    [Arguments]    ${path}    ${name}    ${version}    ${docformat}=HTML
     ${libdoc}=           Parse Xml    ${path}
     Set Test Variable    ${libdoc}
     Name Should Be       ${name}
-    Format Should Be     HTML
+    Format Should Be     ${docformat}
     Run Keyword If       "${version}"    Version Should Match    ${version}
 
 Path to output should be in stdout

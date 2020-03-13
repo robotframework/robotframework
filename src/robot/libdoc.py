@@ -65,12 +65,13 @@ Options
 =======
 
  -f --format HTML|XML|XML:HTML
-                          Specifies whether to generate HTML or XML output.
-                          `XML:HTML` means generating XML output where keyword
-                          documentation is forced to be HTML. The default
-                          output format is got from the output file extension.
-                          If the output file uses `*.libspec` extension, XML
-                          format is used.
+                          Specifies whether to generate an HTML or XML output
+                          file. The XML:HTML format means generating an XML
+                          output file where keyword documentation is converted
+                          to HTML regardless of the original documentation
+                          format. The default output format is got from the
+                          output file extension so that `*.html` -> HTML,
+                          `*.xml` -> XML and `*.libspec` -> XML:HTML.
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -87,19 +88,19 @@ Options
 Creating documentation
 ======================
 
-When creating documentation in HTML or XML format, the output file must
-be specified as a second argument after the library/resource name or path.
-Output format is got automatically from the extension but can also be set
-explicitly with the `--format` option. Special `XML:HTML` format (new in
-RF 3.2) forces keyword documentation in XML output files to use HTML instead
-of the original documentation format.
+When creating documentation in HTML or XML format, the output file must be
+specified as the second argument after the library/resource name or path.
+Output format is got automatically from the output file extension, but it can
+also be set explicitly with the `--format` option. The special `*.libspec`
+extension automatically enables the XML:HTML format i.e. creates an XML output
+file with keyword documentation converted to HTML.
 
 Examples:
 
-  python -m robot.libdoc src/MyLib.py doc/MyLib.html
-  jython -m robot.libdoc MyJavaLibrary.java MyJavaLibrary.html
-  python -m robot.libdoc --name MyLib Remote::10.0.0.42:8270 MyLib.xml
-  python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
+  python -m robot.libdoc src/MyLibrary.py doc/MyLibrary.html
+  jython -m robot.libdoc MyLibrary.java MyLibrary.html
+  python -m robot.libdoc --name MyLibrary Remote::10.0.0.42:8270 MyLibrary.xml
+  python -m robot.libdoc MyLibrary MyLibrary.libspec
 
 Viewing information on console
 ==============================
@@ -172,7 +173,7 @@ class LibDoc(Application):
 
     def _get_output_format(self, format, output):
         extension = os.path.splitext(output)[1][1:].upper()
-        default = 'XML' if extension == 'LIBSPEC' else extension
+        default = 'XML:HTML' if extension == 'LIBSPEC' else extension
         return self._verify_format('Format', format or default,
                                    ['HTML', 'XML', 'XML:HTML'])
 

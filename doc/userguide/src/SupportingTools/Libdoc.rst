@@ -43,9 +43,13 @@ Options
 
   -f, --format <html|xml|xml:html>
                            Specifies whether to generate HTML or XML output.
-                           `xml:html` means generating XML output where keyword
-                           documentation is forced to be HTML. The default
-                           output format is got from the output file extension.
+                           `xml:html` format means generating an XML output
+                           where keyword documentation is converted to HTML
+                           regardless of the original documentation format. The
+                           default output format is got from the output file
+                           extension so that :file:`*.html` -> `html`,
+                           :file:`*.xml` -> `xml` and :file:`*.libspec`->
+                           `xml:html`.
   -F, --docformat <robot|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,
@@ -123,12 +127,13 @@ Libdoc spec files
 '''''''''''''''''
 
 Earlier generated Libdoc XML spec files can also be used as inputs. This
-works if spec files use either `*.xml` or `*.libspec` extension::
+works if spec files use either :file:`*.xml` or :file:`*.libspec` extension::
 
    python -m robot.libdoc Example.xml Example.html
    python -m robot.libdoc Example.libspec Example.html
 
-.. note:: Support for the `*.libspec` extensin is new in Robot Framework 3.2.
+.. note:: Support for the :file:`*.libspec` extension is new in
+          Robot Framework 3.2.
 
 Generating documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -136,9 +141,11 @@ Generating documentation
 Libdoc can generate documentation in HTML (for humans) and XML (for tools)
 formats. The file where to write the documentation is specified as the second
 argument after the library/resource name or path, and by default the output
-format is got from the output file extension. When generating documentation
-in XML, it is possible to use the custom `*.libspec` extension in addition to
-the generic `*.xml` extension::
+format is got from the output file extension. The special :file:`*.libspec`
+extension automatically enables the `xml:html` format which means creating
+an XML output file with keyword documentation converted to HTML.
+
+::
 
    python -m robot.libdoc OperatingSystem OperatingSystem.html
    python -m robot.libdoc --name MyLibrary Remote::http://10.0.0.42:8270 MyLibrary.xml
@@ -151,17 +158,10 @@ If needed, the output format can also be set explicitly by using the
 
    python -m robot.libdoc --format html MyLibrary MyLibrary.htm
    python -m robot.libdoc --format xml MyLibrary MyLibrary.spec
-
-By default keyword documentation in XML output files use the exact same
-`documentation syntax`_ (`ROBOT`, `HTML`, `TEXT` or `reST`) as the documented
-library or resource file uses. It is, however, possible to force the
-documentation to be HTML by using the special `XML:HTML` format::
-
    python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
 
-.. note:: The `XML:HTML` format and automatically creating an XML file if
-          output file extension is `*.libspec` are new features in
-          Robot Framework 3.2.
+.. note:: The `xml:html`  format and automatically using it if output file
+          extension is :file:`*.libspec` are new features in Robot Framework 3.2.
 
 Viewing information on console
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
