@@ -295,14 +295,16 @@ def unescape_variable_syntax(item):
 @py2to3
 class VariableIterator(object):
 
-    def __init__(self, string, identifiers='$@&%*'):
-        self._string = string
-        self._identifiers = identifiers
+    def __init__(self, string, identifiers='$@&%', ignore_errors=False):
+        self.string = string
+        self.identifiers = identifiers
+        self.ignore_errors = ignore_errors
 
     def __iter__(self):
-        remaining = self._string
+        remaining = self.string
         while True:
-            match = search_variable(remaining, self._identifiers)
+            match = search_variable(remaining, self.identifiers,
+                                    self.ignore_errors)
             if not match:
                 break
             remaining = match.after

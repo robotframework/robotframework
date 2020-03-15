@@ -106,7 +106,9 @@ class Tokenizer(object):
         return False
 
     def _remove_trailing_empty(self, tokens):
-        for token in reversed(tokens):
+        # list() needed w/ IronPython, otherwise reversed() alone is enough.
+        # https://github.com/IronLanguages/ironpython2/issues/699
+        for token in reversed(list(tokens)):
             if not token.value and token.type != Token.EOL:
                 tokens.remove(token)
             elif token.type is None:

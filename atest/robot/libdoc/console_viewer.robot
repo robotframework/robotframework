@@ -22,6 +22,7 @@ List all keywords
 
 List some keywords
     Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot list o
+    ...   Deprecation
     ...   Keyword with some "stuff" to <escape>
     ...   non ascii doc
     Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot LIST KW? C*R

@@ -26,3 +26,4 @@ report.html
 __pycache__
 .classpath
 .settings
+.jython_cache

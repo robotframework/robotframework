@@ -33,6 +33,7 @@ ${RUNNER DEFAULTS}
 ...               --ConsoleMarkers OFF
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}testlibs"
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}listeners"
+${u}              ${{'' if $INTERPRETER.is_py3 else 'u'}}
 
 *** Keywords ***
 Run Tests

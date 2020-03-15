@@ -12,6 +12,7 @@ Test Template         Dict Variable Should Be Equal
 ...                   i=15    j=16    k=17    l=18    m=19    n=20    .=21
 &{EQUALS}             key=value with=sign        empty value=    =    ===
 &{ESCAPING EQUALS}    esc\=key=esc\=value    bs\\=\\    bs\\\=\\=    \===
+&{EQUALS IN VAR}      ${{'='}}=value    ${{'='}}${{'='}}\=${{'='}}=${{'='}}
 &{BAD SYNTAX 1}       this=good    this bad
 ...                   &{good}   @{bad}
 &{BAD SYNTAX 2}       bad\=again
@@ -46,6 +47,9 @@ Dict variable
 First non-escaped equal sign is separator
     ${EQUALS}             {'key': 'value with=sign', 'empty value': '', '': '=='}
     ${ESCAPING EQUALS}    {'esc=key': 'esc=value', 'bs\\\\': '\\\\', 'bs\\\\=\\\\': '', '=': '='}
+
+Equals is not detected in variable name
+    ${EQUALS IN VAR}      {'=': 'value', '====': '='}
 
 Invalid syntax
     [Template]    Variable Should Not Exist

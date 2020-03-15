@@ -177,10 +177,11 @@ class Lexer(object):
             if not self._is_commented_or_empty(line):
                 break
             commented_or_empty.append(line)
-            lines.pop()
-        yield list(chain.from_iterable(lines))
-        for line in reversed(commented_or_empty):
-            yield line
+        if not commented_or_empty:
+            return [statement]
+        lines = lines[:-len(commented_or_empty)]
+        statement = list(chain.from_iterable(lines))
+        return [statement] + list(reversed(commented_or_empty))
 
     def _split_to_lines(self, statement):
         lines = []

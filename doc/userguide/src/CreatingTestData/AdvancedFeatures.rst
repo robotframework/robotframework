@@ -508,6 +508,21 @@ the number of loop-variables (excluding the first, index variable).
            Log    "${en}" in English is "${fi}" in Finnish (index: ${index})
        END
 
+If you only use one loop variable with for-in-enumerate loops, that variable
+will become a Python tuple containing the index and the iterated value:
+
+.. sourcecode:: robotframework
+
+   *** Test Case ***
+   For-in-enumerate with one loop variable
+       FOR    ${x}    IN ENUMERATE    @{LIST}
+           Length Should Be    ${x}    2
+           Log    Index is ${x}[0] and item is ${x}[1].
+       END
+
+.. note:: Using for-in-enumerate loops with only one loop variable is a new
+          feature in Robot Framework 3.2.
+
 For-in-zip loop
 ~~~~~~~~~~~~~~~
 
@@ -522,31 +537,147 @@ This may be easiest to show with an example:
 .. sourcecode:: robotframework
 
    *** Variables ***
-   @{NUMBERS}      ${1}    ${2}    ${5}
-   @{NAMES}        one     two     five
+   @{NUMBERS}       ${1}    ${2}    ${5}
+   @{NAMES}         one     two     five
 
    *** Test Cases ***
    Iterate over two lists manually
        ${length}=    Get Length    ${NUMBERS}
-       FOR    ${idx}    IN RANGE    ${length}
-           Number Should Be Named    ${NUMBERS}[${idx}]    ${NAMES}[${idx}]
+       FOR    ${index}    IN RANGE    ${length}
+           Log Many    ${NUMBERS}[${index}]    ${NAMES}[${index}]
        END
 
    For-in-zip
        FOR    ${number}    ${name}    IN ZIP    ${NUMBERS}    ${NAMES}
-           Number Should Be Named    ${number}    ${name}
+           Log Many    ${number}    ${name}
        END
 
 Similarly as for-in-range and for-in-enumerate loops, for-in-zip loops require
 the cell after the loop variables to read `IN ZIP` (case-sensitive).
-
-Values used with for-in-zip loops must be lists or list-like objects, and
-there must be same number of loop variables as lists to loop over. Looping
+Values used with for-in-zip loops must be lists or list-like objects. Looping
 will stop when the shortest list is exhausted.
 
-Note that any lists used with for-in-zip should usually be given as `scalar
-variables`_ like `${list}`. A `list variable`_ only works if its items
-themselves are lists.
+Lists to iterate over must always be given either as `scalar variables`_ like
+`${items}` or as `list variables`_ like `@{lists}` that yield the actual
+iterated lists. The former approach is more common and it was already
+demonstrated above. The latter approach works like this:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{NUMBERS}       ${1}    ${2}    ${5}
+   @{NAMES}         one     two     five
+   @{LISTS}         ${NUMBERS}    ${NAMES}
+
+   *** Test Cases ***
+   For-in-zip
+       FOR    ${number}    ${name}    IN ZIP    @{LISTS}
+           Log Many    ${number}    ${name}
+       END
+
+The number of lists to iterate over is not limited, but it must match
+the number of loop variables. Alternatively there can be just one loop
+variable that then becomes a Python tuple getting items from all lists.
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{ABC}           a    b    c
+   @{XYZ}           x    y    z
+   @{NUM}           1    2    3    4    5
+
+   *** Test Cases ***
+   For-in-zip with multiple lists
+       FOR    ${a}    ${x}    ${n}    IN ZIP    ${ABC}    ${XYZ}    ${NUM}
+           Log Many    ${a}    ${x}    ${n}
+       END
+
+   For-in-zip with one variable
+       FOR    ${items}    IN ZIP    ${ABC}    ${XYZ}    ${NUM}
+           Length Should Be    ${items}    3
+           Log Many    ${items}[0]    ${items}[1]    ${items}[2]
+       END
+
+.. note:: Getting lists to iterate over from list variables and using
+          just one loop variable are new features in Robot Framework 3.2.
+
+Dictionary iteration
+~~~~~~~~~~~~~~~~~~~~
+
+Normal for loops and for-in-enumerate loops support iterating over keys
+and values in dictionaries. This syntax requires at least one of the loop
+values to be a `dictionary variable`_.
+It is possible to use multiple dictionary variables and to give additional
+items in `key=value` syntax. Items are iterated in the order they are defined
+and if same key gets multiple values the last value will be used.
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   &{DICT}          a=1    b=2    c=3
+
+   *** Test Cases ***
+   Dictionary iteration
+       FOR    ${key}    ${value}    IN    &{DICT}
+           Log    Key is '${key}' and value is '${value}'.
+       END
+
+   Dictionary iteration with enumerate
+       FOR    ${index}    ${key}    ${value}    IN ENUMERATE    &{DICT}
+           Log    On round ${index} key is '${key}' and value is '${value}'.
+       END
+
+   Multiple dictionaries and extra items in 'key=value' syntax
+       &{more} =    Create Dictionary    e=5    f=6
+       FOR    ${key}    ${value}    IN    &{DICT}    d=4    &{more}    g=7
+           Log    Key is '${key}' and value is '${value}'.
+       END
+
+Typically it is easiest to use the dictionary iteration syntax so that keys
+and values get separate variables like in the above examples. With normal for
+loops it is also possible to use just a single variable that will become
+a tuple containing the key and the value. If only one variable is used with
+for-in-enumerate loops, it becomes a tuple containing the index, the key and
+the value. Two variables with for-in-enumerate loops means assigning the index
+to the first variable and making the second variable a tuple containing the key
+and the value.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   One loop variable
+       FOR    ${item}    IN    &{DICT}
+           Log    Key is '${item}[0]' and value is '${item}[1]'.
+       END
+
+   One loop variable with enumerate
+       FOR    ${item}    IN ENUMERATE    &{DICT}
+           Log    On round ${item}[0] key is '${item}[1]' and value is '${item}[2]'.
+       END
+
+   Two loop variables with enumerate
+       FOR    ${index}    ${item}    IN ENUMERATE    &{DICT}
+           Log    On round ${index} key is '${item}[0]' and value is '${item}[1]'.
+       END
+
+In addition to iterating over names and values in dictionaries, it is possible
+to iterate over keys and then possibly fetch the value based on it. This syntax
+requires using dictionaries as `list variables`_:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   One loop variable
+       FOR    ${key}    IN    @{DICT}
+           Log    Key is '${key}' and value is '${DICT}[${key}]'.
+       END
+
+.. note:: Iterating over keys and values in dictionaries is a new feature in
+          Robot Framework 3.2. With earlier version it is possible to iterate
+          over dictionary keys like the last example above demonstrates.
+
+.. note:: Dictionary iteration is not supported with for-in-range or
+          for-in-zip loops.
 
 Exiting for loop
 ~~~~~~~~~~~~~~~~

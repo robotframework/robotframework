@@ -5,7 +5,7 @@ Resource          libdoc_resource.robot
 
 *** Test Cases ***
 Name
-    Name Should Be    Example
+    Name Should Be                   Example
 
 Documentation
     Doc Should Start With
@@ -14,42 +14,42 @@ Documentation
     ...    This library is only used in an example and it doesn't do anything useful.
 
 Version
-    Version Should Be    1.0 <alpha>
+    Version Should Be                1.0 <alpha>
 
 Type
-    Type Should Be    library
+    Type Should Be                   library
 
 Generated
     Generated Should Be Defined
 
 Scope
-    Scope Should Be    global
+    Scope Should Be                  global
 
 Named Args
-    Named Args Should Be    no
+    Named Args Should Be             no
 
 Init Documentation
-    Init Doc Should Start With    0   Creates new Example test library 1
-    Init Doc Should Start With    1   Creates new Example test library 2
-    Init Doc Should Start With    2   Creates new Example test library 3
+    Init Doc Should Start With       0    Creates new Example test library 1
+    Init Doc Should Start With       1    Creates new Example test library 2
+    Init Doc Should Start With       2    Creates new Example test library 3
 
 Init Arguments
-    Init Arguments Should Be    0
-    Init Arguments Should Be    1    arg
-    Init Arguments Should Be    2    i
+    Init Arguments Should Be         0
+    Init Arguments Should Be         1    arg
+    Init Arguments Should Be         2    i
 
 Keyword Names
-    Keyword Name Should Be    0    Keyword
-    Keyword Name Should Be    4    My Keyword
+    Keyword Name Should Be           1    Keyword
+    Keyword Name Should Be           5    My Keyword
 
 Keyword Arguments
-    Keyword Arguments Should Be     0    arg
-    Keyword Arguments Should Be     4
+    Keyword Arguments Should Be      1    arg
+    Keyword Arguments Should Be      5
     Keyword Arguments Should Be     -4    *varargs
     Keyword Arguments Should Be     -3    normal    *varargs
 
 Keyword Documentation
-    Keyword Doc Should Start With    0
+    Keyword Doc Should Start With    1
     ...    Takes one `arg` and *does nothing* with it.
     ...
     ...    Example:
@@ -57,36 +57,40 @@ Keyword Documentation
     ...    | Your Keyword | yyy |
     ...
     ...    See `My Keyword` for no more information.
-    Keyword Doc Should Start With    4
+    Keyword Doc Should Start With    5
     ...    Does nothing & <doc> has "stuff" to 'escape'!!
     ...    ${SPACE * 4}We also got some
     ...    ${SPACE * 8}indentation
     ...    ${SPACE * 8}here.
     ...    Back in the normal indentation level.
 
+Deprecation
+    Keyword Doc Should Be            0    *DEPRECATED!?!?!!*
+    Keyword Should Be Deprecated     0
+
 Non ASCII
-    Keyword Doc Should Be    5    Hyvää yötä.\n\nСпасибо!
+    Keyword Doc Should Be            6    Hyvää yötä.\n\nСпасибо!
 
 Lists as varargs
     Keyword Arguments Should Be     -1    *varargsList
 
 Kwargs
-    Keyword Arguments Should Be     1    normal  *varargs  **kwargs
+    Keyword Arguments Should Be      2    normal  *varargs  **kwargs
 
 Only last map is kwargs
-    Keyword Arguments Should Be     2    normal  **kwargs
+    Keyword Arguments Should Be      3    normal  **kwargs
 
 Only last list is varargs
     Keyword Arguments Should Be     -2    normalArray  *varargs
 
 Last argument overrides
-    Keyword Arguments Should Be     3    normalArray  normalMap  normal
+    Keyword Arguments Should Be      4    normalArray  normalMap  normal
 
 Keyword tags
-    Keyword Tags Should Be    4    bar    foo
+    Keyword Tags Should Be           5    bar    foo
 
 Private constructors are ignored
-    Keyword Count Should Be    3    type=init
+    Keyword Count Should Be          3    type=init
 
 Private keywords are ignored
-    Keyword Count Should Be    10
+    Keyword Count Should Be         11

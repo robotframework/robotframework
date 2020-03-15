@@ -42,9 +42,9 @@ class LibdocXmlWriter(object):
         writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
         writer.element('doc', formatter(libdoc.doc))
 
-    def _write_keywords(self, type, keywords, writer, formatter):
+    def _write_keywords(self, kw_type, keywords, writer, formatter):
         for kw in keywords:
-            writer.start(type, {'name': kw.name} if type == 'kw' else {})
+            writer.start(kw_type, self._get_start_attrs(kw_type, kw))
             writer.start('arguments')
             for arg in kw.args:
                 writer.element('arg', arg)
@@ -54,7 +54,13 @@ class LibdocXmlWriter(object):
             for tag in kw.tags:
                 writer.element('tag', tag)
             writer.end('tags')
-            writer.end(type)
+            writer.end(kw_type)
+
+    def _get_start_attrs(self, kw_type, kw):
+        if kw_type == 'init':
+            return {}
+        return {'name': kw.name,
+                'deprecated': 'true' if kw.deprecated else 'false'}
 
     def _write_end(self, writer):
         writer.end('keywordspec')
