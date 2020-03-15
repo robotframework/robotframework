@@ -15,10 +15,10 @@
 
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
-from robot.utils import (escape, is_list_like, is_sequence, is_subscriptable,
+from robot.utils import (escape, is_dict_like, is_list_like, is_subscriptable,
                          type_name, unescape, unic)
 
-from .search import search_variable, VariableMatch
+from .search import VariableMatch, search_variable
 
 
 class VariableReplacer(object):
@@ -137,10 +137,10 @@ class VariableReplacer(object):
             logger.warn("Accessing variable items using '%s' syntax "
                         "is deprecated. Use '$%s' instead." % (var, var[1:]))
         for item in match.items:
-            if is_sequence(value):
-                value = self._get_sequence_variable_item(name, value, item)
+            if is_dict_like(value):
+                value = self._get_dict_variable_item(name, value, item)
             elif is_subscriptable(value):
-                value = self._get_subscriptable_variable_item(name, value, item)
+                value = self._get_sequence_variable_item(name, value, item)
             else:
                 raise VariableError(
                     "Variable '%s' is %s, which is not subscriptable, and "
@@ -175,27 +175,13 @@ class VariableReplacer(object):
             raise ValueError
         return slice(*[int(i) if i else None for i in index.split(':')])
 
-    def _get_subscriptable_variable_item(self, name, variable, item):
-        """Gets item from a subscriptable variable.
-
-        This variable can be a dictionary for example, but also a custom class
-        that implements __getitem__(). If the item is not a variable, the
-        subscriptable variable gets treated as a sequence, which means
-        that the item is allowed to be an index/slice given as a string.
-        """
-        item = self.replace_scalar(item)
+    def _get_dict_variable_item(self, name, variable, item):
+        key = self.replace_scalar(item)
         try:
-            return variable[item]
+            return variable[key]
         except KeyError:
-            raise VariableError("%s '%s' has no item '%s'."
-                                % (type_name(variable, capitalize=True),
-                                   name, item))
-        except Exception as err:
-            # Try to treat custom class as a Sequence but don't raise error
-            # on failure
-            try:
-                return self._get_sequence_variable_item(name, variable, item)
-            except:
-                pass
-            raise VariableError("Accessing item '%s' from %s '%s' failed: %s"
-                                % (item, type_name(variable), name, err))
+            raise VariableError("Dictionary '%s' has no key '%s'."
+                                % (name, key))
+        except TypeError as err:
+            raise VariableError("Dictionary '%s' used with invalid key: %s"
+                                % (name, err))

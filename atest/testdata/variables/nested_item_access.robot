@@ -33,7 +33,7 @@ Non-existing nested list item
     ${LIST}[1][2][666]                  whatever
 
 Non-existing nested dict item
-    [Documentation]    FAIL Dictionary '\${DICT}[x][y]' has no item 'nonex'.
+    [Documentation]    FAIL Dictionary '\${DICT}[x][y]' has no key 'nonex'.
     ${DICT}[x][y][nonex]                whatever
 
 Invalid nested list access
@@ -43,7 +43,7 @@ Invalid nested list access
     ${LIST}[1][2][inv]                  whatever
 
 Invalid nested dict access
-    [Documentation]    FAIL STARTS: Accessing item '{
+    [Documentation]    FAIL Dictionary '\${DICT}[key]' used with invalid key: unhashable type: 'dict'
     ${DICT}[key][${DICT}]               whatever
 
 Invalid nested string access

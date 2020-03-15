@@ -372,16 +372,6 @@ for more details about this syntax.
        Login    ${USER.name}    ${USER.password}
        Title Should Be    Welcome ${USER.name}!
 
-Accessing items of a custom object
-''''''''''''''''''''''''''''''''''
-
-It is possible to access items of an object of a class that implements the
-`__getitem__()`__ method. Depending on the implementation by the class, it is
-handled the same as accessing either `sequence items`_ or `dictionary items`_
-as explained in the two subsections above.
-
-__ https://docs.python.org/3/reference/datamodel.html#object.__getitem__
-
 Nested item access
 ''''''''''''''''''
 

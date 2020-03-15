@@ -63,10 +63,6 @@ def is_list_like(item):
         return True
 
 
-def is_sequence(item):
-    return isinstance(item, Sequence)
-
-
 def is_dict_like(item):
     return isinstance(item, Mapping)
 
