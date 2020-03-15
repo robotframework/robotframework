@@ -204,7 +204,7 @@ Expect Error When Access To Dictionary Nonexisting Key Syntax 1
 
 Expect Error When Access To Dictionary Nonexisting Key Syntax 2
     Run Keyword And Expect Error
-    ...    DotDict '\${dict}' has no item 'c'.
+    ...    Dictionary '\${dict}' has no key 'c'.
     ...    Access To Dictionary Variable Nonexisting Key Syntax 2
 
 Expect Error With Explicit GLOB
