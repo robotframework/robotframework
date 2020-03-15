@@ -43,7 +43,7 @@ Invalid nested list access
     ${LIST}[1][2][inv]                  whatever
 
 Invalid nested dict access
-    [Documentation]    FAIL Dictionary '\${DICT}[key]' used with invalid key: unhashable type: 'dict'
+    [Documentation]    FAIL STARTS: Dictionary '\${DICT}[key]' used with invalid key:
     ${DICT}[key][${DICT}]               whatever
 
 Invalid nested string access

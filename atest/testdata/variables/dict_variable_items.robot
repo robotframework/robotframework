@@ -87,8 +87,7 @@ Invalid key using variable
     Log    ${DICT}[${INVALID}]
 
 Non-hashable key
-    [Documentation]    FAIL Dictionary '\${DICT}' used with invalid key: \
-    ...    unhashable type: 'list'
+    [Documentation]    FAIL STARTS: Dictionary '\${DICT}' used with invalid key:
     Log    ${DICT}[@{DICT}]
 
 Non-existing variable
