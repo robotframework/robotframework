@@ -51,7 +51,7 @@ class Interpreter(object):
 
     def _get_java_version(self):
         if not self.is_jython:
-            return (-1, -1)
+            return -1, -1
         try:
             # platform.java_ver() returns Java version in a format:
             # ('9.0.7.1', 'Azul Systems, Inc.', ('OpenJDK 64-Bit Server VM', '9.0.7.1+1', 'Azul Systems, Inc.'), ('Windows 10', '10.0', 'amd64'))
@@ -64,7 +64,7 @@ class Interpreter(object):
         except (subprocess.CalledProcessError, FileNotFoundError):
             raise ValueError('Invalid interpreter: %s' % self.path)
         major, minor = output.strip().split('.', 2)[:2]
-        return (int(major), int(minor))
+        return int(major), int(minor)
 
     @property
     def os(self):
