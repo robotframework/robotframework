@@ -31,7 +31,7 @@ class Interpreter(object):
         self.name = name
         self.version = version
         self.version_info = tuple(int(item) for item in version.split('.'))
-        self.java_version = self._get_java_version()
+        self.java_version_info = self._get_java_version_info()
 
     def _get_interpreter(self, path):
         path = path.replace('/', os.sep)
@@ -49,14 +49,12 @@ class Interpreter(object):
         version = re.match(r'\d+\.\d+\.\d+', version).group()
         return name, version
 
-    def _get_java_version(self):
+    def _get_java_version_info(self):
         if not self.is_jython:
             return -1, -1
         try:
             # platform.java_ver() returns Java version in a format:
-            # ('9.0.7.1', 'Azul Systems, Inc.', ('OpenJDK 64-Bit Server VM', '9.0.7.1+1', 'Azul Systems, Inc.'), ('Windows 10', '10.0', 'amd64'))
-            # ('11.0.6', 'Ubuntu', ('OpenJDK 64-Bit Server VM', '11.0.6+10-post-Ubuntu-1ubuntu118.04.1', 'Ubuntu'), ('Linux', '4.4.0-18362-Microsoft', 'amd64'))
-            # ('1.8.0_121', 'Oracle Corporation', ('Java HotSpot(TM) 64-Bit Server VM', '25.121-b13', 'Oracle Corporation'), ('Windows 10', '10.0', 'amd64'))
+            # ('9.0.7.1', ...) or ('11.0.6', ...) or ('1.8.0_121', ...)
             script = 'import platform; print(platform.java_ver()[0])'
             output = subprocess.check_output(self.interpreter + ['-c', script],
                                              stderr=subprocess.STDOUT,
@@ -138,10 +136,8 @@ class Interpreter(object):
     def java_opts(self):
         if not self.is_jython:
             return None
-        java_opts = os.environ.get('JAVA_OPTS')
-        if self.version_info[:3] >= (2, 7, 2) and self.java_version[0] >= 9:
-            if not java_opts:
-                java_opts = ''
+        java_opts = os.environ.get('JAVA_OPTS', '')
+        if self.version_info[:3] >= (2, 7, 2) and self.java_version_info[0] >= 9:
             # https://github.com/jythontools/jython/issues/171
             if '--add-opens' not in java_opts:
                 java_opts += ' --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED'
@@ -204,11 +200,10 @@ class Interpreter(object):
         return self.interpreter + [join(ROBOT_PATH, 'tidy.py')]
 
     def __str__(self):
+        java = ''
         if self.is_jython:
-            java_version = '(Java %s) ' % '.'.join(str(ver_part) for ver_part in self.java_version)
-        else:
-            java_version = ''
-        return '%s %s %son %s' % (self.name, self.version, java_version, self.os)
+            java = '(Java %s) ' % '.'.join(str(ver_part) for ver_part in self.java_version_info)
+        return '%s %s %son %s' % (self.name, self.version, java, self.os)
 
 
 class StandaloneInterpreter(Interpreter):
