@@ -33,7 +33,7 @@ ${RUNNER DEFAULTS}
 ...               --ConsoleMarkers OFF
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}testlibs"
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}listeners"
-${u}              ${{'' if $INTERPRETER.is_py3 else 'u'}}
+${u}              ${{'' if $INTERPRETER.is_py3 or $INTERPRETER.is_ironpython else 'u'}}
 
 *** Keywords ***
 Run Tests
@@ -161,7 +161,7 @@ File Should Match Regexp
     [Arguments]    ${path}    @{expected}
     ${exp} =    Catenate    @{expected}
     ${file} =    Get Output File    ${path}
-    Should Match Regexp    ${file.strip()}    ^${exp}$
+    Should Match Regexp    ${file.strip()}    (?s)^${exp}$
 
 File Should Contain Regexp
     [Arguments]    ${path}    @{expected}

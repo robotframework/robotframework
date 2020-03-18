@@ -85,8 +85,9 @@ Lot of output to custom stream
 Lot of output to DEVNULL
     [Tags]    performance
     ${result}=    Run Process    python -c "for i in range(100000):\tprint('a'*99)"    shell=True    stdout=DEVNULL
-    Should Be Equal    ${result.rc}    ${0}
     Should Be Empty    ${result.stdout}
+    Should Be Empty    ${result.stderr}
+    Should Be Equal    ${result.rc}    ${0}
 
 Run multiple times
     [Tags]    performance

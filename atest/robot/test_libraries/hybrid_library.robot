@@ -18,7 +18,8 @@ Non Existing Attribute
     Check Test Case    ${TESTNAME}
     Adding keyword failed    0    Non-existing attribute
     ...    Getting handler method failed:
-    ...    AttributeError: Non-existing attribute 'Non-existing attribute'
+    ...    AttributeError: *
+    ...    pattern=True
 
 Named Keyword Is Not Method
     Check Test Case    ${TESTNAME}
@@ -56,8 +57,8 @@ Invalid get_keyword_names
 
 *** Keywords ***
 Adding keyword failed
-    [Arguments]    ${index}    ${name}    @{error}
+    [Arguments]    ${index}    ${name}    @{error}    ${pattern}=False
     ${message} =    Catenate
     ...    Adding keyword '${name}' to library 'GetKeywordNamesLibrary' failed:
     ...    @{error}
-    Check Log Message    ${ERRORS}[${index}]    ${message}    ERROR
+    Check Log Message    ${ERRORS}[${index}]    ${message}    ERROR    pattern=${pattern}
