@@ -211,14 +211,11 @@ class _ArgumentSpecParser(_ArgumentParser):
                 spec.defaults[arg] = default
             elif self._is_kwargs(arg):
                 spec.kwargs = self._format_kwargs(arg)
-            elif self._is_kw_only_separator(arg):
-                if spec.varargs or kw_only_args:
-                    self._raise_invalid_spec('Cannot have multiple varargs.')
-                kw_only_args = True
             elif self._is_varargs(arg):
-                if spec.varargs or kw_only_args:
+                if kw_only_args:
                     self._raise_invalid_spec('Cannot have multiple varargs.')
-                spec.varargs = self._format_varargs(arg)
+                if not self._is_kw_only_separator(arg):
+                    spec.varargs = self._format_varargs(arg)
                 kw_only_args = True
             elif spec.defaults and not kw_only_args:
                 self._raise_invalid_spec('Non-default argument after default '
@@ -282,11 +279,11 @@ class DynamicArgumentParser(_ArgumentSpecParser):
     def _format_kwargs(self, kwargs):
         return kwargs[2:]
 
-    def _is_kw_only_separator(self, arg):
-        return arg == '*'
-
     def _is_varargs(self, arg):
         return arg.startswith('*')
+
+    def _is_kw_only_separator(self, arg):
+        return arg == '*'
 
     def _format_varargs(self, varargs):
         return varargs[1:]
@@ -311,11 +308,11 @@ class UserKeywordArgumentParser(_ArgumentSpecParser):
     def _is_varargs(self, arg):
         return arg[0] == '@'
 
-    def _format_varargs(self, varargs):
-        return varargs[2:-1]
-
     def _is_kw_only_separator(self, arg):
         return arg == '@{}'
+
+    def _format_varargs(self, varargs):
+        return varargs[2:-1]
 
     def _format_arg(self, arg):
         return arg[2:-1]
