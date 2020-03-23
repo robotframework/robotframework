@@ -21,7 +21,7 @@ from .arguments import JavaArgumentParser, PythonArgumentParser
 
 
 def no_dynamic_method(*args):
-    pass
+    return None
 
 
 @py2to3
@@ -52,7 +52,7 @@ class _DynamicMethod(object):
             return self._handle_return_value(self.method(*args))
         except:
             raise DataError("Calling dynamic method '%s' failed: %s"
-                            % (self.method.__name__, get_error_message()))
+                            % (self.name, get_error_message()))
 
     def _handle_return_value(self, value):
         raise NotImplementedError
@@ -154,7 +154,7 @@ class GetKeywordTypes(_DynamicMethod):
     _underscore_name = 'get_keyword_types'
 
     def _handle_return_value(self, value):
-        return value or {}
+        return value if self else {}
 
 
 class GetKeywordTags(_DynamicMethod):

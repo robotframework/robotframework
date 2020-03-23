@@ -14,11 +14,13 @@ class Dynamic(object):
         return getattr(self, name)(*args, **kwargs)
 
     def get_keyword_arguments(self, name):
-        if name != 'default_values':
-            return ['value', 'expected=None']
-        return [('first', 1), ('first_expected', 1),
-                ('middle', None), ('middle_expected', None),
-                ('last', True), ('last_expected', True)]
+        if name == 'default_values':
+            return [('first', 1), ('first_expected', 1),
+                    ('middle', None), ('middle_expected', None),
+                    ('last', True), ('last_expected', True)]
+        if name == 'default_values_when_types_are_none':
+            return [('value', True), ('expected', None)]
+        return ['value', 'expected=None']
 
     def get_keyword_types(self, name):
         return getattr(self, name).robot_types
@@ -46,6 +48,10 @@ class Dynamic(object):
         self._validate_type(first, first_expected)
         self._validate_type(middle, middle_expected)
         self._validate_type(last, last_expected)
+
+    @keyword(types=None)
+    def default_values_when_types_are_none(self, value=True, expected=None):
+        self._validate_type(value, expected)
 
     def _validate_type(self, argument, expected):
         if isinstance(expected, unicode):
