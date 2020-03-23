@@ -215,6 +215,7 @@ class ArgDocDynamicLibrary:
         kws = [('No Arg', [], None),
                ('One Arg', ['arg'], None),
                ('One or Two Args', ['arg', 'darg=dvalue'], None),
+               ('Default as tuple', [('arg',), ('d1', False), ('d2', None)], None),
                ('Many Args', ['*args'], None),
                ('No Arg Spec', None, None),
                ('Multiline', None, 'Multiline\nshort doc!\n\nBody\nhere.')]
@@ -224,8 +225,8 @@ class ArgDocDynamicLibrary:
     def get_keyword_names(self):
         return sorted(self._keywords)
 
-    def run_keyword(self, name, *args):
-        print('*INFO* Executed keyword %s with arguments %s' % (name, args))
+    def run_keyword(self, name, args):
+        print('*INFO* Executed keyword "%s" with arguments %s.' % (name, args))
 
     def get_keyword_documentation(self, name):
         return self._keywords[name].doc

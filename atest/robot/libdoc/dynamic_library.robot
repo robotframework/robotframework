@@ -21,52 +21,60 @@ Generated
 Scope
     Scope Should Be                  test case
 
-Named Args
+Named args
     Named Args Should Be             yes
 
-Init Documentation
-    Init Doc Should Start With       0    Dummy documentation for `__init__`.
+Init documentation
+    Init Doc Should Start With       0     Dummy documentation for `__init__`.
 
-Init Arguments
-    Init Arguments Should Be         0    arg1    arg2=This is shown in docs
+Init arguments
+    Init Arguments Should Be         0     arg1    arg2=This is shown in docs
 
-Keyword Names
-    Keyword Name Should Be           0    0
-    Keyword Name Should Be           3    Keyword 1
-    Keyword Name Should Be           5    KW 2
+Keyword names
+    Keyword Name Should Be           0     0
+    Keyword Name Should Be           4     Keyword 1
+    Keyword Name Should Be           6     KW 2
 
-Keyword Arguments
+Keyword arguments
     Keyword Arguments Should Be      0
-    Keyword Arguments Should Be      3    arg1
-    Keyword Arguments Should Be      5    arg1    arg2
+    Keyword Arguments Should Be      4     arg1
+    Keyword Arguments Should Be      6     arg1    arg2
 
-Keyword-only Arguments
-    Keyword Arguments Should Be      4    *    kwo    another=default
-    Keyword Arguments Should Be      6    *varargs    a    b=2    c    **kws
+Default values
+    Keyword Arguments Should Be      1     old=style    new=style    cool=True
 
+Keyword-only arguments
+    Keyword Arguments Should Be      5     *    kwo    another=default
+    Keyword Arguments Should Be      7     *varargs    a    b=2    c    **kws
 
-Embedded Arguments
-    Keyword Name Should Be           1    Em\${bed}ed \${args} 2
-    Keyword Name Should Be           2    Embedded \${args} 1
-    Keyword Arguments Should Be      1
+Embedded arguments
+    Keyword Name Should Be           2     Em\${bed}ed \${args} 2
+    Keyword Name Should Be           3     Embedded \${args} 1
     Keyword Arguments Should Be      2
+    Keyword Arguments Should Be      3
 
-Keyword Documentation
-    Keyword Doc Should Start With    0    Dummy documentation for `0`.
-    Keyword Doc Should Start With    3    Dummy documentation for `Keyword 1`.
-    Keyword Doc Should Start With    5    Dummy documentation for `KW2`.
+Keyword documentation
+    Keyword Doc Should Start With    0     Dummy documentation for `0`.
+    Keyword Doc Should Start With    4     Dummy documentation for `Keyword 1`.
+    Keyword Doc Should Start With    6     Dummy documentation for `KW2`.
 
 Non-ASCII Unicode
-    Keyword Name Should Be           8    Nön-äscii Ünicöde
-    Keyword Doc Should Be            8    Hyvää yötä.\n\nСпасибо! (Unicode)
+    Keyword Name Should Be           9     Nön-äscii Ünicöde
+    Keyword Doc Should Be            9     Hyvää yötä.\n\nСпасибо! (Unicode)
 
 Non-ASCII UTF-8
-    Keyword Name Should Be           9    Nön-äscii ÜTF-8
-    Keyword Doc Should Be            9    Hyvää yötä.\n\nСпасибо! (UTF-8)
+    Keyword Name Should Be           10    Nön-äscii ÜTF-8
+    Keyword Doc Should Be            10    Hyvää yötä.\n\nСпасибо! (UTF-8)
 
-No Argspec
-    Keyword Arguments Should be      7    *varargs   **kwargs
+No argspec
+    Keyword Arguments Should be      8     *varargs   **kwargs
 
-Keyword Tags
-    Keyword Tags Should Be           8    hyvää   yötä
-    Keyword Tags Should Be           9    hyvää   yötä
+Keyword tags
+    Keyword Tags Should Be           11    my    tägs
+
+Keyword tags from documentation
+    Keyword Tags Should Be           9     hyvää   yötä
+    Keyword Tags Should Be           10    hyvää   yötä
+
+Keyword types
+    Keyword Arguments Should Be      12    integer: int    no type    boolean: bool=True

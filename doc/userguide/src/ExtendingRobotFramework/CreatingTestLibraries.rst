@@ -2528,8 +2528,7 @@ Java lists or String arrays instead.
    :class: tabular
 
    +--------------------+----------------------------+----------------------------+
-   |    Expected        |      How to represent      |          Examples          |
-   |    arguments       |                            |                            |
+   |   Argument type    |      How to represent      |          Examples          |
    +====================+============================+============================+
    | No arguments       | Empty list.                | `[]`                       |
    +--------------------+----------------------------+----------------------------+
@@ -2537,16 +2536,22 @@ Java lists or String arrays instead.
    | `positional        | argument names.            | `['arg1', 'arg2', 'arg3']` |
    | argument`_         |                            |                            |
    +--------------------+----------------------------+----------------------------+
-   | `Default values`_  | Default values separated   | `['arg=default value']`,   |
-   | for arguments      | from argument names with   | `['a', 'b=1', 'c=2']`      |
-   |                    | `=`. Default values are    |                            |
-   |                    | always considered to be    |                            |
-   |                    | strings.                   |                            |
+   | `Default values`_  | Two ways how to represent  | `['name=default']`,        |
+   |                    | the argument name and the  | `['a', 'b=1', 'c=2']`      |
+   |                    | default value:             |                            |
+   |                    |                            | `[('name', 'default')]`,   |
+   |                    | - As a string where the    | `['a', ('b', 1), ('c', 2)]`|
+   |                    |   name and the default are |                            |
+   |                    |   separated with `=`.      |                            |
+   |                    | - As a tuple with the name |                            |
+   |                    |   and the default as       |                            |
+   |                    |   separate items. New in   |                            |
+   |                    |   Robot Framework 3.2.     |                            |
    +--------------------+----------------------------+----------------------------+
    | `Variable number   | Argument after possible    | `['*varargs']`,            |
    | of arguments`_     | positional arguments and   | `['argument', '*rest']`,   |
    | (varargs)          | their defaults has `*`     | `['a', 'b=42', '*c']`      |
-   | (varargs)          | prefix.                    |                            |
+   |                    | prefix.                    |                            |
    +--------------------+----------------------------+----------------------------+
    | `Free named        | Last arguments has `**`    | `['**named']`,             |
    | arguments`_        | prefix. Requires           | `['a', 'b=42', '**c']`,    |
@@ -2571,15 +2576,31 @@ The actual argument names and default values that are returned are also
 important. They are needed for `named argument support`__ and the Libdoc_
 tool needs them to be able to create a meaningful library documentation.
 
+As explained in the above table, default values can be specified with argument
+names either as a string like `'name=default'` or as a tuple like
+`('name', 'default')`. The main problem with the former syntax is that all
+default values are considered strings whereas the latter syntax allows using
+all objects like `('inteter', 1)` or `('boolean', True)`. When using other
+objects than strings, Robot Framework can do `automatic argument conversion`__
+based on them.
+
+For consistency reasons, also arguments that do not accept default values can
+be specified as one item tuples. For example, `['a', 'b=c', '*d']` and
+`[('a',), ('b', 'c'), ('*d',)]` are equivalent.
+
 If `get_keyword_arguments` is missing or returns Python `None` or Java
 `null` for a certain keyword, that keyword gets an argument specification
 accepting all arguments. This automatic argument spec is either
 `[*varargs, **kwargs]` or `[*varargs]`, depending does
 `run_keyword` `support free named arguments`__ or not.
 
+.. note:: Support to specify arguments as tuples like `('name', 'default')`
+          is new in Robot Framework 3.2.
+
 __ `Free named arguments with dynamic libraries`_
 __ `Named-only arguments with dynamic libraries`_
 __ `Named argument syntax with dynamic libraries`_
+__ `Implicit argument types based on default values`_
 __ `Free named arguments with dynamic libraries`_
 
 Getting keyword argument types
@@ -2599,8 +2620,17 @@ from external systems, using strings like `'int'` or `'integer'` may be
 easier. See the `Supported conversions`_ section for more information about
 supported types and how to specify them.
 
+Robot Framework does automatic argument conversion also based on the
+`argument default values`__. Earlier this did not work with the dynamic API
+because it was possible to specify arguments only as strings. As
+`discussed in the previous section`__, this was changed in Robot Framework
+3.2 and nowadays default values returned like `('example', True)` are
+automatically used for this purpose.
+
 __ `Argument types`_
 __ `Specifying argument types using @keyword decorator`_
+__ `Implicit argument types based on default values`_
+__ `Getting keyword arguments`_
 
 Getting keyword tags
 ~~~~~~~~~~~~~~~~~~~~

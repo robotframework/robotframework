@@ -16,6 +16,12 @@ List of aliases
 Dict of aliases
     Dict of aliases    {'a': 1, 'b': 2}    {'a': 1, 'b': 2}
 
+Default values
+    Default values
+    Default values    1    middle=NONE    last=True
+    Default values    1.5    1.5    not none    u'not none'    OFF    False
+    Default values    x    u'x'    y    u'y'    z    u'z'
+
 Java types
     [Tags]    require-jython
     Java types         42    3.14    [1, 2, 3]

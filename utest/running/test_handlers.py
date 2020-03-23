@@ -107,7 +107,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             self._assert_doc(doc.encode('UTF-8'), doc)
 
     def test_invalid_doc_type(self):
-        self._assert_fails('Return value must be string.', doc=True)
+        self._assert_fails('Return value must be a string.', doc=True)
 
     def test_none_argspec(self):
         self._assert_spec(None, maxargs=sys.maxsize, varargs='varargs', kwargs=False)
@@ -123,11 +123,18 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             self._assert_spec(argspec, len(argspec), len(argspec), argspec)
 
     def test_only_default_args(self):
-        self._assert_spec(['d1=default', 'd2=xxx'], 0, 2,
-                          ['d1', 'd2'], {'d1': 'default', 'd2': 'xxx'})
+        self._assert_spec(['d1=default', 'd2=True'], 0, 2,
+                          ['d1', 'd2'], {'d1': 'default', 'd2': 'True'})
+
+    def test_default_as_tuple_or_list_like(self):
+        self._assert_spec([('d1', 'default'), ['d2', True]], 0, 2,
+                          ['d1', 'd2'], {'d1': 'default', 'd2': True})
 
     def test_default_value_may_contain_equal_sign(self):
         self._assert_spec(['d=foo=bar'], 0, 1, ['d'], {'d': 'foo=bar'})
+
+    def test_default_value_as_tuple_may_contain_equal_sign(self):
+        self._assert_spec([('n=m', 'd=f')], 0, 1, ['n=m'], {'n=m': 'd=f'})
 
     def test_varargs(self):
         self._assert_spec(['*vararg'], 0, sys.maxsize, varargs='vararg')
@@ -155,6 +162,14 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_spec(['*', 'x=1', 'y', 'z=3'],
                           kwonlyargs=['x', 'y', 'z'],
                           defaults={'x': '1', 'z': '3'})
+
+    def test_kwonlydefaults_with_tuple(self):
+        self._assert_spec(['*', ('kwo', 'default')],
+                          kwonlyargs=['kwo'],
+                          defaults={'kwo': 'default'})
+        self._assert_spec([('*',), 'x=1', 'y', ('z', 3)],
+                          kwonlyargs=['x', 'y', 'z'],
+                          defaults={'x': '1', 'z': 3})
 
     def test_integration(self):
         self._assert_spec(['arg', 'default=value'],
@@ -184,10 +199,25 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                           varargs='d',
                           kwonlyargs=['e', 'f', 'g'],
                           kwargs='h')
+        self._assert_spec([('a',), ('b', '1'), ('c', 2), ('*d',), ('e',), ('f', 3), ('g',), ('**h',)],
+                          1, sys.maxsize,
+                          positional=['a', 'b', 'c'],
+                          defaults={'b': '1', 'c': 2, 'f': 3},
+                          varargs='d',
+                          kwonlyargs=['e', 'f', 'g'],
+                          kwargs='h')
 
     def test_invalid_argspec_type(self):
-        for argspec in [True, [1, 2]]:
-            self._assert_fails("Return value must be list of strings.", argspec)
+        for argspec in [True, [1, 2], ['arg', ()]]:
+            self._assert_fails("Return value must be a list of strings "
+                               "or non-empty tuples.", argspec)
+
+    def test_invalid_tuple(self):
+        for invalid in [('too', 'many', 'values'), ('*too', 'many'),
+                        ('**too', 'many'), (1, 2), (1,)]:
+            self._assert_fails('Invalid argument specification: '
+                               'Invalid argument "%s".' % (invalid,),
+                               ['valid', invalid])
 
     def test_mandatory_arg_after_default_arg(self):
         for argspec in [['d=v', 'arg'], ['a', 'b', 'c=v', 'd']]:

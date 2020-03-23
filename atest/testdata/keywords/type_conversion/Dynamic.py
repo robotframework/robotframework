@@ -14,7 +14,11 @@ class Dynamic(object):
         return getattr(self, name)(*args, **kwargs)
 
     def get_keyword_arguments(self, name):
-        return ['value', 'expected=None']
+        if name != 'default_values':
+            return ['value', 'expected=None']
+        return [('first', 1), ('first_expected', 1),
+                ('middle', None), ('middle_expected', None),
+                ('last', True), ('last_expected', True)]
 
     def get_keyword_types(self, name):
         return getattr(self, name).robot_types
@@ -34,6 +38,14 @@ class Dynamic(object):
     @keyword(types={'value': 'Dictionary'})
     def dict_of_aliases(self, value, expected=None):
         self._validate_type(value, expected)
+
+    @keyword
+    def default_values(self, first=1, first_expected=1,
+                       middle=None, middle_expected=None,
+                       last=True, last_expected=True):
+        self._validate_type(first, first_expected)
+        self._validate_type(middle, middle_expected)
+        self._validate_type(last, last_expected)
 
     def _validate_type(self, argument, expected):
         if isinstance(expected, unicode):
