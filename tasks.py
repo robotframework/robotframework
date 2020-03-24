@@ -170,7 +170,7 @@ def init_labels(ctx, username=None, password=None):
 
 
 @task
-def jar(ctx, jython_version='2.7.0', pyyaml_version='5.1', remove_dist=False):
+def jar(ctx, jython_version='2.7.2', pyyaml_version='5.1', remove_dist=False):
     """Create JAR distribution.
 
     Downloads Jython JAR and PyYAML if needed.
@@ -187,6 +187,7 @@ def jar(ctx, jython_version='2.7.0', pyyaml_version='5.1', remove_dist=False):
     print(f"Using '{jython_jar}'.")
     compile_java_files(ctx, jython_jar)
     unzip_jar(jython_jar)
+    remove_tests()
     copy_robot_files()
     pyaml_archive = get_pyyaml(pyyaml_version)
     extract_and_copy_pyyaml_files(pyyaml_version, pyaml_archive)
@@ -242,6 +243,13 @@ def compile_java_files(ctx, jython_jar, build_dir='build'):
 
 def unzip_jar(path, target='build'):
     zipfile.ZipFile(path).extractall(target)
+
+
+def remove_tests(build_dir='build'):
+    for test_dir in ('distutils/tests', 'email/test', 'json/tests',
+                     'lib2to3/tests', 'unittest/test'):
+        path = Path(build_dir, 'Lib', test_dir)
+        shutil.rmtree(str(path))
 
 
 def copy_robot_files(build_dir='build'):
