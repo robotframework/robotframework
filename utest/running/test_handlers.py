@@ -109,7 +109,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             self._assert_doc(doc.encode('UTF-8'), doc)
 
     def test_invalid_doc_type(self):
-        self._assert_fails('Return value must be a string.', doc=True)
+        self._assert_fails('Return value must be a string, got boolean.', doc=True)
 
     def test_none_argspec(self):
         self._assert_spec(None, maxargs=sys.maxsize, varargs='varargs', kwargs=False)

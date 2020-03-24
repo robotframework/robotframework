@@ -54,10 +54,10 @@ Keywords with valid arg spec can be used
 Error message should be correct
     [Arguments]    ${index}    ${kw}    @{message}
     Check Test Case    ${TESTNAME}
-    ${msg} =    Catenate    @{message}
-    Check Log Message    ${ERRORS}[${index}]
-    ...    Adding keyword '${kw}' to library 'InvalidArgSpecs' failed: ${msg}
-    ...    ERROR
+    Error In Library    InvalidArgSpecs
+    ...    Adding keyword '${kw}' failed:
+    ...    @{message}
+    ...    index=${index}
 
 Invalid argument spec
     [Arguments]    ${index}    ${kw}    @{message}

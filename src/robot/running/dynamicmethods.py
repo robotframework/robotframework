@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.utils import (get_error_message, is_java_method, is_bytes,
-                         is_list_like, is_unicode, py2to3)
+                         is_list_like, is_unicode, type_name, py2to3)
 
 from .arguments import JavaArgumentParser, PythonArgumentParser
 
@@ -64,8 +64,9 @@ class _DynamicMethod(object):
             return value.decode('UTF-8')
         if allow_tuple and is_list_like(value) and len(value) > 0:
             return tuple(value)
-        raise DataError('Return value must be a string%s.'
-                        % (' or a non-empty tuple' if allow_tuple else ''))
+        or_tuple = ' or a non-empty tuple' if allow_tuple else ''
+        raise DataError('Return value must be a string%s, got %s.'
+                        % (or_tuple, type_name(value)))
 
     def _to_list(self, value):
         if value is None:

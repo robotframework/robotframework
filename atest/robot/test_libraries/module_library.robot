@@ -68,9 +68,7 @@ Importing Module Should Have Been Syslogged
     ${path} =  Normalize Path  ${CURDIR}/../../testresources/testlibs/module_library
     Syslog Should Contain  Imported test library module 'module_library' from '${path}
 
-
-***Keywords***
-
+*** Keywords ***
 Keyword should not have been added
-    [Arguments]  ${kw}  ${lib}=module_lib_with_all
-    Syslog Should Contain  Adding keyword '${kw}' to library '${lib}' failed: Not exposed as a keyword
+    [Arguments]    ${kw}    ${lib}=module_lib_with_all
+    Syslog Should Contain    In library '${lib}': Adding keyword '${kw}' failed: Not exposed as a keyword

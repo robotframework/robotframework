@@ -74,21 +74,29 @@ Documentation And Argument Boundaries Work With Varargs In Java
 
 Keyword With Kwargs Not Created And Warning Shown When No Run Keyword With Kwargs Support In Java
     [Tags]    require-jython
-    [Template]    NONE
-    Check Log Message    ${ERRORS}[16]
-    ...    Adding keyword 'Unsupported Java Kwargs' to library 'ArgDocDynamicJavaLibrary' failed: Too few 'runKeyword' method parameters for **kwargs support.    ERROR
+    [Template]    Error In Library
+    ArgDocDynamicJavaLibrary
+    ...    Adding keyword 'Unsupported Java Kwargs' failed:
+    ...    Too few 'runKeyword' method parameters for **kwargs support.
+    ...    index=16
 
 Keyword Not Created And Warning Shown When Getting Documentation Fails In Java
     [Tags]    require-jython
-    [Template]    NONE
-    Check Log Message    ${ERRORS}[17]
-    ...    Adding keyword 'Invalid Java Args' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordArguments' failed: Get args failure    ERROR
+    [Template]    Error In Library
+    ArgDocDynamicJavaLibrary
+    ...    Adding keyword 'Invalid Java Args' failed:
+    ...    Calling dynamic method 'getKeywordArguments' failed:
+    ...    Get args failure
+    ...    index=17
 
 Keyword Not Created And Warning Shown When Getting Arguments Fails In Java
     [Tags]    require-jython
-    [Template]    NONE
-    Check Log Message    ${ERRORS}[18]
-    ...    Adding keyword 'Invalid Java Doc' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordDocumentation' failed: Get doc failure    ERROR
+    [Template]    Error In Library
+    ArgDocDynamicJavaLibrary
+    ...    Adding keyword 'Invalid Java Doc' failed:
+    ...    Calling dynamic method 'getKeywordDocumentation' failed:
+    ...    Get doc failure
+    ...    index=18
 
 *** Keywords ***
 Check test case and its doc
@@ -112,6 +120,9 @@ Check Creating Keyword Failed Due To Invalid Args Message
     ...    Calling dynamic method 'get_keyword_arguments' failed: ZeroDivisionError: *
 
 Check Creating Keyword Failed Message
-    [Arguments]    ${index}    ${kw}    ${lib}    ${error}
-    Check Log Message    ${ERRORS}[${index}]
-    ...    Adding keyword '${kw}' to library '${lib}' failed: ${error}    ERROR    pattern=yes
+    [Arguments]    ${index}    ${kw}    ${lib}    @{error}
+    Error In Library    ${lib}
+    ...    Adding keyword '${kw}' failed:
+    ...    @{error}
+    ...    pattern=True
+    ...    index=${index}

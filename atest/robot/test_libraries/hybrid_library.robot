@@ -58,7 +58,8 @@ Invalid get_keyword_names
 *** Keywords ***
 Adding keyword failed
     [Arguments]    ${index}    ${name}    @{error}    ${pattern}=False
-    ${message} =    Catenate
-    ...    Adding keyword '${name}' to library 'GetKeywordNamesLibrary' failed:
+    Error in library    GetKeywordNamesLibrary
+    ...    Adding keyword '${name}' failed:
     ...    @{error}
-    Check Log Message    ${ERRORS}[${index}]    ${message}    ERROR    pattern=${pattern}
+    ...    pattern=${pattern}
+    ...    index=${index}

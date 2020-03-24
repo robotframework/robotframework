@@ -39,7 +39,8 @@ else:
     Object = None
 
 
-def TestLibrary(name, args=None, variables=None, create_handlers=True):
+def TestLibrary(name, args=None, variables=None, create_handlers=True,
+                logger=LOGGER):
     if name in STDLIBS:
         import_name = 'robot.libraries.' + name
     else:
@@ -49,7 +50,7 @@ def TestLibrary(name, args=None, variables=None, create_handlers=True):
         libcode, source = importer.import_class_or_module(import_name,
                                                           return_source=True)
     libclass = _get_lib_class(libcode)
-    lib = libclass(libcode, name, args or [], source, variables)
+    lib = libclass(libcode, name, args or [], source, logger, variables)
     if create_handlers:
         lib.create_handlers()
     return lib
@@ -69,13 +70,14 @@ def _get_lib_class(libcode):
 class _BaseTestLibrary(object):
     get_handler_error_level = 'INFO'
 
-    def __init__(self, libcode, name, args, source, variables):
+    def __init__(self, libcode, name, args, source, logger, variables):
         if os.path.exists(name):
             name = os.path.splitext(os.path.basename(os.path.abspath(name)))[0]
         self.version = self._get_version(libcode)
         self.name = name
         self.orig_name = name  # Stores original name when importing WITH NAME
         self.source = source
+        self.logger = logger
         self.handlers = HandlerStore(self.name, HandlerStore.TEST_LIBRARY_TYPE)
         self.has_listener = None  # Set when first instance is created
         self._doc = None
@@ -124,6 +126,14 @@ class _BaseTestLibrary(object):
 
     def end_test(self):
         self.scope.end_test()
+
+    def report_error(self, message, details=None, level='ERROR',
+                     details_level='INFO'):
+        prefix = 'Error in' if level in ('ERROR', 'WARN') else 'In'
+        self.logger.write("%s library '%s': %s" % (prefix, self.name, message),
+                          level)
+        if details:
+            self.logger.write('Details:\n%s' % details, details_level)
 
     def _get_version(self, libcode):
         return self._get_attr(libcode, 'ROBOT_LIBRARY_VERSION') \
@@ -196,8 +206,7 @@ class _BaseTestLibrary(object):
                 self.has_listener = False
                 # Error should have information about suite where the
                 # problem occurred but we don't have such info here.
-                LOGGER.error("Registering listeners for library '%s' failed: %s"
-                             % (self.name, err))
+                self.report_error("Registering listeners failed: %s" % err)
 
     def unregister_listeners(self, close=False):
         if self.has_listener:
@@ -218,9 +227,8 @@ class _BaseTestLibrary(object):
         except:
             message, details = get_error_details()
             name = getattr(listener, '__name__', None) or type_name(listener)
-            LOGGER.error("Calling method '%s' of listener '%s' failed: %s"
-                         % (method.__name__, name, message))
-            LOGGER.info("Details:\n%s" % details)
+            self.report_error("Calling method '%s' of listener '%s' failed: %s"
+                              % (method.__name__, name, message), details)
 
     def _create_handlers(self, libcode):
         try:
@@ -239,7 +247,7 @@ class _BaseTestLibrary(object):
                     except DataError as err:
                         self._adding_keyword_failed(handler.name, err)
                     else:
-                        LOGGER.debug("Created keyword '%s'" % handler.name)
+                        self.logger.debug("Created keyword '%s'" % handler.name)
 
     def _get_handler_names(self, libcode):
         def has_robot_name(name):
@@ -264,10 +272,12 @@ class _BaseTestLibrary(object):
             return None
 
     def _adding_keyword_failed(self, name, error, level='ERROR'):
-        LOGGER.write("Adding keyword '%s' to library '%s' failed: %s"
-                     % (name, self.name, error.message), level)
-        if error.details:
-            LOGGER.debug('Details:\n%s' % error.details)
+        self.report_error(
+            "Adding keyword '%s' failed: %s" % (name, error.message),
+            error.details,
+            level=level,
+            details_level='DEBUG'
+        )
 
     def _get_handler_method(self, libcode, name):
         try:
@@ -382,8 +392,9 @@ class _HybridLibrary(_BaseTestLibrary):
 class _DynamicLibrary(_BaseTestLibrary):
     get_handler_error_level = 'ERROR'
 
-    def __init__(self, libcode, name, args, source, variables=None):
-        _BaseTestLibrary.__init__(self, libcode, name, args, source, variables)
+    def __init__(self, libcode, name, args, source, logger, variables=None):
+        _BaseTestLibrary.__init__(self, libcode, name, args, source, logger,
+                                  variables)
 
     @property
     def doc(self):
