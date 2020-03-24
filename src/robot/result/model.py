@@ -61,12 +61,12 @@ class Keyword(model.Keyword):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message']
+    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message', 'lineno', 'source']
     message_class = Message
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(),
                  tags=(), timeout=None, type='kw',  status='FAIL',
-                 starttime=None, endtime=None):
+                 starttime=None, endtime=None, source=None, lineno=None):
         model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
         #: Name of the keyword without library or resource name.
         self.kwname = kwname or ''
@@ -82,6 +82,10 @@ class Keyword(model.Keyword):
         self.endtime = endtime
         #: Keyword status message. Used only if suite teardowns fails.
         self.message = ''
+        #: Source file of the keyword
+        self.source = source or ''
+        #: line number of the keyword in the source file
+        self.lineno = -1 if lineno is None else lineno
 
     @property
     def elapsedtime(self):

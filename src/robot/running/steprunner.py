@@ -79,7 +79,7 @@ class ForInRunner(object):
 
     def run(self, data, name=None):
         result = KeywordResult(kwname=self._get_name(data),
-                               type=data.FOR_LOOP_TYPE)
+                               type=data.FOR_LOOP_TYPE, lineno=data.lineno, source=data.source)
         with StatusReporter(self._context, result):
             self._validate(data)
             self._run(data)
@@ -222,7 +222,7 @@ class ForInRunner(object):
             self._context.variables[name] = value
         name = ', '.join(format_assign_message(n, v) for n, v in variables)
         result = KeywordResult(kwname=name,
-                               type=data.FOR_ITEM_TYPE)
+                               type=data.FOR_ITEM_TYPE, lineno=data.lineno, source=data.source)
         runner = StepRunner(self._context, self._templated)
         with StatusReporter(self._context, result):
             runner.run_steps(data.keywords)

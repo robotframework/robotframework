@@ -160,8 +160,10 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   critical or not.                                             |
    |                  |                  | * `template`: The name of the template used for the test.      |
    |                  |                  |   An empty string if the test not templated.                   |
+   |                  |                  | * `source`: An absolute path of the file which contains the    |
+   |                  |                  |   test. New in RF 3.2.                                         |
    |                  |                  | * `lineno`: Line number where the test starts in the source    |
-   |                  |                  |   file. New in RF 3.2.                                         |
+   |                  |                  |   file. New in RF 3.2.                                         |
    |                  |                  | * `starttime`: Test execution execution start time.            |
    +------------------+------------------+----------------------------------------------------------------+
    | end_test         | name, attributes | Called when a test case ends.                                  |
@@ -175,6 +177,7 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `tags`: Same as in `start_test`.                             |
    |                  |                  | * `critical`: Same as in `start_test`.                         |
    |                  |                  | * `template`: Same as in `start_test`.                         |
+   |                  |                  | * `source`: Same as in `start_test`                            |
    |                  |                  | * `lineno`: Same as in `start_test`.                           |
    |                  |                  | * `starttime`: Same as in `start_test`.                        |
    |                  |                  | * `endtime`: Test execution execution end time.                |
@@ -208,6 +211,10 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   return value is assigned to.                                 |
    |                  |                  | * `tags`: `Keyword tags`_ as a list of strings. New in RF 3.0. |
    |                  |                  | * `starttime`: Keyword execution start time.                   |
+   |                  |                  | * `source`: An absolute path of the file from where the        |
+   |                  |                  |   keyword was called. New in RF 3.2                            |
+   |                  |                  | * `lineno`: Line number where the keyword was called from.     |
+   |                  |                  |   New in RF 3.2.                                               |
    +------------------+------------------+----------------------------------------------------------------+
    | end_keyword      | name, attributes | Called when a keyword ends.                                    |
    |                  |                  |                                                                |
@@ -229,6 +236,8 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `elapsedtime`: Total execution time in milliseconds as       |
    |                  |                  |   an integer                                                   |
    |                  |                  | * `status`: Keyword status as string `PASS` or `FAIL`.         |
+   |                  |                  | * `source`: Same as with `start_keyword`.                      |
+   |                  |                  | * `lineno`: Same as with `start_keyword`.                      |
    +------------------+------------------+----------------------------------------------------------------+
    | log_message      | message          | Called when an executed keyword writes a log message.          |
    |                  |                  |                                                                |

@@ -65,6 +65,8 @@ class LibraryKeywordRunner(object):
                              args=kw.args,
                              assign=tuple(assignment),
                              tags=handler.tags,
+                             source=kw.source,
+                             lineno=kw.lineno,
                              type=kw.type)
 
     def _run(self, context, args):

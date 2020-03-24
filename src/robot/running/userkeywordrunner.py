@@ -68,7 +68,9 @@ class UserKeywordRunner(object):
                              args=kw.args,
                              assign=tuple(assignment),
                              tags=tags,
-                             type=kw.type)
+                             type=kw.type,
+                             source=kw.source,
+                             lineno=kw.lineno)
 
     def _run(self, context, args, result):
         variables = context.variables

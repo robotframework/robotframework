@@ -14,8 +14,8 @@ OUTFILE = open(os.path.join(os.getenv('TEMPDIR'), 'listener_attrs.txt'), 'w')
 START = 'doc starttime '
 END = START + 'endtime elapsedtime status '
 SUITE = 'id longname metadata source tests suites totaltests '
-TEST = 'id longname tags template originalname lineno '
-KW = ' kwname libname args assign tags type '
+TEST = 'id longname tags template originalname source lineno '
+KW = ' kwname libname args assign tags type lineno source '
 EXPECTED_TYPES = {'tags': [basestring], 'args': [basestring],
                   'assign': [basestring], 'metadata': {basestring: basestring},
                   'tests': [basestring], 'suites': [basestring],
