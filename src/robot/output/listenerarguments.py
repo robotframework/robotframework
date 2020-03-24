@@ -118,17 +118,23 @@ class StartTestArguments(_ListenerArgumentsFromItem):
     def _get_extra_attributes(self, test):
         return {'critical': 'yes' if test.critical else 'no',
                 'template': test.template or '',
-                'originalname': test.data.name}
+                'originalname': test.data.name,
+                'source': test.source or '',
+        }
 
 
 class EndTestArguments(StartTestArguments):
     _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'starttime',
                         'endtime', 'elapsedtime', 'status', 'message')
 
+    def _get_extra_attribute(self, test):
+        return {
+            'source': test.source or '',
+        }
 
 class StartKeywordArguments(_ListenerArgumentsFromItem):
     _attribute_names = ('kwname', 'libname', 'doc', 'assign', 'tags',
-                        'starttime')
+                        'starttime', 'source', 'lineno')
     _types = {'kw': 'Keyword', 'setup': 'Setup', 'teardown': 'Teardown',
               'for': 'For', 'foritem': 'For Item'}
 
@@ -139,4 +145,4 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
 
 class EndKeywordArguments(StartKeywordArguments):
     _attribute_names = ('kwname', 'libname', 'doc', 'args', 'assign', 'tags',
-                        'starttime', 'endtime', 'elapsedtime', 'status')
+                        'starttime', 'endtime', 'elapsedtime', 'status', 'source', 'lineno')
