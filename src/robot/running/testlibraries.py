@@ -96,6 +96,15 @@ class _BaseTestLibrary(object):
             self._doc = getdoc(self.get_instance())
         return self._doc
 
+    @property
+    def lineno(self):
+        if inspect.ismodule(self._libcode):
+            return 1
+        try:
+            return inspect.getsourcelines(self._libcode)[1]
+        except (TypeError, OSError):
+            return -1
+
     def create_handlers(self):
         self._create_handlers(self.get_instance())
         self.reset_instance()

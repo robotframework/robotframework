@@ -1,10 +1,12 @@
-import unittest
-import sys
 import inspect
+import os.path
+import re
+import sys
+import unittest
 
 from robot.running.handlers import _PythonHandler, _JavaHandler, DynamicHandler
-from robot import utils
-from robot.utils.asserts import *
+from robot.utils import IRONPYTHON, JYTHON
+from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
 from robot.running.testlibraries import TestLibrary, LibraryScope
 from robot.running.dynamicmethods import (
     GetKeywordArguments, GetKeywordDocumentation, RunKeyword)
@@ -12,7 +14,7 @@ from robot.errors import DataError
 
 from classes import NameLibrary, DocLibrary, ArgInfoLibrary
 from ArgumentsPython import ArgumentsPython
-if utils.JYTHON:
+if JYTHON:
     import ArgumentsJava
 
 
@@ -100,7 +102,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
     def test_non_ascii_doc(self):
         self._assert_doc(u'P\xe4iv\xe4\xe4')
 
-    if not utils.IRONPYTHON:
+    if not IRONPYTHON:
 
         def test_with_utf8_doc(self):
             doc = u'P\xe4iv\xe4\xe4'
@@ -295,7 +297,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         return DynamicHandler(lib, 'mock', RunKeyword(lib), doc, argspec)
 
 
-if utils.JYTHON:
+if JYTHON:
 
     handlers = dict((method.__name__, method) for method in
                     _get_java_handler_methods(ArgumentsJava('Arg', ['varargs'])))
@@ -420,6 +422,42 @@ if utils.JYTHON:
         def _test_coercion_fails(self, handler, expected_message):
             assert_raises_with_msg(ValueError, expected_message,
                                    handler._arg_coercer.coerce, ['invalid'], {})
+
+
+class TestSourceAndLineno(unittest.TestCase):
+
+    def test_class(self):
+        from robot.libraries.BuiltIn import __file__ as source
+        kw = TestLibrary('BuiltIn').handlers['convert_to_integer']
+        self._verify(kw, source, 102)
+
+    def test_module(self):
+        from module_library import __file__ as source
+        kw = TestLibrary('module_library').handlers['passing']
+        self._verify(kw, source, 5)
+
+    def test_package(self):
+        from robot.variables.search import __file__ as source
+        kw = TestLibrary('robot.variables').handlers['is_variable']
+        self._verify(kw, source, 33)
+
+    def test_dynamic(self):
+        from classes import __file__ as source
+        kw = TestLibrary('classes.ArgDocDynamicLibrary').handlers['No Arg']
+        self._verify(kw, source, -1)
+
+    if JYTHON:
+
+        def test_java_class(self):
+            kw = TestLibrary('ArgumentTypes').handlers['byte1']
+            self._verify(kw, None, -1)
+
+    def _verify(self, kw, source, lineno):
+        if source:
+            source = re.sub(r'(\.pyc|\$py\.class)$', '.py', source)
+            source = os.path.normpath(source)
+        assert_equal(kw.source, source)
+        assert_equal(kw.lineno, lineno)
 
 
 if __name__ == '__main__':

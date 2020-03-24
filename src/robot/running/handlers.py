@@ -14,10 +14,11 @@
 #  limitations under the License.
 
 from copy import copy
+import inspect
 
 from robot.utils import (getdoc, getshortdoc, is_java_init, is_java_method,
-                         is_list_like, printable_name, split_tags_from_doc,
-                         type_name)
+                         is_list_like, normpath, printable_name,
+                         split_tags_from_doc, type_name)
 from robot.errors import DataError
 from robot.model import Tags
 
@@ -107,6 +108,14 @@ class _RunnableHandler(object):
     def libname(self):
         return self.library.name
 
+    @property
+    def source(self):
+        return self.library.source
+
+    @property
+    def lineno(self):
+        return -1
+
     def create_runner(self, name):
         return LibraryKeywordRunner(self)
 
@@ -130,6 +139,22 @@ class _PythonHandler(_RunnableHandler):
 
     def _parse_arguments(self, handler_method):
         return PythonArgumentParser().parse(handler_method, self.longname)
+
+    @property
+    def source(self):
+        handler = self.current_handler()
+        try:
+            return normpath(inspect.getsourcefile(handler))
+        except TypeError:
+            return self.library.source
+
+    @property
+    def lineno(self):
+        handler = self.current_handler()
+        try:
+            return inspect.getsourcelines(handler)[1]
+        except (TypeError, OSError):
+            return -1
 
 
 class _JavaHandler(_RunnableHandler):
