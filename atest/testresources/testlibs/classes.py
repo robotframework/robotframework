@@ -263,7 +263,7 @@ class DynamicWithSource:
                 'path w/ colon & lineno': r'c:\temp\lib.py:1234567890',
                 'no source': None,
                 u'nön-äscii': u'hyvä esimerkki',
-                u'nön-äscii utf-8': u'福:123'.encode('UTF-8'),
+                u'nön-äscii utf-8': b'\xe7\xa6\x8f:88',
                 'invalid source': 666}
 
     def get_keyword_names(self):

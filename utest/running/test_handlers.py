@@ -484,7 +484,7 @@ class TestSourceAndLineno(unittest.TestCase):
         self._verify(lib.handlers[u'nön-äscii'],
                      u'hyvä esimerkki')
         self._verify(lib.handlers[u'nön-äscii utf-8'],
-                     u'福', 123)
+                     u'福', 88)
 
     def test_dynamic_init(self):
         lib_with_init = TestLibrary('classes.ArgDocDynamicLibrary')
