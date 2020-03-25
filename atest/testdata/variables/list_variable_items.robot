@@ -48,7 +48,8 @@ Invalid index string
     Log    ${STRING}[12]
 
 Invalid index bytes
-    [Documentation]    FAIL Bytes '\${BYTES}' has no item in index 12.
+    [Documentation]    FAIL REGEXP: \
+    ...    (Bytes|String) '\\$\{BYTES\}' has no item in index 12.
     Log    ${BYTES}[12]
 
 Invalid index using variable
@@ -70,10 +71,10 @@ Non-int index string
     Log    ${STRING}[invalid]
 
 Non-int index bytes
-    [Documentation]    FAIL \
-    ...    Bytes '\${BYTES}' used with invalid index 'invalid'. To use \
-    ...    '[invalid]' as a literal value, it needs to be escaped like \
-    ...    '\\[invalid]'.
+    [Documentation]    FAIL REGEXP: \
+    ...    (Bytes|String) '\\$\{BYTES}' used with invalid index 'invalid'. To \
+    ...    use '\\[invalid]' as a literal value, it needs to be escaped like \
+    ...    '\\\\\\[invalid]'.
     Log    ${BYTES}[invalid]
 
 Non-int index using variable 1
@@ -101,9 +102,9 @@ Empty index string
     Log    ${STRING}[]
 
 Empty index bytes
-    [Documentation]    FAIL \
-    ...    Bytes '\${BYTES}' used with invalid index ''. To use \
-    ...    '[]' as a literal value, it needs to be escaped like '\\[]'.
+    [Documentation]    FAIL REGEXP: \
+    ...    (Bytes|String) '\\$\{BYTES}' used with invalid index ''. To use \
+    ...    '\\[]' as a literal value, it needs to be escaped like '\\\\\\[]'.
     Log    ${BYTES}[]
 
 Invalid slice list
@@ -121,10 +122,10 @@ Invalid slice string
     Log    ${STRING}[1:2:3:4]
 
 Invalid slice bytes
-    [Documentation]    FAIL \
-    ...    Bytes '\${BYTES}' used with invalid index '1:2:3:4'. To use \
-    ...    '[1:2:3:4]' as a literal value, it needs to be escaped like \
-    ...    '\\[1:2:3:4]'.
+    [Documentation]    FAIL REGEXP: \
+    ...    (Bytes|String) '\\$\{BYTES}' used with invalid index '1:2:3:4'. To \
+    ...    use '\\[1:2:3:4]' as a literal value, it needs to be escaped like \
+    ...    '\\\\\\[1:2:3:4]'.
     Log    ${BYTES}[1:2:3:4]
 
 Non-int slice index 1
