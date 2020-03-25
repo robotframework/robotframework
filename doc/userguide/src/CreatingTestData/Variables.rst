@@ -340,6 +340,9 @@ specify the start index, the end index, and the step:
 .. note:: The slice syntax is new in Robot Framework 3.1 and does not work
           with the old `@{var}[index]` syntax.
 
+.. note:: Accessing items from strings/bytes/others is new in Robot Framework
+          3.2 and works the same way as accessing items from lists.
+
 __ https://docs.python.org/3/glossary.html#term-sequence
 __ https://docs.python.org/glossary.html#term-slice
 
