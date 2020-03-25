@@ -46,7 +46,7 @@ def DynamicHandler(library, name, method, doc, argspec, tags=None):
     return _DynamicHandler(library, name, method, doc, argspec, tags)
 
 
-def InitHandler(library, method, docgetter=None):
+def InitHandler(library, method=None, docgetter=None):
     Init = _PythonInitHandler if not is_java_init(method) else _JavaInitHandler
     return Init(library, '__init__', method, docgetter)
 
@@ -128,7 +128,13 @@ class _RunnableHandler(object):
         return method
 
     def _get_handler(self, lib_instance, handler_name):
-        return getattr(lib_instance, handler_name)
+        try:
+            return getattr(lib_instance, handler_name)
+        except AttributeError:
+            # Occurs with old-style classes.
+            if handler_name == '__init__':
+                return None
+            raise
 
 
 class _PythonHandler(_RunnableHandler):
@@ -295,9 +301,9 @@ class _PythonInitHandler(_PythonHandler):
             self._docgetter = None
         return self._doc
 
-    def _parse_arguments(self, handler_method):
+    def _parse_arguments(self, init_method):
         parser = PythonArgumentParser(type='Test Library')
-        return parser.parse(handler_method, self.library.name)
+        return parser.parse(init_method or (lambda: None), self.library.name)
 
 
 class _JavaInitHandler(_JavaHandler):

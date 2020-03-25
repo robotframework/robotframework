@@ -14,7 +14,8 @@ from robot.running.dynamicmethods import (
     GetKeywordArguments, GetKeywordDocumentation, RunKeyword)
 from robot.errors import DataError
 
-from classes import NameLibrary, DocLibrary, ArgInfoLibrary
+from classes import (NameLibrary, DocLibrary, ArgInfoLibrary,
+                     __file__ as classes_source)
 from ArgumentsPython import ArgumentsPython
 if JYTHON:
     import ArgumentsJava
@@ -428,35 +429,47 @@ if JYTHON:
 
 class TestSourceAndLineno(unittest.TestCase):
 
-    def test_class(self):
+    def test_class_with_init(self):
+        lib = TestLibrary('classes.RecordingLibrary')
+        self._verify(lib.handlers['kw'], classes_source, 207)
+        self._verify(lib.init, classes_source, 203)
+
+    def test_class_without_init(self):
         from robot.libraries.BuiltIn import __file__ as source
-        kw = TestLibrary('BuiltIn').handlers['convert_to_integer']
-        self._verify(kw, source, 102)
+        lib = TestLibrary('BuiltIn')
+        self._verify(lib.handlers['convert_to_integer'], source, 102)
+        self._verify(lib.init, source, -1)
+
+    def test_old_style_class_without_init(self):
+        lib = TestLibrary('classes.NameLibrary')
+        self._verify(lib.handlers['simple1'], classes_source, 14)
+        self._verify(lib.init, classes_source, -1)
 
     def test_module(self):
         from module_library import __file__ as source
-        kw = TestLibrary('module_library').handlers['passing']
-        self._verify(kw, source, 5)
+        lib = TestLibrary('module_library')
+        self._verify(lib.handlers['passing'], source, 5)
+        self._verify(lib.init, source, -1)
 
     def test_package(self):
         from robot.variables.search import __file__ as source
-        kw = TestLibrary('robot.variables').handlers['is_variable']
-        self._verify(kw, source, 33)
+        from robot.variables import __file__ as init_source
+        lib = TestLibrary('robot.variables')
+        self._verify(lib.handlers['is_variable'], source, 33)
+        self._verify(lib.init, init_source, -1)
 
     def test_dynamic_without_source(self):
-        from classes import __file__ as source
-        kw = TestLibrary('classes.ArgDocDynamicLibrary').handlers['No Arg']
-        self._verify(kw, source, -1)
+        lib = TestLibrary('classes.ArgDocDynamicLibrary')
+        self._verify(lib.handlers['No Arg'], classes_source, -1)
 
     def test_dynamic(self):
-        from classes import __file__ as source
         lib = TestLibrary('classes.DynamicWithSource')
         self._verify(lib.handlers['only path'],
-                     source)
+                     classes_source)
         self._verify(lib.handlers['path & lineno'],
-                     source, 42)
+                     classes_source, 42)
         self._verify(lib.handlers['lineno only'],
-                     source, 6475)
+                     classes_source, 6475)
         self._verify(lib.handlers['invalid path'],
                      'path validity is not validated')
         self._verify(lib.handlers['path w/ colon'],
@@ -464,7 +477,7 @@ class TestSourceAndLineno(unittest.TestCase):
         self._verify(lib.handlers['path w/ colon & lineno'],
                      r'c:\temp\lib.py', 1234567890)
         self._verify(lib.handlers['no source'],
-                     source)
+                     classes_source)
 
     def test_dynamic_with_non_ascii_source(self):
         lib = TestLibrary('classes.DynamicWithSource')
@@ -472,6 +485,12 @@ class TestSourceAndLineno(unittest.TestCase):
                      u'hyvä esimerkki')
         self._verify(lib.handlers[u'nön-äscii utf-8'],
                      u'福', 123)
+
+    def test_dynamic_init(self):
+        lib_with_init = TestLibrary('classes.ArgDocDynamicLibrary')
+        lib_without_init = TestLibrary('classes.DynamicWithSource')
+        self._verify(lib_with_init.init, classes_source, 218)
+        self._verify(lib_without_init.init, classes_source, -1)
 
     def test_dynamic_invalid_source(self):
         logger = LoggerMock()

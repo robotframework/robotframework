@@ -153,9 +153,11 @@ class _BaseTestLibrary(object):
 
     def _resolve_init_method(self, libcode):
         init = getattr(libcode, '__init__', None)
-        return init if init and self._valid_init(init) else lambda: None
+        return init if self._valid_init(init) else None
 
     def _valid_init(self, method):
+        if not method:
+            return False
         # https://bitbucket.org/pypy/pypy/issues/2462/
         if PYPY:
             if PY2:
@@ -379,7 +381,7 @@ class _ModuleLibrary(_BaseTestLibrary):
         return self._libcode
 
     def _create_init_handler(self, libcode):
-        return InitHandler(self, lambda: None)
+        return InitHandler(self)
 
 
 class _HybridLibrary(_BaseTestLibrary):

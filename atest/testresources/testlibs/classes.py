@@ -8,7 +8,7 @@ from robot.api.deco import library
 __version__ = 'N/A'  # This should be ignored when version is parsed
 
 
-class NameLibrary:
+class NameLibrary:    # Old-style class on purpose!
     handler_count = 10
 
     def simple1(self):
