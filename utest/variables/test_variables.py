@@ -24,7 +24,7 @@ class PythonObject(object):
     def __str__(self):
         return '(%s, %s)' % (self.a, self.b)
     def __len__(self):
-        return (self.a, self.b).__len__()
+        return 2
     __repr__ = __str__
 
 if JYTHON:
