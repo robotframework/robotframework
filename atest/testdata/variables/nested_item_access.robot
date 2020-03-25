@@ -5,7 +5,7 @@ Test Template     Should Be Equal
 *** Variables ***
 ${LIST}           [['item'], [1, 2, (3, [4]), 5], 'third']
 ${DICT}           {'key': {'key': 'value'}, 1: {2: 3}, 'x': {'y': {'z': ''}}}
-${MIXED}          {'x': [(1, {'y': {'z': ['foo', 'bar', {'': [42]}]}})]}
+${MIXED}          {'x': [(1, {'y': {'z': ['foo', b'bar', {'': ['ABC']}]}})]}
 ${STRING}         Robot42
 
 *** Test Cases ***
@@ -21,12 +21,14 @@ Nested dict access
     ${DICT}[x][y][z]                    ${EMPTY}
 
 Nested mixed access
-    ${MIXED}[x][0][0]                   ${1}
-    ${MIXED}[x][0][1][y][z][-1][][0]    ${42}
+    ${MIXED}[x][0][0]                       ${1}
+    ${MIXED}[x][0][1][y][z][-1][][0][0]     A
+    ${MIXED}[x][0][1][y][z][1][-1]           ${{b'r'[0]}}
 
 Nested access with slicing
-    ${LIST}[1:][:-1]                    ${LIST[1:-1]}
-    ${LIST}[1:-1][-1][-2:1:-2][0][0]    ${3}
+    ${LIST}[1:][:-1]                        ${LIST[1:-1]}
+    ${LIST}[1:-1][-1][-2:1:-2][0][0]        ${3}
+    ${MIXED}[x][0][1][y][z][-1][][0][:2]    AB
 
 Non-existing nested list item
     [Documentation]    FAIL Tuple '\${LIST}[1][2]' has no item in index 666.
