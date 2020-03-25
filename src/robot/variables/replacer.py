@@ -175,8 +175,8 @@ class VariableReplacer(object):
             raise ValueError
         return slice(*[int(i) if i else None for i in index.split(':')])
 
-    def _get_dict_variable_item(self, name, variable, item):
-        key = self.replace_scalar(item)
+    def _get_dict_variable_item(self, name, variable, key):
+        key = self.replace_scalar(key)
         try:
             return variable[key]
         except KeyError:
