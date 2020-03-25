@@ -609,7 +609,7 @@ class TestSourceAndLineno(unittest.TestCase):
     def test_dynamic(self):
         from classes import __file__ as source
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
-        self._verify(lib, source, 212)
+        self._verify(lib, source, 216)
 
     def test_module(self):
         from module_library import __file__ as source

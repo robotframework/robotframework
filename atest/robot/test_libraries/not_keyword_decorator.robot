@@ -34,12 +34,13 @@ In class
 In hybrid library
     Check Test Case    ${TESTNAME}
     Not exposed error should be in syslog
-    ...    not_exposed_in_hybrid    HybridWithNotKeywordDecorator    ERROR
+    ...    not_exposed_in_hybrid    HybridWithNotKeywordDecorator
+    ...    ERROR    Error in
 
 *** Keywords ***
 Not exposed error should be in syslog
-    [Arguments]    ${keyword}    ${library}    ${level}=INFO
+    [Arguments]    ${keyword}    ${library}    ${level}=INFO    ${prefix}=In
     Syslog should contain
     ...    | ${level.ljust(5)} |
-    ...    Adding keyword '${keyword}' to library '${library}' failed:
+    ...    ${prefix} library '${library}': Adding keyword '${keyword}' failed:
     ...    Not exposed as a keyword.\n

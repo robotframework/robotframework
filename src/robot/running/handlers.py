@@ -25,7 +25,7 @@ from robot.model import Tags
 from .arguments import (ArgumentSpec, DynamicArgumentParser,
                         JavaArgumentCoercer, JavaArgumentParser,
                         PythonArgumentParser)
-from .dynamicmethods import GetKeywordTypes
+from .dynamicmethods import GetKeywordSource, GetKeywordTypes
 from .librarykeywordrunner import (EmbeddedArgumentsRunner,
                                    LibraryKeywordRunner, RunKeywordRunner)
 from .runkwregister import RUN_KW_REGISTER
@@ -46,7 +46,7 @@ def DynamicHandler(library, name, method, doc, argspec, tags=None):
     return _DynamicHandler(library, name, method, doc, argspec, tags)
 
 
-def InitHandler(library, method, docgetter=None):
+def InitHandler(library, method=None, docgetter=None):
     Init = _PythonInitHandler if not is_java_init(method) else _JavaInitHandler
     return Init(library, '__init__', method, docgetter)
 
@@ -128,7 +128,13 @@ class _RunnableHandler(object):
         return method
 
     def _get_handler(self, lib_instance, handler_name):
-        return getattr(lib_instance, handler_name)
+        try:
+            return getattr(lib_instance, handler_name)
+        except AttributeError:
+            # Occurs with old-style classes.
+            if handler_name == '__init__':
+                return None
+            raise
 
 
 class _PythonHandler(_RunnableHandler):
@@ -189,6 +195,7 @@ class _DynamicHandler(_RunnableHandler):
         self._supports_kwargs = dynamic_method.supports_kwargs
         _RunnableHandler.__init__(self, library, handler_name,
                                   dynamic_method.method, doc, tags)
+        self._source_info = None
 
     def _parse_arguments(self, handler_method):
         spec = DynamicArgumentParser().parse(self._argspec, self.longname)
@@ -200,8 +207,41 @@ class _DynamicHandler(_RunnableHandler):
                 raise DataError("Too few '%s' method parameters for "
                                 "keyword-only arguments support."
                                 % self._run_keyword_method_name)
-        spec.types = GetKeywordTypes(self.library.get_instance())(self._handler_name)
+        get_keyword_types = GetKeywordTypes(self.library.get_instance())
+        spec.types = get_keyword_types(self._handler_name)
         return spec
+
+    @property
+    def source(self):
+        if self._source_info is None:
+            self._source_info = self._get_source_info()
+        return self._source_info[0]
+
+    def _get_source_info(self):
+        get_keyword_source = GetKeywordSource(self.library.get_instance())
+        try:
+            source = get_keyword_source(self._handler_name)
+        except DataError as err:
+            self.library.report_error(
+                "Getting source information for keyword '%s' failed: %s"
+                % (self.name, err.message), err.details
+            )
+            return None, -1
+        if not source:
+            return self.library.source, -1
+        if ':' not in source:
+            return source, -1
+        path, lineno = source.rsplit(':', 1)
+        try:
+            return path or self.library.source, int(lineno)
+        except ValueError:
+            return source, -1
+
+    @property
+    def lineno(self):
+        if self._source_info is None:
+            self._source_info = self._get_source_info()
+        return self._source_info[1]
 
     def resolve_arguments(self, arguments, variables=None):
         positional, named = self.arguments.resolve(arguments, variables)
@@ -261,9 +301,9 @@ class _PythonInitHandler(_PythonHandler):
             self._docgetter = None
         return self._doc
 
-    def _parse_arguments(self, handler_method):
+    def _parse_arguments(self, init_method):
         parser = PythonArgumentParser(type='Test Library')
-        return parser.parse(handler_method, self.library.name)
+        return parser.parse(init_method or (lambda: None), self.library.name)
 
 
 class _JavaInitHandler(_JavaHandler):

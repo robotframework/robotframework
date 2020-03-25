@@ -355,3 +355,10 @@ Error in file
     ...    ${error}\n*${stacktrace}*
     ...    ${error}
     Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=${pattern}
+
+Error in library
+    [Arguments]    ${name}    @{message}    ${pattern}=False    ${index}=0
+    ${error} =    Catenate
+    ...    Error in library '${name}':
+    ...    @{message}
+    Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=${pattern}

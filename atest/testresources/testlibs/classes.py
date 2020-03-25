@@ -1,10 +1,14 @@
+# coding: utf-8
+
+import os.path
+
 from robot.api.deco import library
 
 
 __version__ = 'N/A'  # This should be ignored when version is parsed
 
 
-class NameLibrary:
+class NameLibrary:    # Old-style class on purpose!
     handler_count = 10
 
     def simple1(self):
@@ -247,6 +251,29 @@ class ArgDocDynamicLibraryWithKwargsSupport(ArgDocDynamicLibrary):
         argstr = ' '.join([str(a) for a in args] +
                           ['%s:%s' % kv for kv in sorted(kwargs.items())])
         print('*INFO* Executed keyword %s with arguments %s' % (name, argstr))
+
+
+class DynamicWithSource:
+    path = os.path.normpath(os.path.dirname(__file__) + '/classes.py')
+    keywords = {'only path': path,
+                'path & lineno': path + ':42',
+                'lineno only': ':6475',
+                'invalid path': 'path validity is not validated',
+                'path w/ colon': r'c:\temp\lib.py',
+                'path w/ colon & lineno': r'c:\temp\lib.py:1234567890',
+                'no source': None,
+                u'nön-äscii': u'hyvä esimerkki',
+                u'nön-äscii utf-8': b'\xe7\xa6\x8f:88',
+                'invalid source': 666}
+
+    def get_keyword_names(self):
+        return list(self.keywords)
+
+    def run_keyword(self, name, args, kws):
+        pass
+
+    def get_keyword_source(self, name):
+        return self.keywords[name]
 
 
 class _KeywordInfo:

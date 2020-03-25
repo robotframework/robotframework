@@ -61,7 +61,7 @@ Check closing
     ...    CLOSING TEST CASE (test)
     ...    CLOSING TEST CASE (suite)
     ...    CLOSING TEST SUITE
-    ...    [ ERROR ] Registering listeners for library 'lib_not_works' failed: Taking listener 'NoVersionListener' into use failed: Listener 'NoVersionListener' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
+    ...    [ ERROR ] Error in library 'lib_not_works': Registering listeners failed: Taking listener 'NoVersionListener' into use failed: Listener 'NoVersionListener' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
     ...    CLOSING TEST CASE (test)
     ...    CLOSING TEST CASE (test)
     ...    CLOSING TEST CASE (test)
