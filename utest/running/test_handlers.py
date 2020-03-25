@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import inspect
 import os.path
 import re
@@ -441,10 +443,47 @@ class TestSourceAndLineno(unittest.TestCase):
         kw = TestLibrary('robot.variables').handlers['is_variable']
         self._verify(kw, source, 33)
 
-    def test_dynamic(self):
+    def test_dynamic_without_source(self):
         from classes import __file__ as source
         kw = TestLibrary('classes.ArgDocDynamicLibrary').handlers['No Arg']
         self._verify(kw, source, -1)
+
+    def test_dynamic(self):
+        from classes import __file__ as source
+        lib = TestLibrary('classes.DynamicWithSource')
+        self._verify(lib.handlers['only path'],
+                     source)
+        self._verify(lib.handlers['path & lineno'],
+                     source, 42)
+        self._verify(lib.handlers['lineno only'],
+                     source, 6475)
+        self._verify(lib.handlers['invalid path'],
+                     'path validity is not validated')
+        self._verify(lib.handlers['path w/ colon'],
+                     r'c:\temp\lib.py', -1)
+        self._verify(lib.handlers['path w/ colon & lineno'],
+                     r'c:\temp\lib.py', 1234567890)
+        self._verify(lib.handlers['no source'],
+                     source)
+
+    def test_dynamic_with_non_ascii_source(self):
+        lib = TestLibrary('classes.DynamicWithSource')
+        self._verify(lib.handlers[u'nön-äscii'],
+                     u'hyvä esimerkki')
+        self._verify(lib.handlers[u'nön-äscii utf-8'],
+                     u'福', 123)
+
+    def test_dynamic_invalid_source(self):
+        logger = LoggerMock()
+        lib = TestLibrary('classes.DynamicWithSource', logger=logger)
+        self._verify(lib.handlers['invalid source'], None)
+        error = (
+            "Error in library 'classes.DynamicWithSource': "
+            "Getting source information for keyword 'Invalid Source' failed: "
+            "Calling dynamic method 'get_keyword_source' failed: "
+            "Return value must be a string, got integer."
+        )
+        assert_equal(logger.messages, [(error, 'ERROR')])
 
     if JYTHON:
 
@@ -452,12 +491,27 @@ class TestSourceAndLineno(unittest.TestCase):
             kw = TestLibrary('ArgumentTypes').handlers['byte1']
             self._verify(kw, None, -1)
 
-    def _verify(self, kw, source, lineno):
+    def _verify(self, kw, source, lineno=-1):
         if source:
             source = re.sub(r'(\.pyc|\$py\.class)$', '.py', source)
             source = os.path.normpath(source)
         assert_equal(kw.source, source)
         assert_equal(kw.lineno, lineno)
+
+
+class LoggerMock(object):
+
+    def __init__(self):
+        self.messages = []
+
+    def write(self, message, level):
+        self.messages.append((message, level))
+
+    def info(self, message):
+        self.write(message, 'INFO')
+
+    def debug(self, message):
+        pass
 
 
 if __name__ == '__main__':

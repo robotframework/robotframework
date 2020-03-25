@@ -25,7 +25,7 @@ from robot.model import Tags
 from .arguments import (ArgumentSpec, DynamicArgumentParser,
                         JavaArgumentCoercer, JavaArgumentParser,
                         PythonArgumentParser)
-from .dynamicmethods import GetKeywordTypes
+from .dynamicmethods import GetKeywordSource, GetKeywordTypes
 from .librarykeywordrunner import (EmbeddedArgumentsRunner,
                                    LibraryKeywordRunner, RunKeywordRunner)
 from .runkwregister import RUN_KW_REGISTER
@@ -189,6 +189,7 @@ class _DynamicHandler(_RunnableHandler):
         self._supports_kwargs = dynamic_method.supports_kwargs
         _RunnableHandler.__init__(self, library, handler_name,
                                   dynamic_method.method, doc, tags)
+        self._source_info = None
 
     def _parse_arguments(self, handler_method):
         spec = DynamicArgumentParser().parse(self._argspec, self.longname)
@@ -200,8 +201,41 @@ class _DynamicHandler(_RunnableHandler):
                 raise DataError("Too few '%s' method parameters for "
                                 "keyword-only arguments support."
                                 % self._run_keyword_method_name)
-        spec.types = GetKeywordTypes(self.library.get_instance())(self._handler_name)
+        get_keyword_types = GetKeywordTypes(self.library.get_instance())
+        spec.types = get_keyword_types(self._handler_name)
         return spec
+
+    @property
+    def source(self):
+        if self._source_info is None:
+            self._source_info = self._get_source_info()
+        return self._source_info[0]
+
+    def _get_source_info(self):
+        get_keyword_source = GetKeywordSource(self.library.get_instance())
+        try:
+            source = get_keyword_source(self._handler_name)
+        except DataError as err:
+            self.library.report_error(
+                "Getting source information for keyword '%s' failed: %s"
+                % (self.name, err.message), err.details
+            )
+            return None, -1
+        if not source:
+            return self.library.source, -1
+        if ':' not in source:
+            return source, -1
+        path, lineno = source.rsplit(':', 1)
+        try:
+            return path or self.library.source, int(lineno)
+        except ValueError:
+            return source, -1
+
+    @property
+    def lineno(self):
+        if self._source_info is None:
+            self._source_info = self._get_source_info()
+        return self._source_info[1]
 
     def resolve_arguments(self, arguments, variables=None):
         positional, named = self.arguments.resolve(arguments, variables)

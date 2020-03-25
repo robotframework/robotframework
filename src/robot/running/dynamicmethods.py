@@ -57,13 +57,15 @@ class _DynamicMethod(object):
     def _handle_return_value(self, value):
         raise NotImplementedError
 
-    def _to_string(self, value, allow_tuple=False):
+    def _to_string(self, value, allow_tuple=False, allow_none=False):
         if is_unicode(value):
             return value
         if is_bytes(value):
             return value.decode('UTF-8')
         if allow_tuple and is_list_like(value) and len(value) > 0:
             return tuple(value)
+        if allow_none and value is None:
+            return value
         or_tuple = ' or a non-empty tuple' if allow_tuple else ''
         raise DataError('Return value must be a string%s, got %s.'
                         % (or_tuple, type_name(value)))
@@ -163,3 +165,10 @@ class GetKeywordTags(_DynamicMethod):
 
     def _handle_return_value(self, value):
         return self._to_list_of_strings(value)
+
+
+class GetKeywordSource(_DynamicMethod):
+    _underscore_name = 'get_keyword_source'
+
+    def _handle_return_value(self, value):
+        return self._to_string(value, allow_none=True)

@@ -2687,6 +2687,31 @@ class and its `__init__` method. If a non-empty documentation is
 got both directly from the code and from the
 `get_keyword_documentation` method, the latter has precedence.
 
+Getting keyword source information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The dynamic API masks the real implementation of keywords from Robot Framework
+and thus makes it impossible to see where keywords are implemented. This
+means that editors and other tools utilizing Robot Framework APIs cannot
+implement features such as go-to-definition. This problem can be solved by
+implementing yet another optional dynamic method named `get_keyword_source`
+(alias `getKeywordSource`) that returns the source information.
+
+The return value from the `get_keyword_source` method must be a string or
+`None` (`null` in Java) if no source information is available. In the simple
+case it is enough to simply return an absolute path to the file implementing
+the keyword. If the line number where the keyword implementation starts
+is known, it can be embedded to the return value like `path:lineno`.
+Returning only the line number is possible like `:lineno`.
+
+The source information of the library itself is got automatically from
+the imported library class the same way as with other library APIs. The
+library source path is used with all keywords that do not have their own
+source path defined.
+
+.. note:: Returning source information for keywords is a new feature in
+          Robot Framework 3.2.
+
 Named argument syntax with dynamic libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2847,6 +2872,7 @@ camelCase aliases work exactly the same way.
    `get_keyword_types`          `name`                     Return keywords' `argument type information`__. Optional method. New in RF 3.1.
    `get_keyword_tags`           `name`                     Return keywords' `tags`__. Optional method. New in RF 3.0.2.
    `get_keyword_documentation`  `name`                     Return keywords' and library's `documentation`__. Optional method.
+   `get_keyword_source`         `name`                     Return keywords' `source`__. Optional method. New in RF 3.2.
    ===========================  =========================  =======================================================
 
 __ `Getting dynamic keyword names`_
@@ -2855,6 +2881,7 @@ __ `Getting keyword arguments`_
 __ `Getting keyword argument types`_
 __ `Getting keyword tags`_
 __ `Getting keyword documentation`_
+__ `Getting keyword source information`_
 
 It is possible to write a formal interface specification in Java as
 below. However, remember that libraries *do not need* to implement
