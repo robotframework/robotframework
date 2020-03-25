@@ -17,7 +17,8 @@ except ImportError:
     pass
 
 from robot.utils import (is_bytes, is_falsy, is_dict_like, is_list_like,
-                         is_string, is_truthy, type_name, JYTHON, PY3)
+                         is_string, is_truthy, type_name, IRONPYTHON, JYTHON,
+                         PY3)
 from robot.utils.asserts import assert_equal, assert_true
 
 
@@ -126,9 +127,9 @@ class TestDictLike(unittest.TestCase):
 class TestTypeName(unittest.TestCase):
 
     def test_base_types(self):
-        for item, exp in [('string', 'string'),
-                          (u'unicode', 'string'),
-                          (b'bytes', 'bytes' if PY3 else 'string'),
+        for item, exp in [('x', 'string'),
+                          (u'x', 'string'),
+                          (b'x', 'bytes' if (PY3 or IRONPYTHON) else 'string'),
                           (bytearray(), 'bytearray'),
                           (1, 'integer'),
                           (long(1), 'integer'),

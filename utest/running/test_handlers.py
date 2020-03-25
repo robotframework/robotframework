@@ -1,10 +1,12 @@
-import unittest
-import sys
 import inspect
+import os.path
+import re
+import sys
+import unittest
 
 from robot.running.handlers import _PythonHandler, _JavaHandler, DynamicHandler
-from robot import utils
-from robot.utils.asserts import *
+from robot.utils import IRONPYTHON, JYTHON
+from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
 from robot.running.testlibraries import TestLibrary, LibraryScope
 from robot.running.dynamicmethods import (
     GetKeywordArguments, GetKeywordDocumentation, RunKeyword)
@@ -12,7 +14,7 @@ from robot.errors import DataError
 
 from classes import NameLibrary, DocLibrary, ArgInfoLibrary
 from ArgumentsPython import ArgumentsPython
-if utils.JYTHON:
+if JYTHON:
     import ArgumentsJava
 
 
@@ -100,14 +102,14 @@ class TestDynamicHandlerCreation(unittest.TestCase):
     def test_non_ascii_doc(self):
         self._assert_doc(u'P\xe4iv\xe4\xe4')
 
-    if not utils.IRONPYTHON:
+    if not IRONPYTHON:
 
         def test_with_utf8_doc(self):
             doc = u'P\xe4iv\xe4\xe4'
             self._assert_doc(doc.encode('UTF-8'), doc)
 
     def test_invalid_doc_type(self):
-        self._assert_fails('Return value must be string.', doc=True)
+        self._assert_fails('Return value must be a string.', doc=True)
 
     def test_none_argspec(self):
         self._assert_spec(None, maxargs=sys.maxsize, varargs='varargs', kwargs=False)
@@ -123,11 +125,18 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             self._assert_spec(argspec, len(argspec), len(argspec), argspec)
 
     def test_only_default_args(self):
-        self._assert_spec(['d1=default', 'd2=xxx'], 0, 2,
-                          ['d1', 'd2'], {'d1': 'default', 'd2': 'xxx'})
+        self._assert_spec(['d1=default', 'd2=True'], 0, 2,
+                          ['d1', 'd2'], {'d1': 'default', 'd2': 'True'})
+
+    def test_default_as_tuple_or_list_like(self):
+        self._assert_spec([('d1', 'default'), ['d2', True]], 0, 2,
+                          ['d1', 'd2'], {'d1': 'default', 'd2': True})
 
     def test_default_value_may_contain_equal_sign(self):
         self._assert_spec(['d=foo=bar'], 0, 1, ['d'], {'d': 'foo=bar'})
+
+    def test_default_value_as_tuple_may_contain_equal_sign(self):
+        self._assert_spec([('n=m', 'd=f')], 0, 1, ['n=m'], {'n=m': 'd=f'})
 
     def test_varargs(self):
         self._assert_spec(['*vararg'], 0, sys.maxsize, varargs='vararg')
@@ -155,6 +164,14 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_spec(['*', 'x=1', 'y', 'z=3'],
                           kwonlyargs=['x', 'y', 'z'],
                           defaults={'x': '1', 'z': '3'})
+
+    def test_kwonlydefaults_with_tuple(self):
+        self._assert_spec(['*', ('kwo', 'default')],
+                          kwonlyargs=['kwo'],
+                          defaults={'kwo': 'default'})
+        self._assert_spec([('*',), 'x=1', 'y', ('z', 3)],
+                          kwonlyargs=['x', 'y', 'z'],
+                          defaults={'x': '1', 'z': 3})
 
     def test_integration(self):
         self._assert_spec(['arg', 'default=value'],
@@ -184,10 +201,25 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                           varargs='d',
                           kwonlyargs=['e', 'f', 'g'],
                           kwargs='h')
+        self._assert_spec([('a',), ('b', '1'), ('c', 2), ('*d',), ('e',), ('f', 3), ('g',), ('**h',)],
+                          1, sys.maxsize,
+                          positional=['a', 'b', 'c'],
+                          defaults={'b': '1', 'c': 2, 'f': 3},
+                          varargs='d',
+                          kwonlyargs=['e', 'f', 'g'],
+                          kwargs='h')
 
     def test_invalid_argspec_type(self):
-        for argspec in [True, [1, 2]]:
-            self._assert_fails("Return value must be list of strings.", argspec)
+        for argspec in [True, [1, 2], ['arg', ()]]:
+            self._assert_fails("Return value must be a list of strings "
+                               "or non-empty tuples.", argspec)
+
+    def test_invalid_tuple(self):
+        for invalid in [('too', 'many', 'values'), ('*too', 'many'),
+                        ('**too', 'many'), (1, 2), (1,)]:
+            self._assert_fails('Invalid argument specification: '
+                               'Invalid argument "%s".' % (invalid,),
+                               ['valid', invalid])
 
     def test_mandatory_arg_after_default_arg(self):
         for argspec in [['d=v', 'arg'], ['a', 'b', 'c=v', 'd']]:
@@ -265,7 +297,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         return DynamicHandler(lib, 'mock', RunKeyword(lib), doc, argspec)
 
 
-if utils.JYTHON:
+if JYTHON:
 
     handlers = dict((method.__name__, method) for method in
                     _get_java_handler_methods(ArgumentsJava('Arg', ['varargs'])))
@@ -390,6 +422,42 @@ if utils.JYTHON:
         def _test_coercion_fails(self, handler, expected_message):
             assert_raises_with_msg(ValueError, expected_message,
                                    handler._arg_coercer.coerce, ['invalid'], {})
+
+
+class TestSourceAndLineno(unittest.TestCase):
+
+    def test_class(self):
+        from robot.libraries.BuiltIn import __file__ as source
+        kw = TestLibrary('BuiltIn').handlers['convert_to_integer']
+        self._verify(kw, source, 102)
+
+    def test_module(self):
+        from module_library import __file__ as source
+        kw = TestLibrary('module_library').handlers['passing']
+        self._verify(kw, source, 5)
+
+    def test_package(self):
+        from robot.variables.search import __file__ as source
+        kw = TestLibrary('robot.variables').handlers['is_variable']
+        self._verify(kw, source, 33)
+
+    def test_dynamic(self):
+        from classes import __file__ as source
+        kw = TestLibrary('classes.ArgDocDynamicLibrary').handlers['No Arg']
+        self._verify(kw, source, -1)
+
+    if JYTHON:
+
+        def test_java_class(self):
+            kw = TestLibrary('ArgumentTypes').handlers['byte1']
+            self._verify(kw, None, -1)
+
+    def _verify(self, kw, source, lineno):
+        if source:
+            source = re.sub(r'(\.pyc|\$py\.class)$', '.py', source)
+            source = os.path.normpath(source)
+        assert_equal(kw.source, source)
+        assert_equal(kw.lineno, lineno)
 
 
 if __name__ == '__main__':

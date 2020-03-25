@@ -10,18 +10,32 @@ class DynamicLibrary(object):
         """This is overwritten and not shown in docs"""
 
     def get_keyword_names(self):
-        return ['0', 'Keyword 1', 'KW2', 'nön-äscii ÜTF-8',
-                u'nön-äscii Ünicöde', 'no arg spec', 'Embedded ${args} 1',
-                'Em${bed}ed ${args} 2', 'Keyword-only args', 'KWO w/ varargs']
+        return ['0',
+                'Keyword 1',
+                'KW2',
+                'no arg spec',
+                'Defaults',
+                'Keyword-only args',
+                'KWO w/ varargs',
+                'Embedded ${args} 1',
+                'Em${bed}ed ${args} 2',
+                'nön-äscii ÜTF-8',
+                u'nön-äscii Ünicöde',
+                'Tags',
+                'Types']
 
     def run_keyword(self, name, args, kwargs):
         print(name, args)
 
     def get_keyword_arguments(self, name):
+        if name == 'Defaults':
+            return ['old=style', ('new', 'style'), ('cool', True)]
         if name == 'Keyword-only args':
             return ['*', 'kwo', 'another=default']
         if name == 'KWO w/ varargs':
             return ['*varargs', 'a', 'b=2', 'c', '**kws']
+        if name == 'Types':
+            return ['integer', 'no type', ('boolean', True)]
         if not name[-1].isdigit():
             return None
         return ['arg%d' % (i+1) for i in range(int(name[-1]))]
@@ -49,3 +63,13 @@ Examples:
 
 http://robotframework.org
 '''
+
+    def get_keyword_tags(self, name):
+        if name == 'Tags':
+            return ['my', 'tägs']
+        return None
+
+    def get_keyword_types(self, name):
+        if name == 'Types':
+            return {'integer': int, 'boolean': bool}
+        return None

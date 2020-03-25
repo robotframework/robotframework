@@ -1,5 +1,7 @@
-import unittest
+import os.path
+import re
 import sys
+import unittest
 
 from robot.running.testlibraries import (TestLibrary, _ClassLibrary,
                                          _ModuleLibrary, _DynamicLibrary)
@@ -461,7 +463,7 @@ class TestDynamicLibrary(unittest.TestCase):
 
     def test_get_keyword_doc_and_args_are_ignored_if_not_callable(self):
         lib = TestLibrary('classes.InvalidAttributeDynamicLibrary')
-        assert_equal(len(lib.handlers), 6)
+        assert_equal(len(lib.handlers), 7)
         assert_equal(lib.handlers['No Arg'].doc, '')
         assert_handler_args(lib.handlers['No Arg'], 0, sys.maxsize)
 
@@ -590,6 +592,55 @@ class TestDynamicLibraryInitDocumentation(unittest.TestCase):
         def test_dynamic_init_doc_from_java_library(self):
             self._assert_init_doc('ArgDocDynamicJavaLibrary',
                                   'Dynamic Java init doc.')
+
+
+class TestSourceAndLineno(unittest.TestCase):
+
+    def test_class(self):
+        from robot.libraries.BuiltIn import __file__ as source
+        lib = TestLibrary('BuiltIn')
+        self._verify(lib, source, 3270)
+
+    def test_class_in_package(self):
+        from robot.variables.variables import __file__ as source
+        lib = TestLibrary('robot.variables.Variables')
+        self._verify(lib, source, 25)
+
+    def test_dynamic(self):
+        from classes import __file__ as source
+        lib = TestLibrary('classes.ArgDocDynamicLibrary')
+        self._verify(lib, source, 212)
+
+    def test_module(self):
+        from module_library import __file__ as source
+        lib = TestLibrary('module_library')
+        self._verify(lib, source, 1)
+
+    def test_package(self):
+        from robot.variables import __file__ as source
+        lib = TestLibrary('robot.variables')
+        self._verify(lib, source, 1)
+
+    if JYTHON:
+
+        def test_java_class(self):
+            lib = TestLibrary('ArgumentTypes')
+            self._verify(lib, None, -1)
+
+        def test_java_class_by_path(self):
+            from classes import __file__ as base
+            path = os.path.join(os.path.abspath(base), '..', 'ArgumentTypes')
+            lib = TestLibrary(path + '.java')
+            self._verify(lib, path + '.java', -1)
+            lib = TestLibrary(path + '.class')
+            self._verify(lib, path + '.java', -1)
+
+    def _verify(self, lib, source, lineno):
+        if source:
+            source = re.sub(r'(\.pyc|\$py\.class)$', '.py', source)
+            source = os.path.normpath(source)
+        assert_equal(lib.source, source)
+        assert_equal(lib.lineno, lineno)
 
 
 class _FakeNamespace:

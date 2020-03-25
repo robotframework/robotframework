@@ -111,6 +111,7 @@ def _run(args, tempdir, interpreter):
     environ = dict(os.environ,
                    TEMPDIR=tempdir,
                    CLASSPATH=interpreter.classpath or '',
+                   JAVA_OPTS=interpreter.java_opts or '',
                    PYTHONCASEOK='True')
     print('%s\n%s\n' % (interpreter, '-' * len(str(interpreter))))
     print('Running command:\n%s\n' % ' '.join(command))
