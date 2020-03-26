@@ -27,6 +27,10 @@ Scope
 Named Args
     Named Args Should Be    yes
 
+Source info
+    Source should be                 ${TESTDATADIR}/module.py
+    Lineno should be                 1
+
 Has No Inits
     Should Have No Init
 
@@ -88,3 +92,8 @@ Keyword tags
     Keyword Tags Should Be    2    1    one    yksi
     Keyword Tags Should Be    3    2    kaksi    two
     Keyword Tags Should Be    4    tag1    tag2
+
+Keyword source info
+    Keyword Name Should Be           0    Get Hello
+    Keyword Should Not Have Source   0
+    Keyword Lineno Should Be         0    19

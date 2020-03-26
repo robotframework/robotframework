@@ -77,6 +77,16 @@ Named Args Should Be
     [Arguments]    ${namedargs}
     Element Text Should Be    ${LIBDOC}    ${namedargs}    namedargs
 
+Source Should Be
+    [Arguments]    ${source}
+    ${source} =    Evaluate
+    ...    os.path.relpath($source, "%{TEMPDIR}") if os.path.exists($source) else $source
+    Element Attribute Should Be    ${LIBDOC}    source    ${source}
+
+Lineno Should Be
+    [Arguments]    ${lineno}
+    Element Attribute Should Be    ${LIBDOC}    lineno    ${lineno}
+
 Generated Should Be Defined
     Element Attribute Should Match    ${LIBDOC}    generated    *
 
@@ -112,6 +122,12 @@ Keyword Arguments Should Be
     ${args}=    Get Keyword Arguments    ${index}
     Should Be Equal    ${args}    ${expected}
 
+Get Keyword Arguments
+    [Arguments]    ${index}   ${type}=kw
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
+    ${args}=    Get Elements Texts   ${kws}[${index}]    xpath=arguments/arg
+    [Return]    ${args}
+
 Keyword Doc Should Start With
     [Arguments]    ${index}    @{doc}
     ${kws}=   Get Elements    ${LIBDOC}   xpath=kw
@@ -131,6 +147,28 @@ Keyword Tags Should Be
     ${tags}=   Get Elements Texts    ${kws}[${index}]    xpath=tags/tag
     Should Be Equal    ${tags}    ${expected}
 
+Keyword Source Should Be
+    [Arguments]    ${index}    ${source}    ${xpath}=kw
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
+    ${source} =    Evaluate
+    ...    os.path.relpath($source, "%{TEMPDIR}") if os.path.exists($source) else $source
+    Element Attribute Should Be    ${kws}[${index}]    source    ${source}
+
+Keyword Should Not Have Source
+    [Arguments]    ${index}    ${xpath}=kw
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
+    Element Should Not Have Attribute    ${kws}[${index}]    source
+
+Keyword Lineno Should Be
+    [Arguments]    ${index}    ${lineno}    ${xpath}=kw
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
+    Element Attribute Should Be    ${kws}[${index}]    lineno    ${lineno}
+
+Keyword Should Not Have Lineno
+    [Arguments]    ${index}    ${xpath}=kw
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
+    Element Should Not Have Attribute    ${kws}[${index}]    lineno
+
 Keyword Should Be Deprecated
     [Arguments]    ${index}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
@@ -140,12 +178,6 @@ Keyword Should Not Be Deprecated
     [Arguments]    ${index}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
     Element Attribute Should be    ${kws}[${index}]    deprecated    false
-
-Get Keyword Arguments
-    [Arguments]    ${index}   ${type}=kw
-    ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
-    ${args}=    Get Elements Texts   ${kws}[${index}]    xpath=arguments/arg
-    [Return]    ${args}
 
 Keyword Count Should Be
     [Arguments]    ${expected}   ${type}=kw

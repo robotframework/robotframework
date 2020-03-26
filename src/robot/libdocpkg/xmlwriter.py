@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os.path
+
 from robot.utils import XmlWriter, get_timestamp
 
 from .htmlwriter import DocToHtml
@@ -27,24 +29,41 @@ class LibdocXmlWriter(object):
         formatter = DocFormatter(libdoc.doc_format, self._force_html_doc)
         writer = XmlWriter(outfile, usage='Libdoc output')
         self._write_start(libdoc, writer, formatter)
-        self._write_keywords('init', libdoc.inits, writer, formatter)
-        self._write_keywords('kw', libdoc.keywords, writer, formatter)
+        self._write_keywords('init', libdoc.inits, libdoc.source,
+                             writer, formatter)
+        self._write_keywords('kw', libdoc.keywords, libdoc.source,
+                             writer, formatter)
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer, formatter):
-        lib_attrs = {'name': libdoc.name,
-                     'type': libdoc.type,
-                     'format': formatter.format,
-                     'generated': get_timestamp(millissep=None)}
-        writer.start('keywordspec', lib_attrs)
+        attrs = {'name': libdoc.name,
+                 'type': libdoc.type,
+                 'format': formatter.format,
+                 'generated': get_timestamp(millissep=None)}
+        self._add_source_info(attrs, libdoc, writer.output)
+        writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
         writer.element('scope', libdoc.scope)
         writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
         writer.element('doc', formatter(libdoc.doc))
 
-    def _write_keywords(self, kw_type, keywords, writer, formatter):
+    def _add_source_info(self, attrs, item, outfile, lib_source=None):
+        if item.source and item.source != lib_source:
+            attrs['source'] = self._format_source(item.source, outfile)
+        if item.lineno > 0:
+            attrs['lineno'] = str(item.lineno)
+
+    def _format_source(self, source, outfile):
+        if not (os.path.exists(source)
+                and hasattr(outfile, 'name')
+                and os.path.isfile(outfile.name)):
+            return source
+        return os.path.relpath(source, os.path.dirname(outfile.name))
+
+    def _write_keywords(self, kw_type, keywords, lib_source, writer, formatter):
         for kw in keywords:
-            writer.start(kw_type, self._get_start_attrs(kw_type, kw))
+            attrs = self._get_start_attrs(kw_type, kw, lib_source, writer)
+            writer.start(kw_type, attrs)
             writer.start('arguments')
             for arg in kw.args:
                 writer.element('arg', arg)
@@ -56,11 +75,14 @@ class LibdocXmlWriter(object):
             writer.end('tags')
             writer.end(kw_type)
 
-    def _get_start_attrs(self, kw_type, kw):
+    def _get_start_attrs(self, kw_type, kw, lib_source, writer):
         if kw_type == 'init':
-            return {}
-        return {'name': kw.name,
-                'deprecated': 'true' if kw.deprecated else 'false'}
+            attrs = {}
+        else:
+            attrs = {'name': kw.name,
+                     'deprecated': 'true' if kw.deprecated else 'false'}
+        self._add_source_info(attrs, kw, writer.output, lib_source)
+        return attrs
 
     def _write_end(self, writer):
         writer.end('keywordspec')

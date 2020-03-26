@@ -27,6 +27,10 @@ Scope
 Named Args
     Named Args Should Be             yes
 
+Source info
+    Source should be                 ${CURDIR}/../../../src/robot/libraries/Telnet.py
+    Lineno should be                 36
+
 Init Documentation
     Init Doc Should Start With       0
     ...    Telnet library can be imported with optional configuration parameters.\n\n
@@ -38,6 +42,10 @@ Init Arguments
     ...    encoding_errors=ignore    default_log_level=INFO     window_size=None
     ...    environ_user=None    terminal_emulation=False    terminal_type=None
     ...    telnetlib_log_level=TRACE    connection_timeout=None
+
+Init Source Info
+    Keyword Should Not Have Source   0    xpath=init
+    Keyword Lineno Should Be         0    283      xpath=init
 
 Keyword Names
     Keyword Name Should Be           0    Close All Connections
@@ -63,6 +71,16 @@ Keyword Documentation
     ...    | `Write`${SPACE*2}| pwd${SPACE*17}|
     ...    | \${out} = | `Read Until Prompt` |
     ...
+
+Keyword Source Info
+    # This keyword is from the "main library".
+    Keyword Name Should Be           0    Close All Connections
+    Keyword Should Not Have Source   0
+    Keyword Lineno Should Be         0    472
+    # This keyword is from an external library component.
+    Keyword Name Should Be           7    Read Until Prompt
+    Keyword Should Not Have Source   7
+    Keyword Lineno Should Be         7    1013
 
 KwArgs and VarArgs
     Run Libdoc And Parse Output      Process

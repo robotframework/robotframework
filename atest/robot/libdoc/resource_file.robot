@@ -37,6 +37,10 @@ Scope
 Named Args
     Named Args Should Be            yes
 
+Source Info
+    Source Should Be                ${TESTDATADIR}/resource.robot
+    Lineno Should Be                1
+
 Resource Has No Inits
     Should Have No Init
 
@@ -99,8 +103,17 @@ Keyword tags
 Non ASCII
     Keyword Doc Should Be           10    Hyvää yötä.\n\nСпасибо!
 
+Keyword Source Info
+    Keyword Name Should Be            0    curdir
+    Keyword Should Not Have Source    0
+    Keyword Lineno Should Be          0    65
+
 '*.resource' extension is accepted
-    Run Libdoc And Parse Output     ${TESTDATADIR}/resource.resource
-    Keyword Name Should Be          0    Yay, I got new extension!
-    Keyword Arguments Should Be     0    Awesome!!
-    Keyword Doc Should Be           0    Yeah!!!
+    Run Libdoc And Parse Output       ${TESTDATADIR}/resource.resource
+    Source Should Be                  ${TESTDATADIR}/resource.resource
+    Lineno Should Be                  1
+    Keyword Name Should Be            0    Yay, I got new extension!
+    Keyword Arguments Should Be       0    Awesome!!
+    Keyword Doc Should Be             0    Yeah!!!
+    Keyword Should Not Have Source    0
+    Keyword Lineno Should Be          0    2

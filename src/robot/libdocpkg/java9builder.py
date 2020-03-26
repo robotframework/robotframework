@@ -37,7 +37,8 @@ class JavaDocBuilder(object):
                             version=self._get_version(fields),
                             scope=self._get_scope(fields),
                             named_args=False,
-                            doc_format=self._get_doc_format(fields))
+                            doc_format=self._get_doc_format(fields),
+                            source=path)
         libdoc.inits = self._initializers(elements, constructors)
         libdoc.keywords = self._keywords(elements, methods)
         return libdoc

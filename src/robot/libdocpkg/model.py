@@ -26,7 +26,8 @@ from .output import LibdocOutput
 class LibraryDoc(object):
 
     def __init__(self, name='', doc='', version='', type='library',
-                 scope='', named_args=True, doc_format=''):
+                 scope='', named_args=True, doc_format='ROBOT', source=None,
+                 lineno=-1):
         self.name = name
         self._doc = doc
         self.version = version
@@ -34,6 +35,8 @@ class LibraryDoc(object):
         self.scope = scope
         self.named_args = named_args
         self.doc_format = doc_format
+        self.source = source
+        self.lineno = lineno
         self.inits = []
         self.keywords = []
 
@@ -77,16 +80,22 @@ class LibraryDoc(object):
 
 class KeywordDoc(Sortable):
 
-    def __init__(self, name='', args=(), doc='', tags=()):
+    def __init__(self, name='', args=(), doc='', tags=(), source=None,
+                 lineno=-1):
         self.name = name
         self.args = args
         self.doc = doc
         self.tags = Tags(tags)
-        self.deprecated = doc.startswith('*DEPRECATED') and '*' in doc[1:]
+        self.source = source
+        self.lineno = lineno
 
     @property
     def shortdoc(self):
         return getshortdoc(self.doc)
+
+    @property
+    def deprecated(self):
+        return self.doc.startswith('*DEPRECATED') and '*' in self.doc[1:]
 
     @property
     def _sort_key(self):

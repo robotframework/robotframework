@@ -31,7 +31,9 @@ class SpecDocBuilder(object):
                             doc=spec.find('doc').text or '',
                             scope=spec.find('scope').text or '',
                             named_args=self._get_named_args(spec),
-                            doc_format=spec.get('format', 'ROBOT'))
+                            doc_format=spec.get('format', 'ROBOT'),
+                            source=spec.get('source'),
+                            lineno=int(spec.get('lineno', -1)))
         libdoc.inits = self._create_keywords(spec, 'init')
         libdoc.keywords = self._create_keywords(spec, 'kw')
         return libdoc
@@ -58,4 +60,6 @@ class SpecDocBuilder(object):
         return KeywordDoc(name=elem.get('name', ''),
                           args=[a.text for a in elem.findall('arguments/arg')],
                           doc=elem.find('doc').text or '',
-                          tags=[t.text for t in elem.findall('tags/tag')])
+                          tags=[t.text for t in elem.findall('tags/tag')],
+                          source=elem.get('source'),
+                          lineno=int(elem.get('lineno', -1)))

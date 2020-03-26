@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/Example.java
+Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/./Example.java
 Force Tags        require-jython    require-tools.jar
 Resource          libdoc_resource.robot
 
@@ -27,6 +27,10 @@ Scope
 
 Named Args
     Named Args Should Be             no
+
+Source Info
+    Source Should Be                 ${TESTDATADIR}/Example.java
+    Lineno Should Be                 ${None}
 
 Init Documentation
     Init Doc Should Start With       0    Creates new Example test library 1
@@ -88,6 +92,10 @@ Last argument overrides
 
 Keyword tags
     Keyword Tags Should Be           5    bar    foo
+
+No keyword source info
+    Keyword Should Not Have Source   0
+    Keyword Should Not Have Lineno   0
 
 Private constructors are ignored
     Keyword Count Should Be          3    type=init

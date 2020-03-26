@@ -1,5 +1,7 @@
 # coding=UTF-8
 from __future__ import print_function
+import inspect
+import os.path
 
 
 class DynamicLibrary(object):
@@ -22,7 +24,13 @@ class DynamicLibrary(object):
                 'nön-äscii ÜTF-8',
                 u'nön-äscii Ünicöde',
                 'Tags',
-                'Types']
+                'Types',
+                'Source info',
+                'Source path only',
+                'Source lineno only',
+                'Non-existing source path and lineno',
+                'Non-existing source path with lineno',
+                'Invalid source info']
 
     def run_keyword(self, name, args, kwargs):
         print(name, args)
@@ -72,4 +80,21 @@ http://robotframework.org
     def get_keyword_types(self, name):
         if name == 'Types':
             return {'integer': int, 'boolean': bool}
+        return None
+
+    def get_keyword_source(self, name):
+        if name == 'Source info':
+            path = inspect.getsourcefile(type(self))
+            lineno = inspect.getsourcelines(self.get_keyword_source)[1]
+            return '%s:%s' % (path, lineno)
+        if name == 'Source path only':
+            return os.path.dirname(__file__) + '/Annotations.py'
+        if name == 'Source lineno only':
+            return ':12345'
+        if name == 'Non-existing source path and lineno':
+            return 'whatever:xxx'
+        if name == 'Non-existing source path with lineno':
+            return 'everwhat:42'
+        if name == 'Invalid source info':
+            return 123
         return None
