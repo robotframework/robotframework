@@ -42,8 +42,8 @@ class Interpreter(object):
             output = subprocess.check_output(self.interpreter + ['-V'],
                                              stderr=subprocess.STDOUT,
                                              encoding='UTF-8')
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            raise ValueError('Invalid interpreter: %s' % self.path)
+        except (subprocess.CalledProcessError, FileNotFoundError) as err:
+            raise ValueError('Failed to get interpreter version: %s' % err)
         name, version = output.split()[:2]
         name = name if 'PyPy' not in output else 'PyPy'
         version = re.match(r'\d+\.\d+\.\d+', version).group()
@@ -59,8 +59,8 @@ class Interpreter(object):
             output = subprocess.check_output(self.interpreter + ['-c', script],
                                              stderr=subprocess.STDOUT,
                                              encoding='UTF-8')
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            raise ValueError('Invalid interpreter: %s' % self.path)
+        except (subprocess.CalledProcessError, FileNotFoundError) as err:
+            raise ValueError('Failed to get Java version: %s' % err)
         major, minor = output.strip().split('.', 2)[:2]
         return int(major), int(minor)
 
@@ -210,7 +210,7 @@ class StandaloneInterpreter(Interpreter):
 
     def __init__(self, path, name=None, version=None):
         Interpreter.__init__(self, abspath(path), name or 'Standalone JAR',
-                             version or '2.7')
+                             version or '2.7.2')
 
     def _get_interpreter(self, path):
         interpreter = ['java', '-jar', path]
@@ -218,6 +218,21 @@ class StandaloneInterpreter(Interpreter):
         if classpath:
             interpreter.insert(1, '-Xbootclasspath/a:%s' % classpath)
         return interpreter
+
+    def _get_java_version_info(self):
+        result = subprocess.run(self.interpreter + ['--version'],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT,
+                                encoding='UTF-8')
+        if result.returncode != 251:
+            raise ValueError('Failed to get Robot Framework version:\n%s'
+                             % result.stdout)
+        match = re.search(r'Jython .* on java(\d+)\.(\d)', result.stdout)
+        if not match:
+            raise ValueError("Failed to find Java version from '%s'."
+                             % result.stdout)
+        return int(match.group(1)), int(match.group(2))
+
 
     @property
     def excludes(self):

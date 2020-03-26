@@ -13,12 +13,11 @@ The specified interpreter is used by acceptance tests under `atest/robot` to
 run test cases under `atest/testdata`. It can be the name of the interpreter
 like (e.g. `python` or `jython`, a path to the selected interpreter like
 `/usr/bin/python36`, or a path to the standalone jar distribution (e.g.
-`dist/robotframework-2.9dev234.jar`). If the interpreter itself needs
-arguments, the interpreter and arguments need to be quoted like `"py -3"`.
+`dist/robotframework-3.2b3.dev1.jar`). The standalone jar needs to be
+separately created with `invoke jar`.
 
-As a special case the interpreter value `standalone` will compile a new
-standalone jar from the current sources and execute the acceptance tests with
-it.
+If the interpreter itself needs arguments, the interpreter and its arguments
+need to be quoted like `"py -3"`.
 
 Note that this script itself must always be executed with Python 3.6 or newer.
 
@@ -69,8 +68,6 @@ ARGUMENTS = '''
 
 
 def atests(interpreter, *arguments):
-    if interpreter == 'standalone':
-        interpreter = jar()
     try:
         interpreter = InterpreterFactory(interpreter)
     except ValueError as err:

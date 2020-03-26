@@ -46,9 +46,9 @@ Running acceptance tests
 ------------------------
 
 Robot Framework's acceptance tests are executed using the `<run.py>`__
-script. It has two mandatory arguments, the Python interpreter to use
-when running tests and path to tests to be executed, and it accepts also
-all same options as Robot Framework. The script itself should always be
+script. It has two mandatory arguments, the Python interpreter or standalone
+jar to use when running tests and path to tests to be executed, and it accepts
+also all same options as Robot Framework. The script itself should always be
 executed with Python 3.6 or newer. Run it with ``--help`` or see
 documentation in its `source code <run.py>`__ for more information.
 
@@ -145,6 +145,10 @@ Examples:
     # Run only tests related to Java integration. This is considerably faster
     # than running all tests on Jython.
     atest/run.py jython --include require-jython atest/robot
+
+    # Recreate the standalone jar distribution and use it as an interpreter.
+    invoke jar
+    atest/run.py dist/robotframework-3.2b3.dev1.jar --exclude no-ci atest/robot
 
 Preconditions
 -------------
