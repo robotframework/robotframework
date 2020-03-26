@@ -3,6 +3,7 @@ Library       Collections
 Library       XML
 
 *** Variables ***
+${INT}        ${15}
 &{DICT}       A=1    B=2    C=3    ${1}=${2}    3=4    ${NONE}=${NONE}    =    ${SPACE}=${SPACE}
 &{SQUARES}    [=open    ]=close    []=both    [x[y]=mixed
 ${A}          A
@@ -99,9 +100,10 @@ Non-existing index variable
 
 Non-dict variable
     [Documentation]    FAIL
-    ...    Variable '\${INVALID}' is string, not list or dictionary, \
-    ...    and thus accessing item '${nonex}' from it is not possible.
-    Log    ${INVALID}[${nonex}]
+    ...    Variable '\${INT}' is integer, which is not subscriptable, and thus \
+    ...    accessing item '0' from it is not possible. To use '[0]' as a \
+    ...    literal value, it needs to be escaped like '\\[0]'.
+    Log    ${INT}[0]
 
 Sanity check
     @{items} =    Create List

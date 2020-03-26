@@ -15,12 +15,16 @@ NOKS = ['var', '$var', '${var', '${va}r', '@{va}r', '@var', '%{var}', ' ${var}',
 # Simple objects needed when testing assigning objects to variables.
 # JavaObject lives in '../../acceptance/testdata/libraries'
 
-class PythonObject:
+class PythonObject(object):
     def __init__(self, a, b):
         self.a = a
         self.b = b
+    def __getitem__(self, index):
+        return (self.a, self.b)[index]
     def __str__(self):
         return '(%s, %s)' % (self.a, self.b)
+    def __len__(self):
+        return 2
     __repr__ = __str__
 
 if JYTHON:
@@ -266,6 +270,57 @@ class TestVariables(unittest.TestCase):
                          ['x', item, 1, 2, 3])
             assert_equal(v.replace_list(['${x}'+item+'${x}', '@{NON}'], ignore_errors=True),
                          ['x' + item + x_at_end, '@{NON}'])
+
+    def test_sequence_subscript(self):
+        sequences = (
+            [42, 'my', 'name'],
+            (42, ['foo', 'bar'], 'name'),
+            'abcDEF123#@$',
+            b'abcDEF123#@$',
+            bytearray(b'abcDEF123#@$'),
+        )
+        for var in sequences:
+            self.varz['${var}'] = var
+            assert_equal(self.varz.replace_scalar('${var}[0]'), var[0])
+            assert_equal(self.varz.replace_scalar('${var}[-2]'), var[-2])
+            assert_equal(self.varz.replace_scalar('${var}[::2]'), var[::2])
+            assert_equal(self.varz.replace_scalar('${var}[1::2]'), var[1::2])
+            assert_equal(self.varz.replace_scalar('${var}[1:-3:2]'), var[1:-3:2])
+            assert_raises(VariableError, self.varz.replace_scalar, '${var}[0][1]')
+
+    def test_dict_subscript(self):
+        a_key = (42, b'key')
+        var = {'foo': 'bar', 42: [4, 2], 'name': b'my-name', a_key: {4: 2}}
+        self.varz['${a_key}'] = a_key
+        self.varz['${var}'] = var
+        assert_equal(self.varz.replace_scalar('${var}[foo][-1]'), var['foo'][-1])
+        assert_equal(self.varz.replace_scalar('${var}[${42}][-1]'), var[42][-1])
+        assert_equal(self.varz.replace_scalar('${var}[name][:3]'), var['name'][:3])
+        assert_equal(self.varz.replace_scalar('${var}[${a_key}][${4}]'), var[a_key][4])
+        assert_raises(VariableError, self.varz.replace_scalar, '${var}[1]')
+        assert_raises(VariableError, self.varz.replace_scalar, '${var}[42:]')
+        assert_raises(VariableError, self.varz.replace_scalar, '${var}[nonex]')
+
+    def test_custom_class_subscriptable_like_sequence(self):
+        # the two class attributes are accessible via indices 0 and 1
+        # slicing should be supported here as well
+        bytes_key = b'my'
+        var = PythonObject([1, 2, 3, 4, 5], {bytes_key: 'myname'})
+        self.varz['${bytes_key}'] = bytes_key
+        self.varz['${var}'] = var
+        assert_equal(self.varz.replace_scalar('${var}[${0}][2::2]'), [3, 5])
+        assert_equal(self.varz.replace_scalar('${var}[0][2::2]'), [3, 5])
+        assert_equal(self.varz.replace_scalar('${var}[1][${bytes_key}][2:]'), 'name')
+        assert_equal(self.varz.replace_scalar('${var}\\[1]'), str(var) + '[1]')
+        assert_equal(self.varz.replace_scalar('${var}[:][0][4]'), var[:][0][4])
+        assert_equal(self.varz.replace_scalar('${var}[:-2]'), var[:-2])
+        assert_equal(self.varz.replace_scalar('${var}[:7:-2]'), var[:7:-2])
+        assert_equal(self.varz.replace_scalar('${var}[2::]'), ())
+        assert_raises(VariableError, self.varz.replace_scalar, '${var}[${2}]')
+        assert_raises(VariableError, self.varz.replace_scalar, '${var}[${bytes_key}]')
+
+    def test_non_subscriptable(self):
+        assert_raises(VariableError, self.varz.replace_scalar, '${1}[1]')
 
 
 if __name__ == '__main__':
