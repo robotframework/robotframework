@@ -79,8 +79,7 @@ Named Args Should Be
 
 Source Should Be
     [Arguments]    ${source}
-    ${source} =    Evaluate
-    ...    os.path.relpath($source, "%{TEMPDIR}") if os.path.exists($source) else $source
+    ${source} =    Relative Source    ${source}    %{TEMPDIR}
     Element Attribute Should Be    ${LIBDOC}    source    ${source}
 
 Lineno Should Be
@@ -150,8 +149,7 @@ Keyword Tags Should Be
 Keyword Source Should Be
     [Arguments]    ${index}    ${source}    ${xpath}=kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
-    ${source} =    Evaluate
-    ...    os.path.relpath($source, "%{TEMPDIR}") if os.path.exists($source) else $source
+    ${source} =    Relative Source    ${source}    %{TEMPDIR}
     Element Attribute Should Be    ${kws}[${index}]    source    ${source}
 
 Keyword Should Not Have Source

@@ -2,7 +2,7 @@ import json
 import os
 import pprint
 import shlex
-from os.path import join, dirname, abspath
+from os.path import abspath, dirname, exists, join, normpath, relpath
 from subprocess import run, PIPE, STDOUT
 
 from robot.api import logger
@@ -46,3 +46,11 @@ class LibDocLib(object):
             if line.startswith('libdoc = '):
                 return line.split('=', 1)[1].strip(' \n;')
         raise RuntimeError('No model found from HTML')
+
+    def relative_source(self, path, start):
+        if not exists(path):
+            return path
+        try:
+            return relpath(path, start)
+        except ValueError:
+            return normpath(path)

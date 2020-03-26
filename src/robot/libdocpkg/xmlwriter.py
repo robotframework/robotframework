@@ -15,7 +15,7 @@
 
 import os.path
 
-from robot.utils import XmlWriter, get_timestamp
+from robot.utils import get_timestamp, WINDOWS, XmlWriter
 
 from .htmlwriter import DocToHtml
 
@@ -54,11 +54,19 @@ class LibdocXmlWriter(object):
             attrs['lineno'] = str(item.lineno)
 
     def _format_source(self, source, outfile):
-        if not (os.path.exists(source)
-                and hasattr(outfile, 'name')
-                and os.path.isfile(outfile.name)):
+        if not os.path.exists(source):
+            return source
+        source = os.path.normpath(source)
+        if not (hasattr(outfile, 'name')
+                and os.path.isfile(outfile.name)
+                and self._on_same_drive(source, outfile.name)):
             return source
         return os.path.relpath(source, os.path.dirname(outfile.name))
+
+    def _on_same_drive(self, path1, path2):
+        if not WINDOWS:
+            return True
+        return os.path.splitdrive(path1)[0] == os.path.splitdrive(path2)[0]
 
     def _write_keywords(self, kw_type, keywords, lib_source, writer, formatter):
         for kw in keywords:
