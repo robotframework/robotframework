@@ -295,13 +295,13 @@ Robot Framework 3.2 and will not be supported in the future.
 Accessing sequence items
 ''''''''''''''''''''''''
 
-It is possible to access a certain item of a `sequence`__ variable (e.g. list,
-string and bytes) with the syntax `${var}[index]`, where `index` is the index of
-the selected value. Indices start from zero, negative indices can be used to
-access items from the end, and trying to access an item with too large an index
-causes an error. Indices are automatically converted to integers, and it is also
-possible to use variables as indices. Sequence items accessed in this manner can
-be used similarly as scalar variables.
+It is possible to access a certain item of a variable containing a `sequence`__
+(e.g. list, string or bytes) with the syntax `${var}[index]`, where `index`
+is the index of the selected value. Indices start from zero, negative indices
+can be used to access items from the end, and trying to access an item with
+too large an index causes an error. Indices are automatically converted to
+integers, and it is also possible to use variables as indices. Sequence items
+accessed in this manner can be used similarly as scalar variables.
 
 .. sourcecode:: robotframework
 
@@ -340,8 +340,11 @@ specify the start index, the end index, and the step:
 .. note:: The slice syntax is new in Robot Framework 3.1 and does not work
           with the old `@{var}[index]` syntax.
 
-.. note:: Accessing items from strings/bytes/others is new in Robot Framework
-          3.2 and works the same way as accessing items from lists.
+.. note:: With earlier Robot Framework versions accessing items with
+          an index or a slice was only supported with variables containing
+          lists, tuples, or other objects considered list-like. Starting
+          from Robot Framework 3.2, all sequences, including strings and
+          bytes, are supported.
 
 __ https://docs.python.org/3/glossary.html#term-sequence
 __ https://docs.python.org/glossary.html#term-slice

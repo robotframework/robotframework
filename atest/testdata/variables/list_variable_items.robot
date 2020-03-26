@@ -1,14 +1,15 @@
 *** Variables ***
-${INT}        ${15}
-@{LIST}       A    B    C    D    E    F    G    H    I    J    K
-@{NUMBERS}    1    2    3
-${BYTES}      ${{b'ABCDEFGHIJK'}}
-${BYTEARRAY}  ${{bytearray(b'ABCDEFGHIJK')}}
-${STRING}     ABCDEFGHIJK
-&{MAP}        first=0    last=-1
-${ONE}        1
-${INVALID}    xxx
-${COLON}      :
+${INT}            ${15}
+@{LIST}           A    B    C    D    E    F    G    H    I    J    K
+@{NUMBERS}        1    2    3
+${BYTES}          ${{b'ABCDEFGHIJK'}}
+${BYTEARRAY}      ${{bytearray(b'ABCDEFGHIJK')}}
+${STRING}         ABCDEFGHIJK
+&{MAP}            first=0    last=-1
+${ONE}            1
+${INVALID}        xxx
+${COLON}          :
+${BYTES NAME}     ${{'Bytes' if not isinstance(b'', str) else 'String'}}
 
 *** Test Cases ***
 Valid index
@@ -48,8 +49,7 @@ Invalid index string
     Log    ${STRING}[12]
 
 Invalid index bytes
-    [Documentation]    FAIL REGEXP: \
-    ...    (Bytes|String) '\\$\{BYTES\}' has no item in index 12.
+    [Documentation]    FAIL ${BYTES NAME} '\${BYTES}' has no item in index 12.
     Log    ${BYTES}[12]
 
 Invalid index using variable
@@ -57,96 +57,87 @@ Invalid index using variable
     Log    ${LIST}[${ONE}${3}]
 
 Non-int index list
-    [Documentation]    FAIL \
-    ...    List '\${LIST}' used with invalid index 'invalid'. To use \
-    ...    '[invalid]' as a literal value, it needs to be escaped like \
-    ...    '\\[invalid]'.
+    [Documentation]    FAIL
+    ...    List '\${LIST}' used with invalid index 'invalid'. \
+    ...    To use '[invalid]' as a literal value, it needs to be escaped like '\\[invalid]'.
     Log    ${LIST}[invalid]
 
 Non-int index string
-    [Documentation]    FAIL \
-    ...    String '\${STRING}' used with invalid index 'invalid'. To use \
-    ...    '[invalid]' as a literal value, it needs to be escaped like \
-    ...    '\\[invalid]'.
+    [Documentation]    FAIL
+    ...    String '\${STRING}' used with invalid index 'invalid'. \
+    ...    To use '[invalid]' as a literal value, it needs to be escaped like '\\[invalid]'.
     Log    ${STRING}[invalid]
 
 Non-int index bytes
-    [Documentation]    FAIL REGEXP: \
-    ...    (Bytes|String) '\\$\{BYTES}' used with invalid index 'invalid'. To \
-    ...    use '\\[invalid]' as a literal value, it needs to be escaped like \
-    ...    '\\\\\\[invalid]'.
+    [Documentation]    FAIL
+    ...    ${BYTES NAME} '\${BYTES}' used with invalid index 'invalid'. \
+    ...    To use '[invalid]' as a literal value, it needs to be escaped like '\\[invalid]'.
     Log    ${BYTES}[invalid]
 
 Non-int index using variable 1
-    [Documentation]    FAIL \
-    ...    List '\${LIST}' used with invalid index 'xxx'. To use \
-    ...    '[xxx]' as a literal value, it needs to be escaped like '\\[xxx]'.
+    [Documentation]    FAIL
+    ...    List '\${LIST}' used with invalid index 'xxx'. \
+    ...    To use '[xxx]' as a literal value, it needs to be escaped like '\\[xxx]'.
     Log    ${LIST}[${INVALID}]
 
 Non-int index using variable 2
-    [Documentation]    FAIL \
-    ...    List '\${LIST}' used with invalid index '1.1'. To use \
-    ...    '[1.1]' as a literal value, it needs to be escaped like '\\[1.1]'.
+    [Documentation]    FAIL
+    ...    List '\${LIST}' used with invalid index '1.1'. \
+    ...    To use '[1.1]' as a literal value, it needs to be escaped like '\\[1.1]'.
     Log    ${LIST}[${1.1}]
 
 Empty index list
-    [Documentation]    FAIL \
-    ...    List '\${LIST}' used with invalid index ''. To use \
-    ...    '[]' as a literal value, it needs to be escaped like '\\[]'.
+    [Documentation]    FAIL
+    ...    List '\${LIST}' used with invalid index ''. \
+    ...    To use '[]' as a literal value, it needs to be escaped like '\\[]'.
     Log    ${LIST}[]
 
 Empty index string
-    [Documentation]    FAIL \
-    ...    String '\${STRING}' used with invalid index ''. To use \
-    ...    '[]' as a literal value, it needs to be escaped like '\\[]'.
+    [Documentation]    FAIL
+    ...    String '\${STRING}' used with invalid index ''. \
+    ...    To use '[]' as a literal value, it needs to be escaped like '\\[]'.
     Log    ${STRING}[]
 
 Empty index bytes
-    [Documentation]    FAIL REGEXP: \
-    ...    (Bytes|String) '\\$\{BYTES}' used with invalid index ''. To use \
-    ...    '\\[]' as a literal value, it needs to be escaped like '\\\\\\[]'.
+    [Documentation]    FAIL
+    ...    ${BYTES NAME} '\$\{BYTES}' used with invalid index ''. \
+    ...     To use '[]' as a literal value, it needs to be escaped like '\\[]'.
     Log    ${BYTES}[]
 
 Invalid slice list
-    [Documentation]    FAIL \
-    ...    List '\${LIST}' used with invalid index '1:2:3:4'. To use \
-    ...    '[1:2:3:4]' as a literal value, it needs to be escaped like \
-    ...    '\\[1:2:3:4]'.
+    [Documentation]    FAIL
+    ...    List '\${LIST}' used with invalid index '1:2:3:4'. \
+    ...    To use  '[1:2:3:4]' as a literal value, it needs to be escaped like '\\[1:2:3:4]'.
     Log    ${LIST}[1:2:3:4]
 
 Invalid slice string
-    [Documentation]    FAIL \
-    ...    String '\${STRING}' used with invalid index '1:2:3:4'. To use \
-    ...    '[1:2:3:4]' as a literal value, it needs to be escaped like \
-    ...    '\\[1:2:3:4]'.
+    [Documentation]    FAIL
+    ...    String '\${STRING}' used with invalid index '1:2:3:4'. \
+    ...    To use '[1:2:3:4]' as a literal value, it needs to be escaped like '\\[1:2:3:4]'.
     Log    ${STRING}[1:2:3:4]
 
 Invalid slice bytes
-    [Documentation]    FAIL REGEXP: \
-    ...    (Bytes|String) '\\$\{BYTES}' used with invalid index '1:2:3:4'. To \
-    ...    use '\\[1:2:3:4]' as a literal value, it needs to be escaped like \
-    ...    '\\\\\\[1:2:3:4]'.
+    [Documentation]    FAIL
+    ...    ${BYTES NAME} '\${BYTES}' used with invalid index '1:2:3:4'. \
+    ...    To use '[1:2:3:4]' as a literal value, it needs to be escaped like '\\[1:2:3:4]'.
     Log    ${BYTES}[1:2:3:4]
 
 Non-int slice index 1
-    [Documentation]    FAIL \
-    ...    List '\${LIST}' used with invalid index 'ooops:'. To use \
-    ...    '[ooops:]' as a literal value, it needs to be escaped like \
-    ...    '\\[ooops:]'.
+    [Documentation]    FAIL
+    ...    List '\${LIST}' used with invalid index 'ooops:'. \
+    ...    To use '[ooops:]' as a literal value, it needs to be escaped like '\\[ooops:]'.
     Log    ${LIST}[ooops:]
 
 Non-int slice index 2
     [Documentation]    FAIL \
-    ...    List '\${LIST}' used with invalid index '1:ooops'. To use \
-    ...    '[1:ooops]' as a literal value, it needs to be escaped like \
-    ...    '\\[1:ooops]'.
+    ...    List '\${LIST}' used with invalid index '1:ooops'. \
+    ...    To use '[1:ooops]' as a literal value, it needs to be escaped like '\\[1:ooops]'.
     Log    ${LIST}[1:ooops]
 
 Non-int slice index 3
     [Documentation]    FAIL \
-    ...    List '\${LIST}' used with invalid index '1:2:ooops'. To use \
-    ...    '[1:2:ooops]' as a literal value, it needs to be escaped like \
-    ...    '\\[1:2:ooops]'.
+    ...    List '\${LIST}' used with invalid index '1:2:ooops'. \
+    ...    To use '[1:2:ooops]' as a literal value, it needs to be escaped like '\\[1:2:ooops]'.
     Log    ${LIST}[1:2:ooops]
 
 Non-existing variable
