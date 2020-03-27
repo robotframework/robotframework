@@ -159,7 +159,7 @@ class _PythonHandler(_RunnableHandler):
         handler = self.current_handler()
         try:
             return inspect.getsourcelines(handler)[1]
-        except (TypeError, OSError):
+        except (TypeError, OSError, IOError):
             return -1
 
 

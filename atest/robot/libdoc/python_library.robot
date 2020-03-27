@@ -28,6 +28,7 @@ Named Args
     Named Args Should Be             yes
 
 Source info
+    [Tags]    no-standalone
     Source should be                 ${CURDIR}/../../../src/robot/libraries/Telnet.py
     Lineno should be                 36
 
@@ -44,6 +45,7 @@ Init Arguments
     ...    telnetlib_log_level=TRACE    connection_timeout=None
 
 Init Source Info
+    [Tags]    no-standalone
     Keyword Should Not Have Source   0    xpath=init
     Keyword Lineno Should Be         0    283      xpath=init
 
@@ -73,6 +75,7 @@ Keyword Documentation
     ...
 
 Keyword Source Info
+    [Tags]    no-standalone
     # This keyword is from the "main library".
     Keyword Name Should Be           0    Close All Connections
     Keyword Should Not Have Source   0

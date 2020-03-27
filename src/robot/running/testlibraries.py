@@ -104,7 +104,7 @@ class _BaseTestLibrary(object):
             return 1
         try:
             return inspect.getsourcelines(self._libcode)[1]
-        except (TypeError, OSError):
+        except (TypeError, OSError, IOError):
             return -1
 
     def create_handlers(self):
