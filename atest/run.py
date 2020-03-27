@@ -39,20 +39,6 @@ from interpreter import InterpreterFactory
 
 
 CURDIR = dirname(abspath(__file__))
-
-
-sys.path.append(join(CURDIR, '..'))
-try:
-    from tasks import jar
-except ImportError:
-    def jar(*args, **kwargs):
-        raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
-except AssertionError:
-    def jar(*args, **kwargs):
-        raise RuntimeError("JAR can be created only when in the project root. "
-                           "See BUILD.rst for details.")
-
-
 ARGUMENTS = '''
 --doc Robot Framework acceptance tests
 --metadata interpreter:{interpreter}
@@ -109,7 +95,8 @@ def _run(args, tempdir, interpreter):
                    TEMPDIR=tempdir,
                    CLASSPATH=interpreter.classpath or '',
                    JAVA_OPTS=interpreter.java_opts or '',
-                   PYTHONCASEOK='True')
+                   PYTHONCASEOK='True',
+                   PYTHONIOENCODING='')
     print('%s\n%s\n' % (interpreter, '-' * len(str(interpreter))))
     print('Running command:\n%s\n' % ' '.join(command))
     sys.stdout.flush()
