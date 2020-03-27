@@ -160,6 +160,10 @@ class Interpreter(object):
         return self.name == 'PyPy'
 
     @property
+    def is_standalone(self):
+        return False
+
+    @property
     def is_py2(self):
         return self.version[0] == '2'
 
@@ -237,7 +241,7 @@ class StandaloneInterpreter(Interpreter):
     @property
     def excludes(self):
         for exclude in ['no-standalone', 'no-jython', 'require-lxml',
-                        'require-docutils', 'require-ipy']:
+                        'require-docutils', 'require-enum', 'require-ipy']:
             yield exclude
         for exclude in self._platform_excludes:
             yield exclude
@@ -253,6 +257,14 @@ class StandaloneInterpreter(Interpreter):
     @property
     def is_ironpython(self):
         return False
+
+    @property
+    def is_pypy(self):
+        return False
+
+    @property
+    def is_standalone(self):
+        return True
 
     @property
     def runner(self):

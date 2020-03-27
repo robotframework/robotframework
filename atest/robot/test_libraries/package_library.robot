@@ -1,6 +1,9 @@
 *** Settings ***
-Suite Setup      Set PYTHONPATH and run tests
+Suite Setup      Run Tests    --pythonpath "${LIBS}:${LIBS}/dir_for_libs"    test_libraries/package_library.robot
 Resource         atest_resource.robot
+
+*** Variables ***
+${LIBS}          ${DATADIR}/test_libraries
 
 *** Test Cases ***
 Class in package as library implicitly
@@ -45,12 +48,6 @@ Sub-sub-module itself as library
     Check Test Case    ${TESTNAME}
 
 *** Keywords ***
-Set PYTHONPATH and run tests
-    ${dir} =    Normalize Path    ${DATADIR}/test_libraries
-    Set PYTHONPATH    ${dir}    ${dir}${/}dir_for_libs
-    Run Tests    ${EMPTY}    test_libraries/package_library.robot
-    [Teardown]    Reset PYTHONPATH
-
 Import message should be syslogged
     [Arguments]    ${name}    ${file}=__init__    ${type}=class
     ${base} =    Normalize Path    ${DATADIR}/test_libraries/MyLibDir
