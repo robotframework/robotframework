@@ -40,6 +40,20 @@ if JYTHON:
     from java.util import List, Map
 
 
+def _get_class_by_type_name(type_):
+    if not type_:
+        return None
+    type_ = type_.strip()
+    if type_.lower() in ('none', 'nonetype'):
+        return type(None)
+    return type_.lower()
+
+def split_variable_name_with_bracket_and_type(name):
+    if not ':' in name:
+        return name, None
+    type_ = name[name.index(':'):name.index('}')]
+    return name.replace(type_, '', 1), _get_class_by_type_name(type_[1:])
+
 class _ArgumentParser(object):
 
     def __init__(self, type='Keyword'):
@@ -202,13 +216,14 @@ class _ArgumentSpecParser(_ArgumentParser):
         spec = ArgumentSpec(name, self._type)
         kw_only_args = False
         for arg in argspec:
+            arg, type_ = self._split_args_and_types(arg)
             arg = self._validate_arg(arg)
             if spec.kwargs:
                 self._raise_invalid_spec('Only last argument can be kwargs.')
             elif isinstance(arg, tuple):
-                arg, default = arg
-                arg = self._add_arg(spec, arg, kw_only_args)
-                spec.defaults[arg] = default
+                arg_, default = arg
+                arg_ = self._add_arg(spec, arg_, kw_only_args)
+                spec.defaults[arg_] = default
             elif self._is_kwargs(arg):
                 spec.kwargs = self._format_kwargs(arg)
             elif self._is_varargs(arg):
@@ -222,6 +237,8 @@ class _ArgumentSpecParser(_ArgumentParser):
                                          'arguments.')
             else:
                 self._add_arg(spec, arg, kw_only_args)
+            if type_:
+                self._add_type_to_arg(spec, arg, type_)
         return spec
 
     def _validate_arg(self, arg):
@@ -248,12 +265,29 @@ class _ArgumentSpecParser(_ArgumentParser):
     def _format_arg(self, arg):
         return arg
 
+    def _get_body_arg(self, arg):
+        if self._is_kwargs(arg):
+            return self._format_kwargs(arg)
+        elif self._is_varargs(arg) or self._is_kw_only_separator(arg):
+            return self._format_varargs(arg)
+        else:
+            return self._format_arg(arg)
+
     def _add_arg(self, spec, arg, kw_only_arg=False):
         arg = self._format_arg(arg)
         target = spec.positional if not kw_only_arg else spec.kwonlyargs
         target.append(arg)
         return arg
 
+    def _split_args_and_types(self, arg):
+        raise NotImplementedError
+
+    def _add_type_to_arg(self, argspec, arg, type_):
+        if argspec.types is None:
+            argspec.types = {}
+        if isinstance(arg, tuple):
+            arg, default = arg
+        argspec.types[self._get_body_arg(arg)] = type_
 
 class DynamicArgumentParser(_ArgumentSpecParser):
 
@@ -288,6 +322,8 @@ class DynamicArgumentParser(_ArgumentSpecParser):
     def _format_varargs(self, varargs):
         return varargs[1:]
 
+    def _split_args_and_types(self, arg):
+        return arg, None
 
 class UserKeywordArgumentParser(_ArgumentSpecParser):
 
@@ -316,3 +352,6 @@ class UserKeywordArgumentParser(_ArgumentSpecParser):
 
     def _format_arg(self, arg):
         return arg[2:-1]
+
+    def _split_args_and_types(self, arg):
+        return split_variable_name_with_bracket_and_type(arg)
