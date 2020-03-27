@@ -170,7 +170,8 @@ def init_labels(ctx, username=None, password=None):
 
 
 @task
-def jar(ctx, jython_version='2.7.2', pyyaml_version='5.1', remove_dist=False):
+def jar(ctx, jython_version='2.7.2', pyyaml_version='5.1',
+        jar_name=None, remove_dist=False):
     """Create JAR distribution.
 
     Downloads Jython JAR and PyYAML if needed.
@@ -193,7 +194,7 @@ def jar(ctx, jython_version='2.7.2', pyyaml_version='5.1', remove_dist=False):
     extract_and_copy_pyyaml_files(pyyaml_version, pyaml_archive)
     compile_python_files(ctx, jython_jar)
     version = Version(path=VERSION_PATH, pattern=VERSION_PATTERN)
-    create_robot_jar(ctx, str(version))
+    create_robot_jar(ctx, str(version), jar_name)
 
 
 def get_jython_jar(version):
@@ -237,7 +238,7 @@ def compile_java_files(ctx, jython_jar, build_dir='build'):
     root = Path('src/java/org/robotframework')
     files = [str(path) for path in root.iterdir() if path.suffix == '.java']
     print(f'Compiling {len(files)} Java files.')
-    ctx.run(f"javac -d {build_dir} -target 1.7 -source 1.7 -cp {jython_jar} "
+    ctx.run(f"javac -d {build_dir} -target 8 -source 8 -cp {jython_jar} "
             f"{' '.join(files)}")
 
 
@@ -249,7 +250,8 @@ def remove_tests(build_dir='build'):
     for test_dir in ('distutils/tests', 'email/test', 'json/tests',
                      'lib2to3/tests', 'unittest/test'):
         path = Path(build_dir, 'Lib', test_dir)
-        shutil.rmtree(str(path))
+        if path.is_dir():
+            shutil.rmtree(str(path))
 
 
 def copy_robot_files(build_dir='build'):
@@ -269,9 +271,11 @@ def compile_python_files(ctx, jython_jar, build_dir='build'):
                 Path(directory, name).unlink()
 
 
-def create_robot_jar(ctx, version, source='build'):
+def create_robot_jar(ctx, version, name=None, source='build'):
     write_manifest(version, source)
-    target = Path(f'dist/robotframework-{version}.jar')
+    if not name:
+        name = f'robotframework-{version}.jar'
+    target = Path(f'dist/{name}')
     ctx.run(f'jar cvfM {target} -C {source} .')
     print(f"Created '{target}'.")
 
