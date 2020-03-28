@@ -1,16 +1,14 @@
-Robot Framework output XML schema
-=================================
+Robot Framework and Libdoc XML schemas
+======================================
 
 Introduction
 ------------
 
 While Robot Framework is running tests, it generates an XML output file
 containing all information about the execution. After execution is over it
-creates, by default, log and report files using
-`rebot tool <http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#rebot>`_
+creates, by default, log and report files using the `Rebot tool`__
 internally. The same ``rebot`` functionality can also be used externally
-afterwards both as a standalone tool and
-`programmatically <http://robot-framework.readthedocs.org/en/latest/autodoc/robot.html#robot.rebot.rebot>`_.
+afterwards both as a standalone tool and programmatically__.
 
 This document describes the format of the output file in high level and in the
 same folder there are detailed
@@ -20,10 +18,30 @@ compatible. The output file format can be useful both for people interested in
 parsing the output and for people interested to create Robot Framework
 compatible outputs.
 
-General structure
------------------
+Also Robot Framework's library documentation tool Libdoc__ can generate output
+in XML format and this directory contains a schema documentation for it as
+well.
 
-These are the main elements of the XML output with descriptions of their
+__ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#rebot
+__ http://robot-framework.readthedocs.org/en/latest/autodoc/robot.html#robot.rebot.rebot
+__ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#libdoc
+
+Schema definitions
+------------------
+
+Available schema files:
+
+  * `<robot-xsd10.xsd>`__ - Robot Framework XML output (XSD 1.0 compatible version)
+  * `<robot-xsd11.xsd>`__ - Robot Framework XML output (XSD 1.1 compatible version)
+  * `<libdoc.xsd>`__ - Libdoc XML spec (XSD 1.0)
+
+XSD 1.1 schemas are more complete than XSD 1.0 schemas but not as widely
+supported.
+
+General Robot Framework XML output structure
+--------------------------------------------
+
+These are the main elements in Robot Framework XML output files with descriptions of their
 sub-elements. Unless stated otherwise, all attributes are optional. Additionally
 ``rebot`` does not care of the order of the XML elements, except for the order
 of suite, test, and kw elements. Starting from Robot Framework 2.9, empty
@@ -61,14 +79,4 @@ kw - keyword element, name is given as an attribute. Type attribute describes th
     * ``timeout`` - optional keyword timeout. Before 3.0 this was an attribute.
     * ``status`` - keyword has to have a status
 
-For more details and full list of elements and attributes, please see the XML schema files below.
-
-XML schema definition
----------------------
-
-Available schema files:
-
-  * `<robot-xsd10.xsd>`__ - XSD 1.0 compatible version
-  * `<robot-xsd11.xsd>`__ - XSD 1.1 compatible version
-
-The latter schema file is more complete, but XSD 1.1 is not as widely supported as the 1.0 version.
+For more details and full list of elements and attributes, please see the XML schema files above.

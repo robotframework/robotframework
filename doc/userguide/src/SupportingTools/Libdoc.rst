@@ -201,9 +201,11 @@ If needed, the format can be explicitly set with the :option:`--format` option.
    python -m robot.libdoc --format xml MyLibrary MyLibrary.spec
    python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
 
-The spec file format may be changed slightly between Robot Framework major
-releases. To make it easier for external tools to know how to interpret
-spec files, the spec file root element has a dedicated `specversion`
+The exact Libdoc spec file format is documented with an `XML schema`__ (XSD)
+at https://github.com/robotframework/robotframework/tree/master/doc/schema.
+The spec file format may change slightly between Robot Framework major
+releases. To make it easier for external tools to know how to parse a certain
+spec file, the spec file root element has a dedicated `specversion`
 attribute. It was added in Robot Framework 3.2 with value `2` and earlier
 spec files can be considered to have version `1`. The spec version will
 be incremented in the future if and when changes are made.
@@ -212,8 +214,10 @@ be incremented in the future if and when changes are made.
           file extension is :file:`*.libspec` are new features in Robot
           Framework 3.2.
 
-          Including source information in spec files is new in Robot
+          Including source information and spec version are new in Robot
           Framework 3.2 as well.
+
+__ https://en.wikipedia.org/wiki/XML_Schema_(W3C)
 
 Viewing information on console
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
