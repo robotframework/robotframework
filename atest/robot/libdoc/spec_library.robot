@@ -31,6 +31,9 @@ Source info
     Source should be               Example.py
     Lineno should be               8
 
+Spec version
+    Spec version should be correct
+
 Init Documentation
     Init Doc Should Be             0    Creates new Example test library 1
     Init Doc Should Be             1    Creates new Example test library 2

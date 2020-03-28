@@ -41,6 +41,9 @@ Source Info
     Source Should Be                ${TESTDATADIR}/resource.robot
     Lineno Should Be                1
 
+Spec version
+    Spec version should be correct
+
 Resource Has No Inits
     Should Have No Init
 

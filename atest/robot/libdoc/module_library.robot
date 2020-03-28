@@ -31,6 +31,9 @@ Source info
     Source should be                 ${TESTDATADIR}/module.py
     Lineno should be                 1
 
+Spec version
+    Spec version should be correct
+
 Has No Inits
     Should Have No Init
 

@@ -28,6 +28,9 @@ Source info
     Source should be                 ${TESTDATADIR}/DynamicLibrary.py
     Lineno should be                 7
 
+Spec version
+    Spec version should be correct
+
 Init documentation
     Init Doc Should Start With       0     Dummy documentation for `__init__`.
 

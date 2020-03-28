@@ -41,7 +41,8 @@ class LibdocXmlWriter(object):
                  'format': formatter.format,
                  'scope': libdoc.scope,
                  'namedargs': 'true' if libdoc.named_args else 'false',
-                 'generated': get_timestamp(millissep=None)}
+                 'generated': get_timestamp(millissep=None),
+                 'specversion': '2'}
         self._add_source_info(attrs, libdoc, writer.output)
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)

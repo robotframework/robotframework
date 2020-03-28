@@ -32,6 +32,9 @@ Source Info
     Source Should Be                 ${TESTDATADIR}/Example.java
     Lineno Should Be                 ${None}
 
+Spec version
+    Spec version should be correct
+
 Init Documentation
     Init Doc Should Start With       0    Creates new Example test library 1
     Init Doc Should Start With       1    Creates new Example test library 2

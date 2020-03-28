@@ -94,6 +94,9 @@ Lineno Should Be
 Generated Should Be Defined
     Element Attribute Should Match    ${LIBDOC}    generated    *
 
+Spec version should be correct
+    Element Attribute Should Be    ${LIBDOC}    specversion    2
+
 Should Have No Init
     ${inits} =    Get Elements    ${LIBDOC}    xpath=init
     Should Be Empty    ${inits}

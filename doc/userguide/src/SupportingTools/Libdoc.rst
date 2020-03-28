@@ -201,6 +201,13 @@ If needed, the format can be explicitly set with the :option:`--format` option.
    python -m robot.libdoc --format xml MyLibrary MyLibrary.spec
    python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
 
+The spec file format may be changed slightly between Robot Framework major
+releases. To make it easier for external tools to know how to interpret
+spec files, the spec file root element has a dedicated `specversion`
+attribute. It was added in Robot Framework 3.2 with value `2` and earlier
+spec files can be considered to have version `1`. The spec version will
+be incremented in the future if and when changes are made.
+
 .. note:: The `xml:html` format and automatically using it if the output
           file extension is :file:`*.libspec` are new features in Robot
           Framework 3.2.

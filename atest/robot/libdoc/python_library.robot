@@ -32,6 +32,9 @@ Source info
     Source should be                 ${CURDIR}/../../../src/robot/libraries/Telnet.py
     Lineno should be                 36
 
+Spec version
+    Spec version should be correct
+
 Init Documentation
     Init Doc Should Start With       0
     ...    Telnet library can be imported with optional configuration parameters.\n\n
