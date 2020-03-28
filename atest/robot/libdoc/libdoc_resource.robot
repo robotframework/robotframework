@@ -71,11 +71,16 @@ Type Should Be
 
 Scope Should Be
     [Arguments]    ${scope}
-    Element Text Should Be    ${LIBDOC}    ${scope}    scope
+    Element Attribute Should Be    ${LIBDOC}    scope    ${scope}
+    # 'scope' element should be removed in RF 4.0.
+    Element Text Should Be    ${LIBDOC}    ${scope}    xpath=scope
 
 Named Args Should Be
     [Arguments]    ${namedargs}
-    Element Text Should Be    ${LIBDOC}    ${namedargs}    namedargs
+    Element Attribute Should Be    ${LIBDOC}    namedargs    ${namedargs}
+    # 'namedargs' element should be removed in RF 4.0.
+    Element Text Should Be    ${LIBDOC}
+    ...    ${{'yes' if $namedargs == 'true' else 'no'}}    xpath=namedargs
 
 Source Should Be
     [Arguments]    ${source}

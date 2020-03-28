@@ -39,12 +39,16 @@ class LibdocXmlWriter(object):
         attrs = {'name': libdoc.name,
                  'type': libdoc.type,
                  'format': formatter.format,
+                 'scope': libdoc.scope,
+                 'namedargs': 'true' if libdoc.named_args else 'false',
                  'generated': get_timestamp(millissep=None)}
         self._add_source_info(attrs, libdoc, writer.output)
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
+        # TODO: Remove 'scope' and 'namedargs' elements in RF 4.0.
+        # https://github.com/robotframework/robotframework/issues/3522
         writer.element('scope', libdoc.scope)
-        writer.element('namedargs', 'true' if libdoc.named_args else 'false')
+        writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
         writer.element('doc', formatter(libdoc.doc))
 
     def _add_source_info(self, attrs, item, outfile, lib_source=None):
