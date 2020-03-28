@@ -140,28 +140,73 @@ Generating documentation
 
 Libdoc can generate documentation in HTML (for humans) and XML (for tools)
 formats. The file where to write the documentation is specified as the second
-argument after the library/resource name or path, and by default the output
-format is got from the output file extension. The special :file:`*.libspec`
-extension automatically enables the `xml:html` format which means creating
-an XML output file with keyword documentation converted to HTML.
+argument after the library/resource name or path, and the output format is
+got from the output file extension by default.
+
+Libdoc HTML documentation
+'''''''''''''''''''''''''
+
+Most Robot Framework libraries use Libdoc to generate library documentation
+in HTML format. This format is thus familiar for most people who have used
+Robot Framework. A simple example can be seen below, and it has been generated
+based on the example found a `bit later in this section`__.
+
+.. figure:: src/SupportingTools/ExampleLibrary.png
+   :target: src/SupportingTools/ExampleLibrary.html
+   :width: 581
+
+The HTML documentation starts with general library introduction, continues
+with a section about configuring the library when it is imported (when
+applicable), and finally has shortcuts to all keywords and the keywords
+themselves. The magnifying glass icon on the lower right corner opens the
+keyword search dialog that can also be opened by simply pressing the `s` key.
+
+Libdoc automatically creates HTML documentation if the output file extension
+is :file:`*.html`. If there is a need to use some other extension, the
+format can be specified explicitly with the :option:`--format` option.
 
 ::
 
    python -m robot.libdoc OperatingSystem OperatingSystem.html
-   python -m robot.libdoc --name MyLibrary Remote::http://10.0.0.42:8270 MyLibrary.xml
-   python -m robot.libdoc test/resource.robot doc/resource.html
-   jython -m robot.libdoc --version 1.0 MyJavaLibrary.java MyJavaLibrary.html
-   python -m robot.libdoc Example.py Example.libspec
+   python -m robot.libdoc --name MyLibrary Remote::http://10.0.0.42:8270 MyLibrary.html
+   python -m robot.libdoc --format HTML test/resource.robot doc/resource.htm
 
-If needed, the output format can also be set explicitly by using the
-:option:`--format` option::
+__ `Python libraries`_
 
-   python -m robot.libdoc --format html MyLibrary MyLibrary.htm
+Libdoc XML spec files
+'''''''''''''''''''''
+
+Libdoc can also generate documentation in XML format that is suitable for
+external tools such as editors. It contains all the same information as
+the HTML format but in a machine readable format.
+
+XML spec files also contain library and keyword source information so that
+the library and each keyword can have source path (`source` attribute) and
+line number (`lineno` attribute). The source path is relative to the directory
+where the spec file is generated thus does not refer to a correct file if
+the spec is moved. The source path is omitted with keywords if it is
+the same as with the library, and both the source path and the line number
+are omitted if getting them from the library fails for whatever reason.
+
+Libdoc automatically uses the XML format if the output file extension is
+:file:`*.xml` or :file:`*.libspec`. When using the special :file:`*.libspec`
+extension, Libdoc automatically enables the `xml:html` format which means
+creating an XML output file where keyword documentation is converted to HTML.
+If needed, the format can be explicitly set with the :option:`--format` option.
+
+::
+
+   python -m robot.libdoc OperatingSystem OperatingSystem.xml
+   python -m robot.libdoc test/resource.robot doc/resource.libspec
    python -m robot.libdoc --format xml MyLibrary MyLibrary.spec
    python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
 
-.. note:: The `xml:html`  format and automatically using it if output file
-          extension is :file:`*.libspec` are new features in Robot Framework 3.2.
+.. note:: The `xml:html` format and automatically using it if the output
+          file extension is :file:`*.libspec` are new features in Robot
+          Framework 3.2.
+
+          Including source information in spec files is new in Robot
+          Framework 3.2 as well.
 
 Viewing information on console
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -217,36 +262,23 @@ a tool tip in links in the generated HTML documentation), and it should
 thus be as describing as possible, but not too long.
 
 The simple example below illustrates how to write the documentation in
-general, and there is a `bit longer example`__ at the end of this
-chapter containing also an example of the generated documentation.
+general. How the HTML documentation generated based on this example looks
+like can be seen above__, and there is also a `bit longer example`__ at
+the end of this chapter.
 
 .. sourcecode:: python
 
-    class ExampleLib:
-        """Library for demo purposes.
+    src/SupportingTools/ExampleLibrary.py
 
-        This library is only used in an example and it doesn't do anything useful.
-        """
+If you want to use non-ASCII characters in the documentation, the documentation
+must either be Unicode string (default in Python 3) or UTF-8 encoded bytes.
 
-        def my_keyword(self):
-            """Does nothing."""
-            pass
-
-        def your_keyword(self, arg):
-            """Takes one argument and *does nothing* with it.
-
-            Examples:
-            | Your Keyword | xxx |
-            | Your Keyword | yyy |
-            """
-            pass
-
-.. tip:: If you want to use non-ASCII characters in the documentation of
-         Python libraries, you must either use UTF-8 as your `source code
-         encoding`__ or create docstrings as Unicode.
+.. tip:: When using Python 2, you it is a good idea to set the
+         `source code encoding`__ to ease using non-ASCII characters.
 
          For more information on Python documentation strings, see `PEP-257`__.
 
+__ `Libdoc HTML documentation`_
 __ `Libdoc example`_
 __ http://www.python.org/dev/peps/pep-0263
 __ http://www.python.org/dev/peps/pep-0257
@@ -271,7 +303,7 @@ than the earlier Python example.
      *
      * This library is only used in an example and it doesn't do anything useful.
      */
-    public class ExampleLib {
+    public class ExampleLibrary {
 
         /**
          * Does nothing.
