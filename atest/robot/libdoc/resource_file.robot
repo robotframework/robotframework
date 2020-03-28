@@ -35,7 +35,7 @@ Scope
     Scope Should Be                 ${EMPTY}
 
 Named Args
-    Named Args Should Be            yes
+    Named Args Should Be            true
 
 Source Info
     Source Should Be                ${TESTDATADIR}/resource.robot

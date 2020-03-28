@@ -25,7 +25,7 @@ Scope
     Scope Should Be                  test suite
 
 Named Args
-    Named Args Should Be             yes
+    Named Args Should Be             true
 
 Source info
     [Tags]    no-standalone

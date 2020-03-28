@@ -22,7 +22,7 @@ Scope
     Scope Should Be    test case
 
 Named Args
-    Named Args Should Be    yes
+    Named Args Should Be    true
 
 Init
     Init Doc Should Be          0    Static __init__ doc.

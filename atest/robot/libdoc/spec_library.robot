@@ -25,7 +25,7 @@ Scope
     Scope Should Be                global
 
 Named Args
-    Named Args Should Be           no
+    Named Args Should Be           false
 
 Source info
     Source should be               Example.py
@@ -95,7 +95,7 @@ Keyword Source Info
     Type Should Be                    library
     Generated Should Be Defined
     Scope Should Be                   global
-    Named Args Should Be              no
+    Named Args Should Be              false
     Source should be                  Example.py
     Lineno should be                  8
     Init Doc Should Be                0    Creates new Example test library 1

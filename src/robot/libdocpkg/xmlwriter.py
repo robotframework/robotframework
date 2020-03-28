@@ -44,7 +44,7 @@ class LibdocXmlWriter(object):
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
         writer.element('scope', libdoc.scope)
-        writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
+        writer.element('namedargs', 'true' if libdoc.named_args else 'false')
         writer.element('doc', formatter(libdoc.doc))
 
     def _add_source_info(self, attrs, item, outfile, lib_source=None):

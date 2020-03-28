@@ -25,7 +25,7 @@ Scope
     Scope Should Be    global
 
 Named Args
-    Named Args Should Be    yes
+    Named Args Should Be    true
 
 Source info
     Source should be                 ${TESTDATADIR}/module.py

@@ -22,7 +22,7 @@ Scope
     Scope Should Be                  test case
 
 Named args
-    Named Args Should Be             yes
+    Named Args Should Be             true
 
 Source info
     Source should be                 ${TESTDATADIR}/DynamicLibrary.py

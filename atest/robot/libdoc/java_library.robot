@@ -26,7 +26,7 @@ Scope
     Scope Should Be                  global
 
 Named Args
-    Named Args Should Be             no
+    Named Args Should Be             false
 
 Source Info
     Source Should Be                 ${TESTDATADIR}/Example.java
