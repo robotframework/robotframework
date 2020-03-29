@@ -13,6 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
+import sys
+
 from org.robotframework import RobotPythonRunner
 
 from robot.errors import INFO_PRINTED
@@ -67,3 +70,9 @@ class JarRunner(RobotPythonRunner):
         if args[0] in self._commands:
             return self._commands[args[0]], args[1:]
         return run_cli, args
+
+
+def process_jythonpath():
+    for path in os.getenv('JYTHONPATH', '').split(os.pathsep):
+        if path:
+            sys.path.append(path)
