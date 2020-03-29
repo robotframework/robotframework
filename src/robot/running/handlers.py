@@ -18,7 +18,7 @@ import inspect
 
 from robot.utils import (getdoc, getshortdoc, is_java_init, is_java_method,
                          is_list_like, normpath, printable_name,
-                         split_tags_from_doc, type_name)
+                         split_tags_from_doc, type_name, unwrap)
 from robot.errors import DataError
 from robot.model import Tags
 
@@ -150,7 +150,7 @@ class _PythonHandler(_RunnableHandler):
     def source(self):
         handler = self.current_handler()
         try:
-            return normpath(inspect.getsourcefile(handler))
+            return normpath(inspect.getsourcefile(unwrap(handler)))
         except TypeError:
             return self.library.source
 
@@ -158,9 +158,13 @@ class _PythonHandler(_RunnableHandler):
     def lineno(self):
         handler = self.current_handler()
         try:
-            return inspect.getsourcelines(handler)[1]
+            lines, start_lineno = inspect.getsourcelines(unwrap(handler))
         except (TypeError, OSError, IOError):
             return -1
+        for increment, line in enumerate(lines):
+            if line.strip().startswith('def '):
+                return start_lineno + increment
+        return start_lineno
 
 
 class _JavaHandler(_RunnableHandler):

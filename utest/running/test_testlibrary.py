@@ -609,7 +609,7 @@ class TestSourceAndLineno(unittest.TestCase):
     def test_dynamic(self):
         from classes import __file__ as source
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
-        self._verify(lib, source, 216)
+        self._verify(lib, source, 217)
 
     def test_module(self):
         from module_library import __file__ as source
@@ -620,6 +620,11 @@ class TestSourceAndLineno(unittest.TestCase):
         from robot.variables import __file__ as source
         lib = TestLibrary('robot.variables')
         self._verify(lib, source, 1)
+
+    def test_decorated(self):
+        from classes import __file__ as source
+        lib = TestLibrary('classes.Decorated')
+        self._verify(lib, source, 319)
 
     if JYTHON:
 

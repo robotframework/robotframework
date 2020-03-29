@@ -35,7 +35,7 @@ or::
 
 from .argumentparser import ArgumentParser, cmdline2list
 from .application import Application
-from .compat import isatty, py2to3, StringIO, with_metaclass
+from .compat import isatty, py2to3, StringIO, unwrap, with_metaclass
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .dotdict import DotDict

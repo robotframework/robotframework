@@ -98,3 +98,8 @@ Keyword source info
     Keyword Name Should Be           0     Get Hello
     Keyword Should Not Have Source   0
     Keyword Lineno Should Be         0     19
+
+Keyword source info with decorated function
+    Keyword Name Should Be           14    Takes \${embedded} \${args}
+    Keyword Should Not Have Source   14
+    Keyword Lineno Should Be         14    81

@@ -7,7 +7,7 @@ import sys
 import unittest
 
 from robot.running.handlers import _PythonHandler, _JavaHandler, DynamicHandler
-from robot.utils import IRONPYTHON, JYTHON
+from robot.utils import IRONPYTHON, JYTHON, PY2
 from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
 from robot.running.testlibraries import TestLibrary, LibraryScope
 from robot.running.dynamicmethods import (
@@ -431,8 +431,8 @@ class TestSourceAndLineno(unittest.TestCase):
 
     def test_class_with_init(self):
         lib = TestLibrary('classes.RecordingLibrary')
-        self._verify(lib.handlers['kw'], classes_source, 207)
-        self._verify(lib.init, classes_source, 203)
+        self._verify(lib.handlers['kw'], classes_source, 208)
+        self._verify(lib.init, classes_source, 204)
 
     def test_class_without_init(self):
         from robot.libraries.BuiltIn import __file__ as source
@@ -442,7 +442,7 @@ class TestSourceAndLineno(unittest.TestCase):
 
     def test_old_style_class_without_init(self):
         lib = TestLibrary('classes.NameLibrary')
-        self._verify(lib.handlers['simple1'], classes_source, 14)
+        self._verify(lib.handlers['simple1'], classes_source, 15)
         self._verify(lib.init, classes_source, -1)
 
     def test_module(self):
@@ -457,6 +457,17 @@ class TestSourceAndLineno(unittest.TestCase):
         lib = TestLibrary('robot.variables')
         self._verify(lib.handlers['is_variable'], source, 33)
         self._verify(lib.init, init_source, -1)
+
+    def test_decorated(self):
+        lib = TestLibrary('classes.Decorated')
+        self._verify(lib.handlers['no_wrapper'], classes_source, 322)
+        # Python 2 doesn't see the original source with wrapping decorators.
+        if PY2:
+            self._verify(lib.handlers['wrapper'], classes_source, 311)
+        else:
+            self._verify(lib.handlers['wrapper'], classes_source, 329)
+            self._verify(lib.handlers['external'], classes_source, 334)
+        self._verify(lib.handlers['no_def'], classes_source, 337)
 
     def test_dynamic_without_source(self):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
@@ -489,7 +500,7 @@ class TestSourceAndLineno(unittest.TestCase):
     def test_dynamic_init(self):
         lib_with_init = TestLibrary('classes.ArgDocDynamicLibrary')
         lib_without_init = TestLibrary('classes.DynamicWithSource')
-        self._verify(lib_with_init.init, classes_source, 218)
+        self._verify(lib_with_init.init, classes_source, 219)
         self._verify(lib_without_init.init, classes_source, -1)
 
     def test_dynamic_invalid_source(self):

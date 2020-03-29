@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os.path
+import functools
 
 from robot.api.deco import library
 
@@ -299,3 +300,44 @@ class InvalidGetArgsDynamicLibrary(ArgDocDynamicLibrary):
 class InvalidAttributeDynamicLibrary(ArgDocDynamicLibrary):
     get_keyword_documentation = True
     get_keyword_arguments = False
+
+
+def noop(x):
+    return x
+
+
+def wraps(x):
+    @functools.wraps(x)
+    def wrapper(*a, **k):
+        return x(*a, **k)
+    return wrapper
+
+
+@noop
+@noop
+@functools.total_ordering
+class Decorated(object):
+
+    @noop
+    def no_wrapper(self):
+        pass
+
+    @noop
+    @wraps
+    @noop
+    @wraps
+    def wrapper(self):
+        pass
+
+    if hasattr(functools, 'lru_cache'):
+        @functools.lru_cache()
+        def external(self):
+            pass
+
+    no_def = lambda self: None
+
+    def __eq__(self, other):
+        return self is other
+
+    def __lt__(self, other):
+        return True

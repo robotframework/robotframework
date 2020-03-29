@@ -14,7 +14,8 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import JYTHON, PY_VERSION, PY2, is_string, split_from_equals
+from robot.utils import (JYTHON, PY_VERSION, PY2, is_string, split_from_equals,
+                         unwrap)
 from robot.variables import is_assign
 
 from .argumentspec import ArgumentSpec
@@ -24,11 +25,8 @@ if PY2:
 
     def getfullargspec(func):
         return getargspec(func) + ([], None, {})
-
-    def unwrap(func):
-        return func
 else:
-    from inspect import getfullargspec, ismethod, unwrap
+    from inspect import getfullargspec, ismethod
 
 if PY_VERSION >= (3, 5):
     import typing
