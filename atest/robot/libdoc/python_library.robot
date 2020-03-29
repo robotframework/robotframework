@@ -28,7 +28,7 @@ Named Args
     Named Args Should Be             true
 
 Source info
-    [Tags]    no-standalone
+    [Tags]    no-standalone    # Standard library sources aren't included in standalone JAR
     Source should be                 ${CURDIR}/../../../src/robot/libraries/Telnet.py
     Lineno should be                 36
 
@@ -48,7 +48,7 @@ Init Arguments
     ...    telnetlib_log_level=TRACE    connection_timeout=None
 
 Init Source Info
-    [Tags]    no-standalone
+    [Tags]    no-standalone    # Standard library sources aren't included in standalone JAR
     Keyword Should Not Have Source   0    xpath=init
     Keyword Lineno Should Be         0    283      xpath=init
 
@@ -78,7 +78,7 @@ Keyword Documentation
     ...
 
 Keyword Source Info
-    [Tags]    no-standalone     # Standard library sources aren't included in standalone JAR
+    [Tags]    no-standalone    # Standard library sources aren't included in standalone JAR
     # This keyword is from the "main library".
     Keyword Name Should Be           0    Close All Connections
     Keyword Should Not Have Source   0
@@ -116,7 +116,7 @@ Decorators
     ...        Run Keywords
     ...            Keyword Arguments Should Be      1    *args    **kwargs
     ...        AND
-    ...            Keyword Lineno Should Be         1    15
+    ...            Keyword Lineno Should Be         1    ${{'15' if not $INTERPRETER.is_standalone else '14'}}
 
 Documentation set in __init__
     Run Libdoc And Parse Output      ${TESTDATADIR}/DocSetInInit.py
