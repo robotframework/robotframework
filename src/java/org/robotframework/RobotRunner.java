@@ -29,7 +29,7 @@ import org.python.util.PythonInterpreter;
  *
  * {@code
  * try (RobotRunner runner = new RobotRunner()) {
- *     runner.run(new String[] {"mytests.txt"});
+ *     runner.run(new String[] {"tests.robot"});
  * }
  * }
  * </pre>
