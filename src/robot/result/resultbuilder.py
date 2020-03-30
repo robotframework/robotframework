@@ -54,7 +54,7 @@ def ExecutionResult(*sources, **options):
 
 def _merge_results(original, merged, options):
     result = ExecutionResult(original, **options)
-    merger = Merger(result)
+    merger = Merger(result, rpa=result.rpa)
     for path in merged:
         merged = ExecutionResult(path, **options)
         merger.merge(merged)
