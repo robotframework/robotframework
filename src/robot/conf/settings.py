@@ -204,7 +204,7 @@ class _BaseSettings(object):
     def _get_output_file(self, option):
         """Returns path of the requested output file and creates needed dirs.
 
-        `option` can be 'Output', 'Log', 'Report', 'XUnit', 'Junit', or 'DebugFile'.
+        `option` can be 'Output', 'Log', 'Report', 'XUnit', 'Json', or 'DebugFile'.
         """
         name = self._opts[option]
         if not name:

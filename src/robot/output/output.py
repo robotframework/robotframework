@@ -26,7 +26,7 @@ class Output(AbstractLogger):
 
     def __init__(self, settings):
         AbstractLogger.__init__(self)
-        if settings.output.lower().endswith(".json"):
+        if str(settings.output).lower().endswith(".json") or settings.json:
             self._outputlogger = JsonLogger(settings.output, settings.log_level, settings.rpa)
         else:
             self._outputlogger = XmlLogger(settings.output, settings.log_level, settings.rpa)

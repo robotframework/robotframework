@@ -14,6 +14,7 @@ class JsonLogger(ResultVisitor):
         self._log_message_is_logged = IsLogged(log_level)
         self._error_message_is_logged = IsLogged('WARN')
         self._path = path
+
         # Setup the JSON data to store before writing the file
         self._data = {
             'rpa': rpa is not None,
@@ -50,8 +51,13 @@ class JsonLogger(ResultVisitor):
         messages = [self._create_message(msg) for msg in self._errors]
         self.end_errors(messages)
         # Write the output into a json file
-        with open(self._path, 'w') as json_outfile:
-            json.dump(self._data, json_outfile)
+        data = json.dumps(self._data)
+        if not isinstance(self._path, str):
+            self._path.write(data)
+            self._path.close()
+        else:
+            with open(self._path, 'w') as json_outfile:
+                json_outfile.write(data)
 
     def set_log_level(self, level):
         return self._log_message_is_logged.set_level(level)
@@ -127,9 +133,7 @@ class JsonLogger(ResultVisitor):
         if 'kw' not in parent_item:
             parent_item['kw'] = list()
         parent_item['kw'].append(self._current_keyword)
-        # Mark the current keyword as being none
         self._current_keyword = None
-        # Mark the current item as being blank
         self._current_item = ''
 
     def start_test(self, test):
@@ -159,7 +163,7 @@ class JsonLogger(ResultVisitor):
             # Push this onto the stack
             self._item_stack.append(self._current_suite)
 
-        # Default the current suite with t
+        # Default the current suite with the suites variables
         self._current_suite = {
             'id': suite.id,
             'name': suite.name,
@@ -203,7 +207,9 @@ class JsonLogger(ResultVisitor):
         }
 
     def end_errors(self, errors=None):
-        self._data['errors'] = errors
+        if 'errors' not in self._data:
+            self._data['errors'] = list()
+        self._data['errors'].extend([str(error) for error in errors])
 
     def _create_statistic(self, stat):
         statistic = {

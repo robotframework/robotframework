@@ -105,7 +105,7 @@ class Result(object):
         from robot.reporting.outputwriter import OutputWriter
         from robot.reporting.jsonwriter import JsonOutputWriter
         output_path = path or self.source
-        if output_path.lower().endswith(".json"):
+        if str(output_path).lower().endswith(".json"):
             writer = JsonOutputWriter(output_path, rpa=self.rpa)
         else:
             writer = OutputWriter(output_path, rpa=self.rpa)

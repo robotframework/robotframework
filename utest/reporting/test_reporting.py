@@ -25,6 +25,11 @@ class TestReporting(unittest.TestCase):
         self._write_results(output=output)
         self._verify_output(output.value)
 
+    def test_only_json(self):
+        output = ClosableOutput('output.json')
+        self._write_results(json=output)
+        self._verify_output(output.value)
+
     def test_only_xunit(self):
         xunit = ClosableOutput('xunit.xml')
         self._write_results(xunit=xunit)
@@ -52,11 +57,13 @@ class TestReporting(unittest.TestCase):
         xunit = ClosableOutput('x.xml')
         log = ClosableOutput('l.html')
         report = ClosableOutput('r.html')
-        self._write_results(output=output, xunit=xunit, log=log, report=report)
+        json = ClosableOutput('output.json')
+        self._write_results(output=output, xunit=xunit, log=log, report=report, json=json)
         self._verify_output(output.value)
         self._verify_xunit(xunit.value)
         self._verify_log(log.value)
         self._verify_report(report.value)
+        self._verify_output(json.value)
 
     def test_js_generation_does_not_prune_given_result(self):
         result = self._get_execution_result()
@@ -134,6 +141,7 @@ class StubSettings(object):
     statistics_config = {}
     xunit_skip_noncritical = False
     expand_keywords = None
+    json = False
 
     def __init__(self, **settings):
         self.__dict__.update(settings)

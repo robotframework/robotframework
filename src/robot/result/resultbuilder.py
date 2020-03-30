@@ -70,7 +70,7 @@ def _combine_results(sources, options):
 
 def _single_result(source, options):
     result = Result(source, rpa=options.pop('rpa', None))
-    if source.lower().endswith("json"):
+    if str(source).lower().endswith("json"):
         try:
             with open(source, 'r') as source_file:
                 json_data = json.load(source_file)
