@@ -11,45 +11,53 @@ ${MERGE}                  %{TEMPDIR}/merge.xml
 ${RUN_MSG_TEXT}           Test message
 ${RUN_MSG_HTML}           *HTML* <b>Test</b> message
 ${MERGE_MSG_TEXT_TEXT}    SEPARATOR=
-...    *HTML* Re-executed test has been merged.
+...    *HTML* <span class="merge">Re-executed tests have been merged.</span>
 ...    <hr>
-...    New status: <span class="fail">FAIL</span>
+...    <span class="new-status">New status:</span> <span class="fail">FAIL</span>
 ...    <br>
-...    New message: Test message
+...    <span class="new-message">New message:</span> Test message
+...    <br>
 ...    <hr>
-...    Old status: <span class="fail">FAIL</span>
+...    <span class="old-status">Old status:</span> <span class="fail">FAIL</span>
 ...    <br>
-...    Old message: Test message
+...    <span class="old-message">Old message:</span> Test message
+...    <br>
 ${MERGE_MSG_HTML_HTML}    SEPARATOR=
-...    *HTML* Re-executed test has been merged.
+...    *HTML* <span class="merge">Re-executed tests have been merged.</span>
 ...    <hr>
-...    New status: <span class="fail">FAIL</span>
+...    <span class="new-status">New status:</span> <span class="fail">FAIL</span>
 ...    <br>
-...    New message: <b>Test</b> message
+...    <span class="new-message">New message:</span> <b>Test</b> message
+...    <br>
 ...    <hr>
-...    Old status: <span class="fail">FAIL</span>
+...    <span class="old-status">Old status:</span> <span class="fail">FAIL</span>
 ...    <br>
-...    Old message: <b>Test</b> message
+...    <span class="old-message">Old message:</span> <b>Test</b> message
+...    <br>
 ${MERGE_MSG_TEXT_HTML}    SEPARATOR=
-...    *HTML* Re-executed test has been merged.
+...    *HTML* <span class="merge">Re-executed tests have been merged.</span>
 ...    <hr>
-...    New status: <span class="fail">FAIL</span>
+...    <span class="new-status">New status:</span> <span class="fail">FAIL</span>
 ...    <br>
-...    New message: Test message
+...    <span class="new-message">New message:</span> Test message
+...    <br>
 ...    <hr>
-...    Old status: <span class="fail">FAIL</span>
+...    <span class="old-status">Old status:</span> <span class="fail">FAIL</span>
 ...    <br>
-...    Old message: <b>Test</b> message
+...    <span class="old-message">Old message:</span> <b>Test</b> message
+...    <br>
 ${MERGE_MSG_HTML_TEXT}    SEPARATOR=
-...    *HTML* Re-executed test has been merged.
+...    *HTML* <span class="merge">Re-executed tests have been merged.</span>
 ...    <hr>
-...    New status: <span class="fail">FAIL</span>
+...    <span class="new-status">New status:</span> <span class="fail">FAIL</span>
 ...    <br>
-...    New message: <b>Test</b> message
+...    <span class="new-message">New message:</span> <b>Test</b> message
+...    <br>
 ...    <hr>
-...    Old status: <span class="fail">FAIL</span>
+...    <span class="old-status">Old status:</span> <span class="fail">FAIL</span>
 ...    <br>
-...    Old message: Test message
+...    <span class="old-message">Old message:</span> Test message
+...    <br>
 
 *** Test Cases ***
 Merge re-executed tests

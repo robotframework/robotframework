@@ -87,13 +87,29 @@ class Merger(SuiteVisitor):
             return html_escape(message)
 
     def _create_merge_message(self, new, old):
+        if old.message.startswith(self._merge_header()):
+            old_message = old.message.split('<hr>', 1)[1]
+            old_message = old_message.replace(self._html_anchor('New', 'status'), self._html_anchor('Old', 'status'))
+            old_message = old_message.replace(self._html_anchor('New', 'message'), self._html_anchor('Old', 'message'))
+        else:
+            old_message = ''.join([
+                '%s %s<br>' % (self._html_anchor('Old', 'status'), self._format_status(old.status)),
+                ('%s %s<br>' % (self._html_anchor('Old', 'message'), self._html_escape(old.message))) if old.message else ''
+            ])
+
         return ''.join([
-            '*HTML* Re-executed test has been merged.<hr>',
-            'New status: %s<br>' % self._format_status(new.status),
-            'New message: %s<hr>' % self._html_escape(new.message),
-            'Old status: %s<br>' % self._format_status(old.status),
-            'Old message: %s' % self._html_escape(old.message)
+            self._merge_header(),
+            '%s %s<br>' % (self._html_anchor('New', 'status'), self._format_status(new.status)),
+            ('%s %s<br>' % (self._html_anchor('New', 'message'), self._html_escape(new.message))) if new.message else '',
+            '<hr>',
+            old_message
         ])
+
+    def _merge_header(self):
+        return '*HTML* <span class="merge">Re-executed tests have been merged.</span><hr>'
+
+    def _html_anchor(self, state, msg):
+        return '<span class="%s-%s">%s %s:</span>' % (state.lower(), msg.lower(), state, msg)
 
     def _format_status(self, status):
         return '<span class="%s">%s</span>' % (status.lower(), status)
