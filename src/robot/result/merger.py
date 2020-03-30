@@ -19,6 +19,9 @@ from robot.utils import html_escape
 
 
 class Merger(SuiteVisitor):
+    merge_header = ('*HTML* <span class="merge">'
+                    'Test has been re-executed and results merged.'
+                    '</span>')
 
     def __init__(self, result):
         self.result = result
@@ -87,29 +90,37 @@ class Merger(SuiteVisitor):
             return html_escape(message)
 
     def _create_merge_message(self, new, old):
-        if old.message.startswith(self._merge_header()):
-            old_message = old.message.split('<hr>', 1)[1]
-            old_message = old_message.replace(self._html_anchor('New', 'status'), self._html_anchor('Old', 'status'))
-            old_message = old_message.replace(self._html_anchor('New', 'message'), self._html_anchor('Old', 'message'))
-        else:
-            old_message = ''.join([
-                '%s %s<br>' % (self._html_anchor('Old', 'status'), self._format_status(old.status)),
-                ('%s %s<br>' % (self._html_anchor('Old', 'message'), self._html_escape(old.message))) if old.message else ''
-            ])
-
         return ''.join([
-            self._merge_header(),
-            '%s %s<br>' % (self._html_anchor('New', 'status'), self._format_status(new.status)),
-            ('%s %s<br>' % (self._html_anchor('New', 'message'), self._html_escape(new.message))) if new.message else '',
+            self.merge_header,
             '<hr>',
-            old_message
+            self._format_status_and_message('New', new),
+            '<hr>',
+            self._format_old_status_and_message(old)
         ])
 
-    def _merge_header(self):
-        return '*HTML* <span class="merge">Re-executed tests have been merged.</span><hr>'
+    def _format_status_and_message(self, state, test):
+        message = '%s %s<br>' % (self._status_header(state),
+                                 self._status_text(test.status))
+        if test.message:
+            message += '%s %s<br>' % (self._message_header(state),
+                                      self._html_escape(test.message))
+        return message
 
-    def _html_anchor(self, state, msg):
-        return '<span class="%s-%s">%s %s:</span>' % (state.lower(), msg.lower(), state, msg)
+    def _status_header(self, state):
+        return '<span class="%s-status">%s status:</span>' % (state.lower(), state)
 
-    def _format_status(self, status):
+    def _status_text(self, status):
         return '<span class="%s">%s</span>' % (status.lower(), status)
+
+    def _message_header(self, state):
+        return '<span class="%s-message">%s message:</span>' % (state.lower(), state)
+
+    def _format_old_status_and_message(self, test):
+        if not test.message.startswith(self.merge_header):
+            return self._format_status_and_message('Old', test)
+        status_and_message = test.message.split('<hr>', 1)[1]
+        return (
+            status_and_message
+            .replace(self._status_header('New'), self._status_header('Old'))
+            .replace(self._message_header('New'), self._message_header('Old'))
+        )

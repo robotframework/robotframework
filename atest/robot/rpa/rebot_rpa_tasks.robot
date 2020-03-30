@@ -21,7 +21,7 @@ Merge tasks
 Rebot tests with --rpa
     --rpa              ${TESTS}                 Test
     --RPA              ${TESTS} ${TESTS}        Test    Test
-    --rpa --merge      ${TESTS} ${TESTS}        Test=PASS:*HTML* <span class="merge">Re-executed tests have been merged.</span><hr><span class="new-status">New status:</span> <span class="pass">PASS</span><br><hr><span class="old-status">Old status:</span> <span class="pass">PASS</span><br>
+    --rpa --merge      ${TESTS} ${TESTS}        Test=PASS:*HTML* <span class="merge">Test has been re-executed and results merged.</span><hr><span class="new-status">New status:</span> <span class="pass">PASS</span><br><hr><span class="old-status">Old status:</span> <span class="pass">PASS</span><br>
 
 Rebot tasks with --norpa
     [Template]    Rebot and validate test cases

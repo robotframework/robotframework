@@ -4,6 +4,9 @@ Suite Teardown    Remove Files    ${ORIGINAL}
 Resource          rebot_resource.robot
 
 *** Variables ***
+${MERGE HEADER}   Test has been re-executed and results merged.
+
+*** Variables ***
 ${DATA}                   ${DATADIR}/rebot/merge_html.robot
 ${ORIGINAL}               %{TEMPDIR}/merge-original.xml
 ${MERGE}                  %{TEMPDIR}/merge.xml
@@ -11,7 +14,7 @@ ${MERGE}                  %{TEMPDIR}/merge.xml
 ${RUN_MSG_TEXT}           Test message
 ${RUN_MSG_HTML}           *HTML* <b>Test</b> message
 ${MERGE_MSG_TEXT_TEXT}    SEPARATOR=
-...    *HTML* <span class="merge">Re-executed tests have been merged.</span>
+...    *HTML* <span class="merge">${MERGE HEADER}</span>
 ...    <hr>
 ...    <span class="new-status">New status:</span> <span class="fail">FAIL</span>
 ...    <br>
@@ -23,7 +26,7 @@ ${MERGE_MSG_TEXT_TEXT}    SEPARATOR=
 ...    <span class="old-message">Old message:</span> Test message
 ...    <br>
 ${MERGE_MSG_HTML_HTML}    SEPARATOR=
-...    *HTML* <span class="merge">Re-executed tests have been merged.</span>
+...    *HTML* <span class="merge">${MERGE HEADER}</span>
 ...    <hr>
 ...    <span class="new-status">New status:</span> <span class="fail">FAIL</span>
 ...    <br>
@@ -35,7 +38,7 @@ ${MERGE_MSG_HTML_HTML}    SEPARATOR=
 ...    <span class="old-message">Old message:</span> <b>Test</b> message
 ...    <br>
 ${MERGE_MSG_TEXT_HTML}    SEPARATOR=
-...    *HTML* <span class="merge">Re-executed tests have been merged.</span>
+...    *HTML* <span class="merge">${MERGE HEADER}</span>
 ...    <hr>
 ...    <span class="new-status">New status:</span> <span class="fail">FAIL</span>
 ...    <br>
@@ -47,7 +50,7 @@ ${MERGE_MSG_TEXT_HTML}    SEPARATOR=
 ...    <span class="old-message">Old message:</span> <b>Test</b> message
 ...    <br>
 ${MERGE_MSG_HTML_TEXT}    SEPARATOR=
-...    *HTML* <span class="merge">Re-executed tests have been merged.</span>
+...    *HTML* <span class="merge">${MERGE HEADER}</span>
 ...    <hr>
 ...    <span class="new-status">New status:</span> <span class="fail">FAIL</span>
 ...    <br>

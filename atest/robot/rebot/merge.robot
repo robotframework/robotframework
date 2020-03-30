@@ -215,7 +215,7 @@ Timestamps should be set
 Create expected merge message header
     [Arguments]    ${html marker}=*HTML*${SPACE}
     Run Keyword And Return    Catenate    SEPARATOR=
-    ...    ${html marker}<span class="merge">Re-executed tests have been merged.</span><hr>
+    ...    ${html marker}<span class="merge">Test has been re-executed and results merged.</span><hr>
 
 Create expected merge old message body
     [Arguments]    ${old status}    ${old message}
