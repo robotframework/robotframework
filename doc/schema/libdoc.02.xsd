@@ -4,8 +4,10 @@
   <xs:complexType name="KeywordSpec">
     <xs:sequence>
       <xs:element name="version" type="xs:string" />
-      <xs:element name="scope" type="LibraryScope" minOccurs="0" />
-      <xs:element name="namedargs" type="SupportNamedArgs" minOccurs="0" />
+      <!-- Both "scope" and "namedargs" elements are deprecated.
+      Use "scope" and "namedargs" as attributes of <keywordspec> instead. -->
+      <xs:element name="scope" type="LibraryScope" minOccurs="0" /> <!-- deprecated -->
+      <xs:element name="namedargs" type="SupportNamedArgs" minOccurs="0" /> <!-- deprecated -->
       <xs:element name="doc" type="xs:string" />
       <xs:element name="init" type="Init" minOccurs="0" />
       <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
@@ -15,7 +17,7 @@
     <xs:attribute name="format" type="DocumentationFormat" use="required" />
     <xs:attribute name="scope" type="LibraryScope" use="required" />
     <xs:attribute name="namedargs" type="xs:boolean" use="required" />
-    <xs:attribute name="generated" type="GenerationDate" use="required" />
+    <xs:attribute name="generated" type="xs:dateTime" use="required" />
     <xs:attribute name="specversion" type="SpecVersion" use="required" />
     <xs:attribute name="source" type="xs:string" use="optional" />
     <xs:attribute name="lineno" type="xs:positiveInteger" use="optional" />
@@ -71,11 +73,6 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="library" />
       <xs:enumeration value="resource" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:simpleType name="GenerationDate">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="\d{8} ([0-1]\d|2[0-3]):[0-5]\d:[0-5]\d" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="SpecVersion">

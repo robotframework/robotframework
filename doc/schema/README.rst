@@ -33,7 +33,7 @@ Available schema files:
 
   * `<robot-xsd10.xsd>`__ - Robot Framework XML output (XSD 1.0 compatible version)
   * `<robot-xsd11.xsd>`__ - Robot Framework XML output (XSD 1.1 compatible version)
-  * `<libdoc.01.xsd>`__ - Libdoc XML spec version 1 (Robot Framework <= 3.1.2) (XSD 1.0)
+  * `<libdoc.01.xsd>`__ - Libdoc XML spec version 1 (Robot Framework < 3.2) (XSD 1.0)
   * `<libdoc.02.xsd>`__ - Libdoc XML spec version 2 (Robot Framework >= 3.2) (XSD 1.0)
 
 XSD 1.1 schemas are more complete than XSD 1.0 schemas but not as widely

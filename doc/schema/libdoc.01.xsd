@@ -64,7 +64,7 @@
   </xs:simpleType>
   <xs:simpleType name="GenerationDate">
     <xs:restriction base="xs:string">
-      <xs:pattern value="\d{8} ([0-1]\d|2[0-3]):[0-5]\d:[0-5]\d" />
+      <xs:pattern value="\d{8} \d\d:\d\d:\d\d" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="SupportNamedArgs">
