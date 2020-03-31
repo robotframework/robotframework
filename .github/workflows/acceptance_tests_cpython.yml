@@ -97,6 +97,18 @@ jobs:
           sudo rm -rf /etc/ntp.conf
         if: runner.os == 'macOS'
 
+      # Coverage version < 5.0 for Python >= 3.7: https://github.com/nedbat/coveragepy/issues/968
+      # No coverage for PyPy2/3 as it has failures if running with coverage, and it runs too long (> 1 hour)
+      - name: Run acceptance tests (with coverage)
+        run: |
+          python -m pip install 'coverage < 5.0'
+          python -m pip install -r atest/requirements.txt
+          ${{ env.ATEST_PYTHON }} -m pip install -r atest/requirements-run.txt
+          ${{ matrix.set_codepage }}
+          ${{ matrix.set_display }}
+          ${{ env.ATEST_PYTHON }} atest/run.py "${{ env.BASE_PYTHON }} -m coverage run --branch --append" --exclude no-ci atest/robot
+        if: false == contains(matrix.python-version, 'pypy')
+
       - name: Run acceptance tests
         run: |
           python -m pip install -r atest/requirements.txt
@@ -104,6 +116,7 @@ jobs:
           ${{ matrix.set_codepage }}
           ${{ matrix.set_display }}
           ${{ env.ATEST_PYTHON }} atest/run.py ${{ env.BASE_PYTHON }} --exclude no-ci atest/robot
+        if: contains(matrix.python-version, 'pypy')
 
       - name: Delete output.xml (on Win)
         run: |
@@ -114,6 +127,16 @@ jobs:
         run: |
           find atest/results -type f -name 'output.xml' -exec rm {} +
         if: always() && runner.os != 'Windows'
+
+      - name: Prepare XML coverage report
+        run: |
+          python -m coverage xml -i
+        if: always() && false == contains(matrix.python-version, 'pypy')
+
+      - uses: codecov/codecov-action@e34ee485244a5b5e6e4e1b96daa4a15c9073e4fc
+        with:
+          name: ${{ matrix.python-version }}-${{ matrix.os }}
+        if: always() && false == contains(matrix.python-version, 'pypy')
 
       - name: Archive acceptances test results
         uses: actions/upload-artifact@v2
