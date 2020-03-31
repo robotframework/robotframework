@@ -92,7 +92,7 @@ Lineno Should Be
     Element Attribute Should Be    ${LIBDOC}    lineno    ${lineno}
 
 Generated Should Be Defined
-    Element Attribute Should Match    ${LIBDOC}    generated    *
+    Element Attribute Should Match    ${LIBDOC}    generated    ????-??-??T??:??:??Z
 
 Spec version should be correct
     Element Attribute Should Be    ${LIBDOC}    specversion    2

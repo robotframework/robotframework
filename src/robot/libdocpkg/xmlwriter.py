@@ -13,9 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from datetime import datetime
 import os.path
 
-from robot.utils import get_timestamp, WINDOWS, XmlWriter
+from robot.utils import WINDOWS, XmlWriter
 
 from .htmlwriter import DocToHtml
 
@@ -36,12 +37,13 @@ class LibdocXmlWriter(object):
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer, formatter):
+        generated = datetime.utcnow().replace(microsecond=0).isoformat() + 'Z'
         attrs = {'name': libdoc.name,
                  'type': libdoc.type,
                  'format': formatter.format,
                  'scope': libdoc.scope,
                  'namedargs': 'true' if libdoc.named_args else 'false',
-                 'generated': get_timestamp(millissep=None),
+                 'generated': generated,
                  'specversion': '2'}
         self._add_source_info(attrs, libdoc, writer.output)
         writer.start('keywordspec', attrs)
