@@ -3,11 +3,13 @@ name: Unit tests
 on:
   push:
     paths:
+      - '.github/workflows/**'
       - 'src/**'
       - 'utest/**'
       - '!**/*.rst'
   pull_request:
     paths:
+      - '.github/workflows/**'
       - 'src/**'
       - 'utest/**'
       - '!**/*.rst'
