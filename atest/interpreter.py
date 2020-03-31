@@ -39,7 +39,7 @@ class Interpreter(object):
 
     def _get_name_and_version(self):
         try:
-            output = subprocess.check_output(self.interpreter + ['-V'],
+            output = subprocess.check_output([self.interpreter[0]] + ['-V'],
                                              stderr=subprocess.STDOUT,
                                              encoding='UTF-8')
         except (subprocess.CalledProcessError, FileNotFoundError) as err:
