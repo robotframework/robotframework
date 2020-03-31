@@ -4,12 +4,8 @@ from os.path import abspath, join, dirname
 from setuptools import find_packages, setup
 
 
-CURDIR = dirname(abspath(__file__))
-
-with open(join(CURDIR, 'src', 'robot', 'version.py')) as f:
-    exec(f.read())
-    VERSION = get_version()
-with open(join(CURDIR, 'README.rst')) as f:
+VERSION = '3.2b3.dev1'
+with open(join(dirname(abspath(__file__)), 'README.rst')) as f:
     LONG_DESCRIPTION = f.read()
     base_url = 'https://github.com/robotframework/robotframework/blob/master'
     for text in ('INSTALL', 'CONTRIBUTING'):
