@@ -1,6 +1,18 @@
 name: Acceptance tests (CPython + PyPy)
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'utest/**'
+      - 'atest/**'
+      - '!**/*.rst'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'utest/**'
+      - 'atest/**'
+      - '!**/*.rst'
 
 jobs:
   test_using_builtin_python:
