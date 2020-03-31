@@ -77,19 +77,19 @@ Robot Framework {version} was released on {date}.
 
 @task
 def set_version(ctx, version):
-    """Set project version in `src/robot/version.py`` file.
+    """Set project version in `src/robot/version.py`, `setup.py` and `pom.xml`.
 
     Args:
-        version: Project version to set or ``dev`` to set development version.
+        version: Project version to set or `dev` to set development version.
 
     Following PEP-440 compatible version numbers are supported:
     - Final version like 3.0 or 3.1.2.
-    - Alpha, beta or release candidate with ``a``, ``b`` or ``rc`` postfix,
+    - Alpha, beta or release candidate with `a`, `b` or `rc` postfix,
       respectively, and an incremented number like 3.0a1 or 3.0.1rc1.
-    - Development version with ``.dev`` postix and an incremented number like
+    - Development version with `.dev` postix and an incremented number like
       3.0.dev1 or 3.1a1.dev2.
 
-    When the given version is ``dev``, the existing version number is updated
+    When the given version is `dev`, the existing version number is updated
     to the next suitable development version. For example, 3.0 -> 3.0.1.dev1,
     3.1.1 -> 3.1.2.dev1, 3.2a1 -> 3.2a2.dev1, 3.2.dev1 -> 3.2.dev2.
     """
@@ -111,10 +111,10 @@ def library_docs(ctx, name):
     """Generate standard library documentation.
 
     Args:
-        name:  Name of the library or ``all`` to generate docs for all libs.
+        name:  Name of the library or `all` to generate docs for all libs.
                Name is case-insensitive and can be shortened as long as it
-               is a unique prefix. For example, ``b`` is equivalent to
-               ``BuiltIn`` and ``di`` equivalent to ``Dialogs``.
+               is a unique prefix. For example, `b` is equivalent to
+               `BuiltIn` and `di` equivalent to `Dialogs`.
     """
     libraries = ['BuiltIn', 'Collections', 'DateTime', 'Dialogs',
                  'OperatingSystem', 'Process', 'Screenshot', 'String',
@@ -141,8 +141,8 @@ def release_notes(ctx, version=None, username=None, password=None, write=False):
                   possible existing file. Otherwise just print them to the
                   terminal.
 
-    Username and password can also be specified using ``GITHUB_USERNAME`` and
-    ``GITHUB_PASSWORD`` environment variable, respectively. If they aren't
+    Username and password can also be specified using `GITHUB_USERNAME` and
+    `GITHUB_PASSWORD` environment variable, respectively. If they aren't
     specified at all, communication with GitHub is anonymous and typically
     pretty slow.
     """
@@ -161,10 +161,10 @@ def init_labels(ctx, username=None, password=None):
         username: GitHub username.
         password: GitHub password.
 
-    Username and password can also be specified using ``GITHUB_USERNAME`` and
-    ``GITHUB_PASSWORD`` environment variable, respectively.
+    Username and password can also be specified using `GITHUB_USERNAME` and
+    `GITHUB_PASSWORD` environment variable, respectively.
 
-    Should only be executed once when taking ``rellu`` tooling to use or
+    Should only be executed once when taking `rellu` tooling to use or
     when labels it uses have changed.
     """
     initialize_labels(REPOSITORY, username, password)

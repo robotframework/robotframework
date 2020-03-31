@@ -140,7 +140,8 @@ Release notes
 Set version
 -----------
 
-1. Set version information in `<src/robot/version.py>`_ and in `<pom.xml>`_::
+1. Set version information in `<src/robot/version.py>`_, `<setup.py>`_ and
+   `<pom.xml>`_::
 
       invoke set-version $VERSION
 
