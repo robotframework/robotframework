@@ -5,14 +5,12 @@ on:
     paths:
       - '.github/workflows/**'
       - 'src/**'
-      - 'utest/**'
       - 'atest/**'
       - '!**/*.rst'
   pull_request:
     paths:
       - '.github/workflows/**'
       - 'src/**'
-      - 'utest/**'
       - 'atest/**'
       - '!**/*.rst'
 
