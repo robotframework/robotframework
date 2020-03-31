@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils import IRONPYTHON, PY3
+from robot.utils import unicode, IRONPYTHON
 from robot.utils.asserts import assert_equal
 from robot.utils.encoding import console_decode, CONSOLE_ENCODING
 

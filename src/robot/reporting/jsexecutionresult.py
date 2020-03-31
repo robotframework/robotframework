@@ -17,6 +17,7 @@ import time
 from collections import OrderedDict
 
 from robot.utils import IRONPYTHON, PY_VERSION
+from robot.utils.robottypes import long
 
 from .stringcache import StringIndex
 

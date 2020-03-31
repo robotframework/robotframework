@@ -1,3 +1,6 @@
+# flake8: noqa
+
+
 class UnknownType(object):
     pass
 

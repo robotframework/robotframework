@@ -15,18 +15,44 @@
 
 from .platform import PY2
 
+try:
+    long = long
+    unicode = unicode
+except NameError:
+    long = int
+    unicode = str
+
+
+def is_integer(item):
+    return isinstance(item, (int, long))
+
+
+def is_number(item):
+    return isinstance(item, (int, long, float))
+
+
+def is_bytes(item):
+    return isinstance(item, (bytes, bytearray))
+
+
+def is_string(item):
+    # Returns False with `b'bytes'` on IronPython on purpose. Results of
+    # `isinstance(item, basestring)` would depend on IronPython 2.7.x version.
+    return isinstance(item, (str, unicode))
+
+
+def is_unicode(item):
+    return isinstance(item, unicode)
+
+
 
 if PY2:
-    from .robottypes2 import (is_bytes, is_dict_like, is_integer, is_list_like,
-                              is_number, is_pathlike, is_string,
-                              is_unicode, type_name, Mapping, MutableMapping)
-    unicode = unicode
+    from .robottypes2 import (is_dict_like, is_list_like, is_pathlike,
+                              type_name, Mapping, MutableMapping)
 
 else:
-    from .robottypes3 import (is_bytes, is_dict_like, is_integer, is_list_like,
-                              is_number, is_pathlike, is_string,
-                              is_unicode, type_name, Mapping, MutableMapping)
-    unicode = str
+    from .robottypes3 import (is_dict_like, is_list_like, is_pathlike,
+                              type_name, Mapping, MutableMapping)
 
 
 TRUE_STRINGS = {'TRUE', 'YES', 'ON', '1'}

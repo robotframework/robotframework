@@ -45,7 +45,7 @@ from robot.utils import (abspath, Application, file_writer, get_link_path,
                          html_escape, html_format, IRONPYTHON, is_string,
                          PY_VERSION, secs_to_timestr, seq2str2,
                          timestr_to_secs, unescape)
-
+from robot.utils.robottypes import long
 
 # http://ironpython.codeplex.com/workitem/31549
 if IRONPYTHON and PY_VERSION < (2, 7, 2):

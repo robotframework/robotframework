@@ -194,9 +194,9 @@ class TestNormalizedDict(unittest.TestCase):
 
     def test_unicode(self):
         nd = NormalizedDict({'a': u'\xe4', u'\xe4': 'a'})
-        if PY2:
+        try:
             assert_equal(unicode(nd), "{'a': u'\\xe4', u'\\xe4': 'a'}")
-        else:
+        except NameError:
             assert_equal(str(nd), u"{'a': '\xe4', '\xe4': 'a'}")
 
     def test_update(self):

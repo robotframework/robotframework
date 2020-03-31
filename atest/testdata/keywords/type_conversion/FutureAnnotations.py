@@ -21,7 +21,7 @@ def typing_(a: List, b: List[int]):
 
 
 # These cause exception with `typing.get_type_hints`
-def invalid1(a: foo):
+def invalid1(a: foo):  # noqa: F821
     assert a == 'xxx'
 
 

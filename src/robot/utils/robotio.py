@@ -21,7 +21,7 @@ from robot.errors import DataError
 
 from .error import get_error_message
 from .platform import PY3
-from .robottypes import is_pathlike
+from .robottypes import is_pathlike, unicode
 
 
 def file_writer(path=None, encoding='UTF-8', newline=None, usage=None):

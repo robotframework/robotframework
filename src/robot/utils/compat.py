@@ -16,6 +16,7 @@
 import sys
 
 from .platform import IRONPYTHON, PY2
+from .robottypes import unicode
 
 
 if PY2:

@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from os.path import join, abspath
 
 __all__ = ['join_with_execdir', 'abspath', 'attr_is_not_kw',

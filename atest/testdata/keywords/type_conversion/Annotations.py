@@ -125,12 +125,13 @@ def unknown(argument: Unknown, expected=None):
     _validate_type(argument, expected)
 
 
-def non_type(argument: 'this is string, not type', expected=None):
+def non_type(argument: 'this is string, not type',  # noqa: F821
+             expected=None):
     _validate_type(argument, expected)
 
 
 # Causes SyntaxError with `typing.get_type_hints`
-def invalid(argument: 'import sys', expected=None):
+def invalid(argument: 'import sys', expected=None):  # noqa: F722
     _validate_type(argument, expected)
 
 

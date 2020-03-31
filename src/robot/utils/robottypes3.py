@@ -26,26 +26,6 @@ else:
     from os import PathLike
 
 
-def is_integer(item):
-    return isinstance(item, int)
-
-
-def is_number(item):
-    return isinstance(item, (int, float))
-
-
-def is_bytes(item):
-    return isinstance(item, (bytes, bytearray))
-
-
-def is_string(item):
-    return isinstance(item, str)
-
-
-def is_unicode(item):
-    return isinstance(item, str)
-
-
 def is_pathlike(item):
     return isinstance(item, PathLike)
 

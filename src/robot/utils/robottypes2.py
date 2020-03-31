@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# flake8: noqa
+
 from collections import Mapping, MutableMapping, Sequence
 from UserDict import UserDict
 from UserString import UserString
@@ -24,28 +26,6 @@ except ImportError:
     String = ()
 
 from .platform import RERAISED_EXCEPTIONS
-
-
-def is_integer(item):
-    return isinstance(item, (int, long))
-
-
-def is_number(item):
-    return isinstance(item, (int, long, float))
-
-
-def is_bytes(item):
-    return isinstance(item, (bytes, bytearray))
-
-
-def is_string(item):
-    # Returns False with `b'bytes'` on IronPython on purpose. Results of
-    # `isinstance(item, basestring)` would depend on IronPython 2.7.x version.
-    return isinstance(item, (str, unicode))
-
-
-def is_unicode(item):
-    return isinstance(item, unicode)
 
 
 def is_pathlike(item):

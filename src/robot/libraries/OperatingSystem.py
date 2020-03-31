@@ -28,8 +28,9 @@ from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          get_env_var, get_env_vars, get_time, is_truthy,
                          is_unicode, normpath, parse_time, plural_or_not,
                          secs_to_timestamp, secs_to_timestr, seq2str,
-                         set_env_var, timestr_to_secs, unic, CONSOLE_ENCODING,
-                         IRONPYTHON, JYTHON, PY2, PY3, SYSTEM_ENCODING, WINDOWS)
+                         set_env_var, timestr_to_secs, unic, unicode,
+                         CONSOLE_ENCODING, IRONPYTHON, JYTHON, PY2, PY3,
+                         SYSTEM_ENCODING, WINDOWS)
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes.')

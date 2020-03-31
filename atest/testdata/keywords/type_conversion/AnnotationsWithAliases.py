@@ -1,3 +1,5 @@
+# flake8: noqa
+
 # Imports needed for evaluating expected result.
 from datetime import datetime, date, timedelta
 from decimal import Decimal
