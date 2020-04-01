@@ -13,7 +13,7 @@ Documentation
     ...    This library is only used in an example and it doesn't do anything useful.
 
 Version
-    Version Should Match           1.0
+    Version Should Be              42
 
 Type
     Type Should Be                 library
@@ -92,9 +92,17 @@ Keyword Source Info
 '*.libspec' extension
     Copy File    ${TESTDATADIR}/ExampleSpec.xml    %{TEMPDIR}/Example.libspec
     Run Libdoc And Parse Output    %{TEMPDIR}/Example.libspec
+    Test Everything
+
+Old spec format
+    Run Libdoc And Parse Output    ${TESTDATADIR}/OldSpec.xml
+    Test Everything
+
+*** Keywords ***
+Test Everything
     Name Should Be                    Example
     Doc Should Start With             Library for `libdoc.py` testing purposes.
-    Version Should Match              1.0
+    Version Should Be                 42
     Type Should Be                    library
     Generated Should Be Defined
     Scope Should Be                   GLOBAL
