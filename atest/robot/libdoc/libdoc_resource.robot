@@ -184,7 +184,7 @@ Keyword Should Be Deprecated
 Keyword Should Not Be Deprecated
     [Arguments]    ${index}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
-    Element Attribute Should be    ${kws}[${index}]    deprecated    false
+    Element Should Not Have Attribute    ${kws}[${index}]    deprecated
 
 Keyword Count Should Be
     [Arguments]    ${expected}   ${type}=kw

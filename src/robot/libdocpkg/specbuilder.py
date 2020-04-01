@@ -73,6 +73,8 @@ class SpecDocBuilder(object):
         return [self._create_keyword(elem) for elem in spec.findall(path)]
 
     def _create_keyword(self, elem):
+        # "deprecated" attribute isn't read because it is read from the doc
+        # automatically. That should probably be changed at some point.
         return KeywordDoc(name=elem.get('name', ''),
                           args=[a.text for a in elem.findall('arguments/arg')],
                           doc=elem.find('doc').text or '',
