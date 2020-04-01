@@ -94,6 +94,7 @@ jobs:
       - name: Run acceptance tests
         run: |
           python -m pip install -r atest/requirements.txt
+          ${{ env.ATEST_PYTHON }} -m pip install -r atest/requirements-run.txt
           ${{ matrix.set_codepage }}
           ${{ matrix.set_display }}
           ${{ env.ATEST_PYTHON }} atest/run.py ${{ env.BASE_PYTHON }} --exclude no-ci atest/robot

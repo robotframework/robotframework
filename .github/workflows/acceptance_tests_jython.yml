@@ -63,6 +63,7 @@ jobs:
         run: |
           ${{ matrix.set_jython_env }}
           ${{ matrix.jython_cmd }} -m pip install -r atest/requirements.txt
+          python -m pip install -r atest/requirements-run.txt
           ${{ matrix.set_codepage }}
           ${{ matrix.set_display }}
           python atest/run.py ${{ matrix.jython_dir }}/bin/jython --exclude no-ci atest/robot
