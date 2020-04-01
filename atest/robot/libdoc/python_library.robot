@@ -22,7 +22,7 @@ Generated
     Generated Should Be Defined
 
 Scope
-    Scope Should Be                  test suite
+    Scope Should Be                  SUITE
 
 Named Args
     Named Args Should Be             true

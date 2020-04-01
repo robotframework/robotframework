@@ -46,8 +46,9 @@ class JavaDocBuilder(object):
 
     def _get_scope(self, doc):
         scope = self._get_attr(doc, 'SCOPE', upper=True)
-        return {'TESTSUITE': 'test suite',
-                'GLOBAL': 'global'}.get(scope, 'test suite')
+        return {'GLOBAL': 'GLOBAL',
+                'SUITE': 'SUITE',
+                'TESTSUITE': 'SUITE'}.get(scope, 'TEST')
 
     def _get_doc_format(self, doc):
         return self._get_attr(doc, 'DOC_FORMAT', upper=True)

@@ -68,6 +68,7 @@ class ResourceDocBuilder(object):
         libdoc = LibraryDoc(name=res.name,
                             doc=self._get_doc(res),
                             type='resource',
+                            scope='GLOBAL',
                             source=res.source,
                             lineno=1)
         libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(res)

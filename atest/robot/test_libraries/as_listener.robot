@@ -71,7 +71,7 @@ Check closing
     ...    CLOSING GLOBAL\n
 
 Library listener should be in syslog
-    Syslog Should Contain Regexp    Imported library '.*suite_listenerlibrary.py' with arguments \\[ \\] \\(version <unknown>, class type, test suite scope, 5 keywords, with listener\\)
+    Syslog Should Contain Regexp    Imported library '.*suite_listenerlibrary.py' with arguments \\[ \\] \\(version <unknown>, class type, SUITE scope, 5 keywords, with listener\\)
 
 Nested scopes
     Run Tests    sources=test_libraries/as_listener/nested_scopes

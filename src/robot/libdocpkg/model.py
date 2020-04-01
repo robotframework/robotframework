@@ -26,8 +26,8 @@ from .output import LibdocOutput
 class LibraryDoc(object):
 
     def __init__(self, name='', doc='', version='', type='library',
-                 scope='', named_args=True, doc_format='ROBOT', source=None,
-                 lineno=-1):
+                 scope='TEST', named_args=True, doc_format='ROBOT',
+                 source=None, lineno=-1):
         self.name = name
         self._doc = doc
         self.version = version

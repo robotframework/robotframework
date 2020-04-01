@@ -29,7 +29,7 @@ class SpecDocBuilder(object):
                             type=spec.get('type'),
                             version=spec.find('version').text or '',
                             doc=spec.find('doc').text or '',
-                            scope=spec.find('scope').text or '',
+                            scope=self._get_scope(spec),
                             named_args=self._get_named_args(spec),
                             doc_format=spec.get('format', 'ROBOT'),
                             source=spec.get('source'),
@@ -47,11 +47,27 @@ class SpecDocBuilder(object):
             raise DataError("Invalid spec file '%s'." % path)
         return root
 
+    def _get_scope(self, spec):
+        # RF >= 3.2 has "scope" attribute w/ value 'GLOBAL', 'SUITE, or 'TEST'.
+        if 'scope' in spec.attrib:
+            return spec.get('scope')
+        # RF < 3.2 has "scope" element. Need to map old values to new.
+        scope = spec.find('scope').text
+        return {'': 'GLOBAL',          # Was used with resource files.
+                'global': 'GLOBAL',
+                'test suite': 'SUITE',
+                'test case': 'TEST'}[scope]
+
     def _get_named_args(self, spec):
-        elem = spec.find('namedargs')
-        if elem is None:
-            return False    # Backwards compatibility with RF < 2.6.2
-        return elem.text == 'yes'
+        # RF >= 3.2 has "namedargs" attribute w/ value 'true' or 'false'.
+        namedargs = spec.get('namedargs')
+        if namedargs == 'true':
+            return True
+        if namedargs == 'false':
+            return False
+        # RF < 3.2 has "namedargs" element with text 'yes' or 'no'.
+        namedargs = spec.find('namedargs').text
+        return namedargs == 'yes'
 
     def _create_keywords(self, spec, path):
         return [self._create_keyword(elem) for elem in spec.findall(path)]

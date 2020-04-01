@@ -19,7 +19,7 @@ Generated
     Generated Should Be Defined
 
 Scope
-    Scope Should Be    test case
+    Scope Should Be    TEST
 
 Named Args
     Named Args Should Be    true

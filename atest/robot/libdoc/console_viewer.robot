@@ -36,7 +36,7 @@ Show whole library
     Run Libdoc And Set Output    ${TESTDATADIR}/module.py show
     Should Contain Intro    module
     ...    Version=0.1-alpha
-    ...    Scope=global
+    ...    Scope=GLOBAL
     ...    Named arguments=supported
     Should Contain Keyword    Get Hello    ${EMPTY}
     ...    Get hello.

@@ -32,7 +32,7 @@ Generated
     Generated Should Be Defined
 
 Scope
-    Scope Should Be                 ${EMPTY}
+    Scope Should Be                 GLOBAL    old=${EMPTY}
 
 Named Args
     Named Args Should Be            true

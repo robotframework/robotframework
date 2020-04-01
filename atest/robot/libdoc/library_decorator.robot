@@ -7,7 +7,7 @@ Version
     Version should be    3.2b1
 
 Scope
-    Scope Should Be      global
+    Scope Should Be      GLOBAL
 
 Doc format
     Format Should Be     HTML

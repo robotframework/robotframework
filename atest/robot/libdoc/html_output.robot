@@ -18,7 +18,7 @@ Generated
     ${MODEL}[generated]     \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}
 
 Scope
-    ${MODEL}[scope]         global
+    ${MODEL}[scope]         GLOBAL
 
 Named Args
     [Template]    Should Be Equal

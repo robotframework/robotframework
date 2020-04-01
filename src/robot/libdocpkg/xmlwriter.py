@@ -50,7 +50,7 @@ class LibdocXmlWriter(object):
         writer.element('version', libdoc.version)
         # TODO: Remove 'scope' and 'namedargs' elements in RF 4.0.
         # https://github.com/robotframework/robotframework/issues/3522
-        writer.element('scope', libdoc.scope)
+        writer.element('scope', self._get_old_style_scope(libdoc))
         writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
         writer.element('doc', formatter(libdoc.doc))
 
@@ -74,6 +74,13 @@ class LibdocXmlWriter(object):
         if not WINDOWS:
             return True
         return os.path.splitdrive(path1)[0] == os.path.splitdrive(path2)[0]
+
+    def _get_old_style_scope(self, libdoc):
+        if libdoc.type == 'resource':
+            return ''
+        return {'GLOBAL': 'global',
+                'SUITE': 'test suite',
+                'TEST': 'test case'}[libdoc.scope]
 
     def _write_keywords(self, kw_type, keywords, lib_source, writer, formatter):
         for kw in keywords:

@@ -62,7 +62,7 @@ Importing Submodule As Library
     Check Test Case  ${TESTNAME}
 
 Module Library Scope Should Be Global
-    Syslog Should Contain  Imported library 'module_library' with arguments [ ] (version test, module type, global scope, 12 keywords)
+    Syslog Should Contain  Imported library 'module_library' with arguments [ ] (version test, module type, GLOBAL scope, 12 keywords)
 
 Importing Module Should Have Been Syslogged
     ${path} =  Normalize Path  ${CURDIR}/../../testresources/testlibs/module_library

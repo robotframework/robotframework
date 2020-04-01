@@ -22,7 +22,7 @@ Generated
     Generated Should Be Defined
 
 Scope
-    Scope Should Be                global
+    Scope Should Be                GLOBAL
 
 Named Args
     Named Args Should Be           false
@@ -97,7 +97,7 @@ Keyword Source Info
     Version Should Match              1.0
     Type Should Be                    library
     Generated Should Be Defined
-    Scope Should Be                   global
+    Scope Should Be                   GLOBAL
     Named Args Should Be              false
     Source should be                  Example.py
     Lineno should be                  8

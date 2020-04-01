@@ -160,7 +160,6 @@ the libraries used in the above example:
 .. sourcecode:: java
 
    public class AnotherLib {
-
        private String setting = null;
 
        public AnotherLib(String setting) {
@@ -196,15 +195,27 @@ Test libraries can control when new libraries are created with a
 class attribute `ROBOT_LIBRARY_SCOPE` . This attribute must be
 a string and it can have the following three values:
 
-`TEST CASE`
+`TEST`
   A new instance is created for every test case. A possible suite setup
-  and suite teardown share yet another instance. This is the default.
+  and suite teardown share yet another instance.
 
-`TEST SUITE`
+  Prior to Robot Framework 3.2 this value was `TEST CASE`, but nowadays
+  `TEST` is recommended. Because all unrecognized values are considered
+  same as `TEST`, both values work with all versions. For the same reason
+  it is possible to also use value `TASK` if the library is targeted for
+  RPA_ usage more than testing. `TEST` is also the default value if the
+  `ROBOT_LIBRARY_SCOPE` attribute is not set.
+
+
+`SUITE`
   A new instance is created for every test suite. The lowest-level test
   suites, created from test case files and containing test cases, have
   instances of their own, and higher-level suites all get their own instances
   for their possible setups and teardowns.
+
+  Prior to Robot Framework 3.2 this value was `TEST SUITE`. That value still
+  works, but `SUITE` is recommended with libraries targeting Robot Framework
+  3.2 and newer.
 
 `GLOBAL`
   Only one instance is created during the whole test execution and it
@@ -214,8 +225,8 @@ a string and it can have the following three values:
 .. note:: If a library is imported multiple times with different arguments__,
           a new instance is created every time regardless the scope.
 
-When the `TEST SUITE` or `GLOBAL` scopes are used with test
-libraries that have a state, it is recommended that libraries have some
+When the `SUITE` or `GLOBAL` scopes are used with libraries that have a state,
+it is recommended that libraries have some
 special keyword for cleaning up the state. This keyword can then be
 used, for example, in a suite setup or teardown to ensure that test
 cases in the next test suites can start from a known state. For example,
@@ -224,13 +235,12 @@ using the same browser in different test cases without having to
 reopen it, and it also has the :name:`Close All Browsers` keyword for
 easily closing all opened browsers.
 
-Example Python library using the `TEST SUITE` scope:
+Example Python library using the `SUITE` scope:
 
 .. sourcecode:: python
 
     class ExampleLibrary:
-
-        ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
+        ROBOT_LIBRARY_SCOPE = 'SUITE'
 
         def __init__(self):
             self._counter = 0
@@ -247,9 +257,7 @@ Example Java library using the `GLOBAL` scope:
 .. sourcecode:: java
 
     public class ExampleLibrary {
-
         public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
-
         private int counter = 0;
 
         public void count() {
@@ -296,7 +304,6 @@ A Java class using `ROBOT_LIBRARY_VERSION`:
 .. sourcecode:: java
 
     public class VersionExample {
-
         public static final String ROBOT_LIBRARY_VERSION = "1.0.2";
 
         public void keyword() {
@@ -335,6 +342,7 @@ about documenting test libraries in general.
 
     ROBOT_LIBRARY_DOC_FORMAT = 'reST'
 
+
     def keyword():
         """**Nothing** to see here. Not even in the table below.
 
@@ -354,7 +362,6 @@ about documenting test libraries in general.
      * Here is a link to the only `Keyword`.
      */
     public class DocFormatExample {
-
         public static final String ROBOT_LIBRARY_DOC_FORMAT = "HTML";
 
         /**<b>Nothing</b> to see here. Not even in the table below.
@@ -429,7 +436,7 @@ If needed, the automatic keyword discovery can be enabled by using the
     from robot.api.deco import library
 
 
-    @library(scope='TEST SUITE', auto_keywords=True)
+    @library(scope='GLOBAL', auto_keywords=True)
     class Example:
         # ...
 

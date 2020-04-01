@@ -22,7 +22,7 @@ Generated
     Generated Should Be Defined
 
 Scope
-    Scope Should Be                  global
+    Scope Should Be                  GLOBAL
 
 Named Args
     Named Args Should Be             true

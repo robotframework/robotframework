@@ -70,10 +70,10 @@ Type Should Be
     Element Attribute Should Be    ${LIBDOC}    type    ${type}
 
 Scope Should Be
-    [Arguments]    ${scope}
+    [Arguments]    ${scope}    ${old}=${{ {'GLOBAL': 'global', 'SUITE': 'test suite', 'TEST': 'test case'}[$scope] }}
     Element Attribute Should Be    ${LIBDOC}    scope    ${scope}
     # 'scope' element should be removed in RF 4.0.
-    Element Text Should Be    ${LIBDOC}    ${scope}    xpath=scope
+    Element Text Should Be    ${LIBDOC}    ${old}    xpath=scope
 
 Named Args Should Be
     [Arguments]    ${namedargs}

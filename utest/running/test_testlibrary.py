@@ -113,24 +113,29 @@ class TestImports(unittest.TestCase):
         self._verify_lib(TestLibrary(u"pythonmodule.library"), "pythonmodule.library",
                          [("keyword from submodule", None)])
 
-    def test_set_global_scope(self):
-        self._verify_scope(TestLibrary('libraryscope.Global'), 'global')
+    def test_global_scope(self):
+        self._verify_scope(TestLibrary('libraryscope.Global'), 'GLOBAL')
 
     def _verify_scope(self, lib, expected):
         assert_equal(str(lib.scope), expected)
 
-    def test_set_suite_scope(self):
-        self._verify_scope(TestLibrary('libraryscope.Suite'), 'test suite')
+    def test_suite_scope(self):
+        self._verify_scope(TestLibrary('libraryscope.Suite'), 'SUITE')
+        self._verify_scope(TestLibrary('libraryscope.TestSuite'), 'SUITE')
 
-    def test_set_test_scope(self):
-        self._verify_scope(TestLibrary('libraryscope.Test'), 'test case')
+    def test_test_scope(self):
+        self._verify_scope(TestLibrary('libraryscope.Test'), 'TEST')
+        self._verify_scope(TestLibrary('libraryscope.TestCase'), 'TEST')
 
-    def test_set_invalid_scope(self):
+    def test_task_scope_is_mapped_to_test_scope(self):
+        self._verify_scope(TestLibrary('libraryscope.Task'), 'TEST')
+
+    def test_invalid_scope_is_mapped_to_test_scope(self):
         for libname in ['libraryscope.InvalidValue',
                         'libraryscope.InvalidEmpty',
                         'libraryscope.InvalidMethod',
                         'libraryscope.InvalidNone']:
-            self._verify_scope(TestLibrary(libname), 'test case')
+            self._verify_scope(TestLibrary(libname), 'TEST')
 
     if JYTHON:
 
@@ -142,23 +147,23 @@ class TestImports(unittest.TestCase):
             lib = TestLibrary("javapkg.JavaPackageExample")
             self._verify_lib(lib, "javapkg.JavaPackageExample", java_keywords)
 
-        def test_set_global_scope_java(self):
-            self._verify_scope(TestLibrary('javalibraryscope.Global'), 'global')
+        def test_global_scope_java(self):
+            self._verify_scope(TestLibrary('javalibraryscope.Global'), 'GLOBAL')
 
-        def test_set_suite_scope_java(self):
-            self._verify_scope(TestLibrary('javalibraryscope.Suite'), 'test suite')
+        def test_suite_scope_java(self):
+            self._verify_scope(TestLibrary('javalibraryscope.Suite'), 'SUITE')
 
-        def test_set_test_scope_java(self):
-            self._verify_scope(TestLibrary('javalibraryscope.Test'), 'test case')
+        def test_test_scope_java(self):
+            self._verify_scope(TestLibrary('javalibraryscope.Test'), 'TEST')
 
-        def test_set_invalid_scope_java(self):
+        def test_invalid_scope_java(self):
             for libname in ['javalibraryscope.InvalidEmpty',
                             'javalibraryscope.InvalidMethod',
                             'javalibraryscope.InvalidNull',
                             'javalibraryscope.InvalidPrivate',
                             'javalibraryscope.InvalidProtected',
                             'javalibraryscope.InvalidValue']:
-                self._verify_scope(TestLibrary(libname), 'test case')
+                self._verify_scope(TestLibrary(libname), 'TEST')
 
     def _verify_lib(self, lib, libname, keywords):
         assert_equal(libname, lib.name)

@@ -23,11 +23,11 @@ Importing Library Class Should Have Been Syslogged
     Syslog Should Contain Match    | INFO \ |    Imported test library class 'libmodule.LibClass2' from '${base}${/}libmodule*'
 
 Number Of Keywords In Imported Library Is Reported In Syslog
-    Syslog Should Contain    | INFO \ |    Imported library 'libmodule.LibClass1' with arguments [ ] (version <unknown>, class type, test case scope, 1 keywords)
-    Syslog Should Contain    | INFO \ |    Imported library 'NamespaceUsingLibrary' with arguments [ ] (version <unknown>, class type, test case scope, 2 keywords)
+    Syslog Should Contain    | INFO \ |    Imported library 'libmodule.LibClass1' with arguments [ ] (version <unknown>, class type, TEST scope, 1 keywords)
+    Syslog Should Contain    | INFO \ |    Imported library 'NamespaceUsingLibrary' with arguments [ ] (version <unknown>, class type, TEST scope, 2 keywords)
 
 Warning Should Be Written To Syslog If Library Contains No Keywords
-    Syslog Should Contain    | INFO \ |    Imported library 'libmodule' with arguments [ ] (version <unknown>, module type, global scope, 0 keywords)
+    Syslog Should Contain    | INFO \ |    Imported library 'libmodule' with arguments [ ] (version <unknown>, module type, GLOBAL scope, 0 keywords)
     Syslog Should Contain    | WARN \ |    Imported library 'libmodule' contains no keywords.
 
 Importing Python Class From Module
