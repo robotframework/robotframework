@@ -48,9 +48,11 @@ Running acceptance tests
 Robot Framework's acceptance tests are executed using the `<run.py>`__
 script. It has two mandatory arguments, the Python interpreter or standalone
 jar to use when running tests and path to tests to be executed, and it accepts
-also all same options as Robot Framework. The script itself should always be
-executed with Python 3.6 or newer. Run it with ``--help`` or see
-documentation in its `source code <run.py>`__ for more information.
+also all same options as Robot Framework.
+
+The ``run.py`` script itself should always be executed with Python 3.6 or
+newer. The execution side also has some dependencies listed in
+`<requirements-run.py>`__ that needs to be installed before running tests.
 
 To run all the acceptance tests, execute the ``atest/robot`` folder
 entirely using the selected interpreter. If the interpreter itself needs
@@ -63,8 +65,7 @@ Examples::
     atest/run.py "py -3" atest/robot
 
 When running tests with the standalone jar distribution, the jar needs to
-be first created with command ``invoke jar`` (see `<../BUILD.rst>`__ for
-details):
+be created first (see `<../BUILD.rst>`__ for details)::
 
     invoke jar --jar-name=atest
     atest/run.py dist/atest.jar atest/robot
@@ -93,6 +94,9 @@ and on different operating systems.
 The results of the test execution are written into an interpreter specific
 directory under the ``atest/results`` directory. Temporary outputs created
 during the execution are created under the system temporary directory.
+
+For more details about starting execution, run ``atest/run.py --help`` or
+see scripts `own documentation <run.py>`__.
 
 Test data
 ---------
@@ -185,22 +189,15 @@ These Python modules need to be installed:
 - `enum34 <https://pypi.org/project/enum34/>`__ (or older
   `enum <https://pypi.org/project/enum/>`__) by enum conversion tests.
   This module is included by default in Python 3.4 and newer.
+- `Pillow <https://pypi.org/project/Pillow/>`_ for taking screenshots on
+  Windows.
 - `lxml <http://lxml.de/>`__ is needed with XML library tests. Not compatible
   with Jython or IronPython.
 
-It is possible to install the above modules using ``pip`` either
-individually or by using the provided `<requirements.txt>`__ file:
+It is possible to install the above modules using ``pip`` individually, but
+it is easiest to use the provided `<requirements.txt>`__ file that installs
+needed packages conditionally depending on the platform::
 
-.. code:: bash
-
-    # Install individually
-    pip install 'docutils>=0.9'
-    pip install pygments
-    pip install pyyaml
-    pip install enum34    # Needed only with Python 2.
-    pip install lxml
-
-    # Install using requirements.txt
     pip install -r atest/requirements.txt
 
 Notice that the lxml module may require compilation on Linux, which in turn
@@ -215,7 +212,10 @@ Screenshot module or tool
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Screenshot library tests require a platform dependent module or tool that can
-take screenshots. See `Screenshot library documentation`__ for details.
+take screenshots. The above instructions already covered installing Pillow_
+on Windows and on OSX it is possible to use tooling provided by the operating
+system automatically. For Linux Linux alternatives consult the
+`Screenshot library documentation`__.
 
 __ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
 
