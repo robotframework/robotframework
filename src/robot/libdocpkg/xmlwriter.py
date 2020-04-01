@@ -28,7 +28,7 @@ class LibdocXmlWriter(object):
 
     def write(self, libdoc, outfile):
         formatter = DocFormatter(libdoc.doc_format, self._force_html_doc)
-        writer = XmlWriter(outfile, usage='Libdoc output')
+        writer = XmlWriter(outfile, usage='Libdoc spec')
         self._write_start(libdoc, writer, formatter)
         self._write_keywords('init', libdoc.inits, libdoc.source,
                              writer, formatter)

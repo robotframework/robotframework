@@ -57,7 +57,7 @@ Invalid output file
     ...    Create Directory    ${OUT HTML}    AND
     ...    Create Directory    ${OUT XML}
     String ${OUT HTML}    Opening Libdoc output file '${OUT HTML}' failed: *
-    String ${OUT XML}     Opening Libdoc output file '${OUT XML}' failed: *
+    String ${OUT XML}     Opening Libdoc spec file '${OUT XML}' failed: *
     [Teardown]    Run Keywords
     ...    Remove Directory    ${OUT HTML}    AND
     ...    Remove Directory    ${OUT XML}
