@@ -52,7 +52,7 @@ also all same options as Robot Framework.
 
 The ``run.py`` script itself should always be executed with Python 3.6 or
 newer. The execution side also has some dependencies listed in
-`<requirements-run.py>`__ that needs to be installed before running tests.
+`<requirements-run.txt>`__ that needs to be installed before running tests.
 
 To run all the acceptance tests, execute the ``atest/robot`` folder
 entirely using the selected interpreter. If the interpreter itself needs
