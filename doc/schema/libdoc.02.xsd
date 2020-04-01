@@ -5,9 +5,9 @@
     <xs:sequence>
       <xs:element name="version" type="xs:string" />
       <!-- Both "scope" and "namedargs" elements are deprecated.
-      Use "scope" and "namedargs" as attributes of <keywordspec> instead. -->
-      <xs:element name="scope" type="LibraryScope" minOccurs="0" /> <!-- deprecated -->
-      <xs:element name="namedargs" type="SupportNamedArgs" minOccurs="0" /> <!-- deprecated -->
+           Use attributes with same names instead. -->
+      <xs:element name="scope" type="LibraryScope" minOccurs="0" />
+      <xs:element name="namedargs" type="SupportNamedArgs" minOccurs="0" />
       <xs:element name="doc" type="xs:string" />
       <xs:element name="init" type="Init" minOccurs="0" />
       <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
@@ -19,6 +19,9 @@
     <xs:attribute name="namedargs" type="xs:boolean" use="required" />
     <xs:attribute name="generated" type="xs:dateTime" use="required" />
     <xs:attribute name="specversion" type="SpecVersion" use="required" />
+    <!-- "source" is a path relative to the location where the spec file is created.
+         Both "source" and "lineno" are omitted if getting them from library fails.
+         With Init and Keyword elements source is omitted also if it same as here. -->
     <xs:attribute name="source" type="xs:string" use="optional" />
     <xs:attribute name="lineno" type="xs:positiveInteger" use="optional" />
   </xs:complexType>
@@ -29,6 +32,7 @@
       <xs:element name="tags" type="Tags" />
     </xs:sequence>
     <xs:attribute name="deprecated" type="xs:boolean" use="optional" />
+    <!-- See the KeywordSpec level comment about "source" and "lineno". -->
     <xs:attribute name="source" type="xs:string" use="optional" />
     <xs:attribute name="lineno" type="xs:positiveInteger" use="optional" />
   </xs:complexType>
@@ -40,6 +44,7 @@
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="deprecated" type="xs:boolean" use="optional" />
+    <!-- See the KeywordSpec level comment about "source" and "lineno". -->
     <xs:attribute name="source" type="xs:string" use="optional" />
     <xs:attribute name="lineno" type="xs:positiveInteger" use="optional" />
   </xs:complexType>
@@ -81,6 +86,8 @@
       <xs:maxInclusive value="2" />
     </xs:restriction>
   </xs:simpleType>
+  <!-- This is only used with the deprecated "namedargs" element.
+       The "namedargs" attribute is xs:boolean. -->
   <xs:simpleType name="SupportNamedArgs">
     <xs:restriction base="xs:string">
       <xs:enumeration value="yes" />
