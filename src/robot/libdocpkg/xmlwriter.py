@@ -91,10 +91,11 @@ class LibdocXmlWriter(object):
                 writer.element('arg', arg)
             writer.end('arguments')
             writer.element('doc', formatter(kw.doc))
-            writer.start('tags')
-            for tag in kw.tags:
-                writer.element('tag', tag)
-            writer.end('tags')
+            if kw_type == 'kw' and kw.tags:
+                writer.start('tags')
+                for tag in kw.tags:
+                    writer.element('tag', tag)
+                writer.end('tags')
             writer.end(kw_type)
 
     def _get_start_attrs(self, kw_type, kw, lib_source, writer):
