@@ -16,7 +16,7 @@ Version
     Version Should Be              42
 
 Type
-    Type Should Be                 library
+    Type Should Be                 LIBRARY
 
 Generated
     Generated Should Be Defined
@@ -103,7 +103,7 @@ Test Everything
     Name Should Be                    Example
     Doc Should Start With             Library for `libdoc.py` testing purposes.
     Version Should Be                 42
-    Type Should Be                    library
+    Type Should Be                    LIBRARY
     Generated Should Be Defined
     Scope Should Be                   GLOBAL
     Named Args Should Be              false

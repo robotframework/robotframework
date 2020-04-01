@@ -62,7 +62,7 @@ class ConsoleViewer(object):
         self._header(lib.name, underline='=')
         named_args = 'supported' if lib.named_args else 'not supported'
         self._data([('Version', lib.version),
-                    ('Scope', lib.scope if lib.type == 'library' else None),
+                    ('Scope', lib.scope if lib.type == 'LIBRARY' else None),
                     ('Named arguments', named_args)])
         self._doc(lib.doc)
 

@@ -16,7 +16,7 @@ Version
     Version Should Be                0.1-alpha
 
 Type
-    Type Should Be                   library
+    Type Should Be                   LIBRARY
 
 Generated
     Generated Should Be Defined

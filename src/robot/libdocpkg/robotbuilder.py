@@ -67,7 +67,7 @@ class ResourceDocBuilder(object):
         res = self._import_resource(path)
         libdoc = LibraryDoc(name=res.name,
                             doc=self._get_doc(res),
-                            type='resource',
+                            type='RESOURCE',
                             scope='GLOBAL',
                             source=res.source,
                             lineno=1)

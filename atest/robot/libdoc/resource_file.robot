@@ -26,7 +26,7 @@ Version
     Version Should Be               ${EMPTY}
 
 Type
-    Type Should Be                  resource
+    Type Should Be                  RESOURCE
 
 Generated
     Generated Should Be Defined

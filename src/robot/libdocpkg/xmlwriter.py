@@ -76,7 +76,7 @@ class LibdocXmlWriter(object):
         return os.path.splitdrive(path1)[0] == os.path.splitdrive(path2)[0]
 
     def _get_old_style_scope(self, libdoc):
-        if libdoc.type == 'resource':
+        if libdoc.type == 'RESOURCE':
             return ''
         return {'GLOBAL': 'global',
                 'SUITE': 'test suite',

@@ -26,7 +26,7 @@ class SpecDocBuilder(object):
     def build(self, path):
         spec = self._parse_spec(path)
         libdoc = LibraryDoc(name=spec.get('name'),
-                            type=spec.get('type'),
+                            type=spec.get('type').upper(),
                             version=spec.find('version').text or '',
                             doc=spec.find('doc').text or '',
                             scope=self._get_scope(spec),

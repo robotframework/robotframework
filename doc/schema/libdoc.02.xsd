@@ -67,8 +67,8 @@
   </xs:simpleType>
   <xs:simpleType name="LibraryType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="library" />
-      <xs:enumeration value="resource" />
+      <xs:enumeration value="LIBRARY" />
+      <xs:enumeration value="RESOURCE" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="SpecVersion">

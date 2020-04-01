@@ -16,7 +16,7 @@ Version
     Version Should Match             3.*
 
 Type
-    Type Should Be                   library
+    Type Should Be                   LIBRARY
 
 Generated
     Generated Should Be Defined
