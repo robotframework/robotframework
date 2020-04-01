@@ -182,6 +182,9 @@ def jar(ctx, jython_version='2.7.2', pyyaml_version='5.1',
             `jython-standalone-<version>.jar` found from Maven central.
         pyyaml_version: Version of PyYAML that will be included in the
             standalone jar. The version must be available from PyPI.
+        jar_name: Name of the jar file. If not given, name is constructed
+            based on the version. The `.jar` extension is added automatically
+            if needed and the jar is always created under the `dist` directory.
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
     clean(ctx, remove_dist, create_dirs=True)
@@ -276,6 +279,8 @@ def create_robot_jar(ctx, version, name=None, source='build'):
     write_manifest(version, source)
     if not name:
         name = f'robotframework-{version}.jar'
+    elif not name.endswith('.jar'):
+        name += '.jar'
     target = Path(f'dist/{name}')
     ctx.run(f'jar cvfM {target} -C {source} .')
     print(f"Created '{target}'.")

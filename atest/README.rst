@@ -53,10 +53,21 @@ executed with Python 3.6 or newer. Run it with ``--help`` or see
 documentation in its `source code <run.py>`__ for more information.
 
 To run all the acceptance tests, execute the ``atest/robot`` folder
-entirely using the selected interpreter::
+entirely using the selected interpreter. If the interpreter itself needs
+arguments, the interpreter and its arguments need to be quoted.
+
+Examples::
 
     atest/run.py python atest/robot
     atest/run.py jython atest/robot
+    atest/run.py "py -3" atest/robot
+
+When running tests with the standalone jar distribution, the jar needs to
+be first created with command ``invoke jar`` (see `<../BUILD.rst>`__ for
+details):
+
+    invoke jar --jar-name=atest
+    atest/run.py dist/atest.jar atest/robot
 
 The commands above will execute all tests, but you typically want to skip
 `Telnet tests`_ and tests requiring manual interaction. These tests are marked
@@ -64,12 +75,15 @@ with the ``no-ci`` tag and can be easily excluded::
 
     atest/run.py python --exclude no-ci atest/robot
 
+On modern machines running all acceptance tests ought to take less than ten
+minutes with Python, but with Jython and IronPython the execution time can be
+several hours.
+
 A sub test suite can be executed simply by running the folder or file
-containing it. On modern machines running all acceptance tests ought to
-take less than ten minutes with Python, but with Jython the execution time
-is considerably longer. This is due to Jython being somewhat slower than
-Python in general, but the main reason is that the JVM is started by
-acceptance tests dozens of times and that always takes a few seconds.
+containing it::
+
+    atest/run.py python atest/robot/libdoc
+    atest/run.py python atest/robot/libdoc/resource_file.robot
 
 Before a release tests should be executed separately using Python, Jython,
 IronPython and PyPy to verify interoperability with all supported interpreters.
@@ -145,10 +159,6 @@ Examples:
     # Run only tests related to Java integration. This is considerably faster
     # than running all tests on Jython.
     atest/run.py jython --include require-jython atest/robot
-
-    # Recreate the standalone jar distribution and use it as an interpreter.
-    invoke jar
-    atest/run.py dist/robotframework-3.2b3.dev1.jar --exclude no-ci atest/robot
 
 Preconditions
 -------------

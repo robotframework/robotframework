@@ -207,6 +207,11 @@ Creating distributions
        java -jar dist/robotframework-$VERSION.jar --version
        java -jar dist/robotframework-$VERSION.jar atest/testdata/misc/pass_and_fail.robot
 
+    - To create a JAR with a custom name for testing::
+
+       invoke jar --jar-name=example
+       java -jar dist/example.jar --version
+
 8. Upload JAR to Sonatype
 
    - Sonatype offers a service where users can upload JARs and they will be synced
