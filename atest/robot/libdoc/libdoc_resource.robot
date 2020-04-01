@@ -22,8 +22,9 @@ Run Libdoc And Parse Output
     [Arguments]    ${arguments}
     Remove File    ${OUTXML}
     Run Libdoc And Set Output    ${arguments} ${OUTXML}
-    Should Not Contain    ${OUTPUT}    --help    Execution failed:\n\n${output}    no values
+    Should Not Contain    ${OUTPUT}    --help    Execution failed:\n\n${OUTPUT}    values=False
     Log File    ${OUTXML}
+    Validate Spec    ${OUTXML}
     ${LIBDOC}=    Parse Xml    ${OUTXML}
     Set Suite Variable    ${LIBDOC}
 

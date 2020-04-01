@@ -9,7 +9,7 @@
       <xs:element name="scope" type="DeprecatedScope" minOccurs="0" />
       <xs:element name="namedargs" type="DeprecatedNamedArgs" minOccurs="0" />
       <xs:element name="doc" type="xs:string" />
-      <xs:element name="init" type="Init" minOccurs="0" />
+      <xs:element name="init" type="Init" minOccurs="0" maxOccurs="unbounded" />
       <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required" />
