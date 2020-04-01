@@ -1,6 +1,18 @@
 name: Unit tests
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - '.github/workflows/**'
+      - 'src/**'
+      - 'utest/**'
+      - '!**/*.rst'
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'src/**'
+      - 'utest/**'
+      - '!**/*.rst'
 
 jobs:
   test_using_builtin_python:
