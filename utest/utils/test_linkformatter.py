@@ -15,8 +15,8 @@ class TestLinkFormatter(unittest.TestCase):
     def test_format_link_url_image(self):
         for ext in ('jpg', 'jpeg', 'png', 'gif', 'bmp', 'PNG'):
             with self.subTest(ext):
-                result = self.formatter.format_link(f'Robot -> [doc/images/robot.{ext}|robot] Good!')
-                self.assertEqual(result, f'Robot -> <img src="doc/images/robot.{ext}" title="robot"> Good!')
+                result = self.formatter.format_link('Robot -> [doc/images/robot.%s|robot] Good!' % ext)
+                self.assertEqual(result, 'Robot -> <img src="doc/images/robot.%s" title="robot"> Good!' % ext)
 
     def test_format_base64_image_link(self):
         result = self.formatter.format_link('[data:image/png;base64,oooxxx=|Robot rocks!]')
