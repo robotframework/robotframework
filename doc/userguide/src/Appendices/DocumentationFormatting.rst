@@ -212,7 +212,7 @@ It is possible to create custom links
 and embed images using special syntax `[link|content]`. This creates
 a link or image depending are `link` and `content` images.
 They are considered images if they have the same image extensions that are
-special with URLs_. The surrounding square brackets and the pipe character
+special with URLs_ or start with `data:image/`. The surrounding square brackets and the pipe character
 between the parts are mandatory in all cases.
 
 Link with text content
@@ -232,6 +232,7 @@ If `content` is an image, you get a link where the link content is an
 image. Link target is created by `link` and it can be either text or image::
 
     [robot.html|robot.png] -> <a href="robot.html"><img src="robot.png"></a>
+    [robot.html|data:image/png;base64,oooxxx=] -> <a href="robot.html"><img src="data:image/png;base64,oooxxx="></a>
     [image.jpg|thumb.jpg] -> <a href="image.jpg"><img src="thumb.jpg"></a>
 
 Image with title text
@@ -242,6 +243,7 @@ image where the `content` is the title text shown when mouse is over
 the image::
 
     [robot.jpeg|Robot rocks!] -> <img src="robot.jpeg" title="Robot rocks!">
+    [data:image/png;base64,oooxxx=|Robot rocks!] -> <img src="data:image/png;base64,oooxxx=" title="Robot rocks!">
 
 Section titles
 --------------
