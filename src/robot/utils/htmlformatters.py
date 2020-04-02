@@ -67,7 +67,9 @@ class LinkFormatter(object):
         return self._get_link(link, content)
 
     def _is_image(self, text):
-        return text.lower().startswith('data:image/') or text.lower().endswith(self._image_exts)
+
+        return (text.startswith('data:image/')
+                or text.lower().endswith(self._image_exts))
 
 
 class LineFormatter(object):

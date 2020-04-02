@@ -203,7 +203,7 @@ The automatic conversion of URLs to links is applied to all the data
 in logs and reports, but creating images is done only for test suite,
 test case and keyword documentation, and for test suite metadata.
 
-.. note:: `.svg` image support is new in Robot Framework 3.2.
+.. note:: :file:`.svg` image support is new in Robot Framework 3.2.
 
 Custom links and images
 -----------------------
@@ -212,8 +212,10 @@ It is possible to create custom links
 and embed images using special syntax `[link|content]`. This creates
 a link or image depending are `link` and `content` images.
 They are considered images if they have the same image extensions that are
-special with URLs_ or start with `data:image/`. The surrounding square brackets and the pipe character
-between the parts are mandatory in all cases.
+special with URLs_ or start with `data:image/`. The surrounding square
+brackets and the pipe character between the parts are mandatory in all cases.
+
+.. note:: Support for the `data:image/` prefix is new in Robot Framework 3.2.
 
 Link with text content
 ~~~~~~~~~~~~~~~~~~~~~~
