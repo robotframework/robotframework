@@ -13,10 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import Mapping, UserString
+from collections.abc import Mapping, MutableMapping, Sequence
+from collections import UserString
 from io import IOBase
 
-from .platform import RERAISED_EXCEPTIONS
+from .platform import RERAISED_EXCEPTIONS, PY_VERSION
+
+if PY_VERSION < (3, 6):
+    from pathlib import PosixPath, WindowsPath
+    PathLike = (PosixPath, WindowsPath)
+else:
+    from os import PathLike
 
 
 def is_integer(item):
@@ -39,6 +46,10 @@ def is_unicode(item):
     return isinstance(item, str)
 
 
+def is_pathlike(item):
+    return isinstance(item, PathLike)
+
+
 def is_list_like(item):
     if isinstance(item, (str, bytes, bytearray, UserString, IOBase)):
         return False
@@ -56,10 +67,12 @@ def is_dict_like(item):
     return isinstance(item, Mapping)
 
 
-def type_name(item):
+def type_name(item, capitalize=False):
     if isinstance(item, IOBase):
-        return 'file'
-    cls = item.__class__ if hasattr(item, '__class__') else type(item)
-    named_types = {str: 'string', bool: 'boolean', int: 'integer',
-                   type(None): 'None', dict: 'dictionary', type: 'class'}
-    return named_types.get(cls, cls.__name__)
+        name = 'file'
+    else:
+        cls = item.__class__ if hasattr(item, '__class__') else type(item)
+        named_types = {str: 'string', bool: 'boolean', int: 'integer',
+                       type(None): 'None', dict: 'dictionary', type: 'class'}
+        name = named_types.get(cls, cls.__name__)
+    return name.capitalize() if capitalize and name.islower() else name

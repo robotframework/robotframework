@@ -79,11 +79,10 @@ this section.
    in a section of their own.
 
 .. note:: Setting names are case-insensitive, but the format used above is
-      recommended. Prior to Robot Framework 3.1, settings were also
-      space-insensitive meaning that extra spaces could be added (e.g.
-      `[T a g s]`). This is now deprecated and only the format above,
-      case-insensitively, is supported. Possible space between brackets
-      and the name (e.g. `[ Tags ]`) is still allowed.
+      recommended. Settings used to be also space-insensitive, but that was
+      deprecated in Robot Framework 3.1 and trying to use something like
+      `[T a g s]` causes an error in Robot Framework 3.2. Possible spaces
+      between brackets and the name (e.g. `[ Tags ]`) are still allowed.
 
 __ `Settings in the test case table`_
 __ `User keyword tags`_
@@ -142,7 +141,7 @@ the `Deprecating keywords`_ section.
 User keyword tags
 -----------------
 
-Starting from Robot Framework 2.9, keywords can also have tags. User keywords
+Both user keywords and `library keywords`_ can have tags. User keyword
 tags can be set with :setting:`[Tags]` setting similarly as `test case tags`_,
 but possible :setting:`Force Tags` and :setting:`Default Tags` setting do not
 affect them. Additionally keyword tags can be specified on the last line of
@@ -309,7 +308,8 @@ other arguments. The list variable can thus have any number of items, even zero.
        Log    Optional: ${opt}
        Log    Others:
        FOR    ${item}    IN    @{others}
-       \    Log    ${item}
+           Log    ${item}
+       END
 
 Notice that if the last keyword above is used with more than one
 argument, the second argument `${opt}` always gets the given
@@ -527,6 +527,7 @@ __ `Ignoring Given/When/Then/And/But prefixes`_
 
 Using custom regular expressions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 When keywords with embedded arguments are called, the values are
 matched internally using `regular expressions`__
 (regexps for short). The default logic goes so that every argument in
@@ -581,10 +582,10 @@ regular expressions is illustrated by the examples below.
    I execute "${cmd}" with "${opts}"
        Run Process    ${cmd} ${opts}    shell=True
 
-   I type ${a:\d+} ${operator:[+-]} ${b:\d+}
-       Calculate    ${a}    ${operator}    ${b}
+   I type ${num1:\d+} ${operator:[+-]} ${num2:\d+}
+       Calculate    ${num1}    ${operator}    ${num2}
 
-   Today is ${date:\d{4\}-\d{2\}-\d{2\}}
+   Today is ${date:\d{4}-\d{2}-\d{2}}
        Log    ${date}
 
 In the above example keyword :name:`I execute "ls" with "-lh"` matches
@@ -613,23 +614,22 @@ errors`__.
 Escaping special characters
 '''''''''''''''''''''''''''
 
-There are some special characters that need to be escaped when used in
-the custom embedded arguments regexp. First of all, possible closing
-curly braces (`}`) in the pattern need to be escaped with a single backslash
-(`\}`) because otherwise the argument would end already there. This is
-illustrated in the previous example with keyword
-:name:`Today is ${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}`.
+Regular expressions use the backslash character (:codesc:`\\`) heavily both
+to escape characters that have a special meaning in regexps (e.g. `\$`) and
+to form special sequences (e.g. `\d`). Typically in Robot Framework data
+backslash characters `need to be escaped`__ with another backslash, but
+that is not required in this context. If there is a need to have a literal
+backslash in the pattern, then the backslash must be escaped.
 
-Backslash (:codesc:`\\`) is a special character in Python regular
-expression syntax and thus needs to be escaped if you want to have a
-literal backslash character. The safest escape sequence in this case
-is four backslashes (`\\\\`) but, depending on the next
-character, also two backslashes may be enough.
+Possible lone opening and closing curly braces in the pattern must be escaped
+like `${open:\}}` and `${close:\{}`. If there are matching braces like
+`${two digits:\d{2}}`, escaping is not needed. Escaping only opening or
+closing brace is not allowed.
 
-Notice also that keyword names and possible embedded arguments in them
-should *not* be escaped using the normal `test data escaping
-rules`__. This means that, for example, backslashes in expressions
-like `${name:\w+}` should not be escaped.
+.. warning:: Prior to Robot Framework 3.2 it was mandatory to escape all
+             closing curly braces in the pattern like `${two digits:\d{2\}}`.
+             This syntax is unfortunately not supported by Robot Framework 3.2
+             or newer and keywords using it must be updated when upgrading.
 
 Using variables with custom embedded argument regular expressions
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -789,8 +789,9 @@ demonstrates returning conditionally inside a `for loop`_.
        [Arguments]    ${element}    @{items}
        ${index} =    Set Variable    ${0}
        FOR    ${item}    IN    @{items}
-       \    Return From Keyword If    '${item}' == '${element}'    ${index}
-       \    ${index} =    Set Variable    ${index + 1}
+           Return From Keyword If    '${item}' == '${element}'    ${index}
+           ${index} =    Set Variable    ${index + 1}
+       END
        Return From Keyword    ${-1}    # Could also use [Return]
 
 User keyword teardown

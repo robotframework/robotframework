@@ -13,4 +13,4 @@ S1TC2 Fixture
 
 S1TC2 Timeout
     [Timeout]    24 hours
-    Sleep    1.1
+    Sleep    0.1

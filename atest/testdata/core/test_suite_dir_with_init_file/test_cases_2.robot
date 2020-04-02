@@ -13,4 +13,4 @@ TC2 Fixture
 
 TC2 Timeout
     [Timeout]    1 hour
-    Sleep    1.1
+    Sleep    0.1

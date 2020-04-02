@@ -21,7 +21,7 @@ from robot.errors import (ExecutionFailed, ExecutionPassed, ExecutionStatus,
                           UserKeywordExecutionFailed, VariableError)
 from robot.result import Keyword as KeywordResult
 from robot.utils import getshortdoc, DotDict, prepr, split_tags_from_doc
-from robot.variables import is_list_var, VariableAssignment
+from robot.variables import is_list_variable, VariableAssignment
 
 from .arguments import DefaultValue
 from .statusreporter import StatusReporter
@@ -90,10 +90,7 @@ class UserKeywordRunner(object):
 
     def _get_timeout(self, variables=None):
         timeout = self._handler.timeout
-        if not timeout:
-            return None
-        timeout = KeywordTimeout(timeout.value, timeout.message, variables)
-        return timeout
+        return KeywordTimeout(timeout, variables) if timeout else None
 
     def _resolve_arguments(self, arguments, variables=None):
         return self.arguments.resolve(arguments, variables)
@@ -176,12 +173,12 @@ class UserKeywordRunner(object):
         ret = self._handler.return_value if not return_ else return_.return_value
         if not ret:
             return None
-        contains_list_var = any(is_list_var(item) for item in ret)
+        contains_list_var = any(is_list_variable(item) for item in ret)
         try:
             ret = variables.replace_list(ret)
         except DataError as err:
-            raise VariableError('Replacing variables from keyword return value '
-                                'failed: %s' % err.message)
+            raise VariableError('Replacing variables from keyword return '
+                                'value failed: %s' % err.message)
         if len(ret) != 1 or contains_list_var:
             return ret
         return ret[0]
@@ -192,6 +189,8 @@ class UserKeywordRunner(object):
         try:
             name = context.variables.replace_string(self._handler.teardown.name)
         except DataError as err:
+            if context.dry_run:
+                return None
             return ExecutionFailed(err.message, syntax=True)
         if name.upper() in ('', 'NONE'):
             return None

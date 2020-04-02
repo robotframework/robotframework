@@ -31,23 +31,23 @@ Java Listener
     ...    START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
     ...    LOG MESSAGE: [INFO] Hello says "Suite Setup"!
     ...    START KW: BuiltIn.Log [Debug message\${LEVEL2}]
-    ...    START KW: BuiltIn.Set Variable [Just testing...]
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    START KW: String.Convert To Upper Case [Just testing...]
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    START TEST: Pass '' [forcepass]
     ...    START KW: My Keyword [Pass]
     ...    START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
     ...    LOG MESSAGE: [INFO] Hello says "Pass"!
     ...    START KW: BuiltIn.Log [Debug message\${LEVEL2}]
-    ...    START KW: BuiltIn.Set Variable [Just testing...]
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    START KW: String.Convert To Upper Case [Just testing...]
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    END TEST: PASS
     ...    START TEST: Fail 'FAIL Expected failure' [failforce]
     ...    START KW: My Keyword [Fail]
     ...    START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
     ...    LOG MESSAGE: [INFO] Hello says "Fail"!
     ...    START KW: BuiltIn.Log [Debug message\${LEVEL2}]
-    ...    START KW: BuiltIn.Set Variable [Just testing...]
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    START KW: String.Convert To Upper Case [Just testing...]
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    START KW: BuiltIn.Fail [Expected failure]
     ...    LOG MESSAGE: [FAIL] Expected failure
     ...    END TEST: FAIL: Expected failure
@@ -58,16 +58,14 @@ Java Listener
 
 Correct Attributes To Listener Methods
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
-    Check Stderr Does Not Contain    attributeverifyinglistener
-    Should Contain X Times    ${status}    FAILED    0
-    Should Contain X Times    ${status}    PASSED    384
+    Stderr Should Not Contain    attributeverifyinglistener
+    Should Not Contain    ${status}    FAILED
 
 Correct Attributes To Java Listener Methods
     [Tags]    require-jython
     ${status} =    Log File    %{TEMPDIR}/${JAVA_ATTR_TYPE_FILE}
-    Check Stderr Does Not Contain    JavaAttributeVerifyingListener
-    Should Contain X Times    ${status}    FAILED    0
-    Should Contain X Times    ${status}    PASSED    306
+    Stderr Should Not Contain    JavaAttributeVerifyingListener
+    Should Not Contain    ${status}    FAILED
 
 Keyword Tags
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
@@ -103,13 +101,12 @@ Test Template
     Stderr Should Be Empty
 
 Keyword Arguments Are Always Strings
-    ${result} =    Run Tests    --listener attributeverifyinglistener    output/listeners/keyword_argument_types.robot
+    ${result} =    Run Tests    --listener attributeverifyinglistener    output/listeners/keyword_argument_types.robot
     Should Be Empty    ${result.stderr}
     Check Test Tags    Run Keyword with already resolved non-string arguments in test data    1    2
     Check Test Case    Run Keyword with non-string arguments in library
     ${status} =    Log File    %{TEMPDIR}/${ATTR_TYPE_FILE}
-    Should Contain X Times    ${status}    FAILED    0
-    Should Contain X Times    ${status}    PASSED    211
+    Should Not Contain    ${status}    FAILED
 
 TimeoutError occurring during listener method is propagaged
     [Documentation]    Timeouts can only occur inside `log_message`.
@@ -122,11 +119,16 @@ TimeoutError occurring during listener method is propagaged
 
 *** Keywords ***
 Run Tests With Listeners
-    ${args}=    Catenate
-    ...    --listener ListenAll --listener ListenAll:%{TEMPDIR}${/}${ALL_FILE2}
-    ...    --listener module_listener --listener listeners.ListenSome --listener JavaListener
-    ...    --listener attributeverifyinglistener --listener JavaAttributeVerifyingListener
-    ...    --metadata ListenerMeta:Hello --critical pass
+    ${args} =    Join Command Line
+    ...    --listener    ListenAll
+    ...    --listener    ListenAll:%{TEMPDIR}${/}${ALL_FILE2}
+    ...    --listener    module_listener
+    ...    --listener    listeners.ListenSome
+    ...    --listener    JavaListener
+    ...    --listener    attributeverifyinglistener
+    ...    --listener    JavaAttributeVerifyingListener
+    ...    --metadata    ListenerMeta:Hello
+    ...    --critical    pass
     Run Tests    ${args}    misc/pass_and_fail.robot
 
 Check Listen All File
@@ -139,31 +141,31 @@ Check Listen All File
     ...    KW END: PASS
     ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
     ...    KW END: PASS
-    ...    KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...']
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    KW END: PASS
-    ...    TEST START: Pass (s1-t1) '' ['force', 'pass'] crit: yes
+    ...    TEST START: Pass (s1-t1, line 12) '' ['force', 'pass'] crit: yes
     ...    KW START: My Keyword ['Pass']
     ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
     ...    LOG MESSAGE: [INFO] Hello says "Pass"!
     ...    KW END: PASS
     ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
     ...    KW END: PASS
-    ...    KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...']
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    KW END: PASS
     ...    TEST END: PASS crit: yes
-    ...    TEST START: Fail (s1-t2) 'FAIL Expected failure' ['fail', 'force'] crit: no
+    ...    TEST START: Fail (s1-t2, line 17) 'FAIL Expected failure' ['fail', 'force'] crit: no
     ...    KW START: My Keyword ['Fail']
     ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
     ...    LOG MESSAGE: [INFO] Hello says "Fail"!
     ...    KW END: PASS
     ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
     ...    KW END: PASS
-    ...    KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
-    ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...']
+    ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    KW END: PASS
     ...    KW START: BuiltIn.Fail ['Expected failure']
@@ -177,5 +179,5 @@ Check Listen All File
 
 Calling listener failed
     [Arguments]    ${method}    ${error}
-    Check Stderr Contains    [ ERROR ] Calling listener method '${method}' of
+    Stderr Should Contain    [ ERROR ] Calling listener method '${method}' of
     ...    listener 'listeners.InvalidMethods' failed: ${error}

@@ -3,9 +3,9 @@ Suite Setup     Run Tests  ${EMPTY}  core/test_suite_dir
 Resource        atest_resource.robot
 
 *** Variables ***
-${1_test_msg}  1 critical test, 1 passed, 0 failed\n 1 test total, 1 passed, 0 failed
-${2_test_msg}  2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
-${3_test_msg}  3 critical tests, 3 passed, 0 failed\n 3 tests total, 3 passed, 0 failed
+${1_test_msg}     1 critical test, 1 passed, 0 failed\n1 test total, 1 passed, 0 failed
+${2_test_msg}     2 critical tests, 2 passed, 0 failed\n2 tests total, 2 passed, 0 failed
+${3_test_msg}     3 critical tests, 3 passed, 0 failed\n3 tests total, 3 passed, 0 failed
 
 *** Test Cases ***
 Main Suite Executed
@@ -36,13 +36,14 @@ Child Suites Not Containing Tests Not Executed
     Should Contain Suites    ${SUITE.suites[0].suites[0]}    Test Dir 3
     Should Contain Suites    ${SUITE.suites[0].suites[0].suites[0]}    Test File 3
 
-
 File Without Extension
-    Check Syslog Contains  Ignoring file or directory 'no_extension'.
+    ${path} =    Normalize Path    ${DATADIR}/core/test_suite_dir/no_extension
+    Syslog Should Contain  Ignoring file or directory '${path}'.
 
 File and Directory Starting with _
-    Check Syslog Contains  Ignoring file or directory '_ignore_this_file.robot'.
-    Check Syslog Contains  Ignoring file or directory '_ignore_this_dir'.
+    ${path} =    Normalize Path    ${DATADIR}/core/test_suite_dir
+    Syslog Should Contain  Ignoring file or directory '${path}${/}_ignore_this_file.robot'.
+    Syslog Should Contain  Ignoring file or directory '${path}${/}_ignore_this_dir'.
 
 *** Keywords ***
 Suite Passed

@@ -62,7 +62,7 @@ class LoggingLibrary:
         importing` is used.
         """
         level = self._verify_level(level) if level else self.default_level
-        print "*%s* %s" % (level, message)
+        print("*%s* %s" % (level, message))
 
     def log_two_messages(self, message1, message2, level=None):
         """Writes given messages to the log file using the specified log level.

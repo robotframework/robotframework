@@ -93,16 +93,28 @@ from docutils.parsers.rst import directives
 from pygments import highlight, __version__ as pygments_version
 from pygments.lexers import get_lexer_by_name
 
+# Use latest version, not version bundled with Pygments
+import robotframeworklexer
 
-pygments_version = tuple(int(v) for v in pygments_version.split('.')[:2])
-if pygments_version < (2, 1):
-    sys.exit('Pygments version 2.1 or newer is required.')
+
+def too_old(version_string, minimum):
+    version = tuple(int(v) for v in version_string.split('.')[:2])
+    return version < minimum
+
+
+if too_old(getattr(robotframeworklexer, '__version__', '1.0'), (1, 1)):
+    sys.exit('robotframeworklexer >= 1.1 is required.')
+if too_old(pygments_version, (2, 1)):
+    sys.exit('Pygments >= 2.1 is required.')
 
 
 def pygments_directive(name, arguments, options, content, lineno,
                        content_offset, block_text, state, state_machine):
     try:
-        lexer = get_lexer_by_name(arguments[0])
+        if arguments[0] == 'robotframework':
+            lexer = robotframeworklexer.RobotFrameworkLexer()
+        else:
+            lexer = get_lexer_by_name(arguments[0])
     except ValueError as err:
         raise ValueError(f'Invalid syntax highlighting language "{arguments[0]}".')
     # take an arbitrary option if more than one is given
@@ -201,7 +213,6 @@ def create_distribution():
     dist = os.path.normpath(os.path.join(CURDIR, '..', '..', 'dist'))
     ugpath, version = create_userguide()  # we are in doc/userguide after this
     outdir = os.path.join(dist, f'robotframework-userguide-{version}')
-    templates = os.path.join(outdir, 'templates')
     libraries = os.path.join(outdir, 'libraries')
     images = os.path.join(outdir, 'images')
     print('Creating distribution directory ...')
@@ -212,7 +223,7 @@ def create_distribution():
     elif not os.path.exists(dist):
         os.mkdir(dist)
 
-    for dirname in [outdir, templates, libraries, images]:
+    for dirname in [outdir, libraries, images]:
         print(f'Creating output directory {dirname!r}')
         os.mkdir(dirname)
 
@@ -223,10 +234,7 @@ def create_distribution():
         if scheme or (fragment and not path):
             return res.group(0)
         replaced_link = f'{res.group(1)} {res.group(4)}="%s/{os.path.basename(path)}"'
-        if path.startswith('../../templates'):
-            copy(path, templates)
-            replaced_link = replaced_link % 'templates'
-        elif path.startswith('../libraries'):
+        if path.startswith('../libraries'):
             copy(path, libraries)
             replaced_link = replaced_link % 'libraries'
         elif path.startswith('src/'):

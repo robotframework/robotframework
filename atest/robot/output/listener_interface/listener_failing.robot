@@ -32,30 +32,35 @@ Log and report should be created
 
 Listener errors should be reported
     ${path} =    Normalize Path    ${DATADIR}/output/listeners/failing_listener.py
-    : FOR    ${index}    ${method}    IN ENUMERATE
+    FOR    ${index}    ${method}    IN ENUMERATE
     ...    message    start_suite    start_keyword    log_message    end_keyword
     ...    start_test    end_test    end_suite
-    \    Error should be reported in execution errors    ${index}    ${method}    ${path}
-    : FOR    ${method}    IN    output_file    log_file    report_file    close
-    \    Error should be reported in stderr    ${method}    ${path}
+        Error should be reported in execution errors    ${index}    ${method}    ${path}
+    END
+    FOR    ${method}    IN    output_file    log_file    report_file    close
+        Error should be reported in stderr    ${method}    ${path}
+    END
 
 Library listener errors should be reported
-    : FOR    ${index}    ${method}    IN ENUMERATE
+    FOR    ${index}    ${method}    IN ENUMERATE
     ...    start_suite    start_test    start_keyword    log_message
     ...    end_keyword    end_test    end_suite
-    \    Error should be reported in execution errors    ${index}    ${method}    failing_listener
+        Error should be reported in execution errors    ${index}    ${method}    failing_listener
+    END
     Error should be reported in stderr    close    failing_listener
+    ...    Error in library 'LibraryWithFailingListener':
 
 Error should be reported in execution errors
     [Arguments]    ${index}    ${method}    ${listener}
     ${error} =    Catenate
     ...    Calling method '${method}' of listener '${listener}' failed:
     ...    Expected failure in ${method}!
-    Check log message    @{ERRORS}[${index}]    ${error}    ERROR
+    Check log message    ${ERRORS}[${index}]    ${error}    ERROR
 
 Error should be reported in stderr
-    [Arguments]    ${method}    ${listener}
+    [Arguments]    ${method}    ${listener}    @{prefix}
     ${error} =    Catenate
+    ...    @{prefix}
     ...    Calling method '${method}' of listener '${listener}' failed:
     ...    Expected failure in ${method}!
-    Check stderr contains    [ ERROR ] ${error}
+    Stderr Should Contain    [ ERROR ] ${error}

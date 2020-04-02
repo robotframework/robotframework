@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup        Run Tests    ${EMPTY}    running/timeouts.robot
+Suite Setup        Run Tests    -L DEBUG    running/timeouts.robot
 Suite Teardown     Remove Directory    ${TIMEOUT TEMP}    recursive
 Resource           atest_resource.robot
 
@@ -135,19 +135,64 @@ Test Timeout Should Not Be Active For Run Keyword Variants But To Keywords They 
 Keyword Timeout Should Not Be Active For Run Keyword Variants But To Keywords They Execute
     Check Test Case    ${TEST NAME}
 
-Output Capture With Timeouts
-    [Documentation]    Testing that capturing output works with timeouts
+Logging With Timeouts
+    [Documentation]    Testing that logging works with timeouts
     ${tc} =    Check Test Case    Timeouted Keyword Passes
-    Check Log Message    ${tc.kws[0].msgs[0]}    Testing outputcapture in timeouted test
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Testing outputcapture in timeouted keyword
+    Check Log Message    ${tc.kws[0].msgs[1]}           Testing logging in timeouted test
+    Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    Testing logging in timeouted keyword
 
 It Should Be Possible To Print From Java Libraries When Test Timeout Has Been Set
     [Tags]    require-jython
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log message    ${tc.kws[0].msgs[0]}    My message from java lib
+    Timeout should have been active    ${tc.kws[0]}    1 second    2
+    Check Log message    ${tc.kws[0].msgs[1]}    My message from java lib
 
 Timeouted Keyword Called With Wrong Number of Arguments
     Check Test Case    ${TEST NAME}
 
 Timeouted Keyword Called With Wrong Number of Arguments with Run Keyword
     Check Test Case    ${TEST NAME}
+
+Test Timeout Logging
+    ${tc} =    Check Test Case    Passing
+    Timeout should have been active    ${tc.kws[0]}    1 second     1
+    ${tc} =    Check Test Case    Failing Before Timeout
+    Timeout should have been active    ${tc.kws[0]}    2 seconds    3
+    ${tc} =    Check Test Case    Sleeping And Timeouting
+    Timeout should have been active    ${tc.kws[0]}    1 second     2    exceeded=True
+
+Keyword Timeout Logging
+    ${tc} =    Check Test Case    Timeouted Keyword Passes
+    Keyword timeout should have been active    ${tc.kws[1].kws[0]}    5 seconds             2
+    ${tc} =    Check Test Case    Timeouted Keyword Fails Before Timeout
+    Keyword timeout should have been active    ${tc.kws[0].kws[0]}    2 hours 30 minutes    3
+    ${tc} =    Check Test Case    Timeouted Keyword Timeouts
+    Keyword timeout should have been active    ${tc.kws[0].kws[0]}    99 milliseconds       2    exceeded=True
+
+Zero timeout is ignored
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.timeout}    0 seconds
+    Should Be Equal    ${tc.kws[0].timeout}    0 seconds
+    Should Be True     ${tc.kws[0].elapsedtime} > 99
+
+Negative timeout is ignored
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].timeout}    - 1 second
+    Should Be Equal    ${tc.kws[0].timeout}    - 1 second
+    Should Be True     ${tc.kws[0].elapsedtime} > 99
+
+*** Keywords ***
+Timeout should have been active
+    [Arguments]    ${kw}    ${timeout}    ${msg count}    ${exceeded}=False    ${type}=Test
+    Check Log Message    ${kw.msgs[0]}    ${type} timeout ${timeout} active. * left.    DEBUG    pattern=True
+    Length Should Be     ${kw.msgs}       ${msg count}
+    Run Keyword If    ${exceeded}
+    ...    Timeout should have exceeded    ${kw}    ${timeout}    ${type}
+
+Keyword timeout should have been active
+    [Arguments]    ${kw}    ${timeout}    ${msg count}    ${exceeded}=False
+    Timeout should have been active    ${kw}    ${timeout}    ${msg count}    ${exceeded}    type=Keyword
+
+Timeout should have exceeded
+    [Arguments]    ${kw}    ${timeout}    ${type}=Test
+    Check Log Message    ${kw.msgs[1]}    ${type} timeout ${timeout} exceeded.    FAIL

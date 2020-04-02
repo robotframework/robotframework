@@ -91,5 +91,6 @@ Result Should Contain Items In Given Order
     [Arguments]    ${result list}    @{expected}
     ${length} =    Get Length    ${expected}
     Length Should Be    ${result list}    ${length}
-    : FOR    ${i}    IN RANGE    0    ${length}
-    \    Should Be Equal    ${result list[${i}]}    @{expected}[${i}]
+    FOR    ${i}    IN RANGE    ${length}
+        Should Be Equal    ${result list}[${i}]    ${expected}[${i}]
+    END

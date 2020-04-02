@@ -27,6 +27,7 @@ from robot.libdoc import libdoc
 REPOSITORY = 'robotframework/robotframework'
 VERSION_PATH = Path('src/robot/version.py')
 VERSION_PATTERN = "VERSION = '(.*)'"
+SETUP_PATH = Path('setup.py')
 POM_PATH = Path('pom.xml')
 POM_VERSION_PATTERN = '<version>(.*)</version>'
 RELEASE_NOTES_PATH = Path('doc/releasenotes/rf-{version}.rst')
@@ -63,6 +64,7 @@ installation approaches, see the `installation instructions`_.
 Robot Framework {version} was released on {date}.
 
 .. _Robot Framework: http://robotframework.org
+.. _Robot Framework Foundation: http://robotframework.org/foundation
 .. _pip: http://pip-installer.org
 .. _PyPI: https://pypi.python.org/pypi/robotframework
 .. _issue tracker milestone: https://github.com/robotframework/robotframework/issues?q=milestone%3A{version.milestone}
@@ -75,26 +77,26 @@ Robot Framework {version} was released on {date}.
 
 @task
 def set_version(ctx, version):
-    """Set project version in `src/robot/version.py`` file.
+    """Set project version in `src/robot/version.py`, `setup.py` and `pom.xml`.
 
     Args:
-        version: Project version to set or ``dev`` to set development version.
+        version: Project version to set or `dev` to set development version.
 
     Following PEP-440 compatible version numbers are supported:
     - Final version like 3.0 or 3.1.2.
-    - Alpha, beta or release candidate with ``a``, ``b`` or ``rc`` postfix,
+    - Alpha, beta or release candidate with `a`, `b` or `rc` postfix,
       respectively, and an incremented number like 3.0a1 or 3.0.1rc1.
-    - Development version with ``.dev`` postix and an incremented number like
+    - Development version with `.dev` postix and an incremented number like
       3.0.dev1 or 3.1a1.dev2.
 
-    When the given version is ``dev``, the existing version number is updated
+    When the given version is `dev`, the existing version number is updated
     to the next suitable development version. For example, 3.0 -> 3.0.1.dev1,
     3.1.1 -> 3.1.2.dev1, 3.2a1 -> 3.2a2.dev1, 3.2.dev1 -> 3.2.dev2.
     """
     version = Version(version, VERSION_PATH, VERSION_PATTERN)
     version.write()
-    pom = Version(str(version), POM_PATH, POM_VERSION_PATTERN)
-    pom.write()
+    Version(str(version), SETUP_PATH, VERSION_PATTERN).write()
+    Version(str(version), POM_PATH, POM_VERSION_PATTERN).write()
     print(version)
 
 
@@ -109,10 +111,10 @@ def library_docs(ctx, name):
     """Generate standard library documentation.
 
     Args:
-        name:  Name of the library or ``all`` to generate docs for all libs.
+        name:  Name of the library or `all` to generate docs for all libs.
                Name is case-insensitive and can be shortened as long as it
-               is a unique prefix. For example, ``b`` is equivalent to
-               ``BuiltIn`` and ``di`` equivalent to ``Dialogs``.
+               is a unique prefix. For example, `b` is equivalent to
+               `BuiltIn` and `di` equivalent to `Dialogs`.
     """
     libraries = ['BuiltIn', 'Collections', 'DateTime', 'Dialogs',
                  'OperatingSystem', 'Process', 'Screenshot', 'String',
@@ -139,8 +141,8 @@ def release_notes(ctx, version=None, username=None, password=None, write=False):
                   possible existing file. Otherwise just print them to the
                   terminal.
 
-    Username and password can also be specified using ``GITHUB_USERNAME`` and
-    ``GITHUB_PASSWORD`` environment variable, respectively. If they aren't
+    Username and password can also be specified using `GITHUB_USERNAME` and
+    `GITHUB_PASSWORD` environment variable, respectively. If they aren't
     specified at all, communication with GitHub is anonymous and typically
     pretty slow.
     """
@@ -159,17 +161,18 @@ def init_labels(ctx, username=None, password=None):
         username: GitHub username.
         password: GitHub password.
 
-    Username and password can also be specified using ``GITHUB_USERNAME`` and
-    ``GITHUB_PASSWORD`` environment variable, respectively.
+    Username and password can also be specified using `GITHUB_USERNAME` and
+    `GITHUB_PASSWORD` environment variable, respectively.
 
-    Should only be executed once when taking ``rellu`` tooling to use or
+    Should only be executed once when taking `rellu` tooling to use or
     when labels it uses have changed.
     """
     initialize_labels(REPOSITORY, username, password)
 
 
 @task
-def jar(ctx, jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
+def jar(ctx, jython_version='2.7.2', pyyaml_version='5.1',
+        jar_name=None, remove_dist=False):
     """Create JAR distribution.
 
     Downloads Jython JAR and PyYAML if needed.
@@ -179,6 +182,9 @@ def jar(ctx, jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
             `jython-standalone-<version>.jar` found from Maven central.
         pyyaml_version: Version of PyYAML that will be included in the
             standalone jar. The version must be available from PyPI.
+        jar_name: Name of the jar file. If not given, name is constructed
+            based on the version. The `.jar` extension is added automatically
+            if needed and the jar is always created under the `dist` directory.
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
     clean(ctx, remove_dist, create_dirs=True)
@@ -186,12 +192,13 @@ def jar(ctx, jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
     print(f"Using '{jython_jar}'.")
     compile_java_files(ctx, jython_jar)
     unzip_jar(jython_jar)
+    remove_tests()
     copy_robot_files()
     pyaml_archive = get_pyyaml(pyyaml_version)
     extract_and_copy_pyyaml_files(pyyaml_version, pyaml_archive)
     compile_python_files(ctx, jython_jar)
     version = Version(path=VERSION_PATH, pattern=VERSION_PATTERN)
-    create_robot_jar(ctx, str(version))
+    create_robot_jar(ctx, str(version), jar_name)
 
 
 def get_jython_jar(version):
@@ -235,12 +242,20 @@ def compile_java_files(ctx, jython_jar, build_dir='build'):
     root = Path('src/java/org/robotframework')
     files = [str(path) for path in root.iterdir() if path.suffix == '.java']
     print(f'Compiling {len(files)} Java files.')
-    ctx.run(f"javac -d {build_dir} -target 1.7 -source 1.7 -cp {jython_jar} "
+    ctx.run(f"javac -d {build_dir} -target 8 -source 8 -cp {jython_jar} "
             f"{' '.join(files)}")
 
 
 def unzip_jar(path, target='build'):
     zipfile.ZipFile(path).extractall(target)
+
+
+def remove_tests(build_dir='build'):
+    for test_dir in ('distutils/tests', 'email/test', 'json/tests',
+                     'lib2to3/tests', 'unittest/test'):
+        path = Path(build_dir, 'Lib', test_dir)
+        if path.is_dir():
+            shutil.rmtree(str(path))
 
 
 def copy_robot_files(build_dir='build'):
@@ -260,9 +275,13 @@ def compile_python_files(ctx, jython_jar, build_dir='build'):
                 Path(directory, name).unlink()
 
 
-def create_robot_jar(ctx, version, source='build'):
+def create_robot_jar(ctx, version, name=None, source='build'):
     write_manifest(version, source)
-    target = Path(f'dist/robotframework-{version}.jar')
+    if not name:
+        name = f'robotframework-{version}.jar'
+    elif not name.endswith('.jar'):
+        name += '.jar'
+    target = Path(f'dist/{name}')
     ctx.run(f'jar cvfM {target} -C {source} .')
     print(f"Created '{target}'.")
 

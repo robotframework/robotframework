@@ -189,18 +189,21 @@ String None is converted to None object
 
 Invalid type spec causes error
     Check Test Case    ${TESTNAME}
-    ${error} =    Catenate
-    ...    Adding keyword 'invalid_type_spec' to library 'KeywordDecorator' failed:
+    Error In Library    KeywordDecorator
+    ...    Adding keyword 'invalid_type_spec' failed:
     ...    Type information must be given as a dictionary or a list, got string.
-    Check Log Message    ${ERRORS[0]}    ${error}    ERROR
+    ...    index=0
 
 Non-matching argument name causes error
     Check Test Case    ${TESTNAME}
-    ${error} =    Catenate
-    ...    Adding keyword 'non_matching_name' to library 'KeywordDecorator' failed:
+    Error In Library    KeywordDecorator
+    ...    Adding keyword 'non_matching_name' failed:
     ...    Type information given to non-existing arguments 'no_match' and 'xxx'.
-    Check Log Message    ${ERRORS[1]}    ${error}    ERROR
+    ...    index=1
 
 Type can be given to `return` without an error
     [Documentation]    `return` isn't used for anything yet, though.
+    Check Test Case    ${TESTNAME}
+
+Value contains variable
     Check Test Case    ${TESTNAME}

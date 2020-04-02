@@ -17,7 +17,8 @@ import os
 import sys
 import locale
 
-from .platform import JYTHON, PY2, PY3, UNIXY, WINDOWS
+from .compat import isatty
+from .platform import JYTHON, PY2, PY3, PY_VERSION, UNIXY, WINDOWS
 
 
 if UNIXY:
@@ -39,7 +40,7 @@ def get_system_encoding():
 def get_console_encoding():
     platform_getters = [(True, _get_stream_output_encoding),
                         (UNIXY, _get_unixy_encoding),
-                        (WINDOWS, _get_windows_output_encoding)]
+                        (WINDOWS, _get_windows_console_encoding)]
     return _get_encoding(platform_getters, DEFAULT_CONSOLE_ENCODING)
 
 
@@ -53,15 +54,19 @@ def _get_encoding(platform_getters, default):
 
 
 def _get_python_system_encoding():
-    # `locale.getpreferredencoding(False)` returns exactly what we want, but
-    # it doesn't seem to work outside Windows on Python 2. Luckily on these
+    # `locale.getpreferredencoding(False)` should return exactly what we want,
+    # but it doesn't seem to work outside Windows on Python 2. Luckily on these
     # platforms `sys.getfilesystemencoding()` seems to do the right thing.
+    # Jython 2.7.1+ actually uses UTF-8 regardless the system encoding, but
+    # that's handled by `system_decode/encode` utilities separately.
     if PY2 and not WINDOWS:
         return sys.getfilesystemencoding()
     return locale.getpreferredencoding(False)
 
 
 def _get_java_system_encoding():
+    # This is only used with Jython 2.7.0, others get encoding already
+    # from `_get_python_system_encoding`.
     from java.lang import System
     return System.getProperty('file.encoding')
 
@@ -80,17 +85,15 @@ def _get_unixy_encoding():
 
 
 def _get_stream_output_encoding():
-    # Python < 3.6 on Windows returns different encoding depending on are
-    # outputs redirected or not, and Python >= 3.6 always use UTF-8. We
-    # want the real console encoding regardless the platform.
-    if WINDOWS and PY3:
+    # Python 3.6+ uses UTF-8 as encoding with output streams.
+    # We want the real console encoding regardless the platform.
+    if WINDOWS and PY_VERSION >= (3, 6):
         return None
-    # Stream may not have encoding attribute if intercepted outside RF in
-    # Python. Encoding is None if process output is redirected and Python < 3.
     for stream in sys.__stdout__, sys.__stderr__, sys.__stdin__:
-        encoding = getattr(stream, 'encoding', None)
-        if _is_valid(encoding):
-            return encoding
+        if isatty(stream):
+            encoding = getattr(stream, 'encoding', None)
+            if _is_valid(encoding):
+                return encoding
     return None
 
 
@@ -98,8 +101,8 @@ def _get_windows_system_encoding():
     return _get_code_page('GetACP')
 
 
-def _get_windows_output_encoding():
-    return _get_code_page('GetOEMCP')
+def _get_windows_console_encoding():
+    return _get_code_page('GetConsoleOutputCP')
 
 
 def _get_code_page(method_name):

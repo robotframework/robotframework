@@ -19,9 +19,9 @@ import inspect
 
 from robot.errors import DataError
 
-from .encoding import system_decode
+from .encoding import system_decode, system_encode
 from .error import get_error_details
-from .platform import JYTHON, IRONPYTHON, PY3
+from .platform import JYTHON, IRONPYTHON, PY2, PY3, PYPY
 from .robotpath import abspath, normpath
 from .robottypes import type_name, is_unicode
 
@@ -71,12 +71,33 @@ class Importer(object):
         except DataError as err:
             self._raise_import_failed(name, err)
         else:
-            return (imported, source) if return_source else imported
+            return self._handle_return_values(imported, source, return_source)
 
     def _import_class_or_module(self, name):
         for importer in self._importers:
             if importer.handles(name):
                 return importer.import_(name)
+
+    def _handle_return_values(self, imported, source, return_source=False):
+        if not return_source:
+            return imported
+        if source and os.path.exists(source):
+            source = self._sanitize_source(source)
+        return imported, source
+
+    def _sanitize_source(self, source):
+        source = normpath(source)
+        if os.path.isdir(source):
+            candidate = os.path.join(source, '__init__.py')
+        elif source.endswith('.pyc'):
+            candidate = source[:-4] + '.py'
+        elif source.endswith('$py.class'):
+            candidate = source[:-9] + '.py'
+        elif source.endswith('.class'):
+            candidate = source[:-6] + '.java'
+        else:
+            return source
+        return candidate if os.path.exists(candidate) else source
 
     def import_class_or_module_by_path(self, path, instantiate_with_args=None):
         """Import a Python module or Java class using a file system path.
@@ -178,9 +199,10 @@ class _Importer(object):
 
     def _get_source(self, imported):
         try:
-            return abspath(inspect.getfile(imported))
+            source = inspect.getfile(imported)
         except TypeError:
             return None
+        return abspath(source) if source else None
 
 
 class ByPathImporter(_Importer):
@@ -239,6 +261,10 @@ class ByPathImporter(_Importer):
 
     def _import_by_path(self, path):
         module_dir, module_name = self._split_path_to_module(path)
+        # Other interpreters work also with Unicode paths.
+        # https://bitbucket.org/pypy/pypy/issues/3112
+        if PYPY and PY2:
+            module_dir = system_encode(module_dir)
         sys.path.insert(0, module_dir)
         try:
             return self._import(module_name)

@@ -15,14 +15,16 @@
 
 from __future__ import absolute_import
 
+import os
 import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
+
 from robot.api import logger
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
-                         unic, PY3)
+                         unic, FileReader, PY3)
 from robot.version import get_version
 
 
@@ -50,12 +52,16 @@ class String(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def convert_to_lowercase(self, string):
-        """Converts string to lowercase.
+    def convert_to_lower_case(self, string):
+        """Converts string to lower case.
+
+        Uses Python's standard
+        [https://docs.python.org/library/stdtypes.html#str.lower|lower()]
+        method.
 
         Examples:
-        | ${str1} = | Convert To Lowercase | ABC |
-        | ${str2} = | Convert To Lowercase | 1A2c3D |
+        | ${str1} = | Convert To Lower Case | ABC |
+        | ${str2} = | Convert To Lower Case | 1A2c3D |
         | Should Be Equal | ${str1} | abc |
         | Should Be Equal | ${str2} | 1a2c3d |
         """
@@ -63,16 +69,77 @@ class String(object):
         # comments for more details.
         return lower(string)
 
-    def convert_to_uppercase(self, string):
-        """Converts string to uppercase.
+    def convert_to_upper_case(self, string):
+        """Converts string to upper case.
+
+        Uses Python's standard
+        [https://docs.python.org/library/stdtypes.html#str.upper|upper()]
+        method.
 
         Examples:
-        | ${str1} = | Convert To Uppercase | abc |
-        | ${str2} = | Convert To Uppercase | 1a2C3d |
+        | ${str1} = | Convert To Upper Case | abc |
+        | ${str2} = | Convert To Upper Case | 1a2C3d |
         | Should Be Equal | ${str1} | ABC |
         | Should Be Equal | ${str2} | 1A2C3D |
         """
         return string.upper()
+
+    def convert_to_title_case(self, string, exclude=None):
+        """Converts string to title case.
+
+        Uses the following algorithm:
+
+        - Split the string to words from whitespace characters (spaces,
+          newlines, etc.).
+        - Exclude words that are not all lower case. This preserves,
+          for example, "OK" and "iPhone".
+        - Exclude also words listed in the optional ``exclude`` argument.
+        - Title case the first alphabetical character of each word that has
+          not been excluded.
+        - Join all words together so that original whitespace is preserved.
+
+        Explicitly excluded words can be given as a list or as a string with
+        words separated by a comma and an optional space. Excluded words are
+        actually considered to be regular expression patterns, so it is
+        possible to use something like "example[.!?]?" to match the word
+        "example" on it own and also if followed by ".", "!" or "?".
+        See `BuiltIn.Should Match Regexp` for more information about Python
+        regular expression syntax in general and how to use it in Robot
+        Framework test data in particular.
+
+        Examples:
+        | ${str1} = | Convert To Title Case | hello, world!     |
+        | ${str2} = | Convert To Title Case | it's an OK iPhone | exclude=a, an, the |
+        | ${str3} = | Convert To Title Case | distance is 1 km. | exclude=is, km.? |
+        | Should Be Equal | ${str1} | Hello, World! |
+        | Should Be Equal | ${str2} | It's an OK iPhone |
+        | Should Be Equal | ${str3} | Distance is 1 km. |
+
+        The reason this keyword does not use Python's standard
+        [https://docs.python.org/library/stdtypes.html#str.title|title()]
+        method is that it can yield undesired results, for example, if
+        strings contain upper case letters or special characters like
+        apostrophes. It would, for example, convert "it's an OK iPhone"
+        to "It'S An Ok Iphone".
+
+        New in Robot Framework 3.2.
+        """
+        if is_string(exclude):
+            exclude = [e.strip() for e in exclude.split(',')]
+        elif not exclude:
+            exclude = []
+        exclude = [re.compile('^%s$' % e) for e in exclude]
+
+        def title(word):
+            if any(e.match(word) for e in exclude) or not word.islower():
+                return word
+            for index, char in enumerate(word):
+                if char.isalpha():
+                    return word[:index] + word[index].title() + word[index+1:]
+            return word
+
+        tokens = re.split(r'(\s+)', string, flags=re.UNICODE)
+        return ''.join(title(token) for token in tokens)
 
     def encode_string_to_bytes(self, string, encoding, errors='strict'):
         """Encodes the given Unicode ``string`` to bytes using the given ``encoding``.
@@ -120,6 +187,38 @@ class String(object):
         if PY3 and is_unicode(bytes):
             raise TypeError('Can not decode strings on Python 3.')
         return bytes.decode(encoding, errors)
+
+    def format_string(self, template, *positional, **named):
+        """Formats a ``template`` using the given ``positional`` and ``named`` arguments.
+
+        The template can be either be a string or an absolute path to
+        an existing file. In the latter case the file is read and its contents
+        are used as the template. If the template file contains non-ASCII
+        characters, it must be encoded using UTF-8.
+
+        The template is formatted using Python's
+        [https://docs.python.org/library/string.html#format-string-syntax|format
+        string syntax]. Placeholders are marked using ``{}`` with possible
+        field name and format specification inside. Literal curly braces
+        can be inserted by doubling them like `{{` and `}}`.
+
+        Examples:
+        | ${to} = | Format String | To: {} <{}>                    | ${user}      | ${email} |
+        | ${to} = | Format String | To: {name} <{email}>           | name=${name} | email=${email} |
+        | ${to} = | Format String | To: {user.name} <{user.email}> | user=${user} |
+        | ${xx} = | Format String | {:*^30}                        | centered     |
+        | ${yy} = | Format String | {0:{width}{base}}              | ${42}        | base=X | width=10 |
+        | ${zz} = | Format String | ${CURDIR}/template.txt         | positional   | named=value |
+
+        New in Robot Framework 3.1.
+        """
+        if os.path.isabs(template) and os.path.isfile(template):
+            template = template.replace('/', os.sep)
+            logger.info('Reading template from file <a href="%s">%s</a>.'
+                        % (template, template), html=True)
+            with FileReader(template) as reader:
+                template = reader.read()
+        return template.format(*positional, **named)
 
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given string."""

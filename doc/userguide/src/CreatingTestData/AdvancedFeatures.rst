@@ -96,85 +96,71 @@ For more information and examples, see the documentation of the keyword.
 Timeouts
 --------
 
-Keywords may be problematic in situations where they take
-exceptionally long to execute or just hang endlessly. Robot Framework
-allows you to set timeouts both for `test cases`_ and `user
-keywords`_, and if a test or keyword is not finished within the
-specified time, the keyword that is currently being executed is
-forcefully stopped. Stopping keywords in this manner may leave the
-library or system under test to an unstable state, and timeouts are
-recommended only when there is no safer option available. In general,
-libraries should be implemented so that keywords cannot hang or that
-they have their own timeout mechanism, if necessary.
+Sometimes keywords may take exceptionally long time to execute or just hang
+endlessly. Robot Framework allows you to set timeouts both for `test cases`_
+and `user keywords`_, and if a test or keyword is not finished within the
+specified time, the keyword that is currently being executed is forcefully
+stopped.
+
+Stopping keywords in this manner may leave the library, the test environment
+or the system under test to an unstable state, and timeouts are recommended
+only when there is no safer option available. In general, libraries should be
+implemented so that keywords cannot hang or that they have their own timeout
+mechanism.
 
 Test case timeout
 ~~~~~~~~~~~~~~~~~
 
-The test case timeout can be set either by using the :setting:`Test
-Timeout` setting in the Setting table or the :setting:`[Timeout]`
-setting in the Test Case table. :setting:`Test Timeout` in the Setting
-table defines a default test timeout value for all the test cases in
-the test suite, whereas :setting:`[Timeout]` in the Test Case table
-applies a timeout to an individual test case and overrides the
-possible default value.
+The test case timeout can be set either by using the :setting:`Test Timeout`
+setting in the Setting section or the :setting:`[Timeout]` setting with
+individual test cases. :setting:`Test Timeout` defines a default timeout
+for all the test cases in that suite, whereas :setting:`[Timeout]` applies
+a timeout to a particular test case and overrides the possible default value.
 
-Using an empty :setting:`[Timeout]` means that the test has no
-timeout even when :setting:`Test Timeout` is used. It is also possible
-to use value `NONE` for this purpose.
+Using an empty :setting:`[Timeout]` means that the test has no timeout even
+when :setting:`Test Timeout` is used. It is also possible to use explicit
+`NONE` value for this purpose. The timeout is effectively ignored also if
+its value is zero or negative.
 
-Regardless of where the test timeout is defined, the first cell after
-the setting name contains the duration of the timeout. The duration
-must be given in Robot Framework's `time format`_, that is,
-either directly in seconds or in a format like `1 minute
-30 seconds`. It must be noted that there is always some overhead by the
-framework, and timeouts shorter than one second are thus not
-recommended.
+Regardless of where the test timeout is defined, the value given to it
+contains the duration of the timeout. The duration must be given in Robot
+Framework's `time format`_, that is, either directly in seconds like `10`
+or in a format like `1 minute 30 seconds`. Timeouts can also be specified
+as variables_ making it possible to give them, for example, from the command
+line.
 
-The default error message displayed when a test timeout occurs is
-`Test timeout <time> exceeded`. It is also possible to use custom
-error messages, and these messages are written into the cells
-after the timeout duration. The message can be split into multiple
-cells, similarly as documentations. Both the timeout value and the
-error message may contain variables.
-
-If there is a timeout, the keyword running is stopped at the
-expiration of the timeout and the test case fails. However, keywords
-executed as `test teardown`_ are not interrupted if a test timeout
-occurs, because they are normally engaged in important clean-up
-activities. If necessary, it is possible to interrupt also these
-keywords with `user keyword timeouts`_.
+If there is a timeout and it expires, the keyword that is currently running
+is stopped and the test case fails. Keywords executed as part of `test
+teardown`_ are not interrupted if a test timeout occurs, though, but the test
+is nevertheless marked failed. If a keyword in teardown may hang, it can be
+stopped by using `user keyword timeouts`_.
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Test Timeout    2 minutes
+   Test Timeout       2 minutes
 
    *** Test Cases ***
-   Default Timeout
-       [Documentation]    Timeout from the Setting table is used
+   Default timeout
+       [Documentation]    Default timeout from Settings is used.
        Some Keyword    argument
 
    Override
-       [Documentation]    Override default, use 10 seconds timeout
+       [Documentation]    Override default, use 10 seconds timeout.
        [Timeout]    10
        Some Keyword    argument
 
-   Custom Message
-       [Documentation]    Override default and use custom message
-       [Timeout]    1min 10s    This is my custom error
-       Some Keyword    argument
-
    Variables
-       [Documentation]    It is possible to use variables too
+       [Documentation]    It is possible to use variables too.
        [Timeout]    ${TIMEOUT}
        Some Keyword    argument
 
-   No Timeout
-       [Documentation]    Empty timeout means no timeout even when Test Timeout has been used
+   No timeout
+       [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
        [Timeout]
        Some Keyword    argument
 
-   No Timeout 2
+   No timeout 2
        [Documentation]    Disabling timeout with NONE works too and is more explicit.
        [Timeout]    NONE
        Some Keyword    argument
@@ -182,37 +168,29 @@ keywords with `user keyword timeouts`_.
 User keyword timeout
 ~~~~~~~~~~~~~~~~~~~~
 
-A timeout can be set for a user keyword using the :setting:`[Timeout]`
-setting in the Keyword table. The syntax for setting it, including how
-timeout values and possible custom messages are given, is
-identical to the syntax used with `test case timeouts`_. If no custom
-message is provided, the default error message `Keyword timeout
-<time> exceeded` is used if a timeout occurs.
-
-Starting from Robot Framework 3.0, timeout can be specified as a variable
-so that the variable value is given as an argument. Using global variables
-works already with previous versions.
+Timeouts can be set for user keywords using the :setting:`[Timeout]` setting.
+The syntax is exactly the same as with `test case timeout`_, but user keyword
+timeouts do not have any default value. If a user keyword timeout is specified
+using a variable, the value can be given also as a keyword argument.
 
 .. sourcecode:: robotframework
 
    *** Keywords ***
-   Timed Keyword
-       [Documentation]    Set only the timeout value and not the custom message.
+   Hardcoded
+       [Arguments]    ${arg}
        [Timeout]    1 minute 42 seconds
-       Do Something
-       Do Something Else
+       Some Keyword    ${arg}
 
-   Wrapper With Timeout
-       [Arguments]    @{args}
-       [Documentation]    This keyword is a wrapper that adds a timeout to another keyword.
-       [Timeout]    2 minutes    Original Keyword didn't finish in 2 minutes
-       Original Keyword    @{args}
-
-   Wrapper With Customizable Timeout
-       [Arguments]    ${timeout}    @{args}
-       [Documentation]    Same as the above but timeout given as an argument.
+   Configurable
+       [Arguments]    ${arg}    ${timeout}
        [Timeout]    ${timeout}
-       Original Keyword    @{args}
+       Some Keyword    ${arg}
+
+   Run Keyword with Timeout
+       [Arguments]    ${keyword}    @{args}    &{kwargs}    ${timeout}=1 minute
+       [Documentation]    Wrapper that runs another keyword with a configurable timeout.
+       [Timeout]    ${timeout}
+       Run Keyword    ${keyword}    @{args}    &{kwargs}
 
 A user keyword timeout is applicable during the execution of that user
 keyword. If the total time of the whole keyword is longer than the
@@ -223,6 +201,11 @@ timeouts are not.
 If both the test case and some of its keywords (or several nested
 keywords) have a timeout, the active timeout is the one with the least
 time left.
+
+.. note:: With earlier Robot Framework versions it was possible to specify
+          a custom error message to use if a timeout expires. This
+          functionality was deprecated in Robot Framework 3.0.1 and removed
+          in Robot Framework 3.2.
 
 .. _for loop:
 
@@ -251,27 +234,28 @@ a marker, then the loop variable, then a mandatory `IN` (case-sensitive) as
 a separator, and finally the values to iterate. These values can contain
 variables_, including `list variables`_.
 
-The keywords used in the for loop are on the following rows and they must
-be indented one cell to the right. When using the `plain text format`_,
-the indented cells must be `escaped with a backslash`__. The for loop ends
-when the indentation returns back to normal or the test or keyword where
-the loop is used ends.
+The keywords used in the for loop are on the following rows and the loop
+ends with `END` (case-sensitive) on its own row. Keywords inside the loop
+do not need to be indented, but that is highly recommended to make the syntax
+easier to read.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Example 1
+   Example
        FOR    ${animal}    IN    cat    dog
-       \    Log    ${animal}
-       \    Log    2nd keyword
+           Log    ${animal}
+           Log    2nd keyword
+       END
        Log    Outside loop
 
-   Example 2
+   Second Example
        FOR    ${var}    IN    one    two    ${3}    four    ${five}
-       ...     kuusi    7    eight    nine    ${last}
-       \    Log    ${var}
+       ...    kuusi    7    eight    nine    ${last}
+           Log    ${var}
+       END
 
-The for loop in :name:`Example 1` above is executed twice, so that first
+The for loop in :name:`Example` above is executed twice, so that first
 the loop variable `${animal}` has the value `cat` and then
 `dog`. The loop consists of two :name:`Log` keywords. In the
 second example, loop values are `split into two rows`__ and the
@@ -287,15 +271,74 @@ used with all of them one by one.
    *** Test Cases ***
    Example
        FOR    ${element}    IN    @{ELEMENTS}
-       \    Start Element  ${element}
+           Start Element    ${element}
+       END
 
-.. note:: Prior to Robot Framework 3.1, the for loop marker was `:FOR` with
-          a mandatory colon. This syntax still works, but it will be deprecated
-          in the future.
+__ `Dividing test data to several rows`_
 
-.. note:: Prior to Robot Framework 3.1, the `IN` separator was case-insensitive.
-          Using it case-sensitively is now deprecated and that support will
-          be removed in the future.
+Old for loop syntax
+~~~~~~~~~~~~~~~~~~~
+
+For loop syntax was enhanced in various ways in Robot Framework 3.1.
+The most noticeable change was that loops nowadays end with the explicit
+`END` marker and keywords inside the loop do not need to be indented.
+In the `space separated plain text format`_ indentation required
+`escaping with a backslash`__ which resulted in quite ugly syntax:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       :FOR    ${animal}    IN    cat    dog
+       \    Log    ${animal}
+       \    Log    2nd keyword
+       Log    Outside loop
+
+Another change, also visible in the example above, was that the for loop
+marker used to be `:FOR` when nowadays just `FOR` is enough. Related to that,
+the `:FOR` marker and also the `IN` separator were case-insensitive but
+nowadays both `FOR` and `IN` are case-sensitive.
+
+Old for loop syntax still worked in Robot Framework 3.1 and only using `IN`
+case-insensitively caused a deprecation warning. In Robot Framework 3.2
+`IN` is case-sensitive and using `:FOR` instead of `FOR`, not closing loops
+with `END`, and escaping keywords inside loops with :codesc:`\\` were all
+deprecated. Users are advised to switch to the new syntax as soon as possible.
+
+When using the `pipe separated format`_, escaping with :codesc:`\\` has not
+been needed:
+
+.. sourcecode:: robotframework
+
+   | *** Test Cases ***
+   | Example
+   | | :FOR | ${animal}    | IN          | cat | dog |
+   | |      | Log          | ${animal}   |
+   | |      | Log          | 2nd keyword |
+   | | Log  | Outside loop |
+
+The above syntax still works with Robot Framework 3.1, but it will not work
+anymore in Robot Framework 3.2. The recommended solution is closing the loop
+with an explicit `END`, but if old Robot Framework versions need to be
+supported then escaping with :codesc:`\\` is needed.
+
+.. sourcecode:: robotframework
+
+   | *** Test Cases ***
+   | Recommended solution, compatible with RF 3.1 and newer
+   | | FOR  | ${animal}    | IN          | cat | dog |
+   | |      | Log          | ${animal}   |
+   | |      | Log          | 2nd keyword |
+   | | END  |              |
+   | | Log  | Outside loop |
+   |
+   | Compatible with RF 3.0.x, causes deprecation warning with RF 3.2.x
+   | | :FOR | ${animal}    | IN          | cat | dog |
+   | | \    | Log          | ${animal}   |
+   | | \    | Log          | 2nd keyword |
+   | | Log  | Outside loop |
+
+__ Escaping_
 
 Nested for loops
 ~~~~~~~~~~~~~~~~
@@ -309,15 +352,14 @@ a user keyword inside a for loop and have another for loop there.
    Handle Table
        [Arguments]    @{table}
        FOR    ${row}    IN    @{table}
-       \    Handle Row    @{row}
+           Handle Row    @{row}
+       END
 
    Handle Row
        [Arguments]    @{row}
        FOR    ${cell}    IN    @{row}
-       \    Handle Cell    ${cell}
-
-__ `Dividing test data to several rows`_
-__ Escaping_
+           Handle Cell    ${cell}
+       END
 
 Using several loop variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -339,9 +381,11 @@ them below the loop variables, as in the first loop of the example below:
        ...     1           cat           kissa
        ...     2           dog           koira
        ...     3           horse         hevonen
-       \    Add to dictionary    ${english}    ${finnish}    ${index}
+           Add to dictionary    ${english}    ${finnish}    ${index}
+       END
        FOR    ${name}    ${id}    IN    @{EMPLOYERS}
-       \    Create    ${name}    ${id}
+           Create    ${name}    ${id}
+       END
 
 For-in-range loop
 ~~~~~~~~~~~~~~~~~
@@ -380,42 +424,44 @@ integers, but using float values is possible as well.
    Only upper limit
        [Documentation]    Loops over values from 0 to 9
        FOR    ${index}    IN RANGE    10
-       \    Log    ${index}
+           Log    ${index}
+       END
 
    Start and end
-       [Documentation]  Loops over values from 1 to 10
+       [Documentation]    Loops over values from 1 to 10
        FOR    ${index}    IN RANGE    1    11
-       \    Log    ${index}
+           Log    ${index}
+       END
 
    Also step given
-       [Documentation]  Loops over values 5, 15, and 25
+       [Documentation]    Loops over values 5, 15, and 25
        FOR    ${index}    IN RANGE    5    26    10
-       \    Log    ${index}
+           Log    ${index}
+       END
 
    Negative step
-       [Documentation]  Loops over values 13, 3, and -7
+       [Documentation]    Loops over values 13, 3, and -7
        FOR    ${index}    IN RANGE    13    -13    -10
-       \    Log    ${index}
+           Log    ${index}
+       END
 
    Arithmetic
-       [Documentation]  Arithmetic with variable
+       [Documentation]    Arithmetic with variable
        FOR    ${index}    IN RANGE    ${var} + 1
-       \    Log    ${index}
+           Log    ${index}
+       END
 
    Float parameters
-       [Documentation]  Loops over values 3.14, 4.34, and 5.54
+       [Documentation]    Loops over values 3.14, 4.34, and 5.54
        FOR    ${index}    IN RANGE    3.14    6.09    1.2
-       \    Log    ${index}
-
-.. note:: Prior to Robot Framework 3.1, the `IN RANGE` separator was both
-          case- and space-insensitive. Such usage is nowadays deprecated
-          and exactly `IN RANGE` is required.
+           Log    ${index}
+       END
 
 For-in-enumerate loop
 ~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes it is useful to loop over a list and also keep track of your location
-inside the list.  Robot Framework has a special
+inside the list. Robot Framework has a special
 `FOR index ... IN ENUMERATE ...` syntax for this situation.
 This syntax is derived from the `Python built-in enumerate() function`__.
 
@@ -438,12 +484,14 @@ For example, the following two test cases do the same thing:
    Manage index manually
        ${index} =    Set Variable    -1
        FOR    ${item}    IN    @{LIST}
-       \    ${index} =    Evaluate    ${index} + 1
-       \    My Keyword    ${index}    ${item}
+           ${index} =    Evaluate    ${index} + 1
+           My Keyword    ${index}    ${item}
+       END
 
    For-in-enumerate
        FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}
-       \    My Keyword    ${index}    ${item}
+           My Keyword    ${index}    ${item}
+       END
 
 Just like with regular for loops, you can loop over multiple values per loop
 iteration as long as the number of values in your list is evenly divisible by
@@ -457,11 +505,23 @@ the number of loop-variables (excluding the first, index variable).
        ...    cat      kissa
        ...    dog      koira
        ...    horse    hevonen
-       \    Log    "${en}" in English is "${fi}" in Finnish (index: ${index})
+           Log    "${en}" in English is "${fi}" in Finnish (index: ${index})
+       END
 
-.. note:: Prior to Robot Framework 3.1, the `IN ENUMERATE` separator was both
-          case- and space-insensitive. Such usage is nowadays deprecated
-          and exactly `IN ENUMERATE` is required.
+If you only use one loop variable with for-in-enumerate loops, that variable
+will become a Python tuple containing the index and the iterated value:
+
+.. sourcecode:: robotframework
+
+   *** Test Case ***
+   For-in-enumerate with one loop variable
+       FOR    ${x}    IN ENUMERATE    @{LIST}
+           Length Should Be    ${x}    2
+           Log    Index is ${x}[0] and item is ${x}[1].
+       END
+
+.. note:: Using for-in-enumerate loops with only one loop variable is a new
+          feature in Robot Framework 3.2.
 
 For-in-zip loop
 ~~~~~~~~~~~~~~~
@@ -477,40 +537,154 @@ This may be easiest to show with an example:
 .. sourcecode:: robotframework
 
    *** Variables ***
-   @{NUMBERS}      ${1}    ${2}    ${5}
-   @{NAMES}        one     two     five
+   @{NUMBERS}       ${1}    ${2}    ${5}
+   @{NAMES}         one     two     five
 
    *** Test Cases ***
    Iterate over two lists manually
        ${length}=    Get Length    ${NUMBERS}
-       FOR    ${idx}    IN RANGE    ${length}
-       \    Number Should Be Named    ${NUMBERS}[${idx}]    ${NAMES}[${idx}]
+       FOR    ${index}    IN RANGE    ${length}
+           Log Many    ${NUMBERS}[${index}]    ${NAMES}[${index}]
+       END
 
    For-in-zip
        FOR    ${number}    ${name}    IN ZIP    ${NUMBERS}    ${NAMES}
-       \    Number Should Be Named    ${number}    ${name}
+           Log Many    ${number}    ${name}
+       END
 
 Similarly as for-in-range and for-in-enumerate loops, for-in-zip loops require
 the cell after the loop variables to read `IN ZIP` (case-sensitive).
-
-Values used with for-in-zip loops must be lists or list-like objects, and
-there must be same number of loop variables as lists to loop over. Looping
+Values used with for-in-zip loops must be lists or list-like objects. Looping
 will stop when the shortest list is exhausted.
 
-Note that any lists used with for-in-zip should usually be given as `scalar
-variables`_ like `${list}`. A `list variable`_ only works if its items
-themselves are lists.
+Lists to iterate over must always be given either as `scalar variables`_ like
+`${items}` or as `list variables`_ like `@{lists}` that yield the actual
+iterated lists. The former approach is more common and it was already
+demonstrated above. The latter approach works like this:
 
-.. note:: Prior to Robot Framework 3.1, the `IN ZIP` separator was both
-          case- and space-insensitive. Such usage is nowadays deprecated
-          and exactly `IN ZIP` is required.
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{NUMBERS}       ${1}    ${2}    ${5}
+   @{NAMES}         one     two     five
+   @{LISTS}         ${NUMBERS}    ${NAMES}
+
+   *** Test Cases ***
+   For-in-zip
+       FOR    ${number}    ${name}    IN ZIP    @{LISTS}
+           Log Many    ${number}    ${name}
+       END
+
+The number of lists to iterate over is not limited, but it must match
+the number of loop variables. Alternatively there can be just one loop
+variable that then becomes a Python tuple getting items from all lists.
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{ABC}           a    b    c
+   @{XYZ}           x    y    z
+   @{NUM}           1    2    3    4    5
+
+   *** Test Cases ***
+   For-in-zip with multiple lists
+       FOR    ${a}    ${x}    ${n}    IN ZIP    ${ABC}    ${XYZ}    ${NUM}
+           Log Many    ${a}    ${x}    ${n}
+       END
+
+   For-in-zip with one variable
+       FOR    ${items}    IN ZIP    ${ABC}    ${XYZ}    ${NUM}
+           Length Should Be    ${items}    3
+           Log Many    ${items}[0]    ${items}[1]    ${items}[2]
+       END
+
+.. note:: Getting lists to iterate over from list variables and using
+          just one loop variable are new features in Robot Framework 3.2.
+
+Dictionary iteration
+~~~~~~~~~~~~~~~~~~~~
+
+Normal for loops and for-in-enumerate loops support iterating over keys
+and values in dictionaries. This syntax requires at least one of the loop
+values to be a `dictionary variable`_.
+It is possible to use multiple dictionary variables and to give additional
+items in `key=value` syntax. Items are iterated in the order they are defined
+and if same key gets multiple values the last value will be used.
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   &{DICT}          a=1    b=2    c=3
+
+   *** Test Cases ***
+   Dictionary iteration
+       FOR    ${key}    ${value}    IN    &{DICT}
+           Log    Key is '${key}' and value is '${value}'.
+       END
+
+   Dictionary iteration with enumerate
+       FOR    ${index}    ${key}    ${value}    IN ENUMERATE    &{DICT}
+           Log    On round ${index} key is '${key}' and value is '${value}'.
+       END
+
+   Multiple dictionaries and extra items in 'key=value' syntax
+       &{more} =    Create Dictionary    e=5    f=6
+       FOR    ${key}    ${value}    IN    &{DICT}    d=4    &{more}    g=7
+           Log    Key is '${key}' and value is '${value}'.
+       END
+
+Typically it is easiest to use the dictionary iteration syntax so that keys
+and values get separate variables like in the above examples. With normal for
+loops it is also possible to use just a single variable that will become
+a tuple containing the key and the value. If only one variable is used with
+for-in-enumerate loops, it becomes a tuple containing the index, the key and
+the value. Two variables with for-in-enumerate loops means assigning the index
+to the first variable and making the second variable a tuple containing the key
+and the value.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   One loop variable
+       FOR    ${item}    IN    &{DICT}
+           Log    Key is '${item}[0]' and value is '${item}[1]'.
+       END
+
+   One loop variable with enumerate
+       FOR    ${item}    IN ENUMERATE    &{DICT}
+           Log    On round ${item}[0] key is '${item}[1]' and value is '${item}[2]'.
+       END
+
+   Two loop variables with enumerate
+       FOR    ${index}    ${item}    IN ENUMERATE    &{DICT}
+           Log    On round ${index} key is '${item}[0]' and value is '${item}[1]'.
+       END
+
+In addition to iterating over names and values in dictionaries, it is possible
+to iterate over keys and then possibly fetch the value based on it. This syntax
+requires using dictionaries as `list variables`_:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   One loop variable
+       FOR    ${key}    IN    @{DICT}
+           Log    Key is '${key}' and value is '${DICT}[${key}]'.
+       END
+
+.. note:: Iterating over keys and values in dictionaries is a new feature in
+          Robot Framework 3.2. With earlier version it is possible to iterate
+          over dictionary keys like the last example above demonstrates.
+
+.. note:: Dictionary iteration is not supported with for-in-range or
+          for-in-zip loops.
 
 Exiting for loop
 ~~~~~~~~~~~~~~~~
 
 Normally for loops are executed until all the loop values have been iterated
 or a keyword used inside the loop fails. If there is a need to exit the loop
-earlier,  BuiltIn_ keywords :name:`Exit For Loop` and :name:`Exit For Loop If`
+earlier, BuiltIn_ keywords :name:`Exit For Loop` and :name:`Exit For Loop If`
 can be used to accomplish that. They works similarly as `break`
 statement in Python, Java, and many other programming languages.
 
@@ -525,8 +699,9 @@ outside a for loop.
    Exit Example
        ${text} =    Set Variable    ${EMPTY}
        FOR    ${var}    IN    one    two
-       \    Run Keyword If    '${var}' == 'two'    Exit For Loop
-       \    ${text} =    Set Variable    ${text}${var}
+           Run Keyword If    '${var}' == 'two'    Exit For Loop
+           ${text} =    Set Variable    ${text}${var}
+       END
        Should Be Equal    ${text}    one
 
 In the above example it would be possible to use :name:`Exit For Loop If`
@@ -556,8 +731,9 @@ outside a for loop.
    Continue Example
        ${text} =    Set Variable    ${EMPTY}
        FOR    ${var}    IN    one    two    three
-       \    Continue For Loop If    '${var}' == 'two'
-       \    ${text} =    Set Variable    ${text}${var}
+           Continue For Loop If    '${var}' == 'two'
+           ${text} =    Set Variable    ${text}${var}
+       END
        Should Be Equal    ${text}    onethree
 
 For more information about these keywords, including usage examples, see their
@@ -578,7 +754,7 @@ Repeating single keyword
 
 For loops can be excessive in situations where there is only a need to
 repeat a single keyword. In these cases it is often easier to use
-BuiltIn_ keyword :name:`Repeat Keyword`.  This keyword takes a
+BuiltIn_ keyword :name:`Repeat Keyword`. This keyword takes a
 keyword and how many times to repeat it as arguments. The times to
 repeat the keyword can have an optional postfix `times` or `x`
 to make the syntax easier to read.

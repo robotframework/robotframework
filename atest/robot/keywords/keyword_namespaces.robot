@@ -37,11 +37,11 @@ Keyword From Custom Library Overrides Keywords From Standard Library Even When S
 
 No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword
     Check Test Case    ${TEST NAME}
-    Check Stderr Does Not Contain    Run Keyword If
+    Stderr Should Not Contain    Run Keyword If
 
 Keyword In More Than One Custom Library And Standard Library
     Check Test Case    ${TEST NAME}
-    Check Syslog Does Not Contain    BuiltIn.No Operation
+    Syslog Should Not Contain    BuiltIn.No Operation
 
 Keywords are first searched from test case file even if they contain dot
     ${tc} =    Check Test Case    ${TESTNAME}

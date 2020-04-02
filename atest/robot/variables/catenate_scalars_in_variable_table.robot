@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    variables/catenate_scalars_in_variable_table.robot
+Suite Setup      Run Tests    ${EMPTY}    variables/catenate_scalars_in_variable_table*.robot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -17,7 +17,7 @@ Non-string separator
 
 Non-existing variable in separator
     Check Test Case    ${TESTNAME}
-    Verify error    @{ERRORS}[0]
+    Error In File    0    variables/catenate_scalars_in_variable_table.robot    13
     ...    Setting variable '\${NONEX IN SEP}' failed: Variable '\${NON EXISTING}' not found.
 
 Value containing variables
@@ -28,7 +28,7 @@ Value containing list variables
 
 Non-existing variable in value
     Check Test Case    ${TESTNAME}
-    Verify error    @{ERRORS}[1]
+    Error In File    1    variables/catenate_scalars_in_variable_table.robot    25
     ...    Setting variable '\${NONEX IN VALUE}' failed: Variable '\${NON EXISTING}' not found.
 
 'SEPARATOR=' can be escaped
@@ -52,8 +52,6 @@ One scalar variable is not converted to string
 With separator even one scalar variable is converted to string
     Check Test Case    ${TESTNAME}
 
-*** Keywords ***
-Verify error
-    [Arguments]    ${error}    ${message}
-    ${path} =    Normalize Path    ${DATADIR}/variables/catenate_scalars_in_variable_table.robot
-    Check Log Message    ${error}    Error in file '${path}': ${message}    ERROR
+Catenated in resource
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2

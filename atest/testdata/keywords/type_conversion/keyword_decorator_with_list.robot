@@ -9,6 +9,9 @@ Basics
 None means no type
     None means no type    1    2    3
 
+Falsy types mean no type
+    Falsy types mean no type    1    2    3
+
 Less types than arguments is ok
     Less types than arguments is ok    1    2    3
 

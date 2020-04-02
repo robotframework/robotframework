@@ -78,7 +78,9 @@ Separate keys and values with invalid key
     Create Dictionary    ${DICT}=non-hashable
 
 `key=value` syntax without equals
-    [Documentation]    FAIL Dictionary item 'no' does not contain '=' separator.
+    [Documentation]    FAIL
+    ...    Invalid dictionary variable item 'no'. \
+    ...    Items must use 'name=value' syntax or be dictionary variables themselves.
     Create Dictionary    a=1   no   equals
 
 Separate keys and values and 'key=value' syntax
@@ -87,7 +89,7 @@ Separate keys and values and 'key=value' syntax
     &{d} =    Create Dictionary    k    1    k    2    k=3    k=4
     Verify Dictionary    ${d}    {'k': '4'}
 
-`&{dict}` variable
+`\&{dict}` variable
     &{d} =    Create Dictionary    &{EMPTY}
     Verify Dictionary    ${d}    {}
     &{d} =    Create Dictionary    &{DICT}
@@ -97,7 +99,7 @@ Separate keys and values and 'key=value' syntax
     &{d} =    Create Dictionary    &{d}    a=overridded    &{DICT}    b=overrides    another=new
     Verify Dictionary    ${d}    {'a': '1', 'b': 'overrides', 3: 'c', 'new': 'item', 'another': 'new'}
 
-`&{dict}` variable with internal variables
+`\&{dict}` variable with internal variables
     ${name} =    Set Variable    DICT
     &{d} =    Create Dictionary    &{${name}}
     Verify Dictionary    ${d}    {'a': '1', 'b': 2, 3: 'c'}
@@ -105,11 +107,11 @@ Separate keys and values and 'key=value' syntax
     ...    &{${name.lower()}.fromkeys([${4}], '${40 + ${2}}')}
     Verify Dictionary    ${d}    {'a': '1', 'b': 2, 3: 'c', 4: '42'}
 
-Non-existing `&{dict}` variable
+Non-existing `\&{dict}` variable
     [Documentation]    FAIL Variable '\&{NONEX}' not found.
     Create Dictionary    &{EMPTY}    &{NONEX}
 
-Non-dictionary `&{dict}` variable
+Non-dictionary `\&{dict}` variable
     [Documentation]    FAIL Value of variable '&{LIST}' is not dictionary or dictionary-like.
     Create Dictionary   &{LIST}    &{NONEX}
 

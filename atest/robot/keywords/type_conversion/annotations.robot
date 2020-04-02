@@ -184,3 +184,15 @@ Forward references
 
 @keyword decorator overrides annotations
     Check Test Case    ${TESTNAME}
+
+Type information mismatch caused by decorator
+    Check Test Case    ${TESTNAME}
+
+Keyword decorator with wraps
+    Check Test Case    ${TESTNAME}
+
+Keyword decorator with wraps mismatched type
+    Check Test Case    ${TESTNAME}
+
+Value contains variable
+    Check Test Case    ${TESTNAME}

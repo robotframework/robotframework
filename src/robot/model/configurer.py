@@ -71,9 +71,9 @@ class SuiteConfigurer(SuiteVisitor):
 
     def _get_test_selector_msgs(self):
         parts = []
-        for explanation, selector in [('with tags', self.include_tags),
-                                      ('without tags', self.exclude_tags),
-                                      ('named', self.include_tests)]:
+        for explanation, selector in [('matching tags', self.include_tags),
+                                      ('not matching tags', self.exclude_tags),
+                                      ('matching name', self.include_tests)]:
             if selector:
                 parts.append(self._format_selector_msg(explanation, selector))
         return seq2str(parts, quote='')

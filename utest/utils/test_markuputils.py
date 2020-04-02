@@ -95,13 +95,15 @@ class TestUrlsToLinks(unittest.TestCase):
                 ('Hello http://one, ftp://kaksi/; "gopher://3.0"',
                  'Hello <a href="http://one">http://one</a>, '
                  '<a href="ftp://kaksi/">ftp://kaksi/</a>; '
-                 '"<a href="gopher://3.0">gopher://3.0</a>"')]:
+                 '"<a href="gopher://3.0">gopher://3.0</a>"'),
+                ("'{https://issues/3231}'",
+                 "'{<a href=\"https://issues/3231\">https://issues/3231</a>}'")]:
             assert_escape_and_format(inp, exp)
 
     def test_image_urls(self):
         link = '(<a href="%s">%s</a>)'
         img = '(<img src="%s" title="%s">)'
-        for ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
+        for ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg']:
             url = 'foo://bar/zap.%s' % ext
             uprl = url.upper()
             inp = '(%s)' % url

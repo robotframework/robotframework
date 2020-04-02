@@ -68,3 +68,9 @@ Too Few Arguments When Using Varargs
 
 Named arguments before positional
     Check Test Case    ${TESTNAME}
+
+Argument types as list
+    Check Test Case    ${TESTNAME}
+
+Argument types as dict
+    Check Test Case    ${TESTNAME}

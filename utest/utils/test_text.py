@@ -363,6 +363,7 @@ This is the remainder of the doc.
 
     def _verify(self, doc, expected):
         assert_equal(getshortdoc(doc), expected)
+        assert_equal(getshortdoc(doc, linesep=' '), expected.replace('\n', ' '))
 
 
 if __name__ == '__main__':

@@ -17,8 +17,9 @@ Run Keyword And Continue On Failure In For Loop
     ...    3) 3 != 2\n\n
     ...    4) 3 != 4\n\n
     ...    5) Stop here!!
-    :FOR    ${i}    IN RANGE    0    5
-    \    Run keyword And Continue On Failure    Should Be Equal    ${3}    ${i}
+    FOR    ${i}    IN RANGE    0    5
+        Run keyword And Continue On Failure    Should Be Equal    ${3}    ${i}
+    END
     Fail    Stop here!!
     Fail    This isn't executed anymore
 
@@ -33,9 +34,10 @@ Run Keyword And Continue On Failure With For Loops
     ...    2) UK: a\n\n
     ...    3) KW: b\n\n
     ...    4) UK: b
-    :FOR    ${x}    IN    a    b
-    \    Run Keyword and Continue on Failure    Fail    KW: ${x}
-    \    Run Keyword and Continue on Failure    Exception In User Keyword    UK: ${x}
+    FOR    ${x}    IN    a    b
+        Run Keyword and Continue on Failure    Fail    KW: ${x}
+        Run Keyword and Continue on Failure    Exception In User Keyword    UK: ${x}
+    END
 
 Nested Run Keyword And Continue On Failure
     [Documentation]    FAIL    Several failures occurred:\n\n
@@ -44,6 +46,14 @@ Nested Run Keyword And Continue On Failure
     ...    3) Non-continuable in UK\n\n
     ...    4) The End
     Run Keyword And Continue On Failure    RKACOF in UK
+    Fail    The End
+
+Run Keyword And Continue On Failure with failure in keyoword teardown
+    [Documentation]    FAIL    Several failures occurred:\n\n
+    ...    1) Keyword teardown failed:\n
+    ...    Expected error\n\n
+    ...    2) The End
+    Run Keyword And Continue On Failure    Keyword With Failing Teardown
     Fail    The End
 
 Run Keyword And Continue On Failure With Syntax Error
@@ -94,3 +104,6 @@ RKACOF in UK
 RKACOF in UK 2
     Run Keyword And Continue On Failure    Fail    Second continuable in UK
 
+Keyword With Failing Teardown
+    No Operation
+    [Teardown]    Fail    Expected error

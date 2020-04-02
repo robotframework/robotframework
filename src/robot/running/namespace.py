@@ -21,11 +21,11 @@ from itertools import chain
 from robot.errors import DataError, KeywordError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
-from robot.parsing.settings import Library, Resource, Variables
 from robot.utils import (RecommendationFinder, eq, find_file, is_string,
-                         printable_name, seq2str2)
+                         normalize, printable_name, seq2str2)
 
 from .importer import ImportCache, Importer
+from .model import Import
 from .runkwregister import RUN_KW_REGISTER
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
@@ -62,7 +62,7 @@ class Namespace(object):
         for item in import_settings:
             try:
                 if not item.name:
-                    raise DataError('%s setting requires a name' % item.type)
+                    raise DataError('%s setting requires value.' % item.type)
                 self._import(item)
             except DataError as err:
                 item.report_invalid_syntax(err.message)
@@ -74,7 +74,7 @@ class Namespace(object):
         action(import_setting)
 
     def import_resource(self, name, overwrite=True):
-        self._import_resource(Resource(None, name), overwrite=overwrite)
+        self._import_resource(Import('Resource', name), overwrite=overwrite)
 
     def _import_resource(self, import_setting, overwrite=False):
         path = self._resolve_name(import_setting)
@@ -99,7 +99,7 @@ class Namespace(object):
                             "a resource file." % path)
 
     def import_variables(self, name, args, overwrite=False):
-        self._import_variables(Variables(None, name, args), overwrite)
+        self._import_variables(Import('Variables', name, args), overwrite)
 
     def _import_variables(self, import_setting, overwrite=False):
         path = self._resolve_name(import_setting)
@@ -118,8 +118,8 @@ class Namespace(object):
             LOGGER.info("%s already imported by suite '%s'"
                         % (msg, self._suite_name))
 
-    def import_library(self, name, args=None, alias=None, notify=True):
-        self._import_library(Library(None, name, args=args, alias=alias),
+    def import_library(self, name, args=(), alias=None, notify=True):
+        self._import_library(Import('Library', name, args, alias),
                              notify=notify)
 
     def _import_library(self, import_setting, notify=True):
@@ -404,15 +404,14 @@ class KeywordRecommendationFinder(object):
     def recommend_similar_keywords(self, name):
         """Return keyword names similar to `name`."""
         candidates = self._get_candidates('.' in name)
-        normalizer = lambda name: candidates.get(name, name).lower().replace(
-            '_', ' ')
-        finder = RecommendationFinder(normalizer)
-        return finder.find_recommendations(name, candidates)
+        finder = RecommendationFinder(
+            lambda name: normalize(candidates.get(name, name), ignore='_')
+        )
+        return finder.find(name, candidates)
 
     @staticmethod
-    def format_recommendations(msg, recommendations):
-        return RecommendationFinder.format_recommendations(
-            msg, recommendations)
+    def format_recommendations(message, recommendations):
+        return RecommendationFinder().format(message, recommendations)
 
     def _get_candidates(self, use_full_name):
         names = {}

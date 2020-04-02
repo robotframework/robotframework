@@ -1,7 +1,5 @@
 *Setting
-Documentation	Test suite in TSV file
-Resource	../resources/html_resource.html			
-Resource	../resources/rest_resource.rst			
+Documentation	Test suite in TSV file		
 Resource	../resources/txt_resource.txt			
 
 *Variable
@@ -11,14 +9,6 @@ ${msg}	*ERROR*
 TSV Passing	No operation
 TSV Failing	[Documentation]	FAIL	**ERROR**
 	Failing	*${msg}*
-HTML Resource	Keyword from HTML resource		
-	Keyword from HTML resource 2		
-	Should Be Equal	${html_resource_var}	HTML Resource Variable
-	Should Be Equal	${html_resource_var2}	HTML Resource Variable From Recursive Resource
-ReST Resource	Keyword from ReST resource		
-	Keyword from ReST resource 2		
-	Should Be Equal	${rest_resource_var}	ReST Resource Variable
-	Should Be Equal	${rest_resource_var2}	ReST Resource Variable From Recursive Resource
 TXT Resource	Keyword from TXT resource		
 	Keyword from TXT resource 2		
 	Should Be Equal	${txt_resource_var}	TXT Resource Variable

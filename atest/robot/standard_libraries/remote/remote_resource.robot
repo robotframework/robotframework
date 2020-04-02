@@ -10,7 +10,7 @@ Run Remote Tests
     [Arguments]    ${tests}    ${server}    ${stop server}=yes
     ${port} =    Start Remote Server    ${server}
     Run Tests    --variable PORT:${port}    standard_libraries/remote/${tests}
-    Run Keyword If    '${stop server}' == 'yes'
+    [Teardown]    Run Keyword If    '${stop server}' == 'yes'
     ...    Stop Remote Server    ${server}
     [Return]    ${port}
 

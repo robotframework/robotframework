@@ -1,82 +1,75 @@
 *** Settings ***
-Resource        atest_resource.robot
-Library         ProcessManager.py
+Documentation     Test that SIGINT and SIGTERM can stop execution gracefully
+...               (one signal) and forcefully (two signals). Windows does not
+...               support these signals so we use CTRL_C_EVENT instead SIGINT
+...               and do not test with SIGTERM.
+Force Tags        no-windows-jython
+Resource          atest_resource.robot
 
 *** Variables ***
-${TEST FILE}    %{TEMPDIR}${/}signal-tests.txt
+${TEST FILE}      %{TEMPDIR}${/}signal-tests.txt
 
 *** Test Cases ***
 SIGINT Signal Should Stop Test Execution Gracefully
-    Start And Send Signal  without_any_timeout.robot  One SIGINT
-    Process Output For Graceful Shutdown
+    Start And Send Signal    without_any_timeout.robot    One SIGINT
     Check Test Cases Have Failed Correctly
 
 SIGTERM Signal Should Stop Test Execution Gracefully
-    [Tags]  no-windows
-    Start And Send Signal  without_any_timeout.robot  One SIGTERM
-    Process Output For Graceful Shutdown
+    [Tags]    no-windows
+    Start And Send Signal    without_any_timeout.robot    One SIGTERM
     Check Test Cases Have Failed Correctly
 
 Execution Is Stopped Even If Keyword Swallows Exception
     [Tags]    no-ipy    no-jython
-    Start And Send Signal  swallow_exception.robot  One SIGTERM
-    Process Output For Graceful Shutdown
+    Start And Send Signal    swallow_exception.robot    One SIGINT
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Run Keyword Is Used
-    Start And Send Signal  run_keyword.robot  One SIGTERM
-    Process Output For Graceful Shutdown
+    Start And Send Signal    run_keyword.robot    One SIGINT
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Test Timeout Is Used
-    Start And Send Signal  test_timeout.robot  One SIGTERM
-    Process Output For Graceful Shutdown
+    Start And Send Signal    test_timeout.robot    One SIGINT
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Keyword Timeout Is Used
-    Start And Send Signal  keyword_timeout.robot  One SIGTERM
-    Process Output For Graceful Shutdown
+    Start And Send Signal    keyword_timeout.robot    One SIGINT
     Check Test Cases Have Failed Correctly
 
 Two SIGINT Signals Should Stop Test Execution Forcefully
-    Start And Send Signal  without_any_timeout.robot  Two SIGINTs  2s
+    Start And Send Signal    without_any_timeout.robot    Two SIGINTs    2s
     Check Tests Have Been Forced To Shutdown
 
 Two SIGTERM Signals Should Stop Test Execution Forcefully
-    [Tags]  no-windows
-    Start And Send Signal  without_any_timeout.robot  Two SIGTERMs  2s
+    [Tags]    no-windows
+    Start And Send Signal    without_any_timeout.robot    Two SIGTERMs    2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Run Keyword Is Used
-    Start And Send Signal  run_keyword.robot  Two SIGINTs  2s
+    Start And Send Signal    run_keyword.robot    Two SIGINTs    2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Test Timeout Is Used
-    Start And Send Signal  test_timeout.robot  Two SIGINTs  2s
+    Start And Send Signal    test_timeout.robot    Two SIGINTs    2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Keyword Timeout Is Used
-    Start And Send Signal  keyword_timeout.robot  Two SIGINTs  2s
+    Start And Send Signal    keyword_timeout.robot    Two SIGINTs    2s
     Check Tests Have Been Forced To Shutdown
 
 One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardowns Should Be Run
-    Start And Send Signal  with_teardown.robot  One SIGINT
-    Process Output For Graceful Shutdown
+    Start And Send Signal    with_teardown.robot    One SIGINT
     Check Test Cases Have Failed Correctly
-    ${tc} =  Get Test Case  Test
-    Check Log Message  ${tc.teardown.msgs[0]}  Logging Test Case Teardown
-    ${ts} =  Get Test Suite  With Teardown
-    Check Log Message  ${ts.teardown.kws[0].msgs[0]}  Logging Suite Teardown
+    ${tc} =    Get Test Case    Test
+    Check Log Message    ${tc.teardown.msgs[0]}    Logging Test Case Teardown
+    Check Log Message    ${SUITE.teardown.kws[0].msgs[0]}    Logging Suite Teardown
 
 Skip Teardowns After Stopping Gracefully
-    Start And Send Signal  with_teardown.robot  One SIGINT  0s  --SkipTeardownOnExit
-    Process Output For Graceful Shutdown
+    Start And Send Signal    with_teardown.robot    One SIGINT    0s    --SkipTeardownOnExit
     Check Test Cases Have Failed Correctly
-    ${tc} =  Get Test Case  Test
-    Should Be Equal  ${tc.teardown}  ${None}
-    ${ts} =  Get Test Suite  With Teardown
-    Should Be Equal  ${ts.teardown}  ${None}
-
+    ${tc} =    Get Test Case    Test
+    Should Be Equal    ${tc.teardown}    ${None}
+    Should Be Equal    ${SUITE.teardown}    ${None}
 
 *** Keywords ***
 Start And Send Signal
@@ -85,7 +78,9 @@ Start And Send Signal
     Start Run    ${datasource}    ${sleep}    @{extra options}
     Wait Until Created    ${TESTFILE}    timeout=45s
     Run Keyword    ${signals}
-    Wait Until Finished
+    ${result} =    Wait For Process    timeout=45s    on_timeout=terminate
+    Log Many    ${result.rc}    ${result.stdout}    ${result.stderr}
+    Set Test Variable    $STDERR    ${result.stderr}
 
 Start Run
     [Arguments]    ${datasource}    ${sleep}    @{extra options}
@@ -94,28 +89,29 @@ Start Run
     ...    --output    ${OUTFILE}    --report    NONE    --log    NONE
     ...    --variable    TESTSIGNALFILE:${TEST FILE}
     ...    --variable    TEARDOWNSLEEP:${sleep}
+    ...    --variablefile    ${CURDIR}${/}enable_ctrl_c_event.py
     ...    @{extra options}
     ...    ${DATADIR}${/}running${/}stopping_with_signal${/}${datasource}
     Log Many    @{command}
-    ProcessManager.start process    @{command}
+    Start Process    @{command}
 
 Check Test Cases Have Failed Correctly
+    Process Output    ${OUTFILE}
     Check Test Tags    Test
     Check Test Tags    Test2    robot:exit
 
 Check Tests Have Been Forced To Shutdown
-    ${stderr} =    ProcessManager.Get Stderr
-    Should Contain    ${stderr}    Execution forcefully stopped
-
-Process Output For Graceful Shutdown
-    Wait Until Created    ${OUTFILE}    timeout=45s
-    Process Output    ${OUTFILE}
+    Should Contain    ${STDERR}    Execution forcefully stopped
 
 One SIGINT
-    Send Terminate    SIGINT
+    # Process library doesn't support sending signals on Windows so need to
+    # use Call Method instead. Also use CTRL_C_EVENT, not SIGINT, on Windows.
+    ${process} =    Get Process Object
+    ${signal} =    Evaluate    signal.CTRL_C_EVENT if $INTERPRETER.is_windows else signal.SIGINT
+    Call Method    ${process}    send_signal    ${signal}
 
 One SIGTERM
-    Send Terminate    SIGTERM
+    Send Signal To Process    SIGTERM
 
 Two SIGINTs
     One SIGINT

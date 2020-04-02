@@ -1,13 +1,31 @@
 *** Settings ***
-Resource          process_resource.robot
-Suite Teardown    Remove Files    ${STDOUT}    ${STDERR}
+Suite Teardown      Remove Files    ${STDOUT}    ${STDERR}
+Resource            process_resource.robot
 
 *** Variables ***
-@{COMMAND}        python    ${CURDIR}/files/timeout.py
+@{COMMAND}          python    ${CURDIR}/files/timeout.py
+@{QUICK COMMAND}    python    ${CURDIR}/files/timeout.py    0.1
 
 *** Test Cases ***
 Finish before timeout
-    ${result} =    Run Process    @{COMMAND}
+    ${result} =    Run Process    @{QUICK COMMAND}
+    Should not be terminated    ${result}
+
+Disable timeout with nONe
+    ${result} =    Run Process    @{QUICK COMMAND}    timeout=nONe
+    Should not be terminated    ${result}
+
+Disable timeout with empty string
+    [Documentation]   Verifying that backwards compatibility is honored
+    ${result} =    Run Process    @{QUICK COMMAND}    timeout=
+    Should not be terminated    ${result}
+
+Disable timeout with zero
+    ${result} =    Run Process    @{QUICK COMMAND}    timeout=0
+    Should not be terminated    ${result}
+
+Disable timeout with negative value
+    ${result} =    Run Process    @{QUICK COMMAND}    timeout=-1 day
     Should not be terminated    ${result}
 
 On timeout process is terminated by default (w/ default streams)
@@ -29,7 +47,7 @@ On timeout process can be killed (w/ custom streams)
     Should be terminated    ${result}
 
 On timeout process can be left running
-    ${result} =    Run Process    @{COMMAND}    timeout=0.2
+    ${result} =    Run Process    @{COMMAND}    timeout=0.2 seconds
     ...    on_timeout=CONTINUE    alias=exceed
     Should Be Equal    ${result}    ${None}
     ${result} =    Wait For Process    handle=exceed

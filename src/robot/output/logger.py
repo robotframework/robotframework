@@ -162,18 +162,20 @@ class Logger(AbstractLogger):
     @property
     @contextmanager
     def delayed_logging(self):
+        prev_cache = self._log_message_cache
         self._log_message_cache = []
         try:
             yield
         finally:
             messages = self._log_message_cache
-            self._log_message_cache = None
-            for msg in messages:
-                self.log_message(msg)
+            self._log_message_cache = prev_cache
+            for msg in messages or ():
+                self._log_message(msg, no_cache=True)
 
-    def _log_message(self, msg):
+    def _log_message(self, msg, no_cache=False):
         """Log messages written (mainly) by libraries."""
-        if self._log_message_cache is not None:
+        if self._log_message_cache is not None and not no_cache:
+            msg.resolve_delayed_message()
             self._log_message_cache.append(msg)
             return
         for logger in self:

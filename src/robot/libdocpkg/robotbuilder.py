@@ -17,9 +17,9 @@ import os
 import sys
 
 from robot.errors import DataError
-from robot.parsing import disable_curdir_processing
-from robot.running import TestLibrary, UserLibrary, UserErrorHandler
-from robot.utils import split_tags_from_doc, unescape
+from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
+                           ResourceFileBuilder)
+from robot.utils import split_tags_from_doc, unescape, unic
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -34,7 +34,9 @@ class LibraryDocBuilder(object):
                             doc=self._get_doc(lib),
                             version=lib.version,
                             scope=str(lib.scope),
-                            doc_format=lib.doc_format)
+                            doc_format=lib.doc_format,
+                            source=lib.source,
+                            lineno=lib.lineno)
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
         return libdoc
@@ -65,13 +67,17 @@ class ResourceDocBuilder(object):
         res = self._import_resource(path)
         libdoc = LibraryDoc(name=res.name,
                             doc=self._get_doc(res),
-                            type='resource')
+                            type='RESOURCE',
+                            scope='GLOBAL',
+                            source=res.source,
+                            lineno=1)
         libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(res)
         return libdoc
 
-    @disable_curdir_processing
     def _import_resource(self, path):
-        return UserLibrary(self._find_resource_file(path))
+        ast = ResourceFileBuilder(process_curdir=False).build(
+            self._find_resource_file(path))
+        return UserLibrary(ast)
 
     def _find_resource_file(self, path):
         if os.path.isfile(path):
@@ -101,7 +107,9 @@ class KeywordDocBuilder(object):
         return KeywordDoc(name=kw.name,
                           args=self._get_args(kw.arguments),
                           doc=doc,
-                          tags=tags)
+                          tags=tags,
+                          source=kw.source,
+                          lineno=kw.lineno)
 
     def _get_doc_and_tags(self, kw):
         doc = self._get_doc(kw)
@@ -132,7 +140,7 @@ class KeywordDocBuilder(object):
         if argspec.types is not None and arg in argspec.types:
             result = '%s: %s' % (result, self._format_type(argspec.types[arg]))
         if arg in argspec.defaults:
-            result = '%s=%s' % (result, argspec.defaults[arg])
+            result = '%s=%s' % (result, unic(argspec.defaults[arg]))
         return result
 
     def _format_type(self, type_):

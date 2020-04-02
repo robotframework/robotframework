@@ -42,12 +42,12 @@ Error in creating message is logged
 Log using custom logger
     ${tc} =    Check test case    ${TEST NAME}
     Check log message    ${tc.kws[0].msgs[0]}    custom logger
-    Check stdout contains    Custom Logger
+    Stdout Should Contain    Custom Logger
 
 Log using non-propagating logger
     ${tc} =    Check test case    ${TEST NAME}
     Should be empty    ${tc.kws[0].msgs}
-    Check stdout contains    Nonprop Logger
+    Stdout Should Contain    Nonprop Logger
 
 Timestamps are accurate
     ${tc} =    Check test case    ${TEST NAME}
@@ -63,4 +63,4 @@ Logging when timeout is in use
     Check log message    ${tc.kws[0].msgs[1]}    something
 
 Suppress errors from logging module
-    Check Stderr Does Not Contain    Traceback
+    Stderr Should Not Contain    Traceback

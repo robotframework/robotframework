@@ -36,8 +36,10 @@ from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION,
 class TypeConverter(object):
     type = None
     abc = None
+    aliases = ()
     convert_none = True
     _converters = OrderedDict()
+    _type_aliases = {}
 
     @property
     def type_name(self):
@@ -45,7 +47,11 @@ class TypeConverter(object):
 
     @classmethod
     def register(cls, converter_class):
-        cls._converters[converter_class.type] = converter_class()
+        converter = converter_class()
+        cls._converters[converter.type] = converter
+        for name in (converter.type_name,) + converter.aliases:
+            if name is not None:
+                cls._type_aliases[name.lower()] = converter.type
         return converter_class
 
     @classmethod
@@ -54,6 +60,11 @@ class TypeConverter(object):
         # https://bugs.python.org/issue34568
         if PY_VERSION >= (3, 7) and hasattr(type_, '__origin__'):
             type_ = type_.__origin__
+        if isinstance(type_, (str, unicode)):
+            try:
+                type_ = cls._type_aliases[type_.lower()]
+            except KeyError:
+                return None
         if not isinstance(type_, type) or issubclass(type_, unicode):
             return None
         if type_ in cls._converters:
@@ -115,6 +126,7 @@ class TypeConverter(object):
 class BooleanConverter(TypeConverter):
     type = bool
     type_name = 'boolean'
+    aliases = ('bool',)
 
     def _convert(self, value, explicit_type=True):
         upper = value.upper()
@@ -130,6 +142,7 @@ class IntegerConverter(TypeConverter):
     type = int
     abc = Integral
     type_name = 'integer'
+    aliases = ('int', 'long')
 
     def _convert(self, value, explicit_type=True):
         try:
@@ -147,6 +160,7 @@ class IntegerConverter(TypeConverter):
 class FloatConverter(TypeConverter):
     type = float
     abc = Real
+    aliases = ('double',)
 
     def _convert(self, value, explicit_type=True):
         try:
@@ -236,7 +250,7 @@ class EnumConverter(TypeConverter):
 
     @property
     def type_name(self):
-        return self._enum.__name__ if self._enum else 'enum'
+        return self._enum.__name__ if self._enum else None
 
     def get_converter(self, type_):
         return EnumConverter(type_)
@@ -289,6 +303,7 @@ class DictionaryConverter(TypeConverter):
     type = dict
     abc = abc.Mapping
     type_name = 'dictionary'
+    aliases = ('dict', 'map')
 
     def _convert(self, value, explicit_type=True):
         return self._literal_eval(value, dict)
@@ -306,7 +321,6 @@ class SetConverter(TypeConverter):
 @TypeConverter.register
 class FrozenSetConverter(TypeConverter):
     type = frozenset
-    type_name = 'set'
 
     def _convert(self, value, explicit_type=True):
         # There are issues w/ literal_eval. See self._literal_eval for details.

@@ -49,13 +49,7 @@ class OperatingSystem(object):
 
     == Table of contents ==
 
-    - `Path separators`
-    - `Pattern matching`
-    - `Tilde expansion`
-    - `Boolean arguments`
-    - `Example`
-    - `Shortcuts`
-    - `Keywords`
+    %TOC%
 
     = Path separators =
 
@@ -547,16 +541,20 @@ class OperatingSystem(object):
     def create_file(self, path, content='', encoding='UTF-8'):
         """Creates a file with the given content and encoding.
 
-        If the directory for the file does not exist, it is created, along
-        with missing intermediate directories.
+        If the directory where the file is created does not exist, it is
+        automatically created along with possible missing intermediate
+        directories. Possible existing file is overwritten.
+
+        On Windows newline characters (``\\n``) in content are automatically
+        converted to Windows native newline sequence (``\\r\\n``).
 
         See `Get File` for more information about possible ``encoding`` values,
         including special values ``SYSTEM`` and ``CONSOLE``.
 
         Examples:
-        | Create File | ${dir}/example.txt | Hello, world!      |         |
-        | Create File | ${path}            | Hyv\\xe4 esimerkki | Latin-1 |
-        | Create File | /tmp/foo.txt       | ${content}         | SYSTEM  |
+        | Create File | ${dir}/example.txt | Hello, world!       |         |
+        | Create File | ${path}            | Hyv\\xe4 esimerkki  | Latin-1 |
+        | Create File | /tmp/foo.txt       | 3\\nlines\\nhere\\n | SYSTEM  |
 
         Use `Append To File` if you want to append to an existing file
         and `Create Binary File` if you need to write bytes without encoding.
@@ -564,9 +562,10 @@ class OperatingSystem(object):
         files.
 
         The support for ``SYSTEM`` and ``CONSOLE`` encodings is new in Robot
-        Framework 3.0.
+        Framework 3.0. Automatically converting ``\\n`` to ``\\r\\n`` on
+        Windows is new in Robot Framework 3.1.
         """
-        path = self._write_to_file(path, content, self._map_encoding(encoding))
+        path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'.", path)
 
     def _write_to_file(self, path, content, encoding=None, mode='w'):
@@ -578,6 +577,8 @@ class OperatingSystem(object):
         # We expect possible byte-strings to be all ASCII.
         if PY2 and isinstance(content, str) and 'b' not in mode:
             content = unicode(content)
+        if encoding:
+            encoding = self._map_encoding(encoding)
         with io.open(path, mode, encoding=encoding) as f:
             f.write(content)
         return path
@@ -611,8 +612,15 @@ class OperatingSystem(object):
     def append_to_file(self, path, content, encoding='UTF-8'):
         """Appends the given content to the specified file.
 
-        If the file does not exists, this keyword works exactly the same
-        way as `Create File`.
+        If the file exists, the given text is written to its end. If the file
+        does not exist, it is created.
+
+        Other than not overwriting possible existing files, this keyword works
+        exactly like `Create File`. See its documentation for more details
+        about the usage.
+
+        Note that special encodings ``SYSTEM`` and ``CONSOLE`` only work
+        with this keyword starting from Robot Framework 3.1.2.
         """
         path = self._write_to_file(path, content, encoding, mode='a')
         self._link("Appended to file '%s'.", path)
@@ -778,7 +786,7 @@ class OperatingSystem(object):
         return False
 
     def _force_normalize(self, path):
-        # TODO: Should normalize_path also support case and link normalization?
+        # TODO: Should normalize_path also support link normalization?
         # TODO: Should we handle dos paths like 'exampl~1.txt'?
         return os.path.realpath(normpath(path, case_normalize=True))
 
@@ -1080,23 +1088,38 @@ class OperatingSystem(object):
         """
         return [self.join_path(base, path) for path in paths]
 
-    def normalize_path(self, path):
+    def normalize_path(self, path, case_normalize=False):
         """Normalizes the given path.
 
+        - Collapses redundant separators and up-level references.
+        - Converts ``/`` to ``\\`` on Windows.
+        - Replaces initial ``~`` or ``~user`` by that user's home directory.
+          The latter is not supported on Jython.
+        - If ``case_normalize`` is given a true value (see `Boolean arguments`)
+          on Windows, converts the path to all lowercase. New in Robot
+          Framework 3.1.
+
         Examples:
-        | ${path} = | Normalize Path | abc        |
-        | ${p2} =   | Normalize Path | abc/       |
-        | ${p3} =   | Normalize Path | abc/../def |
-        | ${p4} =   | Normalize Path | abc/./def  |
-        | ${p5} =   | Normalize Path | abc//def   |
+        | ${path1} = | Normalize Path | abc/           |
+        | ${path2} = | Normalize Path | abc/../def     |
+        | ${path3} = | Normalize Path | abc/./def//ghi |
+        | ${path4} = | Normalize Path | ~robot/stuff   |
         =>
-        - ${path} = 'abc'
-        - ${p2} = 'abc'
-        - ${p3} = 'def'
-        - ${p4} = 'abc/def'
-        - ${p5} = 'abc/def'
+        - ${path1} = 'abc'
+        - ${path2} = 'def'
+        - ${path3} = 'abc/def/ghi'
+        - ${path4} = '/home/robot/stuff'
+
+        On Windows result would use ``\\`` instead of ``/`` and home directory
+        would be different.
         """
         path = os.path.normpath(os.path.expanduser(path.replace('/', os.sep)))
+        # os.path.normcase doesn't normalize on OSX which also, by default,
+        # has case-insensitive file system. Our robot.utils.normpath would
+        # do that, but it's not certain would that, or other things that the
+        # utility do, desirable.
+        if case_normalize:
+            path = os.path.normcase(path)
         return path or '.'
 
     def split_path(self, path):
@@ -1226,12 +1249,10 @@ class OperatingSystem(object):
            ``YYYYMMDD hhmmss``.
 
         3) If ``mtime`` is equal to ``NOW``, the current local time is used.
-           This time is got using Python's ``time.time()`` function.
 
         4) If ``mtime`` is equal to ``UTC``, the current time in
            [http://en.wikipedia.org/wiki/Coordinated_Universal_Time|UTC]
-           is used. This time is got using ``time.time() + time.altzone``
-           in Python.
+           is used.
 
         5) If ``mtime`` is in the format like ``NOW - 1 day`` or ``UTC + 1
            hour 30 min``, the current local/UTC time plus/minus the time

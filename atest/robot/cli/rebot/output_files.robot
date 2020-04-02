@@ -47,7 +47,7 @@ Non-writable Output File
     Should Be Equal    ${result.rc}    ${0}
     Directory Should Contain    ${OUTDIR}/out    l.html    r.html
     Should Match Regexp    ${result.stdout}    ^Log: .*\nReport: .*$
-    Should Match Regexp    ${result.stderr}    ^\\[ ERROR \\] Opening output file '.*diréctöry.xml' failed: .*$
+    Should Match Regexp    ${result.stderr}    (?s)^\\[ ERROR \\] Opening output file '.*diréctöry.xml' failed: .*$
 
 *** Keywords ***
 Correct outputs should be created

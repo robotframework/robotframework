@@ -15,13 +15,15 @@ Rebot tasks
 Combine tasks
     ${EMPTY}           ${TASKS 1} ${TASKS 2}    Task    Failing    Passing
 
-Merge tasks
-    --merge            ${TASKS 2} ${TASKS 1}    Failing    Passing    Task=PASS:*HTML* Test added from merged output.
-
 Rebot tests with --rpa
     --rpa              ${TESTS}                 Test
     --RPA              ${TESTS} ${TESTS}        Test    Test
-    --rpa --merge      ${TESTS} ${TESTS}        Test=PASS:*HTML* Re-executed test has been merged.<hr>New status: <span class="pass">PASS</span><br>New message: <hr>Old status: <span class="pass">PASS</span><br>Old message:${SPACE}
+
+Merge tasks
+    --merge            ${TASKS 2} ${TASKS 1}    Failing    Passing    Task=PASS:*HTML* Task added from merged output.
+
+Merge tasks so that results are merged
+    --rpa --merge      ${TESTS} ${TESTS}        Test=PASS:*HTML* <span class="merge">Task has been re-executed and results merged.</span><hr><span class="new-status">New status:</span> <span class="pass">PASS</span><br><hr><span class="old-status">Old status:</span> <span class="pass">PASS</span><br>
 
 Rebot tasks with --norpa
     [Template]    Rebot and validate test cases
@@ -36,7 +38,7 @@ Conflicting output files cause error
 
 Conflicking output files with --rpa are fine
     --rpa              ${TESTS} ${TASKS 1}    Test    Task
-    --RPA --merge      ${TESTS} ${TASKS 1}    Test    Task=PASS:*HTML* Test added from merged output.
+    --RPA --merge      ${TESTS} ${TASKS 1}    Test    Task=PASS:*HTML* Task added from merged output.
 
 Conflicting output files with --norpa are fine
     [Template]    Rebot and validate test cases
@@ -48,9 +50,9 @@ Conflicting output files with --norpa are fine
 
 Error message is correct if no task match --task or other options
     [Template]    Rebot and validate no task found
-    --task nonex                   named 'nonex'
-    --include xxx --exclude yyy    with tag 'xxx' and without tag 'yyy'
-    --suite nonex --task task      named 'task' in suite 'nonex'
+    --task nonex                   matching name 'nonex'
+    --include xxx --exclude yyy    matching tag 'xxx' and not matching tag 'yyy'
+    --suite nonex --task task      matching name 'task' in suite 'nonex'
 
 *** Keywords ***
 Create inputs for Rebot

@@ -168,8 +168,8 @@ Create List
     ${list} =    Create List    hello    world
     Should Be True    ${list} == ['hello','world']
     @{list} =    Create List    hello    world
-    Should Be Equal    @{list}[0]    hello
-    Should Be Equal    @{list}[1]    world
+    Should Be Equal    ${list}[0]    hello
+    Should Be Equal    ${list}[1]    world
     ${one_item} =    Create List    one item
     Should Be True    ${one_item} == ['one item']
     ${empty} =    Create List

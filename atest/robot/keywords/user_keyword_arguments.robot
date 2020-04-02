@@ -71,6 +71,9 @@ Default With Dict Variable
 Default With Invalid Dict Variable
     Check Test Case    ${TESTNAME}
 
+Argument With `=` In Name
+    Check Test Case    ${TESTNAME}
+
 Calling Using List Variables
     Check Test Case    ${TESTNAME}
 

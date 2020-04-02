@@ -1,5 +1,6 @@
 *** Settings ***
 Library                  KeywordDecorator.py
+Library                  OperatingSystem
 Resource                 conversion.resource
 
 *** Variables ***
@@ -214,7 +215,6 @@ Invalid sequence (abc)
     Mutable sequence     !"#¤%&/(inv expr)\=?      type=list             error=Invalid expression.
     Sequence             1 / 0                     type=list             error=Invalid expression.
 
-
 Tuple
     Tuple                ()                        ()
     Tuple                ('foo', "bar")            tuple(${LIST})
@@ -295,10 +295,10 @@ Frozenset
 Invalid frozenset
     [Tags]               require-py3
     [Template]           Conversion Should Fail
-    Frozenset            {1, ooops}                type=set              error=Invalid expression.
-    Frozenset            {}                        type=set              error=Value is dictionary, not set.
-    Frozenset            ooops                     type=set              error=Invalid expression.
-    Frozenset            {{'not', 'hashable'}}     type=set              error=Evaluating expression failed: *
+    Frozenset            {1, ooops}                                      error=Invalid expression.
+    Frozenset            {}                                              error=Value is dictionary, not set.
+    Frozenset            ooops                                           error=Invalid expression.
+    Frozenset            {{'not', 'hashable'}}                           error=Evaluating expression failed: *
 
 Sets are not supported in Python 2
     [Tags]               require-py2
@@ -307,9 +307,9 @@ Sets are not supported in Python 2
     Set                  {'foo', 'bar'}                                  error=Sets are not supported on Python 2.
     Set abc              set()                     type=set              error=Sets are not supported on Python 2.
     Mutable set          {'foo', 'bar'}            type=set              error=Sets are not supported on Python 2.
-    Frozenset            set()                     type=set              error=Sets are not supported on Python 2.
-    Frozenset            {'foo', 'bar'}            type=set              error=Sets are not supported on Python 2.
-    Frozenset            frozenset()               type=set              error=Sets are not supported on Python 2.
+    Frozenset            set()                                           error=Sets are not supported on Python 2.
+    Frozenset            {'foo', 'bar'}                                  error=Sets are not supported on Python 2.
+    Frozenset            frozenset()                                     error=Sets are not supported on Python 2.
 
 Unknown types are not converted
     Unknown              foo                       'foo'
@@ -399,11 +399,24 @@ String None is converted to None object
 
 Invalid type spec causes error
     [Documentation]    FAIL No keyword with name 'Invalid type spec' found.
+    [Tags]    negative
     Invalid type spec
 
 Non-matching argument name causes error
     [Documentation]    FAIL No keyword with name 'Non matching name' found.
+    [Tags]    negative
     Non matching name
 
 Type can be given to `return` without an error
     Return type          42                        42
+
+Value contains variable
+    [Setup]       Set Environment Variable         PI_NUMBER    3.14
+    [Teardown]    Remove Environment Variable      PI_NUMBER
+    Float                %{PI_NUMBER}              ${3.14}
+    ${value} =           Set variable              42
+    Integer              ${value}                  ${42}
+    @{value} =           Create List               1    2    3
+    Varargs              @{value}                  expected=(1, 2, 3)
+    &{value} =           Create Dictionary         a=1    b=2    c=3
+    Kwargs               &{value}                  expected={'a': 1, 'b': 2, 'c': 3}

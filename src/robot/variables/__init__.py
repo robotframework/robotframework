@@ -19,9 +19,14 @@ This package is mainly for internal usage.
 """
 
 from .assigner import VariableAssignment
-from .isvar import contains_var, is_var, is_scalar_var, is_list_var, is_dict_var
+from .evaluation import evaluate_expression
 from .notfound import variable_not_found
 from .scopes import VariableScopes
-from .splitter import VariableSplitter, VariableIterator
+from .search import (search_variable, contains_variable,
+                     is_variable, is_assign,
+                     is_scalar_variable, is_scalar_assign,
+                     is_dict_variable, is_dict_assign,
+                     is_list_variable, is_list_assign,
+                     VariableIterator)
 from .tablesetter import VariableTableValue, DictVariableTableValue
 from .variables import Variables

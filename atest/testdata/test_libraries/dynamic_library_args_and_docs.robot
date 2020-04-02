@@ -21,6 +21,15 @@ Documentation and Argument Boundaries Work With Default Args
     One Or Two Args    1    2
     One Or Two Args    1    2    3
 
+Default value as tuple
+    [Documentation]    FAIL Keyword 'classes.ArgDocDynamicLibrary.Default As Tuple' expected 1 to 3 arguments, got 4.
+    Default as tuple    1
+    Default as tuple    1    2
+    Default as tuple    1    2    3
+    Default as tuple    1    d2=3
+    Default as tuple    1    FALSE    3
+    Default as tuple    1    2    3    4
+
 Documentation and Argument Boundaries Work With Varargs
     Many Args
     Many Args    1    2    3    4    5    6    7    8    9    10    11    12    13

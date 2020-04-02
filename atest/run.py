@@ -13,12 +13,11 @@ The specified interpreter is used by acceptance tests under `atest/robot` to
 run test cases under `atest/testdata`. It can be the name of the interpreter
 like (e.g. `python` or `jython`, a path to the selected interpreter like
 `/usr/bin/python36`, or a path to the standalone jar distribution (e.g.
-`dist/robotframework-2.9dev234.jar`). If the interpreter itself needs
-arguments, the interpreter and arguments need to be quoted like `"py -3"`.
+`dist/robotframework-3.2b3.dev1.jar`). The standalone jar needs to be
+separately created with `invoke jar`.
 
-As a special case the interpreter value `standalone` will compile a new
-standalone jar from the current sources and execute the acceptance tests with
-it.
+If the interpreter itself needs arguments, the interpreter and its arguments
+need to be quoted like `"py -3"`.
 
 Note that this script itself must always be executed with Python 3.6 or newer.
 
@@ -40,16 +39,6 @@ from interpreter import InterpreterFactory
 
 
 CURDIR = dirname(abspath(__file__))
-
-
-sys.path.append(join(CURDIR, '..'))
-try:
-    from tasks import jar
-except ImportError:
-    def jar(*args, **kwargs):
-        raise RuntimeError("Dependencies missing. See BUILD.rst for details.")
-
-
 ARGUMENTS = '''
 --doc Robot Framework acceptance tests
 --metadata interpreter:{interpreter}
@@ -65,8 +54,6 @@ ARGUMENTS = '''
 
 
 def atests(interpreter, *arguments):
-    if interpreter == 'standalone':
-        interpreter = jar()
     try:
         interpreter = InterpreterFactory(interpreter)
     except ValueError as err:
@@ -77,7 +64,7 @@ def atests(interpreter, *arguments):
 
 
 def _get_directories(interpreter):
-    name = '{i.name}-{i.version}-{i.os}'.format(i=interpreter).replace(' ', '')
+    name = interpreter.output_name
     outputdir = dos_to_long(join(CURDIR, 'results', name))
     tempdir = dos_to_long(join(tempfile.gettempdir(), 'robottests', name))
     if exists(outputdir):
@@ -107,7 +94,9 @@ def _run(args, tempdir, interpreter):
     environ = dict(os.environ,
                    TEMPDIR=tempdir,
                    CLASSPATH=interpreter.classpath or '',
-                   PYTHONCASEOK='True')
+                   JAVA_OPTS=interpreter.java_opts or '',
+                   PYTHONCASEOK='True',
+                   PYTHONIOENCODING='')
     print('%s\n%s\n' % (interpreter, '-' * len(str(interpreter))))
     print('Running command:\n%s\n' % ' '.join(command))
     sys.stdout.flush()
@@ -125,8 +114,8 @@ def dos_to_long(path):
         return path
     from ctypes import create_unicode_buffer, windll
     buf = create_unicode_buffer(500)
-    windll.kernel32.GetLongPathNameW(path.decode('mbcs'), buf, 500)
-    return buf.value.encode('mbcs')
+    windll.kernel32.GetLongPathNameW(path, buf, 500)
+    return buf.value
 
 
 if __name__ == '__main__':

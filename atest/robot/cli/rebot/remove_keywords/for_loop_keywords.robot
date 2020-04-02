@@ -11,7 +11,7 @@ ${4 REMOVED}      _4 passing steps removed using --RemoveKeywords option._
 
 *** Test Cases ***
 Passed Steps Are Removed Except The Last One
-    ${tc}=    Check Test Case    Simple For
+    ${tc}=    Check Test Case    Simple loop
     Length Should Be    ${tc.kws[1].kws}    1
     Should Be Equal     ${tc.kws[1].doc}    ${1 REMOVED}
     Should Be Equal     ${tc.kws[1].kws[0].status}    PASS
@@ -25,14 +25,14 @@ Failed Steps Are Not Removed
     Should Be Equal     ${tc.kws[0].kws[0].status}    FAIL
 
 Steps With Warning Are Not Removed
-    ${tc}=    Check Test Case    Simple For 2
+    ${tc}=    Check Test Case    Variables in values
     Length Should Be     ${tc.kws[0].kws}    2
     Should Be Equal      ${tc.kws[0].doc}    ${4 REMOVED}
     Check Log Message    ${tc.kws[0].kws[0].kws[-1].kws[0].msgs[0]}    Presidential Candidate!    WARN
     Check Log Message    ${tc.kws[0].kws[1].kws[-1].kws[0].msgs[0]}    Presidential Candidate!    WARN
 
 Steps From Nested Loops Are Removed
-    ${tc}=    Check Test Case    Nested For In User Keywords
+    ${tc}=    Check Test Case    Nested loop in user keyword
     Length Should Be    ${tc.kws[0].kws[0].kws}    1
     Should Be Equal     ${tc.kws[0].kws[0].doc}    ${0 REMOVED}
     Length Should Be    ${tc.kws[0].kws[0].kws[0].kws[0].kws[1].kws}    1
@@ -41,7 +41,7 @@ Steps From Nested Loops Are Removed
     Should Be Equal     ${tc.kws[0].kws[0].kws[0].kws[1].kws[0].doc}    ${1 REMOVED}
 
 Empty Loops Are Handled Correctly
-    ${tc}=    Check Test Case    Empty For Body Fails
+    ${tc}=    Check Test Case    FOR with empty body fails
     Should Be Empty    ${tc.kws[0].kws}
     Should Be Equal    ${tc.kws[0].doc}    ${0 REMOVED}
 

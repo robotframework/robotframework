@@ -82,11 +82,13 @@ Set Some Variables
 Variables Should Contain
     [Arguments]    @{keys}
     ${variables}=    Get Variables
-    : FOR    ${key}    IN    @{keys}
-    \    Dictionary Should Contain Key    ${variables}    ${key}
+    FOR    ${key}    IN    @{keys}
+        Dictionary Should Contain Key    ${variables}    ${key}
+    END
 
 Variables Should Not Contain
     [Arguments]    @{keys}
     ${variables}=    Get Variables
-    : FOR    ${key}    IN    @{keys}
-    \    Dictionary Should Not Contain Key    ${variables}    ${key}
+    FOR    ${key}    IN    @{keys}
+        Dictionary Should Not Contain Key    ${variables}    ${key}
+    END

@@ -31,8 +31,13 @@ to test suites, newlines can be added manually using `\n` `escape sequence`_.
 .. sourcecode:: robotframework
 
   *** Settings ***
-  Documentation    First line.\n\nSecond paragraph, this time\nwith multiple lines.
-  Metadata         Example    Value\nin two lines
+  Documentation    First line.\n\nSecond paragraph. This time\nwith multiple lines.
+  Metadata         Example list    - first item\n- second item\n- third
+
+.. note:: As explained in the Paragraphs_ section below, the single newline in
+          `Second paragraph, this time\nwith multiple lines.` does not actually
+          affect how that paragraph is rendered. Newlines are needed when
+          creating lists_ or other such constructs, though.
 
 Adding newlines manually to a long documentation takes some effort and extra
 characters also make the documentation harder to read. This can be avoided,
@@ -46,20 +51,19 @@ means that the above example could be written also as follows.
   Documentation
   ...    First line.
   ...
-  ...    Second paragraph, this time
+  ...    Second paragraph. This time
   ...    with multiple lines.
-  Metadata
-  ...    Example
-  ...    Value
-  ...    in two lines
+  Metadata    Example list
+  ...    - first item
+  ...    - second item
+  ...    - third
 
 No automatic newline is added if a line already ends with a literal newline
 or if it ends with an `escaping backslash`__. If documentation or metadata
 is defined in multiple columns, cells in a same row are concatenated together
-with spaces. This kind of splitting can be a good idea especially when
-using the `HTML format`_ and columns are narrow. Different ways to split
-documentation are illustrated in the examples below where all test cases
-end up having the same two line documentation.
+with a space. Different ways to split documentation are illustrated in the
+examples below where all test cases end up having the same two line
+documentation.
 
 __ `Dividing test data to several rows`_
 __ Escaping_
@@ -189,8 +193,8 @@ URLs
 
 All strings that look like URLs are automatically converted into
 clickable links. Additionally, URLs that end with extension
-:file:`.jpg`, :file:`.jpeg`, :file:`.png`, :file:`.gif` or
-:file:`.bmp` (case-insensitive) will automatically create images. For
+:file:`.jpg`, :file:`.jpeg`, :file:`.png`, :file:`.gif`, :file:`.bmp` or
+:file:`.svg` (case-insensitive) will automatically create images. For
 example, URLs like `http://example.com` are turned into links, and
 `http:///host/image.jpg` and `file:///path/chart.png`
 into images.
@@ -198,6 +202,8 @@ into images.
 The automatic conversion of URLs to links is applied to all the data
 in logs and reports, but creating images is done only for test suite,
 test case and keyword documentation, and for test suite metadata.
+
+.. note:: `.svg` image support is new in Robot Framework 3.2.
 
 Custom links and images
 -----------------------

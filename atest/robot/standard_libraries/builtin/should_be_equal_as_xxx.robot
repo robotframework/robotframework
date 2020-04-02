@@ -35,10 +35,19 @@ Should Be Equal As Strings
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    int    unicode
 
+Should Be Equal As Strings does NFC normalization
+    Check test case    ${TESTNAME}
+
 Should Be Equal As Strings case-insensitive
     Check test case    ${TESTNAME}
 
+Should Be Equal As Strings repr
+    Check test case    ${TESTNAME}
+
 Should Be Equal As Strings multiline
+    Check test case    ${TESTNAME}
+
+Should Be Equal As Strings repr multiline
     Check test case    ${TESTNAME}
 
 Should Not Be Equal As Strings

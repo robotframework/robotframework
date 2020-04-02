@@ -31,7 +31,8 @@ class JavaDocBuilder(object):
                             version=self._get_version(doc),
                             scope=self._get_scope(doc),
                             named_args=False,
-                            doc_format=self._get_doc_format(doc))
+                            doc_format=self._get_doc_format(doc),
+                            source=path)
         libdoc.inits = self._initializers(doc)
         libdoc.keywords = self._keywords(doc)
         return libdoc
@@ -45,8 +46,9 @@ class JavaDocBuilder(object):
 
     def _get_scope(self, doc):
         scope = self._get_attr(doc, 'SCOPE', upper=True)
-        return {'TESTSUITE': 'test suite',
-                'GLOBAL': 'global'}.get(scope, 'test suite')
+        return {'GLOBAL': 'GLOBAL',
+                'SUITE': 'SUITE',
+                'TESTSUITE': 'SUITE'}.get(scope, 'TEST')
 
     def _get_doc_format(self, doc):
         return self._get_attr(doc, 'DOC_FORMAT', upper=True)

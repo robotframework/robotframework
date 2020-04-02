@@ -46,17 +46,29 @@ Running acceptance tests
 ------------------------
 
 Robot Framework's acceptance tests are executed using the `<run.py>`__
-script. It has two mandatory arguments, the Python interpreter to use
-when running tests and path to tests to be executed, and it accepts also
-all same options as Robot Framework. The script itself should always be
-executed with Python 3.6 or newer. Run it with ``--help`` or see
-documentation in its `source code <run.py>`__ for more information.
+script. It has two mandatory arguments, the Python interpreter or standalone
+jar to use when running tests and path to tests to be executed, and it accepts
+also all same options as Robot Framework.
+
+The ``run.py`` script itself should always be executed with Python 3.6 or
+newer. The execution side also has some dependencies listed in
+`<requirements-run.txt>`__ that needs to be installed before running tests.
 
 To run all the acceptance tests, execute the ``atest/robot`` folder
-entirely using the selected interpreter::
+entirely using the selected interpreter. If the interpreter itself needs
+arguments, the interpreter and its arguments need to be quoted.
+
+Examples::
 
     atest/run.py python atest/robot
     atest/run.py jython atest/robot
+    atest/run.py "py -3" atest/robot
+
+When running tests with the standalone jar distribution, the jar needs to
+be created first (see `<../BUILD.rst>`__ for details)::
+
+    invoke jar --jar-name=atest
+    atest/run.py dist/atest.jar atest/robot
 
 The commands above will execute all tests, but you typically want to skip
 `Telnet tests`_ and tests requiring manual interaction. These tests are marked
@@ -64,14 +76,17 @@ with the ``no-ci`` tag and can be easily excluded::
 
     atest/run.py python --exclude no-ci atest/robot
 
-A sub test suite can be executed simply by running the folder or file
-containing it. On modern machines running all acceptance tests ought to
-take less than ten minutes with Python, but with Jython the execution time
-is considerably longer. This is due to Jython being somewhat slower than
-Python in general, but the main reason is that the JVM is started by
-acceptance dozens of times and that always takes few seconds.
+On modern machines running all acceptance tests ought to take less than ten
+minutes with Python, but with Jython and IronPython the execution time can be
+several hours.
 
-Before a release tests should be executed separately using  Python, Jython,
+A sub test suite can be executed simply by running the folder or file
+containing it::
+
+    atest/run.py python atest/robot/libdoc
+    atest/run.py python atest/robot/libdoc/resource_file.robot
+
+Before a release tests should be executed separately using Python, Jython,
 IronPython and PyPy to verify interoperability with all supported interpreters.
 Tests should also be run using different interpreter versions (when applicable)
 and on different operating systems.
@@ -80,10 +95,13 @@ The results of the test execution are written into an interpreter specific
 directory under the ``atest/results`` directory. Temporary outputs created
 during the execution are created under the system temporary directory.
 
+For more details about starting execution, run ``atest/run.py --help`` or
+see scripts `own documentation <run.py>`__.
+
 Test data
 ---------
 
-The test data is divided to two, test data part (``atest/testdata`` folder) and
+The test data is divided into two, test data part (``atest/testdata`` folder) and
 running part (``atest/robot`` folder). Test data side contains test cases for
 different features. Running side contains the actual acceptance test cases
 that run the test cases on the test data side and verify their results.
@@ -102,7 +120,7 @@ other details can be tested also, but that logic is in the running side.
 Test tags
 ---------
 
-The tests on the running side (``atest/robot``) contains tags that are used
+The tests on the running side (``atest/robot``) contain tags that are used
 to include or exclude them based on the platform and required dependencies.
 Selecting tests based on the platform is done automatically by the `<run.py>`__
 script, but additional selection can be done by the user to avoid running
@@ -171,22 +189,15 @@ These Python modules need to be installed:
 - `enum34 <https://pypi.org/project/enum34/>`__ (or older
   `enum <https://pypi.org/project/enum/>`__) by enum conversion tests.
   This module is included by default in Python 3.4 and newer.
+- `Pillow <https://pypi.org/project/Pillow/>`_ for taking screenshots on
+  Windows.
 - `lxml <http://lxml.de/>`__ is needed with XML library tests. Not compatible
   with Jython or IronPython.
 
-It is possible to install the above modules using ``pip`` either
-individually or by using the provided `<requirements.txt>`__ file:
+It is possible to install the above modules using ``pip`` individually, but
+it is easiest to use the provided `<requirements.txt>`__ file that installs
+needed packages conditionally depending on the platform::
 
-.. code:: bash
-
-    # Install individually
-    pip install 'docutils>=0.9'
-    pip install pygments
-    pip install pyyaml
-    pip install enum34    # Needed only with Python 2.
-    pip install lxml
-
-    # Install using requirements.txt
     pip install -r atest/requirements.txt
 
 Notice that the lxml module may require compilation on Linux, which in turn
@@ -201,7 +212,10 @@ Screenshot module or tool
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Screenshot library tests require a platform dependent module or tool that can
-take screenshots. See `Screenshot library documentation`__ for details.
+take screenshots. The above instructions already covered installing Pillow_
+on Windows and on OSX it is possible to use tooling provided by the operating
+system automatically. For Linux Linux alternatives consult the
+`Screenshot library documentation`__.
 
 __ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
 

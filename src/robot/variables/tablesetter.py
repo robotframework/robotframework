@@ -18,8 +18,7 @@ from contextlib import contextmanager
 from robot.errors import DataError
 from robot.utils import DotDict, is_string, split_from_equals, unic
 
-from .isvar import validate_var
-from .splitter import VariableSplitter
+from .search import is_assign, is_list_variable, is_dict_variable
 
 
 class VariableTableSetter(object):
@@ -28,28 +27,26 @@ class VariableTableSetter(object):
         self._store = store
 
     def set(self, variables, overwrite=False):
-        for name, value in VariableTableReader().read(variables):
+        for name, value in self._get_items(variables):
             self._store.add(name, value, overwrite, decorated=False)
 
-
-class VariableTableReader(object):
-
-    def read(self, variables):
+    def _get_items(self, variables):
         for var in variables:
-            if not var:
+            if var.error:
+                var.report_invalid_syntax(var.error)
                 continue
             try:
-                yield self._get_name_and_value(var.name, var.value,
-                                               var.report_invalid_syntax)
+                value = VariableTableValue(var.value, var.name,
+                                           var.report_invalid_syntax)
             except DataError as err:
                 var.report_invalid_syntax(err)
-
-    def _get_name_and_value(self, name, value, error_reporter):
-        return name[2:-1], VariableTableValue(value, name, error_reporter)
+            else:
+                yield var.name[2:-1], value
 
 
 def VariableTableValue(value, name, error_reporter=None):
-    validate_var(name)
+    if not is_assign(name):
+        raise DataError("Invalid variable name '%s'." % name)
     VariableTableValue = {'$': ScalarVariableTableValue,
                           '@': ListVariableTableValue,
                           '&': DictVariableTableValue}[name[0]]
@@ -96,19 +93,24 @@ class ScalarVariableTableValue(VariableTableValueBase):
         if is_string(values):
             values = [values]
         elif values and values[0].startswith('SEPARATOR='):
-            separator = values.pop(0)[10:]
+            separator = values[0][10:]
+            values = values[1:]
         return separator, values
 
     def _replace_variables(self, values, variables):
         separator, values = values
-        if (separator is None and len(values) == 1 and
-                not VariableSplitter(values[0]).is_list_variable()):
+        # Avoid converting single value to string.
+        if self._is_single_value(separator, values):
             return variables.replace_scalar(values[0])
         if separator is None:
             separator = ' '
         separator = variables.replace_string(separator)
         values = variables.replace_list(values)
         return separator.join(unic(item) for item in values)
+
+    def _is_single_value(self, separator, values):
+        return (separator is None and len(values) == 1 and
+                not is_list_variable(values[0]))
 
 
 class ListVariableTableValue(VariableTableValueBase):
@@ -124,13 +126,16 @@ class DictVariableTableValue(VariableTableValueBase):
 
     def _yield_formatted(self, values):
         for item in values:
-            if VariableSplitter(item).is_dict_variable():
+            if is_dict_variable(item):
                 yield item
             else:
                 name, value = split_from_equals(item)
                 if value is None:
-                    raise DataError("Dictionary item '%s' does not contain "
-                                    "'=' separator." % item)
+                    raise DataError(
+                        "Invalid dictionary variable item '%s'. "
+                        "Items must use 'name=value' syntax or be dictionary "
+                        "variables themselves." % item
+                    )
                 yield name, value
 
     def _replace_variables(self, values, variables):

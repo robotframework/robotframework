@@ -17,7 +17,7 @@ ${VARIABLE}          variable value
 ${EXP_SUITE_NAME}    Automatic Variables.Auto1
 ${EXP_SUITE_DOC}     This is suite documentation. With ${VARIABLE}.
 ${EXP_SUITE_META}    {'MeTa1': 'Value', 'meta2': '${VARIABLE}'}
-${EXP_SUITE_STATS}   16 critical tests, 14 passed, 2 failed\n 16 tests total, 14 passed, 2 failed
+${EXP_SUITE_STATS}   16 critical tests, 14 passed, 2 failed\n16 tests total, 14 passed, 2 failed
 @{LAST_TEST}         Previous Test Variables Should Have Correct Values When That Test Fails    PASS
 
 *** Test Case ***
@@ -63,7 +63,7 @@ Suite Metadata
     Should Be Equal    ${result}    ${expected}
     [Teardown]    Suite Metadata Should Be Correct    ${EXP_SUITE_META}
 
-Modifying &{SUITE METADATA} does not affect actual metadata suite has
+Modifying \&{SUITE METADATA} does not affect actual metadata suite has
     [Documentation]    The variable is changed but not "real" metadata
     Set To Dictionary    ${SUITE METADATA}    Meta1    not really set
     Set To Dictionary    ${SUITE METADATA}    NotSet    not really set

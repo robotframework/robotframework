@@ -14,6 +14,7 @@ My Setup
     Set Suite Variable    &parent_suite_setup_child_suite_var_3    Set=in __init__    children=${42}
     Set Global Variable    $parent_suite_setup_global_var    Set in __init__
     Set Global Variable    $parent_suite_setup_global_var_to_reset    Orig
+    Set Global Variable    ${VARIABLE TABLE IN VARIABLES 2 (1)}    Set by suite setup in "__init__.robot"
     Should Be Equal    ${PARENT SUITE VAR TO RESET}    Initial value
 
 My Teardown

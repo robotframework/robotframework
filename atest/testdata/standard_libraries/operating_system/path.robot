@@ -13,17 +13,17 @@ Join Path
 
 Join Paths
     @{paths} =    Join Paths    base    example    other
-    Should Be Equal    @{paths}[0]    base${/}example
-    Should Be Equal    @{paths}[1]    base${/}other
+    Should Be Equal    ${paths}[0]    base${/}example
+    Should Be Equal    ${paths}[1]    base${/}other
     Length Should Be    ${paths}    2
     @{paths} =    Join Paths    ${CURDIR}${/}my${/}base    %{TEMPDIR}${/}example    other
-    Should Be Equal    @{paths}[0]    %{TEMPDIR}${/}example
-    Should Be Equal    @{paths}[1]    ${CURDIR}${/}my${/}base${/}other
+    Should Be Equal    ${paths}[0]    %{TEMPDIR}${/}example
+    Should Be Equal    ${paths}[1]    ${CURDIR}${/}my${/}base${/}other
     Length Should Be    ${paths}    2
     @{paths} =    Join Paths    my${/}base    example${/}path${/}    other    one${/}more
-    Should Be Equal    @{paths}[0]    my${/}base${/}example${/}path
-    Should Be Equal    @{paths}[1]    my${/}base${/}other
-    Should Be Equal    @{paths}[2]    my${/}base${/}one${/}more
+    Should Be Equal    ${paths}[0]    my${/}base${/}example${/}path
+    Should Be Equal    ${paths}[1]    my${/}base${/}other
+    Should Be Equal    ${paths}[2]    my${/}base${/}one${/}more
     Length Should Be    ${paths}    3
 
 Normalize Path
@@ -43,6 +43,18 @@ Normalize Path
     Normalize Path And Check    abc${/}${/}def    abc${/}def
     Normalize Path And Check    abc${/ * 10}def    abc${/}def
     Normalize Path And Check    ${CURDIR}${/}${/}abc${/}.${/}..${/}.${/}${/}    ${CURDIR}
+
+Case Normalize Path On Windows
+    Normalize Path And Check    ABC        abc         case_normalize=True
+    Normalize Path And Check    ABC/DeF    abc\\def    case_normalize=YES
+    Normalize Path And Check    ABC        ABC         case_normalize=False
+    Normalize Path And Check    ABC/DeF    ABC\\DeF    case_normalize=OFF
+
+Case Normalize Path Outside Windows
+    Normalize Path And Check    ABC        ABC        case_normalize=True
+    Normalize Path And Check    ABC/DeF    ABC/DeF    case_normalize=YES
+    Normalize Path And Check    ABC        ABC        case_normalize=False
+    Normalize Path And Check    ABC/DeF    ABC/DeF    case_normalize=OFF
 
 Split Path
     Split Path And Check    abc${/}def    abc    def
@@ -104,8 +116,8 @@ Join Path And Check
     Should Be Equal    ${path}    ${expected}    Joining ${inputs} failed
 
 Normalize Path And Check
-    [Arguments]    ${input}    ${expected}
-    ${path} =    Normalize Path    ${input}
+    [Arguments]    ${input}    ${expected}    &{config}
+    ${path} =    Normalize Path    ${input}    &{config}
     Should Be Equal    ${path}    ${expected}    Normalizing ${input} failed
 
 Split Path And Check

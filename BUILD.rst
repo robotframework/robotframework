@@ -140,7 +140,8 @@ Release notes
 Set version
 -----------
 
-1. Set version information in `<src/robot/version.py>`_ and in `<pom.xml>`_::
+1. Set version information in `<src/robot/version.py>`_, `<setup.py>`_ and
+   `<pom.xml>`_::
 
       invoke set-version $VERSION
 
@@ -191,9 +192,9 @@ Creating distributions
 5. Verify that project pages at `PyPI
    <https://pypi.python.org/pypi/robotframework>`_ look good.
 
-6. Test installation (add ``--pre`` with pre-releases)::
+6. Test installation::
 
-      pip install --upgrade robotframework
+      pip install --pre --upgrade robotframework
 
 7. JAR distribution
 
@@ -201,10 +202,15 @@ Creating distributions
 
        invoke jar
 
-   - Test that JAR is not totally borken::
+   - Test that JAR is not totally broken::
 
        java -jar dist/robotframework-$VERSION.jar --version
        java -jar dist/robotframework-$VERSION.jar atest/testdata/misc/pass_and_fail.robot
+
+    - To create a JAR with a custom name for testing::
+
+       invoke jar --jar-name=example
+       java -jar dist/example.jar --version
 
 8. Upload JAR to Sonatype
 
@@ -232,13 +238,13 @@ Creating distributions
 
    - Run command::
 
-        mvn gpg:sign-and-deploy-file -Dfile=dist/robotframework-$VERSION.jar -DpomFile=pom.xml -Durl=http://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
+        mvn gpg:sign-and-deploy-file -Dfile=dist/robotframework-$VERSION.jar -DpomFile=pom.xml -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
 
    - Go to https://oss.sonatype.org/index.html#welcome, log in with Sonatype credentials, find the staging repository and do close & release
    - After that, the released JAR is synced to Maven central within an hour.
 
 __ https://issues.sonatype.org/secure/Dashboard.jspa
-__ http://central.sonatype.org/pages/working-with-pgp-signatures.html
+__ https://central.sonatype.org/pages/working-with-pgp-signatures.html
 __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 
 9. Documentation

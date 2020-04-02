@@ -53,5 +53,4 @@ class TypeValidator(object):
             raise DataError('Type information given to %d argument%s but '
                             'keyword has only %d argument%s.'
                             % (len(types), s(types), len(names), s(names)))
-        return {name: value for name, value in zip(names, types)
-                if value is not None}
+        return {name: value for name, value in zip(names, types) if value}

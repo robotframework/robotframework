@@ -12,80 +12,69 @@ ${MYOUTDIR}       %{TEMPDIR}${/}robot-test-145567
 ${INPUT FILE}     %{TEMPDIR}${/}robot-test-file.xml
 
 *** Test Cases ***
-One Call To Test
+--test once
     Run And Check Tests    --test First    First
 
-One Call To Test With Normalized Test Name
-    Run And Check Tests    --test secondone    Second One
+--test multiple times
+    Run And Check Tests    --test first --test nomatch -t "sec_ _ondONE"    First    Second One
 
-Two Calls To test
-    Run And Check Tests    --test First --test thirdone    First    Third One
-
-Two Calls to Test with one nonexisting test name
-    Run And Check Tests    --test notexists --test First    First
-
-One Call To test with pattern
-    Run And Check Tests    --test *one*    Second One    Third One    Fourth One With More Complex Name
-
-Two Calls To test with patterns
+--test with patterns
     Run And Check Tests    --test *one --test Fi?st    First    Second One    Third One
+    Run And Check Tests    --test [Great]Lob[sterB]estCase[!3-9]    GlobTestCase1    GlobTestCase2
 
-Test Filtering With Glob Bracket
-    Run And Check Tests    --test [Great]Lob[sterB]estCase[1-2]    GlobTestCase1    GlobTestCase2
-
-Test Filtering With Negative Glob Bracket
-    Run And Check Tests    --test Glob[!BAD]est*[!1-3]    GlobTestCase[5]    GlobTest Cat    GlobTest Rat
-
-Suite With One Arg
-    Run And Check Suites    --suite tsuite1   Tsuite1
-
-Suite with two args
-    Run And Check Suites    --suite tsuite1 --suite TSuite2   Tsuite1    Tsuite2
-
-Suite With Matching and nonMatching args
-    Run And Check Suites    --suite tsuite1 --suite notexists   Tsuite1
-
-Suite With Pattern in arg
-    Run And Check Suites    --suite t*    Tsuite1   Tsuite2   Tsuite3
-
-Suite Under Subdirectory
-    Run And Check Suites Within Subdirs    --suite sub1   Sub1
-
-Suite Under Subdirectory Using Pattern
-    Run And Check Suites Within Subdirs    --suite sub?    Sub1    Sub2
-
-Suite and test together
-    Run And Check Suites and Tests    --suite tsuite1 --suite tsuite3 --test *1first --test *2*    Tsuite1    Suite1 First
-
-No matching tests
+--test not matching
     Failing Rebot
-    ...    Suite 'Many Tests & Suites' contains no tests named 'nonex'.
+    ...    Suite 'Root' contains no tests matching name 'nonex'.
     ...    --test nonex    ${INPUT FILE}
 
-No matching tests when reboting multiple inputs
+--test not matching with multiple inputs
     Failing Rebot
-    ...    Suite 'Many Tests & Suites & Many Tests & Suites' contains no tests named 'nonex'.
+    ...    Suite 'Root & Root' contains no tests matching name 'nonex'.
     ...    --test nonex    ${INPUT FILE} ${INPUT FILE}
     Failing Rebot
-    ...    Suite 'My Name' contains no tests named 'nonex'.
+    ...    Suite 'My Name' contains no tests matching name 'nonex'.
     ...    --test nonex -N "My Name"    ${INPUT FILE} ${INPUT FILE}
 
-No matching suites
+--suite once
+    Run And Check Suites    --suite tsuite1   Tsuite1
+
+--suite multiple times
+    Run And Check Suites    --suite "t suite 1" -s nomatch -s T_Suite_2    Tsuite1    Tsuite2
+
+--suite with patterns
+    Run And Check Suites    --suite t*te?    Tsuite1   Tsuite2   Tsuite3
+
+--suite with long name
+    Run And Check Suites    --suite root.many_tests
+    Should Contain Suites    ${SUITE}    Many Tests
+    Run And Check Suites    --suite Root.*.SubSuites    Subsuites
+    Should Contain Suites    ${SUITE}    Suites
+    Should Contain Suites    ${SUITE.suites[0].suites[0]}    Sub1    Sub2
+
+--suite with end of long name
+    Run And Check Suites    --suite suites.subsuites    Subsuites
+    Should Contain Suites    ${SUITE}    Suites
+    Should Contain Suites    ${SUITE.suites[0].suites[0]}    Sub1    Sub2
+
+--suite not matching
     Failing Rebot
-    ...    Suite 'Many Tests & Suites' contains no tests in suites 'nonex', 'n2' or 'n3'.
+    ...    Suite 'Root' contains no tests in suites 'nonex', 'n2' or 'n3'.
     ...    --suite nonex -s n2 -s n3    ${INPUT FILE}
 
-No matching suites when reboting multiple inputs
+--suite not matching with multiple inputs
     Failing Rebot
-    ...    Suite 'Many Tests & Suites & Many Tests & Suites' contains no tests in suite 'nonex'.
+    ...    Suite 'Root & Root' contains no tests in suite 'nonex'.
     ...    --suite nonex    ${INPUT FILE} ${INPUT FILE}
     Failing Rebot
     ...    Suite 'CustomName' contains no tests in suite 'nonex'.
     ...    --name CustomName --suite nonex    ${INPUT FILE} ${INPUT FILE}
 
-No Matching Tests In Matching Suites
+--suite and --test together
+    Run And Check Suites and Tests    --suite tsuite1 --suite tsuite3 --test *1first --test nomatch    Tsuite1    Suite1 First
+
+--suite and --test together not matching
     Failing Rebot
-    ...     Suite 'Many Tests & Suites' contains no tests named 'first', 'nonex' or '*one' in suites 'nonex' or 'suites'.
+    ...     Suite 'Root' contains no tests matching name 'first', 'nonex' or '*one' in suites 'nonex' or 'suites'.
     ...    --suite nonex --suite suites --test first --test nonex --test *one    ${INPUT FILE}
 
 Elapsed Time
@@ -112,7 +101,7 @@ Elapsed Time
 
 *** Keywords ***
 Create Input File
-    Create Output With Robot    ${INPUT FILE}    ${EMPTY}    ${SUITE FILE} ${SUITE DIR}
+    Create Output With Robot    ${INPUT FILE}    --name Root    ${SUITE FILE} ${SUITE DIR}
     Create Directory    ${MYOUTDIR}
 
 Remove Temps
@@ -138,12 +127,6 @@ Run and Check Suites
     [Arguments]    ${params}    @{suites}
     Run Suites    ${params}
     Should Contain Suites    ${SUITE.suites[0]}    @{suites}
-    Check Stats
-
-Run and check suites within subdirs
-    [Arguments]    ${params}    @{suites}
-    Run Suites    ${params}
-    Should Contain Suites    ${SUITE.suites[0].suites[0]}   @{suites}
     Check Stats
 
 Run And Check Suites and Tests

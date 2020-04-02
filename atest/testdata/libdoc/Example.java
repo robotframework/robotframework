@@ -109,6 +109,12 @@ public class Example {
     }
 
     /**
+     * *DEPRECATED!?!?!!*
+     */
+    public void deprecation() {
+    }
+
+    /**
      * Should not be visible in library documentation
      */
     private void notAKeyword(String foobar) {

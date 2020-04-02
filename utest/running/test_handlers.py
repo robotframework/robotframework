@@ -1,18 +1,23 @@
-import unittest
-import sys
+# coding: utf-8
+
 import inspect
+import os.path
+import re
+import sys
+import unittest
 
 from robot.running.handlers import _PythonHandler, _JavaHandler, DynamicHandler
-from robot import utils
-from robot.utils.asserts import *
+from robot.utils import IRONPYTHON, JYTHON, PY2
+from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
 from robot.running.testlibraries import TestLibrary, LibraryScope
 from robot.running.dynamicmethods import (
     GetKeywordArguments, GetKeywordDocumentation, RunKeyword)
 from robot.errors import DataError
 
-from classes import NameLibrary, DocLibrary, ArgInfoLibrary
+from classes import (NameLibrary, DocLibrary, ArgInfoLibrary,
+                     __file__ as classes_source)
 from ArgumentsPython import ArgumentsPython
-if utils.JYTHON:
+if JYTHON:
     import ArgumentsJava
 
 
@@ -21,9 +26,10 @@ def _get_handler_methods(lib):
     return [a for a in attrs if inspect.ismethod(a)]
 
 def _get_java_handler_methods(lib):
-    # This hack assumes that all java handlers used start with 'a_' -- easier
-    # than excluding 'equals' etc. otherwise
-    return [a for a in _get_handler_methods(lib) if a.__name__.startswith('a_') ]
+    # This hack assumes that all java handlers used start with 'a_' or 'java'
+    # -- easier than excluding 'equals' etc. otherwise
+    return [a for a in _get_handler_methods(lib)
+            if a.__name__.startswith(('a_', 'java'))]
 
 
 class LibraryMock(object):
@@ -32,7 +38,19 @@ class LibraryMock(object):
         self.name = self.orig_name = name
         self.scope = LibraryScope(scope, self)
 
-    register_listeners = unregister_listeners = reset_instance = lambda *args: None
+    register_listeners = unregister_listeners = reset_instance \
+        = get_instance = lambda *args: None
+
+
+def assert_argspec(argspec, minargs=0, maxargs=0, positional=[], defaults={},
+                   varargs=None, kwonlyargs=[], kwargs=None):
+    assert_equal(argspec.minargs, minargs)
+    assert_equal(argspec.maxargs, maxargs)
+    assert_equal(argspec.positional, positional)
+    assert_equal(argspec.defaults, defaults)
+    assert_equal(argspec.varargs, varargs)
+    assert_equal(argspec.kwonlyargs, kwonlyargs)
+    assert_equal(argspec.kwargs, kwargs)
 
 
 class TestPythonHandler(unittest.TestCase):
@@ -87,14 +105,14 @@ class TestDynamicHandlerCreation(unittest.TestCase):
     def test_non_ascii_doc(self):
         self._assert_doc(u'P\xe4iv\xe4\xe4')
 
-    if not utils.IRONPYTHON:
+    if not IRONPYTHON:
 
         def test_with_utf8_doc(self):
             doc = u'P\xe4iv\xe4\xe4'
             self._assert_doc(doc.encode('UTF-8'), doc)
 
     def test_invalid_doc_type(self):
-        self._assert_fails('Return value must be string.', doc=True)
+        self._assert_fails('Return value must be a string, got boolean.', doc=True)
 
     def test_none_argspec(self):
         self._assert_spec(None, maxargs=sys.maxsize, varargs='varargs', kwargs=False)
@@ -110,11 +128,18 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             self._assert_spec(argspec, len(argspec), len(argspec), argspec)
 
     def test_only_default_args(self):
-        self._assert_spec(['d1=default', 'd2=xxx'], 0, 2,
-                          ['d1', 'd2'], {'d1': 'default', 'd2': 'xxx'})
+        self._assert_spec(['d1=default', 'd2=True'], 0, 2,
+                          ['d1', 'd2'], {'d1': 'default', 'd2': 'True'})
+
+    def test_default_as_tuple_or_list_like(self):
+        self._assert_spec([('d1', 'default'), ['d2', True]], 0, 2,
+                          ['d1', 'd2'], {'d1': 'default', 'd2': True})
 
     def test_default_value_may_contain_equal_sign(self):
         self._assert_spec(['d=foo=bar'], 0, 1, ['d'], {'d': 'foo=bar'})
+
+    def test_default_value_as_tuple_may_contain_equal_sign(self):
+        self._assert_spec([('n=m', 'd=f')], 0, 1, ['n=m'], {'n=m': 'd=f'})
 
     def test_varargs(self):
         self._assert_spec(['*vararg'], 0, sys.maxsize, varargs='vararg')
@@ -142,6 +167,14 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_spec(['*', 'x=1', 'y', 'z=3'],
                           kwonlyargs=['x', 'y', 'z'],
                           defaults={'x': '1', 'z': '3'})
+
+    def test_kwonlydefaults_with_tuple(self):
+        self._assert_spec(['*', ('kwo', 'default')],
+                          kwonlyargs=['kwo'],
+                          defaults={'kwo': 'default'})
+        self._assert_spec([('*',), 'x=1', 'y', ('z', 3)],
+                          kwonlyargs=['x', 'y', 'z'],
+                          defaults={'x': '1', 'z': 3})
 
     def test_integration(self):
         self._assert_spec(['arg', 'default=value'],
@@ -171,10 +204,25 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                           varargs='d',
                           kwonlyargs=['e', 'f', 'g'],
                           kwargs='h')
+        self._assert_spec([('a',), ('b', '1'), ('c', 2), ('*d',), ('e',), ('f', 3), ('g',), ('**h',)],
+                          1, sys.maxsize,
+                          positional=['a', 'b', 'c'],
+                          defaults={'b': '1', 'c': 2, 'f': 3},
+                          varargs='d',
+                          kwonlyargs=['e', 'f', 'g'],
+                          kwargs='h')
 
     def test_invalid_argspec_type(self):
-        for argspec in [True, [1, 2]]:
-            self._assert_fails("Return value must be list of strings.", argspec)
+        for argspec in [True, [1, 2], ['arg', ()]]:
+            self._assert_fails("Return value must be a list of strings "
+                               "or non-empty tuples.", argspec)
+
+    def test_invalid_tuple(self):
+        for invalid in [('too', 'many', 'values'), ('*too', 'many'),
+                        ('**too', 'many'), (1, 2), (1,)]:
+            self._assert_fails('Invalid argument specification: '
+                               'Invalid argument "%s".' % (invalid,),
+                               ['valid', invalid])
 
     def test_mandatory_arg_after_default_arg(self):
         for argspec in [['d=v', 'arg'], ['a', 'b', 'c=v', 'd']]:
@@ -232,16 +280,9 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         else:
             kwargs_support_modes = [True]
         for kwargs_support in kwargs_support_modes:
-            arguments = self._create_handler(argspec,
-                                             kwargs_support=kwargs_support
-                                             ).arguments
-            assert_equal(arguments.minargs, minargs)
-            assert_equal(arguments.maxargs, maxargs)
-            assert_equal(arguments.positional, positional)
-            assert_equal(arguments.defaults, defaults)
-            assert_equal(arguments.varargs, varargs)
-            assert_equal(arguments.kwonlyargs, kwonlyargs)
-            assert_equal(arguments.kwargs, kwargs)
+            handler = self._create_handler(argspec, kwargs_support=kwargs_support)
+            assert_argspec(handler.arguments, minargs, maxargs, positional,
+                           defaults, varargs, kwonlyargs, kwargs)
 
     def _assert_fails(self, error, *args, **kwargs):
         assert_raises_with_msg(DataError, error,
@@ -259,34 +300,60 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         return DynamicHandler(lib, 'mock', RunKeyword(lib), doc, argspec)
 
 
-if utils.JYTHON:
+if JYTHON:
 
     handlers = dict((method.__name__, method) for method in
                     _get_java_handler_methods(ArgumentsJava('Arg', ['varargs'])))
 
-    class TestJavaHandler(unittest.TestCase):
+    class TestJavaHandlerArgLimits(unittest.TestCase):
 
-        def test_arg_limits_no_defaults_or_varargs(self):
+        def test_no_defaults_or_varargs(self):
             for count in [0, 1, 3]:
                 method = handlers['a_%d' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equal(handler.arguments.minargs, count)
-                assert_equal(handler.arguments.maxargs, count)
+                assert_argspec(handler.arguments,
+                               minargs=count,
+                               maxargs=count,
+                               positional=self._format_positional(count))
 
-        def test_arg_limits_with_varargs(self):
-            for count in [0, 1]:
-                method = handlers['a_%d_n' % count]
-                handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equal(handler.arguments.minargs, count)
-                assert_equal(handler.arguments.maxargs, sys.maxsize)
-
-        def test_arg_limits_with_defaults(self):
+        def test_defaults(self):
             # defaults i.e. multiple signatures
             for mina, maxa in [(0, 1), (1, 3)]:
                 method = handlers['a_%d_%d' % (mina, maxa)]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equal(handler.arguments.minargs, mina)
-                assert_equal(handler.arguments.maxargs, maxa)
+                assert_argspec(handler.arguments,
+                               minargs=mina,
+                               maxargs=maxa,
+                               positional=self._format_positional(maxa),
+                               defaults={'arg%s' % (i+1): ''
+                                         for i in range(mina, maxa)})
+
+        def test_varargs(self):
+            for count in [0, 1]:
+                method = handlers['a_%d_n' % count]
+                handler = _JavaHandler(LibraryMock(), method.__name__, method)
+                assert_argspec(handler.arguments,
+                               minargs=count,
+                               maxargs=sys.maxsize,
+                               positional=self._format_positional(count),
+                               varargs='varargs')
+
+        def test_kwargs(self):
+            for name, positional, varargs in [('javaKWArgs', 0, False),
+                                              ('javaNormalAndKWArgs', 1, False),
+                                              ('javaVarArgsAndKWArgs', 0, True),
+                                              ('javaAllArgs', 1, True)]:
+                method = handlers[name]
+                handler = _JavaHandler(LibraryMock(), method.__name__, method)
+                assert_argspec(handler.arguments,
+                               minargs=positional,
+                               maxargs=sys.maxsize if varargs else positional,
+                               positional=self._format_positional(positional),
+                               varargs='varargs' if varargs else None,
+                               kwargs='kwargs')
+
+        def _format_positional(self, count):
+            return ['arg%s' % (i+1) for i in range(count)]
 
 
     class TestArgumentCoercer(unittest.TestCase):
@@ -358,6 +425,123 @@ if utils.JYTHON:
         def _test_coercion_fails(self, handler, expected_message):
             assert_raises_with_msg(ValueError, expected_message,
                                    handler._arg_coercer.coerce, ['invalid'], {})
+
+
+class TestSourceAndLineno(unittest.TestCase):
+
+    def test_class_with_init(self):
+        lib = TestLibrary('classes.RecordingLibrary')
+        self._verify(lib.handlers['kw'], classes_source, 208)
+        self._verify(lib.init, classes_source, 204)
+
+    def test_class_without_init(self):
+        from robot.libraries.BuiltIn import __file__ as source
+        lib = TestLibrary('BuiltIn')
+        self._verify(lib.handlers['convert_to_integer'], source, 102)
+        self._verify(lib.init, source, -1)
+
+    def test_old_style_class_without_init(self):
+        lib = TestLibrary('classes.NameLibrary')
+        self._verify(lib.handlers['simple1'], classes_source, 15)
+        self._verify(lib.init, classes_source, -1)
+
+    def test_module(self):
+        from module_library import __file__ as source
+        lib = TestLibrary('module_library')
+        self._verify(lib.handlers['passing'], source, 5)
+        self._verify(lib.init, source, -1)
+
+    def test_package(self):
+        from robot.variables.search import __file__ as source
+        from robot.variables import __file__ as init_source
+        lib = TestLibrary('robot.variables')
+        self._verify(lib.handlers['is_variable'], source, 33)
+        self._verify(lib.init, init_source, -1)
+
+    def test_decorated(self):
+        lib = TestLibrary('classes.Decorated')
+        self._verify(lib.handlers['no_wrapper'], classes_source, 322)
+        # Python 2 doesn't see the original source with wrapping decorators.
+        if PY2:
+            self._verify(lib.handlers['wrapper'], classes_source, 311)
+        else:
+            self._verify(lib.handlers['wrapper'], classes_source, 329)
+            self._verify(lib.handlers['external'], classes_source, 334)
+        self._verify(lib.handlers['no_def'], classes_source, 337)
+
+    def test_dynamic_without_source(self):
+        lib = TestLibrary('classes.ArgDocDynamicLibrary')
+        self._verify(lib.handlers['No Arg'], classes_source, -1)
+
+    def test_dynamic(self):
+        lib = TestLibrary('classes.DynamicWithSource')
+        self._verify(lib.handlers['only path'],
+                     classes_source)
+        self._verify(lib.handlers['path & lineno'],
+                     classes_source, 42)
+        self._verify(lib.handlers['lineno only'],
+                     classes_source, 6475)
+        self._verify(lib.handlers['invalid path'],
+                     'path validity is not validated')
+        self._verify(lib.handlers['path w/ colon'],
+                     r'c:\temp\lib.py', -1)
+        self._verify(lib.handlers['path w/ colon & lineno'],
+                     r'c:\temp\lib.py', 1234567890)
+        self._verify(lib.handlers['no source'],
+                     classes_source)
+
+    def test_dynamic_with_non_ascii_source(self):
+        lib = TestLibrary('classes.DynamicWithSource')
+        self._verify(lib.handlers[u'nön-äscii'],
+                     u'hyvä esimerkki')
+        self._verify(lib.handlers[u'nön-äscii utf-8'],
+                     u'福', 88)
+
+    def test_dynamic_init(self):
+        lib_with_init = TestLibrary('classes.ArgDocDynamicLibrary')
+        lib_without_init = TestLibrary('classes.DynamicWithSource')
+        self._verify(lib_with_init.init, classes_source, 219)
+        self._verify(lib_without_init.init, classes_source, -1)
+
+    def test_dynamic_invalid_source(self):
+        logger = LoggerMock()
+        lib = TestLibrary('classes.DynamicWithSource', logger=logger)
+        self._verify(lib.handlers['invalid source'], None)
+        error = (
+            "Error in library 'classes.DynamicWithSource': "
+            "Getting source information for keyword 'Invalid Source' failed: "
+            "Calling dynamic method 'get_keyword_source' failed: "
+            "Return value must be a string, got integer."
+        )
+        assert_equal(logger.messages, [(error, 'ERROR')])
+
+    if JYTHON:
+
+        def test_java_class(self):
+            kw = TestLibrary('ArgumentTypes').handlers['byte1']
+            self._verify(kw, None, -1)
+
+    def _verify(self, kw, source, lineno=-1):
+        if source:
+            source = re.sub(r'(\.pyc|\$py\.class)$', '.py', source)
+            source = os.path.normpath(source)
+        assert_equal(kw.source, source)
+        assert_equal(kw.lineno, lineno)
+
+
+class LoggerMock(object):
+
+    def __init__(self):
+        self.messages = []
+
+    def write(self, message, level):
+        self.messages.append((message, level))
+
+    def info(self, message):
+        self.write(message, 'INFO')
+
+    def debug(self, message):
+        pass
 
 
 if __name__ == '__main__':

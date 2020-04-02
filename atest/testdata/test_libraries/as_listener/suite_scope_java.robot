@@ -21,5 +21,7 @@ Listener methods in library are keywords
     endTest   foo   zip=zap
 
 Listener methods starting with underscore are not keywords
-    [Documentation]         FAIL No keyword with name '_endKeyword' found.
-    _endKeyword   bar
+    [Documentation]    FAIL
+    ...    No keyword with name '_endKeyword' found. Did you mean:
+    ...    ${SPACE*4}BuiltIn.Run Keyword
+    _endKeyword    bar

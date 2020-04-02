@@ -22,4 +22,3 @@ Check Keyword Name And Args
     [Arguments]    ${kw}    ${name}    @{args}
     Should Be Equal    ${kw.name}    ${name}
     Lists Should Be Equal    ${kw.args}    ${args}
-

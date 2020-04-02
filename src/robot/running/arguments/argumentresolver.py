@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.utils import is_string, is_dict_like, split_from_equals
-from robot.variables import VariableSplitter
+from robot.variables import is_dict_variable
 
 from .argumentvalidator import ArgumentValidator
 
@@ -36,7 +36,7 @@ class ArgumentResolver(object):
                                                             variables)
         positional, named = self._dict_to_kwargs.handle(positional, named)
         self._argument_validator.validate(positional, named,
-                                          dryrun=not variables)
+                                          dryrun=variables is None)
         return positional, named
 
 
@@ -49,9 +49,9 @@ class NamedArgumentResolver(object):
         positional = []
         named = []
         for arg in arguments:
-            if self._is_dict_var(arg):
+            if is_dict_variable(arg):
                 named.append(arg)
-            elif self._is_named(arg, variables):
+            elif self._is_named(arg, named, variables):
                 named.append(split_from_equals(arg))
             elif named:
                 self._raise_positional_after_named()
@@ -59,23 +59,19 @@ class NamedArgumentResolver(object):
                 positional.append(arg)
         return positional, named
 
-    def _is_dict_var(self, arg):
-        return (is_string(arg) and arg[:2] == '&{' and arg[-1] == '}' and
-                VariableSplitter(arg).is_dict_variable())
-
-    def _is_named(self, arg, variables=None):
-        if not (is_string(arg) and '=' in arg):
-            return False
+    def _is_named(self, arg, previous_named, variables=None):
         name, value = split_from_equals(arg)
         if value is None:
             return False
-        if self._argspec.kwargs or self._argspec.kwonlyargs:
-            return True
-        if not self._argspec.supports_named:
-            return False
         if variables:
-            name = variables.replace_scalar(name)
-        return name in self._argspec.positional
+            try:
+                name = variables.replace_scalar(name)
+            except DataError:
+                return False
+        argspec = self._argspec
+        if previous_named or name in argspec.kwonlyargs or argspec.kwargs:
+            return True
+        return argspec.supports_named and name in argspec.positional
 
     def _raise_positional_after_named(self):
         raise DataError("%s '%s' got positional argument after named arguments."

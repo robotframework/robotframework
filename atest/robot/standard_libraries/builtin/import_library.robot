@@ -14,6 +14,9 @@ Import Library With Arguments
 Import Library With Variables And WITH NAME
     Check Test Case    ${TEST NAME}
 
+Import Library With WITH NAME containing non-ASCII spaces
+    Check Test Case    ${TEST NAME}
+
 Import Library Using Physical Path
     Check Test Case    ${TEST NAME}
 

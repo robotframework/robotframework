@@ -5,7 +5,8 @@ Test Template     Should Be Equal
 *** Variables ***
 ${LIST}           [['item'], [1, 2, (3, [4]), 5], 'third']
 ${DICT}           {'key': {'key': 'value'}, 1: {2: 3}, 'x': {'y': {'z': ''}}}
-${MIXED}          {'x': [(1, {'y': {'z': ['foo', 'bar', {'': [42]}]}})]}
+${MIXED}          {'x': [(1, {'y': {'z': ['foo', b'bar', {'': ['ABC']}]}})]}
+${STRING}         Robot42
 
 *** Test Cases ***
 Nested list access
@@ -20,15 +21,17 @@ Nested dict access
     ${DICT}[x][y][z]                    ${EMPTY}
 
 Nested mixed access
-    ${MIXED}[x][0][0]                   ${1}
-    ${MIXED}[x][0][1][y][z][-1][][0]    ${42}
+    ${MIXED}[x][0][0]                       ${1}
+    ${MIXED}[x][0][1][y][z][-1][][0][0]     A
+    ${MIXED}[x][0][1][y][z][1][-1]           ${{b'r'[0]}}
 
 Nested access with slicing
-    ${LIST}[1:][:-1]                    ${LIST[1:-1]}
-    ${LIST}[1:-1][-1][-2:1:-2][0][0]    ${3}
+    ${LIST}[1:][:-1]                        ${LIST[1:-1]}
+    ${LIST}[1:-1][-1][-2:1:-2][0][0]        ${3}
+    ${MIXED}[x][0][1][y][z][-1][][0][:2]    AB
 
 Non-existing nested list item
-    [Documentation]    FAIL List '\${LIST}[1][2]' has no item in index 666.
+    [Documentation]    FAIL Tuple '\${LIST}[1][2]' has no item in index 666.
     ${LIST}[1][2][666]                  whatever
 
 Non-existing nested dict item
@@ -36,23 +39,31 @@ Non-existing nested dict item
     ${DICT}[x][y][nonex]                whatever
 
 Invalid nested list access
-    [Documentation]    FAIL List '\${LIST}[1][2]' used with invalid index 'inv'.
+    [Documentation]    FAIL
+    ...    Tuple '\${LIST}[1][2]' used with invalid index 'inv'. To use \
+    ...    '[inv]' as a literal value, it needs to be escaped like '\\[inv]'.
     ${LIST}[1][2][inv]                  whatever
 
 Invalid nested dict access
     [Documentation]    FAIL STARTS: Dictionary '\${DICT}[key]' used with invalid key:
     ${DICT}[key][${DICT}]               whatever
 
-Nested access with non-list/dict
+Invalid nested string access
+    [Documentation]    FAIL Tuple '\${STRING}[1]' used with invalid index 'inv'.
+    ${LIST}[1][inv]                  whatever
+
+Nested access with non-subscriptable
     [Documentation]    FAIL
-    ...    Variable '\${DICT}[key][key]' is string, not list or dictionary,\
-    ...    and thus accessing item '0' from it is not possible.
-    ${DICT}[key][key][0]                     whatever
+    ...    Variable '\${DICT}[\${1}][\${2}]' is integer, which is not \
+    ...    subscriptable, and thus accessing item '0' from it is not possible. \
+    ...    To use '[0]' as a literal value, it needs to be escaped like '\\[0]'.
+    ${DICT}[${1}][${2}][0]                     whatever
 
 Escape nested
     ${LIST}[-1]\[0]                     third[0]
     ${DICT}[key][key]\[key]             value[key]
     ${DICT}[key]\[key][key]             {'key': 'value'}[key][key]
+    ${STRING}[0]\[-1]                   R[-1]
 
 Nested access doesn't support old `@` and `&` syntax
     @{LIST}[0][0]                       ['item'][0]

@@ -46,9 +46,9 @@ Extended variable syntax
     Should Be Equal    ${x}    default
 
 Invalid variable syntax 1
-    [Documentation]    FAIL Invalid variable syntax 'notvar'.
+    [Documentation]    FAIL Invalid variable name 'notvar'.
     Get Variable Value    notvar
 
 Invalid variable syntax 2
-    [Documentation]    FAIL Invalid variable syntax ''.
+    [Documentation]    FAIL Invalid variable name '\\'.
     Get Variable Value    \
