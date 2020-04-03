@@ -1,15 +1,15 @@
-==========================
-Robot Framework 3.2 beta 2
-==========================
+=======================================
+Robot Framework 3.2 release candidate 1
+=======================================
 
 .. default-role:: code
 
 `Robot Framework`_ 3.2 is a new major release with an enhanced test data
-parser, handy `@library` and `@not_keyword` decorators, inline Python evaluation
-support, and many other interesting new features and bug fixes. RF 3.2 beta 2
-is its third preview release and as the last planned release before release
-candidates it already already contains majority of the new features and fixes.
-All issues targeted for RF 3.2 can be found from the `issue tracker milestone`_.
+parser, handy `@library` and `@not_keyword` decorators, enhanced Libdoc
+spec files for external tools, inline Python evaluation support, and many
+other interesting new features and lot of bug fixes. Robot Framework 3.2 rc 1
+contains all changes planned to the final release. Users are highly recommended
+to test it in their environments and report possible problems.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users`_ mailing list or to `Robot Framework Slack`_,
@@ -25,14 +25,14 @@ to install the latest available release or use
 
 ::
 
-   pip install robotframework==3.2b2
+   pip install robotframework==3.2rc1
 
 to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 3.2 beta 2 was released as a Valentine's Day gift on
-Friday February 14, 2020.
+Robot Framework 3.2 rc 1 was released on Friday April 3, 2020. Barring any
+major problems, the final release is planned for Friday April 17, 2020.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -44,10 +44,10 @@ Friday February 14, 2020.
 .. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
 .. _installation instructions: ../../INSTALL.rst
 
-
 .. contents::
    :depth: 2
    :local:
+
 
 Most important enhancements
 ===========================
@@ -83,15 +83,13 @@ messages nowadays tell on which line the error occurred and the latter means
 that tools like Tidy do not mess up the original formatting (`#2579`_).
 
 The new parser supports only the plain text format (`#3081`_). This means
-that the HTML format is not supported at all, and the TSV format is supported
+that the HTML format is not supported at all and the TSV format is supported
 only when it is fully compatible with the plain text format. Because the
 new parser only parses `*.robot` files by default (`#3084`_), users of the
 `*.txt`, `*.tsv`, or `*.rst` files need to explicitly use the `--extension`
 option.
 
 __ https://microsoft.github.io/language-server-protocol
-.. _#3373:  https://github.com/robotframework/robotframework/issues/3373
-.. _#549: https://github.com/robotframework/robotframework/issues/549
 .. _#3074: https://github.com/robotframework/robotframework/issues/3074
 .. _#3075: https://github.com/robotframework/robotframework/issues/3075
 .. _#3079: https://github.com/robotframework/robotframework/issues/3079
@@ -166,6 +164,50 @@ This functionality is also used to mark the old `@keyword` decorator, the
 new `@library` decorator, and the `@not_keyword` decorator itself as not
 being keywords (`#3454`_).
 
+Enhanced Libdoc spec files
+--------------------------
+
+The Libdoc tool is typically used for creating library documentation in HTML
+for humans to read, but it can also create XML spec files where external tools
+can easily read all the same information. These spec files have been enhanced
+heavily in Robot Framework 3.2:
+
+- Actual library and keyword documentation in spec files can be converted to
+  HTML format by using the new `XML:HTML` format like `--format XML:HTML` (`#3301`_).
+
+- Support for custom `*.libspec` extension has been added (`#3491`_).
+  When an output file has that extension, Libdoc uses the aforementioned
+  `XML:HTML` format by default.
+
+- Spec files have an XSD schema (`#3520`_). It can be used for validation and
+  it also thoroughly documents the spec format. The schema can be found here__.
+
+- Somewhat related to the above, the `specversion` attribute tells the spec
+  version that has been used (`#3523`_). The current version is 2 and it will
+  incremented if and when changes are made.
+
+- Library and keyword source information is included (`#3507`_). This includes
+  a relative path to the file where library and each keyword is implemented
+  along with the line number.
+
+- Deprecated keywords get `deprecated="true"` attribute automatically (`#3498`_).
+
+- `scope` and `namedargs` elements have been changed to attributes (`#3522`_).
+  `scope` is nowadays consistently `GLOBAL`, `SUITE` or `TEST` (`#3532`_)
+  and `namedargs` is a Boolean and not string `yes/no`. For backwards
+  compatibility reasons the old `scope` and `namedargs` elements are still
+  written to the spec files with old values.
+
+- `type` attribute values have been changed to upper case `LIBRARY` and
+  `RESOURCE` (`#3534`_). Tools using this information need to be updated.
+
+- `generated` attribute has been changed from local time in custom format to
+  UTC time represented as `xsd:dateTime`__ (`#3528`_). Tools using this
+  value need to be updated.
+
+__ https://github.com/robotframework/robotframework/tree/master/doc/schema
+__ http://www.datypic.com/sc/xsd/t-xsd_dateTime.html
+
 Inline Python evaluation
 ------------------------
 
@@ -206,6 +248,49 @@ evaluate expressions import modules automatically (`#3349`_).
 __ http://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Evaluating%20expressions
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#extended-variable-syntax
 
+Native `&{dict}` iteration with FOR loops
+-----------------------------------------
+
+FOR loops support iterating dictionary items if values are `&{dict}`
+variables (`#3485`_)::
+
+    FOR    ${key}    ${value}    IN    &{dict}
+        Log    Key is '${key}' and value is '${value}'.
+    END
+
+It is possible to use multiple dictionaries and add additional items
+using the `key=value` syntax::
+
+    FOR    ${key}    ${value}    IN    &{first}    &{second}    one=more
+        Log    Key is '${key}' and value is '${value}'.
+    END
+
+If same keys is used multiple times, the last value is used but the original
+order of keys is preserved.
+
+In the future this syntax will be generalized so that it works also if all
+values use the `key=value` syntax even if none of the values is a `&{dict}`
+variable. In Robot Framework 3.1 such usage causes a deprecation warning.
+Escaping like `key\=value` is possible to avoid dictionary iteration.
+
+In addition to using separate loop variables for key and value, it is
+possible to use one variable that then becomes a key-value tuple::
+
+    FOR    ${item}    IN    &{dict}
+        Length Should Be    ${item}    2
+        Log    Key is '${item}[0]' and value is '${item}[1]'.
+    END
+
+The dictionary iteration works also with the FOR IN ENUMERATE loops::
+
+    FOR    ${index}    ${key}    ${value}    IN ENUMERATE    &{dict}
+        Log    Key is '${key}' and value is '${value}' at index ${index}.
+    END
+    FOR    ${item}    IN ENUMERATE    &{dict}
+        Length Should Be    ${item}    3
+        Log    Key is '${item}[1]' and value is '${item}[2]' at index ${item}[0].
+    END
+
 Listeners can add and remove tests
 ----------------------------------
 
@@ -234,6 +319,21 @@ function or method to see the real signature.
 
 __ https://realpython.com/primer-on-python-decorators/
 __ https://docs.python.org/library/functools.html#functools.wraps
+
+Continuous integrating
+----------------------
+
+Robot Framework project has not had working continuous integration (CI)
+since the Nokia days but now we finally have it again (`#3420`_). Our CI
+system is based on `GitHub actions`__ and it runs tests automatically every
+time code is pushed to the repository or a pull request is opened. You
+can see all actions at https://github.com/robotframework/robotframework/actions.
+
+__ https://github.com/features/actions
+
+
+Backwards incompatible changes
+==============================
 
 Backwards incompatible changes
 ==============================
@@ -336,7 +436,7 @@ problem is switching to the new for loop style where `:FOR` is replaced with
 
 For alternatives and more details in general see issue `#3108`_.
 
-__ `Old for loop syntax has been deprecated`_
+__ `Old for loop syntax`_
 .. _#3108: https://github.com/robotframework/robotframework/issues/3108
 
 Stricter section and setting name syntax
@@ -351,8 +451,24 @@ Stricter for loop separator syntax
 
 For loop separators `IN`, `IN RANGE`, `IN ZIP` and `IN ENUMERATE` are both
 case and space sensitive (`#3083`_). In other works, separators like `in`
-or `INZIP` are nor recognized. Notice also that the `old for loop syntax
-has been deprecated`_ in general.
+or `INZIP` are nor recognized. Notice also that the `old FOR loop syntax`_
+has been deprecated in general.
+
+Libdoc spec files have changed
+------------------------------
+
+As `discussed earlier`__, Libdoc spec files have been enhanced heavily.
+Most of the changes are backwards compatible, but these changes may cause
+problems for tools using the spec files:
+
+- `type` attribute values have been changed to upper case `LIBRARY` and
+  `RESOURCE` (`#3534`_).
+
+- `generated` attribute has been changed from local time in custom format to
+  UTC time represented as `xsd:dateTime`__ (`#3528`_).
+
+__ `Enhanced Libdoc spec files`_
+__ http://www.datypic.com/sc/xsd/t-xsd_dateTime.html
 
 Pre-run modifiers are run before selecting tests cases to be executed
 ---------------------------------------------------------------------
@@ -367,23 +483,42 @@ it possible to select which order to use.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#programmatic-modification-of-test-data
 
-Support for custom timeout messages has been removed
-----------------------------------------------------
+Other backwards incompatible changes
+------------------------------------
 
-This functionality was deprecated already in Robot Framework 3.0.1 and
-it has now been removed (`#2291`_).
+- Using variable item access syntax like `${var}[0]` works with all sequences
+  including strings and bytes (`#3182`_). With RF 3.1 that caused an error with
+  sequences that were not considered list-like and with earlier versions
+  this syntax was interpreted as variable `${var}` followed by a literal
+  string `[0]`.
 
-`--escape` option has been removed
-----------------------------------
+- BuiltIn keywords `Should Contain X Times` and `Get Count` argument names
+  have been changed from `item1, item2` to `container, item` to be consistent
+  with other similar keywords (`#3486`_). This affects tests only if keywords
+  have been used with the named argument syntax like `item2=xxx`.
 
-This option used to allow escaping problematic characters on the command line.
-Shell escaping or quoting mechanism needs to be used instead (`#3085`_).
+- String library methods `convert_to_uppercase` and `convert_to_lowercase`
+  have been renamed to `convert_to_upper_case` to `convert_to_lower_case`,
+  respectively (`#3484`_). This does not affect how keywords can be used in
+  test data (both `Convert To Upper Case` and `Convert To Uppercase` variants
+  work with all releases) but if someone uses these methods programmatically
+  those usages need to be changes. There should be no need for such usage,
+  though, as Python strings have built-in `upper` and `lower` methods.
 
-`--warnonskippedfiles` option has been removed
-----------------------------------------------
+- Support for custom timeout messages has been removed (`#2291`_). This
+  functionality was deprecated already in Robot Framework 3.0.1 and it
+  has now finally been removed.
 
-This option did not have any effect anymore and has now been removed
-altogether (`#3086`_).
+- `--escape` option has been removed (`#3085`_). This option used to allow
+  escaping problematic characters on the command line. Shell escaping or
+  quoting mechanism needs to be used instead.
+
+- `--warnonskippedfiles` option has been removed (`#3086`_). This option did
+  not have any effect anymore and has now been removed altogether.
+
+- Using `&{dict}` variable with FOR loops initiates dictionary iteration
+  (`#3485`_). If this is not desired, the variable syntax should be changed
+  to `${dict}`.
 
 
 Deprecated features
@@ -395,10 +530,10 @@ the removal. There are not that many deprecations in Robot Framework 3.2, but
 unfortunately especially changes to the for loop syntax are likely to affect
 many users.
 
-Old for loop syntax has been deprecated
----------------------------------------
+Old FOR loop syntax
+-------------------
 
-Robot Framework 3.1 `enhanced for loop syntax`__ so that nowadays loops can
+Robot Framework 3.1 `enhanced FOR loop syntax`__ so that nowadays loops can
 be written like this::
 
    FOR    ${animal}    IN    cat    dog    cow
@@ -428,7 +563,7 @@ data:
   these usages, running tests tells you have you caught them all.
 - Use the `Tidy tool`__ to update data. It also changes data otherwise, so
   it is a good idea to check changes and possibly commit only changes relevant
-  to for loops. Tidy updates the old for loop syntax to new one starting from
+  to FOR loops. Tidy updates the old FOR loop syntax to new one starting from
   Robot Framework 3.1.2.
 - Use operating system search functionality to find `:FOR` (case-insensitively)
   as well as possible `: FOR` variant from test data files. Then update loops
@@ -444,8 +579,30 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 __ https://beyondgrep.com/
 __ https://pypi.org/project/pss/
 
-Accessing list and dictionary items using `@{var}[item]` and `&{var}[item]` is deprecated
------------------------------------------------------------------------------------------
+FOR loops when all values are in `key=value` syntax
+---------------------------------------------------
+
+The `&{dict}` iteration syntax with FOR loops (`#3485`_) supports giving
+additional items using the `key=value` syntax like::
+
+   FOR    ${key}    ${value}    IN    &{dict}    another=item    one=more
+       Log    Key is '${key}' and value is '${value}'.
+   END
+
+In the future this will be generalized so that the same syntax works also
+if none of the values is a `&{dict}` variable::
+
+   FOR    ${key}    ${value}    IN    key=value    another=item    one=more
+       Log    Key is '${key}' and value is '${value}'.
+   END
+
+With Robot Framework 3.2 the above syntax still works as it did earlier
+but there is a deprecation warning. Notice that this problem occurs _only_
+if all values are like `xxx=yyy`. An easy way to avoid is it escaping
+at least one of the values like `xxx\=yyy`.
+
+Accessing list and dictionary items using `@{var}[item]` and `&{var}[item]`
+---------------------------------------------------------------------------
 
 Robot Framework 3.1 enhanced the `syntax for accessing items in nested lists
 and dictionaries`__ by making it possible to use `${var}[item]` and
@@ -499,14 +656,20 @@ great contributions by the wider open source community:
   `ScreenCapLibrary <https://github.com/mihaiparvu/ScreenCapLibrary>`__
   (`#3330`_)
 
+- `Bollen Nico <https://github.com/bollenn>`__ and
+  `JasperCraeghs <https://github.com/JasperCraeghs>`__
+  added support to use variable index access like `${var}[2]` with all
+  sequences, including strings and bytes (`#3182`_)
+
 - `Mihai Pârvu <https://github.com/mihaiparvu>`__
   added support to read "wrapped" signatures correctly (`#3027`_) and
   enhanced Libdoc, TestDoc and Tidy tools as well as Robot Framework's syslog
   files to automatically create output directories (`#2767`_)
 
 - `René <https://github.com/Snooz82>`__
-  made it possible to store documentation in XML outputs using HTML
-  regardless the original documentation format (`#3301`_)
+  made it possible to store documentation in Libdoc XML spec files using HTML
+  regardless the original documentation format (`#3301`_) and helped
+  creating XSD schema for these spec files (`#3520`_)
 
 - `Dirk Richter <https://github.com/DirkRichter>`__
   added support to automatically expand certain keywords in the log file (`#2698`_)
@@ -516,15 +679,16 @@ great contributions by the wider open source community:
   values like `%{EXAMPLE=default}` (`#3382`_)
 
 - `Stavros Ntentos <https://github.com/stdedos>`__
-  made it easier to disable process timeouts when using the Process library (`#3366`_) and
-  fixed equality checking with `Tags` objects (`#3242`_)
+  made it easier to disable process timeouts when using the Process library
+  (`#3366`_) and fixed equality checking with `Tags` objects (`#3242`_)
 
 - `Adrian Yorke <https://github.com/adrianyorke>`_
   implemented support to disable stdout and stderr altogether when using
   the Process library (`#3397`_)
 
-- `Lukas Breitstadt <https://github.com/lubrst>`__
-  fixed using the `ExecutionResult` API with bytes (`#3194`_)
+- `Bharat Patel <https://github.com/bbpatel2001>`__
+  enhanced `Lists Should Be Equal` keyword to allow ignoring order (`#2703`_)
+  and provided initial implementation to `Convert To Title Case` keyword (`#2706`_)
 
 - `Richard Turc <https://github.com/yamatoRT>`__
   added support to use variables in test case names (`#2962`_)
@@ -532,14 +696,36 @@ great contributions by the wider open source community:
 - `Theodoros Chatzigiannakis <https://github.com/TChatzigiannakis>`__
   fixed connection problems with the Remote library in some scenarios (`#3300`_)
 
-- `Jani Mikkonen <https://github.com/rasjani>`__ enhanced Libdoc to allow
-  viewing keywords with a certain tag by using query parameters in the URL (`#3440`_)
+- `Jarkko Peltonen <https://github.com/jpeltonen>`__
+  fixed Dialogs library leaving dialogs minimized at least on Windows Server
+  2016 (`#3492`_)
 
-- `Ossi R. <https://github.com/osrjv>`__ added support for svg image links
-  in documentation (`#3464`_)
+- `Hélio Guilherme <https://github.com/HelioGuilherme66>`__
+  fixed Screenshot library with wxPython 4.0.7 on Linux (`#3403`_)
 
-- `Marcin Koperski <https://github.com/IlfirinPL>`__ enhanced the `plural_or_not`
-  used also by other tools to consider `-1` singular (`#3460`_)
+- `Jani Mikkonen <https://github.com/rasjani>`__
+  enhanced Libdoc to allow viewing keywords with a certain tag by using query
+  parameters in the URL (`#3440`_)
+
+- `Mikhail Kulinich <https://github.com/tysonite>`__
+  enhanced test message when results are merged with `rebot --merge` (`#3319`_)
+
+- `Lukas Breitstadt <https://github.com/lubrst>`__
+  fixed using the `ExecutionResult` API with bytes (`#3194`_)
+
+- `Ossi R. <https://github.com/osrjv>`__
+  added support for svg image links in documentation (`#3464`_)
+
+- `Teddy Lee <https://github.com/Teddy12090>`__
+  enhance documentation syntax to support images with data URIs (`#3536`_)
+
+- `Marcin Koperski <https://github.com/IlfirinPL>`__
+  enhanced the `plural_or_not` used also by other tools to consider `-1`
+  singular (`#3460`_)
+
+- `Mikhail Kulinich <https://github.com/tysonite>`__ and
+  `Juho Saarinen <https://github.com/hi-fi>`__ set up CI system for
+  the Robot Framework project (`#3420`_)
 
 During the Robot Framework 3.2 development the total number of
 contributors to the `Robot Framework project
@@ -632,11 +818,26 @@ Full list of fixes and enhancements
       - high
       - Stable parsing APIs
       - beta 1
+    * - `#3420`_
+      - enhancement
+      - high
+      - Continuous integrating (CI)
+      - beta 1
     * - `#3455`_
       - enhancement
       - high
       - Add `@not_keyword` decorator to mark functions "not keywords"
       - beta 2
+    * - `#3485`_
+      - enhancement
+      - high
+      - Native `&{dict}` iteration with FOR loops
+      - rc 1
+    * - `#3507`_
+      - enhancement
+      - high
+      - Include library and keyword source information in Libdoc spec files
+      - rc 1
     * - `#549`_
       - enhancement
       - high
@@ -717,6 +918,11 @@ Full list of fixes and enhancements
       - medium
       - Non-ASCII paths to test data not handled correctly with Jython 2.7.1+
       - alpha 1
+    * - `#3403`_
+      - bug
+      - medium
+      - Screenshot library doesn't work with wxPython 4.0.7 on Linux
+      - rc 1
     * - `#3424`_
       - bug
       - medium
@@ -727,6 +933,16 @@ Full list of fixes and enhancements
       - medium
       - `@keyword` decorator should not be exposed as keyword
       - beta 2
+    * - `#3483`_
+      - bug
+      - medium
+      - Libdoc: Not possible to link to Tags section
+      - rc 1
+    * - `#3500`_
+      - bug
+      - medium
+      - Rerun functionality fails if test contains `[x]`
+      - rc 1
     * - `#2291`_
       - enhancement
       - medium
@@ -737,6 +953,16 @@ Full list of fixes and enhancements
       - medium
       - Possibility to automatically expand certain keywords in log file
       - beta 1
+    * - `#2703`_
+      - enhancement
+      - medium
+      - `Lists Should Be Equal` keywords in Collections should have an option to ignore order
+      - rc 1
+    * - `#2706`_
+      - enhancement
+      - medium
+      - String: Add `Convert To Title Case` keyword
+      - rc 1
     * - `#2974`_
       - enhancement
       - medium
@@ -757,6 +983,11 @@ Full list of fixes and enhancements
       - medium
       - Consistent handling of whitespace in test data
       - alpha 1
+    * - `#3182`_
+      - enhancement
+      - medium
+      - Support variable index access like `${var}[2]` with all sequences (incl. strings and bytes)
+      - rc 1
     * - `#3194`_
       - enhancement
       - medium
@@ -777,6 +1008,11 @@ Full list of fixes and enhancements
       - medium
       - Support any file extension when explicitly running file and when using `--extension`
       - alpha 1
+    * - `#3280`_
+      - enhancement
+      - medium
+      - Libdoc: Support automatic generation of table of contents when using "robot format"
+      - rc 1
     * - `#3288`_
       - enhancement
       - medium
@@ -787,6 +1023,11 @@ Full list of fixes and enhancements
       - medium
       - Libdoc: Support converting docs to HTML with XML outputs
       - alpha 1
+    * - `#3319`_
+      - enhancement
+      - medium
+      - Enhance test message when results are merged with `rebot --merge`
+      - rc 1
     * - `#3333`_
       - enhancement
       - medium
@@ -817,6 +1058,11 @@ Full list of fixes and enhancements
       - medium
       - Libdoc: Allow showing keywords based on tags using query string in URL
       - beta 2
+    * - `#3449`_
+      - enhancement
+      - medium
+      - Support tokenizing strings with variables
+      - rc 1
     * - `#3451`_
       - enhancement
       - medium
@@ -830,8 +1076,53 @@ Full list of fixes and enhancements
     * - `#3464`_
       - enhancement
       - medium
-      - Add support for svg image link
+      - Add support for svg image links in documentation
       - beta 2
+    * - `#3491`_
+      - enhancement
+      - medium
+      - Libdoc: Support `*.libspec` extension when reading library information from spec files
+      - rc 1
+    * - `#3494`_
+      - enhancement
+      - medium
+      - FOR IN ZIP and FOR IN ENUMERATE enhancements
+      - rc 1
+    * - `#3498`_
+      - enhancement
+      - medium
+      - Libdoc could better handle keywords deprecation info
+      - rc 1
+    * - `#3514`_
+      - enhancement
+      - medium
+      - Dynamic API: Support returning real default values from `get_keyword_arguments`
+      - rc 1
+    * - `#3516`_
+      - enhancement
+      - medium
+      - Dynamic API: Add new `get_keyword_source` method
+      - rc 1
+    * - `#3520`_
+      - enhancement
+      - medium
+      - Libdoc: Create xsd schema for spec files
+      - rc 1
+    * - `#3522`_
+      - enhancement
+      - medium
+      - Libdoc spec files: Change `scope` and `namedargs` to attributes
+      - rc 1
+    * - `#3523`_
+      - enhancement
+      - medium
+      - Add spec version to Libdoc spec files
+      - rc 1
+    * - `#3532`_
+      - enhancement
+      - medium
+      - Libdoc spec files: Change scope to use values `GLOBAL`, `SUITE` and `TEST` consistently
+      - rc 1
     * - `#2767`_
       - bug
       - low
@@ -877,6 +1168,16 @@ Full list of fixes and enhancements
       - low
       - `plural_or_not` utility should consider `-1` singular
       - beta 2
+    * - `#3489`_
+      - bug
+      - low
+      - Variable containing `=` in its name should not initiate named argument syntax
+      - rc 1
+    * - `#3524`_
+      - bug
+      - low
+      - Rebot's merge message uses term "test" also with `--rpa`
+      - rc 1
     * - `#2962`_
       - enhancement
       - low
@@ -937,15 +1238,51 @@ Full list of fixes and enhancements
       - low
       - Better reporting if using valid setting is used in wrong context
       - beta 2
+    * - `#3484`_
+      - enhancement
+      - low
+      - String: Rename `convert_to_uppercase` to `convert_to_upper_case` (and same with `lower`)
+      - rc 1
+    * - `#3486`_
+      - enhancement
+      - low
+      - BuiltIn: Consistent argument names to `Should Contain X Times` and `Get Count`
+      - rc 1
+    * - `#3492`_
+      - enhancement
+      - low
+      - Dialogs library bring to front doesn't work in Windows Server 2016
+      - rc 1
+    * - `#3528`_
+      - enhancement
+      - low
+      - Libdoc specs: Change generation time to be valid `xsd:dateTime`
+      - rc 1
+    * - `#3531`_
+      - enhancement
+      - low
+      - Allow using `"SUITE"` and `"TEST"` as library scope values
+      - rc 1
+    * - `#3534`_
+      - enhancement
+      - low
+      - Libdoc spec files: Change type to upper case  `LIBRARY` and `RESOURCE`
+      - rc 1
+    * - `#3536`_
+      - enhancement
+      - low
+      - Enhance documentation syntax to support images with data URIs
+      - rc 1
     * - `#645`_
       - enhancement
       - low
       - Empty rows should not be discarded during parsing
       - alpha 1
 
-Altogether 75 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av3.2>`__.
+Altogether 105 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av3.2>`__.
 
 .. _#3076: https://github.com/robotframework/robotframework/issues/3076
+.. _#3420: https://github.com/robotframework/robotframework/issues/3420
 .. _#3081: https://github.com/robotframework/robotframework/issues/3081
 .. _#3251: https://github.com/robotframework/robotframework/issues/3251
 .. _#1272: https://github.com/robotframework/robotframework/issues/1272
@@ -959,6 +1296,8 @@ Altogether 75 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#3221: https://github.com/robotframework/robotframework/issues/3221
 .. _#3373: https://github.com/robotframework/robotframework/issues/3373
 .. _#3455: https://github.com/robotframework/robotframework/issues/3455
+.. _#3485: https://github.com/robotframework/robotframework/issues/3485
+.. _#3507: https://github.com/robotframework/robotframework/issues/3507
 .. _#549: https://github.com/robotframework/robotframework/issues/549
 .. _#3201: https://github.com/robotframework/robotframework/issues/3201
 .. _#3213: https://github.com/robotframework/robotframework/issues/3213
@@ -975,29 +1314,47 @@ Altogether 75 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#3338: https://github.com/robotframework/robotframework/issues/3338
 .. _#3355: https://github.com/robotframework/robotframework/issues/3355
 .. _#3364: https://github.com/robotframework/robotframework/issues/3364
+.. _#3403: https://github.com/robotframework/robotframework/issues/3403
 .. _#3424: https://github.com/robotframework/robotframework/issues/3424
 .. _#3454: https://github.com/robotframework/robotframework/issues/3454
+.. _#3483: https://github.com/robotframework/robotframework/issues/3483
+.. _#3500: https://github.com/robotframework/robotframework/issues/3500
 .. _#2291: https://github.com/robotframework/robotframework/issues/2291
 .. _#2698: https://github.com/robotframework/robotframework/issues/2698
+.. _#2703: https://github.com/robotframework/robotframework/issues/2703
+.. _#2706: https://github.com/robotframework/robotframework/issues/2706
 .. _#2974: https://github.com/robotframework/robotframework/issues/2974
 .. _#3085: https://github.com/robotframework/robotframework/issues/3085
 .. _#3091: https://github.com/robotframework/robotframework/issues/3091
 .. _#3121: https://github.com/robotframework/robotframework/issues/3121
+.. _#3182: https://github.com/robotframework/robotframework/issues/3182
 .. _#3194: https://github.com/robotframework/robotframework/issues/3194
 .. _#3202: https://github.com/robotframework/robotframework/issues/3202
 .. _#3261: https://github.com/robotframework/robotframework/issues/3261
 .. _#3269: https://github.com/robotframework/robotframework/issues/3269
+.. _#3280: https://github.com/robotframework/robotframework/issues/3280
 .. _#3288: https://github.com/robotframework/robotframework/issues/3288
 .. _#3301: https://github.com/robotframework/robotframework/issues/3301
+.. _#3319: https://github.com/robotframework/robotframework/issues/3319
 .. _#3333: https://github.com/robotframework/robotframework/issues/3333
 .. _#3349: https://github.com/robotframework/robotframework/issues/3349
 .. _#3366: https://github.com/robotframework/robotframework/issues/3366
 .. _#3382: https://github.com/robotframework/robotframework/issues/3382
 .. _#3397: https://github.com/robotframework/robotframework/issues/3397
 .. _#3440: https://github.com/robotframework/robotframework/issues/3440
+.. _#3449: https://github.com/robotframework/robotframework/issues/3449
 .. _#3451: https://github.com/robotframework/robotframework/issues/3451
 .. _#3463: https://github.com/robotframework/robotframework/issues/3463
 .. _#3464: https://github.com/robotframework/robotframework/issues/3464
+.. _#3491: https://github.com/robotframework/robotframework/issues/3491
+.. _#3494: https://github.com/robotframework/robotframework/issues/3494
+.. _#3498: https://github.com/robotframework/robotframework/issues/3498
+.. _#3514: https://github.com/robotframework/robotframework/issues/3514
+.. _#3516: https://github.com/robotframework/robotframework/issues/3516
+.. _#3520: https://github.com/robotframework/robotframework/issues/3520
+.. _#3522: https://github.com/robotframework/robotframework/issues/3522
+.. _#3523: https://github.com/robotframework/robotframework/issues/3523
+.. _#3532: https://github.com/robotframework/robotframework/issues/3532
 .. _#2767: https://github.com/robotframework/robotframework/issues/2767
 .. _#3231: https://github.com/robotframework/robotframework/issues/3231
 .. _#3242: https://github.com/robotframework/robotframework/issues/3242
@@ -1007,6 +1364,8 @@ Altogether 75 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#3453: https://github.com/robotframework/robotframework/issues/3453
 .. _#3456: https://github.com/robotframework/robotframework/issues/3456
 .. _#3460: https://github.com/robotframework/robotframework/issues/3460
+.. _#3489: https://github.com/robotframework/robotframework/issues/3489
+.. _#3524: https://github.com/robotframework/robotframework/issues/3524
 .. _#2962: https://github.com/robotframework/robotframework/issues/2962
 .. _#3082: https://github.com/robotframework/robotframework/issues/3082
 .. _#3083: https://github.com/robotframework/robotframework/issues/3083
@@ -1019,4 +1378,11 @@ Altogether 75 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#3376: https://github.com/robotframework/robotframework/issues/3376
 .. _#3415: https://github.com/robotframework/robotframework/issues/3415
 .. _#3465: https://github.com/robotframework/robotframework/issues/3465
+.. _#3484: https://github.com/robotframework/robotframework/issues/3484
+.. _#3486: https://github.com/robotframework/robotframework/issues/3486
+.. _#3492: https://github.com/robotframework/robotframework/issues/3492
+.. _#3528: https://github.com/robotframework/robotframework/issues/3528
+.. _#3531: https://github.com/robotframework/robotframework/issues/3531
+.. _#3534: https://github.com/robotframework/robotframework/issues/3534
+.. _#3536: https://github.com/robotframework/robotframework/issues/3536
 .. _#645: https://github.com/robotframework/robotframework/issues/645
