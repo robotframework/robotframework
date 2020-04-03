@@ -27,8 +27,11 @@ to install the latest available release or use
 
    pip install robotframework==3.2rc1
 
-to install exactly this version. Alternatively you can download the source
-distribution from PyPI_ and install it manually. For more details and other
+to install exactly this version.
+
+Alternatively you can download the source distribution from PyPI_ and install
+it manually. If you are interested to test the standalone jar distribution,
+you can find it from the `GitHub release page`_. For more details and other
 installation approaches, see the `installation instructions`_.
 
 Robot Framework 3.2 rc 1 was released on Friday April 3, 2020. Barring any
@@ -43,6 +46,8 @@ major problems, the final release is planned for Friday April 17, 2020.
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
 .. _installation instructions: ../../INSTALL.rst
+.. _GitHub release page: https://github.com/robotframework/robotframework/releases/tag/v3.2rc1
+
 
 .. contents::
    :depth: 2
@@ -319,6 +324,15 @@ function or method to see the real signature.
 
 __ https://realpython.com/primer-on-python-decorators/
 __ https://docs.python.org/library/functools.html#functools.wraps
+
+Standalone jar distribution updated to use Jython 2.7.2
+-------------------------------------------------------
+
+The standalone jar distribution was earlier based on Jython 2.7.0 but
+nowadays it uses Jython 2.7.2 (`#3383`_). This brings all features and fixes
+in the newer Jython version. If you are interested to test the standalone jar,
+you can find it from the `GitHub release page`_. Only the final release
+will be uploaded to the Maven Central.
 
 Continuous integrating
 ----------------------
@@ -818,6 +832,11 @@ Full list of fixes and enhancements
       - high
       - Stable parsing APIs
       - beta 1
+    * - `#3383`_
+      - enhancement
+      - high
+      - Update standalone jar distribution to use Jython 2.7.2
+      - rc 1
     * - `#3420`_
       - enhancement
       - high
@@ -1282,6 +1301,7 @@ Full list of fixes and enhancements
 Altogether 105 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av3.2>`__.
 
 .. _#3076: https://github.com/robotframework/robotframework/issues/3076
+.. _#3383: https://github.com/robotframework/robotframework/issues/3383
 .. _#3420: https://github.com/robotframework/robotframework/issues/3420
 .. _#3081: https://github.com/robotframework/robotframework/issues/3081
 .. _#3251: https://github.com/robotframework/robotframework/issues/3251
