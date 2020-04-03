@@ -147,7 +147,7 @@ Set version
 
 2. Commit and push changes::
 
-      git commit -m "Updated version to $VERSION" src/robot/version.py pom.xml
+      git commit -m "Updated version to $VERSION" src/robot/version.py setup.py pom.xml
       git push
 
 Tagging
@@ -207,7 +207,7 @@ Creating distributions
        java -jar dist/robotframework-$VERSION.jar --version
        java -jar dist/robotframework-$VERSION.jar atest/testdata/misc/pass_and_fail.robot
 
-    - To create a JAR with a custom name for testing::
+   - To create a JAR with a custom name for testing::
 
        invoke jar --jar-name=example
        java -jar dist/example.jar --version
@@ -273,7 +273,7 @@ Post actions
 2. Set dev version based on the previous version::
 
       invoke set-version dev
-      git commit -m "Back to dev version" src/robot/version.py pom.xml
+      git commit -m "Back to dev version" src/robot/version.py setup.py pom.xml
       git push
 
    For example, ``1.2.3`` is changed to ``1.2.4.dev1`` and ``2.0.1a1``
