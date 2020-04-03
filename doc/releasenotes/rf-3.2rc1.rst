@@ -349,9 +349,6 @@ __ https://github.com/features/actions
 Backwards incompatible changes
 ==============================
 
-Backwards incompatible changes
-==============================
-
 Although we try to avoid backwards incompatible changes, sometimes adding new
 features mean that old features need to be changed or even removed. This is
 never done lightly and we try to limit backwards incompatible changes to
