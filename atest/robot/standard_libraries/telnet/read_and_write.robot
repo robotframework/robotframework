@@ -68,6 +68,9 @@ Read Until Regexp Fails
 Read Until Regexp Requires At Least One Pattern
     Check Test Case    ${TEST NAME}
 
+Read Binary Data
+    Check Test Case    ${TEST NAME}
+
 Read Until Prompt
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    ${HOME}\n${FULL PROMPT}
