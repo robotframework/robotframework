@@ -28,7 +28,12 @@ if PY2:
             cls.__str__ = lambda self: unicode(self).encode('UTF-8')
         return cls
 
+
+    def unwrap(func):
+        return func
+
 else:
+    from inspect import unwrap
     from io import StringIO
 
 

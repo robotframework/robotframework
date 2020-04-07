@@ -49,4 +49,4 @@ Invalid get_keyword_names
     Error in file    1    test_libraries/dynamic_library_python.robot    9
     ...    Getting keyword names from library 'InvalidKeywordNames' failed:
     ...    Calling dynamic method 'get_keyword_names' failed:
-    ...    Return value must be list of strings.
+    ...    Return value must be a list of strings.

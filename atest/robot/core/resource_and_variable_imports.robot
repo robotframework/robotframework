@@ -38,8 +38,8 @@ Invalid List Variable
     Check Test Case    ${TEST NAME}
     ${path} =    Normalize Path    ${RESDIR}/invalid_list_variable.py
     Error in file    14    ${DATAFILE}    43
-    ...  Processing variable file '${path}' failed:
-    ...  Invalid variable '\@{invalid_list}': Expected list-like value, got string.
+    ...    Processing variable file '${path}' failed:
+    ...    Invalid variable '\@{invalid_list}': Expected list-like value, got string.
 
 Dynamic Variable File
     Check Test Case    ${TEST NAME} With No Args
@@ -153,15 +153,15 @@ Variable File In PYTHONPATH
 Run Tests With Non-ASCII Items In PYTHONPATH
     Create Directory    %{TEMPDIR}/nön-äscïï
     Set PYTHONPATH    %{TEMPDIR}/nön-äscïï    ${PPATH_RESDIR}
-    Run Tests  ${EMPTY}  ${DATAFILE}
-    [Teardown]  Run Keywords
-    ...    Remove Directory  %{TEMPDIR}/nön-äscïï    AND
+    Run Tests    ${EMPTY}    ${DATAFILE}
+    [Teardown]    Run Keywords
+    ...    Remove Directory    %{TEMPDIR}/nön-äscïï    AND
     ...    Reset PYTHONPATH
 
 Stderr Should Contain Error
     [Arguments]    ${path}    @{error parts}
-    ${path} =  Join Path    ${DATADIR}    ${path}
-    ${error} =  Catenate  @{error parts}
+    ${path} =    Join Path    ${DATADIR}    ${path}
+    ${error} =    Catenate    @{error parts}
     Stderr Should Contain    [ ERROR ] Error in file '${path}': ${error}
 
 File Should Have Already Been Imported

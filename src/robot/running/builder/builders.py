@@ -45,7 +45,6 @@ class TestSuiteBuilder(object):
         suite = parser.parse(structure)
         if not self.included_suites and not self.allow_empty_suite:
             self._validate_test_counts(suite, multisource=len(paths) > 1)
-        # TODO: do we need `preserve_direct_children`?
         suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
         return suite
 

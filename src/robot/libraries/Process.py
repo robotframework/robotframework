@@ -46,14 +46,7 @@ class Process(object):
 
     == Table of contents ==
 
-    - `Specifying command and arguments`
-    - `Process configuration`
-    - `Active process`
-    - `Result object`
-    - `Boolean arguments`
-    - `Example`
-    - `Shortcuts`
-    - `Keywords`
+    %TOC%
 
     = Specifying command and arguments =
 

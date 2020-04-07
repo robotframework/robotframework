@@ -15,6 +15,9 @@ ${NO VALUE}       ${EMPTY}
 @{EMPTY LIST}
 Invalid Name      Decoration missing
 ${}               Body missing
+${not             closed
+${not}[ok]        This is variable but not valid assign
+${not ${ok}}      This is variable but not valid assign
 ${lowercase}      Variable name in lower case
 @{lowercaselist}      Variable name in lower case
 ${S P a c e s }    Variable name with spaces

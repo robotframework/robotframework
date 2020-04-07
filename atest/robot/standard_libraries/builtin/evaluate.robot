@@ -34,6 +34,9 @@ Explicit modules are needed with nested modules
 Explicit modules can override builtins
     Check Test Case    ${TESTNAME}
 
+Explicit modules used in lambda
+    Check Test Case    ${TESTNAME}
+
 Custom namespace
     Check Test Case    ${TESTNAME}
 

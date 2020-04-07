@@ -6,9 +6,10 @@ import unittest
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
-from robot.running.model import TestSuite, TestCase, Keyword
+from robot.running.model import TestSuite, TestCase, Keyword, ForLoop
 from robot.running import TestSuiteBuilder
 from robot.utils.asserts import assert_equal, assert_not_equal, assert_false
+from robot.utils import unicode
 
 
 MISC_DIR = normpath(join(abspath(__file__), '..', '..', '..',
@@ -31,6 +32,20 @@ class TestModelTypes(unittest.TestCase):
         kw = TestCase().keywords.create()
         assert_equal(type(kw), Keyword)
         assert_not_equal(type(kw), model.Keyword)
+
+
+class TestStringRepr(unittest.TestCase):
+
+    def test_for_loop(self):
+        loop = ForLoop(['${x}'], ['foo', 'bar'], 'IN')
+        expected = u'FOR    ${x}    IN    foo    bar'
+        assert_equal(str(loop), expected)
+        assert_equal(unicode(loop), expected)
+        assert_equal(repr(loop), repr(expected))
+        loop = ForLoop(['${x}', u'${\xfc}'], [u'f\xf6\xf6', u'b\xe4r'], 'IN ZIP')
+        expected = u'FOR    ${x}    ${\xfc}    IN ZIP    f\xf6\xf6    b\xe4r'
+        assert_equal(unicode(loop), expected)
+        assert_equal(repr(loop), repr(expected))
 
 
 class TestSuiteFromSources(unittest.TestCase):

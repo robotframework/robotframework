@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from robot.utils import py2to3
+from robot.variables import VariableIterator
 
 
 @py2to3
@@ -25,6 +26,7 @@ class Token(object):
     TESTCASE_HEADER = 'TESTCASE_HEADER'
     KEYWORD_HEADER = 'KEYWORD_HEADER'
     COMMENT_HEADER = 'COMMENT_HEADER'
+
     TESTCASE_NAME = 'TESTCASE_NAME'
     KEYWORD_NAME = 'KEYWORD_NAME'
 
@@ -63,18 +65,15 @@ class Token(object):
     SEPARATOR = 'SEPARATOR'
     COMMENT = 'COMMENT'
     CONTINUATION = 'CONTINUATION'
-    IGNORE = 'IGNORE'
     EOL = 'EOL'
     EOS = 'EOS'
     ERROR = 'ERROR'
     FATAL_ERROR = 'FATAL_ERROR'
-    DATA = 'DATA'
 
     NON_DATA_TOKENS = (
         SEPARATOR,
         COMMENT,
         CONTINUATION,
-        IGNORE,
         EOL,
         EOS
     )
@@ -104,12 +103,19 @@ class Token(object):
         SETTING_HEADER,
         VARIABLE_HEADER,
         TESTCASE_HEADER,
-        KEYWORD_HEADER
+        KEYWORD_HEADER,
+        COMMENT_HEADER
+    )
+    ALLOW_VARIABLES = (
+        NAME,
+        ARGUMENT,
+        TESTCASE_NAME,
+        KEYWORD_NAME
     )
 
     __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error']
 
-    def __init__(self, type, value='', lineno=-1, col_offset=-1, error=None):
+    def __init__(self, type=None, value='', lineno=-1, col_offset=-1, error=None):
         self.type = type
         self.value = value
         self.lineno = lineno
@@ -125,6 +131,30 @@ class Token(object):
     def set_error(self, error, fatal=False):
         self.type = Token.ERROR if not fatal else Token.FATAL_ERROR
         self.error = error
+
+    def tokenize_variables(self):
+        if self.type not in Token.ALLOW_VARIABLES:
+            return self._tokenize_no_variables()
+        variables = VariableIterator(self.value)
+        if not variables:
+            return self._tokenize_no_variables()
+        return self._tokenize_variables(variables)
+
+    def _tokenize_no_variables(self):
+        yield self
+
+    def _tokenize_variables(self, variables):
+        lineno = self.lineno
+        col_offset = self.col_offset
+        remaining = ''
+        for before, variable, remaining in variables:
+            if before:
+                yield Token(self.type, before, lineno, col_offset)
+                col_offset += len(before)
+            yield Token(Token.VARIABLE, variable, lineno, col_offset)
+            col_offset += len(variable)
+        if remaining:
+            yield Token(self.type, remaining, lineno, col_offset)
 
     def __unicode__(self):
         return self.value

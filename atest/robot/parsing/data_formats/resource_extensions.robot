@@ -13,14 +13,6 @@ Resource with '*.resource' extension
 
 '*.resource' files are not parsed for tests
     Should Contain Suites    ${SUITE}    Tests
-    Should Contain Tests     ${SUITE}
-    ...    Resource with '*.resource' extension
-    ...    Resource with '*.robot' extension
-    ...    Resource with '*.txt' extension
-    ...    Resource with '*.tsv' extension
-    ...    Resource with '*.rst' extension
-    ...    Resource with '*.rest' extension
-    ...    Resource with invalid extension
     ${path} =    Normalize Path    ${DATADIR}/parsing/data_formats/resource_extensions/tests.resource
     Syslog Should Contain    | INFO \ | Ignoring file or directory '${path}'.
 
@@ -34,14 +26,16 @@ Resource with '*.tsv' extension
     Check Test Case    ${TESTNAME}
 
 Resource with '*.rst' extension
+    [Tags]    require-docutils
     Check Test Case    ${TESTNAME}
 
 Resource with '*.rest' extension
+    [Tags]    require-docutils
     Check Test Case    ${TESTNAME}
 
 Resource with invalid extension
     Check Test Case    ${TESTNAME}
-    Error in file    0    parsing/data_formats/resource_extensions/tests.robot    8
+    Error in file    0    parsing/data_formats/resource_extensions/tests.robot    6
     ...    Invalid resource file extension '.invalid'.
     ...    Supported extensions are '.resource', '.robot', '.txt', '.tsv', '.rst' and '.rest'.
-    Length should be    ${ERRORS}    1
+    Length should be    ${ERRORS}    ${{1 if not ($INTERPRETER.is_ironpython or $INTERPRETER.is_standalone) else 3}}

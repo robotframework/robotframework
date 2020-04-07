@@ -34,12 +34,9 @@ class HandlerDataMock:
     def __init__(self, name, args=[]):
         self.name = name
         self.args = FakeArgs(args)
-        self.metadata = {}
         self.keywords = Keywords()
-        self.defaults = []
-        self.varargs = None
-        self.minargs = 0
-        self.maxargs = 0
+        self.source = None
+        self.lineno = -1
         self.return_value = None
         self.doc = Fake()
         self.timeout = Fake()

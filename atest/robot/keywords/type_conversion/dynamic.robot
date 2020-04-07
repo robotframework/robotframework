@@ -15,6 +15,12 @@ List of aliases
 Dict of aliases
     Check Test Case    ${TESTNAME}
 
+Default values
+    Check Test Case    ${TESTNAME}
+
+Default values are not used if `get_keyword_types` returns `None`
+    Check Test Case    ${TESTNAME}
+
 Java types
     [Tags]    require-jython
     Check Test Case    ${TESTNAME}

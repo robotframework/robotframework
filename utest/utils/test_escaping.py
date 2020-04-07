@@ -168,19 +168,32 @@ class TestSplitFromEquals(unittest.TestCase):
 
     def test_basics(self):
         for inp in 'foo=bar', '=', 'split=from=first', '===':
-            self._test(inp, inp.split('=', 1))
+            self._test(inp, *inp.split('=', 1))
 
     def test_escaped(self):
-        self._test(r'a\=b=c', (r'a\=b', 'c'))
-        self._test(r'\=====', (r'\=', '==='))
-        self._test(r'\=\\\=\\=', (r'\=\\\=\\', ''))
+        self._test(r'a\=b=c', r'a\=b', 'c')
+        self._test(r'\=====', r'\=', '===')
+        self._test(r'\=\\\=\\=', r'\=\\\=\\', '')
 
     def test_no_unescaped_equal(self):
         for inp in '', 'xxx', r'\=', r'\\\=', r'\\\\\=\\\\\\\=\\\\\\\\\=':
-            self._test(inp, (inp, None))
+            self._test(inp, inp, None)
 
-    def _test(self, inp, exp):
-        assert_equal(split_from_equals(inp), tuple(exp))
+    def test_no_split_in_variable(self):
+        self._test(r'${a=b}', '${a=b}', None)
+        self._test(r'=${a=b}', '', '${a=b}')
+        self._test(r'${a=b}=', '${a=b}', '')
+        self._test(r'\=${a=b}', r'\=${a=b}', None)
+        self._test(r'${a=b}=${c=d}', '${a=b}', '${c=d}')
+        self._test(r'${a=b}\=${c=d}', r'${a=b}\=${c=d}', None)
+        self._test(r'${a=b}${c=d}${e=f}\=${g=h}=${i=j}',
+                   r'${a=b}${c=d}${e=f}\=${g=h}', '${i=j}')
+
+    def test_broken_variable(self):
+        self._test('${foo=bar', '${foo', 'bar')
+
+    def _test(self, inp, *exp):
+        assert_equal(split_from_equals(inp), exp)
 
 
 if __name__ == '__main__':

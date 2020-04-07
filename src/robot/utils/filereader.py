@@ -42,16 +42,16 @@ class FileReader(object):
 
     def __init__(self, source, accept_text=False):
         self.file, self.name, self._opened = self._get_file(source, accept_text)
-        # IronPython handles BOM incorrectly if file not opened in binary mode:
-        # https://ironpython.codeplex.com/workitem/34655
-        if IRONPYTHON and getattr(self.file, 'mode', 'rb') != 'rb':
-            raise ValueError('Only files in binary mode accepted with '
-                             'IronPython.')
 
     def _get_file(self, source, accept_text):
         path = self._get_path(source, accept_text)
         if path:
-            file = open(path, 'rb')
+            try:
+                file = open(path, 'rb')
+            except ValueError:
+                # Converting ValueError to IOError needed due to this IPY bug:
+                # https://github.com/IronLanguages/ironpython2/issues/700
+                raise IOError("Invalid path '%s'." % path)
             opened = True
         elif is_string(source):
             file = StringIO(source)
@@ -73,6 +73,7 @@ class FileReader(object):
             return None
         if os.path.isabs(source) or os.path.exists(source):
             return source
+        return None
 
     def __enter__(self):
         return self
@@ -91,10 +92,16 @@ class FileReader(object):
             first_line = False
 
     def _decode(self, content, remove_bom=True):
-        if is_bytes(content):
+        force_decode = IRONPYTHON and self._is_binary_file()
+        if is_bytes(content) or force_decode:
             content = content.decode('UTF-8')
         if remove_bom and content.startswith(u'\ufeff'):
             content = content[1:]
         if '\r\n' in content:
             content = content.replace('\r\n', '\n')
         return content
+
+    def _is_binary_file(self):
+        mode = getattr(self.file, 'mode', '')
+        encoding = getattr(self.file, 'encoding', 'ascii').lower()
+        return 'r' in mode and encoding == 'ascii'

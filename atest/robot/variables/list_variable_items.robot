@@ -19,23 +19,31 @@ Slicing with variable
     Check Test Case    ${TESTNAME}
 
 Invalid index
-    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} list
+    Check Test Case    ${TESTNAME} string
+    Check Test Case    ${TESTNAME} bytes
 
 Invalid index using variable
     Check Test Case    ${TESTNAME}
 
 Non-int index
-    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} list
+    Check Test Case    ${TESTNAME} string
+    Check Test Case    ${TESTNAME} bytes
 
 Non-int index using variable
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
 
 Empty index
-    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} list
+    Check Test Case    ${TESTNAME} string
+    Check Test Case    ${TESTNAME} bytes
 
 Invalid slice
-    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} list
+    Check Test Case    ${TESTNAME} string
+    Check Test Case    ${TESTNAME} bytes
 
 Non-int slice index
     Check Test Case    ${TESTNAME} 1
@@ -48,7 +56,7 @@ Non-existing variable
 Non-existing index variable
     Check Test Case    ${TESTNAME}
 
-Non-list variable
+Non-subscriptable variable
     Check Test Case    ${TESTNAME}
 
 Old syntax with `@` still works but is deprecated

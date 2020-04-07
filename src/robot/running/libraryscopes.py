@@ -20,18 +20,18 @@ from robot.utils import normalize, unic
 
 def LibraryScope(libcode, library):
     scope = _get_scope(libcode)
-    if scope == 'global':
+    if scope == 'GLOBAL':
         return GlobalScope(library)
-    if scope == 'testsuite':
+    if scope in ('SUITE', 'TESTSUITE'):
         return TestSuiteScope(library)
     return TestCaseScope(library)
 
 
 def _get_scope(libcode):
     if inspect.ismodule(libcode):
-        return 'global'
+        return 'GLOBAL'
     scope = getattr(libcode, 'ROBOT_LIBRARY_SCOPE', '')
-    return normalize(unic(scope), ignore='_')
+    return normalize(unic(scope), ignore='_').upper()
 
 
 class GlobalScope(object):
@@ -54,7 +54,7 @@ class GlobalScope(object):
         pass
 
     def __str__(self):
-        return 'global'
+        return 'GLOBAL'
 
 
 class TestSuiteScope(GlobalScope):
@@ -64,10 +64,6 @@ class TestSuiteScope(GlobalScope):
         GlobalScope.__init__(self, library)
         self._reset_instance = library.reset_instance
         self._instance_cache = []
-
-    @property
-    def is_global(self):
-        return False
 
     def start_suite(self):
         prev = self._reset_instance()
@@ -80,7 +76,7 @@ class TestSuiteScope(GlobalScope):
         self._reset_instance(prev)
 
     def __str__(self):
-        return 'test suite'
+        return 'SUITE'
 
 
 class TestCaseScope(TestSuiteScope):
@@ -98,4 +94,4 @@ class TestCaseScope(TestSuiteScope):
         self._register_listeners()
 
     def __str__(self):
-        return 'test case'
+        return 'TEST'

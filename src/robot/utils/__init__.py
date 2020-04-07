@@ -35,14 +35,14 @@ or::
 
 from .argumentparser import ArgumentParser, cmdline2list
 from .application import Application
-from .compat import isatty, py2to3, StringIO, with_metaclass
+from .compat import isatty, py2to3, StringIO, unwrap, with_metaclass
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .dotdict import DotDict
 from .encoding import (CONSOLE_ENCODING, SYSTEM_ENCODING, console_decode,
                        console_encode, system_decode, system_encode)
 from .error import (get_error_message, get_error_details, ErrorDetails)
-from .escaping import escape, unescape, split_from_equals
+from .escaping import escape, glob_escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource
 from .filereader import FileReader
 from .frange import frange
@@ -68,7 +68,8 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
 from .robottypes import (FALSE_STRINGS, Mapping, MutableMapping, TRUE_STRINGS,
                          is_bytes, is_dict_like, is_falsy, is_integer,
                          is_list_like, is_number, is_pathlike, is_string,
-                         is_truthy, is_unicode, type_name, unicode)
+                         is_subscriptable, is_truthy, is_unicode, type_name,
+                         unicode)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,

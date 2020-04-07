@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="keywordspec" type="KeywordSpec" />
+  <xs:complexType name="KeywordSpec">
+    <xs:sequence>
+      <xs:element name="version" type="xs:string" />
+      <!-- Both "scope" and "namedargs" elements are deprecated.
+           Use attributes with same names instead. -->
+      <xs:element name="scope" type="DeprecatedScope" minOccurs="0" />
+      <xs:element name="namedargs" type="DeprecatedNamedArgs" minOccurs="0" />
+      <xs:element name="doc" type="xs:string" />
+      <xs:element name="init" type="Init" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="type" type="LibraryType" use="required" />
+    <xs:attribute name="format" type="DocumentationFormat" use="required" />
+    <xs:attribute name="scope" type="LibraryScope" use="required" />
+    <xs:attribute name="namedargs" type="xs:boolean" use="required" />
+    <xs:attribute name="generated" type="xs:dateTime" use="required" />
+    <xs:attribute name="specversion" type="SpecVersion" use="required" />
+    <!-- "source" is a path relative to the location where the spec file is created.
+         Both "source" and "lineno" are omitted if getting them from library fails.
+         With Init and Keyword elements source is omitted also if it same as here. -->
+    <xs:attribute name="source" type="xs:string" use="optional" />
+    <xs:attribute name="lineno" type="xs:positiveInteger" use="optional" />
+  </xs:complexType>
+  <xs:complexType name="Init">
+    <xs:sequence>
+      <xs:element name="arguments" type="Arguments" />
+      <xs:element name="doc" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="deprecated" type="xs:boolean" use="optional" />
+    <!-- See the KeywordSpec level comment about "source" and "lineno". -->
+    <xs:attribute name="source" type="xs:string" use="optional" />
+    <xs:attribute name="lineno" type="xs:positiveInteger" use="optional" />
+  </xs:complexType>
+  <xs:complexType name="Keyword">
+    <xs:sequence>
+      <xs:element name="arguments" type="Arguments" />
+      <xs:element name="doc" type="xs:string" />
+      <xs:element name="tags" type="Tags" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="deprecated" type="xs:boolean" use="optional" />
+    <!-- See the KeywordSpec level comment about "source" and "lineno". -->
+    <xs:attribute name="source" type="xs:string" use="optional" />
+    <xs:attribute name="lineno" type="xs:positiveInteger" use="optional" />
+  </xs:complexType>
+  <xs:complexType name="Arguments">
+    <xs:sequence>
+      <xs:element name="arg" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Tags">
+    <xs:sequence>
+      <xs:element name="tag" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="DocumentationFormat">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ROBOT" />
+      <xs:enumeration value="HTML" />
+      <xs:enumeration value="TEXT" />
+      <xs:enumeration value="REST" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="LibraryType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LIBRARY" />
+      <xs:enumeration value="RESOURCE" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="SpecVersion">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="2" />
+      <xs:maxInclusive value="2" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="LibraryScope">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="GLOBAL" />
+      <xs:enumeration value="SUITE" />
+      <xs:enumeration value="TEST" />
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- Compatibility with RF < 3.2. -->
+  <xs:simpleType name="DeprecatedScope">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="" />
+      <xs:enumeration value="global" />
+      <xs:enumeration value="test suite" />
+      <xs:enumeration value="test case" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="DeprecatedNamedArgs">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="yes" />
+      <xs:enumeration value="no" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

@@ -42,16 +42,15 @@ class Tokenizer(object):
         tokens = []
         append = tokens.append
         offset = 0
-        data, sepa = Token.DATA, Token.SEPARATOR
         if line[:1] != '|':
             splitter = self._split_from_spaces
         else:
             splitter = self._split_from_pipes
         for value, is_data in splitter(rstrip(line)):
             if is_data:
-                append(Token(data, value, lineno, offset))
+                append(Token(None, value, lineno, offset))
             elif include_separators:
-                append(Token(sepa, value, lineno, offset))
+                append(Token(Token.SEPARATOR, value, lineno, offset))
             offset += len(value)
         if include_separators:
             trailing_whitespace = line[len(rstrip(line)):]
@@ -89,7 +88,7 @@ class Tokenizer(object):
         has_data = False
         commented = False
         for token in tokens:
-            if token.type == Token.DATA:
+            if token.type is None:
                 if token.value.startswith('#') or commented:
                     token.type = Token.COMMENT
                     commented = True
@@ -99,7 +98,7 @@ class Tokenizer(object):
 
     def _handle_continuation(self, tokens):
         for token in tokens:
-            if token.value == '...' and token.type == Token.DATA:
+            if token.value == '...' and token.type is None:
                 token.type = Token.CONTINUATION
                 return True
             elif token.value and token.type != Token.SEPARATOR:
@@ -107,14 +106,16 @@ class Tokenizer(object):
         return False
 
     def _remove_trailing_empty(self, tokens):
-        for token in reversed(tokens):
+        # list() needed w/ IronPython, otherwise reversed() alone is enough.
+        # https://github.com/IronLanguages/ironpython2/issues/699
+        for token in reversed(list(tokens)):
             if not token.value and token.type != Token.EOL:
                 tokens.remove(token)
-            elif token.type == Token.DATA:
+            elif token.type is None:
                 break
 
     def _remove_leading_empty(self, tokens):
-        data_or_continuation = (Token.DATA, Token.CONTINUATION)
+        data_or_continuation = (None, Token.CONTINUATION)
         for token in list(tokens):
             if not token.value:
                 tokens.remove(token)
@@ -122,10 +123,9 @@ class Tokenizer(object):
                 break
 
     def _ensure_data_after_continuation(self, tokens):
-        data = Token.DATA
-        if not any(t.type == data for t in tokens):
+        if not any(t.type is None for t in tokens):
             cont = self._find_continuation(tokens)
-            token = Token(data, '', cont.lineno, cont.end_col_offset)
+            token = Token(lineno=cont.lineno, col_offset=cont.end_col_offset)
             tokens.insert(tokens.index(cont) + 1, token)
 
     def _find_continuation(self, tokens):
@@ -134,5 +134,4 @@ class Tokenizer(object):
                 return token
 
     def _remove_non_data(self, tokens):
-        data = Token.DATA
-        return [t for t in tokens if t.type == data]
+        return [t for t in tokens if t.type is None]

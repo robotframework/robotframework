@@ -18,7 +18,8 @@ Non Existing Attribute
     Check Test Case    ${TESTNAME}
     Adding keyword failed    0    Non-existing attribute
     ...    Getting handler method failed:
-    ...    AttributeError: Non-existing attribute 'Non-existing attribute'
+    ...    AttributeError: *
+    ...    pattern=True
 
 Named Keyword Is Not Method
     Check Test Case    ${TESTNAME}
@@ -52,12 +53,13 @@ Invalid get_keyword_names
     Error in file    3    test_libraries/hybrid_library.robot    3
     ...    Getting keyword names from library 'InvalidKeywordNames' failed:
     ...    Calling dynamic method 'get_keyword_names' failed:
-    ...    Return value must be list of strings.
+    ...    Return value must be a list of strings.
 
 *** Keywords ***
 Adding keyword failed
-    [Arguments]    ${index}    ${name}    @{error}
-    ${message} =    Catenate
-    ...    Adding keyword '${name}' to library 'GetKeywordNamesLibrary' failed:
+    [Arguments]    ${index}    ${name}    @{error}    ${pattern}=False
+    Error in library    GetKeywordNamesLibrary
+    ...    Adding keyword '${name}' failed:
     ...    @{error}
-    Check Log Message    ${ERRORS}[${index}]    ${message}    ERROR
+    ...    pattern=${pattern}
+    ...    index=${index}

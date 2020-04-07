@@ -31,7 +31,7 @@ Merge re-executed and re-re-executed tests
     Re-run tests
     Re-re-run tests
     Run multi-merge
-    ${message} =    Create expected multi-merge message     html marker=${EMPTY}
+    ${message} =    Create expected multi-merge message
     Test merge should have been successful    status 2=FAIL    message 2=${message}
 
 Add new tests
@@ -212,27 +212,57 @@ Timestamps should be set
         Timestamp Should Be Valid    ${suite.endtime}
     END
 
+Create expected merge message header
+    [Arguments]    ${html marker}=*HTML*${SPACE}
+    Run Keyword And Return    Catenate    SEPARATOR=
+    ...    ${html marker}<span class="merge">Test has been re-executed and results merged.</span><hr>
+
+Create expected merge old message body
+    [Arguments]    ${old status}    ${old message}
+    ${old status} =    Set Variable If    '${old status}' == 'PASS'
+    ...    <span class="pass">PASS</span>    <span class="fail">FAIL</span>
+    ${old message} =    Set Variable If    '${old message}' != ''
+    ...    ${old message}<br>    ${EMPTY}
+    ${old message html achor} =    Set Variable If    '${old message}' != ''
+    ...    <span class="old-message">Old message:</span>${SPACE}    ${EMPTY}
+    Run Keyword And Return    Catenate    SEPARATOR=
+    ...    <span class="old-status">Old status:</span> ${old status}<br>
+    ...    ${old message html achor}${old message}
+
+Create expected merge message body
+    [Arguments]    ${new status}    ${new message}    ${old status}    ${old message}
+    ${new status} =    Set Variable If    '${new status}' == 'PASS'
+    ...    <span class="pass">PASS</span>    <span class="fail">FAIL</span>
+    ${new message html achor} =    Set Variable If    '${new message}' != ''
+    ...    <span class="new-message">New message:</span>${SPACE}    ${EMPTY}
+    ${new message} =    Set Variable If    '${new message}' != ''
+    ...    ${new message}<br>    ${EMPTY}
+    ${old message} =    Create expected merge old message body    ${old status}    ${old message}
+    Run Keyword And Return    Catenate    SEPARATOR=
+    ...    <span class="new-status">New status:</span> ${new status}<br>
+    ...    ${new message html achor}${new message}
+    ...    <hr>${old message}
+
 Create expected merge message
     [Arguments]    ${message}    ${new status}    ${new message}    ${old status}    ${old message}   ${html marker}=*HTML*${SPACE}
     Return From Keyword If    """${message}"""    ${message}
-    ${new status} =    Set Variable If    '${new status}' == 'PASS'
-    ...    <span class="pass">PASS</span>    <span class="fail">FAIL</span>
-    ${old status} =    Set Variable If    '${old status}' == 'PASS'
-    ...    <span class="pass">PASS</span>    <span class="fail">FAIL</span>
+    ${merge header} =    Create expected merge message header    html marker=${html marker}
+    ${merge body} =    Create expected merge message body    ${new status}    ${new message}    ${old status}    ${old message}
     Run Keyword And Return    Catenate    SEPARATOR=
-    ...    ${html marker}Re-executed test has been merged.
-    ...    <hr>New status: ${new status}
-    ...    <br>New message: ${new message}
-    ...    <hr>Old status: ${old status}
-    ...    <br>Old message: ${old message}
+    ...    ${merge header}
+    ...    ${merge body}
 
 Create expected multi-merge message
     [Arguments]    ${html marker}=*HTML*${SPACE}
-    ${message} =    Create expected merge message    ${EMPTY}
-    ...    PASS    ${EMPTY}    FAIL    This test was doomed to fail: YES != NO   html marker=${html marker}
-    ${message} =    Create expected merge message    ${EMPTY}
-    ...    FAIL    This test was doomed to fail: again != NO    PASS    ${message}
-    [Return]    ${message}
+    ${header} =    Create expected merge message header    html marker=${html marker}
+    ${message 1} =    Create expected merge message body
+    ...    FAIL    This test was doomed to fail: again != NO    PASS    ${EMPTY}
+    ${message 2} =    Create expected merge old message body
+    ...    FAIL    This test was doomed to fail: YES != NO
+    Run Keyword And Return    Catenate    SEPARATOR=
+    ...    ${header}
+    ...    ${message 1}
+    ...    <hr>${message 2}
 
 Log should have been created with all Log keywords flattened
     ${log} =    Get File    ${OUTDIR}/log.html

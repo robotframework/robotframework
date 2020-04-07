@@ -228,7 +228,7 @@ Set Suite Variable 1
     Set Suite Variable    \${non_existing}
 
 Set Suite Variable 2
-    [Documentation]    FAIL Invalid variable syntax 'invalid'.
+    [Documentation]    FAIL Invalid variable name 'invalid'.
     Should Be Equal    ${test_level_suite_var}    Suite var set in test
     Should Be True    ${test_level_suite_var_list} == [ 'Suite var set in', 'test' ]
     Should Be Equal    ${suite_var_needing_escaping}    One backslash \\ and \${notvar}
@@ -276,7 +276,7 @@ Set Global Variable 1
     Set Global Variable    @non_existing
 
 Set Global Variable 2
-    [Documentation]    FAIL Invalid variable syntax 'invalid syntax'.
+    [Documentation]    FAIL Invalid variable name 'Ö'.
     Should Be Equal    ${test_level_global_var}    Global var set in test
     Should Be True    ${test_level_global_var_list} == [ 'Global var set in', 'test' ]
     Should Be Equal    ${uk_level_global_var}    Global var set in user keyword
@@ -284,21 +284,21 @@ Set Global Variable 2
     Should Be Equal    ${sub_uk_level_global_var}    Global var set in sub user keyword
     Should Be True    ${sub_uk_level_global_var_list} == [ 'Global var set in', 'sub user keyword' ]
     Check Global Variables Available In UK
-    Set Global Variable    invalid syntax
+    Set Global Variable    Ö    Name is shorter than 2 on purpose
 
 Set Test/Suite/Global Variables With Normal Variable Syntax 1
     Set Test Variable    ${new test var 1}    test
     Set Suite Variable    @{new suite var 1}    suite    variable
-    Set Global Variable    @{new global var 1}    global with \ escapes \\    /home/peke/Devel/robotframework/atest/testdata/standard_libraries/builtin/setting_variables ${TEMPDIR} \${escaped and not a var}
+    Set Global Variable    @{new global var 1}    global with \ escapes \\    ${CURDIR} ${TEMPDIR} \${escaped and not a var}
     Should Be Equal    ${new test var 1}    test
     Should Be True    ${new suite var 1} == 'suite variable'.split()
     Should Be Equal    ${new global var 1}[0]    global with \ escapes \\
-    Should Be Equal    ${new global var 1}[1]    /home/peke/Devel/robotframework/atest/testdata/standard_libraries/builtin/setting_variables ${TEMPDIR} \${escaped and not a var}
+    Should Be Equal    ${new global var 1}[1]    ${CURDIR} ${TEMPDIR} \${escaped and not a var}
 
 Set Test/Suite/Global Variables With Normal Variable Syntax 2
     Should Be True    ${new suite var 1} == 'suite variable'.split()
     Should Be Equal    ${new global var 1}[0]    global with \ escapes \\
-    Should Be Equal    ${new global var 1}[1]    /home/peke/Devel/robotframework/atest/testdata/standard_libraries/builtin/setting_variables ${TEMPDIR} \${escaped and not a var}
+    Should Be Equal    ${new global var 1}[1]    ${CURDIR} ${TEMPDIR} \${escaped and not a var}
 
 Set Test/Suite/Global Variable Using Empty List Variable 1
     @{empty list} =    Create List

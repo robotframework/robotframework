@@ -104,7 +104,9 @@ Library name and keyword name are separate
     Keyword and library names should be    ${tc.kws[4]}    Log    BuiltIn
 
 Empty keyword name is not allowed
-    Check log message    ${ERRORS[0]}    Adding keyword '__' to library 'MyLibrary1' failed: Keyword name cannot be empty.    ERROR
+    Error in library    MyLibrary1
+    ...    Adding keyword '__' failed:
+    ...    Keyword name cannot be empty.
 
 *** Keywords ***
 Check Test And Three Keyword Names

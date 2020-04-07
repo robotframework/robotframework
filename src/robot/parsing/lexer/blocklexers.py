@@ -169,7 +169,7 @@ class TestOrKeywordLexer(BlockLexer):
             self._name_seen = True
         else:
             while statement and not statement[0].value:
-                statement.pop(0).type = Token.IGNORE
+                statement.pop(0).type = None    # These tokens will be ignored
 
     def lexer_classes(self):
         return (TestOrKeywordSettingLexer, ForLoopLexer, KeywordCallLexer)

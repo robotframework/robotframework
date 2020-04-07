@@ -54,16 +54,7 @@ class XML(object):
 
     == Table of contents ==
 
-    - `Parsing XML`
-    - `Using lxml`
-    - `Example`
-    - `Finding elements with xpath`
-    - `Element attributes`
-    - `Handling XML namespaces`
-    - `Boolean arguments`
-    - `Pattern matching`
-    - `Shortcuts`
-    - `Keywords`
+    %TOC%
 
     = Parsing XML =
 

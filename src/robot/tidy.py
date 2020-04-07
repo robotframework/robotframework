@@ -40,10 +40,10 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 from robot.errors import DataError
 from robot.parsing import (get_model, SuiteStructureBuilder,
                            SuiteStructureVisitor)
-from robot.tidypkg import Aligner, Cleaner, NewlineNormalizer, SeparatorNormalizer
+from robot.tidypkg import (Aligner, Cleaner, NewlineNormalizer,
+                           SeparatorNormalizer)
 from robot.utils import Application, file_writer
 
-# FIXME: Proofread usage
 USAGE = """robot.tidy -- Robot Framework test data clean-up tool
 
 Version:  <VERSION>
@@ -66,7 +66,6 @@ Options
                  used, it is possible to give multiple input files.
                  Examples:
                    python -m robot.tidy --inplace tests.robot
-                   python -m robot.tidy --inplace --format robot *.txt
  -r --recursive  Process given directory recursively. Files in the directory
                  are processed in-place similarly as when --inplace option
                  is used. Does not process referenced resource files.
@@ -93,23 +92,6 @@ Examples:
   python -m robot.tidy --inplace tests.robot
   python -m robot.tidy --recursive path/to/tests
 
-Changing the test data format
-=============================
-
-Robot Framework supports test data in various formats, but nowadays the
-plain text format with the '.robot' extension is the most commonly used.
-Tidy makes it easy to convert data from one format to another.
-
-Input format is always determined based on the extension of the input file.
-If output file is given, the output format is got from its extension, and
-when using --inplace or --recursive, it is possible to specify the desired
-format using the --format option.
-
-Examples:
-  python -m robot.tidy tests.txt tests.robot
-  python -m robot.tidy --inplace tests.robot
-  python -m robot.tidy --format robot --recursive path/to/tests
-
 Output encoding
 ===============
 
@@ -135,7 +117,8 @@ class Tidy(SuiteStructureVisitor):
     Tidy command line options with same names.
     """
 
-    def __init__(self, space_count=4, use_pipes=False, line_separator=os.linesep):
+    def __init__(self, space_count=4, use_pipes=False,
+                 line_separator=os.linesep):
         self.space_count = space_count
         self.use_pipes = use_pipes
         self.line_separator = line_separator

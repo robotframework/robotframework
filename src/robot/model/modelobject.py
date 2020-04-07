@@ -15,7 +15,7 @@
 
 import copy
 
-from robot.utils import SetterAwareType, py2to3, with_metaclass
+from robot.utils import SetterAwareType, py2to3, unicode, with_metaclass
 
 
 @py2to3
@@ -60,7 +60,7 @@ class ModelObject(with_metaclass(SetterAwareType, object)):
         return self.name
 
     def __repr__(self):
-        return repr(str(self))
+        return repr(unicode(self))
 
     def __setstate__(self, state):
         """Customize attribute updating when using the `copy` module.

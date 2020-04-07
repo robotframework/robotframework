@@ -26,12 +26,14 @@ class SpecDocBuilder(object):
     def build(self, path):
         spec = self._parse_spec(path)
         libdoc = LibraryDoc(name=spec.get('name'),
-                            type=spec.get('type'),
+                            type=spec.get('type').upper(),
                             version=spec.find('version').text or '',
                             doc=spec.find('doc').text or '',
-                            scope=spec.find('scope').text or '',
+                            scope=self._get_scope(spec),
                             named_args=self._get_named_args(spec),
-                            doc_format=spec.get('format', 'ROBOT'))
+                            doc_format=spec.get('format', 'ROBOT'),
+                            source=spec.get('source'),
+                            lineno=int(spec.get('lineno', -1)))
         libdoc.inits = self._create_keywords(spec, 'init')
         libdoc.keywords = self._create_keywords(spec, 'kw')
         return libdoc
@@ -45,17 +47,37 @@ class SpecDocBuilder(object):
             raise DataError("Invalid spec file '%s'." % path)
         return root
 
+    def _get_scope(self, spec):
+        # RF >= 3.2 has "scope" attribute w/ value 'GLOBAL', 'SUITE, or 'TEST'.
+        if 'scope' in spec.attrib:
+            return spec.get('scope')
+        # RF < 3.2 has "scope" element. Need to map old values to new.
+        scope = spec.find('scope').text
+        return {'': 'GLOBAL',          # Was used with resource files.
+                'global': 'GLOBAL',
+                'test suite': 'SUITE',
+                'test case': 'TEST'}[scope]
+
     def _get_named_args(self, spec):
-        elem = spec.find('namedargs')
-        if elem is None:
-            return False    # Backwards compatiblity with RF < 2.6.2
-        return elem.text == 'yes'
+        # RF >= 3.2 has "namedargs" attribute w/ value 'true' or 'false'.
+        namedargs = spec.get('namedargs')
+        if namedargs == 'true':
+            return True
+        if namedargs == 'false':
+            return False
+        # RF < 3.2 has "namedargs" element with text 'yes' or 'no'.
+        namedargs = spec.find('namedargs').text
+        return namedargs == 'yes'
 
     def _create_keywords(self, spec, path):
         return [self._create_keyword(elem) for elem in spec.findall(path)]
 
     def _create_keyword(self, elem):
+        # "deprecated" attribute isn't read because it is read from the doc
+        # automatically. That should probably be changed at some point.
         return KeywordDoc(name=elem.get('name', ''),
                           args=[a.text for a in elem.findall('arguments/arg')],
                           doc=elem.find('doc').text or '',
-                          tags=[t.text for t in elem.findall('tags/tag')])
+                          tags=[t.text for t in elem.findall('tags/tag')],
+                          source=elem.get('source'),
+                          lineno=int(elem.get('lineno', -1)))

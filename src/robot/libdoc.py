@@ -52,7 +52,7 @@ Usage:  python -m robot.libdoc [options] library output_file
    or:  python -m robot.libdoc [options] library list|show|version [names]
 
 Libdoc tool can generate keyword documentation in HTML and XML formats both
-for test libraries and resource files. HTML format is suitable for humans and
+for libraries and resource files. HTML format is suitable for humans and
 XML specs for RIDE and other tools. Libdoc also has few special commands to
 show library or resource information on the console.
 
@@ -65,18 +65,21 @@ Options
 =======
 
  -f --format HTML|XML|XML:HTML
-                          Specifies whether to generate HTML or XML output.
-                          `XML:HTML` means generating XML output where keyword
-                          documentation is forced to be HTML. The default
-                          output format is got from the output file extension.
+                          Specifies whether to generate an HTML or XML output
+                          file. The XML:HTML format means generating an XML
+                          output file where keyword documentation is converted
+                          to HTML regardless of the original documentation
+                          format. The default output format is got from the
+                          output file extension so that `*.html` -> HTML,
+                          `*.xml` -> XML and `*.libspec` -> XML:HTML.
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
                           HTML, plain text, and reStructuredText. The default
-                          value can be specified in test library source code
-                          and the initial default value is `ROBOT`.
- -n --name newname        Sets the name of the documented library or resource.
- -v --version newversion  Sets the version of the documented library or
+                          value can be specified in library source code and
+                          the initial default value is `ROBOT`.
+ -n --name name           Sets the name of the documented library or resource.
+ -v --version version     Sets the version of the documented library or
                           resource.
  -P --pythonpath path *   Additional locations where to search for libraries
                           and resources.
@@ -85,19 +88,19 @@ Options
 Creating documentation
 ======================
 
-When creating documentation in HTML or XML format, the output file must
-be specified as a second argument after the library/resource name or path.
-Output format is got automatically from the extension but can also be set
-explicitly with the `--format` option. Special `XML:HTML` format (new in
-RF 3.2) forces keyword documentation in XML output files to use HTML instead
-of the original documentation format.
+When creating documentation in HTML or XML format, the output file must be
+specified as the second argument after the library/resource name or path.
+Output format is got automatically from the output file extension, but it can
+also be set explicitly with the `--format` option. The special `*.libspec`
+extension automatically enables the XML:HTML format i.e. creates an XML output
+file with keyword documentation converted to HTML.
 
 Examples:
 
-  python -m robot.libdoc src/MyLib.py doc/MyLib.html
-  jython -m robot.libdoc MyJavaLibrary.java MyJavaLibrary.html
-  python -m robot.libdoc --name MyLib Remote::10.0.0.42:8270 MyLib.xml
-  python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
+  python -m robot.libdoc src/MyLibrary.py doc/MyLibrary.html
+  jython -m robot.libdoc MyLibrary.java MyLibrary.html
+  python -m robot.libdoc --name MyLibrary Remote::10.0.0.42:8270 MyLibrary.xml
+  python -m robot.libdoc MyLibrary MyLibrary.libspec
 
 Viewing information on console
 ==============================
@@ -121,11 +124,11 @@ Both also accept `*` and `?` as wildcards.
 Examples:
 
   python -m robot.libdoc Dialogs list
-  python -m robot.libdoc Selenium2Library list browser
+  python -m robot.libdoc SeleniumLibrary list browser
   python -m robot.libdoc Remote::10.0.0.42:8270 show
   python -m robot.libdoc Dialogs show PauseExecution execute*
-  python -m robot.libdoc Selenium2Library show intro
-  python -m robot.libdoc Selenium2Library version
+  python -m robot.libdoc SeleniumLibrary show intro
+  python -m robot.libdoc SeleniumLibrary version
 
 Alternative execution
 =====================
@@ -169,8 +172,10 @@ class LibDoc(Application):
                                    ['ROBOT', 'TEXT', 'HTML', 'REST'])
 
     def _get_output_format(self, format, output):
-        default = os.path.splitext(output)[1][1:]
-        return self._verify_format('Format', format or default, ['HTML', 'XML', 'XML:HTML'])
+        extension = os.path.splitext(output)[1][1:].upper()
+        default = 'XML:HTML' if extension == 'LIBSPEC' else extension
+        return self._verify_format('Format', format or default,
+                                   ['HTML', 'XML', 'XML:HTML'])
 
     def _verify_format(self, type, format, valid):
         format = format.upper()
@@ -202,7 +207,7 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
            docformat=None):
     """Executes Libdoc.
 
-    :param library_or_resource: Name or path of the test library or resource
+    :param library_or_resource: Name or path of the library or resource
         file to be documented.
     :param outfile: Path path to the file where to write outputs.
     :param name: Custom name to give to the documented library or resource.
@@ -212,7 +217,7 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
         the output file. Possible values are ``'HTML'`` and ``'XML'``.
     :param docformat: Documentation source format. Possible values are
         ``'ROBOT'``, ``'reST'``, ``'HTML'`` and ``'TEXT'``. The default value
-        can be specified in test library source code and the initial default
+        can be specified in library source code and the initial default
         is ``'ROBOT'``. New in Robot Framework 3.0.3.
 
     Arguments have same semantics as Libdoc command line options with

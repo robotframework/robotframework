@@ -22,9 +22,9 @@ reST format
     [Tags]    require-docutils    require-pygments
     Test Format in HTML    <em>bold</em> or &lt;b&gt;bold&lt;/b&gt; <a
     ...    --docformat rest    expected2=Link to <cite>Keyword</cite>.
-    Should Contain    ${MODEL['keywords'][2]['doc']}
+    Should Contain    ${MODEL}[keywords][2][doc]
     ...    This link to <a href="#Keyword" class="name">Keyword</a>
-    Should Contain    ${MODEL['keywords'][2]['doc']}
+    Should Contain    ${MODEL}[keywords][2][doc]
     ...    <span class=\"gh\">*** Test Cases ***\x3c/span>
 
 Format from Python library
@@ -53,14 +53,14 @@ Format in XML:HTML
 Format from XML spec
     [Template]    NONE
     Run Libdoc    -F HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
-    Copy File    ${OUTXML}    ${OUTPREFIX}-2.xml
-    Test Format In XML    HTML    lib=${OUTPREFIX}-2.xml
+    Copy File    ${OUTXML}    ${OUTBASE}-2.xml
+    Test Format In XML    HTML    lib=${OUTBASE}-2.xml
 
 Format from XML:HTML spec
     [Template]    NONE
     Run Libdoc    -F ROBOT --format XML:HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
-    Copy File    ${OUTXML}    ${OUTPREFIX}-2.xml
-    Test Format In XML:HTML    lib=${OUTPREFIX}-2.xml
+    Copy File    ${OUTXML}    ${OUTBASE}-2.xml
+    Test Format In XML:HTML    lib=${OUTBASE}-2.xml
 
 Compare HTML from XML:HTML
     [Template]    NONE
@@ -74,9 +74,9 @@ Test Format In HTML
     ...    ${expected2}=Link to <a href="#Keyword" class="name">Keyword</a>.
     ${lib} =    Join Path    ${TESTDATADIR}    ${lib}
     Run Libdoc And Parse Model From HTML    ${cli} ${lib}
-    Should Contain    ${MODEL['doc']}                   ${expected}
-    Should Contain    ${MODEL['keywords'][0]['doc']}    ${expected}
-    Should Contain    ${MODEL['keywords'][1]['doc']}    ${expected2}
+    Should Contain    ${MODEL}[doc]                 ${expected}
+    Should Contain    ${MODEL}[keywords][0][doc]    ${expected}
+    Should Contain    ${MODEL}[keywords][1][doc]    ${expected2}
 
 Test Format In XML
     [Arguments]    ${format}    ${cli}=    ${lib}=DocFormat.py

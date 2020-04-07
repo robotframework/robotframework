@@ -76,8 +76,10 @@ def _makedirs(path):
     if PY3:
         os.makedirs(path, exist_ok=True)
     else:
-        try:
-            os.makedirs(path)
-        except OSError as err:
-            if err.errno != errno.EEXIST:
-                raise
+        missing = []
+        while not os.path.exists(path):
+            path, name = os.path.split(path)
+            missing.append(name)
+        for name in reversed(missing):
+            path = os.path.join(path, name)
+            os.mkdir(path)

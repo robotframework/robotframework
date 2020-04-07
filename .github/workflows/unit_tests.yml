@@ -1,6 +1,18 @@
 name: Unit tests
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - '.github/workflows/**'
+      - 'src/**'
+      - 'utest/**'
+      - '!**/*.rst'
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'src/**'
+      - 'utest/**'
+      - '!**/*.rst'
 
 jobs:
   test_using_builtin_python:
@@ -33,10 +45,15 @@ jobs:
           python -m pip install coverage
           python -m coverage run --branch utest/run.py -v
 
-      - name: Prepare HTML coverage report
+      - name: Prepare HTML/XML coverage report
         run: |
           python -m coverage html -i -d cov_html
+          python -m coverage xml -i
         if: always()
+
+      - uses: codecov/codecov-action@e34ee485244a5b5e6e4e1b96daa4a15c9073e4fc
+        with:
+          name: ${{ matrix.python-version }}-${{ matrix.os }}
 
       - name: Archive coverage results
         uses: actions/upload-artifact@v1
@@ -82,3 +99,26 @@ jobs:
         run: |
           ${{ matrix.set_codepage }}
           jython/bin/jython utest/run.py -v
+
+  test_using_ironpython:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'windows-latest' ]
+        ironpython-version: [ '2.7.9' ]
+
+    runs-on: ${{ matrix.os }}
+
+    name: IronPython ${{ matrix.ironpython-version }} on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup IronPython ${{ matrix.ironpython-version }}
+        run: |
+          choco install ironpython -y --no-progress --version ${{ matrix.ironpython-version }}
+          ipy -m ensurepip --user
+
+      - name: Run unit tests
+        run: |
+          chcp 850
+          ipy utest/run.py -v

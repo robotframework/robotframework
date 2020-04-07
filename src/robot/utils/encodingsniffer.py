@@ -17,7 +17,8 @@ import os
 import sys
 import locale
 
-from .platform import JYTHON, PY2, PY3, UNIXY, WINDOWS
+from .compat import isatty
+from .platform import JYTHON, PY2, PY3, PY_VERSION, UNIXY, WINDOWS
 
 
 if UNIXY:
@@ -84,17 +85,15 @@ def _get_unixy_encoding():
 
 
 def _get_stream_output_encoding():
-    # Python < 3.6 on Windows returns different encoding depending on are
-    # outputs redirected or not, and Python >= 3.6 always use UTF-8. We
-    # want the real console encoding regardless the platform.
-    if WINDOWS and PY3:
+    # Python 3.6+ uses UTF-8 as encoding with output streams.
+    # We want the real console encoding regardless the platform.
+    if WINDOWS and PY_VERSION >= (3, 6):
         return None
-    # Stream may not have encoding attribute if intercepted outside RF in
-    # Python. Encoding is None if process output is redirected and Python < 3.
     for stream in sys.__stdout__, sys.__stderr__, sys.__stdin__:
-        encoding = getattr(stream, 'encoding', None)
-        if _is_valid(encoding):
-            return encoding
+        if isatty(stream):
+            encoding = getattr(stream, 'encoding', None)
+            if _is_valid(encoding):
+                return encoding
     return None
 
 

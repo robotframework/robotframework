@@ -22,6 +22,7 @@ Values with defaults can be omitted at the end
     Check Test Case    ${TESTNAME}
 
 Values with defaults can be omitted in the middle
+    [Documentation]    Default values are used to fill the gaps.
     Check Test Case    ${TESTNAME}
 
 Non-string values

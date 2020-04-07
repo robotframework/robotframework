@@ -21,27 +21,5 @@ are provided by the separate :mod:`robot.libdoc` module.
 This package is considered stable but it is not part of the public API.
 """
 
-from robot.errors import DataError
-from robot.utils import get_error_message
-
-from .builder import DocumentationBuilder
+from .builder import LibraryDocumentation
 from .consoleviewer import ConsoleViewer
-
-
-def LibraryDocumentation(library_or_resource, name=None, version=None,
-                         doc_format=None):
-    builder = DocumentationBuilder(library_or_resource)
-    try:
-        libdoc = builder.build(library_or_resource)
-    except DataError:
-        raise
-    except:
-        raise DataError("Building library '%s' failed: %s"
-                        % (library_or_resource, get_error_message()))
-    if name:
-        libdoc.name = name
-    if version:
-        libdoc.version = version
-    if doc_format:
-        libdoc.doc_format = doc_format
-    return libdoc

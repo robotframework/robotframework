@@ -6,7 +6,7 @@ from robot.parsing.lexer.tokenizer import Tokenizer
 from robot.parsing.lexer.tokens import Token
 
 
-DATA = Token.DATA
+DATA = None
 SEPA = Token.SEPARATOR
 EOL = Token.EOL
 CONT = Token.CONTINUATION
@@ -22,7 +22,7 @@ def verify_split(string, *expected_statements, **config):
         assert_equal(len(tokens), len(expected),
                      'Expected %d tokens:\n%s\n\nGot %d tokens:\n%s'
                      % (len(expected), expected, len(tokens), tokens),
-                     values = False)
+                     values=False)
         for act, exp in zip(tokens, expected):
             if exp[0] == DATA:
                 expected_data[-1].append(exp)
