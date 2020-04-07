@@ -41,7 +41,7 @@ class DynamicLibrary(object):
         if name == 'Keyword-only args':
             return ['*', 'kwo', 'another=default']
         if name == 'KWO w/ varargs':
-            return ['*varargs', 'a', 'b=2', 'c', '**kws']
+            return ['*varargs', 'a', ('b', 2), 'c', '**kws']
         if name == 'Types':
             return ['integer', 'no type', ('boolean', True)]
         if not name[-1].isdigit():

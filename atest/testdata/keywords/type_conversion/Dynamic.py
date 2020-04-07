@@ -18,6 +18,9 @@ class Dynamic(object):
             return [('first', 1), ('first_expected', 1),
                     ('middle', None), ('middle_expected', None),
                     ('last', True), ('last_expected', True)]
+        if name == 'kwonly_defaults':
+            return [('*',), ('first', 1), ('first_expected', 1),
+                    ('last', True), ('last_expected', True)]
         if name == 'default_values_when_types_are_none':
             return [('value', True), ('expected', None)]
         return ['value', 'expected=None']
@@ -47,6 +50,12 @@ class Dynamic(object):
                        last=True, last_expected=True):
         self._validate_type(first, first_expected)
         self._validate_type(middle, middle_expected)
+        self._validate_type(last, last_expected)
+
+    @keyword
+    def kwonly_defaults(self, first=1, first_expected=1,
+                        last=True, last_expected=True):
+        self._validate_type(first, first_expected)
         self._validate_type(last, last_expected)
 
     @keyword(types=None)
