@@ -604,7 +604,7 @@ class TestSourceAndLineno(unittest.TestCase):
     def test_class(self):
         from robot.libraries.BuiltIn import __file__ as source
         lib = TestLibrary('BuiltIn')
-        self._verify(lib, source, 3270)
+        self._verify(lib, source, 3285)
 
     def test_class_in_package(self):
         from robot.variables.variables import __file__ as source

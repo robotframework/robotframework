@@ -437,7 +437,7 @@ class TestSourceAndLineno(unittest.TestCase):
     def test_class_without_init(self):
         from robot.libraries.BuiltIn import __file__ as source
         lib = TestLibrary('BuiltIn')
-        self._verify(lib.handlers['convert_to_integer'], source, 102)
+        self._verify(lib.handlers['convert_to_integer'], source, 103)
         self._verify(lib.init, source, -1)
 
     def test_old_style_class_without_init(self):

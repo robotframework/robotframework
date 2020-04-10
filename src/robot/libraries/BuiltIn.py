@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections import OrderedDict
 import difflib
 import re
 import time
@@ -1324,8 +1325,22 @@ class _Variables(_BuiltInBase):
         """Logs all variables in the current scope with given log level."""
         variables = self.get_variables()
         for name in sorted(variables, key=lambda s: s[2:-1].lower()):
-            msg = format_assign_message(name, variables[name], cut_long=False)
+            name, value = self._get_logged_variable(name, variables)
+            msg = format_assign_message(name, value, cut_long=False)
             self.log(msg, level)
+
+    def _get_logged_variable(self, name, variables):
+        value = variables[name]
+        try:
+            if name[0] == '@':
+                value = list(value)
+            if name[0] == '&':
+                value = OrderedDict(value)
+        except RERAISED_EXCEPTIONS:
+            raise
+        except:
+            name = '$' + name[1:]
+        return name, value
 
     @run_keyword_variant(resolve=0)
     def variable_should_exist(self, name, msg=None):
