@@ -614,8 +614,11 @@ class _Verify(_BuiltInBase):
         If both arguments are multiline strings, this keyword uses
         `multiline string comparison`.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
+        If ``strip_spaces`` is given a true value (see `Boolean arguments`) and
+        both arguments are strings, comparison is done without leading and
+        trailing spaces. If ``strip_spaces`` is given a string value
+        ``leading`` or ``trailing`` and both arguments are strings, comparison is
+        done without leading or trailing spaces. The default value is ``False``
 
         Examples:
         | Should Be Equal | ${x} | expected |
@@ -631,8 +634,9 @@ class _Verify(_BuiltInBase):
             first = first.lower()
             second = second.lower()
         #TODO Add acceptance tests
-        first = self._strip_spaces(first, strip_spaces)
-        second = self._strip_spaces(second, strip_spaces)
+        if strip_spaces and is_string(first) and is_string(second):
+            first = self._strip_spaces(first, strip_spaces)
+            second = self._strip_spaces(second, strip_spaces)
         self._should_be_equal(first, second, msg, values, formatter)
 
     def _should_be_equal(self, first, second, msg, values, formatter='str'):
