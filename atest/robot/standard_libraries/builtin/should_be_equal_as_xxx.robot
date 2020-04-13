@@ -47,6 +47,9 @@ Should Be Equal As Strings strip leading spaces
 Should Be Equal As Strings strip trailing spaces
     Check test case    ${TESTNAME}
 
+Should Be Equal As Strings strip leading and trailing spaces
+    Check test case    ${TESTNAME}
+
 Should Be Equal As Strings repr
     Check test case    ${TESTNAME}
 
