@@ -12,6 +12,9 @@ Should Start With case-insensitive
 Should Start With without values
     Check test case    ${TESTNAME}
 
+Should Start With strip leading spaces
+    Check test case    ${TESTNAME}
+
 Should Not Start With
     Check test case    ${TESTNAME}
 

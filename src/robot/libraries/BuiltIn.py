@@ -885,13 +885,10 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
             str2 = str2.lower()
-        # TODO Add acceptance tests
         str1 = self._strip_spaces(str1, strip_spaces)
         str2 = self._strip_spaces(str2, strip_spaces)
         if not str1.startswith(str2):

@@ -21,6 +21,17 @@ Should Start With without values
     [Documentation]    FAIL My message
     Should Start With    ${LONG}    Nope    My message    values=No values
 
+Should Start With strip leading spaces
+    [Documentation]    FAIL 'YÖTÄ' does not start with 'PÄIVÄÄ'
+    [Template]    Should Start With
+    San Diego!                San Diego           strip_spaces=leading
+    ${SPACE}test\tvalue       test\tvalue         strip_spaces=LEADING
+    test value                \ttest              strip_spaces=leading
+    \ HYVÄÄ YÖTÄ              \tHYVÄÄ             repr=yes    strip_spaces=leading
+    ${SPACE}                  ${EMPTY}            strip_spaces=leading
+    test\tvalue               test                strip_spaces=yes
+    ${SPACE}\tYÖTÄ            \t${SPACE}PÄIVÄÄ    strip_spaces=leading
+
 Should Not Start With
     [Documentation]    FAIL 'Hello, world!' starts with 'Hello'
     [Template]    Should Not Start With
