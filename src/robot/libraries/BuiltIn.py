@@ -666,9 +666,9 @@ class _Verify(_BuiltInBase):
 
     def _strip_spaces(selfself, string_value, strip_spaces):
         if strip_spaces:
-            if strip_spaces.upper() == 'LEADING':
+            if isinstance(strip_spaces, str) and strip_spaces.upper() == 'LEADING':
                 string_value = string_value.lstrip()
-            elif strip_spaces.upper() == 'TRAILING':
+            elif isinstance(strip_spaces, str) and strip_spaces.upper() == 'TRAILING':
                 string_value = string_value.rstrip()
             elif is_truthy(strip_spaces):
                 string_value = string_value.strip()

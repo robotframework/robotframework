@@ -117,6 +117,24 @@ Should Be Equal As Strings strip trailing spaces
     YÖTÄ${SPACE}\t            PÄIVÄÄ\t${SPACE}\t    strip_spaces=trailing
     ${SPACE}test\t            test                  strip_spaces=trailing
 
+Should Be Equal As Strings strip leading and trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) YÖTÄ != PÄIVÄÄ
+    ...
+    ...    2) test 1 != test
+    [Template]    Should Be Equal As Strings
+    San Diego                 San Diego             strip_spaces=TRUE
+    \tHelsinki                Helsinki\t            strip_spaces=truE
+    \ttest value${SPACE * 5}  \ttest value${SPACE}  strip_spaces=True
+    \ttest\tvalue${SPACE}     test\tvalue           strip_spaces=true
+    \ test\ \ value\t         test\ \ value         strip_spaces=True
+    \ HYVÄÄ YÖTÄ\t ${SPACE}   \ HYVÄÄ YÖTÄ \t       repr=yes    strip_spaces=True
+    ${SPACE}                  ${EMPTY}              strip_spaces=True
+    \tYÖTÄ${SPACE}\t          \ PÄIVÄÄ\t${SPACE}\t  strip_spaces=True
+    ${SPACE}test 1\t          test                  strip_spaces=True
+    \ test 1\t                \ttest 1\t            strip_spaces=Yes
+
 Should Be Equal As Strings repr
     [Documentation]    FAIL Several failures occurred:
     ...
