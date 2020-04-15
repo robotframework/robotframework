@@ -47,19 +47,12 @@ jobs:
 
       - name: Prepare HTML/XML coverage report
         run: |
-          python -m coverage html -i -d cov_html
           python -m coverage xml -i
         if: always()
 
       - uses: codecov/codecov-action@e34ee485244a5b5e6e4e1b96daa4a15c9073e4fc
         with:
           name: ${{ matrix.python-version }}-${{ matrix.os }}
-
-      - name: Archive coverage results
-        uses: actions/upload-artifact@v1
-        with:
-          name: cov-ut-${{ matrix.python-version }}-${{ matrix.os }}
-          path: cov_html
         if: always()
 
   test_using_jython:
