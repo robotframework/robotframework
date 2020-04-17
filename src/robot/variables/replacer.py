@@ -15,8 +15,8 @@
 
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
-from robot.utils import (escape, is_dict_like, is_list_like, is_subscriptable,
-                         type_name, unescape, unic)
+from robot.utils import (escape, is_dict_like, is_list_like, type_name,
+                         unescape, unic)
 
 from .search import VariableMatch, search_variable
 
@@ -139,7 +139,7 @@ class VariableReplacer(object):
         for item in match.items:
             if is_dict_like(value):
                 value = self._get_dict_variable_item(name, value, item)
-            elif is_subscriptable(value):
+            elif hasattr(value, '__getitem__'):
                 value = self._get_sequence_variable_item(name, value, item)
             else:
                 raise VariableError(

@@ -57,7 +57,3 @@ def is_truthy(item):
 def is_falsy(item):
     """Opposite of :func:`is_truthy`."""
     return not is_truthy(item)
-
-
-def is_subscriptable(item):
-    return hasattr(item, '__getitem__')
