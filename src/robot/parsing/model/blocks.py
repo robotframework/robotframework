@@ -81,7 +81,7 @@ class TestCaseSection(Section):
 
     @property
     def tasks(self):
-        return self.header.value.upper() in ('TASKS', 'TASK')
+        return self.header.name.upper() in ('TASKS', 'TASK')
 
 
 class KeywordSection(Section):

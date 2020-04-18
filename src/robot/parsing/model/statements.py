@@ -172,7 +172,7 @@ class Fixture(Statement):
 class SectionHeader(Statement):
 
     @property
-    def value(self):
+    def name(self):
         header = self.get_token(self.type)
         return normalize_whitespace(header.value).strip('* ')
 
