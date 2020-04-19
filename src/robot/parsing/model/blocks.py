@@ -54,6 +54,12 @@ class File(Block):
         self.source = source
 
     def save(self, output=None):
+        """Save model to the given ``output`` or to the original source file.
+
+        The ``output`` can be a path to a file or an already opened file
+        object. If ``output`` is not given, the original source file will
+        be overwritten.
+        """
         output = output or self.source
         if output is None:
             raise TypeError('Saving model requires explicit output '

@@ -28,9 +28,24 @@ class VisitorFinder(object):
             visitor = self._find_visitor(base)
             if visitor:
                 return visitor
+        return None
 
 
 class ModelVisitor(ast.NodeVisitor, VisitorFinder):
+    """NodeVisitor that supports matching nodes based on their base classes.
+
+    Otherwise identical to the standard `ast.NodeVisitor
+    <https://docs.python.org/library/ast.html#ast.NodeVisitor>`__,
+    but allows creating ``visit_ClassName`` methods so that the ``ClassName``
+    is one of the base classes of the node. For example, this visitor method
+    matches all section headers::
+
+        def visit_SectionHeader(self, node):
+            # ...
+
+    If all visitor methods match node classes directly, it is better to use
+    the standard ``ast.NodeVisitor`` instead.
+    """
 
     def visit(self, node):
         visitor = self._find_visitor(type(node)) or self.generic_visit
@@ -38,6 +53,12 @@ class ModelVisitor(ast.NodeVisitor, VisitorFinder):
 
 
 class ModelTransformer(ast.NodeTransformer, VisitorFinder):
+    """NodeTransformer that supports matching nodes based on their base classes.
+
+    See :class:`ModelVisitor` for explanation how this is different compared
+    to the standard `ast.NodeTransformer
+    <https://docs.python.org/library/ast.html#ast.NodeTransformer>`__.
+    """
 
     def visit(self, node):
         visitor = self._find_visitor(type(node)) or self.generic_visit

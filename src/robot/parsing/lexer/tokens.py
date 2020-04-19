@@ -19,7 +19,15 @@ from robot.variables import VariableIterator
 
 @py2to3
 class Token(object):
-    """FIXME: Add documentation to Token class and types."""
+    """Token representing piece of Robot Framework data.
+
+    Each token has type, value, line number, column offset and end column
+    offset in :attr:`type`, :attr:`value`, :attr:`lineno`, :attr:`col_offset`
+    and :attr:`end_col_offset` attributes, respectively. Tokens representing
+    error also have their error message in :attr:`error` attribute.
+
+    Token types are declared as class attributes.
+    """
 
     SETTING_HEADER = 'SETTING_HEADER'
     VARIABLE_HEADER = 'VARIABLE_HEADER'
@@ -67,6 +75,7 @@ class Token(object):
     CONTINUATION = 'CONTINUATION'
     EOL = 'EOL'
     EOS = 'EOS'
+
     ERROR = 'ERROR'
     FATAL_ERROR = 'FATAL_ERROR'
 
@@ -133,6 +142,14 @@ class Token(object):
         self.error = error
 
     def tokenize_variables(self):
+        """Tokenizes possible variables in token value.
+
+        Yields the token itself if the token does not allow variables (see
+        :attr:`Token.ALLOW_VARIABLES`) or its value does not contain
+        variables. Otherwise yields variable tokens as well as tokens
+        before, after, or between variables so that they have the same
+        type as the original token.
+        """
         if self.type not in Token.ALLOW_VARIABLES:
             return self._tokenize_no_variables()
         variables = VariableIterator(self.value)
@@ -179,6 +196,7 @@ class Token(object):
 
 
 class EOS(Token):
+    """Token representing end of statement."""
     __slots__ = []
 
     def __init__(self, lineno=-1, col_offset=-1):
