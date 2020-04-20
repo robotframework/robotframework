@@ -1591,9 +1591,11 @@ class _Variables(_BuiltInBase):
             name = self._resolve_var_name(replaced)
         except ValueError:
             name = original
-        if not search_variable(name).is_assign():
+        match = search_variable(name)
+        match.resolve_base(self._variables)
+        if not match.is_assign():
             raise DataError("Invalid variable name '%s'." % name)
-        return name
+        return unic(match)
 
     def _resolve_var_name(self, name):
         if name.startswith('\\'):

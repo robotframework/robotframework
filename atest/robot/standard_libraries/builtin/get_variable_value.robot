@@ -21,6 +21,10 @@ List variables
 Extended variable syntax
     Check Test Case  ${TESTNAME}
 
+Embedded variable
+    Check Test Case  ${TESTNAME}
+
 Invalid variable syntax
     Check Test Case  ${TESTNAME} 1
     Check Test Case  ${TESTNAME} 2
+    Check Test Case  ${TESTNAME} 3
