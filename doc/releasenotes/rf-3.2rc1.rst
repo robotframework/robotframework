@@ -68,14 +68,14 @@ The most important reason for the parser rewrite was making it possible to
 add new syntax to Robot Framework in the future. No new syntax is introduced
 yet in Robot Framework 3.2, but there are plans to add, for example,
 `IF/ELSE` (`#3074`_), `TRY/EXCEPT` (`#3075`_), and nested control structures
-(`#3079`_) in `Robot Framework 4.0
-<https://github.com/robotframework/robotframework/issues?q=is%3Aopen+is%3Aissue+milestone%3Av4.0>`__
-sometime in 2021.
+(`#3079`_) in `Robot Framework 4.0`__ sometime in 2021.
 
 The new parser also has much better APIs for external tools like editors,
-linters and code formatters than the old one (`#3373`_). These new APIs are
-already used by the
-`robotframework-lsp project <https://github.com/robocorp/robotframework-lsp>`__
+linters and code formatters than the old one (`#3373`_). See the `API
+documentation`__ for more information and examples. The drawback of the new
+APIs is that tools using the old parsing APIs need to be updated.
+
+New parsing APIs are already used by the `robotframework-lsp project`__
 that exposes parsing (and other) APIs to editors and IDEs via the
 `language server protocol (LSP)`__. This is a new project but definitely worth
 checking out for anyone interested in developing editor plugins for Robot
@@ -94,6 +94,9 @@ new parser only parses `*.robot` files by default (`#3084`_), users of the
 `*.txt`, `*.tsv`, or `*.rst` files need to explicitly use the `--extension`
 option.
 
+__ https://github.com/robotframework/robotframework/issues?q=is%3Aopen+is%3Aissue+milestone%3Av4.0
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.parsing.html#module-robot.parsing
+__ https://github.com/robocorp/robotframework-lsp
 __ https://microsoft.github.io/language-server-protocol
 .. _#3074: https://github.com/robotframework/robotframework/issues/3074
 .. _#3075: https://github.com/robotframework/robotframework/issues/3075
@@ -371,6 +374,18 @@ files by default (`#3084`_). Users of the `*.txt`, `*.tsv`, or `*.rst` file
 need to explicitly use the `--extension` option like `--extension tsv` or
 `--extension robot:tsv`. When executing a single file, the file is parsed
 regardless the extension.
+
+Parsing APIs have been rewritten
+--------------------------------
+
+One of the nice features of the `new test data parser`_ is the new stable
+parsing API (`#3373`_). Unfortunately this API is stable only going forward,
+and all tools using the old parsing API need to be updated when migrating
+to Robot Framework 3.2. To see what has changed, see the old__ and new__
+API documentation.
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.parsing.html
+__ https://robot-framework.readthedocs.io/en/v3.1.2/autodoc/robot.parsing.html
 
 Changes to recognizing and evaluating variables
 -----------------------------------------------
