@@ -72,7 +72,7 @@ class Section(Block):
 
     def __init__(self, header=None, body=None):
         self.header = header
-        self.body = Body(body)
+        self.body = body or []
 
 
 class SettingSection(Section):
@@ -98,22 +98,12 @@ class CommentSection(Section):
     pass
 
 
-class Body(Block):
-    _fields = ('items',)
-
-    def __init__(self, items=None):
-        self.items = items or []
-
-    def add(self, item):
-        self.items.append(item)
-
-
 class TestCase(Block):
     _fields = ('header', 'body')
 
     def __init__(self, header, body=None):
         self.header = header
-        self.body = Body(body)
+        self.body = body or []
 
     @property
     def name(self):
@@ -125,7 +115,7 @@ class Keyword(Block):
 
     def __init__(self, header, body=None):
         self.header = header
-        self.body = Body(body)
+        self.body = body or []
 
     @property
     def name(self):
@@ -137,7 +127,7 @@ class ForLoop(Block):
 
     def __init__(self, header, body=None, end=None):
         self.header = header
-        self.body = Body(body)
+        self.body = body or []
         self.end = end
 
     @property

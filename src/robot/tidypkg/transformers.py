@@ -134,31 +134,31 @@ class NewlineNormalizer(ModelTransformer):
 
     def visit_Section(self, node):
         if node is not self.last_section:
-            node.body.add(EmptyLine.from_value(self.newline))
+            node.body.append(EmptyLine.from_value(self.newline))
         return self.generic_visit(node)
 
     def visit_CommentSection(self, node):
         return self.generic_visit(node)
 
     def visit_TestCaseSection(self, node):
-        self.last_test = node.body.items[-1] if node.body.items else None
+        self.last_test = node.body[-1] if node.body else None
         self.custom_test_section_headers = len(node.header.data_tokens) > 1
         section = self.visit_Section(node)
         self.custom_test_section_headers = False
         return section
 
     def visit_TestCase(self, node):
-        if not node.body.items or node is not self.last_test:
-            node.body.items.append(EmptyLine.from_value(self.newline))
+        if not node.body or node is not self.last_test:
+            node.body.append(EmptyLine.from_value(self.newline))
         return self.generic_visit(node)
 
     def visit_KeywordSection(self, node):
-        self.last_keyword = node.body.items[-1] if node.body.items else None
+        self.last_keyword = node.body[-1] if node.body else None
         return self.visit_Section(node)
 
     def visit_Keyword(self, node):
-        if not node.body.items or node is not self.last_keyword:
-            node.body.items.append(EmptyLine.from_value(self.newline))
+        if not node.body or node is not self.last_keyword:
+            node.body.append(EmptyLine.from_value(self.newline))
         return self.generic_visit(node)
 
     def visit_Statement(self, statement):
@@ -187,21 +187,21 @@ class SeparatorNormalizer(ModelTransformer):
     def visit_TestCase(self, node):
         self.visit_Statement(node.header)
         self.indent += 1
-        self.generic_visit(node.body)
+        node.body = [self.visit(item) for item in node.body]
         self.indent -= 1
         return node
 
     def visit_Keyword(self, node):
         self.visit_Statement(node.header)
         self.indent += 1
-        self.generic_visit(node.body)
+        node.body = [self.visit(item) for item in node.body]
         self.indent -= 1
         return node
 
     def visit_ForLoop(self, node):
         self.visit_Statement(node.header)
         self.indent += 1
-        self.generic_visit(node.body)
+        node.body = [self.visit(item) for item in node.body]
         self.indent -= 1
         self.visit_Statement(node.end)
         return node
