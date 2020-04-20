@@ -252,9 +252,10 @@ this example that renames keywords::
     renamer.visit(model)
     model.save()
 
-
 If you run the above example using the earlier :file:`example.robot`, you
-can see that the ``Keyword`` keyword has been renamed to ``New Name``.
+can see that the ``Keyword`` keyword has been renamed to ``New Name``. Notice
+that a real keyword renamer needed to take into account also keywords used
+with setups, teardowns and templates.
 
 When token values are changed, column offset of the other tokens on same
 line are likely to be wrong. This does not affect saving the model or other
@@ -271,48 +272,77 @@ examples.
 
 Removing nodes is relative easy and is accomplished by returning ``None``
 from ``visit_NodeName`` methods. Remember to return the original node,
-or possibly a replacement node, from all of these methods or otherwise also
-those nodes will be removed.
+or possibly a replacement node, from all of these methods when you do not
+want a node to be removed.
 
 Adding nodes is unfortunately not supported by the public :mod:`robot.api`
-interface and the needed block or statement nodes need to be imported
-via the :mod:`robot.parsing.model` package. Functionality related to
-adding nodes can be improved in the future if there are more needs for
-this kind of advanced usage.
+interface and the needed block and statement nodes need to be imported
+via the :mod:`robot.parsing.model` package. That package is considered
+private and may change in the future. A stable public API can be added,
+and functionality related to adding nodes improved in general, if there
+are concrete needs for this kind of advanced usage.
 
-The following example demonstrates both removing and adding nodes from
-the model. If you run it against the earlier :file:`example.robot`,
-you see that the second test case is removed and the remaining test gets
-a new keyword.
+The following example demonstrates both removing and adding nodes.
+If you run it against the earlier :file:`example.robot`, you see that
+the first test gets a new keyword, the second test is removed, and
+settings section with documentation is added.
 
 ::
 
     import ast
     from robot.api import get_model, Token
-    from robot.parsing.model import Statement    # Unfortunate non-public import.
+    from robot.parsing.model import SettingSection, Statement
 
 
     class TestModifier(ast.NodeTransformer):
 
         def visit_TestCase(self, node):
-            # The matched `TestCase` node is a block with `header` and `body`.
-            # `node.header` is a statement and has `get_token` and `get_value`.
+            # The matched `TestCase` node is a block with `header` and `body`
+            # attributes. `header` is a statement with familiar `get_token` and
+            # `get_value` methods for getting certain tokens or their value.
             name = node.header.get_value(Token.TESTCASE_NAME)
             # Returning `None` drops the node altogether i.e. removes this test.
             if name == 'Second example':
                 return None
             # Construct new keyword call statement from tokens.
-            new_kw = Statement.from_tokens([
+            new_keyword = Statement.from_tokens([
                 Token(Token.SEPARATOR, '    '),
                 Token(Token.KEYWORD, 'New Keyword'),
                 Token(Token.SEPARATOR, '    '),
                 Token(Token.ARGUMENT, 'xxx'),
-                Token(Token.EOL, '\n'),
+                Token(Token.EOL, '\n')
             ])
-            # Add the keyword call to test as the second item.
-            node.body.items.insert(1, new_kw)
-            # Must return the node to avoid dropping it.
+            # Add the keyword call to test as the second item. `body` is a list.
+            node.body.insert(1, new_keyword)
+            # No need to call `generic_visit` because we are not modifying child
+            # nodes. The node itself must to be returned to avoid dropping it.
             return node
+
+        def visit_File(self, node):
+            # Create settings section with documentation.
+            setting_header = Statement.from_tokens([
+                Token(Token.SETTING_HEADER, '*** Settings ***'),
+                Token(Token.EOL, '\n')
+            ])
+            documentation = Statement.from_tokens([
+                Token(Token.DOCUMENTATION, 'Documentation'),
+                Token(Token.SEPARATOR, '    '),
+                Token(Token.ARGUMENT, 'This is getting pretty advanced'),
+                Token(Token.EOL, '\n'),
+                Token(Token.CONTINUATION, '...'),
+                Token(Token.SEPARATOR, '    '),
+                Token(Token.ARGUMENT, 'and this API definitely could be better.'),
+                Token(Token.EOL, '\n')
+            ])
+            empty_line = Statement.from_tokens([
+                Token(Token.EOL, '\n')
+            ])
+            body = [documentation, empty_line]
+            settings = SettingSection(setting_header, body)
+            # Add settings to the beginning of the file.
+            node.sections.insert(0, settings)
+            # Must call `generic_visit` to visit also child nodes.
+            return self.generic_visit(node)
 
 
     model = get_model('example.robot')
