@@ -36,8 +36,9 @@ you can use the version created based on release candidate 1 from its
 see the `installation instructions`_.
 
 Robot Framework 3.2 release candidate 2 was released on Tuesday April 21, 2020.
-It contains few small fixes and internal changes compared to the `release
-candidate 1 <rf-3.2rc1.rst>`_ released in early April. Barring any major
+Compared to the `release candidate 1 <rf-3.2rc1.rst>`_ it contains fixes to
+a bug in `Log Variables` (`#3540`_) and a regression in `Get Variable Value`
+(`#3552`_) as well as small changes to the new parsing model. Barring any major
 problems, the final release is planned for Monday April 27, 2020.
 
 .. _Robot Framework: http://robotframework.org
@@ -1427,3 +1428,4 @@ Altogether 107 issues. View on the `issue tracker <https://github.com/robotframe
 .. _#3534: https://github.com/robotframework/robotframework/issues/3534
 .. _#3536: https://github.com/robotframework/robotframework/issues/3536
 .. _#645: https://github.com/robotframework/robotframework/issues/645
+.. _#3552: https://github.com/robotframework/robotframework/issues/3552
