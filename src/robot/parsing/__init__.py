@@ -349,6 +349,31 @@ settings section with documentation is added.
     modifier = TestModifier()
     modifier.visit(model)
     model.save()
+
+Executing model
+---------------
+
+It is possible to convert a parsed and possibly modified model into an
+executable :class:`~robot.running.model.TestSuite` structure by using its
+:func:`~robot.running.model.TestSuite.from_model` class method. In this case
+the :func:`~.parser.parser.get_model` function should be given the ``curdir``
+argument to get possible ``${CURDIR}`` variable resolved correctly.
+
+::
+
+     from robot.api import get_model, TestSuite
+
+     model = get_model('example.robot', curdir='/home/robot/example')
+     # modify model as needed
+     suite = TestSuite.from_model(model)
+     suite.run()
+
+For more details about executing the created
+:class:`~robot.running.model.TestSuite` object, see the documentation
+of its :meth:`~robot.running.model.TestSuite.run` method. Notice also
+that if you do not need to modify the parsed model, it is easier to
+get the executable suite by using the
+:func:`~robot.running.model.TestSuite.from_file_system` class method.
 """
 
 from .lexer import get_tokens, get_resource_tokens, get_init_tokens, Token
