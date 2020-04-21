@@ -1,5 +1,5 @@
 =======================================
-Robot Framework 3.2 release candidate 1
+Robot Framework 3.2 release candidate 2
 =======================================
 
 .. default-role:: code
@@ -7,7 +7,7 @@ Robot Framework 3.2 release candidate 1
 `Robot Framework`_ 3.2 is a new major release with an enhanced test data
 parser, handy `@library` and `@not_keyword` decorators, enhanced Libdoc
 spec files for external tools, inline Python evaluation support, and many
-other interesting new features and lot of bug fixes. Robot Framework 3.2 rc 1
+other interesting new features and lot of bug fixes. Robot Framework 3.2 rc 2
 contains all changes planned to the final release. Users are highly recommended
 to test it in their environments and report possible problems.
 
@@ -25,18 +25,20 @@ to install the latest available release or use
 
 ::
 
-   pip install robotframework==3.2rc1
+   pip install robotframework==3.2rc2
 
 to install exactly this version.
 
 Alternatively you can download the source distribution from PyPI_ and install
 it manually. If you are interested to test the standalone jar distribution,
-you can find it from the `GitHub release page`_. For more details and other
-installation approaches, see the `installation instructions`_.
+you can use the version created based on release candidate 1 from its
+`GitHub release page`_. For more details and other installation approaches,
+see the `installation instructions`_.
 
-Robot Framework 3.2 release candidate 1 was released on Friday April 3, 2020.
-It was replaced by `release candidate 2 <rf-3.2rc2.rst>`_ on Tuesday April 21,
-2020.
+Robot Framework 3.2 release candidate 2 was released on Tuesday April 21, 2020.
+It contains few small fixes and internal changes compared to the `release
+candidate 1 <rf-3.2rc1.rst>`_ released in early April. Barring any major
+problems, the final release is planned for Monday April 27, 2020.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -849,12 +851,12 @@ Full list of fixes and enhancements
       - enhancement
       - high
       - Update standalone jar distribution to use Jython 2.7.2
-      - rc 1
+      - rc 1
     * - `#3420`_
       - enhancement
       - high
       - Continuous integrating (CI)
-      - beta 1
+      - beta 1
     * - `#3455`_
       - enhancement
       - high
@@ -975,6 +977,11 @@ Full list of fixes and enhancements
       - medium
       - Rerun functionality fails if test contains `[x]`
       - rc 1
+    * - `#3540`_
+      - bug
+      - medium
+      - `Log Variables` fails is variable value is iterable but iteration fails
+      - rc 2
     * - `#2291`_
       - enhancement
       - medium
@@ -988,7 +995,7 @@ Full list of fixes and enhancements
     * - `#2703`_
       - enhancement
       - medium
-      - `Lists Should Be Equal` keywords in Collections should have an option to ignore order
+      - `Lists Should Be Equal` keyword in Collections should have an option to ignore order
       - rc 1
     * - `#2706`_
       - enhancement
@@ -1311,11 +1318,9 @@ Full list of fixes and enhancements
       - Empty rows should not be discarded during parsing
       - alpha 1
 
-Altogether 105 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av3.2>`__.
+Altogether 107 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av3.2>`__.
 
 .. _#3076: https://github.com/robotframework/robotframework/issues/3076
-.. _#3383: https://github.com/robotframework/robotframework/issues/3383
-.. _#3420: https://github.com/robotframework/robotframework/issues/3420
 .. _#3081: https://github.com/robotframework/robotframework/issues/3081
 .. _#3251: https://github.com/robotframework/robotframework/issues/3251
 .. _#1272: https://github.com/robotframework/robotframework/issues/1272
@@ -1328,6 +1333,8 @@ Altogether 105 issues. View on the `issue tracker <https://github.com/robotframe
 .. _#3179: https://github.com/robotframework/robotframework/issues/3179
 .. _#3221: https://github.com/robotframework/robotframework/issues/3221
 .. _#3373: https://github.com/robotframework/robotframework/issues/3373
+.. _#3383: https://github.com/robotframework/robotframework/issues/3383
+.. _#3420: https://github.com/robotframework/robotframework/issues/3420
 .. _#3455: https://github.com/robotframework/robotframework/issues/3455
 .. _#3485: https://github.com/robotframework/robotframework/issues/3485
 .. _#3507: https://github.com/robotframework/robotframework/issues/3507
@@ -1352,6 +1359,7 @@ Altogether 105 issues. View on the `issue tracker <https://github.com/robotframe
 .. _#3454: https://github.com/robotframework/robotframework/issues/3454
 .. _#3483: https://github.com/robotframework/robotframework/issues/3483
 .. _#3500: https://github.com/robotframework/robotframework/issues/3500
+.. _#3540: https://github.com/robotframework/robotframework/issues/3540
 .. _#2291: https://github.com/robotframework/robotframework/issues/2291
 .. _#2698: https://github.com/robotframework/robotframework/issues/2698
 .. _#2703: https://github.com/robotframework/robotframework/issues/2703
