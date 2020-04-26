@@ -388,8 +388,8 @@ and all tools using the old parsing API need to be updated when migrating
 to Robot Framework 3.2. To see what has changed, see the old__ and new__
 API documentation.
 
-__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.parsing.html
 __ https://robot-framework.readthedocs.io/en/v3.1.2/autodoc/robot.parsing.html
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.parsing.html
 
 Changes to recognizing and evaluating variables
 -----------------------------------------------
