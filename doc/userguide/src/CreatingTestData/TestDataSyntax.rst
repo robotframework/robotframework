@@ -65,7 +65,7 @@ called tables, listed below:
    +------------+--------------------------------------------+
    | Tasks      | `Creating tasks`_ using available          |
    |            | keywords. Single file can only contain     |
-   |            | either test cases or tasks.                |
+   |            | either tests or tasks.                     |
    +------------+--------------------------------------------+
    | Keywords   | `Creating user keywords`_ from existing    |
    |            | lower-level keywords                       |
@@ -102,81 +102,65 @@ Possible data before the first section is ignored.
 Supported file formats
 ----------------------
 
-Robot Framework test data can be defined in few different formats:
+The most common approach to create Robot Framework data is using the
+`space separated format`_ where pieces of the data, such as keywords
+and their arguments, are separated from each others with two or more spaces.
+An alternative is using the `pipe separated format`_ where the separator is
+the pipe character surrounded with spaces (:codesc:`\ |\ `).
 
-1. The most common approach is using the `plain text format`_ and store files
-   using the :file:`.robot` extension. Alternatively it is possible to use
-   the :file:`.txt` extension.
+Executed files typically use the :file:`.robot` extension, but that `can be
+configured`__ with the :option:`--extension` option. `Resource files`_
+can use the :file:`.robot` extension as well, but using the dedicated
+:file:`.resource` extension is recommended. Files containing non-ASCII
+characters must be saved using the UTF-8 encoding.
 
-2. The `TSV format`_ can be used as long as files are compatible
-   with the plain text format.
+Robot Framework also supports reStructuredText_ files so that normal
+Robot Framework data is `embedded into code blocks`__. It is possible to
+use either :file:`.rst` or :file:`.rest` extension with reStructuredText
+files, but the aforementioned :option:`--extension` option `must be used`__
+to enable parsing them when executing a directory.
 
-3. Plain text test data can be embedded into `reStructuredText files`__.
+Earlier Robot Framework versions supported data also in HTML and TSV formats.
+The TSV format still works if the data is compatible with the `space separated
+format`_, but the support for the HTML format has been removed altogether.
+If you encounter such data files, you need to convert them to the plain text
+format to be able to use them with Robot Framework 3.2 or newer. The easiest
+way to do that is using the Tidy_ tool, but you must use the version included
+with Robot Framework 3.1 because newer versions do not understand the HTML
+format at all.
 
-4. Earlier Robot Framework versions supported test data in `HTML format`_.
-
-Prior to Robot Framework 3.1, all aforementioned file formats were parsed
-automatically unless the :option:`--extension` option was used to `limit
-parsing`__. In Robot Framework 3.1 automatically parsing other than
-`*.robot` files was deprecated, and in the future other files are parsed
-only if that is `explicitly configured`__ using the :option:`--extension` option.
-The support for the HTML format has bee deprecated in general it will be
-removed altogether in the future.
-
+__ `Selecting files to parse`_
 __ `reStructuredText format`_
 __ `Selecting files to parse`_
-__ `Selecting files to parse`_
-
-Plain text format
-~~~~~~~~~~~~~~~~~
-
-The plain text format is the base for all supported Robot Framework data
-formats. Test data is parsed line by line, but long logical lines
-`can be split`__ if needed. In a single line different data items
-like keywords and their arguments are separated from each others using
-a separator. The most commonly used separator is two or more spaces, but
-it is also possible to use a pipe character surrounded with spaces
-(:codesc:`\ |\ `). Depending on the separator we can talk about the `space
-separated format`_ and the `pipe separated format`_, but same file can
-actually contain lines with both separators.
-
-Possible literal tab characters are converted to two spaces before parsing
-lines otherwise. This allows using a single tab as a separator instead of
-multiple spaces. Notice, however, that multiple consecutive tabs are still
-considered to be a single separator. If an actual tab character is needed
-in the data, it must be escaped__ like `\t`.
-
-Plain text files containing non-ASCII characters must be saved using the
-UTF-8 encoding.
-
-__ `Dividing test data to several rows`_
-__ Escaping_
 
 .. _space separated plain text format:
 
 Space separated format
-''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~
 
-In the space separated format two or more spaces (or one or more tab
-characters) act as a separator between different data items.
-The number of spaces used as separator can vary, as long as there are
-at least two, making it possible to align the data nicely in settings
-and elsewhere if it makes sense.
+When Robot Framework parses data, it first splits the data to lines and then
+lines to tokens such as keywords and arguments. When using the space
+separated format, the separator between tokens is two or more spaces or
+alternatively one or more tab characters. In addition to the normal ASCII
+space, any Unicode character considered to be a space (e.g. no-break space)
+works as a separator. The number of spaces used as separator can vary, as
+long as there are at least two, making it possible to align the data nicely
+in settings and elsewhere when it makes the data easier to understand.
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Documentation    Example using the space separated plain text format.
-   Library          OperatingSystem
+   Documentation     Example using the space separated format.
+   Library           OperatingSystem
 
    *** Variables ***
-   ${MESSAGE}       Hello, world!
+   ${MESSAGE}        Hello, world!
 
    *** Test Cases ***
    My Test
-       [Documentation]    Example test
+       [Documentation]    Example test.
        Log    ${MESSAGE}
-       My Keyword    /tmp
+       My Keyword    ${CURDIR}
 
    Another Test
        Should Be Equal    ${MESSAGE}    Hello, world!
@@ -186,17 +170,21 @@ and elsewhere if it makes sense.
        [Arguments]    ${path}
        Directory Should Exist    ${path}
 
-Because space is used as separator, all empty items and items containing
-only spaces must be escaped__ with backslashes or with built-in  `${EMPTY}`
-and `${SPACE}` variables, respectively.
+Because tabs and consecutive spaces are considered separators, they must
+to be escaped if they are needed in keyword arguments or elsewhere
+in the actual data. It is possible to use special escape syntax like
+`\t` for tab and `\xA0` for no-break space as well as `built-in variables`_
+`${SPACE}` and `${EMPTY}`. See the Escaping_ section for details.
 
-__ Escaping_
+.. tip:: Although using two spaces as a separator is enough, it is recommended
+         to use four spaces to make the separator easier to recognize.
 
-.. tip:: Although using two spaces as a separator is enough, it is recommend
-         to use four spaces to make the separator easier to notice.
+.. note:: Prior to Robot Framework 3.2, non-ASCII spaces used in the data
+          were converted to ASCII spaces during parsing. Nowadays all data
+          is preserved as-is.
 
 Pipe separated format
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 The biggest problem of the space delimited format is that visually
 separating keywords from arguments can be tricky. This is a problem
@@ -207,31 +195,32 @@ work better because it makes the separator more visible.
 One file can contain both space separated and pipe separated lines.
 Pipe separated lines are recognized by the mandatory leading pipe character,
 but the pipe at the end of the line is optional. There must always be at
-least one space on both sides of the pipe except at the beginning and at
-the end of the line. There is no need to align the pipes, but that often
+least one space or tab on both sides of the pipe except at the beginning and
+at the end of the line. There is no need to align the pipes, but that often
 makes the data easier to read.
 
 .. sourcecode:: robotframework
 
    | *** Settings ***   |
-   | Documentation      | Example using the pipe separated plain text format.
+   | Documentation      | Example using the pipe separated format.
    | Library            | OperatingSystem
 
    | *** Variables ***  |
    | ${MESSAGE}         | Hello, world!
 
-   | *** Test Cases *** |                 |              |
-   | My Test            | [Documentation] | Example test |
-   |                    | Log             | ${MESSAGE}   |
-   |                    | My Keyword      | /tmp         |
-   | Another Test       | Should Be Equal | ${MESSAGE}   | Hello, world!
+   | *** Test Cases *** |                 |               |
+   | My Test            | [Documentation] | Example test. |
+   |                    | Log             | ${MESSAGE}    |
+   |                    | My Keyword      | ${CURDIR}     |
+   | Another Test       | Should Be Equal | ${MESSAGE}    | Hello, world!
 
    | *** Keywords ***   |                        |         |
    | My Keyword         | [Arguments]            | ${path} |
    |                    | Directory Should Exist | ${path} |
 
-There is no need to escape empty cells (other than the `trailing empty
-cells`__) when using the pipe separated format. Possible pipes surrounded by
+When using the pipe separated format, consecutive spaces or tabs inside
+arguments do not need to be escaped. Similarly empty columns do not need
+to be escaped except `if they are at the end`__. Possible pipes surrounded by
 spaces in the actual test data must be escaped with a backslash, though:
 
 .. sourcecode:: robotframework
@@ -242,172 +231,33 @@ spaces in the actual test data must be escaped with a backslash, though:
 
 __ Escaping_
 
-Editing
-'''''''
-
-Plain text files can be easily edited using normal text editors and IDEs.
-`Many of these tools`__ also have plugins that support syntax highlighting
-Robot Framework test data and may also provide other features such as keyword
-completion. Robot Framework specific editors like RIDE_ naturally support
-the plain text format as well.
-
-As already mentioned, plain text files containing non-ASCII characters must
-be saved using the UTF-8 encoding.
-
-__ http://robotframework.org/#tools
-
-Recognized extensions
-'''''''''''''''''''''
-
-The recommended extension for `test case files`_ in the plain text format is
-:file:`.robot`. Files using this extension are parsed automatically.
-Also the :file:`.txt` extension can be used, but starting from Robot
-Framework 3.1 the :option:`--extension` option must be used to
-explicitly tell that `these files should be parsed`__.
-
-When creating `resource files`_, it is possible to use the special
-:file:`.resource` extension in addition to the aforementioned
-:file:`.robot` and :file:`.txt` extensions. This way resource files and
-test cases files are easily separated from each others.
-
-.. note:: The :file:`.resource` extension is new in Robot Framework 3.1.
-
-__ `Selecting files to parse`_
-
-TSV format
-~~~~~~~~~~
-
-Files in the tab-separated values (TSV) format are typically edited in
-spreadsheet programs and, because the syntax is so simple, they are easy
-to generate programmatically. They are also pretty easy to edit using
-normal text editors and they work well in version control, but the
-`plain text format`_ is even better suited for these purposes.
-
-.. table:: Using the TSV format
-   :class: tsv-example
-
-   =============  =============================  =============  =============
-   \*Setting*     \*Value*                       \*Value*       \*Value*
-   Documentation  Example using the TSV format.
-   Library        OperatingSystem
-   \
-   \
-   \*Variable*    \*Value*                       \*Value*       \*Value*
-   ${MESSAGE}     Hello, world!
-   \
-   \
-   \*Test Case*   \*Action*                      \*Argument*    \*Argument*
-   My Test        [Documentation]                Example test
-   \              Log                            ${MESSAGE}
-   \              My Keyword                     /tmp
-   \
-   Another Test   Should Be Equal                ${MESSAGE}     Hello, world!
-   \
-   \
-   \*Keyword*     \*Action*                      \*Argument*    \*Argument*
-   My Keyword     [Arguments]                    ${path}
-   \              Directory Should Exist         ${path}
-   =============  =============================  =============  =============
-
-The TSV format and the space separated variant of the `plain text format`_
-are nearly identical, but earlier Robot Framework versions had slightly
-different parser for these formats. The differences were:
-
-- The TSV parser did not require escaping empty intermediate cells.
-- The TSV parser removed possible quotes around cells that may be added
-  by spreadsheet programs.
-
-The TSV parser was deprecated in Robot Framework 3.1 and it will be removed
-in the future. It is still possible to use the TSV format, but files
-must be fully compatible with the plain text format. This basically requires
-escaping all empty cells and configuring spreadsheet program or other tool
-saving TSV files not to add surrounding quotes to cells.
-
-Editing test data
-'''''''''''''''''
-
-You can create and edit TSV files in any spreadsheet program, such as
-Microsoft Excel. Select the tab-separated format when you save the file.
-It is also a good idea to turn all automatic corrections off and configure
-the tool to treat all values in the file as plain text. As explained above,
-TSV files should also be saved so that no quotes are added around the cells.
-
-TSV files are relatively easy to edit with any text editor,
-especially if the editor supports visually separating tabs from
-spaces. The TSV format is also supported by RIDE_.
-
-Like plain text files, TSV files containing non-ASCII characters must be
-saved using the UTF-8 encoding.
-
-Recognized extensions
-'''''''''''''''''''''
-
-Files in the TSV format are customarily saved using the :file:`.tsv`
-extension, but starting from Robot Framework 3.1 the :option:`--extension`
-option must be used to explicitly tell that `these files should be parsed`__.
-Another possibility is saving also these files using the the :file:`.robot`
-extension, but this requires the file to be fully compatible with the
-plain text syntax.
-
-__ `Selecting files to parse`_
+.. note:: Preserving consecutive spaces and tabs in arguments is new
+          in Robot Framework 3.2. Prior to it non-ASCII spaces used in
+          the data were also converted to ASCII spaces.
 
 reStructuredText format
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 reStructuredText_ (reST) is an easy-to-read plain text markup syntax that
-is commonly used for documentation of Python projects (including
-Python itself, as well as this User Guide). reST documents are most
-often compiled to HTML, but also other output formats are supported.
+is commonly used for documentation of Python projects, including Python itself
+as well as this User Guide. reST documents are most often compiled to HTML,
+but also other output formats are supported. Using reST with Robot Framework
+allows you to mix richly formatted documents and test data in a concise text
+format that is easy to work with using simple text editors, diff tools, and
+source control systems.
 
-Using reST with Robot Framework allows you to mix richly formatted documents
-and test data in a concise text format that is easy to work with
-using simple text editors, diff tools, and source control systems.
+.. note:: Using reStructuredText_ files with Robot Framework requires the
+          Python docutils_ module to be installed.
 
-When using reST files with Robot Framework, test data is defined `using code
-blocks`_. Earlier Robot Framework versions also supported `using tables`_ and
-converting reST files to HTML, but this was deprecated in Robot Framework 3.1.
-
-.. note:: Using reST files with Robot Framework requires the Python docutils_
-          module to be installed.
-
-Using code blocks
-'''''''''''''''''
-
-reStructuredText documents can contain code examples in so called code blocks.
-When these documents are compiled into HTML or other formats, the code blocks
-are syntax highlighted using Pygments_. In standard reST code blocks are
-started using the `code` directive, but Sphinx_ uses `code-block`
-or `sourcecode` instead. The name of the programming language in
-the code block is given as an argument to the directive. For example, following
-code blocks contain Python and Robot Framework examples, respectively:
+When using Robot Framework with reStructuredText files, normal Robot Framework
+data is embedded to so called code blocks. In standard reST code blocks are
+marked using the `code` directive, but Robot Framework supports also
+`code-block` or `sourcecode` directives used by the Sphinx_ tool.
 
 .. sourcecode:: rest
 
-    .. code:: python
-
-       def example_keyword():
-           print('Hello, world!')
-
-    .. code:: robotframework
-
-       *** Test Cases ***
-       Example Test
-           Example Keyword
-
-When Robot Framework parses reStructuredText files, it first searches for
-possible `code`, `code-block` or `sourcecode` blocks
-containing Robot Framework test data. If such code blocks are found, data
-they contain is written into an in-memory file and executed. All data outside
-the code blocks is ignored.
-
-The test data in the code blocks must be defined using the `plain text format`_.
-As the example below illustrates, both space and pipe separated variants are
-supported:
-
-.. sourcecode:: rest
-
-    Example
-    -------
+    reStructuredText example
+    ------------------------
 
     This text is outside code blocks and thus ignored.
 
@@ -422,66 +272,41 @@ supported:
 
        *** Test Cases ***
        My Test
-           [Documentation]    Example test
+           [Documentation]    Example test.
            Log    ${MESSAGE}
-           My Keyword    /tmp
+           My Keyword    ${CURDIR}
 
        Another Test
            Should Be Equal    ${MESSAGE}    Hello, world!
 
-    Also this text is outside code blocks and ignored. Above block used
-    the space separated plain text format and the block below uses the pipe
-    separated variant.
+    Also this text is outside code blocks and ignored. Code blocks not
+    containing Robot Framework data are ignored as well.
 
     .. code:: robotframework
+
+       # Both space and pipe separated formats are supported.
 
        | *** Keyword ***  |                        |         |
        | My Keyword       | [Arguments]            | ${path} |
        |                  | Directory Should Exist | ${path} |
 
-Using tables
-''''''''''''
+    .. code:: python
 
-Earlier Robot Framework versions supported using reStructuredText also
-so that test data was defined in tables. These files were then internally
-converted to `HTML format`_ before parsing them. This functionality was
-deprecated in Robot Framework 3.1 and will be removed in the future
-along with the general support for the HTML format.
-
-Editing
-'''''''
-
-Test data in reStructuredText files can be edited with any text editor, and
-many editors also provide automatic syntax highlighting for it.
-
-Robot Framework requires reST files containing non-ASCII characters to be
-saved using the UTF-8 encoding.
-
-Recognized extensions
-'''''''''''''''''''''
+       # This code block is ignored.
+       def example():
+           print('Hello, world!')
 
 Robot Framework supports reStructuredText files using both :file:`.rst` and
-:file:`.rest` extension. Starting from Robot Framework 3.1 the
-:option:`--extension` option must be used to explicitly tell that
+:file:`.rest` extension. When executing a directory containing reStucturedText
+files, the :option:`--extension` option must be used to explicitly tell that
 `these files should be parsed`__.
 
 __ `Selecting files to parse`_
-
-Syntax errors in reST source files
-''''''''''''''''''''''''''''''''''
 
 When Robot Framework parses reStructuredText files, errors below level
 `SEVERE` are ignored to avoid noise about possible non-standard directives
 and other such markup. This may hide also real errors, but they can be seen
 when processing files using reStructuredText tooling normally.
-
-HTML format
-~~~~~~~~~~~
-
-Earlier Robot Framework versions supported test data in HTML format but
-this support has been deprecated in Robot Framework 3.1. All test data in
-HTML format should be converted to the `plain text format`_ or other supported
-formats. This is typically easiest by using the built-in Tidy_ tool.
 
 Rules for parsing the data
 --------------------------
@@ -493,11 +318,10 @@ Ignored data
 
 When Robot Framework parses the test data files, it ignores:
 
-- All data before the first `test data section`__. If the data format allows
-  data between sections, also that is ignored.
+- All data before the first `test data section`__.
 - Data in the `Comments`__ section.
 - All empty rows.
-- All empty cells at the end of rows, unless they are escaped__.
+- All empty cells at the end of rows when using the `pipe separated format`_.
 - All single backslashes (:codesc:`\\`) when not used for escaping_.
 - All characters following the hash character (`#`), when it is the first
   character of a cell. This means that hash marks can be used to enter
@@ -512,7 +336,6 @@ test cases or suites, or log it with the BuiltIn_ keywords :name:`Log` or
 
 __ `Test data sections`_
 __ `Test data sections`_
-__ `Handling empty cells`_
 
 Escaping
 ~~~~~~~~
@@ -595,30 +418,37 @@ in the test data.
 
 __ https://github.com/robotframework/robotframework/issues/3333
 
-Handling empty cells
-''''''''''''''''''''
+Handling empty values
+'''''''''''''''''''''
 
-If empty values are needed as arguments for keywords or otherwise, they often
-need to be escaped to prevent them from being ignored__. Empty trailing cells
-must be escaped regardless of the test data format, and when using the
-`space separated format`_ all empty values must be escaped.
-
-Empty cells can be escaped either with the backslash character or with
-`built-in variable`_ `${EMPTY}`. The latter is typically recommended
-as it is easier to understand. All these cases are illustrated by the following
-examples:
+When using the `space separated format`_, the number of spaces used as
+a separator can vary and thus empty values cannot be recognized unless they
+are escaped. Empty cells can be escaped either with the backslash character
+or with `built-in variable`_ `${EMPTY}`. The latter is typically recommended
+as it is easier to understand.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Using backslash
        Do Something    first arg    \
+       Do Something    \            second arg
+
    Using ${EMPTY}
        Do Something    first arg    ${EMPTY}
-   Non-trailing empty
-       Do Something    ${EMPTY}     second arg    # Escaping needed in space separated format
+       Do Something    ${EMPTY}     second arg
 
-__ `Ignored data`_
+When using the `pipe separated format`_, empty values need to be escaped
+only when they are at the end of the row:
+
+.. sourcecode:: robotframework
+
+   | *** Test Cases *** |              |           |            |
+   | Using backslash    | Do Something | first arg | \          |
+   |                    | Do Something |           | second arg |
+   |                    |              |           |            |
+   | Using ${EMPTY}     | Do Something | first arg | ${EMPTY}   |
+   |                    | Do Something |           | second arg |
 
 Handling spaces
 '''''''''''''''
@@ -632,7 +462,7 @@ needed otherwise are problematic for two reasons:
   `pipe separated format`_.
 
 In these cases spaces need to be escaped. Similarly as when escaping empty
-cells, it is possible to do that either by using the backslash character or
+values, it is possible to do that either by using the backslash character or
 by using the `built-in variable`_ `${SPACE}`.
 
 .. table:: Escaping spaces examples
@@ -651,58 +481,63 @@ As the above examples show, using the `${SPACE}` variable often makes the
 test data easier to understand. It is especially handy in combination with
 the `extended variable syntax`_ when more than one space is needed.
 
-Dividing test data to several rows
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Dividing data to several rows
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If there is more data than readily fits a row, it possible to use ellipsis
-(`...`) to continue the previous line. In test case and keyword tables,
-the ellipsis must be preceded by at least one empty cell. In settings and
-variable tables, it can be placed directly under the setting or variable name.
-In all tables, all empty cells before the ellipsis are ignored.
+If there is more data than readily fits a row, it is possible to split it
+and start continuing rows with ellipsis (`...`). Ellipses can be indented
+to match the indentation of the starting row and they must always be followed
+by the normal test data separator.
 
-Also suite, test or keyword documentation and value of test suite metadata
-can be too long to fit into one row nicely. These values can be split into
-multiple rows as well, and they will be `joined together with newlines`__.
+In most places split lines have exact same semantics as lines that are not
+split. Exceptions to this rule are suite__, test__ and keyword__ documentation
+as well `suite metadata`__. With them split values are automatically
+`joined together with the newline character`__ to ease creating multiline
+values.
 
-All the syntax discussed above is illustrated in the following examples.
-In the first three tables test data has not been split, and
-the following three illustrate how fewer columns are needed after
-splitting the data to several rows.
+Splitting lines is illustrated in the following two examples containing
+exactly same data without and with splitting.
 
+__ `Test suite documentation`_
+__ `Test case documentation`_
+__ `User keyword documentation`_
+__ `Free test suite metadata`_
 __ `Newlines in test data`_
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Documentation      This is documentation for this test suite.\nThis kind of documentation can often be get quite long...
+   Documentation      Here we have documentation for this suite.\nDocumentation is often quite long.\n\nIt can also contain multiple paragraphs.
    Default Tags       default tag 1    default tag 2    default tag 3    default tag 4    default tag 5
 
    *** Variable ***
-   @{LIST}            this     list     is      quite    long     and    items in it could also be long
+   @{LIST}            this     list     is    quite    long     and    items in it can also be long
 
    *** Test Cases ***
    Example
-       [Tags]    you    probably    do    not    have    this    many    tags    in    real   life
+       [Tags]    you    probably    do    not    have    this    many    tags    in    real    life
        Do X    first argument    second argument    third argument    fourth argument    fifth argument    sixth argument
-       ${var} =    Get X    first argument passed to this keyword is pretty long   second argument passed to this keyword is long too
+       ${var} =    Get X    first argument passed to this keyword is pretty long    second argument passed to this keyword is long too
 
 
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Documentation      This is documentation for this test suite.
-   ...                This kind of documentation can often be get quite long...
+   Documentation      Here we have documentation for this suite.
+   ...                Documentation is often quite long.
+   ...
+   ...                It can also contain multiple paragraphs.
    Default Tags       default tag 1    default tag 2    default tag 3
    ...                default tag 4    default tag 5
 
    *** Variable ***
    @{LIST}            this     list     is      quite    long     and
-   ...                items in it could also be long
+   ...                items in it can also be long
 
    *** Test Cases ***
    Example
        [Tags]    you    probably    do    not    have    this    many
-       ...       tags    in    real   life
+       ...       tags    in    real    life
        Do X    first argument    second argument    third argument
        ...    fourth argument    fifth argument    sixth argument
        ${var} =    Get X

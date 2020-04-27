@@ -123,7 +123,6 @@
 
 .. _test data: `Creating test data`_
 .. _general parsing rules: `Test data syntax`_
-.. _split into several rows: `Dividing test data to several rows`_
 .. _test case: `Creating test cases`_
 .. _test cases: `test case`_
 .. _test suite: `Creating test suites`_
@@ -227,7 +226,7 @@
 
 .. External link targets
 
-.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+.. _reStructuredText: https://en.wikipedia.org/wiki/ReStructuredText
 .. _docutils: https://pypi.python.org/pypi/docutils
 .. _Sphinx: http://sphinx-doc.org/
 .. _Pygments: http://pygments.org/

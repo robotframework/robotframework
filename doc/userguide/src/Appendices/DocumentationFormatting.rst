@@ -65,7 +65,7 @@ with a space. Different ways to split documentation are illustrated in the
 examples below where all test cases end up having the same two line
 documentation.
 
-__ `Dividing test data to several rows`_
+__ `Dividing data to several rows`_
 __ Escaping_
 
 .. sourcecode:: robotframework

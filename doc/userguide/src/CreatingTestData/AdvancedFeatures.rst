@@ -274,7 +274,7 @@ used with all of them one by one.
            Start Element    ${element}
        END
 
-__ `Dividing test data to several rows`_
+__ `Dividing data to several rows`_
 
 Old for loop syntax
 ~~~~~~~~~~~~~~~~~~~
