@@ -80,7 +80,7 @@ class YamlImporter(object):
                             'to be installed. Typically you can install it '
                             'by running `pip install pyyaml`.')
         if yaml.__version__.split('.')[0] == '3':
-            return yaml.load(stream)
+            return yaml.safe_load(stream)
         return yaml.full_load(stream)
 
 
