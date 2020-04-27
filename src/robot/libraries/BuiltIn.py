@@ -614,11 +614,12 @@ class _Verify(_BuiltInBase):
         If both arguments are multiline strings, this keyword uses
         `multiline string comparison`.
 
-        If ``strip_spaces`` is given a true value (see `Boolean arguments`) and
-        both arguments are strings, comparison is done without leading and
-        trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` and both arguments are strings, comparison is
-        done without leading or trailing spaces. The default value is ``False``
+        If ``strip_spaces`` is given a true value (see `Boolean arguments`)
+        and both arguments are strings, the comparison is done without leading
+        and trailing spaces. If ``strip_spaces`` is given a string value
+        ``leading`` or ``trailing`` and both arguments are strings, the
+        comparison is done without leading or trailing spaces respectively.
+        The default value is ``False``
 
         Examples:
         | Should Be Equal | ${x} | expected |
@@ -671,10 +672,11 @@ class _Verify(_BuiltInBase):
 
     def _strip_spaces(selfself, string_value, strip_spaces):
         if strip_spaces:
-            if isinstance(strip_spaces, str) and strip_spaces.upper() == 'LEADING':
-                string_value = string_value.lstrip()
-            elif isinstance(strip_spaces, str) and strip_spaces.upper() == 'TRAILING':
-                string_value = string_value.rstrip()
+            if isinstance(strip_spaces, str):
+                if strip_spaces.upper() == 'LEADING':
+                    string_value = string_value.lstrip()
+                elif strip_spaces.upper() == 'TRAILING':
+                    string_value = string_value.rstrip()
             elif is_truthy(strip_spaces):
                 string_value = string_value.strip()
         return string_value
@@ -884,7 +886,7 @@ class _Verify(_BuiltInBase):
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case`` option.
+        of the ``ignore_case`` and ``strip_spaces`` options.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
