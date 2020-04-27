@@ -15,6 +15,9 @@ Should Start With without values
 Should Start With strip leading spaces
     Check test case    ${TESTNAME}
 
+Should Start With strip trailing spaces
+    Check test case    ${TESTNAME}
+
 Should Not Start With
     Check test case    ${TESTNAME}
 
