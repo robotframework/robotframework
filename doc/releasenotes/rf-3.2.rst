@@ -28,7 +28,7 @@ to install the latest available stable release or use
 to install exactly this version.
 
 Alternatively you can download the source distribution from PyPI_ and install
-it manually. The standalone jar distribution will be uploaded to
+it manually. The standalone jar distribution is available at the
 `Maven Central`_. For more details and other installation approaches,
 see the `installation instructions`_.
 
@@ -331,7 +331,7 @@ Standalone jar distribution updated to use Jython 2.7.2
 
 The standalone jar distribution was earlier based on Jython 2.7.0 but
 nowadays it uses Jython 2.7.2 (`#3383`_). This brings all features and fixes
-in the newer Jython version. The final release will be uploaded to the
+in the newer Jython version. The standalone jar is available at the
 `Maven Central`_.
 
 Continuous integrating
