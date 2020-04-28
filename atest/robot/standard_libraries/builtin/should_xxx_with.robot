@@ -12,10 +12,10 @@ Should Start With case-insensitive
 Should Start With without values
     Check test case    ${TESTNAME}
 
-Should Start With strip leading spaces
+Should Start With without leading spaces
     Check test case    ${TESTNAME}
 
-Should Start With strip trailing spaces
+Should Start With without trailing spaces
     Check test case    ${TESTNAME}
 
 Should Not Start With
