@@ -21,7 +21,7 @@ Should Start With without values
     [Documentation]    FAIL My message
     Should Start With    ${LONG}    Nope    My message    values=No values
 
-Should Start With strip leading spaces
+Should Start With without leading spaces
     [Documentation]    FAIL Several failures occurred:
     ...
     ...    1) '\ttest\tvalue' does not start with 'test'
@@ -37,7 +37,7 @@ Should Start With strip leading spaces
     \ttest\tvalue      test        strip_spaces=Yep
     ${SPACE}YÖTÄ       \työtä      strip_spaces=leading
 
-Should Start With strip trailing spaces
+Should Start With without trailing spaces
     [Documentation]    FAIL Several failures occurred:
     ...
     ...    1) 'test value' does not start with 'test\t'

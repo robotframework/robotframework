@@ -85,7 +85,7 @@ Should Be Equal As Strings case-insensitive
     HYVÄÄ YÖTÄ    hyvää yötä    repr=yes    ignore_case=yes
     YÖTÄ          PÄIVÄÄ        ignore_case=True
 
-Should Be Equal As Strings strip leading spaces
+Should Be Equal As Strings without leading spaces
     [Documentation]    FAIL Several failures occurred:
     ...
     ...    1) YÖTÄ != yötä
@@ -101,7 +101,7 @@ Should Be Equal As Strings strip leading spaces
     \tYÖTÄ              \työtä           strip_spaces=leading
     ${SPACE}test\t      test             strip_spaces=leading
 
-Should Be Equal As Strings strip trailing spaces
+Should Be Equal As Strings without trailing spaces
     [Documentation]    FAIL Several failures occurred:
     ...
     ...    1) YÖTÄ != yötä
@@ -117,7 +117,7 @@ Should Be Equal As Strings strip trailing spaces
     YÖTÄ\t              yötä\t             strip_spaces=trailing
     ${SPACE}test\t      test               strip_spaces=trailing
 
-Should Be Equal As Strings strip leading and trailing spaces
+Should Be Equal As Strings without leading and trailing spaces
     [Documentation]    FAIL Several failures occurred:
     ...
     ...    1) YÖTÄ != PÄIVÄÄ
