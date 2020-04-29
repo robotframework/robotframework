@@ -619,7 +619,7 @@ class _Verify(_BuiltInBase):
         and trailing spaces. If ``strip_spaces`` is given a string value
         ``leading`` or ``trailing`` and both arguments are strings, the
         comparison is done without leading or trailing spaces respectively.
-        The default value is ``False``
+        The default value is ``False``.
 
         Examples:
         | Should Be Equal | ${x} | expected |
@@ -691,8 +691,12 @@ class _Verify(_BuiltInBase):
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         both arguments are strings, comparison is done case-insensitively.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
+        If ``strip_spaces`` is given a true value (see `Boolean arguments`)
+        and both arguments are strings, the comparison is done without leading
+        and trailing spaces. If ``strip_spaces`` is given a string value
+        ``leading`` or ``trailing`` and both arguments are strings, the
+        comparison is done without leading or trailing spaces respectively.
+        The default value is ``False``.
 
         New option in Robot Framework 3.0.1.
         """
@@ -810,8 +814,12 @@ class _Verify(_BuiltInBase):
         If ``ignore_case`` is given a true value (see `Boolean arguments`),
         comparison is done case-insensitively.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
+        If ``strip_spaces`` is given a true value (see `Boolean arguments`)
+        and both arguments are strings, the comparison is done without leading
+        and trailing spaces. If ``strip_spaces`` is given a string value
+        ``leading`` or ``trailing`` and both arguments are strings, the
+        comparison is done without leading or trailing spaces respectively.
+        The default value is ``False``.
 
         Strings are always [http://www.macchiato.com/unicode/nfc-faq|
         NFC normalized].
@@ -840,8 +848,12 @@ class _Verify(_BuiltInBase):
         comparison is done case-insensitively. If both arguments are
         multiline strings, this keyword uses `multiline string comparison`.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
+        If ``strip_spaces`` is given a true value (see `Boolean arguments`)
+        and both arguments are strings, the comparison is done without leading
+        and trailing spaces. If ``strip_spaces`` is given a string value
+        ``leading`` or ``trailing`` and both arguments are strings, the
+        comparison is done without leading or trailing spaces respectively.
+        The default value is ``False``.
 
         Strings are always [http://www.macchiato.com/unicode/nfc-faq|
         NFC normalized].
@@ -865,10 +877,7 @@ class _Verify(_BuiltInBase):
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case`` option.
-
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
+        of the ``ignore_case`` and ``strip_spaces`` options.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -903,9 +912,7 @@ class _Verify(_BuiltInBase):
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case`` option.
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
+        of the ``ignore_case`` and ``strip_spaces`` options.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -923,10 +930,8 @@ class _Verify(_BuiltInBase):
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
-        of the ``ignore_case`` option.
+        of the ``ignore_case`` and ``strip_spaces`` options.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -949,8 +954,12 @@ class _Verify(_BuiltInBase):
         error message with arguments ``msg`` and ``values``. ``ignore_case``
         has exactly the same semantics as with `Should Contain`.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
+        If ``strip_spaces`` is given a true value (see `Boolean arguments`)
+        and both arguments are strings, the comparison is done without leading
+        and trailing spaces. If ``strip_spaces`` is given a string value
+        ``leading`` or ``trailing`` and both arguments are strings, the
+        comparison is done without leading or trailing spaces respectively.
+        The default value is ``False``.
 
         Examples:
         | Should Not Contain | ${some list} | value  |
@@ -983,14 +992,18 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with arguments ``msg`` and ``values``.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
-
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         compared items are strings, it indicates that comparison should be
         case-insensitive. If the ``container`` is a list-like object, string
         items in it are compared case-insensitively. New option in Robot
         Framework 3.0.1.
+
+        If ``strip_spaces`` is given a true value (see `Boolean arguments`)
+        and both arguments are strings, the comparison is done without leading
+        and trailing spaces. If ``strip_spaces`` is given a string value
+        ``leading`` or ``trailing`` and both arguments are strings, the
+        comparison is done without leading or trailing spaces respectively.
+        The default value is ``False``.
 
         Examples:
         | Should Contain | ${output}    | PASS  |
@@ -1115,8 +1128,12 @@ class _Verify(_BuiltInBase):
         compared items are strings, it indicates that comparison should be
         case-insensitive.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
+        If ``strip_spaces`` is given a true value (see `Boolean arguments`)
+        and both arguments are strings, the comparison is done without leading
+        and trailing spaces. If ``strip_spaces`` is given a string value
+        ``leading`` or ``trailing`` and both arguments are strings, the
+        comparison is done without leading or trailing spaces respectively.
+        The default value is ``False``.
 
         If the ``item1`` is a list-like object, string
         items in it are compared case-insensitively. New option in Robot
@@ -1166,7 +1183,7 @@ class _Verify(_BuiltInBase):
         return count
 
     def should_not_match(self, string, pattern, msg=None, values=True,
-                         ignore_case=False, strip_spaces=False):
+                         ignore_case=False):
         """Fails if the given ``string`` matches the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell with
@@ -1177,20 +1194,16 @@ class _Verify(_BuiltInBase):
         compared items are strings, it indicates that comparison should be
         case-insensitive.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
-
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
-        #TODO strip_spaces
         if self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
 
     def should_match(self, string, pattern, msg=None, values=True,
-                     ignore_case=False, strip_spaces=False):
+                     ignore_case=False):
         """Fails if the given ``string`` does not match the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell with
@@ -1201,14 +1214,10 @@ class _Verify(_BuiltInBase):
         compared items are strings, it indicates that comparison should be
         case-insensitive.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
-
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
-        #TODO strip_spaces
         if not self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
