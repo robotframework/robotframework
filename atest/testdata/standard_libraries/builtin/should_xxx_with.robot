@@ -27,7 +27,6 @@ Should Start With without leading spaces
     ...    1) '\ttest\tvalue' does not start with 'test'
     ...
     ...    2) 'YÖTÄ' does not start with 'yötä'
-    [Documentation]    FAIL 'YÖTÄ' does not start with 'PÄIVÄÄ'
     [Template]    Should Start With
     San Diego!         San Diego   strip_spaces=leading
     ${SPACE}\ttest?    test        strip_spaces=LEADING
@@ -51,6 +50,21 @@ Should Start With without trailing spaces
     ${SPACE}               ${EMPTY}          strip_spaces=trailing
     test value             test\t            strip_spaces=Yep
     YÖTÄ${SPACE}\t         yötä\t${SPACE}    strip_spaces=trailing
+
+Should Start With without leading and trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'test value' does not start with 'test\t'
+    ...
+    ...    2) 'YÖTÄ' does not start with 'yötä'
+    [Template]    Should Start With
+    San Diego!         San Diego         strip_spaces=TRUE
+    \ttest?${SPACE}    ${SPACE}test\t    strip_spaces=True
+    test\ \ value      \ttest\ \ v       strip_spaces=truE
+    ${SPACE}yötä       yötä\t            repr=yes    strip_spaces=yes
+    ${SPACE}           ${EMPTY}          strip_spaces=true
+    test value         test\t            strip_spaces=Yep
+    ${SPACE}YÖTÄ\t     \työtä\t          strip_spaces=true
 
 Should Not Start With
     [Documentation]    FAIL 'Hello, world!' starts with 'Hello'
