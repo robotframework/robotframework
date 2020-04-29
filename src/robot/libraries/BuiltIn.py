@@ -1010,9 +1010,6 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with arguments ``msg`` and ``values``.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
-
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         compared items are strings, it indicates that comparison should be
         case-insensitive. If the ``container`` is a list-like object, string
@@ -1170,8 +1167,12 @@ class _Verify(_BuiltInBase):
         compared items are strings, it indicates that comparison should be
         case-insensitive.
 
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
+        If ``strip_spaces`` is given a true value (see `Boolean arguments`)
+        and both arguments are strings, the comparison is done without leading
+        and trailing spaces. If ``strip_spaces`` is given a string value
+        ``leading`` or ``trailing`` and both arguments are strings, the
+        comparison is done without leading or trailing spaces respectively.
+        The default value is ``False``.
 
         If the ``container`` is a list-like object, string
         items in it are compared case-insensitively. New option in Robot
@@ -1229,7 +1230,7 @@ class _Verify(_BuiltInBase):
         return count
 
     def should_not_match(self, string, pattern, msg=None, values=True,
-                         ignore_case=False, strip_spaces=False):
+                         ignore_case=False):
         """Fails if the given ``string`` matches the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell with
@@ -1244,13 +1245,12 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
-        #TODO strip_spaces
         if self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'matches'))
 
     def should_match(self, string, pattern, msg=None, values=True,
-                     ignore_case=False, strip_spaces=False):
+                     ignore_case=False):
         """Fails if the given ``string`` does not match the given ``pattern``.
 
         Pattern matching is similar as matching files in a shell with
@@ -1265,7 +1265,6 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` option.
         """
-        #TODO strip_spaces
         if not self._matches(string, pattern, caseless=is_truthy(ignore_case)):
             raise AssertionError(self._get_string_msg(string, pattern, msg,
                                                       values, 'does not match'))
