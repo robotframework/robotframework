@@ -65,7 +65,12 @@ if not IRONPYTHON:
         # first check if buffer was detached
         if hasattr(stream, 'buffer') and stream.buffer is None:
             return False
-        return hasattr(stream, 'isatty') and stream.isatty()
+        if not hasattr(stream, 'isatty'):
+            return False
+        try:
+            return stream.isatty()
+        except ValueError:    # Occurs if file is closed.
+            return False
 
 else:
 
