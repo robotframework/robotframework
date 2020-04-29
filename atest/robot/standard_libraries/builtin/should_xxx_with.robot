@@ -18,6 +18,9 @@ Should Start With without leading spaces
 Should Start With without trailing spaces
     Check test case    ${TESTNAME}
 
+Should Start With without leading and trailing spaces
+    Check test case    ${TESTNAME}
+
 Should Not Start With
     Check test case    ${TESTNAME}
 
