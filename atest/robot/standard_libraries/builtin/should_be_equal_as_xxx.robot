@@ -65,3 +65,6 @@ Should Not Be Equal As Strings
 
 Should Not Be Equal As Strings case-insensitive
     Check test case    ${TESTNAME}
+
+Should Not Be Equal As Strings without leading spaces
+    Check test case    ${TESTNAME}
