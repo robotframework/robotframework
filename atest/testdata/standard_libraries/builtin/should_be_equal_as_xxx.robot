@@ -92,14 +92,14 @@ Should Be Equal As Strings without leading spaces
     ...
     ...    2) test\t != test
     [Template]    Should Be Equal As Strings
-    San Diego           San Diego        strip_spaces=leading
-    ${SPACE * 5}test    ${SPACE}test     strip_spaces=Leading
-    ${SPACE}test        \ttest           strip_spaces=LEADING
-    test\ \ value       test\ \ value    strip_spaces=leading
-    ${SPACE}yötä        \työtä           repr=yes    strip_spaces=leading
-    ${SPACE}            ${EMPTY}         strip_spaces=leading
-    \tYÖTÄ              \työtä           strip_spaces=leading
-    ${SPACE}test\t      test             strip_spaces=leading
+    San Diego        San Diego        strip_spaces=leading
+    ${SPACE * 5}1    ${SPACE}${1}     strip_spaces=Leading
+    ${SPACE}test     \ttest           strip_spaces=LEADING
+    test\ \ value    test\ \ value    strip_spaces=leading
+    ${SPACE}yötä     \työtä           repr=yes    strip_spaces=leading
+    ${SPACE}         ${EMPTY}         strip_spaces=leading
+    \tYÖTÄ           \työtä           strip_spaces=leading
+    ${SPACE}test\t   test             strip_spaces=leading
 
 Should Be Equal As Strings without trailing spaces
     [Documentation]    FAIL Several failures occurred:
@@ -108,14 +108,14 @@ Should Be Equal As Strings without trailing spaces
     ...
     ...    2) ${SPACE}test != test
     [Template]    Should Be Equal As Strings
-    San Diego           San Diego          strip_spaces=Trailing
-    test${SPACE * 5}    test${SPACE}       strip_spaces=trailing
-    \ttest\tvalue\t     \ttest\tvalue\t    strip_spaces=TRAILING
-    test\tvalue         test\tvalue        strip_spaces=trailing
-    yötä${SPACE}        yötä\t             repr=yes    strip_spaces=trailing
-    ${SPACE}            ${EMPTY}           strip_spaces=trailing
-    YÖTÄ\t              yötä\t             strip_spaces=trailing
-    ${SPACE}test\t      test               strip_spaces=trailing
+    San Diego          San Diego          strip_spaces=Trailing
+    1${SPACE * 5}      ${1}${SPACE}       strip_spaces=trailing
+    \ttest\tvalue\t    \ttest\tvalue\t    strip_spaces=TRAILING
+    test\tvalue        test\tvalue        strip_spaces=trailing
+    yötä${SPACE}       yötä\t             repr=yes    strip_spaces=trailing
+    ${SPACE}           ${EMPTY}           strip_spaces=trailing
+    YÖTÄ\t             yötä\t             strip_spaces=trailing
+    ${SPACE}test\t     test               strip_spaces=trailing
 
 Should Be Equal As Strings without leading and trailing spaces
     [Documentation]    FAIL Several failures occurred:
@@ -126,7 +126,7 @@ Should Be Equal As Strings without leading and trailing spaces
     [Template]    Should Be Equal As Strings
     San Diego                San Diego      strip_spaces=TRUE
     \tHelsinki               Helsinki\t     strip_spaces=truE
-    test${SPACE * 5}         \ttest         strip_spaces=Yes
+    1${SPACE * 5}            \t${1}         strip_spaces=Yes
     \ttest\tvalue${SPACE}    test\tvalue    strip_spaces=true
     test                     \ttest\t       strip_spaces=true
     ${SPACE}HYVÄÄ\t          \tHYVÄÄ\t      repr=yes    strip_spaces=True
@@ -178,6 +178,14 @@ Should Not Be Equal As Strings
     bar      bar    These strings most certainly should not be equal    False
 
 Should Not Be Equal As Strings case-insensitive
+    [Documentation]    FAIL true == true
+    [Template]    Should Not Be Equal As Strings
+    1        ${1.1}     ignore_case=True
+    Hyvää    päivää     ignore_case=yes
+    true     ${True}    ignore_case=yeah
+
+Should Not Be Equal As Strings without leading spaces
+    # TODO 
     [Documentation]    FAIL true == true
     [Template]    Should Not Be Equal As Strings
     1        ${1.1}     ignore_case=True
