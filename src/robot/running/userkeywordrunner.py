@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from itertools import chain
 
 from robot.errors import (ExecutionFailed, ExecutionPassed, ExecutionStatus,
@@ -50,12 +51,33 @@ class UserKeywordRunner(object):
 
     def run(self, kw, context):
         assignment = VariableAssignment(kw.assign)
-        result = self._get_result(kw, assignment, context.variables)
-        with StatusReporter(context, result):
+        variables = context.variables
+        result = None
+        status_reporter = None
+        try:
+            args = self._resolve_arguments(kw.args, variables)
             with assignment.assigner(context) as assigner:
-                return_value = self._run(context, kw.args, result)
+                with context.user_keyword:
+                    self._set_arguments(args, context)
+                    result = self._get_result(kw, assignment, context.variables)
+                    status_reporter = self.get_status_reporter(context, result)
+                    return_value = self._run(context, args, result)
                 assigner.assign(return_value)
-                return return_value
+            return return_value
+        except Exception:
+            if not result:
+                result = self._get_result(kw, assignment, context.variables)
+            if not status_reporter:
+                status_reporter = self.get_status_reporter(context, result)
+            raise
+        finally:
+            if status_reporter:
+                status_reporter.__exit__(*sys.exc_info())
+
+    def get_status_reporter(self, context, result):
+        status_reporter = StatusReporter(context, result)
+        status_reporter.__enter__()
+        return status_reporter
 
     def _get_result(self, kw, assignment, variables):
         handler = self._handler
@@ -72,21 +94,19 @@ class UserKeywordRunner(object):
 
     def _run(self, context, args, result):
         variables = context.variables
-        args = self._resolve_arguments(args, variables)
-        with context.user_keyword:
-            self._set_arguments(args, context)
-            timeout = self._get_timeout(variables)
-            if timeout is not None:
-                result.timeout = str(timeout)
-            with context.timeout(timeout):
-                exception, return_ = self._execute(context)
-                if exception and not exception.can_continue(context.in_teardown):
-                    raise exception
-                return_value = self._get_return_value(variables, return_)
-                if exception:
-                    exception.return_value = return_value
-                    raise exception
-                return return_value
+        self._set_arguments(args, context)
+        timeout = self._get_timeout(variables)
+        if timeout is not None:
+            result.timeout = str(timeout)
+        with context.timeout(timeout):
+            exception, return_ = self._execute(context)
+            if exception and not exception.can_continue(context.in_teardown):
+                raise exception
+            return_value = self._get_return_value(variables, return_)
+            if exception:
+                exception.return_value = return_value
+                raise exception
+            return return_value
 
     def _get_timeout(self, variables=None):
         timeout = self._handler.timeout
