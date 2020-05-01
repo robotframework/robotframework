@@ -64,7 +64,7 @@ class UserKeywordRunner(object):
                     return_value = self._run(context, args, result)
                 assigner.assign(return_value)
             return return_value
-        except Exception:
+        except:
             if not result:
                 result = self._get_result(kw, assignment, context.variables)
             if not status_reporter:
