@@ -185,9 +185,36 @@ Should Not Be Equal As Strings case-insensitive
     true     ${True}    ignore_case=yeah
 
 Should Not Be Equal As Strings without leading spaces
-    # TODO 
-    [Documentation]    FAIL true == true
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) 1 == 1
+    ...
+    ...    2) Hyvää == Hyvää
     [Template]    Should Not Be Equal As Strings
-    1        ${1.1}     ignore_case=True
-    Hyvää    päivää     ignore_case=yes
-    true     ${True}    ignore_case=yeah
+    \t1       ${1}             strip_spaces=leading
+    Hyvää     ${SPACE}Hyvää    strip_spaces=Leading
+    \ttest    ${SPACE}test     strip_spaces=yeah
+    \t2\t     ${SPACE}2\t\t    strip_spaces=LEADING
+
+Should Not Be Equal As Strings without trailing spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) 1 == 1
+    ...
+    ...    2) Hyvää == Hyvää
+    [Template]    Should Not Be Equal As Strings
+    1\t       ${1}             strip_spaces=trailing
+    Hyvää     Hyvää${SPACE}    strip_spaces=Trailing
+    test\t    test${SPACE}     strip_spaces=yeah
+    \t2\t     \t\t2${SPACE}    strip_spaces=TRAILING
+
+Should Not Be Equal As Strings without leading and trailing spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) 1 == 1
+    ...
+    ...    2) Hyvää == Hyvää
+    [Template]    Should Not Be Equal As Strings
+    \t1${SPACE}    \t${1}\t          strip_spaces=True
+    \tHyvää        Hyvää\t           strip_spaces=Yes
+    \ttest\t       \ttest${SPACE}    strip_spaces=yeah
