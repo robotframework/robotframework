@@ -54,6 +54,8 @@ class UserKeywordRunner(object):
         variables = context.variables
         result = None
         status_reporter = None
+        if sys.version_info[0] < 3:
+            sys.exc_clear()
         try:
             args = self._resolve_arguments(kw.args, variables)
             with assignment.assigner(context) as assigner:
