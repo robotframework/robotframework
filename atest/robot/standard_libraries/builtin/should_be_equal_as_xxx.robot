@@ -68,3 +68,9 @@ Should Not Be Equal As Strings case-insensitive
 
 Should Not Be Equal As Strings without leading spaces
     Check test case    ${TESTNAME}
+
+Should Not Be Equal As Strings without trailing spaces
+    Check test case    ${TESTNAME}
+
+Should Not Be Equal As Strings without leading and trailing spaces
+    Check test case    ${TESTNAME}
