@@ -97,6 +97,51 @@ Should End With case-insensitive
     Hello, world!    hello, WORLD!    ignore_case=True
     HYVÄÄ YÖTÄ       ä yötä           ignore_case=True
 
+Should End With without leading spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) '\ttest value' does not end with '\tvalue'
+    ...
+    ...    2) 'YÖTÄ' does not end with 'yötä'
+    [Template]    Should End With
+    San Diego        Diego       strip_spaces=leading
+    ${SPACE}It is    is          strip_spaces=LEADING
+    test value       \tvalue     strip_spaces=Leading
+    ${SPACE}yötä     \työtä      repr=yes    strip_spaces=leading
+    ${SPACE}         ${EMPTY}    strip_spaces=leading
+    \ttest value    \tvalue      strip_spaces=Yep
+    ${SPACE}YÖTÄ    \työtä       strip_spaces=leading
+
+Should End With without trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'test value' does not end with 'value\t'
+    ...
+    ...    2) 'YÖTÄ' does not end with 'yötä'
+    [Template]    Should End With
+    San Diego              Diego             strip_spaces=trailing
+    test\tvalue${SPACE}    value             strip_spaces=TRAILING
+    test value             value\t           strip_spaces=Trailing
+    yötä\t${SPACE}         yötä\t            repr=yes    strip_spaces=trailing
+    ${SPACE}               ${EMPTY}          strip_spaces=trailing
+    test value             value\t           strip_spaces=Yep
+    YÖTÄ${SPACE}\t         yötä\t${SPACE}    strip_spaces=trailing
+
+Should End With without leading and trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'some test' does not end with 'test\t'
+    ...
+    ...    2) 'YÖTÄ' does not end with 'yötä'
+    [Template]    Should End With
+    San Diego          Diego          strip_spaces=TRUE
+    \ttest?${SPACE}    ${SPACE}?\t    strip_spaces=True
+    test\ \ value      \te            strip_spaces=truE
+    ${SPACE}yötä\t     \ yötä\t       repr=yes    strip_spaces=yes
+    ${SPACE}           ${EMPTY}       strip_spaces=true
+    some test          test\t         strip_spaces=Yep
+    ${SPACE}YÖTÄ\t     \työtä\t       strip_spaces=true
+
 Should Not End With
     [Documentation]    FAIL Message only
     [Template]    Should Not End With
