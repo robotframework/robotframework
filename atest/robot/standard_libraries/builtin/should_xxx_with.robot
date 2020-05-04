@@ -33,6 +33,15 @@ Should End With
 Should End With case-insensitive
     Check test case    ${TESTNAME}
 
+Should End With without leading spaces
+    Check test case    ${TESTNAME}
+
+Should End With without trailing spaces
+    Check test case    ${TESTNAME}
+
+Should End With without leading and trailing spaces
+    Check test case    ${TESTNAME}
+
 Should End With without values
     Check test case    ${TESTNAME}
 
