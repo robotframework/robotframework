@@ -34,9 +34,9 @@ see the `installation instructions`_.
 
 Robot Framework 3.2 was released on Monday April 27, 2020.
 
-.. note:: Robot Framework 3.2 had two severe regressions. All users are
-          recommended to upgrade to `Robot Framework 3.2.1 <rf-3.2.1.rst>`_
-          that was released on Monday May 4, 2020.
+**NOTE:** Robot Framework 3.2 had two severe regressions. All users are
+recommended to upgrade to `Robot Framework 3.2.1 <rf-3.2.1.rst>`_
+that was released on Monday May 4, 2020.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
