@@ -27,6 +27,14 @@ Should Not Start With
 Should Not Start With case-insensitive
     Check test case    ${TESTNAME}
 
+Should Not Start With without leading spaces
+    Check test case    ${TESTNAME}
+
+Should Not Start With without trailing spaces
+    Check test case    ${TESTNAME}
+
+Should Not Start With without leading and trailing spaces
+
 Should End With
     Check test case    ${TESTNAME}
 

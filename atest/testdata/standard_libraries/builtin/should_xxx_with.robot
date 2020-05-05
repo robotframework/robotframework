@@ -80,6 +80,51 @@ Should Not Start With case-insensitive
     HYVÄÄ YÖTÄ       pahaa           ignore_case=yeah
     Hello, world?    hello, WORLD    ignore_case=True
 
+Should Not Start With without leading spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) '\ttest\tvalue' does not start with 'test'
+    ...
+    ...    2) 'YÖTÄ' does not start with 'yötä'
+    [Template]    Should Not Start With
+    San Diego!         San Diego   strip_spaces=leading
+    ${SPACE}\ttest?    test        strip_spaces=LEADING
+    test value         \ttest      strip_spaces=Leading
+    ${SPACE}yötä       \työtä      repr=yes    strip_spaces=leading
+    ${SPACE}           ${EMPTY}    strip_spaces=leading
+    \ttest\tvalue      test        strip_spaces=Yep
+    ${SPACE}YÖTÄ       \työtä      strip_spaces=leading
+
+Should Not Start With without trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'test value' does not start with 'test\t'
+    ...
+    ...    2) 'YÖTÄ' does not start with 'yötä'
+    [Template]    Should Not Start With
+    San Diego!             San Diego         strip_spaces=trailing
+    test\tvalue${SPACE}    test\tvalue       strip_spaces=TRAILING
+    test value!            test\t            strip_spaces=Trailing
+    yötä\t${SPACE}!        yötä\t            repr=yes    strip_spaces=trailing
+    ${SPACE}               ${EMPTY}          strip_spaces=trailing
+    test value             test\t            strip_spaces=Yep
+    YÖTÄ${SPACE}\t         yötä\t${SPACE}    strip_spaces=trailing
+
+Should Not Start With without leading and trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'test value' does not start with 'test\t'
+    ...
+    ...    2) 'YÖTÄ' does not start with 'yötä'
+    [Template]    Should Not Start With
+    San Diego!         San Diego         strip_spaces=TRUE
+    \ttest?${SPACE}    ${SPACE}test\t    strip_spaces=True
+    test\ \ value      \ttest\ \ v       strip_spaces=truE
+    ${SPACE}yötä       yötä\t            repr=yes    strip_spaces=yes
+    ${SPACE}           ${EMPTY}          strip_spaces=true
+    test value         test\t            strip_spaces=Yep
+    ${SPACE}YÖTÄ\t     \työtä\t          strip_spaces=true
+
 Should End With without values
     [Documentation]    FAIL My message
     Should End With    ${LONG}    Nope    My message    values=No values
