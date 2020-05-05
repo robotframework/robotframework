@@ -34,6 +34,7 @@ Should Not Start With without trailing spaces
     Check test case    ${TESTNAME}
 
 Should Not Start With without leading and trailing spaces
+    Check test case    ${TESTNAME}
 
 Should End With
     Check test case    ${TESTNAME}

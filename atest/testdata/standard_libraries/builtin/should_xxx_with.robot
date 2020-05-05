@@ -83,47 +83,44 @@ Should Not Start With case-insensitive
 Should Not Start With without leading spaces
     [Documentation]    FAIL Several failures occurred:
     ...
-    ...    1) '\ttest\tvalue' does not start with 'test'
+    ...    1)  'test?' starts with 'test'
     ...
-    ...    2) 'YÖTÄ' does not start with 'yötä'
+    ...    2) 'test value' starts with 'test'
+    ...
+    ...    3) repr=yes: 'yötä' starts with 'yötä'
     [Template]    Should Not Start With
-    San Diego!         San Diego   strip_spaces=leading
-    ${SPACE}\ttest?    test        strip_spaces=LEADING
-    test value         \ttest      strip_spaces=Leading
-    ${SPACE}yötä       \työtä      repr=yes    strip_spaces=leading
-    ${SPACE}           ${EMPTY}    strip_spaces=leading
-    \ttest\tvalue      test        strip_spaces=Yep
-    ${SPACE}YÖTÄ       \työtä      strip_spaces=leading
+    ${SPACE}test?    test      strip_spaces=LEADING
+    test value       \ttest    strip_spaces=Leading
+    ${SPACE}yötä     \työtä    repr=yes    strip_spaces=leading
+    ${SPACE}test     \ttest    strip_spaces=Yep
 
 Should Not Start With without trailing spaces
     [Documentation]    FAIL Several failures occurred:
     ...
-    ...    1) 'test value' does not start with 'test\t'
+    ...    1)  'test' starts with 'test'
     ...
-    ...    2) 'YÖTÄ' does not start with 'yötä'
+    ...    2) 'test value' starts with 'test'
+    ...
+    ...    3) repr=yes: 'yötä' starts with 'yötä'
     [Template]    Should Not Start With
-    San Diego!             San Diego         strip_spaces=trailing
-    test\tvalue${SPACE}    test\tvalue       strip_spaces=TRAILING
-    test value!            test\t            strip_spaces=Trailing
-    yötä\t${SPACE}!        yötä\t            repr=yes    strip_spaces=trailing
-    ${SPACE}               ${EMPTY}          strip_spaces=trailing
-    test value             test\t            strip_spaces=Yep
-    YÖTÄ${SPACE}\t         yötä\t${SPACE}    strip_spaces=trailing
+    test${SPACE}    test      strip_spaces=TRAILING
+    test value      test\t    strip_spaces=Trailing
+    yötä${SPACE}    yötä\t    repr=yes    strip_spaces=trailing
+    test${SPACE}    test\t    strip_spaces=Yep
 
 Should Not Start With without leading and trailing spaces
     [Documentation]    FAIL Several failures occurred:
     ...
-    ...    1) 'test value' does not start with 'test\t'
+    ...    1) 'test' starts with 'test'
     ...
-    ...    2) 'YÖTÄ' does not start with 'yötä'
+    ...    2) 'test value' starts with 'test'
+    ...
+    ...    3) repr=yes: '\työtä' starts with '\työtä'
     [Template]    Should Not Start With
-    San Diego!         San Diego         strip_spaces=TRUE
-    \ttest?${SPACE}    ${SPACE}test\t    strip_spaces=True
-    test\ \ value      \ttest\ \ v       strip_spaces=truE
-    ${SPACE}yötä       yötä\t            repr=yes    strip_spaces=yes
-    ${SPACE}           ${EMPTY}          strip_spaces=true
-    test value         test\t            strip_spaces=Yep
-    ${SPACE}YÖTÄ\t     \työtä\t          strip_spaces=true
+    test${SPACE}      test        strip_spaces=TRAILING
+    test value        test\t      strip_spaces=Trailing
+    \työtä${SPACE}    \työtä\t    repr=yes    strip_spaces=trailing
+    \ttest${SPACE}    \ttest\t    strip_spaces=Yep
 
 Should End With without values
     [Documentation]    FAIL My message
