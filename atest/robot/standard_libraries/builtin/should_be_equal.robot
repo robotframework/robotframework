@@ -14,6 +14,15 @@ Basics
 Case-insensitive
     Check Test Case     ${TESTNAME}
 
+Without leading spaces
+    Check Test Case     ${TESTNAME}
+
+Without trailing spaces
+    Check Test Case     ${TESTNAME}
+
+Without leading and trailing spaces
+    Check Test Case     ${TESTNAME}
+
 Fails with values
     Check test case    ${TESTNAME}
 
