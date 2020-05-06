@@ -40,6 +40,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: 'x64'
 
+      - name: Disable NTP on macOS (https://github.com/actions/virtual-environments/issues/820)
+        run: |
+          sudo systemsetup -setusingnetworktime off
+          sudo rm -rf /etc/ntp.conf
+        if: runner.os == 'macOS'
+
       - name: Run unit tests with coverage
         run: |
           python -m pip install coverage
@@ -87,6 +93,12 @@ jobs:
         run: |
           wget -nv "http://search.maven.org/remotecontent?filepath=org/python/jython-installer/${{ matrix.jython-version }}/jython-installer-${{ matrix.jython-version }}.jar" -O jytinst.jar
           java -jar jytinst.jar -s -d jython/
+
+      - name: Disable NTP on macOS (https://github.com/actions/virtual-environments/issues/820)
+        run: |
+          sudo systemsetup -setusingnetworktime off
+          sudo rm -rf /etc/ntp.conf
+        if: runner.os == 'macOS'
 
       - name: Run unit tests
         run: |
