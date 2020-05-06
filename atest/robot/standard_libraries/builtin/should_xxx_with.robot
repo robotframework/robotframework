@@ -59,3 +59,12 @@ Should Not End With
 
 Should Not End With case-insensitive
     Check test case    ${TESTNAME}
+
+Should Not End With without leading spaces
+    Check test case    ${TESTNAME}
+
+Should Not End With without trailing spaces
+    Check test case    ${TESTNAME}
+
+Should Not End With without leading and trailing spaces
+    Check test case    ${TESTNAME}
