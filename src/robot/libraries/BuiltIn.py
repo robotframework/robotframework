@@ -634,7 +634,6 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
             first = first.lower()
             second = second.lower()
-        #TODO Add acceptance tests
         if strip_spaces and is_string(first) and is_string(second):
             first = self._strip_spaces(first, strip_spaces)
             second = self._strip_spaces(second, strip_spaces)

@@ -18,6 +18,27 @@ Case-insensitive
     ${42}           ${42}           ignore_case=True
     Yötä            Päivää          ignore_case=yep!
 
+Without leading spaces
+    [Documentation]    FAIL test != value
+    ${SPACE}test    test            strip_spaces=leading
+    hyvää yötä      \thyvää yötä    repr=True    strip_spaces=Leading
+    \t${42}         \t${42}         strip_spaces=LEADING
+    \ttest          \tvalue         strip_spaces=leading
+
+Without trailing spaces
+    [Documentation]    FAIL test != value
+    test${SPACE}    test            strip_spaces=trailing
+    hyvää yötä      hyvää yötä\t    repr=True    strip_spaces=Trailing
+    ${42}\t         ${42}\t         strip_spaces=TRAILING
+    test\t          value\t         strip_spaces=trailing
+
+Without leading and trailing spaces
+    [Documentation]    FAIL test != value
+    test${SPACE}       test               strip_spaces=True
+    hyvää yötä         hyvää yötä\t       repr=True    strip_spaces=TRUE
+    ${SPACE}${42}\t    ${SPACE}${42}\t    strip_spaces=yeS
+    ${SPACE}test\t     ${SPACE}value\t    strip_spaces=yes
+
 Fails with values
     [Documentation]    FAIL Several failures occurred:
     ...
