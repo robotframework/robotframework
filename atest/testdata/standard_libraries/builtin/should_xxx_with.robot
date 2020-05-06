@@ -196,3 +196,45 @@ Should Not End With case-insensitive
     Hello!           hELLo            ignore_case=True
     HYVÄÄ YÖTÄ       hyvää            ignore_case=yeah
     Hello, world!    hello, WORLD!    ignore_case=True
+
+Should Not End With without leading spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'It is' ends with 'is'
+    ...
+    ...    2) 'test value' ends with 'value'
+    ...
+    ...    3) repr=yes: 'yötä' ends with 'yötä'
+    [Template]    Should Not End With
+    ${SPACE}It is    is          strip_spaces=LEADING
+    test value       \tvalue     strip_spaces=Leading
+    ${SPACE}yötä     \työtä      repr=yes    strip_spaces=leading
+    \ttest value     \tvalue      strip_spaces=Yep
+
+Should Not End With without trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'It is' ends with 'is'
+    ...
+    ...    2) 'test value' ends with 'value'
+    ...
+    ...    3) repr=yes: 'yötä' ends with 'yötä'
+    [Template]    Should Not End With
+    It is${SPACE}    is          strip_spaces=TRAILING
+    test value       value\t     strip_spaces=Trailing
+    yötä${SPACE}     yötä\t      repr=yes    strip_spaces=trailing
+    \ttest value     value\t      strip_spaces=Yep
+
+Should Not End With without leading and trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'test?' ends with '?'
+    ...
+    ...    2) 'test\ \ value' ends with 'e'
+    ...
+    ...    3) repr=yes: 'yötä' ends with 'yötä'
+    [Template]    Should Not End With
+    \ttest?${SPACE}    ${SPACE}?\t    strip_spaces=True
+    test\ \ value      \te            strip_spaces=truE
+    ${SPACE}yötä\t     \ yötä\t       repr=yes    strip_spaces=yes
+    some test          test\t         strip_spaces=Yep

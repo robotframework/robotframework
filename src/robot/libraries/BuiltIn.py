@@ -881,7 +881,6 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             str1 = str1.lower()
             str2 = str2.lower()
-        # TODO Add acceptance tests
         str1 = self._strip_spaces(str1, strip_spaces)
         str2 = self._strip_spaces(str2, strip_spaces)
         if str1.startswith(str2):
@@ -916,7 +915,6 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             str1 = str1.lower()
             str2 = str2.lower()
-        # TODO Add acceptance tests
         str1 = self._strip_spaces(str1, strip_spaces)
         str2 = self._strip_spaces(str2, strip_spaces)
         if str1.endswith(str2):
