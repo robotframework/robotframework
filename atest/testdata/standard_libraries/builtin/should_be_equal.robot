@@ -22,8 +22,8 @@ Without leading spaces
     [Documentation]    FAIL test != value
     ${SPACE}test    test            strip_spaces=leading
     hyvää yötä      \thyvää yötä    repr=True    strip_spaces=Leading
-    \t${42}         \t${42}         strip_spaces=LEADING
-    \ttest          \tvalue         strip_spaces=leading
+    \t${42}         \ ${42}         strip_spaces=LEADING
+    \ttest          \ value         strip_spaces=leading
 
 Without trailing spaces
     [Documentation]    FAIL test != value
@@ -327,6 +327,20 @@ Should Not Be Equal case-insensitive
     test value      TEST VALUE1     ignore_case=True
     HYVÄÄ YÖTÄ      hyvää yötä1     ignore_case=True
     foo             FOO             ignore_case=True
+
+Should Not Be Equal without leading spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) test == test
+    ...
+    ...    2) repr=True: hyvää yötä == hyvää yötä
+    ...
+    ...    3) 42 == 42
+    [Template]  Should Not Be Equal
+    ${SPACE}test    test            strip_spaces=leading
+    hyvää yötä      \thyvää yötä    repr=True    strip_spaces=Leading
+    \t${42}         \ ${42}         strip_spaces=LEADING
+    \ttest          \tvalue         strip_spaces=leading
 
 Should Not Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} == ${BYTES WITH NON ASCII}

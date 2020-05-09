@@ -102,6 +102,9 @@ Should Not Be Equal
 Should Not Be Equal case-insensitive
     Check Test Case     ${TESTNAME}
 
+Should Not Be Equal without leading spaces
+    Check Test Case     ${TESTNAME}
+
 Should Not Be Equal with bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    bytes    bytes
