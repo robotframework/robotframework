@@ -342,6 +342,34 @@ Should Not Be Equal without leading spaces
     \t${42}         \ ${42}         strip_spaces=LEADING
     \ttest          \tvalue         strip_spaces=leading
 
+Should Not Be Equal without trailing spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) test == test
+    ...
+    ...    2) repr=True: hyvää yötä == hyvää yötä
+    ...
+    ...    3) 42 == 42
+    [Template]  Should Not Be Equal
+    test${SPACE}    test             strip_spaces=trailing
+    hyvää yötä      hyvää yötä\t     repr=True    strip_spaces=Trailing
+    ${42}\t         ${42}${SPACE}    strip_spaces=TRAILING
+    test\t          value\t          strip_spaces=TraIling
+
+Should Not Be Equal without leading and trailing spaces
+    [Documentation]     FAIL Several failures occurred:
+    ...
+    ...    1) test == test
+    ...
+    ...    2) repr=True: hyvää yötä == hyvää yötä
+    ...
+    ...    3) 42 == 42
+    [Template]  Should Not Be Equal
+    test${SPACE}    test            strip_spaces=True
+    hyvää yötä      hyvää yötä\t    repr=True    strip_spaces=TRUE
+    \t${42}\t       \ ${42}\t       strip_spaces=true
+    \ test\t        \tvalue\t       strip_spaces=yeS
+
 Should Not Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} == ${BYTES WITH NON ASCII}
     [Template]  Should Not Be Equal
