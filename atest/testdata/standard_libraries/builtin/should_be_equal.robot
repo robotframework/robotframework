@@ -23,21 +23,21 @@ Without leading spaces
     ${SPACE}test    test            strip_spaces=leading
     hyvää yötä      \thyvää yötä    repr=True    strip_spaces=Leading
     \t${42}         \ ${42}         strip_spaces=LEADING
-    \ttest          \ value         strip_spaces=leading
+    \ntest          \nvalue         strip_spaces=leading
 
 Without trailing spaces
     [Documentation]    FAIL test != value
     test${SPACE}    test            strip_spaces=trailing
     hyvää yötä      hyvää yötä\t    repr=True    strip_spaces=Trailing
-    ${42}\t         ${42}\t         strip_spaces=TRAILING
-    test\t          value\t         strip_spaces=trailing
+    ${42}\t         ${42}\n         strip_spaces=TRAILING
+    test\n          value\t         strip_spaces=trailing
 
 Without leading and trailing spaces
     [Documentation]    FAIL test != value
     test${SPACE}       test               strip_spaces=True
     hyvää yötä         hyvää yötä\t       repr=True    strip_spaces=TRUE
-    ${SPACE}${42}\t    ${SPACE}${42}\t    strip_spaces=yeS
-    ${SPACE}test\t     ${SPACE}value\t    strip_spaces=yes
+    ${SPACE}${42}\n    ${SPACE}${42}\t    strip_spaces=yeS
+    \n\ test\t         ${SPACE}value\n    strip_spaces=yes
 
 Fails with values
     [Documentation]    FAIL Several failures occurred:
@@ -340,7 +340,7 @@ Should Not Be Equal without leading spaces
     ${SPACE}test    test            strip_spaces=leading
     hyvää yötä      \thyvää yötä    repr=True    strip_spaces=Leading
     \t${42}         \ ${42}         strip_spaces=LEADING
-    \ttest          \tvalue         strip_spaces=leading
+    \t\ntest        \n\tvalue       strip_spaces=leading
 
 Should Not Be Equal without trailing spaces
     [Documentation]     FAIL Several failures occurred:
@@ -354,7 +354,7 @@ Should Not Be Equal without trailing spaces
     test${SPACE}    test             strip_spaces=trailing
     hyvää yötä      hyvää yötä\t     repr=True    strip_spaces=Trailing
     ${42}\t         ${42}${SPACE}    strip_spaces=TRAILING
-    test\t          value\t          strip_spaces=TraIling
+    test\t\n        value\t\n        strip_spaces=TraIling
 
 Should Not Be Equal without leading and trailing spaces
     [Documentation]     FAIL Several failures occurred:
