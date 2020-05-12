@@ -61,7 +61,7 @@ Should Start With without leading and trailing spaces
     San Diego!         San Diego         strip_spaces=TRUE
     \ttest?${SPACE}    ${SPACE}test\t    strip_spaces=True
     test\ \ value      \ttest\ \ v       strip_spaces=truE
-    \nyötä             yötä\t            repr=yes    strip_spaces=yes
+    \nyötä\n\t         yötä\t            repr=yes    strip_spaces=yes
     ${SPACE}           ${EMPTY}          strip_spaces=true
     test value         test\t            strip_spaces=Yep
     \t\n\ YÖTÄ\t       \työtä\t\n        strip_spaces=true
@@ -83,16 +83,15 @@ Should Not Start With case-insensitive
 Should Not Start With without leading spaces
     [Documentation]    FAIL Several failures occurred:
     ...
-    ...    1)  'test?' starts with 'test'
+    ...    1) 'test?' starts with 'test'
     ...
     ...    2) 'test value' starts with 'test'
     ...
     ...    3) repr=yes: 'yötä' starts with 'yötä'
     [Template]    Should Not Start With
-    ${SPACE}test?    test      strip_spaces=LEADING
-    test value       \ttest    strip_spaces=Leading
-    ${SPACE}yötä     \työtä    repr=yes    strip_spaces=leading
-    ${SPACE}test     \ttest    strip_spaces=Yep
+    ${SPACE}test?    test        strip_spaces=LEADING
+    test value       \t\ntest    strip_spaces=Leading
+    \n\työtä         \työtä      repr=yes    strip_spaces=leading
 
 Should Not Start With without trailing spaces
     [Documentation]    FAIL Several failures occurred:
@@ -103,10 +102,9 @@ Should Not Start With without trailing spaces
     ...
     ...    3) repr=yes: 'yötä' starts with 'yötä'
     [Template]    Should Not Start With
-    test${SPACE}    test      strip_spaces=TRAILING
-    test value      test\t    strip_spaces=Trailing
-    yötä${SPACE}    yötä\t    repr=yes    strip_spaces=trailing
-    test${SPACE}    test\t    strip_spaces=Yep
+    test${SPACE}    test        strip_spaces=TRAILING
+    test value      test\t\n    strip_spaces=Trailing
+    yötä\t\n        yötä\n\t    repr=yes    strip_spaces=trailing
 
 Should Not Start With without leading and trailing spaces
     [Documentation]    FAIL Several failures occurred:
@@ -115,12 +113,11 @@ Should Not Start With without leading and trailing spaces
     ...
     ...    2) 'test value' starts with 'test'
     ...
-    ...    3) repr=yes: '\työtä' starts with '\työtä'
+    ...    3) repr=yes: 'yötä' starts with 'yötä'
     [Template]    Should Not Start With
-    test${SPACE}      test        strip_spaces=TRAILING
-    test value        test\t      strip_spaces=Trailing
-    \työtä${SPACE}    \työtä\t    repr=yes    strip_spaces=trailing
-    \ttest${SPACE}    \ttest\t    strip_spaces=Yep
+    test${SPACE}    test          strip_spaces=True
+    test value      test\t\n      strip_spaces=TRUE
+    \n\työtä\t\n    \t\nyötä\t    repr=yes    strip_spaces=yes
 
 Should End With without values
     [Documentation]    FAIL My message
