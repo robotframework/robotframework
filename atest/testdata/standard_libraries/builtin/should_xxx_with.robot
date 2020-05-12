@@ -31,10 +31,10 @@ Should Start With without leading spaces
     San Diego!         San Diego   strip_spaces=leading
     ${SPACE}\ttest?    test        strip_spaces=LEADING
     test value         \ttest      strip_spaces=Leading
-    ${SPACE}yötä       \työtä      repr=yes    strip_spaces=leading
+    \nyötä             \työtä      repr=yes    strip_spaces=leading
     ${SPACE}           ${EMPTY}    strip_spaces=leading
     \ttest\tvalue      test        strip_spaces=Yep
-    ${SPACE}YÖTÄ       \työtä      strip_spaces=leading
+    ${SPACE}YÖTÄ       \nyötä      strip_spaces=leading
 
 Should Start With without trailing spaces
     [Documentation]    FAIL Several failures occurred:
@@ -46,10 +46,10 @@ Should Start With without trailing spaces
     San Diego!             San Diego         strip_spaces=trailing
     test\tvalue${SPACE}    test\tvalue       strip_spaces=TRAILING
     test value!            test\t            strip_spaces=Trailing
-    yötä\t${SPACE}!        yötä\t            repr=yes    strip_spaces=trailing
+    yötä\n${SPACE}!        yötä\n            repr=yes    strip_spaces=trailing
     ${SPACE}               ${EMPTY}          strip_spaces=trailing
     test value             test\t            strip_spaces=Yep
-    YÖTÄ${SPACE}\t         yötä\t${SPACE}    strip_spaces=trailing
+    YÖTÄ${SPACE}\n         yötä\n${SPACE}    strip_spaces=trailing
 
 Should Start With without leading and trailing spaces
     [Documentation]    FAIL Several failures occurred:
@@ -61,10 +61,10 @@ Should Start With without leading and trailing spaces
     San Diego!         San Diego         strip_spaces=TRUE
     \ttest?${SPACE}    ${SPACE}test\t    strip_spaces=True
     test\ \ value      \ttest\ \ v       strip_spaces=truE
-    ${SPACE}yötä       yötä\t            repr=yes    strip_spaces=yes
+    \nyötä             yötä\t            repr=yes    strip_spaces=yes
     ${SPACE}           ${EMPTY}          strip_spaces=true
     test value         test\t            strip_spaces=Yep
-    ${SPACE}YÖTÄ\t     \työtä\t          strip_spaces=true
+    \t\n\ YÖTÄ\t       \työtä\t\n        strip_spaces=true
 
 Should Not Start With
     [Documentation]    FAIL 'Hello, world!' starts with 'Hello'

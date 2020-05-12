@@ -98,7 +98,7 @@ Should Be Equal As Strings without leading spaces
     test\ \ value    test\ \ value    strip_spaces=leading
     ${SPACE}yötä     \työtä           repr=yes    strip_spaces=leading
     ${SPACE}         ${EMPTY}         strip_spaces=leading
-    \tYÖTÄ           \työtä           strip_spaces=leading
+    \t\nYÖTÄ         \t\nyötä         strip_spaces=leading
     ${SPACE}test\t   test             strip_spaces=leading
 
 Should Be Equal As Strings without trailing spaces
@@ -114,7 +114,7 @@ Should Be Equal As Strings without trailing spaces
     test\tvalue        test\tvalue        strip_spaces=trailing
     yötä${SPACE}       yötä\t             repr=yes    strip_spaces=trailing
     ${SPACE}           ${EMPTY}           strip_spaces=trailing
-    YÖTÄ\t             yötä\t             strip_spaces=trailing
+    YÖTÄ\n\t           yötä\t\n           strip_spaces=trailing
     ${SPACE}test\t     test               strip_spaces=trailing
 
 Should Be Equal As Strings without leading and trailing spaces
@@ -124,15 +124,15 @@ Should Be Equal As Strings without leading and trailing spaces
     ...
     ...    2) \ test 1\t != \ttest 1\t
     [Template]    Should Be Equal As Strings
-    San Diego                San Diego      strip_spaces=TRUE
-    \tHelsinki               Helsinki\t     strip_spaces=truE
-    1${SPACE * 5}            \t${1}         strip_spaces=Yes
-    \ttest\tvalue${SPACE}    test\tvalue    strip_spaces=true
-    test                     \ttest\t       strip_spaces=true
-    ${SPACE}HYVÄÄ\t          \tHYVÄÄ\t      repr=yes    strip_spaces=True
-    ${SPACE}                 ${EMPTY}       strip_spaces=True
-    \tYÖTÄ${SPACE}\t         \ PÄIVÄÄ\t     strip_spaces=True
-    ${SPACE}test 1\t         \ttest 1\t     strip_spaces=Okay
+    San Diego                San Diego       strip_spaces=TRUE
+    \tHelsinki               Helsinki\t      strip_spaces=truE
+    1${SPACE * 5}            \t${1}          strip_spaces=Yes
+    \ttest\tvalue${SPACE}    test\tvalue     strip_spaces=true
+    test                     \ttest\t        strip_spaces=true
+    ${SPACE}HYVÄÄ\t          \tHYVÄÄ\t       repr=yes    strip_spaces=True
+    ${SPACE}                 ${EMPTY}        strip_spaces=True
+    \tYÖTÄ\n\t               \n\ PÄIVÄÄ\t    strip_spaces=True
+    ${SPACE}test 1\t         \ttest 1\t      strip_spaces=Okay
 
 Should Be Equal As Strings repr
     [Documentation]    FAIL Several failures occurred:
@@ -194,7 +194,7 @@ Should Not Be Equal As Strings without leading spaces
     \t1       ${1}             strip_spaces=leading
     Hyvää     ${SPACE}Hyvää    strip_spaces=Leading
     \ttest    ${SPACE}test     strip_spaces=yeah
-    \t2\t     ${SPACE}2\t\t    strip_spaces=LEADING
+    \n2\t     ${SPACE}2\n\t    strip_spaces=LEADING
 
 Should Not Be Equal As Strings without trailing spaces
     [Documentation]     FAIL Several failures occurred:
@@ -206,7 +206,7 @@ Should Not Be Equal As Strings without trailing spaces
     1\t       ${1}             strip_spaces=trailing
     Hyvää     Hyvää${SPACE}    strip_spaces=Trailing
     test\t    test${SPACE}     strip_spaces=yeah
-    \t2\t     \t\t2${SPACE}    strip_spaces=TRAILING
+    \t2\n     \n\t2\n          strip_spaces=TRAILING
 
 Should Not Be Equal As Strings without leading and trailing spaces
     [Documentation]     FAIL Several failures occurred:
