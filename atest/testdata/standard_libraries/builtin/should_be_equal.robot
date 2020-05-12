@@ -367,8 +367,8 @@ Should Not Be Equal without leading and trailing spaces
     [Template]  Should Not Be Equal
     test${SPACE}    test            strip_spaces=True
     hyvää yötä      hyvää yötä\t    repr=True    strip_spaces=TRUE
-    \t${42}\t       \ ${42}\t       strip_spaces=true
-    \ test\t        \tvalue\t       strip_spaces=yeS
+    \t${42}\t\n     \n${42}\t\n     strip_spaces=true
+    \ test\t\n      \tvalue\t       strip_spaces=yeS
 
 Should Not Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} == ${BYTES WITH NON ASCII}
