@@ -15,16 +15,16 @@ def get_variables(path, name=None, version=None):
     return {'INTERPRETER': interpreter, 'UNICODE PREFIX': u}
 
 
-def InterpreterFactory(path, name=None, version=None):
+def InterpreterFactory(path, name=None, version=None, coverage=False):
     if path.endswith('.jar'):
-        return StandaloneInterpreter(path, name, version)
-    return Interpreter(path, name, version)
+        return StandaloneInterpreter(path, name, version, coverage)
+    return Interpreter(path, name, version, coverage)
 
 
 class Interpreter(object):
 
-    def __init__(self, path, name=None, version=None):
-        self.path = path
+    def __init__(self, path, name=None, version=None, coverage=False):
+        self.path = self._get_interpreter_path(path, coverage)
         self.interpreter = self._get_interpreter(path)
         if not name:
             name, version = self._get_name_and_version()
@@ -33,13 +33,19 @@ class Interpreter(object):
         self.version_info = tuple(int(item) for item in version.split('.'))
         self.java_version_info = self._get_java_version_info()
 
+    def _get_interpreter_path(self, path, coverage):
+        if not coverage:
+            return path
+        else:
+            return path + ' -m coverage run --branch --append'        
+
     def _get_interpreter(self, path):
         path = path.replace('/', os.sep)
         return [path] if os.path.exists(path) else path.split()
 
     def _get_name_and_version(self):
         try:
-            output = subprocess.check_output([self.interpreter[0]] + ['-V'],
+            output = subprocess.check_output(self.interpreter + ['-V'],
                                              stderr=subprocess.STDOUT,
                                              encoding='UTF-8')
         except (subprocess.CalledProcessError, FileNotFoundError) as err:
@@ -212,9 +218,9 @@ class Interpreter(object):
 
 class StandaloneInterpreter(Interpreter):
 
-    def __init__(self, path, name=None, version=None):
+    def __init__(self, path, name=None, version=None, coverage=False):
         Interpreter.__init__(self, abspath(path), name or 'Standalone JAR',
-                             version or '2.7.2')
+                             version or '2.7.2', coverage)
 
     def _get_interpreter(self, path):
         interpreter = ['java', '-jar', path]
