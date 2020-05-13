@@ -19,14 +19,16 @@ from .listeners import LibraryListeners, Listeners
 from .logger import LOGGER
 from .loggerhelper import AbstractLogger
 from .xmllogger import XmlLogger
+from .logcontroller import LogController
 
 
 class Output(AbstractLogger):
 
     def __init__(self, settings):
         AbstractLogger.__init__(self)
+        self._controller = LogController()
         self._xmllogger = XmlLogger(settings.output, settings.log_level,
-                                    settings.rpa)
+                                    settings.rpa, controller=self._controller)
         self.listeners = Listeners(settings.listeners, settings.log_level)
         self.library_listeners = LibraryListeners(settings.log_level)
         self._register_loggers(DebugFile(settings.debug_file))
@@ -34,6 +36,7 @@ class Output(AbstractLogger):
 
     def _register_loggers(self, debug_file):
         LOGGER.register_xml_logger(self._xmllogger)
+        LOGGER.register_controller(self._controller)
         LOGGER.register_listeners(self.listeners or None, self.library_listeners)
         if debug_file:
             LOGGER.register_logger(debug_file)

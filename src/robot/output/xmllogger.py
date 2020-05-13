@@ -22,11 +22,12 @@ from .loggerhelper import IsLogged
 
 class XmlLogger(ResultVisitor):
 
-    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
+    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot', controller=None):
         self._log_message_is_logged = IsLogged(log_level)
         self._error_message_is_logged = IsLogged('WARN')
         self._writer = self._get_writer(path, rpa, generator)
         self._errors = []
+        self._controller = controller
 
     def _get_writer(self, path, rpa, generator):
         if not path:
@@ -63,6 +64,8 @@ class XmlLogger(ResultVisitor):
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
+        if not self._controller.should_log():
+            return
         attrs = {'name': kw.kwname, 'library': kw.libname}
         if kw.type != 'kw':
             attrs['type'] = kw.type
@@ -73,6 +76,8 @@ class XmlLogger(ResultVisitor):
         self._write_list('assign', 'var', kw.assign)
 
     def end_keyword(self, kw):
+        if not self._controller.should_log():
+            return
         if kw.timeout:
             self._writer.element('timeout', attrs={'value': unic(kw.timeout)})
         self._write_status(kw)

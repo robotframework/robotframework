@@ -41,6 +41,7 @@ class Logger(AbstractLogger):
         self._listeners = None
         self._library_listeners = None
         self._other_loggers = []
+        self._log_controller = None
         self._message_cache = []
         self._log_message_cache = None
         self._started_keywords = 0
@@ -54,14 +55,15 @@ class Logger(AbstractLogger):
 
     @property
     def start_loggers(self):
-        loggers = [self._console_logger, self._syslog, self._xml_logger,
+        loggers = [self._log_controller, self._console_logger, self._syslog, self._xml_logger,
                    self._listeners, self._library_listeners]
         return [logger for logger in self._other_loggers + loggers if logger]
 
     @property
     def end_loggers(self):
         loggers = [self._listeners, self._library_listeners,
-                   self._console_logger, self._syslog, self._xml_logger]
+                   self._console_logger, self._syslog, self._xml_logger,
+                   self._log_controller]
         return [logger for logger in loggers + self._other_loggers if logger]
 
     def __iter__(self):
@@ -113,6 +115,9 @@ class Logger(AbstractLogger):
 
     def unregister_xml_logger(self):
         self._xml_logger = None
+
+    def register_controller(self, logger):
+        self._log_controller = self._wrap_and_relay(logger)
 
     def register_listeners(self, listeners, library_listeners):
         self._listeners = listeners
