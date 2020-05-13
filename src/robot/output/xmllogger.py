@@ -64,7 +64,7 @@ class XmlLogger(ResultVisitor):
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
-        if not self._controller.should_log():
+        if self._controller and not self._controller.should_log():
             return
         attrs = {'name': kw.kwname, 'library': kw.libname}
         if kw.type != 'kw':
@@ -76,7 +76,7 @@ class XmlLogger(ResultVisitor):
         self._write_list('assign', 'var', kw.assign)
 
     def end_keyword(self, kw):
-        if not self._controller.should_log():
+        if self._controller and not self._controller.should_log():
             return
         if kw.timeout:
             self._writer.element('timeout', attrs={'value': unic(kw.timeout)})
