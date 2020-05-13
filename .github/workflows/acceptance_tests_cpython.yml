@@ -97,16 +97,16 @@ jobs:
           sudo rm -rf /etc/ntp.conf
         if: runner.os == 'macOS'
 
-      # Coverage version < 5.0 for Python >= 3.7: https://github.com/nedbat/coveragepy/issues/968
+      # Coverage version < 5.0 for Python >= 3.7: https://github.com/nedbat/coveragepy/issues/919
       # No coverage for PyPy2/3 as it has failures if running with coverage, and it runs too long (> 1 hour)
       - name: Run acceptance tests (with coverage)
         run: |
-          python -m pip install 'coverage < 5.0'
+          ${{ env.BASE_PYTHON }} -m pip install 'coverage < 5.0'
           python -m pip install -r atest/requirements.txt
           ${{ env.ATEST_PYTHON }} -m pip install -r atest/requirements-run.txt
           ${{ matrix.set_codepage }}
           ${{ matrix.set_display }}
-          ${{ env.ATEST_PYTHON }} atest/run.py "${{ env.BASE_PYTHON }} -m coverage run --branch --append" --exclude no-ci atest/robot
+          ${{ env.ATEST_PYTHON }} atest/run.py --coverage ${{ env.BASE_PYTHON }} --exclude no-ci atest/robot
         if: false == contains(matrix.python-version, 'pypy')
 
       - name: Run acceptance tests

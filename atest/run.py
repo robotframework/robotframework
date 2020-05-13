@@ -2,7 +2,7 @@
 
 """A script for running Robot Framework's acceptance tests.
 
-Usage:  atest/run.py interpreter [options] datasource(s)
+Usage:  atest/run.py [--coverage] interpreter [options] datasource(s)
 
 Data sources are paths to directories or files under the `atest/robot` folder.
 
@@ -18,6 +18,10 @@ separately created with `invoke jar`.
 
 If the interpreter itself needs arguments, the interpreter and its arguments
 need to be quoted like `"py -3"`.
+
+If `--coverage` specified, coverage statistic is collected during acceptance
+tests run. This option requires coverage tool to be installed, for example, via
+pip: `pip install "coverage<5.0"`.
 
 Note that this script itself must always be executed with Python 3.6 or newer.
 
@@ -53,9 +57,9 @@ ARGUMENTS = '''
 '''.strip()
 
 
-def atests(interpreter, *arguments):
+def atests(coverage, interpreter, *arguments):
     try:
-        interpreter = InterpreterFactory(interpreter)
+        interpreter = InterpreterFactory(interpreter, coverage=coverage)
     except ValueError as err:
         sys.exit(err)
     outputdir, tempdir = _get_directories(interpreter)
@@ -119,9 +123,13 @@ def dos_to_long(path):
 
 
 if __name__ == '__main__':
+    coverage = False
+    if '--coverage' in sys.argv:
+        sys.argv.remove('--coverage')
+        coverage = True
     if len(sys.argv) == 1 or '--help' in sys.argv:
         print(__doc__)
         rc = 251
     else:
-        rc = atests(*sys.argv[1:])
+        rc = atests(coverage, *sys.argv[1:])
     sys.exit(rc)
