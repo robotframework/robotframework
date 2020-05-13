@@ -102,7 +102,7 @@ jobs:
       - name: Run acceptance tests (with coverage)
         run: |
           ${{ env.BASE_PYTHON }} -m pip install 'coverage < 5.0'
-          python -m pip install -r atest/requirements.txt
+          ${{ env.BASE_PYTHON }} -m pip install -r atest/requirements.txt
           ${{ env.ATEST_PYTHON }} -m pip install -r atest/requirements-run.txt
           ${{ matrix.set_codepage }}
           ${{ matrix.set_display }}
@@ -111,7 +111,7 @@ jobs:
 
       - name: Run acceptance tests
         run: |
-          python -m pip install -r atest/requirements.txt
+          ${{ env.BASE_PYTHON }} -m pip install -r atest/requirements.txt
           ${{ env.ATEST_PYTHON }} -m pip install -r atest/requirements-run.txt
           ${{ matrix.set_codepage }}
           ${{ matrix.set_display }}
@@ -135,7 +135,7 @@ jobs:
 
       - uses: codecov/codecov-action@e34ee485244a5b5e6e4e1b96daa4a15c9073e4fc
         with:
-          name: ${{ matrix.python-version }}-${{ matrix.os }}
+          name: ${{ matrix.python-version }}-${{ matrix.os }}-at
         if: always() && false == contains(matrix.python-version, 'pypy')
 
       - name: Archive acceptances test results

@@ -58,7 +58,7 @@ jobs:
 
       - uses: codecov/codecov-action@e34ee485244a5b5e6e4e1b96daa4a15c9073e4fc
         with:
-          name: ${{ matrix.python-version }}-${{ matrix.os }}
+          name: ${{ matrix.python-version }}-${{ matrix.os }}-ut
         if: always()
 
   test_using_jython:
