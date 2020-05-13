@@ -21,9 +21,9 @@ Case-insensitive
 Without leading spaces
     [Documentation]    FAIL test != value
     ${SPACE}test    test            strip_spaces=leading
-    hyvää yötä      \thyvää yötä    repr=True    strip_spaces=Leading
-    \t${42}         \ ${42}         strip_spaces=LEADING
-    \ntest          \nvalue         strip_spaces=leading
+    hyvää yötä      \nhyvää yötä    repr=True    strip_spaces=Leading
+    \t${42}         \t${42}         strip_spaces=LEADING
+    \ntest          \n value         strip_spaces=leading
 
 Without trailing spaces
     [Documentation]    FAIL test != value
@@ -338,8 +338,8 @@ Should Not Be Equal without leading spaces
     ...    3) 42 == 42
     [Template]  Should Not Be Equal
     ${SPACE}test    test            strip_spaces=leading
-    hyvää yötä      \thyvää yötä    repr=True    strip_spaces=Leading
-    \t${42}         \ ${42}         strip_spaces=LEADING
+    hyvää yötä      \nhyvää yötä    repr=True    strip_spaces=Leading
+    \t${42}         \t${42}         strip_spaces=LEADING
     \t\ntest        \n\tvalue       strip_spaces=leading
 
 Should Not Be Equal without trailing spaces
@@ -353,8 +353,8 @@ Should Not Be Equal without trailing spaces
     [Template]  Should Not Be Equal
     test${SPACE}    test             strip_spaces=trailing
     hyvää yötä      hyvää yötä\t     repr=True    strip_spaces=Trailing
-    ${42}\t         ${42}${SPACE}    strip_spaces=TRAILING
-    test\t\n        value\t\n        strip_spaces=TraIling
+    ${42}\n\t       ${42}${SPACE}    strip_spaces=TRAILING
+    test\t\n        value \n        strip_spaces=TraIling
 
 Should Not Be Equal without leading and trailing spaces
     [Documentation]     FAIL Several failures occurred:

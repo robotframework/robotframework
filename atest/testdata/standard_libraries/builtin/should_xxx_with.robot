@@ -117,6 +117,7 @@ Should Not Start With without leading and trailing spaces
     [Template]    Should Not Start With
     test${SPACE}    test          strip_spaces=True
     test value      test\t\n      strip_spaces=TRUE
+    \n\ttest \t     test\t\n      strip_spaces=Sure
     \n\työtä\t\n    \t\nyötä\t    repr=yes    strip_spaces=yes
 
 Should End With without values
@@ -137,34 +138,28 @@ Should End With case-insensitive
     HYVÄÄ YÖTÄ       ä yötä           ignore_case=True
 
 Should End With without leading spaces
-    [Documentation]    FAIL Several failures occurred:
-    ...
-    ...    1) '\ttest value' does not end with '\tvalue'
-    ...
-    ...    2) 'YÖTÄ' does not end with 'yötä'
+    [Documentation]    FAIL 'YÖTÄ' does not end with 'yötä'
     [Template]    Should End With
     San Diego        Diego       strip_spaces=leading
     ${SPACE}It is    is          strip_spaces=LEADING
     test value       \tvalue     strip_spaces=Leading
-    ${SPACE}yötä     \työtä      repr=yes    strip_spaces=leading
+    \n\työtä         \nyötä      repr=yes    strip_spaces=leading
     ${SPACE}         ${EMPTY}    strip_spaces=leading
-    \ttest value    \tvalue      strip_spaces=Yep
-    ${SPACE}YÖTÄ    \työtä       strip_spaces=leading
+    \n\tYÖTÄ         \työtä      strip_spaces=leading
 
 Should End With without trailing spaces
     [Documentation]    FAIL Several failures occurred:
     ...
-    ...    1) 'test value' does not end with 'value\t'
+    ...    1) 'test value' does not end with 'val'
     ...
     ...    2) 'YÖTÄ' does not end with 'yötä'
     [Template]    Should End With
     San Diego              Diego             strip_spaces=trailing
     test\tvalue${SPACE}    value             strip_spaces=TRAILING
-    test value             value\t           strip_spaces=Trailing
-    yötä\t${SPACE}         yötä\t            repr=yes    strip_spaces=trailing
+    test value             val\t             strip_spaces=Trailing
+    yötä\t \n              yötä\n            repr=yes    strip_spaces=trailing
     ${SPACE}               ${EMPTY}          strip_spaces=trailing
-    test value             value\t           strip_spaces=Yep
-    YÖTÄ${SPACE}\t         yötä\t${SPACE}    strip_spaces=trailing
+    YÖTÄ\n \t              yötä\t${SPACE}    strip_spaces=trailing
 
 Should End With without leading and trailing spaces
     [Documentation]    FAIL Several failures occurred:
@@ -203,10 +198,9 @@ Should Not End With without leading spaces
     ...
     ...    3) repr=yes: 'yötä' ends with 'yötä'
     [Template]    Should Not End With
-    ${SPACE}It is    is          strip_spaces=LEADING
-    test value       \tvalue     strip_spaces=Leading
-    ${SPACE}yötä     \työtä      repr=yes    strip_spaces=leading
-    \ttest value     \tvalue      strip_spaces=Yep
+    ${SPACE}It is    is         strip_spaces=LEADING
+    test value       \nvalue    strip_spaces=Leading
+    \n \työtä        \työtä     repr=yes    strip_spaces=leading
 
 Should Not End With without trailing spaces
     [Documentation]    FAIL Several failures occurred:
@@ -217,10 +211,9 @@ Should Not End With without trailing spaces
     ...
     ...    3) repr=yes: 'yötä' ends with 'yötä'
     [Template]    Should Not End With
-    It is${SPACE}    is          strip_spaces=TRAILING
-    test value       value\t     strip_spaces=Trailing
-    yötä${SPACE}     yötä\t      repr=yes    strip_spaces=trailing
-    \ttest value     value\t      strip_spaces=Yep
+    It is\t \n      is          strip_spaces=TRAILING
+    test value      value\t     strip_spaces=Trailing
+    yötä${SPACE}    yötä\t\n    repr=yes    strip_spaces=trailing
 
 Should Not End With without leading and trailing spaces
     [Documentation]    FAIL Several failures occurred:
@@ -232,6 +225,6 @@ Should Not End With without leading and trailing spaces
     ...    3) repr=yes: 'yötä' ends with 'yötä'
     [Template]    Should Not End With
     \ttest?${SPACE}    ${SPACE}?\t    strip_spaces=True
-    test\ \ value      \te            strip_spaces=truE
-    ${SPACE}yötä\t     \ yötä\t       repr=yes    strip_spaces=yes
+    test\ \ value\n    \te            strip_spaces=truE
+    \n \työtä\t\n      \ yötä\t\n     repr=yes    strip_spaces=yes
     some test          test\t         strip_spaces=Yep
