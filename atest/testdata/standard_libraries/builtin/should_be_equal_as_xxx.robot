@@ -93,10 +93,10 @@ Should Be Equal As Strings without leading spaces
     ...    2) test\t != test
     [Template]    Should Be Equal As Strings
     San Diego        San Diego        strip_spaces=leading
-    ${SPACE * 5}1    ${SPACE}${1}     strip_spaces=Leading
+    \ \t1            ${SPACE}${1}     strip_spaces=Leading
     ${SPACE}test     \ttest           strip_spaces=LEADING
     test\ \ value    test\ \ value    strip_spaces=leading
-    ${SPACE}yötä     \työtä           repr=yes    strip_spaces=leading
+    \n yötä          \työtä           repr=yes    strip_spaces=leading
     ${SPACE}         ${EMPTY}         strip_spaces=leading
     \t\nYÖTÄ         \t\nyötä         strip_spaces=leading
     ${SPACE}test\t   test             strip_spaces=leading
@@ -111,8 +111,7 @@ Should Be Equal As Strings without trailing spaces
     San Diego          San Diego          strip_spaces=Trailing
     1${SPACE * 5}      ${1}${SPACE}       strip_spaces=trailing
     \ttest\tvalue\t    \ttest\tvalue\t    strip_spaces=TRAILING
-    test\tvalue        test\tvalue        strip_spaces=trailing
-    yötä${SPACE}       yötä\t             repr=yes    strip_spaces=trailing
+    yötä\n \t          yötä\t             repr=yes    strip_spaces=trailing
     ${SPACE}           ${EMPTY}           strip_spaces=trailing
     YÖTÄ\n\t           yötä\t\n           strip_spaces=trailing
     ${SPACE}test\t     test               strip_spaces=trailing
@@ -191,10 +190,9 @@ Should Not Be Equal As Strings without leading spaces
     ...
     ...    2) Hyvää == Hyvää
     [Template]    Should Not Be Equal As Strings
-    \t1       ${1}             strip_spaces=leading
-    Hyvää     ${SPACE}Hyvää    strip_spaces=Leading
-    \ttest    ${SPACE}test     strip_spaces=yeah
-    \n2\t     ${SPACE}2\n\t    strip_spaces=LEADING
+    \t1         ${1}             strip_spaces=leading
+    Hyvää       ${SPACE}Hyvää    strip_spaces=Leading
+    \n${2}\t    ${SPACE}2\n\t    strip_spaces=LEADING
 
 Should Not Be Equal As Strings without trailing spaces
     [Documentation]     FAIL Several failures occurred:
@@ -203,10 +201,9 @@ Should Not Be Equal As Strings without trailing spaces
     ...
     ...    2) Hyvää == Hyvää
     [Template]    Should Not Be Equal As Strings
-    1\t       ${1}             strip_spaces=trailing
-    Hyvää     Hyvää${SPACE}    strip_spaces=Trailing
-    test\t    test${SPACE}     strip_spaces=yeah
-    \t2\n     \n\t2\n          strip_spaces=TRAILING
+    1\t         ${1}         strip_spaces=trailing
+    Hyvää       Hyvää\n\t    strip_spaces=Trailing
+    \t${2}\n    \n\t2\n      strip_spaces=TRAILING
 
 Should Not Be Equal As Strings without leading and trailing spaces
     [Documentation]     FAIL Several failures occurred:
@@ -215,6 +212,6 @@ Should Not Be Equal As Strings without leading and trailing spaces
     ...
     ...    2) Hyvää == Hyvää
     [Template]    Should Not Be Equal As Strings
-    \t1${SPACE}    \t${1}\t          strip_spaces=True
-    \tHyvää        Hyvää\t           strip_spaces=Yes
-    \ttest\t       \ttest${SPACE}    strip_spaces=yeah
+    \t1${SPACE}    \ ${1}\t     strip_spaces=True
+    \tHyvää        \tHyvää\n    strip_spaces=Yes
+    \ntest\t       \ttest \n    strip_spaces=yeah
