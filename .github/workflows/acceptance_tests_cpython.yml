@@ -91,7 +91,8 @@ jobs:
           sudo apt-get -y -q install xvfb scrot zip curl
         if: contains(matrix.os, 'ubuntu')
 
-      - name: Disable NTP on macOS (https://github.com/actions/virtual-environments/issues/820)
+      # https://github.com/actions/virtual-environments/issues/820
+      - name: Disable NTP on macOS
         run: |
           sudo systemsetup -setusingnetworktime off
           sudo rm -rf /etc/ntp.conf
