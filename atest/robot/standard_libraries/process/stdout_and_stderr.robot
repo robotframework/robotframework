@@ -9,6 +9,10 @@ Default stdout and stderr
 Custom stdout
     Check Test Case    ${TESTNAME}
 
+Redirecting stdout to DEVNULL
+    [Tags]    no-ipy    # https://github.com/IronLanguages/ironpython2/issues/702
+    Check Test Case    ${TESTNAME}
+
 Custom stderr
     Check Test Case    ${TESTNAME}
 
@@ -24,6 +28,15 @@ Redirecting stderr to stdout
 Redirecting stderr to custom stdout
     Check Test Case    ${TESTNAME}
 
+Redirecting stderr to DEVNULL
+    Check Test Case    ${TESTNAME}
+
+Redirecting stdout and stderr to DEVNULL
+    Check Test Case    ${TESTNAME}
+
+Redirecting stdout to DEVNULL and stderr to STDOUT
+    Check Test Case    ${TESTNAME}
+
 Custom streams are written under cwd when relative
     Check Test Case    ${TESTNAME}
 
@@ -31,6 +44,10 @@ Cwd does not affect absolute custom streams
     Check Test Case    ${TESTNAME}
 
 Lot of output to custom stream
+    Check Test Case    ${TESTNAME}
+
+Lot of output to DEVNULL
+    [Tags]    no-ipy    # https://github.com/IronLanguages/ironpython2/issues/702
     Check Test Case    ${TESTNAME}
 
 Run multiple times

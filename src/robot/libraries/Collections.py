@@ -209,9 +209,9 @@ class _List(object):
         the largest (or smallest) available index.
 
         Examples (incl. Python equivalents in comments):
-        | ${x} = | Get Slice From List | ${L5} | 2 | 4  | # L5[2:4]    |
-        | ${y} = | Get Slice From List | ${L5} | 1 |    | # L5[1:None] |
-        | ${z} = | Get Slice From List | ${L5} |   | -2 | # L5[0:-2]   |
+        | ${x} = | Get Slice From List | ${L5} | 2      | 4 | # L5[2:4]    |
+        | ${y} = | Get Slice From List | ${L5} | 1      |   | # L5[1:None] |
+        | ${z} = | Get Slice From List | ${L5} | end=-2 |   | # L5[0:-2]   |
         =>
         | ${x} = ['c', 'd']
         | ${y} = ['b', 'c', 'd', 'e']
@@ -346,7 +346,7 @@ class _List(object):
                                  '%s found multiple times.' % seq2str(dupes))
 
     def lists_should_be_equal(self, list1, list2, msg=None, values=True,
-                              names=None):
+                              names=None, ignore_order=False):
         """Fails if given lists are unequal.
 
         The keyword first verifies that the lists have equal lengths, and then
@@ -364,12 +364,12 @@ class _List(object):
         - If ``msg`` is given and ``values``  is not given a true value,
           the error message is just the given ``msg``.
 
-        Optional ``names`` argument can be used for naming the indices shown in
-        the default error message. It can either be a list of names matching
-        the indices in the lists or a dictionary where keys are indices that
-        need to be named. It is not necessary to name all of the indices.  When
-        using a dictionary, keys can be either integers or strings that can be
-        converted to integers.
+        The optional ``names`` argument can be used for naming the indices
+        shown in the default error message. It can either be a list of names
+        matching the indices in the lists or a dictionary where keys are
+        indices that need to be named. It is not necessary to name all of
+        the indices.  When using a dictionary, keys can be either integers
+        or strings that can be converted to integers.
 
         Examples:
         | ${names} = | Create List | First Name | Family Name | Email |
@@ -380,6 +380,15 @@ class _List(object):
         If the items in index 2 would differ in the above examples, the error
         message would contain a row like ``Index 2 (email): name@foo.com !=
         name@bar.com``.
+
+        The optional ``ignore_order`` argument can be used to ignore the order
+        of the elements in the lists. Using it requires items to be sortable.
+        This is new in Robot Framework 3.2.
+
+        Example:
+        | ${list1} = | Create List | apple | cherry | banana |
+        | ${list2} = | Create List | cherry | banana | apple |
+        | Lists Should Be Equal | ${list1} | ${list2} | ignore_order=True |
         """
         self._validate_lists(list1, list2)
         len1 = len(list1)
@@ -387,6 +396,9 @@ class _List(object):
         default = 'Lengths are different: %d != %d' % (len1, len2)
         _verify_condition(len1 == len2, default, msg, values)
         names = self._get_list_index_name_mapping(names, len1)
+        if ignore_order:
+            list1 = sorted(list1)
+            list2 = sorted(list2)
         diffs = list(self._yield_list_diffs(list1, list2, names))
         default = 'Lists are different:\n' + '\n'.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
@@ -824,6 +836,10 @@ class Collections(_List, _Dictionary):
     values from lists and dictionaries (e.g. `Append To List`, `Get
     From Dictionary`) and for verifying their contents (e.g. `Lists
     Should Be Equal`, `Dictionary Should Contain Value`).
+
+    == Table of contents ==
+
+    %TOC%
 
     = Related keywords in BuiltIn =
 

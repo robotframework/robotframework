@@ -228,7 +228,7 @@ Set Suite Variable 1
     Set Suite Variable    \${non_existing}
 
 Set Suite Variable 2
-    [Documentation]    FAIL Invalid variable syntax 'invalid'.
+    [Documentation]    FAIL Invalid variable name 'invalid'.
     Should Be Equal    ${test_level_suite_var}    Suite var set in test
     Should Be True    ${test_level_suite_var_list} == [ 'Suite var set in', 'test' ]
     Should Be Equal    ${suite_var_needing_escaping}    One backslash \\ and \${notvar}
@@ -276,7 +276,7 @@ Set Global Variable 1
     Set Global Variable    @non_existing
 
 Set Global Variable 2
-    [Documentation]    FAIL Invalid variable syntax 'invalid syntax'.
+    [Documentation]    FAIL Invalid variable name 'Ö'.
     Should Be Equal    ${test_level_global_var}    Global var set in test
     Should Be True    ${test_level_global_var_list} == [ 'Global var set in', 'test' ]
     Should Be Equal    ${uk_level_global_var}    Global var set in user keyword
@@ -284,21 +284,21 @@ Set Global Variable 2
     Should Be Equal    ${sub_uk_level_global_var}    Global var set in sub user keyword
     Should Be True    ${sub_uk_level_global_var_list} == [ 'Global var set in', 'sub user keyword' ]
     Check Global Variables Available In UK
-    Set Global Variable    invalid syntax
+    Set Global Variable    Ö    Name is shorter than 2 on purpose
 
 Set Test/Suite/Global Variables With Normal Variable Syntax 1
     Set Test Variable    ${new test var 1}    test
     Set Suite Variable    @{new suite var 1}    suite    variable
-    Set Global Variable    @{new global var 1}    global with \ escapes \\    /home/peke/Devel/robotframework/atest/testdata/standard_libraries/builtin/setting_variables ${TEMPDIR} \${escaped and not a var}
+    Set Global Variable    @{new global var 1}    global with \ escapes \\    ${CURDIR} ${TEMPDIR} \${escaped and not a var}
     Should Be Equal    ${new test var 1}    test
     Should Be True    ${new suite var 1} == 'suite variable'.split()
     Should Be Equal    ${new global var 1}[0]    global with \ escapes \\
-    Should Be Equal    ${new global var 1}[1]    /home/peke/Devel/robotframework/atest/testdata/standard_libraries/builtin/setting_variables ${TEMPDIR} \${escaped and not a var}
+    Should Be Equal    ${new global var 1}[1]    ${CURDIR} ${TEMPDIR} \${escaped and not a var}
 
 Set Test/Suite/Global Variables With Normal Variable Syntax 2
     Should Be True    ${new suite var 1} == 'suite variable'.split()
     Should Be Equal    ${new global var 1}[0]    global with \ escapes \\
-    Should Be Equal    ${new global var 1}[1]    /home/peke/Devel/robotframework/atest/testdata/standard_libraries/builtin/setting_variables ${TEMPDIR} \${escaped and not a var}
+    Should Be Equal    ${new global var 1}[1]    ${CURDIR} ${TEMPDIR} \${escaped and not a var}
 
 Set Test/Suite/Global Variable Using Empty List Variable 1
     @{empty list} =    Create List
@@ -455,7 +455,7 @@ Mutating dict variable set using `Set Test/Suite/Global Variable` keywords 3
     Should Be True    ${MUTANT SUITE} == {'s': 1, 's2': 2}
     Should Be True    ${MUTANT GLOBAL} == {'g': 1, 'g2': 2}
 
-Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords
+Using \@{EMPTY} with `Set Test/Suite/Global Variable` keywords
     Set Test Variable    @{LIST}    @{EMPTY}
     Should Be Empty    ${LIST}
     Append To List    ${LIST}    test
@@ -471,7 +471,7 @@ Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords
     Append To List    ${NEW}    global
     Verify @{EMPTY} is still empty
 
-Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords 2
+Using \@{EMPTY} with `Set Test/Suite/Global Variable` keywords 2
     Should Be True    ${LIST} == ['suite']
     Should Be True    ${NEW} == ['global']
 
@@ -498,16 +498,22 @@ If setting test/suite/global variable fails, old value is preserved 4
     Should Be Equal    ${VALID GLOBAL}[valid]    global
 
 Setting non-dict value to test/suite/global level dict variable - test
-    [Documentation]    FAIL Dictionary item 'invalid' does not contain '=' separator.
+    [Documentation]    FAIL
+    ...    Invalid dictionary variable item 'invalid'. \
+    ...    Items must use 'name=value' syntax or be dictionary variables themselves.
     Set Test Variable    &{DICT}    invalid    values
 
 Setting non-dict value to test/suite/global level dict variable - suite
-    [Documentation]    FAIL Dictionary item 'invalid' does not contain '=' separator.
-    Set Suite Variable    &{DICT}    invalid    values
+    [Documentation]    FAIL
+    ...    Invalid dictionary variable item '\@{bad}'. \
+    ...    Items must use 'name=value' syntax or be dictionary variables themselves.
+    Set Suite Variable    &{DICT}    this=good    @{bad}
 
 Setting non-dict value to test/suite/global level dict variable - global
-    [Documentation]    FAIL Dictionary item 'invalid' does not contain '=' separator.
-    Set Global Variable    &{DICT}    invalid    values
+    [Documentation]    FAIL
+    ...    Invalid dictionary variable item 'oops\\=i did it again'. \
+    ...    Items must use 'name=value' syntax or be dictionary variables themselves.
+    Set Global Variable    &{DICT}    oops\=i did it again
 
 Setting scalar test variable with list value is not possible 1
     [Documentation]    FAIL ${SCALAR LIST ERROR}

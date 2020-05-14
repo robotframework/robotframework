@@ -4,6 +4,12 @@ For loop in test
         Log    ${x}
     END
 
+Missing END
+    FOR    ${x}    IN    foo    bar
+        Log    ${x}
+        Keyword
+    END
+
 Old for loop in test
     FOR    ${x}    IN    foo    bar
         Log    ${x}

@@ -1,7 +1,15 @@
+# coding: utf-8
+
+import os.path
+import functools
+
+from robot.api.deco import library
+
+
 __version__ = 'N/A'  # This should be ignored when version is parsed
 
 
-class NameLibrary:
+class NameLibrary:    # Old-style class on purpose!
     handler_count = 10
 
     def simple1(self):
@@ -171,6 +179,7 @@ class SynonymLibrary:
     another_synonym = handler
 
 
+@library(auto_keywords=True)
 class VersionLibrary:
     ROBOT_LIBRARY_VERSION = '0.1'
     ROBOT_LIBRARY_DOC_FORMAT = 'html'
@@ -211,6 +220,7 @@ class ArgDocDynamicLibrary:
         kws = [('No Arg', [], None),
                ('One Arg', ['arg'], None),
                ('One or Two Args', ['arg', 'darg=dvalue'], None),
+               ('Default as tuple', [('arg',), ('d1', False), ('d2', None)], None),
                ('Many Args', ['*args'], None),
                ('No Arg Spec', None, None),
                ('Multiline', None, 'Multiline\nshort doc!\n\nBody\nhere.')]
@@ -220,8 +230,8 @@ class ArgDocDynamicLibrary:
     def get_keyword_names(self):
         return sorted(self._keywords)
 
-    def run_keyword(self, name, *args):
-        print('*INFO* Executed keyword %s with arguments %s' % (name, args))
+    def run_keyword(self, name, args):
+        print('*INFO* Executed keyword "%s" with arguments %s.' % (name, args))
 
     def get_keyword_documentation(self, name):
         return self._keywords[name].doc
@@ -242,6 +252,29 @@ class ArgDocDynamicLibraryWithKwargsSupport(ArgDocDynamicLibrary):
         argstr = ' '.join([str(a) for a in args] +
                           ['%s:%s' % kv for kv in sorted(kwargs.items())])
         print('*INFO* Executed keyword %s with arguments %s' % (name, argstr))
+
+
+class DynamicWithSource:
+    path = os.path.normpath(os.path.dirname(__file__) + '/classes.py')
+    keywords = {'only path': path,
+                'path & lineno': path + ':42',
+                'lineno only': ':6475',
+                'invalid path': 'path validity is not validated',
+                'path w/ colon': r'c:\temp\lib.py',
+                'path w/ colon & lineno': r'c:\temp\lib.py:1234567890',
+                'no source': None,
+                u'nön-äscii': u'hyvä esimerkki',
+                u'nön-äscii utf-8': b'\xe7\xa6\x8f:88',
+                'invalid source': 666}
+
+    def get_keyword_names(self):
+        return list(self.keywords)
+
+    def run_keyword(self, name, args, kws):
+        pass
+
+    def get_keyword_source(self, name):
+        return self.keywords[name]
 
 
 class _KeywordInfo:
@@ -267,3 +300,44 @@ class InvalidGetArgsDynamicLibrary(ArgDocDynamicLibrary):
 class InvalidAttributeDynamicLibrary(ArgDocDynamicLibrary):
     get_keyword_documentation = True
     get_keyword_arguments = False
+
+
+def noop(x):
+    return x
+
+
+def wraps(x):
+    @functools.wraps(x)
+    def wrapper(*a, **k):
+        return x(*a, **k)
+    return wrapper
+
+
+@noop
+@noop
+@functools.total_ordering
+class Decorated(object):
+
+    @noop
+    def no_wrapper(self):
+        pass
+
+    @noop
+    @wraps
+    @noop
+    @wraps
+    def wrapper(self):
+        pass
+
+    if hasattr(functools, 'lru_cache'):
+        @functools.lru_cache()
+        def external(self):
+            pass
+
+    no_def = lambda self: None
+
+    def __eq__(self, other):
+        return self is other
+
+    def __lt__(self, other):
+        return True

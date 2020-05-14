@@ -171,8 +171,7 @@ Options
                           path. Other output files are created based on XML
                           output files after the test execution and XML outputs
                           can also be further processed with Rebot tool. Can be
-                          disabled by giving a special value `NONE`. In this
-                          case, also log and report are automatically disabled.
+                          disabled by giving a special value `NONE`.
                           Default: output.xml
  -l --log file            HTML log file. Can be disabled by giving a special
                           value `NONE`. Default: log.html
@@ -428,7 +427,7 @@ class RobotFramework(Application):
         LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.info('Settings:\n%s' % unic(settings))
         builder = TestSuiteBuilder(settings['SuiteNames'],
-                                   extension=settings.extension,
+                                   included_extensions=settings.extension,
                                    rpa=settings.rpa,
                                    allow_empty_suite=settings.run_empty_suite)
         suite = builder.build(*datasources)

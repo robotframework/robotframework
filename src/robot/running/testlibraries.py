@@ -39,7 +39,8 @@ else:
     Object = None
 
 
-def TestLibrary(name, args=None, variables=None, create_handlers=True):
+def TestLibrary(name, args=None, variables=None, create_handlers=True,
+                logger=LOGGER):
     if name in STDLIBS:
         import_name = 'robot.libraries.' + name
     else:
@@ -49,7 +50,7 @@ def TestLibrary(name, args=None, variables=None, create_handlers=True):
         libcode, source = importer.import_class_or_module(import_name,
                                                           return_source=True)
     libclass = _get_lib_class(libcode)
-    lib = libclass(libcode, name, args or [], source, variables)
+    lib = libclass(libcode, name, args or [], source, logger, variables)
     if create_handlers:
         lib.create_handlers()
     return lib
@@ -67,15 +68,16 @@ def _get_lib_class(libcode):
 
 
 class _BaseTestLibrary(object):
-    _failure_level = 'INFO'
+    get_handler_error_level = 'INFO'
 
-    def __init__(self, libcode, name, args, source, variables):
+    def __init__(self, libcode, name, args, source, logger, variables):
         if os.path.exists(name):
             name = os.path.splitext(os.path.basename(os.path.abspath(name)))[0]
         self.version = self._get_version(libcode)
         self.name = name
         self.orig_name = name  # Stores original name when importing WITH NAME
         self.source = source
+        self.logger = logger
         self.handlers = HandlerStore(self.name, HandlerStore.TEST_LIBRARY_TYPE)
         self.has_listener = None  # Set when first instance is created
         self._doc = None
@@ -95,6 +97,15 @@ class _BaseTestLibrary(object):
         if self._doc is None:
             self._doc = getdoc(self.get_instance())
         return self._doc
+
+    @property
+    def lineno(self):
+        if inspect.ismodule(self._libcode):
+            return 1
+        try:
+            return inspect.getsourcelines(self._libcode)[1]
+        except (TypeError, OSError, IOError):
+            return -1
 
     def create_handlers(self):
         self._create_handlers(self.get_instance())
@@ -116,6 +127,14 @@ class _BaseTestLibrary(object):
     def end_test(self):
         self.scope.end_test()
 
+    def report_error(self, message, details=None, level='ERROR',
+                     details_level='INFO'):
+        prefix = 'Error in' if level in ('ERROR', 'WARN') else 'In'
+        self.logger.write("%s library '%s': %s" % (prefix, self.name, message),
+                          level)
+        if details:
+            self.logger.write('Details:\n%s' % details, details_level)
+
     def _get_version(self, libcode):
         return self._get_attr(libcode, 'ROBOT_LIBRARY_VERSION') \
             or self._get_attr(libcode, '__version__')
@@ -134,9 +153,11 @@ class _BaseTestLibrary(object):
 
     def _resolve_init_method(self, libcode):
         init = getattr(libcode, '__init__', None)
-        return init if init and self._valid_init(init) else lambda: None
+        return init if self._valid_init(init) else None
 
     def _valid_init(self, method):
+        if not method:
+            return False
         # https://bitbucket.org/pypy/pypy/issues/2462/
         if PYPY:
             if PY2:
@@ -187,8 +208,7 @@ class _BaseTestLibrary(object):
                 self.has_listener = False
                 # Error should have information about suite where the
                 # problem occurred but we don't have such info here.
-                LOGGER.error("Registering listeners for library '%s' failed: %s"
-                             % (self.name, err))
+                self.report_error("Registering listeners failed: %s" % err)
 
     def unregister_listeners(self, close=False):
         if self.has_listener:
@@ -209,9 +229,8 @@ class _BaseTestLibrary(object):
         except:
             message, details = get_error_details()
             name = getattr(listener, '__name__', None) or type_name(listener)
-            LOGGER.error("Calling method '%s' of listener '%s' failed: %s"
-                         % (method.__name__, name, message))
-            LOGGER.info("Details:\n%s" % details)
+            self.report_error("Calling method '%s' of listener '%s' failed: %s"
+                              % (method.__name__, name, message), details)
 
     def _create_handlers(self, libcode):
         try:
@@ -228,11 +247,9 @@ class _BaseTestLibrary(object):
                     try:
                         self.handlers.add(handler, embedded)
                     except DataError as err:
-                        LOGGER.error("Error in test library '%s': "
-                                     "Creating keyword '%s' failed: %s"
-                                     % (self.name, handler.name, err.message))
+                        self._adding_keyword_failed(handler.name, err)
                     else:
-                        LOGGER.debug("Created keyword '%s'" % handler.name)
+                        self.logger.debug("Created keyword '%s'" % handler.name)
 
     def _get_handler_names(self, libcode):
         def has_robot_name(name):
@@ -252,43 +269,45 @@ class _BaseTestLibrary(object):
     def _try_to_get_handler_method(self, libcode, name):
         try:
             return self._get_handler_method(libcode, name)
-        # TODO: RF 3.1: Catch only DataError or at least consider others errors.
-        # Don't want to do that in a minor release.
-        except:
-            self._report_adding_keyword_failed(name)
+        except DataError as err:
+            self._adding_keyword_failed(name, err, self.get_handler_error_level)
             return None
 
-    def _report_adding_keyword_failed(self, name, message=None, details=None,
-                                      level=None):
-        if not message:
-            message, details = get_error_details()
-        LOGGER.write("Adding keyword '%s' to library '%s' failed: %s"
-                     % (name, self.name, message), level or self._failure_level)
-        if details:
-            LOGGER.debug('Details:\n%s' % details)
+    def _adding_keyword_failed(self, name, error, level='ERROR'):
+        self.report_error(
+            "Adding keyword '%s' failed: %s" % (name, error.message),
+            error.details,
+            level=level,
+            details_level='DEBUG'
+        )
 
     def _get_handler_method(self, libcode, name):
-        method = getattr(libcode, name)
+        try:
+            method = getattr(libcode, name)
+        except:
+            message, details = get_error_details()
+            raise DataError('Getting handler method failed: %s' % message,
+                            details)
+        self._validate_handler_method(method)
+        return method
+
+    def _validate_handler_method(self, method):
         if not inspect.isroutine(method):
-            raise DataError('Not a method or function')
+            raise DataError('Not a method or function.')
+        if getattr(method, 'robot_not_keyword', False) is True:
+            raise DataError('Not exposed as a keyword.')
         return method
 
     def _try_to_create_handler(self, name, method):
         try:
             handler = self._create_handler(name, method)
         except DataError as err:
-            self._report_adding_keyword_failed(name, err.message, level='ERROR')
-            return None, False
-        # TODO: RF 3.1: Catch only DataError or at least consider others errors.
-        # Don't want to do that in a minor release.
-        except:
-            self._report_adding_keyword_failed(name)
+            self._adding_keyword_failed(name, err)
             return None, False
         try:
             return self._get_possible_embedded_args_handler(handler)
         except DataError as err:
-            self._report_adding_keyword_failed(handler.name, err.message,
-                                               level='ERROR')
+            self._adding_keyword_failed(handler.name, err)
             return None, False
 
     def _create_handler(self, handler_name, handler_method):
@@ -327,15 +346,14 @@ class _ClassLibrary(_BaseTestLibrary):
             if item in (object, Object):
                 continue
             if hasattr(item, '__dict__') and name in item.__dict__:
-                self._validate_handler(item.__dict__[name])
+                self._validate_handler_method(item.__dict__[name])
                 return getattr(libinst, name)
-        raise DataError('No non-implicit implementation found')
+        raise DataError('No non-implicit implementation found.')
 
-    def _validate_handler(self, handler):
-        if not inspect.isroutine(handler):
-            raise DataError('Not a method or function')
-        if self._is_implicit_java_or_jython_method(handler):
-            raise DataError('Implicit methods are ignored')
+    def _validate_handler_method(self, method):
+        _BaseTestLibrary._validate_handler_method(self, method)
+        if self._is_implicit_java_or_jython_method(method):
+            raise DataError('Implicit methods are ignored.')
 
     def _is_implicit_java_or_jython_method(self, handler):
         if not is_java_method(handler):
@@ -352,7 +370,7 @@ class _ModuleLibrary(_BaseTestLibrary):
     def _get_handler_method(self, libcode, name):
         method = _BaseTestLibrary._get_handler_method(self, libcode, name)
         if hasattr(libcode, '__all__') and name not in libcode.__all__:
-            raise DataError('Not exposed as a keyword')
+            raise DataError('Not exposed as a keyword.')
         return method
 
     def get_instance(self, create=True):
@@ -363,21 +381,22 @@ class _ModuleLibrary(_BaseTestLibrary):
         return self._libcode
 
     def _create_init_handler(self, libcode):
-        return InitHandler(self, lambda: None)
+        return InitHandler(self)
 
 
 class _HybridLibrary(_BaseTestLibrary):
-    _failure_level = 'ERROR'
+    get_handler_error_level = 'ERROR'
 
     def _get_handler_names(self, instance):
         return GetKeywordNames(instance)()
 
 
 class _DynamicLibrary(_BaseTestLibrary):
-    _failure_level = 'ERROR'
+    get_handler_error_level = 'ERROR'
 
-    def __init__(self, libcode, name, args, source, variables=None):
-        _BaseTestLibrary.__init__(self, libcode, name, args, source, variables)
+    def __init__(self, libcode, name, args, source, logger, variables=None):
+        _BaseTestLibrary.__init__(self, libcode, name, args, source, logger,
+                                  variables)
 
     @property
     def doc(self):

@@ -28,7 +28,12 @@ if PY2:
             cls.__str__ = lambda self: unicode(self).encode('UTF-8')
         return cls
 
+
+    def unwrap(func):
+        return func
+
 else:
+    from inspect import unwrap
     from io import StringIO
 
 
@@ -60,7 +65,12 @@ if not IRONPYTHON:
         # first check if buffer was detached
         if hasattr(stream, 'buffer') and stream.buffer is None:
             return False
-        return hasattr(stream, 'isatty') and stream.isatty()
+        if not hasattr(stream, 'isatty'):
+            return False
+        try:
+            return stream.isatty()
+        except ValueError:    # Occurs if file is closed.
+            return False
 
 else:
 

@@ -1,6 +1,5 @@
 *** Settings ***
 Resource     resources_and_variables/resources.robot
-Resource     RESOURCES_AND_VARIABLES/resources.robot  # Normalize on Windows
 RESOURCE     ${resource_dir}/resources2.robot
 VARIABLES    resources_and_variables/variables.py
 Variables    ${variables2_file}
@@ -9,9 +8,9 @@ Variables    ${variables2_file}
 VarIables    resources_and_variables/dynamic_variables.py    # No args works
 variables    resources_and_variables/dynamic_variables.py    One arg works
 Variables    resources_and_variables/dynamic_variables.py
-...          Two args   returns invalid
+...          Two args    returns invalid
 Variables    resources_and_variables/dynamic_variables.py
-...          More   args   raises    exception
+...          More    args    raises    exception
 Variables    resources_and_variables/dynamicVariables.py
 ...          This    ${1}    ${works}    back \\ slash    \${escaped}    ${CURDIR}
 
@@ -43,6 +42,9 @@ Variables    ${resource_dir}/invalid_variable_file.py
 Variables    resources_and_variables/dynamicVariables.py    ${non_existing_var_as_arg}
 Variables    resources_and_variables/invalid_list_variable.py
 Variables
+
+# Normalized and ignored as duplicate on case-insensitive file systems
+Resource     RESOURCES_AND_VARIABLES/resources.robot
 
 *** Variables ***
 ${resource_dir}       ${CURDIR}${/}resources_and_variables

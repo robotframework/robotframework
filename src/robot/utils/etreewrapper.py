@@ -17,8 +17,14 @@ from io import BytesIO
 import re
 
 from .compat import py2to3
-from .platform import IRONPYTHON, PY_VERSION, PY2
-from .robottypes import is_bytes, is_string
+from .platform import IRONPYTHON, PY_VERSION, PY3
+from .robottypes import is_bytes, is_pathlike, is_string
+
+if PY3:
+    from os import fsdecode
+else:
+    from .encoding import console_decode as fsdecode
+
 
 IRONPYTHON_WITH_BROKEN_ETREE = IRONPYTHON and PY_VERSION < (2, 7, 9)
 NO_ETREE_ERROR = 'No valid ElementTree XML parser module found'
@@ -42,17 +48,6 @@ else:
     from StringIO import StringIO
 
 
-if PY2:
-    from .encoding import console_decode as fsdecode
-    PathLike = ()
-elif PY_VERSION < (3, 6):
-    from os import fsdecode
-    from pathlib import PosixPath, WindowsPath
-    PathLike = (PosixPath, WindowsPath)
-else:
-    from os import fsdecode, PathLike
-
-
 # cElementTree.VERSION seems to always be 1.0.6. We want real API version.
 if ET.VERSION < '1.3' and hasattr(ET, 'tostringlist'):
     ET.VERSION = '1.3'
@@ -63,7 +58,7 @@ class ETSource(object):
 
     def __init__(self, source):
         # ET on Python < 3.6 doesn't support pathlib.Path
-        if PY_VERSION < (3, 6) and isinstance(source, PathLike):
+        if PY_VERSION < (3, 6) and is_pathlike(source):
             source = str(source)
         self._source = source
         self._opened = None
@@ -83,7 +78,7 @@ class ETSource(object):
         return BytesIO(source.encode(encoding))
 
     def _is_path(self, source):
-        if isinstance(source, PathLike):
+        if is_pathlike(source):
             return True
         elif is_string(source):
             prefix = '<'
@@ -113,7 +108,7 @@ class ETSource(object):
         return u'<in-memory file>'
 
     def _path_to_string(self, path):
-        if isinstance(path, PathLike):
+        if is_pathlike(path):
             return str(path)
         if is_bytes(path):
             return fsdecode(path)

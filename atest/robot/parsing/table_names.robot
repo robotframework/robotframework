@@ -25,20 +25,19 @@ Comment Table
 
 Section Names Are Space Sensitive
     ${path} =    Normalize Path    ${DATADIR}/parsing/table_names.robot
-    Validate Invalid Table Error    ${ERRORS[0]}    table_names.robot    K e y w o r d
+    Invalid Section Error    0    table_names.robot    43    * * * K e y w o r d * * *
 
 Invalid Tables
-    [Documentation]    Unrecognized tables should cause error
     [Setup]    Run Tests    ${EMPTY}    parsing/invalid_table_names.robot
     ${tc} =    Check Test Case    Test in valid table
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Keyword in valid table
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Keyword in valid table in resource
     Length Should Be    ${ERRORS}    5
-    Validate Invalid Table Error    ${ERRORS[0]}    invalid_table_names.robot        Error
-    Validate Invalid Table Error    ${ERRORS[1]}    invalid_table_names.robot        ${EMPTY}
-    Validate Invalid Table Error    ${ERRORS[2]}    invalid_table_names.robot        one more table cause an error
-    Validate Invalid Table Error    ${ERRORS[3]}    invalid_tables_resource.robot    ${EMPTY}
-    Validate Invalid Table Error    ${ERRORS[4]}    invalid_tables_resource.robot    Resource Error
+    Invalid Section Error    0    invalid_table_names.robot        1     *** Error ***
+    Invalid Section Error    1    invalid_table_names.robot        8     *** ***
+    Invalid Section Error    2    invalid_table_names.robot        17    *one more table cause an error
+    Invalid Section Error    3    invalid_tables_resource.robot    1     *** ***                 test and task=
+    Invalid Section Error    4    invalid_tables_resource.robot    10    ***Resource Error***    test and task=
 
 *** Keywords ***
 Check First Log Entry
@@ -46,11 +45,9 @@ Check First Log Entry
     ${tc} =    Check Test Case    ${test case name}
     Check Log Message    ${tc.kws[0].msgs[0]}    ${expected}
 
-Validate Invalid Table Error
-    [Arguments]    ${error}    ${file}    ${header}
-    ${path} =    Normalize Path    ${DATADIR}/parsing/${file}
-    ${message} =    Catenate
-    ...    Error in file '${path}': Unrecognized section header '${header}'.
-    ...    Available headers for data: 'Setting(s)', 'Variable(s)', 'Test Case(s)',
-    ...    'Task(s)' and 'Keyword(s)'. Use 'Comment(s)' to embedded additional data.
-    Check Log Message    ${error}    ${message}    ERROR
+Invalid Section Error
+    [Arguments]    ${index}    ${file}    ${lineno}    ${header}    ${test and task}=, 'Test Cases', 'Tasks'
+    Error In File    ${index}    parsing/${file}    ${lineno}
+    ...    Unrecognized section header '${header}'.
+    ...    Valid sections: 'Settings', 'Variables'${test and task},
+    ...    'Keywords' and 'Comments'.

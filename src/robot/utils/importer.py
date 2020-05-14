@@ -71,12 +71,33 @@ class Importer(object):
         except DataError as err:
             self._raise_import_failed(name, err)
         else:
-            return (imported, source) if return_source else imported
+            return self._handle_return_values(imported, source, return_source)
 
     def _import_class_or_module(self, name):
         for importer in self._importers:
             if importer.handles(name):
                 return importer.import_(name)
+
+    def _handle_return_values(self, imported, source, return_source=False):
+        if not return_source:
+            return imported
+        if source and os.path.exists(source):
+            source = self._sanitize_source(source)
+        return imported, source
+
+    def _sanitize_source(self, source):
+        source = normpath(source)
+        if os.path.isdir(source):
+            candidate = os.path.join(source, '__init__.py')
+        elif source.endswith('.pyc'):
+            candidate = source[:-4] + '.py'
+        elif source.endswith('$py.class'):
+            candidate = source[:-9] + '.py'
+        elif source.endswith('.class'):
+            candidate = source[:-6] + '.java'
+        else:
+            return source
+        return candidate if os.path.exists(candidate) else source
 
     def import_class_or_module_by_path(self, path, instantiate_with_args=None):
         """Import a Python module or Java class using a file system path.

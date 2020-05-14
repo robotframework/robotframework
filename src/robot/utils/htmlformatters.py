@@ -19,12 +19,12 @@ from itertools import cycle
 
 
 class LinkFormatter(object):
-    _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp')
-    _link = re.compile('\[(.+?\|.*?)\]')
-    _url = re.compile('''
-((^|\ ) ["'\(\[]*)           # begin of line or space and opt. any char "'([
+    _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg')
+    _link = re.compile(r'\[(.+?\|.*?)\]')
+    _url = re.compile(r'''
+((^|\ ) ["'(\[{]*)           # begin of line or space and opt. any char "'([{
 ([a-z][\w+-.]*://[^\s|]+?)   # url
-(?=[\]\)|"'.,!?:;]* ($|\ ))   # opt. any char ])"'.,!?:; and end of line or space
+(?=[)\]}"'.,!?:;|]* ($|\ ))  # opt. any char )]}"'.,!?:;| and eol or space
 ''', re.VERBOSE|re.MULTILINE|re.IGNORECASE)
 
     def format_url(self, text):
@@ -67,7 +67,9 @@ class LinkFormatter(object):
         return self._get_link(link, content)
 
     def _is_image(self, text):
-        return text.lower().endswith(self._image_exts)
+
+        return (text.startswith('data:image/')
+                or text.lower().endswith(self._image_exts))
 
 
 class LineFormatter(object):

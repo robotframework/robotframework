@@ -81,13 +81,13 @@ Backslash
     Should Be Equal    \foo    foo
 
 Newline
-    Should Be Equal    \n    ${NL}
-    Should Be Equal    \\n    ${BS}n
+    Should Be Equal    \n            ${NL}
+    Should Be Equal    \\n           ${BS}n
+    Should Be Equal    foo\n\ bar    foo${NL}${SP}bar
+    Should Be Equal    foo\\n bar    foo${BS}n${SP}bar
 
 Ignoring Space After Newline Is Deprecated
     Should Be Equal    foo\n bar\n zap    foo${NL}bar${NL}zap
-    Should Be Equal    foo\n\ bar    foo${NL}${SP}bar
-    Should Be Equal    foo\\n bar    foo${BS}n${SP}bar
 
 Carrriage Return
     Should Be Equal    \r    ${CR}
@@ -97,7 +97,7 @@ Tabulator
     Should Be Equal    \t    ${TAB}
     Should Be Equal    \\t    ${BS}t
 
-Valid \x Escape
+Valid \\x Escape
     Should Be Equal    \x00    ${x00}
     Should Be Equal    \x09\x0A\x0d    \t\n\r
     Should Be Equal    \xe4    ${xE4}
@@ -105,14 +105,14 @@ Valid \x Escape
     Should Be Equal    \x50\xf6\x6cj\xE4    Pöljä
     Log    Bytes 0-10: "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A"
 
-Invalid \x Escape
+Invalid \\x Escape
     Should Be Equal    \x    x
     Should Be Equal    \x+1    x+1
     Should Be Equal    \\x00    ${BS}x00
     Should Be Equal    xx\xxx    xxxxx
     Should Be Equal    \x0    x0
 
-Valid \u Escape
+Valid \\u Escape
     Should Be Equal    \u0000    ${x00}
     Should Be Equal    \u00e4    ${xE4}
     Should Be Equal    \u00FF    ${xFF}
@@ -121,14 +121,14 @@ Valid \u Escape
     Should Be Equal    \u0050\u00f6\x6cj\u00E4    Pöljä
     Log    Snowman: \u2603
 
-Invalid \u Escape
+Invalid \\u Escape
     Should Be Equal    \u    u
     Should Be Equal    \u+123    u+123
     Should Be Equal    \\u1234    ${BS}u1234
     Should Be Equal    uuuu\uuuuu    uuuuuuuuu
     Should Be Equal    \u123    u123
 
-Valid \U (32bit) Escape
+Valid \\U (32bit) Escape
     Should Be Equal    \U00000000    ${x00}
     Should Be Equal    \U000000e4    ${xE4}
     Should Be Equal    \U00002603    ${u2603}
@@ -137,7 +137,7 @@ Valid \U (32bit) Escape
     Should Be Equal    \U00000050\u00f6\x6cj\U000000E4    Pöljä
     Log    Phoenician letter wau: \U00010905
 
-Invalid \U (32bit) Escape
+Invalid \\U (32bit) Escape
     Should Be Equal    \U    U
     Should Be Equal    \U+0001234    U+0001234
     Should Be Equal    \\U00012345    ${BS}U00012345
@@ -145,7 +145,7 @@ Invalid \U (32bit) Escape
     Should Be Equal    \U0000123x    U0000123x
     Should Be Equal    \U0000123    U0000123
 
-\U (32bit) Escape Above Valid Range
+\\U (32bit) Escape Above Valid Range
     Should Be Equal    \U00110000    U00110000
     Should Be Equal    \U12345678    U12345678
     Should Be Equal    \UffffFFFF    UffffFFFF

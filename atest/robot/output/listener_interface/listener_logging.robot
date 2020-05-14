@@ -112,6 +112,6 @@ Correct messages should be logged to syslog
     ...    output_file
     ...    log_file
     ...    report_file
-        Check syslog contains    | INFO \ | ${msg}
-        Check syslog contains    | WARN \ | ${msg}
+        Syslog Should Contain    | INFO \ | ${msg}
+        Syslog Should Contain    | WARN \ | ${msg}
     END

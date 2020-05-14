@@ -1,3 +1,5 @@
+.. _rpa:
+
 Creating tasks
 ==============
 

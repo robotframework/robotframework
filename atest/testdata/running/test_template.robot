@@ -47,7 +47,7 @@ Template With Variables
     [Template]    Expect Exactly Two Args
     ${VARIABLE}    ${VARIABLE}
 
-Template With @{EMPTY} Variable
+Template With \@{EMPTY} Variable
     [Template]    Template With Default Parameters
     @{EMPTY}
 

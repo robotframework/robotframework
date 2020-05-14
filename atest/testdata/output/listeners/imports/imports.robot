@@ -2,7 +2,6 @@
 Resource          resource_with_imports.robot
 Library           String
 Library           local_lib.py    ${2}    WITH NAME    Aliased
-Library           ExampleJavaLibrary
 Library           pythonmodule
 Variables         vars.py    name    value
 Variables         vars.py    name    value
@@ -10,6 +9,7 @@ Variables         vars.py
 Resource          resource that does not exist and fails
 Library           LibraryThatDoesNotExist
 Variables         variables which dont exist
+Library           ExampleJavaLibrary
 
 *** Test Cases ***
 Dynamic imports

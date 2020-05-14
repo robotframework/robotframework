@@ -1,8 +1,8 @@
 import unittest
 
-from os.path import abspath, join
+from os.path import join
 
-from robot import api, model, reporting, result, running
+from robot import api, model, parsing, reporting, result, running
 
 from robot.utils.asserts import assert_equal, assert_true
 
@@ -21,6 +21,13 @@ class TestExposedApi(unittest.TestCase):
     def test_visitors(self):
         assert_equal(api.SuiteVisitor, model.SuiteVisitor)
         assert_equal(api.ResultVisitor, result.ResultVisitor)
+
+    def test_parsing(self):
+        assert_equal(api.get_model, parsing.get_model)
+        assert_equal(api.get_resource_model, parsing.get_resource_model)
+        assert_equal(api.get_tokens, parsing.get_tokens)
+        assert_equal(api.get_resource_tokens, parsing.get_resource_tokens)
+        assert_equal(api.Token, parsing.Token)
 
 
 class TestModelObjects(unittest.TestCase):

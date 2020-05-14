@@ -73,10 +73,9 @@ Keyword with embedded args cannot be used as "normal" keyword
 
 Embedded argument count must match accepted arguments
     Check Test Case    ${TESTNAME}
-    ${msg} =    Catenate
-    ...    Adding keyword 'Wrong \${number} of embedded \${args}' to library 'embedded_args_in_lk_1' failed:
+    Error in library    embedded_args_in_lk_1
+    ...    Adding keyword 'Wrong \${number} of embedded \${args}' failed:
     ...    Embedded argument count does not match number of accepted arguments.
-    Check Log Message    ${ERRORS[0]}    ${msg}    ERROR
 
 Optional Non-Embedded Args Are Okay
     Check Test Case    ${TESTNAME}

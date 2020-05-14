@@ -141,7 +141,7 @@ the `Deprecating keywords`_ section.
 User keyword tags
 -----------------
 
-Starting from Robot Framework 2.9, keywords can also have tags. User keywords
+Both user keywords and `library keywords`_ can have tags. User keyword
 tags can be set with :setting:`[Tags]` setting similarly as `test case tags`_,
 but possible :setting:`Force Tags` and :setting:`Default Tags` setting do not
 affect them. Additionally keyword tags can be specified on the last line of
@@ -504,7 +504,7 @@ values used when calling the keyword match the correct arguments. This
 is a problem especially if there are multiple arguments and characters
 separating them may also appear in the given values. For example,
 keyword :name:`Select ${city} ${team}` does not work correctly if used
-with city containing too parts like :name:`Select Los Angeles Lakers`.
+with city containing two parts like :name:`Select Los Angeles Lakers`.
 
 An easy solution to this problem is quoting the arguments (e.g.
 :name:`Select "${city}" "${team}"`) and using the keyword in quoted

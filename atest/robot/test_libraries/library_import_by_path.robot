@@ -41,29 +41,30 @@ Importing By Path Containing Non-ASCII Characters
 
 Importing Invalid Python File Fails
     ${path} =    Normalize Path    ${DATADIR}/test_libraries/MyInvalidLibFile.py
-    Import should have failed    1    test_libraries/library_import_by_path.robot
+    Error in file    1    test_libraries/library_import_by_path.robot    9
     ...    Importing test library '${path}' failed: ImportError: I'm not really a library!
+    ...    traceback=*
 
 Importing Dir Library Without Trailing "/" Fails
-    Import should have failed    0    test_libraries/library_import_by_path.robot
+    Error in file    0    test_libraries/library_import_by_path.robot    3
     ...    Importing test library 'MyLibDir' failed: *Error: *
+    ...    traceback=None
 
 Importing Non Python File Fails
-    Import should have failed    2    test_libraries/library_import_by_path.robot
+    Error in file    2    test_libraries/library_import_by_path.robot    10
     ...    Importing test library 'library_import_by_path.robot' failed: *Error: *
+    ...    traceback=None
 
 Importing Non Python Dir Fails
-    Import should have failed    3    test_libraries/library_import_by_path.robot
+    Error in file    3    test_libraries/library_import_by_path.robot    11
     ...    Test library 'library_scope' does not exist.
-    ...    traceback=
 
 Importing Non Existing Py File
-    Import should have failed    4    test_libraries/library_import_by_path.robot
+    Error in file    4    test_libraries/library_import_by_path.robot    13
     ...    Test library 'this_does_not_exist.py' does not exist.
-    ...    traceback=
 
 Import failure when path contains non-ASCII characters is handled correctly
     ${path} =    Normalize path    ${DATADIR}/test_libraries/nön_äscii_dïr/invalid.py
-    Import should have failed    -1    test_libraries/library_import_by_path.robot
+    Error in file    -1    test_libraries/library_import_by_path.robot    17
     ...    Importing test library '${path}' failed: Ööööps!
-    ...    File "${path}", line 2, in <module>\n*raise RuntimeError(u'Ööööps!')
+    ...    traceback=File "${path}", line 2, in <module>\n*raise RuntimeError(u'Ööööps!')

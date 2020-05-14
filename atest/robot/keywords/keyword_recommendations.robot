@@ -162,6 +162,3 @@ Explicit Substring Of Many Keywords
 
 Implicit Substring Of Many Keywords
     Check Test Case    ${TESTNAME}
-
-Excluded Library
-    Check Test Case    ${TESTNAME}

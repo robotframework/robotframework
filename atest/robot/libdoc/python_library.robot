@@ -16,16 +16,24 @@ Version
     Version Should Match             3.*
 
 Type
-    Type Should Be                   library
+    Type Should Be                   LIBRARY
 
 Generated
     Generated Should Be Defined
 
 Scope
-    Scope Should Be                  test suite
+    Scope Should Be                  SUITE
 
 Named Args
-    Named Args Should Be             yes
+    Named Args Should Be             true
+
+Source info
+    [Tags]    no-standalone    # Standard library sources aren't included in standalone JAR
+    Source should be                 ${CURDIR}/../../../src/robot/libraries/Telnet.py
+    Lineno should be                 36
+
+Spec version
+    Spec version should be correct
 
 Init Documentation
     Init Doc Should Start With       0
@@ -38,6 +46,11 @@ Init Arguments
     ...    encoding_errors=ignore    default_log_level=INFO     window_size=None
     ...    environ_user=None    terminal_emulation=False    terminal_type=None
     ...    telnetlib_log_level=TRACE    connection_timeout=None
+
+Init Source Info
+    [Tags]    no-standalone    # Standard library sources aren't included in standalone JAR
+    Keyword Should Not Have Source   0    xpath=init
+    Keyword Lineno Should Be         0    283      xpath=init
 
 Keyword Names
     Keyword Name Should Be           0    Close All Connections
@@ -64,6 +77,17 @@ Keyword Documentation
     ...    | \${out} = | `Read Until Prompt` |
     ...
 
+Keyword Source Info
+    [Tags]    no-standalone    # Standard library sources aren't included in standalone JAR
+    # This keyword is from the "main library".
+    Keyword Name Should Be           0    Close All Connections
+    Keyword Should Not Have Source   0
+    Keyword Lineno Should Be         0    472
+    # This keyword is from an external library component.
+    Keyword Name Should Be           7    Read Until Prompt
+    Keyword Should Not Have Source   7
+    Keyword Lineno Should Be         7    1013
+
 KwArgs and VarArgs
     Run Libdoc And Parse Output      Process
     Keyword Name Should Be           7    Run Process
@@ -79,12 +103,38 @@ Decorators
     Run Libdoc And Parse Output      ${TESTDATADIR}/Decorators.py
     Keyword Name Should Be           0    Keyword Using Decorator
     Keyword Arguments Should Be      0    *args    **kwargs
+    Keyword Should Not Have Source   0
+    Keyword Lineno Should Be         0    8
     Keyword Name Should Be           1    Keyword Using Decorator With Wraps
-    Run Keyword If    $INTERPRETER.is_py3
-    ...    Keyword Arguments Should Be      1    args    are    preserved=True
+    Run Keyword If
+    ...    $INTERPRETER.is_py3
+    ...        Run Keywords
+    ...            Keyword Arguments Should Be      1    args    are    preserved=True
+    ...        AND
+    ...            Keyword Lineno Should Be         1    26
     ...    ELSE
-    ...    Keyword Arguments Should Be      1    *args    **kwargs
+    ...        Run Keywords
+    ...            Keyword Arguments Should Be      1    *args    **kwargs
+    ...        AND
+    ...            Keyword Lineno Should Be         1    ${{'15' if not $INTERPRETER.is_standalone else '14'}}
 
 Documentation set in __init__
     Run Libdoc And Parse Output      ${TESTDATADIR}/DocSetInInit.py
     Doc Should Be                    Doc set in __init__!!
+
+Deprecation
+    Run Libdoc And Parse Output          ${TESTDATADIR}/Deprecation.py
+    Keyword Name Should Be               0    Deprecated
+    Keyword Doc Should Be                0    *DEPRECATED*
+    Keyword Should Be Deprecated         0
+    Keyword Name Should Be               1    Deprecated With Message
+    Keyword Doc Should Be                1    *DEPRECATED for some good reason!* Yes it is. For sure.
+    Keyword Should Be Deprecated         1
+    Keyword Name Should Be               2    No Deprecation Whatsoever
+    Keyword Doc Should Be                2
+    Keyword Should Not Be Deprecated     2
+    Keyword Name Should Be               3    Silent Deprecation
+    Keyword Doc Should Be                3    *Deprecated* but not yet loudly.
+    ...
+    ...                                       RF and Libdoc don't consider this being deprecated.
+    Keyword Should Not Be Deprecated     3

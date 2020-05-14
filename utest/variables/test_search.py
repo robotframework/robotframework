@@ -7,7 +7,7 @@ from robot.variables.search import (search_variable, unescape_variable_syntax,
                                     VariableIterator)
 
 
-class TestVariableSplitter(unittest.TestCase):
+class TestSearchVariable(unittest.TestCase):
     _identifiers = ['$', '@', '%', '&', '*']
 
     def test_empty(self):
@@ -217,18 +217,20 @@ class TestVariableSplitter(unittest.TestCase):
         if variable is None or ignore_errors:
             identifier = base = None
             start = end = -1
-            is_var = is_list_var = is_dict_var = False
+            is_var = is_scal_var = is_list_var = is_dict_var = False
         else:
             identifier = variable[0]
             base = variable[2:-1]
             end = start + len(variable)
             is_var = inp == variable
+            is_scal_var = is_var and inp[0] == '$'
             is_list_var = is_var and inp[0] == '@'
             is_dict_var = is_var and inp[0] == '&'
             if items:
                 items_str = ''.join('[%s]' % i for i in items)
                 end += len(items_str)
                 is_var = inp == '%s%s' % (variable, items_str)
+                is_scal_var = is_var and inp[0] == '$'
         match = search_variable(inp, identifiers, ignore_errors)
         assert_equal(match.base, base, '%r base' % inp)
         assert_equal(match.start, start, '%r start' % inp)
@@ -238,29 +240,30 @@ class TestVariableSplitter(unittest.TestCase):
         assert_equal(match.after, inp[end:] if end != -1 else None)
         assert_equal(match.identifier, identifier, '%r identifier' % inp)
         assert_equal(match.items, items, '%r item' % inp)
-        assert_equal(match.is_variable, is_var)
-        assert_equal(match.is_list_variable, is_list_var)
-        assert_equal(match.is_dict_variable, is_dict_var)
+        assert_equal(match.is_variable(), is_var)
+        assert_equal(match.is_scalar_variable(), is_scal_var)
+        assert_equal(match.is_list_variable(), is_list_var)
+        assert_equal(match.is_dict_variable(), is_dict_var)
 
     def test_is_variable(self):
         for no in ['', 'xxx', '${var} not alone', r'\${notvar}', r'\\${var}',
                    '${var}xx}', '${x}${y}']:
-            assert_false(search_variable(no).is_variable, no)
+            assert_false(search_variable(no).is_variable(), no)
         for yes in ['${var}', r'${var$\{}', '${var${internal}}', '@{var}',
                     '@{var}[0]']:
-            assert_true(search_variable(yes).is_variable, yes)
+            assert_true(search_variable(yes).is_variable(), yes)
 
     def test_is_list_variable(self):
         for no in ['', 'xxx', '@{var} not alone', r'\@{notvar}', r'\\@{var}',
                    '@{var}xx}', '@{x}@{y}', '${scalar}', '&{dict}', '@{x}[0]']:
-            assert_false(search_variable(no).is_list_variable)
-        assert_true(search_variable('@{list}').is_list_variable)
+            assert_false(search_variable(no).is_list_variable())
+        assert_true(search_variable('@{list}').is_list_variable())
 
     def test_is_dict_variable(self):
         for no in ['', 'xxx', '&{var} not alone', r'\@{notvar}', r'\\&{var}',
                    '&{var}xx}', '&{x}&{y}', '${scalar}', '@{list}', '&{x}[k]']:
-            assert_false(search_variable(no).is_dict_variable)
-        assert_true(search_variable('&{dict}').is_dict_variable)
+            assert_false(search_variable(no).is_dict_variable())
+        assert_true(search_variable('&{dict}').is_dict_variable())
 
 
 class TestVariableIterator(unittest.TestCase):

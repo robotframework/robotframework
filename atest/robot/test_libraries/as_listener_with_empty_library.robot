@@ -8,6 +8,6 @@ Empty library should not cause warning when it is listener
     ...     START TEST
     ...     MESSAGE We do nothing
     ...     END TEST
-    ...     CLOSE (test)
-    ...     CLOSE (suite)\n
-    Check Stderr Does Not Contain     WARN
+    ...     CLOSE
+    ...     CLOSE\n
+    Stderr Should Not Contain     WARN

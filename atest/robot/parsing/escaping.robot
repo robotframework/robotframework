@@ -40,9 +40,14 @@ New Line
     Check Test Case    ${TEST NAME}
 
 Ignoring Space After Newline Is Deprecated
-    Check Test Case    ${TEST NAME}
-    Check log message    ${ERRORS}[0]    Ignoring space after '\\n' is deprecated.    WARN
-    Check log message    ${ERRORS}[1]    Ignoring space after '\\n' is deprecated.    WARN
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${message} =    Catenate
+    ...    Ignoring space after '\\n' is deprecated.
+    ...    For more info see: https://github.com/robotframework/robotframework/issues/3333
+    Check log message    ${ERRORS}[0]    ${message}    WARN
+    Check log message    ${ERRORS}[1]    ${message}    WARN
+    Check log message    ${tc.kws[0].msgs[0]}    ${message}    WARN
+    Check log message    ${tc.kws[0].msgs[1]}    ${message}    WARN
 
 Carrriage Return
     Check Test Case    ${TEST NAME}
@@ -50,25 +55,25 @@ Carrriage Return
 Tabulator
     Check Test Case    ${TEST NAME}
 
-Valid \x Escape
+Valid \\x Escape
     Check Test Case    ${TEST NAME}
 
-Invalid \x Escape
+Invalid \\x Escape
     Check Test Case    ${TEST NAME}
 
-Valid \u Escape
+Valid \\u Escape
     Check Test Case    ${TEST NAME}
 
-Invalid \u Escape
+Invalid \\u Escape
     Check Test Case    ${TEST NAME}
 
-Valid \U (32bit) Escape
+Valid \\U (32bit) Escape
     Check Test Case    ${TEST NAME}
 
-Invalid \U (32bit) Escape
+Invalid \\U (32bit) Escape
     Check Test Case    ${TEST NAME}
 
-\U (32bit) Escape Above Valid Range
+\\U (32bit) Escape Above Valid Range
     Check Test Case    ${TEST NAME}
 
 Hash

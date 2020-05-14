@@ -15,7 +15,7 @@
 
 from robot.errors import DataError
 from robot.utils import is_string, is_dict_like, split_from_equals
-from robot.variables import search_variable
+from robot.variables import is_dict_variable
 
 from .argumentvalidator import ArgumentValidator
 
@@ -49,7 +49,7 @@ class NamedArgumentResolver(object):
         positional = []
         named = []
         for arg in arguments:
-            if self._is_dict_var(arg):
+            if is_dict_variable(arg):
                 named.append(arg)
             elif self._is_named(arg, named, variables):
                 named.append(split_from_equals(arg))
@@ -58,10 +58,6 @@ class NamedArgumentResolver(object):
             else:
                 positional.append(arg)
         return positional, named
-
-    def _is_dict_var(self, arg):
-        return (is_string(arg) and arg[:2] == '&{' and arg[-1] == '}' and
-                search_variable(arg).is_dict_variable)
 
     def _is_named(self, arg, previous_named, variables=None):
         name, value = split_from_equals(arg)

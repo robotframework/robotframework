@@ -158,7 +158,7 @@ according to the following rules. Other remote servers should behave similarly.
 * Returned dictionaries are converted to so called *dot-accessible dicts*
   that allow accessing keys as attributes using the `extended variable syntax`_
   like `${result.key}`. This works also with nested dictionaries like
-  `${root.child.leaf}`. New functionality in Robot Framework 2.9.
+  `${root.child.leaf}`.
 
 * Strings containing bytes in the ASCII range that cannot be represented in
   XML (e.g. the null byte) are sent as `Binary objects`__ that internally use

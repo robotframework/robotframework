@@ -1,36 +1,36 @@
 *** Settings ***
 Suite Setup       Run Tests    --dryrun    cli/dryrun/dryrun.robot cli/dryrun/more_tests.robot
 Test Teardown     Last keyword should have been validated
-Resource          atest_resource.robot
+Resource          dryrun_resource.robot
 
 *** Test Cases ***
 Passing keywords
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    4
-    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Log    status=NOT_RUN    args=Hello from test
-    Check Keyword Data    ${tc.kws[1]}    OperatingSystem.List Directory    status=NOT_RUN    assign=\${contents}    args=.
-    Check Keyword Data    ${tc.kws[2]}    resource.Simple UK
+    Length Should Be      ${tc.kws}              4
+    Check Keyword Data    ${tc.kws[0]}           BuiltIn.Log    status=NOT_RUN    args=Hello from test
+    Check Keyword Data    ${tc.kws[1]}           OperatingSystem.List Directory    status=NOT_RUN    assign=\${contents}    args=.
+    Check Keyword Data    ${tc.kws[2]}           resource.Simple UK
     Check Keyword Data    ${tc.kws[2].kws[0]}    BuiltIn.Log    status=NOT_RUN    args=Hello from UK
 
 Keywords with embedded arguments
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    3
-    Check Keyword Data    ${tc.kws[0]}    Embedded arguments here
+    Length Should Be      ${tc.kws}              3
+    Check Keyword Data    ${tc.kws[0]}           Embedded arguments here
     Check Keyword Data    ${tc.kws[0].kws[0]}    BuiltIn.No Operation    status=NOT_RUN
-    Check Keyword Data    ${tc.kws[1]}    Embedded args rock here
+    Check Keyword Data    ${tc.kws[1]}           Embedded args rock here
     Check Keyword Data    ${tc.kws[1].kws[0]}    BuiltIn.No Operation    status=NOT_RUN
 
 Library keyword with embedded arguments
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    2
-    Check Keyword Data    ${tc.kws[0]}    EmbeddedArgs.Log 42 times    status=NOT_RUN
+    Length Should Be      ${tc.kws}              2
+    Check Keyword Data    ${tc.kws[0]}           EmbeddedArgs.Log 42 times    status=NOT_RUN
 
 Keywords that would fail
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    3
-    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Fail    status=NOT_RUN    args=Not actually executed so won't fail.
-    Check Keyword Data    ${tc.kws[1]}    resource.Fail In UK
-    Should have correct number of keywords    ${tc.kws[1]}    2
+    Length Should Be      ${tc.kws}              3
+    Check Keyword Data    ${tc.kws[0]}           BuiltIn.Fail    status=NOT_RUN    args=Not actually executed so won't fail.
+    Check Keyword Data    ${tc.kws[1]}           resource.Fail In UK
+    Length Should Be      ${tc.kws[1].kws}       2
     Check Keyword Data    ${tc.kws[1].kws[0]}    BuiltIn.Fail    status=NOT_RUN    args=
     Check Keyword Data    ${tc.kws[1].kws[1]}    BuiltIn.Fail    status=NOT_RUN    args=And again
 
@@ -72,13 +72,13 @@ Non-existing variable in user keyword return value
 
 Test Setup and Teardown
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    2
-    Check Keyword Data    ${tc.setup}    BuiltIn.Log    args=Hello Setup    status=NOT_RUN    type=setup
+    Length Should Be      ${tc.kws}         2
+    Check Keyword Data    ${tc.setup}       BuiltIn.Log    args=Hello Setup    status=NOT_RUN    type=setup
     Check Keyword Data    ${tc.teardown}    Does not exist    status=FAIL    type=teardown
 
 Keyword Teardown
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    2
+    Length Should Be      ${tc.kws}              2
     Check Keyword Data    ${tc.kws[0].kws[-1]}   Does not exist    status=FAIL    type=teardown
 
 Keyword teardown with non-existing variable is ignored
@@ -88,14 +88,6 @@ Keyword teardown with existing variable is resolved and executed
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Keyword Data    ${tc.kws[0].kws[-1]}    Teardown    args=\${I DO NOT EXIST}    type=teardown
     Check Keyword Data    ${tc.kws[0].kws[-1].kws[0]}    BuiltIn.Log    args=\${arg}    status=NOT_RUN
-
-For Loops
-    ${tc}=    Check Test Case    ${TESTNAME}
-    Should have correct number of keywords    ${tc}    4
-    Should have correct number of keywords    ${tc.kws[0]}    1
-    Should have correct number of keywords    ${tc.kws[0].kws[0]}    2
-    Should have correct number of keywords    ${tc.kws[1]}    3
-    Should have correct number of keywords    ${tc.kws[1].kws[1]}    1
 
 Non-existing keyword name
     Check Test Case    ${TESTNAME}
@@ -123,36 +115,14 @@ Avoid keyword in dry-run
     Keyword should have been validated    ${tc.kws[3]}
 
 Invalid imports
-    Import should have failed    1    cli/dryrun/dryrun.robot
+    Error in file    1    cli/dryrun/dryrun.robot    7
     ...    Importing test library 'DoesNotExist' failed: *Error: *
-    Import should have failed    2    cli/dryrun/dryrun.robot
+    Error in file    2    cli/dryrun/dryrun.robot    8
     ...    Variable file 'wrong_path.py' does not exist.
-    ...    traceback=
-    Import should have failed    3    cli/dryrun/dryrun.robot
+    Error in file    3    cli/dryrun/dryrun.robot    9
     ...    Resource file 'NonExisting.robot' does not exist.
-    ...    traceback=
     [Teardown]    NONE
 
 Test from other suite
     Check Test Case    Some Other Test
     [Teardown]    NONE
-
-*** Keywords ***
-Should have correct number of keywords
-    [Arguments]    ${test or uk}    ${exp number of kws}
-    Log    ${test or uk.kws}
-    Should Be Equal As Integers    ${test or uk.kw_count}    ${exp number of kws}
-
-Keyword should have been skipped with tag
-    [Arguments]    ${kw}    ${name}    ${tags}
-    Check Keyword Data    ${kw}    ${name}    status=PASS    tags=${tags}
-    Should Be Empty    ${kw.kws}
-
-Keyword should have been validated
-    [Arguments]    ${kw}
-    Check Keyword Data    ${kw}    This is validated
-    Check Keyword Data    ${kw.kws[0]}    BuiltIn.Log    status=NOT_RUN    args=This is validated
-
-Last keyword should have been validated
-    ${tc} =    Get test case    ${TEST NAME}
-    Keyword should have been validated    ${tc.kws[-1]}

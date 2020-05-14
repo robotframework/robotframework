@@ -15,31 +15,36 @@ __ `Created outputs`_
 Selecting files to parse
 ------------------------
 
-Robot Framework supports test data in `various formats`__, but nowadays the
-`plain text format`_ in dedicated `*.robot` files is the most commonly used.
-Prior to Robot Framework 3.1, all files in all supported formats were parsed,
-meaning that also files not containing any test data could be parsed.
-To avoid parsing non-data files, especially large and slow to parse files,
-Robot Framework 3.0.1 added the :option:`--extension (-F)` option to select
-which files to parse. In Robot Framework 3.1 parsing other than `*.robot`
-files was deprecated and the :option:`--extension` option can be used to
-explicitly tell the framework to parse other files.
+When executing a single file, Robot Framework tries to parse and run it
+regardless the file extension. The file is expected to use the `plain text
+format`__ or, if it has :file:`.rst` or :file:`.rest` extension,
+the `reStructuredText format`_::
 
-The :option:`--extension` option takes a file extension as an argument, and
-only files with that extension are parsed. If there is a need to parse more
-than one kind of files, it is possible to use a colon `:` to separate
-extensions. Matching extensions is case insensitive.
-
-::
-
-  robot --extension robot path/to/tests        # Only parse *.robot files
-  robot --extension ROBOT:TXT path/to/tests    # Parse *.robot and *.txt files
-
-If files in one format use different extensions like ``*.rst`` and ``*.rest``,
-you need to specify those extensions separately. Using just one of them would
-mean that other files in that format are skipped.
+    robot example.robot    # Common case.
+    robot example.tsv      # Must be compatible with the plain text format.
+    robot example.rst      # reStructuredText format.
 
 __ `Supported file formats`_
+
+When executing a directory, Robot Framework only parses files with the
+:file:`.robot` extension by default. If files have other extensions,
+the :option:`--extension (-F)` option must be used to explicitly tell the
+framework to parse also them. If there is a need to parse more
+than one kind of files, it is possible to use a colon `:` to separate
+extensions. Matching extensions is case insensitive and the leading `.`
+can be omitted::
+
+  robot path/to/tests/                   # Parse only *.robot files.
+  robot --extension TSV path/to/tests    # Parse only *.tsv files.
+  robot -F robot:rst path/to/tests       # Parse *.robot and *.rst files.
+
+If files in one format use different extensions like :file:`.rst` and
+:file:`.rest`, they must be specified separately. Using just one of them
+would mean that other files in that format are skipped.
+
+.. note:: Prior to Robot Framework 3.1 also TXT, TSV and HTML files were
+          parsed by default. Starting from Robot Framework 3.2 HTML files
+          are not supported at all.
 
 Selecting test cases
 --------------------
@@ -361,12 +366,6 @@ they affect only a certain user. Alternatively they can be set temporarily
 before running a command, something that works extremely well in custom
 `start-up scripts`_.
 
-.. note:: Prior to Robot Framework 2.9, contents of ``PYTHONPATH`` environment
-          variable were added to the module search path by the framework itself
-          when running on Jython and IronPython. Nowadays that is not done
-          anymore and ``JYTHONPATH`` and ``IRONPYTHONPATH`` must be used with
-          these interpreters.
-
 Using `--pythonpath` option
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -506,7 +505,7 @@ Programmatic modification of test data
 --------------------------------------
 
 If the provided built-in features to modify test data before execution
-are not enough, Robot Framework 2.9 and newer makes it possible to do
+are not enough, Robot Framework makes it possible to do
 custom modifications programmatically. This is accomplished by creating
 a so called *pre-run modifier* and activating it using the
 :option:`--prerunmodifier` option.
@@ -651,10 +650,6 @@ Examples::
     robot --console quiet tests.robot
     robot --dotted tests.robot
 
-.. note:: :option:`--console`, :option:`--dotted` and :option:`--quiet`
-          are new options in Robot Framework 2.9. Prior to that the output
-          was always the same as in the current `verbose` mode.
-
 Console width
 ~~~~~~~~~~~~~
 
@@ -663,11 +658,6 @@ the option :option:`--consolewidth (-W)`. The default width is 78 characters.
 
 .. tip:: On many UNIX-like machines you can use handy `$COLUMNS`
          environment variable like `--consolewidth $COLUMNS`.
-
-.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
-          :option:`--monitorwidth` option that was first deprecated and is
-          nowadays removed. The short option :option:`-W` works the same way
-          in all versions.
 
 Console colors
 ~~~~~~~~~~~~~~
@@ -694,11 +684,6 @@ This option supports the following case-insensitive values:
 `off`
     Colors are disabled.
 
-.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
-          :option:`--monitorcolors` option that was first deprecated and is
-          nowadays removed. The short option :option:`-C` works the same way
-          in all versions.
-
 __ http://en.wikipedia.org/wiki/ANSI_escape_code
 
 Console markers
@@ -722,11 +707,6 @@ case-insensitive values:
 
 `off`
     Markers are disabled.
-
-.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
-          :option:`--monitormarkers` option that was first deprecated and is
-          nowadays removed. The short option :option:`-K` works the same way
-          in all versions.
 
 __ `Console output type`_
 

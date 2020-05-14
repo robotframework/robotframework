@@ -38,45 +38,43 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.errors import DataError
-from robot.parsing import Model
+from robot.parsing import (get_model, SuiteStructureBuilder,
+                           SuiteStructureVisitor)
+from robot.tidypkg import (Aligner, Cleaner, NewlineNormalizer,
+                           SeparatorNormalizer)
 from robot.utils import Application, file_writer
-# TODO: expose from package root
-from robot.running.builder.suitestructure import (SuiteStructureBuilder,
-                                                  SuiteStructureVisitor)
-from robot.writer import DataFileWriter
 
-# TODO: maybe rename --format to --extension
-# Proofread usage
-USAGE = """robot.tidy -- Robot Framework test data clean-up tool
+USAGE = """robot.tidy -- Robot Framework data clean-up tool
 
 Version:  <VERSION>
 
-Usage:  python -m robot.tidy [options] inputfile
-   or:  python -m robot.tidy [options] inputfile [outputfile]
-   or:  python -m robot.tidy --inplace [options] inputfile [more input files]
+Usage:  python -m robot.tidy [options] input
+   or:  python -m robot.tidy [options] input [output]
+   or:  python -m robot.tidy --inplace [options] input [more inputs]
    or:  python -m robot.tidy --recursive [options] directory
 
-Tidy tool can be used to clean up and change format of Robot Framework test
-data files. The output is written into the standard output stream by default,
+Tidy tool can be used to clean up Robot Framework data. It, for example, uses
+headers and settings consistently and adds consistent amount of whitespace
+between sections, keywords and their arguments, and other pieces of the data.
+It also converts old syntax to new syntax when appropriate.
+
+When tidying a single file, the output is written to the console by default,
 but an optional output file can be given as well. Files can also be modified
-in-place using --inplace or --recursive options.
+in-place using --inplace and --recursive options.
+
+All output files are written using UTF-8 encoding. Outputs written to the
+console use the current console encoding.
 
 Options
 =======
 
- -i --inplace    Tidy given file(s) so that original file(s) are overwritten
-                 (or removed, if the format is changed). When this option is
-                 used, it is possible to give multiple input files.
-                 Examples:
-                   python -m robot.tidy --inplace tests.robot
-                   python -m robot.tidy --inplace --format robot *.txt
+ -i --inplace    Tidy given file(s) so that original file(s) are overwritten.
+                 When this option is used, it is possible to give multiple
+                 input files.
  -r --recursive  Process given directory recursively. Files in the directory
                  are processed in-place similarly as when --inplace option
                  is used. Does not process referenced resource files.
- -f --format txt|robot
-                 Output file format. If omitted, the format of the input
-                 file is used.
- -p --usepipes   Use pipe ('|') as a cell separator in the plain text format.
+ -p --usepipes   Use pipe ('|') as a column separator in the plain text format.
  -s --spacecount number
                  The number of spaces between cells in the plain text format.
                  Default is 4.
@@ -87,40 +85,13 @@ Options
                  unix:    use Unix line separators (LF)
  -h -? --help    Show this help.
 
-Cleaning up the test data
-=========================
+Examples
+========
 
-Test case files can be normalized using Tidy. Tidy always writes consistent
-headers, consistent order for settings, and consistent amount of whitespace
-between sections and cells.
-
-Examples:
-  python -m robot.tidy messed_up_tests.robot cleaned_up_tests.robot
-  python -m robot.tidy --inplace tests.robot
+  python -m robot.tidy example.robot
+  python -m robot.tidy messed_up_data.robot cleaned_up_data.robot
+  python -m robot.tidy --inplace example.robot
   python -m robot.tidy --recursive path/to/tests
-
-Changing the test data format
-=============================
-
-Robot Framework supports test data in various formats, but nowadays the
-plain text format with the '.robot' extension is the most commonly used.
-Tidy makes it easy to convert data from one format to another.
-
-Input format is always determined based on the extension of the input file.
-If output file is given, the output format is got from its extension, and
-when using --inplace or --recursive, it is possible to specify the desired
-format using the --format option.
-
-Examples:
-  python -m robot.tidy tests.txt tests.robot
-  python -m robot.tidy --inplace tests.robot
-  python -m robot.tidy --format robot --recursive path/to/tests
-
-Output encoding
-===============
-
-All output files are written using UTF-8 encoding. Outputs written to the
-console use the current console encoding.
 
 Alternative execution
 =====================
@@ -141,11 +112,13 @@ class Tidy(SuiteStructureVisitor):
     Tidy command line options with same names.
     """
 
-    def __init__(self, format='robot', use_pipes=False, space_count=4,
+    def __init__(self, space_count=4, use_pipes=False,
                  line_separator=os.linesep):
-        self._options = dict(format=format, pipe_separated=use_pipes,
-                             txt_separating_spaces=space_count,
-                             line_separator=line_separator)
+        self.space_count = space_count
+        self.use_pipes = use_pipes
+        self.line_separator = line_separator
+        self.short_test_name_length = 18
+        self.setting_and_variable_name_length = 14
 
     def file(self, path, outpath=None):
         """Tidy a file.
@@ -156,15 +129,13 @@ class Tidy(SuiteStructureVisitor):
 
         Use :func:`inplace` to tidy files in-place.
         """
-        data = Model(path)
-        with self._get_writer(outpath) as writer:
-            self._save_file(data, writer)
+        with self._get_output(outpath) as writer:
+            self._tidy(get_model(path), writer)
             if not outpath:
                 return writer.getvalue().replace('\r\n', '\n')
 
-    def _get_writer(self, outpath):
-        return file_writer(outpath, newline=self._options['line_separator'],
-                           usage='Tidy output')
+    def _get_output(self, path):
+        return file_writer(path, newline='', usage='Tidy output')
 
     def inplace(self, *paths):
         """Tidy file(s) in-place.
@@ -172,9 +143,9 @@ class Tidy(SuiteStructureVisitor):
         :param paths: Paths of the files to to process.
         """
         for path in paths:
-            data = Model(path)
-            os.remove(path)
-            self._save_file(data, output=self._get_writer(path))
+            model = get_model(path)
+            with self._get_output(path) as output:
+                self._tidy(model, output)
 
     def directory(self, path):
         """Tidy a directory.
@@ -186,8 +157,15 @@ class Tidy(SuiteStructureVisitor):
         data = SuiteStructureBuilder().build([path])
         data.visit(self)
 
-    def _save_file(self, data, output=None):
-        DataFileWriter(output=output, **self._options).write(data)
+    def _tidy(self, model, output):
+        Cleaner().visit(model)
+        NewlineNormalizer(self.line_separator,
+                          self.short_test_name_length).visit(model)
+        SeparatorNormalizer(self.use_pipes, self.space_count).visit(model)
+        Aligner(self.short_test_name_length,
+                self.setting_and_variable_name_length,
+                self.use_pipes).visit(model)
+        model.save(output)
 
     def visit_file(self, file):
         self.inplace(file.source)
@@ -209,9 +187,9 @@ class TidyCommandLine(Application):
     def __init__(self):
         Application.__init__(self, USAGE, arg_limits=(1,))
 
-    def main(self, arguments, recursive=False, inplace=False, format='txt',
+    def main(self, arguments, recursive=False, inplace=False,
              usepipes=False, spacecount=4, lineseparator=os.linesep):
-        tidy = Tidy(format=format, use_pipes=usepipes, space_count=spacecount,
+        tidy = Tidy(use_pipes=usepipes, space_count=spacecount,
                     line_separator=lineseparator)
         if recursive:
             tidy.directory(arguments[0])
@@ -225,7 +203,6 @@ class TidyCommandLine(Application):
         validator = ArgumentValidator()
         opts['recursive'], opts['inplace'] = validator.mode_and_args(args,
                                                                      **opts)
-        opts['format'] = validator.format(args, **opts)
         opts['lineseparator'] = validator.line_sep(**opts)
         if not opts['spacecount']:
             opts.pop('spacecount')
@@ -265,16 +242,6 @@ class ArgumentValidator(object):
         if not os.path.isfile(args[0]):
             raise DataError('Default mode requires input to be a file.')
 
-    def format(self, args, format, inplace, recursive, **others):
-        if not format:
-            if inplace or recursive or len(args) < 2:
-                return None
-            format = os.path.splitext(args[1])[1][1:]
-        format = format.upper()
-        if format not in ('TXT', 'ROBOT'):
-            raise DataError("Invalid format '%s'." % format)
-        return format
-
     def line_sep(self, lineseparator, **others):
         values = {'native': os.linesep, 'windows': '\r\n', 'unix': '\n'}
         try:
@@ -301,7 +268,7 @@ def tidy_cli(arguments):
 
         from robot.tidy import tidy_cli
 
-        tidy_cli(['--format', 'robot', 'tests.txt'])
+        tidy_cli(['--spacecount', '2', 'tests.robot'])
     """
     TidyCommandLine().execute_cli(arguments)
 

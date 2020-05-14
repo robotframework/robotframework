@@ -49,8 +49,14 @@
         }
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
+        params = util.parseQueryString(window.location.search.slice(1));
+        if ("tag" in params) {
+            tagSearch(params["tag"], window.location.hash);
+        }
         scrollToHash();
-        $(document).bind('keydown', handleKeydown);
+        $(document).bind('keydown', handleKeyDown);
+        // https://github.com/robotframework/robotframework/issues/3456
+        $('.shortcuts a').width('max-content');
     });
 
     function parseTemplates() {
@@ -70,7 +76,7 @@
         $.tmpl(name + '-template', arguments).appendTo(container);
     }
 
-    function handleKeydown(event) {
+    function handleKeyDown(event) {
         event = event || window.event;
         var keyCode = event.keyCode || event.which;
         if (keyCode === 27)  // esc
@@ -87,11 +93,14 @@
         }
     }
 
-    function tagSearch(tag) {
+    function tagSearch(tag, hash) {
         var include = {tags: true, tagsExact: true};
+        var url = window.location.pathname + "?tag=" + tag + (hash || "");
         markMatches(tag, include);
         highlightMatches(tag, include);
         $('#keywords-container').find('.kw-row').addClass('hide-unmatched');
+        history.replaceState && history.replaceState(null, '', url);
+        document.getElementById('Shortcuts').scrollIntoView();
     }
 
     function doSearch() {
@@ -202,10 +211,7 @@
 
     function resetSearch() {
         $('#search-string').val('');
-        $('#include-name').prop('checked', true);
-        $('#include-args').prop('checked', true);
-        $('#include-doc').prop('checked', true);
-        $('#hide-unmatched').prop('checked', false);
+        $('#search input:checkbox').prop({'checked': true, 'disabled': false});
         resetKeywords();
     }
 
@@ -217,6 +223,8 @@
         }
         $('#match-count').hide();
         $('#altogether-count').show();
+        history.replaceState && history.replaceState(null, '', location.pathname + location.hash);
+        scrollToHash();
     }
 
     function setMatchVisibility() {
@@ -309,7 +317,7 @@
         <a href="#${encodeURIComponent($value.name)}"
            class="{{if $value.matched === false}}no-{{/if}}match"
            title="${$value.shortdoc}">${$value.name}</a>
-        {{if $index < keywords.length-1}} &middot; {{/if}}
+        {{if $index < keywords.length-1}}&middot;{{/if}}
         {{/each}}
     </div>
 </script>
@@ -319,10 +327,11 @@
     <div class='shortcuts'>
         {{each all_tags}}
         <a href="javascript:tagSearch('${$value}')"
-           title="Show tests with this tag">${$value}</a> &middot;
+           title="Show keywords with this tag">${$value}</a>
+        &middot;
         {{/each}}
         <a href="javascript:resetKeywords()" class="normal-first-letter"
-           title="Show all tests">[Reset]</a>
+           title="Show all keywords">[Reset]</a>
     </div>
 </script>
 
@@ -358,7 +367,7 @@
         <td class="tags">
             {{each tags}}
             <a href="javascript:tagSearch('${$value}')"
-               title="Show tests with this tag">${$value}</a>{{if $index < tags.length-1}}, {{/if}}
+               title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}}, {{/if}}
             {{/each}}
         </td>
         {{/if}}

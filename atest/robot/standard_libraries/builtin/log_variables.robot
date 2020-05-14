@@ -173,6 +173,9 @@ Log Variables In User Keyword
     Check Variable Message    \${ukvar} = Value of an uk variable
     Should Be Equal As Integers    ${kw.message_count}    39    Wrong total message count
 
+List and dict variables failing during iteration
+    Check Test Case    ${TEST NAME}
+
 *** Keywords ***
 Check Variable Message
     [Arguments]    ${expected}    ${level}=INFO    ${pattern}=

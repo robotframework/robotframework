@@ -37,7 +37,15 @@ def escape(item):
     return item
 
 
-# TODO: Deprecate/remove support for ignoring space after literal newline!
+def glob_escape(item):
+    # Python 3.4+ has `glob.escape()` but it has special handling for drives
+    # that we don't want.
+    for char in '[*?':
+        if char in item:
+            item = item.replace(char, '[%s]' % char)
+    return item
+
+
 class Unescaper(object):
     _escape_sequences = re.compile(r'''
         (\\+)                # escapes
@@ -61,8 +69,12 @@ class Unescaper(object):
 
     def _handle_n(self, value):
         if value:
-            from robot.output import LOGGER
-            LOGGER.warn(r"Ignoring space after '\n' is deprecated.")
+            # TODO: Remove this feature for good in RF 3.3!
+            from robot.output import librarylogger
+            librarylogger.warn(
+                "Ignoring space after '\\n' is deprecated. For more info see: "
+                "https://github.com/robotframework/robotframework/issues/3333"
+            )
         return '\n'
 
     def _hex_to_unichr(self, value):
@@ -95,21 +107,38 @@ unescape = Unescaper().unescape
 
 
 def split_from_equals(string):
+    from robot.variables import VariableIterator
     if not is_string(string) or '=' not in string:
         return string, None
-    index = _get_split_index(string)
-    if index == -1:
+    variables = VariableIterator(string, ignore_errors=True)
+    if not variables and '\\' not in string:
+        return tuple(string.split('=', 1))
+    try:
+        index = _find_split_index(string, variables)
+    except ValueError:
         return string, None
     return string[:index], string[index+1:]
 
-def _get_split_index(string):
+
+def _find_split_index(string, variables):
+    relative_index = 0
+    for before, match, string in variables:
+        try:
+            return _find_split_index_from_part(before) + relative_index
+        except ValueError:
+            relative_index += len(before) + len(match)
+    return _find_split_index_from_part(string) + relative_index
+
+
+def _find_split_index_from_part(string):
     index = 0
     while '=' in string[index:]:
         index += string[index:].index('=')
         if _not_escaping(string[:index]):
             return index
         index += 1
-    return -1
+    raise ValueError
+
 
 def _not_escaping(name):
     backslashes = len(name) - len(name.rstrip('\\'))

@@ -20,16 +20,15 @@ import shlex
 import sys
 import glob
 import string
-import textwrap
 
 from robot.errors import DataError, Information, FrameworkError
 from robot.version import get_full_version
 
-from .misc import plural_or_not
 from .encoding import console_decode, system_decode
+from .filereader import FileReader
+from .misc import plural_or_not
 from .platform import PY2
-from .utf8reader import Utf8Reader
-from .robottypes import is_falsy, is_integer, is_list_like, is_string, is_unicode
+from .robottypes import is_falsy, is_integer, is_string, is_unicode
 
 
 def cmdline2list(args, escaping=False):
@@ -374,7 +373,7 @@ class ArgFileParser(object):
 
     def _read_from_file(self, path):
         try:
-            with Utf8Reader(path) as reader:
+            with FileReader(path) as reader:
                 return reader.read()
         except (IOError, UnicodeError) as err:
             raise DataError("Opening argument file '%s' failed: %s"
