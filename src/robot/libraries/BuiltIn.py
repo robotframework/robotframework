@@ -670,14 +670,13 @@ class _Verify(_BuiltInBase):
         return is_truthy(values) and str(values).upper() != 'NO VALUES'
 
     def _strip_spaces(selfself, string_value, strip_spaces):
-        if strip_spaces:
-            if isinstance(strip_spaces, str):
-                if strip_spaces.upper() == 'LEADING':
-                    string_value = string_value.lstrip()
-                elif strip_spaces.upper() == 'TRAILING':
-                    string_value = string_value.rstrip()
-            elif is_truthy(strip_spaces):
-                string_value = string_value.strip()
+        if isinstance(strip_spaces, str):
+            if strip_spaces.upper() == 'LEADING':
+                string_value = string_value.lstrip()
+            elif strip_spaces.upper() == 'TRAILING':
+                string_value = string_value.rstrip()
+        elif is_truthy(strip_spaces):
+            string_value = string_value.strip()
         return string_value
 
     def should_not_be_equal(self, first, second, msg=None, values=True,
@@ -703,8 +702,9 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case) and is_string(first) and is_string(second):
             first = first.lower()
             second = second.lower()
-        first = self._strip_spaces(first, strip_spaces)
-        second = self._strip_spaces(second, strip_spaces)
+        if strip_spaces:
+            first = self._strip_spaces(first, strip_spaces)
+            second = self._strip_spaces(second, strip_spaces)
         self._should_not_be_equal(first, second, msg, values)
 
     def _should_not_be_equal(self, first, second, msg, values):
@@ -830,8 +830,9 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             first = first.lower()
             second = second.lower()
-        first = self._strip_spaces(first, strip_spaces)
-        second = self._strip_spaces(second, strip_spaces)
+        if strip_spaces:
+            first = self._strip_spaces(first, strip_spaces)
+            second = self._strip_spaces(second, strip_spaces)
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True,
@@ -864,8 +865,9 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             first = first.lower()
             second = second.lower()
-        first = self._strip_spaces(first, strip_spaces)
-        second = self._strip_spaces(second, strip_spaces)
+        if strip_spaces:
+            first = self._strip_spaces(first, strip_spaces)
+            second = self._strip_spaces(second, strip_spaces)
         self._should_be_equal(first, second, msg, values, formatter)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True,
@@ -879,8 +881,9 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             str1 = str1.lower()
             str2 = str2.lower()
-        str1 = self._strip_spaces(str1, strip_spaces)
-        str2 = self._strip_spaces(str2, strip_spaces)
+        if strip_spaces:
+            str1 = self._strip_spaces(str1, strip_spaces)
+            str2 = self._strip_spaces(str2, strip_spaces)
         if str1.startswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'starts with'))
@@ -896,8 +899,9 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             str1 = str1.lower()
             str2 = str2.lower()
-        str1 = self._strip_spaces(str1, strip_spaces)
-        str2 = self._strip_spaces(str2, strip_spaces)
+        if strip_spaces:
+            str1 = self._strip_spaces(str1, strip_spaces)
+            str2 = self._strip_spaces(str2, strip_spaces)
         if not str1.startswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not start with'))
@@ -913,8 +917,9 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             str1 = str1.lower()
             str2 = str2.lower()
-        str1 = self._strip_spaces(str1, strip_spaces)
-        str2 = self._strip_spaces(str2, strip_spaces)
+        if strip_spaces:
+            str1 = self._strip_spaces(str1, strip_spaces)
+            str2 = self._strip_spaces(str2, strip_spaces)
         if str1.endswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'ends with'))
@@ -931,8 +936,9 @@ class _Verify(_BuiltInBase):
         if is_truthy(ignore_case):
             str1 = str1.lower()
             str2 = str2.lower()
-        str1 = self._strip_spaces(str1, strip_spaces)
-        str2 = self._strip_spaces(str2, strip_spaces)
+        if strip_spaces:
+            str1 = self._strip_spaces(str1, strip_spaces)
+            str2 = self._strip_spaces(str2, strip_spaces)
         if not str1.endswith(str2):
             raise AssertionError(self._get_string_msg(str1, str2, msg, values,
                                                       'does not end with'))
@@ -1011,7 +1017,13 @@ class _Verify(_BuiltInBase):
                 container = container.lower()
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
-        #TODO strip_spaces
+        # TODO add acceptanve tests
+        if strip_spaces and is_string(item):
+            item = self._strip_spaces(item, strip_spaces)
+            if is_string(container):
+                container = self._strip_spaces(container, strip_spaces)
+            elif is_list_like(container):
+                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
         if item not in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'does not contain'))

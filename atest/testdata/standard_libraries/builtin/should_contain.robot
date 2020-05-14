@@ -32,6 +32,15 @@ Should Contain case-insensitive
     ${DICT}     Ä      ignore_case=yes
     ${DICT1}    XXX    ignore_case=yes
 
+Should Contain without leading spaces
+    [Documentation]    FAIL '{'a': 1}' does not contain 'xxx'
+    [Template]    Should Contain
+    abcdefg     CD     ignore_case=True
+    HYVÄ        vä     ignore_case=yes
+    ${LIST}     CEE    ignore_case=!!!
+    ${DICT}     Ä      ignore_case=yes
+    ${DICT1}    XXX    ignore_case=yes
+
 Should Not Contain
     [Documentation]    FAIL 'Hello yet again' contains 'yet'
     [Template]    Should Not Contain
