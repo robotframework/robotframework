@@ -54,6 +54,12 @@ function expandElement(item) {
     var children = element.children('.children');
     // .css is faster than .show and .show w/ callback is terribly slow
     children.css({'display': 'block'});
+    // in rare cases on large logs concurrent expanding fails => retry
+    if (children.css('display')!='block') { 
+        console.debug('expandElement '+item.id+' failed! planning retry...');
+        setTimeout(function() { expandElement(item); }, 0); 
+        return;
+    }
     populateChildren(item.id, children, item.childrenNames);
     element.children('.element-header').removeClass('closed');
 }
