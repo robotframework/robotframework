@@ -9,17 +9,13 @@ def split_optional(s, delim):
 
 
 class LoggingState(object):
-    def __init__(self):
-        self.log_here = True
-        self.remove_called = 0
+    def __init__(self, prev_state=None):
+        if prev_state:
+            self.remove_called = max(prev_state.remove_called - 1, 0)
+        else:
+            self.remove_called = 0
+        self.log_here = self.remove_called == 0
         self.is_started = True
-
-    def next_level(self):
-        next_state = LoggingState()
-        remove_remaining = max(self.remove_called - 1, 0)
-        next_state.log_here = remove_remaining == 0
-        next_state.remove_called = remove_remaining
-        return next_state
 
     def flatten(self, attribute):
         self.remove_called = int(attribute) if attribute else 0
@@ -32,12 +28,10 @@ class LoggingState(object):
     def reduce(self, attribute):
         self.remove_called = int(attribute) + 1 if attribute else 999
 
-    def __str__(self):
-        return f'{self.log_here}-{self.remove_called}-{self.is_started}'
-
 
 class LogController(AbstractLogger):
-    def __init__(self):
+    def __init__(self, level='TRACE'):
+        AbstractLogger.__init__(self, level)
         self.start_test()
 
     def push(self, item):
@@ -52,7 +46,7 @@ class LogController(AbstractLogger):
         self.keyword_stack = list([LoggingState()])
 
     def start_keyword(self, keyword):
-        logging_state = self.current().next_level()
+        logging_state = LoggingState(self.current())
         for tag in keyword.tags:
             sentenal, tag = split_optional(tag, ':')
             if not sentenal in ['rf', 'robot']:
@@ -71,8 +65,5 @@ class LogController(AbstractLogger):
     def should_log(self):
         return self.current().is_started
 
-    def _do_nothing(self, *args):
+    def message(self, *args):
         return
-
-    message = log_message = output_file = _imported = close = _do_nothing
-    start_suite = end_suite = end_test = _do_nothing
