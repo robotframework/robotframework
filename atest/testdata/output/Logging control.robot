@@ -28,7 +28,7 @@ Several keywords
     -    Log    doing
 
 -
-    [Tags]    rf:remove-2
+    [Tags]    rf:flatten-2
     [Arguments]    @{kw}
     Run keyword    @{kw}
 
@@ -38,6 +38,7 @@ Flattened keyword
 
 Higher keyword
     Removed keyword
+    Log    This text should show under Log, but the removed keyword and text is nowhere to be seen
 
 Removed keyword
     [Tags]    rf:remove

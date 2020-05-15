@@ -22,8 +22,7 @@ from .loggerhelper import IsLogged
 
 class XmlLogger(ResultVisitor):
 
-    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot', controller=None):
-        self._log_message_is_logged = IsLogged(log_level)
+    def __init__(self, path, rpa=False, generator='Robot', controller=None):
         self._error_message_is_logged = IsLogged('WARN')
         self._writer = self._get_writer(path, rpa, generator)
         self._errors = []
@@ -47,14 +46,14 @@ class XmlLogger(ResultVisitor):
         self._writer.close()
 
     def set_log_level(self, level):
-        return self._log_message_is_logged.set_level(level)
+        return self._controller.set_log_level(level)
 
     def message(self, msg):
         if self._error_message_is_logged(msg.level):
             self._errors.append(msg)
 
     def log_message(self, msg):
-        if self._log_message_is_logged(msg.level):
+        if self._controller.message_is_logged(msg.level):
             self._write_message(msg)
 
     def _write_message(self, msg):
@@ -64,7 +63,7 @@ class XmlLogger(ResultVisitor):
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
-        if self._controller and not self._controller.should_log():
+        if self._controller and not self._controller.keyword_is_logged():
             return
         attrs = {'name': kw.kwname, 'library': kw.libname}
         if kw.type != 'kw':
@@ -76,7 +75,7 @@ class XmlLogger(ResultVisitor):
         self._write_list('assign', 'var', kw.assign)
 
     def end_keyword(self, kw):
-        if self._controller and not self._controller.should_log():
+        if self._controller and not self._controller.keyword_is_logged():
             return
         if kw.timeout:
             self._writer.element('timeout', attrs={'value': unic(kw.timeout)})
