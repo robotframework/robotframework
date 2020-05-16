@@ -23,3 +23,9 @@ Should Not Contain case-insensitive
 
 Should Contain without leading spaces
     Check Test Case    ${TESTNAME}
+
+Should Contain without trailing spaces
+    Check Test Case    ${TESTNAME}
+
+Should Contain without leading and trailing spaces
+    Check Test Case    ${TESTNAME}
