@@ -20,3 +20,6 @@ Should Not Contain with non-strings
 
 Should Not Contain case-insensitive
     Check Test Case    ${TESTNAME}
+
+Should Contain without leading spaces
+    Check Test Case    ${TESTNAME}
