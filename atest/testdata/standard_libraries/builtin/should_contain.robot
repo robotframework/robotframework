@@ -43,6 +43,33 @@ Should Contain without leading spaces
     ${DICT4}    c          strip_spaces=leading
     ${DICT4}    \na        strip_spaces=Leeding
 
+Should Contain without trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) '${DICT4}' does not contain 'a'
+    ...
+    ...    2) '${DICT4}' does not contain 'ak\n'
+    [Template]    Should Contain
+    abcdefg     cd\n\t     strip_spaces=trailing
+    HYVÄ \t     VÄ         strip_spaces=Trailing
+    bar \n      ba\t       strip_spaces=TRAILING
+    ${DICT4}    a\t        strip_spaces=trailinG
+    ${DICT4}    a b\t\n    strip_spaces=trailing
+    ${DICT4}    dd \t      strip_spaces=trailing
+    ${DICT4}    ak\n       strip_spaces=trailin
+
+Should Contain without leading and trailing spaces
+    [Documentation]    FAIL '${DICT4}' does not contain '\ dd\t'
+    [Template]    Should Contain
+    abcdefg      \tcd\n    strip_spaces=True
+    \n HYVÄ\t    VÄ        strip_spaces=TRUE
+    \ bar \n     \ ba\t    strip_spaces=yes
+    ${DICT4}     \na\t     strip_spaces=TRUE
+    ${DICT4}     \ta b\n   strip_spaces=Yes
+    ${DICT4}     \ ak\n    strip_spaces=True
+    ${DICT4}     \ dd\t    strip_spaces=yee
+
+
 Should Not Contain
     [Documentation]    FAIL 'Hello yet again' contains 'yet'
     [Template]    Should Not Contain
