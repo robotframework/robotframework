@@ -977,7 +977,13 @@ class _Verify(_BuiltInBase):
                 container = container.lower()
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
-        #TODO strip_spaces
+        # TODO add acceptance tests
+        if strip_spaces and is_string(item):
+            item = self._strip_spaces(item, strip_spaces)
+            if is_string(container):
+                container = self._strip_spaces(container, strip_spaces)
+            elif is_list_like(container):
+                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
         if item in container:
             raise AssertionError(self._get_string_msg(orig_container, item, msg,
                                                       values, 'contains'))
@@ -1017,7 +1023,7 @@ class _Verify(_BuiltInBase):
                 container = container.lower()
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
-        # TODO add acceptanve tests
+        # TODO add acceptance tests
         if strip_spaces and is_string(item):
             item = self._strip_spaces(item, strip_spaces)
             if is_string(container):
@@ -1054,6 +1060,7 @@ class _Verify(_BuiltInBase):
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
         ignore_case = configuration.pop('ignore_case', False)
+        strip_spaces = configuration.pop('strip_spaces', False)
         if configuration:
             raise RuntimeError("Unsupported configuration parameter%s: %s."
                                % (s(configuration),
@@ -1067,6 +1074,13 @@ class _Verify(_BuiltInBase):
                 container = container.lower()
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
+        # TODO add acceptance tests
+        if strip_spaces:
+            items = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in items]
+            if is_string(container):
+                container = self._strip_spaces(container, strip_spaces)
+            elif is_list_like(container):
+                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
         if not any(item in container for item in items):
             msg = self._get_string_msg(orig_container,
                                        seq2str(items, lastsep=' or '),
@@ -1101,6 +1115,7 @@ class _Verify(_BuiltInBase):
         msg = configuration.pop('msg', None)
         values = configuration.pop('values', True)
         ignore_case = configuration.pop('ignore_case', False)
+        strip_spaces = configuration.pop('strip_spaces', False)
         if configuration:
             raise RuntimeError("Unsupported configuration parameter%s: %s."
                                % (s(configuration),
@@ -1114,6 +1129,13 @@ class _Verify(_BuiltInBase):
                 container = container.lower()
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
+        # TODO add acceptance tests
+        if strip_spaces:
+            items = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in items]
+            if is_string(container):
+                container = self._strip_spaces(container, strip_spaces)
+            elif is_list_like(container):
+                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container)
         if any(item in container for item in items):
             msg = self._get_string_msg(orig_container,
                                        seq2str(items, lastsep=' or '),
@@ -1161,7 +1183,13 @@ class _Verify(_BuiltInBase):
                 item1 = item1.lower()
             elif is_list_like(item1):
                 item1 = [x.lower() if is_string(x) else x for x in item1]
-        #TODO strip_spaces
+        # TODO add acceptance tests
+        if strip_spaces and is_string(item2):
+            item = self._strip_spaces(item2, strip_spaces)
+            if is_string(item1):
+                container = self._strip_spaces(item1, strip_spaces)
+            elif is_list_like(item1):
+                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in item1)
         x = self.get_count(item1, item2)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
