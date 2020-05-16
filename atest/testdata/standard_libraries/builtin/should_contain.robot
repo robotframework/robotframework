@@ -33,13 +33,15 @@ Should Contain case-insensitive
     ${DICT1}    XXX    ignore_case=yes
 
 Should Contain without leading spaces
-    [Documentation]    FAIL '{'a': 1}' does not contain 'xxx'
+    [Documentation]    FAIL '${DICT4}' does not contain '\na'
     [Template]    Should Contain
-    abcdefg     CD     ignore_case=True
-    HYVÄ        vä     ignore_case=yes
-    ${LIST}     CEE    ignore_case=!!!
-    ${DICT}     Ä      ignore_case=yes
-    ${DICT1}    XXX    ignore_case=yes
+    abcdefg     \n\tcd     strip_spaces=leading
+    \t HYVÄ     VÄ         strip_spaces=Leading
+    \n bar      \tba       strip_spaces=leadinG
+    ${DICT4}    \ a        strip_spaces=LEADING
+    ${DICT4}    \n a b     strip_spaces=leading
+    ${DICT4}    c          strip_spaces=leading
+    ${DICT4}    \na        strip_spaces=Leeding
 
 Should Not Contain
     [Documentation]    FAIL 'Hello yet again' contains 'yet'

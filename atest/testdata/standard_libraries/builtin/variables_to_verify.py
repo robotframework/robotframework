@@ -35,6 +35,7 @@ def get_variables():
         DICT_1={'a': 1},
         DICT_2={'a': 1, 2: 'b'},
         DICT_3={'a': 1, 'b': 2, 'c': 3},
+        DICT_4={'\ta': 1, 'a b': 2, '  c': 3},
     )
     variables['ASCII_DICT'] = ascii(variables['DICT'])
     variables['PREPR_DICT1'] = "{'a': 1}" if PY3_OR_IPY else "{b'a': 1}"
