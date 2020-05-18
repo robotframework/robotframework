@@ -172,7 +172,27 @@ itself. Users should thus not use any tag with these prefixes unless actually
 activating the special functionality.
 
 __ `Removing keywords`_
+Using the tag `robot:remove` keyword tag will cause the keyword and any log
+messages to be removed completly - it is as if the keyword was not there,
+but any functional effect will have taken place.
+
 __ `Flattening keywords`_
+Using the `robot:flatten` tag on a keyword causes the keyword with the tag to 
+be removed from the log. Keywords called by the keyword are subsequently logged
+as if they were part of the calling test or keyword.
+
+__ `Reduceing keywords`_
+Using the `robot:reduce` keyword causes any keywords called by this keyword to
+be removed from the log. Output from those keywords show as if produced by the
+keyword with this tag.
+
+__ `Remove, Flatten and Reduce through multiple levels`_
+The remove, flatten and reduce tags can be given an attribute to cascade the
+effect to lower level keywords or limit how many levels are cascaded. 
+e.g. robot:flatten-2 will flatten this keyword and called keywords, 
+but keywords called by those will be logged as normal. Message log level
+for the lower level keywords will also be restored to what it was prior to using tags.
+
 __ `Reserved tags`_
 
 User keyword arguments

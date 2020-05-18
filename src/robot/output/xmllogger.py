@@ -46,7 +46,7 @@ class XmlLogger(ResultVisitor):
         self._writer.close()
 
     def set_log_level(self, level):
-        return self._controller.set_log_level(level)
+        return self._controller.set_level(level)
 
     def message(self, msg):
         if self._error_message_is_logged(msg.level):

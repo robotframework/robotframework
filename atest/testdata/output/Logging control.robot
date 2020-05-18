@@ -24,16 +24,17 @@ Keyword with tag args
 Several keywords
     Log    Hello
     -    Log    There
+    Set log level    robot:reduce
     Log    How are you
     -    Log    doing
 
 -
-    [Tags]    rf:flatten-2
+    [Tags]    robot:flatten-2
     [Arguments]    @{kw}
     Run keyword    @{kw}
 
 Flattened keyword
-    [Tags]    rf:flatten
+    [Tags]    robot:flatten
     Log    This text should show under Log within the test, Flattened keyword should not be visible
 
 Higher keyword
@@ -41,11 +42,11 @@ Higher keyword
     Log    This text should show under Log, but the removed keyword and text is nowhere to be seen
 
 Removed keyword
-    [Tags]    rf:remove
+    [Tags]    robot:remove
     Log    This text should show under higher keyword, not under Removed keyword or Log
 
 Reduced keyword
-    [Tags]    rf:reduce
+    [Tags]    robot:reduce
     Log    This text should show under reduced keyword, not under Log
 
 This has tag args
