@@ -41,6 +41,9 @@ class TestSuiteBuilder(object):
 
     Both modifying the suite and inspecting what data it contains are easiest
     done by using the :mod:`~robot.model.visitor` interface.
+
+    This class is part of the public API and should be imported via the
+    :mod:`robot.api` package.
     """
 
     def __init__(self, included_suites=None, included_extensions=('robot',),
