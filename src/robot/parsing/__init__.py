@@ -39,9 +39,9 @@ The publicly exposed parsing entry points are the following:
 
 .. note:: The :mod:`robot.parsing` package has been totally rewritten in
           Robot Framework 3.2 and all code using it needs to be updated.
-          Depending on the use case, it may be possible to use the higher
-          level :func:`~robot.running.builder.builders.TestSuiteBuilder`
-          that has not been changed instead.
+          Depending on the use case, it may be possible to instead use the
+          higher level :func:`~robot.running.builder.builders.TestSuiteBuilder`
+          that has only seen minor configuration changes.
 
 Parsing data to tokens
 ----------------------

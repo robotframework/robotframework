@@ -383,10 +383,13 @@ One of the nice features of the `new test data parser`_ is the new stable
 parsing API (`#3373`_). Unfortunately this API is stable only going forward,
 and all tools using the old parsing API need to be updated when migrating
 to Robot Framework 3.2. To see what has changed, see the old__ and new__
-API documentation.
+API documentation. Depending on the use case, it may be possible to instead use
+the higher level `TestSuiteBuilder()`__ that has seen only minor configuration
+changes.
 
 __ https://robot-framework.readthedocs.io/en/v3.1.2/autodoc/robot.parsing.html
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.parsing.html
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.builder.html#robot.running.builder.builders.TestSuiteBuilder
 
 Changes to recognizing and evaluating variables
 -----------------------------------------------
