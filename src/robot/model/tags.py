@@ -41,12 +41,15 @@ class Tags(object):
     def add(self, tags):
         self._tags = tuple(self) + tuple(Tags(tags))
 
-    def remove(self, tags):
-        tags = TagPatterns(tags)
-        self._tags = [t for t in self if not tags.match(t)]
+    def remove(self, tag_patterns, memo=None):
+        tag_patterns = TagPatterns(tag_patterns, memo=memo)
+        self._tags = [t for t in self if not tags.match_normalized(t)]
 
-    def match(self, tags):
-        return TagPatterns(tags).match(self)
+    def match(self, tag_patterns, memo=None):
+        return TagPatterns(tags, memo=memo).match(self)
+
+    def match_normalized(self, tag_patterns, memo=None):
+        return TagPatterns(tags, memo=memo).match_normalized(self)
 
     def __contains__(self, tags):
         return self.match(tags)
@@ -85,12 +88,13 @@ class Tags(object):
 @py2to3
 class TagPatterns(object):
 
-    def __init__(self, patterns):
-        self._patterns = tuple(TagPattern(p) for p in Tags(patterns))
+    def __init__(self, patterns, memo=None):
+        self._memo = dict() if memo is None else memo
+        self._patterns = tuple(TagPattern(p, memo) for p in Tags(patterns))
 
     def match(self, tags):
         tags = tags if isinstance(tags, Tags) else Tags(tags)
-        return any(p.match(tags) for p in self._patterns)
+        return any(p.match_normalized(tags) for p in self._patterns)
 
     def __contains__(self, tag):
         return self.match(tag)
@@ -108,25 +112,32 @@ class TagPatterns(object):
         return u'[%s]' % u', '.join(pattern.__unicode__() for pattern in self)
 
 
-def TagPattern(pattern):
+def TagPattern(pattern, memo):
     pattern = pattern.replace(' ', '')
     if 'NOT' in pattern:
-        return NotTagPattern(*pattern.split('NOT'))
+        return NotTagPattern(*pattern.split('NOT'), memo)
     if 'OR' in pattern:
-        return OrTagPattern(pattern.split('OR'))
+        return OrTagPattern(pattern.split('OR'), memo)
     if 'AND' in pattern or '&' in pattern:
-        return AndTagPattern(pattern.replace('&', 'AND').split('AND'))
-    return SingleTagPattern(pattern)
+        return AndTagPattern(pattern.replace('&', 'AND').split('AND'), memo)
+    return SingleTagPattern(pattern, memo)
 
 
 @py2to3
 class SingleTagPattern(object):
 
-    def __init__(self, pattern):
-        self._matcher = Matcher(pattern, ignore='_')
+    def __init__(self, normalized_pattern, memo=None):
+        self._memo = dict() if memo is None else memo
+        if normalized_pattern in self._memo:
+            self._matcher = self._memo[n_pattern]
+        else
+            self._matcher = Matcher(normalized_pattern, ignore='_')
 
     def match(self, tags):
         return self._matcher.match_any(tags)
+
+    def match_normalized(self, tags):
+        return self._matcher.match_normalized_any(tags)
 
     def __iter__(self):
         yield self
@@ -141,11 +152,15 @@ class SingleTagPattern(object):
 @py2to3
 class AndTagPattern(object):
 
-    def __init__(self, patterns):
-        self._patterns = tuple(TagPattern(p) for p in patterns)
+    def __init__(self, patterns, memo):
+        self._memo = dict() if memo is None else memo
+        self._patterns = tuple(TagPattern(p, self._memo) for p in patterns)
 
     def match(self, tags):
         return all(p.match(tags) for p in self._patterns)
+
+    def match_normalized(self, tags):
+        return all(p.match_normalized(tags) for p in self._patterns)
 
     def __iter__(self):
         return iter(self._patterns)
@@ -157,11 +172,15 @@ class AndTagPattern(object):
 @py2to3
 class OrTagPattern(object):
 
-    def __init__(self, patterns):
-        self._patterns = tuple(TagPattern(p) for p in patterns)
+    def __init__(self, patterns, memo):
+        self._memo = dict() if memo is None else memo
+        self._patterns = tuple(TagPattern(p, self._memo) for p in patterns)
 
     def match(self, tags):
         return any(p.match(tags) for p in self._patterns)
+
+    def match_normalized(self, tags):
+        return any(p.match_normalized(tags) for p in self._patterns)
 
     def __iter__(self):
         return iter(self._patterns)
@@ -173,14 +192,20 @@ class OrTagPattern(object):
 @py2to3
 class NotTagPattern(object):
 
-    def __init__(self, must_match, *must_not_match):
-        self._first = TagPattern(must_match)
-        self._rest = OrTagPattern(must_not_match)
+    def __init__(self, must_match, memo=None, *must_not_match):
+        self._memo = dict() if memo is None else memo
+        self._first = TagPattern(must_match, memo=self._memo)
+        self._rest = OrTagPattern(must_not_match, memo=self._memo)
 
     def match(self, tags):
         if not self._first:
             return not self._rest.match(tags)
         return self._first.match(tags) and not self._rest.match(tags)
+
+    def match_normalized(self, tags):
+        if not self._first:
+            return not self._rest.match_normalized(tags)
+        return self._first.match_normalzed(tags) and not self._rest.match_normalized(tags)
 
     def __iter__(self):
         yield self._first

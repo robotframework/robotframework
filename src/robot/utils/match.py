@@ -39,7 +39,9 @@ class Matcher(object):
         self.pattern = pattern
         self._normalize = partial(normalize, ignore=ignore, caseless=caseless,
                                   spaceless=spaceless)
-        self._regexp = self._compile(self._normalize(pattern), regexp=regexp)
+        self.normalized_pattern = self._normalize(pattern)
+        self._regexp = self._compile(self.normalized_pattern, regexp=regexp)
+        self._memo = dict()
 
     def _compile(self, pattern, regexp=False):
         if not regexp:
@@ -52,8 +54,18 @@ class Matcher(object):
     def match(self, string):
         return self._regexp.match(self._normalize(string)) is not None
 
+    def match_normalized(self, string):
+        if string in self._memo:
+            return self._memo[string]
+        ret = self._regexp.match(string) is not None
+        self._memo[string] = ret
+        return ret
+
     def match_any(self, strings):
         return any(self.match(s) for s in strings)
+
+    def match_normalized_any(self, strings):
+        return any(self.match_normalized(s) for s in strings)
 
     def __nonzero__(self):
         return bool(self._normalize(self.pattern))
@@ -62,9 +74,19 @@ class Matcher(object):
 class MultiMatcher(object):
 
     def __init__(self, patterns=None, ignore=(), caseless=True, spaceless=True,
-                 match_if_no_patterns=False, regexp=False):
-        self._matchers = [Matcher(pattern, ignore, caseless, spaceless, regexp)
-                          for pattern in self._ensure_list(patterns)]
+                 match_if_no_patterns=False, regexp=False, memo=None):
+        self._memo = dict() if memo is None else memo
+        _normalize = partial(normalize, ignore=ignore, caseless=caseless,
+                             spaceless=spaceless)
+        self._matchers = list()
+        for pattern in self._ensure_list(patterns):
+            pattern = _normalize(pattern)
+            if pattern in self._memo:
+                matcher = self._memo[pattern]
+            else:
+                matcher = Matcher(pattern, ignore, caseless, spaceless, regexp)
+                self._memo[pattern] = matcher
+            self.matchers.append(matcher)
         self._match_if_no_patterns = match_if_no_patterns
 
     def _ensure_list(self, patterns):
@@ -79,8 +101,16 @@ class MultiMatcher(object):
             return any(m.match(string) for m in self._matchers)
         return self._match_if_no_patterns
 
+    def match_normalized(self, string):
+        if self._matchers:
+            return any(m.match_normalized(string) for m in self._matchers)
+        return self._match_if_no_patterns
+
     def match_any(self, strings):
         return any(self.match(s) for s in strings)
+
+    def match_normalized_any(self, strings):
+        return any(self.match_normalized(s) for s in strings)
 
     def __len__(self):
         return len(self._matchers)

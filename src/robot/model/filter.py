@@ -40,12 +40,13 @@ class EmptySuiteRemover(SuiteVisitor):
 class Filter(EmptySuiteRemover):
 
     def __init__(self, include_suites=None, include_tests=None,
-                 include_tags=None, exclude_tags=None):
+                 include_tags=None, exclude_tags=None, memo=None):
         EmptySuiteRemover.__init__(self)
         self.include_suites = include_suites
         self.include_tests = include_tests
         self.include_tags = include_tags
         self.exclude_tags = exclude_tags
+        self.memo = dict() if memo is None else memo
 
     @setter
     def include_suites(self, suites):
@@ -58,12 +59,12 @@ class Filter(EmptySuiteRemover):
             if not isinstance(tests, TestNamePatterns) else tests
 
     @setter
-    def include_tags(self, tags):
-        return TagPatterns(tags) if not isinstance(tags, TagPatterns) else tags
+    def include_tags(self, tag_patterns):
+        return TagPatterns(tag_patterns, self.memo) if not isinstance(tag_patterns, TagPatterns) else tag_patterns
 
     @setter
-    def exclude_tags(self, tags):
-        return TagPatterns(tags) if not isinstance(tags, TagPatterns) else tags
+    def exclude_tags(self, tag_patterns):
+        return TagPatterns(tag_patterns, self.memo) if not isinstance(tag_patterns, TagPatterns) else tag_patterns
 
     def start_suite(self, suite):
         if not self:
