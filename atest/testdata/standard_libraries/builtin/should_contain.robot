@@ -97,4 +97,46 @@ Should Not Contain case-insensitive
     ${DICT}     Å     ignore_case=yes
     ${DICT1}    A     ignore_case=yes
 
+Should Not Contain without leading spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'abcdefg' contains 'cd'
+    ...
+    ...    2) '\nHYVÄ' contains 'VÄ'
+    ...
+    ...    3) '${DICT_4}' contains 'a'
+    [Template]    Should Not Contain
+    abcdefg      \ncd         strip_spaces=leading
+    \nHYVÄ       \tVÄ         strip_spaces=Leading
+    ${DICT}      \nÅ          strip_spaces=LEADING
+    ${DICT_4}    ${SPACE}a    strip_spaces=leading
 
+Should Not Contain without trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'abcdefg' contains 'cd'
+    ...
+    ...    2) 'HYVÄ\n' contains 'VÄ'
+    ...
+    ...    3) '${DICT_4}' contains 'dd'
+    [Template]    Should Not Contain
+    abcdefg      cd\n          strip_spaces=trailing
+    HYVÄ\n       VÄ\t          strip_spaces=Trailing
+    ${DICT}      Å\n           strip_spaces=TRAILING
+    ${DICT_4}    dd${SPACE}    strip_spaces=trailing
+
+Should Not Contain without leading and trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) '\nabcdefg' contains 'cd'
+    ...
+    ...    2) 'HYVÄ\n' contains 'VÄ'
+    ...
+    ...    3) '${DICT_4}' contains 'a b'
+    ...
+    ...    4) '${DICT_4}' contains 'dd\n\t'
+    [Template]    Should Not Contain
+    \nabcdefg    cd\n         strip_spaces=True
+    HYVÄ\n       \tVÄ         strip_spaces=true
+    ${DICT_4}    \na b\t      strip_spaces=YES
+    ${DICT_4}    dd\n\t       strip_spaces=Yeah
