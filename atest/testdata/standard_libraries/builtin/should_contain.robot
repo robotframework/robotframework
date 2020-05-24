@@ -139,4 +139,4 @@ Should Not Contain without leading and trailing spaces
     \nabcdefg    cd\n         strip_spaces=True
     HYVÄ\n       \tVÄ         strip_spaces=true
     ${DICT_4}    \na b\t      strip_spaces=YES
-    ${DICT_4}    dd\n\t       strip_spaces=Yeah
+    ${DICT_4}    dd\n\t       strip_spaces=No

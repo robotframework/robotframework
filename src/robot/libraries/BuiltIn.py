@@ -675,6 +675,8 @@ class _Verify(_BuiltInBase):
                 string_value = string_value.lstrip()
             elif strip_spaces.upper() == 'TRAILING':
                 string_value = string_value.rstrip()
+            elif is_truthy(strip_spaces):
+                string_value = string_value.strip()
         elif is_truthy(strip_spaces):
             string_value = string_value.strip()
         return string_value

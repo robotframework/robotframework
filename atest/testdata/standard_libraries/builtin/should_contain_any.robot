@@ -61,11 +61,11 @@ Should Contain Any without trailing spaces
 Should Contain Any without leading and trailing spaces
     [Documentation]    FAIL    '${DICT_1}' does not contain any of '\ x\t'
     [Template]    Should Contain Any
-    Hyvä             \tvä\n                 strip_spaces=${True}
-    \ San Diego\n    Diego                  strip_spaces=${True}
+    Hyvä             \tvä\n                 strip_spaces=True
+    \ San Diego\n    Diego                  strip_spaces=TRUE
     ${LIST}          ${-1}     \ b\t        strip_spaces=${True}
     ${LIST}          41        \t\tcee\t    strip_spaces=${True}
-    ${DICT 1}        \ x\t                  strip_spaces=yeah
+    ${DICT 1}        \ x\t                  strip_spaces=No
     ${DICT_4}        \tak\t    g\t          strip_spaces=${True}
 
 Should Contain Any without items fails
@@ -120,6 +120,28 @@ Should Not Contain Any case-insensitive
     ABCDEFG      abc          ignore_case=True
     ${LIST}      ${1}    B    ignore_case=True
     ${DICT 1}    A            ignore_case=True
+
+Should Not Contain Any without leading spaces
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) 'abcd\tx' contains one or more of 'x'
+    ...
+    ...    2) '${DICT_4}' contains one or more of 'a'
+    [Template]    Should Not Contain Any
+    abcd\tx      \tx      strip_spaces=leading
+    ${DICT_4}    \n\ta    strip_spaces=LEADING
+
+Should Not Contain Any without trailing spaces
+    [Documentation]    FAIL
+    ...    Several failures occurred:
+    ...
+    ...    1) 'abcx\td' contains one or more of 'x'
+    ...
+    ...    2) '${DICT_4}' contains one or more of 'dd'
+    [Template]    Should Not Contain Any
+    abcx\td      x\t       strip_spaces=trailing
+    ${DICT_4}    dd\n\n    strip_spaces=TRAILING
 
 Should Not Contain Any without items fails
     [Documentation]    FAIL    One or more items required.
