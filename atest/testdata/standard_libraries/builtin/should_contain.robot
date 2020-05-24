@@ -41,14 +41,10 @@ Should Contain without leading spaces
     ${DICT4}    \ a        strip_spaces=LEADING
     ${DICT4}    \n a b     strip_spaces=leading
     ${DICT4}    c          strip_spaces=leading
-    ${DICT4}    \na        strip_spaces=Leeding
+    ${DICT4}    \na        strip_spaces=NO
 
 Should Contain without trailing spaces
-    [Documentation]    FAIL Several failures occurred:
-    ...
-    ...    1) '${DICT4}' does not contain 'a'
-    ...
-    ...    2) '${DICT4}' does not contain 'ak\n'
+    [Documentation]    FAIL  '${DICT4}' does not contain 'a'
     [Template]    Should Contain
     abcdefg     cd\n\t     strip_spaces=trailing
     HYVÄ \t     VÄ         strip_spaces=Trailing
@@ -56,7 +52,6 @@ Should Contain without trailing spaces
     ${DICT4}    a\t        strip_spaces=trailinG
     ${DICT4}    a b\t\n    strip_spaces=trailing
     ${DICT4}    dd \t      strip_spaces=trailing
-    ${DICT4}    ak\n       strip_spaces=trailin
 
 Should Contain without leading and trailing spaces
     [Documentation]    FAIL '${DICT4}' does not contain '\ dd\t'
@@ -67,7 +62,7 @@ Should Contain without leading and trailing spaces
     ${DICT4}     \na\t     strip_spaces=TRUE
     ${DICT4}     \ta b\n   strip_spaces=Yes
     ${DICT4}     \ ak\n    strip_spaces=True
-    ${DICT4}     \ dd\t    strip_spaces=yee
+    ${DICT4}     \ dd\t    strip_spaces=no
 
 
 Should Not Contain
