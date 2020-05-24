@@ -181,7 +181,7 @@ Should Not Be Equal As Strings case-insensitive
     [Template]    Should Not Be Equal As Strings
     1        ${1.1}     ignore_case=True
     Hyvää    päivää     ignore_case=yes
-    true     ${True}    ignore_case=No
+    true     ${True}    ignore_case=yeah
 
 Should Not Be Equal As Strings without leading spaces
     [Documentation]     FAIL Several failures occurred:

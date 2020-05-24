@@ -32,18 +32,13 @@ Should Start With without leading spaces
     ${SPACE}YÖTÄ       \nyötä      strip_spaces=leading
 
 Should Start With without trailing spaces
-    [Documentation]    FAIL Several failures occurred:
-    ...
-    ...    1) 'test value' does not start with 'test\t'
-    ...
-    ...    2) 'YÖTÄ' does not start with 'yötä'
+    [Documentation]    FAIL  'YÖTÄ' does not start with 'yötä'
     [Template]    Should Start With
     San Diego!             San Diego         strip_spaces=trailing
     test\tvalue${SPACE}    test\tvalue       strip_spaces=TRAILING
     test value!            test\t            strip_spaces=Trailing
     yötä\n${SPACE}!        yötä\n            repr=yes    strip_spaces=trailing
     ${SPACE}               ${EMPTY}          strip_spaces=trailing
-    test value             test\t            strip_spaces=Yep
     YÖTÄ${SPACE}\n         yötä\n${SPACE}    strip_spaces=trailing
 
 Should Start With without leading and trailing spaces
@@ -58,7 +53,7 @@ Should Start With without leading and trailing spaces
     test\ \ value      \ttest\ \ v       strip_spaces=truE
     \nyötä\n\t         yötä\t            repr=yes    strip_spaces=yes
     ${SPACE}           ${EMPTY}          strip_spaces=true
-    test value         test\t            strip_spaces=Yep
+    test value         test\t            strip_spaces=NO
     \t\n\ YÖTÄ\t       \työtä\t\n        strip_spaces=true
 
 Should Not Start With
@@ -112,7 +107,7 @@ Should Not Start With without leading and trailing spaces
     [Template]    Should Not Start With
     test${SPACE}    test          strip_spaces=True
     test value      test\t\n      strip_spaces=TRUE
-    \n\ttest \t     test\t\n      strip_spaces=Sure
+    \n\ttest \t     test\t\n      strip_spaces=NO
     \n\työtä\t\n    \t\nyötä\t    repr=yes    strip_spaces=yes
 
 Should End With without values
@@ -168,7 +163,7 @@ Should End With without leading and trailing spaces
     test\ \ value      \te            strip_spaces=truE
     ${SPACE}yötä\t     \ yötä\t       repr=yes    strip_spaces=yes
     ${SPACE}           ${EMPTY}       strip_spaces=true
-    some test          test\t         strip_spaces=Yep
+    some test          test\t         strip_spaces=False
     ${SPACE}YÖTÄ\t     \työtä\t       strip_spaces=true
 
 Should Not End With
@@ -222,4 +217,4 @@ Should Not End With without leading and trailing spaces
     \ttest?${SPACE}    ${SPACE}?\t    strip_spaces=True
     test\ \ value\n    \te            strip_spaces=truE
     \n \työtä\t\n      \ yötä\t\n     repr=yes    strip_spaces=yes
-    some test          test\t         strip_spaces=Yep
+    some test          test\t         strip_spaces=NO

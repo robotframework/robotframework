@@ -23,7 +23,7 @@ Without leading spaces
     ${SPACE}test    test            strip_spaces=leading
     hyvää yötä      \nhyvää yötä    repr=True    strip_spaces=Leading
     \t${42}         \t${42}         strip_spaces=LEADING
-    \ntest          \n value         strip_spaces=leading
+    \ntest          \n value        strip_spaces=leading
 
 Without trailing spaces
     [Documentation]    FAIL test != value
