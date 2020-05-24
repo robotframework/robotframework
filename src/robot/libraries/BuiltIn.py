@@ -1072,7 +1072,6 @@ class _Verify(_BuiltInBase):
                 container = container.lower()
             elif is_list_like(container):
                 container = set(x.lower() if is_string(x) else x for x in container)
-        # TODO add acceptance tests
         if strip_spaces:
             items = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in items]
             if is_string(container):

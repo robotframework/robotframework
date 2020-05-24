@@ -38,6 +38,36 @@ Should Contain Any case-insensitive
     ${LIST}      41    ${42}    ignore_case=True
     ${DICT 1}    x              ignore_case=True    msg=Fails
 
+Should Contain Any without leading spaces
+    [Documentation]    FAIL    '${DICT_1}' does not contain any of 'x'
+    [Template]    Should Contain Any
+    Hyvä           \nvä              strip_spaces=leading
+    \tSan Diego    \ San             strip_spaces=leading
+    ${LIST}        ${-1}    \tb      strip_spaces=Leading
+    ${LIST}        41       \tcee    strip_spaces=LEADING
+    ${DICT 1}      \tx               strip_spaces=leading
+    ${DICT_4}      \tc      \ g      strip_spaces=leading
+
+Should Contain Any without trailing spaces
+    [Documentation]    FAIL    '${DICT_1}' does not contain any of 'x'
+    [Template]    Should Contain Any
+    Hyvä           vä\n              strip_spaces=trailing
+    San Diego\n    Diego             strip_spaces=Trailing
+    ${LIST}        ${-1}    b\t      strip_spaces=TRAILING
+    ${LIST}        41       cee\t    strip_spaces=trailing
+    ${DICT 1}      x\t               strip_spaces=trailing
+    ${DICT_4}      dd\t     g\t      strip_spaces=trailing
+
+Should Contain Any without leading and trailing spaces
+    [Documentation]    FAIL    '${DICT_1}' does not contain any of '\ x\t'
+    [Template]    Should Contain Any
+    Hyvä             \tvä\n                 strip_spaces=${True}
+    \ San Diego\n    Diego                  strip_spaces=${True}
+    ${LIST}          ${-1}     \ b\t        strip_spaces=${True}
+    ${LIST}          41        \t\tcee\t    strip_spaces=${True}
+    ${DICT 1}        \ x\t                  strip_spaces=yeah
+    ${DICT_4}        \tak\t    g\t          strip_spaces=${True}
+
 Should Contain Any without items fails
     [Documentation]    FAIL    One or more items required.
     Should Contain Any    foo
