@@ -22,18 +22,13 @@ Should Start With without values
     Should Start With    ${LONG}    Nope    My message    values=No values
 
 Should Start With without leading spaces
-    [Documentation]    FAIL Several failures occurred:
-    ...
-    ...    1) '\ttest\tvalue' does not start with 'test'
-    ...
-    ...    2) 'YÖTÄ' does not start with 'yötä'
+    [Documentation]    FAIL    'YÖTÄ' does not start with 'yötä'
     [Template]    Should Start With
     San Diego!         San Diego   strip_spaces=leading
     ${SPACE}\ttest?    test        strip_spaces=LEADING
     test value         \ttest      strip_spaces=Leading
     \nyötä             \työtä      repr=yes    strip_spaces=leading
     ${SPACE}           ${EMPTY}    strip_spaces=leading
-    \ttest\tvalue      test        strip_spaces=Yep
     ${SPACE}YÖTÄ       \nyötä      strip_spaces=leading
 
 Should Start With without trailing spaces

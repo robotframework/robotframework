@@ -131,7 +131,7 @@ Should Be Equal As Strings without leading and trailing spaces
     ${SPACE}HYVÄÄ\t          \tHYVÄÄ\t       repr=yes    strip_spaces=True
     ${SPACE}                 ${EMPTY}        strip_spaces=True
     \tYÖTÄ\n\t               \n\ PÄIVÄÄ\t    strip_spaces=True
-    ${SPACE}test 1\t         \ttest 1\t      strip_spaces=Okay
+    ${SPACE}test 1\t         \ttest 1\t      strip_spaces=no
 
 Should Be Equal As Strings repr
     [Documentation]    FAIL Several failures occurred:
@@ -181,7 +181,7 @@ Should Not Be Equal As Strings case-insensitive
     [Template]    Should Not Be Equal As Strings
     1        ${1.1}     ignore_case=True
     Hyvää    päivää     ignore_case=yes
-    true     ${True}    ignore_case=yeah
+    true     ${True}    ignore_case=No
 
 Should Not Be Equal As Strings without leading spaces
     [Documentation]     FAIL Several failures occurred:
@@ -213,5 +213,5 @@ Should Not Be Equal As Strings without leading and trailing spaces
     ...    2) Hyvää == Hyvää
     [Template]    Should Not Be Equal As Strings
     \t1${SPACE}    \ ${1}\t     strip_spaces=True
-    \tHyvää        \tHyvää\n    strip_spaces=Yes
-    \ntest\t       \ttest \n    strip_spaces=yeah
+    \tHyvää        \tHyvää\n    strip_spaces=yes
+    \ntest\t       \ttest \n    strip_spaces=no

@@ -39,5 +39,8 @@ Should Not Contain Any without items fails
 Should Not Contain Any case-insensitive
     Check test case    ${TESTNAME}
 
+Should Not Contain Any without leading spaces
+    Check test case    ${TESTNAME}
+
 Should Not Contain Any with invalid configuration
     Check test case    ${TESTNAME}
