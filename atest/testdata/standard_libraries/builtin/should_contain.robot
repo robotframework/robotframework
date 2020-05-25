@@ -32,6 +32,39 @@ Should Contain case-insensitive
     ${DICT}     Ä      ignore_case=yes
     ${DICT1}    XXX    ignore_case=yes
 
+Should Contain without leading spaces
+    [Documentation]    FAIL '${DICT4}' does not contain '\na'
+    [Template]    Should Contain
+    abcdefg     \n\tcd     strip_spaces=leading
+    \t HYVÄ     VÄ         strip_spaces=Leading
+    \n bar      \tba       strip_spaces=leadinG
+    ${DICT4}    \ a        strip_spaces=LEADING
+    ${DICT4}    \n a b     strip_spaces=leading
+    ${DICT4}    c          strip_spaces=leading
+    ${DICT4}    \na        strip_spaces=NO
+
+Should Contain without trailing spaces
+    [Documentation]    FAIL  '${DICT4}' does not contain 'a'
+    [Template]    Should Contain
+    abcdefg     cd\n\t     strip_spaces=trailing
+    HYVÄ \t     VÄ         strip_spaces=Trailing
+    bar \n      ba\t       strip_spaces=TRAILING
+    ${DICT4}    a\t        strip_spaces=trailinG
+    ${DICT4}    a b\t\n    strip_spaces=trailing
+    ${DICT4}    dd \t      strip_spaces=trailing
+
+Should Contain without leading and trailing spaces
+    [Documentation]    FAIL '${DICT4}' does not contain '\ dd\t'
+    [Template]    Should Contain
+    abcdefg      \tcd\n    strip_spaces=True
+    \n HYVÄ\t    VÄ        strip_spaces=TRUE
+    \ bar \n     \ ba\t    strip_spaces=yes
+    ${DICT4}     \na\t     strip_spaces=TRUE
+    ${DICT4}     \ta b\n   strip_spaces=Yes
+    ${DICT4}     \ ak\n    strip_spaces=True
+    ${DICT4}     \ dd\t    strip_spaces=no
+
+
 Should Not Contain
     [Documentation]    FAIL 'Hello yet again' contains 'yet'
     [Template]    Should Not Contain
@@ -59,4 +92,46 @@ Should Not Contain case-insensitive
     ${DICT}     Å     ignore_case=yes
     ${DICT1}    A     ignore_case=yes
 
+Should Not Contain without leading spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'abcdefg' contains 'cd'
+    ...
+    ...    2) '\nHYVÄ' contains 'VÄ'
+    ...
+    ...    3) '${DICT_4}' contains 'a'
+    [Template]    Should Not Contain
+    abcdefg      \ncd         strip_spaces=leading
+    \nHYVÄ       \tVÄ         strip_spaces=Leading
+    ${DICT}      \nÅ          strip_spaces=LEADING
+    ${DICT_4}    ${SPACE}a    strip_spaces=leading
 
+Should Not Contain without trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) 'abcdefg' contains 'cd'
+    ...
+    ...    2) 'HYVÄ\n' contains 'VÄ'
+    ...
+    ...    3) '${DICT_4}' contains 'dd'
+    [Template]    Should Not Contain
+    abcdefg      cd\n          strip_spaces=trailing
+    HYVÄ\n       VÄ\t          strip_spaces=Trailing
+    ${DICT}      Å\n           strip_spaces=TRAILING
+    ${DICT_4}    dd${SPACE}    strip_spaces=trailing
+
+Should Not Contain without leading and trailing spaces
+    [Documentation]    FAIL Several failures occurred:
+    ...
+    ...    1) '\nabcdefg' contains 'cd'
+    ...
+    ...    2) 'HYVÄ\n' contains 'VÄ'
+    ...
+    ...    3) '${DICT_4}' contains 'a b'
+    ...
+    ...    4) '${DICT_4}' contains 'dd\n\t'
+    [Template]    Should Not Contain
+    \nabcdefg    cd\n         strip_spaces=True
+    HYVÄ\n       \tVÄ         strip_spaces=true
+    ${DICT_4}    \na b\t      strip_spaces=YES
+    ${DICT_4}    dd\n\t       strip_spaces=No

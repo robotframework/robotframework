@@ -15,6 +15,15 @@ Should Contain Any without items fails
 Should Contain Any case-insensitive
     Check test case    ${TESTNAME}
 
+Should Contain Any without leading spaces
+    Check test case    ${TESTNAME}
+
+Should Contain Any without trailing spaces
+    Check test case    ${TESTNAME}
+
+Should Contain Any without leading and trailing spaces
+    Check test case    ${TESTNAME}
+
 Should Contain Any with invalid configuration
     Check test case    ${TESTNAME}
 
@@ -28,6 +37,15 @@ Should Not Contain Any without items fails
     Check test case    ${TESTNAME}
 
 Should Not Contain Any case-insensitive
+    Check test case    ${TESTNAME}
+
+Should Not Contain Any without leading spaces
+    Check test case    ${TESTNAME}
+
+Should Not Contain Any without trailing spaces
+    Check test case    ${TESTNAME}
+
+Should Not Contain Any without leading and trailing spaces
     Check test case    ${TESTNAME}
 
 Should Not Contain Any with invalid configuration
