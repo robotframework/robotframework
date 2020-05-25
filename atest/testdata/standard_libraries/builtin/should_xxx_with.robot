@@ -24,7 +24,6 @@ Should Start With without values
 Should Start With without leading spaces
     [Documentation]    FAIL    'YÖTÄ' does not start with 'yötä'
     [Template]    Should Start With
-    San Diego!         San Diego   strip_spaces=leading
     ${SPACE}\ttest?    test        strip_spaces=LEADING
     test value         \ttest      strip_spaces=Leading
     \nyötä             \työtä      repr=yes    strip_spaces=leading
@@ -34,7 +33,6 @@ Should Start With without leading spaces
 Should Start With without trailing spaces
     [Documentation]    FAIL  'YÖTÄ' does not start with 'yötä'
     [Template]    Should Start With
-    San Diego!             San Diego         strip_spaces=trailing
     test\tvalue${SPACE}    test\tvalue       strip_spaces=TRAILING
     test value!            test\t            strip_spaces=Trailing
     yötä\n${SPACE}!        yötä\n            repr=yes    strip_spaces=trailing
@@ -48,7 +46,6 @@ Should Start With without leading and trailing spaces
     ...
     ...    2) 'YÖTÄ' does not start with 'yötä'
     [Template]    Should Start With
-    San Diego!         San Diego         strip_spaces=TRUE
     \ttest?${SPACE}    ${SPACE}test\t    strip_spaces=True
     test\ \ value      \ttest\ \ v       strip_spaces=truE
     \nyötä\n\t         yötä\t            repr=yes    strip_spaces=yes
@@ -130,7 +127,6 @@ Should End With case-insensitive
 Should End With without leading spaces
     [Documentation]    FAIL 'YÖTÄ' does not end with 'yötä'
     [Template]    Should End With
-    San Diego        Diego       strip_spaces=leading
     ${SPACE}It is    is          strip_spaces=LEADING
     test value       \tvalue     strip_spaces=Leading
     \n\työtä         \nyötä      repr=yes    strip_spaces=leading
@@ -144,7 +140,6 @@ Should End With without trailing spaces
     ...
     ...    2) 'YÖTÄ' does not end with 'yötä'
     [Template]    Should End With
-    San Diego              Diego             strip_spaces=trailing
     test\tvalue${SPACE}    value             strip_spaces=TRAILING
     test value             val\t             strip_spaces=Trailing
     yötä\t \n              yötä\n            repr=yes    strip_spaces=trailing
@@ -158,7 +153,6 @@ Should End With without leading and trailing spaces
     ...
     ...    2) 'YÖTÄ' does not end with 'yötä'
     [Template]    Should End With
-    San Diego          Diego          strip_spaces=TRUE
     \ttest?${SPACE}    ${SPACE}?\t    strip_spaces=True
     test\ \ value      \te            strip_spaces=truE
     ${SPACE}yötä\t     \ yötä\t       repr=yes    strip_spaces=yes
