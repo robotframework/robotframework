@@ -26,4 +26,4 @@ Invalid embedded arguments
 Stdout should contain adding keyword error
     [Arguments]    ${name}    ${error}
     Should Contain    ${OUTPUT}
-    ...    [ ERROR ] Adding keyword '${name}' to library 'InvalidKeywords' failed: ${error}
+    ...    [ ERROR ] Error in library 'InvalidKeywords': Adding keyword '${name}' failed: ${error}

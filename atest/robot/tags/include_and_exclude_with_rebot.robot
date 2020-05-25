@@ -154,14 +154,12 @@ Run And Check Include And Exclude
     Run Rebot    ${params}    ${INPUT FILES}
     Stderr Should Be Empty
     Should Contain Tests    ${SUITE}    @{tests}
-    Should Be True    ${SUITE.statistics.all.passed} == len(@{tests})
-    Should Be True    ${SUITE.statistics.all.failed} == 0
-    ${exp start} =    Set Variable If    "${params}"    ${NONE}    ${ORIG START}
-    ${exp end} =    Set Variable If    "${params}"    ${NONE}    ${ORIG END}
-    Should Be Equal    ${SUITE.starttime}    ${exp start}
-    Should Be Equal    ${SUITE.endtime}    ${exp end}
+    Should Be True    $SUITE.statistics.all.passed == len($tests)
+    Should Be True    $SUITE.statistics.all.failed == 0
+    Should Be Equal    ${SUITE.starttime}    ${{None if $params else $ORIG_START}}
+    Should Be Equal    ${SUITE.endtime}      ${{None if $params else $ORIG_END}}
     Elapsed Time Should Be Valid    ${SUITE.elapsedtime}
-    Should Be True    ${SUITE.elapsedtime} <= ${ORIG ELAPSED}
+    Should Be True    $SUITE.elapsedtime <= $ORIG_ELAPSED + 1
 
 Run And Check Error
     [Arguments]    ${params}    ${filter msg}    ${suite name}=Include And Exclude

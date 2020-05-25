@@ -100,18 +100,6 @@ Keyword teardown with existing variable is resolved and executed
     Keyword with teardown with existing variable
     This is validated
 
-For Loops
-    [Documentation]    FAIL    Keyword 'resource.Anarchy in the UK' expected 3 arguments, got 2.
-    FOR    ${i}    IN RANGE    10
-        Log    ${i}
-        Simple UK
-    END
-    For Loop in UK
-    FOR    ${a}    ${b}    IN RANGE    ${NONE}
-        Anarchy in the UK    1    2
-    END
-    This is validated
-
 Non-existing keyword name
     [Documentation]    FAIL    No keyword with name 'Does not exist' found.
     Does not exist
@@ -191,6 +179,3 @@ Keyword with keywords not run in dry-run
     Keyword not run in dry-run
     Another keyword not run in dry-run
     This is validated
-
-This is validated
-    Log    This is validated

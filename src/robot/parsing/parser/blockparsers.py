@@ -47,7 +47,7 @@ class TestCaseParser(Parser):
         else:
             parser = None
             model = statement
-        self.model.body.add(model)
+        self.model.body.append(model)
         return parser
 
 
@@ -68,7 +68,7 @@ class KeywordParser(Parser):
         else:
             parser = None
             model = statement
-        self.model.body.add(model)
+        self.model.body.append(model)
         return parser
 
 
@@ -89,4 +89,4 @@ class ForLoopParser(Parser):
             self.model.end = statement
             self.end_seen = True
         else:
-            self.model.body.add(statement)
+            self.model.body.append(statement)

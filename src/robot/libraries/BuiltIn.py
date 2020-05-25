@@ -13,6 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import absolute_import
+
+from collections import OrderedDict
 import difflib
 import re
 import time
@@ -20,7 +23,7 @@ import time
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
-                          PassExecution, ReturnFromKeyword)
+                          PassExecution, ReturnFromKeyword, VariableError)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
@@ -33,9 +36,9 @@ from robot.utils import (DotDict, escape, format_assign_message,
                          roundup, secs_to_timestr, seq2str, split_from_equals,
                          timestr_to_secs, type_name, unic)
 from robot.utils.asserts import assert_equal, assert_not_equal
-from robot.variables import (evaluate_expression, is_list_var, is_var,
-                             DictVariableTableValue, search_variable,
-                             VariableTableValue)
+from robot.variables import (evaluate_expression, is_dict_variable,
+                             is_list_variable, search_variable,
+                             DictVariableTableValue, VariableTableValue)
 from robot.version import get_version
 
 if JYTHON:
@@ -480,7 +483,7 @@ class _Converter(_BuiltInBase):
         separate = []
         for item in items:
             name, value = split_from_equals(item)
-            if value is not None or search_variable(item).is_dict_variable:
+            if value is not None or is_dict_variable(item):
                 break
             separate.append(item)
         return separate, items[len(separate):]
@@ -1142,9 +1145,9 @@ class _Verify(_BuiltInBase):
                                        quote_item2=False)
             raise AssertionError(msg)
 
-    def should_contain_x_times(self, item1, item2, count, msg=None,
+    def should_contain_x_times(self, container, item, count, msg=None,
                                ignore_case=False, strip_spaces=False):
-        """Fails if ``item1`` does not contain ``item2`` ``count`` times.
+        """Fails if ``container`` does not contain ``item`` ``count`` times.
 
         Works with strings, lists and all objects that `Get Count` works
         with. The default error message can be overridden with ``msg`` and
@@ -1152,7 +1155,9 @@ class _Verify(_BuiltInBase):
 
         If ``ignore_case`` is given a true value (see `Boolean arguments`) and
         compared items are strings, it indicates that comparison should be
-        case-insensitive.
+        case-insensitive. If the ``container`` is a list-like object, string
+        items in it are compared case-insensitively. New option in Robot
+        Framework 3.0.1.
 
         If ``strip_spaces`` is given a true value (see `Boolean arguments`)
         and both arguments are strings, the comparison is done without leading
@@ -1161,40 +1166,32 @@ class _Verify(_BuiltInBase):
         comparison is done without leading or trailing spaces respectively.
         The default value is ``False``.
 
-        If the ``item1`` is a list-like object, string
-        items in it are compared case-insensitively. New option in Robot
-        Framework 3.0.1.
-
         Examples:
         | Should Contain X Times | ${output}    | hello | 2 |
         | Should Contain X Times | ${some list} | value | 3 | ignore_case=True |
         """
-        # TODO: Rename 'item1' and 'item2' to 'container' and 'item' in RF 3.1.
-        # Other 'contain' keywords use these names. And 'Get Count' should too.
-        # Cannot be done in minor release due to backwards compatibility.
-        # Remember to update it also in the docstring!!
         count = self._convert_to_integer(count)
-        orig_item1 = item1
-        if is_truthy(ignore_case) and is_string(item2):
-            item2 = item2.lower()
-            if is_string(item1):
-                item1 = item1.lower()
-            elif is_list_like(item1):
-                item1 = [x.lower() if is_string(x) else x for x in item1]
-        if strip_spaces and is_string(item2):
-            item2 = self._strip_spaces(item2, strip_spaces)
-            if is_string(item1):
-                item1 = self._strip_spaces(item1, strip_spaces)
-            elif is_list_like(item1):
-                item1 = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in item1]
-        x = self.get_count(item1, item2)
+        orig_container = container
+        if is_truthy(ignore_case) and is_string(item):
+            item = item.lower()
+            if is_string(container):
+                container = container.lower()
+            elif is_list_like(container):
+                container = [i.lower() if is_string(i) else i for i in container]
+        if strip_spaces and is_string(item):
+            item = self._strip_spaces(item, strip_spaces)
+            if is_string(container):
+                container = self._strip_spaces(container, strip_spaces)
+            elif is_list_like(container):
+                container = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container]
+        x = self.get_count(container, item)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
-                    % (unic(orig_item1), unic(item2), x, s(x), count, s(count))
+                    % (unic(orig_container), unic(item), x, s(x), count, s(count))
         self.should_be_equal_as_integers(x, count, msg, values=False)
 
-    def get_count(self, item1, item2):
-        """Returns and logs how many times ``item2`` is found from ``item1``.
+    def get_count(self, container, item):
+        """Returns and logs how many times ``item`` is found from ``container``.
 
         This keyword works with Python strings and lists and all objects
         that either have ``count`` method or can be converted to Python lists.
@@ -1203,14 +1200,14 @@ class _Verify(_BuiltInBase):
         | ${count} = | Get Count | ${some item} | interesting value |
         | Should Be True | 5 < ${count} < 10 |
         """
-        if not hasattr(item1, 'count'):
+        if not hasattr(container, 'count'):
             try:
-                item1 = list(item1)
+                container = list(container)
             except:
                 raise RuntimeError("Converting '%s' to list failed: %s"
-                                   % (item1, get_error_message()))
-        count = item1.count(item2)
-        self.log('Item found from the first item %d time%s' % (count, s(count)))
+                                   % (container, get_error_message()))
+        count = container.count(item)
+        self.log('Item found from container %d time%s.' % (count, s(count)))
         return count
 
     def should_not_match(self, string, pattern, msg=None, values=True,
@@ -1450,15 +1447,29 @@ class _Variables(_BuiltInBase):
         """
         try:
             return self._variables[self._get_var_name(name)]
-        except DataError:
+        except VariableError:
             return self._variables.replace_scalar(default)
 
     def log_variables(self, level='INFO'):
         """Logs all variables in the current scope with given log level."""
         variables = self.get_variables()
         for name in sorted(variables, key=lambda s: s[2:-1].lower()):
-            msg = format_assign_message(name, variables[name], cut_long=False)
+            name, value = self._get_logged_variable(name, variables)
+            msg = format_assign_message(name, value, cut_long=False)
             self.log(msg, level)
+
+    def _get_logged_variable(self, name, variables):
+        value = variables[name]
+        try:
+            if name[0] == '@':
+                value = list(value)
+            if name[0] == '&':
+                value = OrderedDict(value)
+        except RERAISED_EXCEPTIONS:
+            raise
+        except:
+            name = '$' + name[1:]
+        return name, value
 
     @run_keyword_variant(resolve=0)
     def variable_should_exist(self, name, msg=None):
@@ -1474,7 +1485,7 @@ class _Variables(_BuiltInBase):
         """
         name = self._get_var_name(name)
         msg = self._variables.replace_string(msg) if msg \
-            else "Variable %s does not exist." % name
+            else "Variable '%s' does not exist." % name
         try:
             self._variables[name]
         except DataError:
@@ -1494,7 +1505,7 @@ class _Variables(_BuiltInBase):
         """
         name = self._get_var_name(name)
         msg = self._variables.replace_string(msg) if msg \
-            else "Variable %s exists." % name
+            else "Variable '%s' exists." % name
         try:
             self._variables[name]
         except DataError:
@@ -1698,35 +1709,33 @@ class _Variables(_BuiltInBase):
 
     # Helpers
 
-    def _get_var_name(self, orig):
-        name = self._resolve_possible_variable(orig)
+    def _get_var_name(self, original):
         try:
-            return self._unescape_variable_if_needed(name)
+            replaced = self._variables.replace_string(original)
+        except VariableError:
+            replaced = original
+        try:
+            name = self._resolve_var_name(replaced)
         except ValueError:
-            raise RuntimeError("Invalid variable syntax '%s'." % orig)
+            name = original
+        match = search_variable(name)
+        match.resolve_base(self._variables)
+        if not match.is_assign():
+            raise DataError("Invalid variable name '%s'." % name)
+        return unic(match)
 
-    def _resolve_possible_variable(self, name):
-        try:
-            resolved = self._variables.replace_string(name)
-            return self._unescape_variable_if_needed(resolved)
-        except (KeyError, ValueError, DataError):
-            return name
-
-    def _unescape_variable_if_needed(self, name):
+    def _resolve_var_name(self, name):
         if name.startswith('\\'):
             name = name[1:]
-        if len(name) < 2:
+        if len(name) < 2 or name[0] not in '$@&':
             raise ValueError
         if name[1] != '{':
             name = '%s{%s}' % (name[0], name[1:])
         match = search_variable(name, identifiers='$@&', ignore_errors=True)
-        if not match.is_variable:
-            raise ValueError
         match.resolve_base(self._variables)
-        name = unic(match)
-        if is_var(name):
-            return name
-        raise ValueError
+        if not match.is_assign():
+            raise ValueError
+        return unic(match)
 
     def _get_var_value(self, name, values):
         if not values:
@@ -1736,7 +1745,7 @@ class _Variables(_BuiltInBase):
             # scalar variables in the variable table, but that would require
             # handling non-string values somehow. For details see
             # https://github.com/robotframework/robotframework/issues/1919
-            if len(values) != 1 or search_variable(values[0]).is_list_variable:
+            if len(values) != 1 or is_list_variable(values[0]):
                 raise DataError("Setting list value to scalar variable '%s' "
                                 "is not supported anymore. Create list "
                                 "variable '@%s' instead." % (name, name[1:]))
@@ -2264,7 +2273,7 @@ class _RunKeyword(_BuiltInBase):
             if default:
                 return [None]
             raise RuntimeError('At least one value is required')
-        if is_list_var(values[0]):
+        if is_list_variable(values[0]):
             values[:1] = [escape(item) for item in self._variables[values[0]]]
             return self._verify_values_for_set_variable_if(values)
         return values
@@ -2799,10 +2808,10 @@ class _Misc(_BuiltInBase):
         for msg in messages:
             match = search_variable(msg)
             value = self._variables.replace_scalar(msg)
-            if match.is_list_variable:
+            if match.is_list_variable():
                 for item in value:
                     yield item
-            elif match.is_dict_variable:
+            elif match.is_dict_variable():
                 for name, value in value.items():
                     yield '%s=%s' % (name, value)
             else:
@@ -3416,14 +3425,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     == Table of contents ==
 
-    - `HTML error messages`
-    - `Evaluating expressions`
-    - `Boolean arguments`
-    - `Pattern matching`
-    - `Multiline string comparison`
-    - `String representations`
-    - `Shortcuts`
-    - `Keywords`
+    %TOC%
 
     = HTML error messages =
 

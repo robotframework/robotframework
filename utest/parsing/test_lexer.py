@@ -12,8 +12,8 @@ from robot.parsing import get_tokens, get_init_tokens, get_resource_tokens, Toke
 T = Token
 
 
-def assert_tokens(source, expected, get_tokens=get_tokens, data_only=False):
-    tokens = list(get_tokens(source, data_only))
+def assert_tokens(source, expected, get_tokens=get_tokens, **config):
+    tokens = list(get_tokens(source, **config))
     assert_equal(len(tokens), len(expected),
                  'Expected %d tokens:\n%s\n\nGot %d tokens:\n%s'
                  % (len(expected), expected, len(tokens), tokens),
@@ -877,6 +877,7 @@ ${LONG}=         First part    ${2} part
 Ooops     I did it again
 ${}       invalid
 ${x}==    invalid
+${not     closed
 '''
         # Values are marked as COMMENTs and ignored with `data_only=True`.
         expected = [
@@ -887,7 +888,9 @@ ${x}==    invalid
             (T.ERROR, '${}', 3, 0, "Invalid variable name '${}'."),
             (T.EOS, '', 3, 3),
             (T.ERROR, '${x}==', 4, 0, "Invalid variable name '${x}=='."),
-            (T.EOS, '', 4, 6)
+            (T.EOS, '', 4, 6),
+            (T.ERROR, '${not', 5, 0, "Invalid variable name '${not'."),
+            (T.EOS, '', 5, 5)
         ]
         self._verify(data, expected)
 
@@ -1185,6 +1188,138 @@ NOOP    No Operation
         expected = self.data_tokens if data_only else self.tokens
         assert_tokens(source, expected, get_tokens=get_resource_tokens,
                       data_only=data_only)
+
+
+class TestTokenizeVariables(unittest.TestCase):
+
+    def test_settings(self):
+        data = '''\
+*** Settings ***
+Library       My${Name}    my ${arg}    ${x}[0]    WITH NAME    Your${Name}
+${invalid}    ${usage}
+'''
+        expected = [(T.SETTING_HEADER, '*** Settings ***', 1, 0),
+                    (T.EOS, '', 1, 16),
+                    (T.LIBRARY, 'Library', 2, 0),
+                    (T.NAME, 'My', 2, 14),
+                    (T.VARIABLE, '${Name}', 2, 16),
+                    (T.ARGUMENT, 'my ', 2, 27),
+                    (T.VARIABLE, '${arg}', 2, 30),
+                    (T.VARIABLE, '${x}[0]', 2, 40),
+                    (T.WITH_NAME, 'WITH NAME', 2, 51),
+                    (T.NAME, 'Your', 2, 64),
+                    (T.VARIABLE, '${Name}', 2, 68),
+                    (T.EOS, '', 2, 75),
+                    (T.ERROR, '${invalid}', 3, 0, "Non-existing setting '${invalid}'."),
+                    (T.EOS, '', 3, 10)]
+        assert_tokens(data, expected, get_tokens=get_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_resource_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_init_tokens,
+                      data_only=True, tokenize_variables=True)
+
+    def test_variables(self):
+        data = '''\
+*** Variables ***
+${VARIABLE}      my ${value}
+&{DICT}          key=${var}[item][1:]    ${key}=${a}${b}[c]${d}
+'''
+        expected = [(T.VARIABLE_HEADER, '*** Variables ***', 1, 0),
+                    (T.EOS, '', 1, 17),
+                    (T.VARIABLE, '${VARIABLE}', 2, 0),
+                    (T.ARGUMENT, 'my ', 2, 17),
+                    (T.VARIABLE, '${value}', 2, 20),
+                    (T.EOS, '', 2, 28),
+                    (T.VARIABLE, '&{DICT}', 3, 0),
+                    (T.ARGUMENT, 'key=', 3, 17),
+                    (T.VARIABLE, '${var}[item][1:]', 3, 21),
+                    (T.VARIABLE, '${key}', 3, 41),
+                    (T.ARGUMENT, '=', 3, 47),
+                    (T.VARIABLE, '${a}', 3, 48),
+                    (T.VARIABLE, '${b}[c]', 3, 52),
+                    (T.VARIABLE, '${d}', 3, 59),
+                    (T.EOS, '', 3, 63)]
+        assert_tokens(data, expected, get_tokens=get_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_resource_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_init_tokens,
+                      data_only=True, tokenize_variables=True)
+
+    def test_test_cases(self):
+        data = '''\
+*** Test Cases ***
+My ${name}
+    [Documentation]    a ${b} ${c}[d] ${e${f}}
+    ${assign} =    Keyword    my ${arg}ument
+    Key${word}
+${name}
+'''
+        expected = [(T.TESTCASE_HEADER, '*** Test Cases ***', 1, 0),
+                    (T.EOS, '', 1, 18),
+                    (T.TESTCASE_NAME, 'My ', 2, 0),
+                    (T.VARIABLE, '${name}', 2, 3),
+                    (T.EOS, '', 2, 10),
+                    (T.DOCUMENTATION, '[Documentation]', 3, 4),
+                    (T.ARGUMENT, 'a ', 3, 23),
+                    (T.VARIABLE, '${b}', 3, 25),
+                    (T.ARGUMENT, ' ', 3, 29),
+                    (T.VARIABLE, '${c}[d]', 3, 30),
+                    (T.ARGUMENT, ' ', 3, 37),
+                    (T.VARIABLE, '${e${f}}', 3, 38),
+                    (T.EOS, '', 3, 46),
+                    (T.ASSIGN, '${assign} =', 4, 4),
+                    (T.KEYWORD, 'Keyword', 4, 19),
+                    (T.ARGUMENT, 'my ', 4, 30),
+                    (T.VARIABLE, '${arg}', 4, 33),
+                    (T.ARGUMENT, 'ument', 4, 39),
+                    (T.EOS, '', 4, 44),
+                    (T.KEYWORD, 'Key${word}', 5, 4),
+                    (T.EOS, '', 5, 14),
+                    (T.VARIABLE, '${name}', 6, 0),
+                    (T.EOS, '', 6, 7)]
+        assert_tokens(data, expected, get_tokens=get_tokens,
+                      data_only=True, tokenize_variables=True)
+
+    def test_keywords(self):
+        data = '''\
+*** Keywords ***
+My ${name}
+    [Documentation]    a ${b} ${c}[d] ${e${f}}
+    ${assign} =    Keyword    my ${arg}ument
+    Key${word}
+${name}
+'''
+        expected = [(T.KEYWORD_HEADER, '*** Keywords ***', 1, 0),
+                    (T.EOS, '', 1, 16),
+                    (T.KEYWORD_NAME, 'My ', 2, 0),
+                    (T.VARIABLE, '${name}', 2, 3),
+                    (T.EOS, '', 2, 10),
+                    (T.DOCUMENTATION, '[Documentation]', 3, 4),
+                    (T.ARGUMENT, 'a ', 3, 23),
+                    (T.VARIABLE, '${b}', 3, 25),
+                    (T.ARGUMENT, ' ', 3, 29),
+                    (T.VARIABLE, '${c}[d]', 3, 30),
+                    (T.ARGUMENT, ' ', 3, 37),
+                    (T.VARIABLE, '${e${f}}', 3, 38),
+                    (T.EOS, '', 3, 46),
+                    (T.ASSIGN, '${assign} =', 4, 4),
+                    (T.KEYWORD, 'Keyword', 4, 19),
+                    (T.ARGUMENT, 'my ', 4, 30),
+                    (T.VARIABLE, '${arg}', 4, 33),
+                    (T.ARGUMENT, 'ument', 4, 39),
+                    (T.EOS, '', 4, 44),
+                    (T.KEYWORD, 'Key${word}', 5, 4),
+                    (T.EOS, '', 5, 14),
+                    (T.VARIABLE, '${name}', 6, 0),
+                    (T.EOS, '', 6, 7)]
+        assert_tokens(data, expected, get_tokens=get_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_resource_tokens,
+                      data_only=True, tokenize_variables=True)
+        assert_tokens(data, expected, get_tokens=get_init_tokens,
+                      data_only=True, tokenize_variables=True)
 
 
 if __name__ == '__main__':

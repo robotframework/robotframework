@@ -34,7 +34,9 @@ class LibraryDocBuilder(object):
                             doc=self._get_doc(lib),
                             version=lib.version,
                             scope=str(lib.scope),
-                            doc_format=lib.doc_format)
+                            doc_format=lib.doc_format,
+                            source=lib.source,
+                            lineno=lib.lineno)
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
         return libdoc
@@ -65,7 +67,10 @@ class ResourceDocBuilder(object):
         res = self._import_resource(path)
         libdoc = LibraryDoc(name=res.name,
                             doc=self._get_doc(res),
-                            type='resource')
+                            type='RESOURCE',
+                            scope='GLOBAL',
+                            source=res.source,
+                            lineno=1)
         libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(res)
         return libdoc
 
@@ -102,7 +107,9 @@ class KeywordDocBuilder(object):
         return KeywordDoc(name=kw.name,
                           args=self._get_args(kw.arguments),
                           doc=doc,
-                          tags=tags)
+                          tags=tags,
+                          source=kw.source,
+                          lineno=kw.lineno)
 
     def _get_doc_and_tags(self, kw):
         doc = self._get_doc(kw)

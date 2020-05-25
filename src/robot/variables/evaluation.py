@@ -47,8 +47,9 @@ def evaluate_expression(expression, variable_store, modules=None,
 def _evaluate(expression, variable_store, modules=None, namespace=None):
     if '$' in expression:
         expression = _decorate_variables(expression, variable_store)
-    ns = EvaluationNamespace(variable_store, modules, namespace)
-    return eval(expression, None, ns)
+    global_ns = _import_modules(modules) if modules else {}
+    local_ns = EvaluationNamespace(variable_store, namespace)
+    return eval(expression, global_ns, local_ns)
 
 
 def _decorate_variables(expression, variable_store):
@@ -74,25 +75,27 @@ def _decorate_variables(expression, variable_store):
     return untokenize(tokens).strip() if variable_found else expression
 
 
+def _import_modules(module_names):
+    modules = {}
+    for name in module_names.replace(' ', '').split(','):
+        if not name:
+            continue
+        modules[name] = __import__(name)
+        # If we just import module 'root.sub', module 'root' is not found.
+        while '.' in name:
+            name, _ = name.rsplit('.', 1)
+            modules[name] = __import__(name)
+    return modules
+
+
 # TODO: In Python 3 this could probably be just Mapping, not MutableMapping.
 # With Python 2 at least list comprehensions need to mutate the evaluation
 # namespace. Using just Mapping would allow removing __set/delitem__.
 class EvaluationNamespace(MutableMapping):
 
-    def __init__(self, variable_store, modules=None, namespace=None):
+    def __init__(self, variable_store, namespace=None):
         self.namespace = {} if namespace is None else dict(namespace)
-        if modules:
-            self.namespace.update(self._import_modules(modules))
         self.variables = variable_store
-
-    def _import_modules(self, modules):
-        modules = [n for n in modules.replace(' ', '').split(',') if n]
-        for name in modules:
-            yield name, __import__(name)
-            # If we just import module 'root.sub', module 'root' is not found.
-            while '.' in name:
-                name, _ = name.rsplit('.', 1)
-                yield name, __import__(name)
 
     def __getitem__(self, key):
         if key.startswith('RF_VAR_'):

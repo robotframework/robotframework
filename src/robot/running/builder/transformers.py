@@ -167,11 +167,11 @@ class TestCaseBuilder(NodeVisitor):
 
     def _format_template(self, template, arguments):
         variables = VariableIterator(template, identifiers='$')
-        variable_count = len(variables)
-        if variable_count == 0 or variable_count != len(arguments):
+        count = len(variables)
+        if count == 0 or count != len(arguments):
             return template, arguments
         temp = []
-        for (before, variable, after), arg in zip(variables, arguments):
+        for (before, _, after), arg in zip(variables, arguments):
             temp.extend([before, arg])
         temp.append(after)
         return ''.join(temp), ()

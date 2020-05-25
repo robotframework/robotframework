@@ -39,7 +39,6 @@ With other arguments
 
 Using kw-only arguments is not possible if 'run_keyword' accepts no kwargs
     Check Test Case    ${TESTNAME}
-    ${message} =    CATENATE
-    ...    Adding keyword 'No kwargs' to library 'DynamicKwOnlyArgsWithoutKwargs' failed:
+    Error In Library    DynamicKwOnlyArgsWithoutKwargs
+    ...    Adding keyword 'No kwargs' failed:
     ...    Too few 'run_keyword' method parameters for keyword-only arguments support.
-    Check Log Message    ${ERRORS[0]}    ${message}    ERROR

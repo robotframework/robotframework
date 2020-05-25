@@ -18,8 +18,7 @@ from contextlib import contextmanager
 from robot.errors import DataError
 from robot.utils import DotDict, is_string, split_from_equals, unic
 
-from .isvar import validate_var
-from .search import search_variable
+from .search import is_assign, is_list_variable, is_dict_variable
 
 
 class VariableTableSetter(object):
@@ -46,7 +45,8 @@ class VariableTableSetter(object):
 
 
 def VariableTableValue(value, name, error_reporter=None):
-    validate_var(name)
+    if not is_assign(name):
+        raise DataError("Invalid variable name '%s'." % name)
     VariableTableValue = {'$': ScalarVariableTableValue,
                           '@': ListVariableTableValue,
                           '&': DictVariableTableValue}[name[0]]
@@ -110,7 +110,7 @@ class ScalarVariableTableValue(VariableTableValueBase):
 
     def _is_single_value(self, separator, values):
         return (separator is None and len(values) == 1 and
-                not search_variable(values[0]).is_list_variable)
+                not is_list_variable(values[0]))
 
 
 class ListVariableTableValue(VariableTableValueBase):
@@ -126,7 +126,7 @@ class DictVariableTableValue(VariableTableValueBase):
 
     def _yield_formatted(self, values):
         for item in values:
-            if search_variable(item).is_dict_variable:
+            if is_dict_variable(item):
                 yield item
             else:
                 name, value = split_from_equals(item)

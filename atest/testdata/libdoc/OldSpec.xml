@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordspec name="Example"
+             type="library"
+             source="Example.py"
+             lineno="8"
+             generated="20120214 13:36:44">
+<version>42</version>
+<scope>global</scope>
+<namedargs>no</namedargs>
+<doc>Library for `libdoc.py` testing purposes.
+
+This library is only used in an example and it doesn't do anything useful.</doc>
+<init lineno="12">
+<arguments>
+</arguments>
+<doc>Creates new Example test library 1</doc>
+</init>
+<init>
+<arguments>
+<arg>arg</arg>
+</arguments>
+<doc>Creates new Example test library 2</doc>
+</init>
+<init>
+<arguments>
+<arg>i</arg>
+</arguments>
+<doc>Creates new Example test library 3</doc>
+</init>
+<kw name="Keyword">
+<arguments>
+<arg>arg</arg>
+</arguments>
+<doc>Takes one `arg` and *does nothing* with it.
+
+Example:
+| Your Keyword | xxx |
+| Your Keyword | yyy |
+
+See `My Keyword` for no more information.</doc>
+<tags>
+<tag>tag1</tag>
+<tag>tag2</tag>
+</tags>
+</kw>
+<kw name="My Keyword" lineno="42" source="Example.py">
+<arguments>
+</arguments>
+<doc>Does nothing &amp; &lt;doc&gt; has "stuff" to 'escape'!! and ignored indentation
+Tags: in spec these wont become tags</doc>
+</kw>
+<tags/>
+<kw name="Non Ascii Doc" lineno="666" source="Different!">
+<arguments>
+</arguments>
+<doc>Hyvää yötä.
+
+Спасибо!</doc>
+</kw>
+</keywordspec>

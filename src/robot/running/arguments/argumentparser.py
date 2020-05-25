@@ -14,8 +14,9 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import JYTHON, PY_VERSION, PY2
-from robot.variables import is_dict_var, is_list_var, is_scalar_var
+from robot.utils import (JYTHON, PY_VERSION, PY2, is_string, split_from_equals,
+                         unwrap)
+from robot.variables import is_assign
 
 from .argumentspec import ArgumentSpec
 
@@ -24,11 +25,8 @@ if PY2:
 
     def getfullargspec(func):
         return getargspec(func) + ([], None, {})
-
-    def unwrap(func):
-        return func
 else:
-    from inspect import getfullargspec, ismethod, unwrap
+    from inspect import getfullargspec, ismethod
 
 if PY_VERSION >= (3, 5):
     import typing
@@ -54,6 +52,8 @@ class PythonArgumentParser(_ArgumentParser):
     def parse(self, handler, name=None):
         args, varargs, kws, defaults, kwo, kwo_defaults, annotations \
                 = self._get_arg_spec(handler)
+        if ismethod(handler) or handler.__name__ == '__init__':
+            args = args[1:]    # Drop 'self'.
         spec = ArgumentSpec(
             name,
             self._type,
@@ -69,13 +69,9 @@ class PythonArgumentParser(_ArgumentParser):
     def _get_arg_spec(self, handler):
         handler = unwrap(handler)
         try:
-            args, varargs, kws, defaults, kwo, kwo_defaults, annotations \
-                    = getfullargspec(handler)
+            return getfullargspec(handler)
         except TypeError:    # Can occur w/ C functions (incl. many builtins).
             return [], 'args', None, None, [], None, {}
-        if ismethod(handler) or handler.__name__ == '__init__':
-            args = args[1:]  # Drop 'self'.
-        return args, varargs, kws, defaults, kwo, kwo_defaults, annotations
 
     def _get_defaults(self, args, default_values, kwo_defaults):
         if default_values:
@@ -120,7 +116,13 @@ class PythonArgumentParser(_ArgumentParser):
             if defaults[arg] is None and arg in type_hints:
                 type_ = type_hints[arg]
                 if self._is_union(type_):
-                    types = type_.__args__
+                    try:
+                        types = type_.__args__
+                    except AttributeError:
+                        # Python 3.5.2's typing uses __union_params__ instead
+                        # of __args__. This block can likely be safely removed
+                        # when Python 3.5 support is dropped
+                        types = type_.__union_params__
                     if len(types) == 2 and types[1] is type(None):
                         type_hints[arg] = types[0]
 
@@ -196,21 +198,21 @@ class _ArgumentSpecParser(_ArgumentParser):
         spec = ArgumentSpec(name, self._type)
         kw_only_args = False
         for arg in argspec:
+            arg = self._validate_arg(arg)
             if spec.kwargs:
                 self._raise_invalid_spec('Only last argument can be kwargs.')
+            elif isinstance(arg, tuple):
+                arg, default = arg
+                arg = self._add_arg(spec, arg, kw_only_args)
+                spec.defaults[arg] = default
             elif self._is_kwargs(arg):
-                self._add_kwargs(spec, arg)
-            elif self._is_kw_only_separator(arg):
-                if spec.varargs or kw_only_args:
-                    self._raise_invalid_spec('Cannot have multiple varargs.')
-                kw_only_args = True
+                spec.kwargs = self._format_kwargs(arg)
             elif self._is_varargs(arg):
-                if spec.varargs or kw_only_args:
+                if kw_only_args:
                     self._raise_invalid_spec('Cannot have multiple varargs.')
-                self._add_varargs(spec, arg)
+                if not self._is_kw_only_separator(arg):
+                    spec.varargs = self._format_varargs(arg)
                 kw_only_args = True
-            elif '=' in arg:
-                self._add_arg_with_default(spec, arg, kw_only_args)
             elif spec.defaults and not kw_only_args:
                 self._raise_invalid_spec('Non-default argument after default '
                                          'arguments.')
@@ -218,14 +220,14 @@ class _ArgumentSpecParser(_ArgumentParser):
                 self._add_arg(spec, arg, kw_only_args)
         return spec
 
+    def _validate_arg(self, arg):
+        raise NotImplementedError
+
     def _raise_invalid_spec(self, error):
         raise DataError('Invalid argument specification: %s' % error)
 
     def _is_kwargs(self, arg):
         raise NotImplementedError
-
-    def _add_kwargs(self, spec, kwargs):
-        spec.kwargs = self._format_kwargs(kwargs)
 
     def _format_kwargs(self, kwargs):
         raise NotImplementedError
@@ -236,16 +238,8 @@ class _ArgumentSpecParser(_ArgumentParser):
     def _is_varargs(self, arg):
         raise NotImplementedError
 
-    def _add_varargs(self, spec, varargs):
-        spec.varargs = self._format_varargs(varargs)
-
     def _format_varargs(self, varargs):
         raise NotImplementedError
-
-    def _add_arg_with_default(self, spec, arg, kw_only_arg=False):
-        arg, default = arg.split('=', 1)
-        arg = self._add_arg(spec, arg, kw_only_arg)
-        spec.defaults[arg] = default
 
     def _format_arg(self, arg):
         return arg
@@ -259,17 +253,33 @@ class _ArgumentSpecParser(_ArgumentParser):
 
 class DynamicArgumentParser(_ArgumentSpecParser):
 
+    def _validate_arg(self, arg):
+        if isinstance(arg, tuple):
+            if self._is_invalid_tuple(arg):
+                self._raise_invalid_spec('Invalid argument "%s".' % (arg,))
+            if len(arg) == 1:
+                return arg[0]
+            return arg
+        if '=' in arg:
+            return tuple(arg.split('=', 1))
+        return arg
+
+    def _is_invalid_tuple(self, arg):
+        return (len(arg) > 2
+                or not is_string(arg[0])
+                or (arg[0].startswith('*') and len(arg) > 1))
+
     def _is_kwargs(self, arg):
         return arg.startswith('**')
 
     def _format_kwargs(self, kwargs):
         return kwargs[2:]
 
+    def _is_varargs(self, arg):
+        return arg.startswith('*')
+
     def _is_kw_only_separator(self, arg):
         return arg == '*'
-
-    def _is_varargs(self, arg):
-        return arg.startswith('*') and not self._is_kwargs(arg)
 
     def _format_varargs(self, varargs):
         return varargs[1:]
@@ -277,22 +287,28 @@ class DynamicArgumentParser(_ArgumentSpecParser):
 
 class UserKeywordArgumentParser(_ArgumentSpecParser):
 
+    def _validate_arg(self, arg):
+        arg, default = split_from_equals(arg)
+        if not (is_assign(arg) or arg == '@{}'):
+            self._raise_invalid_spec("Invalid argument syntax '%s'." % arg)
+        if default is not None:
+            return arg, default
+        return arg
+
     def _is_kwargs(self, arg):
-        return is_dict_var(arg)
+        return arg[0] == '&'
 
     def _format_kwargs(self, kwargs):
         return kwargs[2:-1]
 
     def _is_varargs(self, arg):
-        return is_list_var(arg)
-
-    def _format_varargs(self, varargs):
-        return varargs[2:-1]
+        return arg[0] == '@'
 
     def _is_kw_only_separator(self, arg):
         return arg == '@{}'
 
+    def _format_varargs(self, varargs):
+        return varargs[2:-1]
+
     def _format_arg(self, arg):
-        if not is_scalar_var(arg):
-            self._raise_invalid_spec("Invalid argument syntax '%s'." % arg)
         return arg[2:-1]

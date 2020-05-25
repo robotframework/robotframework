@@ -22,6 +22,7 @@ List all keywords
 
 List some keywords
     Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot list o
+    ...   Deprecation
     ...   Keyword with some "stuff" to <escape>
     ...   non ascii doc
     Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot LIST KW? C*R
@@ -35,7 +36,7 @@ Show whole library
     Run Libdoc And Set Output    ${TESTDATADIR}/module.py show
     Should Contain Intro    module
     ...    Version=0.1-alpha
-    ...    Scope=global
+    ...    Scope=GLOBAL
     ...    Named arguments=supported
     Should Contain Keyword    Get Hello    ${EMPTY}
     ...    Get hello.

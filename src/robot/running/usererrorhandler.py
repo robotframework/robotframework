@@ -37,8 +37,10 @@ class UserErrorHandler(object):
         self.name = name
         self.libname = libname
         self.error = error
+        self.source = None
+        self.lineno = -1
         self.arguments = ArgumentSpec()
-        self.timeout = ''
+        self.timeout = None
         self.tags = Tags()
 
     @property

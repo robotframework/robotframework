@@ -40,16 +40,19 @@ Positional and named
     Should Be Equal    ${ret}    A, B, C, D
 
 Values with defaults can be omitted at the end
+    ${ret} =    Four Args    A    B    C
+    Should Be Equal    ${ret}    A, B, C
     ${ret} =    Four Args    a=A    b=B    c=C
     Should Be Equal    ${ret}    A, B, C
     ${ret} =    Four Args    a=A
     Should Be Equal    ${ret}    A
 
 Values with defaults can be omitted in the middle
+    [Documentation]    Default values are used to fill the gaps.
     ${ret} =    Four Args    a=A    d=D
-    Should Be Equal    ${ret}    A, 2, 3, D
+    Should Be Equal    ${ret}    A, 2, 3 (int), D
     ${ret} =    Four Args    d=D
-    Should Be Equal    ${ret}    1, 2, 3, D
+    Should Be Equal    ${ret}    1, 2, 3 (int), D
     ${ret} =    Four Args    c=C
     Should Be Equal    ${ret}    1, 2, C
 
@@ -59,7 +62,7 @@ Non-string values
     ${ret} =    Two Args    first=${1}    second=${2}
     Should Be Equal    ${ret}    1 (int), 2 (int)
     ${ret} =    Four Args    a=${1}    d=${True}
-    Should Be Equal    ${ret}    1 (int), 2, 3, True (bool)
+    Should Be Equal    ${ret}    1 (int), 2, 3 (int), True (bool)
 
 Nön-ÄSCII values
     ${ret} =    Two Args    first=ensimmäinen    second=官话

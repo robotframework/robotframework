@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.variables import is_dict_var, is_var, search_variable
 from robot.utils import normalize_whitespace, split_from_equals
+from robot.variables import is_assign, is_dict_variable, search_variable
 
 from .tokens import Token
 
@@ -110,11 +110,12 @@ class VariableLexer(StatementLexer):
     def lex(self):
         name = self.statement[0]
         values = self.statement[1:]
-        if is_var(name.value, allow_assign_mark=True):
+        match = search_variable(name.value, ignore_errors=True)
+        if match.is_assign(allow_assign_mark=True):
             self._valid_variable(name, values)
         else:
             self._invalid_variable(name, values)
-        if is_dict_var(name.value, allow_assign_mark=True):
+        if match.is_dict_assign(allow_assign_mark=True):
             self._validate_dict_items(values)
 
     def _valid_variable(self, name, values):
@@ -138,7 +139,7 @@ class VariableLexer(StatementLexer):
 
     def _is_valid_dict_item(self, item):
         name, value = split_from_equals(item)
-        return value is not None or search_variable(item).is_dict_variable
+        return value is not None or is_dict_variable(item)
 
 
 class KeywordCallLexer(StatementLexer):
@@ -158,7 +159,7 @@ class KeywordCallLexer(StatementLexer):
         for token in self.statement:
             if keyword_seen:
                 token.type = Token.ARGUMENT
-            elif is_var(token.value, allow_assign_mark=True):
+            elif is_assign(token.value, allow_assign_mark=True):
                 token.type = Token.ASSIGN
             else:
                 token.type = Token.KEYWORD

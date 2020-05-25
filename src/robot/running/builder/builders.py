@@ -24,9 +24,50 @@ from .testsettings import TestDefaults
 
 
 class TestSuiteBuilder(object):
+    """Builder to construct ``TestSuite`` objects based on data on the disk.
+
+    The :meth:`build` method constructs executable
+    :class:`~robot.running.model.TestSuite` objects based on test data files
+    or directories. There are two main use cases for this API:
+
+    - Execute the created suite by using its
+      :meth:`~robot.running.model.TestSuite.run` method. The suite can be
+      can be modified before execution if needed.
+
+    - Inspect the suite to see, for example, what tests it has or what tags
+      tests have. This can be more convenient than using the lower level
+      :mod:`~robot.parsing` APIs but does not allow saving modified data
+      back to the disk.
+
+    Both modifying the suite and inspecting what data it contains are easiest
+    done by using the :mod:`~robot.model.visitor` interface.
+
+    This class is part of the public API and should be imported via the
+    :mod:`robot.api` package.
+    """
 
     def __init__(self, included_suites=None, included_extensions=('robot',),
                  rpa=None, allow_empty_suite=False, process_curdir=True):
+        """
+        :param include_suites:
+            List of suite names to include. If ``None`` or an empty list,
+            all suites are included. Same as using :option:`--suite` on
+            the command line.
+        :param included_extensions:
+            List of extensions of files to parse. Same as :option:`--extension`.
+            This option was renamed in RF 3.2 and it used to be ``extension``.
+        :param rpa: Explicit test execution mode. ``True`` for RPA and
+           ``False`` for test automation. By default mode is got from test
+           data headers and possible conflicting headers cause an error.
+           Same as :option:`--rpa` or :option:`--norpa`.
+        :param allow_empty_suite:
+            Specify is it an error if the built suite contains no tests.
+            Same as :option:`--runemptysuite`. New in RF 3.2.
+        :param process_curdir:
+            Control processing the special ``${CURDIR}`` variable. It is
+            resolved already at parsing time by default, but that can be
+            changed by giving this argument ``False`` value. New in RF 3.2.
+        """
         self.rpa = rpa
         self.included_suites = included_suites
         self.included_extensions = included_extensions
@@ -45,7 +86,6 @@ class TestSuiteBuilder(object):
         suite = parser.parse(structure)
         if not self.included_suites and not self.allow_empty_suite:
             self._validate_test_counts(suite, multisource=len(paths) > 1)
-        # TODO: do we need `preserve_direct_children`?
         suite.remove_empty_suites(preserve_direct_children=len(paths) > 1)
         return suite
 

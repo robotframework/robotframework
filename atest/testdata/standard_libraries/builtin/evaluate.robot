@@ -102,6 +102,10 @@ Explicit modules can override builtins
     ${result} =    Evaluate    len('value')
     Should Be Equal    ${result}    ${5}
 
+Explicit modules used in lambda
+    ${result} =    Evaluate    ''.join(filter(lambda s: re.match('^He',s), $HELLO))    modules=re
+    Should Be Equal    ${result}    Hello
+
 Custom namespace
     ${ns} =    Create Dictionary    a=x    b=${2}    c=2
     ${result} =    Evaluate    a*3 if b==2 and c!=2 else a    namespace=${ns}

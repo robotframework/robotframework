@@ -97,6 +97,7 @@ class DocFormatter(object):
             'importing': 'Importing',
             'library importing': 'Importing',
             'shortcuts': 'Shortcuts',
+            'tags': 'Tags',
             'keywords': 'Keywords'
         }
         for kw in keywords:
@@ -109,7 +110,7 @@ class DocFormatter(object):
     def _yield_header_targets(self, introduction):
         headers = HeaderFormatter()
         for line in introduction.splitlines():
-            match = headers.match(line)
+            match = headers.match(line.strip())
             if match:
                 yield match.group(2)
 

@@ -124,47 +124,42 @@ class NewlineNormalizer(ModelTransformer):
         self.newline = newline
         self.short_test_name_length = short_test_name_length
         self.custom_test_section_headers = False
-        self.tests = []
-        self.keywords = []
-        self.sections = []
+        self.last_test = None
+        self.last_keyword = None
+        self.last_section = None
 
     def visit_File(self, node):
-        self.sections = node.sections
-        self.generic_visit(node)
-        return node
-
-    def visit_CommentSection(self, node):
-        self.generic_visit(node)
-        return node
+        self.last_section = node.sections[-1] if node.sections else None
+        return self.generic_visit(node)
 
     def visit_Section(self, node):
-        if node != self.sections[-1]:
-            node.body.add(EmptyLine.from_value(self.newline))
-        self.generic_visit(node)
-        return node
+        if node is not self.last_section:
+            node.body.append(EmptyLine.from_value(self.newline))
+        return self.generic_visit(node)
+
+    def visit_CommentSection(self, node):
+        return self.generic_visit(node)
 
     def visit_TestCaseSection(self, node):
+        self.last_test = node.body[-1] if node.body else None
         self.custom_test_section_headers = len(node.header.data_tokens) > 1
-        self.tests = node.body.items[:]
         section = self.visit_Section(node)
         self.custom_test_section_headers = False
         return section
 
     def visit_TestCase(self, node):
-        if not node.body.items or node != self.tests[-1]:
-            node.body.items.append(EmptyLine.from_value(self.newline))
-        self.generic_visit(node)
-        return node
+        if not node.body or node is not self.last_test:
+            node.body.append(EmptyLine.from_value(self.newline))
+        return self.generic_visit(node)
 
     def visit_KeywordSection(self, node):
-        self.keywords = node.body.items
+        self.last_keyword = node.body[-1] if node.body else None
         return self.visit_Section(node)
 
     def visit_Keyword(self, node):
-        if not node.body.items or node != self.keywords[-1]:
-            node.body.items.append(EmptyLine.from_value(self.newline))
-        self.generic_visit(node)
-        return node
+        if not node.body or node is not self.last_keyword:
+            node.body.append(EmptyLine.from_value(self.newline))
+        return self.generic_visit(node)
 
     def visit_Statement(self, statement):
         if statement[-1].type != Token.EOL:
@@ -187,48 +182,40 @@ class SeparatorNormalizer(ModelTransformer):
     def __init__(self, use_pipes, space_count):
         self.use_pipes = use_pipes
         self.space_count = space_count
-        self.data_has_pipes = False
         self.indent = 0
-        self.tests = []
-
-    def visit_TestCaseSection(self, section):
-        self.tests = section.body.items
-        self.generic_visit(section)
-        return section
 
     def visit_TestCase(self, node):
         self.visit_Statement(node.header)
         self.indent += 1
-        self.generic_visit(node.body)
+        node.body = [self.visit(item) for item in node.body]
         self.indent -= 1
         return node
 
     def visit_Keyword(self, node):
         self.visit_Statement(node.header)
         self.indent += 1
-        self.generic_visit(node.body)
+        node.body = [self.visit(item) for item in node.body]
         self.indent -= 1
         return node
 
     def visit_ForLoop(self, node):
         self.visit_Statement(node.header)
         self.indent += 1
-        self.generic_visit(node.body)
+        node.body = [self.visit(item) for item in node.body]
         self.indent -= 1
         self.visit_Statement(node.end)
         return node
 
     def visit_Statement(self, statement):
-        if statement.tokens[0].value and statement.tokens[0].value[0] == '|':
-            self.data_has_pipes = True
+        has_pipes = statement.tokens[0].value.startswith('|')
         if self.use_pipes:
-            return self._handle_pipes(statement)
-        return self._handle_spaces(statement)
+            return self._handle_pipes(statement, has_pipes)
+        return self._handle_spaces(statement, has_pipes)
 
-    def _handle_spaces(self, statement):
+    def _handle_spaces(self, statement, has_pipes=False):
         new_tokens = []
         for line in statement.lines:
-            if self.data_has_pipes and len(line) > 1:
+            if has_pipes and len(line) > 1:
                 line = self._remove_consecutive_separators(line)
             new_tokens.extend([self._normalize_spaces(i, t, len(line))
                                for i, t in enumerate(line)])
@@ -238,7 +225,8 @@ class SeparatorNormalizer(ModelTransformer):
 
     def _remove_consecutive_separators(self, line):
         sep_count = len(list(
-            takewhile(lambda t: t.type == Token.SEPARATOR, line)))
+            takewhile(lambda t: t.type == Token.SEPARATOR, line)
+        ))
         return line[sep_count - 1:]
 
     def _normalize_spaces(self, index, token, line_length):
@@ -252,14 +240,14 @@ class SeparatorNormalizer(ModelTransformer):
             token.value = token.value.rstrip()
         return token
 
-    def _handle_pipes(self, statement):
+    def _handle_pipes(self, statement, has_pipes=False):
         new_tokens = []
         for line in statement.lines:
             if len(line) == 1 and line[0].type == Token.EOL:
                 new_tokens.extend(line)
                 continue
 
-            if not self.data_has_pipes:
+            if not has_pipes:
                 line = self._insert_leading_and_trailing_separators(line)
             for index, token in enumerate(line):
                 if token.type == Token.SEPARATOR:
@@ -311,14 +299,13 @@ class ColumnAligner(ModelTransformer):
 
     def visit_TestCase(self, node):
         self.first_statement_after_name_seen = False
-        self.generic_visit(node)
-        return node
+        return self.generic_visit(node)
 
-    def visit_ForLoop(self, statement):
+    def visit_ForLoop(self, node):
         self.indent += 1
-        self.generic_visit(statement)
+        self.generic_visit(node)
         self.indent -= 1
-        return statement
+        return node
 
     def visit_Statement(self, statement):
         if statement.type == Token.TESTCASE_NAME:
@@ -335,7 +322,8 @@ class ColumnAligner(ModelTransformer):
 
     def align_statement(self, statement):
         for line in statement.lines:
-            line = list(filter(lambda t: t.type not in (Token.SEPARATOR, Token.EOL), line))
+            line = [t for t in line if t.type
+                    not in (Token.SEPARATOR, Token.EOL)]
             line_pos = 0
             exp_pos = 0
             widths = self.widths_for_line(line)
@@ -377,7 +365,7 @@ class ColumnWidthCounter(ModelTransformer):
 
     def _count_widths_from_statement(self, statement, indent=0):
         for line in statement.lines:
-            line = filter(lambda t: t.type not in (Token.SEPARATOR, Token.EOL), line)
+            line = [t for t in line if t.type not in (Token.SEPARATOR, Token.EOL)]
             for index, token in enumerate(line, start=indent):
                 if index >= len(self.widths):
                     self.widths.append(len(token.value))
@@ -407,10 +395,10 @@ class Aligner(ModelTransformer):
 
     def visit_Statement(self, statement):
         for line in statement.lines:
-            # TODO: cleaner condition. Line has 2 tokens e.g. when it has
-            # only name and newline
-            value_tokens = [t for t in line if t.type not in (Token.SEPARATOR, Token.EOL)]
-            if len(value_tokens) == 0 or (len(value_tokens) < 2 and not self.pipes_mode):
+            value_tokens = [t for t in line if t.type
+                            not in (Token.SEPARATOR, Token.EOL)]
+            if len(value_tokens) == 0 or (
+                    len(value_tokens) < 2 and not self.pipes_mode):
                 continue
             first_value = [t for t in line if t.type != Token.SEPARATOR][0]
             value_index = line.index(first_value)

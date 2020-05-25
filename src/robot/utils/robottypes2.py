@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import Mapping, MutableMapping
+from collections import Mapping, MutableMapping, Sequence
 from UserDict import UserDict
 from UserString import UserString
 from types import ClassType, NoneType
@@ -70,9 +70,10 @@ def is_dict_like(item):
     return isinstance(item, (Mapping, UserDict))
 
 
-def type_name(item):
+def type_name(item, capitalize=False):
     cls = item.__class__ if hasattr(item, '__class__') else type(item)
     named_types = {str: 'string', unicode: 'string', bool: 'boolean',
                    int: 'integer', long: 'integer', NoneType: 'None',
                    dict: 'dictionary', type: 'class', ClassType: 'class'}
-    return named_types.get(cls, cls.__name__)
+    name = named_types.get(cls, cls.__name__)
+    return name.capitalize() if capitalize and name.islower() else name

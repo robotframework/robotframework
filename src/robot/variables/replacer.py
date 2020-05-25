@@ -18,7 +18,7 @@ from robot.output import librarylogger as logger
 from robot.utils import (escape, is_dict_like, is_list_like, type_name,
                          unescape, unic)
 
-from .search import search_variable, VariableMatch
+from .search import VariableMatch, search_variable
 
 
 class VariableReplacer(object):
@@ -65,7 +65,7 @@ class VariableReplacer(object):
         if not match:
             return [unescape(match.string)]
         value = self.replace_scalar(match, ignore_errors)
-        if match.is_list_variable and is_list_like(value):
+        if match.is_list_variable() and is_list_like(value):
             return value
         return [value]
 
@@ -87,7 +87,7 @@ class VariableReplacer(object):
         return search_variable(item, ignore_errors=ignore_errors)
 
     def _replace_scalar(self, match, ignore_errors=False):
-        if not match.is_variable:
+        if not match.is_variable():
             return self.replace_string(match, ignore_errors=ignore_errors)
         return self._get_variable_value(match, ignore_errors)
 
@@ -139,31 +139,36 @@ class VariableReplacer(object):
         for item in match.items:
             if is_dict_like(value):
                 value = self._get_dict_variable_item(name, value, item)
-            elif is_list_like(value):
-                value = self._get_list_variable_item(name, value, item)
+            elif hasattr(value, '__getitem__'):
+                value = self._get_sequence_variable_item(name, value, item)
             else:
                 raise VariableError(
-                    "Variable '%s' is %s, not list or dictionary, and thus "
-                    "accessing item '%s' from it is not possible."
-                    % (name, type_name(value), item)
+                    "Variable '%s' is %s, which is not subscriptable, and "
+                    "thus accessing item '%s' from it is not possible. To use "
+                    "'[%s]' as a literal value, it needs to be escaped like "
+                    "'\\[%s]'." % (name, type_name(value), item, item, item)
                 )
             name = '%s[%s]' % (name, item)
         return value
 
-    def _get_list_variable_item(self, name, variable, index):
+    def _get_sequence_variable_item(self, name, variable, index):
         index = self.replace_string(index)
         try:
-            index = self._parse_list_variable_index(index, name[0] == '$')
+            index = self._parse_sequence_variable_index(index, name[0] == '$')
         except ValueError:
-            raise VariableError("List '%s' used with invalid index '%s'."
-                                % (name, index))
+            raise VariableError("%s '%s' used with invalid index '%s'. "
+                                "To use '[%s]' as a literal value, it needs "
+                                "to be escaped like '\\[%s]'."
+                                % (type_name(variable, capitalize=True), name,
+                                   index, index, index))
         try:
             return variable[index]
         except IndexError:
-            raise VariableError("List '%s' has no item in index %d."
-                                % (name, index))
+            raise VariableError("%s '%s' has no item in index %d."
+                                % (type_name(variable, capitalize=True), name,
+                                   index))
 
-    def _parse_list_variable_index(self, index, support_slice=True):
+    def _parse_sequence_variable_index(self, index, support_slice=True):
         if ':' not in index:
             return int(index)
         if index.count(':') > 2 or not support_slice:

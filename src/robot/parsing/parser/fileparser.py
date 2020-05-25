@@ -63,7 +63,7 @@ class SectionParser(Parser):
         return statement.type not in Token.HEADER_TOKENS
 
     def parse(self, statement):
-        self.model.body.add(statement)
+        self.model.body.append(statement)
 
 
 class SettingSectionParser(SectionParser):
@@ -102,7 +102,7 @@ class TestCaseSectionParser(SectionParser):
         else:    # Empty lines and comments before first test.
             parser = None
             model = statement
-        self.model.body.add(model)
+        self.model.body.append(model)
         return parser
 
 
@@ -118,5 +118,5 @@ class KeywordSectionParser(SectionParser):
         else:    # Empty lines and comments before first keyword.
             parser = None
             model = statement
-        self.model.body.add(model)
+        self.model.body.append(model)
         return parser
