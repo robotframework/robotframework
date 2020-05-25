@@ -669,8 +669,8 @@ class _Verify(_BuiltInBase):
     def _include_values(self, values):
         return is_truthy(values) and str(values).upper() != 'NO VALUES'
 
-    def _strip_spaces(selfself, string_value, strip_spaces):
-        if isinstance(strip_spaces, str):
+    def _strip_spaces(self, string_value, strip_spaces):
+        if is_string(strip_spaces):
             if strip_spaces.upper() == 'LEADING':
                 string_value = string_value.lstrip()
             elif strip_spaces.upper() == 'TRAILING':
