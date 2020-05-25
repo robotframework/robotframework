@@ -33,14 +33,6 @@ robot.model.filter module
    :undoc-members:
    :show-inheritance:
 
-robot.model.imports module
---------------------------
-
-.. automodule:: robot.model.imports
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.model.itemlist module
 ---------------------------
 

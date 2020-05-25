@@ -9,8 +9,8 @@ from robot.utils.asserts import *
 from robot.utils import normalize, JYTHON, PY2
 from robot.errors import DataError
 
-from classes import (NameLibrary, DocLibrary, ArgInfoLibrary,
-                     GetattrLibrary, SynonymLibrary)
+from classes import (NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary,
+                     SynonymLibrary, __file__ as classes_source)
 if JYTHON:
     import ArgumentTypes, Extended, MultipleArguments, MultipleSignatures, \
             NoHandlers
@@ -602,9 +602,8 @@ class TestDynamicLibraryInitDocumentation(unittest.TestCase):
 class TestSourceAndLineno(unittest.TestCase):
 
     def test_class(self):
-        from robot.libraries.BuiltIn import __file__ as source
-        lib = TestLibrary('BuiltIn')
-        self._verify(lib, source, 3270)
+        lib = TestLibrary('classes.NameLibrary')
+        self._verify(lib, classes_source, 12)
 
     def test_class_in_package(self):
         from robot.variables.variables import __file__ as source
@@ -612,9 +611,8 @@ class TestSourceAndLineno(unittest.TestCase):
         self._verify(lib, source, 25)
 
     def test_dynamic(self):
-        from classes import __file__ as source
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
-        self._verify(lib, source, 217)
+        self._verify(lib, classes_source, 217)
 
     def test_module(self):
         from module_library import __file__ as source
@@ -627,9 +625,8 @@ class TestSourceAndLineno(unittest.TestCase):
         self._verify(lib, source, 1)
 
     def test_decorated(self):
-        from classes import __file__ as source
         lib = TestLibrary('classes.Decorated')
-        self._verify(lib, source, 319)
+        self._verify(lib, classes_source, 319)
 
     if JYTHON:
 

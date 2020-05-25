@@ -67,21 +67,33 @@ class Statement(ast.AST):
     def data_tokens(self):
         return [t for t in self.tokens if t.type not in Token.NON_DATA_TOKENS]
 
-    def get_value(self, type, default=None):
-        token = self.get_token(type)
-        return token.value if token else default
-
     def get_token(self, type):
+        """Return a token with the given ``type``.
+
+        If there are no matches, return ``None``. If there are multiple
+        matches, return the first match.
+        """
         for t in self.tokens:
             if t.type == type:
                 return t
         return None
 
-    def get_values(self, *types):
-        return tuple(t.value for t in self.tokens if t.type in types)
-
     def get_tokens(self, *types):
+        """Return tokens having any of the given ``types``."""
         return [t for t in self.tokens if t.type in types]
+
+    def get_value(self, type, default=None):
+        """Return value of a token with the given ``type``.
+
+        If there are no matches, return ``default``. If there are multiple
+        matches, return the value of the first match.
+        """
+        token = self.get_token(type)
+        return token.value if token else default
+
+    def get_values(self, *types):
+        """Return values of tokens having any of the given ``types``."""
+        return tuple(t.value for t in self.tokens if t.type in types)
 
     @property
     def lines(self):
@@ -172,7 +184,7 @@ class Fixture(Statement):
 class SectionHeader(Statement):
 
     @property
-    def value(self):
+    def name(self):
         header = self.get_token(self.type)
         return normalize_whitespace(header.value).strip('* ')
 

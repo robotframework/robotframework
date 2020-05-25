@@ -7,8 +7,10 @@ ${HELLO}          Used to test that variable name, not value, is shown in argume
 
 *** Test Cases ***
 Fail Because Timeout exceeded
-    [Documentation]    FAIL GLOB: Keyword 'Fail Until Retried Often Enough' failed after retrying for 100 milliseconds. The last error was: Still ? times to fail!
-    Wait Until Keyword Succeeds    0.1 seconds    50ms    Fail Until Retried Often Enough
+    [Documentation]    FAIL GLOB:
+    ...    Keyword 'Fail Until Retried Often Enough' failed after retrying for 100 milliseconds. \
+    ...    The last error was: Still ? times to fail!
+    Wait Until Keyword Succeeds    0.1 seconds    55ms    Fail Until Retried Often Enough
 
 Pass with first Try
     Wait Until Keyword Succeeds    2 minutes    30 seconds    Log    ${HELLO}
@@ -20,29 +22,38 @@ Pass With Last Possible Try
     Wait Until Keyword Succeeds    1.1 seconds    0.3 seconds    Fail Until Retried Often Enough
 
 Pass With Returning Value Correctly
-    ${return value} =    Wait Until Keyword Succeeds    4 seconds    0 min 0 sec 1 ms    Fail Until Retried Often Enough    ${HELLO}
-    Should Be Equal    ${return value}    ${HELLO}    Returned value should be the one that is given to the keyword.
+    ${return value} =    Wait Until Keyword Succeeds    4 seconds    0 min 0 sec 1 ms
+    ...    Fail Until Retried Often Enough    ${HELLO}
+    Should Be Equal    ${return value}    ${HELLO}
 
 Invalid Timeout Does Not Cause Uncatchable Failure
-    Run Keyword And Expect Error    ValueError: Invalid time string 'Not Time Value'.    Wait Until Keyword Succeeds    Not Time Value    1 seconds    No Operation
+    Run Keyword And Expect Error
+    ...    ValueError: Invalid time string 'Not Time Value'.
+    ...    Wait Until Keyword Succeeds    Not Time Value    1 seconds    No Operation
 
 Invalid Retry Interval Does Not Cause Uncatchable Failure
-    Run Keyword And Expect Error    ValueError: Invalid time string 'invalid'.    Wait Until Keyword Succeeds    1 seconds    invalid    No Operation
+    Run Keyword And Expect Error
+    ...    ValueError: Invalid time string 'invalid'.
+    ...    Wait Until Keyword Succeeds    1 seconds    invalid    No Operation
 
 Wait Until In User Keyword
     Wait Until Inside User Keyword
 
 Failing User Keyword with Wait Until
-    [Documentation]    FAIL REGEXP: Keyword 'User Keyword' failed after retrying for 123 milliseconds. The last error was: Still \\d times to fail!
+    [Documentation]    FAIL GLOB:
+    ...    Keyword 'User Keyword' failed after retrying for 123 milliseconds. \
+    ...    The last error was: Still ? times to fail!
     Set Times To Fail    10
     Wait Until Keyword Succeeds    ${0.12345}    0.02    User Keyword
 
 Passing User Keyword with Wait Until
     ${return value} =    Wait Until Keyword Succeeds    10 minutes    10 milliseconds    User Keyword
-    Should Be Equal    ${return value}    From User Keyword    Returned value should be the one defined in user keyword.
+    Should Be Equal    ${return value}    From User Keyword
 
 Wait Until With Longer Test Timeout
-    [Documentation]    FAIL Keyword 'Fail' failed after retrying for 50 milliseconds. The last error was: My error
+    [Documentation]    FAIL
+    ...    Keyword 'Fail' failed after retrying for 50 milliseconds. \
+    ...    The last error was: My error
     [Timeout]    10 seconds
     Wait Until Keyword Succeeds    0.05s    0.01s    Fail    My error
 
@@ -52,7 +63,9 @@ Wait Until With Shorter Test Timeout
     Wait Until Keyword Succeeds    1minute    0.1s    Fail    This won't be the final error
 
 Wait Until With Longer Keyword Timeout
-    [Documentation]    FAIL Keyword 'Fail' failed after retrying for 100 milliseconds. The last error was: Error in timeouted UK
+    [Documentation]    FAIL
+    ...    Keyword 'Fail' failed after retrying for 100 milliseconds. \
+    ...    The last error was: Error in timeouted UK
     Timeouted UK with Wait Until KW    1 hour
 
 Wait Until With Shorter Keyword Timeout
@@ -66,11 +79,15 @@ Retry as count
     Wait Until Keyword Succeeds    ${1}X    1 minute 2 seconds    No Operation
 
 Retry as count failing 1
-    [Documentation]    FAIL Keyword 'Fail Until Retried Often Enough' failed after retrying 3 times. The last error was: Still 0 times to fail!
+    [Documentation]    FAIL
+    ...    Keyword 'Fail Until Retried Often Enough' failed after retrying 3 times. \
+    ...    The last error was: Still 0 times to fail!
     Wait Until Keyword Succeeds    3 times    2 ms    Fail Until Retried Often Enough
 
 Retry as count failing 2
-    [Documentation]    FAIL Keyword 'Fail Until Retried Often Enough' failed after retrying 1 time. The last error was: Still 2 times to fail!
+    [Documentation]    FAIL
+    ...    Keyword 'Fail Until Retried Often Enough' failed after retrying 1 time. \
+    ...    The last error was: Still 2 times to fail!
     Wait Until Keyword Succeeds    1X    1 day    Fail Until Retried Often Enough
 
 Retry count must be integer 1

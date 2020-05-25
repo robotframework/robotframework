@@ -20,9 +20,27 @@ from .fileparser import FileParser
 
 
 def get_model(source, data_only=False, curdir=None):
-    """FIXME: Documentation missing.
+    """Parses the given source to a model represented as an AST.
 
-    Mention TestSuite.from_model when docs are written.
+    How to use the model is explained more thoroughly in the general
+    documentation of the :mod:`robot.parsing` module.
+
+    :param source: The source where to read the data. Can be a path to
+        a source file as a string or as ``pathlib.Path`` object, an already
+        opened file object, or Unicode text containing the date directly.
+        Source files must be UTF-8 encoded.
+    :param data_only: When ``False`` (default), returns all tokens. When set
+        to ``True``, omits separators, comments, continuation markers, and
+        other non-data tokens. Model like this cannot be saved back to
+        file system.
+    :param curdir: Directory where the source file exists. This path is used
+        to set the value of the built-in ``${CURDIR}`` variable during parsing.
+        When not given, the variable is left as-is. Should only be given
+        only if the model will be executed afterwards. If the model is saved
+        back to disk, resolving ``${CURDIR}`` is typically not a good idea.
+
+    Use :func:`get_resource_model` or :func:`get_init_model` when parsing
+    resource or suite initialization files, respectively.
     """
     tokens = get_tokens(source, data_only)
     statements = _tokens_to_statements(tokens, curdir)

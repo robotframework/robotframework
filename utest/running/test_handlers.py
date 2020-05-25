@@ -435,10 +435,9 @@ class TestSourceAndLineno(unittest.TestCase):
         self._verify(lib.init, classes_source, 204)
 
     def test_class_without_init(self):
-        from robot.libraries.BuiltIn import __file__ as source
-        lib = TestLibrary('BuiltIn')
-        self._verify(lib.handlers['convert_to_integer'], source, 102)
-        self._verify(lib.init, source, -1)
+        lib = TestLibrary('classes.NameLibrary')
+        self._verify(lib.handlers['simple1'], classes_source, 15)
+        self._verify(lib.init, classes_source, -1)
 
     def test_old_style_class_without_init(self):
         lib = TestLibrary('classes.NameLibrary')

@@ -18,6 +18,9 @@ Dict of aliases
 Default values
     Check Test Case    ${TESTNAME}
 
+Kwonly defaults
+    Check Test Case    ${TESTNAME}
+
 Default values are not used if `get_keyword_types` returns `None`
     Check Test Case    ${TESTNAME}
 

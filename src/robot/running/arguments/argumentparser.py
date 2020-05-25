@@ -52,6 +52,8 @@ class PythonArgumentParser(_ArgumentParser):
     def parse(self, handler, name=None):
         args, varargs, kws, defaults, kwo, kwo_defaults, annotations \
                 = self._get_arg_spec(handler)
+        if ismethod(handler) or handler.__name__ == '__init__':
+            args = args[1:]    # Drop 'self'.
         spec = ArgumentSpec(
             name,
             self._type,
@@ -67,13 +69,9 @@ class PythonArgumentParser(_ArgumentParser):
     def _get_arg_spec(self, handler):
         handler = unwrap(handler)
         try:
-            args, varargs, kws, defaults, kwo, kwo_defaults, annotations \
-                    = getfullargspec(handler)
+            return getfullargspec(handler)
         except TypeError:    # Can occur w/ C functions (incl. many builtins).
             return [], 'args', None, None, [], None, {}
-        if ismethod(handler) or handler.__name__ == '__init__':
-            args = args[1:]  # Drop 'self'.
-        return args, varargs, kws, defaults, kwo, kwo_defaults, annotations
 
     def _get_defaults(self, args, default_values, kwo_defaults):
         if default_values:

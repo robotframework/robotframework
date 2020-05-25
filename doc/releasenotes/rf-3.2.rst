@@ -1,15 +1,13 @@
-=======================================
-Robot Framework 3.2 release candidate 1
-=======================================
+===================
+Robot Framework 3.2
+===================
 
 .. default-role:: code
 
 `Robot Framework`_ 3.2 is a new major release with an enhanced test data
 parser, handy `@library` and `@not_keyword` decorators, enhanced Libdoc
 spec files for external tools, inline Python evaluation support, and many
-other interesting new features and lot of bug fixes. Robot Framework 3.2 rc 1
-contains all changes planned to the final release. Users are highly recommended
-to test it in their environments and report possible problems.
+other interesting new features and lot of bug fixes.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users`_ mailing list or to `Robot Framework Slack`_,
@@ -19,35 +17,37 @@ If you have pip_ installed, just run
 
 ::
 
-   pip install --pre --upgrade robotframework
+   pip install --upgrade robotframework
 
-to install the latest available release or use
+to install the latest available stable release or use
 
 ::
 
-   pip install robotframework==3.2rc1
+   pip install robotframework==3.2
 
 to install exactly this version.
 
 Alternatively you can download the source distribution from PyPI_ and install
-it manually. If you are interested to test the standalone jar distribution,
-you can find it from the `GitHub release page`_. For more details and other
-installation approaches, see the `installation instructions`_.
+it manually. The standalone jar distribution is available at the
+`Maven Central`_. For more details and other installation approaches,
+see the `installation instructions`_.
 
-Robot Framework 3.2 release candidate 1 was released on Friday April 3, 2020.
-It was replaced by `release candidate 2 <rf-3.2rc2.rst>`_ on Tuesday April 21,
-2020.
+Robot Framework 3.2 was released on Monday April 27, 2020.
+
+**NOTE:** Robot Framework 3.2 had two severe regressions. All users are
+recommended to upgrade to `Robot Framework 3.2.1 <rf-3.2.1.rst>`_
+that was released on Monday May 4, 2020.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
 .. _pip: http://pip-installer.org
 .. _PyPI: https://pypi.python.org/pypi/robotframework
+.. _Maven Central: https://search.maven.org/artifact/org.robotframework/robotframework
 .. _issue tracker milestone: https://github.com/robotframework/robotframework/issues?q=milestone%3Av3.2
 .. _issue tracker: https://github.com/robotframework/robotframework/issues
 .. _robotframework-users: http://groups.google.com/group/robotframework-users
 .. _Robot Framework Slack: https://robotframework-slack-invite.herokuapp.com
 .. _installation instructions: ../../INSTALL.rst
-.. _GitHub release page: https://github.com/robotframework/robotframework/releases/tag/v3.2rc1
 
 
 .. contents::
@@ -119,6 +119,7 @@ The new `@library` decorator can be used to decorate library classes
 
       @library(scope='GLOBAL', version='3.2b1')
       class NewWay:
+
           # actual library code
 
 
@@ -162,11 +163,11 @@ a certain function or methods should not be considered a keyword (`#3455`_):
     from robot.api.deco import not_keyword
 
 
-    def example_keyword(self):
+    def example_keyword():
         # ...
 
     @not_keyword
-    def not_exposed_as_keyword(self):
+    def not_exposed_as_keyword():
         # ...
 
 This functionality is also used to mark the old `@keyword` decorator, the
@@ -233,12 +234,12 @@ Main use cases for this pretty advanced functionality are:
   (`${{len('${var}') > 3}}`, `${{$var[0] if $var is not None else None}}`).
 
 - Creating values that are not Python base types
-  (`${{decimal.Decimal('0.11')}}`, `${{datatime.date(2019, 11, 12)}}`).
+  (`${{decimal.Decimal('0.11')}}`, `${{datatime.date(2020, 4, 27)}}`).
 
 - Creating values dynamically (`${{random.randint(0, 100)}}`,
   `${{datetime.date.today()}}`).
 
-- Constructing collections, especially nested collections (`${{[1, 2, 3, 4]}}`,
+- Constructing collections, including nested collections (`${{[1, 2, 3, 4]}}`,
   `${{ {'id': 1, 'name': 'Example', children: [7, 9]} }}`).
 
 - Accessing constants and other useful attributes in Python modules
@@ -334,9 +335,8 @@ Standalone jar distribution updated to use Jython 2.7.2
 
 The standalone jar distribution was earlier based on Jython 2.7.0 but
 nowadays it uses Jython 2.7.2 (`#3383`_). This brings all features and fixes
-in the newer Jython version. If you are interested to test the standalone jar,
-you can find it from the `GitHub release page`_. Only the final release
-will be uploaded to the Maven Central.
+in the newer Jython version. The standalone jar is available at the
+`Maven Central`_.
 
 Continuous integrating
 ----------------------
@@ -357,7 +357,7 @@ Although we try to avoid backwards incompatible changes, sometimes adding new
 features mean that old features need to be changed or even removed. This is
 never done lightly and we try to limit backwards incompatible changes to
 major releases. In Robot Framework 3.2 these changes are mainly related to
-parsing one way or the other.
+parsing.
 
 HTML and TSV formats are not supported anymore
 ----------------------------------------------
@@ -383,10 +383,13 @@ One of the nice features of the `new test data parser`_ is the new stable
 parsing API (`#3373`_). Unfortunately this API is stable only going forward,
 and all tools using the old parsing API need to be updated when migrating
 to Robot Framework 3.2. To see what has changed, see the old__ and new__
-API documentation.
+API documentation. Depending on the use case, it may be possible to instead use
+the higher level `TestSuiteBuilder()`__ that has seen only minor configuration
+changes.
 
-__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.parsing.html
 __ https://robot-framework.readthedocs.io/en/v3.1.2/autodoc/robot.parsing.html
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.parsing.html
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.running.builder.html#robot.running.builder.builders.TestSuiteBuilder
 
 Changes to recognizing and evaluating variables
 -----------------------------------------------
@@ -576,10 +579,10 @@ backslash::
    \    Keyword    ${animal}
    \    Another keyword
 
-The old format still worked in Robot Framework 3.1, but now using `:FOR`
-instead of `FOR` (`#3080`_) and not closing the loop with an explicit `END`
-(`#3078`_) are both deprecated. The old syntax will be removed for good
-already in Robot Framework 3.3.
+In Robot Framework 3.1 both the old and new formats worked without any
+warnings, but using `:FOR` instead of `FOR` (`#3080`_) and not closing
+the loop with an explicit `END` (`#3078`_) are both deprecated in Robot
+Framework 3.2. The old syntax will be removed for good in Robot Framework 4.0.
 
 This change is likely to cause lot of deprecation warnings and requires users
 to update their test data. Here are some ideas how to find and updated the
@@ -624,7 +627,7 @@ if none of the values is a `&{dict}` variable::
    END
 
 With Robot Framework 3.2 the above syntax still works as it did earlier
-but there is a deprecation warning. Notice that this problem occurs _only_
+but there is a deprecation warning. Notice that this problem occurs *only*
 if all values are like `xxx=yyy`. An easy way to avoid is it escaping
 at least one of the values like `xxx\=yyy`.
 
@@ -779,543 +782,438 @@ Full list of fixes and enhancements
       - Type
       - Priority
       - Summary
-      - Added
     * - `#3076`_
       - enhancement
       - critical
       - New test data parser
-      - alpha 1
     * - `#3081`_
       - enhancement
       - critical
       - Remove support for HTML and TSV formats
-      - alpha 1
     * - `#3251`_
       - bug
       - high
       - Listeners cannot add/remove tests in their `start/end_test` methods
-      - alpha 1
     * - `#1272`_
       - enhancement
       - high
       - Parsing modules should preserve ellipsis (...) denoting line continuation
-      - alpha 1
     * - `#2579`_
       - enhancement
       - high
       - Tidy should not merge continued lines
-      - alpha 1
     * - `#3019`_
       - enhancement
       - high
       - `@library` decorator that supports configuring and forces using `@keyword` to mark keywords
-      - beta 1
     * - `#3027`_
       - enhancement
       - high
       - Read signature (argument names, defaults, types) from "wrapped" keywords correctly
-      - beta 1
     * - `#3078`_
       - enhancement
       - high
       - Deprecate `FOR` loops without `END`
-      - alpha 1
     * - `#3080`_
       - enhancement
       - high
       - Deprecate FOR loops starting with case-insensitive `:FOR`
-      - alpha 1
     * - `#3084`_
       - enhancement
       - high
       - Remove support to parse other than `*.robot` files by default
-      - alpha 1
     * - `#3179`_
       - enhancement
       - high
       - Inline Python evaluation support using `${{expression}}` syntax
-      - alpha 1
     * - `#3221`_
       - enhancement
       - high
       - Possibility to consider only methods decorated with `@keyword` keywords
-      - beta 1
     * - `#3373`_
       - enhancement
       - high
       - Stable parsing APIs
-      - beta 1
     * - `#3383`_
       - enhancement
       - high
       - Update standalone jar distribution to use Jython 2.7.2
-      - rc 1
     * - `#3420`_
       - enhancement
       - high
       - Continuous integrating (CI)
-      - beta 1
     * - `#3455`_
       - enhancement
       - high
       - Add `@not_keyword` decorator to mark functions "not keywords"
-      - beta 2
     * - `#3485`_
       - enhancement
       - high
       - Native `&{dict}` iteration with FOR loops
-      - rc 1
     * - `#3507`_
       - enhancement
       - high
       - Include library and keyword source information in Libdoc spec files
-      - rc 1
     * - `#549`_
       - enhancement
       - high
       - Test parser should retain source line numbers
-      - beta 2
     * - `#3201`_
       - bug
       - medium
       - `Log List` and some other keywords in Collections and BuiltIn fail with tuples
-      - alpha 1
     * - `#3213`_
       - bug
       - medium
       - Using abstract base classes directly from `collections` causes deprecation warning
-      - alpha 1
     * - `#3226`_
       - bug
       - medium
       - XML library does not work with non-ASCII bytes on Python 2 or any bytes on Python 3
-      - alpha 1
     * - `#3229`_
       - bug
       - medium
       - Variable in keyword teardown name causes failure in dry-run mode
-      - alpha 1
     * - `#3259`_
       - bug
       - medium
       - Libdoc doesn't handle bytes containing non-ASCII characters in keyword arguments
-      - alpha 1
     * - `#3263`_
       - bug
       - medium
       - Tidy does not preserve data before first section
-      - alpha 1
     * - `#3264`_
       - bug
       - medium
       - Robot output can crash when piping output
-      - alpha 1
     * - `#3265`_
       - bug
       - medium
       - `--test/--suite/--include/--exclude` don't affect tests added by pre-run modifiers
-      - alpha 1
     * - `#3268`_
       - bug
       - medium
       - Execution crashes if directory is not readable
-      - alpha 1
     * - `#3295`_
       - bug
       - medium
       - Inconsistent handling of escape character inside variable body
-      - alpha 1
     * - `#3300`_
       - bug
       - medium
       - Remote library fails to connect in some scenarios
-      - beta 1
     * - `#3306`_
       - bug
       - medium
       - DateTime: `Get Current Date` with epoch format and timezone UTC return wrong value
-      - alpha 1
     * - `#3338`_
       - bug
       - medium
       - Problems reporting errors when library import fails on Python 2 and import path contains non-ASCII characters
-      - alpha 1
     * - `#3355`_
       - bug
       - medium
       - `Evaluate`: Using nested modules like `modules=rootmodule.submodule` does not work
-      - alpha 1
     * - `#3364`_
       - bug
       - medium
       - Non-ASCII paths to test data not handled correctly with Jython 2.7.1+
-      - alpha 1
     * - `#3403`_
       - bug
       - medium
       - Screenshot library doesn't work with wxPython 4.0.7 on Linux
-      - rc 1
     * - `#3424`_
       - bug
       - medium
       - Windows console encoding set with `chcp` not detected
-      - beta 1
     * - `#3454`_
       - bug
       - medium
       - `@keyword` decorator should not be exposed as keyword
-      - beta 2
     * - `#3483`_
       - bug
       - medium
       - Libdoc: Not possible to link to Tags section
-      - rc 1
     * - `#3500`_
       - bug
       - medium
       - Rerun functionality fails if test contains `[x]`
-      - rc 1
+    * - `#3540`_
+      - bug
+      - medium
+      - `Log Variables` fails is variable value is iterable but iteration fails
     * - `#2291`_
       - enhancement
       - medium
       - Remove possibility to specify custom timeout message
-      - alpha 1
     * - `#2698`_
       - enhancement
       - medium
       - Possibility to automatically expand certain keywords in log file
-      - beta 1
     * - `#2703`_
       - enhancement
       - medium
-      - `Lists Should Be Equal` keywords in Collections should have an option to ignore order
-      - rc 1
+      - `Lists Should Be Equal` keyword in Collections should have an option to ignore order
     * - `#2706`_
       - enhancement
       - medium
       - String: Add `Convert To Title Case` keyword
-      - rc 1
     * - `#2974`_
       - enhancement
       - medium
       - Deprecate accessing list/dict items using syntax `@{var}[item]` and `&{var}[item]`
-      - alpha 1
     * - `#3085`_
       - enhancement
       - medium
       - Remove support using `--escape` to escape characters problematic on console
-      - alpha 1
     * - `#3091`_
       - enhancement
       - medium
       - Add `Set Local Variable` keyword
-      - alpha 1
     * - `#3121`_
       - enhancement
       - medium
       - Consistent handling of whitespace in test data
-      - alpha 1
     * - `#3182`_
       - enhancement
       - medium
       - Support variable index access like `${var}[2]` with all sequences (incl. strings and bytes)
-      - rc 1
     * - `#3194`_
       - enhancement
       - medium
       - `ExecutionResult` should support input as bytes
-      - alpha 1
     * - `#3202`_
       - enhancement
       - medium
       - Upgrade jQuery used by logs and reports
-      - alpha 1
     * - `#3261`_
       - enhancement
       - medium
       - Add missing `list` methods to internally used `ItemList`
-      - alpha 1
     * - `#3269`_
       - enhancement
       - medium
       - Support any file extension when explicitly running file and when using `--extension`
-      - alpha 1
     * - `#3280`_
       - enhancement
       - medium
       - Libdoc: Support automatic generation of table of contents when using "robot format"
-      - rc 1
     * - `#3288`_
       - enhancement
       - medium
       - Require variables to have matching opening and closing curly braces and square brackets
-      - alpha 1
     * - `#3301`_
       - enhancement
       - medium
       - Libdoc: Support converting docs to HTML with XML outputs
-      - alpha 1
     * - `#3319`_
       - enhancement
       - medium
       - Enhance test message when results are merged with `rebot --merge`
-      - rc 1
     * - `#3333`_
       - enhancement
       - medium
       - Deprecate ignoring space after literal newline
-      - alpha 1
     * - `#3349`_
       - enhancement
       - medium
       - Automatically import modules that are used with `Evaluate`, `Run Keyword If`, and others
-      - alpha 1
     * - `#3366`_
       - enhancement
       - medium
       - `Run Process`: Ignore timeout if it is zero, negative or string `None`
-      - beta 1
     * - `#3382`_
       - enhancement
       - medium
       - Default values for environment variables
-      - beta 1
     * - `#3397`_
       - enhancement
       - medium
       - `Process`: Add option to disable stdout and stderr
-      - beta 1
     * - `#3440`_
       - enhancement
       - medium
       - Libdoc: Allow showing keywords based on tags using query string in URL
-      - beta 2
     * - `#3449`_
       - enhancement
       - medium
       - Support tokenizing strings with variables
-      - rc 1
     * - `#3451`_
       - enhancement
       - medium
       - Expose test line number via listener API v2
-      - beta 2
     * - `#3463`_
       - enhancement
       - medium
       - Setting suggestions when using invalid setting
-      - beta 2
     * - `#3464`_
       - enhancement
       - medium
       - Add support for svg image links in documentation
-      - beta 2
     * - `#3491`_
       - enhancement
       - medium
       - Libdoc: Support `*.libspec` extension when reading library information from spec files
-      - rc 1
     * - `#3494`_
       - enhancement
       - medium
       - FOR IN ZIP and FOR IN ENUMERATE enhancements
-      - rc 1
     * - `#3498`_
       - enhancement
       - medium
       - Libdoc could better handle keywords deprecation info
-      - rc 1
     * - `#3514`_
       - enhancement
       - medium
       - Dynamic API: Support returning real default values from `get_keyword_arguments`
-      - rc 1
     * - `#3516`_
       - enhancement
       - medium
       - Dynamic API: Add new `get_keyword_source` method
-      - rc 1
     * - `#3520`_
       - enhancement
       - medium
       - Libdoc: Create xsd schema for spec files
-      - rc 1
     * - `#3522`_
       - enhancement
       - medium
       - Libdoc spec files: Change `scope` and `namedargs` to attributes
-      - rc 1
     * - `#3523`_
       - enhancement
       - medium
       - Add spec version to Libdoc spec files
-      - rc 1
     * - `#3532`_
       - enhancement
       - medium
       - Libdoc spec files: Change scope to use values `GLOBAL`, `SUITE` and `TEST` consistently
-      - rc 1
     * - `#2767`_
       - bug
       - low
       - Syslog, Libdoc, Testdoc and Tidy don't create directory for outputs
-      - alpha 1
     * - `#3231`_
       - bug
       - low
       - Log: Automatically formatting URLs does not handle `{` and `}` correctly
-      - beta 1
     * - `#3242`_
       - bug
       - low
       - `Tags` objects do not support equality checking correctly
-      - alpha 1
     * - `#3260`_
       - bug
       - low
       - Document that Tidy with `--recursive` doesn't process resource files
-      - alpha 1
     * - `#3339`_
       - bug
       - low
       - Libdoc, TestDoc and Tidy crash if output file is invalid
-      - alpha 1
     * - `#3422`_
       - bug
       - low
       - `--help` text related to disabling output has outdated information
-      - beta 1
     * - `#3453`_
       - bug
       - low
       - Methods implemented in C are not exposed as keywords
-      - beta 2
     * - `#3456`_
       - bug
       - low
       - Libdoc: Shortcuts are messed up on Firefox
-      - beta 2
     * - `#3460`_
       - bug
       - low
       - `plural_or_not` utility should consider `-1` singular
-      - beta 2
     * - `#3489`_
       - bug
       - low
       - Variable containing `=` in its name should not initiate named argument syntax
-      - rc 1
     * - `#3524`_
       - bug
       - low
       - Rebot's merge message uses term "test" also with `--rpa`
-      - rc 1
     * - `#2962`_
       - enhancement
       - low
       - Support variables in test case names
-      - beta 1
     * - `#3082`_
       - enhancement
       - low
       - Remove support using section and setting names space-insensitively
-      - alpha 1
     * - `#3083`_
       - enhancement
       - low
       - Remove support using for loops with other separators than exact `IN`, `IN RANGE`, `IN ZIP` and `IN ENUMERATE`
-      - alpha 1
     * - `#3086`_
       - enhancement
       - low
       - Remove `--warnonskippedfiles` because it has no effect anymore
-      - alpha 1
     * - `#3195`_
       - enhancement
       - low
       - Support `.yml` extension in addition to `.yaml` extension with YAML variable files
-      - alpha 1
     * - `#3273`_
       - enhancement
       - low
       - UG: Handling documentation split to multiple columns will not change
-      - alpha 1
     * - `#3291`_
       - enhancement
       - low
       - Document making `.robot` files executable
-      - beta 1
     * - `#3330`_
       - enhancement
       - low
       - Add a note about more powerful ScreenCapLibrary to Screenshot library documentation
-      - alpha 1
     * - `#3365`_
       - enhancement
       - low
       - Document that zero and negative test/keyword timeout is ignored
-      - alpha 1
     * - `#3376`_
       - enhancement
       - low
       - UG: Enhance creating start-up scripts section
-      - beta 1
     * - `#3415`_
       - enhancement
       - low
       - Document (and test) that glob pattern wildcards like `*` can be escaped like `[*]`
-      - beta 1
     * - `#3465`_
       - enhancement
       - low
       - Better reporting if using valid setting is used in wrong context
-      - beta 2
     * - `#3484`_
       - enhancement
       - low
       - String: Rename `convert_to_uppercase` to `convert_to_upper_case` (and same with `lower`)
-      - rc 1
     * - `#3486`_
       - enhancement
       - low
       - BuiltIn: Consistent argument names to `Should Contain X Times` and `Get Count`
-      - rc 1
     * - `#3492`_
       - enhancement
       - low
       - Dialogs library bring to front doesn't work in Windows Server 2016
-      - rc 1
     * - `#3528`_
       - enhancement
       - low
       - Libdoc specs: Change generation time to be valid `xsd:dateTime`
-      - rc 1
     * - `#3531`_
       - enhancement
       - low
       - Allow using `"SUITE"` and `"TEST"` as library scope values
-      - rc 1
     * - `#3534`_
       - enhancement
       - low
       - Libdoc spec files: Change type to upper case  `LIBRARY` and `RESOURCE`
-      - rc 1
     * - `#3536`_
       - enhancement
       - low
       - Enhance documentation syntax to support images with data URIs
-      - rc 1
     * - `#645`_
       - enhancement
       - low
       - Empty rows should not be discarded during parsing
-      - alpha 1
 
-Altogether 105 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av3.2>`__.
+Altogether 107 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av3.2>`__.
 
 .. _#3076: https://github.com/robotframework/robotframework/issues/3076
-.. _#3383: https://github.com/robotframework/robotframework/issues/3383
-.. _#3420: https://github.com/robotframework/robotframework/issues/3420
 .. _#3081: https://github.com/robotframework/robotframework/issues/3081
 .. _#3251: https://github.com/robotframework/robotframework/issues/3251
 .. _#1272: https://github.com/robotframework/robotframework/issues/1272
@@ -1328,6 +1226,8 @@ Altogether 105 issues. View on the `issue tracker <https://github.com/robotframe
 .. _#3179: https://github.com/robotframework/robotframework/issues/3179
 .. _#3221: https://github.com/robotframework/robotframework/issues/3221
 .. _#3373: https://github.com/robotframework/robotframework/issues/3373
+.. _#3383: https://github.com/robotframework/robotframework/issues/3383
+.. _#3420: https://github.com/robotframework/robotframework/issues/3420
 .. _#3455: https://github.com/robotframework/robotframework/issues/3455
 .. _#3485: https://github.com/robotframework/robotframework/issues/3485
 .. _#3507: https://github.com/robotframework/robotframework/issues/3507
@@ -1352,6 +1252,7 @@ Altogether 105 issues. View on the `issue tracker <https://github.com/robotframe
 .. _#3454: https://github.com/robotframework/robotframework/issues/3454
 .. _#3483: https://github.com/robotframework/robotframework/issues/3483
 .. _#3500: https://github.com/robotframework/robotframework/issues/3500
+.. _#3540: https://github.com/robotframework/robotframework/issues/3540
 .. _#2291: https://github.com/robotframework/robotframework/issues/2291
 .. _#2698: https://github.com/robotframework/robotframework/issues/2698
 .. _#2703: https://github.com/robotframework/robotframework/issues/2703

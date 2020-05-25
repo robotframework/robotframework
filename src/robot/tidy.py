@@ -44,32 +44,37 @@ from robot.tidypkg import (Aligner, Cleaner, NewlineNormalizer,
                            SeparatorNormalizer)
 from robot.utils import Application, file_writer
 
-USAGE = """robot.tidy -- Robot Framework test data clean-up tool
+USAGE = """robot.tidy -- Robot Framework data clean-up tool
 
 Version:  <VERSION>
 
-Usage:  python -m robot.tidy [options] inputfile
-   or:  python -m robot.tidy [options] inputfile [outputfile]
-   or:  python -m robot.tidy --inplace [options] inputfile [more input files]
+Usage:  python -m robot.tidy [options] input
+   or:  python -m robot.tidy [options] input [output]
+   or:  python -m robot.tidy --inplace [options] input [more inputs]
    or:  python -m robot.tidy --recursive [options] directory
 
-Tidy tool can be used to clean up and change format of Robot Framework test
-data files. The output is written into the standard output stream by default,
+Tidy tool can be used to clean up Robot Framework data. It, for example, uses
+headers and settings consistently and adds consistent amount of whitespace
+between sections, keywords and their arguments, and other pieces of the data.
+It also converts old syntax to new syntax when appropriate.
+
+When tidying a single file, the output is written to the console by default,
 but an optional output file can be given as well. Files can also be modified
-in-place using --inplace or --recursive options.
+in-place using --inplace and --recursive options.
+
+All output files are written using UTF-8 encoding. Outputs written to the
+console use the current console encoding.
 
 Options
 =======
 
- -i --inplace    Tidy given file(s) so that original file(s) are overwritten
-                 (or removed, if the format is changed). When this option is
-                 used, it is possible to give multiple input files.
-                 Examples:
-                   python -m robot.tidy --inplace tests.robot
+ -i --inplace    Tidy given file(s) so that original file(s) are overwritten.
+                 When this option is used, it is possible to give multiple
+                 input files.
  -r --recursive  Process given directory recursively. Files in the directory
                  are processed in-place similarly as when --inplace option
                  is used. Does not process referenced resource files.
- -p --usepipes   Use pipe ('|') as a cell separator in the plain text format.
+ -p --usepipes   Use pipe ('|') as a column separator in the plain text format.
  -s --spacecount number
                  The number of spaces between cells in the plain text format.
                  Default is 4.
@@ -80,23 +85,13 @@ Options
                  unix:    use Unix line separators (LF)
  -h -? --help    Show this help.
 
-Cleaning up the test data
-=========================
+Examples
+========
 
-Test case files can be normalized using Tidy. Tidy always writes consistent
-headers, consistent order for settings, and consistent amount of whitespace
-between sections and cells.
-
-Examples:
-  python -m robot.tidy messed_up_tests.robot cleaned_up_tests.robot
-  python -m robot.tidy --inplace tests.robot
+  python -m robot.tidy example.robot
+  python -m robot.tidy messed_up_data.robot cleaned_up_data.robot
+  python -m robot.tidy --inplace example.robot
   python -m robot.tidy --recursive path/to/tests
-
-Output encoding
-===============
-
-All output files are written using UTF-8 encoding. Outputs written to the
-console use the current console encoding.
 
 Alternative execution
 =====================

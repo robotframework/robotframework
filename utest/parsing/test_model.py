@@ -301,9 +301,8 @@ class TestModelVisitors(unittest.TestCase):
         assert_equal(visitor.test_names, ['Example'])
         assert_equal(visitor.kw_names, ['Keyword'])
         assert_equal(visitor.blocks,
-                     ['File', 'CommentSection', 'Body',
-                      'TestCaseSection', 'Body', 'TestCase', 'Body',
-                      'KeywordSection', 'Body', 'Keyword', 'Body'])
+                     ['File', 'CommentSection', 'TestCaseSection', 'TestCase',
+                      'KeywordSection', 'Keyword'])
         assert_equal(visitor.statements,
                      ['EOL', 'TESTCASE_HEADER', 'EOL', 'TESTCASE_NAME',
                       'COMMENT', 'KEYWORD', 'EOL', 'EOL', 'KEYWORD_HEADER',
@@ -318,9 +317,10 @@ class TestModelVisitors(unittest.TestCase):
 
             def visit_TestCaseSection(self, node):
                 self.generic_visit(node)
-                node.body.items.append(
+                node.body.append(
                     TestCase(TestCaseName([Token('TESTCASE_NAME', 'Added'),
-                                           Token('EOL', '\n')])))
+                                           Token('EOL', '\n')]))
+                )
                 return node
 
             def visit_TestCase(self, node):

@@ -15,8 +15,11 @@
 
 """Implements storing and resolving variables.
 
-This package is mainly for internal usage.
+This package is mainly for internal usage, but utilities for finding
+variables can be used externally as well.
 """
+
+import warnings
 
 from .assigner import VariableAssignment
 from .evaluation import evaluate_expression
@@ -30,3 +33,36 @@ from .search import (search_variable, contains_variable,
                      VariableIterator)
 from .tablesetter import VariableTableValue, DictVariableTableValue
 from .variables import Variables
+
+
+# TODO: Change DeprecationWarning to more visible UserWarning in RF 3.3/4.0
+# (whichever comes first) and remove these utils in the next major version.
+
+def is_var(string, identifiers='$@&'):
+    """Deprecated since RF 3.2. Use ``is_variable`` instead."""
+    warnings.warn(is_var.__doc__, DeprecationWarning)
+    return is_variable(string, identifiers)
+
+
+def is_scalar_var(string):
+    """Deprecated since RF 3.2.  Use ``is_scalar_variable`` instead."""
+    warnings.warn(is_scalar_var.__doc__, DeprecationWarning)
+    return is_scalar_variable(string)
+
+
+def is_list_var(string):
+    """Deprecated since RF 3.2.  Use ``is_list_variable`` instead."""
+    warnings.warn(is_list_var.__doc__, DeprecationWarning)
+    return is_list_variable(string)
+
+
+def is_dict_var(string):
+    """Deprecated since RF 3.2.  Use ``is_dict_variable`` instead."""
+    warnings.warn(is_dict_var.__doc__, DeprecationWarning)
+    return is_dict_variable(string)
+
+
+def contains_var(string, identifiers='$@&'):
+    """Deprecated since RF 3.2.  Use ``contains_variable`` instead."""
+    warnings.warn(contains_var.__doc__, DeprecationWarning)
+    return contains_variable(string, identifiers)

@@ -492,7 +492,7 @@ can be changed by having `SEPARATOR=<sep>` in the first cell.
    ${MULTILINE}    SEPARATOR=\n    First line
    ...             Second line     Third line
 
-__ `Dividing test data to several rows`_
+__ `Dividing data to several rows`_
 
 Creating list variables
 '''''''''''''''''''''''
@@ -503,7 +503,7 @@ values in the subsequent columns. A list variable can have any number
 of values, starting from zero, and if many values are needed, they
 can be `split into several rows`__.
 
-__ `Dividing test data to several rows`_
+__ `Dividing data to several rows`_
 
 .. sourcecode:: robotframework
 
