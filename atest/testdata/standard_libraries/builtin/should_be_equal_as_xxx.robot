@@ -92,7 +92,6 @@ Should Be Equal As Strings without leading spaces
     ...
     ...    2) test\t != test
     [Template]    Should Be Equal As Strings
-    San Diego        San Diego        strip_spaces=leading
     \ \t1            ${SPACE}${1}     strip_spaces=Leading
     ${SPACE}test     \ttest           strip_spaces=LEADING
     test\ \ value    test\ \ value    strip_spaces=leading
@@ -108,7 +107,6 @@ Should Be Equal As Strings without trailing spaces
     ...
     ...    2) ${SPACE}test != test
     [Template]    Should Be Equal As Strings
-    San Diego          San Diego          strip_spaces=Trailing
     1${SPACE * 5}      ${1}${SPACE}       strip_spaces=trailing
     \ttest\tvalue\t    \ttest\tvalue\t    strip_spaces=TRAILING
     yötä\n \t          yötä\t             repr=yes    strip_spaces=trailing
@@ -123,7 +121,6 @@ Should Be Equal As Strings without leading and trailing spaces
     ...
     ...    2) \ test 1\t != \ttest 1\t
     [Template]    Should Be Equal As Strings
-    San Diego                San Diego       strip_spaces=TRUE
     \tHelsinki               Helsinki\t      strip_spaces=truE
     1${SPACE * 5}            \t${1}          strip_spaces=Yes
     \ttest\tvalue${SPACE}    test\tvalue     strip_spaces=true
