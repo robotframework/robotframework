@@ -35,6 +35,15 @@ Should Contain X Times failing
 Should Contain X Times case-insensitive
     Check test case    ${TESTNAME}
 
+Should Contain X Times without leading spaces
+    Check test case    ${TESTNAME}
+
+Should Contain X Times without trailing spaces
+    Check test case    ${TESTNAME}
+
+Should Contain X Times without leading and trailing spaces
+    Check test case    ${TESTNAME}
+
 Should Contain X Times with invalid item
     Check test case    ${TESTNAME}
 

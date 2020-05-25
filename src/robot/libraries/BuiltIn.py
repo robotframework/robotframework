@@ -1181,13 +1181,12 @@ class _Verify(_BuiltInBase):
                 item1 = item1.lower()
             elif is_list_like(item1):
                 item1 = [x.lower() if is_string(x) else x for x in item1]
-        # TODO add acceptance tests
         if strip_spaces and is_string(item2):
-            item = self._strip_spaces(item2, strip_spaces)
+            item2 = self._strip_spaces(item2, strip_spaces)
             if is_string(item1):
-                container = self._strip_spaces(item1, strip_spaces)
+                item1 = self._strip_spaces(item1, strip_spaces)
             elif is_list_like(item1):
-                container = set(self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in item1)
+                item1 = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in item1]
         x = self.get_count(item1, item2)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \

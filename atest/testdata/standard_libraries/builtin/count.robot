@@ -58,6 +58,34 @@ Should Contain X Times case-insensitive
     ${DICT}      Ä     2      ignore_case=yes
     ${DICT 1}    a     100    ignore_case=yes, please
 
+Should Contain X Times without leading spaces
+    [Documentation]    FAIL    '${DICT_5}' contains 'b' 1 time, not 2 times.
+    a\ \ a\ \ a    \ a      2    strip_spaces=False
+    a\ \ a\ \ a    \ a      3    strip_spaces=Leading
+    ${DICT_5}      \n\na    2    strip_spaces=Leading
+    ${DICT_5}      \ b      1    strip_spaces=leading
+    ${DICT_5}      \nb      2    strip_spaces=LEADING
+    ${LIST_4}      \ a      2    strip_spaces=LEADING
+
+Should Contain X Times without trailing spaces
+    [Documentation]    FAIL    '${DICT_5}' contains 'd' 1 time, not 2 times.
+    a\ \ a\ \ a    a${SPACE}    2    strip_spaces=No
+    a\ \ a\ \ a    a${SPACE}    3    strip_spaces=TRailing
+    ${DICT_5}      a\t          1    strip_spaces=Trailing
+    ${DICT_5}      d\n          1    strip_spaces=TRAILING
+    ${DICT_5}      d\t\t        2    strip_spaces=trailing
+    ${LIST_4}      b\n\n        2    strip_spaces=trailing
+
+Should Contain X Times without leading and trailing spaces
+    [Documentation]    FAIL  '${LIST_4}' contains 'c' 1 time, not 0 times.
+    a\ \ a\ \ a    \ a${SPACE}    1    strip_spaces=No
+    a\ \ a\ \ a    \ a${SPACE}    3    strip_spaces=Yes
+    ${DICT_5}      \n a\t         3    strip_spaces=sure
+    ${DICT_5}      \ d\n          2    strip_spaces=TRUE
+    ${DICT_5}      \ d\t          2    strip_spaces=true
+    ${LIST_4}      \ b\n          2    strip_spaces=${True}
+    ${LIST_4}      c              0    strip_spaces=sure thing
+
 Should Contain X Times with invalid item
     [Documentation]    FAIL STARTS: Converting '10' to list failed: TypeError:
     ${10}    a    1
