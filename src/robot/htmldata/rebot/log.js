@@ -44,12 +44,13 @@ function drawCallback(element, childElement, childrenNames) {
 
 function expandSuite(suite) {
     if (suite.status == "PASS")
-        expandElement(suite, 3);
+        expandElement(suite);
     else
         expandCriticalFailed(suite);
 }
 
 function expandElement(item, retryCount) {
+    retryCount = typeof retryCount !== 'undefined' ? retryCount : 3;
     var element = $('#' + item.id);
     var children = element.children('.children');
     // .css is faster than .show and .show w/ callback is terribly slow
@@ -65,7 +66,7 @@ function expandElement(item, retryCount) {
 }
 
 function expandElementWithId(elementid) {
-    expandElement(window.testdata.findLoaded(elementid), 3);
+    expandElement(window.testdata.findLoaded(elementid));
 }
 
 function expandElementsWithIds(ids) {
@@ -102,7 +103,7 @@ function expandRecursively() {
         window.elementsToExpand = [];
         return;
     }
-    expandElement(element, 3);
+    expandElement(element);
     element.callWhenChildrenReady(function () {
         var children = element.children();
         for (var i = children.length-1; i >= 0; i--) {
