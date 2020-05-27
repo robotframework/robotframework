@@ -13,7 +13,7 @@ be copied and executed on the command line.
 Preconditions
 -------------
 
-Operating system and Python Frequirements
+Operating system and Python requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Generating releases has only been tested on Linux, but it ought to work the
