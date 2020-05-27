@@ -1043,10 +1043,11 @@ class _Verify(_BuiltInBase):
         Works with strings, lists, and anything that supports Python's ``in``
         operator.
 
-        Supports additional configuration parameters ``msg``, ``values``
-        and ``ignore_case``, which have exactly the same semantics as arguments
-        with same names have with `Should Contain`. These arguments must
-        always be given using ``name=value`` syntax after all ``items``.
+        Supports additional configuration parameters ``msg``, ``values``,
+        ``ignore_case`` and ``strip_spaces``, which have exactly the same
+        semantics as arguments with same names have with `Should Contain`.
+        These arguments must always be given using ``name=value`` syntax
+        after all ``items``.
 
         Note that possible equal signs in ``items`` must be escaped with
         a backslash (e.g. ``foo\\=bar``) to avoid them to be passed in
@@ -1098,9 +1099,10 @@ class _Verify(_BuiltInBase):
         operator.
 
         Supports additional configuration parameters ``msg``, ``values``
-        and ``ignore_case``, which have exactly the same semantics as arguments
-        with same names have with `Should Contain`. These arguments must
-        always be given using ``name=value`` syntax after all ``items``.
+        ``ignore_case`` and ``strip_spaces``, which have exactly the same
+        semantics as arguments with same names have with `Should Contain`.
+        These arguments must always be given using ``name=value`` syntax
+        after all ``items``.
 
         Note that possible equal signs in ``items`` must be escaped with
         a backslash (e.g. ``foo\\=bar``) to avoid them to be passed in
