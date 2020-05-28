@@ -55,7 +55,7 @@ class TestSuiteBuilder(object):
             the command line.
         :param included_extensions:
             List of extensions of files to parse. Same as :option:`--extension`.
-            This option was renamed in RF 3.2 and it used to be ``extension``.
+            This parameter was named ``extension`` before RF 3.2.
         :param rpa: Explicit test execution mode. ``True`` for RPA and
            ``False`` for test automation. By default mode is got from test
            data headers and possible conflicting headers cause an error.
