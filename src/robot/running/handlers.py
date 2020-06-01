@@ -149,10 +149,12 @@ class _PythonHandler(_RunnableHandler):
     @property
     def source(self):
         handler = self.current_handler()
+        # `getsourcefile` can return None and raise TypeError.
         try:
-            return normpath(inspect.getsourcefile(unwrap(handler)))
+            source = inspect.getsourcefile(unwrap(handler))
         except TypeError:
-            return self.library.source
+            source = None
+        return normpath(source) if source else self.library.source
 
     @property
     def lineno(self):
