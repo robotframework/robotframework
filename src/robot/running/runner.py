@@ -119,7 +119,7 @@ class Runner(SuiteVisitor):
                                           timeout=self._get_timeout(test))
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(test, result))
-        status = TestStatus(self._suite_status, result.critical)
+        status = TestStatus(self._suite_status, result)
         if status.exit:
             self._add_exit_combine()
             result.tags.add('robot:exit')
