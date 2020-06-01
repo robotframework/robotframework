@@ -133,14 +133,14 @@ class SuiteStatus(_ExecutionStatus):
 
 class TestStatus(_ExecutionStatus):
 
-    def __init__(self, parent, critical):
+    def __init__(self, parent, test):
         _ExecutionStatus.__init__(self, parent)
         self.exit = parent.exit
-        self._critical = critical
+        self._test = test
 
     def test_failed(self, failure):
         self.failure.test = unic(failure)
-        self.exit.failure_occurred(failure, self._critical)
+        self.exit.failure_occurred(failure, self._test.critical)
 
     def _my_message(self):
         return TestMessage(self).message

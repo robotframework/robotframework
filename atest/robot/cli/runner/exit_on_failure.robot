@@ -1,20 +1,37 @@
 *** Settings ***
+Suite Setup       Run Tests
+...               --exitonfailure --critical critical
+...               cli/runner/exit_on_failure.robot misc/suites running/fatal_exception/02__irrelevant.robot
 Resource          atest_resource.robot
 
 *** Variables ***
 ${EXIT ON FAILURE}          Critical failure occurred and exit-on-failure mode is in use.
 
 *** Test Cases ***
-Exit On Failure
-    [Setup]    Run Tests    --exitonfailure    misc/pass_and_fail.robot misc/suites running/fatal_exception/02__irrelevant.robot
-    Check Test Case    Pass
-    Check Test Case    Fail
+Passing tests do not initiate exit-on-failure
+    Check Test Case    Passing critical
+    Check Test Case    Passing non-critical
+    Check Test Case    Passing tests do not initiate exit-on-failure
+
+Failing non-critical tests do not initiate exit-on-failure
+    Check Test Case    Failing non-critical
+    Check Test Case    Failing non-critical tests do not initiate exit-on-failure
+
+Failing dynamically non-critical tests do not initiate exit-on-failure
+    Check Test Case    Failing non-critical
+    Check Test Case    Failing dynamically non-critical tests do not initiate exit-on-failure
+
+Failing critical tests initiate exit-on-failure
+    Check Test Case    Failing critical
+    Test Should Have Been Skipped    Skipped
+
+Tests in subsequent suites are skipped
     Test Should Have Been Skipped    SubSuite1 First
     Test Should Have Been Skipped    Suite3 First
 
-Imports Are Skipped On Exit
-    Previous test should have passed    Exit On Failure
-    Should be empty    ${ERRORS.messages}
+Imports in subsequent suites are skipped
+    Should Be Equal    ${SUITE.suites[-1].name}    Irrelevant
+    Should Be Empty    ${ERRORS.messages}
 
 Correct Suite Teardown Is Executed When ExitOnFailure Is Used
     [Setup]    Run Tests    -X    misc/suites
@@ -42,14 +59,18 @@ Test setup fails
     Test Should Have Been Skipped    Failing test with failing teardown
 
 Test teardown fails
-    [Setup]    Run Tests    --ExitOnFail --variable TEST_TEARDOWN:NonExistingKeyword    misc/setups_and_teardowns.robot
+    [Setup]    Run Tests
+    ...    --ExitOnFail --variable TEST_TEARDOWN:NonExistingKeyword
+    ...    misc/setups_and_teardowns.robot
     Check Test Case    Test with setup and teardown    FAIL    Teardown failed:\nNo keyword with name 'NonExistingKeyword' found.
     Test Should Have Been Skipped    Test with failing setup
     Test Should Have Been Skipped    Test with failing teardown
     Test Should Have Been Skipped    Failing test with failing teardown
 
 Suite setup fails
-    [Setup]    Run Tests    --ExitOnFail --variable SUITE_SETUP:Fail    misc/setups_and_teardowns.robot misc/pass_and_fail.robot
+    [Setup]    Run Tests
+    ...    --ExitOnFail --variable SUITE_SETUP:Fail
+    ...    misc/setups_and_teardowns.robot misc/pass_and_fail.robot
     Check Test Case    Test with setup and teardown    FAIL    Parent suite setup failed:\nAssertionError
     Test Should Have Been Skipped    Test with failing setup
     Test Should Have Been Skipped    Test with failing teardown
@@ -58,7 +79,8 @@ Suite setup fails
     Test Should Have Been Skipped    Fail
 
 Suite teardown fails
-    [Setup]    Run Tests    --ExitOnFail --variable SUITE_TEARDOWN:Fail --test TestWithSetupAndTeardown --test Pass --test Fail
+    [Setup]    Run Tests
+    ...    --ExitOnFail --variable SUITE_TEARDOWN:Fail --test TestWithSetupAndTeardown --test Pass --test Fail
     ...    misc/setups_and_teardowns.robot misc/pass_and_fail.robot
     Check Test Case    Test with setup and teardown    FAIL    Parent suite teardown failed:\nAssertionError
     Test Should Have Been Skipped    Pass
