@@ -11,7 +11,7 @@ Test reduced keyword
 Protection against premature flattening
     [Documentation]    A msg tag is not accepted by rebot directly under a test node
                 ...    so this is prevented by specific protection code
-    Removed keyword
+    -  Reduced keyword
 
 Keyword with tag args
     This has tag args    [Pretend tag]

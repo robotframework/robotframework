@@ -60,12 +60,12 @@ class LogController(AbstractLogger):
         self.start_test()
 
     def push(self, item):
-        item.keyword_is_started = item.log_keyword_here or (
-                                len(self.keyword_stack) < 2 and item.remove_called)
+        item.keyword_is_started = item.log_keyword_here
         if item.message_is_logged:
             self.current().message_is_logged = self._is_logged
             self._is_logged = item.message_is_logged
         self.keyword_stack.append(item)
+        self.any_keyword_started = self.any_keyword_started or item.keyword_is_started
 
     def current(self):
         return self.keyword_stack[-1]
@@ -77,7 +77,10 @@ class LogController(AbstractLogger):
 
     def start_test(self, test=None):
         state = LoggingState()
+        state.keyword_is_started = False
         self.keyword_stack = list([state])
+        self.any_keyword_started = False
+        self.current_test = test
 
     def start_keyword(self, keyword):
         previous_state = self.current()
@@ -94,11 +97,12 @@ class LogController(AbstractLogger):
                 self._is_logged = self.keyword_stack[i].message_is_logged
 
         self.push(logging_state)
-    
+
     def end_keyword(self, keyword):
         state = self.keyword_stack.pop()
         if self.current().message_is_logged:
             self._is_logged = self.current().message_is_logged
+        self.any_keyword_started = any(kw.keyword_is_started for kw in self.keyword_stack)
 
     def keyword_is_logged(self):
         return self.current().keyword_is_started

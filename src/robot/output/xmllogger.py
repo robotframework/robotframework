@@ -17,7 +17,7 @@ from robot.utils import XmlWriter, NullMarkupWriter, get_timestamp, unic
 from robot.version import get_full_version
 from robot.result.visitor import ResultVisitor
 
-from .loggerhelper import IsLogged
+from .loggerhelper import IsLogged, Message
 
 
 class XmlLogger(ResultVisitor):
@@ -53,8 +53,18 @@ class XmlLogger(ResultVisitor):
             self._errors.append(msg)
 
     def log_message(self, msg):
-        if self._controller.message_is_logged(msg.level):
+        if not self._controller.message_is_logged(msg.level):
+            return
+        if self._controller.any_keyword_started:
             self._write_message(msg)
+            return
+        if self._error_message_is_logged(msg.level):
+            return  # Don't report a warning message twice
+        self.message(Message('Message from outside of any keyword in test "' +
+                             self._controller.current_test.name +
+                             '"\n' + 
+                             msg.message, 
+                             level='WARN'))
 
     def _write_message(self, msg):
         attrs = {'timestamp': msg.timestamp or 'N/A', 'level': msg.level}
