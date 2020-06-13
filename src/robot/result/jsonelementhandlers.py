@@ -26,6 +26,13 @@ def parse_root_suite(suite_element, result):
     result.suite.rpa = result.rpa
     result.suite.doc = suite_element.get('doc', '')
 
+    for suite in suite_element.get('suites', []):
+        parse_suite(suite, result.suite)
+    for element in suite_element.get('tests', []):
+        parse_test(element, result.suite)
+    for element in suite_element.get('kw', []):
+        parse_keyword(element, result.suite)
+
     parse_metadata(suite_element.get('metadata', None), result.suite)
     parse_status(suite_element.get('status', None), result.suite, "suite")
 
@@ -33,9 +40,12 @@ def parse_root_suite(suite_element, result):
 def parse_suite(suite_element, result):
     if not suite_element:
         return
-    suite = result.suites.create(name=suite_element.get('name', ''),
-                                 source=suite_element.get('source', ''),
-                                 rpa=result.rpa)
+    try:
+        suite = result.suites.create(name=suite_element.get('name', ''),
+                                     source=suite_element.get('source', ''),
+                                     rpa=result.rpa)
+    except Exception as e:
+        print(e)
     suite.doc = suite_element.get('doc', '')
     parse_metadata(suite_element.get('metadata', None), suite)
     parse_status(suite_element.get('status', None), suite, "suite")
@@ -70,12 +80,12 @@ def parse_test(test_element, result):
         return
     test = result.tests.create(name=test_element.get('name', ''))
     test.doc = test_element.get('doc', '')
-    test.timeout = test_element('timeout', None)
-    for tag in test_element.get('tags'):
+    test.timeout = test_element.get('timeout', None)
+    for tag in test_element.get('tags', []):
         test.tags.add(tag)
     parse_status(test_element.get('status', None), test, "test")
     for element in test_element.get('kw', []):
-        parse_keyword(element, result)
+        parse_keyword(element, test)
 
 
 def parse_keyword(keyword_element, result):
@@ -87,10 +97,12 @@ def parse_keyword(keyword_element, result):
     keyword.doc = keyword_element.get('doc', '')
     keyword.timeout = keyword_element.get('timeout', None)
     for arg in keyword_element.get('args', []):
-        keyword.args += arg
+        if not keyword.args:
+            keyword.args = list()
+        keyword.args.append(arg)
     for assign in keyword_element.get('assign', []):
         keyword.assign += assign
-    for tag in keyword_element.get('tags'):
+    for tag in keyword_element.get('tags', []):
         keyword_element.tags.add(tag)
     for element in keyword_element.get('msgs', []):
         parse_message(element, keyword)

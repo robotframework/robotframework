@@ -36,11 +36,14 @@ class JsonLogger(ResultVisitor):
 
     def _create_status(self, data):
         status = {
-            'status': data.status,
-            'starttime': data.starttime or None,
-            'endtime': data.endtime or None,
-            'elapsedtime': str(data.elapsedtime) or None,
+            'status': data.status
         }
+        if data.starttime:
+            status['starttime'] = data.starttime
+        if data.endtime:
+            status['endtime'] = data.endtime
+        if str(data.elapsedtime):
+            status['elapsedtime'] = str(data.elapsedtime)
         critical = getattr(data, 'critical', None)
         if critical:
             status['critical'] = critical
@@ -93,6 +96,13 @@ class JsonLogger(ResultVisitor):
         if self._current_keyword:
             # Push this onto the stack
             self._item_stack.append(self._current_keyword)
+        # If there is no current test then the destination will be the suite
+        elif not self._current_test:
+            self._current_item = 'suite'
+        # If there is no current item then we're running inside of test case
+        else:
+            self._current_item = 'test'
+
         self._current_keyword = {
             'name': kw.kwname,
             'lib': kw.libname,
@@ -156,6 +166,7 @@ class JsonLogger(ResultVisitor):
         if 'tests' not in self._current_suite:
             self._current_suite['tests'] = list()
         self._current_suite['tests'].append(self._current_test)
+        self._current_test = None
 
     def start_suite(self, suite):
         # If there is an "open" suite, this will be placed inside its suites

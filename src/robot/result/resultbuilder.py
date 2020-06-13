@@ -25,7 +25,7 @@ from .xmlelementhandlers import XmlElementHandler
 from .jsonelementhandlers import JsonElementHandler
 
 import json
-
+import traceback
 
 def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
@@ -77,7 +77,8 @@ def _single_result(source, options):
             return JsonExecutionResultBuilder(json_data, **options).build(result)
         except IOError as err:
             error = err.strerror
-        except:
+        except Exception:
+            traceback.print_exc()
             error = get_error_message()
         raise DataError("Reading JSON source '%s' failed: %s" % (unic(json_data), error))
     else:

@@ -107,7 +107,7 @@
 				},
 				"type" : {"$ref": "#/definitions/type"}
 			},
-			"required": ["name", "status", "type"],
+			"required": ["name", "status"],
 			"additionalProperties": true
 		},
 		"status": {
@@ -120,7 +120,7 @@
 				"critical": {"type": "boolean"}
 			},
 			"required": ["status"]
-		},		
+		},
 		"message": {
 			"type": "object",
 			"properties": {
@@ -129,7 +129,7 @@
 				"level": {"$ref": "#/definitions/level_enum"},
 				"html": {"type": "boolean"}
 			},
-			"required": ["message", "timestamp", "level"],
+			"required": ["msg", "timestamp", "level"],
 			"additionalProperties": true
 		},
 		"metadata": {
