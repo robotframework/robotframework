@@ -2404,9 +2404,10 @@ class _Control(_BuiltInBase):
         in a keyword that the loop uses.
 
         Example:
-        | :FOR | ${var}         | IN                     | @{VALUES}         |
-        |      | Run Keyword If | '${var}' == 'CONTINUE' | Continue For Loop |
-        |      | Do Something   | ${var}                 |
+        | FOR | ${var}         | IN                     | @{VALUES}         |
+        |     | Run Keyword If | '${var}' == 'CONTINUE' | Continue For Loop |
+        |     | Do Something   | ${var}                 |
+        | END |
 
         See `Continue For Loop If` to conditionally continue a for loop without
         using `Run Keyword If` or other wrapper keywords.
@@ -2422,9 +2423,10 @@ class _Control(_BuiltInBase):
         semantics as with `Should Be True` keyword.
 
         Example:
-        | :FOR | ${var}               | IN                     | @{VALUES} |
-        |      | Continue For Loop If | '${var}' == 'CONTINUE' |
-        |      | Do Something         | ${var}                 |
+        | FOR | ${var}               | IN                     | @{VALUES} |
+        |     | Continue For Loop If | '${var}' == 'CONTINUE' |
+        |     | Do Something         | ${var}                 |
+        | END |
         """
         if self._is_true(condition):
             self.continue_for_loop()
@@ -2436,9 +2438,10 @@ class _Control(_BuiltInBase):
         Can be used directly in a for loop or in a keyword that the loop uses.
 
         Example:
-        | :FOR | ${var}         | IN                 | @{VALUES}     |
-        |      | Run Keyword If | '${var}' == 'EXIT' | Exit For Loop |
-        |      | Do Something   | ${var} |
+        | FOR | ${var}         | IN                 | @{VALUES}     |
+        |     | Run Keyword If | '${var}' == 'EXIT' | Exit For Loop |
+        |     | Do Something   | ${var} |
+        | END |
 
         See `Exit For Loop If` to conditionally exit a for loop without
         using `Run Keyword If` or other wrapper keywords.
@@ -2454,9 +2457,10 @@ class _Control(_BuiltInBase):
         semantics as with `Should Be True` keyword.
 
         Example:
-        | :FOR | ${var}           | IN                 | @{VALUES} |
-        |      | Exit For Loop If | '${var}' == 'EXIT' |
-        |      | Do Something     | ${var}             |
+        | FOR | ${var}           | IN                 | @{VALUES} |
+        |     | Exit For Loop If | '${var}' == 'EXIT' |
+        |     | Do Something     | ${var}             |
+        | END |
         """
         if self._is_true(condition):
             self.exit_for_loop()
@@ -2497,9 +2501,10 @@ class _Control(_BuiltInBase):
         | Find Index
         |    [Arguments]    ${element}    @{items}
         |    ${index} =    Set Variable    ${0}
-        |    :FOR    ${item}    IN    @{items}
-        |    \\    Run Keyword If    '${item}' == '${element}'    Return From Keyword    ${index}
-        |    \\    ${index} =    Set Variable    ${index + 1}
+        |    FOR    ${item}    IN    @{items}
+        |        Run Keyword If    '${item}' == '${element}'    Return From Keyword    ${index}
+        |        ${index} =    Set Variable    ${index + 1}
+        |    END
         |    Return From Keyword    ${-1}    # Also [Return] would work here.
 
         The most common use case, returning based on an expression, can be
@@ -2527,9 +2532,10 @@ class _Control(_BuiltInBase):
         | Find Index
         |    [Arguments]    ${element}    @{items}
         |    ${index} =    Set Variable    ${0}
-        |    :FOR    ${item}    IN    @{items}
-        |    \\    Return From Keyword If    '${item}' == '${element}'    ${index}
-        |    \\    ${index} =    Set Variable    ${index + 1}
+        |    FOR    ${item}    IN    @{items}
+        |        Return From Keyword If    '${item}' == '${element}'    ${index}
+        |        ${index} =    Set Variable    ${index + 1}
+        |    END
         |    Return From Keyword    ${-1}    # Also [Return] would work here.
 
         See also `Run Keyword And Return` and `Run Keyword And Return If`.
@@ -2643,9 +2649,10 @@ class _Control(_BuiltInBase):
         and ``*tags`` have same semantics as with `Pass Execution`.
 
         Example:
-        | :FOR | ${var}            | IN                     | @{VALUES}               |
-        |      | Pass Execution If | '${var}' == 'EXPECTED' | Correct value was found |
-        |      | Do Something      | ${var}                 |
+        | FOR | ${var}            | IN                     | @{VALUES}               |
+        |     | Pass Execution If | '${var}' == 'EXPECTED' | Correct value was found |
+        |     | Do Something      | ${var}                 |
+        | END |
         """
         if self._is_true(condition):
             message = self._variables.replace_string(message)
