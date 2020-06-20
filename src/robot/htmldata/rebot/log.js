@@ -32,13 +32,30 @@ function populateChildren(elementId, childElement, childrenNames) {
 
 function drawCallback(element, childElement, childrenNames) {
     return function () {
-        util.map(childrenNames, function (childName) {
-            var children = element[childName + 's']();
-            var template = childName + 'Template';
-            util.map(children, function (child) {
-                $.tmpl(template, child).appendTo(childElement);
-            });
-        });
+      var renderChildren = function (children, template) {
+          util.map(children, function (child) {
+              $.tmpl(template, child).appendTo(childElement);});
+      };
+      var suiteTeardown;
+      for (var i = 0; i < childrenNames.length; i++) {
+          var childrenName = childrenNames[i];
+          var children = element[childrenName + 's']();
+          var child_id = util.last(element.id.split('-'))
+          if (child_id != undefined && child_id[0] == 's') {
+            // make sure this element is suite
+            if (childrenName == 'keyword' && children.length > 0) {
+                var lastChild = util.last(children);
+                if(lastChild != undefined && lastChild.type == 'TEARDOWN') {
+                    suiteTeardown = children.pop();
+                }
+            }
+          }
+          renderChildren(children, childrenName + 'Template');
+      }
+      if(suiteTeardown != undefined) {
+        // render suite teardown in the bottom
+        $.tmpl('keywordTemplate', suiteTeardown).appendTo(childElement);
+      }
     }
 }
 
