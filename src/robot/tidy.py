@@ -140,7 +140,7 @@ class Tidy(SuiteStructureVisitor):
     def inplace(self, *paths):
         """Tidy file(s) in-place.
 
-        :param paths: Paths of the files to to process.
+        :param paths: Paths of the files to process.
         """
         for path in paths:
             model = get_model(path)
@@ -164,7 +164,8 @@ class Tidy(SuiteStructureVisitor):
         SeparatorNormalizer(self.use_pipes, self.space_count).visit(model)
         Aligner(self.short_test_name_length,
                 self.setting_and_variable_name_length,
-                self.use_pipes).visit(model)
+                self.use_pipes,
+                self.space_count).visit(model)
         model.save(output)
 
     def visit_file(self, file):
@@ -250,6 +251,8 @@ class ArgumentValidator(object):
             raise DataError("Invalid line separator '%s'." % lineseparator)
 
     def spacecount(self, spacecount):
+        if spacecount.lower() == 'preserve':
+            return spacecount
         try:
             spacecount = int(spacecount)
             if spacecount < 2:

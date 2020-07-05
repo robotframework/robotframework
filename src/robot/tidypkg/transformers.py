@@ -231,9 +231,14 @@ class SeparatorNormalizer(ModelTransformer):
 
     def _normalize_spaces(self, index, token, line_length):
         if token.type == Token.SEPARATOR:
-            spaces = self.space_count * self.indent \
-                if index == 0 else self.space_count
-            token.value = ' ' * spaces
+            if self.space_count != 'preserve':
+                spaces = self.space_count * self.indent \
+                    if index == 0 else self.space_count
+                token.value = ' ' * spaces
+            else:
+                if index == 0:
+                    token.value = ' ' * 4 * self.indent
+
         # The last token is always EOL, this removes all dangling whitespace
         # from the token before the EOL
         if index == line_length - 2:
@@ -270,7 +275,7 @@ class SeparatorNormalizer(ModelTransformer):
     def _insert_leading_and_trailing_separators(self, line):
         """Add missing separators to the beginning and the end of the line.
 
-        When converting from spaces to pipes, a seprator token is needed
+        When converting from spaces to pipes, a separator token is needed
         in the beginning of the line, for each indent level and in the
         end of the line.
         """
@@ -376,11 +381,13 @@ class ColumnWidthCounter(ModelTransformer):
 class Aligner(ModelTransformer):
 
     def __init__(self, short_test_name_length,
-                 setting_and_variable_name_length, pipes_mode):
+                 setting_and_variable_name_length,
+                 pipes_mode, space_count):
         self.short_test_name_length = short_test_name_length
         self.setting_and_variable_name_length = \
             setting_and_variable_name_length
         self.pipes_mode = pipes_mode
+        self.space_count = space_count
 
     def visit_TestCaseSection(self, section):
         if len(section.header.data_tokens) > 1:
@@ -402,6 +409,7 @@ class Aligner(ModelTransformer):
                 continue
             first_value = [t for t in line if t.type != Token.SEPARATOR][0]
             value_index = line.index(first_value)
-            line[value_index].value = line[value_index].value.ljust(
-                self.setting_and_variable_name_length)
+            if self.space_count != 'preserve':
+                line[value_index].value = line[value_index].value.ljust(
+                    self.setting_and_variable_name_length)
         return statement
