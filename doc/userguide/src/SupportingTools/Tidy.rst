@@ -40,8 +40,9 @@ Options
                   option is used. Does not process referenced resource files.
  -p, --usepipes   Use a pipe character (`|`) as a column separator in the plain
                   text format.
- -s, --spacecount <number>
+ -s, --spacecount <number|preserve>
                   The number of spaces between cells in the plain text format.
+                  To leave whitespaces unchanged use value `preserve`.
                   Default is 4.
  -l, --lineseparator <native|windows|unix>
                   Line separator to use in outputs. The default is *native*.
