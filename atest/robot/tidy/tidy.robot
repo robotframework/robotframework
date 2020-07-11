@@ -8,6 +8,9 @@ Tidying single test case file spaces -> spaces
     Run tidy with golden file and check result    ${EMPTY}    golden.robot
     Run tidy with golden file and check result    --spacecount 2    golden_two_spaces.robot
 
+Tidying single test case file with preserved spaces
+    Run tidy with golden file and check result    --spacecount preserve    golden.robot    input=golden.robot
+
 Tidying single test case file spaces -> pipes
     Run tidy with golden file and check result    --usepipes    golden_pipes.robot
 
