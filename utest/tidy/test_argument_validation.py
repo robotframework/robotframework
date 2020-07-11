@@ -17,9 +17,14 @@ class TestArgumentValidation(unittest.TestCase):
         assert_equal(opts['spacecount'], 42)
 
     def test_invalid_space_count(self):
-        error = '--spacecount must be an integer greater than 1.'
+        error = '--spacecount must be of value "preserve" or an integer greater than 1.'
         self._validate(spacecount='not a number', error=error)
         self._validate(spacecount='1', error=error)
+        self._validate(spacecount='preserv', error=error)
+
+    def test_valid_alternative_space_count(self):
+        opts, _ = self._validate(spacecount='preserve')
+        assert_equal(opts['spacecount'], 'preserve')
 
     def test_inplace_and_recursive_cannot_be_used_together(self):
         self._validate(inplace=True, recursive=True,

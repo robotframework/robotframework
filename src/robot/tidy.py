@@ -75,8 +75,9 @@ Options
                  are processed in-place similarly as when --inplace option
                  is used. Does not process referenced resource files.
  -p --usepipes   Use pipe ('|') as a column separator in the plain text format.
- -s --spacecount number
+ -s --spacecount number|preserve
                  The number of spaces between cells in the plain text format.
+                 To leave whitespaces unchanged use value 'preserve'.
                  Default is 4.
  -l --lineseparator native|windows|unix
                  Line separator to use in outputs. The default is 'native'.
@@ -258,7 +259,7 @@ class ArgumentValidator(object):
             if spacecount < 2:
                 raise ValueError
         except ValueError:
-            raise DataError('--spacecount must be an integer greater than 1.')
+            raise DataError('--spacecount must be of value "preserve" or an integer greater than 1.')
         return spacecount
 
 
