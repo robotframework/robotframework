@@ -259,7 +259,7 @@ class ArgumentValidator(object):
             if spacecount < 2:
                 raise ValueError
         except ValueError:
-            raise DataError('--spacecount must be of value "preserve" or an integer greater than 1.')
+            raise DataError('--spacecount must be either "preserve" or an integer greater than 1.')
         return spacecount
 
 

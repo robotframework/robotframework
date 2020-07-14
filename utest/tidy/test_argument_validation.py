@@ -17,7 +17,7 @@ class TestArgumentValidation(unittest.TestCase):
         assert_equal(opts['spacecount'], 42)
 
     def test_invalid_space_count(self):
-        error = '--spacecount must be of value "preserve" or an integer greater than 1.'
+        error = '--spacecount must be either "preserve" or an integer greater than 1.'
         self._validate(spacecount='not a number', error=error)
         self._validate(spacecount='1', error=error)
         self._validate(spacecount='preserv', error=error)
