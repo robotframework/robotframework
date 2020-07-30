@@ -4,7 +4,7 @@ Robot Framework 3.2.1
 
 .. default-role:: code
 
-`Robot Framework`_ 3.2.1 is a new release minor release fixing two
+`Robot Framework`_ 3.2.1 is a new minor release fixing two
 high priority regressions in `Robot Framework 3.2 <rf-3.2.rst>`_.
 For information about all the features and fixes in Robot Framework
 3.2 see `its release notes <rf-3.2.rst>`_.
