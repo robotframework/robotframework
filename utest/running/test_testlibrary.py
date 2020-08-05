@@ -628,6 +628,10 @@ class TestSourceAndLineno(unittest.TestCase):
         lib = TestLibrary('classes.Decorated')
         self._verify(lib, classes_source, 319)
 
+    def test_no_class_statement(self):
+        lib = TestLibrary('classes.NoClassDefinition')
+        self._verify(lib, classes_source, -1)
+
     if JYTHON:
 
         def test_java_class(self):
