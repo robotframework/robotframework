@@ -25,7 +25,7 @@ except ImportError:
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import (asserts, ET, ETSource, is_bytes, is_falsy, is_string,
-                         is_truthy, plural_or_not as s)
+                         is_truthy, plural_or_not as s, PY2)
 from robot.version import get_version
 
 
@@ -1202,7 +1202,8 @@ class XML(object):
         parent.remove(element)
 
     def _find_parent(self, root, element):
-        for parent in root.getiterator():
+        all_elements = root.getiterator() if PY2 else root.iter()
+        for parent in all_elements:
             for child in parent:
                 if child is element:
                     return parent
