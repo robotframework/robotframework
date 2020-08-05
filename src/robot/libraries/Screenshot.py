@@ -349,6 +349,8 @@ class ScreenshotTaker(object):
         if not path.endswith(('.jpg', '.jpeg')):
             raise RuntimeError("Scrot requires extension to be '.jpg' or "
                                "'.jpeg', got '%s'." % os.path.splitext(path)[1])
+        if os.path.exists(path):
+            os.remove(path)
         if self._call('scrot', '--silent', path) != 0:
             raise RuntimeError("Using 'scrot' failed.")
 
