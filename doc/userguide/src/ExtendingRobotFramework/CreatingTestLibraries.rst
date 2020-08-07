@@ -1040,8 +1040,9 @@ work together:
 
 .. sourcecode:: python
 
-  def various_args(arg, *varargs, **kwargs):
-      print('arg:', arg)
+  def various_args(arg=None, *varargs, **kwargs):
+      if arg is not None:
+          print('arg:', arg)
       for value in varargs:
           print('vararg:', value)
       for name, value in sorted(kwargs.items()):
