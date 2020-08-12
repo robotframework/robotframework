@@ -166,11 +166,12 @@ Enum
 
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
+    Enum                 BAR                       MyEnum.bar
 
 Invalid Enum
     [Template]           Conversion Should Fail
-    Enum                 foobar                    type=MyEnum           error=MyEnum does not have member 'foobar'. Available: 'FOO' and 'bar'
-    Enum                 BAR                       type=MyEnum           error=MyEnum does not have member 'BAR'. Available: 'FOO' and 'bar'
+    Enum                 foobar                    type=MyEnum          error=MyEnum does not have member 'foobar'. Available: 'FOO' and 'bar'
+    Enum                 bar!                      type=MyEnum          error=MyEnum does not have member 'bar!'. Available: 'FOO' and 'bar'
 
 NoneType
     NoneType             None                      None
