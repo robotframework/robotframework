@@ -367,7 +367,7 @@
         </td>
         <td class="args">
             {{each args}}
-            <span>${$value}</span>{{if $index < args.length-1}}, {{/if}}
+            <span>${$value}</span>{{if $index < args.length-1}},<br/>{{/if}}
             {{/each}}
         </td>
         {{if libdoc.contains_tags}}
