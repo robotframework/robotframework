@@ -263,9 +263,9 @@ class EnumConverter(TypeConverter):
             return getattr(self._enum, value)
         except AttributeError:
             members = self._get_members(self._enum)
-            normalized_value = normalize(value)
+            normalized_value = normalize(value, ignore='_')
             for member in members:
-                if normalize(member) == normalized_value:
+                if normalize(member, ignore='_') == normalized_value:
                     return getattr(self._enum, member)
             raise ValueError("%s does not have member '%s'. Available: %s"
                              % (self.type_name, value, seq2str(members)))
