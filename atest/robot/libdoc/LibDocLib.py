@@ -27,7 +27,7 @@ class LibDocLib(object):
         cmd[-1] = cmd[-1].replace('/', os.sep)
         logger.info(' '.join(cmd))
         result = run(cmd, cwd=join(ROOT, 'src'), stdout=PIPE, stderr=STDOUT,
-                     encoding=self.encoding, universal_newlines=True)
+                     encoding=self.encoding, timeout=120, universal_newlines=True)
         logger.info(result.stdout)
         return result.stdout
 
