@@ -319,14 +319,32 @@
 
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
     <h2 id="Shortcuts">Shortcuts</h2>
+    {{if keywords.length > 3}}
+    <fieldset class="shortcuts-style-select">
+        <span>List style:</span>
+        <label title="Shortcut list uses minimum height."><input type="radio" name="shortcut-liststyle" checked="checked" value="All in one line" onclick="$('.shortcuts .all-in-one').show();$('.shortcuts .one-per-line').hide();"><span>All in one line</span></label>
+        <label title="One per line may be easier to spot."><input type="radio" name="shortcut-liststyle" value="One per line" onclick="$('.shortcuts .all-in-one').hide();$('.shortcuts .one-per-line').show();"><span>One per line</span></label>
+    </fieldset>
+    {{/if}}
     <div class='shortcuts'>
-        {{each keywords}}
-        <a href="#${encodeURIComponent($value.name)}"
-           class="{{if $value.matched === false}}no-{{/if}}match"
-           title="${$value.shortdoc}">${$value.name}</a>
-        {{if $index < keywords.length-1}}&middot;{{/if}}
-        {{/each}}
+        <div class='all-in-one'>
+            {{each keywords}}
+            <a href="#${encodeURIComponent($value.name)}"
+            class="{{if $value.matched === false}}no-{{/if}}match"
+            title="${$value.shortdoc}">${$value.name}</a>
+            {{if $index < keywords.length-1}}&middot;{{/if}}
+            {{/each}}
+        </div>
+        <div class='one-per-line'>
+            {{each keywords}}
+            <a href="#${encodeURIComponent($value.name)}"
+            class="{{if $value.matched === false}}no-{{/if}}match"
+            title="${$value.shortdoc}">${$value.name}</a>
+            {{if $index < keywords.length-1}}<br>{{/if}}
+            {{/each}}
+        </div>
     </div>
+
 </script>
 
 <script type="text/x-jquery-tmpl" id="tags-template">

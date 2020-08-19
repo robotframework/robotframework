@@ -39,6 +39,29 @@ a:hover {
     font-weight: bold;
     letter-spacing: 0.1em;
 }
+.shortcuts-style-select {
+    border: 0;
+    padding: 0;
+}
+.shortcuts-style-select label {
+    background-color: white;
+    border: 1px solid #c30;
+    border-radius: 2px;
+    color: #c30;
+    cursor: pointer;
+}
+.shortcuts-style-select input[type="radio"] {
+    display: none;
+}
+.shortcuts-style-select input[type="radio"]:checked ~ span {
+    background: #c30 !important;
+    border: 1px solid #c30;
+    border-radius: 2px;
+    color: white;
+}
+.shortcuts .one-per-line {
+    display: none;
+}
 .normal-first-letter::first-letter {
     font-weight: normal !important;
     letter-spacing: 0 !important;
