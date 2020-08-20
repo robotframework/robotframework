@@ -106,7 +106,7 @@ jobs:
           ${{ env.ATEST_PYTHON }} -m pip install -r atest/requirements-run.txt
           ${{ matrix.set_codepage }}
           ${{ matrix.set_display }}
-          ${{ env.ATEST_PYTHON }} atest/run.py ${{ env.BASE_PYTHON }} --exclude no-ci $$ {{ matrix.exclude_tests_args }} atest/robot
+          ${{ env.ATEST_PYTHON }} atest/run.py ${{ env.BASE_PYTHON }} --exclude no-ci ${{ matrix.exclude_tests_args }} atest/robot
 
       - name: Delete output.xml (on Win)
         run: |
