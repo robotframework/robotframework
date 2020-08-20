@@ -1,8 +1,12 @@
 name: Acceptance tests (Jython)
 
 on:
+  push:
   schedule:
     - cron: '0 */12 * * *'
+
+env:
+  JAVA_TOOL_OPTIONS:
 
 jobs:
   test_using_jython:
