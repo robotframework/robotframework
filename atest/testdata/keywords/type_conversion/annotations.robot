@@ -176,6 +176,10 @@ Normalized enum member match
     Enum                 normalize me              MyEnum.normalize_me
     Enum                 Normalize Me              MyEnum.normalize_me
 
+Normalized enum member match with multiple matches
+    [Template]           Conversion Should Fail
+    Enum                 Foo                       type=MyEnum           error=MyEnum has multiple members matching 'Foo'. Available: 'FOO' and 'foo'
+
 Invalid Enum
     [Template]           Conversion Should Fail
     Enum                 foobar                    type=MyEnum           error=MyEnum does not have member 'foobar'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
