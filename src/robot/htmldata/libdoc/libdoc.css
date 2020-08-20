@@ -39,25 +39,37 @@ a:hover {
     font-weight: bold;
     letter-spacing: 0.1em;
 }
-.shortcuts-style-select {
-    border: 0;
-    padding: 0;
-}
-.shortcuts-style-select label {
+label.switch {
     background-color: white;
-    border: 1px solid #c30;
-    border-radius: 2px;
-    color: #c30;
     cursor: pointer;
+    position: relative;
 }
-.shortcuts-style-select input[type="radio"] {
+input.switch {
     display: none;
 }
-.shortcuts-style-select input[type="radio"]:checked ~ span {
-    background: #c30 !important;
-    border: 1px solid #c30;
-    border-radius: 2px;
-    color: white;
+.slider {
+    background-color: grey;
+    display: inline-block;
+    height: 20px;
+    position: relative;
+    top: 5px;
+    width: 40px;
+}
+.slider:before {
+    background-color: white;
+    content: "";
+    height: 14px;
+    left: 3px;
+    position: absolute;
+    top: 3px;
+    width: 14px;
+}
+input.switch:checked + .slider::before {
+    background-color: white;
+    left: 22px;
+}
+input.switch:checked + .slider {
+    background-color: #c30;
 }
 .shortcuts .one-per-line {
     display: none;

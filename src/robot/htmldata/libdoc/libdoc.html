@@ -320,11 +320,11 @@
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
     <h2 id="Shortcuts">Shortcuts</h2>
     {{if keywords.length > 3}}
-    <fieldset class="shortcuts-style-select">
-        <span>List style:</span>
-        <label title="Shortcut list uses minimum height."><input type="radio" name="shortcut-liststyle" checked="checked" value="All in one line" onclick="$('.shortcuts .all-in-one').show();$('.shortcuts .one-per-line').hide();"><span>All in one line</span></label>
-        <label title="One per line may be easier to spot."><input type="radio" name="shortcut-liststyle" value="One per line" onclick="$('.shortcuts .all-in-one').hide();$('.shortcuts .one-per-line').show();"><span>One per line</span></label>
-    </fieldset>
+        <span>Expanded shortcut list</span>
+        <label class="switch" title="Switch between compact list or expanded list">
+            <input type="checkbox" class="switch" onclick="$('.shortcuts .all-in-one').toggle();$('.shortcuts .one-per-line').toggle();">
+            <span class="slider"></span>
+        </label>
     {{/if}}
     <div class='shortcuts'>
         <div class='all-in-one'>
@@ -344,7 +344,6 @@
             {{/each}}
         </div>
     </div>
-
 </script>
 
 <script type="text/x-jquery-tmpl" id="tags-template">
