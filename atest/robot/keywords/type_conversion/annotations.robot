@@ -85,6 +85,9 @@ Enum
 Normalized enum member match
     Check Test Case    ${TESTNAME}
 
+Normalized enum member match with multiple matches
+    Check Test Case    ${TESTNAME}
+
 Invalid Enum
     Check Test Case    ${TESTNAME}
 
