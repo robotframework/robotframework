@@ -30,7 +30,7 @@ from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION,
-                         PY2, seq2str, type_name, unicode)
+                         PY2, normalize, seq2str, type_name, unicode)
 
 
 class TypeConverter(object):
@@ -263,6 +263,10 @@ class EnumConverter(TypeConverter):
             return getattr(self._enum, value)
         except AttributeError:
             members = self._get_members(self._enum)
+            normalized_value = normalize(value, ignore='_')
+            for member in members:
+                if normalize(member, ignore='_') == normalized_value:
+                    return getattr(self._enum, member)
             raise ValueError("%s does not have member '%s'. Available: %s"
                              % (self.type_name, value, seq2str(members)))
 

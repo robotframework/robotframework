@@ -167,13 +167,16 @@ Invalid timedelta
 Enum
     [Tags]               require-enum
     Enum                 FOO                       MyEnum.FOO
-    Enum                 bar                       MyEnum.bar
+    Enum                 foo                       MyEnum.foo
+    Enum                 b a r                     MyEnum.bar
+    Enum                 BAr                       MyEnum.bar
+    Enum                 B_A_r                     MyEnum.bar
 
 Invalid Enum
     [Tags]               require-enum
     [Template]           Conversion Should Fail
-    Enum                 foobar                    type=MyEnum           error=MyEnum does not have member 'foobar'. Available: 'FOO' and 'bar'
-    Enum                 BAR                       type=MyEnum           error=MyEnum does not have member 'BAR'. Available: 'FOO' and 'bar'
+    Enum                 foobar                    type=MyEnum           error=MyEnum does not have member 'foobar'. Available: 'FOO', 'bar' and 'foo'
+    Enum                 bar!                      type=MyEnum           error=MyEnum does not have member 'bar!'. Available: 'FOO', 'bar' and 'foo'
 
 NoneType
     NoneType             None                      None
