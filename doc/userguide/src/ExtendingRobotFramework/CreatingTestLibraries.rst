@@ -1394,13 +1394,13 @@ case-insensitive.
    +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
    | Enum_       |               |            | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
    |             |               |            | Enum_) and arguments themselves must match its members.        |                                      |
-   |             |               |            | Starting from RF 3.2.2, matching members is case-, underscore- |    class Color(Enum):                |
-   |             |               |            | and whitespace-insensitive.                                        |        RED = 1                       |
-   |             |               |            |                                                                |        GREEN = 2                     |
-   |             |               |            |                                                                |        DARKGREEN = 3                 |
+   |             |               |            |                                                                |    class Color(Enum):                |
+   |             |               |            | Starting from RF 3.2.2, matching members is case-, space-      |        RED = 1                       |
+   |             |               |            | and underscore-insensitive.                                    |        GREEN = 2                     |
+   |             |               |            |                                                                |        DARK_GREEN = 3                |
    |             |               |            |                                                                |                                      |
    |             |               |            |                                                                | | `GREEN` (Color.GREEN)              |
-   |             |               |            |                                                                | | `Dark Green` (Color.DARKGREEN)     |
+   |             |               |            |                                                                | | `Dark Green` (Color.DARK_GREEN)    |
    +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
    | NoneType_   |               |            | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
    |             |               |            | object, other values are passed as-is. Mainly relevant when    |                                      |
