@@ -1,7 +1,6 @@
 name: Acceptance tests (Jython)
 
 on:
-  push:
   schedule:
     - cron: '0 */12 * * *'
 
