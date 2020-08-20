@@ -11,7 +11,7 @@ from robot.api.deco import keyword
 class MyEnum(Enum):
     FOO = 1
     bar = 'xxx'
-
+    foo = 'yyy'
 
 class Unknown(object):
     pass
