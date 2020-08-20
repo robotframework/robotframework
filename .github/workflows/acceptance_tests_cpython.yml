@@ -85,7 +85,7 @@ jobs:
           sudo apt-get -y -q install libxslt-dev libxml2-dev
         if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
 
-      - name: Install screen and report handling tools to Linux
+      - name: Install screen and report handling tools, and other required libraries to Linux
         run: |
           sudo apt-get update
           sudo apt-get -y -q install xvfb scrot zip curl libxml2-dev libxslt1-dev
