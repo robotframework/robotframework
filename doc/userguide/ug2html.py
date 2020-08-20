@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 
 """ug2html.py -- Creates HTML version of Robot Framework User Guide
 
