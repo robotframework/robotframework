@@ -92,6 +92,7 @@ jobs:
         if: contains(matrix.os, 'ubuntu')
 
       # See unofficial pre-compiled libraries at https://www.lfd.uci.edu/~gohlke/pythonlibs
+      # And https://github.com/robotframework/robotframework/issues/3629
       - name: Install Pillow and lxml on Python 3.9 (on Win)
         run: |
           python -m pip install https://download.lfd.uci.edu/pythonlibs/w3jqiv8s/Pillow-7.2.0-cp39-cp39-win_amd64.whl
