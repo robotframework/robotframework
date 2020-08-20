@@ -84,6 +84,10 @@ Enum
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}
 
+Normalized enum member match
+    [Tags]    require-enum
+    Check Test Case    ${TESTNAME}
+
 Invalid Enum
     [Tags]    require-enum
     Check Test Case    ${TESTNAME}
