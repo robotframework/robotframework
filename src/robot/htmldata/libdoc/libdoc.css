@@ -59,9 +59,17 @@ a:hover {
     background: #ddd;
     color: black;
 }
-.kw, .args, .tags {
-    min-width: 100px;
-    max-width: 20%;
+.kw {
+    width: 15%;
+}
+.args {
+    width: 25%;
+}
+.tags {
+    width: 10%;
+}
+.doc {
+    width: 60%;
 }
 td.kw a {
     color: inherit;
