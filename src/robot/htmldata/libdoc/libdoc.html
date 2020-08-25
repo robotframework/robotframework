@@ -367,14 +367,14 @@
         </td>
         <td class="args">
             {{each args}}
-            <span>${$value}</span>{{if $index < args.length-1}},<br/>{{/if}}
+            <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
             {{/each}}
         </td>
         {{if libdoc.contains_tags}}
         <td class="tags">
             {{each tags}}
             <a href="javascript:tagSearch('${$value}')"
-               title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}}, {{/if}}
+               title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
             {{/each}}
         </td>
         {{/if}}
