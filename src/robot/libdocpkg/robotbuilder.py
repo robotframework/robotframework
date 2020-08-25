@@ -13,8 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from inspect import isclass
 import os
 import sys
+try:
+    from enum import Enum
+except ImportError:    # Standard in Py 3.4+ but can be separately installed
+    class Enum(object):
+        pass
 
 from robot.errors import DataError
 from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
@@ -138,10 +144,25 @@ class KeywordDocBuilder(object):
     def _format_arg(self, arg, argspec):
         result = arg
         if argspec.types is not None and arg in argspec.types:
-            result = '%s: %s' % (result, self._format_type(argspec.types[arg]))
+            type_info = argspec.types[arg]
+            result = '%s: %s' % (result, self._format_type(type_info))
+            if isclass(type_info) and issubclass(type_info, Enum):
+                result = '%s { %s }' % (result, self._format_enum(type_info))
+            default_format = '%s = %s'
+        else:
+            default_format = '%s=%s'
         if arg in argspec.defaults:
-            result = '%s=%s' % (result, unic(argspec.defaults[arg]))
+            result = default_format % (result, unic(argspec.defaults[arg]))
         return result
 
-    def _format_type(self, type_):
-        return type_.__name__ if isinstance(type_, type) else type_
+    def _format_type(self, type_info):
+        return type_info.__name__ if isclass(type_info) else type_info
+
+    def _format_enum(self, enum):
+        try:
+            members = list(enum.__members__)
+        except AttributeError:  # old enum module
+            members = [attr for attr in dir(enum) if not attr.startswith('_')]
+        if len(members) > 4:
+            members[3:] = ['...']
+        return ' | '.join(members)
