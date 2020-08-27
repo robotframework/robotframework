@@ -404,12 +404,11 @@ class Aligner(ModelTransformer):
                 )
         return statement
 
-    def _should_be_aligned(self, value_tokens):
-        if not value_tokens:
+    def _should_be_aligned(self, tokens):
+        if not tokens:
             return False
-        if len(value_tokens) == 1:
+        if len(tokens) == 1:
             return self.pipes_mode
-        if len(value_tokens) > 2:
-            return True
-        return not (value_tokens[0].type == Token.CONTINUATION
-                    and not value_tokens[1].value)
+        if len(tokens) == 2:
+            return tokens[0].type != Token.CONTINUATION or tokens[1].value
+        return True
