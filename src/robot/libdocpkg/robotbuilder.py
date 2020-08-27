@@ -163,6 +163,6 @@ class KeywordDocBuilder(object):
             members = list(enum.__members__)
         except AttributeError:  # old enum module
             members = [attr for attr in dir(enum) if not attr.startswith('_')]
-        if len(members) > 4:
-            members[3:] = ['...']
+        while len(members) > 3 and len(' | '.join(members)) > 42:
+            members[-2:] = ['...']
         return ' | '.join(members)
