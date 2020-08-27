@@ -9,7 +9,8 @@ Basics
 
 Enums
     Keyword Arguments Should Be     1    small: Small { one | two | three | four }
-    ...                                  big: Big { A | B | C | ... }
+    ...                                  many_small: ManySmall { A | B | C | D | E | F | G | H | I | J | K }
+    ...                                  big: Big { FIRST_MEMBER_IS_LONG | SECOND_MEMBER_IS_LONGER | ... }
 
 With defaults
     Keyword Arguments Should Be     2    integer: int = 42    list_: list = None

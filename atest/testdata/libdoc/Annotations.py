@@ -12,21 +12,32 @@ class Small(Enum):
     four = 4
 
 
+class ManySmall(Enum):
+    A = 'a'
+    B = 'b'
+    C = 'c'
+    D = 'd'
+    E = 'd'
+    F = 'e'
+    G = 'g'
+    H = 'h'
+    I = 'i'
+    J = 'j'
+    K = 'k'
+
+
 class Big(Enum):
-    A = 1
-    B = 2
-    C = 3
-    D = 4
-    E = 5
-    F = 6
-    G = 7
+    FIRST_MEMBER_IS_LONG = 1
+    SECOND_MEMBER_IS_LONGER = 2
+    THIRD_MEMBER_IS_THE_LONGEST = 3
+    FOURTH_IS_SHORT = 4
 
 
 def A_type_annotation(integer: int, boolean: bool, string: str):
     pass
 
 
-def B_enum(small: Small, big: Big):
+def B_enum(small: Small, many_small: ManySmall, big: Big):
     pass
 
 
