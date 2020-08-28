@@ -12,6 +12,7 @@
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <link rel="stylesheet" type="text/css" href="../common/js_disabled.css" media="all">
 <link rel="stylesheet" type="text/css" href="../common/doc_formatting.css" media="all">
+<script type="text/javascript" src="../common/storage.js"></script>
 <script type="text/javascript" src="../rebot/util.js"></script> <!-- TODO: Should util.js be moved under common? -->
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tmpl.min.js"></script>
@@ -39,13 +40,16 @@
     $(document).ready(function() {
         parseTemplates();
         document.title = libdoc.name;
+        storage.init('libdoc');
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
             renderTemplate('importing', libdoc);
         }
         renderTemplate('shortcuts', libdoc);
+        initShortcutListStyle('shortcut');
         if (libdoc.contains_tags) {
             renderTemplate('tags', libdoc);
+            initShortcutListStyle('tag');
         }
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
@@ -81,9 +85,17 @@
         $('.shortcuts a').width('max-content');
     }
 
-    function toggleListStyle(locator) {
-        var separator = $(locator).text()[0];
-        $(locator).html(separator == '\u00b7' ? '<br>' : '&middot;');
+    function initShortcutListStyle(name) {
+        if (storage.get(name + '-list-style', 'compact') != 'compact') {
+            $('.' + name + '-list-separator').html('<br>');
+            $('.' + name + '-list-toggle .switch').prop('checked', true);
+        }
+    }
+
+    function setShortcutListStyle(name) {
+        var compact = !$('.' + name + '-list-toggle .switch').prop('checked');
+        $('.' + name + '-list-separator').html(compact ? '&middot;' : '<br>');
+        storage.set(name + '-list-style', compact ? 'compact' : 'expanded');
     }
 
     function handleKeyDown(event) {
@@ -325,10 +337,10 @@
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
     <h2 id="Shortcuts">Shortcuts</h2>
     {{if keywords.length > 3}}
-    <div class="list-style-toggle">
+    <div class="shortcut-list-toggle">
         <b>List style:</b>&nbsp; Compact
         <label title="Switch between compact list and expanded list">
-            <input type="checkbox" class="switch" onclick="toggleListStyle('.shortcut-separator');">
+            <input type="checkbox" class="switch" onclick="setShortcutListStyle('shortcut');">
             <span class="slider"></span>
         </label>
         Expanded
@@ -340,7 +352,7 @@
         class="{{if $value.matched === false}}no-{{/if}}match"
         title="${$value.shortdoc}">${$value.name}</a>
         {{if $index < keywords.length-1}}
-        <span class="shortcut-separator">&middot;</span>
+        <span class="shortcut-list-separator">&middot;</span>
         {{/if}}
         {{/each}}
     </div>
@@ -349,10 +361,10 @@
 <script type="text/x-jquery-tmpl" id="tags-template">
     <h2 id="Tags">Tags</h2>
     {{if all_tags.length > 3}}
-    <div class="list-style-toggle">
+    <div class="tag-list-toggle">
         <b>List style:</b>&nbsp; Compact
         <label title="Switch between compact list and expanded list">
-            <input type="checkbox" class="switch" onclick="toggleListStyle('.tag-separator');">
+            <input type="checkbox" class="switch" onclick="setShortcutListStyle('tag');">
             <span class="slider"></span>
         </label>
         Expanded
@@ -362,7 +374,7 @@
         {{each all_tags}}
         <a href="javascript:tagSearch('${$value}')"
            title="Show keywords with this tag">${$value}</a>
-        <span class="tag-separator">&middot;</span>
+        <span class="tag-list-separator">&middot;</span>
         {{/each}}
         <a href="javascript:resetKeywords()" class="normal-first-letter"
            title="Show all keywords">[Reset]</a>

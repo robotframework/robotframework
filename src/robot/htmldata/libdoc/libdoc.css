@@ -43,7 +43,7 @@ a:hover {
     font-weight: normal !important;
     letter-spacing: 0 !important;
 }
-.list-style-toggle {
+.shortcut-list-toggle, .tag-list-toggle {
     margin-bottom: 1em;
     font-size: 0.9em;
 }
