@@ -325,7 +325,7 @@
         <tr class="kw-row">
             <td class="args">
             {{each args}}
-              <span>${$value}</span>{{if $index < args.length-1}}, {{/if}}
+              <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
             {{/each}}
             </td>
             <td class="doc">{{html $value.doc}}</td>
