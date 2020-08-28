@@ -18,6 +18,8 @@ from robot.utils import PY2, unicode
 class MyEnum(Enum):
     FOO = 1
     bar = 'xxx'
+    foo = 'yyy'
+    normalize_me = True
 
 
 class Unknown(object):

@@ -4,7 +4,8 @@ import time
 def busy_sleep(seconds):
     max_time = time.time() + int(seconds)
     while time.time() < max_time:
-        pass
+        time.sleep(0)
+
 
 def swallow_exception(timeout=3):
     try:
@@ -12,4 +13,4 @@ def swallow_exception(timeout=3):
     except:
         pass
     else:
-        raise AssertionError('No exception')
+        raise AssertionError('Expected exception did not occur!')
