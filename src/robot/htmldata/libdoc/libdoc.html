@@ -81,6 +81,11 @@
         $('.shortcuts a').width('max-content');
     }
 
+    function toggleListStyle(locator) {
+        var separator = $(locator).text()[0];
+        $(locator).html(separator == '\u00b7' ? '<br>' : '&middot;');
+    }
+
     function handleKeyDown(event) {
         event = event || window.event;
         var keyCode = event.keyCode || event.which;
@@ -320,39 +325,44 @@
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
     <h2 id="Shortcuts">Shortcuts</h2>
     {{if keywords.length > 3}}
-        <span>Expanded shortcut list</span>
-        <label class="switch" title="Switch between compact list or expanded list">
-            <input type="checkbox" class="switch" onclick="$('.shortcuts .all-in-one').toggle();$('.shortcuts .one-per-line').toggle();">
+    <div class="list-style-toggle">
+        <b>List style:</b>&nbsp; Compact
+        <label title="Switch between compact list and expanded list">
+            <input type="checkbox" class="switch" onclick="toggleListStyle('.shortcut-separator');">
             <span class="slider"></span>
         </label>
+        Expanded
+    </div>
     {{/if}}
     <div class='shortcuts'>
-        <div class='all-in-one'>
-            {{each keywords}}
-            <a href="#${encodeURIComponent($value.name)}"
-            class="{{if $value.matched === false}}no-{{/if}}match"
-            title="${$value.shortdoc}">${$value.name}</a>
-            {{if $index < keywords.length-1}}&middot;{{/if}}
-            {{/each}}
-        </div>
-        <div class='one-per-line'>
-            {{each keywords}}
-            <a href="#${encodeURIComponent($value.name)}"
-            class="{{if $value.matched === false}}no-{{/if}}match"
-            title="${$value.shortdoc}">${$value.name}</a>
-            {{if $index < keywords.length-1}}<br>{{/if}}
-            {{/each}}
-        </div>
+        {{each keywords}}
+        <a href="#${encodeURIComponent($value.name)}"
+        class="{{if $value.matched === false}}no-{{/if}}match"
+        title="${$value.shortdoc}">${$value.name}</a>
+        {{if $index < keywords.length-1}}
+        <span class="shortcut-separator">&middot;</span>
+        {{/if}}
+        {{/each}}
     </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="tags-template">
     <h2 id="Tags">Tags</h2>
+    {{if all_tags.length > 3}}
+    <div class="list-style-toggle">
+        <b>List style:</b>&nbsp; Compact
+        <label title="Switch between compact list and expanded list">
+            <input type="checkbox" class="switch" onclick="toggleListStyle('.tag-separator');">
+            <span class="slider"></span>
+        </label>
+        Expanded
+    </div>
+    {{/if}}
     <div class='shortcuts'>
         {{each all_tags}}
         <a href="javascript:tagSearch('${$value}')"
            title="Show keywords with this tag">${$value}</a>
-        &middot;
+        <span class="tag-separator">&middot;</span>
         {{/each}}
         <a href="javascript:resetKeywords()" class="normal-first-letter"
            title="Show all keywords">[Reset]</a>
