@@ -39,6 +39,41 @@ a:hover {
     font-weight: bold;
     letter-spacing: 0.1em;
 }
+label.switch {
+    background-color: white;
+    cursor: pointer;
+    position: relative;
+}
+input.switch {
+    display: none;
+}
+.slider {
+    background-color: grey;
+    display: inline-block;
+    height: 20px;
+    position: relative;
+    top: 5px;
+    width: 40px;
+}
+.slider:before {
+    background-color: white;
+    content: "";
+    height: 14px;
+    left: 3px;
+    position: absolute;
+    top: 3px;
+    width: 14px;
+}
+input.switch:checked + .slider::before {
+    background-color: white;
+    left: 22px;
+}
+input.switch:checked + .slider {
+    background-color: #c30;
+}
+.shortcuts .one-per-line {
+    display: none;
+}
 .normal-first-letter::first-letter {
     font-weight: normal !important;
     letter-spacing: 0 !important;

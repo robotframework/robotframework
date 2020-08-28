@@ -319,13 +319,30 @@
 
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
     <h2 id="Shortcuts">Shortcuts</h2>
+    {{if keywords.length > 3}}
+        <span>Expanded shortcut list</span>
+        <label class="switch" title="Switch between compact list or expanded list">
+            <input type="checkbox" class="switch" onclick="$('.shortcuts .all-in-one').toggle();$('.shortcuts .one-per-line').toggle();">
+            <span class="slider"></span>
+        </label>
+    {{/if}}
     <div class='shortcuts'>
-        {{each keywords}}
-        <a href="#${encodeURIComponent($value.name)}"
-           class="{{if $value.matched === false}}no-{{/if}}match"
-           title="${$value.shortdoc}">${$value.name}</a>
-        {{if $index < keywords.length-1}}&middot;{{/if}}
-        {{/each}}
+        <div class='all-in-one'>
+            {{each keywords}}
+            <a href="#${encodeURIComponent($value.name)}"
+            class="{{if $value.matched === false}}no-{{/if}}match"
+            title="${$value.shortdoc}">${$value.name}</a>
+            {{if $index < keywords.length-1}}&middot;{{/if}}
+            {{/each}}
+        </div>
+        <div class='one-per-line'>
+            {{each keywords}}
+            <a href="#${encodeURIComponent($value.name)}"
+            class="{{if $value.matched === false}}no-{{/if}}match"
+            title="${$value.shortdoc}">${$value.name}</a>
+            {{if $index < keywords.length-1}}<br>{{/if}}
+            {{/each}}
+        </div>
     </div>
 </script>
 
