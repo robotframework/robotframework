@@ -39,10 +39,13 @@ a:hover {
     font-weight: bold;
     letter-spacing: 0.1em;
 }
-label.switch {
-    background-color: white;
-    cursor: pointer;
-    position: relative;
+.normal-first-letter::first-letter {
+    font-weight: normal !important;
+    letter-spacing: 0 !important;
+}
+.list-style-toggle {
+    margin-bottom: 1em;
+    font-size: 0.9em;
 }
 input.switch {
     display: none;
@@ -50,33 +53,23 @@ input.switch {
 .slider {
     background-color: grey;
     display: inline-block;
-    height: 20px;
     position: relative;
     top: 5px;
-    width: 40px;
+    height: 18px;
+    width: 36px;
 }
 .slider:before {
     background-color: white;
     content: "";
-    height: 14px;
-    left: 3px;
     position: absolute;
     top: 3px;
-    width: 14px;
+    left: 3px;
+    height: 12px;
+    width: 12px;
 }
 input.switch:checked + .slider::before {
     background-color: white;
-    left: 22px;
-}
-input.switch:checked + .slider {
-    background-color: #c30;
-}
-.shortcuts .one-per-line {
-    display: none;
-}
-.normal-first-letter::first-letter {
-    font-weight: normal !important;
-    letter-spacing: 0 !important;
+    left: 21px;
 }
 .keywords {
     border: 1px solid #ccc;
