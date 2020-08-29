@@ -46,10 +46,10 @@
             renderTemplate('importing', libdoc);
         }
         renderTemplate('shortcuts', libdoc);
-        initShortcutListStyle('shortcut');
+        initShortcutListStyle('shortcut', libdoc.keywords);
         if (libdoc.contains_tags) {
             renderTemplate('tags', libdoc);
-            initShortcutListStyle('tag');
+            initShortcutListStyle('tag', libdoc.all_tags);
         }
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
@@ -85,8 +85,9 @@
         $('.shortcuts a').width('max-content');
     }
 
-    function initShortcutListStyle(name) {
-        if (storage.get(name + '-list-style', 'compact') != 'compact') {
+    function initShortcutListStyle(name, items) {
+        var style = storage.get(name + '-list-style', 'compact');
+        if (style != 'compact' && items.length > 1) {
             $('.' + name + '-list-separator').html('<br>');
             $('.' + name + '-list-toggle .switch').prop('checked', true);
         }
@@ -336,7 +337,7 @@
 
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
     <h2 id="Shortcuts">Shortcuts</h2>
-    {{if keywords.length > 3}}
+    {{if keywords.length > 1}}
     <div class="shortcut-list-toggle">
         <b>List style:</b>&nbsp; Compact
         <label title="Switch between compact list and expanded list">
@@ -360,7 +361,7 @@
 
 <script type="text/x-jquery-tmpl" id="tags-template">
     <h2 id="Tags">Tags</h2>
-    {{if all_tags.length > 3}}
+    {{if all_tags.length > 1}}
     <div class="tag-list-toggle">
         <b>List style:</b>&nbsp; Compact
         <label title="Switch between compact list and expanded list">
