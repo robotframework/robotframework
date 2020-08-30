@@ -88,7 +88,7 @@ Keyword tags from documentation
     Keyword Tags Should Be           13    hyvää   yötä
 
 Keyword types
-    Keyword Arguments Should Be      18    integer: int    no type    boolean: bool=True
+    Keyword Arguments Should Be      18    integer: int    no type    boolean: bool = True
 
 No keyword source info
     Keyword Name Should Be           0     0

@@ -270,15 +270,15 @@ class SeparatorNormalizer(ModelTransformer):
     def _insert_leading_and_trailing_separators(self, line):
         """Add missing separators to the beginning and the end of the line.
 
-        When converting from spaces to pipes, a seprator token is needed
+        When converting from spaces to pipes, a separator token is needed
         in the beginning of the line, for each indent level and in the
         end of the line.
         """
         separators_needed = 1
         if self.indent > 1:
-            # TXT format has 1 separator token regardless of the indent level.
+            # Space format has 1 separator token regardless of the indent level.
             # With pipes, we need to add one separator for each indent level
-            # beyond 1
+            # beyond 1.
             separators_needed += self.indent - 1
         for _ in range(separators_needed):
             line = [Token(Token.SEPARATOR, '')] + line
@@ -397,11 +397,18 @@ class Aligner(ModelTransformer):
         for line in statement.lines:
             value_tokens = [t for t in line if t.type
                             not in (Token.SEPARATOR, Token.EOL)]
-            if len(value_tokens) == 0 or (
-                    len(value_tokens) < 2 and not self.pipes_mode):
-                continue
-            first_value = [t for t in line if t.type != Token.SEPARATOR][0]
-            value_index = line.index(first_value)
-            line[value_index].value = line[value_index].value.ljust(
-                self.setting_and_variable_name_length)
+            if self._should_be_aligned(value_tokens):
+                first = value_tokens[0]
+                first.value = first.value.ljust(
+                    self.setting_and_variable_name_length
+                )
         return statement
+
+    def _should_be_aligned(self, tokens):
+        if not tokens:
+            return False
+        if len(tokens) == 1:
+            return self.pipes_mode
+        if len(tokens) == 2:
+            return tokens[0].type != Token.CONTINUATION or tokens[1].value
+        return True

@@ -103,9 +103,13 @@ class _BaseTestLibrary(object):
         if inspect.ismodule(self._libcode):
             return 1
         try:
-            return inspect.getsourcelines(self._libcode)[1]
+            lines, start_lineno = inspect.getsourcelines(self._libcode)
         except (TypeError, OSError, IOError):
             return -1
+        for increment, line in enumerate(lines):
+            if line.strip().startswith('class '):
+                return start_lineno + increment
+        return start_lineno
 
     def create_handlers(self):
         self._create_handlers(self.get_instance())

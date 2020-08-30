@@ -1040,8 +1040,9 @@ work together:
 
 .. sourcecode:: python
 
-  def various_args(arg, *varargs, **kwargs):
-      print('arg:', arg)
+  def various_args(arg=None, *varargs, **kwargs):
+      if arg is not None:
+          print('arg:', arg)
       for value in varargs:
           print('vararg:', value)
       for name, value in sorted(kwargs.items()):
@@ -1394,10 +1395,12 @@ case-insensitive.
    | Enum_       |               |            | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
    |             |               |            | Enum_) and arguments themselves must match its members.        |                                      |
    |             |               |            |                                                                |    class Color(Enum):                |
-   |             |               |            |                                                                |        RED = 1                       |
-   |             |               |            |                                                                |        GREEN = 2                     |
+   |             |               |            | Starting from RF 3.2.2, matching members is case-, space-      |        RED = 1                       |
+   |             |               |            | and underscore-insensitive.                                    |        GREEN = 2                     |
+   |             |               |            |                                                                |        DARK_GREEN = 3                |
    |             |               |            |                                                                |                                      |
-   |             |               |            |                                                                | | `GREEN`                            |
+   |             |               |            |                                                                | | `GREEN` (Color.GREEN)              |
+   |             |               |            |                                                                | | `Dark Green` (Color.DARK_GREEN)    |
    +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
    | NoneType_   |               |            | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
    |             |               |            | object, other values are passed as-is. Mainly relevant when    |                                      |
