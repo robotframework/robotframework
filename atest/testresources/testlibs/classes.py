@@ -341,3 +341,6 @@ class Decorated(object):
 
     def __lt__(self, other):
         return True
+
+
+NoClassDefinition = type('NoClassDefinition', (), {})

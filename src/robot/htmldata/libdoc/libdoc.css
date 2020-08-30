@@ -43,6 +43,34 @@ a:hover {
     font-weight: normal !important;
     letter-spacing: 0 !important;
 }
+.shortcut-list-toggle, .tag-list-toggle {
+    margin-bottom: 1em;
+    font-size: 0.9em;
+}
+input.switch {
+    display: none;
+}
+.slider {
+    background-color: grey;
+    display: inline-block;
+    position: relative;
+    top: 5px;
+    height: 18px;
+    width: 36px;
+}
+.slider:before {
+    background-color: white;
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    height: 12px;
+    width: 12px;
+}
+input.switch:checked + .slider::before {
+    background-color: white;
+    left: 21px;
+}
 .keywords {
     border: 1px solid #ccc;
     border-collapse: collapse;
@@ -59,9 +87,17 @@ a:hover {
     background: #ddd;
     color: black;
 }
-.kw, .args, .tags {
-    min-width: 100px;
-    max-width: 20%;
+.kw {
+    width: 15%;
+}
+.args {
+    width: 25%;
+}
+.tags {
+    width: 10%;
+}
+.doc {
+    width: 60%;
 }
 td.kw a {
     color: inherit;

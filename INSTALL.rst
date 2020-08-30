@@ -117,10 +117,11 @@ a good place to start is http://python.org. There you can download a suitable
 installer and get more information about the installation process and Python
 in general.
 
-Robot Framework 3.0 supports Python 2.6, 2.7, 3.3 and newer, but the plan is
-to `drop Python 2.6 and 3.3 support in RF 3.1`__. If you need to use older
-versions, Robot Framework 2.5-2.8 support Python 2.5 and Robot Framework
-2.0-2.1 support Python 2.3 and 2.4.
+Robot Framework 3.2 supports Python 2.7 and Python 3.4 and newer, but the `plan
+is to drop Python 2 support soon`__ and require Python 3.6 or newer. If you
+need to use older Python versions, Robot Framework 3.0 supports Python 2.6,
+Robot Framework 2.5-2.8 support Python 2.5, and Robot Framework 2.0-2.1
+support Python 2.3 and 2.4.
 
 After installing Python, you probably still want to configure PATH_ to make
 Python itself as well as the ``robot`` and ``rebot`` `runner scripts`_
@@ -130,7 +131,7 @@ executable on the command line.
          the installation. This is disabled by default, but `Add python.exe
          to Path` can be enabled on the `Customize Python` screen.
 
-__ https://github.com/robotframework/robotframework/issues/2276
+__ https://github.com/robotframework/robotframework/issues/3457
 
 Jython installation
 ~~~~~~~~~~~~~~~~~~~

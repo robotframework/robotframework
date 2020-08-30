@@ -2,8 +2,8 @@ tmp
 build
 dist
 target
-venv
-.venv
+venv*
+.venv*
 *~
 MANIFEST
 atest/results

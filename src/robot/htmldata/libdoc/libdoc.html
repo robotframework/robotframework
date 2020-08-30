@@ -12,6 +12,7 @@
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <link rel="stylesheet" type="text/css" href="../common/js_disabled.css" media="all">
 <link rel="stylesheet" type="text/css" href="../common/doc_formatting.css" media="all">
+<script type="text/javascript" src="../common/storage.js"></script>
 <script type="text/javascript" src="../rebot/util.js"></script> <!-- TODO: Should util.js be moved under common? -->
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tmpl.min.js"></script>
@@ -39,13 +40,16 @@
     $(document).ready(function() {
         parseTemplates();
         document.title = libdoc.name;
+        storage.init('libdoc');
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
             renderTemplate('importing', libdoc);
         }
         renderTemplate('shortcuts', libdoc);
+        initShortcutListStyle('shortcut', libdoc.keywords);
         if (libdoc.contains_tags) {
             renderTemplate('tags', libdoc);
+            initShortcutListStyle('tag', libdoc.all_tags);
         }
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
@@ -79,6 +83,20 @@
         // https://github.com/robotframework/robotframework/issues/3456
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1613163
         $('.shortcuts a').width('max-content');
+    }
+
+    function initShortcutListStyle(name, items) {
+        var style = storage.get(name + '-list-style', 'compact');
+        if (style != 'compact' && items.length > 1) {
+            $('.' + name + '-list-separator').html('<br>');
+            $('.' + name + '-list-toggle .switch').prop('checked', true);
+        }
+    }
+
+    function setShortcutListStyle(name) {
+        var compact = !$('.' + name + '-list-toggle .switch').prop('checked');
+        $('.' + name + '-list-separator').html(compact ? '&middot;' : '<br>');
+        storage.set(name + '-list-style', compact ? 'compact' : 'expanded');
     }
 
     function handleKeyDown(event) {
@@ -308,7 +326,7 @@
         <tr class="kw-row">
             <td class="args">
             {{each args}}
-              <span>${$value}</span>{{if $index < args.length-1}}, {{/if}}
+              <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
             {{/each}}
             </td>
             <td class="doc">{{html $value.doc}}</td>
@@ -319,23 +337,45 @@
 
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
     <h2 id="Shortcuts">Shortcuts</h2>
+    {{if keywords.length > 1}}
+    <div class="shortcut-list-toggle">
+        <b>List style:</b>&nbsp; Compact
+        <label title="Switch between compact list and expanded list">
+            <input type="checkbox" class="switch" onclick="setShortcutListStyle('shortcut');">
+            <span class="slider"></span>
+        </label>
+        Expanded
+    </div>
+    {{/if}}
     <div class='shortcuts'>
         {{each keywords}}
         <a href="#${encodeURIComponent($value.name)}"
-           class="{{if $value.matched === false}}no-{{/if}}match"
-           title="${$value.shortdoc}">${$value.name}</a>
-        {{if $index < keywords.length-1}}&middot;{{/if}}
+        class="{{if $value.matched === false}}no-{{/if}}match"
+        title="${$value.shortdoc}">${$value.name}</a>
+        {{if $index < keywords.length-1}}
+        <span class="shortcut-list-separator">&middot;</span>
+        {{/if}}
         {{/each}}
     </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="tags-template">
     <h2 id="Tags">Tags</h2>
+    {{if all_tags.length > 1}}
+    <div class="tag-list-toggle">
+        <b>List style:</b>&nbsp; Compact
+        <label title="Switch between compact list and expanded list">
+            <input type="checkbox" class="switch" onclick="setShortcutListStyle('tag');">
+            <span class="slider"></span>
+        </label>
+        Expanded
+    </div>
+    {{/if}}
     <div class='shortcuts'>
         {{each all_tags}}
         <a href="javascript:tagSearch('${$value}')"
            title="Show keywords with this tag">${$value}</a>
-        &middot;
+        <span class="tag-list-separator">&middot;</span>
         {{/each}}
         <a href="javascript:resetKeywords()" class="normal-first-letter"
            title="Show all keywords">[Reset]</a>
@@ -367,14 +407,14 @@
         </td>
         <td class="args">
             {{each args}}
-            <span>${$value}</span>{{if $index < args.length-1}}, {{/if}}
+            <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
             {{/each}}
         </td>
         {{if libdoc.contains_tags}}
         <td class="tags">
             {{each tags}}
             <a href="javascript:tagSearch('${$value}')"
-               title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}}, {{/if}}
+               title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
             {{/each}}
         </td>
         {{/if}}

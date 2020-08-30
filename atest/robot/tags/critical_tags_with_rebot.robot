@@ -53,12 +53,12 @@ Run Test To Create Output
 Test Criticality
     [Arguments]    ${options}    ${crit 1}    ${crit 2}
     Run Rebot    ${options}    ${INPUT FILE}
-    ${tests} =    Get Elements    ${OUT FILE}    suite/test
-    Test Status And Criticality Should Be    ${tests[0]}    PASS    ${crit 1}
-    Test Status And Criticality Should Be    ${tests[1]}    FAIL    ${crit 2}
+    @{tests} =    Get Elements    ${OUT FILE}    xpath=suite/test
+    Test Status And Criticality Should Be    ${tests}[0]    PASS    ${crit 1}
+    Test Status And Criticality Should Be    ${tests}[1]    FAIL    ${crit 2}
 
 Test Status And Criticality Should Be
-    [Arguments]    ${test}    ${status}    ${criticality}
+    [Arguments]    ${test}    ${status}    ${critical}
     [Documentation]    Must check status and criticality directly from XML because re-processed model would not have same criticality
-    Should Be Equal    ${test.getchildren()[-1].attrib['status']}    ${status}
-    Should Be Equal    ${test.getchildren()[-1].attrib['critical']}    ${criticality}
+    Element Attribute Should Be    ${test}    status      ${status}      xpath=status
+    Element Attribute Should Be    ${test}    critical    ${critical}    xpath=status

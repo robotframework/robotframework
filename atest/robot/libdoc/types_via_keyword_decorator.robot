@@ -7,7 +7,7 @@ Basics
     Keyword Arguments Should Be     0    integer: int    boolean: bool    string: str
 
 With defaults
-    Keyword Arguments Should Be     1    integer: int=42    list_: list=None
+    Keyword Arguments Should Be     1    integer: int = 42    list_: list = None
 
 Varargs and kwargs
     Keyword Arguments Should Be     2    *varargs: int    **kwargs: bool
@@ -21,5 +21,4 @@ Non-type annotations
 
 Keyword-only arguments
     [Tags]    require-py3
-    Keyword Arguments Should Be     5    *    kwo: int    with_default: str=value
-
+    Keyword Arguments Should Be     5    *    kwo: int    with_default: str = value
