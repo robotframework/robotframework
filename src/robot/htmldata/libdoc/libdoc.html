@@ -350,8 +350,8 @@
     <div class='shortcuts'>
         {{each keywords}}
         <a href="#${encodeURIComponent($value.name)}"
-        class="{{if $value.matched === false}}no-{{/if}}match"
-        title="${$value.shortdoc}">${$value.name}</a>
+           class="{{if $value.matched === false}}no-{{/if}}match"
+           title="${$value.shortdoc}">${$value.name}</a>
         {{if $index < keywords.length-1}}
         <span class="shortcut-list-separator">&middot;</span>
         {{/if}}
