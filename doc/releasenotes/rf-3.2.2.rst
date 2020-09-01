@@ -24,7 +24,7 @@ To install the latest available release using pip_, just run
 
    pip install robotframework==3.2.2
 
-Alternatively you can download the source distribution from PyPI_ and install it manually. 
+Alternatively you can download the source distribution from PyPI_ and install it manually.
 For more details and other installation approaches, see the `installation instructions`_.
 
 Robot Framework 3.2.2 was released on Tuesday September 1, 2020.
@@ -75,9 +75,9 @@ __ https://robotframework.org/SeleniumLibrary/SeleniumLibrary.html#Shortcuts
 Python 3.9 support
 ------------------
 
-Although `Python 3.9`__ has not yet been officially released, Robot Framework 3.2.2 was tested using its beta
-releases. Two small problems were fixed (`#3628`_ and a bit more severe `#3627`_) and Python 3.9
-was added to our CI. (`#3629`_)
+Although `Python 3.9`__ has not yet been officially released, Robot Framework 3.2.2 was tested using
+its beta releases. Bugs affecting the XML library (`#3627`_) and line number detection of imported
+libraries (`#3628`_) were fixed and Python 3.9 was also added to our CI. (`#3629`_)
 
 __ https://docs.python.org/3.9/whatsnew/3.9.html
 
