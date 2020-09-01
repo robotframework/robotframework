@@ -12,21 +12,20 @@ Questions and comments related to the release can be sent to the
 `robotframework-users`_ mailing list or to `Robot Framework Slack`_,
 and possible bugs submitted to the `issue tracker`_.
 
-If you have pip_ installed, just run
+To install the latest available release using pip_, just run
 
 ::
 
    pip install --upgrade robotframework
 
-to install the latest available release or use
+ or to install exactly this version use
 
 ::
 
    pip install robotframework==3.2.2
 
-to install exactly this version. Alternatively you can download the source
-distribution from PyPI_ and install it manually. For more details and other
-installation approaches, see the `installation instructions`_.
+Alternatively you can download the source distribution from PyPI_ and install it manually. 
+For more details and other installation approaches, see the `installation instructions`_.
 
 Robot Framework 3.2.2 was released on Tuesday September 1, 2020.
 
@@ -52,20 +51,20 @@ Most important enhancements
 Libdoc enhancements
 -------------------
 
-Libdoc HTML output has been enhanced in several ways:
+Libdoc's HTML output has been enhanced in several ways:
 
-- Keyword arguments are split to own lines to make them easier to read especially when there are
-  lot of arguments or arguments have default values or type information. (`#3639`_)
+- Keyword arguments are split to separate lines to make them easier to read especially when there are
+  lot of arguments or arguments have type information or default values. (`#3639`_)
 
 - If argument type is an enumeration__, its members are shown automatically in arguments. This
-  helps, for example, the new Browser__ library that uses enumerations extensively. (`#3637`_)
+  helps, for example, with the Browser__ library that uses enumerations extensively. (`#3637`_)
 
 - Shortcuts to keywords can be shown in expanded list in addition to the old compact style.
   (`#3635`_)
 
-- Libdoc now again works if the original source of the keyword cannot be found. (`#3587`_)
+- Libdoc once again works if the original source of the keyword cannot be found. (`#3587`_)
 
-To see how the enhancements look like for real, see the documentation of Browser__ and
+To see actual examples of the enhancements, see the documentation for Browser__ and
 SeleniumLibrary__.
 
 __ https://docs.python.org/3/library/enum.html
@@ -76,7 +75,7 @@ __ https://robotframework.org/SeleniumLibrary/SeleniumLibrary.html#Shortcuts
 Python 3.9 support
 ------------------
 
-`Python 3.9`__ has not yet been released, but Robot Framework 3.2.2 was tested with its beta
+Although `Python 3.9`__ has not yet been officially released, Robot Framework 3.2.2 was tested using its beta
 releases. Two small problems were fixed (`#3628`_ and a bit more severe `#3627`_) and Python 3.9
 was added to our CI. (`#3629`_)
 
@@ -89,7 +88,7 @@ Robot Framework 3.2.2 development has been sponsored by the `Robot Framework Fou
 Big thanks to all the `40+ member organizations <https://robotframework.org/foundation/#members>`_
 for your continued support!
 
-We have also got several several great contributions by the open source community:
+We have also had several great contributions by the open source community:
 
 - `willemvanoort <https://github.com/willemvanoort>`__ enhanced type conversions with enums
   to work with normalized member names (`#3611`_)
@@ -107,8 +106,8 @@ We have also got several several great contributions by the open source communit
 - `Mikhail Kulinich <https://github.com/tysonite>`__ added Python 3.9 to CI (`#3629`_)
 
 Huge thanks to all sponsors, contributors and to everyone else who has reported problems,
-participated discussion on various forums, or otherwise helped to make Robot Framework as well
-as the ecosystem and community around it better.
+participated in discussions on various forums, or otherwise helped to make Robot Framework and its community
+and ecosystem better.
 
 | `Pekka Klärck <https://github.com/pekkaklarck>`__
 | Robot Framework Lead Developer
