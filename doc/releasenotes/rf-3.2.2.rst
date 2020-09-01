@@ -18,7 +18,7 @@ To install the latest available release using pip_, just run
 
    pip install --upgrade robotframework
 
- or to install exactly this version use
+or to install exactly this version use
 
 ::
 
