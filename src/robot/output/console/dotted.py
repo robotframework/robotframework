@@ -46,8 +46,6 @@ class DottedOutput(object):
             self._stdout.write('.')
         elif 'robot:exit' in test.tags:
             self._stdout.write('x')
-        elif not test.critical:
-            self._stdout.write('f')
         else:
             self._stdout.highlight('F', 'FAIL')
 
@@ -83,7 +81,7 @@ class StatusReporter(SuiteVisitor):
         self._stream.write('\n%s\n' % stats.message)
 
     def visit_test(self, test):
-        if not test.passed and test.critical and 'robot:exit' not in test.tags:
+        if not test.passed and 'robot:exit' not in test.tags:
             self._stream.write('-' * self._width + '\n')
             self._stream.highlight('FAIL')
             self._stream.write(': %s\n%s\n' % (test.longname,

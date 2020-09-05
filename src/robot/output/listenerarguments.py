@@ -116,8 +116,7 @@ class StartTestArguments(_ListenerArgumentsFromItem):
     _attribute_names = ('id', 'longname', 'doc', 'tags', 'lineno', 'starttime')
 
     def _get_extra_attributes(self, test):
-        return {'critical': 'yes' if test.critical else 'no',
-                'template': test.template or '',
+        return {'template': test.template or '',
                 'originalname': test.data.name}
 
 
