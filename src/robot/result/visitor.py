@@ -67,8 +67,7 @@ class ResultVisitor(SuiteVisitor):
 
     def visit_total_statistics(self, stats):
         if self.start_total_statistics(stats) is not False:
-            for stat in stats:
-                stat.visit(self)
+            stats.all.visit(self)
             self.end_total_statistics(stats)
 
     def start_total_statistics(self, stats):

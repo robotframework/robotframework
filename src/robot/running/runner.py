@@ -52,8 +52,6 @@ class Runner(SuiteVisitor):
                            starttime=get_timestamp(),
                            rpa=self._settings.rpa)
         if not self.result:
-            result.set_criticality(self._settings.critical_tags,
-                                   self._settings.non_critical_tags)
             self.result = Result(root_suite=result, rpa=self._settings.rpa)
             self.result.configure(status_rc=self._settings.status_rc,
                                   stat_config=self._settings.statistics_config)
@@ -98,8 +96,7 @@ class Runner(SuiteVisitor):
             failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
             if failure:
                 self._suite.suite_teardown_failed(unic(failure))
-                if self._suite.statistics.critical.failed:
-                    self._suite_status.critical_failure_occurred()
+                self._suite_status.critical_failure_occurred()
         self._suite.endtime = get_timestamp()
         self._suite.message = self._suite_status.message
         self._context.end_suite(ModelCombiner(suite, self._suite))
@@ -148,7 +145,7 @@ class Runner(SuiteVisitor):
             with self._context.test_teardown(result):
                 failure = self._run_teardown(test.keywords.teardown, status,
                                              result)
-                if failure and result.critical:
+                if failure:
                     status.critical_failure_occurred()
         if not status.failures and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message())

@@ -99,8 +99,7 @@ class SuiteBuilder(_Builder):
         stats = suite.statistics  # Access property only once
         return (stats.all.total,
                 stats.all.passed,
-                stats.critical.total,
-                stats.critical.passed)
+                stats.all.failed)
 
 
 class TestBuilder(_Builder):
@@ -113,7 +112,6 @@ class TestBuilder(_Builder):
         with self._context.prune_input(test.keywords):
             return (self._string(test.name, attr=True),
                     self._string(test.timeout),
-                    int(test.critical),
                     self._html(test.doc),
                     tuple(self._string(t) for t in test.tags),
                     self._get_status(test),

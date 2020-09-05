@@ -34,7 +34,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 
 from itertools import chain
 
-from robot.model import TotalStatisticsBuilder, Criticality
+from robot.model import TotalStatisticsBuilder
 from robot import model, utils
 
 from .configurer import SuiteConfigurer
@@ -148,24 +148,13 @@ class TestCase(model.TestCase):
     def passed(self, passed):
         self.status = 'PASS' if passed else 'FAIL'
 
-    @property
-    def critical(self):
-        """``True/False`` depending on is the test considered critical.
-
-        Criticality is determined based on test's :attr:`tags` and
-        :attr:`~TestSuite.criticality` of the :attr:`parent` suite.
-        """
-        if not self.parent:
-            return True
-        return self.parent.criticality.test_is_critical(self)
-
 
 class TestSuite(model.TestSuite):
     """Represents results of a single test suite.
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['message', 'starttime', 'endtime', '_criticality']
+    __slots__ = ['message', 'starttime', 'endtime']
     test_class = TestCase
     keyword_class = Keyword
 
@@ -178,16 +167,15 @@ class TestSuite(model.TestSuite):
         self.starttime = starttime
         #: Suite execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
-        self._criticality = None
 
     @property
     def passed(self):
-        """``True`` if no critical test has failed, ``False`` otherwise."""
-        return not self.statistics.critical.failed
+        """``True`` if no test has failed, ``False`` otherwise."""
+        return not self.statistics.all.failed
 
     @property
     def status(self):
-        """``'PASS'`` if no critical test has failed, ``'FAIL'`` otherwise."""
+        """``'PASS'`` if no test has failed, ``'FAIL'`` otherwise."""
         return 'PASS' if self.passed else 'FAIL'
 
     @property
@@ -198,7 +186,7 @@ class TestSuite(model.TestSuite):
         to a variable and inspecting it is often a good idea::
 
             stats = suite.statistics
-            print(stats.critical.failed)
+            print(stats.all.failed)
             print(stats.all.total)
             print(stats.message)
         """
@@ -223,38 +211,6 @@ class TestSuite(model.TestSuite):
             return utils.get_elapsed_time(self.starttime, self.endtime)
         return sum(child.elapsedtime for child in
                    chain(self.suites, self.tests, self.keywords))
-
-    @property
-    def criticality(self):
-        """Used by tests to determine are they considered critical or not.
-
-        Normally configured using ``--critical`` and ``--noncritical``
-        command line options. Can be set programmatically using
-        :meth:`set_criticality` of the root test suite.
-        """
-        if self.parent:
-            return self.parent.criticality
-        if self._criticality is None:
-            self.set_criticality()
-        return self._criticality
-
-    def set_criticality(self, critical_tags=None, non_critical_tags=None):
-        """Sets which tags are considered critical and which non-critical.
-
-        :param critical_tags: Tags or patterns considered critical. See
-            the documentation of the ``--critical`` option for more details.
-        :param non_critical_tags: Tags or patterns considered non-critical. See
-            the documentation of the ``--noncritical`` option for more details.
-
-        Tags can be given as lists of strings or, when giving only one,
-        as single strings. This information is used by tests to determine
-        are they considered critical or not.
-
-        Criticality can be set only to the root test suite.
-        """
-        if self.parent is not None:
-            raise ValueError('Criticality can only be set to the root suite.')
-        self._criticality = Criticality(critical_tags, non_critical_tags)
 
     def remove_keywords(self, how):
         """Remove keywords based on the given condition.
@@ -283,7 +239,6 @@ class TestSuite(model.TestSuite):
         Example::
 
             suite.configure(remove_keywords='PASSED',
-                            critical_tags='smoke',
                             doc='Smoke test results.')
         """
         model.TestSuite.configure(self)    # Parent validates call is allowed.

@@ -25,7 +25,7 @@ class Stat(Sortable):
 
     def __init__(self, name):
         #: Human readable identifier of the object these statistics
-        #: belong to. Either `All Tests` or `Critical Tests` for
+        #: belong to. `All Tests` for
         #: :class:`~robot.model.totalstatistics.TotalStatistics`,
         #: long name of the suite for
         #: :class:`~robot.model.suitestatistics.SuiteStatistics`
@@ -126,31 +126,21 @@ class TagStat(Stat):
     """Stores statistic values for a single tag."""
     type = 'tag'
 
-    def __init__(self, name, doc='', links=None, critical=False,
-                 non_critical=False, combined=None):
+    def __init__(self, name, doc='', links=None, combined=None):
         Stat.__init__(self, name)
         #: Documentation of tag as a string.
         self.doc = doc
         #: List of tuples in which the first value is the link URL and
         #: the second is the link title. An empty list by default.
         self.links = links or []
-        #: ``True`` if tag is considered critical, ``False`` otherwise.
-        self.critical = critical
-        #: ``True`` if tag is considered non-critical, ``False`` otherwise.
-        self.non_critical = non_critical
         #: Pattern as a string if the tag is combined, ``None`` otherwise.
         self.combined = combined
 
     @property
     def info(self):
         """Returns additional information of the tag statistics
-           are about. Either `critical`, `non-critical`, `combined` or an
-           empty string.
+           are about. Either `combined` or an empty string.
         """
-        if self.critical:
-            return 'critical'
-        if self.non_critical:
-            return 'non-critical'
         if self.combined:
             return 'combined'
         return ''
@@ -164,10 +154,7 @@ class TagStat(Stat):
 
     @property
     def _sort_key(self):
-        return (not self.critical,
-                not self.non_critical,
-                not self.combined,
-                self._norm_name)
+        return (not self.combined, self._norm_name)
 
 
 class CombinedTagStat(TagStat):
@@ -175,18 +162,6 @@ class CombinedTagStat(TagStat):
     def __init__(self, pattern, name=None, doc='', links=None):
         TagStat.__init__(self, name or pattern, doc, links, combined=pattern)
         self.pattern = TagPattern(pattern)
-
-    def match(self, tags):
-        return self.pattern.match(tags)
-
-
-class CriticalTagStat(TagStat):
-
-    def __init__(self, tag_pattern, name=None, critical=True, doc='',
-                 links=None):
-        TagStat.__init__(self, name or unicode(tag_pattern), doc, links,
-                         critical=critical, non_critical=not critical)
-        self.pattern = tag_pattern
 
     def match(self, tags):
         return self.pattern.match(tags)
