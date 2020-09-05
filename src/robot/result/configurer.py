@@ -21,9 +21,8 @@ class SuiteConfigurer(model.SuiteConfigurer):
     """Result suite configured.
 
     Calls suite's
-    :meth:`~robot.result.testsuite.TestSuite.remove_keywords`,
-    :meth:`~robot.result.testsuite.TestSuite.filter_messages` and
-    :meth:`~robot.result.testsuite.TestSuite.set_criticality` methods
+    :meth:`~robot.result.testsuite.TestSuite.remove_keywords` and
+    :meth:`~robot.result.testsuite.TestSuite.filter_messages` methods
     and sets its start and end time based on the given named parameters.
 
     ``base_config`` is forwarded to
@@ -39,8 +38,6 @@ class SuiteConfigurer(model.SuiteConfigurer):
         self.log_level = log_level
         self.start_time = self._get_time(start_time)
         self.end_time = self._get_time(end_time)
-        self.critical_tags = critical_tags
-        self.non_critical_tags = non_critical_tags
 
     def _get_remove_keywords(self, value):
         if value is None:
@@ -63,7 +60,6 @@ class SuiteConfigurer(model.SuiteConfigurer):
         self._remove_keywords(suite)
         self._set_times(suite)
         suite.filter_messages(self.log_level)
-        suite.set_criticality(self.critical_tags, self.non_critical_tags)
 
     def _remove_keywords(self, suite):
         for how in self.remove_keywords:

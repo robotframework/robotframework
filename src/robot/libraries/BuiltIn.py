@@ -2201,36 +2201,6 @@ class _RunKeyword(_BuiltInBase):
                            % kwname)
 
     @run_keyword_variant(resolve=1)
-    def run_keyword_if_all_critical_tests_passed(self, name, *args):
-        """Runs the given keyword with the given arguments, if all critical tests passed.
-
-        This keyword can only be used in suite teardown. Trying to use it in
-        any other place will result in an error.
-
-        Otherwise, this keyword works exactly like `Run Keyword`, see its
-        documentation for more details.
-        """
-        suite = self._get_suite_in_teardown('Run Keyword If '
-                                            'All Critical Tests Passed')
-        if suite.statistics.critical.failed == 0:
-            return self.run_keyword(name, *args)
-
-    @run_keyword_variant(resolve=1)
-    def run_keyword_if_any_critical_tests_failed(self, name, *args):
-        """Runs the given keyword with the given arguments, if any critical tests failed.
-
-        This keyword can only be used in a suite teardown. Trying to use it
-        anywhere else results in an error.
-
-        Otherwise, this keyword works exactly like `Run Keyword`, see its
-        documentation for more details.
-        """
-        suite = self._get_suite_in_teardown('Run Keyword If '
-                                            'Any Critical Tests Failed')
-        if suite.statistics.critical.failed > 0:
-            return self.run_keyword(name, *args)
-
-    @run_keyword_variant(resolve=1)
     def run_keyword_if_all_tests_passed(self, name, *args):
         """Runs the given keyword with the given arguments, if all tests passed.
 
