@@ -110,3 +110,7 @@ Strip String With Invalid Mode
 Strip String With Given Characters
     ${result} =    Strip String    aabaHelloeee    characters=abe
     Should be equal    ${result}    Hello
+
+Remove Leading Spaces
+    ${result}=    Remove Leading Spaces    ${SPACE}${SPACE}Hello${SPACE}Hello
+    Should be equal    ${result}    Hello Hello

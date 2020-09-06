@@ -552,6 +552,24 @@ class String(object):
         """
         return list(string)
 
+    def split_string_by_delimiter(self, string, delimiter):
+        """Splits the given ``string`` by delimiter and returns a list of strings.
+
+        Example:
+        | @{string_split}= | Split String By Delimiter | ${string} | -
+
+        """
+        return string.split(delimiter)
+
+    def remove_leading_spaces(self, string):
+        """Removes any and only leading spaces in a string. Does not remove any spaces in between strings such as "Hello Hello"
+
+        Example:
+        | ${removed_leading_spaces}= | Remove Leading Spaces | ${string}
+
+        """
+        return string.split(string)
+
     def fetch_from_left(self, string, marker):
         """Returns contents of the ``string`` before the first occurrence of ``marker``.
 

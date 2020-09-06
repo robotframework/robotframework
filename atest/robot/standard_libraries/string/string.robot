@@ -69,3 +69,6 @@ Strip String With Invalid Mode
 
 Strip String With Given Characters
     Check Test Case    ${TESTNAME}
+
+Remove Leading Spaces
+    Check Test Case    ${TESTNAME}

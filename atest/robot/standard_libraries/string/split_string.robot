@@ -63,3 +63,6 @@ Split String To Characters
 Split Empty String To Characters
     Check Test Case    ${TESTNAME}
 
+Split String By Delimiter
+    Check Test Case    ${TESTNAME}
+

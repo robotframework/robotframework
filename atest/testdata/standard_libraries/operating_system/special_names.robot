@@ -30,6 +30,11 @@ Non-ASCII directory name with ordinals < 255
 Non-ASCII directory name with ordinals > 255
     Test Directory Operations    ŋöñ-äßçíï-€
 
+Generate UUID
+    ${uuid}=    Generate UUID
+    ${generated_uuid}=    Get Regexp Matches    ${uuid}    ^(?P<uuid>[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}).*    uuid
+    Should Not Be Empty    ${generated_uuid}
+
 *** Keywords ***
 Test File Operations
     [Arguments]    ${name}

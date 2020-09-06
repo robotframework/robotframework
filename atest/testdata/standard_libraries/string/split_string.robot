@@ -86,6 +86,10 @@ Split Empty String To Characters
     @{chars} =    Split String To Characters    ${EMPTY}
     Result Should Contain Items In Given Order    ${chars}
 
+Split String By Delimiter
+    @{result}=    Split String By Delimiter    A-B-C-D    -
+    Result Should Contain Items In Given Order    ${result}    A    B    C    D
+
 *** Keywords ***
 Result Should Contain Items In Given Order
     [Arguments]    ${result list}    @{expected}
