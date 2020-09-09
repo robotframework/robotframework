@@ -3,9 +3,9 @@ Suite Setup     Run Tests  ${EMPTY}  core/test_suite_dir
 Resource        atest_resource.robot
 
 *** Variables ***
-${1_test_msg}     1 test total, 1 passed, 0 failed
-${2_test_msg}     2 tests total, 2 passed, 0 failed
-${3_test_msg}     3 tests total, 3 passed, 0 failed
+${1_test_msg}     1 test, 1 passed, 0 failed
+${2_test_msg}     2 tests, 2 passed, 0 failed
+${3_test_msg}     3 tests, 3 passed, 0 failed
 
 *** Test Cases ***
 Main Suite Executed
