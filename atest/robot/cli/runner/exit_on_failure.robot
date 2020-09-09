@@ -5,24 +5,15 @@ Suite Setup       Run Tests
 Resource          atest_resource.robot
 
 *** Variables ***
-${EXIT ON FAILURE}          Critical failure occurred and exit-on-failure mode is in use.
+${EXIT ON FAILURE}          Failure occurred and exit-on-failure mode is in use.
 
 *** Test Cases ***
 Passing tests do not initiate exit-on-failure
-    Check Test Case    Passing critical
-    Check Test Case    Passing non-critical
+    Check Test Case    Passing
     Check Test Case    Passing tests do not initiate exit-on-failure
 
-Failing non-critical tests do not initiate exit-on-failure
-    Check Test Case    Failing non-critical
-    Check Test Case    Failing non-critical tests do not initiate exit-on-failure
-
-Failing dynamically non-critical tests do not initiate exit-on-failure
-    Check Test Case    Failing non-critical
-    Check Test Case    Failing dynamically non-critical tests do not initiate exit-on-failure
-
-Failing critical tests initiate exit-on-failure
-    Check Test Case    Failing critical
+Failing tests initiate exit-on-failure
+    Check Test Case    Failing
     Test Should Have Been Skipped    Skipped
 
 Tests in subsequent suites are skipped
