@@ -25,9 +25,6 @@ Including And Excluding Works in Normalized Manner
     [Documentation]    Including is actually tested using --include when running tests. If all previous tests pass then including works.
     Should Not Contain Tests    ${SUITE}    Excluded
 
-Criticality Works In Normalized Manner
-    Stdout Should Contain    1 critical test, 1 passed, 0 failed\n10 tests total, 5 passed, 5 failed
-
 Rebot Keeps Tags In Original Format
     Copy Previous Outfile
     Run Rebot    --exclude LOWER --exclude 2spaces --exclude *D?O?T?S* --settag "Added tag"    ${OUTFILE COPY}
