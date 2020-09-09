@@ -19,9 +19,9 @@ class ListenAll:
 
     def start_test(self, name, attrs):
         tags = [str(tag) for tag in attrs['tags']]
-        self.outfile.write("TEST START: %s (%s, line %s) '%s' %s crit: %s\n"
+        self.outfile.write("TEST START: %s (%s, line %s) '%s' %s\n"
                            % (name, attrs['id'], attrs['lineno'], attrs['doc'],
-                              tags,  attrs['critical']))
+                              tags))
 
     def start_keyword(self, name, attrs):
         args = [str(arg) for arg in attrs['args']]
@@ -55,10 +55,10 @@ class ListenAll:
 
     def end_test(self, name, attrs):
         if attrs['status'] == 'PASS':
-            self.outfile.write('TEST END: PASS crit: %s\n' % attrs['critical'])
+            self.outfile.write('TEST END: PASS\n')
         else:
-            self.outfile.write("TEST END: %s %s crit: %s\n"
-                               % (attrs['status'], attrs['message'], attrs['critical']))
+            self.outfile.write("TEST END: %s %s\n"
+                               % (attrs['status'], attrs['message']))
 
     def end_suite(self, name, attrs):
         self.outfile.write('SUITE END: %s %s\n'
