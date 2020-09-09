@@ -11,11 +11,7 @@ Zero RC when all tests pass
     ${EMPTY}                    ${PASSING}      rc=0
     --statusrc                  ${PASSING}      rc=0
 
-Zero RC when all critical tests pass
-    --critical pass             ${FAILING}      rc=0
-    -c pass --status            ${FAILING}      rc=0
-
-Non-zero RC when critical tests fail
+Non-zero RC when ests fail
     ${EMPTY}                    ${FAILING}      rc=1
     -r report.html              ${FAILING}      rc=1
     -l log.html --statusrc      ${FAILING}      rc=1
@@ -23,7 +19,7 @@ Non-zero RC when critical tests fail
 Zero RC when all tests pass with --NoStatusRC
     --NoStatusRC                 ${PASSING}     rc=0
 
-Zero RC when critical tests fail with --NoStatusRC
+Zero RC when tests fail with --NoStatusRC
     --nostatusrc                 ${FAILING}     rc=0
 
 --StatusRC and --NoStatusRC together

@@ -62,7 +62,7 @@ Dotted does not show details for skipped
     Stderr Should Be    empty.txt
     Check test tags    ${EMPTY}
     ${tc} =    Check test case    Empty Test Case    FAIL
-    ...    Critical failure occurred and exit-on-failure mode is in use.
+    ...    Failure occurred and exit-on-failure mode is in use.
     Should contain    ${tc.tags}    robot:exit
 
 *** Keywords ***
