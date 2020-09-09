@@ -12,9 +12,9 @@ def start_suite(name, attrs):
 
 def start_test(name, attrs):
     tags = [str(tag) for tag in attrs['tags']]
-    OUTFILE.write("TEST START: %s (%s, line %s) '%s' %s crit: %s\n"
+    OUTFILE.write("TEST START: %s (%s, line %s) '%s' %s\n"
                   % (name, attrs['id'], attrs['lineno'], attrs['doc'],
-                     tags,  attrs['critical']))
+                     tags))
 
 def start_keyword(name, attrs):
     args = [str(arg) for arg in attrs['args']]
@@ -39,10 +39,10 @@ def end_keyword(name, attrs):
 
 def end_test(name, attrs):
     if attrs['status'] == 'PASS':
-        OUTFILE.write('TEST END: PASS crit: %s\n' % attrs['critical'])
+        OUTFILE.write('TEST END: PASS\n')
     else:
-        OUTFILE.write("TEST END: %s %s crit: %s\n"
-                      % (attrs['status'], attrs['message'], attrs['critical']))
+        OUTFILE.write("TEST END: %s %s\n"
+                      % (attrs['status'], attrs['message']))
 
 def end_suite(name, attrs):
     OUTFILE.write('SUITE END: %s %s\n' % (attrs['status'], attrs['statistics']))

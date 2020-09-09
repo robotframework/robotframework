@@ -51,8 +51,7 @@ Java Listener
     ...    START KW: BuiltIn.Fail [Expected failure]
     ...    LOG MESSAGE: [FAIL] Expected failure
     ...    END TEST: FAIL: Expected failure
-    ...    END SUITE: PASS: 1 critical test, 1 passed, 0 failed
-    ...    2 tests total, 1 passed, 1 failed
+    ...    END SUITE: PASS: 2 tests total, 1 passed, 1 failed
     ...    Output (java): output.xml    The End
     Check Listener File    ${JAVA_FILE}    @{expected}
 
@@ -128,7 +127,6 @@ Run Tests With Listeners
     ...    --listener    attributeverifyinglistener
     ...    --listener    JavaAttributeVerifyingListener
     ...    --metadata    ListenerMeta:Hello
-    ...    --critical    pass
     Run Tests    ${args}    misc/pass_and_fail.robot
 
 Check Listen All File
@@ -145,7 +143,7 @@ Check Listen All File
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    KW END: PASS
-    ...    TEST START: Pass (s1-t1, line 12) '' ['force', 'pass'] crit: yes
+    ...    TEST START: Pass (s1-t1, line 12) '' ['force', 'pass']
     ...    KW START: My Keyword ['Pass']
     ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
     ...    LOG MESSAGE: [INFO] Hello says "Pass"!
@@ -156,8 +154,8 @@ Check Listen All File
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    KW END: PASS
-    ...    TEST END: PASS crit: yes
-    ...    TEST START: Fail (s1-t2, line 17) 'FAIL Expected failure' ['fail', 'force'] crit: no
+    ...    TEST END: PASS
+    ...    TEST START: Fail (s1-t2, line 17) 'FAIL Expected failure' ['fail', 'force']
     ...    KW START: My Keyword ['Fail']
     ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
     ...    LOG MESSAGE: [INFO] Hello says "Fail"!
@@ -171,9 +169,8 @@ Check Listen All File
     ...    KW START: BuiltIn.Fail ['Expected failure']
     ...    LOG MESSAGE: [FAIL] Expected failure
     ...    KW END: FAIL
-    ...    TEST END: FAIL Expected failure crit: no
-    ...    SUITE END: PASS 1 critical test, 1 passed, 0 failed
-    ...    2 tests total, 1 passed, 1 failed
+    ...    TEST END: FAIL Expected failure
+    ...    SUITE END: FAIL 2 tests, 1 passed, 1 failed
     ...    Output: output.xml    Closing...
     Check Listener File    ${filename}    @{expected}
 
