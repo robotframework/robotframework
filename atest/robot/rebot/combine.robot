@@ -80,22 +80,6 @@ Suite Metadata
     Should Be Equal    ${SUITE2.metadata['Name']}    value
     Should Be Equal    ${SUITE2.metadata['Other Meta']}    Another value
 
-Earlier Criticality Should Be Ignored
-    ${tags} =    Get Total Stat Nodes    ${COMB OUT 1}
-    Tag Statistics Should Be    ${tags[0]}    3    1
-    Tag Statistics Should Be    ${tags[1]}    3    1
-    ${tags} =    Get Total Stat Nodes    ${COMB OUT 3}
-    Tag Statistics Should Be    ${tags[0]}    9    1
-    Tag Statistics Should Be    ${tags[1]}    9    1
-
-Critical/Non-Critical Tags Can Be Given
-    ${tags} =    Get Total Stat Nodes    ${COMB OUT 2}
-    Tag Statistics Should Be    ${tags[0]}    1    1
-    Tag Statistics Should Be    ${tags[1]}    3    1
-    ${tags} =    Get Total Stat Nodes    ${COMB OUT 4}
-    Tag Statistics Should Be    ${tags[0]}    7    1
-    Tag Statistics Should Be    ${tags[1]}    9    1
-
 Suite Times
     Should Be Equal    ${SUITE3.starttime}    ${NONE}
     Should Be Equal    ${SUITE3.endtime}    ${NONE}
