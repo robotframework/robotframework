@@ -8,6 +8,6 @@ Test case name cannot be empty.
 Run suite 'Empty Testcase And Uk' with 9 tests in *.
 
 FAILED
-9 tests total, 0 passed, 9 failed
+9 tests, 0 passed, 9 failed
 
 Output:  *.xml
