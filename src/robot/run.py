@@ -356,6 +356,9 @@ Options
                           |  path/to/test/directory/
                           Examples:
                           --argumentfile argfile.txt --argumentfile STDIN
+ -z --xoutputtimeinfo     Include system timezone and daylight saving time in
+                          output.xml status elements so the timestamp are
+                          definitive.
  -h -? --help             Print usage instructions.
  --version                Print version information.
 

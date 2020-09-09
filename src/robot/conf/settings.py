@@ -69,7 +69,8 @@ class _BaseSettings(object):
                  'ConsoleColors'    : ('consolecolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
-                 'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
+                 'XUnitSkipNonCritical' : ('xunitskipnoncritical', False),
+                 'XOutputTimeInfo'  : ('xoutputtimeinfo', False)}
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
@@ -137,6 +138,7 @@ class _BaseSettings(object):
             self._validate_expandkeywords(value)
         if name == 'Extension':
             return tuple(ext.lower().lstrip('.') for ext in value.split(':'))
+
         return value
 
     def _escape_as_data(self, value):
@@ -349,6 +351,10 @@ class _BaseSettings(object):
     @property
     def xunit_skip_noncritical(self):
         return self['XUnitSkipNonCritical']
+
+    @property
+    def xoutput_timeinfo(self):
+        return self['XOutputTimeInfo']
 
     @property
     def statistics_config(self):

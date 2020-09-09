@@ -22,11 +22,12 @@ from .loggerhelper import IsLogged
 
 class XmlLogger(ResultVisitor):
 
-    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot'):
+    def __init__(self, path, log_level='TRACE', rpa=False, generator='Robot', includetimeinfo=False):
         self._log_message_is_logged = IsLogged(log_level)
         self._error_message_is_logged = IsLogged('WARN')
         self._writer = self._get_writer(path, rpa, generator)
         self._errors = []
+        self._includetimeinfo = includetimeinfo
 
     def _get_writer(self, path, rpa, generator):
         if not path:
@@ -154,4 +155,12 @@ class XmlLogger(ResultVisitor):
             attrs['elapsedtime'] = str(item.elapsedtime)
         if extra_attrs:
             attrs.update(extra_attrs)
+        if self._includetimeinfo:
+            from time import localtime
+            lt = localtime()
+            z = lt.tm_gmtoff / 3600
+            dst = lt.tm_isdst
+            timeinfo = {'timezone': str(z), 'dst': str(dst)}
+            attrs.update(timeinfo)
+
         self._writer.element('status', item.message, attrs)
