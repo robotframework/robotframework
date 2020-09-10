@@ -64,6 +64,7 @@ Convert To Title Case with excludes
     they're bill's friends from the UK
     ...                   They're Bill's Friends From the UK
     ...                                         exclude=${EXCLUDES}
+    this is none          This Is none          exclude=none
 
 Convert To Title Case with regexp excludes
     [Template]    Test title case

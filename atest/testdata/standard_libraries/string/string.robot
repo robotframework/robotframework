@@ -110,3 +110,7 @@ Strip String With Invalid Mode
 Strip String With Given Characters
     ${result} =    Strip String    aabaHelloeee    characters=abe
     Should be equal    ${result}    Hello
+
+Strip String With Given Characters none
+    ${result} =    Strip String    none123noneee    characters=none
+    Should be equal    ${result}    123

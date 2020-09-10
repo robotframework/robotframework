@@ -16,6 +16,8 @@ Get Environment Variable
     Should Contain    ${var}    ${:}
     ${var} =    Get Environment Variable    non_existing    default value
     Should Be Equal    ${var}    default value
+    ${var} =    Get Environment Variable    non_existing    none
+    Should Be Equal    ${var}    none
     ${var} =    Get Environment Variable    non_existing_2
 
 Set Environment Variable

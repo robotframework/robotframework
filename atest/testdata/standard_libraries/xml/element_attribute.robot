@@ -21,6 +21,10 @@ Default value is used when attribute does not exist
     ${attr}=     Get Element Attribute    <tag a="1"/>    a    default=value
     Should Be Equal    ${attr}    1
 
+Default value is none when attribute does not exist
+    ${attr}=     Get Element Attribute    <tag a="1"/>    b    default=none
+    Should Be Equal    ${attr}    none
+
 Get element attributes
     ${attrs}=   Get Element Attributes    <tag a="1" b="2"/>
     Should Be True    ${attrs} == {'a': '1', 'b': '2'}
