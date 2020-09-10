@@ -21,6 +21,7 @@ from .normalizing import normalize
 from .misc import plural_or_not, roundup
 from .robottypes import is_number, is_string
 
+use_utc_timestamp = False
 
 _timer_re = re.compile(r'^([+-])?(\d+:)?(\d+):(\d+)(\.\d+)?$')
 
@@ -29,7 +30,7 @@ def _get_timetuple(epoch_secs=None):
     if epoch_secs is None:  # can also be 0 (at least in unit tests)
         epoch_secs = time.time()
     secs, millis = _float_secs_to_secs_and_millis(epoch_secs)
-    timetuple = time.localtime(secs)[:6]  # from year to secs
+    timetuple = time.localtime(secs)[:6] if not use_utc_timestamp else time.gmtime(secs)[:6]  # from year to secs
     return timetuple + (millis,)
 
 def _float_secs_to_secs_and_millis(secs):
@@ -211,7 +212,7 @@ def get_time(format='timestamp', time_=None):
     # 1) Return time in seconds since epoc
     if 'epoch' in format:
         return time_
-    timetuple = time.localtime(time_)
+    timetuple = time.localtime(time_) if not use_utc_timestamp else time.gmtime(time_)
     parts = []
     for i, match in enumerate('year month day hour min sec'.split()):
         if match in format:
@@ -306,7 +307,7 @@ def timestamp_to_secs(timestamp, seps=None):
 def secs_to_timestamp(secs, seps=None, millis=False):
     if not seps:
         seps = ('', ' ', ':', '.' if millis else None)
-    ttuple = time.localtime(secs)[:6]
+    ttuple = time.localtime(secs)[:6] if not use_utc_timestamp else time.gmtime(secs)[:6]
     if millis:
         millis = (secs - int(secs)) * 1000
         ttuple = ttuple + (roundup(millis),)
