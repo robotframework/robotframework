@@ -1847,6 +1847,27 @@ class _RunKeyword(_BuiltInBase):
             return 'FAIL', unic(err)
 
     @run_keyword_variant(resolve=1)
+    def run_keyword_and_warn_on_failure(self, name, *args):
+        """ Runs the given keyword with given arguments and returns a warning in case of an error.
+
+        This keyword is similar with `Run Keyword And Ignore Error` but in addition it logs the error messages as
+        warnings. See `Run Keyword And Ignore Error` documentation for more details.
+
+        Errors caused by invalid syntax, timeouts, or fatal exceptions are not
+        caught by this keyword. Otherwise this keyword itself never fails.
+
+        New in Robot Framework 4.0.
+        """
+        try:
+            return 'PASS', self.run_keyword(name, *args)
+        except ExecutionFailed as err:
+            if err.dont_continue:
+                raise
+
+            logger.warn(err, 'WARN')
+            return 'FAIL', unic(err)
+
+    @run_keyword_variant(resolve=1)
     def run_keyword_and_return_status(self, name, *args):
         """Runs the given keyword with given arguments and returns the status as a Boolean value.
 
