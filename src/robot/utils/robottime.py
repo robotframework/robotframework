@@ -25,6 +25,46 @@ use_utc_timestamp = False
 
 _timer_re = re.compile(r'^([+-])?(\d+:)?(\d+):(\d+)(\.\d+)?$')
 
+gdaysep = None
+gdaytimesep = None
+gtimesep = None
+gmillissep = None
+gtz = ''
+
+
+def default_to_iso8601():
+    global gdaysep
+    global gdaytimesep
+    global gtimesep
+    global gmillissep
+    global gtz
+    gdaysep = '-'
+    gdaytimesep = 'T'
+    gtimesep = ':'
+    gmillissep = '.'
+    if use_utc_timestamp:
+        gtz = 'Z'
+
+
+def get_timestamp_separators():
+    return gdaysep, gdaytimesep, gtimesep, gmillissep
+
+# Borrowed from https://github.com/salabs/TestArchiver
+SUPPORTED_TIMESTAMP_FORMATS = (
+        "%Y%m%d %H:%M:%S.%f",
+        "%Y-%m-%d %H:%M:%S.%fZ",
+        "%Y-%m-%d %H:%M:%S.%f",
+        "%Y-%m-%d %H:%M:%SZ",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y%m%dT%H:%M:%S.%f",
+        "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%dT%H:%M:%S.%fZ",
+        "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%dT%H:%M:%SZ",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%dT%H:%M:%S.%f%z",
+    )
+
 
 def _get_timetuple(epoch_secs=None):
     if epoch_secs is None:  # can also be 0 (at least in unit tests)
@@ -179,6 +219,8 @@ def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
 
     Seconds after epoch can be either an integer or a float.
     """
+    if gdaysep:
+        daysep, daytimesep, timesep, millissep = get_timestamp_separators()
     if is_number(timetuple_or_epochsecs):
         timetuple = _get_timetuple(timetuple_or_epochsecs)
     else:
@@ -187,7 +229,7 @@ def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
     day = daysep.join(daytimeparts[:3])
     time_ = timesep.join(daytimeparts[3:6])
     millis = millissep and '%s%03d' % (millissep, timetuple[6]) or ''
-    return day + daytimesep + time_ + millis
+    return day + daytimesep + time_ + millis + gtz
 
 
 def get_time(format='timestamp', time_=None):
@@ -261,7 +303,7 @@ def _parse_time_epoch(timestr):
 
 def _parse_time_timestamp(timestr):
     try:
-        return timestamp_to_secs(timestr, (' ', ':', '-', '.'))
+        return timestamp_to_secs(timestr, (' ', ':', '-', '.', 'T', 'Z'))
     except ValueError:
         return None
 
@@ -292,6 +334,8 @@ def _parse_time_now_and_utc_extra(extra):
 
 
 def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
+    if gdaysep:
+        daysep, daytimesep, timesep, millissep = get_timestamp_separators()
     return TIMESTAMP_CACHE.get_timestamp(daysep, daytimesep, timesep, millissep)
 
 
@@ -318,8 +362,6 @@ def get_elapsed_time(start_time, end_time):
     """Returns the time between given timestamps in milliseconds."""
     if start_time == end_time or not (start_time and end_time):
         return 0
-    if start_time[:-4] == end_time[:-4]:
-        return int(end_time[-3:]) - int(start_time[-3:])
     start_millis = _timestamp_to_millis(start_time)
     end_millis = _timestamp_to_millis(end_time)
     # start/end_millis can be long but we want to return int when possible
@@ -367,15 +409,19 @@ def _normalize_timestamp(ts, seps):
     return '%s%s%s %s:%s:%s.%s' % (ts[:4], ts[4:6], ts[6:8], ts[8:10],
                                    ts[10:12], ts[12:14], ts[14:17])
 
+def _timestamp_to_datetime(timestamp):
+    for timestamp_format in SUPPORTED_TIMESTAMP_FORMATS:
+        try:
+            d = datetime.datetime.strptime(timestamp, timestamp_format)
+            return d
+        except ValueError:
+            pass
+    raise Exception("timestamp: '{}' is in unsupported format".format(timestamp))
+
 def _split_timestamp(timestamp):
-    years = int(timestamp[:4])
-    mons = int(timestamp[4:6])
-    days = int(timestamp[6:8])
-    hours = int(timestamp[9:11])
-    mins = int(timestamp[12:14])
-    secs = int(timestamp[15:17])
-    millis = int(timestamp[18:21])
-    return years, mons, days, hours, mins, secs, millis
+    d = _timestamp_to_datetime(timestamp)
+    return d.year, d.month, d.day, d.hour, d.minute, d.second, d.microsecond / 1000
+
 
 
 class TimestampCache(object):
@@ -388,6 +434,8 @@ class TimestampCache(object):
     def get_timestamp(self, daysep='', daytimesep=' ', timesep=':', millissep='.'):
         epoch = self._get_epoch()
         secs, millis = _float_secs_to_secs_and_millis(epoch)
+        if gdaysep:
+            daysep, daytimesep, timesep, millissep = get_timestamp_separators()
         if self._use_cache(secs, daysep, daytimesep, timesep):
             return self._cached_timestamp(millis, millissep)
         timestamp = format_time(epoch, daysep, daytimesep, timesep, millissep)
@@ -405,13 +453,13 @@ class TimestampCache(object):
 
     def _cached_timestamp(self, millis, millissep):
         if millissep:
-            return self._previous_timestamp + millissep + format(millis, '03d')
+            return self._previous_timestamp + millissep + format(millis, '03d') + gtz
         return self._previous_timestamp
 
     def _cache_timestamp(self, secs, timestamp, daysep, daytimesep, timesep, millissep):
         self._previous_secs = secs
         self._previous_separators = (daysep, daytimesep, timesep)
-        self._previous_timestamp = timestamp[:-4] if millissep else timestamp
+        self._previous_timestamp = timestamp[0:timestamp.rindex(millissep)] if millissep else timestamp
 
 
 TIMESTAMP_CACHE = TimestampCache()
