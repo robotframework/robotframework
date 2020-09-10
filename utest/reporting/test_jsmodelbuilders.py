@@ -68,7 +68,7 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_test_with_values(self):
         test = TestCase('Name', '*Doc*', ['t1', 't2'], '1 minute', 'PASS', 'Msg',
                         '20111204 19:22:22.222', '20111204 19:22:22.333')
-        self._verify_test(test, 'Name', '<b>Doc</b>', ('t1', 't2'), 1,
+        self._verify_test(test, 'Name', '<b>Doc</b>', ('t1', 't2'),
                           '1 minute', 1, 'Msg', 0, 111)
 
     def test_name_escaping(self):
@@ -124,7 +124,6 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_nested_structure(self):
         suite = TestSuite()
-        suite.set_criticality(critical_tags=['crit'])
         suite.keywords = [Keyword(type='setup'), Keyword(type='teardown')]
         K1 = self._verify_keyword(suite.keywords[0], type=1)
         K2 = self._verify_keyword(suite.keywords[1], type=2)
@@ -133,7 +132,7 @@ class TestBuildTestSuite(unittest.TestCase):
         t = self._verify_test(suite.suites[0].tests[0], tags=('crit', 'xxx'))
         suite.tests = [TestCase(), TestCase(status='PASS')]
         S1 = self._verify_suite(suite.suites[0],
-                                status=0, tests=(t,), stats=(1, 0, 1, 0))
+                                status=0, tests=(t,), stats=(1, 0, 1))
         suite.tests[0].keywords = [Keyword(type=Keyword.FOR_LOOP_TYPE), Keyword()]
         suite.tests[0].keywords[0].keywords = [Keyword(type=Keyword.FOR_ITEM_TYPE)]
         suite.tests[0].keywords[0].messages = [Message()]
@@ -145,10 +144,10 @@ class TestBuildTestSuite(unittest.TestCase):
         m1 = self._verify_message(suite.tests[0].keywords[1].messages[0])
         m2 = self._verify_message(suite.tests[0].keywords[1].messages[1], 'msg', level=0)
         k2 = self._verify_keyword(suite.tests[0].keywords[1], messages=(m1, m2))
-        T1 = self._verify_test(suite.tests[0], critical=0, keywords=(k1, k2))
-        T2 = self._verify_test(suite.tests[1], critical=0, status=1)
+        T1 = self._verify_test(suite.tests[0], keywords=(k1, k2))
+        T2 = self._verify_test(suite.tests[1], status=1)
         self._verify_suite(suite, status=0, keywords=(K1, K2), suites=(S1,),
-                           tests=(T1, T2), stats=(3, 1, 1, 0))
+                           tests=(T1, T2), stats=(3, 1, 2))
         self._verify_min_message_level('TRACE')
 
     def test_timestamps(self):
@@ -163,14 +162,14 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_status(model[-2][0][8], start=1)
         self._verify_mapped(model[-2][0][-1], context.strings,
                             ((10, 2, 'Message'), (11, 1, '')))
-        self._verify_status(model[-3][0][5], start=1000)
+        self._verify_status(model[-3][0][4], start=1000)
 
     def _verify_status(self, model, status=0, start=None, elapsed=0):
         assert_equal(model, (status, start, elapsed))
 
     def _verify_suite(self, suite, name='', doc='', metadata=(), source='',
                       relsource='', status=1, message='', start=None, elapsed=0,
-                      suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0)):
+                      suites=(), tests=(), keywords=(), stats=(0, 0, 0)):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''
@@ -181,13 +180,13 @@ class TestBuildTestSuite(unittest.TestCase):
     def _get_status(self, *elements):
         return elements if elements[-1] else elements[:-1]
 
-    def _verify_test(self, test, name='', doc='', tags=(), critical=1, timeout='',
+    def _verify_test(self, test, name='', doc='', tags=(), timeout='',
                      status=0, message='', start=None, elapsed=0, keywords=()):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''
         return self._build_and_verify(TestBuilder, test, name, timeout,
-                                      critical, doc, tags, status, keywords)
+                                      doc, tags, status, keywords)
 
     def _verify_keyword(self, keyword, type=0, kwname='', libname='', doc='',
                         args='', assign='', tags='', timeout='', status=0,
@@ -347,14 +346,14 @@ class TestPruneInput(unittest.TestCase):
 class TestBuildStatistics(unittest.TestCase):
 
     def test_total_stats(self):
-        critical, all = self._build_statistics()[0]
+        all = self._build_statistics()[0][0]
         self._verify_stat(all, 2, 2, 'All Tests', '00:00:33')
-        self._verify_stat(critical, 2, 0, 'Critical Tests', '00:00:22')
 
     def test_tag_stats(self):
-        t2, comb, t1, t3 = self._build_statistics()[1]
+        stats = self._build_statistics()[1]
+        comb, t1, t2, t3 = self._build_statistics()[1]
         self._verify_stat(t2, 2, 0, 't2', '00:00:22',
-                          info='critical', doc='doc', links='t:url')
+                          doc='doc', links='t:url')
         self._verify_stat(comb, 2, 0, 'name', '00:00:22',
                           info='combined', combined='t1&amp;t2')
         self._verify_stat(t1, 2, 2, 't1', '00:00:33')
@@ -379,7 +378,6 @@ class TestBuildStatistics(unittest.TestCase):
     def _get_suite(self):
         ts = lambda s, ms=0: '20120816 16:09:%02d.%03d' % (s, ms)
         suite = TestSuite(name='root', starttime=ts(0), endtime=ts(42))
-        suite.set_criticality(critical_tags=['t2'])
         sub1 = TestSuite(name='sub1', starttime=ts(0), endtime=ts(10))
         sub2 = TestSuite(name='sub2')
         suite.suites = [sub1, sub2]
