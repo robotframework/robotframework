@@ -36,7 +36,7 @@
 <tags>
 <tag>t1</tag>
 </tags>
-<status critical="yes" endtime="20111024 13:41:20.934" starttime="20111024 13:41:20.925" status="PASS"></status>
+<status endtime="20111024 13:41:20.934" starttime="20111024 13:41:20.925" status="PASS"></status>
 </test>
 <doc>Normal test cases</doc>
 <metadata>
@@ -79,7 +79,7 @@
 <tags>
 <tag>t1</tag>
 </tags>
-<status critical="yes" endtime="20111024 13:41:20.934" starttime="20111024 13:41:20.925" status="PASS"></status>
+<status endtime="20111024 13:41:20.934" starttime="20111024 13:41:20.925" status="PASS"></status>
 </test>
 <doc>Normal test cases</doc>
 <metadata>
@@ -91,7 +91,6 @@
 </suite>
 <statistics>
 <total>
-<stat fail="0" pass="2">Critical Tests</stat>
 <stat fail="0" pass="2">All Tests</stat>
 </total>
 <tag>
