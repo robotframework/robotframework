@@ -60,7 +60,7 @@ class TestRun(RunningTestCase):
         assert exists(LOG_PATH)
 
     def test_run_multiple_times(self):
-        assert_equal(run_without_outputs(self.data, critical='nomatch'), 0)
+        assert_equal(run_without_outputs(self.data), 1)
         assert_equal(run_without_outputs(self.data, name='New Name'), 1)
         self._assert_outputs([('Pass And Fail', 2), ('New Name', 2), (LOG, 0)])
 
@@ -166,7 +166,7 @@ class TestRebot(RunningTestCase):
         assert exists(LOG_PATH)
 
     def test_run_multiple_times(self):
-        assert_equal(rebot(self.data, outputdir=TEMP, critical='nomatch'), 0)
+        assert_equal(rebot(self.data, outputdir=TEMP), 1)
         assert_equal(rebot(self.data, outputdir=TEMP, name='New Name'), 1)
         self._assert_outputs([(LOG, 2)])
 
