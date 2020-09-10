@@ -11,8 +11,8 @@ Test Case File Suite
     Should Be Equal    ${SUITE.metadata['Something']}    My Value
     Should Be Equal as Strings    ${SUITE.metadata}    {Something: My Value}
     Check Normal Suite Defaults    ${SUITE}
-    Should Be Equal    ${SUITE.full_message}    2 critical tests, 2 passed, 0 failed\n2 tests total, 2 passed, 0 failed
-    Should Be Equal    ${SUITE.statistics.message}    2 critical tests, 2 passed, 0 failed\n2 tests total, 2 passed, 0 failed
+    Should Be Equal    ${SUITE.full_message}    2 tests, 2 passed, 0 failed
+    Should Be Equal    ${SUITE.statistics.message}    2 tests, 2 passed, 0 failed
     Should Contain Tests    ${SUITE}    First One    Second One
 
 Directory Suite
