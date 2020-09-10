@@ -31,6 +31,9 @@ gtimesep = None
 gmillissep = None
 gtz = ''
 
+def default_to_utc_timestamp():
+    global use_utc_timestamp
+    use_utc_timestamp = True
 
 def default_to_iso8601():
     global gdaysep
