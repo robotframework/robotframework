@@ -62,7 +62,7 @@ Suite setup fails
     [Setup]    Run Tests
     ...    --ExitOnFail --variable SUITE_SETUP:Fail
     ...    misc/setups_and_teardowns.robot misc/pass_and_fail.robot
-    Check Test Case    Test with setup and teardown    FAIL    Parent suite setup failed:\nAssertionError
+    Test Should Have Been Skipped    Test with setup and teardown
     Test Should Have Been Skipped    Test with failing setup
     Test Should Have Been Skipped    Test with failing teardown
     Test Should Have Been Skipped    Failing test with failing teardown
