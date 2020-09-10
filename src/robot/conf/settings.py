@@ -70,7 +70,8 @@ class _BaseSettings(object):
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
                  'XUnitSkipNonCritical' : ('xunitskipnoncritical', False),
-                 'XOutputTimeInfo'  : ('xoutputtimeinfo', False)}
+                 'XOutputTimeInfo'  : ('xoutputtimeinfo', False),
+                 'TimestampFormat'  : ('timestampformat', None)}
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
@@ -355,6 +356,10 @@ class _BaseSettings(object):
     @property
     def xoutput_timeinfo(self):
         return self['XOutputTimeInfo']
+
+    @property
+    def timestamp_format(self):
+        return self['TimestampFormat']
 
     @property
     def statistics_config(self):
