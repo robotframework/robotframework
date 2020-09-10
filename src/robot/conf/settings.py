@@ -71,7 +71,7 @@ class _BaseSettings(object):
                  'StdErr'           : ('stderr', None),
                  'XUnitSkipNonCritical' : ('xunitskipnoncritical', False),
                  'XOutputTimeInfo'  : ('xoutputtimeinfo', False),
-                 'TimestampFormat'  : ('timestampformat', None)}
+                 'TimeStampFormat'  : ('timestampformat', None)}
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
@@ -139,6 +139,8 @@ class _BaseSettings(object):
             self._validate_expandkeywords(value)
         if name == 'Extension':
             return tuple(ext.lower().lstrip('.') for ext in value.split(':'))
+        if name == 'TimeStampFormat':
+            self._validate_timestampformat(value)
 
         return value
 
@@ -309,6 +311,10 @@ class _BaseSettings(object):
                 raise DataError("Invalid value for option '--expandkeywords'. "
                                 "Expected 'TAG:<pattern>', or "
                                 "'NAME:<pattern>' but got '%s'." % opt)            
+
+    def _validate_timestampformat(self, value):
+        if value != 'iso8601utc':
+            raise DataError("Invalid value for option '--timestampformat'. %s" % value)
 
     def __contains__(self, setting):
         return setting in self._cli_opts
