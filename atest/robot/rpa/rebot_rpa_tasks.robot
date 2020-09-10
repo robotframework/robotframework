@@ -91,11 +91,8 @@ Outputs should contain correct mode information
     [Arguments]    ${rpa}
     ${title} =    Set variable if    "${rpa}" == "false"    Test    Task
     Element attribute should be    ${OUTDIR}/output.xml     rpa    ${rpa}
-    Element text should be         ${OUTDIR}/output.xml     Critical ${title}s    xpath=statistics/total/stat[1]
-    Element text should be         ${OUTDIR}/output.xml     All ${title}s         xpath=statistics/total/stat[2]
+    Element text should be         ${OUTDIR}/output.xml     All ${title}s         xpath=statistics/total/stat[1]
     File should contain regexp     ${OUTDIR}/log.html       window\\.settings = \\{.*"rpa":${rpa},.*\\};
     File should contain regexp     ${OUTDIR}/report.html    window\\.settings = \\{.*"rpa":${rpa},.*\\};
-    File should contain regexp     ${OUTDIR}/log.html       window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"Critical ${title}s",.*\\}\\]\\];
-    File should contain regexp     ${OUTDIR}/report.html    window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"Critical ${title}s",.*\\}\\]\\];
     File should contain regexp     ${OUTDIR}/log.html       window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"All ${title}s",.*\\}\\]\\];
     File should contain regexp     ${OUTDIR}/report.html    window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"All ${title}s",.*\\}\\]\\];
