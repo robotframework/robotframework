@@ -44,6 +44,8 @@ class Application(object):
             options, arguments = self._parse_arguments(cli_arguments)
             self._set_timestamp_format(options)
             self._logger.info('%s %s' % (self._ap.name, self._ap.version))
+            if arguments:
+                self._logger.info('Arguments: %s' % ','.join(arguments))
             rc = self._execute(arguments, options)
         if exit:
             self._exit(rc)
@@ -61,7 +63,6 @@ class Application(object):
         except DataError as err:
             self._report_error(err.message, help=True, exit=True)
         else:
-            self._logger.info('Arguments: %s' % ','.join(arguments))
             return options, arguments
 
     def parse_arguments(self, cli_args):
