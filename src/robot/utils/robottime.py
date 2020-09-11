@@ -419,7 +419,7 @@ def _timestamp_to_datetime(timestamp):
             return d
         except ValueError:
             pass
-    raise Exception("timestamp: '{}' is in unsupported format".format(timestamp))
+    raise ValueError("timestamp: '{}' is in unsupported format".format(timestamp))
 
 def _split_timestamp(timestamp):
     d = _timestamp_to_datetime(timestamp)
