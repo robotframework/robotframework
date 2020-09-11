@@ -71,7 +71,7 @@ class _BaseSettings(object):
                  'StdErr'           : ('stderr', None),
                  'XUnitSkipNonCritical' : ('xunitskipnoncritical', False),
                  'XOutputTimeInfo'  : ('xoutputtimeinfo', False),
-                 'TimeStampFormat'  : ('timestampformat', None)}
+                 'TimeStampFormat'  : ('formattimestamp', None)}
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
@@ -314,7 +314,7 @@ class _BaseSettings(object):
 
     def _validate_timestampformat(self, value):
         if value != 'iso8601utc':
-            raise DataError("Invalid value for option '--timestampformat'. %s" % value)
+            raise DataError("Invalid value for option '--formattimestamp'. %s" % value)
 
     def __contains__(self, setting):
         return setting in self._cli_opts

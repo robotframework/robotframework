@@ -115,10 +115,10 @@ class Application(object):
         sys.exit(rc)
 
     def _set_timestamp_format(self, options):
-        if 'timestampformat' in options:
+        if 'formattimestamp' in options:
             # Implement a single case to allow for a utc timestamp, but if a rework of robottime allow, this
             # could change to allow for arbitrary timestamp formats
-            if options['timestampformat'] == 'iso8601utc':
+            if options['formattimestamp'] == 'iso8601utc':
                 from .robottime import default_to_iso8601, default_to_utc_timestamp
                 default_to_utc_timestamp()
                 default_to_iso8601()
