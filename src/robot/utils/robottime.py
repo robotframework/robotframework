@@ -55,6 +55,7 @@ def get_timestamp_separators():
 # Borrowed from https://github.com/salabs/TestArchiver
 SUPPORTED_TIMESTAMP_FORMATS = (
         "%Y%m%d %H:%M:%S.%f",
+        "%Y%m%d %H:%M:%S:%f",
         "%Y-%m-%d %H:%M:%S.%fZ",
         "%Y-%m-%d %H:%M:%S.%f",
         "%Y-%m-%d %H:%M:%SZ",
