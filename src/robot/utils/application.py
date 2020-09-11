@@ -41,8 +41,11 @@ class Application(object):
 
     def execute_cli(self, cli_arguments, exit=True):
         with self._logger:
-            self._logger.info('%s %s' % (self._ap.name, self._ap.version))
             options, arguments = self._parse_arguments(cli_arguments)
+            self._set_timestamp_format(options)
+            self._logger.info('%s %s' % (self._ap.name, self._ap.version))
+            if arguments:
+                self._logger.info('Arguments: %s' % ','.join(arguments))
             rc = self._execute(arguments, options)
         if exit:
             self._exit(rc)
@@ -60,7 +63,6 @@ class Application(object):
         except DataError as err:
             self._report_error(err.message, help=True, exit=True)
         else:
-            self._logger.info('Arguments: %s' % ','.join(arguments))
             return options, arguments
 
     def parse_arguments(self, cli_args):
@@ -75,6 +77,7 @@ class Application(object):
 
     def execute(self, *arguments, **options):
         with self._logger:
+            self._set_timestamp_format(options)
             self._logger.info('%s %s' % (self._ap.name, self._ap.version))
             return self._execute(list(arguments), options)
 
@@ -110,6 +113,15 @@ class Application(object):
 
     def _exit(self, rc):
         sys.exit(rc)
+
+    def _set_timestamp_format(self, options):
+        if 'formattimestamp' in options:
+            # Implement a single case to allow for a utc timestamp, but if a rework of robottime allow, this
+            # could change to allow for arbitrary timestamp formats
+            if options['formattimestamp'] == 'iso8601utc':
+                from .robottime import default_to_iso8601, default_to_utc_timestamp
+                default_to_utc_timestamp()
+                default_to_iso8601()
 
 
 class DefaultLogger(object):

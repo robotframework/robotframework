@@ -356,6 +356,12 @@ Options
                           |  path/to/test/directory/
                           Examples:
                           --argumentfile argfile.txt --argumentfile STDIN
+ -z --xoutputtimeinfo     Include system timezone and daylight saving time in
+                          output.xml status elements so the timestamp are
+                          definitive.
+    --formattimestamp iso8601utc  Provide a format for the timestamp.
+                          iso8601utc:  Formatted as "%Y-%m-%dT%H:%M:%S.%fZ"
+                                       e.g. 2020-09-10T06:17:37.831Z
  -h -? --help             Print usage instructions.
  --version                Print version information.
 

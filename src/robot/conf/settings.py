@@ -69,7 +69,9 @@ class _BaseSettings(object):
                  'ConsoleColors'    : ('consolecolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
-                 'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
+                 'XUnitSkipNonCritical' : ('xunitskipnoncritical', False),
+                 'XOutputTimeInfo'  : ('xoutputtimeinfo', False),
+                 'TimeStampFormat'  : ('formattimestamp', None)}
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
@@ -137,6 +139,9 @@ class _BaseSettings(object):
             self._validate_expandkeywords(value)
         if name == 'Extension':
             return tuple(ext.lower().lstrip('.') for ext in value.split(':'))
+        if name == 'TimeStampFormat':
+            self._validate_timestampformat(value)
+
         return value
 
     def _escape_as_data(self, value):
@@ -307,6 +312,10 @@ class _BaseSettings(object):
                                 "Expected 'TAG:<pattern>', or "
                                 "'NAME:<pattern>' but got '%s'." % opt)            
 
+    def _validate_timestampformat(self, value):
+        if value != 'iso8601utc':
+            raise DataError("Invalid value for option '--formattimestamp'. %s" % value)
+
     def __contains__(self, setting):
         return setting in self._cli_opts
 
@@ -349,6 +358,14 @@ class _BaseSettings(object):
     @property
     def xunit_skip_noncritical(self):
         return self['XUnitSkipNonCritical']
+
+    @property
+    def xoutput_timeinfo(self):
+        return self['XOutputTimeInfo']
+
+    @property
+    def timestamp_format(self):
+        return self['TimestampFormat']
 
     @property
     def statistics_config(self):
