@@ -96,9 +96,6 @@ class _ExecutionStatus(object):
         return bool(self.parent and self.parent.failures or
                     self.failure or self.exit)
 
-    def _parent_failures(self):
-        return self.parent and self.parent.failures
-
     @property
     def status(self):
         return 'FAIL' if self.failures else 'PASS'
