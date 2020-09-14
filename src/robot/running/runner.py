@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionStatus, DataError, PassExecution
+from robot.errors import ExecutionStatus, DataError, PassExecution, SkipExecution
 from robot.model import SuiteVisitor
 from robot.result import TestSuite, Result
 from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic
@@ -130,7 +130,10 @@ class Runner(SuiteVisitor):
                 StepRunner(self._context,
                            test.template).run_steps(test.keywords.normal)
             else:
-                status.test_failed(status.message)
+                if status.skipped:
+                    status.test_skipped()
+                else:
+                    status.test_failed(status.message)
         except PassExecution as exception:
             err = exception.earlier_failures
             if err:
@@ -138,7 +141,10 @@ class Runner(SuiteVisitor):
             else:
                 result.message = exception.message
         except ExecutionStatus as err:
-            status.test_failed(err)
+            if err.status == 'SKIP':
+                status.test_skipped()
+            else:
+                status.test_failed(err)
         result.status = status.status
         result.message = status.message or result.message
         if status.teardown_allowed:
@@ -171,12 +177,15 @@ class Runner(SuiteVisitor):
             status.setup_executed(exception)
             if result and isinstance(exception, PassExecution):
                 result.message = exception.message
+        else:
+            if status.parent and status.parent.skipped:
+                status.skipped = True
 
     def _run_teardown(self, teardown, status, result=None):
         if status.teardown_allowed:
             exception = self._run_setup_or_teardown(teardown)
             status.teardown_executed(exception)
-            failed = not isinstance(exception, PassExecution)
+            failed = not isinstance(exception, PassExecution) and not isinstance(exception, SkipExecution)
             if result and exception:
                 result.message = status.message if failed else exception.message
             return exception if failed else None

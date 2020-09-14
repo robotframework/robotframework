@@ -144,9 +144,9 @@ class TestCase(model.TestCase):
         """``True/False`` depending on the :attr:`status`."""
         return self.status == 'PASS'
 
-    @passed.setter
-    def passed(self, passed):
-        self.status = 'PASS' if passed else 'FAIL'
+    @property
+    def skipped(self):
+        return self.status == 'SKIP'
 
 
 class TestSuite(model.TestSuite):
