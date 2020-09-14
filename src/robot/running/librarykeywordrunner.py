@@ -51,7 +51,8 @@ class LibraryKeywordRunner(object):
 
     def run(self, kw, context):
         assignment = VariableAssignment(kw.assign)
-        with StatusReporter(context, self._get_result(kw, assignment)):
+        with StatusReporter(context, self._get_result(kw, assignment), lineno=kw.lineno, source=kw.source,
+                            linecontent="  ".join([kw.name]+list(kw.args))):
             with assignment.assigner(context) as assigner:
                 return_value = self._run(context, kw.args)
                 assigner.assign(return_value)

@@ -21,11 +21,14 @@ from robot.utils import ErrorDetails, get_timestamp
 
 class StatusReporter(object):
 
-    def __init__(self, context, result, dry_run_lib_kw=False):
+    def __init__(self, context, result, dry_run_lib_kw=False, lineno=-1, source=None, linecontent=None):
         self._context = context
         self._result = result
         self._pass_status = 'PASS' if not dry_run_lib_kw else 'NOT_RUN'
         self._test_passed = None
+        self._lineno = lineno
+        self._source = source
+        self._linecontent = linecontent
 
     def __enter__(self):
         if self._context.test:
@@ -73,7 +76,7 @@ class StatusReporter(object):
             syntax = not isinstance(exc_value, (KeywordError, VariableError))
             return ExecutionFailed(msg, syntax=syntax)
         exc_info = (exc_type, exc_value, exc_tb)
-        failure = HandlerExecutionFailed(ErrorDetails(exc_info))
+        failure = HandlerExecutionFailed(ErrorDetails(exc_info), self._source, self._lineno, self._linecontent)
         if failure.timeout:
             context.timeout_occurred = True
         context.fail(failure.full_message)
