@@ -76,6 +76,7 @@ function addStatistics() {
         '<th class="stats-col-stat">Total</th>' +
         '<th class="stats-col-stat">Pass</th>' +
         '<th class="stats-col-stat">Fail</th>' +
+        '<th class="stats-col-stat">Skip</th>' +
         '<th class="stats-col-elapsed">Elapsed</th>' +
         '<th class="stats-col-graph">Pass / Fail</th>';
     var statTable =
@@ -158,6 +159,7 @@ $.template('statColumnsTemplate',
     '<td class="stats-col-stat">${total}</td>' +
     '<td class="stats-col-stat">${pass}</td>' +
     '<td class="stats-col-stat">${fail}</td>' +
+    '<td class="stats-col-stat">${skipped}</td>' +
     '<td class="stats-col-elapsed">${elapsed}</td>' +
     '<td class="stats-col-graph">' +
       '{{if total}}' +
@@ -174,7 +176,8 @@ $.template('statColumnsTemplate',
 $.template('suiteStatusMessageTemplate',
     '${total} {{= testOrTask("{test}")}} total, ' +
     '${totalPassed} passed, ' +
-    '<span class="{{if totalFailed}}fail{{else}}pass{{/if}}">${totalFailed} failed</span>'
+    '<span class="{{if totalFailed}}fail{{else}}pass{{/if}}">${totalFailed} failed</span>' +
+    '{{if skipped}}, <span class="skipped">${skipped} skipped</span>{{/if}}'
 );
 
 // For complete cross-browser experience..

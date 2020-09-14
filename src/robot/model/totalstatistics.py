@@ -40,13 +40,13 @@ class TotalStatistics(object):
             2 tests, 1 passed, 1 failed
         """
         test_or_task = 'test' if not self._rpa else 'task'
-        total, end, passed, failed = self._get_counts(self.all)
-        return ('%d %s%s, %d passed, %d failed'
+        total, end, passed, failed, skipped = self._get_counts(self.all)
+        return ('%d %s%s, %d passed, %d failed, %d skipped'
                 % (total, test_or_task, end, passed, failed))
 
     def _get_counts(self, stat):
         ending = 's' if stat.total != 1 else ''
-        return stat.total, ending, stat.passed, stat.failed
+        return stat.total, ending, stat.passed, stat.failed, stat.skipped
 
 
 class TotalStatisticsBuilder(SuiteVisitor):

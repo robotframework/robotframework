@@ -286,6 +286,14 @@ class PassExecution(ExecutionPassed):
         ExecutionPassed.__init__(self, message)
 
 
+class SkipExecution(ExecutionStatus):
+    """Used by 'Skip' keyword.
+
+    Can also be used by library keyword to skip the current test.
+    """
+    status = "SKIP"
+
+
 class ContinueForLoop(ExecutionPassed):
     """Used by 'Continue For Loop' keyword."""
 

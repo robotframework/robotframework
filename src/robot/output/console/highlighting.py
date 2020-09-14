@@ -101,7 +101,8 @@ class HighlightingStream(object):
         start = {'PASS': highlighter.green,
                  'FAIL': highlighter.red,
                  'ERROR': highlighter.red,
-                 'WARN': highlighter.yellow}[status]
+                 'WARN': highlighter.yellow,
+                 'SKIP': highlighter.yellow}[status]
         start()
         try:
             yield

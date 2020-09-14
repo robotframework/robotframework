@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionFailed, PassExecution
+from robot.errors import ExecutionFailed, PassExecution, SkipExecution
 from robot.utils import html_escape, py2to3, unic
 
 
@@ -66,6 +66,7 @@ class _ExecutionStatus(object):
         self.children = []
         self.failure = Failure()
         self.exit = parent.exit if parent else Exit(*exit_modes)
+        self.skipped = False
         self._teardown_allowed = False
         if parent:
             parent.children.append(self)
@@ -74,6 +75,7 @@ class _ExecutionStatus(object):
         if failure and not isinstance(failure, PassExecution):
             self.failure.setup = unic(failure)
             self.exit.failure_occurred(failure)
+            self.skipped = isinstance(failure, SkipExecution)
         self._teardown_allowed = True
 
     def teardown_executed(self, failure=None):
@@ -98,6 +100,8 @@ class _ExecutionStatus(object):
 
     @property
     def status(self):
+        if self.skipped:
+            return 'SKIP'
         return 'FAIL' if self.failures else 'PASS'
 
     @property
@@ -123,6 +127,7 @@ class SuiteStatus(_ExecutionStatus):
         _ExecutionStatus.__init__(self, parent, exit_on_failure_mode,
                                   exit_on_error_mode,
                                   skip_teardown_on_exit_mode)
+        self.skipped = False
 
     def _my_message(self):
         return SuiteMessage(self).message
@@ -138,17 +143,22 @@ class TestStatus(_ExecutionStatus):
         self.failure.test = unic(failure)
         self.exit.failure_occurred(failure)
 
+    def test_skipped(self):
+        self.skipped = True
+
     def _my_message(self):
         return TestMessage(self).message
 
 
 class _Message(object):
     setup_message = NotImplemented
+    setup_skipped = NotImplemented
     teardown_message = NotImplemented
     also_teardown_message = NotImplemented
 
     def __init__(self, status):
         self.failure = status.failure
+        self.skipped = status.skipped
 
     @property
     def message(self):
@@ -157,7 +167,8 @@ class _Message(object):
 
     def _get_message_before_teardown(self):
         if self.failure.setup:
-            return self._format_setup_or_teardown_message(self.setup_message,
+            msg = self.setup_message if not self.skipped else self.setup_skipped
+            return self._format_setup_or_teardown_message(msg,
                                                           self.failure.setup)
         return self.failure.test or ''
 
@@ -215,12 +226,14 @@ class TestMessage(_Message):
 
 class SuiteMessage(_Message):
     setup_message = 'Suite setup failed:\n%s'
+    setup_skipped = 'Suite setup skipped:\n%s'
     teardown_message = 'Suite teardown failed:\n%s'
     also_teardown_message = '%s\n\nAlso suite teardown failed:\n%s'
 
 
 class ParentMessage(SuiteMessage):
     setup_message = 'Parent suite setup failed:\n%s'
+    setup_skipped = 'Parent suite setup skipped\n%s'
     teardown_message = 'Parent suite teardown failed:\n%s'
     also_teardown_message = '%s\n\nAlso parent suite teardown failed:\n%s'
 

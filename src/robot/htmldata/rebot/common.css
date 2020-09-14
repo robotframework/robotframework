@@ -88,6 +88,10 @@ h2 {
     background-color: #ddd;
     border-radius: 3px;
 }
+.label.skip {
+    background-color: #ec971f;
+    color: white;
+}
 .label.debug, .label.trace, .label.error, .label.keyword {
     letter-spacing: 0;
 }
@@ -188,7 +192,7 @@ th.stats-col-graph:hover {
     width: auto;
     height: 7px;
     padding: 0;
-    background: #f33;
+    background: #aaa;
 }
 .empty-graph {
     background: #eee;
@@ -196,6 +200,9 @@ th.stats-col-graph:hover {
 .pass-bar, .fail-bar {
     float: left;
     height: 100%;
+}
+.fail-bar {
+    background: #f33;
 }
 .pass-bar {
     background: #1d4;
