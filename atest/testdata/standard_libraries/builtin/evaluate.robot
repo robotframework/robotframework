@@ -36,7 +36,7 @@ Modules are imported automatically
     Should Be Equal    ${sep}    ${/}
     Should Be Equal    ${+}    \\+
     ${version} =    Evaluate    robot.__version__.split('.')[0]
-    Should Be Equal    ${version}    3
+    Should Be True    ${version} in (3, 4, 5)
 
 Importing non-existing module fails with NameError
     [Documentation]    FAIL
