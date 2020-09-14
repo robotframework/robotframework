@@ -51,7 +51,7 @@ Java Listener
     ...    START KW: BuiltIn.Fail [Expected failure]
     ...    LOG MESSAGE: [FAIL] Expected failure
     ...    END TEST: FAIL: Expected failure
-    ...    END SUITE: PASS: 2 tests total, 1 passed, 1 failed
+    ...    END SUITE: FAIL: 2 tests, 1 passed, 1 failed
     ...    Output (java): output.xml    The End
     Check Listener File    ${JAVA_FILE}    @{expected}
 
