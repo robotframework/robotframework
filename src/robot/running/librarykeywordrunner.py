@@ -36,6 +36,7 @@ class LibraryKeywordRunner(object):
         self._handler = handler
         self.name = name or handler.name
         self.pre_run_messages = None
+        self._args_resolved = None
 
     @property
     def library(self):
@@ -51,8 +52,7 @@ class LibraryKeywordRunner(object):
 
     def run(self, kw, context):
         assignment = VariableAssignment(kw.assign)
-        with StatusReporter(context, self._get_result(kw, assignment), lineno=kw.lineno, source=kw.source,
-                            linecontent="  ".join([kw.name]+list(kw.args))):
+        with StatusReporter(context, self._get_result(kw, assignment), step=kw, runner=self):
             with assignment.assigner(context) as assigner:
                 return_value = self._run(context, kw.args)
                 assigner.assign(return_value)
@@ -76,7 +76,8 @@ class LibraryKeywordRunner(object):
                 context.output.message(message)
         positional, named = \
             self._handler.resolve_arguments(args, context.variables)
-        context.output.trace(lambda: self._trace_log_args(positional, named))
+        self._args_resolved = lambda: self._trace_log_args(positional, named)
+        context.output.trace(self._args_resolved)
         runner = self._runner_for(context, self._handler.current_handler(),
                                   positional, dict(named))
         return self._run_with_output_captured_and_signal_monitor(runner, context)

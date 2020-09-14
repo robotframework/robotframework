@@ -166,7 +166,7 @@ class ExecutionFailed(ExecutionStatus):
 
 class HandlerExecutionFailed(ExecutionFailed):
 
-    def __init__(self, details, source=None, lineno=None, linecontent=None):
+    def __init__(self, details, source=None, lineno=None, linecontent=None, resolvedcontent=None):
         error = details.error
         timeout = isinstance(error, TimeoutError)
         test_timeout = timeout and error.test_timeout
@@ -180,7 +180,8 @@ class HandlerExecutionFailed(ExecutionFailed):
                                  continue_on_failure)
         self.source = source
         self.lineno = lineno
-        self.full_message = "> %s: %s\n> %s\nE %s" % (self.source, self.lineno, linecontent, details.message)
+        self.full_message = "> %s: %s\n> %s\nE %s\nE %s" % (self.source, self.lineno, linecontent, resolvedcontent,
+                                                            details.message)
         self.traceback = details.traceback
 
     def _get(self, error, attr):
