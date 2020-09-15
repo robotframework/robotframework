@@ -72,3 +72,4 @@ from robot.parsing import (get_tokens, get_resource_tokens, get_init_tokens,
 from robot.reporting import ResultWriter
 from robot.result import ExecutionResult, ResultVisitor
 from robot.running import TestSuite, TestSuiteBuilder
+from robot.utils import DebuggerListener
