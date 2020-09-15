@@ -135,13 +135,19 @@ class SuiteStatus(_ExecutionStatus):
 
 class TestStatus(_ExecutionStatus):
 
-    def __init__(self, parent, test):
+    def __init__(self, parent, test, skip_on_failure=False):
         _ExecutionStatus.__init__(self, parent)
         self.exit = parent.exit
+        self.skip_on_failure = skip_on_failure
+        self.skipped = False
 
     def test_failed(self, failure):
-        self.failure.test = unic(failure)
-        self.exit.failure_occurred(failure)
+        if not self.skip_on_failure:
+            self.failure.test = unic(failure)
+            self.exit.failure_occurred(failure)
+        else:
+            self.failure.test = unic(failure)
+            self.skipped = True
 
     def test_skipped(self):
         self.skipped = True

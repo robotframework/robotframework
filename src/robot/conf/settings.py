@@ -398,6 +398,7 @@ class RobotSettings(_BaseSettings):
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'ExitOnError'        : ('exitonerror', False),
+                       'SkipOnFailure'      : ('skiponfailure', False),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunEmptySuite'      : ('runemptysuite', False),
@@ -474,6 +475,7 @@ class RobotSettings(_BaseSettings):
     @property
     def dry_run(self):
         return self['DryRun']
+
     @property
     def exit_on_failure(self):
         return self['ExitOnFailure']
@@ -481,6 +483,10 @@ class RobotSettings(_BaseSettings):
     @property
     def exit_on_error(self):
         return self['ExitOnError']
+
+    @property
+    def skip_on_failure(self):
+        return self['SkipOnFailure']
 
     @property
     def skip_teardown_on_exit(self):
