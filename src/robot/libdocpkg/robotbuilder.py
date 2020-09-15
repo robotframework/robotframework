@@ -129,6 +129,7 @@ class KeywordDocBuilder(object):
 
     def _get_args(self, argspec):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
+        #FIXME: DO NICE STUFF HERE!!!!
         args = [self._format_arg(arg, argspec) for arg in argspec.positional]
         if argspec.varargs:
             args.append('*%s' % self._format_arg(argspec.varargs, argspec))

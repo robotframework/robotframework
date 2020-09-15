@@ -175,7 +175,7 @@ class LibDoc(Application):
         extension = os.path.splitext(output)[1][1:].upper()
         default = 'XML:HTML' if extension == 'LIBSPEC' else extension
         return self._verify_format('Format', format or default,
-                                   ['HTML', 'XML', 'XML:HTML'])
+                                   ['HTML', 'XML', 'JSON', 'XML:HTML'])
 
     def _verify_format(self, type, format, valid):
         format = format.upper()

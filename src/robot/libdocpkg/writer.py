@@ -16,6 +16,7 @@
 from robot.errors import DataError
 
 from .htmlwriter import LibdocHtmlWriter
+from .jsonwriter import LibdocJsonWriter
 from .xmlwriter import LibdocXmlWriter
 
 
@@ -27,5 +28,7 @@ def LibdocWriter(format=None):
         return LibdocXmlWriter()
     if format == 'XML:HTML':
         return LibdocXmlWriter(force_html_doc=True)
-    raise DataError("Format must be either 'HTML', 'XML' or 'XML:HTML', "
+    if format == 'JSON':
+        return LibdocJsonWriter()
+    raise DataError("Format must be either 'HTML', 'XML', 'JSON' or 'XML:HTML', "
                     "got '%s'." % format)
