@@ -46,7 +46,7 @@ function expandSuite(suite) {
     if (suite.status == "PASS")
         expandElement(suite);
     else
-        expandCriticalFailed(suite);
+        expandFailed(suite);
 }
 
 function expandElement(item, retryCount) {
@@ -79,11 +79,11 @@ function loadAndExpandElementIds(ids) {
     }
 }
 
-function expandCriticalFailed(element) {
+function expandFailed(element) {
     if (element.status == "FAIL") {
         window.elementsToExpand = [element];
         window.expandDecider = function (e) {
-            return e.status == "FAIL" && (e.isCritical === undefined || e.isCritical);
+            return e.status == "FAIL";
         };
         expandRecursively();
     }

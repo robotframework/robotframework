@@ -186,7 +186,7 @@ class TestCustomStreams(RunningTestCase):
         self._run()
         self._assert_output(sys.__stdout__,
                             [('My Suite', 2), ('My Test', 1),
-                             ('1 critical test, 1 passed, 0 failed', 1)])
+                             ('1 test, 1 passed, 0 failed', 1)])
         self._assert_output(sys.__stderr__, [('Hello, world!', 1)])
 
     def test_custom_stdout_and_stderr(self):

@@ -77,7 +77,7 @@ class Result(object):
         but can be :func:`configured <configure>` to always return 0.
         """
         if self._status_rc:
-            return min(self.suite.statistics.critical.failed, 250)
+            return min(self.suite.statistics.all.failed, 250)
         return 0
 
     def configure(self, status_rc=True, suite_config=None, stat_config=None):

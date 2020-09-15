@@ -90,18 +90,17 @@ window.testdata = function () {
     }
 
     function createTest(parent, element, strings, index) {
-        var statusElement = element[5];
+        var statusElement = element[4];
         var test = model.Test({
             parent: parent,
             id: 't' + (index + 1),
             name: strings.get(element[0]),
             doc: function () {
-                var doc = strings.get(element[3]);
+                var doc = strings.get(element[2]);
                 this.doc = function () { return doc; };
                 return doc;
             },
             timeout: strings.get(element[1]),
-            isCritical: element[2],
             status: parseStatus(statusElement),
             message: function () {
                 var msg = createMessage(statusElement, strings);
@@ -109,10 +108,10 @@ window.testdata = function () {
                 return msg;
             },
             times: model.Times(times(statusElement)),
-            tags: tags(element[4], strings),
-            isChildrenLoaded: typeof(element[6]) !== 'number'
+            tags: tags(element[3], strings),
+            isChildrenLoaded: typeof(element[5]) !== 'number'
         });
-        lazyPopulateKeywordsFromFile(test, element[6], strings);
+        lazyPopulateKeywordsFromFile(test, element[5], strings);
         return test;
     }
 
@@ -161,10 +160,7 @@ window.testdata = function () {
         return {
             total: stats[0],
             totalPassed: stats[1],
-            totalFailed: stats[0] - stats[1],
-            critical: stats[2],
-            criticalPassed: stats[3],
-            criticalFailed: stats[2] - stats[3]
+            totalFailed: stats[2],
         };
     }
 

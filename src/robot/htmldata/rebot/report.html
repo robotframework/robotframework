@@ -60,10 +60,8 @@ $(document).ready(function () {
 
 function setBackground(topsuite) {
     var color;
-    if (topsuite.criticalFailed)
+    if (topsuite.totalFailed)
         color = window.settings.background.fail;
-    else if (topsuite.totalFailed)
-        color = window.settings.background.nonCriticalFail;
     else
         color = window.settings.background.pass;
     $('body').css('background-color', color);
@@ -83,16 +81,6 @@ function addDetails() {
 }
 
 function addCustomSortersForDetails() {
-    $.tablesorter.addParser({
-        id: 'criticality',
-        type: 'numeric',
-        is: function(s) {
-            return false;  // do not auto-detect
-        },
-        format: function(s) {
-            return s === 'yes' ? 0 : 1;
-        }
-    });
     $.tablesorter.addParser({
         id: 'times',
         type: 'text',
@@ -132,7 +120,7 @@ function totalDetailSelected(name) {
     renderTotalSelector(name);
     if (name) {
         renderTotalDetails(name);
-        var title = name == 'critical' ? 'Critical {Test}s' : 'All {Test}s'
+        var title = 'All {Test}s'
         updatePrintSelector(testOrTask(title));
     }
     scrollToSelector('totals', name);
@@ -145,9 +133,8 @@ function renderTotalSelector(name) {
 }
 
 function renderTotalDetails(name) {
-    var index = (name == 'critical') ? 0 : 1;
-    var stat = window.testdata.statistics().total[index];
-    var tests = getTotalTests(name);
+    var stat = window.testdata.statistics().total[0];
+    var tests = window.testdata.suite().allTests().sort(sortByStatus)
     stat.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', stat).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
@@ -302,19 +289,11 @@ function renderTestDetailsHeader() {
 function sortByStatus(t1, t2) {
     if (t1.status != t2.status)
         return t1.status == 'FAIL' ? -1 : 1;
-    if (t1.isCritical != t2.isCritical)
-        return t1.isCritical ? -1 : 1;
     return t1.fullName < t2.fullName ? -1 : 1;
 }
 
 function getTestsHavingTag(tag) {
     return window.testdata.suite().searchTestsByTag(tag).sort(sortByStatus);
-}
-
-function getTotalTests(name) {
-    if (name == 'critical')
-        return window.testdata.suite().criticalTests().sort(sortByStatus);
-    return window.testdata.suite().allTests().sort(sortByStatus);
 }
 
 function calculateTotalTime(tests) {
@@ -351,12 +330,12 @@ function renderTestDetailsRows(tests, target) {
 }
 
 function configureTableSorter(sortByStatus) {
-    var config = {headers: {3: {sorter: 'criticality'},
-                            6: {sortInitialOrder: 'desc'},
-                            7: {sorter: 'times'}},
+  // FIXME: define sorting by status, PASS, SKIP, FAIL
+    var config = {headers: {5: {sortInitialOrder: 'desc'},
+                            6: {sorter: 'times'}},
                   selectorSort: '.details-col-header'};
     if (sortByStatus)
-        config['sortList'] = [[4, 0], [3, 0]];
+        config['sortList'] = [[3, 0]];
     $('#test-details').tablesorter(config);
 }
 
@@ -393,12 +372,9 @@ function hideHiddenDetailsColumns(elem) {
   <table class="details">
     <tr>
       <th>Status:</th>
-      {{if criticalFailed}}
-      <td><a href="#totals?critical" onclick="totalDetailSelected('critical')"
-             class="fail">${criticalFailed} critical {{= testOrTask('{test}')}}{{if criticalFailed != 1}}s{{/if}} failed</a></td>
-      {{else totalFailed}}
-      <td><a href="#totals?critical" onclick="totalDetailSelected('critical')"
-             class="pass">All critical {{= testOrTask('{test}')}}s passed</a></td>
+      {{if totalFailed}}
+      <td><a href="#totals?all" onclick="totalDetailSelected('all')"
+             class="fail">${totalFailed} {{= testOrTask('{test}')}}{{if totalFailed != 1}}s{{/if}} failed</a></td>
       {{else}}
       <td><a href="#totals?all" onclick="totalDetailSelected('all')"
              class="pass">All {{= testOrTask('{test}')}}s passed</a></td>
@@ -504,10 +480,6 @@ function hideHiddenDetailsColumns(elem) {
     <tr class="selector">
       <th>Type:</th>
       <td id="normal-selector">
-        <input id="radio-critical" type="radio" name="totals-radio"
-               onclick="totalDetailSelected('critical')"
-               {{if selected == 'critical'}}checked="checked"{{/if}}>
-        <label for="radio-critical">Critical {{= testOrTask('{Test}')}}s</label><br>
         <input id="radio-all" type="radio" name="totals-radio"
                onclick="totalDetailSelected('all')"
                {{if selected == 'all'}}checked="checked"{{/if}}>
@@ -799,9 +771,6 @@ function hideHiddenDetailsColumns(elem) {
           <div class='details-col-toggle' onclick="toggleDetailsColumn('tags')">&times;</div>
           <div class='details-col-header'>Tags</div>
         </th>
-        <th class="details-col-crit" title="Critical">
-          <div class='details-col-header'>Crit.</div>
-        </th>
         <th class="details-col-status" title="Status">
           <div class='details-col-header'>Status</div>
         </th>
@@ -837,7 +806,6 @@ function hideHiddenDetailsColumns(elem) {
   {{/if}}
     <td class="details-col-doc"><div class="doc details-limited">{{html doc()}}</div></td>
     <td class="details-col-tags"><div>{{html tags.join(', ')}}</div></td>
-    <td class="details-col-crit"><div>{{if isCritical}}yes{{else}}no{{/if}}</div></td>
     <td class="details-col-status"><div><span class="label ${status.toLowerCase()}">${status}</span></div></td>
     <td class="details-col-msg"><div class="message details-limited">{{html message()}}</div></td>
     <td class="details-col-elapsed"><div>${times.elapsedTime}</div></td>

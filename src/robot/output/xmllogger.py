@@ -86,7 +86,7 @@ class XmlLogger(ResultVisitor):
         self._write_list('tags', 'tag', test.tags)
         if test.timeout:
             self._writer.element('timeout', attrs={'value': unic(test.timeout)})
-        self._write_status(test, {'critical': 'yes' if test.critical else 'no'})
+        self._write_status(test)
         self._writer.end('test')
 
     def start_suite(self, suite):

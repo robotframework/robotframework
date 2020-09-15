@@ -66,7 +66,7 @@ Invalid Debugfile
     Create Directory  %{TEMPDIR}/debug.txt
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -b %{TEMPDIR}/debug.txt  ${TESTFILE}
     Stderr Should Match Regexp  \\[ ERROR \\] Opening debug file '.*debug.txt' failed: .*
-    Stdout Should Contain  2 critical tests, 2 passed, 0 failed\n2 tests total, 2 passed, 0 failed
+    Stdout Should Contain  2 tests, 2 passed, 0 failed
 
 *** Keywords ***
 Debugfile should contain

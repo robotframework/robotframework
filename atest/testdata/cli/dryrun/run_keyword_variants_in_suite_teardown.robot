@@ -12,13 +12,10 @@ Suite Teardown Related Run Keyword Variants
     ...    2) No keyword with name 'Non Existing' found.
     ...
     ...    3) Keyword 'BuiltIn.Log' expected 1 to 6 arguments, got 9.
-    ...
-    ...    4) Keyword 'BuiltIn.Log' expected 1 to 6 arguments, got 0.
     No Operation
 
 *** Keywords ***
 Run All Suite Teardown Related Run Keyword Variants
-    Run Keyword If All Critical Tests Passed    Log
-    Run Keyword If Any Critical Tests Failed    Non Existing
+    Run Keyword If All Tests Passed    Log
+    Run Keyword If Any Tests Failed    Non Existing
     Run Keyword If All Tests Passed    Log    too    many    args   we    have    here    yes    we    do
-    Run Keyword If Any Tests Failed    Log

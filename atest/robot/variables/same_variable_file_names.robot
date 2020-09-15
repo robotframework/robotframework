@@ -3,7 +3,7 @@ Suite Setup     Run Tests  ${EMPTY}  variables/same_variable_file_names
 Resource        atest_resource.robot
 
 *** Variables ***
-${6 TESTS}    6 critical tests, 6 passed, 0 failed\n6 tests total, 6 passed, 0 failed
+${6 TESTS}    6 tests, 6 passed, 0 failed
 
 *** Test Cases ***
 Different Variable Files Are Imported Correctly

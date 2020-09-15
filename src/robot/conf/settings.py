@@ -305,7 +305,7 @@ class _BaseSettings(object):
             if not opt.lower().startswith(('name:', 'tag:')):
                 raise DataError("Invalid value for option '--expandkeywords'. "
                                 "Expected 'TAG:<pattern>', or "
-                                "'NAME:<pattern>' but got '%s'." % opt)            
+                                "'NAME:<pattern>' but got '%s'." % opt)
 
     def __contains__(self, setting):
         return setting in self._cli_opts
@@ -345,10 +345,6 @@ class _BaseSettings(object):
     @property
     def status_rc(self):
         return self['StatusRC']
-
-    @property
-    def xunit_skip_noncritical(self):
-        return self['XUnitSkipNonCritical']
 
     @property
     def statistics_config(self):

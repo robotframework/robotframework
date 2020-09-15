@@ -11,26 +11,25 @@ Statistics Should Be Written to XML
 
 Total statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/total
-    ${crit}    ${total} =    Call Method    ${stats}    findall    stat
-    Node Should Be Correct    ${crit}    Critical Tests    5    1
+    ${total} =    Call Method    ${stats}    find    stat
     Node Should Be Correct    ${total}    All Tests    10    1
 
 Tag statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
-    Tag Node Should Be Correct    ${stats[0]}    t1
-    ...    5    1    critical
-    Tag Node Should Be Correct    ${stats[1]}    Custom title AND-OR-NOT
+    Tag Node Should Be Correct    ${stats[0]}    Custom title AND-OR-NOT
     ...    1    0    info=combined    combined=d1 AND d2
-    Tag Node Should Be Correct    ${stats[2]}    F1 NOT T 1
+    Tag Node Should Be Correct    ${stats[1]}    F1 NOT T 1
     ...    4    0    info=combined    combined=F1 NOT T 1
-    Tag Node Should Be Correct    ${stats[3]}    d1
+    Tag Node Should Be Correct    ${stats[2]}    d1
     ...    1    0
-    Tag Node Should Be Correct    ${stats[4]}    d2
+    Tag Node Should Be Correct    ${stats[3]}    d2
     ...    1    0
-    Tag Node Should Be Correct    ${stats[5]}    f1
+    Tag Node Should Be Correct    ${stats[4]}    f1
     ...    9    1
-    Tag Node Should Be Correct    ${stats[6]}    sub3
+    Tag Node Should Be Correct    ${stats[5]}    sub3
     ...    2    0
+    Tag Node Should Be Correct    ${stats[6]}    t1
+    ...    5    1
     Tag Node Should Be Correct    ${stats[7]}    XxX
     ...    10    1
 
@@ -49,7 +48,6 @@ My Setup
     Run Tests    ${EMPTY}    misc/suites
     Copy Previous Outfile
     ${options} =    Catenate
-    ...    --critical t1
     ...    --tagstatcombine "d1 AND d2:Custom title AND-OR-NOT"
     ...    --suitestatlevel 2
     ...    --tagstatexclude t2

@@ -121,7 +121,7 @@ function makeElementVisible(id) {
     window.testdata.ensureLoaded(id, function (ids) {
         util.map(ids, expandElementWithId);
         if (ids.length) {
-            expandCriticalFailed(window.testdata.findLoaded(util.last(ids)));
+            expandFailed(window.testdata.findLoaded(util.last(ids)));
             window.location.hash = '';
             window.location.hash = id;
             highlightLinkTarget();
@@ -265,7 +265,6 @@ function addExecutionLog(main) {
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
         <span class="label ${status.toLowerCase()}">{{= testOrTask('{TEST}')}}</span>
         <span class="name">{{html name}}</span>
-        {{if !isCritical}}(non-critical){{/if}}
       </div>
       <div class="element-header-right" onclick="stopPropagation(event)" title="">
         <a class="expand" title="Expand all" href="javascript:expandAll('${id}')"></a>
@@ -304,7 +303,7 @@ function addExecutionLog(main) {
         </tr>
         <tr>
           <th>Status:</th>
-          <td><span class="label ${status.toLowerCase()}">${status}</span> ({{if isCritical}}critical{{else}}non-critical{{/if}})</td>
+          <td><span class="label ${status.toLowerCase()}">${status}</span></td>
         </tr>
         {{if message()}}
         <tr>

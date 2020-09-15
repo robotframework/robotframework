@@ -27,8 +27,6 @@ Report contains suite stats
 *** Keywords ***
 Run tests with stat related options
     ${opts} =    Catenate
-    ...    --Critical t1
-    ...    --NonCritical t2
     ...    --SuiteStatLevel 2
     ...    --TagStatInclude t?
     ...    --TagStatInclude d1
@@ -41,21 +39,20 @@ Run tests with stat related options
 
 Verify total stats
     [Arguments]    ${file}
-    ${critical}    ${all} =    Get Total Stats    ${OUTDIR}${/}${file}
-    Verify stat    ${critical}    label:Critical Tests    pass:5    fail:1
-    Verify stat    ${all}    label:All Tests    pass:10    fail:1
+    ${all} =    Get Total Stats    ${OUTDIR}${/}${file}
+    Verify stat    ${all[0]}    label:All Tests    pass:10    fail:1
 
 Verify tag stats
     [Arguments]    ${file}
     ${stats} =    Get Tag Stats    ${OUTDIR}${/}${file}
     Length Should Be    ${stats}    4
-    Verify stat    ${stats[0]}    label:t1    pass:5    fail:1
-    ...    info:critical    links:T1:http://t/1    doc:the doc
-    Verify stat    ${stats[1]}    label:t2    pass:2    fail:0
-    ...    info:non-critical    links:T2:http://t/2
-    Verify stat    ${stats[2]}    label:f1 AND t1    pass:5    fail:1
+    Verify stat    ${stats[0]}    label:f1 AND t1    pass:5    fail:1
     ...    info:combined    combined:f1 AND t1
-    Verify stat    ${stats[3]}    label:d1    pass:1    fail:0
+    Verify stat    ${stats[1]}    label:d1    pass:1    fail:0
+    Verify stat    ${stats[2]}    label:t1    pass:5    fail:1
+    ...    links:T1:http://t/1    doc:the doc
+    Verify stat    ${stats[3]}    label:t2    pass:2    fail:0
+    ...    links:T2:http://t/2
 
 Verify suite stats
     [Arguments]    ${file}

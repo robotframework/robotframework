@@ -41,10 +41,10 @@ class Exit(object):
         self.error = False
         self.fatal = False
 
-    def failure_occurred(self, failure=None, critical=False):
+    def failure_occurred(self, failure=None):
         if isinstance(failure, ExecutionFailed) and failure.exit:
             self.fatal = True
-        if critical and self.failure_mode:
+        if self.failure_mode:
             self.failure = True
 
     def error_occurred(self):
@@ -81,8 +81,8 @@ class _ExecutionStatus(object):
             self.failure.teardown = unic(failure)
             self.exit.failure_occurred(failure)
 
-    def critical_failure_occurred(self):
-        self.exit.failure_occurred(critical=True)
+    def failure_occurred(self):
+        self.exit.failure_occurred()
 
     def error_occurred(self):
         self.exit.error_occurred()
@@ -95,9 +95,6 @@ class _ExecutionStatus(object):
     def failures(self):
         return bool(self.parent and self.parent.failures or
                     self.failure or self.exit)
-
-    def _parent_failures(self):
-        return self.parent and self.parent.failures
 
     @property
     def status(self):
@@ -136,11 +133,10 @@ class TestStatus(_ExecutionStatus):
     def __init__(self, parent, test):
         _ExecutionStatus.__init__(self, parent)
         self.exit = parent.exit
-        self._test = test
 
     def test_failed(self, failure):
         self.failure.test = unic(failure)
-        self.exit.failure_occurred(failure, self._test.critical)
+        self.exit.failure_occurred(failure)
 
     def _my_message(self):
         return TestMessage(self).message
@@ -196,7 +192,7 @@ class TestMessage(_Message):
     also_teardown_message = '%s\n\nAlso teardown failed:\n%s'
     exit_on_fatal_message = 'Test execution stopped due to a fatal error.'
     exit_on_failure_message = \
-        'Critical failure occurred and exit-on-failure mode is in use.'
+        'Failure occurred and exit-on-failure mode is in use.'
     exit_on_error_message = 'Error occurred and exit-on-error mode is in use.'
 
     def __init__(self, status):
