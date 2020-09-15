@@ -11,7 +11,7 @@ Zero RC when all tests pass
     ${EMPTY}                    ${PASSING}      rc=0
     --statusrc                  ${PASSING}      rc=0
 
-Non-zero RC when ests fail
+Non-zero RC when tests fail
     ${EMPTY}                    ${FAILING}      rc=1
     -r report.html              ${FAILING}      rc=1
     -l log.html --statusrc      ${FAILING}      rc=1
