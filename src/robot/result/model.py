@@ -148,6 +148,13 @@ class TestCase(model.TestCase):
     def passed(self, passed):
         self.status = 'PASS' if passed else 'FAIL'
 
+    @property
+    def critical(self):
+        warnigs.warn("'TestCase.criticality' has been deprecated and always "
+                     " returns 'True'.",
+                     UserWarning)
+        return True
+
 
 class TestSuite(model.TestSuite):
     """Represents results of a single test suite.

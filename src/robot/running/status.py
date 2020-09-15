@@ -81,7 +81,7 @@ class _ExecutionStatus(object):
             self.failure.teardown = unic(failure)
             self.exit.failure_occurred(failure)
 
-    def critical_failure_occurred(self):
+    def failure_occurred(self):
         self.exit.failure_occurred()
 
     def error_occurred(self):

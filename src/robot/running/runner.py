@@ -96,7 +96,7 @@ class Runner(SuiteVisitor):
             failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
             if failure:
                 self._suite.suite_teardown_failed(unic(failure))
-                self._suite_status.critical_failure_occurred()
+                self._suite_status.failure_occurred()
         self._suite.endtime = get_timestamp()
         self._suite.message = self._suite_status.message
         self._context.end_suite(ModelCombiner(suite, self._suite))
@@ -146,7 +146,7 @@ class Runner(SuiteVisitor):
                 failure = self._run_teardown(test.keywords.teardown, status,
                                              result)
                 if failure:
-                    status.critical_failure_occurred()
+                    status.failure_occurred()
         if not status.failures and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message())
             result.message = status.message

@@ -30,19 +30,19 @@ class TotalStatistics(object):
         visitor.visit_total_statistics(self)
 
     def __iter__(self):
-        return iter([self.all])
+        yield self.all
 
     @property
     def message(self):
         """String representation of the statistics.
 
         For example::
-            2 tests total, 1 passed, 1 failed
+            2 tests, 1 passed, 1 failed
         """
         test_or_task = 'test' if not self._rpa else 'task'
-        atotal, aend, apass, afail = self._get_counts(self.all)
+        total, end, passed, failed = self._get_counts(self.all)
         return ('%d %s%s, %d passed, %d failed'
-                % (atotal, test_or_task, aend, apass, afail))
+                % (total, test_or_task, end, passed, failed))
 
     def _get_counts(self, stat):
         ending = 's' if stat.total != 1 else ''
