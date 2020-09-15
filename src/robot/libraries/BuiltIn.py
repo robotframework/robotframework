@@ -2330,6 +2330,16 @@ class _RunKeyword(_BuiltInBase):
                            % kwname)
 
     @run_keyword_variant(resolve=1)
+    def run_keyword_if_all_critical_tests_passed(self, name, *args):
+        """*DEPRECATED.* Use `BuiltIn.Run Keyword If All Tests Passed` instead."""
+        self.run_keyword_if_all_tests_passed(name, args)
+
+    @run_keyword_variant(resolve=1)
+    def run_keyword_if_any_critical_tests_failed(self, name, *args):
+        """*DEPRECATED.* Use `BuiltIn.Run Keyword If Any Tests Failed` instead."""
+        self.run_keyword_if_any_tests_failed(name, args)
+
+    @run_keyword_variant(resolve=1)
     def run_keyword_if_all_tests_passed(self, name, *args):
         """Runs the given keyword with the given arguments, if all tests passed.
 
