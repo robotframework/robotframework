@@ -106,7 +106,7 @@ class _ExecutionStatus(object):
 
     @property
     def message(self):
-        if self.failure or self.exit:
+        if self.failure or self.exit or self.skipped:
             return self._my_message()
         if self.parent and self.parent.failures:
             return self._parent_message()
