@@ -132,7 +132,7 @@ class TestBuildTestSuite(unittest.TestCase):
         t = self._verify_test(suite.suites[0].tests[0], tags=('crit', 'xxx'))
         suite.tests = [TestCase(), TestCase(status='PASS')]
         S1 = self._verify_suite(suite.suites[0],
-                                status=0, tests=(t,), stats=(1, 0, 1))
+                                status=0, tests=(t,), stats=(1, 0, 1, 0))
         suite.tests[0].keywords = [Keyword(type=Keyword.FOR_LOOP_TYPE), Keyword()]
         suite.tests[0].keywords[0].keywords = [Keyword(type=Keyword.FOR_ITEM_TYPE)]
         suite.tests[0].keywords[0].messages = [Message()]
@@ -147,7 +147,7 @@ class TestBuildTestSuite(unittest.TestCase):
         T1 = self._verify_test(suite.tests[0], keywords=(k1, k2))
         T2 = self._verify_test(suite.tests[1], status=1)
         self._verify_suite(suite, status=0, keywords=(K1, K2), suites=(S1,),
-                           tests=(T1, T2), stats=(3, 1, 2))
+                           tests=(T1, T2), stats=(3, 1, 2, 0))
         self._verify_min_message_level('TRACE')
 
     def test_timestamps(self):
@@ -169,7 +169,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def _verify_suite(self, suite, name='', doc='', metadata=(), source='',
                       relsource='', status=1, message='', start=None, elapsed=0,
-                      suites=(), tests=(), keywords=(), stats=(0, 0, 0)):
+                      suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0)):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''
@@ -347,23 +347,23 @@ class TestBuildStatistics(unittest.TestCase):
 
     def test_total_stats(self):
         all = self._build_statistics()[0][0]
-        self._verify_stat(all, 2, 2, 'All Tests', '00:00:33')
+        self._verify_stat(all, 2, 2, 1, 'All Tests', '00:00:33')
 
     def test_tag_stats(self):
         stats = self._build_statistics()[1]
         comb, t1, t2, t3 = self._build_statistics()[1]
-        self._verify_stat(t2, 2, 0, 't2', '00:00:22',
+        self._verify_stat(t2, 2, 0, 0, 't2', '00:00:22',
                           doc='doc', links='t:url')
-        self._verify_stat(comb, 2, 0, 'name', '00:00:22',
+        self._verify_stat(comb, 2, 0, 0, 'name', '00:00:22',
                           info='combined', combined='t1&amp;t2')
-        self._verify_stat(t1, 2, 2, 't1', '00:00:33')
-        self._verify_stat(t3, 0, 1, 't3', '00:00:01')
+        self._verify_stat(t1, 2, 2, 0, 't1', '00:00:33')
+        self._verify_stat(t3, 0, 1, 1, 't3', '00:00:01')
 
     def test_suite_stats(self):
         root, sub1, sub2 = self._build_statistics()[2]
-        self._verify_stat(root, 2, 2, 'root', '00:00:42', name='root', id='s1')
-        self._verify_stat(sub1, 1, 1, 'root.sub1', '00:00:10', name='sub1', id='s1-s1')
-        self._verify_stat(sub2, 1, 1, 'root.sub2', '00:00:30', name='sub2', id='s1-s2')
+        self._verify_stat(root, 2, 2, 0, 'root', '00:00:42', name='root', id='s1')
+        self._verify_stat(sub1, 1, 1, 1, 'root.sub1', '00:00:10', name='sub1', id='s1-s1')
+        self._verify_stat(sub2, 1, 1, 0, 'root.sub2', '00:00:30', name='sub2', id='s1-s2')
 
     def _build_statistics(self):
         return StatisticsBuilder().build(self._get_statistics())
@@ -383,7 +383,8 @@ class TestBuildStatistics(unittest.TestCase):
         suite.suites = [sub1, sub2]
         sub1.tests = [
             TestCase(tags=['t1', 't2'], status='PASS', starttime=ts(0), endtime=ts(1, 500)),
-            TestCase(tags=['t1', 't3'], status='FAIL', starttime=ts(2), endtime=ts(3, 499))
+            TestCase(tags=['t1', 't3'], status='FAIL', starttime=ts(2), endtime=ts(3, 499)),
+            TestCase(tags=['t3'], status='SKIP', starttime=ts(3, 560), endtime=ts(3, 560))
         ]
         sub2.tests = [
             TestCase(tags=['t1', 't2'], status='PASS', starttime=ts(10), endtime=ts(30))
@@ -392,9 +393,9 @@ class TestBuildStatistics(unittest.TestCase):
                 .tests.create(tags=['t1'], status='FAIL', starttime=ts(30), endtime=ts(40))
         return suite
 
-    def _verify_stat(self, stat, pass_, fail, label, elapsed, **attrs):
-        attrs.update({'pass': pass_, 'fail': fail, 'label': label,
-                      'elapsed': elapsed})
+    def _verify_stat(self, stat, pass_, fail, skip, label, elapsed, **attrs):
+        attrs.update({'pass': pass_, 'fail': fail, 'skip': skip,
+                      'label': label, 'elapsed': elapsed})
         assert_equal(stat, attrs)
 
 
