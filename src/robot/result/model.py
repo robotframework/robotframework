@@ -33,6 +33,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 """
 
 from itertools import chain
+import warnings
 
 from robot.model import TotalStatisticsBuilder
 from robot import model, utils
@@ -150,9 +151,9 @@ class TestCase(model.TestCase):
 
     @property
     def critical(self):
-        warnigs.warn("'TestCase.criticality' has been deprecated and always "
-                     " returns 'True'.",
-                     UserWarning)
+        warnings.warn("'TestCase.criticality' has been deprecated and always "
+                      " returns 'True'.",
+                      UserWarning)
         return True
 
 
