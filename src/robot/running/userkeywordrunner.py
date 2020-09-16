@@ -52,7 +52,7 @@ class UserKeywordRunner(object):
         from .runner import ModelCombiner
         assignment = VariableAssignment(kw.assign)
         result = self._get_result(kw, assignment, context.variables)
-        mc = ModelCombiner(data=kw, result=result)
+        mc = ModelCombiner(data=kw, result=result, source=kw.source)
         with StatusReporter(context, mc):
             with assignment.assigner(context) as assigner:
                 return_value = self._run(context, kw.args, result)

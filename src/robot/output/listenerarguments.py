@@ -127,7 +127,7 @@ class EndTestArguments(StartTestArguments):
 
 class StartKeywordArguments(_ListenerArgumentsFromItem):
     _attribute_names = ('kwname', 'libname', 'doc', 'assign', 'tags',
-                        'starttime')
+                        'starttime', 'lineno', 'source')
     _types = {'kw': 'Keyword', 'setup': 'Setup', 'teardown': 'Teardown',
               'for': 'For', 'foritem': 'For Item'}
 
@@ -138,4 +138,4 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
 
 class EndKeywordArguments(StartKeywordArguments):
     _attribute_names = ('kwname', 'libname', 'doc', 'args', 'assign', 'tags',
-                        'starttime', 'endtime', 'elapsedtime', 'status')
+                        'starttime', 'endtime', 'elapsedtime', 'status', 'lineno', 'source')
