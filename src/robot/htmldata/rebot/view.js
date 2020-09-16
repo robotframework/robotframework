@@ -139,6 +139,7 @@ function renderNoTagStatTable() {
         '<td class="stats-col-stat"></td>' +
         '<td class="stats-col-stat"></td>' +
         '<td class="stats-col-stat"></td>' +
+        '<td class="stats-col-stat"></td>' +
         '<td class="stats-col-elapsed"></td>' +
         '<td class="stats-col-graph">' +
           '<div class="empty-graph"></div>' +
