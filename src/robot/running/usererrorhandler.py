@@ -64,7 +64,8 @@ class UserErrorHandler(object):
                                args=kw.args,
                                assign=kw.assign,
                                type=kw.type)
-        with StatusReporter(context, result):
+        from .runner import ModelCombiner
+        with StatusReporter(context, ModelCombiner(kw, result)):
             raise self.error
 
     dry_run = run

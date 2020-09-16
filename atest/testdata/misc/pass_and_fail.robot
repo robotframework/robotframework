@@ -13,6 +13,7 @@ Pass
     [Tags]    pass
     # I am a comment. Please ignore me.
     My Keyword    Pass
+    Log  hello
 
 Fail
     [Documentation]    FAIL Expected failure
