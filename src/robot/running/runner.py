@@ -132,7 +132,7 @@ class Runner(SuiteVisitor):
                            test.template).run_steps(test.keywords.normal)
             else:
                 if status.skipped:
-                    status.test_skipped()
+                    status.test_skipped(status.message)
                 else:
                     status.test_failed(status.message)
         except PassExecution as exception:
@@ -143,7 +143,7 @@ class Runner(SuiteVisitor):
                 result.message = exception.message
         except ExecutionStatus as err:
             if err.status == 'SKIP':
-                status.test_skipped()
+                status.test_skipped(err)
             else:
                 status.test_failed(err)
         result.status = status.status

@@ -42,7 +42,7 @@ class TotalStatistics(object):
         test_or_task = 'test' if not self._rpa else 'task'
         total, end, passed, failed, skipped = self._get_counts(self.all)
         return ('%d %s%s, %d passed, %d failed, %d skipped'
-                % (total, test_or_task, end, passed, failed))
+                % (total, test_or_task, end, passed, failed, skipped))
 
     def _get_counts(self, stat):
         ending = 's' if stat.total != 1 else ''

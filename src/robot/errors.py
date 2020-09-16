@@ -293,6 +293,9 @@ class SkipExecution(ExecutionStatus):
     """
     status = "SKIP"
 
+    def __init__(self, message):
+        ExecutionStatus.__init__(self, message)
+
 
 class ContinueForLoop(ExecutionPassed):
     """Used by 'Continue For Loop' keyword."""

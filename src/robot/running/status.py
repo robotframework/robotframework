@@ -149,8 +149,9 @@ class TestStatus(_ExecutionStatus):
             self.failure.test = unic(failure)
             self.skipped = True
 
-    def test_skipped(self):
+    def test_skipped(self, reason):
         self.skipped = True
+        self.failure.test = unic(reason)
 
     def _my_message(self):
         return TestMessage(self).message
@@ -158,7 +159,7 @@ class TestStatus(_ExecutionStatus):
 
 class _Message(object):
     setup_message = NotImplemented
-    setup_skipped = NotImplemented
+    skipped_message = NotImplemented
     teardown_message = NotImplemented
     also_teardown_message = NotImplemented
 
@@ -173,7 +174,7 @@ class _Message(object):
 
     def _get_message_before_teardown(self):
         if self.failure.setup:
-            msg = self.setup_message if not self.skipped else self.setup_skipped
+            msg = self.setup_message if not self.skipped else self.skipped_message
             return self._format_setup_or_teardown_message(msg,
                                                           self.failure.setup)
         return self.failure.test or ''
@@ -206,6 +207,7 @@ class _Message(object):
 class TestMessage(_Message):
     setup_message = 'Setup failed:\n%s'
     teardown_message = 'Teardown failed:\n%s'
+    skipped_message = 'Skipped in setup:\n%s'
     also_teardown_message = '%s\n\nAlso teardown failed:\n%s'
     exit_on_fatal_message = 'Test execution stopped due to a fatal error.'
     exit_on_failure_message = \
@@ -232,14 +234,14 @@ class TestMessage(_Message):
 
 class SuiteMessage(_Message):
     setup_message = 'Suite setup failed:\n%s'
-    setup_skipped = 'Suite setup skipped:\n%s'
+    skipped_message = 'Skipped in suite setup:\n%s'
     teardown_message = 'Suite teardown failed:\n%s'
     also_teardown_message = '%s\n\nAlso suite teardown failed:\n%s'
 
 
 class ParentMessage(SuiteMessage):
     setup_message = 'Parent suite setup failed:\n%s'
-    setup_skipped = 'Parent suite setup skipped\n%s'
+    skipped_message = 'Skipped in parent suite setup\n%s'
     teardown_message = 'Parent suite teardown failed:\n%s'
     also_teardown_message = '%s\n\nAlso parent suite teardown failed:\n%s'
 
