@@ -159,6 +159,7 @@ window.testdata = function () {
     function suiteStats(stats) {
         return {
             total: stats[0],
+            // TODO: remove `total` prefix from the two names below
             totalPassed: stats[1],
             totalFailed: stats[2],
             skipped: stats[3]

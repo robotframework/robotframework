@@ -44,7 +44,7 @@ class Stat(Sortable):
     def get_attributes(self, include_label=False, include_elapsed=False,
                        exclude_empty=True, values_as_strings=False,
                        html_escape=False):
-        attrs = {'pass': self.passed, 'fail': self.failed, 'skipped': self.skipped}
+        attrs = {'pass': self.passed, 'fail': self.failed, 'skip': self.skipped}
         attrs.update(self._get_custom_attrs())
         if include_label:
             attrs['label'] = self.name
