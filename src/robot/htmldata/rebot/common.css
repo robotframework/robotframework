@@ -197,7 +197,7 @@ th.stats-col-graph:hover {
 .empty-graph {
     background: #eee;
 }
-.pass-bar, .fail-bar {
+.pass-bar, .fail-bar, .skip-bar {
     float: left;
     height: 100%;
 }
@@ -206,6 +206,9 @@ th.stats-col-graph:hover {
 }
 .pass-bar {
     background: #1d4;
+}
+.skip-bar {
+    background:  #ec971f;
 }
 /* Tablesorter - adapted from provided Blue Skin */
 .tablesorter-header {

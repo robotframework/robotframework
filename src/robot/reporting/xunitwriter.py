@@ -56,7 +56,7 @@ class XUnitFileWriter(ResultVisitor):
 
     def _get_stats(self, statistics):
         failures = statistics.all.failed
-        skipped = 0
+        skipped = statistics.all.skipped
         return str(statistics.all.total), str(failures), str(skipped)
 
     def end_suite(self, suite):
