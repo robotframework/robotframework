@@ -21,6 +21,7 @@ import re
 import time
 
 from robot.api import logger
+from robot.api.deco import keyword
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           PassExecution, ReturnFromKeyword, VariableError)
@@ -1428,6 +1429,7 @@ class _Variables(_BuiltInBase):
         """
         return self._variables.as_dict(decoration=is_falsy(no_decoration))
 
+    @keyword(types=None)
     @run_keyword_variant(resolve=0)
     def get_variable_value(self, name, default=None):
         """Returns variable value or ``default`` if the variable does not exist.

@@ -23,6 +23,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 
 from robot.api import logger
+from robot.api.deco import keyword
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
                          unic, FileReader, PY3)
 from robot.version import get_version
@@ -84,6 +85,7 @@ class String(object):
         """
         return string.upper()
 
+    @keyword(types=None)
     def convert_to_title_case(self, string, exclude=None):
         """Converts string to title case.
 
@@ -504,6 +506,7 @@ class String(object):
             string = self.replace_string_using_regexp(string, pattern, '')
         return string
 
+    @keyword(types=None)
     def split_string(self, string, separator=None, max_split=-1):
         """Splits the ``string`` using ``separator`` as a delimiter string.
 
@@ -529,6 +532,7 @@ class String(object):
         max_split = self._convert_to_integer(max_split, 'max_split')
         return string.split(separator, max_split)
 
+    @keyword(types=None)
     def split_string_from_right(self, string, separator=None, max_split=-1):
         """Splits the ``string`` using ``separator`` starting from right.
 
@@ -621,6 +625,7 @@ class String(object):
         end = self._convert_to_index(end, 'end')
         return string[start:end]
 
+    @keyword(types=None)
     def strip_string(self, string, mode='both', characters=None):
         """Remove leading and/or trailing whitespaces from the given string.
 
