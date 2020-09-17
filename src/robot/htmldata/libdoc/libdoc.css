@@ -82,12 +82,13 @@ input.switch:checked + .slider::before {
     flex-wrap: wrap;
     justify-content: space-between;
 }
-@media only screen and (min-width: 800px) {
+@media only screen and (min-width: 640px) {
     .kw-overview {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        width: 400px;
+        justify-content: start;
+        max-width: 400px;
+        margin-right: 1.5rem;
     }
 }
 .kw-docs {
