@@ -9,7 +9,7 @@
     margin-top: 0.1em;
 }
 .doc table {
-    border: 1px solid #ccc;
+    border: none;
     background: transparent;
     border-collapse: collapse;
     empty-cells: show;
