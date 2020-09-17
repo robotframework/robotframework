@@ -135,6 +135,10 @@ h4 {
     display: flex;
     flex-direction: column;
     text-decoration: none;
+    border: 1px solid;
+    border-radius: 3px;
+    padding: 0.5rem 1.0rem 0.5rem 1.0rem;
+    margin-bottom: 0.5rem;
 }
 @media only screen and (min-width: 800px) {
   .kw-row {
@@ -142,6 +146,10 @@ h4 {
     flex-direction: row;
     justify-content: start;
     text-decoration: none;
+    border: 1px solid;
+    border-radius: 3px;
+    padding: 0.5rem 1.0rem 0.5rem 1.0rem;
+    margin-bottom: 0.5rem;
   }
 }
 .kw a {
