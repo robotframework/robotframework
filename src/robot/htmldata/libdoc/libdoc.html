@@ -321,14 +321,18 @@
     <div class="keywords">
         {{each inits}}
         <div class="kw-row">
-          <h4>Arguments</h4>
-          <div class="args">
-          {{each args}}
-          <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
-          {{/each}}
+          <div class="kw-overview">
+            <h4>Arguments</h4>
+            <div class="args">
+            {{each args}}
+            <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
+            {{/each}}
+            </div>
           </div>
-          <h4>Documentation</h4>
-          <div class="kwdoc doc">{{html $value.doc}}</div>
+          <div class="kw-docs">
+            <h4>Documentation</h4>
+            <div class="kwdoc doc">{{html $value.doc}}</div>
+          </div>
         </div>
         {{/each}}
     </div>
