@@ -12,9 +12,6 @@ body {
 a.name, span.name {
     font-style: italic;
 }
-a, a:link, a:visited {
-    color: #c30;
-}
 a img {
     border: 1px solid #c30 !important;
 }
