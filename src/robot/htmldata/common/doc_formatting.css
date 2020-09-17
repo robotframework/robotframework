@@ -14,7 +14,7 @@
     border-collapse: collapse;
     empty-cells: show;
     font-size: 0.9em;
-    overflow-y: scroll;
+    overflow-y: auto;
     display: block;
 }
 .doc table th, .doc table td {
@@ -31,7 +31,7 @@
     font-size: 1.1em;
     letter-spacing: 0.05em;
     background: #f4f4f4;
-    overflow: scroll;
+    overflow-y: auto;
 }
 .doc code {
     padding: 0 0.2em;
