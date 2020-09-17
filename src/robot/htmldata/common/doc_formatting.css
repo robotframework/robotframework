@@ -29,6 +29,7 @@
     font-size: 1.1em;
     letter-spacing: 0.05em;
     background: #f4f4f4;
+    overflow: scroll;
 }
 .doc code {
     padding: 0 0.2em;
