@@ -106,7 +106,7 @@ class _ExecutionStatus(object):
 
     @property
     def message(self):
-        if self.failure or self.exit or self.skipped:
+        if self.failure or self.exit:
             return self._my_message()
         if self.parent and self.parent.failures:
             return self._parent_message()
@@ -241,7 +241,7 @@ class SuiteMessage(_Message):
 
 class ParentMessage(SuiteMessage):
     setup_message = 'Parent suite setup failed:\n%s'
-    skipped_message = 'Skipped in parent suite setup\n%s'
+    skipped_message = 'Skipped in parent suite setup:\n%s'
     teardown_message = 'Parent suite teardown failed:\n%s'
     also_teardown_message = '%s\n\nAlso parent suite teardown failed:\n%s'
 
