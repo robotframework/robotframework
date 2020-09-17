@@ -318,22 +318,20 @@
 
 <script type="text/x-jquery-tmpl" id="importing-template">
     <h2 id="Importing">Importing</h2>
-    <table border="1" class="keywords">
-        <tr>
-            <th class="args">Arguments</th>
-            <th class="doc">Documentation</th>
-        </tr>
+    <div class="keywords">
         {{each inits}}
-        <tr class="kw-row">
-            <td class="args">
-            {{each args}}
-              <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
-            {{/each}}
-            </td>
-            <td class="doc">{{html $value.doc}}</td>
-        </tr>
+        <div class="kw-row">
+          <h4>Arguments</h4>
+          <div class="args">
+          {{each args}}
+          <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
+          {{/each}}
+          </div>
+          <h4>Documentation</h4>
+          <div class="kwdoc doc">{{html $value.doc}}</div>
+        </div>
         {{/each}}
-    </table>
+    </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
@@ -385,44 +383,42 @@
 
 <script type="text/x-jquery-tmpl" id="keywords-template">
     <h2 id="Keywords">Keywords</h2>
-    <table border="1" class="keywords">
-        <tr>
-            <th class="kw">Keyword</th>
-            <th class="args">Arguments</th>
-            {{if libdoc.contains_tags}}
-            <th class="tags">Tags</th>
-            {{/if}}
-            <th class="doc">Documentation</th>
-        </tr>
+    <div class="keywords">
         {{each keywords}}
             {{tmpl($value) 'keyword-template'}}
         {{/each}}
-    </table>
+    </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="keyword-template">
-    <tr class="kw-row {{if matched === false}}no-{{/if}}match">
-        <td class="kw">
-            <a name="${name}" href="#${encodeURIComponent(name)}"
+    <div class="kw-row {{if matched === false}}no-{{/if}}match">
+        <div class="kw-overview">
+        <div class="kw">
+            <h2>
+            <a class="kw-name" name="${name}" href="#${encodeURIComponent(name)}"
                title="Link to this keyword">${name}</a>
-        </td>
-        <td class="args">
+            </h2>
+        </div>
+        <div class="args">
+            <h4>Arguments</h4>
             {{each args}}
             <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
             {{/each}}
-        </td>
+        </div>
         {{if libdoc.contains_tags}}
-        <td class="tags">
+        <div class="tags">
+            <h4>Tags</h4>
             {{each tags}}
             <a href="javascript:tagSearch('${$value}')"
                title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
             {{/each}}
-        </td>
+        </div>
         {{/if}}
-        <td class="doc">{{html doc}}</td>
-    </tr>
+        </div>
+        <h4>Documentation</h4>
+        <div class="kwdoc doc">{{html doc}}</div>
+    </div>
 </script>
-
 
 <script type="text/x-jquery-tmpl" id="footer-template">
     <p class="footer">

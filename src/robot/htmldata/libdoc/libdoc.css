@@ -72,41 +72,56 @@ input.switch:checked + .slider::before {
     left: 21px;
 }
 .keywords {
-    border: 1px solid #ccc;
-    border-collapse: collapse;
-    empty-cells: show;
+    display: flex;
+    flex-direction: column;
     margin: 0.3em 0;
     width: 100%;
 }
-.keywords th, .keywords td {
-    border: 1px solid #ccc;
-    padding: 0.2em;
-    vertical-align: top;
+.kw-overview {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
-.keywords th {
-    background: #ddd;
+.kw-name:link {
+    text-decoration: none;
+    color: black;
+}
+.kw-name:visited {
+    text-decoration: none;
     color: black;
 }
 .kw {
-    width: 15%;
+    display: flex;
+    align-items: baseline;
+    min-width: 250px
 }
-.args {
-    width: 25%;
+h4 {
+    margin-right: 0.5rem;
 }
-.tags {
-    width: 10%;
-}
-.doc {
-    width: 60%;
+.kw-row {
+    border: 1px solid;
+    border-radius: 6px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
 }
 td.kw a {
     color: inherit;
     text-decoration: none;
     font-weight: bold;
 }
+.args {
+    min-width: 200px;
+}
 .args span {
     font-style: italic;
     padding: 0 0.1em;
+}
+.tags {
+    display: flex;
+    align-items: baseline;
 }
 .tags a {
     color: inherit;
