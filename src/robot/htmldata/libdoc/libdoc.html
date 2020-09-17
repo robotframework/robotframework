@@ -122,7 +122,7 @@
         var url = window.location.pathname + "?tag=" + tag + (hash || "");
         markMatches(tag, include);
         highlightMatches(tag, include);
-        $('#keywords-container').find('.kw-row').addClass('hide-unmatched');
+        $('#keywords-container').find('.keyword-container').addClass('hide-unmatched');
         history.replaceState && history.replaceState(null, '', url);
         document.getElementById('Shortcuts').scrollIntoView();
     }
@@ -254,7 +254,7 @@
     }
 
     function setMatchVisibility() {
-        var kws = $('#keywords-container').find('.kw-row');
+        var kws = $('#keywords-container').find('.keyword-container');
         var hide = $('#hide-unmatched').prop('checked');
         kws.toggleClass('hide-unmatched', hide);
     }
@@ -395,34 +395,36 @@
 </script>
 
 <script type="text/x-jquery-tmpl" id="keyword-template">
-    <div class="kw-row {{if matched === false}}no-{{/if}}match" id="${name}">
-        <div class="kw-overview">
-        <div class="kw">
+    <div class="keyword-container {{if matched === false}}no-{{/if}}match" id="${name}">
+       <div class="keyword-name">
             <h2>
             <a class="kw-name" href="#${encodeURIComponent(name)}"
                title="Link to this keyword">${name}</a>
             </h2>
-        </div>
-        <div class="args">
-            <h4>Arguments</h4>
-            {{each args}}
-            <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
-            {{/each}}
-        </div>
-        {{if libdoc.contains_tags}}
-        <div class="tags">
-            <h4>Tags</h4>
-            {{each tags}}
-            <a href="javascript:tagSearch('${$value}')"
-               title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
-            {{/each}}
-        </div>
-        {{/if}}
-        </div>
-        <div class="kw-docs">
-          <h4>Documentation</h4>
-          <div class="kwdoc doc">{{html doc}}</div>
-        </div>
+       </div>
+       <div class="keyword-content">
+          <div class="kw-overview">
+            <div class="args">
+              <h4>Arguments</h4>
+              {{each args}}
+              <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
+              {{/each}}
+            </div>
+            {{if libdoc.contains_tags}}
+            <div class="tags">
+                <h4>Tags</h4>
+                {{each tags}}
+                <a href="javascript:tagSearch('${$value}')"
+                   title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
+                {{/each}}
+            </div>
+            {{/if}}
+          </div>
+          <div class="kw-docs">
+            <h4>Documentation</h4>
+            <div class="kwdoc doc">{{html doc}}</div>
+          </div>
+       </div>
     </div>
 </script>
 

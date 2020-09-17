@@ -112,21 +112,35 @@ input.switch:checked + .slider::before {
 h4 {
     margin-right: 0.5rem;
 }
-.kw-row {
+
+.keyword-container {
     border: 1px solid;
     border-radius: 3px;
     padding: 0.5rem 1.0rem 0.5rem 1.0rem;
     margin-bottom: 0.5rem;
     display: flex;
     flex-direction: column;
+}
+
+.keyword-content {
+    display: flex;
+    flex-direction: column;
+}
+
+@media only screen and (min-width: 800px) {
+    .keyword-content {
+        display: flex;
+        flex-direction: row;
+    }
+}
+
+.kw-row {
+    display: flex;
+    flex-direction: column;
     text-decoration: none;
 }
 @media only screen and (min-width: 800px) {
   .kw-row {
-    border: 1px solid;
-    border-radius: 3px;
-    padding: 0.5rem 1.0rem 0.5rem 1.0rem;
-    margin-bottom: 0.5rem;
     display: flex;
     flex-direction: row;
     justify-content: start;
@@ -220,6 +234,6 @@ fieldset fieldset {
 .no-match {
     color: gray !important;
 }
-.kw-row.no-match.hide-unmatched {
+.keyword-container.no-match.hide-unmatched {
     display: none;
 }
