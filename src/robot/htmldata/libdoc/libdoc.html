@@ -391,11 +391,11 @@
 </script>
 
 <script type="text/x-jquery-tmpl" id="keyword-template">
-    <div class="kw-row {{if matched === false}}no-{{/if}}match">
+    <div class="kw-row {{if matched === false}}no-{{/if}}match" id="${name}">
         <div class="kw-overview">
         <div class="kw">
             <h2>
-            <a class="kw-name" name="${name}" href="#${encodeURIComponent(name)}"
+            <a class="kw-name" href="#${encodeURIComponent(name)}"
                title="Link to this keyword">${name}</a>
             </h2>
         </div>
