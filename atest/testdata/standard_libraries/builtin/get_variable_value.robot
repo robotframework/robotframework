@@ -17,6 +17,10 @@ Get value when variable doesn't exist
     ${y} =    Get Variable Value    ${nonex}    default value
     Should be equal    ${y}    default value
 
+Get value when default value is none
+    ${x} =    Get Variable Value    ${nonex}    none
+    Should be equal    ${x}    none
+
 Default value contains variables
     ${x} =    Get Variable Value    ${nonex}    ${VAR}
     Should be equal    ${x}    var table
