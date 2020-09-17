@@ -409,7 +409,7 @@
         <div class="tags">
             <h4>Tags</h4>
             {{each tags}}
-            <a href="javascript:tagSearch('${$value}')"
+            <a class="kw-tag" href="javascript:tagSearch('${$value}')"
                title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
             {{/each}}
         </div>

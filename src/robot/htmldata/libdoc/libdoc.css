@@ -153,6 +153,10 @@ a {
     text-decoration: none;
     padding: 0 0.1em;
 }
+.kw-tag {
+    font-style: italic;
+    font-weight: 400;
+}
 .footer {
     font-size: 0.9em;
 }
