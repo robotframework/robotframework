@@ -194,5 +194,5 @@ class _ExecutionContext(object):
     def warn(self, message):
         self.output.warn(message)
 
-    def fail(self, message):
-        self.output.fail(message)
+    def fail(self, message, error_type=None):
+        self.output.fail(message, error_type)

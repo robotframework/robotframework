@@ -69,7 +69,7 @@ class StatusReporter(object):
         failure = HandlerExecutionFailed(ErrorDetails(exc_info))
         if failure.timeout:
             context.timeout_occurred = True
-        context.fail(failure.full_message)
+        context.fail(failure.full_message, exc_type)
         if failure.traceback:
             context.debug(failure.traceback)
         return failure
