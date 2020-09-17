@@ -100,8 +100,8 @@ h4 {
 }
 .kw-row {
     border: 1px solid;
-    border-radius: 6px;
-    padding: 0.5rem;
+    border-radius: 3px;
+    padding: 0.5rem 1.0rem 0.5rem 1.0rem;
     margin-bottom: 0.5rem;
     display: flex;
     flex-direction: column;
@@ -194,6 +194,6 @@ fieldset fieldset {
 .no-match {
     color: gray !important;
 }
-tr.no-match.hide-unmatched {
+.kw-row.no-match.hide-unmatched {
     display: none;
 }
