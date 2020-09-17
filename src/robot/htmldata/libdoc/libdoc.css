@@ -132,7 +132,7 @@ h4 {
     text-decoration: none;
   }
 }
-a {
+.kw a {
     color: inherit;
     text-decoration: none;
     font-weight: bold;
