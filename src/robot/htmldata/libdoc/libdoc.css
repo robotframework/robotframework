@@ -94,6 +94,7 @@ input.switch:checked + .slider::before {
 .kw-docs {
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
 }
 .kw-name:link {
     text-decoration: none;
