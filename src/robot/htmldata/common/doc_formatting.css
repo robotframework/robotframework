@@ -14,6 +14,8 @@
     border-collapse: collapse;
     empty-cells: show;
     font-size: 0.9em;
+    overflow-y: scroll;
+    display: block;
 }
 .doc table th, .doc table td {
     border: 1px solid #ccc;
