@@ -24,6 +24,7 @@ body {
 
 .libdoc-details {
     margin-left: 308px;
+    padding-right: 0.5rem;
     overflow: auto;
 }
 
