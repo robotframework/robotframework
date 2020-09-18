@@ -271,53 +271,55 @@
 </script>
 
 <script type="text/x-jquery-tmpl" id="base-template">
-    <div class="libdoc-title">
-      <h1>${name}</h1>
-      <img src="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKcAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAAqAAAAAAAAAAAAAAAAAAAALIAAAD/AAAA4AAAANwAAADcAAAA3AAAANwAAADcAAAA3AAAANwAAADcAAAA4AAAAP8AAACxAAAAAAAAAKYAAAD/AAAAuwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/AAAA/wAAAKkAAAD6AAAAzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN8AAAD/AAAA+gAAAMMAAAAAAAAAAgAAAGsAAABrAAAAawAAAGsAAABrAAAAawAAAGsAAABrAAAADAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAIsAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAANEAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAAAAAAAAMgAAADIAAAAyAAAAMgAAADIAAAAyAAAAMgAAADIAAAAFAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAADwAAAB8AAAAAAAAAGAAAABcAAAAAAAAAH8AAABKAAAAAAAAAAAAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAADCAAAA/wAAACkAAADqAAAA4QAAAAAAAAD7AAAA/wAAALAAAAAGAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAIwAAAP4AAAD/AAAA/wAAAGAAAAAAAAAAAAAAAMkAAAD/AAAAigAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAAAAAAAIAAAAcAAAABkAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAA2gAAAP8AAAD7AAAAywAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN4AAAD/AAAAqwAAAP8AAACvAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALIAAAD/AAAAsgAAAAAAAAC5AAAA/wAAAMoAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMkAAAD/AAAAvAAAAAAAAAAAAAAAAAAAAKwAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAArQAAAAAAAAAAwAMAAIABAAAf+AAAP/wAAD/8AAAgBAAAP/wAAD/8AAA//AAAJIwAADHEAAA//AAAP/wAAB/4AACAAQAAwAMAAA=="
-      alt="Robot Framework Library" />
+    <div class="libdoc-overview"><div id="shortcuts-container"></div></div>
+    <div class="libdoc-details">
+      <div class="libdoc-title">
+        <h1>${name}</h1>
+        <img src="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKcAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAAqAAAAAAAAAAAAAAAAAAAALIAAAD/AAAA4AAAANwAAADcAAAA3AAAANwAAADcAAAA3AAAANwAAADcAAAA4AAAAP8AAACxAAAAAAAAAKYAAAD/AAAAuwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/AAAA/wAAAKkAAAD6AAAAzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN8AAAD/AAAA+gAAAMMAAAAAAAAAAgAAAGsAAABrAAAAawAAAGsAAABrAAAAawAAAGsAAABrAAAADAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAIsAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAANEAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAAAAAAAAMgAAADIAAAAyAAAAMgAAADIAAAAyAAAAMgAAADIAAAAFAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAADwAAAB8AAAAAAAAAGAAAABcAAAAAAAAAH8AAABKAAAAAAAAAAAAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAADCAAAA/wAAACkAAADqAAAA4QAAAAAAAAD7AAAA/wAAALAAAAAGAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAIwAAAP4AAAD/AAAA/wAAAGAAAAAAAAAAAAAAAMkAAAD/AAAAigAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAAAAAAAIAAAAcAAAABkAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAA2gAAAP8AAAD7AAAAywAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN4AAAD/AAAAqwAAAP8AAACvAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALIAAAD/AAAAsgAAAAAAAAC5AAAA/wAAAMoAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMkAAAD/AAAAvAAAAAAAAAAAAAAAAAAAAKwAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAArQAAAAAAAAAAwAMAAIABAAAf+AAAP/wAAD/8AAAgBAAAP/wAAD/8AAA//AAAJIwAADHEAAA//AAAP/wAAB/4AACAAQAAwAMAAA=="
+        alt="Robot Framework Library" />
+      </div>
+      <table class="metadata">
+          {{if version}}<tr><th>Library version:</th><td>${version}</td></tr>{{/if}}
+          {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
+          <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
+      </table>
+      <div id="introduction-container">
+          <h2 id="Introduction">Introduction</h2>
+          <div class="doc">{{html doc}}</div>
+      </div>
+      <div id="importing-container"></div>
+      <div id="tags-container"></div>
+      <div id="keywords-container"></div>
+      <div id="footer-container"></div>
+      <form id="search" action="javascript:void(0)">
+          <fieldset>
+              <legend id="search-title">Search keywords</legend>
+              <input type="text" id="search-string" onkeyup="delay(doSearch, 500)">
+              <fieldset>
+                  <legend>Search from</legend>
+                  <input type="checkbox" id="include-name" onclick="doSearch()" checked>
+                  <label for="include-name">Name</label>
+                  <input type="checkbox" id="include-args" onclick="doSearch()" checked>
+                  <label for="include-args">Arguments</label>
+                  <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
+                  <label for="include-doc">Documentation</label>
+                  {{if libdoc.contains_tags}}
+                  <input type="checkbox" id="include-tags" onclick="doSearch()" checked>
+                  <label for="include-tags">Tags</label>
+                  {{/if}}
+              </fieldset>
+              <input type="checkbox" id="hide-unmatched" onclick="setMatchVisibility()" checked>
+              <label for="hide-unmatched">Hide unmatched keywords</label>
+              <div id="search-buttons">
+                  <input type="button" value="Reset" onclick="resetSearch()"
+                         title="Reset search">
+                  <input type="button" value="Close" onclick="closeSearch()"
+                         title="Close search (shortcut: <Esc>)">
+              </div>
+          </fieldset>
+      </form>
+      <div id="open-search" onclick="openSearch()" title="Search keywords (shortcut: s)"></div>
     </div>
-    <table class="metadata">
-        {{if version}}<tr><th>Library version:</th><td>${version}</td></tr>{{/if}}
-        {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
-        <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
-    </table>
-    <div id="introduction-container">
-        <h2 id="Introduction">Introduction</h2>
-        <div class="doc">{{html doc}}</div>
-    </div>
-    <div id="importing-container"></div>
-    <div id="shortcuts-container"></div>
-    <div id="tags-container"></div>
-    <div id="keywords-container"></div>
-    <div id="footer-container"></div>
-    <form id="search" action="javascript:void(0)">
-        <fieldset>
-            <legend id="search-title">Search keywords</legend>
-            <input type="text" id="search-string" onkeyup="delay(doSearch, 500)">
-            <fieldset>
-                <legend>Search from</legend>
-                <input type="checkbox" id="include-name" onclick="doSearch()" checked>
-                <label for="include-name">Name</label>
-                <input type="checkbox" id="include-args" onclick="doSearch()" checked>
-                <label for="include-args">Arguments</label>
-                <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
-                <label for="include-doc">Documentation</label>
-                {{if libdoc.contains_tags}}
-                <input type="checkbox" id="include-tags" onclick="doSearch()" checked>
-                <label for="include-tags">Tags</label>
-                {{/if}}
-            </fieldset>
-            <input type="checkbox" id="hide-unmatched" onclick="setMatchVisibility()" checked>
-            <label for="hide-unmatched">Hide unmatched keywords</label>
-            <div id="search-buttons">
-                <input type="button" value="Reset" onclick="resetSearch()"
-                       title="Reset search">
-                <input type="button" value="Close" onclick="closeSearch()"
-                       title="Close search (shortcut: <Esc>)">
-            </div>
-        </fieldset>
-    </form>
-    <div id="open-search" onclick="openSearch()" title="Search keywords (shortcut: s)"></div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="importing-template">
@@ -343,27 +345,20 @@
 </script>
 
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
-    <h2 id="Shortcuts">Shortcuts</h2>
-    {{if keywords.length > 1}}
-    <div class="shortcut-list-toggle">
-        <b>List style:</b>&nbsp; Compact
-        <label title="Switch between compact list and expanded list">
-            <input type="checkbox" class="switch" onclick="setShortcutListStyle('shortcut');">
-            <span class="slider"></span>
-        </label>
-        Expanded
+    <div class="libdoc-title">
+        <h1>${name}</h1>
+        <img src="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKcAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAAqAAAAAAAAAAAAAAAAAAAALIAAAD/AAAA4AAAANwAAADcAAAA3AAAANwAAADcAAAA3AAAANwAAADcAAAA4AAAAP8AAACxAAAAAAAAAKYAAAD/AAAAuwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/AAAA/wAAAKkAAAD6AAAAzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN8AAAD/AAAA+gAAAMMAAAAAAAAAAgAAAGsAAABrAAAAawAAAGsAAABrAAAAawAAAGsAAABrAAAADAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAIsAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAANEAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAAAAAAAAMgAAADIAAAAyAAAAMgAAADIAAAAyAAAAMgAAADIAAAAFAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAADwAAAB8AAAAAAAAAGAAAABcAAAAAAAAAH8AAABKAAAAAAAAAAAAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAADCAAAA/wAAACkAAADqAAAA4QAAAAAAAAD7AAAA/wAAALAAAAAGAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAIwAAAP4AAAD/AAAA/wAAAGAAAAAAAAAAAAAAAMkAAAD/AAAAigAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAAAAAAAIAAAAcAAAABkAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAA2gAAAP8AAAD7AAAAywAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN4AAAD/AAAAqwAAAP8AAACvAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALIAAAD/AAAAsgAAAAAAAAC5AAAA/wAAAMoAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMkAAAD/AAAAvAAAAAAAAAAAAAAAAAAAAKwAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAArQAAAAAAAAAAwAMAAIABAAAf+AAAP/wAAD/8AAAgBAAAP/wAAD/8AAA//AAAJIwAADHEAAA//AAAP/wAAB/4AACAAQAAwAMAAA=="
+        alt="Robot Framework Library" />
     </div>
-    {{/if}}
-    <div class='shortcuts'>
+    <ul class='shortcuts'>
         {{each keywords}}
+        <li>
         <a href="#${encodeURIComponent($value.name)}"
            class="{{if $value.matched === false}}no-{{/if}}match"
            title="${$value.shortdoc}">${$value.name}</a>
-        {{if $index < keywords.length-1}}
-        <span class="shortcut-list-separator">&middot;</span>
-        {{/if}}
+        </li>
         {{/each}}
-    </div>
+    </ul>
 </script>
 
 <script type="text/x-jquery-tmpl" id="tags-template">

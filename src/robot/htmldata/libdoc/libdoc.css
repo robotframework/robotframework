@@ -4,7 +4,30 @@ body {
     font-family: system-ui, -apple-system;
 }
 
+.libdoc-overview {
+    position: fixed;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-right: 1px solid #e0e0e2;;
+}
+
+#shortcuts-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.libdoc-details {
+    margin-left: 308px;
+    overflow: auto;
+}
+
 .libdoc-title {
+    margin-left: 0.5rem;
     display: flex;
     align-items: center;
 }
@@ -36,6 +59,9 @@ a:hover {
 .shortcuts {
     margin: 1em 0;
     font-size: 0.9em;
+    overflow: auto;
+    list-style: none;
+    padding-left: 0.5rem;
 }
 .shortcuts a {
     display: inline-block;
