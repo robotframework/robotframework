@@ -60,7 +60,6 @@
         }
         scrollToHash();
         $(document).bind('keydown', handleKeyDown);
-        workaroundFirefoxWidthBug();
     });
 
     function parseTemplates() {
@@ -78,12 +77,6 @@
             arguments.search = false;
         }
         $.tmpl(name + '-template', arguments).appendTo(container);
-    }
-
-    function workaroundFirefoxWidthBug() {
-        // https://github.com/robotframework/robotframework/issues/3456
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=1613163
-        $('.shortcuts a').width('max-content');
     }
 
     function initShortcutListStyle(name, items) {
@@ -194,7 +187,6 @@
         $('#altogether-count').hide();
         if (matchCount === 0)
             $('#keywords-container').find('table').empty();
-        setTimeout(workaroundFirefoxWidthBug, 100);
     }
 
     function highlightMatches(string, include) {
@@ -249,7 +241,6 @@
         $('#match-count').hide();
         $('#altogether-count').show();
         history.replaceState && history.replaceState(null, '', location.pathname + location.hash);
-        setTimeout(workaroundFirefoxWidthBug, 100);
         scrollToHash();
     }
 
