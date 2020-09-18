@@ -1,7 +1,3 @@
-.doc > * {
-    margin: 0.7em 1em 0.1em 1em;
-    padding: 0;
-}
 .doc > p, .doc > h1, .doc > h2, .doc > h3, .doc > h4 {
     margin: 0.7em 0 0.1em 0;
 }
@@ -32,6 +28,8 @@
     letter-spacing: 0.05em;
     background: #f4f4f4;
     overflow-y: auto;
+    padding: 0.3rem;
+    border-radius: 3px;
 }
 .doc code {
     padding: 0 0.2em;

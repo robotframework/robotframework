@@ -111,7 +111,7 @@ h4 {
 }
 
 .keyword-container {
-    border: 1px solid;
+    border: 1px solid #e0e0e2;
     border-radius: 3px;
     padding: 0.5rem 1.0rem 0.5rem 1.0rem;
     margin-bottom: 0.5rem;
@@ -135,7 +135,7 @@ h4 {
     display: flex;
     flex-direction: column;
     text-decoration: none;
-    border: 1px solid;
+    border: 1px solid #e0e0e2;
     border-radius: 3px;
     padding: 0.5rem 1.0rem 0.5rem 1.0rem;
     margin-bottom: 0.5rem;
@@ -146,7 +146,7 @@ h4 {
     flex-direction: row;
     justify-content: start;
     text-decoration: none;
-    border: 1px solid;
+    border: 1px solid #e0e0e2;
     border-radius: 3px;
     padding: 0.5rem 1.0rem 0.5rem 1.0rem;
     margin-bottom: 0.5rem;
