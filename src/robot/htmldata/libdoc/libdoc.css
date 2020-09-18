@@ -47,6 +47,10 @@ body {
     width: 16px;
 }
 
+.metadata {
+    margin-top: 0.5rem;
+ }
+
 .metadata th {
     text-align: left;
     padding-right: 1em;
