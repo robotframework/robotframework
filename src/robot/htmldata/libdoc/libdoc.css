@@ -30,6 +30,12 @@ body {
     margin-left: 0.5rem;
     display: flex;
     align-items: center;
+    text-decoration: none;
+    color: black;
+}
+
+.libdoc-title:hover {
+    background: #f3f3f3;
 }
 
 .libdoc-title > img {
@@ -46,7 +52,7 @@ body {
 a.name, span.name {
     font-style: italic;
 }
-a img {
+.libdoc-details a img {
     border: 1px solid #c30 !important;
 }
 a:hover, a:active {
@@ -61,6 +67,7 @@ a:hover {
     overflow: auto;
     list-style: none;
     padding-left: 0.5rem;
+    margin-top: 0;
 }
 
 .shortcuts a {
@@ -111,11 +118,6 @@ input.switch {
 input.switch:checked + .slider::before {
     background-color: white;
     left: 21px;
-}
-
-.readme-link {
-    margin-bottom: 0.5rem;
-    font-size: medium;
 }
 
 .keywords {
