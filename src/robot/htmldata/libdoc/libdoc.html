@@ -404,12 +404,14 @@
        </div>
        <div class="keyword-content">
           <div class="kw-overview">
-            <div class="args">
-              <h4>Arguments</h4>
-              {{each args}}
-              <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
-              {{/each}}
-            </div>
+            {{if args.length > 0}}
+              <div class="args">
+                <h4>Arguments</h4>
+                {{each args}}
+                <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
+                {{/each}}
+              </div>
+            {{/if}}
             {{if libdoc.contains_tags}}
             <div class="tags">
                 <h4>Tags</h4>
