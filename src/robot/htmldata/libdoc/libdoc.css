@@ -3,6 +3,19 @@ body {
     color: black;
     font-family: system-ui, -apple-system;
 }
+
+.libdoc-title {
+    display: flex;
+    align-items: center;
+}
+
+.libdoc-title > img {
+    padding-top: 5px;
+    padding-left: 8px;
+    height: 16px;
+    width: 16px;
+}
+
 .metadata th {
     text-align: left;
     padding-right: 1em;
