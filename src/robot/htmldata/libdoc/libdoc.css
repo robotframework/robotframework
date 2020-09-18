@@ -63,6 +63,11 @@ a:hover {
     list-style: none;
     padding-left: 0.5rem;
 }
+
+.shortcuts li {
+    margin-bottom: 0.5rem;
+}
+
 .shortcuts a {
     display: inline-block;
     text-decoration: none;
@@ -105,6 +110,12 @@ input.switch:checked + .slider::before {
     background-color: white;
     left: 21px;
 }
+
+.readme-link {
+    margin-bottom: 0.5rem;
+    font-size: medium;
+}
+
 .keywords {
     display: flex;
     flex-direction: column;
