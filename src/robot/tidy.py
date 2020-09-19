@@ -166,7 +166,7 @@ class Tidy(SuiteStructureVisitor):
         Aligner(self.short_test_name_length,
                 self.setting_and_variable_name_length,
                 self.use_pipes,
-                self.space_count).visit(model)
+                self.space_count == 'preserve').visit(model)
         model.save(output)
 
     def visit_file(self, file):

@@ -369,12 +369,12 @@ class Aligner(ModelTransformer):
 
     def __init__(self, short_test_name_length,
                  setting_and_variable_name_length,
-                 pipes_mode, space_count):
+                 pipes_mode, preserve_spaces):
         self.short_test_name_length = short_test_name_length
         self.setting_and_variable_name_length = \
             setting_and_variable_name_length
         self.pipes_mode = pipes_mode
-        self.space_count = space_count
+        self.preserve_spaces = preserve_spaces
 
     def visit_TestCaseSection(self, section):
         if len(section.header.data_tokens) > 1:
@@ -400,6 +400,8 @@ class Aligner(ModelTransformer):
         return statement
 
     def _should_be_aligned(self, tokens):
+        if self.preserve_spaces:
+            return False
         if not tokens:
             return False
         if len(tokens) == 1:
