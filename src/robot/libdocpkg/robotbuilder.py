@@ -13,19 +13,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from inspect import isclass
 import os
 import sys
+
 try:
     from enum import Enum
-except ImportError:    # Standard in Py 3.4+ but can be separately installed
+except ImportError:  # Standard in Py 3.4+ but can be separately installed
     class Enum(object):
         pass
 
 from robot.errors import DataError
 from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
                            ResourceFileBuilder)
-from robot.utils import split_tags_from_doc, unescape, unic
+from robot.utils import split_tags_from_doc, unescape
 
 from .model import LibraryDoc, KeywordDoc, ArgumentDoc
 
@@ -52,16 +52,19 @@ class LibraryDocBuilder(object):
         name = args.pop(0)
         return self._normalize_library_path(name), args
 
-    def _normalize_library_path(self, library):
+    @staticmethod
+    def _normalize_library_path(library):
         path = library.replace('/', os.sep)
         if os.path.exists(path):
             return os.path.abspath(path)
         return library
 
-    def _get_doc(self, lib):
+    @staticmethod
+    def _get_doc(lib):
         return lib.doc or "Documentation for library ``%s``." % lib.name
 
-    def _get_initializers(self, lib):
+    @staticmethod
+    def _get_initializers(lib):
         if lib.init.arguments.maxargs:
             return [KeywordDocBuilder().build_keyword(lib.init)]
         return []
@@ -85,7 +88,8 @@ class ResourceDocBuilder(object):
             self._find_resource_file(path))
         return UserLibrary(ast)
 
-    def _find_resource_file(self, path):
+    @staticmethod
+    def _find_resource_file(path):
         if os.path.isfile(path):
             return os.path.normpath(path)
         for dire in [item for item in sys.path if os.path.isdir(item)]:
@@ -94,7 +98,8 @@ class ResourceDocBuilder(object):
                 return candidate
         raise DataError("Resource file '%s' does not exist." % path)
 
-    def _get_doc(self, res):
+    @staticmethod
+    def _get_doc(res):
         if res.doc:
             return unescape(res.doc)
         return "Documentation for resource file ``%s``." % res.name
@@ -127,49 +132,46 @@ class KeywordDocBuilder(object):
             return unescape(kw.doc)
         return kw.doc
 
-    @staticmethod
-    def _get_args(argspec):
+    def _get_args(self, argspec):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         # ToDo: Snooz: Review By Mikko
         arguments = []
         for arg_name in argspec.positional:
-            value_type = None
-            default_value = None
-            if arg_name in argspec.defaults:
-                default_value = argspec.defaults[arg_name]
-            if argspec.types and arg_name in argspec.types:
-                value_type = argspec.types[arg_name]
-            arguments.append(ArgumentDoc(name=arg_name,
-                                         value_type=value_type,
-                                         default_value=default_value,
-                                         argument_type='positional',
-                                         optional=arg_name in argspec.defaults
-                                         ))
+            arguments.append(
+                self._get_scalar_arg_doc(argspec, arg_name, 'positional'))
         if argspec.varargs:
+            value_type = self._get_value_type(argspec, argspec.varargs)
             arguments.append(ArgumentDoc(name=argspec.varargs,
+                                         value_type=value_type,
                                          argument_type='varargs',
                                          optional=True))
-        if argspec.kwonlyargs:
-            if not argspec.varargs:
-                arguments.append(ArgumentDoc(argument_type='varargs',
-                                             optional=True))
-            for arg_name in argspec.kwonlyargs:
-                value_type = None
-                default_value = None
-                optional = False
-                if argspec.defaults and arg_name in argspec.defaults:
-                    default_value = argspec.defaults[arg_name]
-                    optional = True
-                if argspec.types and arg_name in argspec.types:
-                    value_type = argspec.types[arg_name]
-                arguments.append(ArgumentDoc(name=arg_name,
-                                             value_type=value_type,
-                                             default_value=default_value,
-                                             argument_type='kwonlyargs',
-                                             optional=optional))
+        if argspec.kwonlyargs and not argspec.varargs:
+            arguments.append(ArgumentDoc(argument_type='varargs',
+                                         optional=True))
+        for arg_name in argspec.kwonlyargs:
+            arguments.append(
+                self._get_scalar_arg_doc(argspec, arg_name, 'kwonlyargs'))
+
         if argspec.kwargs:
+            value_type = self._get_value_type(argspec, argspec.kwargs)
             arguments.append(ArgumentDoc(name=argspec.kwargs,
+                                         value_type=value_type,
                                          argument_type='kwargs',
                                          optional=True))
-
         return arguments
+
+    def _get_scalar_arg_doc(self, argspec, arg_name, arg_type):
+        default_value = None
+        if arg_name in argspec.defaults:
+            default_value = argspec.defaults[arg_name]
+        value_type = self._get_value_type(argspec, arg_name)
+        return ArgumentDoc(name=arg_name,
+                           value_type=value_type,
+                           default_value=default_value,
+                           argument_type=arg_type,
+                           optional=arg_name in argspec.defaults)
+
+    @staticmethod
+    def _get_value_type(argspec, argument):
+        if argspec.types and argument in argspec.types:
+            return argspec.types[argument]
