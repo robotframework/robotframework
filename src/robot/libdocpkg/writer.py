@@ -28,7 +28,7 @@ def LibdocWriter(format=None):
         return LibdocXmlWriter()
     if format == 'XML:HTML':
         return LibdocXmlWriter(force_html_doc=True)
-    if format == 'JSON':
+    if format == 'JSON':  # ToDo: add JSON to Errors and writers etc
         return LibdocJsonWriter()
     raise DataError("Format must be either 'HTML', 'XML', 'JSON' or 'XML:HTML', "
                     "got '%s'." % format)

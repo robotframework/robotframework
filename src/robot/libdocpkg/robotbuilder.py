@@ -155,16 +155,21 @@ class KeywordDocBuilder(object):
                                              optional=True))
             for arg_name in argspec.kwonlyargs:
                 value_type = None
-                default_value = argspec.defaults[arg_name]
+                default_value = None
+                optional = False
+                if argspec.defaults and arg_name in argspec.defaults:
+                    default_value = argspec.defaults[arg_name]
+                    optional = True
                 if argspec.types and arg_name in argspec.types:
                     value_type = argspec.types[arg_name]
                 arguments.append(ArgumentDoc(name=arg_name,
                                              value_type=value_type,
                                              default_value=default_value,
                                              argument_type='kwonlyargs',
-                                             optional=True))
+                                             optional=optional))
         if argspec.kwargs:
             arguments.append(ArgumentDoc(name=argspec.kwargs,
                                          argument_type='kwargs',
                                          optional=True))
+
         return arguments
