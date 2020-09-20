@@ -127,7 +127,8 @@ class KeywordDocBuilder(object):
             return unescape(kw.doc)
         return kw.doc
 
-    def _get_args(self, argspec):
+    @staticmethod
+    def _get_args(argspec):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         # ToDo: Snooz: Review By Mikko
         arguments = []
@@ -155,7 +156,7 @@ class KeywordDocBuilder(object):
             for arg_name in argspec.kwonlyargs:
                 value_type = None
                 default_value = argspec.defaults[arg_name]
-                if arg_name in argspec.types:
+                if argspec.types and arg_name in argspec.types:
                     value_type = argspec.types[arg_name]
                 arguments.append(ArgumentDoc(name=arg_name,
                                              value_type=value_type,
