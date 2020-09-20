@@ -88,7 +88,7 @@ class LibdocXmlWriter(object):
             writer.start(kw_type, attrs)
             writer.start('arguments')
             for arg in kw.args:
-                writer.element('arg', arg)
+                writer.element('arg', str(arg))
             writer.end('arguments')
             writer.element('doc', formatter(kw.doc))
             if kw_type == 'kw' and kw.tags:

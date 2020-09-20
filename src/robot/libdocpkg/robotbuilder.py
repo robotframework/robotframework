@@ -27,7 +27,7 @@ from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
                            ResourceFileBuilder)
 from robot.utils import split_tags_from_doc, unescape, unic
 
-from .model import LibraryDoc, KeywordDoc
+from .model import LibraryDoc, KeywordDoc, ArgumentDoc
 
 
 class LibraryDocBuilder(object):
@@ -129,41 +129,41 @@ class KeywordDocBuilder(object):
 
     def _get_args(self, argspec):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
-        #FIXME: DO NICE STUFF HERE!!!!
-        args = [self._format_arg(arg, argspec) for arg in argspec.positional]
+        # ToDo: Snooz: Review By Mikko
+        arguments = []
+        for arg_name in argspec.positional:
+            value_type = None
+            default_value = None
+            if arg_name in argspec.defaults:
+                default_value = argspec.defaults[arg_name]
+            if argspec.types and arg_name in argspec.types:
+                value_type = argspec.types[arg_name]
+            arguments.append(ArgumentDoc(name=arg_name,
+                                         value_type=value_type,
+                                         default_value=default_value,
+                                         argument_type='positional',
+                                         optional=arg_name in argspec.defaults
+                                         ))
         if argspec.varargs:
-            args.append('*%s' % self._format_arg(argspec.varargs, argspec))
+            arguments.append(ArgumentDoc(name=argspec.varargs,
+                                         argument_type='varargs',
+                                         optional=True))
         if argspec.kwonlyargs:
             if not argspec.varargs:
-                args.append('*')
-            args.extend(self._format_arg(arg, argspec)
-                        for arg in argspec.kwonlyargs)
+                arguments.append(ArgumentDoc(argument_type='varargs',
+                                             optional=True))
+            for arg_name in argspec.kwonlyargs:
+                value_type = None
+                default_value = argspec.defaults[arg_name]
+                if arg_name in argspec.types:
+                    value_type = argspec.types[arg_name]
+                arguments.append(ArgumentDoc(name=arg_name,
+                                             value_type=value_type,
+                                             default_value=default_value,
+                                             argument_type='kwonlyargs',
+                                             optional=True))
         if argspec.kwargs:
-            args.append('**%s' % self._format_arg(argspec.kwargs, argspec))
-        return args
-
-    def _format_arg(self, arg, argspec):
-        result = arg
-        if argspec.types is not None and arg in argspec.types:
-            type_info = argspec.types[arg]
-            result = '%s: %s' % (result, self._format_type(type_info))
-            if isclass(type_info) and issubclass(type_info, Enum):
-                result = '%s { %s }' % (result, self._format_enum(type_info))
-            default_format = '%s = %s'
-        else:
-            default_format = '%s=%s'
-        if arg in argspec.defaults:
-            result = default_format % (result, unic(argspec.defaults[arg]))
-        return result
-
-    def _format_type(self, type_info):
-        return type_info.__name__ if isclass(type_info) else type_info
-
-    def _format_enum(self, enum):
-        try:
-            members = list(enum.__members__)
-        except AttributeError:  # old enum module
-            members = [attr for attr in dir(enum) if not attr.startswith('_')]
-        while len(members) > 3 and len(' | '.join(members)) > 42:
-            members[-2:] = ['...']
-        return ' | '.join(members)
+            arguments.append(ArgumentDoc(name=argspec.kwargs,
+                                         argument_type='kwargs',
+                                         optional=True))
+        return arguments

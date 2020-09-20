@@ -12,15 +12,22 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+from enum import Enum
+from inspect import isclass
 from itertools import chain
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, Sortable, setter
+from robot.utils import getshortdoc, Sortable, setter, unic
 
 from .writer import LibdocWriter
 from .output import LibdocOutput
+
+try:
+    from enum import Enum
+except ImportError:  # Standard in Py 3.4+ but can be separately installed
+    class Enum(object):
+        pass
 
 
 class LibraryDoc(object):
@@ -97,3 +104,69 @@ class KeywordDoc(Sortable):
     @property
     def _sort_key(self):
         return self.name.lower()
+
+
+ARG_TYPES = {'positional': '',
+             'varargs': '*',
+             'kwonlyargs': '',
+             'kwargs': '**'}
+
+
+class ArgumentDoc(object):
+
+    def __init__(self,
+                 name='',
+                 value_type=None,
+                 default_value=None,
+                 argument_type='positional',
+                 optional=False):
+        self.name = name
+        self.value_type = value_type
+        self.default_value = default_value
+        self.argument_type = self._validate_arg_type(argument_type)
+        self.optional = optional
+
+    def __str__(self):
+        kw_string = ARG_TYPES[self.argument_type] + self.name
+        kw_string += self._format_type()
+        kw_string += self._format_enum_values()
+        kw_string += self._format_default()
+        return kw_string
+
+    def _format_type(self):
+        if not self.value_type:
+            return ''
+        if isclass(self.value_type):
+            return ': {}'.format(self.value_type.__name__)
+        return ': {}'.format(self.value_type)
+
+    def _format_default(self):
+        if self.argument_type in ['varargs', 'kwargs'] or not self.optional:
+            return ''
+        default_str = ' = ' if self.value_type else '='
+        default_str += unic(self.default_value)
+        return default_str
+
+    def _format_enum_values(self):
+        if isclass(self.value_type) and issubclass(self.value_type, Enum):
+            return ' {{ {} }}'.format(self._format_enum(self.value_type))
+        return ''
+
+    @staticmethod
+    def _validate_arg_type(arg_type):
+        if arg_type.lower() not in ARG_TYPES:
+            raise ValueError("Invalid argument_type '{}'."
+                             "Valid values are {}.".
+                             format(arg_type, ", ".join(ARG_TYPES.keys()))
+                             )
+        return arg_type.lower()
+
+    @staticmethod
+    def _format_enum(enum):
+        try:
+            members = list(enum.__members__)
+        except AttributeError:  # old enum module
+            members = [attr for attr in dir(enum) if not attr.startswith('_')]
+        while len(members) > 3 and len(' | '.join(members)) > 42:
+            members[-2:] = ['...']
+        return ' | '.join(members)
