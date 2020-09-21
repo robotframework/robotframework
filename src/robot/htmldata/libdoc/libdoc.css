@@ -13,7 +13,6 @@ body {
     display: flex;
     flex-direction: column;
     background: white;
-    border-right: 1px solid #e0e0e2;;
 }
 
 #shortcuts-container {
@@ -29,7 +28,10 @@ body {
 }
 
 .libdoc-title {
-    padding-left: 0.5rem;
+    padding: 0.5rem;
+    margin: 0.5rem;
+    border: 1px solid #e0e0e2;
+    border-radius: 3px;
     display: flex;
     align-items: center;
     text-decoration: none;
@@ -68,6 +70,21 @@ a:hover, a:active {
 a:hover {
     text-decoration: underline !important;
 }
+
+.keywords-overview {
+    display: flex;
+    flex-direction: column;
+    height: 0;
+    flex: 1;
+    border: 1px solid #e0e0e2;
+    border-radius: 3px;
+    margin: 0.5rem;
+}
+
+.keywords-overview h4 {
+    margin-left: 0.5rem;
+}
+
 .shortcuts {
     font-size: 0.9em;
     overflow: auto;
