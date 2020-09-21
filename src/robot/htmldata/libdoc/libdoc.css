@@ -51,6 +51,93 @@ body {
     z-index: 100;
 }
 
+input.hamburger-menu
+{
+  display: block;
+  width: 40px;
+  height: 32px;
+  position: fixed;
+  top: 20px;
+  right: 13px;
+
+  cursor: pointer;
+
+  opacity: 0; /* hide this */
+  z-index: 2; /* and place it over the hamburger */
+
+  -webkit-touch-callout: none;
+}
+
+/*
+ * Just a quick hamburger
+ */
+span.hamburger-menu
+{
+  width: 33px;
+  height: 4px;
+  margin-bottom: 5px;
+  position: fixed;
+  right: 20px;
+
+  background: #cdcdcd;
+  border-radius: 3px;
+
+  z-index: 1;
+
+  transform-origin: 4px 0px;
+
+  transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
+              background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
+              opacity 0.55s ease;
+}
+
+span.hamburger-menu-1
+{
+    top: 30px;
+    transform-origin: 0 0;
+}
+
+span.hamburger-menu-2
+{
+    top: 40px;
+
+}
+
+span.hamburger-menu-3
+{
+    top: 50px;
+    transform-origin: 0 100%;
+}
+
+/*
+ * Transform all the slices of hamburger
+ * into a crossmark.
+ */
+input.hamburger-menu:checked ~ span.hamburger-menu-1
+{
+  opacity: 1;
+  transform: rotate(45deg) translate(-2px, -1px);
+  background: #232323;
+}
+
+/*
+ * But let's hide the middle one.
+ */
+input.hamburger-menu:checked ~ span.hamburger-menu-2
+{
+  opacity: 0;
+  transform: rotate(0deg) scale(0.2, 0.2);
+}
+
+/*
+ * Ohyeah and the last one should go the other direction
+ */
+input.hamburger-menu:checked ~ span.hamburger-menu-3
+{
+  transform: rotate(-45deg) translate(0, -1px);
+  background: #232323;
+}
+
 @media only screen and (max-width: 640px) {
     .libdoc-overview {
         display: none;
