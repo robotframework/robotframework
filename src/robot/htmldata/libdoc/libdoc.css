@@ -45,6 +45,12 @@ body {
     background: white;
 }
 
+.hamburger-menu {
+    display: none;
+    position: fixed;
+    z-index: 100;
+}
+
 @media only screen and (max-width: 640px) {
     .libdoc-overview {
         display: none;
@@ -59,6 +65,17 @@ body {
     .libdoc-details {
         margin-top: 82px;
         padding-left: 0.5rem;
+    }
+
+    .hamburger-menu {
+        display: block;
+    }
+
+    .hamburger-menu:checked ~ .libdoc-overview {
+        display: block;
+        position: fixed;
+        height: 100vh;
+        width: 100vw;
     }
 }
 
