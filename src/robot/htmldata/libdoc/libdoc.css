@@ -170,11 +170,10 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     background: #f3f3f3;
 }
 
-.libdoc-title > img {
-    padding-top: 5px;
-    padding-left: 8px;
-    height: 16px;
-    width: 16px;
+.libdoc-title > svg {
+    padding-top: 2px;
+    height: 42px;
+    width: 42px;
 }
 
 .metadata {
