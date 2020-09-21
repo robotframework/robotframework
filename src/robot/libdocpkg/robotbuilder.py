@@ -134,7 +134,6 @@ class KeywordDocBuilder(object):
 
     def _get_args(self, argspec):
         """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
-        # ToDo: Snooz: Review By Mikko
         arguments = []
         for arg_name in argspec.positional:
             arguments.append(
@@ -161,9 +160,7 @@ class KeywordDocBuilder(object):
         return arguments
 
     def _get_scalar_arg_doc(self, argspec, arg_name, arg_type):
-        default_value = None
-        if arg_name in argspec.defaults:
-            default_value = argspec.defaults[arg_name]
+        default_value = argspec.defaults.get(arg_name)
         value_type = self._get_value_type(argspec, arg_name)
         return ArgumentDoc(name=arg_name,
                            value_type=value_type,

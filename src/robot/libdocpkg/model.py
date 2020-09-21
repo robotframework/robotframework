@@ -122,7 +122,7 @@ class ArgumentDoc(object):
         self.name = name
         self.value_type = value_type
         self.default_value = default_value
-        self.argument_type = self._validate_arg_type(argument_type)
+        self.argument_type = argument_type
         self.optional = optional
 
     def __str__(self):
@@ -150,15 +150,6 @@ class ArgumentDoc(object):
         if isclass(self.value_type) and issubclass(self.value_type, Enum):
             return ' {{ {} }}'.format(self._format_enum(self.value_type))
         return ''
-
-    @staticmethod
-    def _validate_arg_type(arg_type):
-        if arg_type.lower() not in ARG_TYPES:
-            raise ValueError("Invalid argument_type '{}'."
-                             "Valid values are {}.".
-                             format(arg_type, ", ".join(ARG_TYPES.keys()))
-                             )
-        return arg_type.lower()
 
     @staticmethod
     def _format_enum(enum):
