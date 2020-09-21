@@ -5,9 +5,13 @@ body {
     font-family: system-ui, -apple-system;
 }
 
+.base-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
 .libdoc-overview {
-    position: fixed;
-    top: 0;
     min-width: 300px;
     height: 100%;
     display: flex;
@@ -22,12 +26,14 @@ body {
 }
 
 .libdoc-details {
-    margin-left: 308px;
     padding-right: 0.5rem;
     overflow: auto;
 }
 
 .libdoc-title {
+    position: fixed;
+    width: 266px;
+    height: 66px;
     padding: 0.5rem;
     margin: 0.5rem;
     border: 1px solid #e0e0e2;
@@ -36,6 +42,24 @@ body {
     align-items: center;
     text-decoration: none;
     color: black;
+    background: white;
+}
+
+@media only screen and (max-width: 640px) {
+    .libdoc-overview {
+        display: none;
+    }
+
+    .libdoc-title {
+        width: 100%;
+        padding: 0.5rem;
+        margin: 0;
+    }
+
+    .libdoc-details {
+        margin-top: 88px;
+        padding-left: 0.5rem;
+    }
 }
 
 .libdoc-title:hover {
@@ -78,7 +102,10 @@ a:hover {
     flex: 1;
     border: 1px solid #e0e0e2;
     border-radius: 3px;
-    margin: 0.5rem;
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
+    margin-top: 100px;
+    margin-bottom: 0.5rem;
 }
 
 .keywords-overview h4 {
