@@ -18,3 +18,15 @@ Skipped in Setup
     [Documentation]    SKIP Skipped in setup:\nSetup skip
     [Setup]    Skip     Setup skip
     Pass
+
+Skipped with --SkipOnFailure
+    [Tags]   dynamic-skip
+    [Documentation]    SKIP Test skipped with --SkipOnFailure, original error:\nAssertionError
+    Fail
+
+Failing Test
+    [Documentation]    FAIL AssertionError
+    Fail
+
+Passing Test
+    No Operation

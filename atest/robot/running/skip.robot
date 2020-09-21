@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}    running/skip/
+Suite Setup     Run Tests  --SkipOnFailure dynamic-skip    running/skip/
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -20,3 +20,10 @@ Skip in Suite Setup
 
 Skip in Directory Suite Setup
     Check Test Case    Skip in Nested Suite
+
+Skip with --SkipOnFailure
+    Check Test Case    Skipped with --SkipOnFailure
+
+Using Skip Does Not Affect Passing And Failing Tests
+    Check Test Case    Passing Test
+    Check Test Case    Failing Test

@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import ExecutionFailed, PassExecution, SkipExecution
+from robot.model.tags import TagPatterns
 from robot.utils import html_escape, py2to3, unic
 
 
@@ -135,19 +136,23 @@ class SuiteStatus(_ExecutionStatus):
 
 class TestStatus(_ExecutionStatus):
 
-    def __init__(self, parent, test, skip_on_failure=False):
+    def __init__(self, parent, test, skip_on_failure=None):
         _ExecutionStatus.__init__(self, parent)
         self.exit = parent.exit
-        self.skip_on_failure = skip_on_failure
+        self.skip_on_failure_tags = TagPatterns(skip_on_failure)
         self.skipped = False
+        self.test = test
 
     def test_failed(self, failure):
-        if not self.skip_on_failure:
-            self.failure.test = unic(failure)
-            self.exit.failure_occurred(failure)
+        if self.skip_on_failure_tags and \
+                self.skip_on_failure_tags.match(self.test.tags):
+            self.failure.test = \
+                 ("Test skipped with --SkipOnFailure, original error:\n%s"
+                  % unic(failure))
+            self.skipped = True
         else:
             self.failure.test = unic(failure)
-            self.skipped = True
+            self.exit.failure_occurred(failure)
 
     def test_skipped(self, reason):
         self.skipped = True

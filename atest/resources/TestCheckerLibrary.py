@@ -104,8 +104,9 @@ class TestCheckerLibrary:
                     msg = ("Test '%s' was expected to PASS but it was SKIPPED.\n\n"
                            "Test message:\n%s" % (test.name, test.message))
             else:
-                msg = ("Test '%s' was expected to FAIL but it PASSED.\n\n"
-                       "Expected message:\n%s" % (test.name, test.exp_message))
+                msg = ("Test '%s' was expected to %s but it %sED.\n\n"
+                       "Expected message:\n%s" % (test.name, test.exp_status,
+                                                  test.status, test.exp_message))
             raise AssertionError(msg)
         if test.exp_message == test.message:
             return

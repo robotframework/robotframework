@@ -398,7 +398,7 @@ class RobotSettings(_BaseSettings):
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'ExitOnError'        : ('exitonerror', False),
-                       'SkipOnFailure'      : ('skiponfailure', False),
+                       'SkipOnFailure'      : ('skiponfailure', None),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunEmptySuite'      : ('runemptysuite', False),
