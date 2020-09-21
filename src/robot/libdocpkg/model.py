@@ -19,6 +19,8 @@ import re
 from robot.model import Tags
 from robot.utils import getshortdoc, Sortable, setter, unic
 
+from typing import _SpecialForm, _GenericAlias
+
 from .writer import LibdocWriter
 from .output import LibdocOutput
 
@@ -135,16 +137,39 @@ class ArgumentDoc(object):
     def _format_type(self):
         if not self.value_type:
             return ''
+        return ': {}'.format(self.get_value_type_str())
+
+    def get_value_type_str(self):
+        if isinstance(self.value_type, _SpecialForm):  # ToDo This is ugly
+            return self.value_type.__reduce__()
+        if isinstance(self.value_type, _GenericAlias):  # ToDo This is ugly and not proper
+            return self.value_type.__repr__()
         if isclass(self.value_type):
-            return ': {}'.format(self.value_type.__name__)
-        return ': {}'.format(self.value_type)
+            return self.value_type.__name__
+        return self.value_type
 
     def _format_default(self):
         if self.argument_type in ['varargs', 'kwargs'] or not self.optional:
             return ''
         default_str = ' = ' if self.value_type else '='
-        default_str += unic(self.default_value)
+        default_str += str(self.get_storable_default())
         return default_str
+
+    def get_storable_default(self):  # Fixme: ugly experimental code here
+        if isinstance(self.default_value, (str, int, float, type(None), bool)):  # ToDo check python2 types
+            return self.default_value
+        if isinstance(self.default_value, Enum):
+            return self.default_value.name  # ToDo imho too much spoecial handling of specific cases
+        return unic(self.default_value)  # Todo: Mikko The Great  primitives should be stored as is... not as string
+
+    def get_default_as_robot_repr(self):  # Fixme: ugly experimental code here
+        if isinstance(self.default_value, (int, float, bool, type(None))):
+            return '${{{}}}'.format(str(self.default_value).upper())
+        if self.default_value == '':
+            return '${EMPTY}'
+        if isinstance(self.default_value, Enum):
+            return self.default_value.name  # ToDo imho too much spoecial handling of specific cases
+        return unic(self.default_value)
 
     def _format_enum_values(self):
         if isclass(self.value_type) and issubclass(self.value_type, Enum):

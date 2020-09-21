@@ -44,6 +44,7 @@ class JsonDumper(object):
         self._output = output
         self._dumpers = (MappingDumper(self),
                          IntegerDumper(self),
+                         FloatDumper(self),
                          TupleListDumper(self),
                          StringDumper(self),
                          NoneDumper(self),
@@ -87,6 +88,14 @@ class StringDumper(_Dumper):
             if search in string:
                 string = string.replace(search, replace)
         return string
+
+
+class FloatDumper(_Dumper):
+    # Handles also bool
+    _handled_types = float
+
+    def dump(self, data, mapping):
+        self._write(str(data).lower())
 
 
 class IntegerDumper(_Dumper):

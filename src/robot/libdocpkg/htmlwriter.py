@@ -14,6 +14,8 @@
 #  limitations under the License.
 
 import re
+from typing import Union
+
 try:
     from urllib import quote
 except ImportError:
@@ -21,7 +23,7 @@ except ImportError:
 
 from robot.errors import DataError
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
-from robot.utils import get_timestamp, html_escape, html_format, NormalizedDict
+from robot.utils import get_timestamp, html_escape, html_format, NormalizedDict, unic
 from robot.utils.htmlformatters import HeaderFormatter
 
 
@@ -74,11 +76,30 @@ class JsonConverter(object):
         return {
             'name': kw.name,
             'args': [str(arg) for arg in kw.args],
+            'argsObj': self._get_arguments(kw.args),
             'doc': self._doc_formatter.html(kw.doc),
             'shortdoc': ' '.join(kw.shortdoc.splitlines()),
             'tags': tuple(kw.tags),
             'matched': True
         }
+
+    def _get_arguments(self, arguments):
+        return [self._convert_argument(arg) for arg in arguments]
+
+    @staticmethod
+    def _convert_argument(argument):
+        try:
+            return {
+                'name': argument.name,
+                'value_type': argument.get_value_type_str(),
+                'default_value': argument.get_storable_default(),
+                'argument_type': argument.argument_type,
+                'optional':  argument.optional,
+            }
+        except Exception as e:
+            print(e)
+            import traceback
+            print(traceback.format_exc())
 
 
 class DocFormatter(object):
