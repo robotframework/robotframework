@@ -35,6 +35,9 @@
 <script type="text/javascript">
     // Not using jQuery here for speed and to support ancient browsers.
     document.getElementById('javascript-disabled').style.display = 'none';
+    window.addEventListener("hashchange", () => {
+      document.getElementsByClassName("hamburger-menu")[0].checked = false;
+    }, false);
 </script>
 
 <script type="text/javascript">
