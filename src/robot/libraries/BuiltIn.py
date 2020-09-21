@@ -1864,7 +1864,7 @@ class _RunKeyword(_BuiltInBase):
             if err.dont_continue:
                 raise
 
-            logger.warn(err, 'WARN')
+            logger.warn(err)
             return 'FAIL', unic(err)
 
     @run_keyword_variant(resolve=1)
