@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections.abc import Mapping, MutableMapping, Sequence
+from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from collections import UserString
 from io import IOBase
 
@@ -53,14 +53,7 @@ def is_pathlike(item):
 def is_list_like(item):
     if isinstance(item, (str, bytes, bytearray, UserString, IOBase)):
         return False
-    try:
-        iter(item)
-    except RERAISED_EXCEPTIONS:
-        raise
-    except:
-        return False
-    else:
-        return True
+    return isinstance(item, Iterable)
 
 
 def is_dict_like(item):

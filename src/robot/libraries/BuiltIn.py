@@ -21,6 +21,7 @@ import re
 import time
 
 from robot.api import logger
+from robot.api.deco import keyword
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           PassExecution, ReturnFromKeyword, VariableError)
@@ -1299,6 +1300,7 @@ class _Variables(_BuiltInBase):
         """
         return self._variables.as_dict(decoration=is_falsy(no_decoration))
 
+    @keyword(types=None)
     @run_keyword_variant(resolve=0)
     def get_variable_value(self, name, default=None):
         """Returns variable value or ``default`` if the variable does not exist.
@@ -2223,33 +2225,13 @@ class _RunKeyword(_BuiltInBase):
 
     @run_keyword_variant(resolve=1)
     def run_keyword_if_all_critical_tests_passed(self, name, *args):
-        """Runs the given keyword with the given arguments, if all critical tests passed.
-
-        This keyword can only be used in suite teardown. Trying to use it in
-        any other place will result in an error.
-
-        Otherwise, this keyword works exactly like `Run Keyword`, see its
-        documentation for more details.
-        """
-        suite = self._get_suite_in_teardown('Run Keyword If '
-                                            'All Critical Tests Passed')
-        if suite.statistics.critical.failed == 0:
-            return self.run_keyword(name, *args)
+        """*DEPRECATED.* Use `BuiltIn.Run Keyword If All Tests Passed` instead."""
+        self.run_keyword_if_all_tests_passed(name, args)
 
     @run_keyword_variant(resolve=1)
     def run_keyword_if_any_critical_tests_failed(self, name, *args):
-        """Runs the given keyword with the given arguments, if any critical tests failed.
-
-        This keyword can only be used in a suite teardown. Trying to use it
-        anywhere else results in an error.
-
-        Otherwise, this keyword works exactly like `Run Keyword`, see its
-        documentation for more details.
-        """
-        suite = self._get_suite_in_teardown('Run Keyword If '
-                                            'Any Critical Tests Failed')
-        if suite.statistics.critical.failed > 0:
-            return self.run_keyword(name, *args)
+        """*DEPRECATED.* Use `BuiltIn.Run Keyword If Any Tests Failed` instead."""
+        self.run_keyword_if_any_tests_failed(name, args)
 
     @run_keyword_variant(resolve=1)
     def run_keyword_if_all_tests_passed(self, name, *args):

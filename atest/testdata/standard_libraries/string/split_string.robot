@@ -14,6 +14,10 @@ Split String With Longer Separator
     ${result} =    Split String    1abc2abc3    abc
     Result Should Contain Items In Given Order    ${result}    1    2    3
 
+Split String With none As Separator
+    ${result} =    Split String    1none2none3    none
+    Result Should Contain Items In Given Order    ${result}    1    2    3
+
 Split String With Whitespaces and Separator Is None
     ${result} =    Split String    ${WHITE SPACES}
     Result Should Contain Items In Given Order    ${result}    hello    world    again
@@ -48,6 +52,10 @@ Split String From Right
 
 Split String From Right With Longer Separator
     ${result} =    Split String From Right    1abc2abc3    abc
+    Result Should Contain Items In Given Order    ${result}    1    2    3
+
+Split String From Right With none As Separator
+    ${result} =    Split String From Right    1none2none3    none
     Result Should Contain Items In Given Order    ${result}    1    2    3
 
 Split String From Right With Whitespaces and Separator Is None

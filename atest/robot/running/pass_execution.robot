@@ -143,8 +143,7 @@ Pass Execution If with multiple variables
 
 Statuses should be correct when running tests
     Stdout Should Contain    SEPARATOR=\n
-    ...    34 critical tests, 20 passed, 14 failed
-    ...    34 tests total, 20 passed, 14 failed
+    ...    34 tests, 20 passed, 14 failed
 
 Passes suite setup and teardown and can modify tags in former
     Run Tests    ${EMPTY}    running/pass_execution_in_suite_setup_and_teardown.robot

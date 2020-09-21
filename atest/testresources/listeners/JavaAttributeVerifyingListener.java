@@ -46,12 +46,12 @@ public class JavaAttributeVerifyingListener {
 
     public void startTest(String name, Map attrs) {
         verifyAttributes("START TEST", attrs,
-                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "critical", "template", "lineno"});
+                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "template", "lineno"});
     }
 
     public void endTest(String name, Map attrs) {
         verifyAttributes("END TEST", attrs,
-                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "critical", "template", "lineno", "endtime", "elapsedtime", "status", "message"});
+                         new String[] {"id", "doc", "starttime", "longname", "origname", "tags", "template", "lineno", "endtime", "elapsedtime", "status", "message"});
     }
 
     public void startKeyword(String name, Map attrs) {

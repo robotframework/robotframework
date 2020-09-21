@@ -24,6 +24,7 @@ import time
 
 from robot.version import get_version
 from robot.api import logger
+from robot.api.deco import keyword
 from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          get_env_var, get_env_vars, get_time, is_truthy,
                          is_unicode, normpath, parse_time, plural_or_not,
@@ -931,6 +932,7 @@ class OperatingSystem(object):
 
     # Environment Variables
 
+    @keyword(types=None)
     def get_environment_variable(self, name, default=None):
         """Returns the value of an environment variable with the given name.
 

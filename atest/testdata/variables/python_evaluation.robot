@@ -54,9 +54,10 @@ Inline variables
 
 Automatic module import
     ${{os.sep}}                                 ${/}
-    ${{robot.__version__.split('.')[0]}}        3
     ${{round(math.pi, 2)}}                      ${3.14}
     ${{json.dumps([1, None, 'kolme'])}}         [1, null, "kolme"]
+    ${{robot.__version__.split('.')[0] in ('3', '4', '5')}}
+    ...                                         ${True}
 
 Module imports are case-sensitive
     [Documentation]    FAIL

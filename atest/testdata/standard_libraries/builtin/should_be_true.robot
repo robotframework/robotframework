@@ -37,7 +37,7 @@ Should Not Be True with invalid expression
 Should (Not) Be True automatically imports modules
     Should Be True    os.pathsep == '${:}'
     Should Be True    math.pi > 3.14
-    Should Be True    robot.__version__[0] == '3'
+    Should Be True    robot.__version__[0] in ('3', '4', '5')
     Should Not Be True    os.sep == 'os.sep'
     Should Not Be True    sys.platform == 'hurd'    # let's see when this starts failing
 

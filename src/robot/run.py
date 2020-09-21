@@ -425,6 +425,8 @@ class RobotFramework(Application):
     def main(self, datasources, **options):
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
+        if settings['XUnitSkipNonCritical']:
+            LOGGER.warn("Command line option --xunitskipnoncritical has been deprecated.")
         LOGGER.info('Settings:\n%s' % unic(settings))
         builder = TestSuiteBuilder(settings['SuiteNames'],
                                    included_extensions=settings.extension,
