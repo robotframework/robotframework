@@ -36,8 +36,6 @@ body {
     height: 66px;
     padding: 0.5rem;
     margin: 0.5rem;
-    border: 1px solid #e0e0e2;
-    border-radius: 3px;
     display: flex;
     align-items: center;
     text-decoration: none;
@@ -147,6 +145,7 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
         width: 100%;
         padding: 0.5rem;
         margin: 0;
+        border-bottom: 1px solid #e0e0e2;
     }
 
     .libdoc-details {
