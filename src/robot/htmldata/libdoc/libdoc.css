@@ -169,10 +169,6 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     }
 }
 
-.libdoc-title:hover {
-    background: #f3f3f3;
-}
-
 .libdoc-title > svg {
     padding-top: 2px;
     height: 42px;
@@ -324,6 +320,7 @@ h4 {
     margin-bottom: 0.5rem;
     display: flex;
     flex-direction: column;
+    scroll-margin-top: 100px;
 }
 
 .keyword-content {
