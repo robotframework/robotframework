@@ -56,7 +56,7 @@
         }
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
-        params = util.parseQueryString(window.location.search.slice(1));
+        const params = util.parseQueryString(window.location.search.slice(1));
         if ("tag" in params) {
             tagSearch(params["tag"], window.location.hash);
         }
@@ -121,7 +121,7 @@
         if (libdoc.contains_tags) {
             renderTemplate('tags-shortcuts', libdoc);
         }
-        var ending = matchCount !== 1 ? 's.' : '.';
+        const ending = matchCount !== 1 ? 's.' : '.';
         $('#match-count').show().text(matchCount + ' matched keyword' + ending);
         $('#altogether-count').hide();
         if (matchCount === 0)
@@ -129,8 +129,8 @@
     }
 
     function highlightMatches(string, include) {
-        var shortcuts = $('#shortcuts-container').find('.match');
-        var keywords = $('#keywords-container').find('.match');
+        const shortcuts = $('#shortcuts-container').find('.match');
+        const keywords = $('#keywords-container').find('.match');
         if (include.name) {
             shortcuts.highlight(string);
             keywords.find('.kw').highlight(string);
@@ -143,7 +143,7 @@
         }
         if (include.tags) {
             var matches = keywords.find('.tags').find('a').add(
-                    $('#tags-container').find('a'));
+                    $('#tags-shortcuts-container').find('a'));
             if (include.tagsExact) {
                 matches = matches.filter(function (index, tag) {
                     return $(tag).text().toUpperCase() === string.toUpperCase();
@@ -187,8 +187,8 @@
     }
 
     function setMatchVisibility() {
-        var kws = $('#keywords-container').find('.keyword-container');
-        var hide = $('#hide-unmatched').prop('checked');
+        const kws = $('#keywords-container').find('.keyword-container');
+        const hide = $('#hide-unmatched').prop('checked');
         kws.toggleClass('hide-unmatched', hide);
     }
 
@@ -221,7 +221,6 @@
           <div class="doc">{{html doc}}</div>
       </div>
       <div id="importing-container"></div>
-      <div id="tags-container"></div>
       <div id="keywords-container"></div>
       <div id="footer-container"></div>
     </div>
@@ -291,8 +290,8 @@
       </div>
       {{if all_tags.length > 0}}
       <h4>Tags</h4>
-      <ul class="shortcuts" id="tags-shortcuts-container">
-      </ul>
+      <select id="tags-shortcuts-container" onchange="location = this.value;">
+      </select>
       {{/if}}
       <h4>Keywords</h4>
       <ul class="shortcuts" id="keyword-shortcuts-container">
@@ -323,11 +322,10 @@
 
 
 <script type="text/x-jquery-tmpl" id="tags-shortcuts-template">
+  <option value="">- Show all tags -</option>
   {{each all_tags}}
-    <li>
-    <a href="javascript:tagSearch('${$value}')"
-           title="Show keywords with this tag">${$value}</a>
-    </li>
+    <option value="javascript:tagSearch('${$value}')">${$value}</a>
+    </option>
   {{/each}}
 </script>
 
