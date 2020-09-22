@@ -24,6 +24,16 @@ Skipped with --SkipOnFailure
     [Documentation]    SKIP Test skipped with --SkipOnFailure, original error:\nAssertionError
     Fail
 
+--NonCritical Is an Alias for --SkipOnFailure
+    [Tags]   non-crit
+    [Documentation]    SKIP Test skipped with --SkipOnFailure, original error:\nAssertionError
+    Fail
+
+--Critical can be used to override --SkipOnFailure
+    [Tags]   dynamic-skip    crit
+    [Documentation]    FAIL AssertionError
+    Fail
+
 Failing Test
     [Documentation]    FAIL AssertionError
     Fail

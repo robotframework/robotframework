@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --SkipOnFailure dynamic-skip    running/skip/
+Suite Setup     Run Tests  --SkipOnFailure dynamic-skip --noncritical non-crit --critical crit   running/skip/
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -27,3 +27,9 @@ Skip with --SkipOnFailure
 Using Skip Does Not Affect Passing And Failing Tests
     Check Test Case    Passing Test
     Check Test Case    Failing Test
+
+--NonCritical Is an Alias for --SkipOnFailure
+    Check Test Case    --NonCritical Is an Alias for --SkipOnFailure
+
+--Critical can be used to override --SkipOnFailure
+    Check Test Case    --Critical can be used to override --SkipOnFailure

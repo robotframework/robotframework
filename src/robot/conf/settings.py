@@ -486,7 +486,7 @@ class RobotSettings(_BaseSettings):
 
     @property
     def skip_on_failure(self):
-        return self['SkipOnFailure']
+        return (self['SkipOnFailure'] or []) + (self['NonCritical'] or [])
 
     @property
     def skip_teardown_on_exit(self):

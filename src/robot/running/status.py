@@ -136,16 +136,15 @@ class SuiteStatus(_ExecutionStatus):
 
 class TestStatus(_ExecutionStatus):
 
-    def __init__(self, parent, test, skip_on_failure=None):
+    def __init__(self, parent, test, skip_on_failure=None, critical_tags=None):
         _ExecutionStatus.__init__(self, parent)
         self.exit = parent.exit
-        self.skip_on_failure_tags = TagPatterns(skip_on_failure)
         self.skipped = False
-        self.test = test
+        self._skip_on_failure = self._should_skip_on_failure(
+            test, skip_on_failure, critical_tags)
 
     def test_failed(self, failure):
-        if self.skip_on_failure_tags and \
-                self.skip_on_failure_tags.match(self.test.tags):
+        if self._skip_on_failure:
             self.failure.test = \
                  ("Test skipped with --SkipOnFailure, original error:\n%s"
                   % unic(failure))
@@ -153,6 +152,14 @@ class TestStatus(_ExecutionStatus):
         else:
             self.failure.test = unic(failure)
             self.exit.failure_occurred(failure)
+
+    def _should_skip_on_failure(self, test, skip_on_failure_tags,
+                                critical_tags):
+        critical_pattern = TagPatterns(critical_tags)
+        if critical_pattern and critical_pattern.match(test.tags):
+            return False
+        skip_on_fail_pattern = TagPatterns(skip_on_failure_tags)
+        return skip_on_fail_pattern and skip_on_fail_pattern.match(test.tags)
 
     def test_skipped(self, reason):
         self.skipped = True
