@@ -62,7 +62,6 @@
             tagSearch(params["tag"], window.location.hash);
         }
         scrollToHash();
-        $(document).bind('keydown', handleKeyDown);
     });
 
     function parseTemplates() {
@@ -94,15 +93,6 @@
         var compact = !$('.' + name + '-list-toggle .switch').prop('checked');
         $('.' + name + '-list-separator').html(compact ? '&middot;' : '<br>');
         storage.set(name + '-list-style', compact ? 'compact' : 'expanded');
-    }
-
-    function handleKeyDown(event) {
-        event = event || window.event;
-        var keyCode = event.keyCode || event.which;
-        if (keyCode === 27)  // esc
-            setTimeout(closeSearch, 0);
-        if (keyCode === 83 && $('#search').is(':hidden'))  // s
-            setTimeout(openSearch, 0);
     }
 
     function scrollToHash() {
