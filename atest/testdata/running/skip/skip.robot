@@ -19,8 +19,13 @@ Skipped in Setup
     [Setup]    Skip     Setup skip
     Pass
 
+Skipped with --skip
+    [Tags]   skip-this
+    [Documentation]    SKIP Test skipped with --skip command line option.
+    Fail
+
 Skipped with --SkipOnFailure
-    [Tags]   dynamic-skip
+    [Tags]   skip-on-failure
     [Documentation]    SKIP Test skipped with --SkipOnFailure, original error:\nAssertionError
     Fail
 

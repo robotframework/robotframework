@@ -398,6 +398,7 @@ class RobotSettings(_BaseSettings):
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'ExitOnError'        : ('exitonerror', False),
+                       'Skip'               : ('skip', None),
                        'SkipOnFailure'      : ('skiponfailure', None),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
@@ -483,6 +484,10 @@ class RobotSettings(_BaseSettings):
     @property
     def exit_on_error(self):
         return self['ExitOnError']
+
+    @property
+    def skipped_tags(self):
+        return self['Skip']
 
     @property
     def skip_on_failure(self):

@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import ExecutionStatus, DataError, PassExecution, SkipExecution
-from robot.model import SuiteVisitor
+from robot.model import SuiteVisitor, TagPatterns
 from robot.result import TestSuite, Result
 from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic
 from robot.variables import VariableScopes
@@ -38,6 +38,7 @@ class Runner(SuiteVisitor):
         self._suite = None
         self._suite_status = None
         self._executed_tests = None
+        self._skipped_tags = TagPatterns(settings.skipped_tags)
 
     @property
     def _context(self):
@@ -122,6 +123,8 @@ class Runner(SuiteVisitor):
         if status.exit:
             self._add_exit_combine()
             result.tags.add('robot:exit')
+        if self._skipped_tags.match(test.tags):
+            status.test_skipped("Test skipped with --skip command line option.")
         if not status.failures and not test.name:
             status.test_failed('Test case name cannot be empty.')
         if not status.failures and not test.keywords.normal:

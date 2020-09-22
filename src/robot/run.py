@@ -149,8 +149,10 @@ Options
  -n --noncritical tag *   Tests having the given tag are not critical even if
                           they have a tag set with --critical. Tag can be
                           a pattern.
-    --skiponfailure tag *  When a test fails, it's status becomes 'SKIP'
-                          instead of 'FAIL'.
+    --skip tag *          Tests having given tag will be skipped.Tag can be
+                          a pattern.
+    --skiponfailure tag *  Tests having given tag will have status 'SKIP'
+                          instead of 'FAIL' if they fail. Tag can be a pattern.
  -v --variable name:value *  Set variables in the test data. Only scalar
                           variables with string value are supported and name is
                           given without `${}`. See --variablefile for a more
