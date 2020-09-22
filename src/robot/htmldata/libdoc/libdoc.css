@@ -45,6 +45,7 @@ body {
 }
 
 .libdoc-details {
+    margin-top: 100px;
     padding-right: 0.5rem;
     overflow: auto;
 }
@@ -168,7 +169,6 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     }
 
     .libdoc-details {
-        margin-top: 82px;
         padding-left: 0.5rem;
     }
 
