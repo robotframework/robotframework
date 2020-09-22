@@ -229,7 +229,8 @@
       document.getElementsByClassName('search-input')[0].value = '';
     }
 
-    function searching() {
+    function searching(event) {
+      event.preventDefault();
       const value = document.getElementsByClassName('search-input')[0].value;
       const include = getIncludesAndDisableIfOnlyOneLeft();
       if (value) {
@@ -381,7 +382,7 @@
     <div class="keywords-overview">
       <h4>Search</h4>
       <div class="keyword-search-box">
-        <input type="text" class="search-input" onchange="searching()"/>
+        <input type="text" class="search-input" onchange="searching(e)"/>
         <button class="clear-search" onclick="clearSearch()">&#10005;</button>
       </div>
       <h4>Keywords</h4>
