@@ -155,6 +155,12 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
   background: #232323;
 }
 
+.libdoc-title > svg {
+    padding-top: 2px;
+    height: 42px;
+    width: 42px;
+}
+
 @media only screen and (max-width: 640px) {
     .libdoc-overview {
         display: none;
@@ -166,6 +172,10 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
         margin: 0;
         border-bottom: 1px solid #e0e0e2;
         background: white;
+    }
+
+    .libdoc-title > svg {
+        margin-right: 60px;
     }
 
     .libdoc-details {
@@ -186,12 +196,7 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
         height: 100vh;
         width: 100vw;
     }
-}
 
-.libdoc-title > svg {
-    padding-top: 2px;
-    height: 42px;
-    width: 42px;
 }
 
 .metadata {
