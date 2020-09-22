@@ -114,44 +114,6 @@
         document.getElementById('Shortcuts').scrollIntoView();
     }
 
-    function doSearch() {
-        var string = $('#search-string').val();
-        var include = getIncludesAndDisableIfOnlyOneLeft();
-        if (string) {
-            markMatches(string, include);
-            highlightMatches(string, include);
-            setMatchVisibility();
-        } else {
-            resetKeywords();
-        }
-    }
-
-    function getIncludesAndDisableIfOnlyOneLeft() {
-        var name = $('#include-name');
-        var args = $('#include-args');
-        var doc = $('#include-doc');
-        var tags = $('#include-tags');
-        var include = {name: name.prop('checked'),
-                       args: args.prop('checked'),
-                       doc: doc.prop('checked'),
-                       tags: !!tags.prop('checked')};
-        if ((!include.name) && (!include.args) && (!include.doc)) {
-            tags.prop('disabled', true);
-        } else if ((!include.name) && (!include.args) && (!include.tags)) {
-            doc.prop('disabled', true);
-        } else if ((!include.name) && (!include.doc) && (!include.tags)) {
-            args.prop('disabled', true);
-        } else if ((!include.args) && (!include.doc) && (!include.tags)) {
-            name.prop('disabled', true);
-        } else {
-            name.prop('disabled', false);
-            args.prop('disabled', false);
-            doc.prop('disabled', false);
-            tags.prop('disabled', false);
-        }
-        return include;
-    }
-
     function markMatches(pattern, include) {
         pattern = util.regexpEscape(pattern);
         if (include.tagsExact) {
@@ -208,24 +170,6 @@
         }
     }
 
-    function openSearch() {
-        $('#search').show();
-        $('#open-search').hide();
-        $('#search-string').focus().select();
-        $(document).scrollTop($("#Shortcuts").offset().top);
-    }
-
-    function closeSearch() {
-        $('#search').hide();
-        $('#open-search').show();
-    }
-
-    function resetSearch() {
-        $('#search-string').val('');
-        $('#search input:checkbox').prop({'checked': true, 'disabled': false});
-        resetKeywords();
-    }
-
     function clearSearch() {
       document.getElementsByClassName('search-input')[0].value = '';
       resetKeywords();
@@ -233,11 +177,15 @@
 
     function searching() {
       const value = document.getElementsByClassName('search-input')[0].value;
-      const include = getIncludesAndDisableIfOnlyOneLeft();
+      const include = {name: true,
+                       args: true,
+                       doc: true,
+                       tags: true};
       if (value) {
           markMatches(value, include);
           highlightMatches(value, include);
           setMatchVisibility();
+          document.getElementById('keyword-shortcuts-container').scrollTop = 0;
       } else {
           resetKeywords();
       }
@@ -293,34 +241,6 @@
       <div id="tags-container"></div>
       <div id="keywords-container"></div>
       <div id="footer-container"></div>
-      <form id="search" action="javascript:void(0)">
-          <fieldset>
-              <legend id="search-title">Search keywords</legend>
-              <input type="text" id="search-string" onkeyup="delay(doSearch, 500)">
-              <fieldset>
-                  <legend>Search from</legend>
-                  <input type="checkbox" id="include-name" onclick="doSearch()" checked>
-                  <label for="include-name">Name</label>
-                  <input type="checkbox" id="include-args" onclick="doSearch()" checked>
-                  <label for="include-args">Arguments</label>
-                  <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
-                  <label for="include-doc">Documentation</label>
-                  {{if libdoc.contains_tags}}
-                  <input type="checkbox" id="include-tags" onclick="doSearch()" checked>
-                  <label for="include-tags">Tags</label>
-                  {{/if}}
-              </fieldset>
-              <input type="checkbox" id="hide-unmatched" onclick="setMatchVisibility()" checked>
-              <label for="hide-unmatched">Hide unmatched keywords</label>
-              <div id="search-buttons">
-                  <input type="button" value="Reset" onclick="resetSearch()"
-                         title="Reset search">
-                  <input type="button" value="Close" onclick="closeSearch()"
-                         title="Close search (shortcut: <Esc>)">
-              </div>
-          </fieldset>
-      </form>
-      <div id="open-search" onclick="openSearch()" title="Search keywords (shortcut: s)"></div>
     </div>
     <a class="libdoc-title" href="#library-documentation-top">
           <h1>${name}</h1>
@@ -394,11 +314,22 @@
 
 <script type="text/x-jquery-tmpl" id="keyword-shortcuts-template">
     {{each keywords}}
+    {{if $value.matched}}
     <li>
     <a href="#${encodeURIComponent($value.name)}"
-       class="{{if $value.matched === false}}no-{{/if}}match"
+       class="match"
        title="${$value.shortdoc}">${$value.name}</a>
     </li>
+    {{/if}}
+    {{/each}}
+    {{each keywords}}
+    {{if $value.matched == false}}
+    <li>
+    <a href="#${encodeURIComponent($value.name)}"
+       class="no-match"
+       title="${$value.shortdoc}">${$value.name}</a>
+    </li>
+    {{/if}}
     {{/each}}
 </script>
 
