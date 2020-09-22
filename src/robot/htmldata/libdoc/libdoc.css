@@ -296,7 +296,6 @@ input.switch:checked + .slider::before {
     flex-direction: column;
     margin: 0.3em 0;
     width: 100%;
-    width: 100%;
 }
 .kw-overview {
     display: flex;

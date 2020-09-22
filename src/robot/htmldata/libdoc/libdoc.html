@@ -225,6 +225,22 @@
         resetKeywords();
     }
 
+    function clearSearch() {
+      document.getElementsByClassName('search-input')[0].value = '';
+    }
+
+    function searching() {
+      const value = document.getElementsByClassName('search-input')[0].value;
+      const include = getIncludesAndDisableIfOnlyOneLeft();
+      if (value) {
+          markMatches(value, include);
+          highlightMatches(value, include);
+          setMatchVisibility();
+      } else {
+          resetKeywords();
+      }
+    }
+
     function resetKeywords() {
         renderTemplate('shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
@@ -365,7 +381,7 @@
     <div class="keywords-overview">
       <h4>Search</h4>
       <div class="keyword-search-box">
-        <input type="text" class="search-input"/>
+        <input type="text" class="search-input" onchange="searching()"/>
         <button class="clear-search" onclick="clearSearch()">&#10005;</button>
       </div>
       <h4>Keywords</h4>
