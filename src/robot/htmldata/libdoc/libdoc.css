@@ -51,17 +51,17 @@ body {
 
 input.hamburger-menu
 {
-  display: block;
-  width: 40px;
-  height: 32px;
+  display: none;
+  width: 67px;
+  height: 76px;
   position: fixed;
-  top: 20px;
-  right: 13px;
+  top: 0;
+  right: 0;
 
   cursor: pointer;
 
-  opacity: 0; /* hide this */
-  z-index: 2; /* and place it over the hamburger */
+  opacity: 0;
+  z-index: 2;
 
   -webkit-touch-callout: none;
 }
@@ -82,11 +82,11 @@ span.hamburger-menu
 
   z-index: 1;
 
-  transform-origin: 4px 0px;
+  transform-origin: 4px 0;
 
-  transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
-              background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
-              opacity 0.55s ease;
+  transition: transform 0.3s cubic-bezier(0.77,0.2,0.05,1.0),
+              background 0.3s cubic-bezier(0.77,0.2,0.05,1.0),
+              opacity 0.35s ease;
 }
 
 span.hamburger-menu-1
@@ -151,6 +151,10 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     .libdoc-details {
         margin-top: 82px;
         padding-left: 0.5rem;
+    }
+
+    input.hamburger-menu {
+        display: block;
     }
 
     .hamburger-menu {
