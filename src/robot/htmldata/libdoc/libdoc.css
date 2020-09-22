@@ -239,6 +239,7 @@ a:hover {
     list-style: none;
     padding-left: 0;
     margin: 0;
+    flex: 1;
 }
 
 .shortcuts a {
@@ -294,6 +295,7 @@ input.switch:checked + .slider::before {
     display: flex;
     flex-direction: column;
     margin: 0.3em 0;
+    width: 100%;
     width: 100%;
 }
 .kw-overview {
