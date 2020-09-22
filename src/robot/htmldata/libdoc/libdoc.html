@@ -51,10 +51,8 @@
         }
         renderTemplate('shortcuts', libdoc);
         renderTemplate('keyword-shortcuts', libdoc);
-        initShortcutListStyle('shortcut', libdoc.keywords);
         if (libdoc.contains_tags) {
-            renderTemplate('tags', libdoc);
-            initShortcutListStyle('tag', libdoc.all_tags);
+            renderTemplate('tags-shortcuts', libdoc);
         }
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
@@ -82,20 +80,6 @@
         $.tmpl(name + '-template', arguments).appendTo(container);
     }
 
-    function initShortcutListStyle(name, items) {
-        var style = storage.get(name + '-list-style', 'compact');
-        if (style !== 'compact' && items.length > 1) {
-            $('.' + name + '-list-separator').html('<br>');
-            $('.' + name + '-list-toggle .switch').prop('checked', true);
-        }
-    }
-
-    function setShortcutListStyle(name) {
-        var compact = !$('.' + name + '-list-toggle .switch').prop('checked');
-        $('.' + name + '-list-separator').html(compact ? '&middot;' : '<br>');
-        storage.set(name + '-list-style', compact ? 'compact' : 'expanded');
-    }
-
     function scrollToHash() {
         if (window.location.hash) {
             var hash = window.location.hash.substring(1).replace('+', ' ');
@@ -111,7 +95,6 @@
         highlightMatches(tag, include);
         $('#keywords-container').find('.keyword-container').addClass('hide-unmatched');
         history.replaceState && history.replaceState(null, '', url);
-        document.getElementById('Shortcuts').scrollIntoView();
     }
 
     function markMatches(pattern, include) {
@@ -136,7 +119,7 @@
         renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
         if (libdoc.contains_tags) {
-            renderTemplate('tags', libdoc);
+            renderTemplate('tags-shortcuts', libdoc);
         }
         var ending = matchCount !== 1 ? 's.' : '.';
         $('#match-count').show().text(matchCount + ' matched keyword' + ending);
@@ -306,6 +289,11 @@
         <input type="text" class="search-input" onkeyup="delay(searching, 500)"/>
         <button class="clear-search" onclick="clearSearch()">&#10005;</button>
       </div>
+      {{if all_tags.length > 0}}
+      <h4>Tags</h4>
+      <ul class="shortcuts" id="tags-shortcuts-container">
+      </ul>
+      {{/if}}
       <h4>Keywords</h4>
       <ul class="shortcuts" id="keyword-shortcuts-container">
       </ul>
@@ -334,27 +322,13 @@
 </script>
 
 
-<script type="text/x-jquery-tmpl" id="tags-template">
-    <h2 id="Tags">Tags</h2>
-    {{if all_tags.length > 1}}
-    <div class="tag-list-toggle">
-        <b>List style:</b>&nbsp; Compact
-        <label title="Switch between compact list and expanded list">
-            <input type="checkbox" class="switch" onclick="setShortcutListStyle('tag');">
-            <span class="slider"></span>
-        </label>
-        Expanded
-    </div>
-    {{/if}}
-    <div class='tag-shortcuts'>
-        {{each all_tags}}
-        <a href="javascript:tagSearch('${$value}')"
+<script type="text/x-jquery-tmpl" id="tags-shortcuts-template">
+  {{each all_tags}}
+    <li>
+    <a href="javascript:tagSearch('${$value}')"
            title="Show keywords with this tag">${$value}</a>
-        <span class="tag-list-separator">&middot;</span>
-        {{/each}}
-        <a href="javascript:resetKeywords()" class="normal-first-letter"
-           title="Show all keywords">[Reset]</a>
-    </div>
+    </li>
+  {{/each}}
 </script>
 
 <script type="text/x-jquery-tmpl" id="keywords-template">
