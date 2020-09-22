@@ -229,8 +229,7 @@
       document.getElementsByClassName('search-input')[0].value = '';
     }
 
-    function searching(event) {
-      event.preventDefault();
+    function searching() {
       const value = document.getElementsByClassName('search-input')[0].value;
       const include = getIncludesAndDisableIfOnlyOneLeft();
       if (value) {
