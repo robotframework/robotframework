@@ -45,7 +45,7 @@ class TestSuiteStats(unittest.TestCase):
 
 class TestSuiteStatus(unittest.TestCase):
 
-    def test_suite_status_is_passed_by_default(self):
+    def test_suite_status_is_pass_by_default(self):
         assert_equal(TestSuite().status, 'PASS')
 
     def test_suite_status_is_failed_if_failed_test(self):
@@ -61,7 +61,14 @@ class TestSuiteStatus(unittest.TestCase):
         suite = TestSuite()
         for i in range(10):
             suite.tests.create(status='PASS')
-        assert_equal(TestSuite().status, 'PASS')
+        assert_equal(suite.status, 'PASS')
+
+    def test_suite_status_is_skipped_if_only_skipped_tests(self):
+        suite = TestSuite()
+        for i in range(10):
+            suite.tests.create(status='SKIP')
+        assert_equal(suite.status, 'SKIP')
+        assert_true(suite.skipped)
 
     def test_suite_status_is_failed_if_failed_subsuite(self):
         suite = TestSuite()

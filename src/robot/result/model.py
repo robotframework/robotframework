@@ -186,11 +186,19 @@ class TestSuite(model.TestSuite):
         return not self.statistics.all.failed
 
     @property
+    def skipped(self):
+        """``True`` if all tests have been skipped, ``False`` otherwise."""
+        return self.status == 'SKIP'
+
+    @property
     def status(self):
-        """``'PASS'`` if no test has failed, ``'FAIL'`` otherwise."""
+        """``'FAIL'`` if any test has failed, ``'SKIP'`` if all tests have
+        been skipped, ``'PASS'`` otherwise."""
         if self.statistics.all.failed:
             return 'FAIL'
-        return 'PASS' if self.statistics.all.passed else 'SKIP'
+        if self.statistics.all.total == 0 or self.statistics.all.passed:
+            return 'PASS'
+        return 'SKIP'
 
     @property
     def statistics(self):
