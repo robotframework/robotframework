@@ -200,9 +200,9 @@ Options
     --reporttitle title   Title for the generated report file. The default
                           title is `<SuiteName> Test Report`.
     --reportbackground colors  Background colors to use in the report file.
-                          Either `all_passed:critical_passed:failed` or
-                          `passed:failed`. Both color names and codes work.
-                          Examples: --reportbackground green:yellow:red
+                          Order is `passed:failed:skipped`. Both color names
+                          and codes work. `skipped` can be omitted.
+                          Examples: --reportbackground green:red:yellow
                                     --reportbackground #00E:#E00
     --maxerrorlines lines  Maximum number of error message lines to show in
                           report when tests fail. Default is 40, minimum is 10

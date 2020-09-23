@@ -188,7 +188,9 @@ class TestSuite(model.TestSuite):
     @property
     def status(self):
         """``'PASS'`` if no test has failed, ``'FAIL'`` otherwise."""
-        return 'PASS' if self.passed else 'FAIL'
+        if self.statistics.all.failed:
+            return 'FAIL'
+        return 'PASS' if self.statistics.all.passed else 'SKIP'
 
     @property
     def statistics(self):

@@ -62,8 +62,10 @@ function setBackground(topsuite) {
     var color;
     if (topsuite.totalFailed)
         color = window.settings.background.fail;
-    else
+    else if (topsuite.totalPassed)
         color = window.settings.background.pass;
+    else
+        color = window.settings.background.skip;
     $('body').css('background-color', color);
 }
 
@@ -375,9 +377,12 @@ function hideHiddenDetailsColumns(elem) {
       {{if totalFailed}}
       <td><a href="#totals?all" onclick="totalDetailSelected('all')"
              class="fail">${totalFailed} {{= testOrTask('{test}')}}{{if totalFailed != 1}}s{{/if}} failed</a></td>
-      {{else}}
+      {{else totalPassed}}
       <td><a href="#totals?all" onclick="totalDetailSelected('all')"
              class="pass">All {{= testOrTask('{test}')}}s passed</a></td>
+      {{else}}
+      <td><a href="#totals?all" onclick="totalDetailSelected('all')"
+             class="skip">All {{= testOrTask('{test}')}}s skipped</a></td>
       {{/if}}
     </tr>
     {{if doc()}}

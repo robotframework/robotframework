@@ -79,6 +79,10 @@ h2 {
 .pass {
     color: #393 !important;
 }
+.skip {
+    color: #ec971f !important;
+    font-weight: bold;
+}
 .label {
     padding: 2px 5px;
     font-size: 0.75em;

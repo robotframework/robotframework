@@ -54,7 +54,7 @@ class _BaseSettings(object):
                  'LogTitle'         : ('logtitle', None),
                  'ReportTitle'      : ('reporttitle', None),
                  'ReportBackground' : ('reportbackground',
-                                       ('#9e9', '#9e9', '#f66')),
+                                       ('#9e9', '#f66', '#ec971f')),
                  'SuiteStatLevel'   : ('suitestatlevel', -1),
                  'TagStatInclude'   : ('tagstatinclude', []),
                  'TagStatExclude'   : ('tagstatexclude', []),
@@ -245,7 +245,7 @@ class _BaseSettings(object):
             raise DataError("Invalid report background colors '%s'." % colors)
         colors = colors.split(':')
         if len(colors) == 2:
-            return colors[0], colors[0], colors[1]
+            return colors[0], colors[1], '#ec971f'
         return tuple(colors)
 
     def _process_tag_stat_combine(self, pattern):
@@ -610,7 +610,7 @@ class RebotSettings(_BaseSettings):
 
     def _resolve_background_colors(self):
         colors = self['ReportBackground']
-        return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}
+        return {'pass': colors[0], 'fail': colors[1], 'skip': colors[2]}
 
     @property
     def merge(self):

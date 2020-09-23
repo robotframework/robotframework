@@ -225,7 +225,6 @@ window.stats = (function () {
     function statElem(stat) {
         stat.total = stat.pass + stat.fail + stat.skip;
         var percents = calculatePercents(stat.total, stat.pass, stat.fail, stat.skip);
-        console.log(percents)
         stat.passPercent = percents[0];
         stat.skipPercent = percents[1];
         stat.failPercent = percents[2];
