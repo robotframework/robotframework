@@ -419,15 +419,9 @@ h4 {
 .doc div > *:last-child {
     margin-bottom: 0;
 }
-#hide-unmatched {
-    margin: 0.5em 0 0 1em;
-}
 .highlight {
     background: yellow;
 }
 .no-match {
     color: gray !important;
-}
-.keyword-container.no-match.hide-unmatched {
-    display: none;
 }

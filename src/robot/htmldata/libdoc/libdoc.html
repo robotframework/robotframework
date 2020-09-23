@@ -96,7 +96,6 @@
       const url = window.location.pathname + "?tag=" + tag + (hash || "");
       markMatches(tag, include);
       highlightMatches(tag, include);
-      $('#keywords-container').find('.keyword-container').addClass('hide-unmatched');
       history.replaceState && history.replaceState(null, '', url);
     }
 
@@ -176,7 +175,6 @@
       if (value) {
           markMatches(value, include);
           highlightMatches(value, include);
-          setMatchVisibility();
           document.getElementById('keyword-shortcuts-container').scrollTop = 0;
       } else {
           resetKeywords();
@@ -193,12 +191,6 @@
         $('#altogether-count').show();
         history.replaceState && history.replaceState(null, '', location.pathname + location.hash);
         scrollToHash();
-    }
-
-    function setMatchVisibility() {
-        const kws = $('#keywords-container').find('.keyword-container');
-        const hide = $('#hide-unmatched').prop('checked');
-        kws.toggleClass('hide-unmatched', hide);
     }
 
     // http://stackoverflow.com/a/18484799
@@ -348,7 +340,7 @@
 </script>
 
 <script type="text/x-jquery-tmpl" id="keyword-template">
-    <div class="keyword-container {{if matched === false}}no-{{/if}}match" id="${name}">
+    <div class="keyword-container{{if matched}} match{{/if}}" id="${name}">
        <div class="keyword-name">
             <h2>
             <a class="kw-name" href="#${encodeURIComponent(name)}"
