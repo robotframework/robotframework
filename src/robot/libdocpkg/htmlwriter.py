@@ -91,10 +91,10 @@ class JsonConverter(object):
         try:
             return {
                 'name': argument.name,
-                'value_type': argument.get_value_type_str(),
-                'default_value': argument.get_storable_default(),
+                'type': argument.get_type_str(),
+                'default': argument.default.get() if argument.default else None,
                 'argument_type': argument.argument_type,
-                'optional':  argument.optional,
+                'required':  argument.required,
             }
         except Exception as e:
             print(e)

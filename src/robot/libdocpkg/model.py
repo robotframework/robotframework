@@ -117,15 +117,15 @@ class ArgumentDoc(object):
 
     def __init__(self,
                  name='',
-                 value_type=None,
-                 default_value=None,
+                 type=None,
+                 default=None,
                  argument_type='positional',
-                 optional=False):
+                 required=True):
         self.name = name
-        self.value_type = value_type
-        self.default_value = default_value
+        self.type = type
+        self.default = default
         self.argument_type = argument_type
-        self.optional = optional
+        self.required = required
 
     def __str__(self):
         kw_string = ARG_TYPES[self.argument_type] + self.name
@@ -135,46 +135,46 @@ class ArgumentDoc(object):
         return kw_string
 
     def _format_type(self):
-        if not self.value_type:
+        if not self.type:
             return ''
-        return ': {}'.format(self.get_value_type_str())
+        return ': {}'.format(self.get_type_str())
 
-    def get_value_type_str(self):
-        if isinstance(self.value_type, _SpecialForm):  # ToDo This is ugly
-            return self.value_type.__reduce__()
-        if isinstance(self.value_type, _GenericAlias):  # ToDo This is ugly and not proper
-            return self.value_type.__repr__()
-        if isclass(self.value_type):
-            return self.value_type.__name__
-        return self.value_type
+    def get_type_str(self):
+        if isinstance(self.type, _SpecialForm):  # ToDo This is ugly
+            return self.type.__reduce__()
+        if isinstance(self.type, _GenericAlias):  # ToDo This is ugly and not proper
+            return self.type.__repr__()
+        if isclass(self.type):
+            return self.type.__name__
+        return self.type
+
+    def _format_enum_values(self):
+        if isclass(self.type) and issubclass(self.type, Enum):
+            return ' {{ {} }}'.format(self._format_enum(self.type))
+        return ''
 
     def _format_default(self):
-        if self.argument_type in ['varargs', 'kwargs'] or not self.optional:
+        if self.argument_type in ['varargs', 'kwargs'] or self.required:
             return ''
-        default_str = ' = ' if self.value_type else '='
-        default_str += str(self.get_storable_default())
+        default_str = ' = ' if self.type else '='
+        default_str += str(self.default)
         return default_str
 
     def get_storable_default(self):  # Fixme: ugly experimental code here
-        if isinstance(self.default_value, (str, int, float, type(None), bool)):  # ToDo check python2 types
-            return self.default_value
-        if isinstance(self.default_value, Enum):
-            return self.default_value.name  # ToDo imho too much spoecial handling of specific cases
-        return unic(self.default_value)  # Todo: Mikko The Great  primitives should be stored as is... not as string
+        if isinstance(self.default, (str, int, float, type(None), bool)):  # ToDo check python2 types
+            return self.default
+        if isinstance(self.default, Enum):
+            return self.default.name  # ToDo imho too much spoecial handling of specific cases
+        return unic(self.default)  # Todo: Mikko The Great  primitives should be stored as is... not as string
 
     def get_default_as_robot_repr(self):  # Fixme: ugly experimental code here
-        if isinstance(self.default_value, (int, float, bool, type(None))):
-            return '${{{}}}'.format(str(self.default_value).upper())
-        if self.default_value == '':
+        if isinstance(self.default, (int, float, bool, type(None))):
+            return '${{{}}}'.format(str(self.default).upper())
+        if self.default == '':
             return '${EMPTY}'
-        if isinstance(self.default_value, Enum):
-            return self.default_value.name  # ToDo imho too much spoecial handling of specific cases
-        return unic(self.default_value)
-
-    def _format_enum_values(self):
-        if isclass(self.value_type) and issubclass(self.value_type, Enum):
-            return ' {{ {} }}'.format(self._format_enum(self.value_type))
-        return ''
+        if isinstance(self.default, Enum):
+            return self.default.name  # ToDo imho too much spoecial handling of specific cases
+        return unic(self.default)
 
     @staticmethod
     def _format_enum(enum):
@@ -185,3 +185,23 @@ class ArgumentDoc(object):
         while len(members) > 3 and len(' | '.join(members)) > 42:
             members[-2:] = ['...']
         return ' | '.join(members)
+
+
+class DefaultValue(object):
+
+    def __init__(self, value=None):
+        self.value = value
+
+    def __str__(self):
+        return str(self._get_storable_default())
+
+    def get(self):
+        return {'value': self._get_storable_default()}
+
+    def _get_storable_default(self):  # Fixme: ugly experimental code here
+        if isinstance(self.value, (str, int, float, type(None), bool)):  # ToDo check python2 types
+            return self.value
+        if isinstance(self.value, Enum):
+            return self.value.name  # ToDo imho too much special handling of specific cases
+        else:
+            return unic(self.value)

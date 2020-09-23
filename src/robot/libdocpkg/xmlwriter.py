@@ -93,9 +93,9 @@ class LibdocXmlWriter(object):
             writer.start('arguments_Obj')
             try:
                 for arg in kw.args:
-                    writer.start('arg', {'argument_type': arg.argument_type, 'optional': 'true' if arg.optional else 'false'})
+                    writer.start('arg', {'argument_type': arg.argument_type, 'required': 'true' if arg.required else 'false'})
                     writer.element('name', arg.name)
-                    writer.element('value_type', arg.get_value_type_str())
+                    writer.element('type', arg.get_type_str())
                     writer.element('default_value', arg.get_default_as_robot_repr())
                     writer.end('arg')
                 writer.end('arguments_Obj')

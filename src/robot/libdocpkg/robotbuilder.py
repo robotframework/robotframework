@@ -27,7 +27,7 @@ from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
                            ResourceFileBuilder)
 from robot.utils import split_tags_from_doc, unescape
 
-from .model import LibraryDoc, KeywordDoc, ArgumentDoc
+from .model import LibraryDoc, KeywordDoc, ArgumentDoc, DefaultValue
 
 
 class LibraryDocBuilder(object):
@@ -141,12 +141,12 @@ class KeywordDocBuilder(object):
         if argspec.varargs:
             value_type = self._get_value_type(argspec, argspec.varargs)
             arguments.append(ArgumentDoc(name=argspec.varargs,
-                                         value_type=value_type,
+                                         type=value_type,
                                          argument_type='varargs',
-                                         optional=True))
+                                         required=False))
         if argspec.kwonlyargs and not argspec.varargs:
             arguments.append(ArgumentDoc(argument_type='varargs',
-                                         optional=True))
+                                         required=False))
         for arg_name in argspec.kwonlyargs:
             arguments.append(
                 self._get_scalar_arg_doc(argspec, arg_name, 'kwonlyargs'))
@@ -154,19 +154,22 @@ class KeywordDocBuilder(object):
         if argspec.kwargs:
             value_type = self._get_value_type(argspec, argspec.kwargs)
             arguments.append(ArgumentDoc(name=argspec.kwargs,
-                                         value_type=value_type,
+                                         type=value_type,
                                          argument_type='kwargs',
-                                         optional=True))
+                                         required=False))
         return arguments
 
     def _get_scalar_arg_doc(self, argspec, arg_name, arg_type):
-        default_value = argspec.defaults.get(arg_name)
+        if arg_name in argspec.defaults:
+            default = DefaultValue(argspec.defaults[arg_name])
+        else:
+            default = None
         value_type = self._get_value_type(argspec, arg_name)
         return ArgumentDoc(name=arg_name,
-                           value_type=value_type,
-                           default_value=default_value,
+                           type=value_type,
+                           default=default,
                            argument_type=arg_type,
-                           optional=arg_name in argspec.defaults)
+                           required=arg_name not in argspec.defaults)
 
     @staticmethod
     def _get_value_type(argspec, argument):
