@@ -55,9 +55,6 @@ class LibraryDoc(object):
         entries = re.findall(r'^\s*=\s+(.+?)\s+=\s*$', doc, flags=re.MULTILINE)
         if self.inits:
             entries.append('Importing')
-        entries.append('Shortcuts')
-        if any(kw.tags for kw in self.keywords):
-            entries.append('Tags')
         entries.append('Keywords')
         return '\n'.join('- `%s`' % entry for entry in entries)
 
