@@ -49,7 +49,7 @@ body {
 }
 
 .libdoc-details {
-    margin-top: 100px;
+    margin-top: 80px;
     padding-right: 0.5rem;
     overflow: auto;
 }
@@ -348,7 +348,7 @@ h4 {
     margin-bottom: 0.5rem;
     display: flex;
     flex-direction: column;
-    scroll-margin-top: 100px;
+    scroll-margin-top: 80px;
 }
 
 .keyword-content {
