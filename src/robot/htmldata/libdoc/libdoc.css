@@ -50,6 +50,7 @@ body {
 
 .libdoc-details {
     margin-top: 80px;
+    padding-left: 0.5rem;
     padding-right: 0.5rem;
     overflow: auto;
 }
@@ -174,7 +175,7 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     border-radius: 3px;
     padding-right: 0.5rem;
     padding-left: 0.5rem;
-    margin: 80px 0.5rem 0.5rem;
+    margin: 80px 0 0.5rem 0.5rem;
 }
 
 @media only screen and (max-width: 640px) {
