@@ -30,9 +30,11 @@ body {
     height: 30px;
     border: 1px solid #e0e0e2;
     border-radius: 3px;
+    margin-top: 0.5rem;
 }
 
 #tags-shortcuts-container {
+    margin-top: 0.5rem;
     height: 30px;
     border: 1px solid #e0e0e2;
     border-radius: 3px;
