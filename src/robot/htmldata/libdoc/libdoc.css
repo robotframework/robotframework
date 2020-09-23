@@ -19,6 +19,11 @@ body {
     top: 0;
 }
 
+.libdoc-overview h4 {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+}
+
 .keyword-search-box {
     display: flex;
     justify-content: space-between;
