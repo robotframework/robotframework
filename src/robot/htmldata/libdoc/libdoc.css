@@ -20,10 +20,14 @@ body {
 }
 
 .keyword-search-box {
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
     display: flex;
     justify-content: space-between;
+    height: 30px;
+    border: 1px solid #e0e0e2;
+    border-radius: 3px;
+}
+
+#tags-shortcuts-container {
     height: 30px;
     border: 1px solid #e0e0e2;
     border-radius: 3px;
@@ -161,6 +165,18 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     width: 42px;
 }
 
+.keywords-overview {
+    display: flex;
+    flex-direction: column;
+    height: 0;
+    flex: 1;
+    border: 1px solid #e0e0e2;
+    border-radius: 3px;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    margin: 80px 0.5rem 0.5rem;
+}
+
 @media only screen and (max-width: 640px) {
     .libdoc-overview {
         display: none;
@@ -197,6 +213,10 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
         width: 100vw;
     }
 
+    .keywords-overview {
+        border: none;
+        margin: 80px 0 0;
+    }
 }
 
 .metadata {
@@ -219,23 +239,6 @@ a:hover, a:active {
 }
 a:hover {
     text-decoration: underline !important;
-}
-
-.keywords-overview {
-    display: flex;
-    flex-direction: column;
-    height: 0;
-    flex: 1;
-    border: 1px solid #e0e0e2;
-    border-radius: 3px;
-    margin-right: 0.5rem;
-    margin-left: 0.5rem;
-    margin-top: 100px;
-    margin-bottom: 0.5rem;
-}
-
-.keywords-overview h4 {
-    margin-left: 0.5rem;
 }
 
 .shortcuts {
