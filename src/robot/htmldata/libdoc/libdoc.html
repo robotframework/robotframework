@@ -97,6 +97,7 @@
       markMatches(tag, include);
       highlightMatches(tag, include);
       history.replaceState && history.replaceState(null, '', url);
+      document.getElementById('keyword-shortcuts-container').scrollTop = 0;
     }
 
     function clearTagSearch() {
