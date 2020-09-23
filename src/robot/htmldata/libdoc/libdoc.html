@@ -51,14 +51,16 @@
         }
         renderTemplate('shortcuts', libdoc);
         renderTemplate('keyword-shortcuts', libdoc);
-        if (libdoc.contains_tags) {
-            renderTemplate('tags-shortcuts', libdoc);
-        }
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
         const params = util.parseQueryString(window.location.search.slice(1));
+        let selectedTag = "";
         if ("tag" in params) {
-            tagSearch(params["tag"], window.location.hash);
+            selectedTag = params["tag"];
+            tagSearch(selectedTag, window.location.hash);
+        }
+        if (libdoc.contains_tags) {
+            renderTemplate('tags-shortcuts', {...libdoc, selectedTag: selectedTag});
         }
         scrollToHash();
     });
@@ -70,14 +72,14 @@
     }
 
     function renderTemplate(name, arguments, container) {
-        if (!container) {
-            container = $('#' + name + '-container');
-            container.empty();
-        }
-        if (!arguments.search) {
-            arguments.search = false;
-        }
-        $.tmpl(name + '-template', arguments).appendTo(container);
+      if (!container) {
+          container = $('#' + name + '-container');
+          container.empty();
+      }
+      if (!arguments.search) {
+          arguments.search = false;
+      }
+      $.tmpl(name + '-template', arguments).appendTo(container);
     }
 
     function scrollToHash() {
@@ -89,23 +91,30 @@
     }
 
     function tagSearch(tag, hash) {
-        var include = {tags: true, tagsExact: true};
-        var url = window.location.pathname + "?tag=" + tag + (hash || "");
-        markMatches(tag, include);
-        highlightMatches(tag, include);
-        $('#keywords-container').find('.keyword-container').addClass('hide-unmatched');
-        history.replaceState && history.replaceState(null, '', url);
+      document.getElementsByClassName('search-input')[0].value = '';
+      const include = {tags: true, tagsExact: true};
+      const url = window.location.pathname + "?tag=" + tag + (hash || "");
+      markMatches(tag, include);
+      highlightMatches(tag, include);
+      $('#keywords-container').find('.keyword-container').addClass('hide-unmatched');
+      history.replaceState && history.replaceState(null, '', url);
+    }
+
+    function clearTagSearch() {
+      document.getElementsByClassName('search-input')[0].value = '';
+      history.replaceState && history.replaceState(null, '', window.location.pathname);
+      resetKeywords();
     }
 
     function markMatches(pattern, include) {
-        pattern = util.regexpEscape(pattern);
+        let patternRegexp = util.regexpEscape(pattern);
         if (include.tagsExact) {
-            pattern = '^' + pattern + '$';
+            patternRegexp = '^' + patternRegexp + '$';
         }
-        var regexp = new RegExp(pattern, 'i');
-        var test = regexp.test.bind(regexp);
-        var result = {contains_tags: libdoc.contains_tags};
-        var matchCount = 0;
+        let regexp = new RegExp(patternRegexp, 'i');
+        let test = regexp.test.bind(regexp);
+        let result = {contains_tags: libdoc.contains_tags};
+        let matchCount = 0;
         result.keywords = util.map(libdoc.keywords, function (kw) {
             kw = $.extend({}, kw);
             kw.matched = (include.name && test(kw.name) ||
@@ -119,7 +128,7 @@
         renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
         if (libdoc.contains_tags) {
-            renderTemplate('tags-shortcuts', libdoc);
+          renderTemplate('tags-shortcuts', {...libdoc, selectedTag: include.tagsExact ? pattern : ""});
         }
         const ending = matchCount !== 1 ? 's.' : '.';
         $('#match-count').show().text(matchCount + ' matched keyword' + ending);
@@ -322,9 +331,9 @@
 
 
 <script type="text/x-jquery-tmpl" id="tags-shortcuts-template">
-  <option value="">- Show all tags -</option>
+  <option value="javascript:clearTagSearch()" {{if selectedTag === ""}}selected{{/if}}>- Show all tags -</option>
   {{each all_tags}}
-    <option value="javascript:tagSearch('${$value}')">${$value}</a>
+    <option value="javascript:tagSearch('${$value}')" {{if selectedTag === $value}}selected{{/if}}>${$value}</a>
     </option>
   {{/each}}
 </script>
