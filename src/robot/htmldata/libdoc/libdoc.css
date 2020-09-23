@@ -302,8 +302,6 @@ input.switch:checked + .slider::before {
 .keywords {
     display: flex;
     flex-direction: column;
-    margin: 0.3em 0;
-    width: 100%;
 }
 .kw-overview {
     display: flex;
@@ -349,6 +347,10 @@ h4 {
     display: flex;
     flex-direction: column;
     scroll-margin-top: 80px;
+}
+
+.keyword-container:target {
+    box-shadow: 0 0 4px red;
 }
 
 .keyword-content {
