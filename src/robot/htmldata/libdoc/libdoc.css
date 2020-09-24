@@ -60,6 +60,7 @@ body {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     overflow: auto;
+    max-width: 1200px;
 }
 
 .libdoc-title {
@@ -314,14 +315,11 @@ input.switch:checked + .slider::before {
 }
 .kw-overview {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: start;
 }
 @media only screen and (min-width: 640px) {
     .kw-overview {
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
         max-width: 400px;
         margin-right: 1.5rem;
     }
@@ -367,33 +365,15 @@ h4 {
     flex-direction: column;
 }
 
-@media only screen and (min-width: 800px) {
-    .keyword-content {
-        display: flex;
-        flex-direction: row;
-    }
-}
-
 .kw-row {
     display: flex;
     flex-direction: column;
     text-decoration: none;
-    border: 1px solid #e0e0e2;
-    border-radius: 3px;
-    padding: 0.5rem 1.0rem 0.5rem 1.0rem;
-    margin-bottom: 0.5rem;
-}
-@media only screen and (min-width: 800px) {
-  .kw-row {
-    display: flex;
-    flex-direction: row;
     justify-content: start;
-    text-decoration: none;
     border: 1px solid #e0e0e2;
     border-radius: 3px;
     padding: 0.5rem 1.0rem 0.5rem 1.0rem;
     margin-bottom: 0.5rem;
-  }
 }
 .kw a {
     color: inherit;
