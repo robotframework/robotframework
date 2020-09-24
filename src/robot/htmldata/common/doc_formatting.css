@@ -20,7 +20,7 @@
     display: block;
 }
 .doc table th, .doc table td {
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     background: transparent;
     padding: 0.1em 0.3em;
     height: 1.2em;
@@ -32,14 +32,14 @@
 .doc pre {
     font-size: 1.1em;
     letter-spacing: 0.05em;
-    background: #f4f4f4;
+    background: var(--light-background-color);
     overflow-y: auto;
     padding: 0.3rem;
     border-radius: 3px;
 }
 .doc code {
     letter-spacing: 0.05em;
-    background: #eee;
+    background: var(--light-background-color);
 }
 .doc li {
     list-style-position: inside;
