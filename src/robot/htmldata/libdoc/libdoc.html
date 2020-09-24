@@ -339,7 +339,14 @@
     <h2 id="Keywords">Keywords</h2>
     <div class="keywords">
         {{each keywords}}
+        {{if $value.matched}}
             {{tmpl($value) 'keyword-template'}}
+        {{/if}}
+        {{/each}}
+        {{each keywords}}
+        {{if $value.matched === false}}
+            {{tmpl($value) 'keyword-template'}}
+        {{/if}}
         {{/each}}
     </div>
 </script>
