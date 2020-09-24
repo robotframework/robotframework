@@ -149,18 +149,12 @@ input.hamburger-menu:checked ~ span.hamburger-menu-1
   background: #232323;
 }
 
-/*
- * But let's hide the middle one.
- */
 input.hamburger-menu:checked ~ span.hamburger-menu-2
 {
   opacity: 0;
   transform: rotate(0deg) scale(0.2, 0.2);
 }
 
-/*
- * Ohyeah and the last one should go the other direction
- */
 input.hamburger-menu:checked ~ span.hamburger-menu-3
 {
   transform: rotate(-45deg) translate(0, -1px);
@@ -184,6 +178,33 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     padding-right: 0.5rem;
     padding-left: 0.5rem;
     margin: 60px 0 0.5rem 0.5rem;
+}
+
+.shortcuts {
+    font-size: 0.9em;
+    overflow: auto;
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    flex: 1;
+    max-width: 320px;
+}
+
+.shortcuts a {
+    display: block;
+    text-decoration: none;
+    white-space: nowrap;
+    color: black;
+    padding: 0.5rem;
+}
+
+.shortcuts a:hover {
+    background: #f3f3f3;
+}
+
+.shortcuts a::first-letter {
+    font-weight: bold;
+    letter-spacing: 0.1em;
 }
 
 @media only screen and (max-width: 640px) {
@@ -226,6 +247,10 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
         border: none;
         margin: 60px 0 0;
     }
+
+    .shortcuts {
+        max-width: 100vw;
+    }
 }
 
 .metadata {
@@ -250,32 +275,6 @@ a:hover {
     text-decoration: underline !important;
 }
 
-.shortcuts {
-    font-size: 0.9em;
-    overflow: auto;
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-    flex: 1;
-    max-width: 320px;
-}
-
-.shortcuts a {
-    display: block;
-    text-decoration: none;
-    white-space: nowrap;
-    color: black;
-    padding: 0.5rem;
-}
-
-.shortcuts a:hover {
-    background: #f3f3f3;
-}
-
-.shortcuts a::first-letter {
-    font-weight: bold;
-    letter-spacing: 0.1em;
-}
 .normal-first-letter::first-letter {
     font-weight: normal !important;
     letter-spacing: 0 !important;
