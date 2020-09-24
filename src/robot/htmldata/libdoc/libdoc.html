@@ -352,7 +352,7 @@
 </script>
 
 <script type="text/x-jquery-tmpl" id="keyword-template">
-    <div class="keyword-container{{if matched}} match{{/if}}" id="${name}">
+    <div class="keyword-container {{if matched === false}}no-{{/if}}match" id="${name}">
        <div class="keyword-name">
             <h2>
             <a class="kw-name" href="#${encodeURIComponent(name)}"

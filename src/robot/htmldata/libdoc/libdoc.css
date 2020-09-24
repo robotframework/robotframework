@@ -408,6 +408,11 @@ h4 {
     background: #f4f4f4;
     padding: 0 0.1em;
 }
+
+.args span .highlight {
+    background: yellow;
+}
+
 .tags {
     display: flex;
     align-items: baseline;
@@ -432,4 +437,8 @@ h4 {
 }
 .no-match {
     color: gray !important;
+}
+
+.no-match .kw-name {
+    color: gray;
 }
