@@ -208,7 +208,7 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     letter-spacing: 0.1em;
 }
 
-@media only screen and (max-width: 640px) {
+@media only screen and (max-width: 899px) {
     .libdoc-overview {
         display: none;
     }
@@ -318,7 +318,7 @@ input.switch:checked + .slider::before {
     flex-direction: column;
     justify-content: start;
 }
-@media only screen and (min-width: 640px) {
+@media only screen and (min-width: 899px) {
     .kw-overview {
         max-width: 400px;
         margin-right: 1.5rem;
