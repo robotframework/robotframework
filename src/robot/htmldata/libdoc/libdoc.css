@@ -27,6 +27,11 @@ body {
     font-family: system-ui, -apple-system, sans-serif;
 }
 
+input, button {
+    background: var(--background-color);
+    color: var(--text-color);
+}
+
 .base-container {
     display: flex;
 }
