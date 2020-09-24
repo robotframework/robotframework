@@ -4,19 +4,23 @@
     --border-color: #e0e0e2;
     --light-background-color: #f3f3f3;
     --robot-highlight: #00c0b5;
+    --highlighted-color: var(----text-color);
     --highlighted-background-color: yellow;
     --less-important-text-color: gray;
+    --link-color: #0000ee;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background-color: black;
-        --text-color: #adadad;
+        --background-color: #1c2227;
+        --text-color: #e2e1d7;
         --border-color: #4e4e4e;
-        --light-background-color: #1d1d1d;
-        --robot-highlight: #00c0b5;
-        --highlighted-background-color: #52521f;
-        --less-important-text-color: #3c3b3b;
+        --light-background-color: #002b36;
+        --robot-highlight: yellow;
+        --highlighted-color: var(--background-color);
+        --highlighted-background-color: yellow;
+        --less-important-text-color: #5b6a6f;
+        --link-color: #52adff;
     }
 }
 
@@ -27,9 +31,13 @@ body {
     font-family: system-ui, -apple-system, sans-serif;
 }
 
-input, button {
+input, button, select {
     background: var(--background-color);
     color: var(--text-color);
+}
+
+a {
+    color: var(--link-color);
 }
 
 .base-container {
@@ -418,10 +426,12 @@ h4 {
     font-family: monospace;
     background: var(--light-background-color);
     padding: 0 0.1em;
+    font-size: 1.1em;
 }
 
 .args span .highlight {
     background: var(--highlighted-background-color);
+    color: var(--highlighted-color);
 }
 
 .tags {
@@ -436,15 +446,13 @@ h4 {
 .footer {
     font-size: 0.9em;
 }
-/* Docs originating from HTML and reST are wrapped to divs. */
-.doc div > *:first-child {
-    margin-top: 0;
-}
+
 .doc div > *:last-child {
     margin-bottom: 0;
 }
 .highlight {
     background: var(--highlighted-background-color);
+    color: var(--highlighted-color);
 }
 .no-match {
     color: var(--less-important-text-color) !important;

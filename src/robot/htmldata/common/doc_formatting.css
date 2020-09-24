@@ -1,9 +1,23 @@
-.doc > h1, .doc > h2, .doc > h3, .doc > h4 {
+#introduction-container > h2,
+.doc > h1,
+.doc > h2,
+.section > h1,
+.section > h2 {
+    margin-top: 4rem;
+    margin-bottom: 1rem;
+}
+
+.doc > h3, .section > h3 {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+}
+
+.doc > h4, .section > h4 {
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
 
-.doc > p {
+.doc > p, .section > p {
     margin-top: 1rem;
     margin-bottom: 0.5rem;
 }
@@ -37,9 +51,14 @@
     padding: 0.3rem;
     border-radius: 3px;
 }
-.doc code {
+
+.doc code,
+.docutils.literal {
+    font-size: 1.1em;
     letter-spacing: 0.05em;
     background: var(--light-background-color);
+    padding: 1px;
+    border-radius: 3px;
 }
 .doc li {
     list-style-position: inside;
