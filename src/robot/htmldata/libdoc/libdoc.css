@@ -57,10 +57,12 @@ body {
 
 .libdoc-details {
     margin-top: 60px;
+    margin-left: auto;
+    margin-right: auto;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     overflow: auto;
-    max-width: 1600px;
+    max-width: 1000px;
 }
 
 .libdoc-title {
