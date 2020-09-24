@@ -187,6 +187,13 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     width: 42px;
 }
 
+#robot-svg-path {
+    fill: var(--text-color);
+    stroke: none;
+    fill-opacity:1;
+    fill-rule:nonzero;
+}
+
 .keywords-overview {
     display: flex;
     flex-direction: column;
