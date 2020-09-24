@@ -164,6 +164,10 @@
 
     function clearSearch() {
       document.getElementsByClassName('search-input')[0].value = '';
+      const tagsSelect = document.getElementById('tags-shortcuts-container');
+      if (tagsSelect) {
+        tagsSelect.selectedIndex = 0;
+      }
       resetKeywords();
     }
 
