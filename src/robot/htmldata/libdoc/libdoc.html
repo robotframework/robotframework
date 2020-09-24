@@ -35,7 +35,7 @@
 <script type="text/javascript">
     // Not using jQuery here for speed and to support ancient browsers.
     document.getElementById('javascript-disabled').style.display = 'none';
-    window.addEventListener("hashchange", () => {
+    window.addEventListener("hashchange", function() {
       document.getElementsByClassName("hamburger-menu")[0].checked = false;
     }, false);
 </script>
@@ -60,7 +60,8 @@
             tagSearch(selectedTag, window.location.hash);
         }
         if (libdoc.contains_tags) {
-            renderTemplate('tags-shortcuts', {...libdoc, selectedTag: selectedTag});
+          libdoc.selectedTag = selectedTag;
+          renderTemplate('tags-shortcuts', libdoc);
         }
         scrollToHash();
     });
@@ -128,7 +129,8 @@
         renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
         if (libdoc.contains_tags) {
-          renderTemplate('tags-shortcuts', {...libdoc, selectedTag: include.tagsExact ? pattern : ""});
+          libdoc.selectedTag = include.tagsExact ? pattern : "";
+          renderTemplate('tags-shortcuts', libdoc);
         }
         const ending = matchCount !== 1 ? 's.' : '.';
         $('#match-count').show().text(matchCount + ' matched keyword' + ending);
