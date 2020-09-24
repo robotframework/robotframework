@@ -278,10 +278,12 @@
             {{/each}}
             </div>
           </div>
-          <div class="kw-docs">
-            <h4>Documentation</h4>
-            <div class="kwdoc doc">{{html $value.doc}}</div>
-          </div>
+          {{if $value.doc}}
+            <div class="kw-docs">
+              <h4>Documentation</h4>
+              <div class="kwdoc doc">{{html $value.doc}}</div>
+            </div>
+          {{/if}}
         </div>
         {{/each}}
     </div>
@@ -371,10 +373,10 @@
             {{/if}}
           </div>
           {{if doc}}
-          <div class="kw-docs">
-            <h4>Documentation</h4>
-            <div class="kwdoc doc">{{html doc}}</div>
-          </div>
+            <div class="kw-docs">
+              <h4>Documentation</h4>
+              <div class="kwdoc doc">{{html doc}}</div>
+            </div>
           {{/if}}
        </div>
     </div>
