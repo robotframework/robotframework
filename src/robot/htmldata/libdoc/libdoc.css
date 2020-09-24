@@ -43,6 +43,7 @@ body {
 .search-input {
     flex: 1;
     border: none;
+    text-indent: 4px;
 }
 
 .clear-search {
