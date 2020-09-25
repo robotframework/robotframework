@@ -249,6 +249,13 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     letter-spacing: 0.1em;
 }
 
+@media only screen and (min-width: 900px) {
+    .libdoc-details {
+        z-index: 1;
+        background: var(--background-color);
+    }
+}
+
 @media only screen and (max-width: 899px) {
     .libdoc-overview {
         display: none;
