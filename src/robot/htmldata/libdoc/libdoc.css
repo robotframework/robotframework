@@ -4,7 +4,7 @@
     --border-color: #e0e0e2;
     --light-background-color: #f3f3f3;
     --robot-highlight: #00c0b5;
-    --highlighted-color: var(----text-color);
+    --highlighted-color: var(--text-color);
     --highlighted-background-color: yellow;
     --less-important-text-color: gray;
     --link-color: #0000ee;
