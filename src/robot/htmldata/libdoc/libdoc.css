@@ -48,6 +48,7 @@ a {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    background: white;
     background: var(--background-color);
     position: -webkit-sticky; /* Safari */
     position: sticky;
@@ -146,6 +147,7 @@ span.hamburger-menu
   position: fixed;
   right: 20px;
 
+  background: black;
   background: var(--text-color);
   border-radius: 2px;
 
@@ -257,6 +259,7 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
         padding: 0.5rem;
         margin: 0;
         border-bottom: 1px solid var(--border-color);
+        background: white;
         background: var(--background-color);
     }
 
