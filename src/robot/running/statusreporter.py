@@ -60,7 +60,9 @@ class StatusReporter(object):
     def _get_status(self, result):
         if result.status == 'SKIP':
             return 'SKIP'
-        return 'PASS' if self._test_passed and result.passed else 'FAIL'
+        if self._test_passed and result.passed:
+            return 'PASS'
+        return 'FAIL'
 
     def _get_failure(self, exc_type, exc_value, exc_tb, context):
         if exc_value is None:

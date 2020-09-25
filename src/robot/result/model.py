@@ -113,6 +113,17 @@ class Keyword(model.Keyword):
     def passed(self, passed):
         self.status = 'PASS' if passed else 'FAIL'
 
+    @property
+    def skipped(self):
+        return self.status == 'SKIP'
+
+    @skipped.setter
+    def skipped(self, skipped):
+        if not skipped:
+            raise ValueError("`skipped` value must be truthy, got '%s'."
+                             % skipped)
+        self.status = 'SKIP'
+
 
 class TestCase(model.TestCase):
     """Represents results of a single test case.
@@ -152,6 +163,13 @@ class TestCase(model.TestCase):
     @property
     def skipped(self):
         return self.status == 'SKIP'
+
+    @skipped.setter
+    def skipped(self, skipped):
+        if not skipped:
+            raise ValueError("`skipped` value must be truthy, got '%s'."
+                             % skipped)
+        self.status = 'SKIP'
 
     @property
     def critical(self):

@@ -375,13 +375,17 @@ function hideHiddenDetailsColumns(elem) {
     <tr>
       <th>Status:</th>
       {{if totalFailed}}
-      <td><a href="#totals?all" onclick="totalDetailSelected('all')"
+      <td><a href="#totals" onclick="totalDetailSelected()"
              class="fail">${totalFailed} {{= testOrTask('{test}')}}{{if totalFailed != 1}}s{{/if}} failed</a></td>
+      {{else totalPassed && skipped}}
+      <td><a href="#totals" onclick="totalDetailSelected()"
+             class="pass">${totalPassed} {{= testOrTask('{test}')}}{{if totalPassed != 1}}s{{/if}} passed,
+             ${skipped} {{= testOrTask('{test}')}}{{if skipped != 1}}s{{/if}} skipped</a></td>
       {{else totalPassed}}
-      <td><a href="#totals?all" onclick="totalDetailSelected('all')"
+      <td><a href="#totals" onclick="totalDetailSelected()"
              class="pass">All {{= testOrTask('{test}')}}s passed</a></td>
       {{else}}
-      <td><a href="#totals?all" onclick="totalDetailSelected('all')"
+      <td><a href="#totals" onclick="totalDetailSelected()"
              class="skip">All {{= testOrTask('{test}')}}s skipped</a></td>
       {{/if}}
     </tr>
@@ -423,10 +427,10 @@ function hideHiddenDetailsColumns(elem) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
-  <tr onclick="totalDetailSelected('${type}')" class="row-${$item.index}">
+  <tr onclick="totalDetailSelected('all')" class="row-${$item.index}">
     <td class="stats-col-name">
       <div class="stat-name">
-        <a href="#totals?${type}">{{html label}}</a>
+        <a href="#totals">{{html label}}</a>
       </div>
     </td>
     {{tmpl($data) 'statColumnsTemplate'}}
@@ -486,7 +490,7 @@ function hideHiddenDetailsColumns(elem) {
       <th>Type:</th>
       <td id="normal-selector">
         <input id="radio-all" type="radio" name="totals-radio"
-               onclick="totalDetailSelected('all')"
+               onclick="totalDetailSelected()"
                {{if selected == 'all'}}checked="checked"{{/if}}>
         <label for="radio-all">All {{= testOrTask('{Test}')}}s</label>
       </td>

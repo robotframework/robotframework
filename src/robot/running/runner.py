@@ -123,6 +123,7 @@ class Runner(SuiteVisitor):
         if status.exit:
             self._add_exit_combine()
             result.tags.add('robot:exit')
+        # TODO: helper for resolving test/tags
         if self._skipped_tags.match(test.tags):
             status.test_skipped("Test skipped with --skip command line option.")
         if not status.failures and not test.name:

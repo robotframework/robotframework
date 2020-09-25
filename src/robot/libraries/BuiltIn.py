@@ -2250,11 +2250,11 @@ class _RunKeyword(_BuiltInBase):
 
 class _Control(_BuiltInBase):
 
-    def skip(self, msg=None):
-        # FIXME: docs
+    def skip(self, msg='Skipped with Skip keyword.'):
+        # TODO: docs
+        """Skip execution of the rest of the current test/task.
         """
-        """
-        raise SkipExecution(msg or '')
+        raise SkipExecution(msg)
 
     def continue_for_loop(self):
         """Skips the current for loop iteration and continues from the next.

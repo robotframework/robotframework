@@ -94,7 +94,7 @@ h2 {
 }
 .label.skip {
     background-color: #ec971f;
-    color: white;
+    color: white !important;
 }
 .label.debug, .label.trace, .label.error, .label.keyword {
     letter-spacing: 0;

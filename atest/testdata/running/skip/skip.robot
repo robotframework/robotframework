@@ -1,9 +1,9 @@
 *** Settings ***
-Library    skiplib
+Library    skiplib.py
 
 *** Test Cases ***
 Skip Keyword
-    [Documentation]    SKIP
+    [Documentation]    SKIP Skipped with Skip keyword.
     Skip
 
 Skip with Library Keyword
@@ -15,7 +15,7 @@ Skip Keyword with Custom Message
     Skip    Skipped due to reasons
 
 Skipped in Setup
-    [Documentation]    SKIP Skipped in setup:\nSetup skip
+    [Documentation]    SKIP Setup skip
     [Setup]    Skip     Setup skip
     Pass
 

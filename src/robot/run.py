@@ -204,6 +204,7 @@ Options
                           and codes work. `skipped` can be omitted.
                           Examples: --reportbackground green:red:yellow
                                     --reportbackground #00E:#E00
+                          # TODO: is the order correct like this?
     --maxerrorlines lines  Maximum number of error message lines to show in
                           report when tests fail. Default is 40, minimum is 10
                           and `NONE` can be used to show the full message.

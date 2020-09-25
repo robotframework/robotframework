@@ -292,6 +292,7 @@ class SkipExecution(ExecutionStatus):
     Can also be used by library keyword to skip the current test.
     """
     status = "SKIP"
+    ROBOT_SKIP_ON_FAILURE = True
 
     def __init__(self, message):
         ExecutionStatus.__init__(self, message)

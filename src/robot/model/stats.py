@@ -123,6 +123,7 @@ class SuiteStat(Stat):
     def add_stat(self, other):
         self.passed += other.passed
         self.failed += other.failed
+        self.skipped = other.skipped
 
 
 class TagStat(Stat):
