@@ -121,6 +121,11 @@ Custom namespace is case-sensitive
     Should Be Equal    ${result}    xyz
     Evaluate    B    namespace=${ns}
 
+Custon namespace used in lambda
+    ${ns} =    Create Dictionary    alphabet=aAbBcCdDeEfFgGhHiIjJkKlLmMnNoO    input=Hello
+    ${sorted} =    Evaluate    ''.join(sorted(input, key=lambda word: [alphabet.find(c) for c in word]))     namespace=${ns}
+    Should Be Equal    ${sorted}    eHllo
+
 Namespace from Get Variables
     ${foo} =    Set variable    value
     ${ns} =    Get variables    no_decoration=Yes

@@ -43,6 +43,9 @@ Custom namespace
 Custom namespace is case-sensitive
     Check Test Case    ${TESTNAME}
 
+Custon namespace used in lambda
+    Check Test Case    ${TESTNAME}
+
 Namespace from Get Variables
     Check Test Case    ${TESTNAME}
 
