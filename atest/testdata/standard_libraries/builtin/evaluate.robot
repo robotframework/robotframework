@@ -50,7 +50,6 @@ Importing invalid module fails with original error
     ...    TypeError: This module cannot be imported!
     Evaluate    invalidmod
 
-
 Automatic module imports are case-sensitive
     [Documentation]    FAIL
     ...    Several failures occurred:
@@ -65,9 +64,9 @@ Automatic module imports are case-sensitive
     os.sep + OS.sep
 
 Automatic modules don't override builtins
-    ${result} =    Evaluate    repr(42)     # `repr` module exists in Python 2
+    ${result} =    Evaluate    repr(42)     # `repr` module exists in Python 2
     Should Be Equal    ${result}    42
-    ${result} =    Evaluate    len('foo')   # `len.py` exists in this directory
+    ${result} =    Evaluate    len('foo')   # `len.py` exists in this directory
     Should Be Equal    ${result}    ${3}
 
 Explicit modules
@@ -97,9 +96,9 @@ Explicit modules are needed with nested modules
     Should Be Equal    ${value}    ${42}
 
 Explicit modules can override builtins
-    ${result} =    Evaluate    len.value    modules=len
+    ${result} =    Evaluate    len.value    modules=len
     Should Be Equal    ${result}    ${42}
-    ${result} =    Evaluate    len('value')
+    ${result} =    Evaluate    len('value')
     Should Be Equal    ${result}    ${5}
 
 Explicit modules used in lambda
