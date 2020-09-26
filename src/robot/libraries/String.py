@@ -747,23 +747,35 @@ class String(object):
         if not string.isupper():
             self._fail(msg, "'%s' is not uppercase.", string)
 
-    def should_be_titlecase(self, string, msg=None):
+    def should_be_title_case(self, string, msg=None, exclude=None):
         """Fails if given ``string`` is not title.
 
-        ``string`` is a titlecased string if there is at least one
-        character in it, uppercase characters only follow uncased
-        characters and lowercase characters only cased ones.
-
-        For example, ``'This Is Title'`` would pass, and ``'Word In UPPER'``,
-        ``'Word In lower'``, ``''`` and ``' '`` would fail.
+        Title case means that the first letter of each word is capitalized.
+        Except for certain small words, such as articles and short prepositions
+        if it is necessary.
+        Words like ``XML``, ``OK`` or ``iPhone`` are considered to be in title case.
 
         The default error message can be overridden with the optional
         ``msg`` argument.
 
+        ``exclude`` words that are not all lower case. This preserves,
+        for example, "OK" and "iPhone". Explicitly excluded words can be given
+        as a list or as a string with words separated by a comma and an optional space
+
+        Examples:
+        | ${str1} = | Convert To Title Case | hello, world!     |
+        | Should Be Title Case| ${str1} |
+        | ${str2} = | Convert To Title Case | it's an OK iPhone | exclude=a, an, the |
+        | Should Be Title Case| ${str2} |  exclude=a, an, the |
+        | ${str3} = | Convert To Title Case | distance is 1 km. | exclude=is, km.? |
+        | Should Be Title Case| ${str3} |  exclude=is, km.? |
+
         See also `Should Be Uppercase` and `Should Be Lowercase`.
         """
-        if not string.istitle():
-            self._fail(msg, "'%s' is not titlecase.", string)
+        if is_bytes(string):
+            string = string.decode(errors="backslashreplace")
+        if self.convert_to_title_case(string, exclude) != string:
+            self._fail(msg, "'%s' is not title case.", string)
 
     def _convert_to_index(self, value, name):
         if value == '':

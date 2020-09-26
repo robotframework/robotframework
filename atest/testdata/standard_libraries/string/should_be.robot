@@ -70,7 +70,7 @@ Should Be Titlecase Positive
 
 Should Be Titlecase Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES.lower()}' is not titlecase.    Should Be Titlecase    ${BYTES.lower()}
+    '${BYTES.lower()}' is not title case.    Should Be Titlecase    ${BYTES.lower()}
     Special error    Should Be Titlecase    all low    Special error
 
 *** Keywords ***
