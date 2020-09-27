@@ -96,8 +96,6 @@ class DocFormatter(object):
             'library introduction': 'Introduction',
             'importing': 'Importing',
             'library importing': 'Importing',
-            'shortcuts': 'Shortcuts',
-            'tags': 'Tags',
             'keywords': 'Keywords'
         }
         for kw in keywords:
