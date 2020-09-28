@@ -24,7 +24,8 @@ from robot.api import logger
 from robot.api.deco import keyword
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
-                          PassExecution, ReturnFromKeyword, VariableError)
+                          PassExecution, ReturnFromKeyword, VariableError,
+                          SkipExecution)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
@@ -2248,6 +2249,12 @@ class _RunKeyword(_BuiltInBase):
 
 
 class _Control(_BuiltInBase):
+
+    def skip(self, msg='Skipped with Skip keyword.'):
+        # TODO: docs
+        """Skip execution of the rest of the current test/task.
+        """
+        raise SkipExecution(msg)
 
     def continue_for_loop(self):
         """Skips the current for loop iteration and continues from the next.

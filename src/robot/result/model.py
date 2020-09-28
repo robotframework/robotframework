@@ -33,6 +33,7 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 """
 
 from itertools import chain
+import warnings
 
 from robot.model import TotalStatisticsBuilder
 from robot import model, utils
@@ -112,6 +113,17 @@ class Keyword(model.Keyword):
     def passed(self, passed):
         self.status = 'PASS' if passed else 'FAIL'
 
+    @property
+    def skipped(self):
+        return self.status == 'SKIP'
+
+    @skipped.setter
+    def skipped(self, skipped):
+        if not skipped:
+            raise ValueError("`skipped` value must be truthy, got '%s'."
+                             % skipped)
+        self.status = 'SKIP'
+
 
 class TestCase(model.TestCase):
     """Represents results of a single test case.
@@ -149,10 +161,21 @@ class TestCase(model.TestCase):
         self.status = 'PASS' if passed else 'FAIL'
 
     @property
+    def skipped(self):
+        return self.status == 'SKIP'
+
+    @skipped.setter
+    def skipped(self, skipped):
+        if not skipped:
+            raise ValueError("`skipped` value must be truthy, got '%s'."
+                             % skipped)
+        self.status = 'SKIP'
+
+    @property
     def critical(self):
-        warnigs.warn("'TestCase.criticality' has been deprecated and always "
-                     " returns 'True'.",
-                     UserWarning)
+        warnings.warn("'TestCase.criticality' has been deprecated and always "
+                      " returns 'True'.",
+                      UserWarning)
         return True
 
 
@@ -181,9 +204,19 @@ class TestSuite(model.TestSuite):
         return not self.statistics.all.failed
 
     @property
+    def skipped(self):
+        """``True`` if all tests have been skipped, ``False`` otherwise."""
+        return self.status == 'SKIP'
+
+    @property
     def status(self):
-        """``'PASS'`` if no test has failed, ``'FAIL'`` otherwise."""
-        return 'PASS' if self.passed else 'FAIL'
+        """``'FAIL'`` if any test has failed, ``'SKIP'`` if all tests have
+        been skipped, ``'PASS'`` otherwise."""
+        if self.statistics.all.failed:
+            return 'FAIL'
+        if self.statistics.all.total == 0 or self.statistics.all.passed:
+            return 'PASS'
+        return 'SKIP'
 
     @property
     def statistics(self):

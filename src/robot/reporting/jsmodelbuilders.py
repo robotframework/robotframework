@@ -41,7 +41,7 @@ class JsModelBuilder(object):
 
 
 class _Builder(object):
-    _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
+    _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2, 'SKIP': 3}
 
     def __init__(self, context):
         self._context = context
@@ -99,7 +99,8 @@ class SuiteBuilder(_Builder):
         stats = suite.statistics  # Access property only once
         return (stats.all.total,
                 stats.all.passed,
-                stats.all.failed)
+                stats.all.failed,
+                stats.all.skipped)
 
 
 class TestBuilder(_Builder):

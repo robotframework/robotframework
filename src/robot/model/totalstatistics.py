@@ -18,6 +18,7 @@ from .visitor import SuiteVisitor
 
 
 class TotalStatistics(object):
+    # TODO: can this class be inlined, since there's only one type of total stat
     """Container for total statistics."""
 
     def __init__(self, rpa=False):
@@ -39,14 +40,18 @@ class TotalStatistics(object):
         For example::
             2 tests, 1 passed, 1 failed
         """
+        # TODO: should this message be highlighted in console
         test_or_task = 'test' if not self._rpa else 'task'
-        total, end, passed, failed = self._get_counts(self.all)
-        return ('%d %s%s, %d passed, %d failed'
-                % (total, test_or_task, end, passed, failed))
+        total, end, passed, failed, skipped = self._get_counts(self.all)
+        template = '%d %s%s, %d passed, %d failed'
+        if skipped:
+            return ((template + ', %d skipped')
+                    % (total, test_or_task, end, passed, failed, skipped))
+        return template % (total, test_or_task, end, passed, failed)
 
     def _get_counts(self, stat):
         ending = 's' if stat.total != 1 else ''
-        return stat.total, ending, stat.passed, stat.failed
+        return stat.total, ending, stat.passed, stat.failed, stat.skipped
 
 
 class TotalStatisticsBuilder(SuiteVisitor):
