@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionStatus, DataError, PassExecution
-from robot.model import SuiteVisitor
+from robot.errors import ExecutionStatus, DataError, PassExecution, SkipExecution
+from robot.model import SuiteVisitor, TagPatterns
 from robot.result import TestSuite, Result
 from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic
 from robot.variables import VariableScopes
@@ -38,6 +38,7 @@ class Runner(SuiteVisitor):
         self._suite = None
         self._suite_status = None
         self._executed_tests = None
+        self._skipped_tags = TagPatterns(settings.skipped_tags)
 
     @property
     def _context(self):
@@ -116,10 +117,15 @@ class Runner(SuiteVisitor):
                                           timeout=self._get_timeout(test))
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(test, result))
-        status = TestStatus(self._suite_status, result)
+        status = TestStatus(self._suite_status, result,
+                            self._settings.skip_on_failure,
+                            self._settings.critical_tags)
         if status.exit:
             self._add_exit_combine()
             result.tags.add('robot:exit')
+        # TODO: helper for resolving test/tags
+        if self._skipped_tags.match(test.tags):
+            status.test_skipped("Test skipped with --skip command line option.")
         if not status.failures and not test.name:
             status.test_failed('Test case name cannot be empty.')
         if not status.failures and not test.keywords.normal:
@@ -130,7 +136,10 @@ class Runner(SuiteVisitor):
                 StepRunner(self._context,
                            test.template).run_steps(test.keywords.normal)
             else:
-                status.test_failed(status.message)
+                if status.skipped:
+                    status.test_skipped(status.message)
+                else:
+                    status.test_failed(status.message)
         except PassExecution as exception:
             err = exception.earlier_failures
             if err:
@@ -138,7 +147,10 @@ class Runner(SuiteVisitor):
             else:
                 result.message = exception.message
         except ExecutionStatus as err:
-            status.test_failed(err)
+            if err.status == 'SKIP':
+                status.test_skipped(err)
+            else:
+                status.test_failed(err)
         result.status = status.status
         result.message = status.message or result.message
         if status.teardown_allowed:
@@ -171,12 +183,15 @@ class Runner(SuiteVisitor):
             status.setup_executed(exception)
             if result and isinstance(exception, PassExecution):
                 result.message = exception.message
+        else:
+            if status.parent and status.parent.skipped:
+                status.skipped = True
 
     def _run_teardown(self, teardown, status, result=None):
         if status.teardown_allowed:
             exception = self._run_setup_or_teardown(teardown)
             status.teardown_executed(exception)
-            failed = not isinstance(exception, PassExecution)
+            failed = not isinstance(exception, PassExecution) and not isinstance(exception, SkipExecution)
             if result and exception:
                 result.message = status.message if failed else exception.message
             return exception if failed else None
