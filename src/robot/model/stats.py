@@ -36,6 +36,7 @@ class Stat(Sortable):
         self.passed = 0
         #: Number of failed tests.
         self.failed = 0
+        #: Number of skipped tests.
         self.skipped = 0
         #: Number of milliseconds it took to execute.
         self.elapsed = 0
