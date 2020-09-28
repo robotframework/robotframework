@@ -177,8 +177,8 @@ $.template('statColumnsTemplate',
 
 $.template('suiteStatusMessageTemplate',
     '${total} {{= testOrTask("{test}")}} total, ' +
-    '${totalPassed} passed, ' +
-    '<span class="{{if totalFailed}}fail{{else}}pass{{/if}}">${totalFailed} failed</span>' +
+    '${passed} passed, ' +
+    '<span class="{{if failed}}fail{{else}}pass{{/if}}">${failed} failed</span>' +
     '{{if skipped}}, <span class="skipped">${skipped} skipped</span>{{/if}}'
 );
 
