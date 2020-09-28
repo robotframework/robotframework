@@ -106,7 +106,7 @@ class Keyword(model.Keyword):
 
     @property
     def passed(self):
-        """``True`` or ``False`` depending on the :attr:`status`."""
+        """``True`` when :attr:`status` is 'PASS', ``False`` otherwise."""
         return self.status == 'PASS'
 
     @passed.setter
@@ -114,7 +114,20 @@ class Keyword(model.Keyword):
         self.status = 'PASS' if passed else 'FAIL'
 
     @property
+    def failed(self):
+        """``True`` when :attr:`status` is 'FAIL', ``False`` otherwise."""
+        return self.status == 'FAIL'
+
+    @failed.setter
+    def failed(self, failed):
+        self.status = 'FAIL' if failed else 'PASS'
+
+    @property
     def skipped(self):
+        """``True`` when :attr:`status` is 'SKIP', ``False`` otherwise.
+
+        Setting to ``False`` value is ambiguous and raises an exception.
+        """
         return self.status == 'SKIP'
 
     @skipped.setter
@@ -153,7 +166,7 @@ class TestCase(model.TestCase):
 
     @property
     def passed(self):
-        """``True/False`` depending on the :attr:`status`."""
+        """``True`` when :attr:`status` is 'PASS', ``False`` otherwise."""
         return self.status == 'PASS'
 
     @passed.setter
@@ -161,7 +174,20 @@ class TestCase(model.TestCase):
         self.status = 'PASS' if passed else 'FAIL'
 
     @property
+    def failed(self):
+        """``True`` when :attr:`status` is 'FAIL', ``False`` otherwise."""
+        return self.status == 'FAIL'
+
+    @failed.setter
+    def failed(self, failed):
+        self.status = 'FAIL' if failed else 'PASS'
+
+    @property
     def skipped(self):
+        """``True`` when :attr:`status` is 'SKIP', ``False`` otherwise.
+
+        Setting to ``False`` value is ambiguous and raises an exception.
+        """
         return self.status == 'SKIP'
 
     @skipped.setter
@@ -201,7 +227,12 @@ class TestSuite(model.TestSuite):
     @property
     def passed(self):
         """``True`` if no test has failed, ``False`` otherwise."""
-        return not self.statistics.all.failed
+        return self.status == 'PASS'
+
+    @property
+    def failed(self):
+        """``True`` if any test has failed, ``False`` otherwise."""
+        return self.status == 'FAIL'
 
     @property
     def skipped(self):
@@ -210,11 +241,18 @@ class TestSuite(model.TestSuite):
 
     @property
     def status(self):
-        """``'FAIL'`` if any test has failed, ``'SKIP'`` if all tests have
-        been skipped, ``'PASS'`` otherwise."""
-        if self.statistics.all.failed:
+        """'PASS', 'FAIL' or 'SKIP' depending on test statuses.
+
+        - If any test has failed, status is 'FAIL'.
+        - If no test has failed but some has passed, status is 'PASS'.
+        - If all tests have been skipped, status is 'SKIP'.
+        """
+        stats = self.statistics.all    # Local variable avoids recreating stats.
+        if stats.failed:
             return 'FAIL'
-        if self.statistics.all.total == 0 or self.statistics.all.passed:
+        # TODO: Would 'SKIP' be better status if there are no executed tests?
+        # Update also docstring above accordingly.
+        if stats.total == 0 or stats.passed:
             return 'PASS'
         return 'SKIP'
 

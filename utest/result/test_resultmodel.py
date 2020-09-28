@@ -83,13 +83,29 @@ class TestSuiteStatus(unittest.TestCase):
         suite.suites.create().tests.create(status='FAIL')
         assert_equal(suite.status, 'FAIL')
 
-    def test_passed(self):
+    def test_passed_failed_skipped_propertys(self):
         suite = TestSuite()
         assert_true(suite.passed)
+        assert_false(suite.failed)
+        assert_false(suite.skipped)
+        suite.tests.create(status='SKIP')
+        assert_false(suite.passed)
+        assert_false(suite.failed)
+        assert_true(suite.skipped)
         suite.tests.create(status='PASS')
         assert_true(suite.passed)
-        suite.tests.create(status='FAIL', tags='tag')
+        assert_false(suite.failed)
+        assert_false(suite.skipped)
+        suite.tests.create(status='FAIL')
         assert_false(suite.passed)
+        assert_true(suite.failed)
+        assert_false(suite.skipped)
+
+    def test_suite_status_cannot_be_set_directly(self):
+        suite = TestSuite()
+        for attr in 'status', 'passed', 'failed', 'skipped':
+            assert_true(hasattr(suite, attr))
+            assert_raises(AttributeError, setattr, suite, attr, True)
 
 
 class TestElapsedTime(unittest.TestCase):
@@ -143,32 +159,47 @@ class TestModel(unittest.TestCase):
     def test_keyword_name_cannot_be_set_directly(self):
         assert_raises(AttributeError, setattr, Keyword(), 'name', 'value')
 
-    def test_test_passed(self):
-        self._test_passed(TestCase())
+    def test_test_passed_failed_skipped_propertys(self):
+        self._verify_passed_failed_skipped(TestCase())
 
-    def test_keyword_passed(self):
-        self._test_passed(Keyword())
+    def test_keyword_passed_failed_skipped_propertys(self):
+        self._verify_passed_failed_skipped(Keyword())
 
     def test_keyword_passed_after_dry_run(self):
-        self._test_passed(Keyword(status='NOT_RUN'),
-                          initial_status='NOT_RUN')
+        self._verify_passed_failed_skipped(Keyword(status='NOT_RUN'),
+                                           initial_status='NOT_RUN')
 
-    def _test_passed(self, item, initial_status='FAIL'):
-        assert_equal(item.passed, False)
+    def _verify_passed_failed_skipped(self, item, initial_status='FAIL'):
         assert_equal(item.status, initial_status)
+        assert_equal(item.passed, False)
+        assert_equal(item.failed, initial_status == 'FAIL')
+        assert_equal(item.skipped, False)
         item.passed = True
         assert_equal(item.passed, True)
+        assert_equal(item.failed, False)
+        assert_equal(item.skipped, False)
         assert_equal(item.status, 'PASS')
         item.passed = False
         assert_equal(item.passed, False)
+        assert_equal(item.failed, True)
+        assert_equal(item.skipped, False)
         assert_equal(item.status, 'FAIL')
-
-    def test_suite_passed(self):
-        suite = TestSuite()
-        assert_equal(suite.passed, True)
-        suite.tests.create(status='FAIL')
-        assert_equal(suite.passed, False)
-        assert_raises(AttributeError, setattr, TestSuite(), 'passed', True)
+        item.failed = True
+        assert_equal(item.passed, False)
+        assert_equal(item.failed, True)
+        assert_equal(item.skipped, False)
+        assert_equal(item.status, 'FAIL')
+        item.failed = False
+        assert_equal(item.passed, True)
+        assert_equal(item.failed, False)
+        assert_equal(item.skipped, False)
+        assert_equal(item.status, 'PASS')
+        item.skipped = True
+        assert_equal(item.passed, False)
+        assert_equal(item.failed, False)
+        assert_equal(item.skipped, True)
+        assert_equal(item.status, 'SKIP')
+        assert_raises(ValueError, setattr, item, 'skipped', False)
 
 
 if __name__ == '__main__':
