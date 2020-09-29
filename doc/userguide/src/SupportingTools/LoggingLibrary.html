@@ -1,20 +1,295 @@
 <!DOCTYPE html>
-<html>
+<html id="library-documentation-top">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta content="Robot Framework 3.1.3.dev1 (Python 2.7.6 on linux2)" name="Generator">
+<meta content="Robot Framework 4.0.dev1 (Python 3.8.5 on darwin)" name="Generator">
 <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKcAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAAqAAAAAAAAAAAAAAAAAAAALIAAAD/AAAA4AAAANwAAADcAAAA3AAAANwAAADcAAAA3AAAANwAAADcAAAA4AAAAP8AAACxAAAAAAAAAKYAAAD/AAAAuwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/AAAA/wAAAKkAAAD6AAAAzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN8AAAD/AAAA+gAAAMMAAAAAAAAAAgAAAGsAAABrAAAAawAAAGsAAABrAAAAawAAAGsAAABrAAAADAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAIsAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAANEAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAAAAAAAAMgAAADIAAAAyAAAAMgAAADIAAAAyAAAAMgAAADIAAAAFAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAADwAAAB8AAAAAAAAAGAAAABcAAAAAAAAAH8AAABKAAAAAAAAAAAAAAAAAAAA2gAAAP8AAAD6AAAAwwAAAAAAAADCAAAA/wAAACkAAADqAAAA4QAAAAAAAAD7AAAA/wAAALAAAAAGAAAAAAAAANoAAAD/AAAA+gAAAMMAAAAAAAAAIwAAAP4AAAD/AAAA/wAAAGAAAAAAAAAAAAAAAMkAAAD/AAAAigAAAAAAAADaAAAA/wAAAPoAAADDAAAAAAAAAAAAAAAIAAAAcAAAABkAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAA2gAAAP8AAAD7AAAAywAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN4AAAD/AAAAqwAAAP8AAACvAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALIAAAD/AAAAsgAAAAAAAAC5AAAA/wAAAMoAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMkAAAD/AAAAvAAAAAAAAAAAAAAAAAAAAKwAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAArQAAAAAAAAAAwAMAAIABAAAf+AAAP/wAAD/8AAAgBAAAP/wAAD/8AAA//AAAJIwAADHEAAA//AAAP/wAAB/4AACAAQAAwAMAAA==">
 <style media="all" type="text/css">
-body {
-    background: white;
-    color: black;
-    font-size: small;
-    font-family: sans-serif;
-    padding: 0 0.5em;
+:root {
+    --background-color: white;
+    --text-color: black;
+    --border-color: #e0e0e2;
+    --light-background-color: #f3f3f3;
+    --robot-highlight: #00c0b5;
+    --highlighted-color: var(--text-color);
+    --highlighted-background-color: yellow;
+    --less-important-text-color: gray;
+    --link-color: #0000ee;
 }
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #1c2227;
+        --text-color: #e2e1d7;
+        --border-color: #4e4e4e;
+        --light-background-color: #002b36;
+        --robot-highlight: yellow;
+        --highlighted-color: var(--background-color);
+        --highlighted-background-color: yellow;
+        --less-important-text-color: #5b6a6f;
+        --link-color: #52adff;
+    }
+}
+body {
+    background: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+input, button, select {
+    background: var(--background-color);
+    color: var(--text-color);
+}
+a {
+    color: var(--link-color);
+}
+.base-container {
+    display: flex;
+}
+.libdoc-overview {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    background: var(--background-color);
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+}
+.libdoc-overview h4 {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+}
+.keyword-search-box {
+    display: flex;
+    justify-content: space-between;
+    height: 30px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    margin-top: 0.5rem;
+}
+#tags-shortcuts-container {
+    margin-top: 0.5rem;
+    height: 30px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+}
+.search-input {
+    flex: 1;
+    border: none;
+    text-indent: 4px;
+}
+.clear-search {
+    border: none;
+}
+#shortcuts-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.libdoc-details {
+    margin-top: 60px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    overflow: auto;
+    max-width: 1000px;
+}
+.libdoc-title {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 300px;
+    height: 36px;
+    padding: 0.5rem;
+    margin: 0.5rem;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+}
+.hamburger-menu {
+    display: none;
+    position: fixed;
+    z-index: 100;
+}
+input.hamburger-menu
+{
+  display: none;
+  width: 67px;
+  height: 46px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  opacity: 0;
+  z-index: 2;
+  -webkit-touch-callout: none;
+}
+span.hamburger-menu
+{
+  width: 31px;
+  height: 2px;
+  margin-bottom: 5px;
+  position: fixed;
+  right: 20px;
+  background: black;
+  background: var(--text-color);
+  border-radius: 2px;
+  z-index: 1;
+  transform-origin: 4px 0;
+  transition: transform 0.3s cubic-bezier(0.77,0.2,0.05,1.0),
+              opacity 0.35s ease;
+}
+span.hamburger-menu-1
+{
+    top: 14px;
+    transform-origin: 0 0;
+}
+span.hamburger-menu-2
+{
+    top: 24px;
+}
+span.hamburger-menu-3
+{
+    top: 34px;
+    transform-origin: 0 100%;
+}
+input.hamburger-menu:checked ~ span.hamburger-menu-1
+{
+  opacity: 1;
+  transform: rotate(45deg) translate(2px, -3px);
+  background: var(--text-color);
+}
+input.hamburger-menu:checked ~ span.hamburger-menu-2
+{
+  opacity: 0;
+  transform: rotate(0deg) scale(0.2, 0.2);
+}
+input.hamburger-menu:checked ~ span.hamburger-menu-3
+{
+  transform: rotate(-45deg) translate(2px, 3px);
+  background: var(--text-color);
+}
+.libdoc-title > svg {
+    padding-top: 2px;
+    height: 42px;
+    width: 42px;
+}
+#robot-svg-path {
+    fill: var(--text-color);
+    stroke: none;
+    fill-opacity:1;
+    fill-rule:nonzero;
+}
+.keywords-overview {
+    display: flex;
+    flex-direction: column;
+    height: 0;
+    max-height: calc(100vh - 60px - 0.5rem);
+    flex: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    margin: 60px 0 0.5rem 0.5rem;
+}
+.keywords-overview-header-row {
+    display: flex;
+    justify-content: space-between;
+}
+.shortcuts {
+    font-size: 0.9em;
+    overflow: auto;
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    flex: 1;
+    max-width: 320px;
+}
+.shortcuts a {
+    display: block;
+    text-decoration: none;
+    white-space: nowrap;
+    color: var(--text-color);
+    padding: 0.5rem;
+}
+.shortcuts a:hover {
+    background: var(--light-background-color);
+}
+.shortcuts a::first-letter {
+    font-weight: bold;
+    letter-spacing: 0.1em;
+}
+@media only screen and (min-width: 900px) {
+    .libdoc-details {
+        z-index: 1;
+        background: var(--background-color);
+    }
+    #toggle-keyword-shortcuts {
+        border: 1px solid var(--border-color);
+        border-radius: 3px;
+        margin-top: 3px;
+        margin-bottom: 3px;
+    }
+    #toggle-keyword-shortcuts:hover {
+        background: var(--light-background-color);
+    }
+    .shortcuts.keyword-wall {
+        display: flex;
+        flex-wrap: wrap;
+        width: 640px;
+        max-width: none;
+    }
+}
+@media only screen and (max-width: 899px) {
+    .libdoc-overview {
+        display: none;
+    }
+    #toggle-keyword-shortcuts {
+        display: none;
+    }
+    .libdoc-title {
+        width: 100%;
+        padding: 0.5rem;
+        margin: 0;
+        border-bottom: 1px solid var(--border-color);
+        background: white;
+        background: var(--background-color);
+    }
+    .libdoc-title > svg {
+        margin-right: 60px;
+    }
+    .libdoc-details {
+        padding-left: 0.5rem;
+    }
+    input.hamburger-menu {
+        display: block;
+    }
+    .hamburger-menu {
+        display: block;
+    }
+    .hamburger-menu:checked ~ .libdoc-overview {
+        display: block;
+        position: fixed;
+        height: 100vh;
+        width: 100vw;
+    }
+    .keywords-overview {
+        border: none;
+        margin: 60px 0 0;
+    }
+    .shortcuts {
+        max-width: 100vw;
+    }
+}
+.metadata {
+    margin-top: 0.5rem;
+ }
 .metadata th {
     text-align: left;
     padding-right: 1em;
@@ -22,65 +297,131 @@ body {
 a.name, span.name {
     font-style: italic;
 }
-a, a:link, a:visited {
-    color: #c30;
-}
-a img {
+.libdoc-details a img {
     border: 1px solid #c30 !important;
 }
 a:hover, a:active {
     text-decoration: underline;
-    color: black;
+    color: var(--text-color);
 }
 a:hover {
     text-decoration: underline !important;
-}
-.shortcuts {
-    margin: 1em 0;
-    font-size: 0.9em;
-}
-.shortcuts a {
-    display: inline-block;
-    text-decoration: none;
-    white-space: nowrap;
-    color: black;
-}
-.shortcuts a::first-letter {
-    font-weight: bold;
-    letter-spacing: 0.1em;
 }
 .normal-first-letter::first-letter {
     font-weight: normal !important;
     letter-spacing: 0 !important;
 }
+.shortcut-list-toggle, .tag-list-toggle {
+    margin-bottom: 1em;
+    font-size: 0.9em;
+}
+input.switch {
+    display: none;
+}
+.slider {
+    background-color: var(--border-color);
+    display: inline-block;
+    position: relative;
+    top: 5px;
+    height: 18px;
+    width: 36px;
+}
+.slider:before {
+    background-color: var(--background-color);
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    height: 12px;
+    width: 12px;
+}
+input.switch:checked + .slider::before {
+    background-color: var(--background-color);
+    left: 21px;
+}
 .keywords {
-    border: 1px solid #ccc;
-    border-collapse: collapse;
-    empty-cells: show;
-    margin: 0.3em 0;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
-.keywords th, .keywords td {
-    border: 1px solid #ccc;
-    padding: 0.2em;
-    vertical-align: top;
+.kw-overview {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
 }
-.keywords th {
-    background: #ddd;
-    color: black;
+@media only screen and (min-width: 899px) {
+    .kw-overview {
+        max-width: 400px;
+        margin-right: 1.5rem;
+    }
 }
-.kw, .args, .tags {
-    min-width: 100px;
-    max-width: 20%;
+.kw-docs {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 }
-td.kw a {
+.kw-name:link {
+    text-decoration: none;
+    color: var(--text-color);
+}
+.kw-name:visited {
+    text-decoration: none;
+    color: var(--text-color);
+}
+.kw {
+    display: flex;
+    align-items: baseline;
+    min-width: 250px
+}
+h4 {
+    margin-right: 0.5rem;
+}
+.keyword-container {
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    padding: 0.5rem 1.0rem 0.5rem 1.0rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    scroll-margin-top: 60px;
+}
+.keyword-container:target {
+    box-shadow: 0 0 4px var(--robot-highlight);
+}
+.keyword-content {
+    display: flex;
+    flex-direction: column;
+}
+.kw-row {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    justify-content: start;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    padding: 0.5rem 1.0rem 0.5rem 1.0rem;
+    margin-bottom: 0.5rem;
+}
+.kw a {
     color: inherit;
     text-decoration: none;
     font-weight: bold;
 }
+.args {
+    min-width: 200px;
+}
 .args span {
-    font-style: italic;
+    font-family: monospace;
+    background: var(--light-background-color);
     padding: 0 0.1em;
+    font-size: 1.1em;
+}
+.args span .highlight {
+    background: var(--highlighted-background-color);
+    color: var(--highlighted-color);
+}
+.tags {
+    display: flex;
+    align-items: baseline;
 }
 .tags a {
     color: inherit;
@@ -90,76 +431,26 @@ td.kw a {
 .footer {
     font-size: 0.9em;
 }
-/* Docs originating from HTML and reST are wrapped to divs. */
-.doc div > *:first-child {
-    margin-top: 0;
-}
-.doc div > *:last-child {    /* Does not work with IE8. */
+.doc div > *:last-child {
     margin-bottom: 0;
 }
-#search, #open-search {
-    position: fixed;
-    bottom: 5px;
-    right: 5px;
-    z-index: 1000;
-}
-#search {
-    width: 30em;
-    display: none;
-}
-#open-search {
-    border: 2px solid #ccc;
-    border-radius: 4px;
-    width: 40px;
-    height: 40px;
-    background-color: white;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAY5JREFUSImt1LtrFGEUBfCfURsFHwEr29UNkS3MFklrQK0EIYUk/5IQ0FSmCCKW1mpAommToCKoK+lsLUKeSFbXFLuT3B13Hjt64INvOPeec+fOnUs2mpjHBrbRwQE+YQFTObm5qGMZf0qct7gxjPgM9kqKJ+cAs2XFf4fEX3iOe7iKsxjFHTxFO8R2ikzqqcq/oVFQUANfUm8ynhUce97qVVoGo/gaclcGBTVDQDuvigw09Lfrr+maD+TSkOIJngWNx2lyI5C3KxrcDRof0+R2IC9XNLgSNPbTZDKa7YricFr/v3EqIUZ0xxPO4FxFg0vhnoz7scFmICcqGjTDvRWJEayG57mKBg/C/U2anHDSu5+oDSlex6GTlTE2KOhVMPmACyXFL+qOZZL7Xf/3OMY17KZMrheI13px6e26nmVyX3eDxnYt4lav0qTiaTzp8VkrPNdkNyOpkyM4lEkNL0uK/CjgXw8ySHATD7GGLd0/fgfv8QiTOI93BSb/jCKT/4Isk1ZOTiWTF0H8M8aPANvFyARlADGFAAAAAElFTkSuQmCC);
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0zLjUgMGMtMS45MyAwLTMuNSAxLjU3LTMuNSAzLjVzMS41NyAzLjUgMy41IDMuNWMuNTkgMCAxLjE3LS4xNCAxLjY2LS40MWExIDEgMCAwIDAgLjEzLjEzbDEgMWExLjAyIDEuMDIgMCAxIDAgMS40NC0xLjQ0bC0xLTFhMSAxIDAgMCAwLS4xNi0uMTNjLjI3LS40OS40NC0xLjA2LjQ0LTEuNjYgMC0xLjkzLTEuNTctMy41LTMuNS0zLjV6bTAgMWMxLjM5IDAgMi41IDEuMTEgMi41IDIuNSAwIC42Ni0uMjQgMS4yNy0uNjYgMS43Mi0uMDEuMDEtLjAyLjAyLS4wMy4wM2ExIDEgMCAwIDAtLjEzLjEzYy0uNDQuNC0xLjA0LjYzLTEuNjkuNjMtMS4zOSAwLTIuNS0xLjExLTIuNS0yLjVzMS4xMS0yLjUgMi41LTIuNXoiCiAgLz4KPC9zdmc+), none;
-    background-size: 24px 24px;
-}
-#open-search:hover {
-    background-color: #ccc;
-}
-fieldset {
-    background: white;
-    border: 2px solid #ccc;
-    border-radius: 4px;
-    padding: 6px 8px;
-}
-fieldset fieldset {
-    border: 1px solid #ccc;
-    margin: 4px 0;
-}
-#search-title {
-    font-size: 1.1em;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-#search-string {
-    box-sizing: border-box;
-    width: 100%;
-}
-#hide-unmatched {
-    margin: 0.5em 0 0 1em;
-}
-#search-buttons {
-    float: right;
-}
 .highlight {
-    background: yellow;
+    background: var(--highlighted-background-color);
+    color: var(--highlighted-color);
 }
 .no-match {
-    color: gray !important;
+    color: var(--less-important-text-color) !important;
 }
-tr.no-match.hide-unmatched {
-    display: none;
+.no-match .kw-name {
+    color: var(--less-important-text-color);
 }
 </style>
 <style media="all" type="text/css">
 /* Pygments 'default' style sheet. Generated with Pygments 2.1.3 using:
-     pygmentize -S default -f html -a .code > src/robot/htmldata/libdoc/pygments.css
+    pygmentize -S default -f html -a .code > src/robot/htmldata/libdoc/pygments.css
+    and added for dark mode
+    @media (prefers-color-scheme: dark)
+    pygmentize -S solarized-dark -f html -a .code > src/robot/htmldata/libdoc/pygments.css
 */
 .code .hll { background-color: #ffffcc }
 .code  { background: #f8f8f8; }
@@ -210,8 +501,10 @@ tr.no-match.hide-unmatched {
 .code .mh { color: #666666 } /* Literal.Number.Hex */
 .code .mi { color: #666666 } /* Literal.Number.Integer */
 .code .mo { color: #666666 } /* Literal.Number.Oct */
+.code .sa { color: #BA2121 } /* Literal.String.Affix */
 .code .sb { color: #BA2121 } /* Literal.String.Backtick */
 .code .sc { color: #BA2121 } /* Literal.String.Char */
+.code .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .code .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .code .s2 { color: #BA2121 } /* Literal.String.Double */
 .code .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -222,10 +515,92 @@ tr.no-match.hide-unmatched {
 .code .s1 { color: #BA2121 } /* Literal.String.Single */
 .code .ss { color: #19177C } /* Literal.String.Symbol */
 .code .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.code .fm { color: #0000FF } /* Name.Function.Magic */
 .code .vc { color: #19177C } /* Name.Variable.Class */
 .code .vg { color: #19177C } /* Name.Variable.Global */
 .code .vi { color: #19177C } /* Name.Variable.Instance */
+.code .vm { color: #19177C } /* Name.Variable.Magic */
 .code .il { color: #666666 } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark) {
+    .code .hll { background-color: #073642 }
+    .code  { background: #002b36; color: #839496 }
+    .code .c { color: #586e75; font-style: italic } /* Comment */
+    .code .err { color: #839496; background-color: #dc322f } /* Error */
+    .code .esc { color: #839496 } /* Escape */
+    .code .g { color: #839496 } /* Generic */
+    .code .k { color: #859900 } /* Keyword */
+    .code .l { color: #839496 } /* Literal */
+    .code .n { color: #839496 } /* Name */
+    .code .o { color: #586e75 } /* Operator */
+    .code .x { color: #839496 } /* Other */
+    .code .p { color: #839496 } /* Punctuation */
+    .code .ch { color: #586e75; font-style: italic } /* Comment.Hashbang */
+    .code .cm { color: #586e75; font-style: italic } /* Comment.Multiline */
+    .code .cp { color: #d33682 } /* Comment.Preproc */
+    .code .cpf { color: #586e75 } /* Comment.PreprocFile */
+    .code .c1 { color: #586e75; font-style: italic } /* Comment.Single */
+    .code .cs { color: #586e75; font-style: italic } /* Comment.Special */
+    .code .gd { color: #dc322f } /* Generic.Deleted */
+    .code .ge { color: #839496; font-style: italic } /* Generic.Emph */
+    .code .gr { color: #dc322f } /* Generic.Error */
+    .code .gh { color: #839496; font-weight: bold } /* Generic.Heading */
+    .code .gi { color: #859900 } /* Generic.Inserted */
+    .code .go { color: #839496 } /* Generic.Output */
+    .code .gp { color: #839496 } /* Generic.Prompt */
+    .code .gs { color: #839496; font-weight: bold } /* Generic.Strong */
+    .code .gu { color: #839496; text-decoration: underline } /* Generic.Subheading */
+    .code .gt { color: #268bd2 } /* Generic.Traceback */
+    .code .kc { color: #2aa198 } /* Keyword.Constant */
+    .code .kd { color: #2aa198 } /* Keyword.Declaration */
+    .code .kn { color: #cb4b16 } /* Keyword.Namespace */
+    .code .kp { color: #859900 } /* Keyword.Pseudo */
+    .code .kr { color: #859900 } /* Keyword.Reserved */
+    .code .kt { color: #b58900 } /* Keyword.Type */
+    .code .ld { color: #839496 } /* Literal.Date */
+    .code .m { color: #2aa198 } /* Literal.Number */
+    .code .s { color: #2aa198 } /* Literal.String */
+    .code .na { color: #839496 } /* Name.Attribute */
+    .code .nb { color: #268bd2 } /* Name.Builtin */
+    .code .nc { color: #268bd2 } /* Name.Class */
+    .code .no { color: #268bd2 } /* Name.Constant */
+    .code .nd { color: #268bd2 } /* Name.Decorator */
+    .code .ni { color: #268bd2 } /* Name.Entity */
+    .code .ne { color: #268bd2 } /* Name.Exception */
+    .code .nf { color: #268bd2 } /* Name.Function */
+    .code .nl { color: #268bd2 } /* Name.Label */
+    .code .nn { color: #268bd2 } /* Name.Namespace */
+    .code .nx { color: #839496 } /* Name.Other */
+    .code .py { color: #839496 } /* Name.Property */
+    .code .nt { color: #268bd2 } /* Name.Tag */
+    .code .nv { color: #268bd2 } /* Name.Variable */
+    .code .ow { color: #859900 } /* Operator.Word */
+    .code .w { color: #839496 } /* Text.Whitespace */
+    .code .mb { color: #2aa198 } /* Literal.Number.Bin */
+    .code .mf { color: #2aa198 } /* Literal.Number.Float */
+    .code .mh { color: #2aa198 } /* Literal.Number.Hex */
+    .code .mi { color: #2aa198 } /* Literal.Number.Integer */
+    .code .mo { color: #2aa198 } /* Literal.Number.Oct */
+    .code .sa { color: #2aa198 } /* Literal.String.Affix */
+    .code .sb { color: #2aa198 } /* Literal.String.Backtick */
+    .code .sc { color: #2aa198 } /* Literal.String.Char */
+    .code .dl { color: #2aa198 } /* Literal.String.Delimiter */
+    .code .sd { color: #586e75 } /* Literal.String.Doc */
+    .code .s2 { color: #2aa198 } /* Literal.String.Double */
+    .code .se { color: #2aa198 } /* Literal.String.Escape */
+    .code .sh { color: #2aa198 } /* Literal.String.Heredoc */
+    .code .si { color: #2aa198 } /* Literal.String.Interpol */
+    .code .sx { color: #2aa198 } /* Literal.String.Other */
+    .code .sr { color: #cb4b16 } /* Literal.String.Regex */
+    .code .s1 { color: #2aa198 } /* Literal.String.Single */
+    .code .ss { color: #2aa198 } /* Literal.String.Symbol */
+    .code .bp { color: #268bd2 } /* Name.Builtin.Pseudo */
+    .code .fm { color: #268bd2 } /* Name.Function.Magic */
+    .code .vc { color: #268bd2 } /* Name.Variable.Class */
+    .code .vg { color: #268bd2 } /* Name.Variable.Global */
+    .code .vi { color: #268bd2 } /* Name.Variable.Instance */
+    .code .vm { color: #268bd2 } /* Name.Variable.Magic */
+    .code .il { color: #2aa198 } /* Literal.Number.Integer.Long */
+}
 </style>
 <style media="print" type="text/css">
 body {
@@ -264,25 +639,40 @@ a {
 }
 </style>
 <style media="all" type="text/css">
-.doc > * {
-    margin: 0.7em 1em 0.1em 1em;
-    padding: 0;
+#introduction-container > h2,
+.doc > h1,
+.doc > h2,
+.section > h1,
+.section > h2 {
+    margin-top: 4rem;
+    margin-bottom: 1rem;
 }
-.doc > p, .doc > h1, .doc > h2, .doc > h3, .doc > h4 {
-    margin: 0.7em 0 0.1em 0;
+.doc > h3, .section > h3 {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+}
+.doc > h4, .section > h4 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+.doc > p, .section > p {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
 }
 .doc > *:first-child {
     margin-top: 0.1em;
 }
 .doc table {
-    border: 1px solid #ccc;
+    border: none;
     background: transparent;
     border-collapse: collapse;
     empty-cells: show;
     font-size: 0.9em;
+    overflow-y: auto;
+    display: block;
 }
 .doc table th, .doc table td {
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     background: transparent;
     padding: 0.1em 0.3em;
     height: 1.2em;
@@ -294,12 +684,18 @@ a {
 .doc pre {
     font-size: 1.1em;
     letter-spacing: 0.05em;
-    background: #f4f4f4;
+    background: var(--light-background-color);
+    overflow-y: auto;
+    padding: 0.3rem;
+    border-radius: 3px;
 }
-.doc code {
-    padding: 0 0.2em;
+.doc code,
+.docutils.literal {
+    font-size: 1.1em;
     letter-spacing: 0.05em;
-    background: #eee;
+    background: var(--light-background-color);
+    padding: 1px;
+    border-radius: 3px;
 }
 .doc li {
     list-style-position: inside;
@@ -314,6 +710,37 @@ a {
     border: 0;
 }
 </style>
+<script type="text/javascript">
+storage = function () {
+    var prefix = 'robot-framework-';
+    var storage;
+    function init(user) {
+        prefix += user + '-';
+        storage = getStorage();
+    }
+    function getStorage() {
+        // Use localStorage if it's accessible, normal object otherwise.
+        // Inspired by https://stackoverflow.com/questions/11214404
+        try {
+            localStorage.setItem(prefix, prefix);
+            localStorage.removeItem(prefix);
+            return localStorage;
+        } catch (exception) {
+            return {};
+        }
+    }
+    function get(name, defaultValue) {
+        var value = storage[prefix + name];
+        if (typeof value === 'undefined')
+            return defaultValue;
+        return value;
+    }
+    function set(name, value) {
+        storage[prefix + name] = value;
+    }
+    return {init: init, get: get, set: set};
+}();
+</script>
 <script type="text/javascript">
 window.util = function () {
     function map(elems, func) {
@@ -547,7 +974,7 @@ window.util = function () {
 jQuery.extend({highlight:function(e,t,n,r){if(e.nodeType===3){var i=e.data.match(t);if(i){var s=document.createElement(n||"span");s.className=r||"highlight";var o=e.splitText(i.index);o.splitText(i[0].length);var u=o.cloneNode(true);s.appendChild(u);o.parentNode.replaceChild(s,o);return 1}}else if(e.nodeType===1&&e.childNodes&&!/(script|style)/i.test(e.tagName)&&!(e.tagName===n.toUpperCase()&&e.className===r)){for(var a=0;a<e.childNodes.length;a++){a+=jQuery.highlight(e.childNodes[a],t,n,r)}}return 0}});jQuery.fn.unhighlight=function(e){var t={className:"highlight",element:"span"};jQuery.extend(t,e);return this.find(t.element+"."+t.className).each(function(){var e=this.parentNode;e.replaceChild(this.firstChild,this);e.normalize()}).end()};jQuery.fn.highlight=function(e,t){var n={className:"highlight",element:"span",caseSensitive:false,wordsOnly:false};jQuery.extend(n,t);if(e.constructor===String){e=[e]}e=jQuery.grep(e,function(e,t){return e!=""});e=jQuery.map(e,function(e,t){return e.replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&")});if(e.length==0){return this}var r=n.caseSensitive?"":"i";var i="("+e.join("|")+")";if(n.wordsOnly){i="\\b"+i+"\\b"}var s=new RegExp(i,r);return this.each(function(){jQuery.highlight(this,s,n.element,n.className)})}
 </script>
 <script type="text/javascript">
-libdoc = {"all_tags":[],"contains_tags":false,"doc":"<p>Library for logging messages.\x3c/p>\n<h2 id=\"Table of contents\">Table of contents\x3c/h2>\n<ul>\n<li><a href=\"#Usage\" class=\"name\">Usage\x3c/a>\x3c/li>\n<li><a href=\"#Valid%20log%20levels\" class=\"name\">Valid log levels\x3c/a>\x3c/li>\n<li><a href=\"#Examples\" class=\"name\">Examples\x3c/a>\x3c/li>\n<li><a href=\"#Importing\" class=\"name\">Importing\x3c/a>\x3c/li>\n<li><a href=\"#Shortcuts\" class=\"name\">Shortcuts\x3c/a>\x3c/li>\n<li><a href=\"#Keywords\" class=\"name\">Keywords\x3c/a>\x3c/li>\n\x3c/ul>\n<h2 id=\"Usage\">Usage\x3c/h2>\n<p>This library has several keyword, for example <a href=\"#Log%20Message\" class=\"name\">Log Message\x3c/a>, for logging messages. In reality the library is used only for <i>Libdoc\x3c/i> demonstration purposes.\x3c/p>\n<h2 id=\"Valid log levels\">Valid log levels\x3c/h2>\n<p>Valid log levels are <code>INFO\x3c/code>, <code>DEBUG\x3c/code>, and <code>TRACE\x3c/code>. The default log level can be set during <a href=\"#Importing\" class=\"name\">importing\x3c/a>.\x3c/p>\n<h2 id=\"Examples\">Examples\x3c/h2>\n<p>Notice how keywords are linked from examples.\x3c/p>\n<table border=\"1\">\n<tr>\n<td><a href=\"#Log%20Message\" class=\"name\">Log Message\x3c/a>\x3c/td>\n<td>My message\x3c/td>\n<td>\x3c/td>\n<td>\x3c/td>\n\x3c/tr>\n<tr>\n<td><a href=\"#Log%20Two%20Messages\" class=\"name\">Log Two Messages\x3c/a>\x3c/td>\n<td>My message\x3c/td>\n<td>Second message\x3c/td>\n<td>level=DEBUG\x3c/td>\n\x3c/tr>\n<tr>\n<td><a href=\"#Log%20Messages\" class=\"name\">Log Messages\x3c/a>\x3c/td>\n<td>First message\x3c/td>\n<td>Second message\x3c/td>\n<td>Third message\x3c/td>\n\x3c/tr>\n\x3c/table>","generated":"2019-08-22 00:39:11","inits":[{"args":["default_level=INFO"],"doc":"<p>The default log level can be given at library import time.\x3c/p>\n<p>See <a href=\"#Valid%20log%20levels\" class=\"name\">Valid log levels\x3c/a> section for information about available log levels.\x3c/p>\n<p>Examples:\x3c/p>\n<table border=\"1\">\n<tr>\n<th>Setting\x3c/th>\n<th>Value\x3c/th>\n<th>Value\x3c/th>\n<th>Comment\x3c/th>\n\x3c/tr>\n<tr>\n<td>Library\x3c/td>\n<td>LoggingLibrary\x3c/td>\n<td>\x3c/td>\n<td># Use default level (INFO)\x3c/td>\n\x3c/tr>\n<tr>\n<td>Library\x3c/td>\n<td>LoggingLibrary\x3c/td>\n<td>DEBUG\x3c/td>\n<td># Use the given level\x3c/td>\n\x3c/tr>\n\x3c/table>","matched":true,"name":"Init","shortdoc":"The default log level can be given at library import time.","tags":[]}],"keywords":[{"args":["message","level=None"],"doc":"<p>Writes given message to the log file using the specified log level.\x3c/p>\n<p>The message to log and the log level to use are defined using <code>message\x3c/code> and <code>level\x3c/code> arguments, respectively.\x3c/p>\n<p>If no log level is given, the default level given during <a href=\"#Importing\" class=\"name\">library importing\x3c/a> is used.\x3c/p>","matched":true,"name":"Log Message","shortdoc":"Writes given message to the log file using the specified log level.","tags":[]},{"args":["*messages"],"doc":"<p>Logs given messages using the log level set during <a href=\"#Importing\" class=\"name\">importing\x3c/a>.\x3c/p>\n<p>See also <a href=\"#Log%20Message\" class=\"name\">Log Message\x3c/a> and <a href=\"#Log%20Two%20Messages\" class=\"name\">Log Two Messages\x3c/a>.\x3c/p>","matched":true,"name":"Log Messages","shortdoc":"Logs given messages using the log level set during `importing`.","tags":[]},{"args":["message1","message2","level=None"],"doc":"<p>Writes given messages to the log file using the specified log level.\x3c/p>\n<p>See <a href=\"#Log%20Message\" class=\"name\">Log Message\x3c/a> keyword for more information.\x3c/p>","matched":true,"name":"Log Two Messages","shortdoc":"Writes given messages to the log file using the specified log level.","tags":[]}],"name":"LoggingLibrary","named_args":true,"scope":"test case","version":"0.1"};
+libdoc = {"all_tags":[],"contains_tags":false,"doc":"<p>Library for logging messages.\x3c/p>\n<h2 id=\"Table of contents\">Table of contents\x3c/h2>\n<ul>\n<li><a href=\"#Table%20of%20contents\" class=\"name\">Table of contents\x3c/a>\x3c/li>\n<li><a href=\"#Usage\" class=\"name\">Usage\x3c/a>\x3c/li>\n<li><a href=\"#Valid%20log%20levels\" class=\"name\">Valid log levels\x3c/a>\x3c/li>\n<li><a href=\"#Examples\" class=\"name\">Examples\x3c/a>\x3c/li>\n<li><a href=\"#Importing\" class=\"name\">Importing\x3c/a>\x3c/li>\n<li><a href=\"#Keywords\" class=\"name\">Keywords\x3c/a>\x3c/li>\n\x3c/ul>\n<h2 id=\"Usage\">Usage\x3c/h2>\n<p>This library has several keyword, for example <a href=\"#Log%20Message\" class=\"name\">Log Message\x3c/a>, for logging messages. In reality the library is used only for <i>Libdoc\x3c/i> demonstration purposes.\x3c/p>\n<h2 id=\"Valid log levels\">Valid log levels\x3c/h2>\n<p>Valid log levels are <code>INFO\x3c/code>, <code>DEBUG\x3c/code>, and <code>TRACE\x3c/code>. The default log level can be set during <a href=\"#Importing\" class=\"name\">importing\x3c/a>.\x3c/p>\n<h2 id=\"Examples\">Examples\x3c/h2>\n<p>Notice how keywords are linked from examples.\x3c/p>\n<table border=\"1\">\n<tr>\n<td><a href=\"#Log%20Message\" class=\"name\">Log Message\x3c/a>\x3c/td>\n<td>My message\x3c/td>\n<td>\x3c/td>\n<td>\x3c/td>\n\x3c/tr>\n<tr>\n<td><a href=\"#Log%20Two%20Messages\" class=\"name\">Log Two Messages\x3c/a>\x3c/td>\n<td>My message\x3c/td>\n<td>Second message\x3c/td>\n<td>level=DEBUG\x3c/td>\n\x3c/tr>\n<tr>\n<td><a href=\"#Log%20Messages\" class=\"name\">Log Messages\x3c/a>\x3c/td>\n<td>First message\x3c/td>\n<td>Second message\x3c/td>\n<td>Third message\x3c/td>\n\x3c/tr>\n\x3c/table>","generated":"2020-09-29 11:29:45","inits":[{"args":["default_level=INFO"],"doc":"<p>The default log level can be given at library import time.\x3c/p>\n<p>See <a href=\"#Valid%20log%20levels\" class=\"name\">Valid log levels\x3c/a> section for information about available log levels.\x3c/p>\n<p>Examples:\x3c/p>\n<table border=\"1\">\n<tr>\n<th>Setting\x3c/th>\n<th>Value\x3c/th>\n<th>Value\x3c/th>\n<th>Comment\x3c/th>\n\x3c/tr>\n<tr>\n<td>Library\x3c/td>\n<td>LoggingLibrary\x3c/td>\n<td>\x3c/td>\n<td># Use default level (INFO)\x3c/td>\n\x3c/tr>\n<tr>\n<td>Library\x3c/td>\n<td>LoggingLibrary\x3c/td>\n<td>DEBUG\x3c/td>\n<td># Use the given level\x3c/td>\n\x3c/tr>\n\x3c/table>","matched":true,"name":"Init","shortdoc":"The default log level can be given at library import time.","tags":[]}],"keywords":[{"args":["message","level=None"],"doc":"<p>Writes given message to the log file using the specified log level.\x3c/p>\n<p>The message to log and the log level to use are defined using <code>message\x3c/code> and <code>level\x3c/code> arguments, respectively.\x3c/p>\n<p>If no log level is given, the default level given during <a href=\"#Importing\" class=\"name\">library importing\x3c/a> is used.\x3c/p>","matched":true,"name":"Log Message","shortdoc":"Writes given message to the log file using the specified log level.","tags":[]},{"args":["*messages"],"doc":"<p>Logs given messages using the log level set during <a href=\"#Importing\" class=\"name\">importing\x3c/a>.\x3c/p>\n<p>See also <a href=\"#Log%20Message\" class=\"name\">Log Message\x3c/a> and <a href=\"#Log%20Two%20Messages\" class=\"name\">Log Two Messages\x3c/a>.\x3c/p>","matched":true,"name":"Log Messages","shortdoc":"Logs given messages using the log level set during `importing`.","tags":[]},{"args":["message1","message2","level=None"],"doc":"<p>Writes given messages to the log file using the specified log level.\x3c/p>\n<p>See <a href=\"#Log%20Message\" class=\"name\">Log Message\x3c/a> keyword for more information.\x3c/p>","matched":true,"name":"Log Two Messages","shortdoc":"Writes given messages to the log file using the specified log level.","tags":[]}],"name":"LoggingLibrary","named_args":true,"scope":"TEST","version":"0.1"};
 </script>
 <title></title>
 </head>
@@ -557,7 +984,7 @@ libdoc = {"all_tags":[],"contains_tags":false,"doc":"<p>Library for logging mess
   <h1>Opening library documentation failed</h1>
   <ul>
     <li>Verify that you have <b>JavaScript enabled</b> in your browser.</li>
-    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 8 or newer is required.</li>
+    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 11 is required.</li>
     <li>Check are there messages in your browser's <b>JavaScript error log</b>. Please report the problem if you suspect you have encountered a bug.</li>
   </ul>
 </div>
@@ -565,24 +992,38 @@ libdoc = {"all_tags":[],"contains_tags":false,"doc":"<p>Library for logging mess
 <script type="text/javascript">
     // Not using jQuery here for speed and to support ancient browsers.
     document.getElementById('javascript-disabled').style.display = 'none';
+    window.addEventListener("hashchange", function() {
+      document.getElementsByClassName("hamburger-menu")[0].checked = false;
+    }, false);
 </script>
 
 <script type="text/javascript">
     $(document).ready(function() {
         parseTemplates();
         document.title = libdoc.name;
+        storage.init('libdoc');
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
             renderTemplate('importing', libdoc);
         }
         renderTemplate('shortcuts', libdoc);
-        if (libdoc.contains_tags) {
-            renderTemplate('tags', libdoc);
-        }
+        renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
+        const params = util.parseQueryString(window.location.search.slice(1));
+        let selectedTag = "";
+        if ("tag" in params) {
+            selectedTag = params["tag"];
+            tagSearch(selectedTag, window.location.hash);
+        }
+        if (libdoc.contains_tags) {
+          libdoc.selectedTag = selectedTag;
+          renderTemplate('tags-shortcuts', libdoc);
+        }
         scrollToHash();
-        $(document).bind('keydown', handleKeydown);
+        setTimeout(function() {
+        document.getElementById("keyword-statistics-header").innerText = '' + libdoc.keywords.length;
+      }, 0);
     });
 
     function parseTemplates() {
@@ -592,23 +1033,14 @@ libdoc = {"all_tags":[],"contains_tags":false,"doc":"<p>Library for logging mess
     }
 
     function renderTemplate(name, arguments, container) {
-        if (!container) {
-            container = $('#' + name + '-container');
-            container.empty();
-        }
-        if (!arguments.search) {
-            arguments.search = false;
-        }
-        $.tmpl(name + '-template', arguments).appendTo(container);
-    }
-
-    function handleKeydown(event) {
-        event = event || window.event;
-        var keyCode = event.keyCode || event.which;
-        if (keyCode === 27)  // esc
-            setTimeout(closeSearch, 0);
-        if (keyCode === 83 && $('#search').is(':hidden'))  // s
-            setTimeout(openSearch, 0);
+      if (!container) {
+          container = $('#' + name + '-container');
+          container.empty();
+      }
+      if (!arguments.search) {
+          arguments.search = false;
+      }
+      $.tmpl(name + '-template', arguments).appendTo(container);
     }
 
     function scrollToHash() {
@@ -619,60 +1051,35 @@ libdoc = {"all_tags":[],"contains_tags":false,"doc":"<p>Library for logging mess
         }
     }
 
-    function tagSearch(tag) {
-        var include = {tags: true, tagsExact: true};
-        markMatches(tag, include);
-        highlightMatches(tag, include);
-        $('#keywords-container').find('.kw-row').addClass('hide-unmatched');
+    function tagSearch(tag, hash) {
+      document.getElementsByClassName('search-input')[0].value = '';
+      const include = {tags: true, tagsExact: true};
+      const url = window.location.pathname + "?tag=" + tag + (hash || "");
+      markMatches(tag, include);
+      highlightMatches(tag, include);
+      history.replaceState && history.replaceState(null, '', url);
+      document.getElementById('keyword-shortcuts-container').scrollTop = 0;
     }
 
-    function doSearch() {
-        var string = $('#search-string').val();
-        var include = getIncludesAndDisableIfOnlyOneLeft();
-        if (string) {
-            markMatches(string, include);
-            highlightMatches(string, include);
-            setMatchVisibility();
-        } else {
-            resetKeywords();
-        }
+    function clearTagSearch() {
+      document.getElementsByClassName('search-input')[0].value = '';
+      history.replaceState && history.replaceState(null, '', window.location.pathname);
+      resetKeywords();
     }
 
-    function getIncludesAndDisableIfOnlyOneLeft() {
-        var name = $('#include-name');
-        var args = $('#include-args');
-        var doc = $('#include-doc');
-        var tags = $('#include-tags');
-        var include = {name: name.prop('checked'),
-                       args: args.prop('checked'),
-                       doc: doc.prop('checked'),
-                       tags: !!tags.prop('checked')};
-        if ((!include.name) && (!include.args) && (!include.doc)) {
-            tags.prop('disabled', true);
-        } else if ((!include.name) && (!include.args) && (!include.tags)) {
-            doc.prop('disabled', true);
-        } else if ((!include.name) && (!include.doc) && (!include.tags)) {
-            args.prop('disabled', true);
-        } else if ((!include.args) && (!include.doc) && (!include.tags)) {
-            name.prop('disabled', true);
-        } else {
-            name.prop('disabled', false);
-            args.prop('disabled', false);
-            doc.prop('disabled', false);
-            tags.prop('disabled', false);
-        }
-        return include;
+    function closeMenu() {
+      document.getElementById('hamburger-menu-input').checked = false;
     }
 
     function markMatches(pattern, include) {
-        pattern = util.regexpEscape(pattern);
+        let patternRegexp = util.regexpEscape(pattern);
         if (include.tagsExact) {
-            pattern = '^' + pattern + '$';
+            patternRegexp = '^' + patternRegexp + '$';
         }
-        var regexp = new RegExp(pattern, 'i');
-        var test = regexp.test.bind(regexp);
-        var result = {contains_tags: libdoc.contains_tags};
-        var matchCount = 0;
+        let regexp = new RegExp(patternRegexp, 'i');
+        let test = regexp.test.bind(regexp);
+        let result = {contains_tags: libdoc.contains_tags};
+        let matchCount = 0;
         result.keywords = util.map(libdoc.keywords, function (kw) {
             kw = $.extend({}, kw);
             kw.matched = (include.name && test(kw.name) ||
@@ -683,21 +1090,20 @@ libdoc = {"all_tags":[],"contains_tags":false,"doc":"<p>Library for logging mess
                 matchCount++;
             return kw
         });
-        renderTemplate('shortcuts', result);
+        renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
         if (libdoc.contains_tags) {
-            renderTemplate('tags', libdoc);
+          libdoc.selectedTag = include.tagsExact ? pattern : "";
+          renderTemplate('tags-shortcuts', libdoc);
         }
-        var ending = matchCount != 1 ? 's.' : '.';
-        $('#match-count').show().text(matchCount + ' matched keyword' + ending);
-        $('#altogether-count').hide();
-        if (matchCount == 0)
+        document.getElementById("keyword-statistics-header").innerText = matchCount + ' / ' + result.keywords.length;
+        if (matchCount === 0)
             $('#keywords-container').find('table').empty();
     }
 
     function highlightMatches(string, include) {
-        var shortcuts = $('#shortcuts-container').find('.match');
-        var keywords = $('#keywords-container').find('.match');
+        const shortcuts = $('#shortcuts-container').find('.match');
+        const keywords = $('#keywords-container').find('.match');
         if (include.name) {
             shortcuts.highlight(string);
             keywords.find('.kw').highlight(string);
@@ -710,51 +1116,59 @@ libdoc = {"all_tags":[],"contains_tags":false,"doc":"<p>Library for logging mess
         }
         if (include.tags) {
             var matches = keywords.find('.tags').find('a').add(
-                    $('#tags-container').find('a'));
+                    $('#tags-shortcuts-container').find('a'));
             if (include.tagsExact) {
                 matches = matches.filter(function (index, tag) {
-                    return $(tag).text().toUpperCase() == string.toUpperCase();
+                    return $(tag).text().toUpperCase() === string.toUpperCase();
                 });
             }
             matches.highlight(string);
         }
     }
 
-    function openSearch() {
-        $('#search').show();
-        $('#open-search').hide();
-        $('#search-string').focus().select();
-        $(document).scrollTop($("#Shortcuts").offset().top);
+    function clearSearch() {
+      document.getElementsByClassName('search-input')[0].value = '';
+      const tagsSelect = document.getElementById('tags-shortcuts-container');
+      if (tagsSelect) {
+        tagsSelect.selectedIndex = 0;
+      }
+      resetKeywords();
     }
 
-    function closeSearch() {
-        $('#search').hide();
-        $('#open-search').show();
+    function searching() {
+      const value = document.getElementsByClassName('search-input')[0].value;
+      const include = {name: true,
+                       args: true,
+                       doc: true,
+                       tags: true};
+      if (value) {
+          markMatches(value, include);
+          highlightMatches(value, include);
+          document.getElementById('keyword-shortcuts-container').scrollTop = 0;
+      } else {
+          resetKeywords();
+      }
     }
 
-    function resetSearch() {
-        $('#search-string').val('');
-        $('#include-name').prop('checked', true);
-        $('#include-args').prop('checked', true);
-        $('#include-doc').prop('checked', true);
-        $('#hide-unmatched').prop('checked', false);
-        resetKeywords();
+    function toggleShortcuts() {
+      const shortcuts = document.getElementsByClassName("shortcuts")[0];
+      if (shortcuts.classList.contains("keyword-wall")) {
+        shortcuts.classList.remove("keyword-wall");
+      } else {
+        shortcuts.classList.add("keyword-wall");
+      }
+      const button = document.getElementById("toggle-keyword-shortcuts")
+      button.innerText = button.innerText === '+' ? '-' : '+';
     }
 
     function resetKeywords() {
-        renderTemplate('shortcuts', libdoc);
+        renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
         if (libdoc.contains_tags) {
             renderTemplate('tags', libdoc);
         }
-        $('#match-count').hide();
-        $('#altogether-count').show();
-    }
-
-    function setMatchVisibility() {
-        var kws = $('#keywords-container').find('.kw-row');
-        var hide = $('#hide-unmatched').prop('checked');
-        kws.toggleClass('hide-unmatched', hide);
+        document.getElementById("keyword-statistics-header").innerText = ''+libdoc.keywords.length;
+        history.replaceState && history.replaceState(null, '', location.pathname);
     }
 
     // http://stackoverflow.com/a/18484799
@@ -769,141 +1183,191 @@ libdoc = {"all_tags":[],"contains_tags":false,"doc":"<p>Library for logging mess
 </script>
 
 <script type="text/x-jquery-tmpl" id="base-template">
-    <h1>${name}</h1>
-    <table class="metadata">
-        {{if version}}<tr><th>Library version:</th><td>${version}</td></tr>{{/if}}
-        {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
-        <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
-    </table>
-    <div id="introduction-container">
-        <h2 id="Introduction">Introduction</h2>
-        <div class="doc">{{html doc}}</div>
+  <div class="base-container">
+    <input id="hamburger-menu-input" class="hamburger-menu" type="checkbox" />
+    <span class="hamburger-menu hamburger-menu-1"></span>
+    <span class="hamburger-menu hamburger-menu-2"></span>
+    <span class="hamburger-menu hamburger-menu-3"></span>
+    <div class="libdoc-overview"><div id="shortcuts-container"></div></div>
+    <div class="libdoc-details">
+      <table class="metadata">
+          {{if version}}<tr><th>Library version:</th><td>${version}</td></tr>{{/if}}
+          {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
+          <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
+      </table>
+      <div id="introduction-container">
+          <h2 id="Introduction">Introduction</h2>
+          <div class="doc">{{html doc}}</div>
+      </div>
+      <div id="importing-container"></div>
+      <div id="keywords-container"></div>
+      <div id="footer-container"></div>
     </div>
-    <div id="importing-container"></div>
-    <div id="shortcuts-container"></div>
-    <div id="tags-container"></div>
-    <div id="keywords-container"></div>
-    <div id="footer-container"></div>
-    <form id="search" action="javascript:void(0)">
-        <fieldset>
-            <legend id="search-title">Search keywords</legend>
-            <input type="text" id="search-string" onkeyup="delay(doSearch, 500)">
-            <fieldset>
-                <legend>Search from</legend>
-                <input type="checkbox" id="include-name" onclick="doSearch()" checked>
-                <label for="include-name">Name</label>
-                <input type="checkbox" id="include-args" onclick="doSearch()" checked>
-                <label for="include-args">Arguments</label>
-                <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
-                <label for="include-doc">Documentation</label>
-                {{if libdoc.contains_tags}}
-                <input type="checkbox" id="include-tags" onclick="doSearch()" checked>
-                <label for="include-tags">Tags</label>
-                {{/if}}
-            </fieldset>
-            <input type="checkbox" id="hide-unmatched" onclick="setMatchVisibility()" checked>
-            <label for="hide-unmatched">Hide unmatched keywords</label>
-            <div id="search-buttons">
-                <input type="button" value="Reset" onclick="resetSearch()"
-                       title="Reset search">
-                <input type="button" value="Close" onclick="closeSearch()"
-                       title="Close search (shortcut: <Esc>)">
-            </div>
-        </fieldset>
-    </form>
-    <div id="open-search" onclick="openSearch()" title="Search keywords (shortcut: s)"></div>
+    <a class="libdoc-title" href="#library-documentation-top">
+          <h1>${name}</h1>
+          <svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   viewBox="0 0 202.4325 202.34125"
+   height="42"
+   width="42"
+   xml:space="preserve"
+   version="1.1"><metadata
+     id="metadata8"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+     id="defs6"><clipPath
+       id="clipPath16"
+       clipPathUnits="userSpaceOnUse"><path
+         id="path18"
+         d="m 0,161.873 161.946,0 L 161.946,0 0,0 0,161.873 Z" /></clipPath></defs><g
+     transform="matrix(1.25,0,0,-1.25,0,202.34125)"
+     id="g10"><g
+       id="g12"><g
+         clip-path="url(#clipPath16)"
+         id="g14"><g
+           transform="translate(52.4477,88.1268)"
+           id="g20"><path
+             id="robot-svg-path"
+             d="m 0,0 c 0,7.6 6.179,13.779 13.77,13.779 7.6,0 13.779,-6.179 13.779,-13.779 0,-2.769 -2.238,-5.007 -4.998,-5.007 -2.761,0 -4.999,2.238 -4.999,5.007 0,2.078 -1.695,3.765 -3.782,3.765 C 11.693,3.765 9.997,2.078 9.997,0 9.997,-2.769 7.76,-5.007 4.999,-5.007 2.238,-5.007 0,-2.769 0,0 m 57.05,-23.153 c 0,-2.771 -2.237,-5.007 -4.998,-5.007 l -46.378,0 c -2.761,0 -4.999,2.236 -4.999,5.007 0,2.769 2.238,5.007 4.999,5.007 l 46.378,0 c 2.761,0 4.998,-2.238 4.998,-5.007 M 35.379,-2.805 c -1.545,2.291 -0.941,5.398 1.35,6.943 l 11.594,7.83 c 2.273,1.58 5.398,0.941 6.943,-1.332 1.545,-2.29 0.941,-5.398 -1.35,-6.943 l -11.594,-7.83 c -0.852,-0.586 -1.829,-0.87 -2.788,-0.87 -1.607,0 -3.187,0.781 -4.155,2.202 m 31.748,-30.786 c 0,-0.945 -0.376,-1.852 -1.045,-2.522 l -8.617,-8.617 c -0.669,-0.668 -1.576,-1.045 -2.523,-1.045 l -52.833,0 c -0.947,0 -1.854,0.377 -2.523,1.045 l -8.617,8.617 c -0.669,0.67 -1.045,1.577 -1.045,2.522 l 0,52.799 c 0,0.947 0.376,1.854 1.045,2.522 l 8.617,8.619 c 0.669,0.668 1.576,1.044 2.523,1.044 l 52.833,0 c 0.947,0 1.854,-0.376 2.523,-1.044 l 8.617,-8.619 c 0.669,-0.668 1.045,-1.575 1.045,-2.522 l 0,-52.799 z m 7.334,61.086 -11.25,11.25 c -1.705,1.705 -4.018,2.663 -6.428,2.663 l -56.523,0 c -2.412,0 -4.725,-0.959 -6.43,-2.665 L -17.412,27.494 c -1.704,-1.705 -2.661,-4.016 -2.661,-6.427 l 0,-56.515 c 0,-2.411 0.958,-4.725 2.663,-6.428 l 11.25,-11.25 c 1.705,-1.705 4.017,-2.662 6.428,-2.662 l 56.515,0 c 2.41,0 4.723,0.957 6.428,2.662 l 11.25,11.25 c 1.705,1.703 2.663,4.017 2.663,6.428 l 0,56.514 c 0,2.412 -0.958,4.724 -2.663,6.429" /></g></g></g></g></svg>
+    </a>
+  </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="importing-template">
     <h2 id="Importing">Importing</h2>
-    <table border="1" class="keywords">
-        <tr>
-            <th class="args">Arguments</th>
-            <th class="doc">Documentation</th>
-        </tr>
+    <div class="keywords">
         {{each inits}}
-        <tr class="kw-row">
-            <td class="args">
+        <div class="kw-row">
+          <div class="kw-overview">
+            <h4>Arguments</h4>
+            <div class="args">
             {{each args}}
-              <span>${$value}</span>{{if $index < args.length-1}}, {{/if}}
+            <span>${$value}</span>{{if $index < args.length-1}}<br>{{/if}}
             {{/each}}
-            </td>
-            <td class="doc">{{html $value.doc}}</td>
-        </tr>
+            </div>
+          </div>
+          {{if $value.doc}}
+            <div class="kw-docs">
+              <h4>Documentation</h4>
+              <div class="kwdoc doc">{{html $value.doc}}</div>
+            </div>
+          {{/if}}
+        </div>
         {{/each}}
-    </table>
+    </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
-    <h2 id="Shortcuts">Shortcuts</h2>
-    <div class='shortcuts'>
-        {{each keywords}}
-        <a href="#${encodeURIComponent($value.name)}"
-           class="{{if $value.matched === false}}no-{{/if}}match"
-           title="${$value.shortdoc}">${$value.name}</a>
-        {{if $index < keywords.length-1}} &middot; {{/if}}
-        {{/each}}
+    <div class="keywords-overview">
+      <div class="keyword-search-box">
+        <input placeholder="Search" type="text" class="search-input" onkeyup="delay(searching, 500)"/>
+        <button class="clear-search" onclick="clearSearch()">&#10005;</button>
+      </div>
+      {{if all_tags.length > 0}}
+      <select id="tags-shortcuts-container" onchange="location = this.value;">
+      </select>
+      {{/if}}
+      <div class="keywords-overview-header-row">
+      <h4>Keywords (<span id="keyword-statistics-header"></span>)</h4>
+      <button id="toggle-keyword-shortcuts" onclick="toggleShortcuts()">+</button>
+      </div>
+      <ul class="shortcuts" id="keyword-shortcuts-container">
+      </ul>
     </div>
 </script>
 
-<script type="text/x-jquery-tmpl" id="tags-template">
-    <h2 id="Tags">Tags</h2>
-    <div class='shortcuts'>
-        {{each all_tags}}
-        <a href="javascript:tagSearch('${$value}')"
-           title="Show tests with this tag">${$value}</a> &middot;
-        {{/each}}
-        <a href="javascript:resetKeywords()" class="normal-first-letter"
-           title="Show all tags">[Reset]</a>
-    </div>
+<script type="text/x-jquery-tmpl" id="keyword-shortcuts-template">
+    {{each keywords}}
+    {{if $value.matched}}
+    <li>
+    <a href="#${encodeURIComponent($value.name)}"
+       onclick="closeMenu()"
+       class="match"
+       title="${$value.shortdoc}">${$value.name}</a>
+    </li>
+    {{/if}}
+    {{/each}}
+    {{each keywords}}
+    {{if $value.matched == false}}
+    <li>
+    <a href="#${encodeURIComponent($value.name)}"
+       onclick="closeMenu()"
+       class="no-match"
+       title="${$value.shortdoc}">${$value.name}</a>
+    </li>
+    {{/if}}
+    {{/each}}
+</script>
+
+
+<script type="text/x-jquery-tmpl" id="tags-shortcuts-template">
+  <option value="javascript:clearTagSearch()" {{if selectedTag === ""}}selected{{/if}}>- Show all tags -</option>
+  {{each all_tags}}
+    <option value="javascript:tagSearch('${$value}')" {{if selectedTag === $value}}selected{{/if}}>${$value}</a>
+    </option>
+  {{/each}}
 </script>
 
 <script type="text/x-jquery-tmpl" id="keywords-template">
     <h2 id="Keywords">Keywords</h2>
-    <table border="1" class="keywords">
-        <tr>
-            <th class="kw">Keyword</th>
-            <th class="args">Arguments</th>
-            {{if libdoc.contains_tags}}
-            <th class="tags">Tags</th>
-            {{/if}}
-            <th class="doc">Documentation</th>
-        </tr>
+    <div class="keywords">
         {{each keywords}}
+        {{if $value.matched}}
             {{tmpl($value) 'keyword-template'}}
+        {{/if}}
         {{/each}}
-    </table>
+        {{each keywords}}
+        {{if $value.matched === false}}
+            {{tmpl($value) 'keyword-template'}}
+        {{/if}}
+        {{/each}}
+    </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="keyword-template">
-    <tr class="kw-row {{if matched === false}}no-{{/if}}match">
-        <td class="kw">
-            <a name="${name}" href="#${encodeURIComponent(name)}"
+    <div class="keyword-container {{if matched === false}}no-{{/if}}match" id="${name}">
+       <div class="keyword-name">
+            <h2>
+            <a class="kw-name" href="#${encodeURIComponent(name)}"
                title="Link to this keyword">${name}</a>
-        </td>
-        <td class="args">
-            {{each args}}
-            <span>${$value}</span>{{if $index < args.length-1}}, {{/if}}
-            {{/each}}
-        </td>
-        {{if libdoc.contains_tags}}
-        <td class="tags">
-            {{each tags}}
-            <a href="javascript:tagSearch('${$value}')"
-               title="Show tests with this tag">${$value}</a>{{if $index < tags.length-1}}, {{/if}}
-            {{/each}}
-        </td>
-        {{/if}}
-        <td class="doc">{{html doc}}</td>
-    </tr>
+            </h2>
+       </div>
+       <div class="keyword-content">
+          <div class="kw-overview">
+            {{if args.length > 0}}
+              <div class="args">
+                <h4>Arguments</h4>
+                {{each args}}
+                <span>${$value}</span>{{if $index < args.length-1}}<br>{{/if}}
+                {{/each}}
+              </div>
+            {{/if}}
+            {{if libdoc.contains_tags}}
+            <div class="tags">
+                <h4>Tags</h4>
+                {{each tags}}
+                <a href="javascript:tagSearch('${$value}')"
+                   title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
+                {{/each}}
+            </div>
+            {{/if}}
+          </div>
+          {{if doc}}
+            <div class="kw-docs">
+              <h4>Documentation</h4>
+              <div class="kwdoc doc">{{html doc}}</div>
+            </div>
+          {{/if}}
+       </div>
+    </div>
 </script>
-
 
 <script type="text/x-jquery-tmpl" id="footer-template">
     <p class="footer">
-        <span id="altogether-count">Altogether ${keywords.length} keywords.</span>
-        <span id="match-count"></span>
-        <br>
         Generated by <a href="http://robotframework.org/robotframework/#built-in-tools">Libdoc</a> on ${generated}.
     </p>
 </script>
