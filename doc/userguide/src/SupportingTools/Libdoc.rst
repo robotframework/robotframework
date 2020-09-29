@@ -663,6 +663,10 @@ shown in the example of the next section.
    Keywords          :codesc:`\`keywords\``
    ================  ===========================================================
 
+.. note:: Before Robot Framework 4.0 there were also sections for tags and shortcuts.
+          In Robot Framework 4.0 these have been remove in favor of the overview menu. This means
+          that prior linking to shortcuts or tags sections does not work.
+
 __ `Keyword tags`_
 
 Linking to custom sections
