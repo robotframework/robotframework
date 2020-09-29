@@ -168,7 +168,7 @@ class TestBuildTestSuite(unittest.TestCase):
         assert_equal(model, (status, start, elapsed))
 
     def _verify_suite(self, suite, name='', doc='', metadata=(), source='',
-                      relsource='', status=1, message='', start=None, elapsed=0,
+                      relsource='', status=3, message='', start=None, elapsed=0,
                       suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0)):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)

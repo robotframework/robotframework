@@ -226,7 +226,7 @@ class TestSuite(model.TestSuite):
 
     @property
     def passed(self):
-        """``True`` if no test has failed, ``False`` otherwise."""
+        """``True`` if no test has failed but some have passed, ``False`` otherwise."""
         return self.status == 'PASS'
 
     @property
@@ -236,7 +236,7 @@ class TestSuite(model.TestSuite):
 
     @property
     def skipped(self):
-        """``True`` if all tests have been skipped, ``False`` otherwise."""
+        """``True`` if there are no passed or failed tests, ``False`` otherwise."""
         return self.status == 'SKIP'
 
     @property
@@ -244,15 +244,14 @@ class TestSuite(model.TestSuite):
         """'PASS', 'FAIL' or 'SKIP' depending on test statuses.
 
         - If any test has failed, status is 'FAIL'.
-        - If no test has failed but some has passed, status is 'PASS'.
-        - If all tests have been skipped, status is 'SKIP'.
+        - If no test has failed but at least some test has passed, status is 'PASS'.
+        - If there are no failed or passed tests, status is 'SKIP'. This covers both
+          the case when all tests have been skipped and when there are no tests.
         """
         stats = self.statistics.all    # Local variable avoids recreating stats.
         if stats.failed:
             return 'FAIL'
-        # TODO: Would 'SKIP' be better status if there are no executed tests?
-        # Update also docstring above accordingly.
-        if stats.total == 0 or stats.passed:
+        if stats.passed:
             return 'PASS'
         return 'SKIP'
 
