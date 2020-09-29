@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionFailed, PassExecution, SkipExecution
+from robot.errors import ExecutionFailed, PassExecution
 from robot.model.tags import TagPatterns
 from robot.utils import html_escape, py2to3, unic
 
@@ -76,13 +76,14 @@ class _ExecutionStatus(object):
         if failure and not isinstance(failure, PassExecution):
             self.failure.setup = unic(failure)
             self.exit.failure_occurred(failure)
-            self.skipped = isinstance(failure, SkipExecution)
+            self.skipped = failure.skip
         self._teardown_allowed = True
 
     def teardown_executed(self, failure=None):
         if failure and not isinstance(failure, PassExecution):
             self.failure.teardown = unic(failure)
             self.exit.failure_occurred(failure)
+            # TODO: Handle skip in teardown!
 
     def failure_occurred(self):
         self.exit.failure_occurred()
@@ -95,21 +96,23 @@ class _ExecutionStatus(object):
         return self.exit.teardown_allowed and self._teardown_allowed
 
     @property
-    def failures(self):
-        return bool(self.parent and self.parent.failures or
+    def failed(self):
+        return bool(self.parent and self.parent.failed or
                     self.failure or self.exit)
 
     @property
     def status(self):
         if self.skipped:
             return 'SKIP'
-        return 'FAIL' if self.failures else 'PASS'
+        if self.failed:
+            return 'FAIL'
+        return 'PASS'
 
     @property
     def message(self):
         if self.failure or self.exit:
             return self._my_message()
-        if self.parent and self.parent.failures:
+        if self.parent and self.parent.failed:
             return self._parent_message()
         return ''
 
@@ -258,6 +261,6 @@ class ParentMessage(SuiteMessage):
     also_teardown_message = '%s\n\nAlso parent suite teardown failed:\n%s'
 
     def __init__(self, status):
-        while status.parent and status.parent.failures:
+        while status.parent and status.parent.failed:
             status = status.parent
         SuiteMessage.__init__(self, status)
