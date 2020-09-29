@@ -65,7 +65,10 @@
         }
         scrollToHash();
         setTimeout(function() {
-        document.getElementById("keyword-statistics-header").innerText = '' + libdoc.keywords.length;
+          document.getElementById("keyword-statistics-header").innerText = '' + libdoc.keywords.length;
+          if (storage.get('keyword-wall') === 'open') {
+            openKeywordWall();
+          }
       }, 0);
     });
 
@@ -196,12 +199,26 @@
     function toggleShortcuts() {
       const shortcuts = document.getElementsByClassName("shortcuts")[0];
       if (shortcuts.classList.contains("keyword-wall")) {
-        shortcuts.classList.remove("keyword-wall");
+        closeKeywordWall();
       } else {
-        shortcuts.classList.add("keyword-wall");
+        openKeywordWall();
       }
+    }
+
+    function openKeywordWall() {
+      const shortcuts = document.getElementsByClassName("shortcuts")[0];
+      shortcuts.classList.add("keyword-wall");
+      storage.set("keyword-wall", 'open');
       const button = document.getElementById("toggle-keyword-shortcuts")
-      button.innerText = button.innerText === '+' ? '-' : '+';
+      button.innerText = '-';
+    }
+
+    function closeKeywordWall() {
+      const shortcuts = document.getElementsByClassName("shortcuts")[0];
+      shortcuts.classList.remove("keyword-wall");
+      storage.set("keyword-wall", 'close');
+      const button = document.getElementById("toggle-keyword-shortcuts")
+      button.innerText = '+';
     }
 
     function resetKeywords() {
