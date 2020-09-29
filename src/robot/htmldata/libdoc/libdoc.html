@@ -193,6 +193,17 @@
       }
     }
 
+    function toggleShortcuts() {
+      const shortcuts = document.getElementsByClassName("shortcuts")[0];
+      if (shortcuts.classList.contains("keyword-wall")) {
+        shortcuts.classList.remove("keyword-wall");
+      } else {
+        shortcuts.classList.add("keyword-wall");
+      }
+      const button = document.getElementById("toggle-keyword-shortcuts")
+      button.innerText = button.innerText === '+' ? '-' : '+';
+    }
+
     function resetKeywords() {
         renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
@@ -303,7 +314,10 @@
       <select id="tags-shortcuts-container" onchange="location = this.value;">
       </select>
       {{/if}}
+      <div class="keywords-overview-header-row">
       <h4>Keywords (<span id="keyword-statistics-header"></span>)</h4>
+      <button id="toggle-keyword-shortcuts" onclick="toggleShortcuts()">+</button>
+      </div>
       <ul class="shortcuts" id="keyword-shortcuts-container">
       </ul>
     </div>

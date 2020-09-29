@@ -222,6 +222,11 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     margin: 60px 0 0.5rem 0.5rem;
 }
 
+.keywords-overview-header-row {
+    display: flex;
+    justify-content: space-between;
+}
+
 .shortcuts {
     font-size: 0.9em;
     overflow: auto;
@@ -254,10 +259,21 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
         z-index: 1;
         background: var(--background-color);
     }
+
+    .shortcuts.keyword-wall {
+        display: flex;
+        flex-wrap: wrap;
+        width: 640px;
+        max-width: none;
+    }
 }
 
 @media only screen and (max-width: 899px) {
     .libdoc-overview {
+        display: none;
+    }
+
+    #toggle-keyword-shortcuts {
         display: none;
     }
 
