@@ -45,8 +45,8 @@ class TestSuiteStats(unittest.TestCase):
 
 class TestSuiteStatus(unittest.TestCase):
 
-    def test_suite_status_is_pass_by_default(self):
-        assert_equal(TestSuite().status, 'PASS')
+    def test_suite_status_is_skip_if_there_are_no_tests(self):
+        assert_equal(TestSuite().status, 'SKIP')
 
     def test_suite_status_is_fail_if_failed_test(self):
         suite = TestSuite()
@@ -67,7 +67,6 @@ class TestSuiteStatus(unittest.TestCase):
         suite = TestSuite()
         for i in range(5):
             suite.tests.create(status='PASS')
-        for i in range(5):
             suite.tests.create(status='SKIP')
         assert_equal(suite.status, 'PASS')
 
@@ -82,12 +81,14 @@ class TestSuiteStatus(unittest.TestCase):
         suite = TestSuite()
         suite.suites.create().tests.create(status='FAIL')
         assert_equal(suite.status, 'FAIL')
+        suite.tests.create(status='PASS')
+        assert_equal(suite.status, 'FAIL')
 
     def test_passed_failed_skipped_propertys(self):
         suite = TestSuite()
-        assert_true(suite.passed)
+        assert_false(suite.passed)
         assert_false(suite.failed)
-        assert_false(suite.skipped)
+        assert_true(suite.skipped)
         suite.tests.create(status='SKIP')
         assert_false(suite.passed)
         assert_false(suite.failed)
