@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import ExecutionStatus, DataError, PassExecution, SkipExecution
+from robot.errors import ExecutionStatus, DataError, PassExecution
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import TestSuite, Result
 from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic
@@ -69,7 +69,7 @@ class Runner(SuiteVisitor):
         EXECUTION_CONTEXTS.start_suite(result, ns, self._output,
                                        self._settings.dry_run)
         self._context.set_suite_variables(result)
-        if not self._suite_status.failures:
+        if not self._suite_status.failed:
             ns.handle_imports()
             ns.variables.resolve_delayed()
         result.doc = self._resolve_setting(result.doc)
@@ -126,13 +126,13 @@ class Runner(SuiteVisitor):
         # TODO: helper for resolving test/tags
         if self._skipped_tags.match(test.tags):
             status.test_skipped("Test skipped with --skip command line option.")
-        if not status.failures and not test.name:
+        if not status.failed and not test.name:
             status.test_failed('Test case name cannot be empty.')
-        if not status.failures and not test.keywords.normal:
+        if not status.failed and not test.keywords.normal:
             status.test_failed('Test case contains no keywords.')
         self._run_setup(test.keywords.setup, status, result)
         try:
-            if not status.failures:
+            if not status.failed:
                 StepRunner(self._context,
                            test.template).run_steps(test.keywords.normal)
             else:
@@ -159,7 +159,7 @@ class Runner(SuiteVisitor):
                                              result)
                 if failure:
                     status.failure_occurred()
-        if not status.failures and result.timeout and result.timeout.timed_out():
+        if not status.failed and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message())
             result.message = status.message
         result.status = status.status
@@ -178,7 +178,7 @@ class Runner(SuiteVisitor):
         return TestTimeout(test.timeout, self._variables, rpa=test.parent.rpa)
 
     def _run_setup(self, setup, status, result=None):
-        if not status.failures:
+        if not status.failed:
             exception = self._run_setup_or_teardown(setup)
             status.setup_executed(exception)
             if result and isinstance(exception, PassExecution):
@@ -191,7 +191,9 @@ class Runner(SuiteVisitor):
         if status.teardown_allowed:
             exception = self._run_setup_or_teardown(teardown)
             status.teardown_executed(exception)
-            failed = not isinstance(exception, PassExecution) and not isinstance(exception, SkipExecution)
+            failed = (exception
+                      and not isinstance(exception, PassExecution)
+                      and not exception.skip)
             if result and exception:
                 result.message = status.message if failed else exception.message
             return exception if failed else None

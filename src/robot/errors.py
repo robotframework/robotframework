@@ -108,7 +108,7 @@ class ExecutionStatus(RobotError):
 
     def __init__(self, message, test_timeout=False, keyword_timeout=False,
                  syntax=False, exit=False, continue_on_failure=False,
-                 return_value=None):
+                 skip=False, return_value=None):
         if '\r\n' in message:
             message = message.replace('\r\n', '\n')
         from robot.utils import cut_long_message
@@ -118,6 +118,7 @@ class ExecutionStatus(RobotError):
         self.syntax = syntax
         self.exit = exit
         self._continue_on_failure = continue_on_failure
+        self.skip = skip
         self.return_value = return_value
 
     @property
@@ -157,7 +158,7 @@ class ExecutionStatus(RobotError):
 
     @property
     def status(self):
-        return 'FAIL'
+        return 'FAIL' if not self.skip else 'SKIP'
 
 
 class ExecutionFailed(ExecutionStatus):
@@ -175,9 +176,10 @@ class HandlerExecutionFailed(ExecutionFailed):
                   and not isinstance(error, (KeywordError, VariableError)))
         exit_on_failure = self._get(error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(error, 'CONTINUE_ON_FAILURE')
+        skip = self._get(error, 'SKIP_ON_FAILURE')
         ExecutionFailed.__init__(self, details.message, test_timeout,
                                  keyword_timeout, syntax, exit_on_failure,
-                                 continue_on_failure)
+                                 continue_on_failure, skip)
         self.full_message = details.message
         self.traceback = details.traceback
 
@@ -218,7 +220,8 @@ class ExecutionFailures(ExecutionFailed):
             'keyword_timeout': any(e.keyword_timeout for e in errors),
             'syntax': any(e.syntax for e in errors),
             'exit': any(e.exit for e in errors),
-            'continue_on_failure': all(e.continue_on_failure for e in errors)
+            'continue_on_failure': all(e.continue_on_failure for e in errors),
+            'skip': all(e.skip for e in errors)
         }
 
     def get_errors(self):
@@ -286,16 +289,15 @@ class PassExecution(ExecutionPassed):
         ExecutionPassed.__init__(self, message)
 
 
-class SkipExecution(ExecutionStatus):
+# FIXME: Move under robot.api.
+class SkipExecution(Exception):
     """Used by 'Skip' keyword.
 
     Can also be used by library keyword to skip the current test.
     """
-    status = "SKIP"
+    # TODO: Perhaps misleading attr name as this isn't related to --skiponfailure?
     ROBOT_SKIP_ON_FAILURE = True
-
-    def __init__(self, message):
-        ExecutionStatus.__init__(self, message)
+    ROBOT_SUPPRESS_NAME = True
 
 
 class ContinueForLoop(ExecutionPassed):
