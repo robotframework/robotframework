@@ -24,14 +24,33 @@ class TotalStatistics(object):
     def __init__(self, rpa=False):
         test_or_task = 'Tests' if not rpa else 'Tasks'
         #: Instance of :class:`~robot.model.stats.TotalStat` for all the tests.
-        self.all = TotalStat('All ' + test_or_task)
+        self._stat = TotalStat('All ' + test_or_task)
         self._rpa = rpa
 
     def visit(self, visitor):
-        visitor.visit_total_statistics(self)
+        visitor.visit_total_statistics(self._stat)
 
     def __iter__(self):
-        yield self.all
+        yield self._stat
+
+    @property
+    def total(self):
+        return self._stat.total
+
+    @property
+    def passed(self):
+        return self._stat.passed
+
+    @property
+    def skipped(self):
+        return self._stat.skipped
+
+    @property
+    def failed(self):
+        return self._stat.failed
+
+    def add_test(self, test):
+        self._stat.add_test(test)
 
     @property
     def message(self):
@@ -42,16 +61,16 @@ class TotalStatistics(object):
         """
         # TODO: should this message be highlighted in console
         test_or_task = 'test' if not self._rpa else 'task'
-        total, end, passed, failed, skipped = self._get_counts(self.all)
+        total, end, passed, failed, skipped = self._get_counts()
         template = '%d %s%s, %d passed, %d failed'
         if skipped:
             return ((template + ', %d skipped')
                     % (total, test_or_task, end, passed, failed, skipped))
         return template % (total, test_or_task, end, passed, failed)
 
-    def _get_counts(self, stat):
-        ending = 's' if stat.total != 1 else ''
-        return stat.total, ending, stat.passed, stat.failed, stat.skipped
+    def _get_counts(self):
+        ending = 's' if self.total != 1 else ''
+        return self.total, ending, self.passed, self.failed, self.skipped
 
 
 class TotalStatisticsBuilder(SuiteVisitor):
@@ -62,7 +81,7 @@ class TotalStatisticsBuilder(SuiteVisitor):
             suite.visit(self)
 
     def add_test(self, test):
-        self.stats.all.add_test(test)
+        self.stats.add_test(test)
 
     def visit_test(self, test):
         self.add_test(test)

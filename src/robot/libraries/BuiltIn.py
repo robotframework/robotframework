@@ -2224,7 +2224,7 @@ class _RunKeyword(_BuiltInBase):
         documentation for more details.
         """
         suite = self._get_suite_in_teardown('Run Keyword If All Tests Passed')
-        if suite.statistics.all.failed == 0:
+        if suite.statistics.failed == 0:
             return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=1)
@@ -2238,7 +2238,7 @@ class _RunKeyword(_BuiltInBase):
         documentation for more details.
         """
         suite = self._get_suite_in_teardown('Run Keyword If Any Tests Failed')
-        if suite.statistics.all.failed > 0:
+        if suite.statistics.failed > 0:
             return self.run_keyword(name, *args)
 
     def _get_suite_in_teardown(self, kwname):

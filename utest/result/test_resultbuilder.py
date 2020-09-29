@@ -37,8 +37,8 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.suite.status, 'PASS')
         assert_equal(self.suite.starttime, '20111024 13:41:20.873')
         assert_equal(self.suite.endtime, '20111024 13:41:20.952')
-        assert_equal(self.suite.statistics.all.passed, 1)
-        assert_equal(self.suite.statistics.all.failed, 0)
+        assert_equal(self.suite.statistics.passed, 1)
+        assert_equal(self.suite.statistics.failed, 0)
 
     def test_testcase_is_built(self):
         assert_equal(self.test.name, 'First One')
@@ -315,8 +315,8 @@ if PY3:
             assert_equal(suite.status, 'PASS')
             assert_equal(suite.starttime, '20111024 13:41:20.873')
             assert_equal(suite.endtime, '20111024 13:41:20.952')
-            assert_equal(suite.statistics.all.passed, 1)
-            assert_equal(suite.statistics.all.failed, 0)
+            assert_equal(suite.statistics.passed, 1)
+            assert_equal(suite.statistics.failed, 0)
 
         def test_test_is_built(self):
             test = self.result.suite.tests[0]

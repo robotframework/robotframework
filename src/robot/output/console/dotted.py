@@ -73,9 +73,9 @@ class StatusReporter(SuiteVisitor):
         suite.visit(self)
         stats = suite.statistics
         self._stream.write("%s\nRun suite '%s' with %d %s%s in %s.\n\n"
-                           % ('=' * self._width, suite.name, stats.all.total,
+                           % ('=' * self._width, suite.name, stats.total,
                               'test' if not suite.rpa else 'task',
-                              plural_or_not(stats.all.total),
+                              plural_or_not(stats.total),
                               secs_to_timestr(suite.elapsedtime/1000.0)))
         self._stream.highlight(suite.status + 'ED', suite.status)
         self._stream.write('\n%s\n' % stats.message)

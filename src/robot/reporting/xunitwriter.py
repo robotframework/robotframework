@@ -55,10 +55,11 @@ class XUnitFileWriter(ResultVisitor):
         self._writer.start('testsuite', attrs)
 
     def _get_stats(self, statistics):
-        # TODO cleanup
-        failures = statistics.all.failed
-        skipped = statistics.all.skipped
-        return str(statistics.all.total), str(failures), str(skipped)
+        return (
+            str(statistics.total),
+            str(statistics.failed),
+            str(statistics.skipped)
+        )
 
     def end_suite(self, suite):
         if suite is self._root_suite:

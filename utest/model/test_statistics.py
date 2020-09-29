@@ -48,7 +48,7 @@ class TestStatisticsSimple(unittest.TestCase):
         self.statistics = Statistics(suite)
 
     def test_total(self):
-        verify_stat(self.statistics.total.all, 'All Tests', 2, 1)
+        verify_stat(self.statistics.total._stat, 'All Tests', 2, 1)
 
     def test_suite(self):
         verify_suite(self.statistics.suite, 'Hello', 's1', 2, 1)
@@ -65,7 +65,7 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
                                      [('t? & smoke', ''), ('none NOT t1', 'a title')])
 
     def test_total(self):
-        verify_stat(self.statistics.total.all, 'All Tests', 4, 3)
+        verify_stat(self.statistics.total._stat, 'All Tests', 4, 3)
 
     def test_suite(self):
         suite = self.statistics.suite
@@ -171,7 +171,7 @@ class TestElapsedTime(unittest.TestCase):
         self.stats = Statistics(suite, tag_stat_combine=[('?2', 'combined')])
 
     def test_total_stats(self):
-        assert_equal(self.stats.total.all.elapsed, 11001)
+        assert_equal(self.stats.total._stat.elapsed, 11001)
 
     def test_tag_stats(self):
         t1, t2, t3 = self.stats.tags.tags.values()

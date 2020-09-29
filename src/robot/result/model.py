@@ -248,7 +248,7 @@ class TestSuite(model.TestSuite):
         - If there are no failed or passed tests, status is 'SKIP'. This covers both
           the case when all tests have been skipped and when there are no tests.
         """
-        stats = self.statistics.all    # Local variable avoids recreating stats.
+        stats = self.statistics  # Local variable avoids recreating stats.
         if stats.failed:
             return 'FAIL'
         if stats.passed:

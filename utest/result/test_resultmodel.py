@@ -9,13 +9,13 @@ class TestSuiteStats(unittest.TestCase):
 
     def test_stats(self):
         suite = self._create_suite_with_tests()
-        assert_equal(suite.statistics.all.passed, 3)
-        assert_equal(suite.statistics.all.failed, 2)
+        assert_equal(suite.statistics.passed, 3)
+        assert_equal(suite.statistics.failed, 2)
 
     def test_nested_suite_stats(self):
         suite = self._create_nested_suite_with_tests()
-        assert_equal(suite.statistics.all.passed, 6)
-        assert_equal(suite.statistics.all.failed, 4)
+        assert_equal(suite.statistics.passed, 6)
+        assert_equal(suite.statistics.failed, 4)
 
     def test_test_count(self):
         suite = self._create_nested_suite_with_tests()
