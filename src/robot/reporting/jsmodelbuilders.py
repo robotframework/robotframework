@@ -97,10 +97,7 @@ class SuiteBuilder(_Builder):
 
     def _get_statistics(self, suite):
         stats = suite.statistics  # Access property only once
-        return (stats.all.total,
-                stats.all.passed,
-                stats.all.failed,
-                stats.all.skipped)
+        return (stats.total, stats.passed, stats.failed, stats.skipped)
 
 
 class TestBuilder(_Builder):
