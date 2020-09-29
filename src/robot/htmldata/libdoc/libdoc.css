@@ -260,6 +260,17 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
         background: var(--background-color);
     }
 
+    #toggle-keyword-shortcuts {
+        border: 1px solid var(--border-color);
+        border-radius: 3px;
+        margin-top: 3px;
+        margin-bottom: 3px;
+    }
+
+    #toggle-keyword-shortcuts:hover {
+        background: var(--light-background-color);
+    }
+
     .shortcuts.keyword-wall {
         display: flex;
         flex-wrap: wrap;
