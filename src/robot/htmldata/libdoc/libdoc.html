@@ -405,8 +405,7 @@
                 {{each args}}
                   <li>
                     <span class="arg-name">
-                    {{if $value.argument_type === 'varargs'}}
-                    *{{/if}}${$value.name}</span>
+                    {{if $value.argument_type === 'varargs'}}*{{/if}}{{if $value.argument_type === 'kwargs'}}**{{/if}}${$value.name}</span>
                     {{if $value.type && $value.type !== 'str'}}
                     <span class="arg-type">: ${$value.type}</span>
                     {{/if}}
