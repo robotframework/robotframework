@@ -404,12 +404,14 @@
                 <ul class="arguments-list">
                 {{each args}}
                   <li>
-                    <span class="arg-name">${$value.name}</span>
-                    {{if $value.type}}
-                    <span class="arg-type">: ${$value.type}</span>
-                    {{/if}}
+                    <span class="arg-name">
+                    {{if $value.argument_type === 'varargs'}}
+                    *{{/if}}${$value.name}</span>
                     {{if $value.default}}
                     <span class="arg-default-value"> = ${$value.default.value}</span>
+                    {{/if}}
+                    {{if $value.type}}
+                    <span class="arg-type">[${$value.type}]</span>
                     {{/if}}
                   </li>
                 {{/each}}

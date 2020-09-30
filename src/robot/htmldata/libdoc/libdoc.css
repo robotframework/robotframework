@@ -466,6 +466,21 @@ h4 {
     font-size: 1.1em;
 }
 
+.args .arguments-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.args .arg-type {
+    background: var(--background-color);
+}
+
+.args .arg-default-value {
+    background: var(--background-color);
+}
+
+
 .args span .highlight {
     background: var(--highlighted-background-color);
     color: var(--highlighted-color);
