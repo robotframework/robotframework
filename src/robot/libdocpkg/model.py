@@ -16,10 +16,8 @@ from inspect import isclass
 from itertools import chain
 import re
 
-from robot.model import Tags
-from robot.utils import getshortdoc, Sortable, setter, unic
-
-from typing import _SpecialForm, _GenericAlias
+from robot.utils import getshortdoc, get_timestamp, Sortable, setter, unic
+from robot.libdocpkg.htmlwriter import DocFormatter
 
 from .writer import LibdocWriter
 from .output import LibdocOutput
@@ -47,6 +45,24 @@ class LibraryDoc(object):
         self.lineno = lineno
         self.inits = []
         self.keywords = []
+
+    def to_dictionary(self):
+        return {
+            'name': self.name,
+            'doc': self.doc,
+            'version': self.version,
+            'type': self.type,
+            'scope': self.scope,
+            'named_args': self.named_args,
+            'doc_format': self.doc_format,
+            'source': self.source,
+            'lineno': self.lineno,
+            'inits': [init.to_dictionary() for init in self.inits],
+            'keywords': [kw.to_dictionary() for kw in self.keywords],
+            'generated': get_timestamp(daysep='-', millissep=None),
+            'all_tags': tuple(self.all_tags),
+            'contains_tags': bool(self.all_tags)
+        }
 
     @property
     def doc(self):
@@ -76,11 +92,20 @@ class LibraryDoc(object):
 
     @property
     def all_tags(self):
-        return Tags(chain.from_iterable(kw.tags for kw in self.keywords))
+        return tuple(chain.from_iterable(kw.tags for kw in self.keywords))
 
     def save(self, output=None, format='HTML'):
         with LibdocOutput(output, format) as outfile:
             LibdocWriter(format).write(self, outfile)
+
+    def convert_doc_to_html(self):
+        formatter = DocFormatter(self.keywords, self.doc, self.doc_format)
+        self._doc = formatter.html(self.doc, intro=True)
+        self.doc_format = 'HTML'
+        for init in self.inits:
+            init.doc = formatter.html(init.doc)
+        for keyword in self.keywords:
+            keyword.doc = formatter.html(keyword.doc)
 
 
 class KeywordDoc(Sortable):
@@ -90,9 +115,22 @@ class KeywordDoc(Sortable):
         self.name = name
         self.args = args
         self.doc = doc
-        self.tags = Tags(tags)
+        self.tags = tuple(tags)
         self.source = source
         self.lineno = lineno
+
+    def to_dictionary(self):
+        return {
+            'name': self.name,
+            'args': [str(arg) for arg in self.args],
+            'argsObj': [arg.to_dictionary() for arg in self.args],
+            'doc': self.doc,
+            'shortdoc': ' '.join(self.shortdoc.splitlines()),
+            'tags': self.tags,
+            'source': self.source,
+            'lineno': self.lineno,
+            'matched': True
+        }
 
     @property
     def shortdoc(self):
@@ -122,10 +160,33 @@ class ArgumentDoc(object):
                  argument_type='positional',
                  required=True):
         self.name = name
-        self.type = type
+        self._type = type
         self.default = default
         self.argument_type = argument_type
         self.required = required
+
+    def to_dictionary(self):
+        return {
+            'name': self.name,
+            'type': self.type,
+            'default': {
+                'value': self.default.value
+            } if self.default else None,
+            'argument_type': self.argument_type,
+            'required': self.required,
+        }
+
+    @property
+    def type(self):
+        if isclass(self._type):
+            return self._type.__name__
+        elif self._type is None:
+            return
+        else:
+            type_name = str(self._type)
+            if type_name.startswith('typing.'):
+                type_name = type_name[len('typing.'):]
+            return type_name
 
     def __str__(self):
         kw_string = ARG_TYPES[self.argument_type] + self.name
@@ -137,44 +198,12 @@ class ArgumentDoc(object):
     def _format_type(self):
         if not self.type:
             return ''
-        return ': {}'.format(self.get_type_str())
-
-    def get_type_str(self):
-        if isinstance(self.type, _SpecialForm):  # ToDo This is ugly
-            return self.type.__reduce__()
-        if isinstance(self.type, _GenericAlias):  # ToDo This is ugly and not proper
-            return self.type.__repr__()
-        if isclass(self.type):
-            return self.type.__name__
-        return self.type
+        return ': {}'.format(self.type)
 
     def _format_enum_values(self):
-        if isclass(self.type) and issubclass(self.type, Enum):
+        if isclass(self._type) and issubclass(self._type, Enum):
             return ' {{ {} }}'.format(self._format_enum(self.type))
         return ''
-
-    def _format_default(self):
-        if self.argument_type in ['varargs', 'kwargs'] or self.required:
-            return ''
-        default_str = ' = ' if self.type else '='
-        default_str += str(self.default)
-        return default_str
-
-    def get_storable_default(self):  # Fixme: ugly experimental code here
-        if isinstance(self.default, (str, int, float, type(None), bool)):  # ToDo check python2 types
-            return self.default
-        if isinstance(self.default, Enum):
-            return self.default.name  # ToDo imho too much spoecial handling of specific cases
-        return unic(self.default)  # Todo: Mikko The Great  primitives should be stored as is... not as string
-
-    def get_default_as_robot_repr(self):  # Fixme: ugly experimental code here
-        if isinstance(self.default, (int, float, bool, type(None))):
-            return '${{{}}}'.format(str(self.default).upper())
-        if self.default == '':
-            return '${EMPTY}'
-        if isinstance(self.default, Enum):
-            return self.default.name  # ToDo imho too much spoecial handling of specific cases
-        return unic(self.default)
 
     @staticmethod
     def _format_enum(enum):
@@ -186,22 +215,37 @@ class ArgumentDoc(object):
             members[-2:] = ['...']
         return ' | '.join(members)
 
+    def _format_default(self):
+        if self.argument_type in ['varargs', 'kwargs'] or self.required:
+            return ''
+        default_str = ' = ' if self.type else '='
+        default_str += str(self.default)
+        return default_str
+
 
 class DefaultValue(object):
 
     def __init__(self, value=None):
         self.value = value
 
-    def __str__(self):
-        return str(self._get_storable_default())
-
-    def get(self):
-        return {'value': self._get_storable_default()}
-
-    def _get_storable_default(self):  # Fixme: ugly experimental code here
-        if isinstance(self.value, (str, int, float, type(None), bool)):  # ToDo check python2 types
-            return self.value
-        if isinstance(self.value, Enum):
-            return self.value.name  # ToDo imho too much special handling of specific cases
+    @setter
+    def value(self, value):
+        if value is None:
+            return 'None'
+        elif isinstance(value, str):
+            return self._escape_defaults_str(value)
+        elif isinstance(value, Enum):
+            return value.name
         else:
-            return unic(self.value)
+            return unic(value)
+
+    def __str__(self):
+        return str(self.value)
+
+    @staticmethod
+    def _escape_defaults_str(value):
+        if value == '':
+            return '${Empty}'
+        else:
+            value_repr = repr(value)[1:-1]
+            return re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', value_repr)

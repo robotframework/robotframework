@@ -16,7 +16,7 @@
 from datetime import datetime
 import os.path
 
-from robot.utils import WINDOWS, XmlWriter, unic
+from robot.utils import WINDOWS, XmlWriter
 
 from .htmlwriter import DocToHtml
 
@@ -90,19 +90,16 @@ class LibdocXmlWriter(object):
             for arg in kw.args:
                 writer.element('arg', str(arg))
             writer.end('arguments')
-            writer.start('arguments_Obj')
-            try:
-                for arg in kw.args:
-                    writer.start('arg', {'argument_type': arg.argument_type, 'required': 'true' if arg.required else 'false'})
-                    writer.element('name', arg.name)
-                    writer.element('type', arg.get_type_str())
-                    writer.element('default_value', arg.get_default_as_robot_repr())
-                    writer.end('arg')
-                writer.end('arguments_Obj')
-            except Exception as e:
-                import traceback
-                print(traceback.format_exc())
-                print(e)
+            writer.start('argumentsObj')
+            for arg in kw.args:
+                writer.start('arg', {'argument_type': arg.argument_type, 'required': 'true' if arg.required else 'false'})
+                writer.element('name', arg.name)
+                if arg.type:
+                    writer.element('type', arg.type)
+                if arg.default:
+                    writer.element('default', str(arg.default))
+                writer.end('arg')
+            writer.end('argumentsObj')
             writer.element('doc', formatter(kw.doc))
             if kw_type == 'kw' and kw.tags:
                 writer.start('tags')

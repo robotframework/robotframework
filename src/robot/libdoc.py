@@ -64,14 +64,16 @@ as part of the library name and separated by two colons, for example, like
 Options
 =======
 
- -f --format HTML|XML|XML:HTML
-                          Specifies whether to generate an HTML or XML output
-                          file. The XML:HTML format means generating an XML
-                          output file where keyword documentation is converted
-                          to HTML regardless of the original documentation
-                          format. The default output format is got from the
-                          output file extension so that `*.html` -> HTML,
-                          `*.xml` -> XML and `*.libspec` -> XML:HTML.
+ -f --format HTML|XML|XML:HTML|JSON|JSON:HTML
+                          Specifies whether to generate an HTML, XML or JSON
+                          output file. The XML:HTML format means generating
+                          an XML output file where keyword documentation is
+                          converted to HTML regardless of the original 
+                          documentation format. The default output format
+                          is got from the output file extension.
+                          `*.html` -> HTML, `*.xml` -> XML,
+                          `*.libspec` -> XML:HTML, `*.json` -> JSON.
+                          
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -175,7 +177,11 @@ class LibDoc(Application):
         extension = os.path.splitext(output)[1][1:].upper()
         default = 'XML:HTML' if extension == 'LIBSPEC' else extension
         return self._verify_format('Format', format or default,
-                                   ['HTML', 'XML', 'JSON', 'XML:HTML'])
+                                   [
+                                       'HTML',
+                                       'XML', 'XML:HTML',
+                                       'JSON', 'JSON:HTML'
+                                   ])
 
     def _verify_format(self, type, format, valid):
         format = format.upper()

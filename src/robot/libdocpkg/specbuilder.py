@@ -18,7 +18,7 @@ import os.path
 from robot.errors import DataError
 from robot.utils import ET, ETSource
 
-from .model import LibraryDoc, KeywordDoc
+from .model import LibraryDoc, KeywordDoc, ArgumentDoc, DefaultValue
 
 
 class SpecDocBuilder(object):
@@ -76,8 +76,35 @@ class SpecDocBuilder(object):
         # "deprecated" attribute isn't read because it is read from the doc
         # automatically. That should probably be changed at some point.
         return KeywordDoc(name=elem.get('name', ''),
-                          args=[a.text for a in elem.findall('arguments/arg')],
+                          args=self._create_arguments(elem),
                           doc=elem.find('doc').text or '',
                           tags=[t.text for t in elem.findall('tags/tag')],
                           source=elem.get('source'),
                           lineno=int(elem.get('lineno', -1)))
+
+    def _create_arguments(self, elem):
+        return [self._create_argument(arg) for arg in elem.findall('argumentsObj/arg')]
+
+    def _create_argument(self, arg):
+        return ArgumentDoc(name=arg.find('name').text,
+                           type=self._get_type(arg),
+                           default=self._create_default(arg),
+                           argument_type=arg.get('argument_type'),
+                           required=self._get_required(arg))
+
+    def _get_type(self, arg):
+        type_elem = arg.find('type')
+        if type_elem is not None:
+            return type_elem.text
+
+    def _create_default(self, arg):
+        default_elem = arg.find('default')
+        if default_elem is not None:
+            return DefaultValue(default_elem.text)
+
+    def _get_required(self, arg):
+        required = arg.get('required')
+        if required == 'true':
+            return True
+        else:
+            return False

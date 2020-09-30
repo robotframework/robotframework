@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 import re
-from typing import Union
 
 try:
     from urllib import quote
@@ -23,7 +22,7 @@ except ImportError:
 
 from robot.errors import DataError
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
-from robot.utils import get_timestamp, html_escape, html_format, NormalizedDict, unic
+from robot.utils import html_escape, html_format, NormalizedDict
 from robot.utils.htmlformatters import HeaderFormatter
 
 
@@ -38,8 +37,8 @@ class LibdocModelWriter(ModelWriter):
 
     def __init__(self, output, libdoc):
         self._output = output
-        formatter = DocFormatter(libdoc.keywords, libdoc.doc, libdoc.doc_format)
-        self._libdoc = JsonConverter(formatter).convert(libdoc)
+        libdoc.convert_doc_to_html()
+        self._libdoc = libdoc.to_dictionary()
 
     def write(self, line):
         self._output.write('<script type="text/javascript">\n')
@@ -48,58 +47,6 @@ class LibdocModelWriter(ModelWriter):
 
     def write_data(self):
         JsonWriter(self._output).write_json('libdoc = ', self._libdoc)
-
-
-class JsonConverter(object):
-
-    def __init__(self, doc_formatter):
-        self._doc_formatter = doc_formatter
-
-    def convert(self, libdoc):
-        return {
-            'name': libdoc.name,
-            'doc': self._doc_formatter.html(libdoc.doc, intro=True),
-            'version': libdoc.version,
-            'named_args': libdoc.named_args,
-            'scope': libdoc.scope,
-            'generated': get_timestamp(daysep='-', millissep=None),
-            'inits': self._get_keywords(libdoc.inits),
-            'keywords': self._get_keywords(libdoc.keywords),
-            'all_tags': tuple(libdoc.all_tags),
-            'contains_tags': bool(libdoc.all_tags)
-        }
-
-    def _get_keywords(self, keywords):
-        return [self._convert_keyword(kw) for kw in keywords]
-
-    def _convert_keyword(self, kw):
-        return {
-            'name': kw.name,
-            'args': [str(arg) for arg in kw.args],
-            'argsObj': self._get_arguments(kw.args),
-            'doc': self._doc_formatter.html(kw.doc),
-            'shortdoc': ' '.join(kw.shortdoc.splitlines()),
-            'tags': tuple(kw.tags),
-            'matched': True
-        }
-
-    def _get_arguments(self, arguments):
-        return [self._convert_argument(arg) for arg in arguments]
-
-    @staticmethod
-    def _convert_argument(argument):
-        try:
-            return {
-                'name': argument.name,
-                'type': argument.get_type_str(),
-                'default': argument.default.get() if argument.default else None,
-                'argument_type': argument.argument_type,
-                'required':  argument.required,
-            }
-        except Exception as e:
-            print(e)
-            import traceback
-            print(traceback.format_exc())
 
 
 class DocFormatter(object):
