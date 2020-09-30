@@ -476,11 +476,6 @@ h4 {
     background: var(--background-color);
 }
 
-.args .arg-default-value {
-    background: var(--background-color);
-}
-
-
 .args span .highlight {
     background: var(--highlighted-background-color);
     color: var(--highlighted-color);
