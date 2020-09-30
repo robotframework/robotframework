@@ -407,11 +407,11 @@
                     <span class="arg-name">
                     {{if $value.argument_type === 'varargs'}}
                     *{{/if}}${$value.name}</span>
-                    {{if $value.default}}
-                    <span class="arg-default-value"> = ${$value.default.value}</span>
-                    {{/if}}
                     {{if $value.type}}
-                    <span class="arg-type">[${$value.type}]</span>
+                    <span class="arg-type">: ${$value.type}</span>
+                    {{/if}}
+                    {{if $value.default}}
+                    <span class="arg-default-value"> = ${JSON.stringify($value.default.value)}</span>
                     {{/if}}
                   </li>
                 {{/each}}
