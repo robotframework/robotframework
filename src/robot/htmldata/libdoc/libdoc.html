@@ -401,9 +401,19 @@
             {{if args.length > 0}}
               <div class="args">
                 <h4>Arguments</h4>
+                <ul class="arguments-list">
                 {{each args}}
-                <span>${$value.string_repr}</span>{{if $index < args.length-1}}<br>{{/if}}
+                  <li>
+                    <span class="arg-name">${$value.name}</span>
+                    {{if $value.type}}
+                    <span class="arg-type">: ${$value.type}</span>
+                    {{/if}}
+                    {{if $value.default}}
+                    <span class="arg-default-value"> = ${$value.default.value}</span>
+                    {{/if}}
+                  </li>
                 {{/each}}
+                </ul>
               </div>
             {{/if}}
             {{if libdoc.contains_tags}}
