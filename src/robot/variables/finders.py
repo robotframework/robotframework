@@ -55,7 +55,7 @@ class VariableFinder(object):
                 except (KeyError, ValueError):
                     continue
                 try:
-                    return self._validate_value(value, identifier, name)
+                    return self._validate_value(value, '$' if match.items else identifier, name)
                 except VariableError:
                     raise
                 except:

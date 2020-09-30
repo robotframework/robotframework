@@ -122,8 +122,7 @@ class VariableMatch(object):
     # https://github.com/robotframework/robotframework/issues/3487
 
     def is_list_variable(self):
-        return (self.identifier == '@' and self.is_variable()
-                and not self.items)
+        return (self.identifier == '@' and self.is_variable())
 
     def is_dict_variable(self):
         return (self.identifier == '&' and self.is_variable()
