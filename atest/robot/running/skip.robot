@@ -9,6 +9,15 @@ Skip Keyword
 Skip with Library Keyword
     Check Test Case    ${TEST NAME}
 
+Skip If Keyword with True Condition
+    Check Test Case    ${TEST NAME}
+
+Skip If Keyword with True Condition And Custom Message
+    Check Test Case    ${TEST NAME}
+
+Skip If Keyword with False Condition
+    Check Test Case    ${TEST NAME}
+
 Skip Keyword with Custom Message
     Check Test Case    ${TEST NAME}
 

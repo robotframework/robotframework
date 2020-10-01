@@ -2380,10 +2380,24 @@ class _RunKeyword(_BuiltInBase):
 class _Control(_BuiltInBase):
 
     def skip(self, msg='Skipped with Skip keyword.'):
-        # TODO: docs
-        """Skip execution of the rest of the current test/task.
+        """Skips the rest of the current test.
+
+        Skips the remaining keywords in the current test and sets the given
+        message to the test. If the test has teardown, it will be executed.
         """
         raise SkipExecution(msg)
+
+    def skip_if(self, condition, msg=None):
+        """Skips the rest of the current test if the ``condition`` is True.
+
+        Skips the remaining keywords in the current test and sets the given
+        message to the test. If ``msg`` is not given, the ``condition`` will
+        be used as the message. If the test has teardown, it will be executed.
+
+        If the ``condition`` evaluates to False, does nothing.
+        """
+        if self._is_true(condition):
+            raise SkipExecution(msg or condition)
 
     def continue_for_loop(self):
         """Skips the current for loop iteration and continues from the next.

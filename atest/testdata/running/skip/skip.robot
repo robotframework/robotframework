@@ -15,6 +15,19 @@ Skip with Library Keyword
     Skip with Message    Show must not got on
     Fail    Should not be executed!
 
+Skip If Keyword with True Condition
+    [Documentation]    SKIP 1 == 1
+    Skip If    1 == 1
+
+Skip If Keyword with True Condition And Custom Message
+    [Documentation]    SKIP Skipped with abandon.
+    Skip If    1 == 1    Skipped with abandon.
+
+Skip If Keyword with False Condition
+    [Documentation]    FAIL AssertionError
+    Skip If    1 == 2
+    Fail
+
 Skip Keyword with Custom Message
     [Documentation]    SKIP Skipped due to reasons
     Skip    Skipped due to reasons
