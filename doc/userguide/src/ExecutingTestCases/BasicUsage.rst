@@ -61,16 +61,16 @@ are illustrated in the examples below. Note that in these examples, as
 well as in other examples in this section, only the ``robot`` script
 is used, but other execution approaches could be used similarly.
 
-__ `Test case files`_
-__ `Test suite directories`_
-__ `Setting the name`_
-__ `Test suite name and documentation`_
-
 ::
 
    robot tests.robot
    robot path/to/my_tests/
    robot c:\robot\tests.robot
+
+.. note:: When executing a directory__, all files and directories starting with
+          a dot (:file:`.`) or an underscore (:file:`_`) are ignored and,
+          by default, only files with the :file:`.robot` extension executed.
+          See the `Selecting files to parse`_ section for more details.
 
 It is also possible to give paths to several test case files or
 directories at once, separated with spaces. In this case, Robot
@@ -86,6 +86,12 @@ example below::
 
    robot my_tests.robot your_tests.robot
    robot --name Example path/to/tests/pattern_*.robot
+
+__ `Test case files`_
+__ `Test suite directories`_
+__ `Setting the name`_
+__ `Test suite name and documentation`_
+__ `Test suite directories`_
 
 Using command line options
 --------------------------
