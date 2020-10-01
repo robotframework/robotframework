@@ -155,16 +155,14 @@ Non-subscriptable variable
     ...    literal value, it needs to be escaped like '\\[0]'.
     Log    ${INT}[0]
 
-Old syntax with `@` still works but is deprecated
-    [Documentation]    `\${list}[1]` and `\@{list}[1]` work same way still.
-    ...                In the future latter is deprecated and changed.
-    ...                FAIL List '\@{LIST}' has no item in index 99.
-    Should Be Equal    @{LIST}[0]         A
-    Should Be Equal    @{LIST}[${-1}]     K
+Access with `@` with index works
+    [Documentation]    FAIL List '\@{LIST}' has no item in index 99.
+    Should Be Equal  @{LIST}[0]  A
+    Should Be Equal  @{LIST}[${-1}]  K
     Log    @{LIST}[99]
 
-Old syntax with `@` doesn't support new slicing syntax
-    [Documentation]    Slicing support should be added in RF 3.3 when `@{list}[index]` changes.
+Syntax with `@` doesn't support slicing syntax
+    [Documentation]    Slicing support should be added when `@{list}[index]` changes.
     ...                FAIL List '\@{LIST}' used with invalid index '1:'. \
     ...                To use '[1:]' as a literal value, it needs to be \
     ...                escaped like '\\[1:]'.
