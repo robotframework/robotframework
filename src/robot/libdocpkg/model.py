@@ -61,8 +61,8 @@ class LibraryDoc(object):
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
             'generated': get_timestamp(daysep='-', millissep=None),
-            'all_tags': tuple(self.all_tags),
-            'contains_tags': bool(self.all_tags)
+            'all_tags': tuple(sorted(self.all_tags)),
+            'contains_tags': bool(self.all_tags)  # ToDo: delete that ugly thing when "mikko the slow" fixed the front end
         }
 
     @property
@@ -93,7 +93,7 @@ class LibraryDoc(object):
 
     @property
     def all_tags(self):
-        return tuple(chain.from_iterable(kw.tags for kw in self.keywords))
+        return set(chain.from_iterable(kw.tags for kw in self.keywords))
 
     def save(self, output=None, format='HTML'):
         with LibdocOutput(output, format) as outfile:
