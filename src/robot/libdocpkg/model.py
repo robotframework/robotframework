@@ -100,8 +100,6 @@ class LibraryDoc(object):
             LibdocWriter(format).write(self, outfile)
 
     def convert_doc_to_html(self):
-        if self.doc_format.upper() == 'HTML':
-            return
         formatter = DocFormatter(self.keywords, self.doc, self.doc_format)
         self._doc = formatter.html(self.doc, intro=True)
         self.doc_format = 'HTML'

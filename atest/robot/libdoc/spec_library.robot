@@ -45,10 +45,10 @@ Init Arguments
     Init Arguments Should Be       2    i
 
 Init Source Info
-    Keyword Should Not Have Source    0    xpath=init
-    Keyword Lineno Should Be          0    12      xpath=init
-    Keyword Should Not Have Source    1    xpath=init
-    Keyword Should Not Have Lineno    1    xpath=init
+    Keyword Should Not Have Source    0    xpath=inits/init
+    Keyword Lineno Should Be          0    12      xpath=inits/init
+    Keyword Should Not Have Source    1    xpath=inits/init
+    Keyword Should Not Have Lineno    1    xpath=inits/init
 
 Keyword Names
     Keyword Name Should Be         0    Keyword
@@ -115,10 +115,10 @@ Test Everything
     Init Arguments Should Be          0
     Init Arguments Should Be          1    arg
     Init Arguments Should Be          2    i
-    Keyword Should Not Have Source    0    xpath=init
-    Keyword Lineno Should Be          0    12      xpath=init
-    Keyword Should Not Have Source    1    xpath=init
-    Keyword Should Not Have Lineno    1    xpath=init
+    Keyword Should Not Have Source    0    xpath=inits/init
+    Keyword Lineno Should Be          0    12      xpath=inits/init
+    Keyword Should Not Have Source    1    xpath=inits/init
+    Keyword Should Not Have Lineno    1    xpath=inits/init
     Keyword Name Should Be            0    Keyword
     Keyword Name Should Be            1    My Keyword
     Keyword Name Should Be            2    Non Ascii Doc

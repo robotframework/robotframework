@@ -38,8 +38,8 @@ Init arguments
     Init Arguments Should Be         0     arg1    arg2=This is shown in docs
 
 Init Source Info
-    Keyword Should Not Have Source   0     xpath=init
-    Keyword Lineno Should Be         0     11      xpath=init
+    Keyword Should Not Have Source   0     xpath=inits/init
+    Keyword Lineno Should Be         0     11      xpath=inits/init
 
 Keyword names
     Keyword Name Should Be           0     0

@@ -73,15 +73,10 @@ Type Should Be
 Scope Should Be
     [Arguments]    ${scope}    ${old}=${{ {'GLOBAL': 'global', 'SUITE': 'test suite', 'TEST': 'test case'}[$scope] }}
     Element Attribute Should Be    ${LIBDOC}    scope    ${scope}
-    # 'scope' element should be removed in RF 4.0.
-    Element Text Should Be    ${LIBDOC}    ${old}    xpath=scope
 
 Named Args Should Be
     [Arguments]    ${namedargs}
     Element Attribute Should Be    ${LIBDOC}    namedargs    ${namedargs}
-    # 'namedargs' element should be removed in RF 4.0.
-    Element Text Should Be    ${LIBDOC}
-    ...    ${{'yes' if $namedargs == 'true' else 'no'}}    xpath=namedargs
 
 Source Should Be
     [Arguments]    ${source}
@@ -96,28 +91,28 @@ Generated Should Be Defined
     Element Attribute Should Match    ${LIBDOC}    generated    ????-??-??T??:??:??Z
 
 Spec version should be correct
-    Element Attribute Should Be    ${LIBDOC}    specversion    2
+    Element Attribute Should Be    ${LIBDOC}    specversion    3
 
 Should Have No Init
-    ${inits} =    Get Elements    ${LIBDOC}    xpath=init
+    ${inits} =    Get Elements    ${LIBDOC}    xpath=inits/init
     Should Be Empty    ${inits}
 
 Init Doc Should Start With
     [Arguments]    ${index}    @{doc}
-    ${inits}=   Get Elements    ${LIBDOC}   xpath=init
+    ${inits}=   Get Elements    ${LIBDOC}   xpath=inits/init
     ${doc}=    Catenate     SEPARATOR=    @{doc}
     ${text} =    Get Element Text    ${inits}[${index}]    xpath=doc
     Should Start With    ${text}    ${doc}
 
 Init Doc Should Be
     [Arguments]    ${index}    @{doc}
-    ${kws}=   Get Elements    ${LIBDOC}    xpath=init
+    ${kws}=   Get Elements    ${LIBDOC}    xpath=inits/init
     ${doc}=    Catenate     SEPARATOR=    @{doc}
     Element Text Should Be    ${kws}[${index}]    ${doc}    xpath=doc
 
 Init Arguments Should Be
     [Arguments]    ${index}   @{expected}
-    ${args}=    Get Keyword Arguments    ${index}    type=init
+    ${args}=    Get Keyword Arguments    ${index}    type=inits/init
     Should Be Equal    ${args}    ${expected}
 
 Keyword Name Should Be
