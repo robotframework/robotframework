@@ -25,7 +25,6 @@ class SpecDocBuilder(object):
 
     def build(self, path):
         spec = self._parse_spec(path)
-
         libdoc = LibraryDoc(name=spec.get('name'),
                             type=spec.get('type').upper(),
                             version=spec.find('version').text or '',
@@ -75,23 +74,34 @@ class SpecDocBuilder(object):
         return [self._create_argument(arg) for arg in elem.findall('arguments/arg')]
 
     def _create_argument(self, arg):
-        return ArgumentDoc(name=arg.find('name').text,
+        return ArgumentDoc(name=self._get_name(arg),
                            type=self._get_type(arg),
                            default=self._create_default(arg),
                            kind=arg.get('kind'),
                            required=self._get_required(arg))
 
-    def _get_type(self, arg):
+    @staticmethod
+    def _get_name(arg):
+        name_elem = arg.find('name')
+        if name_elem:
+            return name_elem.text
+        else:
+            return ''
+
+    @staticmethod
+    def _get_type(arg):
         type_elem = arg.find('type')
-        if type_elem is not None:
+        if type_elem:
             return type_elem.text
 
-    def _create_default(self, arg):
+    @staticmethod
+    def _create_default(arg):
         default_elem = arg.find('default')
-        if default_elem is not None:
+        if default_elem:
             return DefaultValue(default_elem.text)
 
-    def _get_required(self, arg):
+    @staticmethod
+    def _get_required(arg):
         required = arg.get('required')
         if required == 'true':
             return True

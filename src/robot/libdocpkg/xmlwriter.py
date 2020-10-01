@@ -108,7 +108,8 @@ class LibdocXmlWriter(object):
             writer.start('arg', {'kind': arg.kind,
                                  'required': 'true' if arg.required else 'false',
                                  'string_repr': str(arg)})
-            writer.element('name', arg.name)
+            if arg.name:
+                writer.element('name', arg.name)
             if arg.type:
                 writer.element('type', arg.type)
             if arg.default:

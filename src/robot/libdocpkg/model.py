@@ -17,6 +17,7 @@ from inspect import isclass
 from itertools import chain
 import re
 
+from robot.model import Tags
 from robot.utils import getshortdoc, get_timestamp, Sortable, setter, unic
 from robot.libdocpkg.htmlwriter import DocFormatter
 
@@ -61,7 +62,7 @@ class LibraryDoc(object):
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
             'generated': get_timestamp(daysep='-', millissep=None),
-            'all_tags': tuple(sorted(self.all_tags)),
+            'all_tags': tuple(self.all_tags),
             'contains_tags': bool(self.all_tags)
             # ToDo: delete that ugly thing when "mikko the slow" fixed the front end
         }
@@ -94,7 +95,7 @@ class LibraryDoc(object):
 
     @property
     def all_tags(self):
-        return set(chain.from_iterable(kw.tags for kw in self.keywords))
+        return Tags(chain.from_iterable(kw.tags for kw in self.keywords))
 
     def save(self, output=None, format='HTML'):
         with LibdocOutput(output, format) as outfile:
@@ -118,7 +119,7 @@ class KeywordDoc(Sortable):
         self.args = args
         self.shortdoc = None
         self.doc = doc
-        self.tags = tuple(tags)
+        self.tags = Tags(tags)
         self.source = source
         self.lineno = lineno
 
@@ -128,7 +129,7 @@ class KeywordDoc(Sortable):
             'args': [arg.to_dictionary() for arg in self.args],
             'doc': self.doc,
             'shortdoc': self.shortdoc,
-            'tags': self.tags,
+            'tags': tuple(self.tags),
             'source': self.source,
             'lineno': self.lineno,
             'matched': True

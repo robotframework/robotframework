@@ -17,7 +17,7 @@ import os
 import sys
 try:
     from enum import Enum
-except ImportError:  # Standard in Py 3.4+ but can be separately installed
+except ImportError:    # Standard in Py 3.4+ but can be separately installed
     class Enum(object):
         pass
 
@@ -51,19 +51,16 @@ class LibraryDocBuilder(object):
         name = args.pop(0)
         return self._normalize_library_path(name), args
 
-    @staticmethod
-    def _normalize_library_path(library):
+    def _normalize_library_path(self, library):
         path = library.replace('/', os.sep)
         if os.path.exists(path):
             return os.path.abspath(path)
         return library
 
-    @staticmethod
-    def _get_doc(lib):
+    def _get_doc(self, lib):
         return lib.doc or "Documentation for library ``%s``." % lib.name
 
-    @staticmethod
-    def _get_initializers(lib):
+    def _get_initializers(self, lib):
         if lib.init.arguments.maxargs:
             return [KeywordDocBuilder().build_keyword(lib.init)]
         return []
@@ -87,8 +84,7 @@ class ResourceDocBuilder(object):
             self._find_resource_file(path))
         return UserLibrary(ast)
 
-    @staticmethod
-    def _find_resource_file(path):
+    def _find_resource_file(self, path):
         if os.path.isfile(path):
             return os.path.normpath(path)
         for dire in [item for item in sys.path if os.path.isdir(item)]:
@@ -97,8 +93,7 @@ class ResourceDocBuilder(object):
                 return candidate
         raise DataError("Resource file '%s' does not exist." % path)
 
-    @staticmethod
-    def _get_doc(res):
+    def _get_doc(self, res):
         if res.doc:
             return unescape(res.doc)
         return "Documentation for resource file ``%s``." % res.name

@@ -17,7 +17,7 @@ Too many arguments with version
 Invalid option
     --invalid         option --invalid not recognized
 
-Invalid format                              
+Invalid format
     -f XXX BuiltIn ${OUT HTML}              Format must be 'HTML', 'XML', 'XML:HTML', 'JSON' or 'JSON:HTML', got 'XXX'.
     --format XML:XXX BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML', 'XML:HTML', 'JSON' or 'JSON:HTML', got 'XML:XXX'.
     BuiltIn out.ext                         Format must be 'HTML', 'XML', 'XML:HTML', 'JSON' or 'JSON:HTML', got 'EXT'.
