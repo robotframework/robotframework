@@ -122,11 +122,10 @@ class VariableMatch(object):
     # https://github.com/robotframework/robotframework/issues/3487
 
     def is_list_variable(self):
-        return (self.identifier == '@' and self.is_variable())
+        return self.identifier == '@' and self.is_variable()
 
     def is_dict_variable(self):
-        return (self.identifier == '&' and self.is_variable()
-                and not self.items)
+        return self.identifier == '&' and self.is_variable()
 
     def is_assign(self, allow_assign_mark=False):
         if allow_assign_mark and self.string.endswith('='):
