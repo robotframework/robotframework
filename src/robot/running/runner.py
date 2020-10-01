@@ -16,7 +16,8 @@
 from robot.errors import ExecutionStatus, DataError, PassExecution
 from robot.model import SuiteVisitor, TagPatterns
 from robot.result import TestSuite, Result
-from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic
+from robot.utils import (get_timestamp, is_list_like, NormalizedDict, unic,
+                         test_or_task)
 from robot.variables import VariableScopes
 
 from .context import EXECUTION_CONTEXTS
@@ -119,17 +120,24 @@ class Runner(SuiteVisitor):
         self._output.start_test(ModelCombiner(test, result))
         status = TestStatus(self._suite_status, result,
                             self._settings.skip_on_failure,
-                            self._settings.critical_tags)
+                            self._settings.critical_tags,
+                            self._settings.rpa)
         if status.exit:
             self._add_exit_combine()
             result.tags.add('robot:exit')
-        # TODO: helper for resolving test/tags
         if self._skipped_tags.match(test.tags):
-            status.test_skipped("Test skipped with --skip command line option.")
+            status.test_skipped(
+                test_or_task(
+                    "{Test} skipped with --skip command line option.",
+                    self._settings.rpa))
         if not status.failed and not test.name:
-            status.test_failed('Test case name cannot be empty.')
+            status.test_failed(
+                test_or_task('{Test} case name cannot be empty.',
+                             self._settings.rpa))
         if not status.failed and not test.keywords.normal:
-            status.test_failed('Test case contains no keywords.')
+            status.test_failed(
+                test_or_task('{Test} case contains no keywords.',
+                             self._settings.rpa))
         self._run_setup(test.keywords.setup, status, result)
         try:
             if not status.failed:

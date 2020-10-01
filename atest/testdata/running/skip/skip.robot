@@ -1,6 +1,9 @@
 *** Settings ***
 Library    skiplib.py
 
+*** Variables ***
+${TEST_OR_TASK}    Test
+
 *** Test Cases ***
 Skip Keyword
     [Documentation]    SKIP Skipped with Skip keyword.
@@ -32,17 +35,17 @@ Skipped in Setup 2
 
 Skipped with --skip
     [Tags]   skip-this
-    [Documentation]    SKIP Test skipped with --skip command line option.
+    [Documentation]    SKIP ${TEST_OR_TASK} skipped with --skip command line option.
     Fail
 
 Skipped with --SkipOnFailure
     [Tags]   skip-on-failure
-    [Documentation]    SKIP Test skipped with --SkipOnFailure, original error:\nAssertionError
+    [Documentation]    SKIP ${TEST_OR_TASK} skipped with --SkipOnFailure, original error:\nAssertionError
     Fail
 
 --NonCritical Is an Alias for --SkipOnFailure
     [Tags]   non-crit
-    [Documentation]    SKIP Test skipped with --SkipOnFailure, original error:\nAssertionError
+    [Documentation]    SKIP ${TEST_OR_TASK} skipped with --SkipOnFailure, original error:\nAssertionError
     Fail
 
 --Critical can be used to override --SkipOnFailure
