@@ -72,7 +72,7 @@ class SpecDocBuilder(object):
                           lineno=int(elem.get('lineno', -1)))
 
     def _create_arguments(self, elem):
-        return [self._create_argument(arg) for arg in elem.findall('argumentsObj/arg')]
+        return [self._create_argument(arg) for arg in elem.findall('arguments/arg')]
 
     def _create_argument(self, arg):
         return ArgumentDoc(name=arg.find('name').text,

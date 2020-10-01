@@ -188,7 +188,7 @@ Keyword Should Not Be Deprecated
     Element Should Not Have Attribute    ${kws}[${index}]    deprecated
 
 Keyword Count Should Be
-    [Arguments]    ${expected}   ${type}=kw
+    [Arguments]    ${expected}   ${type}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
     Length Should Be    ${kws}    ${expected}
 

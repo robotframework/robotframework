@@ -17,10 +17,10 @@ Too many arguments with version
 Invalid option
     --invalid         option --invalid not recognized
 
-Invalid format
-    -f XXX BuiltIn ${OUT HTML}              Format must be 'HTML', 'XML', 'JSON' or 'XML:HTML', got 'XXX'.
-    --format XML:XXX BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML', 'JSON' or 'XML:HTML', got 'XML:XXX'.
-    BuiltIn out.ext                         Format must be 'HTML', 'XML', 'JSON' or 'XML:HTML', got 'EXT'.
+Invalid format                              
+    -f XXX BuiltIn ${OUT HTML}              Format must be 'HTML', 'XML', 'XML:HTML', 'JSON' or 'JSON:HTML', got 'XXX'.
+    --format XML:XXX BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML', 'XML:HTML', 'JSON' or 'JSON:HTML', got 'XML:XXX'.
+    BuiltIn out.ext                         Format must be 'HTML', 'XML', 'XML:HTML', 'JSON' or 'JSON:HTML', got 'EXT'.
 
 Invalid doc format
     --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.
@@ -61,6 +61,9 @@ Invalid output file
     [Teardown]    Run Keywords
     ...    Remove Directory    ${OUT HTML}    AND
     ...    Remove Directory    ${OUT XML}
+
+invalid Spec File version
+    ${TESTDATADIR}/OldSpec.xml ${OUT XML}    Invalid spec file version 'None'. RF >= 4.0 requires XML specversion 3.
 
 *** Keywords ***
 Run libdoc and verify error

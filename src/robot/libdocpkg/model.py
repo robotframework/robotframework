@@ -116,6 +116,7 @@ class KeywordDoc(Sortable):
                  lineno=-1):
         self.name = name
         self.args = args
+        self.shortdoc = None
         self.doc = doc
         self.tags = tuple(tags)
         self.source = source
@@ -126,16 +127,18 @@ class KeywordDoc(Sortable):
             'name': self.name,
             'args': [arg.to_dictionary() for arg in self.args],
             'doc': self.doc,
-            'shortdoc': ' '.join(self.shortdoc.splitlines()),
+            'shortdoc': self.shortdoc,
             'tags': self.tags,
             'source': self.source,
             'lineno': self.lineno,
             'matched': True
         }
 
-    @property
-    def shortdoc(self):
-        return getshortdoc(self.doc)
+    @setter
+    def doc(self, doc):
+        if not self.shortdoc:
+            self.shortdoc = ' '.join(getshortdoc(doc).splitlines())
+        return doc
 
     @property
     def deprecated(self):
@@ -146,7 +149,8 @@ class KeywordDoc(Sortable):
         return self.name.lower()
 
 
-ARG_TYPES = {'POSITIONAL_OR_KEYWORD': '',
+ARG_TYPES = {'POSITIONAL_ONLY': '',
+             'POSITIONAL_OR_KEYWORD': '',
              'VAR_POSITIONAL': '*',
              'KEYWORD_ONLY': '',
              'VAR_KEYWORD': '**'}
@@ -201,7 +205,7 @@ class ArgumentDoc(object):
 
     def _format_enum_values(self):
         if isclass(self._type) and issubclass(self._type, Enum):
-            return ' {{ {} }}'.format(self._format_enum(self.type))
+            return ' {{ {} }}'.format(self._format_enum(self._type))
         return ''
 
     @staticmethod

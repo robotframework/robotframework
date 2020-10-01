@@ -94,10 +94,6 @@ Keyword Source Info
     Run Libdoc And Parse Output    %{TEMPDIR}/Example.libspec
     Test Everything
 
-Old spec format
-    Run Libdoc And Parse Output    ${TESTDATADIR}/OldSpec.xml
-    Test Everything
-
 *** Keywords ***
 Test Everything
     Name Should Be                    Example

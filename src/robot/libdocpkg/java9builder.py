@@ -24,7 +24,7 @@ from javax.tools import DocumentationTool, ToolProvider
 
 from robot.utils import normalize, printable_name, split_tags_from_doc
 
-from .model import LibraryDoc, KeywordDoc
+from .model import LibraryDoc, KeywordDoc, ArgumentDoc
 
 
 class JavaDocBuilder(object):
@@ -94,13 +94,14 @@ class JavaDocBuilder(object):
         if not params:
             return []
         names = [param.getSimpleName().toString() for param in params]
+        arguments = [ArgumentDoc(name=name, kind='POSITIONAL_ONLY') for name in names]
         if self._is_varargs(params[-1]):
-            names[-1] = '*' + names[-1]
+            arguments[-1] = ArgumentDoc(name=names[-1], kind='VAR_POSITIONAL')
         elif self._is_kwargs(params[-1]):
-            names[-1] = '**' + names[-1]
+            arguments[-1] = ArgumentDoc(name=names[-1], kind='VAR_KEYWORD')
             if len(params) > 1 and self._is_varargs(params[-2]):
-                names[-2] = '*' + names[-2]
-        return names
+                arguments[-2] = ArgumentDoc(name=names[-2], kind='VAR_POSITIONAL')
+        return arguments
 
     def _is_varargs(self, param):
         param_type = param.asType()
