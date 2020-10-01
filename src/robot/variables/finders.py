@@ -46,16 +46,15 @@ class VariableFinder(object):
 
     def find(self, variable):
         match = self._get_match(variable)
-        identifier = match.identifier
         name = match.name
         for finder in self._finders:
-            if identifier in finder.identifiers:
+            if match.identifier in finder.identifiers:
                 try:
                     value = finder.find(name)
                 except (KeyError, ValueError):
                     continue
                 try:
-                    return self._validate_value(value, '$' if match.items else identifier, name)
+                    return self._validate_value(value, match, name)
                 except VariableError:
                     raise
                 except:
@@ -71,13 +70,14 @@ class VariableFinder(object):
             raise DataError("Invalid variable name '%s'." % variable)
         return match
 
-    def _validate_value(self, value, identifier, name):
-        if identifier == '@':
+    def _validate_value(self, value, match, name):
+        identifier = match.identifier
+        if not match.items and identifier == '@':
             if not is_list_like(value):
                 raise VariableError("Value of variable '%s' is not list or "
                                     "list-like." % name)
             return list(value)
-        if identifier == '&':
+        if not match.items and identifier == '&':
             if not is_dict_like(value):
                 raise VariableError("Value of variable '%s' is not dictionary "
                                     "or dictionary-like." % name)
