@@ -4,7 +4,7 @@ Test Template     Should Be Equal
 
 *** Variables ***
 ${LIST}           [['item'], [1, 2, (3, [4]), 5], 'third']
-${DICT}           {'key': {'key': 'value'}, 1: {2: 3}, 'x': {'y': {'z': ''}}}
+${DICT}           {'key': {'key': 'value'}, 1: {2: 3}, 'x': {'y': {'z': ''}}, 'eq': { 'nest': {'first':'expected'}}}
 ${MIXED}          {'x': [(1, {'y': {'z': ['foo', b'bar', {'': ['ABC']}]}})]}
 ${STRING}         Robot42
 
@@ -65,10 +65,9 @@ Escape nested
     ${DICT}[key]\[key][key]             {'key': 'value'}[key][key]
     ${STRING}[0]\[-1]                   R[-1]
 
-Nested access doesn't support old `@` and `&` syntax
-    @{LIST}[0][0]                       ['item'][0]
-    &{DICT}[key][key]                   {'key': 'value'}[key]
-    &{MIXED}[x][0][0]                   ${MIXED}[x]\[0][0]
+Nested access supports `@` and `&` syntax
+    @{LIST}[0][0]                       item
+    &{DICT}[eq][nest]                   second=expected
 
 *** Keywords ***
 Literals to objects
