@@ -16,6 +16,7 @@
 from __future__ import division
 
 from operator import add, sub
+import re
 
 from .platform import PY2
 from .robottypes import is_integer
@@ -124,3 +125,17 @@ def seq2str2(sequence):
     if not sequence:
         return '[ ]'
     return '[ %s ]' % ' | '.join(unic(item) for item in sequence)
+
+
+def test_or_task(text, rpa):
+    """If `rpa` is True, replaces occurrences of `{test}` in `text` with `task`."""
+    def t(match):
+        if not rpa:
+            return match.group(1)
+        try:
+            return {
+                'TEST': 'TASK', 'Test': 'Task', 'test': 'task'
+            }[match.group(1)]
+        except KeyError:
+            raise ValueError("Invalid input string '%s'." % text)
+    return re.sub('{(.*)}', t, text)
