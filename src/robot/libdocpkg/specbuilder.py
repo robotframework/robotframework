@@ -25,17 +25,18 @@ class SpecDocBuilder(object):
 
     def build(self, path):
         spec = self._parse_spec(path)
+
         libdoc = LibraryDoc(name=spec.get('name'),
                             type=spec.get('type').upper(),
                             version=spec.find('version').text or '',
                             doc=spec.find('doc').text or '',
-                            scope=self._get_scope(spec),
+                            scope=spec.get('scope'),
                             named_args=self._get_named_args(spec),
                             doc_format=spec.get('format', 'ROBOT'),
                             source=spec.get('source'),
                             lineno=int(spec.get('lineno', -1)))
-        libdoc.inits = self._create_keywords(spec, 'init')
-        libdoc.keywords = self._create_keywords(spec, 'kw')
+        libdoc.inits = self._create_keywords(spec, 'inits/init')
+        libdoc.keywords = self._create_keywords(spec, 'keywords/kw')
         return libdoc
 
     def _parse_spec(self, path):
@@ -45,29 +46,17 @@ class SpecDocBuilder(object):
             root = ET.parse(source).getroot()
         if root.tag != 'keywordspec':
             raise DataError("Invalid spec file '%s'." % path)
+        version = root.get('specversion')
+        if version != '3':
+            raise DataError("Invalid spec file version '%s'. "
+                            "RF >= 4.0 requires XML specversion 3." % version)
         return root
 
-    def _get_scope(self, spec):
-        # RF >= 3.2 has "scope" attribute w/ value 'GLOBAL', 'SUITE, or 'TEST'.
-        if 'scope' in spec.attrib:
-            return spec.get('scope')
-        # RF < 3.2 has "scope" element. Need to map old values to new.
-        scope = spec.find('scope').text
-        return {'': 'GLOBAL',          # Was used with resource files.
-                'global': 'GLOBAL',
-                'test suite': 'SUITE',
-                'test case': 'TEST'}[scope]
-
     def _get_named_args(self, spec):
-        # RF >= 3.2 has "namedargs" attribute w/ value 'true' or 'false'.
         namedargs = spec.get('namedargs')
-        if namedargs == 'true':
+        if namedargs.lower() == 'true':
             return True
-        if namedargs == 'false':
-            return False
-        # RF < 3.2 has "namedargs" element with text 'yes' or 'no'.
-        namedargs = spec.find('namedargs').text
-        return namedargs == 'yes'
+        return False
 
     def _create_keywords(self, spec, path):
         return [self._create_keyword(elem) for elem in spec.findall(path)]

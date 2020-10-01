@@ -100,6 +100,8 @@ class LibraryDoc(object):
             LibdocWriter(format).write(self, outfile)
 
     def convert_doc_to_html(self):
+        if self.doc_format.upper() == 'HTML':
+            return
         formatter = DocFormatter(self.keywords, self.doc, self.doc_format)
         self._doc = formatter.html(self.doc, intro=True)
         self.doc_format = 'HTML'
@@ -123,8 +125,7 @@ class KeywordDoc(Sortable):
     def to_dictionary(self):
         return {
             'name': self.name,
-            'args': [str(arg) for arg in self.args],
-            'argsObj': [arg.to_dictionary() for arg in self.args],
+            'args': [arg.to_dictionary() for arg in self.args],
             'doc': self.doc,
             'shortdoc': ' '.join(self.shortdoc.splitlines()),
             'tags': self.tags,
@@ -170,24 +171,22 @@ class ArgumentDoc(object):
         return {
             'name': self.name,
             'type': self.type,
-            'default': {
-                'value': self.default.value
-            } if self.default else None,
+            'default': self.default.value if self.default else None,
             'argument_type': self.argument_type,
             'required': self.required,
+            'string_repr': str(self)
         }
 
     @property
     def type(self):
+        if self._type is None:
+            return
         if isclass(self._type):
             return self._type.__name__
-        elif self._type is None:
-            return
-        else:
-            type_name = str(self._type)
-            if type_name.startswith('typing.'):
-                type_name = type_name[len('typing.'):]
-            return type_name
+        type_name = str(self._type)
+        if type_name.startswith('typing.'):
+            type_name = type_name[len('typing.'):]
+        return type_name
 
     def __str__(self):
         kw_string = ARG_TYPES[self.argument_type] + self.name
@@ -232,13 +231,12 @@ class DefaultValue(object):
     @setter
     def value(self, value):
         if value is None:
-            return 'None'
-        elif isinstance(value, str):
+            return '${None}'
+        if isinstance(value, str):
             return self._escape_defaults_str(value)
-        elif isinstance(value, Enum):
+        if isinstance(value, Enum):
             return value.name
-        else:
-            return unic(value)
+        return unic(value)
 
     def __str__(self):
         return str(self.value)
@@ -247,6 +245,5 @@ class DefaultValue(object):
     def _escape_defaults_str(value):
         if value == '':
             return '${Empty}'
-        else:
-            value_repr = repr(value)[1:-1]
-            return re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', value_repr)
+        value_repr = repr(value)[1:-1]
+        return re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', value_repr)

@@ -56,7 +56,7 @@ class JsonDocBuilder(object):
         # "deprecated" attribute isn't read because it is read from the doc
         # automatically. That should probably be changed at some point.
         return KeywordDoc(name=kw.get('name'),
-                          args=self._create_arguments(kw.get('argsObj')),
+                          args=self._create_arguments(kw.get('args')),
                           doc=kw.get('doc'),
                           tags=kw.get('tags'),
                           source=kw.get('source'),
@@ -68,11 +68,11 @@ class JsonDocBuilder(object):
     def _create_argument(self, arg):
         return ArgumentDoc(name=arg.get('name'),
                            type=arg.get('type'),
-                           default=self._create_default(arg.get('default')),
+                           default=self._create_default(arg.get('default', None)),
                            argument_type=arg.get('argument_type'),
                            required=arg.get('required'))
 
     @staticmethod
     def _create_default(default):
         if default:
-            return DefaultValue(default.get('value', None))
+            return DefaultValue(default)

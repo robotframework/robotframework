@@ -30,10 +30,18 @@ class LibdocXmlWriter(object):
         formatter = DocFormatter(libdoc.doc_format, self._force_html_doc)
         writer = XmlWriter(outfile, usage='Libdoc spec')
         self._write_start(libdoc, writer, formatter)
-        self._write_keywords('init', libdoc.inits, libdoc.source,
-                             writer, formatter)
-        self._write_keywords('kw', libdoc.keywords, libdoc.source,
-                             writer, formatter)
+        self._write_keywords('inits',
+                             'init',
+                             libdoc.inits,
+                             libdoc.source,
+                             writer,
+                             formatter)
+        self._write_keywords('keywords',
+                             'kw',
+                             libdoc.keywords,
+                             libdoc.source,
+                             writer,
+                             formatter)
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer, formatter):
@@ -44,14 +52,10 @@ class LibdocXmlWriter(object):
                  'scope': libdoc.scope,
                  'namedargs': 'true' if libdoc.named_args else 'false',
                  'generated': generated,
-                 'specversion': '2'}
+                 'specversion': '3'}
         self._add_source_info(attrs, libdoc, writer.output)
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
-        # TODO: Remove 'scope' and 'namedargs' elements in RF 4.0.
-        # https://github.com/robotframework/robotframework/issues/3522
-        writer.element('scope', self._get_old_style_scope(libdoc))
-        writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
         writer.element('doc', formatter(libdoc.doc))
 
     def _add_source_info(self, attrs, item, outfile, lib_source=None):
@@ -82,24 +86,13 @@ class LibdocXmlWriter(object):
                 'SUITE': 'test suite',
                 'TEST': 'test case'}[libdoc.scope]
 
-    def _write_keywords(self, kw_type, keywords, lib_source, writer, formatter):
+    def _write_keywords(self, list_name, kw_type, keywords, lib_source, writer,
+                        formatter):
+        writer.start(list_name)
         for kw in keywords:
             attrs = self._get_start_attrs(kw_type, kw, lib_source, writer)
             writer.start(kw_type, attrs)
-            writer.start('arguments')
-            for arg in kw.args:
-                writer.element('arg', str(arg))
-            writer.end('arguments')
-            writer.start('argumentsObj')
-            for arg in kw.args:
-                writer.start('arg', {'argument_type': arg.argument_type, 'required': 'true' if arg.required else 'false'})
-                writer.element('name', arg.name)
-                if arg.type:
-                    writer.element('type', arg.type)
-                if arg.default:
-                    writer.element('default', str(arg.default))
-                writer.end('arg')
-            writer.end('argumentsObj')
+            self._write_arguments(kw, writer)
             writer.element('doc', formatter(kw.doc))
             if kw_type == 'kw' and kw.tags:
                 writer.start('tags')
@@ -107,6 +100,21 @@ class LibdocXmlWriter(object):
                     writer.element('tag', tag)
                 writer.end('tags')
             writer.end(kw_type)
+        writer.end(list_name)
+
+    def _write_arguments(self, kw, writer):
+        writer.start('arguments')
+        for arg in kw.args:
+            writer.start('arg', {'argument_type': arg.argument_type,
+                                 'required': 'true' if arg.required else 'false',
+                                 'string_repr': str(arg)})
+            writer.element('name', arg.name)
+            if arg.type:
+                writer.element('type', arg.type)
+            if arg.default:
+                writer.element('default', str(arg.default))
+            writer.end('arg')
+        writer.end('arguments')
 
     def _get_start_attrs(self, kw_type, kw, lib_source, writer):
         if kw_type == 'init':
