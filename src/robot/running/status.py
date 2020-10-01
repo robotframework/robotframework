@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from robot.errors import ExecutionFailed, PassExecution
-from robot.model.tags import TagPatterns
+from robot.model import TagPatterns
 from robot.utils import html_escape, py2to3, unic, test_or_task
 
 
@@ -158,7 +158,6 @@ class TestStatus(_ExecutionStatus):
 
     def _should_skip_on_failure(self, test, skip_on_failure_tags,
                                 critical_tags):
-        # TODO: test if this can be used with not critical TagPattern
         critical_pattern = TagPatterns(critical_tags)
         if critical_pattern and critical_pattern.match(test.tags):
             return False

@@ -18,7 +18,6 @@ from .visitor import SuiteVisitor
 
 
 class TotalStatistics(object):
-    # TODO: can this class be inlined, since there's only one type of total stat
     """Container for total statistics."""
 
     def __init__(self, rpa=False):
