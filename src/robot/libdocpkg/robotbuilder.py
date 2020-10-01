@@ -15,7 +15,6 @@
 
 import os
 import sys
-
 try:
     from enum import Enum
 except ImportError:  # Standard in Py 3.4+ but can be separately installed
@@ -52,18 +51,15 @@ class LibraryDocBuilder(object):
         name = args.pop(0)
         return self._normalize_library_path(name), args
 
-    @staticmethod
     def _normalize_library_path(library):
         path = library.replace('/', os.sep)
         if os.path.exists(path):
             return os.path.abspath(path)
         return library
 
-    @staticmethod
     def _get_doc(lib):
         return lib.doc or "Documentation for library ``%s``." % lib.name
 
-    @staticmethod
     def _get_initializers(lib):
         if lib.init.arguments.maxargs:
             return [KeywordDocBuilder().build_keyword(lib.init)]
@@ -88,7 +84,6 @@ class ResourceDocBuilder(object):
             self._find_resource_file(path))
         return UserLibrary(ast)
 
-    @staticmethod
     def _find_resource_file(path):
         if os.path.isfile(path):
             return os.path.normpath(path)
@@ -98,7 +93,6 @@ class ResourceDocBuilder(object):
                 return candidate
         raise DataError("Resource file '%s' does not exist." % path)
 
-    @staticmethod
     def _get_doc(res):
         if res.doc:
             return unescape(res.doc)

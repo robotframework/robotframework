@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 import re
-
 try:
     from urllib import quote
 except ImportError:
