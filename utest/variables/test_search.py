@@ -254,15 +254,19 @@ class TestSearchVariable(unittest.TestCase):
 
     def test_is_list_variable(self):
         for no in ['', 'xxx', '@{var} not alone', r'\@{notvar}', r'\\@{var}',
-                   '@{var}xx}', '@{x}@{y}', '${scalar}', '&{dict}', '@{x}[0]']:
+                   '@{var}xx}', '@{x}@{y}', '${scalar}', '&{dict}']:
             assert_false(search_variable(no).is_list_variable())
         assert_true(search_variable('@{list}').is_list_variable())
+        assert_true(search_variable('@{x}[0]').is_list_variable())
+        assert_true(search_variable('@{grandpa}[mother][child]').is_list_variable())
 
     def test_is_dict_variable(self):
         for no in ['', 'xxx', '&{var} not alone', r'\@{notvar}', r'\\&{var}',
-                   '&{var}xx}', '&{x}&{y}', '${scalar}', '@{list}', '&{x}[k]']:
+                   '&{var}xx}', '&{x}&{y}', '${scalar}', '@{list}']:
             assert_false(search_variable(no).is_dict_variable())
         assert_true(search_variable('&{dict}').is_dict_variable())
+        assert_true(search_variable('&{yzy}[afa]').is_dict_variable())
+        assert_true(search_variable('&{x}[k][foo][bar][1]').is_dict_variable())
 
 
 class TestVariableIterator(unittest.TestCase):
