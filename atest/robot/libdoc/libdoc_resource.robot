@@ -126,9 +126,15 @@ Keyword Arguments Should Be
     Should Be Equal    ${args}    ${expected}
 
 Get Keyword Arguments
-    [Arguments]    ${index}   ${type}=kw
+    [Arguments]    ${index}   ${type}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
-    ${args}=    Get Elements Texts   ${kws}[${index}]    xpath=arguments/arg
+    #${args}=    Get Elements Texts   ${kws}[${index}]    xpath=arguments/arg
+    ${args}=    Create List
+    ${arg_elems}=    Get Elements    ${kws}[${index}]    xpath=arguments/arg
+    FOR    ${elem}    IN    @{arg_elems}
+        ${arg}=    Get Element Attribute    ${elem}    string_repr
+        Append To List    ${args}    ${arg}
+    END
     [Return]    ${args}
 
 Keyword Doc Should Start With
@@ -151,23 +157,23 @@ Keyword Tags Should Be
     Should Be Equal    ${tags}    ${expected}
 
 Keyword Source Should Be
-    [Arguments]    ${index}    ${source}    ${xpath}=kw
+    [Arguments]    ${index}    ${source}    ${xpath}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     ${source} =    Relative Source    ${source}    %{TEMPDIR}
     Element Attribute Should Be    ${kws}[${index}]    source    ${source}
 
 Keyword Should Not Have Source
-    [Arguments]    ${index}    ${xpath}=kw
+    [Arguments]    ${index}    ${xpath}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     Element Should Not Have Attribute    ${kws}[${index}]    source
 
 Keyword Lineno Should Be
-    [Arguments]    ${index}    ${lineno}    ${xpath}=kw
+    [Arguments]    ${index}    ${lineno}    ${xpath}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     Element Attribute Should Be    ${kws}[${index}]    lineno    ${lineno}
 
 Keyword Should Not Have Lineno
-    [Arguments]    ${index}    ${xpath}=kw
+    [Arguments]    ${index}    ${xpath}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     Element Should Not Have Attribute    ${kws}[${index}]    lineno
 
