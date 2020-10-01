@@ -62,7 +62,8 @@ class LibraryDoc(object):
             'keywords': [kw.to_dictionary() for kw in self.keywords],
             'generated': get_timestamp(daysep='-', millissep=None),
             'all_tags': tuple(sorted(self.all_tags)),
-            'contains_tags': bool(self.all_tags)  # ToDo: delete that ugly thing when "mikko the slow" fixed the front end
+            'contains_tags': bool(self.all_tags)
+            # ToDo: delete that ugly thing when "mikko the slow" fixed the front end
         }
 
     @property
@@ -145,10 +146,10 @@ class KeywordDoc(Sortable):
         return self.name.lower()
 
 
-ARG_TYPES = {'positional': '',
-             'varargs': '*',
-             'kwonlyargs': '',
-             'kwargs': '**'}
+ARG_TYPES = {'POSITIONAL_OR_KEYWORD': '',
+             'VAR_POSITIONAL': '*',
+             'KEYWORD_ONLY': '',
+             'VAR_KEYWORD': '**'}
 
 
 class ArgumentDoc(object):
@@ -157,12 +158,12 @@ class ArgumentDoc(object):
                  name='',
                  type=None,
                  default=None,
-                 argument_type='positional',
+                 kind='POSITIONAL_OR_KEYWORD',
                  required=True):
         self.name = name
         self._type = type
         self.default = default
-        self.argument_type = argument_type
+        self.kind = kind
         self.required = required
 
     def to_dictionary(self):
@@ -170,7 +171,7 @@ class ArgumentDoc(object):
             'name': self.name,
             'type': self.type,
             'default': self.default.value if self.default else None,
-            'argument_type': self.argument_type,
+            'kind': self.kind,
             'required': self.required,
             'string_repr': str(self)
         }
@@ -187,7 +188,7 @@ class ArgumentDoc(object):
         return type_name
 
     def __str__(self):
-        kw_string = ARG_TYPES[self.argument_type] + self.name
+        kw_string = ARG_TYPES[self.kind] + self.name
         kw_string += self._format_type()
         kw_string += self._format_enum_values()
         kw_string += self._format_default()
@@ -214,7 +215,8 @@ class ArgumentDoc(object):
         return ' | '.join(members)
 
     def _format_default(self):
-        if self.argument_type in ['varargs', 'kwargs'] or self.required:
+        if self.kind in ['VAR_POSITIONAL',
+                         'VAR_KEYWORD'] or self.required:
             return ''
         default_str = ' = ' if self.type else '='
         default_str += str(self.default)

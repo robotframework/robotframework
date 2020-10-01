@@ -97,16 +97,17 @@
             <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1" />
             <xs:element name="default" type="xs:string" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
-        <xs:attribute name="argument_type" type="ArgumentType" use="required" />
+        <xs:attribute name="kind" type="Kind" use="required" />
         <xs:attribute name="required" type="xs:boolean" use="required"/>
         <xs:attribute name="string_repr" type="xs:string" use="optional"/>
     </xs:complexType>
-    <xs:simpleType name="ArgumentType">
+    <xs:simpleType name="Kind">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="positional" />
-            <xs:enumeration value="varargs" />
-            <xs:enumeration value="kwonlyargs" />
-            <xs:enumeration value="kwargs" />
+            <xs:enumeration value="POSITIONAL_ONLY" />
+            <xs:enumeration value="POSITIONAL_OR_KEYWORD" />
+            <xs:enumeration value="VAR_POSITIONAL" />
+            <xs:enumeration value="KEYWORD_ONLY" />
+            <xs:enumeration value="VAR_KEYWORD" />
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

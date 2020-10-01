@@ -69,7 +69,7 @@ class JsonDocBuilder(object):
         return ArgumentDoc(name=arg.get('name'),
                            type=arg.get('type'),
                            default=self._create_default(arg.get('default', None)),
-                           argument_type=arg.get('argument_type'),
+                           kind=arg.get('kind'),
                            required=arg.get('required'))
 
     @staticmethod

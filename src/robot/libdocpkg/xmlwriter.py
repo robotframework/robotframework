@@ -105,7 +105,7 @@ class LibdocXmlWriter(object):
     def _write_arguments(self, kw, writer):
         writer.start('arguments')
         for arg in kw.args:
-            writer.start('arg', {'argument_type': arg.argument_type,
+            writer.start('arg', {'kind': arg.kind,
                                  'required': 'true' if arg.required else 'false',
                                  'string_repr': str(arg)})
             writer.element('name', arg.name)

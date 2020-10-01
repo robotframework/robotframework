@@ -78,7 +78,7 @@ class SpecDocBuilder(object):
         return ArgumentDoc(name=arg.find('name').text,
                            type=self._get_type(arg),
                            default=self._create_default(arg),
-                           argument_type=arg.get('argument_type'),
+                           kind=arg.get('kind'),
                            required=self._get_required(arg))
 
     def _get_type(self, arg):

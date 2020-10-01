@@ -136,25 +136,25 @@ class KeywordDocBuilder(object):
         arguments = []
         for arg_name in argspec.positional:
             arguments.append(
-                self._get_scalar_arg_doc(argspec, arg_name, 'positional'))
+                self._get_scalar_arg_doc(argspec, arg_name, 'POSITIONAL_OR_KEYWORD'))
         if argspec.varargs:
             value_type = self._get_value_type(argspec, argspec.varargs)
             arguments.append(ArgumentDoc(name=argspec.varargs,
                                          type=value_type,
-                                         argument_type='varargs',
+                                         kind='VAR_POSITIONAL',
                                          required=False))
         if argspec.kwonlyargs and not argspec.varargs:
-            arguments.append(ArgumentDoc(argument_type='varargs',
+            arguments.append(ArgumentDoc(kind='VAR_POSITIONAL',
                                          required=False))
         for arg_name in argspec.kwonlyargs:
             arguments.append(
-                self._get_scalar_arg_doc(argspec, arg_name, 'kwonlyargs'))
+                self._get_scalar_arg_doc(argspec, arg_name, 'KEYWORD_ONLY'))
 
         if argspec.kwargs:
             value_type = self._get_value_type(argspec, argspec.kwargs)
             arguments.append(ArgumentDoc(name=argspec.kwargs,
                                          type=value_type,
-                                         argument_type='kwargs',
+                                         kind='VAR_KEYWORD',
                                          required=False))
         return arguments
 
@@ -167,7 +167,7 @@ class KeywordDocBuilder(object):
         return ArgumentDoc(name=arg_name,
                            type=value_type,
                            default=default,
-                           argument_type=arg_type,
+                           kind=arg_type,
                            required=arg_name not in argspec.defaults)
 
     @staticmethod
