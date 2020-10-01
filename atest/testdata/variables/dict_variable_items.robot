@@ -113,8 +113,6 @@ Sanity check
     ${items} =    Catenate    SEPARATOR=,${SPACE}    @{items}
     Should Be Equal    ${items}    A: 1, B: 2, C: 3, 1: 2, 3: 4, None: None, : , ${SPACE}: ${SPACE}
 
-Old syntax with `&` still works but is deprecated
-    [Documentation]    FAIL Dictionary '\&{DICT}' has no key 'nonex'.
+Syntax with `&` is unwrapped to named arguments
+    [Documentation]    FAIL Keyword 'BuiltIn.Should Be Equal' got positional argument after named arguments.
     Should Be Equal    &{DICT}[A]       1
-    Should Be Equal    &{DICT}[${1}]    ${2}
-    Log    &{DICT}[nonex]
