@@ -15,7 +15,7 @@
 
 from robot.errors import ExecutionFailed, PassExecution
 from robot.model.tags import TagPatterns
-from robot.utils import html_escape, py2to3, unic
+from robot.utils import html_escape, py2to3, unic, test_or_task
 
 
 @py2to3
@@ -138,17 +138,19 @@ class SuiteStatus(_ExecutionStatus):
 
 class TestStatus(_ExecutionStatus):
 
-    def __init__(self, parent, test, skip_on_failure=None, critical_tags=None):
+    def __init__(self, parent, test, skip_on_failure=None, critical_tags=None,
+                 rpa=False):
         _ExecutionStatus.__init__(self, parent)
         self.exit = parent.exit
         self._skip_on_failure = self._should_skip_on_failure(
             test, skip_on_failure, critical_tags)
+        self._rpa = rpa
 
     def test_failed(self, failure):
         if self._skip_on_failure:
-            self.failure.test = \
-                 ("Test skipped with --SkipOnFailure, original error:\n%s"
-                  % unic(failure))
+            msg = ("%s skipped with --SkipOnFailure, original error:\n%s"
+                  % (test_or_task('{Test}', self._rpa) ,unic(failure)))
+            self.failure.test = msg
             self.skipped = True
         else:
             self.failure.test = unic(failure)
