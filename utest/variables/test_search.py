@@ -156,7 +156,7 @@ class TestSearchVariable(unittest.TestCase):
             self._test(inp, ignore_errors=True)
         self._test('[${var}[i]][', '${var}', start=1, items='i')
 
-    def test_old_list_and_dict_item_syntax(self):
+    def test_nested_list_and_dict_item_syntax(self):
         self._test('@{x}[0]', '@{x}', items='0')
         self._test('&{x}[key]', '&{x}', items='key')
 
@@ -223,14 +223,13 @@ class TestSearchVariable(unittest.TestCase):
             base = variable[2:-1]
             end = start + len(variable)
             is_var = inp == variable
-            is_scal_var = is_var and inp[0] == '$'
-            is_list_var = is_var and inp[0] == '@'
-            is_dict_var = is_var and inp[0] == '&'
             if items:
                 items_str = ''.join('[%s]' % i for i in items)
                 end += len(items_str)
                 is_var = inp == '%s%s' % (variable, items_str)
-                is_scal_var = is_var and inp[0] == '$'
+            is_list_var = is_var and inp[0] == '@'
+            is_dict_var = is_var and inp[0] == '&'
+            is_scal_var = is_var and inp[0] == '$'
         match = search_variable(inp, identifiers, ignore_errors)
         assert_equal(match.base, base, '%r base' % inp)
         assert_equal(match.start, start, '%r start' % inp)
