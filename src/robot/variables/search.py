@@ -251,11 +251,6 @@ class VariableSearcher(object):
             if self._open_brackets == 0:
                 self.items.append(''.join(self.item_chars))
                 self.item_chars = []
-                # Don't support chained item access with old @ and & syntax.
-                # The old syntax was deprecated in RF 3.2 and in RF 3.3 it'll
-                # be reassigned to mean using item in list/dict context.
-                if self.variable_chars[0] in '@&':
-                    return None
                 return self.waiting_item_state
         elif char == '[' and not self._escaped:
             self._open_brackets += 1
