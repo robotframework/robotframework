@@ -231,7 +231,7 @@ class DefaultValue(object):
     @setter
     def value(self, value):
         if value is None:
-            return '${None}'
+            return 'None'
         if isinstance(value, str):
             return self._escape_defaults_str(value)
         if isinstance(value, Enum):

@@ -122,7 +122,7 @@ Init Arguments Should Be
 
 Keyword Name Should Be
     [Arguments]    ${index}   ${name}
-    ${elements}=   Get Elements    ${LIBDOC}    xpath=kw
+    ${elements}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
     Element Attribute Should Be    ${elements}[${index}]    name    ${name}
 
 Keyword Arguments Should Be
@@ -138,20 +138,20 @@ Get Keyword Arguments
 
 Keyword Doc Should Start With
     [Arguments]    ${index}    @{doc}
-    ${kws}=   Get Elements    ${LIBDOC}   xpath=kw
+    ${kws}=   Get Elements    ${LIBDOC}   xpath=keywords/kw
     ${doc}=    Catenate     SEPARATOR=\n    @{doc}
     ${text} =    Get Element Text    ${kws}[${index}]    xpath=doc
     Should Start With    ${text}    ${doc}
 
 Keyword Doc Should Be
     [Arguments]    ${index}    @{doc}
-    ${kws}=   Get Elements    ${LIBDOC}    xpath=kw
+    ${kws}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
     ${doc}=    Catenate     SEPARATOR=\n    @{doc}
     Element Text Should Be    ${kws}[${index}]    ${doc}    xpath=doc
 
 Keyword Tags Should Be
     [Arguments]    ${index}    @{expected}
-    ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
     ${tags}=   Get Elements Texts    ${kws}[${index}]    xpath=tags/tag
     Should Be Equal    ${tags}    ${expected}
 
@@ -178,12 +178,12 @@ Keyword Should Not Have Lineno
 
 Keyword Should Be Deprecated
     [Arguments]    ${index}
-    ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
     Element Attribute Should be    ${kws}[${index}]    deprecated    true
 
 Keyword Should Not Be Deprecated
     [Arguments]    ${index}
-    ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
     Element Should Not Have Attribute    ${kws}[${index}]    deprecated
 
 Keyword Count Should Be

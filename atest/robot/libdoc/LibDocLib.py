@@ -20,7 +20,7 @@ class LibDocLib(object):
         self.libdoc = interpreter.libdoc
         self.encoding = SYSTEM_ENCODING \
             if not interpreter.is_ironpython else CONSOLE_ENCODING
-        self.schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.02.xsd'))
+        self.schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.03.xsd'))
 
     def run_libdoc(self, args):
         cmd = self.libdoc + self._split_args(args)
