@@ -285,10 +285,13 @@ Accessing list and dictionary items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to access items of subscriptable variables, e.g. lists and
-dictionaries, using special syntax `${var}[item]`. Accessing items is an old
-feature, but prior to Robot Framework 3.1 the syntax was `@{var}[item]` with
-lists and `&{var}[item]` with dictionaries. The old syntax was deprecated in
-Robot Framework 3.2 and will not be supported in the future.
+dictionaries, using special syntax `${var}[item]`.
+Accessing items is an old feature, but prior to Robot Framework 3.1 the syntax was
+`@{var}[item]` with lists and `&{var}[item]` with dictionaries.
+The old syntax was deprecated in Robot Framework 3.2 and in
+Robot Framework 4.0 meaning has changed so that
+`@{var}[item]` accesses the item as a list and
+`&{var}[item]` accesses the item as a dictionary.
 
 .. _sequence items:
 
@@ -338,7 +341,7 @@ specify the start index, the end index, and the step:
        Keyword    ${SEQUENCE}[1:-1:10]
 
 .. note:: The slice syntax is new in Robot Framework 3.1 and does not work
-          with the old `@{var}[index]` syntax.
+          with `@{var}[index]` syntax.
 
 .. note:: With earlier Robot Framework versions accessing items with
           an index or a slice was only supported with variables containing
