@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import os
+import re
 import sys
 try:
     from enum import Enum
@@ -24,7 +25,7 @@ except ImportError:    # Standard in Py 3.4+ but can be separately installed
 from robot.errors import DataError
 from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
                            ResourceFileBuilder)
-from robot.utils import split_tags_from_doc, unescape
+from robot.utils import split_tags_from_doc, unescape, unic
 
 from .model import LibraryDoc, KeywordDoc, ArgumentDoc, DefaultValue
 
@@ -155,7 +156,8 @@ class KeywordDocBuilder(object):
 
     def _get_scalar_arg_doc(self, argspec, arg_name, arg_type):
         if arg_name in argspec.defaults:
-            default = DefaultValue(argspec.defaults[arg_name])
+            robot_default = self._escape_defaults_str(argspec.defaults[arg_name])
+            default = DefaultValue(robot_default)
         else:
             default = None
         value_type = self._get_value_type(argspec, arg_name)
@@ -169,3 +171,14 @@ class KeywordDocBuilder(object):
     def _get_value_type(argspec, argument):
         if argspec.types and argument in argspec.types:
             return argspec.types[argument]
+
+    @staticmethod
+    def _escape_defaults_str(value):
+        if isinstance(value, Enum):
+            return value.name
+        if isinstance(value, str):
+            if value == '':
+                return '${Empty}'
+            value_repr = repr(value)[1:-1]
+            return re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', value_repr)
+        return unic(value)

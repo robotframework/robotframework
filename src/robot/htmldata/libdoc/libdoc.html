@@ -306,7 +306,13 @@
             <h4>Arguments</h4>
             <div class="args">
             {{each args}}
-            <span>${$value}</span>{{if $index < args.length-1}}<br>{{/if}}
+            <li>
+                <div class="arg ${$value.kind} {{if $value.required}}arg-required{{else}}arg-optional{{/if}}">
+                  <span class="arg-name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_KEYWORD'}}**{{/if}}${$value.name}</span>
+                  {{if $value.type}}<span class="arg-type">: ${$value.type}</span>{{/if}}
+                  {{if $value.default}} = <span class="arg-default-value">${$value.default}</span>{{/if}}
+                </div>
+              </li>
             {{/each}}
             </div>
           </div>
@@ -404,14 +410,11 @@
                 <ul class="arguments-list">
                 {{each args}}
                   <li>
-                    <span class="arg-name">
-                    {{if $value.argument_type === 'varargs'}}*{{/if}}{{if $value.argument_type === 'kwargs'}}**{{/if}}${$value.name}</span>
-                    {{if $value.type && $value.type !== 'str'}}
-                    <span class="arg-type">: ${$value.type}</span>
-                    {{/if}}
-                    {{if $value.default}}
-                     = <span class="arg-default-value">${JSON.stringify($value.default.value)}</span>
-                    {{/if}}
+                      <div class="arg ${$value.kind} {{if $value.required}}arg-required{{else}}arg-optional{{/if}}">
+                        <span class="arg-name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_KEYWORD'}}**{{/if}}${$value.name}</span>
+                        {{if $value.type}}: <span class="arg-type">${$value.type}</span>{{/if}}
+                        {{if $value.default}} = <span class="arg-default-value">${$value.default}</span>{{/if}}
+                      </div>
                   </li>
                 {{/each}}
                 </ul>

@@ -18,7 +18,7 @@ from itertools import chain
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, get_timestamp, Sortable, setter, unic
+from robot.utils import getshortdoc, get_timestamp, Sortable, setter
 from robot.libdocpkg.htmlwriter import DocFormatter
 
 from .writer import LibdocWriter
@@ -232,22 +232,5 @@ class DefaultValue(object):
     def __init__(self, value=None):
         self.value = value
 
-    @setter
-    def value(self, value):
-        if value is None:
-            return 'None'
-        if isinstance(value, str):
-            return self._escape_defaults_str(value)
-        if isinstance(value, Enum):
-            return value.name
-        return unic(value)
-
     def __str__(self):
         return str(self.value)
-
-    @staticmethod
-    def _escape_defaults_str(value):
-        if value == '':
-            return '${Empty}'
-        value_repr = repr(value)[1:-1]
-        return re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', value_repr)
