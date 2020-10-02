@@ -33,18 +33,72 @@ Skip Keyword with Custom Message
     Skip    Skipped due to reasons
     Fail    Should not be executed!
 
-Skipped in Setup 1
+Skip in Setup
     [Documentation]    SKIP Setup skip
     [Setup]    Skip    Setup skip
     Fail    Should not be executed!
 
-Skipped in Setup 2
-    [Documentation]    SKIP Setup skip
-    [Setup]    Run Keywords
-    ...    No Operation    AND
-    ...    Skip    Setup skip    AND
-    ...    Fail    Should not be executed!
+Remaining setup keywords aren't run after skip
+    [Documentation]    SKIP Skip between keywords
+    [Setup]    Skip with keywords before and after
     Fail    Should not be executed!
+
+Skip in Teardown
+    [Documentation]    SKIP Teardown skip
+    No operation
+    [Teardown]    Skip    Teardown skip
+
+Remaining teardown keywords aren't run after skip
+    [Documentation]    SKIP Skip between keywords
+    No operation
+    [Teardown]    Skip with keywords before and after
+
+Skip in Teardown After Failure In Body
+    [Documentation]    SKIP Skipped in teardown:\nTeardown skip\n\nEarlier message:\nFailure in body!
+    Fail    Failure in body!
+    [Teardown]    Skip    Teardown skip
+
+Teardown is executed after skip
+    [Documentation]    SKIP Skip in body
+    Skip    Skip in body
+    [Teardown]    Log    Teardown is executed!
+
+Fail in Teardown After Skip In Body
+    [Documentation]    SKIP Skip in body\n\nAlso teardown failed:\nTeardown failed!
+    Skip    Skip in body
+    [Teardown]    Fail    Teardown failed!
+
+Skip in Teardown After Skip In Body
+    [Documentation]    SKIP Skipped in teardown:\nTeardown skip\n\nEarlier message:\nSkip in body
+    Skip    Skip in body
+    [Teardown]    Skip    Teardown skip
+
+Skip with Continuable Failures
+    [Documentation]    SKIP Skipping should stop execution but test should still fail\n\nAlso failures occurred\n\n1) We can continue!\n\n2) We can continue again!
+    Run Keyword And Continue On Failure
+    ...    Fail    We can continue!
+    Run Keyword And Continue On Failure
+    ...    Fail    We can continue again!
+    Skip    Skipping should stop execution but test should still fail
+    Fail    Should not be executed!
+
+Skip in Teardown After Continuable Failures
+    [Documentation]    SKIP Skipped in teardown:\nTeardown skip\n\nEarlier message:\nSeveral failures occurred:\n\n1) We can continue!\n\n2) We can continue again!
+    Run Keyword And Continue On Failure
+    ...    Fail    We can continue!
+    Run Keyword And Continue On Failure
+    ...    Fail    We can continue again!
+    [Teardown]    Skip    Teardown skip
+
+Skip with Pass Execution in Teardown
+    [Documentation]    SKIP Skip in body
+    [Teardown]   Pass Execution  Thou shall pass
+    Skip  Skip in body
+
+Skip in Teardown with Pass Execution in Body
+    [Documentation]    SKIP Then we skip
+    [Teardown]    Skip  Then we skip
+    Pass Execution  First we pass
 
 Skipped with --skip
     [Tags]   skip-this
@@ -72,3 +126,9 @@ Failing Test
 
 Passing Test
     No Operation
+
+*** Keywords ***
+Skip with keywords before and after
+    No Operation
+    Skip    Skip between keywords
+    Fail    Should not be executed!

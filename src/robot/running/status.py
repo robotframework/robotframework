@@ -25,9 +25,15 @@ class Failure(object):
         self.setup = None
         self.test = None
         self.teardown = None
+        self.setup_skipped = None
+        self.test_skipped = None
+        self.teardown_skipped = None
 
     def __nonzero__(self):
-        return bool(self.setup or self.test or self.teardown)
+        return bool(
+            self.setup or self.test or self.teardown or
+            self.setup_skipped or self.test_skipped or self.teardown_skipped
+        )
 
 
 @py2to3
@@ -74,16 +80,24 @@ class _ExecutionStatus(object):
 
     def setup_executed(self, failure=None):
         if failure and not isinstance(failure, PassExecution):
-            self.failure.setup = unic(failure)
+            if failure.skip:
+                self.failure.setup_skipped = unic(failure)
+                self.skipped = True
+            else:
+                self.failure.setup = unic(failure)
             self.exit.failure_occurred(failure)
-            self.skipped = failure.skip
+
         self._teardown_allowed = True
 
     def teardown_executed(self, failure=None):
         if failure and not isinstance(failure, PassExecution):
-            self.failure.teardown = unic(failure)
+            if failure.skip:
+                self.failure.teardown_skipped = unic(failure)
+                # Keep the Skip status in case the teardown failed
+                self.skipped = self.skipped or failure.skip
+            else:
+                self.failure.teardown = unic(failure)
             self.exit.failure_occurred(failure)
-            # TODO: Handle skip in teardown!
 
     def failure_occurred(self):
         self.exit.failure_occurred()
@@ -102,7 +116,7 @@ class _ExecutionStatus(object):
 
     @property
     def status(self):
-        if self.skipped:
+        if self.skipped or (self.parent and self.parent.skipped):
             return 'SKIP'
         if self.failed:
             return 'FAIL'
@@ -147,7 +161,9 @@ class TestStatus(_ExecutionStatus):
         self._rpa = rpa
 
     def test_failed(self, failure):
-        if self._skip_on_failure:
+        if hasattr(failure, 'skip') and failure.skip:
+            self.test_skipped(failure)
+        elif self._skip_on_failure:
             msg = ("%s skipped with --SkipOnFailure, original error:\n%s"
                   % (test_or_task('{Test}', self._rpa) ,unic(failure)))
             self.failure.test = msg
@@ -155,6 +171,10 @@ class TestStatus(_ExecutionStatus):
         else:
             self.failure.test = unic(failure)
             self.exit.failure_occurred(failure)
+
+    def test_skipped(self, reason):
+        self.skipped = True
+        self.failure.test_skipped = unic(reason)
 
     def _should_skip_on_failure(self, test, skip_on_failure_tags,
                                 critical_tags):
@@ -164,17 +184,14 @@ class TestStatus(_ExecutionStatus):
         skip_on_fail_pattern = TagPatterns(skip_on_failure_tags)
         return skip_on_fail_pattern and skip_on_fail_pattern.match(test.tags)
 
-    def test_skipped(self, reason):
-        self.skipped = True
-        self.failure.test = unic(reason)
-
     def _my_message(self):
         return TestMessage(self).message
 
 
 class _Message(object):
     setup_message = NotImplemented
-    skipped_message = NotImplemented
+    setup_skipped_message = NotImplemented
+    teardown_skipped_message = NotImplemented
     teardown_message = NotImplemented
     also_teardown_message = NotImplemented
 
@@ -188,11 +205,13 @@ class _Message(object):
         return self._get_message_after_teardown(message)
 
     def _get_message_before_teardown(self):
+        if self.failure.setup_skipped:
+            return self._format_setup_or_teardown_message(
+                self.setup_skipped_message, self.failure.setup_skipped)
         if self.failure.setup:
-            msg = self.setup_message if not self.skipped else self.skipped_message
-            return self._format_setup_or_teardown_message(msg,
-                                                          self.failure.setup)
-        return self.failure.test or ''
+            return self._format_setup_or_teardown_message(
+                self.setup_message, self.failure.setup)
+        return self.failure.test_skipped or self.failure.test or ''
 
     def _format_setup_or_teardown_message(self, prefix, message):
         if message.startswith('*HTML*'):
@@ -201,29 +220,36 @@ class _Message(object):
         return prefix % message
 
     def _get_message_after_teardown(self, message):
-        if not self.failure.teardown:
+        if not (self.failure.teardown or self.failure.teardown_skipped):
             return message
         if not message:
-            return self._format_setup_or_teardown_message(self.teardown_message,
-                                                          self.failure.teardown)
+            if self.failure.teardown:
+                prefix, msg = self.teardown_message, self.failure.teardown
+            else:
+                prefix, msg = self.teardown_skipped_message, self.failure.teardown_skipped
+            return self._format_setup_or_teardown_message(prefix, msg)
         return self._format_message_with_teardown_message(message)
 
     def _format_message_with_teardown_message(self, message):
-        teardown = self.failure.teardown
+        teardown = self.failure.teardown or self.failure.teardown_skipped
         if teardown.startswith('*HTML*'):
             teardown = teardown[6:].lstrip()
             if not message.startswith('*HTML*'):
                 message = '*HTML* ' + html_escape(message)
         elif message.startswith('*HTML*'):
             teardown = html_escape(teardown)
-        return self.also_teardown_message % (message, teardown)
+        if self.failure.teardown:
+            return self.also_teardown_message % (message, teardown)
+        return self.also_teardown_skip_message % (teardown, message)
 
 
 class TestMessage(_Message):
     setup_message = 'Setup failed:\n%s'
     teardown_message = 'Teardown failed:\n%s'
-    skipped_message = '%s'
+    setup_skipped_message = '%s'
+    teardown_skipped_message = '%s'
     also_teardown_message = '%s\n\nAlso teardown failed:\n%s'
+    also_teardown_skip_message = 'Skipped in teardown:\n%s\n\nEarlier message:\n%s'
     exit_on_fatal_message = 'Test execution stopped due to a fatal error.'
     exit_on_failure_message = \
         'Failure occurred and exit-on-failure mode is in use.'
@@ -250,14 +276,16 @@ class TestMessage(_Message):
 class SuiteMessage(_Message):
     setup_message = 'Suite setup failed:\n%s'
     # TODO: wording
-    skipped_message = 'Skipped in suite setup:\n%s'
+    setup_skipped_message = 'Skipped in suite setup:\n%s'
+    teardown_skipped_message = 'Skipped in suite teardown:\n%s'
     teardown_message = 'Suite teardown failed:\n%s'
     also_teardown_message = '%s\n\nAlso suite teardown failed:\n%s'
 
 
 class ParentMessage(SuiteMessage):
     setup_message = 'Parent suite setup failed:\n%s'
-    skipped_message = 'Skipped in parent suite setup:\n%s'
+    setup_skipped_message = 'Skipped in parent suite setup:\n%s'
+    teardown_skipped_message = 'Skipped in parent suite teardown:\n%s'
     teardown_message = 'Parent suite teardown failed:\n%s'
     also_teardown_message = '%s\n\nAlso parent suite teardown failed:\n%s'
 
