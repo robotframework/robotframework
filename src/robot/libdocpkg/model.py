@@ -63,8 +63,7 @@ class LibraryDoc(object):
             'keywords': [kw.to_dictionary() for kw in self.keywords],
             'generated': get_timestamp(daysep='-', millissep=None),
             'all_tags': tuple(self.all_tags),
-            'contains_tags': bool(self.all_tags)
-            # ToDo: delete that ugly thing when "mikko the slow" fixed the front end
+            'contains_tags': bool(self.all_tags)  # ToDo: delete that thing when "mikko" fixed the front end
         }
 
     @property
@@ -132,7 +131,7 @@ class KeywordDoc(Sortable):
             'tags': tuple(self.tags),
             'source': self.source,
             'lineno': self.lineno,
-            'matched': True
+            'matched': True  # ToDo: delete that thing when "mikko" fixed the front end
         }
 
     @setter
