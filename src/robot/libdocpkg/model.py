@@ -177,8 +177,7 @@ class ArgumentDoc(object):
             'type': self.type,
             'default': self.default.value if self.default else None,
             'kind': self.kind,
-            'required': self.required,
-            'string_repr': str(self)
+            'required': self.required
         }
 
     @property
