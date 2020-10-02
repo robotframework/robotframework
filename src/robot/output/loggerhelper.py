@@ -49,30 +49,31 @@ class AbstractLogger(object):
     def warn(self, msg):
         self.write(msg, 'WARN')
 
-    def fail(self, msg):
+    def fail(self, msg, error_type=None):
         html = False
         if msg.startswith("*HTML*"):
             html = True
             msg = msg[6:].lstrip()
-        self.write(msg, 'FAIL', html)
+        self.write(msg, 'FAIL', html, error_type)
 
     def error(self, msg):
         self.write(msg, 'ERROR')
 
-    def write(self, message, level, html=False):
-        self.message(Message(message, level, html))
+    def write(self, message, level, html=False, error_type=None):
+        self.message(Message(message, level, html, error_type=error_type))
 
     def message(self, msg):
         raise NotImplementedError(self.__class__)
 
 
 class Message(BaseMessage):
-    __slots__ = ['_message']
+    __slots__ = ['_message', 'error_type']
 
-    def __init__(self, message, level='INFO', html=False, timestamp=None):
+    def __init__(self, message, level='INFO', html=False, timestamp=None, error_type=None):
         message = self._normalize_message(message)
         level, html = self._get_level_and_html(level, html)
         timestamp = timestamp or get_timestamp()
+        self.error_type=error_type
         BaseMessage.__init__(self, message, level, html, timestamp)
 
     def _normalize_message(self, msg):
