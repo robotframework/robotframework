@@ -21,9 +21,42 @@ Skip If Keyword with False Condition
 Skip Keyword with Custom Message
     Check Test Case    ${TEST NAME}
 
-Skipped in Setup
-    Check Test Case    ${TEST NAME} 1
-    Check Test Case    ${TEST NAME} 2
+Skip in Setup
+    Check Test Case    ${TEST NAME}
+
+Remaining setup keywords aren't run after skip
+    Check Test Case    ${TEST NAME}
+
+Skip in Teardown
+    Check Test Case    ${TEST NAME}
+
+Remaining teardown keywords aren't run after skip
+    Check Test Case    ${TEST NAME}
+
+Skip in Teardown After Failure In Body
+    Check Test Case    ${TEST NAME}
+
+Teardown is executed after skip
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check log message    ${tc.teardown.msgs[0]}    Teardown is executed!
+
+Fail in Teardown After Skip In Body
+    Check Test Case    ${TEST NAME}
+
+Skip in Teardown After Skip In Body
+    Check Test Case    ${TEST NAME}
+
+Skip with Continuable Failures
+    Check Test Case    ${TEST NAME}
+
+Skip with Pass Execution in Teardown
+    Check Test Case    ${TEST NAME}
+
+Skip in Teardown with Pass Execution in Body
+    Check Test Case    ${TEST NAME}
+
+Skip in Teardown After Continuable Failures
+    Check Test Case    ${TEST NAME}
 
 Skip in Suite Setup
     Check Test Case    ${TEST NAME}

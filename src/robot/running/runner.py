@@ -155,10 +155,7 @@ class Runner(SuiteVisitor):
             else:
                 result.message = exception.message
         except ExecutionStatus as err:
-            if err.status == 'SKIP':
-                status.test_skipped(err)
-            else:
-                status.test_failed(err)
+            status.test_failed(err)
         result.status = status.status
         result.message = status.message or result.message
         if status.teardown_allowed:
@@ -199,11 +196,12 @@ class Runner(SuiteVisitor):
         if status.teardown_allowed:
             exception = self._run_setup_or_teardown(teardown)
             status.teardown_executed(exception)
-            failed = (exception
-                      and not isinstance(exception, PassExecution)
-                      and not exception.skip)
+            failed = exception and not isinstance(exception, PassExecution)
             if result and exception:
-                result.message = status.message if failed else exception.message
+                if failed or not result.passed:
+                    result.message = status.message
+                else:
+                    result.message = exception.message
             return exception if failed else None
 
     def _run_setup_or_teardown(self, data):
