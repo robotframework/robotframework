@@ -83,7 +83,7 @@ class SpecDocBuilder(object):
     @staticmethod
     def _get_name(arg):
         name_elem = arg.find('name')
-        if name_elem:
+        if name_elem is not None:
             return name_elem.text
         else:
             return ''
@@ -91,13 +91,13 @@ class SpecDocBuilder(object):
     @staticmethod
     def _get_type(arg):
         type_elem = arg.find('type')
-        if type_elem:
+        if type_elem is not None:
             return type_elem.text
 
     @staticmethod
     def _create_default(arg):
         default_elem = arg.find('default')
-        if default_elem:
+        if default_elem is not None:
             return DefaultValue(default_elem.text)
 
     @staticmethod

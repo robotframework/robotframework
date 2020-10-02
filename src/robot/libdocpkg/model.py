@@ -220,8 +220,7 @@ class ArgumentDoc(object):
         return ' | '.join(members)
 
     def _format_default(self):
-        if self.kind in ['VAR_POSITIONAL',
-                         'VAR_KEYWORD'] or self.required:
+        if not self.default:
             return ''
         default_str = ' = ' if self.type else '='
         default_str += str(self.default)
