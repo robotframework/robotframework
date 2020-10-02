@@ -74,7 +74,7 @@ class ConsoleViewer(object):
     def _show_keyword(self, kw, show_name=True):
         if show_name:
             self._header(kw.name, underline='-')
-        self._data([('Arguments', '[%s]' % ', '.join([str(arg) for arg in kw.args]))])
+        self._data([('Arguments', '[%s]' % ', '.join(kw.argument_strings))])
         self._doc(kw.doc)
 
     def _header(self, name, underline):

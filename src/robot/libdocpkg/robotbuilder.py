@@ -139,9 +139,6 @@ class KeywordDocBuilder(object):
                                          type=value_type,
                                          kind='VAR_POSITIONAL',
                                          required=False))
-        if argspec.kwonlyargs and not argspec.varargs:
-            arguments.append(ArgumentDoc(kind='VAR_POSITIONAL',
-                                         required=False))
         for arg_name in argspec.kwonlyargs:
             arguments.append(
                 self._get_scalar_arg_doc(argspec, arg_name, 'KEYWORD_ONLY'))

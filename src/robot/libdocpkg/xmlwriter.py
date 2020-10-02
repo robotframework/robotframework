@@ -103,11 +103,11 @@ class LibdocXmlWriter(object):
         writer.end(list_name)
 
     def _write_arguments(self, kw, writer):
-        writer.start('arguments')
+        writer.start('arguments', {'repr': ', '.join(kw.argument_strings)})
         for arg in kw.args:
             writer.start('arg', {'kind': arg.kind,
                                  'required': 'true' if arg.required else 'false',
-                                 'string_repr': str(arg)})
+                                 'string_repr': str(arg)})  # ToDo: string_repr shall be deleted when atests are changed
             if arg.name:
                 writer.element('name', arg.name)
             if arg.type:

@@ -148,6 +148,22 @@ class KeywordDoc(Sortable):
     def _sort_key(self):
         return self.name.lower()
 
+    @property
+    def argument_strings(self):
+        arg_strings = []
+        prev_kind = ''
+        for arg in self.args:
+            if prev_kind != arg.kind:
+                if prev_kind == 'POSITIONAL_ONLY':
+                    arg_strings.append('/')
+                if arg.kind == 'KEYWORD_ONLY' and prev_kind != 'VAR_POSITIONAL':
+                    arg_strings.append('*')
+            arg_strings.append(str(arg))
+            prev_kind = arg.kind
+        if prev_kind == 'POSITIONAL_ONLY':
+            arg_strings.append('/')
+        return arg_strings
+
 
 ARG_TYPES = {'POSITIONAL_ONLY': '',
              'POSITIONAL_OR_KEYWORD': '',

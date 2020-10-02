@@ -58,6 +58,7 @@
         <xs:sequence>
             <xs:element name="arg" type="Argument" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
+        <xs:attribute name="repr" type="xs:string" use="required" />
     </xs:complexType>
     <xs:complexType name="Tags">
         <xs:sequence>
@@ -99,7 +100,7 @@
         </xs:sequence>
         <xs:attribute name="kind" type="Kind" use="required" />
         <xs:attribute name="required" type="xs:boolean" use="required"/>
-        <xs:attribute name="string_repr" type="xs:string" use="optional"/>
+        <xs:attribute name="string_repr" type="xs:string" use="optional"/>   <!--# ToDo: string_repr shall be deleted when atests are changed-->
     </xs:complexType>
     <xs:simpleType name="Kind">
         <xs:restriction base="xs:string">
