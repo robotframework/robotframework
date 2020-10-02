@@ -62,7 +62,7 @@ The easiest way to execute Rebot is using the `rebot` command created as part
 of the normal installation. Alternatively it is possible to execute the
 `robot.rebot` module directly using `python -m robot.rebot`, where `python`
 can be replaced with any supported Python interpreter like `jython`, `ipy` or
-`python3`. Yet another alternative is running the `robot/rebot.py` script like
+`python3`. Yet another alternative is running the `robot/rebot.py` script like 
 `python path/to/robot/rebot.py`. Finally, there is a standalone JAR
 distribution available.
 
@@ -145,9 +145,9 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
-    --xunitskipnoncritical  Mark non-critical tests in xUnit output as skipped.    
+    --xunitskipnoncritical  Mark non-critical tests in xUnit output as skipped.
  -j --json file           JSON result file. Not created unless this option is
-                          specified.  
+                          specified.
  -T --timestampoutputs    When this option is used, timestamp in a format
                           `YYYYMMDD-hhmmss` is added to all generated output
                           files between their basename and extension. For
