@@ -20,7 +20,6 @@ from robot.utils import JYTHON, JAVA_VERSION, get_error_message
 
 from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder
 from .specbuilder import SpecDocBuilder
-from .jsonbuilder import JsonDocBuilder
 if JYTHON:
     if JAVA_VERSION < (1, 9):
         from .javabuilder import JavaDocBuilder
@@ -60,8 +59,6 @@ def DocumentationBuilder(library_or_resource):
         return ResourceDocBuilder()
     if extension in SPEC_EXTENSIONS:
         return SpecDocBuilder()
-    if extension == 'json':
-        return JsonDocBuilder()
     if extension == 'java':
         return JavaDocBuilder()
     return LibraryDocBuilder()

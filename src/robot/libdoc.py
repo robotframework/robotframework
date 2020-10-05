@@ -179,8 +179,7 @@ class LibDoc(Application):
         return self._verify_format('Format', format or default,
                                    [
                                        'HTML',
-                                       'XML', 'XML:HTML',
-                                       'JSON', 'JSON:HTML'
+                                       'XML', 'XML:HTML'
                                    ])
 
     def _verify_format(self, type, format, valid):

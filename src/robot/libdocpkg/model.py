@@ -125,7 +125,7 @@ class KeywordDoc(Sortable):
     def to_dictionary(self):
         return {
             'name': self.name,
-            'args': [arg.to_dictionary() for arg in self.args],
+            'args': self.argument_strings,
             'doc': self.doc,
             'shortdoc': self.shortdoc,
             'tags': tuple(self.tags),
