@@ -19,6 +19,11 @@ try:
     from collections import abc
 except ImportError:    # Python 2
     import collections as abc
+try:
+    from typing import Union
+except ImportError:
+    class Union(object):
+        pass
 from datetime import datetime, date, timedelta
 from decimal import InvalidOperation, Decimal
 try:
@@ -58,6 +63,8 @@ class TypeConverter(object):
     def converter_for(cls, type_):
         # Types defined in the typing module in Python 3.7+. For details see
         # https://bugs.python.org/issue34568
+        if hasattr(type_, '__origin__') and type_.__origin__ == Union:
+            return CombinedConverter(type_)
         if PY_VERSION >= (3, 7) and hasattr(type_, '__origin__'):
             type_ = type_.__origin__
         if isinstance(type_, (str, unicode)):
@@ -357,3 +364,34 @@ class FrozenSetConverter(TypeConverter):
         if value == 'frozenset()' and not PY2:
             return frozenset()
         return frozenset(self._literal_eval(value, set))
+
+
+class CombinedConverter(TypeConverter):
+
+    def __init__(self, type_):
+        def converter_for(t):
+            c = TypeConverter.converter_for(t)
+            if c is None:
+                return GenericTypeConverter(t)
+            return c
+        self._combination = [converter_for(t) for t in type_.__args__]
+        self.type = type_
+
+    def _convert(self, value, explicit_type=True):
+        for converter in self._combination:
+            try:
+                return converter.convert('', value, explicit_type)
+            except ValueError:
+                pass
+        raise ValueError("Could not convert value '%s'" % value)
+
+
+class GenericTypeConverter(TypeConverter):
+
+    def __init__(self, type_):
+        self.type = type_
+
+    def _convert(self, value, explicit_type=True):
+        if isinstance(value, self.type):
+            return value
+        raise ValueError("Given value '%s' is not expected type '%s'" % (value, self.type))
