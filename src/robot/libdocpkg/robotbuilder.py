@@ -153,7 +153,7 @@ class KeywordDocBuilder(object):
 
     def _get_scalar_arg_doc(self, argspec, arg_name, arg_type):
         if arg_name in argspec.defaults:
-            robot_default = self._escape_defaults_str(argspec.defaults[arg_name])
+            robot_default = argspec.defaults[arg_name]
             default = DefaultValue(robot_default)
         else:
             default = None
@@ -168,14 +168,3 @@ class KeywordDocBuilder(object):
     def _get_value_type(argspec, argument):
         if argspec.types and argument in argspec.types:
             return argspec.types[argument]
-
-    @staticmethod
-    def _escape_defaults_str(value):
-        if isinstance(value, Enum):
-            return value.name
-        if isinstance(value, str):
-            if value == '':
-                return '${Empty}'
-            value_repr = repr(value)[1:-1]
-            return re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', value_repr)
-        return unic(value)

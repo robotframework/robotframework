@@ -64,7 +64,7 @@ as part of the library name and separated by two colons, for example, like
 Options
 =======
 
- -f --format HTML|XML|XML:HTML|JSON|JSON:HTML
+ -f --format HTML|XML|XML:HTML
                           Specifies whether to generate an HTML, XML or JSON
                           output file. The XML:HTML format means generating
                           an XML output file where keyword documentation is
@@ -177,10 +177,7 @@ class LibDoc(Application):
         extension = os.path.splitext(output)[1][1:].upper()
         default = 'XML:HTML' if extension == 'LIBSPEC' else extension
         return self._verify_format('Format', format or default,
-                                   [
-                                       'HTML',
-                                       'XML', 'XML:HTML'
-                                   ])
+                                   ['HTML', 'XML', 'XML:HTML'])
 
     def _verify_format(self, type, format, valid):
         format = format.upper()
