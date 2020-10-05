@@ -17,7 +17,7 @@ from itertools import chain
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, Sortable, setter
+from robot.utils import getshortdoc, get_shortdoc_from_html, Sortable, setter
 
 from .htmlwriter import HtmlToText
 from .writer import LibdocWriter

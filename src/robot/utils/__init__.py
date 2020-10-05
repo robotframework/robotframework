@@ -72,8 +72,9 @@ from .robottypes import (FALSE_STRINGS, Mapping, MutableMapping, TRUE_STRINGS,
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,
-                   get_console_length, getdoc, getshortdoc, pad_console_length,
-                   rstrip, split_tags_from_doc, split_args_from_name_or_path)
+                   get_console_length, getdoc, getshortdoc,
+                   get_shortdoc_from_html, pad_console_length, rstrip,
+                   split_tags_from_doc, split_args_from_name_or_path)
 from .unic import prepr, unic
 
 
