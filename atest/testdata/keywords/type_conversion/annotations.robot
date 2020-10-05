@@ -68,7 +68,7 @@ Boolean
     Boolean              oFF                       ${False}
     Boolean              0                         ${False}
     Boolean              ${EMPTY}                  ${False}
-    Boolean              none                      ${None}
+    Boolean              none                      ${False}
 
 Invalid boolean is accepted as-is
     Boolean              FooBar                    'FooBar'
@@ -167,6 +167,9 @@ Enum
     Enum                 FOO                       MyEnum.FOO
     Enum                 bar                       MyEnum.bar
     Enum                 foo                       MyEnum.foo
+    None enum            NTWO                      NoneEnum.NTWO
+    None enum            None                      NoneEnum.NONE
+    None enum            NONE                      NoneEnum.NONE
 
 Normalized enum member match
     Enum                 b a r                     MyEnum.bar
@@ -184,6 +187,7 @@ Invalid Enum
     [Template]           Conversion Should Fail
     Enum                 foobar                    type=MyEnum           error=MyEnum does not have member 'foobar'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
     Enum                 bar!                      type=MyEnum           error=MyEnum does not have member 'bar!'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
+    Enum                 None                      type=MyEnum           error=MyEnum does not have member 'None'. Available: 'FOO', 'bar', 'foo' and 'normalize_me'
 
 NoneType
     NoneType             None                      None
@@ -378,22 +382,6 @@ Non-strings are not converted
     Date
     Timedelta
     NoneType
-
-String None is converted to None object
-    [Template]           String None is converted to None object
-    Integer
-    Float
-    Boolean
-    Decimal
-    List
-    Tuple
-    Dictionary
-    Set
-    Frozenset
-    Enum
-    DateTime
-    Date
-    Timedelta
 
 Return value annotation causes no error
     Return value annotation                    42    42
