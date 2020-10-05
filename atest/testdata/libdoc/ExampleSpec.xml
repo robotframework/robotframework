@@ -20,7 +20,7 @@ This library is only used in an example and it doesn't do anything useful.</doc>
 </init>
 <init>
 <arguments>
-<arg kind="POSITIONAL_ONLY" required="true" string_repr="arg">
+<arg kind="POSITIONAL_OR_KEYWORD" required="true" string_repr="arg">
 <name>arg</name>
 </arg>
 </arguments>

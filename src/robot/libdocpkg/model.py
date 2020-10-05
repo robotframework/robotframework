@@ -18,7 +18,7 @@ from itertools import chain
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, get_timestamp, Sortable, setter
+from robot.utils import getshortdoc, get_timestamp, Sortable, setter, unic
 from robot.libdocpkg.htmlwriter import DocFormatter
 
 from .writer import LibdocWriter
@@ -247,4 +247,4 @@ class DefaultValue(object):
         self.value = value
 
     def __str__(self):
-        return str(self.value)
+        return unic(self.value)

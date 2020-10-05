@@ -128,13 +128,10 @@ Keyword Arguments Should Be
 Get Keyword Arguments
     [Arguments]    ${index}   ${type}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
-    #${args}=    Get Elements Texts   ${kws}[${index}]    xpath=arguments/arg
-    ${args}=    Create List
-    ${arg_elems}=    Get Elements    ${kws}[${index}]    xpath=arguments/arg
-    FOR    ${elem}    IN    @{arg_elems}
-        ${arg}=    Get Element Attribute    ${elem}    string_repr
-        Append To List    ${args}    ${arg}
-    END
+    ${args_repr}=    Get Element Attribute    ${kws}[${index}]    repr    xpath=arguments
+    ${args}=   Run Keyword If    $args_repr != ''
+    ...        Split String    ${args_repr}    separator=,${SPACE}
+    ...        ELSE     Create List
     [Return]    ${args}
 
 Keyword Doc Should Start With
