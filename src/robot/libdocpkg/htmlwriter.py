@@ -61,21 +61,21 @@ class JsonConverter(object):
             'named_args': libdoc.named_args,
             'scope': libdoc.scope,
             'generated': get_timestamp(daysep='-', millissep=None),
-            'inits': self._get_keywords(libdoc.inits),
-            'keywords': self._get_keywords(libdoc.keywords),
+            'inits': self._get_keywords(libdoc.inits, libdoc.doc_format),
+            'keywords': self._get_keywords(libdoc.keywords, libdoc.doc_format),
             'all_tags': tuple(libdoc.all_tags),
             'contains_tags': bool(libdoc.all_tags)
         }
 
-    def _get_keywords(self, keywords):
-        return [self._convert_keyword(kw) for kw in keywords]
+    def _get_keywords(self, keywords, doc_format):
+        return [self._convert_keyword(kw, doc_format) for kw in keywords]
 
-    def _convert_keyword(self, kw):
+    def _convert_keyword(self, kw, doc_format):
         return {
             'name': kw.name,
             'args': kw.args,
             'doc': self._doc_formatter.html(kw.doc),
-            'shortdoc': ' '.join(kw.shortdoc.splitlines()),
+            'shortdoc': ' '.join(kw.get_shortdoc(doc_format).splitlines()),
             'tags': tuple(kw.tags),
             'matched': True
         }

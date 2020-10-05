@@ -17,7 +17,7 @@ from itertools import chain
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, Sortable, setter
+from robot.utils import getshortdoc, get_shortdoc_from_html, Sortable, setter
 
 from .writer import LibdocWriter
 from .output import LibdocOutput
@@ -86,8 +86,9 @@ class KeywordDoc(Sortable):
         self.source = source
         self.lineno = lineno
 
-    @property
-    def shortdoc(self):
+    def get_shortdoc(self, doc_format):
+        if doc_format.upper() == 'HTML':
+            return get_shortdoc_from_html(self.doc)
         return getshortdoc(self.doc)
 
     @property
