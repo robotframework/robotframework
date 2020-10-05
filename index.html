@@ -1,6 +1,21 @@
 <!doctype html>
 <html>
   <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106835747-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-106835747-4', {
+            'anonymize_ip': true,
+            'page_path': location.pathname+location.search+location.hash });
+      window.onhashchange = function() {
+            gtag('event', 'HashChange', {
+            'event_category': 'IndexSubsection',
+            'event_label': window.location.hash
+            });
+       }
+    </script>
     <title>Robot Framework documentation</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="resources/reset.css">
