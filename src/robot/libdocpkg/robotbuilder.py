@@ -13,19 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from inspect import isclass
 import os
 import sys
-try:
-    from enum import Enum
-except ImportError:    # Standard in Py 3.4+ but can be separately installed
-    class Enum(object):
-        pass
 
 from robot.errors import DataError
 from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
                            ResourceFileBuilder)
-from robot.utils import split_tags_from_doc, unescape, unic
+from robot.utils import split_tags_from_doc, unescape, unicode
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -111,7 +105,7 @@ class KeywordDocBuilder(object):
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)
         return KeywordDoc(name=kw.name,
-                          args=self._get_args(kw.arguments),
+                          args=[unicode(arg) for arg in kw.arguments],
                           doc=doc,
                           tags=tags,
                           source=kw.source,
@@ -126,43 +120,3 @@ class KeywordDocBuilder(object):
         if self._resource and not isinstance(kw, UserErrorHandler):
             return unescape(kw.doc)
         return kw.doc
-
-    def _get_args(self, argspec):
-        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
-        args = [self._format_arg(arg, argspec) for arg in argspec.positional]
-        if argspec.varargs:
-            args.append('*%s' % self._format_arg(argspec.varargs, argspec))
-        if argspec.kwonlyargs:
-            if not argspec.varargs:
-                args.append('*')
-            args.extend(self._format_arg(arg, argspec)
-                        for arg in argspec.kwonlyargs)
-        if argspec.kwargs:
-            args.append('**%s' % self._format_arg(argspec.kwargs, argspec))
-        return args
-
-    def _format_arg(self, arg, argspec):
-        result = arg
-        if argspec.types is not None and arg in argspec.types:
-            type_info = argspec.types[arg]
-            result = '%s: %s' % (result, self._format_type(type_info))
-            if isclass(type_info) and issubclass(type_info, Enum):
-                result = '%s { %s }' % (result, self._format_enum(type_info))
-            default_format = '%s = %s'
-        else:
-            default_format = '%s=%s'
-        if arg in argspec.defaults:
-            result = default_format % (result, unic(argspec.defaults[arg]))
-        return result
-
-    def _format_type(self, type_info):
-        return type_info.__name__ if isclass(type_info) else type_info
-
-    def _format_enum(self, enum):
-        try:
-            members = list(enum.__members__)
-        except AttributeError:  # old enum module
-            members = [attr for attr in dir(enum) if not attr.startswith('_')]
-        while len(members) > 3 and len(' | '.join(members)) > 42:
-            members[-2:] = ['...']
-        return ' | '.join(members)
