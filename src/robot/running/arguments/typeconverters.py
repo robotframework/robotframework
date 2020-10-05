@@ -244,6 +244,7 @@ class TimeDeltaConverter(TypeConverter):
 @TypeConverter.register
 class EnumConverter(TypeConverter):
     type = Enum
+    convert_none = False
 
     def __init__(self, enum=None):
         self._enum = enum
