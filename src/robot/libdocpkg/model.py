@@ -64,12 +64,13 @@ class LibraryDoc(object):
 
     @setter
     def inits(self, inits):
-        for init in inits:
-            init.parent = self
-        return sorted(inits)
+        return self._add_parent(inits)
 
     @setter
     def keywords(self, kws):
+        return self._add_parent(kws)
+
+    def _add_parent(self, kws):
         for keyword in kws:
             keyword.parent = self
         return sorted(kws)
