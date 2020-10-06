@@ -21,8 +21,7 @@ except ImportError:
 
 from robot.errors import DataError
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
-from robot.utils import (get_timestamp, html_escape, html_format,
-                         NormalizedDict, unicode)
+from robot.utils import get_timestamp, html_escape, html_format, NormalizedDict
 from robot.utils.htmlformatters import HeaderFormatter
 
 
