@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from inspect import getfullargspec, ismethod, unwrap
+import inspect
 import typing
 
 from robot.utils import PY_VERSION
@@ -27,53 +27,64 @@ class PythonArgumentParser:
         self._type = type
 
     def parse(self, handler, name=None):
-        args, varargs, kws, defaults, kwo, kwo_defaults, annotations \
-                = self._get_arg_spec(handler)
-        if ismethod(handler) or handler.__name__ == '__init__':
-            args = args[1:]    # Drop 'self'.
+        positional, varargs, kwonly, kwargs, defaults = self._get_arg_spec(handler)
         spec = ArgumentSpec(
             name,
             self._type,
-            positional=args,
+            positional=positional,
             varargs=varargs,
-            kwargs=kws,
-            kwonlyargs=kwo,
-            defaults=self._get_defaults(args, defaults, kwo_defaults)
+            kwonlyargs=kwonly,
+            kwargs=kwargs,
+            defaults=defaults
         )
-        spec.types = self._get_types(handler, annotations, spec)
+        spec.types = self._get_types(handler, spec)
         return spec
 
     def _get_arg_spec(self, handler):
-        handler = unwrap(handler)
         try:
-            if handler.__name__ == 'po':
-                print(getfullargspec(handler))
-            return getfullargspec(handler)
-        except TypeError:    # Can occur w/ C functions (incl. many builtins).
-            return [], 'args', None, None, [], None, {}
+            signature = inspect.signature(handler)
+        except ValueError:    # Can occur w/ C functions (incl. many builtins).
+            return [], 'args', [], None, {}
+        parameters = list(signature.parameters.values())
+        # `inspect.signature` drops `self` with bound methods and that's the case when
+        # inspecting keywords. `__init__` is got directly from class (i.e. isn't bound)
+        # so we need to handle that case ourselves.
+        if handler.__name__ == '__init__':
+            parameters = parameters[1:]
+        return self._parse_params(parameters)
 
-    def _get_defaults(self, args, default_values, kwo_defaults):
-        if default_values:
-            defaults = dict(zip(args[-len(default_values):], default_values))
-        else:
-            defaults = {}
-        if kwo_defaults:
-            defaults.update(kwo_defaults)
-        return defaults
+    def _parse_params(self, parameters):
+        positional = []
+        varargs = None
+        kwonly = []
+        kwargs = None
+        defaults = {}
+        for param in parameters:
+            if param.kind in (param.POSITIONAL_ONLY, param.POSITIONAL_OR_KEYWORD):
+                positional.append(param.name)
+            elif param.kind == param.VAR_POSITIONAL:
+                varargs = param.name
+            elif param.kind == param.KEYWORD_ONLY:
+                kwonly.append(param.name)
+            elif param.kind == param.VAR_KEYWORD:
+                kwargs = param.name
+            if param.default is not param.empty:
+                defaults[param.name] = param.default
+        return positional, varargs, kwonly, kwargs, defaults
 
-    def _get_types(self, handler, annotations, spec):
+    def _get_types(self, handler, spec):
         types = getattr(handler, 'robot_types', ())
-        if types is None:
-            return None
-        if types:
+        # If types are set using the `@keyword` decorator, use them. Including when
+        # types are explicitly disabled with `@keyword(types=None)`.
+        if types or types is None:
             return types
-        return self._get_type_hints(handler, annotations, spec)
+        return self._get_type_hints(handler, spec)
 
-    def _get_type_hints(self, handler, annotations, spec):
+    def _get_type_hints(self, handler, spec):
         try:
             type_hints = typing.get_type_hints(handler)
         except Exception:  # Can raise pretty much anything
-            return annotations
+            return handler.__annotations__
         self._remove_mismatching_type_hints(type_hints, spec.argument_names)
         self._remove_optional_none_type_hints(type_hints, spec.defaults)
         return type_hints
