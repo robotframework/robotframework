@@ -17,7 +17,7 @@ from itertools import chain
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, get_shortdoc_from_html, Sortable, setter
+from robot.utils import getshortdoc, Sortable, setter
 
 from .writer import LibdocWriter
 from .output import LibdocOutput
@@ -60,10 +60,18 @@ class LibraryDoc(object):
 
     @setter
     def doc_format(self, format):
-        return format or 'ROBOT'
+        return format.upper() or 'ROBOT'
+
+    @setter
+    def inits(self, inits):
+        for init in inits:
+            init.parent = self
+        return sorted(inits)
 
     @setter
     def keywords(self, kws):
+        for keyword in kws:
+            keyword.parent = self
         return sorted(kws)
 
     @property
@@ -85,11 +93,26 @@ class KeywordDoc(Sortable):
         self.tags = Tags(tags)
         self.source = source
         self.lineno = lineno
+        self.parent = None
 
-    def get_shortdoc(self, doc_format):
-        if doc_format.upper() == 'HTML':
-            return get_shortdoc_from_html(self.doc)
+    @property
+    def shortdoc(self):
+        if self.parent.doc_format == 'HTML':
+            return self._get_shortdoc_from_html(self.doc)
         return getshortdoc(self.doc)
+
+    @staticmethod
+    def _get_shortdoc_from_html(doc):
+        match = re.search('<p>(.*?)</p>', doc)
+        if match:
+            doc = match.group(1)
+        doc = re.sub('(<b>)(.*?)(</b>)',
+                     lambda m: '*' + m.group(2) + '*', doc)
+        doc = re.sub('(<i>)(.*?)(</i>)',
+                     lambda m: '_' + m.group(2) + '_', doc)
+        doc = re.sub('(<code>)(.*?)(</code>)',
+                     lambda m: '``' + m.group(2) + '``', doc)
+        return doc
 
     @property
     def deprecated(self):

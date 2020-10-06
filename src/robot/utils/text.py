@@ -175,16 +175,6 @@ def getshortdoc(doc_or_item, linesep='\n'):
     return linesep.join(lines)
 
 
-def get_shortdoc_from_html(doc):
-    match = re.search('<p>(.*?)</p>', doc)
-    if match:
-        doc = match.group(1)
-    doc = re.sub('(<b>)(.*?)(</b>)', lambda m: m.group(2), doc)
-    doc = re.sub('(<i>)(.*?)(</i>)', lambda m: m.group(2), doc)
-    doc = re.sub('(<code>)(.*?)(</code>)', lambda m: m.group(2), doc)
-    return doc
-
-
 # https://bugs.jython.org/issue2772
 if JYTHON and PY_VERSION < (2, 7, 2):
     trailing_spaces = re.compile('\s+$', re.UNICODE)
