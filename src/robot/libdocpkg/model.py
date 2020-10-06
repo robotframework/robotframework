@@ -60,7 +60,7 @@ class LibraryDoc(object):
 
     @setter
     def doc_format(self, format):
-        return format.upper() or 'ROBOT'
+        return format or 'ROBOT'
 
     @setter
     def inits(self, inits):
