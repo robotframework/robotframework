@@ -183,9 +183,9 @@ class TestGetArgSpec(unittest.TestCase):
         argspec = self._parse(in_args)
         assert_equal(argspec.positional, args)
         assert_equal(argspec.defaults, defaults)
-        assert_equal(argspec.varargs, varargs)
-        assert_equal(argspec.kwonlyargs, kwonlyargs)
-        assert_equal(argspec.kwargs, kwargs)
+        assert_equal(argspec.var_positional, varargs)
+        assert_equal(argspec.named_only, kwonlyargs)
+        assert_equal(argspec.var_named, kwargs)
 
     def _parse(self, in_args):
         return UserKeywordArgumentParser().parse(in_args.split())

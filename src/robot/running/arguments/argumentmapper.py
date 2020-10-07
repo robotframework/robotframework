@@ -50,12 +50,12 @@ class KeywordCallTemplate(object):
             if name in spec.positional and spec.supports_named:
                 index = spec.positional.index(name)
                 self.args[index] = value
-            elif spec.kwargs or name in spec.kwonlyargs:
+            elif spec.var_named or name in spec.named_only:
                 self.kwargs.append((name, value))
             else:
                 raise DataError("Non-existing named argument '%s'." % name)
         named_names = {name for name, _ in named}
-        for name in spec.kwonlyargs:
+        for name in spec.named_only:
             if name not in named_names:
                 value = DefaultValue(spec.defaults[name])
                 self.kwargs.append((name, value))

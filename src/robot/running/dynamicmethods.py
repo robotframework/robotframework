@@ -125,10 +125,10 @@ class RunKeyword(_DynamicMethod):
                 self._java_multi_signature_kwargs(spec))
 
     def _java_single_signature_kwargs(self, spec):
-        return len(spec.positional) == 1 and spec.varargs and spec.kwargs
+        return len(spec.positional) == 1 and spec.var_positional and spec.var_named
 
     def _java_multi_signature_kwargs(self, spec):
-        return len(spec.positional) == 3 and not (spec.varargs or spec.kwargs)
+        return len(spec.positional) == 3 and not (spec.var_positional or spec.var_named)
 
 
 class GetKeywordDocumentation(_DynamicMethod):

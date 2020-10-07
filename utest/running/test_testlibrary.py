@@ -505,7 +505,7 @@ class TestDynamicLibrary(unittest.TestCase):
 def assert_handler_args(handler, minargs=0, maxargs=0, kwargs=False):
     assert_equal(handler.arguments.minargs, minargs)
     assert_equal(handler.arguments.maxargs, maxargs)
-    assert_equal(bool(handler.arguments.kwargs), kwargs)
+    assert_equal(bool(handler.arguments.var_named), kwargs)
 
 
 if JYTHON:

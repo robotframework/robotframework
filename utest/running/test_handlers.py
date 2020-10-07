@@ -48,9 +48,9 @@ def assert_argspec(argspec, minargs=0, maxargs=0, positional=[], defaults={},
     assert_equal(argspec.maxargs, maxargs)
     assert_equal(argspec.positional, positional)
     assert_equal(argspec.defaults, defaults)
-    assert_equal(argspec.varargs, varargs)
-    assert_equal(argspec.kwonlyargs, kwonlyargs)
-    assert_equal(argspec.kwargs, kwargs)
+    assert_equal(argspec.var_positional, varargs)
+    assert_equal(argspec.named_only, kwonlyargs)
+    assert_equal(argspec.var_named, kwargs)
 
 
 class TestPythonHandler(unittest.TestCase):
@@ -71,7 +71,7 @@ class TestPythonHandler(unittest.TestCase):
         for method in _get_handler_methods(ArgInfoLibrary()):
             handler = _PythonHandler(LibraryMock(), method.__name__, method)
             args = handler.arguments
-            argspec = (args.positional, args.defaults, args.varargs, args.kwargs)
+            argspec = (args.positional, args.defaults, args.var_positional, args.var_named)
             expected = eval(method.__doc__)
             assert_equal(argspec, expected, method.__name__)
 

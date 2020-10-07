@@ -92,39 +92,39 @@ class JavaArgumentParser(_ArgumentParser):
         else:
             defaults = {}
         return ArgumentSpec(name, self._type,
-                            positional=positional,
-                            varargs='varargs' if varargs else None,
-                            kwargs='kwargs' if kwargs else None,
+                            positional_only=positional,
+                            var_positional='varargs' if varargs else None,
+                            var_named='kwargs' if kwargs else None,
                             defaults=defaults,
-                            supports_named=False)
+                            supports_named=False)    # FIXME: Shouldn't be needed anymore
 
 
 class _ArgumentSpecParser(_ArgumentParser):
 
     def parse(self, argspec, name=None):
         spec = ArgumentSpec(name, self._type)
-        kw_only_args = False
+        named_only = False
         for arg in argspec:
             arg = self._validate_arg(arg)
-            if spec.kwargs:
+            if spec.var_named:
                 self._raise_invalid_spec('Only last argument can be kwargs.')
             elif isinstance(arg, tuple):
                 arg, default = arg
-                arg = self._add_arg(spec, arg, kw_only_args)
+                arg = self._add_arg(spec, arg, named_only)
                 spec.defaults[arg] = default
             elif self._is_kwargs(arg):
-                spec.kwargs = self._format_kwargs(arg)
+                spec.var_named = self._format_kwargs(arg)
             elif self._is_varargs(arg):
-                if kw_only_args:
+                if named_only:
                     self._raise_invalid_spec('Cannot have multiple varargs.')
                 if not self._is_kw_only_separator(arg):
-                    spec.varargs = self._format_varargs(arg)
-                kw_only_args = True
-            elif spec.defaults and not kw_only_args:
+                    spec.var_positional = self._format_varargs(arg)
+                named_only = True
+            elif spec.defaults and not named_only:
                 self._raise_invalid_spec('Non-default argument after default '
                                          'arguments.')
             else:
-                self._add_arg(spec, arg, kw_only_args)
+                self._add_arg(spec, arg, named_only)
         return spec
 
     def _validate_arg(self, arg):
@@ -151,9 +151,9 @@ class _ArgumentSpecParser(_ArgumentParser):
     def _format_arg(self, arg):
         return arg
 
-    def _add_arg(self, spec, arg, kw_only_arg=False):
+    def _add_arg(self, spec, arg, named_only=False):
         arg = self._format_arg(arg)
-        target = spec.positional if not kw_only_arg else spec.kwonlyargs
+        target = spec.positional_or_named if not named_only else spec.named_only
         target.append(arg)
         return arg
 

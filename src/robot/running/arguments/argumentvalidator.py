@@ -48,11 +48,11 @@ class ArgumentValidator(object):
         minend = plural_or_not(spec.minargs)
         if spec.minargs == spec.maxargs:
             expected = '%d argument%s' % (spec.minargs, minend)
-        elif not spec.varargs:
+        elif not spec.var_positional:
             expected = '%d to %d arguments' % (spec.minargs, spec.maxargs)
         else:
             expected = 'at least %d argument%s' % (spec.minargs, minend)
-        if spec.kwargs or spec.kwonlyargs:
+        if spec.var_named or spec.named_only:
             expected = expected.replace('argument', 'non-named argument')
         raise DataError("%s '%s' expected %s, got %d."
                         % (spec.type, spec.name, expected, count))
@@ -72,15 +72,15 @@ class ArgumentValidator(object):
 
     def _validate_no_named_only_missing(self, named, spec):
         defined = set(named) | set(spec.defaults)
-        missing = [arg for arg in spec.kwonlyargs if arg not in defined]
+        missing = [arg for arg in spec.named_only if arg not in defined]
         if missing:
             raise DataError("%s '%s' missing named-only argument%s %s."
                             % (spec.type, spec.name, plural_or_not(missing),
                                seq2str(sorted(missing))))
 
     def _validate_no_extra_named(self, named, spec):
-        if not spec.kwargs:
-            extra = set(named) - set(spec.positional) - set(spec.kwonlyargs)
+        if not spec.var_named:
+            extra = set(named) - set(spec.positional) - set(spec.named_only)
             if extra:
                 raise DataError("%s '%s' got unexpected named argument%s %s."
                                 % (spec.type, spec.name, plural_or_not(extra),

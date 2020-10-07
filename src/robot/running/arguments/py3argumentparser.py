@@ -31,10 +31,10 @@ class PythonArgumentParser:
         spec = ArgumentSpec(
             name,
             self._type,
-            positional=positional,
-            varargs=varargs,
-            kwonlyargs=kwonly,
-            kwargs=kwargs,
+            positional_or_named=positional,
+            var_positional=varargs,
+            named_only=kwonly,
+            var_named=kwargs,
             defaults=defaults
         )
         spec.types = self._get_types(handler, spec)

@@ -33,9 +33,9 @@ class PythonArgumentParser(object):
         spec = ArgumentSpec(
             name,
             self._type,
-            positional=args,
-            varargs=varargs,
-            kwargs=kws,
+            positional_or_named=args,
+            var_positional=varargs,
+            var_named=kws,
             defaults=self._get_defaults(args, defaults),
             types=getattr(handler, 'robot_types', ())
         )
