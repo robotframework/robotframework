@@ -75,7 +75,7 @@ class JsonConverter(object):
             'name': kw.name,
             'args': kw.args,
             'doc': self._doc_formatter.html(kw.doc),
-            'shortdoc': ' '.join(kw.shortdoc.splitlines()),
+            'shortdoc': kw.shortdoc,
             'tags': tuple(kw.tags),
             'matched': True
         }
@@ -161,3 +161,37 @@ class DocToHtml(object):
 
     def __call__(self, doc):
         return self._formatter(doc)
+
+
+class HtmlToText(object):
+
+    html_tags = {
+        'b': '*',
+        'i': '_',
+        'strong': '*',
+        'em': '_',
+        'code': '``'
+    }
+
+    xml_chars = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&apos;': "'"
+    }
+
+    def get_shortdoc_from_html(self, doc):
+        match = re.search(r'<p.*?>(.*?)</p>', doc, re.DOTALL)
+        if match:
+            doc = match.group(1)
+        doc = self.html_to_plain_text(doc)
+        return doc
+
+    def html_to_plain_text(self, doc):
+        for tag, repl in self.html_tags.items():
+            doc = re.sub('(<%(tag)s>)(.*?)(</%(tag)s>)' % {'tag': tag},
+                         lambda m: repl + m.group(2) + repl, doc, flags=re.DOTALL)
+        doc = re.sub("|".join(map(re.escape, self.xml_chars.keys())),
+                     lambda match: self.xml_chars[match.group(0)], doc)
+        return doc
