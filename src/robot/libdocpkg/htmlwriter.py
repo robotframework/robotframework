@@ -173,7 +173,9 @@ class HtmlToText(object):
         'code': '``'
     }
 
-    xml_chars = {
+    single_chars = {
+        '<br>': '\n',
+        '<br/>': '\n',
         '&amp;': '&',
         '&lt;': '<',
         '&gt;': '>',
@@ -192,6 +194,6 @@ class HtmlToText(object):
         for tag, repl in self.html_tags.items():
             doc = re.sub('(<%(tag)s>)(.*?)(</%(tag)s>)' % {'tag': tag},
                          lambda m: repl + m.group(2) + repl, doc, flags=re.DOTALL)
-        doc = re.sub("|".join(map(re.escape, self.xml_chars.keys())),
-                     lambda match: self.xml_chars[match.group(0)], doc)
+        doc = re.sub("|".join(map(re.escape, self.single_chars.keys())),
+                     lambda match: self.single_chars[match.group(0)], doc)
         return doc
