@@ -1,0 +1,3 @@
+# External Python modules required by unit tests.
+
+enum34; python_version < '3.0'
