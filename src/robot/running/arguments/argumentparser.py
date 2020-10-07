@@ -95,8 +95,7 @@ class JavaArgumentParser(_ArgumentParser):
                             positional_only=positional,
                             var_positional='varargs' if varargs else None,
                             var_named='kwargs' if kwargs else None,
-                            defaults=defaults,
-                            supports_named=False)    # FIXME: Shouldn't be needed anymore
+                            defaults=defaults)
 
 
 class _ArgumentSpecParser(_ArgumentParser):

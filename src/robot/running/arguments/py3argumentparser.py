@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import inspect
+from inspect import signature, Parameter
 import typing
 
 from robot.utils import PY_VERSION
@@ -27,58 +27,44 @@ class PythonArgumentParser:
         self._type = type
 
     def parse(self, handler, name=None):
-        positional, varargs, kwonly, kwargs, defaults = self._get_arg_spec(handler)
-        spec = ArgumentSpec(
-            name,
-            self._type,
-            positional_or_named=positional,
-            var_positional=varargs,
-            named_only=kwonly,
-            var_named=kwargs,
-            defaults=defaults
-        )
-        spec.types = self._get_types(handler, spec)
+        spec = ArgumentSpec(name, self._type)
+        self._set_args(spec, handler)
+        self._set_types(spec, handler)
         return spec
 
-    def _get_arg_spec(self, handler):
+    def _set_args(self, spec, handler):
         try:
-            signature = inspect.signature(handler)
-        except ValueError:    # Can occur w/ C functions (incl. many builtins).
-            return [], 'args', [], None, {}
-        parameters = list(signature.parameters.values())
+            sig = signature(handler)
+        except ValueError:  # Can occur w/ C functions (incl. many builtins).
+            spec.var_positional = 'args'
+            return
+        parameters = list(sig.parameters.values())
         # `inspect.signature` drops `self` with bound methods and that's the case when
         # inspecting keywords. `__init__` is got directly from class (i.e. isn't bound)
         # so we need to handle that case ourselves.
         if handler.__name__ == '__init__':
             parameters = parameters[1:]
-        return self._parse_params(parameters)
-
-    def _parse_params(self, parameters):
-        positional = []
-        varargs = None
-        kwonly = []
-        kwargs = None
-        defaults = {}
+        setters = {
+            Parameter.POSITIONAL_ONLY: spec.positional_only.append,
+            Parameter.POSITIONAL_OR_KEYWORD: spec.positional_or_named.append,
+            Parameter.VAR_POSITIONAL: lambda name: setattr(spec, 'var_positional', name),
+            Parameter.KEYWORD_ONLY: spec.named_only.append,
+            Parameter.VAR_KEYWORD: lambda name: setattr(spec, 'var_named', name),
+        }
         for param in parameters:
-            if param.kind in (param.POSITIONAL_ONLY, param.POSITIONAL_OR_KEYWORD):
-                positional.append(param.name)
-            elif param.kind == param.VAR_POSITIONAL:
-                varargs = param.name
-            elif param.kind == param.KEYWORD_ONLY:
-                kwonly.append(param.name)
-            elif param.kind == param.VAR_KEYWORD:
-                kwargs = param.name
+            setters[param.kind](param.name)
             if param.default is not param.empty:
-                defaults[param.name] = param.default
-        return positional, varargs, kwonly, kwargs, defaults
+                spec.defaults[param.name] = param.default
 
-    def _get_types(self, handler, spec):
-        types = getattr(handler, 'robot_types', ())
+    def _set_types(self, spec, handler):
         # If types are set using the `@keyword` decorator, use them. Including when
-        # types are explicitly disabled with `@keyword(types=None)`.
-        if types or types is None:
-            return types
-        return self._get_type_hints(handler, spec)
+        # types are explicitly disabled with `@keyword(types=None)`. Otherwise read
+        # type hints.
+        robot_types = getattr(handler, 'robot_types', ())
+        if robot_types or robot_types is None:
+            spec.types = robot_types
+        else:
+            spec.types = self._get_type_hints(handler, spec)
 
     def _get_type_hints(self, handler, spec):
         try:

@@ -99,6 +99,14 @@ Keyword-only Arguments
     Keyword Arguments Should Be      0    *    kwo
     Keyword Arguments Should Be      1    *varargs    kwo    another=default
 
+Positional-only Arguments
+    [Tags]    require-py3.8
+    Run Libdoc And Parse Output      ${DATADIR}/keywords/PositionalOnly.py
+    Keyword Arguments Should Be      2    arg    /
+    Keyword Arguments Should Be      5    posonly    /    normal
+    Keyword Arguments Should Be      0    required    optional=default    /
+    Keyword Arguments Should Be      4    first: int    second: float    /
+
 Decorators
     Run Libdoc And Parse Output      ${TESTDATADIR}/Decorators.py
     Keyword Name Should Be           0    Keyword Using Decorator

@@ -47,8 +47,8 @@ class KeywordCallTemplate(object):
     def fill_named(self, named):
         spec = self._argspec
         for name, value in named:
-            if name in spec.positional and spec.supports_named:
-                index = spec.positional.index(name)
+            if name in spec.positional_or_named:
+                index = spec.positional_or_named.index(name)
                 self.args[index] = value
             elif spec.var_named or name in spec.named_only:
                 self.kwargs.append((name, value))
