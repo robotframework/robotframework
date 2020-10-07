@@ -99,20 +99,34 @@ class KeywordDoc(Sortable):
     @property
     def shortdoc(self):
         if self.parent.doc_format == 'HTML':
-            return self._get_shortdoc_from_html(self.doc)
+            return self.get_shortdoc_from_html(self.doc)
         return getshortdoc(self.doc)
 
-    @staticmethod
-    def _get_shortdoc_from_html(doc):
+    def get_shortdoc_from_html(self, doc):
         match = re.search('<p>(.*?)</p>', doc)
         if match:
             doc = match.group(1)
-        doc = re.sub('(<b>)(.*?)(</b>)',
-                     lambda m: '*' + m.group(2) + '*', doc)
-        doc = re.sub('(<i>)(.*?)(</i>)',
-                     lambda m: '_' + m.group(2) + '_', doc)
-        doc = re.sub('(<code>)(.*?)(</code>)',
-                     lambda m: '``' + m.group(2) + '``', doc)
+        doc = self._html_to_plain_text(doc)
+        return doc
+
+    def _html_to_plain_text(self, doc):
+        xml_chars = {
+            '&amp;': '&',
+            '&lt;': '<',
+            '&gt;': '>',
+            '&quot;': '"',
+            '&apos;': "'"
+        }
+        html_tags = {
+            'b': '*',
+            'i': '_',
+            'code': '``'
+        }
+        for tag, repl in html_tags.items():
+            doc = re.sub('(<%(tag)s>)(.*?)(</%(tag)s>)' % {'tag': tag},
+                         lambda m: repl + m.group(2) + repl, doc)
+        doc = re.sub("|".join(map(re.escape, xml_chars.keys())),
+                     lambda match: xml_chars[match.group(0)], doc)
         return doc
 
     @property
