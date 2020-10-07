@@ -95,9 +95,8 @@ argument value ``'stderr'``."""
         verify_keyword_shortdoc('REST', doc, exp)
 
     def test_shortdoc_with_multiline_HTML_format(self):
-        doc = """<p><strong>Writes</strong> <em>the</em> <b>message</b>
-to <i>the</i> <code>console</code>.
-
+        doc = """<p><strong>Writes</strong><br><em>the</em> <b>message</b>
+to <i>the</i> <code>console</code>.<br><br>
 If the <code>newline</code> argument is <code>True</code>, a newline character is
 automatically added to the message.</p>
 <p>By default the message is written to the standard output stream.
