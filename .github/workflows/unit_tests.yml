@@ -49,6 +49,7 @@ jobs:
       - name: Run unit tests with coverage
         run: |
           python -m pip install coverage
+          python -m pip install -r utest/requirements.txt
           python -m coverage run --branch utest/run.py -v
 
       - name: Prepare HTML/XML coverage report
@@ -103,6 +104,7 @@ jobs:
       - name: Run unit tests
         run: |
           ${{ matrix.set_codepage }}
+          jython/bin/jython -m pip install -r utest/requirements.txt
           jython/bin/jython utest/run.py -v
 
   test_using_ironpython:
@@ -126,4 +128,5 @@ jobs:
       - name: Run unit tests
         run: |
           chcp 850
+          ipy -m pip install -r utest/requirements.txt
           ipy utest/run.py -v
