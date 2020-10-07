@@ -55,8 +55,7 @@ class ArgumentSpec(object):
 
     @property
     def minargs(self):
-        required = [arg for arg in self.positional if arg not in self.defaults]
-        return len(required)
+        return len([arg for arg in self.positional if arg not in self.defaults])
 
     @property
     def maxargs(self):
