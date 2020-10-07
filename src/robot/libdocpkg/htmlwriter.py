@@ -142,16 +142,13 @@ class DocToHtml(object):
         try:
             return {'ROBOT': html_format,
                     'TEXT': self._format_text,
-                    'HTML': self._format_html,
+                    'HTML': lambda doc: doc,
                     'REST': self._format_rest}[doc_format]
         except KeyError:
             raise DataError("Invalid documentation format '%s'." % doc_format)
 
     def _format_text(self, doc):
         return '<p style="white-space: pre-wrap">%s</p>' % html_escape(doc)
-
-    def _format_html(self, doc):
-        return '<div style="margin: 0">%s</div>' % doc
 
     def _format_rest(self, doc):
         try:
@@ -160,7 +157,7 @@ class DocToHtml(object):
             raise DataError("reST format requires 'docutils' module to be installed.")
         parts = publish_parts(doc, writer_name='html',
                               settings_overrides={'syntax_highlight': 'short'})
-        return self._format_html(parts['html_body'])
+        return parts['html_body']
 
     def __call__(self, doc):
         return self._formatter(doc)
