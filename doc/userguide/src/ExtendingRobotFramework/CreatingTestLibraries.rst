@@ -1111,9 +1111,14 @@ __ `Variable number of arguments with Java`_
 Keyword-only arguments
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 3.1, it is possible to use `named-only
-arguments`_ with different keywords. When implementing libraries using Python,
-this support is provided by Python's `keyword-only arguments`__:
+Starting from Robot Framework 3.1, it is possible to use `named-only arguments`_
+with different keywords. When implementing libraries using Python, this support
+is provided by Python's `keyword-only arguments`__. Keyword-only arguments
+are specified after possible `*varargs` or after a dedicated `*` marker when
+`*varargs` are not needed. Possible `**kwargs` are specified after keyword-only
+arguments.
+
+Example:
 
 .. sourcecode:: python
 
@@ -1121,17 +1126,70 @@ this support is provided by Python's `keyword-only arguments`__:
         key = str.lower if case_sensitive else None
         return sorted(words, key=key)
 
+    def strip_spaces(word, *, left=True, right=True):
+        if left:
+            word = word.lstrip()
+        if right:
+            word = word.rstrip()
+        return word
+
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Example
        Sort Words    Foo    bar    baZ
        Sort Words    Foo    bar    baZ    case_sensitive=True
+       Strip Spaces    ${word}    left=False
 
 Due to keyword-only arguments being a Python 3 feature, libraries using
 Python 2 cannot use it. Time to upgrade!
 
 __ https://www.python.org/dev/peps/pep-3102
+
+Positional-only arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Python 3.8 introduced `positional-only arguments`__ that make it possible to
+specify that an argument can only be given as a `positional argument`_, not as
+a `named argument`_ like `name=value`. Positional-only arguments are specified
+before normal arguments and a special `/` marker must be used after them:
+
+.. sourcecode:: python
+
+    def keyword(posonly, /, normal):
+        print(f"Got positional-only argument {posonly} and normal argument {normal}.")
+
+The above keyword could be used like this:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       # Positional-only and normal argument used as positional arguments.
+       Keyword    foo    bar
+       # Normal argument can also be named.
+       Keyword    foo    normal=bar
+
+If a positional-only argument is used with a value that contains an equal sign
+like `example=usage`, it is not considered to mean `named argument syntax`_
+even if the part before the `=` would match the argument name. This rule
+only applies if the positional-only argument is used in its correct position
+without other arguments using the name argument syntax before it, though.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       # Positional-only argument gets literal value `posonly=foo` in this case.
+       Keyword    posonly=foo    normal=bar
+       # This fails.
+       Keyword    normal=bar    posonly=foo
+
+Positional-only arguments are fully supported starting from Robot Framework 4.0.
+Using them as positional arguments works also with earlier versions,
+but using them as named arguments causes an error on Python side.
+
+__ https://www.python.org/dev/peps/pep-0570/
 
 Argument types
 ~~~~~~~~~~~~~~

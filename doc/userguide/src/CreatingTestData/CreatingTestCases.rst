@@ -227,7 +227,8 @@ the latter requires at least one argument.
        Remove Files    ${TEMPDIR}/f1.txt    ${TEMPDIR}/f2.txt    ${TEMPDIR}/f3.txt
        @{paths} =    Join Paths    ${TEMPDIR}    f1.txt    f2.txt    f3.txt    f4.txt
 
-.. _Named argument syntax:
+.. _named argument:
+.. _named argument syntax:
 
 Named arguments
 ~~~~~~~~~~~~~~~
@@ -329,9 +330,8 @@ As already explained, the named argument syntax works with keywords. In
 addition to that, it also works when `importing libraries`_.
 
 Naming arguments is supported by `user keywords`_ and by most `test libraries`_.
-The only exception are Java based libraries that use the `static library API`_.
-Library documentation generated with Libdoc_ has a note does the library
-support named arguments or not.
+The only exceptions are Java based libraries that use the `static library API`_
+and Python keywords explicitly using `positional-only arguments`_.
 
 Named arguments example
 '''''''''''''''''''''''
