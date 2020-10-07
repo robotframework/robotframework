@@ -81,19 +81,6 @@ argument value ``'stderr'``."""
         exp = "Writes the *message* to _the_ ``console``."
         verify_keyword_shortdoc('ROBOT', doc, exp)
 
-    def test_shortdoc_with_multiline_reST_format(self):
-        doc = """Writes the **message**
-to *the* console.
-
-If the ``newline`` argument is ``True``, a newline character is
-automatically added to the message.
-
-By default the message is written to the standard output stream.
-Using the standard error stream is possibly by giving the ``stream``
-argument value ``'stderr'``."""
-        exp = "Writes the *message* to _the_ console."
-        verify_keyword_shortdoc('REST', doc, exp)
-
     def test_shortdoc_with_multiline_HTML_format(self):
         doc = """<p><strong>Writes</strong><br><em>the</em> <b>message</b>
 to <i>the</i> <code>console</code>.<br><br>
