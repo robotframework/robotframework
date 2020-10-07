@@ -19,6 +19,7 @@ import re
 from robot.model import Tags
 from robot.utils import getshortdoc, Sortable, setter
 
+from .htmlwriter import HtmlToText
 from .writer import LibdocWriter
 from .output import LibdocOutput
 
@@ -87,47 +88,21 @@ class LibraryDoc(object):
 class KeywordDoc(Sortable):
 
     def __init__(self, name='', args=(), doc='', tags=(), source=None,
-                 lineno=-1):
+                 lineno=-1, parent=None):
         self.name = name
         self.args = args
         self.doc = doc
         self.tags = Tags(tags)
         self.source = source
         self.lineno = lineno
-        self.parent = None
+        self.parent = parent
 
     @property
     def shortdoc(self):
-        if self.parent.doc_format == 'HTML':
-            return self.get_shortdoc_from_html(self.doc)
-        return getshortdoc(self.doc)
-
-    def get_shortdoc_from_html(self, doc):
-        match = re.search('<p>(.*?)</p>', doc)
-        if match:
-            doc = match.group(1)
-        doc = self._html_to_plain_text(doc)
-        return doc
-
-    def _html_to_plain_text(self, doc):
-        xml_chars = {
-            '&amp;': '&',
-            '&lt;': '<',
-            '&gt;': '>',
-            '&quot;': '"',
-            '&apos;': "'"
-        }
-        html_tags = {
-            'b': '*',
-            'i': '_',
-            'code': '``'
-        }
-        for tag, repl in html_tags.items():
-            doc = re.sub('(<%(tag)s>)(.*?)(</%(tag)s>)' % {'tag': tag},
-                         lambda m: repl + m.group(2) + repl, doc)
-        doc = re.sub("|".join(map(re.escape, xml_chars.keys())),
-                     lambda match: xml_chars[match.group(0)], doc)
-        return doc
+        doc = self.doc
+        if self.parent and self.parent.doc_format == 'HTML':
+            doc = HtmlToText().get_shortdoc_from_html(doc)
+        return ' '.join(getshortdoc(doc).splitlines())
 
     @property
     def deprecated(self):
