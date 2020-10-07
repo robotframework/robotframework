@@ -29,10 +29,24 @@ class ArgumentValidator(object):
             return
         named = set(name for name, value in named)
         self._validate_no_multiple_values(positional, named, self._argspec)
+        self._validate_no_positional_only_as_named(named, self._argspec)
         self._validate_positional_limits(positional, named, self._argspec)
         self._validate_no_mandatory_missing(positional, named, self._argspec)
         self._validate_no_named_only_missing(named, self._argspec)
         self._validate_no_extra_named(named, self._argspec)
+
+    def _validate_no_multiple_values(self, positional, named, spec):
+        for name in (spec.positional_only + spec.positional_or_named)[:len(positional)]:
+            if name in spec.positional_or_named and name in named:
+                raise DataError("%s '%s' got multiple values for argument "
+                                "'%s'." % (spec.type, spec.name, name))
+
+    def _validate_no_positional_only_as_named(self, named, spec):
+        if not spec.var_named:
+            for name in named:
+                if name in spec.positional_only:
+                    raise DataError("%s '%s' does not accept argument '%s' as named "
+                                    "argument." % (spec.type, spec.name, name))
 
     def _validate_positional_limits(self, positional, named, spec):
         count = len(positional) + self._named_positionals(named, spec)
@@ -40,9 +54,7 @@ class ArgumentValidator(object):
             self._raise_wrong_count(count, spec)
 
     def _named_positionals(self, named, spec):
-        if not spec.supports_named:
-            return 0
-        return sum(1 for n in named if n in spec.positional)
+        return sum(1 for n in named if n in spec.positional_or_named)
 
     def _raise_wrong_count(self, count, spec):
         minend = plural_or_not(spec.minargs)
@@ -56,13 +68,6 @@ class ArgumentValidator(object):
             expected = expected.replace('argument', 'non-named argument')
         raise DataError("%s '%s' expected %s, got %d."
                         % (spec.type, spec.name, expected, count))
-
-    def _validate_no_multiple_values(self, positional, named, spec):
-        if named and spec.supports_named:
-            for name in spec.positional[:len(positional)]:
-                if name in named:
-                    raise DataError("%s '%s' got multiple values for argument "
-                                    "'%s'." % (spec.type, spec.name, name))
 
     def _validate_no_mandatory_missing(self, positional, named, spec):
         for name in spec.positional[len(positional):spec.minargs]:
@@ -80,7 +85,7 @@ class ArgumentValidator(object):
 
     def _validate_no_extra_named(self, named, spec):
         if not spec.var_named:
-            extra = set(named) - set(spec.positional) - set(spec.named_only)
+            extra = set(named) - set(spec.positional_or_named) - set(spec.named_only)
             if extra:
                 raise DataError("%s '%s' got unexpected named argument%s %s."
                                 % (spec.type, spec.name, plural_or_not(extra),

@@ -69,10 +69,11 @@ class NamedArgumentResolver(object):
                 name = variables.replace_scalar(name)
             except DataError:
                 return False
-        argspec = self._argspec
-        if previous_named or name in argspec.named_only or argspec.var_named:
-            return True
-        return argspec.supports_named and name in argspec.positional
+        spec = self._argspec
+        return bool(previous_named or
+                    spec.var_named or
+                    name in spec.positional_or_named or
+                    name in spec.named_only)
 
     def _raise_positional_after_named(self):
         raise DataError("%s '%s' got positional argument after named arguments."
