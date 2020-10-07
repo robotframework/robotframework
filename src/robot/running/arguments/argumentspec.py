@@ -32,22 +32,28 @@ from .typevalidator import TypeValidator
 @py2to3
 class ArgumentSpec(object):
 
-    def __init__(self, name=None, type='Keyword', positional=None,
-                 varargs=None, kwonlyargs=None, kwargs=None, defaults=None,
-                 types=None, supports_named=True):
+    def __init__(self, name=None, type='Keyword', positional_only=None,
+                 positional_or_named=None, var_positional=None, named_only=None,
+                 var_named=None, defaults=None, types=None, supports_named=True):
         self.name = name
         self.type = type
-        self.positional = positional or []
-        self.varargs = varargs
-        self.kwonlyargs = kwonlyargs or []
-        self.kwargs = kwargs
+        self.positional_only = positional_only or []
+        self.positional_or_named = positional_or_named or []
+        self.var_positional = var_positional
+        self.named_only = named_only or []
+        self.var_named = var_named
         self.defaults = defaults or {}
         self.types = types
+        # FIXME: Shouldn't be needed anymore when positional-only are fully supported.
         self.supports_named = supports_named
 
     @setter
     def types(self, types):
         return TypeValidator(self).validate(types)
+
+    @property
+    def positional(self):
+        return self.positional_only + self.positional_or_named
 
     @property
     def minargs(self):
@@ -56,12 +62,15 @@ class ArgumentSpec(object):
 
     @property
     def maxargs(self):
-        return len(self.positional) if not self.varargs else sys.maxsize
+        return len(self.positional) if not self.var_positional else sys.maxsize
 
     @property
     def argument_names(self):
-        return (self.positional + ([self.varargs] if self.varargs else []) +
-                self.kwonlyargs + ([self.kwargs] if self.kwargs else []))
+        return (self.positional_only +
+                self.positional_or_named +
+                ([self.var_positional] if self.var_positional else []) +
+                self.named_only +
+                ([self.var_named] if self.var_named else []))
 
     def resolve(self, arguments, variables=None, resolve_named=True,
                 resolve_variables_until=None, dict_to_kwargs=False):
@@ -81,20 +90,25 @@ class ArgumentSpec(object):
         notset = ArgInfo.NOTSET
         get_type = (self.types or {}).get
         get_default = self.defaults.get
-        for arg in self.positional:
-            yield ArgInfo(ArgInfo.POSITIONAL_OR_KEYWORD, arg,
+        for arg in self.positional_only:
+            yield ArgInfo(ArgInfo.POSITIONAL_ONLY, arg,
                           get_type(arg, notset), get_default(arg, notset))
-        if self.varargs:
-            yield ArgInfo(ArgInfo.VAR_POSITIONAL, self.varargs,
-                          get_type(self.varargs, notset))
-        elif self.kwonlyargs:
-            yield ArgInfo(ArgInfo.KEYWORD_ONLY_MARKER)
-        for arg in self.kwonlyargs:
-            yield ArgInfo(ArgInfo.KEYWORD_ONLY, arg,
+        if self.positional_only:
+            yield ArgInfo(ArgInfo.POSITIONAL_ONLY_MARKER)
+        for arg in self.positional_or_named:
+            yield ArgInfo(ArgInfo.POSITIONAL_OR_NAMED, arg,
                           get_type(arg, notset), get_default(arg, notset))
-        if self.kwargs:
-            yield ArgInfo(ArgInfo.VAR_KEYWORD, self.kwargs,
-                          get_type(self.kwargs, notset))
+        if self.var_positional:
+            yield ArgInfo(ArgInfo.VAR_POSITIONAL, self.var_positional,
+                          get_type(self.var_positional, notset))
+        elif self.named_only:
+            yield ArgInfo(ArgInfo.NAMED_ONLY_MARKER)
+        for arg in self.named_only:
+            yield ArgInfo(ArgInfo.NAMED_ONLY, arg,
+                          get_type(arg, notset), get_default(arg, notset))
+        if self.var_named:
+            yield ArgInfo(ArgInfo.VAR_NAMED, self.var_named,
+                          get_type(self.var_named, notset))
 
     def __unicode__(self):
         return ', '.join(unicode(arg) for arg in self)
@@ -103,11 +117,13 @@ class ArgumentSpec(object):
 @py2to3
 class ArgInfo(object):
     NOTSET = object()
-    POSITIONAL_OR_KEYWORD = 'POSITIONAL_OR_KEYWORD'
+    POSITIONAL_ONLY = 'POSITIONAL_ONLY'
+    POSITIONAL_ONLY_MARKER = 'POSITIONAL_ONLY_MARKER'
+    POSITIONAL_OR_NAMED = 'POSITIONAL_OR_NAMED'
     VAR_POSITIONAL = 'VAR_POSITIONAL'
-    KEYWORD_ONLY_MARKER = 'KEYWORD_ONLY_MARKER'
-    KEYWORD_ONLY = 'KEYWORD_ONLY'
-    VAR_KEYWORD = 'VAR_KEYWORD'
+    NAMED_ONLY_MARKER = 'NAMED_ONLY_MARKER'
+    NAMED_ONLY = 'NAMED_ONLY'
+    VAR_NAMED = 'VAR_NAMED'
 
     def __init__(self, kind, name='', type=NOTSET, default=NOTSET):
         self.kind = kind
@@ -117,7 +133,9 @@ class ArgInfo(object):
 
     @property
     def required(self):
-        if self.kind in (self.POSITIONAL_OR_KEYWORD, self.KEYWORD_ONLY):
+        if self.kind in (self.POSITIONAL_ONLY,
+                         self.POSITIONAL_OR_NAMED,
+                         self.NAMED_ONLY):
             return self.default is self.NOTSET
         return False
 
@@ -141,12 +159,14 @@ class ArgInfo(object):
         return '%s { %s }' % (enum.__name__, ' | '.join(members))
 
     def __unicode__(self):
-        if self.kind == self.KEYWORD_ONLY_MARKER:
+        if self.kind == self.POSITIONAL_ONLY_MARKER:
+            return '/'
+        if self.kind == self.NAMED_ONLY_MARKER:
             return '*'
         ret = self.name
         if self.kind == self.VAR_POSITIONAL:
             ret = '*' + ret
-        elif self.kind == self.VAR_KEYWORD:
+        elif self.kind == self.VAR_NAMED:
             ret = '**' + ret
         if self.type is not self.NOTSET:
             ret = '%s: %s' % (ret, self.type_string)

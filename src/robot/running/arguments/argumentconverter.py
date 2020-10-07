@@ -33,15 +33,15 @@ class ArgumentConverter(object):
         names = self._argspec.positional
         converted = [self._convert(name, value)
                      for name, value in zip(names, positional)]
-        if self._argspec.varargs:
-            converted.extend(self._convert(self._argspec.varargs, value)
+        if self._argspec.var_positional:
+            converted.extend(self._convert(self._argspec.var_positional, value)
                              for value in positional[len(names):])
         return converted
 
     def _convert_named(self, named):
-        names = set(self._argspec.positional) | set(self._argspec.kwonlyargs)
-        kwargs = self._argspec.kwargs
-        return [(name, self._convert(name if name in names else kwargs, value))
+        names = set(self._argspec.positional) | set(self._argspec.named_only)
+        var_named = self._argspec.var_named
+        return [(name, self._convert(name if name in names else var_named, value))
                 for name, value in named]
 
     def _convert(self, name, value):

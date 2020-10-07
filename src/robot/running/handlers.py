@@ -206,10 +206,10 @@ class _DynamicHandler(_RunnableHandler):
     def _parse_arguments(self, handler_method):
         spec = DynamicArgumentParser().parse(self._argspec, self.longname)
         if not self._supports_kwargs:
-            if spec.kwargs:
+            if spec.var_named:
                 raise DataError("Too few '%s' method parameters for **kwargs "
                                 "support." % self._run_keyword_method_name)
-            if spec.kwonlyargs:
+            if spec.named_only:
                 raise DataError("Too few '%s' method parameters for "
                                 "keyword-only arguments support."
                                 % self._run_keyword_method_name)

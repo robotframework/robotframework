@@ -43,6 +43,7 @@ class ArgumentResolver(object):
 class NamedArgumentResolver(object):
 
     def __init__(self, argspec):
+        """:type argspec: :py:class:`robot.running.arguments.ArgumentSpec`"""
         self._argspec = argspec
 
     def resolve(self, arguments, variables=None):
@@ -69,7 +70,7 @@ class NamedArgumentResolver(object):
             except DataError:
                 return False
         argspec = self._argspec
-        if previous_named or name in argspec.kwonlyargs or argspec.kwargs:
+        if previous_named or name in argspec.named_only or argspec.var_named:
             return True
         return argspec.supports_named and name in argspec.positional
 
@@ -88,7 +89,7 @@ class DictToKwargs(object):
 
     def __init__(self, argspec, enabled=False):
         self._maxargs = argspec.maxargs
-        self._enabled = enabled and bool(argspec.kwargs)
+        self._enabled = enabled and bool(argspec.var_named)
 
     def handle(self, positional, named):
         if self._enabled and self._extra_arg_has_kwargs(positional, named):
