@@ -5,6 +5,7 @@ Library       XML
 *** Variables ***
 ${INT}        ${15}
 &{DICT}       A=1    B=2    C=3    ${1}=${2}    3=4    ${NONE}=${NONE}    =    ${SPACE}=${SPACE}
+...           eq=${{{'second': 'xXx', 'ignore_case': True}}}
 &{SQUARES}    [=open    ]=close    []=both    [x[y]=mixed
 ${A}          A
 ${INVALID}    xxx
@@ -111,8 +112,15 @@ Sanity check
         Append To List    ${items}    ${key}: ${DICT}[${key}]
     END
     ${items} =    Catenate    SEPARATOR=,${SPACE}    @{items}
-    Should Be Equal    ${items}    A: 1, B: 2, C: 3, 1: 2, 3: 4, None: None, : , ${SPACE}: ${SPACE}
+    Should Be Equal    ${items}    A: 1, B: 2, C: 3, 1: 2, 3: 4, None: None, : , ${SPACE}: ${SPACE}, eq: {'second': 'xXx', 'ignore_case': True}
 
-Syntax with `&` is unwrapped to named arguments
-    [Documentation]    FAIL Keyword 'BuiltIn.Should Be Equal' got positional argument after named arguments.
-    Should Be Equal    &{DICT}[A]       1
+Dict expansion using `&` syntax
+    [Documentation]    FAIL This fails
+    Should Be Equal    XXX    &{DICT}[eq]
+    Should Be Equal    &{DICT}[eq]    first=xxx
+    Should Be Equal    YYY    &{DICT}[eq]    second=yyy
+    Should Be Equal    xxx    values=False    &{DICT}[eq]    ignore_case=False    msg=This fails
+
+Dict expansion fails if value is not dict-like
+    [Documentation]    FAIL Value of variable '\&{DICT}[eq][second]' is not dictionary or dictionary-like.
+    Log Many    &{DICT}[eq][second]

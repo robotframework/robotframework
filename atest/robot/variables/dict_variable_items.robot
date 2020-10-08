@@ -53,5 +53,8 @@ Non-dict variable
 Sanity check
     Check Test Case    ${TESTNAME}
 
-Syntax with `&` is unwrapped to named arguments
+Dict expansion using `&` syntax
+    Check Test Case    ${TESTNAME}
+
+Dict expansion fails if value is not dict-like
     Check Test Case    ${TESTNAME}

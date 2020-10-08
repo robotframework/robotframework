@@ -25,8 +25,7 @@ except ImportError:
 
 from robot.errors import DataError, VariableError
 from robot.utils import (get_env_var, get_env_vars, get_error_message,
-                         is_dict_like, is_list_like, normalize, DotDict,
-                         NormalizedDict)
+                         normalize, NormalizedDict)
 
 from .evaluation import evaluate_expression
 from .notfound import variable_not_found
@@ -50,16 +49,9 @@ class VariableFinder(object):
         for finder in self._finders:
             if match.identifier in finder.identifiers:
                 try:
-                    value = finder.find(name)
+                    return finder.find(name)
                 except (KeyError, ValueError):
                     continue
-                try:
-                    return self._validate_value(value, match, name)
-                except VariableError:
-                    raise
-                except:
-                    raise VariableError("Resolving variable '%s' failed: %s"
-                                        % (name, get_error_message()))
         variable_not_found(name, self._store.data)
 
     def _get_match(self, variable):
@@ -69,20 +61,6 @@ class VariableFinder(object):
         if match.start != 0 or match.end != len(variable) or match.items:
             raise DataError("Invalid variable name '%s'." % variable)
         return match
-
-    def _validate_value(self, value, match, name):
-        identifier = match.identifier
-        if not match.items and identifier == '@':
-            if not is_list_like(value):
-                raise VariableError("Value of variable '%s' is not list or "
-                                    "list-like." % name)
-            return list(value)
-        if not match.items and identifier == '&':
-            if not is_dict_like(value):
-                raise VariableError("Value of variable '%s' is not dictionary "
-                                    "or dictionary-like." % name)
-            return DotDict(value)
-        return value
 
 
 class StoredFinder(object):

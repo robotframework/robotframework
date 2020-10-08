@@ -2,6 +2,7 @@
 ${INT}            ${15}
 @{LIST}           A    B    C    D    E    F    G    H    I    J    K
 @{NUMBERS}        1    2    3
+@{NESTED}         ${{['a', 'b', 'c']}}    ${{[1, 2, 3]}}
 ${BYTES}          ${{b'ABCDEFGHIJK'}}
 ${BYTEARRAY}      ${{bytearray(b'ABCDEFGHIJK')}}
 ${STRING}         ABCDEFGHIJK
@@ -155,13 +156,22 @@ Non-subscriptable variable
     ...    literal value, it needs to be escaped like '\\[0]'.
     Log    ${INT}[0]
 
-Access with `@` with index works
-    [Documentation]    FAIL List '\@{LIST}' has no item in index 99.
-    Should Be Equal  @{LIST}[0]  A
-    Should Be Equal  @{LIST}[${-1}]  K
-    Log    @{LIST}[99]
+List expansion using `@` syntax
+    [Documentation]    FAIL List '\@{NESTED}' has no item in index 99.
+    ${result} =    Catenate    @{NESTED}[0]    -    @{NESTED}[${-1}]
+    Should Be Equal    ${result}    a b c - 1 2 3
+    Log Many    @{NESTED}[99]
+
+List expansion fails if value is not list-like 1
+    [Documentation]    FAIL Value of variable '\@{LIST}[0]' is not list or list-like.
+    Log Many    @{LIST}[0]
+
+List expansion fails if value is not list-like 2
+    [Documentation]    FAIL Value of variable '\@{NESTED}[1][0]' is not list or list-like.
+    Log Many    @{NESTED}[1][0]
 
 Syntax with `@` doesn't support slicing syntax
+    # FIXME: This should actually work.
     [Documentation]    Slicing support should be added when `@{list}[index]` changes.
     ...                FAIL List '\@{LIST}' used with invalid index '1:'. \
     ...                To use '[1:]' as a literal value, it needs to be \

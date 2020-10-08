@@ -59,8 +59,12 @@ Non-existing index variable
 Non-subscriptable variable
     Check Test Case    ${TESTNAME}
 
-Access with `@` with index works
+List expansion using `@` syntax
     Check Test Case    ${TESTNAME}
+
+List expansion fails if value is not list-like
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
 Syntax with `@` doesn't support slicing syntax
     Check Test Case    ${TESTNAME}

@@ -15,16 +15,17 @@
 
 from robot.errors import DataError, VariableError
 from robot.output import librarylogger as logger
-from robot.utils import (escape, is_dict_like, is_list_like, type_name,
-                         unescape, unic)
+from robot.utils import (escape, get_error_message, is_dict_like, is_list_like,
+                         type_name, unescape, unic, DotDict)
 
+from .finders import VariableFinder
 from .search import VariableMatch, search_variable
 
 
 class VariableReplacer(object):
 
-    def __init__(self, variables):
-        self._variables = variables
+    def __init__(self, variable_store):
+        self._finder = VariableFinder(variable_store)
 
     def replace_list(self, items, replace_until=None, ignore_errors=False):
         """Replaces variables from a list of items.
@@ -121,9 +122,16 @@ class VariableReplacer(object):
                         r"escape it like '\%s'." % (match, match))
             return unic(match)
         try:
-            value = self._variables[match]
+            value = self._finder.find(match)
             if match.items:
                 value = self._get_variable_item(match, value)
+            try:
+                value = self._validate_value(match, value)
+            except VariableError:
+                raise
+            except:
+                raise VariableError("Resolving variable '%s' failed: %s"
+                                    % (match, get_error_message()))
         except DataError:
             if not ignore_errors:
                 raise
@@ -181,3 +189,16 @@ class VariableReplacer(object):
         except TypeError as err:
             raise VariableError("Dictionary '%s' used with invalid key: %s"
                                 % (name, err))
+
+    def _validate_value(self, match, value):
+        if match.identifier == '@':
+            if not is_list_like(value):
+                raise VariableError("Value of variable '%s' is not list or "
+                                    "list-like." % match)
+            return list(value)
+        if match.identifier == '&':
+            if not is_dict_like(value):
+                raise VariableError("Value of variable '%s' is not dictionary "
+                                    "or dictionary-like." % match)
+            return DotDict(value)
+        return value
