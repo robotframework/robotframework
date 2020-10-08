@@ -29,9 +29,9 @@ Access and Modify List Variable With Keywords From Collections Library
     Set List Value  ${LIST VAR}  0  ham
     Should Be True  ${LIST VAR} == ['ham', 21, 'new value']
     Reverse List  ${LIST VAR}
-    Should Be Equal  @{LIST VAR}[0]  new value
-    Should Be Equal  @{LIST VAR}[1]  ${21}
-    Should Be Equal  @{LIST VAR}[-1]  ham
+    Should Be Equal  ${LIST VAR}[0]  new value
+    Should Be Equal  ${LIST VAR}[1]  ${21}
+    Should Be Equal  ${LIST VAR}[-1]  ham
 
 Modifications To List Variables Live Between Test Cases
     Should Be True  ${LIST VAR} == ['new value', 21, 'ham']
