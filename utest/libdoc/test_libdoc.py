@@ -2,7 +2,7 @@ import unittest
 
 from robot.utils.asserts import assert_equal
 from robot.libdocpkg.model import LibraryDoc, KeywordDoc
-from robot.libdocpkg.htmlwriter import HtmlToText, DocToHtml
+from robot.libdocpkg.htmlutils import HtmlToText, DocToHtml
 
 get_shortdoc = HtmlToText().get_shortdoc_from_html
 get_text = HtmlToText().html_to_plain_text
