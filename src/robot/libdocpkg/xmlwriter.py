@@ -13,12 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from datetime import datetime
 import os.path
+from datetime import datetime
 
 from robot.utils import WINDOWS, XmlWriter
-
-from .htmlwriter import DocToHtml
 
 
 class LibdocXmlWriter(object):
@@ -27,20 +25,21 @@ class LibdocXmlWriter(object):
         self._force_html_doc = force_html_doc
 
     def write(self, libdoc, outfile):
-        formatter = DocFormatter(libdoc.doc_format, self._force_html_doc)
+        if self._force_html_doc:
+            libdoc.convert_doc_to_html()
         writer = XmlWriter(outfile, usage='Libdoc spec')
-        self._write_start(libdoc, writer, formatter)
+        self._write_start(libdoc, writer)
         self._write_keywords('init', libdoc.inits, libdoc.source,
-                             writer, formatter)
+                             writer)
         self._write_keywords('kw', libdoc.keywords, libdoc.source,
-                             writer, formatter)
+                             writer)
         self._write_end(writer)
 
-    def _write_start(self, libdoc, writer, formatter):
+    def _write_start(self, libdoc, writer):
         generated = datetime.utcnow().replace(microsecond=0).isoformat() + 'Z'
         attrs = {'name': libdoc.name,
                  'type': libdoc.type,
-                 'format': formatter.format,
+                 'format': libdoc.doc_format,
                  'scope': libdoc.scope,
                  'namedargs': 'true' if libdoc.named_args else 'false',
                  'generated': generated,
@@ -52,7 +51,7 @@ class LibdocXmlWriter(object):
         # https://github.com/robotframework/robotframework/issues/3522
         writer.element('scope', self._get_old_style_scope(libdoc))
         writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
-        writer.element('doc', formatter(libdoc.doc))
+        writer.element('doc', libdoc.doc)
 
     def _add_source_info(self, attrs, item, outfile, lib_source=None):
         if item.source and item.source != lib_source:
@@ -82,7 +81,7 @@ class LibdocXmlWriter(object):
                 'SUITE': 'test suite',
                 'TEST': 'test case'}[libdoc.scope]
 
-    def _write_keywords(self, kw_type, keywords, lib_source, writer, formatter):
+    def _write_keywords(self, kw_type, keywords, lib_source, writer):
         for kw in keywords:
             attrs = self._get_start_attrs(kw_type, kw, lib_source, writer)
             writer.start(kw_type, attrs)
@@ -90,7 +89,7 @@ class LibdocXmlWriter(object):
             for arg in kw.args:
                 writer.element('arg', arg)
             writer.end('arguments')
-            writer.element('doc', formatter(kw.doc))
+            writer.element('doc', kw.doc)
             if kw_type == 'kw' and kw.tags:
                 writer.start('tags')
                 for tag in kw.tags:
@@ -111,17 +110,3 @@ class LibdocXmlWriter(object):
     def _write_end(self, writer):
         writer.end('keywordspec')
         writer.close()
-
-
-class DocFormatter(object):
-
-    def __init__(self, doc_format, force_html=False):
-        if force_html:
-            self._formatter = DocToHtml(doc_format)
-            self.format = 'HTML'
-        else:
-            self._formatter = lambda doc: doc
-            self.format = doc_format
-
-    def __call__(self, doc):
-        return self._formatter(doc)
