@@ -1,14 +1,15 @@
 *** Settings ***
 Resource          libdoc_resource.robot
-Suite Setup       Run Libdoc to XML:HTML and to HTML and Parse Model
+Suite Setup       Run Libdoc to XML:HTML and to HTML and Parse Models    ${TESTDATADIR}/module.py
 Test Template     Should Be Equal As Strings
 
 *** Keywords ***
-Run Libdoc to XML:HTML and to HTML and Parse Model
-    Run Libdoc And Set Output    --format XML:HTML ${TESTDATADIR}/module.py ${OUTXML}
+Run Libdoc to XML:HTML and to HTML and Parse Models
+    [Arguments]    ${library_path}
+    Run Libdoc And Set Output    --format XML:HTML ${library_path} ${OUTXML}
     Run Libdoc And Parse Model From HTML    ${OUTXML}
     Set Suite Variable    ${XML-MODEL}    ${MODEL}
-    Run Libdoc And Parse Model From HTML    ${TESTDATADIR}/module.py
+    Run Libdoc And Parse Model From HTML    ${library_path}
 
 *** Comments ***
 This test suite will be changed with one of the next Tasks to contain a check for the roundtrip from library into XML then from XML to html.
@@ -67,3 +68,8 @@ Keyword tags
     ${XML-MODEL}[keywords][2][tags]    ${MODEL}[keywords][2][tags]
     ${XML-MODEL}[keywords][3][tags]    ${MODEL}[keywords][3][tags]
     ${XML-MODEL}[keywords][4][tags]    ${MODEL}[keywords][4][tags]
+
+TOC doc
+    [Template]    None
+    Run Libdoc to XML:HTML and to HTML and Parse Models    ${TESTDATADIR}/TOCWithInitsAndKeywords.py
+    Should Be Equal As Strings    ${XML-MODEL}[doc]    ${MODEL}[doc]
