@@ -39,8 +39,8 @@ Own Tags   [Tags]   own1   own2
 Default Tags   No Operation
 
 Variable Table   Should Be Equal   ${table_var}   foo
-   Should Be Equal   @{table_listvar}[0]   bar
-   Should Be Equal   @{table_listvar}[1]   foo
+   Should Be Equal   ${table_listvar}[0]   bar
+   Should Be Equal   ${table_listvar}[1]   foo
 
 
 Resource File   Keyword from ROBOT resource
@@ -48,9 +48,9 @@ Resource File   Keyword from ROBOT resource
    Should Be Equal   ${robot_resource_var}   ROBOT Resource Variable
    Should Be Equal   ${robot_resource_var2}   ROBOT Resource Variable From Recursive Resource
 
-Variable File   Should Be Equal   @{file_listvar}[0]   ${True}
-   Should Be Equal   @{file_listvar}[1]   ${3.14}
-   Should Be Equal   @{file_listvar}[2]   Hello, world!!
+Variable File   Should Be Equal   ${file_listvar}[0]   ${True}
+   Should Be Equal   ${file_listvar}[1]   ${3.14}
+   Should Be Equal   ${file_listvar}[2]   Hello, world!!
    Should Be Equal   ${file_var1}   ${-314}
    Should Be Equal   ${file_var2}   file variable 2
 
