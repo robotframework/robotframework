@@ -590,7 +590,6 @@ In the examples above, variables are set so that
 - `${EXAMPLE}` gets the value `value`
 - `${HOST}` and `${USER}` get the values
   `localhost:7272` and `robot`
-- `${ESCAPED}` gets the value `"quotes and spaces"`
 
 The basic syntax for taking `variable files`_ into use from the command line
 is :option:`--variablefile path/to/variables.py`, and `Taking variable files into
