@@ -108,11 +108,12 @@ Non-dict variable
 
 Sanity check
     @{items} =    Create List
-    FOR    ${key}    IN    @{DICT}
-        Run Keyword If   '${key}' != 'eq'  Append To List    ${items}    ${key}: ${DICT}[${key}]
+    FOR    ${key}    ${value}    IN    &{DICT}
+        Should Be Equal    ${DICT}[${key}]    ${value}
+        Append To List    ${items}    ${key}: ${value}
     END
     ${items} =    Catenate    SEPARATOR=,${SPACE}    @{items}
-    Should Be Equal    ${items}    A: 1, B: 2, C: 3, 1: 2, 3: 4, None: None, : , ${SPACE}: ${SPACE}
+    Should Be Equal    ${items}    A: 1, B: 2, C: 3, 1: 2, 3: 4, None: None, : , ${SPACE}: ${SPACE}, eq: ${DICT}[eq]
 
 Dict expansion using `&` syntax
     [Documentation]    FAIL This fails
