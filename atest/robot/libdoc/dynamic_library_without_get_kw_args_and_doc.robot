@@ -13,16 +13,16 @@ Version
     Version Should Be    ${EMPTY}
 
 Type
-    Type Should Be    library
+    Type Should Be    LIBRARY
 
 Generated
     Generated Should Be Defined
 
 Scope
-    Scope Should Be    test case
+    Scope Should Be    TEST
 
 Named Args
-    Named Args Should Be    yes
+    Named Args Should Be    true
 
 Init
     Init Doc Should Be          0    Static __init__ doc.

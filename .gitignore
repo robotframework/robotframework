@@ -2,8 +2,9 @@ tmp
 build
 dist
 target
-venv
-.venv
+venv*
+.venv*
+.env
 *~
 MANIFEST
 atest/results
@@ -26,3 +27,4 @@ report.html
 __pycache__
 .classpath
 .settings
+.jython_cache

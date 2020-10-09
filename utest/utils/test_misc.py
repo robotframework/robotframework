@@ -1,7 +1,9 @@
 import unittest
 
-from robot.utils.asserts import assert_equal
-from robot.utils import printable_name, seq2str, roundup, IRONPYTHON
+from robot.utils.asserts import assert_equal, assert_raises_with_msg
+from robot.utils import (
+    printable_name, seq2str, roundup, plural_or_not, IRONPYTHON, test_or_task
+)
 
 
 class TestRoundup(unittest.TestCase):
@@ -141,6 +143,41 @@ class TestPrintableName(unittest.TestCase):
                          ('Foo-B:A;R!', 'Foo-B:A;R!'),
                          ('', '')]:
             assert_equal(printable_name(inp, code_style=True), exp)
+
+
+class TestPluralOrNot(unittest.TestCase):
+
+    def test_plural_or_not(self):
+        for singular in [1, -1, (2,), ['foo'], {'key': 'value'}, 'x']:
+            assert_equal(plural_or_not(singular), '')
+        for plural in [0, 2, -2, 42,
+                       (), [], {},
+                       (1, 2, 3), ['a', 'b'], {'a': 1, 'b': 2},
+                       '', 'xx', 'Hello, world!']:
+            assert_equal(plural_or_not(plural), 's')
+
+
+
+class TestTestOrTask(unittest.TestCase):
+
+    def test_test_or_task(self):
+        for inp, rpa, exp in [
+            ('{Test}', False, 'Test'),
+            ('{test}', False, 'test'),
+            ('{TEST}', False, 'TEST'),
+            ('{Test}', True, 'Task'),
+            ('{test}', True, 'task'),
+            ('{TEST}', True, 'TASK'),
+            ('Contains {test}', False, 'Contains test'),
+            ('Contains {TEST}', True, 'Contains TASK'),
+            ('Does not contain match', False, 'Does not contain match')
+        ]:
+            assert_equal(test_or_task(inp, rpa), exp)
+
+    def test_test_or_task_fails_with_invalid_pattern_in_braces(self):
+        assert_raises_with_msg(
+            ValueError, "Invalid input string '{TeSt}'.",
+            test_or_task, '{TeSt}', True)
 
 
 if __name__ == "__main__":

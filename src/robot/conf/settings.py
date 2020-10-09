@@ -55,7 +55,7 @@ class _BaseSettings(object):
                  'LogTitle'         : ('logtitle', None),
                  'ReportTitle'      : ('reporttitle', None),
                  'ReportBackground' : ('reportbackground',
-                                       ('#9e9', '#9e9', '#f66')),
+                                       ('#9e9', '#f66', '#ec971f')),
                  'SuiteStatLevel'   : ('suitestatlevel', -1),
                  'TagStatInclude'   : ('tagstatinclude', []),
                  'TagStatExclude'   : ('tagstatexclude', []),
@@ -248,7 +248,7 @@ class _BaseSettings(object):
             raise DataError("Invalid report background colors '%s'." % colors)
         colors = colors.split(':')
         if len(colors) == 2:
-            return colors[0], colors[0], colors[1]
+            return colors[0], colors[1], '#ec971f'
         return tuple(colors)
 
     def _process_tag_stat_combine(self, pattern):
@@ -308,7 +308,7 @@ class _BaseSettings(object):
             if not opt.lower().startswith(('name:', 'tag:')):
                 raise DataError("Invalid value for option '--expandkeywords'. "
                                 "Expected 'TAG:<pattern>', or "
-                                "'NAME:<pattern>' but got '%s'." % opt)            
+                                "'NAME:<pattern>' but got '%s'." % opt)
 
     def __contains__(self, setting):
         return setting in self._cli_opts
@@ -352,10 +352,6 @@ class _BaseSettings(object):
     @property
     def status_rc(self):
         return self['StatusRC']
-
-    @property
-    def xunit_skip_noncritical(self):
-        return self['XUnitSkipNonCritical']
 
     @property
     def statistics_config(self):
@@ -409,6 +405,8 @@ class RobotSettings(_BaseSettings):
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'ExitOnError'        : ('exitonerror', False),
+                       'Skip'               : ('skip', None),
+                       'SkipOnFailure'      : ('skiponfailure', None),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunEmptySuite'      : ('runemptysuite', False),
@@ -485,6 +483,7 @@ class RobotSettings(_BaseSettings):
     @property
     def dry_run(self):
         return self['DryRun']
+
     @property
     def exit_on_failure(self):
         return self['ExitOnFailure']
@@ -492,6 +491,14 @@ class RobotSettings(_BaseSettings):
     @property
     def exit_on_error(self):
         return self['ExitOnError']
+
+    @property
+    def skipped_tags(self):
+        return self['Skip']
+
+    @property
+    def skip_on_failure(self):
+        return (self['SkipOnFailure'] or []) + (self['NonCritical'] or [])
 
     @property
     def skip_teardown_on_exit(self):
@@ -610,7 +617,7 @@ class RebotSettings(_BaseSettings):
 
     def _resolve_background_colors(self):
         colors = self['ReportBackground']
-        return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}
+        return {'pass': colors[0], 'fail': colors[1], 'skip': colors[2]}
 
     @property
     def merge(self):

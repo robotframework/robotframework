@@ -49,12 +49,12 @@ Only Methods And Functions Are Keywords
     Attribute
 
 Class Methods In Module Library Are Not Keywords
-    [Documentation]  FAIL No keyword with name 'Not Keyword' found.
+    [Documentation]  FAIL STARTS: No keyword with name 'Not Keyword' found. Did you mean:
     Not Keyword
 
 Functions starting with underscore are not keywords
-    [Documentation]  FAIL No keyword with name '_not_keyword' found.
-    _not_keyword    
+    [Documentation]  FAIL STARTS: No keyword with name '_not_keyword' found. Did you mean:
+    _not_keyword
 
 If __all__ is present, only functions listed there are available 1
     [Documentation]  FAIL No keyword with name 'Not in all' found.

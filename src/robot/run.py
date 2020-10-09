@@ -149,6 +149,10 @@ Options
  -n --noncritical tag *   Tests having the given tag are not critical even if
                           they have a tag set with --critical. Tag can be
                           a pattern.
+    --skip tag *          Tests having given tag will be skipped.Tag can be
+                          a pattern.
+    --skiponfailure tag *  Tests having given tag will have status 'SKIP'
+                          instead of 'FAIL' if they fail. Tag can be a pattern.
  -v --variable name:value *  Set variables in the test data. Only scalar
                           variables with string value are supported and name is
                           given without `${}`. See --variablefile for a more
@@ -199,9 +203,9 @@ Options
     --reporttitle title   Title for the generated report file. The default
                           title is `<SuiteName> Test Report`.
     --reportbackground colors  Background colors to use in the report file.
-                          Either `all_passed:critical_passed:failed` or
-                          `passed:failed`. Both color names and codes work.
-                          Examples: --reportbackground green:yellow:red
+                          Order is `passed:failed:skipped`. Both color names
+                          and codes work. `skipped` can be omitted.
+                          Examples: --reportbackground green:red:yellow
                                     --reportbackground #00E:#E00
     --maxerrorlines lines  Maximum number of error message lines to show in
                           report when tests fail. Default is 40, minimum is 10
@@ -428,6 +432,8 @@ class RobotFramework(Application):
     def main(self, datasources, **options):
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
+        if settings['XUnitSkipNonCritical']:
+            LOGGER.warn("Command line option --xunitskipnoncritical has been deprecated.")
         LOGGER.info('Settings:\n%s' % unic(settings))
         builder = TestSuiteBuilder(settings['SuiteNames'],
                                    included_extensions=settings.extension,

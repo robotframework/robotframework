@@ -27,8 +27,6 @@ class TestExposedApi(unittest.TestCase):
         assert_equal(api.get_resource_model, parsing.get_resource_model)
         assert_equal(api.get_tokens, parsing.get_tokens)
         assert_equal(api.get_resource_tokens, parsing.get_resource_tokens)
-        assert_equal(api.ModelTransformer, parsing.ModelTransformer)
-        assert_equal(api.ModelVisitor, parsing.ModelVisitor)
         assert_equal(api.Token, parsing.Token)
 
 

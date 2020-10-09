@@ -44,9 +44,6 @@ class JsonLogger(ResultVisitor):
             status['endtime'] = data.endtime
         if str(data.elapsedtime):
             status['elapsedtime'] = str(data.elapsedtime)
-        critical = getattr(data, 'critical', None)
-        if critical:
-            status['critical'] = critical
         return status
 
     def close(self):
@@ -238,7 +235,6 @@ class JsonLogger(ResultVisitor):
             'name': tag_stat.name,
             'passed': tag_stat.passed,
             'failed': tag_stat.failed,
-            'critical': tag_stat.critical,
             'tag': tag_stat.name
         }
         if tag_stat.info:
@@ -248,7 +244,7 @@ class JsonLogger(ResultVisitor):
         return tag_statistic
 
     def _create_total_statistics(self, total_stats):
-        return [self._create_statistic(statistic) for statistic in [total_stats.all, total_stats.critical]]
+        return [self._create_statistic(statistic) for statistic in total_stats]
 
     def _create_suite_statistics(self, suite_stats):
         suites = suite_stats.suites + [suite_stats]

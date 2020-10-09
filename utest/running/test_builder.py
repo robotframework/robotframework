@@ -42,9 +42,9 @@ class TestBuilding(unittest.TestCase):
     def test_variables(self):
         variables = build('pass_and_fail.robot').resource.variables
         assert_equal(variables[0].name, '${LEVEL1}')
-        assert_equal(variables[0].value, ['INFO'])
+        assert_equal(variables[0].value, ('INFO',))
         assert_equal(variables[1].name, '${LEVEL2}')
-        assert_equal(variables[1].value, ['DEBUG'])
+        assert_equal(variables[1].value, ('DEBUG',))
 
     def test_user_keywords(self):
         uk = build('pass_and_fail.robot').resource.keywords[0]

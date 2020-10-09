@@ -18,7 +18,7 @@ from ast import NodeVisitor
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.parsing import get_model, get_resource_model
+from robot.parsing import get_model, get_resource_model, get_init_model, Token
 from robot.utils import FileReader, read_rest_data
 
 from .testsettings import TestDefaults
@@ -46,7 +46,7 @@ class RobotParser(BaseParser):
     def parse_init_file(self, source, defaults=None):
         directory = os.path.dirname(source)
         suite = TestSuite(name=format_name(directory), source=directory)
-        return self._build(suite, source, defaults)
+        return self._build(suite, source, defaults, get_model=get_init_model)
 
     def parse_suite_file(self, source, defaults=None):
         suite = TestSuite(name=format_name(source), source=source)
@@ -57,13 +57,13 @@ class RobotParser(BaseParser):
         suite = TestSuite(name=name or format_name(source), source=source)
         return self._build(suite, source, defaults, model)
 
-    def _build(self, suite, source, defaults, model=None):
+    def _build(self, suite, source, defaults, model=None, get_model=get_model):
         if defaults is None:
             defaults = TestDefaults()
         if model is None:
             model = get_model(self._get_source(source), data_only=True,
                               curdir=self._get_curdir(source))
-        ErrorLogger(source).visit(model)
+        ErrorReporter(source).visit(model)
         SettingsBuilder(suite, defaults).visit(model)
         SuiteBuilder(suite, defaults).visit(model)
         suite.rpa = self._get_rpa_mode(model)
@@ -81,10 +81,7 @@ class RobotParser(BaseParser):
         model = get_resource_model(self._get_source(source), data_only=True,
                                    curdir=self._get_curdir(source))
         resource = ResourceFile(source=source)
-        ErrorLogger(source).visit(model)
-        if model.has_tests:
-            raise DataError("Resource file '%s' cannot contain tests or tasks." %
-                            source)
+        ErrorReporter(source).visit(model)
         ResourceBuilder(resource).visit(model)
         return resource
 
@@ -128,11 +125,18 @@ def format_name(source):
     return format_name(basename)
 
 
-class ErrorLogger(NodeVisitor):
+class ErrorReporter(NodeVisitor):
 
     def __init__(self, source):
         self.source = source
 
     def visit_Error(self, node):
-        LOGGER.error("Error in file '%s' on line %s: %s"
-                     % (self.source, node.lineno, node.error))
+        fatal = node.get_token(Token.FATAL_ERROR)
+        if fatal:
+            raise DataError(self._format_message(fatal))
+        for error in node.get_tokens(Token.ERROR):
+            LOGGER.error(self._format_message(error))
+
+    def _format_message(self, token):
+        return ("Error in file '%s' on line %s: %s"
+                % (self.source, token.lineno, token.error))

@@ -32,7 +32,6 @@ from .keyword import Keyword, Keywords
 from .message import Message
 from .modifier import ModelModifier
 from .tags import Tags, TagPattern, TagPatterns
-from .criticality import Criticality
 from .namepatterns import SuiteNamePatterns, TestNamePatterns
 from .visitor import SuiteVisitor
 from .totalstatistics import TotalStatisticsBuilder

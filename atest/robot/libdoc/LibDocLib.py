@@ -2,29 +2,32 @@ import json
 import os
 import pprint
 import shlex
-from os.path import join, dirname, abspath
+from os.path import abspath, dirname, exists, join, normpath, relpath
 from subprocess import run, PIPE, STDOUT
+
+from xmlschema import XMLSchema
 
 from robot.api import logger
 from robot.utils import CONSOLE_ENCODING, SYSTEM_ENCODING
 
 
-ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
+ROOT = join(dirname(abspath(__file__)), '..', '..', '..')
 
 
 class LibDocLib(object):
 
     def __init__(self, interpreter):
-        self._libdoc = interpreter.libdoc
-        self._encoding = SYSTEM_ENCODING \
+        self.libdoc = interpreter.libdoc
+        self.encoding = SYSTEM_ENCODING \
             if not interpreter.is_ironpython else CONSOLE_ENCODING
+        self.schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.02.xsd'))
 
     def run_libdoc(self, args):
-        cmd = self._libdoc + self._split_args(args)
+        cmd = self.libdoc + self._split_args(args)
         cmd[-1] = cmd[-1].replace('/', os.sep)
         logger.info(' '.join(cmd))
-        result = run(cmd, cwd=ROBOT_SRC, stdout=PIPE, stderr=STDOUT,
-                     encoding=self._encoding, universal_newlines=True)
+        result = run(cmd, cwd=join(ROOT, 'src'), stdout=PIPE, stderr=STDOUT,
+                     encoding=self.encoding, timeout=120, universal_newlines=True)
         logger.info(result.stdout)
         return result.stdout
 
@@ -46,3 +49,14 @@ class LibDocLib(object):
             if line.startswith('libdoc = '):
                 return line.split('=', 1)[1].strip(' \n;')
         raise RuntimeError('No model found from HTML')
+
+    def validate_spec(self, path):
+        self.schema.validate(path)
+
+    def relative_source(self, path, start):
+        if not exists(path):
+            return path
+        try:
+            return relpath(path, start)
+        except ValueError:
+            return normpath(path)

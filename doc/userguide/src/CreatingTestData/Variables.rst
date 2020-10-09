@@ -284,61 +284,72 @@ are imports, setups and teardowns where dictionaries can be used as arguments.
 Accessing list and dictionary items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is possible to access items of lists and dictionaries using special
-syntax `${var}[item]`. Accessing items is an old feature, but prior to
-Robot Framework 3.1 the syntax was `@{var}[item]` with lists and
-`&{var}[item]` with dictionaries. The old syntax was deprecated in
+It is possible to access items of subscriptable variables, e.g. lists and
+dictionaries, using special syntax `${var}[item]`. Accessing items is an old
+feature, but prior to Robot Framework 3.1 the syntax was `@{var}[item]` with
+lists and `&{var}[item]` with dictionaries. The old syntax was deprecated in
 Robot Framework 3.2 and will not be supported in the future.
 
-Accessing list items
-''''''''''''''''''''
+.. _sequence items:
 
-It is possible to access a certain item of a list variable with the syntax
-`${var}[index]`, where `index` is the index of the selected value. Indices
-start from zero, negative indices can be used to access items from the end,
-and trying to access an item with too large an index causes an error.
-Indices are automatically converted to integers, and it is also possible to
-use variables as indices. List items accessed in this manner can be used
-similarly as scalar variables.
+Accessing sequence items
+''''''''''''''''''''''''
+
+It is possible to access a certain item of a variable containing a `sequence`__
+(e.g. list, string or bytes) with the syntax `${var}[index]`, where `index`
+is the index of the selected value. Indices start from zero, negative indices
+can be used to access items from the end, and trying to access an item with
+too large an index causes an error. Indices are automatically converted to
+integers, and it is also possible to use variables as indices. Sequence items
+accessed in this manner can be used similarly as scalar variables.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   List variable item
+   Sequence variable item
        Login    ${USER}[0]    ${USER}[1]
        Title Should Be    Welcome ${USER}[0]!
 
    Negative index
-       Log    ${LIST}[-1]
+       Log    ${SEQUENCE}[-1]
 
    Index defined as variable
-       Log    ${LIST}[${INDEX}]
+       Log    ${SEQUENCE}[${INDEX}]
 
-List item access supports also the `same "slice" functionality as Python`__
+Sequence item access supports also the `same "slice" functionality as Python`__
 with syntax like `${var}[1:]`. With this syntax you do not get a single
-item but a slice of the original list. Same way as with Python you can
+item but a slice of the original sequence. Same way as with Python you can
 specify the start index, the end index, and the step:
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Start index
-       Keyword    ${LIST}[1:]
+       Keyword    ${SEQUENCE}[1:]
 
    End index
-       Keyword    ${LIST}[:4]
+       Keyword    ${SEQUENCE}[:4]
 
    Start and end
-       Keyword    ${LIST}[2:-1]
+       Keyword    ${SEQUENCE}[2:-1]
 
    Step
-       Keyword    ${LIST}[::2]
-       Keyword    ${LIST}[1:-1:10]
+       Keyword    ${SEQUENCE}[::2]
+       Keyword    ${SEQUENCE}[1:-1:10]
 
 .. note:: The slice syntax is new in Robot Framework 3.1 and does not work
           with the old `@{var}[index]` syntax.
 
+.. note:: With earlier Robot Framework versions accessing items with
+          an index or a slice was only supported with variables containing
+          lists, tuples, or other objects considered list-like. Starting
+          from Robot Framework 3.2, all sequences, including strings and
+          bytes, are supported.
+
+__ https://docs.python.org/3/glossary.html#term-sequence
 __ https://docs.python.org/glossary.html#term-slice
+
+.. _dictionary items:
 
 Accessing individual dictionary items
 '''''''''''''''''''''''''''''''''''''
@@ -370,7 +381,7 @@ for more details about this syntax.
 Nested item access
 ''''''''''''''''''
 
-Also nested list and dictionary structures can be accessed using the same
+Also nested subscriptable variables can be accessed using the same
 item access syntax like `${var}[item1][item2]`. This is especially useful
 when working with JSON data often returned by REST services. For example,
 if a variable `${DATA}` contains `[{'id': 1, 'name': 'Robot'},
@@ -481,7 +492,7 @@ can be changed by having `SEPARATOR=<sep>` in the first cell.
    ${MULTILINE}    SEPARATOR=\n    First line
    ...             Second line     Third line
 
-__ `Dividing test data to several rows`_
+__ `Dividing data to several rows`_
 
 Creating list variables
 '''''''''''''''''''''''
@@ -492,7 +503,7 @@ values in the subsequent columns. A list variable can have any number
 of values, starting from zero, and if many values are needed, they
 can be `split into several rows`__.
 
-__ `Dividing test data to several rows`_
+__ `Dividing data to several rows`_
 
 .. sourcecode:: robotframework
 

@@ -546,13 +546,12 @@ variables_ can be used to make the documentation dynamic. Possible
 non-existing variables are left unchanged.
 
 If documentation is split into multiple columns, cells in one row are
-concatenated together with spaces. This is mainly be useful when using
-the `HTML format`_ and columns are narrow. If documentation is `split
+concatenated together with spaces. If documentation is `split
 into multiple rows`__, the created documentation lines themselves are
 `concatenated using newlines`__. Newlines are not added if a line
 already ends with a newline or an `escaping backslash`__.
 
-__ `Dividing test data to several rows`_
+__ `Dividing data to several rows`_
 __ `Newlines in test data`_
 __ `Escaping`_
 

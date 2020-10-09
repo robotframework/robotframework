@@ -49,11 +49,19 @@ class StatusReporter(object):
             if result.type == result.TEARDOWN_TYPE:
                 result.message = failure.message
         if context.test:
-            context.test.passed = self._test_passed and result.passed
+            status = self._get_status(result)
+            context.test.status = status
         result.endtime = get_timestamp()
         context.end_keyword(result)
         if failure is not exc_val:
             raise failure
+
+    def _get_status(self, result):
+        if result.status == 'SKIP':
+            return 'SKIP'
+        if self._test_passed and result.passed:
+            return 'PASS'
+        return 'FAIL'
 
     def _get_failure(self, exc_type, exc_value, exc_tb, context):
         if exc_value is None:

@@ -5,17 +5,13 @@ from robot.model.statistics import Statistics
 from robot.result import TestCase, TestSuite
 
 
-def verify_stat(stat, name, passed, failed, critical=None, combined=None,
+def verify_stat(stat, name, passed, failed, combined=None,
                 id=None, elapsed=0):
     assert_equal(stat.name, name, 'stat.name')
     assert_equal(stat.passed, passed)
     assert_equal(stat.failed, failed)
     assert_equal(stat.total, passed + failed)
-    if hasattr(stat, 'critical'):
-        assert_equal(stat.critical,
-                     False if critical is None else bool(critical))
-        assert_equal(stat.non_critical,
-                     False if critical is None else not bool(critical))
+    if hasattr(stat, 'combined'):
         assert_equal(stat.combined, combined)
     if hasattr(stat, 'id'):
         assert_equal(stat.id, id)
@@ -28,7 +24,6 @@ def verify_suite(suite, name, id, passed, failed):
 
 def generate_suite():
     suite = TestSuite(name='Root Suite')
-    suite.set_criticality(critical_tags=['smoke'])
     s1 = suite.suites.create(name='First Sub Suite')
     s2 = suite.suites.create(name='Second Sub Suite')
     s11 = s1.suites.create(name='Sub Suite 1_1')
@@ -53,8 +48,7 @@ class TestStatisticsSimple(unittest.TestCase):
         self.statistics = Statistics(suite)
 
     def test_total(self):
-        verify_stat(self.statistics.total.critical, 'Critical Tests', 2, 1)
-        verify_stat(self.statistics.total.all, 'All Tests', 2, 1)
+        verify_stat(self.statistics.total._stat, 'All Tests', 2, 1)
 
     def test_suite(self):
         verify_suite(self.statistics.suite, 'Hello', 's1', 2, 1)
@@ -67,13 +61,11 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
 
     def setUp(self):
         suite = generate_suite()
-        suite.set_criticality(critical_tags=['smoke'])
         self.statistics = Statistics(suite, 2, ['t*','smoke'], ['t3'],
                                      [('t? & smoke', ''), ('none NOT t1', 'a title')])
 
     def test_total(self):
-        verify_stat(self.statistics.total.all, 'All Tests', 4, 3)
-        verify_stat(self.statistics.total.critical, 'Critical Tests', 2, 2)
+        verify_stat(self.statistics.total._stat, 'All Tests', 4, 3)
 
     def test_suite(self):
         suite = self.statistics.suite
@@ -90,9 +82,9 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         verify_stat(tags.tags['smoke'], 'smoke', 2, 2)
         verify_stat(tags.tags['t1'], 't1', 3, 2)
         verify_stat(tags.tags['t2'], 't2', 2, 1)
-        expected = [('smoke', 2, 2, True),
-                    ('a title', 0, 0, None, 'none NOT t1'),
-                    ('t? & smoke', 2, 2, None, 't? & smoke'),
+        expected = [('a title', 0, 0, 'none NOT t1'),
+                    ('t? & smoke', 2, 2, 't? & smoke'),
+                    ('smoke', 2, 2),
                     ('t1', 3, 2),
                     ('t2', 2, 1)]
         assert_equal(len(list(tags)), len(expected))
@@ -176,12 +168,10 @@ class TestElapsedTime(unittest.TestCase):
         suite.suites[1].tests = [
             TestCase(starttime=ts+'30.000', endtime=ts+'40.000', tags=['t1', 't2', 't3'])
         ]
-        suite.set_criticality(critical_tags=['t2'])
         self.stats = Statistics(suite, tag_stat_combine=[('?2', 'combined')])
 
     def test_total_stats(self):
-        assert_equal(self.stats.total.all.elapsed, 11001)
-        assert_equal(self.stats.total.critical.elapsed, 11000)
+        assert_equal(self.stats.total._stat.elapsed, 11001)
 
     def test_tag_stats(self):
         t1, t2, t3 = self.stats.tags.tags.values()

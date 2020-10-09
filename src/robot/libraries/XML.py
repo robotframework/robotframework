@@ -23,9 +23,10 @@ except ImportError:
     lxml_etree = None
 
 from robot.api import logger
+from robot.api.deco import keyword
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import (asserts, ET, ETSource, is_bytes, is_falsy, is_string,
-                         is_truthy, plural_or_not as s)
+                         is_truthy, plural_or_not as s, PY2)
 from robot.version import get_version
 
 
@@ -54,16 +55,7 @@ class XML(object):
 
     == Table of contents ==
 
-    - `Parsing XML`
-    - `Using lxml`
-    - `Example`
-    - `Finding elements with xpath`
-    - `Element attributes`
-    - `Handling XML namespaces`
-    - `Boolean arguments`
-    - `Pattern matching`
-    - `Shortcuts`
-    - `Keywords`
+    %TOC%
 
     = Parsing XML =
 
@@ -768,6 +760,7 @@ class XML(object):
         text = self.get_element_text(source, xpath, normalize_whitespace)
         should_match(text, pattern, message, values=False)
 
+    @keyword(types=None)
     def get_element_attribute(self, source, name, xpath='.', default=None):
         """Returns the named attribute of the specified element.
 
@@ -977,6 +970,7 @@ class XML(object):
         for elem in self.get_elements(source, xpath):
             self.set_element_tag(elem, tag)
 
+    @keyword(types=None)
     def set_element_text(self, source, text=None, tail=None, xpath='.'):
         """Sets text and/or tail text of the specified element.
 
@@ -1008,6 +1002,7 @@ class XML(object):
             element.tail = tail
         return source
 
+    @keyword(types=None)
     def set_elements_text(self, source, text=None, tail=None, xpath='.'):
         """Sets text and/or tail text of the specified elements.
 
@@ -1211,7 +1206,8 @@ class XML(object):
         parent.remove(element)
 
     def _find_parent(self, root, element):
-        for parent in root.getiterator():
+        all_elements = root.getiterator() if PY2 else root.iter()
+        for parent in all_elements:
             for child in parent:
                 if child is element:
                     return parent

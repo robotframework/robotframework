@@ -97,11 +97,16 @@ class TestCheckerLibrary:
             test.exp_message = message
         if test.exp_status != test.status:
             if test.exp_status == 'PASS':
-                msg = ("Test '%s' was expected to PASS but it FAILED.\n\n"
-                       "Error message:\n%s" % (test.name, test.message))
+                if test.status == 'FAIL':
+                    msg = ("Test '%s' was expected to PASS but it FAILED.\n\n"
+                           "Error message:\n%s" % (test.name, test.message))
+                else:
+                    msg = ("Test '%s' was expected to PASS but it was SKIPPED.\n\n"
+                           "Test message:\n%s" % (test.name, test.message))
             else:
-                msg = ("Test '%s' was expected to FAIL but it PASSED.\n\n"
-                       "Expected message:\n%s" % (test.name, test.exp_message))
+                msg = ("Test '%s' was expected to %s but it %sED.\n\n"
+                       "Expected message:\n%s" % (test.name, test.exp_status,
+                                                  test.status, test.exp_message))
             raise AssertionError(msg)
         if test.exp_message == test.message:
             return
@@ -235,6 +240,9 @@ def process_test(test):
     if 'FAIL' in test.doc:
         test.exp_status = 'FAIL'
         test.exp_message = test.doc.split('FAIL', 1)[1].lstrip()
+    elif 'SKIP' in test.doc:
+        test.exp_status = 'SKIP'
+        test.exp_message = test.doc.split('SKIP', 1)[1].lstrip()
     else:
         test.exp_status = 'PASS'
         test.exp_message = '' if 'PASS' not in test.doc else test.doc.split('PASS', 1)[1].lstrip()

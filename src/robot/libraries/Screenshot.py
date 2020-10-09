@@ -31,6 +31,7 @@ elif sys.platform == 'cli':
 else:
     try:
         import wx
+        wx_app = wx.App(False)  # Linux Python 2.7 must exist on global scope
     except ImportError:
         wx = None
     try:
@@ -53,6 +54,10 @@ class Screenshot(object):
 
     Notice that successfully taking screenshots requires tests to be run with
     a physical or virtual display.
+
+    == Table of contents ==
+
+    %TOC%
 
     = Using with Python =
 
@@ -251,7 +256,6 @@ class ScreenshotTaker(object):
     def __init__(self, module_name=None):
         self._screenshot = self._get_screenshot_taker(module_name)
         self.module = self._screenshot.__name__.split('_')[1]
-        self._wx_app_reference = None
 
     def __call__(self, path):
         self._screenshot(path)
@@ -345,12 +349,13 @@ class ScreenshotTaker(object):
         if not path.endswith(('.jpg', '.jpeg')):
             raise RuntimeError("Scrot requires extension to be '.jpg' or "
                                "'.jpeg', got '%s'." % os.path.splitext(path)[1])
+        if os.path.exists(path):
+            os.remove(path)
         if self._call('scrot', '--silent', path) != 0:
             raise RuntimeError("Using 'scrot' failed.")
 
     def _wx_screenshot(self, path):
-        if not self._wx_app_reference:
-            self._wx_app_reference = wx.App(False)
+        # depends on wx_app been created
         context = wx.ScreenDC()
         width, height = context.GetSize()
         if wx.__version__ >= '4':

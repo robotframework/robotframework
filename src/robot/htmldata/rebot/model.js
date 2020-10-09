@@ -36,8 +36,6 @@ window.model = (function () {
         };
         suite.searchTestsByTag = function (tag) {
             return suite.searchTests(function (test) {
-                if (tag.info == "critical" || tag.info == "non-critical")
-                    return containsTagPattern(test.tags, tag.label);
                 if (tag.combined)
                     return containsTagPattern(test.tags, tag.combined);
                 return containsTag(test.tags, tag.label);
@@ -49,11 +47,6 @@ window.model = (function () {
         suite.allTests = function () {
             return suite.searchTests(function (test) {
                 return true;
-            });
-        };
-        suite.criticalTests = function () {
-            return suite.searchTests(function (test) {
-                return test.isCritical;
             });
         };
         return suite;
@@ -133,7 +126,6 @@ window.model = (function () {
             if (test.isChildrenLoaded)
                 return test.keywords();
         };
-        test.isCritical = data.isCritical;
         test.tags = data.tags;
         test.message = data.message;
         test.matchesTagPattern = function (pattern) {
@@ -231,19 +223,21 @@ window.stats = (function () {
     }
 
     function statElem(stat) {
-        stat.total = stat.pass + stat.fail;
-        var percents = calculatePercents(stat.total, stat.pass, stat.fail);
+        stat.total = stat.pass + stat.fail + stat.skip;
+        var percents = calculatePercents(stat.total, stat.pass, stat.fail, stat.skip);
         stat.passPercent = percents[0];
-        stat.failPercent = percents[1];
-        var widths = calculateWidths(stat.passPercent, stat.failPercent);
+        stat.skipPercent = percents[1];
+        stat.failPercent = percents[2];
+        var widths = calculateWidths(stat.passPercent, stat.skipPercent, stat.failPercent);
         stat.passWidth = widths[0];
-        stat.failWidth = widths[1];
+        stat.skipWidth = widths[1];
+        stat.failWidth = widths[2];
         return stat;
     }
 
     function totalStatElem(data) {
         var stat = statElem(data);
-        stat.type = stat.label == 'Critical Tests' ? 'critical' : 'all';
+        stat.type = 'all';
         return stat;
     }
 
@@ -269,34 +263,43 @@ window.stats = (function () {
             });
     }
 
-    function calculatePercents(total, passed, failed) {
-        if (total == 0)
-            return [0.0, 0.0];
+    function calculatePercents(total, passed, failed, skipped) {
+        if (total == 0) {
+            return [0.0, 0.0, 0.0];
+        }
+
         var pass = 100.0 * passed / total;
+        var skip = 100.0 * skipped / total;
         var fail = 100.0 * failed / total;
         if (pass > 0 && pass < 0.1)
-            return [0.1, 99.9];
+            pass = 0.1
         if (fail > 0 && fail < 0.1)
-            return [99.9, 0.1];
-        return [Math.round(pass*10)/10, Math.round(fail*10)/10];
+            fail = 0.1
+        if (skip > 0 && skip < 0.1)
+            skip = 0.1
+        return [Math.round(pass*10)/10, Math.round(skip*10)/10, Math.round(fail*10)/10];
     }
 
-    function calculateWidths(num1, num2) {
-        if (num1 + num2 == 0)
-            return [0.0, 0.0];
+    function calculateWidths(num1, num2, num3) {
+        if (num1 + num2 + num3 == 0)
+            return [0.0, 0.0, 0.0];
         // Make small percentages better visible
         if (num1 > 0 && num1 < 1)
-            return [1.0, 99.0];
+            num1 = 1
         if (num2 > 0 && num2 < 1)
-            return [99.0, 1.0];
+            num2 = 1
+        if (num3 > 0 && num3 < 1)
+            num3 = 1
         // Handle situation where both are rounded up
-        while (num1 + num2 > 100) {
-            if (num1 > num2)
+        while (num1 + num2 + num3 > 100) {
+            if (num1 > num2 && num1 > num3)
                 num1 -= 0.1;
-            if (num2 > num1)
+            if (num2 > num1 && num2 > num3)
                 num2 -= 0.1;
+            if (num3 > num1 && num3 > num2)
+                num3 -= 0.1;
         }
-        return [num1, num2];
+        return [num1, num2, num3];
     }
 
     return {

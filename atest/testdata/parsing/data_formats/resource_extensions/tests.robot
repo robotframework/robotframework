@@ -3,9 +3,9 @@ Resource         resource.resource
 Resource         resource.robot
 Resource         resource.txt
 Resource         resource.TSV
+Resource         resource.invalid
 Resource         resource.rst
 Resource         resource.reST
-Resource         resource.invalid
 
 *** Test Cases ***
 Resource with '*.resource' extension

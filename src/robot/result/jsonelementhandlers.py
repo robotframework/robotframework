@@ -103,7 +103,7 @@ def parse_keyword(keyword_element, result):
     for assign in keyword_element.get('assign', []):
         keyword.assign += assign
     for tag in keyword_element.get('tags', []):
-        keyword_element.tags.add(tag)
+        keyword.tags.add(tag)
     for element in keyword_element.get('msgs', []):
         parse_message(element, keyword)
     for element in keyword_element.get('kw', []):

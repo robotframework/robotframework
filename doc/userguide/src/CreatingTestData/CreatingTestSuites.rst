@@ -177,7 +177,7 @@ that it can be split `into several cells`__ (joined together with spaces)
 or `into several rows`__ (joined together with newlines),
 simple `HTML formatting`_ works and even variables_ can be used.
 
-__ `Dividing test data to several rows`_
+__ `Dividing data to several rows`_
 __ `Newlines in test data`_
 
 .. sourcecode:: robotframework

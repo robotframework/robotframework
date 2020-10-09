@@ -35,14 +35,14 @@ or::
 
 from .argumentparser import ArgumentParser, cmdline2list
 from .application import Application
-from .compat import isatty, py2to3, StringIO, with_metaclass
+from .compat import isatty, py2to3, StringIO, unwrap, with_metaclass
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .dotdict import DotDict
 from .encoding import (CONSOLE_ENCODING, SYSTEM_ENCODING, console_decode,
                        console_encode, system_decode, system_encode)
 from .error import (get_error_message, get_error_details, ErrorDetails)
-from .escaping import escape, unescape, split_from_equals
+from .escaping import escape, glob_escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource
 from .filereader import FileReader
 from .frange import frange
@@ -51,7 +51,7 @@ from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
 from .misc import (plural_or_not, printable_name, roundup, seq2str,
-                   seq2str2)
+                   seq2str2, test_or_task)
 from .normalizing import lower, normalize, normalize_whitespace, NormalizedDict
 from .platform import (IRONPYTHON, JAVA_VERSION, JYTHON, PY_VERSION,
                        PY2, PY3, PYPY, UNIXY, WINDOWS, RERAISED_EXCEPTIONS)

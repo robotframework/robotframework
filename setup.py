@@ -4,12 +4,10 @@ from os.path import abspath, join, dirname
 from setuptools import find_packages, setup
 
 
-CURDIR = dirname(abspath(__file__))
-
-with open(join(CURDIR, 'src', 'robot', 'version.py')) as f:
-    exec(f.read())
-    VERSION = get_version()
-with open(join(CURDIR, 'README.rst')) as f:
+# Version number typically updated by running `invoke set-version <version>`.
+# Run `invoke --help set-version` or see tasks.py for details.
+VERSION = '4.0.dev1'
+with open(join(dirname(abspath(__file__)), 'README.rst')) as f:
     LONG_DESCRIPTION = f.read()
     base_url = 'https://github.com/robotframework/robotframework/blob/master'
     for text in ('INSTALL', 'CONTRIBUTING'):
@@ -29,6 +27,8 @@ Programming Language :: Python :: 3.4
 Programming Language :: Python :: 3.5
 Programming Language :: Python :: 3.6
 Programming Language :: Python :: 3.7
+Programming Language :: Python :: 3.8
+Programming Language :: Python :: 3.9
 Programming Language :: Python :: Implementation :: CPython
 Programming Language :: Python :: Implementation :: Jython
 Programming Language :: Python :: Implementation :: IronPython

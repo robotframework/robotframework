@@ -78,7 +78,9 @@ Separate keys and values with invalid key
     Create Dictionary    ${DICT}=non-hashable
 
 `key=value` syntax without equals
-    [Documentation]    FAIL Dictionary item 'no' does not contain '=' separator.
+    [Documentation]    FAIL
+    ...    Invalid dictionary variable item 'no'. \
+    ...    Items must use 'name=value' syntax or be dictionary variables themselves.
     Create Dictionary    a=1   no   equals
 
 Separate keys and values and 'key=value' syntax

@@ -14,14 +14,14 @@ Library decorator can enable automatic keyword discovery
 
 Set library info
     [Template]    Library should have been imported
-    LibraryDecorator.py                    scope=test case     keywords=1
-    LibraryDecoratorWithArgs.py            scope=test suite    keywords=1    version=1.2.3    listener=True
-    LibraryDecoratorWithAutoKeywords.py    scope=global        keywords=2
+    LibraryDecorator.py                    scope=TEST      keywords=1
+    LibraryDecoratorWithArgs.py            scope=SUITE     keywords=1    version=1.2.3    listener=True
+    LibraryDecoratorWithAutoKeywords.py    scope=GLOBAL    keywords=2
 
 *** Keywords ***
 Library should have been imported
     [Arguments]    ${name}    @{}    ${version}=<unknown>    ${scope}    ${keywords}    ${listener}=False
     ${path} =    Normalize path    ${DATADIR}/test_libraries/${name}
-    Check Syslog Contains
+    Syslog Should Contain
     ...    Imported library '${path}' with arguments [ ]
     ...    (version ${version}, class type, ${scope} scope, ${keywords} keywords${{', with listener' if ${listener} else ''}})

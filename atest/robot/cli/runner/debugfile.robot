@@ -21,9 +21,9 @@ Debugfile
     ...      ${TIMESTAMP} - DEBUG - Logging with debug level
     ...      ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
     Debug file should contain    ${content}    + END SUITE: Normal
-    Check Syslog Contains  DebugFile: DeBug.TXT
+    Syslog Should Contain  DebugFile: DeBug.TXT
     ${path} =  Set Variable  [:.\\w /\\\\~+-]*DeBug\\.TXT
-    Check Stdout Matches Regexp  (?s).*Debug: {3}${path}.*
+    Stdout Should Match Regexp  (?s).*Debug: {3}${path}.*
     Syslog Should Match Regexp  (?s).*Debug: ${path}.*
 
 Debugfile Log Level Should Always Be Debug
@@ -60,13 +60,13 @@ Writing Non-ASCII To Debugfile
 No Debugfile
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile NoNe -o o.xml  ${TESTFILE}
     Directory Should Contain  ${CLI OUTDIR}  o.xml
-    Check Syslog Contains  DebugFile: None
+    Syslog Should Contain  DebugFile: None
 
 Invalid Debugfile
     Create Directory  %{TEMPDIR}/debug.txt
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -b %{TEMPDIR}/debug.txt  ${TESTFILE}
-    Check Stderr Matches Regexp  \\[ ERROR \\] Opening debug file '.*debug.txt' failed: .*
-    Check Stdout Contains  2 critical tests, 2 passed, 0 failed\n2 tests total, 2 passed, 0 failed
+    Stderr Should Match Regexp  \\[ ERROR \\] Opening debug file '.*debug.txt' failed: .*
+    Stdout Should Contain  2 tests, 2 passed, 0 failed
 
 *** Keywords ***
 Debugfile should contain

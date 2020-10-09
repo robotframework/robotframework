@@ -66,3 +66,6 @@ curdir  [Documentation]  ${CURDIR}
 
 non ascii doc
     [Documentation]    Hyvää yötä.\n\nСпасибо!
+
+Deprecation
+    [Documentation]    *DEPRECATED* for some reason.

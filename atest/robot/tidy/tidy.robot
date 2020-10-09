@@ -4,15 +4,18 @@ Test Setup        Create Directory     ${TEMP}
 Test Teardown     Remove Directory     ${TEMP}    recursive=True
 
 *** Test Cases ***
-Tidying single test case file
-    [Documentation]   Test tidying to different formats
-    [Template]    Run tidy with golden file and check result
-    ${EMPTY}            golden.robot
-    --usepipes          golden_pipes.robot
-    # TODO: fix the commented test, split this test into smaller pieces
-    #  ${EMPTY}          golden.robot    input=pipes-input.robot
-    --usepipes          golden_pipes.robot    input=pipes-input.robot
-    --spacecount 2      golden_two_spaces.robot
+Tidying single test case file spaces -> spaces
+    Run tidy with golden file and check result    ${EMPTY}    golden.robot
+    Run tidy with golden file and check result    --spacecount 2    golden_two_spaces.robot
+
+Tidying single test case file spaces -> pipes
+    Run tidy with golden file and check result    --usepipes    golden_pipes.robot
+
+Tidying single test case file pipes -> spaces
+    Run tidy with golden file and check result   ${EMPTY}    golden.robot    input=pipes-input.robot
+
+Tidying single test case file pipes -> pipes
+    Run tidy with golden file and check result    --usepipes    golden_pipes.robot    input=pipes-input.robot
 
 Tidying single resource file
     [Template]    Run tidy with golden resource file and check result

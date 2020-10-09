@@ -26,42 +26,49 @@ Version
     Version Should Be               ${EMPTY}
 
 Type
-    Type Should Be                  resource
+    Type Should Be                  RESOURCE
 
 Generated
     Generated Should Be Defined
 
 Scope
-    Scope Should Be                 ${EMPTY}
+    Scope Should Be                 GLOBAL    old=${EMPTY}
 
 Named Args
-    Named Args Should Be            yes
+    Named Args Should Be            true
+
+Source Info
+    Source Should Be                ${TESTDATADIR}/resource.robot
+    Lineno Should Be                1
+
+Spec version
+    Spec version should be correct
 
 Resource Has No Inits
     Should Have No Init
 
 Keyword Names
     Keyword Name Should Be          0    curdir
-    Keyword Name Should Be          3    Keyword with some "stuff" to <escape>
+    Keyword Name Should Be          4    Keyword with some "stuff" to <escape>
 
 Keyword Arguments
     Keyword Arguments Should Be     0
-    Keyword Arguments Should Be     3    a1    a2
-    Keyword Arguments Should Be     6    positional=default    *varargs    **kwargs
+    Keyword Arguments Should Be     4    a1    a2
+    Keyword Arguments Should Be     7    positional=default    *varargs    **kwargs
 
 Different Argument Types
-    Keyword Arguments Should Be     1    mandatory    optional=default    *varargs
+    Keyword Arguments Should Be     2    mandatory    optional=default    *varargs
     ...                                  kwo=default    another    **kwargs
 
 Embedded Arguments
-    Keyword Name Should Be          2    Embedded \${arguments}
-    Keyword Arguments Should Be     2
+    Keyword Name Should Be          3    Embedded \${arguments}
+    Keyword Arguments Should Be     3
 
 Keyword Documentation
     Keyword Doc Should Be           0    $\{CURDIR}
-    Keyword Doc Should Be           3    foo bar `kw` & some "stuff" to <escape> .\n\nbaa `\${a1}`
-    Keyword Doc Should Be           5    literal\nnewline
-    Keyword Doc Should Be           7
+    Keyword Doc Should Be           4    foo bar `kw` & some "stuff" to <escape> .\n\nbaa `\${a1}`
+    Keyword Doc Should Be           6    literal\nnewline
+    Keyword Doc Should Be           8
     ...    foo bar `kw`.
     ...
     ...    FIRST `\${a1}` alskdj alskdjlajd
@@ -78,22 +85,38 @@ Keyword Documentation
     ...
     ...    | = first = | = second = |
     ...    | foo | bar |
-    Keyword Doc Should Be           8
+    Keyword Doc Should Be           9
     ...    Summary line
     ...
     ...    Another line.
 
+Deprecation
+    Keyword Doc Should Be           1    *DEPRECATED* for some reason.
+    Keyword Should Be Deprecated    1
+    FOR    ${index}    IN RANGE    2    11
+        Keyword Should Not Be Deprecated    ${index}
+    END
+
 Keyword tags
-    Keyword Tags Should Be          5
-    Keyword Tags Should Be          6    ?!?!??    Has    kw4    tags
-    Keyword Tags Should Be          7    \${3}   a    b
-    Keyword Tags Should Be          8    bar    dar    foo
+    Keyword Tags Should Be          6
+    Keyword Tags Should Be          7    ?!?!??    Has    kw4    tags
+    Keyword Tags Should Be          8    \${3}   a    b
+    Keyword Tags Should Be          9    bar    dar    foo
 
 Non ASCII
-    Keyword Doc Should Be           9    Hyvää yötä.\n\nСпасибо!
+    Keyword Doc Should Be           10    Hyvää yötä.\n\nСпасибо!
+
+Keyword Source Info
+    Keyword Name Should Be            0    curdir
+    Keyword Should Not Have Source    0
+    Keyword Lineno Should Be          0    65
 
 '*.resource' extension is accepted
-    Run Libdoc And Parse Output     ${TESTDATADIR}/resource.resource
-    Keyword Name Should Be          0    Yay, I got new extension!
-    Keyword Arguments Should Be     0    Awesome!!
-    Keyword Doc Should Be           0    Yeah!!!
+    Run Libdoc And Parse Output       ${TESTDATADIR}/resource.resource
+    Source Should Be                  ${TESTDATADIR}/resource.resource
+    Lineno Should Be                  1
+    Keyword Name Should Be            0    Yay, I got new extension!
+    Keyword Arguments Should Be       0    Awesome!!
+    Keyword Doc Should Be             0    Yeah!!!
+    Keyword Should Not Have Source    0
+    Keyword Lineno Should Be          0    2

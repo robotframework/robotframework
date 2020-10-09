@@ -14,7 +14,8 @@
 #  limitations under the License.
 
 from robot.errors import ExecutionFailed, PassExecution
-from robot.utils import html_escape, py2to3, unic
+from robot.model import TagPatterns
+from robot.utils import html_escape, py2to3, unic, test_or_task
 
 
 @py2to3
@@ -41,10 +42,10 @@ class Exit(object):
         self.error = False
         self.fatal = False
 
-    def failure_occurred(self, failure=None, critical=False):
+    def failure_occurred(self, failure=None):
         if isinstance(failure, ExecutionFailed) and failure.exit:
             self.fatal = True
-        if critical and self.failure_mode:
+        if self.failure_mode:
             self.failure = True
 
     def error_occurred(self):
@@ -66,6 +67,7 @@ class _ExecutionStatus(object):
         self.children = []
         self.failure = Failure()
         self.exit = parent.exit if parent else Exit(*exit_modes)
+        self.skipped = False
         self._teardown_allowed = False
         if parent:
             parent.children.append(self)
@@ -74,15 +76,17 @@ class _ExecutionStatus(object):
         if failure and not isinstance(failure, PassExecution):
             self.failure.setup = unic(failure)
             self.exit.failure_occurred(failure)
+            self.skipped = failure.skip
         self._teardown_allowed = True
 
     def teardown_executed(self, failure=None):
         if failure and not isinstance(failure, PassExecution):
             self.failure.teardown = unic(failure)
             self.exit.failure_occurred(failure)
+            # TODO: Handle skip in teardown!
 
-    def critical_failure_occurred(self):
-        self.exit.failure_occurred(critical=True)
+    def failure_occurred(self):
+        self.exit.failure_occurred()
 
     def error_occurred(self):
         self.exit.error_occurred()
@@ -92,22 +96,23 @@ class _ExecutionStatus(object):
         return self.exit.teardown_allowed and self._teardown_allowed
 
     @property
-    def failures(self):
-        return bool(self.parent and self.parent.failures or
+    def failed(self):
+        return bool(self.parent and self.parent.failed or
                     self.failure or self.exit)
-
-    def _parent_failures(self):
-        return self.parent and self.parent.failures
 
     @property
     def status(self):
-        return 'FAIL' if self.failures else 'PASS'
+        if self.skipped:
+            return 'SKIP'
+        if self.failed:
+            return 'FAIL'
+        return 'PASS'
 
     @property
     def message(self):
         if self.failure or self.exit:
             return self._my_message()
-        if self.parent and self.parent.failures:
+        if self.parent and self.parent.failed:
             return self._parent_message()
         return ''
 
@@ -133,14 +138,35 @@ class SuiteStatus(_ExecutionStatus):
 
 class TestStatus(_ExecutionStatus):
 
-    def __init__(self, parent, critical):
+    def __init__(self, parent, test, skip_on_failure=None, critical_tags=None,
+                 rpa=False):
         _ExecutionStatus.__init__(self, parent)
         self.exit = parent.exit
-        self._critical = critical
+        self._skip_on_failure = self._should_skip_on_failure(
+            test, skip_on_failure, critical_tags)
+        self._rpa = rpa
 
     def test_failed(self, failure):
-        self.failure.test = unic(failure)
-        self.exit.failure_occurred(failure, self._critical)
+        if self._skip_on_failure:
+            msg = ("%s skipped with --SkipOnFailure, original error:\n%s"
+                  % (test_or_task('{Test}', self._rpa) ,unic(failure)))
+            self.failure.test = msg
+            self.skipped = True
+        else:
+            self.failure.test = unic(failure)
+            self.exit.failure_occurred(failure)
+
+    def _should_skip_on_failure(self, test, skip_on_failure_tags,
+                                critical_tags):
+        critical_pattern = TagPatterns(critical_tags)
+        if critical_pattern and critical_pattern.match(test.tags):
+            return False
+        skip_on_fail_pattern = TagPatterns(skip_on_failure_tags)
+        return skip_on_fail_pattern and skip_on_fail_pattern.match(test.tags)
+
+    def test_skipped(self, reason):
+        self.skipped = True
+        self.failure.test = unic(reason)
 
     def _my_message(self):
         return TestMessage(self).message
@@ -148,11 +174,13 @@ class TestStatus(_ExecutionStatus):
 
 class _Message(object):
     setup_message = NotImplemented
+    skipped_message = NotImplemented
     teardown_message = NotImplemented
     also_teardown_message = NotImplemented
 
     def __init__(self, status):
         self.failure = status.failure
+        self.skipped = status.skipped
 
     @property
     def message(self):
@@ -161,7 +189,8 @@ class _Message(object):
 
     def _get_message_before_teardown(self):
         if self.failure.setup:
-            return self._format_setup_or_teardown_message(self.setup_message,
+            msg = self.setup_message if not self.skipped else self.skipped_message
+            return self._format_setup_or_teardown_message(msg,
                                                           self.failure.setup)
         return self.failure.test or ''
 
@@ -193,10 +222,11 @@ class _Message(object):
 class TestMessage(_Message):
     setup_message = 'Setup failed:\n%s'
     teardown_message = 'Teardown failed:\n%s'
+    skipped_message = '%s'
     also_teardown_message = '%s\n\nAlso teardown failed:\n%s'
     exit_on_fatal_message = 'Test execution stopped due to a fatal error.'
     exit_on_failure_message = \
-        'Critical failure occurred and exit-on-failure mode is in use.'
+        'Failure occurred and exit-on-failure mode is in use.'
     exit_on_error_message = 'Error occurred and exit-on-error mode is in use.'
 
     def __init__(self, status):
@@ -219,16 +249,19 @@ class TestMessage(_Message):
 
 class SuiteMessage(_Message):
     setup_message = 'Suite setup failed:\n%s'
+    # TODO: wording
+    skipped_message = 'Skipped in suite setup:\n%s'
     teardown_message = 'Suite teardown failed:\n%s'
     also_teardown_message = '%s\n\nAlso suite teardown failed:\n%s'
 
 
 class ParentMessage(SuiteMessage):
     setup_message = 'Parent suite setup failed:\n%s'
+    skipped_message = 'Skipped in parent suite setup:\n%s'
     teardown_message = 'Parent suite teardown failed:\n%s'
     also_teardown_message = '%s\n\nAlso parent suite teardown failed:\n%s'
 
     def __init__(self, status):
-        while status.parent and status.parent.failures:
+        while status.parent and status.parent.failed:
             status = status.parent
         SuiteMessage.__init__(self, status)

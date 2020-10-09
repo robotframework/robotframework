@@ -70,7 +70,7 @@ class HighlightingStream(object):
         try:
             yield
         except IOError as err:
-            if err.errno not in (errno.EPIPE, errno.EINVAL):
+            if err.errno not in (errno.EPIPE, errno.EINVAL, errno.EBADF):
                 raise
 
     def flush(self):
@@ -101,7 +101,8 @@ class HighlightingStream(object):
         start = {'PASS': highlighter.green,
                  'FAIL': highlighter.red,
                  'ERROR': highlighter.red,
-                 'WARN': highlighter.yellow}[status]
+                 'WARN': highlighter.yellow,
+                 'SKIP': highlighter.yellow}[status]
         start()
         try:
             yield

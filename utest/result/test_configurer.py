@@ -180,17 +180,6 @@ class TestRemoveKeywords(unittest.TestCase):
         assert_equal(len(suite.keywords.setup.messages), 1)
         assert_equal(len(suite.keywords.teardown.keywords), 1)
 
-    def test_remove_passed_does_now_remove_setup_and_teardown_from_suite_with_noncritical_failure(self):
-        suite = TestSuite()
-        suite.set_criticality([], ['non'])
-        suite.keywords.create(type=SETUP).messages.create(message='some')
-        suite.keywords.create(type=TEARDOWN).keywords.create()
-        suite.tests.create(status='FAIL', tags='non')
-        assert_equal(suite.status, 'PASS')
-        self._remove_passed(suite)
-        assert_equal(len(suite.keywords.setup.messages), 1)
-        assert_equal(len(suite.keywords.teardown.keywords), 1)
-
     def test_remove_for_removes_passed_items_except_last(self):
         suite, forloop = self.suite_with_forloop()
         last = forloop.keywords[-1]

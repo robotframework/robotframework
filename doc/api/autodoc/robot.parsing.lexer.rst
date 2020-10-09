@@ -9,6 +9,14 @@ robot.parsing.lexer package
 Submodules
 ----------
 
+robot.parsing.lexer.blocklexers module
+--------------------------------------
+
+.. automodule:: robot.parsing.lexer.blocklexers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.parsing.lexer.context module
 ----------------------------------
 
@@ -17,18 +25,18 @@ robot.parsing.lexer.context module
    :undoc-members:
    :show-inheritance:
 
-robot.parsing.lexer.lexers module
----------------------------------
+robot.parsing.lexer.lexer module
+--------------------------------
 
-.. automodule:: robot.parsing.lexer.lexers
+.. automodule:: robot.parsing.lexer.lexer
    :members:
    :undoc-members:
    :show-inheritance:
 
-robot.parsing.lexer.readers module
-----------------------------------
+robot.parsing.lexer.sections module
+-----------------------------------
 
-.. automodule:: robot.parsing.lexer.readers
+.. automodule:: robot.parsing.lexer.sections
    :members:
    :undoc-members:
    :show-inheritance:
@@ -41,10 +49,18 @@ robot.parsing.lexer.settings module
    :undoc-members:
    :show-inheritance:
 
-robot.parsing.lexer.splitter module
------------------------------------
+robot.parsing.lexer.statementlexers module
+------------------------------------------
 
-.. automodule:: robot.parsing.lexer.splitter
+.. automodule:: robot.parsing.lexer.statementlexers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+robot.parsing.lexer.tokenizer module
+------------------------------------
+
+.. automodule:: robot.parsing.lexer.tokenizer
    :members:
    :undoc-members:
    :show-inheritance:

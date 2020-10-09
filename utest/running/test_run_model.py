@@ -1,13 +1,19 @@
 import copy
-import os.path
+import os
+from os.path import abspath, normpath, join
 import tempfile
 import unittest
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
-from robot.running.model import TestSuite, TestCase, Keyword
+from robot.running.model import TestSuite, TestCase, Keyword, ForLoop
 from robot.running import TestSuiteBuilder
-from robot.utils.asserts import assert_equal, assert_not_equal
+from robot.utils.asserts import assert_equal, assert_not_equal, assert_false
+from robot.utils import unicode
+
+
+MISC_DIR = normpath(join(abspath(__file__), '..', '..', '..',
+                         'atest', 'testdata', 'misc'))
 
 
 class TestModelTypes(unittest.TestCase):
@@ -28,9 +34,23 @@ class TestModelTypes(unittest.TestCase):
         assert_not_equal(type(kw), model.Keyword)
 
 
+class TestStringRepr(unittest.TestCase):
+
+    def test_for_loop(self):
+        loop = ForLoop(['${x}'], ['foo', 'bar'], 'IN')
+        expected = u'FOR    ${x}    IN    foo    bar'
+        assert_equal(str(loop), expected)
+        assert_equal(unicode(loop), expected)
+        assert_equal(repr(loop), repr(expected))
+        loop = ForLoop(['${x}', u'${\xfc}'], [u'f\xf6\xf6', u'b\xe4r'], 'IN ZIP')
+        expected = u'FOR    ${x}    ${\xfc}    IN ZIP    f\xf6\xf6    b\xe4r'
+        assert_equal(unicode(loop), expected)
+        assert_equal(repr(loop), repr(expected))
+
+
 class TestSuiteFromSources(unittest.TestCase):
-    path = os.path.join(os.getenv('TEMPDIR') or tempfile.gettempdir(),
-                        'test_run_model.robot')
+    path = join(os.getenv('TEMPDIR') or tempfile.gettempdir(),
+                'test_run_model.robot')
     data = '''
 *** Settings ***
 Documentation    Some text.
@@ -64,6 +84,7 @@ Keyword
 
     def test_from_file_system_with_multiple_paths(self):
         suite = TestSuite.from_file_system(self.path, self.path)
+        assert_equal(suite.name, 'Test Run Model & Test Run Model')
         self._verify_suite(suite.suites[0])
         self._verify_suite(suite.suites[1])
 
@@ -94,7 +115,7 @@ Keyword
         assert_equal(suite.resource.imports[0].type, 'Library')
         assert_equal(suite.resource.imports[0].name, 'ExampleLibrary')
         assert_equal(suite.resource.variables[0].name, '${VAR}')
-        assert_equal(suite.resource.variables[0].value, ['Value'])
+        assert_equal(suite.resource.variables[0].value, ('Value',))
         assert_equal(suite.resource.keywords[0].name, 'Keyword')
         assert_equal(suite.resource.keywords[0].keywords[0].name, 'Log')
         assert_equal(suite.resource.keywords[0].keywords[0].args, ('Hello!',))
@@ -107,9 +128,7 @@ Keyword
 class TestCopy(unittest.TestCase):
 
     def setUp(self):
-        path = os.path.normpath(os.path.join(__file__, '..', '..', '..',
-                                             'atest', 'testdata', 'misc'))
-        self.suite = TestSuiteBuilder().build(path)
+        self.suite = TestSuiteBuilder().build(MISC_DIR)
 
     def test_copy(self):
         self.assert_copy(self.suite, self.suite.copy())
@@ -165,6 +184,38 @@ class TestCopy(unittest.TestCase):
             return id(value1) == id(copy.deepcopy(value1))
         except TypeError:  # Got in some cases at least with Python 2.6
             return True
+
+
+class TestLineNumberAndSource(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.source = join(MISC_DIR, 'pass_and_fail.robot')
+        cls.suite = TestSuite.from_file_system(cls.source)
+
+    def test_suite(self):
+        assert_equal(self.suite.source, self.source)
+        assert_false(hasattr(self.suite, 'lineno'))
+
+    def test_import(self):
+        self._assert_lineno_and_source(self.suite.resource.imports[0], 5)
+
+    def test_variable(self):
+        self._assert_lineno_and_source(self.suite.resource.variables[0], 8)
+
+    def test_test(self):
+        self._assert_lineno_and_source(self.suite.tests[0], 12)
+
+    def test_user_keyword(self):
+        self._assert_lineno_and_source(self.suite.resource.keywords[0], 24)
+
+    def test_keyword_call(self):
+        self._assert_lineno_and_source(self.suite.tests[0].keywords[0], 15)
+        self._assert_lineno_and_source(self.suite.resource.keywords[0].keywords[0], 27)
+
+    def _assert_lineno_and_source(self, item, lineno):
+        assert_equal(item.source, self.source)
+        assert_equal(item.lineno, lineno)
 
 
 if __name__ == '__main__':

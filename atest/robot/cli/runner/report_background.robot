@@ -8,11 +8,11 @@ Default colors
 
 Two custom colors
     [Template]  Report should have correct background
-    --reportbackground blue:red  blue  blue  red
+    --reportbackground blue:red  blue  red
 
 Three custom colors
     [Template]  Report should have correct background
-    --reportback green:yellow:red  green  yellow  red
+    --reportback green:red:yellow  green  red  yellow
 
 Invalid Colors
     Run Should Fail  --reportback invalid ${SUITE_SOURCE}
@@ -20,7 +20,7 @@ Invalid Colors
 
 *** Keywords ***
 Report should have correct background
-    [Arguments]  ${opt}  ${pass}=#9e9  ${noncrit}=#9e9  ${fail}=#f66
+    [Arguments]  ${opt}  ${pass}=#9e9  ${fail}=#f66  ${skip}=#ec971f
     Run Tests  ${opt} --report rep.html  misc/pass_and_fail.robot
     ${report} =  Get File  ${OUTDIR}/rep.html
-    Should Contain  ${report}  "background":{"fail":"${fail}","nonCriticalFail":"${noncrit}","pass":"${pass}"},
+    Should Contain  ${report}  "background":{"fail":"${fail}","pass":"${pass}","skip":"${skip}"},

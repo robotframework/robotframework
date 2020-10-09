@@ -93,6 +93,11 @@ class ForLoop(Keyword):
     def values(self):
         return self.args
 
+    def __unicode__(self):
+        variables = '    '.join(self.assign)
+        values = '    '.join(self.values)
+        return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
+
 
 class TestCase(model.TestCase):
     """Represents a single executable test case.
@@ -133,7 +138,7 @@ class TestSuite(model.TestSuite):
 
         ``paths`` are file or directory paths where to read the data from.
 
-        Internally utilizes the :class:`~.builder.TestSuiteBuilder` class
+        Internally utilizes the :class:`~.builders.TestSuiteBuilder` class
         and ``config`` can be used to configure how it is initialized.
 
         New in Robot Framework 3.2.
@@ -146,8 +151,8 @@ class TestSuite(model.TestSuite):
         """Create a :class:`TestSuite` object based on the given ``model``.
 
         The model can be created by using the
-        :func:`~robot.parsing.builders.get_model` function and possibly
-        modified by other tooling in the :mod:`~robot.parsing` module.
+        :func:`~robot.parsing.parser.parser.get_model` function and possibly
+        modified by other tooling in the :mod:`robot.parsing` module.
 
         New in Robot Framework 3.2.
         """
@@ -223,7 +228,7 @@ class TestSuite(model.TestSuite):
                                output='example.xml',
                                exitonfailure=True,
                                stdout=stdout)
-            print result.return_code
+            print(result.return_code)
 
         To save memory, the returned
         :class:`~robot.result.executionresult.Result` object does not
@@ -258,11 +263,12 @@ class TestSuite(model.TestSuite):
 
 class Variable(object):
 
-    def __init__(self, name, value, source=None, lineno=None):
+    def __init__(self, name, value, source=None, lineno=None, error=None):
         self.name = name
         self.value = value
         self.source = source
         self.lineno = lineno
+        self.error = error
 
     def report_invalid_syntax(self, message, level='ERROR'):
         source = self.source or '<unknown>'

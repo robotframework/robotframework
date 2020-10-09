@@ -15,55 +15,9 @@
 
 import ast
 
-from robot.utils import file_writer, is_pathlike, is_string, normalize_whitespace
+from robot.utils import file_writer, is_pathlike, is_string
 
 from .visitor import ModelVisitor
-
-
-# TODO: Where does this class and the classes below belong to?
-class ModelWriter(ModelVisitor):
-
-    def __init__(self, output):
-        self.output = output
-
-    def visit_Statement(self, statement):
-        for token in statement.tokens:
-            self.output.write(token.value)
-
-
-class FirstStatementFinder(ModelVisitor):
-
-    def __init__(self):
-        self.statement = None
-
-    @classmethod
-    def find_from(cls, model):
-        finder = cls()
-        finder.visit(model)
-        return finder.statement
-
-    def visit_Statement(self, statement):
-        if self.statement is None:
-            self.statement = statement
-
-    def generic_visit(self, node):
-        if self.statement is None:
-            ModelVisitor.generic_visit(self, node)
-
-
-class LastStatementFinder(ModelVisitor):
-
-    def __init__(self):
-        self.statement = None
-
-    @classmethod
-    def find_from(cls, model):
-        finder = cls()
-        finder.visit(model)
-        return finder.statement
-
-    def visit_Statement(self, statement):
-        self.statement = statement
 
 
 class Block(ast.AST):
@@ -99,25 +53,18 @@ class File(Block):
         self.sections = sections or []
         self.source = source
 
-    @property
-    def has_tests(self):
-        return any(isinstance(s, TestCaseSection) for s in self.sections)
-
     def save(self, output=None):
+        """Save model to the given ``output`` or to the original source file.
+
+        The ``output`` can be a path to a file or an already opened file
+        object. If ``output`` is not given, the original source file will
+        be overwritten.
+        """
         output = output or self.source
         if output is None:
             raise TypeError('Saving model requires explicit output '
                             'when original source is not path.')
-        if is_string(output) or is_pathlike(output):
-            output = file_writer(output)
-            close = True
-        else:
-            close = False
-        try:
-            ModelWriter(output).visit(self)
-        finally:
-            if close:
-                output.close()
+        ModelWriter(output).write(self)
 
 
 class Section(Block):
@@ -125,7 +72,7 @@ class Section(Block):
 
     def __init__(self, header=None, body=None):
         self.header = header
-        self.body = Body(body)
+        self.body = body or []
 
 
 class SettingSection(Section):
@@ -140,8 +87,7 @@ class TestCaseSection(Section):
 
     @property
     def tasks(self):
-        header = normalize_whitespace(self.header.data_tokens[0].value)
-        return header.strip('* ').upper() in ('TASKS', 'TASK')
+        return self.header.name.upper() in ('TASKS', 'TASK')
 
 
 class KeywordSection(Section):
@@ -152,22 +98,12 @@ class CommentSection(Section):
     pass
 
 
-class Body(Block):
-    _fields = ('items',)
-
-    def __init__(self, items=None):
-        self.items = items or []
-
-    def add(self, item):
-        self.items.append(item)
-
-
 class TestCase(Block):
     _fields = ('header', 'body')
 
     def __init__(self, header, body=None):
         self.header = header
-        self.body = Body(body)
+        self.body = body or []
 
     @property
     def name(self):
@@ -179,7 +115,7 @@ class Keyword(Block):
 
     def __init__(self, header, body=None):
         self.header = header
-        self.body = Body(body)
+        self.body = body or []
 
     @property
     def name(self):
@@ -189,10 +125,10 @@ class Keyword(Block):
 class ForLoop(Block):
     _fields = ('header', 'body', 'end')
 
-    def __init__(self, header):
+    def __init__(self, header, body=None, end=None):
         self.header = header
-        self.body = Body()
-        self.end = None
+        self.body = body or []
+        self.end = end
 
     @property
     def variables(self):
@@ -213,3 +149,60 @@ class ForLoop(Block):
     @property
     def _end(self):
         return self.end.value if self.end else None
+
+
+class ModelWriter(ModelVisitor):
+
+    def __init__(self, output):
+        if is_string(output) or is_pathlike(output):
+            self.writer = file_writer(output)
+            self.close_writer = True
+        else:
+            self.writer = output
+            self.close_writer = False
+
+    def write(self, model):
+        try:
+            self.visit(model)
+        finally:
+            if self.close_writer:
+                self.writer.close()
+
+    def visit_Statement(self, statement):
+        for token in statement.tokens:
+            self.writer.write(token.value)
+
+
+class FirstStatementFinder(ModelVisitor):
+
+    def __init__(self):
+        self.statement = None
+
+    @classmethod
+    def find_from(cls, model):
+        finder = cls()
+        finder.visit(model)
+        return finder.statement
+
+    def visit_Statement(self, statement):
+        if self.statement is None:
+            self.statement = statement
+
+    def generic_visit(self, node):
+        if self.statement is None:
+            ModelVisitor.generic_visit(self, node)
+
+
+class LastStatementFinder(ModelVisitor):
+
+    def __init__(self):
+        self.statement = None
+
+    @classmethod
+    def find_from(cls, model):
+        finder = cls()
+        finder.visit(model)
+        return finder.statement
+
+    def visit_Statement(self, statement):
+        self.statement = statement

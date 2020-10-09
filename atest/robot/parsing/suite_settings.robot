@@ -30,8 +30,8 @@ Suite Documentation
     Should Be Equal    ${SUITE.doc}    ${doc}
 
 Suite Name And Documentation On Console
-    Check Stdout Contains    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on console.${SPACE * 3}\n
-    Check Stdout Contains    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on... | PASS |\n
+    Stdout Should Contain    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on console.${SPACE * 3}\n
+    Stdout Should Contain    Suite Settings :: 1st logical line (i.e. paragraph) is shortdoc on... | PASS |\n
 
 Test Setup
     ${test} =    Check Test Case    Test Case
@@ -53,6 +53,12 @@ Suite Teardown
 Invalid Setting
     Error In File    0    parsing/suite_settings.robot    27
     ...    Non-existing setting 'Invalid Setting'.
+
+Small typo should provide recommendation.
+    Error In File    1    parsing/suite_settings.robot    28
+    ...    SEPARATOR=\n
+    ...    Non-existing setting 'Megadata'. Did you mean:
+    ...    ${SPACE*4}Metadata
 
 *** Keywords ***
 Verify Setup

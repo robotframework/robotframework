@@ -160,7 +160,6 @@ the libraries used in the above example:
 .. sourcecode:: java
 
    public class AnotherLib {
-
        private String setting = null;
 
        public AnotherLib(String setting) {
@@ -196,15 +195,27 @@ Test libraries can control when new libraries are created with a
 class attribute `ROBOT_LIBRARY_SCOPE` . This attribute must be
 a string and it can have the following three values:
 
-`TEST CASE`
+`TEST`
   A new instance is created for every test case. A possible suite setup
-  and suite teardown share yet another instance. This is the default.
+  and suite teardown share yet another instance.
 
-`TEST SUITE`
+  Prior to Robot Framework 3.2 this value was `TEST CASE`, but nowadays
+  `TEST` is recommended. Because all unrecognized values are considered
+  same as `TEST`, both values work with all versions. For the same reason
+  it is possible to also use value `TASK` if the library is targeted for
+  RPA_ usage more than testing. `TEST` is also the default value if the
+  `ROBOT_LIBRARY_SCOPE` attribute is not set.
+
+
+`SUITE`
   A new instance is created for every test suite. The lowest-level test
   suites, created from test case files and containing test cases, have
   instances of their own, and higher-level suites all get their own instances
   for their possible setups and teardowns.
+
+  Prior to Robot Framework 3.2 this value was `TEST SUITE`. That value still
+  works, but `SUITE` is recommended with libraries targeting Robot Framework
+  3.2 and newer.
 
 `GLOBAL`
   Only one instance is created during the whole test execution and it
@@ -214,8 +225,8 @@ a string and it can have the following three values:
 .. note:: If a library is imported multiple times with different arguments__,
           a new instance is created every time regardless the scope.
 
-When the `TEST SUITE` or `GLOBAL` scopes are used with test
-libraries that have a state, it is recommended that libraries have some
+When the `SUITE` or `GLOBAL` scopes are used with libraries that have a state,
+it is recommended that libraries have some
 special keyword for cleaning up the state. This keyword can then be
 used, for example, in a suite setup or teardown to ensure that test
 cases in the next test suites can start from a known state. For example,
@@ -224,13 +235,12 @@ using the same browser in different test cases without having to
 reopen it, and it also has the :name:`Close All Browsers` keyword for
 easily closing all opened browsers.
 
-Example Python library using the `TEST SUITE` scope:
+Example Python library using the `SUITE` scope:
 
 .. sourcecode:: python
 
     class ExampleLibrary:
-
-        ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
+        ROBOT_LIBRARY_SCOPE = 'SUITE'
 
         def __init__(self):
             self._counter = 0
@@ -247,9 +257,7 @@ Example Java library using the `GLOBAL` scope:
 .. sourcecode:: java
 
     public class ExampleLibrary {
-
         public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
-
         private int counter = 0;
 
         public void count() {
@@ -296,7 +304,6 @@ A Java class using `ROBOT_LIBRARY_VERSION`:
 .. sourcecode:: java
 
     public class VersionExample {
-
         public static final String ROBOT_LIBRARY_VERSION = "1.0.2";
 
         public void keyword() {
@@ -335,6 +342,7 @@ about documenting test libraries in general.
 
     ROBOT_LIBRARY_DOC_FORMAT = 'reST'
 
+
     def keyword():
         """**Nothing** to see here. Not even in the table below.
 
@@ -354,7 +362,6 @@ about documenting test libraries in general.
      * Here is a link to the only `Keyword`.
      */
     public class DocFormatExample {
-
         public static final String ROBOT_LIBRARY_DOC_FORMAT = "HTML";
 
         /**<b>Nothing</b> to see here. Not even in the table below.
@@ -429,7 +436,7 @@ If needed, the automatic keyword discovery can be enabled by using the
     from robot.api.deco import library
 
 
-    @library(scope='TEST SUITE', auto_keywords=True)
+    @library(scope='GLOBAL', auto_keywords=True)
     class Example:
         # ...
 
@@ -624,6 +631,38 @@ implements only one keyword :name:`Example Keyword`:
           is a new feature in Robot Framework 3.2.
 
 __ https://docs.python.org/tutorial/modules.html#importing-from-a-package
+
+Using `@not_keyword` decorator
+''''''''''''''''''''''''''''''
+
+Functions in modules and methods in classes can be explicitly marked as
+"not keywords" by using the `@not_keyword` decorator. When a library is
+implemented as a module, this decorator can also be used to avoid imported
+functions becoming keywords.
+
+.. sourcecode:: python
+
+   from threading import current_thread
+
+   from robot.api.deco import not_keyword
+
+
+   not_keyword(current_thread)    # Don't expose `current_thread` as a keyword.
+
+
+   def example_keyword():
+       print('Running in thread "%s".' % current_thread().name)
+
+   @not_keyword
+   def this_is_not_keyword():
+       pass
+
+Using the `@not_keyword` decorator is pretty much the opposite way to avoid
+functions or methods becoming keywords compared to disabling the automatic
+keyword discovery with the `@library` decorator or by setting the
+`ROBOT_AUTO_KEYWORDS` to a false value. Which one to use depends on the context.
+
+.. note:: The `@not_keyword` decorator is new in Robot Framework 3.2.
 
 Keyword names
 ~~~~~~~~~~~~~
@@ -1001,8 +1040,9 @@ work together:
 
 .. sourcecode:: python
 
-  def various_args(arg, *varargs, **kwargs):
-      print('arg:', arg)
+  def various_args(arg=None, *varargs, **kwargs):
+      if arg is not None:
+          print('arg:', arg)
       for value in varargs:
           print('vararg:', value)
       for name, value in sorted(kwargs.items()):
@@ -1355,10 +1395,12 @@ case-insensitive.
    | Enum_       |               |            | The specified type must be an enumeration (a subclass of       | .. sourcecode:: python               |
    |             |               |            | Enum_) and arguments themselves must match its members.        |                                      |
    |             |               |            |                                                                |    class Color(Enum):                |
-   |             |               |            |                                                                |        RED = 1                       |
-   |             |               |            |                                                                |        GREEN = 2                     |
+   |             |               |            | Starting from RF 3.2.2, matching members is case-, space-      |        RED = 1                       |
+   |             |               |            | and underscore-insensitive.                                    |        GREEN = 2                     |
+   |             |               |            |                                                                |        DARK_GREEN = 3                |
    |             |               |            |                                                                |                                      |
-   |             |               |            |                                                                | | `GREEN`                            |
+   |             |               |            |                                                                | | `GREEN` (Color.GREEN)              |
+   |             |               |            |                                                                | | `Dark Green` (Color.DARK_GREEN)    |
    +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
    | NoneType_   |               |            | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
    |             |               |            | object, other values are passed as-is. Mainly relevant when    |                                      |
@@ -1490,11 +1532,18 @@ explained thoroughly elsewhere and only listened here as a reference:
 - `Marking methods to expose as keywords`_ when using the
   `dynamic library API`_ or the `hybrid library API`_.
 
-
 __ `Limiting public methods becoming keywords`_
 __ `Setting custom name`_
 __ `Embedding arguments into keyword names`_
 __ `Specifying argument types using @keyword decorator`_
+
+`@not_keyword` decorator
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `robot.api.deco.not_keyword` decorator can be used for
+`disabling functions or methods becoming keywords`__.
+
+__ `Using @not_keyword decorator`_
 
 Using custom decorators
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -2489,8 +2538,7 @@ Java lists or String arrays instead.
    :class: tabular
 
    +--------------------+----------------------------+----------------------------+
-   |    Expected        |      How to represent      |          Examples          |
-   |    arguments       |                            |                            |
+   |   Argument type    |      How to represent      |          Examples          |
    +====================+============================+============================+
    | No arguments       | Empty list.                | `[]`                       |
    +--------------------+----------------------------+----------------------------+
@@ -2498,16 +2546,22 @@ Java lists or String arrays instead.
    | `positional        | argument names.            | `['arg1', 'arg2', 'arg3']` |
    | argument`_         |                            |                            |
    +--------------------+----------------------------+----------------------------+
-   | `Default values`_  | Default values separated   | `['arg=default value']`,   |
-   | for arguments      | from argument names with   | `['a', 'b=1', 'c=2']`      |
-   |                    | `=`. Default values are    |                            |
-   |                    | always considered to be    |                            |
-   |                    | strings.                   |                            |
+   | `Default values`_  | Two ways how to represent  | `['name=default']`,        |
+   |                    | the argument name and the  | `['a', 'b=1', 'c=2']`      |
+   |                    | default value:             |                            |
+   |                    |                            | `[('name', 'default')]`,   |
+   |                    | - As a string where the    | `['a', ('b', 1), ('c', 2)]`|
+   |                    |   name and the default are |                            |
+   |                    |   separated with `=`.      |                            |
+   |                    | - As a tuple with the name |                            |
+   |                    |   and the default as       |                            |
+   |                    |   separate items. New in   |                            |
+   |                    |   Robot Framework 3.2.     |                            |
    +--------------------+----------------------------+----------------------------+
    | `Variable number   | Argument after possible    | `['*varargs']`,            |
    | of arguments`_     | positional arguments and   | `['argument', '*rest']`,   |
    | (varargs)          | their defaults has `*`     | `['a', 'b=42', '*c']`      |
-   | (varargs)          | prefix.                    |                            |
+   |                    | prefix.                    |                            |
    +--------------------+----------------------------+----------------------------+
    | `Free named        | Last arguments has `**`    | `['**named']`,             |
    | arguments`_        | prefix. Requires           | `['a', 'b=42', '**c']`,    |
@@ -2532,15 +2586,31 @@ The actual argument names and default values that are returned are also
 important. They are needed for `named argument support`__ and the Libdoc_
 tool needs them to be able to create a meaningful library documentation.
 
+As explained in the above table, default values can be specified with argument
+names either as a string like `'name=default'` or as a tuple like
+`('name', 'default')`. The main problem with the former syntax is that all
+default values are considered strings whereas the latter syntax allows using
+all objects like `('inteter', 1)` or `('boolean', True)`. When using other
+objects than strings, Robot Framework can do `automatic argument conversion`__
+based on them.
+
+For consistency reasons, also arguments that do not accept default values can
+be specified as one item tuples. For example, `['a', 'b=c', '*d']` and
+`[('a',), ('b', 'c'), ('*d',)]` are equivalent.
+
 If `get_keyword_arguments` is missing or returns Python `None` or Java
 `null` for a certain keyword, that keyword gets an argument specification
 accepting all arguments. This automatic argument spec is either
 `[*varargs, **kwargs]` or `[*varargs]`, depending does
 `run_keyword` `support free named arguments`__ or not.
 
+.. note:: Support to specify arguments as tuples like `('name', 'default')`
+          is new in Robot Framework 3.2.
+
 __ `Free named arguments with dynamic libraries`_
 __ `Named-only arguments with dynamic libraries`_
 __ `Named argument syntax with dynamic libraries`_
+__ `Implicit argument types based on default values`_
 __ `Free named arguments with dynamic libraries`_
 
 Getting keyword argument types
@@ -2560,8 +2630,17 @@ from external systems, using strings like `'int'` or `'integer'` may be
 easier. See the `Supported conversions`_ section for more information about
 supported types and how to specify them.
 
+Robot Framework does automatic argument conversion also based on the
+`argument default values`__. Earlier this did not work with the dynamic API
+because it was possible to specify arguments only as strings. As
+`discussed in the previous section`__, this was changed in Robot Framework
+3.2 and nowadays default values returned like `('example', True)` are
+automatically used for this purpose.
+
 __ `Argument types`_
 __ `Specifying argument types using @keyword decorator`_
+__ `Implicit argument types based on default values`_
+__ `Getting keyword arguments`_
 
 Getting keyword tags
 ~~~~~~~~~~~~~~~~~~~~
@@ -2617,6 +2696,31 @@ documentation directly in the code as the docstring of the library
 class and its `__init__` method. If a non-empty documentation is
 got both directly from the code and from the
 `get_keyword_documentation` method, the latter has precedence.
+
+Getting keyword source information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The dynamic API masks the real implementation of keywords from Robot Framework
+and thus makes it impossible to see where keywords are implemented. This
+means that editors and other tools utilizing Robot Framework APIs cannot
+implement features such as go-to-definition. This problem can be solved by
+implementing yet another optional dynamic method named `get_keyword_source`
+(alias `getKeywordSource`) that returns the source information.
+
+The return value from the `get_keyword_source` method must be a string or
+`None` (`null` in Java) if no source information is available. In the simple
+case it is enough to simply return an absolute path to the file implementing
+the keyword. If the line number where the keyword implementation starts
+is known, it can be embedded to the return value like `path:lineno`.
+Returning only the line number is possible like `:lineno`.
+
+The source information of the library itself is got automatically from
+the imported library class the same way as with other library APIs. The
+library source path is used with all keywords that do not have their own
+source path defined.
+
+.. note:: Returning source information for keywords is a new feature in
+          Robot Framework 3.2.
 
 Named argument syntax with dynamic libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2778,6 +2882,7 @@ camelCase aliases work exactly the same way.
    `get_keyword_types`          `name`                     Return keywords' `argument type information`__. Optional method. New in RF 3.1.
    `get_keyword_tags`           `name`                     Return keywords' `tags`__. Optional method. New in RF 3.0.2.
    `get_keyword_documentation`  `name`                     Return keywords' and library's `documentation`__. Optional method.
+   `get_keyword_source`         `name`                     Return keywords' `source`__. Optional method. New in RF 3.2.
    ===========================  =========================  =======================================================
 
 __ `Getting dynamic keyword names`_
@@ -2786,6 +2891,7 @@ __ `Getting keyword arguments`_
 __ `Getting keyword argument types`_
 __ `Getting keyword tags`_
 __ `Getting keyword documentation`_
+__ `Getting keyword source information`_
 
 It is possible to write a formal interface specification in Java as
 below. However, remember that libraries *do not need* to implement

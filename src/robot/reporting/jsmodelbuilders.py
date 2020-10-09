@@ -41,7 +41,7 @@ class JsModelBuilder(object):
 
 
 class _Builder(object):
-    _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
+    _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2, 'SKIP': 3}
 
     def __init__(self, context):
         self._context = context
@@ -97,10 +97,7 @@ class SuiteBuilder(_Builder):
 
     def _get_statistics(self, suite):
         stats = suite.statistics  # Access property only once
-        return (stats.all.total,
-                stats.all.passed,
-                stats.critical.total,
-                stats.critical.passed)
+        return (stats.total, stats.passed, stats.failed, stats.skipped)
 
 
 class TestBuilder(_Builder):
@@ -113,7 +110,6 @@ class TestBuilder(_Builder):
         with self._context.prune_input(test.keywords):
             return (self._string(test.name, attr=True),
                     self._string(test.timeout),
-                    int(test.critical),
                     self._html(test.doc),
                     tuple(self._string(t) for t in test.tags),
                     self._get_status(test),

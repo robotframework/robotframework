@@ -27,6 +27,9 @@ Set Element Text Returns Root Element
 Set Elements Text
     Check Test Case    ${TESTNAME}
 
+Set Element Text none
+    Check Test Case    ${TESTNAME}
+
 Set Element Attribute
     Check Test Case    ${TESTNAME}
 

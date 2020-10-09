@@ -3,9 +3,10 @@ Resource and variable files
 
 User keywords and variables in `test case files`_ and `test suite
 initialization files`_ can only be used in files where they are
-created, but *resource files* provide a mechanism for sharing them. Since
-the resource file structure is very close to test case files, it is
-easy to create them.
+created, but *resource files* provide a mechanism for sharing them.
+The high level syntax for creating resource files is exactly the same
+as when creating test case files and `supported file formats`_ are the same
+as well. The main difference is that resource files cannot have tests.
 
 *Variable files* provide a powerful mechanism for creating and sharing
 variables. For example, they allow values other than strings and
@@ -24,23 +25,22 @@ Taking resource files into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Resource files are imported using the :setting:`Resource` setting in the
-Settings table. The path to the resource file is given in the cell
-after the setting name.
+Settings section. The path to the resource file is given as an argument
+to the setting. When using the `plain text format`__ for creating resource
+files, it is possible to use the normal :file:`.robot` extension but the
+dedicated :file:`.resource` extension is recommended to separate resource
+files from test case files.
+
+__ `Supported file formats`_
 
 If the path is given in an absolute format, it is used directly. In other
 cases, the resource file is first searched relatively to the directory
 where the importing file is located. If the file is not found there,
 it is then searched from the directories in Python's `module search path`_.
 The path can contain variables, and it is recommended to use them to make paths
-system-independent (for example, :file:`${RESOURCES}/login_resources.robot` or
+system-independent (for example, :file:`${RESOURCES}/login.resource` or
 :file:`${RESOURCE_PATH}`). Additionally, forward slashes (`/`) in the path
 are automatically changed to backslashes (:codesc:`\\`) on Windows.
-
-Resource files can use all the same extensions as test case files created
-using the `supported file formats`_. When using the `plain text format`_,
-it is possible to use a special :file:`.resource` extension in addition
-to the normal :file:`.robot` extensions. This makes it easier to separate
-test case files and resource files from each others.
 
 .. sourcecode:: robotframework
 

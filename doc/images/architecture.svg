@@ -7,16 +7,16 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="15cm"
+   width="10.5cm"
    height="11cm"
-   viewBox="118 102 292 215"
+   viewBox="118 102 204.39998 215"
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r"
-   sodipodi:docname="architecture-wide.svg"
-   inkscape:export-filename="/home/peke/Devel/robotframework/architecture.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   sodipodi:docname="architecture-narrow.svg"
+   inkscape:export-filename="/home/peke/Devel/robotframework/test.png"
+   inkscape:export-xdpi="161.63635"
+   inkscape:export-ydpi="161.63635">
   <metadata
      id="metadata80">
     <rdf:RDF>
@@ -25,6 +25,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -44,15 +45,16 @@
      id="namedview76"
      showgrid="false"
      inkscape:zoom="1.7125983"
-     inkscape:cx="302.4124"
-     inkscape:cy="188.07536"
+     inkscape:cx="262.04898"
+     inkscape:cy="185.73972"
      inkscape:window-x="0"
      inkscape:window-y="25"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg2" />
+     inkscape:current-layer="svg2"
+     inkscape:snap-text-baseline="true" />
   <g
      id="g4"
-     transform="translate(-0.66259851,-0.10497107)">
+     transform="matrix(1.0555612,0,0,0.99959752,-7.3224038,-0.03654811)">
     <rect
        style="fill:#ffffff"
        x="120"
@@ -81,7 +83,7 @@
   </g>
   <g
      id="g14"
-     transform="translate(-0.66259851,-0.10497107)">
+     transform="matrix(1.0559223,0,0,0.99832985,-7.3465518,0.09544623)">
     <rect
        style="fill:#ffffff"
        x="120"
@@ -105,12 +107,12 @@
       <tspan
          x="200"
          y="125.733"
-         id="tspan22">Test Data</tspan>
+         id="tspan22">Data</tspan>
     </text>
   </g>
   <g
      id="g24"
-     transform="translate(-0.66259851,-0.10497107)">
+     transform="matrix(1.0559211,0,0,0.9985103,-7.3463212,0.33895865)">
     <rect
        style="fill:#ffffff"
        x="120"
@@ -134,12 +136,12 @@
       <tspan
          x="200"
          y="303.733"
-         id="tspan32">System Under Test</tspan>
+         id="tspan32">Target System</tspan>
     </text>
   </g>
   <g
      id="g34"
-     transform="translate(-0.66259851,-0.10497107)">
+     transform="matrix(1.0559223,0,0,0.99832985,-7.3465518,0.26246082)">
     <rect
        style="fill:#ffffff"
        x="120"
@@ -163,12 +165,15 @@
       <tspan
          x="200"
          y="225.733"
-         id="tspan42">Test Libraries</tspan>
+         id="tspan42">Libraries</tspan>
     </text>
   </g>
   <g
      id="g44"
-     transform="translate(-0.66259851,-0.10497107)">
+     transform="translate(-0.66259851,-0.10497107)"
+     inkscape:export-filename="/home/peke/Devel/robotframework/g44.png"
+     inkscape:export-xdpi="161.63635"
+     inkscape:export-ydpi="161.63635">
     <rect
        style="fill:#ffffff"
        x="120"
@@ -192,75 +197,75 @@
       <tspan
          x="165"
          y="258.36099"
-         id="tspan52">Test Tools</tspan>
+         id="tspan52">Tools</tspan>
     </text>
   </g>
   <line
-     style="fill:none;fill-opacity:0;stroke:#000000;stroke-width:1.02663577;stroke-dasharray:4.10654311"
+     style="fill:none;fill-opacity:0;stroke:#000000;stroke-width:0.80016798;stroke-dasharray:3.20067199"
      x1="119.3374"
      y1="195.89502"
-     x2="296.40619"
+     x2="226.90254"
      y2="195.89502"
      id="line54" />
   <text
      font-size="11.2889"
      style="font-style:normal;font-weight:normal;font-size:8.2742424px;font-family:OCRACondensed;text-anchor:start;fill:#000000"
-     x="299.82306"
+     x="228.11295"
      y="198.51616"
      id="text56">
     <tspan
-       x="299.82306"
+       x="228.11295"
        y="198.51616"
        id="tspan58"
-       style="font-size:8.2742424px">Test library API</tspan>
+       style="font-size:8.2742424px">Library API</tspan>
   </text>
   <line
-     style="fill:none;fill-opacity:0;stroke:#000000;stroke-width:1.02663565;stroke-dasharray:4.10654279"
+     style="fill:none;fill-opacity:0;stroke:#000000;stroke-width:0.80016792;stroke-dasharray:3.20067174"
      x1="119.3374"
      y1="143.89503"
-     x2="296.40619"
+     x2="226.90254"
      y2="143.89503"
      id="line60" />
   <text
      font-size="11.2889"
      style="font-style:normal;font-weight:normal;font-size:8.2742424px;font-family:OCRACondensed;text-anchor:start;fill:#000000"
-     x="299.82306"
+     x="228.1171"
      y="146.01222"
      id="text62">
     <tspan
-       x="299.82306"
+       x="228.1171"
        y="146.01222"
        id="tspan64"
-       style="font-size:8.2742424px">Test data syntax</tspan>
+       style="font-size:8.2742424px">Data syntax</tspan>
   </text>
   <line
-     style="fill:none;fill-opacity:0;stroke:#000000;stroke-width:1.02663577;stroke-dasharray:4.10654313"
+     style="fill:none;fill-opacity:0;stroke:#000000;stroke-width:0.80016798;stroke-dasharray:3.2006721"
      x1="119.3374"
      y1="271.89505"
-     x2="296.40619"
+     x2="226.90254"
      y2="271.89505"
      id="line66" />
   <text
      font-size="11.2889"
      style="font-style:normal;font-weight:normal;font-size:8.2742424px;font-family:OCRACondensed;text-anchor:start;fill:#000000"
-     x="299.82541"
+     x="228.11531"
      y="274.461"
      id="text68">
     <tspan
-       x="299.82541"
+       x="228.11531"
        y="274.461"
        id="tspan70"
        style="font-size:8.2742424px">System interfaces</tspan>
   </text>
   <text
      font-size="12.7998"
-     style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal"
-     x="331.331"
-     y="266.118"
+     style="font-style:normal;font-weight:normal;font-size:12.79979992px;font-family:sans-serif;text-anchor:start;fill:#000000"
+     x="331.33099"
+     y="266.11801"
      id="text72">
     <tspan
-       x="331.331"
-       y="266.118"
+       x="331.33099"
+       y="266.11801"
        id="tspan74" />
   </text>
 </svg>

@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from itertools import chain
+import re
 
 from robot.model import Tags
 from robot.utils import getshortdoc, Sortable, setter
@@ -24,17 +25,38 @@ from .output import LibdocOutput
 
 class LibraryDoc(object):
 
-    def __init__(self, name='', doc='', version='', type='library',
-                 scope='', named_args=True, doc_format=''):
+    def __init__(self, name='', doc='', version='', type='LIBRARY',
+                 scope='TEST', named_args=True, doc_format='ROBOT',
+                 source=None, lineno=-1):
         self.name = name
-        self.doc = doc
+        self._doc = doc
         self.version = version
         self.type = type
         self.scope = scope
         self.named_args = named_args
         self.doc_format = doc_format
+        self.source = source
+        self.lineno = lineno
         self.inits = []
         self.keywords = []
+
+    @property
+    def doc(self):
+        if self.doc_format == 'ROBOT' and '%TOC%' in self._doc:
+            return self._add_toc(self._doc)
+        return self._doc
+
+    def _add_toc(self, doc):
+        toc = self._create_toc(doc)
+        return '\n'.join(line if line.strip() != '%TOC%' else toc
+                         for line in doc.splitlines())
+
+    def _create_toc(self, doc):
+        entries = re.findall(r'^\s*=\s+(.+?)\s+=\s*$', doc, flags=re.MULTILINE)
+        if self.inits:
+            entries.append('Importing')
+        entries.append('Keywords')
+        return '\n'.join('- `%s`' % entry for entry in entries)
 
     @setter
     def doc_format(self, format):
@@ -55,15 +77,22 @@ class LibraryDoc(object):
 
 class KeywordDoc(Sortable):
 
-    def __init__(self, name='', args=(), doc='', tags=()):
+    def __init__(self, name='', args=(), doc='', tags=(), source=None,
+                 lineno=-1):
         self.name = name
         self.args = args
         self.doc = doc
         self.tags = Tags(tags)
+        self.source = source
+        self.lineno = lineno
 
     @property
     def shortdoc(self):
         return getshortdoc(self.doc)
+
+    @property
+    def deprecated(self):
+        return self.doc.startswith('*DEPRECATED') and '*' in self.doc[1:]
 
     @property
     def _sort_key(self):

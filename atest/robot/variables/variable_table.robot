@@ -49,32 +49,43 @@ Three dots on the same line should be interpreted as string
     Check Test Case     ${TEST NAME}
 
 Invalid variable name
-    Creating Variable Should Have Failed    0    Invalid Name    16
+    Parsing Variable Should Have Failed    0    16
     ...    Invalid variable name 'Invalid Name'.
-    Creating Variable Should Have Failed    1    \${}            17
+    Parsing Variable Should Have Failed    1    17
     ...    Invalid variable name '\${}'.
+    Parsing Variable Should Have Failed    2    18
+    ...    Invalid variable name '\${not'.
+    Parsing Variable Should Have Failed    3    19
+    ...    Invalid variable name '\${not}[[]ok]'.
+    Parsing Variable Should Have Failed    4    20
+    ...    Invalid variable name '\${not \${ok}}'.
 
 Scalar catenated from multile values
     Check Test Case     ${TEST NAME}
 
 Creating variable using non-existing variable fails
     Check Test Case    ${TEST NAME}
-    Creating Variable Should Have Failed    5    \${NONEX 1}     30
+    Creating Variable Should Have Failed    8     \${NONEX 1}     33
     ...    Variable '\${NON EXISTING}' not found.
-    Creating Variable Should Have Failed    6    \${NONEX 2A}    31
+    Creating Variable Should Have Failed    9     \${NONEX 2A}    34
     ...    Variable '\${NON EX}' not found.*
-    Creating Variable Should Have Failed    7    \${NONEX 2B}    32
+    Creating Variable Should Have Failed    10    \${NONEX 2B}    35
     ...    Variable '\${NONEX 2A}' not found.*
 
 Using variable created from non-existing variable in imports fails
-    Creating Variable Should Have Failed    2    \${NONEX 3}     33
+    Creating Variable Should Have Failed    5    \${NONEX 3}     36
     ...    Variable '\${NON EXISTING VARIABLE}' not found.
-    Import Should Have Failed               3    Resource        36
+    Import Should Have Failed               6    Resource        39
     ...    Variable '\${NONEX 3}' not found.*
-    Import Should Have Failed               4    Library         37
+    Import Should Have Failed               7    Library         40
     ...    Variable '\${NONEX 3}' not found.*
 
 *** Keywords ***
+Parsing Variable Should Have Failed
+    [Arguments]    ${index}    ${lineno}    @{message}
+    Error In File    ${index}    variables/variable_table.robot    ${lineno}
+    ...    @{message}
+
 Creating Variable Should Have Failed
     [Arguments]    ${index}    ${name}    ${lineno}    @{message}
     Error In File    ${index}    variables/variable_table.robot    ${lineno}

@@ -29,6 +29,10 @@ Conflicting headers cause error
     [Template]    Run and validate conflict
     rpa/tests.robot rpa/tasks     rpa/tasks/stuff.robot    tasks    tests
     rpa/                          rpa/tests.robot          tests    tasks
+    ...    [[] ERROR ] Error in file '*[/\\]task_setup_teardown_template_timeout.robot' on line 6:
+    ...    Non-existing setting 'Tesk Setup'. Did you mean:\n
+    ...    ${SPACE*3}Test Setup\n
+    ...    ${SPACE*3}Task Setup\n
 
 Conflicting headers with --rpa are fine
     --RPA       rpa/tasks rpa/tests.robot    Task    Another task    Test
@@ -82,14 +86,15 @@ Run and validate test cases
     Should contain tests    ${SUITE}    @{tasks}
 
 Run and validate conflict
-    [Arguments]    ${paths}    ${conflicting}    ${this}    ${that}
+    [Arguments]    ${paths}    ${conflicting}    ${this}    ${that}    @{extra errors}
     Run tests without processing output    ${EMPTY}    ${paths}
     ${conflicting} =    Normalize path    ${DATADIR}/${conflicting}
-    ${message} =    Catenate
-    ...    [ ERROR ] Parsing '${conflicting}' failed: Conflicting execution modes.
+    ${extra} =    Catenate    @{extra errors}
+    ${error} =    Catenate
+    ...    [[] ERROR ] Parsing '${conflicting}' failed: Conflicting execution modes.
     ...    File has ${this} but files parsed earlier have ${that}.
     ...    Fix headers or use '--rpa' or '--norpa' options to set the execution mode explicitly.
-    Stderr Should Be Equal To    ${message}${USAGE TIP}\n
+    Stderr Should Match    ${extra}${error}${USAGE TIP}\n
 
 Run and validate no task found
     [Arguments]    ${options}    ${message}
@@ -101,15 +106,12 @@ Outputs should contain correct mode information
     ${title} =    Set variable if    "${rpa}" == "false"    Test    Task
     ${lower} =    Set variable if    "${rpa}" == "false"    test    task
     Element attribute should be    ${OUTDIR}/output.xml     rpa    ${rpa}
-    Element text should be         ${OUTDIR}/output.xml     Critical ${title}s    xpath=statistics/total/stat[1]
-    Element text should be         ${OUTDIR}/output.xml     All ${title}s         xpath=statistics/total/stat[2]
+    Element text should be         ${OUTDIR}/output.xml     All ${title}s         xpath=statistics/total/stat[1]
     File should contain regexp     ${OUTDIR}/log.html       window\\.settings = \\{.*"rpa":${rpa},.*\\};
     File should contain regexp     ${OUTDIR}/report.html    window\\.settings = \\{.*"rpa":${rpa},.*\\};
-    File should contain regexp     ${OUTDIR}/log.html       window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"Critical ${title}s",.*\\}\\]\\];
-    File should contain regexp     ${OUTDIR}/report.html    window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"Critical ${title}s",.*\\}\\]\\];
     File should contain regexp     ${OUTDIR}/log.html       window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"All ${title}s",.*\\}\\]\\];
     File should contain regexp     ${OUTDIR}/report.html    window\\.output\\["stats"\\] = \\[\\[\\{.*"label":"All ${title}s",.*\\}\\]\\];
-    Check Stdout Contains Regexp    \\d+ critical ${lower}s?, \\d+ passed, \\d+ failed\n\\d+ ${lower}s? total, \\d+ passed, \\d+ failed\n
+    Stdout Should Contain Regexp    \\d+ ${lower}s?, \\d+ passed, \\d+ failed\n
 
 Initialize tests and tasks data
     Create directory    ${TEMPDIR}/rpa

@@ -37,10 +37,8 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.suite.status, 'PASS')
         assert_equal(self.suite.starttime, '20111024 13:41:20.873')
         assert_equal(self.suite.endtime, '20111024 13:41:20.952')
-        assert_equal(self.suite.statistics.critical.passed, 1)
-        assert_equal(self.suite.statistics.critical.failed, 0)
-        assert_equal(self.suite.statistics.all.passed, 1)
-        assert_equal(self.suite.statistics.all.failed, 0)
+        assert_equal(self.suite.statistics.passed, 1)
+        assert_equal(self.suite.statistics.failed, 0)
 
     def test_testcase_is_built(self):
         assert_equal(self.test.name, 'First One')
@@ -51,7 +49,6 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equal(self.test.status, 'PASS')
         assert_equal(self.test.starttime, '20111024 13:41:20.925')
         assert_equal(self.test.endtime, '20111024 13:41:20.934')
-        assert_true(self.test.critical)
 
     def test_keyword_is_built(self):
         assert_equal(self.keyword.name, 'BuiltIn.Log')
@@ -117,6 +114,29 @@ class TestCombiningSuites(unittest.TestCase):
 
     def test_name(self):
         assert_equal(self.result.suite.name, 'Normal & Normal')
+
+
+class TestMergingSuites(unittest.TestCase):
+
+    def setUp(self):
+        result = ExecutionResult(StringIO(GOLDEN_XML), StringIO(GOLDEN_XML),
+                                 StringIO(GOLDEN_XML), merge=True)
+        self.suite = result.suite
+        self.test = self.suite.tests[0]
+
+    def test_name(self):
+        assert_equal(self.suite.name, 'Normal')
+        assert_equal(self.test.name, 'First One')
+
+    def test_message(self):
+        message = self.test.message
+        assert_true(message.startswith('*HTML* <span class="merge">Test has been re-executed and results merged.</span><hr>'))
+        assert_true('<span class="new-status">New status:</span> <span class="pass">PASS</span>' in message)
+        assert_equal(message.count('<span class="new-status">'), 1)
+        assert_true('<span class="new-message">New message:</span>' not in message)
+        assert_true('<span class="old-status">Old status:</span> <span class="pass">PASS</span>' in message)
+        assert_equal(message.count('<span class="old-status">'), 2)
+        assert_true('<span class="old-message">Old message:</span>' not in message)
 
 
 class TestElements(unittest.TestCase):
@@ -271,7 +291,6 @@ class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
         assert_equal(test.name, 'some name')
         assert_equal(test.doc, '')
         assert_equal(test.timeout, None)
-        assert_equal(test.critical, True)
         assert_equal(list(test.tags), [])
         assert_equal(list(test.keywords), [])
         assert_equal(test.starttime, None)
@@ -296,10 +315,8 @@ if PY3:
             assert_equal(suite.status, 'PASS')
             assert_equal(suite.starttime, '20111024 13:41:20.873')
             assert_equal(suite.endtime, '20111024 13:41:20.952')
-            assert_equal(suite.statistics.critical.passed, 1)
-            assert_equal(suite.statistics.critical.failed, 0)
-            assert_equal(suite.statistics.all.passed, 1)
-            assert_equal(suite.statistics.all.failed, 0)
+            assert_equal(suite.statistics.passed, 1)
+            assert_equal(suite.statistics.failed, 0)
 
         def test_test_is_built(self):
             test = self.result.suite.tests[0]
@@ -311,7 +328,6 @@ if PY3:
             assert_equal(test.status, 'PASS')
             assert_equal(test.starttime, '20111024 13:41:20.925')
             assert_equal(test.endtime, '20111024 13:41:20.934')
-            assert_true(test.critical)
 
 
 if __name__ == '__main__':

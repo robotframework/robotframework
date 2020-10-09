@@ -21,13 +21,12 @@ from robot.utils import XmlWriter
 
 class XUnitWriter(object):
 
-    def __init__(self, execution_result, skip_noncritical):
+    def __init__(self, execution_result):
         self._execution_result = execution_result
-        self._skip_noncritical = skip_noncritical
 
     def write(self, output):
         xml_writer = XmlWriter(output, usage='xunit')
-        writer = XUnitFileWriter(xml_writer, self._skip_noncritical)
+        writer = XUnitFileWriter(xml_writer)
         self._execution_result.visit(writer)
 
 
@@ -38,10 +37,9 @@ class XUnitFileWriter(ResultVisitor):
     http://marc.info/?l=ant-dev&m=123551933508682
     """
 
-    def __init__(self, xml_writer, skip_noncritical=False):
+    def __init__(self, xml_writer):
         self._writer = xml_writer
         self._root_suite = None
-        self._skip_noncritical = skip_noncritical
 
     def start_suite(self, suite):
         if self._root_suite:
@@ -57,13 +55,11 @@ class XUnitFileWriter(ResultVisitor):
         self._writer.start('testsuite', attrs)
 
     def _get_stats(self, statistics):
-        if self._skip_noncritical:
-            failures = statistics.critical.failed
-            skipped = statistics.all.total - statistics.critical.total
-        else:
-            failures = statistics.all.failed
-            skipped = 0
-        return str(statistics.all.total), str(failures), str(skipped)
+        return (
+            str(statistics.total),
+            str(statistics.failed),
+            str(statistics.skipped)
+        )
 
     def end_suite(self, suite):
         if suite is self._root_suite:
@@ -74,15 +70,9 @@ class XUnitFileWriter(ResultVisitor):
                            {'classname': test.parent.longname,
                             'name': test.name,
                             'time': self._time_as_seconds(test.elapsedtime)})
-        if self._skip_noncritical and not test.critical:
-            self._skip_test(test)
-        elif not test.passed:
+        if not test.passed:
             self._fail_test(test)
         self._writer.end('testcase')
-
-    def _skip_test(self, test):
-        self._writer.element('skipped', '%s: %s' % (test.status, test.message)
-                                        if test.message else test.status)
 
     def _fail_test(self, test):
         self._writer.element('failure', attrs={'message': test.message,

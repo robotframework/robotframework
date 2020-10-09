@@ -15,24 +15,10 @@
 
 import ast
 import re
-from itertools import dropwhile, takewhile
 
 from robot.utils import normalize_whitespace
 
 from ..lexer import Token
-
-
-def get_statements(tokens, curdir=None):
-    statement = []
-    EOS = Token.EOS
-    for t in tokens:
-        if curdir and '${CURDIR}' in t.value:
-            t.value = t.value.replace('${CURDIR}', curdir)
-        if t.type != EOS:
-            statement.append(t)
-        else:
-            yield Statement.from_tokens(tuple(statement))
-            statement = []
 
 
 class Statement(ast.AST):
@@ -42,7 +28,7 @@ class Statement(ast.AST):
     _statement_handlers = {}
 
     def __init__(self, tokens):
-        self.tokens = tokens
+        self.tokens = tuple(tokens)
 
     @property
     def lineno(self):
@@ -65,6 +51,8 @@ class Statement(ast.AST):
         cls._statement_handlers[subcls.type] = subcls
         if subcls.type == Token.KEYWORD:
             cls._statement_handlers[Token.ASSIGN] = subcls
+        if subcls.type == Token.ERROR:
+            cls._statement_handlers[Token.FATAL_ERROR] = subcls
         return subcls
 
     @classmethod
@@ -79,21 +67,33 @@ class Statement(ast.AST):
     def data_tokens(self):
         return [t for t in self.tokens if t.type not in Token.NON_DATA_TOKENS]
 
-    def get_value(self, type, default=None):
-        token = self.get_token(type)
-        return token.value if token else default
-
     def get_token(self, type):
+        """Return a token with the given ``type``.
+
+        If there are no matches, return ``None``. If there are multiple
+        matches, return the first match.
+        """
         for t in self.tokens:
             if t.type == type:
                 return t
         return None
 
-    def get_values(self, *types):
-        return [t.value for t in self.tokens if t.type in types]
-
     def get_tokens(self, *types):
+        """Return tokens having any of the given ``types``."""
         return [t for t in self.tokens if t.type in types]
+
+    def get_value(self, type, default=None):
+        """Return value of a token with the given ``type``.
+
+        If there are no matches, return ``default``. If there are multiple
+        matches, return the value of the first match.
+        """
+        token = self.get_token(type)
+        return token.value if token else default
+
+    def get_values(self, *types):
+        """Return values of tokens having any of the given ``types``."""
+        return tuple(t.value for t in self.tokens if t.type in types)
 
     @property
     def lines(self):
@@ -105,6 +105,16 @@ class Statement(ast.AST):
                 line = []
         if line:
             yield line
+
+    @property
+    def error(self):
+        tokens = self.get_tokens(Token.ERROR, Token.FATAL_ERROR)
+        if not tokens:
+            return None
+        if len(tokens) == 1:
+            return tokens[0].error
+        errors = ['%d) %s' % (i+1, t.error) for i, t in enumerate(tokens)]
+        return '\n\n'.join(['Multiple errors:'] + errors)
 
     def __len__(self):
         return len(self.tokens)
@@ -147,7 +157,7 @@ class SingleValue(Statement):
 
     @property
     def value(self):
-        values = self.get_values(Token.ARGUMENT)
+        values = self.get_values(Token.NAME, Token.ARGUMENT)
         if values and values[0].upper() != 'NONE':
             return values[0]
         return None
@@ -157,42 +167,50 @@ class MultiValue(Statement):
 
     @property
     def values(self):
-        return tuple(self.get_values(Token.ARGUMENT))
+        return self.get_values(Token.ARGUMENT)
 
 
 class Fixture(Statement):
 
     @property
     def name(self):
-        return self.get_value(Token.ARGUMENT)
+        return self.get_value(Token.NAME)
 
     @property
     def args(self):
-        return tuple(self.get_values(Token.ARGUMENT)[1:])
+        return self.get_values(Token.ARGUMENT)
+
+
+class SectionHeader(Statement):
+
+    @property
+    def name(self):
+        header = self.get_token(self.type)
+        return normalize_whitespace(header.value).strip('* ')
 
 
 @Statement.register
-class SettingSectionHeader(Statement):
+class SettingSectionHeader(SectionHeader):
     type = Token.SETTING_HEADER
 
 
 @Statement.register
-class VariableSectionHeader(Statement):
+class VariableSectionHeader(SectionHeader):
     type = Token.VARIABLE_HEADER
 
 
 @Statement.register
-class TestCaseSectionHeader(Statement):
+class TestCaseSectionHeader(SectionHeader):
     type = Token.TESTCASE_HEADER
 
 
 @Statement.register
-class KeywordSectionHeader(Statement):
+class KeywordSectionHeader(SectionHeader):
     type = Token.KEYWORD_HEADER
 
 
 @Statement.register
-class CommentSectionHeader(Statement):
+class CommentSectionHeader(SectionHeader):
     type = Token.COMMENT_HEADER
 
 
@@ -202,21 +220,16 @@ class LibraryImport(Statement):
 
     @property
     def name(self):
-        return self.get_value(Token.ARGUMENT)
+        return self.get_value(Token.NAME)
 
     @property
     def args(self):
-        return self._get_args_and_alias()[0]
+        return self.get_values(Token.ARGUMENT)
 
     @property
     def alias(self):
-        return self._get_args_and_alias()[1]
-
-    def _get_args_and_alias(self):
-        args = tuple(self.get_values(Token.ARGUMENT)[1:])
-        if len(args) > 1 and normalize_whitespace(args[-2]) == 'WITH NAME':
-            return args[:-2], args[-1]
-        return args, None
+        with_name = self.get_token(Token.WITH_NAME)
+        return self.get_tokens(Token.NAME)[-1].value if with_name else None
 
 
 @Statement.register
@@ -225,7 +238,7 @@ class ResourceImport(Statement):
 
     @property
     def name(self):
-        return self.get_value(Token.ARGUMENT)
+        return self.get_value(Token.NAME)
 
 
 @Statement.register
@@ -234,11 +247,11 @@ class VariablesImport(Statement):
 
     @property
     def name(self):
-        return self.get_value(Token.ARGUMENT)
+        return self.get_value(Token.NAME)
 
     @property
     def args(self):
-        return self.get_values(Token.ARGUMENT)[1:]
+        return self.get_values(Token.ARGUMENT)
 
 
 @Statement.register
@@ -257,11 +270,11 @@ class Metadata(DocumentationOrMetadata):
 
     @property
     def name(self):
-        return self.get_value(Token.ARGUMENT)
+        return self.get_value(Token.NAME)
 
     @property
     def value(self):
-        tokens = self.get_tokens(Token.ARGUMENT)[1:]
+        tokens = self.get_tokens(Token.ARGUMENT)
         return self._join_value(tokens)
 
 
@@ -322,12 +335,21 @@ class Variable(Statement):
 
 
 @Statement.register
-class Name(Statement):
-    type = Token.NAME
+class TestCaseName(Statement):
+    type = Token.TESTCASE_NAME
 
     @property
     def name(self):
-        return self.get_value(Token.NAME)
+        return self.get_value(Token.TESTCASE_NAME)
+
+
+@Statement.register
+class KeywordName(Statement):
+    type = Token.KEYWORD_NAME
+
+    @property
+    def name(self):
+        return self.get_value(Token.KEYWORD_NAME)
 
 
 @Statement.register
@@ -375,11 +397,11 @@ class KeywordCall(Statement):
 
     @property
     def args(self):
-        return tuple(self.get_values(Token.ARGUMENT))
+        return self.get_values(Token.ARGUMENT)
 
     @property
     def assign(self):
-        return tuple(self.get_values(Token.ASSIGN))
+        return self.get_values(Token.ASSIGN)
 
 
 @Statement.register
@@ -397,24 +419,20 @@ class ForLoopHeader(Statement):
 
     @property
     def variables(self):
-        data = self.data_tokens[1:]
-        return tuple(t.value for t in
-                     takewhile(lambda t: t.type != Token.FOR_SEPARATOR, data))
+        return self.get_values(Token.VARIABLE)
 
     @property
     def values(self):
-        data = self.data_tokens[1:]
-        return tuple(t.value for t in
-                     dropwhile(lambda t: t.type != Token.FOR_SEPARATOR, data))[1:]
+        return self.get_values(Token.ARGUMENT)
 
     @property
     def flavor(self):
-        value = self.get_value(Token.FOR_SEPARATOR)
-        return normalize_whitespace(value) if value is not None else None
+        separator = self.get_token(Token.FOR_SEPARATOR)
+        return normalize_whitespace(separator.value) if separator else None
 
     @property
     def _header(self):
-        return self.data_tokens[0].value
+        return self.get_value(Token.FOR)
 
 
 @Statement.register
@@ -423,7 +441,7 @@ class End(Statement):
 
     @property
     def value(self):
-        return self.data_tokens[0].value
+        return self.get_value(Token.END)
 
 
 @Statement.register
@@ -435,10 +453,10 @@ class Comment(Statement):
 class Error(Statement):
     type = Token.ERROR
 
-    @property
-    def error(self):
-        return self.data_tokens[0].error
-
 
 class EmptyLine(Statement):
     type = Token.EOL
+
+    @classmethod
+    def from_value(cls, value):
+        return EmptyLine([Token(Token.EOL, value)])

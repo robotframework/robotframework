@@ -78,7 +78,7 @@ Run tests and check error
     [Arguments]    ${paths}   ${error}
     ${result}=    Run Tests Without Processing Output    ${EMPTY}    ${paths}
     Should be equal    ${result.rc}    ${252}
-    Check Stderr Matches Regexp    \\[ ERROR \\] ${error}${USAGE_TIP}
+    Stderr Should Match Regexp    \\[ ERROR \\] ${error}${USAGE_TIP}
 
 Run tests and check parsing error
     [Arguments]    ${paths}    ${error}    ${path}    ${prefix}=Parsing

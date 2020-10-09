@@ -31,6 +31,7 @@ class Interpreter(object):
         self.name = name
         self.version = version
         self.version_info = tuple(int(item) for item in version.split('.'))
+        self.java_version_info = self._get_java_version_info()
 
     def _get_interpreter(self, path):
         path = path.replace('/', os.sep)
@@ -41,12 +42,27 @@ class Interpreter(object):
             output = subprocess.check_output(self.interpreter + ['-V'],
                                              stderr=subprocess.STDOUT,
                                              encoding='UTF-8')
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            raise ValueError('Invalid interpreter: %s' % self.path)
+        except (subprocess.CalledProcessError, FileNotFoundError) as err:
+            raise ValueError('Failed to get interpreter version: %s' % err)
         name, version = output.split()[:2]
         name = name if 'PyPy' not in output else 'PyPy'
         version = re.match(r'\d+\.\d+\.\d+', version).group()
         return name, version
+
+    def _get_java_version_info(self):
+        if not self.is_jython:
+            return -1, -1
+        try:
+            # platform.java_ver() returns Java version in a format:
+            # ('9.0.7.1', ...) or ('11.0.6', ...) or ('1.8.0_121', ...)
+            script = 'import platform; print(platform.java_ver()[0])'
+            output = subprocess.check_output(self.interpreter + ['-c', script],
+                                             stderr=subprocess.STDOUT,
+                                             encoding='UTF-8')
+        except (subprocess.CalledProcessError, FileNotFoundError) as err:
+            raise ValueError('Failed to get Java version: %s' % err)
+        major, minor = output.strip().split('.', 2)[:2]
+        return int(major), int(minor)
 
     @property
     def os(self):
@@ -87,6 +103,8 @@ class Interpreter(object):
             yield 'require-py2'
         else:
             yield 'require-py3'
+        if self.version_info[:2] == (3, 5):
+            yield 'no-py-3.5'
         if self.version_info < (3, 5):
             yield 'require-py3.5'
         if self.version_info < (3, 7):
@@ -117,6 +135,17 @@ class Interpreter(object):
         return tools_jar
 
     @property
+    def java_opts(self):
+        if not self.is_jython:
+            return None
+        java_opts = os.environ.get('JAVA_OPTS', '')
+        if self.version_info[:3] >= (2, 7, 2) and self.java_version_info[0] >= 9:
+            # https://github.com/jythontools/jython/issues/171
+            if '--add-opens' not in java_opts:
+                java_opts += ' --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED'
+        return java_opts
+
+    @property
     def is_python(self):
         return self.name == 'Python'
 
@@ -131,6 +160,10 @@ class Interpreter(object):
     @property
     def is_pypy(self):
         return self.name == 'PyPy'
+
+    @property
+    def is_standalone(self):
+        return False
 
     @property
     def is_py2(self):
@@ -173,14 +206,17 @@ class Interpreter(object):
         return self.interpreter + [join(ROBOT_PATH, 'tidy.py')]
 
     def __str__(self):
-        return '%s %s on %s' % (self.name, self.version, self.os)
+        java = ''
+        if self.is_jython:
+            java = '(Java %s) ' % '.'.join(str(ver_part) for ver_part in self.java_version_info)
+        return '%s %s %son %s' % (self.name, self.version, java, self.os)
 
 
 class StandaloneInterpreter(Interpreter):
 
     def __init__(self, path, name=None, version=None):
         Interpreter.__init__(self, abspath(path), name or 'Standalone JAR',
-                             version or '2.7')
+                             version or '2.7.2')
 
     def _get_interpreter(self, path):
         interpreter = ['java', '-jar', path]
@@ -189,10 +225,25 @@ class StandaloneInterpreter(Interpreter):
             interpreter.insert(1, '-Xbootclasspath/a:%s' % classpath)
         return interpreter
 
+    def _get_java_version_info(self):
+        result = subprocess.run(self.interpreter + ['--version'],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT,
+                                encoding='UTF-8')
+        if result.returncode != 251:
+            raise ValueError('Failed to get Robot Framework version:\n%s'
+                             % result.stdout)
+        match = re.search(r'Jython .* on java(\d+)\.(\d)', result.stdout)
+        if not match:
+            raise ValueError("Failed to find Java version from '%s'."
+                             % result.stdout)
+        return int(match.group(1)), int(match.group(2))
+
+
     @property
     def excludes(self):
         for exclude in ['no-standalone', 'no-jython', 'require-lxml',
-                        'require-docutils', 'require-ipy']:
+                        'require-docutils', 'require-enum', 'require-ipy']:
             yield exclude
         for exclude in self._platform_excludes:
             yield exclude
@@ -208,6 +259,14 @@ class StandaloneInterpreter(Interpreter):
     @property
     def is_ironpython(self):
         return False
+
+    @property
+    def is_pypy(self):
+        return False
+
+    @property
+    def is_standalone(self):
+        return True
 
     @property
     def runner(self):

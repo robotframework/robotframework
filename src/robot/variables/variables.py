@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_list_like
+from robot.utils import is_list_like, type_name
 
 from .filesetter import VariableFileSetter
 from .finders import VariableFinder
@@ -49,7 +49,8 @@ class Variables(object):
 
     def replace_list(self, items, replace_until=None, ignore_errors=False):
         if not is_list_like(items):
-            raise ValueError("'replace_list' requires list-like input.")
+            raise ValueError("'replace_list' requires list-like input, "
+                             "got %s." % type_name(items))
         return self._replacer.replace_list(items, replace_until, ignore_errors)
 
     def replace_scalar(self, item, ignore_errors=False):

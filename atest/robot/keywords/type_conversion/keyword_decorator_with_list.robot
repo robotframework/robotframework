@@ -17,10 +17,9 @@ Less types than arguments is ok
 
 More types than arguments causes error
     Check Test Case    ${TESTNAME}
-    ${error} =    Catenate
-    ...    Adding keyword 'too_many_types' to library 'KeywordDecoratorWithList' failed:
+    Error In Library    KeywordDecoratorWithList
+    ...    Adding keyword 'too_many_types' failed:
     ...    Type information given to 2 arguments but keyword has only 1 argument.
-    Check Log Message    ${ERRORS[0]}    ${error}    ERROR
 
 Varargs and kwargs
     Check Test Case    ${TESTNAME}

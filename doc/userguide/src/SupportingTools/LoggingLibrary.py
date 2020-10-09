@@ -3,12 +3,7 @@ class LoggingLibrary:
 
     = Table of contents =
 
-    - `Usage`
-    - `Valid log levels`
-    - `Examples`
-    - `Importing`
-    - `Shortcuts`
-    - `Keywords`
+    %TOC%
 
     = Usage =
 
