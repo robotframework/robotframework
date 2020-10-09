@@ -608,7 +608,7 @@ class TestSourceAndLineno(unittest.TestCase):
     def test_class_in_package(self):
         from robot.variables.variables import __file__ as source
         lib = TestLibrary('robot.variables.Variables')
-        self._verify(lib, source, 25)
+        self._verify(lib, source, 24)
 
     def test_dynamic(self):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')

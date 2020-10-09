@@ -122,12 +122,10 @@ class VariableMatch(object):
     # https://github.com/robotframework/robotframework/issues/3487
 
     def is_list_variable(self):
-        return (self.identifier == '@' and self.is_variable()
-                and not self.items)
+        return self.identifier == '@' and self.is_variable()
 
     def is_dict_variable(self):
-        return (self.identifier == '&' and self.is_variable()
-                and not self.items)
+        return self.identifier == '&' and self.is_variable()
 
     def is_assign(self, allow_assign_mark=False):
         if allow_assign_mark and self.string.endswith('='):
@@ -252,11 +250,6 @@ class VariableSearcher(object):
             if self._open_brackets == 0:
                 self.items.append(''.join(self.item_chars))
                 self.item_chars = []
-                # Don't support chained item access with old @ and & syntax.
-                # The old syntax was deprecated in RF 3.2 and in RF 3.3 it'll
-                # be reassigned to mean using item in list/dict context.
-                if self.variable_chars[0] in '@&':
-                    return None
                 return self.waiting_item_state
         elif char == '[' and not self._escaped:
             self._open_brackets += 1
