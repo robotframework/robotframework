@@ -16,11 +16,18 @@ ROOT = join(dirname(abspath(__file__)), '..', '..', '..')
 
 class LibDocLib(object):
 
-    def __init__(self, interpreter):
-        self.libdoc = interpreter.libdoc
-        self.encoding = SYSTEM_ENCODING \
-            if not interpreter.is_ironpython else CONSOLE_ENCODING
+    def __init__(self, interpreter=None):
+        self.interpreter = interpreter
         self.schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.02.xsd'))
+
+    @property
+    def libdoc(self):
+        return self.interpreter.libdoc
+
+    @property
+    def encoding(self):
+        return SYSTEM_ENCODING \
+                if not self.interpreter.is_ironpython else CONSOLE_ENCODING
 
     def run_libdoc(self, args):
         cmd = self.libdoc + self._split_args(args)
