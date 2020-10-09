@@ -66,5 +66,8 @@ List expansion fails if value is not list-like
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
 
-Syntax with `@` doesn't support slicing syntax
+List expansion with slice
+    Check Test Case    ${TESTNAME}
+
+List expansion with slice fails if value is not list-like
     Check Test Case    ${TESTNAME}

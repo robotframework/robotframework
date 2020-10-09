@@ -170,13 +170,15 @@ List expansion fails if value is not list-like 2
     [Documentation]    FAIL Value of variable '\@{NESTED}[1][0]' is not list or list-like.
     Log Many    @{NESTED}[1][0]
 
-Syntax with `@` doesn't support slicing syntax
-    # FIXME: This should actually work.
-    [Documentation]    Slicing support should be added when `@{list}[index]` changes.
-    ...                FAIL List '\@{LIST}' used with invalid index '1:'. \
-    ...                To use '[1:]' as a literal value, it needs to be \
-    ...                escaped like '\\[1:]'.
-    Log    @{LIST}[1:]
+List expansion with slice
+    ${result} =    Catenate    @{LIST}[7:]    -    @{LIST}[:${3}]    -    @{LIST}[8:2:-3]
+    Should Be Equal    ${result}    H I J K - A B C - I F
+    ${result} =    Catenate    @{NESTED}[0][1:]    -    @{NESTED}[:][${-1}][::][${99}:-99:-2][:99:1]
+    Should Be Equal    ${result}    b c - 3 1
+
+List expansion with slice fails if value is not list-like
+    [Documentation]    FAIL Value of variable '\@{STRING}[1:]' is not list or list-like.
+    Log Many    @{STRING}[1:]
 
 *** Keywords ***
 Valid index
@@ -211,6 +213,8 @@ Slicing
     Should Be Equal    ${sequence}[1:-1:2]    ${sequence[1:-1:2]}
     Should Be Equal    ${sequence}[:]         ${sequence}
     Should Be Equal    ${sequence}[::]        ${sequence}
+    Should Be Equal    ${sequence}[:][1:]     ${sequence[1:]}
+    Should Be Equal    ${sequence}[:][::]     ${sequence}
     Should Be Empty    ${sequence}[100:]
 
 Slicing with variable

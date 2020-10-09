@@ -158,7 +158,7 @@ class VariableReplacer(object):
     def _get_sequence_variable_item(self, name, variable, index):
         index = self.replace_string(index)
         try:
-            index = self._parse_sequence_variable_index(index, name[0] == '$')
+            index = self._parse_sequence_variable_index(index)
         except ValueError:
             raise VariableError("%s '%s' used with invalid index '%s'. "
                                 "To use '[%s]' as a literal value, it needs "
@@ -172,10 +172,10 @@ class VariableReplacer(object):
                                 % (type_name(variable, capitalize=True), name,
                                    index))
 
-    def _parse_sequence_variable_index(self, index, support_slice=True):
+    def _parse_sequence_variable_index(self, index):
         if ':' not in index:
             return int(index)
-        if index.count(':') > 2 or not support_slice:
+        if index.count(':') > 2:
             raise ValueError
         return slice(*[int(i) if i else None for i in index.split(':')])
 
