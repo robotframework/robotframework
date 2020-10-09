@@ -53,20 +53,8 @@ Non-dict variable
 Sanity check
     Check Test Case    ${TESTNAME}
 
-Old syntax with `&` still works but is deprecated
-    [Documentation]    `${dict}[key]` and `&{dict}[key]` work same way still.
-    ...                In the future latter is deprecated and then changed.
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Old item access syntax is deprecated    ${tc.kws[0].msgs[0]}    \&{DICT}[A]
-    Old item access syntax is deprecated    ${ERRORS[0]}            \&{DICT}[A]
-    Old item access syntax is deprecated    ${tc.kws[1].msgs[0]}    \&{DICT}[\${1}]
-    Old item access syntax is deprecated    ${ERRORS[1]}            \&{DICT}[\${1}]
-    Old item access syntax is deprecated    ${tc.kws[2].msgs[0]}    \&{DICT}[nonex]
-    Old item access syntax is deprecated    ${ERRORS[2]}            \&{DICT}[nonex]
+Dict expansion using `&` syntax
+    Check Test Case    ${TESTNAME}
 
-*** Keywords ***
-Old item access syntax is deprecated
-    [Arguments]    ${msg}    ${deprecated}
-    Check log message    ${msg}
-    ...    Accessing variable items using '${deprecated}' syntax is deprecated. Use '$${deprecated[1:]}' instead.
-    ...    WARN
+Dict expansion fails if value is not dict-like
+    Check Test Case    ${TESTNAME}

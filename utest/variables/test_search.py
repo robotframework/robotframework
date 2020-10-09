@@ -156,7 +156,7 @@ class TestSearchVariable(unittest.TestCase):
             self._test(inp, ignore_errors=True)
         self._test('[${var}[i]][', '${var}', start=1, items='i')
 
-    def test_old_list_and_dict_item_syntax(self):
+    def test_nested_list_and_dict_item_syntax(self):
         self._test('@{x}[0]', '@{x}', items='0')
         self._test('&{x}[key]', '&{x}', items='key')
 
@@ -223,14 +223,13 @@ class TestSearchVariable(unittest.TestCase):
             base = variable[2:-1]
             end = start + len(variable)
             is_var = inp == variable
-            is_scal_var = is_var and inp[0] == '$'
-            is_list_var = is_var and inp[0] == '@'
-            is_dict_var = is_var and inp[0] == '&'
             if items:
                 items_str = ''.join('[%s]' % i for i in items)
                 end += len(items_str)
                 is_var = inp == '%s%s' % (variable, items_str)
-                is_scal_var = is_var and inp[0] == '$'
+            is_list_var = is_var and inp[0] == '@'
+            is_dict_var = is_var and inp[0] == '&'
+            is_scal_var = is_var and inp[0] == '$'
         match = search_variable(inp, identifiers, ignore_errors)
         assert_equal(match.base, base, '%r base' % inp)
         assert_equal(match.start, start, '%r start' % inp)
@@ -255,15 +254,19 @@ class TestSearchVariable(unittest.TestCase):
 
     def test_is_list_variable(self):
         for no in ['', 'xxx', '@{var} not alone', r'\@{notvar}', r'\\@{var}',
-                   '@{var}xx}', '@{x}@{y}', '${scalar}', '&{dict}', '@{x}[0]']:
+                   '@{var}xx}', '@{x}@{y}', '${scalar}', '&{dict}']:
             assert_false(search_variable(no).is_list_variable())
         assert_true(search_variable('@{list}').is_list_variable())
+        assert_true(search_variable('@{x}[0]').is_list_variable())
+        assert_true(search_variable('@{grandpa}[mother][child]').is_list_variable())
 
     def test_is_dict_variable(self):
         for no in ['', 'xxx', '&{var} not alone', r'\@{notvar}', r'\\&{var}',
-                   '&{var}xx}', '&{x}&{y}', '${scalar}', '@{list}', '&{x}[k]']:
+                   '&{var}xx}', '&{x}&{y}', '${scalar}', '@{list}']:
             assert_false(search_variable(no).is_dict_variable())
         assert_true(search_variable('&{dict}').is_dict_variable())
+        assert_true(search_variable('&{yzy}[afa]').is_dict_variable())
+        assert_true(search_variable('&{x}[k][foo][bar][1]').is_dict_variable())
 
 
 class TestVariableIterator(unittest.TestCase):
