@@ -97,7 +97,10 @@ class Runner(SuiteVisitor):
         with self._context.suite_teardown():
             failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
             if failure:
-                self._suite.suite_teardown_failed(unic(failure))
+                if failure.skip:
+                    self._suite.suite_teardown_skipped(unic(failure))
+                else:
+                    self._suite.suite_teardown_failed(unic(failure))
                 self._suite_status.failure_occurred()
         self._suite.endtime = get_timestamp()
         self._suite.message = self._suite_status.message
@@ -198,9 +201,11 @@ class Runner(SuiteVisitor):
             status.teardown_executed(exception)
             failed = exception and not isinstance(exception, PassExecution)
             if result and exception:
-                if failed or not result.passed:
+                if failed or status.skipped or exception.skip:
                     result.message = status.message
                 else:
+                    # Pass execution used in teardown,
+                    # and it overrides previous failure message
                     result.message = exception.message
             return exception if failed else None
 
