@@ -325,6 +325,10 @@ class TestSuite(model.TestSuite):
         """Internal usage only."""
         self.visit(SuiteTeardownFailureHandler())
 
-    def suite_teardown_failed(self, message):
+    def suite_teardown_failed(self, error):
         """Internal usage only."""
-        self.visit(SuiteTeardownFailed(message))
+        self.visit(SuiteTeardownFailed(error))
+
+    def suite_teardown_skipped(self, message):
+        """Internal usage only."""
+        self.visit(SuiteTeardownFailed(message, skipped=True))

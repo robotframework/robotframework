@@ -64,6 +64,12 @@ Skip in Suite Setup
 Skip in Directory Suite Setup
     Check Test Case    ${TEST NAME}
 
+Skip In Suite Teardown
+    Check Test Case    ${TEST NAME}
+
+Skip In Directory Suite Teardown
+    Check Test Case    ${TEST NAME}
+
 Skipped with --skip
     Check Test Case    ${TEST NAME}
 
