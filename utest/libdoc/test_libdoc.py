@@ -58,13 +58,18 @@ class TestKeywordDoc(unittest.TestCase):
     def test_shortdoc_with_multiline_plain_text(self):
         doc = """Writes the message to the console.
 
-If the ``newline`` argument is ``True``, a newline character is
-automatically added to the message.
+    If the ``newline`` argument is ``True``, a newline character is
+    automatically added to the message.
 
-By default the message is written to the standard output stream.
-Using the standard error stream is possibly by giving the ``stream``
-argument value ``'stderr'``."""
+    By default the message is written to the standard output stream.
+    Using the standard error stream is possibly by giving the ``stream``
+    argument value ``'stderr'``."""
         exp = "Writes the message to the console."
+        verify_keyword_shortdoc('TEXT', doc, exp)
+
+    def test_shortdoc_with_empty_plain_text(self):
+        doc = ""
+        exp = ""
         verify_keyword_shortdoc('TEXT', doc, exp)
 
     def test_shortdoc_with_multiline_robot_format(self):
@@ -81,6 +86,11 @@ argument value ``'stderr'``."""
         exp = "Writes the *message* to _the_ ``console``."
         verify_keyword_shortdoc('ROBOT', doc, exp)
 
+    def test_shortdoc_with_empty_robot_format(self):
+        doc = ""
+        exp = ""
+        verify_keyword_shortdoc('ROBOT', doc, exp)
+
     def test_shortdoc_with_multiline_HTML_format(self):
         doc = """<p><strong>Writes</strong><br><em>the</em> <b>message</b>
 to <i>the</i> <code>console</code>.<br><br>
@@ -91,3 +101,42 @@ Using the standard error stream is possibly by giving the <code>stream</code>
 argument value ``'stderr'``."""
         exp = "*Writes* _the_ *message* to _the_ ``console``."
         verify_keyword_shortdoc('HTML', doc, exp)
+
+    def test_shortdoc_with_nonclosing_p_HTML_format(self):
+        doc = """<p><strong>Writes</strong><br><em>the</em> <b>message</b>
+to <i>the</i> <code>console</code>.<br><br>
+If the <code>newline</code> argument is <code>True</code>, a newline character is
+automatically added to the message.
+<p>By default the message is written to the standard output stream.
+Using the standard error stream is possibly by giving the <code>stream</code>
+argument value ``'stderr'``."""
+        exp = "*Writes* _the_ *message* to _the_ ``console``."
+        verify_keyword_shortdoc('HTML', doc, exp)
+
+    def test_shortdoc_with_empty_HTML_format(self):
+        doc = ""
+        exp = ""
+        verify_keyword_shortdoc('HTML', doc, exp)
+
+    try:
+        from docutils.core import publish_parts
+        def test_shortdoc_with_multiline_reST_format(self):
+
+            doc = """Writes the **message**
+to *the* console.
+
+If the ``newline`` argument is ``True``, a newline character is
+automatically added to the message.
+
+By default the message is written to the standard output stream.
+Using the standard error stream is possibly by giving the ``stream``
+argument value ``'stderr'``."""
+            exp = "Writes the *message* to _the_ console."
+            verify_keyword_shortdoc('REST', doc, exp)
+
+        def test_shortdoc_with_empty_reST_format(self):
+            doc = ""
+            exp = ""
+            verify_keyword_shortdoc('REST', doc, exp)
+    except ImportError:
+        pass
