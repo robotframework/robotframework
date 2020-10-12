@@ -164,8 +164,9 @@ class TestStatus(_ExecutionStatus):
         if hasattr(failure, 'skip') and failure.skip:
             self.test_skipped(failure)
         elif self._skip_on_failure:
-            msg = ("%s skipped with --SkipOnFailure, original error:\n%s"
-                  % (test_or_task('{Test}', self._rpa) ,unic(failure)))
+            msg = ("%s failed but its tags matched '--SkipOnFailure' and it was "
+                   "marked skipped.\n\nOriginal failure:\n%s"
+                   % (test_or_task('{Test}', self._rpa), unic(failure)))
             self.failure.test = msg
             self.skipped = True
         else:
