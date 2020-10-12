@@ -206,7 +206,9 @@ class ExecutionFailures(ExecutionFailed):
             skip_idx = errors.index([e for e in errors if e.skip][0])
             skip_msg = messages[skip_idx]
             messages = messages[:skip_idx] + messages[skip_idx+1:]
-            prefix = '%s\n\nAlso failures occurred' % skip_msg
+            if len(messages) == 1:
+                return '%s\n\nAlso failure occurred:\n%s' % (skip_msg, messages[0])
+            prefix = '%s\n\nAlso failures occurred:' % skip_msg
         return '\n\n'.join(
             [prefix] +
             ['%d) %s' % (i, m) for i, m in enumerate(messages, start=1)]

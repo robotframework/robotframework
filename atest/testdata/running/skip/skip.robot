@@ -18,15 +18,17 @@ Skip with Library Keyword
 Skip If Keyword with True Condition
     [Documentation]    SKIP 1 == 1
     Skip If    1 == 1
+    Fail    Should not be executed!
 
 Skip If Keyword with True Condition And Custom Message
     [Documentation]    SKIP Skipped with abandon.
     Skip If    1 == 1    Skipped with abandon.
+    Fail    Should not be executed!
 
 Skip If Keyword with False Condition
-    [Documentation]    FAIL AssertionError
+    [Documentation]    FAIL Should be executed!
     Skip If    1 == 2
-    Fail
+    Fail    Should be executed!
 
 Skip Keyword with Custom Message
     [Documentation]    SKIP Skipped due to reasons
@@ -54,7 +56,12 @@ Remaining teardown keywords aren't run after skip
     [Teardown]    Skip with keywords before and after
 
 Skip in Teardown After Failure In Body
-    [Documentation]    SKIP Skipped in teardown:\nTeardown skip\n\nEarlier message:\nFailure in body!
+    [Documentation]    SKIP
+    ...    Skipped in teardown:
+    ...    Teardown skip
+    ...
+    ...    Earlier message:
+    ...    Failure in body!
     Fail    Failure in body!
     [Teardown]    Skip    Teardown skip
 
@@ -64,26 +71,62 @@ Teardown is executed after skip
     [Teardown]    Log    Teardown is executed!
 
 Fail in Teardown After Skip In Body
-    [Documentation]    SKIP Skip in body\n\nAlso teardown failed:\nTeardown failed!
+    [Documentation]    SKIP
+    ...    Skip in body
+    ...
+    ...    Also teardown failed:
+    ...    Teardown failed!
     Skip    Skip in body
     [Teardown]    Fail    Teardown failed!
 
 Skip in Teardown After Skip In Body
-    [Documentation]    SKIP Skipped in teardown:\nTeardown skip\n\nEarlier message:\nSkip in body
+    [Documentation]    SKIP
+    ...    Skipped in teardown:
+    ...    Teardown skip
+    ...
+    ...    Earlier message:
+    ...    Skip in body
     Skip    Skip in body
     [Teardown]    Skip    Teardown skip
 
-Skip with Continuable Failures
-    [Documentation]    SKIP Skipping should stop execution but test should still fail\n\nAlso failures occurred\n\n1) We can continue!\n\n2) We can continue again!
+Skip with Continuable Failure
+    [Documentation]    SKIP
+    ...    Skipping should stop execution but test should still fail
+    ...
+    ...    Also failure occurred:
+    ...    We can continue!
+    Run Keyword And Continue On Failure
+    ...    Fail    We can continue!
+    Skip    Skipping should stop execution but test should still fail
+    Fail    Should not be executed!
+
+Skip with Multiple Continuable Failures
+    [Documentation]    SKIP
+    ...    Skip after two failures
+    ...
+    ...    Also failures occurred:
+    ...
+    ...    1) We can continue!
+    ...
+    ...    2) We can continue again!
     Run Keyword And Continue On Failure
     ...    Fail    We can continue!
     Run Keyword And Continue On Failure
     ...    Fail    We can continue again!
-    Skip    Skipping should stop execution but test should still fail
+    Skip    Skip after two failures
     Fail    Should not be executed!
 
 Skip in Teardown After Continuable Failures
-    [Documentation]    SKIP Skipped in teardown:\nTeardown skip\n\nEarlier message:\nSeveral failures occurred:\n\n1) We can continue!\n\n2) We can continue again!
+    [Documentation]    SKIP
+    ...    Skipped in teardown:
+    ...    Teardown skip
+    ...
+    ...    Earlier message:
+    ...    Several failures occurred:
+    ...
+    ...    1) We can continue!
+    ...
+    ...    2) We can continue again!
     Run Keyword And Continue On Failure
     ...    Fail    We can continue!
     Run Keyword And Continue On Failure
@@ -92,32 +135,43 @@ Skip in Teardown After Continuable Failures
 
 Skip with Pass Execution in Teardown
     [Documentation]    SKIP Skip in body
-    [Teardown]   Pass Execution  Thou shall pass
-    Skip  Skip in body
+    Skip    Skip in body
+    [Teardown]    Run Keywords
+    ...    Pass Execution    Thou shall pass
+    ...    AND
+    ...    Fail    Should not be executed!
 
 Skip in Teardown with Pass Execution in Body
     [Documentation]    SKIP Then we skip
+    Pass Execution    First we pass
     [Teardown]    Skip  Then we skip
-    Pass Execution  First we pass
 
 Skipped with --skip
-    [Tags]   skip-this
-    [Documentation]    SKIP ${TEST_OR_TASK} skipped with --skip command line option.
+    [Documentation]    SKIP ${TEST_OR_TASK} skipped with '--skip' command line option.
+    [Tags]    skip-this
     Fail
 
 Skipped with --SkipOnFailure
-    [Tags]   skip-on-failure
-    [Documentation]    SKIP ${TEST_OR_TASK} skipped with --SkipOnFailure, original error:\nAssertionError
-    Fail
+    [Documentation]    SKIP
+    ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
+    ...
+    ...    Original failure:
+    ...    Ooops, we fail!
+    [Tags]    skip-on-failure
+    Fail    Ooops, we fail!
 
 --NonCritical Is an Alias for --SkipOnFailure
-    [Tags]   non-crit
-    [Documentation]    SKIP ${TEST_OR_TASK} skipped with --SkipOnFailure, original error:\nAssertionError
+    [Documentation]    SKIP
+    ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
+    ...
+    ...    Original failure:
+    ...    AssertionError
+    [Tags]    non-crit
     Fail
 
 --Critical can be used to override --SkipOnFailure
-    [Tags]   dynamic-skip    crit
     [Documentation]    FAIL AssertionError
+    [Tags]    dynamic-skip    crit
     Fail
 
 Failing Test

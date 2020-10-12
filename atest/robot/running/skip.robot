@@ -46,7 +46,10 @@ Fail in Teardown After Skip In Body
 Skip in Teardown After Skip In Body
     Check Test Case    ${TEST NAME}
 
-Skip with Continuable Failures
+Skip with Continuable Failure
+    Check Test Case    ${TEST NAME}
+
+Skip with Multiple Continuable Failures
     Check Test Case    ${TEST NAME}
 
 Skip with Pass Execution in Teardown

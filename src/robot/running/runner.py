@@ -131,7 +131,7 @@ class Runner(SuiteVisitor):
         if self._skipped_tags.match(test.tags):
             status.test_skipped(
                 test_or_task(
-                    "{Test} skipped with --skip command line option.",
+                    "{Test} skipped with '--skip' command line option.",
                     self._settings.rpa))
         if not status.failed and not test.name:
             status.test_failed(
