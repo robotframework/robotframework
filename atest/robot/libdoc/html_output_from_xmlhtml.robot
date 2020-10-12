@@ -11,8 +11,6 @@ Run Libdoc to XML:HTML and to HTML and Parse Models
     Set Suite Variable    ${XML-MODEL}    ${MODEL}
     Run Libdoc And Parse Model From HTML    ${library_path}
 
-*** Comments ***
-This test suite will be changed with one of the next Tasks to contain a check for the roundtrip from library into XML then from XML to html.
 *** Test Cases ***
 Name
     ${XML-MODEL}[name]    ${MODEL}[name]
