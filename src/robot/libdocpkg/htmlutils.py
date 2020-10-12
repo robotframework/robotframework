@@ -92,18 +92,16 @@ class DocToHtml(object):
 
 
 class HtmlToText(object):
-
     html_tags = {
         'b': '*',
         'i': '_',
         'strong': '*',
         'em': '_',
-        'code': '``'
+        'code': '``',
+        'div.*?': ''
     }
-
-    single_chars = {
-        '<br>': '\n',
-        '<br/>': '\n',
+    html_chars = {
+        '<br */?>': '\n',
         '&amp;': '&',
         '&lt;': '<',
         '&gt;': '>',
@@ -112,7 +110,7 @@ class HtmlToText(object):
     }
 
     def get_shortdoc_from_html(self, doc):
-        match = re.search(r'<p.*?>(.*?)</p>', doc, re.DOTALL)
+        match = re.search(r'<p.*?>(.*?)</?p>', doc, re.DOTALL)
         if match:
             doc = match.group(1)
         doc = self.html_to_plain_text(doc)
@@ -120,8 +118,9 @@ class HtmlToText(object):
 
     def html_to_plain_text(self, doc):
         for tag, repl in self.html_tags.items():
-            doc = re.sub('(<%(tag)s>)(.*?)(</%(tag)s>)' % {'tag': tag},
-                         lambda m: repl + m.group(2) + repl, doc, flags=re.DOTALL)
-        doc = re.sub("|".join(map(re.escape, self.single_chars.keys())),
-                     lambda match: self.single_chars[match.group(0)], doc)
+            doc = re.sub(r'<%(tag)s>(.*?)</%(tag)s>' % {'tag': tag},
+                         r'%(repl)s\1%(repl)s' % {'repl': repl}, doc,
+                         flags=re.DOTALL)
+        for html, text in self.html_chars.items():
+            doc = re.sub(html, text, doc)
         return doc
