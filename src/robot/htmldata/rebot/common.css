@@ -80,7 +80,7 @@ h2 {
     color: #393 !important;
 }
 .skip {
-    color: #ec971f !important;
+    color: #fed84f !important;
     font-weight: bold;
 }
 .label {
@@ -93,7 +93,7 @@ h2 {
     border-radius: 3px;
 }
 .label.skip {
-    background-color: #ec971f;
+    background-color: #fed84f;
     color: white !important;
 }
 .label.debug, .label.trace, .label.error, .label.keyword {
@@ -104,13 +104,13 @@ h2 {
     font-weight: bold;
 }
 .label.error, .label.fail {
-    background-color: #d9534f;
+    background-color: #ee5919;
 }
 .label.pass {
-    background-color: #5cb85c;
+    background-color: #97bd61;
 }
 .label.warn {
-    background-color: #ec971f;
+    background-color: #b62109;
 }
 /* Top right header */
 #top-right-header {
@@ -206,13 +206,13 @@ th.stats-col-graph:hover {
     height: 100%;
 }
 .fail-bar {
-    background: #f33;
+    background: #ee5919;
 }
 .pass-bar {
-    background: #1d4;
+    background: #97bd61;
 }
 .skip-bar {
-    background:  #ec971f;
+    background:  #fed84f;
 }
 /* Tablesorter - adapted from provided Blue Skin */
 .tablesorter-header {
