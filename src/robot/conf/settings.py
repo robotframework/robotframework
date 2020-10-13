@@ -54,7 +54,7 @@ class _BaseSettings(object):
                  'LogTitle'         : ('logtitle', None),
                  'ReportTitle'      : ('reporttitle', None),
                  'ReportBackground' : ('reportbackground',
-                                       ('#9e9', '#f66', '#ec971f')),
+                                       ('#9e9', '#f66', '#fed84f')),
                  'SuiteStatLevel'   : ('suitestatlevel', -1),
                  'TagStatInclude'   : ('tagstatinclude', []),
                  'TagStatExclude'   : ('tagstatexclude', []),
@@ -245,7 +245,7 @@ class _BaseSettings(object):
             raise DataError("Invalid report background colors '%s'." % colors)
         colors = colors.split(':')
         if len(colors) == 2:
-            return colors[0], colors[1], '#ec971f'
+            return colors[0], colors[1], '#fed84f'
         return tuple(colors)
 
     def _process_tag_stat_combine(self, pattern):
