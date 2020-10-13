@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 import re
-
 try:
     from urllib import quote
 except ImportError:
@@ -37,8 +36,7 @@ class LibdocModelWriter(ModelWriter):
 
     def __init__(self, output, libdoc):
         self._output = output
-        formatter = DocFormatter(libdoc.keywords, libdoc.doc,
-                                 libdoc.doc_format)
+        formatter = DocFormatter(libdoc.keywords, libdoc.doc, libdoc.doc_format)
         self._libdoc = JsonConverter(formatter).convert(libdoc)
 
     def write(self, line):
@@ -115,9 +113,8 @@ class DocFormatter(object):
                 yield match.group(2)
 
     def _escape_and_encode_targets(self, targets):
-        return NormalizedDict(
-            (html_escape(key), self._encode_uri_component(value))
-            for key, value in targets.items())
+        return NormalizedDict((html_escape(key), self._encode_uri_component(value))
+                              for key, value in targets.items())
 
     def _encode_uri_component(self, value):
         # Emulates encodeURIComponent javascript function
@@ -132,8 +129,7 @@ class DocFormatter(object):
     def _link_keywords(self, match):
         name = match.group(1)
         if name in self._targets:
-            return '<a href="#%s" class="name">%s</a>' % (
-            self._targets[name], name)
+            return '<a href="#%s" class="name">%s</a>' % (self._targets[name], name)
         return '<span class="name">%s</span>' % name
 
 
@@ -158,8 +154,7 @@ class DocToHtml(object):
         try:
             from docutils.core import publish_parts
         except ImportError:
-            raise DataError(
-                "reST format requires 'docutils' module to be installed.")
+            raise DataError("reST format requires 'docutils' module to be installed.")
         parts = publish_parts(doc, writer_name='html',
                               settings_overrides={'syntax_highlight': 'short'})
         return parts['html_body']
