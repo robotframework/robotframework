@@ -1,20 +1,19 @@
 *** Settings ***
-Suite Teardown  Run Keyword And Warn On Failure  Fail  Expected Warn From Suite Teardown
+Suite Teardown    Run Keyword And Warn On Failure    Fail    Expected Warn From Suite Teardown
 
 *** Test Cases ***
-
 Run Keyword And Warn On Failure
-    [Documentation]  PASS
-    Run Keyword And Warn On Failure  FAIL  Expected Warn
+    [Documentation]    PASS
+    Run Keyword And Warn On Failure    FAIL    Expected Warn
     Log    This should be executed
 
 Run Keyword And Warn On Failure For Keyword Teardown
-    [Documentation]  PASS
+    [Documentation]    PASS
     Run Keyword And Warn On Failure    User Keyword With Failing Teardown
-    Log  This Should Be Executed
+    Log    This Should Be Executed
 
 Run User keyword And Warn On Failure
-    [Documentation]  PASS
+    [Documentation]    PASS
     Run keyword And Warn On Failure    Exception In User Defined Keyword
     Log    This should be executed
 
@@ -24,9 +23,9 @@ Run Keyword And Warn On Failure With Syntax Error
     Fail    This Should Not Be Executed!
 
 Run Keyword And Warn On Failure With Failure On Test Teardown
-    [Documentation]  PASS
-    [Teardown]  Run Keyword And Warn On Failure  Fail    Expected Warn From Test Teardown
-    Log  This should Be Executed
+    [Documentation]    PASS
+    [Teardown]    Run Keyword And Warn On Failure    Fail    Expected Warn From Test Teardown
+    Log    This should Be Executed
 
 Run Keyword And Warn On Failure With Timeout
     [Documentation]    FAIL    Test timeout 100 milliseconds exceeded.
