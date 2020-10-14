@@ -90,9 +90,10 @@ class JsonLogger(ResultVisitor):
 
     def start_keyword(self, kw):
         # If there is an "open" keyword, this will be placed inside its keywords
-        if self._current_keyword:
-            # Push this onto the stack
-            self._item_stack.append(self._current_keyword)
+        if self._current_item == 'keyword':
+            if self._current_keyword:
+                # Push this onto the stack
+                self._item_stack.append(self._current_keyword)
         # If there is no current test then the destination will be the suite
         elif not self._current_test:
             self._current_item = 'suite'
@@ -141,7 +142,10 @@ class JsonLogger(ResultVisitor):
             parent_item['kw'] = list()
         parent_item['kw'].append(self._current_keyword)
         self._current_keyword = None
-        self._current_item = ''
+        if destination == 'keyword':
+            self._current_item = destination
+        else:
+            self._current_item = ''
 
     def start_test(self, test):
         self._current_test = {

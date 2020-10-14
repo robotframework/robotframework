@@ -101,7 +101,7 @@ def parse_keyword(keyword_element, result):
             keyword.args = list()
         keyword.args.append(arg)
     for assign in keyword_element.get('assign', []):
-        keyword.assign += assign
+        keyword.assign += (assign or '',)
     for tag in keyword_element.get('tags', []):
         keyword.tags.add(tag)
     for element in keyword_element.get('msgs', []):
