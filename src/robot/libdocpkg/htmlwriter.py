@@ -75,7 +75,7 @@ class JsonConverter(object):
             'name': kw.name,
             'args': kw.args,
             'doc': self._doc_formatter.html(kw.doc),
-            'shortdoc': ' '.join(kw.shortdoc.splitlines()),
+            'shortdoc': kw.shortdoc,
             'tags': tuple(kw.tags),
             'matched': True
         }
@@ -142,16 +142,13 @@ class DocToHtml(object):
         try:
             return {'ROBOT': html_format,
                     'TEXT': self._format_text,
-                    'HTML': self._format_html,
+                    'HTML': lambda doc: doc,
                     'REST': self._format_rest}[doc_format]
         except KeyError:
             raise DataError("Invalid documentation format '%s'." % doc_format)
 
     def _format_text(self, doc):
         return '<p style="white-space: pre-wrap">%s</p>' % html_escape(doc)
-
-    def _format_html(self, doc):
-        return '<div style="margin: 0">%s</div>' % doc
 
     def _format_rest(self, doc):
         try:
@@ -160,7 +157,42 @@ class DocToHtml(object):
             raise DataError("reST format requires 'docutils' module to be installed.")
         parts = publish_parts(doc, writer_name='html',
                               settings_overrides={'syntax_highlight': 'short'})
-        return self._format_html(parts['html_body'])
+        return parts['html_body']
 
     def __call__(self, doc):
         return self._formatter(doc)
+
+
+class HtmlToText(object):
+    html_tags = {
+        'b': '*',
+        'i': '_',
+        'strong': '*',
+        'em': '_',
+        'code': '``',
+        'div.*?': ''
+    }
+    html_chars = {
+        '<br */?>': '\n',
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&apos;': "'"
+    }
+
+    def get_shortdoc_from_html(self, doc):
+        match = re.search(r'<p.*?>(.*?)</?p>', doc, re.DOTALL)
+        if match:
+            doc = match.group(1)
+        doc = self.html_to_plain_text(doc)
+        return doc
+
+    def html_to_plain_text(self, doc):
+        for tag, repl in self.html_tags.items():
+            doc = re.sub(r'<%(tag)s>(.*?)</%(tag)s>' % {'tag': tag},
+                         r'%(repl)s\1%(repl)s' % {'repl': repl}, doc,
+                         flags=re.DOTALL)
+        for html, text in self.html_chars.items():
+            doc = re.sub(html, text, doc)
+        return doc

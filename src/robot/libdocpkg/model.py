@@ -19,6 +19,7 @@ import re
 from robot.model import Tags
 from robot.utils import getshortdoc, Sortable, setter
 
+from .htmlwriter import HtmlToText
 from .writer import LibdocWriter
 from .output import LibdocOutput
 
@@ -63,7 +64,16 @@ class LibraryDoc(object):
         return format or 'ROBOT'
 
     @setter
+    def inits(self, inits):
+        return self._add_parent(inits)
+
+    @setter
     def keywords(self, kws):
+        return self._add_parent(kws)
+
+    def _add_parent(self, kws):
+        for keyword in kws:
+            keyword.parent = self
         return sorted(kws)
 
     @property
@@ -78,17 +88,21 @@ class LibraryDoc(object):
 class KeywordDoc(Sortable):
 
     def __init__(self, name='', args=(), doc='', tags=(), source=None,
-                 lineno=-1):
+                 lineno=-1, parent=None):
         self.name = name
         self.args = args
         self.doc = doc
         self.tags = Tags(tags)
         self.source = source
         self.lineno = lineno
+        self.parent = parent
 
     @property
     def shortdoc(self):
-        return getshortdoc(self.doc)
+        doc = self.doc
+        if self.parent and self.parent.doc_format == 'HTML':
+            doc = HtmlToText().get_shortdoc_from_html(doc)
+        return ' '.join(getshortdoc(doc).splitlines())
 
     @property
     def deprecated(self):
