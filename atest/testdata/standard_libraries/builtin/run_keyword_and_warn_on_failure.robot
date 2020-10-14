@@ -9,7 +9,7 @@ Run Keyword And Warn On Failure
 
 Run Keyword And Warn On Failure For Keyword Teardown
     [Documentation]    PASS
-    Run Keyword And Warn On Failure    User Keyword With Failing Teardown
+    Run Keyword And Warn On Failure    Failing Keyword Teardown
     Log    This Should Be Executed
 
 Run User keyword And Warn On Failure
@@ -24,7 +24,7 @@ Run Keyword And Warn On Failure With Syntax Error
 
 Run Keyword And Warn On Failure With Failure On Test Teardown
     [Documentation]    PASS
-    [Teardown]    Run Keyword And Warn On Failure    Fail    Expected Warn From Test Teardown
+    [Teardown]    Run Keyword And Warn On Failure    Should Be Equal    x    y
     Log    This should Be Executed
 
 Run Keyword And Warn On Failure With Timeout
@@ -34,9 +34,9 @@ Run Keyword And Warn On Failure With Timeout
     Fail    This Should Not Be Executed!
 
 *** Keywords ***
-User Keyword With Failing Teardown
+Failing Keyword Teardown
     No Operation
-    [Teardown]    Fail    Expected Warn From User Keyword Teardown
+    [Teardown]    Fail    Expected
 
 Exception In User Defined Keyword
     Fail    Expected Warn In User Keyword
