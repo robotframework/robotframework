@@ -29,10 +29,8 @@ class LibdocXmlWriter(object):
             libdoc.convert_doc_to_html()
         writer = XmlWriter(outfile, usage='Libdoc spec')
         self._write_start(libdoc, writer)
-        self._write_keywords('init', libdoc.inits, libdoc.source,
-                             writer)
-        self._write_keywords('kw', libdoc.keywords, libdoc.source,
-                             writer)
+        self._write_keywords('init', libdoc.inits, libdoc.source, writer)
+        self._write_keywords('kw', libdoc.keywords, libdoc.source, writer)
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer):
