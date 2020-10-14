@@ -191,6 +191,13 @@ terminated immediately. Though, using these keywords for this purpose
 often adds extra complexity to test cases, so the following features are
 worth considering to make continuing after failures easier.
 
+:name:`Run Keyword And Warn On Failure`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+BuiltIn_ keyword :name:`Run Keyword And Warn On Failure` handles failure
+similar to :name:`Run Keyword And Ignore Error` in the sense that test
+execution is not terminated immediately, but will report failures as a
+warning message.
+
 Special failures from keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
