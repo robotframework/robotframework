@@ -79,6 +79,12 @@ class TypeConverter(object):
         for converter in cls._converters.values():
             if converter.handles(type_):
                 return converter.get_converter(type_)
+        if 'from_string' in dir(type_):
+            class DynamicConverter(TypeConverter):
+                type = type_
+                def _convert(self, value, explicit_type=True):
+                    return getattr(type_, 'from_string')(value)
+            return DynamicConverter()
         return None
 
     def handles(self, type_):

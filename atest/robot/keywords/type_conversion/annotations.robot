@@ -28,6 +28,12 @@ Real (abc)
 Invalid real (abc)
     Check Test Case    ${TESTNAME}
 
+Custom conversion
+    Check Test Case    ${TESTNAME}
+
+Invalid custom conversion
+    Check Test Case    ${TESTNAME}
+
 Decimal
     Check Test Case    ${TESTNAME}
 

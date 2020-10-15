@@ -4,7 +4,7 @@ from decimal import Decimal
 from enum import Enum
 from functools import wraps
 from numbers import Integral, Real
-
+import re
 from robot.api.deco import keyword
 
 
@@ -24,9 +24,25 @@ class NoneEnum(Enum):
 class Unknown(object):
     pass
 
+class Email(object):
+
+    def __init__(self, email):
+        self.email = email
+
+    @staticmethod
+    def from_string(email):
+        regex = r"[^@]+@[^@]+\.[^@]+"
+        if not re.match(regex,email):
+            raise ValueError
+        return Email(email)
+
 
 def integer(argument: int, expected=None):
     _validate_type(argument, expected)
+
+
+def custom_type(argument: Email):
+    assert isinstance(argument, Email)
 
 
 def integral(argument: Integral, expected=None):

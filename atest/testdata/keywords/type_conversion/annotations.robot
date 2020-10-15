@@ -62,6 +62,16 @@ Invalid decimal
     [Template]           Conversion Should Fail
     Decimal              foobar
 
+Custom conversion
+    Custom type          myemail@mail.com
+    Custom type          other.email@somesite.com
+    Custom type          oxx@yyy.ninja
+
+Invalid custom conversion
+    [Template]           Conversion Should Fail
+    Custom type          foo bar   type=email
+    Custom type          123       type=email
+
 Boolean
     Boolean              True                      ${True}
     Boolean              YES                       ${True}
