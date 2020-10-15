@@ -1,4 +1,4 @@
-from robot.errors import SkipExecution
+from robot.api import SkipExecution
 
 
 class CustomSkipException(Exception):

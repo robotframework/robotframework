@@ -50,3 +50,9 @@ Test Teardown is Run When Setup Fails
 
 Test Setup And Teardown Fails
     Check Test Case    ${TEST NAME}
+
+robot.api.Failure
+    Check Test Case    ${TEST NAME}
+
+robot.api.Error
+    Check Test Case    ${TEST NAME}

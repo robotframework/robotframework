@@ -22,9 +22,13 @@ Framework 3.2.
 
 Currently exposed APIs are:
 
-* :mod:`.logger` module for test libraries' logging purposes.
+* :mod:`.logger` module for libraries' logging purposes.
 
-* :mod:`.deco` module with decorators test libraries can utilize.
+* :mod:`.deco` module with decorators libraries can utilize.
+
+* :mod:`.exceptions` module containing exceptions that libraries can utilize for
+  reporting failures and other events. These exceptions can be imported also directly
+  via :mod:`robot.api` like ``from robot.api import SkipExecution``.
 
 * Various functions and classes for parsing test data to tokens
   or to a higher level model represented as an abstract syntax tree (AST).
@@ -72,3 +76,5 @@ from robot.parsing import (get_tokens, get_resource_tokens, get_init_tokens,
 from robot.reporting import ResultWriter
 from robot.result import ExecutionResult, ResultVisitor
 from robot.running import TestSuite, TestSuiteBuilder
+
+from .exceptions import ContinuableFailure, Failure, FatalError, Error, SkipExecution

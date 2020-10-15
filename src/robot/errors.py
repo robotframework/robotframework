@@ -176,7 +176,7 @@ class HandlerExecutionFailed(ExecutionFailed):
                   and not isinstance(error, (KeywordError, VariableError)))
         exit_on_failure = self._get(error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(error, 'CONTINUE_ON_FAILURE')
-        skip = self._get(error, 'SKIP_ON_FAILURE')
+        skip = self._get(error, 'SKIP_EXECUTION')
         ExecutionFailed.__init__(self, details.message, test_timeout,
                                  keyword_timeout, syntax, exit_on_failure,
                                  continue_on_failure, skip)
@@ -295,17 +295,6 @@ class PassExecution(ExecutionPassed):
 
     def __init__(self, message):
         ExecutionPassed.__init__(self, message)
-
-
-# FIXME: Move under robot.api.
-class SkipExecution(Exception):
-    """Used by 'Skip' keyword.
-
-    Can also be used by library keyword to skip the current test.
-    """
-    # TODO: Perhaps misleading attr name as this isn't related to --skiponfailure?
-    ROBOT_SKIP_ON_FAILURE = True
-    ROBOT_SUPPRESS_NAME = True
 
 
 class ContinueForLoop(ExecutionPassed):

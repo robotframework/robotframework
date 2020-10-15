@@ -1687,6 +1687,13 @@ Reporting keyword status is done simply using exceptions. If an executed
 method raises an exception, the keyword status is `FAIL`, and if it
 returns normally, the status is `PASS`.
 
+Normal execution failures and errors can be reported using the standard exceptions
+such as `AssertionError`, `ValueError` and `RuntimeError`. There are, however, some
+special cases explained in the subsequent sections where special exceptions are needed.
+
+Error messages
+''''''''''''''
+
 The error message shown in logs, reports and the console is created
 from the exception type and its message. With generic exceptions (for
 example, `AssertionError`, `Exception`, and
@@ -1748,13 +1755,73 @@ These messages are not visible in log files by default because they are very
 rarely interesting for normal users. When developing libraries, it is often a
 good idea to run tests using `--loglevel DEBUG`.
 
+Exceptions provided by Robot Framework
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework provides some exceptions that libraries can use for reporting
+failures and other events. These exceptions exposed via the `robot.api`__ package and
+contain the following:
+
+`Failure`
+    Report failed validation.
+
+    There is no practical difference in using this exception compared to using
+    the standard `AssertionError`. The main benefit of using this exception is
+    that its name is consistent with other provided exceptions.
+
+`ContinuableFailure`
+    Report failed validation but allow continuing execution.
+
+    See the `Continuing test execution despite of failures`_ section below
+    for more information, including how to create a custom exception that
+    has this same behavior.
+
+`Error`
+    Report error in execution.
+
+    Failures related to the system not behaving as expected should typically be
+    reported using the `Failure` exception or the standard `AssertionError`.
+    This exception can be used, for example, if the keyword is used incorrectly.
+    There is no practical difference, other than consistent naming with other
+    provided exceptions, compared to using this exception and the standard
+    `RuntimeError`.
+
+`FatalError`
+    Report error that stops the whole execution.
+
+    See the `Stopping test execution`_ section below for more information,
+    including how to create a custom exception that has this same behavior.
+
+
+`SkipExecution`
+    Mark the executed test or task skipped.
+
+    FIXME! Link to skip section once that's written.
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html
+
+.. note:: All these exceptions are new in Robot Framework 4.0.
+
 Stopping test execution
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to fail a test case so that `the whole test execution is
-stopped`__. This is done simply by having a special `ROBOT_EXIT_ON_FAILURE`
-attribute with `True` value set on the exception raised from the keyword.
-This is illustrated in the examples below.
+stopped`__. The easiest way to accomplish this is using the provided__
+`robot.api.FatalError` exception:
+
+.. sourcecode:: python
+
+    from robot.api import FatalError
+
+
+    def example_keyword():
+        if system_is_not_running():
+            raise FatalError('System is not running!')
+        ...
+
+In addition to using the `robot.api.FatalError` exception, it is possible create
+a custom exception that has a special `ROBOT_EXIT_ON_FAILURE` attribute set to
+a `True` value. This is illustrated by the examples below.
 
 Python:
 
@@ -1771,15 +1838,31 @@ Java:
         public static final boolean ROBOT_EXIT_ON_FAILURE = true;
     }
 
+.. note:: The `robot.api.FatalError` exception is new in Robot Framework 4.0.
+
 __ `Stopping test execution gracefully`_
+__ `Exceptions provided by Robot Framework`_
 
 Continuing test execution despite of failures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to `continue test execution even when there are failures`__.
-The way to signal this from test libraries is adding a special
-`ROBOT_CONTINUE_ON_FAILURE` attribute with `True` value to the exception
-used to communicate the failure. This is demonstrated by the examples below.
+The easiest way to do that is using the provided__ `robot.api.ContinuableFailure`
+exception:
+
+.. sourcecode:: python
+
+    from robot.api import ContinuableFailure
+
+
+    def example_keyword():
+        if something_is_wrong():
+            raise ContinuableFailure('Something is wrong but execution can continue.')
+        ...
+
+An alternative is creating a custom exception that has a special
+`ROBOT_CONTINUE_ON_FAILURE` attribute set to a `True` value.
+This is demonstrated by the examples below.
 
 Python:
 
@@ -1796,7 +1879,10 @@ Java:
         public static final boolean ROBOT_CONTINUE_ON_FAILURE = true;
     }
 
+.. note:: The `robot.api.ContinuableFailure` exception is new in Robot Framework 4.0.
+
 __ `Continue on failure`_
+__ `Exceptions provided by Robot Framework`_
 
 Logging information
 ~~~~~~~~~~~~~~~~~~~
