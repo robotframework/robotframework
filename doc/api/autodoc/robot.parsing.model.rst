@@ -32,4 +32,3 @@ robot.parsing.model.visitor module
    :members:
    :undoc-members:
    :show-inheritance:
-

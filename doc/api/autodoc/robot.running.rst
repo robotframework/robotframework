@@ -10,6 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 2
 
    robot.running.arguments
    robot.running.builder
@@ -185,4 +186,3 @@ robot.running.userkeywordrunner module
    :members:
    :undoc-members:
    :show-inheritance:
-

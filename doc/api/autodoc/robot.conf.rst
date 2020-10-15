@@ -24,4 +24,3 @@ robot.conf.settings module
    :members:
    :undoc-members:
    :show-inheritance:
-
