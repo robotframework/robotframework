@@ -83,7 +83,7 @@ Run Keyword And Continue On Failure With Nonexisting Extended Variable
     Fail    Normal failure after continuable failure
 
 Run Keyword And Continue On Failure With Fatal Error
-    [Documentation]    FAIL    FatalCatastrophyException
+    [Documentation]    FAIL    FatalCatastrophyException: BANG!
     Run keyword And Continue On Failure    Exit On Failure
     Fail    This Should Not Be Executed!
 

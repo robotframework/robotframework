@@ -1,3 +1,6 @@
+*** Settings ***
+Library          StandardExceptions.py
+
 *** Test Case ***
 Test Passes
     [Documentation]    PASS
@@ -75,6 +78,14 @@ Test Setup And Teardown Fails
     [Setup]    Fail    Setup failure
     Fail    This should not be run
     [Teardown]    Fail    Teardown failure
+
+robot.api.Failure
+    [Documentation]    FAIL I failed my duties
+    Failure
+
+robot.api.Error
+    [Documentation]    FAIL I errored my duties
+    Error
 
 *** Keyword ***
 Do Nothing

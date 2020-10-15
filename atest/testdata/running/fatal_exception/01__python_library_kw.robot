@@ -4,7 +4,7 @@ Suite Teardown         Log    Suite Teardown
 
 *** Test Cases ***
 Exit From Python Keyword
-    [Documentation]    FAIL FatalCatastrophyException
+    [Documentation]    FAIL FatalCatastrophyException: BANG!
     [Teardown]    Log    This should be executed
     [Tags]    some tag
     Exit On Failure
