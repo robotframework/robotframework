@@ -214,7 +214,7 @@ class Process(object):
 
     Examples:
     | `Start Process` | program | alias=example |
-    | `Run Process`   | python  | -c | print 'hello' | alias=hello |
+    | `Run Process`   | python  | -c | print('hello') | alias=hello |
 
     = Active process =
 
@@ -324,7 +324,7 @@ class Process(object):
         as ``**configuration``.
 
         Examples:
-        | ${result} = | Run Process | python | -c | print 'Hello, world!' |
+        | ${result} = | Run Process | python | -c | print('Hello, world!') |
         | Should Be Equal | ${result.stdout} | Hello, world! |
         | ${result} = | Run Process | ${command} | stderr=STDOUT | timeout=10s |
         | ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
@@ -661,7 +661,7 @@ class Process(object):
         values.
 
         Examples:
-        | Run Process           | python             | -c            | print 'Hello, world!' | alias=myproc |
+        | Run Process           | python             | -c            | print('Hello, world!') | alias=myproc |
         | # Get result object   |                    |               |
         | ${result} =           | Get Process Result | myproc        |
         | Should Be Equal       | ${result.rc}       | ${0}          |
