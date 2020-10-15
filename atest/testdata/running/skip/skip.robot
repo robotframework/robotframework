@@ -1,5 +1,5 @@
 *** Settings ***
-Library    skiplib.py
+Library            skiplib.py
 
 *** Variables ***
 ${TEST_OR_TASK}    Test
@@ -14,6 +14,10 @@ Skip with Library Keyword
     [Documentation]    SKIP Show must not got on
     Skip with Message    Show must not got on
     Fail    Should not be executed!
+
+Skip with custom exception
+    [Documentation]    SKIP CustomSkipException: Skipped with custom exception.
+    Skip with custom exception
 
 Skip If Keyword with True Condition
     [Documentation]    SKIP 1 == 1
