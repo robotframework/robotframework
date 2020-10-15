@@ -64,7 +64,7 @@ class JsonLogger(ResultVisitor):
 
     def message(self, msg):
         if self._error_message_is_logged(msg.level):
-            self._errors.append(msg)
+            self._errors.append(self._create_message(msg))
 
     def log_message(self, msg):
         if self._log_message_is_logged(msg.level):
@@ -221,7 +221,7 @@ class JsonLogger(ResultVisitor):
     def end_errors(self, errors=None):
         if 'errors' not in self._data:
             self._data['errors'] = list()
-        self._data['errors'].extend([str(error) for error in errors])
+        self._data['errors'].extend(errors)
 
     def _create_statistic(self, stat):
         statistic = {
