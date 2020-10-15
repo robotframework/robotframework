@@ -16,4 +16,3 @@ robot.tidypkg.transformers module
    :members:
    :undoc-members:
    :show-inheritance:
-
