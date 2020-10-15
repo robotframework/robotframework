@@ -1,9 +1,9 @@
 *** Test Case ***
-Test Pass
+Test Passes
     [Documentation]    PASS
     No Operation
 
-Test Fail
+Test Fails
     [Documentation]    FAIL failure
     Fail    failure
 
@@ -11,35 +11,35 @@ Non-Existing Keyword Error
     [Documentation]    FAIL No keyword with name 'Non Existing KW' found.
     Non Existing KW
 
-Tests Setup Pass
+Test Setup Passes
     [Documentation]    PASS
     [Setup]    No operation
     No Operation
 
-Tests Setup Fail
+Test Setup Fails
     [Documentation]    FAIL Setup failed:
     ...    failure
     [Setup]    Fail    failure
     Fail    This should not be executed
 
-Tests Setup Error Non Existing KW
+Test Setup Error
     [Documentation]    FAIL Setup failed:
     ...    No keyword with name 'Non Existing KW' found.
     [Setup]    Non Existing KW
     No Operation
 
-Tests Teardown Pass
+Test Teardown Passes
     [Documentation]    PASS
     No Operation
     [Teardown]    No operation
 
-Tests Teardown Fail
+Test Teardown Fails
     [Documentation]    FAIL Teardown failed:
     ...    failure
     No Operation
     [Teardown]    Fail    failure
 
-Tests Teardown Error Non Existing KW
+Test Teardown Error
     [Documentation]    FAIL Teardown failed:
     ...    No keyword with name 'Non Existing KW' found.
     No Operation
