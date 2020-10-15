@@ -64,7 +64,7 @@ class JsonLogger(ResultVisitor):
 
     def message(self, msg):
         if self._error_message_is_logged(msg.level):
-            self._errors.append(self._create_message(msg))
+            self._errors.append(msg)
 
     def log_message(self, msg):
         if self._log_message_is_logged(msg.level):
