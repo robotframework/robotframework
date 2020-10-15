@@ -73,11 +73,11 @@ Invalid custom conversion
     Custom type          123       type=email
 
 Invalid integer to custom conversion
-   [Documentation]    FAIL Wrong wrong
+   [Documentation]    FAIL ValueError: Argument 'argument' got value '123' that cannot be converted to email.
    Custom type           ${123}
 
 Invalid float to custom conversion
-   [Documentation]    FAIL Wrong wrong
+   [Documentation]    FAIL ValueError: Argument 'argument' got value '3.15159' that cannot be converted to email.
    Custom type           ${3.15159}
 
 Correcty type to custom conversion
