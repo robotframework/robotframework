@@ -34,6 +34,15 @@ Custom conversion
 Invalid custom conversion
     Check Test Case    ${TESTNAME}
 
+Invalid integer to custom conversion
+    Check Test Case    ${TESTNAME}
+
+Invalid float to custom conversion
+    Check Test Case    ${TESTNAME}
+
+Correcty type to custom conversion
+    Check Test Case    ${TESTNAME}
+
 Decimal
     Check Test Case    ${TESTNAME}
 

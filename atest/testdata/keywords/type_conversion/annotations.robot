@@ -72,6 +72,18 @@ Invalid custom conversion
     Custom type          foo bar   type=email
     Custom type          123       type=email
 
+Invalid integer to custom conversion
+   [Documentation]    FAIL Wrong wrong
+   Custom type           ${123}
+
+Invalid float to custom conversion
+   [Documentation]    FAIL Wrong wrong
+   Custom type           ${3.15159}
+
+Correcty type to custom conversion
+   ${correct}=           Create custom object
+   Custom type           ${correct}
+
 Boolean
     Boolean              True                      ${True}
     Boolean              YES                       ${True}

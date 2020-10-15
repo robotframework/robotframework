@@ -30,7 +30,7 @@ class Email(object):
         self.email = email
 
     @staticmethod
-    def from_string(email):
+    def from_str(email):
         regex = r"[^@]+@[^@]+\.[^@]+"
         if not re.match(regex,email):
             raise ValueError
@@ -44,6 +44,8 @@ def integer(argument: int, expected=None):
 def custom_type(argument: Email):
     assert isinstance(argument, Email)
 
+def create_custom_object():
+    return Email("email@hotmail.com")
 
 def integral(argument: Integral, expected=None):
     _validate_type(argument, expected)

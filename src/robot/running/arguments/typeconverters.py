@@ -79,12 +79,8 @@ class TypeConverter(object):
         for converter in cls._converters.values():
             if converter.handles(type_):
                 return converter.get_converter(type_)
-        if 'from_string' in dir(type_):
-            class DynamicConverter(TypeConverter):
-                type = type_
-                def _convert(self, value, explicit_type=True):
-                    return getattr(type_, 'from_string')(value)
-            return DynamicConverter()
+        if 'from_str' in dir(type_):
+            return DynamicConverter(type_)
         return None
 
     def handles(self, type_):
@@ -134,6 +130,35 @@ class TypeConverter(object):
             raise ValueError('Value is %s, not %s.' % (type_name(value),
                                                        expected.__name__))
         return value
+
+
+class DynamicConverter(TypeConverter):
+
+    def __init__(self, inputtype):
+        self.type = inputtype
+        self._available_methods = DynamicConverter.available_methods(inputtype)
+
+    @staticmethod
+    def available_methods(candidatetype):
+        methods = dir(candidatetype)
+        return {
+            'from_str': 'from_str' in methods,
+            'from_int': 'from_int' in methods,
+            'from_float': 'from_float' in methods,
+        }
+
+    @staticmethod
+    def is_dynamic_type(candidatetype):
+        return any(DynamicConverter.available_methods(candidatetype).values())
+
+    def _convert(self, value, explicit_type=True):
+        if isinstance(value, str) and self._available_methods['from_str']:
+            return getattr(self.type, 'from_str')(value)
+        if isinstance(value, int) and self._available_methods['from_int']:
+            return getattr(self.type, 'from_int')(value)
+        if isinstance(value, float) and self._available_methods['from_float']:
+            return getattr(self.type, 'from_float')(value)
+        raise ValueError
 
 
 @TypeConverter.register
