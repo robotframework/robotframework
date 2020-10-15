@@ -67,10 +67,24 @@ Custom conversion
     Custom type          other.email@somesite.com
     Custom type          oxx@yyy.ninja
 
+Custom number conversion
+    Custom number type   12
+    Custom number type   ${2}
+    Custom number type   ${4.0}
+
 Invalid custom conversion
     [Template]           Conversion Should Fail
     Custom type          foo bar   type=email
     Custom type          123       type=email
+
+Invalid custom number conversion
+    [Template]           Conversion Should Fail
+    Custom number type      foo bar   type=evennumber
+    Custom number type      3         type=evennumber
+
+Invalid integer to custom number conversion
+    [Documentation]    FAIL ValueError: Argument 'argument' got value '1' that cannot be converted to evennumber.
+    Custom number type      ${1}
 
 Invalid integer to custom conversion
    [Documentation]    FAIL ValueError: Argument 'argument' got value '123' that cannot be converted to email.

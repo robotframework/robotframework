@@ -1,6 +1,7 @@
 from collections import abc
 from datetime import datetime, date, timedelta
 from decimal import Decimal
+
 from enum import Enum
 from functools import wraps
 from numbers import Integral, Real
@@ -37,9 +38,39 @@ class Email(object):
         return Email(email)
 
 
+class EvenNumber(object):
+
+    def __init__(self, number):
+        self.number = number
+
+    @staticmethod
+    def from_str(value):
+        return EvenNumber.valid_even(value)
+
+    @staticmethod
+    def from_int(value):
+        return EvenNumber.valid_even(value)
+
+    @staticmethod
+    def from_float(value):
+        return EvenNumber.valid_even(value)
+
+    @staticmethod
+    def valid_even(val):
+        try:
+            value = int(val)
+        except:
+            raise ValueError
+        if value % 2 == 0:
+            return value
+        raise ValueError
+
+
 def integer(argument: int, expected=None):
     _validate_type(argument, expected)
 
+def custom_number_type(argument: EvenNumber):
+    assert argument.number % 2 == 0
 
 def custom_type(argument: Email):
     assert isinstance(argument, Email)
