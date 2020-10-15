@@ -7,41 +7,41 @@ Resource          atest_resource.robot
 
 *** Test Case ***
 Test Passes
-    Check Test Case    Test Pass
+    Check Test Case    ${TEST NAME}
 
 Test Fails
-    Check Test Case    Test Fail
+    Check Test Case    ${TEST NAME}
 
 Non-Existing Keyword Error
-    Check Test Case    Non-Existing Keyword Error
+    Check Test Case    ${TEST NAME}
 
 Test Setup Passes
-    Check Test Case    Tests Setup Pass
+    Check Test Case    ${TEST NAME}
 
 Test Setup Fails
     [Documentation]    Checks also that test is not run if setup fails
-    Check Test Case    Tests Setup Fail
+    Check Test Case    ${TEST NAME}
 
-Test Setup Errors
-    Check Test Case    Tests Setup Error Non Existing KW
+Test Setup Error
+    Check Test Case    ${TEST NAME}
 
 Test Teardown Passes
-    Check Test Case    Tests Teardown Pass
+    Check Test Case    ${TEST NAME}
 
 Test Teardown Fails
-    Check Test Case    Tests Teardown Fail
+    Check Test Case    ${TEST NAME}
 
-Test Teardown Errors
-    Check Test Case    Tests Teardown Error Non Existing KW
+Test Teardown Error
+    Check Test Case    ${TEST NAME}
 
 Test And Teardown Fails
-    Check Test Case    Test And Teardown Fails
+    Check Test Case    ${TEST NAME}
 
 Test Setup And Teardown Pass
-    Check Test Case    Test Setup And Teardown Pass
+    Check Test Case    ${TEST NAME}
 
 Test Teardown is Run When Setup Fails
-    ${test}    Check Test Case    Test Teardown is Run When Setup Fails
+    ${test}    Check Test Case    ${TEST NAME}
     ${td} =    Set Variable    ${test.teardown}
     Should Not Be Equal    ${td}    ${None}    Teardown not run    No values
     Length Should Be   ${td.msgs}    1
@@ -49,4 +49,4 @@ Test Teardown is Run When Setup Fails
     Length Should Be   ${td.kws}    0
 
 Test Setup And Teardown Fails
-    Check Test Case    Test Setup And Teardown Fails
+    Check Test Case    ${TEST NAME}
