@@ -2,13 +2,12 @@ from robot.errors import SkipExecution
 
 
 class CustomSkipException(Exception):
-    # TODO: make this work, add test
-    ROBOT_SKIP_ON_FAILURE = True
+    ROBOT_SKIP_EXECUTION = True
 
 
 def skip_with_message(msg):
     raise SkipExecution(msg)
 
 
-def skip_with_custom_exception(self):
+def skip_with_custom_exception():
     raise CustomSkipException("Skipped with custom exception.")

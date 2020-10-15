@@ -9,6 +9,9 @@ Skip Keyword
 Skip with Library Keyword
     Check Test Case    ${TEST NAME}
 
+Skip with custom exception
+    Check Test Case    ${TEST NAME}
+
 Skip If Keyword with True Condition
     Check Test Case    ${TEST NAME}
 
