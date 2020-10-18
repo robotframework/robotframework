@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from inspect import isclass
+import re
 import sys
 try:
     from enum import Enum
@@ -139,12 +140,28 @@ class ArgInfo(object):
     @property
     def type_string(self):
         if self.type is self.NOTSET:
-            return 'NOTSET'
-        if not isclass(self.type):
-            return self.type
-        if issubclass(self.type, Enum):
+            return
+        if isinstance(self.type, Enum):
             return self._format_enum(self.type)
-        return self.type.__name__
+        if isclass(self.type):
+            return self.type.__name__
+        type_name = str(self.type)
+        if type_name.startswith('typing.'):
+            type_name = type_name[len('typing.'):]
+        return type_name
+
+    @property
+    def default_string(self):
+        if self.default is self.NOTSET:
+            return None
+        if isinstance(self.default, Enum):
+            return self.default.name
+        if isinstance(self.default, str):
+            if self.default == '':
+                return '${Empty}'
+            value_repr = repr(self.default)[1:-1]
+            return re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', value_repr)
+        return unic(self.default)
 
     def _format_enum(self, enum):
         try:
@@ -171,5 +188,5 @@ class ArgInfo(object):
         else:
             default_sep = '='
         if self.default is not self.NOTSET:
-            ret = '%s%s%s' % (ret, default_sep, unic(self.default))
+            ret = '%s%s%s' % (ret, default_sep, self.default_string)
         return ret

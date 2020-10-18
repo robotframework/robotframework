@@ -17,6 +17,7 @@ import os.path
 
 from robot.errors import DataError
 from robot.utils import ET, ETSource
+from robot.running.arguments import ArgumentSpec
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -25,17 +26,18 @@ class SpecDocBuilder(object):
 
     def build(self, path):
         spec = self._parse_spec(path)
-        libdoc = LibraryDoc(name=spec.get('name'),
-                            type=spec.get('type').upper(),
+        self.name = spec.get('name')
+        self.type = spec.get('type').upper()
+        libdoc = LibraryDoc(name=self.name,
+                            type=self.type,
                             version=spec.find('version').text or '',
                             doc=spec.find('doc').text or '',
-                            scope=self._get_scope(spec),
-                            named_args=self._get_named_args(spec),
+                            scope=spec.get('scope'),
                             doc_format=spec.get('format', 'ROBOT'),
                             source=spec.get('source'),
                             lineno=int(spec.get('lineno', -1)))
-        libdoc.inits = self._create_keywords(spec, 'init')
-        libdoc.keywords = self._create_keywords(spec, 'kw')
+        libdoc.inits = self._create_keywords(spec, 'inits/init')
+        libdoc.keywords = self._create_keywords(spec, 'keywords/kw')
         return libdoc
 
     def _parse_spec(self, path):
@@ -45,29 +47,11 @@ class SpecDocBuilder(object):
             root = ET.parse(source).getroot()
         if root.tag != 'keywordspec':
             raise DataError("Invalid spec file '%s'." % path)
+        version = root.get('specversion')
+        if version != '3':
+            raise DataError("Invalid spec file version '%s'. "
+                            "RF >= 4.0 requires XML specversion 3." % version)
         return root
-
-    def _get_scope(self, spec):
-        # RF >= 3.2 has "scope" attribute w/ value 'GLOBAL', 'SUITE, or 'TEST'.
-        if 'scope' in spec.attrib:
-            return spec.get('scope')
-        # RF < 3.2 has "scope" element. Need to map old values to new.
-        scope = spec.find('scope').text
-        return {'': 'GLOBAL',          # Was used with resource files.
-                'global': 'GLOBAL',
-                'test suite': 'SUITE',
-                'test case': 'TEST'}[scope]
-
-    def _get_named_args(self, spec):
-        # RF >= 3.2 has "namedargs" attribute w/ value 'true' or 'false'.
-        namedargs = spec.get('namedargs')
-        if namedargs == 'true':
-            return True
-        if namedargs == 'false':
-            return False
-        # RF < 3.2 has "namedargs" element with text 'yes' or 'no'.
-        namedargs = spec.find('namedargs').text
-        return namedargs == 'yes'
 
     def _create_keywords(self, spec, path):
         return [self._create_keyword(elem) for elem in spec.findall(path)]
@@ -76,8 +60,72 @@ class SpecDocBuilder(object):
         # "deprecated" attribute isn't read because it is read from the doc
         # automatically. That should probably be changed at some point.
         return KeywordDoc(name=elem.get('name', ''),
-                          args=[a.text for a in elem.findall('arguments/arg')],
+                          args=self._create_arguments(elem),
                           doc=elem.find('doc').text or '',
                           tags=[t.text for t in elem.findall('tags/tag')],
                           source=elem.get('source'),
                           lineno=int(elem.get('lineno', -1)))
+
+    def _create_arguments(self, elem):
+        positional_only = []
+        positional_or_named = []
+        var_positional = None
+        named_only = []
+        var_named = None
+        defaults = {}
+        types = {}
+        for arg in elem.findall('arguments/arg'):
+            name = self._get_name(arg)
+            type = self._get_type(arg)
+            if type:
+                types[name] = type
+            default = self._get_default(arg)
+            if default:
+                defaults[name] = default
+            kind = arg.get('kind')
+            if kind == 'POSITIONAL_ONLY':
+                positional_only.append(name)
+            elif kind == 'POSITIONAL_OR_NAMED':
+                positional_or_named.append(name)
+            elif kind == 'VAR_POSITIONAL':
+                var_positional = name
+            elif kind == 'NAMED_ONLY':
+                named_only.append(name)
+            elif kind == 'VAR_NAMED':
+                var_named = name
+
+        return ArgumentSpec(positional_only=positional_only,
+                            positional_or_named=positional_or_named,
+                            var_positional=var_positional,
+                            named_only=named_only,
+                            var_named=var_named,
+                            defaults=defaults,
+                            types=types)
+
+    @staticmethod
+    def _get_name(arg):
+        name_elem = arg.find('name')
+        if name_elem is not None:
+            return name_elem.text
+        else:
+            return ''
+
+    @staticmethod
+    def _get_type(arg):
+        type_elem = arg.find('type')
+        if type_elem is not None:
+            return type_elem.text
+
+    @staticmethod
+    def _get_default(arg):
+        default_elem = arg.find('default')
+        if default_elem is not None:
+            return default_elem.text
+
+    @staticmethod
+    def _get_required(arg):
+        required = arg.get('required')
+        if required == 'true':
+            return True
+        else:
+            return False

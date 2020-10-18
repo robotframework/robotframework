@@ -27,14 +27,13 @@ from .output import LibdocOutput
 class LibraryDoc(object):
 
     def __init__(self, name='', doc='', version='', type='LIBRARY',
-                 scope='TEST', named_args=True, doc_format='ROBOT',
+                 scope='TEST', doc_format='ROBOT',
                  source=None, lineno=-1):
         self.name = name
         self._doc = doc
         self.version = version
         self.type = type
         self.scope = scope
-        self.named_args = named_args
         self.doc_format = doc_format
         self.source = source
         self.lineno = lineno
@@ -100,7 +99,6 @@ class LibraryDoc(object):
             'version': self.version,
             'type': self.type,
             'scope': self.scope,
-            'named_args': self.named_args,
             'doc_format': self.doc_format,
             'source': self.source,
             'lineno': self.lineno,
@@ -142,11 +140,23 @@ class KeywordDoc(Sortable):
     def to_dictionary(self):
         return {
             'name': self.name,
-            'args': self.args,
+            'args': self.convert_arguments(),
             'doc': self.doc,
             'shortdoc': self.shortdoc,
             'tags': tuple(self.tags),
             'source': self.source,
             'lineno': self.lineno,
             'matched': True
+        }
+
+    def convert_arguments(self):
+        return [self.arg_to_dict(arg_info) for arg_info in self.args]
+
+    def arg_to_dict(self, arg_info):
+        return {
+            'name': arg_info.name,
+            'type': arg_info.type_string,
+            'default': arg_info.default_string,
+            'kind': arg_info.kind,
+            'required': arg_info.required
         }
