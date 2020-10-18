@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests
-...               --exitonfailure --critical critical
+...               --exitonfailure --skiponfailure skip-on-failure
 ...               cli/runner/exit_on_failure.robot misc/suites running/fatal_exception/02__irrelevant.robot
 Resource          atest_resource.robot
 
@@ -12,9 +12,12 @@ Passing tests do not initiate exit-on-failure
     Check Test Case    Passing
     Check Test Case    Passing tests do not initiate exit-on-failure
 
+Skip-on-failure tests do not initiate exit-on-failure
+    Check Test Case    Skipped on failure
+
 Failing tests initiate exit-on-failure
     Check Test Case    Failing
-    Test Should Have Been Skipped    Skipped
+    Test Should Have Been Skipped    Not executed
 
 Tests in subsequent suites are skipped
     Test Should Have Been Skipped    SubSuite1 First
