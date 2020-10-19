@@ -33,6 +33,7 @@ Keyword Names
     ${XML-MODEL}[keywords][13][name]    ${MODEL}[keywords][13][name]
 
 Keyword Arguments
+    [Template]    Dictionaries Should Be Equal
     ${XML-MODEL}[keywords][0][args]    ${MODEL}[keywords][0][args]
     ${XML-MODEL}[keywords][1][args]    ${MODEL}[keywords][1][args]
     ${XML-MODEL}[keywords][6][args]    ${MODEL}[keywords][6][args]
