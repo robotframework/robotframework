@@ -94,7 +94,7 @@ class LibdocXmlWriter(object):
         for arg in kw.args:
             writer.start('arg', {'kind': arg.kind,
                                  'required': 'true' if arg.required else 'false',
-                                 'string_repr': unicode(arg)})  # ToDo: string_repr shall be deleted when atests are changed
+                                 'repr': unicode(arg)})
             if arg.name:
                 writer.element('name', arg.name)
             if arg.type is not arg.NOTSET:

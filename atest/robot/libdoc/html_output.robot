@@ -11,12 +11,6 @@ Verify Argument Models
        Run Keyword And Continue On Failure    Verify Argument Model    ${arg_model}    ${expected_repr}
     END
 
-Verify Argument Model
-    [Arguments]    ${arg_model}    ${expected_repr}
-    ${repr}=   Get Repr From Arg Model    ${arg_model}
-    Should Be Equal As Strings    ${repr}    ${expected_repr}
-    Should Be Equal As Strings    ${arg_model}[repr]    ${expected_repr}
-
 *** Test Cases ***
 Name
     ${MODEL}[name]          module

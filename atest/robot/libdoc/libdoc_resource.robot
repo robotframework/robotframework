@@ -108,8 +108,7 @@ Init Doc Should Be
 
 Init Arguments Should Be
     [Arguments]    ${index}   @{expected}
-    ${args}=    Get Keyword Arguments    ${index}    type=inits/init
-    Should Be Equal    ${args}    ${expected}
+    Verify Arguments Structure    ${index}    inits/init    ${expected}
 
 Keyword Name Should Be
     [Arguments]    ${index}   ${name}
@@ -118,20 +117,45 @@ Keyword Name Should Be
 
 Keyword Arguments Should Be
     [Arguments]    ${index}    @{expected}
-    ${args}=    Get Keyword Arguments    ${index}
-    Should Be Equal    ${args}    ${expected}
+    Verify Arguments Structure    ${index}    keywords/kw    ${expected}
 
-Get Keyword Arguments
-    [Arguments]    ${index}   ${type}=keywords/kw
+Verify Arguments Structure
+    [Arguments]    ${index}   ${type}    ${expected}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
-    #${args}=    Get Elements Texts   ${kws}[${index}]    xpath=arguments/arg
-    ${args}=    Create List
     ${arg_elems}=    Get Elements    ${kws}[${index}]    xpath=arguments/arg
-    FOR    ${elem}    IN    @{arg_elems}
-        ${arg}=    Get Element Attribute    ${elem}    string_repr
-        Append To List    ${args}    ${arg}
+    FOR    ${arg_elem}    ${exp_repr}    IN ZIP     ${arg_elems}    ${expected}
+        ${kind}=        Get Element Attribute        ${arg_elem}    kind
+        ${required}=    Get Element Attribute        ${arg_elem}    required
+        ${repr}=        Get Element Attribute        ${arg_elem}    repr
+        ${name}=        Get Element Optional Text    ${arg_elem}    name
+        ${type}=        Get Element Optional Text    ${arg_elem}    type
+        ${default}=     Get Element Optional Text    ${arg_elem}    default
+        ${arg_model}=    Create Dictionary
+        ...    kind=${kind}
+        ...    name=${name}
+        ...    type=${type}
+        ...    default=${default}
+        ...    repr=${repr}
+        Run Keyword And Continue On Failure
+        ...    Verify Argument Model    ${arg_model}    ${exp_repr}
+        Run Keyword And Continue On Failure
+        ...    Should Be Equal    ${repr}    ${exp_repr}
     END
-    [Return]    ${args}
+    Should Be True    len($arg_elems) == len($expected)
+
+Get Element Optional Text
+    [Arguments]    ${source}    ${xpath}
+    ${elem}=    Get Elements    ${source}    ${xpath}
+    ${text}=    Run Keyword If    len($elem) == 1    
+    ...   Get Element Text    ${elem}[0]    .
+    ...   ELSE   Set Variable   ${NONE}
+    [Return]    ${text}
+
+Verify Argument Model
+    [Arguments]    ${arg_model}    ${expected_repr}
+    ${repr}=   Get Repr From Arg Model    ${arg_model}
+    Should Be Equal As Strings    ${repr}    ${expected_repr}
+    Should Be Equal As Strings    ${arg_model}[repr]    ${expected_repr}
 
 Keyword Doc Should Start With
     [Arguments]    ${index}    @{doc}
@@ -195,3 +219,9 @@ Should Be Equal Multiline
     [Arguments]    ${actual}    @{expected}
     ${expected} =    Catenate    SEPARATOR=\n    @{expected}
     Should Be Equal As Strings    ${actual}    ${expected}
+
+List of Dict Should Be Equal
+    [Arguments]    ${list1}    ${list2}
+    FOR    ${l1}    ${l2}    IN ZIP    ${list1}    ${list2}
+        Dictionaries Should Be Equal    ${l1}    ${l2}
+    END

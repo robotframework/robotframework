@@ -76,9 +76,10 @@ class SpecDocBuilder(object):
         }
         for arg in elem.findall('arguments/arg'):
             name = self._get_name(arg)
-            setters[arg.get('kind')](name)
-            spec.defaults.update(self._get_default(arg, name))
-            spec.type = self._get_updated_types(arg, name, spec)
+            if name:
+                setters[arg.get('kind')](name)
+                spec.defaults.update(self._get_default(arg, name))
+                spec.type = self._get_updated_types(arg, name, spec)
         return spec
 
     @staticmethod
@@ -86,8 +87,6 @@ class SpecDocBuilder(object):
         name_elem = arg.find('name')
         if name_elem is not None:
             return name_elem.text
-        else:
-            return ''
 
     @staticmethod
     def _get_updated_types(arg, name, spec):
