@@ -6,11 +6,6 @@ Test Template     Should Be Equal Multiline
 *** Keywords ***
 Verify Argument Models
     [Arguments]    ${arg_models}    @{expected_reprs}
-    log    ${arg_models}
-    log    ${{len($arg_models)}}
-    log    ${expected_reprs}
-    log    ${{len($expected_reprs)}}
-    
     Should Be True    len($arg_models) == len($expected_reprs)
     FOR    ${arg_model}    ${expected_repr}    IN ZIP    ${arg_models}    ${expected_reprs}
        Run Keyword And Continue On Failure    Verify Argument Model    ${arg_model}    ${expected_repr}
@@ -52,7 +47,7 @@ Keyword Arguments
     [Template]    Verify Argument Models
     ${MODEL}[keywords][0][args]     
     ${MODEL}[keywords][1][args]     a1=d    *a2
-    ${MODEL}[keywords][6][args]     arg=hyv\\\\xe4
+    ${MODEL}[keywords][6][args]     arg=hyv\\xe4
     ${MODEL}[keywords][10][args]    arg=hyvä
     ${MODEL}[keywords][12][args]    a=1    b=True    c=(1, 2, None)
     ${MODEL}[keywords][13][args]    a    b    *args    **kwargs
