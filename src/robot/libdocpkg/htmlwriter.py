@@ -33,7 +33,7 @@ class LibdocModelWriter(ModelWriter):
         self._libdoc = libdoc.to_dictionary()
 
     def write(self, line):
-        self._output.write('<script type="text/javascript">\n')
-        self._output.write('libdoc = ')
-        self._output.write(json.dumps(self._libdoc))
-        self._output.write('\n</script>\n')
+        self._output.write('<script type="text/javascript">\n'
+                           'libdoc = %s\n'
+                           '</script>\n'
+                           % json.dumps(self._libdoc))

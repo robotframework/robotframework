@@ -17,7 +17,7 @@ from itertools import chain
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, get_timestamp, Sortable, setter
+from robot.utils import getshortdoc, get_timestamp, Sortable, setter, unicode, unic
 
 from .htmlutils import HtmlToText, DocFormatter
 from .writer import LibdocWriter
@@ -140,7 +140,7 @@ class KeywordDoc(Sortable):
     def to_dictionary(self):
         return {
             'name': self.name,
-            'args': self.convert_arguments(),
+            'args': self._convert_arguments(),
             'doc': self.doc,
             'shortdoc': self.shortdoc,
             'tags': tuple(self.tags),
@@ -149,14 +149,15 @@ class KeywordDoc(Sortable):
             'matched': True
         }
 
-    def convert_arguments(self):
-        return [self.arg_to_dict(arg_info) for arg_info in self.args]
+    def _convert_arguments(self):
+        return [self._arg_to_dict(a) for a in self.args]
 
-    def arg_to_dict(self, arg_info):
+    def _arg_to_dict(self, arg_info):
         return {
             'name': arg_info.name,
-            'type': arg_info.type_string,
-            'default': arg_info.default_string,
+            'type': arg_info.type_repr,
+            'default': arg_info.default_repr,
             'kind': arg_info.kind,
-            'required': arg_info.required
+            'required': arg_info.required,
+            'repr': unicode(arg_info)
         }

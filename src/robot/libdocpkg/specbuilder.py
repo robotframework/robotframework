@@ -16,8 +16,8 @@
 import os.path
 
 from robot.errors import DataError
-from robot.utils import ET, ETSource, unescape
-from robot.running.arguments import ArgumentSpec
+from robot.utils import ET, ETSource
+from robot.running.arguments import ArgumentSpec, ArgInfo
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -26,10 +26,9 @@ class SpecDocBuilder(object):
 
     def build(self, path):
         spec = self._parse_spec(path)
-        self.name = spec.get('name')
-        self.type = spec.get('type').upper()
-        libdoc = LibraryDoc(name=self.name,
-                            type=self.type,
+
+        libdoc = LibraryDoc(name=spec.get('name'),
+                            type=spec.get('type').upper(),
                             version=spec.find('version').text or '',
                             doc=spec.find('doc').text or '',
                             scope=spec.get('scope'),
@@ -50,7 +49,7 @@ class SpecDocBuilder(object):
         version = root.get('specversion')
         if version != '3':
             raise DataError("Invalid spec file version '%s'. "
-                            "RF >= 4.0 requires XML specversion 3." % version)
+                            "Robot Framework >= 4.0 requires specversion 3." % version)
         return root
 
     def _create_keywords(self, spec, path):
@@ -67,40 +66,20 @@ class SpecDocBuilder(object):
                           lineno=int(elem.get('lineno', -1)))
 
     def _create_arguments(self, elem):
-        positional_only = []
-        positional_or_named = []
-        var_positional = None
-        named_only = []
-        var_named = None
-        defaults = {}
-        types = {}
+        spec = ArgumentSpec()
+        setters = {
+            ArgInfo.POSITIONAL_ONLY: spec.positional_only.append,
+            ArgInfo.POSITIONAL_OR_NAMED: spec.positional_or_named.append,
+            ArgInfo.VAR_POSITIONAL: lambda value: setattr(spec, 'var_positional', value),
+            ArgInfo.NAMED_ONLY: spec.named_only.append,
+            ArgInfo.VAR_NAMED: lambda value: setattr(spec, 'var_named', value),
+        }
         for arg in elem.findall('arguments/arg'):
             name = self._get_name(arg)
-            type = self._get_type(arg)
-            if type:
-                types[name] = type
-            default = self._get_default(arg)
-            if default:
-                defaults[name] = default
-            kind = arg.get('kind')
-            if kind == 'POSITIONAL_ONLY':
-                positional_only.append(name)
-            elif kind == 'POSITIONAL_OR_NAMED':
-                positional_or_named.append(name)
-            elif kind == 'VAR_POSITIONAL':
-                var_positional = name
-            elif kind == 'NAMED_ONLY':
-                named_only.append(name)
-            elif kind == 'VAR_NAMED':
-                var_named = name
-
-        return ArgumentSpec(positional_only=positional_only,
-                            positional_or_named=positional_or_named,
-                            var_positional=var_positional,
-                            named_only=named_only,
-                            var_named=var_named,
-                            defaults=defaults,
-                            types=types)
+            setters[arg.get('kind')](name)
+            spec.defaults.update(self._get_default(arg, name))
+            spec.type = self._get_updated_types(arg, name, spec)
+        return spec
 
     @staticmethod
     def _get_name(arg):
@@ -111,21 +90,17 @@ class SpecDocBuilder(object):
             return ''
 
     @staticmethod
-    def _get_type(arg):
+    def _get_updated_types(arg, name, spec):
         type_elem = arg.find('type')
         if type_elem is not None:
-            return type_elem.text
+            type_info = {name: type_elem.text}
+            type_info.update(spec.types or {})
+            return type_info
 
     @staticmethod
-    def _get_default(arg):
+    def _get_default(arg, name):
         default_elem = arg.find('default')
-        if default_elem is not None:
-            return unescape(default_elem.text)
-
-    @staticmethod
-    def _get_required(arg):
-        required = arg.get('required')
-        if required == 'true':
-            return True
+        if default_elem is None:
+            return {}
         else:
-            return False
+            return {name: default_elem.text}

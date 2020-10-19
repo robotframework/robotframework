@@ -63,7 +63,7 @@ Invalid output file
     ...    Remove Directory    ${OUT XML}
 
 invalid Spec File version
-    ${TESTDATADIR}/OldSpec.xml ${OUT XML}    Invalid spec file version 'None'. RF >= 4.0 requires XML specversion 3.
+    ${TESTDATADIR}/OldSpec.xml ${OUT XML}    Invalid spec file version 'None'. Robot Framework >= 4.0 requires specversion 3.
 
 *** Keywords ***
 Run libdoc and verify error

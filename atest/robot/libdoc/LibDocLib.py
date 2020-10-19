@@ -8,7 +8,8 @@ from subprocess import run, PIPE, STDOUT
 from xmlschema import XMLSchema
 
 from robot.api import logger
-from robot.utils import CONSOLE_ENCODING, SYSTEM_ENCODING
+from robot.utils import CONSOLE_ENCODING, SYSTEM_ENCODING, unicode
+from robot.running.arguments import ArgInfo
 
 
 ROOT = join(dirname(abspath(__file__)), '..', '..', '..')
@@ -67,3 +68,10 @@ class LibDocLib(object):
             return relpath(path, start)
         except ValueError:
             return normpath(path)
+
+    def get_repr_from_arg_model(self, model):
+        arg_info = ArgInfo(kind=model['kind'],
+                           name=model['name'],
+                           type=model['type'] or ArgInfo.NOTSET,
+                           default=model['default'] or ArgInfo.NOTSET)
+        return unicode(arg_info)

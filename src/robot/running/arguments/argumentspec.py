@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
+from inspect import isclass
 import sys
 try:
     from enum import Enum
@@ -21,8 +21,7 @@ except ImportError:    # Standard in Py 3.4+ but can be separately installed
     class Enum(object):
         pass
 
-from inspect import isclass
-from robot.utils import setter, py2to3, unicode, unic, escape
+from robot.utils import setter, py2to3, unicode, unic
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
@@ -138,29 +137,21 @@ class ArgInfo(object):
         return False
 
     @property
-    def type_string(self):
+    def type_repr(self):
         if self.type is self.NOTSET:
-            return
-        if isinstance(self.type, Enum):
-            return self._format_enum(self.type)
+            return None
         if isclass(self.type):
+            if issubclass(self.type, Enum):
+                return self._format_enum(self.type)
             return self.type.__name__
-        type_name = str(self.type)
-        if type_name.startswith('typing.'):
-            type_name = type_name[len('typing.'):]
-        return type_name
+        return unicode(self.type)
 
     @property
-    def default_string(self):
+    def default_repr(self):
         if self.default is self.NOTSET:
             return None
         if isinstance(self.default, Enum):
             return self.default.name
-        if isinstance(self.default, str):
-            if self.default == '':
-                return '${Empty}'
-            value_repr = repr(self.default)[1:-1]
-            return re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', value_repr)
         return unic(self.default)
 
     def _format_enum(self, enum):
@@ -183,10 +174,10 @@ class ArgInfo(object):
         elif self.kind == self.VAR_NAMED:
             ret = '**' + ret
         if self.type is not self.NOTSET:
-            ret = '%s: %s' % (ret, self.type_string)
+            ret = '%s: %s' % (ret, self.type_repr)
             default_sep = ' = '
         else:
             default_sep = '='
         if self.default is not self.NOTSET:
-            ret = '%s%s%s' % (ret, default_sep, self.default_string)
+            ret = '%s%s%s' % (ret, default_sep, self.default_repr)
         return ret

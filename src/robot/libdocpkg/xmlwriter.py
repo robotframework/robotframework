@@ -98,9 +98,9 @@ class LibdocXmlWriter(object):
             if arg.name:
                 writer.element('name', arg.name)
             if arg.type is not arg.NOTSET:
-                writer.element('type', arg.type_string)
+                writer.element('type', arg.type_repr)
             if arg.default is not arg.NOTSET:
-                writer.element('default', arg.default_string)
+                writer.element('default', arg.default_repr)
             writer.end('arg')
         writer.end('arguments')
 
