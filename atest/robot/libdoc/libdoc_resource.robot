@@ -222,6 +222,6 @@ Should Be Equal Multiline
 
 List of Dict Should Be Equal
     [Arguments]    ${list1}    ${list2}
-    FOR    ${l1}    ${l2}    IN ZIP    ${list1}    ${list2}
-        Dictionaries Should Be Equal    ${l1}    ${l2}
+    FOR    ${dict1}    ${dict2}    IN ZIP    ${list1}    ${list2}
+        Dictionaries Should Be Equal    ${dict1}    ${dict2}
     END
