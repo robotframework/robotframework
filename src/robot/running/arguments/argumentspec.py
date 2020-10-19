@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from inspect import isclass
 import re
 import sys
 try:
@@ -22,7 +21,8 @@ except ImportError:    # Standard in Py 3.4+ but can be separately installed
     class Enum(object):
         pass
 
-from robot.utils import setter, py2to3, unicode, unic
+from inspect import isclass
+from robot.utils import setter, py2to3, unicode, unic, escape
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper

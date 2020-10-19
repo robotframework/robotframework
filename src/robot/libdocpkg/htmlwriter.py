@@ -36,4 +36,4 @@ class LibdocModelWriter(ModelWriter):
         self._output.write('<script type="text/javascript">\n')
         self._output.write('libdoc = ')
         self._output.write(json.dumps(self._libdoc))
-        self._output.write('</script>\n')
+        self._output.write('\n</script>\n')

@@ -20,10 +20,6 @@ Generated
 Scope
     ${MODEL}[scope]         GLOBAL
 
-Named Args
-    [Template]    Should Be Equal
-    ${MODEL}[named_args]    ${True}
-
 Inits
     [Template]    Should Be Empty
     ${MODEL}[inits]

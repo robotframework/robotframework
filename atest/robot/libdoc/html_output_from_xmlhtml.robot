@@ -24,9 +24,6 @@ Version
 Scope
     ${XML-MODEL}[scope]    ${MODEL}[scope]
 
-Named Args
-    ${XML-MODEL}[named_args]    ${MODEL}[named_args]
-
 Inits
     ${XML-MODEL}[inits]    ${MODEL}[inits]
 

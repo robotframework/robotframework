@@ -18,7 +18,7 @@ class LibDocLib(object):
 
     def __init__(self, interpreter=None):
         self.interpreter = interpreter
-        self.schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.02.xsd'))
+        self.schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.03.xsd'))
 
     @property
     def libdoc(self):
@@ -47,7 +47,7 @@ class LibDocLib(object):
     def get_libdoc_model_from_html(self, path):
         with open(path, encoding='UTF-8') as html_file:
             model_string = self._find_model(html_file)
-        model = json.loads(model_string.replace('\\x3c/', '</'))
+        model = json.loads(model_string)
         logger.info(pprint.pformat(model))
         return model
 

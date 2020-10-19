@@ -24,9 +24,6 @@ Generated
 Scope
     Scope Should Be                  GLOBAL
 
-Named Args
-    Named Args Should Be             true
-
 Source info
     Source should be                 ${TESTDATADIR}/module.py
     Lineno should be                 1

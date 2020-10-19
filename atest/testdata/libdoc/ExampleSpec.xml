@@ -3,17 +3,15 @@
              type="LIBRARY"
              scope="GLOBAL"
              format="ROBOT"
-             namedargs="false"
              source="Example.py"
              lineno="8"
              generated="2020-04-01T13:28:56Z"
-             specversion="2">
+             specversion="3">
 <version>42</version>
-<scope>THIS IS DEPRECATED AND NOT USED IF THERE IS "source" ATTRIBUTE.</scope>
-<namedargs>SAME AS THE ABOVE!</namedargs>
 <doc>Library for `libdoc.py` testing purposes.
 
 This library is only used in an example and it doesn't do anything useful.</doc>
+<inits>
 <init lineno="12">
 <arguments>
 </arguments>
@@ -21,19 +19,27 @@ This library is only used in an example and it doesn't do anything useful.</doc>
 </init>
 <init>
 <arguments>
-<arg>arg</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" string_repr="arg">
+<name>arg</name>
+</arg>
 </arguments>
 <doc>Creates new Example test library 2</doc>
 </init>
 <init>
 <arguments>
-<arg>i</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" string_repr="i">
+<name>i</name>
+</arg>
 </arguments>
 <doc>Creates new Example test library 3</doc>
 </init>
+</inits>
+<keywords>
 <kw name="Keyword">
 <arguments>
-<arg>arg</arg>
+<arg kind="POSITIONAL_OR_NAMED" required="true" string_repr="arg">
+<name>arg</name>
+</arg>
 </arguments>
 <doc>Takes one `arg` and *does nothing* with it.
 
@@ -61,4 +67,5 @@ Tags: in spec these wont become tags</doc>
 
 Спасибо!</doc>
 </kw>
+</keywords>
 </keywordspec>

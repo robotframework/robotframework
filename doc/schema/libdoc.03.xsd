@@ -104,8 +104,10 @@
     <xs:simpleType name="Kind">
         <xs:restriction base="xs:string">
             <xs:enumeration value="POSITIONAL_ONLY" />
+            <xs:enumeration value="POSITIONAL_ONLY_MARKER" />
             <xs:enumeration value="POSITIONAL_OR_NAMED" />
             <xs:enumeration value="VAR_POSITIONAL" />
+            <xs:enumeration value="NAMED_ONLY_MARKER" />
             <xs:enumeration value="NAMED_ONLY" />
             <xs:enumeration value="VAR_NAMED" />
         </xs:restriction>

@@ -16,7 +16,7 @@
 import os.path
 
 from robot.errors import DataError
-from robot.utils import ET, ETSource
+from robot.utils import ET, ETSource, unescape
 from robot.running.arguments import ArgumentSpec
 
 from .model import LibraryDoc, KeywordDoc
@@ -120,7 +120,7 @@ class SpecDocBuilder(object):
     def _get_default(arg):
         default_elem = arg.find('default')
         if default_elem is not None:
-            return default_elem.text
+            return unescape(default_elem.text)
 
     @staticmethod
     def _get_required(arg):
