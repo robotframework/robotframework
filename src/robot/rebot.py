@@ -124,13 +124,9 @@ Options
     --processemptysuite   Processes output also if the top level suite is
                           empty. Useful e.g. with --include/--exclude when it
                           is not an error that there are no matches.
- -c --critical tag *      Tests having the given tag are considered critical.
-                          If no critical tags are set, all tests are critical.
-                          Tags can be given as a pattern same way as with
-                          --include.
- -n --noncritical tag *   Tests having the given tag are not critical even if
-                          they have a tag set with --critical. Tag can be
-                          a pattern.
+ -c --critical tag *      Deprecated since RF 4.0 and has no effect anymore.
+ -n --noncritical tag *   Deprecated since RF 4.0 and has no effect anymore.
+                          Use --skiponfailure when starting execution instead.
  -d --outputdir dir       Where to create output files. The default is the
                           directory where Rebot is run from and the given path
                           is considered relative to that unless it is absolute.
@@ -145,7 +141,7 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
-    --xunitskipnoncritical  *Deprecated* since Robot Framework 4.0.
+    --xunitskipnoncritical  Deprecated since RF 4.0 and has no effect anymore.
  -T --timestampoutputs    When this option is used, timestamp in a format
                           `YYYYMMDD-hhmmss` is added to all generated output
                           files between their basename and extension. For
@@ -339,8 +335,13 @@ class Rebot(RobotFramework):
     def main(self, datasources, **options):
         settings = RebotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
+        if settings['Critical'] or settings['NonCritical']:
+            LOGGER.warn("Command line options --critical and --noncritical have been "
+                        "deprecated and have no effect with Rebot. Use --skiponfailure "
+                        "when starting execution instead.")
         if settings['XUnitSkipNonCritical']:
-            LOGGER.warn("Command line option --xunitskipnoncritical has been deprecated.")
+            LOGGER.warn("Command line option --xunitskipnoncritical has been "
+                        "deprecated and has no effect.")
         LOGGER.disable_message_cache()
         rc = ResultWriter(*datasources).write_results(settings)
         if rc < 0:

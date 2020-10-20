@@ -20,12 +20,11 @@ import difflib
 import re
 import time
 
-from robot.api import logger
+from robot.api import logger, SkipExecution
 from robot.api.deco import keyword
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
-                          PassExecution, ReturnFromKeyword, VariableError,
-                          SkipExecution)
+                          PassExecution, ReturnFromKeyword, VariableError)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
@@ -1848,6 +1847,25 @@ class _RunKeyword(_BuiltInBase):
             if err.dont_continue:
                 raise
             return 'FAIL', unic(err)
+
+    @run_keyword_variant(resolve=1)
+    def run_keyword_and_warn_on_failure(self, name, *args):
+        """Runs the specified keyword logs a warning if the keyword fails.
+
+        This keyword is similar to `Run Keyword And Ignore Error` but if the executed
+        keyword fails, the error message is logged as a warning to make it more
+        visible. Returns status and possible return value or error message exactly
+        like `Run Keyword And Ignore Error` does.
+
+        Errors caused by invalid syntax, timeouts, or fatal exceptions are not
+        caught by this keyword. Otherwise this keyword itself never fails.
+
+        New in Robot Framework 4.0.
+        """
+        status, message = self.run_keyword_and_ignore_error(name, *args)
+        if status == 'FAIL':
+            logger.warn("Executing keyword '%s' failed:\n%s" % (name, message))
+        return status, message
 
     @run_keyword_variant(resolve=1)
     def run_keyword_and_return_status(self, name, *args):

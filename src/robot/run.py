@@ -142,17 +142,12 @@ Options
     --runemptysuite       Executes suite even if it contains no tests. Useful
                           e.g. with --include/--exclude when it is not an error
                           that no test matches the condition.
- -c --critical tag *      Tests having the given tag are considered critical.
-                          If no critical tags are set, all tests are critical.
-                          Tags can be given as a pattern same way as with
-                          --include.
- -n --noncritical tag *   Tests having the given tag are not critical even if
-                          they have a tag set with --critical. Tag can be
+    --skip tag *          Tests having given tag will be skipped. Tag can be
                           a pattern.
-    --skip tag *          Tests having given tag will be skipped.Tag can be
-                          a pattern.
-    --skiponfailure tag *  Tests having given tag will have status 'SKIP'
-                          instead of 'FAIL' if they fail. Tag can be a pattern.
+    --skiponfailure tag *  Tests having given tag will be marked skipped if
+                          they fail. New in RF 4.0.
+ -n --noncritical tag *   Alias for --skiponfailure. Deprecated since RF 4.0.
+ -c --critical tag *      Opposite of --noncritical. Deprecated since RF 4.0.
  -v --variable name:value *  Set variables in the test data. Only scalar
                           variables with string value are supported and name is
                           given without `${}`. See --variablefile for a more
@@ -184,7 +179,7 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
-    --xunitskipnoncritical  Mark non-critical tests in xUnit output as skipped.
+    --xunitskipnoncritical  Deprecated since RF 4.0 and has no effect anymore.
  -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.
  -T --timestampoutputs    When this option is used, timestamp in a format
@@ -429,8 +424,12 @@ class RobotFramework(Application):
     def main(self, datasources, **options):
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
+        if settings['Critical'] or settings['NonCritical']:
+            LOGGER.warn("Command line options --critical and --noncritical have been "
+                        "deprecated. Use --skiponfailure instead.")
         if settings['XUnitSkipNonCritical']:
-            LOGGER.warn("Command line option --xunitskipnoncritical has been deprecated.")
+            LOGGER.warn("Command line option --xunitskipnoncritical has been "
+                        "deprecated and has no effect.")
         LOGGER.info('Settings:\n%s' % unic(settings))
         builder = TestSuiteBuilder(settings['SuiteNames'],
                                    included_extensions=settings.extension,

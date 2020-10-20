@@ -97,7 +97,10 @@ class Runner(SuiteVisitor):
         with self._context.suite_teardown():
             failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
             if failure:
-                self._suite.suite_teardown_failed(unic(failure))
+                if failure.skip:
+                    self._suite.suite_teardown_skipped(unic(failure))
+                else:
+                    self._suite.suite_teardown_failed(unic(failure))
                 self._suite_status.failure_occurred()
         self._suite.endtime = get_timestamp()
         self._suite.message = self._suite_status.message
@@ -128,7 +131,7 @@ class Runner(SuiteVisitor):
         if self._skipped_tags.match(test.tags):
             status.test_skipped(
                 test_or_task(
-                    "{Test} skipped with --skip command line option.",
+                    "{Test} skipped with '--skip' command line option.",
                     self._settings.rpa))
         if not status.failed and not test.name:
             status.test_failed(
@@ -155,10 +158,7 @@ class Runner(SuiteVisitor):
             else:
                 result.message = exception.message
         except ExecutionStatus as err:
-            if err.status == 'SKIP':
-                status.test_skipped(err)
-            else:
-                status.test_failed(err)
+            status.test_failed(err)
         result.status = status.status
         result.message = status.message or result.message
         if status.teardown_allowed:
@@ -199,11 +199,14 @@ class Runner(SuiteVisitor):
         if status.teardown_allowed:
             exception = self._run_setup_or_teardown(teardown)
             status.teardown_executed(exception)
-            failed = (exception
-                      and not isinstance(exception, PassExecution)
-                      and not exception.skip)
+            failed = exception and not isinstance(exception, PassExecution)
             if result and exception:
-                result.message = status.message if failed else exception.message
+                if failed or status.skipped or exception.skip:
+                    result.message = status.message
+                else:
+                    # Pass execution used in teardown,
+                    # and it overrides previous failure message
+                    result.message = exception.message
             return exception if failed else None
 
     def _run_setup_or_teardown(self, data):

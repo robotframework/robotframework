@@ -32,4 +32,3 @@ robot.parsing.parser.parser module
    :members:
    :undoc-members:
    :show-inheritance:
-

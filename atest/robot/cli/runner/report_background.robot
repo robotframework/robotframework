@@ -20,7 +20,7 @@ Invalid Colors
 
 *** Keywords ***
 Report should have correct background
-    [Arguments]  ${opt}  ${pass}=#9e9  ${fail}=#f66  ${skip}=#ec971f
+    [Arguments]  ${opt}  ${pass}=#9e9  ${fail}=#f66  ${skip}=#fed84f
     Run Tests  ${opt} --report rep.html  misc/pass_and_fail.robot
     ${report} =  Get File  ${OUTDIR}/rep.html
     Should Contain  ${report}  "background":{"fail":"${fail}","pass":"${pass}","skip":"${skip}"},

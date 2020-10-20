@@ -61,8 +61,7 @@ Invalid XUnit File
 
 Skipping non-critical tests is deprecated
     Run tests    --xUnit xunit.xml --xUnitSkipNonCritical     ${PASS AND FAIL}
-    Stderr Should Contain   Command line option --xunitskipnoncritical has been deprecated.
-
+    Stderr Should Contain   Command line option --xunitskipnoncritical has been deprecated and has no effect.
 
 *** Keywords ***
 Get XUnit Node

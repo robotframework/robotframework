@@ -17,14 +17,6 @@ robot.model.configurer module
    :undoc-members:
    :show-inheritance:
 
-robot.model.criticality module
-------------------------------
-
-.. automodule:: robot.model.criticality
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 robot.model.filter module
 -------------------------
 
@@ -168,4 +160,3 @@ robot.model.visitor module
    :members:
    :undoc-members:
    :show-inheritance:
-

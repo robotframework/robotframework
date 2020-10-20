@@ -14,6 +14,11 @@ Exit From Java Keyword
     Check Test Case    ${TESTNAME}
     Check Test Case    Test That Should Not Be Run 3
 
+robot.api.FatalError
+    Run Tests    ${EMPTY}    running/fatal_exception/standard_error.robot
+    Check Test Case    ${TESTNAME}
+    Check Test Case    Test That Should Not Be Run
+
 Multiple Suite Aware Exiting
     Run Tests    ${EMPTY}    running/fatal_exception/
     Check Test Case    Exit From Python Keyword

@@ -63,9 +63,9 @@ class Result(object):
             result.configure(stat_config={'suite_stat_level': 2,
                                           'tag_stat_combine': 'tagANDanother'})
             stats = result.statistics
-            print stats.total.failed
-            print stats.total.passed
-            print stats.tags.combined[0].total
+            print(stats.total.failed)
+            print(stats.total.passed)
+            print(stats.tags.combined[0].total)
         """
         return Statistics(self.suite, rpa=self.rpa, **self._stat_config)
 

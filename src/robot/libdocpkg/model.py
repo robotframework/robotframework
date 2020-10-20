@@ -17,8 +17,9 @@ from itertools import chain
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, Sortable, setter
+from robot.utils import getshortdoc, get_timestamp, Sortable, setter
 
+from .htmlutils import HtmlToText, DocFormatter
 from .writer import LibdocWriter
 from .output import LibdocOutput
 
@@ -63,7 +64,16 @@ class LibraryDoc(object):
         return format or 'ROBOT'
 
     @setter
+    def inits(self, inits):
+        return self._add_parent(inits)
+
+    @setter
     def keywords(self, kws):
+        return self._add_parent(kws)
+
+    def _add_parent(self, kws):
+        for keyword in kws:
+            keyword.parent = self
         return sorted(kws)
 
     @property
@@ -74,21 +84,52 @@ class LibraryDoc(object):
         with LibdocOutput(output, format) as outfile:
             LibdocWriter(format).write(self, outfile)
 
+    def convert_doc_to_html(self):
+        formatter = DocFormatter(self.keywords, self.doc, self.doc_format)
+        self._doc = formatter.html(self.doc, intro=True)
+        self.doc_format = 'HTML'
+        for init in self.inits:
+            init.doc = formatter.html(init.doc)
+        for keyword in self.keywords:
+            keyword.doc = formatter.html(keyword.doc)
+
+    def to_dictionary(self):
+        return {
+            'name': self.name,
+            'doc': self.doc,
+            'version': self.version,
+            'type': self.type,
+            'scope': self.scope,
+            'named_args': self.named_args,
+            'doc_format': self.doc_format,
+            'source': self.source,
+            'lineno': self.lineno,
+            'inits': [init.to_dictionary() for init in self.inits],
+            'keywords': [kw.to_dictionary() for kw in self.keywords],
+            'generated': get_timestamp(daysep='-', millissep=None),
+            'all_tags': tuple(self.all_tags),
+            'contains_tags': bool(self.all_tags)
+        }
+
 
 class KeywordDoc(Sortable):
 
     def __init__(self, name='', args=(), doc='', tags=(), source=None,
-                 lineno=-1):
+                 lineno=-1, parent=None):
         self.name = name
         self.args = args
         self.doc = doc
         self.tags = Tags(tags)
         self.source = source
         self.lineno = lineno
+        self.parent = parent
 
     @property
     def shortdoc(self):
-        return getshortdoc(self.doc)
+        doc = self.doc
+        if self.parent and self.parent.doc_format == 'HTML':
+            doc = HtmlToText().get_shortdoc_from_html(doc)
+        return ' '.join(getshortdoc(doc).splitlines())
 
     @property
     def deprecated(self):
@@ -97,3 +138,15 @@ class KeywordDoc(Sortable):
     @property
     def _sort_key(self):
         return self.name.lower()
+
+    def to_dictionary(self):
+        return {
+            'name': self.name,
+            'args': self.args,
+            'doc': self.doc,
+            'shortdoc': self.shortdoc,
+            'tags': tuple(self.tags),
+            'source': self.source,
+            'lineno': self.lineno,
+            'matched': True
+        }

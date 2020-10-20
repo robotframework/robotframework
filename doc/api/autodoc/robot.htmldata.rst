@@ -48,4 +48,3 @@ robot.htmldata.template module
    :members:
    :undoc-members:
    :show-inheritance:
-
