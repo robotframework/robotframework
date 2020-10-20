@@ -407,10 +407,10 @@ Forward references
 Type information mismatch caused by decorator
     Mismatch caused by decorator               foo   'foo'
 
-Keyword decorator with wraps
+Decorator with wraps
     Keyword With Wraps                         42    42
 
-Keyword decorator with wraps mismatched type
+Decorator with wraps mismatched type
     Conversion Should Fail
     ...    Keyword With Wraps    argument=foobar    type=integer
 
@@ -424,3 +424,18 @@ Value contains variable
     Varargs              @{value}                  expected=(1, 2, 3)
     &{value} =           Create Dictionary         a=1    b=2    c=3
     Kwargs               &{value}                  expected={'a': 1, 'b': 2, 'c': 3}
+
+Default value is not used if explicit type conversion succeeds
+    Type and default 1    [1, 2]    [1, 2]
+    Type and default 2    42        42
+
+Default value is used if explicit type conversion fails
+    Type and default 1    none       None
+    Type and default 2    FALSE      False
+    Type and default 2    ok also    'ok also'
+    Type and default 3    10         ${{datetime.timedelta(seconds=10)}}
+
+Explicit conversion failure is used if both conversions fail
+    [Template]    Conversion Should Fail
+    Type and default 1    BANG!    type=list         error=Invalid expression.
+    Type and default 3    BANG!    type=timedelta    error=Invalid time string 'BANG!'.

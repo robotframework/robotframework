@@ -218,6 +218,18 @@ def keyword_with_wraps(argument: int, expected=None):
     _validate_type(argument, expected)
 
 
+def type_and_default_1(argument: list = None, expected=None):
+    _validate_type(argument, expected)
+
+
+def type_and_default_2(argument: int = True, expected=None):
+    _validate_type(argument, expected)
+
+
+def type_and_default_3(argument: timedelta = 0, expected=None):
+    _validate_type(argument, expected)
+
+
 def _validate_type(argument, expected):
     if isinstance(expected, str):
         expected = eval(expected)

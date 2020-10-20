@@ -194,11 +194,20 @@ Forward references
 Type information mismatch caused by decorator
     Check Test Case    ${TESTNAME}
 
-Keyword decorator with wraps
+Decorator with wraps
     Check Test Case    ${TESTNAME}
 
-Keyword decorator with wraps mismatched type
+Decorator with wraps mismatched type
     Check Test Case    ${TESTNAME}
 
 Value contains variable
+    Check Test Case    ${TESTNAME}
+
+Default value is not used if explicit type conversion succeeds
+    Check Test Case    ${TESTNAME}
+
+Default value is used if explicit type conversion fails
+    Check Test Case    ${TESTNAME}
+
+Explicit conversion failure is used if both conversions fail
     Check Test Case    ${TESTNAME}
