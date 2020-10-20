@@ -21,11 +21,11 @@ from robot.utils import WINDOWS, XmlWriter, unicode
 
 class LibdocXmlWriter(object):
 
-    def __init__(self, force_html_doc=False):
-        self._force_html_doc = force_html_doc
+    def __init__(self, output_doc_format):
+        self._output_doc_format = output_doc_format
 
     def write(self, libdoc, outfile):
-        if self._force_html_doc:
+        if self._output_doc_format == 'HTML':
             libdoc.convert_doc_to_html()
         writer = XmlWriter(outfile, usage='Libdoc spec')
         self._write_start(libdoc, writer)

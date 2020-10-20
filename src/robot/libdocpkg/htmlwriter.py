@@ -20,7 +20,12 @@ from robot.htmldata import HtmlFileWriter, ModelWriter, LIBDOC
 
 class LibdocHtmlWriter(object):
 
+    def __init__(self, output_doc_format):
+        self._output_doc_format = output_doc_format
+
     def write(self, libdoc, output):
+        if self._output_doc_format == 'HTML':
+            libdoc.convert_doc_to_html()
         model_writer = LibdocModelWriter(output, libdoc)
         HtmlFileWriter(output, model_writer).write(LIBDOC)
 
@@ -29,7 +34,6 @@ class LibdocModelWriter(ModelWriter):
 
     def __init__(self, output, libdoc):
         self._output = output
-        libdoc.convert_doc_to_html()
         self._libdoc = libdoc.to_dictionary()
 
     def write(self, line):
