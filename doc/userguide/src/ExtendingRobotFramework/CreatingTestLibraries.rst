@@ -1456,8 +1456,8 @@ case-insensitive.
    |             |               |            | Starting from RF 3.2.2, matching members is case-, space-      |        RED = 1                       |
    |             |               |            | and underscore-insensitive.                                    |        GREEN = 2                     |
    |             |               |            |                                                                |        DARK_GREEN = 3                |
-   |             |               |            |                                                                |                                      |
-   |             |               |            |                                                                | | `GREEN` (Color.GREEN)              |
+   |             |               |            | Starting from RF 4.0 `NONE` is not converted and will result   |                                      |
+   |             |               |            | failure if matching enum value is not found.                   | | `GREEN` (Color.GREEN)              |
    |             |               |            |                                                                | | `Dark Green` (Color.DARK_GREEN)    |
    +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
    | NoneType_   |               |            | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |

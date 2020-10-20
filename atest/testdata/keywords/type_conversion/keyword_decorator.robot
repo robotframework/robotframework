@@ -67,7 +67,7 @@ Boolean
     Boolean              oFF                       ${False}
     Boolean              0                         ${False}
     Boolean              ${EMPTY}                  ${False}
-    Boolean              none                      ${None}
+    Boolean              none                      ${False}
 
 Invalid boolean is accepted as-is
     Boolean              FooBar                    'FooBar'
@@ -396,21 +396,6 @@ Non-strings are not converted
     Date
     Timedelta
     NoneType
-
-String None is converted to None object
-    [Template]           String None is converted to None object
-    Integer
-    Float
-    Boolean
-    Decimal
-    List
-    Tuple
-    Dictionary
-    Set
-    Frozenset
-    DateTime
-    Date
-    Timedelta
 
 Invalid type spec causes error
     [Documentation]    FAIL No keyword with name 'Invalid type spec' found.

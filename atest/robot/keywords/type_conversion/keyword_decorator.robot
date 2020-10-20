@@ -192,9 +192,6 @@ Invalid kwonly
 Non-strings are not converted
     Check Test Case    ${TESTNAME}
 
-String None is converted to None object
-    Check Test Case    ${TESTNAME}
-
 Invalid type spec causes error
     Check Test Case    ${TESTNAME}
     Error In Library    KeywordDecorator
