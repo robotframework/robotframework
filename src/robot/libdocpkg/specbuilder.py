@@ -26,7 +26,6 @@ class SpecDocBuilder(object):
 
     def build(self, path):
         spec = self._parse_spec(path)
-
         libdoc = LibraryDoc(name=spec.get('name'),
                             type=spec.get('type').upper(),
                             version=spec.find('version').text or '',
@@ -49,7 +48,7 @@ class SpecDocBuilder(object):
         version = root.get('specversion')
         if version != '3':
             raise DataError("Invalid spec file version '%s'. "
-                            "Robot Framework >= 4.0 requires specversion 3." % version)
+                            "Robot Framework 4.0 and newer requires spec version 3." % version)
         return root
 
     def _create_keywords(self, spec, path):
@@ -75,31 +74,17 @@ class SpecDocBuilder(object):
             ArgInfo.VAR_NAMED: lambda value: setattr(spec, 'var_named', value),
         }
         for arg in elem.findall('arguments/arg'):
-            name = self._get_name(arg)
-            if name:
-                setters[arg.get('kind')](name)
-                spec.defaults.update(self._get_default(arg, name))
-                spec.type = self._get_updated_types(arg, name, spec)
+            name_elem = arg.find('name')
+            if name_elem is None:
+                continue
+            name = name_elem.text
+            setters[arg.get('kind')](name)
+            default_elem = arg.find('default')
+            if default_elem is not None:
+                spec.defaults[name] = default_elem.text or ''
+            type_elem = arg.find('type')
+            if type_elem is not None:
+                if not spec.types:
+                    spec.types = {}
+                spec.types[name] = type_elem.text
         return spec
-
-    @staticmethod
-    def _get_name(arg):
-        name_elem = arg.find('name')
-        if name_elem is not None:
-            return name_elem.text
-
-    @staticmethod
-    def _get_updated_types(arg, name, spec):
-        type_elem = arg.find('type')
-        if type_elem is not None:
-            type_info = {name: type_elem.text}
-            type_info.update(spec.types or {})
-            return type_info
-
-    @staticmethod
-    def _get_default(arg, name):
-        default_elem = arg.find('default')
-        if default_elem is None:
-            return {}
-        else:
-            return {name: default_elem.text}

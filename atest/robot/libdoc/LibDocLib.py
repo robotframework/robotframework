@@ -70,8 +70,7 @@ class LibDocLib(object):
             return normpath(path)
 
     def get_repr_from_arg_model(self, model):
-        arg_info = ArgInfo(kind=model['kind'],
-                           name=model['name'],
-                           type=model['type'] or ArgInfo.NOTSET,
-                           default=model['default'] or ArgInfo.NOTSET)
-        return unicode(arg_info)
+        return unicode(ArgInfo(kind=model['kind'],
+                               name=model['name'],
+                               type=model['type'] or ArgInfo.NOTSET,
+                               default=model['default'] or ArgInfo.NOTSET))

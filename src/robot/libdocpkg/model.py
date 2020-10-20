@@ -150,14 +150,10 @@ class KeywordDoc(Sortable):
         }
 
     def _convert_arguments(self):
-        return [self._arg_to_dict(a) for a in self.args]
-
-    def _arg_to_dict(self, arg_info):
-        return {
-            'name': arg_info.name,
-            'type': arg_info.type_repr,
-            'default': arg_info.default_repr,
-            'kind': arg_info.kind,
-            'required': arg_info.required,
-            'repr': unicode(arg_info)
-        }
+        return [{'name': a.name,
+                 'type': a.type_repr,
+                 'default': a.default_repr,
+                 'kind': a.kind,
+                 'required': a.required,
+                 'repr': unicode(a)
+                 } for a in self.args]

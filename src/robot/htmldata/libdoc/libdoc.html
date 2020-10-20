@@ -310,7 +310,7 @@
                 <div class="arg ${$value.kind} {{if $value.required}}arg-required{{else}}arg-optional{{/if}}">
                   <span class="arg-name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
                   {{if $value.type}}<span class="arg-type">: ${$value.type}</span>{{/if}}
-                  {{if $value.default}} = <span class="arg-default-value">${$value.default}</span>{{/if}}
+                  {{if $value.default !== null}} = <span class="arg-default-value">${$value.default}</span>{{/if}}
                 </div>
               </li>
             {{/each}}
@@ -413,7 +413,7 @@
                     <div class="arg ${$value.kind} {{if $value.required}}arg-required{{else}}arg-optional{{/if}}">
                       <span class="arg-name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
                       {{if $value.type}}: <span class="arg-type">${$value.type}</span>{{/if}}
-                      {{if $value.default}} = <span class="arg-default-value">${$value.default}</span>{{/if}}
+                      {{if $value.default !== null}} = <span class="arg-default-value">${$value.default}</span>{{/if}}
                     </div>
                   </li>
                 {{/each}}

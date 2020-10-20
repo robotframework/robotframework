@@ -3,14 +3,6 @@ Resource          libdoc_resource.robot
 Suite Setup       Run Libdoc And Parse Model From HTML    ${TESTDATADIR}/module.py
 Test Template     Should Be Equal Multiline
 
-*** Keywords ***
-Verify Argument Models
-    [Arguments]    ${arg_models}    @{expected_reprs}
-    Should Be True    len($arg_models) == len($expected_reprs)
-    FOR    ${arg_model}    ${expected_repr}    IN ZIP    ${arg_models}    ${expected_reprs}
-       Run Keyword And Continue On Failure    Verify Argument Model    ${arg_model}    ${expected_repr}
-    END
-
 *** Test Cases ***
 Name
     ${MODEL}[name]          module
@@ -111,3 +103,11 @@ User keyword documentation formatting
     ...    <td>bar</td>
     ...    </tr>
     ...    </table>
+
+*** Keywords ***
+Verify Argument Models
+    [Arguments]    ${arg_models}    @{expected_reprs}
+    Should Be True    len($arg_models) == len($expected_reprs)
+    FOR    ${arg_model}    ${expected_repr}    IN ZIP    ${arg_models}    ${expected_reprs}
+       Run Keyword And Continue On Failure    Verify Argument Model    ${arg_model}    ${expected_repr}
+    END
