@@ -14,6 +14,10 @@ class MyEnum(Enum):
     foo = 'yyy'
     normalize_me = True
 
+class NoneEnum(Enum):
+    NONE = 1
+    NTWO = 2
+    NTHREE = 3
 
 class Unknown(object):
     pass
@@ -72,6 +76,10 @@ def timedelta_(argument: timedelta, expected=None):
 
 
 def enum_(argument: MyEnum, expected=None):
+    _validate_type(argument, expected)
+
+
+def none_enum_(argument: NoneEnum, expected=None):
     _validate_type(argument, expected)
 
 

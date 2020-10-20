@@ -49,7 +49,7 @@ Boolean
     Boolean              oFF                       ${False}
     Boolean              0                         ${False}
     Boolean              ${EMPTY}                  ${False}
-    Boolean              none                      ${None}
+    Boolean              none                      ${False}
 
 Invalid boolean
     [Template]           Invalid value is passed as-is
@@ -231,22 +231,6 @@ Unknown types are not converted
     Unknown              None                      u'None'
     Unknown              none                      u'none'
     Unknown              []                        u'[]'
-
-String None is converted to None object
-    [Template]           String None is converted to None object
-    Integer
-    Float
-    Decimal
-    Boolean
-    Datetime
-    Date
-    Timedelta
-    Enum
-    List
-    Tuple
-    Dictionary
-    Set
-    Frozenset
 
 Positional as named
     Integer              argument=-1               expected=-1
