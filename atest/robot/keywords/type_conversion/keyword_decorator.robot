@@ -215,3 +215,12 @@ Type can be given to `return` without an error
 
 Value contains variable
     Check Test Case    ${TESTNAME}
+
+Default value is not used if explicit type conversion succeeds
+    Check Test Case    ${TESTNAME}
+
+Default value is used if explicit type conversion fails
+    Check Test Case    ${TESTNAME}
+
+Explicit conversion failure is used if both conversions fail
+    Check Test Case    ${TESTNAME}

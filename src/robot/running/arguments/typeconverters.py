@@ -80,17 +80,17 @@ class TypeConverter(object):
     def get_converter(self, type_):
         return self
 
-    def convert(self, name, value, explicit_type=True):
+    def convert(self, name, value, explicit_type=True, strict=True):
         try:
             return self._convert(value, explicit_type)
         except ValueError as error:
-            return self._handle_error(name, value, error, explicit_type)
+            return self._handle_error(name, value, error, strict)
 
     def _convert(self, value, explicit_type=True):
         raise NotImplementedError
 
-    def _handle_error(self, name, value, error, explicit_type=True):
-        if not explicit_type:
+    def _handle_error(self, name, value, error, strict=True):
+        if not strict:
             return value
         ending = u': %s' % error if error.args else '.'
         raise ValueError("Argument '%s' got value '%s' that cannot be "
