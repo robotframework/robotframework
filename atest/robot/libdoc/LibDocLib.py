@@ -8,7 +8,8 @@ from subprocess import run, PIPE, STDOUT
 from xmlschema import XMLSchema
 
 from robot.api import logger
-from robot.utils import CONSOLE_ENCODING, SYSTEM_ENCODING
+from robot.utils import CONSOLE_ENCODING, SYSTEM_ENCODING, unicode
+from robot.running.arguments import ArgInfo
 
 
 ROOT = join(dirname(abspath(__file__)), '..', '..', '..')
@@ -18,7 +19,7 @@ class LibDocLib(object):
 
     def __init__(self, interpreter=None):
         self.interpreter = interpreter
-        self.schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.02.xsd'))
+        self.schema = XMLSchema(join(ROOT, 'doc', 'schema', 'libdoc.03.xsd'))
 
     @property
     def libdoc(self):
@@ -47,7 +48,7 @@ class LibDocLib(object):
     def get_libdoc_model_from_html(self, path):
         with open(path, encoding='UTF-8') as html_file:
             model_string = self._find_model(html_file)
-        model = json.loads(model_string.replace('\\x3c/', '</'))
+        model = json.loads(model_string)
         logger.info(pprint.pformat(model))
         return model
 
@@ -67,3 +68,9 @@ class LibDocLib(object):
             return relpath(path, start)
         except ValueError:
             return normpath(path)
+
+    def get_repr_from_arg_model(self, model):
+        return unicode(ArgInfo(kind=model['kind'],
+                               name=model['name'],
+                               type=model['type'] or ArgInfo.NOTSET,
+                               default=model['default'] or ArgInfo.NOTSET))

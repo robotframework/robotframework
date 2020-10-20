@@ -20,10 +20,6 @@ Generated
 Scope
     ${MODEL}[scope]         GLOBAL
 
-Named Args
-    [Template]    Should Be Equal
-    ${MODEL}[named_args]    ${True}
-
 Inits
     [Template]    Should Be Empty
     ${MODEL}[inits]
@@ -34,13 +30,13 @@ Keyword Names
     ${MODEL}[keywords][13][name]    Set Name Using Robot Name Attribute
 
 Keyword Arguments
-    [Template]    Should Be Equal As Strings
-    ${MODEL}[keywords][0][args]     []
-    ${MODEL}[keywords][1][args]     ['a1=d', '*a2']
-    ${MODEL}[keywords][6][args]     ['arg=hyv\\\\xe4']
-    ${MODEL}[keywords][10][args]    ['arg=hyvä']
-    ${MODEL}[keywords][12][args]    ['a=1', 'b=True', 'c=(1, 2, None)']
-    ${MODEL}[keywords][13][args]    ['a', 'b', '*args', '**kwargs']
+    [Template]    Verify Argument Models
+    ${MODEL}[keywords][0][args]     
+    ${MODEL}[keywords][1][args]     a1=d    *a2
+    ${MODEL}[keywords][6][args]     arg=hyv\\xe4
+    ${MODEL}[keywords][10][args]    arg=hyvä
+    ${MODEL}[keywords][12][args]    a=1    b=True    c=(1, 2, None)
+    ${MODEL}[keywords][13][args]    a    b    *args    **kwargs
 
 Embedded Arguments
     [Template]    NONE
@@ -107,3 +103,11 @@ User keyword documentation formatting
     ...    <td>bar</td>
     ...    </tr>
     ...    </table>
+
+*** Keywords ***
+Verify Argument Models
+    [Arguments]    ${arg_models}    @{expected_reprs}
+    Should Be True    len($arg_models) == len($expected_reprs)
+    FOR    ${arg_model}    ${expected_repr}    IN ZIP    ${arg_models}    ${expected_reprs}
+       Run Keyword And Continue On Failure    Verify Argument Model    ${arg_model}    ${expected_repr}
+    END

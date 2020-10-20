@@ -37,7 +37,6 @@ Show whole library
     Should Contain Intro    module
     ...    Version=0.1-alpha
     ...    Scope=GLOBAL
-    ...    Named arguments=supported
     Should Contain Keyword    Get Hello    ${EMPTY}
     ...    Get hello.
     ...    ${EMPTY}
@@ -64,7 +63,6 @@ Show intro only
 
 Show intro and keywords
     Run Libdoc and set output    ${TESTDATADIR}/resource.robot SHOW NONASC* INTRO
-    Should Contain Intro    resource    Named arguments=supported
     Should Contain Keyword    non ascii doc    ${EMPTY}
     ...    Hyvää yötä.
     ...    ${EMPTY}
@@ -79,7 +77,7 @@ Show version
 Should Contain Intro
     [Arguments]    ${name}    &{meta}
     ${underline} =    Evaluate    '=' * len($name)
-    @{meta} =    Evaluate    [(n+':').ljust(18) + v for n, v in $meta.items()]
+    @{meta} =    Evaluate    [(n+':').ljust(10) + v for n, v in $meta.items()]
     ${expected} =    Catenate    SEPARATOR=\n
     ...    ${name}
     ...    ${underline}

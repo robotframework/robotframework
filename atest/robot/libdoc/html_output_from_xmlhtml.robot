@@ -24,9 +24,6 @@ Version
 Scope
     ${XML-MODEL}[scope]    ${MODEL}[scope]
 
-Named Args
-    ${XML-MODEL}[named_args]    ${MODEL}[named_args]
-
 Inits
     ${XML-MODEL}[inits]    ${MODEL}[inits]
 
@@ -36,6 +33,7 @@ Keyword Names
     ${XML-MODEL}[keywords][13][name]    ${MODEL}[keywords][13][name]
 
 Keyword Arguments
+    [Template]    List of Dict Should Be Equal
     ${XML-MODEL}[keywords][0][args]    ${MODEL}[keywords][0][args]
     ${XML-MODEL}[keywords][1][args]    ${MODEL}[keywords][1][args]
     ${XML-MODEL}[keywords][6][args]    ${MODEL}[keywords][6][args]
