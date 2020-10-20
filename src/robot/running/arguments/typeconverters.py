@@ -37,7 +37,6 @@ class TypeConverter(object):
     type = None
     abc = None
     aliases = ()
-    convert_none = False
     _converters = OrderedDict()
     _type_aliases = {}
 
@@ -82,8 +81,6 @@ class TypeConverter(object):
         return self
 
     def convert(self, name, value, explicit_type=True):
-        if self.convert_none and value.upper() == 'NONE':
-            return None
         try:
             return self._convert(value, explicit_type)
         except ValueError as error:
@@ -280,10 +277,12 @@ class EnumConverter(TypeConverter):
 @TypeConverter.register
 class NoneConverter(TypeConverter):
     type = type(None)
-    convert_none = True
+    type_name = 'None'
 
     def _convert(self, value, explicit_type=True):
-        return value
+        if value.upper() == 'NONE':
+            return None
+        raise ValueError
 
 
 @TypeConverter.register

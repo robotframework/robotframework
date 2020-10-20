@@ -99,6 +99,9 @@ Invalid Enum
 NoneType
     Check Test Case    ${TESTNAME}
 
+Invalid NoneType
+    Check Test Case    ${TESTNAME}
+
 List
     Check Test Case    ${TESTNAME}
 
