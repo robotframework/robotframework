@@ -14,10 +14,12 @@ class MyEnum(Enum):
     foo = 'yyy'
     normalize_me = True
 
+
 class NoneEnum(Enum):
     NONE = 1
     NTWO = 2
     NTHREE = 3
+
 
 class Unknown(object):
     pass

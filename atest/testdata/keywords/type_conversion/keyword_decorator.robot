@@ -193,9 +193,12 @@ Invalid Enum
 NoneType
     NoneType             None                      None
     NoneType             NONE                      None
-    NoneType             Hello, world!             'Hello, world!'
-    NoneType             True                      'True'
-    NoneType             []                        '[]'
+
+Invalid NoneType
+    [Template]           Conversion Should Fail
+    NoneType             Hello, world!             type=None
+    NoneType             True                      type=None
+    NoneType             []                        type=None
 
 List
     List                 []                        []
