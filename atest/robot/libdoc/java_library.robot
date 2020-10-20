@@ -25,9 +25,6 @@ Generated
 Scope
     Scope Should Be                  GLOBAL
 
-Named Args
-    Named Args Should Be             false
-
 Source Info
     Source Should Be                 ${TESTDATADIR}/Example.java
     Lineno Should Be                 ${None}

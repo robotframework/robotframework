@@ -24,9 +24,6 @@ Generated
 Scope
     Scope Should Be                  SUITE
 
-Named Args
-    Named Args Should Be             true
-
 Source info
     [Tags]    no-standalone    # Standard library sources aren't included in standalone JAR
     Source should be                 ${CURDIR}/../../../src/robot/libraries/Telnet.py
@@ -49,8 +46,8 @@ Init Arguments
 
 Init Source Info
     [Tags]    no-standalone    # Standard library sources aren't included in standalone JAR
-    Keyword Should Not Have Source   0    xpath=init
-    Keyword Lineno Should Be         0    283      xpath=init
+    Keyword Should Not Have Source   0    xpath=inits/init
+    Keyword Lineno Should Be         0    283      xpath=inits/init
 
 Keyword Names
     Keyword Name Should Be           0    Close All Connections

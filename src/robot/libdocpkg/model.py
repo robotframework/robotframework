@@ -17,7 +17,7 @@ from itertools import chain
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, get_timestamp, Sortable, setter
+from robot.utils import getshortdoc, get_timestamp, Sortable, setter, unicode, unic
 
 from .htmlutils import HtmlToText, DocFormatter
 from .writer import LibdocWriter
@@ -27,14 +27,13 @@ from .output import LibdocOutput
 class LibraryDoc(object):
 
     def __init__(self, name='', doc='', version='', type='LIBRARY',
-                 scope='TEST', named_args=True, doc_format='ROBOT',
+                 scope='TEST', doc_format='ROBOT',
                  source=None, lineno=-1):
         self.name = name
         self._doc = doc
         self.version = version
         self.type = type
         self.scope = scope
-        self.named_args = named_args
         self.doc_format = doc_format
         self.source = source
         self.lineno = lineno
@@ -100,7 +99,6 @@ class LibraryDoc(object):
             'version': self.version,
             'type': self.type,
             'scope': self.scope,
-            'named_args': self.named_args,
             'doc_format': self.doc_format,
             'source': self.source,
             'lineno': self.lineno,
@@ -142,7 +140,7 @@ class KeywordDoc(Sortable):
     def to_dictionary(self):
         return {
             'name': self.name,
-            'args': self.args,
+            'args': self._convert_arguments(),
             'doc': self.doc,
             'shortdoc': self.shortdoc,
             'tags': tuple(self.tags),
@@ -150,3 +148,12 @@ class KeywordDoc(Sortable):
             'lineno': self.lineno,
             'matched': True
         }
+
+    def _convert_arguments(self):
+        return [{'name': a.name,
+                 'type': a.type_repr,
+                 'default': a.default_repr,
+                 'kind': a.kind,
+                 'required': a.required,
+                 'repr': unicode(a)
+                 } for a in self.args]

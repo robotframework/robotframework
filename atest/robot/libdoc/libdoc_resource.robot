@@ -73,15 +73,6 @@ Type Should Be
 Scope Should Be
     [Arguments]    ${scope}    ${old}=${{ {'GLOBAL': 'global', 'SUITE': 'test suite', 'TEST': 'test case'}[$scope] }}
     Element Attribute Should Be    ${LIBDOC}    scope    ${scope}
-    # 'scope' element should be removed in RF 4.0.
-    Element Text Should Be    ${LIBDOC}    ${old}    xpath=scope
-
-Named Args Should Be
-    [Arguments]    ${namedargs}
-    Element Attribute Should Be    ${LIBDOC}    namedargs    ${namedargs}
-    # 'namedargs' element should be removed in RF 4.0.
-    Element Text Should Be    ${LIBDOC}
-    ...    ${{'yes' if $namedargs == 'true' else 'no'}}    xpath=namedargs
 
 Source Should Be
     [Arguments]    ${source}
@@ -96,98 +87,128 @@ Generated Should Be Defined
     Element Attribute Should Match    ${LIBDOC}    generated    ????-??-??T??:??:??Z
 
 Spec version should be correct
-    Element Attribute Should Be    ${LIBDOC}    specversion    2
+    Element Attribute Should Be    ${LIBDOC}    specversion    3
 
 Should Have No Init
-    ${inits} =    Get Elements    ${LIBDOC}    xpath=init
+    ${inits} =    Get Elements    ${LIBDOC}    xpath=inits/init
     Should Be Empty    ${inits}
 
 Init Doc Should Start With
     [Arguments]    ${index}    @{doc}
-    ${inits}=   Get Elements    ${LIBDOC}   xpath=init
+    ${inits}=   Get Elements    ${LIBDOC}   xpath=inits/init
     ${doc}=    Catenate     SEPARATOR=    @{doc}
     ${text} =    Get Element Text    ${inits}[${index}]    xpath=doc
     Should Start With    ${text}    ${doc}
 
 Init Doc Should Be
     [Arguments]    ${index}    @{doc}
-    ${kws}=   Get Elements    ${LIBDOC}    xpath=init
+    ${kws}=   Get Elements    ${LIBDOC}    xpath=inits/init
     ${doc}=    Catenate     SEPARATOR=    @{doc}
     Element Text Should Be    ${kws}[${index}]    ${doc}    xpath=doc
 
 Init Arguments Should Be
     [Arguments]    ${index}   @{expected}
-    ${args}=    Get Keyword Arguments    ${index}    type=init
-    Should Be Equal    ${args}    ${expected}
+    Verify Arguments Structure    ${index}    inits/init    ${expected}
 
 Keyword Name Should Be
     [Arguments]    ${index}   ${name}
-    ${elements}=   Get Elements    ${LIBDOC}    xpath=kw
+    ${elements}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
     Element Attribute Should Be    ${elements}[${index}]    name    ${name}
 
 Keyword Arguments Should Be
     [Arguments]    ${index}    @{expected}
-    ${args}=    Get Keyword Arguments    ${index}
-    Should Be Equal    ${args}    ${expected}
+    Verify Arguments Structure    ${index}    keywords/kw    ${expected}
 
-Get Keyword Arguments
-    [Arguments]    ${index}   ${type}=kw
+Verify Arguments Structure
+    [Arguments]    ${index}   ${type}    ${expected}
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
-    ${args}=    Get Elements Texts   ${kws}[${index}]    xpath=arguments/arg
-    [Return]    ${args}
+    ${arg_elems}=    Get Elements    ${kws}[${index}]    xpath=arguments/arg
+    FOR    ${arg_elem}    ${exp_repr}    IN ZIP     ${arg_elems}    ${expected}
+        ${kind}=        Get Element Attribute        ${arg_elem}    kind
+        ${required}=    Get Element Attribute        ${arg_elem}    required
+        ${repr}=        Get Element Attribute        ${arg_elem}    repr
+        ${name}=        Get Element Optional Text    ${arg_elem}    name
+        ${type}=        Get Element Optional Text    ${arg_elem}    type
+        ${default}=     Get Element Optional Text    ${arg_elem}    default
+        ${arg_model}=    Create Dictionary
+        ...    kind=${kind}
+        ...    name=${name}
+        ...    type=${type}
+        ...    default=${default}
+        ...    repr=${repr}
+        Run Keyword And Continue On Failure
+        ...    Verify Argument Model    ${arg_model}    ${exp_repr}
+        Run Keyword And Continue On Failure
+        ...    Should Be Equal    ${repr}    ${exp_repr}
+    END
+    Should Be True    len($arg_elems) == len($expected)
+
+Get Element Optional Text
+    [Arguments]    ${source}    ${xpath}
+    ${elem}=    Get Elements    ${source}    ${xpath}
+    ${text}=    Run Keyword If    len($elem) == 1    
+    ...   Get Element Text    ${elem}[0]    .
+    ...   ELSE   Set Variable   ${NONE}
+    [Return]    ${text}
+
+Verify Argument Model
+    [Arguments]    ${arg_model}    ${expected_repr}
+    ${repr}=   Get Repr From Arg Model    ${arg_model}
+    Should Be Equal As Strings    ${repr}    ${expected_repr}
+    Should Be Equal As Strings    ${arg_model}[repr]    ${expected_repr}
 
 Keyword Doc Should Start With
     [Arguments]    ${index}    @{doc}
-    ${kws}=   Get Elements    ${LIBDOC}   xpath=kw
+    ${kws}=   Get Elements    ${LIBDOC}   xpath=keywords/kw
     ${doc}=    Catenate     SEPARATOR=\n    @{doc}
     ${text} =    Get Element Text    ${kws}[${index}]    xpath=doc
     Should Start With    ${text}    ${doc}
 
 Keyword Doc Should Be
     [Arguments]    ${index}    @{doc}
-    ${kws}=   Get Elements    ${LIBDOC}    xpath=kw
+    ${kws}=   Get Elements    ${LIBDOC}    xpath=keywords/kw
     ${doc}=    Catenate     SEPARATOR=\n    @{doc}
     Element Text Should Be    ${kws}[${index}]    ${doc}    xpath=doc
 
 Keyword Tags Should Be
     [Arguments]    ${index}    @{expected}
-    ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
     ${tags}=   Get Elements Texts    ${kws}[${index}]    xpath=tags/tag
     Should Be Equal    ${tags}    ${expected}
 
 Keyword Source Should Be
-    [Arguments]    ${index}    ${source}    ${xpath}=kw
+    [Arguments]    ${index}    ${source}    ${xpath}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     ${source} =    Relative Source    ${source}    %{TEMPDIR}
     Element Attribute Should Be    ${kws}[${index}]    source    ${source}
 
 Keyword Should Not Have Source
-    [Arguments]    ${index}    ${xpath}=kw
+    [Arguments]    ${index}    ${xpath}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     Element Should Not Have Attribute    ${kws}[${index}]    source
 
 Keyword Lineno Should Be
-    [Arguments]    ${index}    ${lineno}    ${xpath}=kw
+    [Arguments]    ${index}    ${lineno}    ${xpath}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     Element Attribute Should Be    ${kws}[${index}]    lineno    ${lineno}
 
 Keyword Should Not Have Lineno
-    [Arguments]    ${index}    ${xpath}=kw
+    [Arguments]    ${index}    ${xpath}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     Element Should Not Have Attribute    ${kws}[${index}]    lineno
 
 Keyword Should Be Deprecated
     [Arguments]    ${index}
-    ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
     Element Attribute Should be    ${kws}[${index}]    deprecated    true
 
 Keyword Should Not Be Deprecated
     [Arguments]    ${index}
-    ${kws}=    Get Elements    ${LIBDOC}    xpath=kw
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=keywords/kw
     Element Should Not Have Attribute    ${kws}[${index}]    deprecated
 
 Keyword Count Should Be
-    [Arguments]    ${expected}   ${type}=kw
+    [Arguments]    ${expected}   ${type}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
     Length Should Be    ${kws}    ${expected}
 
@@ -198,3 +219,9 @@ Should Be Equal Multiline
     [Arguments]    ${actual}    @{expected}
     ${expected} =    Catenate    SEPARATOR=\n    @{expected}
     Should Be Equal As Strings    ${actual}    ${expected}
+
+List of Dict Should Be Equal
+    [Arguments]    ${list1}    ${list2}
+    FOR    ${dict1}    ${dict2}    IN ZIP    ${list1}    ${list2}
+        Dictionaries Should Be Equal    ${dict1}    ${dict2}
+    END

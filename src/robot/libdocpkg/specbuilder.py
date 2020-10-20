@@ -17,6 +17,7 @@ import os.path
 
 from robot.errors import DataError
 from robot.utils import ET, ETSource
+from robot.running.arguments import ArgumentSpec, ArgInfo
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -29,13 +30,12 @@ class SpecDocBuilder(object):
                             type=spec.get('type').upper(),
                             version=spec.find('version').text or '',
                             doc=spec.find('doc').text or '',
-                            scope=self._get_scope(spec),
-                            named_args=self._get_named_args(spec),
+                            scope=spec.get('scope'),
                             doc_format=spec.get('format', 'ROBOT'),
                             source=spec.get('source'),
                             lineno=int(spec.get('lineno', -1)))
-        libdoc.inits = self._create_keywords(spec, 'init')
-        libdoc.keywords = self._create_keywords(spec, 'kw')
+        libdoc.inits = self._create_keywords(spec, 'inits/init')
+        libdoc.keywords = self._create_keywords(spec, 'keywords/kw')
         return libdoc
 
     def _parse_spec(self, path):
@@ -45,29 +45,11 @@ class SpecDocBuilder(object):
             root = ET.parse(source).getroot()
         if root.tag != 'keywordspec':
             raise DataError("Invalid spec file '%s'." % path)
+        version = root.get('specversion')
+        if version != '3':
+            raise DataError("Invalid spec file version '%s'. "
+                            "Robot Framework 4.0 and newer requires spec version 3." % version)
         return root
-
-    def _get_scope(self, spec):
-        # RF >= 3.2 has "scope" attribute w/ value 'GLOBAL', 'SUITE, or 'TEST'.
-        if 'scope' in spec.attrib:
-            return spec.get('scope')
-        # RF < 3.2 has "scope" element. Need to map old values to new.
-        scope = spec.find('scope').text
-        return {'': 'GLOBAL',          # Was used with resource files.
-                'global': 'GLOBAL',
-                'test suite': 'SUITE',
-                'test case': 'TEST'}[scope]
-
-    def _get_named_args(self, spec):
-        # RF >= 3.2 has "namedargs" attribute w/ value 'true' or 'false'.
-        namedargs = spec.get('namedargs')
-        if namedargs == 'true':
-            return True
-        if namedargs == 'false':
-            return False
-        # RF < 3.2 has "namedargs" element with text 'yes' or 'no'.
-        namedargs = spec.find('namedargs').text
-        return namedargs == 'yes'
 
     def _create_keywords(self, spec, path):
         return [self._create_keyword(elem) for elem in spec.findall(path)]
@@ -76,8 +58,33 @@ class SpecDocBuilder(object):
         # "deprecated" attribute isn't read because it is read from the doc
         # automatically. That should probably be changed at some point.
         return KeywordDoc(name=elem.get('name', ''),
-                          args=[a.text for a in elem.findall('arguments/arg')],
+                          args=self._create_arguments(elem),
                           doc=elem.find('doc').text or '',
                           tags=[t.text for t in elem.findall('tags/tag')],
                           source=elem.get('source'),
                           lineno=int(elem.get('lineno', -1)))
+
+    def _create_arguments(self, elem):
+        spec = ArgumentSpec()
+        setters = {
+            ArgInfo.POSITIONAL_ONLY: spec.positional_only.append,
+            ArgInfo.POSITIONAL_OR_NAMED: spec.positional_or_named.append,
+            ArgInfo.VAR_POSITIONAL: lambda value: setattr(spec, 'var_positional', value),
+            ArgInfo.NAMED_ONLY: spec.named_only.append,
+            ArgInfo.VAR_NAMED: lambda value: setattr(spec, 'var_named', value),
+        }
+        for arg in elem.findall('arguments/arg'):
+            name_elem = arg.find('name')
+            if name_elem is None:
+                continue
+            name = name_elem.text
+            setters[arg.get('kind')](name)
+            default_elem = arg.find('default')
+            if default_elem is not None:
+                spec.defaults[name] = default_elem.text or ''
+            type_elem = arg.find('type')
+            if type_elem is not None:
+                if not spec.types:
+                    spec.types = {}
+                spec.types[name] = type_elem.text
+        return spec

@@ -306,7 +306,13 @@
             <h4>Arguments</h4>
             <div class="args">
             {{each args}}
-            <span>${$value}</span>{{if $index < args.length-1}}<br>{{/if}}
+              <li>
+                <div class="arg ${$value.kind} {{if $value.required}}arg-required{{else}}arg-optional{{/if}}">
+                  <span class="arg-name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
+                  {{if $value.type}}<span class="arg-type">: ${$value.type}</span>{{/if}}
+                  {{if $value.default !== null}} = <span class="arg-default-value">${$value.default}</span>{{/if}}
+                </div>
+              </li>
             {{/each}}
             </div>
           </div>
@@ -401,9 +407,17 @@
             {{if args.length > 0}}
               <div class="args">
                 <h4>Arguments</h4>
+                <ul class="arguments-list">
                 {{each args}}
-                <span>${$value}</span>{{if $index < args.length-1}}<br>{{/if}}
+                  <li>
+                    <div class="arg ${$value.kind} {{if $value.required}}arg-required{{else}}arg-optional{{/if}}">
+                      <span class="arg-name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
+                      {{if $value.type}}: <span class="arg-type">${$value.type}</span>{{/if}}
+                      {{if $value.default !== null}} = <span class="arg-default-value">${$value.default}</span>{{/if}}
+                    </div>
+                  </li>
                 {{/each}}
+                </ul>
               </div>
             {{/if}}
             {{if libdoc.contains_tags}}

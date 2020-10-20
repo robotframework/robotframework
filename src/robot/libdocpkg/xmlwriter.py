@@ -16,7 +16,7 @@
 import os.path
 from datetime import datetime
 
-from robot.utils import WINDOWS, XmlWriter
+from robot.utils import WINDOWS, XmlWriter, unicode
 
 
 class LibdocXmlWriter(object):
@@ -29,8 +29,8 @@ class LibdocXmlWriter(object):
             libdoc.convert_doc_to_html()
         writer = XmlWriter(outfile, usage='Libdoc spec')
         self._write_start(libdoc, writer)
-        self._write_keywords('init', libdoc.inits, libdoc.source, writer)
-        self._write_keywords('kw', libdoc.keywords, libdoc.source, writer)
+        self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
+        self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer):
@@ -39,16 +39,11 @@ class LibdocXmlWriter(object):
                  'type': libdoc.type,
                  'format': libdoc.doc_format,
                  'scope': libdoc.scope,
-                 'namedargs': 'true' if libdoc.named_args else 'false',
                  'generated': generated,
-                 'specversion': '2'}
+                 'specversion': '3'}
         self._add_source_info(attrs, libdoc, writer.output)
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
-        # TODO: Remove 'scope' and 'namedargs' elements in RF 4.0.
-        # https://github.com/robotframework/robotframework/issues/3522
-        writer.element('scope', self._get_old_style_scope(libdoc))
-        writer.element('namedargs', 'yes' if libdoc.named_args else 'no')
         writer.element('doc', libdoc.doc)
 
     def _add_source_info(self, attrs, item, outfile, lib_source=None):
@@ -79,14 +74,12 @@ class LibdocXmlWriter(object):
                 'SUITE': 'test suite',
                 'TEST': 'test case'}[libdoc.scope]
 
-    def _write_keywords(self, kw_type, keywords, lib_source, writer):
+    def _write_keywords(self, list_name, kw_type, keywords, lib_source, writer):
+        writer.start(list_name)
         for kw in keywords:
             attrs = self._get_start_attrs(kw_type, kw, lib_source, writer)
             writer.start(kw_type, attrs)
-            writer.start('arguments')
-            for arg in kw.args:
-                writer.element('arg', arg)
-            writer.end('arguments')
+            self._write_arguments(kw, writer)
             writer.element('doc', kw.doc)
             if kw_type == 'kw' and kw.tags:
                 writer.start('tags')
@@ -94,6 +87,22 @@ class LibdocXmlWriter(object):
                     writer.element('tag', tag)
                 writer.end('tags')
             writer.end(kw_type)
+        writer.end(list_name)
+
+    def _write_arguments(self, kw, writer):
+        writer.start('arguments', {'repr': unicode(kw.args)})
+        for arg in kw.args:
+            writer.start('arg', {'kind': arg.kind,
+                                 'required': 'true' if arg.required else 'false',
+                                 'repr': unicode(arg)})
+            if arg.name:
+                writer.element('name', arg.name)
+            if arg.type is not arg.NOTSET:
+                writer.element('type', arg.type_repr)
+            if arg.default is not arg.NOTSET:
+                writer.element('default', arg.default_repr)
+            writer.end('arg')
+        writer.end('arguments')
 
     def _get_start_attrs(self, kw_type, kw, lib_source, writer):
         if kw_type == 'init':

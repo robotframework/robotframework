@@ -105,7 +105,7 @@ class KeywordDocBuilder(object):
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)
         return KeywordDoc(name=kw.name,
-                          args=[unicode(arg) for arg in kw.arguments],
+                          args=kw.arguments,
                           doc=doc,
                           tags=tags,
                           source=kw.source,
