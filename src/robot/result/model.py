@@ -33,9 +33,10 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 """
 
 from itertools import chain
+from operator import attrgetter
 import warnings
 
-from robot.model import TotalStatisticsBuilder
+from robot.model import TotalStatisticsBuilder, Messages, Keywords
 from robot import model, utils
 
 from .configurer import SuiteConfigurer
@@ -63,12 +64,15 @@ class Keyword(model.Keyword):
     See the base class for documentation of attributes not documented here.
     """
     __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message']
-    message_class = Message
+    keyword_class = None        #: Internal usage only.
+    message_class = Message     #: Internal usage only.
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(),
                  tags=(), timeout=None, type='kw',  status='FAIL',
                  starttime=None, endtime=None):
         model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
+        self.messages = None
+        self.keywords = None
         #: Name of the keyword without library or resource name.
         self.kwname = kwname or ''
         #: Name of the library or resource containing this keyword.
@@ -83,6 +87,25 @@ class Keyword(model.Keyword):
         self.endtime = endtime
         #: Keyword status message. Used only if suite teardowns fails.
         self.message = ''
+
+    @utils.setter
+    def keywords(self, keywords):
+        """Child keywords as a :class:`~.Keywords` object."""
+        return Keywords(self.keyword_class or self.__class__, self, keywords)
+
+    @utils.setter
+    def messages(self, messages):
+        """Messages as a :class:`~.model.message.Messages` object."""
+        return Messages(self.message_class, self, messages)
+
+    @property
+    def children(self):
+        """Child :attr:`keywords` and :attr:`messages` in creation order."""
+        # It would be cleaner to store keywords/messages in same `children`
+        # list and turn `keywords` and `messages` to properties that pick items
+        # from it. That would require bigger changes to the model, though.
+        return sorted(chain(self.keywords, self.messages),
+                      key=attrgetter('_sort_key'))
 
     @property
     def elapsedtime(self):

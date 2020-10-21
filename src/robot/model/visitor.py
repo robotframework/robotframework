@@ -128,8 +128,10 @@ class SuiteVisitor(object):
         child keywords.
         """
         if self.start_keyword(kw) is not False:
-            kw.keywords.visit(self)
-            kw.messages.visit(self)
+            if hasattr(kw, 'keywords'):
+                kw.keywords.visit(self)
+            if hasattr(kw, 'messages'):
+                kw.messages.visit(self)
             self.end_keyword(kw)
 
     def start_keyword(self, keyword):
