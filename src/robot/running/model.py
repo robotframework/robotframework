@@ -37,6 +37,7 @@ import os
 
 from robot import model
 from robot.conf import RobotSettings
+from robot.model import Keywords
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import seq2str, setter
 
@@ -80,10 +81,16 @@ class ForLoop(Keyword):
                  _header='FOR', _end='END'):
         Keyword.__init__(self, assign=variables, args=values,
                          type=Keyword.FOR_LOOP_TYPE)
+        self.keywords = None
         self.flavor = flavor
         self.lineno = lineno
         self._header = _header
         self._end = _end
+
+    @setter
+    def keywords(self, keywords):
+        """Child keywords as a :class:`~.Keywords` object."""
+        return Keywords(self.keyword_class or self.__class__, self, keywords)
 
     @property
     def variables(self):

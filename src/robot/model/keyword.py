@@ -19,7 +19,6 @@ from operator import attrgetter
 from robot.utils import setter
 
 from .itemlist import ItemList
-from .message import Message, Messages
 from .modelobject import ModelObject
 from .tags import Tags
 
@@ -37,8 +36,6 @@ class Keyword(ModelObject):
     TEARDOWN_TYPE = 'teardown'  #: Teardown :attr:`type`.
     FOR_LOOP_TYPE = 'for'       #: For loop :attr:`type`.
     FOR_ITEM_TYPE = 'foritem'   #: Single for loop iteration :attr:`type`.
-    keyword_class = None        #: Internal usage only.
-    message_class = Message     #: Internal usage only.
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=KEYWORD_TYPE):
@@ -53,8 +50,6 @@ class Keyword(ModelObject):
         #: :attr:`SETUP_TYPE`, :attr:`TEARDOWN_TYPE`, :attr:`FOR_LOOP_TYPE` or
         #: :attr:`FOR_ITEM_TYPE` constant defined on the class level.
         self.type = type
-        self.messages = None
-        self.keywords = None
         self._sort_key = -1
         self._next_child_sort_key = 0
 
@@ -82,25 +77,6 @@ class Keyword(ModelObject):
     def tags(self, tags):
         """Keyword tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
-
-    @setter
-    def keywords(self, keywords):
-        """Child keywords as a :class:`~.Keywords` object."""
-        return Keywords(self.keyword_class or self.__class__, self, keywords)
-
-    @setter
-    def messages(self, messages):
-        """Messages as a :class:`~.model.message.Messages` object."""
-        return Messages(self.message_class, self, messages)
-
-    @property
-    def children(self):
-        """Child :attr:`keywords` and :attr:`messages` in creation order."""
-        # It would be cleaner to store keywords/messages in same `children`
-        # list and turn `keywords` and `messages` to properties that pick items
-        # from it. That would require bigger changes to the model, though.
-        return sorted(chain(self.keywords, self.messages),
-                      key=attrgetter('_sort_key'))
 
     @property
     def id(self):
