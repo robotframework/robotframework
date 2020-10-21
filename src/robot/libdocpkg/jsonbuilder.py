@@ -49,23 +49,21 @@ class JsonDocBuilder(object):
         return libdoc_dict
 
     def _create_keywords(self, keywords):
-        return [self._create_keyword(kw) for kw in keywords]
-
-    def _create_keyword(self, kw):
-        return KeywordDoc(name=kw.get('name'),
-                          args=self._create_arguments(kw.get('args')),
-                          doc=kw.get('doc'),
-                          shortdoc=kw.get('shortdoc'),
-                          tags=kw.get('tags'),
-                          source=kw.get('source'),
-                          lineno=int(kw.get('lineno')))
+        return [KeywordDoc(name=kw.get('name'),
+                           args=self._create_arguments(kw.get('args')),
+                           doc=kw.get('doc'),
+                           shortdoc=kw.get('shortdoc'),
+                           tags=kw.get('tags'),
+                           source=kw.get('source'),
+                           lineno=int(kw.get('lineno'))) for kw in keywords]
 
     def _create_arguments(self, arguments):
         spec = ArgumentSpec()
         setters = {
             ArgInfo.POSITIONAL_ONLY: spec.positional_only.append,
             ArgInfo.POSITIONAL_OR_NAMED: spec.positional_or_named.append,
-            ArgInfo.VAR_POSITIONAL: lambda value: setattr(spec, 'var_positional', value),
+            ArgInfo.VAR_POSITIONAL: lambda value: setattr(spec, 'var_positional',
+                                                          value),
             ArgInfo.NAMED_ONLY: spec.named_only.append,
             ArgInfo.VAR_NAMED: lambda value: setattr(spec, 'var_named', value),
         }
