@@ -64,12 +64,14 @@ as part of the library name and separated by two colons, for example, like
 Options
 =======
 
- -f --format HTML|XML     Specifies whether to generate an HTML or XML
+ -f --format HTML|XML|JSON
+                          Specifies whether to generate an HTML or XML
                           output file. The default output `format` and the 
                           default output `specdocformat` is got from the
                           output file extension.
                           `*.html`    -> -f HTML -s HTML
                           `*.xml`     -> -f XML  -s RAW
+                          `*.json`    -> -f JSON -s HTML
                           `*.libspec` -> -f XML  -s HTML
  -s --specdocformat RAW|HTML
                           Specifies for XML outputs whether the keyword
@@ -80,6 +82,7 @@ Options
                           format. Default is based on the format.
                           `--format HTML` -> HTML
                           `--format XML`  -> RAW
+                          `--format JSON` -> HTML
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -183,7 +186,7 @@ class LibDoc(Application):
     def _get_output_format(self, format, output):
         extension = os.path.splitext(output)[1][1:]
         return self._verify_format('Format', format or extension,
-                                   ['HTML', 'XML', 'LIBSPEC'])
+                                   ['HTML', 'XML', 'JSON', 'LIBSPEC'])
 
     def _get_spec_doc_format(self, spec_doc_format):
         if not spec_doc_format:

@@ -112,11 +112,12 @@ class LibraryDoc(object):
 
 class KeywordDoc(Sortable):
 
-    def __init__(self, name='', args=(), doc='', tags=(), source=None,
+    def __init__(self, name='', args=(), doc='', shortdoc='', tags=(), source=None,
                  lineno=-1, parent=None):
         self.name = name
         self.args = args
         self.doc = doc
+        self._shortdoc = shortdoc
         self.tags = Tags(tags)
         self.source = source
         self.lineno = lineno
@@ -124,10 +125,16 @@ class KeywordDoc(Sortable):
 
     @property
     def shortdoc(self):
+        if self._shortdoc:
+            return self._shortdoc
         doc = self.doc
         if self.parent and self.parent.doc_format == 'HTML':
             doc = HtmlToText().get_shortdoc_from_html(doc)
         return ' '.join(getshortdoc(doc).splitlines())
+
+    @shortdoc.setter
+    def shortdoc(self, shortdoc):
+        self._shortdoc = shortdoc
 
     @property
     def deprecated(self):

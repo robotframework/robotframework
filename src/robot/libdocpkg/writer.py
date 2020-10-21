@@ -17,6 +17,7 @@ from robot.errors import DataError
 
 from .htmlwriter import LibdocHtmlWriter
 from .xmlwriter import LibdocXmlWriter
+from .jsonwriter import LibdocJsonWriter
 
 
 def LibdocWriter(format=None, spec_doc_format=None):
@@ -27,4 +28,6 @@ def LibdocWriter(format=None, spec_doc_format=None):
         return LibdocXmlWriter(spec_doc_format or 'RAW')
     if format == 'LIBSPEC':
         return LibdocXmlWriter(spec_doc_format or 'HTML')
+    if format == 'JSON':
+        return LibdocJsonWriter(spec_doc_format or 'HTML')
     raise DataError("Invalid format '%s'." % format)
