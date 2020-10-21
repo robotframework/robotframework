@@ -81,8 +81,7 @@ class LibraryDoc(object):
 
     def save(self, output=None, format='HTML', spec_doc_format=None):
         with LibdocOutput(output, format) as outfile:
-            writer = LibdocWriter(format, spec_doc_format)
-            writer.write(self, outfile)
+            LibdocWriter(format, spec_doc_format).write(self, outfile)
 
     def convert_doc_to_html(self):
         formatter = DocFormatter(self.keywords, self.doc, self.doc_format)

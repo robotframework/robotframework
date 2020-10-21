@@ -226,8 +226,8 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
     :param outfile: Path path to the file where to write outputs.
     :param name: Custom name to give to the documented library or resource.
     :param version: Version to give to the documented library or resource.
-    :param format: Specifies whether to generate HTML, XML or JSON output.
-        If this options is not used, the format is got from the extension of
+    :param format: Specifies whether to generate HTML or XML output. If this
+        options is not used, the format is got from the extension of
         the output file. Possible values are ``'HTML'`` and ``'XML'``.
     :param docformat: Documentation source format. Possible values are
         ``'ROBOT'``, ``'reST'``, ``'HTML'`` and ``'TEXT'``. The default value
