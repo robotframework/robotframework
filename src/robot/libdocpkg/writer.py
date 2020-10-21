@@ -19,13 +19,12 @@ from .htmlwriter import LibdocHtmlWriter
 from .xmlwriter import LibdocXmlWriter
 
 
-def LibdocWriter(format=None):
-    format = (format or 'HTML').upper()
+def LibdocWriter(format=None, spec_doc_format=None):
+    format = (format or 'HTML')
     if format == 'HTML':
         return LibdocHtmlWriter()
     if format == 'XML':
-        return LibdocXmlWriter()
-    if format == 'XML:HTML':
-        return LibdocXmlWriter(force_html_doc=True)
-    raise DataError("Format must be either 'HTML', 'XML' or 'XML:HTML', "
-                    "got '%s'." % format)
+        return LibdocXmlWriter(spec_doc_format or 'RAW')
+    if format == 'LIBSPEC':
+        return LibdocXmlWriter(spec_doc_format or 'HTML')
+    raise DataError("Invalid format '%s'." % format)

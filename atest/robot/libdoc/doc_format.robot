@@ -46,9 +46,9 @@ Format in XML
 
 Format in XML:HTML
     [Template]    Test Format in XML:HTML
-    --format xMl:hTML            DocFormat.py
-    --docfor RoBoT -f XML:HTML   DocFormatHtml.py
-    -F ROBOT --format xml:html   DocFormat.py
+    --format xMl --specdocformat hTML            DocFormat.py
+    --docfor RoBoT -f XML -s HTML   DocFormatHtml.py
+    -F ROBOT --format xml -s html   DocFormat.py
 
 Format from XML spec
     [Template]    NONE
@@ -58,13 +58,13 @@ Format from XML spec
 
 Format from XML:HTML spec
     [Template]    NONE
-    Run Libdoc    -F ROBOT --format XML:HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
+    Run Libdoc    -F ROBOT --format XML -s HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
     Copy File    ${OUTXML}    ${OUTBASE}-2.xml
     Test Format In XML:HTML    lib=${OUTBASE}-2.xml
 
 Compare HTML from XML:HTML
     [Template]    NONE
-    Run Libdoc    -F ROBOT --format XML:HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
+    Run Libdoc    -F ROBOT --format XML -s HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
     Test Format In HTML    <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}
     ...                    lib=${OUTXML}
 

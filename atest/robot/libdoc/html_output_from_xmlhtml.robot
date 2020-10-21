@@ -1,15 +1,7 @@
 *** Settings ***
 Resource          libdoc_resource.robot
-Suite Setup       Run Libdoc to XML:HTML and to HTML and Parse Models    ${TESTDATADIR}/module.py
+Suite Setup       Run Libdoc to XML with HTML docs and to HTML and Parse Models    ${TESTDATADIR}/module.py
 Test Template     Should Be Equal As Strings
-
-*** Keywords ***
-Run Libdoc to XML:HTML and to HTML and Parse Models
-    [Arguments]    ${library_path}
-    Run Libdoc And Set Output    --format XML:HTML ${library_path} ${OUTXML}
-    Run Libdoc And Parse Model From HTML    ${OUTXML}
-    Set Suite Variable    ${XML-MODEL}    ${MODEL}
-    Run Libdoc And Parse Model From HTML    ${library_path}
 
 *** Test Cases ***
 Name
@@ -67,5 +59,13 @@ Keyword tags
 
 TOC doc
     [Template]    None
-    Run Libdoc to XML:HTML and to HTML and Parse Models    ${TESTDATADIR}/TOCWithInitsAndKeywords.py
+    Run Libdoc to XML with HTML docs and to HTML and Parse Models    ${TESTDATADIR}/TOCWithInitsAndKeywords.py
     Should Be Equal As Strings    ${XML-MODEL}[doc]    ${MODEL}[doc]
+
+*** Keywords ***
+Run Libdoc to XML with HTML docs and to HTML and Parse Models
+    [Arguments]    ${library_path}
+    Run Libdoc And Set Output    --format XML --specdocformat HTML ${library_path} ${OUTXML}
+    Run Libdoc And Parse Model From HTML    ${OUTXML}
+    Set Suite Variable    ${XML-MODEL}    ${MODEL}
+    Run Libdoc And Parse Model From HTML    ${library_path}
