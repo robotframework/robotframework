@@ -19,7 +19,8 @@ from robot.utils import get_timestamp, is_unicode, unic
 
 
 LEVELS = {
-  'NONE'  : 6,
+  'NONE'  : 7,
+  'SKIP'  : 6,
   'FAIL'  : 5,
   'ERROR' : 4,
   'WARN'  : 3,
@@ -55,6 +56,13 @@ class AbstractLogger(object):
             html = True
             msg = msg[6:].lstrip()
         self.write(msg, 'FAIL', html)
+
+    def skip(self, msg):
+        html = False
+        if msg.startswith("*HTML*"):
+            html = True
+            msg = msg[6:].lstrip()
+        self.write(msg, 'SKIP', html)
 
     def error(self, msg):
         self.write(msg, 'ERROR')
