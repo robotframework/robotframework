@@ -79,9 +79,9 @@ class LibraryDoc(object):
     def all_tags(self):
         return Tags(chain.from_iterable(kw.tags for kw in self.keywords))
 
-    def save(self, output=None, format='HTML', output_doc_format=None):
+    def save(self, output=None, format='HTML', spec_doc_format=None):
         with LibdocOutput(output, format) as outfile:
-            writer = LibdocWriter(format, output_doc_format)
+            writer = LibdocWriter(format, spec_doc_format)
             writer.write(self, outfile)
 
     def convert_doc_to_html(self):

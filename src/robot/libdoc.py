@@ -64,20 +64,22 @@ as part of the library name and separated by two colons, for example, like
 Options
 =======
 
- -f --format HTML|XML|JSON
-                          Specifies whether to generate an HTML, XML or JSON
-                          output file. The default output format is got from the
+ -f --format HTML|XML     Specifies whether to generate an HTML or XML
+                          output file. The default output `format` and the 
+                          default output `specdocformat` is got from the
                           output file extension.
-                          `*.html` -> HTML
-                          `*.xml` -> XML
-                          `*.libspec` -> XML
-                          `*.json` -> JSON 
- -o --outputdocformat RAW|HTML
-                          Specifies for XML and JSON outputs whether the
-                          keyword documentation is converted to HTML regardless
-                          of the original documentation format.
-                          `*.html`|`*.libspec` files always get HTML
-                          documentation format. Default is `RAW`
+                          `*.html`    -> -f HTML -s HTML
+                          `*.xml`     -> -f XML  -s RAW
+                          `*.libspec` -> -f XML  -s HTML
+ -s --specdocformat RAW|HTML
+                          Specifies for XML outputs whether the keyword
+                          documentation is converted to HTML regardless
+                          of the original documentation format or kept
+                          raw as in the library or source spec file.
+                          `*.html` files always get HTML documentation
+                          format. Default is based on the format.
+                          `--format HTML` -> HTML
+                          `--format XML`  -> RAW
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -98,8 +100,8 @@ When creating documentation in HTML or XML format, the output file must be
 specified as the second argument after the library/resource name or path.
 Output format is got automatically from the output file extension, but it can
 also be set explicitly with the `--format` option. The special `*.libspec`
-extension automatically enables the XML:HTML format i.e. creates an XML output
-file with keyword documentation converted to HTML.
+extension automatically enables the `XML` with spedocformat `HTML` 
+It creates an XML output file with keyword documentation converted to HTML.
 
 Examples:
 
@@ -161,7 +163,7 @@ class LibDoc(Application):
             raise DataError('Only two arguments allowed when writing output.')
         return options, arguments
 
-    def main(self, args, name='', version='', format=None, docformat=None, outputdocformat=None):
+    def main(self, args, name='', version='', format=None, docformat=None, specdocformat=None):
         lib_or_res, output = args[:2]
         libdoc = LibraryDocumentation(lib_or_res, name, version,
                                       self._get_doc_format(docformat))
@@ -169,7 +171,7 @@ class LibDoc(Application):
             ConsoleViewer(libdoc).view(output, *args[2:])
         else:
 
-            libdoc.save(output, self._get_output_format(format, output), self._get_output_doc_format(outputdocformat))
+            libdoc.save(output, self._get_output_format(format, output), self._get_spec_doc_format(specdocformat))
             self.console(os.path.abspath(output))
 
     def _get_doc_format(self, format):
@@ -181,12 +183,12 @@ class LibDoc(Application):
     def _get_output_format(self, format, output):
         extension = os.path.splitext(output)[1][1:]
         return self._verify_format('Format', format or extension,
-                                   ['HTML', 'XML', 'JSON', 'LIBSPEC'])
+                                   ['HTML', 'XML', 'LIBSPEC'])
 
-    def _get_output_doc_format(self, output_doc_format):
-        if not output_doc_format:
+    def _get_spec_doc_format(self, spec_doc_format):
+        if not spec_doc_format:
             return None
-        return self._verify_format('Doc output', output_doc_format,
+        return self._verify_format('Spec Doc Format', spec_doc_format,
                                    ['RAW', 'HTML'])
 
     def _verify_format(self, type, format, valid):
@@ -216,7 +218,7 @@ def libdoc_cli(arguments):
 
 
 def libdoc(library_or_resource, outfile, name='', version='', format=None,
-           docformat=None, outputdocformat=None):
+           docformat=None, specdocformat=None):
     """Executes Libdoc.
 
     :param library_or_resource: Name or path of the library or resource
@@ -226,13 +228,14 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
     :param version: Version to give to the documented library or resource.
     :param format: Specifies whether to generate HTML, XML or JSON output.
         If this options is not used, the format is got from the extension of
-        the output file. Possible values are ``'HTML'``, ``'XML'`` and ``'XML'``.
+        the output file. Possible values are ``'HTML'`` and ``'XML'``.
     :param docformat: Documentation source format. Possible values are
         ``'ROBOT'``, ``'reST'``, ``'HTML'`` and ``'TEXT'``. The default value
         can be specified in library source code and the initial default
         is ``'ROBOT'``. New in Robot Framework 3.0.3.
-    :param outputdocformat: Specifies whether the keyword documentation is
-        converted to HTML regardless of the original documentation format.
+    :param specdocformat: Specifies whether the keyword documentation is
+        converted to HTML regardless of the original documentation format
+        or kept raw as in in the source.
         The default doc output format is got from the format.
 
     Arguments have same semantics as Libdoc command line options with
@@ -246,7 +249,7 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
         libdoc('MyLibrary.py', 'MyLibraryDoc.html', version='1.0')
     """
     LibDoc().execute(library_or_resource, outfile, name=name, version=version,
-                     format=format, docformat=docformat, outputdocformat=outputdocformat)
+                     format=format, docformat=docformat, specdocformat=specdocformat)
 
 
 if __name__ == '__main__':

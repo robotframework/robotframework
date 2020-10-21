@@ -41,15 +41,22 @@ Synopsis
 Options
 ~~~~~~~
 
-  -f, --format <html|xml|xml:html>
-                           Specifies whether to generate HTML or XML output.
-                           `xml:html` format means generating an XML output
-                           where keyword documentation is converted to HTML
-                           regardless of the original documentation format. The
-                           default output format is got from the output file
-                           extension so that :file:`*.html` -> `html`,
-                           :file:`*.xml` -> `xml` and :file:`*.libspec`->
-                           `xml:html`.
+  -f, --format <html|xml> Specifies whether to generate an HTML or XML
+                          output file. The default output `format` and the 
+                          default output `specdocformat` is got from the
+                          output file extension.
+                          :file:`*.html`    -> `-f HTML -s HTML`
+                          :file:`*.xml`     -> `-f XML  -s RAW`
+                          :file:`*.libspec` -> `-f XML  -s HTML`
+   -s --specdocformat <raw|html>
+                          Specifies for XML outputs whether the keyword
+                          documentation is converted to HTML regardless
+                          of the original documentation format or kept
+                          raw as in the library or source spec file.
+                          :file:`*.html` files always get HTML documentation
+                          format. Default is based on the format.
+                          `--format HTML` -> `HTML`
+                          `--format XML`  -> `RAW`
   -F, --docformat <robot|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,
@@ -190,7 +197,7 @@ are omitted if getting them from the library fails for whatever reason.
 
 Libdoc automatically uses the XML format if the output file extension is
 :file:`*.xml` or :file:`*.libspec`. When using the special :file:`*.libspec`
-extension, Libdoc automatically enables the `xml:html` format which means
+extension, Libdoc automatically enables the options `-f XML -s HTML` which means
 creating an XML output file where keyword documentation is converted to HTML.
 If needed, the format can be explicitly set with the :option:`--format` option.
 
@@ -199,20 +206,24 @@ If needed, the format can be explicitly set with the :option:`--format` option.
    python -m robot.libdoc OperatingSystem OperatingSystem.xml
    python -m robot.libdoc test/resource.robot doc/resource.libspec
    python -m robot.libdoc --format xml MyLibrary MyLibrary.spec
-   python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
+   python -m robot.libdoc --format xml -s html MyLibrary MyLibrary.xml
 
 The exact Libdoc spec file format is documented with an `XML schema`__ (XSD)
 at https://github.com/robotframework/robotframework/tree/master/doc/schema.
-The spec file format may change slightly between Robot Framework major
-releases. To make it easier for external tools to know how to parse a certain
+The spec file format may change between Robot Framework major releases.
+To make it easier for external tools to know how to parse a certain
 spec file, the spec file root element has a dedicated `specversion`
 attribute. It was added in Robot Framework 3.2 with value `2` and earlier
 spec files can be considered to have version `1`. The spec version will
 be incremented in the future if and when changes are made.
+Robot Framework 4.0 introduced new spec version `3`.
 
-.. note:: The `xml:html` format and automatically using it if the output
-          file extension is :file:`*.libspec` are new features in Robot
-          Framework 3.2.
+.. note:: Robot Framework 4.0 introduced an updated xml format. It is
+          incompatible with former versions. LibDoc can only read and write
+          new XML format.
+
+          The `xml:html` format introduced in Robot Framework 3.2. has been
+          replaced by the option `-s --specdocformat <raw|html>`.
 
           Including source information and spec version are new in Robot
           Framework 3.2 as well.
