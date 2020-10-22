@@ -95,16 +95,13 @@ Bytes
     Bytes                NONE                      b'NONE'
     Bytes                ${22}                     b'\\x16'
     Bytes                ${2200001}                b'\\xc1\\x91!'
+    Bytes                ${1.3}                    ${1.3}
 
 Invalid bytes
     [Template]           Conversion Should Fail
     Bytes                \u0100                                          error=Character '\u0100' cannot be mapped to a byte.
     Bytes                \u00ff\u0100\u0101                              error=Character '\u0100' cannot be mapped to a byte.
     Bytes                Hyvä esimerkki! \u2603                          error=Character '\u2603' cannot be mapped to a byte.
-
-Invalid bytes float
-    [Documentation]    FAIL ValueError: Argument 'argument' got value '1.3' that cannot be converted to bytes.
-    Bytes                ${1.3}
 
 Bytestring
     Bytestring           foo                       b'foo'
@@ -126,16 +123,13 @@ Bytearray
     Bytearray            None                      bytearray(b'None')
     Bytearray            NONE                      bytearray(b'NONE')
     Bytearray            ${123176}                 bytearray(b'(\\xe1\\x01')
+    Bytearray            ${2123.1021}              ${2123.1021}
 
 Invalid bytearray
     [Template]           Conversion Should Fail
     Bytearray            \u0100                                          error=Character '\u0100' cannot be mapped to a byte.
     Bytearray            \u00ff\u0100\u0101                              error=Character '\u0100' cannot be mapped to a byte.
     Bytearray            Hyvä esimerkki! \u2603                          error=Character '\u2603' cannot be mapped to a byte.
-
-Invalid bytearray with float input
-    [Documentation]     FAIL ValueError: Argument 'argument' got value '2123.1021' that cannot be converted to bytearray.
-    Bytearray           ${2123.1021}
 
 Datetime
     DateTime             2014-06-11T10:07:42       datetime(2014, 6, 11, 10, 7, 42)
@@ -157,6 +151,8 @@ Date
     Date                 2014-06-11                date(2014, 6, 11)
     Date                 20180808                  date(2018, 8, 8)
     Date                 20180808000000000000      date(2018, 8, 8)
+    Date                 ${12.3}   ${12.3}
+    Date                 ${123}    ${123}
 
 Invalid date
     [Template]           Conversion Should Fail
@@ -165,14 +161,6 @@ Invalid date
     Date                 2018                                            error=Invalid timestamp '2018'.
     Date                 2014-06-11T10:07:42                             error=Value is datetime, not date.
     Date                 20180808000000000001                            error=Value is datetime, not date.
-
-Invalid date with float input
-    [Documentation]      FAIL ValueError: Argument 'argument' got value '12.3' that cannot be converted to date.
-    Date                 ${12.3}
-
-Invalid date with int input
-    [Documentation]      FAIL ValueError: Argument 'argument' got value '123' that cannot be converted to date.
-    Date                 ${123}
 
 Timedelta
     Timedelta            10                        timedelta(seconds=10)

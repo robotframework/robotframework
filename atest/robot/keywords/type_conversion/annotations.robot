@@ -49,18 +49,6 @@ Bytes
 Invalid bytes
     Check Test Case    ${TESTNAME}
 
-Invalid bytes float
-    Check Test Case    ${TESTNAME}
-
-Invalid bytearray with float input
-    Check Test Case    ${TESTNAME}
-
-Invalid date with float input
-    Check Test Case    ${TESTNAME}
-
-Invalid date with int input
-    Check Test Case    ${TESTNAME}
-
 Bytestring
     Check Test Case    ${TESTNAME}
 
