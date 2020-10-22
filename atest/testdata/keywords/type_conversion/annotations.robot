@@ -229,8 +229,6 @@ Invalid NoneType
     NoneType             Hello, world!             type=None
     NoneType             True                      type=None
     NoneType             []                        type=None
-    NoneType             ${1}                      type=None
-    NoneType             ${23.12}                  type=None
 
 List
     List                 []                        []
