@@ -73,6 +73,7 @@ class LibraryDoc(object):
     def _add_parent(self, kws):
         for keyword in kws:
             keyword.parent = self
+            keyword._generate_shortdoc()
         return sorted(kws)
 
     @property
@@ -105,8 +106,7 @@ class LibraryDoc(object):
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
             'generated': get_timestamp(daysep='-', millissep=None),
-            'all_tags': tuple(self.all_tags),
-            'contains_tags': bool(self.all_tags)
+            'all_tags': tuple(self.all_tags)
         }
 
 
@@ -127,6 +127,9 @@ class KeywordDoc(Sortable):
     def shortdoc(self):
         if self._shortdoc:
             return self._shortdoc
+        return self._get_shortdoc()
+
+    def _get_shortdoc(self):
         doc = self.doc
         if self.parent and self.parent.doc_format == 'HTML':
             doc = HtmlToText().get_shortdoc_from_html(doc)
@@ -144,6 +147,10 @@ class KeywordDoc(Sortable):
     def _sort_key(self):
         return self.name.lower()
 
+    def _generate_shortdoc(self):
+        if not self._shortdoc:
+            self.shortdoc = self._get_shortdoc()
+
     def to_dictionary(self):
         return {
             'name': self.name,
@@ -152,8 +159,7 @@ class KeywordDoc(Sortable):
             'shortdoc': self.shortdoc,
             'tags': tuple(self.tags),
             'source': self.source,
-            'lineno': self.lineno,
-            'matched': True
+            'lineno': self.lineno
         }
 
     def _convert_arguments(self):

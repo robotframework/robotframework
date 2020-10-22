@@ -60,6 +60,7 @@ class SpecDocBuilder(object):
         return KeywordDoc(name=elem.get('name', ''),
                           args=self._create_arguments(elem),
                           doc=elem.find('doc').text or '',
+                          shortdoc=elem.find('shortdoc').text or '',
                           tags=[t.text for t in elem.findall('tags/tag')],
                           source=elem.get('source'),
                           lineno=int(elem.get('lineno', -1)))

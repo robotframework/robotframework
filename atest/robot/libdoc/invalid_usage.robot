@@ -18,10 +18,10 @@ Invalid option
     --invalid         option --invalid not recognized
 
 Invalid format
-    -f XXX BuiltIn ${OUT HTML}               Format must be 'HTML', 'XML' or 'LIBSPEC', got 'XXX'.
-    --format XML:XXX BuiltIn ${OUT HTML}     Format must be 'HTML', 'XML' or 'LIBSPEC', got 'XML:XXX'.
-    --format XML:HTML BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML' or 'LIBSPEC', got 'XML:HTML'.
-    BuiltIn out.ext                          Format must be 'HTML', 'XML' or 'LIBSPEC', got 'EXT'.
+    -f XXX BuiltIn ${OUT HTML}               Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'XXX'.
+    --format XML:XXX BuiltIn ${OUT HTML}     Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'XML:XXX'.
+    --format XML:HTML BuiltIn ${OUT HTML}    Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'XML:HTML'.
+    BuiltIn out.ext                          Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'EXT'.
 
 Invalid specdocformat
     -s XXX BuiltIn ${OUT HTML}                Spec Doc Format must be 'RAW' or 'HTML', got 'XXX'.
