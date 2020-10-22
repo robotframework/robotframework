@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_unicode
 from robot.variables import contains_variable
 
 from .typeconverters import TypeConverter
@@ -47,7 +46,6 @@ class ArgumentConverter(object):
     def _convert(self, name, value):
         spec = self._argspec
         if (spec.types is None
-                or not is_unicode(value)
                 or self._dry_run and contains_variable(value, identifiers='$@&%')):
             return value
         conversion_error = None

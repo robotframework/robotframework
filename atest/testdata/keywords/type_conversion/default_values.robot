@@ -50,6 +50,8 @@ Boolean
     Boolean              0                         ${False}
     Boolean              ${EMPTY}                  ${False}
     Boolean              none                      ${False}
+    Boolean              ${0}                      ${False}
+    Boolean              ${1}                      ${True}
 
 Invalid boolean
     [Template]           Invalid value is passed as-is

@@ -7,10 +7,8 @@ Conversion Should Fail
     ...    ValueError: Argument 'argument' got value '${arg}' that cannot be converted to ${type}${end}
     ...    ${kw}    @{args}    &{kwargs}
 
-Non-string is not converted
+Boolean, None, List and Dict are not converted
     [Arguments]    ${kw}
-    Run Keyword    ${kw}    ${1}       ${1}
-    Run Keyword    ${kw}    ${1.5}     ${1.5}
     Run Keyword    ${kw}    ${True}    ${True}
     Run Keyword    ${kw}    ${None}    ${None}
     Run Keyword    ${kw}    ${LIST}    ${LIST}
