@@ -13,6 +13,8 @@ Integer
     Integer              42                        ${42}
     Integer              -1                        ${-1}
     Integer              9999999999999999999999    ${9999999999999999999999}
+    Integer              ${41}                     ${41}
+    Integer              ${-4.0}                     ${-4}
 
 Invalid integer
     [Template]           Conversion Should Fail
@@ -34,6 +36,8 @@ Float
     Float                -1                        ${-1.0}
     Float                1e6                       ${1000000.0}
     Float                -1.2e-3                   ${-0.0012}
+    Float                ${4}                      ${4.0}
+    Float                ${-4.1}                   ${-4.1}
 
 Invalid float
     [Template]           Conversion Should Fail
@@ -80,6 +84,8 @@ String
     String               None                      'None'
     String               True                      'True'
     String               []                        '[]'
+    String               1.2                       '1.2'
+    String               2                         '2'
 
 Bytes
     Bytes                foo                       b'foo'
@@ -87,6 +93,9 @@ Bytes
     Bytes                Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
     Bytes                None                      b'None'
     Bytes                NONE                      b'NONE'
+    Bytes                ${22}                     b'\\x16'
+    Bytes                ${2200001}                b'\\xc1\\x91!'
+    Bytes                ${1.3}                    ${1.3}
 
 Invalid bytes
     [Template]           Conversion Should Fail
@@ -113,6 +122,8 @@ Bytearray
     Bytearray            Hyvä esimerkki!           bytearray(b'Hyv\\xE4 esimerkki!')
     Bytearray            None                      bytearray(b'None')
     Bytearray            NONE                      bytearray(b'NONE')
+    Bytearray            ${123176}                 bytearray(b'(\\xe1\\x01')
+    Bytearray            ${2123.1021}              ${2123.1021}
 
 Invalid bytearray
     [Template]           Conversion Should Fail
@@ -124,6 +135,10 @@ Datetime
     DateTime             2014-06-11T10:07:42       datetime(2014, 6, 11, 10, 7, 42)
     DateTime             20180808144342123456      datetime(2018, 8, 8, 14, 43, 42, 123456)
     DateTime             1975:06:04                datetime(1975, 6, 4)
+    DateTime             ${0}                      datetime.fromtimestamp(0)
+    DateTime             ${1602232445}             datetime.fromtimestamp(1602232445)
+    DateTime             ${0.0}                    datetime.fromtimestamp(0)
+    DateTime             ${1612230445.1}           datetime.fromtimestamp(1612230445.1)
 
 Invalid datetime
     [Template]           Conversion Should Fail
@@ -136,6 +151,8 @@ Date
     Date                 2014-06-11                date(2014, 6, 11)
     Date                 20180808                  date(2018, 8, 8)
     Date                 20180808000000000000      date(2018, 8, 8)
+    Date                 ${12.3}   ${12.3}
+    Date                 ${123}    ${123}
 
 Invalid date
     [Template]           Conversion Should Fail
@@ -156,6 +173,8 @@ Timedelta
     Timedelta            4:3:2.1                   timedelta(seconds=4*60*60 + 3*60 + 2 + 0.1)
     Timedelta            100:00:00                 timedelta(seconds=100*60*60)
     Timedelta            -00:01                    timedelta(seconds=-1)
+    Timedelta            ${21}                     timedelta(seconds=21)
+    Timedelta            ${2.1}                    timedelta(seconds=2, microseconds=100000)
 
 Invalid timedelta
     [Template]           Conversion Should Fail
@@ -367,8 +386,8 @@ Invalid kwonly
     [Template]           Conversion Should Fail
     Kwonly               argument=foobar           type=float
 
-Non-strings are not converted
-    [Template]           Non-string is not converted
+Boolean, None, List and Dict are not converted
+    [Template]           Boolean, None, List and Dict are not converted
     Integer
     Float
     Boolean

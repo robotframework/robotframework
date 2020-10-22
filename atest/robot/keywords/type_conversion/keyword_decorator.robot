@@ -192,7 +192,7 @@ Invalid kwonly
     [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
-Non-strings are not converted
+Boolean, None, List and Dict are not converted
     Check Test Case    ${TESTNAME}
 
 Invalid type spec causes error

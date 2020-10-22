@@ -12,7 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+import sys
 from ast import literal_eval
 from collections import OrderedDict
 try:
@@ -37,6 +37,7 @@ class TypeConverter(object):
     type = None
     abc = None
     aliases = ()
+    value_types = (unicode,)
     _converters = OrderedDict()
     _type_aliases = {}
 
@@ -81,6 +82,9 @@ class TypeConverter(object):
         return self
 
     def convert(self, name, value, explicit_type=True, strict=True):
+        if type(value) not in self.value_types:
+            # TODO: This can be an error once converters convert all meaningful values.
+            return value
         try:
             return self._convert(value, explicit_type)
         except ValueError as error:
@@ -124,8 +128,11 @@ class BooleanConverter(TypeConverter):
     type = bool
     type_name = 'boolean'
     aliases = ('bool',)
+    value_types = (unicode, float, int)
 
     def _convert(self, value, explicit_type=True):
+        if isinstance(value, (float, int)):
+            return bool(value)
         upper = value.upper()
         if upper in TRUE_STRINGS:
             return True
@@ -140,8 +147,13 @@ class IntegerConverter(TypeConverter):
     abc = Integral
     type_name = 'integer'
     aliases = ('int', 'long')
+    value_types = (unicode, float)
 
     def _convert(self, value, explicit_type=True):
+        if isinstance(value, float) and not value.is_integer():
+            if not explicit_type:
+                return value
+            raise ValueError('Conversion would lose precision.')
         try:
             return int(value)
         except ValueError:
@@ -158,6 +170,7 @@ class FloatConverter(TypeConverter):
     type = float
     abc = Real
     aliases = ('double',)
+    value_types = (unicode, int)
 
     def _convert(self, value, explicit_type=True):
         try:
@@ -180,15 +193,23 @@ class DecimalConverter(TypeConverter):
             raise ValueError
 
 
+
+def _int_to_bytes(value):
+    return value.to_bytes((value.bit_length() // 8) + 1, byteorder=sys.byteorder)
+
+
 @TypeConverter.register
 class BytesConverter(TypeConverter):
     type = bytes
     abc = getattr(abc, 'ByteString', None)    # ByteString is new in Python 3
     type_name = 'bytes'                       # Needed on Python 2
+    value_types = (unicode, int)
 
     def _convert(self, value, explicit_type=True):
         if PY2 and not explicit_type:
             return value
+        if not PY2 and isinstance(value, int):
+            return _int_to_bytes(value)
         try:
             value = value.encode('latin-1')
         except UnicodeEncodeError as err:
@@ -200,8 +221,11 @@ class BytesConverter(TypeConverter):
 @TypeConverter.register
 class ByteArrayConverter(TypeConverter):
     type = bytearray
+    value_types = (unicode, int)
 
     def _convert(self, value, explicit_type=True):
+        if not PY2 and isinstance(value, int):
+            return bytearray(_int_to_bytes(value))
         try:
             return bytearray(value, 'latin-1')
         except UnicodeEncodeError as err:
@@ -212,6 +236,7 @@ class ByteArrayConverter(TypeConverter):
 @TypeConverter.register
 class DateTimeConverter(TypeConverter):
     type = datetime
+    value_types = (unicode, int, float)
 
     def _convert(self, value, explicit_type=True):
         return convert_date(value, result_format='datetime')
@@ -231,6 +256,7 @@ class DateConverter(TypeConverter):
 @TypeConverter.register
 class TimeDeltaConverter(TypeConverter):
     type = timedelta
+    value_types = (unicode, int, float)
 
     def _convert(self, value, explicit_type=True):
         return convert_time(value, result_format='timedelta')
