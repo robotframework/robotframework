@@ -45,15 +45,15 @@ class EvenNumber(object):
 
     @staticmethod
     def from_str(value):
-        return EvenNumber.valid_even(value)
+        return EvenNumber(EvenNumber.valid_even(value))
 
     @staticmethod
     def from_int(value):
-        return EvenNumber.valid_even(value)
+        return EvenNumber(EvenNumber.valid_even(value))
 
     @staticmethod
     def from_float(value):
-        return EvenNumber.valid_even(value)
+        return EvenNumber(EvenNumber.valid_even(value))
 
     @staticmethod
     def valid_even(val):

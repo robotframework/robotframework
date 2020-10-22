@@ -79,7 +79,7 @@ class TypeConverter(object):
         for converter in cls._converters.values():
             if converter.handles(type_):
                 return converter.get_converter(type_)
-        if 'from_str' in dir(type_):
+        if DynamicConverter.is_dynamic_type(type_):
             return DynamicConverter(type_)
         return None
 
@@ -133,6 +133,7 @@ class TypeConverter(object):
 
 
 class DynamicConverter(TypeConverter):
+    value_types = (unicode, float, int)
 
     def __init__(self, inputtype):
         self.type = inputtype
