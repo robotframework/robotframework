@@ -27,20 +27,19 @@ class JsonDocBuilder(object):
         spec = self._parse_spec_json(path)
         return self.build_from_dict(spec)
 
-    def build_from_dict(self, libdoc_dict):
-        libdoc = LibraryDoc(name=libdoc_dict.get('name'),
-                            doc=libdoc_dict.get('doc'),
-                            version=libdoc_dict.get('version'),
-                            type=libdoc_dict.get('type'),
-                            scope=libdoc_dict.get('scope'),
-                            doc_format=libdoc_dict.get('doc_format'),
-                            source=libdoc_dict.get('source'),
-                            lineno=int(libdoc_dict.get('lineno')))
-        libdoc.inits = self._create_keywords(libdoc_dict.get('inits'))
-        libdoc.keywords = self._create_keywords(libdoc_dict.get('keywords'))
+    def build_from_dict(self, spec):
+        libdoc = LibraryDoc(name=spec['name'],
+                            doc=spec['doc'],
+                            version=spec['version'],
+                            type=spec['type'],
+                            scope=spec['scope'],
+                            doc_format=spec['doc_format'],
+                            source=spec['source'],
+                            lineno=int(spec.get('lineno', -1)))
+        libdoc.inits = self._create_keywords(spec['inits'])
+        libdoc.keywords = self._create_keywords(spec['keywords'])
         return libdoc
 
-    @staticmethod
     def _parse_spec_json(path):
         if not os.path.isfile(path):
             raise DataError("Spec file '%s' does not exist." % path)
@@ -50,30 +49,29 @@ class JsonDocBuilder(object):
 
     def _create_keywords(self, keywords):
         return [KeywordDoc(name=kw.get('name'),
-                           args=self._create_arguments(kw.get('args')),
-                           doc=kw.get('doc'),
-                           shortdoc=kw.get('shortdoc'),
-                           tags=kw.get('tags'),
-                           source=kw.get('source'),
-                           lineno=int(kw.get('lineno'))) for kw in keywords]
+                           args=self._create_arguments(kw['args']),
+                           doc=kw['doc'],
+                           shortdoc=kw['shortdoc'],
+                           tags=kw['tags'],
+                           source=kw['source'],
+                           lineno=int(kw.get('lineno', -1))) for kw in keywords]
 
     def _create_arguments(self, arguments):
         spec = ArgumentSpec()
         setters = {
             ArgInfo.POSITIONAL_ONLY: spec.positional_only.append,
             ArgInfo.POSITIONAL_OR_NAMED: spec.positional_or_named.append,
-            ArgInfo.VAR_POSITIONAL: lambda value: setattr(spec, 'var_positional',
-                                                          value),
+            ArgInfo.VAR_POSITIONAL: lambda value: setattr(spec, 'var_positional', value),
             ArgInfo.NAMED_ONLY: spec.named_only.append,
             ArgInfo.VAR_NAMED: lambda value: setattr(spec, 'var_named', value),
         }
         for arg in arguments:
-            name = arg.get('name')
-            setters[arg.get('kind')](name)
-            default = arg.get('default', None)
+            name = arg['name']
+            setters[arg['kind']](name)
+            default = arg['default']
             if default:
                 spec.defaults[name] = default
-            arg_type = arg.get('type')
+            arg_type = arg['type']
             if arg_type is not None:
                 if not spec.types:
                     spec.types = {}
