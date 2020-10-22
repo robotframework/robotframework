@@ -222,6 +222,7 @@ class ByteArrayConverter(TypeConverter):
 @TypeConverter.register
 class DateTimeConverter(TypeConverter):
     type = datetime
+    value_types = (unicode, int, float)
 
     def _convert(self, value, explicit_type=True):
         return convert_date(value, result_format='datetime')
@@ -241,6 +242,7 @@ class DateConverter(TypeConverter):
 @TypeConverter.register
 class TimeDeltaConverter(TypeConverter):
     type = timedelta
+    value_types = (unicode, int, float)
 
     def _convert(self, value, explicit_type=True):
         return convert_time(value, result_format='timedelta')
