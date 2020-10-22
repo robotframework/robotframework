@@ -8,7 +8,7 @@ Union testing
      With optional argument  None  ${None}
 
 Optional is removed when None is default
-     [Documentation]    FAIL ValueError: Argument 'arg' got value 'None' that cannot be converted to float.
+     [Documentation]    FAIL None is not float
      Unescaped optionalism   1.0
      Unescaped optionalism   None
 
