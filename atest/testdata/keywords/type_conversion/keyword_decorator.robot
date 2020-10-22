@@ -157,6 +157,8 @@ Timedelta
     Timedelta            4:3:2.1                   timedelta(seconds=4*60*60 + 3*60 + 2 + 0.1)
     Timedelta            100:00:00                 timedelta(seconds=100*60*60)
     Timedelta            -00:01                    timedelta(seconds=-1)
+    Timedelta            ${8}                      timedelta(seconds=8)
+    Timedelta            ${16.4321}                timedelta(seconds=16, microseconds=432100)
 
 Invalid timedelta
     [Template]           Conversion Should Fail
@@ -381,8 +383,10 @@ Invalid kwonly
     [Template]           Conversion Should Fail
     Kwonly               argument=foobar           type=float
 
-Non-strings are not converted
-    [Template]           Non-string is not converted
+Boolean, None, List and Dict are not converted
+    [Template]           Boolean, None, List and Dict are not converted
+    Integer
+    Float
     Boolean
     Decimal
     List

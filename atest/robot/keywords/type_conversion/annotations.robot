@@ -49,6 +49,18 @@ Bytes
 Invalid bytes
     Check Test Case    ${TESTNAME}
 
+Invalid bytes float
+    Check Test Case    ${TESTNAME}
+
+Invalid bytearray with float input
+    Check Test Case    ${TESTNAME}
+
+Invalid date with float input
+    Check Test Case    ${TESTNAME}
+
+Invalid date with int input
+    Check Test Case    ${TESTNAME}
+
 Bytestring
     Check Test Case    ${TESTNAME}
 
@@ -175,7 +187,7 @@ Kwonly
 Invalid kwonly
     Check Test Case    ${TESTNAME}
 
-Non-strings are not converted
+Boolean, None, List and Dict are not converted
     Check Test Case    ${TESTNAME}
 
 Return value annotation causes no error
