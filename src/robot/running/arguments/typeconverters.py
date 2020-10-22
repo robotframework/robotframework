@@ -37,6 +37,7 @@ class TypeConverter(object):
     type = None
     abc = None
     aliases = ()
+    value_types = (unicode,)
     _converters = OrderedDict()
     _type_aliases = {}
 
@@ -81,6 +82,9 @@ class TypeConverter(object):
         return self
 
     def convert(self, name, value, explicit_type=True, strict=True):
+        if type(value) not in self.value_types:
+            # TODO: This can be an error once converters convert all meaningful values.
+            return value
         try:
             return self._convert(value, explicit_type)
         except ValueError as error:
@@ -140,8 +144,13 @@ class IntegerConverter(TypeConverter):
     abc = Integral
     type_name = 'integer'
     aliases = ('int', 'long')
+    value_types = (unicode, float)
 
     def _convert(self, value, explicit_type=True):
+        if isinstance(value, float) and not value.is_integer():
+            if not explicit_type:
+                return value
+            raise ValueError('Conversion would lose precision.')
         try:
             return int(value)
         except ValueError:
@@ -158,6 +167,7 @@ class FloatConverter(TypeConverter):
     type = float
     abc = Real
     aliases = ('double',)
+    value_types = (unicode, int)
 
     def _convert(self, value, explicit_type=True):
         try:

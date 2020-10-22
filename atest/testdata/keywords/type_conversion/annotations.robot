@@ -369,8 +369,6 @@ Invalid kwonly
 
 Non-strings are not converted
     [Template]           Non-string is not converted
-    Integer
-    Float
     Boolean
     Decimal
     List
