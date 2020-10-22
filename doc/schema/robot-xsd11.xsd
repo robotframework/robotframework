@@ -95,6 +95,7 @@
                 <xs:enumeration value="WARN"/>
                 <xs:enumeration value="ERROR"/>
                 <xs:enumeration value="FAIL"/>
+                <xs:enumeration value="SKIP"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:attribute>
