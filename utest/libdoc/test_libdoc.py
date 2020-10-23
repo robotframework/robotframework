@@ -3,6 +3,7 @@ import json
 from os import path
 
 from jsonschema import validate
+from robot.utils import PY3
 from robot.utils.asserts import assert_equal
 from robot.libdocpkg import LibraryDocumentation
 from robot.libdocpkg.model import LibraryDoc, KeywordDoc
@@ -165,7 +166,8 @@ argument value ``'stderr'``."""
 class TestLibdocJsonWriter(unittest.TestCase):
 
     def test_Annotations(self):
-        run_libdoc_and_validate_json('Annotations.py')
+        if PY3:
+            run_libdoc_and_validate_json('Annotations.py')
 
     def test_Decorators(self):
         run_libdoc_and_validate_json('Decorators.py')
@@ -189,7 +191,8 @@ class TestLibdocJsonWriter(unittest.TestCase):
         run_libdoc_and_validate_json('InternalLinking.py')
 
     def test_KeywordOnlyArgs(self):
-        run_libdoc_and_validate_json('KeywordOnlyArgs.py')
+        if PY3:
+            run_libdoc_and_validate_json('KeywordOnlyArgs.py')
 
     def test_LibraryDecorator(self):
         run_libdoc_and_validate_json('LibraryDecorator.py')
@@ -220,3 +223,15 @@ class TestLibdocJsonWriter(unittest.TestCase):
 
     def test_DynamicLibrary_json(self):
         run_libdoc_and_validate_json('DynamicLibrary.json')
+
+class TestLibdocJsonBuilder(unittest.TestCase):
+
+    def test_libdoc_json_roundtrip(self):
+        library = path.join(testdata_dir, 'DynamicLibrary.json')
+        libdoc = LibraryDocumentation(library)
+        libspec = json.loads(json.dumps(libdoc.to_dictionary()))
+        with open(library) as f:
+            org_libspec = json.load(f)
+        libspec['generated'] = None
+        org_libspec['generated'] = None
+        assert_equal(libspec, org_libspec)
