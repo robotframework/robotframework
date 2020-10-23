@@ -44,8 +44,8 @@ Format in XML
     ROBOT    --docfor RoBoT   DocFormatHtml.py
     HTML     ${EMPTY}         DocFormatHtml.py
 
-Format in XML:HTML
-    [Template]    Test Format in XML:HTML
+Format in LIBSPEC
+    [Template]    Test Format in LIBSPEC
     --format xMl --specdocformat hTML            DocFormat.py
     --docfor RoBoT -f XML -s HTML   DocFormatHtml.py
     -F ROBOT --format xml -s html   DocFormat.py
@@ -56,13 +56,13 @@ Format from XML spec
     Copy File    ${OUTXML}    ${OUTBASE}-2.xml
     Test Format In XML    HTML    lib=${OUTBASE}-2.xml
 
-Format from XML:HTML spec
+Format from LIBSPEC spec
     [Template]    NONE
     Run Libdoc    -F ROBOT --format XML -s HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
     Copy File    ${OUTXML}    ${OUTBASE}-2.xml
-    Test Format In XML:HTML    lib=${OUTBASE}-2.xml
+    Test Format In LIBSPEC    lib=${OUTBASE}-2.xml
 
-Compare HTML from XML:HTML
+Compare HTML from LIBSPEC
     [Template]    NONE
     Run Libdoc    -F ROBOT --format XML -s HTML ${TESTDATADIR}/DocFormat.py ${OUTXML}
     Test Format In HTML    <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}
@@ -85,7 +85,7 @@ Test Format In XML
     Format should be    ${format}
     Keyword Doc Should Be    0    *bold* or <b>bold</b> http://example.com
 
-Test Format In XML:HTML
+Test Format In LIBSPEC
     [Arguments]    ${cli}=    ${lib}=DocFormat.py
     ${lib} =    Join Path    ${TESTDATADIR}    ${lib}
     Run Libdoc And Parse Output     ${cli} ${lib}
