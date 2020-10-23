@@ -54,7 +54,7 @@ Variables are not checked in when arguments are embedded
 
 Setup/teardown with non-existing variable is ignored
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${SUITE.setup}    ${NONE}
+    Setup Should Not Be Defined     ${SUITE}
     Should Be Equal    ${tc.setup}    ${NONE}
     Should Be Equal    ${tc.teardown}    ${NONE}
 

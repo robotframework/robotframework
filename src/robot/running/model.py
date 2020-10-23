@@ -39,7 +39,7 @@ from robot import model
 from robot.conf import RobotSettings
 from robot.model import Keywords
 from robot.output import LOGGER, Output, pyloggingconf
-from robot.utils import seq2str, setter
+from robot.utils import seq2str, setter, py2to3
 
 from .randomizer import Randomizer
 from .steprunner import StepRunner
@@ -57,8 +57,9 @@ class Keyword(model.Keyword):
     message_class = None  #: Internal usage only.
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=model.Keyword.KEYWORD_TYPE, lineno=None):
-        model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type)
+                 timeout=None, type=model.Keyword.KEYWORD_TYPE, lineno=None,
+                 parent=None):
+        model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type, parent)
         self.lineno = lineno
 
     def run(self, context):
@@ -69,6 +70,7 @@ class Keyword(model.Keyword):
         return StepRunner(context).run_step(self)
 
 
+@py2to3
 class ForLoop(Keyword):
     """Represents a for loop in test data.
 
@@ -102,6 +104,9 @@ class ForLoop(Keyword):
         variables = '    '.join(self.assign)
         values = '    '.join(self.values)
         return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
+
+    def __nonzero__(self):
+        return True
 
 
 class TestCase(model.TestCase):

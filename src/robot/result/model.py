@@ -69,8 +69,9 @@ class Keyword(model.Keyword):
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(),
                  tags=(), timeout=None, type='kw',  status='FAIL',
-                 starttime=None, endtime=None):
+                 starttime=None, endtime=None, parent=None):
         model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
+        self.parent = parent
         self.messages = None
         self.keywords = None
         #: Name of the keyword without library or resource name.
@@ -310,7 +311,7 @@ class TestSuite(model.TestSuite):
         if self.starttime and self.endtime:
             return utils.get_elapsed_time(self.starttime, self.endtime)
         return sum(child.elapsedtime for child in
-                   chain(self.suites, self.tests, self.keywords))
+                   chain(self.suites, self.tests, (self.setup, self.teardown)))
 
     def remove_keywords(self, how):
         """Remove keywords based on the given condition.

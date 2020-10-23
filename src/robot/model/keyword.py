@@ -16,13 +16,14 @@
 from itertools import chain
 from operator import attrgetter
 
-from robot.utils import setter
+from robot.utils import setter, py2to3
 
 from .itemlist import ItemList
 from .modelobject import ModelObject
 from .tags import Tags
 
 
+@py2to3
 class Keyword(ModelObject):
     """Base model for a single keyword.
 
@@ -38,8 +39,9 @@ class Keyword(ModelObject):
     FOR_ITEM_TYPE = 'foritem'   #: Single for loop iteration :attr:`type`.
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=KEYWORD_TYPE):
+                 timeout=None, type=KEYWORD_TYPE, parent=None):
         self.parent = None
+        self.parent = parent
         self._name = name
         self.doc = doc
         self.args = args      #: Keyword arguments as a list of strings.
@@ -52,6 +54,9 @@ class Keyword(ModelObject):
         self.type = type
         self._sort_key = -1
         self._next_child_sort_key = 0
+
+    def __nonzero__(self):
+        return bool(self.name)
 
     @property
     def name(self):
@@ -87,7 +92,10 @@ class Keyword(ModelObject):
         """
         if not self.parent:
             return 'k1'
-        return '%s-k%d' % (self.parent.id, self.parent.keywords.index(self)+1)
+        if self.parent.keywords:
+            return '%s-k%d' % (self.parent.id, self.parent.keywords.index(self)+1)
+        fixtures = [kw for kw in (self.parent.setup, self.parent.teardown) if kw]
+        return '%s-k%d' % (self.parent.id, fixtures.index(self)+1)
 
     @property
     def source(self):

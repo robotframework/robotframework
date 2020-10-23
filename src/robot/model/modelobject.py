@@ -22,6 +22,16 @@ from robot.utils import SetterAwareType, py2to3, unicode, with_metaclass
 class ModelObject(with_metaclass(SetterAwareType, object)):
     __slots__ = []
 
+    def config(self, **attributes):
+        """Configure model object with given attributes.
+        ``obj.config(name='Example', doc='Something')`` is equivalent to setting
+        ``obj.name = 'Example'`` and ``obj.doc = 'Something'``.
+        New in Robot Framework 4.0.
+        """
+        for name in attributes:
+            setattr(self, name, attributes[name])
+        return self
+
     def copy(self, **attributes):
         """Return shallow copy of this object.
 

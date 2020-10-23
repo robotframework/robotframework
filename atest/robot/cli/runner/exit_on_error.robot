@@ -57,7 +57,7 @@ Skipped due to error
 Teardowns not executed
     [Arguments]    ${name}
     ${suite} =    Get Test Suite    ${name}
-    Should Be Equal    ${suite.teardown}    ${None}
+    Teardown Should Not Be Defined    ${suite}
     ${tc} =    Check Test Case    ${name}    FAIL    ${MESSAGE}
     Should Be Equal    ${tc.teardown}    ${None}
 

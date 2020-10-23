@@ -41,10 +41,10 @@ class SettingsBuilder(NodeVisitor):
         self.suite.metadata[node.name] = node.value
 
     def visit_SuiteSetup(self, node):
-        self.suite.keywords.setup = fixture(node, Keyword.SETUP_TYPE)
+        self.suite.setup = fixture(node, Keyword.SETUP_TYPE)
 
     def visit_SuiteTeardown(self, node):
-        self.suite.keywords.teardown = fixture(node, Keyword.TEARDOWN_TYPE)
+        self.suite.teardown = fixture(node, Keyword.TEARDOWN_TYPE)
 
     def visit_TestSetup(self, node):
         self.test_defaults.setup = fixture(node, Keyword.SETUP_TYPE)

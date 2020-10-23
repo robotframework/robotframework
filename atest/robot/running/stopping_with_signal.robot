@@ -69,7 +69,7 @@ Skip Teardowns After Stopping Gracefully
     Check Test Cases Have Failed Correctly
     ${tc} =    Get Test Case    Test
     Should Be Equal    ${tc.teardown}    ${None}
-    Should Be Equal    ${SUITE.teardown}    ${None}
+    Teardown Should Not Be Defined    ${SUITE}
 
 *** Keywords ***
 Start And Send Signal
