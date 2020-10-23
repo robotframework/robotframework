@@ -18,10 +18,12 @@ MISC_DIR = normpath(join(abspath(__file__), '..', '..', '..',
 
 class TestModelTypes(unittest.TestCase):
 
-    def test_suite_keyword(self):
-        kw = TestSuite().keywords.create()
-        assert_equal(type(kw), Keyword)
-        assert_not_equal(type(kw), model.Keyword)
+    def test_suite_setup(self):
+        suite = TestSuite()
+        assert_equal(type(suite.setup), Keyword)
+        assert_equal(type(suite.teardown), Keyword)
+        assert_not_equal(type(suite.setup), model.Keyword)
+        assert_not_equal(type(suite.teardown), model.Keyword)
 
     def test_suite_test_case(self):
         test = TestSuite().tests.create()
@@ -136,7 +138,7 @@ class TestCopy(unittest.TestCase):
     def assert_copy(self, original, copied):
         assert_not_equal(id(original), id(copied))
         self.assert_same_attrs_and_values(original, copied)
-        for attr in ['suites', 'tests', 'keywords']:
+        for attr in ['suites', 'tests']:
             for child in getattr(original, attr, []):
                 self.assert_copy(child, child.copy())
 
@@ -151,7 +153,7 @@ class TestCopy(unittest.TestCase):
 
     def get_non_property_attrs(self, model1, model2):
         for attr in dir(model1):
-            if isinstance(getattr(type(model1), attr, None), property):
+            if 'parent' in attr or isinstance(getattr(type(model1), attr, None), property):
                 continue
             value1 = getattr(model1, attr)
             value2 = getattr(model2, attr)

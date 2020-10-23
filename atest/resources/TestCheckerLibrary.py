@@ -229,10 +229,8 @@ def process_suite(suite):
         process_suite(subsuite)
     for test in suite.tests:
         process_test(test)
-    for kw in suite.keywords:
+    for kw in suite.setup, suite.teardown:
         process_keyword(kw)
-    suite.setup = suite.keywords.setup
-    suite.teardown = suite.keywords.teardown
     return suite
 
 

@@ -84,9 +84,9 @@ class TestBuilding(unittest.TestCase):
         assert_equal(suite.suites[1].tests[1].id, 's1-s2-t2')
 
     def test_suite_setup_and_teardown(self):
-        kws = build('setups_and_teardowns.robot').keywords
-        assert_keyword(kws.setup, name='${SUITE SETUP}', type='setup')
-        assert_keyword(kws.teardown, name='${SUITE TEARDOWN}', type='teardown')
+        suite = build('setups_and_teardowns.robot')
+        assert_keyword(suite.setup, name='${SUITE SETUP}', type='setup')
+        assert_keyword(suite.teardown, name='${SUITE TEARDOWN}', type='teardown')
 
     def test_test_setup_and_teardown(self):
         kws = build('setups_and_teardowns.robot').tests[0].keywords

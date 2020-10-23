@@ -25,7 +25,7 @@ Run Sample File And Check Tests
     Should Be Equal    ${SUITE.name}    Sample
     Should Be Equal    ${SUITE.doc}    A complex testdata file in ${type} format.
     Check Log Message    ${SUITE.setup.messages[0]}    Setup
-    Should Be Equal    ${SUITE.teardown}    ${None}
+    Teardown Should Not Be Defined    ${SUITE}
     Should Contain Tests    ${SUITE}    @{sample_tests}
     Check Test Tags    Own Tags    force1    force2    own1    own2
     Check Test Tags    Default Tags    default1    force1    force2
@@ -60,6 +60,6 @@ Check Suite With Init
     Should Be Equal    ${suite.name}    With Init
     Should Be Equal    ${suite.doc}    Testing suite init file
     Check Log Message    ${suite.setup.kws[0].messages[0]}    Running suite setup
-    Should Be Equal    ${suite.teardown}    ${None}
+    Teardown Should Not Be Defined    ${suite}
     Should Contain Suites    ${suite}    Sub Suite1    Sub Suite2
     Should Contain Tests    ${suite}    @{SUBSUITE_TESTS}

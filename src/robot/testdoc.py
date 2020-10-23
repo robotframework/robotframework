@@ -187,7 +187,7 @@ class JsonConverter(object):
             'numberOfTests': suite.test_count   ,
             'suites': self._convert_suites(suite),
             'tests': self._convert_tests(suite),
-            'keywords': list(self._convert_keywords(suite))
+            'keywords': list(self._convert_keywords((suite.setup, suite.teardown)))
         }
 
     def _get_relative_source(self, source):
@@ -215,11 +215,13 @@ class JsonConverter(object):
             'doc': self._html(test.doc),
             'tags': [self._escape(t) for t in test.tags],
             'timeout': self._get_timeout(test.timeout),
-            'keywords': list(self._convert_keywords(test))
+            'keywords': list(self._convert_keywords(test.keywords))
         }
 
-    def _convert_keywords(self, item):
-        for kw in getattr(item, 'keywords', []):
+    def _convert_keywords(self, keywords):
+        for kw in keywords:
+            if not kw:
+                continue
             if kw.type == kw.SETUP_TYPE:
                 yield self._convert_keyword(kw, 'SETUP')
             elif kw.type == kw.TEARDOWN_TYPE:
