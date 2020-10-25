@@ -34,8 +34,8 @@ except ImportError:    # Standard in Py 3.4+ but can be separately installed
 from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
-from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION,
-                         PY2, eq, is_list_like, seq2str, type_name, unicode)
+from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION, PY2,
+                         eq, get_error_message, seq2str, type_name, unic, unicode)
 
 
 class TypeConverter(object):
@@ -72,7 +72,7 @@ class TypeConverter(object):
                 type_ = cls._type_aliases[type_.lower()]
             except KeyError:
                 return None
-        if not isinstance(type_, type) or issubclass(type_, unicode):
+        if not isinstance(type_, type):
             return None
         if type_ in cls._converters:
             return cls._converters[type_]
@@ -91,7 +91,7 @@ class TypeConverter(object):
     def convert(self, name, value, explicit_type=True, strict=True):
         if isinstance(value, self.type):
             return value
-        if not isinstance(value, self.value_types):
+        if not self._handles_value(value):
             return self._handle_error(name, value, strict=strict)
         try:
             if not isinstance(value, unicode):
@@ -99,6 +99,9 @@ class TypeConverter(object):
             return self._convert(value, explicit_type)
         except ValueError as error:
             return self._handle_error(name, value, error, strict)
+
+    def _handles_value(self, value):
+        return isinstance(value, self.value_types)
 
     def _non_string_convert(self, value, explicit_type=True):
         return self._convert(value, explicit_type)
@@ -113,7 +116,7 @@ class TypeConverter(object):
         ending = u': %s' % error if (error and error.args) else '.'
         raise ValueError(
             "Argument '%s' got value '%s'%s that cannot be converted to %s%s"
-            % (name, value, value_type, self.type_name, ending)
+            % (name, unic(value), value_type, self.type_name, ending)
         )
 
     def _literal_eval(self, value, expected):
@@ -136,6 +139,24 @@ class TypeConverter(object):
             raise ValueError('Value is %s, not %s.' % (type_name(value),
                                                        expected.__name__))
         return value
+
+
+@TypeConverter.register
+class StringConverter(TypeConverter):
+    type = unicode
+    type_name = 'string'
+    aliases = ('string', 'str', 'unicode')
+
+    def _handles_value(self, value):
+        return True
+
+    def _convert(self, value, explicit_type=True):
+        if not explicit_type:
+            return value
+        try:
+            return unicode(value)
+        except Exception:
+            raise ValueError(get_error_message())
 
 
 @TypeConverter.register

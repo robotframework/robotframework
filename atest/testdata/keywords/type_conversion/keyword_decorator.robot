@@ -6,6 +6,7 @@ Resource                 conversion.resource
 *** Variables ***
 @{LIST}                  foo                       bar
 &{DICT}                  foo=${1}                  bar=${2}
+${u}                     ${{'u' if sys.version_info[0] == 2 else ''}}
 
 *** Test Cases ***
 Integer
@@ -31,7 +32,6 @@ Invalid integral (abc)
     Integral             foobar                    type=integer
     Integral             1.0                       type=integer
     Integral             ${LIST}                   type=integer    arg_type=list
-
 
 Float
     Float                1.5                       ${1.5}
@@ -99,6 +99,19 @@ String
     String               []                        '[]'
     String               1.2                       '1.2'
     String               2                         '2'
+    String               ${42}                     '42'
+    String               ${None}                   'None'
+    String               ${LIST}                   "[${u}'foo', ${u}'bar']"
+
+Invalid string
+    [Template]           Conversion Should Fail
+    String               ${{type('Bang', (), {'__str__': lambda self: 1/0})()}}
+    ...                  arg_type=Bang             error=ZeroDivisionError: *
+
+Invalid string (non-ASCII byte string)
+    [Tags]               require-py2
+    [Template]           Conversion Should Fail
+    String               ${{'åäö'}}                arg_type=string    error=*
 
 Bytes
     Bytes                foo                       b'foo'
@@ -117,7 +130,7 @@ Invalid bytes
     Bytes                ${1.3}                    arg_type=float
 
 Bytestring
-    [Tags]    require-py3
+    [Tags]               require-py3
     Bytestring           foo                       b'foo'
     Bytestring           \x00\x01\xFF\u00FF        b'\\x00\\x01\\xFF\\xFF'
     Bytestring           Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
@@ -127,7 +140,7 @@ Bytestring
     Bytestring           ${{bytearray(b'foo')}}    b'foo'
 
 Invalid bytesstring
-    [Tags]    require-py3
+    [Tags]               require-py3
     [Template]           Conversion Should Fail
     Bytestring           \u0100                    type=bytes            error=Character '\u0100' cannot be mapped to a byte.
     Bytestring           \u00ff\u0100\u0101        type=bytes            error=Character '\u0100' cannot be mapped to a byte.
