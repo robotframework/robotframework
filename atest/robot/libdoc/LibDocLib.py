@@ -9,8 +9,10 @@ from xmlschema import XMLSchema
 
 from robot.api import logger
 from robot.utils import CONSOLE_ENCODING, SYSTEM_ENCODING, unicode
-from robot.running.arguments import ArgInfo
-
+try:
+    from robot.running.arguments import ArgInfo
+except ImportError:
+    pass
 
 ROOT = join(dirname(abspath(__file__)), '..', '..', '..')
 
