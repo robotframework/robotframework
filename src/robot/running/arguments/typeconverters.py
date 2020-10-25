@@ -30,7 +30,7 @@ from numbers import Integral, Real
 
 from robot.libraries.DateTime import convert_date, convert_time
 from robot.utils import (FALSE_STRINGS, IRONPYTHON, TRUE_STRINGS, PY_VERSION,
-                         PY2, eq, seq2str, type_name, unicode)
+                         PY2, eq, is_list_like, seq2str, type_name, unicode)
 
 
 class TypeConverter(object):
@@ -82,24 +82,32 @@ class TypeConverter(object):
         return self
 
     def convert(self, name, value, explicit_type=True, strict=True):
-        if type(value) not in self.value_types:
-            # TODO: This can be an error once converters convert all meaningful values.
+        if isinstance(value, self.type):
             return value
+        if not isinstance(value, self.value_types):
+            return self._handle_error(name, value, strict=strict)
         try:
+            if not isinstance(value, unicode):
+                return self._non_string_convert(value, explicit_type)
             return self._convert(value, explicit_type)
         except ValueError as error:
             return self._handle_error(name, value, error, strict)
 
+    def _non_string_convert(self, value, explicit_type=True):
+        return self._convert(value, explicit_type)
+
     def _convert(self, value, explicit_type=True):
         raise NotImplementedError
 
-    def _handle_error(self, name, value, error, strict=True):
+    def _handle_error(self, name, value, error=None, strict=True):
         if not strict:
             return value
-        ending = u': %s' % error if error.args else '.'
-        raise ValueError("Argument '%s' got value '%s' that cannot be "
-                         "converted to %s%s"
-                         % (name, value, self.type_name, ending))
+        value_type = '' if isinstance(value, unicode) else ' (%s)' % type_name(value)
+        ending = u': %s' % error if (error and error.args) else '.'
+        raise ValueError(
+            "Argument '%s' got value '%s'%s that cannot be converted to %s%s"
+            % (name, value, value_type, self.type_name, ending)
+        )
 
     def _literal_eval(self, value, expected):
         # ast.literal_eval has some issues with sets:
@@ -125,15 +133,18 @@ class TypeConverter(object):
 
 @TypeConverter.register
 class BooleanConverter(TypeConverter):
+    value_types = (unicode, int, float, type(None))
     type = bool
     type_name = 'boolean'
     aliases = ('bool',)
-    value_types = (unicode, float, int)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return value
 
     def _convert(self, value, explicit_type=True):
-        if isinstance(value, (float, int)):
-            return bool(value)
         upper = value.upper()
+        if upper == 'NONE':
+            return None
         if upper in TRUE_STRINGS:
             return True
         if upper in FALSE_STRINGS:
@@ -149,11 +160,14 @@ class IntegerConverter(TypeConverter):
     aliases = ('int', 'long')
     value_types = (unicode, float)
 
+    def _non_string_convert(self, value, explicit_type=True):
+        if value.is_integer():
+            return int(value)
+        if not explicit_type:
+            return value
+        raise ValueError('Conversion would lose precision.')
+
     def _convert(self, value, explicit_type=True):
-        if isinstance(value, float) and not value.is_integer():
-            if not explicit_type:
-                return value
-            raise ValueError('Conversion would lose precision.')
         try:
             return int(value)
         except ValueError:
@@ -182,6 +196,7 @@ class FloatConverter(TypeConverter):
 @TypeConverter.register
 class DecimalConverter(TypeConverter):
     type = Decimal
+    value_types = (unicode, int, float)
 
     def _convert(self, value, explicit_type=True):
         try:
@@ -198,6 +213,10 @@ class BytesConverter(TypeConverter):
     type = bytes
     abc = getattr(abc, 'ByteString', None)    # ByteString is new in Python 3
     type_name = 'bytes'                       # Needed on Python 2
+    value_types = (unicode, bytearray)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return bytes(value)
 
     def _convert(self, value, explicit_type=True):
         if PY2 and not explicit_type:
@@ -213,6 +232,10 @@ class BytesConverter(TypeConverter):
 @TypeConverter.register
 class ByteArrayConverter(TypeConverter):
     type = bytearray
+    value_types = (unicode, bytes)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return bytearray(value)
 
     def _convert(self, value, explicit_type=True):
         try:
@@ -304,6 +327,10 @@ class NoneConverter(TypeConverter):
 class ListConverter(TypeConverter):
     type = list
     abc = abc.Sequence
+    value_types = (unicode, tuple)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return list(value)
 
     def _convert(self, value, explicit_type=True):
         return self._literal_eval(value, list)
@@ -312,6 +339,10 @@ class ListConverter(TypeConverter):
 @TypeConverter.register
 class TupleConverter(TypeConverter):
     type = tuple
+    value_types = (unicode, list)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return tuple(value)
 
     def _convert(self, value, explicit_type=True):
         return self._literal_eval(value, tuple)
@@ -331,7 +362,11 @@ class DictionaryConverter(TypeConverter):
 @TypeConverter.register
 class SetConverter(TypeConverter):
     type = set
+    value_types = (unicode, frozenset, list, tuple, abc.Mapping)
     abc = abc.Set
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return set(value)
 
     def _convert(self, value, explicit_type=True):
         return self._literal_eval(value, set)
@@ -340,6 +375,10 @@ class SetConverter(TypeConverter):
 @TypeConverter.register
 class FrozenSetConverter(TypeConverter):
     type = frozenset
+    value_types = (unicode, set, list, tuple, abc.Mapping)
+
+    def _non_string_convert(self, value, explicit_type=True):
+        return frozenset(value)
 
     def _convert(self, value, explicit_type=True):
         # There are issues w/ literal_eval. See self._literal_eval for details.

@@ -49,13 +49,15 @@ Boolean
     Boolean              oFF                       ${False}
     Boolean              0                         ${False}
     Boolean              ${EMPTY}                  ${False}
-    Boolean              none                      ${False}
-    Boolean              ${0}                      ${False}
-    Boolean              ${1}                      ${True}
+    Boolean              none                      ${None}
+    Boolean              ${None}                   ${None}
+    Boolean              ${0}                      ${0}
+    Boolean              ${1.1}                    ${1.1}
 
 Invalid boolean
     [Template]           Invalid value is passed as-is
     Boolean              foobar
+    Boolean              ${LIST}                   expected=${LIST}
 
 String
     String               Hello, world!             u'Hello, world!'
@@ -260,5 +262,5 @@ Invalid kwonly
 
 *** Keywords ***
 Invalid value is passed as-is
-    [Arguments]    ${kw}    ${arg}
-    Run Keyword    ${kw}    ${arg}    u'''${arg}'''
+    [Arguments]    ${kw}    ${arg}    ${expected}=u'''${arg}'''
+    Run Keyword    ${kw}    ${arg}    ${expected}
