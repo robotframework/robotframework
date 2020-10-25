@@ -36,7 +36,10 @@ Invalid decimal
 Boolean
     Check Test Case    ${TESTNAME}
 
-Invalid boolean is accepted as-is
+Invalid boolean string is accepted as-is
+    Check Test Case    ${TESTNAME}
+
+Invalid boolean
     Check Test Case    ${TESTNAME}
 
 String
@@ -190,9 +193,6 @@ Kwonly
 
 Invalid kwonly
     [Tags]    require-py3
-    Check Test Case    ${TESTNAME}
-
-Boolean, None, List and Dict are not converted
     Check Test Case    ${TESTNAME}
 
 Invalid type spec causes error
