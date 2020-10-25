@@ -12,7 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-import sys
+
 from ast import literal_eval
 from collections import OrderedDict
 try:
@@ -193,23 +193,15 @@ class DecimalConverter(TypeConverter):
             raise ValueError
 
 
-
-def _int_to_bytes(value):
-    return value.to_bytes((value.bit_length() // 8) + 1, byteorder=sys.byteorder)
-
-
 @TypeConverter.register
 class BytesConverter(TypeConverter):
     type = bytes
     abc = getattr(abc, 'ByteString', None)    # ByteString is new in Python 3
     type_name = 'bytes'                       # Needed on Python 2
-    value_types = (unicode, int)
 
     def _convert(self, value, explicit_type=True):
         if PY2 and not explicit_type:
             return value
-        if not PY2 and isinstance(value, int):
-            return _int_to_bytes(value)
         try:
             value = value.encode('latin-1')
         except UnicodeEncodeError as err:
@@ -221,11 +213,8 @@ class BytesConverter(TypeConverter):
 @TypeConverter.register
 class ByteArrayConverter(TypeConverter):
     type = bytearray
-    value_types = (unicode, int)
 
     def _convert(self, value, explicit_type=True):
-        if not PY2 and isinstance(value, int):
-            return bytearray(_int_to_bytes(value))
         try:
             return bytearray(value, 'latin-1')
         except UnicodeEncodeError as err:

@@ -93,8 +93,6 @@ Bytes
     Bytes                Hyvä esimerkki!           b'Hyv\\xE4 esimerkki!'
     Bytes                None                      b'None'
     Bytes                NONE                      b'NONE'
-    Bytes                ${22}                     b'\\x16'
-    Bytes                ${2200001}                b'\\xc1\\x91!'
     Bytes                ${1.3}                    ${1.3}
 
 Invalid bytes
@@ -122,7 +120,6 @@ Bytearray
     Bytearray            Hyvä esimerkki!           bytearray(b'Hyv\\xE4 esimerkki!')
     Bytearray            None                      bytearray(b'None')
     Bytearray            NONE                      bytearray(b'NONE')
-    Bytearray            ${123176}                 bytearray(b'(\\xe1\\x01')
     Bytearray            ${2123.1021}              ${2123.1021}
 
 Invalid bytearray
