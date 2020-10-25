@@ -64,11 +64,11 @@ as part of the library name and separated by two colons, for example, like
 Options
 =======
 
- -f --format HTML|XML|JSON
-                          Specifies whether to generate an HTML or XML
-                          output file. The default output `format` and the 
-                          default output `specdocformat` is got from the
-                          output file extension.
+ -f --format HTML|XML|JSON|LIBSPEC
+                          Specifies whether to generate an HTML, XML or
+                          JSON output file. The default output `format`
+                          and the default output `specdocformat` is fetched
+                          from the output file extension.
                           `*.html`    -> -f HTML -s HTML
                           `*.xml`     -> -f XML  -s RAW
                           `*.json`    -> -f JSON -s HTML
@@ -77,12 +77,9 @@ Options
                           Specifies for XML outputs whether the keyword
                           documentation is converted to HTML regardless
                           of the original documentation format or kept
-                          raw as in the library or source spec file.
-                          `*.html` files always get HTML documentation
-                          format. Default is based on the format.
-                          `--format HTML` -> HTML
-                          `--format XML`  -> RAW
-                          `--format JSON` -> HTML
+                          raw as in the library, resource or source spec file.
+                          `*.html` files only accept `HTML`.
+                          Default is based on the format.
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
@@ -110,6 +107,8 @@ Examples:
 
   python -m robot.libdoc src/MyLibrary.py doc/MyLibrary.html
   jython -m robot.libdoc MyLibrary.java MyLibrary.html
+  python -m robot.libdoc src/MyLibrary.py doc/MyLibrary.json
+  python -m robot.libdoc src/MyLibrary.json doc/MyLibrary.html
   python -m robot.libdoc --name MyLibrary Remote::10.0.0.42:8270 MyLibrary.xml
   python -m robot.libdoc MyLibrary MyLibrary.libspec
 
@@ -173,7 +172,6 @@ class LibDoc(Application):
         if ConsoleViewer.handles(output):
             ConsoleViewer(libdoc).view(output, *args[2:])
         else:
-
             libdoc.save(output, self._get_output_format(format, output), self._get_spec_doc_format(specdocformat))
             self.console(os.path.abspath(output))
 
@@ -191,7 +189,7 @@ class LibDoc(Application):
     def _get_spec_doc_format(self, spec_doc_format):
         if not spec_doc_format:
             return None
-        return self._verify_format('Spec Doc Format', spec_doc_format,
+        return self._verify_format('Spec doc format', spec_doc_format,
                                    ['RAW', 'HTML'])
 
     def _verify_format(self, type, format, valid):

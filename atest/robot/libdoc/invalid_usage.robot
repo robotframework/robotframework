@@ -24,9 +24,11 @@ Invalid format
     BuiltIn out.ext                          Format must be 'HTML', 'XML', 'JSON' or 'LIBSPEC', got 'EXT'.
 
 Invalid specdocformat
-    -s XXX BuiltIn ${OUT HTML}                Spec Doc Format must be 'RAW' or 'HTML', got 'XXX'.
-    --specdocformat MD BuiltIn ${OUT HTML}    Spec Doc Format must be 'RAW' or 'HTML', got 'MD'.
+    -s XXX BuiltIn ${OUT HTML}                Spec doc format must be 'RAW' or 'HTML', got 'XXX'.
+    --specdocformat MD BuiltIn ${OUT HTML}    Spec doc format must be 'RAW' or 'HTML', got 'MD'.
 
+Invalid specdocformat for HTML output format
+    --specdocformat RAW BuiltIn ${OUT HTML}    Spec doc format must be 'HTML' when using 'HTML' output, got 'RAW'.
 
 Invalid doc format
     --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.

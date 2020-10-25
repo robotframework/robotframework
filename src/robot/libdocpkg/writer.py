@@ -23,7 +23,7 @@ from .jsonwriter import LibdocJsonWriter
 def LibdocWriter(format=None, spec_doc_format=None):
     format = (format or 'HTML')
     if format == 'HTML':
-        return LibdocHtmlWriter()
+        return LibdocHtmlWriter(spec_doc_format or 'HTML')
     if format == 'XML':
         return LibdocXmlWriter(spec_doc_format or 'RAW')
     if format == 'LIBSPEC':

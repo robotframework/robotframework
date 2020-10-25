@@ -19,7 +19,7 @@ parsing the output and for people interested to create Robot Framework
 compatible outputs.
 
 Also Robot Framework's library documentation tool Libdoc__ can generate output
-in XML format and this directory contains a schema documentation for it as
+in XML and JSON format and this directory contains a schema documentation for it as
 well.
 
 __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#rebot
@@ -34,10 +34,21 @@ Available schema files:
   * `<robot-xsd10.xsd>`__ - Robot Framework XML output (XSD 1.0 compatible version)
   * `<robot-xsd11.xsd>`__ - Robot Framework XML output (XSD 1.1 compatible version)
   * `<libdoc.01.xsd>`__ - Libdoc XML spec version 1 (Robot Framework < 3.2) (XSD 1.0)
-  * `<libdoc.02.xsd>`__ - Libdoc XML spec version 2 (Robot Framework >= 3.2) (XSD 1.0)
+  * `<libdoc.02.xsd>`__ - Libdoc XML spec version 2 (Robot Framework == 3.2) (XSD 1.0)
+  * `<libdoc.03.xsd>`__ - Libdoc XML spec version 3 (Robot Framework >= 4.0) (XSD 1.0)
+  * `<libdoc_schema.json>`__ - Libdoc JSON schema (Robot Framework >= 4.0) (DRAFT-7__)
 
 XSD 1.1 schemas are more complete than XSD 1.0 schemas but not as widely
 supported.
+
+JSON Schema Draft-7 is used instead of the newer Draft 2019-09 due to missing python
+validator implementations. See difference between Draft-7 and 2019-09 in Release-Nodes__.
+Robot Framework uses python project `jsonschema`__ for validation in utest.
+
+__ https://json-schema.org/draft/2019-09/json-schema-core.html
+__ https://json-schema.org/draft/2019-09/release-notes.html
+__ https://github.com/Julian/jsonschema
+
 
 General Robot Framework XML output structure
 --------------------------------------------
