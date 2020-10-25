@@ -45,6 +45,13 @@ Invalid boolean
 String
     Check Test Case    ${TESTNAME}
 
+Invalid string
+    Check Test Case    ${TESTNAME}
+
+Invalid string (non-ASCII byte string)
+    [Tags]    require-py2
+    Check Test Case    ${TESTNAME}
+
 Bytes
     Check Test Case    ${TESTNAME}
 

@@ -65,11 +65,17 @@ String
     String               None                      u'None'
     String               True                      u'True'
     String               []                        u'[]'
+    String               ${42}                     42
+    String               ${None}                   None
+    String               ${LIST}                   ['foo', 'bar']
     Unicode              Hello, world!             u'Hello, world!'
     Unicode              åäö                       u'åäö'
     Unicode              None                      u'None'
     Unicode              True                      u'True'
     Unicode              []                        u'[]'
+    Unicode              ${42}                     42
+    Unicode              ${None}                   None
+    Unicode              ${LIST}                   ['foo', 'bar']
 
 Bytes
     [Tags]               require-py3

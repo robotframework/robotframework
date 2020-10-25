@@ -99,6 +99,14 @@ String
     String               []                        '[]'
     String               1.2                       '1.2'
     String               2                         '2'
+    String               ${42}                     '42'
+    String               ${None}                   'None'
+    String               ${LIST}                   "['foo', 'bar']"
+
+Invalid string
+    [Template]           Conversion Should Fail
+    String               ${{type('Bang', (), {'__str__': lambda self: 1/0})()}}
+    ...                  arg_type=Bang             error=ZeroDivisionError: *
 
 Bytes
     Bytes                foo                       b'foo'
