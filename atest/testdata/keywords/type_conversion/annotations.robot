@@ -167,8 +167,6 @@ Date
     Date                 2014-06-11                date(2014, 6, 11)
     Date                 20180808                  date(2018, 8, 8)
     Date                 20180808000000000000      date(2018, 8, 8)
-    Date                 ${12.3}   ${12.3}
-    Date                 ${123}    ${123}
 
 Invalid date
     [Template]           Conversion Should Fail
