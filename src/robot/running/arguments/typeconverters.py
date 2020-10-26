@@ -63,17 +63,15 @@ class TypeConverter(object):
     def converter_for(cls, type_):
         # Types defined in the typing module in Python 3.7+. For details see
         # https://bugs.python.org/issue34568
-        if hasattr(type_, '__origin__') and type_.__origin__ == Union:
-            return CombinedConverter(type_)
-        if PY_VERSION >= (3, 7) and hasattr(type_, '__origin__'):
+        if (PY_VERSION >= (3, 7)
+                and hasattr(type_, '__origin__')
+                and type_.__origin__ is not Union):
             type_ = type_.__origin__
         if isinstance(type_, (str, unicode)):
             try:
                 type_ = cls._type_aliases[type_.lower()]
             except KeyError:
                 return None
-        if not isinstance(type_, type):
-            return None
         if type_ in cls._converters:
             return cls._converters[type_]
         for converter in cls._converters.values():
@@ -82,14 +80,14 @@ class TypeConverter(object):
         return None
 
     def handles(self, type_):
-        return (issubclass(type_, self.type) or
-                self.abc and issubclass(type_, self.abc))
+        handled = (self.type, self.abc) if self.abc else self.type
+        return isinstance(type_, type) and issubclass(type_, handled)
 
     def get_converter(self, type_):
         return self
 
     def convert(self, name, value, explicit_type=True, strict=True):
-        if isinstance(value, self.type):
+        if self._no_conversion_needed(value):
             return value
         if not self._handles_value(value):
             return self._handle_error(name, value, strict=strict)
@@ -99,6 +97,9 @@ class TypeConverter(object):
             return self._convert(value, explicit_type)
         except ValueError as error:
             return self._handle_error(name, value, error, strict)
+
+    def _no_conversion_needed(self, value):
+        return isinstance(value, self.type)
 
     def _handles_value(self, value):
         return isinstance(value, self.value_types)
@@ -415,32 +416,47 @@ class FrozenSetConverter(TypeConverter):
         return frozenset(self._literal_eval(value, set))
 
 
+@TypeConverter.register
 class CombinedConverter(TypeConverter):
+    type = Union
 
-    def __init__(self, type_):
-        def converter_for(t):
-            c = TypeConverter.converter_for(t)
-            if c is None:
-                return GenericTypeConverter(t)
-            return c
-        self._combination = [converter_for(t) for t in type_.__args__]
-        self.type = type_
+    def __init__(self, union=None):
+        self.args = self._get_args(union)
+
+    def _get_args(self, union):
+        if not union:
+            return ()
+        try:
+            return union.__args__
+        except AttributeError:
+            # Python 3.5.2's typing uses __union_params__ instead
+            # of __args__. This block can likely be safely removed
+            # when Python 3.5 support is dropped
+            return union.__union_params__
+
+    @property
+    def type_name(self):
+        return ' or '.join(type_name(a) for a in self.args) if self.args else None
+
+    def handles(self, type_):
+        return getattr(type_, '__origin__', None) is Union
+
+    def get_converter(self, type_):
+        return CombinedConverter(type_)
+
+    def _handles_value(self, value):
+        return True
+
+    def _no_conversion_needed(self, value):
+        return False
 
     def _convert(self, value, explicit_type=True):
-        for converter in self._combination:
+        for typ in self.args:
+            converter = TypeConverter.converter_for(typ)
+            if not converter:
+                return value
             try:
                 return converter.convert('', value, explicit_type)
             except ValueError:
                 pass
-        raise ValueError("Could not convert value '%s'" % value)
-
-
-class GenericTypeConverter(TypeConverter):
-
-    def __init__(self, type_):
-        self.type = type_
-
-    def _convert(self, value, explicit_type=True):
-        if isinstance(value, self.type):
-            return value
-        raise ValueError("Given value '%s' is not expected type '%s'" % (value, self.type))
+        raise ValueError

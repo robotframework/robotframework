@@ -1,20 +1,24 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    keywords/type_conversion/unions.robot
 Resource         atest_resource.robot
-Force Tags       require-py3.7
+Force Tags       require-py3
 
 *** Test Cases ***
-Union testing
+Union
      Check Test Case    ${TESTNAME}
 
-Optional is removed when None is default
+Argument not matching union
      Check Test Case    ${TESTNAME}
 
-Multitype union works in order
+Union with None
+     Check Test Case    ${TESTNAME}
+     Check Test Case    ${TESTNAME} and string
+
+Union with custom type
      Check Test Case    ${TESTNAME}
 
-Custom type inside of union
+Optional argument
      Check Test Case    ${TESTNAME}
 
-Unexpected object is just passed when in union
+Optional argument with default
      Check Test Case    ${TESTNAME}
