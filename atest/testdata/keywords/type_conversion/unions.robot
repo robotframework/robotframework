@@ -42,6 +42,21 @@ Union with custom type
     Custom type in union    ${myobject}    MyObject
     Custom type in union    ${object}      UnexpectedObject
 
+Multiple types using tuple
+    [Template]    Tuple of int float and string
+    1          ${1}
+    2.1        ${2.1}
+    ${21.0}    ${21}
+    2hello     2hello
+    ${-110}    ${-110}
+
+Argument not matching tuple types
+    [Template]    Conversion Should Fail
+    Tuple of int and float    not a number    type=integer or float
+    Tuple of int and float    ${NONE}         type=integer or float    arg_type=None
+    Tuple of int and float    ${{type('Custom', (), {})()}}
+    ...                                       type=integer or float    arg_type=Custom
+
 Optional argument
     [Template]    Optional argument
     1       ${1}

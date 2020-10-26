@@ -426,6 +426,8 @@ class CombinedConverter(TypeConverter):
     def _get_args(self, union):
         if not union:
             return ()
+        if isinstance(union, tuple):
+            return union
         try:
             return union.__args__
         except AttributeError:
@@ -439,7 +441,7 @@ class CombinedConverter(TypeConverter):
         return ' or '.join(type_name(a) for a in self.args) if self.args else None
 
     def handles(self, type_):
-        return getattr(type_, '__origin__', None) is Union
+        return getattr(type_, '__origin__', None) is Union or isinstance(type_, tuple)
 
     def get_converter(self, type_):
         return CombinedConverter(type_)

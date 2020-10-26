@@ -12,7 +12,7 @@ except ImportError:
 from numbers import Integral, Real
 
 from robot.api.deco import keyword
-from robot.utils import PY2, unicode
+from robot.utils import PY2, PY3, unicode
 
 
 class MyEnum(Enum):
@@ -214,6 +214,21 @@ def type_and_default_2(argument=True, expected=None):
 
 @keyword(types=[timedelta])
 def type_and_default_3(argument=0, expected=None):
+    _validate_type(argument, expected)
+
+
+if PY3:
+    exec('''
+from typing import Union
+
+@keyword(types={'argument': Union[int, float]})
+def multiple_types_using_union(argument, expected=None):
+    _validate_type(argument, expected)
+''')
+
+
+@keyword(types={'argument': (int, float)})
+def multiple_types_using_tuple(argument, expected=None):
     _validate_type(argument, expected)
 
 
