@@ -494,3 +494,29 @@ Explicit conversion failure is used if both conversions fail
     [Template]    Conversion Should Fail
     Type and default 1    BANG!    type=list         error=Invalid expression.
     Type and default 3    BANG!    type=timedelta    error=Invalid time string 'BANG!'.
+
+Multiple types using Union
+    [Tags]        requite-py3
+    [Template]    Multiple types using Union
+    1             1
+    1.2           1.2
+    ${1}          1
+    ${1.2}        1.2
+
+Argument not matching Union tupes
+    [Tags]        requite-py3
+    [Template]    Conversion Should Fail
+    Multiple types using Union    invalid    type=integer or float
+    Multiple types using Union    ${NONE}    type=integer or float    arg_type=None
+
+Multiple types using tuple
+    [Template]    Multiple types using tuple
+    1             1
+    1.2           1.2
+    ${1}          1
+    ${1.2}        1.2
+
+Argument not matching tuple tupes
+    [Template]    Conversion Should Fail
+    Multiple types using tuple    invalid    type=integer or float
+    Multiple types using tuple    ${NONE}    type=integer or float    arg_type=None

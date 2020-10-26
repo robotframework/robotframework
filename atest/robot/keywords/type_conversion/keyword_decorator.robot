@@ -231,3 +231,17 @@ Default value is used if explicit type conversion fails
 
 Explicit conversion failure is used if both conversions fail
     Check Test Case    ${TESTNAME}
+
+Multiple types using Union
+    [Tags]    requite-py3
+    Check Test Case    ${TESTNAME}
+
+Argument not matching Union tupes
+    [Tags]    requite-py3
+    Check Test Case    ${TESTNAME}
+
+Multiple types using tuple
+    Check Test Case    ${TESTNAME}
+
+Argument not matching tuple tupes
+    Check Test Case    ${TESTNAME}

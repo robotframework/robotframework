@@ -39,6 +39,14 @@ def custom_type_in_union(argument: Union[MyObject, str], expected_type):
     assert isinstance(argument, eval(expected_type))
 
 
+def tuple_of_int_float_and_string(argument: (int, float, str), expected):
+    assert argument == expected
+
+
+def tuple_of_int_and_float(argument: (int, float), expected=None):
+    assert argument == expected
+
+
 def optional_argument(argument: Optional[int], expected):
     assert argument == expected
 

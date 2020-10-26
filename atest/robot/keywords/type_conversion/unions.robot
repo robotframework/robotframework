@@ -17,6 +17,12 @@ Union with None
 Union with custom type
      Check Test Case    ${TESTNAME}
 
+Multiple types using tuple
+     Check Test Case    ${TESTNAME}
+
+Argument not matching tuple types
+     Check Test Case    ${TESTNAME}
+
 Optional argument
      Check Test Case    ${TESTNAME}
 
