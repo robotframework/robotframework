@@ -18,4 +18,3 @@ Custom type inside of union
 
 Unexpected object is just passed when in union
      Check Test Case    ${TESTNAME}
-
