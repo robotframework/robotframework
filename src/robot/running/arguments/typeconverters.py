@@ -346,6 +346,9 @@ class NoneConverter(TypeConverter):
     type = type(None)
     type_name = 'None'
 
+    def handles(self, type_):
+        return type_ in (type(None), None)
+
     def _convert(self, value, explicit_type=True):
         if value.upper() == 'NONE':
             return None

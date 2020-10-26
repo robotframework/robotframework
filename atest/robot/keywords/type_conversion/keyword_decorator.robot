@@ -112,6 +112,12 @@ NoneType
 Invalid NoneType
     Check Test Case    ${TESTNAME}
 
+None
+    Check Test Case    ${TESTNAME}
+
+Invalid None
+    Check Test Case    ${TESTNAME}
+
 List
     Check Test Case    ${TESTNAME}
 
