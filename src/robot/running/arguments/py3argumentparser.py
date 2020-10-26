@@ -89,7 +89,7 @@ class PythonArgumentParser:
         for arg in defaults:
             if defaults[arg] is None and arg in type_hints:
                 type_ = type_hints[arg]
-                if self._is_union(type_):
+                if getattr(type_, '__origin__', None) is typing.Union:
                     try:
                         types = type_.__args__
                     except AttributeError:
@@ -99,8 +99,3 @@ class PythonArgumentParser:
                         types = type_.__union_params__
                     if len(types) == 2 and types[1] is type(None):
                         type_hints[arg] = types[0]
-
-    def _is_union(self, type_):
-        if PY_VERSION >= (3, 7) and hasattr(type_, '__origin__'):
-            type_ = type_.__origin__
-        return isinstance(type_, type(typing.Union))
