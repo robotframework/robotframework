@@ -5,7 +5,7 @@ import unittest
 from os.path import abspath, dirname, join
 
 from robot.running import TestSuite, TestSuiteBuilder
-from robot.utils import StringIO
+from robot.utils import JYTHON, StringIO
 from robot.utils.asserts import assert_equal
 
 from resources.runningtestcase import RunningTestCase
@@ -41,6 +41,20 @@ def assert_test(test, name, status, tags=(), msg=''):
     assert_equal(test.status, status)
     assert_equal(test.message, msg)
     assert_equal(tuple(test.tags), tags)
+
+
+def assert_signal_handler_equal(signum, expected):
+    sig = signal.getsignal(signum)
+    try:
+        assert_equal(sig, expected)
+    except AssertionError:
+        if not JYTHON:
+            raise
+        # With Jython `getsignal` seems to always return different object so that
+        # even `getsignal(SIGINT) == getsignal(SIGINT)` is false. This doesn't
+        # happen always and may be dependent e.g. on the underlying JVM. Comparing
+        # string representations ought to be good enough.
+        assert_equal(str(sig), str(expected))
 
 
 class TestRunning(unittest.TestCase):
@@ -246,8 +260,8 @@ class TestPreservingSignalHandlers(unittest.TestCase):
         suite = TestSuite(name='My Suite')
         suite.tests.create(name='My Test').keywords.create('Log', args=['Hi!'])
         run(suite)
-        assert_equal(signal.getsignal(signal.SIGINT), self.orig_sigint)
-        assert_equal(signal.getsignal(signal.SIGTERM), my_sigterm)
+        assert_signal_handler_equal(signal.SIGINT, self.orig_sigint)
+        assert_signal_handler_equal(signal.SIGTERM, my_sigterm)
 
 
 class TestStateBetweenTestRuns(unittest.TestCase):
