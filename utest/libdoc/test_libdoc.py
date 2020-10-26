@@ -2,8 +2,7 @@ import unittest
 import json
 from os import path
 
-from jsonschema import validate
-from robot.utils import PY3
+from robot.utils import PY3, IRONPYTHON, JYTHON
 from robot.utils.asserts import assert_equal
 from robot.libdocpkg import LibraryDocumentation
 from robot.libdocpkg.model import LibraryDoc, KeywordDoc
@@ -163,66 +162,70 @@ argument value ``'stderr'``."""
         pass
 
 
-class TestLibdocJsonWriter(unittest.TestCase):
+if not IRONPYTHON and not JYTHON:
+    from jsonschema import validate
 
-    def test_Annotations(self):
-        if PY3:
-            run_libdoc_and_validate_json('Annotations.py')
+    class TestLibdocJsonWriter(unittest.TestCase):
 
-    def test_Decorators(self):
-        run_libdoc_and_validate_json('Decorators.py')
+        def test_Annotations(self):
+            if PY3:
+                run_libdoc_and_validate_json('Annotations.py')
 
-    def test_Deprecation(self):
-        run_libdoc_and_validate_json('Deprecation.py')
+        def test_Decorators(self):
+            run_libdoc_and_validate_json('Decorators.py')
 
-    def test_DocFormat(self):
-        run_libdoc_and_validate_json('DocFormat.py')
+        def test_Deprecation(self):
+            run_libdoc_and_validate_json('Deprecation.py')
 
-    def test_DynamicLibrary(self):
-        run_libdoc_and_validate_json('DynamicLibrary.py::required')
+        def test_DocFormat(self):
+            run_libdoc_and_validate_json('DocFormat.py')
 
-    def test_DynamicLibraryWithoutGetKwArgsAndDoc(self):
-        run_libdoc_and_validate_json('DynamicLibraryWithoutGetKwArgsAndDoc.py')
+        def test_DynamicLibrary(self):
+            run_libdoc_and_validate_json('DynamicLibrary.py::required')
 
-    def test_ExampleSpec(self):
-        run_libdoc_and_validate_json('ExampleSpec.xml')
+        def test_DynamicLibraryWithoutGetKwArgsAndDoc(self):
+            run_libdoc_and_validate_json('DynamicLibraryWithoutGetKwArgsAndDoc.py')
 
-    def test_InternalLinking(self):
-        run_libdoc_and_validate_json('InternalLinking.py')
+        def test_ExampleSpec(self):
+            run_libdoc_and_validate_json('ExampleSpec.xml')
 
-    def test_KeywordOnlyArgs(self):
-        if PY3:
-            run_libdoc_and_validate_json('KeywordOnlyArgs.py')
+        def test_InternalLinking(self):
+            run_libdoc_and_validate_json('InternalLinking.py')
 
-    def test_LibraryDecorator(self):
-        run_libdoc_and_validate_json('LibraryDecorator.py')
+        def test_KeywordOnlyArgs(self):
+            if PY3:
+                run_libdoc_and_validate_json('KeywordOnlyArgs.py')
 
-    def test_module(self):
-        run_libdoc_and_validate_json('module.py')
+        def test_LibraryDecorator(self):
+            run_libdoc_and_validate_json('LibraryDecorator.py')
 
-    def test_NewStyleNoInit(self):
-        run_libdoc_and_validate_json('NewStyleNoInit.py')
+        def test_module(self):
+            run_libdoc_and_validate_json('module.py')
 
-    def test_no_arg_init(self):
-        run_libdoc_and_validate_json('no_arg_init.py')
+        def test_NewStyleNoInit(self):
+            run_libdoc_and_validate_json('NewStyleNoInit.py')
 
-    def test_resource(self):
-        run_libdoc_and_validate_json('resource.resource')
+        def test_no_arg_init(self):
+            run_libdoc_and_validate_json('no_arg_init.py')
 
-    def test_resource(self):
-        run_libdoc_and_validate_json('resource.robot')
+        def test_resource(self):
+            run_libdoc_and_validate_json('resource.resource')
 
-    def test_toc(self):
-        run_libdoc_and_validate_json('toc.py')
+        def test_resource(self):
+            run_libdoc_and_validate_json('resource.robot')
 
-    def test_TOCWithInitsAndKeywords(self):
-        run_libdoc_and_validate_json('TOCWithInitsAndKeywords.py')
+        def test_toc(self):
+            run_libdoc_and_validate_json('toc.py')
 
-    def test_TypesViaKeywordDeco(self):
-        run_libdoc_and_validate_json('TypesViaKeywordDeco.py')
+        def test_TOCWithInitsAndKeywords(self):
+            run_libdoc_and_validate_json('TOCWithInitsAndKeywords.py')
 
-    def test_DynamicLibrary_json(self):
-        run_libdoc_and_validate_json('DynamicLibrary.json')
+        def test_TypesViaKeywordDeco(self):
+            run_libdoc_and_validate_json('TypesViaKeywordDeco.py')
+
+        def test_DynamicLibrary_json(self):
+            run_libdoc_and_validate_json('DynamicLibrary.json')
+
 
 class TestLibdocJsonBuilder(unittest.TestCase):
 
