@@ -159,8 +159,8 @@ class TestTypeName(unittest.TestCase):
         for item, exp in [(NewStyle(), 'NewStyle'),
                           (OldStyle(), 'OldStyle'),
                           (lower(), 'lower'),
-                          (NewStyle, 'class'),
-                          (OldStyle, 'class')]:
+                          (NewStyle, 'NewStyle'),
+                          (OldStyle, 'OldStyle')]:
             assert_equal(type_name(item), exp)
 
     if JYTHON:
