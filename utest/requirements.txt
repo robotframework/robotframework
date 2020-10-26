@@ -1,4 +1,4 @@
 # External Python modules required by unit tests.
 docutils >= 0.9; platform_python_implementation != 'IronPython'
 enum34; python_version < '3.0'
-jsonschema
+jsonschema; platform_python_implementation != 'IronPython' and ; platform_python_implementation != 'Jython'
