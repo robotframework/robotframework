@@ -64,8 +64,8 @@ def type_name(item, capitalize=False):
     if isinstance(item, IOBase):
         name = 'file'
     else:
-        cls = item.__class__ if hasattr(item, '__class__') else type(item)
+        typ = type(item) if not isinstance(item, type) else item
         named_types = {str: 'string', bool: 'boolean', int: 'integer',
-                       type(None): 'None', dict: 'dictionary', type: 'class'}
-        name = named_types.get(cls, cls.__name__)
+                       type(None): 'None', dict: 'dictionary'}
+        name = named_types.get(typ, typ.__name__)
     return name.capitalize() if capitalize and name.islower() else name
