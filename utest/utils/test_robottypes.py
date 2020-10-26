@@ -167,7 +167,7 @@ class TestTypeName(unittest.TestCase):
 
         def test_java_object(self):
             for item, exp in [(String(), 'String'),
-                              (String, 'Class'),
+                              (String, 'String'),
                               (java.lang, 'javapackage'),
                               (java, 'javapackage')]:
                 assert_equal(type_name(item), exp)
