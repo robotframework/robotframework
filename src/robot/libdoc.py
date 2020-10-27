@@ -108,7 +108,7 @@ Examples:
   python -m robot.libdoc src/MyLibrary.py doc/MyLibrary.html
   jython -m robot.libdoc MyLibrary.java MyLibrary.html
   python -m robot.libdoc src/MyLibrary.py doc/MyLibrary.json
-  python -m robot.libdoc src/MyLibrary.json doc/MyLibrary.html
+  python -m robot.libdoc doc/MyLibrary.json doc/MyLibrary.html
   python -m robot.libdoc --name MyLibrary Remote::10.0.0.42:8270 MyLibrary.xml
   python -m robot.libdoc MyLibrary MyLibrary.libspec
 

@@ -73,7 +73,7 @@ class LibraryDoc(object):
     def _add_parent(self, kws):
         for keyword in kws:
             keyword.parent = self
-            keyword._generate_shortdoc()
+            keyword.generate_shortdoc()
         return sorted(kws)
 
     @property
@@ -147,7 +147,7 @@ class KeywordDoc(Sortable):
     def _sort_key(self):
         return self.name.lower()
 
-    def _generate_shortdoc(self):
+    def generate_shortdoc(self):
         if not self._shortdoc:
             self.shortdoc = self._get_shortdoc()
 

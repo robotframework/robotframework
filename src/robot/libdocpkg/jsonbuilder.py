@@ -37,8 +37,8 @@ class JsonDocBuilder(object):
                             doc_format=spec['doc_format'],
                             source=spec['source'],
                             lineno=int(spec.get('lineno', -1)))
-        libdoc.inits = self._create_keywords(spec['inits'])
-        libdoc.keywords = self._create_keywords(spec['keywords'])
+        libdoc.inits = [self._create_keyword(kw) for kw in spec['inits']]
+        libdoc.keywords = [self._create_keyword(kw) for kw in spec['keywords']]
         return libdoc
 
     def _parse_spec_json(self, path):
@@ -48,23 +48,23 @@ class JsonDocBuilder(object):
             libdoc_dict = json.load(json_source)
         return libdoc_dict
 
-    def _create_keywords(self, keywords):
-        return [KeywordDoc(name=kw.get('name'),
-                           args=self._create_arguments(kw['args']),
-                           doc=kw['doc'],
-                           shortdoc=kw['shortdoc'],
-                           tags=kw['tags'],
-                           source=kw['source'],
-                           lineno=int(kw.get('lineno', -1))) for kw in keywords]
+    def _create_keyword(self, kw):
+        return KeywordDoc(name=kw.get('name'),
+                          args=self._create_arguments(kw['args']),
+                          doc=kw['doc'],
+                          shortdoc=kw['shortdoc'],
+                          tags=kw['tags'],
+                          source=kw['source'],
+                          lineno=int(kw.get('lineno', -1)))
 
     def _create_arguments(self, arguments):
         spec = ArgumentSpec()
         setters = {
             ArgInfo.POSITIONAL_ONLY: spec.positional_only.append,
-            ArgInfo.POSITIONAL_ONLY_MARKER: lambda *args: None,
+            ArgInfo.POSITIONAL_ONLY_MARKER: lambda value: None,
             ArgInfo.POSITIONAL_OR_NAMED: spec.positional_or_named.append,
             ArgInfo.VAR_POSITIONAL: lambda value: setattr(spec, 'var_positional', value),
-            ArgInfo.NAMED_ONLY_MARKER: lambda *args: None,
+            ArgInfo.NAMED_ONLY_MARKER: lambda value: None,
             ArgInfo.NAMED_ONLY: spec.named_only.append,
             ArgInfo.VAR_NAMED: lambda value: setattr(spec, 'var_named', value),
         }

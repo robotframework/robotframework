@@ -41,9 +41,9 @@ Available schema files:
 XSD 1.1 schemas are more complete than XSD 1.0 schemas but not as widely
 supported.
 
-JSON Schema Draft-7 is used instead of the newer Draft 2019-09 due to missing python
+JSON Schema Draft-7 is used instead of the newer Draft 2019-09 due to missing Python
 validator implementations. See difference between Draft-7 and 2019-09 in Release-Nodes__.
-Robot Framework uses python project `jsonschema`__ for validation in utest.
+Robot Framework uses Python project `jsonschema`__ for validation in unit tests.
 
 __ https://json-schema.org/draft/2019-09/json-schema-core.html
 __ https://json-schema.org/draft/2019-09/release-notes.html
