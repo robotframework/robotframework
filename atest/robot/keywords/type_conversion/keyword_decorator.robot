@@ -239,11 +239,11 @@ Explicit conversion failure is used if both conversions fail
     Check Test Case    ${TESTNAME}
 
 Multiple types using Union
-    [Tags]    requite-py3
+    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Argument not matching Union tupes
-    [Tags]    requite-py3
+    [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
 Multiple types using tuple
