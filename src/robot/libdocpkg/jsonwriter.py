@@ -20,11 +20,6 @@ from robot.utils import file_writer
 
 class LibdocJsonWriter(object):
 
-    def __init__(self, spec_doc_format):
-        self._spec_doc_format = spec_doc_format
-
     def write(self, libdoc, outfile):
-        if self._spec_doc_format == 'HTML':
-            libdoc.convert_doc_to_html()
         with file_writer(outfile) as f:
             json.dump(libdoc.to_dictionary(), f, indent=2)

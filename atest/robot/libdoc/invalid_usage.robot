@@ -28,7 +28,7 @@ Invalid specdocformat
     --specdocformat MD BuiltIn ${OUT HTML}    Spec doc format must be 'RAW' or 'HTML', got 'MD'.
 
 Invalid specdocformat for HTML output format
-    --specdocformat RAW BuiltIn ${OUT HTML}    Spec doc format must be 'HTML' when using 'HTML' output, got 'RAW'.
+    --specdocformat HTML BuiltIn ${OUT HTML}    The --specdocformat option is not applicable with HTML outputs.
 
 Invalid doc format
     --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.
