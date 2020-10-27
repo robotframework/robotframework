@@ -69,8 +69,10 @@ class SpecDocBuilder(object):
         spec = ArgumentSpec()
         setters = {
             ArgInfo.POSITIONAL_ONLY: spec.positional_only.append,
+            ArgInfo.POSITIONAL_ONLY_MARKER: lambda *args: None,
             ArgInfo.POSITIONAL_OR_NAMED: spec.positional_or_named.append,
             ArgInfo.VAR_POSITIONAL: lambda value: setattr(spec, 'var_positional', value),
+            ArgInfo.NAMED_ONLY_MARKER: lambda *args: None,
             ArgInfo.NAMED_ONLY: spec.named_only.append,
             ArgInfo.VAR_NAMED: lambda value: setattr(spec, 'var_named', value),
         }
