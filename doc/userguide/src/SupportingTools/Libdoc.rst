@@ -42,21 +42,17 @@ Options
 ~~~~~~~
 
   -f, --format <html|xml|json|libspec>
-                          Specifies whether to generate an HTML, XML or
-                          JSON output file. The default output `format`
-                          and the default output `specdocformat` is defined
-                          by the output file extension.
-                          :file:`*.html` -> `-f HTML -s HTML`,
-                          :file:`*.xml` -> `-f XML -s RAW`,
-                          :file:`*.json` -> `-f JSON -s HTML` and
-                          :file:`*.libspec` -> `-f XML -s HTML`
+                           Specifies whether to generate an HTML output for humans or
+                           a machine readable spec file in XML or JSON format. The
+                           `libspec` format means XML spec with documentations converted
+                           to HTML. The default format is got from the output file
+                           extension.
   -s, --specdocformat <raw|html>
-                          Specifies for XML and JSON output whether the keyword
-                          documentation is converted to HTML regardless
-                          of the original documentation format or kept
-                          raw as in the library, resource or source spec file.
-                          :file:`*.html` files only accept `HTML`.
-                          Default is based on the `format`.
+                           Specifies the documentation format used with XML and JSON
+                           spec files. `raw` means preserving the original documentation
+                           format and `html` means converting documentation to HTML. The
+                           default is `raw` with XML spec files and `html` with JSON
+                           specs and when using the special `libspec` format.
   -F, --docformat <robot|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,

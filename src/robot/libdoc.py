@@ -65,21 +65,18 @@ Options
 =======
 
  -f --format HTML|XML|JSON|LIBSPEC
-                          Specifies whether to generate an HTML, XML or
-                          JSON output file. The default output `format`
-                          and the default output `specdocformat` is fetched
-                          from the output file extension.
-                          `*.html`    -> -f HTML -s HTML
-                          `*.xml`     -> -f XML  -s RAW
-                          `*.json`    -> -f JSON -s HTML
-                          `*.libspec` -> -f XML  -s HTML
+                          Specifies whether to generate an HTML output for
+                          humans or a machine readable spec file in XML or JSON
+                          format. The `libspec` format means XML spec with
+                          documentations converted to HTML. The default format
+                          is got from the output file extension.
  -s --specdocformat RAW|HTML
-                          Specifies for XML and JSON outputs whether the
-                          keyword documentation is converted to HTML regardless
-                          of the original documentation format or kept
-                          raw as in the library, resource or source spec file.
-                          `*.html` files only accept `HTML`.
-                          Default is based on the format.
+                          Specifies the documentation format used with XML and
+                          JSON spec files. `raw` means preserving the original
+                          documentation format and `html` means converting
+                          documentation to HTML. The default is `raw` with XML
+                          spec files and `html` with JSON specs and when using
+                          the special `libspec` format.
  -F --docformat ROBOT|HTML|TEXT|REST
                           Specifies the source documentation format. Possible
                           values are Robot Framework's documentation format,
