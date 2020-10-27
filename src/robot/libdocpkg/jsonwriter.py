@@ -13,21 +13,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
+import json
 
-from .htmlwriter import LibdocHtmlWriter
-from .xmlwriter import LibdocXmlWriter
-from .jsonwriter import LibdocJsonWriter
+from robot.utils import file_writer
 
 
-def LibdocWriter(format=None, spec_doc_format=None):
-    format = (format or 'HTML')
-    if format == 'HTML':
-        return LibdocHtmlWriter(spec_doc_format or 'HTML')
-    if format == 'XML':
-        return LibdocXmlWriter(spec_doc_format or 'RAW')
-    if format == 'LIBSPEC':
-        return LibdocXmlWriter(spec_doc_format or 'HTML')
-    if format == 'JSON':
-        return LibdocJsonWriter(spec_doc_format or 'HTML')
-    raise DataError("Invalid format '%s'." % format)
+class LibdocJsonWriter(object):
+
+    def __init__(self, spec_doc_format):
+        self._spec_doc_format = spec_doc_format
+
+    def write(self, libdoc, outfile):
+        if self._spec_doc_format == 'HTML':
+            libdoc.convert_doc_to_html()
+        with file_writer(outfile) as f:
+            json.dump(libdoc.to_dictionary(), f, indent=2)

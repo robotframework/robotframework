@@ -1,43 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec name="Example"
-             type="LIBRARY"
-             scope="GLOBAL"
-             format="ROBOT"
-             source="Example.py"
-             lineno="8"
-             generated="2020-04-01T13:28:56Z"
-             specversion="3">
+<keywordspec name="Example" type="LIBRARY" format="ROBOT" scope="GLOBAL" generated="2020-10-22T19:10:45Z" specversion="3" source="Example.py" lineno="8">
 <version>42</version>
 <doc>Library for `libdoc.py` testing purposes.
 
 This library is only used in an example and it doesn't do anything useful.</doc>
 <inits>
 <init lineno="12">
-<arguments>
+<arguments repr="">
 </arguments>
 <doc>Creates new Example test library 1</doc>
+<shortdoc>Creates new Example test library 1</shortdoc>
 </init>
 <init>
-<arguments>
-<arg kind="POSITIONAL_OR_NAMED" required="true" string_repr="arg">
+<arguments repr="arg">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="arg">
 <name>arg</name>
 </arg>
 </arguments>
 <doc>Creates new Example test library 2</doc>
+<shortdoc>Creates new Example test library 2</shortdoc>
 </init>
 <init>
-<arguments>
-<arg kind="POSITIONAL_OR_NAMED" required="true" string_repr="i">
+<arguments repr="i">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="i">
 <name>i</name>
 </arg>
 </arguments>
 <doc>Creates new Example test library 3</doc>
+<shortdoc>Creates new Example test library 3</shortdoc>
 </init>
 </inits>
 <keywords>
 <kw name="Keyword">
-<arguments>
-<arg kind="POSITIONAL_OR_NAMED" required="true" string_repr="arg">
+<arguments repr="arg">
+<arg kind="POSITIONAL_OR_NAMED" required="true" repr="arg">
 <name>arg</name>
 </arg>
 </arguments>
@@ -48,24 +44,26 @@ Example:
 | Your Keyword | yyy |
 
 See `My Keyword` for no more information.</doc>
+<shortdoc>Takes one `arg` and *does nothing* with it.</shortdoc>
 <tags>
 <tag>tag1</tag>
 <tag>tag2</tag>
 </tags>
 </kw>
-<kw name="My Keyword" lineno="42" source="Example.py">
-<arguments>
+<kw name="My Keyword" lineno="42">
+<arguments repr="">
 </arguments>
 <doc>Does nothing &amp; &lt;doc&gt; has "stuff" to 'escape'!! and ignored indentation
 Tags: in spec these wont become tags</doc>
-<tags/>
+<shortdoc>Does nothing &amp; &lt;doc&gt; has "stuff" to 'escape'!! and ignored indentation Tags: in spec these wont become tags</shortdoc>
 </kw>
-<kw name="Non Ascii Doc" lineno="666" source="Different!">
-<arguments>
+<kw name="Non Ascii Doc" source="Different!" lineno="666">
+<arguments repr="">
 </arguments>
 <doc>Hyvää yötä.
 
 Спасибо!</doc>
+<shortdoc>Hyvää yötä.</shortdoc>
 </kw>
 </keywords>
 </keywordspec>

@@ -1,0 +1,189 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://robotframework.org/robotframework/schema/libdoc.json",
+  "type": "object",
+  "title": "Libdoc json spec schema",
+  "description": "This schema describes the json format that is used by Robot Framework Libdocs HTML reports and by the json spec files that can be generated and read by Libdoc.",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "generated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "version": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "LIBRARY",
+        "RESOURCE"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "GLOBAL",
+        "SUITE",
+        "TEST"
+      ],
+      "default": "TEST"
+    },
+    "doc": {
+      "type": "string"
+    },
+    "doc_format": {
+      "type": "string",
+      "enum": [
+        "ROBOT",
+        "HTML",
+        "REST",
+        "TEXT"
+      ],
+      "default": "ROBOT"
+    },
+    "source": {
+      "type": "string",
+      "description": "Path to the source code of that library."
+    },
+    "lineno": {
+      "type": "integer",
+      "minimum": -1
+    },
+    "all_tags": {
+      "$id": "#/properties/all_tags",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "inits": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/keyword"
+      },
+      "uniqueItems": true
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/keyword"
+      },
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "name",
+    "generated",
+    "version",
+    "type",
+    "scope",
+    "doc",
+    "doc_format",
+    "source",
+    "lineno",
+    "inits",
+    "keywords",
+    "all_tags"
+  ],
+  "definitions": {
+    "keyword": {
+      "$id": "#/definitions/keyword",
+      "type": "object",
+      "title": "Keyword schema",
+      "required": [
+        "name",
+        "args",
+        "doc",
+        "shortdoc",
+        "tags",
+        "source",
+        "lineno"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/keyword_arg"
+          }
+        },
+        "doc": {
+          "type": "string"
+        },
+        "shortdoc": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lineno": {
+          "type": "integer",
+          "minimum": -1
+        }
+      }
+    },
+    "keyword_arg": {
+      "$id": "#/definitions/keyword_arg",
+      "type": "object",
+      "required": [
+        "name",
+        "type",
+        "default",
+        "kind",
+        "required",
+        "repr"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "default": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "POSITIONAL_ONLY",
+            "POSITIONAL_ONLY_MARKER",
+            "POSITIONAL_OR_NAMED",
+            "VAR_POSITIONAL",
+            "NAMED_ONLY_MARKER",
+            "NAMED_ONLY",
+            "VAR_NAMED"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "repr": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

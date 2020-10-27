@@ -46,6 +46,9 @@
         document.title = libdoc.name;
         storage.init('libdoc');
         renderTemplate('base', libdoc, $('body'));
+        libdoc.keywords.forEach(kw => {
+          kw.matched = true
+        });
         if (libdoc.inits.length) {
             renderTemplate('importing', libdoc);
         }
@@ -59,7 +62,7 @@
             selectedTag = params["tag"];
             tagSearch(selectedTag, window.location.hash);
         }
-        if (libdoc.contains_tags) {
+        if (libdoc.all_tags.length) {
           libdoc.selectedTag = selectedTag;
           renderTemplate('tags-shortcuts', libdoc);
         }
@@ -124,7 +127,7 @@
         }
         let regexp = new RegExp(patternRegexp, 'i');
         let test = regexp.test.bind(regexp);
-        let result = {contains_tags: libdoc.contains_tags};
+        let result = {contains_tags: libdoc.all_tags.length};
         let matchCount = 0;
         result.keywords = util.map(libdoc.keywords, function (kw) {
             kw = $.extend({}, kw);
@@ -138,7 +141,7 @@
         });
         renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
-        if (libdoc.contains_tags) {
+        if (libdoc.all_tags.length) {
           libdoc.selectedTag = include.tagsExact ? pattern : "";
           renderTemplate('tags-shortcuts', libdoc);
         }
@@ -224,7 +227,7 @@
     function resetKeywords() {
         renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
-        if (libdoc.contains_tags) {
+        if (libdoc.all_tags.length) {
             renderTemplate('tags', libdoc);
         }
         document.getElementById("keyword-statistics-header").innerText = ''+libdoc.keywords.length;
@@ -333,7 +336,7 @@
         <input placeholder="Search" type="text" class="search-input" onkeyup="delay(searching, 500)"/>
         <button class="clear-search" onclick="clearSearch()">&#10005;</button>
       </div>
-      {{if all_tags.length > 0}}
+      {{if all_tags.length}}
       <select id="tags-shortcuts-container" onchange="location = this.value;">
       </select>
       {{/if}}
@@ -404,7 +407,7 @@
        </div>
        <div class="keyword-content">
           <div class="kw-overview">
-            {{if args.length > 0}}
+            {{if args.length}}
               <div class="args">
                 <h4>Arguments</h4>
                 <ul class="arguments-list">
@@ -420,7 +423,7 @@
                 </ul>
               </div>
             {{/if}}
-            {{if libdoc.contains_tags}}
+            {{if libdoc.all_tags.length}}
             <div class="tags">
                 <h4>Tags</h4>
                 {{each tags}}
