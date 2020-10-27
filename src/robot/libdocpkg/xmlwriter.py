@@ -21,12 +21,7 @@ from robot.utils import WINDOWS, XmlWriter, unicode
 
 class LibdocXmlWriter(object):
 
-    def __init__(self, spec_doc_format):
-        self._spec_doc_format = spec_doc_format
-
     def write(self, libdoc, outfile):
-        if self._spec_doc_format == 'HTML':
-            libdoc.convert_doc_to_html()
         writer = XmlWriter(outfile, usage='Libdoc spec')
         self._write_start(libdoc, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)

@@ -15,15 +15,10 @@
 
 import json
 
-from robot.errors import DataError
 from robot.htmldata import HtmlFileWriter, ModelWriter, LIBDOC
 
 
 class LibdocHtmlWriter(object):
-
-    def __init__(self, spec_doc_format):
-        if spec_doc_format != 'HTML':
-            raise DataError("Spec doc format must be 'HTML' when using 'HTML' output, got '%s'." % spec_doc_format)
 
     def write(self, libdoc, output):
         model_writer = LibdocModelWriter(output, libdoc)
@@ -34,7 +29,6 @@ class LibdocModelWriter(ModelWriter):
 
     def __init__(self, output, libdoc):
         self._output = output
-        libdoc.convert_doc_to_html()
         self._libdoc = libdoc.to_dictionary()
 
     def write(self, line):
