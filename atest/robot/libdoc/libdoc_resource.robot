@@ -9,6 +9,7 @@ ${LIBNAME}        robot-libdoc-test-file
 ${OUTBASE}        %{TEMPDIR}${/}${LIBNAME}
 ${OUTXML}         ${OUTBASE}.xml
 ${OUTHTML}        ${OUTBASE}.html
+${OUTJSON}        ${OUTBASE}.json
 ${NEWDIR_XML}     %{TEMPDIR}${/}tempdir${/}${LIBNAME}.xml
 ${NEWDIR_HTML}    %{TEMPDIR}${/}tempdir${/}${LIBNAME}.html
 
@@ -36,8 +37,15 @@ Run Libdoc And Verify Output
 
 Run Libdoc And Parse Model From HTML
     [Arguments]    ${args}
-    Run Libdoc    ${args} ${OUT HTML}
-    ${MODEL} =    Get Libdoc Model From HTML    ${OUT HTML}
+    Run Libdoc    ${args} ${OUTHTML}
+    ${MODEL} =    Get Libdoc Model From HTML    ${OUTHTML}
+    Set Suite Variable    ${MODEL}
+
+Run Libdoc And Parse Model From JSON
+    [Arguments]    ${args}
+    Run Libdoc    ${args} ${OUTJSON}
+    ${model_string}=    Get File    ${OUTJSON}
+    ${MODEL} =    Evaluate    json.loads($model_string)
     Set Suite Variable    ${MODEL}
 
 Name Should Be
@@ -146,7 +154,7 @@ Verify Arguments Structure
 Get Element Optional Text
     [Arguments]    ${source}    ${xpath}
     ${elem}=    Get Elements    ${source}    ${xpath}
-    ${text}=    Run Keyword If    len($elem) == 1    
+    ${text}=    Run Keyword If    len($elem) == 1
     ...   Get Element Text    ${elem}[0]    .
     ...   ELSE   Set Variable   ${NONE}
     [Return]    ${text}

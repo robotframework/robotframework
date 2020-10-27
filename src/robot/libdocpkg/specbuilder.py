@@ -60,6 +60,7 @@ class SpecDocBuilder(object):
         return KeywordDoc(name=elem.get('name', ''),
                           args=self._create_arguments(elem),
                           doc=elem.find('doc').text or '',
+                          shortdoc=elem.find('shortdoc').text or '',
                           tags=[t.text for t in elem.findall('tags/tag')],
                           source=elem.get('source'),
                           lineno=int(elem.get('lineno', -1)))
@@ -68,8 +69,10 @@ class SpecDocBuilder(object):
         spec = ArgumentSpec()
         setters = {
             ArgInfo.POSITIONAL_ONLY: spec.positional_only.append,
+            ArgInfo.POSITIONAL_ONLY_MARKER: lambda value: None,
             ArgInfo.POSITIONAL_OR_NAMED: spec.positional_or_named.append,
             ArgInfo.VAR_POSITIONAL: lambda value: setattr(spec, 'var_positional', value),
+            ArgInfo.NAMED_ONLY_MARKER: lambda value: None,
             ArgInfo.NAMED_ONLY: spec.named_only.append,
             ArgInfo.VAR_NAMED: lambda value: setattr(spec, 'var_named', value),
         }

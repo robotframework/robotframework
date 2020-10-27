@@ -1,6 +1,6 @@
 *** Settings ***
 Resource          libdoc_resource.robot
-Suite Setup       Run Libdoc And Parse Model From HTML    ${TESTDATADIR}/module.py
+Suite Setup       Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/module.py
 Test Template     Should Be Equal Multiline
 
 *** Test Cases ***
