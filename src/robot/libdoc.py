@@ -74,8 +74,8 @@ Options
                           `*.json`    -> -f JSON -s HTML
                           `*.libspec` -> -f XML  -s HTML
  -s --specdocformat RAW|HTML
-                          Specifies for XML outputs whether the keyword
-                          documentation is converted to HTML regardless
+                          Specifies for XML and JSON outputs whether the
+                          keyword documentation is converted to HTML regardless
                           of the original documentation format or kept
                           raw as in the library, resource or source spec file.
                           `*.html` files only accept `HTML`.
