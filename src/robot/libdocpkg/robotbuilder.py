@@ -15,11 +15,13 @@
 
 import os
 import sys
+import re
 
 from robot.errors import DataError
 from robot.running import (TestLibrary, UserLibrary, UserErrorHandler,
                            ResourceFileBuilder)
-from robot.utils import split_tags_from_doc, unescape, unicode
+from robot.utils import split_tags_from_doc, unescape, is_string
+from robot.variables import VariableIterator, contains_variable
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -104,12 +106,30 @@ class KeywordDocBuilder(object):
 
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)
+        self._escape_strings_in_defaults(kw)
         return KeywordDoc(name=kw.name,
                           args=kw.arguments,
                           doc=doc,
                           tags=tags,
                           source=kw.source,
                           lineno=kw.lineno)
+
+    def _escape_strings_in_defaults(self, kw):
+        for name, default in kw.arguments.defaults.items():
+            if is_string(default):
+                default = re.sub(r'[\\\r\n\t]', lambda x: repr(str(x.group()))[1:-1], default)
+                default = self._escape_variables(default)
+                kw.arguments.defaults[name] = re.sub('^(?= )|(?<= )$|(?<= )(?= )', r'\\', default)
+
+    def _escape_variables(self, default):
+        if contains_variable(default, '$&@%'):
+            escaped_var = ''
+            for before, variable, remaining in VariableIterator(default, ignore_errors=True):
+                if contains_variable(remaining, '$&@%'):
+                    remaining = ''
+                escaped_var = '%s%s\\%s%s' % (escaped_var, before, variable, remaining)
+            default = escaped_var
+        return default
 
     def _get_doc_and_tags(self, kw):
         doc = self._get_doc(kw)
