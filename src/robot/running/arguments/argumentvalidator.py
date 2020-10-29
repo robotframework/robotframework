@@ -90,3 +90,7 @@ class ArgumentValidator(object):
                 raise DataError("%s '%s' got unexpected named argument%s %s."
                                 % (spec.type, spec.name, plural_or_not(extra),
                                    seq2str(sorted(extra))))
+
+    @property
+    def argspec(self):
+        return self._argspec

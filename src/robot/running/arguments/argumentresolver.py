@@ -15,8 +15,7 @@
 
 from robot.errors import DataError
 from robot.utils import is_string, is_dict_like, split_from_equals
-from robot.variables import is_dict_variable
-
+from robot.variables import is_dict_variable, search_variable
 from .argumentvalidator import ArgumentValidator
 
 
@@ -30,10 +29,22 @@ class ArgumentResolver(object):
         self._dict_to_kwargs = DictToKwargs(argspec, dict_to_kwargs)
         self._argument_validator = ArgumentValidator(argspec)
 
+    @property
+    def arg_validator(self):
+        return self._argument_validator
+
+    # Here is the code that I changed. A much more elegant way would be to set the resolve argument for
+    # `run_keyword_variants` to 0 but I thought in this way I would limit the impact.
     def resolve(self, arguments, variables=None):
         positional, named = self._named_resolver.resolve(arguments, variables)
-        positional, named = self._variable_replacer.replace(positional, named,
-                                                            variables)
+        if self.arg_validator.argspec.name == 'BuiltIn.Run Keyword':
+            match = search_variable(positional[0])
+            if not match or not (variables.current.store.__contains__(match.base)):
+                positional, named = self._variable_replacer.replace(positional, named,
+                                                                    variables)
+        else:
+            positional, named = self._variable_replacer.replace(positional, named,
+                                                                variables)
         positional, named = self._dict_to_kwargs.handle(positional, named)
         self._argument_validator.validate(positional, named,
                                           dryrun=variables is None)
