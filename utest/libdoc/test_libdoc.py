@@ -1,6 +1,6 @@
 import unittest
 import json
-from os import path
+from os.path import dirname, join, normpath
 
 from robot.utils import PY3, IRONPYTHON, JYTHON
 from robot.utils.asserts import assert_equal
@@ -11,8 +11,9 @@ from robot.libdocpkg.htmlutils import HtmlToText, DocToHtml
 get_shortdoc = HtmlToText().get_shortdoc_from_html
 get_text = HtmlToText().html_to_plain_text
 
-dirname = path.dirname(__file__)
-testdata_dir = path.join(dirname, '../../atest/testdata/libdoc/')
+CURDIR = dirname(__file__)
+DATADIR = normpath(join(CURDIR, '../../atest/testdata/libdoc/'))
+
 
 def verify_shortdoc_output(doc_input, expected):
     current = get_shortdoc(doc_input)
@@ -29,18 +30,12 @@ def verify_keyword_shortdoc(doc_format, doc_input, expected):
     assert_equal(keyword.shortdoc, expected)
 
 
-def validate_dict_to_json_schema(libdoc_spec):
-    with open(path.join(dirname, '../../doc/schema/libdoc_schema.json')) as f:
-        schema = json.load(f)
-    libdoc_spec= json.loads(json.dumps(libdoc_spec))
-    validate(instance=libdoc_spec, schema=schema)
-
-
 def run_libdoc_and_validate_json(filename):
-    library = path.join(testdata_dir, filename)
-    libdoc = LibraryDocumentation(library)
-    libspec = libdoc.to_dictionary()
-    validate_dict_to_json_schema(libspec)
+    library = join(DATADIR, filename)
+    json_spec = LibraryDocumentation(library).to_json()
+    with open(join(CURDIR, '../../doc/schema/libdoc_schema.json')) as f:
+        schema = json.load(f)
+    validate(instance=json.loads(json_spec), schema=schema)
 
 
 class TestHtmlToDoc(unittest.TestCase):
@@ -211,7 +206,7 @@ if not IRONPYTHON and not JYTHON:
         def test_resource(self):
             run_libdoc_and_validate_json('resource.resource')
 
-        def test_resource(self):
+        def test_resource_with_robot_extension(self):
             run_libdoc_and_validate_json('resource.robot')
 
         def test_toc(self):
@@ -230,11 +225,14 @@ if not IRONPYTHON and not JYTHON:
 class TestLibdocJsonBuilder(unittest.TestCase):
 
     def test_libdoc_json_roundtrip(self):
-        library = path.join(testdata_dir, 'DynamicLibrary.json')
-        libdoc = LibraryDocumentation(library)
-        libspec = json.loads(json.dumps(libdoc.to_dictionary()))
+        library = join(DATADIR, 'DynamicLibrary.json')
+        spec = LibraryDocumentation(library).to_json()
+        data = json.loads(spec)
         with open(library) as f:
-            org_libspec = json.load(f)
-        libspec['generated'] = None
-        org_libspec['generated'] = None
-        assert_equal(libspec, org_libspec)
+            orig_data = json.load(f)
+        data['generated'] = orig_data['generated'] = None
+        assert_equal(data, orig_data)
+
+
+if __name__ == '__main__':
+    unittest.main()

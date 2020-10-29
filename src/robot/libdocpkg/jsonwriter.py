@@ -13,13 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import json
-
 from robot.utils import file_writer
 
 
 class LibdocJsonWriter(object):
 
     def write(self, libdoc, outfile):
-        with file_writer(outfile) as f:
-            json.dump(libdoc.to_dictionary(), f, indent=2)
+        with file_writer(outfile) as writer:
+            writer.write(libdoc.to_json(indent=2))
