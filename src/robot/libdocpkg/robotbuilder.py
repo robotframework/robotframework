@@ -106,7 +106,8 @@ class KeywordDocBuilder(object):
 
     def build_keyword(self, kw):
         doc, tags = self._get_doc_and_tags(kw)
-        self._escape_strings_in_defaults(kw)
+        if not self._resource:
+            self._escape_strings_in_defaults(kw)
         return KeywordDoc(name=kw.name,
                           args=kw.arguments,
                           doc=doc,
