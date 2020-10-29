@@ -46,6 +46,7 @@ class UserKeywordRunner(object):
 
     @property
     def arguments(self):
+        """:rtype: :py:class:`robot.running.arguments.ArgumentSpec`"""
         return self._handler.arguments
 
     def run(self, kw, context):
@@ -111,13 +112,13 @@ class UserKeywordRunner(object):
             if isinstance(value, DefaultValue):
                 value = value.resolve(variables)
             variables['${%s}' % name] = value
-        if spec.varargs:
-            variables['@{%s}' % spec.varargs] = varargs
-        if spec.kwargs:
-            variables['&{%s}' % spec.kwargs] = DotDict(kwargs)
+        if spec.var_positional:
+            variables['@{%s}' % spec.var_positional] = varargs
+        if spec.var_named:
+            variables['&{%s}' % spec.var_named] = DotDict(kwargs)
 
     def _split_args_and_varargs(self, args):
-        if not self.arguments.varargs:
+        if not self.arguments.var_positional:
             return args, []
         positional = len(self.arguments.positional)
         return args[:positional], args[positional:]
@@ -126,16 +127,16 @@ class UserKeywordRunner(object):
         kwonly = []
         kwargs = []
         for name, value in all_kwargs:
-            target = kwonly if name in self.arguments.kwonlyargs else kwargs
+            target = kwonly if name in self.arguments.named_only else kwargs
             target.append((name, value))
         return kwonly, kwargs
 
     def _trace_log_args_message(self, variables):
         args = ['${%s}' % arg for arg in self.arguments.positional]
-        if self.arguments.varargs:
-            args.append('@{%s}' % self.arguments.varargs)
-        if self.arguments.kwargs:
-            args.append('&{%s}' % self.arguments.kwargs)
+        if self.arguments.var_positional:
+            args.append('@{%s}' % self.arguments.var_positional)
+        if self.arguments.var_named:
+            args.append('&{%s}' % self.arguments.var_named)
         return self._format_trace_log_args_message(args, variables)
 
     def _format_trace_log_args_message(self, args, variables):

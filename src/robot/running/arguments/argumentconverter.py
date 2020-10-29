@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_unicode
 from robot.variables import contains_variable
 
 from .typeconverters import TypeConverter
@@ -33,32 +32,38 @@ class ArgumentConverter(object):
         names = self._argspec.positional
         converted = [self._convert(name, value)
                      for name, value in zip(names, positional)]
-        if self._argspec.varargs:
-            converted.extend(self._convert(self._argspec.varargs, value)
+        if self._argspec.var_positional:
+            converted.extend(self._convert(self._argspec.var_positional, value)
                              for value in positional[len(names):])
         return converted
 
     def _convert_named(self, named):
-        names = set(self._argspec.positional) | set(self._argspec.kwonlyargs)
-        kwargs = self._argspec.kwargs
-        return [(name, self._convert(name if name in names else kwargs, value))
+        names = set(self._argspec.positional) | set(self._argspec.named_only)
+        var_named = self._argspec.var_named
+        return [(name, self._convert(name if name in names else var_named, value))
                 for name, value in named]
 
     def _convert(self, name, value):
-        type_, explicit_type = self._get_type(name, value)
-        if type_ is None or (self._dry_run and
-                             contains_variable(value, identifiers='$@&%')):
+        spec = self._argspec
+        if (spec.types is None
+                or self._dry_run and contains_variable(value, identifiers='$@&%')):
             return value
-        converter = TypeConverter.converter_for(type_)
-        if converter is None:
-            return value
-        return converter.convert(name, value, explicit_type)
-
-    def _get_type(self, name, value):
-        if self._argspec.types is None or not is_unicode(value):
-            return None, None
-        if name in self._argspec.types:
-            return self._argspec.types[name], True
-        if name in self._argspec.defaults:
-            return type(self._argspec.defaults[name]), False
-        return None, None
+        conversion_error = None
+        if name in spec.types:
+            converter = TypeConverter.converter_for(spec.types[name])
+            if converter:
+                try:
+                    return converter.convert(name, value)
+                except ValueError as err:
+                    conversion_error = err
+        if name in spec.defaults:
+            converter = TypeConverter.converter_for(type(spec.defaults[name]))
+            if converter:
+                try:
+                    return converter.convert(name, value, explicit_type=False,
+                                             strict=bool(conversion_error))
+                except ValueError as err:
+                    conversion_error = conversion_error or err
+        if conversion_error:
+            raise conversion_error
+        return value

@@ -13,7 +13,7 @@ Documentation
     ...    ``Telnet`` is Robot Framework's standard library that makes it possible to
 
 Version
-    Version Should Match             3.*
+    Version Should Match             [345].*
 
 Type
     Type Should Be                   LIBRARY
@@ -23,9 +23,6 @@ Generated
 
 Scope
     Scope Should Be                  SUITE
-
-Named Args
-    Named Args Should Be             true
 
 Source info
     [Tags]    no-standalone    # Standard library sources aren't included in standalone JAR
@@ -49,8 +46,8 @@ Init Arguments
 
 Init Source Info
     [Tags]    no-standalone    # Standard library sources aren't included in standalone JAR
-    Keyword Should Not Have Source   0    xpath=init
-    Keyword Lineno Should Be         0    283      xpath=init
+    Keyword Should Not Have Source   0    xpath=inits/init
+    Keyword Lineno Should Be         0    283      xpath=inits/init
 
 Keyword Names
     Keyword Name Should Be           0    Close All Connections
@@ -98,6 +95,14 @@ Keyword-only Arguments
     Run Libdoc And Parse Output      ${TESTDATADIR}/KeywordOnlyArgs.py
     Keyword Arguments Should Be      0    *    kwo
     Keyword Arguments Should Be      1    *varargs    kwo    another=default
+
+Positional-only Arguments
+    [Tags]    require-py3.8
+    Run Libdoc And Parse Output      ${DATADIR}/keywords/PositionalOnly.py
+    Keyword Arguments Should Be      2    arg    /
+    Keyword Arguments Should Be      5    posonly    /    normal
+    Keyword Arguments Should Be      0    required    optional=default    /
+    Keyword Arguments Should Be      4    first: int    second: float    /
 
 Decorators
     Run Libdoc And Parse Output      ${TESTDATADIR}/Decorators.py

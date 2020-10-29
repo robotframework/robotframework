@@ -12,7 +12,7 @@ from os import chdir, getenv
 from robot import run, run_cli, rebot, rebot_cli
 from robot.model import SuiteVisitor
 from robot.running import namespace
-from robot.utils import StringIO
+from robot.utils import JYTHON, StringIO
 from robot.utils.asserts import assert_equal, assert_raises, assert_true
 
 from resources.runningtestcase import RunningTestCase
@@ -31,6 +31,20 @@ def run_without_outputs(*args, **kwargs):
     options = {'output': 'NONE', 'log': 'NoNe', 'report': None}
     options.update(kwargs)
     return run(*args, **options)
+
+
+def assert_signal_handler_equal(signum, expected):
+    sig = signal.getsignal(signum)
+    try:
+        assert_equal(sig, expected)
+    except AssertionError:
+        if not JYTHON:
+            raise
+        # With Jython `getsignal` seems to always return different object so that
+        # even `getsignal(SIGINT) == getsignal(SIGINT)` is false. This doesn't
+        # happen always and may be dependent e.g. on the underlying JVM. Comparing
+        # string representations ought to be good enough.
+        assert_equal(str(sig), str(expected))
 
 
 class StreamWithOnlyWriteAndFlush(object):
@@ -60,7 +74,7 @@ class TestRun(RunningTestCase):
         assert exists(LOG_PATH)
 
     def test_run_multiple_times(self):
-        assert_equal(run_without_outputs(self.data, critical='nomatch'), 0)
+        assert_equal(run_without_outputs(self.data), 1)
         assert_equal(run_without_outputs(self.data, name='New Name'), 1)
         self._assert_outputs([('Pass And Fail', 2), ('New Name', 2), (LOG, 0)])
 
@@ -166,7 +180,7 @@ class TestRebot(RunningTestCase):
         assert exists(LOG_PATH)
 
     def test_run_multiple_times(self):
-        assert_equal(rebot(self.data, outputdir=TEMP, critical='nomatch'), 0)
+        assert_equal(rebot(self.data, outputdir=TEMP), 1)
         assert_equal(rebot(self.data, outputdir=TEMP, name='New Name'), 1)
         self._assert_outputs([(LOG, 2)])
 
@@ -314,8 +328,8 @@ class TestSignalHandlers(unittest.TestCase):
         signal.signal(signal.SIGTERM, my_sigterm)
         try:
             run_without_outputs(self.data, stdout=StringIO())
-            assert_equal(signal.getsignal(signal.SIGINT), orig_sigint)
-            assert_equal(signal.getsignal(signal.SIGTERM), my_sigterm)
+            assert_signal_handler_equal(signal.SIGINT, orig_sigint)
+            assert_signal_handler_equal(signal.SIGTERM, my_sigterm)
         finally:
             signal.signal(signal.SIGINT, orig_sigint)
             signal.signal(signal.SIGTERM, orig_sigterm)

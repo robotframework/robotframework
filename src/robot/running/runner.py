@@ -14,9 +14,10 @@
 #  limitations under the License.
 
 from robot.errors import ExecutionStatus, DataError, PassExecution
-from robot.model import SuiteVisitor
+from robot.model import SuiteVisitor, TagPatterns
 from robot.result import TestSuite, Result
-from robot.utils import get_timestamp, is_list_like, NormalizedDict, unic
+from robot.utils import (get_timestamp, is_list_like, NormalizedDict, unic,
+                         test_or_task)
 from robot.variables import VariableScopes
 
 from .context import EXECUTION_CONTEXTS
@@ -38,6 +39,7 @@ class Runner(SuiteVisitor):
         self._suite = None
         self._suite_status = None
         self._executed_tests = None
+        self._skipped_tags = TagPatterns(settings.skipped_tags)
 
     @property
     def _context(self):
@@ -52,8 +54,6 @@ class Runner(SuiteVisitor):
                            starttime=get_timestamp(),
                            rpa=self._settings.rpa)
         if not self.result:
-            result.set_criticality(self._settings.critical_tags,
-                                   self._settings.non_critical_tags)
             self.result = Result(root_suite=result, rpa=self._settings.rpa)
             self.result.configure(status_rc=self._settings.status_rc,
                                   stat_config=self._settings.statistics_config)
@@ -70,7 +70,7 @@ class Runner(SuiteVisitor):
         EXECUTION_CONTEXTS.start_suite(result, ns, self._output,
                                        self._settings.dry_run)
         self._context.set_suite_variables(result)
-        if not self._suite_status.failures:
+        if not self._suite_status.failed:
             ns.handle_imports()
             ns.variables.resolve_delayed()
         result.doc = self._resolve_setting(result.doc)
@@ -97,9 +97,11 @@ class Runner(SuiteVisitor):
         with self._context.suite_teardown():
             failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
             if failure:
-                self._suite.suite_teardown_failed(unic(failure))
-                if self._suite.statistics.critical.failed:
-                    self._suite_status.critical_failure_occurred()
+                if failure.skip:
+                    self._suite.suite_teardown_skipped(unic(failure))
+                else:
+                    self._suite.suite_teardown_failed(unic(failure))
+                self._suite_status.failure_occurred()
         self._suite.endtime = get_timestamp()
         self._suite.message = self._suite_status.message
         self._context.end_suite(ModelCombiner(suite, self._suite))
@@ -119,21 +121,36 @@ class Runner(SuiteVisitor):
                                           timeout=self._get_timeout(test))
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(test, result))
-        status = TestStatus(self._suite_status, result)
+        status = TestStatus(self._suite_status, result,
+                            self._settings.skip_on_failure,
+                            self._settings.critical_tags,
+                            self._settings.rpa)
         if status.exit:
             self._add_exit_combine()
             result.tags.add('robot:exit')
-        if not status.failures and not test.name:
-            status.test_failed('Test case name cannot be empty.')
-        if not status.failures and not test.keywords.normal:
-            status.test_failed('Test case contains no keywords.')
+        if self._skipped_tags.match(test.tags):
+            status.test_skipped(
+                test_or_task(
+                    "{Test} skipped with '--skip' command line option.",
+                    self._settings.rpa))
+        if not status.failed and not test.name:
+            status.test_failed(
+                test_or_task('{Test} case name cannot be empty.',
+                             self._settings.rpa))
+        if not status.failed and not test.keywords.normal:
+            status.test_failed(
+                test_or_task('{Test} case contains no keywords.',
+                             self._settings.rpa))
         self._run_setup(test.keywords.setup, status, result)
         try:
-            if not status.failures:
+            if not status.failed:
                 StepRunner(self._context,
                            test.template).run_steps(test.keywords.normal)
             else:
-                status.test_failed(status.message)
+                if status.skipped:
+                    status.test_skipped(status.message)
+                else:
+                    status.test_failed(status.message)
         except PassExecution as exception:
             err = exception.earlier_failures
             if err:
@@ -148,9 +165,9 @@ class Runner(SuiteVisitor):
             with self._context.test_teardown(result):
                 failure = self._run_teardown(test.keywords.teardown, status,
                                              result)
-                if failure and result.critical:
-                    status.critical_failure_occurred()
-        if not status.failures and result.timeout and result.timeout.timed_out():
+                if failure:
+                    status.failure_occurred()
+        if not status.failed and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message())
             result.message = status.message
         result.status = status.status
@@ -169,19 +186,27 @@ class Runner(SuiteVisitor):
         return TestTimeout(test.timeout, self._variables, rpa=test.parent.rpa)
 
     def _run_setup(self, setup, status, result=None):
-        if not status.failures:
+        if not status.failed:
             exception = self._run_setup_or_teardown(setup)
             status.setup_executed(exception)
             if result and isinstance(exception, PassExecution):
                 result.message = exception.message
+        else:
+            if status.parent and status.parent.skipped:
+                status.skipped = True
 
     def _run_teardown(self, teardown, status, result=None):
         if status.teardown_allowed:
             exception = self._run_setup_or_teardown(teardown)
             status.teardown_executed(exception)
-            failed = not isinstance(exception, PassExecution)
+            failed = exception and not isinstance(exception, PassExecution)
             if result and exception:
-                result.message = status.message if failed else exception.message
+                if failed or status.skipped or exception.skip:
+                    result.message = status.message
+                else:
+                    # Pass execution used in teardown,
+                    # and it overrides previous failure message
+                    result.message = exception.message
             return exception if failed else None
 
     def _run_setup_or_teardown(self, data):

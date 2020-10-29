@@ -1111,9 +1111,14 @@ __ `Variable number of arguments with Java`_
 Keyword-only arguments
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 3.1, it is possible to use `named-only
-arguments`_ with different keywords. When implementing libraries using Python,
-this support is provided by Python's `keyword-only arguments`__:
+Starting from Robot Framework 3.1, it is possible to use `named-only arguments`_
+with different keywords. When implementing libraries using Python, this support
+is provided by Python's `keyword-only arguments`__. Keyword-only arguments
+are specified after possible `*varargs` or after a dedicated `*` marker when
+`*varargs` are not needed. Possible `**kwargs` are specified after keyword-only
+arguments.
+
+Example:
 
 .. sourcecode:: python
 
@@ -1121,17 +1126,70 @@ this support is provided by Python's `keyword-only arguments`__:
         key = str.lower if case_sensitive else None
         return sorted(words, key=key)
 
+    def strip_spaces(word, *, left=True, right=True):
+        if left:
+            word = word.lstrip()
+        if right:
+            word = word.rstrip()
+        return word
+
 .. sourcecode:: robotframework
 
    *** Test Cases ***
    Example
        Sort Words    Foo    bar    baZ
        Sort Words    Foo    bar    baZ    case_sensitive=True
+       Strip Spaces    ${word}    left=False
 
 Due to keyword-only arguments being a Python 3 feature, libraries using
 Python 2 cannot use it. Time to upgrade!
 
 __ https://www.python.org/dev/peps/pep-3102
+
+Positional-only arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Python 3.8 introduced `positional-only arguments`__ that make it possible to
+specify that an argument can only be given as a `positional argument`_, not as
+a `named argument`_ like `name=value`. Positional-only arguments are specified
+before normal arguments and a special `/` marker must be used after them:
+
+.. sourcecode:: python
+
+    def keyword(posonly, /, normal):
+        print(f"Got positional-only argument {posonly} and normal argument {normal}.")
+
+The above keyword could be used like this:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       # Positional-only and normal argument used as positional arguments.
+       Keyword    foo    bar
+       # Normal argument can also be named.
+       Keyword    foo    normal=bar
+
+If a positional-only argument is used with a value that contains an equal sign
+like `example=usage`, it is not considered to mean `named argument syntax`_
+even if the part before the `=` would match the argument name. This rule
+only applies if the positional-only argument is used in its correct position
+without other arguments using the name argument syntax before it, though.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       # Positional-only argument gets literal value `posonly=foo` in this case.
+       Keyword    posonly=foo    normal=bar
+       # This fails.
+       Keyword    normal=bar    posonly=foo
+
+Positional-only arguments are fully supported starting from Robot Framework 4.0.
+Using them as positional arguments works also with earlier versions,
+but using them as named arguments causes an error on Python side.
+
+__ https://www.python.org/dev/peps/pep-0570/
 
 Argument types
 ~~~~~~~~~~~~~~
@@ -1398,8 +1456,8 @@ case-insensitive.
    |             |               |            | Starting from RF 3.2.2, matching members is case-, space-      |        RED = 1                       |
    |             |               |            | and underscore-insensitive.                                    |        GREEN = 2                     |
    |             |               |            |                                                                |        DARK_GREEN = 3                |
-   |             |               |            |                                                                |                                      |
-   |             |               |            |                                                                | | `GREEN` (Color.GREEN)              |
+   |             |               |            | Starting from RF 4.0 `NONE` is not converted and will result   |                                      |
+   |             |               |            | failure if matching enum value is not found.                   | | `GREEN` (Color.GREEN)              |
    |             |               |            |                                                                | | `Dark Green` (Color.DARK_GREEN)    |
    +-------------+---------------+------------+----------------------------------------------------------------+--------------------------------------+
    | NoneType_   |               |            | String `NONE` (case-insensitively) is converted to `None`      | | `None`                             |
@@ -1629,6 +1687,13 @@ Reporting keyword status is done simply using exceptions. If an executed
 method raises an exception, the keyword status is `FAIL`, and if it
 returns normally, the status is `PASS`.
 
+Normal execution failures and errors can be reported using the standard exceptions
+such as `AssertionError`, `ValueError` and `RuntimeError`. There are, however, some
+special cases explained in the subsequent sections where special exceptions are needed.
+
+Error messages
+''''''''''''''
+
 The error message shown in logs, reports and the console is created
 from the exception type and its message. With generic exceptions (for
 example, `AssertionError`, `Exception`, and
@@ -1690,13 +1755,73 @@ These messages are not visible in log files by default because they are very
 rarely interesting for normal users. When developing libraries, it is often a
 good idea to run tests using `--loglevel DEBUG`.
 
+Exceptions provided by Robot Framework
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework provides some exceptions that libraries can use for reporting
+failures and other events. These exceptions exposed via the `robot.api`__ package and
+contain the following:
+
+`Failure`
+    Report failed validation.
+
+    There is no practical difference in using this exception compared to using
+    the standard `AssertionError`. The main benefit of using this exception is
+    that its name is consistent with other provided exceptions.
+
+`ContinuableFailure`
+    Report failed validation but allow continuing execution.
+
+    See the `Continuing test execution despite of failures`_ section below
+    for more information, including how to create a custom exception that
+    has this same behavior.
+
+`Error`
+    Report error in execution.
+
+    Failures related to the system not behaving as expected should typically be
+    reported using the `Failure` exception or the standard `AssertionError`.
+    This exception can be used, for example, if the keyword is used incorrectly.
+    There is no practical difference, other than consistent naming with other
+    provided exceptions, compared to using this exception and the standard
+    `RuntimeError`.
+
+`FatalError`
+    Report error that stops the whole execution.
+
+    See the `Stopping test execution`_ section below for more information,
+    including how to create a custom exception that has this same behavior.
+
+
+`SkipExecution`
+    Mark the executed test or task skipped.
+
+    FIXME! Link to skip section once that's written.
+
+__ https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html
+
+.. note:: All these exceptions are new in Robot Framework 4.0.
+
 Stopping test execution
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to fail a test case so that `the whole test execution is
-stopped`__. This is done simply by having a special `ROBOT_EXIT_ON_FAILURE`
-attribute with `True` value set on the exception raised from the keyword.
-This is illustrated in the examples below.
+stopped`__. The easiest way to accomplish this is using the provided__
+`robot.api.FatalError` exception:
+
+.. sourcecode:: python
+
+    from robot.api import FatalError
+
+
+    def example_keyword():
+        if system_is_not_running():
+            raise FatalError('System is not running!')
+        ...
+
+In addition to using the `robot.api.FatalError` exception, it is possible create
+a custom exception that has a special `ROBOT_EXIT_ON_FAILURE` attribute set to
+a `True` value. This is illustrated by the examples below.
 
 Python:
 
@@ -1713,15 +1838,31 @@ Java:
         public static final boolean ROBOT_EXIT_ON_FAILURE = true;
     }
 
+.. note:: The `robot.api.FatalError` exception is new in Robot Framework 4.0.
+
 __ `Stopping test execution gracefully`_
+__ `Exceptions provided by Robot Framework`_
 
 Continuing test execution despite of failures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to `continue test execution even when there are failures`__.
-The way to signal this from test libraries is adding a special
-`ROBOT_CONTINUE_ON_FAILURE` attribute with `True` value to the exception
-used to communicate the failure. This is demonstrated by the examples below.
+The easiest way to do that is using the provided__ `robot.api.ContinuableFailure`
+exception:
+
+.. sourcecode:: python
+
+    from robot.api import ContinuableFailure
+
+
+    def example_keyword():
+        if something_is_wrong():
+            raise ContinuableFailure('Something is wrong but execution can continue.')
+        ...
+
+An alternative is creating a custom exception that has a special
+`ROBOT_CONTINUE_ON_FAILURE` attribute set to a `True` value.
+This is demonstrated by the examples below.
 
 Python:
 
@@ -1738,7 +1879,10 @@ Java:
         public static final boolean ROBOT_CONTINUE_ON_FAILURE = true;
     }
 
+.. note:: The `robot.api.ContinuableFailure` exception is new in Robot Framework 4.0.
+
 __ `Continue on failure`_
+__ `Exceptions provided by Robot Framework`_
 
 Logging information
 ~~~~~~~~~~~~~~~~~~~

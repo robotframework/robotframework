@@ -36,7 +36,7 @@ Modules are imported automatically
     Should Be Equal    ${sep}    ${/}
     Should Be Equal    ${+}    \\+
     ${version} =    Evaluate    robot.__version__.split('.')[0]
-    Should Be Equal    ${version}    3
+    Should Be True    ${version} in (3, 4, 5)
 
 Importing non-existing module fails with NameError
     [Documentation]    FAIL
@@ -49,7 +49,6 @@ Importing invalid module fails with original error
     ...    Evaluating expression 'invalidmod' failed: \
     ...    TypeError: This module cannot be imported!
     Evaluate    invalidmod
-
 
 Automatic module imports are case-sensitive
     [Documentation]    FAIL
@@ -65,9 +64,9 @@ Automatic module imports are case-sensitive
     os.sep + OS.sep
 
 Automatic modules don't override builtins
-    ${result} =    Evaluate    repr(42)     # `repr` module exists in Python 2
+    ${result} =    Evaluate    repr(42)     # `repr` module exists in Python 2
     Should Be Equal    ${result}    42
-    ${result} =    Evaluate    len('foo')   # `len.py` exists in this directory
+    ${result} =    Evaluate    len('foo')   # `len.py` exists in this directory
     Should Be Equal    ${result}    ${3}
 
 Explicit modules
@@ -97,9 +96,9 @@ Explicit modules are needed with nested modules
     Should Be Equal    ${value}    ${42}
 
 Explicit modules can override builtins
-    ${result} =    Evaluate    len.value    modules=len
+    ${result} =    Evaluate    len.value    modules=len
     Should Be Equal    ${result}    ${42}
-    ${result} =    Evaluate    len('value')
+    ${result} =    Evaluate    len('value')
     Should Be Equal    ${result}    ${5}
 
 Explicit modules used in lambda
@@ -121,6 +120,11 @@ Custom namespace is case-sensitive
     ${result} =    Evaluate    a + A + b    namespace=${ns}
     Should Be Equal    ${result}    xyz
     Evaluate    B    namespace=${ns}
+
+Custon namespace used in lambda
+    ${ns} =    Create Dictionary    alphabet=aAbBcCdDeEfFgGhHiIjJkKlLmMnNoO    input=Hello
+    ${sorted} =    Evaluate    ''.join(sorted(input, key=lambda word: [alphabet.find(c) for c in word]))     namespace=${ns}
+    Should Be Equal    ${sorted}    eHllo
 
 Namespace from Get Variables
     ${foo} =    Set variable    value

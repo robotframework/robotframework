@@ -154,8 +154,8 @@ Run And Check Include And Exclude
     Run Rebot    ${params}    ${INPUT FILES}
     Stderr Should Be Empty
     Should Contain Tests    ${SUITE}    @{tests}
-    Should Be True    $SUITE.statistics.all.passed == len($tests)
-    Should Be True    $SUITE.statistics.all.failed == 0
+    Should Be True    $SUITE.statistics.passed == len($tests)
+    Should Be True    $SUITE.statistics.failed == 0
     Should Be Equal    ${SUITE.starttime}    ${{None if $params else $ORIG_START}}
     Should Be Equal    ${SUITE.endtime}      ${{None if $params else $ORIG_END}}
     Elapsed Time Should Be Valid    ${SUITE.elapsedtime}

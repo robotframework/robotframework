@@ -16,7 +16,7 @@ Selecting files to parse
 ------------------------
 
 When executing a single file, Robot Framework tries to parse and run it
-regardless the file extension. The file is expected to use the `plain text
+regardless the name or the file extension. The file is expected to use the `plain text
 format`__ or, if it has :file:`.rst` or :file:`.rest` extension,
 the `reStructuredText format`_::
 
@@ -26,10 +26,11 @@ the `reStructuredText format`_::
 
 __ `Supported file formats`_
 
-When executing a directory, Robot Framework only parses files with the
-:file:`.robot` extension by default. If files have other extensions,
-the :option:`--extension (-F)` option must be used to explicitly tell the
-framework to parse also them. If there is a need to parse more
+When executing a directory__, Robot Framework ignores all files and directories
+starting with a dot (:file:`.`) or an underscore (:file:`_`) and, by default,
+only parses files with the :file:`.robot` extension. If files use other
+extensions, the :option:`--extension (-F)` option must be used to explicitly
+tell the framework to parse also them. If there is a need to parse more
 than one kind of files, it is possible to use a colon `:` to separate
 extensions. Matching extensions is case insensitive and the leading `.`
 can be omitted::
@@ -45,6 +46,8 @@ would mean that other files in that format are skipped.
 .. note:: Prior to Robot Framework 3.1 also TXT, TSV and HTML files were
           parsed by default. Starting from Robot Framework 3.2 HTML files
           are not supported at all.
+
+__ `Test suite directories`_
 
 Selecting test cases
 --------------------

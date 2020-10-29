@@ -14,24 +14,16 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import (JYTHON, PY_VERSION, PY2, is_string, split_from_equals,
-                         unwrap)
+from robot.utils import JYTHON, PY2, is_string, split_from_equals
 from robot.variables import is_assign
 
 from .argumentspec import ArgumentSpec
 
+# Move PythonArgumentParser to this module when Python 2 support is dropped.
 if PY2:
-    from inspect import getargspec, ismethod
-
-    def getfullargspec(func):
-        return getargspec(func) + ([], None, {})
+    from .py2argumentparser import PythonArgumentParser
 else:
-    from inspect import getfullargspec, ismethod
-
-if PY_VERSION >= (3, 5):
-    import typing
-else:
-    typing = None
+    from .py3argumentparser import PythonArgumentParser
 
 if JYTHON:
     from java.lang import Class
@@ -45,91 +37,6 @@ class _ArgumentParser(object):
 
     def parse(self, source, name=None):
         raise NotImplementedError
-
-
-class PythonArgumentParser(_ArgumentParser):
-
-    def parse(self, handler, name=None):
-        args, varargs, kws, defaults, kwo, kwo_defaults, annotations \
-                = self._get_arg_spec(handler)
-        if ismethod(handler) or handler.__name__ == '__init__':
-            args = args[1:]    # Drop 'self'.
-        spec = ArgumentSpec(
-            name,
-            self._type,
-            positional=args,
-            varargs=varargs,
-            kwargs=kws,
-            kwonlyargs=kwo,
-            defaults=self._get_defaults(args, defaults, kwo_defaults)
-        )
-        spec.types = self._get_types(handler, annotations, spec)
-        return spec
-
-    def _get_arg_spec(self, handler):
-        handler = unwrap(handler)
-        try:
-            return getfullargspec(handler)
-        except TypeError:    # Can occur w/ C functions (incl. many builtins).
-            return [], 'args', None, None, [], None, {}
-
-    def _get_defaults(self, args, default_values, kwo_defaults):
-        if default_values:
-            defaults = dict(zip(args[-len(default_values):], default_values))
-        else:
-            defaults = {}
-        if kwo_defaults:
-            defaults.update(kwo_defaults)
-        return defaults
-
-    def _get_types(self, handler, annotations, spec):
-        types = getattr(handler, 'robot_types', ())
-        if types is None:
-            return None
-        if types:
-            return types
-        return self._get_type_hints(handler, annotations, spec)
-
-    def _get_type_hints(self, handler, annotations, spec):
-        if not typing:
-            return annotations
-        try:
-            type_hints = typing.get_type_hints(handler)
-        except Exception:  # Can raise pretty much anything
-            return annotations
-        self._remove_mismatching_type_hints(type_hints, spec.argument_names)
-        self._remove_optional_none_type_hints(type_hints, spec.defaults)
-        return type_hints
-
-    def _remove_mismatching_type_hints(self, type_hints, argument_names):
-        # typing.get_type_hints returns info from the original function even
-        # if it is decorated. Argument names are got from the wrapping
-        # decorator and thus there is a mismatch that needs to be resolved.
-        mismatch = set(type_hints) - set(argument_names)
-        for name in mismatch:
-            type_hints.pop(name)
-
-    def _remove_optional_none_type_hints(self, type_hints, defaults):
-        # If argument has None as a default, typing.get_type_hints adds
-        # optional None to the information it returns. We don't want that.
-        for arg in defaults:
-            if defaults[arg] is None and arg in type_hints:
-                type_ = type_hints[arg]
-                if self._is_union(type_):
-                    try:
-                        types = type_.__args__
-                    except AttributeError:
-                        # Python 3.5.2's typing uses __union_params__ instead
-                        # of __args__. This block can likely be safely removed
-                        # when Python 3.5 support is dropped
-                        types = type_.__union_params__
-                    if len(types) == 2 and types[1] is type(None):
-                        type_hints[arg] = types[0]
-
-    def _is_union(self, type_):
-        if PY_VERSION >= (3, 7) and hasattr(type_, '__origin__'):
-            type_ = type_.__origin__
-        return isinstance(type_, type(typing.Union))
 
 
 class JavaArgumentParser(_ArgumentParser):
@@ -185,39 +92,38 @@ class JavaArgumentParser(_ArgumentParser):
         else:
             defaults = {}
         return ArgumentSpec(name, self._type,
-                            positional=positional,
-                            varargs='varargs' if varargs else None,
-                            kwargs='kwargs' if kwargs else None,
-                            defaults=defaults,
-                            supports_named=False)
+                            positional_only=positional,
+                            var_positional='varargs' if varargs else None,
+                            var_named='kwargs' if kwargs else None,
+                            defaults=defaults)
 
 
 class _ArgumentSpecParser(_ArgumentParser):
 
     def parse(self, argspec, name=None):
         spec = ArgumentSpec(name, self._type)
-        kw_only_args = False
+        named_only = False
         for arg in argspec:
             arg = self._validate_arg(arg)
-            if spec.kwargs:
+            if spec.var_named:
                 self._raise_invalid_spec('Only last argument can be kwargs.')
             elif isinstance(arg, tuple):
                 arg, default = arg
-                arg = self._add_arg(spec, arg, kw_only_args)
+                arg = self._add_arg(spec, arg, named_only)
                 spec.defaults[arg] = default
             elif self._is_kwargs(arg):
-                spec.kwargs = self._format_kwargs(arg)
+                spec.var_named = self._format_kwargs(arg)
             elif self._is_varargs(arg):
-                if kw_only_args:
+                if named_only:
                     self._raise_invalid_spec('Cannot have multiple varargs.')
                 if not self._is_kw_only_separator(arg):
-                    spec.varargs = self._format_varargs(arg)
-                kw_only_args = True
-            elif spec.defaults and not kw_only_args:
+                    spec.var_positional = self._format_varargs(arg)
+                named_only = True
+            elif spec.defaults and not named_only:
                 self._raise_invalid_spec('Non-default argument after default '
                                          'arguments.')
             else:
-                self._add_arg(spec, arg, kw_only_args)
+                self._add_arg(spec, arg, named_only)
         return spec
 
     def _validate_arg(self, arg):
@@ -244,9 +150,9 @@ class _ArgumentSpecParser(_ArgumentParser):
     def _format_arg(self, arg):
         return arg
 
-    def _add_arg(self, spec, arg, kw_only_arg=False):
+    def _add_arg(self, spec, arg, named_only=False):
         arg = self._format_arg(arg)
-        target = spec.positional if not kw_only_arg else spec.kwonlyargs
+        target = spec.positional_or_named if not named_only else spec.named_only
         target.append(arg)
         return arg
 

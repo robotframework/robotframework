@@ -9,7 +9,6 @@ Simple TOC
    ...    - `First entry`
    ...    - `Second`
    ...    - `Third=entry`
-   ...    - `Shortcuts`
    ...    - `Keywords`
    ...
    ...    = First entry =
@@ -34,8 +33,6 @@ TOC with inits and tags
    ...    - `Second`
    ...    - `3`
    ...    - `Importing`
-   ...    - `Shortcuts`
-   ...    - `Tags`
    ...    - `Keywords`
    ...
    ...    = Second =
@@ -54,8 +51,6 @@ TOC in generated HTML
    ...    <li><a href="#Second" class="name">Second</a></li>
    ...    <li><a href="#3" class="name">3</a></li>
    ...    <li><a href="#Importing" class="name">Importing</a></li>
-   ...    <li><a href="#Shortcuts" class="name">Shortcuts</a></li>
-   ...    <li><a href="#Tags" class="name">Tags</a></li>
    ...    <li><a href="#Keywords" class="name">Keywords</a></li>
    ...    </ul>
    ...    <h2 id="Second">Second</h2>

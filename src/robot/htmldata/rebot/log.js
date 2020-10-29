@@ -46,7 +46,7 @@ function expandSuite(suite) {
     if (suite.status == "PASS")
         expandElement(suite);
     else
-        expandCriticalFailed(suite);
+        expandFailed(suite);
 }
 
 function expandElement(item, retryCount) {
@@ -56,9 +56,9 @@ function expandElement(item, retryCount) {
     // .css is faster than .show and .show w/ callback is terribly slow
     children.css({'display': 'block'});
     // in rare cases on large logs concurrent expanding fails => retry
-    if (children.css('display') != 'block' && retryCount > 0) { 
+    if (children.css('display') != 'block' && retryCount > 0) {
         console.debug('expandElement '+item.id+' failed! planning retry...');
-        setTimeout(function() { expandElement(item, retryCount-1); }, 0); 
+        setTimeout(function() { expandElement(item, retryCount-1); }, 0);
         return;
     }
     populateChildren(item.id, children, item.childrenNames);
@@ -79,11 +79,11 @@ function loadAndExpandElementIds(ids) {
     }
 }
 
-function expandCriticalFailed(element) {
+function expandFailed(element) {
     if (element.status == "FAIL") {
         window.elementsToExpand = [element];
         window.expandDecider = function (e) {
-            return e.status == "FAIL" && (e.isCritical === undefined || e.isCritical);
+            return e.status == "FAIL";
         };
         expandRecursively();
     }

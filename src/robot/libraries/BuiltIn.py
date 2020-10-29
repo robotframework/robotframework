@@ -20,7 +20,8 @@ import difflib
 import re
 import time
 
-from robot.api import logger
+from robot.api import logger, SkipExecution
+from robot.api.deco import keyword
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           PassExecution, ReturnFromKeyword, VariableError)
@@ -1299,6 +1300,7 @@ class _Variables(_BuiltInBase):
         """
         return self._variables.as_dict(decoration=is_falsy(no_decoration))
 
+    @keyword(types=None)
     @run_keyword_variant(resolve=0)
     def get_variable_value(self, name, default=None):
         """Returns variable value or ``default`` if the variable does not exist.
@@ -1847,6 +1849,25 @@ class _RunKeyword(_BuiltInBase):
             return 'FAIL', unic(err)
 
     @run_keyword_variant(resolve=1)
+    def run_keyword_and_warn_on_failure(self, name, *args):
+        """Runs the specified keyword logs a warning if the keyword fails.
+
+        This keyword is similar to `Run Keyword And Ignore Error` but if the executed
+        keyword fails, the error message is logged as a warning to make it more
+        visible. Returns status and possible return value or error message exactly
+        like `Run Keyword And Ignore Error` does.
+
+        Errors caused by invalid syntax, timeouts, or fatal exceptions are not
+        caught by this keyword. Otherwise this keyword itself never fails.
+
+        New in Robot Framework 4.0.
+        """
+        status, message = self.run_keyword_and_ignore_error(name, *args)
+        if status == 'FAIL':
+            logger.warn("Executing keyword '%s' failed:\n%s" % (name, message))
+        return status, message
+
+    @run_keyword_variant(resolve=1)
     def run_keyword_and_return_status(self, name, *args):
         """Runs the given keyword with given arguments and returns the status as a Boolean value.
 
@@ -2202,33 +2223,13 @@ class _RunKeyword(_BuiltInBase):
 
     @run_keyword_variant(resolve=1)
     def run_keyword_if_all_critical_tests_passed(self, name, *args):
-        """Runs the given keyword with the given arguments, if all critical tests passed.
-
-        This keyword can only be used in suite teardown. Trying to use it in
-        any other place will result in an error.
-
-        Otherwise, this keyword works exactly like `Run Keyword`, see its
-        documentation for more details.
-        """
-        suite = self._get_suite_in_teardown('Run Keyword If '
-                                            'All Critical Tests Passed')
-        if suite.statistics.critical.failed == 0:
-            return self.run_keyword(name, *args)
+        """*DEPRECATED.* Use `BuiltIn.Run Keyword If All Tests Passed` instead."""
+        self.run_keyword_if_all_tests_passed(name, args)
 
     @run_keyword_variant(resolve=1)
     def run_keyword_if_any_critical_tests_failed(self, name, *args):
-        """Runs the given keyword with the given arguments, if any critical tests failed.
-
-        This keyword can only be used in a suite teardown. Trying to use it
-        anywhere else results in an error.
-
-        Otherwise, this keyword works exactly like `Run Keyword`, see its
-        documentation for more details.
-        """
-        suite = self._get_suite_in_teardown('Run Keyword If '
-                                            'Any Critical Tests Failed')
-        if suite.statistics.critical.failed > 0:
-            return self.run_keyword(name, *args)
+        """*DEPRECATED.* Use `BuiltIn.Run Keyword If Any Tests Failed` instead."""
+        self.run_keyword_if_any_tests_failed(name, args)
 
     @run_keyword_variant(resolve=1)
     def run_keyword_if_all_tests_passed(self, name, *args):
@@ -2241,7 +2242,7 @@ class _RunKeyword(_BuiltInBase):
         documentation for more details.
         """
         suite = self._get_suite_in_teardown('Run Keyword If All Tests Passed')
-        if suite.statistics.all.failed == 0:
+        if suite.statistics.failed == 0:
             return self.run_keyword(name, *args)
 
     @run_keyword_variant(resolve=1)
@@ -2255,7 +2256,7 @@ class _RunKeyword(_BuiltInBase):
         documentation for more details.
         """
         suite = self._get_suite_in_teardown('Run Keyword If Any Tests Failed')
-        if suite.statistics.all.failed > 0:
+        if suite.statistics.failed > 0:
             return self.run_keyword(name, *args)
 
     def _get_suite_in_teardown(self, kwname):
@@ -2266,6 +2267,26 @@ class _RunKeyword(_BuiltInBase):
 
 
 class _Control(_BuiltInBase):
+
+    def skip(self, msg='Skipped with Skip keyword.'):
+        """Skips the rest of the current test.
+
+        Skips the remaining keywords in the current test and sets the given
+        message to the test. If the test has teardown, it will be executed.
+        """
+        raise SkipExecution(msg)
+
+    def skip_if(self, condition, msg=None):
+        """Skips the rest of the current test if the ``condition`` is True.
+
+        Skips the remaining keywords in the current test and sets the given
+        message to the test. If ``msg`` is not given, the ``condition`` will
+        be used as the message. If the test has teardown, it will be executed.
+
+        If the ``condition`` evaluates to False, does nothing.
+        """
+        if self._is_true(condition):
+            raise SkipExecution(msg or condition)
 
     def continue_for_loop(self):
         """Skips the current for loop iteration and continues from the next.

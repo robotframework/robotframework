@@ -96,6 +96,9 @@ Continue in for loop
 Continuable and regular failure in for loop
     Check Test Case    ${TESTNAME}
 
+robot.api.ContinuableFailure
+    Check Test Case    ${TESTNAME}
+
 *** Keywords ***
 Verify all failures in user keyword    [Arguments]    ${kw}    ${where}
     Check Log Message    ${kw.kws[0].msgs[0]}    ContinuableApocalypseException: 1    FAIL

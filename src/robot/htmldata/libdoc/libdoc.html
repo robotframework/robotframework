@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html id="library-documentation-top">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,7 +12,7 @@
 <link rel="stylesheet" type="text/css" href="pygments.css" media="all">
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <link rel="stylesheet" type="text/css" href="../common/js_disabled.css" media="all">
-<link rel="stylesheet" type="text/css" href="../common/doc_formatting.css" media="all">
+<link rel="stylesheet" type="text/css" href="doc_formatting.css" media="all">
 <script type="text/javascript" src="../common/storage.js"></script>
 <script type="text/javascript" src="../rebot/util.js"></script> <!-- TODO: Should util.js be moved under common? -->
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
@@ -26,7 +27,7 @@
   <h1>Opening library documentation failed</h1>
   <ul>
     <li>Verify that you have <b>JavaScript enabled</b> in your browser.</li>
-    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 8 or newer is required.</li>
+    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 11 is required.</li>
     <li>Check are there messages in your browser's <b>JavaScript error log</b>. Please report the problem if you suspect you have encountered a bug.</li>
   </ul>
 </div>
@@ -34,6 +35,9 @@
 <script type="text/javascript">
     // Not using jQuery here for speed and to support ancient browsers.
     document.getElementById('javascript-disabled').style.display = 'none';
+    window.addEventListener("hashchange", function() {
+      document.getElementsByClassName("hamburger-menu")[0].checked = false;
+    }, false);
 </script>
 
 <script type="text/javascript">
@@ -46,20 +50,26 @@
             renderTemplate('importing', libdoc);
         }
         renderTemplate('shortcuts', libdoc);
-        initShortcutListStyle('shortcut');
-        if (libdoc.contains_tags) {
-            renderTemplate('tags', libdoc);
-            initShortcutListStyle('tag');
-        }
+        renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
-        params = util.parseQueryString(window.location.search.slice(1));
+        const params = util.parseQueryString(window.location.search.slice(1));
+        let selectedTag = "";
         if ("tag" in params) {
-            tagSearch(params["tag"], window.location.hash);
+            selectedTag = params["tag"];
+            tagSearch(selectedTag, window.location.hash);
+        }
+        if (libdoc.all_tags.length) {
+          libdoc.selectedTag = selectedTag;
+          renderTemplate('tags-shortcuts', libdoc);
         }
         scrollToHash();
-        $(document).bind('keydown', handleKeyDown);
-        workaroundFirefoxWidthBug();
+        setTimeout(function() {
+          document.getElementById("keyword-statistics-header").innerText = '' + libdoc.keywords.length;
+          if (storage.get('keyword-wall') === 'open') {
+            openKeywordWall();
+          }
+      }, 0);
     });
 
     function parseTemplates() {
@@ -69,42 +79,14 @@
     }
 
     function renderTemplate(name, arguments, container) {
-        if (!container) {
-            container = $('#' + name + '-container');
-            container.empty();
-        }
-        if (!arguments.search) {
-            arguments.search = false;
-        }
-        $.tmpl(name + '-template', arguments).appendTo(container);
-    }
-
-    function workaroundFirefoxWidthBug() {
-        // https://github.com/robotframework/robotframework/issues/3456
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=1613163
-        $('.shortcuts a').width('max-content');
-    }
-
-    function initShortcutListStyle(name) {
-        if (storage.get(name + '-list-style', 'compact') != 'compact') {
-            $('.' + name + '-list-separator').html('<br>');
-            $('.' + name + '-list-toggle .switch').prop('checked', true);
-        }
-    }
-
-    function setShortcutListStyle(name) {
-        var compact = !$('.' + name + '-list-toggle .switch').prop('checked');
-        $('.' + name + '-list-separator').html(compact ? '&middot;' : '<br>');
-        storage.set(name + '-list-style', compact ? 'compact' : 'expanded');
-    }
-
-    function handleKeyDown(event) {
-        event = event || window.event;
-        var keyCode = event.keyCode || event.which;
-        if (keyCode === 27)  // esc
-            setTimeout(closeSearch, 0);
-        if (keyCode === 83 && $('#search').is(':hidden'))  // s
-            setTimeout(openSearch, 0);
+      if (!container) {
+          container = $('#' + name + '-container');
+          container.empty();
+      }
+      if (!arguments.search) {
+          arguments.search = false;
+      }
+      $.tmpl(name + '-template', arguments).appendTo(container);
     }
 
     function scrollToHash() {
@@ -116,88 +98,58 @@
     }
 
     function tagSearch(tag, hash) {
-        var include = {tags: true, tagsExact: true};
-        var url = window.location.pathname + "?tag=" + tag + (hash || "");
-        markMatches(tag, include);
-        highlightMatches(tag, include);
-        $('#keywords-container').find('.kw-row').addClass('hide-unmatched');
-        history.replaceState && history.replaceState(null, '', url);
-        document.getElementById('Shortcuts').scrollIntoView();
+      document.getElementsByClassName('search-input')[0].value = '';
+      const include = {tags: true, tagsExact: true};
+      const url = window.location.pathname + "?tag=" + tag + (hash || "");
+      markMatches(tag, include);
+      highlightMatches(tag, include);
+      history.replaceState && history.replaceState(null, '', url);
+      document.getElementById('keyword-shortcuts-container').scrollTop = 0;
     }
 
-    function doSearch() {
-        var string = $('#search-string').val();
-        var include = getIncludesAndDisableIfOnlyOneLeft();
-        if (string) {
-            markMatches(string, include);
-            highlightMatches(string, include);
-            setMatchVisibility();
-        } else {
-            resetKeywords();
-        }
+    function clearTagSearch() {
+      document.getElementsByClassName('search-input')[0].value = '';
+      history.replaceState && history.replaceState(null, '', window.location.pathname);
+      resetKeywords();
     }
 
-    function getIncludesAndDisableIfOnlyOneLeft() {
-        var name = $('#include-name');
-        var args = $('#include-args');
-        var doc = $('#include-doc');
-        var tags = $('#include-tags');
-        var include = {name: name.prop('checked'),
-                       args: args.prop('checked'),
-                       doc: doc.prop('checked'),
-                       tags: !!tags.prop('checked')};
-        if ((!include.name) && (!include.args) && (!include.doc)) {
-            tags.prop('disabled', true);
-        } else if ((!include.name) && (!include.args) && (!include.tags)) {
-            doc.prop('disabled', true);
-        } else if ((!include.name) && (!include.doc) && (!include.tags)) {
-            args.prop('disabled', true);
-        } else if ((!include.args) && (!include.doc) && (!include.tags)) {
-            name.prop('disabled', true);
-        } else {
-            name.prop('disabled', false);
-            args.prop('disabled', false);
-            doc.prop('disabled', false);
-            tags.prop('disabled', false);
-        }
-        return include;
+    function closeMenu() {
+      document.getElementById('hamburger-menu-input').checked = false;
     }
 
     function markMatches(pattern, include) {
-        pattern = util.regexpEscape(pattern);
+        let patternRegexp = util.regexpEscape(pattern);
         if (include.tagsExact) {
-            pattern = '^' + pattern + '$';
+            patternRegexp = '^' + patternRegexp + '$';
         }
-        var regexp = new RegExp(pattern, 'i');
-        var test = regexp.test.bind(regexp);
-        var result = {contains_tags: libdoc.contains_tags};
-        var matchCount = 0;
+        let regexp = new RegExp(patternRegexp, 'i');
+        let test = regexp.test.bind(regexp);
+        let result = {};
+        let matchCount = 0;
         result.keywords = util.map(libdoc.keywords, function (kw) {
             kw = $.extend({}, kw);
-            kw.matched = (include.name && test(kw.name) ||
-                          include.args && test(kw.args) ||
-                          include.doc && test($(kw.doc).text()) ||
-                          include.tags && util.any(util.map(kw.tags, test)));
-            if (kw.matched)
+            kw.hidden =  !(include.name && test(kw.name)) &&
+                         !(include.args && test(kw.args)) &&
+                          !(include.doc && test($(kw.doc).text())) &&
+                          !(include.tags && util.any(util.map(kw.tags, test)));
+            if (!kw.hidden)
                 matchCount++;
             return kw
         });
-        renderTemplate('shortcuts', result);
+        renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
-        if (libdoc.contains_tags) {
-            renderTemplate('tags', libdoc);
+        if (libdoc.all_tags.length) {
+          libdoc.selectedTag = include.tagsExact ? pattern : "";
+          renderTemplate('tags-shortcuts', libdoc);
         }
-        var ending = matchCount != 1 ? 's.' : '.';
-        $('#match-count').show().text(matchCount + ' matched keyword' + ending);
-        $('#altogether-count').hide();
-        if (matchCount == 0)
+        document.getElementById("keyword-statistics-header").innerText = matchCount + ' / ' + result.keywords.length;
+        if (matchCount === 0)
             $('#keywords-container').find('table').empty();
-        setTimeout(workaroundFirefoxWidthBug, 100);
     }
 
     function highlightMatches(string, include) {
-        var shortcuts = $('#shortcuts-container').find('.match');
-        var keywords = $('#keywords-container').find('.match');
+        const shortcuts = $('#shortcuts-container').find('.match');
+        const keywords = $('#keywords-container').find('.match');
         if (include.name) {
             shortcuts.highlight(string);
             keywords.find('.kw').highlight(string);
@@ -210,51 +162,73 @@
         }
         if (include.tags) {
             var matches = keywords.find('.tags').find('a').add(
-                    $('#tags-container').find('a'));
+                    $('#tags-shortcuts-container').find('a'));
             if (include.tagsExact) {
                 matches = matches.filter(function (index, tag) {
-                    return $(tag).text().toUpperCase() == string.toUpperCase();
+                    return $(tag).text().toUpperCase() === string.toUpperCase();
                 });
             }
             matches.highlight(string);
         }
     }
 
-    function openSearch() {
-        $('#search').show();
-        $('#open-search').hide();
-        $('#search-string').focus().select();
-        $(document).scrollTop($("#Shortcuts").offset().top);
+    function clearSearch() {
+      document.getElementsByClassName('search-input')[0].value = '';
+      const tagsSelect = document.getElementById('tags-shortcuts-container');
+      if (tagsSelect) {
+        tagsSelect.selectedIndex = 0;
+      }
+      resetKeywords();
     }
 
-    function closeSearch() {
-        $('#search').hide();
-        $('#open-search').show();
+    function searching() {
+      const value = document.getElementsByClassName('search-input')[0].value;
+      const include = {name: true,
+                       args: true,
+                       doc: true,
+                       tags: true};
+      if (value) {
+          markMatches(value, include);
+          highlightMatches(value, include);
+          document.getElementById('keyword-shortcuts-container').scrollTop = 0;
+      } else {
+          resetKeywords();
+      }
     }
 
-    function resetSearch() {
-        $('#search-string').val('');
-        $('#search input:checkbox').prop({'checked': true, 'disabled': false});
-        resetKeywords();
+    function toggleShortcuts() {
+      const shortcuts = document.getElementsByClassName("shortcuts")[0];
+      if (shortcuts.classList.contains("keyword-wall")) {
+        closeKeywordWall();
+      } else {
+        openKeywordWall();
+      }
+    }
+
+    function openKeywordWall() {
+      const shortcuts = document.getElementsByClassName("shortcuts")[0];
+      shortcuts.classList.add("keyword-wall");
+      storage.set("keyword-wall", 'open');
+      const button = document.getElementById("toggle-keyword-shortcuts")
+      button.innerText = '-';
+    }
+
+    function closeKeywordWall() {
+      const shortcuts = document.getElementsByClassName("shortcuts")[0];
+      shortcuts.classList.remove("keyword-wall");
+      storage.set("keyword-wall", 'close');
+      const button = document.getElementById("toggle-keyword-shortcuts")
+      button.innerText = '+';
     }
 
     function resetKeywords() {
-        renderTemplate('shortcuts', libdoc);
+        renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
-        if (libdoc.contains_tags) {
+        if (libdoc.all_tags.length) {
             renderTemplate('tags', libdoc);
         }
-        $('#match-count').hide();
-        $('#altogether-count').show();
-        history.replaceState && history.replaceState(null, '', location.pathname + location.hash);
-        setTimeout(workaroundFirefoxWidthBug, 100);
-        scrollToHash();
-    }
-
-    function setMatchVisibility() {
-        var kws = $('#keywords-container').find('.kw-row');
-        var hide = $('#hide-unmatched').prop('checked');
-        kws.toggleClass('hide-unmatched', hide);
+        document.getElementById("keyword-statistics-header").innerText = ''+libdoc.keywords.length;
+        history.replaceState && history.replaceState(null, '', location.pathname);
     }
 
     // http://stackoverflow.com/a/18484799
@@ -269,164 +243,222 @@
 </script>
 
 <script type="text/x-jquery-tmpl" id="base-template">
-    <h1>${name}</h1>
-    <table class="metadata">
-        {{if version}}<tr><th>Library version:</th><td>${version}</td></tr>{{/if}}
-        {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
-        <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
-    </table>
-    <div id="introduction-container">
-        <h2 id="Introduction">Introduction</h2>
-        <div class="doc">{{html doc}}</div>
+  <div class="base-container">
+    <input id="hamburger-menu-input" class="hamburger-menu" type="checkbox" />
+    <span class="hamburger-menu hamburger-menu-1"></span>
+    <span class="hamburger-menu hamburger-menu-2"></span>
+    <span class="hamburger-menu hamburger-menu-3"></span>
+    <div class="libdoc-overview"><div id="shortcuts-container"></div></div>
+    <div class="libdoc-details">
+      <table class="metadata">
+          {{if version}}<tr><th>Library version:</th><td>${version}</td></tr>{{/if}}
+          {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
+          <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
+      </table>
+      <div id="introduction-container">
+          <h2 id="Introduction">Introduction</h2>
+          <div class="doc">{{html doc}}</div>
+      </div>
+      <div id="importing-container"></div>
+      <div id="keywords-container"></div>
+      <div id="footer-container"></div>
     </div>
-    <div id="importing-container"></div>
-    <div id="shortcuts-container"></div>
-    <div id="tags-container"></div>
-    <div id="keywords-container"></div>
-    <div id="footer-container"></div>
-    <form id="search" action="javascript:void(0)">
-        <fieldset>
-            <legend id="search-title">Search keywords</legend>
-            <input type="text" id="search-string" onkeyup="delay(doSearch, 500)">
-            <fieldset>
-                <legend>Search from</legend>
-                <input type="checkbox" id="include-name" onclick="doSearch()" checked>
-                <label for="include-name">Name</label>
-                <input type="checkbox" id="include-args" onclick="doSearch()" checked>
-                <label for="include-args">Arguments</label>
-                <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
-                <label for="include-doc">Documentation</label>
-                {{if libdoc.contains_tags}}
-                <input type="checkbox" id="include-tags" onclick="doSearch()" checked>
-                <label for="include-tags">Tags</label>
-                {{/if}}
-            </fieldset>
-            <input type="checkbox" id="hide-unmatched" onclick="setMatchVisibility()" checked>
-            <label for="hide-unmatched">Hide unmatched keywords</label>
-            <div id="search-buttons">
-                <input type="button" value="Reset" onclick="resetSearch()"
-                       title="Reset search">
-                <input type="button" value="Close" onclick="closeSearch()"
-                       title="Close search (shortcut: <Esc>)">
-            </div>
-        </fieldset>
-    </form>
-    <div id="open-search" onclick="openSearch()" title="Search keywords (shortcut: s)"></div>
+    <a class="libdoc-title" href="#library-documentation-top">
+          <h1>${name}</h1>
+          <svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   viewBox="0 0 202.4325 202.34125"
+   height="42"
+   width="42"
+   xml:space="preserve"
+   version="1.1"><metadata
+     id="metadata8"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+     id="defs6"><clipPath
+       id="clipPath16"
+       clipPathUnits="userSpaceOnUse"><path
+         id="path18"
+         d="m 0,161.873 161.946,0 L 161.946,0 0,0 0,161.873 Z" /></clipPath></defs><g
+     transform="matrix(1.25,0,0,-1.25,0,202.34125)"
+     id="g10"><g
+       id="g12"><g
+         clip-path="url(#clipPath16)"
+         id="g14"><g
+           transform="translate(52.4477,88.1268)"
+           id="g20"><path
+             id="robot-svg-path"
+             d="m 0,0 c 0,7.6 6.179,13.779 13.77,13.779 7.6,0 13.779,-6.179 13.779,-13.779 0,-2.769 -2.238,-5.007 -4.998,-5.007 -2.761,0 -4.999,2.238 -4.999,5.007 0,2.078 -1.695,3.765 -3.782,3.765 C 11.693,3.765 9.997,2.078 9.997,0 9.997,-2.769 7.76,-5.007 4.999,-5.007 2.238,-5.007 0,-2.769 0,0 m 57.05,-23.153 c 0,-2.771 -2.237,-5.007 -4.998,-5.007 l -46.378,0 c -2.761,0 -4.999,2.236 -4.999,5.007 0,2.769 2.238,5.007 4.999,5.007 l 46.378,0 c 2.761,0 4.998,-2.238 4.998,-5.007 M 35.379,-2.805 c -1.545,2.291 -0.941,5.398 1.35,6.943 l 11.594,7.83 c 2.273,1.58 5.398,0.941 6.943,-1.332 1.545,-2.29 0.941,-5.398 -1.35,-6.943 l -11.594,-7.83 c -0.852,-0.586 -1.829,-0.87 -2.788,-0.87 -1.607,0 -3.187,0.781 -4.155,2.202 m 31.748,-30.786 c 0,-0.945 -0.376,-1.852 -1.045,-2.522 l -8.617,-8.617 c -0.669,-0.668 -1.576,-1.045 -2.523,-1.045 l -52.833,0 c -0.947,0 -1.854,0.377 -2.523,1.045 l -8.617,8.617 c -0.669,0.67 -1.045,1.577 -1.045,2.522 l 0,52.799 c 0,0.947 0.376,1.854 1.045,2.522 l 8.617,8.619 c 0.669,0.668 1.576,1.044 2.523,1.044 l 52.833,0 c 0.947,0 1.854,-0.376 2.523,-1.044 l 8.617,-8.619 c 0.669,-0.668 1.045,-1.575 1.045,-2.522 l 0,-52.799 z m 7.334,61.086 -11.25,11.25 c -1.705,1.705 -4.018,2.663 -6.428,2.663 l -56.523,0 c -2.412,0 -4.725,-0.959 -6.43,-2.665 L -17.412,27.494 c -1.704,-1.705 -2.661,-4.016 -2.661,-6.427 l 0,-56.515 c 0,-2.411 0.958,-4.725 2.663,-6.428 l 11.25,-11.25 c 1.705,-1.705 4.017,-2.662 6.428,-2.662 l 56.515,0 c 2.41,0 4.723,0.957 6.428,2.662 l 11.25,11.25 c 1.705,1.703 2.663,4.017 2.663,6.428 l 0,56.514 c 0,2.412 -0.958,4.724 -2.663,6.429" /></g></g></g></g></svg>
+    </a>
+  </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="importing-template">
     <h2 id="Importing">Importing</h2>
-    <table border="1" class="keywords">
-        <tr>
-            <th class="args">Arguments</th>
-            <th class="doc">Documentation</th>
-        </tr>
+    <div class="keywords">
         {{each inits}}
-        <tr class="kw-row">
-            <td class="args">
-            {{each args}}
-              <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
-            {{/each}}
-            </td>
-            <td class="doc">{{html $value.doc}}</td>
-        </tr>
+        <div class="kw-row">
+          <div class="kw-overview">
+          {{if args.length}}
+              <div class="args">
+                <h4>Arguments</h4>
+                <div class="arguments-list-container">
+                <div class="arguments-list">
+                {{each args}}
+                  <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
+
+                  {{if $value.default !== null}}
+                  <div class="arg-default-container">
+                  <span class="arg-default-eq">=</span>
+                  <span class="arg-default-value" title="Argument default value">${$value.default}</span>
+                  </div>
+                  {{/if}}
+
+                  {{if $value.type}}
+                  <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.type}">&lt;${$value.type}&gt;</span>
+                  {{/if}}
+                {{/each}}
+                </div>
+                </div>
+              </div>
+          {{/if}}
+          {{if $value.doc}}
+            <div class="kw-docs">
+              <h4>Documentation</h4>
+              <div class="kwdoc doc">{{html $value.doc}}</div>
+            </div>
+          {{/if}}
+        </div>
         {{/each}}
-    </table>
+    </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
-    <h2 id="Shortcuts">Shortcuts</h2>
-    {{if keywords.length > 3}}
-    <div class="shortcut-list-toggle">
-        <b>List style:</b>&nbsp; Compact
-        <label title="Switch between compact list and expanded list">
-            <input type="checkbox" class="switch" onclick="setShortcutListStyle('shortcut');">
-            <span class="slider"></span>
-        </label>
-        Expanded
-    </div>
-    {{/if}}
-    <div class='shortcuts'>
-        {{each keywords}}
-        <a href="#${encodeURIComponent($value.name)}"
-        class="{{if $value.matched === false}}no-{{/if}}match"
-        title="${$value.shortdoc}">${$value.name}</a>
-        {{if $index < keywords.length-1}}
-        <span class="shortcut-list-separator">&middot;</span>
-        {{/if}}
-        {{/each}}
+    <div class="keywords-overview">
+      <div class="keyword-search-box">
+        <input placeholder="Search" type="text" class="search-input" onkeyup="delay(searching, 500)"/>
+        <button class="clear-search" onclick="clearSearch()">&#10005;</button>
+      </div>
+      {{if all_tags.length}}
+      <select id="tags-shortcuts-container" onchange="location = this.value;">
+      </select>
+      {{/if}}
+      <div class="keywords-overview-header-row">
+      <h4>Keywords (<span id="keyword-statistics-header"></span>)</h4>
+      <button id="toggle-keyword-shortcuts" onclick="toggleShortcuts()">+</button>
+      </div>
+      <ul class="shortcuts" id="keyword-shortcuts-container">
+      </ul>
     </div>
 </script>
 
-<script type="text/x-jquery-tmpl" id="tags-template">
-    <h2 id="Tags">Tags</h2>
-    {{if all_tags.length > 3}}
-    <div class="tag-list-toggle">
-        <b>List style:</b>&nbsp; Compact
-        <label title="Switch between compact list and expanded list">
-            <input type="checkbox" class="switch" onclick="setShortcutListStyle('tag');">
-            <span class="slider"></span>
-        </label>
-        Expanded
-    </div>
+<script type="text/x-jquery-tmpl" id="keyword-shortcuts-template">
+    {{each keywords}}
+    {{if !$value.hidden}}
+    <li>
+    <a href="#${encodeURIComponent($value.name)}"
+       onclick="closeMenu()"
+       class="match"
+       title="${$value.shortdoc}">${$value.name}</a>
+    </li>
     {{/if}}
-    <div class='shortcuts'>
-        {{each all_tags}}
-        <a href="javascript:tagSearch('${$value}')"
-           title="Show keywords with this tag">${$value}</a>
-        <span class="tag-list-separator">&middot;</span>
-        {{/each}}
-        <a href="javascript:resetKeywords()" class="normal-first-letter"
-           title="Show all keywords">[Reset]</a>
-    </div>
+    {{/each}}
+    {{each keywords}}
+    {{if $value.hidden}}
+    <li>
+    <a href="#${encodeURIComponent($value.name)}"
+       onclick="closeMenu()"
+       class="no-match"
+       title="${$value.shortdoc}">${$value.name}</a>
+    </li>
+    {{/if}}
+    {{/each}}
+</script>
+
+
+<script type="text/x-jquery-tmpl" id="tags-shortcuts-template">
+  <option value="javascript:clearTagSearch()" {{if selectedTag === ""}}selected{{/if}}>- Show all tags -</option>
+  {{each all_tags}}
+    <option value="javascript:tagSearch('${$value}')" {{if selectedTag === $value}}selected{{/if}}>${$value}</a>
+    </option>
+  {{/each}}
 </script>
 
 <script type="text/x-jquery-tmpl" id="keywords-template">
     <h2 id="Keywords">Keywords</h2>
-    <table border="1" class="keywords">
-        <tr>
-            <th class="kw">Keyword</th>
-            <th class="args">Arguments</th>
-            {{if libdoc.contains_tags}}
-            <th class="tags">Tags</th>
-            {{/if}}
-            <th class="doc">Documentation</th>
-        </tr>
+    <div class="keywords">
         {{each keywords}}
+        {{if !$value.hidden}}
             {{tmpl($value) 'keyword-template'}}
+        {{/if}}
         {{/each}}
-    </table>
+        {{each keywords}}
+        {{if $value.hidden}}
+            {{tmpl($value) 'keyword-template'}}
+        {{/if}}
+        {{/each}}
+    </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="keyword-template">
-    <tr class="kw-row {{if matched === false}}no-{{/if}}match">
-        <td class="kw">
-            <a name="${name}" href="#${encodeURIComponent(name)}"
+    <div class="keyword-container {{if hidden}}no-{{/if}}match" id="${name}">
+       <div class="keyword-name">
+            <h2>
+            <a class="kw-name" href="#${encodeURIComponent(name)}"
                title="Link to this keyword">${name}</a>
-        </td>
-        <td class="args">
-            {{each args}}
-            <span>${$value}</span>{{if $index < args.length-1}},<br>{{/if}}
-            {{/each}}
-        </td>
-        {{if libdoc.contains_tags}}
-        <td class="tags">
-            {{each tags}}
-            <a href="javascript:tagSearch('${$value}')"
-               title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
-            {{/each}}
-        </td>
-        {{/if}}
-        <td class="doc">{{html doc}}</td>
-    </tr>
-</script>
+            </h2>
+       </div>
+       <div class="keyword-content">
+          <div class="kw-overview">
+            {{if args.length}}
+              <div class="args">
+                <h4>Arguments</h4>
+                <div class="arguments-list-container">
+                <div class="arguments-list">
+                {{each args}}
+                  <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
 
+                  {{if $value.default !== null}}
+                  <div class="arg-default-container">
+                  <span class="arg-default-eq">=</span>
+                  <span class="arg-default-value" title="Argument default value">${$value.default}</span>
+                  </div>
+                  {{/if}}
+
+                  {{if $value.type}}
+                  <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.type}">&lt;${$value.type}&gt;</span>
+                  {{/if}}
+                {{/each}}
+                </div>
+                </div>
+              </div>
+            {{/if}}
+            {{if libdoc.all_tags.length}}
+            <div class="tags">
+                <h4>Tags</h4>
+                {{each tags}}
+                <a href="javascript:tagSearch('${$value}')"
+                   title="Show keywords with this tag">${$value}</a>{{if $index < tags.length-1}},<br>{{/if}}
+                {{/each}}
+            </div>
+            {{/if}}
+          </div>
+          {{if doc}}
+            <div class="kw-docs">
+              <h4>Documentation</h4>
+              <div class="kwdoc doc">{{html doc}}</div>
+            </div>
+          {{/if}}
+       </div>
+    </div>
+</script>
 
 <script type="text/x-jquery-tmpl" id="footer-template">
     <p class="footer">
-        <span id="altogether-count">Altogether ${keywords.length} keywords.</span>
-        <span id="match-count"></span>
-        <br>
         Generated by <a href="http://robotframework.org/robotframework/#built-in-tools">Libdoc</a> on ${generated}.
     </p>
 </script>

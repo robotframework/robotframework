@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections.abc import Mapping, MutableMapping, Sequence
+from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from collections import UserString
 from io import IOBase
 
@@ -53,14 +53,7 @@ def is_pathlike(item):
 def is_list_like(item):
     if isinstance(item, (str, bytes, bytearray, UserString, IOBase)):
         return False
-    try:
-        iter(item)
-    except RERAISED_EXCEPTIONS:
-        raise
-    except:
-        return False
-    else:
-        return True
+    return isinstance(item, Iterable)
 
 
 def is_dict_like(item):
@@ -71,8 +64,8 @@ def type_name(item, capitalize=False):
     if isinstance(item, IOBase):
         name = 'file'
     else:
-        cls = item.__class__ if hasattr(item, '__class__') else type(item)
+        typ = type(item) if not isinstance(item, type) else item
         named_types = {str: 'string', bool: 'boolean', int: 'integer',
-                       type(None): 'None', dict: 'dictionary', type: 'class'}
-        name = named_types.get(cls, cls.__name__)
+                       type(None): 'None', dict: 'dictionary'}
+        name = named_types.get(typ, typ.__name__)
     return name.capitalize() if capitalize and name.islower() else name

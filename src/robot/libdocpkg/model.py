@@ -17,8 +17,9 @@ from itertools import chain
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, Sortable, setter
+from robot.utils import getshortdoc, get_timestamp, Sortable, setter, unicode, unic
 
+from .htmlutils import HtmlToText, DocFormatter
 from .writer import LibdocWriter
 from .output import LibdocOutput
 
@@ -26,14 +27,13 @@ from .output import LibdocOutput
 class LibraryDoc(object):
 
     def __init__(self, name='', doc='', version='', type='LIBRARY',
-                 scope='TEST', named_args=True, doc_format='ROBOT',
+                 scope='TEST', doc_format='ROBOT',
                  source=None, lineno=-1):
         self.name = name
         self._doc = doc
         self.version = version
         self.type = type
         self.scope = scope
-        self.named_args = named_args
         self.doc_format = doc_format
         self.source = source
         self.lineno = lineno
@@ -55,9 +55,6 @@ class LibraryDoc(object):
         entries = re.findall(r'^\s*=\s+(.+?)\s+=\s*$', doc, flags=re.MULTILINE)
         if self.inits:
             entries.append('Importing')
-        entries.append('Shortcuts')
-        if any(kw.tags for kw in self.keywords):
-            entries.append('Tags')
         entries.append('Keywords')
         return '\n'.join('- `%s`' % entry for entry in entries)
 
@@ -66,7 +63,17 @@ class LibraryDoc(object):
         return format or 'ROBOT'
 
     @setter
+    def inits(self, inits):
+        return self._add_parent(inits)
+
+    @setter
     def keywords(self, kws):
+        return self._add_parent(kws)
+
+    def _add_parent(self, kws):
+        for keyword in kws:
+            keyword.parent = self
+            keyword.generate_shortdoc()
         return sorted(kws)
 
     @property
@@ -77,21 +84,60 @@ class LibraryDoc(object):
         with LibdocOutput(output, format) as outfile:
             LibdocWriter(format).write(self, outfile)
 
+    def convert_docs_to_html(self):
+        formatter = DocFormatter(self.keywords, self.doc, self.doc_format)
+        self._doc = formatter.html(self.doc, intro=True)
+        self.doc_format = 'HTML'
+        for init in self.inits:
+            init.doc = formatter.html(init.doc)
+        for keyword in self.keywords:
+            keyword.doc = formatter.html(keyword.doc)
+
+    def to_dictionary(self):
+        return {
+            'name': self.name,
+            'doc': self.doc,
+            'version': self.version,
+            'type': self.type,
+            'scope': self.scope,
+            'doc_format': self.doc_format,
+            'source': self.source,
+            'lineno': self.lineno,
+            'inits': [init.to_dictionary() for init in self.inits],
+            'keywords': [kw.to_dictionary() for kw in self.keywords],
+            'generated': get_timestamp(daysep='-', millissep=None),
+            'all_tags': tuple(self.all_tags)
+        }
+
 
 class KeywordDoc(Sortable):
 
-    def __init__(self, name='', args=(), doc='', tags=(), source=None,
-                 lineno=-1):
+    def __init__(self, name='', args=(), doc='', shortdoc='', tags=(), source=None,
+                 lineno=-1, parent=None):
         self.name = name
         self.args = args
         self.doc = doc
+        self._shortdoc = shortdoc
         self.tags = Tags(tags)
         self.source = source
         self.lineno = lineno
+        self.parent = parent
 
     @property
     def shortdoc(self):
-        return getshortdoc(self.doc)
+        if self._shortdoc:
+            return self._shortdoc
+        return self._get_shortdoc()
+
+    def _get_shortdoc(self):
+        doc = self.doc
+        if self.parent and self.parent.doc_format == 'HTML':
+            doc = HtmlToText().get_shortdoc_from_html(doc)
+        return ' '.join(getshortdoc(doc).splitlines())
+
+    @shortdoc.setter
+    def shortdoc(self, shortdoc):
+        self._shortdoc = shortdoc
 
     @property
     def deprecated(self):
@@ -100,3 +146,27 @@ class KeywordDoc(Sortable):
     @property
     def _sort_key(self):
         return self.name.lower()
+
+    def generate_shortdoc(self):
+        if not self._shortdoc:
+            self.shortdoc = self._get_shortdoc()
+
+    def to_dictionary(self):
+        return {
+            'name': self.name,
+            'args': self._convert_arguments(),
+            'doc': self.doc,
+            'shortdoc': self.shortdoc,
+            'tags': tuple(self.tags),
+            'source': self.source,
+            'lineno': self.lineno
+        }
+
+    def _convert_arguments(self):
+        return [{'name': a.name,
+                 'type': a.type_repr,
+                 'default': a.default_repr,
+                 'kind': a.kind,
+                 'required': a.required,
+                 'repr': unicode(a)
+                 } for a in self.args]

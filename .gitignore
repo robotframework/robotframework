@@ -4,6 +4,7 @@ dist
 target
 venv*
 .venv*
+.env
 *~
 MANIFEST
 atest/results

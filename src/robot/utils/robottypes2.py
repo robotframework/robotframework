@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import Mapping, MutableMapping, Sequence
+from collections import Iterable, Mapping, MutableMapping, Sequence
 from UserDict import UserDict
 from UserString import UserString
 from types import ClassType, NoneType
@@ -56,14 +56,7 @@ def is_list_like(item):
     if isinstance(item, (str, unicode, bytes, bytearray, UserString, String,
                          file)):
         return False
-    try:
-        iter(item)
-    except RERAISED_EXCEPTIONS:
-        raise
-    except:
-        return False
-    else:
-        return True
+    return isinstance(item, (Iterable, UserDict))
 
 
 def is_dict_like(item):
@@ -71,9 +64,14 @@ def is_dict_like(item):
 
 
 def type_name(item, capitalize=False):
-    cls = item.__class__ if hasattr(item, '__class__') else type(item)
+    if isinstance(item, (type, ClassType)):
+        typ = item
+    elif hasattr(item, '__class__'):
+        typ = item.__class__
+    else:
+        typ = type(item)
     named_types = {str: 'string', unicode: 'string', bool: 'boolean',
                    int: 'integer', long: 'integer', NoneType: 'None',
-                   dict: 'dictionary', type: 'class', ClassType: 'class'}
-    name = named_types.get(cls, cls.__name__)
+                   dict: 'dictionary'}
+    name = named_types.get(typ, typ.__name__)
     return name.capitalize() if capitalize and name.islower() else name

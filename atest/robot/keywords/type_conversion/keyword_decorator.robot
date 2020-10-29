@@ -36,10 +36,20 @@ Invalid decimal
 Boolean
     Check Test Case    ${TESTNAME}
 
-Invalid boolean is accepted as-is
+Invalid boolean string is accepted as-is
+    Check Test Case    ${TESTNAME}
+
+Invalid boolean
     Check Test Case    ${TESTNAME}
 
 String
+    Check Test Case    ${TESTNAME}
+
+Invalid string
+    Check Test Case    ${TESTNAME}
+
+Invalid string (non-ASCII byte string)
+    [Tags]    require-py2
     Check Test Case    ${TESTNAME}
 
 Bytes
@@ -97,6 +107,15 @@ Invalid Enum
     Check Test Case    ${TESTNAME}
 
 NoneType
+    Check Test Case    ${TESTNAME}
+
+Invalid NoneType
+    Check Test Case    ${TESTNAME}
+
+None
+    Check Test Case    ${TESTNAME}
+
+Invalid None
     Check Test Case    ${TESTNAME}
 
 List
@@ -189,12 +208,6 @@ Invalid kwonly
     [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
-Non-strings are not converted
-    Check Test Case    ${TESTNAME}
-
-String None is converted to None object
-    Check Test Case    ${TESTNAME}
-
 Invalid type spec causes error
     Check Test Case    ${TESTNAME}
     Error In Library    KeywordDecorator
@@ -214,4 +227,27 @@ Type can be given to `return` without an error
     Check Test Case    ${TESTNAME}
 
 Value contains variable
+    Check Test Case    ${TESTNAME}
+
+Default value is not used if explicit type conversion succeeds
+    Check Test Case    ${TESTNAME}
+
+Default value is used if explicit type conversion fails
+    Check Test Case    ${TESTNAME}
+
+Explicit conversion failure is used if both conversions fail
+    Check Test Case    ${TESTNAME}
+
+Multiple types using Union
+    [Tags]    require-py3
+    Check Test Case    ${TESTNAME}
+
+Argument not matching Union tupes
+    [Tags]    require-py3
+    Check Test Case    ${TESTNAME}
+
+Multiple types using tuple
+    Check Test Case    ${TESTNAME}
+
+Argument not matching tuple tupes
     Check Test Case    ${TESTNAME}

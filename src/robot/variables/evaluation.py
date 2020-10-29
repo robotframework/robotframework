@@ -47,9 +47,16 @@ def evaluate_expression(expression, variable_store, modules=None,
 def _evaluate(expression, variable_store, modules=None, namespace=None):
     if '$' in expression:
         expression = _decorate_variables(expression, variable_store)
-    global_ns = _import_modules(modules) if modules else {}
+    # Given namespace must be included in our custom local namespace to make
+    # it possible to detect which names are not found and should be imported
+    # automatically as modules. It must be also be used as the global namespace
+    # with `eval()` because lambdas and possibly other special constructs don't
+    # see the local namespace at all.
+    namespace = dict(namespace) if namespace else {}
+    if modules:
+        namespace.update(_import_modules(modules))
     local_ns = EvaluationNamespace(variable_store, namespace)
-    return eval(expression, global_ns, local_ns)
+    return eval(expression, namespace, local_ns)
 
 
 def _decorate_variables(expression, variable_store):
@@ -93,8 +100,8 @@ def _import_modules(module_names):
 # namespace. Using just Mapping would allow removing __set/delitem__.
 class EvaluationNamespace(MutableMapping):
 
-    def __init__(self, variable_store, namespace=None):
-        self.namespace = {} if namespace is None else dict(namespace)
+    def __init__(self, variable_store, namespace):
+        self.namespace = namespace
         self.variables = variable_store
 
     def __getitem__(self, key):

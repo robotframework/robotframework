@@ -12,6 +12,15 @@ None means no type
 Falsy types mean no type
     Check Test Case    ${TESTNAME}
 
+NoneType
+    Check Test Case    ${TESTNAME}
+
+None as string is None
+    Check Test Case    ${TESTNAME}
+
+None in tuple is alias for NoneType
+    Check Test Case    ${TESTNAME}
+
 Less types than arguments is ok
     Check Test Case    ${TESTNAME}
 

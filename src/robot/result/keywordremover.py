@@ -63,7 +63,7 @@ class AllKeywordsRemover(_KeywordRemover):
 class PassedKeywordRemover(_KeywordRemover):
 
     def start_suite(self, suite):
-        if not suite.statistics.all.failed:
+        if not suite.statistics.failed:
             for keyword in suite.keywords:
                 if not self._warning_or_error(keyword):
                     self._clear_content(keyword)

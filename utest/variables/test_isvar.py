@@ -46,7 +46,7 @@ class TestIsVariable(unittest.TestCase):
         for ok in LISTS:
             assert is_list_variable(ok)
             assert search_variable(ok).is_list_variable()
-            assert not is_list_variable(ok + '[item]')
+            assert is_list_variable(ok + '[item]')
             assert not is_list_variable(' ' + ok)
             assert not is_list_variable(ok + '=')
         for nok in NOKS + SCALARS + DICTS:
@@ -57,7 +57,7 @@ class TestIsVariable(unittest.TestCase):
         for ok in DICTS:
             assert is_dict_variable(ok)
             assert search_variable(ok).is_dict_variable()
-            assert not is_dict_variable(ok + '[item]')
+            assert is_dict_variable(ok + '[item]')
             assert not is_dict_variable(' ' + ok)
             assert not is_dict_variable(ok + '=')
         for nok in NOKS + SCALARS + LISTS:

@@ -1,36 +1,22 @@
-*** Settings ***
-Default Tags        critical
-
 *** Test Cases ***
-Passing critical
-    No Operation
-
-Passing non-critical
-    [Tags]    NONE
+Passing
     No Operation
 
 Passing tests do not initiate exit-on-failure
     No Operation
 
-Failing non-critical
-    [Documentation]    FAIL Not critical
-    [Tags]    NONE
-    Fail    Not critical
+Skipped on failure
+    [Documentation]    SKIP
+    ...       Test failed but its tags matched '--SkipOnFailure' and it was marked skipped.
+    ...
+    ...       Original failure:
+    ...       Does not initiate exit-on-failure
+    [Tags]    skip-on-failure
+    Fail    Does not initiate exit-on-failure
 
-Failing non-critical tests do not initiate exit-on-failure
-    No Operation
+Failing
+    [Documentation]    FAIL Initiates exit-on-failure
+    Fail    Initiates exit-on-failure
 
-Failing dynamically non-critical
-    [Documentation]    FAIL Criticality removed dynamically
-    [Setup]    Remove Tags    critical
-    Fail    Criticality removed dynamically
-
-Failing dynamically non-critical tests do not initiate exit-on-failure
-    No Operation
-
-Failing critical
-    [Documentation]    FAIL Critical - initiates exit-on-failure
-    Fail    Critical - initiates exit-on-failure
-
-Skipped
+Not executed
     Fail    Not executed

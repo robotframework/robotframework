@@ -25,6 +25,14 @@ robot.libdocpkg.consoleviewer module
    :undoc-members:
    :show-inheritance:
 
+robot.libdocpkg.htmlutils module
+--------------------------------
+
+.. automodule:: robot.libdocpkg.htmlutils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.libdocpkg.htmlwriter module
 ---------------------------------
 
@@ -96,4 +104,3 @@ robot.libdocpkg.xmlwriter module
    :members:
    :undoc-members:
    :show-inheritance:
-

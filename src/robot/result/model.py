@@ -33,8 +33,10 @@ __ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#
 """
 
 from itertools import chain
+from operator import attrgetter
+import warnings
 
-from robot.model import TotalStatisticsBuilder, Criticality
+from robot.model import TotalStatisticsBuilder, Messages, Keywords
 from robot import model, utils
 
 from .configurer import SuiteConfigurer
@@ -62,12 +64,15 @@ class Keyword(model.Keyword):
     See the base class for documentation of attributes not documented here.
     """
     __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message']
-    message_class = Message
+    keyword_class = None        #: Internal usage only.
+    message_class = Message     #: Internal usage only.
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(),
                  tags=(), timeout=None, type='kw',  status='FAIL',
                  starttime=None, endtime=None):
         model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
+        self.messages = None
+        self.keywords = None
         #: Name of the keyword without library or resource name.
         self.kwname = kwname or ''
         #: Name of the library or resource containing this keyword.
@@ -82,6 +87,25 @@ class Keyword(model.Keyword):
         self.endtime = endtime
         #: Keyword status message. Used only if suite teardowns fails.
         self.message = ''
+
+    @utils.setter
+    def keywords(self, keywords):
+        """Child keywords as a :class:`~.Keywords` object."""
+        return Keywords(self.keyword_class or self.__class__, self, keywords)
+
+    @utils.setter
+    def messages(self, messages):
+        """Messages as a :class:`~.model.message.Messages` object."""
+        return Messages(self.message_class, self, messages)
+
+    @property
+    def children(self):
+        """Child :attr:`keywords` and :attr:`messages` in creation order."""
+        # It would be cleaner to store keywords/messages in same `children`
+        # list and turn `keywords` and `messages` to properties that pick items
+        # from it. That would require bigger changes to the model, though.
+        return sorted(chain(self.keywords, self.messages),
+                      key=attrgetter('_sort_key'))
 
     @property
     def elapsedtime(self):
@@ -105,12 +129,36 @@ class Keyword(model.Keyword):
 
     @property
     def passed(self):
-        """``True`` or ``False`` depending on the :attr:`status`."""
+        """``True`` when :attr:`status` is 'PASS', ``False`` otherwise."""
         return self.status == 'PASS'
 
     @passed.setter
     def passed(self, passed):
         self.status = 'PASS' if passed else 'FAIL'
+
+    @property
+    def failed(self):
+        """``True`` when :attr:`status` is 'FAIL', ``False`` otherwise."""
+        return self.status == 'FAIL'
+
+    @failed.setter
+    def failed(self, failed):
+        self.status = 'FAIL' if failed else 'PASS'
+
+    @property
+    def skipped(self):
+        """``True`` when :attr:`status` is 'SKIP', ``False`` otherwise.
+
+        Setting to ``False`` value is ambiguous and raises an exception.
+        """
+        return self.status == 'SKIP'
+
+    @skipped.setter
+    def skipped(self, skipped):
+        if not skipped:
+            raise ValueError("`skipped` value must be truthy, got '%s'."
+                             % skipped)
+        self.status = 'SKIP'
 
 
 class TestCase(model.TestCase):
@@ -141,7 +189,7 @@ class TestCase(model.TestCase):
 
     @property
     def passed(self):
-        """``True/False`` depending on the :attr:`status`."""
+        """``True`` when :attr:`status` is 'PASS', ``False`` otherwise."""
         return self.status == 'PASS'
 
     @passed.setter
@@ -149,15 +197,35 @@ class TestCase(model.TestCase):
         self.status = 'PASS' if passed else 'FAIL'
 
     @property
-    def critical(self):
-        """``True/False`` depending on is the test considered critical.
+    def failed(self):
+        """``True`` when :attr:`status` is 'FAIL', ``False`` otherwise."""
+        return self.status == 'FAIL'
 
-        Criticality is determined based on test's :attr:`tags` and
-        :attr:`~TestSuite.criticality` of the :attr:`parent` suite.
+    @failed.setter
+    def failed(self, failed):
+        self.status = 'FAIL' if failed else 'PASS'
+
+    @property
+    def skipped(self):
+        """``True`` when :attr:`status` is 'SKIP', ``False`` otherwise.
+
+        Setting to ``False`` value is ambiguous and raises an exception.
         """
-        if not self.parent:
-            return True
-        return self.parent.criticality.test_is_critical(self)
+        return self.status == 'SKIP'
+
+    @skipped.setter
+    def skipped(self, skipped):
+        if not skipped:
+            raise ValueError("`skipped` value must be truthy, got '%s'."
+                             % skipped)
+        self.status = 'SKIP'
+
+    @property
+    def critical(self):
+        warnings.warn("'TestCase.criticality' has been deprecated and always "
+                      " returns 'True'.",
+                      UserWarning)
+        return True
 
 
 class TestSuite(model.TestSuite):
@@ -165,7 +233,7 @@ class TestSuite(model.TestSuite):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['message', 'starttime', 'endtime', '_criticality']
+    __slots__ = ['message', 'starttime', 'endtime']
     test_class = TestCase
     keyword_class = Keyword
 
@@ -178,17 +246,37 @@ class TestSuite(model.TestSuite):
         self.starttime = starttime
         #: Suite execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
-        self._criticality = None
 
     @property
     def passed(self):
-        """``True`` if no critical test has failed, ``False`` otherwise."""
-        return not self.statistics.critical.failed
+        """``True`` if no test has failed but some have passed, ``False`` otherwise."""
+        return self.status == 'PASS'
+
+    @property
+    def failed(self):
+        """``True`` if any test has failed, ``False`` otherwise."""
+        return self.status == 'FAIL'
+
+    @property
+    def skipped(self):
+        """``True`` if there are no passed or failed tests, ``False`` otherwise."""
+        return self.status == 'SKIP'
 
     @property
     def status(self):
-        """``'PASS'`` if no critical test has failed, ``'FAIL'`` otherwise."""
-        return 'PASS' if self.passed else 'FAIL'
+        """'PASS', 'FAIL' or 'SKIP' depending on test statuses.
+
+        - If any test has failed, status is 'FAIL'.
+        - If no test has failed but at least some test has passed, status is 'PASS'.
+        - If there are no failed or passed tests, status is 'SKIP'. This covers both
+          the case when all tests have been skipped and when there are no tests.
+        """
+        stats = self.statistics  # Local variable avoids recreating stats.
+        if stats.failed:
+            return 'FAIL'
+        if stats.passed:
+            return 'PASS'
+        return 'SKIP'
 
     @property
     def statistics(self):
@@ -198,7 +286,7 @@ class TestSuite(model.TestSuite):
         to a variable and inspecting it is often a good idea::
 
             stats = suite.statistics
-            print(stats.critical.failed)
+            print(stats.all.failed)
             print(stats.all.total)
             print(stats.message)
         """
@@ -223,38 +311,6 @@ class TestSuite(model.TestSuite):
             return utils.get_elapsed_time(self.starttime, self.endtime)
         return sum(child.elapsedtime for child in
                    chain(self.suites, self.tests, self.keywords))
-
-    @property
-    def criticality(self):
-        """Used by tests to determine are they considered critical or not.
-
-        Normally configured using ``--critical`` and ``--noncritical``
-        command line options. Can be set programmatically using
-        :meth:`set_criticality` of the root test suite.
-        """
-        if self.parent:
-            return self.parent.criticality
-        if self._criticality is None:
-            self.set_criticality()
-        return self._criticality
-
-    def set_criticality(self, critical_tags=None, non_critical_tags=None):
-        """Sets which tags are considered critical and which non-critical.
-
-        :param critical_tags: Tags or patterns considered critical. See
-            the documentation of the ``--critical`` option for more details.
-        :param non_critical_tags: Tags or patterns considered non-critical. See
-            the documentation of the ``--noncritical`` option for more details.
-
-        Tags can be given as lists of strings or, when giving only one,
-        as single strings. This information is used by tests to determine
-        are they considered critical or not.
-
-        Criticality can be set only to the root test suite.
-        """
-        if self.parent is not None:
-            raise ValueError('Criticality can only be set to the root suite.')
-        self._criticality = Criticality(critical_tags, non_critical_tags)
 
     def remove_keywords(self, how):
         """Remove keywords based on the given condition.
@@ -283,7 +339,6 @@ class TestSuite(model.TestSuite):
         Example::
 
             suite.configure(remove_keywords='PASSED',
-                            critical_tags='smoke',
                             doc='Smoke test results.')
         """
         model.TestSuite.configure(self)    # Parent validates call is allowed.
@@ -293,6 +348,10 @@ class TestSuite(model.TestSuite):
         """Internal usage only."""
         self.visit(SuiteTeardownFailureHandler())
 
-    def suite_teardown_failed(self, message):
+    def suite_teardown_failed(self, error):
         """Internal usage only."""
-        self.visit(SuiteTeardownFailed(message))
+        self.visit(SuiteTeardownFailed(error))
+
+    def suite_teardown_skipped(self, message):
+        """Internal usage only."""
+        self.visit(SuiteTeardownFailed(message, skipped=True))
