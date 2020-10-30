@@ -17,6 +17,7 @@ List all keywords
     ...   Non Ascii Unicode Defaults
     ...   Non Ascii Unicode Doc
     ...   Non String Defaults
+    ...   Robot Espacers
     ...   Set Name Using Robot Name Attribute
     ...   Takes \${embedded} \${args}
 

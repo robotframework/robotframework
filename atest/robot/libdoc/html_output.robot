@@ -27,7 +27,7 @@ Inits
 Keyword Names
     ${MODEL}[keywords][0][name]     Get Hello
     ${MODEL}[keywords][1][name]     Keyword
-    ${MODEL}[keywords][13][name]    Set Name Using Robot Name Attribute
+    ${MODEL}[keywords][14][name]    Set Name Using Robot Name Attribute
 
 Keyword Arguments
     [Template]    Verify Argument Models
@@ -36,12 +36,13 @@ Keyword Arguments
     ${MODEL}[keywords][6][args]     arg=hyv\\xe4
     ${MODEL}[keywords][10][args]    arg=hyvä
     ${MODEL}[keywords][12][args]    a=1    b=True    c=(1, 2, None)
-    ${MODEL}[keywords][13][args]    a    b    *args    **kwargs
+    ${MODEL}[keywords][13][args]    arg=\\ robot \\ escapers\\n\\t\\r \\ \\
+    ${MODEL}[keywords][14][args]    a    b    *args    **kwargs
 
 Embedded Arguments
     [Template]    NONE
-    Should Be Equal    ${MODEL}[keywords][14][name]    Takes \${embedded} \${args}
-    Should Be Empty    ${MODEL}[keywords][14][args]
+    Should Be Equal    ${MODEL}[keywords][15][name]    Takes \${embedded} \${args}
+    Should Be Empty    ${MODEL}[keywords][15][args]
 
 Keyword Documentation
     ${MODEL}[keywords][1][doc]
