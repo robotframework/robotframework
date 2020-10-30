@@ -62,6 +62,27 @@ Run Keyword In For Loop
         Run Keyword    ${kw}    ${arg}
     END
 
+Run Keyword With Test Timeout Passing
+    [Timeout]    5 seconds
+    Run Keyword    Log    Timeout is not exceeded
+
+Run Keyword With Test Timeout Exceeded
+    [Documentation]    FAIL Test timeout 1 second 234 milliseconds exceeded.
+    [Timeout]    1234 milliseconds
+    Run Keyword    Log    Before Timeout
+    Run Keyword    Sleep    1.3s
+
+Run Keyword With KW Timeout Passing
+    Run Keyword    Timeoutted UK Passing
+
+Run Keyword With KW Timeout Exceeded
+    [Documentation]    FAIL Keyword timeout 300 milliseconds exceeded.
+    Run Keyword    Timeoutted UK Timeouting
+
+Run Keyword With Invalid Keyword Name
+    [Documentation]    FAIL Keyword name must be a string.
+    Run Keyword    ${42}    arg 1    arg 2
+
 Example
     ${foo} =      Evaluate    [10, 42]
 #    Huu '${foo}'      # Works
@@ -75,6 +96,14 @@ My UK
 Run Keyword If
     [Arguments]    ${name}    ${condition}    @{args}
     BuiltIn.Run Keyword If    ${name}    ${condition}    @{args}
+
+Timeoutted UK Passing
+    [Timeout]    5 seconds
+    No Operation
+
+Timeoutted UK Timeouting
+    [Timeout]    300 milliseconds
+    Sleep    1 second
 
 Huu '${foo}'
     Log    ${foo[1]}    WARN

@@ -67,6 +67,9 @@ Stdout and stderr are not captured when running Run Keyword
     Stdout Should Contain    ${expected}
     Stderr Should Contain    ${expected}
 
+Example
+    Check Test Case    ${TEST NAME}
+
 *** Keywords ***
 Check Run Keyword
     [Arguments]    ${kw}    ${subkw_name}    @{msgs}
