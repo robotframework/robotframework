@@ -192,8 +192,6 @@ class IntegerConverter(TypeConverter):
     def _non_string_convert(self, value, explicit_type=True):
         if value.is_integer():
             return int(value)
-        if not explicit_type:
-            return value
         raise ValueError('Conversion would lose precision.')
 
     def _convert(self, value, explicit_type=True):
