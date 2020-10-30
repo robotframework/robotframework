@@ -49,7 +49,7 @@ def glob_escape(item):
 class Unescaper(object):
     _escape_sequences = re.compile(r'''
         (\\+)                # escapes
-        (n\ ?|r|t            # n, r, or t
+        (n|r|t            # n, r, or t
          |x[0-9a-fA-F]{2}    # x+HH
          |u[0-9a-fA-F]{4}    # u+HHHH
          |U[0-9a-fA-F]{8}    # U+HHHHHHHH
@@ -59,23 +59,13 @@ class Unescaper(object):
     def __init__(self):
         self._escape_handlers = {
             '': lambda value: value,
-            'n': self._handle_n,
+            'n': lambda value: '\n',
             'r': lambda value: '\r',
             't': lambda value: '\t',
             'x': self._hex_to_unichr,
             'u': self._hex_to_unichr,
             'U': self._hex_to_unichr
         }
-
-    def _handle_n(self, value):
-        if value:
-            # TODO: Remove this feature for good in RF 3.3!
-            from robot.output import librarylogger
-            librarylogger.warn(
-                "Ignoring space after '\\n' is deprecated. For more info see: "
-                "https://github.com/robotframework/robotframework/issues/3333"
-            )
-        return '\n'
 
     def _hex_to_unichr(self, value):
         ordinal = int(value, 16)

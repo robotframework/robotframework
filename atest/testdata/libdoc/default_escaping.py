@@ -10,7 +10,7 @@ def verify_backslash(current='c:\\windows\\system', expected='c:\\windows\\syste
     b.should_be_equal(current, expected)
 
 
-def verify_line_break(current='Hello\nWorld!\r\nEnd...\\n', expected='Hello\nWorld!\r\nEnd...\\n'):
+def verify_line_break(current='Hello\n World!\r\n End...\\n', expected='Hello\n World!\r\n End...\\n'):
     b.should_be_equal(current, expected)
 
 
