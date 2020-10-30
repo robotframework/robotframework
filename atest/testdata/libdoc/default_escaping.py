@@ -10,6 +10,11 @@ def verify_backslash(current='c:\\windows\\system', expected='c:\\windows\\syste
     b.should_be_equal(current, expected)
 
 
+def verify_internalvariables(current='first ${sca${lar}}  @{list}[${4}]  &{dict.key}[2] some env %{${somename}} and a \\${backslash}[${key}]   ',
+                             expected='first ${sca${lar}}  @{list}[${4}]  &{dict.key}[2] some env %{${somename}} and a \\${backslash}[${key}]   '):
+    b.should_be_equal(current, expected)
+
+
 def verify_line_break(current='Hello\n World!\r\n End...\\n', expected='Hello\n World!\r\n End...\\n'):
     b.should_be_equal(current, expected)
 
