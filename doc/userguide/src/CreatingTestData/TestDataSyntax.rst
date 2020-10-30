@@ -409,8 +409,6 @@ in the test data.
           dependent line terminator is needed (`\r\n` on Windows and
           `\n` elsewhere).
 
-__ https://github.com/robotframework/robotframework/issues/3333
-
 Handling empty values
 '''''''''''''''''''''
 
