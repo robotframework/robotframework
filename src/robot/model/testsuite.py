@@ -180,8 +180,8 @@ class TestSuite(ModelObject):
     def clear(self):
         self.suites.clear()
         self.tests.clear()
-        self.setup = None
-        self.teardown = None
+        self.setup.reset()
+        self.teardown.reset()
 
 
 class TestSuites(ItemList):
