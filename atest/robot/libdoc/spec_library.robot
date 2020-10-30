@@ -24,9 +24,6 @@ Generated
 Scope
     Scope Should Be                GLOBAL
 
-Named Args
-    Named Args Should Be           false
-
 Source info
     Source should be               Example.py
     Lineno should be               8
@@ -45,10 +42,10 @@ Init Arguments
     Init Arguments Should Be       2    i
 
 Init Source Info
-    Keyword Should Not Have Source    0    xpath=init
-    Keyword Lineno Should Be          0    12      xpath=init
-    Keyword Should Not Have Source    1    xpath=init
-    Keyword Should Not Have Lineno    1    xpath=init
+    Keyword Should Not Have Source    0    xpath=inits/init
+    Keyword Lineno Should Be          0    12      xpath=inits/init
+    Keyword Should Not Have Source    1    xpath=inits/init
+    Keyword Should Not Have Lineno    1    xpath=inits/init
 
 Keyword Names
     Keyword Name Should Be         0    Keyword
@@ -94,10 +91,6 @@ Keyword Source Info
     Run Libdoc And Parse Output    %{TEMPDIR}/Example.libspec
     Test Everything
 
-Old spec format
-    Run Libdoc And Parse Output    ${TESTDATADIR}/OldSpec.xml
-    Test Everything
-
 *** Keywords ***
 Test Everything
     Name Should Be                    Example
@@ -106,7 +99,6 @@ Test Everything
     Type Should Be                    LIBRARY
     Generated Should Be Defined
     Scope Should Be                   GLOBAL
-    Named Args Should Be              false
     Source should be                  Example.py
     Lineno should be                  8
     Init Doc Should Be                0    Creates new Example test library 1
@@ -115,10 +107,10 @@ Test Everything
     Init Arguments Should Be          0
     Init Arguments Should Be          1    arg
     Init Arguments Should Be          2    i
-    Keyword Should Not Have Source    0    xpath=init
-    Keyword Lineno Should Be          0    12      xpath=init
-    Keyword Should Not Have Source    1    xpath=init
-    Keyword Should Not Have Lineno    1    xpath=init
+    Keyword Should Not Have Source    0    xpath=inits/init
+    Keyword Lineno Should Be          0    12      xpath=inits/init
+    Keyword Should Not Have Source    1    xpath=inits/init
+    Keyword Should Not Have Lineno    1    xpath=inits/init
     Keyword Name Should Be            0    Keyword
     Keyword Name Should Be            1    My Keyword
     Keyword Name Should Be            2    Non Ascii Doc

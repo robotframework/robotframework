@@ -41,15 +41,18 @@ Synopsis
 Options
 ~~~~~~~
 
-  -f, --format <html|xml|xml:html>
-                           Specifies whether to generate HTML or XML output.
-                           `xml:html` format means generating an XML output
-                           where keyword documentation is converted to HTML
-                           regardless of the original documentation format. The
-                           default output format is got from the output file
-                           extension so that :file:`*.html` -> `html`,
-                           :file:`*.xml` -> `xml` and :file:`*.libspec`->
-                           `xml:html`.
+  -f, --format <html|xml|json|libspec>
+                           Specifies whether to generate an HTML output for humans or
+                           a machine readable spec file in XML or JSON format. The
+                           `libspec` format means XML spec with documentations converted
+                           to HTML. The default format is got from the output file
+                           extension.
+  -s, --specdocformat <raw|html>
+                           Specifies the documentation format used with XML and JSON
+                           spec files. `raw` means preserving the original documentation
+                           format and `html` means converting documentation to HTML. The
+                           default is `raw` with XML spec files and `html` with JSON
+                           specs and when using the special `libspec` format.
   -F, --docformat <robot|html|text|rest>
                            Specifies the source documentation format. Possible
                            values are Robot Framework's documentation format,
@@ -59,7 +62,7 @@ Options
   -N, --name <newname>     Sets the name of the documented library or resource.
   -V, --version <newversion>  Sets the version of the documented library or
                            resource. The default value for test libraries is
-                           `got from the source code`__.
+                           `defined in the source code`__.
   -P, --pythonpath <path>  Additional locations where to search for libraries
                            and resources similarly as when `running tests`__.
   -h, --help               Prints this help.
@@ -126,19 +129,24 @@ the `module search path`_ similarly as when executing test cases.
 Libdoc spec files
 '''''''''''''''''
 
-Earlier generated Libdoc XML spec files can also be used as inputs. This
-works if spec files use either :file:`*.xml` or :file:`*.libspec` extension::
+Earlier generated Libdoc XML or JSON spec files can also be used as inputs.
+This works if spec files use either :file:`*.xml`, :file:`*.libspec` or
+:file:`*.json` extension::
 
    python -m robot.libdoc Example.xml Example.html
    python -m robot.libdoc Example.libspec Example.html
+   python -m robot.libdoc Example.json Example.html
 
 .. note:: Support for the :file:`*.libspec` extension is new in
           Robot Framework 3.2.
 
+          Support for the :file:`*.json` extension is new in
+          Robot Framework 4.0.
+
 Generating documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Libdoc can generate documentation in HTML (for humans) and XML (for tools)
+Libdoc can generate documentation in HTML (for humans) and XML or JSON (for tools)
 formats. The file where to write the documentation is specified as the second
 argument after the library/resource name or path, and the output format is
 got from the output file extension by default.
@@ -190,7 +198,7 @@ are omitted if getting them from the library fails for whatever reason.
 
 Libdoc automatically uses the XML format if the output file extension is
 :file:`*.xml` or :file:`*.libspec`. When using the special :file:`*.libspec`
-extension, Libdoc automatically enables the `xml:html` format which means
+extension, Libdoc automatically enables the options `-f XML -s HTML` which means
 creating an XML output file where keyword documentation is converted to HTML.
 If needed, the format can be explicitly set with the :option:`--format` option.
 
@@ -199,25 +207,49 @@ If needed, the format can be explicitly set with the :option:`--format` option.
    python -m robot.libdoc OperatingSystem OperatingSystem.xml
    python -m robot.libdoc test/resource.robot doc/resource.libspec
    python -m robot.libdoc --format xml MyLibrary MyLibrary.spec
-   python -m robot.libdoc --format xml:html MyLibrary MyLibrary.xml
+   python -m robot.libdoc --format xml -s html MyLibrary MyLibrary.xml
 
 The exact Libdoc spec file format is documented with an `XML schema`__ (XSD)
 at https://github.com/robotframework/robotframework/tree/master/doc/schema.
-The spec file format may change slightly between Robot Framework major
-releases. To make it easier for external tools to know how to parse a certain
+The spec file format may change between Robot Framework major releases.
+To make it easier for external tools to know how to parse a certain
 spec file, the spec file root element has a dedicated `specversion`
 attribute. It was added in Robot Framework 3.2 with value `2` and earlier
 spec files can be considered to have version `1`. The spec version will
 be incremented in the future if and when changes are made.
+Robot Framework 4.0 introduced new spec version `3`.
 
-.. note:: The `xml:html` format and automatically using it if the output
-          file extension is :file:`*.libspec` are new features in Robot
-          Framework 3.2.
+.. note:: Robot Framework 4.0 introduced an updated xml format. It is
+          incompatible with former versions. LibDoc can only read and write
+          new XML format version 3.
+
+          The `XML:HTML` format introduced in Robot Framework 3.2. has been
+          replaced by the format `LIBSPEC` ot the option combination
+          `--format XML --specdocformat HTML`.
 
           Including source information and spec version are new in Robot
           Framework 3.2 as well.
 
 __ https://en.wikipedia.org/wiki/XML_Schema_(W3C)
+
+Libdoc JSON spec files
+''''''''''''''''''''''
+
+Since Robot Framework 4.0 Libdoc can also generate documentation in JSON
+format that is suitable for external tools such as editors or web pages.
+It contains all the same information as the HTML format but in a machine
+readable format.
+
+Similar to XML spec files the JSON spec files contain all information and
+can also be used as input to Libdoc. From that format any other output format
+can be created. By default the library documentation strings are converted
+to HTML format within the JSON output file.
+
+The exact JSON spec file format is documented with an `JSON schema`__
+at https://github.com/robotframework/robotframework/tree/master/doc/schema.
+The spec file format may change between Robot Framework major releases.
+
+__ https://json-schema.org/
 
 Viewing information on console
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

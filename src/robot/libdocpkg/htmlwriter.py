@@ -13,12 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-try:
-    from urllib import quote
-except ImportError:
-    from urllib.parse import quote
-
-from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
+from robot.htmldata import HtmlFileWriter, ModelWriter, LIBDOC
 
 
 class LibdocHtmlWriter(object):
@@ -31,14 +26,11 @@ class LibdocHtmlWriter(object):
 class LibdocModelWriter(ModelWriter):
 
     def __init__(self, output, libdoc):
-        self._output = output
-        libdoc.convert_doc_to_html()
-        self._libdoc = libdoc.to_dictionary()
+        self.output = output
+        self.libdoc = libdoc
 
     def write(self, line):
-        self._output.write('<script type="text/javascript">\n')
-        self.write_data()
-        self._output.write('</script>\n')
-
-    def write_data(self):
-        JsonWriter(self._output).write_json('libdoc = ', self._libdoc)
+        self.output.write('<script type="text/javascript">\n'
+                          'libdoc = %s\n'
+                          '</script>\n'
+                          % self.libdoc.to_json())

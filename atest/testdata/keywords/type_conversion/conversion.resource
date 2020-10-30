@@ -1,20 +1,12 @@
 *** Keywords ***
 Conversion Should Fail
-    [Arguments]    ${kw}    @{args}    ${error}=    ${type}=${kw.lower()}    &{kwargs}
-    ${arg} =    Evaluate    (list($args) + list($kwargs.values()))[0].replace('[', '?')
+    [Arguments]    ${kw}    @{args}    ${error}=    ${type}=${kw.lower()}    ${arg_type}=    &{kwargs}
+    ${arg} =    Evaluate    (list($args) + list($kwargs.values()))[0]
+    ${arg_type} =    Set Variable If    $arg_type    ${SPACE}(${arg_type})    ${EMPTY}
     ${end} =    Set Variable If    $error    : ${error}    .
     Run Keyword And Expect Error
-    ...    ValueError: Argument 'argument' got value '${arg}' that cannot be converted to ${type}${end}
+    ...    ${{'GLOB' if '*' in $error else 'EQUALS'}}: ValueError: Argument 'argument' got value '${arg}'${arg_type} that cannot be converted to ${type}${end}
     ...    ${kw}    @{args}    &{kwargs}
-
-Non-string is not converted
-    [Arguments]    ${kw}
-    Run Keyword    ${kw}    ${1}       ${1}
-    Run Keyword    ${kw}    ${1.5}     ${1.5}
-    Run Keyword    ${kw}    ${True}    ${True}
-    Run Keyword    ${kw}    ${None}    ${None}
-    Run Keyword    ${kw}    ${LIST}    ${LIST}
-    Run Keyword    ${kw}    ${DICT}    ${DICT}
 
 String None is converted to None object
     [Arguments]    ${kw}

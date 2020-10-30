@@ -1,11 +1,18 @@
 import unittest
+import json
+from os.path import dirname, join, normpath
 
+from robot.utils import PY3, IRONPYTHON, JYTHON
 from robot.utils.asserts import assert_equal
+from robot.libdocpkg import LibraryDocumentation
 from robot.libdocpkg.model import LibraryDoc, KeywordDoc
 from robot.libdocpkg.htmlutils import HtmlToText, DocToHtml
 
 get_shortdoc = HtmlToText().get_shortdoc_from_html
 get_text = HtmlToText().html_to_plain_text
+
+CURDIR = dirname(__file__)
+DATADIR = normpath(join(CURDIR, '../../atest/testdata/libdoc/'))
 
 
 def verify_shortdoc_output(doc_input, expected):
@@ -21,6 +28,14 @@ def verify_keyword_shortdoc(doc_format, doc_input, expected):
     keyword.doc = formatter(keyword.doc)
     libdoc.doc_format = 'HTML'
     assert_equal(keyword.shortdoc, expected)
+
+
+def run_libdoc_and_validate_json(filename):
+    library = join(DATADIR, filename)
+    json_spec = LibraryDocumentation(library).to_json()
+    with open(join(CURDIR, '../../doc/schema/libdoc_schema.json')) as f:
+        schema = json.load(f)
+    validate(instance=json.loads(json_spec), schema=schema)
 
 
 class TestHtmlToDoc(unittest.TestCase):
@@ -53,7 +68,7 @@ class TestHtmlToDoc(unittest.TestCase):
         verify_shortdoc_output(doc, exp)
 
 
-class TestKeywordDoc(unittest.TestCase):
+class TestKeywordShortDoc(unittest.TestCase):
 
     def test_shortdoc_with_multiline_plain_text(self):
         doc = """Writes the message to the console.
@@ -131,7 +146,7 @@ automatically added to the message.
 By default the message is written to the standard output stream.
 Using the standard error stream is possibly by giving the ``stream``
 argument value ``'stderr'``."""
-            exp = "Writes the *message* to _the_ console."
+            exp = "Writes the **message** to *the* console."
             verify_keyword_shortdoc('REST', doc, exp)
 
         def test_shortdoc_with_empty_reST_format(self):
@@ -140,3 +155,84 @@ argument value ``'stderr'``."""
             verify_keyword_shortdoc('REST', doc, exp)
     except ImportError:
         pass
+
+
+if not IRONPYTHON and not JYTHON:
+    from jsonschema import validate
+
+    class TestLibdocJsonWriter(unittest.TestCase):
+
+        def test_Annotations(self):
+            if PY3:
+                run_libdoc_and_validate_json('Annotations.py')
+
+        def test_Decorators(self):
+            run_libdoc_and_validate_json('Decorators.py')
+
+        def test_Deprecation(self):
+            run_libdoc_and_validate_json('Deprecation.py')
+
+        def test_DocFormat(self):
+            run_libdoc_and_validate_json('DocFormat.py')
+
+        def test_DynamicLibrary(self):
+            run_libdoc_and_validate_json('DynamicLibrary.py::required')
+
+        def test_DynamicLibraryWithoutGetKwArgsAndDoc(self):
+            run_libdoc_and_validate_json('DynamicLibraryWithoutGetKwArgsAndDoc.py')
+
+        def test_ExampleSpec(self):
+            run_libdoc_and_validate_json('ExampleSpec.xml')
+
+        def test_InternalLinking(self):
+            run_libdoc_and_validate_json('InternalLinking.py')
+
+        def test_KeywordOnlyArgs(self):
+            if PY3:
+                run_libdoc_and_validate_json('KeywordOnlyArgs.py')
+
+        def test_LibraryDecorator(self):
+            run_libdoc_and_validate_json('LibraryDecorator.py')
+
+        def test_module(self):
+            run_libdoc_and_validate_json('module.py')
+
+        def test_NewStyleNoInit(self):
+            run_libdoc_and_validate_json('NewStyleNoInit.py')
+
+        def test_no_arg_init(self):
+            run_libdoc_and_validate_json('no_arg_init.py')
+
+        def test_resource(self):
+            run_libdoc_and_validate_json('resource.resource')
+
+        def test_resource_with_robot_extension(self):
+            run_libdoc_and_validate_json('resource.robot')
+
+        def test_toc(self):
+            run_libdoc_and_validate_json('toc.py')
+
+        def test_TOCWithInitsAndKeywords(self):
+            run_libdoc_and_validate_json('TOCWithInitsAndKeywords.py')
+
+        def test_TypesViaKeywordDeco(self):
+            run_libdoc_and_validate_json('TypesViaKeywordDeco.py')
+
+        def test_DynamicLibrary_json(self):
+            run_libdoc_and_validate_json('DynamicLibrary.json')
+
+
+class TestLibdocJsonBuilder(unittest.TestCase):
+
+    def test_libdoc_json_roundtrip(self):
+        library = join(DATADIR, 'DynamicLibrary.json')
+        spec = LibraryDocumentation(library).to_json()
+        data = json.loads(spec)
+        with open(library) as f:
+            orig_data = json.load(f)
+        data['generated'] = orig_data['generated'] = None
+        assert_equal(data, orig_data)
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -18,7 +18,7 @@ from robot.utils import JYTHON
 from .argumentmapper import DefaultValue
 from .argumentparser import (PythonArgumentParser, UserKeywordArgumentParser,
                              DynamicArgumentParser, JavaArgumentParser)
-from .argumentspec import ArgumentSpec
+from .argumentspec import ArgumentSpec, ArgInfo
 from .embedded import EmbeddedArguments
 if JYTHON:
     from .javaargumentcoercer import JavaArgumentCoercer

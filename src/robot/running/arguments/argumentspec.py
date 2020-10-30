@@ -137,14 +137,22 @@ class ArgInfo(object):
         return False
 
     @property
-    def type_string(self):
+    def type_repr(self):
         if self.type is self.NOTSET:
-            return 'NOTSET'
-        if not isclass(self.type):
-            return self.type
-        if issubclass(self.type, Enum):
-            return self._format_enum(self.type)
-        return self.type.__name__
+            return None
+        if isclass(self.type):
+            if issubclass(self.type, Enum):
+                return self._format_enum(self.type)
+            return self.type.__name__
+        return unicode(self.type)
+
+    @property
+    def default_repr(self):
+        if self.default is self.NOTSET:
+            return None
+        if isinstance(self.default, Enum):
+            return self.default.name
+        return unic(self.default)
 
     def _format_enum(self, enum):
         try:
@@ -166,10 +174,10 @@ class ArgInfo(object):
         elif self.kind == self.VAR_NAMED:
             ret = '**' + ret
         if self.type is not self.NOTSET:
-            ret = '%s: %s' % (ret, self.type_string)
+            ret = '%s: %s' % (ret, self.type_repr)
             default_sep = ' = '
         else:
             default_sep = '='
         if self.default is not self.NOTSET:
-            ret = '%s%s%s' % (ret, default_sep, unic(self.default))
+            ret = '%s%s%s' % (ret, default_sep, self.default_repr)
         return ret

@@ -33,8 +33,8 @@ class Message(ModelObject):
         #: The message content as a string.
         self.message = message
         #: Severity of the message. Either ``TRACE``, ``DEBUG``, ``INFO``,
-        #: ``WARN``, ``ERROR``, or ``FAIL``. The latest one is only used with
-        #: keyword failure messages.
+        #: ``WARN``, ``ERROR``, ``FAIL`` or ``SKIP`. The last two are only used
+        #: with keyword failure messages.
         self.level = level
         #: ``True`` if the content is in HTML, ``False`` otherwise.
         self.html = html

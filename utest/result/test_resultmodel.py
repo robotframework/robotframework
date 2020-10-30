@@ -203,5 +203,54 @@ class TestModel(unittest.TestCase):
         assert_raises(ValueError, setattr, item, 'skipped', False)
 
 
+class TestKeywordChildren(unittest.TestCase):
+
+    def test_only_keywords(self):
+        kw = Keyword()
+        for i in range(10):
+            kw.keywords.create(str(i))
+        assert_equal(kw.children, list(kw.keywords))
+
+    def test_only_messages(self):
+        kw = Keyword()
+        for i in range(10):
+            kw.messages.create(str(i))
+        assert_equal(kw.children, list(kw.messages))
+
+    def test_order(self):
+        kw = Keyword()
+        m1 = kw.messages.create('m1')
+        k1 = kw.keywords.create('k1')
+        k2 = kw.keywords.create('k2')
+        m2 = kw.messages.create('m2')
+        k3 = kw.keywords.create('k3')
+        assert_equal(kw.children, [m1, k1, k2, m2, k3])
+
+    def test_order_after_modifications(self):
+        kw = Keyword()
+        kw.keywords.create('k1')
+        kw.messages.create('m1')
+        k2 = kw.keywords.create('k2')
+        m2 = kw.messages.create('m2')
+        k1 = kw.keywords[0] = Keyword('k1-new')
+        m1 = kw.messages[0] = Message('m1-new')
+        m3 = Message('m3')
+        kw.messages.append(m3)
+        k3 = Keyword('k3')
+        kw.keywords.extend([k3])
+        assert_equal(kw.children, [k1, m1, k2, m2, m3, k3])
+        kw.keywords = [k1, k3]
+        kw.messages = [m1]
+        assert_equal(kw.children, [k1, m1, k3])
+
+    def test_id_with_keyword_parents(self):
+        kw = TestSuite().tests.create().keywords.create()
+        kw.keywords = [Keyword(), Keyword()]
+        kw.keywords[-1].keywords.create()
+        assert_equal(kw.keywords[0].id, 's1-t1-k1-k1')
+        assert_equal(kw.keywords[1].id, 's1-t1-k1-k2')
+        assert_equal(kw.keywords[1].keywords[0].id, 's1-t1-k1-k2-k1')
+
+
 if __name__ == '__main__':
     unittest.main()
