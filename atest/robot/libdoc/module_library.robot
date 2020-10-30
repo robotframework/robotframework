@@ -37,13 +37,14 @@ Has No Inits
 Keyword Names
     Keyword Name Should Be           0     Get Hello
     Keyword Name Should Be           1     Keyword
-    Keyword Name Should Be           13    Set Name Using Robot Name Attribute
+    Keyword Name Should Be           14    Set Name Using Robot Name Attribute
 
 Keyword Arguments
     Keyword Arguments Should Be      0
     Keyword Arguments Should Be      1     a1=d    *a2
     Keyword Arguments Should Be      12    a=1    b=True    c=(1, 2, None)
-    Keyword Arguments Should Be      13    a    b    *args    **kwargs
+    Keyword Arguments Should Be      13    arg=\\ robot \\ escapers\\n\\t\\r \\ \\
+    Keyword Arguments Should Be      14    a    b    *args    **kwargs
 
 Non-ASCII Unicode Defaults
     Keyword Arguments Should Be      10    arg=hyvä
@@ -55,8 +56,8 @@ Non-ASCII String Defaults
     Keyword Arguments Should Be      7     arg=${{'hyvä' if $PY3_or_IPY else 'hyv\\xc3\\xa4'}}
 
 Embedded Arguments
-    Keyword Name Should Be           14    Takes \${embedded} \${args}
-    Keyword Arguments Should Be      14
+    Keyword Name Should Be           15    Takes \${embedded} \${args}
+    Keyword Arguments Should Be      15
 
 Keyword Documentation
     Keyword Doc Should Be            1     A keyword.\n\nSee `get hello` for details.
@@ -97,6 +98,6 @@ Keyword source info
     Keyword Lineno Should Be         0     19
 
 Keyword source info with decorated function
-    Keyword Name Should Be           14    Takes \${embedded} \${args}
-    Keyword Should Not Have Source   14
-    Keyword Lineno Should Be         14    81
+    Keyword Name Should Be           15    Takes \${embedded} \${args}
+    Keyword Should Not Have Source   15
+    Keyword Lineno Should Be         15    81
