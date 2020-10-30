@@ -20,8 +20,8 @@ Verify Backslash
     Check Libdoc Default    1    c:\\\\windows\\\\system
 
 Verify Line Break
-    Verify Line Break    Hello\nWorld!\r\nEnd...\\n
-    Check Libdoc Default    2    Hello\\nWorld!\\r\\nEnd...\\\\n
+    Verify Line Break    Hello\n World!\r\n End...\\n
+    Check Libdoc Default    2    Hello\\n World!\\r\\n End...\\\\n
 
 Verify Line Tab
     Verify Line Tab    Hello\tWorld!\t\t End\\t...
