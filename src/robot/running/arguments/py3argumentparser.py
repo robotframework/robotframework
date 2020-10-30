@@ -16,8 +16,6 @@
 from inspect import signature, Parameter
 import typing
 
-from robot.utils import PY_VERSION
-
 from .argumentspec import ArgumentSpec
 
 
