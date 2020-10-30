@@ -778,7 +778,9 @@ class String(object):
         See also `Should Be Uppercase` and `Should Be Lowercase`.
         """
         if is_bytes(string):
-            string = string.decode(errors='backslashreplace')
+            if PY3:
+                string = string.decode(errors='backslashreplace')
+            string = str(string)
         if string != self.convert_to_title_case(string, exclude):
             self._fail(msg, "'%s' is not titlecase.", string)
 
