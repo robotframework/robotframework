@@ -39,7 +39,7 @@ Backslash
 New Line
     Check Test Case    ${TEST NAME}
 
-Ignoring Space After Newline Is Deprecated
+Space After Newline Is parsed
     Check Test Case    ${TEST NAME}
 
 Carrriage Return

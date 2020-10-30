@@ -409,13 +409,6 @@ in the test data.
           dependent line terminator is needed (`\r\n` on Windows and
           `\n` elsewhere).
 
-.. note:: Possible un-escaped space character after the `\n` is
-          ignored meaning that `two lines\nhere` and `two lines\n here` are
-          equivalent. This syntax has, however, been deprecated in Robot
-          Framework 3.2 and it will be removed later. See `issue #3333`__
-          for more information about why this syntax existed and why it
-          is going to be removed.
-
 __ https://github.com/robotframework/robotframework/issues/3333
 
 Handling empty values
