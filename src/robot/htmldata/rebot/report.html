@@ -231,11 +231,8 @@ function renderSearchSelector(suite, test, include, exclude) {
 function renderSearchDetails(suite, test, include, exclude) {
     var tests = searchTests(util.escape(suite), util.escape(test),
                             util.escape(include), util.escape(exclude));
-    var passed = calculatePassed(tests);
-    var stats = {total: tests.length,
-                 pass: passed,
-                 fail: tests.length - passed,
-                 totalTime: calculateTotalTime(tests)};
+    var stats = calculateStats(tests);
+    stats.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', stats).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
 }
@@ -302,11 +299,19 @@ function calculateTotalTime(tests) {
     return util.formatElapsed(total);
 }
 
-function calculatePassed(tests) {
+function calculateStats(tests) {
     var passed = util.filter(tests, function (test) {
         return test.status == 'PASS';
     });
-    return passed.length;
+    var failed = util.filter(tests, function (test) {
+        return test.status == 'FAIL';
+    });
+    return {
+      total: tests.length,
+      pass: passed.length,
+      fail: failed.length,
+      skip: tests.length - passed.length - failed.length
+    };
 }
 
 function renderTestDetails(sortByStatus, target) {
