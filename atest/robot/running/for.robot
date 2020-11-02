@@ -66,6 +66,9 @@ Settings after FOR
     Should be FOR loop    ${tc.kws[0]}    1
     Check log message     ${tc.teardown.msgs[0]}    Teardown was found and eXecuted.
 
+Invalid FOR usage
+    Check test case    ${TEST NAME}
+
 Invalid END usage
     Check test case    ${TEST NAME} 1
     Check test case    ${TEST NAME} 2

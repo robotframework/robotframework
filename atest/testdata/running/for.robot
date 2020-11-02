@@ -9,6 +9,8 @@ ${NO VALUES}      FOR loop has no loop values.
 ${NO KEYWORDS}    FOR loop contains no keywords.
 ${NO VARIABLES}   FOR loop has no loop variables.
 ${WRONG VALUES}   Number of FOR loop values should be multiple of its variables.
+${INVALID FOR}    'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
+${INVALID END}    'End' is a reserved keyword. It must be an upper case 'END' and followed by an opening 'FOR' or 'IF' when used as a marker.
 
 *** Test Cases ***
 Simple loop
@@ -72,25 +74,32 @@ Settings after FOR
     END
     [Teardown]    Log    Teardown was found and e${x}ecuted.
 
+Invalid FOR usage
+    [Documentation]    FAIL    ${INVALID FOR}
+    For    ${var}    IN    one    two
+        Log    var: ${var}
+    END
+
+
 Invalid END usage 1
-    [Documentation]    FAIL    'End' is a reserved keyword.
+    [Documentation]    FAIL    ${INVALID END}
     Log    No for loop here...
     END
 
 Invalid END usage 2
-    [Documentation]    FAIL    'End' is a reserved keyword.
+    [Documentation]    FAIL    ${INVALID END}
     FOR    ${var}    IN    one    two
     \    Log    var: ${var}
     \    END
 
 Invalid END usage 3
-    [Documentation]    FAIL    'End' is a reserved keyword.
+    [Documentation]    FAIL    ${INVALID END}
     FOR    ${var}    IN    one    two
     \    Log    var: ${var}
     End
 
 Invalid END usage 4
-    [Documentation]    FAIL    'End' is a reserved keyword.
+    [Documentation]    FAIL    ${INVALID END}
     Invalid END usage in UK
 
 FOR with empty body fails
