@@ -25,7 +25,7 @@ class GatherFailedTests(SuiteVisitor):
         self.tests = []
 
     def visit_test(self, test):
-        if not test.passed:
+        if test.failed:
             self.tests.append(glob_escape(test.longname))
 
     def visit_keyword(self, kw):
