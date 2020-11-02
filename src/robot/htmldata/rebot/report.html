@@ -690,7 +690,7 @@ function hideHiddenDetailsColumns(elem) {
 <script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">
   <tr>
     <th>Status:</th>
-    <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
+    <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
   </tr>
   {{if doc}}
   <tr>
