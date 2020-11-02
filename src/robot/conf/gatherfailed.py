@@ -38,7 +38,7 @@ class GatherFailedSuites(SuiteVisitor):
         self.suites = []
 
     def start_suite(self, suite):
-        if any(not test.passed for test in suite.tests):
+        if any(test.failed for test in suite.tests):
             self.suites.append(glob_escape(suite.longname))
 
     def visit_test(self, test):
