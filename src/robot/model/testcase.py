@@ -27,7 +27,7 @@ class TestCase(ModelObject):
     Extended by :class:`robot.running.model.TestCase` and
     :class:`robot.result.model.TestCase`.
     """
-    __slots__ = ['parent', 'name', 'doc', 'timeout']
+    __slots__ = ['parent', 'name', 'doc', 'timeout', 'setup', 'teardown']
     keyword_class = Keyword  #: Internal usage only
 
     def __init__(self, name='', doc='', tags=None, timeout=None):
@@ -37,6 +37,8 @@ class TestCase(ModelObject):
         self.timeout = timeout  #: Test case timeout.
         self.tags = tags
         self.keywords = None
+        self.setup = self.keyword_class(parent=self)
+        self.teardown = self.keyword_class(parent=self)
 
     @setter
     def tags(self, tags):

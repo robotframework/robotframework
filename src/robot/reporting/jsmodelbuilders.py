@@ -127,6 +127,8 @@ class KeywordBuilder(_Builder):
 
     def build(self, kw, split=False):
         self._context.check_expansion(kw)
+        if kw.teardown:
+            kw.keywords.append(kw.teardown)
         with self._context.prune_input(kw.messages, kw.keywords):
             return (self._types[kw.type],
                     self._string(kw.kwname, attr=True),

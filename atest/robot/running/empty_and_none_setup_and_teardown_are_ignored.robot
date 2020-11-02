@@ -29,5 +29,5 @@ Test Should Not Have Setup Or Teardown
     [Arguments]    ${name}
     ${tc} =    Check Test Case    ${name}
     Should Be Equal    ${tc.status}    PASS
-    Should Be Equal    ${tc.keywords.setup}    ${NONE}
-    Should Be Equal    ${tc.keywords.teardown}    ${NONE}
+    Setup Should Not Be Defined     ${tc}
+    Teardown Should Not Be Defined     ${tc}

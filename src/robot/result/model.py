@@ -70,7 +70,8 @@ class Keyword(model.Keyword):
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(),
                  tags=(), timeout=None, type='kw',  status='FAIL',
                  starttime=None, endtime=None, parent=None):
-        model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
+        model.Keyword.__init__(self, '', doc, args, assign, tags, timeout,
+                               type, parent)
         self.parent = parent
         self.messages = None
         self.keywords = None

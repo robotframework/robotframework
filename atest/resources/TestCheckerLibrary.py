@@ -246,8 +246,10 @@ def process_test(test):
         test.exp_message = '' if 'PASS' not in test.doc else test.doc.split('PASS', 1)[1].lstrip()
     for kw in test.keywords:
         process_keyword(kw)
-    test.setup = test.keywords.setup
-    test.teardown = test.keywords.teardown
+    if test.setup:
+        process_keyword(test.setup)
+    if test.teardown:
+        process_keyword(test.teardown)
     test.keywords = test.kws = list(test.keywords.normal)
     test.keyword_count = test.kw_count = len(test.keywords)
 
@@ -255,6 +257,8 @@ def process_test(test):
 def process_keyword(kw):
     if kw is None:
         return
+    if kw.teardown:
+        process_keyword(kw.teardown)
     kw.kws = kw.keywords
     kw.msgs = kw.messages
     kw.message_count = kw.msg_count = len(kw.messages)

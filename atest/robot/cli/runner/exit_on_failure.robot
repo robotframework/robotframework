@@ -39,7 +39,7 @@ Correct Suite Teardown Is Executed When ExitOnFailure Is Used
 Exit On Failure With Skip Teardown On Exit
     [Setup]    Run Tests    --ExitOnFailure --SkipTeardownOnExit    misc/suites
     ${tcase} =    Check Test Case    Suite4 First
-    Should Be Equal    ${tcase.teardown}    ${None}
+    Teardown Should Not Be Defined    ${tcase}
     ${tsuite} =    Get Test Suite    Fourth
     Teardown Should Not Be Defined    ${tsuite}
     Test Should Have Been Skipped    SubSuite1 First

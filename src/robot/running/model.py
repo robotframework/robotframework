@@ -59,7 +59,8 @@ class Keyword(model.Keyword):
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=model.Keyword.KEYWORD_TYPE, lineno=None,
                  parent=None):
-        model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type, parent)
+        model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
+                               parent)
         self.lineno = lineno
 
     def run(self, context):
@@ -79,9 +80,10 @@ class ForLoop(Keyword):
     __slots__ = ['flavor', 'lineno', 'ended']
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, variables, values, flavor, lineno=None, ended=True):
+    def __init__(self, variables, values, flavor, lineno=None, ended=True,
+                 parent=None):
         Keyword.__init__(self, assign=variables, args=values,
-                         type=Keyword.FOR_LOOP_TYPE)
+                         type=Keyword.FOR_LOOP_TYPE, parent=parent)
         self.keywords = None
         self.flavor = flavor
         self.lineno = lineno
@@ -322,10 +324,17 @@ class UserKeyword(object):
         self.keywords = []
         self.lineno = lineno
         self.parent = parent
+        self._teardown = None
 
     @setter
     def keywords(self, keywords):
         return model.Keywords(Keyword, self, keywords)
+
+    @property
+    def teardown(self):
+        if self._teardown is None:
+            self._teardown = Keyword(parent=self)
+        return self._teardown
 
     @setter
     def tags(self, tags):

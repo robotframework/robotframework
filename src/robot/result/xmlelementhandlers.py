@@ -87,7 +87,7 @@ class SuiteHandler(_Handler):
 
     def _children(self):
         return [DocHandler(), MetadataHandler(), SuiteStatusHandler(),
-                SuiteKeywordHandler(), TestCaseHandler(), self]
+                KeywordHandler(), TestCaseHandler(), self]
 
 
 class RootSuiteHandler(SuiteHandler):
@@ -117,6 +117,16 @@ class KeywordHandler(_Handler):
     tag = 'kw'
 
     def start(self, elem, result):
+        type_ = elem.get('type', 'kw')
+        if type_ == 'setup':
+            return result.setup.config(kwname=elem.get('name', ''),
+                                        libname=elem.get('library', ''),
+                                        type=type_)
+        elif type_ == 'teardown':
+            return result.teardown.config(
+                kwname=elem.get('name', ''),
+                libname=elem.get('library', ''),
+                type=type_)
         return result.keywords.create(kwname=elem.get('name', ''),
                                       libname=elem.get('library', ''),
                                       type=elem.get('type', 'kw'))
@@ -125,24 +135,6 @@ class KeywordHandler(_Handler):
         return [DocHandler(), ArgumentsHandler(), AssignHandler(),
                 TagsHandler(), TimeoutHandler(), KeywordStatusHandler(),
                 MessageHandler(), self]
-
-
-class SuiteKeywordHandler(KeywordHandler):
-
-    def start(self, elem, result):
-        type = elem.get('type', 'kw')
-        # FIXME: This hack needs to be fixed
-        if 'TestSuite' in str(result.__class__):
-            if type == 'setup':
-                return result.setup.config(kwname=elem.get('name', ''),
-                                           libname=elem.get('library', ''),
-                                           type=type)
-            elif type == 'teardown':
-                return result.teardown.config(
-                    kwname=elem.get('name', ''),
-                    libname=elem.get('library', ''),
-                    type=type)
-        return KeywordHandler.start(self, elem, result)
 
 
 class MessageHandler(_Handler):
