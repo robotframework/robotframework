@@ -208,6 +208,10 @@ class JsonConverter(object):
         return [self._convert_test(t) for t in suite.tests]
 
     def _convert_test(self, test):
+        if test.setup:
+            test.keywords.insert(0, test.setup)
+        if test.teardown:
+            test.keywords.append(test.teardown)
         return {
             'name': self._escape(test.name),
             'fullName': self._escape(test.longname),

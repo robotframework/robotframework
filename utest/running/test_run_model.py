@@ -122,9 +122,8 @@ Keyword
         assert_equal(suite.resource.keywords[0].keywords[0].name, 'Log')
         assert_equal(suite.resource.keywords[0].keywords[0].args, ('Hello!',))
         assert_equal(suite.tests[0].name, 'Example')
-        assert_equal(suite.tests[0].keywords.setup.name, 'No Operation')
-        assert_equal(suite.tests[0].keywords[0].name, 'No Operation')
-        assert_equal(suite.tests[0].keywords[1].name, 'Keyword')
+        assert_equal(suite.tests[0].setup.name, 'No Operation')
+        assert_equal(suite.tests[0].keywords[0].name, 'Keyword')
 
 
 class TestCopy(unittest.TestCase):

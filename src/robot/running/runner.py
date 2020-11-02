@@ -141,7 +141,7 @@ class Runner(SuiteVisitor):
             status.test_failed(
                 test_or_task('{Test} case contains no keywords.',
                              self._settings.rpa))
-        self._run_setup(test.keywords.setup, status, result)
+        self._run_setup(test.setup, status, result)
         try:
             if not status.failed:
                 StepRunner(self._context,
@@ -163,7 +163,7 @@ class Runner(SuiteVisitor):
         result.message = status.message or result.message
         if status.teardown_allowed:
             with self._context.test_teardown(result):
-                failure = self._run_teardown(test.keywords.teardown, status,
+                failure = self._run_teardown(test.teardown, status,
                                              result)
                 if failure:
                     status.failure_occurred()

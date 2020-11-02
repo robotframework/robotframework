@@ -31,7 +31,7 @@ class Keyword(ModelObject):
     :class:`robot.result.model.Keyword`.
     """
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
-                 '_sort_key', '_next_child_sort_key']
+                 '_teardown', '_sort_key', '_next_child_sort_key']
     KEYWORD_TYPE = 'kw'         #: Normal keyword :attr:`type`.
     SETUP_TYPE = 'setup'        #: Setup :attr:`type`.
     TEARDOWN_TYPE = 'teardown'  #: Teardown :attr:`type`.
@@ -52,6 +52,7 @@ class Keyword(ModelObject):
         #: :attr:`SETUP_TYPE`, :attr:`TEARDOWN_TYPE`, :attr:`FOR_LOOP_TYPE` or
         #: :attr:`FOR_ITEM_TYPE` constant defined on the class level.
         self.type = type
+        self._teardown = None
         self._sort_key = -1
         self._next_child_sort_key = 0
 
@@ -65,6 +66,16 @@ class Keyword(ModelObject):
     @name.setter
     def name(self, name):
         self._name = name
+
+    @property
+    def teardown(self):
+        if self._teardown is None:
+            self._teardown = (self.keyword_class or self.__class__)(parent=self)
+        return self._teardown
+
+    @teardown.setter
+    def teardown(self, td):
+        self._teardown = td
 
     @setter
     def parent(self, parent):

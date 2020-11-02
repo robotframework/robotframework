@@ -35,7 +35,7 @@ Run Sample File And Check Tests
     Should Be Equal    ${test.kws[0].timeout}    2 milliseconds
     Check Test Doc    Document    Testing the metadata parsing.
     ${test} =    Check Test Case    Default Fixture
-    Should Be Equal    ${test.setup}    ${None}
+    Setup Should Not Be Defined     ${test}
     Check Log Message    ${test.teardown.messages[0]}    Test Teardown
     ${test} =    Check Test Case    Overridden Fixture
     Check Log Message    ${test.setup.messages[0]}    Own Setup    INFO

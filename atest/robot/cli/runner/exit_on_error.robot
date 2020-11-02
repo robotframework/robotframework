@@ -59,7 +59,7 @@ Teardowns not executed
     ${suite} =    Get Test Suite    ${name}
     Teardown Should Not Be Defined    ${suite}
     ${tc} =    Check Test Case    ${name}    FAIL    ${MESSAGE}
-    Should Be Equal    ${tc.teardown}    ${None}
+    Teardown Should Not Be Defined    ${tc}
 
 Teardowns executed
     [Arguments]    ${name}

@@ -148,8 +148,8 @@ class TestCaseBuilder(NodeVisitor):
         self._set_settings(self.test, self.settings)
 
     def _set_settings(self, test, settings):
-        test.keywords.setup = settings.setup
-        test.keywords.teardown = settings.teardown
+        test.setup = settings.setup
+        test.teardown = settings.teardown
         test.timeout = settings.timeout
         test.tags = settings.tags
         if settings.template:
@@ -219,7 +219,8 @@ class KeywordBuilder(NodeVisitor):
         self.kw = self.resource.keywords.create(name=node.name,
                                                 lineno=node.lineno)
         self.generic_visit(node)
-        self.kw.keywords.teardown = self.teardown
+        if self.teardown is not None:
+            self.kw.teardown.config(**self.teardown)
 
     def visit_Documentation(self, node):
         self.kw.doc = node.value
@@ -237,7 +238,10 @@ class KeywordBuilder(NodeVisitor):
         self.kw.timeout = node.value
 
     def visit_Teardown(self, node):
-        self.teardown = fixture(node, Keyword.TEARDOWN_TYPE)
+        self.teardown = {
+            'name': node.name, 'args': node.args,
+            'lineno': node.lineno, 'type': Keyword.TEARDOWN_TYPE
+        }
 
     def visit_KeywordCall(self, node):
         self.kw.keywords.create(name=node.keyword, args=node.args,
