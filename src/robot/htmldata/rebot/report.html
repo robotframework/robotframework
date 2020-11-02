@@ -60,9 +60,9 @@ $(document).ready(function () {
 
 function setBackground(topsuite) {
     var color;
-    if (topsuite.failed)
+    if (topsuite.fail)
         color = window.settings.background.fail;
-    else if (topsuite.passed)
+    else if (topsuite.pass)
         color = window.settings.background.pass;
     else
         color = window.settings.background.skip;
@@ -371,14 +371,14 @@ function hideHiddenDetailsColumns(elem) {
   <table class="details">
     <tr>
       <th>Status:</th>
-      {{if failed}}
+      {{if fail}}
       <td><a href="#totals" onclick="totalDetailSelected()"
-             class="fail">${failed} {{= testOrTask('{test}')}}{{if failed != 1}}s{{/if}} failed</a></td>
-      {{else passed && skipped}}
+             class="fail">${fail} {{= testOrTask('{test}')}}{{if fail != 1}}s{{/if}} failed</a></td>
+      {{else pass && skip}}
       <td><a href="#totals" onclick="totalDetailSelected()"
-             class="pass">${passed} {{= testOrTask('{test}')}}{{if passed != 1}}s{{/if}} passed,
-             ${skipped} {{= testOrTask('{test}')}}{{if skipped != 1}}s{{/if}} skipped</a></td>
-      {{else passed}}
+             class="pass">${pass} {{= testOrTask('{test}')}}{{if pass != 1}}s{{/if}} passed,
+             ${skip} {{= testOrTask('{test}')}}{{if skip != 1}}s{{/if}} skipped</a></td>
+      {{else pass}}
       <td><a href="#totals" onclick="totalDetailSelected()"
              class="pass">All {{= testOrTask('{test}')}}s passed</a></td>
       {{else}}
