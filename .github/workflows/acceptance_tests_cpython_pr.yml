@@ -1,10 +1,7 @@
 name: Acceptance tests (CPython + PyPy)
 
 on:
-  push:
-    branches:
-      - main
-      - master
+  pull_request:
     paths:
       - '.github/workflows/**'
       - 'src/**'
@@ -15,10 +12,10 @@ jobs:
   test_using_builtin_python:
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
-        python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', '3.9', 'pypy2', 'pypy3' ]
+        os: [ 'ubuntu-latest', 'windows-latest' ]
+        python-version: [ '2.7', '3.5', '3.9' ]
         include:
           - os: ubuntu-latest
             set_display: export DISPLAY=:99; Xvfb :99 -screen 0 1024x768x24 -ac -noreset & sleep 3
