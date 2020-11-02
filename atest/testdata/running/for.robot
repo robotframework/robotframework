@@ -80,7 +80,6 @@ Invalid FOR usage
         Log    var: ${var}
     END
 
-
 Invalid END usage 1
     [Documentation]    FAIL    ${INVALID END}
     Log    No for loop here...
