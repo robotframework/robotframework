@@ -7,11 +7,7 @@ Markers should get note about case 1
 
 Markers should get note about case 2
     [Documentation]     FAIL 'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
-    ELSE    Log    ${message}
-
-Markers should get note about case 3
-    [Documentation]     FAIL 'Else' is a reserved keyword. It must be an upper case 'ELSE' when used as a marker.
-    ELSE    Log    ${message}
+    if    Log    ${message}
 
 Others should just be reserved 1
     [Documentation]    FAIL 'Continue' is a reserved keyword.
@@ -21,11 +17,19 @@ Others should just be reserved 2
     [Documentation]    FAIL 'Return' is a reserved keyword.
     Return    ${something}
 
-End gets extra note
-    [Documentation]    FAIL 'End' is a reserved keyword. It must be an upper case 'END' and followed by an opening 'FOR' or 'IF' when used as a marker.
+'End' gets extra note
+    [Documentation]    FAIL 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
     END
 
-Elif gets extra note
+'Else' gets extra note
+    [Documentation]     FAIL 'Else' is a reserved keyword. It must be an upper case 'ELSE' and follow an opening 'IF' when used as a marker.
+    ELSE    Log    ${message}
+
+'Else if' gets extra note
+    [Documentation]     FAIL 'Else If' is a reserved keyword. It must be an upper case 'ELSE IF' and follow an opening 'IF' when used as a marker.
+    ELSE if    Log    ${message}
+
+'Elif' gets extra note
     [Documentation]    FAIL 'Elif' is a reserved keyword. The marker to use with 'IF' is 'ELSE IF'.
     ELIF
 

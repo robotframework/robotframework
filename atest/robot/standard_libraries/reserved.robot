@@ -5,17 +5,22 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Markers should get note about case
     Check Test Case    ${TESTNAME} 1
-    Check Test Case    ${TESTNAME} 1
-    Check Test Case    ${TESTNAME} 3
+    Check Test Case    ${TESTNAME} 2
 
 Others should just be reserved
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
 
-End gets extra note
+'End' gets extra note
     Check Test Case    ${TESTNAME}
 
-Elif gets extra note
+'Else' gets extra note
+    Check Test Case    ${TESTNAME}
+
+'Else if' gets extra note
+    Check Test Case    ${TESTNAME}
+
+'Elif' gets extra note
     Check Test Case    ${TESTNAME}
 
 Reserved in user keyword

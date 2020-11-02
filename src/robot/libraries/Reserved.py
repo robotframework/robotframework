@@ -37,8 +37,10 @@ class Reserved(object):
         error = "'%s' is a reserved keyword." % kw.title()
         if kw in ('for', 'end', 'if', 'else', 'else if'):
             error += " It must be an upper case '%s'" % kw.upper()
+            if kw in ('else', 'else if'):
+                error += " and follow an opening 'IF'"
             if kw == 'end':
-                error += " and followed by an opening 'FOR' or 'IF'"
+                error += " and follow an opening 'FOR' or 'IF'"
             error += " when used as a marker."
         if kw == 'elif':
             error += " The marker to use with 'IF' is 'ELSE IF'."
