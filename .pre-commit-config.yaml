@@ -22,4 +22,4 @@ repos:
       additional_dependencies: [jsonschema]
       pass_filenames: false
       always_run: true
-      stages: [push, commit]
+      stages: [push]
