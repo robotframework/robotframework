@@ -8,3 +8,18 @@ repos:
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: check-added-large-files
+- repo: https://github.com/psf/black
+  rev: 20.8b1
+  hooks:
+    - id: black
+      language_version: python
+- repo: local
+  hooks:
+    - id: run-utests
+      name: utests
+      entry: utest/run.py
+      language: system
+      types: [python]
+      pass_filenames: false
+      stages:
+          - push
