@@ -18,9 +18,8 @@ repos:
     - id: run-utests
       name: utests
       entry: utest/run.py
-      language: system
-      types: [python]
+      language: python
+      additional_dependencies: [jsonschema]
       pass_filenames: false
       always_run: true
-      stages:
-        - push
+      stages: [push, commit]
