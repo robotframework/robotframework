@@ -17,7 +17,7 @@ repos:
   hooks:
     - id: run-utests
       name: utests
-      entry: python utest/run.py
+      entry: utest/run.py
       language: system
       types: [python]
       pass_filenames: false
