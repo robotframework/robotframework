@@ -63,14 +63,14 @@ class Keyword(model.Keyword):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message']
+    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message', 'definition']
     keyword_class = None        #: Internal usage only.
     message_class = Message     #: Internal usage only.
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(),
                  tags=(), timeout=None, type='kw',  status='FAIL',
-                 starttime=None, endtime=None):
-        model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
+                 starttime=None, endtime=None, definiton=''):
+        model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type, definiton)
         self.messages = None
         self.keywords = None
         #: Name of the keyword without library or resource name.
@@ -87,6 +87,7 @@ class Keyword(model.Keyword):
         self.endtime = endtime
         #: Keyword status message. Used only if suite teardowns fails.
         self.message = ''
+        self.definition = definiton
 
     @utils.setter
     def keywords(self, keywords):

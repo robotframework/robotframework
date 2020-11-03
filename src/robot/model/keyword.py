@@ -30,7 +30,7 @@ class Keyword(ModelObject):
     :class:`robot.result.model.Keyword`.
     """
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
-                 '_sort_key', '_next_child_sort_key']
+                 'definition', '_sort_key', '_next_child_sort_key']
     KEYWORD_TYPE = 'kw'         #: Normal keyword :attr:`type`.
     SETUP_TYPE = 'setup'        #: Setup :attr:`type`.
     TEARDOWN_TYPE = 'teardown'  #: Teardown :attr:`type`.
@@ -38,7 +38,7 @@ class Keyword(ModelObject):
     FOR_ITEM_TYPE = 'foritem'   #: Single for loop iteration :attr:`type`.
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=KEYWORD_TYPE):
+                 timeout=None, type=KEYWORD_TYPE, definition=''):
         self.parent = None
         self._name = name
         self.doc = doc
@@ -46,6 +46,7 @@ class Keyword(ModelObject):
         self.assign = assign  #: Assigned variables as a list of strings.
         self.tags = tags
         self.timeout = timeout
+        self.definition = definition
         #: Keyword type as a string. The value is either :attr:`KEYWORD_TYPE`,
         #: :attr:`SETUP_TYPE`, :attr:`TEARDOWN_TYPE`, :attr:`FOR_LOOP_TYPE` or
         #: :attr:`FOR_ITEM_TYPE` constant defined on the class level.

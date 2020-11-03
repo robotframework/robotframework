@@ -66,6 +66,8 @@ class XmlLogger(ResultVisitor):
         attrs = {'name': kw.kwname, 'library': kw.libname}
         if kw.type != 'kw':
             attrs['type'] = kw.type
+        if kw.definition not in ('', kw.kwname):
+            attrs['definition'] = kw.definition
         self._writer.start('kw', attrs)
         self._write_list('tags', 'tag', [unic(t) for t in kw.tags])
         self._writer.element('doc', kw.doc)

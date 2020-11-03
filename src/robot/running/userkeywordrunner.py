@@ -34,6 +34,7 @@ class UserKeywordRunner(object):
     def __init__(self, handler, name=None):
         self._handler = handler
         self.name = name or handler.name
+        self.definition = handler.name
 
     @property
     def longname(self):
@@ -69,7 +70,8 @@ class UserKeywordRunner(object):
                              args=kw.args,
                              assign=tuple(assignment),
                              tags=tags,
-                             type=kw.type)
+                             type=kw.type,
+                             definiton=self.definition)
 
     def _run(self, context, args, result):
         variables = context.variables
