@@ -1,6 +1,6 @@
 *** Settings ***
+Library           String
 Variables         binary_list.py
-Resource          old_for_in_resource.robot
 
 *** Variables ***
 @{NUMS}           1    2    3    4    5
@@ -95,18 +95,6 @@ Invalid END usage 1
 
 Invalid END usage 2
     [Documentation]    FAIL    ${INVALID END}
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    \    END
-
-Invalid END usage 3
-    [Documentation]    FAIL    ${INVALID END}
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    End
-
-Invalid END usage 4
-    [Documentation]    FAIL    ${INVALID END}
     Invalid END usage in UK
 
 FOR with empty body fails
@@ -116,7 +104,7 @@ FOR with empty body fails
     Fail    Not executed
 
 FOR without END fails
-    [Documentation]    FAIL    For loop has no closing 'END'.
+    [Documentation]    FAIL    FOR loop has no closing 'END'.
     FOR    ${var}    IN    one    two
     Fail    Not executed
 
@@ -358,23 +346,21 @@ Characters that are illegal in XML
         Log    ${var}
     END
 
-Header with colon is deprecated
+Old :FOR syntax is not supported
+    [Documentation]    FAIL
+    ...    Support for the old for loop syntax has been removed. Replace ':FOR' with 'FOR', end the loop with 'END', and remove escaping backslashes.
     :FOR    ${x}    IN    a    b    c
-        @{result} =    Create List    @{result}    ${x}
+       Fail    Should not be executed
     END
-    Should Be True    ${result} == ['a', 'b', 'c']
+    Fail    Should not be executed
 
-Header with colon is case and space insensitive
-    : f O r    ${x}    IN    a    b    c
-        @{result} =    Create List    @{result}    ${x}
+Escaping with backslash is not supported
+    [Documentation]    FAIL
+    ...    No keyword with name '\\' found.  If it is used inside a for loop, remove escaping backslashes and end the loop with 'END'.
+    FOR    ${var}    IN    one    two
+    \    Fail    Should not be executed
     END
-    Should Be True    ${result} == ['a', 'b', 'c']
-
-Header can have many colons
-    :::f:o:r:::    ${i}    IN RANGE    1    6
-        @{result} =    Create List    @{result}    ${i}
-    END
-    Should Be True    ${result} == [1, 2, 3, 4, 5]
+    Fail    Should not be executed
 
 Invalid separator
     [Documentation]    FAIL    Invalid FOR loop variable 'IN INVALID'.
@@ -410,32 +396,9 @@ Separator is case- and space-sensitive 4
     END
     Fail    Should not be executed
 
-Escaping with backslash is deprecated
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    \    For in UK with backslashes    ${var}
-    END
-    Log    Between for loops
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    \    For in UK with backslashes    ${var}
-    END
-
-END is not required when escaping with backslash
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    \    For in UK with backslashes and without END    ${var}
-    Log    Between for loops
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    \    For in UK with backslashes and without END    ${var}
-
 Header at the end of file
-    [Documentation]    FAIL For loop has no closing 'END'.
+    [Documentation]    FAIL FOR loop has no closing 'END'.
     Header at the end of file
-
-Old for loop in resource
-    Old for loop in resource
 
 *** Keywords ***
 My UK
