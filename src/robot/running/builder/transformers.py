@@ -180,7 +180,7 @@ class TestCaseBuilder(NodeVisitor):
         # Header and end used only for deprecation purposes. Remove in RF 3.3!
         loop = ForLoop(node.variables, node.values, node.flavor, node.lineno,
                        node._header, node._end)
-        ForLoopBuilder(loop).visit(node)
+        ForLoopBuilder(loop).build(node)
         self.test.keywords.append(loop)
 
     def visit_TemplateArguments(self, node):
@@ -248,7 +248,7 @@ class KeywordBuilder(NodeVisitor):
         # Header and end used only for deprecation purposes. Remove in RF 3.3!
         loop = ForLoop(node.variables, node.values, node.flavor, node.lineno,
                        node._header, node._end)
-        ForLoopBuilder(loop).visit(node)
+        ForLoopBuilder(loop).build(node)
         self.kw.keywords.append(loop)
 
 
@@ -257,9 +257,20 @@ class ForLoopBuilder(NodeVisitor):
     def __init__(self, loop):
         self.loop = loop
 
+    def build(self, for_node):
+        for child_node in for_node.body:
+            self.visit(child_node)
+
     def visit_KeywordCall(self, node):
         self.loop.keywords.create(name=node.keyword, args=node.args,
                                   assign=node.assign, lineno=node.lineno)
 
     def visit_TemplateArguments(self, node):
         self.loop.keywords.create(args=node.args, lineno=node.lineno)
+
+    def visit_ForLoop(self, node):
+        # Header and end used only for deprecation purposes. Remove in RF 3.3!
+        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno,
+                       node._header, node._end)
+        ForLoopBuilder(loop).build(node)
+        self.loop.keywords.append(loop)
