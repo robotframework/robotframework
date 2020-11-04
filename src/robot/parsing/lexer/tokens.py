@@ -67,7 +67,6 @@ class Token(object):
     WITH_NAME = 'WITH_NAME'
     FOR = 'FOR'
     FOR_SEPARATOR = 'FOR_SEPARATOR'
-    OLD_FOR_INDENT = 'OLD_FOR_INDENT'
     END = 'END'
 
     SEPARATOR = 'SEPARATOR'

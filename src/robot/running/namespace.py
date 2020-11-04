@@ -262,6 +262,17 @@ class KeywordStore(object):
         return runner
 
     def _raise_no_keyword_found(self, name):
+        if name.strip(': ').upper() == 'FOR':
+            raise KeywordError(
+                "Support for the old for loop syntax has been removed. "
+                "Replace '%s' with 'FOR', end the loop with 'END', and "
+                "remove escaping backslashes." % name
+            )
+        if name == '\\':
+            raise KeywordError(
+                "No keyword with name '\\' found. If it is used inside a for "
+                "loop, remove escaping backslashes and end the loop with 'END'."
+            )
         msg = "No keyword with name '%s' found." % name
         finder = KeywordRecommendationFinder(self.user_keywords,
                                              self.libraries,

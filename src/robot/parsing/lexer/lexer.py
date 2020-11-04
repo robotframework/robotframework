@@ -100,7 +100,7 @@ class Lexer(object):
 
     def get_tokens(self):
         self.lexer.lex()
-        statements = self._handle_old_for(self.statements)
+        statements = self.statements
         if not self.data_only:
             statements = chain.from_iterable(
                 self._split_trailing_commented_and_empty_lines(s)
@@ -115,8 +115,7 @@ class Lexer(object):
         # Setting local variables is performance optimization to avoid
         # unnecessary lookups and attribute access.
         if self.data_only:
-            ignored_types = {None, Token.COMMENT_HEADER, Token.COMMENT,
-                             Token.OLD_FOR_INDENT}
+            ignored_types = {None, Token.COMMENT_HEADER, Token.COMMENT}
         else:
             ignored_types = {None}
         name_types = (Token.TESTCASE_NAME, Token.KEYWORD_NAME)
@@ -145,34 +144,6 @@ class Lexer(object):
                 yield token
             if prev_token:
                 yield EOS.from_token(prev_token)
-
-    def _handle_old_for(self, statements):
-        end_statement = [Token(Token.SEPARATOR), Token(Token.END)]
-        old_for = False
-        for statement in statements:
-            marker = self._get_first_data_token(statement)
-            if marker:
-                if marker.type == Token.OLD_FOR_INDENT:
-                    old_for = True
-                elif old_for:
-                    if marker.type == Token.END:
-                        # We get here if block has been indented with '\' but
-                        # there is also 'END'. The former is deprecated and
-                        # removing the value causes a deprecation warning.
-                        marker.value = ''
-                    else:
-                        yield end_statement
-                    old_for = False
-            yield statement
-        if old_for:
-            yield end_statement
-
-    def _get_first_data_token(self, statement):
-        non_data_tokens = Token.NON_DATA_TOKENS + (None,)
-        for token in statement:
-            if token.type not in non_data_tokens:
-                return token
-        return None
 
     def _split_trailing_commented_and_empty_lines(self, statement):
         lines = self._split_to_lines(statement)
