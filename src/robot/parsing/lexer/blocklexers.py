@@ -13,6 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.errors import DataError
+
 from .tokens import Token
 from .statementlexers import (Lexer,
                               SettingSectionHeaderLexer, SettingLexer,
@@ -24,7 +26,7 @@ from .statementlexers import (Lexer,
                               TestOrKeywordSettingLexer,
                               KeywordCallLexer,
                               ForLoopHeaderLexer,
-                              EndLexer)
+                              EndLexer, IfStatementLexer, ElseLexer, ElseIfStatementLexer)
 
 
 class BlockLexer(Lexer):
@@ -172,7 +174,7 @@ class TestOrKeywordLexer(BlockLexer):
                 statement.pop(0).type = None    # These tokens will be ignored
 
     def lexer_classes(self):
-        return (TestOrKeywordSettingLexer, ForLoopLexer, KeywordCallLexer)
+        return (TestOrKeywordSettingLexer, ForLoopLexer, IfBlockLexer, KeywordCallLexer)
 
 
 class TestCaseLexer(TestOrKeywordLexer):
@@ -206,10 +208,56 @@ class ForLoopLexer(BlockLexer):
 
     def input(self, statement):
         lexer = BlockLexer.input(self, statement)
-        if isinstance(lexer, ForLoopHeaderLexer):
+        if isinstance(lexer, (IfStatementLexer, ForLoopHeaderLexer)):
             self._block_level += 1
         if isinstance(lexer, EndLexer):
             self._block_level -= 1
 
     def lexer_classes(self):
-        return (ForLoopHeaderLexer, EndLexer, KeywordCallLexer)
+        return (ForLoopHeaderLexer, IfBlockLexer, EndLexer, KeywordCallLexer)
+
+
+class IfBlockLexer(BlockLexer):
+
+    def __init__(self, ctx):
+        BlockLexer.__init__(self, ctx)
+        self._end_seen = False
+        self._else_seen = False
+        self._block_level = 0
+        self._last_block_has_content = False
+
+    def handles(self, statement):
+        return IfStatementLexer(self.ctx).handles(statement)
+
+    def accepts_more(self, statement):
+        return not self._end_seen
+
+    def input(self, statement):
+        lexer = BlockLexer.input(self, statement)
+        if isinstance(lexer, (IfStatementLexer, ForLoopHeaderLexer)):
+            self._block_level += 1
+            self._last_block_has_content = self._block_level > 1
+        elif isinstance(lexer, EndLexer):
+            if not self._last_block_has_content:
+                raise DataError("line [%s] : Empty block detected" % lexer.lineno)
+            self._last_block_has_content = self._block_level > 1
+            self._end_seen = self._block_level == 1
+            self._block_level -= 1
+        elif isinstance(lexer, ElseLexer):
+            if not self._last_block_has_content:
+                raise DataError("line [%s] : Empty block detected" % lexer.lineno)
+            self._last_block_has_content = False
+            if self._else_seen:
+                raise DataError("line [%s] : Invalid second ELSE detected" % lexer.lineno)
+            self._else_seen = True
+        elif isinstance(lexer, ElseIfStatementLexer):
+            if not self._last_block_has_content:
+                raise DataError("line [%s] : Empty block detected" % lexer.lineno)
+            self._last_block_has_content = False
+            if self._else_seen:
+                raise DataError("line [%s] : Invalid ELSE IF detected after ELSE" % lexer.lineno)
+        else:
+            self._last_block_has_content = True
+
+    def lexer_classes(self):
+        return (IfStatementLexer, ElseIfStatementLexer, ElseLexer, ForLoopLexer, EndLexer, KeywordCallLexer)

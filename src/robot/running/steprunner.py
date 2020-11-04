@@ -21,8 +21,9 @@ from robot.result import Keyword as KeywordResult
 from robot.output import librarylogger as logger
 from robot.utils import (format_assign_message, frange, get_error_message,
                          is_list_like, is_number, plural_or_not as s,
-                         split_from_equals, type_name)
-from robot.variables import is_dict_variable, is_scalar_assign
+                         split_from_equals, type_name, is_unicode)
+from robot.variables import is_dict_variable, is_scalar_assign, evaluate_expression
+from .arguments.argumentresolver import VariableReplacer
 
 from .statusreporter import StatusReporter
 
@@ -55,6 +56,9 @@ class StepRunner(object):
         if step.type == step.FOR_LOOP_TYPE:
             runner = ForRunner(context, self._templated, step.flavor)
             return runner.run(step)
+        if step.type == step.IF_EXPRESSION_TYPE:
+            runner = IfRunner(context, self._templated)
+            return runner.run(step)
         runner = context.get_runner(name or step.name)
         if context.dry_run:
             return runner.dry_run(step, context)
@@ -68,6 +72,77 @@ def ForRunner(context, templated=False, flavor='IN'):
                'IN ENUMERATE': ForInEnumerateRunner}
     runner = runners[flavor or 'IN']
     return runner(context, templated)
+
+
+class IfRunner(object):
+
+    current_if_stack = []
+
+    def __init__(self, context, templated=False):
+        self._context = context
+        self._templated = templated
+
+    def _get_type(self, data, first, datacondition):
+        if first:
+            return data.IF_EXPRESSION_TYPE
+        if datacondition is True:
+            return data.ELSE_TYPE
+        return data.ELSE_IF_TYPE
+
+    def run(self, data, name=None):
+        IfRunner.current_if_stack.append(data)
+        try:
+            first = True
+            condition_matched = False
+            for datacondition, body in data.bodies:
+                condition_matched = self._run_if_branch(body, condition_matched, data, datacondition, first)
+                first = False
+        finally:
+            IfRunner.current_if_stack.pop()
+
+    def _run_if_branch(self, body, condition_matched, data, datacondition, first):
+        branch_to_execute, result = self._branch_to_be_executed(data, first, datacondition, body, condition_matched)
+        with StatusReporter(self._context, result, dry_run_lib_kw=not branch_to_execute):
+            if branch_to_execute:
+                runner = StepRunner(self._context, self._templated)
+                runner.run_steps(body)
+        return condition_matched or branch_to_execute
+
+    def _branch_to_be_executed(self, data, first, datacondition, body, condition_matched_already):
+        data_type = self._get_type(data, first, datacondition)
+        condition_result = data_type == data.ELSE_TYPE
+        unresolved_condition = ''
+        if not condition_result:
+            unresolved_condition = datacondition[0]
+            if not condition_matched_already and not self._context.dry_run:
+                condition_result = self._resolve_condition(unresolved_condition)
+        branch_to_execute = self._is_branch_to_execute(condition_matched_already,
+                                                       condition_result,
+                                                       body)
+        result = KeywordResult(kwname=self._get_name(unresolved_condition),
+                               type=data_type)
+        return branch_to_execute, result
+
+    def _resolve_condition(self, unresolved_condition):
+        condition, _ = VariableReplacer().replace([unresolved_condition], (), variables=self._context.variables)
+        resolved_condition = condition[0]
+        if is_unicode(resolved_condition):
+            return evaluate_expression(resolved_condition, self._context.variables)
+        return bool(resolved_condition)
+
+    def _is_branch_to_execute(self, condition_matched_already, condition_result, body):
+        if self._context.dry_run:
+            return not self._is_already_executing_this_if()
+        return not condition_matched_already and condition_result and body
+
+    def _is_already_executing_this_if(self):
+        current = IfRunner.current_if_stack[-1]
+        return current in IfRunner.current_if_stack[:-1]
+
+    def _get_name(self, condition):
+        if not condition:
+            return ''
+        return ' [ %s ]' % (condition)
 
 
 class ForInRunner(object):
