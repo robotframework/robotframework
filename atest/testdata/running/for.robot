@@ -53,7 +53,7 @@ Keyword arguments on multiple rows
         Should Be Equal    ${msg}    1 2 3 4 5 6 7 ${var}
     END
 
-Multiple loops in one test
+Multiple loops in a test
     FOR    ${x}    IN    foo    bar
         Log    In first loop with "${x}"
     END
@@ -68,13 +68,42 @@ Multiple loops in one test
     END
     Log    The End
 
-Nested for loops
-    FOR  ${x}  IN  1  2  3
-       FOR  ${y}  IN  a  b  c
+Nested loop syntax
+    FOR    ${x}    IN    1    2    3
+       Log    ${x} in
+       FOR    ${y}    IN    a    b    c
            Log   values ${x} ${y}
        END
+       Log    ${x} out
     END
     Log   The End
+
+Multiple loops in a loop
+    FOR    ${root}    IN    root
+        FOR    ${child}    IN    first
+            Should Be Equal    ${root}-${child}    root-first
+        END
+        Should Be Equal    ${root}-${child}    root-first
+        FOR    ${child}    IN    second
+            Should Be Equal    ${root}-${child}    root-second
+        END
+        Should Be Equal    ${root}-${child}    root-second
+    END
+    Should Be Equal    ${root}-${child}    root-second
+
+Deeply nested loops
+    FOR    ${a}    IN    a
+        FOR    ${b}    IN    b
+            FOR    ${c}    IN    c
+                FOR    ${d}    IN    d
+                    FOR    ${e}    IN    e
+                        Should Be Equal    ${a}${b}${c}${d}${e}    abcde
+                    END
+                END
+            END
+        END
+    END
+    Should Be Equal    ${a}${b}${c}${d}${e}    abcde
 
 Settings after FOR
     FOR    ${x}    IN    x
@@ -166,11 +195,11 @@ Loop in user keyword
     For In UK
     For In UK with Args    one    two    three    four
 
-Nested loop in user keyword
+Keyword with loop calling other keywords with loops
     [Documentation]    FAIL    This ought to be enough
     Nested for In UK    foo    bar
 
-Loop in test and user keyword
+Test with loop calling keywords with loops
     [Documentation]    FAIL    This ought to be enough
     @{list} =    Create List    one    two
     FOR    ${item}    IN    @{list}

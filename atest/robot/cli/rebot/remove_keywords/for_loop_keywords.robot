@@ -6,6 +6,7 @@ Resource          remove_keywords_resource.robot
 *** Variables ***
 ${0 REMOVED}      ${EMPTY}
 ${1 REMOVED}      _1 passing step removed using --RemoveKeywords option._
+${2 REMOVED}      _2 passing steps removed using --RemoveKeywords option._
 ${3 REMOVED}      _3 passing steps removed using --RemoveKeywords option._
 ${4 REMOVED}      _4 passing steps removed using --RemoveKeywords option._
 
@@ -32,7 +33,14 @@ Steps With Warning Are Not Removed
     Check Log Message    ${tc.kws[0].kws[1].kws[-1].kws[0].msgs[0]}    Presidential Candidate!    WARN
 
 Steps From Nested Loops Are Removed
-    ${tc}=    Check Test Case    Nested loop in user keyword
+    ${tc}=    Check Test Case    Nested Loop Syntax
+    Length Should Be    ${tc.kws[0].kws}    1
+    Should Be Equal     ${tc.kws[0].doc}    ${2 REMOVED}
+    Length Should Be    ${tc.kws[0].kws[0].kws[1].kws}    1
+    Should Be Equal     ${tc.kws[0].kws[0].kws[1].doc}    ${2 REMOVED}
+
+Steps From Loops In Keywords From Loops Are Removed
+    ${tc}=    Check Test Case    Keyword with loop calling other keywords with loops
     Length Should Be    ${tc.kws[0].kws[0].kws}    1
     Should Be Equal     ${tc.kws[0].kws[0].doc}    ${0 REMOVED}
     Length Should Be    ${tc.kws[0].kws[0].kws[0].kws[0].kws[1].kws}    1

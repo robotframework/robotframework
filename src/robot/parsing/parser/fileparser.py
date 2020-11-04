@@ -58,16 +58,13 @@ class FileParser(Parser):
 
 
 class SectionParser(Parser):
-
-    def __init__(self, model, subsection_parser_classes):
-        Parser.__init__(self, model)
-        self._subsection_parser_classes = subsection_parser_classes
+    subsection_parsers = {}
 
     def handles(self, statement):
         return statement.type not in Token.HEADER_TOKENS
 
     def parse(self, statement):
-        parser_class = self._subsection_parser_classes.get(statement.type)
+        parser_class = self.subsection_parsers.get(statement.type)
         if parser_class:
             parser = parser_class(statement)
             self.model.body.append(parser.model)
@@ -75,20 +72,39 @@ class SectionParser(Parser):
         self.model.body.append(statement)
 
 
-def SettingSectionParser(header):
-    return SectionParser(SettingSection(header), {})
+class SettingSectionParser(SectionParser):
 
-def VariableSectionParser(header):
-    return SectionParser(VariableSection(header), {})
+    def __init__(self, header):
+        SectionParser.__init__(self, SettingSection(header))
 
-def CommentSectionParser(header):
-    return SectionParser(CommentSection(header), {})
 
-def ImplicitCommentSectionParser(statement):
-    return SectionParser(CommentSection(body=[statement]), {})
+class VariableSectionParser(SectionParser):
 
-def TestCaseSectionParser(header):
-    return SectionParser(TestCaseSection(header), {Token.TESTCASE_NAME:TestCaseParser})
+    def __init__(self, header):
+        SectionParser.__init__(self, VariableSection(header))
 
-def KeywordSectionParser(header):
-    return SectionParser(KeywordSection(header), {Token.KEYWORD_NAME:KeywordParser})
+
+class CommentSectionParser(SectionParser):
+
+    def __init__(self, header):
+        SectionParser.__init__(self, CommentSection(header))
+
+
+class ImplicitCommentSectionParser(SectionParser):
+
+    def __init__(self, statement):
+        SectionParser.__init__(self, CommentSection(body=[statement]))
+
+
+class TestCaseSectionParser(SectionParser):
+    subsection_parsers = {Token.TESTCASE_NAME: TestCaseParser}
+
+    def __init__(self, header):
+        SectionParser.__init__(self, TestCaseSection(header))
+
+
+class KeywordSectionParser(SectionParser):
+    subsection_parsers = {Token.KEYWORD_NAME: KeywordParser}
+
+    def __init__(self, header):
+        SectionParser.__init__(self, KeywordSection(header))
