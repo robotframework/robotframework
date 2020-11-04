@@ -190,6 +190,43 @@ class ForLoopHeaderLexer(StatementLexer):
         return normalize_whitespace(value) in self.separators
 
 
+class IfStatementLexer(StatementLexer):
+
+    def handles(self, statement):
+        return len(statement) == 2 and statement[0].value == 'IF'
+
+    def lex(self):
+        self.statement[0].type = Token.IF
+        self.statement[1].type = Token.ARGUMENT
+
+
+class ElseIfStatementLexer(StatementLexer):
+
+    def handles(self, statement):
+        return len(statement) == 2 and statement[0].value == 'ELSE IF'
+
+    def lex(self):
+        self.statement[0].type = Token.ELSE_IF
+        self.statement[1].type = Token.ARGUMENT
+
+    @property
+    def lineno(self):
+        return self.statement[0].lineno
+
+
+class ElseLexer(StatementLexer):
+
+    def handles(self, statement):
+        return len(statement) == 1 and statement[0].value == 'ELSE'
+
+    def lex(self):
+        self.statement[0].type = Token.ELSE
+
+    @property
+    def lineno(self):
+        return self.statement[0].lineno
+
+
 class EndLexer(StatementLexer):
 
     def handles(self, statement):
