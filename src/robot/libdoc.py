@@ -161,42 +161,48 @@ class LibDoc(Application):
             return options, arguments
         if len(arguments) > 2:
             raise DataError('Only two arguments allowed when writing output.')
-        extension = os.path.splitext(arguments[-1])[1][1:]
-        options['format'] \
-            = self._validate_format('Format', options['format'] or extension,
-                                    ['HTML', 'XML', 'JSON', 'LIBSPEC'])
-        options['specdocformat'] \
-            = self._validate_format('Spec doc format', options['specdocformat'],
-                                    ['RAW', 'HTML'])
-        options['docformat'] \
-            = self._validate_format('Doc format', options['docformat'],
-                                    ['ROBOT', 'TEXT', 'HTML', 'REST'])
-        if options['format'] == 'HTML' and options['specdocformat']:
-            raise DataError("The --specdocformat option is not applicable with "
-                            "HTML outputs.")
         return options, arguments
 
+    def main(self, args, name='', version='', format=None, docformat=None,
+             specdocformat=None):
+        lib_or_res, output = args[:2]
+        docformat = self._get_docformat(docformat)
+        libdoc = LibraryDocumentation(lib_or_res, name, version, docformat)
+        if ConsoleViewer.handles(output):
+            ConsoleViewer(libdoc).view(output, *args[2:])
+            return
+        format, specdocformat \
+            = self._get_format_and_specdocformat(format, specdocformat, output)
+        if (format == 'HTML'
+                or specdocformat == 'HTML'
+                or format in ('JSON', 'LIBSPEC') and specdocformat != 'RAW'):
+            libdoc.convert_docs_to_html()
+        libdoc.save(output, format)
+        self.console(os.path.abspath(output))
+
+    def _get_docformat(self, docformat):
+        return self._validate_format('Doc format', docformat,
+                                     ['ROBOT', 'TEXT', 'HTML', 'REST'])
+
+    def _get_format_and_specdocformat(self, format, specdocformat, output):
+        extension = os.path.splitext(output)[1][1:]
+        format = self._validate_format('Format', format or extension,
+                                       ['HTML', 'XML', 'JSON', 'LIBSPEC'])
+        specdocformat = self._validate_format('Spec doc format', specdocformat,
+                                              ['RAW', 'HTML'])
+        if format == 'HTML' and specdocformat:
+            raise DataError("The --specdocformat option is not applicable with "
+                            "HTML outputs.")
+        return format, specdocformat
+
     def _validate_format(self, type, format, valid):
-        if not format:
+        if format is None:
             return None
         format = format.upper()
         if format not in valid:
             raise DataError("%s must be %s, got '%s'."
                             % (type, seq2str(valid, lastsep=' or '), format))
         return format
-
-    def main(self, args, name='', version='', format=None, docformat=None, specdocformat=None):
-        lib_or_res, output = args[:2]
-        libdoc = LibraryDocumentation(lib_or_res, name, version, docformat)
-        if ConsoleViewer.handles(output):
-            ConsoleViewer(libdoc).view(output, *args[2:])
-        else:
-            if (format == 'HTML'
-                    or specdocformat == 'HTML'
-                    or format in ('JSON', 'LIBSPEC') and specdocformat != 'RAW'):
-                libdoc.convert_docs_to_html()
-            libdoc.save(output, format)
-            self.console(os.path.abspath(output))
 
 
 def libdoc_cli(arguments):
