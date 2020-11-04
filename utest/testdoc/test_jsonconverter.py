@@ -30,7 +30,7 @@ class TestJsonConverter(unittest.TestCase):
                      fullName='Misc',
                      doc='<p>My doc</p>',
                      metadata=[('1', '<p>2</p>'), ('abc', '<p>123</p>')],
-                     numberOfTests=182,
+                     numberOfTests=183,
                      tests=[],
                      keywords=[])
         test_convert(self.suite['suites'][0],
@@ -44,11 +44,11 @@ class TestJsonConverter(unittest.TestCase):
                      numberOfTests=1,
                      suites=[],
                      keywords=[])
-        test_convert(self.suite['suites'][4]['suites'][1]['suites'][-1],
+        test_convert(self.suite['suites'][5]['suites'][1]['suites'][-1],
                      source=join(normpath(DATADIR), 'multiple_suites',
                                  '02__sub.suite.1', 'second__.Sui.te.2..robot'),
                      relativeSource='misc/multiple_suites/02__sub.suite.1/second__.Sui.te.2..robot',
-                     id='s1-s5-s2-s2',
+                     id='s1-s6-s2-s2',
                      name='.Sui.te.2.',
                      fullName='Misc.Multiple Suites.Sub.Suite.1..Sui.te.2.',
                      doc='',
@@ -99,15 +99,15 @@ class TestJsonConverter(unittest.TestCase):
                      doc='',
                      tags=[],
                      timeout='')
-        test_convert(self.suite['suites'][3]['tests'][-7],
-                     id='s1-s4-t5',
+        test_convert(self.suite['suites'][4]['tests'][-7],
+                     id='s1-s5-t5',
                      name='Fifth',
                      fullName='Misc.Many Tests.Fifth',
                      doc='',
                      tags=['d1', 'd2', 'f1'],
                      timeout='')
         test_convert(self.suite['suites'][-2]['tests'][0],
-                     id='s1-s11-t1',
+                     id='s1-s12-t1',
                      name='Default Test Timeout',
                      fullName='Misc.Timeouts.Default Test Timeout',
                      doc='<p>I have a timeout</p>',
@@ -130,27 +130,27 @@ class TestJsonConverter(unittest.TestCase):
                      name='dummykw',
                      arguments='',
                      type='KEYWORD')
-        test_convert(self.suite['suites'][3]['tests'][-7]['keywords'][0],
+        test_convert(self.suite['suites'][4]['tests'][-7]['keywords'][0],
                      name='Log',
                      arguments='Test 5',
                      type='KEYWORD')
 
     def test_suite_setup_and_teardown(self):
-        test_convert(self.suite['suites'][3]['keywords'][0],
+        test_convert(self.suite['suites'][4]['keywords'][0],
                      name='Log',
                      arguments='Setup',
                      type='SETUP')
-        test_convert(self.suite['suites'][3]['keywords'][1],
+        test_convert(self.suite['suites'][4]['keywords'][1],
                      name='No operation',
                      arguments='',
                      type='TEARDOWN')
 
     def test_test_setup_and_teardown(self):
-        test_convert(self.suite['suites'][8]['tests'][0]['keywords'][0],
+        test_convert(self.suite['suites'][9]['tests'][0]['keywords'][0],
                      name='${TEST SETUP}',
                      arguments='',
                      type='SETUP')
-        test_convert(self.suite['suites'][8]['tests'][0]['keywords'][2],
+        test_convert(self.suite['suites'][9]['tests'][0]['keywords'][2],
                      name='${TEST TEARDOWN}',
                      arguments='',
                      type='TEARDOWN')
@@ -166,7 +166,7 @@ class TestJsonConverter(unittest.TestCase):
                      type='FOR')
 
     def test_assign(self):
-        test_convert(self.suite['suites'][5]['tests'][1]['keywords'][0],
+        test_convert(self.suite['suites'][6]['tests'][1]['keywords'][0],
                      name='${msg} = Evaluate',
                      arguments="u'Fran\\\\xe7ais'",
                      type='KEYWORD')
