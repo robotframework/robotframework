@@ -46,7 +46,7 @@ Keyword arguments on multiple rows
     Check log message     ${loop.kws[0].kws[1].msgs[0]}    1 2 3 4 5 6 7 one
     Check log message     ${loop.kws[1].kws[1].msgs[0]}    1 2 3 4 5 6 7 two
 
-Multiple loops in one test
+Multiple loops in a test
     ${tc} =    Check test case    ${TEST NAME}
     Should be FOR loop    ${tc.kws[0]}                          2
     Check log message     ${tc.kws[0].kws[0].kws[0].msgs[0]}    In first loop with "foo"
@@ -61,21 +61,32 @@ Multiple loops in one test
     Check log message     ${tc.kws[3].kws[1].kws[2].msgs[0]}    Value: b
     Check log message     ${tc.kws[4].msgs[0]}                  The End
 
-Nested for loops
+Nested loop syntax
     ${tc} =    Check test case    ${TEST NAME}
     Should be FOR loop    ${tc.kws[0]}                          3
-    Should be FOR loop    ${tc.kws[0].kws[0].kws[0]}            3
-    Check log message     ${tc.kws[0].kws[0].kws[0].kws[0].kws[0].msgs[0]}    values 1 a
-    Check log message     ${tc.kws[0].kws[0].kws[0].kws[1].kws[0].msgs[0]}    values 1 b
-    Check log message     ${tc.kws[0].kws[0].kws[0].kws[2].kws[0].msgs[0]}    values 1 c
-    Check log message     ${tc.kws[0].kws[1].kws[0].kws[0].kws[0].msgs[0]}    values 2 a
-    Check log message     ${tc.kws[0].kws[1].kws[0].kws[1].kws[0].msgs[0]}    values 2 b
-    Check log message     ${tc.kws[0].kws[1].kws[0].kws[2].kws[0].msgs[0]}    values 2 c
-    Check log message     ${tc.kws[0].kws[2].kws[0].kws[0].kws[0].msgs[0]}    values 3 a
-    Check log message     ${tc.kws[0].kws[2].kws[0].kws[1].kws[0].msgs[0]}    values 3 b
-    Check log message     ${tc.kws[0].kws[2].kws[0].kws[2].kws[0].msgs[0]}    values 3 c
-    Check log message     ${tc.kws[1].msgs[0]}                  The End
+    Should be FOR loop    ${tc.kws[0].kws[0].kws[1]}            3
+    Check log message     ${tc.kws[0].kws[0].kws[0].msgs[0]}                  1 in
+    Check log message     ${tc.kws[0].kws[0].kws[1].kws[0].kws[0].msgs[0]}    values 1 a
+    Check log message     ${tc.kws[0].kws[0].kws[1].kws[1].kws[0].msgs[0]}    values 1 b
+    Check log message     ${tc.kws[0].kws[0].kws[1].kws[2].kws[0].msgs[0]}    values 1 c
+    Check log message     ${tc.kws[0].kws[0].kws[2].msgs[0]}                  1 out
+    Check log message     ${tc.kws[0].kws[1].kws[0].msgs[0]}                  2 in
+    Check log message     ${tc.kws[0].kws[1].kws[1].kws[0].kws[0].msgs[0]}    values 2 a
+    Check log message     ${tc.kws[0].kws[1].kws[1].kws[1].kws[0].msgs[0]}    values 2 b
+    Check log message     ${tc.kws[0].kws[1].kws[1].kws[2].kws[0].msgs[0]}    values 2 c
+    Check log message     ${tc.kws[0].kws[1].kws[2].msgs[0]}                  2 out
+    Check log message     ${tc.kws[0].kws[2].kws[0].msgs[0]}                  3 in
+    Check log message     ${tc.kws[0].kws[2].kws[1].kws[0].kws[0].msgs[0]}    values 3 a
+    Check log message     ${tc.kws[0].kws[2].kws[1].kws[1].kws[0].msgs[0]}    values 3 b
+    Check log message     ${tc.kws[0].kws[2].kws[1].kws[2].kws[0].msgs[0]}    values 3 c
+    Check log message     ${tc.kws[0].kws[2].kws[2].msgs[0]}                  3 out
+    Check log message     ${tc.kws[1].msgs[0]}                                The End
 
+Multiple loops in a loop
+    Check test case    ${TEST NAME}
+
+Deeply nested loops
+    Check test case    ${TEST NAME}
 
 Settings after FOR
     ${tc} =    Check test case    ${TEST NAME}
@@ -145,11 +156,11 @@ Loop in user keyword
     Check kw "For In UK"              ${tc.kws[0]}
     Check kw "For In UK with Args"    ${tc.kws[1]}    4    one
 
-Nested loop in user keyword
+Keyword with loop calling other keywords with loops
     ${tc} =    Check test case    ${TEST NAME}
     Check kw "Nested For In UK"    ${tc.kws[0]}    foo
 
-Loop in test and user keyword
+Test with loop calling keywords with loops
     ${loop} =    Check test and get loop    ${TEST NAME}    1
     Should be FOR loop                ${loop}                  1      FAIL
     Check kw "For In UK"              ${loop.kws[0].kws[0]}

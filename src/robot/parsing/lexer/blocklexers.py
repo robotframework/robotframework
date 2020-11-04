@@ -196,21 +196,19 @@ class ForLoopLexer(BlockLexer):
 
     def __init__(self, ctx):
         BlockLexer.__init__(self, ctx)
-        self._end_seen = False
         self._block_level = 0
 
     def handles(self, statement):
         return ForLoopHeaderLexer(self.ctx).handles(statement)
 
     def accepts_more(self, statement):
-        return not self._end_seen
+        return self._block_level > 0
 
     def input(self, statement):
         lexer = BlockLexer.input(self, statement)
-        if isinstance(lexer, (ForLoopHeaderLexer)):
+        if isinstance(lexer, ForLoopHeaderLexer):
             self._block_level += 1
         if isinstance(lexer, EndLexer):
-            self._end_seen = self._block_level == 1
             self._block_level -= 1
 
     def lexer_classes(self):
