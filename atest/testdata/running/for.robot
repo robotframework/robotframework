@@ -68,6 +68,14 @@ Multiple loops in one test
     END
     Log    The End
 
+Nested for loops
+    FOR  ${x}  IN  1  2  3
+       FOR  ${y}  IN  a  b  c
+           Log   values ${x} ${y}
+       END
+    END
+    Log   The End
+
 Settings after FOR
     FOR    ${x}    IN    x
         ${x} =    Convert to Uppercase    ${x}
