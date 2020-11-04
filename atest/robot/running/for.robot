@@ -61,6 +61,22 @@ Multiple loops in one test
     Check log message     ${tc.kws[3].kws[1].kws[2].msgs[0]}    Value: b
     Check log message     ${tc.kws[4].msgs[0]}                  The End
 
+Nested for loops
+    ${tc} =    Check test case    ${TEST NAME}
+    Should be FOR loop    ${tc.kws[0]}                          3
+    Should be FOR loop    ${tc.kws[0].kws[0].kws[0]}            3
+    Check log message     ${tc.kws[0].kws[0].kws[0].kws[0].kws[0].msgs[0]}    values 1 a
+    Check log message     ${tc.kws[0].kws[0].kws[0].kws[1].kws[0].msgs[0]}    values 1 b
+    Check log message     ${tc.kws[0].kws[0].kws[0].kws[2].kws[0].msgs[0]}    values 1 c
+    Check log message     ${tc.kws[0].kws[1].kws[0].kws[0].kws[0].msgs[0]}    values 2 a
+    Check log message     ${tc.kws[0].kws[1].kws[0].kws[1].kws[0].msgs[0]}    values 2 b
+    Check log message     ${tc.kws[0].kws[1].kws[0].kws[2].kws[0].msgs[0]}    values 2 c
+    Check log message     ${tc.kws[0].kws[2].kws[0].kws[0].kws[0].msgs[0]}    values 3 a
+    Check log message     ${tc.kws[0].kws[2].kws[0].kws[1].kws[0].msgs[0]}    values 3 b
+    Check log message     ${tc.kws[0].kws[2].kws[0].kws[2].kws[0].msgs[0]}    values 3 c
+    Check log message     ${tc.kws[1].msgs[0]}                  The End
+
+
 Settings after FOR
     ${tc} =    Check test case    ${TEST NAME}
     Should be FOR loop    ${tc.kws[0]}    1
