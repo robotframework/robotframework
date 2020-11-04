@@ -16,6 +16,11 @@ Methods inside start_keyword and end_keyword can log normal messages
 Methods outside start_keyword and end_keyword can log messages to syslog
     Correct messages should be logged to syslog
 
+Listener works with if/else structure
+    ${path} =    Normalize Path    ${DATADIR}/output/listeners/logging_listener.py
+    Run Tests    --listener ${path} -l l.html -r r.html    misc/if_else.robot
+    Log and report should be created
+
 *** Keywords ***
 Run Tests With Logging Listener
     ${path} =    Normalize Path    ${DATADIR}/output/listeners/logging_listener.py
