@@ -77,3 +77,6 @@ class StepsWithEndParser(StepsParser):
 
 def ForLoopParser(header):
     return StepsWithEndParser(ForLoop(header))
+
+def IfParser(header):
+    return StepsWithEndParser(IfBlock(header))

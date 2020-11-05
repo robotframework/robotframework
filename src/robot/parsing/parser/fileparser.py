@@ -59,6 +59,10 @@ class FileParser(Parser):
 
 class SectionParser(Parser):
     subsection_parsers = {}
+    section_class = None
+
+    def __init__(self, header):
+        Parser.__init__(self, self.section_class(header))
 
     def handles(self, statement):
         return statement.type not in Token.HEADER_TOKENS
@@ -73,38 +77,27 @@ class SectionParser(Parser):
 
 
 class SettingSectionParser(SectionParser):
-
-    def __init__(self, header):
-        SectionParser.__init__(self, SettingSection(header))
+    section_class = SettingSection
 
 
 class VariableSectionParser(SectionParser):
-
-    def __init__(self, header):
-        SectionParser.__init__(self, VariableSection(header))
+    section_class = VariableSection
 
 
 class CommentSectionParser(SectionParser):
-
-    def __init__(self, header):
-        SectionParser.__init__(self, CommentSection(header))
+    section_class = CommentSection
 
 
 class ImplicitCommentSectionParser(SectionParser):
-
-    def __init__(self, statement):
-        SectionParser.__init__(self, CommentSection(body=[statement]))
+    def section_class(self, statement):
+        return CommentSection(body=[statement])
 
 
 class TestCaseSectionParser(SectionParser):
     subsection_parsers = {Token.TESTCASE_NAME: TestCaseParser}
-
-    def __init__(self, header):
-        SectionParser.__init__(self, TestCaseSection(header))
+    section_class = TestCaseSection
 
 
 class KeywordSectionParser(SectionParser):
     subsection_parsers = {Token.KEYWORD_NAME: KeywordParser}
-
-    def __init__(self, header):
-        SectionParser.__init__(self, KeywordSection(header))
+    section_class = KeywordSection

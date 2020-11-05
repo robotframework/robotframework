@@ -234,3 +234,7 @@ class EndLexer(StatementLexer):
 
     def lex(self):
         self.statement[0].type = Token.END
+
+    @property
+    def lineno(self):
+        return self.statement[0].lineno
