@@ -82,6 +82,12 @@ Skipped with --skip
 Skipped with --SkipOnFailure
     Check Test Case    ${TEST NAME}
 
+Skipped with --SkipOnFailure when Failure in Test Setup
+    Check Test Case    ${TEST NAME}
+
+Skipped with --SkipOnFailure when Failure in Test Teardown
+    Check Test Case    ${TEST NAME}
+
 Using Skip Does Not Affect Passing And Failing Tests
     Check Test Case    Passing Test
     Check Test Case    Failing Test

@@ -164,6 +164,28 @@ Skipped with --SkipOnFailure
     [Tags]    skip-on-failure
     Fail    Ooops, we fail!
 
+Skipped with --SkipOnFailure when Failure in Test Setup
+    [Documentation]    SKIP
+    ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
+    ...
+    ...    Original failure:
+    ...    Setup failed:
+    ...    failure in setup
+    [Tags]    skip-on-failure
+    [Setup]    Fail    failure in setup
+    No Operation
+
+Skipped with --SkipOnFailure when Failure in Test Teardown
+    [Documentation]    SKIP
+    ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
+    ...
+    ...    Original failure:
+    ...    Setup failed:
+    ...    failure in teardown
+    [Tags]    skip-on-failure
+    [Teardown]    Fail    failure in teardown
+    No Operation
+
 --NonCritical Is an Alias for --SkipOnFailure
     [Documentation]    SKIP
     ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.

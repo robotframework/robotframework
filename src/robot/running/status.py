@@ -75,6 +75,8 @@ class _ExecutionStatus(object):
         self.exit = parent.exit if parent else Exit(*exit_modes)
         self.skipped = False
         self._teardown_allowed = False
+        self._skip_on_failure = False
+        self._rpa = False
         if parent:
             parent.children.append(self)
 
@@ -82,6 +84,11 @@ class _ExecutionStatus(object):
         if failure and not isinstance(failure, PassExecution):
             if failure.skip:
                 self.failure.setup_skipped = unic(failure)
+                self.skipped = True
+            elif self._skip_on_failure:
+                msg = self._skip_on_failure_message(
+                    'Setup failed:\n%s' % unic(failure))
+                self.failure.test = msg
                 self.skipped = True
             else:
                 self.failure.setup = unic(failure)
@@ -95,6 +102,11 @@ class _ExecutionStatus(object):
                 self.failure.teardown_skipped = unic(failure)
                 # Keep the Skip status in case the teardown failed
                 self.skipped = self.skipped or failure.skip
+            elif self._skip_on_failure:
+                msg = self._skip_on_failure_message(
+                    'Setup failed:\n%s' % unic(failure))
+                self.failure.test = msg
+                self.skipped = True
             else:
                 self.failure.teardown = unic(failure)
             self.exit.failure_occurred(failure)
@@ -121,6 +133,11 @@ class _ExecutionStatus(object):
         if self.failed:
             return 'FAIL'
         return 'PASS'
+
+    def _skip_on_failure_message(self, failure):
+        return ("%s failed but its tags matched '--SkipOnFailure' and it was "
+                   "marked skipped.\n\nOriginal failure:\n%s"
+                   % (test_or_task('{Test}', self._rpa), unic(failure)))
 
     @property
     def message(self):
@@ -164,9 +181,7 @@ class TestStatus(_ExecutionStatus):
         if hasattr(failure, 'skip') and failure.skip:
             self.test_skipped(failure)
         elif self._skip_on_failure:
-            msg = ("%s failed but its tags matched '--SkipOnFailure' and it was "
-                   "marked skipped.\n\nOriginal failure:\n%s"
-                   % (test_or_task('{Test}', self._rpa), unic(failure)))
+            msg = self._skip_on_failure_message(failure)
             self.failure.test = msg
             self.skipped = True
         else:
