@@ -68,6 +68,8 @@ Options
                            `defined in the source code`__.
   -P, --pythonpath <path>  Additional locations where to search for libraries
                            and resources similarly as when `running tests`__.
+  --quiet                  Do not print the path of the generated output file
+                           to the console. New in Robot Framework 4.0.
   -h, --help               Prints this help.
 
 __ `Library version`_
