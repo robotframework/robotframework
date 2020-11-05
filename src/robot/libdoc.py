@@ -88,6 +88,8 @@ Options
  -n --name name           Sets the name of the documented library or resource.
  -v --version version     Sets the version of the documented library or
                           resource.
+    --quiet               Do not print the path of the generated output file
+                          to the console. New in RF 4.0.
  -P --pythonpath path *   Additional locations where to search for libraries
                           and resources.
  -h -? --help             Print this help.
@@ -168,7 +170,7 @@ class LibDoc(Application):
         return options, arguments
 
     def main(self, args, name='', version='', format=None, docformat=None,
-             specdocformat=None):
+             specdocformat=None, quiet=False):
         lib_or_res, output = args[:2]
         docformat = self._get_docformat(docformat)
         libdoc = LibraryDocumentation(lib_or_res, name, version, docformat)
@@ -182,7 +184,8 @@ class LibDoc(Application):
                 or format in ('JSON', 'LIBSPEC') and specdocformat != 'RAW'):
             libdoc.convert_docs_to_html()
         libdoc.save(output, format)
-        self.console(os.path.abspath(output))
+        if not quiet:
+            self.console(os.path.abspath(output))
 
     def _get_docformat(self, docformat):
         return self._validate_format('Doc format', docformat,
@@ -228,7 +231,7 @@ def libdoc_cli(arguments):
 
 
 def libdoc(library_or_resource, outfile, name='', version='', format=None,
-           docformat=None, specdocformat=None):
+           docformat=None, specdocformat=None, quiet=False):
     """Executes Libdoc.
 
     :param library_or_resource: Name or path of the library or resource
@@ -249,6 +252,8 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
         format. Possible values are ``'HTML'`` (convert to HTML) and ``'RAW'``
         (use original format). The default depends on the output format.
         New in Robot Framework 4.0.
+    :param quiet: When true, the path of the generated output file is not
+        printed the console. New in Robot Framework 4.0.
 
     Arguments have same semantics as Libdoc command line options with
     same names. Run ``python -m robot.libdoc --help`` or consult the Libdoc
@@ -260,8 +265,10 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
 
         libdoc('MyLibrary.py', 'MyLibraryDoc.html', version='1.0')
     """
-    LibDoc().execute(library_or_resource, outfile, name=name, version=version,
-                     format=format, docformat=docformat, specdocformat=specdocformat)
+    return LibDoc().execute(
+        library_or_resource, outfile, name=name, version=version, format=format,
+        docformat=docformat, specdocformat=specdocformat, quiet=quiet
+    )
 
 
 if __name__ == '__main__':
