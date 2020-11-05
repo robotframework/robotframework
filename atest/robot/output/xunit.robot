@@ -35,13 +35,13 @@ File Structure Is Correct
 
 Non-ASCII Content
     ${tests} =    Get XUnit Nodes    testcase
-    Should Be Equal    ${tests[-1].attrib['name']}    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
+    Element Attribute Should Be    ${tests}[-1]    name    Ñöñ-ÄŚÇÏÏ Tëśt äņd Këywörd Nämës, Спасибо
     ${failures} =    Get XUnit Nodes    testcase/failure
-    Should Be Equal    ${failures[0].attrib['message']}    ${MESSAGES}
+    Element Attribute Should Be    ${failures}[0]    message    Setup failed:\n${MESSAGES}
 
 Multiline failure
     ${failures} =    Get XUnit Nodes    testcase/failure
-    Should Be Equal    ${failures[-1].attrib['message']}    Just ASCII here\n\nAlso teardown failed:\n${MESSAGES}
+    Element Attribute Should Be    ${failures}[-1]    message    Just ASCII here\n\nAlso teardown failed:\n${MESSAGES}
 
 Suite has execution time
     ${suite} =    Get XUnit Node
