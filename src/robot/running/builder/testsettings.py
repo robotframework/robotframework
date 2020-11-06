@@ -20,8 +20,8 @@ class TestDefaults(object):
 
     def __init__(self, parent=None):
         self.parent = parent
-        self._setup = None
-        self._teardown = None
+        self._setup = {}
+        self._teardown = {}
         self._force_tags = ()
         self.default_tags = ()
         self.template = None
@@ -33,7 +33,7 @@ class TestDefaults(object):
             return self._setup
         if self.parent:
             return self.parent.setup
-        return None
+        return {}
 
     @setup.setter
     def setup(self, setup):
@@ -45,7 +45,7 @@ class TestDefaults(object):
             return self._teardown
         if self.parent:
             return self.parent.teardown
-        return None
+        return {}
 
     @teardown.setter
     def teardown(self, teardown):

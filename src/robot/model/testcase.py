@@ -37,8 +37,9 @@ class TestCase(ModelObject):
         self.timeout = timeout  #: Test case timeout.
         self.tags = tags
         self.keywords = None
-        self.setup = self.keyword_class(parent=self)
-        self.teardown = self.keyword_class(parent=self)
+        self.setup = self.keyword_class(parent=self, type=Keyword.SETUP_TYPE)
+        self.teardown = self.keyword_class(parent=self,
+                                           type=Keyword.TEARDOWN_TYPE)
 
     @setter
     def tags(self, tags):
