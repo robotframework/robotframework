@@ -70,7 +70,8 @@ class Keyword(ModelObject):
     @property
     def teardown(self):
         if self._teardown is None:
-            self._teardown = (self.keyword_class or self.__class__)(parent=self)
+            self._teardown = (self.keyword_class or self.__class__)(
+                parent=self, type=self.TEARDOWN_TYPE)
         return self._teardown
 
     @teardown.setter
