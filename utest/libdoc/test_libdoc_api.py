@@ -12,6 +12,9 @@ class TestLibdoc(unittest.TestCase):
     def setUp(self):
         sys.stdout = StringIO()
 
+    def tearDown(self):
+        sys.stdout = sys.__stdout__
+
     def test_html(self):
         output = tempfile.mkstemp(suffix='.html')[1]
         libdoc.libdoc('String', output)
@@ -33,8 +36,12 @@ class TestLibdoc(unittest.TestCase):
         with open(output) as f:
             assert 'name="String"' in f.read()
 
-    def tearDown(self):
-        sys.stdout = sys.__stdout__
+    def test_quiet(self):
+        output = tempfile.mkstemp(suffix='.html')[1]
+        libdoc.libdoc('String', output, quiet=True)
+        assert_equal(sys.stdout.getvalue().strip(), '')
+        with open(output) as f:
+            assert '"name": "String"' in f.read()
 
 
 if __name__ == '__main__':

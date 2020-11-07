@@ -137,8 +137,8 @@ class TestRemoveKeywords(unittest.TestCase):
     def test_remove_passed_removes_setup_and_teardown_from_passed_suite(self):
         suite = TestSuite()
         suite.tests.create(status='PASS')
-        suite.keywords.create(status='PASS', type=SETUP).keywords.create()
-        suite.keywords.create(status='PASS', type=TEARDOWN).messages.create(message='message')
+        suite.setup.config(kwname='S', status='PASS').keywords.create()
+        suite.teardown.config(kwname='T', status='PASS').messages.create(message='message')
         self._remove_passed(suite)
         for keyword in suite.keywords:
             self._should_contain_no_messages_or_keywords(keyword)
@@ -173,12 +173,12 @@ class TestRemoveKeywords(unittest.TestCase):
 
     def test_remove_passed_does_not_remove_setup_and_teardown_from_failed_suite(self):
         suite = TestSuite()
-        suite.keywords.create(type=SETUP).messages.create(message='some')
-        suite.keywords.create(type=TEARDOWN).keywords.create()
+        suite.setup.config(kwname='SETUP').messages.create(message='some')
+        suite.teardown.config(type='TEARDOWN').keywords.create()
         suite.tests.create(status='FAIL')
         self._remove_passed(suite)
-        assert_equal(len(suite.keywords.setup.messages), 1)
-        assert_equal(len(suite.keywords.teardown.keywords), 1)
+        assert_equal(len(suite.setup.messages), 1)
+        assert_equal(len(suite.teardown.keywords), 1)
 
     def test_remove_for_removes_passed_items_except_last(self):
         suite, forloop = self.suite_with_forloop()
@@ -229,8 +229,8 @@ class TestRemoveKeywords(unittest.TestCase):
 
     def _suite_with_setup_and_teardown_and_test_with_keywords(self):
         suite = TestSuite()
-        suite.keywords.create(type=SETUP).messages.create('setup message')
-        suite.keywords.create(type=TEARDOWN).messages.create('teardown message')
+        suite.setup.config(kwname='S', status='PASS').messages.create('setup message')
+        suite.teardown.config(kwname='T', status='PASS').messages.create(message='message')
         test = suite.tests.create()
         test.keywords.create().keywords.create()
         test.keywords.create().messages.create('kw with message')

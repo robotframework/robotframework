@@ -68,8 +68,8 @@ Skip Teardowns After Stopping Gracefully
     Start And Send Signal    with_teardown.robot    One SIGINT    0s    --SkipTeardownOnExit
     Check Test Cases Have Failed Correctly
     ${tc} =    Get Test Case    Test
-    Should Be Equal    ${tc.teardown}    ${None}
-    Should Be Equal    ${SUITE.teardown}    ${None}
+    Teardown Should Not Be Defined    ${tc}
+    Teardown Should Not Be Defined    ${SUITE}
 
 *** Keywords ***
 Start And Send Signal

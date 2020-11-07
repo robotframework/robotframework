@@ -17,15 +17,8 @@ from ast import NodeVisitor
 
 from robot.variables import VariableIterator
 
-from ..model import ForLoop, Keyword
+from ..model import ForLoop
 from .testsettings import TestSettings
-
-
-def fixture(node, fixture_type):
-    if node.name is None:
-        return None
-    return Keyword(node.name, args=node.args, type=fixture_type,
-                   lineno=node.lineno)
 
 
 class SettingsBuilder(NodeVisitor):
@@ -41,16 +34,22 @@ class SettingsBuilder(NodeVisitor):
         self.suite.metadata[node.name] = node.value
 
     def visit_SuiteSetup(self, node):
-        self.suite.keywords.setup = fixture(node, Keyword.SETUP_TYPE)
+        self.suite.setup.config(name=node.name, args=node.args,
+                                lineno=node.lineno)
 
     def visit_SuiteTeardown(self, node):
-        self.suite.keywords.teardown = fixture(node, Keyword.TEARDOWN_TYPE)
+        self.suite.teardown.config(name=node.name, args=node.args,
+                                   lineno=node.lineno)
 
     def visit_TestSetup(self, node):
-        self.test_defaults.setup = fixture(node, Keyword.SETUP_TYPE)
+        self.test_defaults.setup = {
+            'name': node.name, 'args': node.args, 'lineno': node.lineno
+        }
 
     def visit_TestTeardown(self, node):
-        self.test_defaults.teardown = fixture(node, Keyword.TEARDOWN_TYPE)
+        self.test_defaults.teardown = {
+            'name': node.name, 'args': node.args, 'lineno': node.lineno
+        }
 
     def visit_TestTimeout(self, node):
         self.test_defaults.timeout = node.value
@@ -148,8 +147,8 @@ class TestCaseBuilder(NodeVisitor):
         self._set_settings(self.test, self.settings)
 
     def _set_settings(self, test, settings):
-        test.keywords.setup = settings.setup
-        test.keywords.teardown = settings.teardown
+        test.setup.config(**settings.setup)
+        test.teardown.config(**settings.teardown)
         test.timeout = settings.timeout
         test.tags = settings.tags
         if settings.template:
@@ -189,10 +188,14 @@ class TestCaseBuilder(NodeVisitor):
         self.test.doc = node.value
 
     def visit_Setup(self, node):
-        self.settings.setup = fixture(node, Keyword.SETUP_TYPE)
+        self.settings.setup = {
+            'name': node.name, 'args': node.args, 'lineno': node.lineno
+        }
 
     def visit_Teardown(self, node):
-        self.settings.teardown = fixture(node, Keyword.TEARDOWN_TYPE)
+        self.settings.teardown = {
+            'name': node.name, 'args': node.args, 'lineno': node.lineno
+        }
 
     def visit_Timeout(self, node):
         self.settings.timeout = node.value
@@ -219,7 +222,8 @@ class KeywordBuilder(NodeVisitor):
         self.kw = self.resource.keywords.create(name=node.name,
                                                 lineno=node.lineno)
         self.generic_visit(node)
-        self.kw.keywords.teardown = self.teardown
+        if self.teardown is not None:
+            self.kw.teardown.config(**self.teardown)
 
     def visit_Documentation(self, node):
         self.kw.doc = node.value
@@ -237,7 +241,9 @@ class KeywordBuilder(NodeVisitor):
         self.kw.timeout = node.value
 
     def visit_Teardown(self, node):
-        self.teardown = fixture(node, Keyword.TEARDOWN_TYPE)
+        self.teardown = {
+            'name': node.name, 'args': node.args, 'lineno': node.lineno
+        }
 
     def visit_KeywordCall(self, node):
         self.kw.keywords.create(name=node.keyword, args=node.args,

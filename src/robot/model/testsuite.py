@@ -31,7 +31,8 @@ class TestSuite(ModelObject):
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
-    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
+    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa',
+                 'setup', 'teardown']
     test_class = TestCase    #: Internal usage only.
     keyword_class = Keyword  #: Internal usage only.
 
@@ -44,7 +45,11 @@ class TestSuite(ModelObject):
         self.rpa = rpa
         self.suites = None
         self.tests = None
+        # TODO: Deprecate
         self.keywords = None
+        self.setup = self.keyword_class(parent=self, type=Keyword.SETUP_TYPE)
+        self.teardown = self.keyword_class(parent=self,
+                                           type=Keyword.TEARDOWN_TYPE)
         self._my_visitors = []
 
     @property
@@ -172,6 +177,12 @@ class TestSuite(ModelObject):
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_suite(self)
+
+    def clear(self):
+        self.suites.clear()
+        self.tests.clear()
+        self.setup.reset()
+        self.teardown.reset()
 
 
 class TestSuites(ItemList):

@@ -84,17 +84,17 @@ class TestBuilding(unittest.TestCase):
         assert_equal(suite.suites[1].tests[1].id, 's1-s2-t2')
 
     def test_suite_setup_and_teardown(self):
-        kws = build('setups_and_teardowns.robot').keywords
-        assert_keyword(kws.setup, name='${SUITE SETUP}', type='setup')
-        assert_keyword(kws.teardown, name='${SUITE TEARDOWN}', type='teardown')
+        suite = build('setups_and_teardowns.robot')
+        assert_keyword(suite.setup, name='${SUITE SETUP}', type='setup')
+        assert_keyword(suite.teardown, name='${SUITE TEARDOWN}', type='teardown')
 
     def test_test_setup_and_teardown(self):
-        kws = build('setups_and_teardowns.robot').tests[0].keywords
-        assert_keyword(kws.setup, name='${TEST SETUP}', type='setup')
-        assert_keyword(kws.teardown, name='${TEST TEARDOWN}', type='teardown')
-        assert_equal([kw.name for kw in kws],
-                      ['${TEST SETUP}', 'Keyword', '${TEST TEARDOWN}'])
-        assert_equal([kw.name for kw in kws.normal], ['Keyword'])
+        test = build('setups_and_teardowns.robot').tests[0]
+        assert_keyword(test.setup, name='${TEST SETUP}', type='setup')
+        assert_keyword(test.teardown, name='${TEST TEARDOWN}', type='teardown')
+        assert_equal([kw.name for kw in test.keywords],
+                      ['Keyword'])
+        assert_equal([kw.name for kw in test.keywords.normal], ['Keyword'])
 
     def test_test_timeout(self):
         tests = build('timeouts.robot').tests

@@ -83,7 +83,10 @@ class SuiteVisitor(object):
         suites, tests or keywords (setup and teardown) at all.
         """
         if self.start_suite(suite) is not False:
-            suite.keywords.visit(self)
+            if suite.setup:
+                suite.setup.visit(self)
+            if suite.teardown:
+                suite.teardown.visit(self)
             suite.suites.visit(self)
             suite.tests.visit(self)
             self.end_suite(suite)

@@ -82,7 +82,7 @@ class UserKeywordHandler(object):
         self.timeout = keyword.timeout
         self.keywords = keyword.keywords.normal
         self.return_value = tuple(keyword.return_)
-        self.teardown = keyword.keywords.teardown
+        self.teardown = keyword.teardown
 
     @property
     def longname(self):
