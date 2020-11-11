@@ -115,6 +115,8 @@ class Tidy(SuiteStructureVisitor):
 
     def __init__(self, space_count=4, use_pipes=False,
                  line_separator=os.linesep):
+        if isinstance(space_count, str):
+            space_count = space_count.lower()
         self.space_count = space_count
         self.use_pipes = use_pipes
         self.line_separator = line_separator

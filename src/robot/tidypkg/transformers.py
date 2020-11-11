@@ -225,7 +225,6 @@ class SeparatorNormalizer(ModelTransformer):
             else:
                 if index == 0:
                     token.value = ' ' * 4 * self.indent
-
         # The last token is always EOL, this removes all dangling whitespace
         # from the token before the EOL
         if index == line_length - 2:
@@ -393,7 +392,7 @@ class Aligner(ModelTransformer):
                             not in (Token.SEPARATOR, Token.EOL)]
             if self._should_be_aligned(value_tokens):
                 first = value_tokens[0]
-                if self.space_count != 'preserve':
+                if not self.preserve_spaces:
                     first.value = first.value.ljust(
                         self.setting_and_variable_name_length
                     )
