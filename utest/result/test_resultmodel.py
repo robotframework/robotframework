@@ -218,7 +218,7 @@ class TestKeywordChildren(unittest.TestCase):
         assert_equal(kw.children, list(kw.messages))
 
     def test_order(self):
-        kw = Keyword()
+        kw = Keyword('parent')
         m1 = kw.messages.create('m1')
         k1 = kw.keywords.create('k1')
         k2 = kw.keywords.create('k2')
@@ -227,7 +227,7 @@ class TestKeywordChildren(unittest.TestCase):
         assert_equal(kw.children, [m1, k1, k2, m2, k3])
 
     def test_order_after_modifications(self):
-        kw = Keyword()
+        kw = Keyword('parent')
         kw.keywords.create('k1')
         kw.messages.create('m1')
         k2 = kw.keywords.create('k2')
@@ -244,8 +244,8 @@ class TestKeywordChildren(unittest.TestCase):
         assert_equal(kw.children, [k1, m1, k3])
 
     def test_id_with_keyword_parents(self):
-        kw = TestSuite().tests.create().keywords.create()
-        kw.keywords = [Keyword(), Keyword()]
+        kw = TestSuite().tests.create().keywords.create('parent')
+        kw.keywords = [Keyword('child1'), Keyword('child2')]
         kw.keywords[-1].keywords.create()
         assert_equal(kw.keywords[0].id, 's1-t1-k1-k1')
         assert_equal(kw.keywords[1].id, 's1-t1-k1-k2')

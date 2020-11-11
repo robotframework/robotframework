@@ -33,8 +33,11 @@ Keyword Arguments
     ${JSON-MODEL}[keywords][12][args]    ${MODEL}[keywords][12][args]
     ${JSON-MODEL}[keywords][13][args]    ${MODEL}[keywords][13][args]
 
-Embedded Arguments
+Embedded Arguments names
     ${JSON-MODEL}[keywords][14][name]    ${MODEL}[keywords][14][name]
+
+Embedded Arguments arguments
+    [Template]    List of Dict Should Be Equal
     ${JSON-MODEL}[keywords][14][args]    ${MODEL}[keywords][14][args]
 
 Keyword Documentation

@@ -159,9 +159,9 @@ window.testdata = function () {
     function suiteStats(stats) {
         return {
             total: stats[0],
-            passed: stats[1],
-            failed: stats[2],
-            skipped: stats[3]
+            pass: stats[1],
+            fail: stats[2],
+            skip: stats[3]
         };
     }
 

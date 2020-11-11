@@ -33,8 +33,11 @@ Keyword Arguments
     ${XML-MODEL}[keywords][12][args]    ${MODEL}[keywords][12][args]
     ${XML-MODEL}[keywords][13][args]    ${MODEL}[keywords][13][args]
 
-Embedded Arguments
+Embedded Arguments names
     ${XML-MODEL}[keywords][14][name]    ${MODEL}[keywords][14][name]
+
+Embedded Arguments arguments
+    [Template]    List of Dict Should Be Equal
     ${XML-MODEL}[keywords][14][args]    ${MODEL}[keywords][14][args]
 
 Keyword Documentation

@@ -1,7 +1,7 @@
 *** Test Cases ***
 For loop in test
-    FOR    ${x}    IN    foo    bar
-        Log    ${x}
+    FOR      ${x}      IN      foo      bar
+            Log    ${x}
     END
 
 Missing END
@@ -9,19 +9,8 @@ Missing END
         Log    ${x}
     Keyword
 
-Old for loop in test
-    :FOR    ${x}    IN    foo    bar
-    \    Log    ${x}
-    :FOR    ${x}    IN    quux    zap
-    \    Log    ${x}
-    END
-
 *** Keywords ***
 For loop in keyword
-    FOR    ${x}    IN    foo    bar
-        Log    ${x}
-    END
-
-Old for loop in keyword
-    :FOR    ${x}    IN    foo    bar
-    \    Log    ${x}
+  FOR    ${x}    IN    foo    bar
+    Log    ${x}
+  END

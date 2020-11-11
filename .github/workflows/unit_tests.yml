@@ -10,12 +10,7 @@ on:
       - 'src/**'
       - 'utest/**'
       - '!**/*.rst'
-  pull_request:
-    paths:
-      - '.github/workflows/**'
-      - 'src/**'
-      - 'utest/**'
-      - '!**/*.rst'
+
 
 jobs:
   test_using_builtin_python:
@@ -24,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
-        python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', '3.9.0-alpha - 3.9', 'pypy2', 'pypy3' ]
+        python-version: [ '2.7', '3.5', '3.6', '3.7', '3.8', '3.9', 'pypy2', 'pypy3' ]
         exclude:
           - os: windows-latest
             python-version: 'pypy2'

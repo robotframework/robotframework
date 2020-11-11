@@ -70,13 +70,13 @@ class XUnitFileWriter(ResultVisitor):
                            {'classname': test.parent.longname,
                             'name': test.name,
                             'time': self._time_as_seconds(test.elapsedtime)})
-        if not test.passed:
-            self._fail_test(test)
+        if test.failed:
+            self._writer.element('failure', attrs={'message': test.message,
+                                                   'type': 'AssertionError'})
+        if test.skipped:
+            self._writer.element('skipped', attrs={'message': test.message,
+                                                   'type': 'SkipExecution'})
         self._writer.end('testcase')
-
-    def _fail_test(self, test):
-        self._writer.element('failure', attrs={'message': test.message,
-                                               'type': 'AssertionError'})
 
     def _time_as_seconds(self, millis):
         return '{:.3f}'.format(millis / 1000)

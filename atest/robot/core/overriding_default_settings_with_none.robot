@@ -6,19 +6,19 @@ Resource        atest_resource.robot
 
 Overriding Test Setup
     ${tc}=  Check Test Case  ${TESTNAME}
-    Should Be Equal  ${tc.setup}  ${NONE}
+    Setup Should Not Be Defined  ${tc}
 
 Overriding Test Setup from Command Line
     ${tc}=  Check Test Case  ${TESTNAME}
-    Should Be Equal  ${tc.setup}  ${NONE}
+    Setup Should Not Be Defined  ${tc}
 
 Overriding Test Teardown
     ${tc}=  Check Test Case  ${TESTNAME}
-    Should Be Equal  ${tc.teardown}  ${NONE}
+    Teardown Should Not Be Defined  ${tc}
 
 Overriding Test Teardown from Command Line
     ${tc}=  Check Test Case  ${TESTNAME}
-    Should Be Equal  ${tc.teardown}  ${NONE}
+    Teardown Should Not Be Defined  ${tc}
 
 Overriding Test Template
     ${tc}=  Check Test Case  ${TESTNAME}
@@ -42,7 +42,7 @@ Overriding Default Tags from Command Line
 
 Overriding Is Case Insensitive
     ${tc}=  Check Test Case  ${TESTNAME}
-    Should Be Equal  ${tc.setup}  ${NONE}
-    Should Be Equal  ${tc.teardown}  ${NONE}
+    Setup Should Not Be Defined  ${tc}
+    Teardown Should Not Be Defined  ${tc}
     Should Be Equal  ${tc.keywords[0].name}  BuiltIn.No Operation
     Should Be Empty  ${tc.tags}

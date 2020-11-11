@@ -39,15 +39,8 @@ Backslash
 New Line
     Check Test Case    ${TEST NAME}
 
-Ignoring Space After Newline Is Deprecated
-    ${tc} =    Check Test Case    ${TEST NAME}
-    ${message} =    Catenate
-    ...    Ignoring space after '\\n' is deprecated.
-    ...    For more info see: https://github.com/robotframework/robotframework/issues/3333
-    Check log message    ${ERRORS}[0]    ${message}    WARN
-    Check log message    ${ERRORS}[1]    ${message}    WARN
-    Check log message    ${tc.kws[0].msgs[0]}    ${message}    WARN
-    Check log message    ${tc.kws[0].msgs[1]}    ${message}    WARN
+Space After Newline Is parsed
+    Check Test Case    ${TEST NAME}
 
 Carrriage Return
     Check Test Case    ${TEST NAME}
@@ -89,7 +82,7 @@ Escaping Variables With User Keywords
     Check Test Case    ${TEST NAME}
 
 No Errors Should Have Occurred
-    Length should be      ${ERRORS}    2    # Warnings due to '\n ' deprecation.
+    Length should be      ${ERRORS}    0
 
 Pipe
     Check Test Case    ${TEST NAME}

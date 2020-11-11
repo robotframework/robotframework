@@ -92,14 +92,10 @@ h2 {
     background-color: #ddd;
     border-radius: 3px;
 }
-.label.skip {
-    background-color: #fed84f;
-    color: white !important;
-}
 .label.debug, .label.trace, .label.error, .label.keyword {
     letter-spacing: 0;
 }
-.label.error, .label.fail, .label.pass, .label.warn {
+.label.error, .label.fail, .label.pass, .labe.skip, .label.warn {
     color: #fff !important;
     font-weight: bold;
 }
@@ -108,6 +104,11 @@ h2 {
 }
 .label.pass {
     background-color: #97bd61;
+    color: black !important;
+}
+.label.skip {
+    background-color: #fed84f;
+    color: black !important;
 }
 .label.warn {
     background-color: #b62109;

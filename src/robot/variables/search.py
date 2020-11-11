@@ -116,11 +116,6 @@ class VariableMatch(object):
     def is_scalar_variable(self):
         return self.identifier == '$' and self.is_variable()
 
-    # The reason `is_list/dict_variable` check they don't have items is that
-    # at the moment e.g. `@{var}[item]` still returns a scalar value.
-    # This will change in RF 4.0 and then obviously this code must be changed:
-    # https://github.com/robotframework/robotframework/issues/3487
-
     def is_list_variable(self):
         return self.identifier == '@' and self.is_variable()
 
@@ -179,11 +174,11 @@ class VariableSearcher(object):
             match.end += sum(len(i) for i in self.items) + 2 * len(self.items)
         return match
 
-    def _search(self, string, offset=0):
+    def _search(self, string):
         start = self._find_variable_start(string)
         if start == -1:
             return False
-        self.start = start + offset
+        self.start = start
         self._open_brackets += 1
         self.variable_chars = [string[start], '{']
         start += 2

@@ -14,10 +14,11 @@
 #  limitations under the License.
 
 from itertools import chain
+import json
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, get_timestamp, Sortable, setter, unicode, unic
+from robot.utils import IRONPYTHON, getshortdoc, get_timestamp, Sortable, setter, unicode
 
 from .htmlutils import HtmlToText, DocFormatter
 from .writer import LibdocWriter
@@ -106,8 +107,25 @@ class LibraryDoc(object):
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
             'generated': get_timestamp(daysep='-', millissep=None),
-            'all_tags': tuple(self.all_tags)
+            'all_tags': list(self.all_tags)
         }
+
+    def to_json(self, indent=None):
+        data = self.to_dictionary()
+        if IRONPYTHON:
+            # Workaround for https://github.com/IronLanguages/ironpython2/issues/643
+            data = self._unicode_to_utf8(data)
+        return json.dumps(data, indent=indent)
+
+    def _unicode_to_utf8(self, data):
+        if isinstance(data, dict):
+            return {self._unicode_to_utf8(key): self._unicode_to_utf8(value)
+                    for key, value in data.items()}
+        if isinstance(data, (list, tuple)):
+            return [self._unicode_to_utf8(item) for item in data]
+        if isinstance(data, unicode):
+            return data.encode('UTF-8')
+        return data
 
 
 class KeywordDoc(Sortable):
@@ -154,19 +172,20 @@ class KeywordDoc(Sortable):
     def to_dictionary(self):
         return {
             'name': self.name,
-            'args': self._convert_arguments(),
+            'args': [self._arg_to_dict(arg) for arg in self.args],
             'doc': self.doc,
             'shortdoc': self.shortdoc,
-            'tags': tuple(self.tags),
+            'tags': list(self.tags),
             'source': self.source,
             'lineno': self.lineno
         }
 
-    def _convert_arguments(self):
-        return [{'name': a.name,
-                 'type': a.type_repr,
-                 'default': a.default_repr,
-                 'kind': a.kind,
-                 'required': a.required,
-                 'repr': unicode(a)
-                 } for a in self.args]
+    def _arg_to_dict(self, arg):
+        return {
+            'name': arg.name,
+            'type': arg.type_repr,
+            'default': arg.default_repr,
+            'kind': arg.kind,
+            'required': arg.required,
+            'repr': unicode(arg)
+        }

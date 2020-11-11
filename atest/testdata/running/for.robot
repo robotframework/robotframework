@@ -1,6 +1,6 @@
 *** Settings ***
+Library           String
 Variables         binary_list.py
-Resource          old_for_in_resource.robot
 
 *** Variables ***
 @{NUMS}           1    2    3    4    5
@@ -9,6 +9,8 @@ ${NO VALUES}      FOR loop has no loop values.
 ${NO KEYWORDS}    FOR loop contains no keywords.
 ${NO VARIABLES}   FOR loop has no loop variables.
 ${WRONG VALUES}   Number of FOR loop values should be multiple of its variables.
+${INVALID FOR}    'For' is a reserved keyword. It must be an upper case 'FOR' when used as a marker.
+${INVALID END}    'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
 
 *** Test Cases ***
 Simple loop
@@ -51,7 +53,7 @@ Keyword arguments on multiple rows
         Should Be Equal    ${msg}    1 2 3 4 5 6 7 ${var}
     END
 
-Multiple loops in one test
+Multiple loops in a test
     FOR    ${x}    IN    foo    bar
         Log    In first loop with "${x}"
     END
@@ -66,31 +68,62 @@ Multiple loops in one test
     END
     Log    The End
 
+Nested loop syntax
+    FOR    ${x}    IN    1    2    3
+       Log    ${x} in
+       FOR    ${y}    IN    a    b    c
+           Log   values ${x} ${y}
+       END
+       Log    ${x} out
+    END
+    Log   The End
+
+Multiple loops in a loop
+    FOR    ${root}    IN    root
+        FOR    ${child}    IN    first
+            Should Be Equal    ${root}-${child}    root-first
+        END
+        Should Be Equal    ${root}-${child}    root-first
+        FOR    ${child}    IN    second
+            Should Be Equal    ${root}-${child}    root-second
+        END
+        Should Be Equal    ${root}-${child}    root-second
+    END
+    Should Be Equal    ${root}-${child}    root-second
+
+Deeply nested loops
+    FOR    ${a}    IN    a
+        FOR    ${b}    IN    b
+            FOR    ${c}    IN    c
+                FOR    ${d}    IN    d
+                    FOR    ${e}    IN    e
+                        Should Be Equal    ${a}${b}${c}${d}${e}    abcde
+                    END
+                END
+            END
+        END
+    END
+    Should Be Equal    ${a}${b}${c}${d}${e}    abcde
+
 Settings after FOR
     FOR    ${x}    IN    x
         ${x} =    Convert to Uppercase    ${x}
     END
     [Teardown]    Log    Teardown was found and e${x}ecuted.
 
+Invalid FOR usage
+    [Documentation]    FAIL    ${INVALID FOR}
+    For    ${var}    IN    one    two
+        Log    var: ${var}
+    END
+
 Invalid END usage 1
-    [Documentation]    FAIL    'End' is a reserved keyword.
+    [Documentation]    FAIL    ${INVALID END}
     Log    No for loop here...
     END
 
 Invalid END usage 2
-    [Documentation]    FAIL    'End' is a reserved keyword.
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    \    END
-
-Invalid END usage 3
-    [Documentation]    FAIL    'End' is a reserved keyword.
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    End
-
-Invalid END usage 4
-    [Documentation]    FAIL    'End' is a reserved keyword.
+    [Documentation]    FAIL    ${INVALID END}
     Invalid END usage in UK
 
 FOR with empty body fails
@@ -100,7 +133,7 @@ FOR with empty body fails
     Fail    Not executed
 
 FOR without END fails
-    [Documentation]    FAIL    For loop has no closing 'END'.
+    [Documentation]    FAIL    FOR loop has no closing 'END'.
     FOR    ${var}    IN    one    two
     Fail    Not executed
 
@@ -162,11 +195,11 @@ Loop in user keyword
     For In UK
     For In UK with Args    one    two    three    four
 
-Nested loop in user keyword
+Keyword with loop calling other keywords with loops
     [Documentation]    FAIL    This ought to be enough
     Nested for In UK    foo    bar
 
-Loop in test and user keyword
+Test with loop calling keywords with loops
     [Documentation]    FAIL    This ought to be enough
     @{list} =    Create List    one    two
     FOR    ${item}    IN    @{list}
@@ -342,23 +375,21 @@ Characters that are illegal in XML
         Log    ${var}
     END
 
-Header with colon is deprecated
+Old :FOR syntax is not supported
+    [Documentation]    FAIL
+    ...    Support for the old for loop syntax has been removed. Replace ':FOR' with 'FOR', end the loop with 'END', and remove escaping backslashes.
     :FOR    ${x}    IN    a    b    c
-        @{result} =    Create List    @{result}    ${x}
+       Fail    Should not be executed
     END
-    Should Be True    ${result} == ['a', 'b', 'c']
+    Fail    Should not be executed
 
-Header with colon is case and space insensitive
-    : f O r    ${x}    IN    a    b    c
-        @{result} =    Create List    @{result}    ${x}
+Escaping with backslash is not supported
+    [Documentation]    FAIL
+    ...    No keyword with name '\\' found.  If it is used inside a for loop, remove escaping backslashes and end the loop with 'END'.
+    FOR    ${var}    IN    one    two
+    \    Fail    Should not be executed
     END
-    Should Be True    ${result} == ['a', 'b', 'c']
-
-Header can have many colons
-    :::f:o:r:::    ${i}    IN RANGE    1    6
-        @{result} =    Create List    @{result}    ${i}
-    END
-    Should Be True    ${result} == [1, 2, 3, 4, 5]
+    Fail    Should not be executed
 
 Invalid separator
     [Documentation]    FAIL    Invalid FOR loop variable 'IN INVALID'.
@@ -394,32 +425,9 @@ Separator is case- and space-sensitive 4
     END
     Fail    Should not be executed
 
-Escaping with backslash is deprecated
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    \    For in UK with backslashes    ${var}
-    END
-    Log    Between for loops
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    \    For in UK with backslashes    ${var}
-    END
-
-END is not required when escaping with backslash
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    \    For in UK with backslashes and without END    ${var}
-    Log    Between for loops
-    FOR    ${var}    IN    one    two
-    \    Log    var: ${var}
-    \    For in UK with backslashes and without END    ${var}
-
 Header at the end of file
-    [Documentation]    FAIL For loop has no closing 'END'.
+    [Documentation]    FAIL FOR loop has no closing 'END'.
     Header at the end of file
-
-Old for loop in resource
-    Old for loop in resource
 
 *** Keywords ***
 My UK

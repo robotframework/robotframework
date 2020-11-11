@@ -27,21 +27,20 @@ class _RunKeywordRegister(object):
     def register_run_keyword(self, libname, keyword, args_to_process=None,
                              deprecation_warning=True):
         if deprecation_warning:
-            warnings.warn(self._deprecation_warning(), UserWarning)
+            warnings.warn(
+                "The API to register run keyword variants and to disable variable "
+                "resolving in keyword arguments will change in the future. "
+                "For more information see "
+                "https://github.com/robotframework/robotframework/issues/2190. "
+                "Use with `deprecation_warning=False` to avoid this warning.",
+                UserWarning
+            )
         if args_to_process is None:
             args_to_process = self._get_args_from_method(keyword)
             keyword = keyword.__name__
         if libname not in self._libs:
             self._libs[libname] = NormalizedDict(ignore=['_'])
         self._libs[libname][keyword] = int(args_to_process)
-
-    def _deprecation_warning(self):
-        return ("The API to register run keyword variants and to disable "
-                "variable resolving in keyword arguments will change in Robot "
-                "Framework 3.1. For more information see issue #2190 <"
-                "https://github.com/robotframework/robotframework/issues/2190"
-                ">. Use with 'deprecation_warning=False' to avoid related "
-                "deprecation warnings.")
 
     def get_args_to_process(self, libname, kwname):
         if libname in self._libs and kwname in self._libs[libname]:

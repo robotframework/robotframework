@@ -180,7 +180,7 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
 
     def test_nested_setups_and_teardowns(self):
         root = TestSuite(name='Root')
-        root.keywords.create('Fail', args=['Top level'], type='teardown')
+        root.teardown.config(name='Fail', args=['Top level'], type='teardown')
         root.suites.append(self.suite)
         suite = run(root, variable=['SUITE SETUP:Fail', 'SUITE TEARDOWN:Fail'])
         assert_suite(suite, 'Root', 'FAIL',

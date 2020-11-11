@@ -34,14 +34,14 @@ Correct Suite Teardown Is Executed When ExitOnFailure Is Used
     ${tsuite} =    Get Test Suite    Fourth
     Should Be Equal    ${tsuite.teardown.name}    BuiltIn.Log
     ${tsuite} =    Get Test Suite    Tsuite3
-    Should Be Equal    ${tsuite.teardown}    ${None}
+    Teardown Should Not Be Defined    ${tsuite}
 
 Exit On Failure With Skip Teardown On Exit
     [Setup]    Run Tests    --ExitOnFailure --SkipTeardownOnExit    misc/suites
     ${tcase} =    Check Test Case    Suite4 First
-    Should Be Equal    ${tcase.teardown}    ${None}
+    Teardown Should Not Be Defined    ${tcase}
     ${tsuite} =    Get Test Suite    Fourth
-    Should Be Equal    ${tsuite.teardown}    ${None}
+    Teardown Should Not Be Defined    ${tsuite}
     Test Should Have Been Skipped    SubSuite1 First
     Test Should Have Been Skipped    Suite3 First
 
