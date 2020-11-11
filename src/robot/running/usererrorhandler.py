@@ -63,7 +63,9 @@ class UserErrorHandler(object):
                                libname=self.libname,
                                args=kw.args,
                                assign=kw.assign,
-                               type=kw.type)
+                               type=kw.type,
+                               lineno=kw.lineno,
+                               source=kw.source)
         with StatusReporter(context, result):
             raise self.error
 
