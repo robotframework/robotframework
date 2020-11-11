@@ -14,6 +14,9 @@ Passing is not re-executed
     Test Should Not Have Been Executed    Passing
     Test Should Not Have Been Executed    Not Failing
 
+Skipping test in not re-executed
+    Test Should Not Have Been Executed    Skipped
+
 Failing is re-executed
     Test Should Have Been Executed        Failing
 

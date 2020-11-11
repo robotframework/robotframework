@@ -196,27 +196,20 @@ class ForLoopLexer(BlockLexer):
 
     def __init__(self, ctx):
         BlockLexer.__init__(self, ctx)
-        self._old_style_for = False
-        self._end_seen = False
+        self._block_level = 0
 
     def handles(self, statement):
         return ForLoopHeaderLexer(self.ctx).handles(statement)
 
     def accepts_more(self, statement):
-        if statement[0].value == '\\':
-            statement[0].type = Token.OLD_FOR_INDENT
-            self._old_style_for = True
-            return True
-        elif self._old_style_for:
-            return EndLexer(self.ctx).handles(statement)
-        return not self._end_seen
+        return self._block_level > 0
 
     def input(self, statement):
         lexer = BlockLexer.input(self, statement)
+        if isinstance(lexer, ForLoopHeaderLexer):
+            self._block_level += 1
         if isinstance(lexer, EndLexer):
-            self._end_seen = True
-        elif statement[0].type == Token.OLD_FOR_INDENT:
-            statement.pop(0)
+            self._block_level -= 1
 
     def lexer_classes(self):
         return (ForLoopHeaderLexer, EndLexer, KeywordCallLexer)

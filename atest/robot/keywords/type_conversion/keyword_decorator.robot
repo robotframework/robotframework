@@ -36,10 +36,20 @@ Invalid decimal
 Boolean
     Check Test Case    ${TESTNAME}
 
-Invalid boolean is accepted as-is
+Invalid boolean string is accepted as-is
+    Check Test Case    ${TESTNAME}
+
+Invalid boolean
     Check Test Case    ${TESTNAME}
 
 String
+    Check Test Case    ${TESTNAME}
+
+Invalid string
+    Check Test Case    ${TESTNAME}
+
+Invalid string (non-ASCII byte string)
+    [Tags]    require-py2
     Check Test Case    ${TESTNAME}
 
 Bytes
@@ -100,6 +110,12 @@ NoneType
     Check Test Case    ${TESTNAME}
 
 Invalid NoneType
+    Check Test Case    ${TESTNAME}
+
+None
+    Check Test Case    ${TESTNAME}
+
+Invalid None
     Check Test Case    ${TESTNAME}
 
 List
@@ -192,9 +208,6 @@ Invalid kwonly
     [Tags]    require-py3
     Check Test Case    ${TESTNAME}
 
-Boolean, None, List and Dict are not converted
-    Check Test Case    ${TESTNAME}
-
 Invalid type spec causes error
     Check Test Case    ${TESTNAME}
     Error In Library    KeywordDecorator
@@ -223,4 +236,18 @@ Default value is used if explicit type conversion fails
     Check Test Case    ${TESTNAME}
 
 Explicit conversion failure is used if both conversions fail
+    Check Test Case    ${TESTNAME}
+
+Multiple types using Union
+    [Tags]    require-py3
+    Check Test Case    ${TESTNAME}
+
+Argument not matching Union tupes
+    [Tags]    require-py3
+    Check Test Case    ${TESTNAME}
+
+Multiple types using tuple
+    Check Test Case    ${TESTNAME}
+
+Argument not matching tuple tupes
     Check Test Case    ${TESTNAME}

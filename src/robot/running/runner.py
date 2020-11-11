@@ -82,7 +82,7 @@ class Runner(SuiteVisitor):
                                                suites=suite.suites,
                                                test_count=suite.test_count))
         self._output.register_error_listener(self._suite_status.error_occurred)
-        self._run_setup(suite.keywords.setup, self._suite_status)
+        self._run_setup(suite.setup, self._suite_status)
         self._executed_tests = NormalizedDict(ignore='_')
 
     def _resolve_setting(self, value):
@@ -95,7 +95,7 @@ class Runner(SuiteVisitor):
         self._context.report_suite_status(self._suite.status,
                                           self._suite.full_message)
         with self._context.suite_teardown():
-            failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
+            failure = self._run_teardown(suite.teardown, self._suite_status)
             if failure:
                 if failure.skip:
                     self._suite.suite_teardown_skipped(unic(failure))
@@ -141,7 +141,7 @@ class Runner(SuiteVisitor):
             status.test_failed(
                 test_or_task('{Test} case contains no keywords.',
                              self._settings.rpa))
-        self._run_setup(test.keywords.setup, status, result)
+        self._run_setup(test.setup, status, result)
         try:
             if not status.failed:
                 StepRunner(self._context,
@@ -163,7 +163,7 @@ class Runner(SuiteVisitor):
         result.message = status.message or result.message
         if status.teardown_allowed:
             with self._context.test_teardown(result):
-                failure = self._run_teardown(test.keywords.teardown, status,
+                failure = self._run_teardown(test.teardown, status,
                                              result)
                 if failure:
                     status.failure_occurred()

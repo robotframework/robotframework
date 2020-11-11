@@ -26,7 +26,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         self.keyword = self.test.keywords[0]
         self.user_keyword = self.test.keywords[1]
         self.message = self.keyword.messages[0]
-        self.setup = self.suite.keywords[0]
+        self.setup = self.suite.setup
         self.errors = self.result.errors
 
     def test_suite_is_built(self):

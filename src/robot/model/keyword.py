@@ -16,13 +16,14 @@
 from itertools import chain
 from operator import attrgetter
 
-from robot.utils import setter
+from robot.utils import setter, py2to3
 
 from .itemlist import ItemList
 from .modelobject import ModelObject
 from .tags import Tags
 
 
+@py2to3
 class Keyword(ModelObject):
     """Base model for a single keyword.
 
@@ -30,7 +31,7 @@ class Keyword(ModelObject):
     :class:`robot.result.model.Keyword`.
     """
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
-                 '_sort_key', '_next_child_sort_key']
+                 '_teardown', '_sort_key', '_next_child_sort_key']
     KEYWORD_TYPE = 'kw'         #: Normal keyword :attr:`type`.
     SETUP_TYPE = 'setup'        #: Setup :attr:`type`.
     TEARDOWN_TYPE = 'teardown'  #: Teardown :attr:`type`.
@@ -38,8 +39,9 @@ class Keyword(ModelObject):
     FOR_ITEM_TYPE = 'foritem'   #: Single for loop iteration :attr:`type`.
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=KEYWORD_TYPE):
+                 timeout=None, type=KEYWORD_TYPE, parent=None):
         self.parent = None
+        self.parent = parent
         self._name = name
         self.doc = doc
         self.args = args      #: Keyword arguments as a list of strings.
@@ -50,8 +52,12 @@ class Keyword(ModelObject):
         #: :attr:`SETUP_TYPE`, :attr:`TEARDOWN_TYPE`, :attr:`FOR_LOOP_TYPE` or
         #: :attr:`FOR_ITEM_TYPE` constant defined on the class level.
         self.type = type
+        self._teardown = None
         self._sort_key = -1
         self._next_child_sort_key = 0
+
+    def __nonzero__(self):
+        return bool(self.name)
 
     @property
     def name(self):
@@ -60,6 +66,17 @@ class Keyword(ModelObject):
     @name.setter
     def name(self, name):
         self._name = name
+
+    @property
+    def teardown(self):
+        if self._teardown is None:
+            self._teardown = (self.keyword_class or self.__class__)(
+                parent=self, type=self.TEARDOWN_TYPE)
+        return self._teardown
+
+    @teardown.setter
+    def teardown(self, td):
+        self._teardown = td
 
     @setter
     def parent(self, parent):
@@ -87,11 +104,17 @@ class Keyword(ModelObject):
         """
         if not self.parent:
             return 'k1'
-        return '%s-k%d' % (self.parent.id, self.parent.keywords.index(self)+1)
+        if self.parent.keywords:
+            return '%s-k%d' % (self.parent.id, self.parent.keywords.index(self)+1)
+        fixtures = [kw for kw in (self.parent.setup, self.parent.teardown) if kw]
+        return '%s-k%d' % (self.parent.id, fixtures.index(self)+1)
 
     @property
     def source(self):
         return self.parent.source if self.parent is not None else None
+
+    def reset(self):
+        self.__init__(type=self.type)
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""

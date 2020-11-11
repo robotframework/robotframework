@@ -13,8 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import json
-
 from robot.htmldata import HtmlFileWriter, ModelWriter, LIBDOC
 
 
@@ -28,12 +26,11 @@ class LibdocHtmlWriter(object):
 class LibdocModelWriter(ModelWriter):
 
     def __init__(self, output, libdoc):
-        self._output = output
-        libdoc.convert_doc_to_html()
-        self._libdoc = libdoc.to_dictionary()
+        self.output = output
+        self.libdoc = libdoc
 
     def write(self, line):
-        self._output.write('<script type="text/javascript">\n'
-                           'libdoc = %s\n'
-                           '</script>\n'
-                           % json.dumps(self._libdoc))
+        self.output.write('<script type="text/javascript">\n'
+                          'libdoc = %s\n'
+                          '</script>\n'
+                          % self.libdoc.to_json())

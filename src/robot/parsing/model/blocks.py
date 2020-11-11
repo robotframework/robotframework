@@ -142,14 +142,6 @@ class ForLoop(Block):
     def flavor(self):
         return self.header.flavor
 
-    @property
-    def _header(self):
-        return self.header._header
-
-    @property
-    def _end(self):
-        return self.end.value if self.end else None
-
 
 class ModelWriter(ModelVisitor):
 

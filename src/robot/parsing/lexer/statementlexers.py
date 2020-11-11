@@ -170,10 +170,7 @@ class ForLoopHeaderLexer(StatementLexer):
     separators = ('IN', 'IN RANGE', 'IN ENUMERATE', 'IN ZIP')
 
     def handles(self, statement):
-        marker = statement[0].value
-        return (marker == 'FOR' or
-                marker.startswith(':') and
-                marker.replace(':', '').replace(' ', '').upper() == 'FOR')
+        return statement[0].value == 'FOR'
 
     def lex(self):
         separator_seen = False

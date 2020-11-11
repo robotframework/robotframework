@@ -52,7 +52,6 @@ class Cleaner(ModelTransformer):
         header_token.value = '*** %s ***' % normalized
 
     def visit_Statement(self, statement):
-        statement.tokens = list(self._remove_old_for_loop_indent(statement))
         if statement.type in Token.SETTING_TOKENS:
             self._normalize_setting_name(statement)
         self.generic_visit(statement)
@@ -62,18 +61,6 @@ class Cleaner(ModelTransformer):
         if self.in_data_section:
             self._remove_empty_lines_within_statement(statement)
         return statement
-
-    def _remove_old_for_loop_indent(self, statement):
-        prev_was_for_indent = False
-        for t in statement.tokens:
-            if t.type == Token.OLD_FOR_INDENT:
-                prev_was_for_indent = True
-                continue
-            elif prev_was_for_indent and t.type == Token.SEPARATOR:
-                prev_was_for_indent = False
-                continue
-            else:
-                yield t
 
     def _normalize_setting_name(self, statement):
         name = statement.data_tokens[0].value

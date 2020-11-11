@@ -35,6 +35,7 @@
         <xs:sequence>
             <xs:element name="arguments" type="Arguments" />
             <xs:element name="doc" type="xs:string" />
+            <xs:element name="shortdoc" type="xs:string" />
         </xs:sequence>
         <xs:attribute name="deprecated" type="xs:boolean" use="optional" />
         <!-- See the KeywordSpec level comment about "source" and "lineno". -->
@@ -45,6 +46,7 @@
         <xs:sequence>
             <xs:element name="arguments" type="Arguments" />
             <xs:element name="doc" type="xs:string" />
+            <xs:element name="shortdoc" type="xs:string" />
             <xs:element name="tags" type="Tags" minOccurs="0" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" />

@@ -279,11 +279,10 @@ __ `Dividing data to several rows`_
 Old for loop syntax
 ~~~~~~~~~~~~~~~~~~~
 
-For loop syntax was enhanced in various ways in Robot Framework 3.1.
-The most noticeable change was that loops nowadays end with the explicit
-`END` marker and keywords inside the loop do not need to be indented.
-In the `space separated plain text format`_ indentation required
-`escaping with a backslash`__ which resulted in quite ugly syntax:
+Prior to Robot Framework 3.1 the for loop syntax was different than nowadays.
+The marker to start the loop was `:FOR` instead of `FOR` and loop contents needed
+to be explicitly marked with a backslash instead of using the `END` marker to end
+the loop. The first example above would look like this using the old syntax:
 
 .. sourcecode:: robotframework
 
@@ -294,57 +293,14 @@ In the `space separated plain text format`_ indentation required
        \    Log    2nd keyword
        Log    Outside loop
 
-Another change, also visible in the example above, was that the for loop
-marker used to be `:FOR` when nowadays just `FOR` is enough. Related to that,
-the `:FOR` marker and also the `IN` separator were case-insensitive but
-nowadays both `FOR` and `IN` are case-sensitive.
-
-Old for loop syntax still worked in Robot Framework 3.1 and only using `IN`
-case-insensitively caused a deprecation warning. In Robot Framework 3.2
-`IN` is case-sensitive and using `:FOR` instead of `FOR`, not closing loops
-with `END`, and escaping keywords inside loops with :codesc:`\\` were all
-deprecated. Users are advised to switch to the new syntax as soon as possible.
-
-When using the `pipe separated format`_, escaping with :codesc:`\\` has not
-been needed:
-
-.. sourcecode:: robotframework
-
-   | *** Test Cases ***
-   | Example
-   | | :FOR | ${animal}    | IN          | cat | dog |
-   | |      | Log          | ${animal}   |
-   | |      | Log          | 2nd keyword |
-   | | Log  | Outside loop |
-
-The above syntax still works with Robot Framework 3.1, but it will not work
-anymore in Robot Framework 3.2. The recommended solution is closing the loop
-with an explicit `END`, but if old Robot Framework versions need to be
-supported then escaping with :codesc:`\\` is needed.
-
-.. sourcecode:: robotframework
-
-   | *** Test Cases ***
-   | Recommended solution, compatible with RF 3.1 and newer
-   | | FOR  | ${animal}    | IN          | cat | dog |
-   | |      | Log          | ${animal}   |
-   | |      | Log          | 2nd keyword |
-   | | END  |              |
-   | | Log  | Outside loop |
-   |
-   | Compatible with RF 3.0.x, causes deprecation warning with RF 3.2.x
-   | | :FOR | ${animal}    | IN          | cat | dog |
-   | | \    | Log          | ${animal}   |
-   | | \    | Log          | 2nd keyword |
-   | | Log  | Outside loop |
-
-__ Escaping_
+The old syntax was deprecated in Robot Framework 3.2 and the support for it was
+removed altogether in Robot Framework 4.0.
 
 Nested for loops
 ~~~~~~~~~~~~~~~~
 
-Having nested for loops is not supported directly, but it is possible to use
-a user keyword inside a for loop and have another for loop there.
+Starting from Robot Framework 4.0, it is possible to use nested for loops
+simply by adding another loop inside a loop:
 
 .. sourcecode:: robotframework
 
@@ -352,14 +308,30 @@ a user keyword inside a for loop and have another for loop there.
    Handle Table
        [Arguments]    @{table}
        FOR    ${row}    IN    @{table}
-           Handle Row    @{row}
+           FOR    ${cell}    IN    @{row}
+               Handle Cell    ${cell}
+           END
        END
 
-   Handle Row
-       [Arguments]    @{row}
-       FOR    ${cell}    IN    @{row}
-           Handle Cell    ${cell}
+There can be multiple nesting levels and one loop can contain several loops:
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Example
+       FOR    ${root}    IN    r1    r2
+           FOR    ${child}    IN    c1   c2    c3
+               FOR    ${grandchild}    IN    g1    g2
+                   Log Many    ${root}    ${child}    ${grandchild}
+               END
+           END
+           FOR    ${sibling}    IN    s1    s2    s3
+                   Log Many    ${root}    ${sibling}
+           END
        END
+
+With earlier Robot Framework versions nesting for loops was not supported directly,
+but it was possible to have a user keyword inside a loop and have another loop there.
 
 Using several loop variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -14,10 +14,11 @@
 #  limitations under the License.
 
 from itertools import chain
+import json
 import re
 
 from robot.model import Tags
-from robot.utils import getshortdoc, get_timestamp, Sortable, setter, unicode, unic
+from robot.utils import IRONPYTHON, getshortdoc, get_timestamp, Sortable, setter, unicode
 
 from .htmlutils import HtmlToText, DocFormatter
 from .writer import LibdocWriter
@@ -73,17 +74,18 @@ class LibraryDoc(object):
     def _add_parent(self, kws):
         for keyword in kws:
             keyword.parent = self
+            keyword.generate_shortdoc()
         return sorted(kws)
 
     @property
     def all_tags(self):
         return Tags(chain.from_iterable(kw.tags for kw in self.keywords))
 
-    def save(self, output=None, format='HTML', spec_doc_format=None):
+    def save(self, output=None, format='HTML'):
         with LibdocOutput(output, format) as outfile:
-            LibdocWriter(format, spec_doc_format).write(self, outfile)
+            LibdocWriter(format).write(self, outfile)
 
-    def convert_doc_to_html(self):
+    def convert_docs_to_html(self):
         formatter = DocFormatter(self.keywords, self.doc, self.doc_format)
         self._doc = formatter.html(self.doc, intro=True)
         self.doc_format = 'HTML'
@@ -105,18 +107,35 @@ class LibraryDoc(object):
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
             'generated': get_timestamp(daysep='-', millissep=None),
-            'all_tags': tuple(self.all_tags),
-            'contains_tags': bool(self.all_tags)
+            'all_tags': list(self.all_tags)
         }
+
+    def to_json(self, indent=None):
+        data = self.to_dictionary()
+        if IRONPYTHON:
+            # Workaround for https://github.com/IronLanguages/ironpython2/issues/643
+            data = self._unicode_to_utf8(data)
+        return json.dumps(data, indent=indent)
+
+    def _unicode_to_utf8(self, data):
+        if isinstance(data, dict):
+            return {self._unicode_to_utf8(key): self._unicode_to_utf8(value)
+                    for key, value in data.items()}
+        if isinstance(data, (list, tuple)):
+            return [self._unicode_to_utf8(item) for item in data]
+        if isinstance(data, unicode):
+            return data.encode('UTF-8')
+        return data
 
 
 class KeywordDoc(Sortable):
 
-    def __init__(self, name='', args=(), doc='', tags=(), source=None,
+    def __init__(self, name='', args=(), doc='', shortdoc='', tags=(), source=None,
                  lineno=-1, parent=None):
         self.name = name
         self.args = args
         self.doc = doc
+        self._shortdoc = shortdoc
         self.tags = Tags(tags)
         self.source = source
         self.lineno = lineno
@@ -124,10 +143,19 @@ class KeywordDoc(Sortable):
 
     @property
     def shortdoc(self):
+        if self._shortdoc:
+            return self._shortdoc
+        return self._get_shortdoc()
+
+    def _get_shortdoc(self):
         doc = self.doc
         if self.parent and self.parent.doc_format == 'HTML':
             doc = HtmlToText().get_shortdoc_from_html(doc)
         return ' '.join(getshortdoc(doc).splitlines())
+
+    @shortdoc.setter
+    def shortdoc(self, shortdoc):
+        self._shortdoc = shortdoc
 
     @property
     def deprecated(self):
@@ -137,23 +165,27 @@ class KeywordDoc(Sortable):
     def _sort_key(self):
         return self.name.lower()
 
+    def generate_shortdoc(self):
+        if not self._shortdoc:
+            self.shortdoc = self._get_shortdoc()
+
     def to_dictionary(self):
         return {
             'name': self.name,
-            'args': self._convert_arguments(),
+            'args': [self._arg_to_dict(arg) for arg in self.args],
             'doc': self.doc,
             'shortdoc': self.shortdoc,
-            'tags': tuple(self.tags),
+            'tags': list(self.tags),
             'source': self.source,
-            'lineno': self.lineno,
-            'matched': True
+            'lineno': self.lineno
         }
 
-    def _convert_arguments(self):
-        return [{'name': a.name,
-                 'type': a.type_repr,
-                 'default': a.default_repr,
-                 'kind': a.kind,
-                 'required': a.required,
-                 'repr': unicode(a)
-                 } for a in self.args]
+    def _arg_to_dict(self, arg):
+        return {
+            'name': arg.name,
+            'type': arg.type_repr,
+            'default': arg.default_repr,
+            'kind': arg.kind,
+            'required': arg.required,
+            'repr': unicode(arg)
+        }

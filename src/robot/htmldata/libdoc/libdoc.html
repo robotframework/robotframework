@@ -59,7 +59,7 @@
             selectedTag = params["tag"];
             tagSearch(selectedTag, window.location.hash);
         }
-        if (libdoc.contains_tags) {
+        if (libdoc.all_tags.length) {
           libdoc.selectedTag = selectedTag;
           renderTemplate('tags-shortcuts', libdoc);
         }
@@ -124,21 +124,21 @@
         }
         let regexp = new RegExp(patternRegexp, 'i');
         let test = regexp.test.bind(regexp);
-        let result = {contains_tags: libdoc.contains_tags};
+        let result = {};
         let matchCount = 0;
         result.keywords = util.map(libdoc.keywords, function (kw) {
             kw = $.extend({}, kw);
-            kw.matched = (include.name && test(kw.name) ||
-                          include.args && test(kw.args) ||
-                          include.doc && test($(kw.doc).text()) ||
-                          include.tags && util.any(util.map(kw.tags, test)));
-            if (kw.matched)
+            kw.hidden =  !(include.name && test(kw.name)) &&
+                         !(include.args && test(kw.args)) &&
+                          !(include.doc && test($(kw.doc).text())) &&
+                          !(include.tags && util.any(util.map(kw.tags, test)));
+            if (!kw.hidden)
                 matchCount++;
             return kw
         });
         renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
-        if (libdoc.contains_tags) {
+        if (libdoc.all_tags.length) {
           libdoc.selectedTag = include.tagsExact ? pattern : "";
           renderTemplate('tags-shortcuts', libdoc);
         }
@@ -224,7 +224,7 @@
     function resetKeywords() {
         renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
-        if (libdoc.contains_tags) {
+        if (libdoc.all_tags.length) {
             renderTemplate('tags', libdoc);
         }
         document.getElementById("keyword-statistics-header").innerText = ''+libdoc.keywords.length;
@@ -303,19 +303,29 @@
         {{each inits}}
         <div class="kw-row">
           <div class="kw-overview">
-            <h4>Arguments</h4>
-            <div class="args">
-            {{each args}}
-              <li>
-                <div class="arg ${$value.kind} {{if $value.required}}arg-required{{else}}arg-optional{{/if}}">
-                  <span class="arg-name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
-                  {{if $value.type}}<span class="arg-type">: ${$value.type}</span>{{/if}}
-                  {{if $value.default !== null}} = <span class="arg-default-value">${$value.default}</span>{{/if}}
+          {{if args.length}}
+              <div class="args">
+                <h4>Arguments</h4>
+                <div class="arguments-list-container">
+                <div class="arguments-list">
+                {{each args}}
+                  <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
+
+                  {{if $value.default !== null}}
+                  <div class="arg-default-container">
+                  <span class="arg-default-eq">=</span>
+                  <span class="arg-default-value" title="Argument default value">${$value.default}</span>
+                  </div>
+                  {{/if}}
+
+                  {{if $value.type}}
+                  <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.type}">&lt;${$value.type}&gt;</span>
+                  {{/if}}
+                {{/each}}
                 </div>
-              </li>
-            {{/each}}
-            </div>
-          </div>
+                </div>
+              </div>
+          {{/if}}
           {{if $value.doc}}
             <div class="kw-docs">
               <h4>Documentation</h4>
@@ -333,7 +343,7 @@
         <input placeholder="Search" type="text" class="search-input" onkeyup="delay(searching, 500)"/>
         <button class="clear-search" onclick="clearSearch()">&#10005;</button>
       </div>
-      {{if all_tags.length > 0}}
+      {{if all_tags.length}}
       <select id="tags-shortcuts-container" onchange="location = this.value;">
       </select>
       {{/if}}
@@ -348,7 +358,7 @@
 
 <script type="text/x-jquery-tmpl" id="keyword-shortcuts-template">
     {{each keywords}}
-    {{if $value.matched}}
+    {{if !$value.hidden}}
     <li>
     <a href="#${encodeURIComponent($value.name)}"
        onclick="closeMenu()"
@@ -358,7 +368,7 @@
     {{/if}}
     {{/each}}
     {{each keywords}}
-    {{if $value.matched == false}}
+    {{if $value.hidden}}
     <li>
     <a href="#${encodeURIComponent($value.name)}"
        onclick="closeMenu()"
@@ -382,12 +392,12 @@
     <h2 id="Keywords">Keywords</h2>
     <div class="keywords">
         {{each keywords}}
-        {{if $value.matched}}
+        {{if !$value.hidden}}
             {{tmpl($value) 'keyword-template'}}
         {{/if}}
         {{/each}}
         {{each keywords}}
-        {{if $value.matched === false}}
+        {{if $value.hidden}}
             {{tmpl($value) 'keyword-template'}}
         {{/if}}
         {{/each}}
@@ -395,7 +405,7 @@
 </script>
 
 <script type="text/x-jquery-tmpl" id="keyword-template">
-    <div class="keyword-container {{if matched === false}}no-{{/if}}match" id="${name}">
+    <div class="keyword-container {{if hidden}}no-{{/if}}match" id="${name}">
        <div class="keyword-name">
             <h2>
             <a class="kw-name" href="#${encodeURIComponent(name)}"
@@ -404,23 +414,30 @@
        </div>
        <div class="keyword-content">
           <div class="kw-overview">
-            {{if args.length > 0}}
+            {{if args.length}}
               <div class="args">
                 <h4>Arguments</h4>
-                <ul class="arguments-list">
+                <div class="arguments-list-container">
+                <div class="arguments-list">
                 {{each args}}
-                  <li>
-                    <div class="arg ${$value.kind} {{if $value.required}}arg-required{{else}}arg-optional{{/if}}">
-                      <span class="arg-name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
-                      {{if $value.type}}: <span class="arg-type">${$value.type}</span>{{/if}}
-                      {{if $value.default !== null}} = <span class="arg-default-value">${$value.default}</span>{{/if}}
-                    </div>
-                  </li>
+                  <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
+
+                  {{if $value.default !== null}}
+                  <div class="arg-default-container">
+                  <span class="arg-default-eq">=</span>
+                  <span class="arg-default-value" title="Argument default value">${$value.default}</span>
+                  </div>
+                  {{/if}}
+
+                  {{if $value.type}}
+                  <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.type}">&lt;${$value.type}&gt;</span>
+                  {{/if}}
                 {{/each}}
-                </ul>
+                </div>
+                </div>
               </div>
             {{/if}}
-            {{if libdoc.contains_tags}}
+            {{if libdoc.all_tags.length}}
             <div class="tags">
                 <h4>Tags</h4>
                 {{each tags}}

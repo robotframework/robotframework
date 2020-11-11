@@ -39,7 +39,7 @@ from robot import model
 from robot.conf import RobotSettings
 from robot.model import Keywords
 from robot.output import LOGGER, Output, pyloggingconf
-from robot.utils import seq2str, setter
+from robot.utils import seq2str, setter, py2to3
 
 from .randomizer import Randomizer
 from .steprunner import StepRunner
@@ -57,8 +57,10 @@ class Keyword(model.Keyword):
     message_class = None  #: Internal usage only.
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=model.Keyword.KEYWORD_TYPE, lineno=None):
-        model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type)
+                 timeout=None, type=model.Keyword.KEYWORD_TYPE, lineno=None,
+                 parent=None):
+        model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
+                               parent)
         self.lineno = lineno
 
     def run(self, context):
@@ -69,23 +71,23 @@ class Keyword(model.Keyword):
         return StepRunner(context).run_step(self)
 
 
+@py2to3
 class ForLoop(Keyword):
     """Represents a for loop in test data.
 
     Contains keywords in the loop body as child :attr:`keywords`.
     """
-    __slots__ = ['flavor', 'lineno', '_header', '_end']
+    __slots__ = ['flavor', 'lineno', 'ended']
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, variables, values, flavor, lineno=None,
-                 _header='FOR', _end='END'):
+    def __init__(self, variables, values, flavor, lineno=None, ended=True,
+                 parent=None):
         Keyword.__init__(self, assign=variables, args=values,
-                         type=Keyword.FOR_LOOP_TYPE)
+                         type=Keyword.FOR_LOOP_TYPE, parent=parent)
         self.keywords = None
         self.flavor = flavor
         self.lineno = lineno
-        self._header = _header
-        self._end = _end
+        self.ended = ended
 
     @setter
     def keywords(self, keywords):
@@ -104,6 +106,9 @@ class ForLoop(Keyword):
         variables = '    '.join(self.assign)
         values = '    '.join(self.values)
         return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
+
+    def __nonzero__(self):
+        return True
 
 
 class TestCase(model.TestCase):
@@ -319,10 +324,17 @@ class UserKeyword(object):
         self.keywords = []
         self.lineno = lineno
         self.parent = parent
+        self._teardown = None
 
     @setter
     def keywords(self, keywords):
         return model.Keywords(Keyword, self, keywords)
+
+    @property
+    def teardown(self):
+        if self._teardown is None:
+            self._teardown = Keyword(parent=self, type=Keyword.TEARDOWN_TYPE)
+        return self._teardown
 
     @setter
     def tags(self, tags):

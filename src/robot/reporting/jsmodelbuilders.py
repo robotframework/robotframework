@@ -77,8 +77,9 @@ class SuiteBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, suite):
-        with self._context.prune_input(suite.suites, suite.tests, suite.keywords):
+        with self._context.prune_input(suite):
             stats = self._get_statistics(suite)  # Must be done before pruning
+            kws = [kw for kw in (suite.setup, suite.teardown) if kw]
             return (self._string(suite.name, attr=True),
                     self._string(suite.source),
                     self._context.relative_source(suite.source),
@@ -87,7 +88,7 @@ class SuiteBuilder(_Builder):
                     self._get_status(suite),
                     tuple(self._build_suite(s) for s in suite.suites),
                     tuple(self._build_test(t) for t in suite.tests),
-                    tuple(self._build_keyword(k, split=True) for k in suite.keywords),
+                    tuple(self._build_keyword(k, split=True) for k in kws),
                     stats)
 
     def _yield_metadata(self, suite):
@@ -126,6 +127,8 @@ class KeywordBuilder(_Builder):
 
     def build(self, kw, split=False):
         self._context.check_expansion(kw)
+        if kw.teardown:
+            kw.keywords.append(kw.teardown)
         with self._context.prune_input(kw.messages, kw.keywords):
             return (self._types[kw.type],
                     self._string(kw.kwname, attr=True),

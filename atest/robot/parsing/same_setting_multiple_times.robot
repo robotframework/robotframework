@@ -32,7 +32,7 @@ Test Setup
 
 Test Teardown
     ${tc} =    Check Test Case    Use Defaults
-    Should Be Equal    ${tc.teardown}    ${NONE}
+    Teardown Should Not Be Defined     ${tc}
     Setting multiple times    4    13    Test Teardown
 
 Test Template
@@ -62,7 +62,7 @@ Test [Setup]
 
 Test [Teardown]
     ${tc} =    Check Test Case    Test Settings
-    Should Be Equal    ${tc.teardown}    ${NONE}
+    Teardown Should Not Be Defined     ${tc}
     Setting multiple times    16    39    Teardown
     Setting multiple times    17    40    Teardown
 

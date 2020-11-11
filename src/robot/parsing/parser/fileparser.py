@@ -58,11 +58,17 @@ class FileParser(Parser):
 
 
 class SectionParser(Parser):
+    subsection_parsers = {}
 
     def handles(self, statement):
         return statement.type not in Token.HEADER_TOKENS
 
     def parse(self, statement):
+        parser_class = self.subsection_parsers.get(statement.type)
+        if parser_class:
+            parser = parser_class(statement)
+            self.model.body.append(parser.model)
+            return parser
         self.model.body.append(statement)
 
 
@@ -91,32 +97,14 @@ class ImplicitCommentSectionParser(SectionParser):
 
 
 class TestCaseSectionParser(SectionParser):
+    subsection_parsers = {Token.TESTCASE_NAME: TestCaseParser}
 
     def __init__(self, header):
         SectionParser.__init__(self, TestCaseSection(header))
 
-    def parse(self, statement):
-        if statement.type == Token.TESTCASE_NAME:
-            parser = TestCaseParser(statement)
-            model = parser.model
-        else:    # Empty lines and comments before first test.
-            parser = None
-            model = statement
-        self.model.body.append(model)
-        return parser
-
 
 class KeywordSectionParser(SectionParser):
+    subsection_parsers = {Token.KEYWORD_NAME: KeywordParser}
 
     def __init__(self, header):
         SectionParser.__init__(self, KeywordSection(header))
-
-    def parse(self, statement):
-        if statement.type == Token.KEYWORD_NAME:
-            parser = KeywordParser(statement)
-            model = parser.model
-        else:    # Empty lines and comments before first keyword.
-            parser = None
-            model = statement
-        self.model.body.append(model)
-        return parser

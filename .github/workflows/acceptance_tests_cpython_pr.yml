@@ -1,0 +1,145 @@
+name: Acceptance tests (CPython + PyPy)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'src/**'
+      - 'atest/**'
+      - '!**/*.rst'
+
+jobs:
+  test_using_builtin_python:
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ 'ubuntu-latest', 'windows-latest' ]
+        python-version: [ '2.7', '3.5', '3.9' ]
+        include:
+          - os: ubuntu-latest
+            set_display: export DISPLAY=:99; Xvfb :99 -screen 0 1024x768x24 -ac -noreset & sleep 3
+          - os: windows-latest
+            set_codepage: chcp 850
+          - os: windows-latest
+            python-version: '3.9'
+            set_codepage: chcp 850
+            atest_args: --exclude require-lxml --exclude require-screenshot
+        exclude:
+          - os: windows-latest
+            python-version: 'pypy2'
+          - os: windows-latest
+            python-version: 'pypy3'
+
+    runs-on: ${{ matrix.os }}
+
+    name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup python for starting the tests
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+          architecture: 'x64'
+
+      - name: Get test starter Python at Windows
+        run: echo "::set-env name=ATEST_PYTHON::$((get-command python.exe).Path)"
+        if: runner.os == 'Windows'
+
+      - name: Get test starter Python
+        run: echo "::set-env name=ATEST_PYTHON::$(which python)"
+        if: runner.os != 'Windows'
+
+      - name: Setup python ${{ matrix.python-version }} for running the tests
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: 'x64'
+      
+      - name: Get test runner Python at Windows
+        run: echo "::set-env name=BASE_PYTHON::$((get-command python.exe).Path)"
+        if: runner.os == 'Windows'
+
+      - name: Get test runner Python
+        run: echo "::set-env name=BASE_PYTHON::$(which python)"
+        if: runner.os != 'Windows'
+
+      - name: Install Report handling tools to Windows
+        run: |
+          choco install curl -y --no-progress
+          choco install zip -y --no-progress
+        if: runner.os == 'Windows'
+
+      - name: Install report handling tools to Mac
+        run: |
+          brew install zip
+          brew install curl
+        if: runner.os == 'macOS'
+
+      - name: Install Ubuntu PyPy dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y -q install libxslt-dev libxml2-dev
+        if: contains(matrix.python-version, 'pypy') && contains(matrix.os, 'ubuntu')
+
+      - name: Install screen and report handling tools, and other required libraries to Linux
+        run: |
+          sudo apt-get update
+          sudo apt-get -y -q install xvfb scrot zip curl libxml2-dev libxslt1-dev
+        if: contains(matrix.os, 'ubuntu')
+
+      - name: Disable NTP on macOS (https://github.com/actions/virtual-environments/issues/820)
+        run: |
+          sudo systemsetup -setusingnetworktime off
+          sudo rm -rf /etc/ntp.conf
+        if: runner.os == 'macOS'
+
+      - name: Run acceptance tests
+        run: |
+          python -m pip install -r atest/requirements.txt
+          ${{ env.ATEST_PYTHON }} -m pip install -r atest/requirements-run.txt
+          ${{ matrix.set_codepage }}
+          ${{ matrix.set_display }}
+          ${{ env.ATEST_PYTHON }} atest/run.py ${{ env.BASE_PYTHON }} --exclude no-ci ${{ matrix.atest_args }} atest/robot
+
+      - name: Delete output.xml (on Win)
+        run: |
+          Get-ChildItem atest/results -Include output.xml -Recurse | Remove-Item
+        if: always() && runner.os == 'Windows'
+
+      - name: Delete output.xml (on Unix-like)
+        run: |
+          find atest/results -type f -name 'output.xml' -exec rm {} +
+        if: always() && runner.os != 'Windows'
+
+      - name: Archive acceptances test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: at-results-${{ matrix.python-version }}-${{ matrix.os }}
+          path: atest/results
+        if: always() && job.status == 'failure'
+
+      - name: Upload results
+        run: |
+          echo '<html><head><meta http-equiv = "refresh" content =" 0 ; url = /report.html"></head></html>' > atest/results/index.html
+          zip -r -j site.zip atest/results > no_output 2>&1
+          curl -s -H "Content-Type: application/zip" -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" --data-binary "@site.zip" https://api.netlify.com/api/v1/sites > response.json
+          echo "::set-env name=REPORT_URL::$(cat response.json|python -c "import sys, json; print('https://' + json.load(sys.stdin)['subdomain'] + '.netlify.com')")"
+          echo "::set-env name=JOB_STATUS::$(python -c "print('${{ job.status }}'.lower())")"
+        if: always() && job.status == 'failure'
+
+      - uses: octokit/request-action@57ec46afcc4c58c813af3afe67e57ced1ea9f165
+        name: Update status with Github Status API
+        id: update_status
+        with:
+          route: POST /repos/:repository/statuses/:sha
+          repository: ${{ github.repository }}
+          sha: ${{ github.sha }}
+          state: "${{env.JOB_STATUS}}"
+          target_url: "${{env.REPORT_URL}}"
+          description: "Link to test report."
+          context: at-results-${{ matrix.python-version }}-${{ matrix.os }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: always() && job.status == 'failure'

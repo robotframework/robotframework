@@ -254,6 +254,64 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     letter-spacing: 0.1em;
 }
 
+.arguments-list-container {
+    overflow-y: auto;
+}
+
+.arguments-list {
+    display: -ms-inline-grid;
+    display: inline-grid;
+    -ms-grid-columns: 1fr 1fr 1fr;
+    grid-template-columns: auto auto auto;
+    row-gap: 3px;
+}
+
+.arguments-list .arg-name {
+    -ms-grid-column: 1;
+    grid-column: 1;
+    border-radius: 3px;
+    white-space: nowrap;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    justify-self: start;
+}
+
+.arguments-list .arg-default-container {
+    -ms-grid-column: 2;
+    grid-column: 2;
+    display: flex;
+}
+
+.arguments-list .arg-optional {
+    font-style: italic;
+}
+
+.arguments-list .arg-default-eq {
+    margin-left: 2rem;
+    margin-right: 0.5rem;
+    background: var(--background-color);
+}
+
+.arguments-list .arg-default-value {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-radius: 3px;
+}
+
+.arguments-list .base-arg-data {
+    display: flex;
+    min-width: 150px;
+}
+
+.arguments-list .arg-type {
+    margin-left: 2rem;
+    -ms-grid-column: 3;
+    grid-column: 3;
+    background: var(--background-color);
+    white-space: nowrap;
+    -webkit-text-size-adjust: none;
+}
+
 @media only screen and (min-width: 900px) {
     .libdoc-details {
         z-index: 1;
@@ -396,7 +454,7 @@ input.switch:checked + .slider::before {
 }
 @media only screen and (min-width: 899px) {
     .kw-overview {
-        max-width: 400px;
+        max-width: 850px;
         margin-right: 1.5rem;
     }
 }

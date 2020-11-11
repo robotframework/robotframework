@@ -49,13 +49,15 @@ Boolean
     Boolean              oFF                       ${False}
     Boolean              0                         ${False}
     Boolean              ${EMPTY}                  ${False}
-    Boolean              none                      ${False}
-    Boolean              ${0}                      ${False}
-    Boolean              ${1}                      ${True}
+    Boolean              none                      ${None}
+    Boolean              ${None}                   ${None}
+    Boolean              ${0}                      ${0}
+    Boolean              ${1.1}                    ${1.1}
 
 Invalid boolean
     [Template]           Invalid value is passed as-is
     Boolean              foobar
+    Boolean              ${LIST}                   expected=${LIST}
 
 String
     String               Hello, world!             u'Hello, world!'
@@ -63,11 +65,17 @@ String
     String               None                      u'None'
     String               True                      u'True'
     String               []                        u'[]'
+    String               ${42}                     42
+    String               ${None}                   None
+    String               ${LIST}                   ['foo', 'bar']
     Unicode              Hello, world!             u'Hello, world!'
     Unicode              åäö                       u'åäö'
     Unicode              None                      u'None'
     Unicode              True                      u'True'
     Unicode              []                        u'[]'
+    Unicode              ${42}                     42
+    Unicode              ${None}                   None
+    Unicode              ${LIST}                   ['foo', 'bar']
 
 Bytes
     [Tags]               require-py3
@@ -260,5 +268,5 @@ Invalid kwonly
 
 *** Keywords ***
 Invalid value is passed as-is
-    [Arguments]    ${kw}    ${arg}
-    Run Keyword    ${kw}    ${arg}    u'''${arg}'''
+    [Arguments]    ${kw}    ${arg}    ${expected}=u'''${arg}'''
+    Run Keyword    ${kw}    ${arg}    ${expected}

@@ -60,9 +60,9 @@ $(document).ready(function () {
 
 function setBackground(topsuite) {
     var color;
-    if (topsuite.failed)
+    if (topsuite.fail)
         color = window.settings.background.fail;
-    else if (topsuite.passed)
+    else if (topsuite.pass)
         color = window.settings.background.pass;
     else
         color = window.settings.background.skip;
@@ -231,11 +231,8 @@ function renderSearchSelector(suite, test, include, exclude) {
 function renderSearchDetails(suite, test, include, exclude) {
     var tests = searchTests(util.escape(suite), util.escape(test),
                             util.escape(include), util.escape(exclude));
-    var passed = calculatePassed(tests);
-    var stats = {total: tests.length,
-                 pass: passed,
-                 fail: tests.length - passed,
-                 totalTime: calculateTotalTime(tests)};
+    var stats = calculateStats(tests);
+    stats.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', stats).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
 }
@@ -302,11 +299,19 @@ function calculateTotalTime(tests) {
     return util.formatElapsed(total);
 }
 
-function calculatePassed(tests) {
+function calculateStats(tests) {
     var passed = util.filter(tests, function (test) {
         return test.status == 'PASS';
     });
-    return passed.length;
+    var failed = util.filter(tests, function (test) {
+        return test.status == 'FAIL';
+    });
+    return {
+      total: tests.length,
+      pass: passed.length,
+      fail: failed.length,
+      skip: tests.length - passed.length - failed.length
+    };
 }
 
 function renderTestDetails(sortByStatus, target) {
@@ -371,14 +376,14 @@ function hideHiddenDetailsColumns(elem) {
   <table class="details">
     <tr>
       <th>Status:</th>
-      {{if failed}}
+      {{if fail}}
       <td><a href="#totals" onclick="totalDetailSelected()"
-             class="fail">${failed} {{= testOrTask('{test}')}}{{if failed != 1}}s{{/if}} failed</a></td>
-      {{else passed && skipped}}
+             class="fail">${fail} {{= testOrTask('{test}')}}{{if fail != 1}}s{{/if}} failed</a></td>
+      {{else pass && skip}}
       <td><a href="#totals" onclick="totalDetailSelected()"
-             class="pass">${passed} {{= testOrTask('{test}')}}{{if passed != 1}}s{{/if}} passed,
-             ${skipped} {{= testOrTask('{test}')}}{{if skipped != 1}}s{{/if}} skipped</a></td>
-      {{else passed}}
+             class="pass">${pass} {{= testOrTask('{test}')}}{{if pass != 1}}s{{/if}} passed,
+             ${skip} {{= testOrTask('{test}')}}{{if skip != 1}}s{{/if}} skipped</a></td>
+      {{else pass}}
       <td><a href="#totals" onclick="totalDetailSelected()"
              class="pass">All {{= testOrTask('{test}')}}s passed</a></td>
       {{else}}
@@ -690,7 +695,7 @@ function hideHiddenDetailsColumns(elem) {
 <script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">
   <tr>
     <th>Status:</th>
-    <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
+    <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
   </tr>
   {{if doc}}
   <tr>

@@ -17,6 +17,7 @@ Non-ASCII In Return Value Attributes
     Log  ${obj.message}
 
 Non-ASCII Failure
+    [Tags]    täg
     Raise NonASCII Error
 
 Non-ASCII Failure In Setup

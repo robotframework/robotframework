@@ -47,7 +47,7 @@ Boolean
     Boolean              oFF                       ${False}
     Bool                 0                         ${False}
     Boolean              ${EMPTY}                  ${False}
-    Bool                 none                      ${False}
+    Bool                 none                      ${None}
 
 Invalid boolean is accepted as-is
     Boolean              FooBar                    'FooBar'

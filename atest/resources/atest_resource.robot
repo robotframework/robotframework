@@ -366,3 +366,11 @@ Error in library
     ...    Error in library '${name}':
     ...    @{message}
     Check Log Message    ${ERRORS}[${index}]    ${error}    level=ERROR    pattern=${pattern}
+
+Setup Should Not Be Defined
+    [Arguments]    ${model_object}
+    Should Not Be True     ${model_object.setup}
+
+Teardown Should Not Be Defined
+    [Arguments]    ${model_object}
+    Should Not Be True     ${model_object.teardown}

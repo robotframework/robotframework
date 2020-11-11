@@ -75,13 +75,18 @@ Check Minimal Suite Times
 Check Suite Defaults
     [Arguments]    ${mysuite}    ${message}=    ${tests}=[]    ${setup}=${None}    ${teardown}=${None}
     Should Be Equal    ${mysuite.message}    ${message}
-    Check Setup Or Teardown    ${mysuite.setup}    ${setup}
-    Check Setup Or Teardown    ${mysuite.teardown}    ${teardown}
+    Check Setup    ${mysuite}    ${setup}
+    Check Teardown    ${mysuite}    ${teardown}
 
-Check Setup Or Teardown
-    [Arguments]    ${item}    ${expected}
-    ${actual} =    Set Variable If    "${expected}" == "None"    ${item}    ${item.name}
-    Should Be Equal    ${actual}    ${expected}
+Check Setup
+    [Arguments]    ${suite}    ${expected}
+    Run Keyword If    "${expected}" != "None"   Should Be Equal   ${suite.setup.name}    ${expected}
+    Run Keyword If    "${expected}" == "None"   Setup Should Not Be Defined    ${suite}
+
+Check Teardown
+    [Arguments]    ${suite}    ${expected}
+    Run Keyword If    "${expected}" != "None"   Should Be Equal   ${suite.teardown.name}    ${expected}
+    Run Keyword If    "${expected}" == "None"   Teardown Should Not Be Defined    ${suite}
 
 Check Suite Got From Misc/suites/ Directory
     Check Normal Suite Defaults    ${SUITE}    teardown=BuiltIn.Log

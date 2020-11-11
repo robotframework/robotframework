@@ -37,10 +37,16 @@ Invalid decimal
 Boolean
     Check Test Case    ${TESTNAME}
 
-Invalid boolean is accepted as-is
+Invalid boolean string is accepted as-is
+    Check Test Case    ${TESTNAME}
+
+Invalid boolean
     Check Test Case    ${TESTNAME}
 
 String
+    Check Test Case    ${TESTNAME}
+
+Invalid string
     Check Test Case    ${TESTNAME}
 
 Bytes
@@ -173,9 +179,6 @@ Kwonly
     Check Test Case    ${TESTNAME}
 
 Invalid kwonly
-    Check Test Case    ${TESTNAME}
-
-Boolean, None, List and Dict are not converted
     Check Test Case    ${TESTNAME}
 
 Return value annotation causes no error
