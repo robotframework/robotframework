@@ -83,10 +83,18 @@ Run Keyword With Invalid Keyword Name
     [Documentation]    FAIL Keyword name must be a string.
     Run Keyword    ${42}    arg 1    arg 2
 
-Example
+Run Keyword With Default Argument
+#    ${foo} =      Evaluate    [10, 42]
+#    ${alo}=     Set Variable      Huu
+    UK With Default Argument
+
+Run Keyword With Embedded Argument
     ${foo} =      Evaluate    [10, 42]
-#    Huu '${foo}'      # Works
-    Run Keyword       Huu '${foo}'    # Does not work
+    Run Keyword       Huu '${foo}'
+
+Run Keyword With UK As Variable
+    ${variable_keyword} =     Set Variable    Foo bar
+    Run Keyword    ${variable_keyword}
 
 *** Keywords ***
 My UK
@@ -104,6 +112,13 @@ Timeoutted UK Passing
 Timeoutted UK Timeouting
     [Timeout]    300 milliseconds
     Sleep    1 second
+
+Foo bar
+    Log    foo    WARN
+
+UK With Default Argument
+    [Arguments]  ${type}=bar
+    Run Keyword  Foo ${type}
 
 Huu '${foo}'
     Log    ${foo[1]}    WARN
