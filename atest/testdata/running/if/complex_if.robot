@@ -152,6 +152,18 @@ If with comments
       Log   no joo  # Here is also ok
   END  # Here is also ok
 
+If with invalid condition
+  [Documentation]   FAIL: funny
+  IF  '123'=${123}
+	 Log    Demo
+  END
+
+If with invalid condition 2
+  [Documentation]   FAIL: funny
+  IF  ooops
+	 Log    Demo
+  END
+
 *** Keywords ***
 Recurse
    [Arguments]  ${value}
