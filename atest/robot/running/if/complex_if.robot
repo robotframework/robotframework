@@ -48,3 +48,9 @@ For loop if else if early exit
 
 If with comments
    Check Test Case    ${TESTNAME}
+
+If with invalid condition
+   Check Test Case    ${TESTNAME}
+
+If with invalid condition 2
+   Check Test Case    ${TESTNAME}
