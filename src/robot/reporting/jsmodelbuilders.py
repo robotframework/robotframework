@@ -108,6 +108,10 @@ class TestBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, test):
+        if test.setup:
+            test.keywords.insert(0, test.setup)
+        if test.teardown:
+            test.keywords.append(test.teardown)
         with self._context.prune_input(test.keywords):
             return (self._string(test.name, attr=True),
                     self._string(test.timeout),
