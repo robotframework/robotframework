@@ -102,6 +102,24 @@ If without end
     ...    .* Empty block detected
     ...    ${PARSING}/if/if_without_end.robot
 
+Else if without condition
+    Run tests and check parsing error
+    ...    ${PARSING}/if/else_if_without_condition.robot
+    ...    .* ELSE IF without condition
+    ...    ${PARSING}/if/else_if_without_condition.robot
+
+Else if with multiple conditions
+    Run tests and check parsing error
+    ...    ${PARSING}/if/else_if_with_many_conditions.robot
+    ...    .* ELSE IF with multiple conditions
+    ...    ${PARSING}/if/else_if_with_many_conditions.robot
+
+Else with a condition
+    Run tests and check parsing error
+    ...    ${PARSING}/if/else_with_condition.robot
+    ...    .* ELSE with a condition
+    ...    ${PARSING}/if/else_with_condition.robot
+
 Multisource Containing File With Invalid Encoding
     Run tests and check parsing error
     ...    ${PARSING}/invalid_encoding/invalid_encoding.robot ${PARSING}/invalid_encoding/a_valid_file.robot
