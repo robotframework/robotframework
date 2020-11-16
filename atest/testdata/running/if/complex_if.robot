@@ -153,13 +153,13 @@ If with comments
   END  # Here is also ok
 
 If with invalid condition
-  [Documentation]   FAIL: funny
+  [Documentation]   FAIL Evaluating expression ''123'=123' failed: SyntaxError: invalid syntax (<string>, line 1)
   IF  '123'=${123}
 	 Log    Demo
   END
 
 If with invalid condition 2
-  [Documentation]   FAIL: funny
+  [Documentation]   FAIL Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
   IF  ooops
 	 Log    Demo
   END
