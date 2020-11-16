@@ -87,14 +87,20 @@ If with empty else_if
 If without condition
     Run tests and check parsing error
     ...    ${PARSING}/if/if_without_condition.robot
-    ...    .* Empty block detected
+    ...    .* IF without condition
     ...    ${PARSING}/if/if_without_condition.robot
 
 If with many conditions
     Run tests and check parsing error
     ...    ${PARSING}/if/if_with_many_conditions.robot
-    ...    .* Empty block detected
+    ...    .* IF with multiple conditions
     ...    ${PARSING}/if/if_with_many_conditions.robot
+
+If without end
+    Run tests and check parsing error
+    ...    ${PARSING}/if/if_without_end.robot
+    ...    .* Empty block detected
+    ...    ${PARSING}/if/if_without_end.robot
 
 Multisource Containing File With Invalid Encoding
     Run tests and check parsing error
