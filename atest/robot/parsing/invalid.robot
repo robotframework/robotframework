@@ -97,10 +97,9 @@ If with many conditions
     ...    ${PARSING}/if/if_with_many_conditions.robot
 
 If without end
-    Run tests and check parsing error
+    Run tests and check error
     ...    ${PARSING}/if/if_without_end.robot
-    ...    .* Empty block detected
-    ...    ${PARSING}/if/if_without_end.robot
+    ...    .*IF has no closing 'END'.
 
 Else if without condition
     Run tests and check parsing error

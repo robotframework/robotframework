@@ -142,6 +142,10 @@ class IfExpression(Keyword):
     def condition(self):
         return self.args[0]
 
+    @property
+    def ended(self):
+        return self._end is not None
+
     def __unicode__(self):
         values = '    '.join(self.condition)
         return u'IF    %s' % values
