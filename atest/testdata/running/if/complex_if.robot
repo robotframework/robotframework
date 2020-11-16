@@ -143,6 +143,15 @@ If inside if
       END
    END
 
+If with comments
+  IF  ${True}  # comment here is ok
+      Log   no operation   # Here is also ok
+  ELSE IF  ${True}   # Again totally fine
+      Log   yeah   # Here is also ok
+  ELSE   # Here is also ok
+      Log   no joo  # Here is also ok
+  END  # Here is also ok
+
 *** Keywords ***
 Recurse
    [Arguments]  ${value}

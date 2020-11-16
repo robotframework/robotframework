@@ -45,3 +45,6 @@ For loop if else early exit
 
 For loop if else if early exit
    Check Test Case    ${TESTNAME}
+
+If with comments
+   Check Test Case    ${TESTNAME}
