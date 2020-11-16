@@ -205,7 +205,13 @@ class IfStatementLexer(StatementLexer):
 class ElseIfStatementLexer(StatementLexer):
 
     def handles(self, statement):
-        return len(statement) == 2 and statement[0].value == 'ELSE IF'
+        if statement[0].value != 'ELSE IF':
+            return False
+        if len(statement) > 2:
+            raise DataError("line [%s] : ELSE IF with multiple conditions" % statement[0].lineno)
+        if len(statement) < 2:
+            raise DataError("line [%s] : ELSE IF without condition" % statement[0].lineno)
+        return True
 
     def lex(self):
         self.statement[0].type = Token.ELSE_IF
@@ -219,7 +225,11 @@ class ElseIfStatementLexer(StatementLexer):
 class ElseLexer(StatementLexer):
 
     def handles(self, statement):
-        return len(statement) == 1 and statement[0].value == 'ELSE'
+        if statement[0].value != 'ELSE':
+            return False
+        if len(statement) > 1:
+            raise DataError("line [%s] : ELSE with a condition" % statement[0].lineno)
+        return True
 
     def lex(self):
         self.statement[0].type = Token.ELSE
