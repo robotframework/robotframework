@@ -55,8 +55,41 @@ Most important enhancements
 
 Native support for IF/ELSE syntax
 ---------------------------------
+Robot Framework finally support for IF/ELSE syntax natively.
 
-See the issue (`#3074`_) for motivation and details.
+Until the native syntax, there are various ways to use conditional logic in Robot's test data, but the most common one is Run Keyword If keyword.
+Native IF/ELSE support has at least these advantages:
+
+1. It can execute any number of keywords in IF or ELSE branch.
+
+2. It support IF / ELSE IF / ELSE like structures much simpler way than chaining Run Keyword Ifs.
+
+3. It works in similar manner to FOR, so the usage is hopefully intuitive.
+
+The main design decisions are listed below:
+
+1. Syntax will use IF case-sensitively and without colons similarly as FOR works nowadays (#2990).
+
+2. The expression will be evaluated in Python similarly as with Run Keyword If.
+
+3. Explicit END marker is needed at the end.
+
+4. Indentation is optional but recommended.
+
+5. END is needed also if there's only one keyword.
+
+6. ELSE branches are supported. It is optional and there can be exactly one.
+
+7. ELSE IF branches are supported and there can be any number of them. ELSE IF wording will be used because it is consistent with Run Keyword If and also reads better than variants like ELIF or ELSIF.
+
+Example of a simple usage compared to Run Keyword If::
+
+    IF    ${x} > 0
+        Some positive keyword
+    END
+
+    Run Keyword If    ${x} > 0    Some positive keyword
+
 
 New SKIP status
 ---------------
@@ -488,3 +521,4 @@ Altogether 25 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#3214: https://github.com/robotframework/robotframework/issues/3214
 .. _#3691: https://github.com/robotframework/robotframework/issues/3691
 .. _#3705: https://github.com/robotframework/robotframework/issues/3705
+.. _#3074: https://github.com/robotframework/robotframework/issues/3074
