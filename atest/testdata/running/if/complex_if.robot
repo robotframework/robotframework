@@ -164,6 +164,13 @@ If with invalid condition 2
 	 Log    Demo
   END
 
+If with invalid condition after valid is ok
+  IF  ${True}
+	 Log    Demo
+  ELSE IF  oops
+     Fail   should not go here
+  END
+
 *** Keywords ***
 Recurse
    [Arguments]  ${value}
