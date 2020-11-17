@@ -176,8 +176,7 @@ class TestCaseBuilder(NodeVisitor):
         return ''.join(temp), ()
 
     def visit_ForLoop(self, node):
-        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno,
-                       ended=node.end is not None)
+        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno)
         ForLoopBuilder(loop).build(node)
         self.test.keywords.append(loop)
 
@@ -255,8 +254,7 @@ class KeywordBuilder(NodeVisitor):
                                 assign=node.assign, lineno=node.lineno)
 
     def visit_ForLoop(self, node):
-        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno,
-                       ended=node.end is not None)
+        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno)
         ForLoopBuilder(loop).build(node)
         self.kw.keywords.append(loop)
 
@@ -272,6 +270,7 @@ class ForLoopBuilder(NodeVisitor):
         self.loop = loop
 
     def build(self, for_node):
+        self.loop.error = for_node.validate()
         for child_node in for_node.body:
             self.visit(child_node)
 
@@ -283,8 +282,7 @@ class ForLoopBuilder(NodeVisitor):
         self.loop.keywords.create(args=node.args, lineno=node.lineno)
 
     def visit_ForLoop(self, node):
-        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno,
-                       ended=node.end is not None)
+        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno)
         ForLoopBuilder(loop).build(node)
         self.loop.keywords.append(loop)
 
@@ -322,7 +320,6 @@ class IfExpressionBuilder(NodeVisitor):
         self.ifblock.add_inner_block(ifblock)
 
     def visit_ForLoop(self, node):
-        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno,
-                       ended=node.end is not None)
+        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno)
         ForLoopBuilder(loop).build(node)
         self.ifblock.add_inner_block(loop)

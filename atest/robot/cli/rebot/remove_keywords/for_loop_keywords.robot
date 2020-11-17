@@ -18,7 +18,7 @@ Passed Steps Are Removed Except The Last One
     Should Be Equal     ${tc.kws[1].kws[0].status}    PASS
 
 Failed Steps Are Not Removed
-    ${tc}=    Check Test Case    For Failing 2
+    ${tc}=    Check Test Case    Failure inside FOR 2
     Length Should Be    ${tc.kws[0].kws}    1
     Should Be Equal     ${tc.kws[0].doc}    ${3 REMOVED}
     Should Be Equal     ${tc.kws[0].kws[0].name}    \${num} = 4
@@ -49,7 +49,7 @@ Steps From Loops In Keywords From Loops Are Removed
     Should Be Equal     ${tc.kws[0].kws[0].kws[0].kws[1].kws[0].doc}    ${1 REMOVED}
 
 Empty Loops Are Handled Correctly
-    ${tc}=    Check Test Case    FOR with empty body fails
+    ${tc}=    Check Test Case    Empty body
     Should Be Empty    ${tc.kws[0].kws}
     Should Be Equal    ${tc.kws[0].doc}    ${0 REMOVED}
 

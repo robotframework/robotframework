@@ -68,7 +68,7 @@ Ignore Error When Invalid Return Values When Setting Variables
     Should Be Equal    ${status}: ${error}    FAIL: Cannot set variables: Expected 2 return values, got 3.
 
 Ignore Error When Syntax Error In For Loop
-    [Documentation]    FAIL Invalid FOR loop variable 'IN KEKKONEN'.
+    [Documentation]    FAIL FOR loop has no 'IN' or other valid separator.
     Run Keyword And Ignore Error    For Loop With Syntax Error
 
 Ignore Error When Non Existing Variable In For Loop
@@ -174,7 +174,7 @@ Expect Error When Invalid Return Values When Setting Variables
     ...    Invalid Return Values When Setting Variables
 
 Expect Error When Syntax Error In For Loop
-    [Documentation]    FAIL Invalid FOR loop variable 'IN KEKKONEN'.
+    [Documentation]    FAIL FOR loop has no 'IN' or other valid separator.
     Run Keyword And Expect Error    *    For Loop With Syntax Error
 
 Expect Error When Non Existing Variable In For Loop

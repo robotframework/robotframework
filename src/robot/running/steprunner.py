@@ -158,26 +158,14 @@ class ForInRunner(object):
                                lineno=data.lineno,
                                source=data.source)
         with StatusReporter(self._context, result):
-            self._validate(data)
+            if data.error:
+                raise DataError(data.error)
             self._run(data)
 
     def _get_name(self, data):
         return '%s %s [ %s ]' % (' | '.join(data.variables),
                                  self.flavor,
                                  ' | '.join(data.values))
-
-    def _validate(self, data):
-        if not data.ended:
-            raise DataError("FOR loop has no closing 'END'.")
-        if not data.variables:
-            raise DataError('FOR loop has no loop variables.')
-        for var in data.variables:
-            if not is_scalar_assign(var):
-                raise DataError("Invalid FOR loop variable '%s'." % var)
-        if not data.values:
-            raise DataError('FOR loop has no loop values.')
-        if not data.keywords:
-            raise DataError('FOR loop contains no keywords.')
 
     def _run(self, data):
         errors = []

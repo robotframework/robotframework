@@ -16,6 +16,7 @@
 import ast
 
 from robot.utils import file_writer, is_pathlike, is_string
+from robot.variables import is_scalar_assign
 
 from .visitor import ModelVisitor
 
@@ -148,12 +149,13 @@ class IfBlock(Block):
 
 
 class ForLoop(Block):
-    _fields = ('header', 'body', 'end')
+    _fields = ('header', 'body', 'end', 'error')
 
-    def __init__(self, header, body=None, end=None):
+    def __init__(self, header, body=None, end=None, error=None):
         self.header = header
         self.body = body or []
         self.end = end
+        self.error = error
 
     @property
     def variables(self):
@@ -166,6 +168,34 @@ class ForLoop(Block):
     @property
     def flavor(self):
         return self.header.flavor
+
+    def validate(self):
+        errors = self._validate()
+        if not errors:
+            self.error = None
+        elif len(errors) == 1:
+            self.error = 'FOR loop has ' + errors[0][0].lower() + errors[0][1:]
+        else:
+            self.error = 'FOR loop has multiple errors:\n- ' + '\n- '.join(errors)
+        return self.error
+
+    def _validate(self):
+        errors = []
+        if not self.variables:
+            errors.append('No loop variables.')
+        if not self.flavor:
+            errors.append("No 'IN' or other valid separator.")
+        else:
+            for var in self.variables:
+                if not is_scalar_assign(var):
+                    errors.append("Invalid loop variable '%s'." % var)
+            if not self.values:
+                errors.append('No loop values.')
+        if not self.body:
+            errors.append('Empty body.')
+        if not self.end:
+            errors.append("No closing 'END'.")
+        return errors
 
 
 class ModelWriter(ModelVisitor):
