@@ -143,6 +143,27 @@ If inside if
       END
    END
 
+If with comments
+  IF  ${True}  # comment here is ok
+      Log   no operation   # Here is also ok
+  ELSE IF  ${True}   # Again totally fine
+      Log   yeah   # Here is also ok
+  ELSE   # Here is also ok
+      Log   no joo  # Here is also ok
+  END  # Here is also ok
+
+If with invalid condition
+  [Documentation]   FAIL Evaluating expression ''123'=123' failed: SyntaxError: invalid syntax (<string>, line 1)
+  IF  '123'=${123}
+	 Log    Demo
+  END
+
+If with invalid condition 2
+  [Documentation]   FAIL Evaluating expression 'ooops' failed: NameError: name 'ooops' is not defined nor importable as module
+  IF  ooops
+	 Log    Demo
+  END
+
 *** Keywords ***
 Recurse
    [Arguments]  ${value}

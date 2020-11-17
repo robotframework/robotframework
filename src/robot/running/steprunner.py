@@ -92,6 +92,8 @@ class IfRunner(object):
     def run(self, data, name=None):
         IfRunner.current_if_stack.append(data)
         try:
+            if not data.ended:
+                raise DataError("[row: %s] IF has no closing 'END'." % data.lineno)
             first = True
             condition_matched = False
             for datacondition, body in data.bodies:
@@ -101,27 +103,33 @@ class IfRunner(object):
             IfRunner.current_if_stack.pop()
 
     def _run_if_branch(self, body, condition_matched, data, datacondition, first):
-        branch_to_execute, result = self._branch_to_be_executed(data, first, datacondition, body, condition_matched)
-        with StatusReporter(self._context, result, dry_run_lib_kw=not branch_to_execute):
-            if branch_to_execute:
+        result = self._create_result_object(data, first, datacondition)
+        with StatusReporter(self._context, result, dry_run_lib_kw=self._is_already_executing_this_if()):
+            condition_result = self._create_condition_result(condition_matched, data, datacondition, first)
+            if self._is_branch_to_execute(condition_matched,
+                                          condition_result,
+                                          body):
                 runner = StepRunner(self._context, self._templated)
                 runner.run_steps(body)
-        return condition_matched or branch_to_execute
+                return True
+        return condition_matched
 
-    def _branch_to_be_executed(self, data, first, datacondition, body, condition_matched_already):
+    def _create_condition_result(self, condition_matched, data, datacondition, first):
         data_type = self._get_type(data, first, datacondition)
-        condition_result = data_type == data.ELSE_TYPE
-        unresolved_condition = ''
-        if not condition_result:
-            unresolved_condition = datacondition[0]
-            if not condition_matched_already and not self._context.dry_run:
-                condition_result = self._resolve_condition(unresolved_condition)
-        branch_to_execute = self._is_branch_to_execute(condition_matched_already,
-                                                       condition_result,
-                                                       body)
-        result = KeywordResult(kwname=self._get_name(unresolved_condition),
-                               type=data_type, lineno=data.lineno, source=data.source)
-        return branch_to_execute, result
+        if data_type == data.ELSE_TYPE:
+            return True
+        if condition_matched or self._context.dry_run:
+            return None
+        return self._resolve_condition(datacondition[0])
+
+    def _create_result_object(self, data, first, datacondition):
+        data_type = self._get_type(data, first, datacondition)
+        unresolved_condition = self._get_unresolved_condition(data, data_type, datacondition)
+        return KeywordResult(kwname=self._get_name(unresolved_condition),
+                            type=data_type, lineno=data.lineno, source=data.source)
+
+    def _get_unresolved_condition(self, data, data_type, datacondition):
+        return '' if data_type == data.ELSE_TYPE else datacondition[0]
 
     def _resolve_condition(self, unresolved_condition):
         condition, _ = VariableReplacer().replace([unresolved_condition], (), variables=self._context.variables)

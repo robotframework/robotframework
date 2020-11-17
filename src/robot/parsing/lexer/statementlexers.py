@@ -17,6 +17,7 @@ from robot.utils import normalize_whitespace, split_from_equals
 from robot.variables import is_assign, is_dict_variable, search_variable
 
 from .tokens import Token
+from robot.errors import DataError
 
 
 class Lexer(object):
@@ -188,7 +189,15 @@ class ForLoopHeaderLexer(StatementLexer):
 class IfStatementLexer(StatementLexer):
 
     def handles(self, statement):
-        return len(statement) == 2 and statement[0].value == 'IF'
+        if statement[0].value.upper() != 'IF':
+            return False
+        if statement[0].value != 'IF':
+            raise DataError("line [%s] : IF must be typed in upper case" % statement[0].lineno)
+        if len(statement) > 2:
+            raise DataError("line [%s] : IF with multiple conditions" % statement[0].lineno)
+        if len(statement) < 2:
+            raise DataError("line [%s] : IF without condition" % statement[0].lineno)
+        return True
 
     def lex(self):
         self.statement[0].type = Token.IF
@@ -198,7 +207,13 @@ class IfStatementLexer(StatementLexer):
 class ElseIfStatementLexer(StatementLexer):
 
     def handles(self, statement):
-        return len(statement) == 2 and statement[0].value == 'ELSE IF'
+        if statement[0].value != 'ELSE IF':
+            return False
+        if len(statement) > 2:
+            raise DataError("line [%s] : ELSE IF with multiple conditions" % statement[0].lineno)
+        if len(statement) < 2:
+            raise DataError("line [%s] : ELSE IF without condition" % statement[0].lineno)
+        return True
 
     def lex(self):
         self.statement[0].type = Token.ELSE_IF
@@ -212,7 +227,11 @@ class ElseIfStatementLexer(StatementLexer):
 class ElseLexer(StatementLexer):
 
     def handles(self, statement):
-        return len(statement) == 1 and statement[0].value == 'ELSE'
+        if statement[0].value != 'ELSE':
+            return False
+        if len(statement) > 1:
+            raise DataError("line [%s] : ELSE with a condition" % statement[0].lineno)
+        return True
 
     def lex(self):
         self.statement[0].type = Token.ELSE
