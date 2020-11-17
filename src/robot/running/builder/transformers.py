@@ -270,7 +270,7 @@ class ForLoopBuilder(NodeVisitor):
         self.loop = loop
 
     def build(self, for_node):
-        self.loop.error = for_node.validate()
+        self.loop.error = for_node.error
         for child_node in for_node.body:
             self.visit(child_node)
 
