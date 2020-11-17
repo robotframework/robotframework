@@ -173,21 +173,16 @@ class ForLoopHeaderLexer(StatementLexer):
         return statement[0].value == 'FOR'
 
     def lex(self):
-        separator_seen = False
-        variable_seen = False
         self.statement[0].type = Token.FOR
+        separator_seen = False
         for token in self.statement[1:]:
             if separator_seen:
                 token.type = Token.ARGUMENT
-            elif variable_seen and self._is_separator(token.value):
+            elif normalize_whitespace(token.value) in self.separators:
                 token.type = Token.FOR_SEPARATOR
                 separator_seen = True
             else:
                 token.type = Token.VARIABLE
-                variable_seen = True
-
-    def _is_separator(self, value):
-        return normalize_whitespace(value) in self.separators
 
 
 class IfStatementLexer(StatementLexer):

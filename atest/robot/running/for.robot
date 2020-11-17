@@ -93,22 +93,6 @@ Settings after FOR
     Should be FOR loop    ${tc.kws[0]}    1
     Check log message     ${tc.teardown.msgs[0]}    Teardown was found and eXecuted.
 
-Invalid FOR usage
-    Check test case    ${TEST NAME}
-
-Invalid END usage
-    Check test case    ${TEST NAME} 1
-    Check test case    ${TEST NAME} 2
-
-FOR with empty body fails
-    Check test and failed loop    ${TEST NAME}
-
-FOR without END fails
-    Check test and failed loop    ${TEST NAME}
-
-FOR without values fails
-    Check test and failed loop    ${TEST NAME}
-
 Looping over empty list variable is OK
     ${tc} =    Check test case    ${TEST NAME}
     Should be FOR loop    ${tc.kws[0]}    0
@@ -117,7 +101,7 @@ Other iterables
     ${tc} =    Check test case    ${TEST NAME}
     Should be FOR loop    ${tc.kws[2]}    10
 
-FOR failing
+Failure inside FOR
     ${loop} =    Check test and get loop    ${TEST NAME} 1
     Should be FOR loop    ${loop}                          1                FAIL
     Check log message     ${loop.kws[0].kws[0].msgs[0]}    Hello before failing kw
@@ -186,24 +170,6 @@ Invalid assign inside loop
     ${tc} =    Check test case    ${TEST NAME}
     Should be FOR loop    ${tc.kws[0]}    1    FAIL
 
-No loop values
-    ${tc} =    Check test case    ${TEST NAME}
-    Should be FOR loop    ${tc.kws[0]}    0    FAIL
-
-Invalid loop variable
-    Check test and failed loop    ${TEST NAME} 1
-    Check test and failed loop    ${TEST NAME} 2
-    Check test and failed loop    ${TEST NAME} 3
-    Check test and failed loop    ${TEST NAME} 4
-    Check test and failed loop    ${TEST NAME} 5
-    Check test and failed loop    ${TEST NAME} 6
-
-FOR without any paramenters
-    Check test case    ${TEST NAME}
-
-FOR without variables
-    Check test case    ${TEST NAME}
-
 Loop with non-existing keyword
     Check test case    ${TEST NAME}
 
@@ -259,10 +225,39 @@ Characters that are illegal in XML
     Should be equal    ${tc.kws[0].kws[1].name}    \${var} = more:
 
 Old :FOR syntax is not supported
-    Check test case    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 Escaping with backslash is not supported
-    Check test case    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
+
+FOR is case and space sensitive
+    Check test case    ${TEST NAME} 1
+    Check test case    ${TEST NAME} 2
+
+Invalid END usage
+    Check test case    ${TEST NAME} 1
+    Check test case    ${TEST NAME} 2
+
+Empty body
+    Check test and failed loop    ${TEST NAME}
+
+No END
+    Check test and failed loop    ${TEST NAME}
+
+No loop values
+    ${tc} =    Check test case    ${TEST NAME}
+    Should be FOR loop    ${tc.kws[0]}    0    FAIL
+
+No loop variables
+    Check Test Case    ${TESTNAME}
+
+Invalid loop variable
+    Check test and failed loop    ${TEST NAME} 1
+    Check test and failed loop    ${TEST NAME} 2
+    Check test and failed loop    ${TEST NAME} 3
+    Check test and failed loop    ${TEST NAME} 4
+    Check test and failed loop    ${TEST NAME} 5
+    Check test and failed loop    ${TEST NAME} 6
 
 Invalid separator
     Check test case    ${TEST NAME}
@@ -273,8 +268,15 @@ Separator is case- and space-sensitive
     Check test case    ${TEST NAME} 3
     Check test case    ${TEST NAME} 4
 
+FOR without any paramenters
+    Check Test Case    ${TESTNAME}
+
+Syntax error in nested loop
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
 Header at the end of file
-    Check test case    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
 *** Keywords ***
 "Variables in values" helper
@@ -325,12 +327,3 @@ Check kw "Nested For In UK"
     Check kw "For In UK"    ${nested2.kws[0].kws[0].kws[0]}
     Check log message       ${nested2.kws[0].kws[0].kws[1].msgs[0]}    Got arg: ${first_arg}
     Check log message       ${nested2.kws[1].msgs[0]}                  This ought to be enough    FAIL
-
-Check kw "For in UK with backslashes"
-    [Arguments]    ${kw}    ${arg}
-    Should be FOR loop                   ${kw.kws[0]}                         2
-    Old style loop body is deprecated    ${kw.kws[0].msgs[0]}
-    Should be loop iteration             ${kw.kws[0].kws[0]}                  \${x} = 1
-    Check log message                    ${kw.kws[0].kws[0].kws[1].msgs[0]}   ${arg}-1
-    Should be loop iteration             ${kw.kws[0].kws[1]}                  \${x} = 2
-    Check log message                    ${kw.kws[0].kws[1].kws[1].msgs[0]}   ${arg}-2
