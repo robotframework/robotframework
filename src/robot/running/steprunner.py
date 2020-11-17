@@ -106,32 +106,30 @@ class IfRunner(object):
         result = self._create_result_object(data, first, datacondition)
         with StatusReporter(self._context, result, dry_run_lib_kw=self._is_already_executing_this_if()):
             condition_result = self._create_condition_result(condition_matched, data, datacondition, first)
-            branch_to_execute = self._is_branch_to_execute(condition_matched,
-                                                           condition_result,
-                                                           body)
-            if branch_to_execute:
+            if self._is_branch_to_execute(condition_matched,
+                                          condition_result,
+                                          body):
                 runner = StepRunner(self._context, self._templated)
                 runner.run_steps(body)
-        return condition_matched or branch_to_execute
+                return True
+        return condition_matched
 
     def _create_condition_result(self, condition_matched, data, datacondition, first):
         data_type = self._get_type(data, first, datacondition)
-        condition_result = data_type == data.ELSE_TYPE
-        if not condition_result:
-            unresolved_condition = datacondition[0]
-            if not condition_matched and not self._context.dry_run:
-                condition_result = self._resolve_condition(unresolved_condition)
-        return condition_result
+        if data_type == data.ELSE_TYPE:
+            return True
+        if condition_matched or self._context.dry_run:
+            return None
+        return self._resolve_condition(datacondition[0])
 
     def _create_result_object(self, data, first, datacondition):
         data_type = self._get_type(data, first, datacondition)
-        condition_result = data_type == data.ELSE_TYPE
-        unresolved_condition = ''
-        if not condition_result:
-            unresolved_condition = datacondition[0]
-        result = KeywordResult(kwname=self._get_name(unresolved_condition),
-                               type=data_type, lineno=data.lineno, source=data.source)
-        return result
+        unresolved_condition = self._get_unresolved_condition(data, data_type, datacondition)
+        return KeywordResult(kwname=self._get_name(unresolved_condition),
+                            type=data_type, lineno=data.lineno, source=data.source)
+
+    def _get_unresolved_condition(self, data, data_type, datacondition):
+        return '' if data_type == data.ELSE_TYPE else datacondition[0]
 
     def _resolve_condition(self, unresolved_condition):
         condition, _ = VariableReplacer().replace([unresolved_condition], (), variables=self._context.variables)
