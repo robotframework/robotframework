@@ -1,22 +1,23 @@
-===========================
-Robot Framework 4.0 alpha 3
-===========================
+=====================
+Robot Framework 4.0a3
+=====================
+
 
 .. default-role:: code
 
-`Robot Framework`_ 4.0  is a new major release with lot of big new features
-such as the SKIP status and enhancements, for example, to type conversion
-and Libdoc. Robot Framework alpha 3 is its third preview release
-targeted especially for users interested in the upcoming IF functionality
-(`#3074`_).
 
-All issues targeted for Robot Framework 4.0 can be found
+`Robot Framework`_ 4.0a3 is a new release with **UPDATE** enhancements
+and bug fixes. **MORE intro stuff...**
+
+**REMOVE reference to tracker if release notes contain all issues.**
+All issues targeted for Robot Framework v4.0 can be found
 from the `issue tracker milestone`_.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users`_ mailing list or to `Robot Framework Slack`_,
 and possible bugs submitted to the `issue tracker`_.
 
+**REMOVE ``--pre`` from the next command with final releases.**
 If you have pip_ installed, just run
 
 ::
@@ -33,7 +34,7 @@ to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 4.0 alpha 3 was released on Friday November 13, 2020.
+Robot Framework 4.0a3 was released on Friday November 13, 2020.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -90,6 +91,20 @@ Example of a simple usage compared to Run Keyword If::
 
     Run Keyword If    ${x} > 0    Some positive keyword
 
+
+Support for nested control structures
+-------------------------------------
+
+It is now possible to nest control structures FOR and IF. Previously, nesting FOR loops was only possible
+by using user keywords. Here is an example with FOR and IF::
+
+    FOR    ${row}    IN    @{rows}
+        FOR    ${cell}    IN    @{row}
+            IF    "${cell}" != "IGNORE"
+                Process Cell    ${cell}
+            END
+        END
+    END
 
 New SKIP status
 ---------------
@@ -299,6 +314,7 @@ backwards incompatibility in some cases:
 - As already discussed above, `criticality has been removed`_ (`#3624`_).
 - As also discussed above, the meaning of `@{var}[item]` and `&{var}[item]` syntax
   `has changed`__ (`#3487`_).
+- The already deprecated support for old `:FOR` loop syntax has been removed (`#3733`)_.
 - Also non-string arguments are used in automatic argument conversion instead of
   using them as-is (`#3735`_).
 - String `NONE` (case-insensitively) is converted to `None` only if the argument has
@@ -314,7 +330,6 @@ __ `List and dictionary expansion with item access`_
 
 Acknowledgements
 ================
-
 Robot Framework development is sponsored by the `Robot Framework Foundation`_
 and its `40+ member organizations <https://robotframework.org/foundation/#members>`_.
 Due to some extra funding we have had a bit bigger team developing Robot Framework 4.0
@@ -350,7 +365,6 @@ Robot Framework and its community and ecosystem better.
 | `Pekka Klärck <https://github.com/pekkaklarck>`__
 | Robot Framework Lead Developer
 
-
 Full list of fixes and enhancements
 ===================================
 
@@ -362,6 +376,16 @@ Full list of fixes and enhancements
       - Priority
       - Summary
       - Added
+    * - `#3074`_
+      - enhancement
+      - critical
+      - Native support for `IF/ELSE` syntax
+      - alpha 3
+    * - `#3079`_
+      - enhancement
+      - critical
+      - Support for nested control structures
+      - alpha 3
     * - `#3622`_
       - enhancement
       - critical
@@ -387,6 +411,11 @@ Full list of fixes and enhancements
       - high
       - Libdoc should format argument names, defaults and types differently
       - alpha 1
+    * - `#3607`_
+      - enhancement
+      - high
+      - Enhance libspec so that it's possible to provide code-completion and validation for enum arguments
+      - alpha 3
     * - `#3687`_
       - enhancement
       - high
@@ -397,15 +426,15 @@ Full list of fixes and enhancements
       - high
       - Positional only argument support with Python keywords
       - alpha 1
-    * - `#3735`_
-      - enhancement
-      - high
-      - Argument conversion and validation with non-string argument values
-      - alpha 2
     * - `#3730`_
       - enhancement
       - high
       - Libdoc: Support JSON spec files
+      - alpha 2
+    * - `#3735`_
+      - enhancement
+      - high
+      - Argument conversion and validation with non-string argument values
       - alpha 2
     * - `#3738`_
       - enhancement
@@ -417,6 +446,11 @@ Full list of fixes and enhancements
       - medium
       - Some non-iterable objects considered iterable
       - alpha 1
+    * - `#3648`_
+      - bug
+      - medium
+      - Enhance error reporting when using markers like `FOR` in wrong case like `for`
+      - alpha 3
     * - `#3649`_
       - bug
       - medium
@@ -442,6 +476,11 @@ Full list of fixes and enhancements
       - medium
       - Run Keyword And Warn On Failure keyword
       - alpha 1
+    * - `#3017`_
+      - enhancement
+      - medium
+      - Add return type to libdoc output
+      - alpha 3
     * - `#3577`_
       - enhancement
       - medium
@@ -457,6 +496,21 @@ Full list of fixes and enhancements
       - medium
       - Libdoc: Escape backslashes, spaces, line breaks etc. in default values to make them Robot compatible
       - alpha 2
+    * - `#3724`_
+      - enhancement
+      - medium
+      - LibDoc show type hints better (Typing without prefix and no str)
+      - alpha 3
+    * - `#3726`_
+      - enhancement
+      - medium
+      - Update RF output.xml schema to reflect v4.0 changes
+      - alpha 3
+    * - `#3733`_
+      - enhancement
+      - medium
+      - Remove support for old `:FOR` loop syntax
+      - alpha 3
     * - `#3736`_
       - enhancement
       - medium
@@ -472,6 +526,11 @@ Full list of fixes and enhancements
       - medium
       - Remove ignoring space after literal newline
       - alpha 2
+    * - `#3748`_
+      - enhancement
+      - medium
+      - Libdoc: Support argument types with multiple possible values
+      - alpha 3
     * - `#3731`_
       - ---
       - medium
@@ -492,33 +551,47 @@ Full list of fixes and enhancements
       - low
       - Remove information about named argument support from Libdoc metadata
       - alpha 2
+    * - `#3758`_
+      - enhancement
+      - low
+      - Libdoc: Support quiet mode to not print output file to console
+      - alpha 3
 
-Altogether 25 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av4.0>`__.
+Altogether 36 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av4.0>`__.
 
+.. _#3074: https://github.com/robotframework/robotframework/issues/3074
+.. _#3079: https://github.com/robotframework/robotframework/issues/3079
 .. _#3622: https://github.com/robotframework/robotframework/issues/3622
 .. _#3624: https://github.com/robotframework/robotframework/issues/3624
 .. _#3487: https://github.com/robotframework/robotframework/issues/3487
 .. _#3578: https://github.com/robotframework/robotframework/issues/3578
 .. _#3586: https://github.com/robotframework/robotframework/issues/3586
+.. _#3607: https://github.com/robotframework/robotframework/issues/3607
 .. _#3687: https://github.com/robotframework/robotframework/issues/3687
 .. _#3695: https://github.com/robotframework/robotframework/issues/3695
+.. _#3730: https://github.com/robotframework/robotframework/issues/3730
 .. _#3735: https://github.com/robotframework/robotframework/issues/3735
 .. _#3738: https://github.com/robotframework/robotframework/issues/3738
 .. _#3547: https://github.com/robotframework/robotframework/issues/3547
+.. _#3648: https://github.com/robotframework/robotframework/issues/3648
 .. _#3649: https://github.com/robotframework/robotframework/issues/3649
 .. _#3681: https://github.com/robotframework/robotframework/issues/3681
 .. _#3708: https://github.com/robotframework/robotframework/issues/3708
 .. _#3729: https://github.com/robotframework/robotframework/issues/3729
 .. _#2294: https://github.com/robotframework/robotframework/issues/2294
+.. _#3017: https://github.com/robotframework/robotframework/issues/3017
 .. _#3577: https://github.com/robotframework/robotframework/issues/3577
 .. _#3685: https://github.com/robotframework/robotframework/issues/3685
 .. _#3697: https://github.com/robotframework/robotframework/issues/3697
-.. _#3730: https://github.com/robotframework/robotframework/issues/3730
+.. _#3724: https://github.com/robotframework/robotframework/issues/3724
+.. _#3726: https://github.com/robotframework/robotframework/issues/3726
+.. _#3733: https://github.com/robotframework/robotframework/issues/3733
 .. _#3736: https://github.com/robotframework/robotframework/issues/3736
 .. _#3739: https://github.com/robotframework/robotframework/issues/3739
 .. _#3746: https://github.com/robotframework/robotframework/issues/3746
+.. _#3748: https://github.com/robotframework/robotframework/issues/3748
 .. _#3731: https://github.com/robotframework/robotframework/issues/3731
 .. _#3214: https://github.com/robotframework/robotframework/issues/3214
 .. _#3691: https://github.com/robotframework/robotframework/issues/3691
 .. _#3705: https://github.com/robotframework/robotframework/issues/3705
-.. _#3074: https://github.com/robotframework/robotframework/issues/3074
+.. _#3758: https://github.com/robotframework/robotframework/issues/3758
