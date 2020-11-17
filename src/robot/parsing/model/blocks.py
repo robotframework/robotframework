@@ -54,6 +54,9 @@ class File(Block):
         self.sections = sections or []
         self.source = source
 
+    def validate(self):
+        ModelValidator().visit(self)
+
     def save(self, output=None):
         """Save model to the given ``output`` or to the original source file.
 
@@ -149,7 +152,8 @@ class IfBlock(Block):
 
 
 class ForLoop(Block):
-    _fields = ('header', 'body', 'end', 'error')
+    _fields = ('header', 'body', 'end')
+    _attributes = Block._attributes + ('error',)
 
     def __init__(self, header, body=None, end=None, error=None):
         self.header = header
@@ -177,7 +181,6 @@ class ForLoop(Block):
             self.error = 'FOR loop has ' + errors[0][0].lower() + errors[0][1:]
         else:
             self.error = 'FOR loop has multiple errors:\n- ' + '\n- '.join(errors)
-        return self.error
 
     def _validate(self):
         errors = []
@@ -218,6 +221,13 @@ class ModelWriter(ModelVisitor):
     def visit_Statement(self, statement):
         for token in statement.tokens:
             self.writer.write(token.value)
+
+
+class ModelValidator(ModelVisitor):
+
+    def visit_ForLoop(self, node):
+        node.validate()
+        ModelVisitor.generic_visit(self, node)
 
 
 class FirstStatementFinder(ModelVisitor):
