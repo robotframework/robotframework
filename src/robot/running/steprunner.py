@@ -103,14 +103,9 @@ class IfRunner(object):
             IfRunner.current_if_stack.pop()
 
     def _run_if_branch(self, body, condition_matched, data, datacondition, first):
-        result = self._branch_to_be_executed(data, first, datacondition)
+        result = self._create_result_object(data, first, datacondition)
         with StatusReporter(self._context, result, dry_run_lib_kw=self._is_already_executing_this_if()):
-            data_type = self._get_type(data, first, datacondition)
-            condition_result = data_type == data.ELSE_TYPE
-            if not condition_result:
-                unresolved_condition = datacondition[0]
-                if not condition_matched and not self._context.dry_run:
-                    condition_result = self._resolve_condition(unresolved_condition)
+            condition_result = self._create_condition_result(condition_matched, data, datacondition, first)
             branch_to_execute = self._is_branch_to_execute(condition_matched,
                                                            condition_result,
                                                            body)
@@ -119,7 +114,16 @@ class IfRunner(object):
                 runner.run_steps(body)
         return condition_matched or branch_to_execute
 
-    def _branch_to_be_executed(self, data, first, datacondition):
+    def _create_condition_result(self, condition_matched, data, datacondition, first):
+        data_type = self._get_type(data, first, datacondition)
+        condition_result = data_type == data.ELSE_TYPE
+        if not condition_result:
+            unresolved_condition = datacondition[0]
+            if not condition_matched and not self._context.dry_run:
+                condition_result = self._resolve_condition(unresolved_condition)
+        return condition_result
+
+    def _create_result_object(self, data, first, datacondition):
         data_type = self._get_type(data, first, datacondition)
         condition_result = data_type == data.ELSE_TYPE
         unresolved_condition = ''
