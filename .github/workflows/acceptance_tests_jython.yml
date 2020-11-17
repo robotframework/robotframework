@@ -90,8 +90,8 @@ jobs:
           echo '<html><head><meta http-equiv = "refresh" content =" 0 ; url = /report.html"></head></html>' > atest/results/index.html
           zip -r -j site.zip atest/results > no_output 2>&1
           curl -s -H "Content-Type: application/zip" -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" --data-binary "@site.zip" https://api.netlify.com/api/v1/sites > response.json
-          echo "::set-env name=REPORT_URL::$(cat response.json|python -c "import sys, json; print('https://' + json.load(sys.stdin)['subdomain'] + '.netlify.com')")"
-          echo "::set-env name=JOB_STATUS::$(python -c "print('${{ job.status }}'.lower())")"
+          echo "REPORT_URL=$(cat response.json|python -c "import sys, json; print('https://' + json.load(sys.stdin)['subdomain'] + '.netlify.com')")" >> $GITHUB_ENV
+          echo "JOB_STATUS=$(python -c "print('${{ job.status }}'.lower())")" >> $GITHUB_ENV
         if: always() && job.status == 'failure'
 
       - uses: octokit/request-action@57ec46afcc4c58c813af3afe67e57ced1ea9f165

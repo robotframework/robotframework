@@ -44,11 +44,11 @@ jobs:
           architecture: 'x64'
 
       - name: Get test starter Python at Windows
-        run: echo "::set-env name=ATEST_PYTHON::$((get-command python.exe).Path)"
+        run: echo "ATEST_PYTHON=$((get-command python.exe).Path)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         if: runner.os == 'Windows'
 
       - name: Get test starter Python
-        run: echo "::set-env name=ATEST_PYTHON::$(which python)"
+        run: echo "ATEST_PYTHON=$(which python)" >> $GITHUB_ENV
         if: runner.os != 'Windows'
 
       - name: Setup python ${{ matrix.python-version }} for running the tests
@@ -58,11 +58,11 @@ jobs:
           architecture: 'x64'
       
       - name: Get test runner Python at Windows
-        run: echo "::set-env name=BASE_PYTHON::$((get-command python.exe).Path)"
+        run: echo "BASE_PYTHON=$((get-command python.exe).Path)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         if: runner.os == 'Windows'
 
       - name: Get test runner Python
-        run: echo "::set-env name=BASE_PYTHON::$(which python)"
+        run: echo "BASE_PYTHON=$(which python)" >> $GITHUB_ENV
         if: runner.os != 'Windows'
 
       - name: Install Report handling tools to Windows
@@ -125,8 +125,8 @@ jobs:
           echo '<html><head><meta http-equiv = "refresh" content =" 0 ; url = /report.html"></head></html>' > atest/results/index.html
           zip -r -j site.zip atest/results > no_output 2>&1
           curl -s -H "Content-Type: application/zip" -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" --data-binary "@site.zip" https://api.netlify.com/api/v1/sites > response.json
-          echo "::set-env name=REPORT_URL::$(cat response.json|python -c "import sys, json; print('https://' + json.load(sys.stdin)['subdomain'] + '.netlify.com')")"
-          echo "::set-env name=JOB_STATUS::$(python -c "print('${{ job.status }}'.lower())")"
+          echo "REPORT_URL=$(cat response.json|python -c "import sys, json; print('https://' + json.load(sys.stdin)['subdomain'] + '.netlify.com')")" >> $GITHUB_ENV
+          echo "JOB_STATUS=$(python -c "print('${{ job.status }}'.lower())")" >> $GITHUB_ENV
         if: always() && job.status == 'failure'
 
       - uses: octokit/request-action@57ec46afcc4c58c813af3afe67e57ced1ea9f165
