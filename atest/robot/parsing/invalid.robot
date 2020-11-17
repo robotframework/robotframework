@@ -101,6 +101,12 @@ If without end
     ...    ${PARSING}/if/if_without_end.robot
     ...    .*IF has no closing 'END'.
 
+If with wrong case
+    Run tests and check parsing error
+    ...    ${PARSING}/if/if_wrong_case.robot
+    ...    .* IF must be typed in upper case
+    ...    ${PARSING}/if/if_wrong_case.robot
+
 Else if without condition
     Run tests and check parsing error
     ...    ${PARSING}/if/else_if_without_condition.robot
