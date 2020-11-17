@@ -189,8 +189,10 @@ class ForLoopHeaderLexer(StatementLexer):
 class IfStatementLexer(StatementLexer):
 
     def handles(self, statement):
-        if statement[0].value != 'IF':
+        if statement[0].value.upper() != 'IF':
             return False
+        if statement[0].value != 'IF':
+            raise DataError("line [%s] : IF must be typed in upper case" % statement[0].lineno)
         if len(statement) > 2:
             raise DataError("line [%s] : IF with multiple conditions" % statement[0].lineno)
         if len(statement) < 2:
