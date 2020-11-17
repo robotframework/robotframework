@@ -54,3 +54,6 @@ If with invalid condition
 
 If with invalid condition 2
    Check Test Case    ${TESTNAME}
+
+If with invalid condition after valid is ok
+   Check Test Case    ${TESTNAME}
