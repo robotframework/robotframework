@@ -51,19 +51,19 @@ Else with a condition
   END
 
 If with empty if
-  [Documentation]    FAIL IF has empty body.
+  [Documentation]    FAIL IF has empty branch.
   IF  'jupiter' == 'saturnus'
   END
 
 If with empty else
-  [Documentation]    FAIL after not passing
+  [Documentation]    FAIL IF has empty branch.
   IF  'kuu' == 'maa'
      Log   something
   ELSE
   END
 
 If with empty else_if
-  [Documentation]    FAIL after not passing
+  [Documentation]    FAIL IF has empty branch.
   IF  'mars' == 'maa'
      Log   something
   ELSE IF  ${False}

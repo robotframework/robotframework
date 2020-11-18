@@ -164,19 +164,28 @@ class IfBlock(Block):
 
     def _validate(self):
         errors = []
-        if not self.body:
-            errors.append('Empty body.')
         if not self.end:
             errors.append("No closing 'END'.")
         else_seen = False
+        last_is_normal_step = False
         for step in self.body:
             if isinstance(step, Else):
                 if else_seen:
                     errors.append("Multiple 'ELSE' branches.")
+                if not last_is_normal_step:
+                    errors.append("Empty branch.")
                 else_seen = True
-            if isinstance(step, ElseIfStatement):
+                last_is_normal_step = False
+            elif isinstance(step, ElseIfStatement):
                 if else_seen:
                     errors.append("'ELSE IF' after 'ELSE'.")
+                if not last_is_normal_step:
+                    errors.append("Empty branch.")
+                last_is_normal_step = False
+            else:
+                last_is_normal_step = True
+        if not last_is_normal_step:
+            errors.append("Empty branch.")
         return errors
 
 
