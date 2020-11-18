@@ -32,3 +32,12 @@ If with empty else
 
 If with empty else_if
   Check Test Case    ${TESTNAME}
+
+If with else after else
+  Check Test Case    ${TESTNAME}
+
+If with else if after else
+  Check Test Case    ${TESTNAME}
+
+If for else if parsing
+  Check Test Case    ${TESTNAME}

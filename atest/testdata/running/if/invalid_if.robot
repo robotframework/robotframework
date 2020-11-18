@@ -70,3 +70,35 @@ If with empty else_if
   ELSE
      Log   ok
   END
+
+If with else after else
+  [Documentation]    FAIL after not passing
+  IF  'kuu' == 'maa'
+     Log   something
+  ELSE
+     Log   hello
+  ELSE
+     Log   hei
+  END
+
+If with else if after else
+  [Documentation]    FAIL after not passing
+  IF  'kuu' == 'maa'
+     Log   something
+  ELSE
+     Log   hello
+  ELSE IF  ${True}
+     Log   hei
+  END
+
+If for else if parsing
+   [Documentation]    FAIL after not passing
+   FOR  ${value}  IN  1  2  3
+       IF  ${value} == 1
+           Log  ${value}
+       ELSE
+           No Operation
+       ELSE IF  ${value} == 3
+           Log  something
+       END
+   END
