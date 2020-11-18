@@ -100,9 +100,20 @@ class XmlWriter(_MarkupWriter):
     def _escape(self, text):
         return xml_escape(text)
 
+    def element(self, name, content=None, attrs=None, escape=True, newline=True,
+                replace_newlines=False):
+        if content is not None:
+            _MarkupWriter.element(self, name, content, attrs, escape, newline, replace_newlines)
+        else:
+            self._self_closing_element(name, attrs, newline)
+
+    def _self_closing_element(self, name, attrs, newline):
+        attrs = self._format_attrs(attrs)
+        if self._write_empty or attrs:
+            self._write('<%s %s/>' % (name, attrs) if attrs else '<%s/>' % name, newline)
+
 
 class NullMarkupWriter(object):
     """Null implementation of the _MarkupWriter interface."""
 
-    __init__ = start = content = element = end = close = \
-        lambda *args, **kwargs: None
+    __init__ = start = content = element = end = close = lambda *args, **kwargs: None
