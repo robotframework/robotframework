@@ -33,7 +33,7 @@ Suite initialization
     Run Tests    ${SUITE DIR}
     Copy File    ${OUTFILE}    ${RUN FAILED FROM}
     Copy File    ${ORIG DIR}/runfailed2.robot     ${SUITE DIR}/runfailed.robot
-    Run Tests    --rerunfailedsuites ${RUN FAILED FROM} --noncritical non_critical --exclude excluded_tag ${SUITE DIR}
+    Run Tests    --rerunfailedsuites ${RUN FAILED FROM} --exclude excluded_tag ${SUITE DIR}
 
 Test Should Have Been Executed
     [Arguments]    ${name}
