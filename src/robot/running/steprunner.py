@@ -92,6 +92,8 @@ class IfRunner(object):
     def run(self, data, name=None):
         IfRunner.current_if_stack.append(data)
         try:
+            if data.error:
+                raise DataError(data.error)
             if not data.ended:
                 raise DataError("[row: %s] IF has no closing 'END'." % data.lineno)
             first = True

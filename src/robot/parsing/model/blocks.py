@@ -128,11 +128,13 @@ class Keyword(Block):
 
 class IfBlock(Block):
     _fields = ('header', 'body', 'end')
+    _attributes = Block._attributes + ('error',)
 
-    def __init__(self, header, body=None, end=None):
+    def __init__(self, header, body=None, end=None, error=None):
         self.header = header
         self.body = body or []
         self.end = end
+        self.error = error
 
     @property
     def variables(self):
@@ -149,6 +151,33 @@ class IfBlock(Block):
     @property
     def _end(self):
         return self.end.value if self.end else None
+
+    def validate(self):
+        errors = self._validate()
+        if not errors:
+            self.error = None
+        elif len(errors) == 1:
+            self.error = 'IF has ' + errors[0][0].lower() + errors[0][1:]
+        else:
+            self.error = 'IF has multiple errors:\n- ' + '\n- '.join(errors)
+
+    def _validate(self):
+        errors = []
+        if not self.variables:
+            errors.append('No loop variables.')
+        if not self.flavor:
+            errors.append("No 'IN' or other valid separator.")
+        else:
+            for var in self.variables:
+                if not is_scalar_assign(var):
+                    errors.append("Invalid loop variable '%s'." % var)
+            if not self.values:
+                errors.append('No loop values.')
+        if not self.body:
+            errors.append('Empty body.')
+        if not self.end:
+            errors.append("No closing 'END'.")
+        return errors
 
 
 class ForLoop(Block):
@@ -226,6 +255,10 @@ class ModelWriter(ModelVisitor):
 class ModelValidator(ModelVisitor):
 
     def visit_ForLoop(self, node):
+        node.validate()
+        ModelVisitor.generic_visit(self, node)
+
+    def visit_IfBlock(self, node):
         node.validate()
         ModelVisitor.generic_visit(self, node)
 
