@@ -49,3 +49,24 @@ Else with a condition
   ELSE  ${True}
      Log   ok
   END
+
+If with empty if
+  [Documentation]    FAIL IF has empty body.
+  IF  'jupiter' == 'saturnus'
+  END
+
+If with empty else
+  [Documentation]    FAIL after not passing
+  IF  'kuu' == 'maa'
+     Log   something
+  ELSE
+  END
+
+If with empty else_if
+  [Documentation]    FAIL after not passing
+  IF  'mars' == 'maa'
+     Log   something
+  ELSE IF  ${False}
+  ELSE
+     Log   ok
+  END
