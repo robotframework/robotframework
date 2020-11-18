@@ -72,7 +72,7 @@ If with empty else_if
   END
 
 If with else after else
-  [Documentation]    FAIL after not passing
+  [Documentation]    FAIL IF has multiple 'ELSE' branches.
   IF  'kuu' == 'maa'
      Log   something
   ELSE
@@ -82,7 +82,7 @@ If with else after else
   END
 
 If with else if after else
-  [Documentation]    FAIL after not passing
+  [Documentation]    FAIL IF has 'ELSE IF' after 'ELSE'.
   IF  'kuu' == 'maa'
      Log   something
   ELSE
@@ -92,7 +92,7 @@ If with else if after else
   END
 
 If for else if parsing
-   [Documentation]    FAIL after not passing
+   [Documentation]    FAIL IF has 'ELSE IF' after 'ELSE'.
    FOR  ${value}  IN  1  2  3
        IF  ${value} == 1
            Log  ${value}
