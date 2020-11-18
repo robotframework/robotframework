@@ -34,7 +34,9 @@ Nesting insanity
    Check Test Case    ${TESTNAME}
 
 Recursive If
-   Check Test Case    ${TESTNAME}
+   ${tc} =    Check Test Case    ${TESTNAME}
+   Should Be Equal    ${tc.kws[0].kws[0].status}  PASS
+   Should Be Equal    ${tc.kws[0].kws[0].kws[0].kws[0].status}  PASS
 
 If creating variable
    Check Test Case    ${TESTNAME}
