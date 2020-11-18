@@ -298,6 +298,7 @@ class IfExpressionBuilder(NodeVisitor):
         self.ifblock = ifblock
 
     def build(self, ifnode):
+        self.ifblock.error = ifnode.error
         for child_node in ifnode.body:
             self.visit(child_node)
 
