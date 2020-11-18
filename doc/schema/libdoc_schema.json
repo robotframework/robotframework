@@ -34,7 +34,7 @@
     "doc": {
       "type": "string"
     },
-    "doc_format": {
+    "docFormat": {
       "type": "string",
       "enum": [
         "ROBOT",
@@ -52,8 +52,8 @@
       "type": "integer",
       "minimum": -1
     },
-    "all_tags": {
-      "$id": "#/properties/all_tags",
+    "allTags": {
+      "$id": "#/properties/allTags",
       "type": "array",
       "items": {
         "type": "string"
@@ -82,12 +82,12 @@
     "type",
     "scope",
     "doc",
-    "doc_format",
+    "docFormat",
     "source",
     "lineno",
     "inits",
     "keywords",
-    "all_tags"
+    "allTags"
   ],
   "definitions": {
     "keyword": {
@@ -110,7 +110,7 @@
         "args": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/keyword_arg"
+            "$ref": "#/definitions/keywordArg"
           }
         },
         "doc": {
@@ -138,8 +138,8 @@
         }
       }
     },
-    "keyword_arg": {
-      "$id": "#/definitions/keyword_arg",
+    "keywordArg": {
+      "$id": "#/definitions/keywordArg",
       "type": "object",
       "required": [
         "name",
