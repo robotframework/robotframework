@@ -1,3 +1,6 @@
+*** Variables ***
+${var}    ${1}
+
 *** Test Cases ***
 Multiple keywords in if
    ${calculator}=  Set Variable  1
@@ -169,6 +172,13 @@ If with invalid condition after valid is ok
 	 Log    Demo
   ELSE IF  oops
      Fail   should not go here
+  END
+
+If with dollar var from variables table
+  IF  $var == 1
+     Log  hello
+  ELSE
+     Fail
   END
 
 *** Keywords ***
