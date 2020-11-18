@@ -163,16 +163,6 @@ class IfBlock(Block):
 
     def _validate(self):
         errors = []
-        if not self.variables:
-            errors.append('No loop variables.')
-        if not self.flavor:
-            errors.append("No 'IN' or other valid separator.")
-        else:
-            for var in self.variables:
-                if not is_scalar_assign(var):
-                    errors.append("Invalid loop variable '%s'." % var)
-            if not self.values:
-                errors.append('No loop values.')
         if not self.body:
             errors.append('Empty body.')
         if not self.end:
