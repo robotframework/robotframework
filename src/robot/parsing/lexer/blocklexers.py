@@ -238,21 +238,15 @@ class IfBlockLexer(BlockLexer):
             self._block_level += 1
             self._last_block_has_content = self._block_level > 1
         elif isinstance(lexer, EndLexer):
-            if not self._last_block_has_content:
-                raise DataError("line [%s] : Empty block detected" % lexer.lineno)
             self._last_block_has_content = self._block_level > 1
             self._end_seen = self._block_level == 1
             self._block_level -= 1
         elif isinstance(lexer, ElseLexer):
-            if not self._last_block_has_content:
-                raise DataError("line [%s] : Empty block detected" % lexer.lineno)
             self._last_block_has_content = False
             if self._else_seen:
                 raise DataError("line [%s] : Invalid second ELSE detected" % lexer.lineno)
             self._else_seen = True
         elif isinstance(lexer, ElseIfStatementLexer):
-            if not self._last_block_has_content:
-                raise DataError("line [%s] : Empty block detected" % lexer.lineno)
             self._last_block_has_content = False
             if self._else_seen:
                 raise DataError("line [%s] : Invalid ELSE IF detected after ELSE" % lexer.lineno)

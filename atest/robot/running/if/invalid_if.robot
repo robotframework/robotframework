@@ -23,3 +23,12 @@ Else if with multiple conditions
 
 Else with a condition
   Check Test Case    ${TESTNAME}
+
+If with empty if
+  Check Test Case    ${TESTNAME}
+
+If with empty else
+  Check Test Case    ${TESTNAME}
+
+If with empty else_if
+  Check Test Case    ${TESTNAME}
