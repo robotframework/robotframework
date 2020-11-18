@@ -13,8 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
-
 from .tokens import Token
 from .statementlexers import (Lexer,
                               SettingSectionHeaderLexer, SettingLexer,
@@ -243,13 +241,9 @@ class IfBlockLexer(BlockLexer):
             self._block_level -= 1
         elif isinstance(lexer, ElseLexer):
             self._last_block_has_content = False
-            if self._else_seen:
-                raise DataError("line [%s] : Invalid second ELSE detected" % lexer.lineno)
             self._else_seen = True
         elif isinstance(lexer, ElseIfStatementLexer):
             self._last_block_has_content = False
-            if self._else_seen:
-                raise DataError("line [%s] : Invalid ELSE IF detected after ELSE" % lexer.lineno)
         else:
             self._last_block_has_content = True
 
