@@ -17,7 +17,6 @@ from robot.utils import normalize_whitespace, split_from_equals
 from robot.variables import is_assign, is_dict_variable, search_variable
 
 from .tokens import Token
-from robot.errors import DataError
 
 
 class Lexer(object):
