@@ -137,7 +137,8 @@ class IfRunner(object):
         condition, _ = VariableReplacer().replace([unresolved_condition], (), variables=self._context.variables)
         resolved_condition = condition[0]
         if is_unicode(resolved_condition):
-            return evaluate_expression(resolved_condition, self._context.variables)
+            return evaluate_expression(resolved_condition,
+                                       self._context.variables.current.store)
         return bool(resolved_condition)
 
     def _is_branch_to_execute(self, condition_matched_already, condition_result, body):

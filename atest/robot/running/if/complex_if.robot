@@ -61,3 +61,6 @@ If with invalid condition 2
 
 If with invalid condition after valid is ok
    Check Test Case    ${TESTNAME}
+
+If with dollar var from variables table
+   Check Test Case    ${TESTNAME}
