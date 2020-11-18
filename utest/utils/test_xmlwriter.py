@@ -9,10 +9,16 @@ from robot.utils.asserts import *
 PATH = os.path.join(tempfile.gettempdir(), 'test_xmlwriter.xml')
 
 
+class XmlWriterWithoutPreamble(XmlWriter):
+
+    def _preamble(self):
+        pass
+
+
 class TestXmlWriter(unittest.TestCase):
 
     def setUp(self):
-        self.writer = XmlWriter(PATH)
+        self.writer = XmlWriterWithoutPreamble(PATH)
 
     def tearDown(self):
         self.writer.close()
@@ -25,19 +31,28 @@ class TestXmlWriter(unittest.TestCase):
         self._verify_node(None, 'name', 'Some content here!!', {'attr': 'value'})
 
     def test_calling_content_multiple_times(self):
-        self.writer.start(u'robot-log', newline=False)
-        self.writer.content(u'Hello world!\n')
-        self.writer.content(u'Hi again!')
+        self.writer.start('element', newline=False)
+        self.writer.content('Hello world!\n')
+        self.writer.content('Hi again!')
         self.writer.content('\tMy name is John')
-        self.writer.end('robot-log')
-        self._verify_node(None, 'robot-log',
-                          'Hello world!\nHi again!\tMy name is John')
+        self.writer.end('element')
+        self._verify_node(None, 'element', 'Hello world!\nHi again!\tMy name is John')
+        self._verify_content('<element>Hello world!\nHi again!\tMy name is John</element>\n')
 
     def test_write_element(self):
-        self.writer.element('foo', 'Node\n content',
-                            {'a1': 'attr1', 'a2': 'attr2'})
-        self._verify_node(None, 'foo', 'Node\n content',
-                          {'a1': 'attr1', 'a2': 'attr2'})
+        self.writer.element('elem', 'Node\n content', {'a1': 'attr1', 'a2': 'attr2'})
+        self._verify_node(None, 'elem', 'Node\n content', {'a1': 'attr1', 'a2': 'attr2'})
+        self._verify_content('<elem a1="attr1" a2="attr2">Node\n content</elem>\n')
+
+    def test_element_with_content_is_self_closing(self):
+        self.writer.element('elem')
+        self._verify_node(None, 'elem')
+        self._verify_content('<elem/>\n')
+
+    def test_element_with_attributes_but_without_content_is_self_closing(self):
+        self.writer.element('elem', attrs={'a1': 'attr1', 'a2': 'attr2'})
+        self._verify_node(None, 'elem', attrs={'a1': 'attr1', 'a2': 'attr2'})
+        self._verify_content('<elem a1="attr1" a2="attr2"/>\n')
 
     def test_write_many_elements(self):
         self.writer.start('root', {'version': 'test'})
@@ -67,7 +82,7 @@ class TestXmlWriter(unittest.TestCase):
         self.writer.end('root')
         content = self._get_content()
         lines = [line for line in content.splitlines() if line != '\n']
-        assert_equal(len(lines), 6)
+        assert_equal(len(lines), 5)
 
     def test_none_content(self):
         self.writer.element(u'robot-log', None)
@@ -95,8 +110,8 @@ class TestXmlWriter(unittest.TestCase):
         self._verify_node(root.find('f'), 'f', u'Hyv\xE4\xE4 \xFC\xF6t\xE4')
 
     def test_content_with_entities(self):
-        self.writer.element(u'robot-log', 'Me, Myself & I > you')
-        self._verify_content('Me, Myself &amp; I &gt; you')
+        self.writer.element('I', 'Me, Myself & I > you')
+        self._verify_content('<I>Me, Myself &amp; I &gt; you</I>\n')
 
     def test_remove_illegal_chars(self):
         assert_equal(self.writer._escape(u'\x1b[31m'), '[31m')
@@ -113,14 +128,11 @@ class TestXmlWriter(unittest.TestCase):
 
     def test_dont_write_empty(self):
         self.tearDown()
-        class NoPreamble(XmlWriter):
-            def _preamble(self):
-                pass
-        self.writer = NoPreamble(PATH, write_empty=False)
-        self.writer.element('foo1', content='', attrs={})
-        self.writer.element('foo2', attrs={'bar': '', 'None': None})
-        self.writer.element('foo3', attrs={'bar': '', 'value': 'value'})
-        assert_equal(self._get_content(), '<foo3 value="value"></foo3>\n')
+        self.writer = XmlWriterWithoutPreamble(PATH, write_empty=False)
+        self.writer.element('e1', content='', attrs={})
+        self.writer.element('e2', attrs={'empty': '', 'None': None})
+        self.writer.element('e3', attrs={'empty': '', 'value': 'value'})
+        assert_equal(self._get_content(), '<e3 value="value"/>\n')
 
     def _verify_node(self, node, name, text=None, attrs={}):
         if node is None:
@@ -132,8 +144,7 @@ class TestXmlWriter(unittest.TestCase):
 
     def _verify_content(self, expected):
         content = self._get_content()
-        assert_true(expected in content,
-                    'Failed to find:\n%s\n\nfrom:\n%s' % (expected, content))
+        assert_equal(expected, content)
 
     def _get_root(self):
         self.writer.close()
