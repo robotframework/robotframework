@@ -84,47 +84,6 @@ If with empty else_if
     ...    .* Empty block detected
     ...    ${PARSING}/if/empty_else_if.robot
 
-If without condition
-    Run tests and check parsing error
-    ...    ${PARSING}/if/if_without_condition.robot
-    ...    .* IF without condition
-    ...    ${PARSING}/if/if_without_condition.robot
-
-If with many conditions
-    Run tests and check parsing error
-    ...    ${PARSING}/if/if_with_many_conditions.robot
-    ...    .* IF with multiple conditions
-    ...    ${PARSING}/if/if_with_many_conditions.robot
-
-If without end
-    Run tests and check error
-    ...    ${PARSING}/if/if_without_end.robot
-    ...    .*IF has no closing 'END'.
-
-If with wrong case
-    Run tests and check parsing error
-    ...    ${PARSING}/if/if_wrong_case.robot
-    ...    .* IF must be typed in upper case
-    ...    ${PARSING}/if/if_wrong_case.robot
-
-Else if without condition
-    Run tests and check parsing error
-    ...    ${PARSING}/if/else_if_without_condition.robot
-    ...    .* ELSE IF without condition
-    ...    ${PARSING}/if/else_if_without_condition.robot
-
-Else if with multiple conditions
-    Run tests and check parsing error
-    ...    ${PARSING}/if/else_if_with_many_conditions.robot
-    ...    .* ELSE IF with multiple conditions
-    ...    ${PARSING}/if/else_if_with_many_conditions.robot
-
-Else with a condition
-    Run tests and check parsing error
-    ...    ${PARSING}/if/else_with_condition.robot
-    ...    .* ELSE with a condition
-    ...    ${PARSING}/if/else_with_condition.robot
-
 Multisource Containing File With Invalid Encoding
     Run tests and check parsing error
     ...    ${PARSING}/invalid_encoding/invalid_encoding.robot ${PARSING}/invalid_encoding/a_valid_file.robot
