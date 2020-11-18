@@ -92,10 +92,6 @@ class IfRunner(object):
     def run(self, data, name=None):
         IfRunner.current_if_stack.append(data)
         try:
-            if data.error:
-                raise DataError(data.error)
-            if not data.ended:
-                raise DataError("[row: %s] IF has no closing 'END'." % data.lineno)
             first = True
             condition_matched = False
             for datacondition, body in data.bodies:
@@ -108,6 +104,8 @@ class IfRunner(object):
         result = self._create_result_object(data, first, datacondition)
         reporter = StatusReporter(self._context, result, dry_run_lib_kw=self._is_dryrun_already_executing_this_if())
         with reporter:
+            if data.error:
+                raise DataError(data.error)
             condition_result = self._create_condition_result(condition_matched, data, datacondition, first)
             if self._is_branch_to_execute(condition_matched,
                                           condition_result,
