@@ -17,6 +17,7 @@ import ast
 
 from robot.utils import file_writer, is_pathlike, is_string
 from robot.variables import is_scalar_assign
+from .statements import Else, ElseIfStatement
 
 from .visitor import ModelVisitor
 
@@ -167,6 +168,15 @@ class IfBlock(Block):
             errors.append('Empty body.')
         if not self.end:
             errors.append("No closing 'END'.")
+        else_seen = False
+        for step in self.body:
+            if isinstance(step, Else):
+                if else_seen:
+                    errors.append("Multiple 'ELSE' branches.")
+                else_seen = True
+            if isinstance(step, ElseIfStatement):
+                if else_seen:
+                    errors.append("'ELSE IF' after 'ELSE'.")
         return errors
 
 
