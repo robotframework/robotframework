@@ -189,15 +189,7 @@ class ForLoopHeaderLexer(StatementLexer):
 class IfStatementLexer(StatementLexer):
 
     def handles(self, statement):
-        if statement[0].value != 'IF':
-            return False
-        if statement[0].value != 'IF':
-            raise DataError("line [%s] : IF must be typed in upper case" % statement[0].lineno)
-        if len(statement) > 2:
-            raise DataError("line [%s] : IF with multiple conditions" % statement[0].lineno)
-        if len(statement) < 2:
-            raise DataError("line [%s] : IF without condition" % statement[0].lineno)
-        return True
+        return statement[0].value == 'IF' and len(statement) == 2
 
     def lex(self):
         self.statement[0].type = Token.IF
@@ -207,13 +199,7 @@ class IfStatementLexer(StatementLexer):
 class ElseIfStatementLexer(StatementLexer):
 
     def handles(self, statement):
-        if statement[0].value != 'ELSE IF':
-            return False
-        if len(statement) > 2:
-            raise DataError("line [%s] : ELSE IF with multiple conditions" % statement[0].lineno)
-        if len(statement) < 2:
-            raise DataError("line [%s] : ELSE IF without condition" % statement[0].lineno)
-        return True
+        return statement[0].value == 'ELSE IF' and len(statement) == 2
 
     def lex(self):
         self.statement[0].type = Token.ELSE_IF
@@ -227,11 +213,7 @@ class ElseIfStatementLexer(StatementLexer):
 class ElseLexer(StatementLexer):
 
     def handles(self, statement):
-        if statement[0].value != 'ELSE':
-            return False
-        if len(statement) > 1:
-            raise DataError("line [%s] : ELSE with a condition" % statement[0].lineno)
-        return True
+        return statement[0].value == 'ELSE' and len(statement) == 1
 
     def lex(self):
         self.statement[0].type = Token.ELSE
