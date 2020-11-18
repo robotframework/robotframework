@@ -104,7 +104,8 @@ class IfRunner(object):
 
     def _run_if_branch(self, body, condition_matched, data, datacondition, first):
         result = self._create_result_object(data, first, datacondition)
-        with StatusReporter(self._context, result, dry_run_lib_kw=self._is_already_executing_this_if()):
+        reporter = StatusReporter(self._context, result, dry_run_lib_kw=self._is_already_executing_this_if())
+        with reporter:
             condition_result = self._create_condition_result(condition_matched, data, datacondition, first)
             if self._is_branch_to_execute(condition_matched,
                                           condition_result,
@@ -112,6 +113,7 @@ class IfRunner(object):
                 runner = StepRunner(self._context, self._templated)
                 runner.run_steps(body)
                 return True
+            reporter.mark_as_not_run()
         return condition_matched
 
     def _create_condition_result(self, condition_matched, data, datacondition, first):
