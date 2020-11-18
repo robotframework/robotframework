@@ -23,10 +23,12 @@ For loop inside for loop
    Check Test Case    ${TESTNAME}
 
 Direct Boolean condition
-   Check Test Case    ${TESTNAME}
+   ${tc} =    Check Test Case    ${TESTNAME}
+   Should Be Equal     ${tc.kws[0].status}    PASS
 
 Direct Boolean condition false
-   Check Test Case    ${TESTNAME}
+   ${tc} =    Check Test Case    ${TESTNAME}
+   Should Be Equal     ${tc.kws[0].status}    NOT_RUN
 
 Nesting insanity
    Check Test Case    ${TESTNAME}
