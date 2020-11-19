@@ -138,20 +138,8 @@ class IfBlock(Block):
         self.error = error
 
     @property
-    def variables(self):
-        return self.header.variables
-
-    @property
     def value(self):
         return self.header.value
-
-    @property
-    def _header(self):
-        return self.header._header
-
-    @property
-    def _end(self):
-        return self.end.value if self.end else None
 
     def validate(self):
         errors = self._validate()

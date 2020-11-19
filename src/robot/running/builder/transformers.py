@@ -181,7 +181,7 @@ class TestCaseBuilder(NodeVisitor):
         self.test.keywords.append(loop)
 
     def visit_IfBlock(self, node):
-        ifblock = IfExpression(node.value, node.lineno, node._header, node._end)
+        ifblock = IfExpression(node.value)
         IfExpressionBuilder(ifblock).build(node)
         self.test.keywords.append(ifblock)
 
@@ -259,7 +259,7 @@ class KeywordBuilder(NodeVisitor):
         self.kw.keywords.append(loop)
 
     def visit_IfBlock(self, node):
-        ifblock = IfExpression(node.value, node.lineno, node._header, node._end)
+        ifblock = IfExpression(node.value)
         IfExpressionBuilder(ifblock).build(node)
         self.kw.keywords.append(ifblock)
 
@@ -287,7 +287,7 @@ class ForLoopBuilder(NodeVisitor):
         self.loop.keywords.append(loop)
 
     def visit_IfBlock(self, node):
-        ifblock = IfExpression(node.value, node.lineno, node._header, node._end)
+        ifblock = IfExpression(node.value)
         IfExpressionBuilder(ifblock).build(node)
         self.loop.keywords.append(ifblock)
 
@@ -304,8 +304,9 @@ class IfExpressionBuilder(NodeVisitor):
 
     def visit_KeywordCall(self, node):
         self.ifblock.create_keyword(name=node.keyword, args=node.args,
-                                  assign=node.assign, lineno=node.lineno)
+                                    assign=node.assign, lineno=node.lineno)
 
+    # FIXME: Is this used for anything? How does IF work with templates?
     def visit_TemplateArguments(self, node):
         self.ifblock.create_keyword(args=node.args, lineno=node.lineno)
 
@@ -316,7 +317,7 @@ class IfExpressionBuilder(NodeVisitor):
         self.ifblock.create_else()
 
     def visit_IfBlock(self, node):
-        ifblock = IfExpression(node.value, node.lineno, node._header, node._end)
+        ifblock = IfExpression(node.value)
         IfExpressionBuilder(ifblock).build(node)
         self.ifblock.add_inner_block(ifblock)
 
