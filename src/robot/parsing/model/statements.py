@@ -439,10 +439,6 @@ class IfStatement(Statement):
     def value(self):
         return self.get_values(Token.ARGUMENT)
 
-    @property
-    def _header(self):
-        return self.get_value(Token.IF)
-
 
 @Statement.register
 class ElseIfStatement(Statement):
@@ -451,10 +447,6 @@ class ElseIfStatement(Statement):
     @property
     def value(self):
         return self.get_values(Token.ARGUMENT)
-
-    @property
-    def _header(self):
-        return self.get_value(Token.ELSE_IF)
 
 
 @Statement.register

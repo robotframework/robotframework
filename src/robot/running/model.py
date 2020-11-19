@@ -115,15 +115,12 @@ class IfExpression(Keyword):
 
     Contains keywords in the body as child :attr:`keywords`.
     """
-    __slots__ = ['lineno', '_header', '_end', 'bodies', 'error']
+    __slots__ = ['bodies', 'error']
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, value, lineno=None, _header='IF', _end='END', error=None):
+    def __init__(self, value, error=None):
         Keyword.__init__(self, args=value,
                          type=Keyword.IF_EXPRESSION_TYPE)
-        self.lineno = lineno
-        self._header = _header
-        self._end = _end
         self.bodies = [(value, Keywords(self.keyword_class, self, None))]
         self.error = error
 
@@ -142,10 +139,6 @@ class IfExpression(Keyword):
     @property
     def condition(self):
         return self.args[0]
-
-    @property
-    def ended(self):
-        return self._end is not None
 
     def __unicode__(self):
         values = '    '.join(self.condition)
