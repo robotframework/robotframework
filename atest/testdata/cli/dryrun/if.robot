@@ -42,19 +42,14 @@ Dryrun fail inside of ELSE
     This is validated
 
 Dryrun fail invalid IF in non executed branch
-    [Documentation]    FAIL
-    ...  Several failures occurred:
-    ...
-    ...  1) 'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
-    ...
-    ...  2) 'End' is a reserved keyword. It must be an upper case 'END' and follow an opening 'FOR' or 'IF' when used as a marker.
+    [Documentation]    FAIL    IF has more than one condition.
     IF  1 > 2
        Keyword with invalid if
     END
     This is validated
 
 Dryrun fail invalid ELSE in non executed branch
-    [Documentation]    FAIL 'Else' is a reserved keyword. It must be an upper case 'ELSE' and follow an opening 'IF' when used as a marker.
+    [Documentation]    FAIL    ELSE has condition.
     IF  1 > 0
        No operation
     ELSE
@@ -63,7 +58,7 @@ Dryrun fail invalid ELSE in non executed branch
     This is validated
 
 Dryrun fail invalid ELSE IF in non executed branch
-    [Documentation]    FAIL 'Else If' is a reserved keyword. It must be an upper case 'ELSE IF' and follow an opening 'IF' when used as a marker.
+    [Documentation]    FAIL    ELSE IF has no condition.
     IF  'fortran' == 'cobol'
        Keyword with invalid else if
     END

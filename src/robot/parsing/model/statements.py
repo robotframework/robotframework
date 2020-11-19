@@ -432,20 +432,20 @@ class ForLoopHeader(Statement):
 
 
 @Statement.register
-class IfStatement(Statement):
+class If(Statement):
     type = Token.IF
 
     @property
-    def value(self):
+    def condition(self):
         return self.get_values(Token.ARGUMENT)
 
 
 @Statement.register
-class ElseIfStatement(Statement):
+class ElseIf(Statement):
     type = Token.ELSE_IF
 
     @property
-    def value(self):
+    def condition(self):
         return self.get_values(Token.ARGUMENT)
 
 
@@ -454,8 +454,8 @@ class Else(Statement):
     type = Token.ELSE
 
     @property
-    def value(self):
-        return self.get_value(Token.ELSE)
+    def condition(self):
+        return self.get_values(Token.ARGUMENT)
 
 
 @Statement.register

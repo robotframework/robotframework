@@ -188,35 +188,44 @@ class ForLoopHeaderLexer(StatementLexer):
 class IfStatementLexer(StatementLexer):
 
     def handles(self, statement):
-        return statement[0].value == 'IF' and len(statement) == 2
+        return statement[0].value == 'IF'
 
     def lex(self):
         self.statement[0].type = Token.IF
-        self.statement[1].type = Token.ARGUMENT
+        # TODO: Should we validate argument count here? Should have only one.
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT
 
 
 class ElseIfStatementLexer(StatementLexer):
 
     def handles(self, statement):
-        return normalize_whitespace(statement[0].value) == 'ELSE IF' and len(statement) == 2
+        return normalize_whitespace(statement[0].value) == 'ELSE IF'
 
     def lex(self):
         self.statement[0].type = Token.ELSE_IF
-        self.statement[1].type = Token.ARGUMENT
+        # TODO: Should we validate argument count here? Should have only one.
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT
 
 
 class ElseLexer(StatementLexer):
 
     def handles(self, statement):
-        return statement[0].value == 'ELSE' and len(statement) == 1
+        return statement[0].value == 'ELSE'
 
     def lex(self):
         self.statement[0].type = Token.ELSE
+        # TODO: Should we validate argument count here? Should have none.
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT
 
 
 class EndLexer(StatementLexer):
 
     def handles(self, statement):
+        # TODO: Should accept any statement starting with 'END' but make statements
+        # with extra values errors. See also comments related to IF/ELSE above.
         return len(statement) == 1 and statement[0].value == 'END'
 
     def lex(self):
