@@ -117,5 +117,5 @@ Test Format In JSON
     [Arguments]    ${expected}   ${format}    ${cli}=    ${lib}=DocFormat.py
     ${lib} =    Join Path    ${TESTDATADIR}    ${lib}
     Run Libdoc And Parse Model From JSON     ${cli} ${lib}
-    Should Be Equal    ${MODEL}[doc_format]    ${format}
+    Should Be Equal    ${MODEL}[docFormat]    ${format}
     Should Be Equal    ${MODEL}[keywords][0][doc]    ${expected}

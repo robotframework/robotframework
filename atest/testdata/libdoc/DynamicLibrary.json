@@ -4,7 +4,7 @@
   "version": "0.1",
   "type": "LIBRARY",
   "scope": "TEST",
-  "doc_format": "HTML",
+  "docFormat": "HTML",
   "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DynamicLibrary.py",
   "lineno": 7,
   "inits": [
@@ -578,7 +578,7 @@
     }
   ],
   "generated": "2020-10-23 23:42:21",
-  "all_tags": [
+  "tags": [
     "hyv\u00e4\u00e4",
     "my",
     "t\u00e4gs",
