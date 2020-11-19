@@ -183,20 +183,10 @@ class IfBlock(Block):
                     errors.append("Empty branch.")
                 last_is_normal_step = False
             else:
-                if self._is_invalid_else(step):
-                    errors.append("Invalid 'ELSE'.")
-                if self._is_invalid_else_if(step):
-                    errors.append("Invalid 'ELSE IF'.")
                 last_is_normal_step = True
         if not last_is_normal_step:
             errors.append("Empty branch.")
         return errors
-
-    def _is_invalid_else(self, step):
-        return isinstance(step, KeywordCall) and step.keyword.upper() == 'ELSE'
-
-    def _is_invalid_else_if(self, step):
-        return isinstance(step, KeywordCall) and step.keyword.upper().replace(' ', '') == 'ELSEIF'
 
 
 class ForLoop(Block):
