@@ -198,7 +198,7 @@ class IfStatementLexer(StatementLexer):
 class ElseIfStatementLexer(StatementLexer):
 
     def handles(self, statement):
-        return statement[0].value == 'ELSE IF' and len(statement) == 2
+        return normalize_whitespace(statement[0].value) == 'ELSE IF' and len(statement) == 2
 
     def lex(self):
         self.statement[0].type = Token.ELSE_IF
