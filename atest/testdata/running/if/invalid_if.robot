@@ -23,7 +23,7 @@ If with wrong case
    END
 
 Else if without condition
-   [Documentation]    FAIL after not passing
+   [Documentation]    FAIL IF has invalid 'ELSE IF'.
    IF  'mars' == 'maa'
       Log   something
    ELSE IF
@@ -33,7 +33,7 @@ Else if without condition
    END
 
 Else if with multiple conditions
-  [Documentation]    FAIL after not passing
+  [Documentation]    FAIL IF has invalid 'ELSE IF'.
   IF  'mars' == 'maa'
      Log   something
   ELSE IF  ${False}  ${True}
@@ -43,7 +43,7 @@ Else if with multiple conditions
   END
 
 Else with a condition
-  [Documentation]    FAIL after not passing
+  [Documentation]    FAIL IF has invalid 'ELSE'.
   IF  'mars' == 'maa'
      Log   something
   ELSE  ${True}
