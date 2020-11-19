@@ -89,6 +89,7 @@ class CommentSectionParser(SectionParser):
 
 
 class ImplicitCommentSectionParser(SectionParser):
+
     def section_class(self, statement):
         return CommentSection(body=[statement])
 
