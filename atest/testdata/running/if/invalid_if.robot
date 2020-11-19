@@ -23,8 +23,9 @@ If with wrong case
    END
 
 Else if without condition
-   [Documentation]    FAIL IF has invalid 'ELSE IF'.
-   IF  'mars' == 'maa'
+   [Documentation]    FAIL
+   ...  'Else If' is a reserved keyword. It must be an upper case 'ELSE IF' and follow an opening 'IF' when used as a marker.
+   IF  'mars' == 'mars'
       Log   something
    ELSE IF
       Log  nothing
@@ -33,8 +34,9 @@ Else if without condition
    END
 
 Else if with multiple conditions
-  [Documentation]    FAIL IF has invalid 'ELSE IF'.
-  IF  'mars' == 'maa'
+  [Documentation]    FAIL
+  ...  'Else If' is a reserved keyword. It must be an upper case 'ELSE IF' and follow an opening 'IF' when used as a marker.
+  IF  'maa' == 'maa'
      Log   something
   ELSE IF  ${False}  ${True}
      Log  nothing
@@ -43,8 +45,9 @@ Else if with multiple conditions
   END
 
 Else with a condition
-  [Documentation]    FAIL IF has invalid 'ELSE'.
-  IF  'mars' == 'maa'
+  [Documentation]    FAIL
+  ...  'Else' is a reserved keyword. It must be an upper case 'ELSE' and follow an opening 'IF' when used as a marker.
+  IF  'venus' != 'mars'
      Log   something
   ELSE  ${True}
      Log   ok
