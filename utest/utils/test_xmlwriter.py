@@ -1,10 +1,11 @@
+from collections import OrderedDict
 import os
 import unittest
 import tempfile
 
 from robot. errors import DataError
-from robot.utils import XmlWriter, ET, ETSource
-from robot.utils.asserts import *
+from robot.utils import ET, ETSource, XmlWriter
+from robot.utils.asserts import assert_equal, assert_raises, assert_true
 
 PATH = os.path.join(tempfile.gettempdir(), 'test_xmlwriter.xml')
 
@@ -29,6 +30,7 @@ class TestXmlWriter(unittest.TestCase):
         self.writer.content('Some content here!!')
         self.writer.end('name')
         self._verify_node(None, 'name', 'Some content here!!', {'attr': 'value'})
+        self._verify_content('<name attr="value">Some content here!!</name>\n')
 
     def test_calling_content_multiple_times(self):
         self.writer.start('element', newline=False)
@@ -40,9 +42,10 @@ class TestXmlWriter(unittest.TestCase):
         self._verify_content('<element>Hello world!\nHi again!\tMy name is John</element>\n')
 
     def test_write_element(self):
-        self.writer.element('elem', 'Node\n content', {'a1': 'attr1', 'a2': 'attr2'})
-        self._verify_node(None, 'elem', 'Node\n content', {'a1': 'attr1', 'a2': 'attr2'})
-        self._verify_content('<elem a1="attr1" a2="attr2">Node\n content</elem>\n')
+        self.writer.element('elem', 'Node\n content',
+                            OrderedDict([('a', '1'), ('b', '2'), ('c', '3')]))
+        self._verify_node(None, 'elem', 'Node\n content', {'a': '1', 'b': '2', 'c': '3'})
+        self._verify_content('<elem a="1" b="2" c="3">Node\n content</elem>\n')
 
     def test_element_with_content_is_self_closing(self):
         self.writer.element('elem')
@@ -50,9 +53,9 @@ class TestXmlWriter(unittest.TestCase):
         self._verify_content('<elem/>\n')
 
     def test_element_with_attributes_but_without_content_is_self_closing(self):
-        self.writer.element('elem', attrs={'a1': 'attr1', 'a2': 'attr2'})
-        self._verify_node(None, 'elem', attrs={'a1': 'attr1', 'a2': 'attr2'})
-        self._verify_content('<elem a1="attr1" a2="attr2"/>\n')
+        self.writer.element('elem', attrs={'attr': 'value'})
+        self._verify_node(None, 'elem', attrs={'attr': 'value'})
+        self._verify_content('<elem attr="value"/>\n')
 
     def test_write_many_elements(self):
         self.writer.start('root', {'version': 'test'})
