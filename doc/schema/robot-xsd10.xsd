@@ -72,14 +72,7 @@
             <xs:restriction base="xs:string">
                 <xs:enumeration value="PASS"/>
                 <xs:enumeration value="FAIL"/>
-            </xs:restriction>
-        </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="critical">
-        <xs:simpleType>
-            <xs:restriction base="xs:string">
-                <xs:enumeration value="yes"/>
-                <xs:enumeration value="no"/>
+                <xs:enumeration value="SKIP"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:attribute>
@@ -90,7 +83,6 @@
                 <xs:attribute name="endtime" type="xs:string"/>
                 <xs:attribute name="starttime" type="xs:string"/>
                 <xs:attribute name="elapsedtime" type="xs:string"/>
-                <xs:attribute ref="critical"/>
                 <xs:anyAttribute processContents="lax"/>
             </xs:extension>
         </xs:simpleContent>
@@ -104,6 +96,7 @@
                 <xs:enumeration value="WARN"/>
                 <xs:enumeration value="ERROR"/>
                 <xs:enumeration value="FAIL"/>
+                <xs:enumeration value="SKIP"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:attribute>
@@ -177,8 +170,8 @@
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute name="fail" type="xs:integer"/>
-                <xs:attribute name="critical" type="xs:string"/>
                 <xs:attribute name="pass" type="xs:integer"/>
+                <xs:attribute name="skip" type="xs:integer"/>
                 <xs:attribute name="info" type="xs:string"/>
                 <xs:attribute name="links" type="xs:string"/>
                 <xs:attribute name="doc" type="xs:string"/>
