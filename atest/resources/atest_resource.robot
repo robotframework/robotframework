@@ -117,7 +117,7 @@ Check Keyword Data
     [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=    ${status}=PASS    ${tags}=    ${type}=kw
     Should be equal    ${kw.name}    ${name}
     Should be equal    ${kw.status}    ${status}
-    Should be equal    ${kw.type}    ${type}
+    Should be equal    ${kw.types}    ${type}
     ${kwassign}=    Catenate    SEPARATOR=,${SPACE}    @{kw.assign}
     Should be equal    ${kwassign}    ${assign}
     ${kwargs}=    Catenate    SEPARATOR=,${SPACE}    @{kw.args}

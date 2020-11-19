@@ -8,6 +8,7 @@
             <xs:element name="doc" type="xs:string" />
             <xs:element name="inits" type="Inits" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="keywords" type="Keywords" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="data_types" type="DataTypes" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" />
         <xs:attribute name="type" type="LibraryType" use="required" />
@@ -31,12 +32,18 @@
             <xs:element name="kw" type="Keyword" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
+    <xs:complexType name="DataTypes">
+        <xs:sequence>
+            <xs:element name="dt" type="DataType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
     <xs:complexType name="Init">
         <xs:sequence>
             <xs:element name="arguments" type="Arguments" />
             <xs:element name="doc" type="xs:string" />
             <xs:element name="shortdoc" type="xs:string" />
         </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="optional" />
         <xs:attribute name="deprecated" type="xs:boolean" use="optional" />
         <!-- See the KeywordSpec level comment about "source" and "lineno". -->
         <xs:attribute name="source" type="xs:string" use="optional" />
@@ -60,6 +67,36 @@
             <xs:element name="arg" type="Argument" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="repr" type="xs:string" use="required" />
+    </xs:complexType>
+    <xs:complexType name="DataType">
+        <xs:sequence>
+            <xs:element name="doc" type="xs:string" />
+            <xs:choice minOccurs="0">
+                <xs:element name="members" type="EnumMembers" />
+                <xs:element name="items" type="TypedDictItems" />
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="super" type="xs:string" use="required" />
+    </xs:complexType>
+    <xs:complexType name="EnumMembers">
+        <xs:sequence>
+            <xs:element name="member" type="EnumMember" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="EnumMember">
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="value" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="TypedDictItems">
+        <xs:sequence>
+            <xs:element name="item" type="TypedDictItem" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TypedDictItem">
+        <xs:attribute name="key" type="xs:string" use="required" />
+        <xs:attribute name="value" type="xs:string" use="required"/>
+        <xs:attribute name="required" type="xs:boolean" use="required"/>
     </xs:complexType>
     <xs:complexType name="Tags">
         <xs:sequence>
@@ -96,7 +133,7 @@
     <xs:complexType name="Argument">
         <xs:sequence>
             <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
-            <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="default" type="xs:string" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="kind" type="Kind" use="required" />

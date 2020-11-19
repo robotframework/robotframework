@@ -128,15 +128,15 @@ Keyword Arguments Should Be
     Verify Arguments Structure    ${index}    keywords/kw    ${expected}
 
 Verify Arguments Structure
-    [Arguments]    ${index}   ${type}    ${expected}
-    ${kws}=    Get Elements    ${LIBDOC}    xpath=${type}
+    [Arguments]    ${index}   ${xpath}    ${expected}
+    ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}
     ${arg_elems}=    Get Elements    ${kws}[${index}]    xpath=arguments/arg
     FOR    ${arg_elem}    ${exp_repr}    IN ZIP     ${arg_elems}    ${expected}
         ${kind}=        Get Element Attribute        ${arg_elem}    kind
         ${required}=    Get Element Attribute        ${arg_elem}    required
         ${repr}=        Get Element Attribute        ${arg_elem}    repr
         ${name}=        Get Element Optional Text    ${arg_elem}    name
-        ${type}=        Get Element Optional Text    ${arg_elem}    type
+        ${type}=       Get Element List Texts       ${arg_elem}    type
         ${default}=     Get Element Optional Text    ${arg_elem}    default
         ${arg_model}=    Create Dictionary
         ...    kind=${kind}
@@ -151,6 +151,17 @@ Verify Arguments Structure
     END
     Should Be True    len($arg_elems) == len($expected)
 
+Get Element List Texts
+    [Arguments]    ${source}    ${xpath}
+    ${elem}=    Get Elements    ${source}    ${xpath}
+    Return From Keyword If    len($elem) == 0    @{EMPTY}
+    ${texts}    Create List
+    FOR    ${element}    IN    @{elem}
+        ${text}    Get Element Text    ${element}
+        Append To List    ${texts}    ${text}
+    END
+    [Return]    ${texts}
+
 Get Element Optional Text
     [Arguments]    ${source}    ${xpath}
     ${elem}=    Get Elements    ${source}    ${xpath}
@@ -160,8 +171,13 @@ Get Element Optional Text
     [Return]    ${text}
 
 Verify Argument Model
-    [Arguments]    ${arg_model}    ${expected_repr}
-    ${repr}=   Get Repr From Arg Model    ${arg_model}
+    [Arguments]    ${arg_model}    ${expected_repr}    ${json}=False
+    Log  ${arg_model}
+    IF    ${json}
+        ${repr}=   Get Repr From Json Arg Model    ${arg_model}
+    ELSE
+        ${repr}=   Get Repr From Arg Model    ${arg_model}
+    END
     Should Be Equal As Strings    ${repr}    ${expected_repr}
     Should Be Equal As Strings    ${arg_model}[repr]    ${expected_repr}
 

@@ -72,5 +72,11 @@ class LibDocLib(object):
     def get_repr_from_arg_model(self, model):
         return unicode(ArgInfo(kind=model['kind'],
                                name=model['name'],
-                               type=model['type'] or ArgInfo.NOTSET,
+                               types=tuple(model['type']),
+                               default=model['default'] or ArgInfo.NOTSET))
+
+    def get_repr_from_json_arg_model(self, model):
+        return unicode(ArgInfo(kind=model['kind'],
+                               name=model['name'],
+                               types=tuple(model['types']),
                                default=model['default'] or ArgInfo.NOTSET))
