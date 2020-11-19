@@ -24,3 +24,15 @@ Dryrun fail inside of ELSE IF
 
 Dryrun fail inside of ELSE
     Check Test Case    ${TESTNAME}
+
+Dryrun fail invalid IF in non executed branch
+    Check Test Case    ${TESTNAME}
+
+Dryrun fail invalid ELSE in non executed branch
+    Check Test Case    ${TESTNAME}
+
+Dryrun fail invalid ELSE IF in non executed branch
+    Check Test Case    ${TESTNAME}
+
+Dryrun fail empty if in non executed branch
+    Check Test Case    ${TESTNAME}
