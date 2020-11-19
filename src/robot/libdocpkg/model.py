@@ -107,7 +107,7 @@ class LibraryDoc(object):
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
             'generated': get_timestamp(daysep='-', millissep=None),
-            'allTags': list(self.all_tags)
+            'tags': list(self.all_tags)
         }
 
     def to_json(self, indent=None):

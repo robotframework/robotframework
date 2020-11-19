@@ -52,8 +52,8 @@
       "type": "integer",
       "minimum": -1
     },
-    "allTags": {
-      "$id": "#/properties/allTags",
+    "tags": {
+      "$id": "#/properties/tags",
       "type": "array",
       "items": {
         "type": "string"
@@ -87,7 +87,7 @@
     "lineno",
     "inits",
     "keywords",
-    "allTags"
+    "tags"
   ],
   "definitions": {
     "keyword": {
