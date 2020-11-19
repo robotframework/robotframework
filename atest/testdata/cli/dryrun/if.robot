@@ -41,7 +41,62 @@ Dryrun fail inside of ELSE
     END
     This is validated
 
+Dryrun fail invalid IF in non executed branch
+    [Documentation]    FAIL
+    IF  1 > 2
+       Keyword with invalid if
+    END
+    This is validated
+
+Dryrun fail invalid ELSE in non executed branch
+    [Documentation]    FAIL IF has invalid 'ELSE'.
+    IF  1 > 0
+       No operation
+    ELSE
+       Keyword with invalid else
+    END
+    This is validated
+
+Dryrun fail invalid ELSE IF in non executed branch
+    [Documentation]    FAIL IF has invalid 'ELSE IF'.
+    IF  'fortran' == 'cobol'
+       Keyword with invalid else if
+    END
+    This is validated
+
+Dryrun fail empty if in non executed branch
+    [Documentation]    FAIL IF has empty branch.
+    IF  ${True}
+       Log  hello
+    ELSE IF  ${True}
+       Keyword with empty if
+    END
+    This is validated
+
 *** Keywords ***
+Keyword with invalid if
+    IF  1 == 1  2 == 2
+       Log  invalid
+    END
+
+Keyword with invalid else
+    IF  ${True}
+       Log  invalid
+    ELSE  ${False}
+       Log  invalid
+    END
+
+Keyword with invalid else if
+    IF  ${True}
+       Log  invalid
+    ELSE IF
+       Log  invalid
+    END
+
+Keyword with empty if
+   IF  ${False}
+   END
+
 Recursive if
     [Arguments]  ${arg}
     IF  '${arg}' == 'call again'
