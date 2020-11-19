@@ -59,7 +59,7 @@
             selectedTag = params["tag"];
             tagSearch(selectedTag, window.location.hash);
         }
-        if (libdoc.all_tags.length) {
+        if (libdoc.tags.length) {
           libdoc.selectedTag = selectedTag;
           renderTemplate('tags-shortcuts', libdoc);
         }
@@ -138,7 +138,7 @@
         });
         renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
-        if (libdoc.all_tags.length) {
+        if (libdoc.tags.length) {
           libdoc.selectedTag = include.tagsExact ? pattern : "";
           renderTemplate('tags-shortcuts', libdoc);
         }
@@ -224,7 +224,7 @@
     function resetKeywords() {
         renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
-        if (libdoc.all_tags.length) {
+        if (libdoc.tags.length) {
             renderTemplate('tags', libdoc);
         }
         document.getElementById("keyword-statistics-header").innerText = ''+libdoc.keywords.length;
@@ -343,7 +343,7 @@
         <input placeholder="Search" type="text" class="search-input" onkeyup="delay(searching, 500)"/>
         <button class="clear-search" onclick="clearSearch()">&#10005;</button>
       </div>
-      {{if all_tags.length}}
+      {{if tags.length}}
       <select id="tags-shortcuts-container" onchange="location = this.value;">
       </select>
       {{/if}}
@@ -382,7 +382,7 @@
 
 <script type="text/x-jquery-tmpl" id="tags-shortcuts-template">
   <option value="javascript:clearTagSearch()" {{if selectedTag === ""}}selected{{/if}}>- Show all tags -</option>
-  {{each all_tags}}
+  {{each tags}}
     <option value="javascript:tagSearch('${$value}')" {{if selectedTag === $value}}selected{{/if}}>${$value}</a>
     </option>
   {{/each}}
@@ -437,7 +437,7 @@
                 </div>
               </div>
             {{/if}}
-            {{if libdoc.all_tags.length}}
+            {{if libdoc.tags.length}}
             <div class="tags">
                 <h4>Tags</h4>
                 {{each tags}}

@@ -34,7 +34,7 @@ class JsonDocBuilder(object):
                             version=spec['version'],
                             type=spec['type'],
                             scope=spec['scope'],
-                            doc_format=spec['doc_format'],
+                            doc_format=spec['docFormat'],
                             source=spec['source'],
                             lineno=int(spec.get('lineno', -1)))
         libdoc.inits = [self._create_keyword(kw) for kw in spec['inits']]
