@@ -73,6 +73,16 @@
         "$ref": "#/definitions/keyword"
       },
       "uniqueItems": true
+    },
+    "dataTypes": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {"$ref": "#/definitions/typedDictType"},
+          {"$ref": "#/definitions/enumType"}
+        ]
+      },
+      "uniqueItems": true
     }
   },
   "required": [
@@ -143,7 +153,7 @@
       "type": "object",
       "required": [
         "name",
-        "type",
+        "types",
         "default",
         "kind",
         "required",
@@ -153,11 +163,11 @@
         "name": {
           "type": "string"
         },
-        "type": {
-          "type": [
-            "string",
-            "null"
-          ]
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "default": {
           "type": [
@@ -182,6 +192,93 @@
         },
         "repr": {
           "type": "string"
+        }
+      }
+    },
+    "enumType": {
+      "$id": "#/definitions/enumType",
+      "type": "object",
+      "title": "Enum DataType schema",
+      "required": [
+        "name",
+        "super",
+        "doc",
+        "members"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "super": {
+          "type": "string"
+        },
+        "doc": {
+          "type": "string"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/enum_member"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "enum_member": {
+      "$id": "#/definitions/enum_member",
+      "type": "object",
+      "title": "Enum Member schema",
+      "required": [
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "typedDictType": {
+      "$id": "#/definitions/typedDictType",
+      "type": "object",
+      "title": "TypedDict Type schema",
+      "required": [
+        "name",
+        "super",
+        "doc",
+        "items",
+        "required_keys",
+        "optional_keys"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "super": {
+          "type": "string"
+        },
+        "doc": {
+          "type": "string"
+        },
+        "items": {
+          "type": "object"
+        },
+        "required_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "optional_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
         }
       }
     }
