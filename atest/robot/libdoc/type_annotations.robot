@@ -8,13 +8,13 @@ Basics
     Keyword Arguments Should Be     0    integer: int    boolean: bool    string: str
 
 Enums
-    Keyword Arguments Should Be     1    small: Small { one | two | three | four }
-    ...                                  many_small: ManySmall { A | B | C | D | E | F | G | H | I | J | K }
-    ...                                  big: Big { FIRST_MEMBER_IS_LONG | SECOND_MEMBER_IS_LONGER | ... }
+    Keyword Arguments Should Be     1    small: Small
+    ...                                  many_small: ManySmall
+    ...                                  big: Big
 
 With defaults
-    Keyword Arguments Should Be     2    integer: int = 42    list_: list = None
-    ...                                  enum: Small { one | two | three | four } = None
+    Keyword Arguments Should Be     2    integer: int = 42    list_: list | None = None
+    ...                                  enum: Small | None = None
 
 Keyword-only arguments
     Keyword Arguments Should Be     3    *    kwo: int    with_default: str = value

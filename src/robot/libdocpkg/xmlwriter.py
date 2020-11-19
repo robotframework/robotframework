@@ -93,8 +93,9 @@ class LibdocXmlWriter(object):
                                  'repr': unicode(arg)})
             if arg.name:
                 writer.element('name', arg.name)
-            if arg.type is not arg.NOTSET:
-                writer.element('type', arg.type_repr)
+            if arg.types:
+                for type_repr in arg.types_reprs:
+                    writer.element('type', type_repr)
             if arg.default is not arg.NOTSET:
                 writer.element('default', arg.default_repr)
             writer.end('arg')
@@ -102,7 +103,7 @@ class LibdocXmlWriter(object):
 
     def _get_start_attrs(self, kw_type, kw, lib_source, writer):
         if kw_type == 'init':
-            attrs = {}
+            attrs = {'name': kw.name}
         else:
             attrs = {'name': kw.name}
             if kw.deprecated:

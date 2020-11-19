@@ -110,5 +110,5 @@ Verify Argument Models
     [Arguments]    ${arg_models}    @{expected_reprs}
     Should Be True    len($arg_models) == len($expected_reprs)
     FOR    ${arg_model}    ${expected_repr}    IN ZIP    ${arg_models}    ${expected_reprs}
-       Run Keyword And Continue On Failure    Verify Argument Model    ${arg_model}    ${expected_repr}
+       Run Keyword And Continue On Failure    Verify Argument Model    ${arg_model}    ${expected_repr}    json=True
     END

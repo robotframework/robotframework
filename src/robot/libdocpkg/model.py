@@ -99,15 +99,16 @@ class LibraryDoc(object):
             'name': self.name,
             'doc': self.doc,
             'version': self.version,
+            'generated': get_timestamp(daysep='-', millissep=None),
             'type': self.type,
             'scope': self.scope,
             'docFormat': self.doc_format,
             'source': self.source,
             'lineno': self.lineno,
+            'tags': list(self.all_tags),
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
-            'generated': get_timestamp(daysep='-', millissep=None),
-            'tags': list(self.all_tags)
+            'dataTypes': []
         }
 
     def to_json(self, indent=None):
@@ -183,7 +184,7 @@ class KeywordDoc(Sortable):
     def _arg_to_dict(self, arg):
         return {
             'name': arg.name,
-            'type': arg.type_repr,
+            'types': arg.types_reprs,
             'default': arg.default_repr,
             'kind': arg.kind,
             'required': arg.required,
