@@ -17,7 +17,7 @@ import ast
 
 from robot.utils import file_writer, is_pathlike, is_string
 from robot.variables import is_scalar_assign
-from .statements import Else, ElseIfStatement, KeywordCall
+from .statements import Else, ElseIf
 
 from .visitor import ModelVisitor
 
@@ -138,42 +138,55 @@ class IfBlock(Block):
         self.error = error
 
     @property
-    def value(self):
-        return self.header.value
+    def condition(self):
+        # FIXME: This currently returns a list. Should return a string.
+        return self.header.condition
 
     def validate(self):
         errors = self._validate()
         if not errors:
             self.error = None
         elif len(errors) == 1:
-            self.error = 'IF has ' + errors[0][0].lower() + errors[0][1:]
+            self.error = errors[0]
         else:
-            self.error = 'IF has multiple errors:\n- ' + '\n- '.join(errors)
+            self.error = 'Multiple errors:\n- ' + '\n- '.join(errors)
 
     def _validate(self):
         errors = []
+        if len(self.header.condition) != 1:
+            if self.header.condition:
+                errors.append('IF has more than one condition.')
+            else:
+                errors.append('IF has no condition.')
         if not self.end:
-            errors.append("No closing 'END'.")
+            errors.append("IF has no closing 'END'.")
         else_seen = False
         last_is_normal_step = False
         for step in self.body:
             if isinstance(step, Else):
+                if step.condition:
+                    errors.append("ELSE has condition.")
                 if else_seen:
-                    errors.append("Multiple 'ELSE' branches.")
+                    errors.append("Multiple ELSE branches.")
                 if not last_is_normal_step:
-                    errors.append("Empty branch.")
+                    errors.append("IF has empty branch.")
                 else_seen = True
                 last_is_normal_step = False
-            elif isinstance(step, ElseIfStatement):
+            elif isinstance(step, ElseIf):
+                if len(step.condition) != 1:
+                    if step.condition:
+                        errors.append("ELSE IF has more than one condition.")
+                    else:
+                        errors.append("ELSE IF has no condition.")
                 if else_seen:
-                    errors.append("'ELSE IF' after 'ELSE'.")
+                    errors.append("ELSE IF after ELSE.")
                 if not last_is_normal_step:
-                    errors.append("Empty branch.")
+                    errors.append("IF has empty branch.")
                 last_is_normal_step = False
             else:
                 last_is_normal_step = True
         if not last_is_normal_step:
-            errors.append("Empty branch.")
+            errors.append("IF has empty branch.")
         return errors
 
 

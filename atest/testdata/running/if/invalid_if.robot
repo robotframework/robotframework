@@ -1,30 +1,29 @@
 *** Test Cases ***
 If without condition
-    [Documentation]    FAIL 'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
+    [Documentation]    FAIL    IF has no condition.
     IF
        No Operation
     END
 
 If with many conditions
-    [Documentation]    FAIL 'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
+    [Documentation]    FAIL    IF has more than one condition.
     IF   '1' == '1'  '2' == '2'  '3' == '3'
        No Operation
     END
 
 If without end
-    [Documentation]    FAIL IF has no closing 'END'.
+    [Documentation]    FAIL    IF has no closing 'END'.
     IF  ${True}
        No Operation
 
 If with wrong case
-   [Documentation]    FAIL 'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
+   [Documentation]    FAIL    'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
    if  ${True}
        Log  hello
    END
 
 Else if without condition
-   [Documentation]    FAIL
-   ...  'Else If' is a reserved keyword. It must be an upper case 'ELSE IF' and follow an opening 'IF' when used as a marker.
+   [Documentation]    FAIL    ELSE IF has no condition.
    IF  'mars' == 'mars'
       Log   something
    ELSE IF
@@ -34,8 +33,7 @@ Else if without condition
    END
 
 Else if with multiple conditions
-  [Documentation]    FAIL
-  ...  'Else If' is a reserved keyword. It must be an upper case 'ELSE IF' and follow an opening 'IF' when used as a marker.
+  [Documentation]    FAIL    ELSE IF has more than one condition.
   IF  'maa' == 'maa'
      Log   something
   ELSE IF  ${False}  ${True}
@@ -45,8 +43,7 @@ Else if with multiple conditions
   END
 
 Else with a condition
-  [Documentation]    FAIL
-  ...  'Else' is a reserved keyword. It must be an upper case 'ELSE' and follow an opening 'IF' when used as a marker.
+  [Documentation]    FAIL    ELSE has condition.
   IF  'venus' != 'mars'
      Log   something
   ELSE  ${True}
@@ -54,19 +51,19 @@ Else with a condition
   END
 
 If with empty if
-  [Documentation]    FAIL IF has empty branch.
+  [Documentation]    FAIL    IF has empty branch.
   IF  'jupiter' == 'saturnus'
   END
 
 If with empty else
-  [Documentation]    FAIL IF has empty branch.
+  [Documentation]    FAIL    IF has empty branch.
   IF  'kuu' == 'maa'
      Log   something
   ELSE
   END
 
 If with empty else_if
-  [Documentation]    FAIL IF has empty branch.
+  [Documentation]    FAIL    IF has empty branch.
   IF  'mars' == 'maa'
      Log   something
   ELSE IF  ${False}
@@ -75,7 +72,7 @@ If with empty else_if
   END
 
 If with else after else
-  [Documentation]    FAIL IF has multiple 'ELSE' branches.
+  [Documentation]    FAIL     Multiple ELSE branches.
   IF  'kuu' == 'maa'
      Log   something
   ELSE
@@ -85,7 +82,7 @@ If with else after else
   END
 
 If with else if after else
-  [Documentation]    FAIL IF has 'ELSE IF' after 'ELSE'.
+  [Documentation]    FAIL    ELSE IF after ELSE.
   IF  'kuu' == 'maa'
      Log   something
   ELSE
@@ -95,7 +92,7 @@ If with else if after else
   END
 
 If for else if parsing
-   [Documentation]    FAIL IF has 'ELSE IF' after 'ELSE'.
+   [Documentation]    FAIL    ELSE IF after ELSE.
    FOR  ${value}  IN  1  2  3
        IF  ${value} == 1
            Log  ${value}

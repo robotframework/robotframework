@@ -118,10 +118,10 @@ class IfExpression(Keyword):
     __slots__ = ['bodies', 'error']
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, value, error=None):
-        Keyword.__init__(self, args=value,
+    def __init__(self, condition, error=None):
+        Keyword.__init__(self, args=condition,
                          type=Keyword.IF_EXPRESSION_TYPE)
-        self.bodies = [(value, Keywords(self.keyword_class, self, None))]
+        self.bodies = [(condition, Keywords(self.keyword_class, self, None))]
         self.error = error
 
     def create_keyword(self, name='', args=(), assign=(), lineno=None):

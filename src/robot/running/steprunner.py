@@ -75,7 +75,6 @@ def ForRunner(context, templated=False, flavor='IN'):
 
 
 class IfRunner(object):
-
     current_if_stack = []
 
     def __init__(self, context, templated=False):
@@ -131,7 +130,7 @@ class IfRunner(object):
                             type=data_type, lineno=data.lineno, source=data.source)
 
     def _get_unresolved_condition(self, data, data_type, datacondition):
-        return '' if data_type == data.ELSE_TYPE else datacondition[0]
+        return '' if data_type == data.ELSE_TYPE or not datacondition else datacondition[0]
 
     def _resolve_condition(self, unresolved_condition):
         condition, _ = VariableReplacer().replace([unresolved_condition], (), variables=self._context.variables)

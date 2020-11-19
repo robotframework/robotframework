@@ -69,8 +69,8 @@ class Token(object):
     FOR_SEPARATOR = 'FOR_SEPARATOR'
     END = 'END'
     IF = 'IF'
+    ELSE_IF = 'ELSE_IF'
     ELSE = 'ELSE'
-    ELSE_IF = 'ELSE IF'
 
     SEPARATOR = 'SEPARATOR'
     COMMENT = 'COMMENT'
