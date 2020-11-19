@@ -102,12 +102,9 @@ class LibdocXmlWriter(object):
         writer.end('arguments')
 
     def _get_start_attrs(self, kw_type, kw, lib_source, writer):
-        if kw_type == 'init':
-            attrs = {'name': kw.name}
-        else:
-            attrs = {'name': kw.name}
-            if kw.deprecated:
-                attrs['deprecated'] = 'true'
+        attrs = {'name': kw.name}
+        if kw_type != 'init' and kw.deprecated:
+            attrs['deprecated'] = 'true'
         self._add_source_info(attrs, kw, writer.output, lib_source)
         return attrs
 
