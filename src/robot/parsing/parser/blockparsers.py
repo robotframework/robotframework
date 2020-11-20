@@ -15,7 +15,7 @@
 
 from ..lexer import Token
 from ..model import TestCase, Keyword, ForLoop
-from ..model.blocks import IfBlock
+from ..model.blocks import If
 
 
 class Parser(object):
@@ -87,4 +87,17 @@ class ForLoopParser(NestedBlockParser):
 class IfParser(NestedBlockParser):
 
     def __init__(self, header):
-        NestedBlockParser.__init__(self, IfBlock(header))
+        NestedBlockParser.__init__(self, If(header))
+
+    def parse(self, statement):
+        if statement.type in (Token.ELSE_IF, Token.ELSE):
+            parser = OrElseParser(statement)
+            self.model.orelse = parser.model
+            return parser
+        return NestedBlockParser.parse(self, statement)
+
+
+class OrElseParser(IfParser):
+
+    def handles(self, statement):
+        return IfParser.handles(self, statement) and statement.type != Token.END

@@ -32,14 +32,15 @@ class Keyword(ModelObject):
     """
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
                  '_teardown', '_sort_key', '_next_child_sort_key']
+    # FIXME: Consistent type values. Consider using same as with tokens.
     KEYWORD_TYPE = 'kw'         #: Normal keyword :attr:`type`.
     SETUP_TYPE = 'setup'        #: Setup :attr:`type`.
     TEARDOWN_TYPE = 'teardown'  #: Teardown :attr:`type`.
     FOR_LOOP_TYPE = 'for'       #: For loop :attr:`type`.
-    IF_EXPRESSION_TYPE = 'if'   #: If expression :attr:`type`.
-    ELSE_IF_TYPE = "else if"  #: else if branch :attr:`type`.
-    ELSE_TYPE = 'else'          #: else branch :attr:`type`.
     FOR_ITEM_TYPE = 'foritem'   #: Single for loop iteration :attr:`type`.
+    IF_TYPE = 'IF'              #: If expression :attr:`type`.
+    ELSE_IF_TYPE = 'ELSE IF'    #: else if branch :attr:`type`.
+    ELSE_TYPE = 'ELSE'          #: else branch :attr:`type`.
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=KEYWORD_TYPE, parent=None):
@@ -51,9 +52,7 @@ class Keyword(ModelObject):
         self.assign = assign  #: Assigned variables as a list of strings.
         self.tags = tags
         self.timeout = timeout
-        #: Keyword type as a string. The value is either :attr:`KEYWORD_TYPE`,
-        #: :attr:`SETUP_TYPE`, :attr:`TEARDOWN_TYPE`, :attr:`FOR_LOOP_TYPE` or
-        #: :attr:`FOR_ITEM_TYPE` constant defined on the class level.
+        #: Keyword type as a string. Values defined as constants on the class level.
         self.type = type
         self._teardown = None
         self._sort_key = -1

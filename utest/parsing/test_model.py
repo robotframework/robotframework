@@ -6,11 +6,12 @@ import tempfile
 from robot.parsing import get_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
     Block, File, CommentSection, TestCaseSection, KeywordSection,
-    TestCase, Keyword, ForLoop
+    TestCase, Keyword, ForLoop, If
 )
 from robot.parsing.model.statements import (
     Statement, TestCaseSectionHeader, KeywordSectionHeader, ForLoopHeader, End,
     TestCaseName, KeywordName, KeywordCall, Arguments, EmptyLine, Comment,
+    IfHeader, ElseIfHeader, ElseHeader
 )
 from robot.utils import PY3
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
@@ -342,6 +343,172 @@ Example
         )
         assert_model(loop, expected)
         assert_equal(loop.error, "FOR loop has no closing 'END'.")
+
+
+class TestIf(unittest.TestCase):
+
+    def test_if(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    IF    True
+        Keyword
+        Another    argument
+    END
+    ''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=IfHeader([
+                Token(Token.IF, 'IF', 3, 4),
+                Token(Token.ARGUMENT, 'True', 3, 10),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Keyword', 4, 8)]),
+                KeywordCall([Token(Token.KEYWORD, 'Another', 5, 8),
+                             Token(Token.ARGUMENT, 'argument', 5, 19)])
+            ],
+            end=End([Token(Token.END, 'END', 6, 4)])
+        )
+        assert_model(node, expected)
+        assert_equal(node.errors, [])
+
+    def test_if_else_if_else(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    IF    True
+        K1
+    ELSE IF    False
+        K2
+    ELSE
+        K3
+    END
+    ''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=IfHeader([
+                Token(Token.IF, 'IF', 3, 4),
+                Token(Token.ARGUMENT, 'True', 3, 10),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'K1', 4, 8)])
+            ],
+            orelse=If(
+                header=ElseIfHeader([
+                    Token(Token.ELSE_IF, 'ELSE IF', 5, 4),
+                    Token(Token.ARGUMENT, 'False', 5, 15),
+                ]),
+                body=[
+                    KeywordCall([Token(Token.KEYWORD, 'K2', 6, 8)])
+                ],
+                orelse=If(
+                    header=ElseHeader([
+                        Token(Token.ELSE, 'ELSE', 7, 4),
+                    ]),
+                    body=[
+                        KeywordCall([Token(Token.KEYWORD, 'K3', 8, 8)])
+                    ],
+                )
+            ),
+            end=End([Token(Token.END, 'END', 9, 4)])
+        )
+        assert_model(node, expected)
+        assert_equal(node.errors, [])
+
+    def test_nested(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    IF    ${x}
+        Log    ${x}
+        IF    ${y}
+            Log    ${y}
+        ELSE
+            Log    ${z}
+        END
+    END
+''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=IfHeader([
+                Token(Token.IF, 'IF', 3, 4),
+                Token(Token.ARGUMENT, '${x}', 3, 10),
+            ]),
+            body=[
+                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
+                             Token(Token.ARGUMENT, '${x}', 4, 15)]),
+                If(
+                    header=IfHeader([
+                        Token(Token.IF, 'IF', 5, 8),
+                        Token(Token.ARGUMENT, '${y}', 5, 14),
+                    ]),
+                    body=[
+                        KeywordCall([Token(Token.KEYWORD, 'Log', 6, 12),
+                                     Token(Token.ARGUMENT, '${y}', 6, 19)])
+                    ],
+                    orelse=If(
+                        header=ElseHeader([
+                            Token(Token.ELSE, 'ELSE', 7, 8)
+                        ]),
+                        body=[
+                            KeywordCall([Token(Token.KEYWORD, 'Log', 8, 12),
+                                         Token(Token.ARGUMENT, '${z}', 8, 19)])
+                        ]
+                    ),
+                    end=End([
+                        Token(Token.END, 'END', 9, 8)
+                    ])
+                )
+            ],
+            end=End([
+                Token(Token.END, 'END', 10, 4)
+            ])
+        )
+        assert_model(node, expected)
+        assert_equal(node.errors, [])
+
+    def test_invalid(self):
+        model = get_model('''\
+*** Test Cases ***
+Example
+    IF    too    many
+    ELSE    ooops
+    ELSE IF
+''', data_only=True)
+        node = model.sections[0].body[0].body[0]
+        expected = If(
+            header=IfHeader([
+                Token(Token.IF, 'IF', 3, 4),
+                Token(Token.ARGUMENT, 'too', 3, 10),
+                Token(Token.ARGUMENT, 'many', 3, 17),
+            ]),
+            orelse=If(
+                header=ElseHeader([
+                    Token(Token.ELSE, 'ELSE', 4, 4),
+                    Token(Token.ARGUMENT, 'ooops', 4, 12)
+                ]),
+                orelse=If(
+                    header=ElseIfHeader([
+                        Token(Token.ELSE_IF, 'ELSE IF', 5, 4)
+                    ])
+                )
+            )
+        )
+        assert_model(node, expected)
+        assert_equal(node.errors, [
+            'IF has more than one condition.',
+            'IF has empty body.',
+            'ELSE IF after ELSE.',
+            'IF has no closing END.'
+       ])
+        assert_equal(node.orelse.errors, [
+            'ELSE has condition.',
+            'ELSE has empty body.'
+        ])
+        assert_equal(node.orelse.orelse.errors, [
+            'ELSE IF has no condition.',
+            'ELSE IF has empty body.'
+        ])
 
 
 class TestModelVisitors(unittest.TestCase):
