@@ -149,8 +149,8 @@ class TestCase(model.TestCase):
     def __init__(self, name='', doc='', tags=None, timeout=None, template=None,
                  lineno=None):
         model.TestCase.__init__(self, name, doc, tags, timeout)
-        #: Name of the keyword that has been used as template
-        #: when building the test. ``None`` if no is template used.
+        #: Name of the keyword that has been used as a template when building the test.
+        # ``None`` if template is not used.
         self.template = template
         self.lineno = lineno
 

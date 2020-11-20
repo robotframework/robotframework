@@ -51,6 +51,30 @@ Template With FOR Loop Containing Variables
 Template With FOR IN RANGE Loop
     Check Test Case    ${TESTNAME}
 
+Nested FOR
+    Check Test Case    ${TESTNAME}
+
+Invalid FOR
+    Check Test Case    ${TESTNAME}
+
+Template With IF
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.kws[0].type}      IF
+    Should Be Equal    ${tc.kws[0].status}    NOT_RUN
+    Should Be Equal    ${tc.kws[1].type}      ELSE IF
+    Should Be Equal    ${tc.kws[1].status}    NOT_RUN
+    Should Be Equal    ${tc.kws[2].type}      ELSE
+    Should Be Equal    ${tc.kws[2].status}    PASS
+
+Template With IF Failing
+    Check Test Case    ${TESTNAME}
+
+Invalid IF
+    Check Test Case    ${TESTNAME}
+
+FOR and IF
+    Check Test Case    ${TESTNAME}
+
 User Keywords Should Not Be Continued On Failure
     Check Test Case    ${TESTNAME}
 
