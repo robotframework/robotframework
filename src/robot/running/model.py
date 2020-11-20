@@ -77,21 +77,19 @@ class ForLoop(Keyword):
 
     Contains keywords in the loop body as child :attr:`keywords`.
     """
-    __slots__ = ['flavor', 'lineno', 'error']
-    keyword_class = Keyword  #: Internal usage only.
+    __slots__ = ['flavor', 'error']
 
     def __init__(self, variables, values, flavor, lineno=None, parent=None, error=None):
-        Keyword.__init__(self, assign=variables, args=values,
-                         type=Keyword.FOR_LOOP_TYPE, parent=parent)
+        Keyword.__init__(self, assign=variables, args=values, type=Keyword.FOR_LOOP_TYPE,
+                         lineno=lineno, parent=parent)
         self.keywords = None
         self.flavor = flavor
-        self.lineno = lineno
         self.error = error
 
     @setter
     def keywords(self, keywords):
         """Child keywords as a :class:`~.Keywords` object."""
-        return Keywords(self.keyword_class or self.__class__, self, keywords)
+        return Keywords(Keyword, self, keywords)
 
     @property
     def variables(self):
@@ -110,39 +108,34 @@ class ForLoop(Keyword):
         return True
 
 
-class IfExpression(Keyword):
+class If(Keyword):
     """Represents an if expression in test data.
 
     Contains keywords in the body as child :attr:`keywords`.
     """
-    __slots__ = ['bodies', 'error']
-    keyword_class = Keyword  #: Internal usage only.
+    __slots__ = ['orelse', 'error']
 
-    def __init__(self, condition, error=None):
-        Keyword.__init__(self, args=condition,
-                         type=Keyword.IF_EXPRESSION_TYPE)
-        self.bodies = [(condition, Keywords(self.keyword_class, self, None))]
+    def __init__(self, condition=None, body=None, orelse=None, lineno=None, error=None,
+                 type=Keyword.IF_TYPE):
+        Keyword.__init__(self, args=[condition], type=type, lineno=lineno)
+        self.keywords = body    # FIXME: self.keywords -> self.body
+        self.orelse = orelse
         self.error = error
 
-    def create_keyword(self, name='', args=(), assign=(), lineno=None):
-        self.bodies[-1][1].create(name=name, args=args, assign=assign, lineno=lineno)
-
-    def add_inner_block(self, inner_block):
-        self.bodies[-1][1].append(inner_block)
-
-    def create_elseif(self, value):
-        self.bodies.append((value, Keywords(self.keyword_class, self, None)))
-
-    def create_else(self):
-        self.bodies.append((True, Keywords(self.keyword_class, self, None)))
+    @setter
+    def keywords(self, keywords):
+        """Child keywords as a :class:`~.Keywords` object."""
+        return Keywords(Keyword, self, keywords)
 
     @property
     def condition(self):
         return self.args[0]
 
     def __unicode__(self):
-        values = '    '.join(self.condition)
-        return u'IF    %s' % values
+        return u'%s    %s' % (self.type, self.condition)
+
+    def __nonzero__(self):
+        return True
 
 
 class TestCase(model.TestCase):

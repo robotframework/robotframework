@@ -53,7 +53,7 @@ End after valid FOR header
     End
 
 End after valid If header
-    [Documentation]    FAIL    IF has no closing 'END'.
+    [Documentation]    FAIL    IF has no closing END.
     IF    True
         No operation
     End

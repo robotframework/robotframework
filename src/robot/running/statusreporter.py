@@ -32,6 +32,7 @@ class StatusReporter(object):
         self._result.starttime = get_timestamp()
         self._context.start_keyword(self._result)
         self._warn_if_deprecated(self._result.doc, self._result.name)
+        return self
 
     def _warn_if_deprecated(self, doc, name):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:

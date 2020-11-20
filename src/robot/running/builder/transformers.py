@@ -15,9 +15,10 @@
 
 from ast import NodeVisitor
 
+from robot.parsing import Token
 from robot.variables import VariableIterator
 
-from ..model import ForLoop, IfExpression
+from ..model import ForLoop, If
 from .testsettings import TestSettings
 
 
@@ -180,9 +181,8 @@ class TestCaseBuilder(NodeVisitor):
         ForLoopBuilder(loop).build(node)
         self.test.keywords.append(loop)
 
-    def visit_IfBlock(self, node):
-        ifblock = IfExpression(node.condition)
-        IfExpressionBuilder(ifblock).build(node)
+    def visit_If(self, node):
+        ifblock = IfBuilder().build(node)
         self.test.keywords.append(ifblock)
 
     def visit_TemplateArguments(self, node):
@@ -258,9 +258,8 @@ class KeywordBuilder(NodeVisitor):
         ForLoopBuilder(loop).build(node)
         self.kw.keywords.append(loop)
 
-    def visit_IfBlock(self, node):
-        ifblock = IfExpression(node.condition)
-        IfExpressionBuilder(ifblock).build(node)
+    def visit_If(self, node):
+        ifblock = IfBuilder().build(node)
         self.kw.keywords.append(ifblock)
 
 
@@ -286,42 +285,59 @@ class ForLoopBuilder(NodeVisitor):
         ForLoopBuilder(loop).build(node)
         self.loop.keywords.append(loop)
 
-    def visit_IfBlock(self, node):
-        ifblock = IfExpression(node.condition)
-        IfExpressionBuilder(ifblock).build(node)
+    def visit_If(self, node):
+        ifblock = IfBuilder().build(node)
         self.loop.keywords.append(ifblock)
 
 
-class IfExpressionBuilder(NodeVisitor):
+class IfBuilder(NodeVisitor):
 
-    def __init__(self, ifblock):
-        self.ifblock = ifblock
+    def __init__(self):
+        self.block = None
 
-    def build(self, ifnode):
-        self.ifblock.error = ifnode.error
-        for child_node in ifnode.body:
+    def build(self, node):
+        self.block = self._build_block(node)
+        for child_node in node.body:
             self.visit(child_node)
+        if node.orelse:
+            self.visit(node.orelse)
+        return self.block
+
+    def _build_block(self, node):
+        return If(node.condition, lineno=node.lineno,
+                  error=self._get_error(node), type=node.type)
+
+    def _get_error(self, node):
+        errors = []
+        while node:
+            errors.extend(node.errors)
+            node = node.orelse
+        if not errors:
+            return None
+        if len(errors) == 1:
+            return errors[0]
+        return 'Multiple errors:\n- ' + '\n- '.join(errors)
 
     def visit_KeywordCall(self, node):
-        self.ifblock.create_keyword(name=node.keyword, args=node.args,
-                                    assign=node.assign, lineno=node.lineno)
+        self.block.keywords.create(name=node.keyword, args=node.args,
+                                   assign=node.assign, lineno=node.lineno)
 
     # FIXME: Is this used for anything? How does IF work with templates?
     def visit_TemplateArguments(self, node):
-        self.ifblock.create_keyword(args=node.args, lineno=node.lineno)
+        self.block.keywords.create(args=node.args, lineno=node.lineno)
 
-    def visit_ElseIf(self, node):
-        self.ifblock.create_elseif(node.condition)
-
-    def visit_Else(self, node):
-        self.ifblock.create_else()
-
-    def visit_IfBlock(self, node):
-        ifblock = IfExpression(node.condition)
-        IfExpressionBuilder(ifblock).build(node)
-        self.ifblock.add_inner_block(ifblock)
+    def visit_If(self, node):
+        if node.type == Token.IF:
+            block = IfBuilder().build(node)
+            self.block.keywords.append(block)
+        else:
+            self.block.orelse = self._build_block(node)
+            orig_block = self.block
+            self.block = orig_block.orelse
+            self.generic_visit(node)
+            self.block = orig_block
 
     def visit_ForLoop(self, node):
         loop = ForLoop(node.variables, node.values, node.flavor, node.lineno)
         ForLoopBuilder(loop).build(node)
-        self.ifblock.add_inner_block(loop)
+        self.block.keywords.append(loop)

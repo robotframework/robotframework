@@ -432,7 +432,7 @@ class ForLoopHeader(Statement):
 
 
 @Statement.register
-class If(Statement):
+class IfHeader(Statement):
     type = Token.IF
 
     @property
@@ -441,7 +441,7 @@ class If(Statement):
 
 
 @Statement.register
-class ElseIf(Statement):
+class ElseIfHeader(Statement):
     type = Token.ELSE_IF
 
     @property
@@ -450,7 +450,7 @@ class ElseIf(Statement):
 
 
 @Statement.register
-class Else(Statement):
+class ElseHeader(Statement):
     type = Token.ELSE
 
     @property

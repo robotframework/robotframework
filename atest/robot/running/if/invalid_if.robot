@@ -41,3 +41,6 @@ If with else if after else
 
 If for else if parsing
   Check Test Case    ${TESTNAME}
+
+Multiple errors
+  Check Test Case    ${TESTNAME}

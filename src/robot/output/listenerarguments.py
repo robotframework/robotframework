@@ -133,9 +133,9 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
               'teardown': 'Teardown',
               'for': 'For',
               'foritem': 'For Item',
-              'if': 'If',
-              'else if': 'Else If',
-              'else': 'Else'}
+              'IF': 'If',
+              'ELSE IF': 'Else If',
+              'ELSE': 'Else'}
 
     def _get_extra_attributes(self, kw):
         args = [a if is_string(a) else unic(a) for a in kw.args]

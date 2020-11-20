@@ -17,9 +17,9 @@ import ast
 
 from robot.utils import file_writer, is_pathlike, is_string
 from robot.variables import is_scalar_assign
-from .statements import Else, ElseIf
 
 from .visitor import ModelVisitor
+from ..lexer import Token
 
 
 class Block(ast.AST):
@@ -127,73 +127,73 @@ class Keyword(Block):
         return self.header.name
 
 
-class IfBlock(Block):
-    _fields = ('header', 'body', 'end')
-    _attributes = Block._attributes + ('error',)
+class If(Block):
+    _fields = ('header', 'body', 'orelse', 'end')
+    _attributes = Block._attributes + ('errors',)
 
-    def __init__(self, header, body=None, end=None, error=None):
+    def __init__(self, header, body=None, orelse=None, end=None, errors=None):
         self.header = header
         self.body = body or []
+        self.orelse = orelse
         self.end = end
-        self.error = error
+        self.errors = errors or []
+
+    @property
+    def type(self):
+        return self.header.type
 
     @property
     def condition(self):
-        # FIXME: This currently returns a list. Should return a string.
-        return self.header.condition
+        condition = self.header.condition
+        return condition[0] if condition else None
 
     def validate(self):
-        errors = self._validate()
-        if not errors:
-            self.error = None
-        elif len(errors) == 1:
-            self.error = errors[0]
-        else:
-            self.error = 'Multiple errors:\n- ' + '\n- '.join(errors)
+        self._validate_header()
+        self._validate_body()
+        if self.type == Token.IF:
+            self._validate_structure()
+            self._validate_end()
 
-    def _validate(self):
-        errors = []
-        if len(self.header.condition) != 1:
-            if self.header.condition:
-                errors.append('IF has more than one condition.')
-            else:
-                errors.append('IF has no condition.')
-        if not self.end:
-            errors.append("IF has no closing 'END'.")
+    def _validate_header(self):
+        length = len(self.header.condition)
+        error = None
+        if self.type in (Token.IF, Token.ELSE_IF):
+            if length == 0:
+                error = '%s has no condition.' % self.type
+            elif length > 1:
+                error = '%s has more than one condition.' % self.type
+        else:
+            if length > 0:
+                error = 'ELSE has condition.'
+        if error:
+            self.errors.append(error)
+
+    def _validate_body(self):
+        if not self.body:
+            self.errors.append('%s has empty body.' % self.type)
+
+    def _validate_structure(self):
+        orelse = self.orelse
         else_seen = False
-        last_is_normal_step = False
-        for step in self.body:
-            if isinstance(step, Else):
-                if step.condition:
-                    errors.append("ELSE has condition.")
-                if else_seen:
-                    errors.append("Multiple ELSE branches.")
-                if not last_is_normal_step:
-                    errors.append("IF has empty branch.")
-                else_seen = True
-                last_is_normal_step = False
-            elif isinstance(step, ElseIf):
-                if len(step.condition) != 1:
-                    if step.condition:
-                        errors.append("ELSE IF has more than one condition.")
-                    else:
-                        errors.append("ELSE IF has no condition.")
-                if else_seen:
-                    errors.append("ELSE IF after ELSE.")
-                if not last_is_normal_step:
-                    errors.append("IF has empty branch.")
-                last_is_normal_step = False
-            else:
-                last_is_normal_step = True
-        if not last_is_normal_step:
-            errors.append("IF has empty branch.")
-        return errors
+        while orelse:
+            if else_seen:
+                if orelse.type == Token.ELSE:
+                    self.errors.append('Multiple ELSE branches.')
+                else:
+                    self.errors.append('ELSE IF after ELSE.')
+            else_seen = else_seen or orelse.type == Token.ELSE
+            orelse = orelse.orelse
+
+    def _validate_end(self):
+        if not self.end:
+            self.errors.append('IF has no closing END.')
 
 
 class ForLoop(Block):
     _fields = ('header', 'body', 'end')
     _attributes = Block._attributes + ('error',)
 
+    # FIXME: error -> errors similarly as with IF
     def __init__(self, header, body=None, end=None, error=None):
         self.header = header
         self.body = body or []
@@ -268,7 +268,7 @@ class ModelValidator(ModelVisitor):
         node.validate()
         ModelVisitor.generic_visit(self, node)
 
-    def visit_IfBlock(self, node):
+    def visit_If(self, node):
         node.validate()
         ModelVisitor.generic_visit(self, node)
 
