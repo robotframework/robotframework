@@ -79,7 +79,7 @@ class ForLoop(Keyword):
     """
     __slots__ = ['flavor', 'error']
 
-    def __init__(self, variables, values, flavor, lineno=None, parent=None, error=None):
+    def __init__(self, variables, flavor, values, lineno=None, parent=None, error=None):
         Keyword.__init__(self, assign=variables, args=values, type=Keyword.FOR_LOOP_TYPE,
                          lineno=lineno, parent=parent)
         self.keywords = None

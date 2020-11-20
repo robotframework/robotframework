@@ -39,12 +39,12 @@ class TestModelTypes(unittest.TestCase):
 class TestStringRepr(unittest.TestCase):
 
     def test_for_loop(self):
-        loop = ForLoop(['${x}'], ['foo', 'bar'], 'IN')
+        loop = ForLoop(['${x}'], 'IN', ['foo', 'bar'])
         expected = u'FOR    ${x}    IN    foo    bar'
         assert_equal(str(loop), expected)
         assert_equal(unicode(loop), expected)
         assert_equal(repr(loop), repr(expected))
-        loop = ForLoop(['${x}', u'${\xfc}'], [u'f\xf6\xf6', u'b\xe4r'], 'IN ZIP')
+        loop = ForLoop(['${x}', u'${\xfc}'], 'IN ZIP', [u'f\xf6\xf6', u'b\xe4r'])
         expected = u'FOR    ${x}    ${\xfc}    IN ZIP    f\xf6\xf6    b\xe4r'
         assert_equal(unicode(loop), expected)
         assert_equal(repr(loop), repr(expected))

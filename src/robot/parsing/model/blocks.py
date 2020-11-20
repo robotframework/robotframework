@@ -191,14 +191,13 @@ class If(Block):
 
 class ForLoop(Block):
     _fields = ('header', 'body', 'end')
-    _attributes = Block._attributes + ('error',)
+    _attributes = Block._attributes + ('errors',)
 
-    # FIXME: error -> errors similarly as with IF
-    def __init__(self, header, body=None, end=None, error=None):
+    def __init__(self, header, body=None, end=None, errors=None):
         self.header = header
         self.body = body or []
         self.end = end
-        self.error = error
+        self.errors = errors or []
 
     @property
     def variables(self):
@@ -213,31 +212,23 @@ class ForLoop(Block):
         return self.header.flavor
 
     def validate(self):
-        errors = self._validate()
-        if not errors:
-            self.error = None
-        elif len(errors) == 1:
-            self.error = 'FOR loop has ' + errors[0][0].lower() + errors[0][1:]
-        else:
-            self.error = 'FOR loop has multiple errors:\n- ' + '\n- '.join(errors)
-
-    def _validate(self):
-        errors = []
         if not self.variables:
-            errors.append('No loop variables.')
+            self._add_error('no loop variables')
         if not self.flavor:
-            errors.append("No 'IN' or other valid separator.")
+            self._add_error("no 'IN' or other valid separator")
         else:
             for var in self.variables:
                 if not is_scalar_assign(var):
-                    errors.append("Invalid loop variable '%s'." % var)
+                    self._add_error("invalid loop variable '%s'" % var)
             if not self.values:
-                errors.append('No loop values.')
+                self._add_error('no loop values')
         if not self.body:
-            errors.append('Empty body.')
+            self._add_error('empty body')
         if not self.end:
-            errors.append("No closing 'END'.")
-        return errors
+            self._add_error("no closing END")
+
+    def _add_error(self, error):
+        self.errors.append('FOR loop has %s.' % error)
 
 
 class ModelWriter(ModelVisitor):

@@ -177,8 +177,7 @@ class TestCaseBuilder(NodeVisitor):
         return ''.join(temp), ()
 
     def visit_ForLoop(self, node):
-        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno)
-        ForLoopBuilder(loop).build(node)
+        loop = ForLoopBuilder().build(node)
         self.test.keywords.append(loop)
 
     def visit_If(self, node):
@@ -254,8 +253,7 @@ class KeywordBuilder(NodeVisitor):
                                 assign=node.assign, lineno=node.lineno)
 
     def visit_ForLoop(self, node):
-        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno)
-        ForLoopBuilder(loop).build(node)
+        loop = ForLoopBuilder().build(node)
         self.kw.keywords.append(loop)
 
     def visit_If(self, node):
@@ -265,13 +263,23 @@ class KeywordBuilder(NodeVisitor):
 
 class ForLoopBuilder(NodeVisitor):
 
-    def __init__(self, loop):
-        self.loop = loop
+    def __init__(self):
+        self.loop = None
 
-    def build(self, for_node):
-        self.loop.error = for_node.error
-        for child_node in for_node.body:
+    def build(self, node):
+        self.loop = ForLoop(node.variables, node.flavor, node.values,
+                            node.lineno, error=self._get_error(node))
+        for child_node in node.body:
             self.visit(child_node)
+        return self.loop
+
+    def _get_error(self, node):
+        errors = node.errors
+        if not errors:
+            return None
+        if len(errors) == 1:
+            return errors[0]
+        return 'Multiple errors:\n- ' + '\n- '.join(errors)
 
     def visit_KeywordCall(self, node):
         self.loop.keywords.create(name=node.keyword, args=node.args,
@@ -281,8 +289,7 @@ class ForLoopBuilder(NodeVisitor):
         self.loop.keywords.create(args=node.args, lineno=node.lineno)
 
     def visit_ForLoop(self, node):
-        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno)
-        ForLoopBuilder(loop).build(node)
+        loop = ForLoopBuilder().build(node)
         self.loop.keywords.append(loop)
 
     def visit_If(self, node):
@@ -338,6 +345,5 @@ class IfBuilder(NodeVisitor):
             self.block = orig_block
 
     def visit_ForLoop(self, node):
-        loop = ForLoop(node.variables, node.values, node.flavor, node.lineno)
-        ForLoopBuilder(loop).build(node)
+        loop = ForLoopBuilder().build(node)
         self.block.keywords.append(loop)

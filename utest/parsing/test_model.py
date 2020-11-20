@@ -123,7 +123,7 @@ EXPECTED = File(sections=[
 ])
 
 
-def assert_model(model, expected=EXPECTED, source=None):
+def assert_model(model, expected=EXPECTED, **expected_attrs):
     if type(model) is not type(expected):
         raise AssertionError('Incompatible types:\n%s\n%s'
                              % (ast.dump(model), ast.dump(expected)))
@@ -133,7 +133,7 @@ def assert_model(model, expected=EXPECTED, source=None):
         for m, e in zip(model, expected):
             assert_model(m, e)
     elif isinstance(model, Block):
-        assert_block(model, expected)
+        assert_block(model, expected, expected_attrs)
     elif isinstance(model, Statement):
         assert_statement(model, expected)
     elif model is None and expected is None:
@@ -141,18 +141,15 @@ def assert_model(model, expected=EXPECTED, source=None):
     else:
         raise AssertionError('Incompatible children:\n%r\n%r'
                              % (model, expected))
-    if isinstance(model, File):
-        assert_equal(model.source, source)
 
 
-def assert_block(model, expected):
+def assert_block(model, expected, expected_attrs):
     assert_equal(model._fields, expected._fields)
     for field in expected._fields:
         assert_model(getattr(model, field), getattr(expected, field))
-    assert_equal(model.lineno, expected.lineno)
-    assert_equal(model.col_offset, expected.col_offset)
-    assert_equal(model.end_lineno, expected.end_lineno)
-    assert_equal(model.end_col_offset, expected.end_col_offset)
+    for attr in expected._attributes:
+        exp = expected_attrs.get(attr, getattr(expected, attr))
+        assert_equal(getattr(model, attr), exp)
 
 
 def assert_statement(model, expected):
@@ -274,7 +271,6 @@ Example
             ])
         )
         assert_model(loop, expected)
-        assert_equal(loop.error, None)
 
     def test_nested(self):
         model = get_model('''\
@@ -317,14 +313,12 @@ Example
             ])
         )
         assert_model(loop, expected)
-        assert_equal(loop.error, None)
 
     def test_invalid(self):
         model = get_model('''\
 *** Test Cases ***
 Example
     FOR    ${x}    IN    a    b    c
-        Log    ${x}
 ''', data_only=True)
         loop = model.sections[0].body[0].body[0]
         expected = ForLoop(
@@ -336,13 +330,10 @@ Example
                 Token(Token.ARGUMENT, 'b', 3, 30),
                 Token(Token.ARGUMENT, 'c', 3, 35),
             ]),
-            body=[
-                KeywordCall([Token(Token.KEYWORD, 'Log', 4, 8),
-                             Token(Token.ARGUMENT, '${x}', 4, 15)])
-            ],
+            errors=['FOR loop has empty body.',
+                    'FOR loop has no closing END.']
         )
         assert_model(loop, expected)
-        assert_equal(loop.error, "FOR loop has no closing 'END'.")
 
 
 class TestIf(unittest.TestCase):
@@ -370,7 +361,6 @@ Example
             end=End([Token(Token.END, 'END', 6, 4)])
         )
         assert_model(node, expected)
-        assert_equal(node.errors, [])
 
     def test_if_else_if_else(self):
         model = get_model('''\
@@ -413,7 +403,6 @@ Example
             end=End([Token(Token.END, 'END', 9, 4)])
         )
         assert_model(node, expected)
-        assert_equal(node.errors, [])
 
     def test_nested(self):
         model = get_model('''\
@@ -465,7 +454,6 @@ Example
             ])
         )
         assert_model(node, expected)
-        assert_equal(node.errors, [])
 
     def test_invalid(self):
         model = get_model('''\
@@ -490,25 +478,19 @@ Example
                 orelse=If(
                     header=ElseIfHeader([
                         Token(Token.ELSE_IF, 'ELSE IF', 5, 4)
-                    ])
-                )
-            )
+                    ]),
+                    errors=['ELSE IF has no condition.',
+                            'ELSE IF has empty body.']
+                ),
+                errors=['ELSE has condition.',
+                        'ELSE has empty body.']
+            ),
+            errors=['IF has more than one condition.',
+                    'IF has empty body.',
+                    'ELSE IF after ELSE.',
+                    'IF has no closing END.']
         )
         assert_model(node, expected)
-        assert_equal(node.errors, [
-            'IF has more than one condition.',
-            'IF has empty body.',
-            'ELSE IF after ELSE.',
-            'IF has no closing END.'
-       ])
-        assert_equal(node.orelse.errors, [
-            'ELSE has condition.',
-            'ELSE has empty body.'
-        ])
-        assert_equal(node.orelse.orelse.errors, [
-            'ELSE IF has no condition.',
-            'ELSE IF has empty body.'
-        ])
 
 
 class TestModelVisitors(unittest.TestCase):

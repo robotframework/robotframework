@@ -320,7 +320,7 @@ Empty body
     Fail    Not executed
 
 No END
-    [Documentation]    FAIL    FOR loop has no closing 'END'.
+    [Documentation]    FAIL    FOR loop has no closing END.
     FOR    ${var}    IN    one    two
     Fail    Not executed
 
@@ -416,9 +416,9 @@ Separator is case- and space-sensitive 4
 
 FOR without any paramenters
     [Documentation]    FAIL
-    ...    FOR loop has multiple errors:
-    ...    - No loop variables.
-    ...    - No 'IN' or other valid separator.
+    ...    Multiple errors:
+    ...    - FOR loop has no loop variables.
+    ...    - FOR loop has no 'IN' or other valid separator.
     FOR
        Fail    Not Executed
     END
@@ -433,7 +433,7 @@ Syntax error in nested loop 1
     END
 
 Syntax error in nested loop 2
-    [Documentation]    FAIL    FOR loop has no closing 'END'.
+    [Documentation]    FAIL    FOR loop has no closing END.
     FOR    ${x}    IN    end    missing
         FOR    ${y}    IN    ok
             Fail    Should not be executed
@@ -441,9 +441,9 @@ Syntax error in nested loop 2
 
 Header at the end of file
     [Documentation]    FAIL
-    ...    FOR loop has multiple errors:
-    ...    - Empty body.
-    ...    - No closing 'END'.
+    ...    Multiple errors:
+    ...    - FOR loop has empty body.
+    ...    - FOR loop has no closing END.
     Header at the end of file
 
 *** Keywords ***
