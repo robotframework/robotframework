@@ -65,15 +65,6 @@ class StepRunner(object):
         return runner.run(step, context)
 
 
-def ForRunner(context, templated=False, flavor='IN'):
-    runners = {'IN': ForInRunner,
-               'IN RANGE': ForInRangeRunner,
-               'IN ZIP': ForInZipRunner,
-               'IN ENUMERATE': ForInEnumerateRunner}
-    runner = runners[flavor or 'IN']
-    return runner(context, templated)
-
-
 class IfRunner(object):
     _dry_run_stack = []
 
@@ -126,6 +117,15 @@ class IfRunner(object):
         if is_unicode(condition):
             return evaluate_expression(condition, self._context.variables.current.store)
         return bool(condition)
+
+
+def ForRunner(context, templated=False, flavor='IN'):
+    runners = {'IN': ForInRunner,
+               'IN RANGE': ForInRangeRunner,
+               'IN ZIP': ForInZipRunner,
+               'IN ENUMERATE': ForInEnumerateRunner}
+    runner = runners[flavor or 'IN']
+    return runner(context, templated)
 
 
 class ForInRunner(object):
