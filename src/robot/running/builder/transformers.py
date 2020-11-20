@@ -160,6 +160,11 @@ class TestCaseBuilder(NodeVisitor):
         for kw in parent.keywords:
             if kw.type == kw.FOR_LOOP_TYPE:
                 self._set_template(kw, template)
+            elif kw.type == kw.IF_TYPE:
+                branch = kw
+                while branch:
+                    self._set_template(branch, template)
+                    branch = branch.orelse
             elif kw.type == kw.KEYWORD_TYPE:
                 name, args = self._format_template(template, kw.args)
                 kw.name = name
@@ -329,7 +334,6 @@ class IfBuilder(NodeVisitor):
         self.block.keywords.create(name=node.keyword, args=node.args,
                                    assign=node.assign, lineno=node.lineno)
 
-    # FIXME: Is this used for anything? How does IF work with templates?
     def visit_TemplateArguments(self, node):
         self.block.keywords.create(args=node.args, lineno=node.lineno)
 
