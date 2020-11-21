@@ -24,7 +24,7 @@ from .statementlexers import (Lexer,
                               TestOrKeywordSettingLexer,
                               KeywordCallLexer,
                               ForLoopHeaderLexer,
-                              EndLexer)
+                              EndLexer, IfStatementLexer, ElseLexer, ElseIfStatementLexer)
 
 
 class BlockLexer(Lexer):
@@ -172,7 +172,7 @@ class TestOrKeywordLexer(BlockLexer):
                 statement.pop(0).type = None    # These tokens will be ignored
 
     def lexer_classes(self):
-        return (TestOrKeywordSettingLexer, ForLoopLexer, KeywordCallLexer)
+        return (TestOrKeywordSettingLexer, ForLoopLexer, IfBlockLexer, KeywordCallLexer)
 
 
 class TestCaseLexer(TestOrKeywordLexer):
@@ -206,10 +206,46 @@ class ForLoopLexer(BlockLexer):
 
     def input(self, statement):
         lexer = BlockLexer.input(self, statement)
-        if isinstance(lexer, ForLoopHeaderLexer):
+        if isinstance(lexer, (IfStatementLexer, ForLoopHeaderLexer)):
             self._block_level += 1
         if isinstance(lexer, EndLexer):
             self._block_level -= 1
 
     def lexer_classes(self):
-        return (ForLoopHeaderLexer, EndLexer, KeywordCallLexer)
+        return (ForLoopHeaderLexer, IfBlockLexer, EndLexer, KeywordCallLexer)
+
+
+class IfBlockLexer(BlockLexer):
+
+    def __init__(self, ctx):
+        BlockLexer.__init__(self, ctx)
+        self._end_seen = False
+        self._else_seen = False
+        self._block_level = 0
+        self._last_block_has_content = False
+
+    def handles(self, statement):
+        return IfStatementLexer(self.ctx).handles(statement)
+
+    def accepts_more(self, statement):
+        return not self._end_seen
+
+    def input(self, statement):
+        lexer = BlockLexer.input(self, statement)
+        if isinstance(lexer, (IfStatementLexer, ForLoopHeaderLexer)):
+            self._block_level += 1
+            self._last_block_has_content = self._block_level > 1
+        elif isinstance(lexer, EndLexer):
+            self._last_block_has_content = self._block_level > 1
+            self._end_seen = self._block_level == 1
+            self._block_level -= 1
+        elif isinstance(lexer, ElseLexer):
+            self._last_block_has_content = False
+            self._else_seen = True
+        elif isinstance(lexer, ElseIfStatementLexer):
+            self._last_block_has_content = False
+        else:
+            self._last_block_has_content = True
+
+    def lexer_classes(self):
+        return (IfStatementLexer, ElseIfStatementLexer, ElseLexer, ForLoopLexer, EndLexer, KeywordCallLexer)

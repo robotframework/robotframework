@@ -108,6 +108,10 @@ class TestBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, test):
+        if test.setup:
+            test.keywords.insert(0, test.setup)
+        if test.teardown:
+            test.keywords.append(test.teardown)
         with self._context.prune_input(test.keywords):
             return (self._string(test.name, attr=True),
                     self._string(test.timeout),
@@ -118,7 +122,7 @@ class TestBuilder(_Builder):
 
 
 class KeywordBuilder(_Builder):
-    _types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4}
+    _types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4, 'if': 5, 'else': 6, 'else if':7}
 
     def __init__(self, context):
         _Builder.__init__(self, context)

@@ -409,7 +409,7 @@ $ jython /opt/robot tests.robot
 $ robot --SuiteStatLevel 2 --Metadata Version:3 tests/*.robot more/tests.robot
 
 # Setting default options and syslog file before running tests.
-$ export ROBOT_OPTIONS="--critical regression --suitestatlevel 2"
+$ export ROBOT_OPTIONS="--outputdir results --suitestatlevel 2"
 $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
 $ robot tests.robot
 """

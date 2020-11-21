@@ -43,7 +43,7 @@ Check Listener File
     ${expected} =    Catenate    SEPARATOR=\n    @{expected}    ${EMPTY}
     Should Be Equal    ${content}    ${expected}
 
-Get Listener FIle
+Get Listener File
     [Arguments]    ${file}
     ${path} =    Join Path    %{TEMPDIR}    ${file}
     ${content} =    Get File    ${path}

@@ -21,8 +21,9 @@ from robot.result import Keyword as KeywordResult
 from robot.output import librarylogger as logger
 from robot.utils import (format_assign_message, frange, get_error_message,
                          is_list_like, is_number, plural_or_not as s,
-                         split_from_equals, type_name)
-from robot.variables import is_dict_variable, is_scalar_assign
+                         split_from_equals, type_name, is_unicode)
+from robot.variables import is_dict_variable, is_scalar_assign, evaluate_expression
+from .arguments.argumentresolver import VariableReplacer
 
 from .statusreporter import StatusReporter
 
@@ -55,6 +56,9 @@ class StepRunner(object):
         if step.type == step.FOR_LOOP_TYPE:
             runner = ForRunner(context, self._templated, step.flavor)
             return runner.run(step)
+        if step.type == step.IF_EXPRESSION_TYPE:
+            runner = IfRunner(context, self._templated)
+            return runner.run(step)
         runner = context.get_runner(name or step.name)
         if context.dry_run:
             return runner.dry_run(step, context)
@@ -70,6 +74,90 @@ def ForRunner(context, templated=False, flavor='IN'):
     return runner(context, templated)
 
 
+class IfRunner(object):
+
+    current_if_stack = []
+
+    def __init__(self, context, templated=False):
+        self._context = context
+        self._templated = templated
+
+    def _get_type(self, data, first, datacondition):
+        if first:
+            return data.IF_EXPRESSION_TYPE
+        if datacondition is True:
+            return data.ELSE_TYPE
+        return data.ELSE_IF_TYPE
+
+    def run(self, data, name=None):
+        IfRunner.current_if_stack.append(data)
+        try:
+            first = True
+            condition_matched = False
+            for datacondition, body in data.bodies:
+                condition_matched = self._run_if_branch(body, condition_matched, data, datacondition, first)
+                first = False
+        finally:
+            IfRunner.current_if_stack.pop()
+
+    def _run_if_branch(self, body, condition_matched, data, datacondition, first):
+        result = self._create_result_object(data, first, datacondition)
+        reporter = StatusReporter(self._context, result, dry_run_lib_kw=self._is_dryrun_already_executing_this_if())
+        with reporter:
+            if data.error:
+                raise DataError(data.error)
+            condition_result = self._create_condition_result(condition_matched, data, datacondition, first)
+            if self._is_branch_to_execute(condition_matched,
+                                          condition_result,
+                                          body):
+                runner = StepRunner(self._context, self._templated)
+                runner.run_steps(body)
+                return True
+            reporter.mark_as_not_run()
+        return condition_matched
+
+    def _create_condition_result(self, condition_matched, data, datacondition, first):
+        data_type = self._get_type(data, first, datacondition)
+        if data_type == data.ELSE_TYPE:
+            return True
+        if condition_matched or self._context.dry_run:
+            return None
+        return self._resolve_condition(datacondition[0])
+
+    def _create_result_object(self, data, first, datacondition):
+        data_type = self._get_type(data, first, datacondition)
+        unresolved_condition = self._get_unresolved_condition(data, data_type, datacondition)
+        return KeywordResult(kwname=self._get_name(unresolved_condition),
+                            type=data_type, lineno=data.lineno, source=data.source)
+
+    def _get_unresolved_condition(self, data, data_type, datacondition):
+        return '' if data_type == data.ELSE_TYPE else datacondition[0]
+
+    def _resolve_condition(self, unresolved_condition):
+        condition, _ = VariableReplacer().replace([unresolved_condition], (), variables=self._context.variables)
+        resolved_condition = condition[0]
+        if is_unicode(resolved_condition):
+            return evaluate_expression(resolved_condition,
+                                       self._context.variables.current.store)
+        return bool(resolved_condition)
+
+    def _is_branch_to_execute(self, condition_matched_already, condition_result, body):
+        if self._context.dry_run:
+            return not self._is_dryrun_already_executing_this_if()
+        return not condition_matched_already and condition_result and body
+
+    def _is_dryrun_already_executing_this_if(self):
+        if not self._context.dry_run:
+            return False
+        current = IfRunner.current_if_stack[-1]
+        return current in IfRunner.current_if_stack[:-1]
+
+    def _get_name(self, condition):
+        if not condition:
+            return ''
+        return ' [ %s ]' % (condition)
+
+
 class ForInRunner(object):
     flavor = 'IN'
 
@@ -79,28 +167,18 @@ class ForInRunner(object):
 
     def run(self, data, name=None):
         result = KeywordResult(kwname=self._get_name(data),
-                               type=data.FOR_LOOP_TYPE)
+                               type=data.FOR_LOOP_TYPE,
+                               lineno=data.lineno,
+                               source=data.source)
         with StatusReporter(self._context, result):
-            self._validate(data)
+            if data.error:
+                raise DataError(data.error)
             self._run(data)
 
     def _get_name(self, data):
         return '%s %s [ %s ]' % (' | '.join(data.variables),
                                  self.flavor,
                                  ' | '.join(data.values))
-
-    def _validate(self, data):
-        if not data.ended:
-            raise DataError("FOR loop has no closing 'END'.")
-        if not data.variables:
-            raise DataError('FOR loop has no loop variables.')
-        for var in data.variables:
-            if not is_scalar_assign(var):
-                raise DataError("Invalid FOR loop variable '%s'." % var)
-        if not data.values:
-            raise DataError('FOR loop has no loop values.')
-        if not data.keywords:
-            raise DataError('FOR loop contains no keywords.')
 
     def _run(self, data):
         errors = []
@@ -211,7 +289,9 @@ class ForInRunner(object):
             self._context.variables[name] = value
         name = ', '.join(format_assign_message(n, v) for n, v in variables)
         result = KeywordResult(kwname=name,
-                               type=data.FOR_ITEM_TYPE)
+                               type=data.FOR_ITEM_TYPE,
+                               lineno=data.lineno,
+                               source=data.source)
         runner = StepRunner(self._context, self._templated)
         with StatusReporter(self._context, result):
             runner.run_steps(data.keywords)

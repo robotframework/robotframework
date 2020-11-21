@@ -173,21 +173,53 @@ class ForLoopHeaderLexer(StatementLexer):
         return statement[0].value == 'FOR'
 
     def lex(self):
-        separator_seen = False
-        variable_seen = False
         self.statement[0].type = Token.FOR
+        separator_seen = False
         for token in self.statement[1:]:
             if separator_seen:
                 token.type = Token.ARGUMENT
-            elif variable_seen and self._is_separator(token.value):
+            elif normalize_whitespace(token.value) in self.separators:
                 token.type = Token.FOR_SEPARATOR
                 separator_seen = True
             else:
                 token.type = Token.VARIABLE
-                variable_seen = True
 
-    def _is_separator(self, value):
-        return normalize_whitespace(value) in self.separators
+
+class IfStatementLexer(StatementLexer):
+
+    def handles(self, statement):
+        return statement[0].value == 'IF' and len(statement) == 2
+
+    def lex(self):
+        self.statement[0].type = Token.IF
+        self.statement[1].type = Token.ARGUMENT
+
+
+class ElseIfStatementLexer(StatementLexer):
+
+    def handles(self, statement):
+        return statement[0].value == 'ELSE IF' and len(statement) == 2
+
+    def lex(self):
+        self.statement[0].type = Token.ELSE_IF
+        self.statement[1].type = Token.ARGUMENT
+
+    @property
+    def lineno(self):
+        return self.statement[0].lineno
+
+
+class ElseLexer(StatementLexer):
+
+    def handles(self, statement):
+        return statement[0].value == 'ELSE' and len(statement) == 1
+
+    def lex(self):
+        self.statement[0].type = Token.ELSE
+
+    @property
+    def lineno(self):
+        return self.statement[0].lineno
 
 
 class EndLexer(StatementLexer):
@@ -197,3 +229,7 @@ class EndLexer(StatementLexer):
 
     def lex(self):
         self.statement[0].type = Token.END
+
+    @property
+    def lineno(self):
+        return self.statement[0].lineno

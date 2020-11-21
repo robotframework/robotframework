@@ -68,8 +68,12 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_test_with_values(self):
         test = TestCase('Name', '*Doc*', ['t1', 't2'], '1 minute', 'PASS', 'Msg',
                         '20111204 19:22:22.222', '20111204 19:22:22.333')
+        test.setup.config(kwname='setup', type='setup')
+        test.teardown.config(kwname='td', type='teardown')
+        k1 = self._verify_keyword(test.setup, type=1, kwname='setup')
+        k2 = self._verify_keyword(test.teardown, type=2, kwname='td')
         self._verify_test(test, 'Name', '<b>Doc</b>', ('t1', 't2'),
-                          '1 minute', 1, 'Msg', 0, 111)
+                          '1 minute', 1, 'Msg', 0, 111, (k1, k2))
 
     def test_name_escaping(self):
         kw = Keyword('quote:"', 'and *url* https://url.com', '*"Doc"*',)

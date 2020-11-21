@@ -36,6 +36,9 @@ class Keyword(ModelObject):
     SETUP_TYPE = 'setup'        #: Setup :attr:`type`.
     TEARDOWN_TYPE = 'teardown'  #: Teardown :attr:`type`.
     FOR_LOOP_TYPE = 'for'       #: For loop :attr:`type`.
+    IF_EXPRESSION_TYPE = 'if'   #: If expression :attr:`type`.
+    ELSE_IF_TYPE = "else if"  #: else if branch :attr:`type`.
+    ELSE_TYPE = 'else'          #: else branch :attr:`type`.
     FOR_ITEM_TYPE = 'foritem'   #: Single for loop iteration :attr:`type`.
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),

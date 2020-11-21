@@ -16,6 +16,8 @@
 import ast
 
 from robot.utils import file_writer, is_pathlike, is_string
+from robot.variables import is_scalar_assign
+from .statements import Else, ElseIfStatement, KeywordCall
 
 from .visitor import ModelVisitor
 
@@ -52,6 +54,9 @@ class File(Block):
     def __init__(self, sections=None, source=None):
         self.sections = sections or []
         self.source = source
+
+    def validate(self):
+        ModelValidator().visit(self)
 
     def save(self, output=None):
         """Save model to the given ``output`` or to the original source file.
@@ -122,13 +127,77 @@ class Keyword(Block):
         return self.header.name
 
 
-class ForLoop(Block):
+class IfBlock(Block):
     _fields = ('header', 'body', 'end')
+    _attributes = Block._attributes + ('error',)
 
-    def __init__(self, header, body=None, end=None):
+    def __init__(self, header, body=None, end=None, error=None):
         self.header = header
         self.body = body or []
         self.end = end
+        self.error = error
+
+    @property
+    def variables(self):
+        return self.header.variables
+
+    @property
+    def value(self):
+        return self.header.value
+
+    @property
+    def _header(self):
+        return self.header._header
+
+    @property
+    def _end(self):
+        return self.end.value if self.end else None
+
+    def validate(self):
+        errors = self._validate()
+        if not errors:
+            self.error = None
+        elif len(errors) == 1:
+            self.error = 'IF has ' + errors[0][0].lower() + errors[0][1:]
+        else:
+            self.error = 'IF has multiple errors:\n- ' + '\n- '.join(errors)
+
+    def _validate(self):
+        errors = []
+        if not self.end:
+            errors.append("No closing 'END'.")
+        else_seen = False
+        last_is_normal_step = False
+        for step in self.body:
+            if isinstance(step, Else):
+                if else_seen:
+                    errors.append("Multiple 'ELSE' branches.")
+                if not last_is_normal_step:
+                    errors.append("Empty branch.")
+                else_seen = True
+                last_is_normal_step = False
+            elif isinstance(step, ElseIfStatement):
+                if else_seen:
+                    errors.append("'ELSE IF' after 'ELSE'.")
+                if not last_is_normal_step:
+                    errors.append("Empty branch.")
+                last_is_normal_step = False
+            else:
+                last_is_normal_step = True
+        if not last_is_normal_step:
+            errors.append("Empty branch.")
+        return errors
+
+
+class ForLoop(Block):
+    _fields = ('header', 'body', 'end')
+    _attributes = Block._attributes + ('error',)
+
+    def __init__(self, header, body=None, end=None, error=None):
+        self.header = header
+        self.body = body or []
+        self.end = end
+        self.error = error
 
     @property
     def variables(self):
@@ -141,6 +210,33 @@ class ForLoop(Block):
     @property
     def flavor(self):
         return self.header.flavor
+
+    def validate(self):
+        errors = self._validate()
+        if not errors:
+            self.error = None
+        elif len(errors) == 1:
+            self.error = 'FOR loop has ' + errors[0][0].lower() + errors[0][1:]
+        else:
+            self.error = 'FOR loop has multiple errors:\n- ' + '\n- '.join(errors)
+
+    def _validate(self):
+        errors = []
+        if not self.variables:
+            errors.append('No loop variables.')
+        if not self.flavor:
+            errors.append("No 'IN' or other valid separator.")
+        else:
+            for var in self.variables:
+                if not is_scalar_assign(var):
+                    errors.append("Invalid loop variable '%s'." % var)
+            if not self.values:
+                errors.append('No loop values.')
+        if not self.body:
+            errors.append('Empty body.')
+        if not self.end:
+            errors.append("No closing 'END'.")
+        return errors
 
 
 class ModelWriter(ModelVisitor):
@@ -163,6 +259,17 @@ class ModelWriter(ModelVisitor):
     def visit_Statement(self, statement):
         for token in statement.tokens:
             self.writer.write(token.value)
+
+
+class ModelValidator(ModelVisitor):
+
+    def visit_ForLoop(self, node):
+        node.validate()
+        ModelVisitor.generic_visit(self, node)
+
+    def visit_IfBlock(self, node):
+        node.validate()
+        ModelVisitor.generic_visit(self, node)
 
 
 class FirstStatementFinder(ModelVisitor):

@@ -430,9 +430,40 @@ class ForLoopHeader(Statement):
         separator = self.get_token(Token.FOR_SEPARATOR)
         return normalize_whitespace(separator.value) if separator else None
 
+
+@Statement.register
+class IfStatement(Statement):
+    type = Token.IF
+
+    @property
+    def value(self):
+        return self.get_values(Token.ARGUMENT)
+
     @property
     def _header(self):
-        return self.get_value(Token.FOR)
+        return self.get_value(Token.IF)
+
+
+@Statement.register
+class ElseIfStatement(Statement):
+    type = Token.ELSE_IF
+
+    @property
+    def value(self):
+        return self.get_values(Token.ARGUMENT)
+
+    @property
+    def _header(self):
+        return self.get_value(Token.ELSE_IF)
+
+
+@Statement.register
+class Else(Statement):
+    type = Token.ELSE
+
+    @property
+    def value(self):
+        return self.get_value(Token.ELSE)
 
 
 @Statement.register

@@ -29,8 +29,6 @@ from .statusreporter import StatusReporter
 
 
 class LibraryKeywordRunner(object):
-    _executed_in_dry_run = ('BuiltIn.Import Library',
-                            'BuiltIn.Set Library Search Order')
 
     def __init__(self, handler, name=None):
         self._handler = handler
@@ -67,6 +65,8 @@ class LibraryKeywordRunner(object):
                              assign=tuple(assignment),
                              tags=handler.tags,
                              type=kw.type,
+                             lineno=kw.lineno,
+                             source=kw.source,
                              definiton=self.definition)
 
     def _run(self, context, args):
@@ -117,10 +117,15 @@ class LibraryKeywordRunner(object):
             self._dry_run(context, kw.args)
 
     def _dry_run(self, context, args):
-        if self._handler.longname in self._executed_in_dry_run:
+        if self._executed_in_dry_run(self._handler):
             self._run(context, args)
         else:
             self._handler.resolve_arguments(args)
+
+    def _executed_in_dry_run(self, handler):
+        return (handler.libname == 'Reserved' or
+                handler.longname in ('BuiltIn.Import Library',
+                                     'BuiltIn.Set Library Search Order'))
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):

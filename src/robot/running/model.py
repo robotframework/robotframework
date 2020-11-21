@@ -78,17 +78,16 @@ class ForLoop(Keyword):
 
     Contains keywords in the loop body as child :attr:`keywords`.
     """
-    __slots__ = ['flavor', 'lineno', 'ended']
+    __slots__ = ['flavor', 'lineno', 'error']
     keyword_class = Keyword  #: Internal usage only.
 
-    def __init__(self, variables, values, flavor, lineno=None, ended=True,
-                 parent=None):
+    def __init__(self, variables, values, flavor, lineno=None, parent=None, error=None):
         Keyword.__init__(self, assign=variables, args=values,
                          type=Keyword.FOR_LOOP_TYPE, parent=parent)
         self.keywords = None
         self.flavor = flavor
         self.lineno = lineno
-        self.ended = ended
+        self.error = error
 
     @setter
     def keywords(self, keywords):
@@ -110,6 +109,48 @@ class ForLoop(Keyword):
 
     def __nonzero__(self):
         return True
+
+
+class IfExpression(Keyword):
+    """Represents an if expression in test data.
+
+    Contains keywords in the body as child :attr:`keywords`.
+    """
+    __slots__ = ['lineno', '_header', '_end', 'bodies', 'error']
+    keyword_class = Keyword  #: Internal usage only.
+
+    def __init__(self, value, lineno=None, _header='IF', _end='END', error=None):
+        Keyword.__init__(self, args=value,
+                         type=Keyword.IF_EXPRESSION_TYPE)
+        self.lineno = lineno
+        self._header = _header
+        self._end = _end
+        self.bodies = [(value, Keywords(self.keyword_class, self, None))]
+        self.error = error
+
+    def create_keyword(self, name='', args=(), assign=(), lineno=None):
+        self.bodies[-1][1].create(name=name, args=args, assign=assign, lineno=lineno)
+
+    def add_inner_block(self, inner_block):
+        self.bodies[-1][1].append(inner_block)
+
+    def create_elseif(self, value):
+        self.bodies.append((value, Keywords(self.keyword_class, self, None)))
+
+    def create_else(self):
+        self.bodies.append((True, Keywords(self.keyword_class, self, None)))
+
+    @property
+    def condition(self):
+        return self.args[0]
+
+    @property
+    def ended(self):
+        return self._end is not None
+
+    def __unicode__(self):
+        values = '    '.join(self.condition)
+        return u'IF    %s' % values
 
 
 class TestCase(model.TestCase):

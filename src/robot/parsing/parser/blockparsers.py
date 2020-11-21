@@ -15,6 +15,7 @@
 
 from ..lexer import Token
 from ..model import TestCase, Keyword, ForLoop
+from ..model.blocks import IfBlock
 
 
 class Parser(object):
@@ -34,7 +35,7 @@ class StepsParser(Parser):
 
     def __init__(self, model, unhandled_tokens):
         Parser.__init__(self, model)
-        self._subsection_parser_classes = {Token.FOR: ForLoopParser}
+        self._subsection_parser_classes = {Token.FOR: ForLoopParser, Token.IF: IfParser}
         self._unhandled_tokens = unhandled_tokens
 
     def handles(self, statement):
@@ -76,3 +77,6 @@ class StepsWithEndParser(StepsParser):
 
 def ForLoopParser(header):
     return StepsWithEndParser(ForLoop(header))
+
+def IfParser(header):
+    return StepsWithEndParser(IfBlock(header))

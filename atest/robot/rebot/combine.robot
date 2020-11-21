@@ -151,11 +151,11 @@ Create inputs for Rebot
     Prevent accidental usage of ${SUITE} variable
 
 Create first input for Rebot
-    Create Output With Robot    ${TEMP OUT 1}    --critical pass    misc/pass_and_fail.robot
+    Create Output With Robot    ${TEMP OUT 1}    ${EMPTY}    misc/pass_and_fail.robot
     Set Suite Variable    $MILLIS1    ${ORIG ELAPSED}
 
 Create second input for Rebot
-    Create Output With Robot    ${TEMP OUT 2}    -c f1 -c nonex --noncritical notag    misc/normal.robot
+    Create Output With Robot    ${TEMP OUT 2}    ${EMPTY}    misc/normal.robot
     Set Suite Variable    $MILLIS2    ${ORIG ELAPSED}
 
 Combine without options
@@ -169,7 +169,6 @@ Combine with options
     ...    --doc "My fine doc"
     ...    --metadata Name:value
     ...    -M "Other Meta:Another value"
-    ...    --critical force
     Run Rebot    ${options}    ${TEMP OUT 1} ${TEMP OUT 2}
     Set Suite Variable    $SUITE2    ${SUITE}
     Copy File    ${OUT FILE}    ${COMB OUT 2}
@@ -180,7 +179,7 @@ Combine with output with known times
     Set Suite Variable    $SUITE3    ${SUITE}
 
 Recombine
-    Run Rebot    --noncritical f1    rebot/times.xml ${COMB OUT 2}
+    Run Rebot    ${EMPTY}    rebot/times.xml ${COMB OUT 2}
     Set Suite Variable    $SUITE4    ${SUITE}
     Copy File    ${OUT FILE}    ${COMB OUT 4}
 
