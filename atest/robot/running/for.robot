@@ -244,6 +244,9 @@ Empty body
 No END
     Check test and failed loop    ${TEST NAME}
 
+Invalid END
+    Check test and failed loop    ${TEST NAME}
+
 No loop values
     ${tc} =    Check test case    ${TEST NAME}
     Should be FOR loop    ${tc.kws[0]}    0    FAIL

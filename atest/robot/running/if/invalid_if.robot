@@ -12,6 +12,9 @@ If with many conditions
 If without end
   Check Test Case    ${TESTNAME}
 
+Invalid END
+  Check Test Case    ${TESTNAME}
+
 If with wrong case
   Check Test Case    ${TESTNAME}
 
