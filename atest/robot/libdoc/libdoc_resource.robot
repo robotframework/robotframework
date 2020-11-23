@@ -136,7 +136,7 @@ Verify Arguments Structure
         ${required}=    Get Element Attribute        ${arg_elem}    required
         ${repr}=        Get Element Attribute        ${arg_elem}    repr
         ${name}=        Get Element Optional Text    ${arg_elem}    name
-        ${type}=       Get Element List Texts       ${arg_elem}    type
+        ${type}=        Get Elements Texts           ${arg_elem}    type
         ${default}=     Get Element Optional Text    ${arg_elem}    default
         ${arg_model}=    Create Dictionary
         ...    kind=${kind}
@@ -150,17 +150,6 @@ Verify Arguments Structure
         ...    Should Be Equal    ${repr}    ${exp_repr}
     END
     Should Be True    len($arg_elems) == len($expected)
-
-Get Element List Texts
-    [Arguments]    ${source}    ${xpath}
-    ${elem}=    Get Elements    ${source}    ${xpath}
-    Return From Keyword If    len($elem) == 0    @{EMPTY}
-    ${texts}    Create List
-    FOR    ${element}    IN    @{elem}
-        ${text}    Get Element Text    ${element}
-        Append To List    ${texts}    ${text}
-    END
-    [Return]    ${texts}
 
 Get Element Optional Text
     [Arguments]    ${source}    ${xpath}
