@@ -49,6 +49,9 @@
                 <xs:enumeration value="teardown"/>
                 <xs:enumeration value="foritem"/>
                 <xs:enumeration value="for"/>
+                <xs:enumeration value="if"/>
+                <xs:enumeration value="elseif"/>
+                <xs:enumeration value="else"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:attribute>
