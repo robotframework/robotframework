@@ -72,7 +72,7 @@ class LibdocXmlWriter(object):
     def _write_keywords(self, list_name, kw_type, keywords, lib_source, writer):
         writer.start(list_name)
         for kw in keywords:
-            attrs = self._get_start_attrs(kw_type, kw, lib_source, writer)
+            attrs = self._get_start_attrs(kw, lib_source, writer)
             writer.start(kw_type, attrs)
             self._write_arguments(kw, writer)
             writer.element('doc', kw.doc)
@@ -100,9 +100,9 @@ class LibdocXmlWriter(object):
             writer.end('arg')
         writer.end('arguments')
 
-    def _get_start_attrs(self, kw_type, kw, lib_source, writer):
+    def _get_start_attrs(self, kw, lib_source, writer):
         attrs = {'name': kw.name}
-        if kw_type != 'init' and kw.deprecated:
+        if kw.deprecated:
             attrs['deprecated'] = 'true'
         self._add_source_info(attrs, kw, writer.output, lib_source)
         return attrs
