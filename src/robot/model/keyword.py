@@ -44,7 +44,6 @@ class Keyword(ModelObject):
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=KEYWORD_TYPE, parent=None):
-        self.parent = None
         self.parent = parent
         self._name = name
         self.doc = doc
@@ -83,7 +82,7 @@ class Keyword(ModelObject):
     @setter
     def parent(self, parent):
         """Parent test suite, test case or keyword."""
-        if parent and parent is not self.parent:
+        if parent and parent is not getattr(self, 'parent', None):
             self._sort_key = getattr(parent, '_child_sort_key', -1)
         return parent
 
