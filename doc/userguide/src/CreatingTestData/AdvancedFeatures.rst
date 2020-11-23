@@ -739,16 +739,49 @@ to make the syntax easier to read.
        Repeat Keyword    42 times    My Keyword
        Repeat Keyword    ${var}    Another Keyword    argument
 
-Conditional execution
----------------------
+Conditional execution with IF and other ways
+--------------------------------------------
 
 In general, it is not recommended to have conditional logic in test
 cases, or even in user keywords, because it can make them hard to
 understand and maintain. Instead, this kind of logic should be in test
 libraries, where it can be implemented using natural programming
-language constructs. However, some conditional logic can be useful at
-times, and even though Robot Framework does not have an actual if/else
-construct, there are several ways to get the same effect.
+language constructs. However, conditional logic can be useful at
+times and from Robot Framework version 4.0 onwards IF block is included
+in the syntax.
+
+Simple conditional execution can be done with IF block.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+       IF  ${rc} == 0
+           Some keyword
+       END
+
+Here the keyword `Some keyword` is executed if the variable `${rc}` is 0.
+
+Also `ELSE` and conditional `ELSE IF` can be used.
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+       IF  '${var}' == 'first'
+           My keyword
+       ELSE IF  '${var}' == 'second'
+           My other keyword
+       ELSE
+           My third keyword
+       END
+
+Here `My keyword` is executed if the variable `${var}` has value 'first'.
+Otherwise if it has value 'second' then `My other keyword` is execute.
+Otherwise `My third keyword` is executed.
+
+There are also other methods that have been already available before
+Robot Framework 4.0:
 
 - The name of the keyword used as a setup or a teardown of both `test
   cases`__ and `test suites`__ can be specified using a
