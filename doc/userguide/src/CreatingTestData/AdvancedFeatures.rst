@@ -750,7 +750,7 @@ language constructs. However, conditional logic can be useful at
 times and from Robot Framework version 4.0 onwards IF block is included
 in the syntax.
 
-Simple conditional execution can be done with IF block.
+Conditional execution can be done with IF block.
 
 .. sourcecode:: robotframework
 
@@ -761,6 +761,7 @@ Simple conditional execution can be done with IF block.
        END
 
 Here the keyword `Some keyword` is executed if the variable `${rc}` is 0.
+Conditions work the same way as in The BuiltIn_ keywords :name:`Run Keyword If`.
 
 Also `ELSE` and conditional `ELSE IF` can be used.
 
