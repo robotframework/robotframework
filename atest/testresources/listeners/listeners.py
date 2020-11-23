@@ -59,10 +59,17 @@ class KeywordType(object):
                                % (attrs['type'], expected))
 
     def _get_expected_kw_type(self, name, args):
-        if 'IN' in name:
+        if ' IN ' in name:
             return 'For'
-        if '=' in name:
+        if ' = ' in name:
             return 'For Item'
+        if not args:
+            if "'IF'" in name:
+                return 'If'
+            if "'ELSE IF'" in name:
+                return 'Else If'
+            if name == '':
+                return 'Else'
         expected = args[0] if name.startswith('BuiltIn.') else name
         return {'Suite Setup': 'Setup', 'Suite Teardown': 'Teardown',
                 'Test Setup': 'Setup', 'Test Teardown': 'Teardown',
