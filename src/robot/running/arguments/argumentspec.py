@@ -172,7 +172,7 @@ class ArgInfo(object):
             return 'None'
         if isclass(typ):
             return typ.__name__
-        return re.sub(r'^typing\.(.+)', lambda m: m.group(1), unic(typ))
+        return re.sub(r'^typing\.(.+)', r'\1', unic(typ))
 
     @property
     def default_repr(self):
