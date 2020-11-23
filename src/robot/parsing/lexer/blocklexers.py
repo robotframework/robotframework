@@ -180,6 +180,7 @@ class TestCaseLexer(TestOrKeywordLexer):
     name_type = Token.TESTCASE_NAME
 
     def __init__(self, ctx):
+        """:type ctx: :class:`robot.parsing.lexer.context.TestCaseFileContext`"""
         TestOrKeywordLexer.__init__(self, ctx.test_case_context())
 
     def lex(self,):
@@ -193,14 +194,11 @@ class KeywordLexer(TestOrKeywordLexer):
         TestOrKeywordLexer.__init__(self, ctx.keyword_context())
 
 
-class ForLexer(BlockLexer):
+class NestedBlockLexer(BlockLexer):
 
     def __init__(self, ctx):
         BlockLexer.__init__(self, ctx)
         self._block_level = 0
-
-    def handles(self, statement):
-        return ForHeaderLexer(self.ctx).handles(statement)
 
     def accepts_more(self, statement):
         return self._block_level > 0
@@ -212,42 +210,20 @@ class ForLexer(BlockLexer):
         if isinstance(lexer, EndLexer):
             self._block_level -= 1
 
+
+class ForLexer(NestedBlockLexer):
+
+    def handles(self, statement):
+        return ForHeaderLexer(self.ctx).handles(statement)
+
     def lexer_classes(self):
         return (ForHeaderLexer, IfLexer, EndLexer, KeywordCallLexer)
 
 
-class IfLexer(BlockLexer):
-
-    def __init__(self, ctx):
-        BlockLexer.__init__(self, ctx)
-        self._end_seen = False
-        self._else_seen = False
-        self._block_level = 0
-        self._last_block_has_content = False
+class IfLexer(NestedBlockLexer):
 
     def handles(self, statement):
         return IfHeaderLexer(self.ctx).handles(statement)
-
-    def accepts_more(self, statement):
-        return not self._end_seen
-
-    # FIXME: Cleanup. Consider adding common base class with ForLexer.
-    def input(self, statement):
-        lexer = BlockLexer.input(self, statement)
-        if isinstance(lexer, (IfHeaderLexer, ForHeaderLexer)):
-            self._block_level += 1
-            self._last_block_has_content = self._block_level > 1
-        elif isinstance(lexer, EndLexer):
-            self._last_block_has_content = self._block_level > 1
-            self._end_seen = self._block_level == 1
-            self._block_level -= 1
-        elif isinstance(lexer, ElseHeaderLexer):
-            self._last_block_has_content = False
-            self._else_seen = True
-        elif isinstance(lexer, ElseIfHeaderLexer):
-            self._last_block_has_content = False
-        else:
-            self._last_block_has_content = True
 
     def lexer_classes(self):
         return (IfHeaderLexer, ElseIfHeaderLexer, ElseHeaderLexer,
