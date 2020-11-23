@@ -132,7 +132,9 @@ class If(Keyword):
         return self.args[0]
 
     def __unicode__(self):
-        return u'%s    %s' % (self.type, self.condition)
+        types = {self.IF_TYPE: 'IF', self.ELSE_IF_TYPE: 'ELSE IF',
+                 self.ELSE_TYPE: 'ELSE'}
+        return u'%s    %s' % (types[self.type], self.condition)
 
     def __nonzero__(self):
         return True

@@ -15,6 +15,7 @@
 
 from ast import NodeVisitor
 
+from robot.parsing import Token
 from robot.variables import VariableIterator
 
 from ..model import For, If
@@ -310,17 +311,16 @@ class IfBuilder(NodeVisitor):
         self.block = None
 
     def build(self, node):
-        self.block = self._build_block(node)
+        self.block = If(node.condition, lineno=node.lineno,
+                        error=self._get_error(node), type=self._get_type(node))
         for child_node in node.body:
             self.visit(child_node)
         if node.orelse:
             self.block.orelse = IfBuilder().build(node.orelse)
         return self.block
 
-    def _build_block(self, node):
-        errors = self._get_errors(node)
-        return If(node.condition, lineno=node.lineno,
-                  error=format_error(errors), type=node.type)
+    def _get_error(self, node):
+        return format_error(self._get_errors(node))
 
     def _get_errors(self, node):
         errors = node.header.errors + node.errors
@@ -329,6 +329,11 @@ class IfBuilder(NodeVisitor):
         if node.end:
             errors += node.end.errors
         return errors
+
+    def _get_type(self, node):
+        return {Token.IF: If.IF_TYPE,
+                Token.ELSE_IF: If.ELSE_IF_TYPE,
+                Token.ELSE: If.ELSE_TYPE}[node.type]
 
     def visit_KeywordCall(self, node):
         self.block.keywords.create(name=node.keyword, args=node.args,

@@ -32,15 +32,14 @@ class Keyword(ModelObject):
     """
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
                  '_teardown', '_sort_key', '_next_child_sort_key']
-    # FIXME: Consistent type values. Consider using same as with tokens.
-    KEYWORD_TYPE = 'kw'         #: Normal keyword :attr:`type`.
-    SETUP_TYPE = 'setup'        #: Setup :attr:`type`.
-    TEARDOWN_TYPE = 'teardown'  #: Teardown :attr:`type`.
-    FOR_LOOP_TYPE = 'for'       #: For loop :attr:`type`.
-    FOR_ITEM_TYPE = 'foritem'   #: Single for loop iteration :attr:`type`.
-    IF_TYPE = 'IF'              #: If expression :attr:`type`.
-    ELSE_IF_TYPE = 'ELSE IF'    #: else if branch :attr:`type`.
-    ELSE_TYPE = 'ELSE'          #: else branch :attr:`type`.
+    KEYWORD_TYPE  = 'kw'
+    SETUP_TYPE    = 'setup'
+    TEARDOWN_TYPE = 'teardown'
+    FOR_LOOP_TYPE = 'for'
+    FOR_ITEM_TYPE = 'foritem'
+    IF_TYPE       = 'if'
+    ELSE_IF_TYPE  = 'elseif'
+    ELSE_TYPE     = 'else'
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=KEYWORD_TYPE, parent=None):
