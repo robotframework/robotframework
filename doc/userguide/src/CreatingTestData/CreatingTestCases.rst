@@ -907,7 +907,7 @@ all the looped elements even if there are failures.
 Templates with IF block
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-IF blocks can be also used together with templates.
+`if block`_ can be also used together with templates.
 This can be useful for example when used together with for loops to
 filter executed arguments.
 
