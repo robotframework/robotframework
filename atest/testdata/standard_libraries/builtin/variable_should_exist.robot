@@ -71,7 +71,7 @@ Variable Should Not Exist With Given Error Message
     Variable Should Not Exist    ${scalar}    This is the error message
 
 Variable Should Not Exist With Error Message Containing Variables
-    [Documentation]    FAIL Error with vars: ${scalar} & ${42}
+    [Documentation]    FAIL Error with vars: \${scalar} & \${42}
     Variable Should Not Exist    ${scalar}    Error with vars: ${scalar} & ${42}
 
 Variable Should Not Exist With Built In Variables

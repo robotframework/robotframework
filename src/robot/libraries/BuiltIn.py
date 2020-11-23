@@ -1359,12 +1359,10 @@ class _Variables(_BuiltInBase):
         See also `Variable Should Not Exist` and `Keyword Should Exist`.
         """
         name = self._get_var_name(name)
-        msg = self._variables.replace_string(msg) if msg \
-            else "Variable '%s' does not exist." % name
         try:
             self._variables[name]
         except DataError:
-            raise AssertionError(msg)
+            raise AssertionError(msg or "Variable '%s' does not exist." % name)
 
     @run_keyword_variant(resolve=0)
     def variable_should_not_exist(self, name, msg=None):
@@ -1379,14 +1377,12 @@ class _Variables(_BuiltInBase):
         See also `Variable Should Exist` and `Keyword Should Exist`.
         """
         name = self._get_var_name(name)
-        msg = self._variables.replace_string(msg) if msg \
-            else "Variable '%s' exists." % name
         try:
             self._variables[name]
         except DataError:
             pass
         else:
-            raise AssertionError(msg)
+            raise AssertionError(msg or "Variable '%s' exists." % name)
 
     def replace_variables(self, text):
         """Replaces variables in the given text with their current values.
