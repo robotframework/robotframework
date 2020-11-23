@@ -16,6 +16,12 @@ If without end
     IF  ${True}
        No Operation
 
+Invalid END
+    [Documentation]    FAIL    END does not accept arguments.
+    IF    True
+        Fail    Not executed
+    END    this    is    invalid
+
 If with wrong case
    [Documentation]    FAIL    'If' is a reserved keyword. It must be an upper case 'IF' when used as a marker.
    if  ${True}

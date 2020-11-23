@@ -6,12 +6,12 @@ import tempfile
 from robot.parsing import get_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
     Block, File, CommentSection, TestCaseSection, KeywordSection,
-    TestCase, Keyword, ForLoop, If
+    TestCase, Keyword, ForLoop, If, VariableSection
 )
 from robot.parsing.model.statements import (
     Statement, TestCaseSectionHeader, KeywordSectionHeader, ForLoopHeader, End,
     TestCaseName, KeywordName, KeywordCall, Arguments, EmptyLine, Comment,
-    IfHeader, ElseIfHeader, ElseHeader
+    IfHeader, ElseIfHeader, ElseHeader, VariableSectionHeader, Variable
 )
 from robot.utils import PY3
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
@@ -158,12 +158,13 @@ def assert_statement(model, expected):
     assert_equal(len(model.tokens), len(expected.tokens))
     for m, e in zip(model.tokens, expected.tokens):
         assert_equal(m, e, formatter=repr)
-    assert_equal(model._attributes, ('lineno', 'col_offset',
-                                     'end_lineno', 'end_col_offset'))
-    assert_equal(model.lineno, model.tokens[0].lineno)
-    assert_equal(model.col_offset, model.tokens[0].col_offset)
-    assert_equal(model.end_lineno, model.tokens[-1].lineno)
-    assert_equal(model.end_col_offset, model.tokens[-1].end_col_offset)
+    assert_equal(model._attributes, ('lineno', 'col_offset', 'end_lineno',
+                                     'end_col_offset', 'errors'))
+    assert_equal(model.lineno, expected.tokens[0].lineno)
+    assert_equal(model.col_offset, expected.tokens[0].col_offset)
+    assert_equal(model.end_lineno, expected.tokens[-1].lineno)
+    assert_equal(model.end_col_offset, expected.tokens[-1].end_col_offset)
+    assert_equal(model.errors, expected.errors)
 
 
 class TestGetModel(unittest.TestCase):
@@ -318,22 +319,38 @@ Example
         model = get_model('''\
 *** Test Cases ***
 Example
-    FOR    ${x}    IN    a    b    c
+    FOR
+    END    ooops
+
+    FOR    wrong    IN
 ''', data_only=True)
-        loop = model.sections[0].body[0].body[0]
-        expected = ForLoop(
-            header=ForLoopHeader([
-                Token(Token.FOR, 'FOR', 3, 4),
-                Token(Token.VARIABLE, '${x}', 3, 11),
-                Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
-                Token(Token.ARGUMENT, 'a', 3, 25),
-                Token(Token.ARGUMENT, 'b', 3, 30),
-                Token(Token.ARGUMENT, 'c', 3, 35),
-            ]),
-            errors=['FOR loop has empty body.',
-                    'FOR loop has no closing END.']
+        loop1, loop2 = model.sections[0].body[0].body
+        expected1 = ForLoop(
+            header=ForLoopHeader(
+                tokens=[Token(Token.FOR, 'FOR', 3, 4)],
+                errors=('FOR loop has no loop variables.',
+                        "FOR loop has no 'IN' or other valid separator."),
+            ),
+            end=End(
+                tokens=[Token(Token.END, 'END', 4, 4),
+                        Token(Token.ARGUMENT, 'ooops', 4, 11)],
+                errors=('END does not accept arguments.',)
+            ),
+            errors=('FOR loop has empty body.',)
         )
-        assert_model(loop, expected)
+        expected2 = ForLoop(
+            header=ForLoopHeader(
+                tokens=[Token(Token.FOR, 'FOR', 6, 4),
+                        Token(Token.VARIABLE, 'wrong', 6, 11),
+                        Token(Token.FOR_SEPARATOR, 'IN', 6, 20)],
+                errors=("FOR loop has invalid loop variable 'wrong'.",
+                        "FOR loop has no loop values."),
+            ),
+            errors=('FOR loop has empty body.',
+                    'FOR loop has no closing END.')
+        )
+        assert_model(loop1, expected1)
+        assert_model(loop2, expected2)
 
 
 class TestIf(unittest.TestCase):
@@ -462,36 +479,130 @@ Example
     IF    too    many
     ELSE    ooops
     ELSE IF
-''', data_only=True)
-        node = model.sections[0].body[0].body[0]
-        expected = If(
-            header=IfHeader([
-                Token(Token.IF, 'IF', 3, 4),
-                Token(Token.ARGUMENT, 'too', 3, 10),
-                Token(Token.ARGUMENT, 'many', 3, 17),
-            ]),
-            orelse=If(
-                header=ElseHeader([
-                    Token(Token.ELSE, 'ELSE', 4, 4),
-                    Token(Token.ARGUMENT, 'ooops', 4, 12)
-                ]),
-                orelse=If(
-                    header=ElseIfHeader([
-                        Token(Token.ELSE_IF, 'ELSE IF', 5, 4)
-                    ]),
-                    errors=['ELSE IF has no condition.',
-                            'ELSE IF has empty body.']
-                ),
-                errors=['ELSE has condition.',
-                        'ELSE has empty body.']
-            ),
-            errors=['IF has more than one condition.',
-                    'IF has empty body.',
-                    'ELSE IF after ELSE.',
-                    'IF has no closing END.']
-        )
-        assert_model(node, expected)
+    END    ooops
 
+    IF
+''', data_only=True)
+        if1, if2 = model.sections[0].body[0].body
+        expected1 = If(
+            header=IfHeader(
+                tokens=[Token(Token.IF, 'IF', 3, 4),
+                        Token(Token.ARGUMENT, 'too', 3, 10),
+                        Token(Token.ARGUMENT, 'many', 3, 17)],
+                errors=('IF has more than one condition.',)
+            ),
+            orelse=If(
+                header=ElseHeader(
+                    tokens=[Token(Token.ELSE, 'ELSE', 4, 4),
+                            Token(Token.ARGUMENT, 'ooops', 4, 12)],
+                    errors=('ELSE has condition.',)
+                ),
+                orelse=If(
+                    header=ElseIfHeader(
+                        tokens=[Token(Token.ELSE_IF, 'ELSE IF', 5, 4)],
+                        errors=('ELSE IF has no condition.',)
+                    ),
+                    errors=('ELSE IF has empty body.',)
+                ),
+                errors=('ELSE has empty body.',)
+            ),
+            end=End(
+                tokens=[Token(Token.END, 'END', 6, 4),
+                        Token(Token.ARGUMENT, 'ooops', 6, 11)],
+                errors=('END does not accept arguments.',)
+            ),
+            errors=('IF has empty body.',
+                    'ELSE IF after ELSE.')
+        )
+        expected2 = If(
+            header=IfHeader(
+                tokens=[Token(Token.IF, 'IF', 8, 4)],
+                errors=('IF has no condition.',)
+            ),
+            errors=('IF has empty body.',
+                    'IF has no closing END.')
+        )
+        assert_model(if1, expected1)
+        assert_model(if2, expected2)
+
+
+class TestVariables(unittest.TestCase):
+
+    def test_valid(self):
+        model = get_model('''\
+*** Variables ***
+${x}      value
+@{y}=     two    values
+&{z} =    one=item
+''', data_only=True)
+        expected = VariableSection(
+            header=VariableSectionHeader(
+                tokens=[Token(Token.VARIABLE_HEADER, '*** Variables ***', 1, 0)]
+            ),
+            body=[
+                Variable([Token(Token.VARIABLE, '${x}', 2, 0),
+                         Token(Token.ARGUMENT, 'value', 2, 10)]),
+                Variable([Token(Token.VARIABLE, '@{y}=', 3, 0),
+                          Token(Token.ARGUMENT, 'two', 3, 10),
+                          Token(Token.ARGUMENT, 'values', 3, 17)]),
+                Variable([Token(Token.VARIABLE, '&{z} =', 4, 0),
+                          Token(Token.ARGUMENT, 'one=item', 4, 10)]),
+            ]
+        )
+        assert_model(model.sections[0], expected)
+
+    def test_invalid(self):
+        model = get_model('''\
+*** Variables ***
+Ooops     I did it again
+${}       invalid
+${x}==    invalid
+${not     closed
+          invalid
+&{dict}   invalid    ${invalid}
+''', data_only=True)
+        expected = VariableSection(
+            header=VariableSectionHeader(
+                tokens=[Token(Token.VARIABLE_HEADER, '*** Variables ***', 1, 0)]
+            ),
+            body=[
+                Variable(
+                    tokens=[Token(Token.VARIABLE, 'Ooops', 2, 0),
+                            Token(Token.ARGUMENT, 'I did it again', 2, 10)],
+                    errors=("Invalid variable name 'Ooops'.",)
+                ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '${}', 3, 0),
+                            Token(Token.ARGUMENT, 'invalid', 3, 10)],
+                    errors=("Invalid variable name '${}'.",)
+                ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '${x}==', 4, 0),
+                            Token(Token.ARGUMENT, 'invalid', 4, 10)],
+                    errors = ("Invalid variable name '${x}=='.",)
+                ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '${not', 5, 0),
+                            Token(Token.ARGUMENT, 'closed', 5, 10)],
+                    errors=("Invalid variable name '${not'.",)
+                ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '', 6, 0),
+                            Token(Token.ARGUMENT, 'invalid', 6, 10)],
+                    errors=("Invalid variable name ''.",)
+                ),
+                Variable(
+                    tokens=[Token(Token.VARIABLE, '&{dict}', 7, 0),
+                            Token(Token.ARGUMENT, 'invalid', 7, 10),
+                            Token(Token.ARGUMENT, '${invalid}', 7, 21)],
+                    errors=("Invalid dictionary variable item 'invalid'. "
+                            "Items must use 'name=value' syntax or be dictionary variables themselves.",
+                            "Invalid dictionary variable item '${invalid}'. "
+                            "Items must use 'name=value' syntax or be dictionary variables themselves.")
+                ),
+            ]
+        )
+        assert_model(model.sections[0], expected)
 
 class TestModelVisitors(unittest.TestCase):
 

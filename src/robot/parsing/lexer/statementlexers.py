@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import normalize_whitespace, split_from_equals
-from robot.variables import is_assign, is_dict_variable, search_variable
+from robot.utils import normalize_whitespace
+from robot.variables import is_assign
 
 from .tokens import Token
 
@@ -108,38 +108,9 @@ class TestOrKeywordSettingLexer(SettingLexer):
 class VariableLexer(StatementLexer):
 
     def lex(self):
-        name = self.statement[0]
-        values = self.statement[1:]
-        match = search_variable(name.value, ignore_errors=True)
-        if match.is_assign(allow_assign_mark=True):
-            self._valid_variable(name, values)
-        else:
-            self._invalid_variable(name, values)
-        if match.is_dict_assign(allow_assign_mark=True):
-            self._validate_dict_items(values)
-
-    def _valid_variable(self, name, values):
-        name.type = Token.VARIABLE
-        for token in values:
+        self.statement[0].type = Token.VARIABLE
+        for token in self.statement[1:]:
             token.type = Token.ARGUMENT
-
-    def _invalid_variable(self, name, values):
-        name.set_error("Invalid variable name '%s'." % name.value)
-        for token in values:
-            token.type = Token.COMMENT
-
-    def _validate_dict_items(self, values):
-        for token in values:
-            if not self._is_valid_dict_item(token.value):
-                token.set_error(
-                    "Invalid dictionary variable item '%s'. "
-                    "Items must use 'name=value' syntax or be dictionary "
-                    "variables themselves." % token.value
-                )
-
-    def _is_valid_dict_item(self, item):
-        name, value = split_from_equals(item)
-        return value is not None or is_dict_variable(item)
 
 
 class KeywordCallLexer(StatementLexer):
@@ -192,7 +163,6 @@ class IfStatementLexer(StatementLexer):
 
     def lex(self):
         self.statement[0].type = Token.IF
-        # TODO: Should we validate argument count here? Should have only one.
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
 
@@ -204,7 +174,6 @@ class ElseIfStatementLexer(StatementLexer):
 
     def lex(self):
         self.statement[0].type = Token.ELSE_IF
-        # TODO: Should we validate argument count here? Should have only one.
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
 
@@ -216,7 +185,6 @@ class ElseLexer(StatementLexer):
 
     def lex(self):
         self.statement[0].type = Token.ELSE
-        # TODO: Should we validate argument count here? Should have none.
         for token in self.statement[1:]:
             token.type = Token.ARGUMENT
 
@@ -224,9 +192,9 @@ class ElseLexer(StatementLexer):
 class EndLexer(StatementLexer):
 
     def handles(self, statement):
-        # TODO: Should accept any statement starting with 'END' but make statements
-        # with extra values errors. See also comments related to IF/ELSE above.
-        return len(statement) == 1 and statement[0].value == 'END'
+        return statement[0].value == 'END'
 
     def lex(self):
         self.statement[0].type = Token.END
+        for token in self.statement[1:]:
+            token.type = Token.ARGUMENT
