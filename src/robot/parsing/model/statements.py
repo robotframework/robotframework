@@ -430,7 +430,7 @@ class TemplateArguments(Statement):
 
 
 @Statement.register
-class ForLoopHeader(Statement):
+class ForHeader(Statement):
     type = Token.FOR
 
     @property

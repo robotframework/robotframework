@@ -72,7 +72,7 @@ class Keyword(model.Keyword):
 
 
 @py2to3
-class ForLoop(Keyword):
+class For(Keyword):
     """Represents a for loop in test data.
 
     Contains keywords in the loop body as child :attr:`keywords`.

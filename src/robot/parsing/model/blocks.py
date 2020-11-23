@@ -175,7 +175,7 @@ class If(Block):
             self.errors += ('IF has no closing END.',)
 
 
-class ForLoop(Block):
+class For(Block):
     _fields = ('header', 'body', 'end')
 
     def __init__(self, header, body=None, end=None, errors=()):
