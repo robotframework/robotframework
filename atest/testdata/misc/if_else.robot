@@ -1,11 +1,8 @@
-*** Settings ***
-Documentation    Created for testing if / else with listeners
-
 *** Test Cases ***
 If structure
-    IF  ${False}
+    IF    'IF' == 'WRONG'
         Fail  not going here
-    ELSE IF  ${True}
+    ELSE IF    'ELSE IF' == 'ELSE IF'
         Log   else if branch
     ELSE
         Fail  not going here
