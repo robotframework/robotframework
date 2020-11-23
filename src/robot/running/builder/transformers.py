@@ -315,7 +315,7 @@ class IfBuilder(NodeVisitor):
         for child_node in node.body:
             self.visit(child_node)
         if node.orelse:
-            self.visit(node.orelse)
+            self.block.orelse = IfBuilder().build(node.orelse)
         return self.block
 
     def _build_block(self, node):
@@ -339,15 +339,8 @@ class IfBuilder(NodeVisitor):
         self.block.keywords.create(args=node.args, lineno=node.lineno)
 
     def visit_If(self, node):
-        if node.type == Token.IF:
-            block = IfBuilder().build(node)
-            self.block.keywords.append(block)
-        else:
-            self.block.orelse = self._build_block(node)
-            orig_block = self.block
-            self.block = orig_block.orelse
-            self.generic_visit(node)
-            self.block = orig_block
+        block = IfBuilder().build(node)
+        self.block.keywords.append(block)
 
     def visit_ForLoop(self, node):
         loop = ForLoopBuilder().build(node)
