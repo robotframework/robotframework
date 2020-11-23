@@ -23,7 +23,7 @@ def start_keyword(name, attrs):
         assign = ''
     name = name + ' ' if name else ''
     if attrs['args']:
-        args = '%s ' % attrs['args']
+        args = '%s ' % [str(a) for a in attrs['args']]
     else:
         args = ''
     kw_type = 'KW' if attrs['type'] == 'Keyword' else attrs['type'].upper()
