@@ -93,9 +93,8 @@ class LibdocXmlWriter(object):
                                  'repr': unicode(arg)})
             if arg.name:
                 writer.element('name', arg.name)
-            if arg.types:
-                for type_repr in arg.types_reprs:
-                    writer.element('type', type_repr)
+            for type_repr in arg.types_reprs:
+                writer.element('type', type_repr)
             if arg.default is not arg.NOTSET:
                 writer.element('default', arg.default_repr)
             writer.end('arg')
