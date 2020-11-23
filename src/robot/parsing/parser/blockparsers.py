@@ -14,8 +14,7 @@
 #  limitations under the License.
 
 from ..lexer import Token
-from ..model import TestCase, Keyword, ForLoop
-from ..model.blocks import If
+from ..model import TestCase, Keyword, For, If
 
 
 class Parser(object):
@@ -37,7 +36,7 @@ class BlockParser(Parser):
 
     def __init__(self, model):
         Parser.__init__(self, model)
-        self.nested_parsers = {Token.FOR: ForLoopParser, Token.IF: IfParser}
+        self.nested_parsers = {Token.FOR: ForParser, Token.IF: IfParser}
 
     def handles(self, statement):
         return statement.type not in self.unhandled_tokens
@@ -78,10 +77,10 @@ class NestedBlockParser(BlockParser):
         return BlockParser.parse(self, statement)
 
 
-class ForLoopParser(NestedBlockParser):
+class ForParser(NestedBlockParser):
 
     def __init__(self, header):
-        NestedBlockParser.__init__(self, ForLoop(header))
+        NestedBlockParser.__init__(self, For(header))
 
 
 class IfParser(NestedBlockParser):

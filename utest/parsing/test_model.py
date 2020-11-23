@@ -6,10 +6,10 @@ import tempfile
 from robot.parsing import get_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
     Block, File, CommentSection, TestCaseSection, KeywordSection,
-    TestCase, Keyword, ForLoop, If, VariableSection
+    TestCase, Keyword, For, If, VariableSection
 )
 from robot.parsing.model.statements import (
-    Statement, TestCaseSectionHeader, KeywordSectionHeader, ForLoopHeader, End,
+    Statement, TestCaseSectionHeader, KeywordSectionHeader, ForHeader, End,
     TestCaseName, KeywordName, KeywordCall, Arguments, EmptyLine, Comment,
     IfHeader, ElseIfHeader, ElseHeader, VariableSectionHeader, Variable
 )
@@ -48,14 +48,14 @@ EXPECTED = File(sections=[
     ),
     TestCaseSection(
         header=TestCaseSectionHeader([
-            Token('TESTCASE_HEADER', '*** Test Cases ***', 2, 0),
+            Token('TESTCASE HEADER', '*** Test Cases ***', 2, 0),
             Token('EOL', '\n', 2, 18)
         ]),
         body=[
             EmptyLine([Token('EOL', '\n', 3, 0)]),
             TestCase(
                 header=TestCaseName([
-                    Token('TESTCASE_NAME', 'Example', 4, 0),
+                    Token('TESTCASE NAME', 'Example', 4, 0),
                     Token('EOL', '\n', 4, 7)
                 ]),
                 body=[
@@ -84,7 +84,7 @@ EXPECTED = File(sections=[
     ),
     KeywordSection(
         header=KeywordSectionHeader([
-            Token('KEYWORD_HEADER', '*** Keywords ***', 10, 0),
+            Token('KEYWORD HEADER', '*** Keywords ***', 10, 0),
             Token('EOL', '\n', 10, 16)
         ]),
         body=[
@@ -96,7 +96,7 @@ EXPECTED = File(sections=[
             ]),
             Keyword(
                 header=KeywordName([
-                    Token('KEYWORD_NAME', 'Keyword', 12, 0),
+                    Token('KEYWORD NAME', 'Keyword', 12, 0),
                     Token('EOL', '\n', 12, 7)
                 ]),
                 body=[
@@ -254,8 +254,8 @@ Example
     END
 ''', data_only=True)
         loop = model.sections[0].body[0].body[0]
-        expected = ForLoop(
-            header=ForLoopHeader([
+        expected = For(
+            header=ForHeader([
                 Token(Token.FOR, 'FOR', 3, 4),
                 Token(Token.VARIABLE, '${x}', 3, 11),
                 Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
@@ -284,8 +284,8 @@ Example
     END
 ''', data_only=True)
         loop = model.sections[0].body[0].body[0]
-        expected = ForLoop(
-            header=ForLoopHeader([
+        expected = For(
+            header=ForHeader([
                 Token(Token.FOR, 'FOR', 3, 4),
                 Token(Token.VARIABLE, '${x}', 3, 11),
                 Token(Token.FOR_SEPARATOR, 'IN', 3, 19),
@@ -293,8 +293,8 @@ Example
                 Token(Token.ARGUMENT, '2', 3, 30),
             ]),
             body=[
-                ForLoop(
-                    header=ForLoopHeader([
+                For(
+                    header=ForHeader([
                         Token(Token.FOR, 'FOR', 4, 8),
                         Token(Token.VARIABLE, '${y}', 4, 15),
                         Token(Token.FOR_SEPARATOR, 'IN RANGE', 4, 23),
@@ -325,8 +325,8 @@ Example
     FOR    wrong    IN
 ''', data_only=True)
         loop1, loop2 = model.sections[0].body[0].body
-        expected1 = ForLoop(
-            header=ForLoopHeader(
+        expected1 = For(
+            header=ForHeader(
                 tokens=[Token(Token.FOR, 'FOR', 3, 4)],
                 errors=('FOR loop has no loop variables.',
                         "FOR loop has no 'IN' or other valid separator."),
@@ -338,8 +338,8 @@ Example
             ),
             errors=('FOR loop has empty body.',)
         )
-        expected2 = ForLoop(
-            header=ForLoopHeader(
+        expected2 = For(
+            header=ForHeader(
                 tokens=[Token(Token.FOR, 'FOR', 6, 4),
                         Token(Token.VARIABLE, 'wrong', 6, 11),
                         Token(Token.FOR_SEPARATOR, 'IN', 6, 20)],
@@ -664,9 +664,9 @@ class TestModelVisitors(unittest.TestCase):
                      ['File', 'CommentSection', 'TestCaseSection', 'TestCase',
                       'KeywordSection', 'Keyword'])
         assert_equal(visitor.statements,
-                     ['EOL', 'TESTCASE_HEADER', 'EOL', 'TESTCASE_NAME',
-                      'COMMENT', 'KEYWORD', 'EOL', 'EOL', 'KEYWORD_HEADER',
-                      'COMMENT', 'KEYWORD_NAME', 'ARGUMENTS', 'KEYWORD'])
+                     ['EOL', 'TESTCASE HEADER', 'EOL', 'TESTCASE NAME',
+                      'COMMENT', 'KEYWORD', 'EOL', 'EOL', 'KEYWORD HEADER',
+                      'COMMENT', 'KEYWORD NAME', 'ARGUMENTS', 'KEYWORD'])
 
     def test_ast_NodeTransformer(self):
 
@@ -678,7 +678,7 @@ class TestModelVisitors(unittest.TestCase):
             def visit_TestCaseSection(self, node):
                 self.generic_visit(node)
                 node.body.append(
-                    TestCase(TestCaseName([Token('TESTCASE_NAME', 'Added'),
+                    TestCase(TestCaseName([Token('TESTCASE NAME', 'Added'),
                                            Token('EOL', '\n')]))
                 )
                 return node
@@ -708,16 +708,16 @@ Remove
         expected = File(sections=[
             TestCaseSection(
                 header=TestCaseSectionHeader([
-                    Token('TESTCASE_HEADER', '*** Test Cases ***', 1, 0),
+                    Token('TESTCASE HEADER', '*** Test Cases ***', 1, 0),
                     Token('EOL', '\n', 1, 18)
                 ]),
                 body=[
                     TestCase(TestCaseName([
-                        Token('TESTCASE_NAME', 'EXAMPLE', 2, 0),
+                        Token('TESTCASE NAME', 'EXAMPLE', 2, 0),
                         Token('EOL', '\n', 2, 7)
                     ])),
                     TestCase(TestCaseName([
-                        Token('TESTCASE_NAME', 'Added'),
+                        Token('TESTCASE NAME', 'Added'),
                         Token('EOL', '\n')
                     ]))
                 ]
@@ -755,12 +755,12 @@ Example
         expected = File(sections=[
             TestCaseSection(
                 header=TestCaseSectionHeader([
-                    Token('TESTCASE_HEADER', '*** TEST CASES ***', 1, 0),
+                    Token('TESTCASE HEADER', '*** TEST CASES ***', 1, 0),
                     Token('EOL', '\n', 1, 18)
                 ]),
                 body=[
                     TestCase(TestCaseName([
-                        Token('TESTCASE_NAME', 'EXAMPLE', 2, 0),
+                        Token('TESTCASE NAME', 'EXAMPLE', 2, 0),
                         Token('EOL', '\n', 2, 7)
                     ])),
                 ]
