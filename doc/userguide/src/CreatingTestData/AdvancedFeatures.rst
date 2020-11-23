@@ -739,20 +739,18 @@ to make the syntax easier to read.
        Repeat Keyword    42 times    My Keyword
        Repeat Keyword    ${var}    Another Keyword    argument
 
-.. _if block:
+.. _if expression:
 
-Conditional execution with IF and other ways
---------------------------------------------
+Conditional execution with if expressions
+-----------------------------------------
 
 In general, it is not recommended to have conditional logic in test
 cases, or even in user keywords, because it can make them hard to
 understand and maintain. Instead, this kind of logic should be in test
 libraries, where it can be implemented using natural programming
 language constructs. However, conditional logic can be useful at
-times and from Robot Framework version 4.0 onwards IF block is included
+times and from Robot Framework version 4.0 onwards if expressions are included
 in the syntax.
-
-Conditional execution can be done with IF block.
 
 .. sourcecode:: robotframework
 

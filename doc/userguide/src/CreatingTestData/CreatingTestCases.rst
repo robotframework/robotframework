@@ -904,10 +904,10 @@ all the looped elements even if there are failures.
            1st arg    ${index}
        END
 
-Templates with IF block
-~~~~~~~~~~~~~~~~~~~~~~~~
+Templates with if expression
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`if block`_ can be also used together with templates.
+`if expression`_ can be also used together with templates.
 This can be useful for example when used together with for loops to
 filter executed arguments.
 
