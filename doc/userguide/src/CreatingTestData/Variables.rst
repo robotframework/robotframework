@@ -1419,6 +1419,9 @@ or `${JANE HOME}`, depending on if :name:`Get Name` returns
        ${name} =    Get Name
        Do X    ${${name} HOME}
 
+
+.. _inline Python evaluation:
+
 Inline Python evaluation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

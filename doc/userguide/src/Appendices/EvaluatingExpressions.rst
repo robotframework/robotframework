@@ -3,8 +3,8 @@
 Evaluating expressions
 ======================
 
-Constructs such as if expressions and inline Python evaluation and
-several BuiltIn keywords, accept an expression that is evaluated
+Constructs such as `if expression`_ and `inline Python evaluation`_ and
+several BuiltIn_ keywords, accept an expression that is evaluated
 in Python.
 
 Evaluation namespace
