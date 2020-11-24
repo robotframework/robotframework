@@ -3,7 +3,7 @@
 Evaluating expressions
 ======================
 
-Constructs such as if expressions and inline evaluation and
+Constructs such as if expressions and inline Python evaluation and
 several BuiltIn keywords, accept an expression that is evaluated
 in Python.
 
