@@ -85,9 +85,8 @@ class SpecDocBuilder(object):
             default_elem = arg.find('default')
             if default_elem is not None:
                 spec.defaults[name] = default_elem.text or ''
-            type_elem = arg.find('type')
-            if type_elem is not None:
-                if not spec.types:
-                    spec.types = {}
-                spec.types[name] = type_elem.text
+            type_elems = arg.findall('type')
+            if not spec.types:
+                spec.types = {}
+            spec.types[name] = tuple(t.text for t in type_elems)
         return spec

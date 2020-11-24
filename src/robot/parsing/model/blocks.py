@@ -16,7 +16,6 @@
 import ast
 
 from robot.utils import file_writer, is_pathlike, is_string
-from robot.variables import is_scalar_assign
 
 from .visitor import ModelVisitor
 from ..lexer import Token
@@ -24,7 +23,8 @@ from ..lexer import Token
 
 class Block(ast.AST):
     _fields = ()
-    _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset')
+    _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset', 'errors')
+    errors = ()
 
     @property
     def lineno(self):
@@ -46,6 +46,12 @@ class Block(ast.AST):
         statement = LastStatementFinder.find_from(self)
         return statement.end_col_offset if statement else -1
 
+    def validate_model(self):
+        ModelValidator().visit(self)
+
+    def validate(self):
+        pass
+
 
 class File(Block):
     _fields = ('sections',)
@@ -54,9 +60,6 @@ class File(Block):
     def __init__(self, sections=None, source=None):
         self.sections = sections or []
         self.source = source
-
-    def validate(self):
-        ModelValidator().visit(self)
 
     def save(self, output=None):
         """Save model to the given ``output`` or to the original source file.
@@ -129,14 +132,13 @@ class Keyword(Block):
 
 class If(Block):
     _fields = ('header', 'body', 'orelse', 'end')
-    _attributes = Block._attributes + ('errors',)
 
-    def __init__(self, header, body=None, orelse=None, end=None, errors=None):
+    def __init__(self, header, body=None, orelse=None, end=None, errors=()):
         self.header = header
         self.body = body or []
         self.orelse = orelse
         self.end = end
-        self.errors = errors or []
+        self.errors = errors
 
     @property
     def type(self):
@@ -144,33 +146,17 @@ class If(Block):
 
     @property
     def condition(self):
-        condition = self.header.condition
-        return condition[0] if condition else None
+        return self.header.condition
 
     def validate(self):
-        self._validate_header()
         self._validate_body()
         if self.type == Token.IF:
             self._validate_structure()
             self._validate_end()
 
-    def _validate_header(self):
-        length = len(self.header.condition)
-        error = None
-        if self.type in (Token.IF, Token.ELSE_IF):
-            if length == 0:
-                error = '%s has no condition.' % self.type
-            elif length > 1:
-                error = '%s has more than one condition.' % self.type
-        else:
-            if length > 0:
-                error = 'ELSE has condition.'
-        if error:
-            self.errors.append(error)
-
     def _validate_body(self):
         if not self.body:
-            self.errors.append('%s has empty body.' % self.type)
+            self.errors += ('%s has empty body.' % self.type,)
 
     def _validate_structure(self):
         orelse = self.orelse
@@ -178,26 +164,25 @@ class If(Block):
         while orelse:
             if else_seen:
                 if orelse.type == Token.ELSE:
-                    self.errors.append('Multiple ELSE branches.')
+                    self.errors += ('Multiple ELSE branches.',)
                 else:
-                    self.errors.append('ELSE IF after ELSE.')
+                    self.errors += ('ELSE IF after ELSE.',)
             else_seen = else_seen or orelse.type == Token.ELSE
             orelse = orelse.orelse
 
     def _validate_end(self):
         if not self.end:
-            self.errors.append('IF has no closing END.')
+            self.errors += ('IF has no closing END.',)
 
 
-class ForLoop(Block):
+class For(Block):
     _fields = ('header', 'body', 'end')
-    _attributes = Block._attributes + ('errors',)
 
-    def __init__(self, header, body=None, end=None, errors=None):
+    def __init__(self, header, body=None, end=None, errors=()):
         self.header = header
         self.body = body or []
         self.end = end
-        self.errors = errors or []
+        self.errors = errors
 
     @property
     def variables(self):
@@ -212,23 +197,10 @@ class ForLoop(Block):
         return self.header.flavor
 
     def validate(self):
-        if not self.variables:
-            self._add_error('no loop variables')
-        if not self.flavor:
-            self._add_error("no 'IN' or other valid separator")
-        else:
-            for var in self.variables:
-                if not is_scalar_assign(var):
-                    self._add_error("invalid loop variable '%s'" % var)
-            if not self.values:
-                self._add_error('no loop values')
         if not self.body:
-            self._add_error('empty body')
+            self.errors += ('FOR loop has empty body.',)
         if not self.end:
-            self._add_error("no closing END")
-
-    def _add_error(self, error):
-        self.errors.append('FOR loop has %s.' % error)
+            self.errors += ('FOR loop has no closing END.',)
 
 
 class ModelWriter(ModelVisitor):
@@ -255,11 +227,11 @@ class ModelWriter(ModelVisitor):
 
 class ModelValidator(ModelVisitor):
 
-    def visit_ForLoop(self, node):
+    def visit_Block(self, node):
         node.validate()
         ModelVisitor.generic_visit(self, node)
 
-    def visit_If(self, node):
+    def visit_Statement(self, node):
         node.validate()
         ModelVisitor.generic_visit(self, node)
 

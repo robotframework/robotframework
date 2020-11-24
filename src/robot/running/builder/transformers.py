@@ -18,7 +18,7 @@ from ast import NodeVisitor
 from robot.parsing import Token
 from robot.variables import VariableIterator
 
-from ..model import ForLoop, If
+from ..model import For, If
 from .testsettings import TestSettings
 
 
@@ -97,8 +97,10 @@ class SuiteBuilder(NodeVisitor):
         pass
 
     def visit_Variable(self, node):
-        self.suite.resource.variables.create(name=node.name, value=node.value,
-                                             lineno=node.lineno, error=node.error)
+        self.suite.resource.variables.create(name=node.name,
+                                             value=node.value,
+                                             lineno=node.lineno,
+                                             error=format_error(node.errors))
 
     def visit_TestCase(self, node):
         TestCaseBuilder(self.suite, self.test_defaults).visit(node)
@@ -129,8 +131,11 @@ class ResourceBuilder(NodeVisitor):
                                      args=node.args, lineno=node.lineno)
 
     def visit_Variable(self, node):
-        self.resource.variables.create(name=node.name, value=node.value,
-                                       lineno=node.lineno, error=node.error)
+        self.resource.variables.create(name=node.name,
+                                       value=node.value,
+                                       lineno=node.lineno,
+                                       error=format_error(node.errors))
+
     def visit_Keyword(self, node):
         KeywordBuilder(self.resource).visit(node)
 
@@ -181,8 +186,8 @@ class TestCaseBuilder(NodeVisitor):
         temp.append(after)
         return ''.join(temp), ()
 
-    def visit_ForLoop(self, node):
-        loop = ForLoopBuilder().build(node)
+    def visit_For(self, node):
+        loop = ForBuilder().build(node)
         self.test.keywords.append(loop)
 
     def visit_If(self, node):
@@ -257,8 +262,8 @@ class KeywordBuilder(NodeVisitor):
         self.kw.keywords.create(name=node.keyword, args=node.args,
                                 assign=node.assign, lineno=node.lineno)
 
-    def visit_ForLoop(self, node):
-        loop = ForLoopBuilder().build(node)
+    def visit_For(self, node):
+        loop = ForBuilder().build(node)
         self.kw.keywords.append(loop)
 
     def visit_If(self, node):
@@ -266,25 +271,23 @@ class KeywordBuilder(NodeVisitor):
         self.kw.keywords.append(ifblock)
 
 
-class ForLoopBuilder(NodeVisitor):
+class ForBuilder(NodeVisitor):
 
     def __init__(self):
         self.loop = None
 
     def build(self, node):
-        self.loop = ForLoop(node.variables, node.flavor, node.values,
-                            node.lineno, error=self._get_error(node))
+        self.loop = For(node.variables, node.flavor, node.values,
+                        node.lineno, error=self._get_error(node))
         for child_node in node.body:
             self.visit(child_node)
         return self.loop
 
     def _get_error(self, node):
-        errors = node.errors
-        if not errors:
-            return None
-        if len(errors) == 1:
-            return errors[0]
-        return 'Multiple errors:\n- ' + '\n- '.join(errors)
+        errors = node.header.errors + node.errors
+        if node.end:
+            errors += node.end.errors
+        return format_error(errors)
 
     def visit_KeywordCall(self, node):
         self.loop.keywords.create(name=node.keyword, args=node.args,
@@ -293,8 +296,8 @@ class ForLoopBuilder(NodeVisitor):
     def visit_TemplateArguments(self, node):
         self.loop.keywords.create(args=node.args, lineno=node.lineno)
 
-    def visit_ForLoop(self, node):
-        loop = ForLoopBuilder().build(node)
+    def visit_For(self, node):
+        loop = ForBuilder().build(node)
         self.loop.keywords.append(loop)
 
     def visit_If(self, node):
@@ -308,27 +311,29 @@ class IfBuilder(NodeVisitor):
         self.block = None
 
     def build(self, node):
-        self.block = self._build_block(node)
+        self.block = If(node.condition, lineno=node.lineno,
+                        error=self._get_error(node), type=self._get_type(node))
         for child_node in node.body:
             self.visit(child_node)
         if node.orelse:
-            self.visit(node.orelse)
+            self.block.orelse = IfBuilder().build(node.orelse)
         return self.block
 
-    def _build_block(self, node):
-        return If(node.condition, lineno=node.lineno,
-                  error=self._get_error(node), type=node.type)
-
     def _get_error(self, node):
-        errors = []
-        while node:
-            errors.extend(node.errors)
-            node = node.orelse
-        if not errors:
-            return None
-        if len(errors) == 1:
-            return errors[0]
-        return 'Multiple errors:\n- ' + '\n- '.join(errors)
+        return format_error(self._get_errors(node))
+
+    def _get_errors(self, node):
+        errors = node.header.errors + node.errors
+        if node.orelse:
+            errors += self._get_errors(node.orelse)
+        if node.end:
+            errors += node.end.errors
+        return errors
+
+    def _get_type(self, node):
+        return {Token.IF: If.IF_TYPE,
+                Token.ELSE_IF: If.ELSE_IF_TYPE,
+                Token.ELSE: If.ELSE_TYPE}[node.type]
 
     def visit_KeywordCall(self, node):
         self.block.keywords.create(name=node.keyword, args=node.args,
@@ -338,16 +343,17 @@ class IfBuilder(NodeVisitor):
         self.block.keywords.create(args=node.args, lineno=node.lineno)
 
     def visit_If(self, node):
-        if node.type == Token.IF:
-            block = IfBuilder().build(node)
-            self.block.keywords.append(block)
-        else:
-            self.block.orelse = self._build_block(node)
-            orig_block = self.block
-            self.block = orig_block.orelse
-            self.generic_visit(node)
-            self.block = orig_block
+        block = IfBuilder().build(node)
+        self.block.keywords.append(block)
 
-    def visit_ForLoop(self, node):
-        loop = ForLoopBuilder().build(node)
+    def visit_For(self, node):
+        loop = ForBuilder().build(node)
         self.block.keywords.append(loop)
+
+
+def format_error(errors):
+    if not errors:
+        return None
+    if len(errors) == 1:
+        return errors[0]
+    return '\n- '.join(('Multiple errors:',) + errors)

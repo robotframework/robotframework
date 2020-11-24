@@ -871,51 +871,6 @@ ${LONG}=         First part    ${2} part
         ]
         self._verify(data, expected)
 
-    def test_invalid(self):
-        data = '''\
-*** Variables ***
-Ooops     I did it again
-${}       invalid
-${x}==    invalid
-${not     closed
-'''
-        # Values are marked as COMMENTs and ignored with `data_only=True`.
-        expected = [
-            (T.VARIABLE_HEADER, '*** Variables ***', 1, 0),
-            (T.EOS, '', 1, 17),
-            (T.ERROR, 'Ooops', 2, 0, "Invalid variable name 'Ooops'."),
-            (T.EOS, '', 2, 5),
-            (T.ERROR, '${}', 3, 0, "Invalid variable name '${}'."),
-            (T.EOS, '', 3, 3),
-            (T.ERROR, '${x}==', 4, 0, "Invalid variable name '${x}=='."),
-            (T.EOS, '', 4, 6),
-            (T.ERROR, '${not', 5, 0, "Invalid variable name '${not'."),
-            (T.EOS, '', 5, 5)
-        ]
-        self._verify(data, expected)
-
-    def test_invalid_dict_variable_items(self):
-        data = '''\
-*** Variables ***
-&{DICT}    this=good    this bad    good=again    bad\=idea    &{good}
-'''
-        expected = [
-            (T.VARIABLE_HEADER, '*** Variables ***', 1, 0),
-            (T.EOS, '', 1, 17),
-            (T.VARIABLE, '&{DICT}', 2, 0),
-            (T.ARGUMENT, 'this=good', 2, 11),
-            (T.ERROR, 'this bad', 2, 24,
-             "Invalid dictionary variable item 'this bad'. Items must use "
-             "'name=value' syntax or be dictionary variables themselves."),
-            (T.ARGUMENT, 'good=again', 2, 36),
-            (T.ERROR, 'bad\\=idea', 2, 50,
-             "Invalid dictionary variable item 'bad\\=idea'. Items must use "
-             "'name=value' syntax or be dictionary variables themselves."),
-            (T.ARGUMENT, '&{good}', 2, 63),
-            (T.EOS, '', 2, 70)
-        ]
-        self._verify(data, expected)
-
     def _verify(self, data, expected):
         assert_tokens(data, expected, get_tokens, data_only=True)
         assert_tokens(data, expected, get_resource_tokens, data_only=True)

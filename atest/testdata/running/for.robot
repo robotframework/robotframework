@@ -324,6 +324,12 @@ No END
     FOR    ${var}    IN    one    two
     Fail    Not executed
 
+Invalid END
+    [Documentation]    FAIL    END does not accept arguments.
+    FOR    ${var}    IN    one    two
+        Fail    Not executed
+    END    ooops
+
 No loop values
     [Documentation]    FAIL    FOR loop has no loop values.
     FOR    ${var}    IN
