@@ -255,7 +255,7 @@ avoid the need to repeat them every time tests are run or Rebot used.
 
 .. sourcecode:: bash
 
-   export ROBOT_OPTIONS="--critical regression --tagdoc 'mytag:Example doc with spaces'"
+   export ROBOT_OPTIONS="--outputdir results --tagdoc 'mytag:Example doc with spaces'"
    robot tests.robot
    export REBOT_OPTIONS="--reportbackground green:yellow:red"
    rebot --name example output.xml
@@ -282,8 +282,7 @@ output from executing a simple test suite with only two test cases::
    Error message is displayed here
    ==============================================================================
    Example test suite                                                    | FAIL |
-   2 critical tests, 1 passed, 1 failed
-   2 tests total, 1 passed, 1 failed
+   2 tests, 1 passed, 1 failed
    ==============================================================================
    Output:  /path/to/output.xml
    Report:  /path/to/report.html
@@ -311,7 +310,7 @@ Return codes
 
 Runner scripts communicate the overall test execution status to the
 system running them using return codes. When the execution starts
-successfully and no `critical test`_ fail, the return code is zero.
+successfully and no tests fail, the return code is zero.
 All possible return codes are explained in the table below.
 
 .. table:: Possible return codes
@@ -320,9 +319,9 @@ All possible return codes are explained in the table below.
    ========  ==========================================
       RC                    Explanation
    ========  ==========================================
-   0         All critical tests passed.
-   1-249     Returned number of critical tests failed.
-   250       250 or more critical failures.
+   0         All tests passed.
+   1-249     Returned number of tests failed.
+   250       250 or more failures.
    251       Help or version information printed.
    252       Invalid test data or command line options.
    253       Test execution stopped by user.
@@ -336,7 +335,7 @@ variable `$?`, and in Windows it is in `%ERRORLEVEL%`
 variable. If you use some external tool for running tests, consult its
 documentation for how to get the return code.
 
-The return code can be set to 0 even if there are critical failures using
+The return code can be set to 0 even if there are failures using
 the :option:`--NoStatusRC` command line option. This might be useful, for
 example, in continuous integration servers where post-processing of results
 is needed before the overall status of test execution can be determined.

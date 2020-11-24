@@ -156,8 +156,6 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  |   unresolved. New in RF 3.2.                                   |
    |                  |                  | * `doc`: Test documentation.                                   |
    |                  |                  | * `tags`: Test tags as a list of strings.                      |
-   |                  |                  | * `critical`: `yes` or `no` depending is test considered       |
-   |                  |                  |   critical or not.                                             |
    |                  |                  | * `template`: The name of the template used for the test.      |
    |                  |                  |   An empty string if the test not templated.                   |
    |                  |                  | * `lineno`: Line number where the test starts in the source    |
@@ -173,7 +171,6 @@ it. If that is needed, `listener version 3`_ can be used instead.
    |                  |                  | * `originalname`: Same as in `start_test`.                     |
    |                  |                  | * `doc`: Same as in `start_test`.                              |
    |                  |                  | * `tags`: Same as in `start_test`.                             |
-   |                  |                  | * `critical`: Same as in `start_test`.                         |
    |                  |                  | * `template`: Same as in `start_test`.                         |
    |                  |                  | * `lineno`: Same as in `start_test`.                           |
    |                  |                  | * `starttime`: Same as in `start_test`.                        |

@@ -1864,11 +1864,10 @@ contain the following:
     See the `Stopping test execution`_ section below for more information,
     including how to create a custom exception that has this same behavior.
 
-
 `SkipExecution`
     Mark the executed test or task skipped.
 
-    FIXME! Link to skip section once that's written.
+    See the `Skipping tests`_ section for more information about the skip status.
 
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html
 
