@@ -150,5 +150,5 @@ jobs:
           description: "Link to test report."
           context: at-results-${{ matrix.python-version }}-${{ matrix.os }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.STATUS_UPLOAD_TOKEN }}
         if: always() && job.status == 'failure'
