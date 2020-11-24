@@ -22,6 +22,8 @@ Examples:
 
 .. sourcecode:: robotframework
 
+  *** Keywords ***
+  Example
     Should Be True  len('${result}') > 3
     IF  os.sep == '/'
         Non-Windows Keyword
@@ -46,6 +48,8 @@ Examples:
 
 .. sourcecode:: robotframework
 
+  *** Keywords ***
+  Example
     Should Be True  ${rc} < 10  Return code greater than 10
     IF  '${status}' == 'PASS'
        Log  Passed
@@ -62,6 +66,8 @@ Examples:
 
 .. sourcecode:: robotframework
 
+  *** Keywords ***
+  Example
     Should Be True  $rc < 10  Return code greater than 10
     IF  $status == 'PASS'
         Log  Passed

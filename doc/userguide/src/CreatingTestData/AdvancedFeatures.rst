@@ -761,7 +761,9 @@ in the syntax.
        END
 
 Here the keyword `Some keyword` is executed if the variable `${rc}` is 0.
-Conditions work the same way as in The BuiltIn_ keywords :name:`Run Keyword If`.
+Please see `Evaluating expressions`_ for more details about how conditions work.
+
+.. note:: If expressions is are new in Robot Framework 4.0.
 
 Also `ELSE` and conditional `ELSE IF` can be used.
 
