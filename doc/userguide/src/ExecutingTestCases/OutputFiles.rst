@@ -85,6 +85,12 @@ log files are always created and their default name is
 
    An example of a log file with keyword details visible
 
+.. figure:: src/ExecutingTestCases/log_skipped.png
+   :target: src/ExecutingTestCases/log_skipped.html
+   :width: 500
+
+   An example of a log file with skipped and passed tests
+
 Report file
 ~~~~~~~~~~~
 
