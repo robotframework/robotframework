@@ -151,6 +151,17 @@ Verify Arguments Structure
     END
     Should Be True    len($arg_elems) == len($expected)
 
+Get Element List Texts
+    [Arguments]    ${source}    ${xpath}
+    ${elem}=    Get Elements    ${source}    ${xpath}
+    Return From Keyword If    len($elem) == 0    @{EMPTY}
+    ${texts}    Create List
+    FOR    ${element}    IN    @{elem}
+        ${text}    Get Element Text    ${element}
+        Append To List    ${texts}    ${text}
+    END
+    [Return]    ${texts}
+
 Get Element Optional Text
     [Arguments]    ${source}    ${xpath}
     ${elem}=    Get Elements    ${source}    ${xpath}
