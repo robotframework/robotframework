@@ -24,6 +24,7 @@
     }
 }
 
+span.or,
 body {
     background: var(--background-color);
     color: var(--text-color);
@@ -638,6 +639,11 @@ span.or {
     background: var(--highlighted-background-color);
     color: var(--highlighted-color);
 }
+
+.data-type {
+    font-style: italic;
+}
+
 .no-match {
     color: var(--less-important-text-color) !important;
 }

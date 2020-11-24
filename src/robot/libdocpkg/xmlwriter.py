@@ -26,6 +26,8 @@ class LibdocXmlWriter(object):
         self._write_start(libdoc, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
+        self._write_data_types(
+            sorted(libdoc.data_types, key=lambda t: t.name), writer)
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer):
@@ -106,6 +108,30 @@ class LibdocXmlWriter(object):
             attrs['deprecated'] = 'true'
         self._add_source_info(attrs, kw, writer.output, lib_source)
         return attrs
+
+    def _write_data_types(self, data_types, writer):
+        writer.start('data_types')
+        for dt in data_types:
+            attrs = {'name': dt.name, 'super': dt.super}
+            writer.start('dt', attrs)
+            writer.element('doc', dt.doc)
+            if dt.super == 'Enum':
+                writer.start('members')
+                for member in dt.members:
+                    writer.element('member', attrs=member)
+                writer.end('members')
+            elif dt.super == 'TypedDict':
+                writer.start('items')
+                for key, value in dt.items.items():
+                    writer.element(
+                        'item',
+                        attrs={
+                            'key': key,
+                            'value': value,
+                            'required': 'true' if key in dt.required_keys else 'false'})
+                writer.end('items')
+            writer.end('dt')
+        writer.end('data_types')
 
     def _write_end(self, writer):
         writer.end('keywordspec')

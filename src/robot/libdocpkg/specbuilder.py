@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.utils import ET, ETSource
 from robot.running.arguments import ArgumentSpec, ArgInfo
 
-from .model import LibraryDoc, KeywordDoc
+from .model import LibraryDoc, KeywordDoc, EnumDoc, TypedDictDoc
 
 
 class SpecDocBuilder(object):
@@ -36,6 +36,7 @@ class SpecDocBuilder(object):
                             lineno=int(spec.get('lineno', -1)))
         libdoc.inits = self._create_keywords(spec, 'inits/init')
         libdoc.keywords = self._create_keywords(spec, 'keywords/kw')
+        libdoc.data_types = self._create_data_types(spec)
         return libdoc
 
     def _parse_spec(self, path):
@@ -90,3 +91,32 @@ class SpecDocBuilder(object):
                 spec.types = {}
             spec.types[name] = tuple(t.text for t in type_elems)
         return spec
+
+    def _create_data_types(self, spec):
+        return [self._create_data_type(dt) for dt in spec.findall('data_types/dt')]
+
+    def _create_data_type(self, dt):
+        args = dict()
+        args['name'] = dt.get('name')
+        args['super'] = dt.get('super')
+        args['doc'] = dt.find('doc').text or ''
+        if args['super'] == 'Enum':
+            args['members'] = [
+                {'name': member.get('name'), 'value': member.get('value')}
+                for member in dt.findall('members/member')]
+            return EnumDoc(**args)
+        if args['super'] == 'TypedDict':
+            args['items'] = dict()
+            args['required_keys'] = list()
+            args['optional_keys'] = list()
+            for item in dt.findall('items/item'):
+                key = item.get('key')
+                args['items'][key] = item.get('value')
+                if item.get('required') == 'true':
+                    args['required_keys'].append(key)
+                else:
+                    args['optional_keys'].append(key)
+            return TypedDictDoc(**args)
+        raise TypeError("Data type '%s' has the wrong 'type' attribute."
+                        "Valid are 'Enum' or 'TypedDict' but got %s"
+                        % (args['name'], args['super']))
