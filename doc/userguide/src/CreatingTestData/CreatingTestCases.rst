@@ -601,10 +601,11 @@ least for the following purposes:
 - Statistics__ about test cases (total, passed, failed  are
   automatically collected based on tags).
 - With tags, you can `include or exclude`__ test cases to be executed.
-- With tags, you can specify which test cases are considered `critical`_.
+- With tags, you can specify which test cases should be `skipped`__.
 
 __ `Configuring statistics`_
 __ `By tag names`_
+__ `Skipping tests`_
 
 In this section it is only explained how to set tags for test
 cases, and different ways to do it are listed below. These

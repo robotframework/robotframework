@@ -216,58 +216,13 @@ Rebot fails in these cases, but it has a separate
 In practice this option works the same way as :option:`--RunEmptySuite` when
 running tests.
 
-Setting criticality
--------------------
+Old criticality functionality
+-----------------------------
 
-The final result of test execution is determined based on
-critical tests. If a single critical test fails, the whole test run is
-considered failed. On the other hand, non-critical test cases can
-fail and the overall status is still considered passed.
+The concept of criticality was removed in Robot Framework 4.0.
+How to achieve similar functionality with the new skip status is explained
+in `Skipping tests`_.
 
-All test cases are considered critical by default, but this can be changed
-with the :option:`--critical (-c)` and :option:`--noncritical (-n)`
-options. These options specify which tests are critical
-based on tags_, similarly as :option:`--include` and
-:option:`--exclude` are used to `select tests by tags`__.
-If only :option:`--critical` is used, test cases with a
-matching tag are critical. If only :option:`--noncritical` is used,
-tests without a matching tag are critical. Finally, if both are
-used, only test with a critical tag but without a non-critical tag are
-critical.
-
-Both :option:`--critical` and :option:`--noncritical` also support same `tag
-patterns`_ as :option:`--include` and :option:`--exclude`. This means that pattern
-matching is case, space, and underscore insensitive, `*` and `?`
-are supported as wildcards, and `AND`, `OR` and `NOT`
-operators can be used to create combined patterns.
-
-::
-
-  --critical regression
-  --noncritical not_ready
-  --critical iter-* --critical req-* --noncritical req-6??
-
-The most common use case for setting criticality is having test cases
-that are not ready or test features still under development in the
-test execution. These tests could also be excluded from the
-test execution altogether with the :option:`--exclude` option, but
-including them as non-critical tests enables you to see when
-they start to pass.
-
-Criticality set when tests are
-executed is not stored anywhere. If you want to keep same criticality
-when `post-processing outputs`_ with Rebot, you need to
-use :option:`--critical` and/or :option:`--noncritical` also with it::
-
-  # Use rebot to create new log and report from the output created during execution
-  robot --critical regression --outputdir all tests.robot
-  rebot --name Smoke --include smoke --critical regression --outputdir smoke all/output.xml
-
-  # No need to use --critical/--noncritical when no log or report is created
-  robot --log NONE --report NONE tests.robot
-  rebot --critical feature1 output.xml
-
-__ `By tag names`_
 
 Setting metadata
 ----------------
@@ -630,9 +585,9 @@ It supports the following case-insensitive values:
     the default.
 
 `dotted`
-    Only show `.` for passed test, `f` for failed non-critical tests, `F`
-    for failed critical tests, and `x` for tests which are skipped because
-    `test execution exit`__. Failed critical tests are listed separately
+    Only show `.` for passed test, `F` for failed tests, `s` for skipped
+    tests and `x` for tests which are skipped because
+    `test execution exit`__. Failed tests are listed separately
     after execution. This output type makes it easy to see are there any
     failures during execution even if there would be a lot of tests.
 
