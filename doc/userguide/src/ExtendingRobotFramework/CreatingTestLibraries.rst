@@ -1867,11 +1867,52 @@ contain the following:
 `SkipExecution`
     Mark the executed test or task skipped.
 
-    See the `Skipping tests`_ section for more information about the skip status.
+    See the `Skipping tests with keywords`_ section below for more information.
 
 __ https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html
 
 .. note:: All these exceptions are new in Robot Framework 4.0.
+
+
+Skipping tests with keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to `skip tests`__ with a library keyword. The easiest way to
+do that is using the provided__ `robot.api.SkipExecution` exception:
+
+.. sourcecode:: python
+
+    from robot.api import SkipExecution
+
+
+    def skipping_keyword():
+        if test_should_be_skipped():
+            raise SkipExecution('Cannot proceed, skipping test.')
+        ...
+
+An alternative is creating a custom exception that has a special
+`ROBOT_SKIP_EXECUTION` attribute set to a `True` value.
+This is demonstrated by the examples below.
+
+Python:
+
+.. sourcecode:: python
+
+    class MySkippingError(RuntimeError):
+        ROBOT_SKIP_EXECUTION = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MySkippingError extends RuntimeException {
+        public static final boolean ROBOT_SKIP_EXECUTION = true;
+    }
+
+.. note:: The `robot.api.SkipExecution` exception is new in Robot Framework 4.0.
+
+__ `Skipping tests`_
+__ `Exceptions provided by Robot Framework`_
 
 Stopping test execution
 ~~~~~~~~~~~~~~~~~~~~~~~
