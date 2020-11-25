@@ -28,3 +28,6 @@ Unknown types
 Non-type annotations
     Keyword Arguments Should Be     6    arg: One of the usages in PEP-3107
     ...                                  *varargs: But surely feels odd...
+
+Drop `typing.` prefix
+    Keyword Arguments Should Be     7    a: Any    b: List    c: Any | List
