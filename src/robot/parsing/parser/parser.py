@@ -68,7 +68,7 @@ def _get_model(token_getter, source, data_only=False, curdir=None):
     tokens = token_getter(source, data_only)
     statements = _tokens_to_statements(tokens, curdir)
     model = _statements_to_model(statements, source)
-    model.validate()
+    model.validate_model()
     return model
 
 

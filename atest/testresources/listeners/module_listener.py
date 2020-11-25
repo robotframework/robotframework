@@ -17,12 +17,18 @@ def start_test(name, attrs):
                      tags))
 
 def start_keyword(name, attrs):
-    args = [str(arg) for arg in attrs['args']]
     if attrs['assign']:
         assign = '%s = ' % ', '.join(attrs['assign'])
     else:
         assign = ''
-    OUTFILE.write("KW START: %s%s %s\n" % (assign, name, args))
+    name = name + ' ' if name else ''
+    if attrs['args']:
+        args = '%s ' % [str(a) for a in attrs['args']]
+    else:
+        args = ''
+    kw_type = 'KW' if attrs['type'] == 'Keyword' else attrs['type'].upper()
+    OUTFILE.write("%s START: %s%s%s(line %d)\n"
+                  % (kw_type, assign, name, args, attrs['lineno']))
 
 def log_message(message):
     msg, level = message['message'], message['level']
@@ -35,7 +41,8 @@ def message(message):
         OUTFILE.write('Got settings on level: %s\n' % level)
 
 def end_keyword(name, attrs):
-    OUTFILE.write("KW END: %s\n" % (attrs['status']))
+    kw_type = 'KW' if attrs['type'] == 'Keyword' else attrs['type'].upper()
+    OUTFILE.write("%s END: %s\n" % (kw_type, attrs['status']))
 
 def end_test(name, attrs):
     if attrs['status'] == 'PASS':

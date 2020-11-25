@@ -47,13 +47,13 @@ End
     End
 
 End after valid FOR header
-    [Documentation]    FAIL    FOR loop has no closing 'END'.
+    [Documentation]    FAIL    FOR loop has no closing END.
     FOR    ${x}   IN    whatever
         Log    ${x}
     End
 
 End after valid If header
-    [Documentation]    FAIL    IF has no closing 'END'.
+    [Documentation]    FAIL    IF has no closing END.
     IF    True
         No operation
     End

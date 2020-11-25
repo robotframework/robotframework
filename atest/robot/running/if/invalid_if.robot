@@ -12,6 +12,9 @@ If with many conditions
 If without end
   Check Test Case    ${TESTNAME}
 
+Invalid END
+  Check Test Case    ${TESTNAME}
+
 If with wrong case
   Check Test Case    ${TESTNAME}
 
@@ -40,4 +43,7 @@ If with else if after else
   Check Test Case    ${TESTNAME}
 
 If for else if parsing
+  Check Test Case    ${TESTNAME}
+
+Multiple errors
   Check Test Case    ${TESTNAME}

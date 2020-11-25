@@ -56,9 +56,8 @@ class Keyword(model.Keyword):
     __slots__ = ['lineno', 'definition']
     message_class = None  #: Internal usage only.
 
-    def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=model.Keyword.KEYWORD_TYPE, lineno=None,
-                 parent=None, definition=''):
+    def __init__(self, name='', doc='', args=(), assign=(), tags=(), timeout=None,
+                 type=model.Keyword.KEYWORD_TYPE, lineno=None, parent=None, definition=''):
         model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
                                parent, definition)
         self.lineno = lineno
@@ -73,26 +72,24 @@ class Keyword(model.Keyword):
 
 
 @py2to3
-class ForLoop(Keyword):
+class For(Keyword):
     """Represents a for loop in test data.
 
     Contains keywords in the loop body as child :attr:`keywords`.
     """
-    __slots__ = ['flavor', 'lineno', 'error']
-    keyword_class = Keyword  #: Internal usage only.
+    __slots__ = ['flavor', 'error']
 
-    def __init__(self, variables, values, flavor, lineno=None, parent=None, error=None):
-        Keyword.__init__(self, assign=variables, args=values,
-                         type=Keyword.FOR_LOOP_TYPE, parent=parent)
+    def __init__(self, variables, flavor, values, lineno=None, parent=None, error=None):
+        Keyword.__init__(self, assign=variables, args=values, type=Keyword.FOR_LOOP_TYPE,
+                         lineno=lineno, parent=parent)
         self.keywords = None
         self.flavor = flavor
-        self.lineno = lineno
         self.error = error
 
     @setter
     def keywords(self, keywords):
         """Child keywords as a :class:`~.Keywords` object."""
-        return Keywords(self.keyword_class or self.__class__, self, keywords)
+        return Keywords(Keyword, self, keywords)
 
     @property
     def variables(self):
@@ -111,46 +108,36 @@ class ForLoop(Keyword):
         return True
 
 
-class IfExpression(Keyword):
+class If(Keyword):
     """Represents an if expression in test data.
 
     Contains keywords in the body as child :attr:`keywords`.
     """
-    __slots__ = ['lineno', '_header', '_end', 'bodies', 'error']
-    keyword_class = Keyword  #: Internal usage only.
+    __slots__ = ['orelse', 'error']
 
-    def __init__(self, value, lineno=None, _header='IF', _end='END', error=None):
-        Keyword.__init__(self, args=value,
-                         type=Keyword.IF_EXPRESSION_TYPE)
-        self.lineno = lineno
-        self._header = _header
-        self._end = _end
-        self.bodies = [(value, Keywords(self.keyword_class, self, None))]
+    def __init__(self, condition=None, body=None, orelse=None, lineno=None, error=None,
+                 type=Keyword.IF_TYPE):
+        Keyword.__init__(self, args=[condition], type=type, lineno=lineno)
+        self.keywords = body    # FIXME: self.keywords -> self.body
+        self.orelse = orelse
         self.error = error
 
-    def create_keyword(self, name='', args=(), assign=(), lineno=None):
-        self.bodies[-1][1].create(name=name, args=args, assign=assign, lineno=lineno)
-
-    def add_inner_block(self, inner_block):
-        self.bodies[-1][1].append(inner_block)
-
-    def create_elseif(self, value):
-        self.bodies.append((value, Keywords(self.keyword_class, self, None)))
-
-    def create_else(self):
-        self.bodies.append((True, Keywords(self.keyword_class, self, None)))
+    @setter
+    def keywords(self, keywords):
+        """Child keywords as a :class:`~.Keywords` object."""
+        return Keywords(Keyword, self, keywords)
 
     @property
     def condition(self):
         return self.args[0]
 
-    @property
-    def ended(self):
-        return self._end is not None
-
     def __unicode__(self):
-        values = '    '.join(self.condition)
-        return u'IF    %s' % values
+        types = {self.IF_TYPE: 'IF', self.ELSE_IF_TYPE: 'ELSE IF',
+                 self.ELSE_TYPE: 'ELSE'}
+        return u'%s    %s' % (types[self.type], self.condition)
+
+    def __nonzero__(self):
+        return True
 
 
 class TestCase(model.TestCase):
@@ -164,8 +151,8 @@ class TestCase(model.TestCase):
     def __init__(self, name='', doc='', tags=None, timeout=None, template=None,
                  lineno=None):
         model.TestCase.__init__(self, name, doc, tags, timeout)
-        #: Name of the keyword that has been used as template
-        #: when building the test. ``None`` if no is template used.
+        #: Name of the keyword that has been used as a template when building the test.
+        # ``None`` if template is not used.
         self.template = template
         self.lineno = lineno
 
@@ -278,7 +265,6 @@ class TestSuite(model.TestSuite):
 
             stdout = StringIO()
             result = suite.run(variable='EXAMPLE:value',
-                               critical='regression',
                                output='example.xml',
                                exitonfailure=True,
                                stdout=stdout)

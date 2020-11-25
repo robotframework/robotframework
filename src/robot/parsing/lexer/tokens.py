@@ -29,25 +29,25 @@ class Token(object):
     Token types are declared as class attributes.
     """
 
-    SETTING_HEADER = 'SETTING_HEADER'
-    VARIABLE_HEADER = 'VARIABLE_HEADER'
-    TESTCASE_HEADER = 'TESTCASE_HEADER'
-    KEYWORD_HEADER = 'KEYWORD_HEADER'
-    COMMENT_HEADER = 'COMMENT_HEADER'
+    SETTING_HEADER = 'SETTING HEADER'
+    VARIABLE_HEADER = 'VARIABLE HEADER'
+    TESTCASE_HEADER = 'TESTCASE HEADER'
+    KEYWORD_HEADER = 'KEYWORD HEADER'
+    COMMENT_HEADER = 'COMMENT HEADER'
 
-    TESTCASE_NAME = 'TESTCASE_NAME'
-    KEYWORD_NAME = 'KEYWORD_NAME'
+    TESTCASE_NAME = 'TESTCASE NAME'
+    KEYWORD_NAME = 'KEYWORD NAME'
 
     DOCUMENTATION = 'DOCUMENTATION'
-    SUITE_SETUP = 'SUITE_SETUP'
-    SUITE_TEARDOWN = 'SUITE_TEARDOWN'
+    SUITE_SETUP = 'SUITE SETUP'
+    SUITE_TEARDOWN = 'SUITE TEARDOWN'
     METADATA = 'METADATA'
-    TEST_SETUP = 'TEST_SETUP'
-    TEST_TEARDOWN = 'TEST_TEARDOWN'
-    TEST_TEMPLATE = 'TEST_TEMPLATE'
-    TEST_TIMEOUT = 'TEST_TIMEOUT'
-    FORCE_TAGS = 'FORCE_TAGS'
-    DEFAULT_TAGS = 'DEFAULT_TAGS'
+    TEST_SETUP = 'TEST SETUP'
+    TEST_TEARDOWN = 'TEST TEARDOWN'
+    TEST_TEMPLATE = 'TEST TEMPLATE'
+    TEST_TIMEOUT = 'TEST TIMEOUT'
+    FORCE_TAGS = 'FORCE TAGS'
+    DEFAULT_TAGS = 'DEFAULT TAGS'
     LIBRARY = 'LIBRARY'
     RESOURCE = 'RESOURCE'
     VARIABLES = 'VARIABLES'
@@ -64,13 +64,13 @@ class Token(object):
     ARGUMENT = 'ARGUMENT'
     ASSIGN = 'ASSIGN'
     KEYWORD = 'KEYWORD'
-    WITH_NAME = 'WITH_NAME'
+    WITH_NAME = 'WITH NAME'
     FOR = 'FOR'
-    FOR_SEPARATOR = 'FOR_SEPARATOR'
+    FOR_SEPARATOR = 'FOR SEPARATOR'
     END = 'END'
     IF = 'IF'
-    ELSE = 'ELSE'
     ELSE_IF = 'ELSE IF'
+    ELSE = 'ELSE'
 
     SEPARATOR = 'SEPARATOR'
     COMMENT = 'COMMENT'
@@ -79,7 +79,7 @@ class Token(object):
     EOS = 'EOS'
 
     ERROR = 'ERROR'
-    FATAL_ERROR = 'FATAL_ERROR'
+    FATAL_ERROR = 'FATAL ERROR'
 
     NON_DATA_TOKENS = (
         SEPARATOR,
@@ -180,7 +180,7 @@ class Token(object):
 
     def __repr__(self):
         error = '' if not self.error else ', %r' % self.error
-        return 'Token(%s, %r, %s, %s%s)' % (self.type, self.value,
+        return 'Token(%r, %r, %s, %s%s)' % (self.type, self.value,
                                             self.lineno, self.col_offset,
                                             error)
 

@@ -1,8 +1,29 @@
 import unittest
 
 from robot.utils.asserts import assert_equal, assert_false
+from robot.utils import unicode
 
 from robot.api import Token
+
+
+class TestToken(unittest.TestCase):
+
+    def test_string_repr(self):
+
+        for token, exp_str, exp_repr in [
+            ((Token.ELSE_IF, 'ELSE IF', 6, 4),
+             'ELSE IF',
+             "Token('ELSE IF', 'ELSE IF', 6, 4)"),
+            ((Token.KEYWORD, u'Hyv\xe4', 6, 4),
+             u'Hyv\xe4',
+             u"Token('KEYWORD', %r, 6, 4)" % u'Hyv\xe4'),
+            ((Token.ERROR, 'bad value', 6, 4, 'The error.'),
+             'bad value',
+             "Token('ERROR', 'bad value', 6, 4, 'The error.')")
+        ]:
+            token = Token(*token)
+            assert_equal(unicode(token), exp_str)
+            assert_equal(repr(token), exp_repr)
 
 
 class TestTokenizeVariables(unittest.TestCase):

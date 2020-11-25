@@ -32,18 +32,17 @@ class Keyword(ModelObject):
     """
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
                  '_teardown', 'definition', '_sort_key', '_next_child_sort_key']
-    KEYWORD_TYPE = 'kw'         #: Normal keyword :attr:`type`.
-    SETUP_TYPE = 'setup'        #: Setup :attr:`type`.
-    TEARDOWN_TYPE = 'teardown'  #: Teardown :attr:`type`.
-    FOR_LOOP_TYPE = 'for'       #: For loop :attr:`type`.
-    IF_EXPRESSION_TYPE = 'if'   #: If expression :attr:`type`.
-    ELSE_IF_TYPE = "else if"  #: else if branch :attr:`type`.
-    ELSE_TYPE = 'else'          #: else branch :attr:`type`.
-    FOR_ITEM_TYPE = 'foritem'   #: Single for loop iteration :attr:`type`.
+    KEYWORD_TYPE  = 'kw'
+    SETUP_TYPE    = 'setup'
+    TEARDOWN_TYPE = 'teardown'
+    FOR_LOOP_TYPE = 'for'
+    FOR_ITEM_TYPE = 'foritem'
+    IF_TYPE       = 'if'
+    ELSE_IF_TYPE  = 'elseif'
+    ELSE_TYPE     = 'else'
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type=KEYWORD_TYPE, parent=None, definition=''):
-        self.parent = None
         self.parent = parent
         self._name = name
         self.doc = doc
@@ -52,9 +51,7 @@ class Keyword(ModelObject):
         self.tags = tags
         self.timeout = timeout
         self.definition = definition
-        #: Keyword type as a string. The value is either :attr:`KEYWORD_TYPE`,
-        #: :attr:`SETUP_TYPE`, :attr:`TEARDOWN_TYPE`, :attr:`FOR_LOOP_TYPE` or
-        #: :attr:`FOR_ITEM_TYPE` constant defined on the class level.
+        #: Keyword type as a string. Values defined as constants on the class level.
         self.type = type
         self._teardown = None
         self._sort_key = -1
@@ -85,7 +82,7 @@ class Keyword(ModelObject):
     @setter
     def parent(self, parent):
         """Parent test suite, test case or keyword."""
-        if parent and parent is not self.parent:
+        if parent and parent is not getattr(self, 'parent', None):
             self._sort_key = getattr(parent, '_child_sort_key', -1)
         return parent
 

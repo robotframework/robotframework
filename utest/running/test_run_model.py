@@ -6,7 +6,7 @@ import unittest
 
 from robot import api, model
 from robot.model.modelobject import ModelObject
-from robot.running.model import TestSuite, TestCase, Keyword, ForLoop
+from robot.running.model import TestSuite, TestCase, Keyword, For, If
 from robot.running import TestSuiteBuilder
 from robot.utils.asserts import assert_equal, assert_not_equal, assert_false
 from robot.utils import unicode
@@ -39,15 +39,26 @@ class TestModelTypes(unittest.TestCase):
 class TestStringRepr(unittest.TestCase):
 
     def test_for_loop(self):
-        loop = ForLoop(['${x}'], ['foo', 'bar'], 'IN')
+        loop = For(['${x}'], 'IN', ['foo', 'bar'])
         expected = u'FOR    ${x}    IN    foo    bar'
         assert_equal(str(loop), expected)
         assert_equal(unicode(loop), expected)
         assert_equal(repr(loop), repr(expected))
-        loop = ForLoop(['${x}', u'${\xfc}'], [u'f\xf6\xf6', u'b\xe4r'], 'IN ZIP')
+        loop = For(['${x}', u'${\xfc}'], 'IN ZIP', [u'f\xf6\xf6', u'b\xe4r'])
         expected = u'FOR    ${x}    ${\xfc}    IN ZIP    f\xf6\xf6    b\xe4r'
         assert_equal(unicode(loop), expected)
         assert_equal(repr(loop), repr(expected))
+
+    def test_if(self):
+        if_ = If('$x > 0')
+        expected = u'IF    $x > 0'
+        assert_equal(str(if_), expected)
+        assert_equal(unicode(if_), expected)
+        assert_equal(repr(if_), repr(expected))
+        if_ = If(u'"\xe4iti" == "mother"', type=If.ELSE_IF_TYPE)
+        expected = u'ELSE IF    "\xe4iti" == "mother"'
+        assert_equal(unicode(if_), expected)
+        assert_equal(repr(if_), repr(expected))
 
 
 class TestSuiteFromSources(unittest.TestCase):

@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from collections import OrderedDict
+from contextlib import contextmanager
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExitForLoop, ContinueForLoop, DataError)
@@ -22,8 +23,7 @@ from robot.output import librarylogger as logger
 from robot.utils import (format_assign_message, frange, get_error_message,
                          is_list_like, is_number, plural_or_not as s,
                          split_from_equals, type_name, is_unicode)
-from robot.variables import is_dict_variable, is_scalar_assign, evaluate_expression
-from .arguments.argumentresolver import VariableReplacer
+from robot.variables import is_dict_variable, evaluate_expression
 
 from .statusreporter import StatusReporter
 
@@ -56,13 +56,67 @@ class StepRunner(object):
         if step.type == step.FOR_LOOP_TYPE:
             runner = ForRunner(context, self._templated, step.flavor)
             return runner.run(step)
-        if step.type == step.IF_EXPRESSION_TYPE:
+        if step.type == step.IF_TYPE:
             runner = IfRunner(context, self._templated)
             return runner.run(step)
         runner = context.get_runner(name or step.name)
         if context.dry_run:
             return runner.dry_run(step, context)
         return runner.run(step, context)
+
+
+class IfRunner(object):
+    _dry_run_stack = []
+
+    def __init__(self, context, templated=False):
+        self._context = context
+        self._templated = templated
+
+    def run(self, data, name=None):
+        branch_run = False
+        with self._dry_run_recursion_detection(data) as recursive_dry_run:
+            while data:
+                branch_run = self._run_if_branch(data, branch_run, recursive_dry_run)
+                data = data.orelse
+
+    @contextmanager
+    def _dry_run_recursion_detection(self, data):
+        dry_run = self._context.dry_run
+        if dry_run:
+            recursive_dry_run = data in self._dry_run_stack
+            self._dry_run_stack.append(data)
+        else:
+            recursive_dry_run = False
+        try:
+            yield recursive_dry_run
+        finally:
+            if dry_run:
+                self._dry_run_stack.pop()
+
+    def _run_if_branch(self, data, branch_run=False, recursive_dry_run=False):
+        result = KeywordResult(kwname=data.condition, type=data.type,
+                               lineno=data.lineno, source=data.source)
+        with StatusReporter(self._context, result) as reporter:
+            if data.error:
+                raise DataError(data.error)
+            if self._should_run_branch(data.condition, branch_run, recursive_dry_run):
+                runner = StepRunner(self._context, self._templated)
+                runner.run_steps(data.keywords)
+                return True
+            reporter.mark_as_not_run()
+            return branch_run
+
+    def _should_run_branch(self, condition, branch_run=False, recursive_dry_run=False):
+        if self._context.dry_run:
+            return not recursive_dry_run
+        if branch_run:
+            return False
+        if condition is None:
+            return True
+        condition = self._context.variables.replace_scalar(condition)
+        if is_unicode(condition):
+            return evaluate_expression(condition, self._context.variables.current.store)
+        return bool(condition)
 
 
 def ForRunner(context, templated=False, flavor='IN'):
@@ -72,90 +126,6 @@ def ForRunner(context, templated=False, flavor='IN'):
                'IN ENUMERATE': ForInEnumerateRunner}
     runner = runners[flavor or 'IN']
     return runner(context, templated)
-
-
-class IfRunner(object):
-
-    current_if_stack = []
-
-    def __init__(self, context, templated=False):
-        self._context = context
-        self._templated = templated
-
-    def _get_type(self, data, first, datacondition):
-        if first:
-            return data.IF_EXPRESSION_TYPE
-        if datacondition is True:
-            return data.ELSE_TYPE
-        return data.ELSE_IF_TYPE
-
-    def run(self, data, name=None):
-        IfRunner.current_if_stack.append(data)
-        try:
-            first = True
-            condition_matched = False
-            for datacondition, body in data.bodies:
-                condition_matched = self._run_if_branch(body, condition_matched, data, datacondition, first)
-                first = False
-        finally:
-            IfRunner.current_if_stack.pop()
-
-    def _run_if_branch(self, body, condition_matched, data, datacondition, first):
-        result = self._create_result_object(data, first, datacondition)
-        reporter = StatusReporter(self._context, result, dry_run_lib_kw=self._is_dryrun_already_executing_this_if())
-        with reporter:
-            if data.error:
-                raise DataError(data.error)
-            condition_result = self._create_condition_result(condition_matched, data, datacondition, first)
-            if self._is_branch_to_execute(condition_matched,
-                                          condition_result,
-                                          body):
-                runner = StepRunner(self._context, self._templated)
-                runner.run_steps(body)
-                return True
-            reporter.mark_as_not_run()
-        return condition_matched
-
-    def _create_condition_result(self, condition_matched, data, datacondition, first):
-        data_type = self._get_type(data, first, datacondition)
-        if data_type == data.ELSE_TYPE:
-            return True
-        if condition_matched or self._context.dry_run:
-            return None
-        return self._resolve_condition(datacondition[0])
-
-    def _create_result_object(self, data, first, datacondition):
-        data_type = self._get_type(data, first, datacondition)
-        unresolved_condition = self._get_unresolved_condition(data, data_type, datacondition)
-        return KeywordResult(kwname=self._get_name(unresolved_condition),
-                            type=data_type, lineno=data.lineno, source=data.source)
-
-    def _get_unresolved_condition(self, data, data_type, datacondition):
-        return '' if data_type == data.ELSE_TYPE else datacondition[0]
-
-    def _resolve_condition(self, unresolved_condition):
-        condition, _ = VariableReplacer().replace([unresolved_condition], (), variables=self._context.variables)
-        resolved_condition = condition[0]
-        if is_unicode(resolved_condition):
-            return evaluate_expression(resolved_condition,
-                                       self._context.variables.current.store)
-        return bool(resolved_condition)
-
-    def _is_branch_to_execute(self, condition_matched_already, condition_result, body):
-        if self._context.dry_run:
-            return not self._is_dryrun_already_executing_this_if()
-        return not condition_matched_already and condition_result and body
-
-    def _is_dryrun_already_executing_this_if(self):
-        if not self._context.dry_run:
-            return False
-        current = IfRunner.current_if_stack[-1]
-        return current in IfRunner.current_if_stack[:-1]
-
-    def _get_name(self, condition):
-        if not condition:
-            return ''
-        return ' [ %s ]' % (condition)
 
 
 class ForInRunner(object):

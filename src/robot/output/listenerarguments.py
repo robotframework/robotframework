@@ -134,7 +134,7 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
               'for': 'For',
               'foritem': 'For Item',
               'if': 'If',
-              'else if': 'Else If',
+              'elseif': 'Else If',
               'else': 'Else'}
 
     def _get_extra_attributes(self, kw):

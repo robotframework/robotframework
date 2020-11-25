@@ -1443,7 +1443,7 @@ Main usages for this pretty advanced functionality are:
   `${{datetime.date.today()}}`).
 
 - Constructing collections, especially nested collections (`${{[1, 2, 3, 4]}}`,
-  `${{ {'id': 1, 'name': 'Example', children: [7, 9]} }}`).
+  `${{ {'id': 1, 'name': 'Example', 'children': [7, 9]} }}`).
 
 - Accessing constants and other useful attributes in Python modules
   (`${{math.pi}}`, `${{platform.system()}}`).
@@ -1457,7 +1457,7 @@ available using the special `$var` syntax during evaluation. All these
 features are discussed in more detail below.
 
 .. tip:: Instead of creating complicated expressions, it is often better
-         to move the logic into a `custom test library`__. That eases
+         to move the logic into a `custom library`__. That eases
          maintenance, makes test data easier to understand and can also
          enhance execution speed.
 
