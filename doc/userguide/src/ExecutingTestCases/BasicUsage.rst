@@ -194,8 +194,8 @@ __ http://en.wikipedia.org/wiki/Glob_(programming)
 Tag patterns
 ~~~~~~~~~~~~
 
-Most tag related options accept arguments as *tag patterns*. They have all the
-same characteristics as `simple patterns`_, but they also support `AND`,
+Most tag related options accept arguments as *tag patterns*. They support same
+wildcards as `simple patterns`_ (e.g. `examp??`, `ex*le`), but they also support `AND`,
 `OR` and `NOT` operators explained below. These operators can be
 used for combining two or more individual tags or patterns together.
 

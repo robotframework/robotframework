@@ -2,8 +2,9 @@ Test execution
 ==============
 
 This section describes how the test suite structure created from the parsed
-test data is executed, how to continue executing a test case after failures,
-and how to stop the whole test execution gracefully.
+test data is executed, how test status is determined, and how to continue
+executing a test case if there are failures, and how to stop the whole test
+execution gracefully.
 
 .. contents::
    :depth: 2
@@ -133,14 +134,25 @@ the :option:`--randomize` option.
 
 __ `Randomizing execution order`_
 
-Passing execution
-~~~~~~~~~~~~~~~~~
+Test and suite statuses
+-----------------------
 
-Typically test cases, setups and teardowns are considered passed if
-all keywords they contain are executed and none of them fail. It is
-also possible to use BuiltIn_ keywords
-:name:`Pass Execution` and :name:`Pass Execution If` to stop execution with
-PASS status and skip the remaining keywords.
+This section explains how tests can get PASS_, FAIL_ or SKIP_ status and how the
+`suite status`_ is determined based on test statuses.
+
+.. note:: The SKIP status is new in Robot Framework 4.0.
+
+PASS
+~~~~
+
+A test gets the PASS status if it is executed and none of the keywords it contains fails.
+
+Prematurely passing tests
+'''''''''''''''''''''''''
+
+Normally all keywords are executed, but it is also possible to use
+BuiltIn_ keywords :name:`Pass Execution` and :name:`Pass Execution If` to stop
+execution with the PASS status and not run the remaining keywords.
 
 How :name:`Pass Execution` and :name:`Pass Execution If` behave
 in different situations is explained below:
@@ -164,72 +176,132 @@ Passing execution in the middle of a test, setup or teardown should be
 used with care. In the worst case it leads to tests that skip all the
 parts that could actually uncover problems in the tested application.
 In cases where execution cannot continue do to external factors,
-it is often safer to `skip the test`__.
+it is often safer to skip_ the test.
 
 __ `Setups and teardowns`_
 __ `Continue on failure`_
 __ `BuiltIn`_
-__ `Skipping tests`_
 
-Skipping tests
---------------
+FAIL
+~~~~
 
-Robot Framework 4.0 introduced a new status. skip.
-Both individual tests and whole test suites may have the skip status.
-A test suite has the skip status if all of its test cases have been skipped.
+The most common reason for a test to get the FAIL status is that one of the keywords
+it contains fails. The keyword itself can fail by `raising an exception`__ or the
+keyword can be called incorrectly. Other reasons for failures include syntax errors
+and the test being empty.
 
-Test cases may be skipped before they start executing with a command line
-option. It is also possible to skip tests during execution, or change a failed
-test status to skip. All of these are explained in greater detail below.
+If a `suite setup`_ fails, tests in that suite are marked failed without running them.
+If a `suite teardown`_ fails, tests are marked failed retroactively.
+
+__ `Reporting keyword status`_
+
+.. _skipped:
+
+SKIP
+~~~~
+
+Starting from Robot Framework 4.0, tests can get also SKIP status in addition to
+PASS and FAIL. There are many different ways to get this status.
+
+Skipping before execution
+'''''''''''''''''''''''''
+
+The command line option :option:`--skip` can be used to skip specified tests without
+running them at all. It works based on tags_ and supports `tag patterns`_ like
+`examp??` and `tagANDanother`. If it is used multiple times, all tests matching any of
+specified tags or tag patterns are skipped::
+
+    --skip require-network
+    --skip windowsANDversion9?
+    --skip python2.* --skip python3.[0-6]
+
+The difference between :option:`--skip` and :option:`--exclude` is that with
+the latter tests are `omitted from the execution altogether`__ and they will not
+be shown in logs and reports. With the former they are included, but not actually
+executed, and they will be visible in logs and reports.
+
+__ `By tag names`_
+
+Skipping dynamically during execution
+'''''''''''''''''''''''''''''''''''''
 
 Tests can get the skip status during execution in various ways:
 
-- Using BuiltIn_ keyword :name:`Skip` anywhere in the test case, including test
-  setup or test terdown. Using :name:`Skip` keyword has two effects: the test's
-  status  becomes skip, and the rest of the steps in the test are not executed.
-  However, if the  test has a teardown, that will be executed.
+- Using the BuiltIn_ keyword :name:`Skip` anywhere in the test case, including setup or
+  teardown. Using :name:`Skip` keyword has two effects: the test gets the SKIP status
+  and rest of the test is not executed. However, if the test has a teardown, it will be
+  run.
 
-- `Library keywords`_ may also trigger skip behavior similar :name:`Skip` keyword
-  described above by using a special exceptions. This is explained fully in the
-  `test library API chapter`__.
+- Using the BuiltIn_ keyword :name:`Skip If` which takes a condition and skips the test
+  if the condition is true.
 
-- There is also BuiltIn_ keyword :name:`Skip If`, which takes a condition, and
-  triggers the skip behaviour if the condition evaluates as True.
+- `Library keywords`_ may also trigger skip behavior by using a special exceptions.
+  This is explained the `Skipping tests`_ section in the `Creating test libraries`_
+  chapter.
 
-If any of the above is used in a suite setup, all tests in that suite will be
-skipped.
+- If `suite setup`_ is skipped using any of the above means, all tests in the suite
+  are skipped without executing them.
 
-Additionally, there are two command line options that can be used to skip tests:
+- If `suite teardown`_ is skipped, all tests will be marked skipped retroactively.
 
-- :option:`skip` can be used to skip tests based on their tags_. All tests
-  with matching tags will be skipped.
+Automatically skipping failed tests
+'''''''''''''''''''''''''''''''''''
 
-- :option:`skiponfailure` can be used to skip tests based on their tags_. Any
-  test with matching tags that fails will be marked skipped.
+The command line option :option:`--skiponfailure` can be used to automatically mark
+failed tests skipped. It works based on tags_ and supports `tag patterns`_ like
+the :option:`--skip` option discussed above::
 
-Both :option:`--skip` and :option:`--skiponfailure` also support same `tag
-patterns`_ as :option:`--include` and :option:`--exclude`. This means that
-pattern matching is case, space, and underscore insensitive, `*` and `?`
-are supported as wildcards, and `AND`, `OR` and `NOT`
-operators can be used to create combined patterns.
+    --skiponfailure not-ready
+    --skiponfailure experimentalANDmobile
 
-__ `Exceptions provided by Robot Framework`_
+The motivation for this functionality is allowing execution of tests that are not yet
+ready or that are testing a functionality that is not yet ready. Instead of such tests
+failing, they will be marked skipped and their tags can be used to separate them
+from possible other skipped tests.
 
-Replacing criticality with skip
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Migrating from criticality to SKIP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework 4.0 removed support for test criticality, and the related
-command line options :option:`--critical` and :option:`--noncritical`.
-The main use case for criticality was to be able to consider some failures
-non-critical, and those failures would not affect the overall test execution
-status.
+Earlier Robot Framework versions supported criticality concept that allowed marking
+tests critical or non-critical. By default all tests were critical, but the
+:option:`--critical` and :option:`--noncritical` options could be used to configure that.
+The difference between critical and non-critical tests was that non-critical tests
+were not included when determining the final status for an executed test suite or
+for the whole test run. In practice the test status was two dimensional having
+PASS and FAIL in one axis and criticality on the other.
 
-Skip status can be used to achieve similar result. Usages of
-:option:`--noncritical` can be replaced with :option:`--skiponfailure`, and the
-overall status of the test execution is pass, since all the failing tests will
-be skipped. There is no direct replacement for :option:`--critical` though,
-so some changes in tags and execution configuration is needed to replace
-uasges of :option:`--critical`.
+Non-critical failed tests were in many ways similar to the current skipped tests.
+Because these features are similar and having both SKIP and criticality would
+have created strange test statuses like non-critical SKIP, the criticality concept
+was removed in Robot Framework 4.0 when the SKIP status was introduced. The problems
+with criticality are explained in more detail in the `issue that proposed removing it`__.
+
+__ https://github.com/robotframework/robotframework/issues/3624
+
+The main use case for the criticality concept was being able to run tests that
+are not yet ready or that are testing a functionality that is not yet ready. This
+use case is nowadays covered by the skip-on-failure functionality discussed in
+the previous section.
+
+To ease migrating from criticality to skipping, the old :option:`--noncritical`
+option works as a direct alias for the new :option:`--skiponfailure`. When using
+:option:`--noncritical` earlier, matched tests were marked non-critical and their
+failures did not affect the final execution status. Nowadays using this option
+causes matched tests to be marked skipped if they fail and failures do not affect
+the final status either.
+
+Also the old :option:`--critical` option is preserved but using it in combination
+with :option:`--noncritical` does not work same way as earlier. Both of these
+options are deprecated and they do not anymore have any affect when used with Rebot_.
+
+Suite status
+~~~~~~~~~~~~
+
+Suite status is determined solely based on statuses of the tests it contains:
+
+- If any test has failed, suite status is FAIL.
+- If there are no failures but at least one test has passed, suite status is PASS.
+- If all tests have been skipped or the are no tests at all, suite status is SKIP.
 
 Continue on failure
 -------------------
@@ -264,7 +336,8 @@ Special failures from keywords
 `Library keywords`_ report failures using exceptions, and it is
 possible to use special exceptions to tell the core framework that
 execution can continue regardless the failure. How these exceptions
-can be created is explained in the `test library API chapter`__.
+can be created is explained in the `Continuable failures`_ section in
+the `Creating test libraries`_ section.
 
 When a test ends and there has been one or more continuable failure,
 the test will be marked failed. If there are more than one failure,
@@ -282,8 +355,6 @@ final error message.
 
 The return value from failed keywords, possibly assigned to a
 variable, is always the Python `None`.
-
-__ `Continuing test execution despite of failures`_
 
 :name:`Run Keyword And Continue On Failure` keyword
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

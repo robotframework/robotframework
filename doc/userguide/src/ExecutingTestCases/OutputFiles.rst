@@ -101,7 +101,7 @@ logs are generated, the report has links to the log file for easy
 navigation to more detailed information.  It is easy to see the
 overall test execution status from report, because its background
 color is green, if all tests pass and bright red if any test fails.
-Background can also be yellow, which means that all tests `were skipped`__.
+Background can also be yellow, which means that all tests were skipped_.
 
 The command line option :option:`--report (-r)` determines where
 report files are created. Similarly as log files, reports are always
@@ -123,8 +123,6 @@ FIXME: new screenshots of report / log.
 
 .. _xunit:
 .. _xunit file:
-
-__ `Skipping tests`_
 
 XUnit compatible result file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
