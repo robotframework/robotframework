@@ -143,9 +143,9 @@ Options
                           e.g. with --include/--exclude when it is not an error
                           that no test matches the condition.
     --skip tag *          Tests having given tag will be skipped. Tag can be
-                          a pattern.
-    --skiponfailure tag *  Tests having given tag will be marked skipped if
-                          they fail. New in RF 4.0.
+                          a pattern. New in RF 4.0.
+    --skiponfailure tag *  Tests having given tag will be skipped if they fail.
+                          Tag can be a pattern. New in RF 4.0.
  -n --noncritical tag *   Alias for --skiponfailure. Deprecated since RF 4.0.
  -c --critical tag *      Opposite of --noncritical. Deprecated since RF 4.0.
  -v --variable name:value *  Set variables in the test data. Only scalar

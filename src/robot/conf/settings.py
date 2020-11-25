@@ -362,10 +362,6 @@ class _BaseSettings(object):
         return self['Critical']
 
     @property
-    def non_critical_tags(self):
-        return self['NonCritical']
-
-    @property
     def remove_keywords(self):
         return self['RemoveKeywords']
 
@@ -574,8 +570,6 @@ class RebotSettings(_BaseSettings):
             'empty_suite_ok': self.process_empty_suite,
             'remove_keywords': self.remove_keywords,
             'log_level': self['LogLevel'],
-            'critical_tags': self.critical_tags,
-            'non_critical_tags': self.non_critical_tags,
             'start_time': self['StartTime'],
             'end_time': self['EndTime']
         }

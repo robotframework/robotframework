@@ -173,9 +173,6 @@
 .. _execution errors: `Errors and warnings during execution`_
 .. _test execution errors: `execution errors`_
 .. _simple pattern: `Simple patterns`_
-.. _critical test: `Setting criticality`_
-.. _critical tests: `critical test`_
-.. _critical: `critical test`_
 .. _output: `Output file`_
 .. _outputs: `output`_
 .. _output files: `output`_

@@ -56,9 +56,8 @@ class Keyword(model.Keyword):
     __slots__ = ['lineno']
     message_class = None  #: Internal usage only.
 
-    def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=model.Keyword.KEYWORD_TYPE, lineno=None,
-                 parent=None):
+    def __init__(self, name='', doc='', args=(), assign=(), tags=(), timeout=None,
+                 type=model.Keyword.KEYWORD_TYPE, lineno=None, parent=None):
         model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
                                parent)
         self.lineno = lineno
@@ -265,7 +264,6 @@ class TestSuite(model.TestSuite):
 
             stdout = StringIO()
             result = suite.run(variable='EXAMPLE:value',
-                               critical='regression',
                                output='example.xml',
                                exitonfailure=True,
                                stdout=stdout)
