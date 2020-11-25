@@ -904,6 +904,25 @@ all the looped elements even if there are failures.
            1st arg    ${index}
        END
 
+Templates with if expression
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`if expression`_ can be also used together with templates.
+This can be useful for example when used together with for loops to
+filter executed arguments.
+
+.. sourcecode:: robotframework
+
+   *** Test Cases ***
+   Template with for and if
+       [Template]    Example keyword
+       FOR    ${item}    IN    @{ITEMS}
+           IF  ${item} < 5
+               ${item}    2nd arg
+           END
+       END
+
+
 Different test case styles
 --------------------------
 
