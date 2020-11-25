@@ -265,7 +265,6 @@ class TestSuite(model.TestSuite):
 
             stdout = StringIO()
             result = suite.run(variable='EXAMPLE:value',
-                               critical='regression',
                                output='example.xml',
                                exitonfailure=True,
                                stdout=stdout)
