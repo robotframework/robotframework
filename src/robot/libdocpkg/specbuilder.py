@@ -96,26 +96,27 @@ class SpecDocBuilder(object):
         return [self._create_data_type(dt) for dt in spec.findall('data_types/dt')]
 
     def _create_data_type(self, dt):
-        args = dict()
-        args['name'] = dt.get('name')
-        args['super'] = dt.get('super')
-        args['doc'] = dt.find('doc').text or ''
+        args = {
+            'name': dt.get('name'),
+            'super': dt.get('super'),
+            'doc': dt.find('doc').text or ''
+        }
         if args['super'] == 'Enum':
             args['members'] = [
-                {'name': member.get('name'), 'value': member.get('value')}
+                {
+                    'name': member.get('name'),
+                    'value': member.get('value')
+                }
                 for member in dt.findall('members/member')]
             return EnumDoc(**args)
         if args['super'] == 'TypedDict':
-            args['items'] = dict()
-            args['required_keys'] = list()
-            args['optional_keys'] = list()
-            for item in dt.findall('items/item'):
-                key = item.get('key')
-                args['items'][key] = item.get('value')
-                if item.get('required') == 'true':
-                    args['required_keys'].append(key)
-                else:
-                    args['optional_keys'].append(key)
+            args['items'] = [
+                {
+                    'key': item.get('key'),
+                    'type': item.get('type'),
+                    'required': item.get('required', None)
+                }
+                for item in dt.findall('items/item')]
             return TypedDictDoc(**args)
         raise TypeError("Data type '%s' has the wrong 'type' attribute."
                         "Valid are 'Enum' or 'TypedDict' but got %s"

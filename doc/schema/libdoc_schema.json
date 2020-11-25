@@ -218,13 +218,13 @@
         "members": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/enum_member"
+            "$ref": "#/definitions/enumMember"
           },
           "uniqueItems": true
         }
       }
     },
-    "enum_member": {
+    "enumMember": {
       "$id": "#/definitions/enum_member",
       "type": "object",
       "title": "Enum Member schema",
@@ -249,9 +249,7 @@
         "name",
         "super",
         "doc",
-        "items",
-        "required_keys",
-        "optional_keys"
+        "items"
       ],
       "properties": {
         "name": {
@@ -264,21 +262,35 @@
           "type": "string"
         },
         "items": {
-          "type": "object"
-        },
-        "required_keys": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/typedDictItem"
           },
           "uniqueItems": true
+        }
+      }
+    },
+    "typedDictItem": {
+      "$id": "#/definitions/typedDictItem",
+      "type": "object",
+      "title": "TypedDict Item schema",
+      "required": [
+        "key",
+        "type",
+        "required"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
         },
-        "optional_keys": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "uniqueItems": true
+        "type": {
+          "type": "string"
+        },
+        "required": {
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       }
     }

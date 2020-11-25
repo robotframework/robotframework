@@ -122,13 +122,14 @@ class LibdocXmlWriter(object):
                 writer.end('members')
             elif dt.super == 'TypedDict':
                 writer.start('items')
-                for key, value in dt.items.items():
-                    writer.element(
-                        'item',
-                        attrs={
-                            'key': key,
-                            'value': value,
-                            'required': 'true' if key in dt.required_keys else 'false'})
+                for item in dt.items:
+                    if item['required'] is None:
+                        item.pop('required')
+                    elif item['required']:
+                        item['required'] = 'true'
+                    else:
+                        item['required'] = 'false'
+                    writer.element('item', attrs=item)
                 writer.end('items')
             writer.end('dt')
         writer.end('data_types')

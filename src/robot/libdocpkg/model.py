@@ -12,8 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from inspect import isclass
-from collections import OrderedDict
+
 from inspect import isclass
 from itertools import chain
 import json
@@ -256,14 +255,11 @@ class KeywordDoc(Sortable):
 
 class TypedDictDoc(object):
 
-    def __init__(self, name='', super='', doc='', items=None,
-                 required_keys=None, optional_keys=None):
+    def __init__(self, name='', super='', doc='', items=None):
         self.name = name
         self.super = super
         self.doc = doc
-        self.items = items or {}
-        self.required_keys = required_keys or []
-        self.optional_keys = optional_keys or []
+        self.items = items or []
 
     @classmethod
     def from_dict(cls, type_doc):
@@ -271,9 +267,7 @@ class TypedDictDoc(object):
             return cls(name=type_doc['name'],
                        super=type_doc['super'],
                        doc=type_doc['doc'],
-                       items=type_doc['items'],
-                       required_keys=type_doc['required_keys'],
-                       optional_keys=type_doc['optional_keys'])
+                       items=type_doc['items'])
         raise TypeError(
             'TypedDictDoc.from_dict() requires dictionary types but got %s.'
             % type_name(type_doc))
@@ -281,15 +275,20 @@ class TypedDictDoc(object):
     @classmethod
     def from_TypedDict(cls, typed_dict):
         if isinstance(typed_dict, (TypedDictType, ExtTypedDictType)):
-            items = {}
+            items = []
+            required_keys = list(getattr(typed_dict, '__required_keys__', []))
+            optional_keys = list(getattr(typed_dict, '__optional_keys__', []))
             for key, value in typed_dict.__annotations__.items():
-                items[key] = value.__name__ if isclass(value) else unic(value)
+                type = value.__name__ if isclass(value) else unic(value)
+                items.append({
+                    'key': key,
+                    'type': type,
+                    'required': key in required_keys if required_keys or optional_keys else None
+                })
             return cls(name=typed_dict.__name__,
                        super='TypedDict',
                        doc=typed_dict.__doc__ if typed_dict.__doc__ else '',
-                       items=items,
-                       required_keys=list(getattr(typed_dict, '__required_keys__', [])),
-                       optional_keys=list(getattr(typed_dict, '__optional_keys__', [])))
+                       items=items)
         raise TypeError(
             'TypedDictDoc.from_TypedDict() requires a TypedDict but got %s.'
             % type_name(typed_dict))
@@ -299,9 +298,7 @@ class TypedDictDoc(object):
             'name': self.name,
             'super': self.super,
             'doc': self.doc,
-            'items': self.items,
-            'required_keys': self.required_keys,
-            'optional_keys': self.optional_keys
+            'items': self.items
         }
 
 
@@ -330,8 +327,10 @@ class EnumDoc(object):
             return cls(name=enum_type.__name__,
                        super='Enum',
                        doc=enum_type.__doc__ or '',
-                       members=[{'name': name, 'value': unicode(member.value)}
-                                for name, member in enum_type.__members__.items()])
+                       members=[{
+                           'name': name,
+                           'value': unicode(member.value)}
+                           for name, member in enum_type.__members__.items()])
         raise TypeError(
             'EnumDoc.from_Enum() requires Enum types but got %s.'
             % type_name(enum_type))

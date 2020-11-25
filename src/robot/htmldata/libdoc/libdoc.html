@@ -554,11 +554,15 @@
               <h4>Dictionary Structure</h4>
                 <div class="typed-dict-annotation">
                 <span class="typed-dict-item"
-                >{{{each(key, val) items}}<br><span
-                 class="td-item {{if required_keys.indexOf(key) != -1}}required-key{{else optional_keys.indexOf(key) != -1}}optional-key{{/if}}"
-                 title="{{if required_keys.indexOf(key) != -1}}required key{{else optional_keys.indexOf(key) != -1}}optional key{{/if}}"
+                >{{{each items}}<br><span
+                  {{if required !== null}}
+                    class="td-item {{if required}}required-key{{else}}optional-key{{/if}}"
+                    title="{{if required}}required-key{{else}}optional-key{{/if}}"
+                  {{else}}
+                    class="td-item"
+                  {{/if}}
                  >'${key}': </span>
-                   <span class="td-type">&lt;${val}&gt;</span>{{/each}}<br>}</span>
+                   <span class="td-type">&lt;${type}&gt;</span>{{/each}}<br>}</span>
                 </div>
             </div>
           {{/if}}
