@@ -289,8 +289,8 @@ class TestSuite(model.TestSuite):
         to a variable and inspecting it is often a good idea::
 
             stats = suite.statistics
-            print(stats.all.failed)
-            print(stats.all.total)
+            print(stats.failed)
+            print(stats.total)
             print(stats.message)
         """
         return TotalStatisticsBuilder(self, self.rpa).stats
