@@ -24,7 +24,6 @@
     }
 }
 
-span.or,
 body {
     background: var(--background-color);
     color: var(--text-color);
@@ -648,6 +647,7 @@ span.or {
     color: var(--less-important-text-color) !important;
 }
 
+.no-match .dt-name,
 .no-match .kw-name {
     color: var(--less-important-text-color);
 }

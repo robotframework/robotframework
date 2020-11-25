@@ -164,6 +164,7 @@
         });
         renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
+        renderTemplate('data-types', result);
         if (libdoc.tags.length) {
           libdoc.selectedTag = include.tagsExact ? pattern : "";
           renderTemplate('tags-shortcuts', libdoc);
@@ -523,14 +524,21 @@
     <h2 id="Data types">Data types</h2>
     <div class="data-types">
         {{each dataTypes}}
+        {{if !$value.hidden}}
             {{tmpl($value) 'data-type-template'}}
+        {{/if}}
+        {{/each}}
+        {{each dataTypes}}
+        {{if $value.hidden}}
+            {{tmpl($value) 'data-type-template'}}
+        {{/if}}
         {{/each}}
     </div>
     {{/if}}
 </script>
 
 <script type="text/x-jquery-tmpl" id="data-type-template">
-    <div class="data-type-container" id="${name}">
+    <div class="data-type-container {{if hidden}}no-{{/if}}match" id="${name}">
        <div class="data-type-name">
             <h2>Type:
             <a class="dt-name" href="#${encodeURIComponent(name)}"
