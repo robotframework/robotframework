@@ -201,7 +201,7 @@
       "title": "Enum DataType schema",
       "required": [
         "name",
-        "super",
+        "type",
         "doc",
         "members"
       ],
@@ -209,7 +209,7 @@
         "name": {
           "type": "string"
         },
-        "super": {
+        "type": {
           "type": "string"
         },
         "doc": {
@@ -247,7 +247,7 @@
       "title": "TypedDict Type schema",
       "required": [
         "name",
-        "super",
+        "type",
         "doc",
         "items"
       ],
@@ -255,7 +255,7 @@
         "name": {
           "type": "string"
         },
-        "super": {
+        "type": {
           "type": "string"
         },
         "doc": {

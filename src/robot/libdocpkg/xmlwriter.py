@@ -112,15 +112,15 @@ class LibdocXmlWriter(object):
     def _write_data_types(self, data_types, writer):
         writer.start('data_types')
         for dt in data_types:
-            attrs = {'name': dt.name, 'super': dt.super}
+            attrs = {'name': dt.name, 'type': dt.type}
             writer.start('dt', attrs)
             writer.element('doc', dt.doc)
-            if dt.super == 'Enum':
+            if dt.type == 'Enum':
                 writer.start('members')
                 for member in dt.members:
                     writer.element('member', attrs=member)
                 writer.end('members')
-            elif dt.super == 'TypedDict':
+            elif dt.type == 'TypedDict':
                 writer.start('items')
                 for item in dt.items:
                     if item['required'] is None:

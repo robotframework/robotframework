@@ -17,8 +17,10 @@ from inspect import isclass
 from itertools import chain
 import json
 import re
+
 try:
     from enum import Enum
+
     EnumType = type(Enum)
 except ImportError:  # Standard in Py 3.4+ but can be separately installed
     class EnumType(object):
@@ -26,6 +28,7 @@ except ImportError:  # Standard in Py 3.4+ but can be separately installed
 
 try:
     from typing import TypedDict
+
     TypedDictType = type(TypedDict('TypedDictDummy', {}))
 except ImportError:
     class TypedDictType(object):
@@ -33,6 +36,7 @@ except ImportError:
 
 try:
     from typing_extensions import TypedDict as ExtTypedDict
+
     ExtTypedDictType = type(ExtTypedDict('TypedDictDummy', {}))
 except ImportError:
     class ExtTypedDictType(object):
@@ -129,9 +133,9 @@ class LibraryDoc(object):
         if isinstance(typ, EnumType):
             return EnumDoc.from_Enum(typ)
         if isinstance(typ, dict):
-            if typ.get('super', None) == 'TypedDict':
+            if typ.get('type', None) == 'TypedDict':
                 return TypedDictDoc.from_dict(typ)
-            if typ.get('super', None) == 'Enum':
+            if typ.get('type', None) == 'Enum':
                 return EnumDoc.from_dict(typ)
         return None
 
@@ -144,7 +148,8 @@ class LibraryDoc(object):
             LibdocWriter(format).write(self, outfile)
 
     def convert_docs_to_html(self):
-        formatter = DocFormatter(self.keywords, self.data_types, self.doc, self.doc_format)
+        formatter = DocFormatter(self.keywords, self.data_types, self.doc,
+                                 self.doc_format)
         self._doc = formatter.html(self.doc, intro=True)
         self.doc_format = 'HTML'
         for init in self.inits:
@@ -255,9 +260,9 @@ class KeywordDoc(Sortable):
 
 class TypedDictDoc(object):
 
-    def __init__(self, name='', super='', doc='', items=None):
+    def __init__(self, name='', type='', doc='', items=None):
         self.name = name
-        self.super = super
+        self.type = type
         self.doc = doc
         self.items = items or []
 
@@ -265,7 +270,7 @@ class TypedDictDoc(object):
     def from_dict(cls, type_doc):
         if isinstance(type_doc, dict):
             return cls(name=type_doc['name'],
-                       super=type_doc['super'],
+                       type=type_doc['type'],
                        doc=type_doc['doc'],
                        items=type_doc['items'])
         raise TypeError(
@@ -279,14 +284,13 @@ class TypedDictDoc(object):
             required_keys = list(getattr(typed_dict, '__required_keys__', []))
             optional_keys = list(getattr(typed_dict, '__optional_keys__', []))
             for key, value in typed_dict.__annotations__.items():
-                type = value.__name__ if isclass(value) else unic(value)
-                items.append({
-                    'key': key,
-                    'type': type,
-                    'required': key in required_keys if required_keys or optional_keys else None
-                })
+                typ = value.__name__ if isclass(value) else unic(value)
+                items.append({'key': key,
+                              'type': typ,
+                              'required': key in required_keys
+                              if required_keys or optional_keys else None})
             return cls(name=typed_dict.__name__,
-                       super='TypedDict',
+                       type='TypedDict',
                        doc=typed_dict.__doc__ if typed_dict.__doc__ else '',
                        items=items)
         raise TypeError(
@@ -296,7 +300,7 @@ class TypedDictDoc(object):
     def to_dictionary(self):
         return {
             'name': self.name,
-            'super': self.super,
+            'type': self.type,
             'doc': self.doc,
             'items': self.items
         }
@@ -304,9 +308,9 @@ class TypedDictDoc(object):
 
 class EnumDoc(object):
 
-    def __init__(self, name='', super='', doc='', members=None):
+    def __init__(self, name='', type='', doc='', members=None):
         self.name = name
-        self.super = super
+        self.type = type
         self.doc = doc
         self.members = members or []
 
@@ -314,7 +318,7 @@ class EnumDoc(object):
     def from_dict(cls, type_doc):
         if isinstance(type_doc, dict):
             return cls(name=type_doc['name'],
-                       super=type_doc['super'],
+                       type=type_doc['type'],
                        doc=type_doc['doc'],
                        members=type_doc['members'])
         raise TypeError(
@@ -325,12 +329,11 @@ class EnumDoc(object):
     def from_Enum(cls, enum_type):
         if isinstance(enum_type, EnumType):
             return cls(name=enum_type.__name__,
-                       super='Enum',
+                       type='Enum',
                        doc=enum_type.__doc__ or '',
-                       members=[{
-                           'name': name,
-                           'value': unicode(member.value)}
-                           for name, member in enum_type.__members__.items()])
+                       members=[{'name': name,
+                                 'value': unicode(member.value)}
+                                for name, member in enum_type.__members__.items()])
         raise TypeError(
             'EnumDoc.from_Enum() requires Enum types but got %s.'
             % type_name(enum_type))
@@ -338,7 +341,7 @@ class EnumDoc(object):
     def to_dictionary(self):
         return {
             'name': self.name,
-            'super': self.super,
+            'type': self.type,
             'doc': self.doc,
             'members': self.members
         }

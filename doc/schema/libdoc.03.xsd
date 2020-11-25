@@ -77,7 +77,7 @@
             </xs:choice>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" />
-        <xs:attribute name="super" type="xs:string" use="required" />
+        <xs:attribute name="type" type="xs:string" use="required" />
     </xs:complexType>
     <xs:complexType name="EnumMembers">
         <xs:sequence>

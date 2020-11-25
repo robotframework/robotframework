@@ -49,7 +49,8 @@ class SpecDocBuilder(object):
         version = root.get('specversion')
         if version != '3':
             raise DataError("Invalid spec file version '%s'. "
-                            "Robot Framework 4.0 and newer requires spec version 3." % version)
+                            "Robot Framework 4.0 and newer requires spec version 3."
+                            % version)
         return root
 
     def _create_keywords(self, spec, path):
@@ -96,28 +97,20 @@ class SpecDocBuilder(object):
         return [self._create_data_type(dt) for dt in spec.findall('data_types/dt')]
 
     def _create_data_type(self, dt):
-        args = {
-            'name': dt.get('name'),
-            'super': dt.get('super'),
-            'doc': dt.find('doc').text or ''
-        }
-        if args['super'] == 'Enum':
-            args['members'] = [
-                {
-                    'name': member.get('name'),
-                    'value': member.get('value')
-                }
-                for member in dt.findall('members/member')]
+        args = {'name': dt.get('name'),
+                'type': dt.get('type'),
+                'doc': dt.find('doc').text or ''}
+        if args['type'] == 'Enum':
+            args['members'] = [{'name': member.get('name'),
+                                'value': member.get('value')}
+                               for member in dt.findall('members/member')]
             return EnumDoc(**args)
-        if args['super'] == 'TypedDict':
-            args['items'] = [
-                {
-                    'key': item.get('key'),
-                    'type': item.get('type'),
-                    'required': item.get('required', None)
-                }
-                for item in dt.findall('items/item')]
+        if args['type'] == 'TypedDict':
+            args['items'] = [{'key': item.get('key'),
+                              'type': item.get('type'),
+                              'required': item.get('required', None)}
+                             for item in dt.findall('items/item')]
             return TypedDictDoc(**args)
         raise TypeError("Data type '%s' has the wrong 'type' attribute."
                         "Valid are 'Enum' or 'TypedDict' but got %s"
-                        % (args['name'], args['super']))
+                        % (args['name'], args['type']))
