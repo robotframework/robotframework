@@ -163,7 +163,6 @@ Command line options for post-processing outputs
 .. _Selects failed test suites: `Re-executing failed test suites`_
 .. _Selects failed tests: `Re-executing failed test cases`_
 .. _Selects the test cases: `By tag names`_
-.. _skipped: `Skipping tests`_
 .. _ContinueOnFailure: `Continue on failure`_
 .. _Skips teardowns: `Handling Teardowns`_
 .. _SkipTeardownOnExit: `Handling Teardowns`_

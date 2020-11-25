@@ -108,9 +108,7 @@ If the :option:`--include` option is used, only test cases having a matching
 tag are selected, and with the :option:`--exclude` option test cases having a
 matching tag are not. If both are used, only tests with a tag
 matching the former option, and not with a tag matching the latter,
-are selected.
-
-::
+are selected::
 
    --include example
    --exclude not_ready
@@ -215,14 +213,6 @@ Rebot fails in these cases, but it has a separate
 :option:`--ProcessEmptySuite` option that can be used to alter the behavior.
 In practice this option works the same way as :option:`--RunEmptySuite` when
 running tests.
-
-Old criticality functionality
------------------------------
-
-The concept of criticality was removed in Robot Framework 4.0.
-How to achieve similar functionality with the new skip status is explained
-in `Skipping tests`_.
-
 
 Setting metadata
 ----------------
