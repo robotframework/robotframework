@@ -1456,8 +1456,8 @@ discussed earlier. As the examples above illustrate, this syntax is even more
 powerful as it provides access to Python built-ins like `len()` and modules
 like `math`. In addition to being able to use variables like `${var}` in
 the expressions (they are replaced before evaluation), variables are also
-available using the special `$var` syntax during evaluation. Please see `Evaluating expressions`_
-for more details.
+available using the special `$var` syntax during evaluation. The whole expression
+syntax is explained in the `Evaluating expressions`_ appendix.
 
 .. tip:: Instead of creating complicated expressions, it is often better
          to move the logic into a `custom library`__. That eases
