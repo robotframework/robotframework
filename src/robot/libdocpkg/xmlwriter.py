@@ -26,8 +26,7 @@ class LibdocXmlWriter(object):
         self._write_start(libdoc, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
-        self._write_data_types(
-            sorted(libdoc.data_types, key=lambda t: t.name), writer)
+        self._write_data_types(libdoc.data_types, writer)
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer):
@@ -111,18 +110,26 @@ class LibdocXmlWriter(object):
 
     def _write_data_types(self, data_types, writer):
         writer.start('data_types')
-        for dt in data_types:
-            attrs = {'name': dt.name, 'type': dt.type}
-            writer.start('dt', attrs)
-            writer.element('doc', dt.doc)
-            if dt.type == 'Enum':
+        if data_types.enum_catalog:
+            writer.start('enums')
+            for enum in data_types.enum_catalog:
+                attrs = {'name': enum.name}
+                writer.start('enum', attrs)
+                writer.element('doc', enum.doc)
                 writer.start('members')
-                for member in dt.members:
+                for member in enum.members:
                     writer.element('member', attrs=member)
                 writer.end('members')
-            elif dt.type == 'TypedDict':
+                writer.end('enum')
+            writer.end('enums')
+        if data_types.typed_dict_catalog:
+            writer.start('typed_dicts')
+            for typ_dict in data_types.typed_dict_catalog:
+                attrs = {'name': typ_dict.name}
+                writer.start('typed_dict', attrs)
+                writer.element('doc', typ_dict.doc)
                 writer.start('items')
-                for item in dt.items:
+                for item in typ_dict.items:
                     if item['required'] is None:
                         item.pop('required')
                     elif item['required']:
@@ -131,7 +138,8 @@ class LibdocXmlWriter(object):
                         item['required'] = 'false'
                     writer.element('item', attrs=item)
                 writer.end('items')
-            writer.end('dt')
+                writer.end('typed_dict')
+            writer.end('typed_dicts')
         writer.end('data_types')
 
     def _write_end(self, writer):

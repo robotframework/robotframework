@@ -64,18 +64,9 @@ class LibraryDoc(object):
         self.doc_format = doc_format
         self.source = source
         self.lineno = lineno
-        self.data_types_catalog = {}
+        self.data_types = DataTypeCatalog()
         self.inits = []
         self.keywords = []
-
-    @property
-    def data_types(self):
-        return self.data_types_catalog.values()
-
-    @data_types.setter
-    def data_types(self, data_types):
-        list_of_type_docs = [self._get_type_doc_object(_type) for _type in data_types]
-        self.data_types_catalog = dict([(t.name, t) for t in list_of_type_docs])
 
     @property
     def doc(self):
@@ -94,7 +85,7 @@ class LibraryDoc(object):
             entries.append('Importing')
         if self.keywords:
             entries.append('Keywords')
-        if self.data_types_catalog:
+        if self.data_types:
             entries.append('Data types')
         return '\n'.join('- `%s`' % entry for entry in entries)
 
@@ -119,25 +110,7 @@ class LibraryDoc(object):
 
     def _add_types_from_keyword(self, keyword):
         for arg in keyword.args:
-            for type_repr, typ in zip(arg.types_reprs, arg.types):
-                if type_repr not in self.data_types_catalog:
-                    type_doc = self._get_type_doc_object(typ)
-                    if type_doc:
-                        self.data_types_catalog[type_repr] = type_doc
-
-    def _get_type_doc_object(self, typ):
-        if isinstance(typ, (EnumDoc, TypedDictDoc)):
-            return typ
-        if isinstance(typ, (TypedDictType, ExtTypedDictType)):
-            return TypedDictDoc.from_TypedDict(typ)
-        if isinstance(typ, EnumType):
-            return EnumDoc.from_Enum(typ)
-        if isinstance(typ, dict):
-            if typ.get('type', None) == 'TypedDict':
-                return TypedDictDoc.from_dict(typ)
-            if typ.get('type', None) == 'Enum':
-                return EnumDoc.from_dict(typ)
-        return None
+            self.data_types.update(arg.types)
 
     @property
     def all_tags(self):
@@ -156,7 +129,7 @@ class LibraryDoc(object):
             init.doc = formatter.html(init.doc)
         for keyword in self.keywords:
             keyword.doc = formatter.html(keyword.doc)
-        for type_doc in self.data_types_catalog.values():
+        for type_doc in self.data_types:
             type_doc.doc = formatter.html(type_doc.doc)
 
     def to_dictionary(self):
@@ -173,8 +146,7 @@ class LibraryDoc(object):
             'tags': list(self.all_tags),
             'inits': [init.to_dictionary() for init in self.inits],
             'keywords': [kw.to_dictionary() for kw in self.keywords],
-            'dataTypes': [dt.to_dictionary() for dt in
-                          sorted(self.data_types, key=lambda t: t.name)]
+            'dataTypes': self.data_types.to_dictionary()
         }
 
     def to_json(self, indent=None):
@@ -258,7 +230,62 @@ class KeywordDoc(Sortable):
         }
 
 
-class TypedDictDoc(object):
+class DataTypeCatalog(object):
+
+    def __init__(self):
+        self._enum_catalog = set()
+        self._typed_dict_catalog = set()
+
+    def __iter__(self):
+        for type_dooc in sorted(self._typed_dict_catalog | self._enum_catalog):
+            yield type_dooc
+
+    def __bool__(self):
+        return bool(self._enum_catalog or self._typed_dict_catalog)
+
+    __nonzero__ = __bool__
+
+    @property
+    def enum_catalog(self):
+        return sorted(self._enum_catalog)
+
+    @property
+    def typed_dict_catalog(self):
+        return sorted(self._typed_dict_catalog)
+
+    def add(self, typ):
+        type_doc = self._get_type_doc_object(typ)
+        if isinstance(type_doc, EnumDoc):
+            self._enum_catalog.add(type_doc)
+        elif isinstance(type_doc, TypedDictDoc):
+            self._typed_dict_catalog.add(type_doc)
+
+    def update(self, typs):
+        for typ in typs:
+            self.add(typ)
+
+    def _get_type_doc_object(self, typ):
+        if isinstance(typ, (EnumDoc, TypedDictDoc)):
+            return typ
+        if isinstance(typ, (TypedDictType, ExtTypedDictType)):
+            return TypedDictDoc.from_TypedDict(typ)
+        if isinstance(typ, EnumType):
+            return EnumDoc.from_Enum(typ)
+        if isinstance(typ, dict):
+            if typ.get('type', None) == 'TypedDict':
+                return TypedDictDoc.from_dict(typ)
+            if typ.get('type', None) == 'Enum':
+                return EnumDoc.from_dict(typ)
+        return None
+
+    def to_dictionary(self):
+        return {
+            'enums': [en.to_dictionary() for en in self.enum_catalog],
+            'typedDicts': [td.to_dictionary() for td in self.typed_dict_catalog]
+        }
+
+
+class TypedDictDoc(Sortable):
 
     def __init__(self, name='', type='', doc='', items=None):
         self.name = name
@@ -297,6 +324,10 @@ class TypedDictDoc(object):
             'TypedDictDoc.from_TypedDict() requires a TypedDict but got %s.'
             % type_name(typed_dict))
 
+    @property
+    def _sort_key(self):
+        return self.name.lower()
+
     def to_dictionary(self):
         return {
             'name': self.name,
@@ -306,7 +337,7 @@ class TypedDictDoc(object):
         }
 
 
-class EnumDoc(object):
+class EnumDoc(Sortable):
 
     def __init__(self, name='', type='', doc='', members=None):
         self.name = name
@@ -337,6 +368,10 @@ class EnumDoc(object):
         raise TypeError(
             'EnumDoc.from_Enum() requires Enum types but got %s.'
             % type_name(enum_type))
+
+    @property
+    def _sort_key(self):
+        return self.name.lower()
 
     def to_dictionary(self):
         return {

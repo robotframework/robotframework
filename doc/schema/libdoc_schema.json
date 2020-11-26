@@ -75,14 +75,24 @@
       "uniqueItems": true
     },
     "dataTypes": {
-      "type": "array",
-      "items": {
-        "oneOf": [
-          {"$ref": "#/definitions/typedDictType"},
-          {"$ref": "#/definitions/enumType"}
-        ]
-      },
-      "uniqueItems": true
+      "type": "object",
+      "title": "Keyword schema",
+      "properties": {
+        "enums": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/enumType"
+          },
+          "uniqueItems": true
+        },
+        "typedDicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typedDictType"
+          },
+          "uniqueItems": true
+        }
+      }
     }
   },
   "required": [

@@ -36,7 +36,7 @@ class SpecDocBuilder(object):
                             lineno=int(spec.get('lineno', -1)))
         libdoc.inits = self._create_keywords(spec, 'inits/init')
         libdoc.keywords = self._create_keywords(spec, 'keywords/kw')
-        libdoc.data_types = self._create_data_types(spec)
+        libdoc.data_types.update(self._create_data_types(spec))
         return libdoc
 
     def _parse_spec(self, path):
@@ -94,23 +94,25 @@ class SpecDocBuilder(object):
         return spec
 
     def _create_data_types(self, spec):
-        return [self._create_data_type(dt) for dt in spec.findall('data_types/dt')]
+        enums = [self._create_enum_doc(dt)
+                 for dt in spec.findall('data_types/enums/enum')]
+        typed_dicts = [self._create_typed_dict_doc(dt)
+                       for dt in spec.findall('data_types/typed_dicts/typed_dict')]
+        return enums + typed_dicts
 
-    def _create_data_type(self, dt):
-        args = {'name': dt.get('name'),
-                'type': dt.get('type'),
-                'doc': dt.find('doc').text or ''}
-        if args['type'] == 'Enum':
-            args['members'] = [{'name': member.get('name'),
-                                'value': member.get('value')}
-                               for member in dt.findall('members/member')]
-            return EnumDoc(**args)
-        if args['type'] == 'TypedDict':
-            args['items'] = [{'key': item.get('key'),
-                              'type': item.get('type'),
-                              'required': item.get('required', None)}
-                             for item in dt.findall('items/item')]
-            return TypedDictDoc(**args)
-        raise TypeError("Data type '%s' has the wrong 'type' attribute."
-                        "Valid are 'Enum' or 'TypedDict' but got %s"
-                        % (args['name'], args['type']))
+    def _create_enum_doc(self, dt):
+        return EnumDoc(name=dt.get('name'),
+                       type='Enum',
+                       doc=dt.find('doc').text or '',
+                       members=[{'name': member.get('name'),
+                                 'value': member.get('value')}
+                                for member in dt.findall('members/member')])
+
+    def _create_typed_dict_doc(self, dt):
+        return TypedDictDoc(name=dt.get('name'),
+                            type=dt.get('type'),
+                            doc=dt.find('doc').text or '',
+                            items=[{'key': item.get('key'),
+                                    'type': item.get('type'),
+                                    'required': item.get('required', None)}
+                                   for item in dt.findall('items/item')])

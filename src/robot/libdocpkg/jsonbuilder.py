@@ -37,7 +37,8 @@ class JsonDocBuilder(object):
                             doc_format=spec['docFormat'],
                             source=spec['source'],
                             lineno=int(spec.get('lineno', -1)))
-        libdoc.data_types = spec['dataTypes']
+        libdoc.data_types.update(spec['dataTypes'].get('enums', []))
+        libdoc.data_types.update(spec['dataTypes'].get('typedDicts', []))
         libdoc.inits = [self._create_keyword(kw) for kw in spec['inits']]
         libdoc.keywords = [self._create_keyword(kw) for kw in spec['keywords']]
         return libdoc

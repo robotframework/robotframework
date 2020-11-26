@@ -45,7 +45,7 @@
     function linkArgs(container, typeNames) {
       container.forEach(function(k) {
           k.args.forEach(function (arg) {
-            arg.linked = arg.types.filter(function(value) {return typeNames.includes(value)});
+            arg.linked = arg.types.filter(function(value) {return typeNames.indexOf(value) > -1});
           })
         }
       );
@@ -55,7 +55,8 @@
         parseTemplates();
         document.title = libdoc.name;
         storage.init('libdoc');
-        libdoc.dataTypes = libdoc.dataTypes.filter(function (d) {return d.name});
+        libdoc.dataTypes = libdoc.dataTypes.enums.concat(libdoc.dataTypes.typedDicts);
+        libdoc.dataTypes.sort(compare)
         const typeNames = libdoc.dataTypes.map(function (d) {return d.name});
         linkArgs(libdoc.inits, typeNames);
         linkArgs(libdoc.keywords, typeNames);
@@ -89,6 +90,16 @@
           }
       }, 0);
     });
+
+     function compare( a, b ) {
+      if ( a.name < b.name ){
+        return -1;
+      }
+      if ( a.name > b.name ){
+        return 1;
+      }
+      return 0;
+    }
 
     function parseTemplates() {
         $('script[type="text/x-jquery-tmpl"]').map(function (idx, elem) {
@@ -254,6 +265,7 @@
     function resetKeywords() {
         renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
+        renderTemplate('data-types', libdoc);
         if (libdoc.tags.length) {
             renderTemplate('tags', libdoc);
         }
@@ -355,7 +367,7 @@
                     {{if $value.types.length}}
                       <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.types}">
                         ${( $data.linked = $value.linked ),''}
-                        {{each $value.types}}&lt;{{if $data.linked.includes($value)}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;{{/each}}
+                        {{each $value.types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;{{/each}}
                       </span>
                     {{/if}}
                   {{/each}}
@@ -491,7 +503,7 @@
                     {{if $value.types.length}}
                       <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.types}">
                         ${( $data.linked = $value.linked ),''}
-                        {{each $value.types}}&lt;{{if $data.linked.includes($value)}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;<span class="or"></span>{{/each}}
+                        {{each $value.types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;<span class="or"></span>{{/each}}
                       </span>
                     {{/if}}
                   {{/each}}
