@@ -739,6 +739,7 @@ to make the syntax easier to read.
        Repeat Keyword    42 times    My Keyword
        Repeat Keyword    ${var}    Another Keyword    argument
 
+.. _if expressions:
 
 If expression
 -------------
