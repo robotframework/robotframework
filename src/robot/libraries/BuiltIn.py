@@ -1973,7 +1973,7 @@ class _RunKeyword(_BuiltInBase):
         try:
             return 'PASS', self.run_keyword(name, *args)
         except ExecutionFailed as err:
-            if err.dont_continue:
+            if err.dont_continue or err.skip:
                 raise
             return 'FAIL', unic(err)
 
@@ -2081,7 +2081,7 @@ class _RunKeyword(_BuiltInBase):
         try:
             self.run_keyword(name, *args)
         except ExecutionFailed as err:
-            if err.dont_continue:
+            if err.dont_continue or err.skip:
                 raise
             error = err.message
         else:
@@ -2234,7 +2234,7 @@ class _RunKeyword(_BuiltInBase):
             try:
                 return self.run_keyword(name, *args)
             except ExecutionFailed as err:
-                if err.dont_continue:
+                if err.dont_continue or err.skip:
                     raise
                 count -= 1
                 if time.time() > maxtime > 0 or count == 0:
