@@ -150,6 +150,27 @@ Skip in Teardown with Pass Execution in Body
     Pass Execution    First we pass
     [Teardown]    Skip  Then we skip
 
+Skip with Run Keyword and Ignore Error
+    [Documentation]    SKIP Skip from within
+    Run Keyword and Ignore Error    Skip    Skip from within
+    Fail    Should not be executed!
+
+Skip with Run Keyword and Expect Error
+    [Documentation]    SKIP Skip from within
+    Run Keyword and Expect Error    An error that never happens    Skip    Skip from within
+    Fail    Should not be executed!
+
+Skip with Run Keyword and Return Status
+    [Documentation]    SKIP Skip from within
+    Run Keyword and Return Status    Skip    Skip from within
+    Fail    Should not be executed!
+
+Skip with Wait Until Keyword Succeeds
+    [Documentation]    SKIP Skip from within
+    Wait Until Keyword Succeeds    3x    1s
+    ...    Skip    Skip from within
+    Fail    Should not be executed!
+
 Skipped with --skip
     [Documentation]    SKIP ${TEST_OR_TASK} skipped with '--skip' command line option.
     [Tags]    skip-this
