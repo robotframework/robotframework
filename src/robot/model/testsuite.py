@@ -17,6 +17,7 @@ from robot.utils import setter
 
 from .configurer import SuiteConfigurer
 from .filter import Filter, EmptySuiteRemover
+from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
 from .metadata import Metadata
@@ -31,8 +32,7 @@ class TestSuite(ModelObject):
     Extended by :class:`robot.running.model.TestSuite` and
     :class:`robot.result.model.TestSuite`.
     """
-    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa',
-                 'setup', 'teardown']
+    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors', 'rpa']
     test_class = TestCase    #: Internal usage only.
     keyword_class = Keyword  #: Internal usage only.
 
@@ -87,6 +87,14 @@ class TestSuite(ModelObject):
     def tests(self, tests):
         """Tests as a :class:`~.TestCases` object."""
         return TestCases(self.test_class, self, tests)
+
+    @setter
+    def setup(self, setup):
+        return create_fixture(setup, self, Keyword.SETUP_TYPE)
+
+    @setter
+    def teardown(self, teardown):
+        return create_fixture(teardown, self, Keyword.TEARDOWN_TYPE)
 
     @setter
     def keywords(self, keywords):
