@@ -41,6 +41,10 @@ FOR IN ENUMERATE loop with three variables
     Should be loop iteration       ${loop.kws[1]}    \${i} = 1, \${k} = b, \${v} = 2
     Should be loop iteration       ${loop.kws[2]}    \${i} = 2, \${k} = c, \${v} = 3
 
+FOR IN ENUMERATE loop with start
+    ${loop} =    Check test and get loop    ${TESTNAME}
+    Should be IN ENUMERATE loop    ${loop}           3
+
 FOR IN ENUMERATE loop with more than three variables is invalid
     Check test and failed loop    ${TESTNAME}    IN ENUMERATE
 

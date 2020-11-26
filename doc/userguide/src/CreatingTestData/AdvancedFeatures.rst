@@ -465,9 +465,34 @@ For example, the following two test cases do the same thing:
            My Keyword    ${index}    ${item}
        END
 
+Starting from Robot Framework 4.0, it is possible to specify a custom start index
+by using `start=<index>` syntax as the last item of the `FOR ... IN ENUMERATE`
+header:
+
+.. sourcecode:: robotframework
+
+   *** Variables ***
+   @{LIST}         a    b    c
+   ${START}        10
+
+   *** Test Cases ***
+   For-in-enumerate with start
+       FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}    start=1
+           My Keyword    ${index}    ${item}
+       END
+
+   Start as variable
+       FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}    start=${start}
+           My Keyword    ${index}    ${item}
+       END
+
+The `start=<index>` syntax must be explicitly used in the `FOR` header and it cannot
+itself come from a variable. If the last actual item to enumerate would start with
+`start=`, it needs to be escaped like `start\=`.
+
 Just like with regular for loops, you can loop over multiple values per loop
 iteration as long as the number of values in your list is evenly divisible by
-the number of loop-variables (excluding the first, index variable).
+the number of loop-variables (excluding the first, index variable):
 
 .. sourcecode:: robotframework
 
@@ -569,6 +594,11 @@ variable that then becomes a Python tuple getting items from all lists.
            Length Should Be    ${items}    3
            Log Many    ${items}[0]    ${items}[1]    ${items}[2]
        END
+
+If lists have an unequal number of items, the shortest list defines how
+many iterations there are and values at the end of longer lists are ignored.
+For example, the above examples loop only three times and values `4` and `5`
+in the `${NUM}` list are ignored.
 
 .. note:: Getting lists to iterate over from list variables and using
           just one loop variable are new features in Robot Framework 3.2.
