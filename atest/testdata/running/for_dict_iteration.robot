@@ -49,6 +49,13 @@ FOR IN ENUMERATE loop with three variables
     END
     Should be true    ${result} == ['0:a:1', '1:b:2', '2:c:3']
 
+FOR IN ENUMERATE loop with start
+    FOR    ${i}    ${k}    ${v}    IN ENUMERATE   &{DICT}    start=42
+        Should be true      isinstance($i, int)
+        @{result} =    Create list    @{result}    ${i}:${k}:${v}
+    END
+    Should be true    ${result} == ['42:a:1', '43:b:2', '44:c:3']
+
 FOR IN ENUMERATE loop with more than three variables is invalid
     [Documentation]    FAIL
     ...    Number of FOR IN ENUMERATE loop variables must be 1-3 when iterating over dictionaries, got 4.

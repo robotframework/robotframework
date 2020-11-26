@@ -185,7 +185,7 @@ class ForInRunner(object):
             values = self._resolve_dict_values(data.values)
             values = self._map_dict_values_to_rounds(values, values_per_round)
         else:
-            values = self._context.variables.replace_list(data.values)
+            values = self._resolve_values(data.values)
             values = self._map_values_to_rounds(values, values_per_round)
         return values
 
@@ -239,6 +239,9 @@ class ForInRunner(object):
                 'over dictionaries, got %d.' % per_round
             )
         return values
+
+    def _resolve_values(self, values):
+        return self._context.variables.replace_list(values)
 
     def _map_values_to_rounds(self, values, per_round):
         count = len(values)
@@ -306,6 +309,7 @@ class ForInRangeRunner(ForInRunner):
 
 class ForInZipRunner(ForInRunner):
     flavor = 'IN ZIP'
+    _start = 0
 
     def _resolve_dict_values(self, values):
         raise DataError(
@@ -327,6 +331,25 @@ class ForInZipRunner(ForInRunner):
 class ForInEnumerateRunner(ForInRunner):
     flavor = 'IN ENUMERATE'
 
+    def _resolve_dict_values(self, values):
+        self._start, values = self._get_start(values)
+        return ForInRunner._resolve_dict_values(self, values)
+
+    def _resolve_values(self, values):
+        self._start, values = self._get_start(values)
+        return ForInRunner._resolve_values(self, values)
+
+    def _get_start(self, values):
+        if not values[-1].startswith('start='):
+            return 0, values
+        start = self._context.variables.replace_string(values[-1][6:])
+        if len(values) == 1:
+            raise DataError('FOR loop has no loop values.')
+        try:
+            return int(start), values[:-1]
+        except ValueError:
+            raise ValueError("Invalid FOR IN ENUMERATE start value '%s'." % start)
+
     def _map_dict_values_to_rounds(self, values, per_round):
         if per_round > 3:
             raise DataError(
@@ -334,13 +357,13 @@ class ForInEnumerateRunner(ForInRunner):
                 'iterating over dictionaries, got %d.' % per_round
             )
         if per_round == 2:
-            return ((index, item) for index, item in enumerate(values))
-        return ((index,) + item for index, item in enumerate(values))
+            return ((i, v) for i, v in enumerate(values, start=self._start))
+        return ((i,) + v for i, v in enumerate(values, start=self._start))
 
     def _map_values_to_rounds(self, values, per_round):
         per_round = max(per_round-1, 1)
         values = ForInRunner._map_values_to_rounds(self, values, per_round)
-        return ([i] + v for i, v in enumerate(values))
+        return ([i] + v for i, v in enumerate(values, start=self._start))
 
     def _raise_wrong_variable_count(self, variables, values):
         raise DataError(

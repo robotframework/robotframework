@@ -19,6 +19,22 @@ Values from list variable
     Should be loop iteration       ${loop.kws[2]}    \${index} = 2, \${item} = c
     Should be loop iteration       ${loop.kws[3]}    \${index} = 3, \${item} = d
 
+Start
+    ${loop} =    Check test and get loop    ${TEST NAME}
+    Should be IN ENUMERATE loop    ${loop}    5
+
+Escape start
+    ${loop} =    Check test and get loop    ${TEST NAME}
+    Should be IN ENUMERATE loop    ${loop}    2
+
+Invalid start
+    ${loop} =    Check test and get loop    ${TEST NAME}
+    Should be IN ENUMERATE loop    ${loop}    0    status=FAIL
+
+Invalid variable in start
+    ${loop} =    Check test and get loop    ${TEST NAME}
+    Should be IN ENUMERATE loop    ${loop}    0    status=FAIL
+
 Index and two items
     ${loop} =    Check test and get loop    ${TEST NAME}    1
     Should be IN ENUMERATE loop    ${loop}           3
@@ -39,4 +55,10 @@ One variable only
     Should be loop iteration       ${loop.kws[1]}    \${item} = (1, ${u}'b')
 
 Wrong number of variables
+    Check test and failed loop    ${TEST NAME}    IN ENUMERATE
+
+No values
+    Check test and failed loop    ${TEST NAME}    IN ENUMERATE
+
+No values with start
     Check test and failed loop    ${TEST NAME}    IN ENUMERATE
