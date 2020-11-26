@@ -35,8 +35,9 @@ class TestCheckerLibrary:
             ExecutionResultBuilder(path).build(result)
         except:
             set_suite_variable('$SUITE', None)
-            raise RuntimeError('Processing output failed: %s'
-                               % utils.get_error_message())
+            msg, details = utils.get_error_details()
+            logger.info(details)
+            raise RuntimeError('Processing output failed: %s' % msg)
         set_suite_variable('$SUITE', process_suite(result.suite))
         set_suite_variable('$STATISTICS', result.statistics)
         set_suite_variable('$ERRORS', process_errors(result.errors))
@@ -201,7 +202,7 @@ class TestCheckerLibrary:
             assert_equal(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
-        actual_names = [kw.name for kw in item.keywords]
+        actual_names = [kw.name for kw in item.body]
         assert_equal(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
             assert_equal(act, exp)
@@ -213,7 +214,7 @@ class TestCheckerLibrary:
         kw_index = int(config.get('kw_index', 0))
         test = self._get_test_from_suite(suite, name)
         self._check_test_status(test)
-        self.should_contain_keywords(test.keywords[kw_index], *kw_names)
+        self.should_contain_keywords(test.body[kw_index], *kw_names)
         return test
 
     def check_log_message(self, item, msg, level='INFO', html=False, pattern=False):
@@ -244,14 +245,14 @@ def process_test(test):
     else:
         test.exp_status = 'PASS'
         test.exp_message = '' if 'PASS' not in test.doc else test.doc.split('PASS', 1)[1].lstrip()
-    for kw in test.keywords:
+    for kw in test.body:
         process_keyword(kw)
     if test.setup:
         process_keyword(test.setup)
     if test.teardown:
         process_keyword(test.teardown)
-    test.keywords = test.kws = list(test.keywords.normal)
-    test.keyword_count = test.kw_count = len(test.keywords)
+    test.keywords = test.kws = list(test.body)
+    test.keyword_count = test.kw_count = len(test.body)
 
 
 def process_keyword(kw):
@@ -259,11 +260,11 @@ def process_keyword(kw):
         return
     if kw.teardown:
         process_keyword(kw.teardown)
-    kw.kws = kw.keywords
+    kw.kws = kw.body
     kw.msgs = kw.messages
     kw.message_count = kw.msg_count = len(kw.messages)
-    kw.keyword_count = kw.kw_count = len(list(kw.keywords.normal))
-    for subkw in kw.keywords:
+    kw.keyword_count = kw.kw_count = len(list(kw.body))
+    for subkw in kw.body:
         process_keyword(subkw)
 
 

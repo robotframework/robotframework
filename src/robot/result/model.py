@@ -37,7 +37,7 @@ from operator import attrgetter
 import warnings
 
 from robot import model
-from robot.model import TotalStatisticsBuilder, Messages, Keywords
+from robot.model import TotalStatisticsBuilder, Messages, Keywords, Body
 from robot.utils import get_elapsed_time, setter
 
 from .configurer import SuiteConfigurer
@@ -74,7 +74,7 @@ class Keyword(model.Keyword):
                  parent=None, lineno=None, source=None):
         model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type, parent)
         self.messages = None
-        self.keywords = None
+        self.body = None
         #: Name of the keyword without library or resource name.
         self.kwname = kwname or ''
         #: Name of the library or resource containing this keyword.
@@ -92,9 +92,22 @@ class Keyword(model.Keyword):
         self.source = source
 
     @setter
+    def body(self, body):
+        """Child keywords as a :class:`~.Body` object."""
+        return Body(self.keyword_class or self.__class__, self, body)
+
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0
+
+        Use :attr:`body`, :attr:`setup` or :attr:`teardown` instead.
+        """
+        kws = list(self.body) + [self.teardown] if self.teardown else []
+        return Keywords(self.keyword_class, self, kws)
+
+    @keywords.setter
     def keywords(self, keywords):
-        """Child keywords as a :class:`~.Keywords` object."""
-        return Keywords(self.keyword_class or self.__class__, self, keywords)
+        Keywords.raise_deprecation_error()
 
     @setter
     def messages(self, messages):
@@ -107,7 +120,7 @@ class Keyword(model.Keyword):
         # It would be cleaner to store keywords/messages in same `children`
         # list and turn `keywords` and `messages` to properties that pick items
         # from it. That would require bigger changes to the model, though.
-        return sorted(chain(self.keywords, self.messages),
+        return sorted(chain(self.body, self.messages),
                       key=attrgetter('_sort_key'))
 
     @property

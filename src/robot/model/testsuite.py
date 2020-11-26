@@ -45,8 +45,6 @@ class TestSuite(ModelObject):
         self.rpa = rpa
         self.suites = None
         self.tests = None
-        # TODO: Deprecate
-        self.keywords = None
         self.setup = self.keyword_class(parent=self, type=Keyword.SETUP_TYPE)
         self.teardown = self.keyword_class(parent=self,
                                            type=Keyword.TEARDOWN_TYPE)
@@ -96,10 +94,18 @@ class TestSuite(ModelObject):
     def teardown(self, teardown):
         return create_fixture(teardown, self, Keyword.TEARDOWN_TYPE)
 
-    @setter
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0
+
+        Use :attr:`body`, :attr:`setup` or :attr:`teardown` instead.
+        """
+        kws = [kw for kw in [self.setup, self.teardown] if kw]
+        return Keywords(self.keyword_class, self, kws)
+
+    @keywords.setter
     def keywords(self, keywords):
-        """Suite setup and teardown as a :class:`~.Keywords` object."""
-        return Keywords(self.keyword_class, self, keywords)
+        Keywords.raise_deprecation_error()
 
     @property
     def id(self):

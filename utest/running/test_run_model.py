@@ -31,7 +31,7 @@ class TestModelTypes(unittest.TestCase):
         assert_not_equal(type(test), model.TestCase)
 
     def test_test_case_keyword(self):
-        kw = TestCase().keywords.create()
+        kw = TestCase().body.create()
         assert_equal(type(kw), Keyword)
         assert_not_equal(type(kw), model.Keyword)
 
@@ -130,11 +130,11 @@ Keyword
         assert_equal(suite.resource.variables[0].name, '${VAR}')
         assert_equal(suite.resource.variables[0].value, ('Value',))
         assert_equal(suite.resource.keywords[0].name, 'Keyword')
-        assert_equal(suite.resource.keywords[0].keywords[0].name, 'Log')
-        assert_equal(suite.resource.keywords[0].keywords[0].args, ('Hello!',))
+        assert_equal(suite.resource.keywords[0].body[0].name, 'Log')
+        assert_equal(suite.resource.keywords[0].body[0].args, ('Hello!',))
         assert_equal(suite.tests[0].name, 'Example')
         assert_equal(suite.tests[0].setup.name, 'No Operation')
-        assert_equal(suite.tests[0].keywords[0].name, 'Keyword')
+        assert_equal(suite.tests[0].body[0].name, 'Keyword')
 
 
 class TestCopy(unittest.TestCase):
@@ -222,8 +222,8 @@ class TestLineNumberAndSource(unittest.TestCase):
         self._assert_lineno_and_source(self.suite.resource.keywords[0], 24)
 
     def test_keyword_call(self):
-        self._assert_lineno_and_source(self.suite.tests[0].keywords[0], 15)
-        self._assert_lineno_and_source(self.suite.resource.keywords[0].keywords[0], 27)
+        self._assert_lineno_and_source(self.suite.tests[0].body[0], 15)
+        self._assert_lineno_and_source(self.suite.resource.keywords[0].body[0], 27)
 
     def _assert_lineno_and_source(self, item, lineno):
         assert_equal(item.source, self.source)

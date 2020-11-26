@@ -80,7 +80,7 @@ class UserKeywordHandler(object):
                                                            self.longname)
         self._kw = keyword
         self.timeout = keyword.timeout
-        self.keywords = keyword.keywords.normal
+        self.keywords = keyword.body
         self.return_value = tuple(keyword.return_)
         self.teardown = keyword.teardown
 

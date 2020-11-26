@@ -122,123 +122,123 @@ class TestRemoveKeywords(unittest.TestCase):
     def test_remove_all_removes_all(self):
         suite = self._suite_with_setup_and_teardown_and_test_with_keywords()
         self._remove('ALL', suite)
-        for keyword in chain(suite.keywords, suite.tests[0].keywords):
+        for keyword in chain((suite.setup, suite.teardown), suite.tests[0].body):
             self._should_contain_no_messages_or_keywords(keyword)
 
     def test_remove_passed_removes_from_passed_test(self):
         suite = TestSuite()
         test = suite.tests.create(status='PASS')
-        test.keywords.create(status='PASS').messages.create(message='keyword message')
-        test.keywords.create(status='PASS').keywords.create(status='PASS')
+        test.body.create(status='PASS').messages.create(message='keyword message')
+        test.body.create(status='PASS').body.create(status='PASS')
         self._remove_passed(suite)
-        for keyword in test.keywords:
+        for keyword in test.body:
             self._should_contain_no_messages_or_keywords(keyword)
 
     def test_remove_passed_removes_setup_and_teardown_from_passed_suite(self):
         suite = TestSuite()
         suite.tests.create(status='PASS')
-        suite.setup.config(kwname='S', status='PASS').keywords.create()
+        suite.setup.config(kwname='S', status='PASS').body.create()
         suite.teardown.config(kwname='T', status='PASS').messages.create(message='message')
         self._remove_passed(suite)
-        for keyword in suite.keywords:
+        for keyword in suite.setup, suite.teardown:
             self._should_contain_no_messages_or_keywords(keyword)
 
     def test_remove_passed_does_not_remove_when_test_failed(self):
         suite = TestSuite()
         test = suite.tests.create(status='FAIL')
-        test.keywords.create(status='PASS').keywords.create()
-        test.keywords.create(status='PASS').messages.create(message='message')
-        failed_keyword = test.keywords.create(status='FAIL')
+        test.body.create(status='PASS').body.create()
+        test.body.create(status='PASS').messages.create(message='message')
+        failed_keyword = test.body.create(status='FAIL')
         failed_keyword.messages.create('mess')
-        failed_keyword.keywords.create()
+        failed_keyword.body.create()
         self._remove_passed(suite)
-        assert_equal(len(test.keywords[0].keywords), 1)
-        assert_equal(len(test.keywords[1].messages), 1)
-        assert_equal(len(test.keywords[2].messages), 1)
-        assert_equal(len(test.keywords[2].keywords), 1)
+        assert_equal(len(test.body[0].body), 1)
+        assert_equal(len(test.body[1].messages), 1)
+        assert_equal(len(test.body[2].messages), 1)
+        assert_equal(len(test.body[2].body), 1)
 
     def test_remove_passed_does_not_remove_when_test_contains_warning(self):
         suite = TestSuite()
         test = self._test_with_warning(suite)
         self._remove_passed(suite)
-        assert_equal(len(test.keywords[0].keywords), 1)
-        assert_equal(len(test.keywords[1].messages), 1)
+        assert_equal(len(test.body[0].body), 1)
+        assert_equal(len(test.body[1].messages), 1)
 
     def _test_with_warning(self, suite):
         test = suite.tests.create(status='PASS')
-        test.keywords.create(status='PASS').keywords.create()
-        test.keywords.create(status='PASS').messages.create(message='danger!',
+        test.body.create(status='PASS').body.create()
+        test.body.create(status='PASS').messages.create(message='danger!',
                                                             level='WARN')
         return test
 
     def test_remove_passed_does_not_remove_setup_and_teardown_from_failed_suite(self):
         suite = TestSuite()
         suite.setup.config(kwname='SETUP').messages.create(message='some')
-        suite.teardown.config(type='TEARDOWN').keywords.create()
+        suite.teardown.config(type='TEARDOWN').body.create()
         suite.tests.create(status='FAIL')
         self._remove_passed(suite)
         assert_equal(len(suite.setup.messages), 1)
-        assert_equal(len(suite.teardown.keywords), 1)
+        assert_equal(len(suite.teardown.body), 1)
 
     def test_remove_for_removes_passed_items_except_last(self):
         suite, forloop = self.suite_with_forloop()
-        last = forloop.keywords[-1]
+        last = forloop.body[-1]
         self._remove_for_loop(suite)
-        assert_equal(len(forloop.keywords), 1)
-        assert_true(forloop.keywords[-1] is last)
+        assert_equal(len(forloop.body), 1)
+        assert_true(forloop.body[-1] is last)
 
     def suite_with_forloop(self):
         suite = TestSuite()
         test = suite.tests.create(status='PASS')
-        forloop = test.keywords.create(status='PASS', type=FOR_LOOP)
+        forloop = test.body.create(status='PASS', type=FOR_LOOP)
         for i in range(100):
-            forloop.keywords.create(status='PASS',
+            forloop.body.create(status='PASS',
                                     type=FOR_ITEM).messages.create(
                 message='something')
         return suite, forloop
 
     def test_remove_for_removes_passing_items_when_there_are_failures(self):
         suite, forloop = self.suite_with_forloop()
-        failed = forloop.keywords.create(status='FAIL')
+        failed = forloop.body.create(status='FAIL')
         self._remove_for_loop(suite)
-        assert_equal(len(forloop.keywords), 1)
-        assert_true(forloop.keywords[-1] is failed)
+        assert_equal(len(forloop.body), 1)
+        assert_true(forloop.body[-1] is failed)
 
     def test_remove_for_does_not_remove_for_loop_items_with_warnings(self):
         suite, forloop = self.suite_with_forloop()
-        forloop.keywords[2].messages.create(message='danger!', level='WARN')
-        warn = forloop.keywords[2]
-        last = forloop.keywords[-1]
+        forloop.body[2].messages.create(message='danger!', level='WARN')
+        warn = forloop.body[2]
+        last = forloop.body[-1]
         self._remove_for_loop(suite)
-        assert_equal(len(forloop.keywords), 2)
-        assert_equal(list(forloop.keywords), [warn, last])
+        assert_equal(len(forloop.body), 2)
+        assert_equal(list(forloop.body), [warn, last])
 
     def test_remove_based_on_multiple_condition(self):
         suite = TestSuite()
         t1 = suite.tests.create(status='PASS')
-        t1.keywords.create().messages.create()
+        t1.body.create().messages.create()
         t2 = suite.tests.create(status='FAIL')
-        t2.keywords.create().messages.create()
-        t2.keywords.create(type=FOR_LOOP)
+        t2.body.create().messages.create()
+        t2.body.create(type=FOR_LOOP)
         for i in range(10):
-            t2.keywords[1].keywords.create(type=FOR_ITEM, status='PASS')
+            t2.body[1].body.create(type=FOR_ITEM, status='PASS')
         self._remove(['passed', 'for'], suite)
-        assert_equal(len(t1.keywords[0].messages), 0)
-        assert_equal(len(t2.keywords[0].messages), 1)
-        assert_equal(len(t2.keywords[1].keywords), 1)
+        assert_equal(len(t1.body[0].messages), 0)
+        assert_equal(len(t2.body[0].messages), 1)
+        assert_equal(len(t2.body[1].body), 1)
 
     def _suite_with_setup_and_teardown_and_test_with_keywords(self):
         suite = TestSuite()
         suite.setup.config(kwname='S', status='PASS').messages.create('setup message')
         suite.teardown.config(kwname='T', status='PASS').messages.create(message='message')
         test = suite.tests.create()
-        test.keywords.create().keywords.create()
-        test.keywords.create().messages.create('kw with message')
+        test.body.create().body.create()
+        test.body.create().messages.create('kw with message')
         return suite
 
     def _should_contain_no_messages_or_keywords(self, keyword):
         assert_equal(len(keyword.messages), 0)
-        assert_equal(len(keyword.keywords), 0)
+        assert_equal(len(keyword.body), 0)
 
     def _remove(self, option, item):
         item.visit(SuiteConfigurer(remove_keywords=option))

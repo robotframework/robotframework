@@ -106,7 +106,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_warning_linking(self):
         msg = Message('Message', 'WARN', timestamp='20111204 22:04:03.210',
-                      parent=TestCase().keywords.create())
+                      parent=TestCase().body.create())
         self._verify_message(msg, 'Message', 3, 0)
         links = self.context._msg_links
         assert_equal(len(links), 1)
@@ -115,7 +115,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_error_linking(self):
         msg = Message('ERROR Message', 'ERROR', timestamp='20150609 01:02:03.004',
-                      parent=TestCase().keywords.create('Parent KW').keywords.create('Child KW'))
+                      parent=TestCase().body.create('Parent KW').body.create('Child KW'))
         self._verify_message(msg, 'ERROR Message', 4, 0)
         links = self.context._msg_links
         assert_equal(len(links), 1)
@@ -138,17 +138,17 @@ class TestBuildTestSuite(unittest.TestCase):
         suite.tests = [TestCase(), TestCase(status='PASS')]
         S1 = self._verify_suite(suite.suites[0],
                                 status=0, tests=(t,), stats=(1, 0, 1, 0))
-        suite.tests[0].keywords = [Keyword(type=Keyword.FOR_LOOP_TYPE), Keyword()]
-        suite.tests[0].keywords[0].keywords = [Keyword(type=Keyword.FOR_ITEM_TYPE)]
-        suite.tests[0].keywords[0].messages = [Message()]
-        k = self._verify_keyword(suite.tests[0].keywords[0].keywords[0], type=4)
-        m = self._verify_message(suite.tests[0].keywords[0].messages[0])
-        k1 = self._verify_keyword(suite.tests[0].keywords[0],
+        suite.tests[0].body = [Keyword(type=Keyword.FOR_LOOP_TYPE), Keyword()]
+        suite.tests[0].body[0].body = [Keyword(type=Keyword.FOR_ITEM_TYPE)]
+        suite.tests[0].body[0].messages = [Message()]
+        k = self._verify_keyword(suite.tests[0].body[0].body[0], type=4)
+        m = self._verify_message(suite.tests[0].body[0].messages[0])
+        k1 = self._verify_keyword(suite.tests[0].body[0],
                                   type=3, keywords=(k,), messages=(m,))
-        suite.tests[0].keywords[1].messages = [Message(), Message('msg', level='TRACE')]
-        m1 = self._verify_message(suite.tests[0].keywords[1].messages[0])
-        m2 = self._verify_message(suite.tests[0].keywords[1].messages[1], 'msg', level=0)
-        k2 = self._verify_keyword(suite.tests[0].keywords[1], messages=(m1, m2))
+        suite.tests[0].body[1].messages = [Message(), Message('msg', level='TRACE')]
+        m1 = self._verify_message(suite.tests[0].body[1].messages[0])
+        m2 = self._verify_message(suite.tests[0].body[1].messages[1], 'msg', level=0)
+        k2 = self._verify_keyword(suite.tests[0].body[1], messages=(m1, m2))
         T1 = self._verify_test(suite.tests[0], keywords=(k1, k2))
         T2 = self._verify_test(suite.tests[1], status=1)
         self._verify_suite(suite, status=0, keywords=(K1, K2), suites=(S1,),
@@ -237,9 +237,9 @@ class TestSplitting(unittest.TestCase):
     def _get_suite_with_tests(self):
         suite = TestSuite(name='suite')
         suite.tests = [TestCase('t1'), TestCase('t2')]
-        suite.tests[0].keywords = [Keyword('t1-k1'), Keyword('t1-k2')]
-        suite.tests[0].keywords[0].keywords = [Keyword('t1-k1-k1')]
-        suite.tests[1].keywords = [Keyword('t2-k1')]
+        suite.tests[0].body = [Keyword('t1-k1'), Keyword('t1-k2')]
+        suite.tests[0].body[0].body = [Keyword('t1-k1-k1')]
+        suite.tests[1].body = [Keyword('t2-k1')]
         return suite
 
     def _build_and_remap(self, suite, split_log=False):
@@ -268,7 +268,7 @@ class TestSplitting(unittest.TestCase):
         suite = TestSuite(name='root')
         suite.setup.config(kwname='k1', type='setup')
         suite.teardown.config(kwname='k2', type='teardown')
-        suite.setup.keywords.create('k1-k2')
+        suite.setup.body.create('k1-k2')
         return suite
 
     def test_nested_suite_and_test_keywords(self):
@@ -290,15 +290,15 @@ class TestSplitting(unittest.TestCase):
         sub = TestSuite(name='suite2')
         suite.suites = [self._get_suite_with_tests(), sub]
         sub.setup.config(kwname='kw', type='setup')
-        sub.setup.keywords.create('skw')
-        sub.setup.keywords[0].messages.create('Message')
+        sub.setup.body.create('skw')
+        sub.setup.body[0].messages.create('Message')
         sub.tests.create('test', doc='tdoc')
-        sub.tests[0].keywords.create('koowee', doc='kdoc')
+        sub.tests[0].body.create('koowee', doc='kdoc')
         return suite
 
     def test_message_linking(self):
         suite = self._get_suite_with_keywords()
-        msg = suite.setup.keywords[0].messages.create(
+        msg = suite.setup.body[0].messages.create(
                 'Message', 'WARN', timestamp='20111204 22:04:03.210')
         context = JsBuildingContext(split_log=True)
         SuiteBuilder(context).build(suite)
@@ -320,12 +320,12 @@ class TestPruneInput(unittest.TestCase):
         s1 = self.suite.suites.create()
         s1.setup.config(kwname='s1')
         tc = s1.tests.create()
-        tc.keywords = [Keyword(), Keyword(), Keyword()]
+        tc.body = [Keyword(), Keyword(), Keyword()]
         s2 = self.suite.suites.create()
         t1 = s2.tests.create()
         t2 = s2.tests.create()
-        t1.keywords = [Keyword()]
-        t2.keywords = [Keyword(), Keyword()]
+        t1.body = [Keyword()]
+        t2.body = [Keyword(), Keyword()]
 
     def test_prune_input_false(self):
         SuiteBuilder(JsBuildingContext(prune_input=False)).build(self.suite)
@@ -333,9 +333,9 @@ class TestPruneInput(unittest.TestCase):
         assert_true(bool(self.suite.teardown))
         assert_true(bool(self.suite.suites[0].setup))
         assert_false(bool(self.suite.suites[0].teardown))
-        assert_equal(len(self.suite.suites[0].tests[0].keywords), 3)
-        assert_equal(len(self.suite.suites[1].tests[0].keywords), 1)
-        assert_equal(len(self.suite.suites[1].tests[1].keywords), 2)
+        assert_equal(len(self.suite.suites[0].tests[0].body), 3)
+        assert_equal(len(self.suite.suites[1].tests[0].body), 1)
+        assert_equal(len(self.suite.suites[1].tests[1].body), 2)
 
     def test_prune_input_true(self):
         SuiteBuilder(JsBuildingContext(prune_input=True)).build(self.suite)
@@ -425,7 +425,7 @@ class TestBuildErrors(unittest.TestCase):
         self.errors.messages.create('Linkable', 'WARN',
                                     timestamp='20111206 14:33:00.001')
         context = JsBuildingContext()
-        kw = TestSuite().tests.create().keywords.create()
+        kw = TestSuite().tests.create().body.create()
         MessageBuilder(context).build(kw.messages.create('Linkable', 'WARN',
                                       timestamp='20111206 14:33:00.001'))
         model = ErrorsBuilder(context).build(self.errors)
