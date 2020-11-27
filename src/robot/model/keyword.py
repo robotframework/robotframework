@@ -114,9 +114,6 @@ class Keyword(ModelObject):
     def source(self):
         return self.parent.source if self.parent is not None else None
 
-    def reset(self):
-        self.__init__(type=self.type)
-
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_keyword(self)
