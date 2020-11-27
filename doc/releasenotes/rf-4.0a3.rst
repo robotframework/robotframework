@@ -7,7 +7,7 @@ Robot Framework 4.0a3
 
 `Robot Framework`_ 4.0  is a new major release with lot of big new features
 such as native support for IF / ELSE, the SKIP status and enhancements,
-for example, to type conversion and Libdoc. Robot Framework alpha 23 is its
+for example, to type conversion and Libdoc. Robot Framework alpha 3 is its
 third preview release targeted especially for developers
 of external tools that are affected by the new status and Libdoc changes, but
 also for users interested in the IF / ELSE support.
