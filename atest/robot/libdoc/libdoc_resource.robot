@@ -249,3 +249,30 @@ List of Dict Should Be Equal
     FOR    ${dict1}    ${dict2}    IN ZIP    ${list1}    ${list2}
         Dictionaries Should Be Equal    ${dict1}    ${dict2}
     END
+
+DataType Enums Should Be
+    [Arguments]    ${index}    ${name}    ${doc}    @{exp_members}
+    ${enums}=   Get Elements    ${LIBDOC}   xpath=data_types/enums/enum
+    Element Attribute Should Be    ${enums}[${index}]     name   ${name}
+    Element Text Should Be    ${enums}[${index}]     ${doc}    xpath=doc
+    ${members}=    Get Elements    ${enums}[${index}]    xpath=members/member
+    FOR   ${member}    ${exp_member}    IN ZIP    ${members}    ${exp_members}
+        ${attrs}=    Get Element Attributes    ${member}
+        Log    ${attrs}
+        Element Attribute Should Be    ${member}    name    ${{${exp_member}}}[name]
+        Element Attribute Should Be    ${member}    value    ${{${exp_member}}}[value]
+    END
+
+DataType TypedDict Should Be
+    [Arguments]    ${index}    ${name}    ${doc}    @{exp_items}
+    ${typdict}=   Get Elements    ${LIBDOC}   xpath=data_types/typed_dicts/typed_dict
+    Element Attribute Should Be    ${typdict}[${index}]     name   ${name}
+    Element Text Should Be    ${typdict}[${index}]     ${doc}    xpath=doc
+    ${items}=    Get Elements    ${typdict}[${index}]    xpath=items/item
+    FOR   ${item}    ${exp_item}    IN ZIP    ${items}    ${exp_items}
+        ${attrs}=    Get Element Attributes    ${item}
+        Log    ${attrs}
+        Element Attribute Should Be    ${item}    key         ${{${exp_item}}}[key]
+        Element Attribute Should Be    ${item}    type        ${{${exp_item}}}[type]
+        Element Attribute Should Be    ${item}    required    ${{${exp_item}}}[required]
+    END

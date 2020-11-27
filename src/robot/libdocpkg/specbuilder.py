@@ -109,10 +109,15 @@ class SpecDocBuilder(object):
                                 for member in dt.findall('members/member')])
 
     def _create_typed_dict_doc(self, dt):
+        items = []
+        for item in dt.findall('items/item'):
+            required = item.get('required', None)
+            if required is not None:
+                required = True if required == 'true' else False
+            items.append({'key': item.get('key'),
+                          'type': item.get('type'),
+                          'required': required})
         return TypedDictDoc(name=dt.get('name'),
-                            type=dt.get('type'),
+                            type='TypedDict',
                             doc=dt.find('doc').text or '',
-                            items=[{'key': item.get('key'),
-                                    'type': item.get('type'),
-                                    'required': item.get('required', None)}
-                                   for item in dt.findall('items/item')])
+                            items=items)

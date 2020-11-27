@@ -32,8 +32,7 @@ class GeoLocation(_GeoCoordinated, total=False):
 class Small(Enum):
     """This is the Documentation.
 
-    This was defined within the class definition.
-    """
+    This was defined within the class definition."""
     one = 1
     two = 2
     three = 3
@@ -93,6 +92,9 @@ class DataTypesLibrary:
         pass
 
     def assert_something(self, value, operator: Optional[AssertionOperator] = None, exp: str = 'something?'):
+        """This links to `AssertionOperator` .
+
+        This is the next Line that links to 'Set Location` ."""
         pass
 
     def funny_unions(self,

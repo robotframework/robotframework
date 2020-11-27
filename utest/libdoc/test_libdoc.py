@@ -221,11 +221,31 @@ if not IRONPYTHON and not JYTHON:
         def test_DynamicLibrary_json(self):
             run_libdoc_and_validate_json('DynamicLibrary.json')
 
+        def test_DataTypesLibrary_json(self):
+            run_libdoc_and_validate_json('DataTypesLibrary.json')
+
+        def test_DataTypesLibrary_xml(self):
+            run_libdoc_and_validate_json('DataTypesLibrary.xml')
+
+        def test_DataTypesLibrary_py(self):
+            run_libdoc_and_validate_json('DataTypesLibrary.py')
+
+        def test_DataTypesLibrary_libspex(self):
+            run_libdoc_and_validate_json('DataTypesLibrary.libspec')
 
 class TestLibdocJsonBuilder(unittest.TestCase):
 
     def test_libdoc_json_roundtrip(self):
         library = join(DATADIR, 'DynamicLibrary.json')
+        spec = LibraryDocumentation(library).to_json()
+        data = json.loads(spec)
+        with open(library) as f:
+            orig_data = json.load(f)
+        data['generated'] = orig_data['generated'] = None
+        assert_equal(data, orig_data)
+
+    def test_libdoc_json_roundtrip_with_dt(self):
+        library = join(DATADIR, 'DataTypesLibrary.json')
         spec = LibraryDocumentation(library).to_json()
         data = json.loads(spec)
         with open(library) as f:

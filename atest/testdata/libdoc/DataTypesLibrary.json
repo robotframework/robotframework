@@ -1,0 +1,326 @@
+{
+  "name": "DataTypesLibrary",
+  "doc": "<p>This Library has Data Types.</p>\n<p>It has some in <code>__init__</code> and others in the <a href=\"#Keywords\" class=\"name\">Keywords</a>.</p>\n<p>The DataTypes are the following that should be linked. <span class=\"name\">HttpCredentials</span> , <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> , <a href=\"#Small\" class=\"name\">Small</a> and <a href=\"#AssertionOperator\" class=\"name\">AssertionOperator</a>.</p>",
+  "version": "",
+  "generated": "2020-11-26 21:27:03",
+  "type": "LIBRARY",
+  "scope": "TEST",
+  "docFormat": "HTML",
+  "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+  "lineno": 77,
+  "tags": [],
+  "inits": [
+    {
+      "name": "Init",
+      "args": [
+        {
+          "name": "credentials",
+          "types": [
+            "Small"
+          ],
+          "default": "one",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "credentials: Small = one"
+        }
+      ],
+      "doc": "<p>This is the init Docs.</p>\n<p>It links to <a href=\"#Set%20Location\" class=\"name\">Set Location</a> keyword and to <a href=\"#GeoLocation\" class=\"name\">GeoLocation</a> data type.</p>",
+      "shortdoc": "This is the init Docs.",
+      "tags": [],
+      "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+      "lineno": 86
+    }
+  ],
+  "keywords": [
+    {
+      "name": "Assert Something",
+      "args": [
+        {
+          "name": "value",
+          "types": [],
+          "default": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "value"
+        },
+        {
+          "name": "operator",
+          "types": [
+            "AssertionOperator",
+            "None"
+          ],
+          "default": "None",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "operator: AssertionOperator | None = None"
+        },
+        {
+          "name": "exp",
+          "types": [
+            "str"
+          ],
+          "default": "something?",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "exp: str = something?"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+      "lineno": 95
+    },
+    {
+      "name": "Funny Unions",
+      "args": [
+        {
+          "name": "funny",
+          "types": [
+            "bool",
+            "int",
+            "float",
+            "str",
+            "AssertionOperator",
+            "Small",
+            "GeoLocation",
+            "None"
+          ],
+          "default": "equal",
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": false,
+          "repr": "funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+      "lineno": 98
+    },
+    {
+      "name": "Set Location",
+      "args": [
+        {
+          "name": "location",
+          "types": [
+            "GeoLocation"
+          ],
+          "default": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "location: GeoLocation"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+      "lineno": 92
+    },
+    {
+      "name": "Typing Types",
+      "args": [
+        {
+          "name": "list_of_str",
+          "types": [
+            "List[str]"
+          ],
+          "default": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "list_of_str: List[str]"
+        },
+        {
+          "name": "dict_str_int",
+          "types": [
+            "Dict[str, int]"
+          ],
+          "default": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "dict_str_int: Dict[str, int]"
+        },
+        {
+          "name": "Whatever",
+          "types": [
+            "Any"
+          ],
+          "default": null,
+          "kind": "POSITIONAL_OR_NAMED",
+          "required": true,
+          "repr": "Whatever: Any"
+        },
+        {
+          "name": "args",
+          "types": [
+            "List[typing.Any]"
+          ],
+          "default": null,
+          "kind": "VAR_POSITIONAL",
+          "required": false,
+          "repr": "*args: List[typing.Any]"
+        }
+      ],
+      "doc": "",
+      "shortdoc": "",
+      "tags": [],
+      "source": "/Source/robotframework/robotframework/atest/testdata/libdoc/DataTypesLibrary.py",
+      "lineno": 112
+    }
+  ],
+  "dataTypes": {
+    "enums": [
+      {
+        "name": "AssertionOperator",
+        "type": "Enum",
+        "doc": "<p>This is some Doc</p>\n<p>This has was defined by assigning to __doc__.</p>",
+        "members": [
+          {
+            "name": "equal",
+            "value": "=="
+          },
+          {
+            "name": "==",
+            "value": "=="
+          },
+          {
+            "name": "should be",
+            "value": "=="
+          },
+          {
+            "name": "inequal",
+            "value": "!="
+          },
+          {
+            "name": "!=",
+            "value": "!="
+          },
+          {
+            "name": "should not be",
+            "value": "!="
+          },
+          {
+            "name": "less than",
+            "value": "<"
+          },
+          {
+            "name": "<",
+            "value": "<"
+          },
+          {
+            "name": "greater than",
+            "value": ">"
+          },
+          {
+            "name": ">",
+            "value": ">"
+          },
+          {
+            "name": "<=",
+            "value": "<="
+          },
+          {
+            "name": ">=",
+            "value": ">="
+          },
+          {
+            "name": "contains",
+            "value": "*="
+          },
+          {
+            "name": "*=",
+            "value": "*="
+          },
+          {
+            "name": "starts",
+            "value": "^="
+          },
+          {
+            "name": "^=",
+            "value": "^="
+          },
+          {
+            "name": "should start with",
+            "value": "^="
+          },
+          {
+            "name": "ends",
+            "value": "$="
+          },
+          {
+            "name": "should end with",
+            "value": "$="
+          },
+          {
+            "name": "$=",
+            "value": "$="
+          },
+          {
+            "name": "matches",
+            "value": "$"
+          },
+          {
+            "name": "validate",
+            "value": "validate"
+          },
+          {
+            "name": "then",
+            "value": "then"
+          },
+          {
+            "name": "evaluate",
+            "value": "then"
+          }
+        ]
+      },
+      {
+        "name": "Small",
+        "type": "Enum",
+        "doc": "<p>This is the Documentation.</p>\n<p>This was defined within the class definition.</p>",
+        "members": [
+          {
+            "name": "one",
+            "value": "1"
+          },
+          {
+            "name": "two",
+            "value": "2"
+          },
+          {
+            "name": "three",
+            "value": "3"
+          },
+          {
+            "name": "four",
+            "value": "4"
+          }
+        ]
+      }
+    ],
+    "typedDicts": [
+      {
+        "name": "GeoLocation",
+        "type": "TypedDict",
+        "doc": "<p>Defines the geolocation.</p>\n<ul>\n<li><code>latitude</code> Latitude between -90 and 90.</li>\n<li><code>longitude</code> Longitude between -180 and 180.</li>\n<li><code>accuracy</code> <b>Optional</b> Non-negative accuracy value. Defaults to 0. Example usage: <code>{'latitude': 59.95, 'longitude': 30.31667}</code></li>\n</ul>",
+        "items": [
+          {
+            "key": "longitude",
+            "type": "float",
+            "required": true
+          },
+          {
+            "key": "latitude",
+            "type": "float",
+            "required": true
+          },
+          {
+            "key": "accuracy",
+            "type": "float",
+            "required": false
+          }
+        ]
+      }
+    ]
+  }
+}
