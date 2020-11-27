@@ -15,6 +15,7 @@
 
 from robot.utils import setter
 
+from .fixture import create_fixture
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
 from .modelobject import ModelObject
@@ -27,7 +28,7 @@ class TestCase(ModelObject):
     Extended by :class:`robot.running.model.TestCase` and
     :class:`robot.result.model.TestCase`.
     """
-    __slots__ = ['parent', 'name', 'doc', 'timeout', 'setup', 'teardown']
+    __slots__ = ['parent', 'name', 'doc', 'timeout']
     keyword_class = Keyword  #: Internal usage only
 
     def __init__(self, name='', doc='', tags=None, timeout=None):
@@ -45,6 +46,14 @@ class TestCase(ModelObject):
     def tags(self, tags):
         """Test tags as a :class:`~.model.tags.Tags` object."""
         return Tags(tags)
+
+    @setter
+    def setup(self, setup):
+        return create_fixture(setup, self, Keyword.SETUP_TYPE)
+
+    @setter
+    def teardown(self, teardown):
+        return create_fixture(teardown, self, Keyword.TEARDOWN_TYPE)
 
     @setter
     def keywords(self, keywords):
