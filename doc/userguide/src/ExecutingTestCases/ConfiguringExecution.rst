@@ -558,6 +558,10 @@ disabled, for example, as follows::
   # Disable both test setups and teardowns by using '--prerunmodifier' twice.
   robot --prerunmodifier disable.TestSetup --prerunmodifier disable.TestTeardown tests.robot
 
+.. note::  This API changed in Robot Framework 4.0. Previously, suites and tests had a `.keywords`
+  object, which had the references to `.setup` and `.teardown`. Suite setup, for example,
+  was accessed like this: `suite.keywords.setup = None`
+
 Controlling console output
 --------------------------
 
