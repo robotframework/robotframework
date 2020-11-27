@@ -5,13 +5,14 @@ import tempfile
 
 from robot.parsing import get_model, ModelVisitor, ModelTransformer, Token
 from robot.parsing.model.blocks import (
-    Block, File, CommentSection, TestCaseSection, KeywordSection,
-    TestCase, Keyword, For, If, VariableSection
+    Block, CommentSection, File, For, If, Keyword, KeywordSection,
+    SettingSection, TestCase, TestCaseSection, VariableSection
 )
 from robot.parsing.model.statements import (
-    Statement, TestCaseSectionHeader, KeywordSectionHeader, ForHeader, End,
-    TestCaseName, KeywordName, KeywordCall, Arguments, EmptyLine, Comment,
-    IfHeader, ElseIfHeader, ElseHeader, VariableSectionHeader, Variable
+    Arguments, Comment, Documentation, ForHeader, End, ElseHeader, ElseIfHeader,
+    EmptyLine, Error, IfHeader, KeywordCall, KeywordName, KeywordSectionHeader,
+    SettingSectionHeader, Statement, TestCaseName, TestCaseSectionHeader,
+    Variable, VariableSectionHeader
 )
 from robot.utils import PY3
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
@@ -126,7 +127,7 @@ EXPECTED = File(sections=[
 def assert_model(model, expected=EXPECTED, **expected_attrs):
     if type(model) is not type(expected):
         raise AssertionError('Incompatible types:\n%s\n%s'
-                             % (ast.dump(model), ast.dump(expected)))
+                             % (dump_model(model), dump_model(expected)))
     if isinstance(model, list):
         assert_equal(len(model), len(expected),
                      '%r != %r' % (model, expected), values=False)
@@ -142,6 +143,14 @@ def assert_model(model, expected=EXPECTED, **expected_attrs):
         raise AssertionError('Incompatible children:\n%r\n%r'
                              % (model, expected))
 
+
+def dump_model(model):
+    if isinstance(model, ast.AST):
+        return ast.dump(model)
+    elif isinstance(model, (list, tuple)):
+        return [dump_model(m) for m in model]
+    else:
+        raise TypeError('Invalid model %r' % model)
 
 def assert_block(model, expected, expected_attrs):
     assert_equal(model._fields, expected._fields)
@@ -603,6 +612,50 @@ ${not     closed
             ]
         )
         assert_model(model.sections[0], expected)
+
+
+class TestError(unittest.TestCase):
+
+    def test_get_errors_from_tokens(self):
+        assert_equal(Error([Token('ERROR', error='xxx')]).errors,
+                     ('xxx',))
+        assert_equal(Error([Token('ERROR', error='xxx'),
+                            Token('ARGUMENT'),
+                            Token('ERROR', error='yyy')]).errors,
+                     ('xxx', 'yyy'))
+        assert_equal(Error([Token('ERROR', error=e) for e in '0123456789']).errors,
+                     tuple('0123456789'))
+
+    def test_model(self):
+        model = get_model('''\
+*** Invalid ***
+*** Settings ***
+Invalid
+Documentation
+''', data_only=True)
+        inv_header = (
+            "Unrecognized section header '*** Invalid ***'. Valid sections: "
+            "'Settings', 'Variables', 'Test Cases', 'Tasks', 'Keywords' and 'Comments'."
+        )
+        inv_setting = "Non-existing setting 'Invalid'."
+        expected = File([
+            CommentSection(
+                body=[
+                    Error([Token('ERROR', '*** Invalid ***', 1, 0, inv_header)])
+                ]
+            ),
+            SettingSection(
+                header=SettingSectionHeader([
+                    Token('SETTING HEADER', '*** Settings ***', 2, 0)
+                ]),
+                body=[
+                    Error([Token('ERROR', 'Invalid', 3, 0, inv_setting)]),
+                    Documentation([Token('DOCUMENTATION', 'Documentation', 4, 0)])
+                ]
+            )
+        ])
+        assert_model(model, expected)
+
 
 class TestModelVisitors(unittest.TestCase):
 
