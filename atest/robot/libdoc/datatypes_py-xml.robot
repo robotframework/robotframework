@@ -4,7 +4,6 @@ Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/DataTypesLibrary
 
 *** Test Cases ***
 Check DataType Enums
-    [Tags]    RR
     DataType Enums Should Be    0
     ...    AssertionOperator
     ...    This is some Doc\n\nThis has was defined by assigning to __doc__.
@@ -42,7 +41,6 @@ Check DataType Enums
     ...    {"name": "four","value": "4"}
 
 Check DataType TypedDict
-    [Tags]    RR
     DataType TypedDict Should Be    0
     ...    GeoLocation
     ...    Defines the geolocation.\n\n \ \ \ - ``latitude`` Latitude between -90 and 90.\n \ \ \ - ``longitude`` Longitude between -180 and 180.\n \ \ \ - ``accuracy`` *Optional* Non-negative accuracy value. Defaults to 0.\n \ \ \ Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``
