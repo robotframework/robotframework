@@ -6,22 +6,22 @@ from robot.api import SuiteVisitor
 class SuiteSetup(SuiteVisitor):
 
     def start_suite(self, suite):
-        suite.keywords.setup = None
+        suite.setup = None
 
 
 class SuiteTeardown(SuiteVisitor):
 
     def start_suite(self, suite):
-        suite.keywords.teardown = None
+        suite.teardown = None
 
 
 class TestSetup(SuiteVisitor):
 
     def start_test(self, test):
-        test.keywords.setup = None
+        test.setup = None
 
 
 class TestTeardown(SuiteVisitor):
 
     def start_test(self, test):
-        test.keywords.teardown = None
+        test.teardown = None
