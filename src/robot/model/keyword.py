@@ -18,6 +18,7 @@ from operator import attrgetter
 
 from robot.utils import setter, py2to3
 
+from .fixture import create_fixture
 from .itemlist import ItemList
 from .modelobject import ModelObject
 from .tags import Tags
@@ -76,7 +77,7 @@ class Keyword(ModelObject):
 
     @teardown.setter
     def teardown(self, td):
-        self._teardown = td
+        self._teardown = create_fixture(td, self,type=self.TEARDOWN_TYPE)
 
     @setter
     def parent(self, parent):
