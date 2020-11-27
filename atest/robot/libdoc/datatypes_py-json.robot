@@ -2,6 +2,8 @@
 Resource          libdoc_resource.robot
 Suite Setup       Run Libdoc And Parse Model From JSON    ${TESTDATADIR}/DataTypesLibrary.py
 Test Template     Should Be Equal Multiline
+Force Tags        require-py3.7
+
 
 *** Test Cases ***
 Documentation
@@ -37,24 +39,24 @@ TypedDict
     ...    </ul>
 
 TypedDict Items
-    [Tags]    require-py3.7    require-py3.9
     [Template]    NONE
-    ${longitude}=    Create Dictionary    key=longitude    type=float    required=${True}
-    ${latitude}=     Create Dictionary    key=latitude     type=float    required=${True}
-    ${accuracy}=     Create Dictionary    key=accuracy     type=float    required=${False}
-    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][0]    ${longitude}
-    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][1]    ${latitude}
-    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][2]    ${accuracy}
-
-TypedDict Items
-    [Tags]    require-py3.8
-    [Template]    NONE
-    ${longitude}=    Create Dictionary    key=longitude    type=float    required=${None}
-    ${latitude}=     Create Dictionary    key=latitude     type=float    required=${None}
-    ${accuracy}=     Create Dictionary    key=accuracy     type=float    required=${None}
-    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][0]    ${longitude}
-    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][1]    ${latitude}
-    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][2]    ${accuracy}
+    ${typ_ext}=     Is Typing Extensions
+    IF   ${typ_ext}
+        ${longitude}=    Create Dictionary    key=longitude    type=float    required=${True}
+        ${latitude}=     Create Dictionary    key=latitude     type=float    required=${True}
+        ${accuracy}=     Create Dictionary    key=accuracy     type=float    required=${False}
+    ELSE
+        ${longitude}=    Create Dictionary    key=longitude    type=float    required=${None}
+        ${latitude}=     Create Dictionary    key=latitude     type=float    required=${None}
+        ${accuracy}=     Create Dictionary    key=accuracy     type=float    required=${None}
+    END
+    FOR    ${exp}    IN    ${longitude}    ${latitude}    ${accuracy}
+        FOR    ${item}    IN    @{Model}[dataTypes][typedDicts][0][items]
+            Continue For Loop If    $exp['key'] != $item['key']
+            Dictionaries Should Be Equal    ${item}    ${exp}
+            Exit For Loop
+        END
+    END
 
 Enum
     ${Model}[dataTypes][enums][0][name]    AssertionOperator

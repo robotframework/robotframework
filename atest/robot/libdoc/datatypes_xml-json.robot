@@ -41,9 +41,13 @@ TypedDict Items
     ${longitude}=    Create Dictionary    key=longitude    type=float    required=${True}
     ${latitude}=     Create Dictionary    key=latitude     type=float    required=${True}
     ${accuracy}=     Create Dictionary    key=accuracy     type=float    required=${False}
-    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][0]    ${longitude}
-    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][1]    ${latitude}
-    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][2]    ${accuracy}
+    FOR    ${exp}    IN    ${longitude}    ${latitude}    ${accuracy}
+        FOR    ${item}    IN    @{Model}[dataTypes][typedDicts][0][items]
+            Continue For Loop If    $exp['key'] != $item['key']
+            Dictionaries Should Be Equal    ${item}    ${exp}
+            Exit For Loop
+        END
+    END
 
 Enum
     ${Model}[dataTypes][enums][0][name]    AssertionOperator

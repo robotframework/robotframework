@@ -1,6 +1,6 @@
 *** Settings ***
 Resource          libdoc_resource.robot
-Default Tags      require-py3.7    require-py3.8    require-py3.9
+Force Tags      require-py3.7
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/DataTypesLibrary.py
 
 *** Test Cases ***
@@ -42,19 +42,19 @@ Check DataType Enums
     ...    {"name": "four","value": "4"}
 
 Check DataType TypedDict
-    [Tags]    require-py3.9    require-py3.7
-    DataType TypedDict Should Be    0
-    ...    GeoLocation
-    ...    Defines the geolocation.\n\n \ \ \ - ``latitude`` Latitude between -90 and 90.\n \ \ \ - ``longitude`` Longitude between -180 and 180.\n \ \ \ - ``accuracy`` *Optional* Non-negative accuracy value. Defaults to 0.\n \ \ \ Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``
-    ...    {"key": "longitude", "type": "float", "required": "true"}
-    ...    {"key": "latitude", "type": "float", "required": "true"}
-    ...    {"key": "accuracy", "type": "float", "required": "false"}
-
-Check DataType TypedDict
-    [Tags]    require-py3.8
-    DataType TypedDict Should Be    0
-    ...    GeoLocation
-    ...    Defines the geolocation.\n\n \ \ \ - ``latitude`` Latitude between -90 and 90.\n \ \ \ - ``longitude`` Longitude between -180 and 180.\n \ \ \ - ``accuracy`` *Optional* Non-negative accuracy value. Defaults to 0.\n \ \ \ Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``
-    ...    {"key": "longitude", "type": "float"}
-    ...    {"key": "latitude", "type": "float"}
-    ...    {"key": "accuracy", "type": "float"}
+    ${typ_ext}=     Is Typing Extensions
+    IF   ${typ_ext}
+        DataType TypedDict Should Be    0
+        ...    GeoLocation
+        ...    Defines the geolocation.\n\n \ \ \ - ``latitude`` Latitude between -90 and 90.\n \ \ \ - ``longitude`` Longitude between -180 and 180.\n \ \ \ - ``accuracy`` *Optional* Non-negative accuracy value. Defaults to 0.\n \ \ \ Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``
+        ...    {"key": "longitude", "type": "float", "required": "true"}
+        ...    {"key": "latitude", "type": "float", "required": "true"}
+        ...    {"key": "accuracy", "type": "float", "required": "false"}
+    ELSE
+        DataType TypedDict Should Be    0
+        ...    GeoLocation
+        ...    Defines the geolocation.\n\n \ \ \ - ``latitude`` Latitude between -90 and 90.\n \ \ \ - ``longitude`` Longitude between -180 and 180.\n \ \ \ - ``accuracy`` *Optional* Non-negative accuracy value. Defaults to 0.\n \ \ \ Example usage: ``{'latitude': 59.95, 'longitude': 30.31667}``
+        ...    {"key": "longitude", "type": "float"}
+        ...    {"key": "latitude", "type": "float"}
+        ...    {"key": "accuracy", "type": "float"}
+    END

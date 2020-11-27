@@ -269,12 +269,17 @@ DataType TypedDict Should Be
     Element Attribute Should Be    ${typdict}[${index}]     name   ${name}
     Element Text Should Be    ${typdict}[${index}]     ${doc}    xpath=doc
     ${items}=    Get Elements    ${typdict}[${index}]    xpath=items/item
-    FOR   ${item}    ${exp_item}    IN ZIP    ${items}    ${exp_items}
-        ${attrs}=    Get Element Attributes    ${item}
-        Log    ${attrs}
-        Element Attribute Should Be    ${item}    key         ${{${exp_item}}}[key]
-        Element Attribute Should Be    ${item}    type        ${{${exp_item}}}[type]
-        IF    ${{${exp_item}}}[required]
-            Element Attribute Should Be    ${item}    required    ${{${exp_item}}}[required]
+    FOR   ${exp_item}    IN    @{exp_items}
+        ${exp}    Evaluate    json.loads($exp_item)
+        FOR    ${item}    IN    @{items}
+            ${cur}=    Get Element Attributes    ${item}
+            Continue For Loop If    $cur['key'] != $exp['key']
+            Should Be Equal    ${cur}[key]         ${exp}[key]
+            Should Be Equal    ${cur}[type]        ${exp}[type]
+            IF    'required' in $exp
+                Should Be Equal    ${cur}[required]    ${exp}[required]
+            END
+            Log    ${cur} == ${exp}
+            Exit For Loop
         END
     END

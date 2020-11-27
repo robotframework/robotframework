@@ -100,7 +100,7 @@
     </xs:complexType>
     <xs:complexType name="EnumMember">
         <xs:attribute name="name" type="xs:string" use="required" />
-        <xs:attribute name="value" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required" />
     </xs:complexType>
     <xs:complexType name="TypedDictItems">
         <xs:sequence>
@@ -109,8 +109,8 @@
     </xs:complexType>
     <xs:complexType name="TypedDictItem">
         <xs:attribute name="key" type="xs:string" use="required" />
-        <xs:attribute name="type" type="xs:string" use="required"/>
-        <xs:attribute name="required" type="xs:boolean" use="required"/>
+        <xs:attribute name="type" type="xs:string" use="required" />
+        <xs:attribute name="required" type="xs:boolean" use="optional" />
     </xs:complexType>
     <xs:complexType name="Tags">
         <xs:sequence>

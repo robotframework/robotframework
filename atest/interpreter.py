@@ -111,6 +111,8 @@ class Interpreter(object):
             yield 'require-py3.7'
         if self.version_info < (3, 8):
             yield 'require-py3.8'
+        if self.version_info < (3, 9):
+            yield 'require-py3.9'
         if self.is_windows:
             yield 'no-windows'
             if self.is_jython:

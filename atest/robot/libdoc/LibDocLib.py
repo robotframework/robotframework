@@ -8,7 +8,7 @@ from subprocess import run, PIPE, STDOUT
 from xmlschema import XMLSchema
 
 from robot.api import logger
-from robot.utils import CONSOLE_ENCODING, SYSTEM_ENCODING, unicode
+from robot.utils import PY_VERSION, CONSOLE_ENCODING, SYSTEM_ENCODING, unicode
 from robot.running.arguments import ArgInfo
 
 
@@ -80,3 +80,10 @@ class LibDocLib(object):
                                name=model['name'],
                                types=tuple(model['types']),
                                default=model['default'] or ArgInfo.NOTSET))
+
+    def is_typing_extensions(self):
+        try:
+            from typing_extensions import TypedDict
+            return True
+        except ImportError:
+            return PY_VERSION[0] == 3 and PY_VERSION[1] >= 9
