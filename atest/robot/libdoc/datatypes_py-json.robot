@@ -65,11 +65,11 @@ Enum
     ...   <p>This has was defined by assigning to __doc__.</p>
 
 Enum Members
-        [Template]    NONE
-        ${exp_list}    Evaluate    [{"name": "equal","value": "=="},{"name": "==","value": "=="},{"name": "should be","value": "=="},{"name": "inequal","value": "!="},{"name": "!=","value": "!="},{"name": "should not be","value": "!="},{"name": "less than","value": "<"},{"name": "<","value": "<"},{"name": "greater than","value": ">"},{"name": ">","value": ">"},{"name": "<=","value": "<="},{"name": ">=","value": ">="},{"name": "contains","value": "*="},{"name": "*=","value": "*="},{"name": "starts","value": "^="},{"name": "^=","value": "^="},{"name": "should start with","value": "^="},{"name": "ends","value": "$="},{"name": "should end with","value": "$="},{"name": "$=","value": "$="},{"name": "matches","value": "$"},{"name": "validate","value": "validate"},{"name": "then","value": "then"},{"name": "evaluate","value": "then"}]
-        FOR   ${cur}    ${exp}    IN ZIP    ${Model}[dataTypes][enums][0][members]    ${exp_list}
-            Run Keyword And Continue On Failure    Dictionaries Should Be Equal    ${cur}    ${exp}
-        END
+    [Template]    NONE
+    ${exp_list}    Evaluate    [{"name": "equal","value": "=="},{"name": "==","value": "=="},{"name": "should be","value": "=="},{"name": "inequal","value": "!="},{"name": "!=","value": "!="},{"name": "should not be","value": "!="},{"name": "less than","value": "<"},{"name": "<","value": "<"},{"name": "greater than","value": ">"},{"name": ">","value": ">"},{"name": "<=","value": "<="},{"name": ">=","value": ">="},{"name": "contains","value": "*="},{"name": "*=","value": "*="},{"name": "starts","value": "^="},{"name": "^=","value": "^="},{"name": "should start with","value": "^="},{"name": "ends","value": "$="},{"name": "should end with","value": "$="},{"name": "$=","value": "$="},{"name": "matches","value": "$"},{"name": "validate","value": "validate"},{"name": "then","value": "then"},{"name": "evaluate","value": "then"}]
+    FOR   ${cur}    ${exp}    IN ZIP    ${Model}[dataTypes][enums][0][members]    ${exp_list}
+        Run Keyword And Continue On Failure    Dictionaries Should Be Equal    ${cur}    ${exp}
+    END
 
 *** Keywords ***
 Verify Argument Models
