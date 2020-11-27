@@ -274,5 +274,7 @@ DataType TypedDict Should Be
         Log    ${attrs}
         Element Attribute Should Be    ${item}    key         ${{${exp_item}}}[key]
         Element Attribute Should Be    ${item}    type        ${{${exp_item}}}[type]
-        Element Attribute Should Be    ${item}    required    ${{${exp_item}}}[required]
+        IF    ${{${exp_item}}}[required]
+            Element Attribute Should Be    ${item}    required    ${{${exp_item}}}[required]
+        END
     END

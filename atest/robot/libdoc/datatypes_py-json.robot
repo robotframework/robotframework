@@ -37,10 +37,21 @@ TypedDict
     ...    </ul>
 
 TypedDict Items
+    [Tags]    require-py3.7    require-py3.9
     [Template]    NONE
     ${longitude}=    Create Dictionary    key=longitude    type=float    required=${True}
     ${latitude}=     Create Dictionary    key=latitude     type=float    required=${True}
     ${accuracy}=     Create Dictionary    key=accuracy     type=float    required=${False}
+    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][0]    ${longitude}
+    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][1]    ${latitude}
+    Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][2]    ${accuracy}
+
+TypedDict Items
+    [Tags]    require-py3.8
+    [Template]    NONE
+    ${longitude}=    Create Dictionary    key=longitude    type=float    required=${None}
+    ${latitude}=     Create Dictionary    key=latitude     type=float    required=${None}
+    ${accuracy}=     Create Dictionary    key=accuracy     type=float    required=${None}
     Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][0]    ${longitude}
     Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][1]    ${latitude}
     Dictionaries Should Be Equal    ${Model}[dataTypes][typedDicts][0][items][2]    ${accuracy}

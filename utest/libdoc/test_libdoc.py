@@ -2,7 +2,7 @@ import unittest
 import json
 from os.path import dirname, join, normpath
 
-from robot.utils import PY3, IRONPYTHON, JYTHON
+from robot.utils import PY3, PY_VERSION, IRONPYTHON, JYTHON
 from robot.utils.asserts import assert_equal
 from robot.libdocpkg import LibraryDocumentation
 from robot.libdocpkg.model import LibraryDoc, KeywordDoc
@@ -228,7 +228,8 @@ if not IRONPYTHON and not JYTHON:
             run_libdoc_and_validate_json('DataTypesLibrary.xml')
 
         def test_DataTypesLibrary_py(self):
-            run_libdoc_and_validate_json('DataTypesLibrary.py')
+            if PY_VERSION[0] == 3 and PY_VERSION[1] >= 7:
+                run_libdoc_and_validate_json('DataTypesLibrary.py')
 
         def test_DataTypesLibrary_libspex(self):
             run_libdoc_and_validate_json('DataTypesLibrary.libspec')
