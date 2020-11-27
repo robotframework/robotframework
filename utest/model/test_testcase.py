@@ -1,9 +1,9 @@
 import unittest
-from robot.utils.asserts import (assert_equal, assert_not_equal, assert_raises,
+from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal, assert_raises,
                                  assert_raises_with_msg, assert_true)
 
 from robot.model.testcase import TestCase, TestCases
-from robot.model import TestSuite
+from robot.model import TestSuite, Keyword
 from robot.utils import PY2, unicode
 
 
@@ -22,6 +22,28 @@ class TestTestCase(unittest.TestCase):
         assert_equal(suite.suites[0].tests[0].id, 's1-s1-t1')
         assert_equal(suite.suites[0].tests[1].id, 's1-s1-t2')
         assert_equal(suite.suites[1].tests[0].id, 's1-s2-t1')
+
+    def test_setup(self):
+        assert_equal(self.test.setup.__class__, Keyword)
+        assert_equal(self.test.setup.name, '')
+        assert_false(self.test.setup)
+        self.test.setup.config(name='setup kw')
+        assert_equal(self.test.setup.name, 'setup kw')
+        assert_true(self.test.setup)
+        self.test.setup = None
+        assert_equal(self.test.setup.name, '')
+        assert_false(self.test.setup)
+
+    def test_teardown(self):
+        assert_equal(self.test.teardown.__class__, Keyword)
+        assert_equal(self.test.teardown.name, '')
+        assert_false(self.test.teardown)
+        self.test.teardown.config(name='teardown kw')
+        assert_equal(self.test.teardown.name, 'teardown kw')
+        assert_true(self.test.teardown)
+        self.test.teardown = None
+        assert_equal(self.test.teardown.name, '')
+        assert_false(self.test.teardown)
 
     def test_modify_tags(self):
         self.test.tags.add(['t0', 't3'])

@@ -109,6 +109,12 @@ statement. Typically a single line forms a statement, but when the ``...``
 syntax is used for continuation, a statement spans multiple lines. In
 special cases a single line can also contain multiple statements.
 
+Errors caused by unrecognized data such as non-existing section or setting names
+are handled during the tokenizing phase. Such errors are reported using tokens
+that have ``ERROR`` type and the actual error message in their ``error`` attribute.
+Syntax errors such as empty FOR loops are only handled when building the higher
+level model discussed below.
+
 See the documentation of :func:`~.lexer.lexer.get_tokens` for details
 about different ways how to specify the data to be parsed, how to control
 should all tokens or only data tokens be returned, and should variables in
@@ -142,13 +148,13 @@ module, can be used for debugging::
 Running this code with the :file:`example.robot` file from the previous
 section would produce so much output that it is not included here. If
 you are going to work with Robot Framework's AST, you are recommended to
-try this on your own.
+try that on your own.
 
 The model is build from blocks like
 :class:`~.model.blocks.File` (the root of the model),
 :class:`~.model.blocks.TestCaseSection`, and
 :class:`~.model.blocks.TestCase`
-implemented in the :mod:`~.model.blocks` module and from statements like
+implemented in the :mod:`~.model.blocks` module, and from statements like
 :class:`~.model.statements.TestCaseSectionHeader`,
 :class:`~.model.statements.Documentation`, and
 :class:`~.model.statements.KeywordCall`
@@ -181,7 +187,7 @@ a certain test case file contains::
 
         def visit_File(self, node):
             print(f"File '{node.source}' has following tests:")
-            # Must call `generic_visit` to visit also child nodes.
+            # Call `generic_visit` to visit also child nodes.
             self.generic_visit(node)
 
         def visit_TestCaseName(self, node):
@@ -198,6 +204,36 @@ output is this::
     File 'example.robot' has following tests:
     - Example (on line 2)
     - Second example (on line 5)
+
+Handling errors
+'''''''''''''''
+
+All nodes in the model have ``errors`` attribute that contains possible errors
+the node has. These errors include syntax errors such as empty FOR loops or IF
+expressions without a condition as well as errors caused by unrecognized data
+such as non-existing section or setting names.
+
+Unrecognized data is handled already during the tokenizing__ phase. In the AST
+model such data is represented as :class:`~robot.parsing.model.statements.Error`
+nodes and their ``errors`` attribute contain error information got from the
+underlying ``ERROR`` tokens. Syntax errors do not create ``Error`` nodes, but
+instead the model has normal nodes such as ``If`` with errors in their ``errors``
+attribute.
+
+A simple way to go through the model and see are there errors is using the
+`ast.NodeVisitor`_ discussed in the previous section::
+
+    class ErrorReporter(ast.NodeVisitor):
+
+        # Implement `generic_visit` to visit all nodes.
+        def generic_visit(self, node):
+            if node.errors:
+                print(f'Error on line {node.lineno}:')
+                for error in node.errors:
+                    print(f'- {error}')
+            ast.NodeVisitor.generic_visit(self, node)
+
+__ `Parsing data to tokens`_
 
 Modifying token values
 ''''''''''''''''''''''
@@ -263,7 +299,7 @@ typical usages, but if it is a problem then the caller needs to updated
 offsets separately.
 
 Adding and removing nodes
--------------------------
+'''''''''''''''''''''''''
 
 Bigger changes to model are somewhat more complicated than just modifying
 existing token values. When doing this kind of changes, `ast.NodeTransformer`_
@@ -351,7 +387,7 @@ settings section with documentation is added.
     model.save()
 
 Executing model
----------------
+'''''''''''''''
 
 It is possible to convert a parsed and possibly modified model into an
 executable :class:`~robot.running.model.TestSuite` structure by using its

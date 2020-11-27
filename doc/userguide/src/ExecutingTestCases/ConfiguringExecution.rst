@@ -477,8 +477,8 @@ works exactly like when `importing a test library`__.
 
 If a modifier requires arguments, like the examples below do, they can be
 specified after the modifier name or path using either a colon (`:`) or a
-semicolon (`;`) as a separator. If both are used in the value, the one first
-is considered to be the actual separator.
+semicolon (`;`) as a separator. If both are used in the value, the one used
+first is considered to be the actual separator.
 
 If more than one pre-run modifier is needed, they can be specified by using
 the :option:`--prerunmodifier` option multiple times. If similar modifying
@@ -499,7 +499,7 @@ __ `Specifying library to import`_
 Example: Select every Xth test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The first example shows how a pre-run-modifier can remove tests from the
+The first example shows how a pre-run modifier can remove tests from the
 executed test suite structure. In this example only every Xth tests is
 preserved, and the X is given from the command line along with an optional
 start index.
@@ -537,8 +537,8 @@ could be used like this::
   # Exclude all tests ending with 'something'.
   robot --prerunmodifier path/to/ExcludeTests.py:*something tests.robot
 
-Example: Skip setups and teardowns
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Example: Disable setups and teardowns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes when debugging tests it can be useful to disable setups or teardowns.
 This can be accomplished by editing the test data, but pre-run modifiers make
@@ -557,6 +557,10 @@ disabled, for example, as follows::
 
   # Disable both test setups and teardowns by using '--prerunmodifier' twice.
   robot --prerunmodifier disable.TestSetup --prerunmodifier disable.TestTeardown tests.robot
+
+.. note::  Prior to Robot Framework 4.0 `setup` and `teardown` were accessed via
+           the intermediate `keywords` attribute and, for example, suite setup
+           was disabled like `suite.keywords.setup = None`.
 
 Controlling console output
 --------------------------

@@ -18,6 +18,7 @@ from operator import attrgetter
 
 from robot.utils import setter, py2to3
 
+from .fixture import create_fixture
 from .itemlist import ItemList
 from .modelobject import ModelObject
 from .tags import Tags
@@ -77,7 +78,7 @@ class Keyword(ModelObject):
 
     @teardown.setter
     def teardown(self, td):
-        self._teardown = td
+        self._teardown = create_fixture(td, self,type=self.TEARDOWN_TYPE)
 
     @setter
     def parent(self, parent):
@@ -113,9 +114,6 @@ class Keyword(ModelObject):
     @property
     def source(self):
         return self.parent.source if self.parent is not None else None
-
-    def reset(self):
-        self.__init__(type=self.type)
 
     def visit(self, visitor):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""

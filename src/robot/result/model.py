@@ -331,6 +331,13 @@ class TestSuite(model.TestSuite):
         """Remove log messages below the specified ``log_level``."""
         self.visit(MessageFilter(log_level))
 
+    def clear(self):
+        """Remove subsuites, tests, setup and teardown from this suite."""
+        self.suites.clear()
+        self.tests.clear()
+        self.setup = None
+        self.teardown = None
+
     def configure(self, **options):
         """A shortcut to configure a suite using one method call.
 

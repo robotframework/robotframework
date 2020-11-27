@@ -513,6 +513,16 @@ class Comment(Statement):
 @Statement.register
 class Error(Statement):
     type = Token.ERROR
+    _errors = ()
+
+    @property
+    def errors(self):
+        """Errors got from the underlying ``ERROR`` tokens."""
+        return tuple(t.error for t in self.get_tokens(Token.ERROR)) + self._errors
+
+    @errors.setter
+    def errors(self, errors):
+        self._errors = errors
 
 
 class EmptyLine(Statement):
