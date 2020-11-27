@@ -186,12 +186,6 @@ class TestSuite(ModelObject):
         """:mod:`Visitor interface <robot.model.visitor>` entry-point."""
         visitor.visit_suite(self)
 
-    def clear(self):
-        self.suites.clear()
-        self.tests.clear()
-        self.setup.reset()
-        self.teardown.reset()
-
 
 class TestSuites(ItemList):
     __slots__ = []

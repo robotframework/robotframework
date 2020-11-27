@@ -17,9 +17,9 @@ def create_fixture(fixture, parent, type):
     if fixture is None:
         fixture = parent.keyword_class(parent=parent, type=type)
     elif not isinstance(fixture, parent.keyword_class):
-        msg = "Only %s objects accepted, got %s." % \
-            (parent.keyword_class.__name__, fixture.__class__.__name__)
-        raise TypeError(msg)
+        raise TypeError("Only %s objects accepted, got %s."
+                        % (parent.keyword_class.__name__,
+                           fixture.__class__.__name__))
     else:
         fixture.parent = parent
         fixture.type = type
