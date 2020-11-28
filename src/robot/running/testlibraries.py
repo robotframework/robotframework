@@ -21,7 +21,7 @@ from robot.libraries import STDLIBS
 from robot.output import LOGGER
 from robot.utils import (getdoc, get_error_details, Importer, is_java_init,
                          is_java_method, JYTHON, normalize, seq2str2, unic,
-                         is_list_like, PY2, PYPY, type_name)
+                         is_list_like, PY2, py2to3, PYPY, type_name)
 
 from .arguments import EmbeddedArguments
 from .context import EXECUTION_CONTEXTS
@@ -67,6 +67,7 @@ def _get_lib_class(libcode):
     return _ClassLibrary
 
 
+@py2to3
 class _BaseTestLibrary(object):
     get_handler_error_level = 'INFO'
 
@@ -91,6 +92,9 @@ class _BaseTestLibrary(object):
 
     def __len__(self):
         return len(self.handlers)
+
+    def __nonzero__(self):
+        return bool(self.handlers) or self.has_listener
 
     @property
     def doc(self):
