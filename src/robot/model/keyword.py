@@ -32,7 +32,7 @@ class Keyword(ModelObject):
     :class:`robot.result.model.Keyword`.
     """
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
-                 '_teardown', 'sourcename', '_sort_key', '_next_child_sort_key']
+                 '_teardown', '_sort_key', '_next_child_sort_key']
     KEYWORD_TYPE  = 'kw'
     SETUP_TYPE    = 'setup'
     TEARDOWN_TYPE = 'teardown'
