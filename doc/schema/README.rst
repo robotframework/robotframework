@@ -90,5 +90,6 @@ kw - keyword element, name is given as an attribute. Type attribute describes th
     * ``msg`` - any number of optional keyword messages
     * ``timeout`` - optional keyword timeout. Before 3.0 this was an attribute.
     * ``status`` - keyword has to have a status
+    * ``sourcename`` - name of keyword with embedded arguments, from it's definition
 
 For more details and full list of elements and attributes, please see the XML schema files above.

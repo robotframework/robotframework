@@ -34,7 +34,6 @@ class UserKeywordRunner(object):
     def __init__(self, handler, name=None):
         self._handler = handler
         self.name = name or handler.name
-        self.sourcename = handler.name
 
     @property
     def longname(self):
@@ -73,7 +72,7 @@ class UserKeywordRunner(object):
                              type=kw.type,
                              lineno=kw.lineno,
                              source=kw.source,
-                             definiton=self.sourcename)
+                             sourcename=self._handler.name)
 
     def _run(self, context, args, result):
         variables = context.variables
@@ -250,3 +249,8 @@ class EmbeddedArgumentsRunner(UserKeywordRunner):
     def _trace_log_args_message(self, variables):
         args = ['${%s}' % arg for arg, _ in self.embedded_args]
         return self._format_trace_log_args_message(args, variables)
+
+    def _get_result(self, kw, assignment, variables):
+        result = UserKeywordRunner._get_result(self, kw, assignment, variables)
+        result.sourcename = self._handler.name
+        return result

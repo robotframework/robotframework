@@ -67,7 +67,7 @@ class LibraryKeywordRunner(object):
                              type=kw.type,
                              lineno=kw.lineno,
                              source=kw.source,
-                             definiton=self.sourcename)
+                             sourcename=self.sourcename)
 
     def _run(self, context, args):
         if self.pre_run_messages:
@@ -142,6 +142,11 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 
     def _dry_run(self, context, args):
         return LibraryKeywordRunner._dry_run(self, context, self._embedded_args)
+
+    def _get_result(self, kw, assignment):
+        result = LibraryKeywordRunner._get_result(self, kw, assignment)
+        result.sourcename = self._handler.name
+        return result
 
 
 class RunKeywordRunner(LibraryKeywordRunner):

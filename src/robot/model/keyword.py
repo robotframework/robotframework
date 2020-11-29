@@ -43,7 +43,7 @@ class Keyword(ModelObject):
     ELSE_TYPE     = 'else'
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=KEYWORD_TYPE, parent=None, sourcename=''):
+                 timeout=None, type=KEYWORD_TYPE, parent=None):
         self.parent = parent
         self._name = name
         self.doc = doc
@@ -51,7 +51,6 @@ class Keyword(ModelObject):
         self.assign = assign  #: Assigned variables as a list of strings.
         self.tags = tags
         self.timeout = timeout
-        self.sourcename = sourcename
         #: Keyword type as a string. Values defined as constants on the class level.
         self.type = type
         self._teardown = None
