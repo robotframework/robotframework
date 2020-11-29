@@ -747,22 +747,41 @@ class String(object):
         if not string.isupper():
             self._fail(msg, "'%s' is not uppercase.", string)
 
-    def should_be_titlecase(self, string, msg=None):
+    @keyword(types=None)
+    def should_be_title_case(self, string, msg=None, exclude=None):
         """Fails if given ``string`` is not title.
 
-        ``string`` is a titlecased string if there is at least one
-        character in it, uppercase characters only follow uncased
-        characters and lowercase characters only cased ones.
+        ``string`` is a title cased string if there is at least one uppercase
+        letter in each word.
 
-        For example, ``'This Is Title'`` would pass, and ``'Word In UPPER'``,
-        ``'Word In lower'``, ``''`` and ``' '`` would fail.
+        For example, ``'This Is Title'`` and ``'OK, Give Me My iPhone'`` 
+        would pass. ``'all words lower'`` and ``'Word In lower'`` would fail.
+
+        This logic changed in Robot Framework 4.0 to be compatible with
+        `Convert to Title Case`. See `Convert to Title Case` for title case 
+        algorithm and reasoning.
 
         The default error message can be overridden with the optional
         ``msg`` argument.
 
+        Words can be explicitly excluded with the optional ``exclude`` argument.
+
+        Explicitly excluded words can be given as a list or as a string with
+        words separated by a comma and an optional space. Excluded words are
+        actually considered to be regular expression patterns, so it is
+        possible to use something like "example[.!?]?" to match the word
+        "example" on it own and also if followed by ".", "!" or "?".
+        See `BuiltIn.Should Match Regexp` for more information about Python
+        regular expression syntax in general and how to use it in Robot
+        Framework test data in particular.
+
         See also `Should Be Uppercase` and `Should Be Lowercase`.
         """
-        if not string.istitle():
+        if is_bytes(string):
+            if PY3:
+                string = string.decode(errors='backslashreplace')
+            string = str(string)
+        if string != self.convert_to_title_case(string, exclude):
             self._fail(msg, "'%s' is not titlecase.", string)
 
     def _convert_to_index(self, value, name):
