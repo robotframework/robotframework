@@ -1,9 +1,8 @@
 *** Settings ***
 Library           String
-Suite Setup       Create Byte String Variables
 
 *** Variables ***
-${BYTES}          <set by suite setup>
+${BYTES}          ${{b'Hello'}}
 @{EXCLUDES}       a    an    the    to    is
 @{EXCLUDES 2}     (a|b|c)[.,]?
 
@@ -68,7 +67,6 @@ Should Be Uppercase Negative
 
 Should Be Title Case Positive
     Should Be Title Case    Foo Bar!
-    Should Be Title Case    ${BYTES}
     Should Be Title Case    Abcd
     Should Be Title Case    Äiti
     Should Be Title Case    XML
@@ -87,8 +85,8 @@ Should Be Title Case Positive
 
 Should Be Title Case Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES.lower()}' is not titlecase.    Should Be Title Case    ${BYTES.lower()}
-    Special error    Should Be Title Case    all low    Special error
+    'low' is not title case.    Should Be Title Case    low
+    Custom error                Should Be Title Case    low    Custom error
 
 Should Be Title Case With Excludes
     [Template]    Test title case
@@ -108,11 +106,19 @@ Should Be Title Case With Regex Excludes
     Full Match Only!      exclude=.
     full Match Only!      exclude=....
 
-*** Keywords ***
-Create Byte String Variables
-    ${BYTES} =    Evaluate    b"Hyv\\xe4"
-    Set Suite Variable    ${BYTES}
+Should Be Title Case Works With ASCII Bytes On Python 2
+    Should Be Title Case    ${BYTES}
 
+Should Be Title Case Does Not Work With ASCII Bytes On Python 2
+    [Documentation]    FAIL    TypeError: This keyword works only with Unicode strings.
+    Should Be Title Case    ${BYTES}
+
+Should Be Title Case Does Not Work With Non-ASCII Bytes
+    [Documentation]    FAIL    REGEXP:
+    ...    TypeError: This keyword works only with Unicode strings( and non-ASCII bytes)?.
+    Should Be Title Case    ${{b'\xe4iti'}}
+
+*** Keywords ***
 Test title case
     [Arguments]    ${string}    @{args}    &{kwargs}
     Should Be Title Case    ${string}   @{args}    &{kwargs}
