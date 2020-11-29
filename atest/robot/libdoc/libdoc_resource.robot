@@ -262,13 +262,14 @@ DataType TypedDict Should Be
         ${exp}    Evaluate    json.loads($exp_item)
         FOR    ${item}    IN    @{items}
             ${cur}=    Get Element Attributes    ${item}
-            Continue For Loop If    $cur['key'] != $exp['key']
-            Should Be Equal    ${cur}[key]         ${exp}[key]
-            Should Be Equal    ${cur}[type]        ${exp}[type]
-            IF    'required' in $exp
-                Should Be Equal    ${cur}[required]    ${exp}[required]
+            IF    $cur['key'] == $exp['key']
+                Should Be Equal    ${cur}[key]         ${exp}[key]
+                Should Be Equal    ${cur}[type]        ${exp}[type]
+                IF    'required' in $exp
+                    Should Be Equal    ${cur}[required]    ${exp}[required]
+                END
+                Log    ${cur} == ${exp}
+                Exit For Loop
             END
-            Log    ${cur} == ${exp}
-            Exit For Loop
         END
     END

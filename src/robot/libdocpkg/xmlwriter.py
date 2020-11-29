@@ -110,11 +110,10 @@ class LibdocXmlWriter(object):
 
     def _write_data_types(self, data_types, writer):
         writer.start('data_types')
-        if data_types.enum_catalog:
+        if data_types.enums:
             writer.start('enums')
-            for enum in data_types.enum_catalog:
-                attrs = {'name': enum.name}
-                writer.start('enum', attrs)
+            for enum in data_types.enums:
+                writer.start('enum', {'name': enum.name})
                 writer.element('doc', enum.doc)
                 writer.start('members')
                 for member in enum.members:
@@ -122,11 +121,10 @@ class LibdocXmlWriter(object):
                 writer.end('members')
                 writer.end('enum')
             writer.end('enums')
-        if data_types.typed_dict_catalog:
+        if data_types.typed_dicts:
             writer.start('typed_dicts')
-            for typ_dict in data_types.typed_dict_catalog:
-                attrs = {'name': typ_dict.name}
-                writer.start('typed_dict', attrs)
+            for typ_dict in data_types.typed_dicts:
+                writer.start('typed_dict', {'name': typ_dict.name})
                 writer.element('doc', typ_dict.doc)
                 writer.start('items')
                 for item in typ_dict.items:

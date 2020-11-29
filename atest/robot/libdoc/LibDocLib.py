@@ -81,12 +81,3 @@ class LibDocLib(object):
                                types=tuple(model['types']),
                                default=model['default'] or ArgInfo.NOTSET))
 
-    def is_typing_extensions(self):
-        try:
-            from typing_extensions import TypedDict
-            logger.info('Using typing_extensions.')
-            return True
-        except ImportError:
-            logger.info('No typing_extensions.')
-            logger.info(PY_VERSION)
-            return PY_VERSION[0] == 3 and PY_VERSION[1] >= 9

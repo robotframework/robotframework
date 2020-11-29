@@ -38,6 +38,14 @@ def run_libdoc_and_validate_json(filename):
     validate(instance=json.loads(json_spec), schema=schema)
 
 
+def is_extended_typing():
+    try:
+        from typing_extensions import TypedDict
+        return True
+    except ImportError:
+        return PY_VERSION[0] == 3 and PY_VERSION[1] >= 9
+
+
 class TestHtmlToDoc(unittest.TestCase):
 
     def test_shortdoc_firstline(self):
@@ -253,6 +261,36 @@ class TestLibdocJsonBuilder(unittest.TestCase):
             orig_data = json.load(f)
         data['generated'] = orig_data['generated'] = None
         assert_equal(data, orig_data)
+
+
+class TestLibdocTypedDictKeys(unittest.TestCase):
+
+    def test_typed_dict_keys(self):
+        library = join(DATADIR, 'DataTypesLibrary.py')
+        spec = LibraryDocumentation(library).to_json()
+        current_items = json.loads(spec)['dataTypes']['typedDicts'][0]['items']
+        expected_items = [
+            {
+                "key": "longitude",
+                "type": "float",
+                "required": True if is_extended_typing() else None
+            },
+            {
+                "key": "latitude",
+                "type": "float",
+                "required": True if is_extended_typing() else None
+            },
+            {
+                "key": "accuracy",
+                "type": "float",
+                "required": False if is_extended_typing() else None
+            }
+        ]
+        for exp_item in expected_items:
+            for cur_item in current_items:
+                if exp_item['key'] == cur_item['key']:
+                    assert_equal(exp_item, cur_item)
+                    break
 
 
 if __name__ == '__main__':

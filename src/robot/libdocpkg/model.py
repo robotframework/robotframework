@@ -13,10 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from inspect import isclass
-from itertools import chain
 import json
 import re
+from itertools import chain
 
 try:
     from enum import Enum
@@ -44,8 +43,9 @@ except ImportError:
 
 from robot.model import Tags
 from robot.utils import (IRONPYTHON, getshortdoc, get_timestamp,
-                         Sortable, setter, type_name, unicode, unic)
+                         Sortable, setter, unicode)
 
+from .datatypesdoc import DataTypeCatalog
 from .htmlutils import HtmlToText, DocFormatter
 from .writer import LibdocWriter
 from .output import LibdocOutput
@@ -95,13 +95,13 @@ class LibraryDoc(object):
 
     @setter
     def inits(self, inits):
-        return self._sort_keywords(inits)
+        return self._process_keywords(inits)
 
     @setter
     def keywords(self, kws):
-        return self._sort_keywords(kws)
+        return self._process_keywords(kws)
 
-    def _sort_keywords(self, kws):
+    def _process_keywords(self, kws):
         for keyword in kws:
             self._add_types_from_keyword(keyword)
             keyword.parent = self
@@ -227,156 +227,4 @@ class KeywordDoc(Sortable):
             'kind': arg.kind,
             'required': arg.required,
             'repr': unicode(arg)
-        }
-
-
-class DataTypeCatalog(object):
-
-    def __init__(self):
-        self._enum_catalog = set()
-        self._typed_dict_catalog = set()
-
-    def __iter__(self):
-        for type_dooc in sorted(self._typed_dict_catalog | self._enum_catalog):
-            yield type_dooc
-
-    def __bool__(self):
-        return bool(self._enum_catalog or self._typed_dict_catalog)
-
-    __nonzero__ = __bool__
-
-    @property
-    def enum_catalog(self):
-        return sorted(self._enum_catalog)
-
-    @property
-    def typed_dict_catalog(self):
-        return sorted(self._typed_dict_catalog)
-
-    def add(self, typ):
-        type_doc = self._get_type_doc_object(typ)
-        if isinstance(type_doc, EnumDoc):
-            self._enum_catalog.add(type_doc)
-        elif isinstance(type_doc, TypedDictDoc):
-            self._typed_dict_catalog.add(type_doc)
-
-    def update(self, typs):
-        for typ in typs:
-            self.add(typ)
-
-    def _get_type_doc_object(self, typ):
-        if isinstance(typ, (EnumDoc, TypedDictDoc)):
-            return typ
-        if isinstance(typ, (TypedDictType, ExtTypedDictType)):
-            return TypedDictDoc.from_TypedDict(typ)
-        if isinstance(typ, EnumType):
-            return EnumDoc.from_Enum(typ)
-        if isinstance(typ, dict):
-            if typ.get('type', None) == 'TypedDict':
-                return TypedDictDoc.from_dict(typ)
-            if typ.get('type', None) == 'Enum':
-                return EnumDoc.from_dict(typ)
-        return None
-
-    def to_dictionary(self):
-        return {
-            'enums': [en.to_dictionary() for en in self.enum_catalog],
-            'typedDicts': [td.to_dictionary() for td in self.typed_dict_catalog]
-        }
-
-
-class TypedDictDoc(Sortable):
-
-    def __init__(self, name='', type='', doc='', items=None):
-        self.name = name
-        self.type = type
-        self.doc = doc
-        self.items = items or []
-
-    @classmethod
-    def from_dict(cls, type_doc):
-        if isinstance(type_doc, dict):
-            return cls(name=type_doc['name'],
-                       type=type_doc['type'],
-                       doc=type_doc['doc'],
-                       items=type_doc['items'])
-        raise TypeError(
-            'TypedDictDoc.from_dict() requires dictionary types but got %s.'
-            % type_name(type_doc))
-
-    @classmethod
-    def from_TypedDict(cls, typed_dict):
-        if isinstance(typed_dict, (TypedDictType, ExtTypedDictType)):
-            items = []
-            required_keys = list(getattr(typed_dict, '__required_keys__', []))
-            optional_keys = list(getattr(typed_dict, '__optional_keys__', []))
-            for key, value in typed_dict.__annotations__.items():
-                typ = value.__name__ if isclass(value) else unic(value)
-                items.append({'key': key,
-                              'type': typ,
-                              'required': key in required_keys
-                              if required_keys or optional_keys else None})
-            return cls(name=typed_dict.__name__,
-                       type='TypedDict',
-                       doc=typed_dict.__doc__ if typed_dict.__doc__ else '',
-                       items=items)
-        raise TypeError(
-            'TypedDictDoc.from_TypedDict() requires a TypedDict but got %s.'
-            % type_name(typed_dict))
-
-    @property
-    def _sort_key(self):
-        return self.name.lower()
-
-    def to_dictionary(self):
-        return {
-            'name': self.name,
-            'type': self.type,
-            'doc': self.doc,
-            'items': self.items
-        }
-
-
-class EnumDoc(Sortable):
-
-    def __init__(self, name='', type='', doc='', members=None):
-        self.name = name
-        self.type = type
-        self.doc = doc
-        self.members = members or []
-
-    @classmethod
-    def from_dict(cls, type_doc):
-        if isinstance(type_doc, dict):
-            return cls(name=type_doc['name'],
-                       type=type_doc['type'],
-                       doc=type_doc['doc'],
-                       members=type_doc['members'])
-        raise TypeError(
-            'EnumDoc.from_dict() requires dictionary types but got %s.'
-            % type_name(type_doc))
-
-    @classmethod
-    def from_Enum(cls, enum_type):
-        if isinstance(enum_type, EnumType):
-            return cls(name=enum_type.__name__,
-                       type='Enum',
-                       doc=enum_type.__doc__ or '',
-                       members=[{'name': name,
-                                 'value': unicode(member.value)}
-                                for name, member in enum_type.__members__.items()])
-        raise TypeError(
-            'EnumDoc.from_Enum() requires Enum types but got %s.'
-            % type_name(enum_type))
-
-    @property
-    def _sort_key(self):
-        return self.name.lower()
-
-    def to_dictionary(self):
-        return {
-            'name': self.name,
-            'type': self.type,
-            'doc': self.doc,
-            'members': self.members
         }

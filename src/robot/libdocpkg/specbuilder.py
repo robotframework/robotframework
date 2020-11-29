@@ -19,7 +19,8 @@ from robot.errors import DataError
 from robot.utils import ET, ETSource
 from robot.running.arguments import ArgumentSpec, ArgInfo
 
-from .model import LibraryDoc, KeywordDoc, EnumDoc, TypedDictDoc
+from .model import LibraryDoc, KeywordDoc
+from .datatypesdoc import EnumDoc, TypedDictDoc
 
 
 class SpecDocBuilder(object):

@@ -40,21 +40,22 @@ TypedDict
 
 TypedDict Items
     [Template]    NONE
-    ${typ_ext}=     Is Typing Extensions
-    IF   ${typ_ext}
-        ${longitude}=    Create Dictionary    key=longitude    type=float    required=${True}
-        ${latitude}=     Create Dictionary    key=latitude     type=float    required=${True}
-        ${accuracy}=     Create Dictionary    key=accuracy     type=float    required=${False}
-    ELSE
+    ${required}     Set Variable    ${Model}[dataTypes][typedDicts][0][items][0][required]
+    IF   $required is None
         ${longitude}=    Create Dictionary    key=longitude    type=float    required=${None}
         ${latitude}=     Create Dictionary    key=latitude     type=float    required=${None}
         ${accuracy}=     Create Dictionary    key=accuracy     type=float    required=${None}
+    ELSE
+        ${longitude}=    Create Dictionary    key=longitude    type=float    required=${True}
+        ${latitude}=     Create Dictionary    key=latitude     type=float    required=${True}
+        ${accuracy}=     Create Dictionary    key=accuracy     type=float    required=${False}
     END
     FOR    ${exp}    IN    ${longitude}    ${latitude}    ${accuracy}
         FOR    ${item}    IN    @{Model}[dataTypes][typedDicts][0][items]
-            Continue For Loop If    $exp['key'] != $item['key']
-            Dictionaries Should Be Equal    ${item}    ${exp}
-            Exit For Loop
+            IF    $exp['key'] == $item['key']
+                Dictionaries Should Be Equal    ${item}    ${exp}
+                Exit For Loop
+            END
         END
     END
 
@@ -66,7 +67,7 @@ Enum
 
 Enum Members
     [Template]    NONE
-    ${exp_list}    Evaluate    [{"name": "equal","value": "=="},{"name": "==","value": "=="},{"name": "should be","value": "=="},{"name": "inequal","value": "!="},{"name": "!=","value": "!="},{"name": "should not be","value": "!="},{"name": "less than","value": "<"},{"name": "<","value": "<"},{"name": "greater than","value": ">"},{"name": ">","value": ">"},{"name": "<=","value": "<="},{"name": ">=","value": ">="},{"name": "contains","value": "*="},{"name": "*=","value": "*="},{"name": "starts","value": "^="},{"name": "^=","value": "^="},{"name": "should start with","value": "^="},{"name": "ends","value": "$="},{"name": "should end with","value": "$="},{"name": "$=","value": "$="},{"name": "matches","value": "$"},{"name": "validate","value": "validate"},{"name": "then","value": "then"},{"name": "evaluate","value": "then"}]
+    ${exp_list}    Evaluate    [{"name": "equal","value": "=="},{"name": "==","value": "=="},{"name": "<","value": "<"},{"name": ">","value": ">"},{"name": "<=","value": "<="},{"name": ">=","value": ">="}]
     FOR   ${cur}    ${exp}    IN ZIP    ${Model}[dataTypes][enums][0][members]    ${exp_list}
         Run Keyword And Continue On Failure    Dictionaries Should Be Equal    ${cur}    ${exp}
     END

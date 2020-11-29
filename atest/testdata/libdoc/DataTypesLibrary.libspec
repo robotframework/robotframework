@@ -98,28 +98,10 @@
 <members>
 <member name="equal" value="=="/>
 <member name="==" value="=="/>
-<member name="should be" value="=="/>
-<member name="inequal" value="!="/>
-<member name="!=" value="!="/>
-<member name="should not be" value="!="/>
-<member name="less than" value="&lt;"/>
 <member name="&lt;" value="&lt;"/>
-<member name="greater than" value="&gt;"/>
 <member name="&gt;" value="&gt;"/>
 <member name="&lt;=" value="&lt;="/>
 <member name="&gt;=" value="&gt;="/>
-<member name="contains" value="*="/>
-<member name="*=" value="*="/>
-<member name="starts" value="^="/>
-<member name="^=" value="^="/>
-<member name="should start with" value="^="/>
-<member name="ends" value="$="/>
-<member name="should end with" value="$="/>
-<member name="$=" value="$="/>
-<member name="matches" value="$"/>
-<member name="validate" value="validate"/>
-<member name="then" value="then"/>
-<member name="evaluate" value="then"/>
 </members>
 </enum>
 <enum name="Small">
