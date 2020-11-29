@@ -56,9 +56,15 @@ Should Be Uppercase Positive
 Should Be Uppercase Negative
     Check Test Case    ${TESTNAME}
 
-Should Be Titlecase Positive
+Should Be Title Case Positive
     Check Test Case    ${TESTNAME}
 
-Should Be Titlecase Negative
+Should Be Title Case Negative
+    Check Test Case    ${TESTNAME}
+
+Should Be Title Case With Excludes
+    Check Test Case    ${TESTNAME}
+
+Should Be Title Case With Regex Excludes
     Check Test Case    ${TESTNAME}
 
