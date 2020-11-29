@@ -53,15 +53,15 @@ class Keyword(model.Keyword):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['lineno', 'definition']
+    __slots__ = ['lineno', 'sourcename']
     message_class = None  #: Internal usage only.
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(), timeout=None,
-                 type=model.Keyword.KEYWORD_TYPE, lineno=None, parent=None, definition=''):
+                 type=model.Keyword.KEYWORD_TYPE, lineno=None, parent=None, sourcename=''):
         model.Keyword.__init__(self, name, doc, args, assign, tags, timeout, type,
-                               parent, definition)
+                               parent, sourcename)
         self.lineno = lineno
-        self.definition = definition
+        self.sourcename = sourcename
 
     def run(self, context):
         """Execute the keyword.
@@ -353,7 +353,7 @@ class UserKeyword(object):
         self.lineno = lineno
         self.parent = parent
         self._teardown = None
-        self.definition = name
+        self.sourcename = name
 
     @setter
     def keywords(self, keywords):

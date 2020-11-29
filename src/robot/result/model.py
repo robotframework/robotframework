@@ -64,7 +64,7 @@ class Keyword(model.Keyword):
 
     See the base class for documentation of attributes not documented here.
     """
-    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message', 'lineno', 'source', 'definition']
+    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message', 'lineno', 'source', 'sourcename']
 
     keyword_class = None        #: Internal usage only.
     message_class = Message     #: Internal usage only.
@@ -90,7 +90,7 @@ class Keyword(model.Keyword):
         self.message = ''
         self.lineno = lineno
         self.source = source
-        self.definition = definiton
+        self.sourcename = definiton
 
     @setter
     def keywords(self, keywords):

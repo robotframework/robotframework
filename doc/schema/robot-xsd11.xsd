@@ -67,7 +67,7 @@
             <xs:element name="status" type="status"/>
         </xs:all>
         <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="definition" type="xs:string"/>
+        <xs:attribute name="sourcename" type="xs:string"/>
         <xs:attribute ref="type"/>
         <xs:anyAttribute processContents="lax"/>
     </xs:complexType>

@@ -33,7 +33,7 @@ class LibraryKeywordRunner(object):
     def __init__(self, handler, name=None):
         self._handler = handler
         self.name = name or handler.name
-        self.definition = handler.name
+        self.sourcename = handler.name
         self.pre_run_messages = None
 
     @property
@@ -67,7 +67,7 @@ class LibraryKeywordRunner(object):
                              type=kw.type,
                              lineno=kw.lineno,
                              source=kw.source,
-                             definiton=self.definition)
+                             definiton=self.sourcename)
 
     def _run(self, context, args):
         if self.pre_run_messages:

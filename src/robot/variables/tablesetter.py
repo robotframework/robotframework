@@ -71,7 +71,7 @@ class VariableTableValueBase(object):
     @contextmanager
     def _avoid_recursion(self):
         if self._resolving:
-            raise DataError('Recursive variable definition.')
+            raise DataError('Recursive variable sourcename.')
         self._resolving = True
         try:
             yield

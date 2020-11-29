@@ -32,7 +32,7 @@ class Keyword(ModelObject):
     :class:`robot.result.model.Keyword`.
     """
     __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
-                 '_teardown', 'definition', '_sort_key', '_next_child_sort_key']
+                 '_teardown', 'sourcename', '_sort_key', '_next_child_sort_key']
     KEYWORD_TYPE  = 'kw'
     SETUP_TYPE    = 'setup'
     TEARDOWN_TYPE = 'teardown'
@@ -43,7 +43,7 @@ class Keyword(ModelObject):
     ELSE_TYPE     = 'else'
 
     def __init__(self, name='', doc='', args=(), assign=(), tags=(),
-                 timeout=None, type=KEYWORD_TYPE, parent=None, definition=''):
+                 timeout=None, type=KEYWORD_TYPE, parent=None, sourcename=''):
         self.parent = parent
         self._name = name
         self.doc = doc
@@ -51,7 +51,7 @@ class Keyword(ModelObject):
         self.assign = assign  #: Assigned variables as a list of strings.
         self.tags = tags
         self.timeout = timeout
-        self.definition = definition
+        self.sourcename = sourcename
         #: Keyword type as a string. Values defined as constants on the class level.
         self.type = type
         self._teardown = None
