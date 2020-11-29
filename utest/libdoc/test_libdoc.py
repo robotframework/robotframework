@@ -266,6 +266,8 @@ class TestLibdocJsonBuilder(unittest.TestCase):
 class TestLibdocTypedDictKeys(unittest.TestCase):
 
     def test_typed_dict_keys(self):
+        if not PY_VERSION[0] == 3 and PY_VERSION[1] >= 7:
+            return
         library = join(DATADIR, 'DataTypesLibrary.py')
         spec = LibraryDocumentation(library).to_json()
         current_items = json.loads(spec)['dataTypes']['typedDicts'][0]['items']
