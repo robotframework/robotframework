@@ -25,7 +25,7 @@ from string import ascii_lowercase, ascii_uppercase, digits
 from robot.api import logger
 from robot.api.deco import keyword
 from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
-                         unic, FileReader, PY3)
+                         unic, FileReader, PY2, PY3)
 from robot.version import get_version
 
 
@@ -126,6 +126,8 @@ class String(object):
 
         New in Robot Framework 3.2.
         """
+        if not is_unicode(string):
+            raise TypeError('This keyword works only with Unicode strings.')
         if is_string(exclude):
             exclude = [e.strip() for e in exclude.split(',')]
         elif not exclude:
@@ -754,11 +756,11 @@ class String(object):
         ``string`` is a title cased string if there is at least one uppercase
         letter in each word.
 
-        For example, ``'This Is Title'`` and ``'OK, Give Me My iPhone'`` 
+        For example, ``'This Is Title'`` and ``'OK, Give Me My iPhone'``
         would pass. ``'all words lower'`` and ``'Word In lower'`` would fail.
 
         This logic changed in Robot Framework 4.0 to be compatible with
-        `Convert to Title Case`. See `Convert to Title Case` for title case 
+        `Convert to Title Case`. See `Convert to Title Case` for title case
         algorithm and reasoning.
 
         The default error message can be overridden with the optional
@@ -777,12 +779,14 @@ class String(object):
 
         See also `Should Be Uppercase` and `Should Be Lowercase`.
         """
-        if is_bytes(string):
-            if PY3:
-                string = string.decode(errors='backslashreplace')
-            string = str(string)
+        if PY2 and is_bytes(string):
+            try:
+                string = unicode(string)
+            except UnicodeError:
+                raise TypeError('This keyword works only with Unicode strings '
+                                'and non-ASCII bytes.')
         if string != self.convert_to_title_case(string, exclude):
-            self._fail(msg, "'%s' is not titlecase.", string)
+            self._fail(msg, "'%s' is not title case.", string)
 
     def _convert_to_index(self, value, name):
         if value == '':
