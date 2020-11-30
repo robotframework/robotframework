@@ -95,14 +95,14 @@ Release notes
    programmatically. The token needs only the `repo/public_repo` scope.
 
 2. Set GitHub user information into shell variables to ease running the
-   `invoke release-notes` command in the next step. Alternatively, supply
-   the credentials when running that command.
+   `invoke release-notes` command in the next step::
 
       GITHUB_USERNAME=<username>
       GITHUB_ACCESS_TOKEN=<token>
 
    `<username>` if you normal GitHub user name and `<token>` is the personal access
-   token generated in the previous step.
+   token generated in the previous step.  Alternatively username and token can be
+   given when running the command in the next step.
 
 3. Generate a template for the release notes::
 
