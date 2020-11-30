@@ -2,7 +2,7 @@ import unittest
 import json
 from os.path import dirname, join, normpath
 
-from robot.utils import PY3, IRONPYTHON, JYTHON
+from robot.utils import PY3, PY_VERSION, IRONPYTHON, JYTHON
 from robot.utils.asserts import assert_equal
 from robot.libdocpkg import LibraryDocumentation
 from robot.libdocpkg.model import LibraryDoc, KeywordDoc
@@ -36,6 +36,14 @@ def run_libdoc_and_validate_json(filename):
     with open(join(CURDIR, '../../doc/schema/libdoc_schema.json')) as f:
         schema = json.load(f)
     validate(instance=json.loads(json_spec), schema=schema)
+
+
+def is_extended_typing():
+    try:
+        from typing_extensions import TypedDict
+        return True
+    except ImportError:
+        return PY_VERSION[0] == 3 and PY_VERSION[1] >= 9
 
 
 class TestHtmlToDoc(unittest.TestCase):
@@ -221,6 +229,18 @@ if not IRONPYTHON and not JYTHON:
         def test_DynamicLibrary_json(self):
             run_libdoc_and_validate_json('DynamicLibrary.json')
 
+        def test_DataTypesLibrary_json(self):
+            run_libdoc_and_validate_json('DataTypesLibrary.json')
+
+        def test_DataTypesLibrary_xml(self):
+            run_libdoc_and_validate_json('DataTypesLibrary.xml')
+
+        def test_DataTypesLibrary_py(self):
+            if PY_VERSION[0] == 3 and PY_VERSION[1] >= 7:
+                run_libdoc_and_validate_json('DataTypesLibrary.py')
+
+        def test_DataTypesLibrary_libspex(self):
+            run_libdoc_and_validate_json('DataTypesLibrary.libspec')
 
 class TestLibdocJsonBuilder(unittest.TestCase):
 
@@ -232,6 +252,47 @@ class TestLibdocJsonBuilder(unittest.TestCase):
             orig_data = json.load(f)
         data['generated'] = orig_data['generated'] = None
         assert_equal(data, orig_data)
+
+    def test_libdoc_json_roundtrip_with_dt(self):
+        library = join(DATADIR, 'DataTypesLibrary.json')
+        spec = LibraryDocumentation(library).to_json()
+        data = json.loads(spec)
+        with open(library) as f:
+            orig_data = json.load(f)
+        data['generated'] = orig_data['generated'] = None
+        assert_equal(data, orig_data)
+
+
+class TestLibdocTypedDictKeys(unittest.TestCase):
+
+    def test_typed_dict_keys(self):
+        if not (PY_VERSION[0] == 3 and PY_VERSION[1] >= 7):
+            return
+        library = join(DATADIR, 'DataTypesLibrary.py')
+        spec = LibraryDocumentation(library).to_json()
+        current_items = json.loads(spec)['dataTypes']['typedDicts'][0]['items']
+        expected_items = [
+            {
+                "key": "longitude",
+                "type": "float",
+                "required": True if is_extended_typing() else None
+            },
+            {
+                "key": "latitude",
+                "type": "float",
+                "required": True if is_extended_typing() else None
+            },
+            {
+                "key": "accuracy",
+                "type": "float",
+                "required": False if is_extended_typing() else None
+            }
+        ]
+        for exp_item in expected_items:
+            for cur_item in current_items:
+                if exp_item['key'] == cur_item['key']:
+                    assert_equal(exp_item, cur_item)
+                    break
 
 
 if __name__ == '__main__':

@@ -45,7 +45,7 @@
     function linkArgs(container, typeNames) {
       container.forEach(function(k) {
           k.args.forEach(function (arg) {
-            arg.linked = arg.types.filter(function(value) {return typeNames.includes(value)});
+            arg.linked = arg.types.filter(function(value) {return typeNames.indexOf(value) > -1});
           })
         }
       );
@@ -55,7 +55,8 @@
         parseTemplates();
         document.title = libdoc.name;
         storage.init('libdoc');
-        libdoc.dataTypes = libdoc.dataTypes.filter(function (d) {return d.name});
+        libdoc.dataTypes = libdoc.dataTypes.enums.concat(libdoc.dataTypes.typedDicts);
+        libdoc.dataTypes.sort(compare)
         const typeNames = libdoc.dataTypes.map(function (d) {return d.name});
         linkArgs(libdoc.inits, typeNames);
         linkArgs(libdoc.keywords, typeNames);
@@ -81,11 +82,24 @@
         scrollToHash();
         setTimeout(function() {
           document.getElementById("keyword-statistics-header").innerText = '' + libdoc.keywords.length;
+          if (libdoc.dataTypes.length) {
+            document.getElementById("type-statistics-header").innerText = '' + libdoc.dataTypes.length;
+          }
           if (storage.get('keyword-wall') === 'open') {
             openKeywordWall();
           }
       }, 0);
     });
+
+     function compare( a, b ) {
+      if ( a.name < b.name ){
+        return -1;
+      }
+      if ( a.name > b.name ){
+        return 1;
+      }
+      return 0;
+    }
 
     function parseTemplates() {
         $('script[type="text/x-jquery-tmpl"]').map(function (idx, elem) {
@@ -140,7 +154,7 @@
         let regexp = new RegExp(patternRegexp, 'i');
         let test = regexp.test.bind(regexp);
         let result = {};
-        let matchCount = 0;
+        let keywordMatchCount = 0;
         result.keywords = util.map(libdoc.keywords, function (kw) {
             kw = $.extend({}, kw);
             kw.hidden =  !(include.name && test(kw.name)) &&
@@ -148,17 +162,29 @@
                           !(include.doc && test($(kw.doc).text())) &&
                           !(include.tags && util.any(util.map(kw.tags, test)));
             if (!kw.hidden)
-                matchCount++;
-            return kw
+                keywordMatchCount++;
+            return kw;
+        });
+        let typeMatchCount = 0;
+        result.dataTypes = util.map(libdoc.dataTypes, function (dataType) {
+            dataType = $.extend({}, dataType);
+            dataType.hidden =  !(include.name && test(dataType.name));
+            if (!dataType.hidden)
+                typeMatchCount++;
+            return dataType;
         });
         renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
+        renderTemplate('data-types', result);
         if (libdoc.tags.length) {
           libdoc.selectedTag = include.tagsExact ? pattern : "";
           renderTemplate('tags-shortcuts', libdoc);
         }
-        document.getElementById("keyword-statistics-header").innerText = matchCount + ' / ' + result.keywords.length;
-        if (matchCount === 0)
+        document.getElementById("keyword-statistics-header").innerText = keywordMatchCount + ' / ' + result.keywords.length;
+        if (libdoc.dataTypes.length) {
+          document.getElementById("type-statistics-header").innerText = typeMatchCount + ' / ' + result.dataTypes.length;
+        }
+        if (keywordMatchCount === 0)
             $('#keywords-container').find('table').empty();
     }
 
@@ -239,10 +265,14 @@
     function resetKeywords() {
         renderTemplate('keyword-shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
+        renderTemplate('data-types', libdoc);
         if (libdoc.tags.length) {
             renderTemplate('tags', libdoc);
         }
         document.getElementById("keyword-statistics-header").innerText = ''+libdoc.keywords.length;
+        if (libdoc.dataTypes.length) {
+          document.getElementById("type-statistics-header").innerText = '' + libdoc.dataTypes.length;
+        }
         history.replaceState && history.replaceState(null, '', location.pathname);
     }
 
@@ -337,7 +367,7 @@
                     {{if $value.types.length}}
                       <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.types}">
                         ${( $data.linked = $value.linked ),''}
-                        {{each $value.types}}&lt;{{if $data.linked.includes($value)}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;{{/each}}
+                        {{each $value.types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;{{/each}}
                       </span>
                     {{/if}}
                   {{/each}}
@@ -367,7 +397,9 @@
       </select>
       {{/if}}
       <div class="keywords-overview-header-row">
-      <h4>Keywords (<span id="keyword-statistics-header"></span>)</h4>
+      <h4>Keywords (<span id="keyword-statistics-header"></span>)
+      {{if dataTypes.length}}& <span class="data-type">Types</span> (<span id="type-statistics-header"></span>){{/if}}
+      </h4>
       <button id="toggle-keyword-shortcuts" onclick="toggleShortcuts()">+</button>
       </div>
       <ul class="shortcuts" id="keyword-shortcuts-container">
@@ -386,12 +418,32 @@
     </li>
     {{/if}}
     {{/each}}
+    {{each dataTypes}}
+    {{if !$value.hidden}}
+    <li>
+      <a href="#${encodeURIComponent($value.name)}"
+       onclick="closeMenu()"
+       class="data-type match"
+       title="${$value.shortdoc}">${$value.name}</a>
+    </li>
+    {{/if}}
+    {{/each}}
     {{each keywords}}
     {{if $value.hidden}}
     <li>
     <a href="#${encodeURIComponent($value.name)}"
        onclick="closeMenu()"
        class="no-match"
+       title="${$value.shortdoc}">${$value.name}</a>
+    </li>
+    {{/if}}
+    {{/each}}
+    {{each dataTypes}}
+    {{if $value.hidden}}
+    <li>
+      <a href="#${encodeURIComponent($value.name)}"
+       onclick="closeMenu()"
+       class="data-type no-match"
        title="${$value.shortdoc}">${$value.name}</a>
     </li>
     {{/if}}
@@ -451,7 +503,7 @@
                     {{if $value.types.length}}
                       <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.types}">
                         ${( $data.linked = $value.linked ),''}
-                        {{each $value.types}}&lt;{{if $data.linked.includes($value)}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;<span class="or"></span>{{/each}}
+                        {{each $value.types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;<span class="or"></span>{{/each}}
                       </span>
                     {{/if}}
                   {{/each}}
@@ -484,14 +536,21 @@
     <h2 id="Data types">Data types</h2>
     <div class="data-types">
         {{each dataTypes}}
+        {{if !$value.hidden}}
             {{tmpl($value) 'data-type-template'}}
+        {{/if}}
+        {{/each}}
+        {{each dataTypes}}
+        {{if $value.hidden}}
+            {{tmpl($value) 'data-type-template'}}
+        {{/if}}
         {{/each}}
     </div>
     {{/if}}
 </script>
 
 <script type="text/x-jquery-tmpl" id="data-type-template">
-    <div class="data-type-container" id="${name}">
+    <div class="data-type-container {{if hidden}}no-{{/if}}match" id="${name}">
        <div class="data-type-name">
             <h2>Type:
             <a class="dt-name" href="#${encodeURIComponent(name)}"
@@ -515,11 +574,15 @@
               <h4>Dictionary Structure</h4>
                 <div class="typed-dict-annotation">
                 <span class="typed-dict-item"
-                >{{{each(key, val) items}}<br><span
-                 class="td-item {{if required_keys.indexOf(key) != -1}}required-key{{else optional_keys.indexOf(key) != -1}}optional-key{{/if}}"
-                 title="{{if required_keys.indexOf(key) != -1}}required key{{else optional_keys.indexOf(key) != -1}}optional key{{/if}}"
+                >{{{each items}}<br><span
+                  {{if required !== null}}
+                    class="td-item {{if required}}required-key{{else}}optional-key{{/if}}"
+                    title="{{if required}}required-key{{else}}optional-key{{/if}}"
+                  {{else}}
+                    class="td-item"
+                  {{/if}}
                  >'${key}': </span>
-                   <span class="td-type">&lt;${val}&gt;</span>{{/each}}<br>}</span>
+                   <span class="td-type">&lt;${type}&gt;</span>{{/each}}<br>}</span>
                 </div>
             </div>
           {{/if}}

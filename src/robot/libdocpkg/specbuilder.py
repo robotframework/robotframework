@@ -20,6 +20,7 @@ from robot.utils import ET, ETSource
 from robot.running.arguments import ArgumentSpec, ArgInfo
 
 from .model import LibraryDoc, KeywordDoc
+from .datatypesdoc import EnumDoc, TypedDictDoc
 
 
 class SpecDocBuilder(object):
@@ -36,6 +37,7 @@ class SpecDocBuilder(object):
                             lineno=int(spec.get('lineno', -1)))
         libdoc.inits = self._create_keywords(spec, 'inits/init')
         libdoc.keywords = self._create_keywords(spec, 'keywords/kw')
+        libdoc.data_types.update(self._create_data_types(spec))
         return libdoc
 
     def _parse_spec(self, path):
@@ -48,7 +50,8 @@ class SpecDocBuilder(object):
         version = root.get('specversion')
         if version != '3':
             raise DataError("Invalid spec file version '%s'. "
-                            "Robot Framework 4.0 and newer requires spec version 3." % version)
+                            "Robot Framework 4.0 and newer requires spec version 3."
+                            % version)
         return root
 
     def _create_keywords(self, spec, path):
@@ -90,3 +93,32 @@ class SpecDocBuilder(object):
                 spec.types = {}
             spec.types[name] = tuple(t.text for t in type_elems)
         return spec
+
+    def _create_data_types(self, spec):
+        enums = [self._create_enum_doc(dt)
+                 for dt in spec.findall('data_types/enums/enum')]
+        typed_dicts = [self._create_typed_dict_doc(dt)
+                       for dt in spec.findall('data_types/typed_dicts/typed_dict')]
+        return enums + typed_dicts
+
+    def _create_enum_doc(self, dt):
+        return EnumDoc(name=dt.get('name'),
+                       type='Enum',
+                       doc=dt.find('doc').text or '',
+                       members=[{'name': member.get('name'),
+                                 'value': member.get('value')}
+                                for member in dt.findall('members/member')])
+
+    def _create_typed_dict_doc(self, dt):
+        items = []
+        for item in dt.findall('items/item'):
+            required = item.get('required', None)
+            if required is not None:
+                required = True if required == 'true' else False
+            items.append({'key': item.get('key'),
+                          'type': item.get('type'),
+                          'required': required})
+        return TypedDictDoc(name=dt.get('name'),
+                            type='TypedDict',
+                            doc=dt.find('doc').text or '',
+                            items=items)

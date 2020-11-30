@@ -165,9 +165,9 @@ class ArgInfo(object):
 
     @property
     def types_reprs(self):
-        return [self._type_repr(t) for t in self.types]
+        return [self.get_type_repr(t) for t in self.types]
 
-    def _type_repr(self, typ):
+    def get_type_repr(self, typ):
         if typ == type(None):
             return 'None'
         if isclass(typ):

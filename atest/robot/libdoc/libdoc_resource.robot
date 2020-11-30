@@ -238,3 +238,38 @@ List of Dict Should Be Equal
     FOR    ${dict1}    ${dict2}    IN ZIP    ${list1}    ${list2}
         Dictionaries Should Be Equal    ${dict1}    ${dict2}
     END
+
+DataType Enums Should Be
+    [Arguments]    ${index}    ${name}    ${doc}    @{exp_members}
+    ${enums}=   Get Elements    ${LIBDOC}   xpath=data_types/enums/enum
+    Element Attribute Should Be    ${enums}[${index}]     name   ${name}
+    Element Text Should Be    ${enums}[${index}]     ${doc}    xpath=doc
+    ${members}=    Get Elements    ${enums}[${index}]    xpath=members/member
+    FOR   ${member}    ${exp_member}    IN ZIP    ${members}    ${exp_members}
+        ${attrs}=    Get Element Attributes    ${member}
+        Log    ${attrs}
+        Element Attribute Should Be    ${member}    name    ${{${exp_member}}}[name]
+        Element Attribute Should Be    ${member}    value    ${{${exp_member}}}[value]
+    END
+
+DataType TypedDict Should Be
+    [Arguments]    ${index}    ${name}    ${doc}    @{exp_items}
+    ${typdict}=   Get Elements    ${LIBDOC}   xpath=data_types/typed_dicts/typed_dict
+    Element Attribute Should Be    ${typdict}[${index}]     name   ${name}
+    Element Text Should Be    ${typdict}[${index}]     ${doc}    xpath=doc
+    ${items}=    Get Elements    ${typdict}[${index}]    xpath=items/item
+    FOR   ${exp_item}    IN    @{exp_items}
+        ${exp}    Evaluate    json.loads($exp_item)
+        FOR    ${item}    IN    @{items}
+            ${cur}=    Get Element Attributes    ${item}
+            IF    $cur['key'] == $exp['key']
+                Should Be Equal    ${cur}[key]         ${exp}[key]
+                Should Be Equal    ${cur}[type]        ${exp}[type]
+                IF    'required' in $exp
+                    Should Be Equal    ${cur}[required]    ${exp}[required]
+                END
+                Log    ${cur} == ${exp}
+                Exit For Loop
+            END
+        END
+    END
