@@ -1,6 +1,6 @@
-=====================
-Robot Framework 4.0a3
-=====================
+===========================
+Robot Framework 4.0 alpha 3
+===========================
 
 
 .. default-role:: code
@@ -34,7 +34,7 @@ to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 4.0a3 was released on Friday November 13, 2020.
+Robot Framework 4.0 alpha 3 was released on Friday November 13, 2020.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
