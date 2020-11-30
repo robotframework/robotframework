@@ -1,6 +1,6 @@
 *** Settings ***
 Resource          libdoc_resource.robot
-Force Tags      require-py3.7
+Force Tags        require-py3.6
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/DataTypesLibrary.py
 
 *** Test Cases ***

@@ -1,2 +1,1 @@
 xmlschema
-typing-extensions; python_version == '3.7'
