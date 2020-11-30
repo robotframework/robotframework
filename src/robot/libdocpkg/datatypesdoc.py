@@ -39,37 +39,37 @@ except ImportError:
     class ExtTypedDictType(object):
         pass
 
-from robot.utils import (Sortable, type_name, unicode, unic, py2to3)
+from robot.utils import (Sortable, unicode, unic, py2to3)
 
 
 @py2to3
 class DataTypeCatalog(object):
 
     def __init__(self):
-        self.enum_set = set()
-        self.typed_dict_set = set()
+        self._enums = set()
+        self._typed_dicts = set()
 
     def __iter__(self):
-        return iter(sorted(self.typed_dict_set | self.enum_set))
+        return iter(sorted(self._typed_dicts | self._enums))
 
     def __nonzero__(self):
-        return bool(self.enum_set or self.typed_dict_set)
+        return bool(self._enums or self._typed_dicts)
 
     @property
     def enums(self):
-        return sorted(self.enum_set)
+        return sorted(self._enums)
 
     @property
     def typed_dicts(self):
-        return sorted(self.typed_dict_set)
+        return sorted(self._typed_dicts)
 
     def update(self, types):
         for typ in types:
             type_doc = self._get_type_doc_object(typ)
             if isinstance(type_doc, EnumDoc):
-                self.enum_set.add(type_doc)
+                self._enums.add(type_doc)
             elif isinstance(type_doc, TypedDictDoc):
-                self.typed_dict_set.add(type_doc)
+                self._typed_dicts.add(type_doc)
 
     def _get_type_doc_object(self, typ):
         if isinstance(typ, (EnumDoc, TypedDictDoc)):
