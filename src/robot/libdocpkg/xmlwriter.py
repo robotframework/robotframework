@@ -109,7 +109,7 @@ class LibdocXmlWriter(object):
         return attrs
 
     def _write_data_types(self, data_types, writer):
-        writer.start('data_types')
+        writer.start('datatypes')
         if data_types.enums:
             writer.start('enums')
             for enum in data_types.enums:
@@ -122,9 +122,9 @@ class LibdocXmlWriter(object):
                 writer.end('enum')
             writer.end('enums')
         if data_types.typed_dicts:
-            writer.start('typed_dicts')
+            writer.start('typeddicts')
             for typ_dict in data_types.typed_dicts:
-                writer.start('typed_dict', {'name': typ_dict.name})
+                writer.start('typeddict', {'name': typ_dict.name})
                 writer.element('doc', typ_dict.doc)
                 writer.start('items')
                 for item in typ_dict.items:
@@ -136,9 +136,9 @@ class LibdocXmlWriter(object):
                         item['required'] = 'false'
                     writer.element('item', attrs=item)
                 writer.end('items')
-                writer.end('typed_dict')
-            writer.end('typed_dicts')
-        writer.end('data_types')
+                writer.end('typeddict')
+            writer.end('typeddicts')
+        writer.end('datatypes')
 
     def _write_end(self, writer):
         writer.end('keywordspec')

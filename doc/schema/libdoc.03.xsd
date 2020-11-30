@@ -8,7 +8,7 @@
             <xs:element name="doc" type="xs:string" />
             <xs:element name="inits" type="Inits" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="keywords" type="Keywords" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="data_types" type="DataTypes" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="datatypes" type="DataTypes" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" />
         <xs:attribute name="type" type="LibraryType" use="required" />
@@ -66,7 +66,7 @@
     <xs:complexType name="DataTypes">
         <xs:sequence>
             <xs:element name="enums" type="EnumList" minOccurs="0" />
-            <xs:element name="typed_dicts" type="TypedDictList" minOccurs="0" />
+            <xs:element name="typeddicts" type="TypedDictList" minOccurs="0" />
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="EnumList">
@@ -76,7 +76,7 @@
     </xs:complexType>
     <xs:complexType name="TypedDictList">
         <xs:sequence>
-            <xs:element name="typed_dict" type="TypedDictType" maxOccurs="unbounded" />
+            <xs:element name="typeddict" type="TypedDictType" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="EnumType">

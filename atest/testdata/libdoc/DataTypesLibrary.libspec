@@ -90,7 +90,7 @@
 <shortdoc></shortdoc>
 </kw>
 </keywords>
-<data_types>
+<datatypes>
 <enums>
 <enum name="AssertionOperator">
 <doc>&lt;p&gt;This is some Doc&lt;/p&gt;
@@ -115,8 +115,8 @@
 </members>
 </enum>
 </enums>
-<typed_dicts>
-<typed_dict name="GeoLocation">
+<typeddicts>
+<typeddict name="GeoLocation">
 <doc>&lt;p&gt;Defines the geolocation.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;latitude&lt;/code&gt; Latitude between -90 and 90.&lt;/li&gt;
@@ -128,7 +128,7 @@
 <item key="latitude" type="float" required="true"/>
 <item key="accuracy" type="float" required="false"/>
 </items>
-</typed_dict>
-</typed_dicts>
-</data_types>
+</typeddict>
+</typeddicts>
+</datatypes>
 </keywordspec>

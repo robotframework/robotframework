@@ -94,7 +94,7 @@ It links to `Set Location` keyword and to `GeoLocation` data type.</doc>
 <shortdoc></shortdoc>
 </kw>
 </keywords>
-<data_types>
+<datatypes>
 <enums>
 <enum name="AssertionOperator">
 <doc>This is some Doc
@@ -121,8 +121,8 @@ This has was defined by assigning to __doc__.</doc>
 </members>
 </enum>
 </enums>
-<typed_dicts>
-<typed_dict name="GeoLocation">
+<typeddicts>
+<typeddict name="GeoLocation">
 <doc>Defines the geolocation.
 
     - ``latitude`` Latitude between -90 and 90.
@@ -134,7 +134,7 @@ This has was defined by assigning to __doc__.</doc>
 <item key="latitude" type="float" required="true"/>
 <item key="accuracy" type="float" required="false"/>
 </items>
-</typed_dict>
-</typed_dicts>
-</data_types>
+</typeddict>
+</typeddicts>
+</datatypes>
 </keywordspec>
