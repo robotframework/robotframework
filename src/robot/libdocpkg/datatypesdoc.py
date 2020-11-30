@@ -94,11 +94,11 @@ class DataTypeCatalog(object):
 
 class TypedDictDoc(Sortable):
 
-    def __init__(self, name='', type='', doc='', items=None):
+    def __init__(self, name='', doc='', items=None, type='TypedDict'):
         self.name = name
-        self.type = type
         self.doc = doc
         self.items = items or []
+        self.type = type
 
     @classmethod
     def from_TypedDict(cls, typed_dict):
@@ -107,13 +107,10 @@ class TypedDictDoc(Sortable):
         optional_keys = list(getattr(typed_dict, '__optional_keys__', []))
         for key, value in typed_dict.__annotations__.items():
             typ = value.__name__ if isclass(value) else unic(value)
-            items.append({'key': key,
-                          'type': typ,
-                          'required': key in required_keys
-                          if required_keys or optional_keys else None})
+            required = key in required_keys if required_keys or optional_keys else None
+            items.append({'key': key, 'type': typ, 'required': required})
         return cls(name=typed_dict.__name__,
-                   type='TypedDict',
-                   doc=typed_dict.__doc__ if typed_dict.__doc__ else '',
+                   doc=typed_dict.__doc__ or '',
                    items=items)
 
     @property
@@ -131,19 +128,17 @@ class TypedDictDoc(Sortable):
 
 class EnumDoc(Sortable):
 
-    def __init__(self, name='', type='', doc='', members=None):
+    def __init__(self, name='', doc='', members=None, type='Enum'):
         self.name = name
-        self.type = type
         self.doc = doc
         self.members = members or []
+        self.type = type
 
     @classmethod
     def from_Enum(cls, enum_type):
         return cls(name=enum_type.__name__,
-                   type='Enum',
                    doc=enum_type.__doc__ or '',
-                   members=[{'name': name,
-                             'value': unicode(member.value)}
+                   members=[{'name': name, 'value': unicode(member.value)}
                             for name, member in enum_type.__members__.items()])
 
     @property

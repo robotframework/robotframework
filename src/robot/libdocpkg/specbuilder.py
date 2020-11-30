@@ -103,7 +103,6 @@ class SpecDocBuilder(object):
 
     def _create_enum_doc(self, dt):
         return EnumDoc(name=dt.get('name'),
-                       type='Enum',
                        doc=dt.find('doc').text or '',
                        members=[{'name': member.get('name'),
                                  'value': member.get('value')}
@@ -119,6 +118,5 @@ class SpecDocBuilder(object):
                           'type': item.get('type'),
                           'required': required})
         return TypedDictDoc(name=dt.get('name'),
-                            type='TypedDict',
                             doc=dt.find('doc').text or '',
                             items=items)

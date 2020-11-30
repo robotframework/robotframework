@@ -17,30 +17,6 @@ import json
 import re
 from itertools import chain
 
-try:
-    from enum import Enum
-
-    EnumType = type(Enum)
-except ImportError:  # Standard in Py 3.4+ but can be separately installed
-    class EnumType(object):
-        pass
-
-try:
-    from typing import TypedDict
-
-    TypedDictType = type(TypedDict('TypedDictDummy', {}))
-except ImportError:
-    class TypedDictType(object):
-        pass
-
-try:
-    from typing_extensions import TypedDict as ExtTypedDict
-
-    ExtTypedDictType = type(ExtTypedDict('TypedDictDummy', {}))
-except ImportError:
-    class ExtTypedDictType(object):
-        pass
-
 from robot.model import Tags
 from robot.utils import (IRONPYTHON, getshortdoc, get_timestamp,
                          Sortable, setter, unicode)
