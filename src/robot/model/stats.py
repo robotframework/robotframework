@@ -14,12 +14,12 @@
 #  limitations under the License.
 
 from robot.utils import (Sortable, elapsed_time_to_string, html_escape,
-                         is_string, normalize, py2to3, unicode)
+                         is_string, normalize, py3to2, unicode)
 
 from .tags import TagPattern
 
 
-@py2to3
+@py3to2
 class Stat(Sortable):
     """Generic statistic object used for storing all the statistic values."""
 
@@ -90,7 +90,7 @@ class Stat(Sortable):
     def _sort_key(self):
         return self._norm_name
 
-    def __nonzero__(self):
+    def __bool__(self):
         return not self.failed
 
     def visit(self, visitor):

@@ -17,7 +17,7 @@ import re
 import fnmatch
 from functools import partial
 
-from .compat import py2to3
+from .compat import py3to2
 from .normalizing import normalize
 from .platform import IRONPYTHON, PY3
 from .robottypes import is_string
@@ -29,7 +29,7 @@ def eq(str1, str2, ignore=(), caseless=True, spaceless=True):
     return str1 == str2
 
 
-@py2to3
+@py3to2
 class Matcher(object):
 
     def __init__(self, pattern, ignore=(), caseless=True, spaceless=True,
@@ -55,7 +55,7 @@ class Matcher(object):
     def match_any(self, strings):
         return any(self.match(s) for s in strings)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._normalize(self.pattern))
 
 
