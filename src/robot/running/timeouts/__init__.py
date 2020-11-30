@@ -15,8 +15,8 @@
 
 import time
 
-from robot.utils import (Sortable, py2to3, secs_to_timestr, timestr_to_secs,
-                         IRONPYTHON, JYTHON, WINDOWS)
+from robot.utils import (IRONPYTHON, JYTHON, py3to2, Sortable, secs_to_timestr,
+                         timestr_to_secs, WINDOWS)
 from robot.errors import TimeoutError, DataError, FrameworkError
 
 if JYTHON:
@@ -29,7 +29,7 @@ else:
     from .posix import Timeout
 
 
-@py2to3
+@py3to2
 class _Timeout(Sortable):
 
     def __init__(self, timeout=None, variables=None):
@@ -96,10 +96,10 @@ class _Timeout(Sortable):
     def _timeout_error(self):
         return '%s timeout %s exceeded.' % (self.type, self.string)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.string
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.string and self.string.upper() != 'NONE')
 
     @property
@@ -108,6 +108,9 @@ class _Timeout(Sortable):
 
     def __eq__(self, other):
         return self is other
+
+    def __ne__(self, other):
+        return not self == other
 
     def __hash__(self):
         return id(self)

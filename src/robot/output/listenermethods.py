@@ -14,13 +14,13 @@
 #  limitations under the License.
 
 from robot.errors import TimeoutError
-from robot.utils import get_error_details, py2to3
+from robot.utils import get_error_details, py3to2
 
 from .listenerarguments import ListenerArguments
 from .logger import LOGGER
 
 
-@py2to3
+@py3to2
 class ListenerMethods(object):
 
     def __init__(self, method_name, listeners):
@@ -41,7 +41,7 @@ class ListenerMethods(object):
             for method in self._methods:
                 method(args.get_arguments(method.version))
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._methods)
 
 

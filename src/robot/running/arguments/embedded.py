@@ -16,11 +16,11 @@
 import re
 
 from robot.errors import DataError
-from robot.utils import get_error_message, py2to3
+from robot.utils import get_error_message, py3to2
 from robot.variables import VariableIterator
 
 
-@py2to3
+@py3to2
 class EmbeddedArguments(object):
 
     def __init__(self, name):
@@ -29,7 +29,7 @@ class EmbeddedArguments(object):
         else:
             self.name, self.args = None, []
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.name is not None
 
 

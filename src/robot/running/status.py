@@ -15,10 +15,10 @@
 
 from robot.errors import ExecutionFailed, PassExecution
 from robot.model import TagPatterns
-from robot.utils import html_escape, py2to3, unic, test_or_task
+from robot.utils import html_escape, py3to2, unic, test_or_task
 
 
-@py2to3
+@py3to2
 class Failure(object):
 
     def __init__(self):
@@ -29,14 +29,14 @@ class Failure(object):
         self.test_skipped = None
         self.teardown_skipped = None
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(
             self.setup or self.test or self.teardown or
             self.setup_skipped or self.test_skipped or self.teardown_skipped
         )
 
 
-@py2to3
+@py3to2
 class Exit(object):
 
     def __init__(self, failure_mode=False, error_mode=False,
@@ -62,7 +62,7 @@ class Exit(object):
     def teardown_allowed(self):
         return not (self.skip_teardown_mode and self)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.failure or self.error or self.fatal
 
 

@@ -39,10 +39,10 @@ except ImportError:
     class ExtTypedDictType(object):
         pass
 
-from robot.utils import (Sortable, unicode, unic, py2to3)
+from robot.utils import py3to2, Sortable, unic, unicode
 
 
-@py2to3
+@py3to2
 class DataTypeCatalog(object):
 
     def __init__(self):
@@ -52,7 +52,7 @@ class DataTypeCatalog(object):
     def __iter__(self):
         return iter(sorted(self._typed_dicts | self._enums))
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._enums or self._typed_dicts)
 
     @property

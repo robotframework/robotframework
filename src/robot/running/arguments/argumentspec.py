@@ -29,7 +29,7 @@ except ImportError:    # Standard in Py 3.4+ but can be separately installed
     class Enum(object):
         pass
 
-from robot.utils import setter, py2to3, unicode, unic
+from robot.utils import setter, py3to2, unicode, unic
 
 from .argumentconverter import ArgumentConverter
 from .argumentmapper import ArgumentMapper
@@ -37,7 +37,7 @@ from .argumentresolver import ArgumentResolver
 from .typevalidator import TypeValidator
 
 
-@py2to3
+@py3to2
 class ArgumentSpec(object):
 
     def __init__(self, name=None, type='Keyword', positional_only=None,
@@ -115,11 +115,11 @@ class ArgumentSpec(object):
             yield ArgInfo(ArgInfo.VAR_NAMED, self.var_named,
                           get_type(self.var_named, notset))
 
-    def __unicode__(self):
+    def __str__(self):
         return ', '.join(unicode(arg) for arg in self)
 
 
-@py2to3
+@py3to2
 class ArgInfo(object):
     NOTSET = object()
     POSITIONAL_ONLY = 'POSITIONAL_ONLY'
@@ -182,7 +182,7 @@ class ArgInfo(object):
             return self.default.name
         return unic(self.default)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.kind == self.POSITIONAL_ONLY_MARKER:
             return '/'
         if self.kind == self.NAMED_ONLY_MARKER:

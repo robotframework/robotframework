@@ -13,10 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from itertools import chain
-from operator import attrgetter
-
-from robot.utils import setter, py2to3
+from robot.utils import setter, py3to2
 
 from .fixture import create_fixture
 from .itemlist import ItemList
@@ -24,7 +21,7 @@ from .modelobject import ModelObject
 from .tags import Tags
 
 
-@py2to3
+@py3to2
 class Keyword(ModelObject):
     """Base model for a single keyword.
 
@@ -57,7 +54,7 @@ class Keyword(ModelObject):
         self._sort_key = -1
         self._next_child_sort_key = 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.name)
 
     @property

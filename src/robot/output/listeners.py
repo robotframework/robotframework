@@ -16,15 +16,15 @@
 import os.path
 
 from robot.errors import DataError
-from robot.utils import (Importer, is_string, py2to3,
-                         split_args_from_name_or_path, type_name)
+from robot.utils import (Importer, is_string, py3to2, split_args_from_name_or_path,
+                         type_name)
 
 from .listenermethods import ListenerMethods, LibraryListenerMethods
 from .loggerhelper import AbstractLoggerProxy, IsLogged
 from .logger import LOGGER
 
 
-@py2to3
+@py3to2
 class Listeners(object):
     _method_names = ('start_suite', 'end_suite', 'start_test', 'end_test',
                      'start_keyword', 'end_keyword', 'log_message', 'message',
@@ -57,7 +57,7 @@ class Listeners(object):
         method = getattr(self, '_%s_file' % file_type.lower())
         method(path)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return any(isinstance(method, ListenerMethods) and method
                    for method in self.__dict__.values())
 

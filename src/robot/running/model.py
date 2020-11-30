@@ -39,7 +39,7 @@ from robot import model
 from robot.conf import RobotSettings
 from robot.model import Keywords
 from robot.output import LOGGER, Output, pyloggingconf
-from robot.utils import seq2str, setter, py2to3
+from robot.utils import seq2str, setter, py3to2
 
 from .randomizer import Randomizer
 from .steprunner import StepRunner
@@ -70,7 +70,7 @@ class Keyword(model.Keyword):
         return StepRunner(context).run_step(self)
 
 
-@py2to3
+@py3to2
 class For(Keyword):
     """Represents a for loop in test data.
 
@@ -98,15 +98,16 @@ class For(Keyword):
     def values(self):
         return self.args
 
-    def __unicode__(self):
+    def __str__(self):
         variables = '    '.join(self.assign)
         values = '    '.join(self.values)
         return u'FOR    %s    %s    %s' % (variables, self.flavor, values)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return True
 
 
+@py3to2
 class If(Keyword):
     """Represents an if expression in test data.
 
@@ -130,12 +131,12 @@ class If(Keyword):
     def condition(self):
         return self.args[0]
 
-    def __unicode__(self):
+    def __str__(self):
         types = {self.IF_TYPE: 'IF', self.ELSE_IF_TYPE: 'ELSE IF',
                  self.ELSE_TYPE: 'ELSE'}
         return u'%s    %s' % (types[self.type], self.condition)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return True
 
 

@@ -24,12 +24,12 @@ from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
 from robot.utils import (abspath, create_destination_directory, escape,
                          format_time, get_link_path, html_escape, is_list_like,
-                         py2to3, split_args_from_name_or_path)
+                         py3to2, split_args_from_name_or_path)
 
 from .gatherfailed import gather_failed_tests, gather_failed_suites
 
 
-@py2to3
+@py3to2
 class _BaseSettings(object):
     _cli_opts = {'RPA'              : ('rpa', None),
                  'Name'             : ('name', None),
@@ -310,7 +310,7 @@ class _BaseSettings(object):
     def __contains__(self, setting):
         return setting in self._cli_opts
 
-    def __unicode__(self):
+    def __str__(self):
         return '\n'.join('%s: %s' % (name, self._opts[name])
                          for name in sorted(self._opts))
 

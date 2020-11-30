@@ -13,11 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import py2to3
+from robot.utils import py3to2
 from robot.variables import VariableIterator
 
 
-@py2to3
+@py3to2
 class Token(object):
     """Token representing piece of Robot Framework data.
 
@@ -175,7 +175,7 @@ class Token(object):
         if remaining:
             yield Token(self.type, remaining, lineno, col_offset)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.value
 
     def __repr__(self):
