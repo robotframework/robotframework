@@ -588,5 +588,8 @@
       "lineno": -1
     }
   ],
-  "dataTypes": []
+  "dataTypes": {
+    "enums": [],
+    "typedDicts": []
+  }
 }
