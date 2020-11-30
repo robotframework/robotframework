@@ -21,7 +21,7 @@ from robot.model import Tags
 from robot.utils import (IRONPYTHON, getshortdoc, get_timestamp,
                          Sortable, setter, unicode)
 
-from .datatypesdoc import DataTypeCatalog
+from .datatypes import DataTypeCatalog
 from .htmlutils import HtmlToText, DocFormatter
 from .writer import LibdocWriter
 from .output import LibdocOutput

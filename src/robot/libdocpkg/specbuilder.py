@@ -20,7 +20,7 @@ from robot.utils import ET, ETSource
 from robot.running.arguments import ArgumentSpec, ArgInfo
 
 from .model import LibraryDoc, KeywordDoc
-from .datatypesdoc import EnumDoc, TypedDictDoc
+from .datatypes import EnumDoc, TypedDictDoc
 
 
 class SpecDocBuilder(object):
