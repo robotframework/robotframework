@@ -96,9 +96,9 @@ class SpecDocBuilder(object):
 
     def _create_data_types(self, spec):
         enums = [self._create_enum_doc(dt)
-                 for dt in spec.findall('data_types/enums/enum')]
+                 for dt in spec.findall('datatypes/enums/enum')]
         typed_dicts = [self._create_typed_dict_doc(dt)
-                       for dt in spec.findall('data_types/typed_dicts/typed_dict')]
+                       for dt in spec.findall('datatypes/typeddicts/typeddict')]
         return enums + typed_dicts
 
     def _create_enum_doc(self, dt):

@@ -241,7 +241,7 @@ List of Dict Should Be Equal
 
 DataType Enums Should Be
     [Arguments]    ${index}    ${name}    ${doc}    @{exp_members}
-    ${enums}=   Get Elements    ${LIBDOC}   xpath=data_types/enums/enum
+    ${enums}=   Get Elements    ${LIBDOC}   xpath=datatypes/enums/enum
     Element Attribute Should Be    ${enums}[${index}]     name   ${name}
     Element Text Should Be    ${enums}[${index}]     ${doc}    xpath=doc
     ${members}=    Get Elements    ${enums}[${index}]    xpath=members/member
@@ -254,7 +254,7 @@ DataType Enums Should Be
 
 DataType TypedDict Should Be
     [Arguments]    ${index}    ${name}    ${doc}    @{exp_items}
-    ${typdict}=   Get Elements    ${LIBDOC}   xpath=data_types/typed_dicts/typed_dict
+    ${typdict}=   Get Elements    ${LIBDOC}   xpath=datatypes/typeddicts/typeddict
     Element Attribute Should Be    ${typdict}[${index}]     name   ${name}
     Element Text Should Be    ${typdict}[${index}]     ${doc}    xpath=doc
     ${items}=    Get Elements    ${typdict}[${index}]    xpath=items/item
