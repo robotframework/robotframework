@@ -91,6 +91,7 @@ class Keyword(model.Keyword):
         self.lineno = lineno
         self.source = source
         self.sourcename = sourcename
+        #: sourcename is name of keyword with embedded arguments, from it's definition
 
     @setter
     def keywords(self, keywords):
