@@ -21,7 +21,7 @@ import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, cmdline2list, console_decode,
                          is_list_like, is_string, is_truthy, NormalizedDict,
-                         py2to3, secs_to_timestr, system_decode, system_encode,
+                         py3to2, secs_to_timestr, system_decode, system_encode,
                          timestr_to_secs, IRONPYTHON, JYTHON, WINDOWS)
 from robot.version import get_version
 from robot.api import logger
@@ -838,7 +838,7 @@ class ExecutionResult(object):
         return '<result object with rc %d>' % self.rc
 
 
-@py2to3
+@py3to2
 class ProcessConfiguration(object):
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
@@ -932,7 +932,7 @@ class ProcessConfiguration(object):
                 'stderr': self.stderr_stream,
                 'output_encoding': self.output_encoding}
 
-    def __unicode__(self):
+    def __str__(self):
         return """\
 cwd:     %s
 shell:   %s

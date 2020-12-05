@@ -638,10 +638,16 @@ span.or {
     background: var(--highlighted-background-color);
     color: var(--highlighted-color);
 }
+
+.data-type {
+    font-style: italic;
+}
+
 .no-match {
     color: var(--less-important-text-color) !important;
 }
 
+.no-match .dt-name,
 .no-match .kw-name {
     color: var(--less-important-text-color);
 }

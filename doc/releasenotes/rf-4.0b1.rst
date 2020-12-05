@@ -1,19 +1,15 @@
-===========================
-Robot Framework 4.0 alpha 3
-===========================
-
+==========================
+Robot Framework 4.0 beta 1
+==========================
 
 .. default-role:: code
 
 `Robot Framework`_ 4.0  is a new major release with lot of big new features
-such as native support for IF / ELSE, the SKIP status and enhancements,
-for example, to type conversion and Libdoc. Robot Framework alpha 3 is its
-third preview release targeted especially for developers
-of external tools that are affected by the new status and Libdoc changes, but
-also for users interested in the IF / ELSE support.
-
-All issues targeted for Robot Framework 4.0 can be found
-from the `issue tracker milestone`_.
+such as the SKIP status and native IF/ELSE support as well as enhancements
+to, for example, type conversion and Libdoc. Robot Framework beta 1 already
+contains most of the planned new features and internal changes. The remaining
+issues targeted for Robot Framework 4.0 can be found from the `issue tracker
+milestone`_ and the plan is to get the final release out by the end of 2020.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users`_ mailing list or to `Robot Framework Slack`_,
@@ -28,13 +24,13 @@ to install the latest available release or use
 
 ::
 
-   pip install robotframework==4.0a3
+   pip install robotframework==4.0b1
 
 to install exactly this version. Alternatively you can download the source
 distribution from PyPI_ and install it manually. For more details and other
 installation approaches, see the `installation instructions`_.
 
-Robot Framework 4.0 alpha 3 was released on Friday November 13, 2020.
+Robot Framework 4.0 beta 1 was released on Monday November 30, 2020.
 
 .. _Robot Framework: http://robotframework.org
 .. _Robot Framework Foundation: http://robotframework.org/foundation
@@ -54,63 +50,11 @@ Robot Framework 4.0 alpha 3 was released on Friday November 13, 2020.
 Most important enhancements
 ===========================
 
-Native support for IF/ELSE syntax
----------------------------------
-Robot Framework finally support for IF/ELSE syntax natively.
-
-Until the native syntax, there are various ways to use conditional logic in Robot's test data, but the most common one is Run Keyword If keyword.
-Native IF/ELSE support has at least these advantages:
-
-1. It can execute any number of keywords in IF or ELSE branch.
-
-2. It support IF / ELSE IF / ELSE like structures much simpler way than chaining Run Keyword Ifs.
-
-3. It works in similar manner to FOR, so the usage is hopefully intuitive.
-
-The main design decisions are listed below:
-
-1. Syntax will use IF case-sensitively and without colons similarly as FOR works nowadays (#2990).
-
-2. The expression will be evaluated in Python similarly as with Run Keyword If.
-
-3. Explicit END marker is needed at the end.
-
-4. Indentation is optional but recommended.
-
-5. END is needed also if there's only one keyword.
-
-6. ELSE branches are supported. It is optional and there can be exactly one.
-
-7. ELSE IF branches are supported and there can be any number of them. ELSE IF wording will be used because it is consistent with Run Keyword If and also reads better than variants like ELIF or ELSIF.
-
-Example of a simple usage compared to Run Keyword If::
-
-    IF    ${x} > 0
-        Some positive keyword
-    END
-
-    Run Keyword If    ${x} > 0    Some positive keyword
-
-
-Support for nested control structures
--------------------------------------
-
-It is now possible to nest control structures FOR and IF. Previously, nesting FOR loops was only possible
-by using user keywords. Here is an example with FOR and IF::
-
-    FOR    ${row}    IN    @{rows}
-        FOR    ${cell}    IN    @{row}
-            IF    "${cell}" != "IGNORE"
-                Process Cell    ${cell}
-            END
-        END
-    END
-
 New SKIP status
 ---------------
 
-Robot Framework tests (and tasks) finally get the SKIP status (`#3622`_). There are
-many different ways for them to get it:
+Robot Framework tests (and tasks) finally have SKIP status in addition to
+PASS and FAIL (`#3622`_). There are many different ways for tests get skipped:
 
 1. Tests can use new `Skip` and `Skip If` BuiltIn keywords. The former skips the test
    unconditionally and the latter accepts an expression that is evaluated using the
@@ -123,9 +67,9 @@ many different ways for them to get it:
    create a custom exception that has a special `ROBOT_SKIP_EXECUTION` attribute set
    to a true value.
 
-3. If either of the above ways are used in suite setup, all tests in the that suite
-   will be marked skipped without running them. If they are used in suite teardown,
-   all tests are marked skipped retroactively.
+3. If a suite setup is skipped using a keyword or an exception, all tests in that
+   suite will be marked skipped without executing them. If a suite teardown is skipped,
+   all tests in the suite are marked skipped retroactively.
 
 4. New command line option `--skip` can be used to skip tests based on tags without
    running them. The difference compared to the old `--exclude` option is that skipped
@@ -161,7 +105,7 @@ dynamically marking them non-critical before failing. The system worked by using
 
 Although this functionality worked ok in its designed usage, it also had several
 problems discussed in more detail below. Due to these problems the decision was made
-to remove the criticality concept (`#3624`_).
+to remove the criticality concept in Robot Framework 4.0. (`#3624`_)
 
 Problems with criticality
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -198,8 +142,8 @@ Migrating from criticality to skipping
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Part of the new skip functionality (`#3622`_) is adding `--skiponfailure` command line
-option that automatically changes status of tests having a matching tag to skip if they
-fail. This works very much like the current `--noncritical` option that marks tests
+option that automatically changes status of failed tests to skip if they have a matching
+tag. This works very much like the old `--noncritical` option that marks tests
 non-critical and thus their failures are in practice ignored. To make migration to
 skipping easier, `--noncritical` and also `--critical` will be preserved as deprecated
 aliases to `--skiponfailure` when starting execution. They will also be preserved with
@@ -216,6 +160,108 @@ tools. This will certainly add some work to projects providing such integration
 (e.g. Robot Framework Jenkins Plugin), but in the end using commonly used skip status
 and not the unique criticality is likely to make things easier.
 
+Native IF/ELSE syntax
+---------------------
+
+Robot Framework finally has support for real IF/ELSE syntax avoiding the need to
+use the `Run Keyword If` keyword for conditional execution.
+
+Basic `IF` syntax
+~~~~~~~~~~~~~~~~~
+
+The new native if expression syntax starts with `IF` (case-sensitive) and ends
+with `END` (case-sensitive). The `IF` marker requires exactly one value that is
+the condition to evaluate. Keywords to execute if the condition is true are on
+their own rows between the `IF` and `END` markers. Indenting keywords in the if
+block is highly recommended but not mandatory.
+
+In the following example keywords `Some keyword` and `Another keyword`
+are executed if `${rc}` is greater than zero:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+       IF    ${rc} > 0
+           Some keyword
+           Another keyword
+       END
+
+The condition is evaluated in Python so that Python builtins like `len()` are
+available and modules are imported automatically to support usages like
+`platform.system() == 'Linux'` and `math.ceil(${x}) == 1`.
+Normal variables like `${rc}` in the above example are replaced before evaluation, but
+variables are also available in the evaluation namespace using the special `$rc` syntax.
+The latter approach is handy when the string representation of the variable cannot be
+used in the condition directly. In practice the condition syntax is the same as with
+the `Run Keyword If` keyword.
+
+`ELSE`
+~~~~~~
+
+Like most other languages supporting conditional execution, Robot Framework `IF`
+syntax also supports `ELSE` branches that are executed if the `IF` condition is
+not true.
+
+In this example `Some keyword` is executed if `${rc}` is greater than
+zero and `Another keyword` is executed otherwise:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+        IF    ${rc} > 0
+            Some keyword
+        ELSE
+            Another keyword
+        END
+
+`ELSE IF`
+~~~~~~~~~
+
+Robot Framework also supports `ELSE IF` branches that have their own condition
+that is evaluated if the initial condition is not true. There can be any number
+of `ELSE IF` branches and they are gone through in the order they are specified.
+If one of the `ELSE IF` conditions is true, the block following it is executed
+and remaining `ELSE IF` branches are ignored. An optional `ELSE` branch can follow
+`ELSE IF` branches and it is executed if all conditions are false.
+
+In the following example different keyword is executed depending on is `${rc}` positive,
+negative, zero, or something else like a string or `None`:
+
+.. sourcecode:: robotframework
+
+    *** Test Cases ***
+    Example
+        IF    $rc > 0
+            Positive keyword
+        ELSE IF    $rc < 0
+            Negative keyword
+        ELSE IF    $rc == 0
+            Zero keyword
+        ELSE
+            Fail    Unexpected rc: ${rc}
+        END
+
+Notice that this example uses the `${rc}` variable in the special `$rc` format to
+avoid evaluation failures if it is not a number.
+
+Support for nested control structures
+-------------------------------------
+
+It is now possible to nest old FOR loops as well new IF/ELSE structures. Previously,
+nesting FOR loops was only possible by using user keywords.
+
+Here is an example with FOR and IF::
+
+    FOR    ${row}    IN    @{rows}
+        FOR    ${cell}    IN    @{row}
+            IF    "${cell}" != "IGNORE"
+                Process Cell    ${cell}
+            END
+        END
+    END
+
 Libdoc enhancements
 -------------------
 
@@ -226,19 +272,30 @@ Libdoc generated HTML documentation has been enhanced so that it contains a navi
 bar with easier access to keywords both directly and via search. Support for mobile
 browsers has also been improved. (`#3687`_)
 
-Showing keyword arguments has also been improved and nowadays argument names and
-possible types and default values have are shown separately and not anymore like
-`arg: int = 42`. (`#3586`_)
+Showing keyword arguments has been improved. Nowadays argument names and
+possible types and default values are shown separately and not anymore as
+a single string like `arg: int = 42`. (`#3586`_)
+
+Enums_ or a TypedDicts_ used as argument types are automatically listed in the new
+Data types section in Libdoc HTML output. The type information keywords have also
+contain links to this information where applicable. (`#3783`_)
+
+.. _Enums: https://docs.python.org/3/library/enum.html
+.. _TypedDicts: https://docs.python.org/3/library/typing.html#typing.TypedDict
 
 Spec file enhancements
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Most important enhancement to the machine readable spec files is that Libdoc nowadays
-can generate specs also in the JSON format in addition to XML (`#3730`_). The JSON spec
-is more convenient especially when working with JavaScript and other web technologies.
+can generate specs also in the JSON format in addition to XML. The JSON spec is more
+convenient especially when working with JavaScript and other web technologies. (`#3730`_)
 
 Another important change is that specs nowadays store keyword argument information
-so that name and possible type and default value are separated (`#3578`_).
+so that name and possible type and default value are separated. (`#3578`_)
+
+Enums_ and TypedDicts_ shown specially in HTML are also stored separately in the spec
+files. This makes it possible, for example, to implement completion for enum members
+in IDEs. (`#3607`_)
 
 Argument conversion enhancements
 --------------------------------
@@ -247,12 +304,12 @@ Automatic argument conversion that was initially added in `Robot Framework 3.1`_
 has been enhanced in multiple ways:
 
 - It is possible to specify that an argument has multiple possible types, for
-  example, like `arg: Union[int, float]` (`#3738`_).
-- Conversion is done also when the given argument is not a string (`#3735`_).
-- Conversion to string (e.g. `arg: str`) has been added (`#3736`_).
-- Conversion to `None` is done only if an argument has `None` as a type or as
-  a default value (`#3729`_).
-- `None` can be used instead of `NoneType` consistently (`#3739`_).
+  example, like `arg: Union[int, float]`. (`#3738`_)
+- Conversion is done also when the given argument is not a string. (`#3735`_)
+- Conversion to string (e.g. `arg: str`) has been added. (`#3736`_)
+- Conversion to `None` is done only if an argument has `None` as an explicit
+  type or as a default value. (`#3729`_)
+- `None` can be used as a type instead of `NoneType` consistently. (`#3739`_)
 
 __ https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-3.1.rst#automatic-argument-conversion
 
@@ -264,8 +321,9 @@ now works also in combination with item access like `@{var}[item]` (`#3487`_). T
 is how that syntax is handled:
 
 - Both `@{var}[item]` and `&{var}[item]` first make a normal variable item lookup,
-  exactly like when using `${var}[item]`. Nested access like `@{var}[item1][item2]`
-  and using the slice notation with lists like `@{var}[1:]` are supported as well.
+  exactly like when using `${var}[item]`.
+- Nested access like `@{var}[item1][item2]` and using the slice notation with lists
+  like `@{var}[1:]` are supported as well.
 - When using the `@{var}[item]` syntax, the found item must be a list or list-like.
   It is expanded exactly like `@{var}` is expanded normally.
 - When using the `&{var}[item]` syntax, the found item must be a mapping. It is
@@ -287,8 +345,8 @@ Prior to this change the item access needed to be done separately::
 
 This change is backward incompatible because with earlier versions `@{var}[item]` and
 `&{var}[item]` meant normal item access with lists and dictionaries, respectively.
-The new generic `${var}[item]` access was introduced already in RF 3.1 (`#2601`__) and
-the old syntax was deprecated in RF 3.2 (`#2974`__).
+The new generic `${var}[item]` access was introduced already in Robot Framework 3.1
+(`#2601`__) and the old syntax was deprecated in Robot Framework 3.2 (`#2974`__).
 
 __ https://github.com/robotframework/robotframework/issues/2601
 __ https://github.com/robotframework/robotframework/issues/2974
@@ -309,27 +367,90 @@ Backwards incompatible changes
 ==============================
 
 Big changes in Robot Framework 4.0 have not been possible without breaking
-backwards incompatibility in some cases:
+backwards incompatibility in some cases.
 
-- As already discussed above, `criticality has been removed`_ (`#3624`_).
-- As also discussed above, the meaning of `@{var}[item]` and `&{var}[item]` syntax
-  `has changed`__ (`#3487`_).
-- The already deprecated support for old `:FOR` loop syntax has been removed (`#3733`)_.
+Changes to test and suite statuses
+----------------------------------
+
+As already discussed, tests and suites can have `SKIP status`__ (`#3622`_)
+and `criticality has been removed`_ (`#3624`_).
+
+__ `New SKIP status`_
+
+Old `:FOR` loop syntax is not supported anymore
+-----------------------------------------------
+
+Prior to Robot Framework 3.1 the FOR loop syntax looked like this::
+
+   :FOR    ${animal}    IN    cat    dog    cow
+   \    Keyword    ${animal}
+   \    Another keyword
+
+Robot Framework 3.1 `added the new loop syntax`__ that makes it possible to
+write loops like this::
+
+   FOR    ${animal}    IN    cat    dog    cow
+       Keyword    ${animal}
+       Another keyword
+   END
+
+The old loop syntax was `deprecated in Robot Framework 3.2`__ and now in
+Robot Framework 4.0 the support for it has been removed altogether. (`#3733`_)
+
+__ https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-3.1.rst#for-loop-enhancements
+__ https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-3.2.rst#old-for-loop-syntax
+
+Meaning of `@{var}[item]` and `&{var}[item]` syntax has changed
+---------------------------------------------------------------
+
+As discussed earlier, `@{var}[item]` and `&{var}[item]` nowadays mean
+`list and dictionary expansion with item access`_, respectively (`#3487`_).
+With earlier versions they meant accessing items from lists or dictionaries
+without expansion, but that functionality was `deprecated in Robot Framework 3.2`__.
+
+__ https://github.com/robotframework/robotframework/blob/master/doc/releasenotes/rf-3.2.rst#accessing-list-and-dictionary-items-using-varitem-and-varitem
+
+Argument conversion changes
+---------------------------
+
+Argument type conversion has been `enhanced in many ways`__ and some of these
+changes are backwards incompatible:
+
 - Also non-string arguments are used in automatic argument conversion instead of
-  using them as-is (`#3735`_).
-- String `NONE` (case-insensitively) is converted to `None` only if the argument has
-  `None` as an explicit type or as a default value (`#3729`_).
-- Libdoc spec files store argument name, type and default separately (`#3578`_)
-  and do not have information about named argument support (`#3705`_).
-- Libdoc's special `XML:HTML` format has been removed in favor of the dedicated
-  `--specdocformat` option (`#3731`_).
-- Space after a literal newline is not ignored anymore (`#3746`_).
-- Python 3.4 is not anymore supported (`#3577`_).
+  passing them to keywords as-is. Keywords may thus get arguments in different
+  type than earlier or the type conversion can fail. (`#3735`_)
 
-__ `List and dictionary expansion with item access`_
+- String `NONE` (case-insensitively) is converted to `None` only if the argument has
+  `None` as an explicit type or as a default value. This may lead to argument
+  conversion failure instead of the keyword getting `None`. (`#3729`_)
+
+__ `Argument conversion enhancements`_
+
+Libdoc spec changes
+-------------------
+
+Libdoc XML spec files have been changed:
+
+- Argument name, type and default are stored separately. (`#3578`_)
+- Information about named argument support has been removed. (`#3705`_)
+- Spec files have new information such as Enum and TypedDict data types. (`#3607`_)
+- When generating specs, it is not possible to use the special `XML:HTML` format
+  anymore. The new `--specdocformat` option must be used instead. (`#3731`_)
+
+As the result the `XML schema version`__ has been raised to 3.
+
+__ https://github.com/robotframework/robotframework/tree/master/doc/schema
+
+Other backwards incompatible changes
+------------------------------------
+
+- Python 3.4 is not anymore supported. (`#3577`_)
+- Parsing model has been changed slightly. (`#3776`_)
+- Space after a literal newline is not ignored anymore. (`#3746`_)
 
 Acknowledgements
 ================
+
 Robot Framework development is sponsored by the `Robot Framework Foundation`_
 and its `40+ member organizations <https://robotframework.org/foundation/#members>`_.
 Due to some extra funding we have had a bit bigger team developing Robot Framework 4.0
@@ -358,12 +479,16 @@ contributions by the wider open source community:
 - `Hugo van Kemenade <https://github.com/hugovk>`__ did metadata and documentation
   changes to drop Python 3.4 support. (`#3577`_)
 
+- `Sergio Freire <https://github.com/bitcoder>`__ updated output.xml schema after
+  changes to status and criticality. (`#3726`_)
+
 Huge thanks to all sponsors, contributors and to everyone else who has reported
 problems, participated in discussions on various forums, or otherwise helped to make
 Robot Framework and its community and ecosystem better.
 
 | `Pekka Klärck <https://github.com/pekkaklarck>`__
 | Robot Framework Lead Developer
+
 
 Full list of fixes and enhancements
 ===================================
@@ -401,6 +526,11 @@ Full list of fixes and enhancements
       - high
       - Allow using `@{list}[index]` as a list and `&{dict}[key]` as a dict
       - alpha 1
+    * - `#3538`_
+      - enhancement
+      - high
+      - Expose keyword line numbers via listener API v2
+      - alpha 3
     * - `#3578`_
       - enhancement
       - high
@@ -414,8 +544,8 @@ Full list of fixes and enhancements
     * - `#3607`_
       - enhancement
       - high
-      - Enhance libspec so that it's possible to provide code-completion and validation for enum arguments
-      - alpha 3
+      - Libdoc: Store information about enums and TypedDicts used as argument types in spec files
+      - beta 1
     * - `#3687`_
       - enhancement
       - high
@@ -441,6 +571,11 @@ Full list of fixes and enhancements
       - high
       - Support type conversion with multiple possible types
       - alpha 2
+    * - `#3783`_
+      - enhancement
+      - high
+      - Libdoc: List enums and TypedDicts used as argument types in HTML automatically
+      - beta 1
     * - `#3547`_
       - bug
       - medium
@@ -471,16 +606,16 @@ Full list of fixes and enhancements
       - medium
       - `None` conversion should not be done unless argument has `None` as explicit type or as default value
       - alpha 2
+    * - `#3772`_
+      - bug
+      - medium
+      - If library has listener but no keywords, other library listeners' `close` method is called multiple times
+      - beta 1
     * - `#2294`_
       - enhancement
       - medium
       - Run Keyword And Warn On Failure keyword
       - alpha 1
-    * - `#3017`_
-      - enhancement
-      - medium
-      - Add return type to libdoc output
-      - alpha 3
     * - `#3577`_
       - enhancement
       - medium
@@ -496,16 +631,11 @@ Full list of fixes and enhancements
       - medium
       - Libdoc: Escape backslashes, spaces, line breaks etc. in default values to make them Robot compatible
       - alpha 2
-    * - `#3724`_
-      - enhancement
-      - medium
-      - LibDoc show type hints better (Typing without prefix and no str)
-      - alpha 3
     * - `#3726`_
       - enhancement
       - medium
       - Update RF output.xml schema to reflect v4.0 changes
-      - alpha 3
+      - beta 1
     * - `#3733`_
       - enhancement
       - medium
@@ -530,7 +660,17 @@ Full list of fixes and enhancements
       - enhancement
       - medium
       - Libdoc: Support argument types with multiple possible values
-      - alpha 3
+      - beta 1
+    * - `#3769`_
+      - enhancement
+      - medium
+      - Reserved keywords should be executed in dry-run
+      - beta 1
+    * - `#3781`_
+      - enhancement
+      - medium
+      - Support optional start index with `FOR ... IN ENUMERATE` loops
+      - beta 1
     * - `#3731`_
       - ---
       - medium
@@ -551,19 +691,35 @@ Full list of fixes and enhancements
       - low
       - Remove information about named argument support from Libdoc metadata
       - alpha 2
+    * - `#3724`_
+      - enhancement
+      - low
+      - Libdoc: Drop `typing.` prefix from type hints originating from the `typing` module
+      - beta 1
     * - `#3758`_
       - enhancement
       - low
       - Libdoc: Support quiet mode to not print output file to console
       - alpha 3
+    * - `#3767`_
+      - enhancement
+      - low
+      - Write elements without text as self closing to XML outputs
+      - beta 1
+    * - `#3776`_
+      - enhancement
+      - low
+      - Cleanup parsing model
+      - beta 1
 
-Altogether 36 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av4.0>`__.
+Altogether 43 issues. View on the `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3Av4.0>`__.
 
 .. _#3074: https://github.com/robotframework/robotframework/issues/3074
 .. _#3079: https://github.com/robotframework/robotframework/issues/3079
 .. _#3622: https://github.com/robotframework/robotframework/issues/3622
 .. _#3624: https://github.com/robotframework/robotframework/issues/3624
 .. _#3487: https://github.com/robotframework/robotframework/issues/3487
+.. _#3538: https://github.com/robotframework/robotframework/issues/3538
 .. _#3578: https://github.com/robotframework/robotframework/issues/3578
 .. _#3586: https://github.com/robotframework/robotframework/issues/3586
 .. _#3607: https://github.com/robotframework/robotframework/issues/3607
@@ -572,26 +728,31 @@ Altogether 36 issues. View on the `issue tracker <https://github.com/robotframew
 .. _#3730: https://github.com/robotframework/robotframework/issues/3730
 .. _#3735: https://github.com/robotframework/robotframework/issues/3735
 .. _#3738: https://github.com/robotframework/robotframework/issues/3738
+.. _#3783: https://github.com/robotframework/robotframework/issues/3783
 .. _#3547: https://github.com/robotframework/robotframework/issues/3547
 .. _#3648: https://github.com/robotframework/robotframework/issues/3648
 .. _#3649: https://github.com/robotframework/robotframework/issues/3649
 .. _#3681: https://github.com/robotframework/robotframework/issues/3681
 .. _#3708: https://github.com/robotframework/robotframework/issues/3708
 .. _#3729: https://github.com/robotframework/robotframework/issues/3729
+.. _#3772: https://github.com/robotframework/robotframework/issues/3772
 .. _#2294: https://github.com/robotframework/robotframework/issues/2294
-.. _#3017: https://github.com/robotframework/robotframework/issues/3017
 .. _#3577: https://github.com/robotframework/robotframework/issues/3577
 .. _#3685: https://github.com/robotframework/robotframework/issues/3685
 .. _#3697: https://github.com/robotframework/robotframework/issues/3697
-.. _#3724: https://github.com/robotframework/robotframework/issues/3724
 .. _#3726: https://github.com/robotframework/robotframework/issues/3726
 .. _#3733: https://github.com/robotframework/robotframework/issues/3733
 .. _#3736: https://github.com/robotframework/robotframework/issues/3736
 .. _#3739: https://github.com/robotframework/robotframework/issues/3739
 .. _#3746: https://github.com/robotframework/robotframework/issues/3746
 .. _#3748: https://github.com/robotframework/robotframework/issues/3748
+.. _#3769: https://github.com/robotframework/robotframework/issues/3769
+.. _#3781: https://github.com/robotframework/robotframework/issues/3781
 .. _#3731: https://github.com/robotframework/robotframework/issues/3731
 .. _#3214: https://github.com/robotframework/robotframework/issues/3214
 .. _#3691: https://github.com/robotframework/robotframework/issues/3691
 .. _#3705: https://github.com/robotframework/robotframework/issues/3705
+.. _#3724: https://github.com/robotframework/robotframework/issues/3724
 .. _#3758: https://github.com/robotframework/robotframework/issues/3758
+.. _#3767: https://github.com/robotframework/robotframework/issues/3767
+.. _#3776: https://github.com/robotframework/robotframework/issues/3776

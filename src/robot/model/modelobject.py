@@ -15,10 +15,10 @@
 
 import copy
 
-from robot.utils import SetterAwareType, py2to3, unicode, with_metaclass
+from robot.utils import py3to2, SetterAwareType, unicode, with_metaclass
 
 
-@py2to3
+@py3to2
 class ModelObject(with_metaclass(SetterAwareType, object)):
     __slots__ = []
 
@@ -66,7 +66,7 @@ class ModelObject(with_metaclass(SetterAwareType, object)):
             setattr(copied, name, attributes[name])
         return copied
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def __repr__(self):

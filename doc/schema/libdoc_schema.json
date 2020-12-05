@@ -75,14 +75,24 @@
       "uniqueItems": true
     },
     "dataTypes": {
-      "type": "array",
-      "items": {
-        "oneOf": [
-          {"$ref": "#/definitions/typedDictType"},
-          {"$ref": "#/definitions/enumType"}
-        ]
-      },
-      "uniqueItems": true
+      "type": "object",
+      "title": "Keyword schema",
+      "properties": {
+        "enums": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/enumType"
+          },
+          "uniqueItems": true
+        },
+        "typedDicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typedDictType"
+          },
+          "uniqueItems": true
+        }
+      }
     }
   },
   "required": [
@@ -201,7 +211,7 @@
       "title": "Enum DataType schema",
       "required": [
         "name",
-        "super",
+        "type",
         "doc",
         "members"
       ],
@@ -209,7 +219,7 @@
         "name": {
           "type": "string"
         },
-        "super": {
+        "type": {
           "type": "string"
         },
         "doc": {
@@ -218,13 +228,13 @@
         "members": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/enum_member"
+            "$ref": "#/definitions/enumMember"
           },
           "uniqueItems": true
         }
       }
     },
-    "enum_member": {
+    "enumMember": {
       "$id": "#/definitions/enum_member",
       "type": "object",
       "title": "Enum Member schema",
@@ -247,38 +257,50 @@
       "title": "TypedDict Type schema",
       "required": [
         "name",
-        "super",
+        "type",
         "doc",
-        "items",
-        "required_keys",
-        "optional_keys"
+        "items"
       ],
       "properties": {
         "name": {
           "type": "string"
         },
-        "super": {
+        "type": {
           "type": "string"
         },
         "doc": {
           "type": "string"
         },
         "items": {
-          "type": "object"
-        },
-        "required_keys": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/typedDictItem"
           },
           "uniqueItems": true
+        }
+      }
+    },
+    "typedDictItem": {
+      "$id": "#/definitions/typedDictItem",
+      "type": "object",
+      "title": "TypedDict Item schema",
+      "required": [
+        "key",
+        "type",
+        "required"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
         },
-        "optional_keys": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "uniqueItems": true
+        "type": {
+          "type": "string"
+        },
+        "required": {
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       }
     }

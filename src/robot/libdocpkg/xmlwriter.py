@@ -26,6 +26,7 @@ class LibdocXmlWriter(object):
         self._write_start(libdoc, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
+        self._write_data_types(libdoc.data_types, writer)
         self._write_end(writer)
 
     def _write_start(self, libdoc, writer):
@@ -106,6 +107,38 @@ class LibdocXmlWriter(object):
             attrs['deprecated'] = 'true'
         self._add_source_info(attrs, kw, writer.output, lib_source)
         return attrs
+
+    def _write_data_types(self, data_types, writer):
+        writer.start('datatypes')
+        if data_types.enums:
+            writer.start('enums')
+            for enum in data_types.enums:
+                writer.start('enum', {'name': enum.name})
+                writer.element('doc', enum.doc)
+                writer.start('members')
+                for member in enum.members:
+                    writer.element('member', attrs=member)
+                writer.end('members')
+                writer.end('enum')
+            writer.end('enums')
+        if data_types.typed_dicts:
+            writer.start('typeddicts')
+            for typ_dict in data_types.typed_dicts:
+                writer.start('typeddict', {'name': typ_dict.name})
+                writer.element('doc', typ_dict.doc)
+                writer.start('items')
+                for item in typ_dict.items:
+                    if item['required'] is None:
+                        item.pop('required')
+                    elif item['required']:
+                        item['required'] = 'true'
+                    else:
+                        item['required'] = 'false'
+                    writer.element('item', attrs=item)
+                writer.end('items')
+                writer.end('typeddict')
+            writer.end('typeddicts')
+        writer.end('datatypes')
 
     def _write_end(self, writer):
         writer.end('keywordspec')

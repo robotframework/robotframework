@@ -16,7 +16,7 @@
 import re
 
 from robot.errors import VariableError
-from robot.utils import is_string, py2to3, rstrip
+from robot.utils import is_string, py3to2, rstrip
 
 
 def search_variable(string, identifiers='$@&%*', ignore_errors=False):
@@ -70,7 +70,7 @@ def is_dict_assign(string, allow_assign_mark=False):
     return is_assign(string, '&', allow_assign_mark)
 
 
-@py2to3
+@py3to2
 class VariableMatch(object):
 
     def __init__(self, string, identifier=None, base=None, items=(),
@@ -139,10 +139,10 @@ class VariableMatch(object):
     def is_dict_assign(self, allow_assign_mark=False):
         return self.identifier == '&' and self.is_assign(allow_assign_mark)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.identifier is not None
 
-    def __unicode__(self):
+    def __str__(self):
         if not self:
             return '<no match>'
         items = ''.join('[%s]' % i for i in self.items) if self.items else ''
@@ -281,7 +281,7 @@ def unescape_variable_syntax(item):
     return re.sub(r'(\\+)(?=(.+))', handle_escapes, item)
 
 
-@py2to3
+@py3to2
 class VariableIterator(object):
 
     def __init__(self, string, identifiers='$@&%', ignore_errors=False):
@@ -302,7 +302,7 @@ class VariableIterator(object):
     def __len__(self):
         return sum(1 for _ in self)
 
-    def __nonzero__(self):
+    def __bool__(self):
         try:
             next(iter(self))
         except StopIteration:

@@ -2,7 +2,7 @@ import unittest
 import json
 from os.path import dirname, join, normpath
 
-from robot.utils import PY3, IRONPYTHON, JYTHON
+from robot.utils import PY3, PY_VERSION, IRONPYTHON, JYTHON
 from robot.utils.asserts import assert_equal
 from robot.libdocpkg import LibraryDocumentation
 from robot.libdocpkg.model import LibraryDoc, KeywordDoc
@@ -13,6 +13,13 @@ get_text = HtmlToText().html_to_plain_text
 
 CURDIR = dirname(__file__)
 DATADIR = normpath(join(CURDIR, '../../atest/testdata/libdoc/'))
+
+try:
+    from typing_extensions import TypedDict
+except ImportError:
+    TYPEDDICT_SUPPORTS_REQUIRED_KEYS = PY_VERSION >= (3, 9)
+else:
+    TYPEDDICT_SUPPORTS_REQUIRED_KEYS = True
 
 
 def verify_shortdoc_output(doc_input, expected):
@@ -221,6 +228,18 @@ if not IRONPYTHON and not JYTHON:
         def test_DynamicLibrary_json(self):
             run_libdoc_and_validate_json('DynamicLibrary.json')
 
+        def test_DataTypesLibrary_json(self):
+            run_libdoc_and_validate_json('DataTypesLibrary.json')
+
+        def test_DataTypesLibrary_xml(self):
+            run_libdoc_and_validate_json('DataTypesLibrary.xml')
+
+        if PY_VERSION >= (3, 6):
+            def test_DataTypesLibrary_py(self):
+                run_libdoc_and_validate_json('DataTypesLibrary.py')
+
+        def test_DataTypesLibrary_libspex(self):
+            run_libdoc_and_validate_json('DataTypesLibrary.libspec')
 
 class TestLibdocJsonBuilder(unittest.TestCase):
 
@@ -232,6 +251,47 @@ class TestLibdocJsonBuilder(unittest.TestCase):
             orig_data = json.load(f)
         data['generated'] = orig_data['generated'] = None
         assert_equal(data, orig_data)
+
+    def test_libdoc_json_roundtrip_with_dt(self):
+        library = join(DATADIR, 'DataTypesLibrary.json')
+        spec = LibraryDocumentation(library).to_json()
+        data = json.loads(spec)
+        with open(library) as f:
+            orig_data = json.load(f)
+        data['generated'] = orig_data['generated'] = None
+        assert_equal(data, orig_data)
+
+
+if PY_VERSION >= (3, 6):
+
+    class TestLibdocTypedDictKeys(unittest.TestCase):
+
+        def test_typed_dict_keys(self):
+            library = join(DATADIR, 'DataTypesLibrary.py')
+            spec = LibraryDocumentation(library).to_json()
+            current_items = json.loads(spec)['dataTypes']['typedDicts'][0]['items']
+            expected_items = [
+                {
+                    "key": "longitude",
+                    "type": "float",
+                    "required": True if TYPEDDICT_SUPPORTS_REQUIRED_KEYS else None
+                },
+                {
+                    "key": "latitude",
+                    "type": "float",
+                    "required": True if TYPEDDICT_SUPPORTS_REQUIRED_KEYS else None
+                },
+                {
+                    "key": "accuracy",
+                    "type": "float",
+                    "required": False if TYPEDDICT_SUPPORTS_REQUIRED_KEYS else None
+                }
+            ]
+            for exp_item in expected_items:
+                for cur_item in current_items:
+                    if exp_item['key'] == cur_item['key']:
+                        assert_equal(exp_item, cur_item)
+                        break
 
 
 if __name__ == '__main__':
