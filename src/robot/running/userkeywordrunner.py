@@ -71,8 +71,7 @@ class UserKeywordRunner(object):
                              tags=tags,
                              type=kw.type,
                              lineno=kw.lineno,
-                             source=kw.source,
-                             sourcename=self._handler.name)
+                             source=kw.source)
 
     def _run(self, context, args, result):
         variables = context.variables
