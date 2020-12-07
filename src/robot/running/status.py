@@ -133,6 +133,9 @@ class _ExecutionStatus(object):
             return 'FAIL'
         return 'PASS'
 
+    def _skip_on_failure(self):
+        return False
+
     def _skip_on_failure_message(self, failure):
         return ("%s failed but its tags matched '--SkipOnFailure' and it was "
                    "marked skipped.\n\nOriginal failure:\n%s"
@@ -191,6 +194,14 @@ class TestStatus(_ExecutionStatus):
     def test_skipped(self, reason):
         self.skipped = True
         self.failure.test_skipped = unic(reason)
+
+    def skip_if_needed(self):
+        if not self.skipped and self.failed and self._skip_on_failure():
+            msg = self._skip_on_failure_message(self.failure.test)
+            self.failure.test = msg
+            self.skipped = True
+            return True
+        return False
 
     def _skip_on_failure(self):
         critical_pattern = TagPatterns(self._critical_tags)
