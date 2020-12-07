@@ -21,7 +21,7 @@
         {
           "name": "arg1",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg1"
@@ -29,7 +29,7 @@
         {
           "name": "arg2",
           "types": [],
-          "default": "This is shown in docs",
+          "defaultValue": "This is shown in docs",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "arg2=This is shown in docs"
@@ -58,7 +58,7 @@
         {
           "name": "old",
           "types": [],
-          "default": "style",
+          "defaultValue": "style",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "old=style"
@@ -66,7 +66,7 @@
         {
           "name": "new",
           "types": [],
-          "default": "style",
+          "defaultValue": "style",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "new=style"
@@ -74,7 +74,7 @@
         {
           "name": "cool",
           "types": [],
-          "default": "True",
+          "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "cool=True"
@@ -110,7 +110,7 @@
         {
           "name": "varargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*varargs"
@@ -118,7 +118,7 @@
         {
           "name": "kwargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
           "repr": "**kwargs"
@@ -136,7 +136,7 @@
         {
           "name": "arg1",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg1"
@@ -154,7 +154,7 @@
         {
           "name": "",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "NAMED_ONLY_MARKER",
           "required": false,
           "repr": "*"
@@ -162,7 +162,7 @@
         {
           "name": "kwo",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "NAMED_ONLY",
           "required": true,
           "repr": "kwo"
@@ -170,7 +170,7 @@
         {
           "name": "another",
           "types": [],
-          "default": "default",
+          "defaultValue": "default",
           "kind": "NAMED_ONLY",
           "required": false,
           "repr": "another=default"
@@ -188,7 +188,7 @@
         {
           "name": "arg1",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg1"
@@ -196,7 +196,7 @@
         {
           "name": "arg2",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg2"
@@ -214,7 +214,7 @@
         {
           "name": "varargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*varargs"
@@ -222,7 +222,7 @@
         {
           "name": "a",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "NAMED_ONLY",
           "required": true,
           "repr": "a"
@@ -230,7 +230,7 @@
         {
           "name": "b",
           "types": [],
-          "default": "2",
+          "defaultValue": "2",
           "kind": "NAMED_ONLY",
           "required": false,
           "repr": "b=2"
@@ -238,7 +238,7 @@
         {
           "name": "c",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "NAMED_ONLY",
           "required": true,
           "repr": "c"
@@ -246,7 +246,7 @@
         {
           "name": "kws",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
           "repr": "**kws"
@@ -264,7 +264,7 @@
         {
           "name": "varargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*varargs"
@@ -272,7 +272,7 @@
         {
           "name": "kwargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
           "repr": "**kwargs"
@@ -290,7 +290,7 @@
         {
           "name": "varargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*varargs"
@@ -298,7 +298,7 @@
         {
           "name": "kwargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
           "repr": "**kwargs"
@@ -316,7 +316,7 @@
         {
           "name": "varargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*varargs"
@@ -324,7 +324,7 @@
         {
           "name": "kwargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
           "repr": "**kwargs"
@@ -342,7 +342,7 @@
         {
           "name": "varargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*varargs"
@@ -350,7 +350,7 @@
         {
           "name": "kwargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
           "repr": "**kwargs"
@@ -371,7 +371,7 @@
         {
           "name": "arg1",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg1"
@@ -379,7 +379,7 @@
         {
           "name": "arg2",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg2"
@@ -387,7 +387,7 @@
         {
           "name": "arg3",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg3"
@@ -395,7 +395,7 @@
         {
           "name": "arg4",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg4"
@@ -403,7 +403,7 @@
         {
           "name": "arg5",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg5"
@@ -411,7 +411,7 @@
         {
           "name": "arg6",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg6"
@@ -419,7 +419,7 @@
         {
           "name": "arg7",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg7"
@@ -427,7 +427,7 @@
         {
           "name": "arg8",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "arg8"
@@ -448,7 +448,7 @@
         {
           "name": "varargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*varargs"
@@ -456,7 +456,7 @@
         {
           "name": "kwargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
           "repr": "**kwargs"
@@ -474,7 +474,7 @@
         {
           "name": "varargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*varargs"
@@ -482,7 +482,7 @@
         {
           "name": "kwargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
           "repr": "**kwargs"
@@ -500,7 +500,7 @@
         {
           "name": "varargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*varargs"
@@ -508,7 +508,7 @@
         {
           "name": "kwargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
           "repr": "**kwargs"
@@ -526,7 +526,7 @@
         {
           "name": "varargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*varargs"
@@ -534,7 +534,7 @@
         {
           "name": "kwargs",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_NAMED",
           "required": false,
           "repr": "**kwargs"
@@ -557,7 +557,7 @@
           "types": [
             "int"
           ],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "integer: int"
@@ -565,7 +565,7 @@
         {
           "name": "no type",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "no type"
@@ -575,7 +575,7 @@
           "types": [
             "bool"
           ],
-          "default": "True",
+          "defaultValue": "True",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "boolean: bool = True"

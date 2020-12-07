@@ -199,7 +199,7 @@ class KeywordDoc(Sortable):
         return {
             'name': arg.name,
             'types': arg.types_reprs,
-            'default': arg.default_repr,
+            'defaultValue': arg.default_repr,
             'kind': arg.kind,
             'required': arg.required,
             'repr': unicode(arg)
