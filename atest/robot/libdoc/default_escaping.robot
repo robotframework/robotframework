@@ -48,5 +48,5 @@ Verify No Escaping on Resource Files
 Check Libdoc Default
     [Arguments]    ${keyword_index}    ${expected}
     Should Be Equal    ${expected}
-    ...                ${MODEL}[keywords][${keyword_index}][args][0][default]
-    Log    ${MODEL}[keywords][${keyword_index}][args][0][default]
+    ...                ${MODEL}[keywords][${keyword_index}][args][0][defaultValue]
+    Log    ${MODEL}[keywords][${keyword_index}][args][0][defaultValue]

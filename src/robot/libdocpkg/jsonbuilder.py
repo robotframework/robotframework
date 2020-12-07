@@ -73,7 +73,7 @@ class JsonDocBuilder(object):
         for arg in arguments:
             name = arg['name']
             setters[arg['kind']](name)
-            default = arg['default']
+            default = arg.get('defaultValue')
             if default is not None:
                 spec.defaults[name] = default
             arg_types = arg['types']

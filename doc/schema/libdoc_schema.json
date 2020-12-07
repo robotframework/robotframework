@@ -164,7 +164,7 @@
       "required": [
         "name",
         "types",
-        "default",
+        "defaultValue",
         "kind",
         "required",
         "repr"
@@ -179,7 +179,7 @@
             "type": "string"
           }
         },
-        "default": {
+        "defaultValue": {
           "type": [
             "string",
             "null"

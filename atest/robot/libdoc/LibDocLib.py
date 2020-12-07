@@ -79,4 +79,4 @@ class LibDocLib(object):
         return unicode(ArgInfo(kind=model['kind'],
                                name=model['name'],
                                types=tuple(model['types']),
-                               default=model['default'] or ArgInfo.NOTSET))
+                               default=model['defaultValue'] or ArgInfo.NOTSET))
