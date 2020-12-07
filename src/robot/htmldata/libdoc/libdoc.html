@@ -492,10 +492,10 @@
                   <div class="arguments-list">
                   {{each args}}
                     <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">
-                    {{if $value.kind === 'VAR_POSITIONAL'}}<span class="arg-kind" title="KINDS">*</span>{{/if}}
-                    {{if $value.kind === 'VAR_NAMED'}}<span class="arg-kind" title="KINDS2">**</span>{{/if}}
-                    {{if $value.kind === 'NAMED_ONLY'}}<span class="arg-kind" title="KINDS3">&#x1F3F7;</span>{{/if}}
-                    {{if $value.kind === 'POSITIONAL_ONLY'}}<span class="arg-kind" title="KINDS4">&#x27F6;</span>{{/if}}
+                    {{if $value.kind === 'VAR_POSITIONAL'}}<span class="arg-kind" title="Variable number of arguments">*</span>{{/if}}
+                    {{if $value.kind === 'VAR_NAMED'}}<span class="arg-kind" title="Variable number of named arguments">**</span>{{/if}}
+                    {{if $value.kind === 'NAMED_ONLY'}}<span class="arg-kind" title="Named only argument">&#x1F3F7;</span>{{/if}}
+                    {{if $value.kind === 'POSITIONAL_ONLY'}}<span class="arg-kind" title="Positional only argument">&#x27F6;</span>{{/if}}
                     ${$value.name}
                     </span>
 
