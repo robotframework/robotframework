@@ -355,21 +355,7 @@
                 <div class="arguments-list-container">
                   <div class="arguments-list">
                   {{each args}}
-                    <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
-
-                    {{if $value.defaultValue !== null}}
-                      <div class="arg-default-container">
-                        <span class="arg-default-eq">=</span>
-                        <span class="arg-default-value" title="Argument default value">${$value.defaultValue}</span>
-                      </div>
-                    {{/if}}
-
-                    {{if $value.types.length}}
-                      <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.types}">
-                        ${( $data.linked = $value.linked ),''}
-                        {{each $value.types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;{{/each}}
-                      </span>
-                    {{/if}}
+                    {{tmpl($value) 'argument-template'}}
                   {{/each}}
                   </div>
                 </div>
@@ -491,27 +477,7 @@
                 <div class="arguments-list-container">
                   <div class="arguments-list">
                   {{each args}}
-                    <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">
-                    {{if $value.kind === 'VAR_POSITIONAL'}}<span class="arg-kind" title="Variable number of arguments">*</span>{{/if}}
-                    {{if $value.kind === 'VAR_NAMED'}}<span class="arg-kind" title="Variable number of named arguments">**</span>{{/if}}
-                    {{if $value.kind === 'NAMED_ONLY'}}<span class="arg-kind" title="Named only argument">&#x1F3F7;</span>{{/if}}
-                    {{if $value.kind === 'POSITIONAL_ONLY'}}<span class="arg-kind" title="Positional only argument">&#x27F6;</span>{{/if}}
-                    ${$value.name}
-                    </span>
-
-                    {{if $value.defaultValue !== null}}
-                      <div class="arg-default-container">
-                        <span class="arg-default-eq">=</span>
-                        <span class="arg-default-value" title="Argument default value">${$value.defaultValue}</span>
-                      </div>
-                    {{/if}}
-
-                    {{if $value.types.length}}
-                      <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.types}">
-                        ${( $data.linked = $value.linked ),''}
-                        {{each $value.types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;<span class="or"></span>{{/each}}
-                      </span>
-                    {{/if}}
+                    {{tmpl($value) 'argument-template'}}
                   {{/each}}
                   </div>
                 </div>
@@ -536,6 +502,31 @@
        </div>
     </div>
 </script>
+
+<script type="text/x-jquery-tmpl" id="argument-template">
+<span class="arg-name {{if required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">
+{{if kind === 'VAR_POSITIONAL'}}<span class="arg-kind" title="Variable number of arguments">*</span>{{/if}}
+{{if kind === 'VAR_NAMED'}}<span class="arg-kind" title="Variable number of named arguments">**</span>{{/if}}
+{{if kind === 'NAMED_ONLY'}}<span class="arg-kind" title="Named only argument">&#x1F3F7;</span>{{/if}}
+{{if kind === 'POSITIONAL_ONLY'}}<span class="arg-kind" title="Positional only argument">&#x27F6;</span>{{/if}}
+${name}
+</span>
+
+{{if defaultValue !== null}}
+  <div class="arg-default-container">
+    <span class="arg-default-eq">=</span>
+    <span class="arg-default-value" title="Argument default value">${defaultValue}</span>
+  </div>
+{{/if}}
+
+{{if types.length}}
+  <span class="arg-type" title="Argument '${name}' will be converter to type ${types}">
+    ${( $data.linked = linked ),''}
+    {{each types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;<span class="or"></span>{{/each}}
+  </span>
+{{/if}}
+</script>
+
 
 <script type="text/x-jquery-tmpl" id="data-types-template">
     {{if dataTypes.length}}
