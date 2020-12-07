@@ -31,8 +31,8 @@ class Parser(object):
 
 
 class BlockParser(Parser):
-    unhandled_tokens = frozenset((Token.TESTCASE_NAME, Token.KEYWORD_NAME)
-                                 + Token.HEADER_TOKENS)
+    unhandled_tokens = Token.HEADER_TOKENS | frozenset((Token.TESTCASE_NAME,
+                                                        Token.KEYWORD_NAME))
 
     def __init__(self, model):
         Parser.__init__(self, model)
@@ -48,6 +48,7 @@ class BlockParser(Parser):
             self.model.body.append(parser.model)
             return parser
         self.model.body.append(statement)
+        return None
 
 
 class TestCaseParser(BlockParser):
@@ -63,9 +64,6 @@ class KeywordParser(BlockParser):
 
 
 class NestedBlockParser(BlockParser):
-
-    def __init__(self, model):
-        BlockParser.__init__(self, model)
 
     def handles(self, statement):
         return BlockParser.handles(self, statement) and not self.model.end

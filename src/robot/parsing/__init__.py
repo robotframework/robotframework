@@ -102,8 +102,13 @@ look like this::
     Token(EOL, '\n', 4, 0)
     Token(EOS, '', 4, 1)
 
-The output shows token type, value, line number and column offset. The
-``EOL`` tokens denote end of a line and they include the new line character
+The output shows the token type, value, line number and column offset. When finding
+tokens by their type, the constants in the :class:`~.lexer.tokens.Token` class such
+as ``Token.TESTCASE_NAME`` and ``Token.EOL`` should be used instead the values
+of these constants like ``'TESTCASE NAME'`` and ``'EOL'``. These values have
+changed slightly in Robot Framework 4.0 and they may change in the future as well.
+
+The ``EOL`` tokens denote end of a line and they include the new line character
 and possible trailing spaces. The ``EOS`` tokens denote end of a logical
 statement. Typically a single line forms a statement, but when the ``...``
 syntax is used for continuation, a statement spans multiple lines. In

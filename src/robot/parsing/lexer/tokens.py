@@ -81,14 +81,14 @@ class Token(object):
     ERROR = 'ERROR'
     FATAL_ERROR = 'FATAL ERROR'
 
-    NON_DATA_TOKENS = (
+    NON_DATA_TOKENS = frozenset((
         SEPARATOR,
         COMMENT,
         CONTINUATION,
         EOL,
         EOS
-    )
-    SETTING_TOKENS = (
+    ))
+    SETTING_TOKENS = frozenset((
         DOCUMENTATION,
         SUITE_SETUP,
         SUITE_TEARDOWN,
@@ -109,20 +109,20 @@ class Token(object):
         TAGS,
         ARGUMENTS,
         RETURN
-    )
-    HEADER_TOKENS = (
+    ))
+    HEADER_TOKENS = frozenset((
         SETTING_HEADER,
         VARIABLE_HEADER,
         TESTCASE_HEADER,
         KEYWORD_HEADER,
         COMMENT_HEADER
-    )
-    ALLOW_VARIABLES = (
+    ))
+    ALLOW_VARIABLES = frozenset((
         NAME,
         ARGUMENT,
         TESTCASE_NAME,
         KEYWORD_NAME
-    )
+    ))
 
     __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error']
 
@@ -179,19 +179,18 @@ class Token(object):
         return self.value
 
     def __repr__(self):
+        type_ = self.type.replace(' ', '_') if self.type else 'None'
         error = '' if not self.error else ', %r' % self.error
-        return 'Token(%r, %r, %s, %s%s)' % (self.type, self.value,
-                                            self.lineno, self.col_offset,
-                                            error)
+        return 'Token(%s, %r, %s, %s%s)' % (type_, self.value, self.lineno,
+                                            self.col_offset, error)
 
     def __eq__(self, other):
-        if not isinstance(other, Token):
-            return False
-        return (self.type == other.type and
-                self.value == other.value and
-                self.lineno == other.lineno and
-                self.col_offset == other.col_offset and
-                self.error == other.error)
+        return (isinstance(other, Token)
+                and self.type == other.type
+                and self.value == other.value
+                and self.lineno == other.lineno
+                and self.col_offset == other.col_offset
+                and self.error == other.error)
 
     def __ne__(self, other):
         return not self == other
