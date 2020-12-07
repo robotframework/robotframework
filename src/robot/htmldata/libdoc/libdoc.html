@@ -165,25 +165,13 @@
                 keywordMatchCount++;
             return kw;
         });
-        let typeMatchCount = 0;
-        result.dataTypes = util.map(libdoc.dataTypes, function (dataType) {
-            dataType = $.extend({}, dataType);
-            dataType.hidden =  !(include.name && test(dataType.name));
-            if (!dataType.hidden)
-                typeMatchCount++;
-            return dataType;
-        });
         renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
-        renderTemplate('data-types', result);
         if (libdoc.tags.length) {
           libdoc.selectedTag = include.tagsExact ? pattern : "";
           renderTemplate('tags-shortcuts', libdoc);
         }
         document.getElementById("keyword-statistics-header").innerText = keywordMatchCount + ' / ' + result.keywords.length;
-        if (libdoc.dataTypes.length) {
-          document.getElementById("type-statistics-header").innerText = typeMatchCount + ' / ' + result.dataTypes.length;
-        }
         if (keywordMatchCount === 0)
             $('#keywords-container').find('table').empty();
     }
@@ -384,7 +372,6 @@
       {{/if}}
       <div class="keywords-overview-header-row">
       <h4>Keywords (<span id="keyword-statistics-header"></span>)
-      {{if dataTypes.length}}& <span class="data-type">Types</span> (<span id="type-statistics-header"></span>){{/if}}
       </h4>
       <button id="toggle-keyword-shortcuts" onclick="toggleShortcuts()">+</button>
       </div>
@@ -404,32 +391,12 @@
     </li>
     {{/if}}
     {{/each}}
-    {{each dataTypes}}
-    {{if !$value.hidden}}
-    <li>
-      <a href="#${encodeURIComponent($value.name)}"
-       onclick="closeMenu()"
-       class="data-type match"
-       title="${$value.shortdoc}">${$value.name}</a>
-    </li>
-    {{/if}}
-    {{/each}}
     {{each keywords}}
     {{if $value.hidden}}
     <li>
     <a href="#${encodeURIComponent($value.name)}"
        onclick="closeMenu()"
        class="no-match"
-       title="${$value.shortdoc}">${$value.name}</a>
-    </li>
-    {{/if}}
-    {{/each}}
-    {{each dataTypes}}
-    {{if $value.hidden}}
-    <li>
-      <a href="#${encodeURIComponent($value.name)}"
-       onclick="closeMenu()"
-       class="data-type no-match"
        title="${$value.shortdoc}">${$value.name}</a>
     </li>
     {{/if}}
@@ -533,14 +500,7 @@ ${name}
     <h2 id="Data types">Data types</h2>
     <div class="data-types">
         {{each dataTypes}}
-        {{if !$value.hidden}}
-            {{tmpl($value) 'data-type-template'}}
-        {{/if}}
-        {{/each}}
-        {{each dataTypes}}
-        {{if $value.hidden}}
-            {{tmpl($value) 'data-type-template'}}
-        {{/if}}
+        {{tmpl($value) 'data-type-template'}}
         {{/each}}
     </div>
     {{/if}}
