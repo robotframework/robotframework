@@ -357,10 +357,10 @@
                   {{each args}}
                     <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
 
-                    {{if $value.default !== null}}
+                    {{if $value.defaultValue !== null}}
                       <div class="arg-default-container">
                         <span class="arg-default-eq">=</span>
-                        <span class="arg-default-value" title="Argument default value">${$value.default}</span>
+                        <span class="arg-default-value" title="Argument default value">${$value.defaultValue}</span>
                       </div>
                     {{/if}}
 
@@ -499,10 +499,10 @@
                     ${$value.name}
                     </span>
 
-                    {{if $value.default !== null}}
+                    {{if $value.defaultValue !== null}}
                       <div class="arg-default-container">
                         <span class="arg-default-eq">=</span>
-                        <span class="arg-default-value" title="Argument default value">${$value.default}</span>
+                        <span class="arg-default-value" title="Argument default value">${$value.defaultValue}</span>
                       </div>
                     {{/if}}
 
