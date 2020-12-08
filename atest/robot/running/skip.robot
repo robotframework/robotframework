@@ -100,6 +100,9 @@ Skipped with --SkipOnFailure when Failure in Test Setup
 Skipped with --SkipOnFailure when Failure in Test Teardown
     Check Test Case    ${TEST NAME}
 
+Skipped with --SkipOnFailure when Set Tags Used in Teardown
+    Check Test Case    Skipped with --SkipOnFailure when Set Tags Used in Teardown
+
 Using Skip Does Not Affect Passing And Failing Tests
     Check Test Case    Passing Test
     Check Test Case    Failing Test
