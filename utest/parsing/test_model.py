@@ -10,9 +10,8 @@ from robot.parsing.model.blocks import (
 )
 from robot.parsing.model.statements import (
     Arguments, Comment, Documentation, ForHeader, End, ElseHeader, ElseIfHeader,
-    EmptyLine, Error, IfHeader, KeywordCall, KeywordName, KeywordSectionHeader,
-    SettingSectionHeader, Statement, TestCaseName, TestCaseSectionHeader,
-    Variable, VariableSectionHeader
+    EmptyLine, Error, IfHeader, KeywordCall, KeywordName, SectionHeader,
+    Statement, TestCaseName, Variable
 )
 from robot.utils import PY3
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
@@ -48,7 +47,7 @@ EXPECTED = File(sections=[
         ]
     ),
     TestCaseSection(
-        header=TestCaseSectionHeader([
+        header=SectionHeader([
             Token('TESTCASE HEADER', '*** Test Cases ***', 2, 0),
             Token('EOL', '\n', 2, 18)
         ]),
@@ -84,7 +83,7 @@ EXPECTED = File(sections=[
         ]
     ),
     KeywordSection(
-        header=KeywordSectionHeader([
+        header=SectionHeader([
             Token('KEYWORD HEADER', '*** Keywords ***', 10, 0),
             Token('EOL', '\n', 10, 16)
         ]),
@@ -545,7 +544,7 @@ ${x}      value
 &{z} =    one=item
 ''', data_only=True)
         expected = VariableSection(
-            header=VariableSectionHeader(
+            header=SectionHeader(
                 tokens=[Token(Token.VARIABLE_HEADER, '*** Variables ***', 1, 0)]
             ),
             body=[
@@ -571,7 +570,7 @@ ${not     closed
 &{dict}   invalid    ${invalid}
 ''', data_only=True)
         expected = VariableSection(
-            header=VariableSectionHeader(
+            header=SectionHeader(
                 tokens=[Token(Token.VARIABLE_HEADER, '*** Variables ***', 1, 0)]
             ),
             body=[
@@ -645,7 +644,7 @@ Documentation
                 ]
             ),
             SettingSection(
-                header=SettingSectionHeader([
+                header=SectionHeader([
                     Token('SETTING HEADER', '*** Settings ***', 2, 0)
                 ]),
                 body=[
@@ -760,7 +759,7 @@ Remove
         Transformer().visit(model)
         expected = File(sections=[
             TestCaseSection(
-                header=TestCaseSectionHeader([
+                header=SectionHeader([
                     Token('TESTCASE HEADER', '*** Test Cases ***', 1, 0),
                     Token('EOL', '\n', 1, 18)
                 ]),
@@ -782,7 +781,7 @@ Remove
 
         class Transformer(ModelTransformer):
 
-            def visit_TestCaseSectionHeader(self, node):
+            def visit_SectionHeader(self, node):
                 return node
 
             def visit_TestCaseName(self, node):
@@ -807,7 +806,7 @@ Example
         Transformer().visit(model)
         expected = File(sections=[
             TestCaseSection(
-                header=TestCaseSectionHeader([
+                header=SectionHeader([
                     Token('TESTCASE HEADER', '*** TEST CASES ***', 1, 0),
                     Token('EOL', '\n', 1, 18)
                 ]),
