@@ -290,14 +290,27 @@ window.stats = (function () {
             num2 = 1
         if (num3 > 0 && num3 < 1)
             num3 = 1
-        // Handle situation where both are rounded up
+
+        // Handle situation where some are rounded up
         while (num1 + num2 + num3 > 100) {
             if (num1 > num2 && num1 > num3)
                 num1 -= 0.1;
-            if (num2 > num1 && num2 > num3)
+            else if (num2 > num1 && num2 > num3)
                 num2 -= 0.1;
-            if (num3 > num1 && num3 > num2)
+            else if (num3 > num1 && num3 > num2)
                 num3 -= 0.1;
+            else if (num1 > num3 && num1 == num2) {
+                num1 -= 0.1;
+                num2 -= 0.1;
+            }
+            else if (num1 > num2 && num1 == num3) {
+                num1 -= 0.1;
+                num3 -= 0.1;
+            }
+            else if (num2 > num1 && num2 == num3) {
+                num2 -= 0.1;
+                num3 -= 0.1;
+            }
         }
         return [num1, num2, num3];
     }
