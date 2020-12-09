@@ -42,10 +42,18 @@
 
 <script type="text/javascript">
 
-    function linkArgs(container, typeNames) {
-      container.forEach(function(k) {
-          k.args.forEach(function (arg) {
-            arg.linked = arg.types.filter(function(value) {return typeNames.indexOf(value) > -1});
+    function linkArgs(container, dataTypes) {
+      container.forEach(function(keyword) {
+          keyword.args.forEach(function (arg) {
+            arg.linked = arg.types.filter(function(value) {
+              return dataTypes.filter(function (dataType) {
+                   if (dataType.name === value) {
+                     dataType.usage.push(keyword.name);
+                     return true;
+                   }
+                   return false;
+              })[0];
+            });
           })
         }
       );
@@ -56,10 +64,13 @@
         document.title = libdoc.name;
         storage.init('libdoc');
         libdoc.dataTypes = libdoc.dataTypes.enums.concat(libdoc.dataTypes.typedDicts);
+        libdoc.dataTypes = libdoc.dataTypes.map(function(dt) {
+          dt.usage = [];
+          return dt;
+        })
         libdoc.dataTypes.sort(compare)
-        const typeNames = libdoc.dataTypes.map(function (d) {return d.name});
-        linkArgs(libdoc.inits, typeNames);
-        linkArgs(libdoc.keywords, typeNames);
+        linkArgs(libdoc.inits, libdoc.dataTypes);
+        linkArgs(libdoc.keywords, libdoc.dataTypes);
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
             renderTemplate('importing', libdoc);
@@ -82,9 +93,6 @@
         scrollToHash();
         setTimeout(function() {
           document.getElementById("keyword-statistics-header").innerText = '' + libdoc.keywords.length;
-          if (libdoc.dataTypes.length) {
-            document.getElementById("type-statistics-header").innerText = '' + libdoc.dataTypes.length;
-          }
           if (storage.get('keyword-wall') === 'open') {
             openKeywordWall();
           }
@@ -547,6 +555,18 @@ ${name}
             <div class="dt-docs">
               <h4>Documentation</h4>
               <div class="dtdoc doc">{{html doc}}</div>
+            </div>
+          {{/if}}
+          {{if usage}}
+            <div class="dt-usage">
+              <h4>Used in</h4>
+              <ul class="dt-usage-list">
+                {{each usage}}
+                <li>
+                <a href="#${encodeURIComponent($value)}">${$value}</a>
+                </li>
+                {{/each}}
+              </ul>
             </div>
           {{/if}}
        </div>
