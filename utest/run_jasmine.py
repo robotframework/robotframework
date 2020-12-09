@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import urllib2
+import sys
+PY3 = sys.version_info[0] == 3
+if PY3:
+    from urllib.request import urlopen
+else:
+    from urllib2 import urlopen
 import shutil
 import os
 from os.path import join, exists, dirname, abspath
@@ -39,11 +44,16 @@ def download_jasmine_reporters():
         return
     if not exists(EXT_LIB):
         os.mkdir(EXT_LIB)
-    reporter = urllib2.urlopen(JASMINE_REPORTER_URL)
-    with open(join(EXT_LIB, 'tmp.zip'), 'w') as temp:
-        temp.write(reporter.read())
-    with open(join(EXT_LIB, 'tmp.zip'), 'r') as temp:
-        ZipFile(temp).extractall(EXT_LIB)
+    reporter = urlopen(JASMINE_REPORTER_URL)
+    if PY3:
+        import io
+        z = ZipFile(io.BytesIO(reporter.read()))
+        z.extractall(EXT_LIB)
+    else:
+        with open(join(EXT_LIB, 'tmp.zip'), 'w') as temp:
+            temp.write(reporter.read())
+        with open(join(EXT_LIB, 'tmp.zip'), 'r') as temp:
+            ZipFile(temp).extractall(EXT_LIB)
     extraction_dir = glob(join(EXT_LIB, 'larrymyers-jasmine-reporters*'))[0]
     print('Extracting Jasmine-Reporters to', extraction_dir)
     shutil.move(extraction_dir, join(EXT_LIB, 'jasmine-reporters'))
