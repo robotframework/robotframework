@@ -42,13 +42,13 @@
 
 <script type="text/javascript">
 
-    function linkArgs(container, dataTypes) {
+    function linkArgs(container, dataTypes, usageName) {
       container.forEach(function(keyword) {
           keyword.args.forEach(function (arg) {
             arg.linked = arg.types.filter(function(value) {
               return dataTypes.filter(function (dataType) {
                    if (dataType.name === value) {
-                     dataType.usage.push(keyword.name);
+                     dataType.usage.push(usageName || keyword.name);
                      return true;
                    }
                    return false;
@@ -69,7 +69,7 @@
           return dt;
         })
         libdoc.dataTypes.sort(compare)
-        linkArgs(libdoc.inits, libdoc.dataTypes);
+        linkArgs(libdoc.inits, libdoc.dataTypes, "Importing");
         linkArgs(libdoc.keywords, libdoc.dataTypes);
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
