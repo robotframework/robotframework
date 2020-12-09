@@ -533,7 +533,7 @@ h4 {
     flex-direction: column;
 }
 
-.enum-type-members{
+.enum-type-members, .dt-usage-list {
     list-style: none;
 }
 
