@@ -370,7 +370,7 @@ class TestBuildStatistics(unittest.TestCase):
 
     def test_suite_stats(self):
         root, sub1, sub2 = self._build_statistics()[2]
-        self._verify_stat(root, 2, 2, 0, 'root', '00:00:42', name='root', id='s1')
+        self._verify_stat(root, 2, 2, 1, 'root', '00:00:42', name='root', id='s1')
         self._verify_stat(sub1, 1, 1, 1, 'root.sub1', '00:00:10', name='sub1', id='s1-s1')
         self._verify_stat(sub2, 1, 1, 0, 'root.sub2', '00:00:30', name='sub2', id='s1-s2')
 
