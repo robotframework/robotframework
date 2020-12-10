@@ -75,8 +75,9 @@ class IfRunner(object):
     def run(self, data, name=None):
         branch_run = False
         with self._dry_run_recursion_detection(data) as recursive_dry_run:
+            source = data.source
             while data:
-                branch_run = self._run_if_branch(data, branch_run, recursive_dry_run)
+                branch_run = self._run_if_branch(data, branch_run, recursive_dry_run, source)
                 data = data.orelse
 
     @contextmanager
@@ -93,9 +94,9 @@ class IfRunner(object):
             if dry_run:
                 self._dry_run_stack.pop()
 
-    def _run_if_branch(self, data, branch_run=False, recursive_dry_run=False):
+    def _run_if_branch(self, data, branch_run=False, recursive_dry_run=False, source=None):
         result = KeywordResult(kwname=data.condition, type=data.type,
-                               lineno=data.lineno, source=data.source)
+                               lineno=data.lineno, source=source)
         with StatusReporter(self._context, result) as reporter:
             if data.error:
                 raise DataError(data.error)
