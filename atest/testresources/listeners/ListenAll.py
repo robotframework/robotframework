@@ -38,7 +38,7 @@ class ListenAll:
         kw_type = 'KW' if attrs['type'] == 'Keyword' else attrs['type'].upper()
         self.outfile.write("%s START: %s%s%s(%s:%d)\n"
                            % (kw_type, assign, name, args,
-                              os.path.basename(attrs['source']),
+                              os.path.basename(attrs['source']) if attrs['source'] else "UNKNOWN",
                               attrs['lineno']))
         self.start_attrs.append(attrs)
 
