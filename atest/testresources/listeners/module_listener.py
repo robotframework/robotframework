@@ -27,8 +27,10 @@ def start_keyword(name, attrs):
     else:
         args = ''
     kw_type = 'KW' if attrs['type'] == 'Keyword' else attrs['type'].upper()
-    OUTFILE.write("%s START: %s%s%s(line %d)\n"
-                  % (kw_type, assign, name, args, attrs['lineno']))
+    OUTFILE.write("%s START: %s%s%s(%s:%d)\n"
+                  % (kw_type, assign, name, args,
+                     os.path.basename(attrs['source']),
+                     attrs['lineno']))
 
 def log_message(message):
     msg, level = message['message'], message['level']

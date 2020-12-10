@@ -36,8 +36,10 @@ class ListenAll:
         else:
             args = ''
         kw_type = 'KW' if attrs['type'] == 'Keyword' else attrs['type'].upper()
-        self.outfile.write("%s START: %s%s%s(line %d)\n"
-                           % (kw_type, assign, name, args, attrs['lineno']))
+        self.outfile.write("%s START: %s%s%s(%s:%d)\n"
+                           % (kw_type, assign, name, args,
+                              os.path.basename(attrs['source']),
+                              attrs['lineno']))
         self.start_attrs.append(attrs)
 
     def log_message(self, message):

@@ -153,40 +153,40 @@ Check Listen All File
     [Arguments]    ${filename}
     @{expected}=    Create List    Got settings on level: INFO
     ...    SUITE START: Pass And Fail (s1) 'Some tests here' [ListenerMeta: Hello]
-    ...    SETUP START: My Keyword ['Suite Setup'] (line 3)
-    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
+    ...    SETUP START: My Keyword ['Suite Setup'] (pass_and_fail.robot:3)
+    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (pass_and_fail.robot:27)
     ...    LOG MESSAGE: [INFO] Hello says "Suite Setup"!
     ...    KW END: PASS
-    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
+    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (pass_and_fail.robot:28)
     ...    KW END: PASS
-    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
+    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (pass_and_fail.robot:29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    SETUP END: PASS
     ...    TEST START: Pass (s1-t1, line 12) '' ['force', 'pass']
-    ...    KW START: My Keyword ['Pass'] (line 15)
-    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
+    ...    KW START: My Keyword ['Pass'] (pass_and_fail.robot:15)
+    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (pass_and_fail.robot:27)
     ...    LOG MESSAGE: [INFO] Hello says "Pass"!
     ...    KW END: PASS
-    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
+    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (pass_and_fail.robot:28)
     ...    KW END: PASS
-    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
+    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (pass_and_fail.robot:29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    KW END: PASS
     ...    TEST END: PASS
     ...    TEST START: Fail (s1-t2, line 17) 'FAIL Expected failure' ['fail', 'force']
-    ...    KW START: My Keyword ['Fail'] (line 20)
-    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (line 27)
+    ...    KW START: My Keyword ['Fail'] (pass_and_fail.robot:20)
+    ...    KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}'] (pass_and_fail.robot:27)
     ...    LOG MESSAGE: [INFO] Hello says "Fail"!
     ...    KW END: PASS
-    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (line 28)
+    ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}'] (pass_and_fail.robot:28)
     ...    KW END: PASS
-    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (line 29)
+    ...    KW START: \${assign} = String.Convert To Upper Case ['Just testing...'] (pass_and_fail.robot:29)
     ...    LOG MESSAGE: [INFO] \${assign} = JUST TESTING...
     ...    KW END: PASS
     ...    KW END: PASS
-    ...    KW START: BuiltIn.Fail ['Expected failure'] (line 21)
+    ...    KW START: BuiltIn.Fail ['Expected failure'] (pass_and_fail.robot:21)
     ...    LOG MESSAGE: [FAIL] Expected failure
     ...    KW END: FAIL
     ...    TEST END: FAIL Expected failure
