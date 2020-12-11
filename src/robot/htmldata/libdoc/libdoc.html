@@ -157,7 +157,10 @@
       document.getElementById('hamburger-menu-input').checked = false;
     }
 
-    function markMatches(pattern, include) {
+    function markMatches(pattern, include, givenSearchTime, callback) {
+       if (givenSearchTime && givenSearchTime !== searchTime) {
+         return;
+       }
         let patternRegexp = util.regexpEscape(pattern);
         if (include.tagsExact) {
             patternRegexp = '^' + patternRegexp + '$';
@@ -185,9 +188,15 @@
         document.getElementById("keyword-statistics-header").innerText = keywordMatchCount + ' / ' + result.keywords.length;
         if (keywordMatchCount === 0)
             $('#keywords-container').find('table').empty();
+        if (callback) {
+          requestAnimationFrame(callback);
+        }
     }
 
-    function highlightMatches(string, include) {
+    function highlightMatches(string, include, givenSearchTime) {
+       if (givenSearchTime && givenSearchTime !== searchTime) {
+         return;
+       }
         const shortcuts = $('#shortcuts-container').find('.match');
         const keywords = $('#keywords-container').find('.match');
         if (include.name) {
@@ -221,16 +230,24 @@
       resetKeywords();
     }
 
+    let searchTime = 0;
+
     function searching() {
+      searchTime = Date.now();
       const value = document.getElementsByClassName('search-input')[0].value;
       const include = {name: true,
                        args: true,
                        doc: true,
                        tags: true};
       if (value) {
-          markMatches(value, include);
-          highlightMatches(value, include);
-          document.getElementById('keyword-shortcuts-container').scrollTop = 0;
+        requestAnimationFrame(function () {
+          markMatches(value, include, searchTime,
+                  function () {
+                    highlightMatches(value, include, searchTime);
+                    document.getElementById('keyword-shortcuts-container').scrollTop = 0;
+                  }
+          );
+        });
       } else {
           resetKeywords();
       }
@@ -374,7 +391,7 @@
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
     <div class="keywords-overview">
       <div class="keyword-search-box">
-        <input placeholder="Search" type="text" class="search-input" onkeyup="delay(searching, 500)"/>
+        <input placeholder="Search" type="text" class="search-input" onkeydown="delay(searching, 150)"/>
         <button class="clear-search" onclick="clearSearch()">&#10005;</button>
       </div>
       {{if tags.length}}
