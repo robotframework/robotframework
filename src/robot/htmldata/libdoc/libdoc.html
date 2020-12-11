@@ -44,14 +44,17 @@
 
     function linkArgs(container, dataTypes, usageName) {
       container.forEach(function(keyword) {
+        let user = usageName || keyword.name
           keyword.args.forEach(function (arg) {
             arg.linked = arg.types.filter(function(value) {
               return dataTypes.filter(function (dataType) {
-                   if (dataType.name === value) {
-                     dataType.usage.push(usageName || keyword.name);
-                     return true;
+                 if (dataType.name === value) {
+                   if (dataType.usage.indexOf(user) === -1) {
+                    dataType.usage.push(user);
                    }
-                   return false;
+                   return true;
+                 }
+                 return false;
               })[0];
             });
           })
