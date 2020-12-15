@@ -563,10 +563,13 @@ in log file similar to failed keywords. Expanding supports the following modes:
    Expand keywords with tags matching the given pattern. Pattern matching
    rules are same as when `removing keywords`_ using the `TAG:<pattern>` mode.
 
+If you need to expand keywords matching different names or patterns, you can
+use the :option:`--expandkeywords` multiple times.
+
 Examples::
 
    robot --expandkeywords name:SeleniumLibrary.CapturePageScreenshot tests.robot
-   rebot --expandkeywords tag:expand output.xml
+   rebot --expandkeywords tag:example --expandkeywords tag:another output.xml
 
 .. note:: The :option:`--expandkeywords` option is new in Robot Framework 3.2.
 
