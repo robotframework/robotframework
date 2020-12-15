@@ -89,11 +89,16 @@ class Tokenizer(object):
         commented = False
         for token in tokens:
             if token.type is None:
-                if token.value.startswith('#') or commented:
+                # lstrip needed to strip possible leading space from first token.
+                # Other leading/trailing spaces have been consumed as separators.
+                value = token.value.lstrip()
+                if value and not commented:
+                    if value[0] == '#':
+                        commented = True
+                    else:
+                        has_data = True
+                if commented:
                     token.type = Token.COMMENT
-                    commented = True
-                elif token.value:
-                    has_data = True
         return has_data
 
     def _handle_continuation(self, tokens):

@@ -13,8 +13,14 @@ Resource       ../resources/robot_resource.robot
 Variables      ../resources/variables.py
 Library       OperatingSystem
 
+# This is a normal comment.
+ # These
+  # are
+   # comments
+    # as
+     # well
 
-* Variable
+* Variable    # comment
 
 ${table_var}   foo
 @{table_listvar}   bar   ${table_var}
@@ -100,14 +106,16 @@ Escaping
 
 
 *Keywords*   *Action*   *Argument*   *Argument*   *Argument*
-
+# comment
 My Keyword With Arg   [Arguments]   ${arg1}
+# comment
    Keyword with no arguments
    Another Keyword   ${arg1}
 
 
-
+ # comment
 Another Keyword   [Arguments]   ${arg1}   ${arg2}=something
+ # comment
    Should Be Equal   ${arg1}   ${arg2}
 
 Timeouted Keyword   [Timeout]   2ms

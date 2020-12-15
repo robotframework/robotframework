@@ -750,6 +750,22 @@ class TestComments(unittest.TestCase):
                       (COMM, '# third', 3, 4),
                       (EOL, '', 3, 11)])
 
+    def test_leading_spaces(self):
+        verify_split('# no spaces',
+                     [(COMM, '# no spaces', 1, 0),
+                      (EOL, '', 1, 11)])
+        verify_split(' # one space',
+                     [(COMM, ' # one space', 1, 0),
+                      (EOL, '', 1, 12)])
+        verify_split('  # two spaces',
+                     [(SEPA, '  ', 1, 0),
+                      (COMM, '# two spaces', 1, 2),
+                      (EOL, '', 1, 14)])
+        verify_split('   # three spaces',
+                     [(SEPA, '   ', 1, 0),
+                      (COMM, '# three spaces', 1, 3),
+                      (EOL, '', 1, 17)])
+
 
 if __name__ == '__main__':
     unittest.main()
