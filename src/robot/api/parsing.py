@@ -42,10 +42,12 @@ The publicly exposed parsing entry points are the following:
 * :class:`~robot.parsing.model.visitor.ModelTransformer`
   for `adding and removing nodes`_.
 
-.. note:: The :mod:`robot.api.parsing` module is new in Robot Framework 4.0.
-          In Robot Framework 3.2 parsing API was exposed directly via the
-          :mod:`robot.api` package and `model objects`_ and visitors were
-          not exposed publicly at all.
+.. note:: This module is new in Robot Framework 4.0. In Robot Framework 3.2 functions
+          for getting tokens and model as well as the :class:`~.lexer.tokens.Token`
+          class were exposed directly via the :mod:`robot.api` package, but other
+          parts of the parsing API were not publicly exposed. All code targeting
+          Robot Framework 4.0 or newer should use this module because parsing related
+          functions and classes will be removed from :mod:`robot.api` in the future.
 
 .. note:: Parsing was totally rewritten in Robot Framework 3.2 and external
           tools using the parsing APIs need to be updated. Depending on
