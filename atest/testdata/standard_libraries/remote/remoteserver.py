@@ -65,11 +65,11 @@ class RemoteServer(SimpleXMLRPCServer):
 
     def get_keyword_tags(self, name):
         kw = getattr(self.library, name)
-        return getattr(kw, 'robot_tags', None)
+        return getattr(kw, 'robot_tags', [])
 
     def get_keyword_documentation(self, name):
         kw = getattr(self.library, name)
-        return inspect.getdoc(kw)
+        return inspect.getdoc(kw) or ''
 
     def run_keyword(self, name, args, kwargs=None):
         try:

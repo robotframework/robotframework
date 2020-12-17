@@ -210,6 +210,7 @@ class XmlRpcRemoteClient(object):
     def __init__(self, uri, timeout=None):
         self.uri = uri
         self.timeout = timeout
+        self.__kw_cache = None
 
     @property
     @contextmanager
@@ -227,23 +228,49 @@ class XmlRpcRemoteClient(object):
         finally:
             server('close')()
 
+    @property
+    def _kw_cache(self):
+        """
+        returns False or a dict with structure:
+        { "keyword_name" : { 'args':[], 'tags':[], 'doc':"", 'types':[]},
+          "kw2"          : {...}, etc. }
+        """
+        if self.__kw_cache is None:
+            self.__kw_cache = False
+            try:
+                with self._server as server:
+                    self.__kw_cache = server.get_library_information()
+            except:
+                pass # Best efort failed, fall back to regular loading
+        return self.__kw_cache
+
     def get_keyword_names(self):
+        if self._kw_cache:
+            return self._kw_cache.keys()
         with self._server as server:
             return server.get_keyword_names()
             
     def get_keyword_arguments(self, name):
+        if self._kw_cache:
+            return self._kw_cache[name].get('args', [])
         with self._server as server:
             return server.get_keyword_arguments(name)
 
     def get_keyword_types(self, name):
+        if self._kw_cache:
+            return self._kw_cache[name].get('types', [])
         with self._server as server:
             return server.get_keyword_types(name)
 
     def get_keyword_tags(self, name):
+        if self._kw_cache:
+            return self._kw_cache[name].get('tags', [])
         with self._server as server:
             return server.get_keyword_tags(name)
 
     def get_keyword_documentation(self, name):
+        if self._kw_cache:
+            return self._kw_cache[name].get('doc', "")
         with self._server as server:
             return server.get_keyword_documentation(name)
 
