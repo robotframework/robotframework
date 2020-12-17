@@ -29,6 +29,7 @@ class TestToken(unittest.TestCase):
                            (Token.ELSE, 'ELSE'),
                            (Token.FOR, 'FOR'),
                            (Token.END, 'END'),
+                           (Token.CONTINUATION, '...'),
                            (Token.EOL, '\n')]:
             assert_equal(Token(typ).value, value)
 

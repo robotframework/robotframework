@@ -26,6 +26,11 @@ class Token(object):
     and :attr:`end_col_offset` attributes, respectively. Tokens representing
     error also have their error message in :attr:`error` attribute.
 
+    If :attr:`value` is not given when :class:`Token` is initialized and
+    :attr:`type` is ``IF``, ``ELSE_IF``, ``ELSE``, ``FOR``, ``END``, or
+    ``CONTINUATION`` the value is automatically set to the correct marker value.
+    If :attr:`type` is ``EOL`` in this case, the value is set to ``\\n``.
+
     Token types are declared as class attributes.
     """
 
@@ -127,18 +132,12 @@ class Token(object):
     __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error']
 
     def __init__(self, type=None, value=None, lineno=-1, col_offset=-1, error=None):
-        r"""Initialize token with given parameters.
-
-        If :param:`value` is not given and :param:`type` is ``IF``, ``ELSE_IF``,
-        ``ELSE``, ``FOR``, or ``END``, the value is automatically
-        set to the correct marker value. If :param:`type` is ``EOL`` in this case,
-        the value is set to ``\n``.
-        """
         self.type = type
         if value is None:
             value = {
                 Token.IF: 'IF', Token.ELSE_IF: 'ELSE IF', Token.ELSE: 'ELSE',
-                Token.FOR: 'FOR', Token.END: 'END', Token.EOL: '\n'
+                Token.FOR: 'FOR', Token.END: 'END', Token.CONTINUATION: '...',
+                Token.EOL: '\n'
             }.get(type, '')
         self.value = value
         self.lineno = lineno
@@ -209,7 +208,7 @@ class Token(object):
 
 
 class EOS(Token):
-    """Token representing end of statement."""
+    """Token representing end of a statement."""
     __slots__ = []
 
     def __init__(self, lineno=-1, col_offset=-1):
