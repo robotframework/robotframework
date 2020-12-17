@@ -126,8 +126,20 @@ class Token(object):
 
     __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error']
 
-    def __init__(self, type=None, value='', lineno=-1, col_offset=-1, error=None):
+    def __init__(self, type=None, value=None, lineno=-1, col_offset=-1, error=None):
+        r"""Initialize token with given parameters.
+
+        If :param:`value` is not given and :param:`type` is ``IF``, ``ELSE_IF``,
+        ``ELSE``, ``FOR``, or ``END``, the value is automatically
+        set to the correct marker value. If :param:`type` is ``EOL`` in this case,
+        the value is set to ``\n``.
+        """
         self.type = type
+        if value is None:
+            value = {
+                Token.IF: 'IF', Token.ELSE_IF: 'ELSE IF', Token.ELSE: 'ELSE',
+                Token.FOR: 'FOR', Token.END: 'END', Token.EOL: '\n'
+            }.get(type, '')
         self.value = value
         self.lineno = lineno
         self.col_offset = col_offset
