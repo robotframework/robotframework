@@ -26,12 +26,18 @@ class Token(object):
     and :attr:`end_col_offset` attributes, respectively. Tokens representing
     error also have their error message in :attr:`error` attribute.
 
-    If :attr:`value` is not given when :class:`Token` is initialized and
-    :attr:`type` is ``IF``, ``ELSE_IF``, ``ELSE``, ``FOR``, ``END``, or
-    ``CONTINUATION`` the value is automatically set to the correct marker value.
-    If :attr:`type` is ``EOL`` in this case, the value is set to ``\\n``.
+    Token types are declared as class attributes such as :attr:`SETTING_HEADER`
+    and :attr:`EOL`. Values of these constants have changed slightly in Robot
+    Framework 4.0 and they may change again in the future. It is thus safer
+    to use the constants, not their values, when types are needed. For example,
+    use ``Token(Token.EOL)`` instead of ``Token('EOL')`` and
+    ``token.type == Token.EOL`` instead of ``token.type == 'EOL'``.
 
-    Token types are declared as class attributes.
+    If :attr:`value` is not given when :class:`Token` is initialized and
+    :attr:`type` is :attr:`IF`, :attr:`ELSE_IF`, :attr:`ELSE`, :attr:`FOR`,
+    :attr:`END` or :attr:`CONTINUATION`, the value is automatically set
+    to the correct marker value like ``'IF'`` or ``'ELSE IF'``. If :attr:`type`
+    is :attr:`EOL` in this case, the value is set to ``'\\n'``.
     """
 
     SETTING_HEADER = 'SETTING HEADER'

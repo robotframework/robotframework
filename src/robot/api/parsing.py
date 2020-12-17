@@ -58,14 +58,14 @@ Parsing data to tokens
 Data can be parsed to tokens by using
 :func:`~.lexer.lexer.get_tokens`,
 :func:`~.lexer.lexer.get_resource_tokens` or
-:func:`~.lexer.lexer.get_init_tokens` functions depending on does the data
+:func:`~.lexer.lexer.get_init_tokens` functions depending on whether the data
 represent a test case (or task) file, a resource file, or a suite
 initialization file. In practice the difference between these functions is
 what settings and sections are valid.
 
 Typically the data is easier to inspect and modify by using the higher level
-model discussed in the next section, but in some cases the token stream can
-be enough. Tokens returned by the aforementioned functions are
+model discussed in the next section, but in some cases having just the tokens
+can be enough. Tokens returned by the aforementioned functions are
 :class:`~.lexer.tokens.Token` instances and they have the token type, value,
 and position easily available as their attributes. Tokens also have useful
 string representation used by the example below::
