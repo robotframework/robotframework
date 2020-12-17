@@ -131,6 +131,10 @@ class Keyword(Block):
 
 
 class If(Block):
+    """Represents IF structures in the model.
+
+    Used with IF, ELSE_IF and ELSE nodes. The :attr:`type` attribute specifies the type.
+    """
     _fields = ('header', 'body', 'orelse', 'end')
 
     def __init__(self, header, body=None, orelse=None, end=None, errors=()):
