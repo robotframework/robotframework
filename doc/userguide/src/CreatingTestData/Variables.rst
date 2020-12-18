@@ -1440,7 +1440,7 @@ Main usages for this pretty advanced functionality are:
   (`${{len('${var}') > 3}}`, `${{$var[0] if $var is not None else None}}`).
 
 - Creating values that are not Python base types
-  (`${{decimal.Decimal('0.11')}}`, `${{datatime.date(2019, 11, 5)}}`).
+  (`${{decimal.Decimal('0.11')}}`, `${{datetime.date(2019, 11, 5)}}`).
 
 - Creating values dynamically (`${{random.randint(0, 100)}}`,
   `${{datetime.date.today()}}`).
