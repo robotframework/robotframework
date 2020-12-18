@@ -32,3 +32,11 @@ robot.api.logger module
    :members:
    :undoc-members:
    :show-inheritance:
+
+robot.api.parsing module
+------------------------
+
+.. automodule:: robot.api.parsing
+   :members:
+   :undoc-members:
+   :show-inheritance:
