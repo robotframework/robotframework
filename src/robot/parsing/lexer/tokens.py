@@ -26,7 +26,18 @@ class Token(object):
     and :attr:`end_col_offset` attributes, respectively. Tokens representing
     error also have their error message in :attr:`error` attribute.
 
-    Token types are declared as class attributes.
+    Token types are declared as class attributes such as :attr:`SETTING_HEADER`
+    and :attr:`EOL`. Values of these constants have changed slightly in Robot
+    Framework 4.0 and they may change again in the future. It is thus safer
+    to use the constants, not their values, when types are needed. For example,
+    use ``Token(Token.EOL)`` instead of ``Token('EOL')`` and
+    ``token.type == Token.EOL`` instead of ``token.type == 'EOL'``.
+
+    If :attr:`value` is not given when :class:`Token` is initialized and
+    :attr:`type` is :attr:`IF`, :attr:`ELSE_IF`, :attr:`ELSE`, :attr:`FOR`,
+    :attr:`END` or :attr:`CONTINUATION`, the value is automatically set
+    to the correct marker value like ``'IF'`` or ``'ELSE IF'``. If :attr:`type`
+    is :attr:`EOL` in this case, the value is set to ``'\\n'``.
     """
 
     SETTING_HEADER = 'SETTING HEADER'
@@ -126,8 +137,14 @@ class Token(object):
 
     __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error']
 
-    def __init__(self, type=None, value='', lineno=-1, col_offset=-1, error=None):
+    def __init__(self, type=None, value=None, lineno=-1, col_offset=-1, error=None):
         self.type = type
+        if value is None:
+            value = {
+                Token.IF: 'IF', Token.ELSE_IF: 'ELSE IF', Token.ELSE: 'ELSE',
+                Token.FOR: 'FOR', Token.END: 'END', Token.CONTINUATION: '...',
+                Token.EOL: '\n'
+            }.get(type, '')
         self.value = value
         self.lineno = lineno
         self.col_offset = col_offset
@@ -197,7 +214,7 @@ class Token(object):
 
 
 class EOS(Token):
-    """Token representing end of statement."""
+    """Token representing end of a statement."""
     __slots__ = []
 
     def __init__(self, lineno=-1, col_offset=-1):
