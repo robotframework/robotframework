@@ -337,6 +337,13 @@ class Variable(Statement):
 class TestCaseName(Statement):
     type = Token.TESTCASE_NAME
 
+    @classmethod
+    def from_params(cls, name, eol='\n'):
+        return TestCaseName([
+            Token(Token.TESTCASE_NAME, name),
+            Token(Token.EOL, eol)
+        ])
+
     @property
     def name(self):
         return self.get_value(Token.TESTCASE_NAME)
@@ -450,6 +457,16 @@ class ForHeader(Statement):
 class IfHeader(Statement):
     type = Token.IF
 
+    @classmethod
+    def from_params(cls, condition, indent='    ', separator='    ', eol='\n'):
+        return IfHeader([
+            Token(Token.SEPARATOR, indent),
+            Token(Token.IF),
+            Token(Token.SEPARATOR, separator),
+            Token(Token.ARGUMENT, condition),
+            Token(Token.EOL, eol)
+        ])
+
     @property
     def condition(self):
         return self.get_value(Token.ARGUMENT)
@@ -466,10 +483,28 @@ class IfHeader(Statement):
 class ElseIfHeader(IfHeader):
     type = Token.ELSE_IF
 
+    @classmethod
+    def from_params(cls, condition, indent='    ', separator='    ', eol='\n'):
+        return ElseIfHeader([
+            Token(Token.SEPARATOR, indent),
+            Token(Token.ELSE_IF),
+            Token(Token.SEPARATOR, separator),
+            Token(Token.ARGUMENT, condition),
+            Token(Token.EOL, eol)
+        ])
+
 
 @Statement.register
 class ElseHeader(Statement):
     type = Token.ELSE
+
+    @classmethod
+    def from_params(cls, indent='    ', eol='\n'):
+        return ElseHeader([
+            Token(Token.SEPARATOR, indent),
+            Token(Token.ELSE),
+            Token(Token.EOL, eol)
+        ])
 
     @property
     def condition(self):
@@ -484,6 +519,14 @@ class ElseHeader(Statement):
 class End(Statement):
     type = Token.END
 
+    @classmethod
+    def from_params(cls, indent='    ', eol='\n'):
+        return End([
+            Token(Token.SEPARATOR, indent),
+            Token(Token.END),
+            Token(Token.EOL, eol)
+        ])
+
     def validate(self):
         if self.get_tokens(Token.ARGUMENT):
             self.errors += ('END does not accept arguments.',)
@@ -492,6 +535,14 @@ class End(Statement):
 @Statement.register
 class Comment(Statement):
     type = Token.COMMENT
+
+    @classmethod
+    def from_params(cls, comment, indent='    ', eol='\n'):
+        return Comment([
+            Token(Token.SEPARATOR, indent),
+            Token(Token.COMMENT, comment),
+            Token(Token.EOL, eol)
+        ])
 
 
 @Statement.register
@@ -514,5 +565,5 @@ class EmptyLine(Statement):
     type = Token.EOL
 
     @classmethod
-    def from_value(cls, value):
+    def from_params(cls, value):
         return EmptyLine([Token(Token.EOL, value)])

@@ -121,7 +121,7 @@ class NewlineNormalizer(ModelTransformer):
 
     def visit_Section(self, node):
         if node is not self.last_section:
-            node.body.append(EmptyLine.from_value(self.newline))
+            node.body.append(EmptyLine.from_params(self.newline))
         return self.generic_visit(node)
 
     def visit_CommentSection(self, node):
@@ -136,7 +136,7 @@ class NewlineNormalizer(ModelTransformer):
 
     def visit_TestCase(self, node):
         if not node.body or node is not self.last_test:
-            node.body.append(EmptyLine.from_value(self.newline))
+            node.body.append(EmptyLine.from_params(self.newline))
         return self.generic_visit(node)
 
     def visit_KeywordSection(self, node):
@@ -145,7 +145,7 @@ class NewlineNormalizer(ModelTransformer):
 
     def visit_Keyword(self, node):
         if not node.body or node is not self.last_keyword:
-            node.body.append(EmptyLine.from_value(self.newline))
+            node.body.append(EmptyLine.from_params(self.newline))
         return self.generic_visit(node)
 
     def visit_Statement(self, statement):
