@@ -6,6 +6,15 @@ ${TEST DATA}      misc/pass_and_fail.robot
 ${LOG}            %{TEMPDIR}/modified_log.html
 
 *** Keywords ***
+Output and log should be modified
+    [Arguments]    @{added tags}
+    Output should be modified    @{added tags}
+    Log should be modified    @{added tags}
+
+Output and log should not be modified
+    Output should not be modified
+    Log should not be modified
+
 Output should be modified
     [Arguments]    @{added tags}
     Check Test Tags    Pass    force    pass    @{added tags}
