@@ -46,7 +46,7 @@ def TestLibrary(name, args=None, variables=None, create_handlers=True,
     else:
         import_name = name
     with OutputCapturer(library_import=True):
-        importer = Importer('test library')
+        importer = Importer('library')
         libcode, source = importer.import_class_or_module(import_name,
                                                           return_source=True)
     libclass = _get_lib_class(libcode)
@@ -329,7 +329,7 @@ class _BaseTestLibrary(object):
             args_text = 'arguments %s' % seq2str2(args)
         else:
             args_text = 'no arguments'
-        raise DataError("Initializing test library '%s' with %s failed: %s\n%s"
+        raise DataError("Initializing library '%s' with %s failed: %s\n%s"
                         % (self.name, args_text, msg, details))
 
 

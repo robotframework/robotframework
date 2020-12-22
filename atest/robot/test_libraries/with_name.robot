@@ -131,7 +131,7 @@ With Name When Library Arguments Are Not Strings
 
 'WITH NAME' is case-sensitive
     Error In File    -1    test_libraries/with_name_3.robot    5
-    ...    Test Library 'ParameterLibrary' expected 0 to 2 arguments, got 4.
+    ...    Library 'ParameterLibrary' expected 0 to 2 arguments, got 4.
 
 'WITH NAME' cannot come from variable
     Check Test Case    ${TEST NAME}

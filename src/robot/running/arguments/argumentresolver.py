@@ -77,7 +77,7 @@ class NamedArgumentResolver(object):
 
     def _raise_positional_after_named(self):
         raise DataError("%s '%s' got positional argument after named arguments."
-                        % (self._argspec.type, self._argspec.name))
+                        % (self._argspec.type.capitalize(), self._argspec.name))
 
 
 class NullNamedArgumentResolver(object):

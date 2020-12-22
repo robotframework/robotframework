@@ -47,7 +47,7 @@ Import Library With Named Arguments
     Named.Parameters Should Be    first    ${2}
 
 Import Library Failure Is Catchable
-    [Documentation]    FAIL GLOB: Importing test library 'NonExistingLib' failed: *Error: *
+    [Documentation]    FAIL GLOB: Importing library 'NonExistingLib' failed: *Error: *
     Import Library    NonExistingLib
 
 Import Library From Path
@@ -56,5 +56,5 @@ Import Library From Path
     Print    hello
 
 Extra Spaces In Name Are Not Supported
-    [Documentation]    FAIL GLOB: Importing test library 'Date Time' failed: *Error: *
+    [Documentation]    FAIL GLOB: Importing library 'Date Time' failed: *Error: *
     Import Library    Date Time

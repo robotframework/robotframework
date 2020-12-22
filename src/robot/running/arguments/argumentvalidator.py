@@ -38,15 +38,18 @@ class ArgumentValidator(object):
     def _validate_no_multiple_values(self, positional, named, spec):
         for name in spec.positional[:len(positional)]:
             if name in named and name not in spec.positional_only:
-                raise DataError("%s '%s' got multiple values for argument '%s'."
-                                % (spec.type, spec.name, name))
+                self._raise_error("got multiple values for argument '%s'" % name)
+
+    def _raise_error(self, message):
+        raise DataError("%s '%s' %s." % (self._argspec.type.capitalize(),
+                                         self._argspec.name, message))
 
     def _validate_no_positional_only_as_named(self, named, spec):
         if not spec.var_named:
             for name in named:
                 if name in spec.positional_only:
-                    raise DataError("%s '%s' does not accept argument '%s' as named "
-                                    "argument." % (spec.type, spec.name, name))
+                    self._raise_error("does not accept argument '%s' as named "
+                                      "argument" % name)
 
     def _validate_positional_limits(self, positional, named, spec):
         count = len(positional) + self._named_positionals(named, spec)
@@ -66,27 +69,23 @@ class ArgumentValidator(object):
             expected = 'at least %d argument%s' % (spec.minargs, minend)
         if spec.var_named or spec.named_only:
             expected = expected.replace('argument', 'non-named argument')
-        raise DataError("%s '%s' expected %s, got %d."
-                        % (spec.type, spec.name, expected, count))
+        self._raise_error("expected %s, got %d" % (expected, count))
 
     def _validate_no_mandatory_missing(self, positional, named, spec):
         for name in spec.positional[len(positional):]:
             if name not in spec.defaults and name not in named:
-                raise DataError("%s '%s' missing value for argument '%s'."
-                                % (spec.type, spec.name, name))
+                self._raise_error("missing value for argument '%s'" % name)
 
     def _validate_no_named_only_missing(self, named, spec):
         defined = set(named) | set(spec.defaults)
         missing = [arg for arg in spec.named_only if arg not in defined]
         if missing:
-            raise DataError("%s '%s' missing named-only argument%s %s."
-                            % (spec.type, spec.name, plural_or_not(missing),
-                               seq2str(sorted(missing))))
+            self._raise_error("missing named-only argument%s %s"
+                              % (plural_or_not(missing), seq2str(sorted(missing))))
 
     def _validate_no_extra_named(self, named, spec):
         if not spec.var_named:
             extra = set(named) - set(spec.positional_or_named) - set(spec.named_only)
             if extra:
-                raise DataError("%s '%s' got unexpected named argument%s %s."
-                                % (spec.type, spec.name, plural_or_not(extra),
-                                   seq2str(sorted(extra))))
+                self._raise_error("got unexpected named argument%s %s"
+                                  % (plural_or_not(extra), seq2str(sorted(extra))))

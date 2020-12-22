@@ -66,7 +66,7 @@ Module Library Scope Should Be Global
 
 Importing Module Should Have Been Syslogged
     ${path} =  Normalize Path  ${CURDIR}/../../testresources/testlibs/module_library
-    Syslog Should Contain  Imported test library module 'module_library' from '${path}
+    Syslog Should Contain  Imported library module 'module_library' from '${path}
 
 *** Keywords ***
 Keyword should not have been added

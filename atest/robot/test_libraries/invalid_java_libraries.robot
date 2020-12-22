@@ -25,11 +25,11 @@ Init Error
     [Arguments]    ${index}    ${lineno}    ${name}
     Error In File
     ...    ${index}    test_libraries/invalid_java_libraries.robot    ${lineno}
-    ...    Initializing test library '${name}' with no arguments failed:
+    ...    Initializing library '${name}' with no arguments failed:
     ...    TypeError: *
 
 Limit Error
     [Arguments]    ${index}    ${lineno}    ${name}    ${arg count}
     Error In File
     ...    ${index}    test_libraries/invalid_java_libraries.robot    ${lineno}
-    ...    Test Library '${name}' expected 0 arguments, got ${arg count}.
+    ...    Library '${name}' expected 0 arguments, got ${arg count}.

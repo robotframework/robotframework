@@ -12,4 +12,4 @@ Library import should have been successful
 
 Library import should have failed
     [Arguments]  ${lib}  ${err}
-    Syslog Should Contain  Test Library '${lib}' expected ${err}
+    Syslog Should Contain  Library '${lib}' expected ${err}
