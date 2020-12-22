@@ -83,7 +83,6 @@ class YamlImporter(object):
             return yaml.load(stream)
         return yaml.full_load(stream)
 
-
     def _dot_dict(self, value):
         if is_dict_like(value):
             value = DotDict((n, self._dot_dict(v)) for n, v in value.items())
@@ -93,7 +92,7 @@ class YamlImporter(object):
 class PythonImporter(object):
 
     def import_variables(self, path, args=None):
-        importer = Importer('variable file').import_class_or_module_by_path
+        importer = Importer('variable file', LOGGER).import_class_or_module_by_path
         var_file = importer(path, instantiate_with_args=())
         return self._get_variables(var_file, args)
 

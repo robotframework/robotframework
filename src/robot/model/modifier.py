@@ -36,11 +36,14 @@ class ModelModifier(SuiteVisitor):
                 self._log_error("Executing model modifier '%s' failed: %s\n%s"
                                 % (type_name(visitor), message, details))
         if not (suite.test_count or self._empty_suite_ok):
-            raise DataError("Suite '%s' contains no tests after model "
-                            "modifiers." % suite.name)
+            raise DataError("Suite '%s' contains no tests after model modifiers."
+                            % suite.name)
 
     def _yield_visitors(self, visitors):
-        importer = Importer('model modifier')
+        # Avoid cyclic imports. Yuck.
+        from robot.output import LOGGER
+
+        importer = Importer('model modifier', logger=LOGGER)
         for visitor in visitors:
             try:
                 if not is_string(visitor):

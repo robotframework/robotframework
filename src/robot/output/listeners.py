@@ -133,7 +133,7 @@ class ListenerProxy(AbstractLoggerProxy):
             name = getattr(listener, '__name__', None) or type_name(listener)
             return listener, name
         name, args = split_args_from_name_or_path(listener)
-        importer = Importer('listener')
+        importer = Importer('listener', logger=LOGGER)
         listener = importer.import_class_or_module(os.path.normpath(name),
                                                    instantiate_with_args=args)
         return listener, name
