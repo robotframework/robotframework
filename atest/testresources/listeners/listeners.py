@@ -1,6 +1,7 @@
 import os
 
 from robot.libraries.BuiltIn import BuiltIn
+from robot.utils import PY3
 
 
 class ListenSome:
@@ -25,9 +26,23 @@ class WithArgs(object):
 
     def __init__(self, arg1, arg2='default'):
         outpath = os.path.join(os.getenv('TEMPDIR'), 'listener_with_args.txt')
-        outfile = open(outpath, 'a')
-        outfile.write("I got arguments '%s' and '%s'\n" % (arg1, arg2))
-        outfile.close()
+        with open(outpath, 'a') as outfile:
+            outfile.write("I got arguments '%s' and '%s'\n" % (arg1, arg2))
+
+
+class WithArgConversion(object):
+    ROBOT_LISTENER_API_VERSION = '2'
+
+    def __init__(self, integer, boolean=False):
+        assert integer == '42'
+        assert boolean is True
+
+    if PY3:
+        exec('''
+def __init__(self, integer: int, boolean=False):
+    assert integer == 42
+    assert boolean is True
+''')
 
 
 class SuiteAndTestCounts(object):
