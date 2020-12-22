@@ -23,6 +23,7 @@ from .encoding import system_decode, system_encode
 from .error import get_error_details
 from .platform import JYTHON, IRONPYTHON, PY2, PY3, PYPY
 from .robotpath import abspath, normpath
+from .robotinspect import is_java_init, is_init
 from .robottypes import type_name, is_unicode
 
 if PY3:
@@ -36,6 +37,7 @@ if JYTHON:
 class Importer(object):
 
     def __init__(self, type=None, logger=None):
+        # FIXME: No automatic logger to ease external usage.
         if not logger:
             from robot.output import LOGGER as logger
         self._type = type or ''
@@ -45,31 +47,28 @@ class Importer(object):
                            DottedImporter(logger))
         self._by_path_importer = self._importers[0]
 
-    def import_class_or_module(self, name, instantiate_with_args=None,
+    def import_class_or_module(self, name_or_path, instantiate_with_args=None,
                                return_source=False):
-        """Imports Python class/module or Java class with given name.
+        """Imports Python class/module or Java class with given name or path.
 
-        Class can either live in a module/package or be standalone Java class.
-        In the former case the name is something like 'MyClass' and in the
-        latter it could be 'your.package.YourLibrary'. Python classes always
-        live in a module, but if the module name is exactly same as the class
-        name then simple 'MyLibrary' will import a class.
+        The class or module to import can be specified either as a name, in which
+        case it must be in the module search path, or as a path to the implementing
+        file or directory.
 
-        Python modules can be imported both using format 'MyModule' and
-        'mymodule.submodule'.
+        Classes can be imported from the module search path using name like
+        `module.ClassName`. If the class name and module name are same, using just
+        `CommonName` is enough. When importing a class by a path, the class name
+        and the module name must match.
 
-        `name` can also be a path to the imported file/directory. In that case
-        importing is done using `import_class_or_module_by_path` method.
-
-        If `instantiate_with_args` is not None, imported classes are
-        instantiated with the specified arguments automatically.
+        If `instantiate_with_args` is not None, imported classes are instantiated
+        with the specified arguments automatically.
         """
         try:
-            imported, source = self._import_class_or_module(name)
-            self._log_import_succeeded(imported, name, source)
+            imported, source = self._import_class_or_module(name_or_path)
+            self._log_import_succeeded(imported, name_or_path, source)
             imported = self._instantiate_if_needed(imported, instantiate_with_args)
         except DataError as err:
-            self._raise_import_failed(name, err)
+            self._raise_import_failed(name_or_path, err)
         else:
             return self._handle_return_values(imported, source, return_source)
 
@@ -146,10 +145,27 @@ class Importer(object):
         return imported
 
     def _instantiate_class(self, imported, args):
+        spec = self._get_arg_spec(imported)
         try:
-            return imported(*args)
+            positional, named = spec.resolve(args)
+        except ValueError as err:
+            raise DataError(err.args[0])
+        try:
+            return imported(*positional, **dict(named))
         except:
             raise DataError('Creating instance failed: %s\n%s' % get_error_details())
+
+    def _get_arg_spec(self, imported):
+        # Avoid cyclic import. Yuck.
+        from robot.running.arguments import ArgumentSpec, PythonArgumentParser
+
+        init = getattr(imported, '__init__', None)
+        name = imported.__name__
+        if not is_init(init):
+            return ArgumentSpec(name, self._type)
+        if is_java_init(init):
+            return ArgumentSpec(name, self._type, var_positional='varargs')
+        return PythonArgumentParser(self._type).parse(init, name)
 
     def _log_import_succeeded(self, item, name, source):
         import_type = '%s ' % self._type.lower() if self._type else ''
