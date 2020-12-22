@@ -46,7 +46,7 @@ def TestLibrary(name, args=None, variables=None, create_handlers=True,
     else:
         import_name = name
     with OutputCapturer(library_import=True):
-        importer = Importer('library')
+        importer = Importer('library', logger=LOGGER)
         libcode, source = importer.import_class_or_module(import_name,
                                                           return_source=True)
     libclass = _get_lib_class(libcode)

@@ -37,11 +37,8 @@ if JYTHON:
 class Importer(object):
 
     def __init__(self, type=None, logger=None):
-        # FIXME: No automatic logger to ease external usage.
-        if not logger:
-            from robot.output import LOGGER as logger
         self._type = type or ''
-        self._logger = logger
+        self._logger = logger or NoLogger()
         self._importers = (ByPathImporter(logger),
                            NonDottedImporter(logger),
                            DottedImporter(logger))
@@ -116,6 +113,13 @@ class Importer(object):
         except DataError as err:
             self._raise_import_failed(path, err)
 
+    def _log_import_succeeded(self, item, name, source):
+        import_type = '%s ' % self._type.lower() if self._type else ''
+        item_type = 'module' if inspect.ismodule(item) else 'class'
+        location = ("'%s'" % source) if source else 'unknown location'
+        self._logger.info("Imported %s%s '%s' from %s."
+                          % (import_type, item_type, name, location))
+
     def _raise_import_failed(self, name, error):
         import_type = '%s ' % self._type.lower() if self._type else ''
         msg = "Importing %s'%s' failed: %s" % (import_type, name, error.message)
@@ -166,13 +170,6 @@ class Importer(object):
         if is_java_init(init):
             return ArgumentSpec(name, self._type, var_positional='varargs')
         return PythonArgumentParser(self._type).parse(init, name)
-
-    def _log_import_succeeded(self, item, name, source):
-        import_type = '%s ' % self._type.lower() if self._type else ''
-        item_type = 'module' if inspect.ismodule(item) else 'class'
-        location = ("'%s'" % source) if source else 'unknown location'
-        self._logger.info("Imported %s%s '%s' from %s."
-                          % (import_type, item_type, name, location))
 
 
 class _Importer(object):
@@ -314,3 +311,7 @@ class DottedImporter(_Importer):
                             % (parent_name, lib_name))
         imported = self._get_class_from_module(imported, lib_name) or imported
         return self._verify_type(imported), self._get_source(imported)
+
+
+class NoLogger(object):
+    error = warn = info = debug = trace = lambda self, *args, **kws: None
