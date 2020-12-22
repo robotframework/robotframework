@@ -185,31 +185,43 @@ class TestInvalidImportPath(unittest.TestCase):
 
     def test_non_existing(self):
         path = 'non-existing.py'
-        assert_raises_with_msg(DataError,
+        assert_raises_with_msg(
+            DataError,
             "Importing '%s' failed: File or directory does not exist." % path,
-            Importer().import_class_or_module_by_path, path)
+            Importer().import_class_or_module_by_path, path
+        )
         path = abspath(path)
-        assert_raises_with_msg(DataError,
+        assert_raises_with_msg(
+            DataError,
             "Importing test file '%s' failed: File or directory does not exist." % path,
-            Importer('test file').import_class_or_module_by_path, path)
+            Importer('test file').import_class_or_module_by_path, path
+        )
 
     def test_non_absolute(self):
         path = os.listdir('.')[0]
-        assert_raises_with_msg(DataError,
+        assert_raises_with_msg(
+            DataError,
             "Importing '%s' failed: Import path must be absolute." % path,
-            Importer().import_class_or_module_by_path, path)
-        assert_raises_with_msg(DataError,
+            Importer().import_class_or_module_by_path, path
+        )
+        assert_raises_with_msg(
+            DataError,
             "Importing file '%s' failed: Import path must be absolute." % path,
-            Importer('file').import_class_or_module_by_path, path)
+            Importer('file').import_class_or_module_by_path, path
+        )
 
     def test_invalid_format(self):
         path = join(CURDIR, '..', '..', 'README.rst')
-        assert_raises_with_msg(DataError,
+        assert_raises_with_msg(
+            DataError,
             "Importing '%s' failed: Not a valid file or directory to import." % path,
-            Importer().import_class_or_module_by_path, path)
-        assert_raises_with_msg(DataError,
+            Importer().import_class_or_module_by_path, path
+        )
+        assert_raises_with_msg(
+            DataError,
             "Importing xxx '%s' failed: Not a valid file or directory to import." % path,
-            Importer('xxx').import_class_or_module_by_path, path)
+            Importer('xxx').import_class_or_module_by_path, path
+        )
 
 
 class TestImportClassOrModule(unittest.TestCase):
@@ -472,6 +484,19 @@ class TestInstantiation(unittest.TestCase):
         lib = Importer().import_class_or_module('libswithargs.Mixed',
                                                 ['default=b', 'mandatory=a'])
         assert_equal(lib.get_args(), ('a', 'b', ''))
+
+    def test_escape_equals(self):
+        lib = Importer().import_class_or_module('libswithargs.Mixed',
+                                                ['default\=b', 'mandatory\=a'])
+        assert_equal(lib.get_args(), ('default\=b', 'mandatory\=a', ''))
+        lib = Importer().import_class_or_module('libswithargs.Mixed',
+                                                ['default\=b', 'default=a'])
+        assert_equal(lib.get_args(), ('default\=b', 'a', ''))
+
+    def test_escaping_not_needed_if_args_do_not_match_names(self):
+        lib = Importer().import_class_or_module('libswithargs.Mixed',
+                                                ['foo=b', 'bar=a'])
+        assert_equal(lib.get_args(), ('foo=b', 'bar=a', ''))
 
     def test_arguments_when_importing_by_path(self):
         path = create_temp_file('args.py', extra_content='''
