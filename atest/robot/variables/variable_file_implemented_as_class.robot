@@ -33,4 +33,7 @@ Dynamic Java Class
 
 Instantiating Fails
     ${path} =    Normalize Path    ${DATADIR}/variables/InvalidClass.py
-    Syslog Should Contain    Importing variable file '${path}' failed: Creating instance failed: TypeError:
+    Error In File    -1    variables/variable_file_implemented_as_class.robot    6
+    ...    Processing variable file '${path}' failed:
+    ...    Importing variable file '${path}' failed:
+    ...    Variable file 'InvalidClass' expected 4 arguments, got 0.

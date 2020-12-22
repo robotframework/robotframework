@@ -468,18 +468,50 @@ class TestInstantiation(unittest.TestCase):
         lib = Importer().import_class_or_module('libswithargs.Mixed', range(5))
         assert_equal(lib.get_args(), (0, 1, '2 3 4'))
 
-    def test_when_importing_by_path(self):
-        path = create_temp_file('args.py', extra_content='class args: a=1')
-        lib = Importer().import_class_or_module_by_path(path, ())
-        assert_true(not inspect.isclass(lib))
-        assert_equal(lib.__class__.__name__, 'args')
-        assert_equal(lib.a, 1)
+    def test_named_arguments(self):
+        lib = Importer().import_class_or_module('libswithargs.Mixed',
+                                                ['default=b', 'mandatory=a'])
+        assert_equal(lib.get_args(), ('a', 'b', ''))
+
+    def test_arguments_when_importing_by_path(self):
+        path = create_temp_file('args.py', extra_content='''
+class args:
+    def __init__(self, arg='default'):
+        self.arg = arg
+''')
+        importer = Importer().import_class_or_module_by_path
+        for args, expected in [((), 'default'),
+                               (['positional'], 'positional'),
+                               (['arg=named'], 'named')]:
+            lib = importer(path, args)
+            assert_true(not inspect.isclass(lib))
+            assert_equal(lib.__class__.__name__, 'args')
+            assert_equal(lib.arg, expected)
 
     def test_instantiate_failure(self):
-        err = assert_raises(DataError, Importer().import_class_or_module,
-                            'ExampleLibrary', ['accepts', 'no', 'args'])
-        assert_true(unicode(err).startswith("Importing 'ExampleLibrary' failed: "
-                                            "Creating instance failed: TypeError:"))
+        assert_raises_with_msg(
+            DataError,
+            "Importing xxx 'ExampleLibrary' failed: Xxx 'ExampleLibrary' expected 0 arguments, got 3.",
+            Importer('XXX').import_class_or_module, 'ExampleLibrary', ['accepts', 'no', 'args']
+        )
+
+    if PY3:
+        def test_argument_conversion(self):
+            path = create_temp_file('conversion.py', extra_content='''
+class conversion:
+    def __init__(self, arg: int):
+        self.arg = arg
+''')
+            lib = Importer().import_class_or_module_by_path(path, ['42'])
+            assert_true(not inspect.isclass(lib))
+            assert_equal(lib.__class__.__name__, 'conversion')
+            assert_equal(lib.arg, 42)
+            assert_raises_with_msg(
+                DataError,
+                "Importing xxx '%s' failed: "
+                "Argument 'arg' got value 'invalid' that cannot be converted to integer." % path,
+                Importer('XXX').import_class_or_module, path, ['invalid']
+            )
 
     def test_modules_do_not_take_arguments(self):
         path = create_temp_file('no_args_allowed.py')
