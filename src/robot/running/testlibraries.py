@@ -19,9 +19,9 @@ import os
 from robot.errors import DataError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER
-from robot.utils import (getdoc, get_error_details, Importer, is_java_init,
+from robot.utils import (getdoc, get_error_details, Importer, is_init,
                          is_java_method, JYTHON, normalize, seq2str2, unic,
-                         is_list_like, PY2, py3to2, PYPY, type_name)
+                         is_list_like, py3to2, type_name)
 
 from .arguments import EmbeddedArguments
 from .context import EXECUTION_CONTEXTS
@@ -161,19 +161,7 @@ class _BaseTestLibrary(object):
 
     def _resolve_init_method(self, libcode):
         init = getattr(libcode, '__init__', None)
-        return init if self._valid_init(init) else None
-
-    def _valid_init(self, method):
-        if not method:
-            return False
-        # https://bitbucket.org/pypy/pypy/issues/2462/
-        if PYPY:
-            if PY2:
-                return method.__func__ is not object.__init__.__func__
-            return method is not object.__init__
-        return (inspect.ismethod(method) or     # PY2
-                inspect.isfunction(method) or   # PY3
-                is_java_init(method))
+        return init if is_init(init) else None
 
     def reset_instance(self, instance=None):
         prev = self._libinst
