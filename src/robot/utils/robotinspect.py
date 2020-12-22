@@ -13,7 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .platform import JYTHON
+import inspect
+
+from .platform import JYTHON, PY2, PYPY
 
 
 if JYTHON:
@@ -34,3 +36,16 @@ else:
 
     def is_java_method(method):
         return False
+
+
+def is_init(method):
+    if not method:
+        return False
+    # https://bitbucket.org/pypy/pypy/issues/2462/
+    if PYPY:
+        if PY2:
+            return method.__func__ is not object.__init__.__func__
+        return method is not object.__init__
+    return (inspect.ismethod(method) or  # PY2
+            inspect.isfunction(method) or  # PY3
+            is_java_init(method))
