@@ -29,7 +29,8 @@ def assert_statement(model, expected):
     assert_equal(model.errors, expected.errors)
 
 
-def assert_created_statement(tokens, new_statement, base_class):
+def assert_created_statement(tokens, base_class, **params):
+    new_statement = base_class.from_params(**params)
     assert_statement(
         new_statement,
         base_class(tokens)
@@ -44,13 +45,13 @@ def assert_created_statement(tokens, new_statement, base_class):
     )
 
 
-class TestCreateStatementsFromParams:
+class TestCreateStatementsFromParams(unittest.TestCase):
     def test_SectionHeader(self):
         tokens = [Token(Token.TESTCASE_NAME, 'Example test case name'), Token(Token.EOL, '\n')]
         assert_created_statement(
             tokens,
-            TestCaseName.from_params(name='Example test case name'),
-            TestCaseName
+            TestCaseName,
+            name='Example test case name'
         )
 
     def test_IfHeader(self):
@@ -63,8 +64,8 @@ class TestCreateStatementsFromParams:
         ]
         assert_created_statement(
             tokens,
-            IfHeader.from_params(condition='${var} not in [@{list}]'),
-            IfHeader
+            IfHeader,
+            condition='${var} not in [@{list}]'
         )
 
     def test_ElseIfHeader(self):
@@ -77,8 +78,8 @@ class TestCreateStatementsFromParams:
         ]
         assert_created_statement(
             tokens,
-            ElseIfHeader.from_params(condition='${var} not in [@{list}]'),
-            ElseIfHeader
+            ElseIfHeader,
+            condition='${var} not in [@{list}]'
         )
 
     def test_ElseHeader(self):
@@ -89,7 +90,6 @@ class TestCreateStatementsFromParams:
         ]
         assert_created_statement(
             tokens,
-            ElseHeader.from_params(),
             ElseHeader
         )
 
@@ -101,7 +101,6 @@ class TestCreateStatementsFromParams:
         ]
         assert_created_statement(
             tokens,
-            End.from_params(),
             End
         )
 
@@ -113,8 +112,8 @@ class TestCreateStatementsFromParams:
         ]
         assert_created_statement(
             tokens,
-            Comment.from_params(comment='# example comment'),
-            Comment
+            Comment,
+            comment='# example comment'
         )
 
     def test_EmptyLine(self):
@@ -123,8 +122,8 @@ class TestCreateStatementsFromParams:
         ]
         assert_created_statement(
             tokens,
-            EmptyLine.from_params('\n'),
-            EmptyLine
+            EmptyLine,
+            value='\n'
         )
 
 
