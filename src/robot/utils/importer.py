@@ -118,7 +118,7 @@ class Importer(object):
             self._raise_import_failed(path, err)
 
     def _raise_import_failed(self, name, error):
-        import_type = '%s ' % self._type if self._type else ''
+        import_type = '%s ' % self._type.lower() if self._type else ''
         msg = "Importing %s'%s' failed: %s" % (import_type, name, error.message)
         if not error.details:
             raise DataError(msg)
@@ -152,7 +152,7 @@ class Importer(object):
             raise DataError('Creating instance failed: %s\n%s' % get_error_details())
 
     def _log_import_succeeded(self, item, name, source):
-        import_type = '%s ' % self._type if self._type else ''
+        import_type = '%s ' % self._type.lower() if self._type else ''
         item_type = 'module' if inspect.ismodule(item) else 'class'
         location = ("'%s'" % source) if source else 'unknown location'
         self._logger.info("Imported %s%s '%s' from %s."

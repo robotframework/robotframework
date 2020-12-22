@@ -101,7 +101,7 @@ Failed Impors Are Listed In Errors
     Error in file    0    ${path}    9
     ...    Resource file 'resource that does not exist and fails' does not exist.
     Error in file    1    ${path}    10
-    ...    Importing test library 'LibraryThatDoesNotExist' failed: *
+    ...    Importing library 'LibraryThatDoesNotExist' failed: *
     ...    traceback=None
     Error in file    2    ${path}    11
     ...    Variable file 'variables which dont exist' does not exist.

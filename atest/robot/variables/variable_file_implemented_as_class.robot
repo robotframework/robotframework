@@ -3,7 +3,6 @@ Suite Setup      Run Tests    ${EMPTY}    variables/variable_file_implemented_as
 Resource         atest_resource.robot
 
 *** Test Cases ***
-
 Python Class
     Check Test Case    ${TESTNAME}
 
