@@ -35,8 +35,17 @@ if JYTHON:
 
 
 class Importer(object):
+    """Utility that can import modules and classes based on names and paths."""
 
     def __init__(self, type=None, logger=None):
+        """
+        :param type:
+            Type of the thing being imported. Used in error and log messages.
+        :param logger:
+            Logger to be notified about successful imports and other events.
+            Currently only needs the ``info`` method, but other level specific
+            methods may be needed in the future. If not given, logging is disabled.
+        """
         self._type = type or ''
         self._logger = logger or NoLogger()
         self._importers = (ByPathImporter(logger),
@@ -46,19 +55,26 @@ class Importer(object):
 
     def import_class_or_module(self, name_or_path, instantiate_with_args=None,
                                return_source=False):
-        """Imports Python class/module or Java class with given name or path.
+        """Imports Python class/module or Java class based on the given name or path.
+
+        :param name_or_path:
+            Name or path of the module or class to import.
+        :param instantiate_with_args:
+            When arguments are given, imported classes are automatically initialized
+            using them.
+        :param return_source:
+            When true, returns a tuple containing the imported module or class
+            and a path to it. By default returns only the imported module or class.
 
         The class or module to import can be specified either as a name, in which
-        case it must be in the module search path, or as a path to the implementing
-        file or directory.
+        case it must be in the module search path, or as a path to the file or
+        directory implementing the module. See :meth:`import_class_or_module_by_path`
+        for more information about importing classes and modules by path.
 
         Classes can be imported from the module search path using name like
-        `module.ClassName`. If the class name and module name are same, using just
-        `CommonName` is enough. When importing a class by a path, the class name
-        and the module name must match.
-
-        If `instantiate_with_args` is not None, imported classes are instantiated
-        with the specified arguments automatically.
+        ``modulename.ClassName``. If the class name and module name are same, using
+        just ``CommonName`` is enough. When importing a class by a path, the class
+        name and the module name must match.
         """
         try:
             imported, source = self._import_class_or_module(name_or_path)
@@ -98,13 +114,16 @@ class Importer(object):
     def import_class_or_module_by_path(self, path, instantiate_with_args=None):
         """Import a Python module or Java class using a file system path.
 
-        When importing a Python file, the path must end with '.py' and the
-        actual file must also exist. When importing Java classes, the path
-        must end with '.java' or '.class'. The class file must exist in both
-        cases and in the former case also the source file must exist.
+        :param path:
+            Path to the module or class to import.
+        :param instantiate_with_args:
+            When arguments are given, imported classes are automatically initialized
+            using them.
 
-        If `instantiate_with_args` is not None, imported classes are
-        instantiated with the specified arguments automatically.
+        When importing a Python file, the path must end with :file:`.py` and the
+        actual file must also exist. When importing Java classes, the path must
+        end with :file:`.java` or :file:`.class`. The Java class file must exist
+        in both cases and in the former case also the source file must exist.
         """
         try:
             imported, source = self._by_path_importer.import_(path)
