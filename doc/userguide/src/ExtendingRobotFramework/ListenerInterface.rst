@@ -48,9 +48,41 @@ quotes on UNIX-like operating systems::
 
    robot --listener listener.py:arg1:arg2 tests.robot
    robot --listener "listener.py;arg:with:colons" tests.robot
-   robot --listener C:\Path\Listener.py;D:\data;E:\extra tests.robot
+   robot --listener c:\path\listener.py;d:\first\arg;e:\second\arg tests.robot
+
+In addition to passing arguments one-by-one as positional arguments, it is
+possible to pass them using the `named argument syntax`_ exactly when using
+keywords::
+
+   robot --listener listener.py:name=value tests.robot
+   robot --listener "listener.py;name=value:with:colons;another=value" tests.robot
+
+Listener arguments are automatically converted using `same rules as with
+keywords`__ based on `type hints`__ and `default values`__. For example,
+this listener
+
+.. sourcecode:: python
+
+    class Listener(object):
+
+        def __init__(self, port: int, log=True):
+            self.port = post
+            self.log = log
+
+could be used like ::
+
+    robot --listener Listener:8270:false
+
+and the first argument would be converted to an integer based on the type hint
+and the second to a Boolean based on the default value.
+
+.. note:: Both named argument syntax and argument conversion are new in
+          Robot Framework 4.0.
 
 __ `Using physical path to library`_
+__ `Supported conversions`_
+__ `Specifying argument types using function annotations`_
+__ `Implicit argument types based on default values`_
 
 Listener interface versions
 ---------------------------
