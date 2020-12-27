@@ -1178,6 +1178,13 @@ class _Verify(_BuiltInBase):
         items in it are compared case-insensitively. New option in Robot
         Framework 3.0.1.
 
+        If ``strip_spaces`` is given a true value (see `Boolean arguments`)
+        and both arguments are strings, the comparison is done without leading
+        and trailing spaces. If ``strip_spaces`` is given a string value
+        ``leading`` or ``trailing`` and both arguments are strings, the
+        comparison is done without leading or trailing spaces respectively.
+        The default value is ``False``.
+
         Examples:
         | Should Contain X Times | ${output}    | hello | 2 |
         | Should Contain X Times | ${some list} | value | 3 | ignore_case=True |
@@ -1190,14 +1197,12 @@ class _Verify(_BuiltInBase):
                 container = container.lower()
             elif is_list_like(container):
                 container = [i.lower() if is_string(i) else i for i in container]
-        #TODO strip_spaces
-        # TODO add acceptance tests
-        if strip_spaces and is_string(item2):
-            item2 = self._strip_spaces(item2, strip_spaces)
-            if is_string(item1):
-                item1 = self._strip_spaces(item1, strip_spaces)
-            elif is_list_like(item1):
-                item1 = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in item1]
+        if strip_spaces and is_string(item):
+            item = self._strip_spaces(item, strip_spaces)
+            if is_string(container):
+                container = self._strip_spaces(container, strip_spaces)
+            elif is_list_like(container):
+                container = [self._strip_spaces(x, strip_spaces) if is_string(x) else x for x in container]
         x = self.get_count(container, item)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
