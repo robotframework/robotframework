@@ -883,9 +883,6 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` and ``strip_spaces`` options.
-
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -904,8 +901,6 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` and ``strip_spaces`` options.
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -924,8 +919,6 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``, as well as for semantics
         of the ``ignore_case`` and ``strip_spaces`` options.
-        TODO If ``strip_spaces`` is given a true value (see `Boolean arguments`),
-        comparison is done without leading and trailing spaces.
         """
         if is_truthy(ignore_case):
             str1 = str1.lower()
@@ -1177,13 +1170,6 @@ class _Verify(_BuiltInBase):
         If the ``container`` is a list-like object, string
         items in it are compared case-insensitively. New option in Robot
         Framework 3.0.1.
-
-        If ``strip_spaces`` is given a true value (see `Boolean arguments`)
-        and both arguments are strings, the comparison is done without leading
-        and trailing spaces. If ``strip_spaces`` is given a string value
-        ``leading`` or ``trailing`` and both arguments are strings, the
-        comparison is done without leading or trailing spaces respectively.
-        The default value is ``False``.
 
         Examples:
         | Should Contain X Times | ${output}    | hello | 2 |
