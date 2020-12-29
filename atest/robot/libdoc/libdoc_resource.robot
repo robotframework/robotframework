@@ -189,6 +189,12 @@ Keyword Tags Should Be
     ${tags}=   Get Elements Texts    ${kws}[${index}]    xpath=tags/tag
     Should Be Equal    ${tags}    ${expected}
 
+Resource Tags Should Be
+    [Arguments]    ${index}    @{expected}
+    ${tags}    Get Elements Texts    ${LIBDOC}    xpath=tags
+    ${tags}    Split String    ${tags}[0]    \n
+    List Should Contain Sub List    ${tags}    ${expected}
+
 Keyword Source Should Be
     [Arguments]    ${index}    ${source}    ${xpath}=keywords/kw
     ${kws}=    Get Elements    ${LIBDOC}    xpath=${xpath}

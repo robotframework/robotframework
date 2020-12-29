@@ -24,6 +24,7 @@ class LibdocXmlWriter(object):
     def write(self, libdoc, outfile):
         writer = XmlWriter(outfile, usage='Libdoc spec')
         self._write_start(libdoc, writer)
+        self._write_tags(libdoc.all_tags, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
         self._write_data_types(libdoc.data_types, writer)
@@ -79,12 +80,15 @@ class LibdocXmlWriter(object):
             writer.element('doc', kw.doc)
             writer.element('shortdoc', kw.shortdoc)
             if kw_type == 'kw' and kw.tags:
-                writer.start('tags')
-                for tag in kw.tags:
-                    writer.element('tag', tag)
-                writer.end('tags')
+                self._write_tags(kw.tags, writer)
             writer.end(kw_type)
         writer.end(list_name)
+
+    def _write_tags(self, tags, writer):
+        writer.start('tags')
+        for tag in tags:
+            writer.element('tag', tag)
+        writer.end('tags')
 
     def _write_arguments(self, kw, writer):
         writer.start('arguments', {'repr': unicode(kw.args)})
