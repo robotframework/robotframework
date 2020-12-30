@@ -26,7 +26,18 @@ class Token(object):
     and :attr:`end_col_offset` attributes, respectively. Tokens representing
     error also have their error message in :attr:`error` attribute.
 
-    Token types are declared as class attributes.
+    Token types are declared as class attributes such as :attr:`SETTING_HEADER`
+    and :attr:`EOL`. Values of these constants have changed slightly in Robot
+    Framework 4.0 and they may change again in the future. It is thus safer
+    to use the constants, not their values, when types are needed. For example,
+    use ``Token(Token.EOL)`` instead of ``Token('EOL')`` and
+    ``token.type == Token.EOL`` instead of ``token.type == 'EOL'``.
+
+    If :attr:`value` is not given when :class:`Token` is initialized and
+    :attr:`type` is :attr:`IF`, :attr:`ELSE_IF`, :attr:`ELSE`, :attr:`FOR`,
+    :attr:`END` or :attr:`CONTINUATION`, the value is automatically set
+    to the correct marker value like ``'IF'`` or ``'ELSE IF'``. If :attr:`type`
+    is :attr:`EOL` in this case, the value is set to ``'\\n'``.
     """
 
     SETTING_HEADER = 'SETTING HEADER'
@@ -81,14 +92,14 @@ class Token(object):
     ERROR = 'ERROR'
     FATAL_ERROR = 'FATAL ERROR'
 
-    NON_DATA_TOKENS = (
+    NON_DATA_TOKENS = frozenset((
         SEPARATOR,
         COMMENT,
         CONTINUATION,
         EOL,
         EOS
-    )
-    SETTING_TOKENS = (
+    ))
+    SETTING_TOKENS = frozenset((
         DOCUMENTATION,
         SUITE_SETUP,
         SUITE_TEARDOWN,
@@ -109,25 +120,31 @@ class Token(object):
         TAGS,
         ARGUMENTS,
         RETURN
-    )
-    HEADER_TOKENS = (
+    ))
+    HEADER_TOKENS = frozenset((
         SETTING_HEADER,
         VARIABLE_HEADER,
         TESTCASE_HEADER,
         KEYWORD_HEADER,
         COMMENT_HEADER
-    )
-    ALLOW_VARIABLES = (
+    ))
+    ALLOW_VARIABLES = frozenset((
         NAME,
         ARGUMENT,
         TESTCASE_NAME,
         KEYWORD_NAME
-    )
+    ))
 
     __slots__ = ['type', 'value', 'lineno', 'col_offset', 'error']
 
-    def __init__(self, type=None, value='', lineno=-1, col_offset=-1, error=None):
+    def __init__(self, type=None, value=None, lineno=-1, col_offset=-1, error=None):
         self.type = type
+        if value is None:
+            value = {
+                Token.IF: 'IF', Token.ELSE_IF: 'ELSE IF', Token.ELSE: 'ELSE',
+                Token.FOR: 'FOR', Token.END: 'END', Token.CONTINUATION: '...',
+                Token.EOL: '\n'
+            }.get(type, '')
         self.value = value
         self.lineno = lineno
         self.col_offset = col_offset
@@ -179,26 +196,25 @@ class Token(object):
         return self.value
 
     def __repr__(self):
+        type_ = self.type.replace(' ', '_') if self.type else 'None'
         error = '' if not self.error else ', %r' % self.error
-        return 'Token(%r, %r, %s, %s%s)' % (self.type, self.value,
-                                            self.lineno, self.col_offset,
-                                            error)
+        return 'Token(%s, %r, %s, %s%s)' % (type_, self.value, self.lineno,
+                                            self.col_offset, error)
 
     def __eq__(self, other):
-        if not isinstance(other, Token):
-            return False
-        return (self.type == other.type and
-                self.value == other.value and
-                self.lineno == other.lineno and
-                self.col_offset == other.col_offset and
-                self.error == other.error)
+        return (isinstance(other, Token)
+                and self.type == other.type
+                and self.value == other.value
+                and self.lineno == other.lineno
+                and self.col_offset == other.col_offset
+                and self.error == other.error)
 
     def __ne__(self, other):
         return not self == other
 
 
 class EOS(Token):
-    """Token representing end of statement."""
+    """Token representing end of a statement."""
     __slots__ = []
 
     def __init__(self, lineno=-1, col_offset=-1):

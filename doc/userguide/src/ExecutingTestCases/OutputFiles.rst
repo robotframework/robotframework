@@ -563,10 +563,13 @@ in log file similar to failed keywords. Expanding supports the following modes:
    Expand keywords with tags matching the given pattern. Pattern matching
    rules are same as when `removing keywords`_ using the `TAG:<pattern>` mode.
 
+If you need to expand keywords matching different names or patterns, you can
+use the :option:`--expandkeywords` multiple times.
+
 Examples::
 
    robot --expandkeywords name:SeleniumLibrary.CapturePageScreenshot tests.robot
-   rebot --expandkeywords tag:expand output.xml
+   rebot --expandkeywords tag:example --expandkeywords tag:another output.xml
 
 .. note:: The :option:`--expandkeywords` option is new in Robot Framework 3.2.
 
@@ -634,8 +637,8 @@ marks all passed tests that have taken more time than allowed as failed:
 
     class ExecutionTimeChecker(SuiteVisitor):
 
-        def __init__(self, max_seconds):
-            self.max_milliseconds = float(max_seconds) * 1000
+        def __init__(self, max_seconds: float):
+            self.max_milliseconds = max_seconds * 1000
 
         def visit_test(self, test):
             if test.status == 'PASS' and test.elapsedtime > self.max_milliseconds:
@@ -656,6 +659,9 @@ If more than one model modifier is needed, they can be specified by using
 the :option:`--prerebotmodifier` option multiple times. When executing tests,
 it is possible to use :option:`--prerunmodifier` and
 :option:`--prerebotmodifier` options together.
+
+.. note:: Argument conversion based on type hints like `max_seconds: float` in
+          the above example is new in Robot Framework 4.0 and requires Python 3.
 
 System log
 ----------

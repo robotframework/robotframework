@@ -46,12 +46,12 @@ def inplace_replace_all(file, search, replace):
 
 
 if __name__ == '__main__':
-    create('Suite.txt', 'Suite.js')
-    create('SetupsAndTeardowns.txt', 'SetupsAndTeardowns.js')
-    create('Messages.txt', 'Messages.js')
+    create('Suite.robot', 'Suite.js')
+    create('SetupsAndTeardowns.robot', 'SetupsAndTeardowns.js')
+    create('Messages.robot', 'Messages.js')
     create('teardownFailure', 'TeardownFailure.js')
-    create(join('teardownFailure', 'PassingFailing.txt'), 'PassingFailing.js')
-    create('TestsAndKeywords.txt', 'TestsAndKeywords.js')
+    create(join('teardownFailure', 'PassingFailing.robot'), 'PassingFailing.js')
+    create('TestsAndKeywords.robot', 'TestsAndKeywords.js')
     create('.', 'allData.js')
     create('.', 'splitting.js', split_log=True)
     os.remove(OUTPUT)

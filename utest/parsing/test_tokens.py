@@ -9,21 +9,29 @@ from robot.api import Token
 class TestToken(unittest.TestCase):
 
     def test_string_repr(self):
-
         for token, exp_str, exp_repr in [
-            ((Token.ELSE_IF, 'ELSE IF', 6, 4),
-             'ELSE IF',
-             "Token('ELSE IF', 'ELSE IF', 6, 4)"),
-            ((Token.KEYWORD, u'Hyv\xe4', 6, 4),
-             u'Hyv\xe4',
-             u"Token('KEYWORD', %r, 6, 4)" % u'Hyv\xe4'),
-            ((Token.ERROR, 'bad value', 6, 4, 'The error.'),
-             'bad value',
-             "Token('ERROR', 'bad value', 6, 4, 'The error.')")
+            ((Token.ELSE_IF, 'ELSE IF', 6, 4), 'ELSE IF',
+             "Token(ELSE_IF, 'ELSE IF', 6, 4)"),
+            ((Token.KEYWORD, u'Hyv\xe4', 6, 4), u'Hyv\xe4',
+             u"Token(KEYWORD, %r, 6, 4)" % u'Hyv\xe4'),
+            ((Token.ERROR, 'bad value', 6, 4, 'The error.'), 'bad value',
+             "Token(ERROR, 'bad value', 6, 4, 'The error.')"),
+            (((), '',
+              "Token(None, '', -1, -1)"))
         ]:
             token = Token(*token)
             assert_equal(unicode(token), exp_str)
             assert_equal(repr(token), exp_repr)
+
+    def test_automatic_value(self):
+        for typ, value in [(Token.IF, 'IF'),
+                           (Token.ELSE_IF, 'ELSE IF'),
+                           (Token.ELSE, 'ELSE'),
+                           (Token.FOR, 'FOR'),
+                           (Token.END, 'END'),
+                           (Token.CONTINUATION, '...'),
+                           (Token.EOL, '\n')]:
+            assert_equal(Token(typ).value, value)
 
 
 class TestTokenizeVariables(unittest.TestCase):

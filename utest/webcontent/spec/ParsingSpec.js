@@ -61,13 +61,11 @@ describe("Handling Suite", function () {
         window.output = window.suiteOutput;
     });
 
-    function expectStats(suite, total, passed, critical, criticalPassed){
+    function expectStats(suite, total, passed, failed, skipped){
         expect(suite.total).toEqual(total);
-        expect(suite.totalPassed).toEqual(passed);
-        expect(suite.totalFailed).toEqual(total-passed);
-        expect(suite.critical).toEqual(critical);
-        expect(suite.criticalPassed).toEqual(criticalPassed);
-        expect(suite.criticalFailed).toEqual(critical-criticalPassed);
+        expect(suite.pass).toEqual(passed);
+        expect(suite.fail).toEqual(failed);
+        expect(suite.skip).toEqual(skipped);
     }
 
     function endsWith(string, ending) {
@@ -80,12 +78,12 @@ describe("Handling Suite", function () {
         expect(suite.name).toEqual("Suite");
         expect(suite.id).toEqual("s1");
         expect(suite.status).toEqual("PASS");
-        expect(endsWith(suite.source, "Suite.txt")).toEqual(true);
+        expect(endsWith(suite.source, "Suite.robot")).toEqual(true);
         expect(suite.doc()).toEqual("<p>suite doc</p>");
         expect(suite.times).toBeDefined();
         expect(suite.times.elapsedMillis).toBeGreaterThan(0);
         expect(suite.times.elapsedMillis).toBeLessThan(1000);
-        expectStats(suite, 1, 1, 1, 1);
+        expectStats(suite, 1, 1, 0, 0);
         expect(suite.metadata[0]).toEqual(["meta", "<p>data</p>"]);
         expect(suite.childrenNames).toEqual(['keyword', 'suite', 'test']);
     });

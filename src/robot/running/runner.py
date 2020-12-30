@@ -170,6 +170,8 @@ class Runner(SuiteVisitor):
         if not status.failed and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message())
             result.message = status.message
+        if status.skip_if_needed():
+            result.message = status.message or result.message
         result.status = status.status
         result.endtime = get_timestamp()
         self._output.end_test(ModelCombiner(test, result))

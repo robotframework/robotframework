@@ -18,7 +18,7 @@
           "types": [
             "Small"
           ],
-          "default": "one",
+          "defaultValue": "one",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "credentials: Small = one"
@@ -38,7 +38,7 @@
         {
           "name": "value",
           "types": [],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "value"
@@ -49,7 +49,7 @@
             "AssertionOperator",
             "None"
           ],
-          "default": "None",
+          "defaultValue": "None",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "operator: AssertionOperator | None = None"
@@ -59,7 +59,7 @@
           "types": [
             "str"
           ],
-          "default": "something?",
+          "defaultValue": "something?",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "exp: str = something?"
@@ -86,7 +86,7 @@
             "GeoLocation",
             "None"
           ],
-          "default": "equal",
+          "defaultValue": "equal",
           "kind": "POSITIONAL_OR_NAMED",
           "required": false,
           "repr": "funny: bool | int | float | str | AssertionOperator | Small | GeoLocation | None = equal"
@@ -106,7 +106,7 @@
           "types": [
             "GeoLocation"
           ],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "location: GeoLocation"
@@ -126,7 +126,7 @@
           "types": [
             "List[str]"
           ],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "list_of_str: List[str]"
@@ -136,7 +136,7 @@
           "types": [
             "Dict[str, int]"
           ],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "dict_str_int: Dict[str, int]"
@@ -146,7 +146,7 @@
           "types": [
             "Any"
           ],
-          "default": null,
+          "defaultValue": null,
           "kind": "POSITIONAL_OR_NAMED",
           "required": true,
           "repr": "Whatever: Any"
@@ -156,7 +156,7 @@
           "types": [
             "List[typing.Any]"
           ],
-          "default": null,
+          "defaultValue": null,
           "kind": "VAR_POSITIONAL",
           "required": false,
           "repr": "*args: List[typing.Any]"

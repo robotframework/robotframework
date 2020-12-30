@@ -298,8 +298,7 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     display: flex;
 }
 
-.optional-key,
-.arguments-list .arg-optional {
+.optional-key {
     font-style: italic;
 }
 
@@ -327,6 +326,13 @@ input.hamburger-menu:checked ~ span.hamburger-menu-3
     background: var(--background-color);
     white-space: nowrap;
     -webkit-text-size-adjust: none;
+}
+
+.arguments-list .arg-kind {
+  color: transparent;
+  text-shadow: 0 0 0 var(--less-important-text-color);
+  padding: 0;
+  font-size: 0.8em;
 }
 
 @media only screen and (min-width: 900px) {
@@ -527,7 +533,7 @@ h4 {
     flex-direction: column;
 }
 
-.enum-type-members{
+.enum-type-members, .dt-usage-list {
     list-style: none;
 }
 

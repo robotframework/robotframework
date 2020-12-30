@@ -277,11 +277,17 @@ window.stats = (function () {
             fail = 0.1
         if (skip > 0 && skip < 0.1)
             skip = 0.1
+        if (pass > 99.95 && pass < 100)
+            pass = 99.9
+        if (fail > 99.95 && fail < 100)
+            fail = 99.9
+        if (skip > 99.95 && skip < 100)
+            skip = 99.9
         return [Math.round(pass*10)/10, Math.round(skip*10)/10, Math.round(fail*10)/10];
     }
 
     function calculateWidths(num1, num2, num3) {
-        if (num1 + num2 + num3 == 0)
+        if (num1 + num2 + num3 === 0)
             return [0.0, 0.0, 0.0];
         // Make small percentages better visible
         if (num1 > 0 && num1 < 1)
@@ -290,16 +296,29 @@ window.stats = (function () {
             num2 = 1
         if (num3 > 0 && num3 < 1)
             num3 = 1
-        // Handle situation where both are rounded up
+
+        // Handle situation where some are rounded up
         while (num1 + num2 + num3 > 100) {
             if (num1 > num2 && num1 > num3)
                 num1 -= 0.1;
-            if (num2 > num1 && num2 > num3)
+            else if (num2 > num1 && num2 > num3)
                 num2 -= 0.1;
-            if (num3 > num1 && num3 > num2)
+            else if (num3 > num1 && num3 > num2)
                 num3 -= 0.1;
+            else if (num1 > num3 && num1 == num2) {
+                num1 -= 0.1;
+                num2 -= 0.1;
+            }
+            else if (num1 > num2 && num1 == num3) {
+                num1 -= 0.1;
+                num3 -= 0.1;
+            }
+            else if (num2 > num1 && num2 == num3) {
+                num2 -= 0.1;
+                num3 -= 0.1;
+            }
         }
-        return [num1, num2, num3];
+        return [Math.ceil(num1*10)/10, Math.ceil(num2*10)/10, Math.ceil(num3*10)/10];
     }
 
     return {

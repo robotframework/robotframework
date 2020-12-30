@@ -58,47 +58,54 @@ class FileParser(Parser):
 
 
 class SectionParser(Parser):
-    subsection_parsers = {}
-    section_class = None
+    model_class = None
 
     def __init__(self, header):
-        Parser.__init__(self, self.section_class(header))
+        Parser.__init__(self, self.model_class(header))
 
     def handles(self, statement):
         return statement.type not in Token.HEADER_TOKENS
 
     def parse(self, statement):
-        parser_class = self.subsection_parsers.get(statement.type)
-        if parser_class:
-            parser = parser_class(statement)
-            self.model.body.append(parser.model)
-            return parser
         self.model.body.append(statement)
+        return None
 
 
 class SettingSectionParser(SectionParser):
-    section_class = SettingSection
+    model_class = SettingSection
 
 
 class VariableSectionParser(SectionParser):
-    section_class = VariableSection
+    model_class = VariableSection
 
 
 class CommentSectionParser(SectionParser):
-    section_class = CommentSection
+    model_class = CommentSection
 
 
 class ImplicitCommentSectionParser(SectionParser):
 
-    def section_class(self, statement):
+    def model_class(self, statement):
         return CommentSection(body=[statement])
 
 
 class TestCaseSectionParser(SectionParser):
-    subsection_parsers = {Token.TESTCASE_NAME: TestCaseParser}
-    section_class = TestCaseSection
+    model_class = TestCaseSection
+
+    def parse(self, statement):
+        if statement.type == Token.TESTCASE_NAME:
+            parser = TestCaseParser(statement)
+            self.model.body.append(parser.model)
+            return parser
+        return SectionParser.parse(self, statement)
 
 
 class KeywordSectionParser(SectionParser):
-    subsection_parsers = {Token.KEYWORD_NAME: KeywordParser}
-    section_class = KeywordSection
+    model_class = KeywordSection
+
+    def parse(self, statement):
+        if statement.type == Token.KEYWORD_NAME:
+            parser = KeywordParser(statement)
+            self.model.body.append(parser.model)
+            return parser
+        return SectionParser.parse(self, statement)

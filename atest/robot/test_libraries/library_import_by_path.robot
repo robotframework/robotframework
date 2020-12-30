@@ -42,17 +42,17 @@ Importing By Path Containing Non-ASCII Characters
 Importing Invalid Python File Fails
     ${path} =    Normalize Path    ${DATADIR}/test_libraries/MyInvalidLibFile.py
     Error in file    1    test_libraries/library_import_by_path.robot    9
-    ...    Importing test library '${path}' failed: ImportError: I'm not really a library!
+    ...    Importing library '${path}' failed: ImportError: I'm not really a library!
     ...    traceback=*
 
 Importing Dir Library Without Trailing "/" Fails
     Error in file    0    test_libraries/library_import_by_path.robot    3
-    ...    Importing test library 'MyLibDir' failed: *Error: *
+    ...    Importing library 'MyLibDir' failed: *Error: *
     ...    traceback=None
 
 Importing Non Python File Fails
     Error in file    2    test_libraries/library_import_by_path.robot    10
-    ...    Importing test library 'library_import_by_path.robot' failed: *Error: *
+    ...    Importing library 'library_import_by_path.robot' failed: *Error: *
     ...    traceback=None
 
 Importing Non Python Dir Fails
@@ -66,5 +66,5 @@ Importing Non Existing Py File
 Import failure when path contains non-ASCII characters is handled correctly
     ${path} =    Normalize path    ${DATADIR}/test_libraries/nön_äscii_dïr/invalid.py
     Error in file    -1    test_libraries/library_import_by_path.robot    17
-    ...    Importing test library '${path}' failed: Ööööps!
+    ...    Importing library '${path}' failed: Ööööps!
     ...    traceback=File "${path}", line 2, in <module>\n*raise RuntimeError(u'Ööööps!')

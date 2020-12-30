@@ -207,6 +207,15 @@ Skipped with --SkipOnFailure when Failure in Test Teardown
     [Teardown]    Fail    failure in teardown
     No Operation
 
+Skipped with --SkipOnFailure when Set Tags Used in Teardown
+    [Documentation]    SKIP
+    ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.
+    ...
+    ...    Original failure:
+    ...    Ooops, we fail!
+    Fail    Ooops, we fail!
+    [Teardown]    Set Tags    skip-on-failure
+
 --NonCritical Is an Alias for --SkipOnFailure
     [Documentation]    SKIP
     ...    ${TEST_OR_TASK} failed but its tags matched '--SkipOnFailure' and it was marked skipped.

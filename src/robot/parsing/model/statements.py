@@ -24,6 +24,7 @@ from ..lexer import Token
 
 class Statement(ast.AST):
     type = None
+    handles_types = ()
     _fields = ('type', 'tokens')
     _attributes = ('lineno', 'col_offset', 'end_lineno', 'end_col_offset', 'errors')
     _statement_handlers = {}
@@ -50,11 +51,9 @@ class Statement(ast.AST):
 
     @classmethod
     def register(cls, subcls):
-        cls._statement_handlers[subcls.type] = subcls
-        if subcls.type == Token.KEYWORD:
-            cls._statement_handlers[Token.ASSIGN] = subcls
-        if subcls.type == Token.ERROR:
-            cls._statement_handlers[Token.FATAL_ERROR] = subcls
+        types = subcls.handles_types or (subcls.type,)
+        for typ in types:
+            cls._statement_handlers[typ] = subcls
         return subcls
 
     @classmethod
@@ -69,14 +68,14 @@ class Statement(ast.AST):
     def data_tokens(self):
         return [t for t in self.tokens if t.type not in Token.NON_DATA_TOKENS]
 
-    def get_token(self, type):
+    def get_token(self, *types):
         """Return a token with the given ``type``.
 
         If there are no matches, return ``None``. If there are multiple
         matches, return the first match.
         """
         for t in self.tokens:
-            if t.type == type:
+            if t.type in types:
                 return t
         return None
 
@@ -176,37 +175,21 @@ class Fixture(Statement):
         return self.get_values(Token.ARGUMENT)
 
 
+@Statement.register
 class SectionHeader(Statement):
+    handles_types = (Token.SETTING_HEADER, Token.VARIABLE_HEADER,
+                     Token.TESTCASE_HEADER, Token.KEYWORD_HEADER,
+                     Token.COMMENT_HEADER)
+
+    @property
+    def type(self):
+        token = self.get_token(*self.handles_types)
+        return token.type
 
     @property
     def name(self):
-        header = self.get_token(self.type)
-        return normalize_whitespace(header.value).strip('* ')
-
-
-@Statement.register
-class SettingSectionHeader(SectionHeader):
-    type = Token.SETTING_HEADER
-
-
-@Statement.register
-class VariableSectionHeader(SectionHeader):
-    type = Token.VARIABLE_HEADER
-
-
-@Statement.register
-class TestCaseSectionHeader(SectionHeader):
-    type = Token.TESTCASE_HEADER
-
-
-@Statement.register
-class KeywordSectionHeader(SectionHeader):
-    type = Token.KEYWORD_HEADER
-
-
-@Statement.register
-class CommentSectionHeader(SectionHeader):
-    type = Token.COMMENT_HEADER
+        token = self.get_token(*self.handles_types)
+        return normalize_whitespace(token.value).strip('* ')
 
 
 @Statement.register
@@ -406,6 +389,7 @@ class Return(MultiValue):
 @Statement.register
 class KeywordCall(Statement):
     type = Token.KEYWORD
+    handles_types = (Token.KEYWORD, Token.ASSIGN)
 
     @property
     def keyword(self):
@@ -513,6 +497,7 @@ class Comment(Statement):
 @Statement.register
 class Error(Statement):
     type = Token.ERROR
+    handles_types = (Token.ERROR, Token.FATAL_ERROR)
     _errors = ()
 
     @property

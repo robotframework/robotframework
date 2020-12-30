@@ -25,6 +25,14 @@ robot.model.filter module
    :undoc-members:
    :show-inheritance:
 
+robot.model.fixture module
+--------------------------
+
+.. automodule:: robot.model.fixture
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 robot.model.itemlist module
 ---------------------------
 

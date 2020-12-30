@@ -42,10 +42,21 @@
 
 <script type="text/javascript">
 
-    function linkArgs(container, typeNames) {
-      container.forEach(function(k) {
-          k.args.forEach(function (arg) {
-            arg.linked = arg.types.filter(function(value) {return typeNames.indexOf(value) > -1});
+    function linkArgs(container, dataTypes, usageName) {
+      container.forEach(function(keyword) {
+        let user = usageName || keyword.name
+          keyword.args.forEach(function (arg) {
+            arg.linked = arg.types.filter(function(value) {
+              return dataTypes.filter(function (dataType) {
+                 if (dataType.name === value) {
+                   if (dataType.usage.indexOf(user) === -1) {
+                    dataType.usage.push(user);
+                   }
+                   return true;
+                 }
+                 return false;
+              })[0];
+            });
           })
         }
       );
@@ -56,10 +67,13 @@
         document.title = libdoc.name;
         storage.init('libdoc');
         libdoc.dataTypes = libdoc.dataTypes.enums.concat(libdoc.dataTypes.typedDicts);
+        libdoc.dataTypes = libdoc.dataTypes.map(function(dt) {
+          dt.usage = [];
+          return dt;
+        })
         libdoc.dataTypes.sort(compare)
-        const typeNames = libdoc.dataTypes.map(function (d) {return d.name});
-        linkArgs(libdoc.inits, typeNames);
-        linkArgs(libdoc.keywords, typeNames);
+        linkArgs(libdoc.inits, libdoc.dataTypes, "Importing");
+        linkArgs(libdoc.keywords, libdoc.dataTypes);
         renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length) {
             renderTemplate('importing', libdoc);
@@ -82,9 +96,6 @@
         scrollToHash();
         setTimeout(function() {
           document.getElementById("keyword-statistics-header").innerText = '' + libdoc.keywords.length;
-          if (libdoc.dataTypes.length) {
-            document.getElementById("type-statistics-header").innerText = '' + libdoc.dataTypes.length;
-          }
           if (storage.get('keyword-wall') === 'open') {
             openKeywordWall();
           }
@@ -146,7 +157,10 @@
       document.getElementById('hamburger-menu-input').checked = false;
     }
 
-    function markMatches(pattern, include) {
+    function markMatches(pattern, include, givenSearchTime, callback) {
+       if (givenSearchTime && givenSearchTime !== searchTime) {
+         return;
+       }
         let patternRegexp = util.regexpEscape(pattern);
         if (include.tagsExact) {
             patternRegexp = '^' + patternRegexp + '$';
@@ -165,30 +179,24 @@
                 keywordMatchCount++;
             return kw;
         });
-        let typeMatchCount = 0;
-        result.dataTypes = util.map(libdoc.dataTypes, function (dataType) {
-            dataType = $.extend({}, dataType);
-            dataType.hidden =  !(include.name && test(dataType.name));
-            if (!dataType.hidden)
-                typeMatchCount++;
-            return dataType;
-        });
         renderTemplate('keyword-shortcuts', result);
         renderTemplate('keywords', result);
-        renderTemplate('data-types', result);
         if (libdoc.tags.length) {
           libdoc.selectedTag = include.tagsExact ? pattern : "";
           renderTemplate('tags-shortcuts', libdoc);
         }
         document.getElementById("keyword-statistics-header").innerText = keywordMatchCount + ' / ' + result.keywords.length;
-        if (libdoc.dataTypes.length) {
-          document.getElementById("type-statistics-header").innerText = typeMatchCount + ' / ' + result.dataTypes.length;
-        }
         if (keywordMatchCount === 0)
             $('#keywords-container').find('table').empty();
+        if (callback) {
+          requestAnimationFrame(callback);
+        }
     }
 
-    function highlightMatches(string, include) {
+    function highlightMatches(string, include, givenSearchTime) {
+       if (givenSearchTime && givenSearchTime !== searchTime) {
+         return;
+       }
         const shortcuts = $('#shortcuts-container').find('.match');
         const keywords = $('#keywords-container').find('.match');
         if (include.name) {
@@ -222,16 +230,24 @@
       resetKeywords();
     }
 
+    let searchTime = 0;
+
     function searching() {
+      searchTime = Date.now();
       const value = document.getElementsByClassName('search-input')[0].value;
       const include = {name: true,
                        args: true,
                        doc: true,
                        tags: true};
       if (value) {
-          markMatches(value, include);
-          highlightMatches(value, include);
-          document.getElementById('keyword-shortcuts-container').scrollTop = 0;
+        requestAnimationFrame(function () {
+          markMatches(value, include, searchTime,
+                  function () {
+                    highlightMatches(value, include, searchTime);
+                    document.getElementById('keyword-shortcuts-container').scrollTop = 0;
+                  }
+          );
+        });
       } else {
           resetKeywords();
       }
@@ -355,21 +371,7 @@
                 <div class="arguments-list-container">
                   <div class="arguments-list">
                   {{each args}}
-                    <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
-
-                    {{if $value.default !== null}}
-                      <div class="arg-default-container">
-                        <span class="arg-default-eq">=</span>
-                        <span class="arg-default-value" title="Argument default value">${$value.default}</span>
-                      </div>
-                    {{/if}}
-
-                    {{if $value.types.length}}
-                      <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.types}">
-                        ${( $data.linked = $value.linked ),''}
-                        {{each $value.types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;{{/each}}
-                      </span>
-                    {{/if}}
+                    {{tmpl($value) 'argument-template'}}
                   {{/each}}
                   </div>
                 </div>
@@ -389,7 +391,7 @@
 <script type="text/x-jquery-tmpl" id="shortcuts-template">
     <div class="keywords-overview">
       <div class="keyword-search-box">
-        <input placeholder="Search" type="text" class="search-input" onkeyup="delay(searching, 500)"/>
+        <input placeholder="Search" type="text" class="search-input" onkeydown="delay(searching, 150)"/>
         <button class="clear-search" onclick="clearSearch()">&#10005;</button>
       </div>
       {{if tags.length}}
@@ -398,7 +400,6 @@
       {{/if}}
       <div class="keywords-overview-header-row">
       <h4>Keywords (<span id="keyword-statistics-header"></span>)
-      {{if dataTypes.length}}& <span class="data-type">Types</span> (<span id="type-statistics-header"></span>){{/if}}
       </h4>
       <button id="toggle-keyword-shortcuts" onclick="toggleShortcuts()">+</button>
       </div>
@@ -418,32 +419,12 @@
     </li>
     {{/if}}
     {{/each}}
-    {{each dataTypes}}
-    {{if !$value.hidden}}
-    <li>
-      <a href="#${encodeURIComponent($value.name)}"
-       onclick="closeMenu()"
-       class="data-type match"
-       title="${$value.shortdoc}">${$value.name}</a>
-    </li>
-    {{/if}}
-    {{/each}}
     {{each keywords}}
     {{if $value.hidden}}
     <li>
     <a href="#${encodeURIComponent($value.name)}"
        onclick="closeMenu()"
        class="no-match"
-       title="${$value.shortdoc}">${$value.name}</a>
-    </li>
-    {{/if}}
-    {{/each}}
-    {{each dataTypes}}
-    {{if $value.hidden}}
-    <li>
-      <a href="#${encodeURIComponent($value.name)}"
-       onclick="closeMenu()"
-       class="data-type no-match"
        title="${$value.shortdoc}">${$value.name}</a>
     </li>
     {{/if}}
@@ -491,27 +472,13 @@
                 <div class="arguments-list-container">
                   <div class="arguments-list">
                   {{each args}}
-                    <span class="arg-name {{if $value.required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">{{if $value.kind === 'VAR_POSITIONAL'}}*{{/if}}{{if $value.kind === 'VAR_NAMED'}}**{{/if}}${$value.name}</span>
-
-                    {{if $value.default !== null}}
-                      <div class="arg-default-container">
-                        <span class="arg-default-eq">=</span>
-                        <span class="arg-default-value" title="Argument default value">${$value.default}</span>
-                      </div>
-                    {{/if}}
-
-                    {{if $value.types.length}}
-                      <span class="arg-type" title="Argument '${$value.name}' will be converter to type ${$value.types}">
-                        ${( $data.linked = $value.linked ),''}
-                        {{each $value.types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;<span class="or"></span>{{/each}}
-                      </span>
-                    {{/if}}
+                    {{tmpl($value) 'argument-template'}}
                   {{/each}}
                   </div>
                 </div>
               </div>
             {{/if}}
-            {{if libdoc.tags.length}}
+            {{if libdoc.tags.length && tags.length}}
               <div class="tags">
                 <h4>Tags</h4>
                 {{each tags}}
@@ -531,19 +498,37 @@
     </div>
 </script>
 
+<script type="text/x-jquery-tmpl" id="argument-template">
+<span class="arg-name {{if required}}arg-required{{else}}arg-optional{{/if}}" title="Argument name">
+{{if kind === 'VAR_POSITIONAL'}}<span class="arg-kind" title="Variable number of arguments">*</span>{{/if}}
+{{if kind === 'VAR_NAMED'}}<span class="arg-kind" title="Variable number of named arguments">**</span>{{/if}}
+{{if kind === 'NAMED_ONLY'}}<span class="arg-kind" title="Named only argument">&#x1F3F7;</span>{{/if}}
+{{if kind === 'POSITIONAL_ONLY'}}<span class="arg-kind" title="Positional only argument">&#x27F6;</span>{{/if}}
+${name}
+</span>
+
+{{if defaultValue !== null}}
+  <div class="arg-default-container">
+    <span class="arg-default-eq">=</span>
+    <span class="arg-default-value" title="Default value that is used if no value is given">${defaultValue}</span>
+  </div>
+{{/if}}
+
+{{if types.length}}
+  <span class="arg-type" title="Argument '${name}' will be converter to type ${types}">
+    ${( $data.linked = linked ),''}
+    {{each types}}&lt;{{if $data.linked.indexOf($value) > -1}}<a class="type" href="#${$value}">${$value}</a>{{else}}<span class="type">${$value}</span>{{/if}}&gt;<span class="or"></span>{{/each}}
+  </span>
+{{/if}}
+</script>
+
+
 <script type="text/x-jquery-tmpl" id="data-types-template">
     {{if dataTypes.length}}
     <h2 id="Data types">Data types</h2>
     <div class="data-types">
         {{each dataTypes}}
-        {{if !$value.hidden}}
-            {{tmpl($value) 'data-type-template'}}
-        {{/if}}
-        {{/each}}
-        {{each dataTypes}}
-        {{if $value.hidden}}
-            {{tmpl($value) 'data-type-template'}}
-        {{/if}}
+        {{tmpl($value) 'data-type-template'}}
         {{/each}}
     </div>
     {{/if}}
@@ -590,6 +575,18 @@
             <div class="dt-docs">
               <h4>Documentation</h4>
               <div class="dtdoc doc">{{html doc}}</div>
+            </div>
+          {{/if}}
+          {{if usage}}
+            <div class="dt-usage">
+              <h4>Used in</h4>
+              <ul class="dt-usage-list">
+                {{each usage}}
+                <li>
+                <a href="#${encodeURIComponent($value)}">${$value}</a>
+                </li>
+                {{/each}}
+              </ul>
             </div>
           {{/if}}
        </div>
