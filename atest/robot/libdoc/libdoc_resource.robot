@@ -191,9 +191,8 @@ Keyword Tags Should Be
 
 Specfile Tags Should Be
     [Arguments]    @{expected}
-    ${tags}    Get Elements Texts    ${LIBDOC}    xpath=tags
-    ${tags}    Split String    ${tags}[0]    \n
-    List Should Contain Sub List    ${tags}    ${expected}
+    ${tags}    Get Elements Texts    ${LIBDOC}    xpath=tags/tag
+    Should Be Equal    ${tags}    ${expected}
 
 Keyword Source Should Be
     [Arguments]    ${index}    ${source}    ${xpath}=keywords/kw

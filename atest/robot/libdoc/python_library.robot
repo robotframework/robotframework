@@ -32,11 +32,6 @@ Source info
 Spec version
     Spec version should be correct
 
-Library Tags
-    [Documentation]    Telnet Library does not have keyword tags, 
-    ...    thus library does not have them too. 
-    Specfile Tags Should Be    ${EMPTY}
-
 Init Documentation
     Init Doc Should Start With       0
     ...    Telnet library can be imported with optional configuration parameters.\n\n
