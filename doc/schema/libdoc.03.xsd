@@ -6,13 +6,7 @@
         <xs:sequence>
             <xs:element name="version" type="xs:string" />
             <xs:element name="doc" type="xs:string" />
-            <xs:element name="tags">
-               <xs:complexType>
-                   <xs:sequence>
-                       <xs:element type="xs:string" name="tag" minOccurs="0" maxOccurs="unbounded"/>
-                   </xs:sequence>
-               </xs:complexType>
-            </xs:element>
+            <xs:element name="tags" type="Tags" minOccurs="0" />
             <xs:element name="inits" type="Inits" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="keywords" type="Keywords" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="datatypes" type="DataTypes" minOccurs="0" maxOccurs="unbounded" />

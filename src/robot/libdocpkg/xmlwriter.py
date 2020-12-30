@@ -24,7 +24,6 @@ class LibdocXmlWriter(object):
     def write(self, libdoc, outfile):
         writer = XmlWriter(outfile, usage='Libdoc spec')
         self._write_start(libdoc, writer)
-        self._write_tags(libdoc.all_tags, writer)
         self._write_keywords('inits', 'init', libdoc.inits, libdoc.source, writer)
         self._write_keywords('keywords', 'kw', libdoc.keywords, libdoc.source, writer)
         self._write_data_types(libdoc.data_types, writer)
@@ -42,6 +41,7 @@ class LibdocXmlWriter(object):
         writer.start('keywordspec', attrs)
         writer.element('version', libdoc.version)
         writer.element('doc', libdoc.doc)
+        self._write_tags(libdoc.all_tags, writer)
 
     def _add_source_info(self, attrs, item, outfile, lib_source=None):
         if item.source and item.source != lib_source:

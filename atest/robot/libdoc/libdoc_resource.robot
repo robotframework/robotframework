@@ -189,8 +189,8 @@ Keyword Tags Should Be
     ${tags}=   Get Elements Texts    ${kws}[${index}]    xpath=tags/tag
     Should Be Equal    ${tags}    ${expected}
 
-Resource Tags Should Be
-    [Arguments]    ${index}    @{expected}
+Specfile Tags Should Be
+    [Arguments]    @{expected}
     ${tags}    Get Elements Texts    ${LIBDOC}    xpath=tags
     ${tags}    Split String    ${tags}[0]    \n
     List Should Contain Sub List    ${tags}    ${expected}

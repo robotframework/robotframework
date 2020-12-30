@@ -41,6 +41,10 @@ Source Info
 Spec version
     Spec version should be correct
 
+Resource Tags
+    Specfile Tags Should Be          ?!?!??    Has    kw4    tags    \${3}
+    ...                              a         b      bar    dar     foo
+
 Resource Has No Inits
     Should Have No Init
 
@@ -99,9 +103,6 @@ Keyword tags
     Keyword Tags Should Be          7    ?!?!??    Has    kw4    tags
     Keyword Tags Should Be          8    \${3}   a    b
     Keyword Tags Should Be          9    bar    dar    foo
-
-Resource tags
-    Resource Tags Should Be          ?!?!??    Has    kw4    tags    \${3}   a    b    bar    dar    foo
 
 Non ASCII
     Keyword Doc Should Be           10    Hyvää yötä.\n\nСпасибо!
