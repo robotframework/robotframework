@@ -119,6 +119,11 @@ def _lose_width(text, diff):
 
 
 def split_args_from_name_or_path(name):
+    """Split arguments embedded to name or path like ``Example:arg1:arg2``.
+
+    The separator can be either colon ``:`` or semicolon ``;``. If both are used,
+    the first one is considered to be the separator.
+    """
     if os.path.exists(name):
         return os.path.abspath(name), []
     index = _get_arg_separator_index_from_name_or_path(name)
