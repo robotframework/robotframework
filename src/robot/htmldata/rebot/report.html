@@ -84,6 +84,16 @@ function addDetails() {
 
 function addCustomSortersForDetails() {
     $.tablesorter.addParser({
+        id: 'status',
+        type: 'numeric',
+        is: function(s) {
+            return false;  // do not auto-detect
+        },
+        format: function(s) {
+            return {'FAIL': -1, 'SKIP': 0, 'PASS': 1}[s];
+        }
+    });
+    $.tablesorter.addParser({
         id: 'times',
         type: 'text',
         is: function(s) {
@@ -283,9 +293,10 @@ function renderTestDetailsHeader() {
 }
 
 function sortByStatus(t1, t2) {
-    if (t1.status != t2.status)
-        return t1.status == 'FAIL' ? -1 : 1;
-    return t1.fullName < t2.fullName ? -1 : 1;
+    if (t1.status == t2.status)
+        return t1.fullName < t2.fullName ? -1 : 1;
+    statuses = {'FAIL': -1, 'SKIP': 0, 'PASS': 1};
+    return statuses[t1.status] < statuses[t2.status] ? -1 : 1;
 }
 
 function getTestsHavingTag(tag) {
@@ -334,8 +345,8 @@ function renderTestDetailsRows(tests, target) {
 }
 
 function configureTableSorter(sortByStatus) {
-  // FIXME: define sorting by status, PASS, SKIP, FAIL
-    var config = {headers: {5: {sortInitialOrder: 'desc'},
+    var config = {headers: {3: {sorter: 'status},
+                            5: {sortInitialOrder: 'desc'},
                             6: {sorter: 'times'}},
                   selectorSort: '.details-col-header'};
     if (sortByStatus)
