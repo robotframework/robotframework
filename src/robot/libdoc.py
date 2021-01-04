@@ -220,15 +220,14 @@ class LibDoc(Application):
         return format
 
 
-def libdoc_cli(arguments=None):
+def libdoc_cli(arguments=None, exit=True):
     """Executes Libdoc similarly as from the command line.
 
     :param arguments: Command line options and arguments as a list of strings.
         Starting from RF 4.0, defaults to ``sys.argv[1:]`` if not given.
+    :param exit: If ``True``, call ``sys.exit`` automatically. New in RF 4.0.
 
-    For programmatic usage the :func:`libdoc` function is typically better. It
-    has a better API for that usage and does not call :func:`sys.exit` like
-    this function.
+    The :func:`libdoc` function may work better in programmatic usage.
 
     Example::
 
@@ -238,7 +237,7 @@ def libdoc_cli(arguments=None):
     """
     if arguments is None:
         arguments = sys.argv[1:]
-    LibDoc().execute_cli(arguments)
+    LibDoc().execute_cli(arguments, exit=exit)
 
 
 def libdoc(library_or_resource, outfile, name='', version='', format=None,
