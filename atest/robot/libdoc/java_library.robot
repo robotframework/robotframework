@@ -32,6 +32,9 @@ Source Info
 Spec version
     Spec version should be correct
 
+Library Tags
+    Specfile Tags Should Be          bar    foo
+
 Init Documentation
     Init Doc Should Start With       0    Creates new Example test library 1
     Init Doc Should Start With       1    Creates new Example test library 2
