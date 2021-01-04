@@ -482,9 +482,6 @@ function hideHiddenDetailsColumns(elem) {
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">{{= testOrTask('{Test}')}} Details</h2>
   <ul id="detail-tabs">
-    <li class="${searchTabStatus} detail-tab">
-      <a href="#search" onclick="renderSearchSelector()">Search</a>
-    </li>
     <li class="${totalTabStatus} detail-tab">
       <a href="#totals" onclick="renderTotalSelector()">Totals</a>
     </li>
@@ -493,6 +490,9 @@ function hideHiddenDetailsColumns(elem) {
     </li>
     <li class="${suiteTabStatus} detail-tab">
       <a href="#suites" onclick="renderSuiteSelector()">Suites</a>
+    </li>
+    <li class="${searchTabStatus} detail-tab">
+      <a href="#search" onclick="renderSearchSelector()">Search</a>
     </li>
   </ul>
 </script>
@@ -510,11 +510,11 @@ function hideHiddenDetailsColumns(elem) {
 <script  type="text/x-jquery-tmpl" id="tagDetailsSelectorTemplate">
   <table class="details" id="details-header">
     <tr class="selector">
-      <th>Name:</th>
+      <th>Tag:</th>
       <td id="normal-selector">
         <select id="tag-detail-selector"
                 onchange="tagDetailSelected(this.options[this.selectedIndex].value)">
-          <option value="">Select tag...</option>
+          <option selected disabled hidden>-- Select --</option>
           {{each tags}}
           <option value="${$value.label}"
                   {{if $value.label == selected}}selected="selected"{{/if}}>
@@ -531,11 +531,11 @@ function hideHiddenDetailsColumns(elem) {
 <script  type="text/x-jquery-tmpl" id="suiteDetailsSelectorTemplate">
   <table class="details" id="details-header">
     <tr class="selector">
-      <th>Name:</th>
+      <th>Suite:</th>
       <td id="normal-selector">
         <select id="suite-detail-selector"
                 onchange="suiteDetailSelected(this.options[this.selectedIndex].value)">
-          <option value="">Select suite...</option>
+          <option selected disabled hidden>-- Select --</option>
           {{each suites}}
           <option value="${$value.id}"
                   {{if $value.id == selected}}selected="selected"{{/if}}>
