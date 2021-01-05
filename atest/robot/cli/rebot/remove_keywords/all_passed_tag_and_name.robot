@@ -40,8 +40,8 @@ Passed Mode
     ${tc1} =    Check Test Case    Pass
     ${tc2} =    Check Test Case    Fail
     Length Should Be    ${tc1.kws}    1
-    Keyword Should Be Empty    ${tc1.keywords[0]}    My Keyword    Pass
-    Keyword Should Contain Removal Message     ${tc1.keywords[0]}
+    Keyword Should Be Empty    ${tc1.body[0]}    My Keyword    Pass
+    Keyword Should Contain Removal Message     ${tc1.body[0]}
     Length Should Be    ${tc2.kws}    2
     Keyword Should Not Be Empty    ${tc2.kws[0]}    My Keyword    Fail
     Keyword Should Not Be Empty    ${tc2.kws[1]}    BuiltIn.Fail    Expected failure

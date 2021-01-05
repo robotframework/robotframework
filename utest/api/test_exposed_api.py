@@ -72,7 +72,6 @@ class TestModelObjects(unittest.TestCase):
         assert_true(result.TestSuite)
         assert_true(result.TestCase)
         assert_true(result.Keyword)
-        assert_true(result.Message)
 
 
 class TestTestSuiteBuilder(unittest.TestCase):

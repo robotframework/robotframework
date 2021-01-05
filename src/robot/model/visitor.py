@@ -109,7 +109,7 @@ class SuiteVisitor(object):
         calling :func:`start_test` or :func:`end_test` nor visiting keywords.
         """
         if self.start_test(test) is not False:
-            test.keywords.visit(self)
+            test.body.visit(self)
             self.end_test(test)
 
     def start_test(self, test):
@@ -131,8 +131,8 @@ class SuiteVisitor(object):
         child keywords.
         """
         if self.start_keyword(kw) is not False:
-            if hasattr(kw, 'keywords'):
-                kw.keywords.visit(self)
+            if hasattr(kw, 'body'):
+                kw.body.visit(self)
             if hasattr(kw, 'messages'):
                 kw.messages.visit(self)
             self.end_keyword(kw)
