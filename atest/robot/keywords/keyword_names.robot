@@ -34,7 +34,7 @@ Resource File User Keyword Names In Test Case File User Keyword
 
 Base Keyword Names In Test Case File User Keyword
     ${test} =    Check Test Case    Base Keyword Names In Test Case File User Keyword
-    Check Name and Three Keyword Names    ${test.keywords[0]}    Using Base Keywords    MyLibrary1.Keyword Only In Library 1
+    Check Name and Three Keyword Names    ${test.body[0]}    Using Base Keywords    MyLibrary1.Keyword Only In Library 1
     Should Be Equal    ${test.body[1].name}    Using Base Keywords Nested
     Check Name and Three Keyword Names    ${test.body[1].body[0]}    Using Base Keywords    MyLibrary1.Keyword Only In Library 1
     Check Name and Three Keyword Names    ${test.body[1].body[1]}    Using Base Keywords    MyLibrary1.Keyword Only In Library 1
@@ -51,7 +51,7 @@ Resource File User Keyword Names In Resource File User Keyword
 
 Base Keyword Names In Resource File User Keyword
     ${test} =    Check Test Case    Base Keyword Names In Resource File User Keyword
-    Check Name and Three Keyword Names    ${test.keywords[0]}    my_resource_1.Using Base Keywords In Resource    MyLibrary1.Keyword Only In Library 1
+    Check Name and Three Keyword Names    ${test.body[0]}    my_resource_1.Using Base Keywords In Resource    MyLibrary1.Keyword Only In Library 1
 
 User Keyword Name Containing Dots
     Check Test And Three Keyword Names    User Keyword Name Containing Dots    User Keyword.Name

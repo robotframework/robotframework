@@ -251,7 +251,7 @@ def process_test(test):
         process_keyword(test.setup)
     if test.teardown:
         process_keyword(test.teardown)
-    test.keywords = test.kws = list(test.body)
+    test.kws = list(test.body)
     test.keyword_count = test.kw_count = len(test.body)
 
 
