@@ -108,17 +108,23 @@ class TestBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, test):
-        if test.setup:
-            test.body.insert(0, test.setup)
-        if test.teardown:
-            test.body.append(test.teardown)
+        kws = self._get_keywords(test)
         with self._context.prune_input(test.body):
             return (self._string(test.name, attr=True),
                     self._string(test.timeout),
                     self._html(test.doc),
                     tuple(self._string(t) for t in test.tags),
                     self._get_status(test),
-                    self._build_keywords(test.body, split=True))
+                    self._build_keywords(kws, split=True))
+
+    def _get_keywords(self, test):
+        kws = []
+        if test.setup:
+            kws.append(test.setup)
+        kws.extend(test.body)
+        if test.teardown:
+            kws.append(test.teardown)
+        return kws
 
 
 class KeywordBuilder(_Builder):
@@ -132,8 +138,9 @@ class KeywordBuilder(_Builder):
 
     def build(self, kw, split=False):
         self._context.check_expansion(kw)
+        kws = list(kw.body)
         if kw.teardown:
-            kw.body.append(kw.teardown)
+            kws.append(kw.teardown)
         with self._context.prune_input(kw.messages, kw.body):
             return (self._types[kw.type],
                     self._string(kw.kwname, attr=True),
@@ -144,7 +151,7 @@ class KeywordBuilder(_Builder):
                     self._string(', '.join(kw.assign)),
                     self._string(', '.join(kw.tags)),
                     self._get_status(kw),
-                    self._build_keywords(kw.body, split),
+                    self._build_keywords(kws, split),
                     tuple(self._build_message(m) for m in kw.messages))
 
 

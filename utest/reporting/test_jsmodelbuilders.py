@@ -320,7 +320,11 @@ class TestPruneInput(unittest.TestCase):
         s1 = self.suite.suites.create()
         s1.setup.config(kwname='s1')
         tc = s1.tests.create()
+        tc.setup.config(kwname='tcs')
+        tc.teardown.config(kwname='tct')
         tc.body = [Keyword(), Keyword(), Keyword()]
+        tc.body[0].body = [Keyword(), Keyword()]
+        tc.body[0].teardown.config(kwname='kt')
         s2 = self.suite.suites.create()
         t1 = s2.tests.create()
         t2 = s2.tests.create()
@@ -329,11 +333,15 @@ class TestPruneInput(unittest.TestCase):
 
     def test_prune_input_false(self):
         SuiteBuilder(JsBuildingContext(prune_input=False)).build(self.suite)
-        assert_true(bool(self.suite.setup))
-        assert_true(bool(self.suite.teardown))
-        assert_true(bool(self.suite.suites[0].setup))
-        assert_false(bool(self.suite.suites[0].teardown))
+        assert_equal(self.suite.setup.kwname, 's')
+        assert_equal(self.suite.teardown.kwname, 't')
+        assert_equal(self.suite.suites[0].setup.kwname, 's1')
+        assert_equal(self.suite.suites[0].teardown.kwname, '')
+        assert_equal(self.suite.suites[0].tests[0].setup.kwname, 'tcs')
+        assert_equal(self.suite.suites[0].tests[0].teardown.kwname, 'tct')
         assert_equal(len(self.suite.suites[0].tests[0].body), 3)
+        assert_equal(len(self.suite.suites[0].tests[0].body[0].body), 2)
+        assert_equal(self.suite.suites[0].tests[0].body[0].teardown.kwname, 'kt')
         assert_equal(len(self.suite.suites[1].tests[0].body), 1)
         assert_equal(len(self.suite.suites[1].tests[1].body), 2)
 
