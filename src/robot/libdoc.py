@@ -44,12 +44,12 @@ from robot.errors import DataError
 from robot.libdocpkg import LibraryDocumentation, ConsoleViewer
 
 
-USAGE = """robot.libdoc -- Robot Framework library documentation generator
+USAGE = """Libdoc -- Robot Framework library documentation generator
 
 Version:  <VERSION>
 
-Usage:  python -m robot.libdoc [options] library output_file
-   or:  python -m robot.libdoc [options] library list|show|version [names]
+Usage:  libdoc [options] library_or_resource output_file
+   or:  libdoc [options] library_or_resource list|show|version [names]
 
 Libdoc can generate documentation for Robot Framework libraries and resource
 files. It can generate HTML documentation for humans as well as machine
@@ -61,7 +61,15 @@ and JSON specs can be used as input. If a library needs arguments, they must be
 given as part of the library name and separated by two colons, for example,
 like `LibraryName::arg1::arg2`.
 
-The support for the JSON spec files is new in Robot Framework 4.0.
+The easiest way to run Libdoc is using the `libdoc` command created as part of
+the normal installation. Alternatively it is possible to execute the
+`robot.libdoc` module directly like `python -m robot.libdoc`, where `python`
+can be replaced with any supported Python interpreter such as `jython`, `ipy`
+or `python3`. Yet another alternative is running the module as a script like
+`python path/to/robot/libdoc.py`.
+
+The separate `libdoc` command and the support for JSON spec files are new in
+Robot Framework 4.0.
 
 Options
 =======
@@ -108,12 +116,12 @@ the `--format` option.
 
 Examples:
 
-  python -m robot.libdoc src/MyLibrary.py doc/MyLibrary.html
-  jython -m robot.libdoc MyLibrary.java MyLibrary.html
-  python -m robot.libdoc src/MyLibrary.py doc/MyLibrary.json
-  python -m robot.libdoc doc/MyLibrary.json doc/MyLibrary.html
-  python -m robot.libdoc --name MyLibrary Remote::10.0.0.42:8270 MyLibrary.xml
-  python -m robot.libdoc MyLibrary MyLibrary.libspec
+  libdoc src/MyLibrary.py doc/MyLibrary.html
+  python -m robot.libdoc MyLibrary.java MyLibrary.html
+  jython -m robot.libdoc src/MyLibrary.py doc/MyLibrary.json
+  libdoc doc/MyLibrary.json doc/MyLibrary.html
+  libdoc --name MyLibrary Remote::10.0.0.42:8270 MyLibrary.xml
+  libdoc MyLibrary MyLibrary.libspec
 
 Viewing information on console
 ==============================
@@ -136,12 +144,12 @@ Both also accept `*` and `?` as wildcards.
 
 Examples:
 
-  python -m robot.libdoc Dialogs list
-  python -m robot.libdoc SeleniumLibrary list browser
-  python -m robot.libdoc Remote::10.0.0.42:8270 show
-  python -m robot.libdoc Dialogs show PauseExecution execute*
-  python -m robot.libdoc SeleniumLibrary show intro
-  python -m robot.libdoc SeleniumLibrary version
+  libdoc Dialogs list
+  libdoc SeleniumLibrary list browser
+  libdoc Remote::10.0.0.42:8270 show
+  libdoc Dialogs show PauseExecution execute*
+  libdoc SeleniumLibrary show intro
+  libdoc SeleniumLibrary version
 
 Alternative execution
 =====================
@@ -212,22 +220,24 @@ class LibDoc(Application):
         return format
 
 
-def libdoc_cli(arguments):
+def libdoc_cli(arguments=None, exit=True):
     """Executes Libdoc similarly as from the command line.
 
-    :param arguments: Command line arguments as a list of strings.
+    :param arguments: Command line options and arguments as a list of strings.
+        Starting from RF 4.0, defaults to ``sys.argv[1:]`` if not given.
+    :param exit: If ``True``, call ``sys.exit`` automatically. New in RF 4.0.
 
-    For programmatic usage the :func:`libdoc` function is typically better. It
-    has a better API for that usage and does not call :func:`sys.exit` like
-    this function.
+    The :func:`libdoc` function may work better in programmatic usage.
 
     Example::
 
         from robot.libdoc import libdoc_cli
 
-        libdoc_cli(['--version', '1.0', 'MyLibrary.py', 'MyLibraryDoc.html'])
+        libdoc_cli(['--version', '1.0', 'MyLibrary.py', 'MyLibrary.html'])
     """
-    LibDoc().execute_cli(arguments)
+    if arguments is None:
+        arguments = sys.argv[1:]
+    LibDoc().execute_cli(arguments, exit=exit)
 
 
 def libdoc(library_or_resource, outfile, name='', version='', format=None,
@@ -255,15 +265,15 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None,
     :param quiet: When true, the path of the generated output file is not
         printed the console. New in Robot Framework 4.0.
 
-    Arguments have same semantics as Libdoc command line options with
-    same names. Run ``python -m robot.libdoc --help`` or consult the Libdoc
-    section in the Robot Framework User Guide for more details.
+    Arguments have same semantics as Libdoc command line options with same names.
+    Run ``libdoc --help`` or consult the Libdoc section in the Robot Framework
+    User Guide for more details.
 
     Example::
 
         from robot.libdoc import libdoc
 
-        libdoc('MyLibrary.py', 'MyLibraryDoc.html', version='1.0')
+        libdoc('MyLibrary.py', 'MyLibrary.html', version='1.0')
     """
     return LibDoc().execute(
         library_or_resource, outfile, name=name, version=version, format=format,

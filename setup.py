@@ -64,5 +64,6 @@ setup(
     package_data = {'robot': PACKAGE_DATA},
     packages     = find_packages('src'),
     entry_points = {'console_scripts': ['robot = robot.run:run_cli',
-                                        'rebot = robot.rebot:rebot_cli']}
+                                        'rebot = robot.rebot:rebot_cli',
+                                        'libdoc = robot.libdoc:libdoc_cli']}
 )

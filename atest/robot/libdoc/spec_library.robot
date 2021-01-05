@@ -31,6 +31,9 @@ Source info
 Spec version
     Spec version should be correct
 
+Library Tags
+    Specfile Tags Should Be          tag1    tag2
+
 Init Documentation
     Init Doc Should Be             0    Creates new Example test library 1
     Init Doc Should Be             1    Creates new Example test library 2

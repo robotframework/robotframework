@@ -30,7 +30,7 @@
   <h1>Opening Robot Framework report failed</h1>
   <ul>
     <li>Verify that you have <b>JavaScript enabled</b> in your browser.</li>
-    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 8 or newer is required.</li>
+    <li>Make sure you are using a <b>modern enough browser</b>. If using Internet Explorer, version 11 is required.</li>
     <li>Check are there messages in your browser's <b>JavaScript error log</b>. Please report the problem if you suspect you have encountered a bug.</li>
   </ul>
 </div>
@@ -83,6 +83,16 @@ function addDetails() {
 }
 
 function addCustomSortersForDetails() {
+    $.tablesorter.addParser({
+        id: 'status',
+        type: 'numeric',
+        is: function(s) {
+            return false;  // do not auto-detect
+        },
+        format: function(s) {
+            return {'FAIL': -1, 'SKIP': 0, 'PASS': 1}[s];
+        }
+    });
     $.tablesorter.addParser({
         id: 'times',
         type: 'text',
@@ -283,9 +293,10 @@ function renderTestDetailsHeader() {
 }
 
 function sortByStatus(t1, t2) {
-    if (t1.status != t2.status)
-        return t1.status == 'FAIL' ? -1 : 1;
-    return t1.fullName < t2.fullName ? -1 : 1;
+    if (t1.status == t2.status)
+        return t1.fullName < t2.fullName ? -1 : 1;
+    statuses = {'FAIL': -1, 'SKIP': 0, 'PASS': 1};
+    return statuses[t1.status] < statuses[t2.status] ? -1 : 1;
 }
 
 function getTestsHavingTag(tag) {
@@ -334,8 +345,8 @@ function renderTestDetailsRows(tests, target) {
 }
 
 function configureTableSorter(sortByStatus) {
-  // FIXME: define sorting by status, PASS, SKIP, FAIL
-    var config = {headers: {5: {sortInitialOrder: 'desc'},
+    var config = {headers: {3: {sorter: 'status'},
+                            5: {sortInitialOrder: 'desc'},
                             6: {sorter: 'times'}},
                   selectorSort: '.details-col-header'};
     if (sortByStatus)
@@ -471,9 +482,6 @@ function hideHiddenDetailsColumns(elem) {
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">{{= testOrTask('{Test}')}} Details</h2>
   <ul id="detail-tabs">
-    <li class="${searchTabStatus} detail-tab">
-      <a href="#search" onclick="renderSearchSelector()">Search</a>
-    </li>
     <li class="${totalTabStatus} detail-tab">
       <a href="#totals" onclick="renderTotalSelector()">Totals</a>
     </li>
@@ -482,6 +490,9 @@ function hideHiddenDetailsColumns(elem) {
     </li>
     <li class="${suiteTabStatus} detail-tab">
       <a href="#suites" onclick="renderSuiteSelector()">Suites</a>
+    </li>
+    <li class="${searchTabStatus} detail-tab">
+      <a href="#search" onclick="renderSearchSelector()">Search</a>
     </li>
   </ul>
 </script>
@@ -499,11 +510,11 @@ function hideHiddenDetailsColumns(elem) {
 <script  type="text/x-jquery-tmpl" id="tagDetailsSelectorTemplate">
   <table class="details" id="details-header">
     <tr class="selector">
-      <th>Name:</th>
+      <th>Tag:</th>
       <td id="normal-selector">
         <select id="tag-detail-selector"
                 onchange="tagDetailSelected(this.options[this.selectedIndex].value)">
-          <option value="">Select tag...</option>
+          <option selected disabled hidden>-- Select --</option>
           {{each tags}}
           <option value="${$value.label}"
                   {{if $value.label == selected}}selected="selected"{{/if}}>
@@ -520,11 +531,11 @@ function hideHiddenDetailsColumns(elem) {
 <script  type="text/x-jquery-tmpl" id="suiteDetailsSelectorTemplate">
   <table class="details" id="details-header">
     <tr class="selector">
-      <th>Name:</th>
+      <th>Suite:</th>
       <td id="normal-selector">
         <select id="suite-detail-selector"
                 onchange="suiteDetailSelected(this.options[this.selectedIndex].value)">
-          <option value="">Select suite...</option>
+          <option selected disabled hidden>-- Select --</option>
           {{each suites}}
           <option value="${$value.id}"
                   {{if $value.id == selected}}selected="selected"{{/if}}>

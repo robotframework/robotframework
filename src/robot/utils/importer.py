@@ -35,7 +35,10 @@ if JYTHON:
 
 
 class Importer(object):
-    """Utility that can import modules and classes based on names and paths."""
+    """Utility that can import modules and classes based on names and paths.
+
+    Imported classes can optionally be instantiated automatically.
+    """
 
     def __init__(self, type=None, logger=None):
         """
@@ -75,6 +78,16 @@ class Importer(object):
         ``modulename.ClassName``. If the class name and module name are same, using
         just ``CommonName`` is enough. When importing a class by a path, the class
         name and the module name must match.
+
+        Optional arguments to use when creating an instance are given as a list.
+        Starting from Robot Framework 4.0, both positional and named arguments are
+        supported (e.g. ``['positional', 'name=value']``) and arguments are converted
+        automatically based on type hints and default values.
+
+        If arguments needed when creating an instance are initially embedded into
+        the name or path like ``Example:arg1:arg2``, separate
+        :func:`~robot.utils.text.split_args_from_name_or_path` function can be
+        used to split them before calling this method.
         """
         try:
             imported, source = self._import_class_or_module(name_or_path)
@@ -124,6 +137,10 @@ class Importer(object):
         actual file must also exist. When importing Java classes, the path must
         end with :file:`.java` or :file:`.class`. The Java class file must exist
         in both cases and in the former case also the source file must exist.
+
+        Use :meth:`import_class_or_module` to support importing also using name,
+        not only path. See the documentation of that function for more information
+        about creating instances automatically.
         """
         try:
             imported, source = self._by_path_importer.import_(path)
