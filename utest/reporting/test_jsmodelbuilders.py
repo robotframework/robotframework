@@ -5,9 +5,9 @@ from os.path import abspath, basename, dirname, join
 
 from robot.utils.asserts import assert_equal, assert_true
 from robot.utils.platform import PY2
-from robot.result import Message, Keyword, TestCase, TestSuite
+from robot.result import Keyword, TestCase, TestSuite
 from robot.result.executionerrors import ExecutionErrors
-from robot.model import Statistics
+from robot.model import Message, Statistics
 from robot.reporting.jsmodelbuilders import *
 from robot.reporting.stringcache import StringIndex
 

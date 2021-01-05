@@ -67,16 +67,15 @@ class Keyword(ModelObject):
     def name(self, name):
         self._name = name
 
-    @property
+    @property    # Cannot use @setter because it would create teardowns recursively.
     def teardown(self):
         if self._teardown is None:
-            self._teardown = (self.keyword_class or self.__class__)(
-                parent=self, type=self.TEARDOWN_TYPE)
+            self._teardown = create_fixture(None, self, self.TEARDOWN_TYPE)
         return self._teardown
 
     @teardown.setter
-    def teardown(self, td):
-        self._teardown = create_fixture(td, self,type=self.TEARDOWN_TYPE)
+    def teardown(self, teardown):
+        self._teardown = create_fixture(teardown, self, self.TEARDOWN_TYPE)
 
     @setter
     def parent(self, parent):

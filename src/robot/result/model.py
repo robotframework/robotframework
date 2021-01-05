@@ -47,18 +47,6 @@ from .suiteteardownfailed import (SuiteTeardownFailureHandler,
                                   SuiteTeardownFailed)
 
 
-# TODO: Should remove model.Message altogether and just implement the whole
-# thing here. Additionally model.Keyword should not have `message_class` at
-# all or it should be None.
-
-class Message(model.Message):
-    """Represents a single log message.
-
-    See the base class for documentation of attributes not documented here.
-    """
-    __slots__ = []
-
-
 class Keyword(model.Keyword):
     """Represents results of a single keyword.
 
@@ -66,8 +54,6 @@ class Keyword(model.Keyword):
     """
     __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message',
                  'lineno', 'source']
-    keyword_class = None        #: Internal usage only.
-    message_class = Message     #: Internal usage only.
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(), tags=(),
                  timeout=None, type='kw', status='FAIL', starttime=None, endtime=None,
@@ -94,7 +80,7 @@ class Keyword(model.Keyword):
     @setter
     def body(self, body):
         """Child keywords as a :class:`~.Body` object."""
-        return Body(self.keyword_class or self.__class__, self, body)
+        return Body(self.__class__, self, body)
 
     @property
     def keywords(self):
@@ -112,7 +98,7 @@ class Keyword(model.Keyword):
     @setter
     def messages(self, messages):
         """Messages as a :class:`~.model.message.Messages` object."""
-        return Messages(self.message_class, self, messages)
+        return Messages(parent=self, messages=messages)
 
     @property
     def children(self):

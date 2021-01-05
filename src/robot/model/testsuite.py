@@ -45,9 +45,8 @@ class TestSuite(ModelObject):
         self.rpa = rpa
         self.suites = None
         self.tests = None
-        self.setup = self.keyword_class(parent=self, type=Keyword.SETUP_TYPE)
-        self.teardown = self.keyword_class(parent=self,
-                                           type=Keyword.TEARDOWN_TYPE)
+        self.setup = None
+        self.teardown = None
         self._my_visitors = []
 
     @property
