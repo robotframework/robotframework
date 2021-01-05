@@ -77,7 +77,7 @@ class SuiteBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, suite):
-        with self._context.prune_input(suite):
+        with self._context.prune_input(suite.tests, suite.suites):
             stats = self._get_statistics(suite)  # Must be done before pruning
             kws = [kw for kw in (suite.setup, suite.teardown) if kw]
             return (self._string(suite.name, attr=True),

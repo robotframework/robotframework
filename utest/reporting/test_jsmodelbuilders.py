@@ -3,7 +3,7 @@ import unittest
 import zlib
 from os.path import abspath, basename, dirname, join
 
-from robot.utils.asserts import assert_equal, assert_true, assert_false
+from robot.utils.asserts import assert_equal, assert_true
 from robot.utils.platform import PY2
 from robot.result import Message, Keyword, TestCase, TestSuite
 from robot.result.executionerrors import ExecutionErrors
@@ -324,6 +324,7 @@ class TestPruneInput(unittest.TestCase):
         tc.teardown.config(kwname='tct')
         tc.body = [Keyword(), Keyword(), Keyword()]
         tc.body[0].body = [Keyword(), Keyword()]
+        tc.body[0].messages = [Message(), Message(), Message()]
         tc.body[0].teardown.config(kwname='kt')
         s2 = self.suite.suites.create()
         t1 = s2.tests.create()
@@ -331,7 +332,7 @@ class TestPruneInput(unittest.TestCase):
         t1.body = [Keyword()]
         t2.body = [Keyword(), Keyword()]
 
-    def test_prune_input_false(self):
+    def test_no_pruning(self):
         SuiteBuilder(JsBuildingContext(prune_input=False)).build(self.suite)
         assert_equal(self.suite.setup.kwname, 's')
         assert_equal(self.suite.teardown.kwname, 't')
@@ -341,16 +342,40 @@ class TestPruneInput(unittest.TestCase):
         assert_equal(self.suite.suites[0].tests[0].teardown.kwname, 'tct')
         assert_equal(len(self.suite.suites[0].tests[0].body), 3)
         assert_equal(len(self.suite.suites[0].tests[0].body[0].body), 2)
+        assert_equal(len(self.suite.suites[0].tests[0].body[0].messages), 3)
         assert_equal(self.suite.suites[0].tests[0].body[0].teardown.kwname, 'kt')
         assert_equal(len(self.suite.suites[1].tests[0].body), 1)
         assert_equal(len(self.suite.suites[1].tests[1].body), 2)
 
-    def test_prune_input_true(self):
-        SuiteBuilder(JsBuildingContext(prune_input=True)).build(self.suite)
-        assert_false(bool(self.suite.setup))
-        assert_false(bool(self.suite.teardown))
-        assert_equal(len(self.suite.suites), 0)
-        assert_equal(len(self.suite.tests), 0)
+    def test_prune_suites_from_suite(self):
+        suite = self.suite
+        assert_equal(len(suite.suites), 2)
+        assert_equal(len(suite.tests), 0)
+        SuiteBuilder(JsBuildingContext(prune_input=True)).build(suite)
+        assert_equal(len(suite.suites), 0)
+        assert_equal(len(suite.tests), 0)
+
+    def test_prune_test_from_suite(self):
+        suite = self.suite.suites[0]
+        assert_equal(len(suite.suites), 0)
+        assert_equal(len(suite.tests), 1)
+        SuiteBuilder(JsBuildingContext(prune_input=True)).build(suite)
+        assert_equal(len(suite.suites), 0)
+        assert_equal(len(suite.tests), 0)
+
+    def test_prune_test(self):
+        test = self.suite.suites[0].tests[0]
+        assert_equal(len(test.body), 3)
+        TestBuilder(JsBuildingContext(prune_input=True)).build(test)
+        assert_equal(len(test.body), 0)
+
+    def test_prune_keyword(self):
+        kw = self.suite.suites[0].tests[0].body[0]
+        assert_equal(len(kw.body), 2)
+        assert_equal(len(kw.messages), 3)
+        KeywordBuilder(JsBuildingContext(prune_input=True)).build(kw)
+        assert_equal(len(kw.body), 0)
+        assert_equal(len(kw.messages), 0)
 
     def test_prune_errors(self):
         errors = ExecutionErrors([Message(), Message()])
