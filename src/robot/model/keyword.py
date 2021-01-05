@@ -121,54 +121,36 @@ class Keyword(ModelObject):
 class Keywords(ItemList):
     """A list-like object representing keywords in a suite, a test or a keyword.
 
-    Possible setup and teardown keywords are directly available as
-    :attr:`setup` and :attr:`teardown` attributes.
+    Deprecated since Robot Framework 4.0.
     """
     __slots__ = []
 
     def __init__(self, keyword_class=Keyword, parent=None, keywords=None):
-        warnings.warn(
-            '`keywords` property has been deprecated in Robot Framework 4.0',
-            UserWarning)
+        warnings.warn('`keywords` property has been deprecated in Robot Framework 4.0.',
+                      UserWarning)
         ItemList.__init__(self, keyword_class, {'parent': parent}, keywords)
 
     @property
     def setup(self):
-        """Keyword used as the setup or ``None`` if no setup.
-
-        Can be set to a new setup keyword or ``None`` since RF 3.0.1.
-        """
         return self[0] if (self and self[0].type == 'setup') else None
 
     @setup.setter
     def setup(self, kw):
-        msg = ('The `keywords` property has been deprecated in RF 4.0. ' \
-               'Use `body`, `setup` or `teardown` instead.')
-        raise AttributeError(msg)
+        self.raise_deprecation_error()
 
     def create_setup(self, *args, **kwargs):
-        msg = ('The `keywords` property has been deprecated in RF 4.0. ' \
-               'Use `body`, `setup` or `teardown` instead.')
-        raise AttributeError(msg)
+        self.raise_deprecation_error()
 
     @property
     def teardown(self):
-        """Keyword used as the teardown or ``None`` if no teardown.
-
-        Can be set to a new teardown keyword or ``None`` since RF 3.0.1.
-        """
         return self[-1] if (self and self[-1].type == 'teardown') else None
 
     @teardown.setter
     def teardown(self, kw):
-        msg = ('The `keywords` property has been deprecated in RF 4.0. ' \
-               'Use `body`, `setup` or `teardown` instead.')
-        raise AttributeError(msg)
+        self.raise_deprecation_error()
 
     def create_teardown(self, *args, **kwargs):
-        msg = ('The `keywords` property has been deprecated in RF 4.0. ' \
-               'Use `body`, `setup` or `teardown` instead.')
-        raise AttributeError(msg)
+        self.raise_deprecation_error()
 
     @property
     def all(self):
@@ -216,9 +198,8 @@ class Keywords(ItemList):
 
     @classmethod
     def raise_deprecation_error(cls):
-        msg = ('The `keywords` property has been deprecated in RF 4.0. ' \
-               'Use `body`, `setup` or `teardown` instead.')
-        raise AttributeError(msg)
+        raise AttributeError('The `keywords` property has been deprecated in RF 4.0. '
+                             'Use `body`, `setup` or `teardown` instead.')
 
 
 class Body(ItemList):
