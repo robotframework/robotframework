@@ -120,6 +120,18 @@ class Statement(ast.AST):
     def __getitem__(self, item):
         return self.tokens[item]
 
+    def __eq__(self, other):
+        return (isinstance(other, type(self))
+                and self.tokens == other.tokens
+                and self.errors == other.errors)
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __repr__(self):
+        errors = '' if not self.errors else ', errors=%s' % list(self.errors)
+        return '%s(tokens=%s%s)' % (type(self).__name__, list(self.tokens), errors)
+
 
 class DocumentationOrMetadata(Statement):
 

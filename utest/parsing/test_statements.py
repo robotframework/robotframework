@@ -16,32 +16,17 @@ from robot.parsing.model.statements import (
 from robot.utils.asserts import assert_equal
 
 
-def assert_statement(model, expected):
-    assert_equal(model._fields, ('type', 'tokens'))
-    assert_equal(model.type, expected.type)
-    assert_equal(len(model.tokens), len(expected.tokens))
-    for m, e in zip(model.tokens, expected.tokens):
-        assert_equal(m, e, formatter=repr)
-    assert_equal(model._attributes, ('lineno', 'col_offset', 'end_lineno',
-                                     'end_col_offset', 'errors'))
-    assert_equal(model.lineno, expected.tokens[0].lineno)
-    assert_equal(model.col_offset, expected.tokens[0].col_offset)
-    assert_equal(model.end_lineno, expected.tokens[-1].lineno)
-    assert_equal(model.end_col_offset, expected.tokens[-1].end_col_offset)
-    assert_equal(model.errors, expected.errors)
-
-
 def assert_created_statement(tokens, base_class, **params):
     new_statement = base_class.from_params(**params)
-    assert_statement(
+    assert_equal(
         new_statement,
         base_class(tokens)
     )
-    assert_statement(
+    assert_equal(
         new_statement,
         base_class.from_tokens(tokens)
     )
-    assert_statement(
+    assert_equal(
         new_statement,
         Statement.from_tokens(tokens)
     )
@@ -154,7 +139,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             EmptyLine,
-            value='\n'
+            eol='\n'
         )
 
 
