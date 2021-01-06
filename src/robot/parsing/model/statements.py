@@ -212,6 +212,18 @@ class SectionHeader(Statement):
 class LibraryImport(Statement):
     type = Token.LIBRARY
 
+    @classmethod
+    def from_params(cls, library, alias=None, separator=FOUR_SPACES, eol=EOL):
+        separator_token = Token(Token.SEPARATOR, separator)
+        tokens = [Token(Token.LIBRARY), separator_token, Token(Token.NAME, library)]
+        if alias is not None:
+            tokens.append(separator_token)
+            tokens.append(Token(Token.WITH_NAME))
+            tokens.append(separator_token)
+            tokens.append(Token(Token.NAME, alias))
+        tokens.append(Token(Token.EOL, eol))
+        return LibraryImport(tokens)
+
     @property
     def name(self):
         return self.get_value(Token.NAME)

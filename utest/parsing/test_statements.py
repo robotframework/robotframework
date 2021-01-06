@@ -3,6 +3,9 @@ import unittest
 from robot.parsing import Token
 from robot.parsing.model.statements import (
     Statement,
+    LibraryImport,
+    ResourceImport,
+    VariablesImport,
     TestCaseName,
     ForceTags,
     DefaultTags,
@@ -40,6 +43,28 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             TestCaseName,
             name='Example test case name'
+        )
+
+    def test_LibraryImport(self):
+        tokens = [Token(Token.LIBRARY), Token(Token.SEPARATOR, '    '), Token(Token.NAME, 'library_name.py')]
+        assert_created_statement(
+            tokens + [Token(Token.EOL, '\n')],
+            LibraryImport,
+            library='library_name.py'
+        )
+
+        tokens.extend([
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.WITH_NAME),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.NAME, 'anothername'),
+            Token(Token.EOL, '\n')
+        ])
+        assert_created_statement(
+            tokens,
+            LibraryImport,
+            library='library_name.py',
+            alias='anothername'
         )
 
     def test_ForceTags(self):
