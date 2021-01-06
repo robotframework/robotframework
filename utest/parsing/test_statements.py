@@ -47,7 +47,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.FORCE_TAGS),
             Token(Token.ARGUMENT, 'some tag'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, 'ąętag'),
+            Token(Token.ARGUMENT, 'another_tag'),
             Token(Token.EOL, '\n')
         ]
         assert_created_statement(
