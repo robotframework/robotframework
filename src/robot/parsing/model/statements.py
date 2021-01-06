@@ -478,6 +478,19 @@ class Teardown(Fixture):
 class Tags(MultiValue):
     type = Token.TAGS
 
+    @classmethod
+    def from_params(cls, tags, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.SEPARATOR, indent),
+            Token(Token.TAGS, '[Tags]')
+        ]
+
+        for tag in tags:
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.ARGUMENT, tag))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
 
 @Statement.register
 class Template(SingleValue):
