@@ -22,8 +22,7 @@ from robot.variables import is_scalar_assign, is_dict_variable, search_variable
 from ..lexer import Token
 
 
-INDENT = '    '
-SEPARATOR = '    '
+FOUR_SPACES = '    '
 EOL = '\n'
 
 
@@ -463,7 +462,7 @@ class IfHeader(Statement):
     type = Token.IF
 
     @classmethod
-    def from_params(cls, condition, indent=INDENT, separator=SEPARATOR, eol=EOL):
+    def from_params(cls, condition, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         return IfHeader([
             Token(Token.SEPARATOR, indent),
             Token(Token.IF),
@@ -489,7 +488,7 @@ class ElseIfHeader(IfHeader):
     type = Token.ELSE_IF
 
     @classmethod
-    def from_params(cls, condition, indent=INDENT, separator=SEPARATOR, eol=EOL):
+    def from_params(cls, condition, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
         return ElseIfHeader([
             Token(Token.SEPARATOR, indent),
             Token(Token.ELSE_IF),
@@ -504,7 +503,7 @@ class ElseHeader(Statement):
     type = Token.ELSE
 
     @classmethod
-    def from_params(cls, indent=INDENT, eol=EOL):
+    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
         return ElseHeader([
             Token(Token.SEPARATOR, indent),
             Token(Token.ELSE),
@@ -525,7 +524,7 @@ class End(Statement):
     type = Token.END
 
     @classmethod
-    def from_params(cls, indent=INDENT, eol=EOL):
+    def from_params(cls, indent=FOUR_SPACES, eol=EOL):
         return End([
             Token(Token.SEPARATOR, indent),
             Token(Token.END),
@@ -542,7 +541,7 @@ class Comment(Statement):
     type = Token.COMMENT
 
     @classmethod
-    def from_params(cls, comment, indent=INDENT, eol=EOL):
+    def from_params(cls, comment, indent=FOUR_SPACES, eol=EOL):
         return Comment([
             Token(Token.SEPARATOR, indent),
             Token(Token.COMMENT, comment),
