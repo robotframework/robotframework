@@ -7,6 +7,7 @@ from robot.parsing.model.statements import (
     ResourceImport,
     VariablesImport,
     Documentation,
+    Metadata,
     TestCaseName,
     ForceTags,
     DefaultTags,
@@ -130,6 +131,35 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             Documentation,
             doc='First line\nSecond line'
+        )
+
+    def test_Metadata(self):
+        tokens = [
+            Token(Token.METADATA),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'Example documentation'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            Metadata,
+            metadata='Example documentation'
+        )
+
+        tokens = [
+            Token(Token.METADATA),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'First line'),
+            Token(Token.EOL, '\n'),
+            Token(Token.CONTINUATION, '...'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'Second line'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            Metadata,
+            metadata='First line\nSecond line'
         )
 
     def test_ForceTags(self):

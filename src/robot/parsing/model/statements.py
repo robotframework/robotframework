@@ -317,6 +317,29 @@ class Documentation(DocumentationOrMetadata):
 class Metadata(DocumentationOrMetadata):
     type = Token.METADATA
 
+    @classmethod
+    def from_params(cls, metadata, split_on_eol=True, indent='', separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.METADATA),
+            Token(Token.SEPARATOR, separator)
+        ]
+        if split_on_eol:
+            metadata_lines = metadata.splitlines()
+            if metadata_lines:
+                tokens.append(Token(Token.ARGUMENT, metadata_lines[0]))
+                tokens.append(Token(Token.EOL, eol))
+            for line in metadata_lines[1:]:
+                if indent:
+                    tokens.append(Token(Token.SEPARATOR, indent))
+                tokens.append(Token(Token.CONTINUATION, '...'))
+                tokens.append(Token(Token.SEPARATOR, separator))
+                tokens.append(Token(Token.ARGUMENT, line))
+                tokens.append(Token(Token.EOL, eol))
+        else:
+            tokens.append(Token(Token.ARGUMENT, metadata))
+            tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
     @property
     def name(self):
         return self.get_value(Token.NAME)
