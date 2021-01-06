@@ -291,19 +291,17 @@ class Documentation(DocumentationOrMetadata):
             Token(Token.SEPARATOR, separator)
         ]
         if split_on_eol:
-            doc_tokens = []
             doc_lines = doc.splitlines()
             if doc_lines:
-                doc_tokens.append(Token(Token.ARGUMENT, doc_lines[0]))
-                doc_tokens.append(Token(Token.EOL, eol))
+                tokens.append(Token(Token.ARGUMENT, doc_lines[0]))
+                tokens.append(Token(Token.EOL, eol))
             for line in doc_lines[1:]:
                 if indent:
-                    doc_tokens.append(Token(Token.SEPARATOR, indent))
-                doc_tokens.append(Token(Token.CONTINUATION, '...'))
-                doc_tokens.append(Token(Token.SEPARATOR, separator))
-                doc_tokens.append(Token(Token.ARGUMENT, line))
-                doc_tokens.append(Token(Token.EOL, eol))
-            tokens += doc_tokens
+                    tokens.append(Token(Token.SEPARATOR, indent))
+                tokens.append(Token(Token.CONTINUATION, '...'))
+                tokens.append(Token(Token.SEPARATOR, separator))
+                tokens.append(Token(Token.ARGUMENT, line))
+                tokens.append(Token(Token.EOL, eol))
         else:
             tokens.append(Token(Token.ARGUMENT, doc))
             tokens.append(Token(Token.EOL, eol))
