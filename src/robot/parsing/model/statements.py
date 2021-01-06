@@ -222,7 +222,7 @@ class LibraryImport(Statement):
             tokens.append(separator_token)
             tokens.append(Token(Token.NAME, alias))
         tokens.append(Token(Token.EOL, eol))
-        return LibraryImport(tokens)
+        return cls(tokens)
 
     @property
     def name(self):
@@ -292,7 +292,7 @@ class ForceTags(MultiValue):
     def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
         tag_tokens = [Token(Token.ARGUMENT, tag) for tag in tags]
         separated_tags = list(join_tokens_with_separator(tag_tokens, Token(Token.SEPARATOR, separator)))
-        return ForceTags([Token(Token.FORCE_TAGS)] + separated_tags + [Token(Token.EOL, eol)])
+        return cls([Token(Token.FORCE_TAGS)] + separated_tags + [Token(Token.EOL, eol)])
 
 
 @Statement.register
@@ -303,7 +303,7 @@ class DefaultTags(MultiValue):
     def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
         tag_tokens = [Token(Token.ARGUMENT, tag) for tag in tags]
         separated_tags = list(join_tokens_with_separator(tag_tokens, Token(Token.SEPARATOR, separator)))
-        return DefaultTags([Token(Token.DEFAULT_TAGS)] + separated_tags + [Token(Token.EOL, eol)])
+        return cls([Token(Token.DEFAULT_TAGS)] + separated_tags + [Token(Token.EOL, eol)])
 
 
 @Statement.register
@@ -379,7 +379,7 @@ class TestCaseName(Statement):
 
     @classmethod
     def from_params(cls, name, eol=EOL):
-        return TestCaseName([
+        return cls([
             Token(Token.TESTCASE_NAME, name),
             Token(Token.EOL, eol)
         ])
@@ -499,7 +499,7 @@ class IfHeader(Statement):
 
     @classmethod
     def from_params(cls, condition, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
-        return IfHeader([
+        return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.IF),
             Token(Token.SEPARATOR, separator),
@@ -525,7 +525,7 @@ class ElseIfHeader(IfHeader):
 
     @classmethod
     def from_params(cls, condition, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
-        return ElseIfHeader([
+        return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.ELSE_IF),
             Token(Token.SEPARATOR, separator),
@@ -540,7 +540,7 @@ class ElseHeader(Statement):
 
     @classmethod
     def from_params(cls, indent=FOUR_SPACES, eol=EOL):
-        return ElseHeader([
+        return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.ELSE),
             Token(Token.EOL, eol)
@@ -561,7 +561,7 @@ class End(Statement):
 
     @classmethod
     def from_params(cls, indent=FOUR_SPACES, eol=EOL):
-        return End([
+        return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.END),
             Token(Token.EOL, eol)
@@ -578,7 +578,7 @@ class Comment(Statement):
 
     @classmethod
     def from_params(cls, comment, indent=FOUR_SPACES, eol=EOL):
-        return Comment([
+        return cls([
             Token(Token.SEPARATOR, indent),
             Token(Token.COMMENT, comment),
             Token(Token.EOL, eol)
@@ -606,4 +606,4 @@ class EmptyLine(Statement):
 
     @classmethod
     def from_params(cls, eol=EOL):
-        return EmptyLine([Token(Token.EOL, eol)])
+        return cls([Token(Token.EOL, eol)])
