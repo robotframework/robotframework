@@ -284,6 +284,31 @@ class VariablesImport(Statement):
 class Documentation(DocumentationOrMetadata):
     type = Token.DOCUMENTATION
 
+    @classmethod
+    def from_params(cls, doc, split_on_eol=True, indent='', separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.DOCUMENTATION),
+            Token(Token.SEPARATOR, separator)
+        ]
+        if split_on_eol:
+            doc_tokens = []
+            doc_lines = doc.splitlines()
+            if doc_lines:
+                doc_tokens.append(Token(Token.ARGUMENT, doc_lines[0]))
+                doc_tokens.append(Token(Token.EOL, eol))
+            for line in doc_lines[1:]:
+                if indent:
+                    doc_tokens.append(Token(Token.SEPARATOR, indent))
+                doc_tokens.append(Token(Token.CONTINUATION, '...'))
+                doc_tokens.append(Token(Token.SEPARATOR, separator))
+                doc_tokens.append(Token(Token.ARGUMENT, line))
+                doc_tokens.append(Token(Token.EOL, eol))
+            tokens += doc_tokens
+        else:
+            tokens.append(Token(Token.ARGUMENT, doc))
+            tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
     @property
     def value(self):
         tokens = self.get_tokens(Token.ARGUMENT)
