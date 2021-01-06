@@ -569,5 +569,5 @@ class EmptyLine(Statement):
     type = Token.EOL
 
     @classmethod
-    def from_params(cls, value):
-        return EmptyLine([Token(Token.EOL, value)])
+    def from_params(cls, eol=EOL):
+        return EmptyLine([Token(Token.EOL, eol)])
