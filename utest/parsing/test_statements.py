@@ -53,7 +53,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             ForceTags,
-            tags=['some tag', 'ąętag']
+            tags=['some tag', 'another_tag']
         )
 
     def test_DefaultTags(self):
@@ -61,13 +61,13 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             Token(Token.DEFAULT_TAGS),
             Token(Token.ARGUMENT, 'some tag'),
             Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, 'ąętag'),
+            Token(Token.ARGUMENT, 'another_tag'),
             Token(Token.EOL, '\n')
         ]
         assert_created_statement(
             tokens,
             DefaultTags,
-            tags=['some tag', 'ąętag']
+            tags=['some tag', 'another_tag']
         )
 
     def test_IfHeader(self):
