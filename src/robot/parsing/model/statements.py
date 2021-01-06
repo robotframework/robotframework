@@ -16,7 +16,7 @@
 import ast
 import re
 
-from robot.utils import normalize_whitespace, split_from_equals
+from robot.utils import normalize_whitespace, split_from_equals, join_tokens_with_separator
 from robot.variables import is_scalar_assign, is_dict_variable, search_variable
 
 from ..lexer import Token
@@ -264,10 +264,22 @@ class Metadata(DocumentationOrMetadata):
 class ForceTags(MultiValue):
     type = Token.FORCE_TAGS
 
+    @classmethod
+    def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
+        tag_tokens = [Token(Token.ARGUMENT, tag) for tag in tags]
+        separated_tags = list(join_tokens_with_separator(tag_tokens, Token(Token.SEPARATOR, separator)))
+        return ForceTags([Token(Token.FORCE_TAGS)] + separated_tags + [Token(Token.EOL, eol)])
+
 
 @Statement.register
 class DefaultTags(MultiValue):
     type = Token.DEFAULT_TAGS
+
+    @classmethod
+    def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
+        tag_tokens = [Token(Token.ARGUMENT, tag) for tag in tags]
+        separated_tags = list(join_tokens_with_separator(tag_tokens, Token(Token.SEPARATOR, separator)))
+        return DefaultTags([Token(Token.DEFAULT_TAGS)] + separated_tags + [Token(Token.EOL, eol)])
 
 
 @Statement.register

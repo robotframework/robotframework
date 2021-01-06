@@ -4,6 +4,8 @@ from robot.parsing import Token
 from robot.parsing.model.statements import (
     Statement,
     TestCaseName,
+    ForceTags,
+    DefaultTags,
     IfHeader,
     ElseHeader,
     ElseIfHeader,
@@ -46,12 +48,41 @@ def assert_created_statement(tokens, base_class, **params):
 
 
 class TestCreateStatementsFromParams(unittest.TestCase):
+
     def test_SectionHeader(self):
         tokens = [Token(Token.TESTCASE_NAME, 'Example test case name'), Token(Token.EOL, '\n')]
         assert_created_statement(
             tokens,
             TestCaseName,
             name='Example test case name'
+        )
+
+    def test_ForceTags(self):
+        tokens = [
+            Token(Token.FORCE_TAGS),
+            Token(Token.ARGUMENT, 'some tag'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'ąętag'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            ForceTags,
+            tags=['some tag', 'ąętag']
+        )
+
+    def test_DefaultTags(self):
+        tokens = [
+            Token(Token.DEFAULT_TAGS),
+            Token(Token.ARGUMENT, 'some tag'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'ąętag'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            DefaultTags,
+            tags=['some tag', 'ąętag']
         )
 
     def test_IfHeader(self):

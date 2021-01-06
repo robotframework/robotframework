@@ -139,3 +139,11 @@ def test_or_task(text, rpa):
         except KeyError:
             raise ValueError("Invalid input string '%s'." % text)
     return re.sub('{(.*)}', t, text)
+
+
+def join_tokens_with_separator(tokens, separator):
+    """ Yield `tokens` separated by passed `separator` """
+    for token in tokens[:-1]:
+        yield token
+        yield separator
+    yield tokens[-1]
