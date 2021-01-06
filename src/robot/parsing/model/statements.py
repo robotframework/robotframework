@@ -242,6 +242,16 @@ class LibraryImport(Statement):
 class ResourceImport(Statement):
     type = Token.RESOURCE
 
+    @classmethod
+    def from_params(cls, resource, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.RESOURCE),
+            Token(Token.SEPARATOR, separator),
+            Token(Token.NAME, resource),
+            Token(Token.EOL, eol)
+        ]
+        return cls(tokens)
+
     @property
     def name(self):
         return self.get_value(Token.NAME)
@@ -250,6 +260,16 @@ class ResourceImport(Statement):
 @Statement.register
 class VariablesImport(Statement):
     type = Token.VARIABLES
+
+    @classmethod
+    def from_params(cls, variable_file, args=None, separator=FOUR_SPACES, eol=EOL):
+        separator_token = Token(Token.SEPARATOR, separator)
+        tokens = [Token(Token.VARIABLES), separator_token, Token(Token.NAME, variable_file)]
+        if args is not None:
+            arg_tokens = [Token(Token.ARGUMENT, arg) for arg in args]
+            tokens += [separator_token] + list(join_tokens_with_separator(arg_tokens, separator_token))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
 
     @property
     def name(self):

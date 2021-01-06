@@ -67,6 +67,41 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             alias='anothername'
         )
 
+    def test_ResourceImport(self):
+        tokens = [
+            Token(Token.RESOURCE),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.NAME, 'path${/}to${/}resource.robot'),
+            Token(Token.EOL, '\n')
+        ]
+        assert_created_statement(
+            tokens,
+            ResourceImport,
+            resource='path${/}to${/}resource.robot'
+        )
+
+    def test_VariablesImport(self):
+        tokens = [Token(Token.VARIABLES), Token(Token.SEPARATOR, '    '), Token(Token.NAME, 'variables.py')]
+        assert_created_statement(
+            tokens + [Token(Token.EOL, '\n')],
+            VariablesImport,
+            variable_file='variables.py'
+        )
+
+        tokens.extend([
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, 'arg1'),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.ARGUMENT, '2'),
+            Token(Token.EOL, '\n')
+        ])
+        assert_created_statement(
+            tokens,
+            VariablesImport,
+            variable_file='variables.py',
+            args=['arg1', '2']
+        )
+
     def test_ForceTags(self):
         tokens = [
             Token(Token.FORCE_TAGS),
