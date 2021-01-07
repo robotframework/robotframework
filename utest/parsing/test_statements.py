@@ -347,7 +347,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             Documentation,
-            test_documentation=True,
+            settings_section=False,
             doc='First line\nSecond line'
         )
 
@@ -444,18 +444,6 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             keyword='Keyword Name'
         )
 
-        # Test
-        # [Template]
-        tokens = [
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.TEMPLATE, '[Template]'),
-            Token(Token.EOL, '\n')
-        ]
-        assert_created_statement(
-            tokens,
-            Template
-        )
-
     def test_Timeout(self):
         # Test
         #     [Timeout]  1 min
@@ -470,18 +458,6 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             tokens,
             Timeout,
             timeout='1 min'
-        )
-
-        # Test
-        # [Timeout]
-        tokens = [
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.TIMEOUT, '[Timeout]'),
-            Token(Token.EOL, '\n')
-        ]
-        assert_created_statement(
-            tokens,
-            Timeout
         )
 
     def test_Arguments(self):
@@ -502,28 +478,6 @@ class TestCreateStatementsFromParams(unittest.TestCase):
             args=['${arg1}', '${arg2}=4']
         )
 
-        # Keyword
-        #     [Arguments]    ${arg1}
-        #     ...    ${arg2}=4
-        tokens = [
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENTS, '[Arguments]'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, '${arg1}'),
-            Token(Token.EOL, '\n'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.CONTINUATION),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, '${arg2}=4'),
-            Token(Token.EOL, '\n')
-        ]
-        assert_created_statement(
-            tokens,
-            Arguments,
-            split_to_multiline=True,
-            args=['${arg1}', '${arg2}=4']
-        )
-
     def test_Return(self):
         # Keyword
         #     [Return]    ${arg1}    ${arg2}=4
@@ -539,28 +493,6 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         assert_created_statement(
             tokens,
             Return,
-            args=['${arg1}', '${arg2}=4']
-        )
-
-        # Keyword
-        #     [Return]    ${arg1}
-        #     ...    ${arg2}=4
-        tokens = [
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.RETURN, '[Return]'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, '${arg1}'),
-            Token(Token.EOL, '\n'),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.CONTINUATION),
-            Token(Token.SEPARATOR, '    '),
-            Token(Token.ARGUMENT, '${arg2}=4'),
-            Token(Token.EOL, '\n')
-        ]
-        assert_created_statement(
-            tokens,
-            Return,
-            split_to_multiline=True,
             args=['${arg1}', '${arg2}=4']
         )
 
