@@ -215,10 +215,10 @@ class LibraryImport(Statement):
     @classmethod
     def from_params(cls, library, alias=None, separator=FOUR_SPACES, eol=EOL):
         separator_token = Token(Token.SEPARATOR, separator)
-        tokens = [Token(Token.LIBRARY), separator_token, Token(Token.NAME, library)]
+        tokens = [Token(Token.LIBRARY, 'Library'), separator_token, Token(Token.NAME, library)]
         if alias is not None:
             tokens.append(separator_token)
-            tokens.append(Token(Token.WITH_NAME))
+            tokens.append(Token(Token.WITH_NAME, 'WITH NAME'))
             tokens.append(separator_token)
             tokens.append(Token(Token.NAME, alias))
         tokens.append(Token(Token.EOL, eol))
@@ -245,7 +245,7 @@ class ResourceImport(Statement):
     @classmethod
     def from_params(cls, resource, separator=FOUR_SPACES, eol=EOL):
         tokens = [
-            Token(Token.RESOURCE),
+            Token(Token.RESOURCE, 'Resource'),
             Token(Token.SEPARATOR, separator),
             Token(Token.NAME, resource),
             Token(Token.EOL, eol)
@@ -264,7 +264,7 @@ class VariablesImport(Statement):
     @classmethod
     def from_params(cls, variable_file, args=None, separator=FOUR_SPACES, eol=EOL):
         separator_token = Token(Token.SEPARATOR, separator)
-        tokens = [Token(Token.VARIABLES), separator_token, Token(Token.NAME, variable_file)]
+        tokens = [Token(Token.VARIABLES, 'Variables'), separator_token, Token(Token.NAME, variable_file)]
         if args is not None:
             for arg in args:
                 tokens.append(separator_token)
@@ -303,7 +303,7 @@ class Documentation(DocumentationOrMetadata):
             ]
         else:
             tokens = [
-                Token(Token.DOCUMENTATION),
+                Token(Token.DOCUMENTATION, 'Documentation'),
                 Token(Token.SEPARATOR, separator)
             ]
         if split_on_eol:
@@ -336,7 +336,7 @@ class Metadata(DocumentationOrMetadata):
     @classmethod
     def from_params(cls, metadata, split_on_eol=True, separator=FOUR_SPACES, eol=EOL):
         tokens = [
-            Token(Token.METADATA),
+            Token(Token.METADATA, 'Metadata'),
             Token(Token.SEPARATOR, separator)
         ]
         if split_on_eol:
@@ -370,7 +370,7 @@ class ForceTags(MultiValue):
 
     @classmethod
     def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
-        tag_tokens = [Token(Token.FORCE_TAGS)]
+        tag_tokens = [Token(Token.FORCE_TAGS, 'Force Tags')]
         for tag in tags:
             tag_tokens.append(Token(Token.SEPARATOR, separator))
             tag_tokens.append(Token(Token.ARGUMENT, tag))
@@ -384,7 +384,7 @@ class DefaultTags(MultiValue):
 
     @classmethod
     def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
-        tag_tokens = [Token(Token.DEFAULT_TAGS)]
+        tag_tokens = [Token(Token.DEFAULT_TAGS, 'Default Tags')]
         for tag in tags:
             tag_tokens.append(Token(Token.SEPARATOR, separator))
             tag_tokens.append(Token(Token.ARGUMENT, tag))
@@ -396,35 +396,117 @@ class DefaultTags(MultiValue):
 class SuiteSetup(Fixture):
     type = Token.SUITE_SETUP
 
+    @classmethod
+    def from_params(cls, keyword, args=None, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.SUITE_SETUP, 'Suite Setup')]
+        if keyword:
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.NAME, keyword))
+        if args is not None:
+            for arg in args:
+                tokens.append(Token(Token.SEPARATOR, separator))
+                tokens.append(Token(Token.ARGUMENT, arg))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
 
 @Statement.register
 class SuiteTeardown(Fixture):
     type = Token.SUITE_TEARDOWN
+
+    @classmethod
+    def from_params(cls, keyword, args=None, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.SUITE_TEARDOWN, 'Suite Teardown')]
+        if keyword:
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.NAME, keyword))
+        if args is not None:
+            for arg in args:
+                tokens.append(Token(Token.SEPARATOR, separator))
+                tokens.append(Token(Token.ARGUMENT, arg))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
 
 
 @Statement.register
 class TestSetup(Fixture):
     type = Token.TEST_SETUP
 
+    @classmethod
+    def from_params(cls, keyword, args=None, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.TEST_SETUP, 'Test Setup')]
+        if keyword:
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.NAME, keyword))
+        if args is not None:
+            for arg in args:
+                tokens.append(Token(Token.SEPARATOR, separator))
+                tokens.append(Token(Token.ARGUMENT, arg))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
 
 @Statement.register
 class TestTeardown(Fixture):
     type = Token.TEST_TEARDOWN
+
+    @classmethod
+    def from_params(cls, keyword, args=None, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.TEST_TEARDOWN, 'Test Teardown')]
+        if keyword:
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.NAME, keyword))
+        if args is not None:
+            for arg in args:
+                tokens.append(Token(Token.SEPARATOR, separator))
+                tokens.append(Token(Token.ARGUMENT, arg))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
 
 
 @Statement.register
 class TestTemplate(SingleValue):
     type = Token.TEST_TEMPLATE
 
+    @classmethod
+    def from_params(cls, keyword, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.TEST_TEMPLATE, 'Test Template'),
+            Token(Token.SEPARATOR, separator),
+            Token(Token.NAME, keyword),
+            Token(Token.EOL, eol)
+        ]
+        return cls(tokens)
+
 
 @Statement.register
 class TestTimeout(SingleValue):
     type = Token.TEST_TIMEOUT
 
+    @classmethod
+    def from_params(cls, timeout, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.TEST_TIMEOUT, 'Test Timeout'),
+            Token(Token.SEPARATOR, separator),
+            Token(Token.ARGUMENT, timeout),
+            Token(Token.EOL, eol)
+        ]
+        return cls(tokens)
+
 
 @Statement.register
 class Variable(Statement):
     type = Token.VARIABLE
+
+    @classmethod
+    def from_params(cls, name, value, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.VARIABLE, name),
+            Token(Token.SEPARATOR, separator),
+            Token(Token.ARGUMENT, value),
+            Token(Token.EOL, eol)
+        ]
+        return cls(tokens)
 
     @property
     def name(self):
@@ -479,6 +561,13 @@ class TestCaseName(Statement):
 class KeywordName(Statement):
     type = Token.KEYWORD_NAME
 
+    @classmethod
+    def from_params(cls, name, eol=EOL):
+        return cls([
+            Token(Token.KEYWORD_NAME, name),
+            Token(Token.EOL, eol)
+        ])
+
     @property
     def name(self):
         return self.get_value(Token.KEYWORD_NAME)
@@ -488,10 +577,36 @@ class KeywordName(Statement):
 class Setup(Fixture):
     type = Token.SETUP
 
+    @classmethod
+    def from_params(cls, keyword, args=None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.SEPARATOR, indent), Token(Token.SETUP, '[Setup]')]
+        if keyword:
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.NAME, keyword))
+        if args is not None:
+            for arg in args:
+                tokens.append(Token(Token.SEPARATOR, separator))
+                tokens.append(Token(Token.ARGUMENT, arg))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
 
 @Statement.register
 class Teardown(Fixture):
     type = Token.TEARDOWN
+
+    @classmethod
+    def from_params(cls, keyword, args=None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.SEPARATOR, indent), Token(Token.TEARDOWN, '[Teardown]')]
+        if keyword:
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.NAME, keyword))
+        if args is not None:
+            for arg in args:
+                tokens.append(Token(Token.SEPARATOR, separator))
+                tokens.append(Token(Token.ARGUMENT, arg))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
 
 
 @Statement.register
@@ -516,26 +631,97 @@ class Tags(MultiValue):
 class Template(SingleValue):
     type = Token.TEMPLATE
 
+    @classmethod
+    def from_params(cls, keyword=None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.SEPARATOR, indent),
+            Token(Token.TEMPLATE, '[Template]')
+        ]
+        if keyword:
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.NAME, keyword))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
 
 @Statement.register
 class Timeout(SingleValue):
     type = Token.TIMEOUT
+
+    @classmethod
+    def from_params(cls, timeout=None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.SEPARATOR, indent),
+            Token(Token.TIMEOUT, '[Timeout]')
+        ]
+        if timeout:
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.ARGUMENT, timeout))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
 
 
 @Statement.register
 class Arguments(MultiValue):
     type = Token.ARGUMENTS
 
+    @classmethod
+    def from_params(cls, args, split_to_multiline=False, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.SEPARATOR, indent),
+            Token(Token.ARGUMENTS, '[Arguments]'),
+        ]
+        for index, arg in enumerate(args):
+            if split_to_multiline and index != 0:
+                tokens.append(Token(Token.EOL, eol))
+                tokens.append(Token(Token.SEPARATOR, indent))
+                tokens.append(Token(Token.CONTINUATION))
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.ARGUMENT, arg))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
 
 @Statement.register
 class Return(MultiValue):
     type = Token.RETURN
+
+    @classmethod
+    def from_params(cls, args, split_to_multiline=False, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.SEPARATOR, indent),
+            Token(Token.RETURN, '[Return]'),
+        ]
+        for index, arg in enumerate(args):
+            if split_to_multiline and index != 0:
+                tokens.append(Token(Token.EOL, eol))
+                tokens.append(Token(Token.SEPARATOR, indent))
+                tokens.append(Token(Token.CONTINUATION))
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.ARGUMENT, arg))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
 
 
 @Statement.register
 class KeywordCall(Statement):
     type = Token.KEYWORD
     handles_types = (Token.KEYWORD, Token.ASSIGN)
+
+    @classmethod
+    def from_params(cls, keyword, assign=None, args=None, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.SEPARATOR, indent)]
+        if assign is not None:
+            for assignment in assign:
+                tokens.append(Token(Token.ASSIGN, assignment))
+                tokens.append(Token(Token.SEPARATOR, separator))
+        tokens.append(Token(Token.KEYWORD, keyword))
+        if args is not None:
+            for arg in args:
+                tokens.append(Token(Token.SEPARATOR, separator))
+                tokens.append(Token(Token.ARGUMENT, arg))
+        tokens.append(Token(Token.EOL))
+        return cls(tokens)
 
     @property
     def keyword(self):
@@ -554,6 +740,16 @@ class KeywordCall(Statement):
 class TemplateArguments(Statement):
     type = Token.ARGUMENT
 
+    @classmethod
+    def from_params(cls, args, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [Token(Token.SEPARATOR, indent)]
+        for index, arg in enumerate(args):
+            if index != 0:
+                tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.ARGUMENT, arg))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
+
     @property
     def args(self):
         return self.get_values(self.type)
@@ -562,6 +758,23 @@ class TemplateArguments(Statement):
 @Statement.register
 class ForHeader(Statement):
     type = Token.FOR
+
+    @classmethod
+    def from_params(cls, for_separator, values, variables, indent=FOUR_SPACES, separator=FOUR_SPACES, eol=EOL):
+        tokens = [
+            Token(Token.SEPARATOR, indent),
+            Token(Token.FOR, 'FOR'),
+            Token(Token.SEPARATOR, separator)
+        ]
+        for variable in variables:
+            tokens.append(Token(Token.VARIABLE, variable))
+            tokens.append(Token(Token.SEPARATOR, separator))
+        tokens.append(Token(Token.FOR_SEPARATOR, for_separator))
+        for value in values:
+            tokens.append(Token(Token.SEPARATOR, separator))
+            tokens.append(Token(Token.ARGUMENT, value))
+        tokens.append(Token(Token.EOL, eol))
+        return cls(tokens)
 
     @property
     def variables(self):
