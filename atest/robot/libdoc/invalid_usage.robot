@@ -37,7 +37,7 @@ Invalid doc format in library
     ${TESTDATADIR}/DocFormatInvalid.py ${OUT HTML}   Invalid documentation format 'INVALID'.
 
 Non-existing library
-    NonExistingLib ${OUT HTML}   Importing test library 'NonExistingLib' failed: *
+    NonExistingLib ${OUT HTML}   Importing library 'NonExistingLib' failed: *
 
 Non-existing spec
     nonex.xml ${OUT HTML}    Spec file 'nonex.xml' does not exist.

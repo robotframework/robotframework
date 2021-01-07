@@ -1,4 +1,5 @@
 import unittest
+import warnings
 from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal, assert_raises,
                                  assert_raises_with_msg, assert_true)
 
@@ -88,6 +89,17 @@ class TestTestCase(unittest.TestCase):
         copy = TestCase(name='Orig').deepcopy(name='New', doc='New')
         assert_equal(copy.name, 'New')
         assert_equal(copy.doc, 'New')
+
+    def test_keywords_deprecation(self):
+        t = TestCase()
+        with warnings.catch_warnings(record=True) as w:
+            t.keywords
+            assert_true('deprecated' in str(w[0].message))
+        try:
+            t.keywords = []
+            raise AssertionError("Atrribute error not raised.")
+        except AttributeError:
+            pass
 
 
 class TestStringRepresentation(unittest.TestCase):

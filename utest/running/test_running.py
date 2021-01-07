@@ -61,7 +61,7 @@ class TestRunning(unittest.TestCase):
 
     def test_one_library_keyword(self):
         suite = TestSuite(name='Suite')
-        suite.tests.create(name='Test').keywords.create('Log',
+        suite.tests.create(name='Test').body.create('Log',
                                                         args=['Hello, world!'])
         result = run(suite)
         assert_suite(result, 'Suite', 'PASS')
@@ -70,8 +70,8 @@ class TestRunning(unittest.TestCase):
     def test_failing_library_keyword(self):
         suite = TestSuite(name='Suite')
         test = suite.tests.create(name='Test')
-        test.keywords.create('Log', args=['Dont fail yet.'])
-        test.keywords.create('Fail', args=['Hello, world!'])
+        test.body.create('Log', args=['Dont fail yet.'])
+        test.body.create('Fail', args=['Hello, world!'])
         result = run(suite)
         assert_suite(result, 'Suite', 'FAIL')
         assert_test(result.tests[0], 'Test', 'FAIL', msg='Hello, world!')
@@ -79,8 +79,8 @@ class TestRunning(unittest.TestCase):
     def test_assign(self):
         suite = TestSuite(name='Suite')
         test = suite.tests.create(name='Test')
-        test.keywords.create(assign=['${var}'], name='Set Variable', args=['value in variable'])
-        test.keywords.create('Fail', args=['${var}'])
+        test.body.create(assign=['${var}'], name='Set Variable', args=['value in variable'])
+        test.body.create('Fail', args=['${var}'])
         result = run(suite)
         assert_suite(result, 'Suite', 'FAIL')
         assert_test(result.tests[0], 'Test', 'FAIL', msg='value in variable')
@@ -89,7 +89,7 @@ class TestRunning(unittest.TestCase):
         root = TestSuite(name='Root')
         root.suites.create(name='Child')\
             .tests.create(name='Test')\
-            .keywords.create('Log', args=['Hello, world!'])
+            .body.create('Log', args=['Hello, world!'])
         result = run(root)
         assert_suite(result, 'Root', 'PASS', tests=0)
         assert_suite(result.suites[0], 'Child', 'PASS')
@@ -97,9 +97,9 @@ class TestRunning(unittest.TestCase):
 
     def test_user_keywords(self):
         suite = TestSuite(name='Suite')
-        suite.tests.create(name='Test').keywords.create('User keyword', args=['From uk'])
+        suite.tests.create(name='Test').body.create('User keyword', args=['From uk'])
         uk = suite.resource.keywords.create(name='User keyword', args=['${msg}'])
-        uk.keywords.create(name='Fail', args=['${msg}'])
+        uk.body.create(name='Fail', args=['${msg}'])
         result = run(suite)
         assert_suite(result, 'Suite', 'FAIL')
         assert_test(result.tests[0], 'Test', 'FAIL', msg='From uk')
@@ -108,8 +108,8 @@ class TestRunning(unittest.TestCase):
         suite = TestSuite(name='Suite')
         suite.resource.variables.create('${ERROR}', 'Error message')
         suite.resource.variables.create('@{LIST}', ['Error', 'added tag'])
-        suite.tests.create(name='T1').keywords.create('Fail', args=['${ERROR}'])
-        suite.tests.create(name='T2').keywords.create('Fail', args=['@{LIST}'])
+        suite.tests.create(name='T1').body.create('Fail', args=['${ERROR}'])
+        suite.tests.create(name='T2').body.create('Fail', args=['@{LIST}'])
         result = run(suite)
         assert_suite(result, 'Suite', 'FAIL', tests=2)
         assert_test(result.tests[0], 'T1', 'FAIL', msg='Error message')
@@ -119,7 +119,7 @@ class TestRunning(unittest.TestCase):
         # These options are valid but not used. Modifiers can be passed to
         # suite.visit() explicitly if needed.
         suite = TestSuite(name='Suite')
-        suite.tests.create(name='Test').keywords.create('No Operation')
+        suite.tests.create(name='Test').body.create('No Operation')
         result = run(suite, prerunmodifier='not used', prerebotmodifier=42)
         assert_suite(result, 'Suite', 'PASS', tests=1)
 
@@ -237,7 +237,7 @@ class TestCustomStreams(RunningTestCase):
     def _run(self, stdout=None, stderr=None, **options):
         suite = TestSuite(name='My Suite')
         suite.resource.variables.create('${MESSAGE}', 'Hello, world!')
-        suite.tests.create(name='My Test').keywords.create('Log', args=['${MESSAGE}', 'WARN'])
+        suite.tests.create(name='My Test').body.create('Log', args=['${MESSAGE}', 'WARN'])
         run(suite, stdout=stdout, stderr=stderr, **options)
 
     def _assert_normal_stdout_stderr_are_empty(self):
@@ -258,7 +258,7 @@ class TestPreservingSignalHandlers(unittest.TestCase):
         my_sigterm = lambda signum, frame: None
         signal.signal(signal.SIGTERM, my_sigterm)
         suite = TestSuite(name='My Suite')
-        suite.tests.create(name='My Test').keywords.create('Log', args=['Hi!'])
+        suite.tests.create(name='My Test').body.create('Log', args=['Hi!'])
         run(suite)
         assert_signal_handler_equal(signal.SIGINT, self.orig_sigint)
         assert_signal_handler_equal(signal.SIGTERM, my_sigterm)
@@ -270,7 +270,7 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         assert_equal(logging.getLogger().handlers, [])
         assert_equal(logging.raiseExceptions, 1)
         suite = TestSuite(name='My Suite')
-        suite.tests.create(name='My Test').keywords.create('Log', args=['Hi!'])
+        suite.tests.create(name='My Test').body.create('Log', args=['Hi!'])
         run(suite)
         assert_equal(logging.getLogger().handlers, [])
         assert_equal(logging.raiseExceptions, 1)

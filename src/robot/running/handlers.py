@@ -308,7 +308,7 @@ class _PythonInitHandler(_PythonHandler):
         return self._doc
 
     def _parse_arguments(self, init_method):
-        parser = PythonArgumentParser(type='Test Library')
+        parser = PythonArgumentParser(type='Library')
         return parser.parse(init_method or (lambda: None), self.library.name)
 
 
@@ -326,7 +326,7 @@ class _JavaInitHandler(_JavaHandler):
         return self._doc
 
     def _parse_arguments(self, handler_method):
-        parser = JavaArgumentParser(type='Test Library')
+        parser = JavaArgumentParser(type='Library')
         signatures = self._get_signatures(handler_method)
         return parser.parse(signatures, self.library.name)
 

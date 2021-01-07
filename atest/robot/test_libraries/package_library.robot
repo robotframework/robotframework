@@ -52,4 +52,4 @@ Import message should be syslogged
     [Arguments]    ${name}    ${file}=__init__    ${type}=class
     ${base} =    Normalize Path    ${DATADIR}/test_libraries/MyLibDir
     Syslog Should Contain    | INFO \ |
-    ...    Imported test library ${type} '${name}' from '${base}${/}${file}
+    ...    Imported library ${type} '${name}' from '${base}${/}${file}

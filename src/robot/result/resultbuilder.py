@@ -195,7 +195,8 @@ class ExecutionResultBuilder(object):
 class RemoveKeywords(SuiteVisitor):
 
     def start_suite(self, suite):
-        suite.keywords = []
+        suite.setup = None
+        suite.teardown = None
 
     def visit_test(self, test):
-        test.keywords = []
+        test.body = []

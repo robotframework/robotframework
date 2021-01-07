@@ -15,29 +15,28 @@ Python Module Listener
     module    module_listener    module_listener
 
 Listener With Arguments
-    class    listeners.WithArgs    listeners    5
+    class    listeners.WithArgs    listeners    6
     [Teardown]    Check Listener File    ${ARGS_FILE}
     ...    I got arguments 'value' and 'default'
     ...    I got arguments 'a1' and 'a;2'
     ...    I got arguments 'semi' and 'colons:here'
+    ...    I got arguments 'named' and 'args'
+
+Listener With Argument Conversion
+    class    listeners.WithArgConversion    listeners    1
 
 Listener With Path
     class    ${LISTENERS}${/}ListenAll.py   ListenAll
     [Teardown]    File Should Exist  %{TEMPDIR}${/}${ALL_FILE2}
 
 Listener With Wrong Number Of Arguments
-    [Template]    Syslog Should Contain
-    Taking listener 'listeners.WithArgs' into use failed:
-    ...    Importing listener 'listeners.WithArgs' failed:
-    ...    Creating instance failed: TypeError:
-    Taking listener 'listeners.WithArgs:1:2:3' into use failed:
-    ...    Importing listener 'listeners.WithArgs' failed:
-    ...    Creating instance failed: TypeError:
+    [Template]    Importing Listener Failed
+    0    listeners.WithArgs          Listener 'WithArgs' expected 1 to 2 arguments, got 0.
+    1    listeners.WithArgs:1:2:3    Listener 'WithArgs' expected 1 to 2 arguments, got 3.
 
 Non Existing Listener
-    [Template]    Syslog Should Contain
-    Taking listener 'NonExistingListener' into use failed:
-    ...    Importing listener 'NonExistingListener' failed:
+    [Template]    Importing Listener Failed
+    2    NonExistingListener    *${EMPTY TB}PYTHONPATH:*    pattern=True
 
 Java Listener
     [Tags]  require-jython
@@ -51,19 +50,11 @@ Java Listener With Arguments
 
 Java Listener With Wrong Number Of Arguments
     [Tags]  require-jython
-    [Template]    Syslog Should Contain
-    Taking listener 'JavaListenerWithArgs' into use failed:
-    ...    Importing listener 'JavaListenerWithArgs' failed:
-    ...    Creating instance failed:
-    ...    TypeError: JavaListenerWithArgs(): expected 2 args; got 0${EMPTY TB}
-    Taking listener 'JavaListenerWithArgs:b:a:r' into use failed:
-    ...    Importing listener 'JavaListenerWithArgs' failed:
-    ...    Creating instance failed:
-    ...    TypeError: JavaListenerWithArgs(): expected 2 args; got 3${EMPTY TB}
-
+    [Template]    Importing Listener Failed
+    3    JavaListenerWithArgs          Creating instance failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 0${EMPTY TB}
+    4    JavaListenerWithArgs:b:a:r    Creating instance failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 3${EMPTY TB}
 
 *** Keywords ***
-
 Run Tests With Listeners
     ${listeners} =    Catenate
     ...    --listener ListenAll
@@ -72,13 +63,21 @@ Run Tests With Listeners
     ...    --listener listeners.WithArgs:value
     ...    --listener "listeners.WithArgs:a1:a;2"
     ...    --listener "listeners.WithArgs;semi;colons:here"
+    ...    --listener listeners.WithArgs:arg2=args:arg1=named
+    ...    --listener listeners.WithArgConversion:42:yes
     ...    --listener ${LISTENERS}${/}ListenAll.py:%{TEMPDIR}${/}${ALL_FILE2}
     ...    --listener listeners.WithArgs
     ...    --listener listeners.WithArgs:1:2:3
+    ...    --listener NonExistingListener
     ...    --listener JavaListener
     ...    --listener JavaListenerWithArgs:Hello:world
     ...    --listener JavaListenerWithArgs
     ...    --listener JavaListenerWithArgs:b:a:r
-    ...    --listener NonExistingListener
     Run Tests    ${listeners}    misc/pass_and_fail.robot
 
+Importing Listener Failed
+    [Arguments]    ${index}    ${name}    ${error}    ${pattern}=False
+    Check Log Message
+    ...    ${ERRORS}[${index}]
+    ...    Taking listener '${name}' into use failed: Importing listener '${name.split(':')[0]}' failed: ${error}
+    ...    ERROR    pattern=${pattern}

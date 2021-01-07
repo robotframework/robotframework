@@ -37,8 +37,8 @@ Synopsis
 
 ::
 
-    python -m robot.libdoc [options] library_or_resource output_file
-    python -m robot.libdoc [options] library_or_resource list|show|version [names]
+    libdoc [options] library_or_resource output_file
+    libdoc [options] library_or_resource list|show|version [names]
 
 Options
 ~~~~~~~
@@ -75,22 +75,29 @@ Options
 __ `Library version`_
 __ `Using --pythonpath option`_
 
-Alternative execution
-~~~~~~~~~~~~~~~~~~~~~
+Executing Libdoc
+~~~~~~~~~~~~~~~~
 
-Although Libdoc is used only with Python in the synopsis above, it works
-also with Jython and IronPython. When documenting Java libraries, Jython is
-actually required.
+The easiest way to run Libdoc is using the `libdoc` command created as part of
+the normal installation::
 
-In the synopsis Libdoc is executed as an installed module
-(`python -m robot.libdoc`). In addition to that, it can be run also as
-a script::
+    libdoc ExampleLibrary ExampleLibrary.html
 
-    python path/robot/libdoc.py [options] arguments
+Alternatively it is possible to execute the `robot.libdoc` module directly.
+This approach is especially useful if you have installed Robot Framework using
+multiple Python versions and want to use a specific version with Libdoc::
 
-Executing as a script can be useful if you have done `manual installation`_
-or otherwise just have the :file:`robot` directory with the source code
-somewhere in your system.
+    python -m robot.libdoc ExampleLibrary ExampleLibrary.html
+    python3.9 -m robot.libdoc ExampleLibrary ExampleLibrary.html
+
+Yet another alternative is running the `robot.libdoc` module as a script.
+This can be useful if you have done a `manual installation`_ or otherwise
+just have the :file:`robot` directory with the source code somewhere in your
+system::
+
+    python path/to/robot/libdoc.py ExampleLibrary ExampleLibrary.html
+
+.. note:: The separate `libdoc` command is new in Robot Framework 4.0.
 
 Specifying library or resource file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -100,9 +107,14 @@ Python libraries and dynamic libraries with name or path
 
 When documenting libraries implemented with Python or that use the
 `dynamic library API`_, it is possible to specify the library either by
-using just the library name or path to the library source code.
+using just the library name or path to the library source code::
+
+   libdoc ExampleLibrary ExampleLibrary.html
+   libdoc src/ExampleLibrary.py docs/ExampleLibrary.html
+
 In the former case the library is searched using the `module search path`_
-and its name must be in the same format as in Robot Framework test data.
+and its name must be in the same format as when `importing libraries`_ in
+Robot Framework test data.
 
 If these libraries require arguments when they are imported, the arguments
 must be catenated with the library name or path using two colons like
@@ -127,9 +139,12 @@ documentation for Java libraries works only with Jython.
 Resource files with path
 ''''''''''''''''''''''''
 
-Resource files must always be specified using a path. If the path does
-not exist, resource files are also searched from all directories in
-the `module search path`_ similarly as when executing test cases.
+Resource files must always be specified using a path::
+
+    libdoc example.resource example.html
+
+If the path does not exist, resource files are also searched from all directories
+in the `module search path`_ similarly as when executing test cases.
 
 Libdoc spec files
 '''''''''''''''''
@@ -138,9 +153,9 @@ Earlier generated Libdoc XML or JSON spec files can also be used as inputs.
 This works if spec files use either :file:`*.xml`, :file:`*.libspec` or
 :file:`*.json` extension::
 
-   python -m robot.libdoc Example.xml Example.html
-   python -m robot.libdoc Example.libspec Example.html
-   python -m robot.libdoc Example.json Example.html
+   libdoc Example.xml Example.html
+   libdoc Example.libspec Example.html
+   libdoc Example.json Example.html
 
 .. note:: Support for the :file:`*.libspec` extension is new in
           Robot Framework 3.2.
@@ -180,9 +195,9 @@ format can be specified explicitly with the :option:`--format` option.
 
 ::
 
-   python -m robot.libdoc OperatingSystem OperatingSystem.html
-   python -m robot.libdoc --name MyLibrary Remote::http://10.0.0.42:8270 MyLibrary.html
-   python -m robot.libdoc --format HTML test/resource.robot doc/resource.htm
+   libdoc OperatingSystem OperatingSystem.html
+   libdoc --name MyLibrary Remote::http://10.0.0.42:8270 MyLibrary.html
+   libdoc --format HTML test/resource.robot doc/resource.htm
 
 __ `Python libraries`_
 
@@ -209,10 +224,10 @@ If needed, the format can be explicitly set with the :option:`--format` option.
 
 ::
 
-   python -m robot.libdoc OperatingSystem OperatingSystem.xml
-   python -m robot.libdoc test/resource.robot doc/resource.libspec
-   python -m robot.libdoc --format xml MyLibrary MyLibrary.spec
-   python -m robot.libdoc --format xml -s html MyLibrary MyLibrary.xml
+   libdoc OperatingSystem OperatingSystem.xml
+   libdoc test/resource.robot doc/resource.libspec
+   libdoc --format xml MyLibrary MyLibrary.spec
+   libdoc --format xml -s html MyLibrary MyLibrary.xml
 
 The exact Libdoc spec file format is documented with an `XML schema`__ (XSD)
 at https://github.com/robotframework/robotframework/tree/master/doc/schema.
@@ -278,12 +293,12 @@ insensitive. Both also accept `*` and `?` as wildcards.
 
 Examples::
 
-  python -m robot.libdoc Dialogs list
-  python -m robot.libdoc SeleniumLibrary list browser
-  python -m robot.libdoc Remote::10.0.0.42:8270 show
-  python -m robot.libdoc Dialogs show PauseExecution execute*
-  python -m robot.libdoc SeleniumLibrary show intro
-  python -m robot.libdoc SeleniumLibrary version
+  libdoc Dialogs list
+  libdoc SeleniumLibrary list browser
+  libdoc Remote::10.0.0.42:8270 show
+  libdoc Dialogs show PauseExecution execute*
+  libdoc SeleniumLibrary show intro
+  libdoc SeleniumLibrary version
 
 Writing documentation
 ---------------------

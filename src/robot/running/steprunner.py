@@ -101,7 +101,7 @@ class IfRunner(object):
                 raise DataError(data.error)
             if self._should_run_branch(data.condition, branch_run, recursive_dry_run):
                 runner = StepRunner(self._context, self._templated)
-                runner.run_steps(data.keywords)
+                runner.run_steps(data.body)
                 return True
             reporter.mark_as_not_run()
             return branch_run
@@ -267,7 +267,7 @@ class ForInRunner(object):
                                source=data.source)
         runner = StepRunner(self._context, self._templated)
         with StatusReporter(self._context, result):
-            runner.run_steps(data.keywords)
+            runner.run_steps(data.body)
 
     def _map_variables_and_values(self, variables, values):
         if len(variables) == 1 and len(values) != 1:

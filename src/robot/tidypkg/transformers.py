@@ -152,9 +152,15 @@ class NewlineNormalizer(ModelTransformer):
         if statement[-1].type != Token.EOL:
             if not self._should_write_content_after_name(statement):
                 statement.tokens.append(Token(Token.EOL, self.newline))
+        new_tokens = []
         for line in statement.lines:
             if line[-1].type == Token.EOL:
-                line[-1].value = self.newline
+                if self._should_write_content_after_name(statement):
+                    line.pop()
+                else:
+                    line[-1].value = self.newline
+            new_tokens.extend(line)
+        statement.tokens = new_tokens
         return statement
 
     def _should_write_content_after_name(self, statement):

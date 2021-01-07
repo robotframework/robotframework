@@ -209,9 +209,9 @@ class JsonConverter(object):
 
     def _convert_test(self, test):
         if test.setup:
-            test.keywords.insert(0, test.setup)
+            test.body.insert(0, test.setup)
         if test.teardown:
-            test.keywords.append(test.teardown)
+            test.body.append(test.teardown)
         return {
             'name': self._escape(test.name),
             'fullName': self._escape(test.longname),
@@ -219,7 +219,7 @@ class JsonConverter(object):
             'doc': self._html(test.doc),
             'tags': [self._escape(t) for t in test.tags],
             'timeout': self._get_timeout(test.timeout),
-            'keywords': list(self._convert_keywords(test.keywords))
+            'keywords': list(self._convert_keywords(test.body))
         }
 
     def _convert_keywords(self, keywords):

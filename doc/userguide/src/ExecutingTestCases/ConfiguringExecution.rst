@@ -478,7 +478,10 @@ works exactly like when `importing a test library`__.
 If a modifier requires arguments, like the examples below do, they can be
 specified after the modifier name or path using either a colon (`:`) or a
 semicolon (`;`) as a separator. If both are used in the value, the one used
-first is considered to be the actual separator.
+first is considered to be the actual separator. Starting from Robot Framework
+4.0, arguments also support the `named argument syntax`_ as well as `argument
+conversion`__ based on `type hints`__ and `default values`__ the same way
+as keywords do.
 
 If more than one pre-run modifier is needed, they can be specified by using
 the :option:`--prerunmodifier` option multiple times. If similar modifying
@@ -491,10 +494,17 @@ executed test suite and test cases. Most importantly, options related to
 use options like :option:`--include` also with possible dynamically added
 tests.
 
+.. tip:: Modifiers are taken into use from the command line exactly the same
+         way as listeners_. See the `Taking listeners into use`_ section for
+         more information and examples.
+
 .. note:: Prior to Robot Framework 3.2 pre-run modifiers were executed
           after other configuration.
 
 __ `Specifying library to import`_
+__ `Supported conversions`_
+__ `Specifying argument types using function annotations`_
+__ `Implicit argument types based on default values`_
 
 Example: Select every Xth test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -516,6 +526,9 @@ the file is in the `module search path`_, it could be used like this::
 
     # Specify the modifier as a name. Run every third test, starting from the second.
     robot --prerunmodifier SelectEveryXthTest:3:1 tests.robot
+
+.. note:: Argument conversion based on type hints like `x: int` in the above
+          example is new in Robot Framework 4.0 and requires Python 3.
 
 Example: Exclude tests by name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

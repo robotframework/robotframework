@@ -28,6 +28,9 @@ Source info
 Spec version
     Spec version should be correct
 
+Library Tags
+    Specfile Tags Should Be          hyvää    my    tägs    yötä
+
 Init documentation
     Init Doc Should Start With       0     Dummy documentation for `__init__`.
 

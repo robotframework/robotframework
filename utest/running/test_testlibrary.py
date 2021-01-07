@@ -81,7 +81,7 @@ class TestImports(unittest.TestCase):
                          [("keyword from submodule", None)])
 
     def test_import_non_existing_module(self):
-        msg = ("Importing test library '{libname}' failed: "
+        msg = ("Importing library '{libname}' failed: "
                "{type}Error: No module named {quote}{modname}{quote}")
         quote = '' if PY2 else "'"
         type = 'Import' if sys.version_info < (3, 6) else 'ModuleNotFound'
@@ -93,12 +93,12 @@ class TestImports(unittest.TestCase):
 
     def test_import_non_existing_class_from_existing_module(self):
         assert_raises_with_msg(DataError,
-                               "Importing test library 'pythonmodule.NonExisting' failed: "
+                               "Importing library 'pythonmodule.NonExisting' failed: "
                                "Module 'pythonmodule' does not contain 'NonExisting'.",
                                TestLibrary, 'pythonmodule.NonExisting')
 
     def test_import_invalid_type(self):
-        msg = "Importing test library '%s' failed: Expected class or module, got %s."
+        msg = "Importing library '%s' failed: Expected class or module, got %s."
         assert_raises_with_msg(DataError,
                                msg % ('pythonmodule.some_string', 'string'),
                                TestLibrary, 'pythonmodule.some_string')

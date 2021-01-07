@@ -17,7 +17,7 @@ from robot.utils import setter
 
 from .fixture import create_fixture
 from .itemlist import ItemList
-from .keyword import Keyword, Keywords
+from .keyword import Keyword, Keywords, Body
 from .modelobject import ModelObject
 from .tags import Tags
 
@@ -37,10 +37,14 @@ class TestCase(ModelObject):
         self.doc = doc          #: Test case documentation.
         self.timeout = timeout  #: Test case timeout.
         self.tags = tags
-        self.keywords = None
-        self.setup = self.keyword_class(parent=self, type=Keyword.SETUP_TYPE)
-        self.teardown = self.keyword_class(parent=self,
-                                           type=Keyword.TEARDOWN_TYPE)
+        self.body = None
+        self.setup = None
+        self.teardown = None
+
+    @setter
+    def body(self, body):
+        """Test case body as a :class:`~.Body` object."""
+        return Body(self.keyword_class, self, body)
 
     @setter
     def tags(self, tags):
@@ -55,13 +59,18 @@ class TestCase(ModelObject):
     def teardown(self, teardown):
         return create_fixture(teardown, self, Keyword.TEARDOWN_TYPE)
 
-    @setter
-    def keywords(self, keywords):
-        """Keywords as a :class:`~.Keywords` object.
+    @property
+    def keywords(self):
+        """Deprecated since Robot Framework 4.0
 
-        Contains also possible setup and teardown keywords.
+        Use :attr:`body`, :attr:`setup` or :attr:`teardown` instead.
         """
-        return Keywords(self.keyword_class, self, keywords)
+        kws = [kw for kw in [self.setup] + list(self.body) + [self.teardown] if kw]
+        return Keywords(self.keyword_class, self, kws)
+
+    @keywords.setter
+    def keywords(self, keywords):
+        Keywords.raise_deprecation_error()
 
     @property
     def id(self):
