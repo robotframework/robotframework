@@ -84,20 +84,28 @@ class TestCreateStatementsFromParams(unittest.TestCase):
         )
 
     def test_VariablesImport(self):
-        tokens = [Token(Token.VARIABLES), Token(Token.SEPARATOR, '    '), Token(Token.NAME, 'variables.py')]
+        tokens = [
+            Token(Token.VARIABLES),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.NAME, 'variables.py'),
+            Token(Token.EOL, '\n')
+        ]
         assert_created_statement(
-            tokens + [Token(Token.EOL, '\n')],
+            tokens,
             VariablesImport,
             variable_file='variables.py'
         )
 
-        tokens.extend([
+        tokens = [
+            Token(Token.VARIABLES),
+            Token(Token.SEPARATOR, '    '),
+            Token(Token.NAME, 'variables.py'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, 'arg1'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, '2'),
             Token(Token.EOL, '\n')
-        ])
+        ]
         assert_created_statement(
             tokens,
             VariablesImport,
@@ -209,6 +217,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
     def test_ForceTags(self):
         tokens = [
             Token(Token.FORCE_TAGS),
+            Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, 'some tag'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, 'another_tag'),
@@ -223,6 +232,7 @@ class TestCreateStatementsFromParams(unittest.TestCase):
     def test_DefaultTags(self):
         tokens = [
             Token(Token.DEFAULT_TAGS),
+            Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, 'some tag'),
             Token(Token.SEPARATOR, '    '),
             Token(Token.ARGUMENT, 'another_tag'),

@@ -16,7 +16,7 @@
 import ast
 import re
 
-from robot.utils import normalize_whitespace, split_from_equals, join_tokens_with_separator
+from robot.utils import normalize_whitespace, split_from_equals
 from robot.variables import is_scalar_assign, is_dict_variable, search_variable
 
 from ..lexer import Token
@@ -266,8 +266,9 @@ class VariablesImport(Statement):
         separator_token = Token(Token.SEPARATOR, separator)
         tokens = [Token(Token.VARIABLES), separator_token, Token(Token.NAME, variable_file)]
         if args is not None:
-            arg_tokens = [Token(Token.ARGUMENT, arg) for arg in args]
-            tokens += [separator_token] + list(join_tokens_with_separator(arg_tokens, separator_token))
+            for arg in args:
+                tokens.append(separator_token)
+                tokens.append(Token(Token.ARGUMENT, arg))
         tokens.append(Token(Token.EOL, eol))
         return cls(tokens)
 
@@ -369,9 +370,12 @@ class ForceTags(MultiValue):
 
     @classmethod
     def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
-        tag_tokens = [Token(Token.ARGUMENT, tag) for tag in tags]
-        separated_tags = list(join_tokens_with_separator(tag_tokens, Token(Token.SEPARATOR, separator)))
-        return cls([Token(Token.FORCE_TAGS)] + separated_tags + [Token(Token.EOL, eol)])
+        tag_tokens = [Token(Token.FORCE_TAGS)]
+        for tag in tags:
+            tag_tokens.append(Token(Token.SEPARATOR, separator))
+            tag_tokens.append(Token(Token.ARGUMENT, tag))
+        tag_tokens.append(Token(Token.EOL, eol))
+        return cls(tag_tokens)
 
 
 @Statement.register
@@ -380,9 +384,12 @@ class DefaultTags(MultiValue):
 
     @classmethod
     def from_params(cls, tags, separator=FOUR_SPACES, eol=EOL):
-        tag_tokens = [Token(Token.ARGUMENT, tag) for tag in tags]
-        separated_tags = list(join_tokens_with_separator(tag_tokens, Token(Token.SEPARATOR, separator)))
-        return cls([Token(Token.DEFAULT_TAGS)] + separated_tags + [Token(Token.EOL, eol)])
+        tag_tokens = [Token(Token.DEFAULT_TAGS)]
+        for tag in tags:
+            tag_tokens.append(Token(Token.SEPARATOR, separator))
+            tag_tokens.append(Token(Token.ARGUMENT, tag))
+        tag_tokens.append(Token(Token.EOL, eol))
+        return cls(tag_tokens)
 
 
 @Statement.register
